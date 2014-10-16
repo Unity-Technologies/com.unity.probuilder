@@ -1,0 +1,52 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"C:\\Program Files (x86)\\Unity\\Editor\\Data\\Mono\\bin\\xbuild.bat",
+				"${project_path}/${project_base_name}.sln",
+				"/noconsolelogger",
+				"/logger:${project_path}\\SublimeUnity\\SublimeLogger.dll"
+			],
+			"file_regex": "([^(]*)\\((\\d*),(\\d*)\\)\\s*(.*)",
+			"name": "Unity Mono"
+		}
+	],
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.unity",
+				"*.guiskin",
+				"*.dll",
+				"*.meta",
+				"*.prefab",
+				"*.anim",
+				"*.physicMaterial",
+				"*.flare",
+				"*.cubemap",
+				"*.font",
+				"*.fontsettings",
+				"*.renderTexture",
+				"defines.txt",
+				"*boo*",
+				"*us.rsp"
+			],
+			"folder_exclude_patterns":
+			[
+				"Resources",
+				"*test*",
+				"Doxygen",
+				"UVee"
+			],
+			"follow_symlinks": true,
+			"path": "Assets/ProCore/ProBuilder/"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "Assets/Bugger"
+		}
+	]
+}

@@ -1,0 +1,10 @@
+# Triangulation Library
+	- Delauney.cs, Edge.cs, Triangle.cs
+	- Credit to Paul Bourke (pbourke@swin.edu.au) for the original Fortran 77 Program
+	- Converted to a standalone C# 2.0 library by Morten Nielsen (www.iter.dk)
+
+# PivotTool
+	Author: Matt1988
+
+# Diffuse Vertex Color Shaders
+	Author: Snoopbaron - Fernando Zapata
