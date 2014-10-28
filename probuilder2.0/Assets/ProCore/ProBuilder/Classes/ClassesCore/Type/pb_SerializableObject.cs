@@ -7,6 +7,22 @@ using ProBuilder2.Common;
 
 using UnityEngine;
 
+#if UNITY_WP8
+public class pb_SerializableObject
+{
+	// pb_Object
+	public Vector3[] vertices;
+	public Vector2[] uv;
+	public pb_Face[] faces;
+	public int[][] sharedIndices;
+	public int[][] sharedIndicesUV;
+
+	// transform
+	public Vector3 		t_position;
+	public Quaternion 	t_rotation;
+	public Vector3 		t_scale;
+}
+#else
 [Serializable()]		
 public class pb_SerializableObject : ISerializable
 {
@@ -86,3 +102,4 @@ public class pb_SerializableObject : ISerializable
 		this.t_scale = (pb_Vector3) info.GetValue("t_scale", typeof(pb_Vector3));
 	}
 }
+#endif

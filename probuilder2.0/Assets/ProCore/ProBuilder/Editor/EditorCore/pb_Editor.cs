@@ -35,6 +35,7 @@ using Parabox.Debug;
 [InitializeOnLoad]
 public class pb_Editor : EditorWindow
 {
+
 #region STATIC REFERENCES
 
 	public static pb_Editor instance { get { return me; } }
@@ -62,7 +63,7 @@ public class pb_Editor : EditorWindow
 
 	Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
 
-	GUIStyle pbStyle;
+	// GUIStyle pbStyle;
 	GUIStyle VertexTranslationInfoStyle;
 	// private int UNITY_VERSION;
 	GUIStyle eye_style;
@@ -174,7 +175,7 @@ public class pb_Editor : EditorWindow
 		selectedVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor);
 		defaultVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
  		
- 		pbStyle = new GUIStyle();
+ 		// pbStyle = new GUIStyle();
 
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
@@ -296,10 +297,10 @@ public class pb_Editor : EditorWindow
 
 		if(!guiInitialized)
 		{
-			pbStyle = new GUIStyle();
-			pbStyle.border = new RectOffset(0,0,0,0);
-			pbStyle.normal.background = null;
-			pbStyle.margin = new RectOffset(4,4,0,0);
+			// pbStyle = new GUIStyle();
+			// pbStyle.border = new RectOffset(0,0,0,0);
+			// pbStyle.normal.background = null;
+			// pbStyle.margin = new RectOffset(4,4,0,0);
 
 			eye_style = new GUIStyle( EditorStyles.miniButtonRight );
 			eye_style.padding = new RectOffset(0,0,0,0);

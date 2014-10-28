@@ -36,8 +36,11 @@ public class pb_Object : MonoBehaviour
 {
 #region MONOBEHAVIOUR
 
-	void Awake()
+	void Start()
 	{
+		if(GetComponent<MeshRenderer>().isPartOfStaticBatch)
+			return;
+
 		if(msh == null)
 		{
 			Verify();

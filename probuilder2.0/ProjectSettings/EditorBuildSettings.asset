@@ -5,7 +5,5 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/estets.unity
   - enabled: 1
-    path: Assets/doc_screenshots.unity
+    path: Assets/test.unity

@@ -519,6 +519,22 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor.cs",
+			"settings":
+			{
+				"buffer_size": 100905,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "probuilder2.0.sublime-project",
+			"settings":
+			{
+				"buffer_size": 892,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -605,21 +621,12 @@
 	},
 	"expanded_folders":
 	[
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/About",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/API Examples",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Classes",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Repair",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Selection",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Tools",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Scripts",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Shader",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/Bugger"
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder"
 	],
 	"file_history":
 	[
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_UV.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/plist.txt",
 		"/C/Users/karl/parabox/uv-tool/Assets/UVee/Editor/UVeeWindow.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_UV_Editor.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pbUndo.cs",
@@ -745,9 +752,7 @@
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/Type/VertexConnection.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/UnitTests.cs",
 		"/C/Users/karl/parabox/website/blog/entries/2014-09-19/PipeDreams.html",
-		"/C/Users/karl/parabox/blog/2014-09-25.md",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/Editor/pb_BendTool.cs",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Classes/Debug/pb_Sample.cs"
+		"/C/Users/karl/parabox/blog/2014-09-25.md"
 	],
 	"find":
 	{
@@ -939,8 +944,67 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 100905,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1423,
+								1442
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 273.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "probuilder2.0.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 892,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -994,6 +1058,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"pbedito",
+				"ProBuilder\\Editor\\EditorCore\\pb_Editor.cs"
+			],
 			[
 				"uvedit",
 				"ProBuilder\\Editor\\EditorCore\\pb_UV_Editor.cs"
@@ -1133,10 +1201,6 @@
 			[
 				"profiler",
 				"C:\\Users\\karl\\probuilder\\probuilder2.0\\Assets\\ProCore\\Shared\\pb_Profiler\\Tests\\TestProfiler.cs"
-			],
-			[
-				"pbedito",
-				"ProBuilder\\Editor\\EditorCore\\pb_Editor.cs"
 			],
 			[
 				"pbeditor",

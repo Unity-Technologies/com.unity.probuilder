@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if !UNITY_WP8
+
+using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections;
@@ -54,3 +56,5 @@ public class SaveLoadSerializedPbObject : Editor
 		}
 	}
 }
+
+#endif
