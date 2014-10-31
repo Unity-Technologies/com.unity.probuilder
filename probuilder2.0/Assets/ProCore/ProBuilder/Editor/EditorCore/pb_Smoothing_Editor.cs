@@ -148,8 +148,16 @@ public class pb_Smoothing_Editor : EditorWindow
 
 		foreach(pb_Object pb in _selection)
 		{
-			foreach(pb_Face face in pb.SelectedFaces)
-				face.SetSmoothingGroup(sg);
+			if(pb.SelectedFaceCount > 0)
+			{
+				foreach(pb_Face face in pb.SelectedFaces)
+					face.SetSmoothingGroup(sg);
+			}
+			else
+			{
+				foreach(pb_Face face in pb.faces)
+					face.SetSmoothingGroup(sg);
+			}
 
 			pb.RefreshNormals();
 		}

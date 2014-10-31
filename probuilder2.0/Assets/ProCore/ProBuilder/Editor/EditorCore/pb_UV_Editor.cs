@@ -2160,7 +2160,7 @@ public class pb_UV_Editor : EditorWindow
 	 * If it ain't null, selected UVs will be set to the UV coordinates contained within the drag rect.
 	 */
 	void RefreshUVCoordinates(Rect? dragRect, bool isClick)
-	{
+	{	
 		if(editor == null || selection == null) return;
 
 		#if PB_DEBUG

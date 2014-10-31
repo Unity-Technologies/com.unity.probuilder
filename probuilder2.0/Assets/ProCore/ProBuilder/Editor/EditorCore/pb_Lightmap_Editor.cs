@@ -261,6 +261,9 @@ public class pb_Lightmap_Editor : EditorWindow
 
 public static class pb_Lightmap_Editor_Extensions
 {
+	/**
+	 * Editor-only extension to pb_Object generates lightmap UVs.
+	 */
 	public static void GenerateUV2(this pb_Object pb, bool show_NoDraw)
 	{
 		if(pb.onlyNodraw)
