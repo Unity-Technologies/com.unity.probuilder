@@ -8,6 +8,8 @@ using ProBuilder2.Common;
 public class pb_Entity_Editor : Editor
 {
 	pb_Entity ent;
+	pb_Object pb;
+
 	public enum ColType
 	{
 		MeshCollider,
@@ -18,6 +20,7 @@ public class pb_Entity_Editor : Editor
 	public void OnEnable()
 	{
 		ent = (pb_Entity)target;
+		pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
 		// if(ent.colliderType != pb_Entity.ColliderType.Upgraded) ent.GenerateCollisions();
 	}
 
@@ -31,7 +34,15 @@ public class pb_Entity_Editor : Editor
 			pb_Editor_Utility.SetEntityType(et, ent.gameObject);
 		}
 
+
+		GUILayout.Space(4);
+
+		pb.userCollisions = EditorGUILayout.Toggle("Custom Collider", pb.userCollisions);
+
 		// Convience
+		if(pb.userCollisions)
+			GUI.enabled = false;
+
 		GUILayout.Label("Add Collider", EditorStyles.boldLabel);
 		GUILayout.BeginHorizontal();
 
@@ -44,7 +55,10 @@ public class pb_Entity_Editor : Editor
 			if(GUILayout.Button("Remove Collider", EditorStyles.miniButtonRight))
 				EditorApplication.delayCall += RemoveColliders;
 
+
 		GUILayout.EndHorizontal();
+
+		GUI.enabled = true;
 
 		// GUILayout.Space(4);
 

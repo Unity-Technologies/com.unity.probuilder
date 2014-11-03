@@ -229,6 +229,7 @@ public class pb_Object : MonoBehaviour
 	[SerializeField] private int[]		m_selectedTriangles 	= new int[]{};
 
 	public Vector3 						previousTransform = new Vector3(0f, 0f, 0f);
+	public bool 						userCollisions = true;	///< If true, ProBuilder will automatically create and scale colliders.
 
 	public bool 						isSelectable = true;	///< Optional flag - if true editor should ignore clicks on this object.
 
@@ -746,7 +747,7 @@ public class pb_Object : MonoBehaviour
 
 		msh.RecalculateBounds();
 		
-		if(GetComponent<Collider>())
+		if(!userCollisions && GetComponent<Collider>())
 		{
 			foreach(Collider c in gameObject.GetComponents<Collider>())
 			{
