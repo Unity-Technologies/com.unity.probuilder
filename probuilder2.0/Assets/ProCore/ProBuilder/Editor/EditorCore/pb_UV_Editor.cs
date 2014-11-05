@@ -73,6 +73,8 @@ public class pb_UV_Editor : EditorWindow
 	const int ACTION_WINDOW_WIDTH_MANUAL = 128;
 	const int ACTION_WINDOW_WIDTH_AUTO = 200;
 
+	private float pref_gridSnapValue = .0625f;
+
 	Color DRAG_BOX_COLOR_BASIC 	= new Color(0f, .7f, 1f, .2f);
 	Color DRAG_BOX_COLOR_PRO 	= new Color(0f, .7f, 1f, 1f);
 	Color DRAG_BOX_COLOR;
@@ -255,7 +257,9 @@ public class pb_UV_Editor : EditorWindow
 		
 		nearestElement.Clear();
 
+		// Find preferences
 		pref_showMaterial = pb_Preferences_Internal.GetBool(pb_Constant.pbUVMaterialPreview);
+		pref_gridSnapValue = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
 	}
 
 	void OnDisable()
@@ -467,7 +471,7 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		#if PB_DEBUG
-		buggerRect = new Rect(Screen.width - 200, PAD, 180, 300);
+		buggerRect = new Rect(Screen.width - 226, PAD, 220, 300);
 		DrawDebugInfo(buggerRect);
 		#endif
 	}
@@ -1187,7 +1191,7 @@ public class pb_UV_Editor : EditorWindow
 			if(ControlKey)
 			{
 				Vector2 uv = pb_Handle_Utility.GUIToUVPoint( t_handlePosition, uvGridSize);
-				handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(pbUtil.SnapValue(uv, handlePosition_canvas-t_handlePosition, .1f), uvGridSize);
+				handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(pbUtil.SnapValue(uv, handlePosition_canvas-t_handlePosition, pref_gridSnapValue), uvGridSize);
 			}
 			else
 			{		
@@ -1254,7 +1258,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition_canvas-t_handlePosition, .1f);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition_canvas-t_handlePosition, pref_gridSnapValue);
 
 			#if UNITY_4_3
 				pbUndo.RecordObjects(selection, "Move UVs");
@@ -1367,7 +1371,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition-t_handlePosition, .1f);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition-t_handlePosition, pref_gridSnapValue);
 
 			#if UNITY_4_3
 				pbUndo.RecordObjects(selection, "Move UVs");
@@ -1496,7 +1500,7 @@ public class pb_UV_Editor : EditorWindow
 		uvScale = pb_Handle_Utility.ScaleHandle2d(2, CanvasToGUIPoint(handlePosition_canvas), uvScale, 128);
 
 		if(ControlKey)
-			uvScale = pbUtil.SnapValue(uvScale, .1f);
+			uvScale = pbUtil.SnapValue(uvScale, pref_gridSnapValue);
 
 		#if !UNITY_4_3
 		Undo.ClearSnapshotTarget();
@@ -1573,7 +1577,7 @@ public class pb_UV_Editor : EditorWindow
 		previousScale.y = 1f / previousScale.y;
 
 		if(ControlKey)
-			textureScale = pbUtil.SnapValue(textureScale, .1f);
+			textureScale = pbUtil.SnapValue(textureScale, pref_gridSnapValue);
 
 		#if !UNITY_4_3
 		Undo.ClearSnapshotTarget();
@@ -1637,115 +1641,133 @@ public class pb_UV_Editor : EditorWindow
 	}
 #endregion
 
-#region UV Graph
+#region UV Graph Drawing
 
 	Vector2 UVGraphCenter = Vector2.zero;
 	
-	private class UVGraphCoordinates
-	{
+	// private class UVGraphCoordinates
+	// {
 		// Remember that Unity GUI coordinates Y origin is the bottom
-		private static Vector2 UpperLeft = new Vector2(  0f, -1f);
-		private static Vector2 UpperRight = new Vector2( 1f, -1f);
-		private static Vector2 LowerLeft = new Vector2(  0f,  0f);
-		private static Vector2 LowerRight = new Vector2( 1f,  0f);
+	private static Vector2 UpperLeft = new Vector2(  0f, -1f);
+	private static Vector2 UpperRight = new Vector2( 1f, -1f);
+	private static Vector2 LowerLeft = new Vector2(  0f,  0f);
+	private static Vector2 LowerRight = new Vector2( 1f,  0f);
 
-		public Vector2 center;	// Center (after scale and offset are applied).
-		public int size;		// Size (extents) after scale and offset have been applied.
-		public Rect rect { get; private set; }
+	private Rect UVGraphZeroZero = new Rect(0,0,40,40);
+	private Rect UVGraphOneOne = new Rect(0,0,40,40);
 
-		public UVGraphCoordinates(Vector2 center, int gridSize, float scale, Vector2 offset)
+	/**
+	 * Must be called inside GL immediate mode context
+	 */
+	internal void DrawUVGrid(Color gridColor)
+	{		
+		Color col = GUI.color;
+		gridColor.a = .1f;
+
+		GL.PushMatrix();
+		pb_Handle_Utility.handleMaterial.SetPass(0);
+		GL.MultMatrix(Handles.matrix);
+
+		GL.Begin( GL.LINES );
+		GL.Color( gridColor );
+
+		// Grid temp vars
+		int GridLines = 64;
+		float StepSize = pref_gridSnapValue;	// In UV coordinates
+
+		// Exponentially scale grid size
+		while(StepSize * uvGridSize * uvGraphScale < uvGridSize/10)
+			StepSize *= 2f;
+
+		Vector2 p0 = Vector2.zero, p1 = Vector2.zero;
+
+		Vector2 gridOffset = uvCanvasOffset;
+		gridOffset.x = gridOffset.x % (uvGridSize * uvGraphScale);
+		gridOffset.y = gridOffset.y % (uvGridSize * uvGraphScale);
+
+		///==== X axis lines
+		p0.x = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
+		p1.x = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
+
+		for(int i = 0; i < GridLines + 1; i++)
 		{
-			this.center = center + offset;
-			this.size = (int)(gridSize * scale);
-			this.rect = new Rect(this.center.x, this.center.y - this.size, this.size, this.size);
+			p0.y = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.y + gridOffset.y;
+			p1.y = p0.y;
+
+			GL.Vertex( p0 );
+			GL.Vertex( p1 );
 		}
 
-		/**
-		 * Must be called inside GL immediate mode context
-		 */
-		internal void DrawGraph(Color gridColor)
-		{		
-			Color col = GUI.color;
-			gridColor.a = .1f;
+		///==== Y axis lines
+		p0.y = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
+		p1.y = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
 
-			GL.PushMatrix();
-			pb_Handle_Utility.handleMaterial.SetPass(0);
-			GL.MultMatrix(Handles.matrix);
+		for(int i = 0; i < GridLines + 1; i++)
+		{
+			p0.x = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.x + gridOffset.x;
+			p1.x = p0.x;
 
-			GL.Begin( GL.LINES );
-			GL.Color( gridColor );
-
-			// X axis lines
-			int gridDim = 11;
-			for(int i = 0; i < gridDim*2+1; i++)
-			{
-				int y = (int)(center.y + (size * (i-gridDim)));
-				GL.Vertex( new Vector2(center.x + (size * -gridDim), y) );
-				GL.Vertex( new Vector2(center.x + (size *  gridDim), y) );
-			}
-
-			// y axis lines
-			for(int i = 0; i < gridDim*2+1; i++)
-			{
-				int x = (int)(center.x + (size * (i-gridDim)));
-
-				GL.Vertex( new Vector2(x, center.y + size * -gridDim) );
-				GL.Vertex( new Vector2(x, center.y + size *  gridDim) );
-			}
-
-			// Box
-			GL.Color( Color.gray );
-
-			GL.Vertex(center + (UpperLeft * size));
-			GL.Vertex(center + (UpperRight * size));
-
-			GL.Vertex(center + (UpperRight * size));
-			GL.Vertex(center + (LowerRight * size));
-
-			GL.Vertex(center + (LowerRight * size));
-			GL.Vertex(center + (LowerLeft * size));
-
-			GL.Vertex(center + (LowerLeft * size));
-			GL.Vertex(center + (UpperLeft * size));
-
-			// Axes
-			GL.Color( pb_Constant.ProBuilderBlue );
-
-			GL.Vertex(center);
-			GL.Vertex(center + (Vector2.right * size));
-
-			GL.Vertex(center);
-			GL.Vertex(center + (-Vector2.up * size));
-			
-			GL.End();
-			GL.PopMatrix();
-
-			GUI.color = gridColor;
-
-			Handles.BeginGUI();
-				GUI.Label( new Rect( center.x+UpperRight.x*size, (center.y+UpperRight.y*size)-20, 60, 30), "1, 1" );
-				GUI.Label( new Rect( (center.x+LowerLeft.x*size)-40, (center.y+LowerLeft.y*size)+5, 80, 30), "0, 0" );
-			Handles.EndGUI();
-
-			GUI.color = col;
+			GL.Vertex( p0 );
+			GL.Vertex( p1 );
 		}
+
+		// Box
+		GL.Color( Color.gray );
+
+		GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+
+		GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+
+		GL.Color( pb_Constant.ProBuilderBlue );
+
+		GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+
+		GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		
+		GL.End();
+		GL.PopMatrix();	// Pop pop!
+
+		GUI.color = gridColor;
+
+		UVGraphZeroZero.x = UVRectIdentity.x + 4;
+		UVGraphZeroZero.y = UVRectIdentity.y + UVRectIdentity.height + 1;
+
+		UVGraphOneOne.x = UVRectIdentity.x + UVRectIdentity.width + 4;
+		UVGraphOneOne.y = UVRectIdentity.y;
+
+		Handles.BeginGUI();
+			GUI.Label(UVGraphZeroZero, "0, 0" );
+			GUI.Label(UVGraphOneOne, "1, 1" );
+		Handles.EndGUI();
+
+		GUI.color = col;
 	}
+
+	Rect UVRectIdentity = new Rect(0,0,1,1);
 
 	void DrawUVGraph(Rect rect)
 	{
 		UVGraphCenter = rect.center;
 
-		UVGraphCoordinates graphCoords = new UVGraphCoordinates(UVGraphCenter, uvGridSize, uvGraphScale, uvCanvasOffset);
+		UVRectIdentity.width = uvGridSize * uvGraphScale;
+		UVRectIdentity.height = UVRectIdentity.width;
+
+		UVRectIdentity.x = UVGraphCenter.x + uvCanvasOffset.x;
+		UVRectIdentity.y = UVGraphCenter.y + uvCanvasOffset.y - UVRectIdentity.height;
 
 		if(pref_showMaterial && preview_material && preview_material.mainTexture)
-			EditorGUI.DrawPreviewTexture(graphCoords.rect, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
+			EditorGUI.DrawPreviewTexture(UVRectIdentity, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
 
 		#if PB_DEBUG
 			profiler.BeginSample("Draw Base Graph");
-				graphCoords.DrawGraph(GridColorPrimary);
+				DrawUVGrid(GridColorPrimary);
 			profiler.EndSample();
 		#else
-			graphCoords.DrawGraph(GridColorPrimary);
+			DrawUVGrid(GridColorPrimary);
 		#endif
 
 		if(selection == null || selection.Length < 1)
@@ -1781,8 +1803,8 @@ public class pb_UV_Editor : EditorWindow
 					p = CanvasToGUIPoint(uvs_gui_space[i][index]);
 					GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
 
-					#if DEBUG
-					GUI.Label( new Rect(p.x, p.y, 120, 20), pb.uv[index].ToString() );
+					#if PB_DEBUG
+					GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_gui_space[i][index] + " -> " + p );
 					#endif
 				}
 			}
@@ -1972,15 +1994,12 @@ public class pb_UV_Editor : EditorWindow
 		if(channel != t_channel)
 			RefreshUVCoordinates();
 
-		#if PB_DEBUG
-
 		if(GUILayout.Button("Dump Times"))
 			Bugger.Log( profiler.ToString() );
 
 		if(GUILayout.Button("Clear Profiler"))
 			profiler.Reset();
-		#endif
-
+		
 		GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
 		GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
 		GUILayout.Label("m_draggingCanvas: " + m_draggingCanvas);
@@ -2000,24 +2019,16 @@ public class pb_UV_Editor : EditorWindow
 		// if(GUILayout.Button("Screenshot"))	
 		// 	EditorApplication.delayCall += Screenshot;
 
-		EditorGUI.BeginChangeCheck();
-		GUILayout.Label("HOVER MANUAL");
-		HOVER_COLOR_MANUAL = EditorGUILayout.ColorField(HOVER_COLOR_MANUAL, GUILayout.MaxWidth(rect.width));
-		GUILayout.Label(
-			HOVER_COLOR_MANUAL.r.ToString("F2") + ", " +
-			HOVER_COLOR_MANUAL.g.ToString("F2") + ", " +
-			HOVER_COLOR_MANUAL.b.ToString("F2") + ", " +
-			HOVER_COLOR_MANUAL.a.ToString("F2"), GUILayout.MaxWidth(rect.width));
+		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
+		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));
 
-		GUILayout.Label("SELECTED MANUAL");
-		SELECTED_COLOR_MANUAL = EditorGUILayout.ColorField(SELECTED_COLOR_MANUAL, GUILayout.MaxWidth(rect.width));
-		GUILayout.Label(
-			SELECTED_COLOR_MANUAL.r.ToString("F2") + ", " +
-			SELECTED_COLOR_MANUAL.g.ToString("F2") + ", " +
-			SELECTED_COLOR_MANUAL.b.ToString("F2") + ", " +
-			SELECTED_COLOR_MANUAL.a.ToString("F2"), GUILayout.MaxWidth(rect.width));
-
-		GUILayout.EndVertical();
+		float tmp = pref_gridSnapValue;
+		pref_gridSnapValue = EditorGUILayout.FloatField("Grid Snap", pref_gridSnapValue, GUILayout.MaxWidth(rect.width-6));
+		if(tmp != pref_gridSnapValue)
+		{
+			pref_gridSnapValue = Mathf.Clamp(pref_gridSnapValue, .001f, 2f);
+			EditorPrefs.SetFloat(pb_Constant.pbUVGridSnapValue, pref_gridSnapValue);
+		}
 
 		GUI.EndGroup();
 	}
@@ -2149,7 +2160,7 @@ public class pb_UV_Editor : EditorWindow
 
 #region Refresh / Set
 
-		// Doesn't call Repaint for you
+	// Doesn't call Repaint for you
 	void RefreshUVCoordinates()
 	{
 		RefreshUVCoordinates(null, false);
@@ -2711,7 +2722,9 @@ public class pb_UV_Editor : EditorWindow
 
 		if(projected > 0)
 		{
-			Menu_FitUVs();			
+			if(pb_Preferences_Internal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
+				Menu_FitUVs();
+				
 			ResetUserPivot();
 		}
 		

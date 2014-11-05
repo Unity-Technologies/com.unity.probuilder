@@ -105,6 +105,8 @@ xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\ProBuilder
 xcopy %CD%\bin\temp\ProBuilder2-v*.unitypackage %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Install\Packs\
 xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\QuickStart2.cs %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Install\Editor\
 
+mkdir bin\Debug
+
 %unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ generateAbout:FALSE generateZip:TRUE
 
 pause

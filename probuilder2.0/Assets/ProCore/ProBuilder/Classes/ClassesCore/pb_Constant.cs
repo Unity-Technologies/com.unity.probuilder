@@ -48,9 +48,11 @@ public static class pb_Constant
 	public const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
 	public const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.
 	public const string pbShowUVEditorTooltip			= "pbShowUVEditorTooltip";			///< Turns on or off the SceneView toolbar.
+	public const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
+	public const string pbUVGridSnapValue				= "pbUVGridSnapValue";
 
 	// Misc
 	public const string pbDefaultShortcuts 				= "pbDefaultShortcuts";

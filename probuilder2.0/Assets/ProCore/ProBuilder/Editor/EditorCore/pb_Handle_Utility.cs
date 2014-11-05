@@ -210,6 +210,10 @@ public class pb_Handle_Utility
 	}
 
 	static Vector2 initialDirection;
+
+	/**
+	 * A 2D rotation handle.  Behaves like HandleUtility.RotationHandle
+	 */
 	public static float RotationHandle2d(int id, Vector2 position, float rotation, int radius)
 	{
 		Event e = Event.current;
@@ -269,7 +273,7 @@ public class pb_Handle_Utility
 	}
 
 	/**
-	 * Draw a scale handle in 2d space.
+	 * Draw a working scale handle in 2d space.
 	 */
 	public static Vector2 ScaleHandle2d(int id, Vector2 position, Vector2 scale, int size)
 	{
@@ -370,9 +374,12 @@ public class pb_Handle_Utility
 
 	static MethodInfo IntersectRayMesh;
 
+	/**
+	 * Raycast for use in SceneView.  Returns a RaycastHit if @pb is in the line of fire.
+	 */
 	public static bool Raycast(Ray ray, pb_Object pb, out RaycastHit hit)
 	{
-				/// necessary because Physics.Raycast() doesn't pick up objects without mesh colliders
+		/// necessary because Physics.Raycast() doesn't pick up objects without concave mesh colliders
 		object[] parameters = new object[] { ray, pb.msh, pb.transform.localToWorldMatrix, null };
 		if(IntersectRayMesh == null) IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		object result = IntersectRayMesh.Invoke(null, parameters);
@@ -427,6 +434,9 @@ public class pb_Handle_Utility
 		return foundMatch;
 	}
 
+	/**
+	 * Returns the index of the nearest point in the points array, or -1 if no point is within maxDelta range.
+	 */
 	public static int NearestPoint(Vector2 point, Vector2[] points, float maxDelta)
 	{
 		float dist = 0f;

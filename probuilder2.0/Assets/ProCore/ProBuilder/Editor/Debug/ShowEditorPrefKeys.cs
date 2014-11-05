@@ -51,13 +51,15 @@ public class ShowEditorPrefKeys : EditorWindow
 		pb_Constant.pbShowMover,
 		pb_Constant.pbShowCollider,
 		pb_Constant.pbShowTrigger,
-		pb_Constant.pbShowNoDraw
+		pb_Constant.pbShowNoDraw,
+		pb_Constant.pbNormalizeUVsOnPlanarProjection
 	};
 
 	string[] floats = new string[] 
 	{
 		pb_Constant.pbVertexHandleSize,
-		pb_Constant.pbExtrudeDistance
+		pb_Constant.pbExtrudeDistance,
+		pb_Constant.pbUVGridSnapValue
 	};
 
 	void OnGUI()
