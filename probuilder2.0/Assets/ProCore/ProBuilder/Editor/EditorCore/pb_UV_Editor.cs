@@ -1808,7 +1808,6 @@ public class pb_UV_Editor : EditorWindow
 					#endif
 				}
 			}
-
 		}
 
 		GL.PushMatrix();
@@ -2026,7 +2025,7 @@ public class pb_UV_Editor : EditorWindow
 		pref_gridSnapValue = EditorGUILayout.FloatField("Grid Snap", pref_gridSnapValue, GUILayout.MaxWidth(rect.width-6));
 		if(tmp != pref_gridSnapValue)
 		{
-			pref_gridSnapValue = Mathf.Clamp(pref_gridSnapValue, .001f, 2f);
+			pref_gridSnapValue = Mathf.Clamp(pref_gridSnapValue, .015625f, 2f);
 			EditorPrefs.SetFloat(pb_Constant.pbUVGridSnapValue, pref_gridSnapValue);
 		}
 
@@ -2724,7 +2723,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
 				Menu_FitUVs();
-				
+
 			ResetUserPivot();
 		}
 		
