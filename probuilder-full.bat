@@ -12,7 +12,9 @@ echo UNITY PATH IS %unity_path%
 
 :: clean out temp directory.
 rd /s /q bin\temp\
+mkdir bin\
 md bin\temp
+mkdir bin\Debug
 
 :: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
 %unity_path% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources -logFile %CD%/probuilder-release-resources-log.txt
@@ -76,7 +78,7 @@ xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilder
 :: xcopy "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps\bin\Debug\ProBuilderMeshOps.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: Build Editor Core
-%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_3" /t:Clean,Build "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor.sln"
+%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_3;" /t:Clean,Build "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor.sln"
 xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 :: Export release pack for Unity 4.3 +
@@ -104,8 +106,6 @@ xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\ProBuilder
 :: the root to ProCore since ProCore doesn't exist yet
 xcopy %CD%\bin\temp\ProBuilder2-v*.unitypackage %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Install\Packs\
 xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\QuickStart2.cs %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Install\Editor\
-
-mkdir bin\Debug
 
 %unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ generateAbout:FALSE generateZip:TRUE
 

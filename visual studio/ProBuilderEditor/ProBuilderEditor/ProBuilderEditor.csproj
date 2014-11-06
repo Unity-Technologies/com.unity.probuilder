@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="pb_Profiler">
+      <HintPath>..\..\..\probuilder2.0\Assets\ProCore\Shared\pb_Profiler\pb_Profiler.dll</HintPath>
+    </Reference>
     <Reference Include="ProBuilderCore">
       <HintPath>..\..\ProBuilderCore\ProBuilderCore\bin\Debug\ProBuilderCore.dll</HintPath>
     </Reference>

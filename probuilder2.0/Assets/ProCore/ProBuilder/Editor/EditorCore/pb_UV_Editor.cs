@@ -1679,11 +1679,12 @@ public class pb_UV_Editor : EditorWindow
 		while(StepSize * uvGridSize * uvGraphScale < uvGridSize/10)
 			StepSize *= 2f;
 
-		Vector2 p0 = Vector2.zero, p1 = Vector2.zero;
-
+		// Calculate what offset the grid should be (different from uvCanvasOffset in that we always want to render the grid)
 		Vector2 gridOffset = uvCanvasOffset;
-		gridOffset.x = gridOffset.x % (uvGridSize * uvGraphScale);
-		gridOffset.y = gridOffset.y % (uvGridSize * uvGraphScale);
+		gridOffset.x = gridOffset.x % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
+		gridOffset.y = gridOffset.y % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
+
+		Vector2 p0 = Vector2.zero, p1 = Vector2.zero;
 
 		///==== X axis lines
 		p0.x = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
@@ -1994,7 +1995,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshUVCoordinates();
 
 		if(GUILayout.Button("Dump Times"))
-			Bugger.Log( profiler.ToString() );
+			Debug.Log( profiler.ToString() );
 
 		if(GUILayout.Button("Clear Profiler"))
 			profiler.Reset();
@@ -2015,8 +2016,8 @@ public class pb_UV_Editor : EditorWindow
 			RefreshUVCoordinates();
 		}
 
-		// if(GUILayout.Button("Screenshot"))	
-		// 	EditorApplication.delayCall += Screenshot;
+		if(GUILayout.Button("Screenshot"))	
+			EditorApplication.delayCall += Screenshot;
 
 		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
 		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));

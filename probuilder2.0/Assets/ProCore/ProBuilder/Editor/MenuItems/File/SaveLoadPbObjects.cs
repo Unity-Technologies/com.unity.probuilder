@@ -17,6 +17,7 @@ public class SaveLoadSerializedPbObject : Editor
 		pb_SerializableObject obj = null;
 
 		BinaryFormatter formatter = new BinaryFormatter();
+		Debug.Log("path : " + path);
 		Stream stream = File.Open(path, FileMode.Open);
 
 		obj = (pb_SerializableObject)formatter.Deserialize(stream);
@@ -36,7 +37,7 @@ public class SaveLoadSerializedPbObject : Editor
 		string path = "";
 
 		if(len == 1)
-			path = EditorUtility.SaveFilePanelInProject("Save ProBuilder Object", selection[0].name, "pbo", "Save ProBuilder Object to File.");
+			path = EditorUtility.SaveFilePanel("Save ProBuilder Object", "", selection[0].name, "pbo");// "Save ProBuilder Object to File.");
 		else
 			path = EditorUtility.SaveFolderPanel("Save ProBuilder Objects to Folder", "", "");
 
