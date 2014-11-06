@@ -3,6 +3,7 @@
 # Features
 	- Add a toggle in pb_Entity to turn off automatic collision generation.
 	- Improve UV editor grid logic (now follows camera and resizes at far zoom levels).
+	- New PostProcessor automatically strips ProBuilder scripts when building executables (toggle-able in Preferences).
 
 # Bug Fixes
 	- Respect ProGrids `X` key shortcut when translating faces.

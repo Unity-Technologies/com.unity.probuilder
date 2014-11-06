@@ -691,6 +691,7 @@ public class pb_Menu_Commands : Editor
 			int[] inverse = inverse_list.ToArray();
 		
 			pb_Object copy = pb_Object.InitWithObject(pb);
+			Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Face");
 
 			copy.transform.position = pb.transform.position;
 			copy.transform.localScale = pb.transform.localScale;
