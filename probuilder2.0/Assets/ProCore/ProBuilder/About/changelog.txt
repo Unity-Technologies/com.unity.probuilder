@@ -1,3 +1,14 @@
+-- ProBuilder 2.3.2f0 (r2924) -
+
+# Features
+	- Add a toggle in pb_Entity to turn off automatic collision generation.
+	- Improve UV editor grid logic (now follows camera and resizes at far zoom levels).
+
+# Bug Fixes
+	- Respect ProGrids `X` key shortcut when translating faces.
+	- Fix build errors with Static Batching enabled.
+	- When applying Smooothing Groups, if no face is selected apply group to entire object.
+
 -- ProBuilder 2.3.1f1 (r2900) -
 
 # Features
