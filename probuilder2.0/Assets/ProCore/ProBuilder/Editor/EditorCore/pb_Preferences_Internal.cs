@@ -99,6 +99,9 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbNormalizeUVsOnPlanarProjection:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
 				
+			case pb_Constant.pbStripProBuilderOnBuild:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
+
 			// When in doubt, say yes!
 			default:
 				return true;
