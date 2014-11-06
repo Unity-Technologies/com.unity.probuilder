@@ -9,7 +9,7 @@ using ProBuilder2.Common;
 
 public class SaveLoadSerializedPbObject : Editor
 {
-	[MenuItem("Tools/ProBuilder/Experimental/Load ProBuilder Object")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Load ProBuilder Object")]
 	public static void MenuLoadPbObject()
 	{
 		string path = EditorUtility.OpenFilePanel("Load Serialized ProBuilder Object", Application.dataPath + "../", "pbo");
@@ -26,7 +26,7 @@ public class SaveLoadSerializedPbObject : Editor
 		Selection.activeTransform = pb_Object.InitWithSerializableObject(obj).transform;
 	}
 
-	[MenuItem("Tools/ProBuilder/Experimental/Save ProBuilder Object to File")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Save ProBuilder Object to File")]
 	public static void MenuSavePbObject()
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
