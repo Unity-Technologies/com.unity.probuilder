@@ -11,10 +11,11 @@ echo UNITY PATH IS %unity_path%
 
 :: clean out temp directory.
 rd /s /q bin\temp\
+rd /s /q probuilder2.0\Library\
 md bin\temp
 
 :: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources ignore:Tools;MaterialSelection.cs;Geometry\ConnectEdges;Geometry\DetachDeleteFace;Geometry\FlipFaces;Geometry\VertexMergeWeld;Geometry\Bridge;API;MenuItems\Window;Actions\DeleteNoDrawFaces.cs;Actions\ExportObj.cs;Actions\MakeAsset.cs;Actions\StripProBuilderScripts.cs -logFile %CD%/prototype-release-resources-log.txt
+%unity_path% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources ignore:Tools;MaterialSelection.cs;Geometry\ConnectEdges;Geometry\DetachDeleteFace;Geometry\FlipFaces;Geometry\VertexMergeWeld;Geometry\Bridge;API;MenuItems\Window;Actions\TriangulatePbObject.cs;Actions\DeleteNoDrawFaces.cs;Actions\ExportObj.cs;Actions\MakeAsset.cs;Actions\StripProBuilderScripts.cs;Geometry\ConformNormals.cs -logFile %CD%/prototype-release-resources-log.txt
 
 
 :: md %CD%\probuilder-staging\Assets
@@ -62,7 +63,7 @@ echo "GO INTO UNITY AND MANUALLY RENAME PROBUILDER FOLDER"
 pause
 
 :: Export release pack for Unity 3.5 +
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/prototype.5.7-compile-log.txt
+%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt;pb_Profiler postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/prototype.5.7-compile-log.txt
 
 :: ================================ END   3.5 + LIBRARIES ================================ }
 
@@ -81,7 +82,7 @@ pause
 xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\"
 
 :: Export release pack for Unity 4.3 +
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt postfix:-unity43 generateVersionInfo:TRUE
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt;pb_Profiler postfix:-unity43 generateVersionInfo:TRUE
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
