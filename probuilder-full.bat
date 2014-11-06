@@ -12,6 +12,9 @@ echo UNITY PATH IS %unity_path%
 
 :: clean out temp directory.
 rd /s /q bin\temp\
+
+rd /s /q probuilder2.0\Library
+
 mkdir bin\
 md bin\temp
 mkdir bin\Debug

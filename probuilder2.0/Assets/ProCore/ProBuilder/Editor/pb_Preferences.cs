@@ -26,12 +26,14 @@ public class pb_Preferences
 	static bool pbForceGridPivot = true;
 	static bool pbManifoldEdgeExtrusion;
 	static bool pbPerimeterEdgeBridgeOnly;
-	static float pbVertexHandleSize;
 	static bool pbPBOSelectionOnly;
 	static bool pbCloseShapeWindow = false;
 	static bool pbHideWireframe = false;
 	static bool pbUVEditorFloating = true;
 	static bool pbShowSceneToolbar = true;
+
+	static float pbUVGridSnapValue;
+	static float pbVertexHandleSize;
 
 	static pb_Shortcut[] defaultShortcuts;
 
@@ -60,6 +62,8 @@ public class pb_Preferences
 
 		_defaultMaterial = (Material) EditorGUILayout.ObjectField("Default Material", _defaultMaterial, typeof(Material), false);
 
+		pbUVGridSnapValue = EditorGUILayout.FloatField("UV Snap Increment", pbUVGridSnapValue);
+		
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);
 
 		GUILayout.BeginHorizontal();
@@ -92,10 +96,11 @@ public class pb_Preferences
 
 		GUILayout.Label("Texture Editing Settings", EditorStyles.boldLabel);
 
-
 		GUILayout.Label("UV Editor Settings", EditorStyles.boldLabel);
 
 		pbUVEditorFloating = EditorGUILayout.Toggle(new GUIContent("Editor window floating", "If true UV   Editor window will open as a floating window"), pbUVEditorFloating);
+
+
 
 		EditorGUILayout.EndScrollView();
 
@@ -144,18 +149,19 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbHideWireframe);
 			EditorPrefs.DeleteKey(pb_Constant.pbUVEditorFloating);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneToolbar);
+			EditorPrefs.DeleteKey(pb_Constant.pbUVGridSnapValue);
 		}
 
 		LoadPrefs();
 	}
 
-	public static int shortcutIndex = 0;
+	static int shortcutIndex = 0;
 	static Rect selectBox = new Rect(130, 207, 179, 185);
 
 	static Rect resetRect = new Rect(0,0,0,0);
 	static Vector2 shortcutScroll = Vector2.zero;
 	static int CELL_HEIGHT = 20;
-	public static void ShortcutSelectPanel()
+	static void ShortcutSelectPanel()
 	{
 		GUILayout.Space(4);
 		GUI.contentColor = Color.white;
@@ -241,6 +247,8 @@ public class pb_Preferences
 
 		pbDefaultSelectionMode = pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		defaultColliderType = (int)pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
+
+		pbUVGridSnapValue = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
 		
 		pbDragCheckLimit 	= pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 		pbForceConvex 		= pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex);
@@ -291,12 +299,14 @@ public class pb_Preferences
 		EditorPrefs.SetBool  	(pb_Constant.pbForceGridPivot, pbForceGridPivot);
 		EditorPrefs.SetBool		(pb_Constant.pbManifoldEdgeExtrusion, pbManifoldEdgeExtrusion);
 		EditorPrefs.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly);
-		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly);
 		EditorPrefs.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow);
 		EditorPrefs.SetBool		(pb_Constant.pbHideWireframe, pbHideWireframe	);
 		EditorPrefs.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating);
 		EditorPrefs.SetBool		(pb_Constant.pbShowSceneToolbar, pbShowSceneToolbar);
 		// pb_Editor.instance.LoadPrefs();
+		
+		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
+		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
 	}
 }

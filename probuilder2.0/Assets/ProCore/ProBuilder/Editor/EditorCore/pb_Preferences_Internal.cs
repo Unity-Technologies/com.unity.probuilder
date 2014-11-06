@@ -124,7 +124,7 @@ public class pb_Preferences_Internal
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : Mathf.Epsilon;
 
 			case pb_Constant.pbUVGridSnapValue:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), .015625f, 2f) : .0625f;
+				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), .015625f, 2f) : .125f;
 
 			default:
 				return 1f;
