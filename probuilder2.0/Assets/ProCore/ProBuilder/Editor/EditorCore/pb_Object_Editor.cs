@@ -147,7 +147,8 @@ public class pb_Object_Editor : Editor
 		if(pb == null)
 			pb = (pb_Object)target;
 
-		return pb_Editor.instance != null && pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.sharedIndices.UniqueIndicesWithValues(x.SelectedTriangles).Length) > 1;
+		return pb_Editor.instance != null && pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
+		// return pb_Editor.instance != null && pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.sharedIndices.UniqueIndicesWithValues(x.SelectedTriangles).Length) > 1;
 	}
 
 	Bounds OnGetFrameBounds()
@@ -183,6 +184,6 @@ public class pb_Object_Editor : Editor
 			}
 		}
 
-		return new Bounds( (min+max)/2f, max-min );
+		return new Bounds( (min+max)/2f, max != min ? max-min : Vector3.one * .1f );
 	}
 }
