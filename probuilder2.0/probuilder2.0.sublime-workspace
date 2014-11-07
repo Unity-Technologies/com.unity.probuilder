@@ -520,10 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
+			"file": "/C/Users/karl/github/parabox-primitives.git/trunk/README.md",
 			"settings":
 			{
-				"buffer_size": 13310,
+				"buffer_size": 476,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,48 +531,8 @@
 			"file": "Assets/ProCore/ProBuilder/About/changelog.txt",
 			"settings":
 			{
-				"buffer_size": 37050,
+				"buffer_size": 37136,
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/karl/github/parabox-primitives.git/trunk/primitives/Assets/Parabox Primitives/README.txt",
-			"settings":
-			{
-				"buffer_size": 389,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Classes/qd_Mesh.cs",
-			"settings":
-			{
-				"buffer_size": 2510,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Editor/qd_Editor.cs",
-			"settings":
-			{
-				"buffer_size": 39771,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Menu_Commands.cs",
-			"settings":
-			{
-				"buffer_size": 28512,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/karl/github/parabox-primitives.git/trunk/README.md",
-			"settings":
-			{
-				"buffer_size": 476,
-				"line_ending": "Unix"
 			}
 		},
 		{
@@ -682,10 +642,23 @@
 	],
 	"file_history":
 	[
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Geometry/DetachDeleteFace.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/plist.txt",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Repair/pb_PrintDebugInfo.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt",
 		"/C/Users/karl/github/parabox-primitives.git/trunk/primitives/Assets/Parabox Primitives/README.txt",
 		"/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Classes/qd_Mesh.cs",
 		"/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Editor/qd_Editor.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Menu_Commands.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/UnitTests.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing/pb_Object_Utility.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Object_Editor.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing/pbVertexOps.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing/pbUVOps.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Object.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_UV.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Geometry/DetachDeleteFace.cs",
 		"/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/UVee/Editor/UVeeWindow.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/pb_ScenePostProcessor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Constant.cs",
@@ -694,12 +667,9 @@
 		"/C/Users/karl/github/parabox-primitives.git/trunk/primitives/Assets/DynamicCube.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Handle_Utility.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/API Examples/Misc/HueCube.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/plist.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Enum.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/API Examples/Runtime Editing/RuntimeEdit.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_UV.cs",
 		"/C/Users/karl/Documents/New Unity Project 6/Assets/ProCore/Prototype/Editor/pb_ScenePostProcessor.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/prototype.bat",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/File/SaveLoadPbObjects.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder-full.bat",
@@ -711,14 +681,11 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/plist-prototype.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ListPBObjects.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Graphics.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Object.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Entity_Editor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Entity.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Math.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/Credits.txt",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Repair/pb_PrintDebugInfo.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_UV_Editor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Edge.cs",
 		"/C/Users/karl/parabox/website/primitives/index.html",
@@ -728,10 +695,8 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Repair/FixGameObjectFlags.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pbUtil.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing/pbMeshUtils.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Actions/TriangulatePbObject.cs",
 		"/C/Users/karl/Desktop/test.md",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing/pbUVOps.cs",
 		"/C/Users/karl/Downloads/SlantTest/SlantTest/SlantTest.obj",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Temp/UnityTempFile-247099f2cfa1e134fa307d3f7269b152.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/pb_DebugWindow.cs",
@@ -750,7 +715,6 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/Editor/DumpUVs.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/SvnManager.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Selection/MaterialSelection.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Menu_Commands.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Lightmap_Editor.cs",
 		"/C/Users/karl/AppData/Roaming/Unreal Engine/AutomationTool/Logs/C+Program+Files+Unreal+Engine+4.3/Cook.txt",
 		"/C/Users/karl/parabox/blog/2014-09-25 (Unreal).md",
@@ -805,11 +769,7 @@
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Constant.cs",
 		"/C/Users/karl/Documents/New Unity Project 4/Assets/ProCore/Shared/About/Editor/pc_AboutWindow.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt",
-		"/C/Users/karl/probuilder/probuilder-full.bat",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Tools/ProjectNodrawUtil.cs",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Menu_Commands.cs",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pbUtil.cs",
-		"/C/Users/karl/Documents/New Unity Project 2/Assets/ProCore/ProBuilder/Editor/MenuItems/Tools/pb_VertexPainter.cs"
+		"/C/Users/karl/probuilder/probuilder-full.bat"
 	],
 	"find":
 	{
@@ -828,6 +788,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"zoom",
 			"SetEditorFlags",
 			"pref_grid",
 			"IntField",
@@ -954,8 +915,7 @@
 			"UNITY_EDITOR",
 			"UNITY_EDITO",
 			"shift",
-			"new BuggerEvent",
-			"BuggerEvent"
+			"new BuggerEvent"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1001,184 +961,11 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13310,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8954,
-								8968
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3439.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "Assets/ProCore/ProBuilder/About/changelog.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 37050,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								27,
-								27
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/karl/github/parabox-primitives.git/trunk/primitives/Assets/Parabox Primitives/README.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 389,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Classes/qd_Mesh.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2510,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/C/Users/karl/probuilder/prj/quickdecals2/quickdecals2/Assets/ProCore/QuickDecals/Editor/qd_Editor.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 39771,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								38015,
-								38040
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 15997.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Menu_Commands.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 28512,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								17648,
-								17648
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 8464.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "/C/Users/karl/github/parabox-primitives.git/trunk/README.md",
 					"semi_transient": false,
 					"settings":
@@ -1202,11 +989,40 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 1,
+					"file": "Assets/ProCore/ProBuilder/About/changelog.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 37136,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								28,
+								28
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
 					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_UV_Editor.cs",
 					"semi_transient": false,
 					"settings":
@@ -1231,7 +1047,7 @@
 						"translation.y": 25864.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1288,6 +1104,22 @@
 		"selected_items":
 		[
 			[
+				"plist",
+				"ProBuilder\\Editor\\Debug\\plist.txt"
+			],
+			[
+				"chan",
+				"ProBuilder\\About\\changelog.txt"
+			],
+			[
+				"pbobjectedi",
+				"ProBuilder\\Editor\\EditorCore\\pb_Object_Editor.cs"
+			],
+			[
+				"pb_object_util",
+				"ProBuilder\\Classes\\ClassesEditing\\pb_Object_Utility.cs"
+			],
+			[
 				"detach",
 				"ProBuilder\\Editor\\MenuItems\\Geometry\\DetachDeleteFace.cs"
 			],
@@ -1298,10 +1130,6 @@
 			[
 				"chang",
 				"ProBuilder\\About\\changelog.txt"
-			],
-			[
-				"plist",
-				"ProBuilder\\Editor\\Debug\\plist.txt"
 			],
 			[
 				"uvedio",
@@ -1462,10 +1290,6 @@
 			[
 				"plis",
 				"ProBuilder\\Editor\\Debug\\plist.txt"
-			],
-			[
-				"chan",
-				"ProBuilder\\About\\changelog.txt"
 			],
 			[
 				"rea",
@@ -1790,14 +1614,6 @@
 			[
 				"pb_cons",
 				"ProBuilder\\Classes\\ClassesCore\\pb_Constant.cs"
-			],
-			[
-				"cha",
-				"ProBuilder\\About\\changelog.txt"
-			],
-			[
-				"pbpreferin",
-				"ProBuilder\\Editor\\EditorCore\\pb_Preferences_Internal.cs"
 			]
 		],
 		"width": 0.0
