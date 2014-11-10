@@ -361,7 +361,9 @@ namespace ProBuilder2.Common {
 		System.Array.Copy(_mesh.colors32, c, c.Length);
 
 		Mesh m = new Mesh();
+
 		m.Clear();
+		m.name = _mesh.name;
 
 		m.vertices = v;
 		
@@ -370,10 +372,10 @@ namespace ProBuilder2.Common {
 			m.SetTriangles(t[i], i);
 
 		m.uv = u;
-		m.uv2 = u2;
-	
+		m.uv2 = u2; 
 		m.tangents = tan;
 		m.normals = n;
+		m.colors32 = c;
 
 		return m;
 	}

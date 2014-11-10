@@ -6,7 +6,7 @@ echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
 :: Clean out Upgrade project
 :: rd /S /q uv-upgrade-src\
 :: 
-:: svn update
+svn update
 
 echo UNITY PATH IS %unity_path%
 

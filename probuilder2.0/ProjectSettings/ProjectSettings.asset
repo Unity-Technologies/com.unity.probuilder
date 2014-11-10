@@ -34,7 +34,7 @@ PlayerSettings:
   allowedAutorotateToLandscapeLeft: 1
   useOSAutorotation: 1
   use32BitDisplayBuffer: 0
-  use24BitDepthBuffer: 1
+  use24BitDepthBuffer: 0
   defaultIsFullScreen: 0
   defaultIsNativeResolution: 1
   runInBackground: 0
@@ -68,7 +68,7 @@ PlayerSettings:
   iPhoneBundleIdentifier: com.Company.ProductName
   metroEnableIndependentInputSource: 0
   metroEnableLowLatencyPresentationAPI: 0
-  productGUID: 99220805ccd6e9544ae21ee90ada4266
+  productGUID: 6813623fbd9353d48b79174c1e8f361e
   iPhoneBundleVersion: 1.0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9

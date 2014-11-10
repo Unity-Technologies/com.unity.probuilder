@@ -36,7 +36,6 @@
 			],
 			"folder_exclude_patterns":
 			[
-				"Resources",
 				"*test*",
 				"Doxygen",
 				"UVee"

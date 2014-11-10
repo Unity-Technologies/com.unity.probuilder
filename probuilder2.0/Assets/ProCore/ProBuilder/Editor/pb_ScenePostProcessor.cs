@@ -11,21 +11,31 @@ public class pb_ScenePostProcessor
 	[PostProcessScene]
 	public static void OnPostprocessScene()
 	{ 
-		if(EditorApplication.isPlayingOrWillChangePlaymode || !pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
-			return;
+		// if(EditorApplication.isPlayingOrWillChangePlaymode || !pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
+			// return;
 
 		foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
 		{
-			pb.ToMesh(true);
+			/**
+			 * Hide nodraw faces if present.  Don't call 'ToMesh' on objects that are statically batched since
+			 * batching runs pre-PostProcessScene and will break the combined mesh.
+			 */
+			if(pb.containsNodraw && !pb.GetComponent<MeshRenderer>().isPartOfStaticBatch)
+			{
+				pb.ToMesh(true);
+				pb.Refresh();
+			}
+
+			GameObject go = pb.gameObject;
 
 			pb_Entity entity = pb.gameObject.GetComponent<pb_Entity>();
 
-			if(entity.entityType == EntityType.Mover)
-				continue;
+			if(entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)	
+				go.GetComponent<MeshRenderer>().enabled = false;
 
-			GameObject.DestroyImmediate(pb);
-			if(entity != null)
-				GameObject.DestroyImmediate(entity);
+			GameObject.DestroyImmediate( pb );
+			GameObject.DestroyImmediate( go.GetComponent<pb_Entity>() );
+
 		}
 	}
 }

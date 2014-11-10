@@ -50,7 +50,6 @@ namespace ProBuilder2.Actions
 					((float)i / all.Length));
 
 				Mesh m = pbUtil.DeepCopyMesh(all[i].msh);
-				m.name = all[i].msh.name;
 
 				GameObject go = all[i].gameObject;
 

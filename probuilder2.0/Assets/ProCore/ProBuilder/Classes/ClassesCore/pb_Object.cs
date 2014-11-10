@@ -660,7 +660,8 @@ public class pb_Object : MonoBehaviour
 		Dictionary<Material, List<pb_Face>> matDic = new Dictionary<Material, List<pb_Face>>();
 		
 		#if PROTOTYPE
-			matDic.Add(renderer.sharedMaterial == null ? pb_Constant.DefaultMaterial : renderer.sharedMaterial, new List<pb_Face>(this.faces));
+			MeshRenderer mr = GetComponent<MeshRenderer>();
+			matDic.Add(mr.sharedMaterial == null ? pb_Constant.DefaultMaterial : mr.sharedMaterial, new List<pb_Face>(this.faces));
 		#else
 			foreach(pb_Face quad in faces)
 			{
@@ -727,11 +728,18 @@ public class pb_Object : MonoBehaviour
 		Refresh();
 	}
 
+	/**
+	 * If the object contains any nodraw faces, rebuild the mesh.  Otherwise, do nothing.
+	 */
 	public void HideNodraw()
 	{
-		ToMesh(true);
+		if(containsNodraw)
+			ToMesh(true);
 	}
 
+	/**
+	 * Rebuild the mesh with Nodraw faces visible.
+	 */
 	public void ShowNodraw()
 	{
 		ToMesh(false);
@@ -1259,8 +1267,7 @@ public class pb_Object : MonoBehaviour
 	// so unless people really complain about that mesh leak when deleting objects, we'll just let it be.
 	public void OnDestroy()
 	{
-		DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
-		// EditorUtility.UnloadUnusedAssets();
+		// DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
 	}
 #endregion
 
