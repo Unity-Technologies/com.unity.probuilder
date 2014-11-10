@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ShowNotes : MonoBehaviour {
 
-	[TextAreaAttribute]
+	// [TextAreaAttribute]	... this was introduced in Unity 4.x???
 	public string Notes = "";
 	bool mouseOver = false;
 	static GUIStyle LabelStyle;
@@ -108,7 +108,12 @@ public class ShowNotes : MonoBehaviour {
 		Mesh m = new Mesh();
 		m.vertices = v.ToArray();
 		m.subMeshCount = 1;
+		#if !UNITY_3_5
 		m.SetIndices(t, MeshTopology.Lines, 0);
+		#else
+		m.triangles = t;
+		#endif
+
 		m.uv = u;
 		m.normals = v.ToArray();
 		m.colors = c; 
