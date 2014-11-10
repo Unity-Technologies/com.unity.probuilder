@@ -13,7 +13,7 @@ public class ShowNotes : MonoBehaviour {
 	Mesh boundsMesh;
 	static Material BoundsMaterial;
 
-	void Awake()
+	void Start()
 	{
 		if( LabelStyle == null )
 		{
@@ -27,10 +27,7 @@ public class ShowNotes : MonoBehaviour {
 		{
 			BoundsMaterial = MaterialSingleton.instance.material;
 		}
-	}
-
-	void Start()
-	{
+		
 		stats = "\nStatically Batched: " + gameObject.GetComponent<MeshRenderer>().isPartOfStaticBatch;
 		boundsMesh = DrawBounds();
 	}
