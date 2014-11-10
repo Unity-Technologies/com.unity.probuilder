@@ -155,17 +155,13 @@ public class pb_Editor : EditorWindow
 		IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
-		if( EditorPrefs.HasKey("pbShowUpgradeDialog") && EditorPrefs.GetBool("pbShowUpgradeDialog") )
-		{
-			EditorPrefs.SetBool("pbShowUpgradeDialog", false);	// see quickstart2
+		// if( EditorPrefs.HasKey("pbShowUpgradeDialog") && EditorPrefs.GetBool("pbShowUpgradeDialog") )
+		// {
+		// 	EditorPrefs.SetBool("pbShowUpgradeDialog", false);	// see quickstart2
 
-			switch(pb_Constant.pbVersion)
-			{
-				case "2.3.0":
-					pb_Upgrade.Upgrade_2_3();
-					break;
-			}
-		}
+		// 	if(pb_Constant.pbVersion == "2.3.0")
+		//	 	pb_Upgrade.Upgrade_2_3();
+		// }
 	}
 
 	private Color selectedVertexColor = Color.green;

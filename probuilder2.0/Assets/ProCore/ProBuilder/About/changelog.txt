@@ -1,4 +1,4 @@
--- ProBuilder 2.3.2f2 (r2945) -
+-- ProBuilder 2.3.2f2 (r2947) -
 
 # Features
 	- Add a toggle in pb_Entity to turn off automatic collision generation.

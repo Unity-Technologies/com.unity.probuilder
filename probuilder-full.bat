@@ -87,8 +87,6 @@ xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuil
 :: Export release pack for Unity 4.3 +
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity43 generateVersionInfo:TRUE
 
-pause
-
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
 

@@ -11,8 +11,8 @@ public class pb_ScenePostProcessor
 	[PostProcessScene]
 	public static void OnPostprocessScene()
 	{ 
-		// if(EditorApplication.isPlayingOrWillChangePlaymode || !pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
-			// return;
+		if(EditorApplication.isPlayingOrWillChangePlaymode || !pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
+			return;
 
 		foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
 		{
