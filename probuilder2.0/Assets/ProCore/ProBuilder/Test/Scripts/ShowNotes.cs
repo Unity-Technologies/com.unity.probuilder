@@ -25,7 +25,7 @@ public class ShowNotes : MonoBehaviour {
 
 		if(BoundsMaterial == null)
 		{
-			BoundsMaterial = new Material(Shader.Find("Custom/UnlitVertexColor"));
+			BoundsMaterial = MaterialSingleton.instance.material;
 		}
 	}
 
