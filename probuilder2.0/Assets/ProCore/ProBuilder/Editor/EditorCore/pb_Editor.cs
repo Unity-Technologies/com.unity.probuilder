@@ -161,7 +161,7 @@ public class pb_Editor : EditorWindow
 
 			switch(pb_Constant.pbVersion)
 			{
-				case pb_Constant.PROBUILDER_2_3:
+				case "2.3.0":
 					pb_Upgrade.Upgrade_2_3();
 					break;
 			}

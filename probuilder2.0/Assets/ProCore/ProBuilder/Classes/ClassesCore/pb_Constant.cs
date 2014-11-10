@@ -7,9 +7,7 @@ public static class pb_Constant
 	public static Material NoDrawMaterial { get{ return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string PROBUILDER_2_3 = "2.3.0";
-
-	public const string pbVersion = PROBUILDER_2_3;			///< The currently install ProBuilder version.
+	public const string pbVersion = "2.3.2";			///< The currently install ProBuilder version.
 
 #if PROTOTYPE
 	public const string PRODUCT_NAME = "Prototype";

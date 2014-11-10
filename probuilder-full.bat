@@ -65,7 +65,7 @@ xcopy "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps\bin\Debug\ProBuild
 xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 :: Export release pack for Unity 3.5 +
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/probuilder3.5.7-compile-log.txt
+%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/probuilder3.5.7-compile-log.txt
 
 
 :: ================================ END   3.5 + LIBRARIES ================================ }
@@ -85,7 +85,9 @@ xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilder
 xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 :: Export release pack for Unity 4.3 +
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity43 generateVersionInfo:TRUE
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity43 generateVersionInfo:TRUE
+
+pause
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
