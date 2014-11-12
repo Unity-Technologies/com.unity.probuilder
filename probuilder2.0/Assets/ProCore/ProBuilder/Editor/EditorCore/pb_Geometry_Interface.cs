@@ -494,8 +494,8 @@ public class pb_Geometry_Interface : EditorWindow
 		GUI.backgroundColor = oldColor;
 	}
 
-	static float plane_width = 10, plane_height = 10;
-	static int plane_widthCuts = 3, plane_heightCuts = 3;
+	static float plane_height = 10, plane_width = 10;
+	static int plane_height_cuts = 3, plane_width_cuts = 3;
 	static Axis plane_axis = Axis.Up;
 	static bool plane_smooth = false;
 	void PlaneGUI()
@@ -507,31 +507,31 @@ public class pb_Geometry_Interface : EditorWindow
 		plane_axis = (Axis)EditorGUILayout.EnumPopup("Initial Orientation", plane_axis);
 
 		plane_width = EditorGUILayout.FloatField("Width", plane_width);
-		plane_height = EditorGUILayout.FloatField("Length", plane_height);
-
-		if(plane_width < 1f)
-			plane_width = 1f;
+		plane_height = EditorGUILayout.FloatField("Height", plane_height);
 
 		if(plane_height < 1f)
 			plane_height = 1f;
 
-		plane_widthCuts = EditorGUILayout.IntField("Width Segments", plane_widthCuts);
-		
-		if(plane_widthCuts < 0)
-			plane_widthCuts = 0;
+		if(plane_width < 1f)
+			plane_width = 1f;
 
-		plane_heightCuts = EditorGUILayout.IntField("Length Segments", plane_heightCuts);
+		plane_height_cuts = EditorGUILayout.IntField("Width Segments", plane_height_cuts);
 		
-		if(plane_heightCuts < 0)
-			plane_heightCuts = 0;
+		if(plane_height_cuts < 0)
+			plane_height_cuts = 0;
+
+		plane_width_cuts = EditorGUILayout.IntField("Length Segments", plane_width_cuts);
+		
+		if(plane_width_cuts < 0)
+			plane_width_cuts = 0;
 
 		if( showPreview && (GUI.changed || initPreview) ) 
 			SetPreviewObject(
 				 pb_Shape_Generator.PlaneGenerator(
-				 	plane_width,
 				 	plane_height,
-				 	plane_widthCuts,
-				 	plane_heightCuts,
+				 	plane_width,
+				 	plane_height_cuts,
+				 	plane_width_cuts,
 				 	plane_axis,
 				 	plane_smooth));
 
@@ -542,7 +542,7 @@ public class pb_Geometry_Interface : EditorWindow
 
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
-			pb_Object pb = pb_Shape_Generator.PlaneGenerator(plane_width, plane_height, plane_widthCuts, plane_heightCuts, plane_axis, plane_smooth);
+			pb_Object pb = pb_Shape_Generator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis, plane_smooth);
 			
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 			
