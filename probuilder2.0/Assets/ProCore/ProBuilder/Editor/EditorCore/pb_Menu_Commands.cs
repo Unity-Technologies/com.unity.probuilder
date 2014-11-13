@@ -152,68 +152,68 @@ public class pb_Menu_Commands : Editor
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
 	}
 
-	/**
-	 * Union operation between two ProBuilder objects.
-	 */
-	public static void MenuUnion(pb_Object[] selection)
-	{
-		pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+	// /**
+	//  * Union operation between two ProBuilder objects.
+	//  */
+	// public static void MenuUnion(pb_Object[] selection)
+	// {
+	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		if(sel.Length < 2)
-		{
-			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-			return;
-		}
+	// 	if(sel.Length < 2)
+	// 	{
+	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+	// 		return;
+	// 	}
 
-		Mesh c = Parabox.CSG.CSG.Union(sel[0].gameObject, sel[1].gameObject);
+	// 	Mesh c = Parabox.CSG.CSG.Union(sel[0].gameObject, sel[1].gameObject);
 
-		GameObject go = new GameObject();
+	// 	GameObject go = new GameObject();
 
-		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-		go.AddComponent<MeshFilter>().sharedMesh = c;
+	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
 
-		pb_Editor_Utility.ShowNotification("Union");
-	}
+	// 	pb_Editor_Utility.ShowNotification("Union");
+	// }
 
-	public static void MenuSubtract(pb_Object[] selection)
-	{
-		pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+	// public static void MenuSubtract(pb_Object[] selection)
+	// {
+	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		if(sel.Length < 2)
-		{
-			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-			return;
-		}
+	// 	if(sel.Length < 2)
+	// 	{
+	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+	// 		return;
+	// 	}
 
-		Mesh c = Parabox.CSG.CSG.Subtract(sel[1].gameObject, sel[0].gameObject);
+	// 	Mesh c = Parabox.CSG.CSG.Subtract(sel[1].gameObject, sel[0].gameObject);
 
-		GameObject go = new GameObject();
+	// 	GameObject go = new GameObject();
 
-		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-		go.AddComponent<MeshFilter>().sharedMesh = c;
+	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
 
-		pb_Editor_Utility.ShowNotification("Subtract");
-	}
+	// 	pb_Editor_Utility.ShowNotification("Subtract");
+	// }
 
-	public static void MenuIntersect(pb_Object[] selection)
-	{
-		pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+	// public static void MenuIntersect(pb_Object[] selection)
+	// {
+	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		if(sel.Length < 2)
-		{
-			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-			return;
-		}
+	// 	if(sel.Length < 2)
+	// 	{
+	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+	// 		return;
+	// 	}
 
-		Mesh c = Parabox.CSG.CSG.Intersect(sel[0].gameObject, sel[1].gameObject);
+	// 	Mesh c = Parabox.CSG.CSG.Intersect(sel[0].gameObject, sel[1].gameObject);
 
-		GameObject go = new GameObject();
+	// 	GameObject go = new GameObject();
 
-		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-		go.AddComponent<MeshFilter>().sharedMesh = c;
+	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
 
-		pb_Editor_Utility.ShowNotification("Intersect");
-	}
+	// 	pb_Editor_Utility.ShowNotification("Intersect");
+	// }
 
 #endregion
 

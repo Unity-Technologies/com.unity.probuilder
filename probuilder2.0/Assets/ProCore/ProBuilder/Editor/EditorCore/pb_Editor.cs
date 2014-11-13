@@ -407,14 +407,14 @@ public class pb_Editor : EditorWindow
 				// Boolean operations
 
 				// @todo Remove!
-				if(GUILayout.Button("Union"))
-					pb_Menu_Commands.MenuUnion(selection);
+				// if(GUILayout.Button("Union"))
+				// 	pb_Menu_Commands.MenuUnion(selection);
 
-				if(GUILayout.Button("Subtract"))
-					pb_Menu_Commands.MenuSubtract(selection);
+				// if(GUILayout.Button("Subtract"))
+				// 	pb_Menu_Commands.MenuSubtract(selection);
 
-				if(GUILayout.Button("Intersect"))
-					pb_Menu_Commands.MenuIntersect(selection);
+				// if(GUILayout.Button("Intersect"))
+				// 	pb_Menu_Commands.MenuIntersect(selection);
 
 				#endif
 
