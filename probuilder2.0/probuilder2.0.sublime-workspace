@@ -520,26 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/PersistentEditor.cs",
+			"file": "Assets/ProCore/ProBuilder/Classes/Debug/CSG.cs",
 			"settings":
 			{
-				"buffer_size": 1070,
+				"buffer_size": 2033,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
+			"file": "Assets/ProCore/ProBuilder/Classes/Debug/CSG.cpp",
 			"settings":
 			{
-				"buffer_size": 13310,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/ProCore/ProBuilder/Editor/pb_ScenePostProcessor.cs",
-			"settings":
-			{
-				"buffer_size": 1168,
+				"buffer_size": 15386,
 				"line_ending": "Unix"
 			}
 		}
@@ -632,7 +624,7 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/Debug",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Data",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug",
@@ -640,6 +632,11 @@
 	],
 	"file_history":
 	[
+		"/C/Users/karl/AppData/Roaming/Unreal Engine/AutomationTool/Logs/C+Program+Files+Unreal+Engine+4.3/Cook.txt",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/pb_ScenePostProcessor.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
+		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/PersistentEditor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Entity.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Enum.cs",
@@ -650,11 +647,9 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Debug/Scripts/ShowNotes.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/probuilder2.0.sublime-project",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Debug/Scripts/MaterialSingleton.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Lightmap_Editor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pb_Object.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore/pbUtil.cs",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
 		"/C/Users/karl/Documents/New Unity Project 1/Assets/ProCore/ProBuilder/Test/Scripts/ShowNotes.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Scripts/RebuildMeshOnWake.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Test/Scripts/MaterialSingleton.cs",
@@ -667,7 +662,6 @@
 		"/C/Users/karl/github/parabox-primitives.git/trunk/README.md",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/UVee/Editor/UVeeWindow.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/prototype.bat",
-		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/pb_ScenePostProcessor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Entity_Editor.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Actions/StripProBuilderScripts.cs",
 		"/C/Users/karl/probuilder/prj/leveleditor/Assets/Level Editor/Shader/UnlitVertexColor.shader",
@@ -734,7 +728,6 @@
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/Editor/DumpUVs.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/SvnManager.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Selection/MaterialSelection.cs",
-		"/C/Users/karl/AppData/Roaming/Unreal Engine/AutomationTool/Logs/C+Program+Files+Unreal+Engine+4.3/Cook.txt",
 		"/C/Users/karl/parabox/blog/2014-09-25 (Unreal).md",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/MenuItems/Repair/DegenerateTris.cs",
 		"/C/Users/karl/probuilder/prj/probuilder2/probuilder2.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Geometry_Interface.cs",
@@ -766,8 +759,7 @@
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/Bugger/Editor/BuggerWindow.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/Bugger/Bugger.cs",
 		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Install/Editor/QuickStart2.cs",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/pb_SceneExplorer.cs",
-		"/C/Users/karl/probuilder/probuilder2.0/Assets/Bugger/BuggerUtil.cs"
+		"/C/Users/karl/probuilder/probuilder2.0/Assets/ProCore/ProBuilder/Editor/Debug/pb_SceneExplorer.cs"
 	],
 	"find":
 	{
@@ -786,6 +778,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"csgjs_polygon",
+			"CSG_Polygon",
 			"SetCollider",
 			"Upgrade_2_3",
 			"pause",
@@ -911,8 +905,6 @@
 			"pb_UV_Editor",
 			"lastLogUpdate",
 			"now",
-			"lastLogUpdate",
-			"Time.time",
 			"lastLogUpdate"
 		],
 		"highlight": true,
@@ -959,16 +951,45 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/PersistentEditor.cs",
+					"file": "Assets/ProCore/ProBuilder/Classes/Debug/CSG.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1070,
+						"buffer_size": 2033,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1828,
+								1828
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 138.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Assets/ProCore/ProBuilder/Classes/Debug/CSG.cpp",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 15386,
 						"regions":
 						{
 						},
@@ -981,65 +1002,7 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_Editor_Utility.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13310,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6019,
-								6019
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2412.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "Assets/ProCore/ProBuilder/Editor/pb_ScenePostProcessor.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1168,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								283,
-								408
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"syntax": "Packages/C++/C++.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1102,6 +1065,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"change",
+				"ProBuilder\\About\\changelog.txt"
+			],
 			[
 				"editoru",
 				"ProBuilder\\Editor\\EditorCore\\pb_Editor_Utility.cs"
@@ -1185,10 +1152,6 @@
 			[
 				"const",
 				"ProBuilder\\Classes\\ClassesCore\\pb_Constant.cs"
-			],
-			[
-				"change",
-				"ProBuilder\\About\\changelog.txt"
 			],
 			[
 				"pbeditoruil",

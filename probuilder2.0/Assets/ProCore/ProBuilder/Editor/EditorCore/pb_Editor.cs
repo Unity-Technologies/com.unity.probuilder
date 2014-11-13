@@ -293,11 +293,6 @@ public class pb_Editor : EditorWindow
 
 		if(!guiInitialized)
 		{
-			// pbStyle = new GUIStyle();
-			// pbStyle.border = new RectOffset(0,0,0,0);
-			// pbStyle.normal.background = null;
-			// pbStyle.margin = new RectOffset(4,4,0,0);
-
 			eye_style = new GUIStyle( EditorStyles.miniButtonRight );
 			eye_style.padding = new RectOffset(0,0,0,0);
 		}
@@ -327,7 +322,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
-			GUILayout.Space( isFloatingWindow ? 20 : 32 );
+			GUILayout.Space( 34 );
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 			pb_GUI_Utility.DrawSeparator(2);
@@ -408,6 +403,18 @@ public class pb_Editor : EditorWindow
 				pb_GUI_Utility.DrawSeparator(1);
 				GUI.backgroundColor = Color.white;
 				GUILayout.Space(2);
+
+				// Boolean operations
+
+				// @todo Remove!
+				if(GUILayout.Button("Union"))
+					pb_Menu_Commands.MenuUnion(selection);
+
+				if(GUILayout.Button("Subtract"))
+					pb_Menu_Commands.MenuSubtract(selection);
+
+				if(GUILayout.Button("Intersect"))
+					pb_Menu_Commands.MenuIntersect(selection);
 
 				#endif
 
@@ -2333,6 +2340,8 @@ public class pb_Editor : EditorWindow
 
 	private bool GeoLevelShortcuts(pb_Shortcut shortcut)
 	{
+		Debug.Log(shortcut);
+
 		bool used = true;
 		switch(shortcut.action)
 		{

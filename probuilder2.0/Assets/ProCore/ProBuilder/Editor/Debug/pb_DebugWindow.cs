@@ -34,35 +34,51 @@ public class pb_DebugWindow : EditorWindow
 	[MenuItem("Tools/ProBuilder/Debug/Test Function &d")]
 	public static void run()
 	{
-		Vector3[] vertices = new Vector3[] {
-			new Vector3(-.5f, -.5f, 0f),
-			new Vector3( .5f, -.5f, 0f),
-			new Vector3(-.5f,  .5f, 0f),
-			new Vector3( .5f,  .5f, 0f)
-		};
+		pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		pb_Face[] faces = new pb_Face[] {
-			new pb_Face( new int[] { 0, 1, 2, 1, 3, 2 } )
-		};
+		if(sel.Length < 2) return;
 
-		pb_IntArray[] sharedIndices = new pb_IntArray[] { 
-			(pb_IntArray)new int[] { 0 },
-			(pb_IntArray)new int[] { 1 },
-			(pb_IntArray)new int[] { 2 },
-			(pb_IntArray)new int[] { 3 }
-		};
+		Mesh c = Parabox.CSG.CSG.Union(sel[0].gameObject, sel[1].gameObject);
 
-		pb_Object pb = pb_Object.CreateInstanceWithElements(vertices, null, faces, sharedIndices, null);
-		// pb_Object pb = pb_Shape_Generator.PlaneGenerator(
-		//  	1,
-		//  	1,
-		//  	0,
-		//  	0,
-		//  	Axis.Up,
-		//  	false);
+		GameObject go = new GameObject();
 
-		pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
-		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
+		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+		go.AddComponent<MeshFilter>().sharedMesh = c;
+
+		// Vector3[] vertices = new Vector3[] {
+		// 	new Vector3(-.5f, -.5f, 0f),
+		// 	new Vector3( .5f, -.5f, 0f),
+		// 	new Vector3(-.5f,  .5f, 0f),
+		// 	new Vector3( .5f,  .5f, 0f)
+		// };
+
+		// pb_Face[] faces = new pb_Face[] {
+		// 	new pb_Face( new int[] { 0, 1, 2, 1, 3, 2 } )
+		// };
+
+		// pb_IntArray[] sharedIndices = new pb_IntArray[] { 
+		// 	(pb_IntArray)new int[] { 0 },
+		// 	(pb_IntArray)new int[] { 1 },
+		// 	(pb_IntArray)new int[] { 2 },
+		// 	(pb_IntArray)new int[] { 3 }
+		// };
+
+		// pb_Object pb = pb_Object.CreateInstanceWithElements(vertices, null, faces, sharedIndices, null);
+		// // pb_Object pb = pb_Shape_Generator.PlaneGenerator(
+		// //  	1,
+		// //  	1,
+		// //  	0,
+		// //  	0,
+		// //  	Axis.Up,
+		// //  	false);
+
+		// pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+		// pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
+	}
+
+	static void AddToList(List<int> n)
+	{
+		n.Add(4);
 	}
 
 	[MenuItem("Tools/ProBuilder/Debug/ProBuilder Debug Window")]

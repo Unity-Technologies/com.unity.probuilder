@@ -139,15 +139,13 @@ public class ProBuilderizeMesh : Editor
 		go.transform.localRotation = t.localRotation;
 		go.transform.localScale = t.localScale;
 		
-		pb.FreezeScaleTransform();
+		// pb.FreezeScaleTransform();
 
 #if UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5	
 		t.gameObject.active = false;
 #else
 		t.gameObject.SetActive(false);
 #endif
-
-
 
 		return pb;
 	}
