@@ -2340,8 +2340,6 @@ public class pb_Editor : EditorWindow
 
 	private bool GeoLevelShortcuts(pb_Shortcut shortcut)
 	{
-		Debug.Log(shortcut);
-
 		bool used = true;
 		switch(shortcut.action)
 		{

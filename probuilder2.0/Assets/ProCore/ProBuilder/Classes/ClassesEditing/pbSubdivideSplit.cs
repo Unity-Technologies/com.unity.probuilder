@@ -15,6 +15,7 @@ namespace ProBuilder2.MeshOperations
 {
 public static class pbSubdivideSplit
 {
+
 #if !PROTOTYPE
 
 #region Wrappers (Subdivide)
@@ -24,6 +25,7 @@ public static class pbSubdivideSplit
 	 */
 	public static bool Subdivide(this pb_Object pb)
 	{
+
 		try
 		{
 			List<EdgeConnection> ec = new List<EdgeConnection>();
@@ -32,15 +34,14 @@ public static class pbSubdivideSplit
 
 			pb_Face[] faces;
 
-			Profiler.BeginSample("ConnectEdges: " + ec.Count);
 			ConnectEdges(pb, ec, out faces);
-			Profiler.EndSample();
 		}
 		catch(System.Exception e)
 		{
 			Debug.LogWarning("Subdivide failed: \n" + e.ToString());
 			return false;
 		}
+
 		return true;
 	}
 
@@ -84,12 +85,14 @@ public static class pbSubdivideSplit
 			}
 		}
 
-
 		// If it's stupid but it works it ain't stupid!
 		Vector3[] vertices = pb.GetVertices( EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 
+
 		pb_Face[] faces;
-		if( ConnectEdges(pb, splits, out faces) )
+ 		bool success = ConnectEdges(pb, splits, out faces);
+
+		if(success)
 		{
 			/**
 			 * Get the newly created Edges so that we can return them.
@@ -107,14 +110,13 @@ public static class pbSubdivideSplit
 				}
 			}
 			newEdges = nedges.ToArray();
-
-			return true;
 		}
 		else
 		{
 			newEdges = null;
-			return false;
 		}
+
+		return success;
 	}
 
 	private static bool ConnectEdges(this pb_Object pb, List<EdgeConnection> edgeConnectionsUnfiltered, out pb_Face[] faces)
@@ -217,6 +219,7 @@ public static class pbSubdivideSplit
 
 		List<pb_Face>[][] allConnects = pbMeshUtils.GetNeighborFacesJagged(pb, tedges);		
 
+
 		Dictionary<pb_Face, List<Vector3>> addVertex = new Dictionary<pb_Face, List<Vector3>>();
 		List<pb_Face> temp = new List<pb_Face>();
 		for(int j = 0; j < edgeConnections.Count; j++)
@@ -249,7 +252,7 @@ public static class pbSubdivideSplit
 				}
 			}
 		}
-		
+
 		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
 		
 		List<pb_Face> triangulatedFaces = new List<pb_Face>();
@@ -271,13 +274,17 @@ public static class pbSubdivideSplit
 		System.Array.Copy(splitFaceTris, 0, allModifiedTris, 0, splitFaceTris.Length);
 		System.Array.Copy(triangulatedFaceTris, 0, allModifiedTris, splitFaceTris.Length, triangulatedFaceTris.Length);
 		
-		// safe to assume that we probably didn't delete anything :/
-		int[] welds;
-		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+			// safe to assume that we probably didn't delete anything :/
+			int[] welds;
+
+			pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+			// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+
 		
 		// Now that we're done screwing with geo, delete all the old faces (that were successfully split)		
 		pb.DeleteFaces( successfullySplitFaces.ToArray() );
 		faces = appendedFaces;
+
 		return true;
 	}
 

@@ -113,11 +113,22 @@ public static class pb_IntArrayUtility
 		return arr;
 	}
 
+	/**
+	 * Convert a jagged int array to a pb_IntArray.
+	 */
 	public static pb_IntArray[] ToPbIntArray(this int[][] val)
 	{
 		pb_IntArray[] arr = new pb_IntArray[val.Length];
 		for(int i = 0; i < arr.Length; i++)
 			arr[i] = (pb_IntArray)val[i];
+		return arr;
+	}
+
+	public static pb_IntArray[] ToPbIntArray(this List<List<int>> val)
+	{
+		pb_IntArray[] arr = new pb_IntArray[val.Count];
+		for(int i = 0; i < arr.Length; i++)
+			arr[i] = (pb_IntArray)val[i].ToArray();
 		return arr;
 	}
 

@@ -74,25 +74,37 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			indices = pb.sharedIndices.UniqueIndicesWithValues(indices);
+			pb_Profiler profiler = new pb_Profiler();
+
+			List<int> universal = new List<int>();
+			for(int i = 0; i < indices.Length; i++)
+			{
+				int index = pb.sharedIndices.IndexOf(indices[i]);
+
+				if(universal.Contains(index))
+					continue;
+				else
+					universal.Add(index);
+			}
 
 			int[] groupIndex = pbUtil.FilledArray<int>(-1, indices.Length);
+			List<List<int>> groups = new List<List<int>>();
+			List<int> used = new List<int>();
 
 			Vector3[] v = pb.vertices;
 
-			List<List<int>> groups = new List<List<int>>();
-
-			for(int i = 0; i < indices.Length-1; i++)
+			for(int i = 0; i < universal.Count-1; i++)
 			{
-				if(groupIndex[i] > -1) continue;
+				if(groupIndex[i] > -1)
+					continue;
 
-				for(int n = i+1; n < indices.Length; n++)
+				for(int n = i+1; n < universal.Count; n++)
 				{
-					if(Vector3.Distance(v[indices[i]], v[indices[n]]) < delta)
+					if(Vector3.Distance(v[pb.sharedIndices[universal[i]][0]], v[pb.sharedIndices[universal[n]][0]]) < delta)
 					{
 						if(groupIndex[n] < 0 && groupIndex[i] < 0)
-						{
-							groups.Add( new List<int>() { indices[i], indices[n] } );
+						{ 
+							groups.Add( new List<int>() { universal[i], universal[n] } );
 							groupIndex[i] = groups.Count-1;
 							groupIndex[n] = groups.Count-1;
 						}
@@ -100,25 +112,44 @@ namespace ProBuilder2.MeshOperations
 						{
 							if(groupIndex[i] > -1)
 							{
-								groups[groupIndex[i]].Add(indices[n]);
+								groups[groupIndex[i]].Add(universal[n]);
 								groupIndex[n] = groupIndex[i];
 							}
 							else
 							{
-								groups[groupIndex[n]].Add(indices[i]);
+								groups[groupIndex[n]].Add(universal[i]);
 								groupIndex[i] = groupIndex[n];
 							}
-						}	
+						}
+
+						used.Add(universal[i]);
+						used.Add(universal[n]);
 					}
+				}
+			}			
+
+			// Rebuild sharedIndices using the new associations
+			List<List<int>> sharedIndicesRebuilt = new List<List<int>>();
+
+			for(int i = 0; i < groups.Count; i++)
+			{
+				sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[groups[i][0]].array) );
+
+				for(int n = 1; n < groups[i].Count; n++)
+				{
+					sharedIndicesRebuilt[i].AddRange( pb.sharedIndices[groups[i][n]].array );
 				}
 			}
 
-			int p;
-			for(int i = 0; i < groups.Count; i++)
+			// Now add in all the unused sharedIndices arrays
+			for(int i = 0; i < pb.sharedIndices.Length; i++)
 			{
-				int[] all = pb.sharedIndices.AllIndicesWithValues(groups[i].ToArray());
-				pb.MergeVertices(all, out p);
+				if(!used.Contains(i))
+				{
+					sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[i].array) );
+				}
 			}
+			pb.SetSharedIndices(sharedIndicesRebuilt.ToPbIntArray());
 
 			//@ todo
 			welds = new int[0];
