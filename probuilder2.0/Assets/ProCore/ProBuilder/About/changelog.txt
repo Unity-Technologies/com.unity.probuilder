@@ -1,3 +1,12 @@
+-- ProBuilder 2.3.3f0 (r2967) -
+
+# Features
+	- Significantly improve performance of Subdivide action.
+
+# Bug Fixes
+	- Fix incorrect language in Plane generator.
+	- Fix bug that resulted in mangled vertices when Welding.
+
 -- ProBuilder 2.3.2f2 (r2947) -
 
 # Features
