@@ -74,8 +74,6 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			pb_Profiler profiler = new pb_Profiler();
-
 			List<int> universal = new List<int>();
 			for(int i = 0; i < indices.Length; i++)
 			{
@@ -130,16 +128,29 @@ namespace ProBuilder2.MeshOperations
 
 			// Rebuild sharedIndices using the new associations
 			List<List<int>> sharedIndicesRebuilt = new List<List<int>>();
+			welds = new int[groups.Count];
 
 			for(int i = 0; i < groups.Count; i++)
 			{
+				welds[i] = pb.sharedIndices[groups[i][0]][0];
+
 				sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[groups[i][0]].array) );
 
 				for(int n = 1; n < groups[i].Count; n++)
 				{
 					sharedIndicesRebuilt[i].AddRange( pb.sharedIndices[groups[i][n]].array );
 				}
+
+				// Average the vertex positions
+				Vector3 avg = pb_Math.Average(pbUtil.ValuesWithIndices(v, sharedIndicesRebuilt[i].ToArray()));
+
+				foreach(int CurTriangle in sharedIndicesRebuilt[i])
+				{
+					v[CurTriangle] = avg;
+				}
 			}
+
+			pb.SetVertices(v);
 
 			// Now add in all the unused sharedIndices arrays
 			for(int i = 0; i < pb.sharedIndices.Length; i++)
@@ -149,10 +160,8 @@ namespace ProBuilder2.MeshOperations
 					sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[i].array) );
 				}
 			}
-			pb.SetSharedIndices(sharedIndicesRebuilt.ToPbIntArray());
 
-			//@ todo
-			welds = new int[0];
+			pb.SetSharedIndices(sharedIndicesRebuilt.ToPbIntArray());
 
 			return true;	
 		}
@@ -357,7 +366,7 @@ namespace ProBuilder2.MeshOperations
 	}
 
 	/**
-	 *	Deletes the vertcies from the passed index array.  Does NOT retriangulate mesh.
+	 *	Deletes the vertcies from the passed index array.  Handles rebuilding the sharedIndices array.
 	 */
 	public static void DeleteVerticesWithIndices(this pb_Object pb, int[] distInd)
 	{

@@ -7,6 +7,8 @@ using ProBuilder2.EditorCommon;
 
 public class ProBuilderMenuItems : EditorWindow
 {
+	const string DOCUMENTATION_URL = "http://www.protoolsforunity3d.com/docs/probuilder/";
+
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
 #region WINDOW
@@ -15,6 +17,12 @@ public class ProBuilderMenuItems : EditorWindow
 	public static void MenuInitAbout()
 	{
 		pc_AboutWindow.Init("Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/pc_AboutEntry_ProBuilder.txt", true);
+	}
+
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, 0)]
+	public static void MenuInitDocumentation()
+	{
+		Application.OpenURL(DOCUMENTATION_URL);
 	}
 
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/" + pb_Constant.PRODUCT_NAME + " Window", false, pb_Constant.MENU_WINDOW + 0)]

@@ -136,11 +136,8 @@ namespace Parabox.CSG
 		{
 			if (!this.plane.Valid())
 			{
-				Bugger.Log("this.plane isn't valid");
 				return list;
 			}
-
-			Bugger.Log("ClipPolygons");
 
 			List<CSG_Polygon> list_front = new List<CSG_Polygon>();
 			List<CSG_Polygon> list_back = new List<CSG_Polygon>();	

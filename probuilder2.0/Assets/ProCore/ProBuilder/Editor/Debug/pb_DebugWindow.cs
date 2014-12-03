@@ -183,7 +183,7 @@ public class pb_DebugWindow : EditorWindow
 					/* VERTICES */			
 					GUILayout.BeginHorizontal();
 						GUILayout.Space(24);
-						pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices");
+						pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount);
 					GUILayout.EndHorizontal();
 		
 					GUILayout.BeginHorizontal();
@@ -209,7 +209,7 @@ public class pb_DebugWindow : EditorWindow
 					/* UV  */			
 					GUILayout.BeginHorizontal();
 						GUILayout.Space(24);
-						pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs");
+						pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
 					GUILayout.EndHorizontal();
 		
 					GUILayout.BeginHorizontal();
@@ -221,7 +221,7 @@ public class pb_DebugWindow : EditorWindow
 					/* UV 2 */			
 					GUILayout.BeginHorizontal();
 						GUILayout.Space(24);
-						pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2");
+						pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
 					GUILayout.EndHorizontal();
 		
 					GUILayout.BeginHorizontal();

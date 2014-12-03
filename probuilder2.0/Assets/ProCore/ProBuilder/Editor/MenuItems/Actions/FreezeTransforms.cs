@@ -6,7 +6,7 @@ using ProBuilder2.Common;
 public class FreezeTransforms : Editor
 {
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Freeze Transforms", false, 0)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Freeze Transforms", false, pb_Constant.MENU_ACTIONS + 1)]
 	public static void MenuFreezeTransforms()
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);

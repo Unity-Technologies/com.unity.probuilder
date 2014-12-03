@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using Parabox.Debug;
 using ProBuilder2.Common;
 
 namespace Parabox.CSG
@@ -63,8 +62,6 @@ namespace Parabox.CSG
 				types.Add(type);
 			}
 
-			Bugger.Log("Plane: " + this.normal + " Poly: "+ polygon.plane.normal + "  " + polygonType+ "  |" + types.ToFormattedString(", "));
-
 			// Put the polygon in the correct list, splitting it when necessary.
 			switch (polygonType) 
 			{
@@ -91,8 +88,6 @@ namespace Parabox.CSG
 			
 				case EPolygonType.Spanning:
 				{
-					Bugger.Log("Spanning: ");
-
 					List<CSG_Vertex> f = new List<CSG_Vertex>();
 					List<CSG_Vertex> b = new List<CSG_Vertex>();
 

@@ -851,11 +851,19 @@ public class pb_Menu_Commands : Editor
 				int[] welds;
 				success = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
 
+				int[] removed;
+				if( pb.RemoveDegenerateTriangles(out removed) )
+				{
+					welds = new int[0];	// @todo
+				}
+
 				if(success)
 				{
 					pb.SetSelectedTriangles(welds);
 
 					pb.GenerateUV2(pb_Editor.show_NoDraw);
+
+					pb.msh.vertices = pb.vertices;	// no need for a full ToMesh() call, just set the vertices.
 					pb.Refresh();
 				}
 			}

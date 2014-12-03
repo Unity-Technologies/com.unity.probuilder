@@ -235,6 +235,9 @@ namespace ProBuilder2.Math
 
 #region Normal
 
+		/**
+		 * Calculate the unit vector normal of 3 points:  B-A x C-A
+		 */
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
 			Vector3 cross = Vector3.Cross(p1 - p0, p2 - p0);
