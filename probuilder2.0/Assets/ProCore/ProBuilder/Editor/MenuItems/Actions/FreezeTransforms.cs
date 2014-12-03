@@ -22,7 +22,7 @@ public class FreezeTransforms : Editor
 			pb.transform.localScale = Vector3.one;
 
 			pb.SetVertices(v);
-
+			pb.ToMesh();
 			pb.Refresh();
 		}
 	}
