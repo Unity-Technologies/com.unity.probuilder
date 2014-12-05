@@ -918,7 +918,7 @@ public class UVeeWindow : EditorWindow {
 			PrefabUtility.ReconnectToLastPrefab(mf.gameObject);
 			PrefabUtility.ResetToPrefabState(mf);
 		}
-		EditorUtility.UnloadUnusedAssets();
+		// EditorUtility.UnloadUnusedAssetsImmediate();
 	}
 
 	public void CreateMeshInstance(MeshFilter mf)

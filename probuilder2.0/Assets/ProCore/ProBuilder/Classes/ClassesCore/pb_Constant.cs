@@ -5,6 +5,24 @@ public static class pb_Constant
 {
 	public static Material DefaultMaterial { get{ return (Material)Resources.Load("Materials/Default_Prototype", typeof(Material)); } }
 	public static Material NoDrawMaterial { get{ return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
+	
+	private static Material _UnityDefaultDiffuse = null;
+	public static Material UnityDefaultDiffuse
+	{
+		get
+		{
+			if( _UnityDefaultDiffuse == null )
+			{
+				GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
+				GameObject.DestroyImmediate(go);
+
+				Debug.Log("Create and Destroy PrimitiveType");
+			}
+			
+			return _UnityDefaultDiffuse;
+		}
+	}
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
 	public const string pbVersion = "2.3.2";			///< The currently install ProBuilder version.

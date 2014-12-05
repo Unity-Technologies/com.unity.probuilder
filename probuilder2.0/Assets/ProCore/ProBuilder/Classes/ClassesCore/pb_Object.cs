@@ -636,7 +636,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh(bool removeNoDraw)
 	{
-		
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
 		if(msh != null)
@@ -668,10 +667,21 @@ public class pb_Object : MonoBehaviour
 				if( (removeNoDraw && quad.material.name == "NoDraw") )
 					continue;
 					
-				if(matDic.ContainsKey(quad.material))
-					matDic[quad.material].Add(quad);
+				Material face_mat = quad.material;
+
+				if(face_mat == null)
+				{
+					face_mat = pb_Constant.UnityDefaultDiffuse;
+				}
+
+				if(matDic.ContainsKey(face_mat))
+				{
+					matDic[face_mat].Add(quad);
+				}
 				else
-					matDic.Add(quad.material, new List<pb_Face>(1){quad});
+				{
+					matDic.Add(face_mat, new List<pb_Face>(1) {quad} );
+				}
 			}
 		#endif
 
@@ -791,7 +801,7 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 
-		msh.Optimize();
+		// msh.Optimize();
 
 		RefreshUV();
 
