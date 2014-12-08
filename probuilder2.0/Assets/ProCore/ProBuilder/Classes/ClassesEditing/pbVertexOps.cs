@@ -19,7 +19,7 @@ namespace ProBuilder2.MeshOperations
 #region Merge / Split
 
 		/**
-		 *	\brief Collapses all passed indices to a single shared index.
+		 *	\brief Collapses all passed indices to a single shared index.  Retains vertex normals.
 		 *	
 		 */
 		public static bool MergeVertices(this pb_Object pb, int[] indices, out int collapsedIndex)

@@ -34,7 +34,7 @@ PlayerSettings:
   allowedAutorotateToLandscapeLeft: 1
   useOSAutorotation: 1
   use32BitDisplayBuffer: 0
-  use24BitDepthBuffer: 0
+  use24BitDepthBuffer: 1
   defaultIsFullScreen: 0
   defaultIsNativeResolution: 1
   runInBackground: 0
@@ -53,8 +53,10 @@ PlayerSettings:
   xboxEnableKinect: 0
   xboxEnableKinectAutoTracking: 0
   xboxEnableFitness: 0
+  visibleInBackground: 0
   macFullscreenMode: 2
   d3d9FullscreenMode: 1
+  d3d11ForceExclusiveMode: 0
   xboxSpeechDB: 0
   xboxEnableHeadOrientation: 0
   xboxEnableGuest: 0
@@ -68,7 +70,7 @@ PlayerSettings:
   iPhoneBundleIdentifier: com.Company.ProductName
   metroEnableIndependentInputSource: 0
   metroEnableLowLatencyPresentationAPI: 0
-  productGUID: accae75bbd7f9e145a23deffefca7b6c
+  productGUID: 7a8e3f7a8bf7b94409d6152684245ca2
   iPhoneBundleVersion: 1.0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9
@@ -92,6 +94,9 @@ PlayerSettings:
   iPhoneSplashScreen: {fileID: 0}
   iPhoneHighResSplashScreen: {fileID: 0}
   iPhoneTallHighResSplashScreen: {fileID: 0}
+  iPhone47inSplashScreen: {fileID: 0}
+  iPhone55inPortraitSplashScreen: {fileID: 0}
+  iPhone55inLandscapeSplashScreen: {fileID: 0}
   iPadPortraitSplashScreen: {fileID: 0}
   iPadHighResPortraitSplashScreen: {fileID: 0}
   iPadLandscapeSplashScreen: {fileID: 0}
@@ -142,7 +147,7 @@ PlayerSettings:
   psp2NPCommsPassphrase: 
   psp2NPCommsSig: 
   psp2ParamSfxPath: 
-  psp2PackagePassword: 
+  psp2PackagePassword: 9P4t6oDDixg0sNgIu5KAZpub0zXeCjCB
   psp2DLCConfigPath: 
   psp2ThumbnailPath: 
   psp2BackgroundPath: 

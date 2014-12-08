@@ -107,9 +107,9 @@ public class pb_DebugWindow : EditorWindow
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 	}
 
-	public bool edgeInfo = true;
-	public bool faceInfo = true;
-	public bool elementGroupInfo = true;
+	public bool edgeInfo = false;
+	public bool faceInfo = false;
+	public bool elementGroupInfo = false;
 	public bool vertexInfo = true;
 	public bool autoUVInfo = false;
 	Vector2 scroll = Vector2.zero;

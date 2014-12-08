@@ -3567,13 +3567,8 @@ public class pb_Editor : EditorWindow
 				Vector3 v0 = verts[i];
 				Vector3 v1 = verts[i] + Quaternion.AngleAxis(angle, vup) * pb.msh.normals[i] * dist;
 
-				Quaternion lookRotation = (v1-v0 != Vector3.zero) ? Quaternion.LookRotation(v1-v0, Vector3.up) : Quaternion.identity;
-
 				Handles.color = new Color( Mathf.Abs(nrmls[i].x), Mathf.Abs(nrmls[i].y), Mathf.Abs(nrmls[i].z) );
 					Handles.DrawLine(v0, v1);
-
-				// if( System.Array.IndexOf(pb.SelectedTriangles, i) > -1 )
-				// 	Handles.ConeCap(0, v1, lookRotation, HandleUtility.GetHandleSize(v1) * Mathf.Clamp(dist, .01f, .2f));
 
 				Handles.color = Color.white;
 			}
