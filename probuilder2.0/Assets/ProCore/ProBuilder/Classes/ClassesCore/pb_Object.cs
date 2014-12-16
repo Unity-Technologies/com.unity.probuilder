@@ -629,8 +629,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
-		Debug.Log("ToMesh: " + name);
-
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
 		if(msh != null)
@@ -729,9 +727,7 @@ public class pb_Object : MonoBehaviour
 	 *	\brief Recalculates standard mesh properties - normals, bounds, collisions, UVs, tangents, and colors.
 	 */
 	public void Refresh()
-	{
-		Debug.Log("Refresh");
-		
+	{	
 		// Mesh
 		RefreshNormals();
 

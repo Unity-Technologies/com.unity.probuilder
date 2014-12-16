@@ -236,7 +236,9 @@ public static class pbUVOps
 
 		/* and set the msh uv array using the new coordintaes */
 		pb.SetUV(uv);
-		pb.msh.uv = uv;
+		
+		pb.ToMesh();
+		pb.Refresh();
 	}
 #endregion
 

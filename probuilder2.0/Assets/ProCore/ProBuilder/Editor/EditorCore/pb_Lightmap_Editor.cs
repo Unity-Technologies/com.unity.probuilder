@@ -277,8 +277,6 @@ public static class pb_Lightmap_Editor_Extensions
 
 		Unwrapping.GenerateSecondaryUVSet(pb.GetComponent<MeshFilter>().sharedMesh, param);
 
-		Debug.Log("Unwrapping: " + pb.vertexCount + " -> " + pb.msh.vertexCount);
-
 		EditorUtility.SetDirty(pb);
 	}
 }

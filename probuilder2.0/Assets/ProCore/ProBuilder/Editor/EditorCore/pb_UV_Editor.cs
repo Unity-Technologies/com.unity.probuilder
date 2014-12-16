@@ -515,6 +515,7 @@ public class pb_UV_Editor : EditorWindow
 			}
 
 			selection[i].ToMesh();	 // Reset the Mesh to PB data only.
+			selection[i].Refresh();
 		}
 
 		if(update)
@@ -2760,6 +2761,8 @@ public class pb_UV_Editor : EditorWindow
 					selection[i].faces[f].manualUV = true;
 
 				p ++;
+
+				selection[i].GenerateUV2();
 			}
 		}
 

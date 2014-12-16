@@ -84,7 +84,7 @@ public class pb_Editor : EditorWindow
 	
 	private static pb_Editor me;
 
-	MethodInfo IntersectRayMesh;
+	// MethodInfo IntersectRayMesh;
 	MethodInfo findNearestVertex;
 
 	public EditLevel editLevel;
@@ -151,7 +151,7 @@ public class pb_Editor : EditorWindow
 
 		UpdateSelection(true);
 
-		IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+		// IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
 		// if( EditorPrefs.HasKey("pbShowUpgradeDialog") && EditorPrefs.GetBool("pbShowUpgradeDialog") )
@@ -1201,19 +1201,6 @@ public class pb_Editor : EditorWindow
 			}
 		}
 		
-		Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-		RaycastHit hit;
-
-		// if( Physics.Raycast(ray.origin, ray.direction, out hit))
-		object[] parameters = new object[] { ray, pb.msh, pb.transform.localToWorldMatrix, null };
-		if(IntersectRayMesh == null) IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-		object result = IntersectRayMesh.Invoke(this, parameters);	
-
-		if ( (bool)result )
-			hit = (RaycastHit)parameters[3];
-		else
-			return pb;
-
 		pb_Object vpb;
 		/**
 		 *	If in vertex selection mode, check for a vertex click before checking for a face.
@@ -1231,18 +1218,15 @@ public class pb_Editor : EditorWindow
 		// finally, fall back on face selection
 		else
 		{
-			// Check for face hit
-			Mesh m = pb.msh;
-
-			int[] tri = new int[3] {
-				m.triangles[hit.triangleIndex * 3 + 0], 
-				m.triangles[hit.triangleIndex * 3 + 1], 
-				m.triangles[hit.triangleIndex * 3 + 2] 
-			};
-			
+			// Check for face hit	
 			pb_Face selectedFace;
 			int selectedFaceIndex;
-			if( pb.FaceWithTriangle(tri, out selectedFaceIndex) )
+			float hitPoint;
+
+			//  MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
+			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out selectedFaceIndex, out hitPoint) )
 			{
 				selectedFace = pb.faces[selectedFaceIndex];
 

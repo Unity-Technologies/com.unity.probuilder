@@ -392,6 +392,61 @@ public class pb_Handle_Utility
 		return (bool)result;
 
 	}
+
+	/**
+	 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
+	 * Returns the index in pb.faces of the hit face, or -1.
+	 */
+	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
+	{
+
+		/**
+		 * Transform ray into model space
+		 */
+		InWorldRay.origin -= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
+		
+		InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
+		InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
+
+		Vector3[] vertices = pb.vertices;
+
+		float dist = 0f;
+		OutHitPoint = Mathf.Infinity;
+		OutHitFace = -1;
+
+		for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
+		{
+			int[] Indices = pb.faces[CurFace].indices;
+
+			for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+			{
+				Vector3 a = vertices[Indices[CurTriangle+0]];
+				Vector3 b = vertices[Indices[CurTriangle+1]];
+				Vector3 c = vertices[Indices[CurTriangle+2]];
+
+				if(pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist))
+				{
+					if(dist > OutHitPoint)
+						continue;
+					else
+						OutHitPoint = dist;
+
+					// Don't allow culled faces to trigger
+					Vector3 nrm = Vector3.Cross(b-a, c-a);
+					float dot = Vector3.Dot(InWorldRay.direction, -nrm);
+
+					if(dot > 0f)
+					{
+						OutHitFace = CurFace;
+					}
+
+					continue;
+				}
+			}
+		}
+
+		return OutHitFace > -1;
+	}
 #endregion
 
 #region Point Methods
