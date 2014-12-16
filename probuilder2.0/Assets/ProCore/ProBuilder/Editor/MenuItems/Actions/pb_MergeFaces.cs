@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 
 /**
@@ -14,7 +15,14 @@ using ProBuilder2.MeshOperations;
  */
 public class pb_MergeFaces : Editor
 {
-	[MenuItem("Tools/ProBuilder/Geometry/Merge Faces")]
+	[MenuItem("Tools/ProBuilder/Geometry/Delete Edge", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
+	public static bool MenuVerifyDeleteEdge()
+	{
+		pb_Editor editor = pb_Editor.instance;
+		return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Edge && editor.selectedEdgeCount > 0;
+	}
+
+	[MenuItem("Tools/ProBuilder/Geometry/Delete Edge", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
 	public static void MenuMergeFaces()
 	{
 		pbUndo.RecordObjects(Selection.transforms, "Merge Faces");
@@ -23,6 +31,7 @@ public class pb_MergeFaces : Editor
 		{
 			if(pb.SelectedFaceCount > 1)
 			{
+				
 				MergeFaces(pb, pb.SelectedFaces);
 			}
 		}

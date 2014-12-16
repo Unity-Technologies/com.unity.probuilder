@@ -63,7 +63,7 @@ public class pb_Object_Editor : Editor
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 		if( !pb.Verify() )
-			pb.GenerateUV2(true);
+			pb.GenerateUV2();
 	}
 
 	// bool pbInspectorFoldout = false;

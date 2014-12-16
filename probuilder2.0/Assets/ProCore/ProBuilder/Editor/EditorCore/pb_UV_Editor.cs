@@ -492,6 +492,8 @@ public class pb_UV_Editor : EditorWindow
 
 	/**
 	 * Automatically select textureGroup kin, and copy origins of all UVs.
+	 * Also resets the mesh to PB data - removing vertices appended by 
+	 * UV2 generation.
 	 */
 	internal void OnBeginUVModification()
 	{
@@ -511,6 +513,8 @@ public class pb_UV_Editor : EditorWindow
 				if(fc != selection[i].SelectedFaceCount)
 					update = true;
 			}
+
+			selection[i].ToMesh();	 // Reset the Mesh to PB data only.
 		}
 
 		if(update)
@@ -646,6 +650,12 @@ public class pb_UV_Editor : EditorWindow
 				}
 			}
 
+		}
+
+		// Regenerate UV2s
+		foreach(pb_Object pb in selection)
+		{
+			pb.GenerateUV2();
 		}
 	}
 

@@ -77,7 +77,7 @@ public class pb_MirrorTool : EditorWindow
 		p.transform.localScale = pb.transform.localScale;
 		
 		p.Refresh();
-		p.GenerateUV2(true);
+		p.GenerateUV2();
 
 		pb_Editor_Utility.InitObjectFlags(p, ColliderType.MeshCollider, pb.GetComponent<pb_Entity>().entityType);
 		

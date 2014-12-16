@@ -55,7 +55,7 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.SetEntityType(EntityType.Detail, pb.gameObject);
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);			
 			pb.gameObject.AddComponent<MeshCollider>().convex = false;
-			pb.GenerateUV2(true);
+			pb.GenerateUV2();
 
 			pb.gameObject.name = "pb-MergedObject" + pb.id;
 
@@ -300,8 +300,8 @@ public class pb_Menu_Commands : Editor
 				pb.SetSelectedFaces(pb.SelectedFaces);
 			}
 
-			pb.GenerateUV2(pb_Editor.show_NoDraw);
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		if(extrudedFaceCount > 0)
@@ -331,8 +331,8 @@ public class pb_Menu_Commands : Editor
 				if(pb.Bridge(pb.SelectedEdges[0], pb.SelectedEdges[1], limitToPerimeterEdges))
 				{
 					success = true;
-					pb.GenerateUV2(pb_Editor.show_NoDraw);
 					pb.Refresh();
+					pb.GenerateUV2();
 				}
 			}
 		}
@@ -663,8 +663,8 @@ public class pb_Menu_Commands : Editor
 		foreach(pb_Object pb in selection)
 		{
 			pb.DeleteFaces(pb.SelectedFaces);
-			pb.GenerateUV2(true);
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		if(editor)
@@ -713,8 +713,8 @@ public class pb_Menu_Commands : Editor
 			foreach(pb_Face face in pb.SelectedFaces)
 				pb.DetachFace(face);
 
-			pb.GenerateUV2(true);
 			pb.Refresh();
+			pb.GenerateUV2();
 			
 			pb.SetSelectedFaces(pb.SelectedFaces);
 		}
@@ -764,11 +764,11 @@ public class pb_Menu_Commands : Editor
 			pb.DeleteFaces(primary);
 			copy.DeleteFaces(inverse);
 
-			pb.GenerateUV2(pb_Editor.show_NoDraw);
-			copy.GenerateUV2(pb_Editor.show_NoDraw);
-
 			pb.Refresh();
 			copy.Refresh();
+
+			pb.GenerateUV2();
+			copy.GenerateUV2();
 
 			pb.ClearSelection();
 			copy.ClearSelection();
@@ -819,8 +819,8 @@ public class pb_Menu_Commands : Editor
 					pb.SetSelectedTriangles(new int[] { newIndex });
 				}
 				
-				pb.GenerateUV2(true);
 				pb.Refresh();
+				pb.GenerateUV2();
 			}
 		}
 
@@ -861,10 +861,10 @@ public class pb_Menu_Commands : Editor
 				{
 					pb.SetSelectedTriangles(welds);
 
-					pb.GenerateUV2(pb_Editor.show_NoDraw);
-
-					pb.msh.vertices = pb.vertices;	// no need for a full ToMesh() call, just set the vertices.
+					pb.ToMesh();
 					pb.Refresh();
+
+					pb.GenerateUV2();
 				}
 			}
 		}
@@ -969,8 +969,8 @@ public class pb_Menu_Commands : Editor
 			newTriSelection.AddRange(tris);
 			pb.SetSelectedTriangles(newTriSelection.ToArray());
 			
-			pb.GenerateUV2(true);
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		pb_Editor_Utility.ShowNotification("Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
@@ -1008,8 +1008,8 @@ public class pb_Menu_Commands : Editor
 			if( pbSubdivideSplit.Subdivide(pb) )
 				success++;
 
-			pb.GenerateUV2(pb_Editor.show_NoDraw);
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		/*
@@ -1058,8 +1058,8 @@ public class pb_Menu_Commands : Editor
 			{
 				success += pb.SelectedFaces.Length;
 				pb.SetSelectedFaces(faces);
-				pb.GenerateUV2(true);
 				pb.Refresh();
+				pb.GenerateUV2();
 			}
 		}
 
@@ -1094,8 +1094,8 @@ public class pb_Menu_Commands : Editor
 			{
 				pb.SetSelectedEdges(edges);
 
-				pb.GenerateUV2(pb_Editor.show_NoDraw);
 				pb.Refresh();
+				pb.GenerateUV2();
 				
 				success++;
 			}
@@ -1161,8 +1161,8 @@ public class pb_Menu_Commands : Editor
 		
 		foreach(pb_Object pb in selection)
 		{
-			pb.GenerateUV2(true);
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		if(success > 0)
@@ -1192,8 +1192,8 @@ public class pb_Menu_Commands : Editor
 			if( pb.ConnectEdges( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
 			{
 				pb.SetSelectedEdges(edges);
-				pb.GenerateUV2(true);
 				pb.Refresh();
+				pb.GenerateUV2();
 				success++;
 			}
 		}

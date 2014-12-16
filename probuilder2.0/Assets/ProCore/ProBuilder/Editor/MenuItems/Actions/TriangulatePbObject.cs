@@ -27,8 +27,8 @@ public class TriangulatePbObject : Editor
 		{
 			Triangulate(selection[i]);
 
-			selection[i].GenerateUV2(true);
 			selection[i].Refresh();
+			selection[i].GenerateUV2();
 		}
 
 		pb_Editor_Utility.ShowNotification(selection.Length > 0 ? "Triangulate" : "Nothing Selected");

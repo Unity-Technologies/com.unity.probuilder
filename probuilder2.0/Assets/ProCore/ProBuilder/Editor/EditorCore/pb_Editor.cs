@@ -145,7 +145,6 @@ public class pb_Editor : EditorWindow
 		show_Mover 		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover);
 		show_Collider 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowCollider);
 		show_Trigger 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowTrigger);
-		show_NoDraw 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowNoDraw);
 
 		// EditorUtility.UnloadUnusedAssets();
 		ToggleEntityVisibility(EntityType.Detail, true);
@@ -192,7 +191,6 @@ public class pb_Editor : EditorWindow
 			new GUIContent(face_Graphic_off, "Face Selection")
 		};
 
-		show_NoDraw = true;		
 		show_Detail = true;
 		show_Mover = true;
 		show_Collider = true;
@@ -483,19 +481,6 @@ public class pb_Editor : EditorWindow
 				GUI.backgroundColor = Color.white;
 				GUILayout.Space(3);
 
-				#if !PROTOTYPE
-				GUILayout.BeginHorizontal();
-
-					GUILayout.Label("NoDraw", EditorStyles.miniButtonLeft); 
-
-					if(GUILayout.Button( show_NoDraw ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-						show_NoDraw = !show_NoDraw;
-						EditorPrefs.SetBool(pb_Constant.pbShowNoDraw, show_NoDraw);
-						ToggleNoDrawVisibility(show_NoDraw);
-					}
-				GUILayout.EndHorizontal();
-
-				#endif
 
 				GUI.enabled = true;
 			}
@@ -842,8 +827,8 @@ public class pb_Editor : EditorWindow
 								pb.SetFaceMaterial(pb.faces, mat);
 							}
 
-							pb.GenerateUV2(true);
 							pb.Refresh();
+							pb.GenerateUV2();
 
 							currentEvent.Use();
 						}
@@ -1628,6 +1613,8 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
+				OnBeginVertexMovement();
+
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -1679,6 +1666,8 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
+				OnBeginVertexMovement();
+
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -1792,6 +1781,8 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
+				OnBeginVertexMovement();
+
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -2397,8 +2388,8 @@ public class pb_Editor : EditorWindow
 					}
 					else
 					{
-						pb.GenerateUV2(show_NoDraw);
 						pb.Refresh();
+						pb.GenerateUV2();
 					}
 				}
 
@@ -2457,7 +2448,6 @@ public class pb_Editor : EditorWindow
 
 #region VIS GROUPS
 
-	public static bool show_NoDraw;
 	bool show_Detail;
 	bool show_Mover;
 	bool show_Collider;
@@ -2473,14 +2463,6 @@ public class pb_Editor : EditorWindow
 					sel.GetComponent<MeshCollider>().enabled = isVisible;
 			}
 		}		
-	}
-	
-	public void ToggleNoDrawVisibility(bool show)
-	{
-		#if !PROTOTYPE
-		foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
-			pb.ToMesh(!show_NoDraw);// param is hideNoDraw
-		#endif
 	}
 #endregion
 
@@ -3261,7 +3243,7 @@ public class pb_Editor : EditorWindow
 						profiler.EndSample();
 						
 						profiler.BeginSample("GenerateUV2::Prefab");
-							pb.GenerateUV2(show_NoDraw);
+							pb.GenerateUV2();
 						profiler.EndSample();
 					}
 
@@ -3270,7 +3252,7 @@ public class pb_Editor : EditorWindow
 					if( !pb.Verify() )
 					{
 						pb.ToMesh();
-						pb.GenerateUV2(show_NoDraw);
+						pb.GenerateUV2();
 					}
 				#endif
 			}
@@ -3429,8 +3411,8 @@ public class pb_Editor : EditorWindow
 				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
 
 			pb.ToMesh();
-			pb.GenerateUV2(show_NoDraw);
 			pb.Refresh();
+			pb.GenerateUV2();
 		
 		}
 
@@ -3448,23 +3430,11 @@ public class pb_Editor : EditorWindow
 		{
 			StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
 			
-			// if nodraw found
-			if(pb.containsNodraw)
+			// if nodraw not found, and entity type should be batching static
+			if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
 			{
-				if( (flags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic )
-				{
-					flags ^= StaticEditorFlags.BatchingStatic;
-					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-				}
-			}
-			else
-			{
-				// if nodraw not found, and entity type should be batching static
-				if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
-				{
-					flags = flags | StaticEditorFlags.BatchingStatic;
-					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-				}
+				flags = flags | StaticEditorFlags.BatchingStatic;
+				GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
 			}
 		}
 	}
@@ -3501,6 +3471,20 @@ public class pb_Editor : EditorWindow
 		VerifyTextureGroupSelection();
 	}
 
+	/**
+	 * When beginning a vertex modification, nuke the UV2 and rebuild the mesh
+	 * using PB data so that triangles match vertices (and no inserted vertices
+	 * from the Unwrapping.GenerateSecondaryUVSet() remain).
+	 */
+	void OnBeginVertexMovement()
+	{
+		foreach(pb_Object pb in selection)
+		{
+			pb.msh.uv2 = null;
+			pb.ToMesh();
+		}
+	}
+
 	public void OnFinishedVertexModification()
 	{	
 		if(OnVertexMovementFinished != null)
@@ -3525,8 +3509,9 @@ public class pb_Editor : EditorWindow
 		{
 			foreach(pb_Object sel in selection)
 			{
+				sel.ToMesh();
 				sel.Refresh();
-				sel.GenerateUV2(show_NoDraw);
+				sel.GenerateUV2();
 			}
 			movingVertices = false;
 		}

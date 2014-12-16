@@ -21,7 +21,7 @@ public class FlipFaces : Editor
 		{
 			pb.ReverseWindingOrder(pb.SelectedFaces);
 			pb.Refresh();
-			pb.GenerateUV2(true);
+			pb.GenerateUV2();
 		}
 		
 		EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));

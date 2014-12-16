@@ -23,16 +23,16 @@ namespace ProBuilder2.Actions
 				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( all[i].gameObject );
 				
 				// if nodraw found
-				if(all[i].containsNodraw)
-				{
-					if( (flags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic )
-					{
-						flags ^= StaticEditorFlags.BatchingStatic;
-						GameObjectUtility.SetStaticEditorFlags(all[i].gameObject, flags);
-					}
-				}
-				else
-				{
+				// if(all[i].containsNodraw)
+				// {
+				// 	if( (flags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic )
+				// 	{
+				// 		flags ^= StaticEditorFlags.BatchingStatic;
+				// 		GameObjectUtility.SetStaticEditorFlags(all[i].gameObject, flags);
+				// 	}
+				// }
+				// else
+				// {
 					pb_Entity ent = all[i].GetComponent<pb_Entity>();
 
 					// if nodraw not found, and entity type should be batching static
@@ -41,7 +41,7 @@ namespace ProBuilder2.Actions
 						flags = flags | StaticEditorFlags.BatchingStatic;
 						GameObjectUtility.SetStaticEditorFlags(all[i].gameObject, flags);
 					}
-				}
+				// }
 			}
 
 			EditorUtility.ClearProgressBar();

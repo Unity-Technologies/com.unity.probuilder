@@ -41,9 +41,6 @@ public class pb_Entity : MonoBehaviour
 			return;
 		}
 
-		if(pb.containsNodraw)
-			pb.HideNodraw();
-
 		switch(entityType)
 		{
 			case EntityType.Occluder:

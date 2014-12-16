@@ -91,8 +91,9 @@ public static class pb_Editor_Utility
 				"Reshaping pb_Object " + all[i].id + ".",
 				((float)i / all.Length));
 
+			all[i].ToMesh();
 			all[i].Refresh();
-			all[i].GenerateUV2(pb_Editor.show_NoDraw);
+			all[i].GenerateUV2();
 		}
 		if(interactive)
 		{
@@ -280,10 +281,7 @@ public static class pb_Editor_Utility
 		}
 
 		StaticEditorFlags editorFlags;
-		if( !target.GetComponent<pb_Object>().containsNodraw )
-			editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.OccluderStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
-		else
-			editorFlags = StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.OccluderStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
+		editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.OccluderStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
 		
 		SetEditorFlags(editorFlags, target);
 	}
@@ -337,10 +335,7 @@ public static class pb_Editor_Utility
 		
 		StaticEditorFlags editorFlags;
 
-		if(!target.GetComponent<pb_Object>().containsNodraw)
-			editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
-		else
-			editorFlags = StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
+		editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
 
 		// if(target.GetComponent<pb_Entity>().entityType == EntityType.Occluder)
 		// 	SetEditorFlagsWithBounds(editorFlags, target);
@@ -370,7 +365,7 @@ public static class pb_Editor_Utility
 		}
 
 		pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
-		pb.GenerateUV2(true);
+		pb.GenerateUV2();
 		pb_Editor_Utility.SetEntityType(et, pb.gameObject);
 		pb_Editor_Utility.ScreenCenter( pb.gameObject );
 	}

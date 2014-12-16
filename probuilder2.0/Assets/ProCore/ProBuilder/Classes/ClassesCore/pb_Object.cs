@@ -624,18 +624,13 @@ public class pb_Object : MonoBehaviour
 
 #region MESH CONSTRUCTION
 
-	// Uses local mesh and quad info to generate triangle sets per material
-	public void ToMesh()
-	{
-		ToMesh(false);
-	}
-
 	/**
 	 *	\brief Force regenerate geometry.  Also responsible for sorting faces with shared materials into the same submeshes.
-	 *	@param removeNoDraw If true, NoDraw faces will not be added to the mesh.
 	 */
-	public void ToMesh(bool removeNoDraw)
+	public void ToMesh()
 	{
+		Debug.Log("ToMesh: " + name);
+
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
 		if(msh != null)
@@ -664,15 +659,7 @@ public class pb_Object : MonoBehaviour
 		#else
 			foreach(pb_Face quad in faces)
 			{
-				if( (removeNoDraw && quad.material.name == "NoDraw") )
-					continue;
-					
-				Material face_mat = quad.material;
-
-				if(face_mat == null)
-				{
-					face_mat = pb_Constant.UnityDefaultDiffuse;
-				}
+				Material face_mat = quad.material ?? pb_Constant.UnityDefaultDiffuse;
 
 				if(matDic.ContainsKey(face_mat))
 				{
@@ -739,27 +726,12 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 * If the object contains any nodraw faces, rebuild the mesh.  Otherwise, do nothing.
-	 */
-	public void HideNodraw()
-	{
-		if(containsNodraw)
-			ToMesh(true);
-	}
-
-	/**
-	 * Rebuild the mesh with Nodraw faces visible.
-	 */
-	public void ShowNodraw()
-	{
-		ToMesh(false);
-	}
-
-	/**
 	 *	\brief Recalculates standard mesh properties - normals, bounds, collisions, UVs, tangents, and colors.
 	 */
 	public void Refresh()
 	{
+		Debug.Log("Refresh");
+		
 		// Mesh
 		RefreshNormals();
 
@@ -978,31 +950,6 @@ public class pb_Object : MonoBehaviour
 			quad[i].SetMaterial(mat);
 		
 		ToMesh();
-	}
-
-	/**
-	 *	\brief True if any face in this #pb_Object is marked NoDraw.
-	 */
-	public bool containsNodraw
-	{
-		get 
-		{
-			return System.Array.Exists(faces, x => x.material != null && x.material.name == "NoDraw");
-		}
-	}
-
-	/**
-	 *	\brief True if object only consists of NoDraw faces.
-	 */
-	public bool onlyNodraw
-	{
-		get
-		{
-			foreach(pb_Face f in faces)
-				if(f.material != null && f.material.name != "NoDraw")
-					return false;
-			return true;
-		}
 	}
 
 	/**
@@ -1334,12 +1281,7 @@ public class pb_Object : MonoBehaviour
 	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
 	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
 	 */
-	#if PB_DEBUG
-	public bool Verify() { return Verify(null); }
-	public bool Verify(pb_Profiler profiler)
-	#else
 	public bool Verify()
-	#endif
 	{	
 		if(msh == null)
 		{

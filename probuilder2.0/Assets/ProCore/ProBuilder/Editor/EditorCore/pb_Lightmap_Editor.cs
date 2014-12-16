@@ -86,7 +86,7 @@ public class pb_Lightmap_Editor : EditorWindow
 			{
 				pb_Object[] all = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 				foreach(pb_Object pb in all)
-					pb.GenerateUV2(pb_Editor.show_NoDraw);
+					pb.GenerateUV2();
 			}
 
 			if(GUILayout.Button(new GUIContent("Apply Settings To All", "Caution: Will be slooow in a big scene.")))
@@ -97,7 +97,7 @@ public class pb_Lightmap_Editor : EditorWindow
 					pb.areaError = sampleAreaError;
 					pb.hardAngle = sampleHardAngle;
 					pb.packMargin = samplePackMargin;
-					pb.GenerateUV2(pb_Editor.show_NoDraw);
+					pb.GenerateUV2();
 					EditorUtility.SetDirty(pb);
 				}
 			}
@@ -191,7 +191,7 @@ public class pb_Lightmap_Editor : EditorWindow
 	void RefreshUV2()
 	{
 		foreach(pb_Object pb in editor.selection)
-			pb.GenerateUV2(pb_Editor.show_NoDraw);
+			pb.GenerateUV2();
 	}
 
 	public void ResetObjectToDefaultValues(pb_Object pb)
@@ -223,7 +223,7 @@ public class pb_Lightmap_Editor : EditorWindow
 
 		foreach(pb_Object pb in editor.selection) {
 			ResetObjectToDefaultValues(pb);
-			pb.GenerateUV2(pb_Editor.show_NoDraw);
+			pb.GenerateUV2();
 		}
 	}
 
@@ -264,20 +264,8 @@ public static class pb_Lightmap_Editor_Extensions
 	/**
 	 * Editor-only extension to pb_Object generates lightmap UVs.
 	 */
-	public static void GenerateUV2(this pb_Object pb, bool show_NoDraw)
+	public static void GenerateUV2(this pb_Object pb)
 	{
-		if(pb.onlyNodraw)
-		{
-			Vector2[] u = new Vector2[pb.msh.vertices.Length];
-			for(int n = 0; n < u.Length; n++)
-				u[n] = Vector2.zero;
-			pb.SetUV2(u);
-			return;
-		}
-
-		if(pb.containsNodraw)
-			pb.ToMesh(true);			// re-draw meshes without nodraw faces
-
 		// SetUVParams(8f, 15f, 15f, 20f);
 		UnwrapParam param;
 		UnwrapParam.SetDefaults(out param);
@@ -289,17 +277,7 @@ public static class pb_Lightmap_Editor_Extensions
 
 		Unwrapping.GenerateSecondaryUVSet(pb.GetComponent<MeshFilter>().sharedMesh, param);
 
-		/**
-		 * Unwrapping.GenerateSecondaryUVSet will sometimes add vertices to make the UVs nice.
-		 * If it does that, rebuild the mesh with our own _vertices instead (but keep the UV2).
-		 * While this isn't exactly ideal, it seems to work most of the time, and the only 
-		 * instances I see extra vertices added are when geo is already screwed up anyways.
-		 */
-		if(pb.containsNodraw || pb.msh.vertexCount != pb.vertexCount)
-		{
-			if(show_NoDraw)
-				pb.ToMesh(!show_NoDraw);
-		}
+		Debug.Log("Unwrapping: " + pb.vertexCount + " -> " + pb.msh.vertexCount);
 
 		EditorUtility.SetDirty(pb);
 	}

@@ -303,23 +303,11 @@ public class pb_Material_Editor : EditorWindow
 	{
 		StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
 		
-		// if nodraw found
-		if(pb.containsNodraw)
+		// if nodraw not found, and entity type should be batching static
+		if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
 		{
-			if( (flags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic )
-			{
-				flags ^= StaticEditorFlags.BatchingStatic;
-				GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-			}
-		}
-		else
-		{
-			// if nodraw not found, and entity type should be batching static
-			if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
-			{
-				flags = flags | StaticEditorFlags.BatchingStatic;
-				GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-			}
+			flags = flags | StaticEditorFlags.BatchingStatic;
+			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
 		}
 	}
 }
