@@ -300,7 +300,6 @@ public class pb_Menu_Commands : Editor
 				pb.SetSelectedFaces(pb.SelectedFaces);
 			}
 
-			pb.Refresh();
 			pb.GenerateUV2();
 		}
 

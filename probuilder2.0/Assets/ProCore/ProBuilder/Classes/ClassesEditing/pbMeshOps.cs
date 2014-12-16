@@ -253,6 +253,7 @@ namespace ProBuilder2.MeshOperations
 		pb.SetVertices(localVerts);
 
 		pb.ToMesh();
+		pb.Refresh();
 
 		return true;
 	}
