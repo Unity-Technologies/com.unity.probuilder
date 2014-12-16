@@ -116,8 +116,7 @@ public class ProBuilderizeMesh : Editor
 							0,		// smoothing group
 							-1,		// texture group
 							-1,		// element group
-							true, 	// manualUV 
-							Color.white
+							true 	// manualUV 
 						));					
 				}
 			}

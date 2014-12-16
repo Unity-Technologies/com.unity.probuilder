@@ -11,32 +11,29 @@ public class HueCube : MonoBehaviour
 	{
 		// Create a new ProBuilder cube to work with.
 		pb = ProBuilder.CreatePrimitive(Shape.Cube);
-	
-		// Because of the way colors are stored (one color per-index in triangle array),
-		// we have to keep track of what color belongs to what index.  A real pain, I am
-		// aware.  This will be changed in the future - because it is a terrible method.
-		Dictionary<int, Color32> vertexColors = new Dictionary<int, Color32>();
 
 		// Cycle through each unique vertex in the cube (8 total), and assign a color
 		// to the index in the sharedIndices array.
 		int si_len = pb.sharedIndices.Length;
+		Color[] vertexColors = new Color[si_len];
 		for(int i = 0; i < si_len; i++)
 		{
-			vertexColors.Add(i, HSVtoRGB( (i/(float)si_len) * 360f, 1f, 1f) );
+			vertexColors[i] = HSVtoRGB( (i/(float)si_len) * 360f, 1f, 1f);
 		}
 
 		// Now go through each face (vertex colors are stored the pb_Face class) and
 		// assign the pre-calculated index color to each index in the triangles array.
-		foreach(pb_Face face in pb.faces)
+		Color[] colors = pb.colors;
+
+		for(int CurSharedIndex = 0; CurSharedIndex < pb.sharedIndices.Length; CurSharedIndex++)
 		{
-			Color32[] faceColors = new Color32[face.indices.Length];
-			for(int i = 0; i < face.indices.Length; i++)
+			foreach(int CurIndex in pb.sharedIndices[CurSharedIndex].array)
 			{
-				int index = pb.sharedIndices.IndexOf(face.indices[i]);
-				faceColors[i] = vertexColors[index];
+				colors[CurIndex] = vertexColors[CurSharedIndex];
 			}
-			face.SetColors(faceColors);
 		}
+
+		pb.SetColors(colors);
 
 		// In order for these changes to take effect, you must refresh the mesh
 		// object.

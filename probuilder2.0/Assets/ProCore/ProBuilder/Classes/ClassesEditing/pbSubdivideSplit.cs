@@ -119,6 +119,18 @@ public static class pbSubdivideSplit
 		return success;
 	}
 
+	struct DanglingVertex
+	{
+		public Vector3 position;
+		public Color color;
+
+		public DanglingVertex(Vector3 InPosition, Color InColor)
+		{
+			position = InPosition;
+			color = InColor;
+		}
+	}
+
 	private static bool ConnectEdges(this pb_Object pb, List<EdgeConnection> edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
 		// first, remove any junk connections.  faces with less than two edges confuse this method.
@@ -136,11 +148,13 @@ public static class pbSubdivideSplit
 		}
 
 		Vector3[] vertices = pb.vertices;
+		Color[] colors = pb.colors;
 
 		List<pb_Face> successfullySplitFaces = new List<pb_Face>();
 
 		List<pb_Face> all_splitFaces 		= new List<pb_Face>();
 		List<Vector3[]> all_splitVertices 	= new List<Vector3[]>();
+		List<Color[]> all_splitColors 		= new List<Color[]>();
 		List<Vector2[]> all_splitUVs	 	= new List<Vector2[]>();
 		List<int[]> all_splitSharedIndices	= new List<int[]>();
 		bool[] success 						= new bool[len];
@@ -149,13 +163,14 @@ public static class pbSubdivideSplit
 		// code to work, it needs to know what dangling vert belongs to which edge, 
 		// if we out a vector3[] with each index corresponding to the passed edges
 		// in EdgeConnection, it's easy to maintain the relationship.
-		Vector3?[][] danglingVertices = new Vector3?[len][];	
+		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
 
 		int i = 0;
 		foreach(EdgeConnection fc in edgeConnections)
 		{	
 			pb_Face[] splitFaces 		= null;
 			Vector3[][] splitVertices 	= null;
+			Color[][] splitColors  		= null;
 			Vector2[][] splitUVs 		= null;
 			int[][] splitSharedIndices 	= null;
 	
@@ -163,12 +178,17 @@ public static class pbSubdivideSplit
 			{
 				Vector3 edgeACen = (vertices[fc.edges[0].x] + vertices[fc.edges[0].y]) / 2f; 
 				Vector3 edgeBCen = (vertices[fc.edges[1].x] + vertices[fc.edges[1].y]) / 2f;
-				danglingVertices[i] = new Vector3?[2] { edgeACen, edgeBCen };
+
+				Color cola = (colors[fc.edges[0].x] + colors[fc.edges[0].y]) / 2f;
+				Color colb = (colors[fc.edges[1].x] + colors[fc.edges[1].y]) / 2f;
+
+				danglingVertices[i] = new DanglingVertex?[2] { new DanglingVertex(edgeACen, cola), new DanglingVertex(edgeBCen, colb) };
 
 				success[i] = SplitFace_Internal(
-					new SplitSelection(pb, fc.face, edgeACen, edgeBCen, false, false, new int[]{fc.edges[0].x, fc.edges[0].y}, new int[]{fc.edges[1].x, fc.edges[1].y}),
+					new SplitSelection(pb, fc.face, edgeACen, edgeBCen, cola, colb, false, false, new int[]{fc.edges[0].x, fc.edges[0].y}, new int[]{fc.edges[1].x, fc.edges[1].y}),
 					out splitFaces,
 					out splitVertices, 
+					out splitColors,
 					out splitUVs,
 					out splitSharedIndices);
 				
@@ -177,12 +197,13 @@ public static class pbSubdivideSplit
 			}
 			else
 			{
-				Vector3?[] appendedVertices = null;
+				DanglingVertex?[] appendedVertices = null;
 
 				success[i] = SubdivideFace_Internal(pb, fc,
 					out appendedVertices,
 					out splitFaces,
 					out splitVertices,
+					out splitColors,
 					out splitUVs,
 					out splitSharedIndices);
 
@@ -201,6 +222,7 @@ public static class pbSubdivideSplit
 					splitFaces[j].textureGroup = texGroup;
 					all_splitFaces.Add(splitFaces[j]);
 					all_splitVertices.Add(splitVertices[j]);
+					all_splitColors.Add(splitColors[j]);
 					all_splitUVs.Add(splitUVs[j]);
 					all_splitSharedIndices.Add(splitSharedIndices[j]);
 				}
@@ -220,7 +242,7 @@ public static class pbSubdivideSplit
 		List<pb_Face>[][] allConnects = pbMeshUtils.GetNeighborFacesJagged(pb, tedges);		
 
 
-		Dictionary<pb_Face, List<Vector3>> addVertex = new Dictionary<pb_Face, List<Vector3>>();
+		Dictionary<pb_Face, List<DanglingVertex>> addVertex = new Dictionary<pb_Face, List<DanglingVertex>>();
 		List<pb_Face> temp = new List<pb_Face>();
 		for(int j = 0; j < edgeConnections.Count; j++)
 		{
@@ -242,24 +264,25 @@ public static class pbSubdivideSplit
 					if(ind < 0)
 					{
 						if(addVertex.ContainsKey(face))
-							addVertex[face].Add((Vector3)danglingVertices[j][i]);
+							addVertex[face].Add( (DanglingVertex)danglingVertices[j][i] );
 						else
 						{
 							temp.Add(face);
-							addVertex.Add(face, new List<Vector3>(1) { (Vector3)danglingVertices[j][i] });
+							addVertex.Add(face, new List<DanglingVertex>(1) { (DanglingVertex)danglingVertices[j][i] });
 						}
 					}
 				}
 			}
 		}
 
-		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
+		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitColors.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
 		
 		List<pb_Face> triangulatedFaces = new List<pb_Face>();
-		foreach(KeyValuePair<pb_Face, List<Vector3>> add in addVertex)
+		foreach(KeyValuePair<pb_Face, List<DanglingVertex>> add in addVertex)
 		{
 			pb_Face newFace;
-			if( pb.AppendVerticesToFace(add.Key, add.Value, out newFace) )
+
+			if( pb.AppendVerticesToFace(add.Key, add.Value.Select(x => x.position).ToArray(), add.Value.Select(x => x.color).ToArray(), out newFace) )
 				triangulatedFaces.Add(newFace);
 			else
 				Debug.LogError("Mesh re-triangulation failed.  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
@@ -327,6 +350,7 @@ public static class pbSubdivideSplit
 		List<pb_Face> all_splitFaces = new List<pb_Face>();
 
 		List<Vector3[]> all_splitVertices = new List<Vector3[]>();
+		List<Color[]> all_splitColors = new List<Color[]>();
 		List<Vector2[]> all_splitUVs = new List<Vector2[]>();
 
 		List<int[]> all_splitSharedIndices = new List<int[]>();
@@ -339,6 +363,7 @@ public static class pbSubdivideSplit
 		{
 			pb_Face[] splitFaces = null;
 			Vector3[][] splitVertices = null;
+			Color[][] splitColors = null;
 			Vector2[][] splitUVs;
 			int[][] splitSharedIndices = null;
 	
@@ -357,9 +382,10 @@ public static class pbSubdivideSplit
 				indB = vc.face.indices[indB];
 
 				success[i] = SplitFace_Internal(
-					new SplitSelection(pb, vc.face, pb.vertices[indA], pb.vertices[indB], true, true, new int[] {indA}, new int[] {indB}),
+					new SplitSelection(pb, vc.face, pb.vertices[indA], pb.vertices[indB], pb.colors[indA], pb.colors[indB], true, true, new int[] {indA}, new int[] {indB}),
 					out splitFaces,
 					out splitVertices, 
+					out splitColors,
 					out splitUVs,
 					out splitSharedIndices);
 
@@ -373,7 +399,8 @@ public static class pbSubdivideSplit
 				success[i] = PokeFace_Internal(pb, vc.face, vc.indices.ToArray(),
 					out pokedVertex,
 					out splitFaces,
-					out splitVertices, 
+					out splitVertices,
+					out splitColors, 
 					out splitUVs, 
 					out splitSharedIndices);
 
@@ -394,6 +421,7 @@ public static class pbSubdivideSplit
 
 					all_splitFaces.Add(splitFaces[j]);
 					all_splitVertices.Add(splitVertices[j]);
+					all_splitColors.Add(splitColors[j]);
 					all_splitUVs.Add(splitUVs[j]);
 
 					all_splitSharedIndices.Add(splitSharedIndices[j]);
@@ -409,7 +437,12 @@ public static class pbSubdivideSplit
 			return false;
 		}
 
-		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
+		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(),
+		                                         all_splitColors.ToArray(),
+		                                         all_splitUVs.ToArray(),
+		                                         all_splitFaces.ToArray(),
+		                                         all_splitSharedIndices.ToArray());
+
 		inds.AddRange(pb_Face.AllTriangles(appendedFaces));
 		
 		int[] welds;
@@ -445,6 +478,9 @@ public static class pbSubdivideSplit
 		public Vector3 pointA;
 		public Vector3 pointB;
 
+		public Color colorA;
+		public Color colorB;
+
 		public bool aIsVertex;
 		public bool bIsVertex;
 
@@ -456,12 +492,14 @@ public static class pbSubdivideSplit
 		/**
 		 *	Constructor
 		 */
-		public SplitSelection(pb_Object pb, pb_Face face, Vector3 pointA, Vector3 pointB, bool aIsVertex, bool bIsVertex, int[] indexA, int[] indexB)
+		public SplitSelection(pb_Object pb, pb_Face face, Vector3 pointA, Vector3 pointB, Color colA, Color colB, bool aIsVertex, bool bIsVertex, int[] indexA, int[] indexB)
 		{
 			this.pb = pb;
 			this.face = face;
 			this.pointA = pointA;
 			this.pointB = pointB;
+			this.colorA = colA;
+			this.colorB = colB;
 			this.aIsVertex = aIsVertex;
 			this.bIsVertex = bIsVertex;
 			this.indexA = indexA;
@@ -481,11 +519,13 @@ public static class pbSubdivideSplit
 	private static bool SplitFace_Internal(SplitSelection splitSelection,
 		out pb_Face[] splitFaces,
 		out Vector3[][] splitVertices,
+		out Color[][] splitColors,
 		out Vector2[][] splitUVs,
 		out int[][] splitSharedIndices) 
 	{
 		splitFaces = null;
 		splitVertices = null;
+		splitColors = null;
 		splitUVs = null;
 		splitSharedIndices = null;
 
@@ -500,6 +540,7 @@ public static class pbSubdivideSplit
 
 		// First order of business is to translate the face to 2D plane.
 		Vector3[] verts = pb.GetVertices(face.distinctIndices);
+		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 		Vector2[] uvs = pb.GetUVs(face.distinctIndices);
 
 		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
@@ -517,6 +558,9 @@ public static class pbSubdivideSplit
 
 		List<Vector3> v_polyA = new List<Vector3>();	// point in object space
 		List<Vector3> v_polyB = new List<Vector3>();	// point in object space
+
+		List<Color> c_polyA = new List<Color>();
+		List<Color> c_polyB = new List<Color>();
 		
 		List<Vector2> v_polyB_2d = new List<Vector2>();	// point in 2d space - used to triangulate
 		List<Vector2> v_polyA_2d = new List<Vector2>();	// point in 2d space - used to triangulate
@@ -547,6 +591,9 @@ public static class pbSubdivideSplit
 
 				i_polyA.Add( sharedIndex[i] );
 				i_polyB.Add( sharedIndex[i] );
+
+				c_polyA.Add(colors[i]);
+				c_polyB.Add(colors[i]);
 			}
 			else
 			{
@@ -560,6 +607,7 @@ public static class pbSubdivideSplit
 					v_polyA_2d.Add(plane[i]);
 					u_polyA.Add(uvs[i]);
 					i_polyA.Add(sharedIndex[i]);
+					c_polyA.Add(colors[i]);
 				}
 				else
 				{
@@ -567,6 +615,7 @@ public static class pbSubdivideSplit
 					v_polyB_2d.Add(plane[i]);
 					u_polyB.Add(uvs[i]);
 					i_polyB.Add(sharedIndex[i]);
+					c_polyB.Add(colors[i]);
 				}
 			}
 		}
@@ -577,27 +626,32 @@ public static class pbSubdivideSplit
 			v_polyA_2d.Add( splitPointA_2d );
 			u_polyA.Add( splitPointA_uv );
 			i_polyA.Add(-1);
+			c_polyA.Add(splitSelection.colorA);
 			
 			v_polyB.Add( splitPointA_3d );
 			v_polyB_2d.Add( splitPointA_2d );
 			u_polyB.Add( splitPointA_uv );
 			i_polyB.Add(-1);	//	neg 1 because it's a new vertex point
+			c_polyB.Add(splitSelection.colorA);
 
 			nedgeA.Add(v_polyA.Count);
 			nedgeB.Add(v_polyB.Count);
 		}
 
+		// PLACE
 		if(!splitSelection.bIsVertex)
 		{
 			v_polyA.Add( splitPointB_3d );
 			v_polyA_2d.Add( splitPointB_2d );
 			u_polyA.Add( splitPointB_uv );
 			i_polyA.Add(-1);
+			c_polyB.Add(splitSelection.colorB);
 			
 			v_polyB.Add( splitPointB_3d );
 			v_polyB_2d.Add( splitPointB_2d );
 			u_polyB.Add( splitPointB_uv );
 			i_polyB.Add(-1);	//	neg 1 because it's a new vertex point
+			c_polyB.Add(splitSelection.colorB);
 		
 			nedgeA.Add(v_polyA.Count);
 			nedgeB.Add(v_polyB.Count);
@@ -629,11 +683,12 @@ public static class pbSubdivideSplit
 		if(Vector3.Dot(nrm, nrmB) < 0) System.Array.Reverse(t_polyB);
 
 		// triangles, material, pb_UV, smoothing group, shared index
-		pb_Face faceA = new pb_Face( t_polyA, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV, face.color);
-		pb_Face faceB = new pb_Face( t_polyB, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV, face.color);
+		pb_Face faceA = new pb_Face( t_polyA, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
+		pb_Face faceB = new pb_Face( t_polyB, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
 
 		splitFaces = new pb_Face[2] { faceA, faceB };
 		splitVertices = new Vector3[2][] { v_polyA.ToArray(), v_polyB.ToArray() };
+		splitColors = new Color[2][] { c_polyA.ToArray(), c_polyB.ToArray() };
 		splitUVs = new Vector2[2][] { u_polyA.ToArray(), u_polyB.ToArray() };
 		splitSharedIndices = new int[2][] { i_polyA.ToArray(), i_polyB.ToArray() };
 
@@ -645,17 +700,19 @@ public static class pbSubdivideSplit
 	 *	vertex placed at the center of the face.
 	 */
 	private static bool SubdivideFace_Internal(pb_Object pb, EdgeConnection edgeConnection, 
-		out Vector3?[] appendedVertices,	
+		out DanglingVertex?[] appendedVertices,	
 		out pb_Face[] splitFaces,
 		out Vector3[][] splitVertices,
+		out Color[][] splitColors,
 		out Vector2[][] splitUVs,
 		out int[][] splitSharedIndices)
 	{
 		splitFaces 			= null;
 		splitVertices 		= null;
+		splitColors 		= null;
 		splitUVs 			= null;
 		splitSharedIndices 	= null;
-		appendedVertices 	= new Vector3?[edgeConnection.edges.Count];
+		appendedVertices 	= new DanglingVertex?[edgeConnection.edges.Count];
 
 		// cache all the things
 		pb_Face face = edgeConnection.face;
@@ -665,6 +722,7 @@ public static class pbSubdivideSplit
 
 		List<Vector2> edgeCentersUV = new List<Vector2>();
 		List<Vector3> edgeCenters3d = new List<Vector3>();
+		List<Color> edgeCentersCol = new List<Color>();
 		
 		// filter duplicate edges
 		int u = 0;
@@ -675,10 +733,12 @@ public static class pbSubdivideSplit
 			if(!usedEdgeIndices.Contains(ind))
 			{
 				Vector3 cen = (vertices[edge.x] + vertices[edge.y]) / 2f;
-				appendedVertices[u] = cen;
+
+				appendedVertices[u] = new DanglingVertex(cen, (pb.colors[edge.x] + pb.colors[edge.y]) / 2f);
 				
 				edgeCenters3d.Add(cen);
 				edgeCentersUV.Add( (uvs[edge.x] + uvs[edge.y])/2f );
+				edgeCentersCol.Add( (pb.colors[edge.x] + pb.colors[edge.y])/2f );
 
 				usedEdgeIndices.Add(ind);
 			}
@@ -695,6 +755,7 @@ public static class pbSubdivideSplit
 
 		Vector3[] verts3d = pb.GetVertices(face.distinctIndices);
 		Vector2[] faceUVs = pb.GetUVs(face.distinctIndices);
+		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
 		Vector2[] verts2d = pb_Math.PlanarProject(verts3d, nrm);
 		Vector2[] edgeCenters2d = pb_Math.PlanarProject(edgeCenters3d.ToArray(), nrm);
@@ -712,6 +773,7 @@ public static class pbSubdivideSplit
 		List<Vector2>[] quadrants2d = new List<Vector2>[edgeCenters2d.Length];
 		List<Vector3>[] quadrants3d = new List<Vector3>[edgeCenters2d.Length];
 		List<Vector2>[] quadrantsUV = new List<Vector2>[edgeCenters2d.Length];
+		List<Color>[] 	quadrantsCol = new List<Color>[edgeCenters2d.Length];
 
 		List<int>[]		sharedIndex = new List<int>[edgeCenters2d.Length];
 
@@ -720,6 +782,7 @@ public static class pbSubdivideSplit
 			quadrants2d[i] = new List<Vector2>(1) { cen2d };
 			quadrants3d[i] = new List<Vector3>(1) { cen3d };			
 			quadrantsUV[i] = new List<Vector2>(1) { cenUV };
+			quadrantsCol[i] = new List<Color>(1) { pb_Math.Average(pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices)) };
 
 			sharedIndex[i] = new List<int>(1) { -2 };		// any negative value less than -1 will be treated as a new group
 		}
@@ -730,6 +793,7 @@ public static class pbSubdivideSplit
 			quadrants2d[i].Add(edgeCenters2d[i]);
 			quadrants3d[i].Add(edgeCenters3d[i]);
 			quadrantsUV[i].Add(edgeCentersUV[i]);
+			quadrantsCol[i].Add(edgeCentersCol[i]);
 
 			sharedIndex[i].Add(-1);
 
@@ -755,6 +819,7 @@ public static class pbSubdivideSplit
 			quadrants2d[quad].Add(edgeCenters2d[i]);
 			quadrants3d[quad].Add(edgeCenters3d[i]);
 			quadrantsUV[quad].Add(edgeCentersUV[i]);
+			quadrantsCol[quad].Add(edgeCentersCol[i]);
 
 			sharedIndex[quad].Add(-1);
 		}
@@ -781,6 +846,7 @@ public static class pbSubdivideSplit
 			quadrants2d[quad].Add(verts2d[i]);
 			quadrants3d[quad].Add(verts3d[i]);
 			quadrantsUV[quad].Add(faceUVs[i]);
+			quadrantsCol[quad].Add(colors[i]);
 
 			sharedIndex[quad].Add(pb.sharedIndices.IndexOf(face.distinctIndices[i]));
 		}
@@ -808,14 +874,16 @@ public static class pbSubdivideSplit
 
 		splitFaces 		= new pb_Face[len];
 		splitVertices 	= new Vector3[len][];
+		splitColors 	= new Color[len][];
 		splitUVs 		= new Vector2[len][];
 		splitSharedIndices 	= new int[len][];
 
 		for(int i = 0; i < len; i++)
 		{
 			// triangles, material, pb_UV, smoothing group, shared index
-			splitFaces[i] 			= new pb_Face(tris[i], face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV, face.color);
+			splitFaces[i] 			= new pb_Face(tris[i], face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
 			splitVertices[i] 		= quadrants3d[i].ToArray();
+			splitColors[i] 			= quadrantsCol[i].ToArray();
 			splitUVs[i] 			= quadrantsUV[i].ToArray();
 			
 			splitSharedIndices[i] 	= sharedIndex[i].ToArray();
@@ -831,12 +899,14 @@ public static class pbSubdivideSplit
 		out Vector3 pokedVertex,
 		out pb_Face[] splitFaces,
 		out Vector3[][] splitVertices,
+		out Color[][] splitColors,
 		out Vector2[][] splitUVs,
 		out int[][] splitSharedIndices)
 	{
 		pokedVertex = Vector3.zero;
 		splitFaces = null;
 		splitVertices = null;
+		splitColors = null;
 		splitUVs = null;
 		splitSharedIndices = null;
 
@@ -892,14 +962,15 @@ public static class pbSubdivideSplit
 		 *	then a pie, then a basketball again.  I'm on a horse.
 		 */
 
-
 		Vector3[] verts 	= pb.GetVertices(face.distinctIndices);
 		Vector2[] uvs 		= pb.GetUVs(face.distinctIndices);
+		Color[] colors  	= pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
 		Vector2 cenUV		= pb_Bounds2D.Center(uvs);
 		Vector3 cen3d 		= pb_Math.BoundsCenter(verts);
 		pokedVertex 		= cen3d;
 		Vector3 nrm 		= pb_Math.Normal(pb.GetVertices(face.indices));
+		Color cenColor 		= pb_Math.Average(colors);
 
 		// this should be cleaned up
 		Vector2[] plane 	= pb_Math.PlanarProject(verts, nrm);
@@ -914,6 +985,7 @@ public static class pbSubdivideSplit
 		List<Vector2>[] quadrants2d 	= new List<Vector2>[indices.Length];
 		List<Vector3>[] quadrants3d 	= new List<Vector3>[indices.Length];
 		List<Vector2>[] quadrantsUV_2d 	= new List<Vector2>[indices.Length];
+		List<Color>[] 	quadrantsCol 	= new List<Color>[indices.Length];
 
 		List<int>[]		sharedIndex = new List<int>[indices.Length];
 
@@ -922,6 +994,7 @@ public static class pbSubdivideSplit
 			quadrants2d[i] = new List<Vector2>(1) { cen2d };
 			quadrants3d[i] = new List<Vector3>(1) { cen3d };
 			quadrantsUV_2d[i] = new List<Vector2>(1) { cenUV };
+			quadrantsCol[i] = new List<Color>(1) { cenColor };
 
 			sharedIndex[i] = new List<int>(1) { -2 };		// any negative value less than -1 will be treated as a new group
 		}
@@ -938,6 +1011,7 @@ public static class pbSubdivideSplit
 				quadrants2d[indexInPokeVerts].Add(plane[i]);
 				quadrants3d[indexInPokeVerts].Add(verts[i]);
 				quadrantsUV_2d[indexInPokeVerts].Add(uvs[i]);
+				quadrantsCol[indexInPokeVerts].Add(colors[i]);
 
 				sharedIndex[indexInPokeVerts].Add(pb.sharedIndices.IndexOf(face.distinctIndices[i]));
 
@@ -966,6 +1040,7 @@ public static class pbSubdivideSplit
 			quadrants2d[quad].Add(plane[i]);
 			quadrants3d[quad].Add(verts[i]);
 			quadrantsUV_2d[quad].Add(uvs[i]);
+			quadrantsCol[quad].Add(colors[i]);
 
 			sharedIndex[quad].Add(pb.sharedIndices.IndexOf(face.distinctIndices[i]));
 		}
@@ -991,14 +1066,16 @@ public static class pbSubdivideSplit
 
 		splitFaces 			= new pb_Face[len];
 		splitVertices 		= new Vector3[len][];
+		splitColors 		= new Color[len][];
 		splitUVs 			= new Vector2[len][];
 		splitSharedIndices 	= new int[len][];
 
 		for(int i = 0; i < len; i++)
 		{
 			// triangles, material, pb_UV, smoothing group, shared index
-			splitFaces[i] = new pb_Face(tris[i], face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV, face.color);
-			splitVertices[i] = quadrants3d[i].ToArray();
+			splitFaces[i] 		= new pb_Face(tris[i], face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+			splitVertices[i] 	= quadrants3d[i].ToArray();
+			splitColors[i] 		= quadrantsCol[i].ToArray();
 			splitUVs[i] 		= quadrantsUV_2d[i].ToArray();
 
 			splitSharedIndices[i] = sharedIndex[i].ToArray();

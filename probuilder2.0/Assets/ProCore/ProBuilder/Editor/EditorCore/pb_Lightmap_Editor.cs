@@ -266,6 +266,8 @@ public static class pb_Lightmap_Editor_Extensions
 	 */
 	public static void GenerateUV2(this pb_Object pb)
 	{
+		Debug.Log("GenerateUV2");
+
 		// SetUVParams(8f, 15f, 15f, 20f);
 		UnwrapParam param;
 		UnwrapParam.SetDefaults(out param);

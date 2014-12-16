@@ -211,6 +211,9 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private int[] 						_submeshTriangleCount;	///< Used to detect changes to the material array
 
+	[SerializeField]
+	private Color[] 					_colors;
+
 	// UV2 generation params
 	public float angleError = 8f;
 	public float areaError = 15f;
@@ -261,6 +264,7 @@ public class pb_Object : MonoBehaviour
 
 	public Vector3[] vertices { get { return _vertices; } }
 	public Vector2[] uv { get { return _uv; } }
+	public Color[] colors { get { return _colors; } }
 
 	public int faceCount { get { return _faces.Length; } }
 	public int vertexCount { get { return _vertices.Length; } }
@@ -471,8 +475,7 @@ public class pb_Object : MonoBehaviour
 				0,
 				-1,
 				-1,
-				false,
-				(Color32)Color.white);
+				false);
 		}
 
 		SetVertices(v);
@@ -629,6 +632,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
+		Debug.Log("ToMesh");
+
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
 		if(msh != null)
@@ -728,6 +733,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void Refresh()
 	{	
+		Debug.Log("Refresh");
+
 		// Mesh
 		RefreshNormals();
 
@@ -770,6 +777,7 @@ public class pb_Object : MonoBehaviour
 		}
 
 		// msh.Optimize();
+		RefreshColor();
 
 		RefreshUV();
 
@@ -1010,44 +1018,30 @@ public class pb_Object : MonoBehaviour
 
 #region COLORS
 
-	private void RefreshColor()
+	/**
+	 * Set the internal color array.
+	 */
+	public void SetColors(Color[] InColors)
 	{
-		Color32[] col = pb_Face.Color32ArrayWithFaces(faces, vertexCount);
-		if(col.Length == vertexCount)
-			msh.colors32 = col;
+		_colors = InColors.Length == vertexCount ? InColors : pbUtil.FilledArray<Color>(Color.white, vertexCount);
 	}
 
-	private void SetColors32(Color32[] c32)
+	public void SetFaceColor(pb_Face face, Color color)
 	{
-		if(c32.Length != _vertices.Length)
-			return;
+		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 
-		msh.colors32 = c32;
+		foreach(int i in face.distinctIndices)
+		{
+			_colors[i] = color;
+		}
 	}
 
-	public void SetFaceColor(pb_Face face, Color32 c32)
+	public void RefreshColor()
 	{
-		Color32[] clrs = GetColors32();
+		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 
-		int[] indices = face.distinctIndices;
-
-		for(int i = 0; i < indices.Length; i++)
-			clrs[indices[i]] = c32;
-
-		face.SetColor(c32);
-
-		SetColors32(clrs);
+		msh.colors = _colors;
 	}
-
-	public Color32[] GetColors32()
-	{
-		Mesh m = msh;
-		
-		if(m.colors32 == null || m.colors32.Length < 1)
-			m.colors32 = pbUtil.FilledArray((Color32)Color.white, _vertices.Length);
-
-		return m.colors32;
-	}	
 #endregion
 
 #region TANGENTS

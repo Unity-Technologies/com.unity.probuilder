@@ -74,8 +74,7 @@ public class TriangulatePbObject : Editor
 											face.smoothingGroup,
 											face.textureGroup,		// textureGroup -> force to manual uv mode
 											face.elementGroup,
-											face.manualUV,			// manualUV
-											face.color
+											face.manualUV
 										);	
 				n += 3;
 			}

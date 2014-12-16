@@ -49,7 +49,7 @@ public class pb_VertexPainter : EditorWindow
 	Camera sceneCamera;													///< Cache the sceneview camera at start of OnSceneGUI.
  
 	///< Used to store changes to mesh color array for live preview.
-	Dictionary<pb_Object, Color32[]> hovering = new Dictionary<pb_Object, Color32[]>();
+	Dictionary<pb_Object, Color[]> hovering = new Dictionary<pb_Object, Color[]>();
  
 	Vector2 mpos = Vector2.zero;
 	GameObject go;
@@ -109,9 +109,9 @@ public class pb_VertexPainter : EditorWindow
 			if(pb != null)
 			{
 				if(!hovering.ContainsKey(pb))
-					hovering.Add(pb, pb.msh.colors32 ?? new Color32[pb.vertexCount]);
+					hovering.Add(pb, pb.msh.colors ?? new Color[pb.vertexCount]);
 				else
-					pb.msh.colors32 = hovering[pb];
+					pb.msh.colors = hovering[pb];
  
 				Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
 				RaycastHit hit;
@@ -123,7 +123,7 @@ public class pb_VertexPainter : EditorWindow
 					handleRotation = Quaternion.LookRotation(hit.normal, Vector3.up);
  
  					Transform t = pb.transform;
-					Color32[] colors = pb.msh.colors32;
+					Color[] colors = pb.msh.colors;
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
 					for(int i = 0; i < sharedIndices.Length; i++)
@@ -131,17 +131,17 @@ public class pb_VertexPainter : EditorWindow
 						if( Vector3.Distance(hit.point, t.TransformPoint(pb.vertices[sharedIndices[i][0]])) < brushSize)
 						{
 							for(int n = 0; n < sharedIndices[i].Length; n++)
-								colors[sharedIndices[i][n]] = (Color32)color;
+								colors[sharedIndices[i][n]] = (Color)color;
 						}
 					}
  
-					pb.msh.colors32 = colors;
+					pb.msh.colors = colors;
 				}
 				else
 				{
 					// Clear
-					foreach(KeyValuePair<pb_Object, Color32[]> kvp in hovering)
-						kvp.Key.msh.colors32 = kvp.Value;
+					foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
+						kvp.Key.msh.colors = kvp.Value;
  
 					hovering.Clear();
 
@@ -153,8 +153,8 @@ public class pb_VertexPainter : EditorWindow
 		}
 		else
 		{
-			foreach(KeyValuePair<pb_Object, Color32[]> kvp in hovering)
-				kvp.Key.msh.colors32 = kvp.Value;
+			foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
+				kvp.Key.msh.colors = kvp.Value;
  
 			hovering.Clear();
  	
@@ -172,26 +172,21 @@ public class pb_VertexPainter : EditorWindow
  
 		if( (currentEvent.type == EventType.MouseDown || currentEvent.type == EventType.MouseDrag) )
 		{
-			Dictionary<pb_Object, Color32[]> sticky = new Dictionary<pb_Object, Color32[]>();
+			Dictionary<pb_Object, Color[]> sticky = new Dictionary<pb_Object, Color[]>();
  
-			foreach(KeyValuePair<pb_Object, Color32[]> kvp in hovering)
+			foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
 			{
-				Color32[] colors = kvp.Key.msh.colors32;
+				Color[] colors = kvp.Key.msh.colors;
 
 				sticky.Add(kvp.Key, colors);
  
-				kvp.Key.msh.colors32 = kvp.Value;
+				kvp.Key.msh.colors = kvp.Value;
 
 				pbUndo.RecordObjects(new Object[] {kvp.Key, kvp.Key.msh}, "Apply Vertex Colors");
 
-				// This is terrible, and is currently being re-written -
-				// the whole vertex color API is overhauled for next release!
-				foreach(pb_Face face in kvp.Key.faces)
-				{
-					face.SetColors( pbUtil.ValuesWithIndices(colors, face.indices) );
-				}
+				kvp.Key.SetColors(colors);
 
-				kvp.Key.msh.colors32 = colors;
+				kvp.Key.msh.colors = colors;
 			}
  
 			hovering = sticky;

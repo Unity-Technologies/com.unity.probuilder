@@ -331,6 +331,7 @@ public class pb_Menu_Commands : Editor
 				if(pb.Bridge(pb.SelectedEdges[0], pb.SelectedEdges[1], limitToPerimeterEdges))
 				{
 					success = true;
+					pb.ToMesh();
 					pb.Refresh();
 					pb.GenerateUV2();
 				}

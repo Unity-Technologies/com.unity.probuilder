@@ -1,3 +1,11 @@
+-- ProBuilder 2.3.4b0 (r2986) -
+
+# Features
+	- Unity 5 support.
+
+# Bug Fixes
+	- Fix crash when a face material is null (defaults to Unity Default-Diffuse).
+
 -- ProBuilder 2.3.3f1 (r2970) -
 
 # Features

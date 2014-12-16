@@ -57,8 +57,7 @@ public class pb_MergeFaces : Editor
 		                                 faces[0].smoothingGroup,
 		                                 faces[0].textureGroup,
 		                                 faces[0].elementGroup,
-		                                 faces[0].manualUV,
-		                                 faces[0].colors[0]);
+		                                 faces[0].manualUV);
 
 		pb_Face[] rebuiltFaces = new pb_Face[pb.faces.Length - faces.Length + 1];
 

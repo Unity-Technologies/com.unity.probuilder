@@ -212,6 +212,7 @@ namespace ProBuilder2.MeshOperations
 		int[] distinctIndices = face.distinctIndices;
 		int len = distinctIndices.Length;
 		Vector3[] verts = pb.GetVertices(distinctIndices);
+		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
 
 		// Get the face normal before modifying the vertex array
 		Vector3 nrm = pb_Math.Normal(pb.GetVertices(face.indices));
@@ -219,6 +220,7 @@ namespace ProBuilder2.MeshOperations
 		
 		// Add the new point
 		verts = verts.Add(point);
+		cols = cols.Add( pb_Math.Average(cols) );
 
 		// Project
 		List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(verts, projAxis));
@@ -243,7 +245,7 @@ namespace ProBuilder2.MeshOperations
 		Vector2[] uvs = new Vector2[len+1];
 		System.Array.Copy(pb.GetUVs(distinctIndices), 0, uvs, 0, len);
 
-		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV, face.color);
+		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
 		/**
 		 * Attempt to figure out where the new UV point should go
@@ -262,7 +264,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		// Compose new face
-		newFace = pb.AppendFace(verts, uvs, triangulated_face, sharedIndex);
+		newFace = pb.AppendFace(verts, cols, uvs, triangulated_face, sharedIndex);
 
 		// And delete the old
 		pb.DeleteFace(face);
@@ -273,7 +275,7 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
 	 */
-	public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, List<Vector3> points, out pb_Face newFace)
+	public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
 	{
 		if(!face.isValid())
 		{
@@ -284,14 +286,21 @@ namespace ProBuilder2.MeshOperations
 		// First order of business - project face to 2d
 		int[] distinctIndices = face.distinctIndices;
 		Vector3[] verts = pb.GetVertices(distinctIndices);
-		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Count];
+		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
+		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Length];
 		System.Array.Copy(pb.GetUVs(distinctIndices), 0, uvs, 0, distinctIndices.Length);
 
 		// Add the new point
-		Vector3[] t_verts = new Vector3[verts.Length + points.Count];
+		Vector3[] t_verts = new Vector3[verts.Length + points.Length];
 		System.Array.Copy(verts, 0, t_verts, 0, verts.Length);
-		System.Array.Copy(points.ToArray(), 0, t_verts, verts.Length, points.Count);
+		System.Array.Copy(points, 0, t_verts, verts.Length, points.Length);
 		verts = t_verts;
+
+		// Add the new color
+		Color[] t_col = new Color[cols.Length + addColors.Length];
+		System.Array.Copy(cols, 0, t_col, 0, cols.Length);
+		System.Array.Copy(addColors, 0, t_col, cols.Length, addColors.Length);
+		cols = t_col;
 
 		// Get the face normal before modifying the vertex array
 		Vector3 nrm = pb_Math.Normal(pb.GetVertices(face.indices));
@@ -302,11 +311,11 @@ namespace ProBuilder2.MeshOperations
 
 		// Save the sharedIndices index for each distinct vertex
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		int[] sharedIndex = new int[distinctIndices.Length+points.Count];
+		int[] sharedIndex = new int[distinctIndices.Length+points.Length];
 		for(int i = 0; i < distinctIndices.Length; i++)
 			sharedIndex[i] = sharedIndices.IndexOf(distinctIndices[i]);
 		
-		for(int i = distinctIndices.Length; i < distinctIndices.Length+points.Count; i++)
+		for(int i = distinctIndices.Length; i < distinctIndices.Length+points.Length; i++)
 			sharedIndex[i] = -1;	// add the new vertex to it's own sharedIndex
 
 		// Triangulate the face with the new point appended
@@ -318,7 +327,7 @@ namespace ProBuilder2.MeshOperations
 			System.Array.Reverse(tris);
 		
 		// Build the new face
-		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV, face.color);
+		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
 		/**
 		 * Attempt to figure out where the new UV point(s) should go
@@ -340,7 +349,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		// Compose new face
-		newFace = pb.AppendFace(verts, uvs, triangulated_face, sharedIndex);
+		newFace = pb.AppendFace(verts, cols, uvs, triangulated_face, sharedIndex);
 
 		// And delete the old
 		pb.DeleteFace(face);	

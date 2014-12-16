@@ -69,12 +69,11 @@ public class pb_Face : ISerializable
 		_mat = pb_Constant.DefaultMaterial;
 		_smoothingGroup = 0;
 		elementGroup = 0;
-		_colors = pbUtil.FilledArray((Color32)Color.white, indices.Length);
 
 		RebuildCaches();
 	}
 
-	public pb_Face(int[] i, Material m, pb_UV u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV, Color32 c)
+	public pb_Face(int[] i, Material m, pb_UV u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
 	{
 		this._indices = i;
 		this._uv = u;
@@ -82,7 +81,6 @@ public class pb_Face : ISerializable
 		this._smoothingGroup = smoothingGroup;
 		this.textureGroup = textureGroup;
 		this.elementGroup = elementGroup;
-		this._colors = pbUtil.FilledArray(c, i.Length);
 		this.manualUV = manualUV;
 
 		RebuildCaches();
@@ -103,11 +101,6 @@ public class pb_Face : ISerializable
 		_smoothingGroup = face.smoothingGroup;
 		textureGroup = face.textureGroup;
 		elementGroup = face.elementGroup;
-		manualUV = face.manualUV;
-
-		_colors = new Color32[face.colors.Length];
-		System.Array.Copy(face.colors, _colors, colors.Length);
-		
 		manualUV = face.manualUV;
 
 		RebuildCaches();
@@ -139,8 +132,6 @@ public class pb_Face : ISerializable
 	[SerializeField]
 	Material _mat;				///< What material does this face use.
 	[SerializeField]
-	Color32[] _colors;			///< Vertex colors (matching indices array).
-	[SerializeField]
 	public bool manualUV;		///< If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
 	[SerializeField]	
 	public int elementGroup;	///< UV Element group.
@@ -156,8 +147,6 @@ public class pb_Face : ISerializable
 	public pb_UV uv { get { return _uv; } }
 	public Material material { get { return _mat; } }
 	public Material mat { get { Debug.LogWarning("pb_Face->mat property is deprecated.  Please use pb_Face->material instead."); return _mat; } }	// TODO -- remove me
-	public Color32[] colors { get { return _colors == null || _colors.Length != indices.Length ? InitColors() : _colors; } } 	///< Returns the color properties for this face.
-	public Color32 color { get { return _colors == null || _colors.Length != indices.Length ? (Color32)Color.white : _colors[0]; } } 
 	public int textureGroup = -1;
 
 	public void SetUV(pb_UV u)
@@ -173,22 +162,6 @@ public class pb_Face : ISerializable
 	public void SetSmoothingGroup(int i)
 	{
 		_smoothingGroup = i;
-	}
-
-	public void SetColor(Color32 c32)
-	{
-		for(int i = 0; i < indices.Length; i++)
-			_colors[i] = c32;
-	}
-
-	public void SetColors(Color32[] c32)
-	{
-		if(c32.Length != indices.Length)
-		{
-			Debug.LogWarning("Array must have same length as indices array.  Use pb_Face::SetColor() to set all vertices to one color.");
-			return;
-		}
-		_colors = c32;
 	}
 #endregion
 
@@ -310,16 +283,8 @@ public class pb_Face : ISerializable
 		CacheDistinctIndices();
 		CacheEdges();
 	}
-#endregion
 
-#region PRIVATE
-
-	private Color32[] InitColors()
-	{
-		_colors = pbUtil.FilledArray((Color32)Color.white, indices.Length);
-		return _colors;
-	}
-
+	
 	private pb_Edge[] CacheEdges()
 	{
 		_edges = this.GetPerimeterEdges();
@@ -359,26 +324,6 @@ public class pb_Face : ISerializable
 #endregion
 
 #region Special
-
-	/**
-	 *	\brief Used to get the Mesh.Colors array from each face in mesh.
-	 *	Assumes that your pb_Object and pb_Faces are in sync.  Will fail if not.
-	 */
-	public static Color32[] Color32ArrayWithFaces(pb_Face[] faces, int vertexCount)
-	{
-		Color32[] clrs = new Color32[vertexCount];
-
-		foreach(pb_Face face in faces)
-		{
-			int[] ind = face.indices;
-			Color32[] t_clrs = face.colors;
-			for(int i = 0; i < ind.Length; i++)
-				clrs[ind[i]] = t_clrs[i];
-		}
-
-
-		return clrs;
-	}
 
 	/**
 	 *	\brief Returns all triangles contained within the #pb_Face array.

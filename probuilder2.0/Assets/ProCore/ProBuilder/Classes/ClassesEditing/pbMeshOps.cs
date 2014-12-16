@@ -150,6 +150,13 @@ namespace ProBuilder2.MeshOperations
 					localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
 					localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
 				},
+				new Color[4]
+				{
+					pb.colors[ edge.x ],
+					pb.colors[ edge.y ],
+					pb.colors[ edge.x ],
+					pb.colors[ edge.y ]
+				},
 				new Vector2[4],	// empty array for UVs
 				new pb_Face
 				( 
@@ -159,8 +166,7 @@ namespace ProBuilder2.MeshOperations
 					face.smoothingGroup,					// smoothing group
 					-1,										// texture group
 					-1,										// uv element group
-					false,									// manualUV flag
-					face.colors[0] ),						// colors
+					false),									// manualUV flag
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
 			extrudedIndices.Add(new pb_Edge(x_sharedIndex, newFace.indices[2]));
@@ -351,8 +357,15 @@ namespace ProBuilder2.MeshOperations
 					localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
 					localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
 				},
+				new Color[4] 
+				{
+					pb.colors[ edge.x ],
+					pb.colors[ edge.y ],
+					pb.colors[ edge.x ],
+					pb.colors[ edge.y ]
+				},
 				new Vector2[4],
-				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false, face.colors[0] ),
+				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
 				new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
 			newEdges.Add(new pb_Edge(newFace.indices[3], newFace.indices[4]));
@@ -471,9 +484,9 @@ namespace ProBuilder2.MeshOperations
 		
 			Vector3[] verts = pb.vertices;
 			Vector3[] v;
+			Color[] c;
 			int[] s;
 			pb_UV uvs = new pb_UV();
-			Color32 color = (Color32)Color.white;
 			Material mat = pb_Constant.DefaultMaterial;
 
 			// Get material and UV stuff from the first edge face 
@@ -483,7 +496,6 @@ namespace ProBuilder2.MeshOperations
 				{
 					uvs = new pb_UV(face.uv);
 					mat = face.material;
-					color = face.colors[0];
 					break;
 				}
 			}
@@ -492,6 +504,7 @@ namespace ProBuilder2.MeshOperations
 			if( a.Contains(b.x, sharedIndices) || a.Contains(b.y, sharedIndices) )
 			{
 				v = new Vector3[3];
+				c = new Color[3];
 				s = new int[3];
 
 				bool axbx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.x)], b.x) > -1;
@@ -503,47 +516,60 @@ namespace ProBuilder2.MeshOperations
 				if(axbx)
 				{	
 					v[0] = verts[a.x];
+					c[0] = pb.colors[a.x];
 					s[0] = sharedIndices.IndexOf(a.x);
 					v[1] = verts[a.y];
+					c[1] = pb.colors[a.y];
 					s[1] = sharedIndices.IndexOf(a.y);
 					v[2] = verts[b.y];
+					c[2] = pb.colors[b.y];
 					s[2] = sharedIndices.IndexOf(b.y);
 				}
 				else
 				if(axby)
 				{
 					v[0] = verts[a.x];
+					c[0] = pb.colors[a.x];
 					s[0] = sharedIndices.IndexOf(a.x);
 					v[1] = verts[a.y];
+					c[1] = pb.colors[a.y];
 					s[1] = sharedIndices.IndexOf(a.y);
 					v[2] = verts[b.x];
+					c[2] = pb.colors[b.x];
 					s[2] = sharedIndices.IndexOf(b.x);
 				}
 				else
 				if(aybx)
 				{
 					v[0] = verts[a.y];
+					c[0] = pb.colors[a.y];
 					s[0] = sharedIndices.IndexOf(a.y);
 					v[1] = verts[a.x];
+					c[1] = pb.colors[a.x];
 					s[1] = sharedIndices.IndexOf(a.x);
 					v[2] = verts[b.y];
+					c[2] = pb.colors[b.y];
 					s[2] = sharedIndices.IndexOf(b.y);
 				}
 				else
 				if(ayby)
 				{
 					v[0] = verts[a.y];
+					c[0] = pb.colors[a.y];
 					s[0] = sharedIndices.IndexOf(a.y);
 					v[1] = verts[a.x];
+					c[1] = pb.colors[a.x];
 					s[1] = sharedIndices.IndexOf(a.x);
 					v[2] = verts[b.x];
+					c[2] = pb.colors[b.x];
 					s[2] = sharedIndices.IndexOf(b.x);
 				}
 
 				pb.AppendFace(
 					v,
+					c,
 					new Vector2[v.Length],
-					new pb_Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false, color ),
+					new pb_Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
 					s);
 
 				pb.RebuildFaceCaches();
@@ -555,11 +581,14 @@ namespace ProBuilder2.MeshOperations
 			// Else, bridge will form a quad
 
 			v = new Vector3[4];
+			c = new Color[4];
 			s = new int[4]; // shared indices index to add to
 
 			v[0] = verts[a.x];
+			c[0] = pb.colors[a.x];
 			s[0] = sharedIndices.IndexOf(a.x);
 			v[1] = verts[a.y];
+			c[1] = pb.colors[a.y];
 			s[1] = sharedIndices.IndexOf(a.y);
 
 			Vector3 nrm = Vector3.Cross( verts[b.x]-verts[a.x], verts[a.y]-verts[a.x] ).normalized;
@@ -571,22 +600,27 @@ namespace ProBuilder2.MeshOperations
 			if(!interescts)
 			{
 				v[2] = verts[b.x];
+				c[2] = pb.colors[b.x];
 				s[2] = sharedIndices.IndexOf(b.x);
 				v[3] = verts[b.y];
+				c[3] = pb.colors[b.y];
 				s[3] = sharedIndices.IndexOf(b.y);
 			}
 			else
 			{
 				v[2] = verts[b.y];
+				c[2] = pb.colors[b.y];
 				s[2] = sharedIndices.IndexOf(b.y);
 				v[3] = verts[b.x];
+				c[3] = pb.colors[b.x];
 				s[3] = sharedIndices.IndexOf(b.x);
 			}
 
 			pb.AppendFace(
 				v,
+				c,
 				new Vector2[v.Length],
-				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false, color ),
+				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
 				s);
 
 			pb.RebuildFaceCaches();

@@ -159,7 +159,9 @@ public class pb_Smoothing_Editor : EditorWindow
 					face.SetSmoothingGroup(sg);
 			}
 
-			pb.RefreshNormals();
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		OnSelectionUpdate(selection);
@@ -175,7 +177,10 @@ public class pb_Smoothing_Editor : EditorWindow
 			{
 				face.SetSmoothingGroup(0);
 			}
-			pb.RefreshNormals();
+			
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		OnSelectionUpdate(selection);

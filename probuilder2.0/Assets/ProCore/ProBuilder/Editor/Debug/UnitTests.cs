@@ -61,8 +61,10 @@ public class UnitTests : Editor
 			new Vector3(0f, 1f, 0f),
 			new Vector3(1f, 1f, 0f)
 		};
+
+		Color[] colors = pbUtil.FilledArray(Color.white, 4);
 		
-		pb_Face result = pb.AppendFace(vertices, new Vector2[vertices.Length], face);
+		pb_Face result = pb.AppendFace(vertices, colors, new Vector2[vertices.Length], face);
 		if(result == null) return false;
 
 		if(pb.vertices[pb.vertices.Length-1] != new Vector3(1f, 1f, 0f))
@@ -124,9 +126,17 @@ public class UnitTests : Editor
 
 		pb_Face face = pb.faces[0];
 
-		List<Vector3> points = new List<Vector3>();
-		points.Add( (v[face.edges[0].x] + v[face.edges[0].y])/2f );
-		points.Add( (v[face.edges[1].x] + v[face.edges[1].y])/2f );
+		Vector3[] points = new Vector3[]
+		{
+			(v[face.edges[0].x] + v[face.edges[0].y])/2f,
+			(v[face.edges[1].x] + v[face.edges[1].y])/2f
+		};
+
+		Color[] colors = new Color[]
+		{
+			(pb.colors[face.edges[0].x] + pb.colors[face.edges[0].y]) / 2f,
+			(pb.colors[face.edges[1].x] + pb.colors[face.edges[1].y]) / 2f
+		};
 
 		pb_Face outFace = null;
 
@@ -145,7 +155,7 @@ public class UnitTests : Editor
 		face = pb.faces[1];
 		try
 		{	
-			if( !pb.AppendVerticesToFace(face, points, out outFace) )
+			if( !pb.AppendVerticesToFace(face, points, colors, out outFace) )
 			{
 				GameObject.DestroyImmediate(pb.gameObject);
 				return false;

@@ -19,29 +19,35 @@ public static class pbAppendDelete
 	 *	param sharedIndex An optional array that sets the new pb_Face indices to use the _sharedIndices array.
 	 *	\returns The newly appended pb_Face.
 	 */
-	public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Vector2[] u, pb_Face face)
+	public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face)
 	{
 		int[] shared = new int[v.Length];
 		for(int i = 0; i < v.Length; i++)
 			shared[i] = -1;
-		return pb.AppendFace(v, u, face, shared);
+		return pb.AppendFace(v, c, u, face, shared);
 	}
 	
 	/**
 	 * Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
 	 */
-	public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Vector2[] u, pb_Face face, int[] sharedIndex)
+	public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face, int[] sharedIndex)
 	{
 		int vertexCount = pb.vertexCount;
 
 		Vector3[] _verts = new Vector3[vertexCount + v.Length];
+		Color[] _colors = new Color[vertexCount + c.Length];
 		Vector2[] _uvs = new Vector2[pb.uv.Length + u.Length];
+
 		List<pb_Face> _faces = new List<pb_Face>(pb.faces);
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 
 		// copy new vertices
 		System.Array.Copy(pb.vertices, 0, _verts, 0, vertexCount);
 		System.Array.Copy(v, 0, _verts, vertexCount, v.Length);
+
+		// copy new colors
+		System.Array.Copy(pb.colors, 0, _colors, 0, vertexCount);
+		System.Array.Copy(c, 0, _colors, vertexCount, c.Length);
 
 		// copy new uvs
 		System.Array.Copy(pb.uv, 0, _uvs, 0, pb.uv.Length);
@@ -50,18 +56,18 @@ public static class pbAppendDelete
 		face.ShiftIndicesToZero();
 		face.ShiftIndices(vertexCount);
 		face.RebuildCaches();
+
 		_faces.Add(face);
 
 		for(int i = 0; i < sharedIndex.Length; i++)
 			pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndex[i], i+vertexCount);
 
 		pb.SetVertices( _verts );
+		pb.SetColors( _colors );
 		pb.SetUV( _uvs );
 		
 		pb.SetSharedIndices(sharedIndices);
 		pb.SetFaces(_faces.ToArray());
-
-		pb.ToMesh();
 
 		return face;
 	}
@@ -69,9 +75,10 @@ public static class pbAppendDelete
 	/**
 	 * Append a group of new faces to the pb_Object.  Significantly faster than calling AppendFace multiple times.
 	 */
-	public static pb_Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Vector2[][] new_uvs, pb_Face[] new_Faces, int[][] new_SharedIndices)
+	public static pb_Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, pb_Face[] new_Faces, int[][] new_SharedIndices)
 	{
 		List<Vector3> _verts = new List<Vector3>(pb.vertices);
+		List<Color> _colors = new List<Color>(pb.colors);
 		List<Vector2> _uv = new List<Vector2>(pb.uv);
 
 		List<pb_Face> _faces = new List<pb_Face>(pb.faces);
@@ -82,6 +89,7 @@ public static class pbAppendDelete
 		for(int i = 0; i < new_Faces.Length; i++)
 		{
 			_verts.AddRange(new_Vertices[i]);
+			_colors.AddRange(new_Colors[i]);
 			_uv.AddRange(new_uvs[i]);
 
 			new_Faces[i].ShiftIndicesToZero();
@@ -115,6 +123,7 @@ public static class pbAppendDelete
 		pb.SetSharedIndices(sharedIndices);
 
 		pb.SetVertices(_verts.ToArray());
+		pb.SetColors(_colors.ToArray());
 		pb.SetUV(_uv.ToArray());
 		pb.SetFaces(_faces.ToArray());
 
@@ -135,6 +144,7 @@ public static class pbAppendDelete
 		int[] distInd = face.distinctIndices;
 		
 		Vector3[] verts = pb.vertices.RemoveAt(distInd);
+		Color[] cols = pb.colors.RemoveAt(distInd);
 		Vector2[] uvs = pb.uv.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
@@ -167,6 +177,7 @@ public static class pbAppendDelete
 		pb.SetSharedIndicesUV(si_uv);		
 
 		pb.SetVertices(verts);
+		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
@@ -191,6 +202,7 @@ public static class pbAppendDelete
 		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
 
 		Vector3[] verts = pb.vertices.RemoveAt(distInd);
+		Color[] cols = pb.colors.RemoveAt(distInd);
 		Vector2[] uvs = pb.uv.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
@@ -223,6 +235,7 @@ public static class pbAppendDelete
 		pb.SetSharedIndicesUV(si_uv);
 		
 		pb.SetVertices(verts);
+		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
@@ -245,6 +258,7 @@ public static class pbAppendDelete
 		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
 
 		Vector3[] verts = pb.vertices.RemoveAt(distInd);
+		Color[] cols = pb.colors.RemoveAt(distInd);
 		Vector2[] uvs = pb.uv.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(faceIndices);
@@ -277,6 +291,7 @@ public static class pbAppendDelete
 		pb.SetSharedIndicesUV(si_uv);
 		
 		pb.SetVertices(verts);
+		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);

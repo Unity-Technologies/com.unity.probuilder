@@ -119,6 +119,10 @@ public class pb_VertexColorInterface : EditorWindow
 		{
 			foreach(pb_Face face in pb.SelectedFaces)
 				pb.SetFaceColor(face, col);
+	
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		pb_Editor_Utility.ShowNotification("Set Face Color\n" + col);

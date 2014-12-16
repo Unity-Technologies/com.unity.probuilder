@@ -127,8 +127,18 @@ public class ProBuilderInstantiate : MonoBehaviour
 					};
 
 					int i = 0;
+
+					Color[] colors = new Color[pb.vertexCount];
+
 					foreach(pb_Face face in pb.faces)
-						pb.SetFaceColor(face, cubeColors[i++]);
+					{
+						foreach(int n in face.distinctIndices)
+						{
+							colors[n] = cubeColors[i];
+						}
+						
+						i++;
+					}
 
 					myInstantiatedObject = pb.gameObject;
 					

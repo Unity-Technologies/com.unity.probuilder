@@ -504,6 +504,16 @@ namespace ProBuilder2.Math
 			return sum/(float)v.Length;
 		}
 
+		public static Color Average(Color[] Array)
+		{
+			Color sum = Array[0];
+
+			for(int i = 1; i < Array.Length; i++)
+				sum += Array[i];
+
+			return sum / (float)Array.Length;
+		}
+
 		/**
 		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */

@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using System.Linq;
 
 public class MaterialSelection : Editor
 {
@@ -42,12 +43,15 @@ public class MaterialSelection : Editor
 	{
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 		{
-			HashSet<Color32> cols = new HashSet<Color32>();
+			HashSet<Color> cols = new HashSet<Color>();
 			
 			foreach(pb_Face f in pb.SelectedFaces)
-				cols.Add(f.color);
+			{
+				foreach(int i in f.distinctIndices)
+					cols.Add(pb.colors[i]);
+			}
 
-			pb_Face[] faces = System.Array.FindAll(pb.faces, x => cols.Contains(x.color));
+			pb_Face[] faces = System.Array.FindAll(pb.faces, x => cols.Intersect(pbUtil.ValuesWithIndices(pb.colors, x.distinctIndices)).Count() > 0);
 
 			pb.SetSelectedFaces(faces);
 			if(pb_Editor.instance)

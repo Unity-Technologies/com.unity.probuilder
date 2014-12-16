@@ -497,6 +497,8 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnBeginUVModification()
 	{
+		Debug.Log("OnBeginUVModification");
+
 		modifyingUVs = true;
 
 		Vector2 handle = handlePosition_canvas;
@@ -533,6 +535,8 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnFinishUVModification()
 	{
+		Debug.Log("OnFinishUVModification");
+
 		modifyingUVs = false;
 
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
@@ -782,7 +786,7 @@ public class pb_UV_Editor : EditorWindow
 		switch(e.type)
 		{
 			case EventType.MouseDown:			
-			
+				
 				#if PB_DEBUG
 				if(toolbarRect.Contains(e.mousePosition) || actionWindowRect.Contains(e.mousePosition) || buggerRect.Contains(e.mousePosition))
 				#else
@@ -838,7 +842,9 @@ public class pb_UV_Editor : EditorWindow
 
 			case EventType.Ignore:
 			case EventType.MouseUp:
-				
+
+				modifyingUVs_AutoPanel = false;
+
 				if(m_ignore)
 				{
 					m_ignore = false;
@@ -2330,10 +2336,11 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * Sets an array to the appropriate UV channel.
+	 * Sets an array to the appropriate UV channel, but don't refresh the Mesh.
 	 */
 	static void ApplyUVs(pb_Object pb, Vector2[] uvs, int channel)
 	{
+		Debug.Log("ApplyUVs");
 		switch(channel)
 		{
 			case 0:
@@ -2462,6 +2469,8 @@ public class pb_UV_Editor : EditorWindow
 		GUI.DragWindow(ActionWindowDragRect);
 	}
 
+	bool modifyingUVs_AutoPanel = false;
+
 	void DrawAutoModeUI()
 	{
 		if(GUILayout.Button("Convert to Manual", EditorStyles.miniButton))
@@ -2472,7 +2481,25 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
+		{
+			if(!modifyingUVs_AutoPanel)
+			{
+				modifyingUVs_AutoPanel = true;
+
+				foreach(pb_Object pb in selection)
+				{
+					pb.ToMesh();
+					pb.Refresh();
+				}
+			}
+
+			for(int i = 0; i < selection.Length; i++)
+			{
+				selection[i].RefreshUV(editor.SelectedFacesInEditZone[i] );
+			}
+
 			RefreshSelectedUVCoordinates();
+		}
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -2802,7 +2829,10 @@ public class pb_UV_Editor : EditorWindow
 		pbUndo.RecordObjects(selection, "Reset Faces to Auto-Unwrap");
 		
 		foreach(pb_Object pb in selection)
+		{
 			pbUVOps.SetAutoUV(pb, pb.SelectedFaces, !isManual);
+			pb.GenerateUV2();
+		}
 
 		SetSelectedUVsWithSceneView();
 		RefreshUVCoordinates();
@@ -2840,7 +2870,9 @@ public class pb_UV_Editor : EditorWindow
 		{			
 			selection[i].CollapseUVs(distinct_indices[i]);
 
-				selection[i].msh.uv = selection[i].uv;
+			selection[i].ToMesh();
+			selection[i].Refresh();
+			selection[i].GenerateUV2();
 		}
 
 		RefreshSelectedUVCoordinates();
@@ -2862,7 +2894,9 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].SewUVs(distinct_indices[i], .03f);
 			RefreshElementGroups(selection[i]);
 
-			selection[i].msh.uv = selection[i].uv;
+			selection[i].ToMesh();
+			selection[i].Refresh();
+			selection[i].GenerateUV2();
 		}
 		
 		RefreshSelectedUVCoordinates();
@@ -2952,7 +2986,10 @@ public class pb_UV_Editor : EditorWindow
 				uv[ distinct_indices[i][n] ] = uvs[n];
 
 			selection[i].SetUV(uv);
-			selection[i].msh.uv = uv;
+
+			selection[i].ToMesh();
+			selection[i].Refresh();
+			selection[i].GenerateUV2();
 		}
 
 		RefreshSelectedUVCoordinates();

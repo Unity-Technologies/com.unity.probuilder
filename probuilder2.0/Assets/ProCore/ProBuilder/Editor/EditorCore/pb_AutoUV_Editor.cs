@@ -318,7 +318,6 @@ public class pb_AutoUV_Editor
 				q.uv.offset -= delta.DivideBy(q.uv.scale);
 			}
 
-			sel[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
 		}
 	}
 
@@ -330,7 +329,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.rotation += delta;
 			}
-			sel[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
 		}
 		#endif
 	}
@@ -343,7 +341,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.scale += delta;
 			}
-			sel[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
 		}
 		#endif
 	}
@@ -356,7 +353,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.flipU = flipU;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -366,7 +362,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.flipV = flipV;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -376,7 +371,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.swapUV = swapUV;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -386,7 +380,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.useWorldSpace = useWorldSpace;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -397,7 +390,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.fill = fill;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -408,7 +400,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.justify = justify;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}
 	}
 
@@ -430,7 +421,6 @@ public class pb_AutoUV_Editor
 						break;
 				}
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}		
 	}
 
@@ -441,7 +431,6 @@ public class pb_AutoUV_Editor
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.rotation = rot;
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}		
 	}	
 
@@ -463,7 +452,6 @@ public class pb_AutoUV_Editor
 						break;
 				}
 			}
-			sel[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 		}		
 	}
 #endregion

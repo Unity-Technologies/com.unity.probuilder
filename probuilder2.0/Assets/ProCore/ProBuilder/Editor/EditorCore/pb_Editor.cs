@@ -3466,6 +3466,7 @@ public class pb_Editor : EditorWindow
 		{
 			pb.msh.uv2 = null;
 			pb.ToMesh();
+			pb.Refresh();
 		}
 	}
 
@@ -3524,20 +3525,16 @@ public class pb_Editor : EditorWindow
 			if(pb == null)
 				continue;
 
-			Vector3[] verts = pb.VerticesInWorldSpace();
+			Vector3[] verts = pb.msh.vertices;
 			Vector3[] nrmls = pb.msh.normals;
 
 			for(int i = 0; i < verts.Length; i++)
 			{
-				float angle = 0f;
-				Vector3 vup = verts[i];
-				pb.transform.localRotation.ToAngleAxis(out angle, out vup);
-
-				Vector3 v0 = verts[i];
-				Vector3 v1 = verts[i] + Quaternion.AngleAxis(angle, vup) * pb.msh.normals[i] * dist;
+				Vector3 v0 = pb.transform.TransformPoint(verts[i]);
+				Vector3 v1 = v0 + pb.transform.TransformDirection(nrmls[i]) * dist;
 
 				Handles.color = new Color( Mathf.Abs(nrmls[i].x), Mathf.Abs(nrmls[i].y), Mathf.Abs(nrmls[i].z) );
-					Handles.DrawLine(v0, v1);
+				Handles.DrawLine(v0, v1);
 
 				Handles.color = Color.white;
 			}
