@@ -5,7 +5,7 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 3
+  serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
   - 114: {fileID: 11400002}
@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 21
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -31,8 +31,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 0
 --- !u!23 &2300000
-Renderer:
+MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -41,14 +42,24 @@ Renderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_LightmapIndex: 255
+  m_LightmapIndexDynamic: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_LightmapTilingOffsetDynamic: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
   - {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -66,7 +77,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 0}
 --- !u!114 &11400000
@@ -77,8 +87,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 783e97c03fcda354bb319e8e49ba6ea6, type: 1}
+  m_Script: {fileID: 11500000, guid: 783e97c03fcda354bb319e8e49ba6ea6, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   isTrigger: 0
   physicMaterial: {fileID: 0}
   forceConvex: 0
@@ -95,15 +106,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df1f528f2edda9a42a68204801ccc3e9, type: 1}
+  m_Script: {fileID: 11500000, guid: df1f528f2edda9a42a68204801ccc3e9, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   _quads:
   - _indices: 000000000100000002000000
     _distinctIndices: 000000000100000002000000
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -113,15 +124,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -130,7 +135,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -140,21 +144,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .353553414, y: .5}
+      localSize: {x: .707106829, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -163,7 +155,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -173,21 +164,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .353553414, y: .5}
+      localSize: {x: .707106829, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -196,7 +175,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -206,21 +184,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .5}
+      localSize: {x: 1, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -229,7 +195,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -239,15 +204,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -256,7 +215,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -266,21 +224,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .426776707, y: .426776707}
+      localSize: {x: .853553414, y: .853553414}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -289,7 +235,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -299,21 +244,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .24999997, y: .5}
+      localSize: {x: .50000006, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -322,7 +255,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -332,21 +264,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .25000006, y: .5}
+      localSize: {x: .500000119, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -355,7 +275,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -365,21 +284,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .426776707, y: .426776707}
+      localSize: {x: .853553414, y: .853553414}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -388,7 +295,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -398,21 +304,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .426776707, y: .426776707}
+      localSize: {x: .853553414, y: .853553414}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -421,7 +315,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -431,21 +324,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .25000006, y: .5}
+      localSize: {x: .500000119, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -454,7 +335,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -464,21 +344,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .24999997, y: .5}
+      localSize: {x: .50000006, y: 1}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -487,7 +355,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -497,21 +364,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .426776707, y: .426776707}
+      localSize: {x: .853553414, y: .853553414}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -520,7 +375,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -530,21 +384,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -553,7 +395,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -563,21 +404,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -586,7 +415,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -596,21 +424,9 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
@@ -619,7 +435,6 @@ MonoBehaviour:
     _edges: []
     _smoothingGroup: 0
     _uv:
-      projectionAxis: 3
       useWorldSpace: 0
       flipU: 0
       flipV: 0
@@ -629,25 +444,12 @@ MonoBehaviour:
       offset: {x: 0, y: 0}
       rotation: 0
       justify: 5
-      projectionValue: {x: 0, y: 0, z: 0}
+      localPivot: {x: .5, y: .25}
+      localSize: {x: 1, y: .5}
     _mat: {fileID: 2100000, guid: 5e1f0148831774c428e0a336127838e1, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: 0
     textureGroup: 0
-  _shape: 6
   _sharedIndices:
   - array: 0000000019000000200000003100000034000000
   - array: 01000000180000001d0000003900000040000000
@@ -667,7 +469,6 @@ MonoBehaviour:
   - array: 15000000280000002d0000003c00000045000000
   - array: 160000001c000000250000004100000044000000
   - array: 1700000021000000240000002900000030000000
-  _uniqueIndices: 00000000010000000200000003000000040000000500000007000000090000000a0000000b0000000d0000000f000000100000001100000013000000150000001600000017000000
   _vertices:
   - {x: 0, y: .5, z: -.5}
   - {x: .5, y: 0, z: -.5}
@@ -741,15 +542,91 @@ MonoBehaviour:
   - {x: -.5, y: 0, z: .5}
   - {x: .5, y: -.5, z: .5}
   - {x: -.5, y: -.5, z: .5}
+  _uv:
+  - {x: .5, y: .5}
+  - {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: .707106829, y: 0}
+  - {x: 0, y: 0}
+  - {x: .707106829, y: 1}
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: .707106829, y: 1}
+  - {x: 0, y: 1}
+  - {x: .707106829, y: 1}
+  - {x: 0, y: 0}
+  - {x: .707106829, y: 1}
+  - {x: .707106829, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 1}
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  - {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: .5, y: .5}
+  - {x: .5, y: 0}
+  - {x: 0, y: .5}
+  - {x: .853553414, y: .353553414}
+  - {x: .353553414, y: .853553414}
+  - {x: .5, y: 1}
+  - {x: .5, y: 0}
+  - {x: -5.96046448e-08, y: 1}
+  - {x: -5.96046448e-08, y: 0}
+  - {x: 2.98023224e-08, y: 0}
+  - {x: 2.98023224e-08, y: 1}
+  - {x: .500000119, y: 0}
+  - {x: .500000119, y: 1}
+  - {x: .853553414, y: .5}
+  - {x: .353553414, y: 0}
+  - {x: .5, y: .853553414}
+  - {x: 0, y: .353553414}
+  - {x: .5, y: 0}
+  - {x: 0, y: .5}
+  - {x: .853553414, y: .353553414}
+  - {x: .353553414, y: .853553414}
+  - {x: 2.98023224e-08, y: 0}
+  - {x: 2.98023224e-08, y: 1}
+  - {x: .500000119, y: 0}
+  - {x: .500000119, y: 1}
+  - {x: .5, y: 1}
+  - {x: .5, y: 0}
+  - {x: -5.96046448e-08, y: 1}
+  - {x: -5.96046448e-08, y: 0}
+  - {x: .853553414, y: .5}
+  - {x: .353553414, y: 0}
+  - {x: .5, y: .853553414}
+  - {x: 0, y: .353553414}
+  - {x: 0, y: .5}
+  - {x: 1, y: .5}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: .5}
+  - {x: 1, y: .5}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: .5}
+  - {x: 1, y: .5}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: .5}
+  - {x: 1, y: .5}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
   _sharedIndicesUV: []
+  _submeshTriangleCount: 60000000
+  _colors: []
   angleError: 8
   areaError: 15
   hardAngle: 88
   packMargin: 20
-  m_selectedFaces: []
+  m_selectedFaces: 
   m_SelectedEdges: []
   m_selectedTriangles: 
   previousTransform: {x: 0, y: 0, z: 0}
+  userCollisions: 0
   isSelectable: 1
   _name: Prism
 --- !u!1001 &100100000
@@ -763,4 +640,3 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 100000}
   m_IsPrefabParent: 1
-  m_IsExploded: 1

@@ -21,6 +21,7 @@ public class TakeScreenshotInEditor : ScriptableObject
 	{
 		Camera cam = (Camera)SceneView.lastActiveSceneView.camera;
 		cam = Camera.current;
+		
 		if(cam == null)
 		{
 			Debug.Log("Cam is null");
