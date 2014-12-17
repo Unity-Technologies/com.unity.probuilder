@@ -1597,8 +1597,6 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
-				OnBeginVertexMovement();
-
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -1611,6 +1609,8 @@ public class pb_Editor : EditorWindow
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+
+				OnBeginVertexMovement();
 			}
 
 			#if UNITY_4_3
@@ -1650,8 +1650,6 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
-				OnBeginVertexMovement();
-
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -1664,6 +1662,8 @@ public class pb_Editor : EditorWindow
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+
+				OnBeginVertexMovement();
 
 				// cache vertex positions for scaling later
 				vertexOrigins = new Vector3[selection.Length][];
@@ -1765,8 +1765,6 @@ public class pb_Editor : EditorWindow
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
-				OnBeginVertexMovement();
-
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
@@ -1779,6 +1777,8 @@ public class pb_Editor : EditorWindow
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+
+				OnBeginVertexMovement();
 
 				// cache vertex positions for modifying later
 				vertexOrigins = new Vector3[selection.Length][];

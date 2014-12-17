@@ -252,9 +252,6 @@ namespace ProBuilder2.MeshOperations
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
 
-		pb.ToMesh();
-		pb.Refresh();
-
 		return true;
 	}
 
