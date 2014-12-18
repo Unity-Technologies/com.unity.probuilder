@@ -113,6 +113,8 @@ public class pb_Menu_Commands : Editor
 				pb.CenterPivot(pb.SelectedTriangles);
 			else
 				pb.CenterPivot(null);
+	
+			pb.GenerateUV2();
 		}
 		
 		SceneView.RepaintAll();
@@ -152,68 +154,87 @@ public class pb_Menu_Commands : Editor
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
 	}
 
-	// /**
-	//  * Union operation between two ProBuilder objects.
-	//  */
-	// public static void MenuUnion(pb_Object[] selection)
-	// {
-	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+	/**
+	 * Union operation between two ProBuilder objects.
+	 */
+	public static void MenuUnion(pb_Object lhs, pb_Object rhs)
+	{
+		pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-	// 	if(sel.Length < 2)
-	// 	{
-	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-	// 		return;
-	// 	}
+		pbUndo.RecordObjects(sel, "Union");
 
-	// 	Mesh c = Parabox.CSG.CSG.Union(sel[0].gameObject, sel[1].gameObject);
+		if(sel.Length < 2)
+		{
+			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+			return;
+		}
 
-	// 	GameObject go = new GameObject();
+		Mesh c = Parabox.CSG.CSG.Union(lhs.gameObject, rhs.gameObject);
 
-	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
+		GameObject go = new GameObject();
 
-	// 	pb_Editor_Utility.ShowNotification("Union");
-	// }
+		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+		go.AddComponent<MeshFilter>().sharedMesh = c;
 
-	// public static void MenuSubtract(pb_Object[] selection)
-	// {
-	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		Selection.objects = new Object[] { go };
 
-	// 	if(sel.Length < 2)
-	// 	{
-	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-	// 		return;
-	// 	}
+		pb_Editor_Utility.ShowNotification("Union");
+	}
 
-	// 	Mesh c = Parabox.CSG.CSG.Subtract(sel[1].gameObject, sel[0].gameObject);
+	/**
+	 * Subtract boolean operation between two pb_Objects.
+	 */
+	public static void MenuSubtract(pb_Object lhs, pb_Object rhs)
+	{
+		pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-	// 	GameObject go = new GameObject();
+		pbUndo.RecordObjects(sel, "Subtract");
 
-	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
+		if(sel.Length < 2)
+		{
+			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+			return;
+		}
 
-	// 	pb_Editor_Utility.ShowNotification("Subtract");
-	// }
+		Mesh c = Parabox.CSG.CSG.Subtract(lhs.gameObject, rhs.gameObject);
 
-	// public static void MenuIntersect(pb_Object[] selection)
-	// {
-	// 	pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		GameObject go = new GameObject();
 
-	// 	if(sel.Length < 2)
-	// 	{
-	// 		pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-	// 		return;
-	// 	}
+		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+		go.AddComponent<MeshFilter>().sharedMesh = c;
 
-	// 	Mesh c = Parabox.CSG.CSG.Intersect(sel[0].gameObject, sel[1].gameObject);
+		Selection.objects = new Object[] { go };
 
-	// 	GameObject go = new GameObject();
+		pb_Editor_Utility.ShowNotification("Subtract");
+	}
+	
+	/**
+	 * Intersect boolean operation between two pb_Objects.
+	 */
+	public static void MenuIntersect(pb_Object lhs, pb_Object rhs)
+	{
+		pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-	// 	go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-	// 	go.AddComponent<MeshFilter>().sharedMesh = c;
+		pbUndo.RecordObjects(sel, "Intersect");
 
-	// 	pb_Editor_Utility.ShowNotification("Intersect");
-	// }
+		if(sel.Length < 2)
+		{
+			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+			return;
+		}
+
+		Mesh c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
+
+		GameObject go = new GameObject();
+
+		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+		go.AddComponent<MeshFilter>().sharedMesh = c;
+
+		Selection.objects = new Object[] { go };
+
+		pb_Editor_Utility.ShowNotification("Intersect");
+	}
+
 
 #endregion
 
@@ -1163,6 +1184,7 @@ public class pb_Menu_Commands : Editor
 		
 		foreach(pb_Object pb in selection)
 		{
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}

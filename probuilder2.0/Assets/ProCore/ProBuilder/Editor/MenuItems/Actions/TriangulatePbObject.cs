@@ -27,6 +27,7 @@ public class TriangulatePbObject : Editor
 		{
 			Triangulate(selection[i]);
 
+			selection[i].ToMesh();
 			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
@@ -37,6 +38,7 @@ public class TriangulatePbObject : Editor
 	static void Triangulate(pb_Object pb)
 	{
 		Vector3[] 	v = pb.vertices;
+		Color[] 	c = pb.colors;
 		Vector2[] 	u = pb.msh.uv;
 
 		int triangleCount = pb.msh.triangles.Length;
@@ -50,6 +52,7 @@ public class TriangulatePbObject : Editor
 		int faceCount = vertexCount / 3;
 
 		Vector3[]	tri_vertices = new Vector3[vertexCount];
+		Color[] 	tri_colors = new Color[vertexCount];
 		Vector2[]	tri_uvs = new Vector2[vertexCount];
 		pb_Face[]	tri_faces = new pb_Face[faceCount];
 
@@ -63,6 +66,10 @@ public class TriangulatePbObject : Editor
 				tri_vertices[n+0] = v[indices[i+0]];
 				tri_vertices[n+1] = v[indices[i+1]];
 				tri_vertices[n+2] = v[indices[i+2]];
+
+				tri_colors[n+0] = c[indices[i+0]];
+				tri_colors[n+1] = c[indices[i+1]];
+				tri_colors[n+2] = c[indices[i+2]];
 
 				tri_uvs[n+0] = u[indices[i+0]];
 				tri_uvs[n+1] = u[indices[i+1]];
@@ -82,6 +89,7 @@ public class TriangulatePbObject : Editor
 		}
 
 		pb.SetVertices(tri_vertices);
+		pb.SetColors(tri_colors);
 		pb.SetUV(tri_uvs);
 		pb.SetFaces(tri_faces);
 

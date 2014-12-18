@@ -3222,10 +3222,8 @@ public class pb_Editor : EditorWindow
 
 					if( !pb.Verify() )
 					{
-						profiler.BeginSample("ToMesh::Prefab");
-							pb.ToMesh();
-						profiler.EndSample();
-						
+						pb.Refresh();
+										
 						profiler.BeginSample("GenerateUV2::Prefab");
 							pb.GenerateUV2();
 						profiler.EndSample();
@@ -3392,12 +3390,7 @@ public class pb_Editor : EditorWindow
 			 * because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
 			 */
 			if( !pb.Verify() && pb.SelectedFaces.Length > 0 )
-				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
-
-			pb.ToMesh();
-			pb.Refresh();
-			pb.GenerateUV2();
-		
+				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );	
 		}
 
 		UpdateSelection(true);

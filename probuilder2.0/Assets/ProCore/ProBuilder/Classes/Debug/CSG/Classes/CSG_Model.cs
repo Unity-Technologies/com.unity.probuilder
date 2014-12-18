@@ -24,9 +24,10 @@ namespace Parabox.CSG
 			Vector3[] v = m.vertices;
 			Vector3[] n = m.normals;
 			Vector2[] u = m.uv;
+			Color[] c = m.colors;
 
 			for(int i = 0; i < v.Length; i++)
-				vertices.Add( new CSG_Vertex(trans.TransformPoint(v[i]), trans.TransformDirection(n[i]), u[i]) );
+				vertices.Add( new CSG_Vertex(trans.TransformPoint(v[i]), trans.TransformDirection(n[i]), u[i], c[i]) );
 
 			indices = new List<int>(m.triangles);
 		}
@@ -83,16 +84,19 @@ namespace Parabox.CSG
 			Vector3[] v = new Vector3[vc];
 			Vector3[] n = new Vector3[vc];
 			Vector2[] u = new Vector2[vc];
+			Color[] c = new Color[vc];
 
 			for(int i = 0; i < vc; i++)
 			{
 				v[i] = this.vertices[i].position;
 				n[i] = this.vertices[i].normal;
 				u[i] = this.vertices[i].uv;
+				c[i] = this.vertices[i].color;
 			}
 
 			m.vertices = v;
 			m.normals = n;
+			m.colors = c;
 			m.uv = u;
 			m.triangles = this.indices.ToArray();
 

@@ -15,14 +15,14 @@ using ProBuilder2.MeshOperations;
  */
 public class pb_MergeFaces : Editor
 {
-	[MenuItem("Tools/ProBuilder/Geometry/Delete Edge", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
+	[MenuItem("Tools/ProBuilder/Geometry/Merge Faces", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
 	public static bool MenuVerifyDeleteEdge()
 	{
 		pb_Editor editor = pb_Editor.instance;
-		return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Edge && editor.selectedEdgeCount > 0;
+		return editor && editor.editLevel == EditLevel.Geometry && editor.selectedFaceCount > 0;
 	}
 
-	[MenuItem("Tools/ProBuilder/Geometry/Delete Edge", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
+	[MenuItem("Tools/ProBuilder/Geometry/Merge Faces", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
 	public static void MenuMergeFaces()
 	{
 		pbUndo.RecordObjects(Selection.transforms, "Merge Faces");
@@ -30,19 +30,20 @@ public class pb_MergeFaces : Editor
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 		{
 			if(pb.SelectedFaceCount > 1)
-			{
-				
-				MergeFaces(pb, pb.SelectedFaces);
+			{		
+				pb.SetSelectedFaces( new pb_Face[] { MergeFaces(pb, pb.SelectedFaces) } );
 			}
 		}
 
 		pb_Editor_Utility.ShowNotification("Merged Faces");
 
 		if(pb_Editor.instance)
+		{
 			pb_Editor.instance.UpdateSelection(true);
+		}
 	}
 
-	static void MergeFaces(pb_Object pb, pb_Face[] faces)
+	static pb_Face MergeFaces(pb_Object pb, pb_Face[] faces)
 	{
 		List<int> collectedIndices = new List<int>(faces[0].indices);
 		
@@ -94,5 +95,7 @@ public class pb_MergeFaces : Editor
 		pb.RemoveUnusedVertices();
 
 		pb.Refresh();
+
+		return mergedFace;
 	}
 }

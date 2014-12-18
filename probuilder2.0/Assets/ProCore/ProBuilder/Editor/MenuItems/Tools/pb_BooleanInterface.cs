@@ -32,6 +32,8 @@ public class pb_BooleanInterface : EditorWindow
 	Rect rhsRect = new Rect(0f, PAD, 0f, 0f);
 	Rect rhsPreviewRect = new Rect(0f, PAD + PREVIEW_INSET, 0f, 0f);
 
+	Rect swapOrderRect = new Rect(0f, 0f, 42f, 42f);
+
 	static GUIStyle previewBackground;
 	static GUIStyle unicodeIconStyle;
 
@@ -41,6 +43,7 @@ public class pb_BooleanInterface : EditorWindow
 	Editor lhsEditor, rhsEditor;
 
 	BooleanOp operation = BooleanOp.Intersection;
+	bool mouseClickedSwapRect = false;
 
 	int lowerControlsHeight = 32;
 
@@ -63,6 +66,7 @@ public class pb_BooleanInterface : EditorWindow
 		unicodeIconStyle = new GUIStyle();
 		unicodeIconStyle.fontSize = 64;
 		unicodeIconStyle.normal.textColor = Color.white;
+		unicodeIconStyle.alignment = TextAnchor.MiddleCenter;
 	}
 
 	void OnDisable()
@@ -74,15 +78,48 @@ public class pb_BooleanInterface : EditorWindow
 	}
 
 	void OnGUI()
-	{
-		DrawPreviewWells();
+	{	
+		Event e = Event.current;
 
-		if(lhs && rhs)
-			GUI.Label(new Rect(PAD, PAD + 2, Screen.width, 128), lhs.name + " Intersects " + rhs.name, EditorStyles.boldLabel);
+		// Since image wells eat mouse clicks, listen for a mouse up when hovering over 'reverse operation order' button
+		switch(e.type)
+		{
+			case EventType.MouseDown:
+					if(swapOrderRect.Contains(e.mousePosition))
+					{
+						mouseClickedSwapRect = true;
+						e.Use();
+					}
+				break;
+
+			case EventType.MouseUp:
+				if(mouseClickedSwapRect && swapOrderRect.Contains(Event.current.mousePosition))
+				{
+					ReverseOperationOrder();
+					e.Use();
+				}
+				mouseClickedSwapRect = false;
+				break;
+
+			case EventType.Ignore:
+				mouseClickedSwapRect = false;
+				break;
+		}
+
+		DrawPreviewWells();
 
 		if(ListenForDragAndDrop())
 		{
 			return;
+		}
+
+		swapOrderRect.x = (Screen.width/2f)-(swapOrderRect.width/2f);
+		swapOrderRect.y = PAD + previewHeight/2f - (swapOrderRect.width/2f);
+
+		// http://xahlee.info/comp/unicode_arrows.html
+		if(GUI.Button( swapOrderRect, ((char)8644).ToString(), unicodeIconStyle))
+		{
+			ReverseOperationOrder();
 		}
 
 		GUILayout.Space(previewHeight + PAD*2);
@@ -107,15 +144,32 @@ public class pb_BooleanInterface : EditorWindow
 
 		operation = (BooleanOp) EditorGUILayout.EnumPopup("Operation", operation);
 
-		// http://xahlee.info/comp/unicode_arrows.html
-		if(GUI.Button( new Rect( Screen.width - 64 - PAD, PAD, 64, 64), ((char)8644).ToString(), unicodeIconStyle ))
+		if(GUILayout.Button("Apply", GUILayout.MinHeight(32)))
 		{
-			GameObject tmp = lhs;
-			lhs = rhs;
-			rhs = tmp;
-			lhsEditor = null;
-			rhsEditor = null;
+			switch(operation)
+			{
+				case BooleanOp.Union:
+					pb_Menu_Commands.MenuUnion(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+					break;
+
+				case BooleanOp.Intersection:
+					pb_Menu_Commands.MenuIntersect(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+					break;
+
+				case BooleanOp.Subtraction:
+					pb_Menu_Commands.MenuSubtract(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+					break;
+			}
 		}
+	}
+
+	void ReverseOperationOrder()
+	{
+		GameObject tmp = lhs;
+		lhs = rhs;
+		rhs = tmp;
+		lhsEditor = null;
+		rhsEditor = null;
 	}
 
 	/**
@@ -177,6 +231,24 @@ public class pb_BooleanInterface : EditorWindow
 			GUI.color = Color.white;
 		}
 
+		// Show text summary
+		if(lhs && rhs)
+		{
+			switch(operation)
+			{
+			case BooleanOp.Intersection:
+				GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Intersects " + rhs.name, EditorStyles.boldLabel);
+				break;
+
+			case BooleanOp.Union:
+				GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Union " + rhs.name, EditorStyles.boldLabel);
+				break;
+
+			case BooleanOp.Subtraction:
+				GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Subtracts " + rhs.name, EditorStyles.boldLabel);
+				break;
+			}
+		}
 		// END PREVIEW WELLS
 	}
  

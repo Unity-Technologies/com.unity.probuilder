@@ -380,9 +380,11 @@ namespace ProBuilder2.MeshOperations
 	public static void DeleteVerticesWithIndices(this pb_Object pb, int[] distInd)
 	{
 		Vector3[] verts = pb.vertices;
+		Color[] cols = pb.colors;
 		Vector2[] uvs = pb.uv;
 
 		verts = verts.RemoveAt(distInd);
+		cols = cols.RemoveAt(distInd);
 		uvs = uvs.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces;
@@ -411,6 +413,7 @@ namespace ProBuilder2.MeshOperations
 		
 		pb.SetSharedIndices(si);
 		pb.SetVertices(verts);
+		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);

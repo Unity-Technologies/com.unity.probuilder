@@ -44,6 +44,7 @@ namespace ProBuilder2.MeshOperations
 		// the last bool param force disables snapping vertices
 		pb.TranslateVertices_World(pb.msh.triangles, dir, true);
 
+		pb.ToMesh();
 		pb.Refresh();
 	}
 
@@ -695,7 +696,115 @@ namespace ProBuilder2.MeshOperations
 	 }
 #endregion
 
-#region Faces
+#region Init
+
+	public static pb_Object CreatePbObjectWithTransform(Transform t, bool preserveFaces)
+	{
+		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
+
+		Vector3[] m_vertices = m.vertices;
+		Color[] m_colors = m.colors;
+		Vector2[] m_uvs = m.uv;
+
+		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
+		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
+		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
+		List<pb_Face> faces = new List<pb_Face>();
+
+		for(int n = 0; n < m.subMeshCount; n++)
+		{
+			int[] tris = m.GetTriangles(n);
+			for(int i = 0; i < tris.Length; i+=3)
+			{
+				int index = -1;
+				if(preserveFaces)
+				{
+					for(int j = 0; j < faces.Count; j++)
+					{
+						if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
+							faces[j].distinctIndices.Contains(tris[i+1]) ||
+							faces[j].distinctIndices.Contains(tris[i+2]))
+						{
+							index = j;
+							break;
+						}
+					}
+				}
+
+				if(index > -1 && preserveFaces)
+				{
+					int len = faces[index].indices.Length;
+					int[] arr = new int[len + 3];
+					System.Array.Copy(faces[index].indices, 0, arr, 0, len);
+					arr[len+0] = tris[i+0];
+					arr[len+1] = tris[i+1];
+					arr[len+2] = tris[i+2];
+					faces[index].SetIndices(arr);
+					faces[index].RebuildCaches();
+				}
+				else
+				{
+					int[] faceTris;
+
+					if(preserveFaces)
+					{
+						faceTris = new int[3]
+						{
+							tris[i+0],
+							tris[i+1],
+							tris[i+2]	
+						};
+					}
+					else
+					{
+						verts.Add(m_vertices[tris[i+0]]);
+						verts.Add(m_vertices[tris[i+1]]);
+						verts.Add(m_vertices[tris[i+2]]);
+
+						cols.Add(m_colors[tris[i+0]]);
+						cols.Add(m_colors[tris[i+1]]);
+						cols.Add(m_colors[tris[i+2]]);
+
+						uvs.Add(m_uvs[tris[i+0]]);
+						uvs.Add(m_uvs[tris[i+1]]);
+						uvs.Add(m_uvs[tris[i+2]]);
+
+						faceTris = new int[3] { i+0, i+1, i+2 };
+					}
+
+					faces.Add( 
+						new pb_Face(
+							faceTris,
+							t.GetComponent<MeshRenderer>().sharedMaterials[n],
+							new pb_UV(),
+							0,		// smoothing group
+							-1,		// texture group
+							-1,		// element group
+							true 	// manualUV 
+						));					
+				}
+			}
+		}
+
+		GameObject go = (GameObject)GameObject.Instantiate(t.gameObject);
+		go.GetComponent<MeshFilter>().sharedMesh = null;
+
+		pb_Object pb = go.AddComponent<pb_Object>();
+		pb.GeometryWithVerticesFaces(verts.ToArray(), faces.ToArray());
+
+		pb.SetColors(cols.ToArray());
+		pb.SetUV(uvs.ToArray());
+
+		pb.SetName(t.name);
+			
+		go.transform.position = t.position;
+		go.transform.localRotation = t.localRotation;
+		go.transform.localScale = t.localScale;
+
+		pb.CenterPivot(null);
+
+		return pb;
+	}
 
 	/**
 	 *	Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and 

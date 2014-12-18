@@ -2340,7 +2340,6 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	static void ApplyUVs(pb_Object pb, Vector2[] uvs, int channel)
 	{
-		Debug.Log("ApplyUVs");
 		switch(channel)
 		{
 			case 0:
@@ -2745,6 +2744,9 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(selection[i].SelectedFaces.Length > 0)
 			{
+				selection[i].ToMesh();	// Remove UV2 modifications
+				selection[i].Refresh();
+
 				pbUVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
 
 				pbUVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
@@ -2752,6 +2754,8 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int f in selection[i].SelectedFaceIndices)
 					selection[i].faces[f].manualUV = true;
 
+				selection[i].GenerateUV2();
+				
 				projected++;
 			}
 		}
