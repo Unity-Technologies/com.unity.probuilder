@@ -2895,11 +2895,12 @@ public class pb_UV_Editor : EditorWindow
 		pbUndo.RecordObjects(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
 		{
+			selection[i].ToMesh();
+			selection[i].Refresh();
+
 			selection[i].SewUVs(distinct_indices[i], .03f);
 			RefreshElementGroups(selection[i]);
 
-			selection[i].ToMesh();
-			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
 		
@@ -2919,8 +2920,13 @@ public class pb_UV_Editor : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
+			pb.ToMesh();
+			pb.Refresh();
+			
 			pb.SplitUVs(pb.SelectedTriangles);
 			RefreshElementGroups(pb);
+
+			pb.GenerateUV2();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -2938,9 +2944,11 @@ public class pb_UV_Editor : EditorWindow
 
 		Vector2 center = pb_Handle_Utility.GUIToUVPoint( handlePosition_canvas, uvGridSize );
 
-
 		for(int i = 0; i < selection.Length; i++)
 		{
+			selection[i].ToMesh();
+			selection[i].Refresh();
+
 			selection[i].SplitUVs(selection[i].SelectedTriangles);
 
 			Vector2[] uv = channel == 0 ? selection[i].uv : selection[i].msh.uv2;
@@ -2951,6 +2959,8 @@ public class pb_UV_Editor : EditorWindow
 			ApplyUVs(selection[i], uv, channel);
 			
 			RefreshElementGroups(selection[i]);
+
+			selection[i].GenerateUV2();
 		}
 
 		SetSelectedUVsWithSceneView();

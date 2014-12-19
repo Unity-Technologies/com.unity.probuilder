@@ -223,6 +223,12 @@ public class pb_Menu_Commands : Editor
 			return;
 		}
 
+		if(!lhs || !rhs)
+		{
+			Debug.Log("something is null");
+			return;
+		}
+
 		Mesh c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
 
 		GameObject go = new GameObject();

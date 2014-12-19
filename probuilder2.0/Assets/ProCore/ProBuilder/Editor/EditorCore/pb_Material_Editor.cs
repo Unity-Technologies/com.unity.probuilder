@@ -292,6 +292,7 @@ public class pb_Material_Editor : EditorWindow
 		{
 			pb_Face[] faces = pb.SelectedFaces;
 			pb.SetFaceMaterial(faces == null || faces.Length < 1 ? pb.faces : faces, mat);
+
 			OnFaceChanged(pb);
 		}
 
@@ -301,14 +302,18 @@ public class pb_Material_Editor : EditorWindow
 
 	private static void OnFaceChanged( pb_Object pb )
 	{
-		StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
+		pb.ToMesh();
+		pb.Refresh();
+		pb.GenerateUV2();
 		
-		// if nodraw not found, and entity type should be batching static
-		if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
-		{
-			flags = flags | StaticEditorFlags.BatchingStatic;
-			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-		}
+		// StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
+		
+		// // if nodraw not found, and entity type should be batching static
+		// if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
+		// {
+		// 	flags = flags | StaticEditorFlags.BatchingStatic;
+		// 	GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
+		// }
 	}
 }
 #endif

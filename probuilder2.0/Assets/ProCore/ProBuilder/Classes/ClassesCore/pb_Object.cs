@@ -945,15 +945,12 @@ public class pb_Object : MonoBehaviour
 	{
 		quad.SetMaterial(mat);
 		RefreshUV(new pb_Face[]{quad});
-		ToMesh();
 	}
 
 	public void SetFaceMaterial(pb_Face[] quad, Material mat)
 	{
 		for(int i = 0; i < quad.Length; i++)
 			quad[i].SetMaterial(mat);
-		
-		ToMesh();
 	}
 
 	/**

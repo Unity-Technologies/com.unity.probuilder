@@ -56,6 +56,7 @@ public class pb_DebugWindow : EditorWindow
 	{
 		public bool showObject;
 		public bool showVertices;
+		public bool showColors;
 		public bool showUv;
 		public bool showUv2;
 		public bool showAutoUV;
@@ -64,6 +65,7 @@ public class pb_DebugWindow : EditorWindow
 		{
 			this.showObject = true;
 			this.showVertices = false;
+			this.showColors = false;
 			this.showUv = false;
 			this.showUv2 = false;
 			this.showAutoUV = false;
@@ -143,6 +145,22 @@ public class pb_DebugWindow : EditorWindow
 							}
 						}
 					GUILayout.EndHorizontal();
+					
+					/* Colors */			
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showColors = EditorGUILayout.Foldout(pv.showColors, "colors: " + (pb.colors != null ? pb.colors.Length : 0).ToString());
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showColors)
+							{
+								GUILayout.Label("" + pb.colors.ToFormattedString("\n"));						
+							}
+						GUILayout.EndHorizontal();
+					}
 					
 					/* UV  */			
 					GUILayout.BeginHorizontal();
