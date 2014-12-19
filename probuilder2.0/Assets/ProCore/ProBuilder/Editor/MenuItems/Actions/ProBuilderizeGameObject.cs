@@ -34,7 +34,7 @@ public class ProBuilderizeMesh : Editor
 		{
 			if(t.GetComponent<MeshFilter>())
 			{
-				pb_Object pb = ProBuilderize(t, preserveFaces);
+				ProBuilderize(t, preserveFaces);
 
 			}
 		}

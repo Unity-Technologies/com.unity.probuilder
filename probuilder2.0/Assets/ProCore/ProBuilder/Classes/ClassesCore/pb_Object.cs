@@ -1278,6 +1278,14 @@ public class pb_Object : MonoBehaviour
 
 			return false;
 		}
+		
+		int meshNo;
+		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
+		if(meshNo != id)
+		{
+			MakeUnique();
+			return false;
+		}
 
 		return msh.uv2 != null;
 
@@ -1311,14 +1319,6 @@ public class pb_Object : MonoBehaviour
 		// 			break;
 		// 		}
 		// 	}
-		// }
-
-		// int meshNo;
-		// int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
-		// if(meshNo != id)
-		// {
-		// 	MakeUnique();
-		// 	return false;
 		// }
 
 		// return msh.uv2 != null && msh.uv2.Length == vertexCount;
