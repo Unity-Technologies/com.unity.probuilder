@@ -50,6 +50,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Model.cs">
+      <Link>CSG_Model.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Node.cs">
+      <Link>CSG_Node.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Plane.cs">
+      <Link>CSG_Plane.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Polygon.cs">
+      <Link>CSG_Polygon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Vertex.cs">
+      <Link>CSG_Vertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\CSG.cs">
+      <Link>CSG.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbAppendDelete.cs">
       <Link>pbAppendDelete.cs</Link>
     </Compile>

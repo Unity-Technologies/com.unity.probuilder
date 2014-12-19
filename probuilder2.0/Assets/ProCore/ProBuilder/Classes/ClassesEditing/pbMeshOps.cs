@@ -89,10 +89,6 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance, out List<pb_Face> appendedFaces)
 	{
-		pb_Profiler profiler = new pb_Profiler();
-
-		profiler.BeginSample("Extrude");
-
 		appendedFaces = new List<pb_Face>();
 
 		if(faces == null || faces.Length < 1)
@@ -263,9 +259,6 @@ namespace ProBuilder2.MeshOperations
 
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
-
-		profiler.EndSample();
-		Debug.Log( profiler.ToString() );
 
 		return true;
 	}

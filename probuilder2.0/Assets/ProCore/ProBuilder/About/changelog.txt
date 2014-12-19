@@ -1,10 +1,20 @@
--- ProBuilder 2.3.4b0 (r2986) -
+-- ProBuilder 2.3.4b0 (r2996) -
 
 # Features
 	- Unity 5 support.
+	- New 'Merge Faces' geometry action combines selected faces to a single face.
 
 # Bug Fixes
 	- Fix crash when a face material is null (defaults to Unity Default-Diffuse).
+	- Fix incorrect results when extruding multiple faces sharing a single center vertex (usually seen on the top of a cylinder).
+	- Save vertex colors when ProBuilder-izing a mesh.
+
+# Changes
+	- Vertex Colors button in Editor now opens the painter tool.
+	- Remove 'NoDraw' feature (necessary for Unity 5 compatiblity).
+
+# Beta
+	- Rudimentary Boolean tool added - this is very early in development, and the resulting geometry will not be PB compatible.  Wouldn't recommend using this at the moment.
 
 -- ProBuilder 2.3.3f1 (r2970) -
 

@@ -632,8 +632,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
-		Debug.Log("ToMesh");
-
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
 		if(msh != null)
@@ -733,8 +731,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void Refresh()
 	{	
-		Debug.Log("Refresh");
-
 		// Mesh
 		RefreshNormals();
 

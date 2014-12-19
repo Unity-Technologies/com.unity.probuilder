@@ -17,7 +17,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using Parabox.Debug;
 using ProBuilder2.Common;
 
 namespace Parabox.CSG
