@@ -43,7 +43,7 @@ public class pb_Object : MonoBehaviour
 
 		if(msh == null)
 		{
-			Verify();
+			ReconstructMesh();
 		}
 		else
 		{
@@ -1286,47 +1286,49 @@ public class pb_Object : MonoBehaviour
 			return false;
 		}
 
-		// check to make sure that faces and vertex data from mesh match
-		// pb_Object cached values.  Can change when applying/reverting
-		// prefabs
-		if(!msh.vertices.IsEqual(_vertices))
-		{
-			ReconstructMesh();
-			return false;
-		}	
+		return msh.uv2 != null;
 
-		// upgrade path things
-		if(_uv == null || !msh.uv.IsEqual(_uv))	
-			RefreshUV();
+		// // check to make sure that faces and vertex data from mesh match
+		// // pb_Object cached values.  Can change when applying/reverting
+		// // prefabs
+		// if(!msh.vertices.IsEqual(_vertices))
+		// {
+		// 	ReconstructMesh();
+		// 	return false;
+		// }	
 
-		/**
-		 * If the submeshes don't match, rebuild
-		 */
-		if(_submeshTriangleCount == null || _submeshTriangleCount.Length != msh.subMeshCount)
-		{
-			ToMesh();
-		}
-		else
-		{
-			for(int i = 0; i < _submeshTriangleCount.Length; i++)
-			{
-				if( _submeshTriangleCount[i] != msh.GetTriangles(i).Length)
-				{
-					ToMesh();
-					break;
-				}
-			}
-		}
+		// // upgrade path things
+		// if(_uv == null || !msh.uv.IsEqual(_uv))	
+		// 	RefreshUV();
 
-		int meshNo;
-		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
-		if(meshNo != id)
-		{
-			MakeUnique();
-			return false;
-		}
+		// /**
+		//  * If the submeshes don't match, rebuild
+		//  */
+		// if(_submeshTriangleCount == null || _submeshTriangleCount.Length != msh.subMeshCount)
+		// {
+		// 	ReconstructMesh();
+		// }
+		// else
+		// {
+		// 	for(int i = 0; i < _submeshTriangleCount.Length; i++)
+		// 	{
+		// 		if( _submeshTriangleCount[i] != msh.GetTriangles(i).Length)
+		// 		{
+		// 			ReconstructMesh();
+		// 			break;
+		// 		}
+		// 	}
+		// }
 
-		return msh.uv2 != null && msh.uv2.Length == vertexCount;
+		// int meshNo;
+		// int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
+		// if(meshNo != id)
+		// {
+		// 	MakeUnique();
+		// 	return false;
+		// }
+
+		// return msh.uv2 != null && msh.uv2.Length == vertexCount;
 	}
 #endregion
 }

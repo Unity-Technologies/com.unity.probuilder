@@ -248,7 +248,13 @@ public class pb_Menu_Commands : Editor
 		pbUndo.RecordObjects(selected, "Flip Face Normals.");
 
 		foreach(pb_Object pb in selected)
+		{
 			pb.ReverseWindingOrder(pb.SelectedFaces.Length < 1 ? pb.faces : pb.SelectedFaces);
+
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
+		}
 
 		if(selected.Length > 0)
 			pb_Editor_Utility.ShowNotification("Flip Normals");
@@ -686,6 +692,8 @@ public class pb_Menu_Commands : Editor
 		foreach(pb_Object pb in selection)
 		{
 			pb.DeleteFaces(pb.SelectedFaces);
+
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
@@ -736,6 +744,7 @@ public class pb_Menu_Commands : Editor
 			foreach(pb_Face face in pb.SelectedFaces)
 				pb.DetachFace(face);
 
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 			
@@ -787,7 +796,9 @@ public class pb_Menu_Commands : Editor
 			pb.DeleteFaces(primary);
 			copy.DeleteFaces(inverse);
 
+			pb.ToMesh();
 			pb.Refresh();
+			copy.ToMesh();
 			copy.Refresh();
 
 			pb.GenerateUV2();
@@ -811,6 +822,42 @@ public class pb_Menu_Commands : Editor
 	}
 
 	#endif
+#endregion
+
+#region Face / Triangles
+
+	public static void MenuMergeFaces(pb_Object[] selection)
+	{
+		pbUndo.RecordObjects(selection, "Merge Faces");
+
+		int success = 0;
+
+		foreach(pb_Object pb in selection)
+		{
+			if(pb.SelectedFaceCount > 1)
+			{
+				success += pb.SelectedFaceCount;
+
+				pb_Face face = pb.MergeFaces(pb.SelectedFaces);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.GenerateUV2();
+
+				pb.SetSelectedFaces( new pb_Face[] { face } );
+			}
+		}
+
+		if(success > 0)
+		{
+			pb_Editor_Utility.ShowNotification("Merged " + success + " Faces");
+		}
+
+		if(editor)
+		{
+			editor.UpdateSelection();
+		}
+	}
 #endregion
 
 #region Vertex Operations
@@ -842,6 +889,7 @@ public class pb_Menu_Commands : Editor
 					pb.SetSelectedTriangles(new int[] { newIndex });
 				}
 				
+				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 			}
@@ -992,6 +1040,7 @@ public class pb_Menu_Commands : Editor
 			newTriSelection.AddRange(tris);
 			pb.SetSelectedTriangles(newTriSelection.ToArray());
 			
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
@@ -1081,6 +1130,8 @@ public class pb_Menu_Commands : Editor
 			{
 				success += pb.SelectedFaces.Length;
 				pb.SetSelectedFaces(faces);
+
+				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 			}
@@ -1117,6 +1168,7 @@ public class pb_Menu_Commands : Editor
 			{
 				pb.SetSelectedEdges(edges);
 
+				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 				
@@ -1216,6 +1268,7 @@ public class pb_Menu_Commands : Editor
 			if( pb.ConnectEdges( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
 			{
 				pb.SetSelectedEdges(edges);
+				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 				success++;

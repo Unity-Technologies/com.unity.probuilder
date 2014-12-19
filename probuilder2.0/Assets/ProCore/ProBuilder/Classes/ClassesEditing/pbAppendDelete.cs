@@ -127,8 +127,6 @@ public static class pbAppendDelete
 		pb.SetUV(_uv.ToArray());
 		pb.SetFaces(_faces.ToArray());
 
-		pb.ToMesh();
-
 		return new_Faces;
 	}
 #endregion
@@ -182,8 +180,6 @@ public static class pbAppendDelete
 
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();
-		
-		pb.ToMesh();
 	}
 
 	/**
@@ -240,8 +236,6 @@ public static class pbAppendDelete
 
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();
-		
-		pb.ToMesh();
 	}
 
 	/**
@@ -297,7 +291,6 @@ public static class pbAppendDelete
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();
 		
-		pb.ToMesh();
 	}
 #endregion
 }

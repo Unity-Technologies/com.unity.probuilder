@@ -139,7 +139,7 @@ public class pb_Editor : EditorWindow
 		InitGUI();
 
 		// checks for duplicate meshes created while probuilder was not open
-		SceneWideDuplicateCheck();
+		SceneWideNullCheck();
 
 		show_Detail 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail);
 		show_Mover 		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover);
@@ -357,7 +357,9 @@ public class pb_Editor : EditorWindow
 			#endif
 
 			if(GUILayout.Button(new GUIContent("Vertex Colors", "Provides an interface to set vertex colors.  Note that your shader must support vertex colors in order for changes to be visible."), EditorStyles.miniButton))	
-				EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
+				pb_VertexColor_Editor.Init();
+
+			// EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
 
 			#if !PROTOTYPE
 			if(GUILayout.Button("Smoothing", EditorStyles.miniButton))
@@ -567,10 +569,15 @@ public class pb_Editor : EditorWindow
 					if(GUILayout.Button("Detach", EditorStyles.miniButton))
 						pb_Menu_Commands.MenuDetachFacesContext(selection);
 
+					GUI.enabled = selectedFaceCount > 1;
+					if(GUILayout.Button("Merge Faces", EditorStyles.miniButton))
+						pb_Menu_Commands.MenuMergeFaces(selection);
+
 					switch(selectionMode)
 					{
 						case SelectMode.Face:
 
+							GUI.enabled = selectedFaceCount > 0;
 							if(GUILayout.Button("Subdiv Face", EditorStyles.miniButton))
 								pb_Menu_Commands.MenuSubdivideFace(selection);
 							break;
@@ -3191,6 +3198,9 @@ public class pb_Editor : EditorWindow
 		Internal_UpdateSelectionFast();
 	}
 
+	/**
+	 * Used to catch prefab modifications that otherwise wouldn't be registered on the usual 'Awake' verify.
+	 */
 	private void OnHierarchyChange()
 	{
 		#if PB_DEBUG
@@ -3201,15 +3211,7 @@ public class pb_Editor : EditorWindow
 
 		if(!EditorApplication.isPlaying && !movingVertices)
 		{
-			// don't delete, dummy!
-			#if PB_DEBUG
-			profiler.BeginSample("FindObjectsOfType");
-			Object[] objs = FindObjectsOfType(typeof(pb_Object));
-			profiler.EndSample();
-			foreach(pb_Object pb in objs)
-			#else
 			foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-			#endif
 			{
 				/**
 				 * If it's a prefab instance, reconstruct submesh structure.
@@ -3217,40 +3219,16 @@ public class pb_Editor : EditorWindow
 				// bool exists = System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter);
 				// if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance && exists )
 
-				#if PB_DEBUG
-					profiler.BeginSample("prefab::Verify()");
-
-					if( !pb.Verify() )
-					{
-						pb.Refresh();
-										
-						profiler.BeginSample("GenerateUV2::Prefab");
-							pb.GenerateUV2();
-						profiler.EndSample();
-					}
-
-					profiler.EndSample();
-				#else
-					if( !pb.Verify() )
-					{
-						pb.ToMesh();
-						pb.GenerateUV2();
-					}
-				#endif
+				pb.ToMesh();
+				pb.Refresh();
+				pb.GenerateUV2();
 			}
 		}
 
 		if(prefabModified)
 		{
-			#if PB_DEBUG
-			profiler.BeginSample("UpdateSelection");
-			#endif
 			UpdateSelection(true);
 			SceneView.RepaintAll();
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 		}
 
 		#if PB_DEBUG
@@ -3361,7 +3339,7 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
-	void SceneWideDuplicateCheck()
+	void SceneWideNullCheck()
 	{
 		pb_Object[] allPBObjects = FindObjectsOfType(typeof(pb_Object)) as pb_Object[];
 		foreach(pb_Object pb in allPBObjects)
@@ -3389,7 +3367,11 @@ public class pb_Editor : EditorWindow
 			/**
 			 * because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
 			 */
-			if( !pb.Verify() && pb.SelectedFaces.Length > 0 )
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
+
+			if( pb.SelectedFaces.Length > 0 )
 				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );	
 		}
 

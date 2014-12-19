@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
 
+#if PB_DEBUG
+using Parabox.Debug;
+#endif
 
 namespace ProBuilder2.MeshOperations
 {
@@ -86,6 +89,10 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance, out List<pb_Face> appendedFaces)
 	{
+		pb_Profiler profiler = new pb_Profiler();
+
+		profiler.BeginSample("Extrude");
+
 		appendedFaces = new List<pb_Face>();
 
 		if(faces == null || faces.Length < 1)
@@ -94,7 +101,6 @@ namespace ProBuilder2.MeshOperations
 		pb_IntArray[] sharedIndices = pb.GetSharedIndices();
 
 		Vector3[] localVerts = pb.vertices;
-		Vector3[] oNormals = pb.msh.normals;
 
 		pb_Edge[] perimeterEdges = pb.GetPerimeterEdges(faces);
 
@@ -135,8 +141,10 @@ namespace ProBuilder2.MeshOperations
 			// don't bother getting vertex normals if not auto-extruding
 			if(extrudeDistance > Mathf.Epsilon)
 			{
-				xnorm = Norm( edge.x, sharedIndices, allEdgeIndices, oNormals );
-				ynorm = Norm( edge.y, sharedIndices, allEdgeIndices, oNormals );
+				xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
+				ynorm = xnorm;
+				// xnorm = Norm( edge.x, sharedIndices, allEdgeIndices, oNormals );
+				// ynorm = Norm( edge.y, sharedIndices, allEdgeIndices, oNormals );
 			}
 
 			int x_sharedIndex = sharedIndices.IndexOf(edge.x);
@@ -236,9 +244,12 @@ namespace ProBuilder2.MeshOperations
 		// checking the normal averages
 		foreach(pb_Face f in faces)
 		{
+			Vector3 norm = pb_Math.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
+
 			foreach(int ind in f.distinctIndices)
 			{
-				Vector3 norm = Norm( ind, si, allEdgeIndices, oNormals );
+				// Vector3 norm = Norm( ind, si, allEdgeIndices, oNormals );
+
 				localVerts[ind] += norm.normalized * extrudeDistance;
 			}
 		}
@@ -252,6 +263,9 @@ namespace ProBuilder2.MeshOperations
 
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
+
+		profiler.EndSample();
+		Debug.Log( profiler.ToString() );
 
 		return true;
 	}
@@ -698,6 +712,9 @@ namespace ProBuilder2.MeshOperations
 
 #region Init
 
+	/**
+	* "ProBuilder-ize function"
+	*/
 	public static pb_Object CreatePbObjectWithTransform(Transform t, bool preserveFaces)
 	{
 		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
@@ -804,129 +821,6 @@ namespace ProBuilder2.MeshOperations
 		pb.CenterPivot(null);
 
 		return pb;
-	}
-
-	/**
-	 *	Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and 
-	 *	tris with indices that point to the same vertex.
-	 * \returns True if Degenerate tris were found, false if no changes.
-	 */
-	public static bool RemoveDegenerateTriangles(this pb_Object pb, out int[] removed)
-	{
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		Vector3[] v = pb.vertices;
-		List<pb_Face> del = new List<pb_Face>();
-
-		List<pb_Face> f = new List<pb_Face>();
-
-		foreach(pb_Face face in pb.faces)
-		{
-			List<int> tris = new List<int>();
-	
-			int[] ind = face.indices;
-			for(int i = 0; i < ind.Length; i+=3)
-			{
-				int[] s = new int[3]
-				{
-					sharedIndices.IndexOf(ind[i+0]),
-					sharedIndices.IndexOf(ind[i+1]),
-					sharedIndices.IndexOf(ind[i+2])
-				};
-
-				float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
-
-				if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
-				{
-					// don't include this face in the reconstruct
-					;
-				}
-				else
-				{
-					tris.Add(ind[i+0]);
-					tris.Add(ind[i+1]);
-					tris.Add(ind[i+2]);
-				}
-			}
-
-			if(tris.Count > 0)
-			{
-				face.SetIndices(tris.ToArray());
-				face.RebuildCaches();
-
-				f.Add(face);
-			}
-			else
-			{
-				del.Add(face);
-			}
-		}
-
-		pb.SetFaces(f.ToArray());
-
-		removed = pb.RemoveUnusedVertices();
-		return removed.Length > 0;
-	}
-		
-	/**
-	 *	Removes triangles that occupy the same space and point to the same vertices.
-	 */
-	public static int[] RemoveDuplicateTriangles(this pb_Object pb)
-	{
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		Vector3[] v = pb.vertices;
-		List<pb_Face> del = new List<pb_Face>();
-
-		int[] removedIndices;
-
-		List<pb_Face> f = new List<pb_Face>();
-
-		foreach(pb_Face face in pb.faces)
-		{
-			List<int> tris = new List<int>();
-	
-			int[] ind = face.indices;
-			for(int i = 0; i < ind.Length; i+=3)
-			{
-				int[] s = new int[3]
-				{
-					sharedIndices.IndexOf(ind[i+0]),
-					sharedIndices.IndexOf(ind[i+1]),
-					sharedIndices.IndexOf(ind[i+2])
-				};
-
-				float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
-
-				if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
-				{
-					// don't include this face in the reconstruct
-					;
-				}
-				else
-				{
-					tris.Add(ind[i+0]);
-					tris.Add(ind[i+1]);
-					tris.Add(ind[i+2]);
-				}
-			}
-
-			if(tris.Count > 0)
-			{
-				face.SetIndices(tris.ToArray());
-				face.RebuildCaches();
-
-				f.Add(face);
-			}
-			else
-			{
-				del.Add(face);
-			}
-		}
-
-		pb.SetFaces(f.ToArray());
-
-		removedIndices = pb.RemoveUnusedVertices();
-
-		return removedIndices;
 	}
 #endregion
 	}
