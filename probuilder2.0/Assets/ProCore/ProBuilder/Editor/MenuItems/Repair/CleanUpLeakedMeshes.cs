@@ -1,7 +1,3 @@
-#if UNITY_5_0_0
-#define UNITY_5
-#endif
-
 using UnityEngine;
 using System.Collections;
 using UnityEditor;

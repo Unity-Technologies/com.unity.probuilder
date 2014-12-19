@@ -67,7 +67,6 @@ xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilder
 :: Export release pack for Unity 3.5 +
 %unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/probuilder3.5.7-compile-log.txt
 
-
 :: ================================ END   3.5 + LIBRARIES ================================ }
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
