@@ -71,14 +71,6 @@ xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilder
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
 
-:: Build Core - (post-build script places dll in staging project)
-:: %SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;" /t:Clean,Build "%CD%\visual studio\ProBuilderCore\ProBuilderCore.sln"
-:: xcopy /y "%CD%\visual studio\ProBuilderCore\ProBuilderCore\bin\Debug\ProBuilderCore.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
-:: Build mesh editing classes
-:: %SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;" /t:Clean,Build "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps.sln"
-:: xcopy "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps\bin\Debug\ProBuilderMeshOps.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
 :: Build Editor Core
 %SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_3;" /t:Clean,Build "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor.sln"
 xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
