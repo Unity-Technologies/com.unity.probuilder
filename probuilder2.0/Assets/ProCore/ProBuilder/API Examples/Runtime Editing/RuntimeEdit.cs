@@ -87,7 +87,7 @@ public class RuntimeEdit : MonoBehaviour
 	{
 		// This creates a basic cube with ProBuilder features enabled.  See the ProBuilder.Shape enum to 
 		// see all possible primitive types.
-		pb_Object pb = (pb_Object)ProBuilder.CreatePrimitive(Shape.Cube).GetComponent<pb_Object>();
+		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 		
 		// The runtime component requires that a concave mesh collider be present in order for face selection
 		// to work.
@@ -219,7 +219,7 @@ public class RuntimeEdit : MonoBehaviour
 		if(preview)
 			Destroy(preview.gameObject);
 
-		preview = ProBuilder.CreateObjectWithVerticesFaces(verts, new pb_Face[1]{face});
+		preview = pb_Object.CreateInstanceWithVerticesFaces(verts, new pb_Face[1]{face});
 		preview.SetName("Preview");
 		preview.SetFaceMaterial(preview.faces, previewMaterial);
 	}

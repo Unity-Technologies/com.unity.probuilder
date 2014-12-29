@@ -64,7 +64,7 @@ public class pb_Geometry_Interface : EditorWindow
 	[MenuItem("GameObject/Create Other/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
 	public static void MenuCreateCube()
 	{
-		pb_Object pb = ProBuilder.CreatePrimitive(Shape.Cube);
+		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 		
 		Material mat = null;
 		if(EditorPrefs.HasKey(pb_Constant.pbDefaultMaterial))
@@ -784,7 +784,7 @@ public class pb_Geometry_Interface : EditorWindow
 		{
 			Vector3[] v = pbUtil.StringToVector3Array(verts);
 			if(v.Length % 4 == 0)
-				SetPreviewObject(ProBuilder.CreateObjectWithPoints(v));
+				SetPreviewObject(pb_Object.CreateInstanceWithPoints(v));
 		}
 
 		Color oldColor = GUI.backgroundColor;
@@ -796,7 +796,7 @@ public class pb_Geometry_Interface : EditorWindow
 		{
 			if(verts.Length > 256)
 				Debug.Log("Whoa!  Did you seriously type all those points!?");
-			pb_Object pb = ProBuilder.CreateObjectWithPoints(pbUtil.StringToVector3Array(verts));
+			pb_Object pb = pb_Object.CreateInstanceWithPoints(pbUtil.StringToVector3Array(verts));
 			
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	public class EdgeConnection : System.IEquatable<EdgeConnection>
+	public class pb_EdgeConnection : System.IEquatable<pb_EdgeConnection>
 	{
-		public EdgeConnection(pb_Face face, List<pb_Edge> edges)
+		public pb_EdgeConnection(pb_Face face, List<pb_Edge> edges)
 		{
 			this.face = face;
 			this.edges = edges;
@@ -22,15 +22,15 @@ namespace ProBuilder2.Common
 
 		public override bool Equals(System.Object b)
 		{
-			return b is EdgeConnection ? this.face == ((EdgeConnection)b).face : false;
+			return b is pb_EdgeConnection ? this.face == ((pb_EdgeConnection)b).face : false;
 		}
 
-		public bool Equals(EdgeConnection fc)
+		public bool Equals(pb_EdgeConnection fc)
 		{
 			return this.face == fc.face;
 		}
 
-		public static explicit operator pb_Face(EdgeConnection fc)
+		public static explicit operator pb_Face(pb_EdgeConnection fc)
 		{
 			return fc.face;
 		}
@@ -45,10 +45,10 @@ namespace ProBuilder2.Common
 			return face.ToString() + " : " + edges.ToFormattedString(", ");
 		}
 
-		public static List<int> AllTriangles(List<EdgeConnection> ec)
+		public static List<int> AllTriangles(List<pb_EdgeConnection> ec)
 		{
 			List<pb_Edge> edges = new List<pb_Edge>();
-			foreach(EdgeConnection e in ec)	
+			foreach(pb_EdgeConnection e in ec)	
 				edges.AddRange(e.edges);
 			return edges.AllTriangles();
 		}

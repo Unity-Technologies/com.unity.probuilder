@@ -53,7 +53,7 @@ public class UnitTests : Editor
 
 	private static bool VerifyAppendFace()
 	{
-		pb_Object pb = ProBuilder.CreatePrimitive(Shape.Cube);
+		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 		pb_Face face = new pb_Face( new int[6] {0, 1, 2, 1, 3, 2} );
 		Vector3[] vertices = new Vector3[4] {
 			new Vector3(0f, 0f, 0f),
@@ -121,7 +121,7 @@ public class UnitTests : Editor
 
 	private static bool VerifyAppendVertices()
 	{
-		pb_Object pb = ProBuilder.CreatePrimitive(Shape.Cube);
+		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 		Vector3[] v = pb.vertices;
 
 		pb_Face face = pb.faces[0];

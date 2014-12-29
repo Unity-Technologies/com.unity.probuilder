@@ -1,9 +1,3 @@
-/**
- *	To Install:
- *	Create a C# file named MakeAsset in 6by7/ProBuilder/Editor/Actions folder.
- *	Copy this text into the file you just made.
- */
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -11,7 +5,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class MakeAsset : Editor
+	public class pb_MakeMeshAsset : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Make Asset", true, pb_Constant.MENU_ACTIONS + 1)]
 		public static bool VerifyMakeAsset()

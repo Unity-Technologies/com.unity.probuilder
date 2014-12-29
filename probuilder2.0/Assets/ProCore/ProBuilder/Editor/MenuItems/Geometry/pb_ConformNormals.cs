@@ -4,7 +4,7 @@ using System.Collections;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 
-public class ConformNormals : Editor
+public class pb_ConformNormals : Editor
 {
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Conform Normals", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 2)]
 	public static bool MenuVerifyConformNormals()

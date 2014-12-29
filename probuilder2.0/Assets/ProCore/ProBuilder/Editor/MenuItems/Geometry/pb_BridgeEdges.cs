@@ -7,11 +7,11 @@ using ProBuilder2.MeshOperations;
 using ProBuilder2.Common;
 
 /**
- * This probably doesn't need to exist anymore...
+ * Bridge edges.
  */
 namespace ProBuilder2.Actions
 {
-	public class Bridge : Editor
+	public class pb_BridgeEdges : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Bridge Edges &b", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
 		public static bool VerifyBridgeEdges()

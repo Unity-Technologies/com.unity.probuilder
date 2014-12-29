@@ -7,7 +7,7 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.Actions
 {
-public class ProBuilderizeMesh : Editor
+public class pb_ProBuilderize : Editor
 {
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/ProBuilderize Selection", true, pb_Constant.MENU_ACTIONS + 1)]
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/ProBuilderize Selection (Preserve Faces)", true, pb_Constant.MENU_ACTIONS + 2)]

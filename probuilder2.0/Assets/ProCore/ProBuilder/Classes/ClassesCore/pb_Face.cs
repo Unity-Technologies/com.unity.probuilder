@@ -106,14 +106,14 @@ public class pb_Face : ISerializable
 		RebuildCaches();
 	}
 
-	public static explicit operator EdgeConnection(pb_Face face)
+	public static explicit operator pb_EdgeConnection(pb_Face face)
 	{
-		return new EdgeConnection(face, null);
+		return new pb_EdgeConnection(face, null);
 	}
 
-	public static explicit operator VertexConnection(pb_Face face)
+	public static explicit operator pb_VertexConnection(pb_Face face)
 	{
-		return new VertexConnection(face, null);
+		return new pb_VertexConnection(face, null);
 	}
 #endregion
 

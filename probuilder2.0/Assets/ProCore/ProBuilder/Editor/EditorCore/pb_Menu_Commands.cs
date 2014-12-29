@@ -1086,10 +1086,10 @@ public class pb_Menu_Commands : Editor
 			// Vertex subdivision
 			foreach(pb_Object pb in selection)
 			{
-				List<VertexConnection> vertexConnections = new List<VertexConnection>();
+				List<pb_VertexConnection> vertexConnections = new List<pb_VertexConnection>();
 
 				foreach(pb_Face f in pb.faces)
-					vertexConnections.Add( new VertexConnection(f, new List<int>(f.distinctIndices) ) );
+					vertexConnections.Add( new pb_VertexConnection(f, new List<int>(f.distinctIndices) ) );
 
 				pb_Face[] faces;
 
@@ -1177,7 +1177,9 @@ public class pb_Menu_Commands : Editor
 		if(success > 0)
 		{
 			if(editor)
-				editor.UpdateSelection();
+			{
+				editor.UpdateSelection(true);
+			}
 
 			pb_Editor_Utility.ShowNotification("Connect Edges");
 		}
@@ -1202,7 +1204,7 @@ public class pb_Menu_Commands : Editor
 			int[] selectedTriangles = pb.SelectedTriangles.Distinct().ToArray();
 			int len = selectedTriangles.Length;
 
-			List<VertexConnection> splits = new List<VertexConnection>();
+			List<pb_VertexConnection> splits = new List<pb_VertexConnection>();
 			List<pb_Face>[] connectedFaces = new List<pb_Face>[len];
 
 			// For each vertex, get all it's connected faces
@@ -1213,9 +1215,9 @@ public class pb_Menu_Commands : Editor
 			{
 				foreach(pb_Face face in connectedFaces[i])
 				{
-					int index = splits.IndexOf((VertexConnection)face);	// VertexConnection only compares face property
+					int index = splits.IndexOf((pb_VertexConnection)face);	// pb_VertexConnection only compares face property
 					if(index < 0)
-						splits.Add( new VertexConnection(face, new List<int>(1) { selectedTriangles[i] } ) );
+						splits.Add( new pb_VertexConnection(face, new List<int>(1) { selectedTriangles[i] } ) );
 					else
 						splits[index].indices.Add(selectedTriangles[i]);
 				}
@@ -1242,8 +1244,11 @@ public class pb_Menu_Commands : Editor
 		if(success > 0)
 		{
 			pb_Editor_Utility.ShowNotification("Connect Vertices");
+
 			if(editor)
-				editor.UpdateSelection();
+			{
+				editor.UpdateSelection(true);
+			}
 		}
 		else
 		{
@@ -1279,7 +1284,7 @@ public class pb_Menu_Commands : Editor
 		}
 
 		if(editor)
-			editor.UpdateSelection();
+			editor.UpdateSelection(true);
 
 		EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 	}

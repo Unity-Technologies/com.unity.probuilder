@@ -85,7 +85,7 @@ public class pb_Shape_Generator
 			verts.Add(new Vector3(stepWidth/2f, height, depth) );
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithPoints(verts.ToArray());
+		pb_Object pb = pb_Object.CreateInstanceWithPoints(verts.ToArray());
 		pb.SetName("Stairs"); 
 		return pb;
 	}
@@ -96,7 +96,7 @@ public class pb_Shape_Generator
 		for(int i = 0; i < pb_Constant.TRIANGLES_CUBE.Length; i++)
 			points[i] = Vector3.Scale(pb_Constant.VERTICES_CUBE[pb_Constant.TRIANGLES_CUBE[i]], size);
 
-		pb_Object pb = ProBuilder.CreateObjectWithPoints(points);
+		pb_Object pb = pb_Object.CreateInstanceWithPoints(points);
 		pb.SetName("Cube");
 		return pb;
 	}
@@ -218,7 +218,7 @@ public class pb_Shape_Generator
 			ind += 3;
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithVerticesFaces(verts, faces);
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(verts, faces);
 		pb.SetName("Cylinder");
 		return pb;
 	}
@@ -275,7 +275,7 @@ public class pb_Shape_Generator
 			new pb_Face(new int[6]{14, 15, 16, 15, 17, 16})
 		};
 
-		pb_Object pb = ProBuilder.CreateObjectWithVerticesFaces(v, f);
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 		pb.RebuildFaceCaches();
 		pb.SetName("Prism");
 		return pb;
@@ -429,7 +429,7 @@ public class pb_Shape_Generator
 			f[i] = new pb_Face(seg);
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithVerticesFaces(v, f);
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 		pb.SetName("Door");
 		return pb;
 	}
@@ -517,7 +517,7 @@ public class pb_Shape_Generator
 		}
 		pb_Object pb;
 
-		pb = ProBuilder.CreateObjectWithVerticesFaces(v, f);
+		pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 		
 		pb.SetName("Plane");
 
@@ -633,7 +633,7 @@ public class pb_Shape_Generator
 			v.AddRange(tpt);		
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithPoints(v.ToArray());
+		pb_Object pb = pb_Object.CreateInstanceWithPoints(v.ToArray());
 
 		pb.SetName("Pipe");
 
@@ -682,7 +682,7 @@ public class pb_Shape_Generator
 			f.Add( new pb_Face( new int[3] {i+3,i+4,i+5} ) );
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithVerticesFaces(v.ToArray(), f.ToArray());
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v.ToArray(), f.ToArray());
 		pb.SetName("Cone");
 		return pb;
 	}
@@ -805,7 +805,7 @@ public class pb_Shape_Generator
 				v.AddRange(tpt);
 		}
 
-		pb_Object pb = ProBuilder.CreateObjectWithPoints(v.ToArray());
+		pb_Object pb = pb_Object.CreateInstanceWithPoints(v.ToArray());
 
 		pb.SetName("Arch");
 		return pb;

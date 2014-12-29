@@ -3,7 +3,8 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
 
-public class ExportObj : MonoBehaviour {
+public class pb_ExportObj : MonoBehaviour
+{
 
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Export Selected to OBJ", true, 0)]
 	public static bool VerifyExportOBJ()

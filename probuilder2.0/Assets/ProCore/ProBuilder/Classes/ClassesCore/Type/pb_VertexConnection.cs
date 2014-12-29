@@ -8,9 +8,9 @@ using Parabox.Debug;
 
 namespace ProBuilder2.Common
 {
-	public class VertexConnection : System.IEquatable<VertexConnection>
+	public class pb_VertexConnection : System.IEquatable<pb_VertexConnection>
 	{
-		public VertexConnection(pb_Face face, List<int> indices)
+		public pb_VertexConnection(pb_Face face, List<int> indices)
 		{
 			this.face = face;
 			this.indices = indices;
@@ -23,22 +23,22 @@ namespace ProBuilder2.Common
 			get { return indices != null && indices.Count > 1; }
 		}
 
-		public VertexConnection Distinct(pb_IntArray[] sharedIndices)
+		public pb_VertexConnection Distinct(pb_IntArray[] sharedIndices)
 		{
-			return new VertexConnection(this.face, sharedIndices.UniqueIndicesWithValues(indices));
+			return new pb_VertexConnection(this.face, sharedIndices.UniqueIndicesWithValues(indices));
 		}
 
 		public override bool Equals(System.Object b)
 		{
-			return b is VertexConnection ? this.face == ((VertexConnection)b).face : false;
+			return b is pb_VertexConnection ? this.face == ((pb_VertexConnection)b).face : false;
 		}
 
-		public bool Equals(VertexConnection vc)
+		public bool Equals(pb_VertexConnection vc)
 		{
 			return this.face == vc.face;
 		}
 
-		public static implicit operator pb_Face(VertexConnection vc)
+		public static implicit operator pb_Face(pb_VertexConnection vc)
 		{
 			return vc.face;
 		}
@@ -54,9 +54,9 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Returns a List<int> of all the indices in this List of VertexConnections.
+		 * Returns a List<int> of all the indices in this List of pb_VertexConnections.
 		 */
-		public static List<int> AllTriangles(List<VertexConnection> vcs)
+		public static List<int> AllTriangles(List<pb_VertexConnection> vcs)
 		{
 			List<int> tris = new List<int>();
 			for(int i = 0; i < vcs.Count; i++)

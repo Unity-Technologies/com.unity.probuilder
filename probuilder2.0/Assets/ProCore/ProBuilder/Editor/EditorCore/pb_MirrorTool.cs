@@ -47,7 +47,7 @@ public class pb_MirrorTool : EditorWindow
 	 */
 	public static pb_Object Mirror(pb_Object pb, Vector3 scale)
 	{
-		pb_Object p = ProBuilder.CreateObjectWithObject(pb);
+		pb_Object p = pb_Object.InitWithObject(pb);
 		p.MakeUnique();
 
 		p.transform.parent = pb.transform.parent;

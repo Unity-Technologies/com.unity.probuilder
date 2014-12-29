@@ -14,7 +14,7 @@ using Parabox.Debug;
 
 namespace ProBuilder2.Actions
 {
-	public class SplitOperations : Editor
+	public class pb_ConnectEdges : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Subdivide Face", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 2)]
 		public static bool MenuVerifySplitOperationGeometryFace()

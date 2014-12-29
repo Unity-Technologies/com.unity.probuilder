@@ -10,7 +10,7 @@ public class HueCube : MonoBehaviour
 	void Start()
 	{
 		// Create a new ProBuilder cube to work with.
-		pb = ProBuilder.CreatePrimitive(Shape.Cube);
+		pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 
 		// Cycle through each unique vertex in the cube (8 total), and assign a color
 		// to the index in the sharedIndices array.

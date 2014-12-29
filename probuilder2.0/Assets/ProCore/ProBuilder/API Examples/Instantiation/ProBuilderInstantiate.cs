@@ -98,12 +98,7 @@ public class ProBuilderInstantiate : MonoBehaviour
 			switch(objectToInstantiate)
 			{
 				case ObjectSelectionOptions.Prefab:
-					
-					// Use ProBuilder.Instantiate(GameObject) to build cube.  This force rebuilds the mesh
-					// immediately.  It is also safe to use with non-ProBuilder objects, and will behave
-					// exactly like GameObject.Instantiate() if no pb_Object type is found.
-					myInstantiatedObject = ProBuilder.Instantiate(probuilderPrefab, Vector3.zero, Quaternion.identity);
-
+					myInstantiatedObject = (GameObject)GameObject.Instantiate(probuilderPrefab, Vector3.zero, Quaternion.identity);
 					break;
 
 				///* These demonstrate how to instantiate ProBuilder Primitive Types
@@ -113,7 +108,7 @@ public class ProBuilderInstantiate : MonoBehaviour
 					
 					// Using the basic Shape instantiation, build a cube.  CreatePrimitive() returns a 
 					// pb_Object, so get the GameObject after instantiation.
-					pb_Object pb = ProBuilder.CreatePrimitive(Shape.Cube);
+					pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
 
 					// Cubes alone are a little boring, so let's add some color to it
 					Color[] cubeColors = new Color[6]

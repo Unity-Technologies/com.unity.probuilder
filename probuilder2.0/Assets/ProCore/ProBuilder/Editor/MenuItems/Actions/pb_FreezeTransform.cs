@@ -3,10 +3,10 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
 
-public class FreezeTransforms : Editor
+public class pb_FreezeTransform : Editor
 {
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Freeze Transforms", false, pb_Constant.MENU_ACTIONS + 1)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Freeze Transform", false, pb_Constant.MENU_ACTIONS + 1)]
 	public static void MenuFreezeTransforms()
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);

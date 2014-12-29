@@ -6,17 +6,17 @@ using ProBuilder2.Common;
 /**
  * Triangulates a ProBuilder object.
  *
- * MenuItem: Tools -> ProBuilder -> Actions -> Triangulate Selection 
+ * MenuItem: Tools -> ProBuilder -> Geometry -> Triangulate Selection 
  */
-public class TriangulatePbObject : Editor
+public class pb_Triangulate : Editor
 {
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Triangulate Selection", true)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Triangulate Object", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 	public static bool MenuVerifyTriangulateSelection()
 	{
 		return pbUtil.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Triangulate Selection")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Triangulate Object", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 	public static void MenuTriangulatePbObjects()
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);

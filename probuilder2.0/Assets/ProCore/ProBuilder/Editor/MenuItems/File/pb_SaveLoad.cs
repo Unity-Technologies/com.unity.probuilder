@@ -7,7 +7,10 @@ using System.Collections;
 using System.Runtime.Serialization.Formatters.Binary;
 using ProBuilder2.Common;
 
-public class SaveLoadSerializedPbObject : Editor
+/**
+ * Proof of concept for serialization of pb_Objects.
+ */
+public class pb_SaveLoad : Editor
 {
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Load ProBuilder Object")]
 	public static void MenuLoadPbObject()

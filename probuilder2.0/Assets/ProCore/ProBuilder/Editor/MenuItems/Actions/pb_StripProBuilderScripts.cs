@@ -6,7 +6,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class StripProBuilderScripts : Editor 
+	public class pb_StripProBuilderScripts : Editor 
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()

@@ -6,7 +6,7 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.Actions
 {
-	public class ExtrudeFace : Editor
+	public class pb_ExtrudeElement : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude with Translation %e", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 1)]
 		public static bool VerifyExtrudeFace()

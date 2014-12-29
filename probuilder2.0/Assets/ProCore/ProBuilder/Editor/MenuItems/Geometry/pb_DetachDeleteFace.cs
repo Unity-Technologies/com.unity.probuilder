@@ -6,9 +6,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class DetachDeleteFace : Editor
+	public class pb_DetachDeleteFace : Editor
 	{
-		#if !PROTOTYPE
+#if !PROTOTYPE
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Detach Face Selection", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 4)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Delete Face (Backspace)", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 5)]
@@ -28,7 +28,6 @@ namespace ProBuilder2.Actions
 		{
 			pb_Menu_Commands.MenuDeleteFace(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 		}
-
-		#endif
+#endif
 	}
 }

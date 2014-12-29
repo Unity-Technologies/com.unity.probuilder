@@ -10,7 +10,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class PivotTool : Editor
+	public class pb_SetPivot : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Set Pivot _%j", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
 		public static bool VerifySetPivot()

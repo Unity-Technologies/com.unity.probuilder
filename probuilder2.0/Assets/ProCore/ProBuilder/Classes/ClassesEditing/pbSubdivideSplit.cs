@@ -28,9 +28,9 @@ public static class pbSubdivideSplit
 
 		try
 		{
-			List<EdgeConnection> ec = new List<EdgeConnection>();
+			List<pb_EdgeConnection> ec = new List<pb_EdgeConnection>();
 			foreach(pb_Face f in pb.faces)
-				ec.Add(new EdgeConnection(f, new List<pb_Edge>(f.edges)));
+				ec.Add(new pb_EdgeConnection(f, new List<pb_Edge>(f.edges)));
 
 			pb_Face[] faces;
 
@@ -47,9 +47,9 @@ public static class pbSubdivideSplit
 
 	public static bool SubdivideFace(this pb_Object pb, pb_Face[] faces, out pb_Face[] splitFaces)
 	{
-		List<EdgeConnection> split = new List<EdgeConnection>();
+		List<pb_EdgeConnection> split = new List<pb_EdgeConnection>();
 		foreach(pb_Face face in faces)
-			split.Add(new EdgeConnection(face, new List<pb_Edge>(face.edges)));
+			split.Add(new pb_EdgeConnection(face, new List<pb_Edge>(face.edges)));
 
 		return pb.ConnectEdges(split, out splitFaces);
 	}
@@ -63,13 +63,13 @@ public static class pbSubdivideSplit
 	public static bool ConnectEdges(this pb_Object pb, pb_Edge[] edges, out pb_Edge[] newEdges)
 	{
 		int len = edges.Length;
-		List<EdgeConnection> splits = new List<EdgeConnection>();
+		List<pb_EdgeConnection> splits = new List<pb_EdgeConnection>();
 
 		for(int i = 0; i < len; i++)
 		{
 			foreach(pb_Face face in pbMeshUtils.GetNeighborFaces(pb, edges[i]))
 			{
-				if(!splits.Contains((EdgeConnection)face))
+				if(!splits.Contains((pb_EdgeConnection)face))
 				{
 					List<pb_Edge> faceEdges = new List<pb_Edge>();
 					foreach(pb_Edge e in edges)
@@ -80,13 +80,13 @@ public static class pbSubdivideSplit
 					}
 
 					if(faceEdges.Count > 1)	
-						splits.Add(new EdgeConnection(face, faceEdges));
+						splits.Add(new pb_EdgeConnection(face, faceEdges));
 				}
 			}
 		}
 
 		// If it's stupid but it works it ain't stupid!
-		Vector3[] vertices = pb.GetVertices( EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
+		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 
 
 		pb_Face[] faces;
@@ -131,15 +131,15 @@ public static class pbSubdivideSplit
 		}
 	}
 
-	private static bool ConnectEdges(this pb_Object pb, List<EdgeConnection> edgeConnectionsUnfiltered, out pb_Face[] faces)
+	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
 		// first, remove any junk connections.  faces with less than two edges confuse this method.
-		List<EdgeConnection> edgeConnections = new List<EdgeConnection>();
-		foreach(EdgeConnection ec in edgeConnectionsUnfiltered)
+		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
+		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
 			if(ec.isValid)
-				edgeConnections.Add(ec);
+				pb_edgeConnections.Add(ec);
 
-		int len = edgeConnections.Count;
+		int len = pb_edgeConnections.Count;
 
 		if(len < 1)
 		{
@@ -162,11 +162,11 @@ public static class pbSubdivideSplit
 		// use a nullable type because in order for the adjacent face triangulation
 		// code to work, it needs to know what dangling vert belongs to which edge, 
 		// if we out a vector3[] with each index corresponding to the passed edges
-		// in EdgeConnection, it's easy to maintain the relationship.
+		// in pb_EdgeConnection, it's easy to maintain the relationship.
 		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
 
 		int i = 0;
-		foreach(EdgeConnection fc in edgeConnections)
+		foreach(pb_EdgeConnection fc in pb_edgeConnections)
 		{	
 			pb_Face[] splitFaces 		= null;
 			Vector3[][] splitVertices 	= null;
@@ -234,23 +234,23 @@ public static class pbSubdivideSplit
 		/**
 		 *	Figure out which faces need to be re-triangulated
 		 */
-		pb_Edge[][] tedges = new pb_Edge[edgeConnections.Count][];
+		pb_Edge[][] tedges = new pb_Edge[pb_edgeConnections.Count][];
 		int n = 0;
-		for(i = 0; i < edgeConnections.Count; i++)
-			tedges[n++] = edgeConnections[i].edges.ToArray();
+		for(i = 0; i < pb_edgeConnections.Count; i++)
+			tedges[n++] = pb_edgeConnections[i].edges.ToArray();
 
 		List<pb_Face>[][] allConnects = pbMeshUtils.GetNeighborFacesJagged(pb, tedges);		
 
 
 		Dictionary<pb_Face, List<DanglingVertex>> addVertex = new Dictionary<pb_Face, List<DanglingVertex>>();
 		List<pb_Face> temp = new List<pb_Face>();
-		for(int j = 0; j < edgeConnections.Count; j++)
+		for(int j = 0; j < pb_edgeConnections.Count; j++)
 		{
 			if(!success[j]) continue;
 
 			// check that this edge has a buddy that it welded it's new vertex to, and if not,
 			// create one
-			for(i = 0; i < edgeConnections[j].edges.Count; i++)
+			for(i = 0; i < pb_edgeConnections[j].edges.Count; i++)
 			{
 				if(danglingVertices[j][i] == null) 
 					continue;
@@ -316,16 +316,16 @@ public static class pbSubdivideSplit
 	 *	Todo - Could implement more sanity checks - namely testing for edges before sending to Split_Internal.  However,
 	 *	the split method is smart enough to fail on those cases, so ignore for now.
 	 */
-	public static bool ConnectVertices(this pb_Object pb, List<VertexConnection> vertexConnectionsUnfiltered, out int[] triangles)
+	public static bool ConnectVertices(this pb_Object pb, List<pb_VertexConnection> vertexConnectionsUnfiltered, out int[] triangles)
 	{
-		List<VertexConnection> vertexConnections = new List<VertexConnection>();
+		List<pb_VertexConnection> vertexConnections = new List<pb_VertexConnection>();
 		List<int> inds = new List<int>();
 
 		int i = 0;
 
 		for(i = 0; i < vertexConnectionsUnfiltered.Count; i++)
 		{
-			VertexConnection vc = vertexConnectionsUnfiltered[i];
+			pb_VertexConnection vc = vertexConnectionsUnfiltered[i];
 			vc.indices = vc.indices.Distinct().ToList();
 
 			if(vc.isValid) 
@@ -341,7 +341,7 @@ public static class pbSubdivideSplit
 			return false;
 		}
 
-		List<Vector3> selectedVertices = pb.GetVertices( VertexConnection.AllTriangles(vertexConnections) );
+		List<Vector3> selectedVertices = pb.GetVertices( pb_VertexConnection.AllTriangles(vertexConnections) );
 
 		int len = vertexConnections.Count;
 
@@ -359,7 +359,7 @@ public static class pbSubdivideSplit
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 
 		i = 0;
-		foreach(VertexConnection vc in vertexConnections)
+		foreach(pb_VertexConnection vc in vertexConnections)
 		{
 			pb_Face[] splitFaces = null;
 			Vector3[][] splitVertices = null;
@@ -699,7 +699,7 @@ public static class pbSubdivideSplit
 	 *	Inserts a vertex at the center of each edge, then connects the new vertices to another new
 	 *	vertex placed at the center of the face.
 	 */
-	private static bool SubdivideFace_Internal(pb_Object pb, EdgeConnection edgeConnection, 
+	private static bool SubdivideFace_Internal(pb_Object pb, pb_EdgeConnection pb_edgeConnection, 
 		out DanglingVertex?[] appendedVertices,	
 		out pb_Face[] splitFaces,
 		out Vector3[][] splitVertices,
@@ -712,10 +712,10 @@ public static class pbSubdivideSplit
 		splitColors 		= null;
 		splitUVs 			= null;
 		splitSharedIndices 	= null;
-		appendedVertices 	= new DanglingVertex?[edgeConnection.edges.Count];
+		appendedVertices 	= new DanglingVertex?[pb_edgeConnection.edges.Count];
 
 		// cache all the things
-		pb_Face face = edgeConnection.face;
+		pb_Face face = pb_edgeConnection.face;
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 		Vector3[] vertices = pb.vertices;
 		Vector2[] uvs = pb.uv;
@@ -727,7 +727,7 @@ public static class pbSubdivideSplit
 		// filter duplicate edges
 		int u = 0;
 		List<int> usedEdgeIndices = new List<int>();
-		foreach(pb_Edge edge in edgeConnection.edges)
+		foreach(pb_Edge edge in pb_edgeConnection.edges)
 		{
 			int ind = face.edges.IndexOf(edge, sharedIndices);
 			if(!usedEdgeIndices.Contains(ind))
@@ -859,7 +859,7 @@ public static class pbSubdivideSplit
 		{
 			if(quadrants2d[i].Count < 3)
 			{
-				Debug.LogError("Insufficient points to triangulate - bailing on subdivide operation.  This is probably due to a concave face, or maybe the compiler just doesn't like you today.  50/50 odds really.");
+				Debug.LogError("Insufficient points to triangulate.  Exit subdivide operation.  This is probably due to a concave face.");
 				return false;
 			}
 		

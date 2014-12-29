@@ -9,7 +9,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class VertexMergeWeld : Editor
+	public class pb_VertexMergeWeld : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Collapse Selected Vertices &c", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_VERTEX + 0)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Weld Selected Vertices &v", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_VERTEX + 1)]
