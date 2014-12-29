@@ -8,7 +8,6 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using ProCore.Common;	// new - SharedProperties.snapEnabled
-using SixBySeven;		// backwards compat - Shared.snapEnabled
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -23,21 +22,15 @@ namespace ProBuilder2.Common {
 
 #region SharedProperities
 
-	public static bool SharedSnapEnabled { get { return SharedProperties.snapEnabled || Shared.snapEnabled; } }
+	public static bool SharedSnapEnabled { get { return SharedProperties.snapEnabled; } }
 	public static float SharedSnapValue 
 	{
-		/* prefer new lib over old, and default to new */
 		get
 		{
-			if(SharedProperties.snapEnabled)
-				return SharedProperties.snapValue;
-			else if(Shared.snapEnabled)
-				return Shared.snapValue;
-
 			return SharedProperties.snapValue;
 		}
 	}
-	public static bool SharedUseAxisConstraints { get { return SharedProperties.useAxisConstraints && Shared.useAxisConstraints; } }
+	public static bool SharedUseAxisConstraints { get { return SharedProperties.useAxisConstraints; } }
 #endregion
 
 #region COMPONENT WRANGLING
