@@ -7,7 +7,7 @@ using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
 
-public class ExpandSelection : Editor
+public class pb_ExpandSelection : Editor
 {
 
 	// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Grow Selection %&g", true, pb_Constant.MENU_SELECTION + 1)]

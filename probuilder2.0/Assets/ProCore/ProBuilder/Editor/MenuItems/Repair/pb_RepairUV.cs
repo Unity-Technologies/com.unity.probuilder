@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class InvertUVScale : Editor
+public class pb_RepairUV : Editor
 {
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Invert UV Scale (Scene)", false, pb_Constant.MENU_REPAIR + 30)]
 	public static void MenuInvertSceneFaceUVScale()

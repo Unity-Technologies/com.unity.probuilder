@@ -6,7 +6,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class DegenerateTris : Editor
+	public class pb_RemoveDegenerateTris : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Remove Degenerate Triangles", false, pb_Constant.MENU_REPAIR)]
 		public static void MenuRemoveDegenerateTriangles()

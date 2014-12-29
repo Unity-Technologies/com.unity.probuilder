@@ -9,7 +9,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class InvertSelection : Editor
+	public class pb_InvertSelection : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Invert Face Selection %#i", true, pb_Constant.MENU_SELECTION + 0)]
 		public static bool VerifySelectionAction()
