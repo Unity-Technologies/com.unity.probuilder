@@ -1,4 +1,3 @@
-set unity_path="C:\Program Files (x86)\Unity 3.5.7\Editor\Unity.exe"
 set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)

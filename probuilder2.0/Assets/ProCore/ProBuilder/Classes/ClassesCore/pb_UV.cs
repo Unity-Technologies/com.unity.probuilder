@@ -12,6 +12,9 @@ public class pb_UV : ISerializable {
 
 #region ENUM
 
+	/**
+	 * Defines the anchor point of UV calculations.
+	 */
 	public enum Justify {
 		Right,
 		Left,
@@ -21,6 +24,9 @@ public class pb_UV : ISerializable {
 		None
 	}
 
+	/**
+	 * Fill mode.
+	 */
 	public enum Fill {
 		Fit,
 		Tile,

@@ -7,7 +7,7 @@ PlayerSettings:
   AndroidProfiler: 0
   defaultScreenOrientation: 0
   targetDevice: 2
-  targetGlesGraphics: -1
+  targetGlesGraphics: 1
   targetResolution: 0
   accelerometerFrequency: 60
   companyName: karl
@@ -70,7 +70,7 @@ PlayerSettings:
   iPhoneBundleIdentifier: com.Company.ProductName
   metroEnableIndependentInputSource: 0
   metroEnableLowLatencyPresentationAPI: 0
-  productGUID: 6b492169a8bb5904db32357ef038c2a4
+  productGUID: 8a7c7ebf18b0dd24d956fcc193b6f776
   iPhoneBundleVersion: 1.0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9
@@ -147,7 +147,7 @@ PlayerSettings:
   psp2NPCommsPassphrase: 
   psp2NPCommsSig: 
   psp2ParamSfxPath: 
-  psp2PackagePassword: F69AzBlax3CF3EDNhm3soLBPh71Yexui
+  psp2PackagePassword: 
   psp2DLCConfigPath: 
   psp2ThumbnailPath: 
   psp2BackgroundPath: 

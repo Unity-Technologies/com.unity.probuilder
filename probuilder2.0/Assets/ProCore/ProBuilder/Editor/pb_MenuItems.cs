@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
-public class ProBuilderMenuItems : EditorWindow
+public class pb_MenuItems : EditorWindow
 {
 	const string DOCUMENTATION_URL = "http://www.protoolsforunity3d.com/docs/probuilder/";
 

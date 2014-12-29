@@ -1,15 +1,6 @@
 // #pragma warning disable 0414
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
-#define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
-#endif
-
-// #define PB_DEBUG
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -347,11 +338,7 @@ public class pb_UV_Editor : EditorWindow
 	void OnGUI()
 	{
 		if(tool == Tool.View || m_draggingCanvas)	
-		#if UNITY_4
 			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.Pan);
-		#else
-			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.MoveArrow);
-		#endif
 
 		#if PB_DEBUG
 		profiler.BeginSample("pb_UV_Editor::OnGUI");
@@ -495,8 +482,6 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnBeginUVModification()
 	{
-		Debug.Log("OnBeginUVModification");
-
 		modifyingUVs = true;
 
 		Vector2 handle = handlePosition_canvas;
@@ -533,8 +518,6 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnFinishUVModification()
 	{
-		Debug.Log("OnFinishUVModification");
-
 		modifyingUVs = false;
 
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
@@ -1186,10 +1169,6 @@ public class pb_UV_Editor : EditorWindow
 		profiler.EndSample();
 		#endif
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		if (!e.isMouse) return;
 
 		/**
@@ -1259,12 +1238,6 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(selection, "Move UVs");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				OnBeginUVModification();
 			}
 
@@ -1275,9 +1248,7 @@ public class pb_UV_Editor : EditorWindow
 			if(ControlKey)
 				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition_canvas-t_handlePosition, pref_gridSnapValue);
 
-			#if UNITY_4_3
-				pbUndo.RecordObjects(selection, "Move UVs");
-			#endif
+			pbUndo.RecordObjects(selection, "Move UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1354,10 +1325,6 @@ public class pb_UV_Editor : EditorWindow
 
 	internal void SceneMoveTool(Vector2 t_handlePosition, Vector2 handlePosition)
 	{
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-		
 		t_handlePosition = pb_Handle_Utility.UVToGUIPoint(t_handlePosition, uvGridSize);
 		handlePosition = pb_Handle_Utility.UVToGUIPoint(handlePosition, uvGridSize);
 
@@ -1373,12 +1340,6 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(selection, "Move UVs");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				OnBeginUVModification();
 				uvOrigin = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);	// have to set this one special
 			}
@@ -1388,9 +1349,7 @@ public class pb_UV_Editor : EditorWindow
 			if(ControlKey)
 				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition-t_handlePosition, pref_gridSnapValue);
 
-			#if UNITY_4_3
-				pbUndo.RecordObjects(selection, "Move UVs");
-			#endif
+			pbUndo.RecordObjects(selection, "Move UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1415,30 +1374,18 @@ public class pb_UV_Editor : EditorWindow
 		float t_uvRotation = uvRotation;
 
 		uvRotation = pb_Handle_Utility.RotationHandle2d(0, CanvasToGUIPoint(handlePosition_canvas), uvRotation, 128);
-		
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
 
 		if(uvRotation != t_uvRotation)
 		{
 			if(!modifyingUVs)
 			{
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(selection, "Rotate UVs");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				OnBeginUVModification();
 			}
 
 			if(ControlKey)
 				uvRotation = pbUtil.SnapValue(uvRotation, 15f);
 
-			#if UNITY_4_3
-				pbUndo.RecordObjects(selection, "Rotate UVs");
-			#endif
+			pbUndo.RecordObjects(selection, "Rotate UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1463,31 +1410,19 @@ public class pb_UV_Editor : EditorWindow
 
 	internal void SceneRotateTool(float rotation)
 	{
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		if(rotation != uvRotation)
 		{
 			uvRotation = rotation;
 
 			if(!modifyingUVs)
 			{
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(selection, "Rotate UVs");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				OnBeginUVModification();
 			}
 
 			if(ControlKey)
 				rotation = pbUtil.SnapValue(rotation, 15f);
 
-			#if UNITY_4_3
-				pbUndo.RecordObjects(selection, "Rotate UVs");
-			#endif
+			pbUndo.RecordObjects(selection, "Rotate UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1517,26 +1452,14 @@ public class pb_UV_Editor : EditorWindow
 		if(ControlKey)
 			uvScale = pbUtil.SnapValue(uvScale, pref_gridSnapValue);
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		if(t_uvScale != uvScale)
 		{
 			if(!modifyingUVs)
 			{		
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(selection, "Scale UVs");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				OnBeginUVModification();
 			}
 
-			#if UNITY_4_3
 			pbUndo.RecordObjects(selection, "Scale UVs");
-			#endif
 
 			if(mode == UVMode.Mixed || mode == UVMode.Manual)
 			{
@@ -1594,24 +1517,12 @@ public class pb_UV_Editor : EditorWindow
 		if(ControlKey)
 			textureScale = pbUtil.SnapValue(textureScale, pref_gridSnapValue);
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		if(!modifyingUVs)
 		{		
-			#if !UNITY_4_3
-			Undo.SetSnapshotTarget(selection, "Scale UVs");
-			Undo.CreateSnapshot();
-			Undo.RegisterSnapshot();
-			#endif
-
 			OnBeginUVModification();
 		}
 
-		#if UNITY_4_3
 		pbUndo.RecordObjects(selection, "Scale UVs");
-		#endif
 
 		if(mode == UVMode.Mixed || mode == UVMode.Manual)
 		{
@@ -1799,32 +1710,35 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 * Draw all vertices if in vertex mode
 		 */
-		Vector2 p = Vector2.zero;
-		if(selectionMode == SelectMode.Vertex)
+		try 
 		{
-			// GUI.color = UVColorSecondary;
-
-			for(int i = 0; i < uvs_gui_space.Length; i++)
+			Vector2 p = Vector2.zero;
+			if(selectionMode == SelectMode.Vertex)
 			{
-				GUI.color = UVColorSecondary;
-				for(int n = 0; n < uvs_gui_space[i].Length; n++)
-				{
-					p = CanvasToGUIPoint(uvs_gui_space[i][n]);
-					GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
-				}
-	
-				GUI.color = UVColorPrimary;
-				foreach(int index in selection[i].SelectedTriangles)
-				{
-					p = CanvasToGUIPoint(uvs_gui_space[i][index]);
-					GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
+				// GUI.color = UVColorSecondary;
 
-					#if PB_DEBUG
-					GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_gui_space[i][index] + " -> " + p );
-					#endif
+				for(int i = 0; i < uvs_gui_space.Length; i++)
+				{
+					GUI.color = UVColorSecondary;
+					for(int n = 0; n < uvs_gui_space[i].Length; n++)
+					{
+						p = CanvasToGUIPoint(uvs_gui_space[i][n]);
+						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
+					}
+		
+					GUI.color = UVColorPrimary;
+					foreach(int index in selection[i].SelectedTriangles)
+					{
+						p = CanvasToGUIPoint(uvs_gui_space[i][index]);
+						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
+
+						#if PB_DEBUG
+						GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_gui_space[i][index] + " -> " + p );
+						#endif
+					}
 				}
 			}
-		}
+		} catch(System.Exception e) { }
 
 		GL.PushMatrix();
 		pb_Handle_Utility.handleMaterial.SetPass(0);
@@ -1895,7 +1809,7 @@ public class pb_UV_Editor : EditorWindow
 						GL.Vertex(x);
 						GL.Vertex(y);
 						
-						#if DEBUG
+						#if PB_DEBUG
 						GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
 						GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
 						#endif

@@ -7,7 +7,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class EdgeSelection : Editor
+	public class pb_EdgeSelection : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Edge Ring &r", true)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Edge Loop &l", true)]

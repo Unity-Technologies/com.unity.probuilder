@@ -1,13 +1,6 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
-#define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
-#endif
-
-#undef UNITY_4
+// #define FORCE_MESH_GRAPHICS
 
 using UnityEngine;
 using UnityEditor;
@@ -324,7 +317,7 @@ public class pb_Editor_Graphics
 
 		switch(selectionMode)
 		{
-			#if UNITY_4
+			#if FORCE_MESH_GRAPHICS
 			case SelectMode.Edge:
 				selectionMesh.subMeshCount = 1;
 				selectionMesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);				
@@ -366,10 +359,6 @@ public class pb_Editor_Graphics
 		if(cam == null)
 			return RenderingPath.Forward;
 
-		#if UNITY_4_3
 		return cam.actualRenderingPath == RenderingPath.UsePlayerSettings ? PlayerSettings.renderingPath : cam.actualRenderingPath;
-		#else
-		return cam.actualRenderingPath;
-		#endif
 	}
 }

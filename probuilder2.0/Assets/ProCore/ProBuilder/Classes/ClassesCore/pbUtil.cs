@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using ProCore.Common;	// new - SharedProperties.snapEnabled
-using SixBySeven;	// backwards compat - Shared.snapEnabled
+using SixBySeven;		// backwards compat - Shared.snapEnabled
 
 #if PB_DEBUG
 using Parabox.Debug;

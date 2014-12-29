@@ -1,11 +1,4 @@
-﻿#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
-#define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
-#endif
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,11 +67,7 @@ public class pb_Menu_Commands : Editor
 
 				case 1:
 					foreach(pb_Object sel in selected)
-						#if UNITY_3
-						sel.gameObject.active = false;
-						#else
 						sel.gameObject.SetActive(false);
-						#endif
 					break;
 			}
 

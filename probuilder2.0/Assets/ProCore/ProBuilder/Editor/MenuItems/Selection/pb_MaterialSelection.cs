@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using System.Linq;
 
-public class MaterialSelection : Editor
+public class pb_MaterialSelection : Editor
 {
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select All Faces With Material", true, pb_Constant.MENU_SELECTION + 2)]
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Faces with Vertex Colors", true, pb_Constant.MENU_SELECTION + 2)]

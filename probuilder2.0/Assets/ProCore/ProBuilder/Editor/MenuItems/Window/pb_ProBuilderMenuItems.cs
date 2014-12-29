@@ -6,7 +6,7 @@ using System.Collections;
  * Due to the Prototype build process, windows that are exclusive to ProBuilder cannot 
  * simply be #if def'ed out .
  */
-public class ProBuilderOnlyWindows : Editor 
+public class pb_ProBuilderMenuItems : Editor 
 {
 #if !PROTOTYPE
 	[MenuItem("Tools/ProBuilder/UV Editor Window", false, pb_Constant.MENU_WINDOW + 2)]

@@ -1,17 +1,7 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
-#define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
-#endif
-
-// Edge graphics aren't up to par yet
-#undef UNITY_4
-
-// TODO
-// udpate preferences version
+// Enables line mesh rendering for edges
+// #define FORCE_MESH_GRAPHICS
 
 using UnityEngine;
 using UnityEditor;
@@ -123,9 +113,7 @@ public class pb_Editor : EditorWindow
 	{
 		me = this;
 
-		#if UNITY_4_3
-			Undo.undoRedoPerformed += this.UndoRedoPerformed;
-		#endif
+		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
 		SharedProperties.PushToGridEvent += PushToGrid;
 
@@ -224,10 +212,7 @@ public class pb_Editor : EditorWindow
 		SharedProperties.PushToGridEvent -= PushToGrid;
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-
-		#if UNITY_4_3
-			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
-		#endif
+		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 
 		EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
@@ -768,14 +753,6 @@ public class pb_Editor : EditorWindow
 
 		if(currentEvent.type == EventType.MouseUp && currentEvent.button == 1 || currentEvent.type == EventType.Ignore)
 			rightMouseDown = false;
-
-		#if !UNITY_4_3
-		if(currentEvent.type == EventType.ValidateCommand)
-		{
-			OnValidateCommand(currentEvent.commandName);
-			return;
-		}
-		#endif
 
 		#if !PROTOTYPE
 			// e.type == EventType.DragUpdated || 
@@ -1574,10 +1551,6 @@ public class pb_Editor : EditorWindow
 		newPosition = selected_handlePivotWorld;
 		cachedPosition = newPosition;
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		newPosition = Handles.PositionHandle(newPosition, handleRotation);
 
 		if(altClick) return;
@@ -1606,21 +1579,13 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Move Vertices");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
 				OnBeginVertexMovement();
 			}
 
-			#if UNITY_4_3
-				Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Move Vertices");
-			#endif
+			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Move Vertices");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -1640,10 +1605,6 @@ public class pb_Editor : EditorWindow
 
 		previousHandleScale = currentHandleScale;
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-	
 		currentHandleScale = Handles.ScaleHandle(currentHandleScale, newPosition, handleRotation, HandleUtility.GetHandleSize(newPosition));
 
 		if(altClick) return;
@@ -1658,12 +1619,6 @@ public class pb_Editor : EditorWindow
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
-
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
@@ -1684,9 +1639,7 @@ public class pb_Editor : EditorWindow
 			Vector3 ver;	// resulting vertex from modification
 			Vector3 over;	// vertex point to modify. different for world, local, and plane
 			
-			#if UNITY_4_3
-				Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
-			#endif
+			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
 
 			bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
 			bool gotoLocal = selectedFaceCount < 1;
@@ -1754,10 +1707,6 @@ public class pb_Editor : EditorWindow
 
 		previousHandleRotation = currentHandleRotation;
 
-		#if !UNITY_4_3
-		Undo.ClearSnapshotTarget();
-		#endif
-
 		if(altClick)
 			Handles.RotationHandle(currentHandleRotation, newPosition);
 		else
@@ -1774,12 +1723,6 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 				
-				#if !UNITY_4_3
-				Undo.SetSnapshotTarget(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Rotate Vertices");
-				Undo.CreateSnapshot();
-				Undo.RegisterSnapshot();
-				#endif
-
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
@@ -1796,9 +1739,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
-			#if UNITY_4_3
-				Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
-			#endif
+			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
 
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
@@ -2057,7 +1998,7 @@ public class pb_Editor : EditorWindow
 			}
 			break;
 	
-		#if !UNITY_4			
+		#if !FORCE_MESH_GRAPHICS			
 			case SelectMode.Edge:
 
 				Handles.color = Color.blue;
@@ -2534,7 +2475,7 @@ public class pb_Editor : EditorWindow
 	{
 		selectionMode = mode;
 
-		#if UNITY_4
+		#if FORCE_MESH_GRAPHICS
 			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
 		#else
 		if(selectionMode == SelectMode.Face)
@@ -2931,13 +2872,11 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		#if UNITY_4
+		#if FORCE_MESH_GRAPHICS
 			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
 		#else
-		if(selectionMode == SelectMode.Face)// && !EditorApplication.isPlaying)
+		if(selectionMode == SelectMode.Face)
 			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-		// else
-		// 	pb_Editor_Graphics.ClearSelectionMesh();
 		#endif
 	}
 

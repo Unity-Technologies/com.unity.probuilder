@@ -1,8 +1,9 @@
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
+/**
+ * Defines the minimum available Unity version.
+ */
+
+#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_6_1 || UNITY_4_7
 #define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
 #endif
 
 using UnityEngine;
@@ -13,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
-class QuickStartPostProcessor2 : AssetPostprocessor 
+class pb_InstallPostProcessor : AssetPostprocessor 
 {
 
 #if !PROTOTYPE
@@ -28,14 +29,16 @@ class QuickStartPostProcessor2 : AssetPostprocessor
 		string[] movedAssets,
 		string[] movedFromAssetPaths)
 	{
+		Debug.Log("pb_InstallPostProcessor: OnPostprocessAllAssets");
 		if( System.Array.Exists(importedAssets, element => element.Contains(".unitypackage") && element.Contains(PACKNAME)) )
 		{
-			QuickStart2.AttemptAutoInstall();
+			pb_InstallScript.AttemptAutoInstall();
+			Debug.Log("pb_InstallPostProcessor: Found Packs");
 		}
 	}
 }
 
-public class QuickStart2 : EditorWindow
+public class pb_InstallScript : EditorWindow
 {
 #if !PROTOTYPE
 	const string PACKNAME = "ProBuilder";
@@ -43,6 +46,9 @@ public class QuickStart2 : EditorWindow
 	const string PACKNAME = "Prototype";
 #endif
 
+	/**
+	 * Release (use Dll) or Source (no Dll).
+	 */
 	private enum InstallType
 	{
 		Release,
@@ -51,37 +57,29 @@ public class QuickStart2 : EditorWindow
 		#endif
 	}
 
-	static string[] FILES_TO_DELETE = new string[]
-	{
-		"VertexColorInterface.cs",
-		"pb_Upgrade_Utility.cs",
-		"MirrorTool.cs",
-		"pbVersionBridge",
-		"pb_About.cs",
-		"SetProjectionAxis.cs"
-	};
-
 	static bool probuilderExists = false;
 	static bool needsOrganized = false;
 
+	/**
+	 * Attempt to install package without user interaction.
+	 */
 	public static void AttemptAutoInstall()
 	{
 		CloseProBuilderWindow();
-
-		CreateProCoreDirectories();
 		EditorApplication.delayCall += InstallProBuilder;
 	}
 
 	[MenuItem("Tools/" + PACKNAME + "/Install or Update", false, 0)]
 	public static void MenuInitGraphics()
 	{
-		EditorWindow.GetWindow<QuickStart2>(true, PACKNAME + " Install", true).Show();
+		string path;
+		probuilderExists = FindFile("ProBuilderCore.dll", out path) || FindFile("pb_Object.cs", out path);
+
+		EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + (probuilderExists ? " Update" : " Install"), true).Show();
 	}
 
 	private static void InstallProBuilder()
 	{
-		RemoveOldInstallScript();
-
 		string pbcore_path;
 		probuilderExists = FindFile("ProBuilderCore.dll", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
 	
@@ -96,21 +94,10 @@ public class QuickStart2 : EditorWindow
 		/* See if ProBuilder already exists, and if so, if it's in the correct directory */
 		if(probuilderExists)
 		{
-			if(needsOrganized)
+			if(!needsOrganized || UpdateOrganizePromptContinue())
 			{
-				MoveOldFiles();
-			}
-
-			if(!needsOrganized)
-			{
-				// success!  do the upgrade
-				foreach(string str in FILES_TO_DELETE)
-					DeleteFile(str);
-
-				// 2.3 Needs to show users a message, so if upgrading show a window
-				EditorPrefs.SetBool("pbShowUpgradeDialog", true);
-
-				ImportPack( (InstallType)(pbcore_path.Contains(".dll") ? (InstallType)0 : (InstallType)1) );
+				// cast int to enum cause if Prototype, the Source option doesn't
+				ImportLatestPack( (InstallType)(pbcore_path.Contains(".dll") ? (InstallType)0 : (InstallType)1) );
 
 				return;
 			}
@@ -118,33 +105,21 @@ public class QuickStart2 : EditorWindow
 
 		#if PROTOTYPE
 		if(!probuilderExists)
-			ImportPack(InstallType.Release);
+			ImportLatestPack(InstallType.Release);
 		else
-			EditorWindow.GetWindow<QuickStart2>(true, PACKNAME + " Install", true).Show();
+			EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + " Install", true).Show();
 		#else
 		// If this isn't an upgrade, or the upgrade failed for whatever reason, show the dialogue
-		EditorWindow.GetWindow<QuickStart2>(true, PACKNAME + " Install", true).Show();
+		EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + " Install", true).Show();
 		#endif	
 	}
 
-	static void RemoveOldInstallScript()
+	/**
+	 * Asks the user to continue upgrading in the event that they have moved the PB directory.
+	 */
+	static bool UpdateOrganizePromptContinue()
 	{
-		string[] allFiles = System.IO.Directory.GetFiles("Assets/", "QuickStart.cs.*", System.IO.SearchOption.AllDirectories);
-		string[] matches = System.Array.FindAll(allFiles, name => InProCorePath(name) && !name.Contains(".meta") );
-
-		/* close the old window */
-		EditorWindow[] edWins = (Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[]);
-		EditorWindow[] ew = (EditorWindow[])System.Array.FindAll(edWins, x => x.GetType().ToString() == "QuickStart");
-		if(ew != null)
-			foreach(EditorWindow e in ew)
-				e.Close();
-
-
-		for(int i = 0; i < matches.Length; i++)
-		{
-			// Debug.Log("matches: " + matches[i]);
-			AssetDatabase.DeleteAsset(matches[i]);
-		}
+		return EditorUtility.DisplayDialog("Continue Installation?", "Install script has detected that the " + PACKNAME + " folder has been moved from the \"Assets/ProCore/\" path.  This means the upgrade process will not be able to preserve script references, and you may introduce duplicate namespace errors.\n\nYou can exit the install process and move " + PACKNAME + " back to the ProCore directory, or continue anyway.", "Continue Install", "Cancel");
 	}
 
 	GUIStyle headerStyle = new GUIStyle();
@@ -188,11 +163,8 @@ public class QuickStart2 : EditorWindow
 					if(!EditorUtility.DisplayDialog("Install " + PACKNAME + " Update", "Install " + PACKNAME + "\n\nWarning!  Back up your project!",
 						"Run Update", "Cancel"))
 						return;
-			
-				foreach(string str in FILES_TO_DELETE)
-					DeleteFile(str);
 				
-				ImportPack( install );
+				ImportLatestPack( install );
 				
 				this.Close();
 			}
@@ -214,27 +186,21 @@ public class QuickStart2 : EditorWindow
 
 		if(needsOrganized)
 		{
-			EditorGUILayout.HelpBox("Install Script has detected ProBuilder exists in this project, but is not in the \"Assets/6by7/\" folder.\n\nTo upgrade your project without losing your work, please manually move the ProBuilder folder to \"Assets/6by7/\".\n\nClick the \"Continue\" button once you've moved ProBuilder's folders.", MessageType.Warning);
+			EditorGUILayout.HelpBox("Install Script has detected ProBuilder exists in this project, but is not in the \"Assets/ProCore/\" folder.\n\nTo upgrade your project without losing your work, please manually move the ProBuilder folder to \"Assets/ProCore/\".", MessageType.Warning);
+		}
 
-			if(GUILayout.Button("Continue"))
-			{
-				MoveOldFiles();
-			}
-		}
-		else
+		switch(install)
 		{
-			switch(install)
-			{
-				case InstallType.Release:
-					GUILayout.Box("Release is the standard installation type.  It provides pre-compiled " + PACKNAME + " libraries instead of source code, meaning Unity doesn't need to compile extra files.\n\n*Note that all " + PACKNAME + " `Actions` and example scene files are still provided as source code.");
-					break;
-				#if !PROTOTYPE
-				case InstallType.Source:
-					GUILayout.Box(PACKNAME + " will be installed with full source code.  Note that you will need to remove any previous "+ PACKNAME + " \"Release\" installations prior to installing a Source version.  This is not recommended for users upgrading from a prior installation, as you *will* lose all prior-built " + PACKNAME + " objects.");
-					break;
-				#endif
-			}
+			case InstallType.Release:
+				GUILayout.Box("Release is the standard installation type.  It provides pre-compiled " + PACKNAME + " libraries instead of source code, meaning Unity doesn't need to compile extra files.\n\n*Note that all " + PACKNAME + " `Actions` and example scene files are still provided as source code.");
+				break;
+			#if !PROTOTYPE
+			case InstallType.Source:
+				GUILayout.Box(PACKNAME + " will be installed with full source code.  Note that you will need to remove any previous "+ PACKNAME + " \"Release\" installations prior to installing a Source version.  This is not recommended for users upgrading from a prior installation, as you *will* lose all prior-built " + PACKNAME + " objects.");
+				break;
+			#endif
 		}
+
 		GUILayout.Space(4);
 		GUI.skin.box.alignment = ta;
 		GUI.skin.box.normal.textColor = oldBoxTC;
@@ -242,76 +208,21 @@ public class QuickStart2 : EditorWindow
 		GUI.backgroundColor = oldBGC;
 	}
 
-	private static void MoveOldFiles()
-	{
-		string[] move = new string[]
-		{
-			PACKNAME + "/API Examples",
-			PACKNAME + "/Classes",
-			PACKNAME + "/Credits.txt",
-			PACKNAME + "/Editor",
-			PACKNAME + "/Resources",
-			PACKNAME + "/Shader",
-			"Shared/Code/SixBySeven.dll",
-			"Shared/Resources/GUI",
-		};
-
-		List<FileMove> FilesToMoveOnUpgrade = new List<FileMove>();
-
-		foreach(string str in move)
-		{
-			string path;
-			if(FindFile(str, out path))
-				FilesToMoveOnUpgrade.Add(new FileMove(path, "Assets/ProCore/" + str));						
-		}
-
-		if(VerifyOrganizeFiles(FilesToMoveOnUpgrade))
-		{
-			// File movements check out - do the thang
-			foreach(FileMove fm in FilesToMoveOnUpgrade)
-				fm.Move();
-
-			needsOrganized = false;
-		}
-		else
-			needsOrganized = true;
-	}
-
-	private static bool CreateProCoreDirectories()
-	{
-		if(!Directory.Exists("Assets/ProCore"))
-			AssetDatabase.CreateFolder("Assets", "ProCore");
-
-		if(!Directory.Exists("Assets/ProCore/" + PACKNAME))
-			AssetDatabase.CreateFolder("Assets/ProCore", PACKNAME);
-
-		if(!Directory.Exists("Assets/ProCore/Shared"))
-			AssetDatabase.CreateFolder("Assets/ProCore", "Shared");
-
-		if(!Directory.Exists("Assets/ProCore/Shared/Resources"))
-			AssetDatabase.CreateFolder("Assets/ProCore/Shared", "Resources");
-
-		if(!Directory.Exists("Assets/ProCore/Shared/Code"))
-			AssetDatabase.CreateFolder("Assets/ProCore/Shared", "Code");
-
-		return true;
-	}
-
 	/**
 	 * Can't reference ProBuilder classes, so do some hacky workaround
 	 */
-	static void CloseProBuilderWindow()
+	private static void CloseProBuilderWindow()
 	{
-		List<EditorWindow> ew = (Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[]).Where(x => x.GetType().ToString().Contains("pb_Editor")).ToList();
+		IEnumerable<EditorWindow> ew = (Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[]).Where(x => x.GetType().ToString().Contains("pb_Editor"));
 
-		for(int i = 0; i < ew.Count; i++)
-			ew[i].Close();
+		foreach(EditorWindow win in ew)
+			win.Close();
 	}
 
 	/**
 	 * Always install the latest.  
 	 */
-	private static void ImportPack(InstallType i)
+	private static void ImportLatestPack(InstallType i)
 	{
 		string[] packs = GetProBuilderPacks(i == InstallType.Release ? "-unity" : "-source");
 		int tmp;
@@ -323,27 +234,12 @@ public class QuickStart2 : EditorWindow
 		PostInstallCleanup();
 	}
 
-
 	private static void PostInstallCleanup()
 	{
-		/* delete 6by7/ProBuilder folder, only accounting for most basic case */
-		string old_pb_path = "";
-		if(FindFile("6by7/" + PACKNAME, out old_pb_path))
-			DeleteDirectory(old_pb_path);
-
-		string six_path;
-		if(FindFile("6by7", out six_path))
-		{
-			string[] files = Directory.GetFiles(six_path);
-			// string[] folders = Directory.GetDirectories(six_path);
-			if(files.Length < 1)// && folders.Length < 1)
-				DeleteDirectory(six_path);
-		}
-
-		DeleteFile("QuickStart2.cs");
+		DeleteFile("pb_InstallScript.cs");
 	}
 
-	public static void LoadPack(string pb_path)
+	private static void LoadPack(string pb_path)
 	{
 		#if !UNITY_STANDALONE_OSX && !UNITY_IPHONE
 		pb_path = pb_path.Replace("\\", "/");
@@ -369,77 +265,6 @@ public class QuickStart2 : EditorWindow
 			if( InProCorePath(file) )
 				AssetDatabase.DeleteAsset(file);
 		}
-	}
-
-	/**
-	 * Attempts to Delete directory at path.  Will also delete all files in said directory.
-	 */
-	public static void DeleteDirectory(string path)
-	{
-		if(!Directory.Exists(path))
-			return;
-
-		string[] files = Directory.GetFiles(path);
-		string[] dirs = Directory.GetDirectories(path);
-
-		foreach (string file in files)
-		{
-			File.SetAttributes(file, FileAttributes.Normal);
-			File.Delete(file);
-		}
-
-		foreach (string dir in dirs)
-		{
-			DeleteDirectory(dir);
-		}
-
-		Directory.Delete(path, false);
-
-		if(File.Exists(path+".meta"))
-			File.Delete(path+".meta");
-	}
-
-	struct FileMove
-	{
-		public string source;
-		public string destination;
-
-		public FileMove(string source, string destination)
-		{
-			this.source = source;
-			this.destination = destination;
-		}
-
-		public bool Verify()
-		{
-			return AssetDatabase.ValidateMoveAsset(source, destination) == "";
-		}
-
-		public void Move()
-		{
-			AssetDatabase.MoveAsset(source, destination);
-		}
-
-		public override string ToString()
-		{
-			return source + " -> " + destination;// + "  Valid: " + Verify();
-		}
-	}
-
-	/**
-	 * Returns true if all movements are confirmmed.
-	 */
-	private static bool VerifyOrganizeFiles(List<FileMove> files)
-	{
-		foreach(FileMove fm in files)
-		{
-			if(!fm.Verify())
-			{
-				Debug.LogWarning("Failed verifying move: " + fm.ToString());
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -521,19 +346,19 @@ public class QuickStart2 : EditorWindow
 		string pack = "ProBuilder2-v";
 		#endif
 
-		#if UNITY_4_3
+		#if UNITY_5
 		string[] allPackages = System.Array.FindAll(allFiles, name =>
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("unity35")
+			!name.Contains("unity43")
 			);
 		#else
 		string[] allPackages = System.Array.FindAll(allFiles, name =>
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("unity43")
+			!name.Contains("unity5")
 			);
 		#endif
 

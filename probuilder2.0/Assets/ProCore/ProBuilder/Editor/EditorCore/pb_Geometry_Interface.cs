@@ -1,10 +1,3 @@
-#if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_5_0
-#define UNITY_4_3
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-#define UNITY_3
-#endif
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -55,9 +48,7 @@ public class pb_Geometry_Interface : EditorWindow
 	Material userMaterial = null;
 	void OnEnable()
 	{
-		#if !PROTOTYPE
-			userMaterial = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
-		#endif
+		userMaterial = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 		initPreview = true;
 	}
@@ -75,13 +66,11 @@ public class pb_Geometry_Interface : EditorWindow
 	{
 		pb_Object pb = ProBuilder.CreatePrimitive(Shape.Cube);
 		
-		#if !PROTOTYPE
 		Material mat = null;
 		if(EditorPrefs.HasKey(pb_Constant.pbDefaultMaterial))
 			mat = (Material)Resources.LoadAssetAtPath(EditorPrefs.GetString(pb_Constant.pbDefaultMaterial), typeof(Material));
 
 		if(mat != null) pb.SetFaceMaterial(pb.faces, mat);
-		#endif
 
 		pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
 		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
@@ -368,10 +357,6 @@ public class pb_Geometry_Interface : EditorWindow
 	static int cyl_heightCuts = 2;
 	void CylinderGUI()
 	{
-		#if FREE || TORNADO_TWINS
-		GUI.enabled = false;
-		#endif
-
 		// Store old values	
 		cyl_radius = EditorGUILayout.FloatField("Radius", cyl_radius);
 		cyl_radius = Mathf.Clamp(cyl_radius, .01f, Mathf.Infinity);
@@ -429,11 +414,6 @@ public class pb_Geometry_Interface : EditorWindow
 		}
 		
 		GUI.backgroundColor = oldColor;
-
-
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = true;
-		#endif
 	}
 
 	/**** Door Generator ***/
@@ -496,10 +476,6 @@ public class pb_Geometry_Interface : EditorWindow
 	static bool plane_smooth = false;
 	void PlaneGUI()
 	{
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = false;
-		#endif
-
 		plane_axis = (Axis)EditorGUILayout.EnumPopup("Initial Orientation", plane_axis);
 
 		plane_width = EditorGUILayout.FloatField("Width", plane_width);
@@ -556,10 +532,6 @@ public class pb_Geometry_Interface : EditorWindow
 		}
 		
 		GUI.backgroundColor = oldColor;
-
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = true;
-		#endif
 	}
 
 	static float pipe_radius = 1f;
@@ -569,9 +541,6 @@ public class pb_Geometry_Interface : EditorWindow
 	static int pipe_subdivHeight = 1;
 	void PipeGUI()
 	{
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = false;
-		#endif
 		pipe_radius = EditorGUILayout.FloatField("Radius", pipe_radius);
 		pipe_height = EditorGUILayout.FloatField("Height", pipe_height);
 		pipe_thickness = EditorGUILayout.FloatField("Thickness", pipe_thickness);
@@ -629,10 +598,6 @@ public class pb_Geometry_Interface : EditorWindow
 		}
 
 		GUI.backgroundColor = oldColor;
-
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = true;
-		#endif
 	}
 
 	static float 	cone_radius = 1f;
@@ -640,9 +605,6 @@ public class pb_Geometry_Interface : EditorWindow
 	static int 		cone_subdivAxis = 6;
 	void ConeGUI()
 	{
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = false;
-		#endif
 		cone_radius = EditorGUILayout.FloatField("Radius", cone_radius);
 		cone_height = EditorGUILayout.FloatField("Height", cone_height);
 		cone_subdivAxis = EditorGUILayout.IntField("Number of Sides", cone_subdivAxis);
@@ -695,9 +657,6 @@ public class pb_Geometry_Interface : EditorWindow
 		
 		GUI.backgroundColor = oldColor;
 		
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = true;
-		#endif
 	}
 
 	/**** Arch Generator ***/
@@ -814,10 +773,6 @@ public class pb_Geometry_Interface : EditorWindow
 	static Vector2 scrollbar = new Vector2(0f, 0f);
 	void CustomGUI()
 	{
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = false;
-		#endif
-
 		GUILayout.Label("Custom Geometry", EditorStyles.boldLabel);
 		EditorGUILayout.HelpBox("Vertices must be wound in faces, and counter-clockwise.\n(Think horizontally reversed Z)", MessageType.Info);
 			
@@ -859,10 +814,6 @@ public class pb_Geometry_Interface : EditorWindow
 		}
 		
 		GUI.backgroundColor = oldColor;
-		
-		#if FREE || TORNADO_TWINS
-			GUI.enabled = true;
-		#endif
 	}
 
 	private int Clamp(int val, int min, int max)
