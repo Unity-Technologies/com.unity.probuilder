@@ -9,6 +9,8 @@ using Ionic.Zip;
 using System.Collections;
 using System.Collections.Generic;
 
+using System.Text.RegularExpressions;
+
 #if !UNITY_WEBPLAYER
 public class AutomatedExport : MonoBehaviour
 {
@@ -93,7 +95,7 @@ public class AutomatedExport : MonoBehaviour
 	{
 		// parse args first
 		// bool generateAboutPanel = true;
-		bool generateVersionInfoFile = false;
+		bool generateAboutEntry = false;
 		
 		string[] arg = System.Environment.GetCommandLineArgs();
 		string append = "";
@@ -103,7 +105,6 @@ public class AutomatedExport : MonoBehaviour
 		bool generateZip = false;
 		string plistName = DEFAULT_PLIST_NAME;
 		string define = "";
-		string plistPath = "";
 		string exportFolderPath = "";
 		string folderRootName = "ProBuilder";
 
@@ -111,44 +112,45 @@ public class AutomatedExport : MonoBehaviour
 		{
 			if(str.StartsWith("exportFolderPath:"))
 				exportFolderPath = str.Replace("exportFolderPath:", "").Trim();
+
 			if(str.StartsWith("packName:"))
 				packName = str.Replace("packName:","");
-			if(str.StartsWith("postfix:"))
-				append = str.Replace("postfix:", "");
+
+			if(str.StartsWith("suffix:"))
+				append = str.Replace("suffix:", "");
+
 			if(str.StartsWith("installDir:"))
 				path = str.Replace("installDir:", "");
+
 			if(str.StartsWith("ignore:"))
 				addlIgnore = str.Replace("ignore:", "").Trim().Split(';');
+
 			if(str.StartsWith("packageName:"))
 				packName = str.Replace("packageName:", "").Trim();
-			// if(str.StartsWith("generateAbout:"))
-			// 	generateAboutPanel = (str.Replace("generateAbout:","").Trim() == "TRUE") ? true : false;
+
 			if(str.StartsWith("generateVersionInfo:"))
-				generateVersionInfoFile = (str.Replace("generateVersionInfo:","").Trim() == "TRUE") ? true : false;
+				generateAboutEntry = (str.Replace("generateVersionInfo:","").Trim() == "TRUE") ? true : false;
+
 			if(str.StartsWith("generateZip:"))
 				generateZip = (str.Replace("generateZip:","").Trim() == "TRUE") ? true : false;
-			if(str.StartsWith("plistName:"))
-				plistName = str.Replace("plistName:", "");
+
 			if(str.StartsWith("define:"))
 				define = str.Replace("define:", "");
-			if(str.StartsWith("plistPath:"))
-				plistPath = str.Replace("plistPath:", "");
+
 			if(str.StartsWith("folderRootName:"))
 				folderRootName = str.Replace("folderRootName:", "");
 		}
 
-		if(plistPath == "")
-			plistPath = "Assets/ProCore/" + folderRootName + "/Editor/Debug/";
+		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
 
-		TextAsset plist = (TextAsset)Resources.LoadAssetAtPath( plistPath + plistName, typeof(TextAsset));
+		TextAsset changelog = (TextAsset)Resources.LoadAssetAtPath(changelog_path, typeof(TextAsset));
 
-		string[] txt 				= (plist != null) ? plist.text.Split('\n') : new string[]{""};
-		string VERSION_NUMBER 		= (plist != null) ? txt[0].Replace("Version: ", "").Trim() : "";
-		// string RELEASE_METRIC 		= (plist != null) ? txt[1].Replace("ReleaseMetric: ", "").Trim() : "";
-		// string VELOCIRAPTOR_DANGER 	= (plist != null) ? txt[2].Replace("VelociraptorDanger: ", "").Trim() : "";
+		Regex reg = new Regex(@"([0-9].[0-9].[0-9][a-z][0-9]*)", RegexOptions.None);
+		Match first = reg.Match(changelog.text);
+		string VERSION_NUMBER = first.Success ? first.Value : "Failed parsing version number!";
 
-		// write the version info file
-		if(generateVersionInfoFile)
+		// write the about entry info file
+		if(generateAboutEntry)
 		{
 			string hiddenVersionInfo = "Assets/ProCore/" + folderRootName + "/About/pc_AboutEntry_ProBuilder.txt";
 			string versionInfoText = 

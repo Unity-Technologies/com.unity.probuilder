@@ -12,8 +12,6 @@ public class DefineView : EditorWindow
 
 	void OnGUI()
 	{
-		bool on = false;
-
 #if UNITY_4_5
 		GUILayout.Label("UNITY_4_5");
 #endif
