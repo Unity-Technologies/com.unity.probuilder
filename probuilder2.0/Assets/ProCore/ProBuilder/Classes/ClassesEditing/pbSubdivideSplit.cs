@@ -285,7 +285,7 @@ public static class pbSubdivideSplit
 			if( pb.AppendVerticesToFace(add.Key, add.Value.Select(x => x.position).ToArray(), add.Value.Select(x => x.color).ToArray(), out newFace) )
 				triangulatedFaces.Add(newFace);
 			else
-				Debug.LogError("Mesh re-triangulation failed.  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
+				Debug.LogError("Mesh re-triangulation failed.");//  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
 		}
 
 		// Re-triangulate any faces left with dangling verts at edges

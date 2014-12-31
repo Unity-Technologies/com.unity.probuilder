@@ -2078,7 +2078,7 @@ public class pb_Editor : EditorWindow
 				);
 		}
 
-		#if DEBUG
+		#if PB_DEBUG
 		int startY = 0;
 		GUI.Label(new Rect(18, startY += 20, 200, 40), "Faces: " + faceCount);
 		GUI.Label(new Rect(18, startY += 20, 200, 40), "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
@@ -2578,7 +2578,7 @@ public class pb_Editor : EditorWindow
 	// Vector3[]			selected_handlePivot = new Vector3[0];
 	int 				per_object_vertexCount_distinct = 0;	///< The number of selected distinct indices on the object with the greatest number of selected distinct indices.
 
-	#if DEBUG
+	#if PB_DEBUG
 	int faceCount = 0;
 	int vertexCount = 0;
 	int triangleCount = 0;
@@ -2597,7 +2597,7 @@ public class pb_Editor : EditorWindow
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
 
-		#if DEBUG
+		#if PB_DEBUG
 		faceCount = 0;
 		vertexCount = 0;
 		triangleCount = 0;
@@ -2766,7 +2766,7 @@ public class pb_Editor : EditorWindow
 			if(distinctVertexCount > per_object_vertexCount_distinct)
 				per_object_vertexCount_distinct = distinctVertexCount;
 
-			#if DEBUG
+			#if PB_DEBUG
 			faceCount += selection[i].faces.Length;
 			vertexCount += selection[i].vertexCount;
 			triangleCount += selection[i].msh.triangles.Length;

@@ -103,7 +103,6 @@ public class AutomatedExport : MonoBehaviour
 		string[] addlIgnore = new string[0];
 		string packName = "ProBuilder2";
 		bool generateZip = false;
-		string plistName = DEFAULT_PLIST_NAME;
 		string define = "";
 		string exportFolderPath = "";
 		string folderRootName = "ProBuilder";
