@@ -360,14 +360,14 @@ public class pb_InstallScript : EditorWindow
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("Unity5")
+			!name.Contains("unity5")
 			);
 		#else
 		string[] allPackages = System.Array.FindAll(allFiles, name =>
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("Unity4")
+			!name.Contains("unity4")
 			);
 		#endif
 

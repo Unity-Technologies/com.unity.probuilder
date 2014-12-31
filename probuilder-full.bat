@@ -131,10 +131,6 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
 :: ================================ END   5.0 + LIBRARIES ================================ }
 
-	pause
-
-@echo on
-
 :: Clear out staging project again, but this time repopulate it with a built pack + install stuff
 rd /S /Q %CD%\probuilder-staging
 
