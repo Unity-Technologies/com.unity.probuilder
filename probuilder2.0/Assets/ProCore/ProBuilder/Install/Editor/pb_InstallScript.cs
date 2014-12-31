@@ -90,7 +90,7 @@ public class pb_InstallScript : EditorWindow
 	private static void InstallProBuilder()
 	{
 		string pbcore_path;
-		probuilderExists = FindFile("ProBuilderCore.dll", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
+		probuilderExists = FindFile("ProBuilderCore", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
 	
 		string pbeditor_path;
 		if( !FindFile("ProBuilderEditor.dll", out pbeditor_path) )
@@ -360,14 +360,14 @@ public class pb_InstallScript : EditorWindow
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("unity5")
+			name.Contains("unity5")
 			);
 		#else
 		string[] allPackages = System.Array.FindAll(allFiles, name =>
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
 			name.Contains(match) &&
-			!name.Contains("unity4")
+			name.Contains("unity4")
 			);
 		#endif
 

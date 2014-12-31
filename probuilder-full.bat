@@ -157,7 +157,7 @@ xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\pb_InstallScri
 
 echo ================================== EXPORT FINAL PACK ==================================
 
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ generateZip:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ ignore:changelog.txt generateZip:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 
 echo ================================== COMPLETE! ================================== 
 
