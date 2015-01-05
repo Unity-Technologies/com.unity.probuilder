@@ -1,158 +1,338 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 /**
  * Extends MonoBehaviour Inspector, automatically fixing missing script
  * references caused by the upgrade process.
  */
-// [CustomEditor(typeof(MonoBehaviour))]
+[CustomEditor(typeof(MonoBehaviour))]
 public class pb_MissingScriptEditor : Editor
 {
-	[MenuItem("Tools/ProBuilder/FIND BROKED SHIT")]
-	public static void nimsif()
+	static int index = 0;
+	static float total;
+
+	static bool doFix = false;
+	static bool doShow = true;
+
+	static MonoScript _mono_pb;
+	static MonoScript _mono_pe;
+
+	static void LoadMonoScript()
 	{
-		MethodInfo loadFromCache = typeof(SerializedObject).GetMethod("LoadFromCache", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+		GameObject go = new GameObject();
 
-		foreach(GameObject go in FindObjectsOfType(typeof(GameObject)))
+		pb_Object pb = go.AddComponent<pb_Object>();
+		pb_Entity pe = go.AddComponent<pb_Entity>();
+
+		_mono_pb = MonoScript.FromMonoBehaviour( pb );
+		_mono_pe = MonoScript.FromMonoBehaviour( pe );
+
+		DestroyImmediate(go);
+	}
+
+	public MonoScript pb_monoscript
+	{
+		get
 		{
-			SerializedObject so = new SerializedObject( go );
-
-			// object[] parameters = new object[] { (int)go.GetInstanceID() };
-			// SerializedObject so; 
-			// object result = loadFromCache.Invoke(null, parameters);
-			// so = (SerializedObject)result;//(SerializedObject)parameters[1];
-
-			Debug.Log("serializedObject: " + so);
-
-			SerializedProperty iterator = so.GetIterator();
-
-			iterator.Next(true);
-
-			string txt = go.name + "\n";
-
-			while( iterator.Next(true) )
-			{
-				txt += iterator.name + "  : (" + iterator.type + " / " + iterator.propertyType + ")";
-
-				if(iterator.propertyType == SerializedPropertyType.ObjectReference && iterator.type == "PPtr<Component>")
-				{
-					txt += (iterator.objectReferenceValue == null ? " is null\n" : "\n");
-					
-					SerializedObject iso = new SerializedObject(iterator.objectReferenceValue);
-
-					SerializedProperty it = iso.GetIterator();
-					it.Next(true);
-
-					while( it.Next(true) ){
-						txt += "\t" + it.name + "\n";
-					}
-				}
-				else
-				{
-					txt += "\n";
-				}
-			}
-
-			SerializedProperty sp = so.FindProperty("m_Script");
-			Debug.Log(txt);
-
-			if(sp == null || sp.objectReferenceValue != null)
-				continue;
-
-			Debug.Log(go.name + " contains a null component");
+			if(_mono_pb == null) LoadMonoScript();
+			return _mono_pb; 
 		}
 	}
 
-	// /**
-	//  * SerializedProperty names found in pb_Entity.
-	//  */
-	// List<string> PB_OBJECT_SCRIPT_PROPERTIES = new List<string>()
-	// {
-	// 	"_sharedIndices",
-	// 	"_vertices",
-	// 	"_uv",
-	// 	"_sharedIndicesUV",
-	// 	"_quads"
-	// };
+	public MonoScript pe_monoscript
+	{
+		get
+		{
+			if(_mono_pe == null) LoadMonoScript();
+			return _mono_pe; 
+		}
+	}
 
-	// /**
-	//  * SerializedProperty names found in pb_Object.
-	//  */
-	// List<string> PB_ENTITY_SCRIPT_PROPERTIES = new List<string>()
-	// {
-	// 	"pb",
-	// 	"userSetDimensions",
-	// 	"_entityType"
-	// };
 
-	// public override void OnInspectorGUI()
-	// {
-	// 	SerializedProperty scriptProperty = this.serializedObject.FindProperty("m_Script");
+	[MenuItem("Tools/ProBuilder/FIX BROKED SHIT")]
+	public static void nimsif()
+	{
+		EditorApplication.ExecuteMenuItem("Window/Inspector");
 
-	// 	if(scriptProperty == null || scriptProperty.objectReferenceValue != null)
-	// 	{
-	// 		base.OnInspectorGUI();
-	// 		return;
-	// 	}
+		total = FindObjectsOfType(typeof(GameObject)).Where(x => ((GameObject)x).GetComponents<Component>().Any(n => n == null) ).ToList().Count;
 
-	// 	GUILayout.Label(scriptProperty.type);
+		if(total > 1)
+		{
+			index = 0;
+			doFix = true;
 
-	// 	int pbObjectMatches = 0, pbEntityMatches = 0;
+			EditorApplication.delayCall += Next;
+		}
+	}
 
-	// 	SerializedProperty iterator = this.serializedObject.GetIterator();
+	static void Next()
+	{
+		EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
+		// {
+		// 	EditorUtility.DisplayDialog("User Canceled", "Successfully repaired " + index + " out of " + total + " ProBuilder objects.", "Okay");
 
-	// 	iterator.Next(true);
+		// 	EditorUtility.ClearProgressBar();
+		// 	doFix = false;
+		// 	return;
+		// }
 
-	// 	while( iterator.Next(false) )
-	// 	{
-	// 		GUILayout.Label(iterator.name);
+		foreach(GameObject go in FindObjectsOfType(typeof(GameObject)))
+		{
+			if(go.GetComponents<Component>().Any(x => x == null))
+			{
+				Selection.activeObject = go;
+				return;
+			}
+		}
 
-	// 		if( PB_OBJECT_SCRIPT_PROPERTIES.Contains(iterator.name) )
-	// 			pbObjectMatches++;
+		EditorUtility.ClearProgressBar();
 
-	// 		if( PB_ENTITY_SCRIPT_PROPERTIES.Contains(iterator.name) )
-	// 			pbEntityMatches++;
-	// 	}
+		doFix = false;
 
-	// 	if(pbObjectMatches >= 3)
-	// 	{
-	// 		Debug.Log("Matched pb_Object script to: " + target.name);
-	// 		GUILayout.Label("SCRIPT MATCHES PB_OBJECT", EditorStyles.boldLabel);
+		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
+	}
 
-	// 		GameObject go = new GameObject();
-	// 		pb_Object pb = go.AddComponent<pb_Object>();
-	// 		MonoScript ms = MonoScript.FromMonoBehaviour( pb );
+	/**
+	 * SerializedProperty names found in pb_Entity.
+	 */
+	List<string> PB_OBJECT_SCRIPT_PROPERTIES = new List<string>()
+	{
+		"_sharedIndices",
+		"_vertices",
+		"_uv",
+		"_sharedIndicesUV",
+		"_quads"
+	};
+
+	/**
+	 * SerializedProperty names found in pb_Object.
+	 */
+	List<string> PB_ENTITY_SCRIPT_PROPERTIES = new List<string>()
+	{
+		"pb",
+		"userSetDimensions",
+		"_entityType",
+		"forceConvex"
+	};
+
+	public override void OnInspectorGUI()
+	{
+		if(!doShow && !doFix)
+		{
+			base.OnInspectorGUI();
+			return;
+		}
+
+		SerializedProperty scriptProperty = this.serializedObject.FindProperty("m_Script");
+
+		if(scriptProperty == null || scriptProperty.objectReferenceValue != null)
+		{
+			if(doFix && Event.current.type == EventType.Repaint)
+			{
+				EditorApplication.delayCall += Next;
+			}
+
+			return;
+		}
+
+		// GUILayout.Label(scriptProperty.type);
+
+		int pbObjectMatches = 0, pbEntityMatches = 0;
+
+		// GUILayout.Label( SerializedObjectToString(this.serializedObject) );
+
+		SerializedProperty iterator = this.serializedObject.GetIterator();
+
+		iterator.Next(true);
+
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();			
+
+		while( iterator.Next(true) )
+		{
+			// GUILayout.Label(iterator.name);
+
+			// if(doShow)
+			// {
+			// 	string tabs = "";
+			// 	for(int i = 0; i < iterator.depth; i++) tabs += "\t";
+
+			// 	sb.AppendLine(tabs + iterator.name + (iterator.propertyType == SerializedPropertyType.ObjectReference && iterator.type.Contains("Component") && iterator.objectReferenceValue == null ? " -> NULL" : "") );
+				
+			// 	tabs += "  - ";
+				
+			// 	sb.AppendLine(tabs + "Type: (" + iterator.type + " / " + iterator.propertyType + " / " + iterator.name + ")");
+			// 	sb.AppendLine(tabs + iterator.propertyPath);
+			// 	sb.AppendLine(tabs + "Value: " + SerializedPropertyValue(iterator));
+			// }
+
+		
+			if( PB_OBJECT_SCRIPT_PROPERTIES.Contains(iterator.name) )
+				pbObjectMatches++;
+
+			if( PB_ENTITY_SCRIPT_PROPERTIES.Contains(iterator.name) )
+				pbEntityMatches++;
+
+		}
+
+		sb.AppendLine("OBJECT MATCHES: " + pbObjectMatches);
+		sb.AppendLine("ENTITY MATCHES: " + pbEntityMatches);
+
+		if(doShow)
+		{
+			GUILayout.Label(sb.ToString());	
+		}
+
+		if(doFix || GUILayout.Button("Fix"))
+		{
+			if(pbObjectMatches >= 3)
+			{
+				index++;
+
+				scriptProperty.objectReferenceValue = pb_monoscript;
+				scriptProperty.serializedObject.ApplyModifiedProperties();
+				scriptProperty.serializedObject.Update();
+
+			}
+
+			if(pbEntityMatches >= 3)
+			{
+				scriptProperty.objectReferenceValue = pe_monoscript;
+				scriptProperty.serializedObject.ApplyModifiedProperties();
+				scriptProperty.serializedObject.Update();
+
+			}
+		}
+
+		if(doFix && Event.current.type == EventType.Repaint)
+			EditorApplication.delayCall += Next;
+
+	}
+
+
+	static string SerializedObjectToString(SerializedObject serializedObject)
+	{
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();			
+
+		if(serializedObject == null)
+		{
+			sb.Append("NULL");
+			return sb.ToString();
+		}
+
+		SerializedProperty iterator = serializedObject.GetIterator();
+
+		iterator.Next(true);
+
+
+		while( iterator.Next(true) )
+		{	
+			string tabs = "";
+			for(int i = 0; i < iterator.depth; i++) tabs += "\t";
+
+			sb.AppendLine(tabs + iterator.name + (iterator.propertyType == SerializedPropertyType.ObjectReference && iterator.type.Contains("Component") && iterator.objectReferenceValue == null ? " -> NULL" : "") );
 			
-	// 		Debug.Log(ms.name);
+			tabs += "  - ";
 			
-	// 		scriptProperty.objectReferenceValue = MonoScript.FromMonoBehaviour( pb );
-	// 		scriptProperty.serializedObject.ApplyModifiedProperties();
-	// 		scriptProperty.serializedObject.Update();
+			sb.AppendLine(tabs + "Type: (" + iterator.type + " / " + iterator.propertyType + " / " + " / " + iterator.name + ")");
+			sb.AppendLine(tabs + iterator.propertyPath);
+			sb.AppendLine(tabs + "Value: " + SerializedPropertyValue(iterator));
+		}
 
-	// 		DestroyImmediate(go);
-	// 	}
+		// SerializedProperty sp = serializedObject.FindProperty("m_Script");
 
-	// 	if(pbEntityMatches >= 3)
-	// 	{
-	// 		Debug.Log("Matched pb_Object script to: " + target.name);
-	// 		GUILayout.Label("SCRIPT MATCHES PB_ENTITY", EditorStyles.boldLabel);
+		return sb.ToString();
+	}
 
-	// 		GameObject go = new GameObject();
+	static List<SerializedProperty> FindNullComponents(SerializedObject serializedObject)
+	{
+		List<SerializedProperty> nullComponents = new List<SerializedProperty>();
 
-	// 		pb_Object pb = go.AddComponent<pb_Object>();
-	// 		pb_Entity pe = go.AddComponent<pb_Entity>();
+		SerializedProperty iterator = serializedObject.GetIterator();
 
-	// 		MonoScript ms = MonoScript.FromMonoBehaviour( pe );
+		iterator.Next(true);
 
-	// 		Debug.Log(ms.name);
+		while( iterator.Next(true) )
+		{	
+			if(iterator.propertyType == SerializedPropertyType.ObjectReference && iterator.type.Contains("Component") && iterator.objectReferenceValue == null)
+			{
+				nullComponents.Add(iterator);
 
-	// 		scriptProperty.objectReferenceValue = MonoScript.FromMonoBehaviour( pe );
-	// 		scriptProperty.serializedObject.ApplyModifiedProperties();
-	// 		scriptProperty.serializedObject.Update();
+				System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-	// 		DestroyImmediate(go);
-	// 	}
-	// }
+				sb.AppendLine( iterator.name );
+				sb.AppendLine( iterator.propertyPath );
+
+				SerializedProperty nullproperty = iterator.FindPropertyRelative( iterator.propertyPath );
+				sb.AppendLine( nullproperty == null ? "couldn't find component" : " huzzah ");
+
+				Debug.Log(sb.ToString());
+			}		
+		}
+
+		return nullComponents;
+	}
+
+	static string SerializedPropertyValue(SerializedProperty sp)
+	{
+		switch(sp.propertyType)
+		{
+			case SerializedPropertyType.Integer:
+				return sp.intValue.ToString();
+
+			case SerializedPropertyType.Boolean:
+				return sp.boolValue.ToString();
+
+			case SerializedPropertyType.Float:
+				return sp.floatValue.ToString();
+
+			case SerializedPropertyType.String:
+				return sp.stringValue.ToString();
+
+			case SerializedPropertyType.Color:
+				return sp.colorValue.ToString();
+
+			case SerializedPropertyType.ObjectReference:
+				return (sp.objectReferenceValue == null ? "null" : sp.objectReferenceValue.name);
+
+			case SerializedPropertyType.LayerMask:
+				return sp.intValue.ToString();
+
+			case SerializedPropertyType.Enum:
+				return sp.enumValueIndex.ToString();
+
+			case SerializedPropertyType.Vector2:
+				return sp.vector2Value.ToString();
+
+			case SerializedPropertyType.Vector3:
+				return sp.vector3Value.ToString();
+
+			// case SerializedPropertyType.Vector4:
+			// 	return sp.vector4Value.ToString();
+
+			case SerializedPropertyType.Rect:
+				return sp.rectValue.ToString();
+
+			case SerializedPropertyType.ArraySize:
+				return sp.intValue.ToString();
+
+			case SerializedPropertyType.Character:
+				return "Character";
+
+			case SerializedPropertyType.AnimationCurve:
+				return sp.animationCurveValue.ToString();
+
+			case SerializedPropertyType.Bounds:
+				return sp.boundsValue.ToString();
+
+			case SerializedPropertyType.Gradient:
+				return "Gradient";
+
+			default:
+				return "Unknown type";
+		}
+	}
+
 }
