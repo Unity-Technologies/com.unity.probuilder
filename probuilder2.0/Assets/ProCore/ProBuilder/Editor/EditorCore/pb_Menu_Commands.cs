@@ -440,7 +440,7 @@ public class pb_Menu_Commands : Editor
 		}
 
 		if(editor != null)
-			editor.UpdateSelection();
+			editor.UpdateSelection(false);
 
 		pb_Editor_Utility.ShowNotification(grown > 0 ? "Grow Selection" : "Nothing to Grow");
 
@@ -1107,7 +1107,7 @@ public class pb_Menu_Commands : Editor
 		pb_Editor_Utility.ShowNotification("Subdivide Object");
 
 		if(editor)
-			editor.UpdateSelection();
+			editor.UpdateSelection(true);
 	}
 
 	/**
@@ -1140,7 +1140,7 @@ public class pb_Menu_Commands : Editor
 	        pb_Editor_Utility.ShowNotification("Subdivide " + success + ((success > 1) ? " faces" : " face"));
 			
 			if(editor)
-				editor.UpdateSelection();
+				editor.UpdateSelection(true);
 		}
 		else
 		{

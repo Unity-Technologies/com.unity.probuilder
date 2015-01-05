@@ -52,7 +52,7 @@ public class pb_MissingScriptEditor : Editor
 	}
 
 
-	[MenuItem("Tools/ProBuilder/FIX BROKED SHIT")]
+	[MenuItem("Tools/ProBuilder/Repair/Repair Missing Script References")]
 	public static void nimsif()
 	{
 		EditorApplication.ExecuteMenuItem("Window/Inspector");

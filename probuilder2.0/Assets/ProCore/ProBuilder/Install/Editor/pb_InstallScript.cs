@@ -1,6 +1,7 @@
 /**
  * Defines the minimum available Unity version.
  */
+#if !PB_DEV
 
 #if UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_6_1 || UNITY_4_7
 #define UNITY_4_3
@@ -222,10 +223,10 @@ public class pb_InstallScript : EditorWindow
 	 */
 	private static void CloseProBuilderWindow()
 	{
-		IEnumerable<EditorWindow> ew = (Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[]).Where(x => x.GetType().ToString().Contains("pb_Editor"));
+		EditorWindow[] ew = (Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[]).Where(x => x.GetType().ToString().Contains("pb_Editor")).ToArray();
 
-		foreach(EditorWindow win in ew)
-			win.Close();
+		for(int i = 0; i < ew.Length; i++)
+			ew[i].Close();
 	}
 
 	/**
@@ -236,6 +237,8 @@ public class pb_InstallScript : EditorWindow
 		string[] packs = GetProBuilderPacks(i == InstallType.Release ? "-unity" : "-source");
 		int tmp;
 		int high = GetHighestVersion(packs, out tmp);
+
+		if(high < 0) return;
 
 		LoadPack( packs[high] );//foundPacks[selectedPack]);
 
@@ -375,3 +378,4 @@ public class pb_InstallScript : EditorWindow
 	}
 #endregion
 }
+#endif
