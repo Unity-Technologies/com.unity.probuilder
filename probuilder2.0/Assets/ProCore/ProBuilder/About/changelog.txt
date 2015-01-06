@@ -1,3 +1,11 @@
+-- ProBuilder 2.3.4b1 (r3013) -
+
+# Features
+	- Add Missing Script Reference repair item.
+
+# Bug Fixes
+	- Fix null ref when creating objects from shape menu.
+
 -- ProBuilder 2.3.4b0 (r3010) -
 
 # Features
