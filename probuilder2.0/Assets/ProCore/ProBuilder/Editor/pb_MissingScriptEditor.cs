@@ -1,26 +1,34 @@
-﻿using UnityEngine;
+﻿/**
+ * Repairs missing pb_Object and pb_Entity references.  It is based
+ * on this article by Unity Gems: http://unitygems.com/lateral1/
+ */
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 /**
  * Extends MonoBehaviour Inspector, automatically fixing missing script
- * references caused by the upgrade process.
+ * references (typically caused by ProBuilder upgrade process).
  */
 [CustomEditor(typeof(MonoBehaviour))]
 public class pb_MissingScriptEditor : Editor
 {
 #region Members
 
-	static int index = 0;
-	static float total;
+	static int index = 0;	///< general idea of where we are in terms of processing this scene.
+	static float total;		///< general idea of how many missing script references are in this scene.
 
-	static bool doFix = false;
+	static bool doFix = false;	///< while true, the inspector will attempt to cycle to broken gameobjects until none are found.
+	static List<GameObject> unfixable = new List<GameObject>();	///< if a non-pb missing reference is encountered, need to let the iterator know not to bother,
 
-	static MonoScript _mono_pb;
-	static MonoScript _mono_pe;
+	static MonoScript _mono_pb;	///< MonoScript assets
+	static MonoScript _mono_pe;	///< MonoScript assets
 
+	/**
+	 * Load the pb_Object and pb_Entity classes to MonoScript assets.  Saves us from having to fall back on Reflection.
+	 */
 	static void LoadMonoScript()
 	{
 		GameObject go = new GameObject();
@@ -54,18 +62,28 @@ public class pb_MissingScriptEditor : Editor
 #endregion
 
 	[MenuItem("Tools/ProBuilder/Repair/Repair Missing Script References")]
-	public static void nimsif()
+	public static void MenuRepairMissingScriptReferences()
+	{
+		FixAllScriptReferencesInScene();
+	}
+
+	static void FixAllScriptReferencesInScene()
 	{
 		EditorApplication.ExecuteMenuItem("Window/Inspector");
 
-		total = FindObjectsOfType(typeof(GameObject)).Where(x => ((GameObject)x).GetComponents<Component>().Any(n => n == null) ).ToList().Count;
+		Object[] all = FindObjectsOfType(typeof(GameObject)).Where(x => ((GameObject)x).GetComponents<Component>().Any(n => n == null) ).ToArray();
+		total = all.Length;
+
+		unfixable.Clear();
 
 		if(total > 1)
 		{
+			Undo.RecordObjects(all, "Fix missing script references");
+
 			index = 0;
 			doFix = true;
 
-			EditorApplication.delayCall += Next;
+			Next();
 		}
 		else
 		{
@@ -73,15 +91,17 @@ public class pb_MissingScriptEditor : Editor
 		}
 	}
 
+	/**
+	 * Advance to the next gameobject with missing components.  If none are found, display dialog and exit.
+	 */
 	static void Next()
 	{
-		Debug.Log("Next");
-
 		EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
 
+		// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
 		foreach(GameObject go in FindObjectsOfType(typeof(GameObject)))
 		{
-			if(go.GetComponents<Component>().Any(x => x == null))
+			if(go.GetComponents<Component>().Any(x => x == null) && !unfixable.Contains(go))
 			{
 				Selection.activeObject = go;
 				return;
@@ -90,10 +110,10 @@ public class pb_MissingScriptEditor : Editor
 
 		EditorUtility.ClearProgressBar();
 
-		Debug.Log("Done");
-		doFix = false;
-
 		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
+
+		doFix = false;
+		skipEvent = true;
 	}
 
 	/**
@@ -119,8 +139,17 @@ public class pb_MissingScriptEditor : Editor
 		"forceConvex"
 	};
 
+	// Prevents ArgumentException after displaying 'Done' dialog.  For some reason the Event loop skips layout phase after DisplayDialog.
+	private static bool skipEvent = false;
+
 	public override void OnInspectorGUI()
 	{
+		if(skipEvent)
+		{
+			skipEvent = false;
+			return;
+		}
+
 		SerializedProperty scriptProperty = this.serializedObject.FindProperty("m_Script");
 
 		if(scriptProperty == null || scriptProperty.objectReferenceValue != null)
@@ -129,8 +158,7 @@ public class pb_MissingScriptEditor : Editor
 			{
 				if(Event.current.type == EventType.Repaint)
 				{
-					Debug.Log("Object Okay: Next()");
-					EditorApplication.delayCall += Next;
+					Next();
 				}
 			}
 			else
@@ -166,6 +194,12 @@ public class pb_MissingScriptEditor : Editor
 		}
 		else
 		{
+			if(doFix)
+			{
+				unfixable.Add( ((Component)target).gameObject );
+				Next();
+			}
+
 			base.OnInspectorGUI();
 			return;
 		}
@@ -173,7 +207,8 @@ public class pb_MissingScriptEditor : Editor
 		GUI.backgroundColor = Color.green;
 		if(GUILayout.Button("Fix All in Scene"))
 		{
-			doFix = true;
+			FixAllScriptReferencesInScene();
+			return;
 		}
 
 		GUI.backgroundColor = Color.cyan;
@@ -182,18 +217,17 @@ public class pb_MissingScriptEditor : Editor
 			if(pbObjectMatches >= 3)	// only increment for pb_Object otherwise the progress bar will fill 2x faster than it should
 				index++;
 
+			if(!doFix)
+			{
+				Undo.RecordObject(((Component)target).gameObject, "Fix missing reference.");
+			}
+
 			scriptProperty.objectReferenceValue = pbObjectMatches >= 3 ? pb_monoscript : pe_monoscript;
 			scriptProperty.serializedObject.ApplyModifiedProperties();
 			scriptProperty.serializedObject.Update();
 		}
 
 		GUI.backgroundColor = Color.white;
-
-		if(doFix && Event.current.type == EventType.Repaint)
-		{
-			Debug.Log("Fixed Object: Next()");
-			EditorApplication.delayCall += Next;
-		}
 	}
 
 	/**
