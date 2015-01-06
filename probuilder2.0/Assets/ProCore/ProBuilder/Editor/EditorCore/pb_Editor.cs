@@ -2629,7 +2629,7 @@ public class pb_Editor : EditorWindow
 				#if PB_DEBUG
 				profiler.BeginSample("selected_uniqueIndices_all");
 				#endif
-				selected_uniqueIndices_all[i] = selection[i].msh.triangles.Distinct().ToArray();//pb.uniqueIndices;
+				selected_uniqueIndices_all[i] = pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
 
 				// necessary only once on selection modification
 				#if PB_DEBUG
@@ -3350,10 +3350,11 @@ public class pb_Editor : EditorWindow
 				
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
 			pb.SetVertices(verts);
-			pb.msh.vertices = verts;
-
 			pb.RefreshUV( SelectedFacesInEditZone[i] );
 			pb.RefreshNormals();
+
+			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 		Internal_UpdateSelectionFast();
