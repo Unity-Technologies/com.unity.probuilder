@@ -1,10 +1,10 @@
--- ProBuilder 2.3.4b1 (r3013) -
+-- ProBuilder 2.4.0b2 (r3017) -
 
 # Features
 	- Add Missing Script Reference repair item.
 
 # Bug Fixes
-	- Fix null ref when creating objects from shape menu.
+	- Fix regression in 3010 where editing vertices and extruding could throw a null ref error.
 
 -- ProBuilder 2.3.4b0 (r3010) -
 
