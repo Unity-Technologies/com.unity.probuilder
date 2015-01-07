@@ -26,7 +26,7 @@ public class pb_Menu_Commands : Editor
 	 * Combine selected pb_Objects to a single object.
 	 * ProBuilder only.
 	 */
-	#if !PROTOTYPE
+#if !PROTOTYPE
 	public static void MenuMergeObjects(pb_Object[] selected)	
 	{
 		if(selected.Length < 2)
@@ -79,7 +79,7 @@ public class pb_Menu_Commands : Editor
 		if(editor)
 			editor.UpdateSelection();
 	}
-	#endif
+#endif
 
 	/**
 	 * Set the pivot to the center of the current element selection.
@@ -146,31 +146,66 @@ public class pb_Menu_Commands : Editor
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
 	}
 
-	/**
-	 * Union operation between two ProBuilder objects.
-	 */
-	public static void MenuUnion(pb_Object lhs, pb_Object rhs)
+
+#if !PROTOTYPE
+
+	enum BooleanOperation
 	{
-		pb_Object[] sel = new pb_Object[] { lhs, rhs };
+		Union,
+		Subtract,
+		Intersect
+	}
 
-		pbUndo.RecordObjects(sel, "Union");
-
-		if(sel.Length < 2)
+	static void MenuBooleanOperation(BooleanOperation operation, pb_Object lhs, pb_Object rhs)
+	{
+		if(lhs == null || rhs == null)
 		{
 			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
 			return;
 		}
 
-		Mesh c = Parabox.CSG.CSG.Union(lhs.gameObject, rhs.gameObject);
+		string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
+
+		pb_Object[] sel = new pb_Object[] { lhs, rhs };
+
+		pbUndo.RecordObjects(sel, op_string);
+
+		Mesh c;
+
+		switch(operation)
+		{
+			case BooleanOperation.Union:
+				c = Parabox.CSG.CSG.Union(lhs.gameObject, rhs.gameObject);
+				break;
+
+			case BooleanOperation.Subtract:
+				c = Parabox.CSG.CSG.Subtract(lhs.gameObject, rhs.gameObject);
+				break;
+	
+			default:
+				c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
+				break;
+		}
 
 		GameObject go = new GameObject();
 
 		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 		go.AddComponent<MeshFilter>().sharedMesh = c;
 
-		Selection.objects = new Object[] { go };
+		pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(go.transform, false);
+		DestroyImmediate(go);
 
-		pb_Editor_Utility.ShowNotification("Union");
+		Selection.objects = new Object[] { pb };
+
+		pb_Editor_Utility.ShowNotification(op_string);
+	}
+
+	/**
+	 * Union operation between two ProBuilder objects.
+	 */
+	public static void MenuUnion(pb_Object lhs, pb_Object rhs)
+	{
+		MenuBooleanOperation(BooleanOperation.Union, lhs, rhs);
 	}
 
 	/**
@@ -178,26 +213,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuSubtract(pb_Object lhs, pb_Object rhs)
 	{
-		pb_Object[] sel = new pb_Object[] { lhs, rhs };
-
-		pbUndo.RecordObjects(sel, "Subtract");
-
-		if(sel.Length < 2)
-		{
-			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-			return;
-		}
-
-		Mesh c = Parabox.CSG.CSG.Subtract(lhs.gameObject, rhs.gameObject);
-
-		GameObject go = new GameObject();
-
-		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-		go.AddComponent<MeshFilter>().sharedMesh = c;
-
-		Selection.objects = new Object[] { go };
-
-		pb_Editor_Utility.ShowNotification("Subtract");
+		MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
 	}
 	
 	/**
@@ -205,34 +221,9 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuIntersect(pb_Object lhs, pb_Object rhs)
 	{
-		pb_Object[] sel = new pb_Object[] { lhs, rhs };
-
-		pbUndo.RecordObjects(sel, "Intersect");
-
-		if(sel.Length < 2)
-		{
-			pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
-			return;
-		}
-
-		if(!lhs || !rhs)
-		{
-			Debug.Log("something is null");
-			return;
-		}
-
-		Mesh c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
-
-		GameObject go = new GameObject();
-
-		go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-		go.AddComponent<MeshFilter>().sharedMesh = c;
-
-		Selection.objects = new Object[] { go };
-
-		pb_Editor_Utility.ShowNotification("Intersect");
+		MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
 	}
-
+#endif
 
 #endregion
 

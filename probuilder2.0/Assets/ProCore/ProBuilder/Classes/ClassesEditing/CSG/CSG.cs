@@ -23,11 +23,11 @@ namespace Parabox.CSG
 {
 	public class CSG
 	{
-	#region Const
+#region Const
 
 		///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
 		public const float EPSILON = 0.00001f;
-	#endregion
+#endregion
 
 		/**
 		 * Returns a new mesh of the resulting Union.
