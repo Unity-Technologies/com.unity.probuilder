@@ -1,7 +1,7 @@
 @echo off
 
 set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
-set unity_path_5="C:\Program Files\Unity 5.0.0b16\Editor\Unity.exe"
+set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 set procore_changelog="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\About\changelog.txt"

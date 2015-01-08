@@ -96,6 +96,7 @@ public class pb_MissingScriptEditor : Editor
 	 */
 	static void Next()
 	{
+		Debug.Log("Next()");
 		EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
 
 		// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
@@ -108,6 +109,8 @@ public class pb_MissingScriptEditor : Editor
 			}
 		}
 
+		Debug.Log("DONE!");
+
 		EditorUtility.ClearProgressBar();
 
 		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
@@ -117,7 +120,7 @@ public class pb_MissingScriptEditor : Editor
 	}
 
 	/**
-	 * SerializedProperty names found in pb_Entity.
+	 * SerializedProperty names found in pb_Entity.d
 	 */
 	List<string> PB_OBJECT_SCRIPT_PROPERTIES = new List<string>()
 	{
@@ -157,9 +160,7 @@ public class pb_MissingScriptEditor : Editor
 			if(doFix)
 			{
 				if(Event.current.type == EventType.Repaint)
-				{
 					Next();
-				}
 			}
 			else
 			{
@@ -198,33 +199,57 @@ public class pb_MissingScriptEditor : Editor
 			{
 				unfixable.Add( ((Component)target).gameObject );
 				Next();
+				GUIUtility.ExitGUI();
+				return;
+			}
+			else
+			{
+				base.OnInspectorGUI();
 			}
 
-			base.OnInspectorGUI();
 			return;
 		}
 
 		GUI.backgroundColor = Color.green;
-		if(GUILayout.Button("Fix All in Scene"))
+
+		if(!doFix)
 		{
-			FixAllScriptReferencesInScene();
-			return;
+			if(GUILayout.Button("Fix All in Scene"))
+			{
+				FixAllScriptReferencesInScene();
+				return;
+			}
 		}
 
 		GUI.backgroundColor = Color.cyan;
-		if(doFix || GUILayout.Button("Reconnect"))
+
+		if((doFix || GUILayout.Button("Reconnect")) && Event.current.type == EventType.Repaint)
 		{
 			if(pbObjectMatches >= 3)	// only increment for pb_Object otherwise the progress bar will fill 2x faster than it should
+			{
 				index++;
+			}
+			else
+			{
+				// Make sure that pb_Object is fixed first
+				if(((Component)target).gameObject.GetComponent<pb_Object>() == null)
+					return;
+			}
 
 			if(!doFix)
 			{
 				Undo.RecordObject(((Component)target).gameObject, "Fix missing reference.");
 			}
 
+			Debug.Log("Fix: " + (pbObjectMatches > 2 ? "pb_Object" : "pb_Entity") + "  " + ((Component)target).gameObject.name);
+
 			scriptProperty.objectReferenceValue = pbObjectMatches >= 3 ? pb_monoscript : pe_monoscript;
 			scriptProperty.serializedObject.ApplyModifiedProperties();
+			scriptProperty = this.serializedObject.FindProperty("m_Script");
 			scriptProperty.serializedObject.Update();
+
+			Next();
+			GUIUtility.ExitGUI();
 		}
 
 		GUI.backgroundColor = Color.white;

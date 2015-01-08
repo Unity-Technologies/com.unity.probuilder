@@ -20,12 +20,17 @@ public class pb_Entity_Editor : Editor
 	public void OnEnable()
 	{
 		ent = (pb_Entity)target;
-		pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
+
+		if(ent != null)
+			pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
 		// if(ent.colliderType != pb_Entity.ColliderType.Upgraded) ent.GenerateCollisions();
 	}
 
 	public override void OnInspectorGUI()
 	{
+		if(pb == null) return;
+		if(ent == null) return;
+		
 		EntityType et = ent.entityType;
 		et = (EntityType)EditorGUILayout.EnumPopup("Entity Type", et);
 		if(et != ent.entityType)
