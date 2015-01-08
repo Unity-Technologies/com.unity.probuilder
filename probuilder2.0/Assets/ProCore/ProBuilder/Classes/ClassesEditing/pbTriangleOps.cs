@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
+using ProBuilder2.Triangulator;
+using ProBuilder2.Triangulator.Geometry;
 
 namespace ProBuilder2.MeshOperations
 {
@@ -103,67 +105,67 @@ namespace ProBuilder2.MeshOperations
 			return removed.Length > 0;
 		}
 			
-		/**
-		 *	Removes triangles that occupy the same space and point to the same vertices.
-		 */
-		public static int[] RemoveDuplicateTriangles(this pb_Object pb)
-		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			Vector3[] v = pb.vertices;
-			List<pb_Face> del = new List<pb_Face>();
+		// /**
+		//  *	Removes triangles that occupy the same space and point to the same vertices.
+		//  */
+		// public static int[] RemoveDuplicateTriangles(this pb_Object pb)
+		// {
+		// 	pb_IntArray[] sharedIndices = pb.sharedIndices;
+		// 	Vector3[] v = pb.vertices;
+		// 	List<pb_Face> del = new List<pb_Face>();
 
-			int[] removedIndices;
+		// 	int[] removedIndices;
 
-			List<pb_Face> f = new List<pb_Face>();
+		// 	List<pb_Face> f = new List<pb_Face>();
 
-			foreach(pb_Face face in pb.faces)
-			{
-				List<int> tris = new List<int>();
+		// 	foreach(pb_Face face in pb.faces)
+		// 	{
+		// 		List<int> tris = new List<int>();
 		
-				int[] ind = face.indices;
-				for(int i = 0; i < ind.Length; i+=3)
-				{
-					int[] s = new int[3]
-					{
-						sharedIndices.IndexOf(ind[i+0]),
-						sharedIndices.IndexOf(ind[i+1]),
-						sharedIndices.IndexOf(ind[i+2])
-					};
+		// 		int[] ind = face.indices;
+		// 		for(int i = 0; i < ind.Length; i+=3)
+		// 		{
+		// 			int[] s = new int[3]
+		// 			{
+		// 				sharedIndices.IndexOf(ind[i+0]),
+		// 				sharedIndices.IndexOf(ind[i+1]),
+		// 				sharedIndices.IndexOf(ind[i+2])
+		// 			};
 
-					float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
+		// 			float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
 
-					if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
-					{
-						// don't include this face in the reconstruct
-						;
-					}
-					else
-					{
-						tris.Add(ind[i+0]);
-						tris.Add(ind[i+1]);
-						tris.Add(ind[i+2]);
-					}
-				}
+		// 			if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
+		// 			{
+		// 				// don't include this face in the reconstruct
+		// 				;
+		// 			}
+		// 			else
+		// 			{
+		// 				tris.Add(ind[i+0]);
+		// 				tris.Add(ind[i+1]);
+		// 				tris.Add(ind[i+2]);
+		// 			}
+		// 		}
 
-				if(tris.Count > 0)
-				{
-					face.SetIndices(tris.ToArray());
-					face.RebuildCaches();
+		// 		if(tris.Count > 0)
+		// 		{
+		// 			face.SetIndices(tris.ToArray());
+		// 			face.RebuildCaches();
 
-					f.Add(face);
-				}
-				else
-				{
-					del.Add(face);
-				}
-			}
+		// 			f.Add(face);
+		// 		}
+		// 		else
+		// 		{
+		// 			del.Add(face);
+		// 		}
+		// 	}
 
-			pb.SetFaces(f.ToArray());
+		// 	pb.SetFaces(f.ToArray());
 
-			removedIndices = pb.RemoveUnusedVertices();
+		// 	removedIndices = pb.RemoveUnusedVertices();
 
-			return removedIndices;
-		}
+		// 	return removedIndices;
+		// }
 
 		/**
 		 * Merge all faces into a sigle face.
@@ -220,6 +222,32 @@ namespace ProBuilder2.MeshOperations
 			pb.RemoveUnusedVertices();
 
 			return mergedFace;
+		}
+
+		/**
+		 * Re-triangulates a face with existing indices and vertices.
+		 */
+		public static void TriangulateFace(this pb_Object pb, pb_Face face, Vector3? projectionAxis)
+		{
+			int[] orig = face.indices;
+
+			Vector3[] v3d = pbUtil.ValuesWithIndices(pb.vertices, orig);
+			Vector3 nrm = (Vector3)(projectionAxis ?? Vector3.Cross(v3d[2]-v3d[0], v3d[1]-v3d[0]));
+			Vector2[] v2d = pb_Math.PlanarProject(v3d, nrm);
+
+			int[] tris = Delaunay.Triangulate(new List<Vector2>( v2d )).ToIntArray();
+
+			int[] new_indices = new int[tris.Length];
+
+			for(int i = 0; i < tris.Length; i++)
+			{
+				new_indices[i] = orig[ tris[i] ];
+			}
+
+			face.SetIndices(new_indices);
+
+			Debug.Log(tris.ToFormattedString(", "));
+			Debug.Log(orig.ToFormattedString(", ") + "\n" + face.indices.ToFormattedString(", "));
 		}
 	}
 }

@@ -375,7 +375,7 @@ namespace ProBuilder2.MeshOperations
 	}
 
 	/**
-	 *	Deletes the vertcies from the passed index array.  Handles rebuilding the sharedIndices array.
+	 *	Deletes the vertices from the passed index array.  Handles rebuilding the sharedIndices array.
 	 */
 	public static void DeleteVerticesWithIndices(this pb_Object pb, int[] distInd)
 	{
