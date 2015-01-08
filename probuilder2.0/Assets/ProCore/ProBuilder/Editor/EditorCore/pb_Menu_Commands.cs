@@ -693,9 +693,49 @@ public class pb_Menu_Commands : Editor
 			editor.UpdateSelection();
 		}
 		
-		pb_Editor_Utility.ShowNotification("Delete Face");
+		pb_Editor_Utility.ShowNotification("Delete Elements");
 
 		EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+	}
+
+	/**
+	 * Delete selected vertices and attempt to retriangulate a super face.
+	 */
+	public static void MenuDeleteVertices(pb_Object[] selection)
+	{
+		pbUndo.RecordObjects(selection, "Delete Vertices");
+
+		foreach(pb_Object pb in selection)
+		{
+			int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles);
+
+			pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected);
+
+			if(selected_faces.Length < 1)
+				continue;
+
+			Vector3 nrm = pb_Math.Normal(pb, selected_faces[0]);
+
+			pb.DeleteVerticesWithIndices(selected);
+
+			pb_Face composite = pb.MergeFaces(selected_faces);
+
+			pb.TriangulateFace(composite, nrm);
+
+			int[] removed;
+			pb.RemoveDegenerateTriangles(out removed);
+
+			if(composite != null)
+			{
+				pb.Refresh();
+				pb.GenerateUV2();
+
+				pb.SetSelectedFaces( new pb_Face[] { composite } );
+			}
+		}
+
+		if(pb_Editor.instance)
+			pb_Editor.instance.UpdateSelection();
 	}
 
 	public static void MenuDetachFacesContext(pb_Object[] selection)

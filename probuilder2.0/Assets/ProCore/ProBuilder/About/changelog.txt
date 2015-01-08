@@ -1,3 +1,9 @@
+-- ProBuilder 2.4.0b3 (r3028) -
+
+# Bug Fixes
+	- Fix crash when running `Fix Missing Script References` in Unity 5.0.0b18 (big thanks to Michael N!)
+
+
 -- ProBuilder 2.4.0b2 (r3017) -
 
 # Features

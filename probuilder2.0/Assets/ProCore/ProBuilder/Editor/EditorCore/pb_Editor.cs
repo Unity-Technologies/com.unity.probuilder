@@ -2305,26 +2305,19 @@ public class pb_Editor : EditorWindow
 			case "Delete Face":
 				pbUndo.RecordObjects(selection, "Delete selected faces.");
 
-				int sel_faces = 0;
-				foreach(pb_Object pb in selection)
+				switch(selectionMode)
 				{
-					sel_faces += pb.SelectedFaces.Length;
+					case SelectMode.Face:
+					case SelectMode.Edge:
+					case SelectMode.Vertex:
 
-					pb.DeleteFaces(pb.SelectedFaces);
+						pb_Menu_Commands.MenuDeleteFace(selection);
+					break;
 
-					if(pb.faces.Length < 1)
-					{
-						pbUndo.DestroyImmediate(pb, "Delete Object");
-					}
-					else
-					{
-						pb.Refresh();
-						pb.GenerateUV2();
-					}
+					// case SelectMode.Vertex:
+						// pb_Menu_Commands.MenuDeleteVertices(selection);
+						// break;
 				}
-
-				if(sel_faces > 0)
-					pb_Editor_Utility.ShowNotification(shortcut.action);
 
 				ClearFaceSelection();
 

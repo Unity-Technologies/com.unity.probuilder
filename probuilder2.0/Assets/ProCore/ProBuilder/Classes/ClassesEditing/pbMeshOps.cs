@@ -578,9 +578,6 @@ namespace ProBuilder2.MeshOperations
 					new pb_Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
 					s);
 
-				pb.RebuildFaceCaches();
-				pb.Refresh();
-
 				return true;
 			}
 
@@ -628,8 +625,6 @@ namespace ProBuilder2.MeshOperations
 				new Vector2[v.Length],
 				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
 				s);
-
-			pb.RebuildFaceCaches();
 
 			return true;
 		}

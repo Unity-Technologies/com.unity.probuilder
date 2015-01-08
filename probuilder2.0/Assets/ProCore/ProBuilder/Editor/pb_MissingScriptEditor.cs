@@ -96,7 +96,6 @@ public class pb_MissingScriptEditor : Editor
 	 */
 	static void Next()
 	{
-		// Debug.Log("Next()");
 		EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
 
 		// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
@@ -109,8 +108,6 @@ public class pb_MissingScriptEditor : Editor
 			}
 		}
 
-		// Debug.Log("DONE!");
-
 		EditorUtility.ClearProgressBar();
 
 		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
@@ -120,7 +117,7 @@ public class pb_MissingScriptEditor : Editor
 	}
 
 	/**
-	 * SerializedProperty names found in pb_Entity.d
+	 * SerializedProperty names found in pb_Entity.
 	 */
 	List<string> PB_OBJECT_SCRIPT_PROPERTIES = new List<string>()
 	{

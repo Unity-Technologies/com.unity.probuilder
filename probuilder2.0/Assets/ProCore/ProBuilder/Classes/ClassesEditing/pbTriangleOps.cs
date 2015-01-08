@@ -245,9 +245,6 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			face.SetIndices(new_indices);
-
-			Debug.Log(tris.ToFormattedString(", "));
-			Debug.Log(orig.ToFormattedString(", ") + "\n" + face.indices.ToFormattedString(", "));
 		}
 	}
 }
