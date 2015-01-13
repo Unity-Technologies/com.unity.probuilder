@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0b3 (r3028) -
+-- ProBuilder 2.4.0b4 (r3037) -
 
 # Bug Fixes
 	- Refresh all objects in scene after running `Fix Missing Script References`.

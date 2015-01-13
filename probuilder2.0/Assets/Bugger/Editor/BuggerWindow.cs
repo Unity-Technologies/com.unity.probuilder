@@ -448,11 +448,11 @@ public class BuggerWindow : EditorWindow
 				menu.AddItem (new GUIContent("Copy Selected Log to Buffer", ""), false, CopySelectedToBuffer);
 				menu.AddItem (new GUIContent("Open Selected in Text Editor", ""), false, OpenSelectedInText);
 				
-				menu.AddSeparator("");
+				// menu.AddSeparator("");
 
-				menu.AddItem (new GUIContent("Make Log", ""), false, CreateLog);
-				menu.AddItem (new GUIContent("Make Warning", ""), false, CreateWarning);
-				menu.AddItem (new GUIContent("Make Error", ""), false, CreateError);
+				// menu.AddItem (new GUIContent("Make Log", ""), false, CreateLog);
+				// menu.AddItem (new GUIContent("Make Warning", ""), false, CreateWarning);
+				// menu.AddItem (new GUIContent("Make Error", ""), false, CreateError);
 
 				menu.ShowAsContext ();
 				e.Use();

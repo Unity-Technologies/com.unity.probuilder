@@ -50,6 +50,19 @@ class pb_InstallHook : Editor
 
 public class pb_InstallScript : EditorWindow
 {
+	const string PreviousInstallFoundText = "Install script has detected an older version of 					\
+" + PRODUCT_NAME + " in the project.  As of " + PRODUCT_NAME + " 2.4, previous installs need to 				\
+be deleted prior to updating.  To upgrade your project, follow these steps:										\
+\n 																												\
+\n 																				 								\
+1. Delete \"ProCore/" + PRODUCT_NAME + "\" folder.  You may leave the \"ProCore/Shared\" folder as is.\n 		\
+2. Re-import the new version of " + PRODUCT_NAME ". 															\
+3. Run Install tool.
+4. Run \"Tools/ " + PRODUCT_NAME + "/Repair/Repair Missing Script References\".\n 								\
+5. Save your scene.\n 																							\
+\n 																												\
+Repeat steps 4 and 5 for any scenes with ProBuilder objects.";													
+
 #if !PROTOTYPE
 	const string PACKNAME = "ProBuilder";
 #else
@@ -75,7 +88,7 @@ public class pb_InstallScript : EditorWindow
 	 */
 	public static void AttemptAutoInstall()
 	{
-		CloseProBuilderWindow();
+		// CloseProBuilderWindow();
 		EditorApplication.delayCall += InstallProBuilder;
 	}
 
@@ -85,51 +98,37 @@ public class pb_InstallScript : EditorWindow
 		string path;
 		probuilderExists = FindFile("ProBuilderCore.dll", out path) || FindFile("pb_Object.cs", out path);
 
-		EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + (probuilderExists ? " Update" : " Install"), true).Show();
+		InstallProBuilder();
 	}
 
 	private static void InstallProBuilder()
 	{
 		string pbcore_path;
 		probuilderExists = FindFile("ProBuilderCore", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
-	
-		string pbeditor_path;
-		if( !FindFile("ProBuilderEditor.dll", out pbeditor_path) )
-			FindFile("pb_Editor.cs", out pbeditor_path);
-
-		needsOrganized = probuilderExists && (
-			!pbcore_path.Replace("\\", "/").Contains("Assets/ProCore/" + PACKNAME + "/Classes") ||
-			!pbeditor_path.Replace("\\", "/").Contains("Assets/ProCore/" + PACKNAME + "/Editor") );
 
 		/* See if ProBuilder already exists, and if so, if it's in the correct directory */
-		if(probuilderExists)
+		if(probuilderExists && !ContinueWithoutDelete())
 		{
-			if(!needsOrganized || UpdateOrganizePromptContinue())
-			{
-				// cast int to enum cause if Prototype, the Source option doesn't
-				ImportLatestPack( (InstallType)(pbcore_path.Contains(".dll") ? (InstallType)0 : (InstallType)1) );
+			return;
 
-				return;
-			}
+			// cast int to enum cause if Prototype, the Source option doesn't
+			// ImportLatestPack( (InstallType)(pbcore_path.Contains(".dll") ? (InstallType)0 : (InstallType)1) );
 		}
 
 		#if PROTOTYPE
-		if(!probuilderExists)
 			ImportLatestPack(InstallType.Release);
-		else
-			EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + " Install", true).Show();
 		#else
-		// If this isn't an upgrade, or the upgrade failed for whatever reason, show the dialogue
-		EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + " Install", true).Show();
+			// If this isn't an upgrade, or the upgrade failed for whatever reason, show the dialogue
+			EditorWindow.GetWindow<pb_InstallScript>(true, PACKNAME + " Install", true).Show();
 		#endif	
 	}
 
 	/**
 	 * Asks the user to continue upgrading in the event that they have moved the PB directory.
 	 */
-	static bool UpdateOrganizePromptContinue()
+	static bool ContinueWithoutDelete()
 	{
-		return EditorUtility.DisplayDialog("Continue Installation?", "Install script has detected that the " + PACKNAME + " folder has been moved from the \"Assets/ProCore/\" path.  This means the upgrade process will not be able to preserve script references, and you may introduce duplicate namespace errors.\n\nYou can exit the install process and move " + PACKNAME + " back to the ProCore directory, or continue anyway.", "Continue Install", "Cancel");
+		return EditorUtility.DisplayDialog("Continue Installation?", PreviousInstallFoundText, "Continue Install", "Cancel");
 	}
 
 	GUIStyle headerStyle = new GUIStyle();
@@ -194,11 +193,6 @@ public class pb_InstallScript : EditorWindow
 
 		GUILayout.Space(4);
 
-		if(needsOrganized)
-		{
-			EditorGUILayout.HelpBox("Install Script has detected ProBuilder exists in this project, but is not in the \"Assets/ProCore/\" folder.\n\nTo upgrade your project without losing your work, please manually move the ProBuilder folder to \"Assets/ProCore/\".", MessageType.Warning);
-		}
-
 		switch(install)
 		{
 			case InstallType.Release:
@@ -206,7 +200,7 @@ public class pb_InstallScript : EditorWindow
 				break;
 			#if !PROTOTYPE
 			case InstallType.Source:
-				GUILayout.Box(PACKNAME + " will be installed with full source code.  Note that you will need to remove any previous "+ PACKNAME + " \"Release\" installations prior to installing a Source version.  This is not recommended for users upgrading from a prior installation, as you *will* lose all prior-built " + PACKNAME + " objects.");
+				GUILayout.Box(PACKNAME + " will be installed with full source code.");
 				break;
 			#endif
 		}
