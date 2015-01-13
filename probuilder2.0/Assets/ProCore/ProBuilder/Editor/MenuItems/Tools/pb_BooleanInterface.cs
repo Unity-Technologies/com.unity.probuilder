@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using ProBuilder2.GUI;
+using ProBuilder2.Common;
 
 public class pb_BooleanInterface : EditorWindow
 {
@@ -49,6 +50,14 @@ public class pb_BooleanInterface : EditorWindow
 
 	void OnEnable()
 	{
+		pb_Object[] pbs = (pb_Object[])Selection.transforms.GetComponents<pb_Object>();
+
+		if(pbs.Length == 2)
+		{
+			lhs = pbs[0].gameObject;
+			rhs = pbs[1].gameObject;
+		}
+
 		previewBackground = new GUIStyle();
 		
 		backgroundTexture = new Texture2D(2,2);

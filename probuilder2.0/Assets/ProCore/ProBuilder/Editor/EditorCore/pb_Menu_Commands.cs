@@ -198,7 +198,7 @@ public class pb_Menu_Commands : Editor
 		pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(go.transform, false);
 		DestroyImmediate(go);
 
-		Selection.objects = new Object[] { pb };
+		Selection.objects = new Object[] { pb.gameObject };
 
 		pb_Editor_Utility.ShowNotification(op_string);
 	}

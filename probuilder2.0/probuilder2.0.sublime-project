@@ -31,7 +31,7 @@
 				"*.fontsettings",
 				"*.renderTexture",
 				"defines.txt",
-				"*boo*",
+				".boo*",
 				"*us.rsp"
 			],
 			"folder_exclude_patterns":
