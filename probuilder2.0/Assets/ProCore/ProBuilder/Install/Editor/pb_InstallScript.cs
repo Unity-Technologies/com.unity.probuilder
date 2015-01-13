@@ -105,8 +105,6 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 		string pbcore_path;
 		probuilderExists = FindFile("ProBuilderCore", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
 
-		Debug.Log("ProBuilder exists: " + probuilderExists);
-
 		/* See if ProBuilder already exists, and if so, if it's in the correct directory */
 		if(probuilderExists && !ContinueWithoutDelete())
 		{
@@ -281,29 +279,11 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 	 */
 	private static bool FindFile(string fileName, out string path)
 	{
-		if( fileName.Contains(".") )
-		{
-			string[] allFiles = Directory.GetFiles("Assets/", "*.*", SearchOption.AllDirectories);
-			string[] matches = System.Array.FindAll(allFiles, name => name.Replace("\\", "/").Contains(fileName));
+		string[] matches = Directory.GetFiles("Assets/", "*" + fileName + "*", SearchOption.AllDirectories).Where(x => !x.EndsWith(".meta")).ToArray();
 
-			if(matches.Length > 0)
-			{
-				path = matches[0];
-				return true;
-			}
-			else
-			{
-				path = "";
-				return false;
-			}
-		}
-		else
-		{
-			string[] allDir = Directory.GetDirectories("Assets/", "*", SearchOption.AllDirectories);
-			string[] matches = System.Array.FindAll(allDir, element => element.Replace("\\", "/").Contains(fileName));
-			path = matches.Length > 0 ? matches[0] : "";
-			return matches.Length > 0;
-		}
+		path = matches.Length > 0 ? matches[0] : "";
+
+		return matches.Length > 0;
 	}
 	/**
 	 * Assumes packages have already been filtered

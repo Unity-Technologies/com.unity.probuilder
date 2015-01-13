@@ -716,6 +716,8 @@ public class pb_UV_Editor : EditorWindow
 
 			pbUndo.RecordObject(pb, "AutoStitch");
 
+			pb.ToMesh();
+
 			bool success = pbUVOps.AutoStitch(pb, anchor, selectedFace);
 			
 			if(success)
@@ -724,9 +726,12 @@ public class pb_UV_Editor : EditorWindow
 
 				pb.SetSelectedFaces(new pb_Face[]{selectedFace});
 
-				// only need to do this for one pb_Object...
-				for(int i = 0; i < selection.Length; i++)
-					selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
+				// // only need to do this for one pb_Object...
+				// for(int i = 0; i < selection.Length; i++)
+				// 	selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
+
+				pb.Refresh();
+				pb.GenerateUV2();
 
 				SetSelectedUVsWithSceneView();
 
@@ -738,6 +743,11 @@ public class pb_UV_Editor : EditorWindow
 					editor.UpdateSelection(false);
 
 				Repaint();
+			}
+			else
+			{
+				pb.Refresh();
+				pb.GenerateUV2();
 			}
 
 			return success;
