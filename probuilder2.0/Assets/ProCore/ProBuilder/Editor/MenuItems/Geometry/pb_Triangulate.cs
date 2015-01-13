@@ -25,11 +25,17 @@ public class pb_Triangulate : Editor
 
 		for(int i = 0; i < selection.Length; i++)
 		{
+
 			Triangulate(selection[i]);
 
 			selection[i].ToMesh();
 			selection[i].Refresh();
 			selection[i].GenerateUV2();
+		}
+
+		if(pb_Editor.instance)
+		{
+			pb_Editor.instance.UpdateSelection();
 		}
 
 		pb_Editor_Utility.ShowNotification(selection.Length > 0 ? "Triangulate" : "Nothing Selected");
@@ -39,9 +45,10 @@ public class pb_Triangulate : Editor
 	{
 		Vector3[] 	v = pb.vertices;
 		Color[] 	c = pb.colors;
-		Vector2[] 	u = pb.msh.uv;
+		Vector2[] 	u = pb.uv;
 
-		int triangleCount = pb.msh.triangles.Length;
+		int triangleCount = pb.TriangleCount();
+		// int triangleCount = pb_Face.AllTriangles(pb.faces).Length; // pb.msh.triangles.Length;
 
 		if(triangleCount == v.Length)
 		{

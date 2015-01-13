@@ -108,6 +108,16 @@ public class pb_MissingScriptEditor : Editor
 			}
 		}
 
+		pb_Object[] pbs = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
+
+		for(int i = 0; i < pbs.Length; i++)
+		{	
+			EditorUtility.DisplayProgressBar("Force Refresh ProBuilder Objects", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
+			pbs[i].Refresh();		
+			pbs[i].GenerateUV2();		
+		}
+
+
 		EditorUtility.ClearProgressBar();
 
 		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");

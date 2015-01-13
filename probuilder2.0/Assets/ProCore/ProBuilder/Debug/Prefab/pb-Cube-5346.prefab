@@ -5,7 +5,7 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 3
+  serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
   - 23: {fileID: 2300000}
@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 3452816845
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -50,6 +50,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -126,19 +129,6 @@ MonoBehaviour:
       localPivot: {x: .49999997, y: .5}
       localSize: {x: .99999994, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -167,19 +157,6 @@ MonoBehaviour:
       localPivot: {x: .5, y: .5}
       localSize: {x: 1, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -208,19 +185,6 @@ MonoBehaviour:
       localPivot: {x: .5, y: .5}
       localSize: {x: 1, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4278190335
-    - serializedVersion: 2
-      rgba: 4278190335
-    - serializedVersion: 2
-      rgba: 4278190335
-    - serializedVersion: 2
-      rgba: 4278190335
-    - serializedVersion: 2
-      rgba: 4278190335
-    - serializedVersion: 2
-      rgba: 4278190335
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -249,19 +213,6 @@ MonoBehaviour:
       localPivot: {x: .5, y: .5}
       localSize: {x: 1, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -290,19 +241,6 @@ MonoBehaviour:
       localPivot: {x: .5, y: .5}
       localSize: {x: 1, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -331,19 +269,6 @@ MonoBehaviour:
       localPivot: {x: .49999997, y: .5}
       localSize: {x: .99999994, y: 1}
     _mat: {fileID: 2100000, guid: 55296d1b6ee54e14e8eb4648d4b448ee, type: 2}
-    _colors:
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
-    - serializedVersion: 2
-      rgba: 4294967295
     manualUV: 0
     elementGroup: -1
     textureGroup: -1
@@ -408,6 +333,7 @@ MonoBehaviour:
   - {x: 0, y: 1}
   _sharedIndicesUV: []
   _submeshTriangleCount: 24000000
+  _colors: []
   angleError: 8
   areaError: 15
   hardAngle: 88

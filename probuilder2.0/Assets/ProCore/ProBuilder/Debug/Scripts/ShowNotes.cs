@@ -1,6 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
+static class DebugNotesStringExt
+{
+	public static string ToFormattedString(this IEnumerable collection)
+	{
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		foreach(var item in collection)
+		{
+			sb.AppendLine(item.ToString());
+		}
+		return sb.ToString();
+	}
+}
 
 public class ShowNotes : MonoBehaviour {
 
@@ -29,6 +44,8 @@ public class ShowNotes : MonoBehaviour {
 		}
 		
 		stats = "\nStatically Batched: " + gameObject.GetComponent<MeshRenderer>().isPartOfStaticBatch;
+		List<System.Type> components = gameObject.GetComponents<Component>().Select(x => x.GetType()).ToList();
+		stats += "\nComponents: " + components.Count + "\n" + components.ToFormattedString();
 		boundsMesh = DrawBounds();
 	}
 

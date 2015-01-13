@@ -22,7 +22,14 @@ namespace ProBuilder2.Common {
 
 #region SharedProperities
 
+	/**
+	 * Checks for ProGrids in project, and returns true if snapping is enabled.
+	 */
 	public static bool SharedSnapEnabled { get { return SharedProperties.snapEnabled; } }
+
+	/**
+	 * If ProGrids is present in project, this is the current snap value.
+	 */
 	public static float SharedSnapValue 
 	{
 		get
@@ -30,6 +37,10 @@ namespace ProBuilder2.Common {
 			return SharedProperties.snapValue;
 		}
 	}
+
+	/**
+	 * If ProGrids is present, this toggles axis constraints when snapping.
+	 */
 	public static bool SharedUseAxisConstraints { get { return SharedProperties.useAxisConstraints; } }
 #endregion
 

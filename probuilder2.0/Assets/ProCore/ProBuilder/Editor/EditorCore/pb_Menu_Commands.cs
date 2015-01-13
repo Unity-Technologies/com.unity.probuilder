@@ -101,11 +101,14 @@ public class pb_Menu_Commands : Editor
 
 		foreach (pb_Object pb in selection)
 		{
+			pb.ToMesh();
+
 			if (pb.SelectedTriangles.Length > 0)
 				pb.CenterPivot(pb.SelectedTriangles);
 			else
 				pb.CenterPivot(null);
 	
+			pb.Refresh();
 			pb.GenerateUV2();
 		}
 		
@@ -727,6 +730,7 @@ public class pb_Menu_Commands : Editor
 
 			if(composite != null)
 			{
+				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 
@@ -1109,6 +1113,7 @@ public class pb_Menu_Commands : Editor
 			if( pbSubdivideSplit.Subdivide(pb) )
 				success++;
 
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}

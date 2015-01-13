@@ -1,6 +1,12 @@
 -- ProBuilder 2.4.0b3 (r3028) -
 
 # Bug Fixes
+	- Refresh all objects in scene after running `Fix Missing Script References`.
+	- Fix `Index out of range` errors when subdividing, triangulating, and setting pivot.
+
+-- ProBuilder 2.4.0b3 (r3028) -
+
+# Bug Fixes
 	- Fix crash when running `Fix Missing Script References` in Unity 5.0.0b18 (big thanks to Michael N!)
 
 

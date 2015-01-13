@@ -78,8 +78,14 @@ public class pb_Object_Editor : Editor
 			if(GUILayout.Button("Apply Offset"))
 			{
 				pbUndo.RecordObject(pb, "Offset Vertices");
+
+				pb.ToMesh();
+
 				pb.TranslateVertices_World(pb.SelectedTriangles, offset);
+
 				pb.Refresh();
+				pb.GenerateUV2();
+
 				if(editor != null)
 					editor.UpdateSelection();
 			}

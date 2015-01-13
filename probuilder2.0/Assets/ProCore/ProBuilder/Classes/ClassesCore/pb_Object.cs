@@ -262,6 +262,17 @@ public class pb_Object : MonoBehaviour
 	public int vertexCount { get { return _vertices.Length; } }
 
 	/**
+	 * pb_Object doesn't keep an active count of triangles, so this is an instance method to reflect that.
+	 */
+	public int TriangleCount()
+	{
+		int count = 0;
+		for(int i = 0; i < faces.Length; i++)
+			count += faces[i].indices.Length;
+		return count;
+	}
+
+	/**
 	 * \brief Returns the material property of the specified #pb_Face. 
 	 * \returns Returns the material property of the specified #pb_Face. 
 	 * @param face The face to extract material data from.
@@ -1220,21 +1231,21 @@ public class pb_Object : MonoBehaviour
 	{
 		string str =  
 			"Name: " + gameObject.name + "\n" +
-			"\tStatic: " + gameObject.isStatic + "\n" + 
-			"\tID: " + id + "\n" +
-			"\tEntity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
-			"\tShared Vertices: " + sharedIndices.Length + "\n" +
-			"\tVertices int/msh: " + _vertices.Length + ", " + msh.vertices.Length + "\n" +
-			"\tUVs int/msh: " + _uv.Length + ", " + msh.uv.Length + "\n" +
-			"\tTriangles: " + msh.triangles.Length + "\n" + 
-			"\tFaces: " + faces.Length + "\n" +
-			"\tSubmesh: " + msh.subMeshCount + "\n" +
+			"Static: " + gameObject.isStatic + "\n" + 
+			"ID: " + id + "\n" +
+			"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
+			"Shared Vertices: " + sharedIndices.Length + "\n" +
+			"Vertices int/msh: " + _vertices.Length + ", " + msh.vertices.Length + "\n" +
+			"UVs int/msh: " + _uv.Length + ", " + msh.uv.Length + "\n" +
+			"Triangles: " + msh.triangles.Length + "\n" + 
+			"Faces: " + faces.Length + "\n" +
+			"Submesh: " + msh.subMeshCount + "\n" +
 
-			"\t# Vertices\n" + pbUtil.ToFormattedString(_vertices, "\n\t\t") + "\n" +
-			"\t# UVs\n" + pbUtil.ToFormattedString(_uv, "\n\t\t") + "\n" +
-			"\t# Shared:\n" + sharedIndices.ToFormattedString("\n\t\t") + "\n" + 
-			"\t# Faces:\n" + pbUtil.ToFormattedString(_faces, "\n\t\t") + "\n"+
-			"\t# UV:\n" + _faces.Select(x => x.uv).ToArray().ToFormattedString("\n\t\t");
+			"# Vertices\n" + pbUtil.ToFormattedString(_vertices, "\n\t") + "\n" +
+			"# UVs\n" + pbUtil.ToFormattedString(_uv, "\n\t") + "\n" +
+			"# Shared:\n" + sharedIndices.ToFormattedString("\n\t") + "\n" + 
+			"# Faces:\n" + pbUtil.ToFormattedString(_faces, "\n\t") + "\n"+
+			"# UV:\n" + _faces.Select(x => x.uv).ToArray().ToFormattedString("\n\t");
 
 		return str;
 	}
