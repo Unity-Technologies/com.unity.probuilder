@@ -50,24 +50,23 @@ class pb_InstallHook : Editor
 
 public class pb_InstallScript : EditorWindow
 {
-	const string PreviousInstallFoundText = "Install script has detected an older version of 					\
-" + PRODUCT_NAME + " in the project.  As of " + PRODUCT_NAME + " 2.4, previous installs need to 				\
-be deleted prior to updating.  To upgrade your project, follow these steps:										\
-\n 																												\
-\n 																				 								\
-1. Delete \"ProCore/" + PRODUCT_NAME + "\" folder.  You may leave the \"ProCore/Shared\" folder as is.\n 		\
-2. Re-import the new version of " + PRODUCT_NAME ". 															\
-3. Run Install tool.
-4. Run \"Tools/ " + PRODUCT_NAME + "/Repair/Repair Missing Script References\".\n 								\
-5. Save your scene.\n 																							\
-\n 																												\
-Repeat steps 4 and 5 for any scenes with ProBuilder objects.";													
-
 #if !PROTOTYPE
 	const string PACKNAME = "ProBuilder";
 #else
 	const string PACKNAME = "Prototype";
 #endif
+
+	const string PreviousInstallFoundText = @"Install script has detected an older version of
+" + PACKNAME + " in the project.  As of " + PACKNAME + @" 2.4, previous installs need to
+be deleted prior to updating.  To upgrade your project, follow these steps:
+
+1. Delete `ProCore/" + PACKNAME + @"` folder.  You may leave the `ProCore/Shared` folder as is.
+2. Re-import the new version of " + PACKNAME + @".
+3. Run Install tool.
+4. Run `Tools/ " + PACKNAME + @"/Repair/Repair Missing Script References`.
+5. Save your scene.
+
+Repeat steps 4 and 5 for any scenes with ProBuilder objects.";													
 
 	/**
 	 * Release (use Dll) or Source (no Dll).
@@ -105,6 +104,8 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 	{
 		string pbcore_path;
 		probuilderExists = FindFile("ProBuilderCore", out pbcore_path) || FindFile("pb_Object.cs", out pbcore_path);
+
+		Debug.Log("ProBuilder exists: " + probuilderExists);
 
 		/* See if ProBuilder already exists, and if so, if it's in the correct directory */
 		if(probuilderExists && !ContinueWithoutDelete())
@@ -169,9 +170,11 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 			if(GUILayout.Button("Install", GUILayout.MinWidth(Mathf.Min(Screen.width - installTypeEnumWidth - 8, 96)), GUILayout.MinHeight(32)))
 			{
 				if(probuilderExists)
-					if(!EditorUtility.DisplayDialog("Install " + PACKNAME + " Update", "Install " + PACKNAME + "\n\nWarning!  Back up your project!",
-						"Run Update", "Cancel"))
+				{
+					if(!EditorUtility.DisplayDialog("Continue Install?", "Install tool detected older version of " + PACKNAME + "!\n\nContinuing installation without first removing the old version will cause errors in your project.  Continue?",
+						"Continue", "Cancel"))
 						return;
+				}
 				
 				ImportLatestPack( install );
 				
@@ -282,10 +285,6 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 		{
 			string[] allFiles = Directory.GetFiles("Assets/", "*.*", SearchOption.AllDirectories);
 			string[] matches = System.Array.FindAll(allFiles, name => name.Replace("\\", "/").Contains(fileName));
-
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			foreach(string str in allFiles)
-				sb.AppendLine(str);
 
 			if(matches.Length > 0)
 			{
