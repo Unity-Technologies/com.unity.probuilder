@@ -40,11 +40,14 @@ public class HueCube : MonoBehaviour
 		pb.Refresh();
 	}
 
-	// http://www.cs.rit.edu/~ncs/color/t_convert.html
-	// r,g,b values are from 0 to 1
-	// h = [0,360], s = [0,1], v = [0,1]
-	//		if s == 0, then h = -1 (undefined)
-	Color HSVtoRGB(float h, float s, float v )
+	/**
+	 * Convert HSV to RGB.
+	 *  http://www.cs.rit.edu/~ncs/color/t_convert.html
+	 *	r,g,b values are from 0 to 1
+	 *	h = [0,360], s = [0,1], v = [0,1]
+	 *	if s == 0, then h = -1 (undefined)
+	 */
+	static Color HSVtoRGB(float h, float s, float v )
 	{
 		float r, g, b;
 		int i;

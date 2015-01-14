@@ -1,6 +1,9 @@
--- ProBuilder 2.4.0b4 (r3038) -
+-- ProBuilder 2.4.0b4 (r3042) -
 
 # Bug Fixes
+	- Fix null ref when continuing UVs.
+	- Support Undo in UV Editor Auto panel.
+	- Support Undo for Push to Grid events from ProGrids.
 	- Refresh all objects in scene after running `Fix Missing Script References`.
 	- Fix `Index out of range` errors when subdividing, triangulating, and setting pivot.
 
