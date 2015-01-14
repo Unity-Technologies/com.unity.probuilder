@@ -3330,6 +3330,8 @@ public class pb_Editor : EditorWindow
 
 	private void PushToGrid(float snapVal)
 	{
+		Undo.RecordObjects(selection, "Push elements to Grid");
+
 		for(int i = 0; i  < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
