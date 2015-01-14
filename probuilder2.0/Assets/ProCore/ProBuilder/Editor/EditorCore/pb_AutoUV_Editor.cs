@@ -231,8 +231,7 @@ public class pb_AutoUV_Editor
 		if(selection == null || selection.Length < 1)
 			return;
 
-		for(int i = 0; i < selection.Length; i++)
-			uv_selection.AddRange( selection[i].SelectedFaces.Select(x => x.uv) );
+		uv_selection = selection.SelectMany(x => x.SelectedFaces).Where(x => !x.manualUV).Select(x => x.uv).ToList();
 
 		// Clear values for each iteration
 		foreach(string key in uv_diff.Keys.ToList())

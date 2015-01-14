@@ -17,7 +17,7 @@ public class pb_BooleanInterface : EditorWindow
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Tools/Boolean (CSG) Tool")]
 	public static void MenuOpenBooleanTool()
 	{
-		EditorWindow.GetWindow<pb_BooleanInterface>(true, "Boolean", true).Show();
+		EditorWindow.GetWindow<pb_BooleanInterface>(true, "Boolean (Experimental)", true).Show();
 	}
 
 	const int PAD = 6;

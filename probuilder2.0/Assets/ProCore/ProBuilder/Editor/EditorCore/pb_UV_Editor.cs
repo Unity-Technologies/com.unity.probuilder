@@ -696,7 +696,6 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * auto-stitch logic up in hurr
 	 * return true if shortcut should eat the event
 	 */
 	internal bool ClickShortcutCheck(pb_Object pb, pb_Face selectedFace)
@@ -2401,10 +2400,12 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("pb_AutoUV_Editor");
 		#endif
 
+		Undo.RecordObjects(selection, "Adjust Auto UV Parameters");
+
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
 		{
 			if(!modifyingUVs_AutoPanel)
-			{
+			{				
 				modifyingUVs_AutoPanel = true;
 
 				foreach(pb_Object pb in selection)
@@ -2752,7 +2753,7 @@ public class pb_UV_Editor : EditorWindow
 
 	public void SetIsManual(bool isManual)
 	{
-		pbUndo.RecordObjects(selection, "Reset Faces to Auto-Unwrap");
+		pbUndo.RecordObjects(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
 		
 		foreach(pb_Object pb in selection)
 		{

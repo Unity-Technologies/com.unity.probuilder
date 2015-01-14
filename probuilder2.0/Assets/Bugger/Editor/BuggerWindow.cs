@@ -29,6 +29,7 @@ using Newtonsoft.Json;
 using Parabox.Debug;
 using System.Reflection;
 using Parabox.DebugUtil;
+using System.Linq;
 
 [InitializeOnLoad]
 public class BuggerWindow : EditorWindow
@@ -65,14 +66,14 @@ public class BuggerWindow : EditorWindow
 
 #region Enum/Classes
 
-	protected class MethodTrace
+	private class MethodTrace
 	{
 		public string methodName;
 		public string fullPath;
 		public int lineNumber;
 	}
 
-	protected class BugLog
+	private class BugLog
 	{
 		public BugLog()
 		{
@@ -105,6 +106,21 @@ public class BuggerWindow : EditorWindow
 					sb.AppendLine("\n");
 			}
 			return sb.ToString();
+		}
+	}
+
+	private class BugLogComparer : IEqualityComparer<BugLog>
+	{
+		public bool Equals(BugLog lhs, BugLog rhs)
+		{
+			return 	lhs.message.Equals(rhs.message) &&
+					lhs.logType == rhs.logType &&
+					lhs.stack[0].lineNumber == rhs.stack[0].lineNumber;
+		}
+
+		public int GetHashCode(BugLog log)
+		{
+			return log.ToString().GetHashCode();
 		}
 	}
 
@@ -150,6 +166,7 @@ public class BuggerWindow : EditorWindow
 	public List<int> selectedLog = new List<int>();
 	private List<BugLog> selectedValue = new List<BugLog>();
 	private List<BugLog> logEntries;
+	bool collapse = true;
 
 	private double lastMouseUp = 0;
 	public double lastLogUpdate = 0;
@@ -706,6 +723,10 @@ public class BuggerWindow : EditorWindow
 			if(GUILayout.Button("Clear", EditorStyles.toolbarButton))
 				Bugger.ClearLog();
 
+			GUI.backgroundColor = !collapse ? Color.white : TOOLBAR_TOGGLED_COLOR;
+			if(GUILayout.Button("Collapse", EditorStyles.toolbarButton))
+				collapse = !collapse;
+
 			GUILayout.Space(2);
 
 			EditorGUI.BeginChangeCheck();
@@ -1067,6 +1088,12 @@ public class BuggerWindow : EditorWindow
 			(warningLogs && x.logType == UnityEngine.LogType.Warning) ||
 			(errorLogs && (x.logType == UnityEngine.LogType.Error || x.logType == UnityEngine.LogType.Assert || x.logType == UnityEngine.LogType.Exception))
 			);
+
+		if(collapse)
+		{
+			entries = entries.Distinct(new BugLogComparer()).ToList();
+		}
+
 		return entries;
 	}
 
