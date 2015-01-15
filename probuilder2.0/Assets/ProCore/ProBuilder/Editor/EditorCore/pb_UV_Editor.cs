@@ -2403,7 +2403,8 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("pb_AutoUV_Editor");
 		#endif
 
-		Undo.RecordObjects(selection, "Adjust Auto UV Parameters");
+		if(selection != null)
+			Undo.RecordObjects(selection, "Adjust Auto UV Parameters");
 
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
 		{

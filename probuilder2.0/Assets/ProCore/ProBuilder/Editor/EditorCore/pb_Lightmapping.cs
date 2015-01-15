@@ -31,10 +31,12 @@ public static class pb_Lightmapping
 	[System.Diagnostics.Conditional("UNITY_5")]
 	internal static void PushGIWorkflowMode()
 	{
+#if UNITY_5
 		EditorPrefs.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
 
 		if(Lightmapping.giWorkflowMode != Lightmapping.GIWorkflowMode.Legacy)
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
+#endif
 	}
 
 	/**
@@ -43,10 +45,12 @@ public static class pb_Lightmapping
 	[System.Diagnostics.Conditional("UNITY_5")]
 	internal static void PopGIWorkflowMode()
 	{
+#if UNITY_5
 		// if no key found (?), don't do anything.
 		if(!EditorPrefs.HasKey("pb_GIWorkflowMode"))
 			return;
 
 		 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)EditorPrefs.GetInt("pb_GIWorkflowMode");
+#endif
 	}
 }

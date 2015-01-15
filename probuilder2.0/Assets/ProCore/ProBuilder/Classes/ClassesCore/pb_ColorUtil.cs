@@ -10,7 +10,6 @@ namespace ProBuilder2.Common
 	{
 		public float h, s, v;
 
-
 		public pb_HsvColor(float h, float s, float v)
 		{
 			this.h = h;
@@ -19,7 +18,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Wikipedia colors are from 0-100, so this constructor includes and S, V normalizes the values.
+		 * Wikipedia colors are from 0-100 %, so this constructor includes and S, V normalizes the values.
 		 * modifier value that affects saturation and value, making it useful for any SV value range.
 		 */
 		public pb_HsvColor(float h, float s, float v, float sv_modifier)
@@ -109,8 +108,14 @@ namespace ProBuilder2.Common
 		}
 	}
 
+	/**
+	 * Conversion methods for RGB, HSV, XYZ, CIE-Lab
+	 */
 	public static class pb_ColorUtil
 	{
+		/**
+		 * Compare float values within Epsilon distance.
+		 */
 		private static bool approx(float lhs, float rhs)
 		{
 			return Mathf.Abs(lhs-rhs) < Mathf.Epsilon;
