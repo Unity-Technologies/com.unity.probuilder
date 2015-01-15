@@ -19,6 +19,7 @@ public class pb_FlipNormals : Editor
 
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 		{
+			pb.ToMesh();
 			pb.ReverseWindingOrder(pb.SelectedFaces);
 			pb.Refresh();
 			pb.GenerateUV2();

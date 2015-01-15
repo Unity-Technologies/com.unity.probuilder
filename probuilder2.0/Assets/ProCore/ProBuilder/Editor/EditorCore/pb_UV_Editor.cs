@@ -482,6 +482,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnBeginUVModification()
 	{
+
 		modifyingUVs = true;
 
 		Vector2 handle = handlePosition_canvas;
@@ -517,7 +518,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Internal because pb_Editor needs to call this sometimes.
 	 */
 	internal void OnFinishUVModification()
-	{
+	{	
 		modifyingUVs = false;
 
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
@@ -641,6 +642,9 @@ public class pb_UV_Editor : EditorWindow
 		// Regenerate UV2s
 		foreach(pb_Object pb in selection)
 		{
+			pb.ToMesh();
+			pb.Refresh();
+
 			pb.GenerateUV2();
 		}
 	}
@@ -936,10 +940,6 @@ public class pb_UV_Editor : EditorWindow
 			case KeyCode.F:
 				FrameSelection();
 				break;
-
-			// case KeyCode.J:	// Blech.
-			// 	EditorApplication.delayCall += this.Close;
-			// 	break;
 
 			case KeyCode.H:
 				if(editor)
