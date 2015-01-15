@@ -1,3 +1,14 @@
+-- ProBuilder 2.4.0b5 (r3048) -
+
+# Features
+	- Show color name in vertex tools instead of RGBA info.
+
+# Bug Fixes
+	- Fix bug where dragging UVs in Unity 5 would sometimes corrupt the mesh.
+	- Disable Continuous Baking when dragging elements or making continuous changes to the mesh, fixing corruption issues in Unity 5.
+	- Fix occasional erroneous error message when subdividing faces.
+	- Fix null ref error when Auto UV panel is open with nothing selected.
+
 -- ProBuilder 2.4.0b4 (r3042) -
 
 # Bug Fixes
