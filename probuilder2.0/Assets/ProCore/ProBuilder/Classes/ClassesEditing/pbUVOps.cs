@@ -150,49 +150,49 @@ public static class pbUVOps
 			SplitUVs(pb, f.distinctIndices);
 		}
 
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
+		// pb_IntArray[] sharedIndices = pb.sharedIndices;
 
 		pb.SewUVs(pb_Face.AllTrianglesDistinct(faces), .001f);
 
-		foreach(pb_Face f in faces)
-		{
-			foreach(pb_Edge e in f.edges)
-			{
-				foreach(pb_Face f2 in faces)
-				{
-					if(f2 == f) continue;
+		// foreach(pb_Face f in faces)
+		// {
+		// 	foreach(pb_Edge e in f.edges)
+		// 	{
+		// 		foreach(pb_Face f2 in faces)
+		// 		{
+		// 			if(f2 == f) continue;
 						
-					int index = f2.edges.IndexOf(e, sharedIndices);
+		// 			int index = f2.edges.IndexOf(e, sharedIndices);
 
-					// Found an aligned edge
-					if( index > -1 )
-					{
-						if(f.elementGroup < 0)
-						{
-							if(f2.elementGroup < 0)
-							{
-								f.elementGroup = pb.UnusedElementGroup(0);
-								f2.elementGroup = f.elementGroup;
-							}
-							else
-							{
-								f.elementGroup = f2.elementGroup;
-							}
-						}
-						else
-						{
-							if(f2.elementGroup < 0)
-								f2.elementGroup = f.elementGroup;
-							else
-							{
-								foreach(pb_Face iter in System.Array.FindAll(faces, element => element.elementGroup == f2.elementGroup))
-									iter.elementGroup = f.elementGroup;
-							}
-						}
-					}
-				}
-			}
-		}
+		// 			// Found an aligned edge
+		// 			if( index > -1 )
+		// 			{
+		// 				if(f.elementGroup < 0)
+		// 				{
+		// 					if(f2.elementGroup < 0)
+		// 					{
+		// 						f.elementGroup = pb.UnusedElementGroup(0);
+		// 						f2.elementGroup = f.elementGroup;
+		// 					}
+		// 					else
+		// 					{
+		// 						f.elementGroup = f2.elementGroup;
+		// 					}
+		// 				}
+		// 				else
+		// 				{
+		// 					if(f2.elementGroup < 0)
+		// 						f2.elementGroup = f.elementGroup;
+		// 					else
+		// 					{
+		// 						foreach(pb_Face iter in System.Array.FindAll(faces, element => element.elementGroup == f2.elementGroup))
+		// 							iter.elementGroup = f.elementGroup;
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 
 	/**

@@ -4,6 +4,8 @@
 	- Show color name in vertex tools instead of RGBA info.
 
 # Bug Fixes
+	- Improve the performance of Planar Mapping manual Uvs.
+	- Create Material data asset path if it doesn't exist.
 	- Fix bug where dragging UVs in Unity 5 would sometimes corrupt the mesh.
 	- Disable Continuous Baking when dragging elements or making continuous changes to the mesh, fixing corruption issues in Unity 5.
 	- Fix occasional erroneous error message when subdividing faces.

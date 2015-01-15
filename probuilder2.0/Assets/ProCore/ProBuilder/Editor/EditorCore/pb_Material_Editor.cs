@@ -148,6 +148,13 @@ public class pb_Material_Editor : EditorWindow
 	{
 		pb_ObjectArray poa = (pb_ObjectArray)ScriptableObject.CreateInstance(typeof(pb_ObjectArray));
 		poa.array = materials;
+
+		if(!System.IO.Directory.Exists("Assets/ProCore"))
+			AssetDatabase.CreateFolder("Assets/", "ProCore");
+		
+		if(!System.IO.Directory.Exists("Assets/ProCore/ProBuilder"))
+			AssetDatabase.CreateFolder("Assets/ProCore/", "ProBuilder");
+		
 		if(!System.IO.Directory.Exists("Assets/ProCore/ProBuilder/Data"))
 			AssetDatabase.CreateFolder("Assets/ProCore/ProBuilder", "Data");
 

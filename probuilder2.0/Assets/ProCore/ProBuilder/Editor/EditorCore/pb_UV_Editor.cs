@@ -2669,6 +2669,7 @@ public class pb_UV_Editor : EditorWindow
 	
 		for(int i = 0; i < selection.Length; i++)
 		{
+
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
@@ -2683,8 +2684,11 @@ public class pb_UV_Editor : EditorWindow
 
 				selection[i].GenerateUV2();
 				
+				RefreshElementGroups(selection[i]);
+
 				projected++;
 			}
+
 		}
 
 		SetSelectedUVsWithSceneView();
