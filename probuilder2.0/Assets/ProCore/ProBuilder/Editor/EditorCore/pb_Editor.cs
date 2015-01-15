@@ -3370,6 +3370,9 @@ public class pb_Editor : EditorWindow
 	 */
 	void OnBeginVertexMovement()
 	{
+		// Disable iterative lightmapping
+		pb_Lightmapping.PushGIWorkflowMode();
+
 		foreach(pb_Object pb in selection)
 		{
 			pb.msh.uv2 = null;
@@ -3380,6 +3383,8 @@ public class pb_Editor : EditorWindow
 
 	public void OnFinishedVertexModification()
 	{	
+		pb_Lightmapping.PopGIWorkflowMode();
+
 		if(OnVertexMovementFinished != null)
 			OnVertexMovementFinished(selection);
 

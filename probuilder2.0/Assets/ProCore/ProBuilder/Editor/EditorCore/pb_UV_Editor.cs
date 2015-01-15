@@ -482,6 +482,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnBeginUVModification()
 	{
+		pb_Lightmapping.PushGIWorkflowMode();
 
 		modifyingUVs = true;
 
@@ -519,6 +520,8 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	internal void OnFinishUVModification()
 	{	
+		pb_Lightmapping.PopGIWorkflowMode();
+
 		modifyingUVs = false;
 
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)

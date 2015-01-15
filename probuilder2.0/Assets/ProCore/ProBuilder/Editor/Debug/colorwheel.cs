@@ -33,14 +33,6 @@ public class colorwheel : EditorWindow {
 		GUILayout.Label("Color (HSV): " + hsv.ToString());
 		GUILayout.Label("Color (XYZ): " + xyz.ToString());
 		GUILayout.Label("Color (LAB): " + lab.ToString());
-
-		Color compare = new Color(1f, 0f, 1f, 1f);
-		pb_CIE_Lab_Color lab_lhs = pb_CIE_Lab_Color.FromRGB(compare);
-
-		float delta = pb_ColorUtil.DeltaE(lab_lhs, lab);
-
-		GUILayout.Label("Delta: " + delta);
-
 		GUILayout.Label("Name: " + pb_ColorUtil.GetColorName(col));
 	}
 

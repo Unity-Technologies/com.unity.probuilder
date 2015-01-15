@@ -19,6 +19,8 @@ public class pb_VertexColor_Editor : EditorWindow
 
  	void OnEnable()
 	{
+		pb_Lightmapping.PushGIWorkflowMode();
+
 		if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
 		{
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
@@ -27,10 +29,14 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		if(editor)
 			editor.SetEditLevel(EditLevel.Plugin);
+
+		colorName = pb_ColorUtil.GetColorName(color);
 	}
 
 	void OnDisable()
 	{
+		pb_Lightmapping.PopGIWorkflowMode();
+
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 
 		foreach(pb_Object pb in modified)
@@ -49,9 +55,14 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	public pb_Editor editor { get { return pb_Editor.instance; } }		///< Convenience getter for pb_Editor.instance
 
+	static readonly Color OuterRingColor = new Color(1f, 1f, 1f, .3f);
+	static readonly Color MiddleRingColor = new Color(1f, 1f, 1f, .5f);
+	static readonly Color InnerRingColor = new Color(1f, 1f, 1f, .7f);
+
 	Color color = Color.green;											///< The color currently being painted.
+	string colorName = "Green";											///< Human readable color name.
 	bool enabled = true;												///< Is the tool enabled?
-	float brushSize = 1f;												///< The brush size to use.
+	float brushSize = .5f;												///< The brush size to use.
 
 	Event currentEvent;													///< Cache the current event at start of OnSceneGUI.
 	Camera sceneCamera;													///< Cache the sceneview camera at start of OnSceneGUI.
@@ -79,7 +90,14 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		enabled = EditorGUILayout.Toggle("Enabled", enabled);
  
+ 		EditorGUI.BeginChangeCheck();
 		color = EditorGUILayout.ColorField("Color", color);
+		if(EditorGUI.EndChangeCheck())
+		{
+			colorName = pb_ColorUtil.GetColorName(color);
+		}
+
+		GUILayout.Label(colorName);
 
 		EditorGUI.BeginChangeCheck();
 			brushSize = Mathf.Max(.01f, EditorGUILayout.FloatField("Brush Size", brushSize));
@@ -98,6 +116,13 @@ public class pb_VertexColor_Editor : EditorWindow
 		if(editor && editor.editLevel != EditLevel.Plugin)
 			editor.SetEditLevel(EditLevel.Plugin);
  
+		if( Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative )
+		{
+			pb_Lightmapping.PushGIWorkflowMode();
+			Lightmapping.Cancel();
+			Debug.LogWarning("Vertex Painter requires Continuous Baking to be Off.  When you close the Vertex Painter tool, Continuous Baking will returned to it's previous state automatically.\nIf you toggle Continuous Baking On while the Vertex Painter is open, you may lose all mesh vertex colors.");
+		}
+
 		currentEvent = Event.current;
 		sceneCamera = scnview.camera;
 
@@ -117,7 +142,7 @@ public class pb_VertexColor_Editor : EditorWindow
 				if(pb != null)
 				{
 					modified.Add(pb);
-
+					
 					pb.ToMesh();
 					pb.Refresh();
 				}
@@ -193,7 +218,13 @@ public class pb_VertexColor_Editor : EditorWindow
 			handlePosition = ray.origin + ray.direction * handleDistance;
  		}
 
-		Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
+ 		Handles.color = InnerRingColor;
+			Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
+ 		Handles.color = MiddleRingColor;
+			Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .5f);
+ 		Handles.color = OuterRingColor;		
+			Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
+ 		Handles.color = Color.white;
  
 		// This prevents us from selecting other objects in the scene,
 		// and allows for the selection of faces / vertices.

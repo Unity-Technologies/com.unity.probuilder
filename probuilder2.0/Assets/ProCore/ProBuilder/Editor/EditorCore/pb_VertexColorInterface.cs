@@ -39,7 +39,7 @@ public class pb_VertexColorInterface : EditorWindow
 
 #region ONGUI
 
-	// Color32 col = Color.white;
+	// Color col = Color.white;
 	public void OnGUI()
 	{
 		this.minSize = new Vector2(404, 68 + 24);
@@ -109,7 +109,7 @@ public class pb_VertexColorInterface : EditorWindow
 			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.COLOR_ARRAY[userPrefColorIndex]);
 	}
 
-	public static void SetFaceColors(Color32 col)
+	public static void SetFaceColors(Color col)
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
@@ -125,7 +125,7 @@ public class pb_VertexColorInterface : EditorWindow
 			pb.GenerateUV2();
 		}
 
-		pb_Editor_Utility.ShowNotification("Set Face Color\n" + col);
+		pb_Editor_Utility.ShowNotification("Set Face Color\n" + pb_ColorUtil.GetColorName(col));
 	}
 #endregion
 }

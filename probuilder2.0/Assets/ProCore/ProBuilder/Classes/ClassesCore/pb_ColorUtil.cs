@@ -208,6 +208,9 @@ namespace ProBuilder2.Common
 			return HSVtoRGB(hsv.h, hsv.s, hsv.v);
 		}
 
+		/**
+		 * Convert HSV color to RGB.
+		 */
 		public static Color HSVtoRGB(float h, float s, float v )
 		{
 			float r, g, b;

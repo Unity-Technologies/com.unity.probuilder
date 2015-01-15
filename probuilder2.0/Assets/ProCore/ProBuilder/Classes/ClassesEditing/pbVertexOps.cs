@@ -330,21 +330,24 @@ namespace ProBuilder2.MeshOperations
 		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
 		/**
-		 * Attempt to figure out where the new UV point(s) should go
+		 * Attempt to figure out where the new UV point(s) should go (if auto uv'ed face)
 		 */
-		for(int n = distinctIndices.Length; n < uvs.Length; n++)
+		if(triangulated_face.manualUV)
 		{
-			// these are the two vertices that are split by the new vertex
-			int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(n)).Select(x => x.x != n ? x.x : x.y).ToArray();
+			for(int n = distinctIndices.Length; n < uvs.Length; n++)
+			{
+				// these are the two vertices that are split by the new vertex
+				int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(n)).Select(x => x.x != n ? x.x : x.y).ToArray();
 
-			if(adjacent_vertex.Length == 2)
-			{
-				uvs[n] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
-			}
-			else
-			{
-				Debug.LogError("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
-				triangulated_face.manualUV = false;
+				if(adjacent_vertex.Length == 2)
+				{
+					uvs[n] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
+				}
+				else
+				{
+					Debug.LogWarning("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
+					triangulated_face.manualUV = false;
+				}
 			}
 		}
 
