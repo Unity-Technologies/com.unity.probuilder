@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0b5 (r3048) -
+-- ProBuilder 2.4.0b5 (r3049) -
 
 # Features
 	- Show color name in vertex tools instead of RGBA info.
