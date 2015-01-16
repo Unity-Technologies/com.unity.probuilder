@@ -25,7 +25,13 @@ namespace ProBuilder2.Common {
 	/**
 	 * Checks for ProGrids in project, and returns true if snapping is enabled.
 	 */
-	public static bool SharedSnapEnabled { get { return SharedProperties.snapEnabled; } }
+	public static bool SharedSnapEnabled
+	{
+		get
+		{
+			return SharedProperties.snapEnabled;
+		}
+	}
 
 	/**
 	 * If ProGrids is present in project, this is the current snap value.

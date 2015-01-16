@@ -911,6 +911,7 @@ public class pb_Menu_Commands : Editor
 		{
 			if(pb.SelectedTriangles.Length > 1)
 			{
+				pb.ToMesh();
 
 				int newIndex = -1;
 				success = pb.MergeVertices(pb.SelectedTriangles, out newIndex);
@@ -922,7 +923,6 @@ public class pb_Menu_Commands : Editor
 					pb.SetSelectedTriangles(new int[] { newIndex });
 				}
 				
-				pb.ToMesh();
 				pb.Refresh();
 				pb.GenerateUV2();
 			}
@@ -952,6 +952,8 @@ public class pb_Menu_Commands : Editor
 		{
 			if(pb.SelectedTriangles.Length > 1)
 			{
+				pb.ToMesh();
+				
 				int[] welds;
 				success = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
 
@@ -965,7 +967,6 @@ public class pb_Menu_Commands : Editor
 				{
 					pb.SetSelectedTriangles(welds);
 
-					pb.ToMesh();
 					pb.Refresh();
 
 					pb.GenerateUV2();
