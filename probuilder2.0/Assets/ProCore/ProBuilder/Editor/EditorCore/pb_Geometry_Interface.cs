@@ -72,8 +72,8 @@ public class pb_Geometry_Interface : EditorWindow
 
 		if(mat != null) pb.SetFaceMaterial(pb.faces, mat);
 
-		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
 		pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
 	}
 
 	Vector2 scroll = Vector2.zero;
