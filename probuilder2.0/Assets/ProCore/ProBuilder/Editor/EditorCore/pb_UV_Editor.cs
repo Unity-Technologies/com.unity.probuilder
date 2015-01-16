@@ -87,7 +87,8 @@ public class pb_UV_Editor : EditorWindow
 #region GUI Properties
 
 	Color GridColorPrimary;
-	Color UVColorPrimary, UVColorSecondary;
+	Color BasicBackgroundColor;
+	Color UVColorPrimary, UVColorSecondary, UVColorGroupIndicator;
 	Texture2D dot;
 	Texture2D icon_textureMode_on, icon_textureMode_off;
 	Texture2D icon_sceneUV_on, icon_sceneUV_off;
@@ -124,7 +125,10 @@ public class pb_UV_Editor : EditorWindow
 	// All UV coordinates
 	pb_Object[] selection;
 	int[][] distinct_indices;
-	Vector2[][] uvs_gui_space;	// mirror of each selected pbo's UV coorindates in GUI window coordinates
+	Vector2[][] uvs_canvas_space;	// mirror of each selected pbo's UV coorindates in GUI window coordinates, but not transformed to offset or scale
+
+	List<pb_Face[]>[] incompleteTextureGroupsInSelection = new List<pb_Face[]>[0];
+	List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
 
 	int selectedUVCount = 0;
 	int selectedFaceCount = 0;
@@ -268,24 +272,29 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	void InitGUI()
 	{
-		DRAG_BOX_COLOR = EditorGUIUtility.isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
-		GridColorPrimary = EditorGUIUtility.isProSkin ? new Color(1f, 1f, 1f, .2f) : new Color(0f, 0f, 0f, .2f);
-		UVColorPrimary = EditorGUIUtility.isProSkin ? Color.green : new Color(0f, .8f, 0f, 1f);
-		UVColorSecondary = EditorGUIUtility.isProSkin ? new Color(1f, 1f, 1f, .7f) : Color.blue;
-		// UVColorSecondary = EditorGUIUtility.isProSkin ? new Color(1f, 1f, 1f, .7f) : new Color(0f, 0f, 0f, .3f);
-		dot = EditorGUIUtility.whiteTexture;
+		bool isProSkin = true;
 
+		DRAG_BOX_COLOR = isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
+		GridColorPrimary = isProSkin ? new Color(1f, 1f, 1f, .2f) : new Color(0f, 0f, 0f, .2f);
+		UVColorPrimary = isProSkin ? Color.green : new Color(0f, .8f, 0f, 1f);
+		UVColorSecondary = isProSkin ? new Color(1f, 1f, 1f, .7f) : Color.blue;
+		UVColorGroupIndicator = isProSkin ? new Color(0f, 1f, .2f, .15f) : new Color(0f, 1f, .2f, .3f);
+		BasicBackgroundColor = new Color(.24f, .24f, .24f, 1f);
+
+		dot = EditorGUIUtility.whiteTexture;
 
 		MethodInfo loadIconMethod = typeof(EditorGUIUtility).GetMethod("LoadIcon", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 		
+		isProSkin = EditorGUIUtility.isProSkin;
+
 		Texture2D moveIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
 		Texture2D rotateIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
 		Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
 		Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
 
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
+		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
+		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
 
 		icon_textureMode_on		= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_On", typeof(Texture2D)));
 		icon_textureMode_off	= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_Off", typeof(Texture2D)));
@@ -334,11 +343,25 @@ public class pb_UV_Editor : EditorWindow
 	bool m_mouseDragging = false;
 
 	bool needsRepaint = false;
+	Rect ScreenRect = new Rect(0f, 0f, 0f, 0f);
 
 	void OnGUI()
 	{
 		if(tool == Tool.View || m_draggingCanvas)	
 			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.Pan);
+
+		/**
+		 * if basic skin, manually tint the background
+		 */
+		if(!EditorGUIUtility.isProSkin)
+		{
+			ScreenRect.width = Screen.width;
+			ScreenRect.height = Screen.height;
+
+			GUI.backgroundColor = BasicBackgroundColor; //new Color(.13f, .13f, .13f, .7f);
+			GUI.Box(ScreenRect, "");
+			GUI.backgroundColor = Color.white;
+		}
 
 		#if PB_DEBUG
 		profiler.BeginSample("pb_UV_Editor::OnGUI");
@@ -379,7 +402,11 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("DrawUVGraph");
 		#endif
 
-		DrawUVGraph( graphRect );
+		try{
+			DrawUVGraph( graphRect );		
+		} catch(System.Exception e) {
+
+		}
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -472,6 +499,46 @@ public class pb_UV_Editor : EditorWindow
 
 		RefreshUVCoordinates();
 
+		/**
+		 * Get incompletely selected texture groups
+		 */
+		int len = selection == null ? 0 : selection.Length;
+
+		incompleteTextureGroupsInSelection = new List<pb_Face[]>[len];
+		incompleteTextureGroupsInSelection_CoordCache.Clear();
+
+		for(int i = 0; i < len; i++)
+		{
+			incompleteTextureGroupsInSelection[i] = GetIncompleteTextureGroups(selection[i], selection[i].SelectedFaces);
+			
+			if(incompleteTextureGroupsInSelection[i].Count < 1)
+			{
+				continue;
+			}
+			else
+			{
+				pb_Object pb = selection[i];
+
+
+				foreach(pb_Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
+				{
+					List<Vector2> coords = new List<Vector2>();
+
+					foreach(pb_Face face in incomplete_group)
+					{
+						Vector2 cur = pb_Bounds2D.Center( pb.GetUVs( face.distinctIndices ) );
+						cur = pb_Handle_Utility.UVToGUIPoint(cur, uvGridSize);
+						coords.Add(cur);
+					}
+
+					coords.Insert(0, pb_Bounds2D.Center(coords));
+
+					incompleteTextureGroupsInSelection_CoordCache.Add(coords);
+				}
+			}
+		}
+
+		
 		Repaint();
 	}
 
@@ -489,6 +556,7 @@ public class pb_UV_Editor : EditorWindow
 		Vector2 handle = handlePosition_canvas;
 		bool update = false;
 
+		// Make sure all TextureGroups are auto-selected
 		for(int i = 0; i < selection.Length; i++)
 		{
 			if(selection[i].SelectedFaceCount > 0)
@@ -988,8 +1056,8 @@ public class pb_UV_Editor : EditorWindow
 						{
 							for(int p = 0; p < pb.faces[n].edges.Length; p++)
 							{
-								Vector2 x = uvs_gui_space[i][pb.faces[n].edges[p].x];
-								Vector2 y = uvs_gui_space[i][pb.faces[n].edges[p].y];
+								Vector2 x = uvs_canvas_space[i][pb.faces[n].edges[p].x];
+								Vector2 y = uvs_canvas_space[i][pb.faces[n].edges[p].y];
 
 								dist = pb_Math.DistancePointLineSegment(mpos, x, y);
 
@@ -1017,7 +1085,7 @@ public class pb_UV_Editor : EditorWindow
 					{
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_gui_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
+							if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1106,7 +1174,7 @@ public class pb_UV_Editor : EditorWindow
 					List<pb_Face> selectedFaces = new List<pb_Face>(selection[i].SelectedFaces);
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
-						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_gui_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
+						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
 						{
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
@@ -1132,8 +1200,8 @@ public class pb_UV_Editor : EditorWindow
 
 		if(editor)
 			editor.UpdateSelection(false);
-
-		RefreshSelectedUVCoordinates();
+		else
+			RefreshSelectedUVCoordinates();
 		
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -1213,16 +1281,16 @@ public class pb_UV_Editor : EditorWindow
 					Vector2 offset = Vector2.zero;
 					for(int i = 0; i < selection.Length; i++)
 					{
-						int index = pb_Handle_Utility.NearestPoint( handlePosition_canvas, uvs_gui_space[i], MAX_PROXIMITY_SNAP_DIST_CANVAS);
+						int index = pb_Handle_Utility.NearestPoint( handlePosition_canvas, uvs_canvas_space[i], MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 						if(index < 0) continue;
 						
-						dist = Vector2.Distance( uvs_gui_space[i][index], handlePosition_canvas );
+						dist = Vector2.Distance( uvs_canvas_space[i][index], handlePosition_canvas );
 
 						if(dist < minDist)
 						{
 							minDist = dist;
-							offset = uvs_gui_space[i][index] - handlePosition_canvas;
+							offset = uvs_canvas_space[i][index] - handlePosition_canvas;
 						}
 					}
 
@@ -1407,7 +1475,7 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
-					uvs_gui_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
+					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 				}
 
 				pb.SetUV(uvs);
@@ -1444,7 +1512,7 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, rotation );
-					uvs_gui_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
+					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 				}
 
 				pb.SetUV(uvs);
@@ -1483,7 +1551,7 @@ public class pb_UV_Editor : EditorWindow
 					foreach(int i in distinct_indices[n])
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
-						uvs_gui_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
+						uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 					}
 					
 					pb.SetUV(uvs);
@@ -1546,7 +1614,7 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
-					uvs_gui_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
+					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 				}
 				
 				pb.SetUV(uvs);
@@ -1718,7 +1786,7 @@ public class pb_UV_Editor : EditorWindow
 	 	#if PB_DEBUG
 		profiler.BeginSample("Draw Base Edges + Vertices");
 		#endif
-	
+
 		/**
 		 * Draw all vertices if in vertex mode
 		 */
@@ -1729,39 +1797,65 @@ public class pb_UV_Editor : EditorWindow
 			{
 				// GUI.color = UVColorSecondary;
 
-				for(int i = 0; i < uvs_gui_space.Length; i++)
+				for(int i = 0; i < uvs_canvas_space.Length; i++)
 				{
 					GUI.color = UVColorSecondary;
-					for(int n = 0; n < uvs_gui_space[i].Length; n++)
+					for(int n = 0; n < uvs_canvas_space[i].Length; n++)
 					{
-						p = CanvasToGUIPoint(uvs_gui_space[i][n]);
+						p = CanvasToGUIPoint(uvs_canvas_space[i][n]);
 						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
 					}
 		
 					GUI.color = UVColorPrimary;
 					foreach(int index in selection[i].SelectedTriangles)
 					{
-						p = CanvasToGUIPoint(uvs_gui_space[i][index]);
+						p = CanvasToGUIPoint(uvs_canvas_space[i][index]);
 						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
 
-						#if PB_DEBUG
-						GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_gui_space[i][index] + " -> " + p );
-						#endif
+						// #if PB_DEBUG
+						// GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_canvas_space[i][index] + " -> " + p );
+						// #endif
 					}
 				}
 			}
 		} catch(System.Exception e) { }
 
+		Handles.color = UVColorGroupIndicator;
+		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+			for(int i = 1; i < lines.Count; i++)
+				Handles.CircleCap(-1, CanvasToGUIPoint(lines[i]), Quaternion.identity, 8f);
+
 		GL.PushMatrix();
 		pb_Handle_Utility.handleMaterial.SetPass(0);
 		GL.MultMatrix(Handles.matrix);
+
+
+		/**
+		 * Draw incomplete texture group indicators
+		 */
+ 		GL.Begin(GL.LINES);
+		GL.Color(UVColorGroupIndicator);
+
+		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+		{
+			Vector2 cen = CanvasToGUIPoint(lines[0]);
+
+			for(int i = 1; i < lines.Count; i++)
+			{
+				GL.Vertex(cen);
+
+				Vector2 v = CanvasToGUIPoint(lines[i]);
+				GL.Vertex(v);
+			}
+		}
+		GL.End();
 
 		GL.Begin(GL.LINES);
 		GL.Color(UVColorSecondary);
 
 		// Here because when you undo a geometry action that involved deleting or adding vertices,
 		// the UpdateSelection() delegate doesn't call UV editor's updateselection fast enough,
-		// meaning that uvs_gui_space[][] can get some out of bounds values.  this  seemed like the
+		// meaning that uvs_canvas_space[][] can get some out of bounds values.  this  seemed like the
 		// lesser of two evils, the second being an "if (out of bounds) continue"
 		try
 		{
@@ -1776,8 +1870,8 @@ public class pb_UV_Editor : EditorWindow
 
 					foreach(pb_Edge edge in face.edges)
 					{
-						x = CanvasToGUIPoint(uvs_gui_space[i][edge.x]);
-						y = CanvasToGUIPoint(uvs_gui_space[i][edge.y]);
+						x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
+						y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
 
 						GL.Vertex(x);
 						GL.Vertex(y);
@@ -1815,16 +1909,16 @@ public class pb_UV_Editor : EditorWindow
 				{
 					foreach(pb_Edge edge in pb.SelectedEdges)
 					{
-						Vector2 x = CanvasToGUIPoint(uvs_gui_space[i][edge.x]);
-						Vector2 y = CanvasToGUIPoint(uvs_gui_space[i][edge.y]);
+						Vector2 x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
+						Vector2 y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
 
 						GL.Vertex(x);
 						GL.Vertex(y);
 						
-						#if PB_DEBUG
-						GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
-						GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
-						#endif
+						// #if PB_DEBUG
+						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
+						// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
+						// #endif
 					}
 				}
 	
@@ -1850,8 +1944,8 @@ public class pb_UV_Editor : EditorWindow
 				if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 				{
 					pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-					GL.Vertex( CanvasToGUIPoint(uvs_gui_space[nearestElement.objectIndex][edge.x]) );
-					GL.Vertex( CanvasToGUIPoint(uvs_gui_space[nearestElement.objectIndex][edge.y]) );
+					GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][edge.x]) );
+					GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][edge.y]) );
 				}
 				GL.End();
 				
@@ -1876,9 +1970,9 @@ public class pb_UV_Editor : EditorWindow
 
 					for(int i = 0; i < tris.Length; i+=3)
 					{
-						GL.Vertex( CanvasToGUIPoint(uvs_gui_space[nearestElement.objectIndex][tris[i+0]]) );
-						GL.Vertex( CanvasToGUIPoint(uvs_gui_space[nearestElement.objectIndex][tris[i+1]]) );
-						GL.Vertex( CanvasToGUIPoint(uvs_gui_space[nearestElement.objectIndex][tris[i+2]]) );
+						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+0]]) );
+						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+1]]) );
+						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+2]]) );
 					}
 
 					GL.End();
@@ -1902,9 +1996,9 @@ public class pb_UV_Editor : EditorWindow
 
 							for(int n = 0; n < tris.Length; n+=3)
 							{
-								GL.Vertex( CanvasToGUIPoint(uvs_gui_space[i][tris[n+0]]) );
-								GL.Vertex( CanvasToGUIPoint(uvs_gui_space[i][tris[n+1]]) );
-								GL.Vertex( CanvasToGUIPoint(uvs_gui_space[i][tris[n+2]]) );
+								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+0]]) );
+								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+1]]) );
+								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+2]]) );
 							}
 						}
 					}
@@ -1949,13 +2043,11 @@ public class pb_UV_Editor : EditorWindow
 		if(editor)
 			GUILayout.Label("manualUV: " + selection.SelectMany(x => x.SelectedFaces.Select(n => n.manualUV)).ToArray().ToFormattedString(", "), GUILayout.MaxWidth(rect.width-6));
 
-		if(GUILayout.Button("Refresh Auto UVs"))
-		{
-			foreach(pb_Object pb in selection)
-				pb.RefreshUV();
 
-			RefreshUVCoordinates();
-		}
+		BasicBackgroundColor = EditorGUILayout.ColorField("BACKGROUND", BasicBackgroundColor);
+		GUILayout.Label(BasicBackgroundColor.ToString("F2"));
+
+		UVColorGroupIndicator = EditorGUILayout.ColorField("Groups", UVColorGroupIndicator);
 
 		if(GUILayout.Button("Screenshot"))	
 			EditorApplication.delayCall += Screenshot;
@@ -2080,17 +2172,17 @@ public class pb_UV_Editor : EditorWindow
 			foreach(int i in distinct_indices[n])
 			{
 				if(first) { 
-					xMin = uvs_gui_space[n][i].x; 
+					xMin = uvs_canvas_space[n][i].x; 
 					xMax = xMin; 
-					yMin = uvs_gui_space[n][i].y; 
+					yMin = uvs_canvas_space[n][i].y; 
 					yMax = yMin; 
 					first = false;
 				} else {
-					xMin = Mathf.Min(xMin, uvs_gui_space[n][i].x);
-					yMin = Mathf.Min(yMin, uvs_gui_space[n][i].y);
+					xMin = Mathf.Min(xMin, uvs_canvas_space[n][i].x);
+					yMin = Mathf.Min(yMin, uvs_canvas_space[n][i].y);
 
-					xMax = Mathf.Max(xMax, uvs_gui_space[n][i].x);
-					yMax = Mathf.Max(yMax, uvs_gui_space[n][i].y);
+					xMax = Mathf.Max(xMax, uvs_canvas_space[n][i].x);
+					yMax = Mathf.Max(yMax, uvs_canvas_space[n][i].y);
 				}
 			}
 		}
@@ -2120,7 +2212,7 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		// Collect drawables
-		uvs_gui_space = new Vector2[selection.Length][];
+		uvs_canvas_space = new Vector2[selection.Length][];
 
 		// Convert dragrect from Unity GUI space to uv_gui_space
 		pb_Bounds2D dragBounds = dragRect != null ? 
@@ -2138,10 +2230,10 @@ public class pb_UV_Editor : EditorWindow
 			int len = pb.vertexCount;
 			Vector2[] mshUV = GetUVs(pb, channel);
 
-			uvs_gui_space[i] = new Vector2[len];
+			uvs_canvas_space[i] = new Vector2[len];
 
 			for(int j = 0; j < len; j++)
-				uvs_gui_space[i][j] = pb_Handle_Utility.UVToGUIPoint(mshUV[j], uvGridSize);
+				uvs_canvas_space[i][j] = pb_Handle_Utility.UVToGUIPoint(mshUV[j], uvGridSize);
 
 			// this should probably be separate from RefreshUVCoordinates
 			if(dragRect != null)
@@ -2153,7 +2245,7 @@ public class pb_UV_Editor : EditorWindow
 
 						for(int j = 0; j < len; j++)
 						{
-							if( dragBounds.ContainsPoint( uvs_gui_space[i][j] ) )
+							if( dragBounds.ContainsPoint( uvs_canvas_space[i][j] ) )
 							{
 								int indx = selectedTris.IndexOf(j);
 
@@ -2180,7 +2272,7 @@ public class pb_UV_Editor : EditorWindow
 							{
 								pb_Edge edge = pb.faces[n].edges[p];
 
-								if( dragBounds.IntersectsLineSegment( uvs_gui_space[i][edge.x],  uvs_gui_space[i][edge.y]) )	
+								if( dragBounds.IntersectsLineSegment( uvs_canvas_space[i][edge.x],  uvs_canvas_space[i][edge.y]) )	
 								{
 									if(!selectedEdges.Contains(edge))
 										selectedEdges.Add( edge );
@@ -2201,7 +2293,7 @@ public class pb_UV_Editor : EditorWindow
 						List<int> selectedFaces = new List<int>(selection[i].SelectedFaceIndices);
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
-							Vector2[] uvs = pbUtil.ValuesWithIndices(uvs_gui_space[i], pb.faces[n].distinctIndices);
+							Vector2[] uvs = pbUtil.ValuesWithIndices(uvs_canvas_space[i], pb.faces[n].distinctIndices);
 							bool allPointsContained = true;
 
 							// if(dragBounds.Intersects(faceBounds))
@@ -2302,7 +2394,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2[] uvs = GetUVs(selection[n], channel);
 			
 			foreach(int i in distinct_indices[n])
-				uvs_gui_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
+				uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 		}
 
 		selected_canvas_bounds = CanvasSelectionBounds();
@@ -2518,19 +2610,21 @@ public class pb_UV_Editor : EditorWindow
 			pb_Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 			
 			List<int> elementGroups = new List<int>();
+			List<int> textureGroups = new List<int>();
 			
 			foreach(pb_Face f in faces)
-				elementGroups.Add(f.elementGroup);
-
-			List<pb_Face> facesMatchingElementGroup = new List<pb_Face>(faces);
-
-			foreach(pb_Face f in pb.faces)
 			{
-				if(f.elementGroup > -1 && elementGroups.Contains(f.elementGroup))
-					facesMatchingElementGroup.Add(f);
+				if(f.manualUV)
+					elementGroups.Add(f.elementGroup);
+				else
+					textureGroups.Add(f.textureGroup);
 			}
 
-			pb.SetSelectedFaces( facesMatchingElementGroup.Distinct().ToArray() );
+			IEnumerable<pb_Face> matches = System.Array.FindAll(pb.faces, x => 
+			                                                    (x.manualUV && x.elementGroup > -1 && elementGroups.Contains(x.elementGroup)) ||
+			                                                    (!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)) );
+
+			pb.SetSelectedFaces( faces.Union(matches).ToArray() );
 	
 			if(editor != null)
 				editor.UpdateSelection(false);
@@ -2547,6 +2641,29 @@ public class pb_UV_Editor : EditorWindow
 		pb_Face[] sel = System.Array.FindAll(pb.faces, x => !x.manualUV && texGroups.Contains(x.textureGroup));
 
 		return selection.Union(sel).ToArray();
+	}
+
+	/**
+	 * If selection contains faces that are part of a texture group, and not all of those group faces are in the selection,
+	 * return a pb_Face[] of that entire group so that we can show the user some indication of that groupage.
+	 */
+	private List<pb_Face[]> GetIncompleteTextureGroups(pb_Object pb, pb_Face[] selection)
+	{
+		// get distinct list of all selected texture groups
+		List<int> groups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
+		List<pb_Face[]> incompleteGroups = new List<pb_Face[]>(); 
+		
+		// figure out how many 
+		for(int i = 0; i < groups.Count; i++)
+		{
+			pb_Face[] whole_group = System.Array.FindAll(pb.faces, x => !x.manualUV && groups[i] == x.textureGroup);
+			int inSelection = System.Array.FindAll(selection, x => x.textureGroup == groups[i]).Length;
+
+			if(inSelection != whole_group.Length)
+				incompleteGroups.Add(whole_group);
+		}
+
+		return incompleteGroups;
 	}
 
 	/**

@@ -20,6 +20,8 @@ public class pbUndo : Editor
 	 */
 	public static void RecordObjects(Object[] objs, string msg)
 	{
+		if(objs == null) return;
+		
 		Undo.RecordObjects(objs, msg);
 	}
 

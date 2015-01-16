@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using ProBuilder2.Math;
 
 namespace ProBuilder2.Common
@@ -154,6 +156,7 @@ namespace ProBuilder2.Common
 		 * Returns the center of the bounding box of points.  Optional parameter @length limits the 
 		 * bounds calculations to only the points up to length in array.
 		 */
+		public static Vector2 Center(List<Vector2> points) { return Center(points.ToArray()); }
 		public static Vector2 Center(Vector2[] points) { return Center(points, points.Length); }
 		public static Vector2 Center(Vector2[] points, int length)
 		{
