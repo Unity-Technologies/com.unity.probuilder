@@ -736,7 +736,7 @@ public class pb_Editor : EditorWindow
 	{	
 		currentEvent = Event.current;
 		
-		if(currentEvent.Equals(Event.KeyboardEvent("v")))
+		if(editLevel == EditLevel.Geometry && currentEvent.Equals(Event.KeyboardEvent("v")))
 		{
 			currentEvent.Use();
 			snapToVertex = true;
