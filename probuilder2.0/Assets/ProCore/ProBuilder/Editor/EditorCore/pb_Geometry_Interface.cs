@@ -65,6 +65,7 @@ public class pb_Geometry_Interface : EditorWindow
 	public static void MenuCreateCube()
 	{
 		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+		pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 		
 		Material mat = null;
 		if(EditorPrefs.HasKey(pb_Constant.pbDefaultMaterial))
@@ -175,6 +176,8 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.CubeGenerator(cubeSize);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
@@ -228,6 +231,9 @@ public class pb_Geometry_Interface : EditorWindow
 				 	0,
 				 	plane_axis,
 				 	false);
+
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 			
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
@@ -269,6 +275,9 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.PrismGenerator(prismSize);
+			
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 	
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
@@ -331,6 +340,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.StairGenerator(stair_steps, stair_width, stair_height, stair_depth, extendSidesToFloor, generateBack, stair_platformsOnly);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 			
@@ -394,6 +404,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			
 			int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
 			
@@ -451,6 +462,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			 
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -515,6 +527,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis, plane_smooth);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 			
@@ -581,6 +594,7 @@ public class pb_Geometry_Interface : EditorWindow
 					pipe_subdivAxis,
 					pipe_subdivHeight
 				 	);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -639,6 +653,7 @@ public class pb_Geometry_Interface : EditorWindow
 					cone_height,
 					cone_subdivAxis
 				 	);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -705,6 +720,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.ArchGenerator(arch_angle, arch_radius, arch_width, arch_depth, arch_radialCuts, arch_insideFaces, arch_outsideFaces, arch_frontFaces, arch_backFaces);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 
@@ -749,6 +765,7 @@ public class pb_Geometry_Interface : EditorWindow
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
 			pb_Object pb = pb_Shape_Generator.DomeGenerator(dome_radius, dome_radialCuts, dome_depthCuts);
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 			
@@ -794,9 +811,8 @@ public class pb_Geometry_Interface : EditorWindow
 
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
-			if(verts.Length > 256)
-				Debug.Log("Whoa!  Did you seriously type all those points!?");
 			pb_Object pb = pb_Object.CreateInstanceWithPoints(pbUtil.StringToVector3Array(verts));
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			
 			if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 

@@ -32,4 +32,9 @@ public class pbUndo : Editor
 	{
 		Undo.DestroyObjectImmediate(obj);
 	}
+
+	public static void RegisterCreatedObjectUndo(Object obj, string msg)
+	{
+		Undo.RegisterCreatedObjectUndo(obj, msg);
+	}
 }
