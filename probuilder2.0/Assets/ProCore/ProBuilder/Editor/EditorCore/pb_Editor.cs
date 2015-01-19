@@ -15,6 +15,7 @@ using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
 using ProBuilder2.GUI;
+using System.Threading;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -94,6 +95,7 @@ public class pb_Editor : EditorWindow
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
+
 #endregion
 
 #region INITIALIZATION AND ONDISABLE
@@ -1461,7 +1463,7 @@ public class pb_Editor : EditorWindow
 
 					for(int i = 0; i < selected_universal_edges_all[e].Length; i++)
 					{
-						// pb_Edge edge = new pb_Edge(
+						//  pb_Edge edge = new pb_Edge(
 						// 	pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
 						// 	pb.sharedIndices[selected_universal_edges_all[e][i].y][0]);
 
@@ -2032,15 +2034,15 @@ public class pb_Editor : EditorWindow
 							Handles.DrawLine(v[pb.SelectedEdges[j].x], v[pb.SelectedEdges[j].y]);
 						}
 					}
-				} catch (System.Exception e) {}
 
-				if(nearestEdgeObjectIndex > -1 && nearestEdgeIndex > -1)
-				{
-					Handles.color = Color.red;
-					Handles.DrawLine(
-						selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.x],
-						selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.y]);
-				}
+					if(nearestEdgeObjectIndex > -1 && nearestEdgeIndex > -1)
+					{
+						Handles.color = Color.red;
+						Handles.DrawLine(
+							selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.x],
+							selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.y]);
+					}
+				} catch (System.Exception e) {}
 				Handles.color = Color.white;
 				
 				break;
@@ -2080,14 +2082,18 @@ public class pb_Editor : EditorWindow
 
 		#if PB_DEBUG
 		int startY = 0;
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "Faces: " + faceCount);
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "Triangles: " + triangleCount);
-		startY += 20;
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Faces: " + selectedFaceCount);
-		GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Vertices: " + selectedVertexCount);
+		try
+		{
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "Faces: " + faceCount);
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "Triangles: " + triangleCount);
+			startY += 20;
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Faces: " + selectedFaceCount);
+			GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Vertices: " + selectedVertexCount);
+		} catch (System.Exception e) {}
 		#endif
+
 
 		// Enables vertex selection with a mouse click
 		if(editLevel == EditLevel.Geometry && !dragging && selectionMode == SelectMode.Vertex)
@@ -2577,9 +2583,31 @@ public class pb_Editor : EditorWindow
 	int triangleCount = 0;
 	#endif
 
+	int selectionHash;
+
+	/**
+	 * used to compare selection values when returning from GetUniversalEdges worker - should not be trusted anywhere that really matters.
+	 * @todo use FNV-1a hash? 
+	 */
+	int GetSelectionHash(pb_Object[] sel)
+	{
+		if(sel.Length < 1)
+			return 0;
+		
+		int hash = sel[0].GetInstanceID();
+
+		for(int i = 1; i < sel.Length; i++)
+		{
+			hash = hash ^ sel[i].GetHashCode();
+		}
+
+		return hash;
+	}
+
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{	
+
 		#if PB_DEBUG
 		profiler.BeginSample("UpdateSelection");
 		#endif
@@ -2606,11 +2634,13 @@ public class pb_Editor : EditorWindow
 		#else
 		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 		#endif
-		
+
 		// If the top level selection has changed, update all the heavy cache things
 		// that don't change based on element selction
 		if(forceUpdate || !t_selection.SequenceEqual(selection))
 		{
+			selectionHash = GetSelectionHash(selection);
+
 			forceUpdate = true;	// If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
 								// can be trusted.
 			selected_universal_edges_all 		= new pb_Edge[selection.Length][];
@@ -2627,13 +2657,12 @@ public class pb_Editor : EditorWindow
 				// necessary only once on selection modification
 				#if PB_DEBUG
 				profiler.EndSample();
-				profiler.BeginSample("pb_Edge.GetUniversalEdges");
+				// profiler.BeginSample("pb_Edge.GetUniversalEdges");
 				#endif
 
-				selected_universal_edges_all[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
+				selected_universal_edges_all[i] = new pb_Edge[0];// pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
 				
 				#if PB_DEBUG
-				profiler.EndSample();
 				profiler.BeginSample("VerticesInWorldSpace_all");
 				#endif
 
@@ -2643,7 +2672,18 @@ public class pb_Editor : EditorWindow
 				profiler.EndSample();
 				#endif
 			}
+
+			#if PB_DEBUG
+			profiler.BeginSample("GetUniversalEdges");	
+			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
+			edgesThread.Start();
+			profiler.EndSample();
+			#else
+			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
+			edgesThread.Start(selection);
+			#endif
 		}
+
 
 		transformCache = new Vector3[selection.Length][];
 
@@ -2657,7 +2697,7 @@ public class pb_Editor : EditorWindow
 		#if PB_DEBUG
 		profiler.EndSample();
 		#endif
-		
+
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool boundsInitialized = false;
 
@@ -2979,6 +3019,33 @@ public class pb_Editor : EditorWindow
 
 		pb_Editor_Graphics.ClearSelectionMesh();
 	}
+
+	/**
+	 * Get universal edges on a separate thread, since it can be expensive.
+	 */
+	void GetUniversalEdgesWorker(pb_Object[] objects)
+	{
+		pb_Object[] sel;
+
+		lock(objects)
+		{
+			sel = new pb_Object[objects.Length];
+			System.Array.Copy(objects, 0, sel, 0, objects.Length);
+		}
+
+		pb_Edge[][] edges = new pb_Edge[sel.Length][];
+
+		for(int i = 0; i < sel.Length; i++)
+		{
+			edges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(sel[i].faces), sel[i].sharedIndices).Distinct().ToArray();
+		}
+
+		lock(selection)
+		{
+			if( GetSelectionHash(sel) == selectionHash )
+				selected_universal_edges_all = edges;
+		}
+	}
 #endregion
 
 #region HANDLE AND GUI CALCULTATIONS
@@ -3146,12 +3213,15 @@ public class pb_Editor : EditorWindow
 				/**
 				 * If it's a prefab instance, reconstruct submesh structure.
 				 */
-				// bool exists = System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter);
-				// if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance && exists )
-
-				pb.ToMesh();
-				pb.Refresh();
-				pb.GenerateUV2();
+				if(	(PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance ||
+					 PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.Prefab ) )
+				// && System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter) )
+				{
+					prefabModified = true;
+					pb.ToMesh();
+					pb.Refresh();
+					pb.GenerateUV2();
+				}
 			}
 		}
 
