@@ -1,3 +1,20 @@
+-- ProBuilder 2.4.0b6 (r3061) -
+
+# Features
+	- When selecting a texture-grouped face in UV editor, show an indicator of all faces in group.
+	- New dark background in UV editor for Unity light skin users.
+	- Improve performance when selecting objects with large vertex counts.
+
+# Bug Fixes
+	- Allow `V` key usage when not in Element mode.
+	- Fix regression where instantiated objects would not respect ProGrids alignment.
+	- Fix null ref errors when welding or collapsing vertices.
+	- When double-clicking a texture grouped face in UV editor, select the entire group.
+	- Fix regression that caused performance spikes when deleting or instantiating objects.
+	- When detaching faces to a new object, copy all of that object's properties.
+	- Add Undo support to Shape creation tool.
+	- Fix bug where running Flip Normals from the Menu would not immediately update the mesh graphics.
+
 -- ProBuilder 2.4.0b5 (r3049) -
 
 # Features
