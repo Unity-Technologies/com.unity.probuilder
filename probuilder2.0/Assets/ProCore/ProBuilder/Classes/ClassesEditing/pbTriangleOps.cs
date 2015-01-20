@@ -104,68 +104,6 @@ namespace ProBuilder2.MeshOperations
 			removed = pb.RemoveUnusedVertices();
 			return removed.Length > 0;
 		}
-			
-		// /**
-		//  *	Removes triangles that occupy the same space and point to the same vertices.
-		//  */
-		// public static int[] RemoveDuplicateTriangles(this pb_Object pb)
-		// {
-		// 	pb_IntArray[] sharedIndices = pb.sharedIndices;
-		// 	Vector3[] v = pb.vertices;
-		// 	List<pb_Face> del = new List<pb_Face>();
-
-		// 	int[] removedIndices;
-
-		// 	List<pb_Face> f = new List<pb_Face>();
-
-		// 	foreach(pb_Face face in pb.faces)
-		// 	{
-		// 		List<int> tris = new List<int>();
-		
-		// 		int[] ind = face.indices;
-		// 		for(int i = 0; i < ind.Length; i+=3)
-		// 		{
-		// 			int[] s = new int[3]
-		// 			{
-		// 				sharedIndices.IndexOf(ind[i+0]),
-		// 				sharedIndices.IndexOf(ind[i+1]),
-		// 				sharedIndices.IndexOf(ind[i+2])
-		// 			};
-
-		// 			float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
-
-		// 			if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
-		// 			{
-		// 				// don't include this face in the reconstruct
-		// 				;
-		// 			}
-		// 			else
-		// 			{
-		// 				tris.Add(ind[i+0]);
-		// 				tris.Add(ind[i+1]);
-		// 				tris.Add(ind[i+2]);
-		// 			}
-		// 		}
-
-		// 		if(tris.Count > 0)
-		// 		{
-		// 			face.SetIndices(tris.ToArray());
-		// 			face.RebuildCaches();
-
-		// 			f.Add(face);
-		// 		}
-		// 		else
-		// 		{
-		// 			del.Add(face);
-		// 		}
-		// 	}
-
-		// 	pb.SetFaces(f.ToArray());
-
-		// 	removedIndices = pb.RemoveUnusedVertices();
-
-		// 	return removedIndices;
-		// }
 
 		/**
 		 * Merge all faces into a sigle face.

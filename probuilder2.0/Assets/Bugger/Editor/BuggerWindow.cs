@@ -115,7 +115,10 @@ public class BuggerWindow : EditorWindow
 		{
 			return 	lhs.message.Equals(rhs.message) &&
 					lhs.logType == rhs.logType &&
-					lhs.stack[0].lineNumber == rhs.stack[0].lineNumber;
+					(
+						(lhs.stack.Count > 0 && rhs.stack.Count > 0 && lhs.stack[0].lineNumber == rhs.stack[0].lineNumber) ||
+						(lhs.stack.Count == 0 && rhs.stack.Count == 0)
+					);
 		}
 
 		public int GetHashCode(BugLog log)

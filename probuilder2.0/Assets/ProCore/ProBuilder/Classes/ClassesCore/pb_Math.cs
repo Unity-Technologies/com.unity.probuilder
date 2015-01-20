@@ -295,7 +295,7 @@ namespace ProBuilder2.Math
 		}
 #endregion
 
-#region Normal
+#region Normal and Tangents
 
 		/**
 		 * Calculate the unit vector normal of 3 points:  B-A x C-A
@@ -324,6 +324,73 @@ namespace ProBuilder2.Math
 								pb.vertices[face.indices[i+2]]);
 
 			return nrm / (face.indices.Length/3f);
+		}
+
+		/**
+		 * Returns the first normal, tangent, and bitangent for this face, using the first triangle available for tangent and bitangent.
+		 * Does not rely on pb.msh for normal or uv information - uses pb.vertices & pb.uv.
+		 */
+		public static void NormalTangentBitangent(pb_Object pb, pb_Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
+		{			
+			if(face.indices.Length < 3)
+			{
+				Debug.LogWarning("Cannot find normal / tangent / bitangent for face with < 3 indices.");
+				normal = Vector3.zero;
+				tangent = Vector3.zero;
+				bitangent = Vector3.zero;
+				return;
+			}
+
+			normal = pb_Math.Normal(pb, face);
+
+			Vector3 tan1 = Vector3.zero;
+			Vector3 tan2 = Vector3.zero;
+			Vector4 tan = new Vector4(0f,0f,0f,1f);
+
+			long i1 = face.indices[0];
+			long i2 = face.indices[1];
+			long i3 = face.indices[2];
+
+			Vector3 v1 = pb.vertices[i1];
+			Vector3 v2 = pb.vertices[i2];
+			Vector3 v3 = pb.vertices[i3];
+
+			Vector2 w1 = pb.uv[i1];
+			Vector2 w2 = pb.uv[i2];
+			Vector2 w3 = pb.uv[i3];
+
+			float x1 = v2.x - v1.x;
+			float x2 = v3.x - v1.x;
+			float y1 = v2.y - v1.y;
+			float y2 = v3.y - v1.y;
+			float z1 = v2.z - v1.z;
+			float z2 = v3.z - v1.z;
+
+			float s1 = w2.x - w1.x;
+			float s2 = w3.x - w1.x;
+			float t1 = w2.y - w1.y;
+			float t2 = w3.y - w1.y;
+
+			float r = 1.0f / (s1 * t2 - s2 * t1);
+
+			Vector3 sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+			Vector3 tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+			tan1 += sdir;
+			tan2 += tdir;
+
+			Vector3 n = normal;
+
+			Vector3.OrthoNormalize(ref n, ref tan1);
+
+			tan.x = tan1.x;
+			tan.y = tan1.y;
+			tan.z = tan1.z;
+
+			tan.w = (Vector3.Dot(Vector3.Cross(n, tan1), tan2) < 0.0f) ? -1.0f : 1.0f;
+
+			tangent = ((Vector3)tan) * tan.w;
+			bitangent = Vector3.Cross(normal, tangent);
 		}
 
 		/**
@@ -499,6 +566,22 @@ namespace ProBuilder2.Math
 		public static Vector2 Average(Vector2[] v)
 		{
 			Vector2 sum = Vector2.zero;
+			for(int i = 0; i < v.Length; i++)
+				sum += v[i];
+			return sum/(float)v.Length;
+		}
+
+		public static Vector4 Average(List<Vector4> v)
+		{
+			Vector4 sum = Vector4.zero;
+			for(int i = 0; i < v.Count; i++)
+				sum += v[i];
+			return sum/(float)v.Count;
+		}
+
+		public static Vector4 Average(Vector4[] v)
+		{
+			Vector4 sum = Vector4.zero;
 			for(int i = 0; i < v.Length; i++)
 				sum += v[i];
 			return sum/(float)v.Length;

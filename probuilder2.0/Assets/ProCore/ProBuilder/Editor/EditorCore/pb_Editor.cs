@@ -91,7 +91,7 @@ public class pb_Editor : EditorWindow
 
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
 	public float drawVertexNormals = 0f;
-	public bool drawFaceNormals = false;
+	public bool drawFaceNormals = true;
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
@@ -473,6 +473,8 @@ public class pb_Editor : EditorWindow
 			}
 		#endregion
 
+		drawFaceNormals = EditorGUILayout.Toggle("Normal", drawFaceNormals);
+
 		#region Geometry
 
 			// Soft Select
@@ -845,6 +847,7 @@ public class pb_Editor : EditorWindow
 		if( (movingVertices || movingPictures || scaling) && GUIUtility.hotControl < 1)
 		{
 			OnFinishedVertexModification();
+			UpdateHandleRotation();
 			UpdateTextureHandles();
 		}
 		#endif
@@ -3061,7 +3064,7 @@ public class pb_Editor : EditorWindow
 		// Reset temp vars
 		textureHandle = selected_handlePivotWorld;
 		textureScale = Vector3.one;
-		textureRotation = Quaternion.identity;// currentHandleRotation;
+		textureRotation = Quaternion.identity;
 
 		pb_Object pb;
 		pb_Face face;
@@ -3069,12 +3072,16 @@ public class pb_Editor : EditorWindow
 		handleMatrix = selection[0].transform.localToWorldMatrix;
 
 		if( GetFirstSelectedFace(out pb, out face) )
-			handleMatrix *= Matrix4x4.TRS( pb_Math.Average( pb.GetVertices(face.distinctIndices) ), handleRotation, Vector3.one);
+		{
+			Vector3 nrm, bitan, tan;
+			pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+
+			handleMatrix *= Matrix4x4.TRS( pb_Math.BoundsCenter( pb.GetVertices(face.distinctIndices) ), Quaternion.LookRotation(nrm, bitan), Vector3.one);
+		}
 	}
 	#endif
 
 
-	Vector3 selectedNormal_local = Vector3.up;
 	Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 	public void UpdateHandleRotation()
 	{
@@ -3092,18 +3099,12 @@ public class pb_Editor : EditorWindow
 
 				if( !GetFirstSelectedFace(out pb, out face) )
 					goto case HandleAlignment.Local;
-				else
-					selectedNormal_local = pb_Math.Normal( pb.GetVertices(face.indices) );
 
-				// Unity freaks out if SetLookRotation() is Vector3.zero, throwing Debug Logs like crazy - 
-				// which in turn slows the editor to a crawl.  This catches that and prevents a zero'd 
-				// Vector3 from sneaking through.
-				if(selectedNormal_local == Vector3.zero)
-					selectedNormal_local = Vector3.up;
+				// use average normal, tangent, and bitangent to calculate rotation relative to local space
+				Vector3 nrm, bitan, tan;
+				pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
 
-				// apply local rotation, then apply rotation derived from normal unit vector
-				handleRotation = localRot * Quaternion.LookRotation( selectedNormal_local, Vector3.up );
-
+				handleRotation = localRot * Quaternion.LookRotation(nrm, bitan);
 				break;
 
 			case HandleAlignment.Local:
@@ -3530,22 +3531,24 @@ public class pb_Editor : EditorWindow
 	{
 		foreach(pb_Object pb in selection)
 		{
-			// selection doesn't update fast enough, so this null check needs to exist
-			if(pb == null)
-				continue;
+			Vector3 nrm, bitan, tan;
 
-			pb_Face[] faces = pb.SelectedFaces;
-
-			for(int i = 0; i < faces.Length; i++)
+			Handles.matrix = pb.transform.localToWorldMatrix;
+			
+			foreach(pb_Face face in pb.faces)
 			{
-				Vector3[] fv = pb.GetVertices(faces[i]);
-				Vector3 v = pb.transform.TransformPoint(pb_Math.Average(fv));
-				Vector3 nrml = pb.transform.TransformDirection(pb_Math.Normal(fv));
+				pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
 
+				Vector3 v = pb_Math.BoundsCenter(pb.GetVertices(face.distinctIndices));
+
+				Handles.color = Color.blue;
+				Handles.DrawLine( v, v + nrm * .3f );
+				Handles.color = Color.red;
+				Handles.DrawLine( v, v + (Vector3)tan * .3f);
 				Handles.color = Color.green;
-					Handles.DrawLine(v, v + nrml);
-				Handles.color = Color.white;
+				Handles.DrawLine( v, v + bitan * .3f );
 			}
+			Handles.matrix = Matrix4x4.identity;
 		}
 	}
 #endregion

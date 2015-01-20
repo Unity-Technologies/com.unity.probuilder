@@ -17,6 +17,9 @@ using Parabox.Debug;
  */
 public class pb_DebugWindow : EditorWindow 
 {
+	float elementLength = .5f;
+	float elementOffset = .01f;
+
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
 	[MenuItem("Tools/ProBuilder/Debug/ProBuilder Debug Window")]
@@ -60,6 +63,8 @@ public class pb_DebugWindow : EditorWindow
 		public bool showUv;
 		public bool showUv2;
 		public bool showAutoUV;
+		public bool showSharedUV;
+		public bool showSharedTris;
 
 		public ParamView()
 		{
@@ -69,6 +74,8 @@ public class pb_DebugWindow : EditorWindow
 			this.showUv = false;
 			this.showUv2 = false;
 			this.showAutoUV = false;
+			this.showSharedUV = false;
+			this.showSharedTris = false;
 		}
 	}
 	Hashtable showParams = new Hashtable();
@@ -79,10 +86,30 @@ public class pb_DebugWindow : EditorWindow
 	{
 		selection = editor != null ? editor.selection : new pb_Object[0];
 
-		edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
-		faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
-		elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
-		vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
+		EditorGUI.BeginChangeCheck();
+			edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
+			faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
+			elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
+			vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
+
+			GUILayout.Label("Normals / Tangents / Bitangents", EditorStyles.boldLabel);
+			elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
+			elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
+
+			Color pop = GUI.color;
+			GUI.color = Color.green;
+			GUILayout.Label("Normals");
+			GUI.color = Color.red;
+			GUILayout.Label("Tangents");
+			GUI.color = Color.blue;
+			GUILayout.Label("Bitangents");
+			GUI.color = pop;
+
+		if(EditorGUI.EndChangeCheck())
+		{
+			SceneView.RepaintAll();
+		}
+
 
 		GUILayout.Label("Active Selection", EditorStyles.boldLabel);
 		if(selection.Length > 0)
@@ -121,30 +148,32 @@ public class pb_DebugWindow : EditorWindow
 				if(pv.showObject)
 				{
 					/* VERTICES */			
-					GUILayout.BeginHorizontal();
-						GUILayout.Space(24);
-						pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount);
-					GUILayout.EndHorizontal();
-		
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(48);
-						if(pv.showVertices)
-						{
-							if(m == null)
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount);
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showVertices)
 							{
-								GUILayout.Label("" + pb.vertices.ToFormattedString("\n"));						
-							}
-							else
-							{
-								GUILayout.BeginVertical();
-								for(int i = 0; i < m.subMeshCount; i++)
+								if(m == null)
 								{
-									GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.GetVertices( m.GetTriangles(i) ).ToFormattedString("\n") + "\n");
+									GUILayout.Label("" + pb.vertices.ToFormattedString("\n"));						
 								}
-								GUILayout.EndVertical();
+								else
+								{
+									GUILayout.BeginVertical();
+									for(int i = 0; i < m.subMeshCount; i++)
+									{
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.GetVertices( m.GetTriangles(i) ).ToFormattedString("\n") + "\n");
+									}
+									GUILayout.EndVertical();
+								}
 							}
-						}
-					GUILayout.EndHorizontal();
+						GUILayout.EndHorizontal();						
+					}
 					
 					/* Colors */			
 					{
@@ -162,42 +191,92 @@ public class pb_DebugWindow : EditorWindow
 						GUILayout.EndHorizontal();
 					}
 					
-					/* UV  */			
-					GUILayout.BeginHorizontal();
-						GUILayout.Space(24);
-						pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
-					GUILayout.EndHorizontal();
-		
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(48);
-						if(pv.showUv)
-							GUILayout.Label("" + pb.uv.ToFormattedString("\n"));
-					GUILayout.EndHorizontal();
+					/* UV  */	
+					{		
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
+						GUILayout.EndHorizontal();
+			
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showUv)
+								GUILayout.Label("" + pb.uv.ToFormattedString("\n"));
+						GUILayout.EndHorizontal();
+					}
 
 					/* UV 2 */			
-					GUILayout.BeginHorizontal();
-						GUILayout.Space(24);
-						pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
-					GUILayout.EndHorizontal();
-		
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(48);
-						if(pv.showUv2 && m != null)
-							GUILayout.Label("" + m.uv2.ToFormattedString("\n"));
-					GUILayout.EndHorizontal();
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
+						GUILayout.EndHorizontal();
+			
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showUv2 && m != null)
+								GUILayout.Label("" + m.uv2.ToFormattedString("\n"));
+						GUILayout.EndHorizontal();
+					}
 
 					/* Auto UV params */
-					GUILayout.BeginHorizontal();
-						GUILayout.Space(24);
-						pv.showAutoUV = EditorGUILayout.Foldout(pv.showAutoUV, "Auto-UV Params");
-					GUILayout.EndHorizontal();
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showAutoUV = EditorGUILayout.Foldout(pv.showAutoUV, "Auto-UV Params");
+						GUILayout.EndHorizontal();
 
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(48);
-						if(pv.showAutoUV)
-							GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToFormattedString("\n"));
-					GUILayout.EndHorizontal();
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showAutoUV)
+								GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToFormattedString("\n"));
+						GUILayout.EndHorizontal();
+					}
 
+					/* Shared UVs */
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showSharedUV = EditorGUILayout.Foldout(pv.showSharedUV, "Shared UV");
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showSharedUV)
+							{
+								GUILayout.BeginVertical();
+								for(int i = 0; i < pb.sharedIndicesUV.Length; i++)
+								{
+									if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToFormattedString(", "), EditorStyles.label))
+									{
+										pb.SetSelectedTriangles(pb.sharedIndicesUV[i]);
+
+										if(pb_Editor.instance)
+										{
+											pb_Editor.instance.UpdateSelection();
+											SceneView.RepaintAll();
+										}
+									}
+								}
+								GUILayout.EndVertical();
+								// GUILayout.Label("" + pb.sharedIndicesUV.ToFormattedString("\n"));
+							}
+						GUILayout.EndHorizontal();
+					}
+
+					/* Shared Triangle */
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showSharedTris = EditorGUILayout.Foldout(pv.showSharedTris, "Shared Indices");
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showSharedTris)
+								GUILayout.Label("" + pb.sharedIndices.ToFormattedString("\n"));
+						GUILayout.EndHorizontal();
+					}
 				}
 			}
 		GUILayout.EndScrollView();
@@ -206,7 +285,12 @@ public class pb_DebugWindow : EditorWindow
 	void OnSceneGUI(SceneView scn)
 	{
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+		{
 			DrawStats(pb);
+
+			if(elementLength > 0.01f)
+				DrawElements(pb);
+		}
 
 		Repaint();
 	}
@@ -284,5 +368,36 @@ public class pb_DebugWindow : EditorWindow
 			GUI.Label(new Rect(10, 10, 400, 800), sb.ToString());
 		}
 		Handles.EndGUI();
+	}
+
+	/**
+	 * Draw the normals, tangents, and bitangets associated with this mesh.
+	 * Green = normals
+	 * Blue = tangents
+	 * Red = bitangents
+	 */
+	void DrawElements(pb_Object pb)
+	{
+		int vertexCount = pb.msh.vertexCount;
+
+		Vector3[] vertices = pb.msh.vertices;
+		Vector3[] normals  = pb.msh.normals;
+		Vector4[] tangents = pb.msh.tangents;
+
+		Handles.matrix = pb.transform.localToWorldMatrix;
+
+		Handles.color = Color.green;
+		for(int i = 0; i < vertexCount; i++)
+			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + normals[i] * elementLength);
+
+		Handles.color = Color.blue;
+		for(int i = 0; i < vertexCount; i++)
+			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3)tangents[i] * elementLength);
+
+		Handles.color = Color.red;
+		for(int i = 0; i < vertexCount; i++)
+			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength);
+
+		Handles.matrix = Matrix4x4.identity;
 	}
 }

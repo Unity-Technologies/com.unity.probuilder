@@ -2178,6 +2178,12 @@ public class pb_UV_Editor : EditorWindow
 					yMax = yMin; 
 					first = false;
 				} else {
+
+					if(n > uvs_canvas_space.Length)	
+						Debug.Log("n: " + n + " sel: " + selection.Length);
+					if(i > uvs_canvas_space[n].Length)
+						Debug.Log("i: " + i + " > " + uvs_canvas_space[n].Length);	
+
 					xMin = Mathf.Min(xMin, uvs_canvas_space[n][i].x);
 					yMin = Mathf.Min(yMin, uvs_canvas_space[n][i].y);
 
