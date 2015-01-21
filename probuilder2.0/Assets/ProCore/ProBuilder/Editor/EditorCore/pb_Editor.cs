@@ -1727,7 +1727,7 @@ public class pb_Editor : EditorWindow
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
-				
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
@@ -1740,11 +1740,11 @@ public class pb_Editor : EditorWindow
 				for(int i = 0; i < selection.Length; i++)
 				{					
 					vertexOrigins[i] = selection[i].GetVertices(selection[i].SelectedTriangles).ToArray();
-					vertexOffset[i] = pb_Math.Average(vertexOrigins[i]);
+					vertexOffset[i] = pb_Math.BoundsCenter(vertexOrigins[i]);
 				}
 			}
 			
-			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
+			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Rotate Vertices");
 
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
@@ -1753,6 +1753,7 @@ public class pb_Editor : EditorWindow
 				switch(handleAlignment)
 				{
 					case HandleAlignment.Plane:
+
 						int facesLength = selection[i].SelectedFaceIndices.Length;
 						if(facesLength < 1) goto case HandleAlignment.Local;	// can't do plane without a plane
 
@@ -3080,7 +3081,6 @@ public class pb_Editor : EditorWindow
 		}
 	}
 	#endif
-
 
 	Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 	public void UpdateHandleRotation()
