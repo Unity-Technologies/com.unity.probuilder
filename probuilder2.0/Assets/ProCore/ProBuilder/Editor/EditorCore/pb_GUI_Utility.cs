@@ -18,6 +18,14 @@ namespace ProBuilder2.GUI
 		 * Draws a horizontal line and inserts a GUILayout.Space(2).
 		 * @param lines How many lines to draw. Typically 1 or 2 suffice.
 		 */
+		public static void DrawSeparator(int lines, Color color)
+		{
+			Color old = UnityEngine.GUI.backgroundColor;
+			UnityEngine.GUI.backgroundColor = color;
+			DrawSeparator(lines);
+			UnityEngine.GUI.backgroundColor = old;
+		}
+		 
 		public static void DrawSeparator(int lines)
 		{
 			if(splitStyle == null)

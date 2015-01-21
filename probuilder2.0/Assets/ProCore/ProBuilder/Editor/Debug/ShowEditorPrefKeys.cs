@@ -74,6 +74,7 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string e in enums)
 				GUILayout.Label(e);
+				
 			pb_GUI_Utility.DrawSeparator(1);
 			
 			

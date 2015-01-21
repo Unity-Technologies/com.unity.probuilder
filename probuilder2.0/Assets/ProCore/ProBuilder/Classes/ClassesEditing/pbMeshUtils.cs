@@ -171,7 +171,9 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Face> faces = new List<pb_Face>();
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			
 			int[] i = new int[indices.Length];
+
 			for(int j = 0; j < indices.Length; j++)
 				i[j] = sharedIndices.IndexOf(indices[j]);
 

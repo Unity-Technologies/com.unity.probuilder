@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.GUI;
 
 public class pb_VertexColor_Editor : EditorWindow
 {
@@ -80,29 +81,72 @@ public class pb_VertexColor_Editor : EditorWindow
 	Vector2 screenCenter = Vector2.zero;
 
 	HashSet<pb_Object> modified = new HashSet<pb_Object>();	// list of all objects that have been modified by the painter, stored so that we can regenerate UV2 on disable
+
+	Texture[] textures = new Texture[0];
+
+	public enum VertexPainterMode
+	{
+		Color,
+		Texture
+	}
+
+	private VertexPainterMode mode = VertexPainterMode.Color;
 #endregion
  
 #region OnGUI
 
 	void OnGUI()
-	{
+	{		
+		GUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+			if(mode == VertexPainterMode.Color)	GUI.backgroundColor = Color.gray;
+			if(GUILayout.Button("Colors", EditorStyles.toolbarButton))
+				mode = VertexPainterMode.Color;
+
+			GUI.backgroundColor = mode == VertexPainterMode.Texture ? Color.gray : Color.white;
+			if(GUILayout.Button("Textures", EditorStyles.toolbarButton))
+				mode = VertexPainterMode.Texture;
+
+			GUI.backgroundColor = Color.white;
+		GUILayout.EndHorizontal();
+
 		lockhandleToCenter = EditorWindow.focusedWindow == this;
 
 		enabled = EditorGUILayout.Toggle("Enabled", enabled);
- 
- 		EditorGUI.BeginChangeCheck();
-		color = EditorGUILayout.ColorField("Color", color);
-		if(EditorGUI.EndChangeCheck())
-		{
-			colorName = pb_ColorUtil.GetColorName(color);
-		}
-
-		GUILayout.Label(colorName);
-
+	
 		EditorGUI.BeginChangeCheck();
 			brushSize = Mathf.Max(.01f, EditorGUILayout.FloatField("Brush Size", brushSize));
 		if(EditorGUI.EndChangeCheck())
 			SceneView.RepaintAll();
+
+		GUILayout.Space(6);
+		pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
+		GUILayout.Space(6);
+
+
+		if(mode == VertexPainterMode.Color)
+		{
+
+	 		EditorGUI.BeginChangeCheck();
+			color = EditorGUILayout.ColorField("Color", color);
+			if(EditorGUI.EndChangeCheck())
+			{
+				colorName = pb_ColorUtil.GetColorName(color);
+			}
+
+			GUILayout.Label(colorName);
+		}
+		else
+		{
+			GUILayout.BeginHorizontal();
+			int max = (Screen.width - 21) / 4;
+
+			for(int i = 0; i < textures.Length; i++)
+			{
+				GUILayout.Label(textures[i], GUILayout.MaxWidth(max), GUILayout.MaxHeight(max));
+			}
+			GUILayout.EndHorizontal();
+		}
 	}
 #endregion
 
@@ -143,6 +187,8 @@ public class pb_VertexColor_Editor : EditorWindow
 
 				if(pb != null)
 				{
+					textures = GetTextures( pb.transform.GetComponent<MeshRenderer>().sharedMaterial ).ToArray();
+
 					modified.Add(pb);
 					
 					pb.ToMesh();
@@ -180,6 +226,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					Color[] colors = pb.msh.colors;
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
+
 					for(int i = 0; i < sharedIndices.Length; i++)
 					{
 						if( Vector3.Distance(hit.point, t.TransformPoint(pb.vertices[sharedIndices[i][0]])) < brushSize)
@@ -262,6 +309,25 @@ public class pb_VertexColor_Editor : EditorWindow
 			SceneView.RepaintAll();
 		}
 	}
+#endregion
+
+#region Utility
+
+	private static List<Texture> GetTextures(Material mat)
+	{
+		List<Texture> textures = new List<Texture>();
+
+		for(int i = 0; i < ShaderUtil.GetPropertyCount(mat.shader); i++)
+		{
+			if( ShaderUtil.GetPropertyType(mat.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv )
+			{
+				textures.Add(mat.GetTexture( ShaderUtil.GetPropertyName(mat.shader, i)));
+			}
+		}
+
+		return textures;
+	}
+
 #endregion
 }
  

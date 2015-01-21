@@ -91,7 +91,7 @@ public class pb_Editor : EditorWindow
 
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
 	public float drawVertexNormals = 0f;
-	public bool drawFaceNormals = true;
+	public bool drawFaceNormals = false;
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
@@ -473,7 +473,7 @@ public class pb_Editor : EditorWindow
 			}
 		#endregion
 
-		drawFaceNormals = EditorGUILayout.Toggle("Normal", drawFaceNormals);
+		// drawFaceNormals = EditorGUILayout.Toggle("Normal", drawFaceNormals);
 
 		#region Geometry
 
@@ -3476,6 +3476,9 @@ public class pb_Editor : EditorWindow
 		#endif
 		if(movingVertices)
 		{
+			#if PB_DEBUG
+			profiler.BeginSample("OnFinishUVModification");
+			#endif
 			foreach(pb_Object sel in selection)
 			{
 				sel.ToMesh();
@@ -3483,6 +3486,10 @@ public class pb_Editor : EditorWindow
 				sel.GenerateUV2();
 			}
 			movingVertices = false;
+
+			#if PB_DEBUG
+			profiler.EndSample();
+			#endif
 		}
 
 		scaling = false;
