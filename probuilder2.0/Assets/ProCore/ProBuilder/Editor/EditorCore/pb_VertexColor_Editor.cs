@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#pragma warning disable 0168	///< Disable unused var (that exception hack)
+
+using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System.Collections.Generic;
@@ -66,7 +68,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	static readonly Color InnerRingColor = new Color(.2f, 9f, .2f, .8f);
 
 	const int MOUSE_BUTTON_LEFT = 0;
-	const float BRUSH_STRENGTH_MAX = 20f;								///< Max brush applications per-second
+	const float BRUSH_STRENGTH_MAX = 24f;								///< Max brush applications per-second
 	const float BRUSH_SIZE_MAX = 5f;
 
 	Color color = Color.green;											///< The color currently being painted.
@@ -120,6 +122,13 @@ public class pb_VertexColor_Editor : EditorWindow
 #endregion
  
 #region OnGUI
+
+	Vector3 nonzero(Vector3 vec)
+	{
+		if(vec.x == 0f && vec.y == 0f && vec.z == 0f)
+			return Vector3.up;
+		return vec;
+	}
 
 	void OnGUI()
 	{		
@@ -299,10 +308,17 @@ public class pb_VertexColor_Editor : EditorWindow
 			{
 				if(!hovering.ContainsKey(pb))
 				{
-					hovering.Add(pb, pb.msh.colors ?? new Color[pb.vertexCount]);
+					hovering.Add(pb, pb.colors ?? new Color[pb.vertexCount]);
 				}
 				else
 				{
+					if(pb.msh.vertexCount != pb.vertexCount)
+					{
+						// script reload can make this happen
+						pb.ToMesh();
+						pb.Refresh();
+					}
+
 					pb.msh.colors = hovering[pb];
 				}
  
@@ -312,8 +328,8 @@ public class pb_VertexColor_Editor : EditorWindow
 				if ( pb_Handle_Utility.Raycast(ray, pb, out hit) )
 				{
 					handlePosition = hit.point;
-					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);
-					handleRotation = Quaternion.LookRotation(hit.normal, Vector3.up);
+					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);					
+					handleRotation = Quaternion.LookRotation(nonzero(hit.normal), Vector3.up);
  
  					Transform t = pb.transform;
 					localHitPoint = t.InverseTransformPoint(hit.point);
@@ -321,19 +337,25 @@ public class pb_VertexColor_Editor : EditorWindow
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
 
-					for(int i = 0; i < sharedIndices.Length; i++)
+					// wrapped in try/catch because a script reload can cause the mesh
+					// to re-unwrap itself in some crazy configuration, throwing off the 
+					// vertex count sync.
+					try
 					{
-						float dist = Vector3.Distance(localHitPoint, pb.vertices[sharedIndices[i][0]]);
-
-						if(dist < brushSize)
+						for(int i = 0; i < sharedIndices.Length; i++)
 						{
-							for(int n = 0; n < sharedIndices[i].Length; n++)
+							float dist = Vector3.Distance(localHitPoint, pb.vertices[sharedIndices[i][0]]);
+
+							if(dist < brushSize)
 							{
-								colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color, (1f/(dist/brushSize)) * brushOpacity );
+								for(int n = 0; n < sharedIndices[i].Length; n++)
+								{
+									colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color, (1f-(dist/brushSize)) * brushOpacity );
+								}
 							}
 						}
-					}
- 
+	 				} catch (System.Exception e) { /* shhhhh */ }
+
 					// show a preview
 					pb.msh.colors = colors;
 				}
@@ -401,13 +423,13 @@ public class pb_VertexColor_Editor : EditorWindow
 
 				sticky.Add(kvp.Key, colors);
  
-				kvp.Key.msh.colors = kvp.Value;
+				// kvp.Key.msh.colors = kvp.Value;
 
-				pbUndo.RecordObjects(new Object[] {kvp.Key, kvp.Key.msh}, "Apply Vertex Colors");
+				pbUndo.RecordObjects(new Object[] {kvp.Key}, "Apply Vertex Colors");
 
 				kvp.Key.SetColors(colors);
 
-				kvp.Key.msh.colors = colors;
+				// kvp.Key.msh.colors = colors;
 			}
  
 			hovering = sticky;

@@ -90,6 +90,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Bounds2D.cs">
       <Link>pb_Bounds2D.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Color.cs">
+      <Link>pb_Color.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_EdgeConnection.cs">
       <Link>pb_EdgeConnection.cs</Link>
     </Compile>
