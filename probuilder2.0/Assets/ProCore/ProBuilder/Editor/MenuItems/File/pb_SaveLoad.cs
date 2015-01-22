@@ -15,7 +15,7 @@ public class pb_SaveLoad : Editor
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Load ProBuilder Object")]
 	public static void MenuLoadPbObject()
 	{
-		string path = EditorUtility.OpenFilePanel("Load Serialized ProBuilder Object", Application.dataPath + "../", "pbo");
+		string path = EditorUtility.OpenFilePanel("Load Serialized ProBuilder Object", Application.dataPath, "pbo");
 
 		pb_SerializableObject obj = null;
 
@@ -23,6 +23,7 @@ public class pb_SaveLoad : Editor
 		Stream stream = File.Open(path, FileMode.Open);
 
 		obj = (pb_SerializableObject)formatter.Deserialize(stream);
+
 		stream.Close();
 
 		Selection.activeTransform = pb_Object.InitWithSerializableObject(obj).transform;
@@ -42,6 +43,9 @@ public class pb_SaveLoad : Editor
 			path = EditorUtility.SaveFilePanel("Save ProBuilder Object", "", selection[0].name, "pbo");// "Save ProBuilder Object to File.");
 		else
 			path = EditorUtility.SaveFolderPanel("Save ProBuilder Objects to Folder", "", "");
+
+		if(path == "" || !path.EndsWith(".pbo"))
+			return;
 
 		foreach(pb_Object pb in selection)
 		{

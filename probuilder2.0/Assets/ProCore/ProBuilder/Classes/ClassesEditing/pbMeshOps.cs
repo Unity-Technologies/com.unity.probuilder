@@ -644,6 +644,7 @@ namespace ProBuilder2.MeshOperations
 
 	 	List<Vector3> v = new List<Vector3>();
 	 	List<Vector2> u = new List<Vector2>();
+	 	List<Color> c = new List<Color>();
 	 	List<pb_Face> f = new List<pb_Face>();
 	 	List<pb_IntArray> s = new List<pb_IntArray>();
 	 	List<pb_IntArray> suv = new List<pb_IntArray>();
@@ -657,6 +658,9 @@ namespace ProBuilder2.MeshOperations
 
 	 		// UVs
 	 		u.AddRange(pb.uv);
+
+	 		// Colors
+	 		c.AddRange(pb.colors);
 
 			// Faces
 	 		pb_Face[] faces = new pb_Face[pb.faces.Length];
@@ -690,7 +694,7 @@ namespace ProBuilder2.MeshOperations
 		 	}
 	 	}
 
-	 	combined = pb_Object.CreateInstanceWithElements(v.ToArray(), u.ToArray(), f.ToArray(), s.ToArray(), suv.ToArray());
+	 	combined = pb_Object.CreateInstanceWithElements(v.ToArray(), u.ToArray(), c.ToArray(), f.ToArray(), s.ToArray(), suv.ToArray());
 	 	
 	 	combined.CenterPivot(new int[1]{0});
 

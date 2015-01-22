@@ -27,11 +27,12 @@ public class pb_SerializableObject
 public class pb_SerializableObject : ISerializable
 {
 	// pb_Object
-	public Vector3[] vertices;
-	public Vector2[] uv;
-	public pb_Face[] faces;
-	public int[][] sharedIndices;
-	public int[][] sharedIndicesUV;
+	public Vector3[] 	vertices;
+	public Vector2[] 	uv;
+	public Color[]		color;
+	public pb_Face[] 	faces;
+	public int[][] 		sharedIndices;
+	public int[][] 		sharedIndicesUV;
 
 	// transform
 	public Vector3 		t_position;
@@ -42,6 +43,7 @@ public class pb_SerializableObject : ISerializable
 	{
 		this.vertices = pb.vertices;
 		this.uv = pb.uv;
+		this.color = pb.colors;
 		this.faces = pb.faces;
 		this.sharedIndices = (int[][])pb.GetSharedIndices().ToArray();
 		this.sharedIndicesUV = (int[][])pb.GetSharedIndicesUV().ToArray();
@@ -67,6 +69,7 @@ public class pb_SerializableObject : ISerializable
 		// pb_object
 		info.AddValue("vertices", 			System.Array.ConvertAll(vertices, x => (pb_Vector3)x),	typeof(pb_Vector3[]));
 		info.AddValue("uv", 				System.Array.ConvertAll(uv, x => (pb_Vector2)x), 		typeof(pb_Vector2[]));
+		info.AddValue("color", 				System.Array.ConvertAll(color, x => (pb_Color)x), 		typeof(pb_Color[]));
 		info.AddValue("faces", 				faces, 													typeof(pb_Face[]));
 		info.AddValue("sharedIndices", 		sharedIndices, 											typeof(int[][]));
 		info.AddValue("sharedIndicesUV",	sharedIndicesUV, 										typeof(int[][]));
@@ -87,6 +90,10 @@ public class pb_SerializableObject : ISerializable
 		/// UVs
 		pb_Vector2[] pb_uv = (pb_Vector2[]) info.GetValue("uv", typeof(pb_Vector2[]));
 		this.uv = System.Array.ConvertAll(pb_uv, x => (Vector2)x);
+		
+		/// Colors
+		pb_Color[] pb_color = (pb_Color[]) info.GetValue("color", typeof(pb_Color[]));
+		this.color = System.Array.ConvertAll(pb_color, x => (Color)x);
 
 		/// Faces
 		this.faces = (pb_Face[]) info.GetValue("faces", typeof(pb_Face[]));

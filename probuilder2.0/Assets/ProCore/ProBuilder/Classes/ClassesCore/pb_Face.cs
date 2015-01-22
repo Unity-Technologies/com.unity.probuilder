@@ -28,7 +28,7 @@ public class pb_Face : ISerializable
 		info.AddValue("edges", 				_edges, 					typeof(pb_Edge[]));
 		info.AddValue("smoothingGroup",	 	_smoothingGroup, 			typeof(int));
 		info.AddValue("uv",	 				_uv, 						typeof(pb_UV));
-		info.AddValue("material",			_mat.GetInstanceID(),		typeof(int));
+		info.AddValue("material",			_mat.name,					typeof(string));
 		info.AddValue("manualUV", 			manualUV, 					typeof(bool));
 		info.AddValue("elementGroup", 		elementGroup, 				typeof(int));
 	}
@@ -47,11 +47,11 @@ public class pb_Face : ISerializable
 		// material is a little different - it requires some fanaglin'
 		this._mat = pb_Constant.DefaultMaterial;
 
-		int materialInstanceId = (int)info.GetValue("material", typeof(int));
+		string matName = (string)info.GetValue("material", typeof(string));
 
 		foreach(Material mat in Resources.FindObjectsOfTypeAll(typeof(Material)))
 		{
-			if(mat.GetInstanceID() == materialInstanceId)
+			if(mat.name == matName)
 			{
 				this._mat = mat;
 				break;

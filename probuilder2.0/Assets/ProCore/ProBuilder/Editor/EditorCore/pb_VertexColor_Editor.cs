@@ -114,6 +114,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	private Vector2 scroll = Vector2.zero;
 	private bool helpFoldout = false;
+	GUIContent gc_BrushSize = new GUIContent("Brush Size", "How big the brush is.  Use Ctrl + Scroll Wheel to adjust this in the Scene View.");
 	GUIContent gc_BrushOpacity = new GUIContent("Opacity", "The opacity that this brush will paint.  Large value means fully opaque, low values are more transparent.");
 	GUIContent gc_BrushStrength = new GUIContent("Strength", "How fast your brush affects the mesh colors.  High values mean changes happen quickly, low values mean colors have to be applied for longer to show.");
 #endregion
@@ -147,7 +148,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	
 		EditorGUI.BeginChangeCheck();
 			
-			brushSize = EditorGUILayout.Slider("Brush Size", brushSize, .01f, BRUSH_SIZE_MAX);
+			brushSize = EditorGUILayout.Slider(gc_BrushSize, brushSize, .01f, BRUSH_SIZE_MAX);
 			brushOpacity = EditorGUILayout.Slider(gc_BrushOpacity, brushOpacity, .01f, 1f);
 			brushStrength = EditorGUILayout.Slider(gc_BrushStrength, brushStrength, .01f, 1f);
 
@@ -386,7 +387,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		 */
 		if( (currentEvent.type == EventType.MouseDown || currentEvent.type == EventType.MouseDrag) &&
 		   	(currentEvent.button == MOUSE_BUTTON_LEFT) &&
-		   	currentEvent.modifiers == EventModifiers.None &&
+		   	currentEvent.modifiers == (EventModifiers)0 &&
 		   	((CurTime - lastBrushApplication) > 1f/(brushStrength * BRUSH_STRENGTH_MAX)) )
 		{
 			lastBrushApplication = CurTime;

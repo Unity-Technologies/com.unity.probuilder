@@ -63,12 +63,15 @@ public class pb_Object : MonoBehaviour
 		Vector2[] u = new Vector2[pb.vertexCount];
 		System.Array.Copy(pb.uv, u, pb.vertexCount);
 
+		Color[] c = new Color[pb.vertexCount];
+		System.Array.Copy(pb.colors, c, pb.vertexCount);
+
 		pb_Face[] f = new pb_Face[pb.faces.Length];
 		
 		for(int i = 0; i < f.Length; i++)
 			f[i] = new pb_Face(pb.faces[i]);
 
-		pb_Object p = CreateInstanceWithElements(v, u, f, pb.GetSharedIndices(), pb.GetSharedIndicesUV());
+		pb_Object p = CreateInstanceWithElements(v, u, c, f, pb.GetSharedIndices(), pb.GetSharedIndicesUV());
 
 		p.gameObject.name = pb.gameObject.name + "-clone";
 
@@ -86,6 +89,7 @@ public class pb_Object : MonoBehaviour
 		pb_Object pb = CreateInstanceWithElements(
 			serialized.vertices,
 			serialized.uv,
+			serialized.color,
 			serialized.faces,
 			serialized.sharedIndices.ToPbIntArray(),
 			serialized.sharedIndicesUV.ToPbIntArray());
@@ -159,13 +163,14 @@ public class pb_Object : MonoBehaviour
 	/**
 	 * Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
 	 */
-	public static pb_Object CreateInstanceWithElements(Vector3[] v, Vector2[] u, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
+	public static pb_Object CreateInstanceWithElements(Vector3[] v, Vector2[] u, Color[] c, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
 	{
 		GameObject _gameObject = new GameObject();
 		pb_Object pb = _gameObject.AddComponent<pb_Object>();
 
 		pb.SetVertices(v);
 		pb.SetUV(u);
+		pb.SetColors(c);
 
 		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(v) );
 
