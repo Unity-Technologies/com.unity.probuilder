@@ -1,4 +1,4 @@
-Shader "Custom/Diffuse Vertex Color Emission" {
+Shader "ProBuilder/Diffuse Vertex Color Emission" {
   Properties {
     _MainTex ("Texture", 2D) = "gray" {}
   }

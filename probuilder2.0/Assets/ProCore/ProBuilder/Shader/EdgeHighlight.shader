@@ -1,4 +1,4 @@
-Shader "Hidden/ProBuilder/Edge Highlight"
+Shader "ProBuilder/ProBuilder/Edge Highlight"
 {
 	Properties
 	{

@@ -3346,18 +3346,6 @@ public class pb_Editor : EditorWindow
 		foreach(pb_Object pb in allPBObjects)
 			pb.Verify();
 	}
-
-	void OnValidateCommand(string command)
-	{
-		switch(command)
-		{
-			case "UndoRedoPerformed":
-
-				UndoRedoPerformed();
-
-				break;
-		}
-	}
 	
 	void UndoRedoPerformed()
 	{

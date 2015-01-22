@@ -11,7 +11,20 @@ namespace ProBuilder2.GUI
 	{
 #region Private
 
-		private static GUIStyle splitStyle;
+		private static GUIStyle _splitStyle;
+		private static GUIStyle SplitStyle
+		{
+			get
+			{
+				if(_splitStyle == null)
+				{
+					_splitStyle = new GUIStyle();
+					_splitStyle.normal.background = EditorGUIUtility.whiteTexture;
+					_splitStyle.margin = new RectOffset(6,6,0,0);
+				}
+				return _splitStyle;
+			}
+		}
 #endregion
 
 		/**
@@ -28,20 +41,26 @@ namespace ProBuilder2.GUI
 		 
 		public static void DrawSeparator(int lines)
 		{
-			if(splitStyle == null)
-			{
-				splitStyle = new GUIStyle();
-				splitStyle.normal.background = EditorGUIUtility.whiteTexture;
-				splitStyle.margin = new RectOffset(6,6,0,0);
-			}
-
-			GUILayout.Box("", splitStyle, GUILayout.MaxHeight(2));
+			GUILayout.Box("", SplitStyle, GUILayout.MaxHeight(2));
 			
 			for(int i = 1; i < lines; i++)
 			{
 				GUILayout.Space(2);
-				GUILayout.Box("", splitStyle, GUILayout.MaxHeight(2));
+				GUILayout.Box("", SplitStyle, GUILayout.MaxHeight(2));
 			}
+		}
+
+		/**
+		 * Draw a solid color block at rect.
+		 */
+		public static void DrawSolidColor(Rect rect, Color col)
+		{
+			Color old = UnityEngine.GUI.backgroundColor;
+			UnityEngine.GUI.backgroundColor = col;
+
+			UnityEngine.GUI.Box(rect, "", SplitStyle);
+
+			UnityEngine.GUI.backgroundColor = old;
 		}
 
 		const int FieldBoxWidth = 64;

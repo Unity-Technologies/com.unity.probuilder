@@ -61,9 +61,13 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	public pb_Editor editor { get { return pb_Editor.instance; } }		///< Convenience getter for pb_Editor.instance
 
-	static readonly Color OuterRingColor = new Color(1f, 1f, 1f, .3f);
-	static readonly Color MiddleRingColor = new Color(1f, 1f, 1f, .5f);
-	static readonly Color InnerRingColor = new Color(1f, 1f, 1f, .7f);
+	static readonly Color OuterRingColor = new Color(.4f, .7f, .4f, .15f);
+	static readonly Color MiddleRingColor = new Color(.3f, 7f, .3f, .4f);
+	static readonly Color InnerRingColor = new Color(.2f, 9f, .2f, .8f);
+
+	const int MOUSE_BUTTON_LEFT = 0;
+	const float BRUSH_STRENGTH_MAX = 20f;								///< Max brush applications per-second
+	const float BRUSH_SIZE_MAX = 5f;
 
 	Color color = Color.green;											///< The color currently being painted.
 	string colorName = "Green";											///< Human readable color name.
@@ -96,12 +100,30 @@ public class pb_VertexColor_Editor : EditorWindow
 	}
 
 	private VertexPainterMode mode = VertexPainterMode.Color;
+
+	private float brushStrength = 10f;			///< How many brush strokes should be registered per-second.
+	private float brushOpacity = 1f;
+	private double lastBrushApplication = 0f;	///< The last second that a brush stroke was applied.
+	private double CurTime
+	{
+		get
+		{
+			return EditorApplication.timeSinceStartup;
+		}
+	}
+
+	private Vector2 scroll = Vector2.zero;
+	private bool helpFoldout = false;
+	GUIContent gc_BrushOpacity = new GUIContent("Opacity", "The opacity that this brush will paint.  Large value means fully opaque, low values are more transparent.");
+	GUIContent gc_BrushStrength = new GUIContent("Strength", "How fast your brush affects the mesh colors.  High values mean changes happen quickly, low values mean colors have to be applied for longer to show.");
 #endregion
  
 #region OnGUI
 
 	void OnGUI()
 	{		
+		scroll = EditorGUILayout.BeginScrollView(scroll);
+
 		GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			if(mode == VertexPainterMode.Color)	GUI.backgroundColor = Color.gray;
@@ -117,18 +139,29 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		lockhandleToCenter = EditorWindow.focusedWindow == this;
 
+		/**
+		 * BRUSH SETTINGS
+		 */
+
 		enabled = EditorGUILayout.Toggle("Enabled", enabled);
 	
 		EditorGUI.BeginChangeCheck();
-			brushSize = Mathf.Max(.01f, EditorGUILayout.FloatField("Brush Size", brushSize));
+			
+			brushSize = EditorGUILayout.Slider("Brush Size", brushSize, .01f, BRUSH_SIZE_MAX);
+			brushOpacity = EditorGUILayout.Slider(gc_BrushOpacity, brushOpacity, .01f, 1f);
+			brushStrength = EditorGUILayout.Slider(gc_BrushStrength, brushStrength, .01f, 1f);
 
 		if(EditorGUI.EndChangeCheck())
 			SceneView.RepaintAll();
+
 
 		GUILayout.Space(6);
 		pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
 		GUILayout.Space(6);
 
+		/**
+		 * COLOR / TEXTURE SPECIFIC SETTINGS
+		 */
 
 		if(mode == VertexPainterMode.Color)
 		{
@@ -139,19 +172,16 @@ public class pb_VertexColor_Editor : EditorWindow
 				colorName = pb_ColorUtil.GetColorName(color);
 			}
 
-			GUILayout.Label(colorName);
+			GUILayout.Label(colorName, EditorStyles.boldLabel);
 		}
 		else
 		{
 			GUILayout.BeginHorizontal();
-			int max = (Screen.width - 21) / 4;
+			int max = (Screen.width - 20) / 4;
 
 			// Only allow 4
 			for(int i = 0; i < 4; i++)
 			{
-				if( i == GetIndex(color) )
-					GUI.backgroundColor = Color.green;
-
 				if( GUILayout.Button(i < textures.Length ? textures[i] : null, EditorStyles.label, GUILayout.MaxWidth(max), GUILayout.MaxHeight(max)) )
 				{
 					color.r = i == 0 ? 1f : 0f;
@@ -160,10 +190,51 @@ public class pb_VertexColor_Editor : EditorWindow
 					color.a = i == 3 ? 1f : 0f;
 				}
 
-				GUI.backgroundColor = Color.white;
+				if( i < textures.Length && i == GetIndex(color) )
+				{
+					Rect r = GUILayoutUtility.GetLastRect();
+
+					r.y += r.height + 4;
+					r.width -= 4f;
+					r.x += 2f;
+					r.height = 6f;
+
+					pb_GUI_Utility.DrawSolidColor(r, Color.green);
+				}
 			}
 			GUILayout.EndHorizontal();
+
+			GUILayout.Space(6);
 		}
+
+		GUILayout.Space(6);
+
+		helpFoldout = EditorGUILayout.Foldout(helpFoldout, "Help!");
+
+		if( helpFoldout )
+		{
+			EditorGUILayout.HelpBox(@"If you're not seeing anything happen on your ProBuilder object, make sure that you're using a shader that supports vertex colors.  The ProBuilder default material provides support for colored vertices, and the included `Diffuse Texture Blend` material supports blending multiple textures together.  You can use the shaders from either of these on new Materials that you create to enable vertex color support.", MessageType.Info);
+
+			if(GUILayout.Button("Show me the Vertex Color Shader"))
+			{
+				Shader shader = Shader.Find("ProBuilder/Diffuse Vertex Color");
+				if(shader != null)
+					EditorGUIUtility.PingObject(shader);
+				else
+					Debug.LogWarning("Couldn't find default ProBuilder shader: \"Diffuse Vertex Color\"");
+			}
+
+			if(GUILayout.Button("Show me the Texture Blend Shader"))
+			{
+				Shader shader = Shader.Find("ProBuilder/Diffuse Texture Blend");
+				if(shader != null)
+					EditorGUIUtility.PingObject(shader);
+				else
+					Debug.LogWarning("Couldn't find default ProBuilder shader: \"Diffuse Texture Blend\"");
+			}
+		}
+
+		EditorGUILayout.EndScrollView();
 	}
 #endregion
 
@@ -171,9 +242,9 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	void OnSceneGUI(SceneView scnview)
 	{
-		if(!enabled || (EditorWindow.focusedWindow != scnview && !lockhandleToCenter))
+		if(!enabled)// || (EditorWindow.focusedWindow != scnview && !lockhandleToCenter))
 			return;
- 
+
 		if(editor && editor.editLevel != EditLevel.Plugin)
 			editor.SetEditLevel(EditLevel.Plugin);
  
@@ -194,6 +265,9 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		mouseMoveEvent = currentEvent.type == EventType.MouseMove;
 		
+		/**
+		 * Check if a new object is under the mouse.
+		 */
 		if( mouseMoveEvent )
 		{
 			GameObject go = HandleUtility.PickGameObject(Event.current.mousePosition, false);
@@ -216,8 +290,8 @@ public class pb_VertexColor_Editor : EditorWindow
 		}
 
 		/**
-		*    Draw the handles
-		*/
+		 * Hit test scene
+		 */
 		if(!lockhandleToCenter && !pb_Handle_Utility.SceneViewInUse(currentEvent))
 		{
 			if(pb != null)
@@ -254,7 +328,7 @@ public class pb_VertexColor_Editor : EditorWindow
 						{
 							for(int n = 0; n < sharedIndices[i].Length; n++)
 							{
-								colors[sharedIndices[i][n]] = Lerp(color, hovering[pb][sharedIndices[i][n]], (dist/brushSize) );
+								colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color, (1f/(dist/brushSize)) * brushOpacity );
 							}
 						}
 					}
@@ -291,6 +365,9 @@ public class pb_VertexColor_Editor : EditorWindow
 			handlePosition = ray.origin + ray.direction * handleDistance;
  		}
 
+		/**
+		*    Draw the handles
+		*/
  		Handles.color = InnerRingColor;
 			Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
  		Handles.color = MiddleRingColor;
@@ -304,10 +381,18 @@ public class pb_VertexColor_Editor : EditorWindow
 		int controlID = GUIUtility.GetControlID(FocusType.Passive);
 		HandleUtility.AddDefaultControl(controlID);
  
-		if( (currentEvent.type == EventType.MouseDown || currentEvent.type == EventType.MouseDrag) )
+		/**
+		 * Apply colors to mesh
+		 */
+		if( (currentEvent.type == EventType.MouseDown || currentEvent.type == EventType.MouseDrag) &&
+		   	(currentEvent.button == MOUSE_BUTTON_LEFT) &&
+		   	currentEvent.modifiers == EventModifiers.None &&
+		   	((CurTime - lastBrushApplication) > 1f/(brushStrength * BRUSH_STRENGTH_MAX)) )
 		{
+			lastBrushApplication = CurTime;
+
 			Dictionary<pb_Object, Color[]> sticky = new Dictionary<pb_Object, Color[]>();
- 
+ 	
  			// Apply colors
 			foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
 			{
@@ -325,6 +410,15 @@ public class pb_VertexColor_Editor : EditorWindow
 			}
  
 			hovering = sticky;
+		}
+
+		if(currentEvent.control && currentEvent.type == EventType.ScrollWheel)
+		{
+			currentEvent.Use();
+			brushSize += (currentEvent.delta.y > 0f ? -1f : 1f) * (brushSize * .1f);
+			brushSize = Mathf.Clamp(brushSize, .01f, BRUSH_SIZE_MAX);
+
+			Repaint();
 		}
  
 		if(mpos != currentEvent.mousePosition && currentEvent.type == EventType.Repaint)

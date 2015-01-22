@@ -1,4 +1,4 @@
-Shader "ProBuilder/Diffuse Material Blend"
+Shader "ProBuilder/Diffuse Texture Blend"
 {
 	Properties 
 	{
