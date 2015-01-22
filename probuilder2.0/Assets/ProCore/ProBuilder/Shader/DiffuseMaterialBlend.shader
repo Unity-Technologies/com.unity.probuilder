@@ -40,7 +40,10 @@ Shader "ProBuilder/Diffuse Material Blend"
 
 			fixed4 blend = normalize(IN.color);
 
-			fixed4 rgba = ( (c0 * blend.r) + (c1 * blend.g) + (c2 * blend.b) + (c3 * blend.a) );
+			fixed4 rgba = c0 * blend.r;
+			rgba = lerp(rgba, c1, blend.g);
+			rgba = lerp(rgba, c2, blend.b);
+			rgba = lerp(rgba, c3, blend.a);
 
 			o.Albedo = rgba.rgb;
 		}

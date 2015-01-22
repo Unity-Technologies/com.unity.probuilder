@@ -28,6 +28,11 @@ public class pb_VertexColor_Editor : EditorWindow
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 		}
 
+		pb_Object[] sel = Selection.transforms.GetComponents<pb_Object>();
+
+		if(sel != null && sel.Length > 0)
+			textures = GetTextures( sel[0].transform.GetComponent<MeshRenderer>().sharedMaterial ).ToArray();
+
 		if(editor)
 			editor.SetEditLevel(EditLevel.Plugin);
 
@@ -74,7 +79,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	Vector2 mpos = Vector2.zero;
 	pb_Object pb;										// The object currently gettin' paintered
 	bool mouseMoveEvent = false;
-	Vector3 handlePosition = Vector3.zero;
+	Vector3 handlePosition = Vector3.zero, localHitPoint = Vector3.zero;
 	Quaternion handleRotation = Quaternion.identity;
 	float handleDistance = 10f;
 	bool lockhandleToCenter = false;
@@ -116,6 +121,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	
 		EditorGUI.BeginChangeCheck();
 			brushSize = Mathf.Max(.01f, EditorGUILayout.FloatField("Brush Size", brushSize));
+
 		if(EditorGUI.EndChangeCheck())
 			SceneView.RepaintAll();
 
@@ -126,7 +132,6 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		if(mode == VertexPainterMode.Color)
 		{
-
 	 		EditorGUI.BeginChangeCheck();
 			color = EditorGUILayout.ColorField("Color", color);
 			if(EditorGUI.EndChangeCheck())
@@ -141,9 +146,21 @@ public class pb_VertexColor_Editor : EditorWindow
 			GUILayout.BeginHorizontal();
 			int max = (Screen.width - 21) / 4;
 
-			for(int i = 0; i < textures.Length; i++)
+			// Only allow 4
+			for(int i = 0; i < 4; i++)
 			{
-				GUILayout.Label(textures[i], GUILayout.MaxWidth(max), GUILayout.MaxHeight(max));
+				if( i == GetIndex(color) )
+					GUI.backgroundColor = Color.green;
+
+				if( GUILayout.Button(i < textures.Length ? textures[i] : null, EditorStyles.label, GUILayout.MaxWidth(max), GUILayout.MaxHeight(max)) )
+				{
+					color.r = i == 0 ? 1f : 0f;
+					color.g = i == 1 ? 1f : 0f;
+					color.b = i == 2 ? 1f : 0f;
+					color.a = i == 3 ? 1f : 0f;
+				}
+
+				GUI.backgroundColor = Color.white;
 			}
 			GUILayout.EndHorizontal();
 		}
@@ -188,6 +205,7 @@ public class pb_VertexColor_Editor : EditorWindow
 				if(pb != null)
 				{
 					textures = GetTextures( pb.transform.GetComponent<MeshRenderer>().sharedMaterial ).ToArray();
+					Repaint();
 
 					modified.Add(pb);
 					
@@ -223,19 +241,25 @@ public class pb_VertexColor_Editor : EditorWindow
 					handleRotation = Quaternion.LookRotation(hit.normal, Vector3.up);
  
  					Transform t = pb.transform;
+					localHitPoint = t.InverseTransformPoint(hit.point);
 					Color[] colors = pb.msh.colors;
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
 
 					for(int i = 0; i < sharedIndices.Length; i++)
 					{
-						if( Vector3.Distance(hit.point, t.TransformPoint(pb.vertices[sharedIndices[i][0]])) < brushSize)
+						float dist = Vector3.Distance(localHitPoint, pb.vertices[sharedIndices[i][0]]);
+
+						if(dist < brushSize)
 						{
 							for(int n = 0; n < sharedIndices[i].Length; n++)
-								colors[sharedIndices[i][n]] = (Color)color;
+							{
+								colors[sharedIndices[i][n]] = Lerp(color, hovering[pb][sharedIndices[i][n]], (dist/brushSize) );
+							}
 						}
 					}
  
+					// show a preview
 					pb.msh.colors = colors;
 				}
 				else
@@ -313,6 +337,14 @@ public class pb_VertexColor_Editor : EditorWindow
 
 #region Utility
 
+	static Color Lerp(Color lhs, Color rhs, float alpha)
+	{
+		return new Color(lhs.r * (1f-alpha) + rhs.r * alpha,
+		                 lhs.g * (1f-alpha) + rhs.g * alpha,
+		                 lhs.b * (1f-alpha) + rhs.b * alpha,
+		                 lhs.a * (1f-alpha) + rhs.a * alpha );
+	}
+
 	private static List<Texture> GetTextures(Material mat)
 	{
 		List<Texture> textures = new List<Texture>();
@@ -328,6 +360,19 @@ public class pb_VertexColor_Editor : EditorWindow
 		return textures;
 	}
 
+	int GetIndex(Color col)
+	{
+		if(col.r > col.g && col.r > col.b && col.r > col.a)
+			return 0;
+		else if(col.g > col.r && col.g > col.b && col.g > col.a)
+			return 1;
+		else if(col.b > col.r && col.b > col.g && col.b > col.a)
+			return 2;
+		else if(col.a > col.r && col.a > col.g && col.a > col.b)
+			return 3;
+
+		return 0;
+	}
 #endregion
 }
  
