@@ -20,7 +20,6 @@ public class pb_SaveLoad : Editor
 		pb_SerializableObject obj = null;
 
 		BinaryFormatter formatter = new BinaryFormatter();
-		Debug.Log("path : " + path);
 		Stream stream = File.Open(path, FileMode.Open);
 
 		obj = (pb_SerializableObject)formatter.Deserialize(stream);

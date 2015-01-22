@@ -61,8 +61,8 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	public pb_Editor editor { get { return pb_Editor.instance; } }		///< Convenience getter for pb_Editor.instance
 
-	static readonly Color OuterRingColor = new Color(.4f, .7f, .4f, .15f);
-	static readonly Color MiddleRingColor = new Color(.3f, 7f, .3f, .4f);
+	static readonly Color OuterRingColor = new Color(.4f, .7f, .4f, .5f);
+	static readonly Color MiddleRingColor = new Color(.3f, 7f, .3f, .5f);
 	static readonly Color InnerRingColor = new Color(.2f, 9f, .2f, .8f);
 
 	const int MOUSE_BUTTON_LEFT = 0;
@@ -180,7 +180,7 @@ public class pb_VertexColor_Editor : EditorWindow
 			int max = (Screen.width - 20) / 4;
 
 			// Only allow 4
-			for(int i = 0; i < 4; i++)
+			for(int i = 0; i < (int)Mathf.Min(textures.Length, 4); i++)
 			{
 				if( GUILayout.Button(i < textures.Length ? textures[i] : null, EditorStyles.label, GUILayout.MaxWidth(max), GUILayout.MaxHeight(max)) )
 				{
@@ -447,7 +447,10 @@ public class pb_VertexColor_Editor : EditorWindow
 		{
 			if( ShaderUtil.GetPropertyType(mat.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv )
 			{
-				textures.Add(mat.GetTexture( ShaderUtil.GetPropertyName(mat.shader, i)));
+				Texture t = mat.GetTexture( ShaderUtil.GetPropertyName(mat.shader, i));
+				
+				if(t != null)
+					textures.Add(t);
 			}
 		}
 
