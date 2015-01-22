@@ -17,17 +17,38 @@ namespace ProBuilder2.Actions
 		public static void MenuMakeAsset()
 		{
 			string path = "Assets";
+			path = AssetDatabase.GetAssetPath(Selection.activeObject);
+			Mesh meshAsset = null;
+
+			if(path == "" || path == string.Empty) 
+			{
+				path = "Assets/ProBuilder Saved Assets";
+			}
+
+			if(!System.IO.Directory.Exists(path + "/ProBuilder Saved Assets"))
+			{
+				AssetDatabase.CreateFolder("Assets", "ProBuilder Saved Assets");
+				AssetDatabase.Refresh();
+			}
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
-				path = AssetDatabase.GetAssetPath(Selection.activeObject);
-				if(path == "" || path == string.Empty) path = "Assets";
-				AssetDatabase.CreateAsset(pb.msh, AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".asset"));
+				string meshPath = AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".asset");
+				AssetDatabase.CreateAsset(pb.msh, meshPath);
+
+				meshAsset = (Mesh) AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
+
+				GameObject go = new GameObject();
+				go.AddComponent<MeshFilter>().sharedMesh = meshAsset;
+				go.AddComponent<MeshRenderer>().sharedMaterials = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterials;
+
+				PrefabUtility.CreatePrefab(AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".prefab"), go, ReplacePrefabOptions.Default);
+				DestroyImmediate(go);
 			}
 
 			AssetDatabase.Refresh();
 
-			Selection.activeObject = AssetDatabase.LoadAssetAtPath(path, typeof(Mesh));
+			Selection.activeObject = meshAsset;
 		}
 	}
 }
