@@ -1,3 +1,14 @@
+-- ProBuilder 2.4.0b7 (r3071) -
+
+# Features
+	- New texture painting mode in Vertex Painter interface (works with any shader that uses vertex colors to apply blend).
+	- New texture blending shader (works with Vertex Painter).
+	- When creating an Mesh Asset, also create a prefab with the new mesh and materials already wired up.
+
+# Bug Fixes
+	- When serializing pb_Objects, save color and material information (materials are now loaded by name).
+	- Fix bug where the texture handle tool would sometimes (most times) move UVs in the wrong direction.
+
 -- ProBuilder 2.4.0b6 (r3061) -
 
 # Features
