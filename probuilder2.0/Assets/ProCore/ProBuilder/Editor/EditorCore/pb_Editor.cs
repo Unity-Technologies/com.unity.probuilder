@@ -1466,11 +1466,8 @@ public class pb_Editor : EditorWindow
 
 					for(int i = 0; i < selected_universal_edges_all[e].Length; i++)
 					{
-						//  pb_Edge edge = new pb_Edge(
-						// 	pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
-						// 	pb.sharedIndices[selected_universal_edges_all[e][i].y][0]);
-
-						pb_Edge edge = pb_Edge.GetLocalEdge(pb, selected_universal_edges_all[e][i]);
+						pb_Edge edge = new pb_Edge( pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
+						                            pb.sharedIndices[selected_universal_edges_all[e][i].y][0] );
 
 						if( selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.x])) &&
 							selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.y])))
@@ -1482,7 +1479,6 @@ public class pb_Editor : EditorWindow
 					foreach(pb_Edge edge in inSelection.Distinct())
 					{
 						int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices);
-						// int ind = System.Array.IndexOf(pb.SelectedEdges, edge);
 						
 						if(ind > -1)
 							remove.Add(ind);
@@ -1492,6 +1488,7 @@ public class pb_Editor : EditorWindow
 
 					List<pb_Edge> priorSelection = new List<pb_Edge>(pb.SelectedEdges.RemoveAt(remove.ToArray()));
 					priorSelection.AddRange(add);
+
 					pb.SetSelectedEdges(priorSelection.ToArray());
 				}
 

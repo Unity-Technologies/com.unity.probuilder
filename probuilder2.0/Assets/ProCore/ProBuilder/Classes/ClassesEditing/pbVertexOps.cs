@@ -130,6 +130,11 @@ namespace ProBuilder2.MeshOperations
 			List<List<int>> sharedIndicesRebuilt = new List<List<int>>();
 			welds = new int[groups.Count];
 
+			// If no welds, don't set vertex array so that the calling method
+			// also doesn't have to call ToMesh() and Refresh()
+			if(welds.Length < 1)
+				return false;
+
 			for(int i = 0; i < groups.Count; i++)
 			{
 				welds[i] = pb.sharedIndices[groups[i][0]][0];

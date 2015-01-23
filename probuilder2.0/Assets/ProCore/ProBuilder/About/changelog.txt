@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0b7 (r3071) -
+-- ProBuilder 2.4.0b7 (r3072) -
 
 # Features
 	- New texture painting mode in Vertex Painter interface (works with any shader that uses vertex colors to apply blend).

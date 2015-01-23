@@ -193,7 +193,6 @@ public class pb_AutoUV_Editor
 			for(int i = 0; i < selection.Length; i++)
 			{
 				TextureGroupSelectedFaces(selection[i]);
-				selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 			}
 
 			pb_Editor.instance.UpdateSelection();

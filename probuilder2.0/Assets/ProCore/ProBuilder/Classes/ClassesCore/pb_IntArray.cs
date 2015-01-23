@@ -64,7 +64,7 @@ public class pb_IntArray
 		return intArr.array;
 	}
 
-	public static implicit operator pb_IntArray(int[] arr)
+	public static explicit operator pb_IntArray(int[] arr)
 	{
 		return new pb_IntArray(arr);
 	}

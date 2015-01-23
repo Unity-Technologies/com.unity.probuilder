@@ -960,25 +960,24 @@ public class pb_Menu_Commands : Editor
 				int[] welds;
 				success = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
 
-				int[] removed;
-				if( pb.RemoveDegenerateTriangles(out removed) )
-				{
-					welds = new int[0];	// @todo
-				}
-
 				if(success)
 				{
+					int[] removed;
+					if( pb.RemoveDegenerateTriangles(out removed) )
+						welds = new int[0];	// @todo
+
 					pb.SetSelectedTriangles(welds);
-
-					pb.Refresh();
-
-					pb.GenerateUV2();
 				}
+
+				pb.Refresh();
+				pb.GenerateUV2();
 			}
 		}
 
 		if(success)
 			pb_Editor_Utility.ShowNotification("Weld Vertices");
+		else
+			pb_Editor_Utility.ShowNotification("Nothing to Weld");
 
 		if(editor)
 			editor.UpdateSelection(true);

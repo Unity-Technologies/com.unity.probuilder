@@ -177,6 +177,8 @@ namespace ProBuilder2.MeshOperations
 			for(int j = 0; j < indices.Length; j++)
 				i[j] = sharedIndices.IndexOf(indices[j]);
 
+			i = i.Distinct().ToArray();
+
 			for(int n = 0; n < pb.faces.Length; n++)
 			{
 				for(int t = 0; t < i.Length; t++)

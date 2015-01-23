@@ -99,7 +99,7 @@ public static class pbUVOps
 			if(index < 0) continue;
 
 			// can't use ArrayUtility.RemoveAt on account of it being Editor only
-			sharedIndices[index] = ((int[])sharedIndices[index]).Remove(distInd[i]);
+			sharedIndices[index].array = sharedIndices[index].array.Remove(distInd[i]);
 		}
 
 		/**
