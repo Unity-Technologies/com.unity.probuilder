@@ -2178,17 +2178,44 @@ public class pb_UV_Editor : EditorWindow
 					yMax = yMin; 
 					first = false;
 				} else {
-
-					if(n > uvs_canvas_space.Length)	
-						Debug.Log("n: " + n + " sel: " + selection.Length);
-					if(i > uvs_canvas_space[n].Length)
-						Debug.Log("i: " + i + " > " + uvs_canvas_space[n].Length);	
-
 					xMin = Mathf.Min(xMin, uvs_canvas_space[n][i].x);
 					yMin = Mathf.Min(yMin, uvs_canvas_space[n][i].y);
 
 					xMax = Mathf.Max(xMax, uvs_canvas_space[n][i].x);
 					yMax = Mathf.Max(yMax, uvs_canvas_space[n][i].y);
+				}
+			}
+		}
+
+		return new pb_Bounds2D( new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f ), new Vector2(xMax-xMin, yMax-yMin) );
+	}
+
+	/**
+	 * Returns the bounds of the current selection in UV space
+	 */
+	pb_Bounds2D UVSelectionBounds()
+	{	
+		float xMin = 0f, xMax = 0f, yMin = 0f, yMax = 0f;
+		bool first = true;
+		for(int n = 0; n < selection.Length; n++)
+		{
+			Vector2[] uv = selection[n].uv;
+
+			foreach(int i in distinct_indices[n])
+			{
+				if(first)
+				{ 
+					xMin = uv[i].x; 
+					xMax = xMin; 
+					yMin = uv[i].y; 
+					yMax = yMin; 
+					first = false;
+				} else {
+					xMin = Mathf.Min(xMin, uv[i].x);
+					yMin = Mathf.Min(yMin, uv[i].y);
+
+					xMax = Mathf.Max(xMax, uv[i].x);
+					yMax = Mathf.Max(yMax, uv[i].y);
 				}
 			}
 		}
@@ -2792,11 +2819,9 @@ public class pb_UV_Editor : EditorWindow
 	
 		for(int i = 0; i < selection.Length; i++)
 		{
-
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
-				selection[i].Refresh();
 
 				pbUVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
 
@@ -2805,6 +2830,7 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int f in selection[i].SelectedFaceIndices)
 					selection[i].faces[f].manualUV = true;
 
+				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
 				selection[i].GenerateUV2();
 				
 				RefreshElementGroups(selection[i]);
@@ -2820,6 +2846,8 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
 				Menu_FitUVs();
+			else
+				CenterUVsAtPoint( pb_Handle_Utility.GUIToUVPoint(handlePosition_canvas, uvGridSize) );
 
 			ResetUserPivot();
 		}
@@ -2855,6 +2883,8 @@ public class pb_UV_Editor : EditorWindow
 
 		if(p > 0)
 		{
+			CenterUVsAtPoint( pb_Handle_Utility.GUIToUVPoint(handlePosition_canvas, uvGridSize) );
+
 			ResetUserPivot();
 		}
 
@@ -2926,9 +2956,10 @@ public class pb_UV_Editor : EditorWindow
 
 		for(int i = 0; i < selection.Length; i++)
 		{			
+			selection[i].ToMesh();
+
 			selection[i].CollapseUVs(distinct_indices[i]);
 
-			selection[i].ToMesh();
 			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
@@ -2950,11 +2981,11 @@ public class pb_UV_Editor : EditorWindow
 		for(int i = 0; i < selection.Length; i++)
 		{
 			selection[i].ToMesh();
-			selection[i].Refresh();
 
 			selection[i].SewUVs(distinct_indices[i], .03f);
 			RefreshElementGroups(selection[i]);
 
+			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
 		
@@ -2975,11 +3006,11 @@ public class pb_UV_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 		{
 			pb.ToMesh();
-			pb.Refresh();
 			
 			pb.SplitUVs(pb.SelectedTriangles);
 			RefreshElementGroups(pb);
 
+			pb.Refresh();
 			pb.GenerateUV2();
 		}
 
@@ -3001,7 +3032,6 @@ public class pb_UV_Editor : EditorWindow
 		for(int i = 0; i < selection.Length; i++)
 		{
 			selection[i].ToMesh();
-			selection[i].Refresh();
 
 			selection[i].SplitUVs(selection[i].SelectedTriangles);
 
@@ -3014,6 +3044,7 @@ public class pb_UV_Editor : EditorWindow
 			
 			RefreshElementGroups(selection[i]);
 
+			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
 
@@ -3045,6 +3076,8 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(selection[i].SelectedTriangleCount < 3) continue;
 
+			selection[i].ToMesh();
+
 			Vector2[] uv = selection[i].uv;
 			Vector2[] uvs = pbUtil.ValuesWithIndices( uv, distinct_indices[i] );
 
@@ -3055,13 +3088,34 @@ public class pb_UV_Editor : EditorWindow
 
 			selection[i].SetUV(uv);
 
-			selection[i].ToMesh();
 			selection[i].Refresh();
 			selection[i].GenerateUV2();
 		}
 
 		RefreshSelectedUVCoordinates();
 		pb_Editor_Utility.ShowNotification(this, "Fit UVs");
+	}
+
+	/**
+	 * Moves the selected UVs to where their bounds center is now point, where point is in UV space.
+	 * Does not call ToMesh or Refresh.
+	 */
+	private void CenterUVsAtPoint(Vector2 point)
+	{
+		Vector2 uv_cen = UVSelectionBounds().center;
+		Vector2 delta = uv_cen - point;
+
+		for(int i = 0; i < selection.Length; i++)
+		{
+			Vector2[] uv = selection[i].uv;
+
+			foreach(int n in selection[i].SelectedTriangles.Distinct())
+			{
+				uv[n] -= delta;
+			}
+
+			selection[i].SetUV(uv);
+		}
 	}
 #endregion
 
