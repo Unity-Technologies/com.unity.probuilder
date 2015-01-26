@@ -856,7 +856,7 @@ public class pb_Editor : EditorWindow
 		UpdateMouse(currentEvent.mousePosition);
 
 		// Draw GUI Handles
-		if(editLevel != EditLevel.Top)
+		if(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
 			DrawHandles();
 
 		DrawVertexNormals(drawVertexNormals);
