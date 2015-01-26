@@ -9,7 +9,13 @@ using ProBuilder2.Common;
 public class pb_FreezeTransform : Editor
 {
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Freeze Transforms", false, pb_Constant.MENU_ACTIONS + 1)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
+	public static bool MenuVerifyFreezeTransforms()
+	{
+		return Selection.transforms.GetComponents<pb_Object>().Length > 0;
+	}
+
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 	public static void MenuFreezeTransforms()
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
