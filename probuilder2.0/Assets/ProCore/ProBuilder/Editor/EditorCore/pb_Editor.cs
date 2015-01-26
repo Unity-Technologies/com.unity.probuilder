@@ -2297,16 +2297,16 @@ public class pb_Editor : EditorWindow
 				}
 				break;
 
-			#if !PROTOTYPE
-			case "Quick Apply Nodraw":
+			// #if !PROTOTYPE
+			// case "Quick Apply Nodraw":
 		
-				if(editLevel != EditLevel.Top)
-					pb_Editor_Utility.ShowNotification(shortcut.action);
+			// 	if(editLevel != EditLevel.Top)
+			// 		pb_Editor_Utility.ShowNotification(shortcut.action);
 
-				pb_Material_Editor.ApplyMaterial(selection, pb_Constant.NoDrawMaterial);
-				ClearFaceSelection();
-				break;
-			#endif
+			// 	pb_Material_Editor.ApplyMaterial(selection, pb_Constant.NoDrawMaterial);
+			// 	ClearFaceSelection();
+			// 	break;
+			// #endif
 
 			#if !PROTOTYPE
 			case "Delete Face":

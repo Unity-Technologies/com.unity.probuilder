@@ -19,6 +19,8 @@ public class pb_FreezeTransform : Editor
 
 		foreach(pb_Object pb in selection)
 		{
+			pb.ToMesh();
+
 			Vector3[] v = pb.VerticesInWorldSpace();
 
 			pb.transform.position = Vector3.zero;
@@ -32,8 +34,8 @@ public class pb_FreezeTransform : Editor
 
 			pb.SetVertices(v);
 
-			pb.ToMesh();
 			pb.Refresh();
+			pb.GenerateUV2();
 		}
 	}
 }

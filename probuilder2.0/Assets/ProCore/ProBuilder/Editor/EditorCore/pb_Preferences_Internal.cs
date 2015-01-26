@@ -101,6 +101,9 @@ public class pb_Preferences_Internal
 				
 			case pb_Constant.pbStripProBuilderOnBuild:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
+				
+			case pb_Constant.pbDisableAutoUV2Generation:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
 
 			// When in doubt, say yes!
 			default:

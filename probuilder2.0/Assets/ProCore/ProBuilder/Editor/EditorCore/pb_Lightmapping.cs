@@ -9,8 +9,13 @@ public static class pb_Lightmapping
 	/**
 	 * Editor-only extension to pb_Object generates lightmap UVs.
 	 */
-	public static void GenerateUV2(this pb_Object pb)
+	public static void GenerateUV2(this pb_Object pb) { pb.GenerateUV2(false); }
+
+	public static void GenerateUV2(this pb_Object pb, bool forceUpdate)
 	{
+		if(pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) && !forceUpdate)
+			return;
+
 		// SetUVParams(8f, 15f, 15f, 20f);
 		UnwrapParam param;
 		UnwrapParam.SetDefaults(out param);

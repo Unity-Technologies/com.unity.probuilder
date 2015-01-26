@@ -14,9 +14,10 @@ namespace ProBuilder2.Actions
 			int count = 0;
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
+				pb.ToMesh();
+
 				int[] rm;
 				pb.RemoveDegenerateTriangles(out rm);
-
 				count += rm.Length;
 
 				pb.Refresh();

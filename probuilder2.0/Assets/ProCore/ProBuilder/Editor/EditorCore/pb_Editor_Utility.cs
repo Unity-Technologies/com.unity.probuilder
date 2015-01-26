@@ -67,34 +67,6 @@ public static class pb_Editor_Utility
 	}
 #endregion
 
-#region OBJECT
-
-	/**
-	 *	\brief Force refreshes all meshes in scene.
-	 */
-	public static void ForceRefresh(bool interactive)
-	{
-		pb_Object[] all = (pb_Object[])GameObject.FindObjectsOfType(typeof(pb_Object));
-		for(int i = 0; i < all.Length; i++)
-		{
-			if(interactive)
-			EditorUtility.DisplayProgressBar(
-				"Refreshing ProBuilder Objects",
-				"Reshaping pb_Object " + all[i].id + ".",
-				((float)i / all.Length));
-
-			all[i].ToMesh();
-			all[i].Refresh();
-			all[i].GenerateUV2();
-		}
-		if(interactive)
-		{
-			EditorUtility.ClearProgressBar();
-			EditorUtility.DisplayDialog("Refresh ProBuilder Objects", "Successfully refreshed all ProBuilder objects in scene.", "Okay");
-		}
-	}
-#endregion
-
 #region GUI 
 	
 	public static Rect GUIRectWithObject(GameObject go)

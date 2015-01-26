@@ -32,6 +32,7 @@ public class pb_Preferences
 	static bool pbUVEditorFloating = true;
 	static bool pbShowSceneToolbar = true;
 	static bool pbStripProBuilderOnBuild = true;
+	static bool pbDisableAutoUV2Generation = false;
 
 	static float pbUVGridSnapValue;
 	static float pbVertexHandleSize;
@@ -56,6 +57,7 @@ public class pb_Preferences
 		GUILayout.Label("General Settings", EditorStyles.boldLabel);
 
 		pbStripProBuilderOnBuild = EditorGUILayout.Toggle(new GUIContent("Strip PB Scripts on Build", "If true, when building an executable all ProBuilder scripts will be stripped from your built product."), pbStripProBuilderOnBuild);
+		pbDisableAutoUV2Generation = EditorGUILayout.Toggle(new GUIContent("Disable Auto UV2 Generation", "Disables automatic generation of UV2 channel.  If Unity is sluggish when working with large ProBuilder objects, disabling UV2 generation will improve performance.  Use `Actions/Generate UV2` or `Actions/Generate Scene UV2` to build lightmap UVs prior to baking."), pbDisableAutoUV2Generation);
 		pbDefaultSelectionMode = (SelectMode)EditorGUILayout.EnumPopup("Default Selection Mode", pbDefaultSelectionMode);
 		_defaultMaterial = (Material) EditorGUILayout.ObjectField("Default Material", _defaultMaterial, typeof(Material), false);
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);
@@ -147,6 +149,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneToolbar);
 			EditorPrefs.DeleteKey(pb_Constant.pbUVGridSnapValue);
 			EditorPrefs.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
+			EditorPrefs.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
 		}
 
 		LoadPrefs();
@@ -188,9 +191,6 @@ public class pb_Preferences
 					labelStyle.normal.background = null;
 					labelStyle.normal.textColor = oc;
 				GUI.backgroundColor = Color.white;
-	
-				// if(GUILayout.Button(defaultShortcuts[n].action, EditorStyles.whiteLabel))
-				// 	shortcutIndex = n;
 			}
 			else
 			{
@@ -235,6 +235,7 @@ public class pb_Preferences
 	static void LoadPrefs()
 	{
 		pbStripProBuilderOnBuild = pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
+		pbDisableAutoUV2Generation = pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 
 		pbDefaultFaceColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		
@@ -284,6 +285,7 @@ public class pb_Preferences
 	public static void SetPrefs()
 	{
 		EditorPrefs.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
+		EditorPrefs.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 
 		EditorPrefs.SetInt		(pb_Constant.pbDefaultSelectionMode, (int)pbDefaultSelectionMode);
 		EditorPrefs.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString());

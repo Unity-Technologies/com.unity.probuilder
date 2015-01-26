@@ -66,6 +66,7 @@ public static class pb_Constant
 	public const string pbShowUVEditorTooltip			= "pbShowUVEditorTooltip";			///< Turns on or off the SceneView toolbar.
 	public const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
 	public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
+	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
