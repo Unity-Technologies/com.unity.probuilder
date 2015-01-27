@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.GUI;
+using ProBuilder2.Math;
 
 public class pb_VertexColor_Editor : EditorWindow
 {
@@ -85,7 +86,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	Vector2 mpos = Vector2.zero;
 	pb_Object pb;										// The object currently gettin' paintered
 	bool mouseMoveEvent = false;
-	Vector3 handlePosition = Vector3.zero, localHitPoint = Vector3.zero;
+	Vector3 handlePosition = Vector3.zero;
 	Quaternion handleRotation = Quaternion.identity;
 	float handleDistance = 10f;
 	bool lockhandleToCenter = false;
@@ -323,16 +324,14 @@ public class pb_VertexColor_Editor : EditorWindow
 				}
  
 				Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
-				RaycastHit hit;
- 
-				if ( pb_Handle_Utility.Raycast(ray, pb, out hit) )
+				pb_RaycastHit hit;
+
+				if ( pb_Handle_Utility.MeshRaycast(ray, pb, out hit) )
 				{
-					handlePosition = hit.point;
+					handlePosition = pb.transform.TransformPoint(hit.Point);
 					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);					
-					handleRotation = Quaternion.LookRotation(nonzero(hit.normal), Vector3.up);
+					handleRotation = Quaternion.LookRotation(nonzero(pb.transform.TransformDirection(hit.Normal)), Vector3.up);
  
- 					Transform t = pb.transform;
-					localHitPoint = t.InverseTransformPoint(hit.point);
 					Color[] colors = pb.msh.colors;
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
@@ -344,7 +343,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					{
 						for(int i = 0; i < sharedIndices.Length; i++)
 						{
-							float dist = Vector3.Distance(localHitPoint, pb.vertices[sharedIndices[i][0]]);
+							float dist = Vector3.Distance(hit.Point, pb.vertices[sharedIndices[i][0]]);
 
 							if(dist < brushSize)
 							{

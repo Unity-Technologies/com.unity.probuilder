@@ -1,7 +1,7 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
 // Enables line mesh rendering for edges
-// #define FORCE_MESH_GRAPHICS
+#define FORCE_MESH_GRAPHICS
 
 using UnityEngine;
 using UnityEditor;
@@ -853,7 +853,8 @@ public class pb_Editor : EditorWindow
 		#endif
 
 		// Check mouse position in scene and determine if we should highlight something
-		UpdateMouse(currentEvent.mousePosition);
+		if(currentEvent.type == EventType.MouseMove)
+			UpdateMouse(currentEvent.mousePosition);
 
 		// Draw GUI Handles
 		if(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
@@ -1020,8 +1021,7 @@ public class pb_Editor : EditorWindow
 #region RAYCASTING AND DRAGGING
 
 	public const float MAX_EDGE_SELECT_DISTANCE = 7;
-	int nearestEdgeObjectIndex = -1;
-	int nearestEdgeIndex = -1;
+	pb_Object nearestEdgeObject = null;
 	pb_Edge nearestEdge;	
 
 	/**
@@ -1036,43 +1036,80 @@ public class pb_Editor : EditorWindow
 			// default:
 			case SelectMode.Edge:
 
-				// TODO
-				float bestDistance = MAX_EDGE_SELECT_DISTANCE;				
-				int bestEdgeIndex = -1;
-				int objIndex = -1;
-				try 
-				{
-					for(int i = 0; i < selected_universal_edges_all.Length; i++)
-					{
-						pb_Edge[] edges = selected_universal_edges_all[i];
-						
-						for(int j = 0; j < edges.Length; j++)
-						{
-							int x = selection[i].sharedIndices[edges[j].x][0];
-							int y = selection[i].sharedIndices[edges[j].y][0];
+				GameObject go = HandleUtility.PickGameObject(mousePosition, false);
 
-							float d = HandleUtility.DistanceToLine(selected_verticesInWorldSpace_all[i][x], selected_verticesInWorldSpace_all[i][y]);
+				pb_Edge bestEdge = null;
+				pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
+
+				/**
+				 * If mouse isn't over a pb object, it still may be near enough to an edge.
+				 */
+				if(bestObj == null)
+				{
+					// TODO
+					float bestDistance = MAX_EDGE_SELECT_DISTANCE;				
+
+					try 
+					{
+						for(int i = 0; i < selected_universal_edges_all.Length; i++)
+						{
+							profiler.BeginSample("UpdateMouse");
+
+							pb_Edge[] edges = selected_universal_edges_all[i];
 							
+							for(int j = 0; j < edges.Length; j++)
+							{
+								int x = selection[i].sharedIndices[edges[j].x][0];
+								int y = selection[i].sharedIndices[edges[j].y][0];
+
+								Vector3 world_vert_x = selected_verticesInWorldSpace_all[i][x];
+								Vector3 world_vert_y = selected_verticesInWorldSpace_all[i][y];
+
+								float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
+								
+								if(d < bestDistance)
+								{
+									bestObj = selection[i];
+									bestEdge = new pb_Edge(x, y);
+									bestDistance = d;
+								}
+							}
+							
+							profiler.EndSample();
+						}
+					} catch( System.Exception e) {
+					}
+				}
+				else
+				{
+					// Test culling
+					pb_RaycastHit hit;
+
+					if(pb_Handle_Utility.MeshRaycast(HandleUtility.GUIPointToWorldRay(mousePosition), bestObj, out hit))
+					{
+						float bestDistance = Mathf.Infinity;
+						Vector3[] v = bestObj.vertices;
+
+						foreach(pb_Edge edge in bestObj.faces[hit.FaceIndex].edges)
+						{
+							float d = HandleUtility.DistancePointLine(hit.Point, v[edge.x], v[edge.y]);
+
 							if(d < bestDistance)
 							{
-								objIndex = i;
-								bestEdgeIndex = j;
 								bestDistance = d;
+								bestEdge = edge;
 							}
 						}
-					}
-				} catch( System.Exception e) {
-				}
-				
-				if(bestEdgeIndex != nearestEdgeIndex || objIndex != nearestEdgeObjectIndex)
-				{
-					nearestEdgeObjectIndex = objIndex;
-					nearestEdgeIndex = bestEdgeIndex;
 
-					if(nearestEdgeIndex > -1)
-						nearestEdge = new pb_Edge(
-							selection[objIndex].sharedIndices[selected_universal_edges_all[objIndex][nearestEdgeIndex].x][0],
-							selection[objIndex].sharedIndices[selected_universal_edges_all[objIndex][nearestEdgeIndex].y][0]);
+						if(bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > MAX_EDGE_SELECT_DISTANCE)
+							bestEdge = null;
+					}
+				}	
+
+				if(bestEdge != nearestEdge || bestObj != nearestEdgeObject)
+				{
+					nearestEdge = bestEdge;
+					nearestEdgeObject = bestObj;
 
 					SceneView.RepaintAll();
 				}
@@ -1207,15 +1244,14 @@ public class pb_Editor : EditorWindow
 		{
 			// Check for face hit	
 			pb_Face selectedFace;
-			int selectedFaceIndex;
-			float hitPoint;
 
 			//  MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+			pb_RaycastHit hit;
 
-			if( pb_Handle_Utility.MeshRaycast(ray, pb, out selectedFaceIndex, out hitPoint) )
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit) )
 			{
-				selectedFace = pb.faces[selectedFaceIndex];
+				selectedFace = pb.faces[hit.FaceIndex];
 
 				/**
 				 * Check for other editor mouse shortcuts first - todo: better way to do this.
@@ -1239,7 +1275,7 @@ public class pb_Editor : EditorWindow
 				if( indx > -1 ) {
 					pb.RemoveFromFaceSelectionAtIndex(indx);
 				} else {
-					pb.AddToFaceSelection(selectedFaceIndex);
+					pb.AddToFaceSelection(hit.FaceIndex);
 				}
 			}
 		}
@@ -1299,13 +1335,13 @@ public class pb_Editor : EditorWindow
 		profiler.BeginSample("EdgeClickCheck");
 		#endif
 
-		if(nearestEdgeObjectIndex > -1)
+		if(nearestEdgeObject != null)
 		{
-			pb = selection[nearestEdgeObjectIndex];
+			pb = nearestEdgeObject;
 
 			if(!shiftKey && !ctrlKey) pb.ClearSelection();
 
-			if(nearestEdgeIndex > -1)
+			if(nearestEdge != null && nearestEdge.IsValid())
 			{
 				pb_Edge edge;
 				
@@ -2001,15 +2037,19 @@ public class pb_Editor : EditorWindow
 			}
 			break;
 	
-		#if !FORCE_MESH_GRAPHICS			
 			case SelectMode.Edge:
 
-				Handles.color = Color.blue;
 
 				// TODO - figure out how to run UpdateSelection prior to an Undo event.
 				// Currently UndoRedoPerformed is called after the action has taken place.
+#if FORCE_MESH_GRAPHICS	
+				pb_Editor_Graphics.DrawSelectionMesh();
+#endif
 				try
 				{
+#if !FORCE_MESH_GRAPHICS
+					Handles.color = Color.blue;
+					
 					for(int i = 0; i < selected_universal_edges_all.Length; i++)
 					{
 						pb_Object pb = selection[i];
@@ -2023,8 +2063,8 @@ public class pb_Editor : EditorWindow
 							Handles.DrawLine(selected_verticesInWorldSpace_all[i][pb.sharedIndices[edge.x][0]], selected_verticesInWorldSpace_all[i][pb.sharedIndices[edge.y][0]]);
 						}
 					}
+#endif
 					Handles.color = Color.green;
-
 					for(int i = 0; i < selection.Length; i++)
 					{
 						for(int j = 0; j < selection[i].SelectedEdges.Length; j++)
@@ -2036,18 +2076,16 @@ public class pb_Editor : EditorWindow
 						}
 					}
 
-					if(nearestEdgeObjectIndex > -1 && nearestEdgeIndex > -1)
+					if(nearestEdgeObject != null && nearestEdge.IsValid())
 					{
 						Handles.color = Color.red;
-						Handles.DrawLine(
-							selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.x],
-							selected_verticesInWorldSpace_all[nearestEdgeObjectIndex][nearestEdge.y]);
+						Handles.DrawLine( 	nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.x]),
+											nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.y]) );
 					}
 				} catch (System.Exception e) {}
 				Handles.color = Color.white;
 				
 				break;
-		#endif
 		}
 
 		Handles.lighting = true;
@@ -3004,8 +3042,7 @@ public class pb_Editor : EditorWindow
 		}
 
 		nearestEdge = null;
-		nearestEdgeObjectIndex = -1;
-		nearestEdgeIndex = -1;
+		nearestEdgeObject = null;
 		
 		pb_Editor_Graphics.ClearSelectionMesh();
 	}
@@ -3237,8 +3274,7 @@ public class pb_Editor : EditorWindow
 	private void OnSelectionChange()
 	{
 		nearestEdge = null;
-		nearestEdgeIndex = -1;
-		nearestEdgeObjectIndex = -1;
+		nearestEdgeObject = null;
 		
 		if(Selection.objects.Contains(pb_Editor_Graphics.selectionGameObject)) {
 			// Debug.LogWarning("TELL KARL THIS WARNING WAS THROWN");

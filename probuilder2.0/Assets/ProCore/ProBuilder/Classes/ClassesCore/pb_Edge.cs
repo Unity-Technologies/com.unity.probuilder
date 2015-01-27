@@ -25,6 +25,11 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		y = edge.y;
 	}
 
+	public bool IsValid()
+	{
+		return x > -1 && y > -1 && x != y;
+	}
+
 	public override string ToString()
 	{
 		return "[" + x + ", " + y + "]";

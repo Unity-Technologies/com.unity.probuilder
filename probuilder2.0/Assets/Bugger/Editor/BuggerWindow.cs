@@ -169,7 +169,7 @@ public class BuggerWindow : EditorWindow
 	public List<int> selectedLog = new List<int>();
 	private List<BugLog> selectedValue = new List<BugLog>();
 	private List<BugLog> logEntries;
-	bool collapse = true;
+	bool collapse = false;
 
 	private double lastMouseUp = 0;
 	public double lastLogUpdate = 0;

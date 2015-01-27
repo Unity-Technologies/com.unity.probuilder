@@ -1,6 +1,6 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-// #define FORCE_MESH_GRAPHICS
+#define FORCE_MESH_GRAPHICS
 
 using UnityEngine;
 using UnityEditor;
@@ -18,6 +18,7 @@ public class pb_Editor_Graphics
 {
 	const string HIGHLIGHT_SHADER = "Hidden/ProBuilder/UnlitColor";
 	const string OVERLAY_SHADER = "Hidden/ProBuilder/UnlitColor-Overlay";
+	const string EDGE_SHADER = "Hidden/ProBuilder/UnlitEdgeOffset";
 
 	// "Hidden/ProBuilder/VertexBillboard"
 	const string SHADER_NAME = "Hidden/ProBuilder/UnlitColor";
@@ -31,6 +32,8 @@ public class pb_Editor_Graphics
 	static Material 			selectionMaterial;
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
 	public static SelectMode 	_selectMode = SelectMode.Face;
+
+	static Color EDGE_COLOR = Color.blue;
 
 	private static void Init()
 	{
@@ -54,21 +57,36 @@ public class pb_Editor_Graphics
 	{
 		switch(sm)
 		{
-			case SelectMode.Vertex:
-				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-				selectionMaterial = new Material(Shader.Find( GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER ));
-				selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
-				break;
+			// case SelectMode.Vertex:
+			// 	vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
+			// 	selectionMaterial = new Material(Shader.Find( GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER ));
+			// 	selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
+			// 	break;
 				
+#if FORCE_MESH_GRAPHICS
+			case SelectMode.Edge:
+				if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
+				selectionMaterial = new Material(Shader.Find(EDGE_SHADER));
+				break;
+#endif
+
 			default:
-				if(selectionMaterial == null)
-				{
-					selectionMaterial = new Material(Shader.Find(GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER));
-				}
+				if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
+				selectionMaterial = new Material(Shader.Find(GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER));
 				break;
 		}
 
-		selectionMaterial.SetColor("_Color", faceSelectionColor);	// todo - remove this and use vertex colors
+		if(sm == SelectMode.Edge)
+			selectionMaterial.SetColor("_Color", EDGE_COLOR);	// todo - remove this and use vertex colors
+		else
+			selectionMaterial.SetColor("_Color", faceSelectionColor);	// todo - remove this and use vertex colors
+
+		if(selectionGameObject.GetComponent<MeshRenderer>() == null)
+			Debug.Log("MeshRenderer is null");
+	
+		if(selectionMaterial == null)
+	
+			Debug.Log("selection material == null");
 		selectionGameObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
 	}
 
@@ -140,14 +158,14 @@ public class pb_Editor_Graphics
 			return;
 		}
 
+		if(selectionGameObject == null)
+			Init();
+
 		if(_selectMode != selectionMode)
 		{	
 			SetMaterial(selectionMode);
 			_selectMode = selectionMode;
 		}
-
-		if(selectionGameObject == null)
-			Init();
 
 		if(selectionMesh != null)
 			selectionMesh.Clear();

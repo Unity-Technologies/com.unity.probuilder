@@ -374,30 +374,30 @@ public class pb_Handle_Utility
 
 	static MethodInfo IntersectRayMesh;
 
-	/**
-	 * Raycast for use in SceneView.  Returns a RaycastHit if @pb is in the line of fire.
-	 */
-	public static bool Raycast(Ray ray, pb_Object pb, out RaycastHit hit)
-	{
-		/// necessary because Physics.Raycast() doesn't pick up objects without concave mesh colliders
-		object[] parameters = new object[] { ray, pb.msh, pb.transform.localToWorldMatrix, null };
-		if(IntersectRayMesh == null) IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-		object result = IntersectRayMesh.Invoke(null, parameters);
+	// /**
+	//  * Raycast for use in SceneView.  Returns a RaycastHit if @pb is in the line of fire.
+	//  */
+	// public static bool Raycast(Ray ray, pb_Object pb, out RaycastHit hit)
+	// {
+	// 	/// necessary because Physics.Raycast() doesn't pick up objects without concave mesh colliders
+	// 	object[] parameters = new object[] { ray, pb.msh, pb.transform.localToWorldMatrix, null };
+	// 	if(IntersectRayMesh == null) IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+	// 	object result = IntersectRayMesh.Invoke(null, parameters);
 
-		if ( (bool)result )
-			hit = (RaycastHit)parameters[3];
-		else
-			hit = new RaycastHit();
+	// 	if ( (bool)result )
+	// 		hit = (RaycastHit)parameters[3];
+	// 	else
+	// 		hit = new RaycastHit();
 
-		return (bool)result;
+	// 	return (bool)result;
 
-	}
+	// }
 
 	/**
 	 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
 	 * Returns the index in pb.faces of the hit face, or -1.
 	 */
-	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
+	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
 	{
 
 		/**
@@ -411,8 +411,9 @@ public class pb_Handle_Utility
 		Vector3[] vertices = pb.vertices;
 
 		float dist = 0f;
-		OutHitPoint = Mathf.Infinity;
-		OutHitFace = -1;
+		float OutHitPoint = Mathf.Infinity;
+		int OutHitFace = -1;
+		Vector3 OutNrm = Vector3.zero;
 
 		for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
 		{
@@ -437,6 +438,7 @@ public class pb_Handle_Utility
 
 					if(dot > 0f)
 					{
+						OutNrm = nrm;
 						OutHitFace = CurFace;
 					}
 
@@ -444,6 +446,12 @@ public class pb_Handle_Utility
 				}
 			}
 		}
+
+		hit = new pb_RaycastHit();
+		hit.Distance = OutHitPoint;
+		hit.Point = InWorldRay.GetPoint(OutHitPoint);
+		hit.Normal = OutNrm;
+		hit.FaceIndex = OutHitFace;
 
 		return OutHitFace > -1;
 	}
