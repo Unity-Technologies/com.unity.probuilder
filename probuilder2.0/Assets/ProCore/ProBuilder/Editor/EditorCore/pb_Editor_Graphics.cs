@@ -64,8 +64,8 @@ public class pb_Editor_Graphics
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
-		selectionObject.GetComponent<MeshRenderer>().enabled = false;
-		wireframeObject.GetComponent<MeshRenderer>().enabled = false;
+		selectionObject.GetComponent<MeshRenderer>().enabled = true;
+		wireframeObject.GetComponent<MeshRenderer>().enabled = true;
 
 		selectionMesh = selectionObject.GetComponent<MeshFilter>().sharedMesh;
 		wireframeMesh = wireframeObject.GetComponent<MeshFilter>().sharedMesh;
@@ -104,7 +104,7 @@ public class pb_Editor_Graphics
 		selectionMaterial.SetColor("_Color", faceSelectionColor);
 	
 		selectionObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
-		wireframeObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
+		wireframeObject.GetComponent<MeshRenderer>().sharedMaterial = wireframeMaterial;
 	}
 
 	static internal void OnDisable()
@@ -139,12 +139,8 @@ public class pb_Editor_Graphics
 
 	static internal void Draw()
 	{
-		selectionMaterial.SetPass(0);
-		Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
-
-		// this is significantly slower than DrawMeshNow - perhaps lighting is the issue?
-		// Graphics.DrawMesh(wireframeMesh, Vector3.zero, Quaternion.identity, wireframeMaterial, 0);
-		// Graphics.DrawMesh(selectionMesh, Vector3.zero, Quaternion.identity, selectionMaterial, 0);
+		// selectionMaterial.SetPass(0);
+		// Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
 	}
 
 	/**
@@ -153,8 +149,9 @@ public class pb_Editor_Graphics
 	 */
 	static internal void DrawWireframe()
 	{
-		wireframeMaterial.SetPass(0);
-		Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+		Debug.Log("here2");
+		// wireframeMaterial.SetPass(0);
+		// Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
 	}
 
 	/**

@@ -139,6 +139,8 @@ public class pb_Editor : EditorWindow
 
 		UpdateSelection(true);
 
+		HideSelectedWireframe();
+
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
@@ -738,7 +740,7 @@ public class pb_Editor : EditorWindow
 	Event currentEvent;// = (Event)0;
 
 	void OnSceneGUI(SceneView scnView)
-	{	
+	{			
 		currentEvent = Event.current;
 		
 		if(editLevel == EditLevel.Geometry && currentEvent.Equals(Event.KeyboardEvent("v")))
@@ -831,7 +833,7 @@ public class pb_Editor : EditorWindow
 		}
 
 		// Always want to draw the wireframe
-		pb_Editor_Graphics.DrawWireframe();
+		// pb_Editor_Graphics.DrawWireframe();
 
 		DrawHandleGUI();
 
@@ -1051,6 +1053,13 @@ public class pb_Editor : EditorWindow
 				pb_Edge bestEdge = null;
 				pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
 
+				if(!selection.Contains(bestObj))
+				{
+					bestObj = null;
+					bestEdge = null;
+					goto SkipMouseCheck;
+				}
+
 				/**
 				 * If mouse isn't over a pb object, it still may be near enough to an edge.
 				 */
@@ -1111,6 +1120,8 @@ public class pb_Editor : EditorWindow
 							bestEdge = null;
 					}
 				}	
+
+				SkipMouseCheck:
 
 				if(bestEdge != nearestEdge || bestObj != nearestEdgeObject)
 				{
@@ -2032,7 +2043,7 @@ public class pb_Editor : EditorWindow
 		 * Edge wireframe and selected faces are drawn in pb_Editor_Graphics, selected edges & vertices 
 		 * are drawn here.
 		 */
-		pb_Editor_Graphics.Draw();
+//		pb_Editor_Graphics.Draw();
 
 		switch(selectionMode)
 		{
@@ -3278,6 +3289,14 @@ public class pb_Editor : EditorWindow
 
 		UpdateSelection(false);
 
+		HideSelectedWireframe();
+	}
+
+	/**
+	 * Hide the default unity wireframe renderer
+	 */
+	private void HideSelectedWireframe()
+	{
 		foreach(pb_Object pb in selection)
 		{
 			Renderer ren = pb.gameObject.GetComponent<Renderer>();

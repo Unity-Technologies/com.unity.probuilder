@@ -13,8 +13,8 @@ Shader "Hidden/ProBuilder/UnlitEdgeOffset"
 		ZWrite Off
 		Offset -1, -1
 		Cull Back
-//		Blend One Zero
-		Blend DstColor SrcColor
+		Blend SrcAlpha OneMinusSrcAlpha
+//		Blend DstColor Zero
 
 		Pass
 		{
