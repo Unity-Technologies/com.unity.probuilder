@@ -59,7 +59,7 @@ public class pb_Editor_Graphics
 		DestroyTempObjects();
 
 		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
-		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
@@ -375,18 +375,13 @@ public class pb_Editor_Graphics
 		return cam.actualRenderingPath == RenderingPath.UsePlayerSettings ? PlayerSettings.renderingPath : cam.actualRenderingPath;
 	}
 
-	static pb_Profiler profiler = new pb_Profiler();
-
 	/**
 	 * Generate a mesh composed of all universal edges in an array of pb_Object.
 	 */
 	static void MakeEdgeMesh(pb_Object[] selection, ref Mesh mesh)
 	{
-		profiler.BeginSample("MakeEdgeMesh");
-
 		List<Vector3> all_verts = new List<Vector3>();
 
-		profiler.BeginSample("Generate Vertices");
 		for(int i = 0; i < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
@@ -394,13 +389,9 @@ public class pb_Editor_Graphics
 			Vector3[] pbverts = pb.vertices;
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-			profiler.BeginSample("universal edges");
-
 			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
 			pb_Edge[] universalEdges = editor.Selected_Universal_Edges_All[i]; // new List<pb_Edge>(pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), sharedIndices).Distinct());
-			profiler.EndSample();
 			
-			profiler.BeginSample("transform vertices");
 			Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
 			
 			int n = 0;
@@ -411,9 +402,7 @@ public class pb_Editor_Graphics
 			}
 
 			all_verts.AddRange(edge_verts);
-			profiler.EndSample();
 		}
-		profiler.EndSample();
 
 		int[] tris = new int[all_verts.Count * 2];
 		Vector2[] uvs = new Vector2[all_verts.Count];
@@ -427,14 +416,10 @@ public class pb_Editor_Graphics
 			uvs[i+1] = Vector2.zero;
 		}
 
-		profiler.BeginSample("Assign to Mesh");
 		mesh.Clear();
 		mesh.vertices = all_verts.ToArray();
 		mesh.uv = uvs;
 		mesh.subMeshCount = 1;
 		mesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);
-		profiler.EndSample();
-
-		profiler.EndSample();
 	}
 }

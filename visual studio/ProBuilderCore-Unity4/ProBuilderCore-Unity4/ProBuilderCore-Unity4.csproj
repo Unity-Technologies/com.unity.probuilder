@@ -99,6 +99,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_HandleConstraint2D.cs">
       <Link>pb_HandleConstraint2D.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_RaycastHit.cs">
+      <Link>pb_RaycastHit.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_SerializableObject.cs">
       <Link>pb_SerializableObject.cs</Link>
     </Compile>

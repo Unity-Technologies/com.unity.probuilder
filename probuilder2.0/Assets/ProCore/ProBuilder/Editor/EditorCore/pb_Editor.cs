@@ -1063,8 +1063,6 @@ public class pb_Editor : EditorWindow
 					{
 						for(int i = 0; i < selected_universal_edges_all.Length; i++)
 						{
-							profiler.BeginSample("UpdateMouse");
-
 							pb_Edge[] edges = selected_universal_edges_all[i];
 							
 							for(int j = 0; j < edges.Length; j++)
@@ -1083,9 +1081,7 @@ public class pb_Editor : EditorWindow
 									bestEdge = new pb_Edge(x, y);
 									bestDistance = d;
 								}
-							}
-							
-							profiler.EndSample();
+							}			
 						}
 					} catch( System.Exception e) {
 					}
@@ -2937,9 +2933,7 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		profiler.BeginSample("UpdateGraphics");
 		pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-		profiler.EndSample();
 	}
 
 	public void AddToSelection(GameObject t)

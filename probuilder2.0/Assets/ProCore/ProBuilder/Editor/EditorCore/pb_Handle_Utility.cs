@@ -372,7 +372,7 @@ public class pb_Handle_Utility
 
 #region Raycast
 
-	static MethodInfo IntersectRayMesh;
+	// static MethodInfo IntersectRayMesh;
 
 	// /**
 	//  * Raycast for use in SceneView.  Returns a RaycastHit if @pb is in the line of fire.
