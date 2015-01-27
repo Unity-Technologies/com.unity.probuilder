@@ -148,7 +148,7 @@ public class pb_Preferences_Internal
 				break;
 				
 			case pb_Constant.pbDefaultEdgeColor:
-					col = new Color(0f, .5f, .6f, 1f);
+					col = new Color(0f, .25f, 1f, 1f);
 				break;
 				
 			case pb_Constant.pbDefaultVertexColor:
