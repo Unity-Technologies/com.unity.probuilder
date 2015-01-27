@@ -25,7 +25,8 @@ public static class pb_Constant
 	}
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string pbVersion = "2.3.2";			///< The currently install ProBuilder version.
+	public const string pbVersion = "2.4.0";			///< The currently install ProBuilder version.
+
 
 #if PROTOTYPE
 	public const string PRODUCT_NAME = "Prototype";
@@ -42,6 +43,7 @@ public static class pb_Constant
 
 	// Color
 	public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
+	public const string pbDefaultEdgeColor 				= "pbDefaultEdgeColor";
 	public const string pbDefaultSelectedVertexColor	= "pbDefaultSelectedVertexColor";
 	public const string pbDefaultVertexColor 			= "pbDefaultVertexColor";
 
@@ -59,7 +61,6 @@ public static class pb_Constant
 	public const string pbPerimeterEdgeBridgeOnly 		= "pbPerimeterEdgeBridgeOnly";
 	public const string pbPBOSelectionOnly 				= "pbPBOSelectionOnly";
 	public const string pbCloseShapeWindow 				= "pbCloseShapeWindow";
-	public const string pbHideWireframe 				= "pbHideWireframe";
 	public const string pbUVEditorFloating 				= "pbUVEditorFloating";
 	public const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
 	public const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.

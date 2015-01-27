@@ -143,7 +143,24 @@ public class pb_VertexColor_Editor : EditorWindow
 
 			GUI.backgroundColor = mode == VertexPainterMode.Texture ? Color.gray : Color.white;
 			if(GUILayout.Button("Textures", EditorStyles.toolbarButton))
+			{
+				switch(GetIndex(color))
+				{
+					case 0:	
+						color = Color.red;
+						break;
+					case 1:	
+						color = Color.green;
+						break;
+					case 2:	
+						color = Color.blue;
+						break;
+					case 3:	
+						color = Color.black;
+						break;
+				}
 				mode = VertexPainterMode.Texture;
+			}
 
 			GUI.backgroundColor = Color.white;
 		GUILayout.EndHorizontal();

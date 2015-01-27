@@ -13,6 +13,7 @@ public class pb_Preferences
 
 	static SelectMode pbDefaultSelectionMode;
 	static Color pbDefaultFaceColor;
+	static Color pbDefaultEdgeColor;
 	static Color pbDefaultSelectedVertexColor;
 	static Color pbDefaultVertexColor;
 	static bool defaultOpenInDockableWindow;
@@ -28,7 +29,6 @@ public class pb_Preferences
 	static bool pbPerimeterEdgeBridgeOnly;
 	static bool pbPBOSelectionOnly;
 	static bool pbCloseShapeWindow = false;
-	static bool pbHideWireframe = false;
 	static bool pbUVEditorFloating = true;
 	static bool pbShowSceneToolbar = true;
 	static bool pbStripProBuilderOnBuild = true;
@@ -71,7 +71,6 @@ public class pb_Preferences
 		pbDragCheckLimit = EditorGUILayout.Toggle(new GUIContent("Limit Drag Check to Selection", "If true, when drag selecting faces, only currently selected pb-Objects will be tested for matching faces.  If false, all pb_Objects in the scene will be checked.  The latter may be slower in large scenes."), pbDragCheckLimit);
 		pbPBOSelectionOnly = EditorGUILayout.Toggle(new GUIContent("Only PBO are Selectable", "If true, you will not be able to select non probuilder objects in Geometry and Texture mode"), pbPBOSelectionOnly);
 		pbCloseShapeWindow = EditorGUILayout.Toggle(new GUIContent("Close shape window after building", "If true the shape window will close after hitting the build button"), pbCloseShapeWindow);
-		pbHideWireframe = EditorGUILayout.Toggle(new GUIContent("Hide Wireframe", "If toggled, wireframes on ProBuilder objects will not be rendered."), pbHideWireframe);
 		pbShowSceneToolbar = EditorGUILayout.Toggle(new GUIContent("Show Scene Toolbar", "Hide or show the SceneView mode toolbar."), pbShowSceneToolbar);
 
 		GUILayout.Space(4);
@@ -82,6 +81,7 @@ public class pb_Preferences
 		GUILayout.Label("Geometry Editing Settings", EditorStyles.boldLabel);
 
 		pbDefaultFaceColor = EditorGUILayout.ColorField("Selected Face Color", pbDefaultFaceColor);
+		pbDefaultEdgeColor = EditorGUILayout.ColorField("Edge Wireframe Color", pbDefaultEdgeColor);
 		pbDefaultVertexColor = EditorGUILayout.ColorField("Vertex Color", pbDefaultVertexColor);
 		pbDefaultSelectedVertexColor = EditorGUILayout.ColorField("Selected Vertex Color", pbDefaultSelectedVertexColor);
 		pbVertexHandleSize = EditorGUILayout.FloatField("Vertex Handle Size", pbVertexHandleSize);
@@ -128,6 +128,7 @@ public class pb_Preferences
 		if(EditorUtility.DisplayDialog("Delete ProBuilder editor preferences?", "Are you sure you want to delete these?, this action cannot be undone.", "Yes", "No")) {
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectionMode);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultMaterial);
@@ -144,7 +145,6 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbVertexHandleSize);
 			EditorPrefs.DeleteKey(pb_Constant.pbPBOSelectionOnly);
 			EditorPrefs.DeleteKey(pb_Constant.pbCloseShapeWindow);
-			EditorPrefs.DeleteKey(pb_Constant.pbHideWireframe);
 			EditorPrefs.DeleteKey(pb_Constant.pbUVEditorFloating);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneToolbar);
 			EditorPrefs.DeleteKey(pb_Constant.pbUVGridSnapValue);
@@ -238,6 +238,7 @@ public class pb_Preferences
 		pbDisableAutoUV2Generation = pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 
 		pbDefaultFaceColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
+		pbDefaultEdgeColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
 		
 		pbDefaultSelectedVertexColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
 		pbDefaultVertexColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultVertexColor );
@@ -257,7 +258,6 @@ public class pb_Preferences
 		pbForceConvex 		= pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex);
 		pbForceGridPivot 	= pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot);
 		pbForceVertexPivot 	= pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot);
-		pbHideWireframe 	= pb_Preferences_Internal.GetBool(pb_Constant.pbHideWireframe);
 		
 		pbManifoldEdgeExtrusion = pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
 		pbPerimeterEdgeBridgeOnly = pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
@@ -289,6 +289,7 @@ public class pb_Preferences
 
 		EditorPrefs.SetInt		(pb_Constant.pbDefaultSelectionMode, (int)pbDefaultSelectionMode);
 		EditorPrefs.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString());
+		EditorPrefs.SetString	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor.ToString());
 		EditorPrefs.SetString	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor.ToString());
 		EditorPrefs.SetString	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor.ToString());
 		EditorPrefs.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
@@ -307,12 +308,14 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly);
 		EditorPrefs.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly);
 		EditorPrefs.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow);
-		EditorPrefs.SetBool		(pb_Constant.pbHideWireframe, pbHideWireframe	);
 		EditorPrefs.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating);
 		EditorPrefs.SetBool		(pb_Constant.pbShowSceneToolbar, pbShowSceneToolbar);
 		// pb_Editor.instance.LoadPrefs();
 		
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
+
+
+		pb_Editor_Graphics.LoadColors();
 	}
 }

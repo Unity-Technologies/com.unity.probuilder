@@ -23,38 +23,70 @@ public class pb_Editor_Graphics
 	// "Hidden/ProBuilder/VertexBillboard"
 	const string SHADER_NAME = "Hidden/ProBuilder/UnlitColor";
 	const string PREVIEW_OBJECT_NAME = "ProBuilderSelectionMeshObject";
+	const string WIREFRAME_OBJECT_NAME = "ProBuilderWireframeMeshObject";
 
 	static float vertexHandleSize = .04f;
 	const float SELECTION_MESH_OFFSET = 0.0001f;//.005f;
 	
-	public static GameObject 	selectionGameObject;
+	public static GameObject 	selectionObject { get; private set; }	// allow get so that pb_Editor can check that the user hasn't 
+	public static GameObject 	wireframeObject { get; private set; }	// selected the graphic objects on accident.
+
 	static Mesh 				selectionMesh;
+	static Mesh 				wireframeMesh;
 	static Material 			selectionMaterial;
+	static Material 			wireframeMaterial;
+
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
+	static Color 				edgeSelectionColor = new Color(0f, .6f, .7f, 1f);
+
 	public static SelectMode 	_selectMode = SelectMode.Face;
 
-	static Color EDGE_COLOR = Color.blue;
+	static pb_Editor editor { get { return pb_Editor.instance; } }
+
+	/**
+	 * Reload colors for edge and face highlights from editor prefs.
+	 */
+	public static void LoadColors()
+	{
+		faceSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
+		edgeSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
+
+		SetMaterial(_selectMode);
+	}
 
 	private static void Init()
 	{
 		DestroyTempObjects();
 
-		selectionGameObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		
-		selectionGameObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
-		selectionGameObject.GetComponent<MeshRenderer>().enabled = false;
+		selectionObject.GetComponent<MeshRenderer>().enabled = false;
+		wireframeObject.GetComponent<MeshRenderer>().enabled = false;
 
-		selectionMesh = selectionGameObject.GetComponent<MeshFilter>().sharedMesh;
+		selectionMesh = selectionObject.GetComponent<MeshFilter>().sharedMesh;
+		wireframeMesh = wireframeObject.GetComponent<MeshFilter>().sharedMesh;
 
-		faceSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
+		LoadColors();
 		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 
 		SetMaterial(_selectMode);
 	}
 
+	/**
+	 * If Materials are null, initialize them.
+	 */
 	static void SetMaterial(SelectMode sm)
 	{
+		if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
+		if(wireframeMaterial != null) GameObject.DestroyImmediate(wireframeMaterial);
+
+		// Always generate the wireframe
+		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
+
 		switch(sm)
 		{
 			// case SelectMode.Vertex:
@@ -62,32 +94,17 @@ public class pb_Editor_Graphics
 			// 	selectionMaterial = new Material(Shader.Find( GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER ));
 			// 	selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
 			// 	break;
-				
-#if FORCE_MESH_GRAPHICS
-			case SelectMode.Edge:
-				if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
-				selectionMaterial = new Material(Shader.Find(EDGE_SHADER));
-				break;
-#endif
 
 			default:
-				if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
 				selectionMaterial = new Material(Shader.Find(GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER));
 				break;
 		}
 
-		if(sm == SelectMode.Edge)
-			selectionMaterial.SetColor("_Color", EDGE_COLOR);	// todo - remove this and use vertex colors
-		else
-			selectionMaterial.SetColor("_Color", faceSelectionColor);	// todo - remove this and use vertex colors
-
-		if(selectionGameObject.GetComponent<MeshRenderer>() == null)
-			Debug.Log("MeshRenderer is null");
+		wireframeMaterial.SetColor("_Color", edgeSelectionColor);
+		selectionMaterial.SetColor("_Color", faceSelectionColor);
 	
-		if(selectionMaterial == null)
-	
-			Debug.Log("selection material == null");
-		selectionGameObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
+		selectionObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
+		wireframeObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
 	}
 
 	static internal void OnDisable()
@@ -97,41 +114,52 @@ public class pb_Editor_Graphics
 
 	static internal void DestroyTempObjects()
 	{
-		selectionGameObject = GameObject.Find(PREVIEW_OBJECT_NAME);
+		DestroyObjectsWithName(PREVIEW_OBJECT_NAME);
+		DestroyObjectsWithName(WIREFRAME_OBJECT_NAME);
+	}
 
-		while(selectionGameObject != null)
+	static private void DestroyObjectsWithName(string InName)
+	{
+		GameObject go = GameObject.Find(InName);
+
+		while(go != null)
 		{
-			selectionMesh = selectionGameObject.GetComponent<MeshFilter>().sharedMesh;
-			selectionMaterial = selectionGameObject.GetComponent<MeshRenderer>().sharedMaterial;
+			Mesh msh = go.GetComponent<MeshFilter>().sharedMesh;
+			Material mat = go.GetComponent<MeshRenderer>().sharedMaterial;
 
-			if(selectionMesh)
-				GameObject.DestroyImmediate(selectionMesh);
+			if(msh != null) GameObject.DestroyImmediate(msh);
 
-			if(selectionMaterial)
-				GameObject.DestroyImmediate(selectionMaterial, true);
+			if(mat != null) GameObject.DestroyImmediate(mat);
 
-			GameObject.DestroyImmediate(selectionGameObject);
-			selectionGameObject = GameObject.Find(PREVIEW_OBJECT_NAME);
+			GameObject.DestroyImmediate(go);
+
+			go = GameObject.Find(InName);
 		}
 	}
 
-	static internal void ClearSelectionMesh()
+	static internal void Draw()
 	{
-		if(selectionMesh)
-		{
-			selectionMesh.Clear();
-		}
-	}
-
-	static internal void DrawSelectionMesh()
-	{
-		if(selectionGameObject == null || selectionMesh == null || selectionMaterial == null)
-			Init();
-
 		selectionMaterial.SetPass(0);
 		Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+
+		// this is significantly slower than DrawMeshNow - perhaps lighting is the issue?
+		// Graphics.DrawMesh(wireframeMesh, Vector3.zero, Quaternion.identity, wireframeMaterial, 0);
+		// Graphics.DrawMesh(selectionMesh, Vector3.zero, Quaternion.identity, selectionMaterial, 0);
 	}
 
+	/**
+	 * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
+	 * much lighter and more akin to Unity's default wireframe.
+	 */
+	static internal void DrawWireframe()
+	{
+		wireframeMaterial.SetPass(0);
+		Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+	}
+
+	/**
+	 * Draw vertex handles using UnityEngine.Handles.
+	 */
 	public static void DrawVertexHandles(int selectionLength, int[][] indices, Vector3[][] allVerticesInWorldSpace, Color col)
 	{
 		Color t = Handles.color;
@@ -150,16 +178,23 @@ public class pb_Editor_Graphics
 		Handles.color = t;
 	}
 
+	/**
+	 * Refresh the selection and wireframe mesh with _selection.
+	 */
 	static internal void UpdateSelectionMesh(pb_Object[] _selection, SelectMode selectionMode)
 	{
+		// Debug.Log("UpdateSelectionMesh");
+		// Always clear the mesh whenever updating, even if selection is null.
+		if(selectionObject == null || wireframeObject == null || selectionMesh == null || wireframeMesh == null)
+			Init();
+
+		selectionMesh.Clear();
+		wireframeMesh.Clear();
+
 		if(_selection == null || _selection.Length < 1)
 		{
-			ClearSelectionMesh();
 			return;
 		}
-
-		if(selectionGameObject == null)
-			Init();
 
 		if(_selectMode != selectionMode)
 		{	
@@ -167,8 +202,8 @@ public class pb_Editor_Graphics
 			_selectMode = selectionMode;
 		}
 
-		if(selectionMesh != null)
-			selectionMesh.Clear();
+		selectionMesh.name = "EDITOR_SELECTION_MESH";
+		wireframeMesh.name = "EDITOR_WIREFRAME_MESH";
 
 		List<Vector3> verts = new List<Vector3>();
 		List<Vector4> tan = new List<Vector4>();
@@ -177,36 +212,10 @@ public class pb_Editor_Graphics
 		List<Color> col = new List<Color>();
 		List<int> tris = new List<int>();
 
+		MakeEdgeMesh(_selection, ref wireframeMesh);
+
 		switch( selectionMode )
 		{
-			case SelectMode.Edge:
-
-				List<Vector3> ve = new List<Vector3>();
-				foreach(pb_Object pb in _selection)
-				{
-					Vector3[] pbverts = pb.vertices;
-					pb_IntArray[] sharedIndices = pb.sharedIndices;
-
-					List<pb_Edge> universalEdges = new List<pb_Edge>(pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), sharedIndices).Distinct());
-					
-					foreach(pb_Edge e in universalEdges)
-					{
-						ve.Add( pb.transform.TransformPoint(pbverts[sharedIndices[e.x][0]]) );
-						ve.Add( pb.transform.TransformPoint(pbverts[sharedIndices[e.y][0]]) );
-					}
-
-					verts.AddRange(ve);
-				}
-
-				for(int i = 0; i < verts.Count; i+=2)
-				{
-					tris.Add(i);
-					tris.Add(i+1);
-					uvs.Add(Vector2.zero);
-					uvs.Add(Vector2.zero);
-				}
-				break;
-
 			case SelectMode.Vertex:
 
 				// int vcount = 0;
@@ -299,7 +308,6 @@ public class pb_Editor_Graphics
 
 				break;
 
-			default:
 			case SelectMode.Face:
 
 				foreach(pb_Object pb in _selection)			
@@ -324,35 +332,22 @@ public class pb_Editor_Graphics
 				break;
 		}
 
-		if(selectionMesh == null) // todo- remove this turd hax
-			return;
-
 		selectionMesh.vertices = verts.ToArray();	// it is assigned here because we need to get normals
+		selectionMesh.triangles = tris.ToArray();
 		selectionMesh.uv = uvs.ToArray();
 		selectionMesh.uv2 = uv2s.ToArray();
 		selectionMesh.tangents = tan.ToArray();
 		selectionMesh.colors = col.ToArray();
 
-		switch(selectionMode)
-		{
-			#if FORCE_MESH_GRAPHICS
-			case SelectMode.Edge:
-				selectionMesh.subMeshCount = 1;
-				selectionMesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);				
-				break;
-			#endif
-
-			default:
-				selectionMesh.triangles = tris.ToArray();
-				break;
-		}
-
 		if(selectionMode == SelectMode.Face)
 		{
 			selectionMesh.RecalculateNormals();
+
 			Vector3[] nrmls = selectionMesh.normals;
+
 			for(int i = 0; i < verts.Count; i++)
 				verts[i] += SELECTION_MESH_OFFSET * nrmls[i].normalized;
+
 			selectionMesh.vertices = verts.ToArray();
 		}
 	}
@@ -378,5 +373,68 @@ public class pb_Editor_Graphics
 			return RenderingPath.Forward;
 
 		return cam.actualRenderingPath == RenderingPath.UsePlayerSettings ? PlayerSettings.renderingPath : cam.actualRenderingPath;
+	}
+
+	static pb_Profiler profiler = new pb_Profiler();
+
+	/**
+	 * Generate a mesh composed of all universal edges in an array of pb_Object.
+	 */
+	static void MakeEdgeMesh(pb_Object[] selection, ref Mesh mesh)
+	{
+		profiler.BeginSample("MakeEdgeMesh");
+
+		List<Vector3> all_verts = new List<Vector3>();
+
+		profiler.BeginSample("Generate Vertices");
+		for(int i = 0; i < selection.Length; i++)
+		{
+			pb_Object pb = selection[i];
+
+			Vector3[] pbverts = pb.vertices;
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+
+			profiler.BeginSample("universal edges");
+
+			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
+			pb_Edge[] universalEdges = editor.Selected_Universal_Edges_All[i]; // new List<pb_Edge>(pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), sharedIndices).Distinct());
+			profiler.EndSample();
+			
+			profiler.BeginSample("transform vertices");
+			Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
+			
+			int n = 0;
+			foreach(pb_Edge e in universalEdges)
+			{
+				edge_verts[n++] = pb.transform.TransformPoint(pbverts[sharedIndices[e.x][0]]);
+				edge_verts[n++] = pb.transform.TransformPoint(pbverts[sharedIndices[e.y][0]]);
+			}
+
+			all_verts.AddRange(edge_verts);
+			profiler.EndSample();
+		}
+		profiler.EndSample();
+
+		int[] tris = new int[all_verts.Count * 2];
+		Vector2[] uvs = new Vector2[all_verts.Count];
+
+		for(int i = 0; i < all_verts.Count; i+=2)
+		{
+			tris[i] = i;
+			tris[i+1] = i+1;
+
+			uvs[i] = Vector2.zero;
+			uvs[i+1] = Vector2.zero;
+		}
+
+		profiler.BeginSample("Assign to Mesh");
+		mesh.Clear();
+		mesh.vertices = all_verts.ToArray();
+		mesh.uv = uvs;
+		mesh.subMeshCount = 1;
+		mesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);
+		profiler.EndSample();
+
+		profiler.EndSample();
 	}
 }

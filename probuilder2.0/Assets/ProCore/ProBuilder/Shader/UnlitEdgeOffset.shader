@@ -7,16 +7,16 @@ Shader "Hidden/ProBuilder/UnlitEdgeOffset"
 
 	SubShader
 	{
-		Tags { "LightMode"="Always" "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
 		Lighting Off
 		ZTest LEqual
-		ZWrite On
+		ZWrite Off
 		Offset -1, -1
 		Cull Back
 
 		Pass
 		{
-			AlphaTest Greater 1 //.25
+			AlphaTest Greater .25
 
 			CGPROGRAM
 			#pragma vertex vert

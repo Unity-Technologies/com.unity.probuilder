@@ -44,7 +44,6 @@ public class ShowEditorPrefKeys : EditorWindow
 		pb_Constant.pbPerimeterEdgeBridgeOnly,
 		pb_Constant.pbPBOSelectionOnly,
 		pb_Constant.pbCloseShapeWindow,
-		pb_Constant.pbHideWireframe,
 		pb_Constant.pbUVEditorFloating,
 		pb_Constant.pbShowDetail,
 		pb_Constant.pbShowOccluder,

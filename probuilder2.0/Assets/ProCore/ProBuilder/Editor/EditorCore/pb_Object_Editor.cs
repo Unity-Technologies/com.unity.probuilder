@@ -41,13 +41,11 @@ public class pb_Object_Editor : Editor
 		else
 			return;
 
- 		SceneToolbarColor_Active = EditorGUIUtility.isProSkin ? new Color(.35f, .35f, .35f, 1f) : new Color(.8f, .8f, .8f, 1f);
-		ren = pb.gameObject.GetComponent<Renderer>();
 
-		EditorUtility.SetSelectedWireframeHidden(ren,
-			pb_Preferences_Internal.GetBool(pb_Constant.pbHideWireframe) &&
-			editor != null
-			);
+		ren = pb.gameObject.GetComponent<Renderer>();
+		EditorUtility.SetSelectedWireframeHidden(ren, editor != null);
+
+ 		SceneToolbarColor_Active = EditorGUIUtility.isProSkin ? new Color(.35f, .35f, .35f, 1f) : new Color(.8f, .8f, .8f, 1f);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 		if( !pb.Verify() )
@@ -123,17 +121,6 @@ public class pb_Object_Editor : Editor
 			Handles.EndGUI();
 		// #endif
 		}
-
-		if(EditorApplication.isPlayingOrWillChangePlaymode || pb == null)
-			return;
-
-		// if(GUIUtility.hotControl < 1 && pb.transform.localScale != Vector3.one)
-		// {
-		// 	pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-		// 	pbUndo.RecordObjects(selection, "Scale Selection");
-		// 	foreach(pb_Object pbs in selection)
-		// 		pbs.FreezeScaleTransform();
-		// }
 	}
 
 	bool HasFrameBounds() 

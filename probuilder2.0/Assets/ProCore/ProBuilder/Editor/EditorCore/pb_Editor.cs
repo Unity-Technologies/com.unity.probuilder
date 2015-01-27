@@ -139,16 +139,7 @@ public class pb_Editor : EditorWindow
 
 		UpdateSelection(true);
 
-		// IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-		// if( EditorPrefs.HasKey("pbShowUpgradeDialog") && EditorPrefs.GetBool("pbShowUpgradeDialog") )
-		// {
-		// 	EditorPrefs.SetBool("pbShowUpgradeDialog", false);	// see quickstart2
-
-		// 	if(pb_Constant.pbVersion == "2.3.0")
-		//	 	pb_Upgrade.Upgrade_2_3();
-		// }
 	}
 
 	private Color selectedVertexColor = Color.green;
@@ -207,7 +198,9 @@ public class pb_Editor : EditorWindow
 	public void OnDisable()
 	{
 		ClearFaceSelection();
+
 		UpdateSelection();
+
 		if( OnSelectionUpdate != null )
 			OnSelectionUpdate(null);
 
@@ -219,7 +212,15 @@ public class pb_Editor : EditorWindow
 		EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
 		pb_Editor_Graphics.OnDisable();
-		// EditorUtility.UnloadUnusedAssetsIgnoreManagedReferences();	// this was fixed in 4.1.2
+
+		// re-enable unity wireframe
+		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
+		{
+			Renderer ren = pb.gameObject.GetComponent<Renderer>();
+			EditorUtility.SetSelectedWireframeHidden(ren, false);
+		}
+
+		SceneView.RepaintAll();
 	}
 #endregion
 
@@ -235,7 +236,7 @@ public class pb_Editor : EditorWindow
 	{
 		if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
 		{
-			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;	// fuuuuck yooou lightmapping window
+			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 		}
 
@@ -823,6 +824,15 @@ public class pb_Editor : EditorWindow
 			}
 		#endif
 
+		if(edgeWorkerFinished > 0)
+		{
+			edgeWorkerFinished = 0;
+			UpdateGraphics();
+		}
+
+		// Always want to draw the wireframe
+		pb_Editor_Graphics.DrawWireframe();
+
 		DrawHandleGUI();
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
@@ -859,7 +869,7 @@ public class pb_Editor : EditorWindow
 		// Draw GUI Handles
 		if(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
 			DrawHandles();
-
+		
 		DrawVertexNormals(drawVertexNormals);
 
 		if(drawFaceNormals) DrawFaceNormals();
@@ -1356,12 +1366,15 @@ public class pb_Editor : EditorWindow
 					pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
 				else
 					pb.SetSelectedEdges(pb.SelectedEdges.Add(nearestEdge));
+
+				return true;
 			}
 
 			#if PB_DEBUG
 			profiler.EndSample();
 			#endif
-			return true;
+
+			return false;
 		}
 		else
 		{
@@ -2018,14 +2031,15 @@ public class pb_Editor : EditorWindow
 	public void DrawHandles ()
 	{
 		Handles.lighting = false;
+			
+		/**
+		 * Edge wireframe and selected faces are drawn in pb_Editor_Graphics, selected edges & vertices 
+		 * are drawn here.
+		 */
+		pb_Editor_Graphics.Draw();
 
 		switch(selectionMode)
 		{
-
-			case SelectMode.Face:
-				pb_Editor_Graphics.DrawSelectionMesh();
-				break;
-
 			case SelectMode.Vertex:
 			{		
 				if(selection.Length > 0)
@@ -2033,7 +2047,6 @@ public class pb_Editor : EditorWindow
 					pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_all, selected_verticesInWorldSpace_all, defaultVertexColor);
 					pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_sel, selected_verticesInWorldSpace_all, selectedVertexColor);
 				}
-					// pb_Editor_Graphics.DrawSelectionMesh();
 			}
 			break;
 	
@@ -2042,28 +2055,8 @@ public class pb_Editor : EditorWindow
 
 				// TODO - figure out how to run UpdateSelection prior to an Undo event.
 				// Currently UndoRedoPerformed is called after the action has taken place.
-#if FORCE_MESH_GRAPHICS	
-				pb_Editor_Graphics.DrawSelectionMesh();
-#endif
 				try
 				{
-#if !FORCE_MESH_GRAPHICS
-					Handles.color = Color.blue;
-					
-					for(int i = 0; i < selected_universal_edges_all.Length; i++)
-					{
-						pb_Object pb = selection[i];
-						for(int e = 0; e < selected_universal_edges_all[i].Length; e++)
-						{
-							pb_Edge edge = selected_universal_edges_all[i][e];
-							
-							if(edge.x >= pb.sharedIndices.Length || edge.y >= pb.sharedIndices.Length)
-								break;
-
-							Handles.DrawLine(selected_verticesInWorldSpace_all[i][pb.sharedIndices[edge.x][0]], selected_verticesInWorldSpace_all[i][pb.sharedIndices[edge.y][0]]);
-						}
-					}
-#endif
 					Handles.color = Color.green;
 					for(int i = 0; i < selection.Length; i++)
 					{
@@ -2944,12 +2937,9 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		#if FORCE_MESH_GRAPHICS
-			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-		#else
-		if(selectionMode == SelectMode.Face)
-			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-		#endif
+		profiler.BeginSample("UpdateGraphics");
+		pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
+		profiler.EndSample();
 	}
 
 	public void AddToSelection(GameObject t)
@@ -3044,7 +3034,7 @@ public class pb_Editor : EditorWindow
 		nearestEdge = null;
 		nearestEdgeObject = null;
 		
-		pb_Editor_Graphics.ClearSelectionMesh();
+		UpdateGraphics();
 	}
 
 	public void ClearSelection()
@@ -3055,8 +3045,10 @@ public class pb_Editor : EditorWindow
 
 		Selection.objects = new Object[0];
 
-		pb_Editor_Graphics.ClearSelectionMesh();
+		UpdateGraphics();
 	}
+
+	int edgeWorkerFinished = 0;
 
 	/**
 	 * Get universal edges on a separate thread, since it can be expensive.
@@ -3081,7 +3073,14 @@ public class pb_Editor : EditorWindow
 		lock(selection)
 		{
 			if( GetSelectionHash(sel) == selectionHash )
+			{
 				selected_universal_edges_all = edges;
+
+				// if we changed something, also update the editor graphics so that the wireframe
+				// syncs.  can't just call pb_Editor_Graphics.Update() for some thread-y reason
+				// on Unity's side (I think... something about CompareBaseObjectsInternal)
+				edgeWorkerFinished = 1;
+			}
 		}
 	}
 #endregion
@@ -3275,13 +3274,23 @@ public class pb_Editor : EditorWindow
 	{
 		nearestEdge = null;
 		nearestEdgeObject = null;
-		
-		if(Selection.objects.Contains(pb_Editor_Graphics.selectionGameObject)) {
-			// Debug.LogWarning("TELL KARL THIS WARNING WAS THROWN");
-			RemoveFromSelection(pb_Editor_Graphics.selectionGameObject);
-		}
+
+		// not sure if this is still necessary?
+		if(Selection.objects.Contains(pb_Editor_Graphics.selectionObject))
+			RemoveFromSelection(pb_Editor_Graphics.selectionObject);
+
+		if(Selection.objects.Contains(pb_Editor_Graphics.wireframeObject))
+			RemoveFromSelection(pb_Editor_Graphics.wireframeObject);
 
 		UpdateSelection(false);
+
+		foreach(pb_Object pb in selection)
+		{
+			Renderer ren = pb.gameObject.GetComponent<Renderer>();
+			EditorUtility.SetSelectedWireframeHidden(ren, true);
+		}
+
+		SceneView.RepaintAll();
 	}
 
 	/**

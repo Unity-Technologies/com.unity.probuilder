@@ -60,9 +60,6 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbCloseShapeWindow:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
 			
-			case pb_Constant.pbHideWireframe:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-
 			case pb_Constant.pbUVEditorFloating:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
 			
@@ -148,6 +145,10 @@ public class pb_Preferences_Internal
 		{
 			case pb_Constant.pbDefaultFaceColor:
 					col = new Color(0f, .86f, 1f, .275f);
+				break;
+				
+			case pb_Constant.pbDefaultEdgeColor:
+					col = new Color(0f, .5f, .6f, 1f);
 				break;
 				
 			case pb_Constant.pbDefaultVertexColor:
