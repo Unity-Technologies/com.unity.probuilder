@@ -144,7 +144,12 @@ public class pb_Menu_Commands : Editor
 		pbUndo.RecordObjects(undoObjects, "Set Entity Type");
 
 		foreach(pb_Object pb in selection)
+		{
 			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
+		}
 
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
 	}

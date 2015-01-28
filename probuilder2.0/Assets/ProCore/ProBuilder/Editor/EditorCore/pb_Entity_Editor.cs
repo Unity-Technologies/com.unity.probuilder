@@ -36,7 +36,11 @@ public class pb_Entity_Editor : Editor
 		if(et != ent.entityType)
 		{
 			pbUndo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
+
 			pb_Editor_Utility.SetEntityType(et, ent.gameObject);
+			pb.ToMesh();
+			pb.Refresh();
+			pb.GenerateUV2();
 		}
 
 
