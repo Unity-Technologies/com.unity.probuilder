@@ -16,12 +16,10 @@ using Parabox.Debug;
 
 public class pb_Editor_Graphics
 {
-	const string HIGHLIGHT_SHADER = "Hidden/ProBuilder/UnlitColor";
-	const string OVERLAY_SHADER = "Hidden/ProBuilder/UnlitColor-Overlay";
+	const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";// "Hidden/ProBuilder/UnlitColor";
 	const string EDGE_SHADER = "Hidden/ProBuilder/UnlitEdgeOffset";
 
 	// "Hidden/ProBuilder/VertexBillboard"
-	const string SHADER_NAME = "Hidden/ProBuilder/UnlitColor";
 	const string PREVIEW_OBJECT_NAME = "ProBuilderSelectionMeshObject";
 	const string WIREFRAME_OBJECT_NAME = "ProBuilderWireframeMeshObject";
 
@@ -96,7 +94,7 @@ public class pb_Editor_Graphics
 			// 	break;
 
 			default:
-				selectionMaterial = new Material(Shader.Find(GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER));
+				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
 				break;
 		}
 
@@ -137,22 +135,21 @@ public class pb_Editor_Graphics
 		}
 	}
 
-	static internal void Draw()
-	{
-		// selectionMaterial.SetPass(0);
-		// Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
-	}
+	// static internal void Draw()
+	// {
+	// 	// selectionMaterial.SetPass(0);
+	// 	// Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+	// }
 
-	/**
-	 * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
-	 * much lighter and more akin to Unity's default wireframe.
-	 */
-	static internal void DrawWireframe()
-	{
-		Debug.Log("here2");
-		// wireframeMaterial.SetPass(0);
-		// Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
-	}
+	// /**
+	//  * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
+	//  * much lighter and more akin to Unity's default wireframe.
+	//  */
+	// static internal void DrawWireframe()
+	// {
+	// 	// wireframeMaterial.SetPass(0);
+	// 	// Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+	// }
 
 	/**
 	 * Draw vertex handles using UnityEngine.Handles.
