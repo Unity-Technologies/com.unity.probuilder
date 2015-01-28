@@ -62,8 +62,12 @@ public class pb_Editor_Graphics
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
-		selectionObject.GetComponent<MeshRenderer>().enabled = true;
-		wireframeObject.GetComponent<MeshRenderer>().enabled = true;
+		selectionObject.GetComponent<MeshRenderer>().enabled = false;
+		wireframeObject.GetComponent<MeshRenderer>().enabled = false;
+
+		// Force the mesh to only render in SceneView
+		selectionObject.AddComponent<pb_SceneMeshRender>();
+		wireframeObject.AddComponent<pb_SceneMeshRender>();
 
 		selectionMesh = selectionObject.GetComponent<MeshFilter>().sharedMesh;
 		wireframeMesh = wireframeObject.GetComponent<MeshFilter>().sharedMesh;
@@ -141,14 +145,15 @@ public class pb_Editor_Graphics
 	// 	// Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
 	// }
 
-	// /**
-	//  * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
-	//  * much lighter and more akin to Unity's default wireframe.
-	//  */
+	/**
+	 * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
+	 * much lighter and more akin to Unity's default wireframe.
+	 */
 	// static internal void DrawWireframe()
 	// {
-	// 	// wireframeMaterial.SetPass(0);
-	// 	// Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+	// 	wireframeMaterial.SetPass(0);
+	// 	Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
+	// 	Graphics.DrawMesh(wireframeMesh, Vector3.zero, Quaternion.identity, wireframeMaterial, 0);
 	// }
 
 	/**
@@ -333,17 +338,17 @@ public class pb_Editor_Graphics
 		selectionMesh.tangents = tan.ToArray();
 		selectionMesh.colors = col.ToArray();
 
-		if(selectionMode == SelectMode.Face)
-		{
-			selectionMesh.RecalculateNormals();
+		// if(selectionMode == SelectMode.Face)
+		// {
+		// 	selectionMesh.RecalculateNormals();
 
-			Vector3[] nrmls = selectionMesh.normals;
+		// 	Vector3[] nrmls = selectionMesh.normals;
 
-			for(int i = 0; i < verts.Count; i++)
-				verts[i] += SELECTION_MESH_OFFSET * nrmls[i].normalized;
+		// 	for(int i = 0; i < verts.Count; i++)
+		// 		verts[i] += SELECTION_MESH_OFFSET * nrmls[i].normalized;
 
-			selectionMesh.vertices = verts.ToArray();
-		}
+		// 	selectionMesh.vertices = verts.ToArray();
+		// }
 	}
 
 	/**
