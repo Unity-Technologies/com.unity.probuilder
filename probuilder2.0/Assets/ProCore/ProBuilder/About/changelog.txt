@@ -1,6 +1,16 @@
--- ProBuilder 2.4.0b8 (r3082) -
+-- ProBuilder 2.4.0b9 (r3089) -
 
-# INTERNAL BUILD
+# Features
+	- New wireframe shader overrides Unity default when ProBuilder Editor is open.
+	- Cull hidden edges when in Edge mode.
+	- Fix spotty face selection highlight rendering when using Deferred Rendering.
+	- Add preference to disable automatic UV2 generation while modeling (improves editor performance).
+
+# Bug Fixes
+	- When entering Texture Blending mode in Vertex Painter, set the color to a solid variant of one of the available textures.
+	- Fix bug where projected UVs in manual mode could potentially be placed very far from the current handle.
+	- Fix lag when drag selecting edges on objects with large vertex counts.
+	- Fix Null Reference errors in Vertex Painter in Unity 5.
 
 -- ProBuilder 2.4.0b7 (r3072) -
 

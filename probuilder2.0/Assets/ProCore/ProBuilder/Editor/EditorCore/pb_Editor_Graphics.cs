@@ -56,8 +56,10 @@ public class pb_Editor_Graphics
 	{
 		DestroyTempObjects();
 
-		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
-		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		HideFlags hide = (HideFlags)(1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
+
+		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
