@@ -308,7 +308,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
-			GUILayout.Space( 34 );
+			GUILayout.Space( isFloatingWindow ? 20 : 34 );
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 			pb_GUI_Utility.DrawSeparator(2);
