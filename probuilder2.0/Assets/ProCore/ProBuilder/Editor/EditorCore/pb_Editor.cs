@@ -1053,7 +1053,7 @@ public class pb_Editor : EditorWindow
 				pb_Edge bestEdge = null;
 				pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
 
-				if(!selection.Contains(bestObj))
+				if(bestObj != null && !selection.Contains(bestObj))
 				{
 					bestObj = null;
 					bestEdge = null;
