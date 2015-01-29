@@ -14,8 +14,7 @@ Shader "Hidden/ProBuilder/UnlitEdgeOffset"
 		Offset -1, -1
 		Cull Back
 		Blend SrcAlpha OneMinusSrcAlpha
-//		Blend DstColor Zero
-
+	
 		Pass
 		{
 			AlphaTest Greater .25

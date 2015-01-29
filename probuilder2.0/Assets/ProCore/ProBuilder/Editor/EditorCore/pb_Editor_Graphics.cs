@@ -104,6 +104,8 @@ public class pb_Editor_Graphics
 				break;
 		}
 
+		edgeSelectionColor.a = sm == SelectMode.Edge ? 1f : .5f;
+
 		wireframeMaterial.SetColor("_Color", edgeSelectionColor);
 		selectionMaterial.SetColor("_Color", faceSelectionColor);
 	

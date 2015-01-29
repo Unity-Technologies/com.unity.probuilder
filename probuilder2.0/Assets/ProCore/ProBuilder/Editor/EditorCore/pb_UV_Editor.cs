@@ -2563,7 +2563,8 @@ public class pb_UV_Editor : EditorWindow
 	Vector2 scroll = Vector2.zero;
 	void DrawManualModeUI()
 	{
-		if(GUILayout.Button("Convert to Auto", EditorStyles.miniButton))
+		GUI.enabled = selectedFaceCount > 0;
+		if(GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
 			Menu_SetAutoUV();
 
 		scroll = EditorGUILayout.BeginScrollView(scroll);
@@ -2573,7 +2574,6 @@ public class pb_UV_Editor : EditorWindow
 		 */
 		GUILayout.Label("Project UVs", EditorStyles.miniBoldLabel);
 
-		GUI.enabled = selectedFaceCount > 0;
 		GUILayout.BeginHorizontal();
 			if(GUILayout.Button("Planar", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				Menu_PlanarProject();
@@ -2591,6 +2591,7 @@ public class pb_UV_Editor : EditorWindow
 		if(GUILayout.Button("Select Island", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 			Menu_SelectUVIsland();
 
+		GUI.enabled = selectedUVCount > 0 && selectionMode != SelectMode.Face;
 		if(GUILayout.Button("Select Face", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 			Menu_SelectUVFace();
 
@@ -2606,7 +2607,7 @@ public class pb_UV_Editor : EditorWindow
 		if(GUILayout.Button("Collapse UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 			Menu_CollapseUVs();
 
-		GUI.enabled = selectedUVCount > 0;
+		GUI.enabled = selectedUVCount > 1;
 		if(GUILayout.Button("Split UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 			Menu_SplitUVs();
 
