@@ -37,6 +37,8 @@ public class pb_Editor_Graphics
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
 	static Color 				edgeSelectionColor = new Color(0f, .6f, .7f, 1f);
 
+	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
+
 	public static SelectMode 	_selectMode = SelectMode.Face;
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
@@ -104,9 +106,7 @@ public class pb_Editor_Graphics
 				break;
 		}
 
-		edgeSelectionColor.a = sm == SelectMode.Edge ? 1f : .5f;
-
-		wireframeMaterial.SetColor("_Color", edgeSelectionColor);
+		wireframeMaterial.SetColor("_Color", sm == SelectMode.Edge ? edgeSelectionColor : wireframeColor);
 		selectionMaterial.SetColor("_Color", faceSelectionColor);
 	
 		selectionObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
