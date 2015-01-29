@@ -76,7 +76,7 @@ public class pb_Editor : EditorWindow
 	// MethodInfo IntersectRayMesh;
 	MethodInfo findNearestVertex;
 
-	public EditLevel editLevel;
+	public EditLevel editLevel { get; private set; }
 	private EditLevel previousEditLevel;
 	
 	public SelectMode selectionMode { get; private set; }
@@ -111,7 +111,7 @@ public class pb_Editor : EditorWindow
 		return editor;
 	}
 
-	void OnEnable()
+	private void OnEnable()
 	{
 		me = this;
 
@@ -146,7 +146,7 @@ public class pb_Editor : EditorWindow
 
 	private Color selectedVertexColor = Color.green;
 	private Color defaultVertexColor = Color.blue;
-	public void InitGUI()
+	private void InitGUI()
 	{	
 		selectedVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor);
 		defaultVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
@@ -180,7 +180,7 @@ public class pb_Editor : EditorWindow
 		this.minSize = new Vector2( isFloatingWindow ? WINDOW_WIDTH_FlOATING : WINDOW_WIDTH_DOCKABLE, 200 );
 	}
 
-	public void LoadPrefs()
+	private void LoadPrefs()
 	{
 		// this exists to force update preferences when updating packages
 		if(!EditorPrefs.HasKey(pb_Constant.pbEditorPrefVersion) || EditorPrefs.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION ) {
@@ -197,7 +197,7 @@ public class pb_Editor : EditorWindow
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 	}
 
-	public void OnDisable()
+	private void OnDisable()
 	{
 		ClearFaceSelection();
 
@@ -924,7 +924,7 @@ public class pb_Editor : EditorWindow
 
 		// altClick || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
 		// Tools.viewTool == ViewTool.FPS || Tools.viewTool == ViewTool.Orbit
-		if( pb_Handle_Utility.SceneViewInUse(currentEvent) || currentEvent.isKey)
+		if( pb_Handle_Utility.SceneViewInUse(currentEvent) || currentEvent.isKey || selection == null || selection.Length < 1)
 		{
 			dragging = false;
 
@@ -1147,7 +1147,7 @@ public class pb_Editor : EditorWindow
 		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) || 
 		   	(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
 		{
-			UpdateSelection();
+			UpdateSelection(false);
 			SceneView.RepaintAll();
 			return pb;
 		}
