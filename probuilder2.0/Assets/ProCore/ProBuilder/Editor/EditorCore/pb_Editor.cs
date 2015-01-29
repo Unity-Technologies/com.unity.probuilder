@@ -2646,8 +2646,8 @@ public class pb_Editor : EditorWindow
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{	
-
 		#if PB_DEBUG
+		Debug.Log("UpdateSelection() ForceUpdate: " + forceUpdate);
 		profiler.BeginSample("UpdateSelection");
 		#endif
 		
@@ -2723,9 +2723,6 @@ public class pb_Editor : EditorWindow
 			#endif
 		}
 
-
-		transformCache = new Vector3[selection.Length][];
-
 		selected_uniqueIndices_sel			= new int[selection.Length][];
 		selected_verticesLocal_sel			= new Vector3[selection.Length][];
 		SelectedFacesInEditZone 			= new pb_Face[selection.Length][];
@@ -2743,6 +2740,8 @@ public class pb_Editor : EditorWindow
 		for(int i = 0; i < selection.Length; i++)
 		{			
 			pb_Object pb = selection[i];
+			
+			pb.transform.hasChanged = false;
 
 			if(!boundsInitialized && pb.SelectedTriangleCount > 0)	
 			{
@@ -2754,13 +2753,6 @@ public class pb_Editor : EditorWindow
 			#if PB_DEBUG
 			profiler.BeginSample("Cache Transform");
 			#endif 
-
-			transformCache[i] = new Vector3[3]
-			{
-				pb.transform.position,
-				pb.transform.localRotation.eulerAngles,
-				pb.transform.localScale
-			};
 
 			#if PB_DEBUG
 			profiler.EndSample();
@@ -2882,6 +2874,7 @@ public class pb_Editor : EditorWindow
 	private void Internal_UpdateSelectionFast()
 	{
 		#if PB_DEBUG
+		Debug.Log("Internal_UpdateSelectionFast");
 		profiler.BeginSample("Internal_UpdateSelectionFast");
 		#endif
 
@@ -2895,14 +2888,9 @@ public class pb_Editor : EditorWindow
 		for(int i = 0; i < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
-			
-			transformCache[i] = new Vector3[3]
-			{
-				pb.transform.position,
-				pb.transform.localRotation.eulerAngles,
-				pb.transform.localScale
-			};
-			
+
+			pb.transform.hasChanged = false;
+
 			selected_verticesInWorldSpace_all[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 			selected_verticesLocal_sel[i] = pb.GetVertices(pb.SelectedTriangles);
 			// selected_handlePivot[i] = pb_Math.Average(selected_verticesLocal_sel[i]);
@@ -3203,35 +3191,26 @@ public class pb_Editor : EditorWindow
 
 #region EVENTS AND LISTENERS
 
-	/// @todo -- use hasChanged flag (someday)
-	Vector3[][] transformCache = new Vector3[0][];
-
+	/**
+	 * Returns true if any of the selected pb_Object transforms have changed.
+	 */
 	private void ListenForTopLevelMovement()
 	{
 		if(selectedVertexCount > 1)// || GUIUtility.hotControl < 1)
 			return;
 
 		bool movementDetected = false;
-		try {
-			for(int i = 0; i < selection.Length; i++)
-			{
-				if(selection[i] == null)
-					continue;
+		for(int i = 0; i < selection.Length; i++)
+		{
+			if(selection[i] == null)
+				continue;
 
-				if(	selection[i].transform.position != transformCache[i][0] ||
-					selection[i].transform.localRotation.eulerAngles != transformCache[i][1] ||
-					selection[i].transform.localScale != transformCache[i][2])
-				{
-					movementDetected = true;
-					break;
-				}
-			}
-		} catch (System.Exception e) {}
+			if(selection[i].transform.hasChanged)
+				movementDetected = true;
+		}
 
-		if(!movementDetected)
-			return;
-
-		Internal_UpdateSelectionFast();
+		if(movementDetected)
+			Internal_UpdateSelectionFast();
 	}
 
 	/**

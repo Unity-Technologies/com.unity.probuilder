@@ -635,7 +635,7 @@ public class pb_Menu_Commands : Editor
 		#endif
 
 		if(editor)
-			editor.UpdateSelection();
+			editor.UpdateSelection(false);
 
 		pb_Editor_Utility.ShowNotification(success ? "Select Edge Ring" : "Nothing to Ring");
 
@@ -665,10 +665,9 @@ public class pb_Menu_Commands : Editor
 		}
 
 		if(editor)
-			editor.UpdateSelection();
+			editor.UpdateSelection(false);
 
 		pb_Editor_Utility.ShowNotification(foundLoop ? "Select Edge Loop" : "Nothing to Loop");
-		// Internal_UpdateSelectionFast();
 
 		SceneView.RepaintAll();
 	}
