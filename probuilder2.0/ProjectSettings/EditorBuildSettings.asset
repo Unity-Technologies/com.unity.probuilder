@@ -6,4 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/rwarwa.unity
+  - enabled: 1
     path: Assets/ProCore/ProBuilder/Debug/Scene/BuildSceneTest.unity

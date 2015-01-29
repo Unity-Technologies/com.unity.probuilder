@@ -1032,7 +1032,7 @@ public class pb_Editor : EditorWindow
 
 #region RAYCASTING AND DRAGGING
 
-	public const float MAX_EDGE_SELECT_DISTANCE = 7;
+	public const float MAX_EDGE_SELECT_DISTANCE = 12;
 	pb_Object nearestEdgeObject = null;
 	pb_Edge nearestEdge;	
 
@@ -1139,125 +1139,56 @@ public class pb_Editor : EditorWindow
 	private pb_Object RaycastCheck(Vector3 mousePosition)
 	{
 		pb_Object pb;
-		if(selectionMode == SelectMode.Edge)
+
+		/**
+		 * Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
+		 * first.  If no hits, move on to face selection or object change.
+		 */
+		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) || 
+		   	(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
 		{
-			if(EdgeClickCheck(out pb))
-			{
-				UpdateSelection(false);
-				SceneView.RepaintAll();
-				return pb;
-			}
+			UpdateSelection();
+			SceneView.RepaintAll();
+			return pb;
 		}
+
+
+		if(!shiftKey && !ctrlKey)
+			SetSelection( (GameObject)null );
 
 		GameObject nearestGameObject = HandleUtility.PickGameObject(mousePosition, false);
 
 		if(nearestGameObject)
-		{
-			// if we clicked a pb_Object
 			pb = nearestGameObject.GetComponent<pb_Object>();
-			if(pb && pb.isSelectable)
-			{
-				// check for shift key.  if not, change selection to clicked object
-				if(!shiftKey && !ctrlKey)
-				{
-					// assuming that it is not the currently selected
-					if(nearestGameObject != Selection.activeGameObject)
-					{
-						SetSelection(nearestGameObject);
 
-						// Uncomment to require object selection before editing
-						// 	return pb;
-					}
-					else
-					{
-						// otherwise, set the selection to just the nearest gameObject
-						// and continue
-						SetSelection(nearestGameObject);
-					}
-				}
-				else
-				// if shift key is held, and we haven't already selected this object, add it to the selection
-				if(shiftKey || ctrlKey)
-				{
-					// if adding, don't allow for face selection.  if it's already selected, move on to face selection
-					if(!Selection.Contains(nearestGameObject))
-					{
-						AddToSelection(nearestGameObject);
-					}
-				}
-			}
-			else 
-			{
-			  // Check prefrences to see if only Probuilder objects are selectable
-			  if (pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly))
-			  {
-				  if (nearestGameObject.GetComponent<pb_Object>())
-				  {
-					  Exit(nearestGameObject);
-				  }
-			  }
-			  else
-			  {
-				  Exit(nearestGameObject);
-			  }
-
-			  return null;
-			}
-		}
-		// Clicked off gameObject.  Return selection to native functions.
-		else
+		if(nearestGameObject)
 		{
-			if(selectionMode == SelectMode.Vertex)
+			if(pb)
 			{
-				if(!VertexClickCheck(out pb))
-				{
-					Exit();
-					return null;
-				}
+				if(pb.isSelectable)
+					AddToSelection(nearestGameObject);
 				else
-				{
-					UpdateSelection(false);
-					SceneView.RepaintAll();
-					return pb;
-				}
+					return null;
 			}
-			else if(selectionMode == SelectMode.Edge)
+			else if( !pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly) )
 			{
-				if(!EdgeClickCheck(out pb))
-				{
-					Exit();
-					return null;
-				}
-				else
-				{
-					UpdateSelection(false);
-					SceneView.RepaintAll();
-					return pb;
-				}
+				// If clicked off a pb_Object but onto another gameobject, set the selection
+				// and dip out.
+				SetSelection(nearestGameObject);
+				return null;
 			}
 			else
 			{
-				Exit();
+				// clicked on something that isn't allowed at all (ex, pboSelectionOnly on and clicked a camera)
 				return null;
 			}
 		}
-		
-		pb_Object vpb;
-		/**
-		 *	If in vertex selection mode, check for a vertex click before checking for a face.
-		 */
-		if(selectionMode == SelectMode.Vertex && VertexClickCheck(out vpb))
-		{
-			pb = vpb;
-		}
-		// Then check if edge mode, and test for edgeVertices
 		else
-		if(selectionMode == SelectMode.Edge && EdgeClickCheck(out vpb))
 		{
-			pb = vpb;
+			return null;
 		}
-		// finally, fall back on face selection
-		else
+
+		// Face click check
 		{
 			// Check for face hit	
 			pb_Face selectedFace;
@@ -1308,7 +1239,6 @@ public class pb_Editor : EditorWindow
 	private bool VertexClickCheck(out pb_Object vpb)
 	{
 		if(!shiftKey && !ctrlKey) ClearFaceSelection();
-		
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -1325,8 +1255,8 @@ public class pb_Editor : EditorWindow
 					int indx = System.Array.IndexOf(pb.SelectedTriangles, selected_uniqueIndices_all[i][n]);
 
 					// @all vertex handles
-					if(!Selection.Contains(pb.gameObject))
-						AddToSelection(pb.gameObject);
+					// if(!Selection.Contains(pb.gameObject))
+					// 	AddToSelection(pb.gameObject);
 
 					pbUndo.RecordObject(pb, "Change Vertex Selection");
 
@@ -2145,6 +2075,7 @@ public class pb_Editor : EditorWindow
 		if(dragging)
 		{
 			GUI.backgroundColor = dragRectColor;
+
 			// Always draw from lowest to largest values
 			Vector2 start = Vector2.Min(mousePosition_initial, mousePosition);
 			Vector2 end = Vector2.Max(mousePosition_initial, mousePosition);
@@ -2937,10 +2868,16 @@ public class pb_Editor : EditorWindow
 
 	public void AddToSelection(GameObject t)
 	{
+		if(t == null || Selection.objects.Contains(t))
+			return;
+
 		Object[] temp = new Object[Selection.objects.Length + 1];
+
 		temp[0] = t;
+
 		for(int i = 1; i < temp.Length; i++)
 			temp[i] = Selection.objects[i-1];
+
 		Selection.objects = temp;
 	}
 
@@ -2958,35 +2895,6 @@ public class pb_Editor : EditorWindow
 		}
 
 		Selection.objects = temp;
-	}
-
-	public void Exit()
-	{
-		pbUndo.RecordObjects(selection, "Change Selection");
-
-		ClearSelection();
-
-		// if the previous tool was set to none, use Tool.Move
-		if(Tools.current == Tool.None)
-			Tools.current = Tool.Move;
-
-		Selection.activeTransform = null;
-	}
-
-	public void Exit(GameObject newSelection)
-	{
-		pbUndo.RecordObjects(selection, "Change Selection");
-
-		ClearSelection();
-
-		// if the previous tool was set to none, use Tool.Move
-		if(Tools.current == Tool.None)
-			Tools.current = Tool.Move;
-
-		if(newSelection)
-			Selection.activeTransform = newSelection.transform;
-		else
-			Selection.activeTransform = null;
 	}
 
 	public void SetSelection(GameObject[] newSelection)

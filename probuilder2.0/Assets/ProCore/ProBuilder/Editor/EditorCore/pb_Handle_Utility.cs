@@ -399,7 +399,6 @@ public class pb_Handle_Utility
 	 */
 	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
 	{
-
 		/**
 		 * Transform ray into model space
 		 */
