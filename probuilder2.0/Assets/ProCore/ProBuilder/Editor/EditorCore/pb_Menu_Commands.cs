@@ -267,12 +267,10 @@ public class pb_Menu_Commands : Editor
 		float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 		
 		EditorGUI.BeginChangeCheck();
-			GUILayout.BeginHorizontal();
-				GUILayout.Label("Dist", GUILayout.MaxWidth(36));
-				Rect al = GUILayoutUtility.GetLastRect();
-				extrudeAmount = EditorGUI.FloatField(new Rect(al.x + al.width, al.y, 38, al.height+2), "", extrudeAmount);
-			GUILayout.EndHorizontal();
 
+		EditorGUIUtility.labelWidth = Screen.width - 68;
+		extrudeAmount = EditorGUILayout.FloatField("Dist", extrudeAmount);
+		
 		if(EditorGUI.EndChangeCheck())
 			EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
 	}
@@ -452,10 +450,8 @@ public class pb_Menu_Commands : Editor
 
 		EditorGUI.BeginChangeCheck();
 
-		GUILayout.Label("Angle", GUILayout.MaxWidth(36));
-		
-		Rect al = GUILayoutUtility.GetLastRect();
-		angleGrow = EditorGUI.Toggle(new Rect(al.x + al.width + 18, al.y-1, 36, al.height), "", angleGrow);
+		EditorGUIUtility.labelWidth = Screen.width - 28;
+		angleGrow = EditorGUILayout.Toggle("Angle", angleGrow);
 
 		float angleVal = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
 
@@ -463,11 +459,8 @@ public class pb_Menu_Commands : Editor
 
 		GUI.enabled = angleGrow;
 
-		GUILayout.BeginHorizontal();
-			GUILayout.Label("Max", GUILayout.MaxWidth(36));
-			al = GUILayoutUtility.GetLastRect();
-			angleVal = EditorGUI.FloatField(new Rect(al.x + al.width, al.y, 36, al.height+2), "", angleVal);
-		GUILayout.EndHorizontal();
+		EditorGUIUtility.labelWidth = Screen.width - 68;
+		angleVal = EditorGUILayout.FloatField("Max", angleVal);
 
 		GUI.enabled = te;
 
