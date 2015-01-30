@@ -1689,6 +1689,7 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
+	Quaternion c_inversePlaneRotation = Quaternion.identity;
 	private void VertexRotateTool()
 	{
 		newPosition = selected_handlePivotWorld;
@@ -1711,6 +1712,15 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
+				pb_Object pb;
+				pb_Face face;
+				if(GetFirstSelectedFace(out pb, out face))
+				{
+					Vector3 nrm, bitan, tan;
+					pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+					c_inversePlaneRotation = Quaternion.Inverse( Quaternion.LookRotation(nrm, bitan) );
+				}
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
@@ -1729,33 +1739,38 @@ public class pb_Editor : EditorWindow
 			
 			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Rotate Vertices");
 
+			Quaternion transformedRotation;
+			switch(handleAlignment)
+			{
+				case HandleAlignment.Plane:
+
+					pb_Object pb;
+					pb_Face face;
+
+					if( !GetFirstSelectedFace(out pb, out face) )
+						goto case HandleAlignment.Local;	// can't do plane without a plane
+
+					Quaternion inverseLocalRotation = Quaternion.Inverse(pb.transform.localRotation);
+
+					transformedRotation =  inverseLocalRotation * currentHandleRotation * c_inversePlaneRotation;
+					break;
+
+				case HandleAlignment.Local:
+
+					if(selection.Length < 1)
+						goto default;
+
+					transformedRotation = Quaternion.Inverse(selection[0].transform.localRotation) * currentHandleRotation;
+					break;
+
+				default:
+					transformedRotation = currentHandleRotation;
+					break;
+			}
+
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
 			{
-				Quaternion transformedRotation;
-				switch(handleAlignment)
-				{
-					case HandleAlignment.Plane:
-
-						int facesLength = selection[i].SelectedFaceIndices.Length;
-						if(facesLength < 1) goto case HandleAlignment.Local;	// can't do plane without a plane
-
-						Quaternion inverseLocalRotation = Quaternion.Inverse(selection[i].transform.localRotation);
-						Vector3 nrm = facesLength > 0 ? pb_Math.Normal(vertexOrigins[i]) : Vector3.zero;
-						Quaternion inversePlaneRotation = Quaternion.Inverse( nrm == Vector3.zero ? Quaternion.identity : Quaternion.LookRotation(nrm, Vector3.up) );
-			
-						transformedRotation = inverseLocalRotation * currentHandleRotation * inversePlaneRotation;
-						break;
-
-					case HandleAlignment.Local:
-						transformedRotation = Quaternion.Inverse(selection[i].transform.localRotation) * currentHandleRotation;
-						break;
-
-					default:
-						transformedRotation = currentHandleRotation;
-						break;
-				}
-
 				if(selection.Length > 1)	// use world when selection is > 1 objects
 				{
 					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
@@ -1973,7 +1988,7 @@ public class pb_Editor : EditorWindow
 		 * Edge wireframe and selected faces are drawn in pb_Editor_Graphics, selected edges & vertices 
 		 * are drawn here.
 		 */
-//		pb_Editor_Graphics.Draw();
+		// pb_Editor_Graphics.Draw();
 
 		switch(selectionMode)
 		{
