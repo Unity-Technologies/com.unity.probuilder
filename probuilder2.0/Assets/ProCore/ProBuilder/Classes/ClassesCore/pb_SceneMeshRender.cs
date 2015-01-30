@@ -15,7 +15,11 @@ public class pb_SceneMeshRender : MonoBehaviour
 		get
 		{
 			if(_material == null)
-				_material = GetComponent<MeshRenderer>().sharedMaterial;
+			{
+				MeshRenderer mr = GetComponent<MeshRenderer>();
+				if(mr != null) _material = mr.sharedMaterial;
+			}
+
 			return _material;
 		}
 	}
@@ -26,9 +30,21 @@ public class pb_SceneMeshRender : MonoBehaviour
 		get
 		{
 			if(_mesh == null)
-				_mesh = GetComponent<MeshFilter>().sharedMesh;
+			{
+				MeshFilter mf = GetComponent<MeshFilter>();
+				_mesh = mf.sharedMesh;
+			}
+
 			return _mesh;
 		}
+	}
+
+	void SelfDestruct()
+	{
+		if(_mesh) DestroyImmediate(_mesh);
+		if(_material) DestroyImmediate(_material);
+
+		DestroyImmediate(gameObject);
 	}
 
 	void OnRenderObject()
@@ -39,7 +55,16 @@ public class pb_SceneMeshRender : MonoBehaviour
 		if( (Camera.current.gameObject.hideFlags & SceneCameraHideFlags) != SceneCameraHideFlags )
 			return;
 
+		Mesh msh = mesh;
+		Material mat = material;
+
+		if(mat == null || msh == null)
+		{
+			SelfDestruct();
+			return;
+		}
+
 		material.SetPass(0);
-		Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
+		Graphics.DrawMeshNow(msh, Vector3.zero, Quaternion.identity, 0);
 	}
 }

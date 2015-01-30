@@ -2578,7 +2578,6 @@ public class pb_Editor : EditorWindow
 	public void UpdateSelection(bool forceUpdate)
 	{	
 		#if PB_DEBUG
-		Debug.Log("UpdateSelection() ForceUpdate: " + forceUpdate);
 		profiler.BeginSample("UpdateSelection");
 		#endif
 		
@@ -2805,7 +2804,6 @@ public class pb_Editor : EditorWindow
 	private void Internal_UpdateSelectionFast()
 	{
 		#if PB_DEBUG
-		Debug.Log("Internal_UpdateSelectionFast");
 		profiler.BeginSample("Internal_UpdateSelectionFast");
 		#endif
 
