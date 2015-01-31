@@ -17,7 +17,8 @@ using Parabox.Debug;
 public class pb_Editor_Graphics
 {
 	const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";// "Hidden/ProBuilder/UnlitColor";
-	const string EDGE_SHADER = "Hidden/ProBuilder/UnlitEdgeOffset";
+	const string EDGE_SHADER = "Hidden/ProBuilder/FaceHighlight";
+	const string VERT_SHADER = "Hidden/ProBuilder/pb_VertexShader";
 
 	// "Hidden/ProBuilder/VertexBillboard"
 	const string PREVIEW_OBJECT_NAME = "ProBuilderSelectionMeshObject";
