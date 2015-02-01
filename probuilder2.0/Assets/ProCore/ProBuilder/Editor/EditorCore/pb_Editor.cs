@@ -1138,7 +1138,7 @@ public class pb_Editor : EditorWindow
 	// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
 	private pb_Object RaycastCheck(Vector3 mousePosition)
 	{
-		pb_Object pb;
+		pb_Object pb = null;
 
 		/**
 		 * Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
@@ -1163,7 +1163,7 @@ public class pb_Editor : EditorWindow
 
 		if(nearestGameObject)
 		{
-			if(pb)
+			if(pb != null)
 			{
 				if(pb.isSelectable)
 					AddToSelection(nearestGameObject);
