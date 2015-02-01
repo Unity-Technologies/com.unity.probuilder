@@ -1,3 +1,12 @@
+-- ProBuilder 2.4.0b10 (r3104) -
+
+# Bug Fixes
+	- Fix bug where setting entity type would not immediately refresh the mesh.
+	- Fix minor edge selection bug that would break edge highlighting when not directly hovering a mesh.
+	- Fix regression that broke handle rotation while in planar mode.
+	- Improve appearance of Grow and Extrude foldouts in editor window.
+	- Fix bug where clicking on a vertex could sometimes select the object behind it.
+
 -- ProBuilder 2.4.0b9 (r3089) -
 
 # Features
