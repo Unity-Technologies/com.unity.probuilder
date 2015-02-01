@@ -1996,7 +1996,7 @@ public class pb_Editor : EditorWindow
 			{		
 				if(selection.Length > 0)
 				{
-					pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_all, selected_verticesInWorldSpace_all, defaultVertexColor);
+					// pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_all, selected_verticesInWorldSpace_all, defaultVertexColor);
 					pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_sel, selected_verticesInWorldSpace_all, selectedVertexColor);
 				}
 			}

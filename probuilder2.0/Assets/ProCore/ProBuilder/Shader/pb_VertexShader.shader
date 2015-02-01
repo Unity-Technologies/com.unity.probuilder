@@ -3,19 +3,31 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		_Scale("Scale", float) = .02
+		_Scale("Scale", float) = 5
 	}
 
 	SubShader
 	{
 		Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Overlay" }
+
+		// Want to depth test here, using the single point as reference instead of 
+		// the four corners of the sprite
+		// Pass
+		// {
+		// 	Lighting Off
+		// 	ZWrite On
+		//  ZTest LEqual
+		// }
+
 		Lighting Off
-		ZTest Always //LEqual
 		ZWrite On
+		ZTest LEqual
+		Blend SrcAlpha OneMinusSrcAlpha
+		AlphaTest Greater .25
 
 		Pass 
 		{
-			AlphaTest Greater .25
+
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -32,7 +44,6 @@
 				float4 color : COLOR;
 				float2 texcoord : TEXCOORD0;
 				float2 texcoord1 : TEXCOORD1;
-				float4 tangent : TANGENT;
 			};
 
 			struct v2f
@@ -48,19 +59,21 @@
 
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
-				float dist = distance(_WorldSpaceCameraPos, mul(_Object2World, v.vertex));
+				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
 
-				// prevent oblong shapes
-				float2 screenScale = float2( max(_ScreenParams.y/_ScreenParams.x, 1), max(_ScreenParams.x/_ScreenParams.y, 1) );
+				float4 clip = o.pos;
 
-				// dist from camera - 0, 50
-				// appropriate values - .04, .08
-				float scale = v.tangent.x;
+				clip.xy /= clip.w;
+				clip.xy = clip.xy * .5 + .5;
+				clip.xy *= _ScreenParams.xy;
 
-				if(UNITY_MATRIX_P[3].w < 1)	// If perspective
-					o.pos.xy += v.texcoord1.xy * scale * screenScale;
-				else
-					o.pos.xy += v.texcoord1.xy * (clamp(.08 - (dist/50) * .04, .04, .08)) * _ScreenParams.zw * screenScale;
+				clip.xy += v.texcoord1.xy * _Scale;
+
+				clip.xy /= _ScreenParams.xy;
+				clip.xy = (clip.xy - .5) / .5;
+				clip.xy *= clip.w;
+
+				o.pos = clip;
 
 				o.uv = v.texcoord.xy;
 				o.color = v.color;

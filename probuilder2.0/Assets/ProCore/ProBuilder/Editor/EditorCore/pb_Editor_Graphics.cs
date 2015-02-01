@@ -59,7 +59,11 @@ public class pb_Editor_Graphics
 	{
 		DestroyTempObjects();
 
+		#if PB_DEBUG
+		HideFlags hide = (HideFlags) 0; // (1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
+		#else
 		HideFlags hide = (HideFlags)(1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
+		#endif
 
 		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
@@ -93,17 +97,20 @@ public class pb_Editor_Graphics
 
 		// Always generate the wireframe
 		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
+		wireframeMaterial.name = "WIREFRAME_MATERIAL";
 
 		switch(sm)
 		{
-			// case SelectMode.Vertex:
-			// 	vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-			// 	selectionMaterial = new Material(Shader.Find( GetRenderingPath() == RenderingPath.DeferredLighting ? OVERLAY_SHADER : HIGHLIGHT_SHADER ));
-			// 	selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
-			// 	break;
+			case SelectMode.Vertex:
+				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
+				selectionMaterial = new Material(Shader.Find(VERT_SHADER));
+				selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
+				selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
+				break;
 
 			default:
 				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
+				selectionMaterial.name = "FACE_SELECTION_MATERIAL";
 				break;
 		}
 
@@ -222,93 +229,86 @@ public class pb_Editor_Graphics
 		{
 			case SelectMode.Vertex:
 
-				// int vcount = 0;
-				// foreach(pb_Object pb in _selection)
-				// {
-				// 	Vector3[] v = new Vector3[pb.uniqueIndices.Length];
-				// 	for(int i = 0; i < v.Length; i++)	
-				// 		v[i] = pb.vertices[pb.uniqueIndices[i]];
+				int vcount = 0;
+				foreach(pb_Object pb in _selection)
+				{
+					Vector3[] v = new Vector3[pb.sharedIndices.Length];
 
-				// 	int[] sel = pb.SelectedTriangles;
+					for(int i = 0; i < v.Length; i++)	
+						v[i] = pb.vertices[pb.sharedIndices[i][0]];
 
-				// 	Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
-				// 	Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
-				// 	Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
-				// 	Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
-				// 	Vector4[] 	t_tan 				= new Vector4[v.Length*4];
-				// 	Color[]   	t_col 				= new Color[v.Length*4];
-				// 	int[] 		t_tris 				= new int[v.Length*6];
+					int[] sel = pb.SelectedTriangles;
 
-				// 	int n = 0;
-				// 	int t = 0;
+					Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
+					Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
+					Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
+					Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
+					Color[]   	t_col 				= new Color[v.Length*4];
+					int[] 		t_tris 				= new int[v.Length*6];
 
-				// 	Vector3 up = Vector3.up;// * .1f;
-				// 	Vector3 right = Vector3.right;// * .1f;
+					int n = 0;
+					int t = 0;
 
-				// 	for(int i = 0; i < v.Length; i++)
-				// 	{
-				// 		Vector3 vpoint = pb.transform.TransformPoint(v[i]);
-				// 		float handleSize = HandleUtility.GetHandleSize(vpoint) * .04f;
+					Vector3 up = Vector3.up;// * .1f;
+					Vector3 right = Vector3.right;// * .1f;
+
+					for(int i = 0; i < v.Length; i++)
+					{
+						Vector3 vpoint = pb.transform.TransformPoint(v[i]);
 						
-				// 		t_billboards[t+0] = vpoint;//-up-right;
-				// 		t_billboards[t+1] = vpoint;//-up+right;
-				// 		t_billboards[t+2] = vpoint;//+up-right;
-				// 		t_billboards[t+3] = vpoint;//+up+right;
+						t_billboards[t+0] = vpoint;//-up-right;
+						t_billboards[t+1] = vpoint;//-up+right;
+						t_billboards[t+2] = vpoint;//+up-right;
+						t_billboards[t+3] = vpoint;//+up+right;
 
-				// 		t_uvs[t+0] = Vector3.zero;
-				// 		t_uvs[t+1] = Vector3.right;
-				// 		t_uvs[t+2] = Vector3.up;
-				// 		t_uvs[t+3] = Vector3.one;
+						t_uvs[t+0] = Vector3.zero;
+						t_uvs[t+1] = Vector3.right;
+						t_uvs[t+2] = Vector3.up;
+						t_uvs[t+3] = Vector3.one;
 
-				// 		t_tan[t+0] = new Vector4(handleSize, 0f, 0f, 0f);
-				// 		t_tan[t+1] = new Vector4(handleSize, 0f, 0f, 0f);
-				// 		t_tan[t+2] = new Vector4(handleSize, 0f, 0f, 0f);
-				// 		t_tan[t+3] = new Vector4(handleSize, 0f, 0f, 0f);
+						t_uv2[t+0] = -up-right;
+						t_uv2[t+1] = -up+right;
+						t_uv2[t+2] =  up-right;
+						t_uv2[t+3] =  up+right;
 	
-				// 		t_uv2[t+0] = -up-right;
-				// 		t_uv2[t+1] = -up+right;
-				// 		t_uv2[t+2] =  up-right;
-				// 		t_uv2[t+3] =  up+right;
-	
-				// 		t_nrm[t+0] = Vector3.forward;
-				// 		t_nrm[t+1] = Vector3.forward;
-				// 		t_nrm[t+2] = Vector3.forward;
-				// 		t_nrm[t+3] = Vector3.forward;
+						t_nrm[t+0] = Vector3.forward;
+						t_nrm[t+1] = Vector3.forward;
+						t_nrm[t+2] = Vector3.forward;
+						t_nrm[t+3] = Vector3.forward;
 
-				// 		t_tris[n+0] = t+2+vcount;
-				// 		t_tris[n+1] = t+1+vcount;
-				// 		t_tris[n+2] = t+0+vcount;
-				// 		t_tris[n+3] = t+2+vcount;
-				// 		t_tris[n+4] = t+3+vcount;
-				// 		t_tris[n+5] = t+1+vcount;
+						t_tris[n+0] = t+2+vcount;
+						t_tris[n+1] = t+1+vcount;
+						t_tris[n+2] = t+0+vcount;
+						t_tris[n+3] = t+2+vcount;
+						t_tris[n+4] = t+3+vcount;
+						t_tris[n+5] = t+1+vcount;
 
-				// 		if(System.Array.IndexOf(sel, pb.uniqueIndices[i]) > -1)
-				// 		{
-				// 			t_col[t+0] = Color.green;
-				// 			t_col[t+1] = Color.green;
-				// 			t_col[t+2] = Color.green;
-				// 			t_col[t+3] = Color.green;
-				// 		}
-				// 		else
-				// 		{
-				// 			t_col[t+0] = faceSelectionColor;
-				// 			t_col[t+1] = faceSelectionColor;
-				// 			t_col[t+2] = faceSelectionColor;
-				// 			t_col[t+3] = faceSelectionColor;
-				// 		}
+						// if(System.Array.IndexOf(sel, pb.uniqueIndices[i]) > -1)
+						// {
+						// 	t_col[t+0] = Color.green;
+						// 	t_col[t+1] = Color.green;
+						// 	t_col[t+2] = Color.green;
+						// 	t_col[t+3] = Color.green;
+						// }
+						// else
+						{
+							t_col[t+0] = faceSelectionColor;
+							t_col[t+1] = faceSelectionColor;
+							t_col[t+2] = faceSelectionColor;
+							t_col[t+3] = faceSelectionColor;
+						}
 
-				// 		t+=4;
-				// 		n+=6;				
-				// 	}
+						t+=4;
+						n+=6;				
+					}
 
-				// 	verts.AddRange(t_billboards);
-				// 	vcount += t_billboards.Length;
-				// 	uvs.AddRange(t_uvs);
-				// 	uv2s.AddRange(t_uv2);
-				// 	tan.AddRange(t_tan);
-				// 	col.AddRange(t_col);
-				// 	tris.AddRange(t_tris);
-				// }
+					verts.AddRange(t_billboards);
+					vcount += t_billboards.Length;
+					uvs.AddRange(t_uvs);
+					uv2s.AddRange(t_uv2);
+					col.AddRange(t_col);
+					tris.AddRange(t_tris);
+				}
 
 				break;
 
