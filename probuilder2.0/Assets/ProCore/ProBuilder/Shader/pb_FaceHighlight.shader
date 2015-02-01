@@ -10,11 +10,9 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
 		Lighting Off
 		ZTest LEqual
-		ZWrite Off
-		Offset -1, -1
+		ZWrite On
 		Cull Back
 		Blend SrcAlpha OneMinusSrcAlpha
-//		Blend DstColor Zero
 
 		Pass
 		{

@@ -3,7 +3,8 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		_Scale("Scale", float) = 5
+		_Scale("Scale", float) = 3
+		_Color ("Color Tint", Color) = (1,1,1,1)
 	}
 
 	SubShader
@@ -12,22 +13,21 @@
 
 		// Want to depth test here, using the single point as reference instead of 
 		// the four corners of the sprite
-		// Pass
-		// {
-		// 	Lighting Off
-		// 	ZWrite On
-		//  ZTest LEqual
-		// }
+		Pass
+		{
+			Lighting Off
+			ZWrite On
+			Colormask 0
+		}
 
 		Lighting Off
-		ZWrite On
 		ZTest LEqual
+		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha
-		AlphaTest Greater .25
 
 		Pass 
 		{
-
+			AlphaTest Greater .25
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -57,7 +57,9 @@
 			{
 				v2f o;
 
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
+				o.pos *= .98;
+				o.pos = mul(UNITY_MATRIX_P, o.pos);
 
 				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
 
@@ -84,7 +86,8 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return tex2D(_MainTex, i.uv) * i.color;
+				return _Color;
+//				return tex2D(_MainTex, i.uv) * i.color;
 			}
 
 			ENDCG
