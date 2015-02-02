@@ -35,6 +35,7 @@ namespace ProBuilder2.Actions
 			{
 				string meshPath = AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".asset");
 				AssetDatabase.CreateAsset(pb.msh, meshPath);
+				pb.MakeUnique();
 
 				meshAsset = (Mesh) AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
 
