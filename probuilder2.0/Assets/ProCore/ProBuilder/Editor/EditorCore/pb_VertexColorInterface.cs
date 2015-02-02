@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 public class pb_VertexColorInterface : EditorWindow
 {
 #region CONSTANTS
 
-	public static Color[] COLOR_ARRAY = new Color[10]
+	public static Color[] DEFAULT_COLORS = new Color[10]
 	{
 		Color.white,
 		Color.red,
@@ -25,54 +26,102 @@ public class pb_VertexColorInterface : EditorWindow
 #endregion
 
 #region INITIALIZATION
+	
+	/**
+	 * Initialize this window.
+	 */
+	public static void Init()
+	{
+		EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
+	}
+
 
 	void OnEnable()
 	{
 		USER_COLORS = new Color[10];
-		for(int i = 0; i < COLOR_ARRAY.Length; i++)
+		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
 			if( !pbUtil.ColorWithString( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), out USER_COLORS[i] ) )
-				USER_COLORS[i] = COLOR_ARRAY[i];
+				USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}
 #endregion
 
 #region ONGUI
 
-	// Color col = Color.white;
-	public void OnGUI()
+	int pad = 4;
+	Vector2 scroll = Vector2.zero;
+	int ButtonWidth = 58;
+	private void OnGUI()
 	{
-		this.minSize = new Vector2(404, 68 + 24);
-		this.maxSize = new Vector2(404, 68 + 24);
+		// this.minSize = new Vector2(404, 68 + 24);
+		// this.maxSize = new Vector2(404, 68 + 24);
+		int width = Screen.width;
 
+		int rowSize = width / (ButtonWidth+5);
+		int curRow = 0;
 
+		scroll = EditorGUILayout.BeginScrollView(scroll);
+
+		GUILayout.BeginVertical();
 		GUILayout.BeginHorizontal();
 
 		for(int i = 0; i < USER_COLORS.Length; i++)
-		{
-			GUI.backgroundColor = USER_COLORS[i];
+		{	
+			if( (i - (curRow * rowSize)) >= rowSize)
+			{
+				curRow++;
+				GUILayout.FlexibleSpace();
+
+				GUILayout.EndHorizontal();
+
+				GUILayout.Space(6);
+
+				GUILayout.BeginHorizontal();
+			}
 
 			GUILayout.BeginVertical();
 
-			if(GUILayout.Button("", 
-				GUILayout.MinWidth(36), GUILayout.MaxWidth(36),
-				GUILayout.MinHeight(36), GUILayout.MaxHeight(36)))
+			GUI.color = Color.white;
+
+			if(GUILayout.Button(EditorGUIUtility.whiteTexture, GUILayout.Width(ButtonWidth), GUILayout.Height(42)))
 				SetFaceColors(USER_COLORS[i]);
 
+			GUI.color = USER_COLORS[i];
+			Rect layoutRect = GUILayoutUtility.GetLastRect();
+			layoutRect.x += pad;
+			layoutRect.y += pad;
+			layoutRect.width -= pad*2;
+			layoutRect.height -= pad*2;
+			EditorGUI.DrawPreviewTexture(layoutRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill, 0);
+
 			GUI.changed = false;
-			USER_COLORS[i] = EditorGUILayout.ColorField(USER_COLORS[i], GUILayout.MinWidth(36), GUILayout.MaxWidth(36));
+			USER_COLORS[i] = EditorGUILayout.ColorField(USER_COLORS[i], GUILayout.Width(ButtonWidth));
 			if(GUI.changed) SetColorPreference(i, USER_COLORS[i]);
 
 			GUILayout.EndVertical();
 
+			if(i == USER_COLORS.Length-1)
+				GUILayout.FlexibleSpace();
 		}
 
-		GUI.backgroundColor = Color.white;
+		GUI.color = Color.white;
 
 		GUILayout.EndHorizontal();
+		GUILayout.EndVertical();
 
-		if( GUI.Button(new Rect(Screen.width-44, Screen.height-24, 40, 20), "Reset") )
+		EditorGUILayout.EndScrollView();
+
+		// Vertical spacing
+		GUILayout.FlexibleSpace();
+
+		GUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+		GUILayout.FlexibleSpace();
+		if( GUILayout.Button("Reset", EditorStyles.toolbarButton) )
 			ResetColors();
+
+		GUILayout.EndHorizontal();
 	}
 #endregion
 
@@ -90,11 +139,11 @@ public class pb_VertexColorInterface : EditorWindow
 	private void ResetColors()
 	{
 		USER_COLORS = new Color[10];
-		for(int i = 0; i < COLOR_ARRAY.Length; i++)
+		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
 			if(EditorPrefs.HasKey(pb_Constant.pbVertexColorPrefs+i))
 				EditorPrefs.DeleteKey(pb_Constant.pbVertexColorPrefs+i);
-			USER_COLORS[i] = COLOR_ARRAY[i];
+			USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}
 #endregion
@@ -106,7 +155,7 @@ public class pb_VertexColorInterface : EditorWindow
 		if(USER_COLORS != null)
 			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.USER_COLORS[userPrefColorIndex]);
 		else
-			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.COLOR_ARRAY[userPrefColorIndex]);
+			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.DEFAULT_COLORS[userPrefColorIndex]);
 	}
 
 	public static void SetFaceColors(Color col)
@@ -115,17 +164,54 @@ public class pb_VertexColorInterface : EditorWindow
 
 		pbUndo.RecordObjects(selection, "Apply Vertex Colors");
 
+		pb_Editor editor = pb_Editor.instance;
+
+		if(editor && editor.editLevel == EditLevel.Geometry)
+		{
+			switch(editor.selectionMode)
+			{
+				case SelectMode.Face:
+				case SelectMode.Vertex:
+					foreach(pb_Object pb in selection)
+					{
+						Color[] colors = pb.colors;
+
+						foreach(int i in pb.SelectedTriangles)
+							colors[i] = col;					
+
+						pb.SetColors(colors);
+					}
+					break;
+				case SelectMode.Edge:
+					foreach(pb_Object pb in selection)
+					{
+						Color[] colors = pb.colors;
+
+						foreach(int i in pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles))
+							colors[i] = col;					
+
+						pb.SetColors(colors);
+					}
+					break;
+			}
+		}
+		else
+		{
+			foreach(pb_Object pb in selection)
+			{
+				foreach(pb_Face face in pb.faces)
+					pb.SetFaceColor(face, col);	
+			}
+		}
+
 		foreach(pb_Object pb in selection)
 		{
-			foreach(pb_Face face in pb.SelectedFaces)
-				pb.SetFaceColor(face, col);
-	
 			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
 
-		pb_Editor_Utility.ShowNotification("Set Face Color\n" + pb_ColorUtil.GetColorName(col));
+		pb_Editor_Utility.ShowNotification("Set Vertex Colors\n" + pb_ColorUtil.GetColorName(col));
 	}
 #endregion
 }

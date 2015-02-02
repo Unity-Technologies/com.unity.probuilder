@@ -40,8 +40,8 @@ public class pb_MenuItems : EditorWindow
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Color Palette", false, pb_Constant.MENU_WINDOW + 3)]
 	public static void InitVertexColorEditor()
 	{
-		bool openInDockableWindow = !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
-		EditorWindow.GetWindow<pb_VertexColorInterface>(openInDockableWindow, "Vertex Colors", true);
+		// bool openInDockableWindow = !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
+		EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class pb_MenuItems : EditorWindow
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 0 &#0", true, pb_Constant.MENU_VERTEX_COLORS)]
 	public static bool VerifyApplyVertexColor()
 	{
-		return pb_Editor.instance != null && pb_Editor.instance.selectedFaceCount > 0;
+		return pb_Editor.instance != null && pb_Editor.instance.selectedVertexCount > 0;
 	}
 
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", false, pb_Constant.MENU_VERTEX_COLORS)]

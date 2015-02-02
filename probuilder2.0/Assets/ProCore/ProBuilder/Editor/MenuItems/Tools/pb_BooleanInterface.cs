@@ -14,7 +14,7 @@ public class pb_BooleanInterface : EditorWindow
 		Subtraction
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Tools/Boolean (CSG) Tool")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, 10)]
 	public static void MenuOpenBooleanTool()
 	{
 		EditorWindow.GetWindow<pb_BooleanInterface>(true, "Boolean (Experimental)", true).Show();

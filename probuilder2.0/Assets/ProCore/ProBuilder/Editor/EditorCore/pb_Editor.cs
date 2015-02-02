@@ -345,9 +345,7 @@ public class pb_Editor : EditorWindow
 			#endif
 
 			if(GUILayout.Button(new GUIContent("Vertex Colors", "Provides an interface to set vertex colors.  Note that your shader must support vertex colors in order for changes to be visible."), EditorStyles.miniButton))	
-				pb_VertexColor_Editor.Init();
-
-			// EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
+				pb_VertexColorInterface.Init();
 
 			#if !PROTOTYPE
 			if(GUILayout.Button("Smoothing", EditorStyles.miniButton))

@@ -14,7 +14,7 @@ public class pb_VertexColor_Editor : EditorWindow
 #region Initialization
 
 	/**
-	 * Public call to init.
+	 * Public call to inititalize window.
 	 */
 	public static void Init()
 	{
@@ -40,6 +40,14 @@ public class pb_VertexColor_Editor : EditorWindow
 			editor.SetEditLevel(EditLevel.Plugin);
 
 		colorName = pb_ColorUtil.GetColorName(color);
+
+		// load the users custom palette
+		UserColors = new Color[10];
+		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
+		{
+			if( !pbUtil.ColorWithString( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), out UserColors[i] ) )
+				UserColors[i] = DEFAULT_COLORS[i];
+		}
 	}
 
 	void OnDisable()
@@ -61,6 +69,22 @@ public class pb_VertexColor_Editor : EditorWindow
 #endregion
 
 #region Members
+
+	private readonly Color[] DEFAULT_COLORS = new Color[10]
+	{
+		Color.white,
+		Color.red,
+		Color.blue,
+		Color.yellow,
+		Color.green,
+		Color.cyan,
+		Color.black,
+		Color.magenta,
+		Color.gray,
+		new Color(.4f, 0f, 1f, 1f)
+	};
+	private Color[] UserColors;
+
 
 	public pb_Editor editor { get { return pb_Editor.instance; } }		///< Convenience getter for pb_Editor.instance
 
@@ -133,13 +157,15 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	void OnGUI()
 	{		
-		scroll = EditorGUILayout.BeginScrollView(scroll);
-
 		GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			if(mode == VertexPainterMode.Color)	GUI.backgroundColor = Color.gray;
+
 			if(GUILayout.Button("Colors", EditorStyles.toolbarButton))
+			{
+				colorName = pb_ColorUtil.GetColorName(color);
 				mode = VertexPainterMode.Color;
+			}
 
 			GUI.backgroundColor = mode == VertexPainterMode.Texture ? Color.gray : Color.white;
 			if(GUILayout.Button("Textures", EditorStyles.toolbarButton))
@@ -164,6 +190,9 @@ public class pb_VertexColor_Editor : EditorWindow
 
 			GUI.backgroundColor = Color.white;
 		GUILayout.EndHorizontal();
+
+		scroll = EditorGUILayout.BeginScrollView(scroll);
+
 
 		lockhandleToCenter = EditorWindow.focusedWindow == this;
 
@@ -193,14 +222,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		if(mode == VertexPainterMode.Color)
 		{
-	 		EditorGUI.BeginChangeCheck();
-			color = EditorGUILayout.ColorField("Color", color);
-			if(EditorGUI.EndChangeCheck())
-			{
-				colorName = pb_ColorUtil.GetColorName(color);
-			}
-
-			GUILayout.Label(colorName, EditorStyles.boldLabel);
+			ColorGUI();
 		}
 		else
 		{
@@ -261,6 +283,86 @@ public class pb_VertexColor_Editor : EditorWindow
 					Debug.LogWarning("Couldn't find default ProBuilder shader: \"Diffuse Texture Blend\"");
 			}
 		}
+
+		EditorGUILayout.EndScrollView();
+	}
+#endregion
+
+#region COLOR GUI
+
+	// Color[] colors = new Color[12];
+	Vector2 colorScroll=  Vector2.zero;
+	int pad = 4;
+	int ButtonWidth = 50;
+	void ColorGUI()
+	{	
+		Rect r = GUILayoutUtility.GetLastRect();
+		r.x = 6;
+		r.y += r.height;
+		r.width = Screen.width - 12;
+		r.height = 26;
+
+		pb_GUI_Utility.DrawSolidColor(r, color);
+
+		GUILayout.Label("  Brush Color: " + colorName, EditorStyles.boldLabel);
+
+		GUILayout.Space(2);
+
+		colorScroll = EditorGUILayout.BeginScrollView(colorScroll, GUILayout.MinHeight(82), GUILayout.MaxHeight(Screen.height));
+
+		GUILayout.BeginVertical();
+		GUILayout.BeginHorizontal();
+
+		int curRow = 0, rowSize = Screen.width / (ButtonWidth+5);
+
+		for(int i = 0; i < UserColors.Length; i++)
+		{	
+			if( (i - (curRow * rowSize)) >= rowSize)
+			{
+				curRow++;
+				GUILayout.FlexibleSpace();
+
+				GUILayout.EndHorizontal();
+
+				GUILayout.Space(6);
+
+				GUILayout.BeginHorizontal();
+			}
+
+			GUILayout.BeginVertical();
+
+			GUI.color = Color.white;
+
+			if(GUILayout.Button(EditorGUIUtility.whiteTexture, GUILayout.Width(ButtonWidth), GUILayout.Height(42)))
+			{
+				color = UserColors[i];
+				colorName = pb_ColorUtil.GetColorName(color);
+			}
+
+			GUI.color = UserColors[i];
+			Rect layoutRect = GUILayoutUtility.GetLastRect();
+			layoutRect.x += pad;
+			layoutRect.y += pad;
+			layoutRect.width -= pad*2;
+			layoutRect.height -= pad*2;
+			EditorGUI.DrawPreviewTexture(layoutRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill, 0);
+
+			GUI.changed = false;
+				UserColors[i] = EditorGUILayout.ColorField(UserColors[i], GUILayout.Width(ButtonWidth));
+
+			if(GUI.changed) 
+				EditorPrefs.SetString(pb_Constant.pbVertexColorPrefs+i, UserColors[i].ToString());
+
+			GUILayout.EndVertical();
+
+			if(i == UserColors.Length-1)
+				GUILayout.FlexibleSpace();
+		}
+
+		GUI.color = Color.white;
+
+		GUILayout.EndHorizontal();
+		GUILayout.EndVertical();
 
 		EditorGUILayout.EndScrollView();
 	}
