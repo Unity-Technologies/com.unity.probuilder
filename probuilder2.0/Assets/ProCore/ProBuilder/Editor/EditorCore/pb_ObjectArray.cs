@@ -1,3 +1,7 @@
+/**
+ * This is in the Editor folder because WebGL doesn't like ProceduralMaterial types apparently.
+ */
+
 using UnityEngine;
 using System.Collections;
 
