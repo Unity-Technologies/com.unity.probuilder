@@ -41,6 +41,7 @@ public class pb_Editor_Graphics
 
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
 
+	public static EditLevel 	_editLevel = EditLevel.Geometry;
 	public static SelectMode 	_selectMode = SelectMode.Face;
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
@@ -54,10 +55,10 @@ public class pb_Editor_Graphics
 		edgeSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
 		// vertSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
 
-		SetMaterial(_selectMode);
+		SetMaterial(_editLevel, _selectMode);
 	}
 
-	private static void Init()
+	private static void Init(EditLevel el, SelectMode sm)
 	{
 		DestroyTempObjects();
 
@@ -86,13 +87,16 @@ public class pb_Editor_Graphics
 		LoadColors();
 		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 
-		SetMaterial(_selectMode);
+		_editLevel = el;
+		_selectMode = sm;
+
+		SetMaterial(_editLevel, _selectMode);
 	}
 
 	/**
 	 * If Materials are null, initialize them.
 	 */
-	static void SetMaterial(SelectMode sm)
+	static void SetMaterial(EditLevel el, SelectMode sm)
 	{
 		if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
 		if(wireframeMaterial != null) GameObject.DestroyImmediate(wireframeMaterial);
@@ -100,7 +104,7 @@ public class pb_Editor_Graphics
 		// Always generate the wireframe
 		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
 		wireframeMaterial.name = "WIREFRAME_MATERIAL";
-		wireframeMaterial.SetColor("_Color", sm == SelectMode.Edge ? edgeSelectionColor : wireframeColor);
+		wireframeMaterial.SetColor("_Color", (sm == SelectMode.Edge && el == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 
 		switch(sm)
 		{
@@ -195,12 +199,11 @@ public class pb_Editor_Graphics
 	/**
 	 * Refresh the selection and wireframe mesh with _selection.
 	 */
-	static internal void UpdateSelectionMesh(pb_Object[] _selection, SelectMode selectionMode)
+	static internal void UpdateSelectionMesh(pb_Object[] _selection, EditLevel editLevel, SelectMode selectionMode)
 	{
-		// Debug.Log("UpdateSelectionMesh");
 		// Always clear the mesh whenever updating, even if selection is null.
 		if(selectionObject == null || wireframeObject == null || selectionMesh == null || wireframeMesh == null)
-			Init();
+			Init(editLevel, selectionMode);
 
 		selectionMesh.Clear();
 		wireframeMesh.Clear();
@@ -210,9 +213,10 @@ public class pb_Editor_Graphics
 			return;
 		}
 
-		if(_selectMode != selectionMode)
+		if(_selectMode != selectionMode || _editLevel != editLevel)
 		{	
-			SetMaterial(selectionMode);
+			SetMaterial(editLevel, selectionMode);
+			_editLevel = editLevel;
 			_selectMode = selectionMode;
 		}
 

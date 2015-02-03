@@ -2457,22 +2457,7 @@ public class pb_Editor : EditorWindow
 	{
 		selectionMode = mode;
 
-		#if FORCE_MESH_GRAPHICS
-			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-		#else
-		if(selectionMode == SelectMode.Face)
-		{
-			pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
-			Internal_UpdateSelectionFast();
-		}
-		else
-		{
-			pb_Editor_Graphics.OnDisable();
-			UpdateSelection(false);
-		}
-		#endif
-
-		SceneView.RepaintAll();
+		Internal_UpdateSelectionFast();
 
 		EditorPrefs.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
 	}
@@ -2491,6 +2476,7 @@ public class pb_Editor : EditorWindow
 	public void SetEditLevel(EditLevel el)
 	{	
 		previousEditLevel = editLevel;
+		editLevel = el;
 
 		switch(el)
 		{
@@ -2520,7 +2506,6 @@ public class pb_Editor : EditorWindow
 			#endif
 		}
 
-		editLevel = el;
 
 		#if !PROTOTYPE
 		if(previousEditLevel == EditLevel.Texture && el != EditLevel.Texture)
@@ -2874,7 +2859,7 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		pb_Editor_Graphics.UpdateSelectionMesh(selection, selectionMode);
+		pb_Editor_Graphics.UpdateSelectionMesh(selection, editLevel, selectionMode);
 	}
 
 	public void AddToSelection(GameObject t)
