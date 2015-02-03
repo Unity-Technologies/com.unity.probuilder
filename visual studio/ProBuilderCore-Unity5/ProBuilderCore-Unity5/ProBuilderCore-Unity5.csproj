@@ -70,9 +70,6 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Object.cs">
       <Link>pb_Object.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ObjectArray.cs">
-      <Link>pb_ObjectArray.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ObjectPool.cs">
       <Link>pb_ObjectPool.cs</Link>
     </Compile>

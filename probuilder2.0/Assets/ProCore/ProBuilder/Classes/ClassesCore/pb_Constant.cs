@@ -109,6 +109,7 @@ public static class pb_Constant
 	public const int MENU_TOOLS = 630;
 	public const int MENU_VERTEX_COLORS = 740;
 	public const int MENU_MATERIAL_COLORS = 750;
+	public const int MENU_EXPERIMENTAL = 850;
 
 	// Second Tier
 	public const int MENU_GEOMETRY_FACE = 0;
