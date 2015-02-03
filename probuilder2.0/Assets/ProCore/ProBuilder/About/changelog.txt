@@ -1,108 +1,66 @@
--- ProBuilder 2.4.0b10 (r3104) -
-
-# Bug Fixes
-	- Fix bug where setting entity type would not immediately refresh the mesh.
-	- Fix minor edge selection bug that would break edge highlighting when not directly hovering a mesh.
-	- Fix regression that broke handle rotation while in planar mode.
-	- Improve appearance of Grow and Extrude foldouts in editor window.
-	- Fix bug where clicking on a vertex could sometimes select the object behind it.
-
--- ProBuilder 2.4.0b9 (r3089) -
+-- ProBuilder 2.4.0f0 (r3115) -
 
 # Features
+	- Unity 5 support.
 	- New wireframe shader overrides Unity default when ProBuilder Editor is open.
+	- New 'Merge Faces' geometry action combines selected faces to a single face.
+	- Add `Missing Script Reference` repair item.
+	- Show color name in vertex tools instead of RGBA info.
+	- When creating an mesh Asset, also create a prefab with the new mesh and materials already wired up.
 	- Cull hidden edges when in Edge mode.
 	- Fix spotty face selection highlight rendering when using Deferred Rendering.
 	- Add preference to disable automatic UV2 generation while modeling (improves editor performance).
-
-# Bug Fixes
-	- When entering Texture Blending mode in Vertex Painter, set the color to a solid variant of one of the available textures.
-	- Fix bug where projected UVs in manual mode could potentially be placed very far from the current handle.
-	- Fix lag when drag selecting edges on objects with large vertex counts.
-	- Fix Null Reference errors in Vertex Painter in Unity 5.
-
--- ProBuilder 2.4.0b7 (r3072) -
-
-# Features
-	- New texture painting mode in Vertex Painter interface (works with any shader that uses vertex colors to apply blend).
-	- New texture blending shader (works with Vertex Painter).
-	- When creating an Mesh Asset, also create a prefab with the new mesh and materials already wired up.
-
-# Bug Fixes
-	- When serializing pb_Objects, save color and material information (materials are now loaded by name).
-	- Fix bug where the texture handle tool would sometimes (most times) move UVs in the wrong direction.
-
--- ProBuilder 2.4.0b6 (r3061) -
-
-# Features
 	- When selecting a texture-grouped face in UV editor, show an indicator of all faces in group.
 	- Improve performance when modifying geometry & UVs in Unity 5.
 	- New dark background in UV editor for Unity light skin users.
 	- Improve performance when selecting objects with large vertex counts.
 
-# Bug Fixes
-	- Allow `V` key usage when not in Element mode.
-	- Fix regression where instantiated objects would not respect ProGrids alignment.
-	- Fix null ref errors when welding or collapsing vertices.
-	- When double-clicking a texture grouped face in UV editor, select the entire group.
-	- Fix regression that caused performance spikes when deleting or instantiating objects.
-	- When detaching faces to a new object, copy all of that object's properties.
-	- Add Undo support to Shape creation tool.
-	- Fix bug where running Flip Normals from the Menu would not immediately update the mesh graphics.
-
--- ProBuilder 2.4.0b5 (r3049) -
-
-# Features
-	- Show color name in vertex tools instead of RGBA info.
-
-# Bug Fixes
-	- Improve the performance of Planar Mapping manual Uvs.
-	- Create Material data asset path if it doesn't exist.
+# Bug Fixes	
+	- Fix crash when a face material is null (defaults to Unity Default-Diffuse).
+	- Fix incorrect results when extruding multiple faces sharing a single center vertex (usually seen on the top of a cylinder).
+	- Save vertex colors when ProBuilder-izing a mesh.
+	- Fix occasional null ref when continuing UVs.
+	- Support Undo in UV Editor Auto panel.
+	- Support Undo for `Push to Grid` events from ProGrids.
+	- Fix occasional `Index out of range` errors when subdividing, triangulating, and setting pivot.
+	- Fix crash when running `Fix Missing Script References` in Unity 5.0.0b18 (big thanks to Michael N!)
+	- Improve the performance of Planar Mapping manual UVs.
+	- Create Material data asset path if it doesn't exist (fixes errors when saving Material preferences).
 	- Fix bug where dragging UVs in Unity 5 would sometimes corrupt the mesh.
 	- Disable Continuous Baking when dragging elements or making continuous changes to the mesh, fixing corruption issues in Unity 5.
 	- Fix occasional erroneous error message when subdividing faces.
 	- Fix null ref error when Auto UV panel is open with nothing selected.
-
--- ProBuilder 2.4.0b4 (r3042) -
-
-# Bug Fixes
-	- Fix null ref when continuing UVs.
-	- Support Undo in UV Editor Auto panel.
-	- Support Undo for Push to Grid events from ProGrids.
-	- Refresh all objects in scene after running `Fix Missing Script References`.
-	- Fix `Index out of range` errors when subdividing, triangulating, and setting pivot.
-
--- ProBuilder 2.4.0b3 (r3028) -
-
-# Bug Fixes
-	- Fix crash when running `Fix Missing Script References` in Unity 5.0.0b18 (big thanks to Michael N!)
-
-
--- ProBuilder 2.4.0b2 (r3017) -
-
-# Features
-	- Add Missing Script Reference repair item.
-
-# Bug Fixes
-	- Fix regression in 3010 where editing vertices and extruding could throw a null ref error.
-
--- ProBuilder 2.3.4b0 (r3010) -
-
-# Features
-	- Unity 5 support.
-	- New 'Merge Faces' geometry action combines selected faces to a single face.
-
-# Bug Fixes
-	- Fix crash when a face material is null (defaults to Unity Default-Diffuse).
-	- Fix incorrect results when extruding multiple faces sharing a single center vertex (usually seen on the top of a cylinder).
-	- Save vertex colors when ProBuilder-izing a mesh.
+	- Allow `V` key usage when not in Element mode.
+	- Fix regression where instantiated objects would not respect ProGrids alignment.
+	- Fix occasional null ref errors when welding or collapsing vertices.
+	- When double-clicking a texture grouped face in UV editor, select the entire group.
+	- Fix regression that caused performance spikes when deleting or instantiating objects.
+	- When detaching faces to a new object, copy all of that objects properties.
+	- Add Undo support to Shape creation tool.
+	- Fix bug where running Flip Normals from the Menu would not immediately update the mesh graphics.
+	- When serializing pb_Objects, save color and material information (materials are now loaded by name).
+	- Fix bug where the texture handle tool would sometimes (most times) move UVs in the wrong direction.
+	- When entering Texture Blending mode in Vertex Painter, set the color to a solid variant of one of the available textures.
+	- Fix bug where projected UVs in manual mode could potentially be placed very far from the current handle.
+	- Fix lag when drag selecting edges on objects with large vertex counts.
+	- Fix bug where setting entity type would not immediately refresh the mesh.
+	- Fix minor edge selection bug that would break edge highlighting when not directly hovering a mesh.
+	- Improve appearance of Grow and Extrude foldouts in editor window.
+	- Fix bug where clicking on a vertex could sometimes select the object behind it.
+	- Fix compile errors when building to WebGL target.
+	- When creating a mesh asset, ensure that the source object mesh is not referenced by the new mesh asset.
 
 # Changes
-	- Vertex Colors button in Editor now opens the painter tool.
 	- Remove 'NoDraw' feature (necessary for Unity 5 compatiblity).
-
+	
 # Beta
-	- Rudimentary Boolean tool added - this is very early in development, and the resulting geometry will not be PB compatible.  Wouldn't recommend using this at the moment.
+	- Rudimentary Boolean tool added - this is very early in development.
+
+# Bug Fixes (since 2.4.0b10)
+	- Fix bug where exiting to Top Level editing mode from edge selection mode would not hide the darker edge highlights.
+	- When running the `Repair Missing Script References` tool, also scan for disabled ProBuilder objects.
+	- Fix compile errors when building to WebGL target.
+	- When creating a mesh asset, ensure that the source object mesh is not referenced by the new mesh asset.
 
 -- ProBuilder 2.3.3f1 (r2970) -
 
