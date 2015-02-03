@@ -71,7 +71,7 @@ public class pb_MissingScriptEditor : Editor
 	{
 		EditorApplication.ExecuteMenuItem("Window/Inspector");
 
-		Object[] all = FindObjectsOfType(typeof(GameObject)).Where(x => ((GameObject)x).GetComponents<Component>().Any(n => n == null) ).ToArray();
+		Object[] all = Resources.FindObjectsOfTypeAll(typeof(GameObject)).Where(x => ((GameObject)x).GetComponents<Component>().Any(n => n == null) ).ToArray();
 		total = all.Length;
 
 		unfixable.Clear();
@@ -99,7 +99,7 @@ public class pb_MissingScriptEditor : Editor
 		EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
 
 		// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
-		foreach(GameObject go in FindObjectsOfType(typeof(GameObject)))
+		foreach(GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)))
 		{
 			if(go.GetComponents<Component>().Any(x => x == null) && !unfixable.Contains(go))
 			{
@@ -108,7 +108,7 @@ public class pb_MissingScriptEditor : Editor
 			}
 		}
 
-		pb_Object[] pbs = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
+		pb_Object[] pbs = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
 
 		for(int i = 0; i < pbs.Length; i++)
 		{	

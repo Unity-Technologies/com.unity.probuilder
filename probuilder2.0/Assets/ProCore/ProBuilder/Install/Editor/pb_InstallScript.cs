@@ -15,30 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
-// class pb_InstallPostProcessor : AssetPostprocessor 
-// {
-
-// #if !PROTOTYPE
-// 	const string PACKNAME = "ProBuilder";
-// #else
-// 	const string PACKNAME = "Prototype";
-// #endif
-
-// 	static void OnPostprocessAllAssets (
-// 		string[] importedAssets,
-// 		string[] deletedAssets,
-// 		string[] movedAssets,
-// 		string[] movedFromAssetPaths)
-// 	{
-// 		Debug.Log("pb_InstallPostProcessor: OnPostprocessAllAssets");
-// 		if( System.Array.Exists(importedAssets, element => element.Contains(".unitypackage") && element.Contains(PACKNAME)) )
-// 		{
-// 			pb_InstallScript.AttemptAutoInstall();
-// 			Debug.Log("pb_InstallPostProcessor: Found Packs");
-// 		}
-// 	}
-// }
-
 [InitializeOnLoad]
 class pb_InstallHook : Editor
 {
