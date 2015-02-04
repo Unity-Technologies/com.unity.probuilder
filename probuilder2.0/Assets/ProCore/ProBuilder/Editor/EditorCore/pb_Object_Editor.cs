@@ -48,8 +48,32 @@ public class pb_Object_Editor : Editor
  		SceneToolbarColor_Active = EditorGUIUtility.isProSkin ? new Color(.35f, .35f, .35f, 1f) : new Color(.8f, .8f, .8f, 1f);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
-		if( !pb.Verify() )
+
+ 		Mesh oldMesh = pb.msh;
+ 		pb_Object.MeshRebuildReason reason = pb.Verify();
+
+		if( reason != pb_Object.MeshRebuildReason.None )
+		{
+			/**
+			 * If the mesh ID doesn't match the gameObject Id, it could mean two things - 
+			 * 1. The object was just duplicated, and then made unique
+			 * 2. The scene was reloaded, and gameObject ids were recalculated.
+			 * If the latter, we need to clean up the old mesh.  If the former,
+			 * the old mesh needs to *not* be destroyed.
+			 */
+			int meshNo = -1;
+			if(oldMesh)
+			{
+				int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
+
+				GameObject dup = (GameObject)EditorUtility.InstanceIDToObject(meshNo);
+
+				if(dup == null)
+					DestroyImmediate(oldMesh);
+			}
+
 			pb.GenerateUV2();
+		}
 	}
 
 	// bool pbInspectorFoldout = false;
@@ -122,7 +146,7 @@ public class pb_Object_Editor : Editor
 		// #endif
 		}
 	}
-
+	
 	bool HasFrameBounds() 
 	{
 		if(pb == null)

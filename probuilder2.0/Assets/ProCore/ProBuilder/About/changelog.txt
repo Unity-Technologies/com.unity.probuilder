@@ -16,6 +16,7 @@
 	- Improve performance when selecting objects with large vertex counts.
 
 # Bug Fixes	
+	- Fix leaks when deleting or duplicated pb_Objects.
 	- Fix crash when a face material is null (defaults to Unity Default-Diffuse).
 	- Fix incorrect results when extruding multiple faces sharing a single center vertex (usually seen on the top of a cylinder).
 	- Save vertex colors when ProBuilder-izing a mesh.

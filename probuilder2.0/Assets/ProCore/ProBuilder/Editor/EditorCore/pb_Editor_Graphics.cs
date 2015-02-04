@@ -65,7 +65,7 @@ public class pb_Editor_Graphics
 		#if PB_DEBUG
 		HideFlags hide = (HideFlags) 0; // (1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
 		#else
-		HideFlags hide = (HideFlags)(1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
+		HideFlags hide = (HideFlags)( 1 | 2 | 8);	/// I'll just have eeeverything on the menu.
 		#endif
 
 		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
@@ -84,13 +84,11 @@ public class pb_Editor_Graphics
 		selectionMesh = selectionObject.GetComponent<MeshFilter>().sharedMesh;
 		wireframeMesh = wireframeObject.GetComponent<MeshFilter>().sharedMesh;
 
-		LoadColors();
-		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-
 		_editLevel = el;
 		_selectMode = sm;
 
-		SetMaterial(_editLevel, _selectMode);
+		LoadColors();
+		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 	}
 
 	/**
@@ -98,8 +96,11 @@ public class pb_Editor_Graphics
 	 */
 	static void SetMaterial(EditLevel el, SelectMode sm)
 	{
-		if(selectionMaterial != null) GameObject.DestroyImmediate(selectionMaterial);
-		if(wireframeMaterial != null) GameObject.DestroyImmediate(wireframeMaterial);
+		if(selectionMaterial != null)
+			GameObject.DestroyImmediate(selectionMaterial);
+
+		if(wireframeMaterial != null)
+			GameObject.DestroyImmediate(wireframeMaterial);
 
 		// Always generate the wireframe
 		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
@@ -148,9 +149,11 @@ public class pb_Editor_Graphics
 			Mesh msh = go.GetComponent<MeshFilter>().sharedMesh;
 			Material mat = go.GetComponent<MeshRenderer>().sharedMaterial;
 
-			if(msh != null) GameObject.DestroyImmediate(msh);
+			if(msh != null)
+				GameObject.DestroyImmediate(msh);
 
-			if(mat != null) GameObject.DestroyImmediate(mat);
+			if(mat != null)
+				GameObject.DestroyImmediate(mat);
 
 			GameObject.DestroyImmediate(go);
 

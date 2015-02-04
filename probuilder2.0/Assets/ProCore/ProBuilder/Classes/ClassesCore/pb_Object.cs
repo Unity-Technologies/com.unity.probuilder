@@ -20,7 +20,7 @@ using Parabox.Debug;
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(pb_Entity))]
-
+[ExecuteInEditMode]
 /**
  *	\brief Object class for all ProBuilder geometry.
  */	
@@ -729,7 +729,7 @@ public class pb_Object : MonoBehaviour
 		SetUV(u);
 
 		msh = pbUtil.DeepCopyMesh(msh);
-
+		
 		ToMesh();
 		Refresh();
 	}
@@ -1215,7 +1215,7 @@ public class pb_Object : MonoBehaviour
 	// so unless people really complain about that mesh leak when deleting objects, we'll just let it be.
 	public void OnDestroy()
 	{
-		// DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
+		DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
 	}
 #endregion
 
@@ -1268,11 +1268,18 @@ public class pb_Object : MonoBehaviour
 			f.RebuildCaches();
 	}
 
+	public enum MeshRebuildReason
+	{
+		Null,
+		InstanceIDMismatch,
+		Lightmap,
+		None
+	}
 	/**
 	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
 	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
 	 */
-	public bool Verify()
+	public MeshRebuildReason Verify()
 	{	
 		if(msh == null)
 		{
@@ -1284,18 +1291,21 @@ public class pb_Object : MonoBehaviour
 				DestroyImmediate(this.gameObject);
 			}
 
-			return false;
+			return MeshRebuildReason.Null;
 		}
-		
+
+
 		int meshNo;
 		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
+
 		if(meshNo != id)
 		{
 			MakeUnique();
-			return false;
+			return MeshRebuildReason.InstanceIDMismatch;
 		}
 
-		return msh.uv2 != null;
+
+		return msh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
 
 		// // check to make sure that faces and vertex data from mesh match
 		// // pb_Object cached values.  Can change when applying/reverting

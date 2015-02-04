@@ -47,7 +47,8 @@ public class pb_SceneExplorer : EditorWindow
 			#if UNITY_5
 			EditorUtility.UnloadUnusedAssetsImmediate();
 			#else
-			EditorUtility.UnloadUnusedAssetsIgnoreManagedReferences();
+			EditorUtility.UnloadUnusedAssets();
+			// EditorUtility.UnloadUnusedAssetsIgnoreManagedReferences();
 			#endif
 		}
 
@@ -56,7 +57,7 @@ public class pb_SceneExplorer : EditorWindow
 
 		scroll = GUILayout.BeginScrollView(scroll);
 
-		Object[] obj = System.Array.FindAll(gameobjects, x => x.name.Contains("ProBuilder"));
+		Object[] obj = System.Array.FindAll(gameobjects, x => x != null && x.name.Contains("ProBuilder"));
 		GUILayout.Label("ProBuilder Preview Objects: " + (obj == null ? 0 : obj.Length).ToString(), EditorStyles.boldLabel);
 
 		GUILayout.Space(12);
