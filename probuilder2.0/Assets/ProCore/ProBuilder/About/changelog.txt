@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0f0 (r3115) -
+-- ProBuilder 2.4.0f1 (r3119) -
 
 # Features
 	- Unity 5 support.
@@ -57,11 +57,9 @@
 # Beta
 	- Rudimentary Boolean tool added - this is very early in development.
 
-# Bug Fixes (since 2.4.0b10)
-	- Fix bug where exiting to Top Level editing mode from edge selection mode would not hide the darker edge highlights.
-	- When running the `Repair Missing Script References` tool, also scan for disabled ProBuilder objects.
-	- Fix compile errors when building to WebGL target.
-	- When creating a mesh asset, ensure that the source object mesh is not referenced by the new mesh asset.
+# Bug Fixes (since 2.4.0f0)
+	- Fix leaks when deleting or duplicated pb_Objects.
+	- Fix crash on installing to a fresh Unity project on MacOS.
 
 -- ProBuilder 2.3.3f1 (r2970) -
 
