@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0f1 (r3119) -
+-- ProBuilder 2.4.0f2 (r3124) -
 
 # Features
 	- Unity 5 support.
@@ -57,9 +57,9 @@
 # Beta
 	- Rudimentary Boolean tool added - this is very early in development.
 
-# Bug Fixes (since 2.4.0f0)
-	- Fix leaks when deleting or duplicated pb_Objects.
-	- Fix crash on installing to a fresh Unity project on MacOS.
+# Bug Fixes (since 2.4.0f1)
+	- Fix issue where "Repair Missing Script References" script could get stuck on prefab instances.
+	- Silence cast exception error in pb_Object_Editor.
 
 -- ProBuilder 2.3.3f1 (r2970) -
 
