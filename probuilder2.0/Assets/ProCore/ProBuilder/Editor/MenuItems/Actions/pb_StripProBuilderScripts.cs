@@ -66,6 +66,8 @@ namespace ProBuilder2.Actions
 			EditorUtility.ClearProgressBar();
 			EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
 
+			if(pb_Editor.instance)
+				pb_Editor.instance.UpdateSelection();
 		}
 	}
 }

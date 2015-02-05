@@ -235,6 +235,9 @@ public class pb_Object : MonoBehaviour
 
 	[SerializeField]
 	private string _name = "Object";
+
+	public bool 						dontDestroyMeshOnDelete = false;	///< usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
+																			/// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 #endregion
 
 #region ACCESS
@@ -1215,7 +1218,8 @@ public class pb_Object : MonoBehaviour
 	// so unless people really complain about that mesh leak when deleting objects, we'll just let it be.
 	public void OnDestroy()
 	{
-		DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
+		if(!dontDestroyMeshOnDelete)
+			DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
 	}
 #endregion
 

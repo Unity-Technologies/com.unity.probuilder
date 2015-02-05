@@ -36,6 +36,8 @@ public class pb_ScenePostProcessor
 			if(!pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
 			   return;
 
+			pb.dontDestroyMeshOnDelete = true;
+			
 			GameObject.DestroyImmediate( pb );
 			GameObject.DestroyImmediate( go.GetComponent<pb_Entity>() );
 
