@@ -103,13 +103,24 @@ public class pb_MissingScriptEditor : Editor
 		{
 			if(go.GetComponents<Component>().Any(x => x == null) && !unfixable.Contains(go))
 			{
+				if(	(PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance ||
+					 PrefabUtility.GetPrefabType(go) == PrefabType.Prefab ) )
+				{
+					GameObject pref = (GameObject)PrefabUtility.GetPrefabParent(go);
+
+					if(pref && (pref.GetComponent<pb_Object>() || pref.GetComponent<pb_Entity>()))
+					{
+						unfixable.Add(go);
+						continue;
+					}
+				}
 				Selection.activeObject = go;
 				return;
 			}
 		}
 
 		pb_Object[] pbs = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
-
+	
 		for(int i = 0; i < pbs.Length; i++)
 		{	
 			EditorUtility.DisplayProgressBar("Force Refresh ProBuilder Objects", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
@@ -123,6 +134,9 @@ public class pb_MissingScriptEditor : Editor
 		EditorUtility.ClearProgressBar();
 
 		EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
+
+		if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
+			Debug.LogWarning("Repaired script references will be lost on exit if this scene is not saved!");
 
 		doFix = false;
 		skipEvent = true;
@@ -169,7 +183,9 @@ public class pb_MissingScriptEditor : Editor
 			if(doFix)
 			{
 				if(Event.current.type == EventType.Repaint)
+				{
 					Next();
+				}
 			}
 			else
 			{
@@ -249,14 +265,14 @@ public class pb_MissingScriptEditor : Editor
 			{
 				Undo.RegisterCompleteObjectUndo(target, "Fix missing reference.");
 			}
-	
+		
 			// Debug.Log("Fix: " + (pbObjectMatches > 2 ? "pb_Object" : "pb_Entity") + "  " + ((Component)target).gameObject.name);
 
 			scriptProperty.objectReferenceValue = pbObjectMatches >= 3 ? pb_monoscript : pe_monoscript;
 			scriptProperty.serializedObject.ApplyModifiedProperties();
 			scriptProperty = this.serializedObject.FindProperty("m_Script");
 			scriptProperty.serializedObject.Update();
-
+	
 			if(doFix)
 				Next();
 

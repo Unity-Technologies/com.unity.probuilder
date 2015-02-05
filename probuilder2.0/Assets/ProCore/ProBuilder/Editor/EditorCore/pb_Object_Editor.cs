@@ -1,3 +1,5 @@
+#pragma warning disable 0168
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -66,8 +68,6 @@ public class pb_Object_Editor : Editor
 			{
 				int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-				Debug.Log("pb: " + pb.name+  "  id: " + meshNo);
-				
 				GameObject go = null;
 				Object dup = EditorUtility.InstanceIDToObject(meshNo);
 				try { go = (GameObject)dup; }

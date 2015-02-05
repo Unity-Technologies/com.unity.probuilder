@@ -216,9 +216,6 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 
 		if(high < 0) return;
 
-		foreach(string er in packs)
-			Debug.Log(er);
-
 		LoadPack( packs[high] );//foundPacks[selectedPack]);
 
 		/* nuke this installer and any other stuff */
