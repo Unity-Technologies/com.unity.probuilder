@@ -283,7 +283,7 @@ public class AutomatedExport : MonoBehaviour
 			path == "" ? "../../bin/Release" : path,
 			"ProBuilder2",
 			VersionMarking.SVN,
-			new string[] {".meta", "Debug", "Build Checklist"},
+			new string[] {".meta", "Debug", "Install", "Build Checklist"},
 			false,
 			"-source",
 			"" ));

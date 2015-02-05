@@ -84,9 +84,10 @@ public class Bugger
 
 	public static void DebugLogHandler(string logString, string stackTrace, LogType type)
 	{
+		#if !UNITY_WEBPLAYER
+
 		string json = UnityLogToJSON(logString, stackTrace, type);
 
-		#if !UNITY_WEBPLAYER
 		if(!File.Exists(Bugger.LogPath))
 			File.WriteAllText(LogPath, "{ \"entries\" : [\n");
 		
@@ -149,11 +150,11 @@ public class Bugger
 
 	public static void Log<T>(T value, int offset, LogType logType)
 	{
+		#if !UNITY_WEBPLAYER
+
 		StackTrace trace = new StackTrace(true);
 		
 		string json = LogToJSON(value.ToString(), trace, offset, logType);
-
-		#if !UNITY_WEBPLAYER
 
 		if(!File.Exists(Bugger.LogPath))
 			File.WriteAllText(LogPath, "{ \"entries\" : [\n");

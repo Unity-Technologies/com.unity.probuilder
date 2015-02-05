@@ -66,9 +66,14 @@ public class pb_Object_Editor : Editor
 			{
 				int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-				GameObject dup = (GameObject)EditorUtility.InstanceIDToObject(meshNo);
+				Debug.Log("pb: " + pb.name+  "  id: " + meshNo);
+				
+				GameObject go = null;
+				Object dup = EditorUtility.InstanceIDToObject(meshNo);
+				try { go = (GameObject)dup; }
+				catch(System.Exception e) {}
 
-				if(dup == null)
+				if(go == null)
 					DestroyImmediate(oldMesh);
 			}
 

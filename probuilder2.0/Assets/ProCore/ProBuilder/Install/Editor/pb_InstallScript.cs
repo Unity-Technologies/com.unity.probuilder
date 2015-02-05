@@ -205,11 +205,19 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 	 */
 	private static void ImportLatestPack(InstallType i)
 	{
-		string[] packs = GetProBuilderPacks(i == InstallType.Release ? "-unity" : "-source");
+		#if UNITY_5
+		string[] packs = GetProBuilderPacks(i == InstallType.Release ? "-unity5" : "-source");
+		#else
+		string[] packs = GetProBuilderPacks(i == InstallType.Release ? "-unity4" : "-source");
+		#endif
+
 		int tmp;
 		int high = GetHighestVersion(packs, out tmp);
 
 		if(high < 0) return;
+
+		foreach(string er in packs)
+			Debug.Log(er);
 
 		LoadPack( packs[high] );//foundPacks[selectedPack]);
 
@@ -307,21 +315,10 @@ Repeat steps 4 and 5 for any scenes with ProBuilder objects.";
 		string pack = "ProBuilder2-v";
 		#endif
 
-		#if UNITY_5
 		string[] allPackages = System.Array.FindAll(allFiles, name =>
 			name.EndsWith(".unitypackage") &&
 			name.Contains(pack) &&
-			name.Contains(match) &&
-			name.Contains("unity5")
-			);
-		#else
-		string[] allPackages = System.Array.FindAll(allFiles, name =>
-			name.EndsWith(".unitypackage") &&
-			name.Contains(pack) &&
-			name.Contains(match) &&
-			name.Contains("unity4")
-			);
-		#endif
+			name.Contains(match) );
 
 		return allPackages;
 	}
