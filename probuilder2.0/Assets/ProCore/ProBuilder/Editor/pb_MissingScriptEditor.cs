@@ -114,7 +114,15 @@ public class pb_MissingScriptEditor : Editor
 						continue;
 					}
 				}
+
+				if(go.hideFlags != HideFlags.None)
+				{
+					unfixable.Add(go);
+					continue;
+				}
+
 				Selection.activeObject = go;
+
 				return;
 			}
 		}
