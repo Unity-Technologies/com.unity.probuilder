@@ -87,6 +87,8 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
+	pause
+
 	:: Export release pack for Unity 4.3 +
 	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 :: ================================ END   4.3 + LIBRARIES ================================ }

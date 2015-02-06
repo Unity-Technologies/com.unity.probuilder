@@ -1,5 +1,8 @@
-set unity_path="C:\Program Files (x86)\Unity 3.5.7\Editor\Unity.exe"
+# @echo off
+
 set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
+set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
+set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
 
@@ -7,7 +10,8 @@ echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
 
 svn update
 
-echo UNITY PATH IS %unity_path%
+echo UNITY 4 PATH IS %unity_path_4%
+echo UNITY 5 PATH IS %unity_path_5%
 
 :: clean out temp directory.
 rd /s /q bin\temp\
@@ -15,13 +19,24 @@ rd /s /q probuilder2.0\Library\
 md bin\temp
 
 :: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources ignore:Tools;MaterialSelection.cs;Geometry\ConnectEdges;Geometry\DetachDeleteFace;Geometry\FlipFaces;Geometry\VertexMergeWeld;Geometry\Bridge;API;MenuItems\Window;Actions\TriangulatePbObject.cs;Actions\DeleteNoDrawFaces.cs;Actions\ExportObj.cs;Actions\MakeAsset.cs;Actions\StripProBuilderScripts.cs;Geometry\ConformNormals.cs -logFile %CD%/prototype-release-resources-log.txt
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources ignore:
+	MenuItems/Tools;
+	MenuItems/Actions/pb_ExportObj.cs;
+	MenuItems/Actions/pb_ProBuilderize.cs;
+	MenuItems/Actions/pb_MakeMeshAsset.cs;
+	MenuItems/Actions/pb_StripProBuilderScripts.cs;
 
+	API;
+
+	pb_SaveLoad.cs -logFile %CD%/prototype-release-resources-log.txt
+
+pause
 
 :: md %CD%\probuilder-staging\Assets
 rd /S /Q %CD%\probuilder-staging
 
-%unity_path% -quit -batchMode -createProject %CD%\probuilder-staging
+%unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
+pause
 
 md %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor
 md %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes
@@ -39,58 +54,94 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\Debug\
 
 :: Import ProBuilder resources
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\bin\temp\ProBuilder2(Resources).unitypackage
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\bin\temp\ProBuilder2(Resources).unitypackage
 
-:: ================================ BUILD 3.5 + LIBRARIES ================================ {
-
-:: Build Core - (post-build script places dll in staging project)
-%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build "%CD%\visual studio\ProBuilderCore\ProBuilderCore.sln"
-xcopy "%CD%\visual studio\ProBuilderCore\ProBuilderCore\bin\Debug\ProBuilderCore.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
-:: Build mesh editing classes
-%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps.sln"
-xcopy "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps\bin\Debug\ProBuilderMeshOps.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
-:: Build Editor Core
-:: Compile with ErrorsOnly flag because we're building against 4.3 Editor, meaning all the Undo crap is going to 
-:: throw crazy warnings.
-%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;" /v:q /clp:ErrorsOnly /t:Clean,Build "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor.sln"
-xcopy "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
-
-
-:: %unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.Refresh
-echo "GO INTO UNITY AND MANUALLY RENAME PROBUILDER FOLDER"
 pause
-
-:: Export release pack for Unity 3.5 +
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt;pb_Profiler postfix:-unity35 generateVersionInfo:TRUE -logFile %CD%/prototype.5.7-compile-log.txt
-
-:: ================================ END   3.5 + LIBRARIES ================================ }
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
 
-:: Build Core - (post-build script places dll in staging project)
-:: %SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build "%CD%\visual studio\ProBuilderCore\ProBuilderCore.sln"
-:: xcopy /y "%CD%\visual studio\ProBuilderCore\ProBuilderCore\bin\Debug\ProBuilderCore.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+	echo ================================== Build U4 Lib ==================================
 
-:: Build mesh editing classes
-:: %SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps.sln"
-:: xcopy "%CD%\visual studio\ProBuilderMeshOps\ProBuilderMeshOps\bin\Debug\ProBuilderMeshOps.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+	:: Path to Unity 4 linked Core
+	:: Path to Unity 4 linked Mesh Ops
+	set u4core="%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4.sln"
+	set u4mesh="%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4.sln"
+	set u4editor="%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4.sln"
 
-:: Build Editor Core
-%SYSTEMROOT%\Microsoft.NET\Framework\v3.5\MSBuild.exe /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_4_3" /t:Clean,Build "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor.sln"
-xcopy /y "%CD%\visual studio\ProBuilderEditor\ProBuilderEditor\bin\Debug\ProBuilderEditor.dll" "%CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\"
+	:: Build Core - (post-build script places dll in staging project)
+	%msbuild% /p:DefineConstants="RELEASE;
+	PROTOTYPE;" /t:Clean,Build %u4core%
 
-:: Export release pack for Unity 4.3 +
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ packageName:Prototype define:PROTOTYPE folderRootName:Prototype ignore:plist.txt;pb_Profiler postfix:-unity43 generateVersionInfo:TRUE
+	echo Copy core lib to staging
+	xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Debug\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+
+	:: Build mesh editing classes
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build %u4mesh%
+
+	echo Copy mesh ops lib to staging
+	xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Debug\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+	
+	:: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;" /v:q /t:Clean,Build %u4editor%
+
+	echo Copy editor lib to staging
+	xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Debug\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+
+	echo ================================== EXPORT UNITY 4 PACK ==================================
+
+	:: Export release pack for Unity 4.3 +
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+
+pause
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
+
+	echo ================================== CLEAN STAGING ==================================
+
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderCore-Unity4.dll"
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderMeshOps-Unity4.dll"
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity4.dll"
+
+:: ================================ BUILD 5.0 + LIBRARIES ================================ {
+	
+	echo ================================== BUILD U5 LIB ================================== 
+
+	:: Path to Unity 5 linked Core
+	:: Path to Unity 5 linked Mesh Ops
+	set u5core="%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5.sln"
+	set u5mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5.sln"
+	set u5editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
+
+	:: Build Core against Unity 5 libs
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5core%
+
+	echo Copy core 5 to staging
+	xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+
+	:: Build Mesh ops against Unity 5
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5mesh%
+
+	echo Copy mesh ops 5 to staging
+	xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+
+	:: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;" /v:q /t:Clean,Build %u5editor%
+
+	echo Copy editor lib to staging
+	xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+
+	echo ================================== EXPORT UNITY 5 PACK ==================================
+
+	:: Export release pack for Unity 5.0 +
+	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
+pause
+:: ================================ END   5.0 + LIBRARIES ================================ }
 
 
 :: Clear out staging project again, but this time repopulate it with a built pack + install stuff
 rd /S /Q %CD%\probuilder-staging
 
-%unity_path% -quit -batchMode -createProject %CD%\probuilder-staging
+%unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
 
 md %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Editor\
 md %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Packs\
@@ -107,6 +158,6 @@ xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\Prototype\
 xcopy %CD%\bin\temp\Prototype-v*.unitypackage %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Packs\
 xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\QuickStart2.cs %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Editor\
 
-%unity_path% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ packageName:Prototype define:PROTOTYPE generateAbout:FALSE generateZip:TRUE
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ packageName:Prototype define:PROTOTYPE generateAbout:FALSE generateZip:TRUE
 
 pause

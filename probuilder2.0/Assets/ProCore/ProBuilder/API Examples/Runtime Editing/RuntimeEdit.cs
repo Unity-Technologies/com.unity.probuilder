@@ -214,7 +214,7 @@ public class RuntimeEdit : MonoBehaviour
 		Vector3 normal = pb_Math.Normal(verts);
 
 		for(int i = 0; i < verts.Length; i++)
-			verts[i] += normal.normalized * .1f;
+			verts[i] += normal.normalized * .01f;
 
 		if(preview)
 			Destroy(preview.gameObject);
@@ -222,5 +222,7 @@ public class RuntimeEdit : MonoBehaviour
 		preview = pb_Object.CreateInstanceWithVerticesFaces(verts, new pb_Face[1]{face});
 		preview.SetName("Preview");
 		preview.SetFaceMaterial(preview.faces, previewMaterial);
+		preview.ToMesh();
+		preview.Refresh();
 	}
 }
