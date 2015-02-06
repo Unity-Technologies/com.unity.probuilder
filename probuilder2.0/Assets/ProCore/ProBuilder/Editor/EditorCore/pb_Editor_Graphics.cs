@@ -46,6 +46,8 @@ public class pb_Editor_Graphics
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
+	static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags)(1 | 2 | 4 | 8);
+
 	/**
 	 * Reload colors for edge and face highlights from editor prefs.
 	 */
@@ -62,14 +64,8 @@ public class pb_Editor_Graphics
 	{
 		DestroyTempObjects();
 
-		#if PB_DEBUG
-		HideFlags hide = (HideFlags) 0; // (1 | 2 | 4 | 8);	/// I'll just have eeeverything on the menu.
-		#else
-		HideFlags hide = (HideFlags)( 1 | 2 | 8);	/// I'll just have eeeverything on the menu.
-		#endif
-
-		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
-		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, hide, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
+		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
@@ -106,6 +102,7 @@ public class pb_Editor_Graphics
 		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
 		wireframeMaterial.name = "WIREFRAME_MATERIAL";
 		wireframeMaterial.SetColor("_Color", (sm == SelectMode.Edge && el == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
+		wireframeMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 
 		switch(sm)
 		{
@@ -121,6 +118,7 @@ public class pb_Editor_Graphics
 				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
 				selectionMaterial.name = "FACE_SELECTION_MATERIAL";
 				selectionMaterial.SetColor("_Color", faceSelectionColor);
+				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 				break;
 		}
 
@@ -350,6 +348,7 @@ public class pb_Editor_Graphics
 		selectionMesh.uv2 = uv2s.ToArray();
 		selectionMesh.tangents = tan.ToArray();
 		selectionMesh.colors = col.ToArray();
+		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 
 		// if(selectionMode == SelectMode.Face)
 		// {
@@ -433,5 +432,6 @@ public class pb_Editor_Graphics
 		mesh.uv = uvs;
 		mesh.subMeshCount = 1;
 		mesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);
+		mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 	}
 }

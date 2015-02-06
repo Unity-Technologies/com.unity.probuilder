@@ -39,12 +39,10 @@ public class pb_SceneMeshRender : MonoBehaviour
 		}
 	}
 
-	void SelfDestruct()
+	void OnDestroy()
 	{
 		if(_mesh) DestroyImmediate(_mesh);
 		if(_material) DestroyImmediate(_material);
-
-		DestroyImmediate(gameObject);
 	}
 
 	void OnRenderObject()
@@ -60,7 +58,7 @@ public class pb_SceneMeshRender : MonoBehaviour
 
 		if(mat == null || msh == null)
 		{
-			SelfDestruct();
+			DestroyImmediate(gameObject);
 			return;
 		}
 
