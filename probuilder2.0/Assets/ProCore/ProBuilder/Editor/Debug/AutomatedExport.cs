@@ -106,6 +106,7 @@ public class AutomatedExport : MonoBehaviour
 		string define = "";
 		string exportFolderPath = "";
 		string folderRootName = "ProBuilder";
+		string revisionNo = "";
 
 		foreach(string str in arg)
 		{
@@ -138,6 +139,9 @@ public class AutomatedExport : MonoBehaviour
 
 			if(str.StartsWith("folderRootName:"))
 				folderRootName = str.Replace("folderRootName:", "");
+
+			if(str.StartsWith("revisionNo:"))
+				revisionNo = str.Replace("revisionNo:", "");
 		}
 
 		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
@@ -156,7 +160,7 @@ public class AutomatedExport : MonoBehaviour
 				"name: " + folderRootName + "\n" + 
 				"identifier: ProBuilder2_AboutWindowIdentifier\n" +
 				"version: " + VERSION_NUMBER + "\n" +
-				"revision: " + SvnManager.GetRevisionNumber() + "\n" +
+				"revision: " + revisionNo == "" ? SvnManager.GetRevisionNumber() : revisionNo + "\n" +
 				"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 				"changelog: Assets/ProCore/" + folderRootName + "/About/changelog.txt";
 			// name: ProBuilder

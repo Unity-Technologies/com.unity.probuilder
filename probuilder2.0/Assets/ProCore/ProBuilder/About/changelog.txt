@@ -1,4 +1,4 @@
--- ProBuilder 2.4.0f4 (r3130) -
+-- ProBuilder 2.4.0f4 (r3132) -
 
 # Features
 	- Unity 5 support.

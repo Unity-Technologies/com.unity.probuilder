@@ -33,7 +33,9 @@ echo ================================== EXPORT RELEASE RESOURCES ===============
 echo ================================== EXPORT SOURCE PACK ==================================
 
 :: Create source pack
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportSourceRelease installDir:..\..\bin\temp\ -logFile %CD%/log/probuilder-source-compile-log.txt
+:: %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportSourceRelease installDir:..\..\bin\temp\ -logFile %CD%/log/probuilder-source-compile-log.txt
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder-source-compile-log.txt
+
 
 :: md %CD%\probuilder-staging\Assets
 rd /S /Q %CD%\probuilder-staging
@@ -132,6 +134,10 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 	:: Export release pack for Unity 5.0 +
 	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
 :: ================================ END   5.0 + LIBRARIES ================================ }
+
+echo Finished building all projects
+echo Press any key to build a composite, or exit now
+pause
 
 :: Clear out staging project again, but this time repopulate it with a built pack + install stuff
 rd /S /Q %CD%\probuilder-staging
