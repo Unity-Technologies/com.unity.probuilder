@@ -1,3 +1,5 @@
+#if !PROTOTYPE
+
 using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
@@ -11,3 +13,5 @@ public class pb_VertexPainter : EditorWindow
 		pb_VertexColor_Editor.Init();
 	}
 }
+
+#endif

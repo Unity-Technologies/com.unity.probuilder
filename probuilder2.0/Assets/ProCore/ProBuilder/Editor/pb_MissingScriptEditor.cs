@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Repairs missing pb_Object and pb_Entity references.  It is based
  * on this article by Unity Gems: http://unitygems.com/lateral1/
  */
@@ -61,7 +61,7 @@ public class pb_MissingScriptEditor : Editor
 	}
 #endregion
 
-	[MenuItem("Tools/ProBuilder/Repair/Repair Missing Script References")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Repair Missing Script References")]
 	public static void MenuRepairMissingScriptReferences()
 	{
 		FixAllScriptReferencesInScene();

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if !PROTOTYPE
+
+using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections;
@@ -301,3 +303,4 @@ public class pb_BooleanInterface : EditorWindow
 		return false;
 	}
 }
+#endif

@@ -1,4 +1,5 @@
-﻿#pragma warning disable 0168	///< Disable unused var (that exception hack)
+﻿#if !PROTOTYPE
+#pragma warning disable 0168	///< Disable unused var (that exception hack)
 
 using UnityEngine;
 using UnityEditor;
@@ -614,3 +615,4 @@ public class pb_VertexColor_Editor : EditorWindow
 #endregion
 }
  
+#endif

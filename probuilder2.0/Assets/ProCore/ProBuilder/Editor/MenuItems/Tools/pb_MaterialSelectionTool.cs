@@ -1,3 +1,5 @@
+#if !PROTOTYPE
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -136,4 +138,5 @@ public class pb_MaterialSelectionTool : EditorWindow
 		SceneView.RepaintAll();
 	}
 }
-// }
+
+#endif

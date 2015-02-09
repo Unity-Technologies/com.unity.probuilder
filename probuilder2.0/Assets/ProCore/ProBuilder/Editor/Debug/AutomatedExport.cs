@@ -20,7 +20,7 @@ public class AutomatedExport : MonoBehaviour
 	public class Config
 	{
 		// ...this is getting out of hand
-		public Config(string _directoryParent, string _destinationPath, string _packageName, VersionMarking _versionMarking, string[] _ignore, bool _showFilePanel, string _append, string _addDefine)
+		public Config(string _directoryParent, string _destinationPath, string _packageName, VersionMarking _versionMarking, string[] _ignore, bool _showFilePanel, string _append, string _addDefine, string _versionNumber)
 		{
 			directoryParent = _directoryParent;
 			destinationPath = _destinationPath;
@@ -30,12 +30,14 @@ public class AutomatedExport : MonoBehaviour
 			showFilePanel = _showFilePanel;
 			append = _append;
 			addDefine = _addDefine;
+			versionNumber = _versionNumber;
 		}
 
 		public string directoryParent = "";
 		public string destinationPath = "";
 		public string packageName 	   = "";
 		public VersionMarking versionMarking = VersionMarking.DateTime;
+		public string versionNumber = "";
 		public string[] ignore;
 		public bool showFilePanel = true;
 		public string append = "";
@@ -47,6 +49,7 @@ public class AutomatedExport : MonoBehaviour
 	public enum VersionMarking {
 		SVN,
 		DateTime,
+		Manual,
 		None
 	}
 
@@ -61,6 +64,7 @@ public class AutomatedExport : MonoBehaviour
 		{
 			if(str.StartsWith("ignore:"))
 				addlIgnore = str.Replace("ignore:", "").Trim().Split(';');
+
 			if(str.StartsWith("define:"))
 				define = str.Replace("define:", "").Trim();
 		}
@@ -86,7 +90,8 @@ public class AutomatedExport : MonoBehaviour
 			ignore,
 			false,
 			"",
-			define));
+			define,
+			""));
 	}
 
 	/** for building dll release -- only call from probuilder-*.bat */
@@ -141,7 +146,7 @@ public class AutomatedExport : MonoBehaviour
 				folderRootName = str.Replace("folderRootName:", "");
 
 			if(str.StartsWith("revisionNo:"))
-				revisionNo = str.Replace("revisionNo:", "");
+				revisionNo = "-v" + str.Replace("revisionNo:", "");
 		}
 
 		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
@@ -160,7 +165,7 @@ public class AutomatedExport : MonoBehaviour
 				"name: " + folderRootName + "\n" + 
 				"identifier: ProBuilder2_AboutWindowIdentifier\n" +
 				"version: " + VERSION_NUMBER + "\n" +
-				"revision: " + revisionNo == "" ? SvnManager.GetRevisionNumber() : revisionNo + "\n" +
+				"revision: " + (revisionNo == "" ? SvnManager.GetRevisionNumber() : revisionNo) + "\n" +
 				"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 				"changelog: Assets/ProCore/" + folderRootName + "/About/changelog.txt";
 			// name: ProBuilder
@@ -170,11 +175,8 @@ public class AutomatedExport : MonoBehaviour
 			// date: 04-18-2014
 			// changelog: Assets/changelog.txt
 
-				Debug.Log("About Path: " + hiddenVersionInfo);
-
 			if(File.Exists(hiddenVersionInfo))
 			{
-				Debug.Log("deleting : " + hiddenVersionInfo);
 				File.Delete(hiddenVersionInfo);
 			}
 			
@@ -199,11 +201,12 @@ public class AutomatedExport : MonoBehaviour
 			exportFolderPath == "" ? "Assets/ProCore" : exportFolderPath,
 			(path == "") ? "../../bin/Release" : path,
 			packName,
-			VersionMarking.SVN,
+			revisionNo == "" ? VersionMarking.SVN : VersionMarking.Manual,
 			ignore,
 			false,
 			append,
-			define));
+			define,
+			revisionNo));
 
 		// puts a zipped copy on the desktop
 		if(generateZip)
@@ -232,66 +235,66 @@ public class AutomatedExport : MonoBehaviour
 		}
 	}
 
-	[MenuItem("Tools/Automated Export/Export ProBuilder Source Package")]
-	public static void ExportSourceRelease()
-	{
-		string[] arg = System.Environment.GetCommandLineArgs();
-		string path = "";
-		string plistName = DEFAULT_PLIST_NAME;
+	// [MenuItem("Tools/Automated Export/Export ProBuilder Source Package")]
+	// public static void ExportSourceRelease()
+	// {
+	// 	string[] arg = System.Environment.GetCommandLineArgs();
+	// 	string path = "";
+	// 	string plistName = DEFAULT_PLIST_NAME;
 
-		foreach(string str in arg)
-		{
-			if(str.StartsWith("installDir:"))
-				path = str.Replace("installDir:", "");
+	// 	foreach(string str in arg)
+	// 	{
+	// 		if(str.StartsWith("installDir:"))
+	// 			path = str.Replace("installDir:", "");
 
-			if(str.StartsWith("plistName:"))
-				plistName = str.Replace("plistName:", "");
-		}
+	// 		if(str.StartsWith("plistName:"))
+	// 			plistName = str.Replace("plistName:", "");
+	// 	}
 
-		// This manually modifies the pb_About file.
-		TextAsset plist = (TextAsset)Resources.LoadAssetAtPath("Assets/ProCore/ProBuilder/Editor/Debug/" + plistName, typeof(TextAsset));
-		string[] txt = plist.text.Split('\n');
-		string VERSION_NUMBER = txt[0].Replace("Version: ", "").Trim();
-		// string RELEASE_METRIC = txt[1].Replace("ReleaseMetric: ", "").Trim();
-		// string VELOCIRAPTOR_DANGER = txt[2].Replace("VelociraptorDanger: ", "").Trim();
+	// 	// This manually modifies the pb_About file.
+	// 	TextAsset plist = (TextAsset)Resources.LoadAssetAtPath("Assets/ProCore/ProBuilder/Editor/Debug/" + plistName, typeof(TextAsset));
+	// 	string[] txt = plist.text.Split('\n');
+	// 	string VERSION_NUMBER = txt[0].Replace("Version: ", "").Trim();
+	// 	// string RELEASE_METRIC = txt[1].Replace("ReleaseMetric: ", "").Trim();
+	// 	// string VELOCIRAPTOR_DANGER = txt[2].Replace("VelociraptorDanger: ", "").Trim();
 
-		string hiddenVersionInfo = "Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt";
+	// 	string hiddenVersionInfo = "Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt";
 
-		// name: ProBuilder
-		// identifier: ProBuilder2_AboutWindowIdentifier
-		// version: 2.2.5b0
-		// revision: 2176
-		// date: 04-18-2014
-		// changelog: Assets/changelog.txt
-		string versionInfoText = 
-			"name: ProBuilder\n" + 
-			"identifier: ProBuilder2_AboutWindowIdentifier\n" +
-			"version: " + VERSION_NUMBER + "\n" +
-			"revision: " + SvnManager.GetRevisionNumber() + "\n" +
-			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
-			"changelog: Assets/ProCore/ProBuilder/About/changelog.txt";
+	// 	// name: ProBuilder
+	// 	// identifier: ProBuilder2_AboutWindowIdentifier
+	// 	// version: 2.2.5b0
+	// 	// revision: 2176
+	// 	// date: 04-18-2014
+	// 	// changelog: Assets/changelog.txt
+	// 	string versionInfoText = 
+	// 		"name: ProBuilder\n" + 
+	// 		"identifier: ProBuilder2_AboutWindowIdentifier\n" +
+	// 		"version: " + VERSION_NUMBER + "\n" +
+	// 		"revision: " + SvnManager.GetRevisionNumber() + "\n" +
+	// 		"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
+	// 		"changelog: Assets/ProCore/ProBuilder/About/changelog.txt";
 
-		if(File.Exists(hiddenVersionInfo))
-			File.Delete(hiddenVersionInfo);
+	// 	if(File.Exists(hiddenVersionInfo))
+	// 		File.Delete(hiddenVersionInfo);
 		
-		using (FileStream fs = File.Create(hiddenVersionInfo))
-		{
-			Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
-			fs.Write(contents, 0, contents.Length);
-		}
+	// 	using (FileStream fs = File.Create(hiddenVersionInfo))
+	// 	{
+	// 		Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
+	// 		fs.Write(contents, 0, contents.Length);
+	// 	}
 
-		AssetDatabase.Refresh();
+	// 	AssetDatabase.Refresh();
 
-		Export(new Config(
-			"Assets/ProCore",
-			path == "" ? "../../bin/Release" : path,
-			"ProBuilder2",
-			VersionMarking.SVN,
-			new string[] {".meta", "Debug", "Install", "Build Checklist"},
-			false,
-			"-source",
-			"" ));
-	}
+	// 	Export(new Config(
+	// 		"Assets/ProCore",
+	// 		path == "" ? "../../bin/Release" : path,
+	// 		"ProBuilder2",
+	// 		VersionMarking.SVN,
+	// 		new string[] {".meta", "Debug", "Install", "Build Checklist"},
+	// 		false,
+	// 		"-source",
+	// 		"" ));
+	// }
 
 	public static string Export(Config config)
 	{
@@ -314,20 +317,27 @@ public class AutomatedExport : MonoBehaviour
 			}
 		}
 
-		string versionNo = (config.versionMarking == VersionMarking.None) ? "" : "-v";
+		string versionNo = "";
 
 		switch(config.versionMarking)
 		{
 			case VersionMarking.SVN:
 		#if !UNITY_WEBPLAYER
-				versionNo += SvnManager.GetRevisionNumber();
+				versionNo = "-v" + SvnManager.GetRevisionNumber();
 		#else
-				versionNo += "DO NOT USE WEBPLAYER SETTINGS";
+				versionNo = "DO NOT USE WEBPLAYER SETTINGS";
 		#endif
 				break;
 
 			case VersionMarking.DateTime:
-				versionNo += System.DateTime.Now.ToString(DateTimeFormat);
+				versionNo = System.DateTime.Now.ToString(DateTimeFormat);
+				break;
+
+			case VersionMarking.None:
+				break;
+
+			case VersionMarking.Manual:
+				versionNo = config.versionNumber;
 				break;
 		}
 	
@@ -386,7 +396,7 @@ public class AutomatedExport : MonoBehaviour
 			bool skip = false;
 			for(int i = 0; i < ignore.Length; i++)
 			{
-				if(file.Contains(ignore[i]))	
+				if(file.Replace("\\", "/").Contains(ignore[i]))	
 				{
 					skip = true;
 					break;
@@ -403,7 +413,7 @@ public class AutomatedExport : MonoBehaviour
 			bool skip = false;
 			for(int i = 0; i < ignore.Length; i++)
 			{
-				if(directory.Contains(ignore[i]))	
+				if(directory.Replace("\\", "/").Contains(ignore[i]))	
 				{
 					skip = true;
 					break;
