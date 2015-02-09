@@ -94,6 +94,26 @@ public class AutomatedExport : MonoBehaviour
 			""));
 	}
 
+	public static void PrependDefine()
+	{
+		string[] arg = System.Environment.GetCommandLineArgs();
+		string define = "";
+
+		foreach(string str in arg)
+		{
+			if(str.StartsWith("define:"))
+				define = str.Replace("define:", "").Trim();
+		}
+
+		CollectFiles("Assets/ProCore/ProBuilder", new string[] {".meta", "Debug", "AutomatedExport.cs"});
+
+		foreach(string str in assetsToExport)
+		{
+			if(str.EndsWith(".cs") && !str.Contains("AutomatedExport"))
+				AddDefine(str, define);
+		}
+	}
+
 	/** for building dll release -- only call from probuilder-*.bat */
 	// [MenuItem("Tools/Automated Export/Export Release")]
 	public static void ExportRelease()
@@ -234,67 +254,6 @@ public class AutomatedExport : MonoBehaviour
 			Directory.Delete(TEMP_PATH, true);
 		}
 	}
-
-	// [MenuItem("Tools/Automated Export/Export ProBuilder Source Package")]
-	// public static void ExportSourceRelease()
-	// {
-	// 	string[] arg = System.Environment.GetCommandLineArgs();
-	// 	string path = "";
-	// 	string plistName = DEFAULT_PLIST_NAME;
-
-	// 	foreach(string str in arg)
-	// 	{
-	// 		if(str.StartsWith("installDir:"))
-	// 			path = str.Replace("installDir:", "");
-
-	// 		if(str.StartsWith("plistName:"))
-	// 			plistName = str.Replace("plistName:", "");
-	// 	}
-
-	// 	// This manually modifies the pb_About file.
-	// 	TextAsset plist = (TextAsset)Resources.LoadAssetAtPath("Assets/ProCore/ProBuilder/Editor/Debug/" + plistName, typeof(TextAsset));
-	// 	string[] txt = plist.text.Split('\n');
-	// 	string VERSION_NUMBER = txt[0].Replace("Version: ", "").Trim();
-	// 	// string RELEASE_METRIC = txt[1].Replace("ReleaseMetric: ", "").Trim();
-	// 	// string VELOCIRAPTOR_DANGER = txt[2].Replace("VelociraptorDanger: ", "").Trim();
-
-	// 	string hiddenVersionInfo = "Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt";
-
-	// 	// name: ProBuilder
-	// 	// identifier: ProBuilder2_AboutWindowIdentifier
-	// 	// version: 2.2.5b0
-	// 	// revision: 2176
-	// 	// date: 04-18-2014
-	// 	// changelog: Assets/changelog.txt
-	// 	string versionInfoText = 
-	// 		"name: ProBuilder\n" + 
-	// 		"identifier: ProBuilder2_AboutWindowIdentifier\n" +
-	// 		"version: " + VERSION_NUMBER + "\n" +
-	// 		"revision: " + SvnManager.GetRevisionNumber() + "\n" +
-	// 		"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
-	// 		"changelog: Assets/ProCore/ProBuilder/About/changelog.txt";
-
-	// 	if(File.Exists(hiddenVersionInfo))
-	// 		File.Delete(hiddenVersionInfo);
-		
-	// 	using (FileStream fs = File.Create(hiddenVersionInfo))
-	// 	{
-	// 		Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
-	// 		fs.Write(contents, 0, contents.Length);
-	// 	}
-
-	// 	AssetDatabase.Refresh();
-
-	// 	Export(new Config(
-	// 		"Assets/ProCore",
-	// 		path == "" ? "../../bin/Release" : path,
-	// 		"ProBuilder2",
-	// 		VersionMarking.SVN,
-	// 		new string[] {".meta", "Debug", "Install", "Build Checklist"},
-	// 		false,
-	// 		"-source",
-	// 		"" ));
-	// }
 
 	public static string Export(Config config)
 	{

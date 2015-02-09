@@ -1,3 +1,4 @@
+#if !PROTOTYPE
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -22,3 +23,4 @@ public class pb_ProBuilderMenuItems : Editor
 	}
 #endif
 }
+#endif
