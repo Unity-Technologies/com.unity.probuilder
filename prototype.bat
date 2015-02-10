@@ -1,4 +1,4 @@
-# @echo off
+@echo off
 
 set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
 set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
@@ -6,57 +6,56 @@ set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
 
-:: Clean out Upgrade project
-
 svn update
 
 echo UNITY 4 PATH IS %unity_path_4%
 echo UNITY 5 PATH IS %unity_path_5%
 
 :: clean out temp directory.
+echo clean out temp directory
 rd /s /q bin\temp\
 rd /s /q probuilder2.0\Library\
 md bin\temp
+rd /s /q probuilder-staging\
 
-:: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportReleaseResources ignore:
-	MenuItems/Tools;
-	MenuItems/Actions/pb_ExportObj.cs;
-	MenuItems/Actions/pb_ProBuilderize.cs;
-	MenuItems/Actions/pb_MakeMeshAsset.cs;
-	MenuItems/Actions/pb_StripProBuilderScripts.cs;
-
-	API;
-
-	pb_SaveLoad.cs -logFile %CD%/prototype-release-resources-log.txt
-
-pause
-
-:: md %CD%\probuilder-staging\Assets
-rd /S /Q %CD%\probuilder-staging
+echo build resources
 
 %unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
-pause
 
-md %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor
-md %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes
+xcopy /E /Y /I %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Assets\ProCore
 
-:: Copy AutomatedExport script into project
-xcopy %editor_debug%\AutomatedExport.cs %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\Debug\
+:: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
+:: %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportReleaseResources define:PROTOTYPE ignore:ProBuilder/API;ProBuilder/Debug;ProBuilder/Editor/Debug;MenuItems/Actions/pb_ExportObj.cs;MenuItems/Actions/pb_MakeMeshAsset.cs;MenuItems/Actions/pb_ProBuilderize.cs;MenuItems/Actions/pb_StripProBuilderScripts.cs;MenuItems/File/;MenuItems/Geometry/pb_BridgeEdges.cs;MenuItems/Geometry/pb_ConformNormals.cs;MenuItems/Geometry/pb_ConnectEdges.cs;MenuItems/Geometry/pb_DetachDeleteFace.cs;MenuItems/Geometry/pb_FreezeTransform.cs;MenuItems/Geometry/pb_MergeFaces.cs;MenuItems/Geometry/pb_Triangulate.cs;MenuItems/Geometry/pb_VertexMergeWeld.cs;MenuItems/Tools;Shared/pb_Profiler -logFile %CD%/prototype-release-resources-log.txt
 
-:: Copy SvnManager to temp project
-xcopy %editor_debug%\SvnManager.cs %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\Debug\
+:: rd /S /Q %CD%\probuilder-staging
 
-:: Copy Ionic.Zip DLL into project
-xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\Debug\
+echo #define PROTOTYPE
 
-:: Copy plist file to temp project
-xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\Debug\
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.PrependDefine define:PROTOTYPE
 
-:: Import ProBuilder resources
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\bin\temp\ProBuilder2(Resources).unitypackage
+echo remove core, mesh ops, and editor core
 
-pause
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
+
+:: for prototype, remove all kinds of other stuff 
+
+rd /S /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\API Examples"
+rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Debug
+rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\File
+rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Tools
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_ExportObj.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_MakeMeshAsset.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_ProBuilderize.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_StripProBuilderScripts.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_BridgeEdges.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_ConformNormals.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_ConnectEdges.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_DetachDeleteFace.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_FreezeTransform.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_MergeFaces.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_Triangulate.cs
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_VertexMergeWeld.cs
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
 
@@ -69,8 +68,7 @@ pause
 	set u4editor="%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4.sln"
 
 	:: Build Core - (post-build script places dll in staging project)
-	%msbuild% /p:DefineConstants="RELEASE;
-	PROTOTYPE;" /t:Clean,Build %u4core%
+	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build %u4core%
 
 	echo Copy core lib to staging
 	xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Debug\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
@@ -87,20 +85,23 @@ pause
 	echo Copy editor lib to staging
 	xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Debug\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
+	echo renaming ProBuilder to Prototype
+	move %CD%\probuilder-staging\Assets\ProCore\ProBuilder %CD%\probuilder-staging\Assets\ProCore\Prototype
+
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
 	:: Export release pack for Unity 4.3 +
-	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 
-pause
+	pause
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
 	echo ================================== CLEAN STAGING ==================================
 
-	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderCore-Unity4.dll"
-	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderMeshOps-Unity4.dll"
-	del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity4.dll"
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\Prototype\Classes\ProBuilderCore-Unity4.dll"
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\Prototype\Classes\ProBuilderMeshOps-Unity4.dll"
+	del /Q "%CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\ProBuilderEditor-Unity4.dll"
 
 :: ================================ BUILD 5.0 + LIBRARIES ================================ {
 	
@@ -116,24 +117,27 @@ pause
 	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5core%
 
 	echo Copy core 5 to staging
-	xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+	xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\Prototype\Classes\"
 
 	:: Build Mesh ops against Unity 5
 	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5mesh%
 
 	echo Copy mesh ops 5 to staging
-	xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+	xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\Prototype\Classes\"
 
 	:: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
 	%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;" /v:q /t:Clean,Build %u5editor%
 
 	echo Copy editor lib to staging
-	xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+	xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\"
 
 	echo ================================== EXPORT UNITY 5 PACK ==================================
 
 	:: Export release pack for Unity 5.0 +
-	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
+	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler;Debug folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE -logFile %CD%\logs\probuilder5.0-compile-log.txt
+
+	echo Done building Source, Unity 4, Unity 5 project packages.
+
 pause
 :: ================================ END   5.0 + LIBRARIES ================================ }
 
