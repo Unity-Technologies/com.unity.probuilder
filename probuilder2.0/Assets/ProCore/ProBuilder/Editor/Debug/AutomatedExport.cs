@@ -166,7 +166,7 @@ public class AutomatedExport : MonoBehaviour
 				folderRootName = str.Replace("folderRootName:", "");
 
 			if(str.StartsWith("revisionNo:"))
-				revisionNo = "-v" + str.Replace("revisionNo:", "");
+				revisionNo = str.Replace("revisionNo:", "");
 		}
 
 		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
@@ -188,6 +188,7 @@ public class AutomatedExport : MonoBehaviour
 				"revision: " + (revisionNo == "" ? SvnManager.GetRevisionNumber() : revisionNo) + "\n" +
 				"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 				"changelog: Assets/ProCore/" + folderRootName + "/About/changelog.txt";
+			
 			// name: ProBuilder
 			// identifier: ProBuilder2_AboutWindowIdentifier
 			// version: 2.2.5b0
@@ -296,7 +297,7 @@ public class AutomatedExport : MonoBehaviour
 				break;
 
 			case VersionMarking.Manual:
-				versionNo = config.versionNumber;
+				versionNo = "-v" + config.versionNumber;
 				break;
 		}
 	

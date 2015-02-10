@@ -5,6 +5,7 @@ set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
+set force_revision="3132"	:: If left empty, build process will use the current revision.
 
 svn update
 
@@ -18,22 +19,17 @@ rd /s /q probuilder2.0\Library\
 md bin\temp
 rd /s /q probuilder-staging\
 
-echo build resources
+echo "Copy resources"
 
 %unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
 
 xcopy /E /Y /I %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Assets\ProCore
 
-:: Create resources pack (ExportReleaseResources dumps the pack in bin/temp)
-:: %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportReleaseResources define:PROTOTYPE ignore:ProBuilder/API;ProBuilder/Debug;ProBuilder/Editor/Debug;MenuItems/Actions/pb_ExportObj.cs;MenuItems/Actions/pb_MakeMeshAsset.cs;MenuItems/Actions/pb_ProBuilderize.cs;MenuItems/Actions/pb_StripProBuilderScripts.cs;MenuItems/File/;MenuItems/Geometry/pb_BridgeEdges.cs;MenuItems/Geometry/pb_ConformNormals.cs;MenuItems/Geometry/pb_ConnectEdges.cs;MenuItems/Geometry/pb_DetachDeleteFace.cs;MenuItems/Geometry/pb_FreezeTransform.cs;MenuItems/Geometry/pb_MergeFaces.cs;MenuItems/Geometry/pb_Triangulate.cs;MenuItems/Geometry/pb_VertexMergeWeld.cs;MenuItems/Tools;Shared/pb_Profiler -logFile %CD%/prototype-release-resources-log.txt
-
-:: rd /S /Q %CD%\probuilder-staging
-
-echo #define PROTOTYPE
+echo Prefix files with #define PROTOTYPE
 
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.PrependDefine define:PROTOTYPE
 
-echo remove core, mesh ops, and editor core
+echo Remove core, mesh ops, and editor core
 
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
@@ -91,9 +87,7 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
 	:: Export release pack for Unity 4.3 +
-	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
-
-	pause
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
@@ -134,34 +128,8 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 	echo ================================== EXPORT UNITY 5 PACK ==================================
 
 	:: Export release pack for Unity 5.0 +
-	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler;Debug folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE -logFile %CD%\logs\probuilder5.0-compile-log.txt
+	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler;Debug folderRootName:Prototype suffix:-unity5 generateVersionInfo:TRUE -logFile %CD%\logs\probuilder5.0-compile-log.txt
 
-	echo Done building Source, Unity 4, Unity 5 project packages.
-
-pause
-:: ================================ END   5.0 + LIBRARIES ================================ }
-
-
-:: Clear out staging project again, but this time repopulate it with a built pack + install stuff
-rd /S /Q %CD%\probuilder-staging
-
-%unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
-
-md %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Editor\
-md %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Packs\
-
-xcopy %editor_debug%\AutomatedExport.cs %CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\Debug\
-xcopy %editor_debug%\SvnManager.cs %CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\Debug\
-xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\Debug\
-xcopy %editor_debug%\plist.txt %CD%\probuilder-staging\Assets\ProCore\Prototype\Editor\Debug\
-
-
-:: Bring in upgrade packages and QuickStart script -- (this brings in all packages preesent in temp)
-:: Export using old 6by7 path so that the QuickStart overwrites the old one.  Also allows us to move 
-:: the root to ProCore since ProCore doesn't exist yet
-xcopy %CD%\bin\temp\Prototype-v*.unitypackage %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Packs\
-xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\QuickStart2.cs %CD%\probuilder-staging\Assets\ProCore\Prototype\Install\Editor\
-
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ packageName:Prototype define:PROTOTYPE generateAbout:FALSE generateZip:TRUE
+	echo Done building Unity 4, Unity 5 project packages.
 
 pause
