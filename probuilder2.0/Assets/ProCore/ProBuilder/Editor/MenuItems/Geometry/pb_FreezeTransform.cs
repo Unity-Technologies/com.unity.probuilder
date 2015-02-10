@@ -40,8 +40,14 @@ public class pb_FreezeTransform : Editor
 
 			pb.SetVertices(v);
 
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
+
+		if(pb_Editor.instance)
+			pb_Editor.instance.UpdateSelection();
+
+		SceneView.RepaintAll();
 	}
 }
