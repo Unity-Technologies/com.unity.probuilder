@@ -5,6 +5,7 @@ set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 set procore_changelog="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\About\changelog.txt"
+set force_revision=""
 
 :: Clean out Upgrade project
 :: rd /S /q uv-upgrade-src\
@@ -34,7 +35,7 @@ echo ================================== EXPORT SOURCE PACK =====================
 
 :: Create source pack
 :: %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportSourceRelease installDir:..\..\bin\temp\ -logFile %CD%/log/probuilder-source-compile-log.txt
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder-source-compile-log.txt
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder2.0 -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ revisionNo:%force_revision% ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-source generateVersionInfo:TRUE -logFile %CD%/logs/probuilder-source-compile-log.txt
 
 
 :: md %CD%\probuilder-staging\Assets
@@ -89,10 +90,8 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
-	pause
-
 	:: Export release pack for Unity 4.3 +
-	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ revisionNo:%force_revision% ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
 	echo ================================== CLEAN STAGING ==================================
@@ -132,7 +131,7 @@ xcopy %editor_debug%\Ionic.Zip.dll %CD%\probuilder-staging\Assets\ProCore\ProBui
 	echo ================================== EXPORT UNITY 5 PACK ==================================
 
 	:: Export release pack for Unity 5.0 +
-	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
+	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease installDir:..\..\bin\temp\ revisionNo:%force_revision% ignore:UserMaterials.asset;plist.txt;pb_Profiler folderRootName:ProBuilder suffix:-unity5 generateVersionInfo:TRUE
 :: ================================ END   5.0 + LIBRARIES ================================ }
 
 echo Finished building all projects
@@ -165,7 +164,7 @@ xcopy %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Install\Editor\pb_InstallScri
 
 echo ================================== EXPORT FINAL PACK ==================================
 
-%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ ignore:changelog.txt generateZip:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease exportFolderPath:"Assets/ProCore" installDir:..\..\bin\Debug\ revisionNo:%force_revision% ignore:changelog.txt generateZip:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 
 echo ================================== COMPLETE! ================================== 
 
