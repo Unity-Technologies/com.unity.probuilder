@@ -46,6 +46,12 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 	}
+
+	void OnValidate()
+	{
+		if(_colors == null || _colors.Length != vertexCount)
+			_colors = pbUtil.FilledArray(Color.white, vertexCount);
+	}
 #endregion
 
 #region INITIALIZATION

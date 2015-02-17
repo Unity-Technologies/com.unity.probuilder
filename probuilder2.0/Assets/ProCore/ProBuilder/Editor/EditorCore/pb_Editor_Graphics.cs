@@ -57,6 +57,9 @@ public class pb_Editor_Graphics
 		edgeSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
 		// vertSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
 
+		if(!selectionObject || !wireframeObject)
+			Init(_editLevel, _selectMode);
+
 		SetMaterial(_editLevel, _selectMode);
 	}
 

@@ -37,6 +37,8 @@ public class pb_Object_Editor : Editor
 			return;
 		
 		showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
+		// pb_Editor.OnVertexMovementFinished += OnSelectionChange;
+		// pb_Editor.OnSelectionUpdate += OnSelectionChange;
 
 		if(target is pb_Object)
 			pb = (pb_Object)target;
@@ -80,6 +82,19 @@ public class pb_Object_Editor : Editor
 			pb.GenerateUV2();
 		}
 	}
+
+	// void OnDisable()
+	// {
+	// 	if(boundsMesh)
+	// 		DestroyImmediate(boundsMesh);
+	// }
+
+	// private Mesh boundsMesh = null;
+	// private void OnSelectionChange(pb_Object[] selection)
+	// {
+	// 	if(selection.Contains(pb))
+	// 		boundsMesh = pb_Mesh_Utility.BoundsWireframe( pb.GetComponent<MeshFilter>().sharedMesh.bounds );
+	// }
 
 	// bool pbInspectorFoldout = false;
 	public override void OnInspectorGUI()
@@ -148,10 +163,16 @@ public class pb_Object_Editor : Editor
 				}
 			GUI.backgroundColor = Color.white;
 			Handles.EndGUI();
-		// #endif
 		}
+
+		// Material mat = pb_Constant.UnlitVertexColor;
+		// if(mat != null)
+		// {
+		// 	if(boundsMesh && mat.SetPass(0))
+		// 		Graphics.DrawMeshNow(boundsMesh, pb.transform.localToWorldMatrix, 0);
+		// }
 	}
-	
+
 	bool HasFrameBounds() 
 	{
 		if(pb == null)

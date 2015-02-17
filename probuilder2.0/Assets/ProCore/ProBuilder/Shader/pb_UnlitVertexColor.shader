@@ -1,4 +1,4 @@
-﻿Shader "Custom/UnlitVertexColor"
+﻿Shader "ProBuilder/UnlitVertexColor"
 {
 	SubShader
 	{

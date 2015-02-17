@@ -4,7 +4,6 @@ using UnityEngine;
 public static class pb_Constant
 {
 	public static Material DefaultMaterial { get{ return (Material)Resources.Load("Materials/Default_Prototype", typeof(Material)); } }
-	public static Material NoDrawMaterial { get{ return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
 	
 	private static Material _UnityDefaultDiffuse = null;
 	public static Material UnityDefaultDiffuse
@@ -21,6 +20,18 @@ public static class pb_Constant
 			}
 			
 			return _UnityDefaultDiffuse;
+		}
+	}
+
+	private static Material _UnlitVertexColorMaterial;
+	public static Material UnlitVertexColor
+	{
+		get
+		{
+			if(_UnlitVertexColorMaterial == null)
+				_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
+
+			return _UnlitVertexColorMaterial;
 		}
 	}
 
@@ -68,6 +79,7 @@ public static class pb_Constant
 	public const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
 	public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
 	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
+	public const string pbShowSceneInfo 				= "pbShowSceneInfo";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

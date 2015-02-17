@@ -92,6 +92,7 @@ public class pb_Editor : EditorWindow
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
 	public float drawVertexNormals = 0f;
 	public bool drawFaceNormals = false;
+	private bool pref_showSceneInfo = false;
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
@@ -192,6 +193,7 @@ public class pb_Editor : EditorWindow
 		editLevel 			= pb_Preferences_Internal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
 		selectionMode		= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
+		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
 				
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -2041,6 +2043,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	Color handleBgColor;
+	Rect sceneInfoRect = new Rect(18, 0, 200, 40);
 	public void DrawHandleGUI()
 	{
 		Handles.BeginGUI();
@@ -2068,20 +2071,33 @@ public class pb_Editor : EditorWindow
 				);
 		}
 
-		#if PB_DEBUG
-		int startY = 0;
-		try
+		if( pref_showSceneInfo )
 		{
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "Faces: " + faceCount);
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "Triangles: " + triangleCount);
-			startY += 20;
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Faces: " + selectedFaceCount);
-			GUI.Label(new Rect(18, startY += 20, 200, 40), "Selected Vertices: " + selectedVertexCount);
-		} catch (System.Exception e) {}
-		#endif
-
+			sceneInfoRect.y = 12;
+			/**
+			 * Show the PB cached and Unity mesh element counts if in Debug mode.
+			 */
+			#if PB_DEBUG
+				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Triangles: " + triangleCount);
+				sceneInfoRect.y += 40;
+				
+				GUI.Label(sceneInfoRect, "Selected Faces: " + selectedFaceCount);
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Selected Vertices: " + selectedVertexCount);
+			#else
+				GUI.Label(sceneInfoRect, "Vertices: " + vertexCount);
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Triangles: " + triangleCount);
+			#endif
+		}
 
 		// Enables vertex selection with a mouse click
 		if(editLevel == EditLevel.Geometry && !dragging && selectionMode == SelectMode.Vertex)
@@ -2551,11 +2567,9 @@ public class pb_Editor : EditorWindow
 	// Vector3[]			selected_handlePivot = new Vector3[0];
 	int 				per_object_vertexCount_distinct = 0;	///< The number of selected distinct indices on the object with the greatest number of selected distinct indices.
 
-	#if PB_DEBUG
 	int faceCount = 0;
 	int vertexCount = 0;
 	int triangleCount = 0;
-	#endif
 
 	int selectionHash;
 
@@ -2591,11 +2605,9 @@ public class pb_Editor : EditorWindow
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
 
-		#if PB_DEBUG
 		faceCount = 0;
 		vertexCount = 0;
 		triangleCount = 0;
-		#endif
 
 		pb_Object[] t_selection = selection;
 
@@ -2764,11 +2776,9 @@ public class pb_Editor : EditorWindow
 			if(distinctVertexCount > per_object_vertexCount_distinct)
 				per_object_vertexCount_distinct = distinctVertexCount;
 
-			#if PB_DEBUG
 			faceCount += selection[i].faces.Length;
 			vertexCount += selection[i].vertexCount;
 			triangleCount += selection[i].msh.triangles.Length;
-			#endif
 		}
 
 		selected_handlePivotWorld = (max+min)/2f;
