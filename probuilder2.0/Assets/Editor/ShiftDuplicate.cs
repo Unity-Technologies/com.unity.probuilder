@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
- 
+using ProBuilder2.EditorCommon;
+
+
 [InitializeOnLoad]
 public class ShiftDuplicate : Editor
 {
@@ -25,9 +27,11 @@ public class ShiftDuplicate : Editor
  
 		if(e.modifiers == EventModifiers.Shift && e.type == EventType.MouseDrag)
 		{
+			if(pb_Editor.instance != null && pb_Editor.instance.editLevel == EditLevel.Geometry)
+				return;
+
 			if(go == null)
 			{
-
 				go = GameObject.Instantiate(Selection.activeTransform.gameObject);
 				Undo.RegisterCreatedObjectUndo(go, "Shift Duplicate");
 			}

@@ -308,7 +308,11 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
+			#if UNITY_5
 			GUILayout.Space( isFloatingWindow ? 20 : 34 );
+			#else
+			GUILayout.Space( isFloatingWindow ? 28 : 34 );
+			#endif
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 			pb_GUI_Utility.DrawSeparator(2);
@@ -524,7 +528,9 @@ public class pb_Editor : EditorWindow
 				if(editLevel == EditLevel.Geometry)
 				{
 					GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
+					GUILayout.Space(2);
 					pb_GUI_Utility.DrawSeparator(1);
+					GUILayout.Space(2);
 					GUI.backgroundColor = Color.white;
 
 					/********************************************************
@@ -2930,8 +2936,6 @@ public class pb_Editor : EditorWindow
 
 		nearestEdge = null;
 		nearestEdgeObject = null;
-		
-		UpdateGraphics();
 	}
 
 	public void ClearSelection()
@@ -2941,8 +2945,6 @@ public class pb_Editor : EditorWindow
 		}
 
 		Selection.objects = new Object[0];
-
-		UpdateGraphics();
 	}
 
 	int edgeWorkerFinished = 0;

@@ -13,6 +13,7 @@ using Parabox.Debug;
  */
 public class UnitTests : Editor
 {
+#if PB_DEBUG
 	static pb_Profiler profiler = new pb_Profiler();
 
 	static System.Func<bool>[] tests = new System.Func<bool>[]
@@ -172,4 +173,5 @@ public class UnitTests : Editor
 
 		return true;
 	}
+#endif
 }
