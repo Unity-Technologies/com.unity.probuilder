@@ -371,6 +371,7 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	ScreenshotStatus screenshotStatus = ScreenshotStatus.Done;
+	readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
 
 	void OnGUI()
 	{
@@ -379,9 +380,10 @@ public class pb_UV_Editor : EditorWindow
 			this.minSize = new Vector2(ScreenRect.width, ScreenRect.height);
 			this.maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
 
-			GUI.backgroundColor = BasicBackgroundColor;
-			GUI.Box(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), "");
-			GUI.backgroundColor = Color.white;
+			pb_GUI_Utility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), UV_FILL_COLOR);
+
+			if(Camera.current)
+				Camera.current.backgroundColor = Color.clear;
 
 			DrawUVGraph(graphRect);
 
@@ -1913,7 +1915,11 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		GL.Begin(GL.LINES);
-		GL.Color(UVColorSecondary);
+
+		if(screenshotStatus != ScreenshotStatus.Done)
+			GL.Color(Color.green);
+		else
+			GL.Color(UVColorSecondary);
 
 		// Here because when you undo a geometry action that involved deleting or adding vertices,
 		// the UpdateSelection() delegate doesn't call UV editor's updateselection fast enough,
@@ -3279,6 +3285,19 @@ public class pb_UV_Editor : EditorWindow
 				break;
 
 			case ScreenshotStatus.RenderComplete:
+
+				Color[] px = screenshot.GetPixels(0);
+
+				for(int i = 0; i < px.Length; i++)
+
+					if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f && 
+					 	Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
+					  	Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
+						px[i] = Color.clear;
+
+				screenshot.SetPixels(px);
+				screenshot.Apply();
+
 				pb_Editor_Utility.SaveTexture(screenshot);
 				DestroyImmediate(screenshot);
 				screenshotStatus = ScreenshotStatus.Done;
