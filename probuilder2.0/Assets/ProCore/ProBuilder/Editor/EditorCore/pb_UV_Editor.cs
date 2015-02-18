@@ -98,6 +98,8 @@ public class pb_UV_Editor : EditorWindow
 
 	GUIContent gc_ConvertToManual = new GUIContent("Convert to Manual", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
 	GUIContent gc_ConvertToAuto = new GUIContent("Convert to Auto", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
+
+	GUIContent gc_RenderUV = new GUIContent((Texture2D)null, "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image.");
 #endregion
 
 #region Properties
@@ -213,6 +215,19 @@ public class pb_UV_Editor : EditorWindow
 		menu.ShowAsContext ();
 	}
 
+	void ScreenshotMenu()
+	{
+		GenericMenu menu = new GenericMenu();
+
+		menu.AddItem( new GUIContent("UV Template 256x256", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image."), false, () => Screenshot(256));
+		menu.AddItem( new GUIContent("UV Template 512x512", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 512px image."), false, () => Screenshot(512));
+		menu.AddItem( new GUIContent("UV Template 1024x1024", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 1024px image."), false, () => Screenshot(1024));
+		menu.AddItem( new GUIContent("UV Template 2048x2048", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 2048px image."), false, () => Screenshot(2048));
+		menu.AddItem( new GUIContent("UV Template 4096x4096", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 4096px image."), false, () => Screenshot(4096));
+
+		menu.ShowAsContext();
+	}
+
 	static void ContextMenu_OpenFloatingWindow()
 	{
 		EditorPrefs.SetBool(pb_Constant.pbUVEditorFloating, true);
@@ -274,7 +289,6 @@ public class pb_UV_Editor : EditorWindow
 	{
 		bool isProSkin = true;
 
-		DRAG_BOX_COLOR = isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
 		GridColorPrimary = isProSkin ? new Color(1f, 1f, 1f, .2f) : new Color(0f, 0f, 0f, .2f);
 		UVColorPrimary = isProSkin ? Color.green : new Color(0f, .8f, 0f, 1f);
 		UVColorSecondary = isProSkin ? new Color(1f, 1f, 1f, .7f) : Color.blue;
@@ -286,6 +300,7 @@ public class pb_UV_Editor : EditorWindow
 		MethodInfo loadIconMethod = typeof(EditorGUIUtility).GetMethod("LoadIcon", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 		
 		isProSkin = EditorGUIUtility.isProSkin;
+		DRAG_BOX_COLOR = isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
 
 		Texture2D moveIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
 		Texture2D rotateIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
@@ -301,6 +316,8 @@ public class pb_UV_Editor : EditorWindow
 
 		icon_sceneUV_on			= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_Manip_On", typeof(Texture2D)));
 		icon_sceneUV_off		= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_Manip_Off", typeof(Texture2D)));
+
+		gc_RenderUV.image = (Texture2D)(Resources.Load(isProSkin ? "GUI/camera-64x64" : "GUI/camera-64x64-dark", typeof(Texture2D)));
 
 		ToolIcons = new GUIContent[4]
 		{
@@ -345,24 +362,61 @@ public class pb_UV_Editor : EditorWindow
 	bool needsRepaint = false;
 	Rect ScreenRect = new Rect(0f, 0f, 0f, 0f);
 
+	enum ScreenshotStatus
+	{
+		PrepareCanvas,
+		CanvasReady,
+		RenderComplete,
+		Done
+	}
+
+	ScreenshotStatus screenshotStatus = ScreenshotStatus.Done;
+
 	void OnGUI()
 	{
+		if(screenshotStatus != ScreenshotStatus.Done)
+		{
+			this.minSize = new Vector2(ScreenRect.width, ScreenRect.height);
+			this.maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
+
+			GUI.backgroundColor = BasicBackgroundColor;
+			GUI.Box(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), "");
+			GUI.backgroundColor = Color.white;
+
+			DrawUVGraph(graphRect);
+
+			if(screenshotStatus == ScreenshotStatus.PrepareCanvas)
+			{
+				if(Event.current.type == EventType.Repaint)
+				{
+					screenshotStatus = ScreenshotStatus.CanvasReady;
+					Screenshot();
+				}
+
+				return;
+			}
+			else // if(screenshotStatus == ScreenshotStatus.RenderComplete || screenshotStatus.)
+			{
+				Screenshot();
+			}
+		}		
+
 		if(tool == Tool.View || m_draggingCanvas)	
 			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.Pan);
+
+		ScreenRect.width = Screen.width;
+		ScreenRect.height = Screen.height;
 
 		/**
 		 * if basic skin, manually tint the background
 		 */
 		if(!EditorGUIUtility.isProSkin)
 		{
-			ScreenRect.width = Screen.width;
-			ScreenRect.height = Screen.height;
-
 			GUI.backgroundColor = BasicBackgroundColor; //new Color(.13f, .13f, .13f, .7f);
 			GUI.Box(ScreenRect, "");
 			GUI.backgroundColor = Color.white;
 		}
-
+		
 		#if PB_DEBUG
 		profiler.BeginSample("pb_UV_Editor::OnGUI");
 		profiler.BeginSample("GUI Calculations");
@@ -989,12 +1043,13 @@ public class pb_UV_Editor : EditorWindow
 
 		switch(e.keyCode)
 		{
-			// case KeyCode.Keypad0: 
-			// case KeyCode.Alpha0:
-			// 	ResetCanvas();
-			// 	e.Use();
-			// 	needsRepaint = true;
-			// 	break;
+			case KeyCode.Keypad0: 
+			case KeyCode.Alpha0:
+				ResetCanvas();
+				uvCanvasOffset = Vector2.zero;
+				e.Use();
+				needsRepaint = true;
+				break;
 
 			case KeyCode.W:
 				SetTool_Internal(Tool.Move);
@@ -1769,13 +1824,17 @@ public class pb_UV_Editor : EditorWindow
 		if(pref_showMaterial && preview_material && preview_material.mainTexture)
 			EditorGUI.DrawPreviewTexture(UVRectIdentity, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
 
-		#if PB_DEBUG
-			profiler.BeginSample("Draw Base Graph");
+		if(screenshotStatus != ScreenshotStatus.PrepareCanvas && 
+		   screenshotStatus != ScreenshotStatus.CanvasReady)
+		{
+			#if PB_DEBUG
+				profiler.BeginSample("Draw Base Graph");
+					DrawUVGrid(GridColorPrimary);
+				profiler.EndSample();
+			#else
 				DrawUVGrid(GridColorPrimary);
-			profiler.EndSample();
-		#else
-			DrawUVGrid(GridColorPrimary);
-		#endif
+			#endif
+		}
 
 		if(selection == null || selection.Length < 1)
 			return;
@@ -1793,7 +1852,7 @@ public class pb_UV_Editor : EditorWindow
 		try 
 		{
 			Vector2 p = Vector2.zero;
-			if(selectionMode == SelectMode.Vertex)
+			if(selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 			{
 				// GUI.color = UVColorSecondary;
 
@@ -1831,24 +1890,27 @@ public class pb_UV_Editor : EditorWindow
 
 
 		/**
-		 * Draw incomplete texture group indicators
+		 * Draw incomplete texture group indicators (unless taking a screenshot)
 		 */
- 		GL.Begin(GL.LINES);
-		GL.Color(UVColorGroupIndicator);
-
-		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+		if(screenshotStatus == ScreenshotStatus.Done)
 		{
-			Vector2 cen = CanvasToGUIPoint(lines[0]);
+	 		GL.Begin(GL.LINES);
+			GL.Color(UVColorGroupIndicator);
 
-			for(int i = 1; i < lines.Count; i++)
+			foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 			{
-				GL.Vertex(cen);
+				Vector2 cen = CanvasToGUIPoint(lines[0]);
 
-				Vector2 v = CanvasToGUIPoint(lines[i]);
-				GL.Vertex(v);
+				for(int i = 1; i < lines.Count; i++)
+				{
+					GL.Vertex(cen);
+
+					Vector2 v = CanvasToGUIPoint(lines[i]);
+					GL.Vertex(v);
+				}
 			}
+			GL.End();
 		}
-		GL.End();
 
 		GL.Begin(GL.LINES);
 		GL.Color(UVColorSecondary);
@@ -1893,6 +1955,13 @@ public class pb_UV_Editor : EditorWindow
 		#if PB_DEBUG
 		profiler.BeginSample("Draw Selected Edges + Vertices");
 		#endif
+
+		if(screenshotStatus != ScreenshotStatus.Done)
+		{
+			GL.PopMatrix();
+			GUI.color = Color.white;
+			return;
+		}
 
 		GUI.color = UVColorPrimary;
 
@@ -2049,9 +2118,11 @@ public class pb_UV_Editor : EditorWindow
 
 		UVColorGroupIndicator = EditorGUILayout.ColorField("Groups", UVColorGroupIndicator);
 
-		if(GUILayout.Button("Screenshot"))	
-			EditorApplication.delayCall += Screenshot;
-
+		if(GUILayout.Button("Screenshot"))
+		{
+			ScreenshotMenu();
+		}
+		
 		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
 		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));
 
@@ -2483,6 +2554,12 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pref_showMaterial = !pref_showMaterial;
 			EditorPrefs.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
+		}
+
+		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
+		if(GUI.Button(editor_toggles_rect, gc_RenderUV))
+		{
+			ScreenshotMenu();
 		}
 		GUI.EndGroup();
 	}
@@ -3120,18 +3197,94 @@ public class pb_UV_Editor : EditorWindow
 	}
 #endregion
 
-	public void Screenshot()
+	float curUvScale = 0f;					///< Store the user set positioning and scale before modifying them for a screenshot
+	Vector2 curUvPosition = Vector2.zero;	///< ditto ^
+	Texture2D screenshot;
+	int screenshotSize = 1024;
+	Rect screenshotCanvasRect = new Rect(0,0,0,0);
+	Vector2 screenshotTexturePosition = Vector2.zero;
+
+	void Screenshot(int size)
 	{
-		Vector2 cen = CanvasToGUIPoint( Vector2.zero );
-		cen.y = Screen.height - cen.y;
+		screenshotSize = size;
+		screenshotStatus = ScreenshotStatus.Done;
+		Screenshot();
+	}
 
-		int sz = (int)(uvGridSize * uvGraphScale);
+	void Screenshot()
+	{
+		switch(screenshotStatus)
+		{
+				// A new screenshot has been initiated
+			case ScreenshotStatus.Done:
+				curUvScale = uvGraphScale;
+				curUvPosition = uvCanvasOffset;
 
-		Texture2D tex = new Texture2D(sz, sz);
-		tex.ReadPixels(new Rect(cen.x, cen.y - WINDOW_HEADER_OFFSET, sz, sz), 0, 0);
-		tex.Apply();
+				uvGraphScale = screenshotSize / 256;
+				// always begin texture grabs at bottom left
+				uvCanvasOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f);
 
-		pb_Editor_Utility.SaveTexture(tex);
+				screenshot = new Texture2D(screenshotSize, screenshotSize);
+				screenshot.hideFlags = (HideFlags)( 1 | 2 | 4 );
+				screenshotStatus = ScreenshotStatus.PrepareCanvas;
+
+				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent
+				// passes
+				screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshotSize, ScreenRect.width), (int)Mathf.Min(screenshotSize, ScreenRect.height) );
+				screenshotTexturePosition = new Vector2(0,0);
+
+				this.ShowNotification(new GUIContent("Rendering UV Graph\n..."));
+
+				return;
+
+			case ScreenshotStatus.CanvasReady:
+					
+				// take screenshots vertically, then move right, repeat if necessary
+				if(screenshotTexturePosition.y < screenshotSize)
+				{
+					screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
+
+					screenshotTexturePosition.y += screenshotCanvasRect.height;
+
+					if(screenshotTexturePosition.y < screenshotSize)
+					{
+						// reposition canvas
+						uvCanvasOffset.y += screenshotCanvasRect.height;
+						screenshotCanvasRect.height = (int)Mathf.Min(screenshotSize - screenshotTexturePosition.y, ScreenRect.height);
+						screenshotStatus = ScreenshotStatus.PrepareCanvas;
+						return;
+					}
+					else
+					{
+						screenshotTexturePosition.x += screenshotCanvasRect.width;
+
+						if(screenshotTexturePosition.x < screenshotSize)
+						{
+							uvCanvasOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
+							uvCanvasOffset.y = ScreenRect.height/2f;	// reset canvas offset y value
+							screenshotCanvasRect.width = (int)Mathf.Min(screenshotSize - screenshotTexturePosition.x, ScreenRect.width);
+							screenshotTexturePosition.y = 0;
+							screenshotStatus = ScreenshotStatus.PrepareCanvas;
+							return;
+						}
+					}
+				}
+
+				// reset the canvas to it's original position and scale
+				uvGraphScale = curUvScale;
+				uvCanvasOffset = curUvPosition;
+
+				this.RemoveNotification();
+				screenshotStatus = ScreenshotStatus.RenderComplete;
+				Repaint();
+				break;
+
+			case ScreenshotStatus.RenderComplete:
+				pb_Editor_Utility.SaveTexture(screenshot);
+				DestroyImmediate(screenshot);
+				screenshotStatus = ScreenshotStatus.Done;
+				break;
+		}
 	}
 }
 

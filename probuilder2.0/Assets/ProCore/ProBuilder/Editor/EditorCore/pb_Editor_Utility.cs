@@ -143,7 +143,12 @@ public static class pb_Editor_Utility
 
 		byte[] bytes = texture.EncodeToPNG();
 
-		System.IO.File.WriteAllBytes(Application.dataPath + "/Screenshot.png", bytes);
+		string path = EditorUtility.SaveFilePanel("Save Image", Application.dataPath, "", "png");
+
+		if(path == "") return;
+
+		System.IO.File.WriteAllBytes(path, bytes);
+
 		AssetDatabase.Refresh();
 	}
 #endregion
