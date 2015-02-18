@@ -311,7 +311,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			#if UNITY_5
-			GUILayout.Space( isFloatingWindow ? 20 : 34 );
+			GUILayout.Space( isFloatingWindow ? 30 : 34 );
 			#else
 			GUILayout.Space( isFloatingWindow ? 28 : 34 );
 			#endif
@@ -822,6 +822,7 @@ public class pb_Editor : EditorWindow
 								pb.SetFaceMaterial(pb.faces, mat);
 							}
 
+							pb.ToMesh();
 							pb.Refresh();
 							pb.GenerateUV2();
 
@@ -3353,6 +3354,10 @@ public class pb_Editor : EditorWindow
 				verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), Vector3.one, snapVal));
 				
 			pb.ToMesh();
+
+			pb.RefreshUV( SelectedFacesInEditZone[i] );
+			pb.RefreshNormals();
+
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
