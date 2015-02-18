@@ -3352,11 +3352,7 @@ public class pb_Editor : EditorWindow
 			for(int n = 0; n < indices.Length; n++)
 				verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), Vector3.one, snapVal));
 				
-			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
-			pb.SetVertices(verts);
-			pb.RefreshUV( SelectedFacesInEditZone[i] );
-			pb.RefreshNormals();
-
+			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
