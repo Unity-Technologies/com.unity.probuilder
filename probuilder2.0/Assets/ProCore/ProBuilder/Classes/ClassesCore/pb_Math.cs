@@ -600,12 +600,23 @@ namespace ProBuilder2.Math
 		/**
 		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */
-		public static bool EqualWithError(this Vector3 v, Vector3 b, float delta)
+		public static bool Approx(this Vector3 v, Vector3 b, float delta)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
 				Mathf.Abs(v.y - b.y) < delta &&
 				Mathf.Abs(v.z - b.z) < delta;
+		}
+
+		/**
+		 *	\brief Compares 2 color objects, allowing for a margin of error.
+		 */
+		public static bool Approx(this Color a, Color b, float delta)
+		{
+			return 	Mathf.Abs(a.r - b.r) < delta &&
+					Mathf.Abs(a.g - b.g) < delta &&
+					Mathf.Abs(a.b - b.b) < delta &&
+					Mathf.Abs(a.a - b.a) < delta;
 		}
 #endregion
 

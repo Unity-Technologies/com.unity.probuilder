@@ -217,15 +217,13 @@ public class pb_UV_Editor : EditorWindow
 
 	void ScreenshotMenu()
 	{
-		GenericMenu menu = new GenericMenu();
-
-		menu.AddItem( new GUIContent("UV Template 256x256", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image."), false, () => Screenshot(256));
-		menu.AddItem( new GUIContent("UV Template 512x512", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 512px image."), false, () => Screenshot(512));
-		menu.AddItem( new GUIContent("UV Template 1024x1024", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 1024px image."), false, () => Screenshot(1024));
-		menu.AddItem( new GUIContent("UV Template 2048x2048", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 2048px image."), false, () => Screenshot(2048));
-		menu.AddItem( new GUIContent("UV Template 4096x4096", "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 4096px image."), false, () => Screenshot(4096));
-
-		menu.ShowAsContext();
+		pb_UV_RenderOptions renderOptions = (pb_UV_RenderOptions)ScriptableObject.CreateInstance(typeof(pb_UV_RenderOptions));
+		renderOptions.screenFunc = Screenshot;
+		renderOptions.ShowAsDropDown(new Rect(	this.position.x + 348,
+												this.position.y + 32,
+												0,
+												0),
+												new Vector2(256, 152));
 	}
 
 	static void ContextMenu_OpenFloatingWindow()
@@ -371,7 +369,6 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	ScreenshotStatus screenshotStatus = ScreenshotStatus.Done;
-	readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
 
 	void OnGUI()
 	{
@@ -380,10 +377,7 @@ public class pb_UV_Editor : EditorWindow
 			this.minSize = new Vector2(ScreenRect.width, ScreenRect.height);
 			this.maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
 
-			pb_GUI_Utility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), UV_FILL_COLOR);
-
-			if(Camera.current)
-				Camera.current.backgroundColor = Color.clear;
+			pb_GUI_Utility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
 
 			DrawUVGraph(graphRect);
 
@@ -1311,7 +1305,7 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.EqualWithError(t_handlePosition, handlePosition_canvas, .9f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .9f))
 		{
 			#if PB_DEBUG
 			profiler.BeginSample("Set Custom Pivot");
@@ -1368,7 +1362,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.EqualWithError(t_handlePosition, handlePosition_canvas, .9f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .9f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1470,7 +1464,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.EqualWithError(t_handlePosition, handlePosition, .9f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition, .9f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1776,22 +1770,25 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		// Box
-		GL.Color( Color.gray );
+		if(screenshotStatus == ScreenshotStatus.Done)
+		{
+			GL.Color( Color.gray );
 
-		GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
-		GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
 
-		GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
-		GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
 
-		GL.Color( pb_Constant.ProBuilderBlue );
+			GL.Color( pb_Constant.ProBuilderBlue );
 
-		GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
-		GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
 
-		GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
-		GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
-		
+			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+		}
+
 		GL.End();
 		GL.PopMatrix();	// Pop pop!
 
@@ -1826,8 +1823,7 @@ public class pb_UV_Editor : EditorWindow
 		if(pref_showMaterial && preview_material && preview_material.mainTexture)
 			EditorGUI.DrawPreviewTexture(UVRectIdentity, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
 
-		if(screenshotStatus != ScreenshotStatus.PrepareCanvas && 
-		   screenshotStatus != ScreenshotStatus.CanvasReady)
+		if( (screenshotStatus != ScreenshotStatus.PrepareCanvas && screenshotStatus != ScreenshotStatus.CanvasReady) || !screenshot_hideGrid)
 		{
 			#if PB_DEBUG
 				profiler.BeginSample("Draw Base Graph");
@@ -1872,10 +1868,6 @@ public class pb_UV_Editor : EditorWindow
 					{
 						p = CanvasToGUIPoint(uvs_canvas_space[i][index]);
 						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
-
-						// #if PB_DEBUG
-						// GUI.Label( new Rect(p.x, p.y, 220, 120), selection[i].uv[index].ToString("F4") + "\n" + uvs_canvas_space[i][index] + " -> " + p );
-						// #endif
 					}
 				}
 			}
@@ -1917,7 +1909,7 @@ public class pb_UV_Editor : EditorWindow
 		GL.Begin(GL.LINES);
 
 		if(screenshotStatus != ScreenshotStatus.Done)
-			GL.Color(Color.green);
+			GL.Color(screenshot_lineColor);
 		else
 			GL.Color(UVColorSecondary);
 
@@ -3205,13 +3197,41 @@ public class pb_UV_Editor : EditorWindow
 	float curUvScale = 0f;					///< Store the user set positioning and scale before modifying them for a screenshot
 	Vector2 curUvPosition = Vector2.zero;	///< ditto ^
 	Texture2D screenshot;
-	int screenshotSize = 1024;
 	Rect screenshotCanvasRect = new Rect(0,0,0,0);
 	Vector2 screenshotTexturePosition = Vector2.zero;
 
-	void Screenshot(int size)
+	// settings
+	int screenshot_size = 1024;
+	bool screenshot_hideGrid = true;
+	bool screenshot_transparentBackground;
+	Color screenshot_lineColor = Color.green;
+	Color screenshot_backgroundColor = Color.black;
+	string screenshot_path = "";
+
+	readonly Color UV_FILL_COLOR = new Color(.192f,.192f,.192f,1f);	///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
+
+	void Screenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor)
 	{
-		screenshotSize = size;
+		screenshot_size = ImageSize;
+		screenshot_hideGrid = HideGrid;
+		screenshot_lineColor = LineColor;
+		screenshot_transparentBackground = TransparentBackground;
+		screenshot_backgroundColor = TransparentBackground ? UV_FILL_COLOR : BackgroundColor;
+
+		// if line color and background color are the same but we want transparent backgruond,
+		// make sure that the background fill will be distinguishable from the lines during the
+		// opacity wipe
+		if(TransparentBackground && (screenshot_lineColor.Approx(screenshot_backgroundColor, .01f)))
+		{
+			screenshot_backgroundColor.r += screenshot_backgroundColor.r < .9f ? .1f : -.1f;
+			screenshot_backgroundColor.g += screenshot_backgroundColor.g < .9f ? .1f : -.1f;
+			screenshot_backgroundColor.b += screenshot_backgroundColor.b < .9f ? .1f : -.1f;
+		}
+
+		screenshot_path = EditorUtility.SaveFilePanel("Save UV Template", Application.dataPath, "", "png");
+		if(screenshot_path == "")
+			return;
+
 		screenshotStatus = ScreenshotStatus.Done;
 		Screenshot();
 	}
@@ -3225,17 +3245,17 @@ public class pb_UV_Editor : EditorWindow
 				curUvScale = uvGraphScale;
 				curUvPosition = uvCanvasOffset;
 
-				uvGraphScale = screenshotSize / 256;
+				uvGraphScale = screenshot_size / 256;
 				// always begin texture grabs at bottom left
 				uvCanvasOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f);
 
-				screenshot = new Texture2D(screenshotSize, screenshotSize);
+				screenshot = new Texture2D(screenshot_size, screenshot_size);
 				screenshot.hideFlags = (HideFlags)( 1 | 2 | 4 );
 				screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
 				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent
 				// passes
-				screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshotSize, ScreenRect.width), (int)Mathf.Min(screenshotSize, ScreenRect.height) );
+				screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height) );
 				screenshotTexturePosition = new Vector2(0,0);
 
 				this.ShowNotification(new GUIContent("Rendering UV Graph\n..."));
@@ -3245,17 +3265,17 @@ public class pb_UV_Editor : EditorWindow
 			case ScreenshotStatus.CanvasReady:
 					
 				// take screenshots vertically, then move right, repeat if necessary
-				if(screenshotTexturePosition.y < screenshotSize)
+				if(screenshotTexturePosition.y < screenshot_size)
 				{
 					screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
 
 					screenshotTexturePosition.y += screenshotCanvasRect.height;
 
-					if(screenshotTexturePosition.y < screenshotSize)
+					if(screenshotTexturePosition.y < screenshot_size)
 					{
 						// reposition canvas
 						uvCanvasOffset.y += screenshotCanvasRect.height;
-						screenshotCanvasRect.height = (int)Mathf.Min(screenshotSize - screenshotTexturePosition.y, ScreenRect.height);
+						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height);
 						screenshotStatus = ScreenshotStatus.PrepareCanvas;
 						return;
 					}
@@ -3263,11 +3283,11 @@ public class pb_UV_Editor : EditorWindow
 					{
 						screenshotTexturePosition.x += screenshotCanvasRect.width;
 
-						if(screenshotTexturePosition.x < screenshotSize)
+						if(screenshotTexturePosition.x < screenshot_size)
 						{
 							uvCanvasOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
 							uvCanvasOffset.y = ScreenRect.height/2f;	// reset canvas offset y value
-							screenshotCanvasRect.width = (int)Mathf.Min(screenshotSize - screenshotTexturePosition.x, ScreenRect.width);
+							screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
 							screenshotTexturePosition.y = 0;
 							screenshotStatus = ScreenshotStatus.PrepareCanvas;
 							return;
@@ -3286,22 +3306,33 @@ public class pb_UV_Editor : EditorWindow
 
 			case ScreenshotStatus.RenderComplete:
 
-				Color[] px = screenshot.GetPixels(0);
+				if(screenshot_transparentBackground)
+				{
+					Color[] px = screenshot.GetPixels(0);
 
-				for(int i = 0; i < px.Length; i++)
+					for(int i = 0; i < px.Length; i++)
 
-					if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f && 
-					 	Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
-					  	Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
-						px[i] = Color.clear;
+						if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f && 
+						 	Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
+						  	Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
+							px[i] = Color.clear;
 
-				screenshot.SetPixels(px);
-				screenshot.Apply();
+					screenshot.SetPixels(px);
+					screenshot.Apply();
+				}
 
-				pb_Editor_Utility.SaveTexture(screenshot);
-				DestroyImmediate(screenshot);
+				EditorApplication.delayCall += SaveUVRender;	// don't run the save image stuff in the UI loop
 				screenshotStatus = ScreenshotStatus.Done;
 				break;
+		}
+	}
+
+	void SaveUVRender()
+	{
+		if(screenshot && screenshot_path != "")
+		{
+			pb_Editor_Utility.SaveTexture(screenshot, screenshot_path);
+			DestroyImmediate(screenshot);
 		}
 	}
 }

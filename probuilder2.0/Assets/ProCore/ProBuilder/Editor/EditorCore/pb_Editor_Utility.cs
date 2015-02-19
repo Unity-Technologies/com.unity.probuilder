@@ -136,14 +136,21 @@ public static class pb_Editor_Utility
 
 #region Screenshots
 
+	/**
+	 * Open a save file dialog, and save the image to that path.
+	 */
 	public static void SaveTexture(Texture2D texture)
 	{
-		// int width = texture.width;
-		// int height = texture.height;
-
-		byte[] bytes = texture.EncodeToPNG();
-
 		string path = EditorUtility.SaveFilePanel("Save Image", Application.dataPath, "", "png");
+		SaveTexture(texture, path);		
+	}
+
+	/**
+	 * Save an image to the specified path.
+	 */
+	public static void SaveTexture(Texture2D texture, string path)
+	{
+		byte[] bytes = texture.EncodeToPNG();
 
 		if(path == "") return;
 
