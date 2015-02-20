@@ -176,7 +176,6 @@ public class pb_AutoUV_Editor
 
 		if(tempInt != textureGroup)
 		{
-			pbUndo.RecordObjects(selection, "Set Texture Group " + textureGroup);
 			SetTextureGroup(selection, textureGroup);
 			
 			for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
@@ -189,7 +188,6 @@ public class pb_AutoUV_Editor
 
 		if(GUILayout.Button(new GUIContent("Group Selected Faces", "This sets all selected faces to share a texture group.  What that means is that the UVs on these faces will all be projected as though they are a single plane.  Ideal candidates for texture groups are floors with multiple faces, walls with edge loops, flat surfaces, etc."), GUILayout.MaxWidth(width)))
 		{
-			pbUndo.RecordObjects(selection, "Create Texture Group" + textureGroup);
 			for(int i = 0; i < selection.Length; i++)
 			{
 				TextureGroupSelectedFaces(selection[i]);
@@ -238,7 +236,7 @@ public class pb_AutoUV_Editor
 
 		if(uv_selection.Count < 1) return;
 		
-		uv_gui = uv_selection[0];
+		uv_gui = new pb_UV(uv_selection[0]);
 
 		foreach(pb_UV u in uv_selection)
 		{
@@ -289,51 +287,9 @@ public class pb_AutoUV_Editor
 
 #region MODIFY SINGLE PROPERTIES
 
-	/**
-	 *	When modifying single properties, also set the textureGroup back to 0 since
-	 *	generally users don't want their face UVs to snap back to form after applying
-	 *	a change.
-	 */
-	public static void TranslateOffset(Vector2 delta, pb_Object[] sel)
-	{
-		delta.x = -delta.x;
-		for(int i = 0; i < sel.Length; i++)
-		{
-			foreach(pb_Face q in sel[i].SelectedFaces) 
-			{
-				q.uv.offset -= delta.DivideBy(q.uv.scale);
-			}
-
-		}
-	}
-
-	public static void TranslateRotation(float delta, pb_Object[] sel)
-	{
-		#if !FREE
-		for(int i = 0; i < sel.Length; i++)
-		{
-			foreach(pb_Face q in sel[i].SelectedFaces) {
-				q.uv.rotation += delta;
-			}
-		}
-		#endif
-	}
-
-	public static void TranslateScale(Vector2 delta, pb_Object[] sel)
-	{
-		#if !FREE
-		for(int i = 0; i < sel.Length; i++)
-		{
-			foreach(pb_Face q in sel[i].SelectedFaces) {
-				q.uv.scale += delta;
-			}
-		}
-		#endif
-	}
-
-	// These could be public if we added a selection param
 	private static void SetFlipU(bool flipU, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Flip U");
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -344,6 +300,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetFlipV(bool flipV, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Flip V");
 		for(int i = 0; i < sel.Length; i++) {
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.flipV = flipV;
@@ -353,6 +310,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetSwapUV(bool swapUV, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Swap U, V");
 		for(int i = 0; i < sel.Length; i++) {
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.swapUV = swapUV;
@@ -362,6 +320,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetUseWorldSpace(bool useWorldSpace, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Use World Space UVs");
 		for(int i = 0; i < sel.Length; i++) {
 			foreach(pb_Face q in sel[i].SelectedFaces) {
 				q.uv.useWorldSpace = useWorldSpace;
@@ -371,6 +330,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetFill(pb_UV.Fill fill, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Fill UVs");
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -381,6 +341,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetJustify(pb_UV.Justify justify, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Justify UVs");
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -391,6 +352,8 @@ public class pb_AutoUV_Editor
 
 	private static void SetOffset(Vector2 offset, pb_Axis2d axis, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Offset UVs");
+
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -412,6 +375,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetRotation(float rot, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Rotate UVs");
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -422,6 +386,7 @@ public class pb_AutoUV_Editor
 
 	private static void SetScale(Vector2 scale, pb_Axis2d axis, pb_Object[] sel)
 	{
+		pbUndo.RecordObjects(sel, "Scale UVs");
 		for(int i = 0; i < sel.Length; i++)
 		{
 			foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -446,6 +411,8 @@ public class pb_AutoUV_Editor
 		
 	private static void SetTextureGroup(pb_Object[] selection, int tex)
 	{
+		pbUndo.RecordObjects(selection, "Set Texture Group " + textureGroup);
+
 		foreach(pb_Object pb in selection)
 		{
 			if(pb.SelectedFaceIndices.Length < 1) continue;
@@ -471,6 +438,8 @@ public class pb_AutoUV_Editor
 		pb_UV cont_uv = faces[0].uv;
 
 		int texGroup = pb.UnusedTextureGroup();
+
+		pbUndo.RecordObject(pb, "Create Texture Group" + textureGroup);
 
 		foreach(pb_Face f in faces)
 		{

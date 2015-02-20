@@ -1574,13 +1574,15 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
+				
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+				else
+					pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 
 				OnBeginVertexMovement();
 			}
 
-			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Move Vertices");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -1634,7 +1636,7 @@ public class pb_Editor : EditorWindow
 			Vector3 ver;	// resulting vertex from modification
 			Vector3 over;	// vertex point to modify. different for world, local, and plane
 			
-			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
+			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
 
 			bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
 			bool gotoLocal = selectedFaceCount < 1;
@@ -1730,6 +1732,8 @@ public class pb_Editor : EditorWindow
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+				else
+					pbUndo.RecordObjects(selection as Object[], "Rotate Vertices");
 
 				OnBeginVertexMovement();
 
@@ -1744,7 +1748,6 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
-			Undo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Rotate Vertices");
 
 			Quaternion transformedRotation;
 			switch(handleAlignment)
@@ -3135,40 +3138,40 @@ public class pb_Editor : EditorWindow
 	 */
 	private void OnHierarchyChange()
 	{
-		#if PB_DEBUG
-		profiler.BeginSample("OnHierarchyChange");
-		#endif
+		// #if PB_DEBUG
+		// profiler.BeginSample("OnHierarchyChange");
+		// #endif
 
-		bool prefabModified = false;
+		// bool prefabModified = false;
 
-		if(!EditorApplication.isPlaying && !movingVertices)
-		{
-			foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-			{
-				/**
-				 * If it's a prefab instance, reconstruct submesh structure.
-				 */
-				if(	(PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance ||
-					 PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.Prefab ) )
-				// && System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter) )
-				{
-					prefabModified = true;
-					pb.ToMesh();
-					pb.Refresh();
-					pb.GenerateUV2();
-				}
-			}
-		}
+		// if(!EditorApplication.isPlaying && !movingVertices)
+		// {
+		// 	foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
+		// 	{
+		// 		/**
+		// 		 * If it's a prefab instance, reconstruct submesh structure.
+		// 		 */
+		// 		if(	(PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance ||
+		// 			 PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.Prefab ) )
+		// 		// && System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter) )
+		// 		{
+		// 			prefabModified = true;
+		// 			pb.ToMesh();
+		// 			pb.Refresh();
+		// 			pb.GenerateUV2();
+		// 		}
+		// 	}
+		// }
 
-		if(prefabModified)
-		{
-			UpdateSelection(true);
-			SceneView.RepaintAll();
-		}
+		// if(prefabModified)
+		// {
+		// 	UpdateSelection(true);
+		// 	SceneView.RepaintAll();
+		// }
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
+		// #if PB_DEBUG
+		// profiler.EndSample();
+		// #endif
 	}
 
 	private void OnSelectionChange()
@@ -3302,6 +3305,8 @@ public class pb_Editor : EditorWindow
 	{
 		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
+		Debug.Log("UndoRedoPerformed");
+
 		foreach(pb_Object pb in pbos)
 		{
 			/**
@@ -3340,7 +3345,7 @@ public class pb_Editor : EditorWindow
 
 	private void PushToGrid(float snapVal)
 	{
-		Undo.RecordObjects(selection, "Push elements to Grid");
+		pbUndo.RecordObjects(selection, "Push elements to Grid");
 
 		for(int i = 0; i  < selection.Length; i++)
 		{

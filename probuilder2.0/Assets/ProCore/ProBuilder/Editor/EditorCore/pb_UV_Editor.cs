@@ -118,9 +118,10 @@ public class pb_UV_Editor : EditorWindow
 
 	#if PB_DEBUG
 	int[] UV_CHANNELS = new int[] { 0, 1 };
+	bool debug_showCoordinates = false;
 	#endif
 	
-	int channel = 0;	// Maybe someday Unity will support > 2 UV channels?
+	int channel = 0;
 
 	private Vector2 uvCanvasOffset = Vector2.zero;
 
@@ -251,6 +252,8 @@ public class pb_UV_Editor : EditorWindow
 		
 		InitGUI();
 
+		this.wantsMouseMove = true;
+
 		/**
 		 * Register for delegates
 		 */
@@ -335,14 +338,6 @@ public class pb_UV_Editor : EditorWindow
 #endregion
 
 #region GUI Loop
-
-	void Update()
-	{
-		if( selectionMode == SelectMode.Edge ||
-			selectionMode == SelectMode.Face ||
-			m_rightMouseDrag )
-			Repaint();
-	}
 
 	Rect 	graphRect,
 			toolbarRect, 
@@ -487,7 +482,8 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("UpdateNearestElement");
 		#endif
 
-		UpdateNearestElement(Event.current.mousePosition);
+		if(UpdateNearestElement(Event.current.mousePosition))
+			Repaint();
 		
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -1196,8 +1192,7 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("OnMouseClick");
 		#endif
 
-		pbUndo.RecordObjects(selection, "Change Selection");
-		
+
 		switch(selectionMode)
 		{
 			case SelectMode.Edge:
@@ -1227,6 +1222,8 @@ public class pb_UV_Editor : EditorWindow
 					{
 						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
 						{
+							pbUndo.RecordObjects(selection, "Change Selection");
+							
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
 							else
@@ -1323,9 +1320,9 @@ public class pb_UV_Editor : EditorWindow
 				handlePosition_canvas = t_handlePosition;
 
 				/**
-				 * Attempt vertex proximity snap if shift key isn't held
+				 * Attempt vertex proximity snap if shift key is held
 				 */
-				if(!ShiftKey)
+				if(ShiftKey)
 				{
 
 					float dist, minDist = MAX_PROXIMITY_SNAP_DIST_CANVAS;
@@ -1369,6 +1366,7 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
+				pbUndo.RecordObjects(selection, "Move UVs");
 				OnBeginUVModification();
 			}
 
@@ -1378,8 +1376,6 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition_canvas-t_handlePosition, pref_gridSnapValue);
-
-			pbUndo.RecordObjects(selection, "Move UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1399,11 +1395,14 @@ public class pb_UV_Editor : EditorWindow
 				else
 					pb.msh.uv2 = uvs;
 
-				if( (ShiftKey || ControlKey) && channel == 0)
+				if( (!ShiftKey || ControlKey) && channel == 0)
 					pb.msh.uv = uvs;
 			}
 
-			if(!ShiftKey && !ControlKey)
+			/**
+			 * Proximity snapping
+			 */
+			if(ShiftKey && !ControlKey)
 			{
 				Vector2 nearestDelta = Vector2.one;
 
@@ -1471,6 +1470,7 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
+				pbUndo.RecordObjects(selection, "Move UVs");
 				OnBeginUVModification();
 				uvOrigin = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);	// have to set this one special
 			}
@@ -1479,8 +1479,6 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition-t_handlePosition, pref_gridSnapValue);
-
-			pbUndo.RecordObjects(selection, "Move UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1510,13 +1508,12 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
+				pbUndo.RecordObjects(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
 			if(ControlKey)
 				uvRotation = pbUtil.SnapValue(uvRotation, 15f);
-
-			pbUndo.RecordObjects(selection, "Rotate UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1547,13 +1544,12 @@ public class pb_UV_Editor : EditorWindow
 
 			if(!modifyingUVs)
 			{
+				pbUndo.RecordObjects(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
 			if(ControlKey)
 				rotation = pbUtil.SnapValue(rotation, 15f);
-
-			pbUndo.RecordObjects(selection, "Rotate UVs");
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1587,10 +1583,9 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{		
+				pbUndo.RecordObjects(selection, "Scale UVs");
 				OnBeginUVModification();
 			}
-
-			pbUndo.RecordObjects(selection, "Scale UVs");
 
 			if(mode == UVMode.Mixed || mode == UVMode.Manual)
 			{
@@ -1650,10 +1645,10 @@ public class pb_UV_Editor : EditorWindow
 
 		if(!modifyingUVs)
 		{		
+			pbUndo.RecordObjects(selection, "Scale UVs");
 			OnBeginUVModification();
 		}
 
-		pbUndo.RecordObjects(selection, "Scale UVs");
 
 		if(mode == UVMode.Mixed || mode == UVMode.Manual)
 		{
@@ -1878,10 +1873,29 @@ public class pb_UV_Editor : EditorWindow
 			for(int i = 1; i < lines.Count; i++)
 				Handles.CircleCap(-1, CanvasToGUIPoint(lines[i]), Quaternion.identity, 8f);
 
+		#if PB_DEBUG
+		if(debug_showCoordinates)
+		{
+			Handles.BeginGUI();
+			Rect r = new Rect(0,0,256,40);
+			foreach(pb_Object pb in selection)
+			{
+				foreach(int i in pb.SelectedTriangles)
+				{
+					Vector2 v = pb.uv[i];
+					Vector2 sv = CanvasToGUIPoint( pb_Handle_Utility.UVToGUIPoint(v, uvGridSize) );
+					r.x = sv.x;
+					r.y = sv.y;
+					GUI.Label(r, "UV:" + v.ToString("F2") + "\nScreen: " + (int)sv.x + ", " + (int)sv.y);
+				}
+			}
+			Handles.EndGUI();
+		}
+		#endif
+
 		GL.PushMatrix();
 		pb_Handle_Utility.handleMaterial.SetPass(0);
 		GL.MultMatrix(Handles.matrix);
-
 
 		/**
 		 * Draw incomplete texture group indicators (unless taking a screenshot)
@@ -2122,6 +2136,8 @@ public class pb_UV_Editor : EditorWindow
 		
 		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
 		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));
+
+		debug_showCoordinates = EditorGUILayout.Toggle("Show UV coordinates", debug_showCoordinates);
 
 		float tmp = pref_gridSnapValue;
 		pref_gridSnapValue = EditorGUILayout.FloatField("Grid Snap", pref_gridSnapValue, GUILayout.MaxWidth(rect.width-6));
@@ -2602,8 +2618,6 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("pb_AutoUV_Editor");
 		#endif
 
-		if(selection != null)
-			Undo.RecordObjects(selection, "Adjust Auto UV Parameters");
 
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
 		{
@@ -3259,6 +3273,8 @@ public class pb_UV_Editor : EditorWindow
 				screenshotTexturePosition = new Vector2(0,0);
 
 				this.ShowNotification(new GUIContent("Rendering UV Graph\n..."));
+				
+				Repaint();
 
 				return;
 
@@ -3277,6 +3293,7 @@ public class pb_UV_Editor : EditorWindow
 						uvCanvasOffset.y += screenshotCanvasRect.height;
 						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height);
 						screenshotStatus = ScreenshotStatus.PrepareCanvas;
+						Repaint();
 						return;
 					}
 					else
@@ -3290,6 +3307,7 @@ public class pb_UV_Editor : EditorWindow
 							screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
 							screenshotTexturePosition.y = 0;
 							screenshotStatus = ScreenshotStatus.PrepareCanvas;
+							Repaint();
 							return;
 						}
 					}

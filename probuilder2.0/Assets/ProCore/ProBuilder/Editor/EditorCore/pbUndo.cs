@@ -12,6 +12,7 @@ public class pbUndo : Editor
 	 */
 	public static void RecordObject(Object obj, string msg)
 	{
+		Debug.Log("RecordObjects: " + 1);
 		Undo.RecordObject(obj, msg);
 	}
 
