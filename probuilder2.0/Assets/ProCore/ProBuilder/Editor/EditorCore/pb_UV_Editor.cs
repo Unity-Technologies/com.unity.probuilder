@@ -1945,7 +1945,7 @@ public class pb_UV_Editor : EditorWindow
 					{
 						x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
 						y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
-						
+
 						GL.Vertex(x);
 						GL.Vertex(y);
 					}
@@ -2572,6 +2572,7 @@ public class pb_UV_Editor : EditorWindow
 		if(GUI.Button(editor_toggles_rect, gc_RenderUV))
 		{
 			ScreenshotMenu();
+			GUIUtility.ExitGUI();
 		}
 		GUI.EndGroup();
 	}

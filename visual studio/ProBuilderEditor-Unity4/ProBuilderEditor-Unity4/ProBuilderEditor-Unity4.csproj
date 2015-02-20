@@ -103,6 +103,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Editor.cs">
       <Link>pb_UV_Editor.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_RenderOptions.cs">
+      <Link>pb_UV_RenderOptions.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_VertexColorInterface.cs">
       <Link>pb_VertexColorInterface.cs</Link>
     </Compile>

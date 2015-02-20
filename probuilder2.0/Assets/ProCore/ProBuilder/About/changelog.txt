@@ -1,3 +1,17 @@
+-- ProBuilder 2.4.1f0 (r3169) -
+
+# Features
+	- New "Export UV Template" function saves a PNG of your UV maps.
+	- Add new preference to show object vertex, face, and triangle count in the scene view (Preferences/Show Scene Info).
+
+# Bug Fixes
+	- Edge wireframe no longer renders the material preview wells.
+	- Fix performance issues when editing large objects in the UV editor with Auto UVs.
+	- Fix bug where 'Push to Grid' from ProGrids would not Undo correctly.
+	- Fix lagging wireframe when running "Freeze Transforms" action.
+	- Fix null ref when deleting multiple faces.
+
+
 -- ProBuilder 2.4.0f4 (r3132) -
 
 # Features
