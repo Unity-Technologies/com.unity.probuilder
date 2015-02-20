@@ -1192,7 +1192,8 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("OnMouseClick");
 		#endif
 
-
+		pbUndo.RecordObjects(selection, "Change Selection");
+		
 		switch(selectionMode)
 		{
 			case SelectMode.Edge:
@@ -1222,8 +1223,6 @@ public class pb_UV_Editor : EditorWindow
 					{
 						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
 						{
-							pbUndo.RecordObjects(selection, "Change Selection");
-							
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
 							else
@@ -1946,7 +1945,7 @@ public class pb_UV_Editor : EditorWindow
 					{
 						x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
 						y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
-
+						
 						GL.Vertex(x);
 						GL.Vertex(y);
 					}

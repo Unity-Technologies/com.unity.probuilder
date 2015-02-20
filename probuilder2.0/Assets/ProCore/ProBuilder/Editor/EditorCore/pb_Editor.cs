@@ -3305,8 +3305,6 @@ public class pb_Editor : EditorWindow
 	{
 		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		Debug.Log("UndoRedoPerformed");
-
 		foreach(pb_Object pb in pbos)
 		{
 			/**
