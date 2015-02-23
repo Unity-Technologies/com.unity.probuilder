@@ -220,14 +220,12 @@ public class pb_UV_Editor : EditorWindow
 	{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
-		// This behaves pretty much like a dropdown if we close on 'LostFocus'.
-		pb_UV_RenderOptions renderOptions = ScriptableObject.CreateInstance<pb_UV_RenderOptions>();
-		renderOptions.position = new Rect(	this.position.x + 348,
-		                                  this.position.y + 32,
-		                                  256,
-		                                  152);
+		pb_UV_RenderOptions renderOptions = EditorWindow.GetWindow<pb_UV_RenderOptions>(true, "Save UV Image", true);
+		renderOptions.position = new Rect(	this.position.x + (Screen.width/2f - 128),
+		                                  	this.position.y + (Screen.height/2f - 76),
+		                                  	256f,
+		                                  	152f);
 		renderOptions.screenFunc = Screenshot;
-		renderOptions.ShowPopup();
 #else
 		pb_UV_RenderOptions renderOptions = (pb_UV_RenderOptions)ScriptableObject.CreateInstance(typeof(pb_UV_RenderOptions));
 		renderOptions.screenFunc = Screenshot;
