@@ -218,6 +218,17 @@ public class pb_UV_Editor : EditorWindow
 
 	void ScreenshotMenu()
 	{
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
+		// This behaves pretty much like a dropdown if we close on 'LostFocus'.
+		pb_UV_RenderOptions renderOptions = ScriptableObject.CreateInstance<pb_UV_RenderOptions>();
+		renderOptions.position = new Rect(	this.position.x + 348,
+		                                  this.position.y + 32,
+		                                  256,
+		                                  152);
+		renderOptions.screenFunc = Screenshot;
+		renderOptions.ShowPopup();
+#else
 		pb_UV_RenderOptions renderOptions = (pb_UV_RenderOptions)ScriptableObject.CreateInstance(typeof(pb_UV_RenderOptions));
 		renderOptions.screenFunc = Screenshot;
 		renderOptions.ShowAsDropDown(new Rect(	this.position.x + 348,
@@ -225,6 +236,7 @@ public class pb_UV_Editor : EditorWindow
 												0,
 												0),
 												new Vector2(256, 152));
+#endif										
 	}
 
 	static void ContextMenu_OpenFloatingWindow()
@@ -504,7 +516,7 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		DrawUVTools(toolbarRect);
-		
+
 		#if PB_DEBUG
 		profiler.EndSample();
 		profiler.BeginSample("DrawActionWindow");
@@ -2569,12 +2581,14 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
+
 		if(GUI.Button(editor_toggles_rect, gc_RenderUV))
 		{
 			ScreenshotMenu();
-			GUIUtility.ExitGUI();
 		}
+		
 		GUI.EndGroup();
+
 	}
 
 	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);

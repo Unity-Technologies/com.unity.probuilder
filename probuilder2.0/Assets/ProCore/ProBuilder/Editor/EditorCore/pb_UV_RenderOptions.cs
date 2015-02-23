@@ -42,7 +42,11 @@ public class pb_UV_RenderOptions : EditorWindow
 
 		if( EditorPrefs.HasKey(PREF_HIDEGRID) )
 			hideGrid = EditorPrefs.GetBool(PREF_HIDEGRID);
-
+	}
+	
+	void OnLostFocus()
+	{
+		this.Close();
 	}
 
 	public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor);
@@ -50,7 +54,7 @@ public class pb_UV_RenderOptions : EditorWindow
 
 	void OnGUI()
 	{
-		GUILayout.Label("Render UV Template", EditorStyles.boldLabel);
+		GUILayout.Label("Render UVs", EditorStyles.boldLabel);
 
 		pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderDarkGray);
 		GUILayout.Space(2);
@@ -85,5 +89,8 @@ public class pb_UV_RenderOptions : EditorWindow
 			screenFunc((int)imageSize, hideGrid, lineColor, transparentBackground, backgroundColor);
 			this.Close();
 		}
+		
+		if(EditorWindow.focusedWindow != this)
+			this.Focus();
 	}
 }
