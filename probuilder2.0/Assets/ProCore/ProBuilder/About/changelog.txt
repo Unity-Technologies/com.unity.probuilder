@@ -1,7 +1,15 @@
--- ProBuilder 2.4.1f2 (r3197) -
+-- ProBuilder 2.4.2f0 (r3202) -
+
+# Features
+	- New debug window visualizes mesh information in the sceneview.
 
 # Bug Fixes
-	- Lots of them
+	- Fix regression that broke prefab editing applying to instances.
+	- Fix latency in SceneView when selecting elements in the UV window.
+	- Fix bug where selecting elements in the UV window would not Undo correctly.
+	- Fix regression that caused UV handle to not update its position when right-click dragging.
+	- Fix bug where texture rotation handle in the scene view would not snap correctly on finishing a UV adjustment.
+	- Fix bug where drag selecting edges or faces could select elements behind the scene camera.
 
 -- ProBuilder 2.4.1f1 (r3174) -
 

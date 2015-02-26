@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 /**
  * Used to pop up the window on import.
  */
-public class pc_AboutWindowSetup : AssetPostprocessor
+public class pb_AboutWindowSetup : AssetPostprocessor
 {
 #region Initialization
 
@@ -33,7 +33,7 @@ public class pc_AboutWindowSetup : AssetPostprocessor
 		string[] entries = System.Array.FindAll(importedAssets, name => name.Contains("pc_AboutEntry") && !name.EndsWith(".meta"));
 		
 		foreach(string str in entries)
-			if( pc_AboutWindow.Init(str, false) )
+			if( pb_AboutWindow.Init(str, false) )
 				break;
 	}
 
@@ -45,7 +45,7 @@ public class pc_AboutWindowSetup : AssetPostprocessor
 #endregion
 }
 
-public class pc_AboutWindow : EditorWindow
+public class pb_AboutWindow : EditorWindow
 {
 
 /**
@@ -167,12 +167,12 @@ public class pc_AboutWindow : EditorWindow
 		if(fromMenu || EditorPrefs.GetString(identifier) != version)
 		{
 			string tname;	
-			pc_AboutWindow win;
+			pb_AboutWindow win;
 
 			if(GetField(aboutEntryPath, "name: ", out tname))
-				win = (pc_AboutWindow)EditorWindow.GetWindow(typeof(pc_AboutWindow), true, tname, true);
+				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, tname, true);
 			else
-				win = (pc_AboutWindow)EditorWindow.GetWindow(typeof(pc_AboutWindow));
+				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow));
 
 			win.SetAboutEntryPath(aboutEntryPath);
 			win.ShowUtility();
