@@ -36,7 +36,7 @@ public static class pb_Constant
 	}
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string pbVersion = "2.4.0";			///< The currently install ProBuilder version.
+	public const string pbVersion = "2.4.2";			///< The currently install ProBuilder version.
 
 
 #if PROTOTYPE
