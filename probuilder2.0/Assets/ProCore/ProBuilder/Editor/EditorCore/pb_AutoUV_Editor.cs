@@ -104,6 +104,16 @@ public class pb_AutoUV_Editor
 		if(tempVec2.y != uv_gui.offset.y) { SetOffset(uv_gui.offset, pb_Axis2d.Y, selection); }
 
 		/**
+		 * Rotation
+		 */
+		tempFloat = uv_gui.rotation;
+		EditorGUI.showMixedValue = uv_diff["rotation"];
+		GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width-64));
+
+		GUI.SetNextControlName(ROTATION_CONTROL_NAME);
+		uv_gui.rotation = EditorGUILayout.Slider(uv_gui.rotation, 0f, 360f, GUILayout.MaxWidth(width));
+		
+		/**
 		 * Scale
 		 */
 		EditorGUI.showMixedValue = uv_diff["scalex"] || uv_diff["scaley"];
@@ -113,15 +123,6 @@ public class pb_AutoUV_Editor
 		if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
 		if(tempVec2.y != uv_gui.scale.y) { SetScale(uv_gui.scale, pb_Axis2d.Y, selection); }
 		
-		/**
-		 * Rotation
-		 */
-		tempFloat = uv_gui.rotation;
-		EditorGUI.showMixedValue = uv_diff["rotation"];
-		GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width-64));
-
-		GUI.SetNextControlName(ROTATION_CONTROL_NAME);
-		uv_gui.rotation = EditorGUILayout.Slider(uv_gui.rotation, 0f, 360f, GUILayout.MaxWidth(width));
 
 		if(tempFloat != uv_gui.rotation) { SetRotation(uv_gui.rotation, selection); }
 

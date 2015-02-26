@@ -1366,11 +1366,12 @@ public class pb_Editor : EditorWindow
 					{
 						Vector3 v = selected_verticesInWorldSpace_all[i][selected_uniqueIndices_all[i][n]];
 
+						// if point is behind the camera, ignore it.
+						if(cam.WorldToScreenPoint(v).z < 0)
+							continue;
+
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
-							// if point is behind the camera, ignore it.
-							if(cam.WorldToScreenPoint(v).z < 0)
-								continue;
 							
 							// Check if index is already selected, and if not add it to the pot
 							int indx = selectedTriangles.IndexOf(selected_uniqueIndices_all[i][n]);
@@ -1412,11 +1413,15 @@ public class pb_Editor : EditorWindow
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
 						pb_Face face = pb.faces[n];
+
+						if(cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0)
+							continue;
+
 						// only check the first index per quad, and if it checks out, then check every other point
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.indices[0]])))
 						{
 							bool nope = false;
-							for(int q = 0; q < pb.faces[n].distinctIndices.Length; q++)
+							for(int q = 1; q < pb.faces[n].distinctIndices.Length; q++)
 							{
 								if(!selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.distinctIndices[q]])))
 								{
@@ -1467,6 +1472,10 @@ public class pb_Editor : EditorWindow
 					{
 						pb_Edge edge = new pb_Edge( pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
 						                            pb.sharedIndices[selected_universal_edges_all[e][i].y][0] );
+
+						if( cam.WorldToScreenPoint( selected_verticesInWorldSpace_all[e][edge.x] ).z < 0 ||
+							cam.WorldToScreenPoint( selected_verticesInWorldSpace_all[e][edge.y] ).z < 0)
+							continue;
 
 						if( selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.x])) &&
 							selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.y])))
