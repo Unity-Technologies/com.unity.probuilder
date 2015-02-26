@@ -1,4 +1,4 @@
--- ProBuilder 2.4.1f0 (r3169) -
+-- ProBuilder 2.4.1f1 (r3174) -
 
 # Features
 	- New "Export UV Template" function saves a PNG of your UV maps.

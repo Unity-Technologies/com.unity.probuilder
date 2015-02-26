@@ -497,6 +497,7 @@ public class pb_Object : MonoBehaviour
 
 		SetVertices(v);
 		SetUV(new Vector2[v.Length]);
+		SetColors( pbUtil.FilledArray<Color>(Color.white, v.Length) );
 
 		SetFaces(f);
 	 	SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(v));
