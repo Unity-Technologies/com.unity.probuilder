@@ -1,3 +1,8 @@
+-- ProBuilder 2.4.1f2 (r3197) -
+
+# Bug Fixes
+	- Lots of them
+
 -- ProBuilder 2.4.1f1 (r3174) -
 
 # Features

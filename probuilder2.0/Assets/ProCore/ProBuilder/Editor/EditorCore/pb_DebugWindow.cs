@@ -9,16 +9,12 @@ using ProBuilder2.Math;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.GUI;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 /**
  * Debugging menu items for ProBuilder.
  */
 public class pb_DebugWindow : EditorWindow 
 {
-	float elementLength = .5f;
+	float elementLength = .15f;
 	float elementOffset = .01f;
 
 	static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);

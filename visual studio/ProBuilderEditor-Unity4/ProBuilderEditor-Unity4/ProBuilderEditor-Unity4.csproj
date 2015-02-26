@@ -40,6 +40,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_AutoUV_Editor.cs">
       <Link>pb_AutoUV_Editor.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_DebugWindow.cs">
+      <Link>pb_DebugWindow.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs">
       <Link>pb_Editor.cs</Link>
     </Compile>
