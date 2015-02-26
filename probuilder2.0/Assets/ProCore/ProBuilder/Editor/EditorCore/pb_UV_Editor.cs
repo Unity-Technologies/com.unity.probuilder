@@ -933,7 +933,10 @@ public class pb_UV_Editor : EditorWindow
 				m_mouseDragging = true;
 
 				if(e.button == RIGHT_MOUSE_BUTTON || (e.button == LEFT_MOUSE_BUTTON && e.alt))
+				{
 					m_rightMouseDrag = true;
+					needsRepaint = true;
+				}
 			
 				/* If no handle is selected, do other stuff */
 				if(pb_Handle_Utility.CurrentID < 0)
