@@ -1552,6 +1552,9 @@ public class pb_UV_Editor : EditorWindow
 	{
 		if(rotation != uvRotation)
 		{
+			if(ControlKey)
+				rotation = pbUtil.SnapValue(rotation, 15f);
+
 			uvRotation = rotation;
 
 			if(!modifyingUVs)
@@ -1559,9 +1562,6 @@ public class pb_UV_Editor : EditorWindow
 				pbUndo.RecordObjects(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
-
-			if(ControlKey)
-				rotation = pbUtil.SnapValue(rotation, 15f);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
