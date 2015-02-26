@@ -1288,13 +1288,19 @@ public class pb_Editor : EditorWindow
 		#if PB_DEBUG
 		profiler.BeginSample("EdgeClickCheck");
 		#endif
+	
+		if(!shiftKey && !ctrlKey)
+		{
+			// don't call ClearFaceSelection b/c that also removes
+			// nearestEdge info
+			foreach(pb_Object p in selection)
+				p.ClearSelection();
+		}
 
 		if(nearestEdgeObject != null)
 		{
 			pb = nearestEdgeObject;
-
-			if(!shiftKey && !ctrlKey) pb.ClearSelection();
-
+	
 			if(nearestEdge != null && nearestEdge.IsValid())
 			{
 				pb_Edge edge;
@@ -2917,6 +2923,7 @@ public class pb_Editor : EditorWindow
 
 	public void SetSelection(GameObject[] newSelection)
 	{
+		Debug.Log("here");
 		pbUndo.RecordObjects(selection, "Change Selection");
 		
 		ClearSelection();
