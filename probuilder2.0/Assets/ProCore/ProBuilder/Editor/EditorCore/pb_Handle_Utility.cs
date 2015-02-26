@@ -372,32 +372,17 @@ public class pb_Handle_Utility
 
 #region Raycast
 
-	// static MethodInfo IntersectRayMesh;
-
-	// /**
-	//  * Raycast for use in SceneView.  Returns a RaycastHit if @pb is in the line of fire.
-	//  */
-	// public static bool Raycast(Ray ray, pb_Object pb, out RaycastHit hit)
-	// {
-	// 	/// necessary because Physics.Raycast() doesn't pick up objects without concave mesh colliders
-	// 	object[] parameters = new object[] { ray, pb.msh, pb.transform.localToWorldMatrix, null };
-	// 	if(IntersectRayMesh == null) IntersectRayMesh = typeof(HandleUtility).GetMethod("IntersectRayMesh", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-	// 	object result = IntersectRayMesh.Invoke(null, parameters);
-
-	// 	if ( (bool)result )
-	// 		hit = (RaycastHit)parameters[3];
-	// 	else
-	// 		hit = new RaycastHit();
-
-	// 	return (bool)result;
-
-	// }
-
 	/**
 	 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
-	 * Returns the index in pb.faces of the hit face, or -1.
+	 * Returns the index in pb.faces of the hit face, or -1.  Optionally can ignore
+	 * backfaces.
 	 */
 	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
+	{
+		return MeshRaycast(InWorldRay, pb, out hit, true);
+	}
+
+	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, bool ignoreBackfaces)
 	{
 		/**
 		 * Transform ray into model space
@@ -432,12 +417,21 @@ public class pb_Handle_Utility
 						OutHitPoint = dist;
 
 					// Don't allow culled faces to trigger
-					Vector3 nrm = Vector3.Cross(b-a, c-a);
-					float dot = Vector3.Dot(InWorldRay.direction, -nrm);
 
-					if(dot > 0f)
+					if(ignoreBackfaces)
 					{
-						OutNrm = nrm;
+						Vector3 nrm = Vector3.Cross(b-a, c-a);
+						float dot = Vector3.Dot(InWorldRay.direction, -nrm);
+
+						if(dot > 0f)
+						{
+							OutNrm = nrm;
+							OutHitFace = CurFace;
+						}
+					}
+					else
+					{
+						OutNrm = Vector3.Cross(b-a, c-a);
 						OutHitFace = CurFace;
 					}
 

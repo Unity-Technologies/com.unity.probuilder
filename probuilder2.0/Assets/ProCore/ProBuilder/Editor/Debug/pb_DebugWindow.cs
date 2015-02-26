@@ -7,6 +7,7 @@ using System.Linq;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
 using ProBuilder2.MeshOperations;
+using ProBuilder2.GUI;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -19,6 +20,8 @@ public class pb_DebugWindow : EditorWindow
 {
 	float elementLength = .5f;
 	float elementOffset = .01f;
+
+	static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -51,9 +54,11 @@ public class pb_DebugWindow : EditorWindow
 	public bool edgeInfo = false;
 	public bool faceInfo = false;
 	public bool elementGroupInfo = false;
+	public bool textureGroupInfo = false;
 	public bool vertexInfo = true;
 	public bool autoUVInfo = false;
 	Vector2 scroll = Vector2.zero;
+	public bool ntbSelectedOnly = false;
 
 	class ParamView
 	{
@@ -90,20 +95,29 @@ public class pb_DebugWindow : EditorWindow
 			edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
 			faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
 			elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
+			textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
 			vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
 
-			GUILayout.Label("Normals / Tangents / Bitangents", EditorStyles.boldLabel);
+			GUILayout.BeginHorizontal();
+				Color pop = GUI.color;
+				GUI.color = Color.green;
+				GUILayout.Label("Normals", EditorStyles.boldLabel);
+				GUI.color = pop;
+				GUILayout.Label(" / ", EditorStyles.boldLabel);
+				GUI.color = Color.red;
+				GUILayout.Label("Tangents", EditorStyles.boldLabel);
+				GUI.color = pop;
+				GUILayout.Label(" / ", EditorStyles.boldLabel);
+				GUI.color = Color.blue;
+				GUILayout.Label("Bitangents", EditorStyles.boldLabel);
+				GUI.color = pop;
+
+				GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
+
 			elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
 			elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
-
-			Color pop = GUI.color;
-			GUI.color = Color.green;
-			GUILayout.Label("Normals");
-			GUI.color = Color.red;
-			GUILayout.Label("Tangents");
-			GUI.color = Color.blue;
-			GUILayout.Label("Bitangents");
-			GUI.color = pop;
+			ntbSelectedOnly = EditorGUILayout.Toggle("Selection Only Selected", ntbSelectedOnly);
 
 		if(EditorGUI.EndChangeCheck())
 		{
@@ -305,8 +319,8 @@ public class pb_DebugWindow : EditorWindow
 		foreach(pb_Edge f in pb.SelectedEdges)
 		{
 			Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint((pb.vertices[f.x] + pb.vertices[f.y])/ 2f) );
-			GUI.Box(new Rect(cen.x, cen.y, 60, 40), f.ToString() + "\n");
-			// GUI.Label(new Rect(cen.x, cen.y, 200, 200), f.ToString());
+			GUIContent gc = new GUIContent(f.ToString(), "");
+			DrawSceneLabel(gc, cen);
 		}
 
 		/**
@@ -324,15 +338,34 @@ public class pb_DebugWindow : EditorWindow
 		{
 			Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.GetVertices(f.distinctIndices) ) ) );
 			
-				GUI.Box( new Rect(cen.x, cen.y, 300, 100), "Face: " + f.ToString() + "Element Group: " + f.elementGroup);			
+			GUIContent gc = new GUIContent("Face: " + f.ToString() + "\nElement Group: " + f.elementGroup, "");
 
+			DrawSceneLabel(gc, cen);
 		}
 
-		if(elementGroupInfo)
-		foreach(pb_Face f in pb.faces)
+		if(elementGroupInfo || textureGroupInfo)
 		{
-			Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.GetVertices(f.distinctIndices) ) ) );
-			GUI.Label( new Rect(cen.x, cen.y, 300, 100), f.elementGroup.ToString(), EditorStyles.boldLabel);			
+			foreach(pb_Face f in pb.faces)
+			{
+				Vector3 v = pb_Math.Average( pb.GetVertices(f.distinctIndices) );
+				v += pb_Math.Normal(pb, f) * .01f;
+				v = pb.transform.TransformPoint(v);
+
+				if(!PointIsOccluded(v))
+				{
+					Vector2 cen = HandleUtility.WorldToGUIPoint( v );
+					GUIContent gc;
+					
+					if( elementGroupInfo && textureGroupInfo)
+						gc = new GUIContent("E: " + f.elementGroup + "\nT: " + f.textureGroup, "");
+					else if(elementGroupInfo)
+						gc = new GUIContent("E: " + f.elementGroup, "");
+					else
+						gc = new GUIContent("T: " + f.textureGroup, "");
+
+					DrawSceneLabel(gc, cen);
+				}
+			}
 		}
 
 			// sb.AppendLine(f.ToString() + ", ");
@@ -352,12 +385,18 @@ public class pb_DebugWindow : EditorWindow
 
 		if(vertexInfo)
 		{
+			Vector3[] normals = pb.msh.normals;
 			foreach(pb_IntArray arr in pb.sharedIndices)
 			{
-				Vector3 v = pb.vertices[arr[0]];
+				Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
 
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( v ) );
-				GUI.Label(new Rect(cen.x, cen.y, 500, 64), arr.array.ToFormattedString(", "), EditorStyles.boldLabel);
+				if(!PointIsOccluded(v))
+				{
+					Vector2 cen = HandleUtility.WorldToGUIPoint( v );
+					GUIContent gc = new GUIContent(arr.array.ToFormattedString(", "), "");
+
+					DrawSceneLabel(gc, cen);
+				}
 			}
 		}
 
@@ -370,6 +409,37 @@ public class pb_DebugWindow : EditorWindow
 		Handles.EndGUI();
 	}
 
+	void DrawSceneLabel(GUIContent content, Vector2 position)
+	{
+		float width = EditorStyles.boldLabel.CalcSize(content).x;
+		float height = EditorStyles.label.CalcHeight(content, width) + 4;
+
+		pb_GUI_Utility.DrawSolidColor( new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
+		GUI.Label( new Rect(position.x, position.y, width, height), content, EditorStyles.boldLabel );
+	}
+
+	bool PointIsOccluded(Vector3 worldPoint)
+	{
+		Camera cam = SceneView.lastActiveSceneView.camera;
+
+		Ray ray = new Ray(worldPoint, (cam.transform.position - worldPoint).normalized * 1000f );
+
+		pb_RaycastHit hit;
+
+		foreach(pb_Object pb in selection)
+		{
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, false) )
+			{
+				return true;
+			}
+		}
+
+		return false;
+
+	//	pb_Handle.MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, bool ignoreBackfaces)
+
+	}
+
 	/**
 	 * Draw the normals, tangents, and bitangets associated with this mesh.
 	 * Green = normals
@@ -378,11 +448,11 @@ public class pb_DebugWindow : EditorWindow
 	 */
 	void DrawElements(pb_Object pb)
 	{
-		int vertexCount = pb.msh.vertexCount;
+		int vertexCount = ntbSelectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
 
-		Vector3[] vertices = pb.msh.vertices;
-		Vector3[] normals  = pb.msh.normals;
-		Vector4[] tangents = pb.msh.tangents;
+		Vector3[] vertices = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
+		Vector3[] normals  = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
+		Vector4[] tangents = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
 
 		Handles.matrix = pb.transform.localToWorldMatrix;
 
