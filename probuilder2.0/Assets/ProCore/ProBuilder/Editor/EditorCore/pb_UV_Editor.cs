@@ -1254,9 +1254,14 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		if(editor)
+		{
 			editor.UpdateSelection(false);
+			SceneView.RepaintAll();
+		}
 		else
+		{
 			RefreshSelectedUVCoordinates();
+		}
 		
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -2444,6 +2449,7 @@ public class pb_UV_Editor : EditorWindow
 				}
 
 				editor.UpdateSelection(false);
+				SceneView.RepaintAll();
 			}
 		}
 
