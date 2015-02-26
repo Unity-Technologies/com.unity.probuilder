@@ -984,7 +984,9 @@ public class pb_UV_Editor : EditorWindow
 					}
 					else
 					{
-						if(e.modifiers == (EventModifiers)0 && editor)
+						pbUndo.RecordObjects(selection, "Change Selection");
+
+						if(Event.current.modifiers == (EventModifiers)0 && editor)
 							editor.ClearFaceSelection();
 
 						OnMouseClick(e.mousePosition);
@@ -1199,8 +1201,6 @@ public class pb_UV_Editor : EditorWindow
 		#if PB_DEBUG
 		profiler.BeginSample("OnMouseClick");
 		#endif
-
-		pbUndo.RecordObjects(selection, "Change Selection");
 		
 		switch(selectionMode)
 		{
@@ -1230,7 +1230,7 @@ public class pb_UV_Editor : EditorWindow
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
 						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
-						{
+						{						
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
 							else
