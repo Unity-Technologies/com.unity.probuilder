@@ -933,11 +933,10 @@ public class pb_UV_Editor : EditorWindow
 				m_mouseDragging = true;
 
 				if(e.button == RIGHT_MOUSE_BUTTON || (e.button == LEFT_MOUSE_BUTTON && e.alt))
-				{
 					m_rightMouseDrag = true;
-					needsRepaint = true;
-				}
-			
+				
+				needsRepaint = true;
+
 				/* If no handle is selected, do other stuff */
 				if(pb_Handle_Utility.CurrentID < 0)
 				{
@@ -945,21 +944,17 @@ public class pb_UV_Editor : EditorWindow
 					{
 						m_draggingCanvas = true;
 						uvCanvasOffset += e.delta;
-						needsRepaint = true;
 					}
 					else if(e.button == LEFT_MOUSE_BUTTON)
 					{
 						dragRect.x = mousePosition_initial.x < e.mousePosition.x ? mousePosition_initial.x : e.mousePosition.x;
 						dragRect.y = mousePosition_initial.y > e.mousePosition.y ? e.mousePosition.y : mousePosition_initial.y;
 						dragRect.width = Mathf.Abs(mousePosition_initial.x-e.mousePosition.x);
-						dragRect.height = Mathf.Abs(mousePosition_initial.y-e.mousePosition.y);
-						
-						needsRepaint = true;
+						dragRect.height = Mathf.Abs(mousePosition_initial.y-e.mousePosition.y);	
 					}
 					else if(e.alt && e.button == RIGHT_MOUSE_BUTTON)
 					{
 						SetCanvasScale(uvGraphScale + (e.delta.x - e.delta.y) * ((uvGraphScale/MAX_GRAPH_SCALE) * ALT_SCROLL_MODIFIER) );
-						needsRepaint = true;
 					}
 				}
 				break;
