@@ -165,7 +165,7 @@ public class pb_DebugWindow : EditorWindow
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
-							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount);
+							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount + " / " + pb.msh.vertexCount);
 						GUILayout.EndHorizontal();
 
 						GUILayout.BeginHorizontal();
@@ -448,6 +448,9 @@ public class pb_DebugWindow : EditorWindow
 	 */
 	void DrawElements(pb_Object pb)
 	{
+		if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length )
+			return;
+
 		int vertexCount = ntbSelectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
 
 		Vector3[] vertices = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;

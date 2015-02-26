@@ -2486,6 +2486,8 @@ public class pb_Editor : EditorWindow
 		Internal_UpdateSelectionFast();
 
 		EditorPrefs.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
+
+		SceneView.RepaintAll();
 	}
 
 	/**

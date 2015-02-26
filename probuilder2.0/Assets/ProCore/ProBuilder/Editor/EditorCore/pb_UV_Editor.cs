@@ -2544,10 +2544,15 @@ public class pb_UV_Editor : EditorWindow
 			tool = (Tool)GUI.Toolbar(toolbarRect_tool, (int)tool < 0 ? 0 : (int)tool, ToolIcons, "Command");
 
 		if(EditorGUI.EndChangeCheck())
+		{
 			SetTool_Internal(tool);
+			SceneView.RepaintAll();
+		}
 
 		int t_selectionMode = (int)selectionMode;
+		
 		t_selectionMode = GUI.Toolbar(toolbarRect_select, (int)t_selectionMode, SelectionIcons, "Command");
+
 		if(t_selectionMode != (int)selectionMode)
 			selectionMode = (SelectMode)t_selectionMode;
 

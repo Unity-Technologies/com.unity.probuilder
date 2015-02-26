@@ -5,7 +5,7 @@ set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
-set force_revision="3169"	:: If left empty, build process will use the current revision.
+set force_revision="3174"	:: If left empty, build process will use the current revision.
 
 svn update
 
@@ -87,7 +87,7 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
 	:: Export release pack for Unity 4.3 +
-	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype packageName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 
@@ -128,7 +128,7 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 	echo ================================== EXPORT UNITY 5 PACK ==================================
 
 	:: Export release pack for Unity 5.0 +
-	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler;Debug folderRootName:Prototype suffix:-unity5 generateVersionInfo:TRUE -logFile %CD%\logs\probuilder5.0-compile-log.txt
+	%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;pb_Profiler;Debug folderRootName:Prototype packageName:Prototype suffix:-unity5 generateVersionInfo:TRUE -logFile %CD%\logs\probuilder5.0-compile-log.txt
 
 	echo Done building Unity 4, Unity 5 project packages.
 
