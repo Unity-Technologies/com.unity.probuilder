@@ -2932,7 +2932,6 @@ public class pb_Editor : EditorWindow
 
 	public void SetSelection(GameObject[] newSelection)
 	{
-		Debug.Log("here");
 		pbUndo.RecordObjects(selection, "Change Selection");
 		
 		ClearSelection();
