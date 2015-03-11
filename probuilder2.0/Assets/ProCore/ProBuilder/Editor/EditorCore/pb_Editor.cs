@@ -21,7 +21,6 @@ using System.Threading;
 using Parabox.Debug;
 #endif
 
-[InitializeOnLoad]
 public class pb_Editor : EditorWindow
 {
 
@@ -52,9 +51,7 @@ public class pb_Editor : EditorWindow
 
 	Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
 
-	// GUIStyle pbStyle;
 	GUIStyle VertexTranslationInfoStyle;
-	// private int UNITY_VERSION;
 	GUIStyle eye_style;
 #endregion
 
@@ -73,8 +70,7 @@ public class pb_Editor : EditorWindow
 	
 	private static pb_Editor me;
 
-	// MethodInfo IntersectRayMesh;
-	MethodInfo findNearestVertex;
+	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tryed that already.
 
 	public EditLevel editLevel { get; private set; }
 	private EditLevel previousEditLevel;
@@ -141,7 +137,7 @@ public class pb_Editor : EditorWindow
 		UpdateSelection(true);
 
 		HideSelectedWireframe();
-
+		
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
@@ -1592,12 +1588,11 @@ public class pb_Editor : EditorWindow
 				
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
-				else
-					pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 
 				OnBeginVertexMovement();
 			}
 
+			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -1651,7 +1646,7 @@ public class pb_Editor : EditorWindow
 			Vector3 ver;	// resulting vertex from modification
 			Vector3 over;	// vertex point to modify. different for world, local, and plane
 			
-			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Scale Vertices");
+			pbUndo.RecordObjects(selection as Object[], "Scale Vertices");
 
 			bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
 			bool gotoLocal = selectedFaceCount < 1;
@@ -1747,8 +1742,6 @@ public class pb_Editor : EditorWindow
 
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
-				else
-					pbUndo.RecordObjects(selection as Object[], "Rotate Vertices");
 
 				OnBeginVertexMovement();
 
@@ -1763,7 +1756,6 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
-
 			Quaternion transformedRotation;
 			switch(handleAlignment)
 			{
@@ -1792,6 +1784,8 @@ public class pb_Editor : EditorWindow
 					transformedRotation = currentHandleRotation;
 					break;
 			}
+
+			pbUndo.RecordObjects(selection as Object[], "Rotate Vertices");
 
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
@@ -1851,9 +1845,12 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
+	/**
+	 * Extrude the current selection with no translation.
+	 */
 	private void ShiftExtrude()
 	{
-		pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Shift+Extrude Faces");
+		pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Shift-Extrude Faces");
 
 		int ef = 0;
 		foreach(pb_Object pb in selection)
@@ -1894,22 +1891,6 @@ public class pb_Editor : EditorWindow
 			pb_Editor_Utility.ShowNotification("Extrude");
 			UpdateSelection(true);
 		}
-	}
-
-	private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
-	{
-		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
-		
-		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
-		if(nearest != null)
-			t.Add(nearest.transform);
-
-		object[] parameters = new object[] { (Vector2)mousePosition, t.ToArray(), null };
-		if(findNearestVertex == null) findNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-		object result = findNearestVertex.Invoke(this, parameters);	
-		vertex = (bool)result ? (Vector3)parameters[2] : Vector3.zero;
-		return (bool)result;
 	}
 
 	#if !PROTOTYPE
@@ -3039,6 +3020,13 @@ public class pb_Editor : EditorWindow
 		{
 			Vector3 nrm, bitan, tan;
 			pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+			
+			if(nrm == Vector3.zero || bitan == Vector3.zero)
+			{
+				nrm = Vector3.up;
+				bitan = Vector3.right;
+				tan = Vector3.forward;
+			}
 
 			handleMatrix *= Matrix4x4.TRS( pb_Math.BoundsCenter( pb.GetVertices(face.distinctIndices) ), Quaternion.LookRotation(nrm, bitan), Vector3.one);
 		}
@@ -3066,6 +3054,13 @@ public class pb_Editor : EditorWindow
 				// use average normal, tangent, and bitangent to calculate rotation relative to local space
 				Vector3 nrm, bitan, tan;
 				pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+				
+				if(nrm == Vector3.zero || bitan == Vector3.zero)
+				{
+					nrm = Vector3.up;
+					bitan = Vector3.right;
+					tan = Vector3.forward;
+				}
 
 				handleRotation = localRot * Quaternion.LookRotation(nrm, bitan);
 				break;
@@ -3079,6 +3074,30 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 	}
+
+	/**
+	 * Find the nearest vertex among all visible objects.
+	 */
+	private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
+	{
+		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
+		
+		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
+		if(nearest != null)
+			t.Add(nearest.transform);
+
+		object[] parameters = new object[] { (Vector2)mousePosition, t.ToArray(), null };
+
+		if(findNearestVertex == null)
+			findNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+
+		Debug.Log(findNearestVertex == null);
+
+		object result = findNearestVertex.Invoke(this, parameters);	
+		vertex = (bool)result ? (Vector3)parameters[2] : Vector3.zero;
+		return (bool)result;
+	}
+
 #endregion
 
 #region Selection Management and checks
