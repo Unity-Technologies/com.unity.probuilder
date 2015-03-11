@@ -104,6 +104,9 @@ public class pb_Preferences_Internal
 				
 			case pb_Constant.pbShowSceneInfo:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
+			
+			case pb_Constant.pbEnableBackfaceSelection:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
 
 			// When in doubt, say yes!
 			default:

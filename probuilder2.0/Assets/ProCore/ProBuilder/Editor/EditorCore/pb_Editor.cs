@@ -92,7 +92,6 @@ public class pb_Editor : EditorWindow
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
-
 #endregion
 
 #region INITIALIZATION AND ONDISABLE
@@ -835,9 +834,6 @@ public class pb_Editor : EditorWindow
 			UpdateGraphics();
 		}
 
-		// Always want to draw the wireframe
-		// pb_Editor_Graphics.DrawWireframe();
-
 		DrawHandleGUI();
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
@@ -876,8 +872,6 @@ public class pb_Editor : EditorWindow
 			DrawHandles();
 		
 		DrawVertexNormals(drawVertexNormals);
-
-		if(drawFaceNormals) DrawFaceNormals();
 
 		if(Tools.current != Tool.None && Tools.current != currentHandle)
 			SetTool_Internal(Tools.current);
@@ -1200,7 +1194,9 @@ public class pb_Editor : EditorWindow
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 			pb_RaycastHit hit;
 
-			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit) )
+			bool ignoreBackfaces = !pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, ignoreBackfaces) )
 			{
 				selectedFace = pb.faces[hit.FaceIndex];
 
@@ -3020,7 +3016,7 @@ public class pb_Editor : EditorWindow
 		{
 			Vector3 nrm, bitan, tan;
 			pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
-			
+
 			if(nrm == Vector3.zero || bitan == Vector3.zero)
 			{
 				nrm = Vector3.up;
@@ -3510,32 +3506,6 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
-	const float NRML_LENGTH = .3f;
-
-	public void DrawFaceNormals()
-	{
-		foreach(pb_Object pb in selection)
-		{
-			Vector3 nrm, bitan, tan;
-
-			Handles.matrix = pb.transform.localToWorldMatrix;
-			
-			foreach(pb_Face face in pb.faces)
-			{
-				pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
-
-				Vector3 v = pb_Math.BoundsCenter(pb.GetVertices(face.distinctIndices));
-
-				Handles.color = Color.blue;
-				Handles.DrawLine( v, v + nrm * .3f );
-				Handles.color = Color.red;
-				Handles.DrawLine( v, v + (Vector3)tan * .3f);
-				Handles.color = Color.green;
-				Handles.DrawLine( v, v + bitan * .3f );
-			}
-			Handles.matrix = Matrix4x4.identity;
-		}
-	}
 #endregion
 
 #region CONVENIENCE CALLS

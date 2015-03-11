@@ -413,8 +413,6 @@ public class pb_Handle_Utility
 				{
 					if(dist > OutHitPoint)
 						continue;
-					else
-						OutHitPoint = dist;
 
 					// Don't allow culled faces to trigger
 
@@ -427,12 +425,14 @@ public class pb_Handle_Utility
 						{
 							OutNrm = nrm;
 							OutHitFace = CurFace;
+							OutHitPoint = dist;
 						}
 					}
 					else
 					{
 						OutNrm = Vector3.Cross(b-a, c-a);
 						OutHitFace = CurFace;
+						OutHitPoint = dist;
 					}
 
 					continue;

@@ -1271,8 +1271,12 @@ public class pb_UV_Editor : EditorWindow
 	void OnMouseDrag()
 	{
 		Event e = Event.current;
+
 		if(editor && !e.shift && !e.control && !e.command)
+		{
+			pbUndo.RecordObjects(selection, "Change Selection");
 			editor.ClearFaceSelection();
+		}
 
 		RefreshUVCoordinates(dragRect, false);
 		e.Use();

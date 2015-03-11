@@ -34,6 +34,7 @@ public class pb_Preferences
 	static bool pbStripProBuilderOnBuild = true;
 	static bool pbDisableAutoUV2Generation = false;
 	static bool pbShowSceneInfo = false;
+	static bool pbEnableBackfaceSelection = false;
 
 	static float pbUVGridSnapValue;
 	static float pbVertexHandleSize;
@@ -60,15 +61,21 @@ public class pb_Preferences
 		pbStripProBuilderOnBuild = EditorGUILayout.Toggle(new GUIContent("Strip PB Scripts on Build", "If true, when building an executable all ProBuilder scripts will be stripped from your built product."), pbStripProBuilderOnBuild);
 		pbDisableAutoUV2Generation = EditorGUILayout.Toggle(new GUIContent("Disable Auto UV2 Generation", "Disables automatic generation of UV2 channel.  If Unity is sluggish when working with large ProBuilder objects, disabling UV2 generation will improve performance.  Use `Actions/Generate UV2` or `Actions/Generate Scene UV2` to build lightmap UVs prior to baking."), pbDisableAutoUV2Generation);
 		pbShowSceneInfo = EditorGUILayout.Toggle(new GUIContent("Show Scene Info", "Displays the selected object vertex and triangle counts in the scene view."), pbShowSceneInfo);
-		pbDefaultSelectionMode = (SelectMode)EditorGUILayout.EnumPopup("Default Selection Mode", pbDefaultSelectionMode);
+		pbEnableBackfaceSelection = EditorGUILayout.Toggle(new GUIContent("Enable Back-face Selection", "If enabled, you may select faces that have been culled by their back face."), pbEnableBackfaceSelection);
+
+		// pbDefaultSelectionMode = (SelectMode)EditorGUILayout.EnumPopup("Default Selection Mode", pbDefaultSelectionMode);
+
 		_defaultMaterial = (Material) EditorGUILayout.ObjectField("Default Material", _defaultMaterial, typeof(Material), false);
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);
+
 		GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Collider");
 			defaultColliderType = (int)((ColliderType)EditorGUILayout.EnumPopup( (ColliderType)defaultColliderType ));
 		GUILayout.EndHorizontal();
+
 		if((ColliderType)defaultColliderType == ColliderType.MeshCollider)
 			pbForceConvex = EditorGUILayout.Toggle("Force Convex Mesh Collider", pbForceConvex);
+			
 		pbShowEditorNotifications = EditorGUILayout.Toggle("Show Editor Notifications", pbShowEditorNotifications);
 		pbDragCheckLimit = EditorGUILayout.Toggle(new GUIContent("Limit Drag Check to Selection", "If true, when drag selecting faces, only currently selected pb-Objects will be tested for matching faces.  If false, all pb_Objects in the scene will be checked.  The latter may be slower in large scenes."), pbDragCheckLimit);
 		pbPBOSelectionOnly = EditorGUILayout.Toggle(new GUIContent("Only PBO are Selectable", "If true, you will not be able to select non probuilder objects in Geometry and Texture mode"), pbPBOSelectionOnly);
@@ -153,6 +160,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
 			EditorPrefs.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneInfo);
+			EditorPrefs.DeleteKey(pb_Constant.pbEnableBackfaceSelection);
 		}
 
 		LoadPrefs();
@@ -240,6 +248,7 @@ public class pb_Preferences
 		pbStripProBuilderOnBuild = pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
 		pbDisableAutoUV2Generation = pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 		pbShowSceneInfo = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
+		pbEnableBackfaceSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 
 		pbDefaultFaceColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
@@ -291,6 +300,7 @@ public class pb_Preferences
 		EditorPrefs.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
 		EditorPrefs.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 		EditorPrefs.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
+		EditorPrefs.SetBool  	(pb_Constant.pbEnableBackfaceSelection, pbEnableBackfaceSelection);
 
 		EditorPrefs.SetInt		(pb_Constant.pbDefaultSelectionMode, (int)pbDefaultSelectionMode);
 		EditorPrefs.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString());

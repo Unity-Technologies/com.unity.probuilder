@@ -80,6 +80,7 @@ public static class pb_Constant
 	public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
 	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
 	public const string pbShowSceneInfo 				= "pbShowSceneInfo";
+	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
