@@ -3087,8 +3087,6 @@ public class pb_Editor : EditorWindow
 		if(findNearestVertex == null)
 			findNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
-		Debug.Log(findNearestVertex == null);
-
 		object result = findNearestVertex.Invoke(this, parameters);	
 		vertex = (bool)result ? (Vector3)parameters[2] : Vector3.zero;
 		return (bool)result;

@@ -3,6 +3,10 @@
 	- Credit to Paul Bourke (pbourke@swin.edu.au) for the original Fortran 77 Program
 	- Converted to a standalone C# 2.0 library by Morten Nielsen (www.iter.dk)
 
+# CSG
+	- Ported from Javascript project by Evan Wallace
+	- https://github.com/evanw/csg.js
+
 # PivotTool
 	Author: Matt1988
 
