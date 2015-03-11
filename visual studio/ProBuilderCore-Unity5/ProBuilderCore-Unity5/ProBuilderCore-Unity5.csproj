@@ -34,9 +34,8 @@
     <Reference Include="ProCore">
       <HintPath>..\..\ProCore\ProCore\bin\Release\ProCore.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.0b18\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.0f4\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
