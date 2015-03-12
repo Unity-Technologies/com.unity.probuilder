@@ -676,21 +676,23 @@ public class pb_Geometry_Interface : EditorWindow
 
 	/**** Arch Generator ***/
 	static float arch_angle		= 180.0f;
-	static float arch_radius	= 4.0f;
+	static float arch_radius	= 3.0f;
 	static float arch_width		= 0.50f;
-	static float arch_depth		= 0.5f;
-	static int arch_radialCuts	= 8;
-	static bool arch_insideFaces = true;
-	static bool arch_outsideFaces = true;
-	static bool arch_frontFaces = true;
-	static bool arch_backFaces = true;
+	static float arch_depth		= 1f;
+	static int arch_radialCuts	= 6;
+	static bool arch_insideFaces 	= true;	///< Generate inside faces of arch?
+	static bool arch_outsideFaces 	= true;	///< Generate outside faces of arch?
+	static bool arch_frontFaces 	= true;	///< Generate front faces of arch?
+	static bool arch_backFaces 		= true;	///< Generate back faces of arch?
+	static bool arch_endCaps 		= true;	///< Generate end cap faces of arch?
+
 	void ArchGUI()
 	{
 		arch_radius = EditorGUILayout.FloatField("Radius", arch_radius);
 		arch_radius = arch_radius <= 0f ? .01f : arch_radius;
 
 		arch_width = EditorGUILayout.FloatField("Thickness", arch_width);
-		arch_width = Mathf.Clamp(arch_width, 0.01f, arch_radius);
+		arch_width = Mathf.Clamp(arch_width, 0.01f, 100f);
 
 		arch_depth = EditorGUILayout.FloatField("Depth", arch_depth);
 		arch_depth = Mathf.Clamp(arch_depth, 0.1f, 500.0f);
@@ -701,16 +703,28 @@ public class pb_Geometry_Interface : EditorWindow
 		arch_angle = EditorGUILayout.FloatField("Arch Degrees", arch_angle);
 		arch_angle = Mathf.Clamp(arch_angle, 0.0f, 360.0f);
 
-		arch_insideFaces = EditorGUILayout.Toggle("Inner Faces", arch_insideFaces);
+		// arch_insideFaces = EditorGUILayout.Toggle("Inner Faces", arch_insideFaces);
 
-		arch_outsideFaces = EditorGUILayout.Toggle("Outer Faces", arch_outsideFaces);
+		// arch_outsideFaces = EditorGUILayout.Toggle("Outer Faces", arch_outsideFaces);
 
-		arch_frontFaces = EditorGUILayout.Toggle("Front Faces", arch_frontFaces);
+		// arch_frontFaces = EditorGUILayout.Toggle("Front Faces", arch_frontFaces);
 
-		arch_backFaces = EditorGUILayout.Toggle("Rear Faces", arch_backFaces);
+		// arch_backFaces = EditorGUILayout.Toggle("Rear Faces", arch_backFaces);
+
+		if(arch_angle < 360f)
+			arch_endCaps = EditorGUILayout.Toggle("End Caps", arch_endCaps);
 
 	  	if (showPreview && (GUI.changed || initPreview))
-			SetPreviewObject(pb_Shape_Generator.ArchGenerator(arch_angle, arch_radius, arch_width, arch_depth, arch_radialCuts, arch_insideFaces, arch_outsideFaces, arch_frontFaces, arch_backFaces));
+			SetPreviewObject( pb_Shape_Generator.ArchGenerator(	arch_angle,
+																arch_radius,
+																Mathf.Clamp(arch_width, 0.01f, arch_radius),
+																arch_depth,
+																arch_radialCuts,
+																arch_insideFaces,
+																arch_outsideFaces,
+																arch_frontFaces,
+																arch_backFaces,
+																arch_endCaps));
 
 		Color oldColor = GUI.backgroundColor;
 		GUI.backgroundColor = COLOR_GREEN;
@@ -719,7 +733,22 @@ public class pb_Geometry_Interface : EditorWindow
 
 		if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 		{
-			pb_Object pb = pb_Shape_Generator.ArchGenerator(arch_angle, arch_radius, arch_width, arch_depth, arch_radialCuts, arch_insideFaces, arch_outsideFaces, arch_frontFaces, arch_backFaces);
+			pb_Object pb = pb_Shape_Generator.ArchGenerator(
+				arch_angle,
+				arch_radius,
+				Mathf.Clamp(arch_width, 0.01f, arch_radius),
+				arch_depth,
+				arch_radialCuts,
+				arch_insideFaces,
+				arch_outsideFaces,
+				arch_frontFaces,
+				arch_backFaces,
+				arch_endCaps);
+
+			int[] removed;
+			// happens when radius and width are the same :/
+			pb.RemoveDegenerateTriangles(out removed);
+
 			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);

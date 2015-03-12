@@ -701,7 +701,7 @@ public class pb_Shape_Generator
 	  * \returns New #pb_Object.
 	  */
 	public static pb_Object ArchGenerator(
-		float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces)
+		float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
 	{
 		Vector2[] templateOut = new Vector2[radialCuts];
 		Vector2[] templateIn = new Vector2[radialCuts];
@@ -718,7 +718,7 @@ public class pb_Shape_Generator
 
 		float y = 0;
 
-		for (int n = 0; n < radialCuts; n++)
+		for (int n = 0; n < radialCuts-1; n++)
 		{
 			// outside faces
 			tmp = templateOut[n];
@@ -751,30 +751,37 @@ public class pb_Shape_Generator
 				v.AddRange(qvi);
 
 			// left side bottom face
-			if(n == 0 && angle < 360.0f)
-			v.AddRange(
-				new Vector3[4]
+			if( angle < 360f && endCaps)
+			{
+				if(n == 0)
 				{
-					new Vector3(templateOut[n].x, templateOut[n].y, depth),
-					new Vector3(templateIn[n].x, templateIn[n].y, depth),
-					new Vector3(templateOut[n].x, templateOut[n].y, y),
-					new Vector3(templateIn[n].x, templateIn[n].y, y)
-				});
-			
-			// ride side bottom face
-			if(n == radialCuts -1 && angle < 360.0f)
-			v.AddRange(
-				new Vector3[4]
+					v.AddRange(
+						new Vector3[4]
+						{
+							new Vector3(templateOut[n].x, templateOut[n].y, depth),
+							new Vector3(templateIn[n].x, templateIn[n].y, depth),
+							new Vector3(templateOut[n].x, templateOut[n].y, y),
+							new Vector3(templateIn[n].x, templateIn[n].y, y)
+						});
+				}
+				
+				// ride side bottom face
+				if(n == radialCuts-2)
 				{
-					new Vector3(templateIn[n].x, templateIn[n].y, depth),
-					new Vector3(templateOut[n].x, templateOut[n].y, depth),
-					new Vector3(templateIn[n].x, templateIn[n].y, y),
-					new Vector3(templateOut[n].x, templateOut[n].y, y)
-				});
+					v.AddRange(
+						new Vector3[4]
+						{
+							new Vector3(templateIn[n+1].x, templateIn[n+1].y, depth),
+							new Vector3(templateOut[n+1].x, templateOut[n+1].y, depth),
+							new Vector3(templateIn[n+1].x, templateIn[n+1].y, y),
+							new Vector3(templateOut[n+1].x, templateOut[n+1].y, y)
+						});
+				}
+			}
 		}
 
 		// build front and back faces
-		for (int i = 0; i < radialCuts; i++)
+		for (int i = 0; i < radialCuts-1; i++)
 		{
 			tmp = templateOut[i];
 			tmp2 = (i < radialCuts - 1) ? templateOut[i + 1] : templateOut[i];

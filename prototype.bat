@@ -1,11 +1,11 @@
 @echo off
 
 set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
-set unity_path_5="C:\Program Files\Unity 5.0.0b18\Editor\Unity.exe"
+set unity_path_5="C:\Program Files\Unity 5.0.0f4\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
-set force_revision="3174"	:: If left empty, build process will use the current revision.
+set force_revision="3210"	:: If left empty, build process will use the current revision.
 
 svn update
 
