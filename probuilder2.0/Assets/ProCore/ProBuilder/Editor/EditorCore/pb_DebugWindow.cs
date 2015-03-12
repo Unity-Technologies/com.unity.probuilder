@@ -21,7 +21,7 @@ public class pb_DebugWindow : EditorWindow
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
-	[MenuItem("Tools/ProBuilder/Debug/ProBuilder Debug Window")]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/ProBuilder Debug Window")]
 	public static void MenuSceneViewDebug()
 	{
 		EditorWindow.GetWindow<pb_DebugWindow>();

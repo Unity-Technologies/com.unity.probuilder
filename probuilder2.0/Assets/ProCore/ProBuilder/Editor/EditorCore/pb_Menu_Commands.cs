@@ -242,21 +242,33 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuFlipNormals(pb_Object[] selected)
 	{
-		pbUndo.RecordObjects(selected, "Flip Face Normals.");
+		pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+		int c = 0;
+		int faceCount = pb_Editor.instance.selectedFaceCount;
 
-		foreach(pb_Object pb in selected)
+		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 		{
-			pb.ReverseWindingOrder(pb.SelectedFaces.Length < 1 ? pb.faces : pb.SelectedFaces);
-
+			if( pb.SelectedFaceCount < 1 && faceCount < 1 )
+			{
+				pb.ReverseWindingOrder(pb.faces);
+				c += pb.faces.Length;
+			}
+			else
+			{
+				pb.ReverseWindingOrder(pb.SelectedFaces);
+				c += pb.SelectedFaceCount;
+			}
+			
+			
 			pb.ToMesh();
 			pb.Refresh();
 			pb.GenerateUV2();
 		}
-
-		if(selected.Length > 0)
-			pb_Editor_Utility.ShowNotification("Flip Normals");
+		
+		if(c > 0)
+			pb_Editor_Utility.ShowNotification("Flip " + c + (c > 1 ? " Faces" : " Face"));
 		else
-			pb_Editor_Utility.ShowNotification("Nothing Selected");
+			pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
 	}
 #endregion
 

@@ -49,7 +49,7 @@ namespace ProBuilder2.Actions
 		public static bool MenuVerifySmartConnect()
 		{
 			pb_Editor editor = pb_Editor.instance;
-			return editor && editor.selectedVertexCount > 1;
+			return editor != null;
 		}
 		/**
 		 * "Smart Connect" exists because even if shortcuts are mutually exclusive via Verify, they can't share.
@@ -60,19 +60,26 @@ namespace ProBuilder2.Actions
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Smart Connect _&e", false,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
 		public static void MenuConnectInferUse()
 		{
-			switch(pb_Editor.instance.selectionMode)
+			if(pb_Editor.instance.editLevel == EditLevel.Geometry)
 			{
-				case SelectMode.Vertex:
-					pb_Menu_Commands.MenuConnectVertices(pbUtil.GetComponents<pb_Object>(Selection.transforms));
-					break;
+				switch(pb_Editor.instance.selectionMode)
+				{
+					case SelectMode.Vertex:
+						pb_Menu_Commands.MenuConnectVertices(pbUtil.GetComponents<pb_Object>(Selection.transforms));
+						break;
 
-				case SelectMode.Face:
-					pb_Menu_Commands.MenuSubdivideFace(pbUtil.GetComponents<pb_Object>(Selection.transforms));
-					break;
+					case SelectMode.Face:
+						pb_Menu_Commands.MenuSubdivideFace(pbUtil.GetComponents<pb_Object>(Selection.transforms));
+						break;
 
-				case SelectMode.Edge:
-					pb_Menu_Commands.MenuConnectEdges(pbUtil.GetComponents<pb_Object>(Selection.transforms));
-					break;
+					case SelectMode.Edge:
+						pb_Menu_Commands.MenuConnectEdges(pbUtil.GetComponents<pb_Object>(Selection.transforms));
+						break;
+				}
+			}
+			else
+			{
+				pb_Menu_Commands.MenuSubdivide(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 			}
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
