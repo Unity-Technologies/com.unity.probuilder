@@ -361,10 +361,10 @@ public class pb_Geometry_Interface : EditorWindow
 	}
 
 	/**** Cylinder Generator ***/
-	static int cyl_axisCuts = 6;
-	static float cyl_radius = 1.5f;
-	static float cyl_height = 4f;
-	static int cyl_heightCuts = 2;
+	static int cyl_axisCuts = 8;
+	static float cyl_radius = .5f;
+	static float cyl_height = 1f;
+	static int cyl_heightCuts = 1;
 	void CylinderGUI()
 	{
 		// Store old values	

@@ -301,6 +301,9 @@ public class pb_Menu_Commands : Editor
 
 		foreach(pb_Object pb in pbs)
 		{
+			pb.ToMesh();
+			pb.RefreshNormals();
+
 			if(editor && editor.selectionMode == SelectMode.Edge)
 			{
 				if(pb.SelectedEdges.Length < 1 || pb.SelectedFaceCount > 0)

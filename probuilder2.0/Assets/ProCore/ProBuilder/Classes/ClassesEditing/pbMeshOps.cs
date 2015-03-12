@@ -122,6 +122,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		List<pb_Edge> extrudedIndices = new List<pb_Edge>();
+		Vector3[] normals = pb.msh.normals;
 		appendedFaces = new List<pb_Face>();
 
 		/// build out new faces around edges
@@ -137,10 +138,10 @@ namespace ProBuilder2.MeshOperations
 			// don't bother getting vertex normals if not auto-extruding
 			if(extrudeDistance > Mathf.Epsilon)
 			{
-				xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
-				ynorm = xnorm;
-				// xnorm = Norm( edge.x, sharedIndices, allEdgeIndices, oNormals );
-				// ynorm = Norm( edge.y, sharedIndices, allEdgeIndices, oNormals );
+				// xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
+				// ynorm = xnorm;
+				xnorm = Norm( edge.x, sharedIndices, allEdgeIndices, normals );
+				ynorm = Norm( edge.y, sharedIndices, allEdgeIndices, normals );
 			}
 
 			int x_sharedIndex = sharedIndices.IndexOf(edge.x);
@@ -236,15 +237,19 @@ namespace ProBuilder2.MeshOperations
 
 		pb.SplitUVs(pb_Face.AllTriangles(faces));
 		
+		/**
+		 * Move the inside faces to the top of teh extrusion
+		 */
 		// this is a separate loop cause the one above this must completely merge all sharedindices prior to 
 		// checking the normal averages
 		foreach(pb_Face f in faces)
 		{
-			Vector3 norm = pb_Math.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
+			// Vector3 norm = pb_Math.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
 
 			foreach(int ind in f.distinctIndices)
 			{
-				// Vector3 norm = Norm( ind, si, allEdgeIndices, oNormals );
+				allEdgeIndices = pb_Face.AllTrianglesDistinct(faces);
+				Vector3 norm = Norm( ind, sharedIndices, allEdgeIndices, normals );
 
 				localVerts[ind] += norm.normalized * extrudeDistance;
 			}

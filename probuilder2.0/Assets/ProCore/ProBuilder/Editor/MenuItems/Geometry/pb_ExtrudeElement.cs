@@ -18,7 +18,6 @@ namespace ProBuilder2.Actions
 		public static void Extrude()
 		{
 			pb_Menu_Commands.MenuExtrude(pbUtil.GetComponents<pb_Object>(Selection.transforms));
-			// PerformExtrusion( pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance) );
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 		}
 	}
