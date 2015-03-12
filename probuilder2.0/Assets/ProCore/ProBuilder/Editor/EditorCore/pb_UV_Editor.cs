@@ -2610,11 +2610,11 @@ public class pb_UV_Editor : EditorWindow
 		switch(mode)
 		{
 			case UVMode.Auto:
-				DrawAutoModeUI();
+				DrawAutoModeUI((int)actionWindowRect.width);
 				break;
 
 			case UVMode.Manual:
-				DrawManualModeUI();
+				DrawManualModeUI((int)actionWindowRect.width);
 				break;
 
 			case UVMode.Mixed:
@@ -2634,7 +2634,7 @@ public class pb_UV_Editor : EditorWindow
 
 	bool modifyingUVs_AutoPanel = false;
 
-	void DrawAutoModeUI()
+	void DrawAutoModeUI(int width)
 	{
 		if(GUILayout.Button("Convert to Manual", EditorStyles.miniButton))
 			Menu_SetManualUV();
@@ -2673,8 +2673,10 @@ public class pb_UV_Editor : EditorWindow
 		
 	}
 
+	bool tool_weldButton = false;
+
 	Vector2 scroll = Vector2.zero;
-	void DrawManualModeUI()
+	void DrawManualModeUI(int width)
 	{
 		GUI.enabled = selectedFaceCount > 0;
 		if(GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
@@ -2714,8 +2716,14 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Edit", EditorStyles.miniBoldLabel);
 
 		GUI.enabled = selectedUVCount > 1;
-		if(GUILayout.Button("Weld UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-			Menu_SewUVs();
+
+		tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
+			tool_weldButton,
+			Menu_SewUVs,
+			WeldButtonGUI,
+			width,
+			20,
+			selection);
 
 		if(GUILayout.Button("Collapse UVs", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 			Menu_CollapseUVs();
@@ -2740,6 +2748,31 @@ public class pb_UV_Editor : EditorWindow
 		EditorGUILayout.EndScrollView();
 
 		GUI.enabled = true;
+	}
+
+	/**
+	 * Expose the distance parameter used in Weld operations.
+	 * ProBuilder only.
+	 */
+	const float MIN_WELD_DISTANCE = .001f;
+	private void WeldButtonGUI(int width)
+	{
+		EditorGUI.BeginChangeCheck();
+
+		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
+		
+		if(weldDistance <= MIN_WELD_DISTANCE)
+			weldDistance = MIN_WELD_DISTANCE;
+
+		EditorGUIUtility.labelWidth = width - 70;
+		weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
+	
+		if( EditorGUI.EndChangeCheck() )
+		{
+			if(weldDistance < MIN_WELD_DISTANCE)
+				weldDistance = MIN_WELD_DISTANCE;
+			EditorPrefs.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
+		}
 	}
 #endregion
 
@@ -3083,7 +3116,7 @@ public class pb_UV_Editor : EditorWindow
 		pb_Editor_Utility.ShowNotification(this, "Collapse UVs");
 	}
 
-	public void Menu_SewUVs()
+	public void Menu_SewUVs(pb_Object[] selection)
 	{
 		if(channel == 1)
 		{
@@ -3091,12 +3124,14 @@ public class pb_UV_Editor : EditorWindow
 			return;
 		}
 
+		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
+
 		pbUndo.RecordObjects(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
 		{
 			selection[i].ToMesh();
 
-			selection[i].SewUVs(distinct_indices[i], .03f);
+			selection[i].SewUVs(distinct_indices[i], weldDistance);
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();

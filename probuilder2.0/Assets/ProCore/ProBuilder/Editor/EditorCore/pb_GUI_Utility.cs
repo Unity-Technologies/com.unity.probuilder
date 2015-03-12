@@ -11,6 +11,8 @@ namespace ProBuilder2.GUI
 	{
 #region Private
 
+		static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
+
 		private static GUIStyle _splitStyle;
 		private static GUIStyle SplitStyle
 		{
@@ -84,5 +86,43 @@ namespace ProBuilder2.GUI
 
 			return value;
 		}
+	
+		public static bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action<int> gui, int guiWidth, int guiHeight, pb_Object[] selection)
+		{
+			return ToolSettingsGUI(text, description, showSettings, action, gui, true, guiWidth, guiHeight , selection);
+		}
+
+		public static bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action<int> gui, bool enabled, int guiWidth, int guiHeight, pb_Object[] selection)
+		{
+			if(enabled)
+			{
+				GUILayout.BeginHorizontal();
+				if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButtonLeft))
+					action(selection);
+
+				if(GUILayout.Button( showSettings ? "-" : "+", EditorStyles.miniButtonRight, GUILayout.MaxWidth(24)))
+					showSettings = !showSettings;
+				GUILayout.EndHorizontal();
+
+				if(showSettings)
+				{
+					UnityEngine.GUI.backgroundColor = TOOL_SETTINGS_COLOR;
+					Rect al = GUILayoutUtility.GetLastRect();
+					UnityEngine.GUI.Box( new Rect(al.x, al.y + al.height + 2, al.width, guiHeight), "");
+					UnityEngine.GUI.backgroundColor = Color.white;
+
+					gui(guiWidth);
+					GUILayout.Space(4);
+				}
+			}
+			else
+			{
+				if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButton))
+					action(selection);
+			}
+
+			return showSettings;
+		}
 	}
+
 }

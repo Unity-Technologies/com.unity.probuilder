@@ -49,8 +49,6 @@ public class pb_Editor : EditorWindow
 
 	const int SELECT_MODE_LENGTH = 3;
 
-	Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
-
 	GUIStyle VertexTranslationInfoStyle;
 	GUIStyle eye_style;
 #endregion
@@ -493,12 +491,14 @@ public class pb_Editor : EditorWindow
 				********************************************************/
 				GUI.enabled = selectedVertexCount > 0;
 				
-				tool_growSelection = ToolSettingsGUI("Grow", "Adds adjacent faces to the current selection.  Optionally can restrict augmentation to faces within a restricted angle difference.",
+				tool_growSelection = pb_GUI_Utility.ToolSettingsGUI("Grow", "Adds adjacent faces to the current selection.  Optionally can restrict augmentation to faces within a restricted angle difference.",
 					tool_growSelection,
 					pb_Menu_Commands.MenuGrowSelection,
 					pb_Menu_Commands.GrowSelectionGUI,
 					selectionMode == SelectMode.Face,
-					40);
+					Screen.width,
+					40,
+					selection);
 
 				if(GUILayout.Button("Shrink", EditorStyles.miniButton))
 					pb_Menu_Commands.MenuShrinkSelection(selection);
@@ -541,11 +541,13 @@ public class pb_Editor : EditorWindow
 
 					GUI.enabled = selectedFaceCount > 0 || selectedEdgeCount > 0;
 					
-					tool_extrudeButton = ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
+					tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
 						tool_extrudeButton,
 						pb_Menu_Commands.MenuExtrude,
 						pb_Menu_Commands.ExtrudeButtonGUI,
-						20);
+						Screen.width,
+						20,
+						selection);
 
 					GUI.enabled = selectedFaceCount > 0;
 
@@ -595,11 +597,13 @@ public class pb_Editor : EditorWindow
 							if(GUILayout.Button("Connect", EditorStyles.miniButton))
 								pb_Menu_Commands.MenuConnectVertices(selection);
 
-							tool_weldButton = ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
+							tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
 								tool_weldButton,
 								pb_Menu_Commands.MenuWeldVertices,
 								pb_Menu_Commands.WeldButtonGUI,
-								20);
+								Screen.width,
+								20,
+								selection);
 
 							if(GUILayout.Button("Collapse", EditorStyles.miniButton))
 								pb_Menu_Commands.MenuCollapseVertices(selection);
@@ -638,43 +642,6 @@ public class pb_Editor : EditorWindow
 		#endregion
 		
 		GUILayout.EndScrollView();
-	}
-
-	bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action gui, int guiHeight)
-	{
-		return ToolSettingsGUI(text, description, showSettings, action, gui, true, guiHeight);
-	}
-
-	bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action gui, bool enabled, int guiHeight)
-	{
-		if(enabled)
-		{
-			GUILayout.BeginHorizontal();
-			if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButtonLeft))
-				action(selection);
-
-			if(GUILayout.Button( showSettings ? "-" : "+", EditorStyles.miniButtonRight, GUILayout.MaxWidth(24)))
-				showSettings = !showSettings;
-			GUILayout.EndHorizontal();
-
-			if(showSettings)
-			{
-				GUI.backgroundColor = TOOL_SETTINGS_COLOR;
-				Rect al = GUILayoutUtility.GetLastRect();
-				GUI.Box( new Rect(al.x, al.y + al.height + 2, al.width, guiHeight), "");
-				GUI.backgroundColor = Color.white;
-
-				gui();
-				GUILayout.Space(4);
-			}
-		}
-		else
-		{
-			if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButton))
-				action(selection);
-		}
-
-		return showSettings;
 	}
 #endregion
 

@@ -38,7 +38,7 @@ namespace ProBuilder2.Actions
 		public static void WeldVertices()
 		{
 			if( EditorWindow.focusedWindow != null && EditorWindow.focusedWindow is pb_UV_Editor)
-				pb_UV_Editor.instance.Menu_SewUVs();
+				pb_UV_Editor.instance.Menu_SewUVs(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 			else
 				pb_Menu_Commands.MenuWeldVertices(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 		}

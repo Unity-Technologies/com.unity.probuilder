@@ -274,13 +274,13 @@ public class pb_Menu_Commands : Editor
 
 #region Extrude / Bridge
 
-	public static void ExtrudeButtonGUI()
+	public static void ExtrudeButtonGUI(int width)
 	{
 		float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 		
 		EditorGUI.BeginChangeCheck();
 
-		EditorGUIUtility.labelWidth = Screen.width - 68;
+		EditorGUIUtility.labelWidth = width - 68;
 		extrudeAmount = EditorGUILayout.FloatField("Dist", extrudeAmount);
 		
 		if(EditorGUI.EndChangeCheck())
@@ -456,13 +456,13 @@ public class pb_Menu_Commands : Editor
 		SceneView.RepaintAll();
 	}
 
-	public static void GrowSelectionGUI()
+	public static void GrowSelectionGUI(int width)
 	{
 		bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
 
 		EditorGUI.BeginChangeCheck();
 
-		EditorGUIUtility.labelWidth = Screen.width - 28;
+		EditorGUIUtility.labelWidth = width - 28;
 		angleGrow = EditorGUILayout.Toggle("Angle", angleGrow);
 
 		float angleVal = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
@@ -471,7 +471,7 @@ public class pb_Menu_Commands : Editor
 
 		GUI.enabled = angleGrow;
 
-		EditorGUIUtility.labelWidth = Screen.width - 68;
+		EditorGUIUtility.labelWidth = width - 68;
 		angleVal = EditorGUILayout.FloatField("Max", angleVal);
 
 		GUI.enabled = te;
@@ -1000,7 +1000,7 @@ public class pb_Menu_Commands : Editor
 	 * Expose the distance parameter used in Weld operations.
 	 * ProBuilder only.
 	 */
-	public static void WeldButtonGUI()
+	public static void WeldButtonGUI(int width)
 	{
 		EditorGUI.BeginChangeCheck();
 
@@ -1009,12 +1009,9 @@ public class pb_Menu_Commands : Editor
 		if(weldDistance <= MIN_WELD_DISTANCE)
 			weldDistance = MIN_WELD_DISTANCE;
 
-		GUILayout.BeginHorizontal();
-			GUILayout.Label(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), GUILayout.MaxWidth(36));
-			Rect al = GUILayoutUtility.GetLastRect();
-			weldDistance = EditorGUI.FloatField(new Rect(al.x + al.width, al.y, 36, al.height+2), "", weldDistance);
-		GUILayout.EndHorizontal();
-
+		EditorGUIUtility.labelWidth = width - 68;
+		weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
+	
 		if( EditorGUI.EndChangeCheck() )
 		{
 			if(weldDistance < MIN_WELD_DISTANCE)

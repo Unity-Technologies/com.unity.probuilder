@@ -85,13 +85,14 @@ public static class pb_Constant
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
 	public const string pbUVGridSnapValue				= "pbUVGridSnapValue";
+	public const string pbUVWeldDistance				= "pbUVWeldDistance";
+	public const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
+	public const string pbExtrudeDistance 				= "pbExtrudeDistance";
 
 	// Misc
 	public const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
 	public const string pbDefaultMaterial 				= "pbDefaultMaterial";
 
-	public const string pbExtrudeDistance 				= "pbExtrudeDistance";
-	public const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
 
 	// usablility settings (not preferences, just things that need to be saved)
 	public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";

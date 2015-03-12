@@ -135,6 +135,9 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbUVGridSnapValue:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), .015625f, 2f) : .125f;
 
+			case pb_Constant.pbUVWeldDistance:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), Mathf.Epsilon, 10f) : .01f;
+
 			default:
 				return 1f;
 		}
