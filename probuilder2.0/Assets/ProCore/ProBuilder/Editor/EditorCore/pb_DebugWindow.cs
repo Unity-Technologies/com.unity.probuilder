@@ -455,18 +455,20 @@ public class pb_DebugWindow : EditorWindow
 
 		Handles.matrix = pb.transform.localToWorldMatrix;
 
-		Handles.color = Color.green;
 		for(int i = 0; i < vertexCount; i++)
+		{
+			// if( PointIsOccluded( pb.transform.TransformPoint(vertices[i]) ) )
+			// 	continue;
+
+			Handles.color = Color.green;
 			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + normals[i] * elementLength);
 
-		Handles.color = Color.blue;
-		for(int i = 0; i < vertexCount; i++)
+			Handles.color = Color.blue;
 			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3)tangents[i] * elementLength);
 
-		Handles.color = Color.red;
-		for(int i = 0; i < vertexCount; i++)
+			Handles.color = Color.red;
 			Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength);
-
+		}
 		Handles.matrix = Matrix4x4.identity;
 	}
 }

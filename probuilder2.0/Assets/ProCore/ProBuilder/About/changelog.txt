@@ -1,3 +1,12 @@
+-- ProBuilder 2.4.3p0 (r3216) -
+
+# Features
+	- Weld distance now adjustable in UV editor.
+
+# Bug Fixes
+	- Fix weird arch geometry near caps, noticeable when inserting edge loops.
+	- Improve 'Flip Normals' shortcut context awareness.
+
 -- ProBuilder 2.4.3f0 (r3202) -
 
 # Features
