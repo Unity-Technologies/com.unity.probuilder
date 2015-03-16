@@ -79,7 +79,7 @@ public class pb_Object_Editor : Editor
 					DestroyImmediate(oldMesh);
 			}
 
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 	}
 
@@ -126,7 +126,7 @@ public class pb_Object_Editor : Editor
 				pb.TranslateVertices_World(pb.SelectedTriangles, offset);
 
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 
 				if(editor != null)
 					editor.UpdateSelection();

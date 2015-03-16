@@ -459,8 +459,6 @@ public static class pbUVOps
 	{
 		if(auto)
 		{
-			pb.ToMesh();
-
 			faces = System.Array.FindAll(faces, x => x.manualUV).ToArray();	// only operate on faces that were previously manual
 
 			pb.SplitUVs( pb_Face.AllTriangles(faces) );
@@ -488,8 +486,6 @@ public static class pbUVOps
 				if( Mathf.Abs(transform.scale.sqrMagnitude - 2f) > .1f )
 					faces[i].uv.scale = transform.scale;
 			}
-
-			pb.Refresh();
 		}
 		else
 		{

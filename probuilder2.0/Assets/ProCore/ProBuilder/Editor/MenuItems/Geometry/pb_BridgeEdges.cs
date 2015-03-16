@@ -5,12 +5,13 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
-/**
- * Bridge edges.
- */
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for Bridge edges functions.
+	 */
 	public class pb_BridgeEdges : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Bridge Edges &b", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]

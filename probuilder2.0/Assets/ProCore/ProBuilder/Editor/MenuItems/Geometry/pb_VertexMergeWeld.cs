@@ -6,9 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for vertex merge / weld functions.
+	 */
 	public class pb_VertexMergeWeld : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Collapse Selected Vertices &c", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_VERTEX + 0)]

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
-using ProBuilder2.GUI;
+using ProBuilder2.Interface;
 using ProBuilder2.Math;
 
 public class pb_VertexColor_Editor : EditorWindow
@@ -61,7 +61,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		if(editor)

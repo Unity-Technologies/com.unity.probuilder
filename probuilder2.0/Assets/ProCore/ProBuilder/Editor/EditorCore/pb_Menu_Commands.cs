@@ -48,10 +48,11 @@ public class pb_Menu_Commands : Editor
 
 		if( pbMeshOps.CombineObjects(selected, out pb) )
 		{
-			pb_Editor_Utility.SetEntityType(EntityType.Detail, pb.gameObject);
+			pb_Editor_Utility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);			
 			pb.gameObject.AddComponent<MeshCollider>().convex = false;
-			pb.GenerateUV2();
+
+			pb.Finalize();
 
 			pb.gameObject.name = "pb-MergedObject" + pb.id;
 
@@ -109,7 +110,7 @@ public class pb_Menu_Commands : Editor
 				pb.CenterPivot(null);
 	
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 		
 		SceneView.RepaintAll();
@@ -148,7 +149,7 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
@@ -262,7 +263,7 @@ public class pb_Menu_Commands : Editor
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 		
 		if(c > 0)
@@ -339,7 +340,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		if(extrudedFaceCount > 0)
@@ -371,7 +372,7 @@ public class pb_Menu_Commands : Editor
 					success = true;
 					pb.ToMesh();
 					pb.Refresh();
-					pb.GenerateUV2();
+					pb.Finalize();
 				}
 			}
 		}
@@ -699,7 +700,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		if(editor)
@@ -744,7 +745,7 @@ public class pb_Menu_Commands : Editor
 			{
 				pb.ToMesh();
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 
 				pb.SetSelectedFaces( new pb_Face[] { composite } );
 			}
@@ -791,7 +792,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 			
 			pb.SetSelectedFaces(pb.SelectedFaces);
 		}
@@ -849,8 +850,8 @@ public class pb_Menu_Commands : Editor
 			copy.ToMesh();
 			copy.Refresh();
 
-			pb.GenerateUV2();
-			copy.GenerateUV2();
+			pb.Finalize();
+			copy.Finalize();
 
 			pb.ClearSelection();
 			copy.ClearSelection();
@@ -890,7 +891,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 
 				pb.SetSelectedFaces( new pb_Face[] { face } );
 			}
@@ -939,7 +940,7 @@ public class pb_Menu_Commands : Editor
 				}
 				
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 			}
 		}
 
@@ -982,7 +983,7 @@ public class pb_Menu_Commands : Editor
 				}
 
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 			}
 		}
 
@@ -1087,7 +1088,7 @@ public class pb_Menu_Commands : Editor
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		pb_Editor_Utility.ShowNotification("Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
@@ -1127,7 +1128,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		/*
@@ -1179,7 +1180,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 			}
 		}
 
@@ -1216,7 +1217,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 				
 				success++;
 			}
@@ -1286,7 +1287,7 @@ public class pb_Menu_Commands : Editor
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		if(success > 0)
@@ -1321,7 +1322,7 @@ public class pb_Menu_Commands : Editor
 				pb.SetSelectedEdges(edges);
 				pb.ToMesh();
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 				success++;
 			}
 		}

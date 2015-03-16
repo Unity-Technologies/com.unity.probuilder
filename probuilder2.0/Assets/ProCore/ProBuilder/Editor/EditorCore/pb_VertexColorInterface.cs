@@ -244,7 +244,7 @@ public class pb_VertexColorInterface : EditorWindow
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		pb_Editor_Utility.ShowNotification("Set Vertex Colors\n" + pb_ColorUtil.GetColorName(col));

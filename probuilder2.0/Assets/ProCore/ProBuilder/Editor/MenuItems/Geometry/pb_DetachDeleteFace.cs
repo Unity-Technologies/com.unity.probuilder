@@ -3,9 +3,13 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for deleting and detaching faces.
+	 */
 	public class pb_DetachDeleteFace : Editor
 	{
 #if !PROTOTYPE

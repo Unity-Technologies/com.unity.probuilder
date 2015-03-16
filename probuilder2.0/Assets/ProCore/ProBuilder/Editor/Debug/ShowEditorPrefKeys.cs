@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
-using ProBuilder2.GUI;
+using ProBuilder2.Interface;
 
 public class ShowEditorPrefKeys : EditorWindow
 {

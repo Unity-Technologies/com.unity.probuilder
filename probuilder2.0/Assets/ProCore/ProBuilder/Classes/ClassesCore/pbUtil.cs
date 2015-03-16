@@ -283,6 +283,9 @@ namespace ProBuilder2.Common {
 		return false;// ind;
 	}
 
+	/**
+	 * Concatenate two arrays.
+	 */
 	public static T[] Concat<T>(this T[] x, T[] y)
 	{
 		if (x == null) throw new ArgumentNullException("x");
@@ -291,6 +294,21 @@ namespace ProBuilder2.Common {
 		Array.Resize<T>(ref x, x.Length + y.Length);
 		Array.Copy(y, 0, x, oldLen, y.Length);
 		return x;
+	}
+
+	/**
+	 * Returns the index of the array that contains this value.  -1 if not found.
+	 */
+	public static int IndexOf<T>(this List<List<T>> InList, T InValue)
+	{
+		for(int i = 0; i < InList.Count; i++)
+		{
+			for(int x = 0; x < InList[i].Count; x++)
+				if( InList[i][x].Equals(InValue) )
+					return i;
+		}
+
+		return -1;
 	}
 #endregion
 

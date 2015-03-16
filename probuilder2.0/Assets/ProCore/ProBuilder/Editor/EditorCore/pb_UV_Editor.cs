@@ -11,7 +11,7 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using System.Reflection;
-using ProBuilder2.GUI;
+using ProBuilder2.Interface;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -771,8 +771,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb.ToMesh();
 			pb.Refresh();
-
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 	}
 
@@ -861,7 +860,7 @@ public class pb_UV_Editor : EditorWindow
 				// 	selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 
 				SetSelectedUVsWithSceneView();
 
@@ -877,7 +876,7 @@ public class pb_UV_Editor : EditorWindow
 			else
 			{
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 			}
 
 			return success;
@@ -2959,6 +2958,9 @@ public class pb_UV_Editor : EditorWindow
 
 #region Menu Commands
 
+	/**
+	 * Planar projecct UVs on all selected faces in selection.
+	 */
 	public void Menu_PlanarProject()
 	{
 		pbUndo.RecordObjects(selection, "Planar Project Faces");
@@ -2978,7 +2980,7 @@ public class pb_UV_Editor : EditorWindow
 					selection[i].faces[f].manualUV = true;
 
 				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
-				selection[i].GenerateUV2();
+				selection[i].Finalize();
 				
 				RefreshElementGroups(selection[i]);
 
@@ -3006,6 +3008,9 @@ public class pb_UV_Editor : EditorWindow
 		needsRepaint = true;
 	}
 
+	/**
+	 * Box project all selected faces in selection.
+	 */
 	public void Menu_BoxProject()
 	{
 		int p = 0;
@@ -3022,7 +3027,7 @@ public class pb_UV_Editor : EditorWindow
 
 				p ++;
 
-				selection[i].GenerateUV2();
+				selection[i].Finalize();
 			}
 		}
 
@@ -3065,8 +3070,10 @@ public class pb_UV_Editor : EditorWindow
 		
 		foreach(pb_Object pb in selection)
 		{
+			pb.ToMesh();
 			pbUVOps.SetAutoUV(pb, pb.SelectedFaces, !isManual);
-			pb.GenerateUV2();
+			pb.Refresh();
+			pb.Finalize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3108,7 +3115,7 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].CollapseUVs(distinct_indices[i]);
 
 			selection[i].Refresh();
-			selection[i].GenerateUV2();
+			selection[i].Finalize();
 		}
 
 		RefreshSelectedUVCoordinates();
@@ -3135,7 +3142,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
-			selection[i].GenerateUV2();
+			selection[i].Finalize();
 		}
 		
 		RefreshSelectedUVCoordinates();
@@ -3160,7 +3167,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(pb);
 
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3194,7 +3201,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
-			selection[i].GenerateUV2();
+			selection[i].Finalize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3238,7 +3245,7 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].SetUV(uv);
 
 			selection[i].Refresh();
-			selection[i].GenerateUV2();
+			selection[i].Finalize();
 		}
 
 		RefreshSelectedUVCoordinates();

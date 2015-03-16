@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections;
-using ProBuilder2.GUI;
+using ProBuilder2.Interface;
 using ProBuilder2.Common;
 
 public class pb_BooleanInterface : EditorWindow

@@ -6,9 +6,13 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for inverting the current element selection.
+	 */
 	public class pb_InvertSelection : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Invert Face Selection %#i", true, pb_Constant.MENU_SELECTION + 0)]

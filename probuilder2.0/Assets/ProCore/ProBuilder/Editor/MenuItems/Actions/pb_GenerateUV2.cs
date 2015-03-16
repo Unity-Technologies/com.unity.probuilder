@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
@@ -13,7 +14,7 @@ namespace ProBuilder2.Actions
 		{
 			pb_Object[] sel = Selection.transforms.GetComponents<pb_Object>();
 
-			if( !GenerateUV2(sel) )
+			if( !Menu_GenerateUV2(sel) )
 				return;	/// user canceled
 
 			if(sel.Length > 0)
@@ -27,7 +28,7 @@ namespace ProBuilder2.Actions
 		{
 			pb_Object[] sel = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 
-			if( !GenerateUV2(sel) )
+			if( !Menu_GenerateUV2(sel) )
 				return;
 
 			if(sel.Length > 0)
@@ -36,7 +37,7 @@ namespace ProBuilder2.Actions
 				pb_Editor_Utility.ShowNotification("No ProBuilder Objects Found");
 		}
 
-		static bool GenerateUV2(pb_Object[] selected)
+		static bool Menu_GenerateUV2(pb_Object[] selected)
 		{			
 			for(int i = 0; i < selected.Length; i++)
 			{
@@ -54,7 +55,7 @@ namespace ProBuilder2.Actions
 				}
 
 				// True parameter forcibly generates UV2.  Otherwise if pbDisableAutoUV2Generation is true then UV2 wouldn't be built.
-				selected[i].GenerateUV2(true);
+				selected[i].GenerateUV2_2(true);
 			}
 
 			EditorUtility.ClearProgressBar();

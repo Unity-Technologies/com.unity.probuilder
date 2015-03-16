@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for manually re-generating all ProBuilder geometry in scene.
+	 */
 	public class pb_ForceSceneRefresh : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Force Refresh Scene", false, pb_Constant.MENU_REPAIR)]
@@ -28,7 +32,7 @@ namespace ProBuilder2.Actions
 
 				all[i].ToMesh();
 				all[i].Refresh();
-				all[i].GenerateUV2(true);
+				all[i].Finalize();
 			}
 			if(interactive)
 			{

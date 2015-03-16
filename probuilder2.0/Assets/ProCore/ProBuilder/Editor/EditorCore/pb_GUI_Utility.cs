@@ -5,7 +5,7 @@ using System.Collections;
 /**
  * Generic GUI utility methods used in ProBuilder windows.
  */
-namespace ProBuilder2.GUI
+namespace ProBuilder2.Interface
 {
 	public class pb_GUI_Utility
 	{

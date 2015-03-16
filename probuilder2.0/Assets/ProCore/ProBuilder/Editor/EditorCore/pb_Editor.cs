@@ -11,16 +11,17 @@ using System.Reflection;
 using System.Collections.Generic;
 using ProCore.Common;
 using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
-using ProBuilder2.GUI;
+using ProBuilder2.Interface;
 using System.Threading;
 
 #if PB_DEBUG
 using Parabox.Debug;
 #endif
 
+namespace ProBuilder2.EditorCommon
+{
 public class pb_Editor : EditorWindow
 {
 
@@ -786,7 +787,7 @@ public class pb_Editor : EditorWindow
 
 							pb.ToMesh();
 							pb.Refresh();
-							pb.GenerateUV2();
+							pb.Finalize();
 
 							currentEvent.Use();
 						}
@@ -3155,7 +3156,7 @@ public class pb_Editor : EditorWindow
 					prefabModified = true;
 					pb.ToMesh();
 					pb.Refresh();
-					pb.GenerateUV2();
+					pb.Finalize();
 				}
 			}
 		}
@@ -3309,7 +3310,7 @@ public class pb_Editor : EditorWindow
 			 */
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 
 			if( pb.SelectedFaces.Length > 0 )
 				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );	
@@ -3354,12 +3355,8 @@ public class pb_Editor : EditorWindow
 				verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), Vector3.one, snapVal));
 				
 			pb.ToMesh();
-
-			pb.RefreshUV( SelectedFacesInEditZone[i] );
-			pb.RefreshNormals();
-
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		Internal_UpdateSelectionFast();
@@ -3422,7 +3419,7 @@ public class pb_Editor : EditorWindow
 			{
 				sel.ToMesh();
 				sel.Refresh();
-				sel.GenerateUV2();
+				sel.Finalize();
 			}
 			movingVertices = false;
 
@@ -3529,4 +3526,5 @@ public class pb_Editor : EditorWindow
 	public KeyCode getKeyUp			{ get { return currentEvent.type == EventType.KeyUp ? currentEvent.keyCode : KeyCode.None; } }
 #endregion
 
+}
 }

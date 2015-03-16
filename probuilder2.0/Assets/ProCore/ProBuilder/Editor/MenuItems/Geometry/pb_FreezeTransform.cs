@@ -2,52 +2,57 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
-/**
- * Set the pivot point of a pb_Object mesh to 0,0,0 while retaining current world space.
- */
-public class pb_FreezeTransform : Editor
+namespace ProBuilder2.Actions
 {
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
-	public static bool MenuVerifyFreezeTransforms()
+	/**
+	 * Set the pivot point of a pb_Object mesh to 0,0,0 while retaining current world space.
+	 */
+	public class pb_FreezeTransform : Editor
 	{
-		return Selection.transforms.GetComponents<pb_Object>().Length > 0;
-	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
-	public static void MenuFreezeTransforms()
-	{
-		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-
-		pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
-		pbUndo.RecordObjects(selection, "Freeze Transforms");
-
-		foreach(pb_Object pb in selection)
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
+		public static bool MenuVerifyFreezeTransforms()
 		{
-			pb.ToMesh();
-
-			Vector3[] v = pb.VerticesInWorldSpace();
-
-			pb.transform.position = Vector3.zero;
-			pb.transform.localRotation = Quaternion.identity;
-			pb.transform.localScale = Vector3.one;
-
-			foreach(pb_Face face in pb.faces)
-			{
-				face.manualUV = true;
-			}
-
-			pb.SetVertices(v);
-
-			pb.ToMesh();
-			pb.Refresh();
-			pb.GenerateUV2();
+			return Selection.transforms.GetComponents<pb_Object>().Length > 0;
 		}
 
-		if(pb_Editor.instance)
-			pb_Editor.instance.UpdateSelection();
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
+		public static void MenuFreezeTransforms()
+		{
+			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		SceneView.RepaintAll();
+			pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
+			pbUndo.RecordObjects(selection, "Freeze Transforms");
+
+			foreach(pb_Object pb in selection)
+			{
+				pb.ToMesh();
+
+				Vector3[] v = pb.VerticesInWorldSpace();
+
+				pb.transform.position = Vector3.zero;
+				pb.transform.localRotation = Quaternion.identity;
+				pb.transform.localScale = Vector3.one;
+
+				foreach(pb_Face face in pb.faces)
+				{
+					face.manualUV = true;
+				}
+
+				pb.SetVertices(v);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Finalize();
+			}
+
+			if(pb_Editor.instance)
+				pb_Editor.instance.UpdateSelection();
+
+			SceneView.RepaintAll();
+		}
 	}
 }

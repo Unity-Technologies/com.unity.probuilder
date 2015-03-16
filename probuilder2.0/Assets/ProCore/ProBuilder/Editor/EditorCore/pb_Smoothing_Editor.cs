@@ -140,6 +140,9 @@ public class pb_Smoothing_Editor : EditorWindow
 
 #region APPLY
 	
+	/**
+	 * Apply smoothing group to all selected faces in _selection.
+	 */
 	void SetSmoothingGroup(pb_Object[] _selection, int sg)
 	{
 		pbUndo.RecordObjects(_selection, "Set Smoothing Groups");
@@ -163,7 +166,7 @@ public class pb_Smoothing_Editor : EditorWindow
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		OnSelectionUpdate(selection);
@@ -182,7 +185,7 @@ public class pb_Smoothing_Editor : EditorWindow
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.GenerateUV2();
+			pb.Finalize();
 		}
 
 		OnSelectionUpdate(selection);

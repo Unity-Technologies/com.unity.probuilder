@@ -12,6 +12,11 @@ using Parabox.Debug;
 
 namespace ProBuilder2.MeshOperations
 {
+	/**
+	 * Utilities for working with pb_Object meshes.  The operations here only operate on the 
+	 * element caches in pb_Object- they do not affect the UnityEngine.Mesh.  You should call
+	 * ToMesh() prior to invoking these methods, then Refresh() & optionally Finalize() post.
+	 */
 	public static class pbMeshOps
 	{
 #region Pivot Operations (Center, Freeze Transform)
@@ -46,9 +51,6 @@ namespace ProBuilder2.MeshOperations
 
 		// the last bool param force disables snapping vertices
 		pb.TranslateVertices_World(pb.msh.triangles, dir, true);
-
-		pb.ToMesh();
-		pb.Refresh();
 	}
 
 	/**
@@ -61,9 +63,7 @@ namespace ProBuilder2.MeshOperations
 			v[i] = Vector3.Scale(v[i], pb.transform.localScale);
 
 		pb.SetVertices(v);
-		pb.ToMesh();
 		pb.transform.localScale = new Vector3(1f, 1f, 1f);
-		pb.Refresh();
 	}
 #endregion
 

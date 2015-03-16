@@ -3,9 +3,13 @@ using UnityEngine;
 using System.Collections;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
+	/**
+	 * Menu interface for removing degerate triangles.
+	 */
 	public class pb_RemoveDegenerateTris : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Remove Degenerate Triangles", false, pb_Constant.MENU_REPAIR)]
@@ -21,7 +25,7 @@ namespace ProBuilder2.Actions
 				count += rm.Length;
 
 				pb.Refresh();
-				pb.GenerateUV2();
+				pb.Finalize();
 			}
 
 			pb_Editor_Utility.ShowNotification("Removed " + (count/3) + " degenerate triangles.");
