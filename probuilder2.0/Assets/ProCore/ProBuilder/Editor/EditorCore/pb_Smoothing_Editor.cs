@@ -41,9 +41,11 @@ public class pb_Smoothing_Editor : EditorWindow
 	void OnEnable()
 	{		
 		this.autoRepaintOnSceneChange = true;
+
 		this.minSize = new Vector2(332f, 220f);
 
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+
 		if(editor != null)
 			OnSelectionUpdate(editor.selection);
 	}
@@ -205,6 +207,8 @@ public class pb_Smoothing_Editor : EditorWindow
 				}
 			}
 		}
+
+		Repaint();
 	}
 #endregion
 	#endif

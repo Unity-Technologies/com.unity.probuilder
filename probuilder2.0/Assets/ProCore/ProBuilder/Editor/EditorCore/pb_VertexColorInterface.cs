@@ -30,9 +30,10 @@ public class pb_VertexColorInterface : EditorWindow
 	/**
 	 * Initialize this window.
 	 */
-	public static void Init()
+	public static void MenuOpenWindow()
 	{
-		EditorWindow.GetWindow<pb_VertexColorInterface>(true, "Vertex Colors", true);
+		bool dockable = pb_Preferences_Internal.GetBool(pb_Constant.pbVertexPaletteDockable);
+		EditorWindow.GetWindow<pb_VertexColorInterface>(!dockable, "Vertex Colors", true);
 	}
 
 
@@ -45,6 +46,32 @@ public class pb_VertexColorInterface : EditorWindow
 				USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}
+
+	void OpenContextMenu()
+	{
+		GenericMenu menu = new GenericMenu();
+
+		menu.AddItem (new GUIContent("Open As Floating Window", ""), false, Menu_OpenAsFloatingWindow);
+		menu.AddItem (new GUIContent("Open As Dockable Window", ""), false, Menu_OpenAsDockableWindow);
+
+		menu.ShowAsContext ();
+	}		
+
+	void Menu_OpenAsDockableWindow()
+	{
+		EditorPrefs.SetBool(pb_Constant.pbVertexPaletteDockable, true);
+
+		EditorWindow.GetWindow<pb_VertexColorInterface>().Close();
+		pb_VertexColorInterface.MenuOpenWindow();
+	}
+
+	void Menu_OpenAsFloatingWindow()
+	{
+		EditorPrefs.SetBool(pb_Constant.pbVertexPaletteDockable, false);
+
+		EditorWindow.GetWindow<pb_VertexColorInterface>().Close();
+		pb_VertexColorInterface.MenuOpenWindow();
+	}
 #endregion
 
 #region ONGUI
@@ -54,6 +81,15 @@ public class pb_VertexColorInterface : EditorWindow
 	int ButtonWidth = 58;
 	private void OnGUI()
 	{
+		Event e = Event.current;
+
+		switch(e.type)
+		{
+			case EventType.ContextClick:
+				OpenContextMenu();
+				break;
+		}
+
 		// this.minSize = new Vector2(404, 68 + 24);
 		// this.maxSize = new Vector2(404, 68 + 24);
 		int width = Screen.width;

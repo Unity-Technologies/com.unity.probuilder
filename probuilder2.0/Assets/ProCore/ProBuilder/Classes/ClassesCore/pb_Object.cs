@@ -1173,49 +1173,46 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 
-		Vector3[] nrmls = msh.normals;
+		Vector3[] normals = msh.normals;
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in groups)
 		{
-			// Sort shared normals into groups discarding normals at indices that don't belong to shared group
-			int[][] smoothed;
-			{
-				List<int> distinct = pb_Face.AllTrianglesDistinct(kvp.Value);
-				Dictionary<int, List<int>> shared = new Dictionary<int, List<int>>();
-				int i = 0;
-				for(i = 0; i < distinct.Count; i++)
-				{
-					int sharedIndex = sharedIndices.IndexOf(distinct[i]);
-					
-					if(shared.ContainsKey(sharedIndex))
-						shared[sharedIndex].Add(distinct[i]);
-					else
-						shared.Add(sharedIndex, new List<int>(){distinct[i]});
-				}
+			List<int> distinct = pb_Face.AllTrianglesDistinct(kvp.Value);
+			Dictionary<int, List<int>> shared = new Dictionary<int, List<int>>();
+			int i = 0;
 
-				smoothed = new int[shared.Count][];
-				i = 0;
-				foreach(KeyValuePair<int, List<int>> skvp in shared)
-				{
-					smoothed[i++] = skvp.Value.ToArray();
-				}
+			/**
+			 * Find each vertex in the smoothing group that belongs to a sharedIndices group.
+			 */
+			for(i = 0; i < distinct.Count; i++)
+			{
+				int sharedIndex = sharedIndices.IndexOf(distinct[i]);
+				
+				if(shared.ContainsKey(sharedIndex))
+					shared[sharedIndex].Add(distinct[i]);
+				else
+					shared.Add(sharedIndex, new List<int>(){distinct[i]});
 			}
 
+			i = 0;
 
-			for(int i = 0; i < smoothed.Length; i++)
+			/**
+			 * Now go through and average the values of each vertex normal that is shared.
+			 */
+			foreach(KeyValuePair<int, List<int>> skvp in shared)
 			{
-				Vector3[] vN = new Vector3[smoothed[i].Length];
-				int n = 0;
-				for(n = 0; n < vN.Length; n++)
-					vN[n] = nrmls[smoothed[i][n]];
+				Vector3 avg = Vector3.zero;
 
-				Vector3 nrml = pb_Math.Average(vN);
+				foreach(int vertexNormalIndex in skvp.Value)
+					avg += normals[vertexNormalIndex];
 
-				for(n = 0; n < smoothed[i].Length; n++)
-					nrmls[smoothed[i][n]] = nrml.normalized;
+				avg = (avg / (float)skvp.Value.Count).normalized;
+
+				foreach(int vertexNormalIndex in skvp.Value)
+					normals[vertexNormalIndex] = avg;
 			}
 		}
 
-		GetComponent<MeshFilter>().sharedMesh.normals = nrmls;
+		GetComponent<MeshFilter>().sharedMesh.normals = normals;
 	}
 #endregion
 

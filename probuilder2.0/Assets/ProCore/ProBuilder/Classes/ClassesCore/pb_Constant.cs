@@ -81,6 +81,7 @@ public static class pb_Constant
 	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
 	public const string pbShowSceneInfo 				= "pbShowSceneInfo";
 	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
+	public const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
