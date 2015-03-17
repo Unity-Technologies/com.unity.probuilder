@@ -461,7 +461,7 @@ public class BuggerWindow : EditorWindow
 				GenericMenu menu = new GenericMenu();
 				
 				menu.AddItem (new GUIContent("Open Bugger Log", ""), false, OpenBuggerLog);
-				menu.AddItem (new GUIContent("Clear Bugger Log", ""), false, Bugger.ClearLog);
+				menu.AddItem (new GUIContent("Clear Bugger Log", ""), false, ClearLog);
 				
 				menu.AddSeparator("");
 				
@@ -711,6 +711,12 @@ public class BuggerWindow : EditorWindow
 		}
 	}
 
+	void ClearLog()
+	{
+		UnityEngine.Debug.ClearDeveloperConsole ();
+		Bugger.ClearLog();
+	}
+
 	Rect logRect;
 	Vector2 logScroll = Vector2.zero;
 	private void DrawLogs(Rect rect, BuggerEvent e)
@@ -724,7 +730,7 @@ public class BuggerWindow : EditorWindow
 		GUI.BeginGroup(rect);
 		EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 			if(GUILayout.Button("Clear", EditorStyles.toolbarButton))
-				Bugger.ClearLog();
+				ClearLog();
 
 			GUI.backgroundColor = !collapse ? Color.white : TOOLBAR_TOGGLED_COLOR;
 			if(GUILayout.Button("Collapse", EditorStyles.toolbarButton))

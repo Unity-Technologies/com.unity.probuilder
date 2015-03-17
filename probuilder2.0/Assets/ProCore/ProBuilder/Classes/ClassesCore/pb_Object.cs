@@ -1073,57 +1073,59 @@ public class pb_Object : MonoBehaviour
 		SmoothPerGroups();
 	}
 
+	struct VSG
+	{
+		int triangle;
+		int shared;
+		int group;
+	}
+
 	/**
 	 * Iterate mesh vertices and average shared indices that match smoothing groups.
 	 */
 	private void SmoothPerGroups()
 	{
-		/**
-		 * Merge faces in to their groups so the next we can test which indices are actually on
-		 * top of one another.
-		 */
-		Dictionary<int, List<pb_Face>> groups = new Dictionary<int, List<pb_Face>>();
-		for(int i = 0; i < faces.Length; i++) {
-			// smoothing groups 
-			// 0 		= none
-			// 1 - 24 	= smooth
-			// 25 - 42	= hard
-			if(faces[i].smoothingGroup > 0 && faces[i].smoothingGroup < 25)
-			{
-				if(groups.ContainsKey(faces[i].smoothingGroup))
-					groups[faces[i].smoothingGroup].Add(faces[i]);
-				else
-					groups.Add(faces[i].smoothingGroup, new List<pb_Face>(){faces[i]});
-			}
-		}
-
 		Vector3[] normals = msh.normals;
 
-		foreach(KeyValuePair<int, List<pb_Face>> kvp in groups)
+		int[] smoothGroup = new int[normals.Length];
+
+		/**
+		 * Create a lookup of each triangles smoothing group.
+		 */
+		foreach(pb_Face face in faces) // .Where(x => x.smoothingGroup > 0 && x.smoothingGroup < 25))
 		{
-			List<int> distinct = pb_Face.AllTrianglesDistinct(kvp.Value);
-			Dictionary<int, List<int>> shared = new Dictionary<int, List<int>>();
-			int i = 0;
+			foreach(int tri in face.distinctIndices)
+				smoothGroup[tri] = face.smoothingGroup;
+		}
+
+		List<int> list;
+
+		/**
+		 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
+		 * group and average their normals.
+		 */
+		for(int i = 0; i < sharedIndices.Length; i++)
+		{
+			Dictionary<int, List<int>> shareable = new Dictionary<int, List<int>>();
 
 			/**
-			 * Find each vertex in the smoothing group that belongs to a sharedIndices group.
+			 * Sort indices that share a smoothing group
 			 */
-			for(i = 0; i < distinct.Count; i++)
+			foreach(int tri in sharedIndices[i].array)
 			{
-				int sharedIndex = sharedIndices.IndexOf(distinct[i]);
-				
-				if(shared.ContainsKey(sharedIndex))
-					shared[sharedIndex].Add(distinct[i]);
+				if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)	
+					continue;
+
+				if( shareable.TryGetValue(smoothGroup[tri], out list) )
+					list.Add(tri);
 				else
-					shared.Add(sharedIndex, new List<int>(){distinct[i]});
+					shareable.Add(smoothGroup[tri], new List<int>() { tri });
 			}
 
-			i = 0;
-		
 			/**
-			 * Now go through and average the values of each vertex normal that is shared.
+			 * Average the normals
 			 */
-			foreach(KeyValuePair<int, List<int>> skvp in shared)
+			foreach(KeyValuePair<int, List<int>> skvp in shareable)
 			{
 				Vector3 avg = Vector3.zero;
 
@@ -1131,9 +1133,6 @@ public class pb_Object : MonoBehaviour
 
 				for(int vertexNormalIndex = 0; vertexNormalIndex < indices.Count; vertexNormalIndex++)
 				{
-					/**
-					 * Average the normals
-					 */
 					avg += normals[indices[vertexNormalIndex]];
 				}
 

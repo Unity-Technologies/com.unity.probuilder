@@ -1526,6 +1526,7 @@ public class pb_Editor : EditorWindow
 		if(altClick) return;
 
 		bool previouslyMoving = movingVertices;
+
 		if(newPosition != cachedPosition)
 		{
 			Vector3 diff = newPosition-cachedPosition;
@@ -1548,7 +1549,6 @@ public class pb_Editor : EditorWindow
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
-
 				
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
@@ -1557,11 +1557,10 @@ public class pb_Editor : EditorWindow
 			}
 
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
-
+			
 			for(int i = 0; i < selection.Length; i++)
 			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
-
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
 			}
@@ -1819,6 +1818,10 @@ public class pb_Editor : EditorWindow
 		int ef = 0;
 		foreach(pb_Object pb in selection)
 		{
+			// @todo - If caching normals, remove this 'ToMesh' and move 
+			pb.ToMesh();
+			pb.Refresh();
+
 			switch(selectionMode)
 			{
 				case SelectMode.Edge:
@@ -3377,6 +3380,10 @@ public class pb_Editor : EditorWindow
 	 */
 	void OnBeginVertexMovement()
 	{
+		#if PB_DEBUG
+			profiler.BeginSample("OnBeginVertexMovement");
+		#endif
+
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();
 
@@ -3413,22 +3420,42 @@ public class pb_Editor : EditorWindow
 		if(movingVertices)
 		{
 			#if PB_DEBUG
-			profiler.BeginSample("OnFinishUVModification");
+			
+				profiler.BeginSample("OnFinishedVertexModification");
+
+				foreach(pb_Object sel in selection)
+				{
+					profiler.BeginSample("ToMesh()");
+					sel.ToMesh();
+					profiler.EndSample();
+					profiler.BeginSample("Refresh()");
+					sel.Refresh();
+					profiler.EndSample();
+					profiler.BeginSample("Finalize()");
+					sel.Finalize();
+					profiler.EndSample();
+				}
+
+				profiler.EndSample();
+			#else
+				foreach(pb_Object sel in selection)
+				{
+
+					sel.ToMesh();
+					sel.Refresh();
+					sel.Finalize();
+				}
 			#endif
-			foreach(pb_Object sel in selection)
-			{
-				sel.ToMesh();
-				sel.Refresh();
-				sel.Finalize();
-			}
+
 			movingVertices = false;
 
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 		}
 
 		scaling = false;
+
+		#if PB_DEBUG
+		profiler.EndSample();
+		#endif
 	}
 #endregion
 
