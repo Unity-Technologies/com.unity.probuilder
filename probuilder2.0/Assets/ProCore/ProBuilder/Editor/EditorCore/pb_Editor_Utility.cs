@@ -1,3 +1,5 @@
+#pragma warning disable 0168
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -292,6 +294,42 @@ namespace ProBuilder2.EditorCommon
 	#endregion
 
 	#region EDITOR
+
+		/**
+		 * Ensure that this object has a valid mesh reference, and the geometry is 
+		 * current.
+		 */
+		public static void VerifyMesh(pb_Object pb)
+		{
+		 	Mesh oldMesh = pb.msh;
+	 		pb_Object.MeshRebuildReason reason = pb.Verify();
+
+			if( reason != pb_Object.MeshRebuildReason.None )
+			{
+				/**
+				 * If the mesh ID doesn't match the gameObject Id, it could mean two things - 
+				 * 1. The object was just duplicated, and then made unique
+				 * 2. The scene was reloaded, and gameObject ids were recalculated.
+				 * If the latter, we need to clean up the old mesh.  If the former,
+				 * the old mesh needs to *not* be destroyed.
+				 */
+				int meshNo = -1;
+				if(oldMesh)
+				{
+					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
+
+					GameObject go = null;
+					Object dup = EditorUtility.InstanceIDToObject(meshNo);
+					try { go = (GameObject)dup; }
+					catch(System.Exception e) {}
+
+					if(go == null)
+						GameObject.DestroyImmediate(oldMesh);
+				}
+
+				pb.Finalize();
+			}
+		}
 
 		/**
 		 * \brief ProBuilder objects created in Editor need to be initialized with a number of additional Editor-only settings.

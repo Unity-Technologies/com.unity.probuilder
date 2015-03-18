@@ -2047,7 +2047,11 @@ public class pb_Editor : EditorWindow
 			#if PB_DEBUG
 				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
 				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Vertices: " + vertexCount + " : " + (selection != null && selection.Length > 0 ? selection[0].msh.vertexCount : 0).ToString());
+				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x=>x.msh.vertexCount).Sum() : 0).ToString());
+				sceneInfoRect.y += 20;
+				GUI.Label(sceneInfoRect, "Vertices (pb_Object): " + (selection != null ? selection.Select(x=>x.vertexCount).Sum() : 0).ToString());
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
 				sceneInfoRect.y += 20;

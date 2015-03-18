@@ -399,6 +399,9 @@ public class pb_Handle_Utility
 		int OutHitFace = -1;
 		Vector3 OutNrm = Vector3.zero;
 
+		/**
+		 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+		 */
 		for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
 		{
 			int[] Indices = pb.faces[CurFace].indices;

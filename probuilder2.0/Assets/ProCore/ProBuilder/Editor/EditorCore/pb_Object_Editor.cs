@@ -1,5 +1,3 @@
-#pragma warning disable 0168
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -53,34 +51,7 @@ public class pb_Object_Editor : Editor
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 
- 		Mesh oldMesh = pb.msh;
- 		pb_Object.MeshRebuildReason reason = pb.Verify();
-
-		if( reason != pb_Object.MeshRebuildReason.None )
-		{
-			/**
-			 * If the mesh ID doesn't match the gameObject Id, it could mean two things - 
-			 * 1. The object was just duplicated, and then made unique
-			 * 2. The scene was reloaded, and gameObject ids were recalculated.
-			 * If the latter, we need to clean up the old mesh.  If the former,
-			 * the old mesh needs to *not* be destroyed.
-			 */
-			int meshNo = -1;
-			if(oldMesh)
-			{
-				int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-				GameObject go = null;
-				Object dup = EditorUtility.InstanceIDToObject(meshNo);
-				try { go = (GameObject)dup; }
-				catch(System.Exception e) {}
-
-				if(go == null)
-					DestroyImmediate(oldMesh);
-			}
-
-			pb.Finalize();
-		}
+ 		pb_Editor_Utility.VerifyMesh(pb);
 	}
 
 	// void OnDisable()

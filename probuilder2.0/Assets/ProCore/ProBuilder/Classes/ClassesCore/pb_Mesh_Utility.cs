@@ -10,15 +10,21 @@ namespace ProBuilder2.Common
 	 */
 	public class pb_Mesh_Utility
 	{
+		static Parabox.Debug.pb_Profiler profiler = new Parabox.Debug.pb_Profiler();
+
 		/**
 		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
 		 * pb_Object vertices.
 		 */
 		public static void CollapseSharedVertices(pb_Object pb)
 		{
+			profiler.BeginSample("FindDuplicateVertices");
 			List<List<int>> merge = pb_Mesh_Utility.FindDuplicateVertices(pb);
+			profiler.EndSample();
 			Mesh m = pb.msh;
+			profiler.BeginSample("MergeVertices");
 			pb_Mesh_Utility.MergeVertices(merge, ref m);		
+			profiler.EndSample();
 		}
 
 		/**
@@ -26,23 +32,37 @@ namespace ProBuilder2.Common
 		 */
 		public static void MergeVertices(List<List<int>> InIndices, ref Mesh InMesh)
 		{
+			profiler.BeginSample("First Pass - Point triangles to first index");
+
+			Dictionary<int, int> swapTable = new Dictionary<int, int>();
+			foreach(List<int> group in InIndices)
+			{
+				for(int i = 1; i < group.Count; i++)
+				{
+					swapTable.Add(group[i], group[0]);
+				}
+			}				
+
 			// Iterate triangles and point collapse-able verts to the first index
 			for(int submeshIndex = 0; submeshIndex < InMesh.subMeshCount; submeshIndex++)
 			{
+				profiler.BeginSample("GetTriangles");
 				int[] tris = InMesh.GetTriangles(submeshIndex);
+				profiler.EndSample();
 
+				profiler.BeginSample("Loop");
 				for(int i = 0; i < tris.Length; i++)
 				{
-					int index = InIndices.IndexOf(tris[i]);
-
-					if(index < 0)
-						continue;
-
-					tris[i] = InIndices[index][0];
+					if( swapTable.ContainsKey(tris[i]) )
+						tris[i] = swapTable[tris[i]];
 				}
+				profiler.EndSample();
 
+				profiler.BeginSample("SetTriangles");
 				InMesh.SetTriangles(tris, submeshIndex);
+				profiler.EndSample();
 			}
+			profiler.EndSample();
 
 			// populate list of unused vertices post-collapse
 			List<int> unused = InIndices.SelectMany( x => x.GetRange(1, x.Count - 1) ).ToList();
@@ -79,6 +99,7 @@ namespace ProBuilder2.Common
 
 			int unusedIndex = 0;
 
+			profiler.BeginSample("Shift Triangles");
 			// shift triangles
 			for(int submeshIndex = 0; submeshIndex < InMesh.subMeshCount; submeshIndex++)
 			{
@@ -92,9 +113,12 @@ namespace ProBuilder2.Common
 
 				InMesh.SetTriangles(tris, submeshIndex);
 			}
+			profiler.EndSample();
 
 			unusedIndex = 0;
 			int newIndex = 0;
+
+			profiler.BeginSample("Remove unused");
 
 			// rebuild vertex arrays without duplicate indices
 			for(int i = 0; i < vertexCount; i++)
@@ -113,6 +137,7 @@ namespace ProBuilder2.Common
 
 				newIndex++;
 			}
+			profiler.EndSample();
 
 			InMesh.vertices = v_n;
 			InMesh.normals = n_n;
@@ -127,85 +152,83 @@ namespace ProBuilder2.Common
 		 */
 		public static List<List<int>> FindDuplicateVertices(pb_Object pb)
 		{
+			Vector3[] normals = pb.msh.normals;
+			Vector2[] textures = pb.uv;
+
+			int[] smoothGroup = new int[normals.Length];
+
 			/**
-			 * Merge faces in to their groups so the next we can test which indices are actually on
-			 * top of one another.
+			 * Create a lookup of each triangles smoothing group.
 			 */
-			Dictionary<int, List<pb_Face>> groups = new Dictionary<int, List<pb_Face>>();
-			for(int i = 0; i < pb.faces.Length; i++) {
-				// smoothing groups 
-				// 0 		= none
-				// 1 - 24 	= smooth
-				// 25 - 42	= hard
-				if(pb.faces[i].smoothingGroup > 0 && pb.faces[i].smoothingGroup < 25)
-				{
-					if(groups.ContainsKey(pb.faces[i].smoothingGroup))
-						groups[pb.faces[i].smoothingGroup].Add(pb.faces[i]);
-					else
-						groups.Add(pb.faces[i].smoothingGroup, new List<pb_Face>(){pb.faces[i]});
-				}
+			foreach(pb_Face face in pb.faces)
+			{
+				foreach(int tri in face.distinctIndices)
+					smoothGroup[tri] = face.smoothingGroup;
 			}
 
-			List<List<int>> indicesToCollapse = new List<List<int>>();
+			List<int> list;
+			List<List<int>> merge = new List<List<int>>();
 
-			foreach(KeyValuePair<int, List<pb_Face>> kvp in groups)
+			/**
+			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
+			 * group and check if their texture coordinates are similar enough to collapse to a single vertex.
+			 */
+			for(int i = 0; i < pb.sharedIndices.Length; i++)
 			{
-				List<int> distinct = pb_Face.AllTrianglesDistinct(kvp.Value);
-				Dictionary<int, List<int>> shared = new Dictionary<int, List<int>>();
-				int i = 0;
+				Dictionary<int, List<int>> shareable = new Dictionary<int, List<int>>();
 
 				/**
-				 * Find each vertex in the smoothing group that belongs to a sharedIndices group.
+				 * Sort indices that share a smoothing group
 				 */
-				for(i = 0; i < distinct.Count; i++)
+				foreach(int tri in pb.sharedIndices[i].array)
 				{
-					int sharedIndex = pb.sharedIndices.IndexOf(distinct[i]);
-					
-					if(shared.ContainsKey(sharedIndex))
-						shared[sharedIndex].Add(distinct[i]);
+					if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)	
+						continue;
+
+					if( shareable.TryGetValue(smoothGroup[tri], out list) )
+						list.Add(tri);
 					else
-						shared.Add(sharedIndex, new List<int>(){distinct[i]});
+						shareable.Add(smoothGroup[tri], new List<int>() { tri });
 				}
 
-				i = 0;
-				Vector3[] vertices = pb.vertices;
-				Vector2[] uv = pb.uv;
-				List<List<int>> merge = new List<List<int>>();	///< Vertices that are smooth, and share the same world and texture coordinate.
-				
 				/**
-				 * Now go through and average the values of each vertex normal that is shared.
+				 * At this point, `shareable` contains a key value pair of 
+				 * { SmoothingGroupKey, All valid triangles pointing to this vertex }
 				 */
-				foreach(KeyValuePair<int, List<int>> skvp in shared)
-				{
-					List<int> indices = skvp.Value;
 
-					for(int vertexNormalIndex = 0; vertexNormalIndex < indices.Count; vertexNormalIndex++)
+				/**
+				 * Now go through each key value pair and sort them into vertices that
+				 * share a 'close enough' texture coordinate to be considered the same.
+				 * Don't bother checking position since if they're in the same shared
+				 * index group that should always means they're on top of one-another.
+				 */
+				List<List<int>> textureMatches = new List<List<int>>();
+
+				foreach(KeyValuePair<int, List<int>> group in shareable)
+				{
+					foreach(int tri in group.Value)
 					{
-						/**
-						 * Group indices that share the same vertex position and texture coordinate together.
-						 */
-						bool merged = false;
-						foreach(List<int> mergeGroup in merge)
+						bool foundMatch = false;
+
+						for(int n = 0; n < textureMatches.Count; n++)
 						{
-							if( vertices[mergeGroup[0]].Approx(vertices[indices[vertexNormalIndex]], .001f) &&
-							 	uv[mergeGroup[0]].Approx(uv[indices[vertexNormalIndex]], .001f) )
+							if( textures[textureMatches[n][0]].Approx(textures[tri], .001f) )
 							{
-								mergeGroup.Add( indices[vertexNormalIndex] );
-								merged = true;
+								textureMatches[n].Add(tri);
+								foundMatch = true;
 								break;
 							}
 						}
 
-						if(!merged)
-							merge.Add(new List<int>(1) { indices[vertexNormalIndex] });
+						if(!foundMatch)
+							textureMatches.Add( new List<int>() { tri } );
 					}
-
-					// add vertices that can be collapsed to a single vertex to the master list
-					indicesToCollapse.AddRange( merge.Where(x => x.Count > 1) );
 				}
+
+				merge.AddRange( textureMatches.Where(x => x.Count > 1) );
 			}
 
-			return indicesToCollapse.Distinct().ToList();
+			return merge;
 		}
 
 		/**

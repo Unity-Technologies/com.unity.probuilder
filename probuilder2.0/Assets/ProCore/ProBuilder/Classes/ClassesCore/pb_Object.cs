@@ -1073,13 +1073,6 @@ public class pb_Object : MonoBehaviour
 		SmoothPerGroups();
 	}
 
-	struct VSG
-	{
-		int triangle;
-		int shared;
-		int group;
-	}
-
 	/**
 	 * Iterate mesh vertices and average shared indices that match smoothing groups.
 	 */
