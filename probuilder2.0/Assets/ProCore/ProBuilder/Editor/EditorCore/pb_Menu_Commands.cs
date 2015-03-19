@@ -421,29 +421,53 @@ public class pb_Menu_Commands : Editor
 					
 					if( pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle) )
 					{
-						List<pb_Face> newFaceSelection = new List<pb_Face>( pb.SelectedFaces );
+						Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
 
-						foreach(pb_Face f in pb.SelectedFaces)
+						HashSet<pb_Face> selected = new HashSet<pb_Face>( pb.SelectedFaces );
+						Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
+						bool facesAdded = true;
+
+						List<pb_Face> perimeterFaces = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToList();
+
+						List<pb_Face> newFaces = new List<pb_Face>();
+
+						while(facesAdded)
 						{
-							Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
+							facesAdded = false;
 
-							List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, f);
-
-							foreach(pb_Face connectedFace in adjacent)
+							foreach(pb_Face f in perimeterFaces)
 							{
-								float angle = Vector3.Angle( nrm, pb_Math.Normal( pb.GetVertices(connectedFace.indices)) );
+								Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
 
-								if( angle < pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle") )
-									newFaceSelection.Add(connectedFace);
+								List<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x)).ToList();
+
+								foreach(pb_Face connectedFace in adjacent)
+								{
+									float angle = Vector3.Angle( nrm, pb_Math.Normal( pb.GetVertices(connectedFace.indices)) );
+
+									if( angle < pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle") )
+									{
+										selected.Add(connectedFace);
+										newFaces.Add(connectedFace);
+										facesAdded = true;
+									}
+								}
 							}
+
+							perimeterFaces = new List<pb_Face>(newFaces);
+							newFaces.Clear();
 						}
 
-						pb.SetSelectedFaces(newFaceSelection.Distinct().ToArray());
+						pb.SetSelectedFaces(selected.Distinct().ToArray());
 					}
 					else
 					{
-						pb_Face[] all = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedFaces);
-						pb.SetSelectedFaces(all);
+						pb_Face[] perimeter = pbMeshUtils.GetNeighborFaces(pb, pb.sharedIndices.ToDictionary(), pb.SelectedFaces);
+
+						perimeter = pbUtil.Concat(perimeter, pb.SelectedFaces);
+
+						pb.SetSelectedFaces(perimeter);
 					}
 
 					break;
@@ -494,6 +518,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuShrinkSelection(pb_Object[] selection)
 	{
+		// @TODO
 		if(editor == null)
 		{
 			pb_Editor_Utility.ShowNotification("ProBuilder Editor Not Open!");
@@ -501,7 +526,6 @@ public class pb_Menu_Commands : Editor
 		}
 
 		// find perimeter edges
-		int[] perimeter = null;
 		int rc = 0;
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -511,27 +535,29 @@ public class pb_Menu_Commands : Editor
 			{
 				case SelectMode.Edge:
 				{
-					perimeter = pbMeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);		
+					int[] perimeter = pbMeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);		
 					pb.SetSelectedEdges( pb.SelectedEdges.RemoveAt(perimeter) );
+					rc += perimeter != null ? perimeter.Length : 0;
 					break;
 				}
 
 				case SelectMode.Face:
 				{
-					perimeter = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces);
-					pb.SetSelectedFaces( pb.SelectedFaces.RemoveAt(perimeter) );
+					pb_Face[] perimeter = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
+					pb.SetSelectedFaces( pb.SelectedFaces.Except(perimeter).ToArray() );
+					rc += perimeter != null ? perimeter.Length : 0;
 					break;
 				}
 
 				case SelectMode.Vertex:
 				{
-					perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.Selected_Universal_Edges_All[i]);
+					int[] perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.Selected_Universal_Edges_All[i]);
 					pb.SetSelectedTriangles( pb.SelectedTriangles.RemoveAt(perimeter) );
 					break;
+					rc += perimeter != null ? perimeter.Length : 0;
 				}
 			}
 
-			rc += perimeter != null ? perimeter.Length : 0;
 		}
 
 		if(selection.Length > 0 && rc > 0)
@@ -540,7 +566,7 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.ShowNotification("Unable to Shrink");
 
 		if(editor)
-			editor.UpdateSelection();
+			editor.UpdateSelection(false);
 
 		EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 	}
@@ -725,7 +751,7 @@ public class pb_Menu_Commands : Editor
 		{
 			int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles);
 
-			pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected);
+			pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected).ToArray();
 
 			if(selected_faces.Length < 1)
 				continue;

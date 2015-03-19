@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
+using System.Linq;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -98,7 +99,7 @@ namespace ProBuilder2.MeshOperations
 
 		Vector3[] localVerts = pb.vertices;
 
-		pb_Edge[] perimeterEdges = pb.GetPerimeterEdges(faces);
+		pb_Edge[] perimeterEdges = pbMeshUtils.GetPerimeterEdges(pb, faces).ToArray();
 
 		if(perimeterEdges == null || perimeterEdges.Length < 3)
 		{

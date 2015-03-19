@@ -218,7 +218,7 @@ namespace ProBuilder2.EditorCommon
 												GUILayout.Space(16);
 		
 												GUILayout.BeginVertical();
-													GUILayout.Label( tris.ToFormattedString("\n") + "\n" );
+													GUILayout.Label( tris.ToFormattedString("\n", 0, 256) + "\n" );
 												GUILayout.EndVertical();
 											GUILayout.EndHorizontal();
 
@@ -428,6 +428,7 @@ namespace ProBuilder2.EditorCommon
 				try
 				{
 					Vector3[] normals = pb.msh.normals;
+					int index = 0;
 					foreach(pb_IntArray arr in pb.sharedIndices)
 					{
 						Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
@@ -435,7 +436,7 @@ namespace ProBuilder2.EditorCommon
 						if(!PointIsOccluded(v))
 						{
 							Vector2 cen = HandleUtility.WorldToGUIPoint( v );
-							GUIContent gc = new GUIContent(arr.array.ToFormattedString(", "), "");
+							GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
 
 							DrawSceneLabel(gc, cen);
 						}

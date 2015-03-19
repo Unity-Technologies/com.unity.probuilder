@@ -2726,7 +2726,7 @@ public class pb_Editor : EditorWindow
 			profiler.BeginSample("SelectedFacesInEditZone");
 			#endif
 
-			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles);
+			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToArray();
 			
 			#if PB_DEBUG
 			profiler.EndSample();
@@ -2740,7 +2740,7 @@ public class pb_Editor : EditorWindow
 			profiler.BeginSample("Distinct Vertex Count");
 			#endif
 
-			int distinctVertexCount = selection[i].sharedIndices.UniqueIndicesWithValues(selection[i].SelectedTriangles).Length;
+			int distinctVertexCount = selection[i].sharedIndices.UniqueIndicesWithValues(selection[i].SelectedTriangles).ToList().Count;
 
 			#if PB_DEBUG
 			profiler.EndSample();

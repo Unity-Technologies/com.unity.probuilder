@@ -1,7 +1,5 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-#define FORCE_MESH_GRAPHICS
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;

@@ -2,6 +2,7 @@
  *	Used to describe split face actions.
  */
 using System.Collections.Generic;
+using System.Linq;
 #if PB_DEBUG
 using Parabox.Debug;
 #endif
@@ -25,7 +26,7 @@ namespace ProBuilder2.Common
 
 		public pb_VertexConnection Distinct(pb_IntArray[] sharedIndices)
 		{
-			return new pb_VertexConnection(this.face, sharedIndices.UniqueIndicesWithValues(indices));
+			return new pb_VertexConnection(this.face, sharedIndices.UniqueIndicesWithValues(indices).ToList());
 		}
 
 		public override bool Equals(System.Object b)

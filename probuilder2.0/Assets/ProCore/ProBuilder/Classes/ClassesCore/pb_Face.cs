@@ -287,7 +287,7 @@ public class pb_Face : ISerializable
 	
 	private pb_Edge[] CacheEdges()
 	{
-		_edges = this.GetPerimeterEdges();
+		_edges = pb_Edge.GetPerimeterEdges( GetEdges() );
 		return _edges;
 	}
 
@@ -398,7 +398,7 @@ public class pb_Face : ISerializable
 			if(i < indices.Length-3)
 				sb.Append(", ");
 		}
-		sb.Append(" }\nMaterial: " + material.name + "\n" + (manualUV ? "Manual UV" : "Auto UV") + "\nSmoothing: " + smoothingGroup + "\nTexture: " + textureGroup);
+		sb.Append(" }"); // \nMaterial: " + material.name + "\n" + (manualUV ? "Manual UV" : "Auto UV") + "\nSmoothing: " + smoothingGroup + "\nTexture: " + textureGroup);
 
 		// sb.Append(edges.ToFormattedString(", "));
 

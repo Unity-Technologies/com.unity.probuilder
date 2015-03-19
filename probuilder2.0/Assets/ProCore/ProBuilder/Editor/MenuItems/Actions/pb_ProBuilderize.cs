@@ -50,6 +50,10 @@ namespace ProBuilder2.Actions
 			pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(t, preserveFaces);
 
 			pb_Editor_Utility.SetEntityType(EntityType.Detail, pb.gameObject);
+
+			pb.ToMesh();
+			pb.Refresh();
+			pb.Finalize();
 			
 			t.gameObject.SetActive(false);
 

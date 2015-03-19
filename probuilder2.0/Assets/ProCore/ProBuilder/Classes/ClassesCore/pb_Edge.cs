@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Math;
 
@@ -136,6 +137,16 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	 *	Returns new edges where each edge is composed not of vertex indices, but rather the index in pb.sharedIndices of each
 	 *	vertex.
 	 */
+	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, Dictionary<int, int> sharedIndicesLookup)
+	{
+		pb_Edge[] uni = new pb_Edge[edges.Length];
+
+		for(int i = 0; i < edges.Length; i++)
+			uni[i] = new pb_Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
+
+		return uni;
+	}
+
 	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, pb_IntArray[] sharedIndices)
 	{
 		int len = edges.Length;
@@ -298,6 +309,27 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		return v;
 	}
 
+	/**
+	 * Returns all edges in this array that are only referenced once.
+	 */
+	public static pb_Edge[] GetPerimeterEdges(pb_Edge[] edges)
+	{
+		int[] count = pbUtil.FilledArray<int>(0, edges.Length);
+
+		for(int i = 0; i < edges.Length-1; i++)
+		{
+			for(int n = i+1; n < edges.Length; n++)
+			{
+				if(edges[i].Equals(edges[n]))
+				{
+					count[i]++;
+					count[n]++;
+				}
+			}
+		}
+
+		return edges.Where((val, index) => count[index] < 1).ToArray();
+	}
 #endregion
 }
 
@@ -317,80 +349,6 @@ public static class EdgeExtensions
 		}
 
 		return false;
-	}
-
-	public static List<pb_Edge> GetPerimeterEdges(this pb_Object pb, List<pb_Face> faces)
-	{
-		List<pb_Edge> edges = new List<pb_Edge>();
-
-		for(int i = 0; i < faces.Count; i++)
-			edges.AddRange(faces[i].edges);	
-
-		List<pb_Edge> perimeterEdges = new List<pb_Edge>();
-		
-		for(int i = 0; i < edges.Count; i++)	
-		{
-			if(edges.ContainsDuplicate(edges[i], pb.sharedIndices))
-				continue;
-			else
-				perimeterEdges.Add(edges[i]);
-		}
-
-		return perimeterEdges;
-	}
-
-	public static pb_Edge[] GetPerimeterEdges(this pb_Object pb, pb_Face[] faces)
-	{
-		List<pb_Edge> edges = new List<pb_Edge>();
-
-		for(int i = 0; i < faces.Length; i++)
-			edges.AddRange(faces[i].edges);
-
-		List<pb_Edge> perimeterEdges = new List<pb_Edge>();
-		
-		for(int i = 0; i < edges.Count; i++)	
-		{
-			if(edges.ContainsDuplicate(edges[i], pb.sharedIndices))
-				continue;
-			else
-				perimeterEdges.Add(edges[i]);
-		}
-
-		return perimeterEdges.ToArray();
-	}
-
-	public static pb_Edge[] GetPerimeterEdges(this pb_Face face)
-	{
-		pb_Edge[] edges = face.GetEdges();
-		List<pb_Edge> perimeterEdges = new List<pb_Edge>();
-		
-		for(int i = 0; i < edges.Length; i++)	
-		{
-			if(pb_Edge.ContainsDuplicateFast(edges, edges[i]))
-				continue;
-			else
-				perimeterEdges.Add(edges[i]);
-		}
-
-		return perimeterEdges.ToArray();
-	}
-
-	/**
-	 *	Returns edges where each edge is guaranteed to be a face perimeter edge, and
-	 *	no duplicate edges (checked against sharedIndex array)
-	 */
-	// todo - this is a farce!
-	public static pb_Edge[] GetUniqueEdges(this pb_Object pb, pb_Face[] faces)
-	{
-		List<pb_Edge> edges = new List<pb_Edge>();
-
-		foreach(pb_Face face in faces)
-		{
-			foreach(pb_Edge edge in face.edges)
-				edges.Add(edge);
-		}
-
-		return edges.ToArray();
 	}
 
 	/**

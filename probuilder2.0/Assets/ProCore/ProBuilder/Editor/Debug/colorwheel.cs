@@ -1,13 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
+using System.Linq;
+using ProBuilder2.MeshOperations;
 
 public class colorwheel : EditorWindow {
 
-	[MenuItem("Tools/COLOR WHEEL")]
+	[MenuItem("Tools/SELECT PERIMETER FACES")]
 	public static void intdtas()
 	{
+		// foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+		// {
+		// 	pb_Face[] perim = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
+		// 	pb.SetSelectedFaces( perim );
+		// }
+
+		// if(pb_Editor.instance != null)
+		// 	pb_Editor.instance.UpdateSelection();
+
+		// SceneView.RepaintAll();
+
 		EditorWindow.GetWindow<colorwheel>().Show();
 	}
 

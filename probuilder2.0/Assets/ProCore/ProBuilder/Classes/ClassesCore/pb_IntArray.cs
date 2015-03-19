@@ -114,6 +114,25 @@ public static class pb_IntArrayUtility
 	}
 
 	/**
+	 * Returns a dictionary where Key is equal to sharedIndices index, and Value
+	 * is equal to the triangle value.
+	 */
+	public static Dictionary<int, int> ToDictionary(this pb_IntArray[] array)
+	{
+		Dictionary<int, int> dic = new Dictionary<int, int>();
+
+		for(int i = 0; i < array.Length; i++)
+		{
+			for(int n = 0; n < array[i].array.Length; n++)
+			{
+				dic.Add(array[i][n], i);
+			}
+		}
+
+		return dic;
+	}
+
+	/**
 	 * Convert a jagged int array to a pb_IntArray.
 	 */
 	public static pb_IntArray[] ToPbIntArray(this int[][] val)
@@ -221,25 +240,42 @@ public static class pb_IntArrayUtility
 	/**
 	 *	Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
 	 */
-	public static int[] UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, int[] values)
-	{
-		List<int> unique = new List<int>(values);
+	// public static int[] UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, int[] values)
+	// {
+	// 	List<int> unique = new List<int>(values);
 		
-		for(int i = 0; i < unique.Count; i++)
-			unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
+	// 	for(int i = 0; i < unique.Count; i++)
+	// 		unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
 
-		return unique.Distinct().ToArray();
+	// 	return unique.Distinct().ToArray();
+	// }
+
+	public static IEnumerable<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
+	{
+		Dictionary<int, int> lookup = pbIntArr.ToDictionary();
+
+		HashSet<int> shared = new HashSet<int>();
+
+		foreach(int tri in indices)
+			shared.Add(lookup[tri]);
+
+		List<int> unique = new List<int>();
+
+		foreach(int i in shared)
+			unique.Add(pbIntArr[i][0]);
+
+		return unique;
 	}
 
-	public static List<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, List<int> values)
-	{
-		List<int> unique = new List<int>(values);
+	// public static List<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, List<int> values)
+	// {
+	// 	List<int> unique = new List<int>(values);
 		
-		for(int i = 0; i < unique.Count; i++)
-			unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
+	// 	for(int i = 0; i < unique.Count; i++)
+	// 		unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
 
-		return unique.Distinct().ToList();
-	}
+	// 	return unique.Distinct().ToList();
+	// }
 
 
 	/**

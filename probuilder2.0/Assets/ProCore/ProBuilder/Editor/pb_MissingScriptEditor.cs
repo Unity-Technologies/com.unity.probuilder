@@ -19,14 +19,16 @@ namespace ProBuilder2.EditorCommon
 	{
 	#region Members
 
-		static int index = 0;	///< general idea of where we are in terms of processing this scene.
-		static float total;		///< general idea of how many missing script references are in this scene.
+		static bool applyDummyScript = false;	///< If true, any null components that can't be set will have this script applied to their reference, allowing us to later remove them.
+		static int index = 0;					///< general idea of where we are in terms of processing this scene.
+		static float total;						///< general idea of how many missing script references are in this scene.
 
 		static bool doFix = false;	///< while true, the inspector will attempt to cycle to broken gameobjects until none are found.
 		static List<GameObject> unfixable = new List<GameObject>();	///< if a non-pb missing reference is encountered, need to let the iterator know not to bother,
 
 		static MonoScript _mono_pb;	///< MonoScript assets
 		static MonoScript _mono_pe;	///< MonoScript assets
+		static MonoScript _mono_dummy;	///< MonoScript assets
 
 		/**
 		 * Load the pb_Object and pb_Entity classes to MonoScript assets.  Saves us from having to fall back on Reflection.
@@ -37,9 +39,11 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object pb = go.AddComponent<pb_Object>();
 			pb_Entity pe = go.AddComponent<pb_Entity>();
+			pb_DummyScript du = go.AddComponent<pb_DummyScript>();
 
 			_mono_pb = MonoScript.FromMonoBehaviour( pb );
 			_mono_pe = MonoScript.FromMonoBehaviour( pe );
+			_mono_dummy = MonoScript.FromMonoBehaviour( du );
 
 			DestroyImmediate(go);
 		}
@@ -59,6 +63,15 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(_mono_pe == null) LoadMonoScript();
 				return _mono_pe; 
+			}
+		}
+
+		public MonoScript dummy_monoscript
+		{
+			get
+			{
+				if(_mono_dummy == null) LoadMonoScript();
+				return _mono_dummy; 
 			}
 		}
 	#endregion
@@ -89,6 +102,9 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
+				if( applyDummyScript )
+					DeleteDummyScripts();
+
 				EditorUtility.DisplayDialog("Success", "No missing ProBuilder script references found.", "Okay");
 			}
 		}
@@ -133,15 +149,17 @@ namespace ProBuilder2.EditorCommon
 		
 			for(int i = 0; i < pbs.Length; i++)
 			{	
-				EditorUtility.DisplayProgressBar("Force Refresh ProBuilder Objects", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
+				EditorUtility.DisplayProgressBar("Checking ProBuilder Meshes", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
 				
 				pbs[i].ToMesh();
 				pbs[i].Refresh();		
 				pbs[i].Finalize();		
 			}
 
-
 			EditorUtility.ClearProgressBar();
+
+			if( applyDummyScript )
+				DeleteDummyScripts();
 
 			EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
 
@@ -232,7 +250,18 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(doFix)
 				{
-					unfixable.Add( ((Component)target).gameObject );
+					if( applyDummyScript )
+					{
+						scriptProperty.objectReferenceValue = dummy_monoscript;
+						scriptProperty.serializedObject.ApplyModifiedProperties();
+						scriptProperty = this.serializedObject.FindProperty("m_Script");
+						scriptProperty.serializedObject.Update();
+					}
+					else
+					{
+						unfixable.Add( ((Component)target).gameObject );
+					}
+
 					Next();
 					GUIUtility.ExitGUI();
 					return;
@@ -290,6 +319,26 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			GUI.backgroundColor = Color.white;
+		}
+
+		/**
+		 * Scan the scene for gameObjects referencing `pb_DummyScript` and delete them.
+		 */
+		static void DeleteDummyScripts()
+		{
+			pb_DummyScript[] dummies = (pb_DummyScript[])Resources.FindObjectsOfTypeAll(typeof(pb_DummyScript));
+			dummies = dummies.Where(x => x.hideFlags == HideFlags.None).ToArray();
+
+			if(dummies.Length > 0)
+			{
+				if( EditorUtility.DisplayDialog("Found Unrepairable Objects", "Repair script found " + dummies.Length + " missing components that could not be repaired.  Would you like to delete those components now?", "Delete", "Cancel"))
+				{
+					Undo.RecordObjects(dummies.Select(x=>x.gameObject).ToArray(), "Delete Broken Scripts");
+					for(int i = 0; i < dummies.Length; i++)
+						GameObject.DestroyImmediate( dummies[i] );
+				}
+				
+			}
 		}
 
 		/**

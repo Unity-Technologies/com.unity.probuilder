@@ -423,12 +423,12 @@ namespace ProBuilder2.Common {
 	 */
 	public static string ToFormattedString<T>(this T[] t, string _delimiter)
 	{
-		return t.ToFormattedString(_delimiter, 0);
+		return t.ToFormattedString(_delimiter, 0, -1);
 	}
 
-	public static string ToFormattedString<T>(this T[] t, string _delimiter, int entriesPerLine)
+	public static string ToFormattedString<T>(this T[] t, string _delimiter, int entriesPerLine, int maxEntries)
 	{
-		int len = t.Length;
+		int len = maxEntries > 0 ? (int)Mathf.Min(t.Length, maxEntries) : t.Length;
 		if(t == null || len < 1)
 			return "Empty Array.";
 
