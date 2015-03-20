@@ -1218,12 +1218,14 @@ public class pb_Editor : EditorWindow
 
 				if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 				{
+					if( pb_Handle_Utility.PointIsOccluded(pb, v))
+					{
+						Debug.Log("point is occluded");
+						continue;
+					}
+
 					// Check if index is already selected, and if not add it to the pot
 					int indx = System.Array.IndexOf(pb.SelectedTriangles, selected_uniqueIndices_all[i][n]);
-
-					// @all vertex handles
-					// if(!Selection.Contains(pb.gameObject))
-					// 	AddToSelection(pb.gameObject);
 
 					pbUndo.RecordObject(pb, "Change Vertex Selection");
 

@@ -451,6 +451,24 @@ public class pb_Handle_Utility
 
 		return OutHitFace > -1;
 	}
+
+	/**
+	 * Returns true if this point in world space is occluded by a triangle on this object.
+	 */
+	public static bool PointIsOccluded(pb_Object pb, Vector3 worldPoint)
+	{
+		Camera cam = SceneView.lastActiveSceneView.camera;
+		Vector3 dir = (cam.transform.position - worldPoint).normalized;
+
+		// move the point slightly towards the camera to avoid colliding with its own triangle
+		Vector3 point = worldPoint + dir * .001f;
+		
+		Ray ray = new Ray(worldPoint, dir * 1000f );
+
+		pb_RaycastHit hit;
+
+		return pb_Handle_Utility.MeshRaycast(ray, pb, out hit, false);
+	}
 #endregion
 
 #region Point Methods

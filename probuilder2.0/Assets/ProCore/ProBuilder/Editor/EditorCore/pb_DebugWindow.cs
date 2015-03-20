@@ -391,7 +391,7 @@ namespace ProBuilder2.EditorCommon
 					v += pb_Math.Normal(pb, f) * .01f;
 					v = pb.transform.TransformPoint(v);
 
-					if(!PointIsOccluded(v))
+					if(!pb_Handle_Utility.PointIsOccluded(pb, v))
 					{
 						Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 						GUIContent gc;
@@ -433,7 +433,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
 
-						if(!PointIsOccluded(v))
+						if(!pb_Handle_Utility.PointIsOccluded(pb, v))
 						{
 							Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 							GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
@@ -460,28 +460,6 @@ namespace ProBuilder2.EditorCommon
 
 			pb_GUI_Utility.DrawSolidColor( new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
 			GUI.Label( new Rect(position.x, position.y, width, height), content, EditorStyles.boldLabel );
-		}
-
-		bool PointIsOccluded(Vector3 worldPoint)
-		{
-			Camera cam = SceneView.lastActiveSceneView.camera;
-
-			Ray ray = new Ray(worldPoint, (cam.transform.position - worldPoint).normalized * 1000f );
-
-			pb_RaycastHit hit;
-
-			foreach(pb_Object pb in selection)
-			{
-				if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, false) )
-				{
-					return true;
-				}
-			}
-
-			return false;
-
-		//	pb_Handle.MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, bool ignoreBackfaces)
-
 		}
 
 		/**
