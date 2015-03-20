@@ -4,25 +4,18 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_Scale("Scale", float) = 3
-		_Color ("Color Tint", Color) = (1,1,1,1)
+		// _Color ("Color Tint", Color) = (1,1,1,1)
 	}
 
 	SubShader
 	{
-		Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Overlay" }
-
-		// Want to depth test here, using the single point as reference instead of 
-		// the four corners of the sprite
-		Pass
-		{
-			Lighting Off
-			ZWrite On
-			Colormask 0
-		}
+		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" "DisableBatching"="True" }
 
 		Lighting Off
 		ZTest LEqual
-		ZWrite Off
+		ZWrite On
+		Cull Back
+		Offset -1, -1
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass 
@@ -35,7 +28,7 @@
 			#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
-			float4 _Color;
+			// float4 _Color;
 			float _Scale;
 
 			struct appdata
@@ -86,8 +79,9 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return _Color;
-//				return tex2D(_MainTex, i.uv) * i.color;
+				// return _Color;
+				return i.color;
+				// return tex2D(_MainTex, i.uv) * i.color;
 			}
 
 			ENDCG

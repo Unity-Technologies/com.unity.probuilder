@@ -424,7 +424,6 @@ public class pb_Menu_Commands : Editor
 						Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
 
 						HashSet<pb_Face> selected = new HashSet<pb_Face>( pb.SelectedFaces );
-						Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 						bool facesAdded = true;
 
@@ -553,8 +552,8 @@ public class pb_Menu_Commands : Editor
 				{
 					int[] perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.Selected_Universal_Edges_All[i]);
 					pb.SetSelectedTriangles( pb.SelectedTriangles.RemoveAt(perimeter) );
-					break;
 					rc += perimeter != null ? perimeter.Length : 0;
+					break;
 				}
 			}
 

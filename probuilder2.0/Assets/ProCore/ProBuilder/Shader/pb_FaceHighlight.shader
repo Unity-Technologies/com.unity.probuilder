@@ -44,7 +44,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 				/// so simple, but oh so effective
 				/// https://www.opengl.org/discussion_boards/showthread.php/166719-Clean-Wireframe-Over-Solid-Mesh
 				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.pos.xyz *= .99;
+				o.pos.xyz *= .98;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
 
 				return o;

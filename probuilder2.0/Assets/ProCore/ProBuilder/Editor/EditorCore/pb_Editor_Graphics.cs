@@ -23,7 +23,6 @@ public class pb_Editor_Graphics
 	const string WIREFRAME_OBJECT_NAME = "ProBuilderWireframeMeshObject";
 
 	static float vertexHandleSize = .04f;
-	const float SELECTION_MESH_OFFSET = 0.0001f;//.005f;
 	
 	public static GameObject 	selectionObject { get; private set; }	// allow get so that pb_Editor can check that the user hasn't 
 	public static GameObject 	wireframeObject { get; private set; }	// selected the graphic objects on accident.
@@ -35,16 +34,17 @@ public class pb_Editor_Graphics
 
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
 	static Color 				edgeSelectionColor = new Color(0f, .6f, .7f, 1f);
-	// static Color 				vertSelectionColor = new Color(0f, .6f, .7f, 1f);
+	static Color 				vertSelectionColor = new Color(0f, .6f, .7f, 1f);
 
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
+	static Color 				vertexDotColor = new Color(0.63f, 0.75f, 0.94f, 1f);	///< Unity's wireframe color (approximately)
 
 	public static EditLevel 	_editLevel = EditLevel.Geometry;
 	public static SelectMode 	_selectMode = SelectMode.Face;
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
-	static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags)(1 | 2 | 4 | 8);
+	static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
 
 	/**
 	 * Reload colors for edge and face highlights from editor prefs.
@@ -53,7 +53,7 @@ public class pb_Editor_Graphics
 	{
 		faceSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
 		edgeSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
-		// vertSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
+		vertSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
 
 		if(!selectionObject || !wireframeObject)
 			Init(_editLevel, _selectMode);
@@ -107,13 +107,13 @@ public class pb_Editor_Graphics
 
 		switch(sm)
 		{
-			// case SelectMode.Vertex:
-			// 	vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-			// 	selectionMaterial = new Material(Shader.Find(VERT_SHADER));
-			// 	selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
-			// 	selectionMaterial.SetTexture("_MainTex", (Texture2D)Resources.Load("Textures/VertOff", typeof(Texture2D)));
-			// 	selectionMaterial.SetColor("_Color", vertSelectionColor);
-			// 	break;
+			case SelectMode.Vertex:
+				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
+				selectionMaterial = new Material(Shader.Find(VERT_SHADER));
+				selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
+				selectionMaterial.SetColor("_Color", vertexDotColor);
+				selectionMaterial.SetFloat("_Scale", 3);
+				break;
 
 			default:
 				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
@@ -159,23 +159,6 @@ public class pb_Editor_Graphics
 			go = GameObject.Find(InName);
 		}
 	}
-
-	// static internal void Draw()
-	// {
-	// 	// selectionMaterial.SetPass(0);
-	// 	// Graphics.DrawMeshNow(selectionMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
-	// }
-
-	/**
-	 * Draw the wireframe with the regular mesh rendering pipeline, which has the effect of being
-	 * much lighter and more akin to Unity's default wireframe.
-	 */
-	// static internal void DrawWireframe()
-	// {
-	// 	wireframeMaterial.SetPass(0);
-	// 	Graphics.DrawMeshNow(wireframeMesh, Vector3.zero, Quaternion.identity/*, selectionMaterial*/, 0);
-	// 	Graphics.DrawMesh(wireframeMesh, Vector3.zero, Quaternion.identity, wireframeMaterial, 0);
-	// }
 
 	/**
 	 * Draw vertex handles using UnityEngine.Handles.
@@ -236,88 +219,89 @@ public class pb_Editor_Graphics
 
 		switch( selectionMode )
 		{
-			// case SelectMode.Vertex:
+			case SelectMode.Vertex:
 
-			// 	int vcount = 0;
-			// 	foreach(pb_Object pb in _selection)
-			// 	{
-			// 		Vector3[] v = new Vector3[pb.sharedIndices.Length];
+				int vcount = 0;
+				foreach(pb_Object pb in _selection)
+				{
+					Vector3[] v = new Vector3[pb.sharedIndices.Length];
+					HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetUniversalIndices(pb.SelectedTriangles));
 
-			// 		for(int i = 0; i < v.Length; i++)	
-			// 			v[i] = pb.vertices[pb.sharedIndices[i][0]];
+					for(int i = 0; i < v.Length; i++)	
+						v[i] = pb.vertices[pb.sharedIndices[i][0]];
 
-			// 		Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
-			// 		Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
-			// 		Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
-			// 		Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
-			// 		Color[]   	t_col 				= new Color[v.Length*4];
-			// 		int[] 		t_tris 				= new int[v.Length*6];
+					Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
+					Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
+					Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
+					Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
+					Color[]   	t_col 				= new Color[v.Length*4];
+					int[] 		t_tris 				= new int[v.Length*6];
 
-			// 		int n = 0;
-			// 		int t = 0;
+					int n = 0;
+					int t = 0;
 
-			// 		Vector3 up = Vector3.up;// * .1f;
-			// 		Vector3 right = Vector3.right;// * .1f;
-
-			// 		for(int i = 0; i < v.Length; i++)
-			// 		{
-			// 			Vector3 vpoint = pb.transform.TransformPoint(v[i]);
+					Vector3 up = Vector3.up;// * .1f;
+					Vector3 right = Vector3.right;// * .1f;
+					
+					for(int i = 0; i < v.Length; i++)
+					{
+						Vector3 vpoint = pb.transform.TransformPoint(v[i]);
 						
-			// 			t_billboards[t+0] = vpoint;//-up-right;
-			// 			t_billboards[t+1] = vpoint;//-up+right;
-			// 			t_billboards[t+2] = vpoint;//+up-right;
-			// 			t_billboards[t+3] = vpoint;//+up+right;
+						t_billboards[t+0] = vpoint;//-up-right;
+						t_billboards[t+1] = vpoint;//-up+right;
+						t_billboards[t+2] = vpoint;//+up-right;
+						t_billboards[t+3] = vpoint;//+up+right;
 
-			// 			t_uvs[t+0] = Vector3.zero;
-			// 			t_uvs[t+1] = Vector3.right;
-			// 			t_uvs[t+2] = Vector3.up;
-			// 			t_uvs[t+3] = Vector3.one;
+						t_uvs[t+0] = Vector3.zero;
+						t_uvs[t+1] = Vector3.right;
+						t_uvs[t+2] = Vector3.up;
+						t_uvs[t+3] = Vector3.one;
 
-			// 			t_uv2[t+0] = -up-right;
-			// 			t_uv2[t+1] = -up+right;
-			// 			t_uv2[t+2] =  up-right;
-			// 			t_uv2[t+3] =  up+right;
+						t_uv2[t+0] = -up-right;
+						t_uv2[t+1] = -up+right;
+						t_uv2[t+2] =  up-right;
+						t_uv2[t+3] =  up+right;
 	
-			// 			t_nrm[t+0] = Vector3.forward;
-			// 			t_nrm[t+1] = Vector3.forward;
-			// 			t_nrm[t+2] = Vector3.forward;
-			// 			t_nrm[t+3] = Vector3.forward;
+						t_nrm[t+0] = Vector3.forward;
+						t_nrm[t+1] = Vector3.forward;
+						t_nrm[t+2] = Vector3.forward;
+						t_nrm[t+3] = Vector3.forward;
 
-			// 			t_tris[n+0] = t+2+vcount;
-			// 			t_tris[n+1] = t+1+vcount;
-			// 			t_tris[n+2] = t+0+vcount;
-			// 			t_tris[n+3] = t+2+vcount;
-			// 			t_tris[n+4] = t+3+vcount;
-			// 			t_tris[n+5] = t+1+vcount;
+						t_tris[n+0] = t+2+vcount;
+						t_tris[n+1] = t+1+vcount;
+						t_tris[n+2] = t+0+vcount;
+						t_tris[n+3] = t+2+vcount;
+						t_tris[n+4] = t+3+vcount;
+						t_tris[n+5] = t+1+vcount;
 
-			// 			// if(System.Array.IndexOf(sel, pb.uniqueIndices[i]) > -1)
-			// 			// {
-			// 			// 	t_col[t+0] = Color.green;
-			// 			// 	t_col[t+1] = Color.green;
-			// 			// 	t_col[t+2] = Color.green;
-			// 			// 	t_col[t+3] = Color.green;
-			// 			// }
-			// 			// else
-			// 			{
-			// 				t_col[t+0] = faceSelectionColor;
-			// 				t_col[t+1] = faceSelectionColor;
-			// 				t_col[t+2] = faceSelectionColor;
-			// 				t_col[t+3] = faceSelectionColor;
-			// 			}
+						if( selected.Contains(i) )
+						{
+							t_col[t+0] = Color.green;
+							t_col[t+1] = Color.green;
+							t_col[t+2] = Color.green;
+							t_col[t+3] = Color.green;
+						}
+						else
+						{
+							t_col[t+0] = vertexDotColor;
+							t_col[t+1] = vertexDotColor;
+							t_col[t+2] = vertexDotColor;
+							t_col[t+3] = vertexDotColor;
+						}
 
-			// 			t+=4;
-			// 			n+=6;				
-			// 		}
+						t+=4;
+						n+=6;				
+					}
 
-			// 		verts.AddRange(t_billboards);
-			// 		vcount += t_billboards.Length;
-			// 		uvs.AddRange(t_uvs);
-			// 		uv2s.AddRange(t_uv2);
-			// 		col.AddRange(t_col);
-			// 		tris.AddRange(t_tris);
-			// 	}
+					verts.AddRange(t_billboards);
+					vcount += t_billboards.Length;
+					uvs.AddRange(t_uvs);
+					uv2s.AddRange(t_uv2);
+					col.AddRange(t_col);
+					tris.AddRange(t_tris);
+				}
 
-			// 	break;
+				break;
 
 			case SelectMode.Face:
 
@@ -350,18 +334,6 @@ public class pb_Editor_Graphics
 		selectionMesh.tangents = tan.ToArray();
 		selectionMesh.colors = col.ToArray();
 		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-
-		// if(selectionMode == SelectMode.Face)
-		// {
-		// 	selectionMesh.RecalculateNormals();
-
-		// 	Vector3[] nrmls = selectionMesh.normals;
-
-		// 	for(int i = 0; i < verts.Count; i++)
-		// 		verts[i] += SELECTION_MESH_OFFSET * nrmls[i].normalized;
-
-		// 	selectionMesh.vertices = verts.ToArray();
-		// }
 	}
 
 	/**

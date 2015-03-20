@@ -240,16 +240,6 @@ public static class pb_IntArrayUtility
 	/**
 	 *	Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
 	 */
-	// public static int[] UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, int[] values)
-	// {
-	// 	List<int> unique = new List<int>(values);
-		
-	// 	for(int i = 0; i < unique.Count; i++)
-	// 		unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
-
-	// 	return unique.Distinct().ToArray();
-	// }
-
 	public static IEnumerable<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
 	{
 		Dictionary<int, int> lookup = pbIntArr.ToDictionary();
@@ -267,16 +257,21 @@ public static class pb_IntArrayUtility
 		return unique;
 	}
 
-	// public static List<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, List<int> values)
-	// {
-	// 	List<int> unique = new List<int>(values);
-		
-	// 	for(int i = 0; i < unique.Count; i++)
-	// 		unique[i] = pbIntArr[pbIntArr.IndexOf(values[i])][0];
+	/**
+	 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (universal index).
+	 */
+	public static IEnumerable<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
+	{
+		Dictionary<int, int> lookup = pbIntArr.ToDictionary();
+		HashSet<int> universal = new HashSet<int>();
 
-	// 	return unique.Distinct().ToList();
-	// }
+		foreach(int i in indices)
+		{
+			universal.Add( lookup[i] );
+		}
 
+		return universal;
+	}
 
 	/**
 	 *	\brief Cycles through a mesh and returns a pb_IntArray[] of 
