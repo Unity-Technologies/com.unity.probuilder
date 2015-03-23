@@ -1059,10 +1059,15 @@ public class pb_Editor : EditorWindow
 				{
 					// Test culling
 					List<pb_RaycastHit> hits;
+					Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-					if(pb_Handle_Utility.MeshRaycast(HandleUtility.GUIPointToWorldRay(mousePosition), bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
+					if(pb_Handle_Utility.MeshRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
 					{
+						// Sort from nearest hit to farthest
+						hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
+
 						// Find the nearest edge in the hit faces
+
 						float bestDistance = Mathf.Infinity;
 						Vector3[] v = bestObj.vertices;
 
@@ -1081,6 +1086,9 @@ public class pb_Editor : EditorWindow
 									bestEdge = edge;
 								}
 							}
+
+							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].Normal)) < 0 )
+								break;
 						}
 
 						if(bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > MAX_EDGE_SELECT_DISTANCE)
