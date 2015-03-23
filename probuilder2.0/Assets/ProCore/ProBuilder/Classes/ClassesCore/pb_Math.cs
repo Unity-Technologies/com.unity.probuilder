@@ -235,10 +235,12 @@ namespace ProBuilder2.Math
 		/**
 		 * Returns true if a raycast intersects a triangle.
 		 * http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+		 * http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 		 */
-		public static bool RayIntersectsTriangle(Ray InRay, Vector3 InTriangleA,  Vector3 InTriangleB,  Vector3 InTriangleC, out float OutDistance)
+		public static bool RayIntersectsTriangle(Ray InRay, Vector3 InTriangleA,  Vector3 InTriangleB,  Vector3 InTriangleC, out float OutDistance, out Vector3 OutPoint)
 		{
 			OutDistance = 0f;
+			OutPoint = Vector3.zero;
 			
 			Vector3 e1, e2;  //Edge1, Edge2
 			Vector3 P, Q, T;
@@ -255,42 +257,48 @@ namespace ProBuilder2.Math
 			//if determinant is near zero, ray lies in plane of triangle
 			det = Vector3.Dot(e1, P);
 
-			// NOT CULLING
-			if(det > -Mathf.Epsilon && det < Mathf.Epsilon)
-				return false;
+			// Non-culling branch
+			// {
+				if(det > -Mathf.Epsilon && det < Mathf.Epsilon)
+					return false;
 
-			inv_det = 1f / det;
+				inv_det = 1f / det;
 
-			//calculate distance from V1 to ray origin
-			T = InRay.origin - InTriangleA;
+				//calculate distance from V1 to ray origin
+				T = InRay.origin - InTriangleA;
 
-			// Calculate u parameter and test bound
-			u = Vector3.Dot(T, P) * inv_det;
+				// Calculate u parameter and test bound
+				u = Vector3.Dot(T, P) * inv_det;
 
-			//The intersection lies outside of the triangle
-			if(u < 0f || u > 1f)
-				return false;
+				//The intersection lies outside of the triangle
+				if(u < 0f || u > 1f)
+					return false;
 
-			//Prepare to test v parameter
-			Q = Vector3.Cross(T, e1);
+				//Prepare to test v parameter
+				Q = Vector3.Cross(T, e1);
 
-			//Calculate V parameter and test bound
-			v = Vector3.Dot(InRay.direction, Q) * inv_det;
+				//Calculate V parameter and test bound
+				v = Vector3.Dot(InRay.direction, Q) * inv_det;
 
-			//The intersection lies outside of the triangle
-			if(v < 0f || u + v  > 1f)
-				return false;
+				//The intersection lies outside of the triangle
+				if(v < 0f || u + v  > 1f)
+					return false;
 
-			t = Vector3.Dot(e2, Q) * inv_det;
+				t = Vector3.Dot(e2, Q) * inv_det;
+			// }
 
 			if(t > Mathf.Epsilon)
 			{ 
 				//ray intersection
 				OutDistance = t;
+
+				OutPoint.x = (u * InTriangleB.x + v * InTriangleC.x + (1-(u+v)) * InTriangleA.x);
+				OutPoint.y = (u * InTriangleB.y + v * InTriangleC.y + (1-(u+v)) * InTriangleA.y);
+				OutPoint.z = (u * InTriangleB.z + v * InTriangleC.z + (1-(u+v)) * InTriangleA.z);
+
 				return true;
 			}
 
-			// No hit, no win
 			return false;
 		}
 #endregion

@@ -34,7 +34,7 @@ public class pb_Editor_Graphics
 
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
 	static Color 				edgeSelectionColor = new Color(0f, .6f, .7f, 1f);
-	static Color 				vertSelectionColor = new Color(0f, .6f, .7f, 1f);
+	static Color 				vertSelectionColor = new Color(1f, .2f, .2f, 1f);
 
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
 	static Color 				vertexDotColor = new Color(0.63f, 0.75f, 0.94f, 1f);	///< Unity's wireframe color (approximately)
@@ -276,10 +276,10 @@ public class pb_Editor_Graphics
 
 						if( selected.Contains(i) )
 						{
-							t_col[t+0] = Color.green;
-							t_col[t+1] = Color.green;
-							t_col[t+2] = Color.green;
-							t_col[t+3] = Color.green;
+							t_col[t+0] = vertSelectionColor;
+							t_col[t+1] = vertSelectionColor;
+							t_col[t+2] = vertSelectionColor;
+							t_col[t+3] = vertSelectionColor;
 						}
 						else
 						{

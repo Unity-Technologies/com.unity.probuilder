@@ -139,13 +139,8 @@ public class pb_Editor : EditorWindow
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
-	private Color selectedVertexColor = Color.green;
-	private Color defaultVertexColor = Color.blue;
 	private void InitGUI()
 	{	
-		selectedVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor);
-		defaultVertexColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
- 		
  		// pbStyle = new GUIStyle();
 
 		VertexTranslationInfoStyle = new GUIStyle();
@@ -1063,21 +1058,28 @@ public class pb_Editor : EditorWindow
 				else
 				{
 					// Test culling
-					pb_RaycastHit hit;
+					List<pb_RaycastHit> hits;
 
-					if(pb_Handle_Utility.MeshRaycast(HandleUtility.GUIPointToWorldRay(mousePosition), bestObj, out hit))
+					if(pb_Handle_Utility.MeshRaycast(HandleUtility.GUIPointToWorldRay(mousePosition), bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
 					{
+						// Find the nearest edge in the hit faces
 						float bestDistance = Mathf.Infinity;
 						Vector3[] v = bestObj.vertices;
 
-						foreach(pb_Edge edge in bestObj.faces[hit.FaceIndex].edges)
+						for(int i = 0; i < hits.Count; i++)
 						{
-							float d = HandleUtility.DistancePointLine(hit.Point, v[edge.x], v[edge.y]);
+							if( pb_Handle_Utility.PointIsOccluded(bestObj, hits[i].Point) )
+								continue;
 
-							if(d < bestDistance)
+							foreach(pb_Edge edge in bestObj.faces[hits[i].FaceIndex].edges)
 							{
-								bestDistance = d;
-								bestEdge = edge;
+								float d = HandleUtility.DistancePointLine(hits[i].Point, v[edge.x], v[edge.y]);
+
+								if(d < bestDistance)
+								{
+									bestDistance = d;
+									bestEdge = edge;
+								}
 							}
 						}
 
@@ -1164,7 +1166,7 @@ public class pb_Editor : EditorWindow
 
 			bool ignoreBackfaces = !pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 
-			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, ignoreBackfaces) )
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Mathf.Infinity, ignoreBackfaces ? Culling.Front : Culling.FrontBack) )
 			{
 				selectedFace = pb.faces[hit.FaceIndex];
 
@@ -1218,9 +1220,8 @@ public class pb_Editor : EditorWindow
 
 				if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 				{
-					if( pb_Handle_Utility.PointIsOccluded(pb, v))
+					if( pb_Handle_Utility.PointIsOccluded(pb, v) )
 					{
-						Debug.Log("point is occluded");
 						continue;
 					}
 
@@ -1314,9 +1315,8 @@ public class pb_Editor : EditorWindow
 		{
 			case SelectMode.Vertex:
 			{
-
 				if(!shiftKey && !ctrlKey) ClearFaceSelection();
-				
+
 				for(int i = 0; i < selection.Length; i++)
 				{
 					pb_Object pb = selection[i];
@@ -1334,7 +1334,9 @@ public class pb_Editor : EditorWindow
 
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
-							
+							if( pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
+								continue;
+
 							// Check if index is already selected, and if not add it to the pot
 							int indx = selectedTriangles.IndexOf(selected_uniqueIndices_all[i][n]);
 
@@ -2047,6 +2049,9 @@ public class pb_Editor : EditorWindow
 			 * Show the PB cached and Unity mesh element counts if in Debug mode.
 			 */
 			#if PB_DEBUG
+			 	
+			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, 164, 185), new Color(.1f,.1f,.1f,.65f));
+
 				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);

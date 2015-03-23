@@ -72,9 +72,22 @@ namespace ProBuilder2.Common
 		BinPack
 	}
 
+	/**
+	 * Describes the winding order of mesh triangles.
+	 */
 	public enum WindingOrder {
 		Unknown,
 		Clockwise,
 		CounterClockwise
+	}
+
+	/**
+	 * Describes different culling options.
+	 */
+	public enum Culling
+	{
+		Back = 0x0,
+		Front = 0x1,
+		FrontBack = 0x2
 	}
 }
