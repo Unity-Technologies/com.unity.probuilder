@@ -9,13 +9,11 @@
 
 	SubShader
 	{
-		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" "DisableBatching"="True" }
-
+		Tags { "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
-		Cull Back
-		Offset -1, -1
+		Cull Off
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass 
@@ -28,7 +26,6 @@
 			#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
-			// float4 _Color;
 			float _Scale;
 
 			struct appdata
@@ -51,7 +48,7 @@
 				v2f o;
 
 				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.pos *= .98;
+				o.pos *= .99;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
 
 				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
