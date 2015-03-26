@@ -14,6 +14,46 @@ using UnityEngine;
 namespace ProBuilder2.SerializationTmp
 {
 
+	[System.Serializable()]
+	public class pb_Color
+	{
+		public float r, g, b, a;
+
+		public static implicit operator Color(pb_Color c) 
+		{
+			return new Color(c.r, c.g, c.b, c.a);
+		}
+
+		public static implicit operator pb_Color(Color c)
+		{
+			return new pb_Color(c);
+		}
+
+		public pb_Color()
+		{
+			this.r = 0f;
+			this.g = 0f;
+			this.b = 0f;
+			this.a = 0f;
+		}
+
+		public pb_Color(Color c)
+		{
+			this.r = c.r;
+			this.g = c.g;
+			this.b = c.b;
+			this.a = c.a;
+		}
+
+		public pb_Color(float r, float g, float b, float a)
+		{
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
+		}
+	}
+
 	#if UNITY_WP8
 	public class pb_SerializableObject
 	{
@@ -50,7 +90,16 @@ namespace ProBuilder2.SerializationTmp
 		{
 			this.vertices = pb.vertices;
 			this.uv = pb.uv;
-			this.color = pb.colors;
+			if(pb.msh != null && pb.msh.colors != null && pb.msh.colors.Length == pb.vertexCount)
+			{
+				this.color = pb.msh.colors;
+			}
+			else
+			{
+				this.color = new Color[pb.vertexCount];
+				for(int i = 0; i < this.color.Length; i++)
+					this.color[i] = Color.white;
+			}
 			this.faces = pb.faces;
 			this.sharedIndices = (int[][])pb.GetSharedIndices().ToArray();
 			this.sharedIndicesUV = (int[][])pb.GetSharedIndicesUV().ToArray();

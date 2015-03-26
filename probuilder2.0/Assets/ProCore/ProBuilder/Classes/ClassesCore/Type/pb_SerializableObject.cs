@@ -2,10 +2,9 @@
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 using ProBuilder2.Common;
-
-using UnityEngine;
 
 namespace ProBuilder2.Serialization
 {
@@ -41,6 +40,16 @@ namespace ProBuilder2.Serialization
 		public Vector3 		t_position;
 		public Quaternion 	t_rotation;
 		public Vector3 		t_scale;
+
+		/**
+		 * Getters
+		 */
+		public Vector3[]	GetVertices() { return vertices; }
+		public Vector2[]	GetUvs() { return uv; }
+		public Color[]		GetColors() { return color; }
+		public pb_Face[]	GetFaces() { return faces; }
+		public int[][]		GetSharedIndices() { return sharedIndices; }
+		public int[][]		GetSharedIndicesUV() { return sharedIndicesUV; }
 
 		/**
 		 * Default constructor to appease serializers

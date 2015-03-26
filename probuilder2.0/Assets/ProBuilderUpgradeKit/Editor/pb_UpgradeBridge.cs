@@ -11,6 +11,12 @@ using tmp = ProBuilder2.SerializationTmp;
 
 namespace ProBuilder2.Serialization
 {
+	static class BackwardsCompatibilityExtensions
+	{
+		public static void SetColors(this pb_Object pb, Color[] colors) { Debug.Log("FUCK");}
+		public static Color[] GetColors(this pb_SerializableObject ser) { Debug.Log("DOUBLEFUCK"); return null; }
+	}
+
 	/**
  	 * Methods for storing data about ProBuilder objects that may be translated back into PB post-upgrade.
 	 */
@@ -131,7 +137,7 @@ namespace ProBuilder2.Serialization
 		{
 			pb.SetVertices( serialized.vertices );
 			pb.SetUV( serialized.uv );
-			pb.SetColors( serialized.color );
+			pb.SetColors( serialized.GetColors() );
 
 			pb.SetSharedIndices( serialized.sharedIndices.ToPbIntArray() );
 			pb.SetSharedIndicesUV( serialized.sharedIndicesUV.ToPbIntArray() );
