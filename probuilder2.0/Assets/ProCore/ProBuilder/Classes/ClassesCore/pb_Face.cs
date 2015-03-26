@@ -51,8 +51,7 @@ public class pb_Face : ISerializable
 
 		foreach(Material mat in Resources.FindObjectsOfTypeAll(typeof(Material)))
 		{
-			// past me was an idiot, and used instanceIds to serialize materials
-			if(mat.name.Equals(matName) || mat.GetInstanceID().Equals(matName))
+			if(mat.name.Equals(matName))
 			{
 				this._mat = mat;
 				break;

@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using ProBuilder2.Common;
 using Newtonsoft.Json;
 using ProBuilder2.EditorCommon;
+using System.Text.RegularExpressions;
 using tmp = ProBuilder2.SerializationTmp;
 
 namespace ProBuilder2.Serialization
@@ -22,6 +23,8 @@ namespace ProBuilder2.Serialization
 	 */
 	public class pb_UpgradeBridgeEditor : Editor
 	{
+		const string MaterialFieldRegex = "\"material\": [\\-0-9]{2,20}";
+
 		[MenuItem("Tools/ProBuilder/Upgrade/Prepare Scene for Upgrade")]
 		[MenuItem("Tools/SERIALIZE")]
 		static void MenuSerialize()
@@ -58,6 +61,25 @@ namespace ProBuilder2.Serialization
 
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
 						string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
+						
+						// pre-2.4.1 pb_Face would serialize material as an instance id.  past-me is an idiot.
+						// this searches for material entries and tries to replace instance ids with material
+						// names.
+						obj = Regex.Replace(obj, MaterialFieldRegex, delegate(Match match)
+							{
+								string material_entry = match.ToString().Replace("\"material\": ", "").Trim();
+								int instanceId = 0;
+
+								if(int.TryParse(material_entry, out instanceId))
+								{
+									Object mat_obj = EditorUtility.InstanceIDToObject(instanceId);
+
+									if(mat_obj != null)
+										return "\"material\": \"" + mat_obj.name + "\"";
+								}
+
+								return match.ToString();
+							});
 						
 						pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>();
 
