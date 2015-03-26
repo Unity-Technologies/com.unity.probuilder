@@ -14,6 +14,8 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 {
 	public int x, y;
 
+	public pb_Edge() {}
+
 	public pb_Edge(int _x, int _y)
 	{
 		x = _x;

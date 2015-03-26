@@ -1,7 +1,5 @@
 /*
  *	ProBuilder Object
- *	@Karl Henkel, @Gabriel Williams
- *
  */
 
 using UnityEngine;
@@ -11,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
+using ProBuilder2.Serialization;
 
 #if PB_DEBUG
 using Parabox.Debug;

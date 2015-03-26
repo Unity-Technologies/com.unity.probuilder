@@ -62,9 +62,14 @@ public static class pbSubdivideSplit
 	 */
 	public static bool ConnectEdges(this pb_Object pb, pb_Edge[] edges, out pb_Edge[] newEdges)
 	{
+		pb_Profiler profiler = new pb_Profiler();
+
+		profiler.BeginSample("Con nectEdges");
+
 		int len = edges.Length;
 		List<pb_EdgeConnection> splits = new List<pb_EdgeConnection>();
 
+		profiler.BeginSample("Split Edges");
 		for(int i = 0; i < len; i++)
 		{
 			foreach(pb_Face face in pbMeshUtils.GetNeighborFaces(pb, edges[i]))
@@ -84,6 +89,7 @@ public static class pbSubdivideSplit
 				}
 			}
 		}
+		profiler.EndSample();
 
 		// If it's stupid but it works it ain't stupid!
 		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
@@ -92,6 +98,7 @@ public static class pbSubdivideSplit
 		pb_Face[] faces;
  		bool success = ConnectEdges(pb, splits, out faces);
 
+		profiler.BeginSample("Find New Edges");
 		if(success)
 		{
 			/**
@@ -115,6 +122,10 @@ public static class pbSubdivideSplit
 		{
 			newEdges = null;
 		}
+		profiler.EndSample();
+
+		profiler.EndSample();
+		Debug.Log(profiler.ToString());
 
 		return success;
 	}
@@ -133,11 +144,17 @@ public static class pbSubdivideSplit
 
 	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
+		pb_Profiler profiler = new pb_Profiler();
+
+		profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
+		
 		// first, remove any junk connections.  faces with less than two edges confuse this method.
+		profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
 		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
 		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
 			if(ec.isValid)
 				pb_edgeConnections.Add(ec);
+		profiler.EndSample();
 
 		int len = pb_edgeConnections.Count;
 
@@ -165,6 +182,7 @@ public static class pbSubdivideSplit
 		// in pb_EdgeConnection, it's easy to maintain the relationship.
 		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
 
+		profiler.BeginSample("foreach(edge connection)");
 		int i = 0;
 		foreach(pb_EdgeConnection fc in pb_edgeConnections)
 		{	
@@ -230,7 +248,10 @@ public static class pbSubdivideSplit
 
 			i++;
 		}
+		profiler.EndSample();
 
+
+		profiler.BeginSample("Retrianguate");
 		/**
 		 *	Figure out which faces need to be re-triangulated
 		 */
@@ -274,7 +295,9 @@ public static class pbSubdivideSplit
 				}
 			}
 		}
+		profiler.EndSample();
 
+		profiler.BeginSample("Append vertices to faces");
 		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitColors.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
 		
 		List<pb_Face> triangulatedFaces = new List<pb_Face>();
@@ -287,6 +310,9 @@ public static class pbSubdivideSplit
 			else
 				Debug.LogError("Mesh re-triangulation failed.");//  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
 		}
+		profiler.EndSample();
+
+		profiler.BeginSample("rebuild mesh");
 
 		// Re-triangulate any faces left with dangling verts at edges
 		// Weld verts, including those added in re-triangu
@@ -297,16 +323,22 @@ public static class pbSubdivideSplit
 		System.Array.Copy(splitFaceTris, 0, allModifiedTris, 0, splitFaceTris.Length);
 		System.Array.Copy(triangulatedFaceTris, 0, allModifiedTris, splitFaceTris.Length, triangulatedFaceTris.Length);
 		
-			// safe to assume that we probably didn't delete anything :/
-			int[] welds;
+		// safe to assume that we probably didn't delete anything :/
+		int[] welds;
 
-			pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
-			// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+		profiler.BeginSample("weld vertices");
+		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+		profiler.EndSample();
+		// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 
-		
 		// Now that we're done screwing with geo, delete all the old faces (that were successfully split)		
+		profiler.BeginSample("delete faces");
 		pb.DeleteFaces( successfullySplitFaces.ToArray() );
 		faces = appendedFaces;
+		profiler.EndSample();
+		profiler.EndSample();
+		profiler.EndSample();
+		Debug.Log(profiler.ToString());
 
 		return true;
 	}

@@ -1342,7 +1342,8 @@ public class pb_Editor : EditorWindow
 
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
-							if( pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
+							bool backfaceSelectionEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+							if( !backfaceSelectionEnabled && pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
@@ -2064,7 +2065,7 @@ public class pb_Editor : EditorWindow
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);
 				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x=>x.msh.vertexCount).Sum() : 0).ToString());
+				GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString());
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (pb_Object): " + (selection != null ? selection.Select(x=>x.vertexCount).Sum() : 0).ToString());
 				sceneInfoRect.y += 20;

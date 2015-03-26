@@ -21,16 +21,19 @@ using ProBuilder2.Common;
 
 namespace Parabox.CSG
 {
+	/**
+	 * Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations.
+	 * The GameObjects passed to these functions will not be modified.
+	 */
 	public class CSG
 	{
 #region Const
 
-		///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-		public const float EPSILON = 0.00001f;
+		public const float EPSILON = 0.00001f; ///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
 #endregion
 
 		/**
-		 * Returns a new mesh of the resulting Union.
+		 * Returns a new mesh by merging @lhs with @rhs.
 		 */
 		public static Mesh Union(GameObject lhs, GameObject rhs)
 		{
@@ -47,8 +50,9 @@ namespace Parabox.CSG
 			return result.ToMesh();
 		}
 
-		// Return a new CSG solid representing space in this solid but not in the
-		// solid `csg`. Neither this solid nor the solid `csg` are modified.
+		/**
+		 * Returns a new mesh by subtracting @rhs from @lhs.
+		 */
 		public static Mesh Subtract(GameObject lhs, GameObject rhs)
 		{
 			CSG_Model csg_model_a = new CSG_Model(lhs);
@@ -65,8 +69,8 @@ namespace Parabox.CSG
 		}
 
 		/**
-		 * Return a new CSG solid representing space both this solid and in the
-		 * solid `csg`. Neither this solid nor the solid `csg` are modified.
+		 * Return a new mesh by intersecting @lhs with @rhs.  This operation
+		 * is non-commutative, so set @lhs and @rhs accordingly.
 		 */
 		public static Mesh Intersect(GameObject lhs, GameObject rhs)
 		{

@@ -5,6 +5,9 @@ using ProBuilder2.Common;
 
 namespace Parabox.CSG
 {
+	/**
+	 * Represents a plane in 3d space.  Does not include position.
+	 */
 	class CSG_Plane
 	{
 		public Vector3 normal;

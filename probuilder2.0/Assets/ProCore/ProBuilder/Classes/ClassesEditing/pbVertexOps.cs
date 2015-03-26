@@ -7,6 +7,8 @@ using ProBuilder2.Math;
 using ProBuilder2.Triangulator;
 using ProBuilder2.Triangulator.Geometry;
 using System.Linq;
+using KDTree;
+using System.Text;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -70,103 +72,67 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 *	Similar to Merge vertices, expect that this method only collapses vertices within
-		 *	a specified distance of one another (typically epsilon).
+		 *	a specified distance of one another (typically epsilon).  Returns true if any action
+		 * 	was taken, false otherwise.  Outputs indices that have been welded in the @welds var.
 		 */
 		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			List<int> universal = new List<int>();
-			for(int i = 0; i < indices.Length; i++)
-			{
-				int index = pb.sharedIndices.IndexOf(indices[i]);
+			pb_Profiler profiler = new pb_Profiler();
+			profiler.BeginSample("WeldVertices");
 
-				if(universal.Contains(index))
-					continue;
-				else
-					universal.Add(index);
-			}
-
-			int[] groupIndex = pbUtil.FilledArray<int>(-1, indices.Length);
-			List<List<int>> groups = new List<List<int>>();
-			List<int> used = new List<int>();
-
+			profiler.BeginSample("GetUniversalIndices");
+			List<int> universal = pb.sharedIndices.GetUniversalIndices(indices).ToList();
+			profiler.EndSample();
 			Vector3[] v = pb.vertices;
 
-			for(int i = 0; i < universal.Count-1; i++)
+			profiler.BeginSample("Sort Vertices");
+			HashSet<int> used = new HashSet<int>();
+			KDTree<int> tree = new KDTree<int>(3, 64);	// dimensions (xyz), node size
+
+			for(int i = 0; i < universal.Count; i++)
 			{
-				if(groupIndex[i] > -1)
+				Vector3 vert = v[pb.sharedIndices[universal[i]][0]];
+				tree.AddPoint( new double[] { vert.x, vert.y, vert.z }, universal[i]);
+			}
+
+			List<List<int>> groups = new List<List<int>>();
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			for(int i = 0; i < universal.Count; i++)
+			{
+				if(used.Contains(universal[i]))
 					continue;
 
-				for(int n = i+1; n < universal.Count; n++)
+				NearestNeighbour<int> neighborIterator = tree.NearestNeighbors( new double[] { v[i].x, v[i].y, v[i].z }, 32, delta );
+
+				List<int> neighbors = new List<int>();
+
+				while(neighborIterator.MoveNext())
 				{
-					if(Vector3.Distance(v[pb.sharedIndices[universal[i]][0]], v[pb.sharedIndices[universal[n]][0]]) < delta)
-					{
-						if(groupIndex[n] < 0 && groupIndex[i] < 0)
-						{ 
-							groups.Add( new List<int>() { universal[i], universal[n] } );
-							groupIndex[i] = groups.Count-1;
-							groupIndex[n] = groups.Count-1;
-						}
-						else
-						{
-							if(groupIndex[i] > -1)
-							{
-								groups[groupIndex[i]].Add(universal[n]);
-								groupIndex[n] = groupIndex[i];
-							}
-							else
-							{
-								groups[groupIndex[n]].Add(universal[i]);
-								groupIndex[i] = groupIndex[n];
-							}
-						}
-
-						used.Add(universal[i]);
-						used.Add(universal[n]);
-					}
+					used.Add( neighborIterator.Current );
+					neighbors.Add( neighborIterator.Current );
 				}
-			}			
+				sb.AppendLine(neighbors.ToFormattedString(", "));
 
+				used.Add( universal[i] );
+				groups.Add( neighbors );
+			}
+
+			Debug.Log(sb.ToString());
+
+			profiler.EndSample();
+	
 			// Rebuild sharedIndices using the new associations
-			List<List<int>> sharedIndicesRebuilt = new List<List<int>>();
-			welds = new int[groups.Count];
-
-			// If no welds, don't set vertex array so that the calling method
-			// also doesn't have to call ToMesh() and Refresh()
-			if(welds.Length < 1)
-				return false;
-
-			for(int i = 0; i < groups.Count; i++)
-			{
-				welds[i] = pb.sharedIndices[groups[i][0]][0];
-
-				sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[groups[i][0]].array) );
-
-				for(int n = 1; n < groups[i].Count; n++)
-				{
-					sharedIndicesRebuilt[i].AddRange( pb.sharedIndices[groups[i][n]].array );
-				}
-
-				// Average the vertex positions
-				Vector3 avg = pb_Math.Average(pbUtil.ValuesWithIndices(v, sharedIndicesRebuilt[i].ToArray()));
-
-				foreach(int CurTriangle in sharedIndicesRebuilt[i])
-				{
-					v[CurTriangle] = avg;
-				}
+			Dictionary<int, List<int>> rebuilt = new Dictionary<int, List<int>>();
+			for(int i = 0; i < pb.sharedIndices.Length; i++) {
+				rebuilt.Add(i, new List<int>( pb.sharedIndices[i].array) );
 			}
 
-			pb.SetVertices(v);
+			welds = null;
 
-			// Now add in all the unused sharedIndices arrays
-			for(int i = 0; i < pb.sharedIndices.Length; i++)
-			{
-				if(!used.Contains(i))
-				{
-					sharedIndicesRebuilt.Add( new List<int>(pb.sharedIndices[i].array) );
-				}
-			}
-
-			pb.SetSharedIndices(sharedIndicesRebuilt.ToPbIntArray());
+			profiler.EndSample();	// WeldVertices
+			Debug.Log(profiler.ToString());
 
 			return true;	
 		}
@@ -198,6 +164,8 @@ namespace ProBuilder2.MeshOperations
 				pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
 			pb.SetSharedIndices(sharedIndices);
+
+			Debug.Log(pb.sharedIndices.ToFormattedString());
 
 			return true;
 		}

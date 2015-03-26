@@ -62,6 +62,8 @@ public class pb_Face : ISerializable
 
 #region CONSTRUCTORS
 
+	public pb_Face() {}
+
 	public pb_Face(int[] i)
 	{
 		SetIndices(i);

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
+	/**
+	 * Represents a polygon face with an arbitrary number of vertices.
+	 */
 	class CSG_Polygon
 	{
 		public List<CSG_Vertex> vertices;
 		public CSG_Plane plane;
-
-		// public CSG_Polygon() {}
 
 		public CSG_Polygon(List<CSG_Vertex> list)
 		{

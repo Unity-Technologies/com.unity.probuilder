@@ -26,6 +26,8 @@ public class pb_Vector4
 		return new pb_Vector4(v);
 	}
 
+	public pb_Vector4() {}
+
 	public pb_Vector4(Vector4 v)
 	{
 		this.x = v.x;

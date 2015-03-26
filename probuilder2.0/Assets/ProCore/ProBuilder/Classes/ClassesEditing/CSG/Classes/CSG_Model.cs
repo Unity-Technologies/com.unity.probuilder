@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
+	/**
+	 * Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.
+	 */
 	class CSG_Model
 	{
 		public List<CSG_Vertex> vertices;
@@ -14,6 +17,9 @@ namespace Parabox.CSG
 			this.indices = new List<int>();
 		}
 
+		/**
+		 * Initialize a CSG_Model with the mesh of a gameObject.
+		 */
 		public CSG_Model(GameObject go)
 		{
 			vertices = new List<CSG_Vertex>();
@@ -75,6 +81,9 @@ namespace Parabox.CSG
 			return list;
 		}
 
+		/**
+		 * Converts a CSG_Model to a Unity mesh.
+		 */
 		public Mesh ToMesh()
 		{
 			Mesh m = new Mesh();

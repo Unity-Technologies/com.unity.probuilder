@@ -1004,7 +1004,7 @@ public class pb_Menu_Commands : Editor
 					if( pb.RemoveDegenerateTriangles(out removed) )
 						welds = new int[0];	// @todo
 
-					pb.SetSelectedTriangles(welds);
+					pb.SetSelectedTriangles(welds ?? new int[0] {});
 				}
 
 				pb.Refresh();
