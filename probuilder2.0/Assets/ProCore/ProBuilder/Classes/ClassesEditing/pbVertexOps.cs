@@ -77,15 +77,15 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			pb_Profiler profiler = new pb_Profiler();
-			profiler.BeginSample("WeldVertices");
+			// pb_Profiler profiler = new pb_Profiler();
+			// profiler.BeginSample("WeldVertices");
 
-			profiler.BeginSample("GetUniversalIndices");
+			// profiler.BeginSample("GetUniversalIndices");
 			List<int> universal = pb.sharedIndices.GetUniversalIndices(indices).ToList();
-			profiler.EndSample();
+			// profiler.EndSample();
 			Vector3[] v = pb.vertices;
 
-			profiler.BeginSample("Sort Vertices");
+			// profiler.BeginSample("Sort Vertices");
 			HashSet<int> used = new HashSet<int>();
 			KDTree<int> tree = new KDTree<int>(3, 64);	// dimensions (xyz), node size
 
@@ -121,7 +121,7 @@ namespace ProBuilder2.MeshOperations
 
 			Debug.Log(sb.ToString());
 
-			profiler.EndSample();
+			// profiler.EndSample();
 	
 			// Rebuild sharedIndices using the new associations
 			Dictionary<int, List<int>> rebuilt = new Dictionary<int, List<int>>();
@@ -131,8 +131,8 @@ namespace ProBuilder2.MeshOperations
 
 			welds = null;
 
-			profiler.EndSample();	// WeldVertices
-			Debug.Log(profiler.ToString());
+			// profiler.EndSample();	// WeldVertices
+			// Debug.Log(profiler.ToString());
 
 			return true;	
 		}
