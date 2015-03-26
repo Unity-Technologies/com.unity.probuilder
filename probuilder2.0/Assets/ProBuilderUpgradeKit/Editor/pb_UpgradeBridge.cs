@@ -13,8 +13,8 @@ namespace ProBuilder2.Serialization
 {
 	static class BackwardsCompatibilityExtensions
 	{
-		public static void SetColors(this pb_Object pb, Color[] colors) { Debug.Log("FUCK");}
-		public static Color[] GetColors(this pb_SerializableObject ser) { Debug.Log("DOUBLEFUCK"); return null; }
+		public static void SetColors(this pb_Object pb, Color[] colors) { }
+		public static Color[] GetColors(this pb_SerializableObject ser) { return null; }
 	}
 
 	/**
@@ -59,7 +59,10 @@ namespace ProBuilder2.Serialization
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
 						string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
 						
-						pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>() ?? pb.gameObject.AddComponent<pb_SerializedComponent>();
+						pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>();
+
+						if( storage == null )
+							storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
 
 						storage.SetObjectData(obj);
 						storage.SetEntityData(entity);
@@ -92,14 +95,14 @@ namespace ProBuilder2.Serialization
 			}
 			else
 			{
-				int success = 0;
+				int success = 0, c = 0;
 				float len = serializedComponents.Length;
 
 				for(int i = 0; i < serializedComponents.Length; i++)
 				{
 					pb_SerializedComponent ser = serializedComponents[i];
 
-					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, success / len);
+					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, c++ / len);
 
 					try
 					{
@@ -146,6 +149,7 @@ namespace ProBuilder2.Serialization
 
 			pb.ToMesh();
 			pb.Refresh();
+			pb.Finalize();
 
 			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
 		}
@@ -170,10 +174,10 @@ namespace ProBuilder2.Serialization
 			Mesh m = pbUtil.DeepCopyMesh(pb.msh);
 
 			// Destroy pb_Object first, then entity.  Order is important.
-			DestroyImmediate(pb);
+			DestroyImmediate(pb, true);
 			
 			if(go.GetComponent<pb_Entity>())
-				DestroyImmediate(go.GetComponent<pb_Entity>());
+				DestroyImmediate(go.GetComponent<pb_Entity>(), true);
 
 			// Set the mesh back.
 			go.GetComponent<MeshFilter>().sharedMesh = m;
