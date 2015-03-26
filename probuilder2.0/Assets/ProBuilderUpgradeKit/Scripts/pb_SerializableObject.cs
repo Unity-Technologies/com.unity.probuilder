@@ -7,15 +7,19 @@ using ProBuilder2.Common;
 
 using UnityEngine;
 
-namespace ProBuilder2.Serialization
+/**
+ * ProBuilder 2.3.1 does not contain a color property on its serializableObject class, so we need to provide a 
+ * replacement that does.
+ */
+namespace ProBuilder2.SerializationTmp
 {
+
 	#if UNITY_WP8
 	public class pb_SerializableObject
 	{
 		// pb_Object
 		public Vector3[] vertices;
 		public Vector2[] uv;
-		public Color[]	color;
 		public pb_Face[] faces;
 		public int[][] sharedIndices;
 		public int[][] sharedIndicesUV;
@@ -41,11 +45,6 @@ namespace ProBuilder2.Serialization
 		public Vector3 		t_position;
 		public Quaternion 	t_rotation;
 		public Vector3 		t_scale;
-
-		/**
-		 * Default constructor to appease serializers
-		 */
-		public pb_SerializableObject() {}
 
 		public pb_SerializableObject(pb_Object pb)
 		{

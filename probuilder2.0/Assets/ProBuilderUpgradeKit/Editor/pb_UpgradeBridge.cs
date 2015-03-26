@@ -7,20 +7,10 @@ using System.Xml.Serialization;
 using ProBuilder2.Common;
 using Newtonsoft.Json;
 using ProBuilder2.EditorCommon;
+using tmp = ProBuilder2.SerializationTmp;
 
 namespace ProBuilder2.Serialization
 {
-	/**
-	 * 2.3.1 does not have SetColors() on pb_Object.  This prevents errors on those older projects.
-	 */
-	static class BackwardsCompatibilityExtensions
-	{
-		public static void SetColors(this pb_Object pb, Color[] c)
-		{
-			Debug.Log("here");
-		}
-	}
-
 	/**
  	 * Methods for storing data about ProBuilder objects that may be translated back into PB post-upgrade.
 	 */
@@ -57,7 +47,7 @@ namespace ProBuilder2.Serialization
 
 					try
 					{
-						pb_SerializableObject serializedObject = new pb_SerializableObject(pb);
+						tmp.pb_SerializableObject serializedObject = new tmp.pb_SerializableObject(pb);
 						pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
 
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
