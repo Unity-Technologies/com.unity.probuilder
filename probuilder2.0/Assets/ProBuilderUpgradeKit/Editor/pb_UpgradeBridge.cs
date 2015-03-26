@@ -102,6 +102,11 @@ namespace ProBuilder2.Serialization
 		{
 			GameObject go = pb.gameObject;
 
+			pb.Verify();
+
+			if(pb.msh == null)
+				return;
+
 			// Copy the mesh (since destroying pb_Object will take the mesh reference with it)
 			Mesh m = pbUtil.DeepCopyMesh(pb.msh);
 
