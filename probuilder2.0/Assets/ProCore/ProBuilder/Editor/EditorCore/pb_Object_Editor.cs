@@ -50,7 +50,6 @@ public class pb_Object_Editor : Editor
  		SceneToolbarColor_Active = EditorGUIUtility.isProSkin ? new Color(.35f, .35f, .35f, 1f) : new Color(.8f, .8f, .8f, 1f);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
-
  		pb_Editor_Utility.VerifyMesh(pb);
 	}
 

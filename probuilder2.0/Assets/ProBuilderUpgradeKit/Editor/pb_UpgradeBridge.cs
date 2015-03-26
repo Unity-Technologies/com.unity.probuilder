@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using ProBuilder2.Common;
 using Newtonsoft.Json;
 using ProBuilder2.EditorCommon;
+using System.Linq;
 using System.Text.RegularExpressions;
 using tmp = ProBuilder2.SerializationTmp;
 
 namespace ProBuilder2.Serialization
 {
+	/**
+	 * 2.3.1 (lowest supported upgrade path) doesn't include serialized support for colors.
+	 */
 	static class BackwardsCompatibilityExtensions
 	{
 		public static void SetColors(this pb_Object pb, Color[] colors) { }
@@ -26,13 +30,21 @@ namespace ProBuilder2.Serialization
 		const string MaterialFieldRegex = "\"material\": [\\-0-9]{2,20}";
 
 		[MenuItem("Tools/ProBuilder/Upgrade/Prepare Scene for Upgrade")]
-		[MenuItem("Tools/SERIALIZE")]
 		static void MenuSerialize()
+		{
+			pb_Object[] objects = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
+			pb_Object[] prefabs = FindProBuilderPrefabs();
+
+			objects = pbUtil.Concat(objects, prefabs).Distinct().ToArray();
+
+			MakeSerializedComponent(objects);		
+		}
+
+		static void MakeSerializedComponent(pb_Object[] objects)
 		{
 			if(pb_Editor.instance != null)
 				pb_Editor.instance.Close();
 
-			pb_Object[] objects = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
 			float len = objects.Length;
 			int success = 0;
 
@@ -52,10 +64,18 @@ namespace ProBuilder2.Serialization
 
 				foreach(pb_Object pb in objects)
 				{
+					if(pb == null)
+						continue;
+
 					EditorUtility.DisplayProgressBar("Serialize ProBuilder Data", "Object: " + pb.name, success / len);
 
 					try
 					{
+						bool isPrefabInstance = IsPrefabInstance(pb.gameObject);
+
+						if(isPrefabInstance)
+							PrefabUtility.DisconnectPrefabInstance(pb.gameObject);
+
 						tmp.pb_SerializableObject serializedObject = new tmp.pb_SerializableObject(pb);
 						pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
 
@@ -81,10 +101,8 @@ namespace ProBuilder2.Serialization
 								return match.ToString();
 							});
 						
-						pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>();
-
-						if( storage == null )
-							storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
+						pb_SerializedComponent storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
+						storage.isPrefabInstance = isPrefabInstance;
 
 						storage.SetObjectData(obj);
 						storage.SetEntityData(entity);
@@ -102,11 +120,10 @@ namespace ProBuilder2.Serialization
 				EditorUtility.ClearProgressBar();
 
 				EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized " + success + " / " + (int)len + " objects.", "Okay");
-			}
+			}			
 		}
 
 		[MenuItem("Tools/ProBuilder/Upgrade/Re-attach ProBuilder Scripts")]
-		[MenuItem("Tools/DESERIALIZE")]
 		static void MenuDeserialize()
 		{
 			pb_SerializedComponent[] serializedComponents = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
@@ -131,17 +148,26 @@ namespace ProBuilder2.Serialization
 						pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
 						pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
 
+						// if( ser.isPrefabInstance )
+						// 	PrefabUtility.ReconnectToLastPrefab(ser.gameObject);
+
 						pb_Object pb = ser.gameObject.GetComponent<pb_Object>() ?? ser.gameObject.AddComponent<pb_Object>();
 						InitObjectWithSerializedObject(pb, serializedObject);
 
 						pb_Entity ent = ser.gameObject.GetComponent<pb_Entity>() ?? ser.gameObject.AddComponent<pb_Entity>();
 						InitEntityWithSerializedObject(ent, serializedEntity);
 
+						PrefabUtility.RecordPrefabInstancePropertyModifications(pb);
+
 						success++;
 					}
 					catch(System.Exception e)
 					{
-						Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+						if(ser != null)
+							Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+						else
+							Debug.LogError("Failed deserializing object\n" + e.ToString());
+
 						continue;
 					}
 
@@ -206,6 +232,44 @@ namespace ProBuilder2.Serialization
 
 			if(go.GetComponent<MeshCollider>())
 				go.GetComponent<MeshCollider>().sharedMesh = m;
+		}
+
+		/**
+		 * Returns all prefabs that reference pb_Object
+		 */
+		static pb_Object[] FindProBuilderPrefabs()
+		{
+			List<pb_Object> pbObjects = new List<pb_Object>();
+
+			// t:pb_Object doesn't return anything, presumably because the top level asset is a gameObject.
+			foreach(string cheese in AssetDatabase.FindAssets("t:GameObject"))
+			{
+				Object[] prefabs = (Object[])AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GUIDToAssetPath(cheese));
+
+				foreach(GameObject go in prefabs.Where(x => x is GameObject))
+				{
+					pb_Object pb = go.GetComponent<pb_Object>();
+
+					if(pb != null) pbObjects.Add(pb);
+
+					pb_Object[] all = go.GetComponentsInChildren<pb_Object>();
+
+					foreach(pb_Object i in all)
+					{
+						pbObjects.Add(i);
+					}
+				}
+			}
+
+			return pbObjects.ToArray();
+		}
+
+		static bool IsPrefabInstance(GameObject go)
+		{
+			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
+			// return 	PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance ||
+			// 		PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
+
 		}
 	}
 }

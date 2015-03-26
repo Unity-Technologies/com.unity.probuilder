@@ -329,6 +329,12 @@ namespace ProBuilder2.EditorCommon
 
 				pb.Finalize();
 			}
+
+			#if UNITY_5
+			EditorUtility.UnloadUnusedAssetsImmediate();
+			#else
+			EditorUtility.UnloadUnusedAssets();
+			#endif
 		}
 
 		/**
