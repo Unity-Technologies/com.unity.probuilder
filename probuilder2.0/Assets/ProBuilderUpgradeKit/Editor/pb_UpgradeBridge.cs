@@ -11,6 +11,17 @@ using ProBuilder2.EditorCommon;
 namespace ProBuilder2.Serialization
 {
 	/**
+	 * 2.3.1 does not have SetColors() on pb_Object.  This prevents errors on those older projects.
+	 */
+	static class BackwardsCompatibilityExtensions
+	{
+		public static void SetColors(this pb_Object pb, Color[] c)
+		{
+			Debug.Log("here");
+		}
+	}
+
+	/**
  	 * Methods for storing data about ProBuilder objects that may be translated back into PB post-upgrade.
 	 */
 	public class pb_UpgradeBridgeEditor : Editor
@@ -22,51 +33,103 @@ namespace ProBuilder2.Serialization
 			if(pb_Editor.instance != null)
 				pb_Editor.instance.Close();
 
-			foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())// Resources.FindObjectsOfTypeAll(typeof(pb_Object)))
+			pb_Object[] objects = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
+			float len = objects.Length;
+			int success = 0;
+
+			if( len < 1 )
 			{
-				pb_SerializableObject serializedObject = new pb_SerializableObject(pb);
-				pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
+				int c = ((pb_SerializedComponent[]) Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent))).Length;
 
-				string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
-				string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
-				
-				pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>() ?? pb.gameObject.AddComponent<pb_SerializedComponent>();
+				if( c > 0 )
+					EditorUtility.DisplayDialog("Prepare Scene", "There are " + c + " serialized components ready to be rebuilt into ProBuilder components in this scene.", "Okay");
+				else
+					EditorUtility.DisplayDialog("Prepare Scene", "No ProBuilder components found in scene.", "Okay");
+			}
+			else
+			{
+				if( !EditorUtility.DisplayDialog("Prepare Scene", "This will safely store all ProBuilder data in a new component, and remove ProBuilder components from all objects in the scene.\n\nThis must be run for each scene in your project.", "Okay", "Cancel") )
+					return;
 
-				storage.SetObjectData(obj);
-				storage.SetEntityData(entity);
+				foreach(pb_Object pb in objects)
+				{
+					EditorUtility.DisplayProgressBar("Serialize ProBuilder Data", "Object: " + pb.name, success / len);
 
-				RemoveProBuilderScripts(pb);
+					try
+					{
+						pb_SerializableObject serializedObject = new pb_SerializableObject(pb);
+						pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
+
+						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
+						string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
+						
+						pb_SerializedComponent storage = pb.gameObject.GetComponent<pb_SerializedComponent>() ?? pb.gameObject.AddComponent<pb_SerializedComponent>();
+
+						storage.SetObjectData(obj);
+						storage.SetEntityData(entity);
+
+						RemoveProBuilderScripts(pb);
+
+						success++;
+					}
+					catch (System.Exception e)
+					{
+						Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
+					}
+				}
+
+				EditorUtility.ClearProgressBar();
+
+				EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized " + success + " / " + (int)len + " objects.", "Okay");
 			}
 		}
 
 		[MenuItem("Tools/ProBuilder/Upgrade/Re-attach ProBuilder Scripts")]
-		[MenuItem("Tools/RESERIALIZE")]
+		[MenuItem("Tools/DESERIALIZE")]
 		static void MenuDeserialize()
 		{
-			pb_SerializedComponent[] serializedComponents = Selection.transforms.GetComponents<pb_SerializedComponent>();
+			pb_SerializedComponent[] serializedComponents = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
 
-			for(int i = 0; i < serializedComponents.Length; i++)
+			if( serializedComponents.Length < 1 )
 			{
-				pb_SerializedComponent ser = serializedComponents[i];
+				EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "No serialized ProBuilder components found in this scene.", "Okay");
+			}
+			else
+			{
+				int success = 0;
+				float len = serializedComponents.Length;
 
-				try
+				for(int i = 0; i < serializedComponents.Length; i++)
 				{
-					pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
-					pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
+					pb_SerializedComponent ser = serializedComponents[i];
 
-					pb_Object pb = ser.gameObject.GetComponent<pb_Object>() ?? ser.gameObject.AddComponent<pb_Object>();
-					InitObjectWithSerializedObject(pb, serializedObject);
+					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, success / len);
 
-					pb_Entity ent = ser.gameObject.GetComponent<pb_Entity>() ?? ser.gameObject.AddComponent<pb_Entity>();
-					InitEntityWithSerializedObject(ent, serializedEntity);
+					try
+					{
+						pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
+						pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
+
+						pb_Object pb = ser.gameObject.GetComponent<pb_Object>() ?? ser.gameObject.AddComponent<pb_Object>();
+						InitObjectWithSerializedObject(pb, serializedObject);
+
+						pb_Entity ent = ser.gameObject.GetComponent<pb_Entity>() ?? ser.gameObject.AddComponent<pb_Entity>();
+						InitEntityWithSerializedObject(ent, serializedEntity);
+
+						success++;
+					}
+					catch(System.Exception e)
+					{
+						Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+						continue;
+					}
+
+					DestroyImmediate( ser, true );
 				}
-				catch(System.Exception e)
-				{
-					Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
-					continue;
-				}
 
-				DestroyImmediate( ser );
+				EditorUtility.ClearProgressBar();
+
+				EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + success + " / " + (int)len + " objects.", "Okay");
 			}
 		}
 

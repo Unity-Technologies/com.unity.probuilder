@@ -1,7 +1,5 @@
 ﻿# README
 
-It is critically important that you follow these steps!
-
 ## Notes
 
 Projects using ProBuilder 2.3.1 and up are supported.  If your project 
