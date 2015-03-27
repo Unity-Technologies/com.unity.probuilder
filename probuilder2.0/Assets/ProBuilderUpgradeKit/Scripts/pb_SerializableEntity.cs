@@ -8,6 +8,7 @@ namespace ProBuilder2.UpgradeKit
 	/**
 	 * Serializable class for pb_Entity.
 	 */
+	[System.Serializable()]
 	public class pb_SerializableEntity :  ISerializable
 	{
 		public EntityType entityType;

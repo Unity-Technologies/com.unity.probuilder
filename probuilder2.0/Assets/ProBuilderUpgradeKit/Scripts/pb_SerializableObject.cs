@@ -101,12 +101,12 @@ namespace ProBuilder2.UpgradeKit
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			// pb_object
-			info.AddValue("vertices", 			System.Array.ConvertAll(vertices, x => (pb_Vector3)x),	typeof(pb_Vector3[]));
-			info.AddValue("uv", 				System.Array.ConvertAll(uv, x => (pb_Vector2)x), 		typeof(pb_Vector2[]));
-			info.AddValue("color", 				System.Array.ConvertAll(color, x => (pb_Color)x), 		typeof(pb_Color[]));
-			info.AddValue("faces", 				faces, 													typeof(pb_Face[]));
-			info.AddValue("sharedIndices", 		sharedIndices, 											typeof(int[][]));
-			info.AddValue("sharedIndicesUV",	sharedIndicesUV, 										typeof(int[][]));
+			info.AddValue("vertices", 			System.Array.ConvertAll(vertices, x => (pb_Vector3)x),				typeof(pb_Vector3[]));
+			info.AddValue("uv", 				System.Array.ConvertAll(uv, x => (pb_Vector2)x), 					typeof(pb_Vector2[]));
+			info.AddValue("color", 				System.Array.ConvertAll(color, x => (pb_Color)x), 					typeof(pb_Color[]));
+			info.AddValue("faces", 				System.Array.ConvertAll(faces, x => new pb_SerializableFace(x)),	typeof(pb_SerializableFace[]));
+			info.AddValue("sharedIndices", 		sharedIndices, 														typeof(int[][]));
+			info.AddValue("sharedIndicesUV",	sharedIndicesUV, 													typeof(int[][]));
 		}
 
 		// The pb_SerializableObject constructor is used to deserialize values. 
@@ -125,7 +125,8 @@ namespace ProBuilder2.UpgradeKit
 			this.color = System.Array.ConvertAll(pb_color, x => (Color)x);
 
 			/// Faces
-			this.faces = (pb_Face[]) info.GetValue("faces", typeof(pb_Face[]));
+			pb_SerializableFace[] pb_faces = (pb_SerializableFace[]) info.GetValue("faces", typeof(pb_SerializableFace[]));
+			this.faces = (pb_Face[]) System.Array.ConvertAll(pb_faces, x => (pb_Face)x);
 
 			// Shared Indices
 			this.sharedIndices = (int[][]) info.GetValue("sharedIndices", typeof(int[][]));

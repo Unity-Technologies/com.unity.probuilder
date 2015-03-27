@@ -10,6 +10,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ProBuilder2.EditorCommon;
 
+/**
+ * EditorCommon exists 2.4+, so this allows us to include the namespace on earlier versions.
+ */
+namespace ProBuilder2.EditorCommon
+{}
+
 namespace ProBuilder2.UpgradeKit
 {
 	/**
@@ -148,7 +154,7 @@ namespace ProBuilder2.UpgradeKit
 
 					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, c++ / len);
 
-					try
+					// try
 					{
 						pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
 						pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
@@ -166,15 +172,15 @@ namespace ProBuilder2.UpgradeKit
 
 						success++;
 					}
-					catch(System.Exception e)
-					{
-						if(ser != null)
-							Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
-						else
-							Debug.LogError("Failed deserializing object\n" + e.ToString());
+					// catch(System.Exception e)
+					// {
+					// 	if(ser != null)
+					// 		Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+					// 	else
+					// 		Debug.LogError("Failed deserializing object\n" + e.ToString());
 
-						continue;
-					}
+					// 	continue;
+					// }
 
 					DestroyImmediate( ser, true );
 				}
