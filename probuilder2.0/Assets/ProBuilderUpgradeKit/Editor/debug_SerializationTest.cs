@@ -38,20 +38,21 @@ namespace ProBuilder2.UpgradeKit
 
 			pb.msh = new Mesh();
 
+			if(!pb.gameObject.GetComponent<MeshRenderer>())
+				pb.gameObject.AddComponent<MeshRenderer>();
+
 			pb.SetVertices( serialized.GetVertices() );
 
 			pb.msh.vertices = pb.vertices;
 
-			// pb.SetUV( serialized.GetUVs() );
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } );
+			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } ))
+				pb.msh.uv = serialized.GetUVs();
 
-			// pb.SetColors( serialized.GetColors() );
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } );
+			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } ))
+				pb.msh.colors = serialized.GetColors();
 
-			// pb.SetSharedIndices( serialized.GetSharedIndices().ToPbIntArray() );
 			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
 
-			// pb.SetSharedIndicesUV( serialized.GetSharedIndicesUV().ToPbIntArray() );
 			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
 
 			pb.SetFaces( serialized.GetFaces() );
@@ -60,7 +61,9 @@ namespace ProBuilder2.UpgradeKit
 
 			pb.GenerateUV2(true);
 
-			pb.GetComponent<pb_Entity>().SetEntity( 0 );
+			pb_Entity entity = pb.GetComponent<pb_Entity>();
+			if(entity == null) entity = pb.gameObject.AddComponent<pb_Entity>();
+			entity.SetEntity( 0 );
 		}
 	}
 }

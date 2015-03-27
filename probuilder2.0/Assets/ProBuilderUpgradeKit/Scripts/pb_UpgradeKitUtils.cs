@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Reflection;
-using ProBuilder2.Common;
 
 namespace ProBuilder2.UpgradeKit
 {
@@ -63,13 +62,22 @@ namespace ProBuilder2.UpgradeKit
 			else
 			{
 				// GenerateSubmeshes also calls 'Refresh()'
-				InvokeFunction(pb, "GenerateSubmeshes", new object[] { false });
+				InvokeFunction(pb, "GenerateSubmeshes", new System.Type[] { typeof(bool) }, new object[] { false });
 			}
 		}
 
 		public static bool InvokeFunction(object target, string methodName, object[] parameters)
 		{
-			MethodInfo mi = target.GetType().GetMethod(methodName);
+			return InvokeFunction(target, methodName, null, parameters);
+		}
+		
+		public static bool InvokeFunction(object target, string methodName, System.Type[] argumentTypes, object[] parameters)
+		{
+			MethodInfo mi;
+			if(argumentTypes != null)
+				mi = target.GetType().GetMethod(methodName, argumentTypes);
+			else
+				mi = target.GetType().GetMethod(methodName);
 
 			if(mi != null)
 			{

@@ -109,6 +109,8 @@ namespace ProBuilder2.UpgradeKit
 					}
 					catch (System.Exception e)
 					{
+						if( IsPrefabRoot(pb.gameObject) )
+							Debug.Log("Failed serializing: " + pb.name + " DGAF");
 						Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
 					}
 				}
@@ -182,18 +184,40 @@ namespace ProBuilder2.UpgradeKit
 		 */
 		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
 		{
+			/**
+			 * On older probuilder versions, SetUV also applied to mesh -
+			 * this initializes the mesh so that SetUv() doesn't get a null
+			 * ref when setting.
+			 */
+
+			pb.msh = new Mesh();
+
+			if(!pb.gameObject.GetComponent<MeshRenderer>())
+				pb.gameObject.AddComponent<MeshRenderer>();
+
 			pb.SetVertices( serialized.GetVertices() );
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } );
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } );
+
+			pb.msh.vertices = pb.vertices;
+
+			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } ))
+				pb.msh.uv = serialized.GetUVs();
+
+			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } ))
+				pb.msh.colors = serialized.GetColors();
+
 			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
+
 			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
+
 			pb.SetFaces( serialized.GetFaces() );
 
 			pb_UpgradeKitUtils.RebuildMesh(pb);
 
 			pb.GenerateUV2(true);
 
-			pb.GetComponent<pb_Entity>().SetEntity( 0 );	// InitEntityWithSerializedType will set this properly
+			pb_Entity entity = pb.GetComponent<pb_Entity>();
+			if(entity == null) entity = pb.gameObject.AddComponent<pb_Entity>();
+			entity.SetEntity( 0 );
 		}
 
 		static void InitEntityWithSerializedObject(pb_Entity entity, pb_SerializableEntity serialized)
@@ -262,9 +286,11 @@ namespace ProBuilder2.UpgradeKit
 		static bool IsPrefabInstance(GameObject go)
 		{
 			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
-			// return 	PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance ||
-			// 		PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
+		}
 
+		static bool IsPrefabRoot(GameObject go)
+		{
+			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
 		}
 	}
 }
