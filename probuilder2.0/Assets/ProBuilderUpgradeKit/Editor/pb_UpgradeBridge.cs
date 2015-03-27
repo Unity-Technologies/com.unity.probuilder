@@ -9,9 +9,8 @@ using Newtonsoft.Json;
 using ProBuilder2.EditorCommon;
 using System.Linq;
 using System.Text.RegularExpressions;
-using tmp = ProBuilder2.SerializationTmp;
 
-namespace ProBuilder2.Serialization
+namespace ProBuilder2.UpgradeKit
 {
 	/**
 	 * 2.3.1 (lowest supported upgrade path) doesn't include serialized support for colors.
@@ -76,7 +75,7 @@ namespace ProBuilder2.Serialization
 						if(isPrefabInstance)
 							PrefabUtility.DisconnectPrefabInstance(pb.gameObject);
 
-						tmp.pb_SerializableObject serializedObject = new tmp.pb_SerializableObject(pb);
+						pb_SerializableObject serializedObject = new pb_SerializableObject(pb);
 						pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
 
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);

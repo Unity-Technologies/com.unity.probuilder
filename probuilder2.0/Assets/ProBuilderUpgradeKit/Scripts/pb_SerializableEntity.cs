@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections;
 using ProBuilder2.Common;
 
-namespace ProBuilder2.Serialization
+namespace ProBuilder2.UpgradeKit
 {
 	/**
 	 * Serializable class for pb_Entity.

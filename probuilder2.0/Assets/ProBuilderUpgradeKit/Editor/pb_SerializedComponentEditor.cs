@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.Collections;
 
-namespace ProBuilder2.Serialization
+namespace ProBuilder2.UpgradeKit
 {
 	/**
 	 * Inspector for pb_SerializedComponent

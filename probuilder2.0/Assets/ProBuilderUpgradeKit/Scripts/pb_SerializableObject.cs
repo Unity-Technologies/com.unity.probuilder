@@ -8,52 +8,10 @@ using ProBuilder2.Common;
 using UnityEngine;
 
 /**
- * ProBuilder 2.3.1 does not contain a color property on its serializableObject class, so we need to provide a 
- * replacement that does.
+ *
  */
-namespace ProBuilder2.SerializationTmp
+namespace ProBuilder2.UpgradeKit
 {
-
-	[System.Serializable()]
-	public class pb_Color
-	{
-		public float r, g, b, a;
-
-		public static implicit operator Color(pb_Color c) 
-		{
-			return new Color(c.r, c.g, c.b, c.a);
-		}
-
-		public static implicit operator pb_Color(Color c)
-		{
-			return new pb_Color(c);
-		}
-
-		public pb_Color()
-		{
-			this.r = 0f;
-			this.g = 0f;
-			this.b = 0f;
-			this.a = 0f;
-		}
-
-		public pb_Color(Color c)
-		{
-			this.r = c.r;
-			this.g = c.g;
-			this.b = c.b;
-			this.a = c.a;
-		}
-
-		public pb_Color(float r, float g, float b, float a)
-		{
-			this.r = r;
-			this.g = g;
-			this.b = b;
-			this.a = a;
-		}
-	}
-
 	#if UNITY_WP8
 	public class pb_SerializableObject
 	{
@@ -63,11 +21,6 @@ namespace ProBuilder2.SerializationTmp
 		public pb_Face[] faces;
 		public int[][] sharedIndices;
 		public int[][] sharedIndicesUV;
-
-		// transform
-		public Vector3 		t_position;
-		public Quaternion 	t_rotation;
-		public Vector3 		t_scale;
 	}
 	#else
 	[Serializable()]		
@@ -80,11 +33,6 @@ namespace ProBuilder2.SerializationTmp
 		public pb_Face[] 	faces;
 		public int[][] 		sharedIndices;
 		public int[][] 		sharedIndicesUV;
-
-		// transform
-		public Vector3 		t_position;
-		public Quaternion 	t_rotation;
-		public Vector3 		t_scale;
 
 		public pb_SerializableObject(pb_Object pb)
 		{
@@ -103,11 +51,6 @@ namespace ProBuilder2.SerializationTmp
 			this.faces = pb.faces;
 			this.sharedIndices = (int[][])pb.GetSharedIndices().ToArray();
 			this.sharedIndicesUV = (int[][])pb.GetSharedIndicesUV().ToArray();
-
-			// Transform
-			this.t_position = pb.transform.position;
-			this.t_rotation = pb.transform.localRotation;
-			this.t_scale = pb.transform.localScale;
 		}
 
 		public void Print()
@@ -129,11 +72,6 @@ namespace ProBuilder2.SerializationTmp
 			info.AddValue("faces", 				faces, 													typeof(pb_Face[]));
 			info.AddValue("sharedIndices", 		sharedIndices, 											typeof(int[][]));
 			info.AddValue("sharedIndicesUV",	sharedIndicesUV, 										typeof(int[][]));
-
-			// transform
-			info.AddValue("t_position", 		(pb_Vector3)t_position,									typeof(pb_Vector3));
-			info.AddValue("t_rotation", 		(pb_Vector4)t_rotation,									typeof(pb_Vector4));
-			info.AddValue("t_scale", 			(pb_Vector3)t_scale, 									typeof(pb_Vector3));
 		}
 
 		// The pb_SerializableObject constructor is used to deserialize values. 
@@ -159,10 +97,6 @@ namespace ProBuilder2.SerializationTmp
 
 			// Shared Indices UV
 			this.sharedIndicesUV = (int[][]) info.GetValue("sharedIndicesUV", typeof(int[][]));
-
-			this.t_position = (pb_Vector3) info.GetValue("t_position", typeof(pb_Vector3));
-			this.t_rotation = (pb_Vector4) info.GetValue("t_rotation", typeof(pb_Vector4));
-			this.t_scale = (pb_Vector3) info.GetValue("t_scale", typeof(pb_Vector3));
 		}
 	}
 	#endif

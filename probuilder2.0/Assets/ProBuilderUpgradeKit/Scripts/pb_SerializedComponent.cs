@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace ProBuilder2.Serialization
+namespace ProBuilder2.UpgradeKit
 {
 	/**
 	 * This component stores serialized data.
