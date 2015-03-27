@@ -88,10 +88,10 @@ namespace ProBuilder2.EditorCommon
 				{
 					pb_Object[] all = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 					foreach(pb_Object pb in all)
-						pb.GenerateUV2_2();
+						pb.GenerateUV2();
 				}
 
-				if(GUILayout.Button(new GUIContent("Apply Settings To All", "Caution: Will be slooow in a big scene.")))
+				if(GUILayout.Button(new GUIContent("Apply Settings To All", "Caution: Will be slow in a big scene.")))
 				{
 					pb_Object[] all = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 					foreach(pb_Object pb in all) {
@@ -99,7 +99,7 @@ namespace ProBuilder2.EditorCommon
 						pb.areaError = sampleAreaError;
 						pb.hardAngle = sampleHardAngle;
 						pb.packMargin = samplePackMargin;
-						pb.GenerateUV2_2();
+						pb.GenerateUV2();
 						EditorUtility.SetDirty(pb);
 					}
 				}
@@ -193,7 +193,7 @@ namespace ProBuilder2.EditorCommon
 		void RefreshUV2()
 		{
 			foreach(pb_Object pb in editor.selection)
-				pb.GenerateUV2_2();
+				pb.GenerateUV2();
 		}
 
 		public void ResetObjectToDefaultValues(pb_Object pb)
@@ -225,7 +225,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in editor.selection) {
 				ResetObjectToDefaultValues(pb);
-				pb.GenerateUV2_2();
+				pb.GenerateUV2();
 			}
 		}
 

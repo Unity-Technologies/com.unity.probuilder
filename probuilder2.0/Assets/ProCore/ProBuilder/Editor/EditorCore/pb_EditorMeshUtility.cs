@@ -15,7 +15,7 @@ namespace ProBuilder2.EditorCommon
 		public static void Finalize(this pb_Object InObject)
 		{
 			pb_Mesh_Utility.CollapseSharedVertices(InObject);	///< Merge compatible shared vertices to a single vertex.
-			InObject.GenerateUV2_2();
+			InObject.GenerateUV2();
 		}
 	}
 }

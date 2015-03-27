@@ -6,9 +6,9 @@ using System.IO;
 using System.Runtime.Serialization;
 using ProBuilder2.Common;
 using Newtonsoft.Json;
-using ProBuilder2.EditorCommon;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.UpgradeKit
 {
@@ -18,7 +18,13 @@ namespace ProBuilder2.UpgradeKit
 	static class BackwardsCompatibilityExtensions
 	{
 		public static void SetColors(this pb_Object pb, Color[] colors) { }
-		public static Color[] GetColors(this pb_SerializableObject ser) { return null; }
+		public static pb_IntArray[] ToPbIntArray(this int[][] arr)
+		{
+			pb_IntArray[] pbint = new pb_IntArray[arr.Length];
+			for(int i = 0; i < arr.Length; i++)
+				pbint[i] = new pb_IntArray(arr[i]);
+			return pbint;
+		}
 	}
 
 	/**
@@ -84,21 +90,21 @@ namespace ProBuilder2.UpgradeKit
 						// pre-2.4.1 pb_Face would serialize material as an instance id.  past-me is an idiot.
 						// this searches for material entries and tries to replace instance ids with material
 						// names.
-						obj = Regex.Replace(obj, MaterialFieldRegex, delegate(Match match)
-							{
-								string material_entry = match.ToString().Replace("\"material\": ", "").Trim();
-								int instanceId = 0;
+						// obj = Regex.Replace(obj, MaterialFieldRegex, delegate(Match match)
+						// 	{
+						// 		string material_entry = match.ToString().Replace("\"material\": ", "").Trim();
+						// 		int instanceId = 0;
 
-								if(int.TryParse(material_entry, out instanceId))
-								{
-									Object mat_obj = EditorUtility.InstanceIDToObject(instanceId);
+						// 		if(int.TryParse(material_entry, out instanceId))
+						// 		{
+						// 			Object mat_obj = EditorUtility.InstanceIDToObject(instanceId);
 
-									if(mat_obj != null)
-										return "\"material\": \"" + mat_obj.name + "\"";
-								}
+						// 			if(mat_obj != null)
+						// 				return "\"material\": \"" + mat_obj.name + "\"";
+						// 		}
 
-								return match.ToString();
-							});
+						// 		return match.ToString();
+						// 	});
 						
 						pb_SerializedComponent storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
 						storage.isPrefabInstance = isPrefabInstance;
@@ -185,18 +191,18 @@ namespace ProBuilder2.UpgradeKit
 		 */
 		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
 		{
-			pb.SetVertices( serialized.vertices );
-			pb.SetUV( serialized.uv );
+			pb.SetVertices( serialized.GetVertices() );
+			pb.SetUV( serialized.GetUVs() );
 			pb.SetColors( serialized.GetColors() );
 
-			pb.SetSharedIndices( serialized.sharedIndices.ToPbIntArray() );
-			pb.SetSharedIndicesUV( serialized.sharedIndicesUV.ToPbIntArray() );
+			pb.SetSharedIndices( serialized.GetSharedIndices().ToPbIntArray() );
+			pb.SetSharedIndicesUV( serialized.GetSharedIndicesUV().ToPbIntArray() );
 
-			pb.SetFaces( serialized.faces );
+			pb.SetFaces( serialized.GetFaces() );
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.GenerateUV2(true);
 
 			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
 		}

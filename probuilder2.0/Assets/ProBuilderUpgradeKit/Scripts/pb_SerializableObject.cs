@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-
+using System.Reflection;
 using ProBuilder2.Common;
-
 using UnityEngine;
 
 /**
@@ -27,17 +26,33 @@ namespace ProBuilder2.UpgradeKit
 	public class pb_SerializableObject : ISerializable
 	{
 		// pb_Object
-		public Vector3[] 	vertices;
-		public Vector2[] 	uv;
-		public Color[]		color;
-		public pb_Face[] 	faces;
-		public int[][] 		sharedIndices;
-		public int[][] 		sharedIndicesUV;
+		private Vector3[] 	vertices;
+		private Vector2[] 	uv;
+		private Color[]		color;
+		private pb_Face[] 	faces;
+		private int[][] 	sharedIndices;
+		private int[][] 	sharedIndicesUV;
+
+		public Vector3[] 	GetVertices() { return vertices; }
+		public Vector2[] 	GetUVs() { return uv; }
+		public Color[]		GetColors() { return color; }
+		public pb_Face[] 	GetFaces() { return faces; }
+		public int[][]		GetSharedIndices() { return sharedIndices; }
+		public int[][]		GetSharedIndicesUV() { return sharedIndicesUV; }
 
 		public pb_SerializableObject(pb_Object pb)
 		{
 			this.vertices = pb.vertices;
-			this.uv = pb.uv;
+
+			// Make sure the mesh is valid, and in sync with current pb_Object
+			if(pb.msh == null || pb.msh.vertexCount != pb.vertexCount)
+			{
+				pb.ToMesh();
+				pb.Refresh();
+			}
+
+			this.uv = pb.msh != null ? pb.msh.uv : null;
+
 			if(pb.msh != null && pb.msh.colors != null && pb.msh.colors.Length == pb.vertexCount)
 			{
 				this.color = pb.msh.colors;
@@ -50,14 +65,34 @@ namespace ProBuilder2.UpgradeKit
 			}
 			this.faces = pb.faces;
 			this.sharedIndices = (int[][])pb.GetSharedIndices().ToArray();
-			this.sharedIndicesUV = (int[][])pb.GetSharedIndicesUV().ToArray();
+
+			PropertyInfo prop_uv = pb.GetType().GetProperty("sharedIndicesUV", BindingFlags.Instance | BindingFlags.Public);
+
+			if(prop_uv != null)
+			{
+				var val = prop_uv.GetValue(pb, null);
+
+				if(val != null)
+				{
+					pb_IntArray[] sharedUvs = (pb_IntArray[])val;
+					this.sharedIndicesUV =  (int[][])sharedUvs.ToArray();
+				}
+				else
+				{
+					this.sharedIndicesUV = new int[0][];
+				}
+			}
+			else
+			{
+				this.sharedIndicesUV = new int[0][];
+			}
 		}
 
 		public void Print()
 		{
 			Debug.Log(	"vertices: " + vertices.ToFormattedString(", ") +
 						"\nuv: " + uv.ToFormattedString(", ") +
-						"\nsharedIndices: " + ((pb_IntArray[])sharedIndices.ToPbIntArray()).ToFormattedString(", ") +
+						// "\nsharedIndices: " + ((pb_IntArray[])sharedIndices.ToPbIntArray()).ToFormattedString(", ") +
 						"\nfaces: " + faces.ToFormattedString(", ")
 						);
 		}

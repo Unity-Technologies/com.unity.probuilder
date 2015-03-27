@@ -55,7 +55,7 @@ namespace ProBuilder2.Actions
 				}
 
 				// True parameter forcibly generates UV2.  Otherwise if pbDisableAutoUV2Generation is true then UV2 wouldn't be built.
-				selected[i].GenerateUV2_2(true);
+				selected[i].GenerateUV2(true);
 			}
 
 			EditorUtility.ClearProgressBar();
