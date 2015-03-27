@@ -26,12 +26,12 @@ namespace ProBuilder2.UpgradeKit
 	public class pb_SerializableObject : ISerializable
 	{
 		// pb_Object
-		private Vector3[] 	vertices;
-		private Vector2[] 	uv;
-		private Color[]		color;
-		private pb_Face[] 	faces;
-		private int[][] 	sharedIndices;
-		private int[][] 	sharedIndicesUV;
+		[SerializeField] private Vector3[] 	vertices;
+		[SerializeField] private Vector2[] 	uv;
+		[SerializeField] private Color[]	color;
+		[SerializeField] private pb_Face[] 	faces;
+		[SerializeField] private int[][] 	sharedIndices;
+		[SerializeField] private int[][] 	sharedIndicesUV;
 
 		public Vector3[] 	GetVertices() { return vertices; }
 		public Vector2[] 	GetUVs() { return uv; }

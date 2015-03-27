@@ -44,9 +44,8 @@ namespace ProBuilder2.UpgradeKit
 
 		public static explicit operator pb_Face(pb_SerializableFace serialized)
 		{
-			pb_Face face = new pb_Face();
+			pb_Face face = new pb_Face( serialized.indices );
 
-			face.SetIndices( serialized.indices );
 			face.SetUV( serialized.uv );
 			face.SetMaterial( serialized.material);
 			face.SetSmoothingGroup( serialized.smoothingGroup );

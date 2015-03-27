@@ -66,17 +66,19 @@ namespace ProBuilder2.UpgradeKit
 
 		public static explicit operator pb_UV(pb_SerializableUV serialized)
 		{
-			return new pb_UV(
-					serialized.useWorldSpace,
-					serialized.flipU,
-					serialized.flipV,
-					serialized.swapUV,
-					serialized.fill,
-					serialized.scale,
-					serialized.offset,
-					serialized.rotation,
-					serialized.justify
-				);
+			pb_UV uv = new pb_UV();
+
+			uv.useWorldSpace	= serialized.useWorldSpace;
+			uv.flipU			= serialized.flipU;
+			uv.flipV			= serialized.flipV;
+			uv.swapUV			= serialized.swapUV;
+			uv.fill				= serialized.fill;
+			uv.scale			= serialized.scale;
+			uv.offset			= serialized.offset;
+			uv.rotation			= serialized.rotation;
+			uv.justify			= serialized.justify;
+
+			return uv;
 		}
 	}
 }
