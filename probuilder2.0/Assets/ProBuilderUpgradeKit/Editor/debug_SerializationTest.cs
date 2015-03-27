@@ -30,26 +30,37 @@ namespace ProBuilder2.UpgradeKit
 
 		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
 		{
+			/**
+			 * On older probuilder versions, SetUV also applied to mesh -
+			 * this initializes the mesh so that SetUv() doesn't get a null
+			 * ref when setting.
+			 */
+
+			pb.msh = new Mesh();
+
 			pb.SetVertices( serialized.GetVertices() );
 
-			pb.msh = new Mesh();	// on older probuilder versions, SetUV also applied to mesh - this initializes the mesh so that 
-									// SetUv() doesn't get a null ref when setting.
 			pb.msh.vertices = pb.vertices;
 
-			pb.SetUV( serialized.GetUVs() );
+			// pb.SetUV( serialized.GetUVs() );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } );
 
-			pb.SetColors( serialized.GetColors() );
+			// pb.SetColors( serialized.GetColors() );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } );
 
-			pb.SetSharedIndices( serialized.GetSharedIndices().ToPbIntArray() );
-			pb.SetSharedIndicesUV( serialized.GetSharedIndicesUV().ToPbIntArray() );
+			// pb.SetSharedIndices( serialized.GetSharedIndices().ToPbIntArray() );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
+
+			// pb.SetSharedIndicesUV( serialized.GetSharedIndicesUV().ToPbIntArray() );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
 
 			pb.SetFaces( serialized.GetFaces() );
 
-			pb.ToMesh();
-			pb.Refresh();
+			pb_UpgradeKitUtils.RebuildMesh(pb);
+
 			pb.GenerateUV2(true);
 
-			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+			pb.GetComponent<pb_Entity>().SetEntity( 0 );
 		}
 	}
 }

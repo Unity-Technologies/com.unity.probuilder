@@ -37,9 +37,12 @@ namespace ProBuilder2.UpgradeKit
 			this.smoothingGroup		= face.smoothingGroup;
 			this.uv					= face.uv;
 			this.material			= face.material;
-			this.manualUV			= face.manualUV;
-			this.elementGroup		= face.elementGroup;
-			this.textureGroup		= face.textureGroup;
+			this.manualUV  			= false;
+			pb_UpgradeKitUtils.TryGetProperty(face, "manualUV", typeof(bool), ref this.manualUV);
+			this.elementGroup		= -1;
+			pb_UpgradeKitUtils.TryGetProperty(face, "elementGroup", typeof(int), ref this.elementGroup);
+			this.textureGroup		= -1;
+			pb_UpgradeKitUtils.TryGetProperty(face, "textureGroup", typeof(int), ref this.textureGroup);
 		}
 
 		public static explicit operator pb_Face(pb_SerializableFace serialized)
@@ -51,9 +54,9 @@ namespace ProBuilder2.UpgradeKit
 			face.SetSmoothingGroup( serialized.smoothingGroup );
 			face.RebuildCaches();	// set distinct indices and edges
 
-			face.manualUV = serialized.manualUV;
-			face.elementGroup = serialized.elementGroup;
-			face.textureGroup = serialized.textureGroup;
+			pb_UpgradeKitUtils.TrySetProperty(face, "manualUV", serialized.manualUV);
+			pb_UpgradeKitUtils.TrySetProperty(face, "elementGroup", serialized.elementGroup);
+			pb_UpgradeKitUtils.TrySetProperty(face, "textureGroup", serialized.textureGroup);
 
 			return face;
 		}
@@ -89,7 +92,7 @@ namespace ProBuilder2.UpgradeKit
 			this.elementGroup 		= (int) 		info.GetValue( "elementGroup",		typeof(int));
 			this.textureGroup 		= (int) 		info.GetValue( "textureGroup",		typeof(int));
 
-			this.material = pb_Constant.DefaultMaterial;
+			this.material = pb_UpgradeKitUtils.GetDefaultMaterial();
 
 			string matName = (string)info.GetValue("material", typeof(string));
 

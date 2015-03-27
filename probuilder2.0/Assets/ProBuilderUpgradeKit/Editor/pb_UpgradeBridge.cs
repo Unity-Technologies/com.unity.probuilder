@@ -19,21 +19,6 @@ namespace ProBuilder2.EditorCommon
 namespace ProBuilder2.UpgradeKit
 {
 	/**
-	 * 2.3.1 (lowest supported upgrade path) doesn't include serialized support for colors.
-	 */
-	static class BackwardsCompatibilityExtensions
-	{
-		public static void SetColors(this pb_Object pb, Color[] colors) { }
-		public static pb_IntArray[] ToPbIntArray(this int[][] arr)
-		{
-			pb_IntArray[] pbint = new pb_IntArray[arr.Length];
-			for(int i = 0; i < arr.Length; i++)
-				pbint[i] = new pb_IntArray(arr[i]);
-			return pbint;
-		}
-	}
-
-	/**
  	 * Methods for storing data about ProBuilder objects that may be translated back into PB post-upgrade.
 	 */
 	public class pb_UpgradeBridgeEditor : Editor
@@ -198,26 +183,25 @@ namespace ProBuilder2.UpgradeKit
 		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
 		{
 			pb.SetVertices( serialized.GetVertices() );
-			pb.SetUV( serialized.GetUVs() );
-			pb.SetColors( serialized.GetColors() );
-
-			pb.SetSharedIndices( serialized.GetSharedIndices().ToPbIntArray() );
-			pb.SetSharedIndicesUV( serialized.GetSharedIndicesUV().ToPbIntArray() );
-
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
+			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
 			pb.SetFaces( serialized.GetFaces() );
 
-			pb.ToMesh();
-			pb.Refresh();
+			pb_UpgradeKitUtils.RebuildMesh(pb);
+
 			pb.GenerateUV2(true);
 
-			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+			pb.GetComponent<pb_Entity>().SetEntity( 0 );	// InitEntityWithSerializedType will set this properly
 		}
 
 		static void InitEntityWithSerializedObject(pb_Entity entity, pb_SerializableEntity serialized)
 		{
 			// SetEntityType is an extension method (editor-only) that also sets the static flags to 
 			// match the entity use.
-			entity.SetEntityType(serialized.entityType);
+
+			pb_Editor_Utility.SetEntityType( entity.entityType, entity.gameObject );
 		}
 
 		static void RemoveProBuilderScripts(pb_Object pb)
@@ -230,7 +214,7 @@ namespace ProBuilder2.UpgradeKit
 				return;
 
 			// Copy the mesh (since destroying pb_Object will take the mesh reference with it)
-			Mesh m = pbUtil.DeepCopyMesh(pb.msh);
+			Mesh m = pb_UpgradeKitUtils.DeepCopyMesh(pb.msh);
 
 			// Destroy pb_Object first, then entity.  Order is important.
 			DestroyImmediate(pb, true);

@@ -47,8 +47,7 @@ namespace ProBuilder2.UpgradeKit
 			// Make sure the mesh is valid, and in sync with current pb_Object
 			if(pb.msh == null || pb.msh.vertexCount != pb.vertexCount)
 			{
-				pb.ToMesh();
-				pb.Refresh();
+				pb_UpgradeKitUtils.RebuildMesh(pb);
 			}
 
 			this.uv = pb.msh != null ? pb.msh.uv : null;

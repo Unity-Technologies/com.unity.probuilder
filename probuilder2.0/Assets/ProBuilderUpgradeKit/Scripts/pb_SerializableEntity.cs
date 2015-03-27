@@ -11,21 +11,21 @@ namespace ProBuilder2.UpgradeKit
 	[System.Serializable()]
 	public class pb_SerializableEntity :  ISerializable
 	{
-		public EntityType entityType;
+		public int entityType;
 
 		public pb_SerializableEntity(pb_Entity entity)
 		{
-			entityType = entity.entityType;
+			entityType = (int)entity.entityType;
 		}
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("entityType", entityType, typeof(EntityType));
+			info.AddValue("entityType", entityType, typeof(int));
 		}
 
 		public pb_SerializableEntity(SerializationInfo info, StreamingContext context)
 		{
-			this.entityType = (EntityType)info.GetValue( "entityType", typeof(EntityType) );
+			this.entityType = (int)info.GetValue( "entityType", typeof(int) );
 		}
 	}
 }
