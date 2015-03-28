@@ -1,25 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.UpgradeKit
 {
 	public static class pb_UpgradeKitUtils
 	{
 #region REFLECTION
+		/**
+		 * These would be marked `internal`, but since classes compiled in the editor pass need to access them, they 
+		 * have to be public.  So just don't use these, k?
+		 */
 
-		internal static bool TryGetProperty<T>(object target, string propertyName, System.Type propertyType, ref T value)
+		 /**
+		  * Attempt to set a field by name with value.  Returns true if successful.
+		  */
+		public static bool TryGetField<T>(object target, string fieldName, ref T value)
 		{
-			return TryGetProperty(target, propertyName, propertyType, BindingFlags.Instance | BindingFlags.Public, ref value);
+			return TryGetField(target, fieldName, BindingFlags.Instance, ref value);
 		}
 
-		internal static bool TryGetProperty<T>(object target, string propertyName, System.Type propertyType, BindingFlags flags, ref T value)
+		public static bool TryGetField<T>(object target, string fieldName, BindingFlags flags, ref T value)
 		{
-			PropertyInfo property = target.GetType().GetProperty(propertyName, flags);
+			FieldInfo field = target.GetType().GetField(fieldName);
 
-			if(property != null)
+			if(field != null)
 			{
-				var val = property.GetValue(target, null);
+				var val = field.GetValue(target);
 
 				if(val != null && val is T)
 				{
@@ -31,18 +39,18 @@ namespace ProBuilder2.UpgradeKit
 			return false;
 		}
 
-		internal static bool TrySetProperty<T>(object target, string propertyName, T value)
+		public static bool TrySetField<T>(object target, string fieldName, T value)
 		{
-			return TrySetProperty(target, propertyName, BindingFlags.Instance | BindingFlags.Public, value);
+			return TrySetField(target, fieldName, BindingFlags.Instance | BindingFlags.Public, value);
 		}
 
-		internal static bool TrySetProperty<T>(object target, string propertyName, BindingFlags flags, T value)
+		public static bool TrySetField<T>(object target, string fieldName, BindingFlags flags, T value)
 		{
-			PropertyInfo property = target.GetType().GetProperty(propertyName, flags);
+			FieldInfo field = target.GetType().GetField(fieldName);
 
-			if(property != null)
+			if(field != null)
 			{
-				property.SetValue(target, value, null);
+				field.SetValue(target, value);
 				return true;
 			}
 
@@ -89,7 +97,7 @@ namespace ProBuilder2.UpgradeKit
 					return false;				
 				}
 			}
-			
+						
 			return false;				
 		}
 #endregion
@@ -169,6 +177,6 @@ namespace ProBuilder2.UpgradeKit
 
 			return m;
 		}
-	}
 #endregion
+	}
 }

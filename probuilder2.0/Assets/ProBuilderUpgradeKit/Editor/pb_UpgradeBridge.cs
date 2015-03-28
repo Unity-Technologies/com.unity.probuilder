@@ -78,25 +78,6 @@ namespace ProBuilder2.UpgradeKit
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
 						string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
 						
-						// pre-2.4.1 pb_Face would serialize material as an instance id.  past-me is an idiot.
-						// this searches for material entries and tries to replace instance ids with material
-						// names.
-						// obj = Regex.Replace(obj, MaterialFieldRegex, delegate(Match match)
-						// 	{
-						// 		string material_entry = match.ToString().Replace("\"material\": ", "").Trim();
-						// 		int instanceId = 0;
-
-						// 		if(int.TryParse(material_entry, out instanceId))
-						// 		{
-						// 			Object mat_obj = EditorUtility.InstanceIDToObject(instanceId);
-
-						// 			if(mat_obj != null)
-						// 				return "\"material\": \"" + mat_obj.name + "\"";
-						// 		}
-
-						// 		return match.ToString();
-						// 	});
-						
 						pb_SerializedComponent storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
 						storage.isPrefabInstance = isPrefabInstance;
 
@@ -150,10 +131,10 @@ namespace ProBuilder2.UpgradeKit
 						// 	PrefabUtility.ReconnectToLastPrefab(ser.gameObject);
 
 						pb_Object pb = ser.gameObject.GetComponent<pb_Object>() ?? ser.gameObject.AddComponent<pb_Object>();
-						InitObjectWithSerializedObject(pb, serializedObject);
+						pb_EditorUpgradeKitUtils.InitObjectWithSerializedObject(pb, serializedObject);
 
 						pb_Entity ent = ser.gameObject.GetComponent<pb_Entity>() ?? ser.gameObject.AddComponent<pb_Entity>();
-						InitEntityWithSerializedObject(ent, serializedEntity);
+						pb_EditorUpgradeKitUtils.InitEntityWithSerializedObject(ent, serializedEntity);
 
 						PrefabUtility.RecordPrefabInstancePropertyModifications(pb);
 
@@ -176,56 +157,6 @@ namespace ProBuilder2.UpgradeKit
 
 				EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + success + " / " + (int)len + " objects.", "Okay");
 			}
-		}
-
-		/**
-		 * Initialize a pb_Object component with data from a pb_SerializableObject.
-		 * If you are initializing a completely new pb_Object, use pb_Object.InitWithSerializableObject() instead.
-		 */
-		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
-		{
-			/**
-			 * On older probuilder versions, SetUV also applied to mesh -
-			 * this initializes the mesh so that SetUv() doesn't get a null
-			 * ref when setting.
-			 */
-
-			pb.msh = new Mesh();
-
-			if(!pb.gameObject.GetComponent<MeshRenderer>())
-				pb.gameObject.AddComponent<MeshRenderer>();
-
-			pb.SetVertices( serialized.GetVertices() );
-
-			pb.msh.vertices = pb.vertices;
-
-			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } ))
-				pb.msh.uv = serialized.GetUVs();
-
-			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } ))
-				pb.msh.colors = serialized.GetColors();
-
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
-
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
-
-			pb.SetFaces( serialized.GetFaces() );
-
-			pb_UpgradeKitUtils.RebuildMesh(pb);
-
-			pb.GenerateUV2(true);
-
-			pb_Entity entity = pb.GetComponent<pb_Entity>();
-			if(entity == null) entity = pb.gameObject.AddComponent<pb_Entity>();
-			entity.SetEntity( 0 );
-		}
-
-		static void InitEntityWithSerializedObject(pb_Entity entity, pb_SerializableEntity serialized)
-		{
-			// SetEntityType is an extension method (editor-only) that also sets the static flags to 
-			// match the entity use.
-
-			pb_Editor_Utility.SetEntityType( entity.entityType, entity.gameObject );
 		}
 
 		static void RemoveProBuilderScripts(pb_Object pb)

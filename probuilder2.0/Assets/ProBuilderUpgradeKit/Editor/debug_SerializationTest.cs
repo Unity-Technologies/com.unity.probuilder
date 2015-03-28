@@ -8,62 +8,32 @@ namespace ProBuilder2.UpgradeKit
 {
 	public class debug_SerializationTest : Editor {
 
-		[MenuItem("Tools/SERIALIZE")]
+		[MenuItem("Tools/SERIALIZE TEST")]
 		static void tdsotidsj()
 		{
 			foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 			{
-				pb_SerializableObject ser = new pb_SerializableObject(pb);
+				pb_SerializableObject pbobj = new pb_SerializableObject(pb);
+				pb_SerializableEntity entity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
 					
-				string json = JsonConvert.SerializeObject(ser, Formatting.Indented);
-				
-				Debug.Log(json);
+				string obj = JsonConvert.SerializeObject(pbobj, Formatting.Indented);
+				string ent = JsonConvert.SerializeObject(entity, Formatting.Indented);
 				
 				GameObject go = new GameObject();
+
 				go.transform.position = pb.transform.position + Vector3.right * 2;
 
 				pb_Object pb2 = go.AddComponent<pb_Object>();
-				InitObjectWithSerializedObject(pb2, ser);
+				pb_Entity et2 = go.GetComponent<pb_Entity>();	///< pb_Object [requires] component pb_Entity.
+
+				pb_SerializableObject deserialized_object = (pb_SerializableObject) JsonConvert.DeserializeObject<pb_SerializableObject>(obj);
+				pb_SerializableEntity deserialized_entity = (pb_SerializableEntity) JsonConvert.DeserializeObject<pb_SerializableEntity>(ent);
+
+				pb_EditorUpgradeKitUtils.InitObjectWithSerializedObject(pb2, deserialized_object);
+				pb_EditorUpgradeKitUtils.InitEntityWithSerializedObject(et2, deserialized_entity);
+
+				pb2.GenerateUV2(true);
 			}
-		}
-
-
-		static void InitObjectWithSerializedObject(pb_Object pb, pb_SerializableObject serialized)
-		{
-			/**
-			 * On older probuilder versions, SetUV also applied to mesh -
-			 * this initializes the mesh so that SetUv() doesn't get a null
-			 * ref when setting.
-			 */
-
-			pb.msh = new Mesh();
-
-			if(!pb.gameObject.GetComponent<MeshRenderer>())
-				pb.gameObject.AddComponent<MeshRenderer>();
-
-			pb.SetVertices( serialized.GetVertices() );
-
-			pb.msh.vertices = pb.vertices;
-
-			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetUV", new object[] { (object)serialized.GetUVs() } ))
-				pb.msh.uv = serialized.GetUVs();
-
-			if(!pb_UpgradeKitUtils.InvokeFunction(pb, "SetColors", new object[] { (object)serialized.GetColors() } ))
-				pb.msh.colors = serialized.GetColors();
-
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndices", new object[] { (object)serialized.GetSharedIndices().ToPbIntArray() } );
-
-			pb_UpgradeKitUtils.InvokeFunction(pb, "SetSharedIndicesUV", new object[] { (object)serialized.GetSharedIndicesUV().ToPbIntArray() } );
-
-			pb.SetFaces( serialized.GetFaces() );
-
-			pb_UpgradeKitUtils.RebuildMesh(pb);
-
-			pb.GenerateUV2(true);
-
-			pb_Entity entity = pb.GetComponent<pb_Entity>();
-			if(entity == null) entity = pb.gameObject.AddComponent<pb_Entity>();
-			entity.SetEntity( 0 );
 		}
 	}
 }
