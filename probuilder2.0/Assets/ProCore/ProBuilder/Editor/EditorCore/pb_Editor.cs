@@ -3154,47 +3154,6 @@ public class pb_Editor : EditorWindow
 			Internal_UpdateSelectionFast();
 	}
 
-	/**
-	 * Used to catch prefab modifications that otherwise wouldn't be registered on the usual 'Awake' verify.
-	 */
-	private void OnHierarchyChange()
-	{
-		#if PB_DEBUG
-		profiler.BeginSample("OnHierarchyChange");
-		#endif
-
-		bool prefabModified = false;
-
-		if(!EditorApplication.isPlaying && !movingVertices)
-		{
-			foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-			{
-				/**
-				 * If it's a prefab instance, reconstruct submesh structure.
-				 */
-				if(	(PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance ||
-					 PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.Prefab ) )
-				// && System.Array.Exists(PrefabUtility.GetPropertyModifications(pb.gameObject), x => x.target is MeshRenderer || x.target is MeshFilter) )
-				{
-					prefabModified = true;
-					pb.ToMesh();
-					pb.Refresh();
-					pb.Finalize();
-				}
-			}
-		}
-
-		if(prefabModified)
-		{
-			UpdateSelection(true);
-			SceneView.RepaintAll();
-		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
-	}
-
 	private void OnSelectionChange()
 	{
 		nearestEdge = null;
