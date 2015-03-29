@@ -184,6 +184,12 @@ namespace ProBuilder2.UpgradeKit
 					DestroyImmediate( ser, true );
 				}
 
+				#if UNITY_5
+				EditorUtility.UnloadUnusedAssetsImmediate();
+				#else
+				EditorUtility.UnloadUnusedAssets();
+				#endif
+
 				EditorUtility.ClearProgressBar();
 
 				EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + success + " / " + (int)len + " objects.", "Okay");
@@ -218,7 +224,7 @@ namespace ProBuilder2.UpgradeKit
 		/**
 		 * Returns all prefabs that reference pb_Object
 		 */
-		static T[] FindPrefabsWithComponent<T>()
+		static T[] FindPrefabsWithComponent<T>() where T : Component
 		{
 			List<T> components = new List<T>();
 
