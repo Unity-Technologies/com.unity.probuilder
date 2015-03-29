@@ -66,7 +66,7 @@ namespace ProBuilder2.UpgradeKit
 
 					EditorUtility.DisplayProgressBar("Serialize ProBuilder Data", "Object: " + pb.name, success / len);
 
-					try
+					// try
 					{
 						bool isPrefabInstance = IsPrefabInstance(pb.gameObject);
 
@@ -77,6 +77,7 @@ namespace ProBuilder2.UpgradeKit
 						pb_SerializableEntity serializedEntity = new pb_SerializableEntity(pb.GetComponent<pb_Entity>());
 
 						string obj = JsonConvert.SerializeObject(serializedObject, Formatting.Indented);
+						Debug.Log(obj);
 						string entity = JsonConvert.SerializeObject(serializedEntity, Formatting.Indented);
 						
 						pb_SerializedComponent storage = pb.gameObject.AddComponent<pb_SerializedComponent>();
@@ -89,12 +90,12 @@ namespace ProBuilder2.UpgradeKit
 
 						success++;
 					}
-					catch (System.Exception e)
-					{
-						if( IsPrefabRoot(pb.gameObject) )
-							Debug.Log("Failed serializing: " + pb.name + " DGAF");
-						Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
-					}
+					// catch (System.Exception e)
+					// {
+					// 	if( IsPrefabRoot(pb.gameObject) )
+					// 		Debug.Log("Failed serializing: " + pb.name + " DGAF");
+					// 	Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
+					// }
 				}
 
 				EditorUtility.ClearProgressBar();
@@ -124,7 +125,7 @@ namespace ProBuilder2.UpgradeKit
 
 					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, c++ / len);
 
-					try
+					// try
 					{
 						pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
 						pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
@@ -166,20 +167,20 @@ namespace ProBuilder2.UpgradeKit
 						}
 
 						// Check if the object is a prefab root, and if so, mark the mesh with appropriate hideflags
-						if(pb && pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+						if(pb && IsPrefabRoot(pb.gameObject))
 							pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 						success++;
 					}
-					catch(System.Exception e)
-					{
-						if(ser != null)
-							Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
-						else
-							Debug.LogError("Failed deserializing object\n" + e.ToString());
+					// catch(System.Exception e)
+					// {
+					// 	if(ser != null)
+					// 		Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+					// 	else
+					// 		Debug.LogError("Failed deserializing object\n" + e.ToString());
 
-						continue;
-					}
+					// 	continue;
+					// }
 
 					DestroyImmediate( ser, true );
 				}

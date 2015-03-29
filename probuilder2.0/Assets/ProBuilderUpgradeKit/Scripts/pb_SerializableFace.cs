@@ -69,7 +69,7 @@ namespace ProBuilder2.UpgradeKit
 		{
 			info.AddValue("indices",			indices, 					typeof(int[]));
 			info.AddValue("distinctIndices", 	distinctIndices, 			typeof(int[]));
-			info.AddValue("edges", 				edges, 						typeof(pb_Edge[]));
+			info.AddValue("edges", 				System.Array.ConvertAll(edges, x => new pb_SerializableEdge(x)), typeof(pb_SerializableEdge[]));
 			info.AddValue("smoothingGroup",	 	smoothingGroup, 			typeof(int));
 			info.AddValue("uv",	 				new pb_SerializableUV(uv),	typeof(pb_SerializableUV));
 			info.AddValue("material",			material.name,				typeof(string));
@@ -83,7 +83,8 @@ namespace ProBuilder2.UpgradeKit
 		{
 			this.indices 			= (int[])		info.GetValue( "indices",			typeof(int[]));
 			this.distinctIndices 	= (int[])		info.GetValue( "distinctIndices",	typeof(int[]));
-			this.edges 				= (pb_Edge[])	info.GetValue( "edges",				typeof(pb_Edge[]));
+			pb_SerializableEdge[] sedges = (pb_SerializableEdge[]) info.GetValue("edges", typeof(pb_SerializableEdge[]));
+			this.edges 				= System.Array.ConvertAll(sedges, x => (pb_Edge)x);
 			this.smoothingGroup 	= (int) 		info.GetValue( "smoothingGroup",	typeof(int));
 			pb_SerializableUV suv = (pb_SerializableUV) info.GetValue("uv", typeof(pb_SerializableUV));
 			this.uv = (pb_UV) suv;

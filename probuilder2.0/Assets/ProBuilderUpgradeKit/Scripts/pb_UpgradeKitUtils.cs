@@ -64,7 +64,7 @@ namespace ProBuilder2.UpgradeKit
 		 */
 		public static void RebuildMesh(pb_Object pb)
 		{
-			if( InvokeFunction(pb, "ToMesh", null) )
+			if( InvokeFunction(pb, "ToMesh", new System.Type[0] {}, null) )
 			{
 				InvokeFunction(pb, "Refresh", null);
 			}
@@ -187,9 +187,12 @@ namespace ProBuilder2.UpgradeKit
 			if(lhs == null || rhs == null)
 				return false;
 
+			Color[] lhs_colors = lhs.msh != null ? lhs.msh.colors : new Color[lhs.vertexCount];
+			Color[] rhs_colors = rhs.msh != null ? rhs.msh.colors : new Color[rhs.vertexCount];
+
 			return 	lhs.vertices.SequenceEqual(rhs.vertices) && 
 					lhs.uv.SequenceEqual(rhs.uv) &&
-					lhs.colors.SequenceEqual(rhs.colors) &&
+					lhs_colors.SequenceEqual(rhs_colors) &&
 					FacesAreEqual(lhs.faces, rhs.faces);
 		}
 
