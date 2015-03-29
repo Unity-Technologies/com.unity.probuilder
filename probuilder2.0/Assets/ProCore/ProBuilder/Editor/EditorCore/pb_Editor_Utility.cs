@@ -22,7 +22,7 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public static class pb_Editor_Utility
 	{
-	#region NOTIFICATION MANAGER
+#region NOTIFICATION MANAGER
 
 		const float TIMER_DISPLAY_TIME = 1f;
 		private static float notifTimer = 0f;
@@ -73,9 +73,9 @@ namespace ProBuilder2.EditorCommon
 				RemoveNotification(notifWindow);
 			}
 		}
-	#endregion
+#endregion
 
-	#region OBJ EXPORT
+#region OBJ EXPORT
 
 		public static string ExportOBJ(pb_Object[] pb)
 		{
@@ -105,9 +105,9 @@ namespace ProBuilder2.EditorCommon
 			}
 			return path;
 		}
-	#endregion
+#endregion
 
-	#region Screenshots
+#region Screenshots
 
 		/**
 		 * Open a save file dialog, and save the image to that path.
@@ -131,9 +131,28 @@ namespace ProBuilder2.EditorCommon
 
 			AssetDatabase.Refresh();
 		}
-	#endregion
+#endregion
 
-	#region ENTITY
+#region PREFAB
+
+		/**
+		 * Returns true if this object is a prefab instanced in the scene.
+		 */
+		public static bool IsPrefabInstance(GameObject go)
+		{
+			return PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance;
+		}
+
+		/**
+		 * Returns true if this object is a prefab in the Project view.
+		 */
+		public static bool IsPrefabRoot(GameObject go)
+		{
+			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
+		}
+#endregion
+
+#region ENTITY
 
 		/**
 		 *	\brief Sets the EntityType for the passed gameObject. 
@@ -291,9 +310,9 @@ namespace ProBuilder2.EditorCommon
 
 			SetEditorFlags(editorFlags, target);
 		}
-	#endregion
+#endregion
 
-	#region EDITOR
+#region EDITOR
 
 		/**
 		 * Ensure that this object has a valid mesh reference, and the geometry is 
@@ -324,7 +343,14 @@ namespace ProBuilder2.EditorCommon
 					catch(System.Exception e) {}
 
 					if(go == null)
+					{
 						GameObject.DestroyImmediate(oldMesh);
+					}
+				}
+				else
+				{
+					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 				}
 
 				pb.Finalize();
@@ -422,6 +448,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			GetSceneView().Focus();
 		}
-	#endregion
+#endregion
 	}
 }

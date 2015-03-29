@@ -8,7 +8,7 @@ namespace ProBuilder2.UpgradeKit
 {
 	public class debug_SerializationTest : Editor {
 
-		[MenuItem("Tools/SERIALIZE TEST")]
+		// [MenuItem("Tools/SERIALIZE TEST")]
 		static void tdsotidsj()
 		{
 			foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())

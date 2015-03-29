@@ -68,8 +68,15 @@ public class pb_Editor_Graphics
 		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
 		
+		Debug.Log("Create: " + selectionObject.name);
+		Debug.Log("Create: " + wireframeObject.name);
+		
 		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+
+		Debug.Log("Create: " + selectionObject.name + " MESH");
+		Debug.Log("Create: " + wireframeObject.name + " MESH");
+
 
 		selectionObject.GetComponent<MeshRenderer>().enabled = false;
 		wireframeObject.GetComponent<MeshRenderer>().enabled = false;
@@ -94,10 +101,16 @@ public class pb_Editor_Graphics
 	static void SetMaterial(EditLevel el, SelectMode sm)
 	{
 		if(selectionMaterial != null)
+		{
+			Debug.Log("Delete: " + selectionMaterial.name);
 			GameObject.DestroyImmediate(selectionMaterial);
+		}
 
 		if(wireframeMaterial != null)
+		{
+			Debug.Log("Delete: " + wireframeMaterial.name);
 			GameObject.DestroyImmediate(wireframeMaterial);
+		}
 
 		// Always generate the wireframe
 		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
@@ -111,13 +124,16 @@ public class pb_Editor_Graphics
 				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 				selectionMaterial = new Material(Shader.Find(VERT_SHADER));
 				selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
+				Debug.Log("Create: " + "VERTEX_BILLBOARD_MATERIAL");
 				selectionMaterial.SetColor("_Color", vertexDotColor);
 				selectionMaterial.SetFloat("_Scale", 3);
+				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 				break;
 
 			default:
 				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
 				selectionMaterial.name = "FACE_SELECTION_MATERIAL";
+				Debug.Log("Create: " + "FACE_SELECTION_MATERIAL");
 				selectionMaterial.SetColor("_Color", faceSelectionColor);
 				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 				break;
@@ -149,11 +165,18 @@ public class pb_Editor_Graphics
 			Material mat = go.GetComponent<MeshRenderer>().sharedMaterial;
 
 			if(msh != null)
+			{
+				Debug.Log("Delete: " + msh.name);
 				GameObject.DestroyImmediate(msh);
+			}
 
 			if(mat != null)
+			{
+				Debug.Log("Delete: " + mat.name);
 				GameObject.DestroyImmediate(mat);
+			}
 
+			Debug.Log("Delete: " + go.name);
 			GameObject.DestroyImmediate(go);
 
 			go = GameObject.Find(InName);

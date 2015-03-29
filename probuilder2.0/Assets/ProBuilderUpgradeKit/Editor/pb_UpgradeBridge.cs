@@ -26,10 +26,11 @@ namespace ProBuilder2.UpgradeKit
 		const string MaterialFieldRegex = "\"material\": [\\-0-9]{2,20}";
 
 		[MenuItem("Tools/ProBuilder/Upgrade/Prepare Scene for Upgrade")]
+		[MenuItem("Tools/SERIALIZE SCENE")]
 		static void MenuSerialize()
 		{
 			pb_Object[] objects = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
-			pb_Object[] prefabs = FindProBuilderPrefabs();
+			pb_Object[] prefabs = FindPrefabsWithComponent<pb_Object>();
 
 			objects = pbUtil.Concat(objects, prefabs).Distinct().ToArray();
 
@@ -103,6 +104,7 @@ namespace ProBuilder2.UpgradeKit
 		}
 
 		[MenuItem("Tools/ProBuilder/Upgrade/Re-attach ProBuilder Scripts")]
+		[MenuItem("Tools/UN - SERIALIZE SCENE")]
 		static void MenuDeserialize()
 		{
 			pb_SerializedComponent[] serializedComponents = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
@@ -187,31 +189,31 @@ namespace ProBuilder2.UpgradeKit
 		/**
 		 * Returns all prefabs that reference pb_Object
 		 */
-		static pb_Object[] FindProBuilderPrefabs()
+		static T[] FindPrefabsWithComponent<T>()
 		{
-			List<pb_Object> pbObjects = new List<pb_Object>();
+			List<T> components = new List<T>();
 
-			// t:pb_Object doesn't return anything, presumably because the top level asset is a gameObject.
+			// t:T doesn't return anything, presumably because the top level asset is a gameObject.
 			foreach(string cheese in AssetDatabase.FindAssets("t:GameObject"))
 			{
 				Object[] prefabs = (Object[])AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GUIDToAssetPath(cheese));
 
 				foreach(GameObject go in prefabs.Where(x => x is GameObject))
 				{
-					pb_Object pb = go.GetComponent<pb_Object>();
+					T pb = go.GetComponent<T>();
 
-					if(pb != null) pbObjects.Add(pb);
+					if(pb != null) components.Add(pb);
 
-					pb_Object[] all = go.GetComponentsInChildren<pb_Object>();
+					T[] all = go.GetComponentsInChildren<T>();
 
-					foreach(pb_Object i in all)
+					foreach(T i in all)
 					{
-						pbObjects.Add(i);
+						components.Add(i);
 					}
 				}
 			}
 
-			return pbObjects.ToArray();
+			return components.ToArray();
 		}
 
 		static bool IsPrefabInstance(GameObject go)
