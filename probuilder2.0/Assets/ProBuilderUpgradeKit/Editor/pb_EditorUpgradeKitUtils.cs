@@ -18,7 +18,7 @@ namespace ProBuilder2.UpgradeKit
 			 * On older probuilder versions, the Set() methods also applied to mesh.
 			 * To avoid errors, initialize the mesh and renderer components.
 			 */
-			pb.msh = new Mesh();
+			pb.msh = pb.msh ?? new Mesh();
 
 			if(!pb.gameObject.GetComponent<MeshRenderer>())
 				pb.gameObject.AddComponent<MeshRenderer>();

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using System.Linq;
 using ProBuilder2.Common;
 
 namespace ProBuilder2.UpgradeKit
@@ -176,6 +177,42 @@ namespace ProBuilder2.UpgradeKit
 			m.colors32 = c;
 
 			return m;
+		}
+
+		/**
+		 * Compare vertices, uvs, and normals of a mesh.
+		 */
+		public static bool AreEqual(pb_Object lhs, pb_Object rhs)
+		{
+			if(lhs == null || rhs == null)
+				return false;
+
+			return 	lhs.vertices.SequenceEqual(rhs.vertices) && 
+					lhs.uv.SequenceEqual(rhs.uv) &&
+					lhs.colors.SequenceEqual(rhs.colors) &&
+					FacesAreEqual(lhs.faces, rhs.faces);
+		}
+
+		/**
+		 * Compare values of faces.
+		 */
+		public static bool FacesAreEqual(pb_Face[] lhs, pb_Face[] rhs)
+		{
+			if(lhs.Length != rhs.Length)
+				return false;
+
+			for(int i = 0; i < lhs.Length; i++)
+			{
+				if( !lhs[i].indices.SequenceEqual(rhs[i].indices) || 
+					lhs[i].smoothingGroup != rhs[i].smoothingGroup ||
+					lhs[i].textureGroup != rhs[i].textureGroup ||
+					lhs[i].elementGroup != rhs[i].elementGroup ||
+					lhs[i].manualUV != rhs[i].manualUV ||
+					lhs[i].material != rhs[i].material)
+					return false;
+			}
+
+			return true;
 		}
 #endregion
 	}

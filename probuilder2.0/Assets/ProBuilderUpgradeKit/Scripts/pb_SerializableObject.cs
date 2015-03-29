@@ -3,6 +3,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
+using System.Linq;
 using ProBuilder2.Common;
 using UnityEngine;
 
@@ -94,6 +95,14 @@ namespace ProBuilder2.UpgradeKit
 						// "\nsharedIndices: " + ((pb_IntArray[])sharedIndices.ToPbIntArray()).ToFormattedString(", ") +
 						"\nfaces: " + faces.ToFormattedString(", ")
 						);
+		}
+
+		public bool Equals(pb_SerializableObject other)
+		{
+			return vertices.SequenceEqual(other.vertices) &&
+					uv.SequenceEqual(other.uv) && 
+					color.SequenceEqual(other.color) &&
+					pb_UpgradeKitUtils.FacesAreEqual(faces, other.faces);
 		}
 
 		// OnSerialize

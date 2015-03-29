@@ -10,6 +10,8 @@ namespace ProBuilder2.UpgradeKit
 	[CustomEditor(typeof(pb_SerializedComponent))]
 	public class pb_SerializedComponentEditor : Editor
 	{
+		const int MAX_STRING_LENGTH = 2048;
+
 		bool showObject = false;
 		bool showEntity = false;
 
@@ -22,6 +24,14 @@ namespace ProBuilder2.UpgradeKit
 			ser = (pb_SerializedComponent)target;
 		}
 
+		string Truncate(string str)
+		{
+			if( str.Length > MAX_STRING_LENGTH)
+				return str.Substring(0, MAX_STRING_LENGTH - 7) + "\n...etc";
+			else
+				return str;
+		}
+
 		public override void OnInspectorGUI()
 		{
 			showObject = EditorGUILayout.Foldout(showObject, "pb_Object");
@@ -29,7 +39,7 @@ namespace ProBuilder2.UpgradeKit
 			if(showObject)
 			{
 				objScroll = EditorGUILayout.BeginScrollView(objScroll);
-					GUILayout.Label(ser.GetObjectData(), EditorStyles.wordWrappedLabel);
+					GUILayout.Label(Truncate(ser.GetObjectData()), EditorStyles.wordWrappedLabel);
 				EditorGUILayout.EndScrollView();
 			}
 
@@ -41,6 +51,8 @@ namespace ProBuilder2.UpgradeKit
 					GUILayout.Label(ser.GetEntityData(), EditorStyles.wordWrappedLabel);
 				EditorGUILayout.EndScrollView();
 			}
+
+			GUILayout.Label("Is Prefab Instance: " + ser.isPrefabInstance);
 		}
 	}
 }

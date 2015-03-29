@@ -124,13 +124,10 @@ namespace ProBuilder2.UpgradeKit
 
 					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, c++ / len);
 
-					// try
+					try
 					{
 						pb_SerializableObject serializedObject = JsonConvert.DeserializeObject<pb_SerializableObject>(ser.GetObjectData());
 						pb_SerializableEntity serializedEntity = JsonConvert.DeserializeObject<pb_SerializableEntity>(ser.GetEntityData());
-
-						// if( ser.isPrefabInstance )
-						// 	PrefabUtility.ReconnectToLastPrefab(ser.gameObject);
 
 						pb_Object pb = ser.gameObject.GetComponent<pb_Object>() ?? ser.gameObject.AddComponent<pb_Object>();
 						pb_EditorUpgradeKitUtils.InitObjectWithSerializedObject(pb, serializedObject);
@@ -138,19 +135,51 @@ namespace ProBuilder2.UpgradeKit
 						pb_Entity ent = ser.gameObject.GetComponent<pb_Entity>() ?? ser.gameObject.AddComponent<pb_Entity>();
 						pb_EditorUpgradeKitUtils.InitEntityWithSerializedObject(ent, serializedEntity);
 
-						PrefabUtility.RecordPrefabInstancePropertyModifications(pb);
+						// Check if the instance is equal to the prefab (vertex and uv changes aren't recorded as propertymodifications)
+						// If it is, reconnect the prefab to the root.
+						if( ser.isPrefabInstance )
+						{
+							Object parent = PrefabUtility.GetPrefabParent(ser.gameObject);
+
+							if(parent != null)
+							{
+								pb_Object parent_pb = ((GameObject)parent).GetComponent<pb_Object>();
+
+								if(parent_pb != null)
+								{
+									if( pb_UpgradeKitUtils.AreEqual(parent_pb, pb) )
+										PrefabUtility.ReconnectToLastPrefab(ser.gameObject);
+								}
+								else
+								{
+									pb_SerializedComponent parent_ser_component = ((GameObject)parent).GetComponent<pb_SerializedComponent>();
+
+									if( parent_ser_component != null )
+									{
+										if( parent_ser_component.GetObjectData().Equals(serializedObject) )
+										{
+											PrefabUtility.ReconnectToLastPrefab(ser.gameObject);
+										}
+									}
+								}
+							}
+						}
+
+						// Check if the object is a prefab root, and if so, mark the mesh with appropriate hideflags
+						if(pb && pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+							pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 						success++;
 					}
-					// catch(System.Exception e)
-					// {
-					// 	if(ser != null)
-					// 		Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
-					// 	else
-					// 		Debug.LogError("Failed deserializing object\n" + e.ToString());
+					catch(System.Exception e)
+					{
+						if(ser != null)
+							Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+						else
+							Debug.LogError("Failed deserializing object\n" + e.ToString());
 
-					// 	continue;
-					// }
+						continue;
+					}
 
 					DestroyImmediate( ser, true );
 				}
