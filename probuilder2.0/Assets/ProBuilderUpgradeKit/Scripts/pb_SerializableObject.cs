@@ -7,6 +7,9 @@ using System.Linq;
 using ProBuilder2.Common;
 using UnityEngine;
 
+namespace ProBuilder2.Common
+{}
+	
 /**
  *
  */

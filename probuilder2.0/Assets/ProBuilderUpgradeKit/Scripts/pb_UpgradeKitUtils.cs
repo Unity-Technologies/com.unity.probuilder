@@ -190,8 +190,11 @@ namespace ProBuilder2.UpgradeKit
 			Color[] lhs_colors = lhs.msh != null ? lhs.msh.colors : new Color[lhs.vertexCount];
 			Color[] rhs_colors = rhs.msh != null ? rhs.msh.colors : new Color[rhs.vertexCount];
 
+			Vector2[] lhs_uv = lhs.msh != null ? lhs.msh.uv : new Vector2[lhs.vertexCount];
+			Vector2[] rhs_uv = rhs.msh != null ? rhs.msh.uv : new Vector2[rhs.vertexCount];
+
 			return 	lhs.vertices.SequenceEqual(rhs.vertices) && 
-					lhs.uv.SequenceEqual(rhs.uv) &&
+					lhs_uv.SequenceEqual(rhs_uv) &&
 					lhs_colors.SequenceEqual(rhs_colors) &&
 					FacesAreEqual(lhs.faces, rhs.faces);
 		}
@@ -206,11 +209,22 @@ namespace ProBuilder2.UpgradeKit
 
 			for(int i = 0; i < lhs.Length; i++)
 			{
+				bool 	lhs_textureGroup = false, lhs_elementGroup = false, lhs_manualUV = false,
+						rhs_textureGroup = false, rhs_elementGroup = false, rhs_manualUV = false;
+
+				TryGetField(lhs[i], "textureGroup", ref lhs_textureGroup);
+				TryGetField(lhs[i], "elementGroup", ref lhs_elementGroup);
+				TryGetField(lhs[i], "manualUV", ref lhs_manualUV);
+
+				TryGetField(rhs[i], "textureGroup", ref rhs_textureGroup);
+				TryGetField(rhs[i], "elementGroup", ref rhs_elementGroup);
+				TryGetField(rhs[i], "manualUV", ref rhs_manualUV);
+
 				if( !lhs[i].indices.SequenceEqual(rhs[i].indices) || 
 					lhs[i].smoothingGroup != rhs[i].smoothingGroup ||
-					lhs[i].textureGroup != rhs[i].textureGroup ||
-					lhs[i].elementGroup != rhs[i].elementGroup ||
-					lhs[i].manualUV != rhs[i].manualUV ||
+					lhs_textureGroup != rhs_textureGroup ||
+					lhs_elementGroup != rhs_elementGroup ||
+					lhs_manualUV != rhs_manualUV ||
 					lhs[i].material != rhs[i].material)
 					return false;
 			}

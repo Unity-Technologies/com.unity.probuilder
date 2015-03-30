@@ -10,12 +10,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ProBuilder2.EditorCommon;
 
-/**
- * EditorCommon exists 2.4+, so this allows us to include the namespace on earlier versions.
- */
 namespace ProBuilder2.EditorCommon
 {}
 
+/**
+ *	UpgradeKit namespace contains utilities for serializing ProBuilder components to JSON and re-initializing new components.
+ *	ProBuilder 2.4.0f4 is the earliest supported version.
+ */
 namespace ProBuilder2.UpgradeKit
 {
 	/**
@@ -29,7 +30,7 @@ namespace ProBuilder2.UpgradeKit
 		[MenuItem("Tools/SERIALIZE SCENE")]
 		static void MenuSerialize()
 		{
-			pb_Object[] objects = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
+			pb_Object[] objects = ((pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object))).Where(x => x.gameObject.hideFlags == HideFlags.None).ToArray();
 			pb_Object[] prefabs = FindPrefabsWithComponent<pb_Object>();
 
 			objects = pbUtil.Concat(objects, prefabs).Distinct().ToArray();
@@ -108,7 +109,10 @@ namespace ProBuilder2.UpgradeKit
 		[MenuItem("Tools/UN - SERIALIZE SCENE")]
 		static void MenuDeserialize()
 		{
-			pb_SerializedComponent[] serializedComponents = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
+			pb_SerializedComponent[] scene = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
+			pb_SerializedComponent[] prefabs = FindPrefabsWithComponent<pb_SerializedComponent>();
+
+			pb_SerializedComponent[] serializedComponents = pbUtil.Concat(scene, prefabs).Distinct().ToArray();
 
 			if( serializedComponents.Length < 1 )
 			{
