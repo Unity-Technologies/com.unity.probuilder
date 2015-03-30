@@ -35,7 +35,8 @@ namespace ProBuilder2.UpgradeKit
 
 			objects = pbUtil.Concat(objects, prefabs).Distinct().ToArray();
 
-			MakeSerializedComponent(objects);		
+			MakeSerializedComponent(objects);
+
 		}
 
 		static void MakeSerializedComponent(pb_Object[] objects)
@@ -93,12 +94,19 @@ namespace ProBuilder2.UpgradeKit
 					catch (System.Exception e)
 					{
 						if( IsPrefabRoot(pb.gameObject) )
-							Debug.Log("Failed serializing: " + pb.name + " DGAF");
-						Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
+							Debug.LogWarning("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object is a prefab parent, and not in the current scene.  If this prefab is not used in another scene, it may not be safely saved.  To fix this warning, please place an instance of this prefab in a scene and run the \"Prepare Scene for Upgrade\" menu item");
+						else
+							Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
 					}
 				}
 
 				EditorUtility.ClearProgressBar();
+
+				#if UNITY_5
+				EditorUtility.UnloadUnusedAssetsImmediate();
+				#else
+				EditorUtility.UnloadUnusedAssets();
+				#endif
 
 				if( EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized " + success + " / " + (int)len + " objects.", "Save Scene", "Don't Save"))
 					EditorApplication.SaveScene("", false);
