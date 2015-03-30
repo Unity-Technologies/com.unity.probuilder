@@ -26,8 +26,8 @@ namespace ProBuilder2.UpgradeKit
 	{
 		const string MaterialFieldRegex = "\"material\": [\\-0-9]{2,20}";
 
-		[MenuItem("Tools/ProBuilder/Upgrade/Prepare Scene for Upgrade")]
-		[MenuItem("Tools/SERIALIZE SCENE")]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade")]
+		// [MenuItem("Tools/SERIALIZE SCENE")]
 		static void MenuSerialize()
 		{
 			pb_Object[] objects = ((pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object))).Where(x => x.gameObject.hideFlags == HideFlags.None).ToArray();
@@ -113,8 +113,8 @@ namespace ProBuilder2.UpgradeKit
 			}			
 		}
 
-		[MenuItem("Tools/ProBuilder/Upgrade/Re-attach ProBuilder Scripts")]
-		[MenuItem("Tools/UN - SERIALIZE SCENE")]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts")]
+		// [MenuItem("Tools/UN - SERIALIZE SCENE")]
 		static void MenuDeserialize()
 		{
 			pb_SerializedComponent[] scene = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
