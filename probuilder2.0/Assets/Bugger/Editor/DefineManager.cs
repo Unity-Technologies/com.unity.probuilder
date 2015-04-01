@@ -42,6 +42,11 @@ public class DefineManager : EditorWindow
 
 	void OnEnable()
 	{
+		ParseDefineFiles();
+	}
+
+	void ParseDefineFiles()
+	{
 		csDefines = ParseRspFile(CSHARP_PATH);
 		usDefines = ParseRspFile(UNITYSCRIPT_PATH);
 		booDefines = ParseRspFile(BOO_PATH);
@@ -75,7 +80,10 @@ public class DefineManager : EditorWindow
 			}
 
 			if(GUILayout.Button( ((Compiler)i).ToString(), st))
+			{
 				compiler = (Compiler)i;
+				ParseDefineFiles();
+			}
 
 			GUI.backgroundColor = oldColor;
 		}
@@ -133,7 +141,7 @@ public class DefineManager : EditorWindow
 			{
 				SetDefines(compiler, defs);
 				AssetDatabase.ImportAsset("Assets/Bugger/Editor/DefineManager.cs", ImportAssetOptions.ForceUpdate);
-				OnEnable();
+				ParseDefineFiles();
 			}
 		
 			GUI.backgroundColor = Color.red;
@@ -142,7 +150,7 @@ public class DefineManager : EditorWindow
 				{
 					SetDefines((Compiler)i, defs);
 					AssetDatabase.ImportAsset("Assets/Bugger/Editor/DefineManager.cs", ImportAssetOptions.ForceUpdate);
-					OnEnable();		
+					ParseDefineFiles();		
 				}
 		
 		GUILayout.EndHorizontal();

@@ -77,71 +77,116 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			// pb_Profiler profiler = new pb_Profiler();
+			pb_Profiler profiler = new pb_Profiler();
 			// profiler.BeginSample("WeldVertices");
 
 			// profiler.BeginSample("GetUniversalIndices");
 			List<int> universal = pb.sharedIndices.GetUniversalIndices(indices).ToList();
-			// profiler.EndSample();
 			Vector3[] v = pb.vertices;
+			// profiler.EndSample();
 
-			// profiler.BeginSample("Sort Vertices");
 			HashSet<int> used = new HashSet<int>();
-			KDTree<int> tree = new KDTree<int>(3, 64);	// dimensions (xyz), node size
+			KDTree<int> tree = new KDTree<int>(3, 48);	// dimensions (xyz), node size
 
+			// profiler.BeginSample("Initialize KDTree");
 			for(int i = 0; i < universal.Count; i++)
 			{
 				Vector3 vert = v[pb.sharedIndices[universal[i]][0]];
 				tree.AddPoint( new double[] { vert.x, vert.y, vert.z }, universal[i]);
 			}
+			// profiler.EndSample();
 
 			List<List<int>> groups = new List<List<int>>();
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			// System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			// profiler.BeginSample("NearestNeighbour");
+			double[] point = new double[3] { 0, 0, 0 };
 
+			int[][] si = pb.sharedIndices.ToArray();
 			for(int i = 0; i < universal.Count; i++)
 			{
+				// profiler.BeginSample("used.Contains()");
 				if(used.Contains(universal[i]))
+				{
+					// profiler.EndSample();
 					continue;
+				}
+				// profiler.EndSample();
 
-				NearestNeighbour<int> neighborIterator = tree.NearestNeighbors( new double[] { v[i].x, v[i].y, v[i].z }, 32, delta );
+				int tri = si[universal[i]][0];
+				
+				point[0] = v[tri].x;
+				point[1] = v[tri].y;
+				point[2] = v[tri].z;
+
+				// profiler.BeginSample("NearestNeighbours()");
+				NearestNeighbour<int> neighborIterator = tree.NearestNeighbors( point, 64, delta );
+				// profiler.EndSample();
 
 				List<int> neighbors = new List<int>();
 
+				// profiler.BeginSample("MoveNext()");
 				while(neighborIterator.MoveNext())
 				{
+					if( used.Contains(neighborIterator.Current) )
+						continue;
+	
 					used.Add( neighborIterator.Current );
 					neighbors.Add( neighborIterator.Current );
 				}
-				sb.AppendLine(neighbors.ToFormattedString(", "));
+				// profiler.EndSample();
+				// sb.AppendLine(neighbors.ToFormattedString(", "));
 
 				used.Add( universal[i] );
 				groups.Add( neighbors );
 			}
-
-			Debug.Log(sb.ToString());
-
 			// profiler.EndSample();
-	
-			// Rebuild sharedIndices using the new associations
-			Dictionary<int, List<int>> rebuilt = new Dictionary<int, List<int>>();
-			for(int i = 0; i < pb.sharedIndices.Length; i++) {
-				rebuilt.Add(i, new List<int>( pb.sharedIndices[i].array) );
+
+			// profiler.BeginSample("Rebuild sharedIndices");
+			pb_IntArray[] rebuilt = new pb_IntArray[groups.Count];// + remainingCount ];
+			welds = new int[groups.Count];
+
+			// profiler.BeginSample("sort groups");
+			for(int i = 0; i < groups.Count; i++)
+			{
+				rebuilt[i] = new pb_IntArray( groups[i].SelectMany(x => pb.sharedIndices[x].array).ToArray() );
+				welds[i] = rebuilt[i][0];
+			}
+			// profiler.EndSample();
+
+			// profiler.BeginSample("average vertices");
+			foreach(pb_IntArray arr in rebuilt)
+			{
+				Vector3 avg = pb_Math.Average(pbUtil.ValuesWithIndices(v, arr.array));
+				foreach(int i in arr.array)
+					v[i] = avg;
 			}
 
-			welds = null;
+			pb.SetVertices(v);
+			// profiler.EndSample();
 
-			// profiler.EndSample();	// WeldVertices
+			// profiler.BeginSample("set sharedIndices");
+			pb_IntArray[] remaining = pb.sharedIndices.Where( (val, index) => !used.Contains(index) ).ToArray();
+
+			rebuilt = pbUtil.Concat(rebuilt, remaining);
+
+			pb.SetSharedIndices(rebuilt);
+			// profiler.EndSample();
+
+			// profiler.EndSample();
+			// profiler.EndSample();
 			// Debug.Log(profiler.ToString());
 
 			return true;	
 		}
-
+		
 		/**
 		 * Creates separate entries in sharedIndices cache for all passed indices.
 		 */
 		public static bool SplitVertices(this pb_Object pb, int[] indices)
 		{
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
 			List<int> usedIndex = new List<int>();
@@ -149,12 +194,12 @@ namespace ProBuilder2.MeshOperations
 
 			for(int i = 0; i < indices.Length; i++)
 			{
-				int index = sharedIndices.IndexOf(indices[i]);
+				int universal = lookup[indices[i]];
 
-				if(!usedIndex.Contains(index))
+				if(!usedIndex.Contains(universal))
 				{
-					usedIndex.Add(index);
-					splits.AddRange(sharedIndices[index].array);
+					usedIndex.Add(universal);
+					splits.AddRange(sharedIndices[universal].array);
 				}
 			}
 
@@ -164,8 +209,6 @@ namespace ProBuilder2.MeshOperations
 				pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
 			pb.SetSharedIndices(sharedIndices);
-
-			Debug.Log(pb.sharedIndices.ToFormattedString());
 
 			return true;
 		}

@@ -209,13 +209,18 @@ namespace ProBuilder2.Common {
 	}
 
 	/**
-	 *	This could be better
+	 * Remove @val from @arr.
 	 */
 	public static T[] Remove<T>(this T[] arr, T val)
 	{
 		List<T> list = new List<T>(arr);
 		list.Remove(val);
 		return list.ToArray();
+	}
+
+	public static T[] Remove<T>(this T[] arr, IEnumerable<T> val)
+	{
+		return arr.Except(val).ToArray();
 	}
 
 	public static T[] RemoveAt<T>(this T[] arr, int index)
@@ -232,17 +237,34 @@ namespace ProBuilder2.Common {
 		return newArray;
 	}
 	
+	/**
+	 * Remove elements at @indices from an array.
+	 */
 	public static T[] RemoveAt<T>(this T[] arr, int[] indices)
 	{
-		T[] newArray = new T[arr.Length-indices.Length];
+		List<int> indices_distinct = new List<int>(indices);
+		indices_distinct.Sort();
+
+		int indices_length = indices_distinct.Count;
+		int arr_length = arr.Length;
+
+		T[] newArray = new T[arr_length-indices_length];
 		int n = 0;
+
 		for(int i = 0; i < arr.Length; i++)
 		{
-			if(System.Array.IndexOf(indices, i) < 0)
+			if(n < indices_length && indices_distinct[n] == i)
 			{
-				newArray[n++] = arr[i];
+				// handle duplicate indices
+				while(n < indices_length && indices_distinct[n] == i)	
+					n++;
+
+				continue;
 			}
+
+			newArray[i-n] = arr[i];
 		}
+
 		return newArray;
 	}
 

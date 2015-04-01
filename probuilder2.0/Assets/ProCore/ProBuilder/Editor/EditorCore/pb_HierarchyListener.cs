@@ -54,9 +54,5 @@ public class pb_HierarchyListener : Editor
 
 			SceneView.RepaintAll();
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 }

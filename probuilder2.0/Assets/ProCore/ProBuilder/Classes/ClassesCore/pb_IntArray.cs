@@ -437,27 +437,46 @@ public static class pb_IntArrayUtility
 	 *	faces or vertices.  For general moving around and modification of shared 
 	 *	index array, use #RemoveValuesAtIndex.
 	 */
+#if PB_DEBUG
 	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
 	{
-		// MUST BE DISTINCT
-		remove = remove.ToDistinctArray();
+		RemoveValuesAndShift(ref sharedIndices, remove, null);
+	}
+	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove, pb_Profiler profiler)
+#else	
+	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
+#endif	
+	{
+		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
+		if(profiler != null) profiler.BeginSample("remove indices");
 		// remove face indices from all shared indices caches
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
+			List<int> removals = new List<int>();
+
 			for(int n = 0; n < remove.Length; n++)
 			{
-				int ind = System.Array.IndexOf(sharedIndices[i], remove[n]);
+				if(lookup[remove[n]] == i)
+				{
+					int ind = System.Array.IndexOf(sharedIndices[i].array, remove[n]);
 
-				if(ind > -1)
-					sharedIndices[i].array = sharedIndices[i].array.RemoveAt(ind);
+					if(ind > -1)	
+						removals.Add(ind);
+				}
 			}
+
+			sharedIndices[i].array = sharedIndices[i].array.RemoveAt(removals.ToArray());
 		}
+		if(profiler != null) profiler.EndSample();
 
 		// Remove empty or null entries caused by shifting around all them indices
+		if(profiler != null) profiler.BeginSample("remove empty / null");
 		pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
+		if(profiler != null) profiler.EndSample();
 		
 		// now cycle through and shift indices
+		if(profiler != null) profiler.BeginSample("shift");
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
 			for(int n = 0; n < sharedIndices[i].Length; n++)
@@ -475,6 +494,7 @@ public static class pb_IntArrayUtility
 				sharedIndices[i][n] -= sub;
 			}
 		}
+		if(profiler != null) profiler.EndSample();
 	}	
 #endregion
 }

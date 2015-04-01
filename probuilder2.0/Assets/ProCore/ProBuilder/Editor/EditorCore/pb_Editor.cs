@@ -88,6 +88,7 @@ public class pb_Editor : EditorWindow
 	public float drawVertexNormals = 0f;
 	public bool drawFaceNormals = false;
 	private bool pref_showSceneInfo = false;
+	private bool pref_backfaceSelect = false;
 
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
@@ -183,6 +184,7 @@ public class pb_Editor : EditorWindow
 		selectionMode		= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
 		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
+		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 				
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -316,6 +318,14 @@ public class pb_Editor : EditorWindow
 				if(EditorGUI.EndChangeCheck())
 					SetHandleAlignment(handleAlignment);
 				
+				EditorGUI.BeginChangeCheck();
+
+					if( GUILayout.Button(pref_backfaceSelect ? "All Elements" : "Visible Only", EditorStyles.miniButton) )
+						pref_backfaceSelect = !pref_backfaceSelect;
+
+				if(EditorGUI.EndChangeCheck())
+					EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+
 				GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 				pb_GUI_Utility.DrawSeparator(1);
 				GUI.backgroundColor = Color.white;
@@ -1172,9 +1182,8 @@ public class pb_Editor : EditorWindow
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 			pb_RaycastHit hit;
 
-			bool ignoreBackfaces = !pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 
-			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Mathf.Infinity, ignoreBackfaces ? Culling.Front : Culling.FrontBack) )
+			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
 			{
 				selectedFace = pb.faces[hit.FaceIndex];
 
@@ -1342,8 +1351,7 @@ public class pb_Editor : EditorWindow
 
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
-							bool backfaceSelectionEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
-							if( !backfaceSelectionEnabled && pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
+							if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
@@ -1531,12 +1539,18 @@ public class pb_Editor : EditorWindow
 
 	private void VertexMoveTool()
 	{
+		profiler.BeginSample("VertexMoveTool");
+		
 		newPosition = selected_handlePivotWorld;
 		cachedPosition = newPosition;
 
 		newPosition = Handles.PositionHandle(newPosition, handleRotation);
 
-		if(altClick) return;
+		if(altClick)
+		{
+			profiler.EndSample();
+			return;
+		}
 
 		bool previouslyMoving = movingVertices;
 
@@ -1569,17 +1583,22 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
+			profiler.BeginSample("Undo");
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+			profiler.EndSample();
 			
+			profiler.BeginSample("TranslateVertices_World & Refresh");
 			for(int i = 0; i < selection.Length; i++)
 			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
 			}
+			profiler.EndSample();
 
 			Internal_UpdateSelectionFast();
 		}
+		profiler.EndSample();
 	}
 
 	private void VertexScaleTool()
