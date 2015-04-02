@@ -297,7 +297,7 @@ namespace ProBuilder2.Common {
 	 * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1 
 	 * is returned.  If an exact match is found, the index prior to that match is returned.
 	 */
-	public static int NearestIndexPriorToValue<T>(List<T> sorted_list, T value) where T : System.IComparable<T>
+	public static int NearestIndexPriorToValue<T>(IList<T> sorted_list, T value) where T : System.IComparable<T>
 	{
 		int count = sorted_list.Count;
 		if(count < 1) return -1;

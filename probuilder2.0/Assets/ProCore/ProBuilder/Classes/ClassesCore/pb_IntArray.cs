@@ -458,27 +458,14 @@ public static class pb_IntArrayUtility
 	 *	faces or vertices.  For general moving around and modification of shared 
 	 *	index array, use #RemoveValuesAtIndex.
 	 */
-#if PB_DEBUG
 	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
 	{
-		RemoveValuesAndShift(ref sharedIndices, remove, null);
-	}
-	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove, pb_Profiler profiler)
-#else	
-	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
-#endif	
-	{
-		if(profiler != null) profiler.BeginSample("remove indices");
 		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 		for(int i = 0; i < remove.Length; i++)
 			lookup[remove[i]] = -1;
 
 		sharedIndices = lookup.Where(x => x.Value > -1).ToSharedIndices();
-
-		if(profiler != null) profiler.EndSample();
-
-		if(profiler != null) profiler.BeginSample("shift indices");
 
 		List<int> removed_values = new List<int>(remove);
 
@@ -494,7 +481,6 @@ public static class pb_IntArrayUtility
 			}
 		}
 
-		if(profiler != null) profiler.EndSample();
 	}
 #endregion
 }

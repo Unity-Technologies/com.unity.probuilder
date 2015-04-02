@@ -188,75 +188,51 @@ public static class pbAppendDelete
 	 */
 	public static void DeleteFaces(this pb_Object pb, pb_Face[] faces)
 	{	
-		pb_Profiler profiler = new pb_Profiler();
-
-		profiler.BeginSample("DeleteFaces");
-
 		int[] f_ind = new int[faces.Length];
 
-		profiler.BeginSample("Find face indices");
 		// test for triangle array equality, not reference equality
 		for(int i = 0; i < faces.Length; i++)
 			f_ind[i] = System.Array.IndexOf(pb.faces, faces[i]);
-		profiler.EndSample();
 		
-		profiler.BeginSample("AllTrianglesDistinct");
-		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
-		profiler.EndSample();
+		int[] indices_to_remove = pb_Face.AllTrianglesDistinct(faces);
 
-		profiler.BeginSample("RemoveAt elements");
-		Vector3[] verts = pb.vertices.RemoveAt(distInd);
-		Color[] cols = pb.colors.RemoveAt(distInd);
-		Vector2[] uvs = pb.uv.RemoveAt(distInd);
+		Vector3[] verts = pb.vertices.RemoveAt(indices_to_remove);
+		Color[] cols = pb.colors.RemoveAt(indices_to_remove);
+		Vector2[] uvs = pb.uv.RemoveAt(indices_to_remove);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
-		profiler.EndSample();
 
 		// shift all other face indices down to account for moved vertex positions
-		profiler.BeginSample("Shift face indices");
 		for(int i = 0; i < nFaces.Length; i++)
 		{
 			int[] tris = nFaces[i].indices;
+
 			for(int n = 0; n < tris.Length; n++)
 			{
-				int sub = 0;
-				for(int d = 0; d < distInd.Length; d++)
-				{
-					if(tris[n] > distInd[d])
-						sub++;
-				}
-				tris[n] -= sub;
+				int index = pbUtil.NearestIndexPriorToValue(indices_to_remove, tris[n]);
+				// add 1 because index is zero based
+				tris[n] -= index + 1;
 			}
+
 			nFaces[i].SetIndices(tris);
 		}
-		profiler.EndSample();
 
 		// shift all other face indices in the shared index array down to account for moved vertex positions
-		profiler.BeginSample("RemoveValuesAndShift");
 		pb_IntArray[] si = pb.sharedIndices;
 		pb_IntArray[] si_uv = pb.sharedIndicesUV;
 
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd, profiler);
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, distInd, profiler);
-		profiler.EndSample();
+		pb_IntArrayUtility.RemoveValuesAndShift(ref si, indices_to_remove);
+		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, indices_to_remove);
 		
-		profiler.BeginSample("SetSharedIndices");
 		pb.SetSharedIndices(si);
 		pb.SetSharedIndicesUV(si_uv);
 		
 		pb.SetVertices(verts);
 		pb.SetColors(cols);
 		pb.SetUV(uvs);
-		profiler.EndSample();
 
-		profiler.BeginSample("Set Faces / Rebuild Caches");
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();
-		profiler.EndSample();
-
-		profiler.EndSample();	// DeleteFaces
-		Debug.Log(profiler.ToString());
-
 	}
 
 	/**
