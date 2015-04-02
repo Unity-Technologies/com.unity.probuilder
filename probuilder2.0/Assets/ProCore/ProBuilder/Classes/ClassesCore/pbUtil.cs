@@ -268,6 +268,70 @@ namespace ProBuilder2.Common {
 		return newArray;
 	}
 
+	/**
+	 * Holds a start and end index for a binary search.
+	 */
+	private struct SearchRange
+	{
+		public int begin, end;
+
+		public SearchRange(int begin, int end)
+		{
+			this.begin = begin;
+			this.end = end;
+		}
+
+		public bool Valid() { return end - begin > 1; }
+		public int Center() { return begin + (end-begin)/2; }
+
+		public override string ToString()
+		{
+			return "{" + begin + ", " + end + "} : " + Center();
+		}
+	}
+
+	/**
+	 * Given a sorted list and value, returns the index of the greatest value in sorted_list that is 
+	 * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value 
+	 * 4.
+	 * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1 
+	 * is returned.  If an exact match is found, the index prior to that match is returned.
+	 */
+	public static int NearestIndexPriorToValue<T>(List<T> sorted_list, T value) where T : System.IComparable<T>
+	{
+		int count = sorted_list.Count;
+		if(count < 1) return -1;
+
+		SearchRange range = new SearchRange(0, count-1);
+
+		if(value.CompareTo(sorted_list[0]) < 0)
+			return -1;
+
+		if(value.CompareTo(sorted_list[count-1]) > 0)
+			return count-1;
+
+		while( range.Valid() )
+		{
+			if( sorted_list[range.Center()].CompareTo(value) > 0)
+			{
+				// sb.AppendLine(sorted_list[range.Center()] + " > " + value + " [" + range.begin + ", " + range.end +"] -> [" + range.begin + ", " + range.Center() + "]");
+				range.end = range.Center();
+			}
+			else
+			{
+				// sb.AppendLine(sorted_list[range.Center()] + " < " + value + " [" + range.begin + ", " + range.end +"] -> [" + range.Center() + ", " + range.end + "]");
+				range.begin = range.Center();
+
+				if( sorted_list[range.begin+1].CompareTo(value) >= 0 )
+				{
+					return range.begin;
+				}
+			}
+		}
+	
+		return 0;
+	}
+
 	public static T[] FilledArray<T>(T val, int length)
 	{
 		T[] arr = new T[length];

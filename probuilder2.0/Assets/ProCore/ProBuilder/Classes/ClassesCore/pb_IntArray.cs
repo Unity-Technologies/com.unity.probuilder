@@ -132,6 +132,27 @@ public static class pb_IntArrayUtility
 		return dic;
 	}
 
+	public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
+	{
+		Dictionary<int, int> indexes = new Dictionary<int, int>();
+		List<List<int>> shared = new List<List<int>>();
+
+		foreach(KeyValuePair<int, int> pair in lookup)
+		{
+			if( indexes.ContainsKey(pair.Value) )
+			{
+				shared[indexes[pair.Value]].Add(pair.Key);
+			}
+			else
+			{
+				shared.Add( new List<int>() { pair.Key } );
+				indexes.Add(pair.Value, shared.Count-1);
+			}
+		}
+
+		return shared.ToPbIntArray();
+	}
+
 	/**
 	 * Convert a jagged int array to a pb_IntArray.
 	 */
@@ -447,55 +468,34 @@ public static class pb_IntArrayUtility
 	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
 #endif	
 	{
+		if(profiler != null) profiler.BeginSample("remove indices");
 		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
-		if(profiler != null) profiler.BeginSample("remove indices");
-		// remove face indices from all shared indices caches
-		for(int i = 0; i < sharedIndices.Length; i++)
-		{
-			List<int> removals = new List<int>();
+		for(int i = 0; i < remove.Length; i++)
+			lookup[remove[i]] = -1;
 
-			for(int n = 0; n < remove.Length; n++)
-			{
-				if(lookup[remove[n]] == i)
-				{
-					int ind = System.Array.IndexOf(sharedIndices[i].array, remove[n]);
+		sharedIndices = lookup.Where(x => x.Value > -1).ToSharedIndices();
 
-					if(ind > -1)	
-						removals.Add(ind);
-				}
-			}
-
-			sharedIndices[i].array = sharedIndices[i].array.RemoveAt(removals.ToArray());
-		}
 		if(profiler != null) profiler.EndSample();
 
-		// Remove empty or null entries caused by shifting around all them indices
-		if(profiler != null) profiler.BeginSample("remove empty / null");
-		pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
-		if(profiler != null) profiler.EndSample();
-		
-		// now cycle through and shift indices
-		if(profiler != null) profiler.BeginSample("shift");
+		if(profiler != null) profiler.BeginSample("shift indices");
+
+		List<int> removed_values = new List<int>(remove);
+
+		removed_values.Sort();
+	
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
 			for(int n = 0; n < sharedIndices[i].Length; n++)
 			{
-				int ind = sharedIndices[i][n];
-				int sub = 0;
-
-				// use a count and subtract at end because indices aren't guaranteed to be in order.
-				// ex, 9, 8, 7 would only sub 1 if we just did rm < ind; ind--
-				foreach(int rm in remove)
-				{
-					if(rm < ind)
-						sub++;
-				}
-				sharedIndices[i][n] -= sub;
+				int index = pbUtil.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
+				// add 1 because index is zero based
+				sharedIndices[i][n] -= index+1;
 			}
 		}
+
 		if(profiler != null) profiler.EndSample();
-	}	
+	}
 #endregion
 }
 }

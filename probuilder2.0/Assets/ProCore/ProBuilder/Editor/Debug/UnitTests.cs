@@ -52,6 +52,81 @@ public class UnitTests : Editor
 		Debug.Log(sb.ToString());
 	}
 
+	[MenuItem("Tools/ProBuilder/Unit Tests/Find NearestIndexPriorToValue")]	
+	public static bool VerifyFindNearestIndex()
+	{
+		List<int> list = new List<int>() {
+		//	0, 1, 2, 3, 4, 5, 6
+			0, 1, 3, 4, 6, 7, 12
+		};
+
+		if( pbUtil.NearestIndexPriorToValue(list, 5) != 3 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, -1) != -1 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, 14) != 6 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, 12) != 5 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!  "  + pbUtil.NearestIndexPriorToValue(list, 12));
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, 0) != 0 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		list = new List<int>() { 0, 1, 2 };
+
+		if( pbUtil.NearestIndexPriorToValue(list, 1) != 1 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, 2) != 1 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!" + pbUtil.NearestIndexPriorToValue(list, 2));
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, 0) != 0 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+		
+		if( pbUtil.NearestIndexPriorToValue(list, 3) != 2 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		if( pbUtil.NearestIndexPriorToValue(list, -192) != -1 )
+		{
+			Debug.LogError("NearestIndexPriorToValue failed a test!");
+			return false;
+		}
+
+		Debug.Log("NearestIndexPriorToValue passed all tests!");
+		return true;
+
+	}
+
 	private static bool VerifyAppendFace()
 	{
 		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
