@@ -458,11 +458,11 @@ public static class pb_IntArrayUtility
 	 *	faces or vertices.  For general moving around and modification of shared 
 	 *	index array, use #RemoveValuesAtIndex.
 	 */
-	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, int[] remove)
+	public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, IList<int> remove)
 	{
 		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
-		for(int i = 0; i < remove.Length; i++)
+		for(int i = 0; i < remove.Count; i++)
 			lookup[remove[i]] = -1;
 
 		sharedIndices = lookup.Where(x => x.Value > -1).ToSharedIndices();

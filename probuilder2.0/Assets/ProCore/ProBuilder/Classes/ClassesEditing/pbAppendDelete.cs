@@ -194,11 +194,12 @@ public static class pbAppendDelete
 		for(int i = 0; i < faces.Length; i++)
 			f_ind[i] = System.Array.IndexOf(pb.faces, faces[i]);
 		
-		int[] indices_to_remove = pb_Face.AllTrianglesDistinct(faces);
+		List<int> indices_to_remove = new List<int>( pb_Face.AllTrianglesDistinct(faces) );
+		indices_to_remove.Sort();
 
-		Vector3[] verts = pb.vertices.RemoveAt(indices_to_remove);
-		Color[] cols = pb.colors.RemoveAt(indices_to_remove);
-		Vector2[] uvs = pb.uv.RemoveAt(indices_to_remove);
+		Vector3[] verts = pb.vertices.SortedRemoveAt(indices_to_remove);
+		Color[] cols = pb.colors.SortedRemoveAt(indices_to_remove);
+		Vector2[] uvs = pb.uv.SortedRemoveAt(indices_to_remove);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
 

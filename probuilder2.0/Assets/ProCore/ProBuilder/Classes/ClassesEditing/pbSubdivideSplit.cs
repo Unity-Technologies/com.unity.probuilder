@@ -143,22 +143,12 @@ public static class pbSubdivideSplit
 
 	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
-		// pb_Profiler profiler = new pb_Profiler();
-
-		// profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
-		Debug.Log(pb_edgeConnectionsUnfiltered.ToFormattedString("\n"));
-		
-		// first, remove any junk connections.  faces with less than two edges confuse this method.
-		// profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
 		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
 		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
 			if(ec.isValid)
 				pb_edgeConnections.Add(ec);
-		// profiler.EndSample();
 
 		int len = pb_edgeConnections.Count;
-
-		Debug.Log("len : " + len);
 
 		if(len < 1)
 		{

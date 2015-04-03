@@ -240,29 +240,37 @@ namespace ProBuilder2.Common {
 	/**
 	 * Remove elements at @indices from an array.
 	 */
-	public static T[] RemoveAt<T>(this T[] arr, int[] indices)
+	public static T[] RemoveAt<T>(this IList<T> list, IList<int> indices)
 	{
-		List<int> indices_distinct = new List<int>(indices);
-		indices_distinct.Sort();
+		List<int> indices_sorted = new List<int>(indices);
+		indices_sorted.Sort();
 
-		int indices_length = indices_distinct.Count;
-		int arr_length = arr.Length;
+		return SortedRemoveAt(list, indices_sorted);
+	}
 
-		T[] newArray = new T[arr_length-indices_length];
+	/**
+	 * Remove elements at @indices from an array, but accepts a pre-sorted indices list.
+	 */
+	public static T[] SortedRemoveAt<T>(this IList<T> list, IList<int> sorted_indices)
+	{
+		int indices_length = sorted_indices.Count;
+		int len = list.Count;
+
+		T[] newArray = new T[len - indices_length];
 		int n = 0;
 
-		for(int i = 0; i < arr.Length; i++)
+		for(int i = 0; i < len; i++)
 		{
-			if(n < indices_length && indices_distinct[n] == i)
+			if(n < indices_length && sorted_indices[n] == i)
 			{
 				// handle duplicate indices
-				while(n < indices_length && indices_distinct[n] == i)	
+				while(n < indices_length && sorted_indices[n] == i)	
 					n++;
 
 				continue;
 			}
 
-			newArray[i-n] = arr[i];
+			newArray[i-n] = list[i];
 		}
 
 		return newArray;
