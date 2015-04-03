@@ -421,47 +421,85 @@ public class pb_Menu_Commands : Editor
 					
 					if( pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle) )
 					{
-						Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
-
+						bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
+						float growSelectionAngle = pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle");
 						HashSet<pb_Face> selected = new HashSet<pb_Face>( pb.SelectedFaces );
-
-						bool facesAdded = true;
-
 						List<pb_Face> perimeterFaces = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToList();
 
-						List<pb_Face> newFaces = new List<pb_Face>();
-
-						while(facesAdded)
+						if(!iterative)
 						{
-							facesAdded = false;
+							/**
+							 * Grow by angle flood fill
+							 */
+							Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
 
-							foreach(pb_Face f in perimeterFaces)
+							bool facesAdded = true;
+
+							List<pb_Face> newFaces = new List<pb_Face>();
+
+							while(facesAdded)
 							{
-								Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
+								facesAdded = false;
 
-								List<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x)).ToList();
-
-								foreach(pb_Face connectedFace in adjacent)
+								foreach(pb_Face f in perimeterFaces)
 								{
-									float angle = Vector3.Angle( nrm, pb_Math.Normal( pb.GetVertices(connectedFace.indices)) );
+									Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
 
-									if( angle < pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle") )
+									List<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x)).ToList();
+
+									foreach(pb_Face connectedFace in adjacent)
 									{
-										selected.Add(connectedFace);
-										newFaces.Add(connectedFace);
-										facesAdded = true;
+										float angle = Vector3.Angle( nrm, pb_Math.Normal( pb.GetVertices(connectedFace.indices)) );
+
+										if( angle < growSelectionAngle )
+										{
+											selected.Add(connectedFace);
+											newFaces.Add(connectedFace);
+											facesAdded = true;
+										}
+									}
+								}
+
+								perimeterFaces = new List<pb_Face>(newFaces);
+								newFaces.Clear();
+							}
+
+							pb.SetSelectedFaces(selected.ToArray());
+						}
+						else
+						{
+							/**
+							 * Grow with angle iterative
+							 */
+							Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
+							for(int i = 0; i < perimeterFaces.Count; i++)
+							{
+								List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, lookup, perimeterFaces, perimeterFaces[i]);
+
+								Vector3 perim_normal = pb_Math.Normal(pb.GetVertices(perimeterFaces[i].indices));
+
+								for(int n = 0; n < adjacent.Count; n++)
+								{
+									Vector3 adjacent_normal = pb_Math.Normal( pb.GetVertices(adjacent[n].indices) );
+
+									float angle = Vector3.Angle( perim_normal, adjacent_normal );
+
+									if( angle < growSelectionAngle )
+									{
+										selected.Add(adjacent[n]);
 									}
 								}
 							}
 
-							perimeterFaces = new List<pb_Face>(newFaces);
-							newFaces.Clear();
+							pb.SetSelectedFaces(selected.ToArray());
 						}
-
-						pb.SetSelectedFaces(selected.Distinct().ToArray());
 					}
 					else
 					{
+						/**
+						 * Grow by proximity
+						 */
 						pb_Face[] perimeter = pbMeshUtils.GetNeighborFaces(pb, pb.sharedIndices.ToDictionary(), pb.SelectedFaces);
 
 						perimeter = pbUtil.Concat(perimeter, pb.SelectedFaces);
@@ -496,16 +534,21 @@ public class pb_Menu_Commands : Editor
 
 		bool te = GUI.enabled;
 
-		GUI.enabled = angleGrow;
+		GUI.enabled = te ? angleGrow : te;
 
 		EditorGUIUtility.labelWidth = width - 68;
 		angleVal = EditorGUILayout.FloatField("Max", angleVal);
+
+		EditorGUIUtility.labelWidth = width - 28;
+		bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
+		iterative = EditorGUILayout.Toggle("Iterative", iterative);
 
 		GUI.enabled = te;
 
 		if( EditorGUI.EndChangeCheck() )
 		{
 			EditorPrefs.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
+			EditorPrefs.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
 			EditorPrefs.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
 		}
 	}

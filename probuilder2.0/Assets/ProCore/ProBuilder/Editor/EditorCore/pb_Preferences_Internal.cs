@@ -110,6 +110,9 @@ public class pb_Preferences_Internal
 			
 			case pb_Constant.pbVertexPaletteDockable:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
+			
+			case pb_Constant.pbGrowSelectionAngleIterative:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
 
 			// When in doubt, say yes!
 			default:

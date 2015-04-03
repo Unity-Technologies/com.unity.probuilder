@@ -503,7 +503,7 @@ public class pb_Editor : EditorWindow
 					pb_Menu_Commands.GrowSelectionGUI,
 					selectionMode == SelectMode.Face,
 					Screen.width,
-					40,
+					54,
 					selection);
 
 				if(GUILayout.Button("Shrink", EditorStyles.miniButton))

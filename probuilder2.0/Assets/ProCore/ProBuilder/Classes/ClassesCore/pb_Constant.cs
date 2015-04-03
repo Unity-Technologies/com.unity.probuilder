@@ -38,7 +38,7 @@ public static class pb_Constant
 	}
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string pbVersion = "2.4.3";			///< The currently install ProBuilder version.
+	public const string pbVersion = "2.4.4";			///< The currently install ProBuilder version.
 
 
 #if PROTOTYPE
@@ -98,8 +98,9 @@ public static class pb_Constant
 
 
 	// usablility settings (not preferences, just things that need to be saved)
-	public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";
-	public const string pbGrowSelectionAngle 	 		= "pbGrowSelectionAngle";
+	public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?
+	public const string pbGrowSelectionAngle 	 		= "pbGrowSelectionAngle";			///< The angle value
+	public const string pbGrowSelectionAngleIterative	= "pbGrowSelectionAngleIterative";	///< If true, only one step of outer edges will be added.
 
 	public const string pbShowDetail					= "pbShowDetail";
 	public const string pbShowOccluder					= "pbShowOccluder";
