@@ -91,7 +91,6 @@ public static class pbSubdivideSplit
 		}
 		// profiler.EndSample();
 
-		// If it's stupid but it works it ain't stupid!
 		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 
 
@@ -147,6 +146,7 @@ public static class pbSubdivideSplit
 		// pb_Profiler profiler = new pb_Profiler();
 
 		// profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
+		Debug.Log(pb_edgeConnectionsUnfiltered.ToFormattedString("\n"));
 		
 		// first, remove any junk connections.  faces with less than two edges confuse this method.
 		// profiler.BeginSample("ConnectEdges: edgeConnectionsUnfiltered");
@@ -157,6 +157,8 @@ public static class pbSubdivideSplit
 		// profiler.EndSample();
 
 		int len = pb_edgeConnections.Count;
+
+		Debug.Log("len : " + len);
 
 		if(len < 1)
 		{
@@ -328,6 +330,7 @@ public static class pbSubdivideSplit
 
 		// profiler.BeginSample("weld vertices");
 		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+
 		// profiler.EndSample();
 		// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 

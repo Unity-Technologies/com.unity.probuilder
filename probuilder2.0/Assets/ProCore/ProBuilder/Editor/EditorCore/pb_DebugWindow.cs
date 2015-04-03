@@ -462,6 +462,8 @@ namespace ProBuilder2.EditorCommon
 			GUI.Label( new Rect(position.x, position.y, width, height), content, EditorStyles.boldLabel );
 		}
 
+		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
+
 		/**
 		 * Draw the normals, tangents, and bitangets associated with this mesh.
 		 * Green = normals
@@ -470,6 +472,24 @@ namespace ProBuilder2.EditorCommon
 		 */
 		void DrawElements(pb_Object pb)
 		{
+			// pb_EditorGizmos.LineSegments(
+			// 	new Vector3[] 
+			// 		{
+			// 			Vector3.zero,
+			// 			Vector3.up,
+			// 			Vector3.zero,
+			// 			Vector3.right,
+			// 			Vector3.zero,
+			// 			Vector3.forward,
+			// 		},
+			// 	new Color[]
+			// 		{
+			// 			Color.green,
+			// 			Color.red,
+			// 			Color.blue
+			// 		}
+			// 	);
+			
 			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length )
 				return;
 
@@ -479,23 +499,30 @@ namespace ProBuilder2.EditorCommon
 			Vector3[] normals  = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
 			Vector4[] tangents = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
 
-			Handles.matrix = pb.transform.localToWorldMatrix;
+			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
+
+			Vector3[] segments = new Vector3[vertexCount * 3 * 2];
+
+			int n = 0;
+			Vector3 pivot = Vector3.zero;
 
 			for(int i = 0; i < vertexCount; i++)
 			{
-				// if( PointIsOccluded( pb.transform.TransformPoint(vertices[i]) ) )
-				// 	continue;
+				pivot = vertices[i] + normals[i] * elementOffset;
 
-				Handles.color = Color.green;
-				Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + normals[i] * elementLength);
+				segments[n+0] = matrix.MultiplyPoint3x4( pivot );
+				segments[n+1] = matrix.MultiplyPoint3x4( (pivot + normals[i] * elementLength) );
 
-				Handles.color = Color.blue;
-				Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3)tangents[i] * elementLength);
+				segments[n+2] = segments[n];
+				segments[n+3] = matrix.MultiplyPoint3x4( (pivot + (Vector3)tangents[i] * elementLength) );
 
-				Handles.color = Color.red;
-				Handles.DrawLine( (vertices[i] + normals[i] * elementOffset),  (vertices[i] + normals[i] * elementOffset) + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength);
+				segments[n+4] = segments[n];
+				segments[n+5] = matrix.MultiplyPoint3x4( (pivot + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength) );
+
+				n += 6;
 			}
-			Handles.matrix = Matrix4x4.identity;
+
+			pb_EditorGizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 }

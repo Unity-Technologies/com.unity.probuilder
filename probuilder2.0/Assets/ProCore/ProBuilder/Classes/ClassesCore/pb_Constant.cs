@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class pb_Constant
 {
+	public static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+
 	public static Material DefaultMaterial { get{ return (Material)Resources.Load("Materials/Default_Prototype", typeof(Material)); } }
 	
 	private static Material _UnityDefaultDiffuse = null;

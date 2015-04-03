@@ -1,42 +1,45 @@
 using UnityEngine;
 using System.Collections;
 
-/**
- * Super simple object pool implementation.
- */
-[System.Serializable]
-public class pb_ObjectPool
+namespace ProBuilder2.Common
 {
-	public int desiredSize;
-	public System.Func<Object> constructor;
-
-	[SerializeField] private Queue pool = new Queue();
-
-	public pb_ObjectPool(int initialSize, int desiredSize, System.Func<Object> constructor)
+	/**
+	 * Super simple object pool implementation.
+	 */
+	[System.Serializable]
+	public class pb_ObjectPool
 	{
-		this.constructor = constructor;
-		this.desiredSize = desiredSize;
+		public int desiredSize;
+		public System.Func<Object> constructor;
 
-		for(int i = 0; i < initialSize && i < desiredSize; i++)
-			pool.Enqueue( constructor() );
-	}
+		[SerializeField] private Queue pool = new Queue();
 
-	public Object Get()
-	{
-		return pool.Count > 0 ? (Object)pool.Dequeue() : constructor();
-	}
+		public pb_ObjectPool(int initialSize, int desiredSize, System.Func<Object> constructor)
+		{
+			this.constructor = constructor;
+			this.desiredSize = desiredSize;
 
-	public void Put(Object obj)
-	{
-		if(pool.Count < desiredSize)
-			pool.Enqueue(obj);
-		else
-			GameObject.DestroyImmediate(obj);
-	}
+			for(int i = 0; i < initialSize && i < desiredSize; i++)
+				pool.Enqueue( constructor() );
+		}
 
-	public void Empty()
-	{
-		for(int i = 0; i < pool.Count; i++)
-			GameObject.DestroyImmediate( (UnityEngine.Object)pool.Dequeue() );
+		public Object Get()
+		{
+			return pool.Count > 0 ? (Object)pool.Dequeue() : constructor();
+		}
+
+		public void Put(Object obj)
+		{
+			if(pool.Count < desiredSize)
+				pool.Enqueue(obj);
+			else
+				GameObject.DestroyImmediate(obj);
+		}
+
+		public void Empty()
+		{
+			for(int i = 0; i < pool.Count; i++)
+				GameObject.DestroyImmediate( (UnityEngine.Object)pool.Dequeue() );
+		}
 	}
 }

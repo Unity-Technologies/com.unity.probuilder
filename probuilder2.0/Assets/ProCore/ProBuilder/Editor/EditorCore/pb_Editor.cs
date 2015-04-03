@@ -1075,7 +1075,7 @@ public class pb_Editor : EditorWindow
 					{
 						// Sort from nearest hit to farthest
 						hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
-
+						
 						// Find the nearest edge in the hit faces
 
 						float bestDistance = Mathf.Infinity;
@@ -1590,9 +1590,15 @@ public class pb_Editor : EditorWindow
 			profiler.BeginSample("TranslateVertices_World & Refresh");
 			for(int i = 0; i < selection.Length; i++)
 			{
+				profiler.BeginSample("TranslateVertices_World");
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
+				profiler.EndSample();
+				profiler.BeginSample("RefreshUV");
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
+				profiler.EndSample();
+				profiler.BeginSample("RefreshNormals");
 				selection[i].RefreshNormals();
+				profiler.EndSample();
 			}
 			profiler.EndSample();
 
