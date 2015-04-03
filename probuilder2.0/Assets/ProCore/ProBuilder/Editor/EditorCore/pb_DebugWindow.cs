@@ -471,25 +471,7 @@ namespace ProBuilder2.EditorCommon
 		 * Red = bitangents
 		 */
 		void DrawElements(pb_Object pb)
-		{
-			// pb_EditorGizmos.LineSegments(
-			// 	new Vector3[] 
-			// 		{
-			// 			Vector3.zero,
-			// 			Vector3.up,
-			// 			Vector3.zero,
-			// 			Vector3.right,
-			// 			Vector3.zero,
-			// 			Vector3.forward,
-			// 		},
-			// 	new Color[]
-			// 		{
-			// 			Color.green,
-			// 			Color.red,
-			// 			Color.blue
-			// 		}
-			// 	);
-			
+		{	
 			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length )
 				return;
 

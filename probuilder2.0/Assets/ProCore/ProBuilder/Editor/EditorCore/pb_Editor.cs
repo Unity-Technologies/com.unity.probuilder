@@ -1539,7 +1539,6 @@ public class pb_Editor : EditorWindow
 
 	private void VertexMoveTool()
 	{
-		profiler.BeginSample("VertexMoveTool");
 		
 		newPosition = selected_handlePivotWorld;
 		cachedPosition = newPosition;
@@ -1548,7 +1547,6 @@ public class pb_Editor : EditorWindow
 
 		if(altClick)
 		{
-			profiler.EndSample();
 			return;
 		}
 
@@ -1583,28 +1581,17 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
-			profiler.BeginSample("Undo");
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
-			profiler.EndSample();
 			
-			profiler.BeginSample("TranslateVertices_World & Refresh");
 			for(int i = 0; i < selection.Length; i++)
 			{
-				profiler.BeginSample("TranslateVertices_World");
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
-				profiler.EndSample();
-				profiler.BeginSample("RefreshUV");
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
-				profiler.EndSample();
-				profiler.BeginSample("RefreshNormals");
 				selection[i].RefreshNormals();
-				profiler.EndSample();
 			}
-			profiler.EndSample();
 
 			Internal_UpdateSelectionFast();
 		}
-		profiler.EndSample();
 	}
 
 	private void VertexScaleTool()
@@ -1999,22 +1986,9 @@ public class pb_Editor : EditorWindow
 		 * Edge wireframe and selected faces are drawn in pb_Editor_Graphics, selected edges & vertices 
 		 * are drawn here.
 		 */
-		// pb_Editor_Graphics.Draw();
-
 		switch(selectionMode)
 		{
-			// case SelectMode.Vertex:
-			// {		
-			// 	if(selection.Length > 0)
-			// 	{
-			// 		pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_all, selected_verticesInWorldSpace_all, defaultVertexColor);
-			// 		pb_Editor_Graphics.DrawVertexHandles(selection.Length, selected_uniqueIndices_sel, selected_verticesInWorldSpace_all, selectedVertexColor);
-			// 	}
-			// }
-			// break;
-	
 			case SelectMode.Edge:
-
 
 				// TODO - figure out how to run UpdateSelection prior to an Undo event.
 				// Currently UndoRedoPerformed is called after the action has taken place.
@@ -3473,29 +3447,48 @@ public class pb_Editor : EditorWindow
 
 #region DEBUG
 
+	static readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
+
 	void DrawVertexNormals(float dist)
 	{
 		if(dist <= Mathf.Epsilon) return;
 
+		float elementOffset = .01f;
+		float elementLength = dist;
+
 		foreach(pb_Object pb in selection)
 		{
-			// selection doesn't update fast enough, so this null check needs to exist
-			if(pb == null)
-				continue;
+			Mesh m = pb.msh;
+			int vertexCount = m.vertexCount;
 
-			Vector3[] verts = pb.msh.vertices;
-			Vector3[] nrmls = pb.msh.normals;
+			Vector3[] vertices = m.vertices;
+			Vector3[] normals  = m.normals;
+			Vector4[] tangents = m.tangents;
 
-			for(int i = 0; i < verts.Length; i++)
+			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
+
+			Vector3[] segments = new Vector3[vertexCount * 3 * 2];
+
+			int n = 0;
+			Vector3 pivot = Vector3.zero;
+
+			for(int i = 0; i < vertexCount; i++)
 			{
-				Vector3 v0 = pb.transform.TransformPoint(verts[i]);
-				Vector3 v1 = v0 + pb.transform.TransformDirection(nrmls[i]) * dist;
+				pivot = vertices[i] + normals[i] * elementOffset;
 
-				Handles.color = new Color( Mathf.Abs(nrmls[i].x), Mathf.Abs(nrmls[i].y), Mathf.Abs(nrmls[i].z) );
-				Handles.DrawLine(v0, v1);
+				segments[n+0] = matrix.MultiplyPoint3x4( pivot );
+				segments[n+1] = matrix.MultiplyPoint3x4( (pivot + normals[i] * elementLength) );
 
-				Handles.color = Color.white;
+				segments[n+2] = segments[n];
+				segments[n+3] = matrix.MultiplyPoint3x4( (pivot + (Vector3)tangents[i] * elementLength) );
+
+				segments[n+4] = segments[n];
+				segments[n+5] = matrix.MultiplyPoint3x4( (pivot + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength) );
+
+				n += 6;
 			}
+
+			pb_EditorGizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 
