@@ -65,21 +65,14 @@ public class pb_Editor_Graphics
 	{
 		DestroyTempObjects();
 
-		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
-		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[2]{typeof(MeshFilter), typeof(MeshRenderer)});
-				
-		selectionObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
-		wireframeObject.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[1] { typeof(pb_MeshRenderer) });
+		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[1] { typeof(pb_MeshRenderer) });	
 
-		selectionObject.GetComponent<MeshRenderer>().enabled = false;
-		wireframeObject.GetComponent<MeshRenderer>().enabled = false;
+		selectionMesh = new Mesh();
+		wireframeMesh = new Mesh();
 
-		// Force the mesh to only render in SceneView
-		selectionObject.AddComponent<pb_SceneMeshRender>();
-		wireframeObject.AddComponent<pb_SceneMeshRender>();
-
-		selectionMesh = selectionObject.GetComponent<MeshFilter>().sharedMesh;
-		wireframeMesh = wireframeObject.GetComponent<MeshFilter>().sharedMesh;
+		selectionObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( selectionMesh, (Material) null ) );
+		wireframeObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( wireframeMesh, (Material) null ) );
 
 		_editLevel = el;
 		_selectMode = sm;
@@ -129,8 +122,8 @@ public class pb_Editor_Graphics
 		}
 
 	
-		selectionObject.GetComponent<MeshRenderer>().sharedMaterial = selectionMaterial;
-		wireframeObject.GetComponent<MeshRenderer>().sharedMaterial = wireframeMaterial;
+		selectionObject.GetComponent<pb_MeshRenderer>().renderables[0].materials[0] = selectionMaterial;
+		wireframeObject.GetComponent<pb_MeshRenderer>().renderables[0].materials[0] = wireframeMaterial;
 	}
 
 	static internal void OnDisable()
@@ -150,17 +143,11 @@ public class pb_Editor_Graphics
 
 		while(go != null)
 		{
-			Mesh msh = go.GetComponent<MeshFilter>().sharedMesh;
-			Material mat = go.GetComponent<MeshRenderer>().sharedMaterial;
+			pb_MeshRenderer mr = go.GetComponent<pb_MeshRenderer>();
 
-			if(msh != null)
+			if(mr != null)
 			{
-				GameObject.DestroyImmediate(msh);
-			}
-
-			if(mat != null)
-			{
-				GameObject.DestroyImmediate(mat);
+				GameObject.DestroyImmediate(mr);
 			}
 
 			GameObject.DestroyImmediate(go);

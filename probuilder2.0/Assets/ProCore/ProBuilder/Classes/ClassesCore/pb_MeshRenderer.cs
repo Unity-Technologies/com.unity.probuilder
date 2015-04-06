@@ -1,0 +1,55 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ProBuilder2.Common
+{
+	/**
+	 * Renders a list a mesh and material objects to the scene view.
+	 * Caller is responsible for mesh and material memory.
+	 */
+	[ExecuteInEditMode]
+	[AddComponentMenu("")]
+	public class pb_MeshRenderer : MonoBehaviour
+	{
+		[HideInInspector]
+		public List<pb_Renderable> renderables = new List<pb_Renderable>();
+
+		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints 
+		// and just cast to HideFlags.
+		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
+		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
+
+		int clamp(int val, int min, int max) { return val < min ? min : val > max ? max : val; }
+
+		void OnRenderObject()
+		{
+			// instead of relying on 'SceneCamera' string comparison, check if the hideflags match.
+			// this could probably even just check for one bit match, since chances are that any 
+			// game view camera isn't going to have hideflags set.
+			if( (Camera.current.gameObject.hideFlags & SceneCameraHideFlags) != SceneCameraHideFlags || Camera.current.name != "SceneCamera" )
+				return;
+
+			int materialIndex = 0;
+			for(int i = 0; i < renderables.Count; i++)
+			{
+				Material[] mats = renderables[i].materials;
+
+				for(int n = 0; n < renderables[i].mesh.subMeshCount; n++)
+				{
+					materialIndex = clamp(n, 0, mats.Length-1);
+					if (mats[materialIndex] == null || !mats[materialIndex].SetPass(0) )
+						continue;
+
+					Graphics.DrawMeshNow(renderables[i].mesh, Vector3.zero, Quaternion.identity, n);
+				}
+			}
+		}
+
+		void OnDestroy()
+		{
+			foreach(pb_Renderable ren in renderables)
+				ren.Destroy();
+		}
+	}
+}

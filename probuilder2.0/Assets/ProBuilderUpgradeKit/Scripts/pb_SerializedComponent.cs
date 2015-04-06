@@ -6,6 +6,7 @@ namespace ProBuilder2.UpgradeKit
 	/**
 	 * This component stores serialized data.
 	 */
+	[AddComponentMenu("")]
 	public class pb_SerializedComponent : MonoBehaviour
 	{
 		[SerializeField] string _object;			///< JSON serialized pb_SerializableObject	

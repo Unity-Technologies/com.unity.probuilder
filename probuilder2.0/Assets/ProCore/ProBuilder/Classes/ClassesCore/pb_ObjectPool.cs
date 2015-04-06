@@ -4,7 +4,7 @@ using System.Collections;
 namespace ProBuilder2.Common
 {
 	/**
-	 * Super simple object pool implementation.
+	 * Simple object pool implementation.
 	 */
 	[System.Serializable]
 	public class pb_ObjectPool

@@ -4,7 +4,11 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
+	/**
+	 * Renders lines to the scene view.  For general purpose rendering to the sceneview, use pb_MeshRenderer.
+	 */
 	[ExecuteInEditMode]
+	[AddComponentMenu("")]
 	public class pb_LineRenderer : MonoBehaviour
 	{
 		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints 
