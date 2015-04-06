@@ -22,7 +22,7 @@ namespace ProBuilder2.Common
 			for(int i = 0; i < initialSize && i < desiredSize; i++)
 				pool.Enqueue( constructor() );
 		}
-
+ 
 		public Object Get()
 		{
 			return pool.Count > 0 ? (Object)pool.Dequeue() : constructor();
@@ -39,7 +39,9 @@ namespace ProBuilder2.Common
 		public void Empty()
 		{
 			for(int i = 0; i < pool.Count; i++)
+			{
 				GameObject.DestroyImmediate( (UnityEngine.Object)pool.Dequeue() );
+			}
 		}
 	}
 }

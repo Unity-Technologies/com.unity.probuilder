@@ -9,15 +9,15 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Renders gizmos to sceneview.
 	 */
-	public class pb_EditorGizmos : Editor
+	public class pb_Editor_Gizmos : Editor
 	{
 		const string GIZMO_RENDERER_NAME = "pb_EditorGizmos_gameObject";
 
 		static pb_LineRenderer _renderer;
 
-		~pb_EditorGizmos()
+		~pb_Editor_Gizmos()
 		{
-
+			DestroySceneRenderer();
 		}
 
 		/**
@@ -28,7 +28,7 @@ namespace ProBuilder2.EditorCommon
 			pb_LineRenderer[] components = (pb_LineRenderer[])Resources.FindObjectsOfTypeAll(typeof(pb_LineRenderer));
 
 			for(int i = 0; i < components.Length; i++)
-				DestroyImmediate(_renderer);
+				DestroyImmediate(components[i]);
 		}
 
 		static pb_LineRenderer renderer
@@ -47,6 +47,19 @@ namespace ProBuilder2.EditorCommon
 		public static void DrawLineSegments(Vector3[] InWorldPoints, Color[] InColors)
 		{
 			renderer.AddLineSegments(InWorldPoints, InColors);
+		}
+
+		public static void ClearLines()
+		{
+			renderer.Clear();
+		}
+
+		/**
+		 * Destroy all renderers associated with PB gizmos.
+		 */
+		public static void CleanUp()
+		{
+			DestroySceneRenderer();
 		}
 
 	}

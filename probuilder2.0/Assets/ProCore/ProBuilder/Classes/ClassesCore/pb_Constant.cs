@@ -1,4 +1,5 @@
 
+
 using UnityEngine;
 
 public static class pb_Constant
@@ -17,8 +18,6 @@ public static class pb_Constant
 				GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
 				GameObject.DestroyImmediate(go);
-
-				Debug.Log("Create and Destroy PrimitiveType");
 			}
 			
 			return _UnityDefaultDiffuse;

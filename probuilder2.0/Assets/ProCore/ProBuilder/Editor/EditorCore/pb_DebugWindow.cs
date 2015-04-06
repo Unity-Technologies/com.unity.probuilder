@@ -504,7 +504,7 @@ namespace ProBuilder2.EditorCommon
 				n += 6;
 			}
 
-			pb_EditorGizmos.DrawLineSegments(segments, ElementColors);
+			pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 }

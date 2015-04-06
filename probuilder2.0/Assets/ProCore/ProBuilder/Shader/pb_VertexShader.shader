@@ -4,7 +4,6 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_Scale("Scale", float) = 3
-		// _Color ("Color Tint", Color) = (1,1,1,1)
 	}
 
 	SubShader
@@ -76,9 +75,7 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				// return _Color;
 				return i.color;
-				// return tex2D(_MainTex, i.uv) * i.color;
 			}
 
 			ENDCG

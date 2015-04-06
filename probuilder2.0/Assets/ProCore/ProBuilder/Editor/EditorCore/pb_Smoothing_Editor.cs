@@ -33,7 +33,10 @@ public class pb_Smoothing_Editor : EditorWindow
 	void SetDrawNormals(float val)
 	{
 		if(pb_Editor.instance)
-			pb_Editor.instance.drawVertexNormals = val;
+		{
+			pb_Editor.instance.drawNormals = val;
+			pb_Editor.instance.DrawNormals(val);
+		}
 
 		SceneView.RepaintAll();
 	}
@@ -63,8 +66,8 @@ public class pb_Smoothing_Editor : EditorWindow
 
 	void OnWindowResize()
 	{
-		clearAllRect = new Rect(Screen.width-80-pad, Screen.height-20-pad, 80, 18);
-		drawNormalsRect = new Rect(pad, Screen.height-18-pad, 200, 18);
+		clearAllRect = new Rect(Screen.width-68-pad, Screen.height-20-pad, 68, 18);
+		drawNormalsRect = new Rect(pad, Screen.height-18-pad, 252, 18);
 	}
 #endregion
 
@@ -87,7 +90,8 @@ public class pb_Smoothing_Editor : EditorWindow
 		GUI.Label(smoothLabelRect, "Smooth", EditorStyles.boldLabel);
 
 		EditorGUI.BeginChangeCheck();
-		normalsLength = Mathf.Clamp( EditorGUI.FloatField(drawNormalsRect, "Normals", normalsLength), 0f, 10f);
+		EditorGUIUtility.labelWidth = 60;
+		normalsLength = EditorGUI.Slider(drawNormalsRect, "Normals", normalsLength, 0f, 1f);
 		if(EditorGUI.EndChangeCheck())
 			SetDrawNormals(normalsLength);
 
@@ -212,6 +216,14 @@ public class pb_Smoothing_Editor : EditorWindow
 		}
 
 		Repaint();
+	}
+#endregion
+
+#region VISUALIZATION
+
+	void DrawPreviewMesh(pb_Object pb)
+	{
+
 	}
 #endregion
 	#endif

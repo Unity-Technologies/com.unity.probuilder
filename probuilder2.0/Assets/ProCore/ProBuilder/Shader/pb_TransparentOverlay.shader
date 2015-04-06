@@ -1,13 +1,13 @@
-Shader "Hidden/ProBuilder/FaceHighlight" 
+﻿Shader "Hidden/ProBuilder/pb_TransparentOverlay" 
 {
 	Properties
 	{
-		_Color ("Color Tint", Color) = (1,1,1,1)
+		_MainTex ("Texture", 2D) = "white" {}
 	}
 
 	SubShader
 	{
-		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
+		Tags { "IgnoreProjector"="True" "RenderType"="Transparent" }
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
@@ -23,33 +23,38 @@ Shader "Hidden/ProBuilder/FaceHighlight"
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			float4 _Color;
+			sampler2D _MainTex;
 
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float4 color : COLOR;
+        		float4 texcoord0 : TEXCOORD0;
 			};
 
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
+				float4 color : COLOR;
+				float2 uv : TEXCOORD0;
 			};
 
 			v2f vert (appdata v)
 			{
 				v2f o;
 
-				/// https://www.opengl.org/discussion_boards/showthread.php/166719-Clean-Wireframe-Over-Solid-Mesh
-				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.pos.xyz *= .98;
-				o.pos = mul(UNITY_MATRIX_P, o.pos);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
+				o.uv = v.texcoord0.xy;
+
+				o.color = v.color;
 
 				return o;
 			}
 
 			half4 frag (v2f i) : COLOR
 			{
-				return _Color;
+				return tex2D(_MainTex, i.uv) * i.color;
 			}
 
 			ENDCG

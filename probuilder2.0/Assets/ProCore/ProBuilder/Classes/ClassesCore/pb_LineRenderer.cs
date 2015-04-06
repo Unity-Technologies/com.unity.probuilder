@@ -12,11 +12,13 @@ namespace ProBuilder2.Common
 		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
 		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
 
-		[HideInInspector] pb_ObjectPool pool = new pb_ObjectPool(1, 16, MeshConstructor);
+		[HideInInspector] pb_ObjectPool pool = new pb_ObjectPool(1, 8, MeshConstructor);
 
 		static Mesh MeshConstructor()
 		{
-			return new Mesh();
+			Mesh m = new Mesh();
+			m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
+			return m;
 		}
 
 		[HideInInspector]
@@ -27,7 +29,6 @@ namespace ProBuilder2.Common
 
 		void OnEnable()
 		{
-			// mat = new Material(Shader.Find("Hidden/ProBuilder/FaceHighlight"));
 			mat = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 			mat.name = "pb_LineRenderer_Material";
 			mat.SetColor("_Color", Color.white);
@@ -39,6 +40,7 @@ namespace ProBuilder2.Common
 			Mesh m = (Mesh) pool.Get();
 
 			m.Clear();
+			m.name = "pb_LineRenderer::Mesh_" + m.GetInstanceID();
 			m.MarkDynamic();
 
 			int vc = segments.Length;
@@ -57,7 +59,6 @@ namespace ProBuilder2.Common
 				if(i % 2 == 1) n++;
 			}
 
-
 			m.subMeshCount = 1;
 			m.SetIndices(tris, MeshTopology.Lines, 0);
 			m.uv = new Vector2[m.vertexCount];
@@ -68,10 +69,24 @@ namespace ProBuilder2.Common
 			gizmos.Add(m);
 		}
 
-		void OnDestroy()
+		/**
+		 * Clear the queue of line segments to render.
+		 */
+		public void Clear()
+		{
+			for(int i = 0; i < gizmos.Count; i++)
+				pool.Put(gizmos[i]);
+				
+			gizmos.Clear();
+		}
+
+		void OnDisable()
 		{
 			foreach(Mesh m in gizmos)
-				DestroyImmediate(m);
+			{
+				if(m != null)
+					DestroyImmediate(m);
+			}
 
 			DestroyImmediate(mat);
 
@@ -90,10 +105,7 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < gizmos.Count; i++) {
 				Graphics.DrawMeshNow(gizmos[i], Vector3.zero, Quaternion.identity, 0);
-				pool.Put(gizmos[i]);
 			}
-
-			gizmos.Clear();
 		}
 	}
 }

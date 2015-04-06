@@ -85,7 +85,7 @@ public class pb_Editor : EditorWindow
 	pb_Shortcut[] shortcuts;
 
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
-	public float drawVertexNormals = 0f;
+	public float drawNormals = 0f;
 	public bool drawFaceNormals = false;
 	private bool pref_showSceneInfo = false;
 	private bool pref_backfaceSelect = false;
@@ -479,8 +479,6 @@ public class pb_Editor : EditorWindow
 			}
 		#endregion
 
-		// drawFaceNormals = EditorGUILayout.Toggle("Normal", drawFaceNormals);
-
 		#region Geometry
 
 			// Soft Select
@@ -844,8 +842,6 @@ public class pb_Editor : EditorWindow
 		if(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
 			DrawHandles();
 		
-		DrawVertexNormals(drawVertexNormals);
-
 		if(Tools.current != Tool.None && Tools.current != currentHandle)
 			SetTool_Internal(Tools.current);
 
@@ -2787,6 +2783,7 @@ public class pb_Editor : EditorWindow
 			UpdateHandleRotation();
 		#endif
 
+		DrawNormals(drawNormals);
 
 		#if !PROTOTYPE
 		UpdateTextureHandles();
@@ -2852,6 +2849,7 @@ public class pb_Editor : EditorWindow
 		UpdateGraphics();
 		UpdateHandleRotation();
 		currentHandleRotation = handleRotation;
+		DrawNormals(drawNormals);
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
@@ -3448,19 +3446,35 @@ public class pb_Editor : EditorWindow
 #region DEBUG
 
 	static readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
+	float elementLength = 0f;
 
-	void DrawVertexNormals(float dist)
+	/**
+	 * Draw vertex normals, tangents, and bitangents.
+	 */
+	public void DrawNormals(float dist)
 	{
-		if(dist <= Mathf.Epsilon) return;
+		if(dist <= Mathf.Epsilon)
+		{
+			if(elementLength > 0f)
+			{
+				elementLength = 0f;
+				pb_Editor_Gizmos.CleanUp();
+				SceneView.RepaintAll();
+			}
 
-		float elementOffset = .01f;
-		float elementLength = dist;
+			return;
+		}
+
+		float elementOffset = .001f;
+		elementLength = dist;
+
+		pb_Editor_Gizmos.ClearLines();
 
 		foreach(pb_Object pb in selection)
 		{
 			Mesh m = pb.msh;
 			int vertexCount = m.vertexCount;
-
+ 
 			Vector3[] vertices = m.vertices;
 			Vector3[] normals  = m.normals;
 			Vector4[] tangents = m.tangents;
@@ -3488,7 +3502,7 @@ public class pb_Editor : EditorWindow
 				n += 6;
 			}
 
-			pb_EditorGizmos.DrawLineSegments(segments, ElementColors);
+			pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 
