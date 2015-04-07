@@ -791,7 +791,7 @@ public class pb_Menu_Commands : Editor
 
 		foreach(pb_Object pb in selection)
 		{
-			int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles);
+			int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
 
 			pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected).ToArray();
 

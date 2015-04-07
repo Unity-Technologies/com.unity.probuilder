@@ -420,35 +420,30 @@ public class pb_Handle_Utility
 				Vector3 b = vertices[Indices[CurTriangle+1]];
 				Vector3 c = vertices[Indices[CurTriangle+2]];
 
-				if(pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+				nrm = Vector3.Cross(b-a, c-a);
+				dot = Vector3.Dot(InWorldRay.direction, nrm);
+
+				bool ignore = false;
+
+				switch(cullingMode)
+				{
+					case Culling.Front:
+						if(dot > 0f) ignore = true;
+						break;
+
+					case Culling.Back:
+						if(dot < 0f) ignore = true;
+						break;
+				}
+
+				if(!ignore && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
 				{
 					if(dist > OutHitPoint || dist > distance)
 						continue;
 
-					nrm = Vector3.Cross(b-a, c-a);
-
-					switch(cullingMode)
-					{
-						case Culling.Front:
-							dot = Vector3.Dot(InWorldRay.direction, -nrm);
-
-							if(dot > 0f)
-								goto case Culling.FrontBack;
-							break;
-
-						case Culling.Back:
-							dot = Vector3.Dot(InWorldRay.direction, nrm);
-
-							if(dot > 0f)
-								goto case Culling.FrontBack;
-							break;
-
-						case Culling.FrontBack:
-							OutNrm = nrm;
-							OutHitFace = CurFace;
-							OutHitPoint = dist;
-							break;
-					}
+					OutNrm = nrm;
+					OutHitFace = CurFace;
+					OutHitPoint = dist;
 
 					continue;
 				}
@@ -547,7 +542,7 @@ public class pb_Handle_Utility
 
 		// move the point slightly towards the camera to avoid colliding with its own triangle
 		Ray ray = new Ray(worldPoint + dir * .0001f, dir);
-
+		
 		pb_RaycastHit hit;
 
 		return pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), Culling.Back);

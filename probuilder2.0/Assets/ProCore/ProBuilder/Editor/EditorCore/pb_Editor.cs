@@ -320,7 +320,7 @@ public class pb_Editor : EditorWindow
 				
 				EditorGUI.BeginChangeCheck();
 
-					if( GUILayout.Button(pref_backfaceSelect ? "All Elements" : "Visible Only", EditorStyles.miniButton) )
+					if( GUILayout.Button(pref_backfaceSelect ? "Select All" : "Select Visible", EditorStyles.miniButton) )
 						pref_backfaceSelect = !pref_backfaceSelect;
 
 				if(EditorGUI.EndChangeCheck())
@@ -1079,7 +1079,7 @@ public class pb_Editor : EditorWindow
 
 						for(int i = 0; i < hits.Count; i++)
 						{
-							if( pb_Handle_Utility.PointIsOccluded(bestObj, hits[i].Point) )
+							if( pb_Handle_Utility.PointIsOccluded(bestObj, bestObj.transform.TransformPoint(hits[i].Point)) )
 								continue;
 
 							foreach(pb_Edge edge in bestObj.faces[hits[i].FaceIndex].edges)
@@ -1093,7 +1093,7 @@ public class pb_Editor : EditorWindow
 								}
 							}
 
-							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].Normal)) < 0 )
+							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].Normal)) < 0f )
 								break;
 						}
 
@@ -1398,7 +1398,7 @@ public class pb_Editor : EditorWindow
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.indices[0]])))
 						{
 							bool nope = false;
-							for(int q = 1; q < pb.faces[n].distinctIndices.Length; q++)
+							for(int q = 1; q < face.distinctIndices.Length; q++)
 							{
 								if(!selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.distinctIndices[q]])))
 								{
@@ -1409,13 +1409,21 @@ public class pb_Editor : EditorWindow
 
 							if(!nope)
 							{
-								int indx =  selectedFaces.IndexOf(face);
-								
-								if( indx > -1 ) {
-									selectedFaces.RemoveAt(indx);
-								} else {
-									addToSelection = true;
-									selectedFaces.Add(face);
+								if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+								{
+									Debug.Log("nope!");
+								}
+								else
+								{
+									int indx =  selectedFaces.IndexOf(face);
+									
+									if( indx > -1 ) {
+										selectedFaces.RemoveAt(indx);
+									} else {
+										addToSelection = true;
+										selectedFaces.Add(face);
+									}
+
 								}
 							}
 						}
@@ -1440,6 +1448,8 @@ public class pb_Editor : EditorWindow
 				profiler.BeginSample("Drag Select Edges");
 				#endif
 
+				Vector3 v0 = Vector3.zero, v1 = Vector3.zero;
+
 				for(int e = 0; e < selection.Length; e++)
 				{
 					pb_Object pb = selection[e];
@@ -1450,13 +1460,22 @@ public class pb_Editor : EditorWindow
 						pb_Edge edge = new pb_Edge( pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
 						                            pb.sharedIndices[selected_universal_edges_all[e][i].y][0] );
 
-						if( cam.WorldToScreenPoint( selected_verticesInWorldSpace_all[e][edge.x] ).z < 0 ||
-							cam.WorldToScreenPoint( selected_verticesInWorldSpace_all[e][edge.y] ).z < 0)
+						v0 = selected_verticesInWorldSpace_all[e][edge.x];
+						v1 = selected_verticesInWorldSpace_all[e][edge.y];
+
+						if( cam.WorldToScreenPoint( v0 ).z < 0 ||
+							cam.WorldToScreenPoint( v1 ).z < 0)
 							continue;
 
-						if( selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.x])) &&
-							selectionRect.Contains(HandleUtility.WorldToGUIPoint(selected_verticesInWorldSpace_all[e][edge.y])))
+						if( selectionRect.Contains(HandleUtility.WorldToGUIPoint(v0)) &&
+							selectionRect.Contains(HandleUtility.WorldToGUIPoint(v1)))
+						{
+							// delay occlusion check til end since it's heavy
+							if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pb, (v0+v1)*.5f) )
+								continue;
+
 							inSelection.Add(edge);
+						}
 					}
 
 					List<pb_Edge> add = new List<pb_Edge>();
@@ -1534,8 +1553,7 @@ public class pb_Editor : EditorWindow
 	private Vector3 scaleOrigin = Vector3.zero;
 
 	private void VertexMoveTool()
-	{
-		
+	{		
 		newPosition = selected_handlePivotWorld;
 		cachedPosition = newPosition;
 
@@ -1563,8 +1581,9 @@ public class pb_Editor : EditorWindow
 				if( FindNearestVertex(mousePosition, out v) )
 					diff = Vector3.Scale(v-cachedPosition, mask);
 			}
-
+	
 			movingVertices = true;
+
 			if(previouslyMoving == false)
 			{
 				translateOrigin = cachedPosition;
@@ -1577,14 +1596,28 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
+			profiler.BeginSample("VertexMoveTool");
+
+			profiler.BeginSample("Undo");
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+				profiler.EndSample();
 			
+			profiler.BeginSample("Translate Vertices");
 			for(int i = 0; i < selection.Length; i++)
 			{
+				profiler.BeginSample("TranslateVertices_World");
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
+				profiler.EndSample();
+				profiler.BeginSample("RefreshUV(SelectedFacesInEditZone)");
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
+				profiler.EndSample();
+				profiler.BeginSample("RefreshNormals");
 				selection[i].RefreshNormals();
+				profiler.EndSample();
 			}
+			profiler.EndSample();
+
+			profiler.EndSample();
 
 			Internal_UpdateSelectionFast();
 		}
@@ -2296,28 +2329,7 @@ public class pb_Editor : EditorWindow
 
 			#if !PROTOTYPE
 			case "Delete Face":
-				pbUndo.RecordObjects(selection, "Delete selected faces.");
-
-				switch(selectionMode)
-				{
-					case SelectMode.Face:
-					case SelectMode.Edge:
-					case SelectMode.Vertex:
-
-						pb_Menu_Commands.MenuDeleteFace(selection);
-					break;
-
-					// case SelectMode.Vertex:
-						// pb_Menu_Commands.MenuDeleteVertices(selection);
-						// break;
-				}
-
-				ClearFaceSelection();
-
-				UpdateSelection(true);
-
-				OnGeometryChanged(selection);
-
+				pb_Menu_Commands.MenuDeleteFace(selection);
 				break;
 			#endif
 
@@ -3299,25 +3311,6 @@ public class pb_Editor : EditorWindow
 		SceneView.RepaintAll();
 	}
 
-	/**
-	 *	\brief Used to check whether object is nodraw free or not - matching call is in pb_AutoUV_Editor.SetNoDraw
-	 */
-	void OnGeometryChanged( pb_Object[] pbs )
-	{
-		// check the object flags
-		foreach(pb_Object pb in pbs)
-		{
-			StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
-			
-			// if nodraw not found, and entity type should be batching static
-			if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
-			{
-				flags = flags | StaticEditorFlags.BatchingStatic;
-				GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-			}
-		}
-	}
-
 	private void PushToGrid(float snapVal)
 	{
 		pbUndo.RecordObjects(selection, "Push elements to Grid");
@@ -3326,7 +3319,7 @@ public class pb_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
-			int[] indices = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles);
+			int[] indices = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
 
 			Vector3[] verts = pb.vertices;
 			
@@ -3397,7 +3390,7 @@ public class pb_Editor : EditorWindow
 		{
 			#if PB_DEBUG
 			
-				profiler.BeginSample("OnFinishedVertexModification");
+				profiler.BeginSample("RebuildObjects");
 
 				foreach(pb_Object sel in selection)
 				{

@@ -226,36 +226,18 @@ public static class pb_IntArrayUtility
 	 * Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and 
 	 * distinct.
 	 */
-	public static int[] AllIndicesWithValues(this pb_IntArray[] pbIntArr, int[] indices)
+	public static IEnumerable<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
 	{
-		// List<int> used = new List<int>();
-		List<int> shared = new List<int>();
-		for(int i = 0; i < indices.Length; i++)
-		{
-			int indx = pbIntArr.IndexOf(indices[i]);
+		int[] universal = pbIntArr.GetUniversalIndices(indices).ToArray();
 
-			if(indx > -1)
-				shared.AddRange(pbIntArr[indx].array);
-
-		}
-
-		return shared.Distinct().ToArray();
-	}
-
-	public static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, List<int> indices)
-	{
 		List<int> shared = new List<int>();
 
-		for(int i = 0; i < indices.Count; i++)
+		for(int i = 0; i < universal.Length; i++)
 		{
-			int indx = pbIntArr.IndexOf(indices[i]);
-
-			if(indx > -1)
-				shared.AddRange(pbIntArr[indx].array);
-
+			shared.AddRange(pbIntArr[universal[i]].array);
 		}
 
-		return shared.Distinct().ToList();
+		return shared;
 	}
 
 	/**

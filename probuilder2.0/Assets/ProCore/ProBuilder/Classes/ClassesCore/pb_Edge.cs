@@ -110,7 +110,7 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 	public bool Contains(int a, pb_IntArray[] sharedIndices)
 	{
-		Debug.LogWarning("@todo OPTIMIZE ME");
+		// @todo optimize
 		int ind = sharedIndices.IndexOf(a);
 		return ( System.Array.IndexOf(sharedIndices[ind], x) > -1 || System.Array.IndexOf(sharedIndices[ind], y) > -1);
 	}
