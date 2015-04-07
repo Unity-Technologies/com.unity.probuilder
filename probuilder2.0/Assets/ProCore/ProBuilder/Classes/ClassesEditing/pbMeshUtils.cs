@@ -271,13 +271,15 @@ namespace ProBuilder2.MeshOperations
 			foreach(int tri in indices)
 				shared.Add(lookup[tri]);
 
-			foreach(pb_Face face in pb.faces)
+			for(int i = 0; i < pb.faces.Length; i++)
 			{
-				foreach(int tri in face.distinctIndices)
+				int[] dist = pb.faces[i].distinctIndices;
+
+				for(int n = 0; n < dist.Length; n++)
 				{
-					if(shared.Contains(lookup[tri]))
+					if( shared.Contains(lookup[dist[n]]))
 					{
-						neighboring.Add(face);
+						neighboring.Add(pb.faces[i]);
 						break;
 					}
 				}

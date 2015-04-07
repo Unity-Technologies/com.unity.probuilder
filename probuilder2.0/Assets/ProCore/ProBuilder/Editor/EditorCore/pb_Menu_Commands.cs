@@ -348,6 +348,8 @@ public class pb_Menu_Commands : Editor
 
 		if(editor != null)
 			editor.UpdateSelection();
+			
+		EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 		SceneView.RepaintAll();
 	}

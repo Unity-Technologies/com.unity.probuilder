@@ -391,8 +391,8 @@ public class pb_Handle_Utility
 		/**
 		 * Transform ray into model space
 		 */
-		InWorldRay.origin -= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-		
+
+		InWorldRay.origin 		-= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
 		InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
 		InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
 

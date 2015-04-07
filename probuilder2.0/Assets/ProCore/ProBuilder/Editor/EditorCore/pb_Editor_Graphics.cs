@@ -371,9 +371,8 @@ public class pb_Editor_Graphics
 
 			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
 			pb_Edge[] universalEdges = editor.Selected_Universal_Edges_All[i]; // new List<pb_Edge>(pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), sharedIndices).Distinct());
-			
 			Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
-			
+		
 			int n = 0;
 			foreach(pb_Edge e in universalEdges)
 			{

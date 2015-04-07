@@ -22,7 +22,6 @@ namespace ProBuilder2.Actions
 		public static void Extrude()
 		{
 			pb_Menu_Commands.MenuExtrude(pbUtil.GetComponents<pb_Object>(Selection.transforms));
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 		}
 	}
 }

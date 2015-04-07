@@ -1293,6 +1293,10 @@ public class pb_Editor : EditorWindow
 				else
 					pb.SetSelectedEdges(pb.SelectedEdges.Add(nearestEdge));
 
+				#if PB_DEBUG
+				profiler.EndSample();
+				#endif
+
 				return true;
 			}
 
@@ -1378,6 +1382,8 @@ public class pb_Editor : EditorWindow
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 
 				List<pb_Face> selectedFaces;
+				Vector3 camPosition = SceneView.lastActiveSceneView.camera.transform.position;
+
 				for(int i = 0; i < pool.Length; i++)
 				{
 					pb_Object pb = pool[i];
@@ -1387,11 +1393,14 @@ public class pb_Editor : EditorWindow
 
 					Vector3[] verticesInWorldSpace = limitFaceDragCheckToSelection ? selected_verticesInWorldSpace_all[i] : pb.VerticesInWorldSpace();
 					bool addToSelection = false;
+
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
 						pb_Face face = pb.faces[n];
+						Vector3 nrm = pb_Math.Normal(pb, face);
+						Vector3 dir = camPosition - pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices));
 
-						if(cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0)
+						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 || (!pref_backfaceSelect && Vector3.Dot(dir, nrm) < 0f))
 							continue;
 
 						// only check the first index per quad, and if it checks out, then check every other point
@@ -1409,11 +1418,7 @@ public class pb_Editor : EditorWindow
 
 							if(!nope)
 							{
-								if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
-								{
-									Debug.Log("nope!");
-								}
-								else
+								if( pref_backfaceSelect || !pb_Handle_Utility.PointIsOccluded(pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 								{
 									int indx =  selectedFaces.IndexOf(face);
 									
@@ -1423,7 +1428,6 @@ public class pb_Editor : EditorWindow
 										addToSelection = true;
 										selectedFaces.Add(face);
 									}
-
 								}
 							}
 						}
@@ -1444,64 +1448,62 @@ public class pb_Editor : EditorWindow
 			{
 				if(!shiftKey && !ctrlKey) ClearFaceSelection();
 
-				#if PB_DEBUG
 				profiler.BeginSample("Drag Select Edges");
-				#endif
 
-				Vector3 v0 = Vector3.zero, v1 = Vector3.zero;
-
-				for(int e = 0; e < selection.Length; e++)
+				for(int i = 0; i < selection.Length; i++)
 				{
-					pb_Object pb = selection[e];
-					List<pb_Edge> inSelection = new List<pb_Edge>();
+					Vector3 v0 = Vector3.zero, v1 = Vector3.zero, cen = Vector3.zero;
+					pb_Object pb = selection[i];
+					Vector3[] vertices = selected_verticesInWorldSpace_all[i];
+					pb_IntArray[] sharedIndices = pb.sharedIndices;
+					Matrix4x4 matrix = pb.transform.localToWorldMatrix;
+					HashSet<pb_Edge> inSelection = new HashSet<pb_Edge>();
 
-					for(int i = 0; i < selected_universal_edges_all[e].Length; i++)
+					for(int n = 0; n < selected_universal_edges_all[i].Length; n++)
 					{
-						pb_Edge edge = new pb_Edge( pb.sharedIndices[selected_universal_edges_all[e][i].x][0],
-						                            pb.sharedIndices[selected_universal_edges_all[e][i].y][0] );
+						v0 = vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]];// matrix.MultiplyPoint3x4( vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]] );
+						v1 = vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]];// matrix.MultiplyPoint3x4( vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]] );
 
-						v0 = selected_verticesInWorldSpace_all[e][edge.x];
-						v1 = selected_verticesInWorldSpace_all[e][edge.y];
+						cen = (v0+v1)*.5f;
 
-						if( cam.WorldToScreenPoint( v0 ).z < 0 ||
-							cam.WorldToScreenPoint( v1 ).z < 0)
+						bool behindCam = cam.WorldToScreenPoint(cen).z < 0;
+
+						if( behindCam )
 							continue;
 
-						if( selectionRect.Contains(HandleUtility.WorldToGUIPoint(v0)) &&
-							selectionRect.Contains(HandleUtility.WorldToGUIPoint(v1)))
-						{
-							// delay occlusion check til end since it's heavy
-							if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pb, (v0+v1)*.5f) )
-								continue;
+						bool rectContains = selectionRect.Contains( HandleUtility.WorldToGUIPoint(cen) );
 
-							inSelection.Add(edge);
+						if( rectContains )
+						{
+							bool occluded = !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pb, cen);
+
+							if(!occluded)
+							{
+								inSelection.Add( new pb_Edge(selected_universal_edges_all[i][n]) );
+							}
 						}
 					}
 
-					List<pb_Edge> add = new List<pb_Edge>();
-					List<int> remove = new List<int>();
-					foreach(pb_Edge edge in inSelection.Distinct())
+					pb_Edge[] curSelection = pb_Edge.GetUniversalEdges(pb.SelectedEdges, sharedIndices.ToDictionary());
+					inSelection.SymmetricExceptWith(curSelection);
+					pb_Edge[] selected = inSelection.ToArray();
+
+					for(int n = 0; n < selected.Length; n++)
 					{
-						int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices);
-						
-						if(ind > -1)
-							remove.Add(ind);
-						else
-							add.Add(edge);
+						selected[n].x = sharedIndices[selected[n].x][0];
+						selected[n].y = sharedIndices[selected[n].y][0];
 					}
 
-					List<pb_Edge> priorSelection = new List<pb_Edge>(pb.SelectedEdges.RemoveAt(remove.ToArray()));
-					priorSelection.AddRange(add);
-
-					pb.SetSelectedEdges(priorSelection.ToArray());
+					pb.SetSelectedEdges( selected );
 				}
 
 				if(!vertexSelectionMask)
+				{
+					Debug.Log("DragObjectCheck");
 					DragObjectCheck(true);
+				}
 				
-				#if PB_DEBUG
 				profiler.EndSample();
-				#endif
 
 				UpdateSelection(false);
 			}

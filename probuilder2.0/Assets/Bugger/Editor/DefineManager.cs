@@ -12,6 +12,8 @@ using System.Text;
 
 public class DefineManager : EditorWindow
 {
+	const string DEF_MANAGER_PATH = "Assets/Bugger/Editor/DefineManager.cs";
+
 	enum Compiler
 	{
 		CSharp,
@@ -140,7 +142,7 @@ public class DefineManager : EditorWindow
 			if( GUILayout.Button("Apply") )
 			{
 				SetDefines(compiler, defs);
-				AssetDatabase.ImportAsset("Assets/Bugger/Editor/DefineManager.cs", ImportAssetOptions.ForceUpdate);
+				AssetDatabase.ImportAsset(DEF_MANAGER_PATH, ImportAssetOptions.ForceUpdate);
 				ParseDefineFiles();
 			}
 		
@@ -149,7 +151,7 @@ public class DefineManager : EditorWindow
 				for(int i = 0; i < COMPILER_COUNT; i++)
 				{
 					SetDefines((Compiler)i, defs);
-					AssetDatabase.ImportAsset("Assets/Bugger/Editor/DefineManager.cs", ImportAssetOptions.ForceUpdate);
+					AssetDatabase.ImportAsset(DEF_MANAGER_PATH, ImportAssetOptions.ForceUpdate);
 					ParseDefineFiles();		
 				}
 		
