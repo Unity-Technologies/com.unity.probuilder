@@ -8,23 +8,6 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Serialization
 {
-	#if UNITY_WP8
-	public class pb_SerializableObject
-	{
-		// pb_Object
-		public Vector3[] vertices;
-		public Vector2[] uv;
-		public Color[]	color;
-		public pb_Face[] faces;
-		public int[][] sharedIndices;
-		public int[][] sharedIndicesUV;
-
-		// transform
-		public Vector3 		t_position;
-		public Quaternion 	t_rotation;
-		public Vector3 		t_scale;
-	}
-	#else
 	[Serializable()]		
 	public class pb_SerializableObject : ISerializable
 	{
@@ -126,5 +109,4 @@ namespace ProBuilder2.Serialization
 			this.t_scale = (pb_Vector3) info.GetValue("t_scale", typeof(pb_Vector3));
 		}
 	}
-	#endif
 }

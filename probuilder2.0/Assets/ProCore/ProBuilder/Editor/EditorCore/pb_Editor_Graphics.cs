@@ -37,7 +37,7 @@ public class pb_Editor_Graphics
 	static Color 				vertSelectionColor = new Color(1f, .2f, .2f, 1f);
 
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
-	static Color 				vertexDotColor = new Color(0.63f, 0.75f, 0.94f, 1f);	///< Unity's wireframe color (approximately)
+	static Color 				vertexDotColor = Color.white;
 
 	public static EditLevel 	_editLevel = EditLevel.Geometry;
 	public static SelectMode 	_selectMode = SelectMode.Face;
@@ -51,13 +51,15 @@ public class pb_Editor_Graphics
 	 */
 	public static void LoadColors()
 	{
-		faceSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
-		edgeSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
-		vertSelectionColor = pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor);
+		faceSelectionColor 	= pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
+		edgeSelectionColor 	= pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
+		vertSelectionColor 	= pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor);
 
 		if(!selectionObject || !wireframeObject)
 			Init(_editLevel, _selectMode);
 
+		// UpdateSelectionMesh(pb_Editor.instance.selection, _editLevel, _selectMode);
+		// SceneView.RepaintAll();
 		SetMaterial(_editLevel, _selectMode);
 	}
 
@@ -108,8 +110,10 @@ public class pb_Editor_Graphics
 				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 				selectionMaterial = new Material(Shader.Find(VERT_SHADER));
 				selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
+				Texture2D dot = (Texture2D)Resources.Load("Textures/VertOff");
+				selectionMaterial.mainTexture = dot;
 				selectionMaterial.SetColor("_Color", vertexDotColor);
-				selectionMaterial.SetFloat("_Scale", 3);
+				selectionMaterial.SetFloat("_Scale", dot == null ? 3f : 3.3f);
 				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 				break;
 
@@ -205,7 +209,7 @@ public class pb_Editor_Graphics
 		wireframeMesh.name = "EDITOR_WIREFRAME_MESH";
 
 		List<Vector3> verts = new List<Vector3>();
-		List<Vector4> tan = new List<Vector4>();
+		List<Vector3> nrm = new List<Vector3>();
 		List<Vector2> uvs 	= new List<Vector2>();
 		List<Vector2> uv2s 	= new List<Vector2>();
 		List<Color> col = new List<Color>();
@@ -263,12 +267,12 @@ public class pb_Editor_Graphics
 						t_nrm[t+2] = Vector3.forward;
 						t_nrm[t+3] = Vector3.forward;
 
-						t_tris[n+0] = t+2+vcount;
+						t_tris[n+0] = t+0+vcount;
 						t_tris[n+1] = t+1+vcount;
-						t_tris[n+2] = t+0+vcount;
-						t_tris[n+3] = t+2+vcount;
+						t_tris[n+2] = t+2+vcount;
+						t_tris[n+3] = t+1+vcount;
 						t_tris[n+4] = t+3+vcount;
-						t_tris[n+5] = t+1+vcount;
+						t_tris[n+5] = t+2+vcount;
 
 						if( selected.Contains(i) )
 						{
@@ -276,6 +280,11 @@ public class pb_Editor_Graphics
 							t_col[t+1] = vertSelectionColor;
 							t_col[t+2] = vertSelectionColor;
 							t_col[t+3] = vertSelectionColor;
+
+							t_nrm[t].x = .1f;
+							t_nrm[t+1].x = .1f;
+							t_nrm[t+2].x = .1f;
+							t_nrm[t+3].x = .1f;
 						}
 						else
 						{
@@ -291,6 +300,7 @@ public class pb_Editor_Graphics
 
 					verts.AddRange(t_billboards);
 					vcount += t_billboards.Length;
+					nrm.AddRange(t_nrm);
 					uvs.AddRange(t_uvs);
 					uv2s.AddRange(t_uv2);
 					col.AddRange(t_col);
@@ -313,10 +323,9 @@ public class pb_Editor_Graphics
 				}
 
 				tris = new List<int>(verts.Count);			// because ValuesWithIndices returns in wound order, just fill
-				tan = new List<Vector4>(verts.Count);
+
 				for(int p = 0; p < verts.Count; p++)		// triangles with 0, 1, 2, 3, etc
 				{
-					tan.Add(Vector4.one);
 					tris.Add(p);
 				}
 				
@@ -324,10 +333,10 @@ public class pb_Editor_Graphics
 		}
 
 		selectionMesh.vertices = verts.ToArray();	// it is assigned here because we need to get normals
+		selectionMesh.normals = nrm.ToArray();
 		selectionMesh.triangles = tris.ToArray();
 		selectionMesh.uv = uvs.ToArray();
 		selectionMesh.uv2 = uv2s.ToArray();
-		selectionMesh.tangents = tan.ToArray();
 		selectionMesh.colors = col.ToArray();
 		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 	}

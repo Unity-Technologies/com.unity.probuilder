@@ -1456,13 +1456,12 @@ public class pb_Editor : EditorWindow
 					pb_Object pb = selection[i];
 					Vector3[] vertices = selected_verticesInWorldSpace_all[i];
 					pb_IntArray[] sharedIndices = pb.sharedIndices;
-					Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 					HashSet<pb_Edge> inSelection = new HashSet<pb_Edge>();
 
 					for(int n = 0; n < selected_universal_edges_all[i].Length; n++)
 					{
-						v0 = vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]];// matrix.MultiplyPoint3x4( vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]] );
-						v1 = vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]];// matrix.MultiplyPoint3x4( vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]] );
+						v0 = vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]];
+						v1 = vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]];
 
 						cen = (v0+v1)*.5f;
 

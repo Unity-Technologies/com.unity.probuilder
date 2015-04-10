@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		_Scale("Scale", float) = 3
+		_Scale("Scale", Range(1,7)) = 3.3
 	}
 
 	SubShader
@@ -30,6 +30,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float3 normal : NORMAL;
 				float4 color : COLOR;
 				float2 texcoord : TEXCOORD0;
 				float2 texcoord1 : TEXCOORD1;
@@ -46,9 +47,7 @@
 			{
 				v2f o;
 
-				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.pos *= .99;
-				o.pos = mul(UNITY_MATRIX_P, o.pos);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
 
@@ -59,6 +58,7 @@
 				clip.xy *= _ScreenParams.xy;
 
 				clip.xy += v.texcoord1.xy * _Scale;
+				clip.z -= (.002 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
 
 				clip.xy /= _ScreenParams.xy;
 				clip.xy = (clip.xy - .5) / .5;
@@ -75,7 +75,7 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return i.color;
+				return tex2D(_MainTex, i.uv) * i.color;
 			}
 
 			ENDCG

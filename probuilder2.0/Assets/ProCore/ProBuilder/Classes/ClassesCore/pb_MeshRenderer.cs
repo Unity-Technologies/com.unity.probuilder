@@ -35,6 +35,9 @@ namespace ProBuilder2.Common
 			{
 				Material[] mats = renderables[i].materials;
 
+				if( renderables[i].mesh == null )
+					continue;
+
 				for(int n = 0; n < renderables[i].mesh.subMeshCount; n++)
 				{
 					materialIndex = clamp(n, 0, mats.Length-1);

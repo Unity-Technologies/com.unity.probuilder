@@ -74,7 +74,11 @@ public class Bugger
 	public static Dictionary<string, LogEntry> keyedLogs = new Dictionary<string, LogEntry>();
 	public static Dictionary<string, TempLogEntry> tempLog = new Dictionary<string, TempLogEntry>();
 
+	#if UNITY_WP8
+	public static string LogPath { get { return Application.dataPath + "../Temp/BuggerLog.txt"; } }
+	#else
 	public static string LogPath { get { return Directory.GetParent(Application.dataPath) + "/Temp/BuggerLog.txt"; } }
+	#endif
 	public static string LogSplitString { get { return "---"; } }
 
 	public static double lastLogEntryTime { get; internal set; }
@@ -84,7 +88,7 @@ public class Bugger
 
 	public static void DebugLogHandler(string logString, string stackTrace, LogType type)
 	{
-		#if !UNITY_WEBPLAYER
+		#if !UNITY_WEBPLAYER && !UNITY_WP8
 
 		string json = UnityLogToJSON(logString, stackTrace, type);
 
@@ -150,7 +154,7 @@ public class Bugger
 
 	public static void Log<T>(T value, int offset, LogType logType)
 	{
-		#if !UNITY_WEBPLAYER
+		#if !UNITY_WEBPLAYER && !UNITY_WP8
 
 		StackTrace trace = new StackTrace(true);
 		
@@ -173,7 +177,7 @@ public class Bugger
 	{
 		// UnityEngine.Debug.ClearDeveloperConsole();
 
-		#if !UNITY_WEBPLAYER && UNITY_EDITOR
+		#if !UNITY_WEBPLAYER && !UNITY_WP8 && UNITY_EDITOR
 		File.WriteAllText(LogPath, "{ \"entries\" : [\n");
 		lastLogEntryTime = EditorApplication.timeSinceStartup;
 		#endif

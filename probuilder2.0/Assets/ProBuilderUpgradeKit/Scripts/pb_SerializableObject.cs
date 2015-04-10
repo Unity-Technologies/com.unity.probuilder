@@ -15,17 +15,6 @@ namespace ProBuilder2.Common
  */
 namespace ProBuilder2.UpgradeKit
 {
-	#if UNITY_WP8
-	public class pb_SerializableObject
-	{
-		// pb_Object
-		public Vector3[] vertices;
-		public Vector2[] uv;
-		public pb_Face[] faces;
-		public int[][] sharedIndices;
-		public int[][] sharedIndicesUV;
-	}
-	#else
 	[Serializable()]		
 	public class pb_SerializableObject : ISerializable
 	{
@@ -146,5 +135,4 @@ namespace ProBuilder2.UpgradeKit
 			this.sharedIndicesUV = (int[][]) info.GetValue("sharedIndicesUV", typeof(int[][]));
 		}
 	}
-	#endif
 }
