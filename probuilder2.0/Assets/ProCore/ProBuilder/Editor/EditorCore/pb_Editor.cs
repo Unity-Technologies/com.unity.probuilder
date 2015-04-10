@@ -3211,7 +3211,7 @@ public class pb_Editor : EditorWindow
 						if(!show_Detail)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = true;
-							entity.transform.GetComponent<MeshCollider>().enabled = true;
+							entity.transform.GetComponent<Collider>().enabled = true;
 						}
 						break;
 
@@ -3219,21 +3219,21 @@ public class pb_Editor : EditorWindow
 						if(!show_Mover)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = true;
-							entity.transform.GetComponent<MeshCollider>().enabled = true;
+							entity.transform.GetComponent<Collider>().enabled = true;
 						}
 						break;
 	
 					case EntityType.Collider:
 						if(!show_Collider)
 						{
-							entity.transform.GetComponent<MeshCollider>().enabled = true;
+							entity.transform.GetComponent<Collider>().enabled = true;
 						}
 						break;
 
 					case EntityType.Trigger:
 						if(!show_Trigger)
 						{
-							entity.transform.GetComponent<MeshCollider>().enabled = true;
+							entity.transform.GetComponent<Collider>().enabled = true;
 						}
 						break;
 				}
@@ -3252,7 +3252,7 @@ public class pb_Editor : EditorWindow
 						if(!show_Detail)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<MeshCollider>().enabled = false;
+							entity.transform.GetComponent<Collider>().enabled = false;
 						}
 						break;
 
@@ -3260,7 +3260,7 @@ public class pb_Editor : EditorWindow
 						if(!show_Mover)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<MeshCollider>().enabled = false;
+							entity.transform.GetComponent<Collider>().enabled = false;
 						}
 						break;
 
@@ -3268,7 +3268,7 @@ public class pb_Editor : EditorWindow
 						if(!show_Collider)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<MeshCollider>().enabled = false;
+							entity.transform.GetComponent<Collider>().enabled = false;
 						}
 						break;
 
@@ -3276,7 +3276,7 @@ public class pb_Editor : EditorWindow
 						if(!show_Trigger)
 						{
 							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<MeshCollider>().enabled = false;
+							entity.transform.GetComponent<Collider>().enabled = false;
 						}
 						break;
 				}
