@@ -48,6 +48,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnDisable()
 		{
+			pb_Editor_Gizmos.ClearLines();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		}
 
@@ -55,6 +56,7 @@ namespace ProBuilder2.EditorCommon
 		public bool faceInfo = false;
 		public bool elementGroupInfo = false;
 		public bool textureGroupInfo = false;
+		public bool smoothingGroupInfo = false;
 		public bool vertexInfo = true;
 		public bool autoUVInfo = false;
 		Vector2 scroll = Vector2.zero;
@@ -98,6 +100,7 @@ namespace ProBuilder2.EditorCommon
 				faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
 				elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
 				textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
+				smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
 				vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
 
 				GUILayout.BeginHorizontal();
@@ -402,6 +405,9 @@ namespace ProBuilder2.EditorCommon
 							gc = new GUIContent("E: " + f.elementGroup, "");
 						else
 							gc = new GUIContent("T: " + f.textureGroup, "");
+
+						if(smoothingGroupInfo)
+							gc.text += "\nS: " + f.smoothingGroup;
 
 						DrawSceneLabel(gc, cen);
 					}

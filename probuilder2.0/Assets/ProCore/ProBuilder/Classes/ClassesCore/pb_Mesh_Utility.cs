@@ -51,6 +51,7 @@ namespace ProBuilder2.Common
 			#endif
 
 			Dictionary<int, int> swapTable = new Dictionary<int, int>();
+
 			foreach(List<int> group in InIndices)
 			{
 				for(int i = 1; i < group.Count; i++)
@@ -98,17 +99,6 @@ namespace ProBuilder2.Common
 			List<int> unused = InIndices.SelectMany( x => x.GetRange(1, x.Count - 1) ).ToList();
 
 			RemoveVertices(unused, ref InMesh);
-		}
-
-		private static int NearestIndexLessThan(List<int> InArray, int InValue)
-		{
-			for(int i = 0; i < InArray.Count; i++)
-			{
-				if( InArray[i] >= InValue )
-					return i-1;
-			}
-
-			return InArray.Count - 1;
 		}
 
 		/**
@@ -159,7 +149,7 @@ namespace ProBuilder2.Common
 			// rebuild vertex arrays without duplicate indices
 			for(int i = 0; i < vertexCount; i++)
 			{
-				if(unusedIndex < unusedCount && i == InUnusedVertices[unusedIndex])
+				if(unusedIndex < unusedCount && i >= InUnusedVertices[unusedIndex])
 				{
 					unusedIndex++;
 					continue;
@@ -240,10 +230,11 @@ namespace ProBuilder2.Common
 				 * Don't bother checking position since if they're in the same shared
 				 * index group that should always means they're on top of one-another.
 				 */
-				List<List<int>> textureMatches = new List<List<int>>();
 
 				foreach(KeyValuePair<int, List<int>> group in shareable)
-				{
+				{			
+					List<List<int>> textureMatches = new List<List<int>>();
+
 					foreach(int tri in group.Value)
 					{
 						bool foundMatch = false;
@@ -261,9 +252,9 @@ namespace ProBuilder2.Common
 						if(!foundMatch)
 							textureMatches.Add( new List<int>() { tri } );
 					}
+	
+					merge.AddRange( textureMatches.Where(x => x.Count > 1) );
 				}
-
-				merge.AddRange( textureMatches.Where(x => x.Count > 1) );
 			}
 
 			return merge;

@@ -50,7 +50,10 @@ public class pb_Smoothing_Editor : EditorWindow
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 
 		if(editor != null)
+		{
+			SetDrawNormals(normalsLength);
 			OnSelectionUpdate(editor.selection);
+		}
 	}
 
 	void OnFocus()

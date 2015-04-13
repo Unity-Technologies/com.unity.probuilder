@@ -319,6 +319,7 @@ public class pb_Editor_Graphics
 					Vector2[] 	u = pbUtil.ValuesWithIndices(pb.uv, selectedTriangles);
 
 					verts.AddRange(v);
+					nrm.AddRange( v );
 					uvs.AddRange  (u);
 				}
 
