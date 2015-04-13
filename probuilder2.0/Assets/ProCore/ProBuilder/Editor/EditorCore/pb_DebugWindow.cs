@@ -472,6 +472,8 @@ namespace ProBuilder2.EditorCommon
 		 */
 		void DrawElements(pb_Object pb)
 		{	
+			pb_Editor_Gizmos.ClearLines();
+
 			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length )
 				return;
 

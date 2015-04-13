@@ -173,7 +173,10 @@ public class pb_Smoothing_Editor : EditorWindow
 			pb.Finalize();
 		}
 
-		OnSelectionUpdate(selection);
+		if( pb_Editor.instance != null)
+			pb_Editor.instance.UpdateSelection(false);
+		else
+			OnSelectionUpdate(selection);
 	}
 
 	void ClearAllSmoothingGroups(pb_Object[] _selection)
@@ -192,7 +195,10 @@ public class pb_Smoothing_Editor : EditorWindow
 			pb.Finalize();
 		}
 
-		OnSelectionUpdate(selection);
+		if( pb_Editor.instance != null)
+			pb_Editor.instance.UpdateSelection(false);
+		else
+			OnSelectionUpdate(selection);
 	}
 #endregion
 

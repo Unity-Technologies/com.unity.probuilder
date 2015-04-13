@@ -3459,7 +3459,7 @@ public class pb_Editor : EditorWindow
 			return;
 		}
 
-		float elementOffset = .001f;
+		float elementOffset = .01f;
 		elementLength = dist;
 
 		pb_Editor_Gizmos.ClearLines();

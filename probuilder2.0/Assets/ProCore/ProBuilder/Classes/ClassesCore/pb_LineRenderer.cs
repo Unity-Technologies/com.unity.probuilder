@@ -107,9 +107,9 @@ namespace ProBuilder2.Common
 
 			mat.SetPass(0);
 
-			for(int i = 0; i < gizmos.Count; i++) {
+			for(int i = 0; i < gizmos.Count && gizmos[i] != null; i++) {
 				Graphics.DrawMeshNow(gizmos[i], Vector3.zero, Quaternion.identity, 0);
 			}
-		}
+		} 
 	}
 }

@@ -69,10 +69,16 @@ public static class pbSubdivideSplit
 		int len = edges.Length;
 		List<pb_EdgeConnection> splits = new List<pb_EdgeConnection>();
 
+		Debug.Log("edges: " + edges.Length);
+
 		// profiler.BeginSample("Split Edges");
 		for(int i = 0; i < len; i++)
 		{
-			foreach(pb_Face face in pbMeshUtils.GetNeighborFaces(pb, edges[i]))
+			List<pb_Face> neighbors = pbMeshUtils.GetNeighborFaces(pb, edges[i]);
+
+			Debug.Log(edges[i] + ": " + neighbors.Count);
+
+			foreach(pb_Face face in neighbors)
 			{
 				if(!splits.Contains((pb_EdgeConnection)face))
 				{
@@ -90,6 +96,8 @@ public static class pbSubdivideSplit
 			}
 		}
 		// profiler.EndSample();
+
+		Debug.Log(splits.Count);
 
 		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 
@@ -359,6 +367,8 @@ public static class pbSubdivideSplit
 				vertexConnections.Add(vc);
 			}
 		}
+
+		Debug.Log(vertexConnections.ToFormattedString("\n"));
 
 		if(vertexConnections.Count < 1)
 		{
@@ -992,7 +1002,7 @@ public static class pbSubdivideSplit
 		Color[] colors  	= pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
 		Vector2 cenUV		= pb_Bounds2D.Center(uvs);
-		Vector3 cen3d 		= pb_Math.BoundsCenter(verts);
+		Vector3 cen3d 		= pb_Math.Average(verts);
 		pokedVertex 		= cen3d;
 		Vector3 nrm 		= pb_Math.Normal(pb.GetVertices(face.indices));
 		Color cenColor 		= pb_Math.Average(colors);
@@ -1078,9 +1088,12 @@ public static class pbSubdivideSplit
 		{
 			try {
 				tris[i] = Delaunay.Triangulate(quadrants2d[i]).ToIntArray();
-				
+			
 				if(tris[i] == null || tris[i].Length < 3)
+				{
+					Debug.Log("Fail triangulation");
 					return false;
+				}
 			} catch (System.Exception error) {
 				Debug.LogError("PokeFace internal failed triangulation. Bail!\n" + error);
 				return false;
@@ -1107,6 +1120,28 @@ public static class pbSubdivideSplit
 		}
 
 		return true;
+	}
+
+	static string tfs(Vector3[] v)
+	{
+		string tx2 = v[0].ToString("F4");
+
+		for(int i = 1; i < v.Length; i++)
+		{
+			tx2 += "\n" + v[i].ToString("F4");
+		}
+		return tx2;
+	}
+
+	static string tfs(Vector2[] v)
+	{
+		string tx2 = v[0].ToString("F4");
+
+		for(int i = 1; i < v.Length; i++)
+		{
+			tx2 += "\n" + v[i].ToString("F4");
+		}
+		return tx2;
 	}
 #endregion
 #endif

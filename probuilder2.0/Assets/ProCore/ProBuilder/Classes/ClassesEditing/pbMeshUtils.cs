@@ -169,7 +169,7 @@ namespace ProBuilder2.MeshOperations
 					e.x = edges[n].x;
 					e.y = edges[n].y;
 
-					if( (uni.x == lookup[e.x] && uni.x == lookup[e.y]) || 
+					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) || 
 						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
 					{
 						faces.Add(pb.faces[i]);

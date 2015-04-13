@@ -66,10 +66,16 @@ namespace ProBuilder2.Triangulator
 		/// <returns>Triangles referencing vertex indices arranged in clockwise order</returns>
 		public static List<Geometry.Triangle> Triangulate(List<Vector2> verts)
 		{
-			// stupid floating point errors force this
 			List<Vector2> Vertex = new List<Vector2>();
+
+			Vector2 avg = ProBuilder2.Math.pb_Math.Average(verts);
+
+			// Blow out triangle scale to avoid rounding error on sliver pieces.
 			for(int i = 0; i < verts.Count; i++)
-				Vertex.Add(verts[i] * 10f);
+			{
+				Vector2 dir = (verts[i] - avg).normalized;
+				Vertex.Add(verts[i] + (dir * 10f));
+			}
 
 			int nv = Vertex.Count;
 
@@ -193,7 +199,7 @@ namespace ProBuilder2.Triangulator
 			//made up by points (x1,y1) (x2,y2) (x3,y3)
 			//NOTE: A point on the edge is inside the circumcircle
 
-			if (System.Math.Abs(p1.y - p2.y) < float.Epsilon && System.Math.Abs(p2.y - p3.y) < float.Epsilon)
+			if (System.Math.Abs(p1.y - p2.y) < Mathf.Epsilon && System.Math.Abs(p2.y - p3.y) < Mathf.Epsilon)
 			{
 				//INCIRCUM - F - Vector2s are coincident !!
 				return false;
@@ -204,7 +210,7 @@ namespace ProBuilder2.Triangulator
 			float my1, my2;
 			float xc, yc;
 						
-			if (System.Math.Abs(p2.y - p1.y) < float.Epsilon)
+			if (System.Math.Abs(p2.y - p1.y) < Mathf.Epsilon)
 			{
 				m2 = -(p3.x - p2.x) / (p3.y - p2.y);
 				mx2 = (p2.x + p3.x) * 0.5f;
@@ -213,7 +219,7 @@ namespace ProBuilder2.Triangulator
 				xc = (p2.x + p1.x) * 0.5f;
 				yc = m2 * (xc - mx2) + my2;
 			}
-			else if (System.Math.Abs(p3.y - p2.y) < float.Epsilon)
+			else if (System.Math.Abs(p3.y - p2.y) < Mathf.Epsilon)
 			{
 				m1 = -(p2.x - p1.x) / (p2.y - p1.y);
 				mx1 = (p1.x + p2.x) * 0.5f;
