@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Linq;
 using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
@@ -90,6 +91,11 @@ namespace ProBuilder2.EditorCommon
 
 		private void AddCollider(ColType c)
 		{
+			Collider[] colliders = serializedObject.targetObjects.Where(x => x is pb_Entity).SelectMany(x => ((pb_Entity)x).gameObject.GetComponents<Collider>()).ToArray();
+			bool isTrigger = false;
+			if( colliders != null )
+				isTrigger = colliders.Any(x => x.isTrigger);
+
 			RemoveColliders();
 			
 			foreach(pb_Entity obj in serializedObject.targetObjects)
@@ -99,16 +105,43 @@ namespace ProBuilder2.EditorCommon
 				switch(c)
 				{
 					case ColType.MeshCollider:
-						go.AddComponent<MeshCollider>();
+					{
+						MeshCollider col = go.AddComponent<MeshCollider>();
+
+						if(ent.entityType == EntityType.Trigger)
+						{
+							col.convex = true;
+							col.isTrigger = true;
+						}
+						else if(ent.entityType == EntityType.Collider)
+						{
+							col.convex = true;
+						}
+						else if(isTrigger)
+						{
+							col.convex = true;
+							col.isTrigger = true;
+						}
+
 						break;
+					}
 
 					case ColType.BoxCollider:	
-						go.AddComponent<BoxCollider>();
+					{
+						BoxCollider col = go.AddComponent<BoxCollider>();
+
+						if(ent.entityType == EntityType.Trigger || isTrigger)
+							col.isTrigger = true;
 						break;
+					}
 
 					case ColType.SphereCollider:	
-						go.AddComponent<SphereCollider>();
+					{
+						SphereCollider col = go.AddComponent<SphereCollider>();
+						if(ent.entityType == EntityType.Trigger || isTrigger)
+							col.isTrigger = true;
 						break;
+					}
 
 					default:
 						break;

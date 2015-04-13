@@ -69,14 +69,10 @@ public static class pbSubdivideSplit
 		int len = edges.Length;
 		List<pb_EdgeConnection> splits = new List<pb_EdgeConnection>();
 
-		Debug.Log("edges: " + edges.Length);
-
 		// profiler.BeginSample("Split Edges");
 		for(int i = 0; i < len; i++)
 		{
 			List<pb_Face> neighbors = pbMeshUtils.GetNeighborFaces(pb, edges[i]);
-
-			Debug.Log(edges[i] + ": " + neighbors.Count);
 
 			foreach(pb_Face face in neighbors)
 			{
@@ -96,8 +92,6 @@ public static class pbSubdivideSplit
 			}
 		}
 		// profiler.EndSample();
-
-		Debug.Log(splits.Count);
 
 		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 

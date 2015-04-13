@@ -2136,9 +2136,6 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("m_draggingCanvas: " + m_draggingCanvas);
 		GUILayout.Label("modifyingUVs: " + modifyingUVs);
 
-		if(editor)
-			GUILayout.Label("manualUV: " + selection.SelectMany(x => x.SelectedFaces.Select(n => n.manualUV)).ToArray().ToFormattedString(", "), GUILayout.MaxWidth(rect.width-6));
-
 		BasicBackgroundColor = EditorGUILayout.ColorField("BACKGROUND", BasicBackgroundColor);
 		GUILayout.Label(BasicBackgroundColor.ToString("F2"));
 
