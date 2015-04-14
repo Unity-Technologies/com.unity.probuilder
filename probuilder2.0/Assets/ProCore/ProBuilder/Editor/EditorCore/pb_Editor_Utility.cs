@@ -353,7 +353,7 @@ namespace ProBuilder2.EditorCommon
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 				}
 
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 			#if UNITY_5
@@ -384,7 +384,7 @@ namespace ProBuilder2.EditorCommon
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
 			pb_Editor_Utility.SetEntityType(et, pb.gameObject);
 			pb_Editor_Utility.ScreenCenter( pb.gameObject );
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		/**

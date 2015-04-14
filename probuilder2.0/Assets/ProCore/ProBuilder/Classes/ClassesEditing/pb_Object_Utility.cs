@@ -60,28 +60,27 @@ public static class pb_Object_Utility
 		pb.TranslateVertices_World(selectedTriangles, offset, false);
 	}
 
-	public static pb_Profiler translate_profiler = new pb_Profiler();
 	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, bool forceDisableSnap)
 	{	
-		translate_profiler.BeginSample("TranslateVertices_World");
+		// translate_profiler.BeginSample("TranslateVertices_World");
 		
 		Vector3 orig = offset;
 		
 		int i = 0;
-		translate_profiler.BeginSample("AllIndicesWithValues");
+		// translate_profiler.BeginSample("AllIndicesWithValues");
 		int[] indices = pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
-		translate_profiler.EndSample();
+		// translate_profiler.EndSample();
 
 		offset = pb.transform.worldToLocalMatrix * offset;
 
 		Vector3[] verts = pb.vertices;
-		translate_profiler.BeginSample("Offset");
+		// translate_profiler.BeginSample("Offset");
 		for(i = 0; i < indices.Length; i++)
 			verts[indices[i]] += offset;
-		translate_profiler.EndSample();
+		// translate_profiler.EndSample();
 		
 		// Snaps to world grid
-		translate_profiler.BeginSample("Snap");
+		// translate_profiler.BeginSample("Snap");
 		if(pbUtil.SharedSnapEnabled && !forceDisableSnap)
 		{
 			float snapValue = pbUtil.SharedSnapValue;
@@ -93,15 +92,15 @@ public static class pb_Object_Utility
 					verts[indices[i]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[i]]), Vector3.one, snapValue));
 			}
 		}
-		translate_profiler.EndSample();
+		// translate_profiler.EndSample();
 
 		// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
-		translate_profiler.BeginSample("Set mesh");
+		// translate_profiler.BeginSample("Set mesh");
 		pb.SetVertices(verts);
 		pb.msh.vertices = verts;
-		translate_profiler.EndSample();
+		// translate_profiler.EndSample();
 
-		translate_profiler.EndSample();
+		// translate_profiler.EndSample();
 	}
 
 	/**

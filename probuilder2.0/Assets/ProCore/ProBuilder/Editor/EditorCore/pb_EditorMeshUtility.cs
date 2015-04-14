@@ -12,7 +12,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
 		 */
-		public static void Finalize(this pb_Object InObject)
+		public static void Optimize(this pb_Object InObject)
 		{
 			pb_Mesh_Utility.CollapseSharedVertices(InObject);	///< Merge compatible shared vertices to a single vertex.
 			InObject.GenerateUV2();

@@ -42,7 +42,7 @@ public class pb_HierarchyListener : Editor
 
 					pb.ToMesh();
 					pb.Refresh();
-					pb.Finalize();
+					pb.Optimize();
 				}
 			}
 		}

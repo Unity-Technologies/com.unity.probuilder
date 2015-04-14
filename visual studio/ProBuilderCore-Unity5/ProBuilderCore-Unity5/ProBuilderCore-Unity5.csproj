@@ -31,14 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ProCore">
-      <HintPath>..\..\ProCore\ProCore\bin\Release\ProCore.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>D:\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pbUtil.cs">
       <Link>pbUtil.cs</Link>
     </Compile>
@@ -47,6 +39,9 @@
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Constant.cs">
       <Link>pb_Constant.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_DummyScript.cs">
+      <Link>pb_DummyScript.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Edge.cs">
       <Link>pb_Edge.cs</Link>
@@ -63,17 +58,23 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_IntArray.cs">
       <Link>pb_IntArray.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_LineRenderer.cs">
+      <Link>pb_LineRenderer.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Math.cs">
       <Link>pb_Math.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshRenderer.cs">
+      <Link>pb_MeshRenderer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Mesh_Utility.cs">
+      <Link>pb_Mesh_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Object.cs">
       <Link>pb_Object.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ObjectPool.cs">
       <Link>pb_ObjectPool.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_SceneMeshRender.cs">
-      <Link>pb_SceneMeshRender.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Shortcut.cs">
       <Link>pb_Shortcut.cs</Link>
@@ -99,6 +100,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_RaycastHit.cs">
       <Link>pb_RaycastHit.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Renderable.cs">
+      <Link>pb_Renderable.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_SerializableObject.cs">
       <Link>pb_SerializableObject.cs</Link>
     </Compile>
@@ -118,6 +122,14 @@
       <Link>pb_VertexConnection.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ProCore">
+      <HintPath>..\..\ProCore\ProCore\bin\Debug\ProCore.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.1\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

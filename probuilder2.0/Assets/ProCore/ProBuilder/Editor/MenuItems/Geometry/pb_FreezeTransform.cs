@@ -46,7 +46,7 @@ namespace ProBuilder2.Actions
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 			if(pb_Editor.instance)

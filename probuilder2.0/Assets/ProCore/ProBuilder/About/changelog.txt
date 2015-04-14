@@ -1,3 +1,59 @@
+-- ProBuilder 2.4.4b0 (r3322)
+
+# Features
+	- Where possible* indices are now collapsed to share a single vertex.
+	- Add context menu to swap between dockable window modes in vertex painter.
+	- New Repair/pb_RepairMeshReferences script fixes duplicate mesh references.
+	- Grow Selection is now roughly one gajillion times faster.
+	- Grow with Angle can now optionally select all faces on a plane instead of just the ones near the perimeter.
+	- New vertex handle gizmos are now culled (and much faster).
+	- Add option to select only visible elements (Select All or Select Visible toggles this).
+	- Improve edge selection logic, making edge selection much easier.
+	- Add a preference to enable backface selection on meshes.
+	- Re-enable 'NoDraw' faces (now implemented as a shader replacement at compile time).
+	- Improve subdivide action performance.
+	- Smooth Normals Window now displays vertex normals with culling, and much faster.
+
+# Bug Fixes
+	- Improve Flip Normals shortcut selection context handling.
+	- Enable Subdivide shortcut in Top mode.
+	- Fix arch geometry that broke when subdividing caps.
+	- Fix bug where setting arch radius would also set the thickness to 0.01.
+	- Add option to toggle cap generation on/off in arch tool.
+	- Fix bug where extruding multiple adjacent faces with a shared center point would not correctly translate the shared center vertex.
+	- Fix bug where Smoothing Window would not repaint on selection change.
+	- Improve performance of MergeVertices function, helping to address lag after modifying large objects.
+	- Fix bug where selecting faces obscured by a culled face would sometimes not register.
+	- Remove obsolete preference entries.
+	- Add 'undo' when a click drag changes the selection in the UV editor.
+	- Fix 'Quaternion Look Rotation is Zero' log spam when a face contains degenerate triangles.
+	- Fix most instances of mesh and material leaks in Editor.
+	- Fix bug where applying prefab changes to pb_Objects with the Editor closed would not propogate changes to instances.
+	- Hide some internal MonoBehaviours from the Scripts menu.
+	- Fix bug where deleting a face with 'delete' key shortcut would change static flags.
+	- Fix null ref when entering play mode with collider entities sporting boxcollider components.
+	- Fix bug where Connect Vertices would fail on thin isosceles triangles.
+	- Fix bug where Connect Edges would mangle adjacent long skinny faces.
+	- When adding colliders via pb_Entity toolbar, scan current collider components for isTrigger values and apply to new collider if found.
+	- Fix some instances where convexity and trigger for EntityType.Collider & EntityType.Trigger types would not be set on initialization.
+	- When detaching faces to a new object, make the detached object selected and center the pivot.
+	- Fix bug where exiting to Top or Plugin level would not clear the selection mesh.
+
+# API
+	- New `Optimize()` method calls CollapseSharedVertices and GenerateUV2.
+	- Move most of remaining scripts into proper namespaces.
+	- ProBuilder2.GUI namespace become ProBuilder2.Interface to avoid conflicts with UnityEngine.GUI.
+	- Move Triangulation code into pbTriangleOps.
+	- Significantly improved performance of RefreshNormals() function.
+	- New VerifyMesh() function in pb_Editor_Utility guarantees good mesh reference and geometry.
+	- Add ability to delete unfixable components in pb_MissingScriptEditor.
+	- New PointIsOccluded() check in pb_Handle_Utility tests if a point is visible in editor.
+	- Significantly improve performance of pbUtil.RemoveAt().
+	- Significantly improve performance of many pbMeshOps methods.
+	- New pb_LineRenderer and pb_MeshRenderer provide fast gizmo drawing in the SceneView.
+
+* Vertices must be smoothed, and have the same texture coordinate.
+
 -- ProBuilder 2.4.3p0 (r3216) -
 
 # Features

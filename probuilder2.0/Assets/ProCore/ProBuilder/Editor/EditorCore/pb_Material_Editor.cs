@@ -318,7 +318,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 			
 			// StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
 			

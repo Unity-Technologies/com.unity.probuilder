@@ -74,7 +74,7 @@ namespace ProBuilder2.EditorCommon
 			// Regenerate normals
 			p.ToMesh();
 			p.Refresh();
-			p.Finalize();
+			p.Optimize();
 
 			pb_Editor_Utility.InitObjectFlags(p, ColliderType.MeshCollider, pb.GetComponent<pb_Entity>().entityType);
 			

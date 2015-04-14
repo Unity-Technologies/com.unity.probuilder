@@ -173,7 +173,7 @@ public class pb_Smoothing_Editor : EditorWindow
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if( pb_Editor.instance != null)
@@ -195,7 +195,7 @@ public class pb_Smoothing_Editor : EditorWindow
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if( pb_Editor.instance != null)

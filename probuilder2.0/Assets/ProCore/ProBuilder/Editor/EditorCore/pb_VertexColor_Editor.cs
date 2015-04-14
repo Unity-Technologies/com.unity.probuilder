@@ -61,7 +61,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if(editor)

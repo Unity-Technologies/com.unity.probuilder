@@ -794,7 +794,7 @@ public class pb_Editor : EditorWindow
 
 							pb.ToMesh();
 							pb.Refresh();
-							pb.Finalize();
+							pb.Optimize();
 
 							currentEvent.Use();
 						}
@@ -1452,8 +1452,6 @@ public class pb_Editor : EditorWindow
 			{
 				if(!shiftKey && !ctrlKey) ClearFaceSelection();
 
-				profiler.BeginSample("Drag Select Edges");
-
 				for(int i = 0; i < selection.Length; i++)
 				{
 					Vector3 v0 = Vector3.zero, v1 = Vector3.zero, cen = Vector3.zero;
@@ -1506,8 +1504,6 @@ public class pb_Editor : EditorWindow
 					DragObjectCheck(true);
 				}
 				
-				profiler.EndSample();
-
 				UpdateSelection(false);
 			}
 			break;
@@ -1601,28 +1597,15 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
-			profiler.BeginSample("VertexMoveTool");
-
-			profiler.BeginSample("Undo");
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
-				profiler.EndSample();
 			
-			profiler.BeginSample("Translate Vertices");
 			for(int i = 0; i < selection.Length; i++)
 			{
-				profiler.BeginSample("TranslateVertices_World");
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
-				profiler.EndSample();
-				profiler.BeginSample("RefreshUV(SelectedFacesInEditZone)");
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
-				profiler.EndSample();
-				profiler.BeginSample("RefreshNormals");
 				selection[i].RefreshNormals();
-				profiler.EndSample();
 			}
-			profiler.EndSample();
 
-			profiler.EndSample();
 
 			Internal_UpdateSelectionFast();
 		}
@@ -3313,7 +3296,7 @@ public class pb_Editor : EditorWindow
 			 */
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 
 			if( pb.SelectedFaces.Length > 0 )
 				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );	
@@ -3340,7 +3323,7 @@ public class pb_Editor : EditorWindow
 				
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		Internal_UpdateSelectionFast();
@@ -3412,8 +3395,8 @@ public class pb_Editor : EditorWindow
 					profiler.BeginSample("Refresh()");
 					sel.Refresh();
 					profiler.EndSample();
-					profiler.BeginSample("Finalize()");
-					sel.Finalize();
+					profiler.BeginSample("Optimize()");
+					sel.Optimize();
 					profiler.EndSample();
 				}
 
@@ -3424,7 +3407,7 @@ public class pb_Editor : EditorWindow
 
 					sel.ToMesh();
 					sel.Refresh();
-					sel.Finalize();
+					sel.Optimize();
 				}
 			#endif
 

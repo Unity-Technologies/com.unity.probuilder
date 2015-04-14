@@ -5,7 +5,7 @@ set unity_path_5="C:\Program Files\Unity 5.0.0f4\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 set procore_changelog="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\About\changelog.txt"
-set force_revision="3216"
+set force_revision="r3322"
 
 :: Clean out Upgrade project
 :: rd /S /q uv-upgrade-src\

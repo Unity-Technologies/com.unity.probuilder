@@ -52,7 +52,7 @@ public class pb_Menu_Commands : Editor
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);			
 			pb.gameObject.AddComponent<MeshCollider>().convex = false;
 
-			pb.Finalize();
+			pb.Optimize();
 
 			pb.gameObject.name = "pb-MergedObject" + pb.id;
 
@@ -110,7 +110,7 @@ public class pb_Menu_Commands : Editor
 				pb.CenterPivot(null);
 	
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 		
 		SceneView.RepaintAll();
@@ -149,7 +149,7 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		pb_Editor_Utility.ShowNotification("Set " + entityType);
@@ -263,7 +263,7 @@ public class pb_Menu_Commands : Editor
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 		
 		if(c > 0)
@@ -340,7 +340,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if(extrudedFaceCount > 0)
@@ -374,7 +374,7 @@ public class pb_Menu_Commands : Editor
 					success = true;
 					pb.ToMesh();
 					pb.Refresh();
-					pb.Finalize();
+					pb.Optimize();
 				}
 			}
 		}
@@ -770,7 +770,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if(editor)
@@ -815,7 +815,7 @@ public class pb_Menu_Commands : Editor
 			{
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 
 				pb.SetSelectedFaces( new pb_Face[] { composite } );
 			}
@@ -862,7 +862,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 			
 			pb.SetSelectedFaces(pb.SelectedFaces);
 		}
@@ -936,8 +936,8 @@ public class pb_Menu_Commands : Editor
 			pb.Refresh();
 			copy.Refresh();
 			
-			pb.Finalize();
-			copy.Finalize();
+			pb.Optimize();
+			copy.Optimize();
 
 			pb.ClearSelection();
 			copy.ClearSelection();
@@ -981,7 +981,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 
 				pb.SetSelectedFaces( new pb_Face[] { face } );
 			}
@@ -1030,7 +1030,7 @@ public class pb_Menu_Commands : Editor
 				}
 				
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 		}
 
@@ -1077,7 +1077,7 @@ public class pb_Menu_Commands : Editor
 				}
 
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 			weldCount -= pb.sharedIndices.Length;
@@ -1185,7 +1185,7 @@ public class pb_Menu_Commands : Editor
 			
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		pb_Editor_Utility.ShowNotification("Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
@@ -1225,7 +1225,7 @@ public class pb_Menu_Commands : Editor
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		/*
@@ -1277,7 +1277,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 		}
 
@@ -1314,7 +1314,7 @@ public class pb_Menu_Commands : Editor
 
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 				
 				success++;
 			}
@@ -1384,7 +1384,7 @@ public class pb_Menu_Commands : Editor
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		if(success > 0)
@@ -1419,7 +1419,7 @@ public class pb_Menu_Commands : Editor
 				pb.SetSelectedEdges(edges);
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 				success++;
 			}
 		}

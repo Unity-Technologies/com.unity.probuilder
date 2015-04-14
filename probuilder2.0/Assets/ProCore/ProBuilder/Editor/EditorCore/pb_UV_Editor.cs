@@ -771,7 +771,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 	}
 
@@ -860,7 +860,7 @@ public class pb_UV_Editor : EditorWindow
 				// 	selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
 
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 
 				SetSelectedUVsWithSceneView();
 
@@ -876,7 +876,7 @@ public class pb_UV_Editor : EditorWindow
 			else
 			{
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 			return success;
@@ -2977,7 +2977,7 @@ public class pb_UV_Editor : EditorWindow
 					selection[i].faces[f].manualUV = true;
 
 				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
-				selection[i].Finalize();
+				selection[i].Optimize();
 				
 				RefreshElementGroups(selection[i]);
 
@@ -3024,7 +3024,7 @@ public class pb_UV_Editor : EditorWindow
 
 				p ++;
 
-				selection[i].Finalize();
+				selection[i].Optimize();
 			}
 		}
 
@@ -3070,7 +3070,7 @@ public class pb_UV_Editor : EditorWindow
 			pb.ToMesh();
 			pbUVOps.SetAutoUV(pb, pb.SelectedFaces, !isManual);
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3112,7 +3112,7 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].CollapseUVs(distinct_indices[i]);
 
 			selection[i].Refresh();
-			selection[i].Finalize();
+			selection[i].Optimize();
 		}
 
 		RefreshSelectedUVCoordinates();
@@ -3139,7 +3139,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
-			selection[i].Finalize();
+			selection[i].Optimize();
 		}
 		
 		RefreshSelectedUVCoordinates();
@@ -3164,7 +3164,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(pb);
 
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3198,7 +3198,7 @@ public class pb_UV_Editor : EditorWindow
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
-			selection[i].Finalize();
+			selection[i].Optimize();
 		}
 
 		SetSelectedUVsWithSceneView();
@@ -3242,7 +3242,7 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].SetUV(uv);
 
 			selection[i].Refresh();
-			selection[i].Finalize();
+			selection[i].Optimize();
 		}
 
 		RefreshSelectedUVCoordinates();

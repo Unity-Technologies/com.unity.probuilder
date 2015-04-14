@@ -46,7 +46,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.SetEntityType(et, ent.gameObject);
 				pb.ToMesh();
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 

@@ -53,7 +53,7 @@ namespace ProBuilder2.Actions
 
 			pb.ToMesh();
 			pb.Refresh();
-			pb.Finalize();
+			pb.Optimize();
 			
 			t.gameObject.SetActive(false);
 

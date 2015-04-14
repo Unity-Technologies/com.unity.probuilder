@@ -153,7 +153,7 @@ namespace ProBuilder2.EditorCommon
 				
 				pbs[i].ToMesh();
 				pbs[i].Refresh();		
-				pbs[i].Finalize();		
+				pbs[i].Optimize();		
 			}
 
 			EditorUtility.ClearProgressBar();

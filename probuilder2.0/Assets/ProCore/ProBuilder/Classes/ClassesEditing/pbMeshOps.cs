@@ -16,7 +16,7 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 * Utilities for working with pb_Object meshes.  The operations here only operate on the 
 	 * element caches in pb_Object- they do not affect the UnityEngine.Mesh.  You should call
-	 * ToMesh() prior to invoking these methods, then Refresh() & optionally Finalize() post.
+	 * ToMesh() prior to invoking these methods, then Refresh() & optionally Optimize() post.
 	 */
 	public static class pbMeshOps
 	{

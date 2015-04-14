@@ -96,7 +96,7 @@ public class pb_Object_Editor : Editor
 				pb.TranslateVertices_World(pb.SelectedTriangles, offset);
 
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 
 				if(editor != null)
 					editor.UpdateSelection();

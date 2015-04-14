@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 				count += rm.Length;
 
 				pb.Refresh();
-				pb.Finalize();
+				pb.Optimize();
 			}
 
 			pb_Editor_Utility.ShowNotification("Removed " + (count/3) + " degenerate triangles.");

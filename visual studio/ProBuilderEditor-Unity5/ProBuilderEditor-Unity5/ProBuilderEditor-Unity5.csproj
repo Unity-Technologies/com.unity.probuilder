@@ -39,7 +39,7 @@
       <HintPath>..\..\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll</HintPath>
     </Reference>
     <Reference Include="ProCore">
-      <HintPath>..\..\ProCore\ProCore\bin\Release\ProCore.dll</HintPath>
+      <HintPath>..\..\ProCore\ProCore\bin\Debug\ProCore.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor">
@@ -65,14 +65,17 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs">
       <Link>pb_Editor.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorMeshUtility.cs">
+      <Link>pb_EditorMeshUtility.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Enum.cs">
       <Link>pb_Editor_Enum.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Gizmos.cs">
+      <Link>pb_Editor_Gizmos.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Graphics.cs">
       <Link>pb_Editor_Graphics.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_GUI.cs">
-      <Link>pb_Editor_GUI.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Utility.cs">
       <Link>pb_Editor_Utility.cs</Link>
@@ -109,9 +112,6 @@
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Object_Editor.cs">
       <Link>pb_Object_Editor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_PostBuild.cs">
-      <Link>pb_PostBuild.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Preferences_Internal.cs">
       <Link>pb_Preferences_Internal.cs</Link>

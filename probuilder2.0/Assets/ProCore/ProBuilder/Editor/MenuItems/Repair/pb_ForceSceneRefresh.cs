@@ -32,7 +32,7 @@ namespace ProBuilder2.Actions
 
 				all[i].ToMesh();
 				all[i].Refresh();
-				all[i].Finalize();
+				all[i].Optimize();
 			}
 			if(interactive)
 			{
