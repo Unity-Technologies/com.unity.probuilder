@@ -906,6 +906,19 @@ public class pb_Menu_Commands : Editor
 			pb_Object copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<pb_Object>();
 			copy.MakeUnique();
 
+			// if is prefab, break connection and destroy children
+			if( pb_Editor_Utility.IsPrefabInstance(copy.gameObject) || pb_Editor_Utility.IsPrefabRoot(copy.gameObject) )
+				PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
+
+			if(copy.transform.childCount > 0)
+			{
+				for(int i = 0; i < copy.transform.childCount; ++i)
+					GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
+
+				foreach(pb_Object pb_child in pb.transform.GetComponentsInChildren<pb_Object>())
+					pb_child.Verify();
+			}
+
 			Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Face");
 
 			copy.transform.position = pb.transform.position;
@@ -914,7 +927,6 @@ public class pb_Menu_Commands : Editor
 
 			pb.DeleteFaces(primary);
 			copy.DeleteFaces(inverse);
-
 
 			pb.ToMesh();
 			copy.ToMesh();

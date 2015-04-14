@@ -2094,13 +2094,12 @@ public class pb_Editor : EditorWindow
 			 	
 			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, 164, 185), new Color(.1f,.1f,.1f,.65f));
 
+				try {
 				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);
 				sceneInfoRect.y += 20;
-				try {
 					GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString());
-				} catch (System.Exception e) { ; }
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (pb_Object): " + (selection != null ? selection.Select(x=>x.vertexCount).Sum() : 0).ToString());
 				sceneInfoRect.y += 20;
@@ -2112,6 +2111,7 @@ public class pb_Editor : EditorWindow
 				GUI.Label(sceneInfoRect, "Selected Faces: " + selectedFaceCount);
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Selected Vertices: " + selectedVertexCount);
+				} catch (System.Exception e) { /**do not care**/; }
 			#else
 				GUI.Label(sceneInfoRect, "Vertices: " + vertexCount);
 				sceneInfoRect.y += 20;
