@@ -936,9 +936,9 @@ namespace ProBuilder2.EditorCommon
 			if(previewObject.GetComponent<pb_Entity>())
 				GameObject.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
 
-			m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-			previewMat.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-			previewObject.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			m.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			previewMat.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			previewObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
 
 			previewObject.GetComponent<MeshFilter>().sharedMesh = m;
 			previewObject.GetComponent<MeshRenderer>().sharedMaterial = previewMat;
