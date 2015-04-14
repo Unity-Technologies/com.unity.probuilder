@@ -127,7 +127,7 @@ public class pb_Preferences_Internal
 		switch(pref)
 		{
 			case pb_Constant.pbVertexHandleSize:
-				return EditorPrefs.HasKey(pref) && !forceDefault ?  EditorPrefs.GetFloat(pref) : .04f;
+				return EditorPrefs.HasKey(pref) && !forceDefault ?  EditorPrefs.GetFloat(pref) : .5f;
 			
 			case pb_Constant.pbGrowSelectionAngle:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : 42f;

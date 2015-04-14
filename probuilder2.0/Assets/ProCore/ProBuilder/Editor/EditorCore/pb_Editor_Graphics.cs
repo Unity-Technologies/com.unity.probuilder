@@ -49,7 +49,7 @@ public class pb_Editor_Graphics
 	/**
 	 * Reload colors for edge and face highlights from editor prefs.
 	 */
-	public static void LoadColors()
+	public static void LoadPrefs()
 	{
 		faceSelectionColor 	= pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor);
 		edgeSelectionColor 	= pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor);
@@ -57,6 +57,8 @@ public class pb_Editor_Graphics
 
 		if(!selectionObject || !wireframeObject)
 			Init(_editLevel, _selectMode);
+
+		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 
 		// UpdateSelectionMesh(pb_Editor.instance.selection, _editLevel, _selectMode);
 		// SceneView.RepaintAll();
@@ -79,8 +81,7 @@ public class pb_Editor_Graphics
 		_editLevel = el;
 		_selectMode = sm;
 
-		LoadColors();
-		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
+		LoadPrefs();
 	}
 
 	/**
@@ -113,7 +114,7 @@ public class pb_Editor_Graphics
 				Texture2D dot = (Texture2D)Resources.Load("Textures/VertOff");
 				selectionMaterial.mainTexture = dot;
 				selectionMaterial.SetColor("_Color", vertexDotColor);
-				selectionMaterial.SetFloat("_Scale", dot == null ? 3f : 3.3f);
+				selectionMaterial.SetFloat("_Scale", vertexHandleSize * (dot == null ? 5f : 6f));
 				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 				break;
 

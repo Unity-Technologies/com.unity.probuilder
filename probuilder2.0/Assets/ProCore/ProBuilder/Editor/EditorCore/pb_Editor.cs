@@ -40,7 +40,7 @@ public class pb_Editor : EditorWindow
 	
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
-	const int EDITOR_PREF_VERSION = 129;
+	const int EDITOR_PREF_VERSION = 244;
 
 	const string SHARED_GUI = "Assets/6by7/Shared/GUI";
 	const float HANDLE_DRAW_DISTANCE = 15f;
@@ -174,10 +174,14 @@ public class pb_Editor : EditorWindow
 	private void LoadPrefs()
 	{
 		// this exists to force update preferences when updating packages
-		if(!EditorPrefs.HasKey(pb_Constant.pbEditorPrefVersion) || EditorPrefs.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION ) {
+		if(!EditorPrefs.HasKey(pb_Constant.pbEditorPrefVersion) || EditorPrefs.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
+		{
 			EditorPrefs.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
-			Debug.LogWarning("ProBuilder: Clearing shortcuts. There were some internal changes in this release that required we rebuild this cache.  This will only happen once, and everything else is okay.");
+			EditorPrefs.DeleteKey(pb_Constant.pbVertexHandleSize);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
 		}
 
 		editLevel 			= pb_Preferences_Internal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);

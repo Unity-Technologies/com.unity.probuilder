@@ -362,8 +362,6 @@ public static class pbSubdivideSplit
 			}
 		}
 
-		Debug.Log(vertexConnections.ToFormattedString("\n"));
-
 		if(vertexConnections.Count < 1)
 		{
 			triangles = null;
