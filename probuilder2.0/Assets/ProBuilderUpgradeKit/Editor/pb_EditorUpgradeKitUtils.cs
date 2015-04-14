@@ -53,7 +53,9 @@ namespace ProBuilder2.UpgradeKit
 			// do this song and dance because ya can't implicitly convert int to enum, and EntityType has changed from a ProBuilder.EntityType
 			// enum to namespace ProBuilder2.Common, and I can't figure a better way to make this work
 			pb_UpgradeKitUtils.InvokeFunction(entity, "SetEntity", new object[] { System.Enum.ToObject(entity.entityType.GetType(), serialized.entityType) });
-			pb_Editor_Utility.SetEntityType( entity.entityType, entity.gameObject );
+		
+			// Leave commented because if the user made modifications to the colliders or flags this will reset them.
+		//	pb_Editor_Utility.SetEntityType( entity.entityType, entity.gameObject );
 		}
 	}
 #endregion

@@ -25,6 +25,7 @@ namespace ProBuilder2.UpgradeKit
 		[SerializeField] private pb_Face[] 	faces;
 		[SerializeField] private int[][] 	sharedIndices;
 		[SerializeField] private int[][] 	sharedIndicesUV;
+		[SerializeField] private bool 		userCollisions;
 
 		public Vector3[] 	GetVertices() { return vertices; }
 		public Vector2[] 	GetUVs() { return uv; }
@@ -32,6 +33,7 @@ namespace ProBuilder2.UpgradeKit
 		public pb_Face[] 	GetFaces() { return faces; }
 		public int[][]		GetSharedIndices() { return sharedIndices; }
 		public int[][]		GetSharedIndicesUV() { return sharedIndicesUV; }
+		public bool 		GetUserCollisions() { return userCollisions; }
 
 		public pb_SerializableObject(pb_Object pb)
 		{
@@ -78,6 +80,9 @@ namespace ProBuilder2.UpgradeKit
 			{
 				this.sharedIndicesUV = new int[0][];
 			}
+
+			PropertyInfo prop_userCollisions = pb.GetType().GetProperty("userCollisions", BindingFlags.Instance | BindingFlags.Public);
+			userCollisions = prop_userCollisions == null ? false : (bool) prop_userCollisions.GetValue(pb, null);
 		}
 
 		public void Print()
@@ -107,6 +112,7 @@ namespace ProBuilder2.UpgradeKit
 			info.AddValue("faces", 				System.Array.ConvertAll(faces, x => new pb_SerializableFace(x)),	typeof(pb_SerializableFace[]));
 			info.AddValue("sharedIndices", 		sharedIndices, 														typeof(int[][]));
 			info.AddValue("sharedIndicesUV",	sharedIndicesUV, 													typeof(int[][]));
+			info.AddValue("userCollisions",		userCollisions, 													typeof(bool));
 		}
 
 		// The pb_SerializableObject constructor is used to deserialize values. 
@@ -133,6 +139,9 @@ namespace ProBuilder2.UpgradeKit
 
 			// Shared Indices UV
 			this.sharedIndicesUV = (int[][]) info.GetValue("sharedIndicesUV", typeof(int[][]));
+
+			// User collisions
+			this.userCollisions = (bool) info.GetValue("userCollisions", typeof(bool));
 		}
 	}
 }

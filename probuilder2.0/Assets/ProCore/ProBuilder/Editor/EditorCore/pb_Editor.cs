@@ -2520,6 +2520,11 @@ public class pb_Editor : EditorWindow
 				SceneView.RepaintAll();
 				break;
 
+			case EditLevel.Plugin:
+				UpdateSelection(false);
+				SceneView.RepaintAll();
+				break;
+
 			#if !PROTOTYPE
 			case EditLevel.Texture:
 				

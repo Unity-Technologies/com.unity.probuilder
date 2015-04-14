@@ -39,6 +39,10 @@ namespace ProBuilder2.UpgradeKit
 
 		}
 
+		/**
+		 * Serialize and store pb_Object and pb_Entity data in a new pb_SerializableComponent MonoBehaviour, then 
+		 * remove pb_Object and pb_Entity components.
+		 */
 		static void MakeSerializedComponent(pb_Object[] objects)
 		{
 			if(pb_Editor.instance != null)
@@ -158,6 +162,9 @@ namespace ProBuilder2.UpgradeKit
 							{
 								pb_Object parent_pb = ((GameObject)parent).GetComponent<pb_Object>();
 
+								/**
+								 * Compare pb_Object field values because PropertyModifications does not account for private data.
+								 */
 								if(parent_pb != null)
 								{
 									if( pb_UpgradeKitUtils.AreEqual(parent_pb, pb) )

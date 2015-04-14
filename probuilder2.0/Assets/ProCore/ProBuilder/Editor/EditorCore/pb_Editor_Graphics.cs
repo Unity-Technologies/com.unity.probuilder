@@ -226,128 +226,131 @@ public class pb_Editor_Graphics
 
 		MakeEdgeMesh(_selection, ref wireframeMesh);
 
-		switch( selectionMode )
+		if(editLevel == EditLevel.Geometry)
 		{
-			case SelectMode.Vertex:
+			switch( selectionMode )
+			{
+				case SelectMode.Vertex:
 
-				int vcount = 0;
-				foreach(pb_Object pb in _selection)
-				{
-					Vector3[] v = new Vector3[pb.sharedIndices.Length];
-					HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetUniversalIndices(pb.SelectedTriangles));
-
-					for(int i = 0; i < v.Length; i++)	
-						v[i] = pb.vertices[pb.sharedIndices[i][0]];
-
-					Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
-					Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
-					Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
-					Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
-					Color[]   	t_col 				= new Color[v.Length*4];
-					int[] 		t_tris 				= new int[v.Length*6];
-
-					int n = 0;
-					int t = 0;
-
-					Vector3 up = Vector3.up;// * .1f;
-					Vector3 right = Vector3.right;// * .1f;
-					
-					for(int i = 0; i < v.Length; i++)
+					int vcount = 0;
+					foreach(pb_Object pb in _selection)
 					{
-						Vector3 vpoint = pb.transform.TransformPoint(v[i]);
+						Vector3[] v = new Vector3[pb.sharedIndices.Length];
+						HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetUniversalIndices(pb.SelectedTriangles));
+
+						for(int i = 0; i < v.Length; i++)	
+							v[i] = pb.vertices[pb.sharedIndices[i][0]];
+
+						Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
+						Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
+						Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
+						Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
+						Color[]   	t_col 				= new Color[v.Length*4];
+						int[] 		t_tris 				= new int[v.Length*6];
+
+						int n = 0;
+						int t = 0;
+
+						Vector3 up = Vector3.up;// * .1f;
+						Vector3 right = Vector3.right;// * .1f;
 						
-						t_billboards[t+0] = vpoint;//-up-right;
-						t_billboards[t+1] = vpoint;//-up+right;
-						t_billboards[t+2] = vpoint;//+up-right;
-						t_billboards[t+3] = vpoint;//+up+right;
-
-						t_uvs[t+0] = Vector3.zero;
-						t_uvs[t+1] = Vector3.right;
-						t_uvs[t+2] = Vector3.up;
-						t_uvs[t+3] = Vector3.one;
-
-						t_uv2[t+0] = -up-right;
-						t_uv2[t+1] = -up+right;
-						t_uv2[t+2] =  up-right;
-						t_uv2[t+3] =  up+right;
-	
-						t_nrm[t+0] = Vector3.forward;
-						t_nrm[t+1] = Vector3.forward;
-						t_nrm[t+2] = Vector3.forward;
-						t_nrm[t+3] = Vector3.forward;
-
-						t_tris[n+0] = t+0+vcount;
-						t_tris[n+1] = t+1+vcount;
-						t_tris[n+2] = t+2+vcount;
-						t_tris[n+3] = t+1+vcount;
-						t_tris[n+4] = t+3+vcount;
-						t_tris[n+5] = t+2+vcount;
-
-						if( selected.Contains(i) )
+						for(int i = 0; i < v.Length; i++)
 						{
-							t_col[t+0] = vertSelectionColor;
-							t_col[t+1] = vertSelectionColor;
-							t_col[t+2] = vertSelectionColor;
-							t_col[t+3] = vertSelectionColor;
+							Vector3 vpoint = pb.transform.TransformPoint(v[i]);
+							
+							t_billboards[t+0] = vpoint;//-up-right;
+							t_billboards[t+1] = vpoint;//-up+right;
+							t_billboards[t+2] = vpoint;//+up-right;
+							t_billboards[t+3] = vpoint;//+up+right;
 
-							t_nrm[t].x = .1f;
-							t_nrm[t+1].x = .1f;
-							t_nrm[t+2].x = .1f;
-							t_nrm[t+3].x = .1f;
-						}
-						else
-						{
-							t_col[t+0] = vertexDotColor;
-							t_col[t+1] = vertexDotColor;
-							t_col[t+2] = vertexDotColor;
-							t_col[t+3] = vertexDotColor;
+							t_uvs[t+0] = Vector3.zero;
+							t_uvs[t+1] = Vector3.right;
+							t_uvs[t+2] = Vector3.up;
+							t_uvs[t+3] = Vector3.one;
+
+							t_uv2[t+0] = -up-right;
+							t_uv2[t+1] = -up+right;
+							t_uv2[t+2] =  up-right;
+							t_uv2[t+3] =  up+right;
+		
+							t_nrm[t+0] = Vector3.forward;
+							t_nrm[t+1] = Vector3.forward;
+							t_nrm[t+2] = Vector3.forward;
+							t_nrm[t+3] = Vector3.forward;
+
+							t_tris[n+0] = t+0+vcount;
+							t_tris[n+1] = t+1+vcount;
+							t_tris[n+2] = t+2+vcount;
+							t_tris[n+3] = t+1+vcount;
+							t_tris[n+4] = t+3+vcount;
+							t_tris[n+5] = t+2+vcount;
+
+							if( selected.Contains(i) )
+							{
+								t_col[t+0] = vertSelectionColor;
+								t_col[t+1] = vertSelectionColor;
+								t_col[t+2] = vertSelectionColor;
+								t_col[t+3] = vertSelectionColor;
+
+								t_nrm[t].x = .1f;
+								t_nrm[t+1].x = .1f;
+								t_nrm[t+2].x = .1f;
+								t_nrm[t+3].x = .1f;
+							}
+							else
+							{
+								t_col[t+0] = vertexDotColor;
+								t_col[t+1] = vertexDotColor;
+								t_col[t+2] = vertexDotColor;
+								t_col[t+3] = vertexDotColor;
+							}
+
+							t+=4;
+							n+=6;				
 						}
 
-						t+=4;
-						n+=6;				
+						verts.AddRange(t_billboards);
+						vcount += t_billboards.Length;
+						nrm.AddRange(t_nrm);
+						uvs.AddRange(t_uvs);
+						uv2s.AddRange(t_uv2);
+						col.AddRange(t_col);
+						tris.AddRange(t_tris);
 					}
 
-					verts.AddRange(t_billboards);
-					vcount += t_billboards.Length;
-					nrm.AddRange(t_nrm);
-					uvs.AddRange(t_uvs);
-					uv2s.AddRange(t_uv2);
-					col.AddRange(t_col);
-					tris.AddRange(t_tris);
-				}
+					break;
 
-				break;
+				case SelectMode.Face:
 
-			case SelectMode.Face:
+					foreach(pb_Object pb in _selection)			
+					{
+						int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
-				foreach(pb_Object pb in _selection)			
-				{
-					int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
+						Vector3[] 	v = pb.VerticesInWorldSpace(selectedTriangles);
+						Vector2[] 	u = pbUtil.ValuesWithIndices(pb.uv, selectedTriangles);
 
-					Vector3[] 	v = pb.VerticesInWorldSpace(selectedTriangles);
-					Vector2[] 	u = pbUtil.ValuesWithIndices(pb.uv, selectedTriangles);
+						verts.AddRange(v);
+						nrm.AddRange( v );
+						uvs.AddRange  (u);
+					}
 
-					verts.AddRange(v);
-					nrm.AddRange( v );
-					uvs.AddRange  (u);
-				}
+					tris = new List<int>(verts.Count);			// because ValuesWithIndices returns in wound order, just fill
 
-				tris = new List<int>(verts.Count);			// because ValuesWithIndices returns in wound order, just fill
+					for(int p = 0; p < verts.Count; p++)		// triangles with 0, 1, 2, 3, etc
+					{
+						tris.Add(p);
+					}
+					
+					break;
+			}
 
-				for(int p = 0; p < verts.Count; p++)		// triangles with 0, 1, 2, 3, etc
-				{
-					tris.Add(p);
-				}
-				
-				break;
+			selectionMesh.vertices = verts.ToArray();	// it is assigned here because we need to get normals
+			selectionMesh.normals = nrm.ToArray();
+			selectionMesh.triangles = tris.ToArray();
+			selectionMesh.uv = uvs.ToArray();
+			selectionMesh.uv2 = uv2s.ToArray();
+			selectionMesh.colors = col.ToArray();
 		}
-
-		selectionMesh.vertices = verts.ToArray();	// it is assigned here because we need to get normals
-		selectionMesh.normals = nrm.ToArray();
-		selectionMesh.triangles = tris.ToArray();
-		selectionMesh.uv = uvs.ToArray();
-		selectionMesh.uv2 = uv2s.ToArray();
-		selectionMesh.colors = col.ToArray();
 	}
 
 	/**
