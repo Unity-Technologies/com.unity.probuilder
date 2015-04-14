@@ -936,6 +936,10 @@ namespace ProBuilder2.EditorCommon
 			if(previewObject.GetComponent<pb_Entity>())
 				GameObject.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
 
+			m.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			previewMat.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			previewObject.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+
 			previewObject.GetComponent<MeshFilter>().sharedMesh = m;
 			previewObject.GetComponent<MeshRenderer>().sharedMaterial = previewMat;
 

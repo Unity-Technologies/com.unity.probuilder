@@ -19,8 +19,10 @@ public class pb_Editor_Graphics
 	const string VERT_SHADER = "Hidden/ProBuilder/pb_VertexShader";
 
 	// "Hidden/ProBuilder/VertexBillboard"
-	const string PREVIEW_OBJECT_NAME = "ProBuilderSelectionMeshObject";
-	const string WIREFRAME_OBJECT_NAME = "ProBuilderWireframeMeshObject";
+	const string PREVIEW_OBJECT_NAME = "ProBuilderSelectionGameObject";
+	const string WIREFRAME_OBJECT_NAME = "ProBuilderWireframeGameObject";
+	const string SELECTION_MESH_NAME = "ProBuilderEditorSelectionMesh";
+	const string WIREFRAME_MESH_NAME = "ProBuilderEditorWireframeMesh";
 
 	static float vertexHandleSize = .04f;
 	
@@ -74,6 +76,12 @@ public class pb_Editor_Graphics
 
 		selectionMesh = new Mesh();
 		wireframeMesh = new Mesh();
+
+		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+		wireframeMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+
+		selectionMesh.name = SELECTION_MESH_NAME;
+		wireframeMesh.name = WIREFRAME_MESH_NAME;
 
 		selectionObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( selectionMesh, (Material) null ) );
 		wireframeObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( wireframeMesh, (Material) null ) );
@@ -206,8 +214,8 @@ public class pb_Editor_Graphics
 			_selectMode = selectionMode;
 		}
 
-		selectionMesh.name = "EDITOR_SELECTION_MESH";
-		wireframeMesh.name = "EDITOR_WIREFRAME_MESH";
+		selectionMesh.name = SELECTION_MESH_NAME;
+		wireframeMesh.name = WIREFRAME_MESH_NAME;
 
 		List<Vector3> verts = new List<Vector3>();
 		List<Vector3> nrm = new List<Vector3>();
@@ -340,7 +348,6 @@ public class pb_Editor_Graphics
 		selectionMesh.uv = uvs.ToArray();
 		selectionMesh.uv2 = uv2s.ToArray();
 		selectionMesh.colors = col.ToArray();
-		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 	}
 
 	/**
