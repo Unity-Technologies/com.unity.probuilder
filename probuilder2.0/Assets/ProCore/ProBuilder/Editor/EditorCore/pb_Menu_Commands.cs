@@ -886,6 +886,7 @@ public class pb_Menu_Commands : Editor
 		pbUndo.RecordObjects(selection, "Detach Selection to PBO");
 
 		int detachedFaceCount = 0;
+		List<GameObject> detached = new List<GameObject>();
 
 		foreach(pb_Object pb in selection)
 		{
@@ -902,7 +903,6 @@ public class pb_Menu_Commands : Editor
 					
 			int[] inverse = inverse_list.ToArray();
 		
-			// pb_Object copy = pb_Object.InitWithObject(pb);
 			pb_Object copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<pb_Object>();
 			copy.MakeUnique();
 
@@ -915,11 +915,15 @@ public class pb_Menu_Commands : Editor
 			pb.DeleteFaces(primary);
 			copy.DeleteFaces(inverse);
 
-			pb.ToMesh();
-			pb.Refresh();
-			copy.ToMesh();
-			copy.Refresh();
 
+			pb.ToMesh();
+			copy.ToMesh();
+			
+			copy.CenterPivot(null);
+
+			pb.Refresh();
+			copy.Refresh();
+			
 			pb.Finalize();
 			copy.Finalize();
 
@@ -927,10 +931,14 @@ public class pb_Menu_Commands : Editor
 			copy.ClearSelection();
 		
 			copy.gameObject.name = pb.gameObject.name + "-detach";
+			detached.Add(copy.gameObject);
 		}
 	
 		if(editor)
+		{
+			editor.SetSelection(detached.ToArray());
 			editor.UpdateSelection();
+		}
 
 		if(detachedFaceCount > 0)
 			pb_Editor_Utility.ShowNotification("Detach " + detachedFaceCount + " faces to new Object");
@@ -1033,9 +1041,12 @@ public class pb_Menu_Commands : Editor
 
 		pbUndo.RecordObjects(selection, "Weld Vertices");
 		float weld = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
+		int weldCount = 0;
 
 		foreach(pb_Object pb in selection)
 		{
+			weldCount += pb.sharedIndices.Length;
+
 			if(pb.SelectedTriangles.Length > 1)
 			{
 				pb.ToMesh();
@@ -1046,6 +1057,7 @@ public class pb_Menu_Commands : Editor
 				if(success)
 				{
 					int[] removed;
+
 					if( pb.RemoveDegenerateTriangles(out removed) )
 						welds = new int[0];	// @todo
 
@@ -1055,10 +1067,13 @@ public class pb_Menu_Commands : Editor
 				pb.Refresh();
 				pb.Finalize();
 			}
+
+			weldCount -= pb.sharedIndices.Length;
 		}
 
-		if(success)
-			pb_Editor_Utility.ShowNotification("Weld Vertices");
+
+		if(success && weldCount > 0)
+			pb_Editor_Utility.ShowNotification("Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
 		else
 			pb_Editor_Utility.ShowNotification("Nothing to Weld");
 

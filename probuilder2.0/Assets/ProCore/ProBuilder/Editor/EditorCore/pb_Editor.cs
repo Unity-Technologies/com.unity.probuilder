@@ -2098,7 +2098,9 @@ public class pb_Editor : EditorWindow
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);
 				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString());
+				try {
+					GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString());
+				} catch (System.Exception e) { ; }
 				sceneInfoRect.y += 20;
 				GUI.Label(sceneInfoRect, "Vertices (pb_Object): " + (selection != null ? selection.Select(x=>x.vertexCount).Sum() : 0).ToString());
 				sceneInfoRect.y += 20;
