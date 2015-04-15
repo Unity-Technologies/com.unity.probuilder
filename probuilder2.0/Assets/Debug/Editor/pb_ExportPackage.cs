@@ -22,11 +22,40 @@ public class pb_ExportPackage : Editor
 	static string CHANGELOG_PATH { get { return "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/changelog.txt"; } }
 	const string DateTimeFormat = "MM-dd-yyyy";
 
+	public static void ExportCommandLine()
+	{
+		string[] args = System.Environment.GetCommandLineArgs();
+
+		string sourceDir = "";
+		string outDir = "";
+		string outName = "";
+		string outSuffix = "";
+
+		foreach(string str in args)
+		{
+			if(str.StartsWith("sourceDir:"))
+				sourceDir = str.Replace("sourceDir:", "").Trim();
+
+			if(str.StartsWith("outDir:"))
+				outDir = str.Replace("outDir:", "").Trim();
+
+			if(str.StartsWith("outName:"))
+				outName = str.Replace("outName:", "").Trim();
+
+			if(str.StartsWith("outSuffix:"))
+				outSuffix = str.Replace("outSuffix:", "").Trim();
+		}
+
+		Debug.Log("Exporting\n" + "Source: " + sourceDir + "\nOut: " + outDir + "\nName: " + outName + "\nSuffix: "+  outSuffix);
+
+		Export(sourceDir, outDir, outName, outSuffix);
+	}
+
 	/**
 	 * Recursively export a package from SourcePath.  SourcePath is relative to Assets/ directory.
 	 */
 	private static void Export(string SourceDirectory, string OutDirectory, string OutName, string suffix)
-	{
+	{	
 		// Read version number and revision number from changelog.txt
 		TextAsset changelog = (TextAsset)Resources.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
 
