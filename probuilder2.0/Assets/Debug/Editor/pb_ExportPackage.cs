@@ -4,135 +4,79 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 /**
  * Export Unity packages for release - usually called from command line.
  */
 public class pb_ExportPackage : Editor
 {
+	[MenuItem("Tools/TEST EXPORT")]
+	static void DOIT()
+	{
+		Export("ProCore", Application.dataPath, "ProBuilder2", "-unity4");
+	}
+
+	static string CHANGELOG_PATH { get { return "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/changelog.txt"; } }
 	const string DateTimeFormat = "MM-dd-yyyy";
 
 	/**
-	 * Appended to exported package name if not None.
+	 * Recursively export a package from SourcePath.  SourcePath is relative to Assets/ directory.
 	 */
-	public enum VersionMarking
+	private static void Export(string SourceDirectory, string OutDirectory, string OutName, string suffix)
 	{
-		SVN,
-		DateTime,
-		None
+		// Read version number and revision number from changelog.txt
+		TextAsset changelog = (TextAsset)Resources.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
+
+		Regex reg = new Regex(@"([0-9].[0-9].[0-9][a-z][0-9]*)", RegexOptions.None);
+		Match first = reg.Match(changelog.text);
+		string version = first.Success ? first.Value : "Failed parsing version number!";
+
+		reg = new Regex(@"(\(r[0-9]{4}\))", RegexOptions.None);
+		first = reg.Match(changelog.text);
+		string revision = first.Success ? first.Value.Replace("(r", "").Replace(")", "") : "Failed parsing SVN revision!";
+
+		// Populate the about entry information text file.
+		WriteAboutEntry(CHANGELOG_PATH, version, revision);
+
+		AssetDatabase.ExportPackage("Assets/" + SourceDirectory, (OutDirectory.EndsWith("/") ? OutDirectory : OutDirectory + "/") + OutName + "-v" + revision + suffix + ".unitypackage", ExportPackageOptions.Recurse);
 	}
-
-#region Export Methods
-
-	public static void ExportReleaseResources()
-	{
-		string[] arg = System.Environment.GetCommandLineArgs();
-		string[] addlIgnore = new string[0];
-		string define = "";
-
-		foreach(string str in arg)
-		{
-			if(str.StartsWith("ignore:"))
-				addlIgnore = str.Replace("ignore:", "").Trim().Split(';');
-
-			if(str.StartsWith("define:"))
-				define = str.Replace("define:", "").Trim();
-		}
-		
-		string[] ignore = new string[3 + addlIgnore.Length];
-		ignore[0] = "ClassesCore";
-		ignore[1] = "EditorCore";
-		ignore[2] = "ClassesEditing";
-
-		for(int i = 3; i < ignore.Length; i++)
-			ignore[i] = addlIgnore[i-3];
-
-		Export("Assets/ProCore", "../../bin/temp", "ProBuilder2(Resources)", VersionMarking.None, ignore, define);
-	}
-
-#endregion
-
-#region Export Util
-
-	private static void Export(string SourcePath, string DestPath, string Name, VersionMarking Mark, string[] IgnorePattern, string Define)
-	{
-
-	}
-#endregion
-
-#region File
 
 	/**
-	 * Recursively collect exportable files using an ignore pattern.
+	 * Populate the AboutWindowEntry with version and dating information.
+	 * Ex:
+	 *
+	 *	name: ProBuilder
+	 *	identifier: ProBuilder2_AboutWindowIdentifier
+	 *	version: 2.2.5b0
+	 *	revision: 2176
+	 *	date: 04-18-2014
+	 *	changelog: Assets/changelog.txt
 	 */
-	private static List<string> CollectFilesRecursive(string InPath, string[] InIgnorePattern)
+	private static void WriteAboutEntry(string changelog, string version, string svnRevision)
 	{
-		List<string> CollectedAssetPaths = new List<string>();
+		string versionInfoText = 
+			"name: " + pb_Constant.PRODUCT_NAME + "\n" + 
+			"identifier: " + pb_Constant.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
+			"version: " + version + "\n" +
+			"revision: " + svnRevision + "\n" +
+			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
+			"changelog: " + changelog;
 
-		foreach(string file in Directory.GetFiles(InPath))
-		{
-			bool skip = false;
-			for(int i = 0; i < InIgnorePattern.Length; i++)
-			{
-				if(file.Contains(InIgnorePattern[i]))	
-				{
-					skip = true;
-					break;
-				}
-			}
+		string version_entry_path = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/pc_AboutEntry_ProBuilder.txt";
 
-			if(!skip)
-			{
-				CollectedAssetPaths.Add(file);
-			}
-		}
-
+		if(File.Exists(version_entry_path))
+			File.Delete(version_entry_path);
 		
-		foreach(string directory in Directory.GetDirectories(InPath))
+		using (FileStream fs = File.Create(version_entry_path))
 		{
-			bool skip = false;
-			for(int i = 0; i < InIgnorePattern.Length; i++)
-			{
-				if(directory.Contains(InIgnorePattern[i]))	
-				{
-					skip = true;
-					break;
-				}
-			}
-
-			if(!skip)
-			{
-				CollectedAssetPaths.AddRange( CollectFilesRecursive(directory, InIgnorePattern) );
-			}
+			Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
+			fs.Write(contents, 0, contents.Length);
 		}
 
-		return CollectedAssetPaths;
+		AssetDatabase.Refresh();
 	}
-
-
-	public static void AddDefine(string path, string define)
-	{
-		StringBuilder sb = new StringBuilder();
-
-		Encoding encoding;
-		
-		sb.AppendLine( "#define " + define);
-		
-		using (StreamReader sr = new StreamReader(path))
-		{
-			string line;
-			encoding = sr.CurrentEncoding;
-			while ((line = sr.ReadLine()) != null)
-			{
-				sb.AppendLine(line);
-			}
-		}
-		
-		using (StreamWriter writer = new StreamWriter(path, false, encoding))
-		{
-			writer.Write(sb.ToString());
-		}
-	}
-#endregion
 }
 

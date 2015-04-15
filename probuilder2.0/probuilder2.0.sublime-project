@@ -45,7 +45,7 @@
 		},
 		{
 			"follow_symlinks": true,
-			"path": "Assets/Bugger"
+			"path": "Assets/Debug"
 		},
 		{
 			"follow_symlinks": true,
