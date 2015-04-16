@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 
@@ -30,14 +31,23 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Mirror"))
 			{
+				List<GameObject> mirrors = new List<GameObject>();
+
 				foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 				{
-					pb_MirrorTool.Mirror(pb, new Vector3(
+					pb_Object result = pb_MirrorTool.Mirror(pb, new Vector3(
 						(scaleX) ? -1f : 1f,
 						(scaleY) ? -1f : 1f,
 						(scaleZ) ? -1f : 1f
 						));
+
+					mirrors.Add(result.gameObject);
 				}
+
+				if(pb_Editor.instance != null)
+					pb_Editor.instance.SetSelection(mirrors.ToArray());
+				else
+					Selection.objects = mirrors.ToArray();
 				
 				SceneView.RepaintAll();
 			}

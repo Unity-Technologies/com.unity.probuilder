@@ -931,7 +931,7 @@ public class pb_Menu_Commands : Editor
 			pb.ToMesh();
 			copy.ToMesh();
 			
-			copy.CenterPivot(null);
+			// copy.CenterPivot(null);
 
 			pb.Refresh();
 			copy.Refresh();
