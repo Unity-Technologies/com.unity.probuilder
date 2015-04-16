@@ -12,6 +12,17 @@ public class ShowHideFlags : Editor
 			Debug.Log(t.gameObject.hideFlags);
 	}
 
+	[MenuItem("Tools/Print Snap Settings")]
+	public static void dflkajsdkflj()
+	{
+		string txt = "Snap Enabled: ";
+		txt += pb_ProGridsInterface.SnapEnabled();
+		txt += "\nAxis Constraints: " + pb_ProGridsInterface.UseAxisConstraints();
+		txt += "\nSnap Value: " + pb_ProGridsInterface.SnapValue();
+
+		Debug.Log(txt);
+	}
+
 	[MenuItem("Tools/Show Prefab Info")]
 	static void Indoadfadsfadsft()
 	{

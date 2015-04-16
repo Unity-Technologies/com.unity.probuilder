@@ -9,7 +9,6 @@ using System.Linq;
 using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
-using ProCore.Common;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
@@ -90,6 +89,10 @@ public class pb_Editor : EditorWindow
 	private bool pref_showSceneInfo = false;
 	private bool pref_backfaceSelect = false;
 
+	private float pref_snapValue = .25f;
+	private bool pref_snapAxisConstraints = true;
+	private bool pref_snapEnabled = false;
+
 	private bool limitFaceDragCheckToSelection = true;
 	internal bool isFloatingWindow = false;
 #endregion
@@ -113,7 +116,7 @@ public class pb_Editor : EditorWindow
 
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
-		SharedProperties.PushToGridEvent += PushToGrid;
+		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 
 		HookSceneViewDelegate();
 
@@ -189,6 +192,10 @@ public class pb_Editor : EditorWindow
 		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
 		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
 		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+
+		pref_snapEnabled 	= pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue		= pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 				
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -203,7 +210,7 @@ public class pb_Editor : EditorWindow
 		if( OnSelectionUpdate != null )
 			OnSelectionUpdate(null);
 
-		SharedProperties.PushToGridEvent -= PushToGrid;
+		pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
@@ -1601,7 +1608,7 @@ public class pb_Editor : EditorWindow
 			
 			for(int i = 0; i < selection.Length; i++)
 			{
-				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff);
+				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
 			}
@@ -3306,8 +3313,12 @@ public class pb_Editor : EditorWindow
 		SceneView.RepaintAll();
 	}
 
+	/**
+	 * Called from ProGrids.
+	 */
 	private void PushToGrid(float snapVal)
 	{
+		Debug.Log("Push TO Grid");
 		pbUndo.RecordObjects(selection, "Push elements to Grid");
 
 		for(int i = 0; i  < selection.Length; i++)
@@ -3344,6 +3355,10 @@ public class pb_Editor : EditorWindow
 	 */
 	void OnBeginVertexMovement()
 	{
+		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue = pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
+
 		#if PB_DEBUG
 			profiler.BeginSample("OnBeginVertexMovement");
 		#endif

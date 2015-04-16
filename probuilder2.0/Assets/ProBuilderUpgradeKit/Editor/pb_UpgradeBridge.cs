@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if !UNITY_4_3
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -283,3 +285,4 @@ namespace ProBuilder2.UpgradeKit
 		}
 	}
 }
+#endif

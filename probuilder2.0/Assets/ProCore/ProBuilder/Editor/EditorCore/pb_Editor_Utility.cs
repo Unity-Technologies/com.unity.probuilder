@@ -8,7 +8,6 @@ using System.Reflection;
 using System.IO;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
-using ProCore.Common;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -420,20 +419,11 @@ namespace ProBuilder2.EditorCommon
 			else
 				pb.CenterPivot(indicesToCenterPivot);
 
-			if(pbUtil.SharedSnapEnabled)
-				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pbUtil.SharedSnapValue);
+			if(pb_ProGridsInterface.SnapEnabled())
+				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pb_ProGridsInterface.SnapValue());
 			else
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);
-		}
-
-		/**
-		 * Returns all Unity Scenes found within the Project directory.
-		 */
-		public static string[] GetScenes()
-		{
-			string[] allFiles = Directory.GetFiles("Assets/", "*.unity", SearchOption.AllDirectories);
-			return allFiles;
 		}
 
 		/**
@@ -442,11 +432,6 @@ namespace ProBuilder2.EditorCommon
 		public static SceneView GetSceneView()
 		{
 			return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
-		}
-
-		public static void FocusSceneView()
-		{
-			GetSceneView().Focus();
 		}
 #endregion
 	}

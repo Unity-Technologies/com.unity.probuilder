@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using ProCore.Common;	// new - SharedProperties.snapEnabled
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -17,38 +16,10 @@ using Parabox.Debug;
  *	\brief A series of handy extensions, ranging from Array utilities
  *	to 3d math.
  */
-namespace ProBuilder2.Common {
-	public static class pbUtil {
-
-#region SharedProperities
-
-	/**
-	 * Checks for ProGrids in project, and returns true if snapping is enabled.
-	 */
-	public static bool SharedSnapEnabled
+namespace ProBuilder2.Common
+{
+	public static class pbUtil 
 	{
-		get
-		{
-			return SharedProperties.snapEnabled;
-		}
-	}
-
-	/**
-	 * If ProGrids is present in project, this is the current snap value.
-	 */
-	public static float SharedSnapValue 
-	{
-		get
-		{
-			return SharedProperties.snapValue;
-		}
-	}
-
-	/**
-	 * If ProGrids is present, this toggles axis constraints when snapping.
-	 */
-	public static bool SharedUseAxisConstraints { get { return SharedProperties.useAxisConstraints; } }
-#endregion
 
 #region COMPONENT WRANGLING
 

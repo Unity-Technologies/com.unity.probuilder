@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProCore.Common;
 using System.Linq;
 
 #if PB_DEBUG
@@ -57,10 +56,10 @@ public static class pb_Object_Utility
 	 */
 	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
 	{
-		pb.TranslateVertices_World(selectedTriangles, offset, false);
+		pb.TranslateVertices_World(selectedTriangles, offset, 0f, false);
 	}
 
-	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, bool forceDisableSnap)
+	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapMask)
 	{	
 		// translate_profiler.BeginSample("TranslateVertices_World");
 		
@@ -81,15 +80,11 @@ public static class pb_Object_Utility
 		
 		// Snaps to world grid
 		// translate_profiler.BeginSample("Snap");
-		if(pbUtil.SharedSnapEnabled && !forceDisableSnap)
+		if(Mathf.Abs(snapValue) > Mathf.Epsilon)
 		{
-			float snapValue = pbUtil.SharedSnapValue;
 			for(i = 0; i < indices.Length; i++)
 			{
-				if(pbUtil.SharedUseAxisConstraints)
-					verts[indices[i]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[i]]), orig /*mask*/, snapValue));
-				else
-					verts[indices[i]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[i]]), Vector3.one, snapValue));
+				verts[indices[i]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[i]]), snapMask ? orig : Vector3.one, snapValue));
 			}
 		}
 		// translate_profiler.EndSample();

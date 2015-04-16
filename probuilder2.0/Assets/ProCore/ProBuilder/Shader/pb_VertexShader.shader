@@ -58,7 +58,7 @@
 				clip.xy *= _ScreenParams.xy;
 
 				clip.xy += v.texcoord1.xy * _Scale;
-				clip.z -= (.0005 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
+				clip.z -= (.0008 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
 
 				clip.xy /= _ScreenParams.xy;
 				clip.xy = (clip.xy - .5) / .5;

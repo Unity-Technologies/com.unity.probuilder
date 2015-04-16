@@ -921,8 +921,8 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ScreenCenter(previewObject.gameObject);
 			}
 
-			if(pbUtil.SharedSnapEnabled)
-				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pbUtil.SharedSnapValue);
+			if(pb_ProGridsInterface.SnapEnabled())
+				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pb_ProGridsInterface.SnapValue());
 			else
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);

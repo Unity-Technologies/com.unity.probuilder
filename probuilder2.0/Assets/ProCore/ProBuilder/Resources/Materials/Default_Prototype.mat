@@ -137,6 +137,10 @@ Material:
         second: 0
       data:
         first:
+          name: _Lightmapping
+        second: 1
+      data:
+        first:
           name: _Parallax
         second: .0199999996
       data:
@@ -175,10 +179,6 @@ Material:
         first:
           name: _Metallic
         second: .296999991
-      data:
-        first:
-          name: _Lightmapping
-        second: 1
       data:
         first:
           name: _Size

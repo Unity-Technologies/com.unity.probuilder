@@ -532,8 +532,7 @@ public class pb_Shape_Generator
 
 		pb.transform.position = center;
 
-		// the last bool param force disables snapping vertices
-		pb.TranslateVertices_World(pb.msh.triangles, dir, true);
+		pb.TranslateVertices_World(pb.msh.triangles, dir);
 
 		return pb;
 	}
