@@ -116,6 +116,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Preferences_Internal.cs">
       <Link>pb_Preferences_Internal.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ProGridsInterface.cs">
+      <Link>pb_ProGridsInterface.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Smoothing_Editor.cs">
       <Link>pb_Smoothing_Editor.cs</Link>
     </Compile>
