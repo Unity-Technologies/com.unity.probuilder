@@ -130,17 +130,7 @@ public class pb_Menu_Commands : Editor
 			return;
 		}
 		
-		Object[] undoObjects = new Object[selection.Length * 3];
-
-		int len = selection.Length;
-
-		System.Array.Copy(selection, 0, undoObjects, 0, len);
-
-		for(int i = 0; i < len; i++)
-		{
-			undoObjects[len + i] = selection[i].gameObject;
-			undoObjects[len*2 + i] = selection[i].transform.GetComponent<pb_Entity>();
-		}
+		Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
 
 		pbUndo.RecordObjects(undoObjects, "Set Entity Type");
 

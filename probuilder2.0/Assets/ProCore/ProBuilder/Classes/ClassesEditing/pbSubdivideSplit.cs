@@ -787,7 +787,7 @@ public static class pbSubdivideSplit
 		Vector2[] verts2d = pb_Math.PlanarProject(verts3d, nrm);
 		Vector2[] edgeCenters2d = pb_Math.PlanarProject(edgeCenters3d.ToArray(), nrm);
 		
-		Vector3 cen3d = pb_Math.BoundsCenter(verts3d);
+		Vector3 cen3d = pb_Math.Average(verts3d);
 		Vector2 cenUV = pb_Bounds2D.Center(faceUVs);
 
 		Vector2 cen2d = pb_Math.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];

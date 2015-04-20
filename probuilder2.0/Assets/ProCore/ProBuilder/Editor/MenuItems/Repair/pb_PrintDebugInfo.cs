@@ -12,7 +12,6 @@ public class pb_PrintDebugInfo : Editor
 		StringBuilder sb = new StringBuilder();
 
 		sb.AppendLine("Build Target: " + EditorUserBuildSettings.activeBuildTarget);
-		sb.AppendLine("Rendering Path:  " + pb_Editor_Graphics.GetRenderingPath());
 		sb.AppendLine("Pixel Light Count:  " + QualitySettings.pixelLightCount);
 
 		sb.AppendLine("---");

@@ -16,7 +16,7 @@ namespace ProBuilder2.Common
 		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
 		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
 
-		[HideInInspector] pb_ObjectPool pool = new pb_ObjectPool(1, 8, MeshConstructor);
+		[HideInInspector] pb_ObjectPool<Mesh> pool = new pb_ObjectPool<Mesh>(1, 8, MeshConstructor, null);
 
 		static Mesh MeshConstructor()
 		{

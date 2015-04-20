@@ -12,6 +12,7 @@ using System.Linq;
 using Parabox.Debug;
 #endif
 
+[InitializeOnLoad]
 public class pb_Editor_Graphics
 {
 	const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";// "Hidden/ProBuilder/UnlitColor";
@@ -29,10 +30,18 @@ public class pb_Editor_Graphics
 	public static GameObject 	selectionObject { get; private set; }	// allow get so that pb_Editor can check that the user hasn't 
 	public static GameObject 	wireframeObject { get; private set; }	// selected the graphic objects on accident.
 
-	static Mesh 				selectionMesh;
-	static Mesh 				wireframeMesh;
-	static Material 			selectionMaterial;
+	static Material 			faceMaterial;
+	static Material 			vertexMaterial;
 	static Material 			wireframeMaterial;
+	static pb_MeshRenderer 		wireframeRenderer;
+	static pb_MeshRenderer 		selectionRenderer;
+
+	private static pb_ObjectPool<pb_Renderable> renderablePool;
+
+	static pb_Editor_Graphics()
+	{
+		renderablePool = new pb_ObjectPool<pb_Renderable>(2, 8, CreateEditorRenderable, DestroyEditorRenderable);
+	}
 
 	static Color 				faceSelectionColor = new Color(0f, 1f, 1f, .275f);
 	static Color 				edgeSelectionColor = new Color(0f, .6f, .7f, 1f);
@@ -41,12 +50,63 @@ public class pb_Editor_Graphics
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
 	static Color 				vertexDotColor = Color.white;
 
-	public static EditLevel 	_editLevel = EditLevel.Geometry;
-	public static SelectMode 	_selectMode = SelectMode.Face;
+	private static EditLevel 	_editLevel = EditLevel.Geometry;
+	private static SelectMode 	_selectMode = SelectMode.Face;
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 
 	static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+
+	static Material WireframeMaterial
+	{
+		get
+		{
+			if(wireframeMaterial == null)
+			{
+				wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
+				wireframeMaterial.name = "WIREFRAME_MATERIAL";
+				wireframeMaterial.SetColor("_Color", (_selectMode == SelectMode.Edge && _editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
+				wireframeMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+			}
+			return wireframeMaterial;
+		}
+	}
+
+	static Material FaceMaterial
+	{
+		get
+		{
+			if( faceMaterial == null )	
+			{
+				faceMaterial = new Material(Shader.Find(FACE_SHADER));
+				faceMaterial.name = "FACE_SELECTION_MATERIAL";
+				faceMaterial.SetColor("_Color", faceSelectionColor);
+				faceMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+			}
+
+			return faceMaterial;
+		}
+	}
+
+	static Material VertexMaterial
+	{
+		get
+		{
+			if( vertexMaterial == null )	
+			{
+				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
+				vertexMaterial = new Material(Shader.Find(VERT_SHADER));
+				vertexMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
+				Texture2D dot = (Texture2D)Resources.Load("Textures/VertOff");
+				vertexMaterial.mainTexture = dot;
+				vertexMaterial.SetColor("_Color", vertexDotColor);
+				vertexMaterial.SetFloat("_Scale", vertexHandleSize * (dot == null ? 5f : 6f));
+				vertexMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+			}
+
+			return vertexMaterial;
+		}
+	}
 
 	/**
 	 * Reload colors for edge and face highlights from editor prefs.
@@ -61,12 +121,11 @@ public class pb_Editor_Graphics
 			Init(_editLevel, _selectMode);
 
 		vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-
-		// UpdateSelectionMesh(pb_Editor.instance.selection, _editLevel, _selectMode);
-		// SceneView.RepaintAll();
-		SetMaterial(_editLevel, _selectMode);
 	}
 
+	/**
+	 * Create selection and wireframe render objects, and set their hideflasgs.
+	 */
 	private static void Init(EditLevel el, SelectMode sm)
 	{
 		DestroyTempObjects();
@@ -74,69 +133,13 @@ public class pb_Editor_Graphics
 		selectionObject = EditorUtility.CreateGameObjectWithHideFlags(PREVIEW_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[1] { typeof(pb_MeshRenderer) });
 		wireframeObject = EditorUtility.CreateGameObjectWithHideFlags(WIREFRAME_OBJECT_NAME, PB_EDITOR_GRAPHIC_HIDE_FLAGS, new System.Type[1] { typeof(pb_MeshRenderer) });	
 
-		selectionMesh = new Mesh();
-		wireframeMesh = new Mesh();
-
-		selectionMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-		wireframeMesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-
-		selectionMesh.name = SELECTION_MESH_NAME;
-		wireframeMesh.name = WIREFRAME_MESH_NAME;
-
-		selectionObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( selectionMesh, (Material) null ) );
-		wireframeObject.GetComponent<pb_MeshRenderer>().renderables.Add( new pb_Renderable( wireframeMesh, (Material) null ) );
+		selectionRenderer = selectionObject.GetComponent<pb_MeshRenderer>();
+		wireframeRenderer = wireframeObject.GetComponent<pb_MeshRenderer>();
 
 		_editLevel = el;
 		_selectMode = sm;
 
 		LoadPrefs();
-	}
-
-	/**
-	 * If Materials are null, initialize them.
-	 */
-	static void SetMaterial(EditLevel el, SelectMode sm)
-	{
-		if(selectionMaterial != null)
-		{
-			GameObject.DestroyImmediate(selectionMaterial);
-		}
-
-		if(wireframeMaterial != null)
-		{
-			GameObject.DestroyImmediate(wireframeMaterial);
-		}
-
-		// Always generate the wireframe
-		wireframeMaterial = new Material(Shader.Find(EDGE_SHADER));
-		wireframeMaterial.name = "WIREFRAME_MATERIAL";
-		wireframeMaterial.SetColor("_Color", (sm == SelectMode.Edge && el == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
-		wireframeMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-
-		switch(sm)
-		{
-			case SelectMode.Vertex:
-				vertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-				selectionMaterial = new Material(Shader.Find(VERT_SHADER));
-				selectionMaterial.name = "VERTEX_BILLBOARD_MATERIAL";
-				Texture2D dot = (Texture2D)Resources.Load("Textures/VertOff");
-				selectionMaterial.mainTexture = dot;
-				selectionMaterial.SetColor("_Color", vertexDotColor);
-				selectionMaterial.SetFloat("_Scale", vertexHandleSize * (dot == null ? 5f : 6f));
-				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-				break;
-
-			default:
-				selectionMaterial = new Material(Shader.Find(FACE_SHADER));
-				selectionMaterial.name = "FACE_SELECTION_MATERIAL";
-				selectionMaterial.SetColor("_Color", faceSelectionColor);
-				selectionMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
-				break;
-		}
-
-	
-		selectionObject.GetComponent<pb_MeshRenderer>().renderables[0].materials[0] = selectionMaterial;
-		wireframeObject.GetComponent<pb_MeshRenderer>().renderables[0].materials[0] = wireframeMaterial;
 	}
 
 	static internal void OnDisable()
@@ -148,8 +151,13 @@ public class pb_Editor_Graphics
 	{
 		DestroyObjectsWithName(PREVIEW_OBJECT_NAME);
 		DestroyObjectsWithName(WIREFRAME_OBJECT_NAME);
+
+		renderablePool.Empty();
 	}
 
+	/**
+	 * Search scene and destroy all PB rendering objects.
+	 */
 	static private void DestroyObjectsWithName(string InName)
 	{
 		GameObject go = GameObject.Find(InName);
@@ -170,63 +178,38 @@ public class pb_Editor_Graphics
 	}
 
 	/**
-	 * Draw vertex handles using UnityEngine.Handles.
-	 */
-	public static void DrawVertexHandles(int selectionLength, int[][] indices, Vector3[][] allVerticesInWorldSpace, Color col)
-	{
-		Color t = Handles.color;
-		Handles.color = col;
-		try {
-			for(int i = 0; i < selectionLength; i++)
-			{
-				foreach(int j in indices[i])
-				{
-					Vector3 pos = allVerticesInWorldSpace[i][j];
-					Handles.DotCap(-1, pos, Quaternion.identity, HandleUtility.GetHandleSize(pos) * vertexHandleSize);
-				}
-			}
-		} catch (System.Exception e) {}
-
-		Handles.color = t;
-	}
-
-	/**
 	 * Refresh the selection and wireframe mesh with _selection.
 	 */
 	static internal void UpdateSelectionMesh(pb_Object[] _selection, EditLevel editLevel, SelectMode selectionMode)
 	{
 		// Always clear the mesh whenever updating, even if selection is null.
-		if(selectionObject == null || wireframeObject == null || selectionMesh == null || wireframeMesh == null)
+		if(selectionObject == null || wireframeObject == null)
+		{
 			Init(editLevel, selectionMode);
+		}
 
-		selectionMesh.Clear();
-		wireframeMesh.Clear();
+		if(_selectMode != selectionMode || _editLevel != editLevel)
+		{	
+			if(wireframeMaterial != null)
+				GameObject.DestroyImmediate(wireframeMaterial);	
+	
+			_editLevel = editLevel;
+			_selectMode = selectionMode;
+		}
+
+		foreach(pb_Renderable ren in selectionRenderer.renderables)
+			renderablePool.Put(ren);
+
+		selectionRenderer.renderables.Clear();
+
+		UpdateWireframeMeshes(_selection);
 
 		if(_selection == null || _selection.Length < 1)
 		{
 			return;
 		}
 
-		if(_selectMode != selectionMode || _editLevel != editLevel)
-		{	
-			SetMaterial(editLevel, selectionMode);
-			_editLevel = editLevel;
-			_selectMode = selectionMode;
-		}
-
-		selectionMesh.name = SELECTION_MESH_NAME;
-		wireframeMesh.name = WIREFRAME_MESH_NAME;
-
-		List<Vector3> verts = new List<Vector3>();
-		List<Vector3> nrm = new List<Vector3>();
-		List<Vector2> uvs 	= new List<Vector2>();
-		List<Vector2> uv2s 	= new List<Vector2>();
-		List<Color> col = new List<Color>();
-		List<int> tris = new List<int>();
-
-		MakeEdgeMesh(_selection, ref wireframeMesh);
-
-		if(editLevel == EditLevel.Geometry)
+		if(editLevel == EditLevel.Geometry && selectionMode != SelectMode.Edge)
 		{
 			switch( selectionMode )
 			{
@@ -256,12 +239,10 @@ public class pb_Editor_Graphics
 						
 						for(int i = 0; i < v.Length; i++)
 						{
-							Vector3 vpoint = pb.transform.TransformPoint(v[i]);
-							
-							t_billboards[t+0] = vpoint;//-up-right;
-							t_billboards[t+1] = vpoint;//-up+right;
-							t_billboards[t+2] = vpoint;//+up-right;
-							t_billboards[t+3] = vpoint;//+up+right;
+							t_billboards[t+0] = v[i];//-up-right;
+							t_billboards[t+1] = v[i];//-up+right;
+							t_billboards[t+2] = v[i];//+up-right;
+							t_billboards[t+3] = v[i];//+up+right;
 
 							t_uvs[t+0] = Vector3.zero;
 							t_uvs[t+1] = Vector3.right;
@@ -309,13 +290,20 @@ public class pb_Editor_Graphics
 							n+=6;				
 						}
 
-						verts.AddRange(t_billboards);
-						vcount += t_billboards.Length;
-						nrm.AddRange(t_nrm);
-						uvs.AddRange(t_uvs);
-						uv2s.AddRange(t_uv2);
-						col.AddRange(t_col);
-						tris.AddRange(t_tris);
+						pb_Renderable ren = renderablePool.Get();
+						ren.name = "Selection Renderable";
+						ren.matrix = pb.transform.localToWorldMatrix;
+						ren.materials[0] = VertexMaterial;
+						ren.mesh.Clear();
+
+						ren.mesh.vertices = t_billboards;
+						ren.mesh.normals = t_nrm;
+						ren.mesh.uv = t_uvs;
+						ren.mesh.uv2 = t_uv2;
+						ren.mesh.colors = t_col;
+						ren.mesh.triangles = t_tris;
+						
+						selectionRenderer.renderables.Add(ren);
 					}
 
 					break;
@@ -326,65 +314,66 @@ public class pb_Editor_Graphics
 					{
 						int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
-						Vector3[] 	v = pb.VerticesInWorldSpace(selectedTriangles);
+						Vector3[] 	v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);
 						Vector2[] 	u = pbUtil.ValuesWithIndices(pb.uv, selectedTriangles);
 
-						verts.AddRange(v);
-						nrm.AddRange( v );
-						uvs.AddRange  (u);
-					}
+						pb_Renderable ren = renderablePool.Get();
+						ren.name = "Selection Renderable";
+						ren.matrix = pb.transform.localToWorldMatrix;
+						ren.materials[0] = FaceMaterial;
 
-					tris = new List<int>(verts.Count);			// because ValuesWithIndices returns in wound order, just fill
-
-					for(int p = 0; p < verts.Count; p++)		// triangles with 0, 1, 2, 3, etc
-					{
-						tris.Add(p);
-					}
+						ren.mesh.Clear();
+						ren.mesh.vertices = v;
+						ren.mesh.normals = v;
+						ren.mesh.uv = u;
+						ren.mesh.triangles = SequentialTriangles(v.Length);
 					
+						selectionRenderer.renderables.Add(ren);
+					}
 					break;
 			}
-
-			selectionMesh.vertices = verts.ToArray();	// it is assigned here because we need to get normals
-			selectionMesh.normals = nrm.ToArray();
-			selectionMesh.triangles = tris.ToArray();
-			selectionMesh.uv = uvs.ToArray();
-			selectionMesh.uv2 = uv2s.ToArray();
-			selectionMesh.colors = col.ToArray();
 		}
 	}
 
 	/**
-	 * Returns the actual rendering path - (will not return UsePlayerSettings).
+	 * Create a new pb_Renderable with the wireframe material.
 	 */
-	public static RenderingPath GetRenderingPath()
+	static pb_Renderable CreateEditorRenderable()
 	{
-		SceneView scn = SceneView.lastActiveSceneView;
-		Camera cam;
+		pb_Renderable ren = pb_Renderable.CreateInstance(new Mesh(), (Material)null);
+		ren.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+		ren.mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+		return ren;
+	}
 
-		if(scn != null)
-		{
-			cam = scn.camera;
-		}
-		else
-		{
-			cam = Camera.main;
-		}
+	/**
+	 * Destructor for wireframe pb_Renderables.
+	 */
+	static void DestroyEditorRenderable(pb_Renderable ren)
+	{
+		// Don't destroy material since it's used elsewhere
+		ren.materials = (Material[])null;
 
-		if(cam == null)
-			return RenderingPath.Forward;
-
-		return cam.actualRenderingPath == RenderingPath.UsePlayerSettings ? PlayerSettings.renderingPath : cam.actualRenderingPath;
+		GameObject.DestroyImmediate(ren);
 	}
 
 	/**
 	 * Generate a mesh composed of all universal edges in an array of pb_Object.
 	 */
-	static void MakeEdgeMesh(pb_Object[] selection, ref Mesh mesh)
+	static void UpdateWireframeMeshes(pb_Object[] selection)
 	{
-		List<Vector3> all_verts = new List<Vector3>();
+		for(int i = 0; i < wireframeRenderer.renderables.Count; i++)
+			renderablePool.Put(wireframeRenderer.renderables[i]);
+
+		wireframeRenderer.renderables.Clear();
 
 		for(int i = 0; i < selection.Length; i++)
 		{
+			pb_Renderable ren = renderablePool.Get();
+			ren.name = "Wireframe Renderable";
+			Mesh mesh = ren.mesh;
+			ren.materials[0] = WireframeMaterial;
+			ren.matrix = selection[i].transform.localToWorldMatrix;
 			pb_Object pb = selection[i];
 
 			Vector3[] pbverts = pb.vertices;
@@ -397,30 +386,27 @@ public class pb_Editor_Graphics
 			int n = 0;
 			foreach(pb_Edge e in universalEdges)
 			{
-				edge_verts[n++] = pb.transform.TransformPoint(pbverts[sharedIndices[e.x][0]]);
-				edge_verts[n++] = pb.transform.TransformPoint(pbverts[sharedIndices[e.y][0]]);
+				edge_verts[n++] = pbverts[sharedIndices[e.x][0]];
+				edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
 			}
+			
+			mesh.Clear();
+			mesh.vertices = edge_verts;
+			mesh.uv = new Vector2[edge_verts.Length];
+			mesh.subMeshCount = 1;
+			mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
+			mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 
-			all_verts.AddRange(edge_verts);
+			wireframeRenderer.renderables.Add(ren);
 		}
+	}
 
-		int[] tris = new int[all_verts.Count * 2];
-		Vector2[] uvs = new Vector2[all_verts.Count];
-
-		for(int i = 0; i < all_verts.Count; i+=2)
-		{
+	static int[] SequentialTriangles(int len)
+	{
+		int[] tris = new int[len];
+		for(int i = 0; i < len; i++) {
 			tris[i] = i;
-			tris[i+1] = i+1;
-
-			uvs[i] = Vector2.zero;
-			uvs[i+1] = Vector2.zero;
 		}
-
-		mesh.Clear();
-		mesh.vertices = all_verts.ToArray();
-		mesh.uv = uvs;
-		mesh.subMeshCount = 1;
-		mesh.SetIndices(tris.ToArray(), MeshTopology.Lines, 0);
-		mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+		return tris;
 	}
 }

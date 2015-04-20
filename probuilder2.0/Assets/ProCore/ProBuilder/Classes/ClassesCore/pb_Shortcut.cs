@@ -24,7 +24,7 @@ public class pb_Shortcut
 	public override string ToString()
 	{
 		string val = action + "-" + description + "-" + key + "-" + eventModifiers;
-		return val;
+		return val; 
 	}
 
 	public pb_Shortcut(string str)

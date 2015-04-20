@@ -7,7 +7,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Helper functions that are only available in the Editor.
 	 */
-	public static class pb_EditorMeshUtility
+	public static class pb_Editor_Mesh_Utility
 	{
 		/**
 		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).

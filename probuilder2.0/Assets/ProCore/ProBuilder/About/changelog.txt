@@ -1,3 +1,8 @@
+-- ProBuilder 2.4.4b1 (r3330)
+
+# Bug Fixes
+	- Sttuff!
+
 -- ProBuilder 2.4.4b0 (r3322)
 
 # Features

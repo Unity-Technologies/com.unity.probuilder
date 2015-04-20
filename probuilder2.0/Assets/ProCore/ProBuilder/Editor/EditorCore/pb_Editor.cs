@@ -59,9 +59,6 @@ public class pb_Editor : EditorWindow
 	string revisionNo = " no svn found";
 	#endif
 
-	#if PB_DEBUG
-	pb_Profiler profiler = new pb_Profiler();
-	#endif
 #endregion
 
 #region LOCAL MEMBERS && EDITOR PREFS
@@ -646,12 +643,10 @@ public class pb_Editor : EditorWindow
 
 			if(GUILayout.Button("times",GUILayout.MinWidth(20)))
 			{
-				Bugger.Log(profiler.ToString());
 			}
 
 			if(GUILayout.Button("reset",GUILayout.MinWidth(20)))
 			{
-				profiler.Reset();
 			}
 			#endif
 		#endregion
@@ -1177,6 +1172,7 @@ public class pb_Editor : EditorWindow
 		}
 		else
 		{
+			UpdateSelection(true);
 			return null;
 		}
 
@@ -1223,6 +1219,8 @@ public class pb_Editor : EditorWindow
 
 		Event.current.Use();
 
+		// OnSelectionChange will also call UpdateSelection, but this needs to remain
+		// because it catches element selection changes.
 		UpdateSelection(false);
 		SceneView.RepaintAll();
 
@@ -1272,10 +1270,6 @@ public class pb_Editor : EditorWindow
 
 	private bool EdgeClickCheck(out pb_Object pb)
 	{
-		#if PB_DEBUG
-		profiler.BeginSample("EdgeClickCheck");
-		#endif
-	
 		if(!shiftKey && !ctrlKey)
 		{
 			// don't call ClearFaceSelection b/c that also removes
@@ -1304,16 +1298,8 @@ public class pb_Editor : EditorWindow
 				else
 					pb.SetSelectedEdges(pb.SelectedEdges.Add(nearestEdge));
 
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
-
 				return true;
 			}
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			return false;
 		}
@@ -1323,10 +1309,6 @@ public class pb_Editor : EditorWindow
 				ClearFaceSelection();
 
 			pb = null;
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			return false;
 		}
@@ -1604,18 +1586,22 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
+
 			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 			
 			for(int i = 0; i < selection.Length; i++)
 			{
+				
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
+
 			}
 
-
 			Internal_UpdateSelectionFast();
+
 		}
+
 	}
 
 	private void VertexScaleTool()
@@ -2592,11 +2578,7 @@ public class pb_Editor : EditorWindow
 
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
-	{	
-		#if PB_DEBUG
-		profiler.BeginSample("UpdateSelection");
-		#endif
-		
+	{		
 		per_object_vertexCount_distinct = 0;
 		
 		selectedVertexCount = 0;
@@ -2609,14 +2591,7 @@ public class pb_Editor : EditorWindow
 
 		pb_Object[] t_selection = selection;
 
-		#if PB_DEBUG
-		profiler.BeginSample("GetComponents");
-			selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-		profiler.EndSample();
-		profiler.BeginSample("Heavy Update Stuff");
-		#else
 		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-		#endif
 
 		// If the top level selection has changed, update all the heavy cache things
 		// that don't change based on element selction
@@ -2632,39 +2607,16 @@ public class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				#if PB_DEBUG
-				profiler.BeginSample("selected_uniqueIndices_all");
-				#endif
-				selected_uniqueIndices_all[i] = pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
+				selected_uniqueIndices_all[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
 
 				// necessary only once on selection modification
-				#if PB_DEBUG
-				profiler.EndSample();
-				// profiler.BeginSample("pb_Edge.GetUniversalEdges");
-				#endif
-
 				selected_universal_edges_all[i] = new pb_Edge[0];// pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
 				
-				#if PB_DEBUG
-				profiler.BeginSample("VerticesInWorldSpace_all");
-				#endif
-
 				selected_verticesInWorldSpace_all[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
-
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
 			}
 
-			#if PB_DEBUG
-			profiler.BeginSample("GetUniversalEdges");	
-			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
-			edgesThread.Start();
-			profiler.EndSample();
-			#else
 			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
 			edgesThread.Start(selection);
-			#endif
 		}
 
 		selected_uniqueIndices_sel			= new int[selection.Length][];
@@ -2673,10 +2625,6 @@ public class pb_Editor : EditorWindow
 		// selected_handlePivot 				= new Vector3[selection.Length];
 		
 		selected_handlePivotWorld			= Vector3.zero;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool boundsInitialized = false;
@@ -2694,38 +2642,11 @@ public class pb_Editor : EditorWindow
 				max = min;
 			}
 
-			#if PB_DEBUG
-			profiler.BeginSample("Cache Transform");
-			#endif 
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			profiler.BeginSample("unique::SelectedTriangles");
-			#endif
-
 			// things necessary to call every frame
 			selected_uniqueIndices_sel[i] = pb.SelectedTriangles;			
 
-			
-			#if PB_DEBUG
-			profiler.EndSample();
-			profiler.BeginSample("selected_verticesLocal_sel");
-			#endif
-
 			selected_verticesLocal_sel[i] = pb.GetVertices(pb.SelectedTriangles);
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			// profiler.BeginSample("selected_handlePivot");
-			#endif
-
-			// selected_handlePivot[i] = pb_Math.Average(selected_verticesLocal_sel[i]);
 			
-			#if PB_DEBUG
-			// profiler.EndSample();
-			profiler.BeginSample("selected_handlePivotWorld");
-			#endif
-
 			if(pb.SelectedTriangles.Length > 0)
 			{
 				if(forceUpdate)
@@ -2746,30 +2667,13 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
-			#if PB_DEBUG
-			profiler.EndSample();
-			profiler.BeginSample("SelectedFacesInEditZone");
-			#endif
-
 			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToArray();
 			
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
-
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
 			selectedFaceCount += selection[i].SelectedFaceIndices.Length;
 			selectedEdgeCount += selection[i].SelectedEdges.Length;
 
-			#if PB_DEBUG
-			profiler.BeginSample("Distinct Vertex Count");
-			#endif
-
 			int distinctVertexCount = selection[i].sharedIndices.UniqueIndicesWithValues(selection[i].SelectedTriangles).ToList().Count;
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			if(distinctVertexCount > per_object_vertexCount_distinct)
 				per_object_vertexCount_distinct = distinctVertexCount;
@@ -2781,21 +2685,9 @@ public class pb_Editor : EditorWindow
 
 		selected_handlePivotWorld = (max+min)/2f;
 
-		#if PB_DEBUG
-		profiler.BeginSample("UpdateGraphics");
-			UpdateGraphics();
-		profiler.EndSample();
-		#else
-			UpdateGraphics();
-		#endif
+		UpdateGraphics();
 
-		#if PB_DEBUG
-		profiler.BeginSample("UpdateHandleRotation");
-			UpdateHandleRotation();
-		profiler.EndSample();
-		#else
-			UpdateHandleRotation();
-		#endif
+		UpdateHandleRotation();
 
 		DrawNormals(drawNormals);
 
@@ -2807,19 +2699,11 @@ public class pb_Editor : EditorWindow
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 
 	// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 	private void Internal_UpdateSelectionFast()
 	{
-		#if PB_DEBUG
-		profiler.BeginSample("Internal_UpdateSelectionFast");
-		#endif
-
 		selectedVertexCount = 0;
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
@@ -2832,10 +2716,9 @@ public class pb_Editor : EditorWindow
 			pb_Object pb = selection[i];
 
 			pb.transform.hasChanged = false;
-
-			selected_verticesInWorldSpace_all[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
+	
 			selected_verticesLocal_sel[i] = pb.GetVertices(pb.SelectedTriangles);
-			// selected_handlePivot[i] = pb_Math.Average(selected_verticesLocal_sel[i]);
+			selected_verticesInWorldSpace_all[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 
 			if(selection[i].SelectedTriangleCount > 0)
 			{
@@ -2859,7 +2742,7 @@ public class pb_Editor : EditorWindow
 		}
 
 		selected_handlePivotWorld = (max+min)/2f;
-		
+
 		UpdateGraphics();
 		UpdateHandleRotation();
 		currentHandleRotation = handleRotation;
@@ -2867,10 +2750,6 @@ public class pb_Editor : EditorWindow
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 
 	private void UpdateGraphics()
@@ -3359,10 +3238,6 @@ public class pb_Editor : EditorWindow
 		pref_snapValue = pb_ProGridsInterface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 
-		#if PB_DEBUG
-			profiler.BeginSample("OnBeginVertexMovement");
-		#endif
-
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();
 
@@ -3398,43 +3273,19 @@ public class pb_Editor : EditorWindow
 		#endif
 		if(movingVertices)
 		{
-			#if PB_DEBUG
-			
-				profiler.BeginSample("RebuildObjects");
+			foreach(pb_Object sel in selection)
+			{
 
-				foreach(pb_Object sel in selection)
-				{
-					profiler.BeginSample("ToMesh()");
-					sel.ToMesh();
-					profiler.EndSample();
-					profiler.BeginSample("Refresh()");
-					sel.Refresh();
-					profiler.EndSample();
-					profiler.BeginSample("Optimize()");
-					sel.Optimize();
-					profiler.EndSample();
-				}
-
-				profiler.EndSample();
-			#else
-				foreach(pb_Object sel in selection)
-				{
-
-					sel.ToMesh();
-					sel.Refresh();
-					sel.Optimize();
-				}
-			#endif
+				sel.ToMesh();
+				sel.Refresh();
+				sel.Optimize();
+			}
 
 			movingVertices = false;
 
 		}
 
 		scaling = false;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 #endregion
 

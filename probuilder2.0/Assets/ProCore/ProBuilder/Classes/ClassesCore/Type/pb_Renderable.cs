@@ -6,33 +6,45 @@ namespace ProBuilder2.Common
 	/**
 	 * A mesh / material(s) structure.
 	 */
-	public class pb_Renderable
+	[System.Serializable]
+	public class pb_Renderable : ScriptableObject
 	{
 		public Mesh mesh;
 		public Material[] materials;
+		public Matrix4x4 matrix = Matrix4x4.identity;
 
-		public pb_Renderable(Mesh InMesh, Material[] InMaterials)
+		public static pb_Renderable CreateInstance(Mesh InMesh, Material[] InMaterials)
 		{
-			this.mesh = InMesh;
-			this.materials = InMaterials; 
+			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
+			ren.mesh = InMesh;
+			ren.materials = InMaterials; 
+			return ren;
 		}
 
-		public pb_Renderable(Mesh InMesh, Material InMaterial)
+		public static pb_Renderable CreateInstance(Mesh InMesh, Material InMaterial)
 		{
-			this.mesh = InMesh;
-			this.materials = new Material[] { InMaterial };
+			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
+			ren.mesh = InMesh;
+			ren.materials = new Material[] { InMaterial };
+			return ren;
 		}
 
 		/**
 		 * Destroy the mesh and materials associated with this object.  Do not call Destroy() if 
 		 * any of the materials or mesh is not an instance value.
 		 */
-		public void Destroy()
+		public void OnDestroy()
 		{
 			GameObject.DestroyImmediate(mesh);
 
-			for(int i = 0; i < materials.Length; i++)
-				GameObject.DestroyImmediate(materials[i]);
+			if(materials != null)
+			{
+				for(int i = 0; i < materials.Length; i++)
+				{
+					if(materials[i] != null)
+						GameObject.DestroyImmediate(materials[i]);
+				}
+			}
 		}
 	}
 }

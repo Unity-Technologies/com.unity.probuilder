@@ -12,7 +12,7 @@ using System.Text;
 
 public class DefineManager : EditorWindow
 {
-	const string DEF_MANAGER_PATH = "Assets/Bugger/Editor/DefineManager.cs";
+	const string DEF_MANAGER_PATH = "Assets/Debug/Editor/DefineManager.cs";
 
 	enum Compiler
 	{
