@@ -152,7 +152,7 @@ public class pb_Editor_Graphics
 		DestroyObjectsWithName(PREVIEW_OBJECT_NAME);
 		DestroyObjectsWithName(WIREFRAME_OBJECT_NAME);
 
-		renderablePool.Empty();
+		// renderablePool.Empty();
 	}
 
 	/**
@@ -360,12 +360,15 @@ public class pb_Editor_Graphics
 	/**
 	 * Generate a mesh composed of all universal edges in an array of pb_Object.
 	 */
-	static void UpdateWireframeMeshes(pb_Object[] selection)
+	internal static void UpdateWireframeMeshes(pb_Object[] selection)
 	{
 		for(int i = 0; i < wireframeRenderer.renderables.Count; i++)
 			renderablePool.Put(wireframeRenderer.renderables[i]);
 
 		wireframeRenderer.renderables.Clear();
+
+		if( (editor == null || selection == null || editor.SelectedUniversalEdges == null) || selection.Length != editor.SelectedUniversalEdges.Length )
+			return;
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -380,7 +383,7 @@ public class pb_Editor_Graphics
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
 			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
-			pb_Edge[] universalEdges = editor.Selected_Universal_Edges_All[i]; // new List<pb_Edge>(pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), sharedIndices).Distinct());
+			pb_Edge[] universalEdges = editor.SelectedUniversalEdges[i];
 			Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
 		
 			int n = 0;

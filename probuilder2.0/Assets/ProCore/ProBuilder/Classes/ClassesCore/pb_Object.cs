@@ -668,42 +668,13 @@ public class pb_Object : MonoBehaviour
 			m.normals = new Vector3[vertexCount];
 		}
 
-		// Sort the faces into groups of like materials
-		Dictionary<Material, List<pb_Face>> matDic = new Dictionary<Material, List<pb_Face>>();
-		
-		#if PROTOTYPE
-			MeshRenderer mr = GetComponent<MeshRenderer>();
-			matDic.Add(mr.sharedMaterial == null ? pb_Constant.DefaultMaterial : mr.sharedMaterial, new List<pb_Face>(this.faces));
-		#else
-			foreach(pb_Face quad in faces)
-			{
-				Material face_mat = quad.material ?? pb_Constant.UnityDefaultDiffuse;
+		int[][] tris;
+		Material[] mats;
 
-				if(matDic.ContainsKey(face_mat))
-				{
-					matDic[face_mat].Add(quad);
-				}
-				else
-				{
-					matDic.Add(face_mat, new List<pb_Face>(1) {quad} );
-				}
-			}
-		#endif
+		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
 
-		Material[] mats = new Material[matDic.Count];
-
-		m.subMeshCount = matDic.Count;
-		_submeshTriangleCount = new int[matDic.Count];
-
-		int i = 0;
-		foreach( KeyValuePair<Material, List<pb_Face>> kvp in matDic )
-		{
-			m.SetTriangles(pb_Face.AllTriangles(kvp.Value), i);
-			_submeshTriangleCount[i] = m.GetTriangles(i).Length;
-
-			mats[i] = kvp.Key;
-			i++;
-		}
+		for(int i = 0; i < tris.Length; i++)
+			m.SetTriangles(tris[i], i);
 
 		m.RecalculateBounds();
 		m.Optimize();
@@ -711,6 +682,34 @@ public class pb_Object : MonoBehaviour
 
 		GetComponent<MeshFilter>().sharedMesh = m;
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
+	}
+
+	/**
+	 * Set the MeshComponent.sharedMesh back to matching the pb_Object.vertices cache.
+	 * Does not recalculate UVs unless _uv is null, but does rebuild normals and smoothing
+	 * by necessity.
+	 */
+	public void ResetMesh()
+	{
+		Mesh m = msh;
+
+		m.Clear();
+		m.vertices = _vertices;
+
+		int[][] tris;
+		Material[] mats;
+		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
+
+		for(int i = 0; i < tris.Length; i++) m.SetTriangles(tris[i], i);
+
+		if( _uv == null || _uv.Length != vertexCount )
+			RefreshUV();
+		else
+			m.uv = _uv;
+
+		RefreshColor();
+
+		RefreshNormals();
 	}
 
 	/**
@@ -792,7 +791,9 @@ public class pb_Object : MonoBehaviour
 		m.Optimize();
 
 		RefreshColor();
+
 		RefreshUV();
+
 		RefreshNormals();
 
 		pb_Mesh_Utility.GenerateTangent(ref m);
@@ -1155,13 +1156,14 @@ public class pb_Object : MonoBehaviour
 
 	public override string ToString()
 	{
-		string str =  
-			"Name: " + gameObject.name + "\n" +
-			"ID: " + id + "\n" +
-			"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
-			"Shared / Total Vertices: " + sharedIndices.Length + " , " + msh.vertices.Length + "\n" +
-			"faces: " + faces.Length;
-		return str;
+		return gameObject.name;
+		// string str =  
+		// 	"Name: " + gameObject.name + "\n" +
+		// 	"ID: " + id + "\n" +
+		// 	"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
+		// 	"Shared / Total Vertices: " + sharedIndices.Length + " , " + msh.vertices.Length + "\n" +
+		// 	"faces: " + faces.Length;
+		// return str;
 	}
 
 	public string ToStringDetailed()

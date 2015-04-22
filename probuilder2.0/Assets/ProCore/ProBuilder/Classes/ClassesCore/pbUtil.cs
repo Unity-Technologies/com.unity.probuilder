@@ -401,9 +401,9 @@ namespace ProBuilder2.Common
 	{
 		float _x = vertex.x, _y = vertex.y, _z = vertex.z;
 		Vector3 v = new Vector3(
-			( Mathf.Abs(mask.x) < 0.0001f ? _x : SnapValue(_x, snpVal) ),
-			( Mathf.Abs(mask.y) < 0.0001f ? _y : SnapValue(_y, snpVal) ),
-			( Mathf.Abs(mask.z) < 0.0001f ? _z : SnapValue(_z, snpVal) )
+			( Mathf.Abs(mask.x) < 0.0001f ? _x : snpVal * Mathf.Round(_x / snpVal) ),
+			( Mathf.Abs(mask.y) < 0.0001f ? _y : snpVal * Mathf.Round(_y / snpVal) ),
+			( Mathf.Abs(mask.z) < 0.0001f ? _z : snpVal * Mathf.Round(_z / snpVal) )
 			);
 		return v;
 	}

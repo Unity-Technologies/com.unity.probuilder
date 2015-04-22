@@ -585,7 +585,7 @@ public class pb_Menu_Commands : Editor
 
 				case SelectMode.Vertex:
 				{
-					int[] perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.Selected_Universal_Edges_All[i]);
+					int[] perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.SelectedUniversalEdges[i]);
 					pb.SetSelectedTriangles( pb.SelectedTriangles.RemoveAt(perimeter) );
 					rc += perimeter != null ? perimeter.Length : 0;
 					break;
@@ -655,7 +655,7 @@ public class pb_Menu_Commands : Editor
 				for(int i = 0; i < selection.Length; i++)
 				{
 					pb_Edge[] universal_selected_edges = pb_Edge.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndices).Distinct().ToArray();
-					pb_Edge[] inverse_universal = System.Array.FindAll(editor.Selected_Universal_Edges_All[i], x => !universal_selected_edges.Contains(x));
+					pb_Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 					pb_Edge[] inverse = new pb_Edge[inverse_universal.Length];
 					
 					for(int n = 0; n < inverse_universal.Length; n++)

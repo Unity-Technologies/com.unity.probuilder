@@ -84,7 +84,7 @@ namespace ProBuilder2.EditorCommon
 				this.showAutoUV = false;
 				this.showSharedUV = false;
 				this.showSharedTris = false;
-				this.showTriangles = true;
+				this.showTriangles = false;
 			}
 		}
 		Hashtable showParams = new Hashtable();

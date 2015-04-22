@@ -240,6 +240,20 @@ public static class pb_IntArrayUtility
 		return shared;
 	}
 
+	public static IEnumerable<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IEnumerable<int> indices)
+	{
+		int[] universal = GetUniversalIndices(lookup, indices).ToArray();
+
+		List<int> shared = new List<int>();
+
+		for(int i = 0; i < universal.Length; i++)
+		{
+			shared.AddRange(pbIntArr[universal[i]].array);
+		}
+
+		return shared;
+	}
+
 	/**
 	 *	Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
 	 */
@@ -270,6 +284,17 @@ public static class pb_IntArrayUtility
 
 		foreach(int i in indices)
 		{
+			universal.Add( lookup[i] );
+		}
+
+		return universal;
+	}
+
+	public static IEnumerable<int> GetUniversalIndices(Dictionary<int, int> lookup, IEnumerable<int> indices)
+	{
+		HashSet<int> universal = new HashSet<int>();
+
+		foreach(int i in indices) {
 			universal.Add( lookup[i] );
 		}
 

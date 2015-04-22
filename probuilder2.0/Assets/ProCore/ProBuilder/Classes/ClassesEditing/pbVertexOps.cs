@@ -38,9 +38,7 @@ namespace ProBuilder2.MeshOperations
 			int newIndex = pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
 			pb.SetSharedIndices(sharedIndices);
 
-			int firstTriInSharedIndexArr = pb.sharedIndices[newIndex][0];
-
-			pb.SetSharedVertexPosition(firstTriInSharedIndexArr, cen);
+			pb.SetSharedVertexPosition(newIndex, cen);
 
 			int[] mergedSharedIndex = pb.GetSharedIndices()[newIndex].array;
 			
@@ -194,7 +192,7 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool AppendVertexToFace(this pb_Object pb, pb_Face face, Vector3 point, ref pb_Face newFace)
 	{
-		if(!face.isValid()) return false;
+		if(!face.IsValid()) return false;
 
 		// First order of business - project face to 2d
 		int[] distinctIndices = face.distinctIndices;
@@ -265,7 +263,7 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
 	{
-		if(!face.isValid())
+		if(!face.IsValid())
 		{
 			newFace = face;
 			return false;

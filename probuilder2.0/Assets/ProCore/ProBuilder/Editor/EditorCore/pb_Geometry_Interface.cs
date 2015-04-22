@@ -16,6 +16,12 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_Geometry_Interface : EditorWindow
 	{	
+
+		public static void MenuOpenShapeCreator()
+		{
+			EditorWindow.GetWindow(typeof(pb_Geometry_Interface), true, "Shape Tool", true);
+		}
+
 		static Color COLOR_GREEN = new Color(0f, .8f, 0f, .8f);
 		static Color PREVIEW_COLOR = new Color(.5f, .9f, 1f, .56f);
 		public Shape shape = Shape.Cube;

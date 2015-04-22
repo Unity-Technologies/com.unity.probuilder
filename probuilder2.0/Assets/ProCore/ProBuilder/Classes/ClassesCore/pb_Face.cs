@@ -169,7 +169,7 @@ public class pb_Face : ISerializable
 
 #region GET
 
-	public bool isValid()
+	public bool IsValid()
 	{
 		return indices.Length > 2;
 	}
@@ -373,6 +373,49 @@ public class pb_Face : ISerializable
 			all.AddRange(quad.distinctIndices);
 
 		return all;
+	}
+
+	/**
+	 * Sorts faces by material and returns a jagged array of their combined triangles.
+	 */
+	public static int MeshTriangles(pb_Face[] faces, out int[][] submeshes, out Material[] materials)
+	{
+		// Sort the faces into groups of like materials
+		Dictionary<Material, List<pb_Face>> matDic = new Dictionary<Material, List<pb_Face>>();
+		
+		int i = 0;
+
+		#if PROTOTYPE
+			MeshRenderer mr = GetComponent<MeshRenderer>();
+			matDic.Add(mr.sharedMaterial == null ? pb_Constant.DefaultMaterial : mr.sharedMaterial, new List<pb_Face>(this.faces));
+		#else
+			for(i = 0; i < faces.Length; i++)
+			{
+				Material face_mat = faces[i].material ?? pb_Constant.UnityDefaultDiffuse;
+
+				if(matDic.ContainsKey(face_mat))
+				{
+					matDic[face_mat].Add(faces[i]);
+				}
+				else
+				{
+					matDic.Add(face_mat, new List<pb_Face>(1) { faces[i] } );
+				}
+			}
+		#endif
+
+		materials = new Material[matDic.Count];
+		submeshes = new int[materials.Length][];
+
+		i = 0;
+		foreach( KeyValuePair<Material, List<pb_Face>> kvp in matDic )
+		{
+			submeshes[i] = pb_Face.AllTriangles(kvp.Value);
+			materials[i] = kvp.Key;
+			i++;
+		}
+
+		return submeshes.Length;
 	}
 #endregion
 

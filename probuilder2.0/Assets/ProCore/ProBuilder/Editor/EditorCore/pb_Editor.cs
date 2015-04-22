@@ -1,8 +1,5 @@
 #pragma warning disable 0168	///< Disable unused var (that exception hack)
 
-// Enables line mesh rendering for edges
-#define FORCE_MESH_GRAPHICS
-
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -23,49 +20,30 @@ namespace ProBuilder2.EditorCommon
 {
 public class pb_Editor : EditorWindow
 {
-
-#region STATIC REFERENCES
-
-	public static pb_Editor instance { get { return me; } }
-#endregion
-
-#region MENU TEXTURES
-	
-	GUIContent[] SelectionIcons;
-	Texture2D eye_on, eye_off;
-#endregion
-
-#region CONSTANT & GUI MEMEBRS
+#region CONSTANT
 	
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 244;
 
-	const string SHARED_GUI = "Assets/6by7/Shared/GUI";
-	const float HANDLE_DRAW_DISTANCE = 15f;
-	
 	const int WINDOW_WIDTH_FlOATING = 102;
 	const int WINDOW_WIDTH_DOCKABLE = 105;
 
+	// Toggles for Face, Vertex, and Edge mode.
 	const int SELECT_MODE_LENGTH = 3;
-
-	GUIStyle VertexTranslationInfoStyle;
-	GUIStyle eye_style;
-#endregion
-
-#region DEBUG
-
-	#if SVN_EXISTS && !RELEASE
-	string revisionNo = " no svn found";
-	#endif
-
 #endregion
 
 #region LOCAL MEMBERS && EDITOR PREFS
 	
-	private static pb_Editor me;
+	GUIContent[] SelectionIcons;
+	Texture2D eye_on, eye_off;
+	GUIStyle VertexTranslationInfoStyle;
+	GUIStyle eye_style;
 
-	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tryed that already.
+	public static pb_Editor instance { get { return _instance; } }
+	private static pb_Editor _instance;
+	
+	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
 
 	public EditLevel editLevel { get; private set; }
 	private EditLevel previousEditLevel;
@@ -109,13 +87,9 @@ public class pb_Editor : EditorWindow
 
 	private void OnEnable()
 	{
-		me = this;
+		_instance = this;
 
-		Undo.undoRedoPerformed += this.UndoRedoPerformed;
-
-		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
-
-		HookSceneViewDelegate();
+		HookDelegates();
 
 		// make sure load prefs is called first, because other methods depend on the preferences set here
 		LoadPrefs();
@@ -200,6 +174,8 @@ public class pb_Editor : EditorWindow
 
 	private void OnDisable()
 	{
+		_instance = null;
+
 		ClearFaceSelection();
 
 		UpdateSelection();
@@ -235,7 +211,7 @@ public class pb_Editor : EditorWindow
 	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
 	public static event OnVertexMovementFinishedEventHandler OnVertexMovementFinished;
 
-	public void HookSceneViewDelegate()
+	public void HookDelegates()
 	{
 		if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
 		{
@@ -243,6 +219,9 @@ public class pb_Editor : EditorWindow
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 		}
 
+		Undo.undoRedoPerformed += this.UndoRedoPerformed;
+		// Undo.postprocessModifications += PostprocessModifications;
+		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 		EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
 	}
 #endregion
@@ -345,7 +324,7 @@ public class pb_Editor : EditorWindow
 		#region Tools
 
 			if(GUILayout.Button(new GUIContent("Shape", "Open Shape Creation Panel"), EditorStyles.miniButton))
-				OpenGeometryInterface();
+				pb_Geometry_Interface.MenuOpenShapeCreator();
 
 			#if !PROTOTYPE
 			if(GUILayout.Button(new GUIContent("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces."), EditorStyles.miniButton))	
@@ -809,6 +788,7 @@ public class pb_Editor : EditorWindow
 		{
 			edgeWorkerFinished = 0;
 			UpdateGraphics();
+			SceneView.RepaintAll();
 		}
 
 		DrawHandleGUI();
@@ -1042,17 +1022,17 @@ public class pb_Editor : EditorWindow
 
 					try 
 					{
-						for(int i = 0; i < selected_universal_edges_all.Length; i++)
+						for(int i = 0; i < m_universalEdges.Length; i++)
 						{
-							pb_Edge[] edges = selected_universal_edges_all[i];
+							pb_Edge[] edges = m_universalEdges[i];
 							
 							for(int j = 0; j < edges.Length; j++)
 							{
 								int x = selection[i].sharedIndices[edges[j].x][0];
 								int y = selection[i].sharedIndices[edges[j].y][0];
 
-								Vector3 world_vert_x = selected_verticesInWorldSpace_all[i][x];
-								Vector3 world_vert_y = selected_verticesInWorldSpace_all[i][y];
+								Vector3 world_vert_x = m_verticesInWorldSpace[i][x];
+								Vector3 world_vert_y = m_verticesInWorldSpace[i][y];
 
 								float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
 								
@@ -1236,9 +1216,9 @@ public class pb_Editor : EditorWindow
 			pb_Object pb = selection[i];
 			if(!pb.isSelectable) continue;
 
-			for(int n = 0; n < selected_uniqueIndices_all[i].Length; n++)
+			for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 			{
-				Vector3 v = selected_verticesInWorldSpace_all[i][selected_uniqueIndices_all[i][n]];
+				Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
 
 				if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 				{
@@ -1248,7 +1228,7 @@ public class pb_Editor : EditorWindow
 					}
 
 					// Check if index is already selected, and if not add it to the pot
-					int indx = System.Array.IndexOf(pb.SelectedTriangles, selected_uniqueIndices_all[i][n]);
+					int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
 
 					pbUndo.RecordObject(pb, "Change Vertex Selection");
 
@@ -1256,7 +1236,7 @@ public class pb_Editor : EditorWindow
 					if( indx > -1 )
 						pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
 					else
-						pb.SetSelectedTriangles(pb.SelectedTriangles.Add(selected_uniqueIndices_all[i][n]));
+						pb.SetSelectedTriangles(pb.SelectedTriangles.Add(m_uniqueIndices[i][n]));
 
 					vpb = pb;
 					return true;
@@ -1334,9 +1314,9 @@ public class pb_Editor : EditorWindow
 
 					List<int> selectedTriangles = new List<int>(pb.SelectedTriangles);
 
-					for(int n = 0; n < selected_uniqueIndices_all[i].Length; n++)
+					for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 					{
-						Vector3 v = selected_verticesInWorldSpace_all[i][selected_uniqueIndices_all[i][n]];
+						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
 
 						// if point is behind the camera, ignore it.
 						if(cam.WorldToScreenPoint(v).z < 0)
@@ -1348,13 +1328,13 @@ public class pb_Editor : EditorWindow
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
-							int indx = selectedTriangles.IndexOf(selected_uniqueIndices_all[i][n]);
+							int indx = selectedTriangles.IndexOf(m_uniqueIndices[i][n]);
 
 							// @todo condense this to a single array rebuild
 							if(indx > -1)
 								selectedTriangles.RemoveAt(indx);
 							else
-								selectedTriangles.Add(selected_uniqueIndices_all[i][n]);
+								selectedTriangles.Add(m_uniqueIndices[i][n]);
 						}
 					}
 					
@@ -1384,7 +1364,7 @@ public class pb_Editor : EditorWindow
 
 					if(!pb.isSelectable) continue;
 
-					Vector3[] verticesInWorldSpace = limitFaceDragCheckToSelection ? selected_verticesInWorldSpace_all[i] : pb.VerticesInWorldSpace();
+					Vector3[] verticesInWorldSpace = limitFaceDragCheckToSelection ? m_verticesInWorldSpace[i] : pb.VerticesInWorldSpace();
 					bool addToSelection = false;
 
 					for(int n = 0; n < pb.faces.Length; n++)
@@ -1445,14 +1425,14 @@ public class pb_Editor : EditorWindow
 				{
 					Vector3 v0 = Vector3.zero, v1 = Vector3.zero, cen = Vector3.zero;
 					pb_Object pb = selection[i];
-					Vector3[] vertices = selected_verticesInWorldSpace_all[i];
+					Vector3[] vertices = m_verticesInWorldSpace[i];
 					pb_IntArray[] sharedIndices = pb.sharedIndices;
 					HashSet<pb_Edge> inSelection = new HashSet<pb_Edge>();
 
-					for(int n = 0; n < selected_universal_edges_all[i].Length; n++)
+					for(int n = 0; n < m_universalEdges[i].Length; n++)
 					{
-						v0 = vertices[sharedIndices[selected_universal_edges_all[i][n].x][0]];
-						v1 = vertices[sharedIndices[selected_universal_edges_all[i][n].y][0]];
+						v0 = vertices[sharedIndices[m_universalEdges[i][n].x][0]];
+						v1 = vertices[sharedIndices[m_universalEdges[i][n].y][0]];
 
 						cen = (v0+v1)*.5f;
 
@@ -1469,12 +1449,12 @@ public class pb_Editor : EditorWindow
 
 							if(!occluded)
 							{
-								inSelection.Add( new pb_Edge(selected_universal_edges_all[i][n]) );
+								inSelection.Add( new pb_Edge(m_universalEdges[i][n]) );
 							}
 						}
 					}
 
-					pb_Edge[] curSelection = pb_Edge.GetUniversalEdges(pb.SelectedEdges, sharedIndices.ToDictionary());
+					pb_Edge[] curSelection = pb_Edge.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]);
 					inSelection.SymmetricExceptWith(curSelection);
 					pb_Edge[] selected = inSelection.ToArray();
 
@@ -1538,13 +1518,14 @@ public class pb_Editor : EditorWindow
 	private Quaternion previousHandleRotation = Quaternion.identity;
 	private Quaternion currentHandleRotation = Quaternion.identity;
 	
+	// Use for delta display
 	private Vector3 translateOrigin = Vector3.zero;
 	private Vector3 rotateOrigin = Vector3.zero;
 	private Vector3 scaleOrigin = Vector3.zero;
 
 	private void VertexMoveTool()
 	{		
-		newPosition = selected_handlePivotWorld;
+		newPosition = m_handlePivotWorld;
 		cachedPosition = newPosition;
 
 		newPosition = Handles.PositionHandle(newPosition, handleRotation);
@@ -1586,27 +1567,27 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
-
-			pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+			// For some insane reason, applying Snap() to vertices in TranslateVertices_World() causes
+			// the Undo stack to skip all handle movement.  This "fixes" it.
+			if(pref_snapEnabled)
+				pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 			
 			for(int i = 0; i < selection.Length; i++)
-			{
-				
-				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints);
+			{			
+				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
 
 			}
 
 			Internal_UpdateSelectionFast();
-
 		}
 
 	}
 
 	private void VertexScaleTool()
 	{
-		newPosition = selected_handlePivotWorld;
+		newPosition = m_handlePivotWorld;
 
 		previousHandleScale = currentHandleScale;
 
@@ -1644,10 +1625,11 @@ public class pb_Editor : EditorWindow
 			Vector3 ver;	// resulting vertex from modification
 			Vector3 over;	// vertex point to modify. different for world, local, and plane
 			
-			pbUndo.RecordObjects(selection as Object[], "Scale Vertices");
-
 			bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
 			bool gotoLocal = selectedFaceCount < 1;
+
+			if(pref_snapEnabled)
+				pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -1680,7 +1662,7 @@ public class pb_Editor : EditorWindow
 							// re-apply world position offset
 							ver += vertexOffset[i];
 							// set the vertex in local space
-							selection[i].SetSharedVertexPosition(selection[i].SelectedTriangles[n], ver);
+							selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
 							
 							break;
 
@@ -1693,7 +1675,7 @@ public class pb_Editor : EditorWindow
 							// move vertex back to locally offset position
 							ver += vertexOffset[i];
 							// set vertex in local space on pb-Object
-							selection[i].SetSharedVertexPosition(selection[i].SelectedTriangles[n], ver);
+							selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
 							break;
 					}
 				}
@@ -1709,7 +1691,7 @@ public class pb_Editor : EditorWindow
 	Quaternion c_inversePlaneRotation = Quaternion.identity;
 	private void VertexRotateTool()
 	{
-		newPosition = selected_handlePivotWorld;
+		newPosition = m_handlePivotWorld;
 
 		previousHandleRotation = currentHandleRotation;
 
@@ -1783,7 +1765,9 @@ public class pb_Editor : EditorWindow
 					break;
 			}
 
-			pbUndo.RecordObjects(selection as Object[], "Rotate Vertices");
+			if(pref_snapEnabled)
+				pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+
 
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
@@ -1807,8 +1791,8 @@ public class pb_Editor : EditorWindow
 						// and back to vertex position
 						ver += vertexOffset[i];
 
-						// now set that mofo in the msh.vertices array
-						selection[i].SetSharedVertexPosition(selection[i].SelectedTriangles[n], ver);
+						// now set in the msh.vertices array
+						selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
 					}
 				}
 				else
@@ -1823,7 +1807,7 @@ public class pb_Editor : EditorWindow
 						// move vertex back to locally offset position
 						ver += vertexOffset[i];
 
-						selection[i].SetSharedVertexPosition(selection[i].SelectedTriangles[n], ver);
+						selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
 					}
 				}
 
@@ -1848,14 +1832,14 @@ public class pb_Editor : EditorWindow
 	 */
 	private void ShiftExtrude()
 	{
-		pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms) as Object[], "Shift-Extrude Faces");
-
 		int ef = 0;
 		foreach(pb_Object pb in selection)
 		{
 			// @todo - If caching normals, remove this 'ToMesh' and move 
 			pb.ToMesh();
 			pb.Refresh();
+
+			pbUndo.RecordObject(pb, "Shift-Extrude Faces");
 
 			switch(selectionMode)
 			{
@@ -1934,7 +1918,7 @@ public class pb_Editor : EditorWindow
 		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
 		if(!uvEditor) return;
 
-		float size = HandleUtility.GetHandleSize(selected_handlePivotWorld);
+		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
 
 		if(altClick) return;
 
@@ -1963,7 +1947,7 @@ public class pb_Editor : EditorWindow
 		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
 		if(!uvEditor) return;
 
-		float size = HandleUtility.GetHandleSize(selected_handlePivotWorld);
+		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
 
 		Matrix4x4 prev = Handles.matrix;
 		Handles.matrix = handleMatrix;
@@ -2010,7 +1994,7 @@ public class pb_Editor : EditorWindow
 						for(int j = 0; j < selection[i].SelectedEdges.Length; j++)
 						{
 							pb_Object pb = selection[i];
-							Vector3[] v = selected_verticesInWorldSpace_all[i];
+							Vector3[] v = m_verticesInWorldSpace[i];
 		
 							Handles.DrawLine(v[pb.SelectedEdges[j].x], v[pb.SelectedEdges[j].y]);
 						}
@@ -2526,7 +2510,7 @@ public class pb_Editor : EditorWindow
 	}
 #endregion
 
-#region SELECTION CACHING AND MANAGING
+#region SELECTION CACHING
 	
 	/** 
 	 *	\brief Updates the arrays used to draw GUI elements (both Window and Scene).
@@ -2535,21 +2519,19 @@ public class pb_Editor : EditorWindow
 	 *	 things like quad faces and vertex billboards.
 	 */
 
-	int[][] 			selected_uniqueIndices_all = new int[0][];
-	int[][] 			selected_uniqueIndices_sel = new int[0][];
-	Vector3[][] 		selected_verticesInWorldSpace_all = new Vector3[0][];
-	Vector3[][] 		selected_verticesLocal_sel = new Vector3[0][];
-	
-	pb_Edge[][] 		selected_universal_edges_all = new pb_Edge[0][];
+	int[][] 				m_uniqueIndices = new int[0][];
+	Vector3[][] 			m_verticesInWorldSpace = new Vector3[0][];
+	pb_Edge[][] 			m_universalEdges = new pb_Edge[0][];
+	Vector3					m_handlePivotWorld = Vector3.zero;
+	Dictionary<int, int>[] 	m_sharedIndicesLookup = new Dictionary<int, int>[0];
 
-	public pb_Edge[][]  Selected_Universal_Edges_All { get { return selected_universal_edges_all; } }
-	public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }//new pb_Face[0][];		// faces that need to be refreshed when moving or modifying the actual selection
-	public Vector3[][]  SelectedVerticesInWorldSpace { get { return selected_verticesInWorldSpace_all; } }
+	public pb_Edge[][]  SelectedUniversalEdges { get { return m_universalEdges; } }
 
-	public Vector3		HandlePositionWorld { get { return selected_handlePivotWorld; } }
-	Vector3				selected_handlePivotWorld = Vector3.zero;
-	// Vector3[]			selected_handlePivot = new Vector3[0];
-	int 				per_object_vertexCount_distinct = 0;	///< The number of selected distinct indices on the object with the greatest number of selected distinct indices.
+	// faces that need to be refreshed when moving or modifying the actual selection
+	public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
+
+	// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
+	int 				per_object_vertexCount_distinct = 0;
 
 	int faceCount = 0;
 	int vertexCount = 0;
@@ -2601,30 +2583,30 @@ public class pb_Editor : EditorWindow
 
 			forceUpdate = true;	// If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
 								// can be trusted.
-			selected_universal_edges_all 		= new pb_Edge[selection.Length][];
-			selected_verticesInWorldSpace_all 	= new Vector3[selection.Length][];
-			selected_uniqueIndices_all			= new int[selection.Length][];
+			m_universalEdges 		= new pb_Edge[selection.Length][];
+			m_verticesInWorldSpace 	= new Vector3[selection.Length][];
+			m_uniqueIndices			= new int[selection.Length][];
+			m_sharedIndicesLookup 			= new Dictionary<int, int>[selection.Length];
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				selected_uniqueIndices_all[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
+				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
 
 				// necessary only once on selection modification
-				selected_universal_edges_all[i] = new pb_Edge[0];// pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
+				m_universalEdges[i] = new pb_Edge[0];// pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
+
+				m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
 				
-				selected_verticesInWorldSpace_all[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
+				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 			}
 
 			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
 			edgesThread.Start(selection);
 		}
 
-		selected_uniqueIndices_sel			= new int[selection.Length][];
-		selected_verticesLocal_sel			= new Vector3[selection.Length][];
 		SelectedFacesInEditZone 			= new pb_Face[selection.Length][];
-		// selected_handlePivot 				= new Vector3[selection.Length];
 		
-		selected_handlePivotWorld			= Vector3.zero;
+		m_handlePivotWorld			= Vector3.zero;
 
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool boundsInitialized = false;
@@ -2641,17 +2623,12 @@ public class pb_Editor : EditorWindow
 				min = pb.transform.TransformPoint(pb.vertices[pb.SelectedTriangles[0]]);
 				max = min;
 			}
-
-			// things necessary to call every frame
-			selected_uniqueIndices_sel[i] = pb.SelectedTriangles;			
-
-			selected_verticesLocal_sel[i] = pb.GetVertices(pb.SelectedTriangles);
 			
 			if(pb.SelectedTriangles.Length > 0)
 			{
 				if(forceUpdate)
 				{
-					foreach(Vector3 v in pbUtil.ValuesWithIndices(selected_verticesInWorldSpace_all[i], pb.SelectedTriangles))
+					foreach(Vector3 v in pbUtil.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
 					{
 						min = Vector3.Min(min, v);
 						max = Vector3.Max(max, v);
@@ -2683,7 +2660,7 @@ public class pb_Editor : EditorWindow
 			triangleCount += selection[i].msh.triangles.Length / 3;
 		}
 
-		selected_handlePivotWorld = (max+min)/2f;
+		m_handlePivotWorld = (max+min)/2f;
 
 		UpdateGraphics();
 
@@ -2717,22 +2694,21 @@ public class pb_Editor : EditorWindow
 
 			pb.transform.hasChanged = false;
 	
-			selected_verticesLocal_sel[i] = pb.GetVertices(pb.SelectedTriangles);
-			selected_verticesInWorldSpace_all[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
+			m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 
 			if(selection[i].SelectedTriangleCount > 0)
 			{
 				if(!boundsInitialized)
 				{
 					boundsInitialized = true;
-					min = selected_verticesInWorldSpace_all[i][selection[i].SelectedTriangles[0]];
+					min = m_verticesInWorldSpace[i][selection[i].SelectedTriangles[0]];
 					max = min;
 				}
 				
 				for(int n = 0; n < selection[i].SelectedTriangleCount; n++)
 				{					
-					min = Vector3.Min(min, selected_verticesInWorldSpace_all[i][selection[i].SelectedTriangles[n]]);
-					max = Vector3.Max(max, selected_verticesInWorldSpace_all[i][selection[i].SelectedTriangles[n]]);
+					min = Vector3.Min(min, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
+					max = Vector3.Max(max, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
 				}
 			}
 	
@@ -2741,7 +2717,7 @@ public class pb_Editor : EditorWindow
 			selectedEdgeCount 	+= selection[i].SelectedEdges.Length;
 		}
 
-		selected_handlePivotWorld = (max+min)/2f;
+		m_handlePivotWorld = (max+min)/2f;
 
 		UpdateGraphics();
 		UpdateHandleRotation();
@@ -2862,7 +2838,7 @@ public class pb_Editor : EditorWindow
 		{
 			if( GetSelectionHash(sel) == selectionHash )
 			{
-				selected_universal_edges_all = edges;
+				m_universalEdges = edges;
 
 				// if we changed something, also update the editor graphics so that the wireframe
 				// syncs.  can't just call pb_Editor_Graphics.Update() for some thread-y reason
@@ -2884,7 +2860,7 @@ public class pb_Editor : EditorWindow
 		if(selection.Length < 1) return;
 
 		// Reset temp vars
-		textureHandle = selected_handlePivotWorld;
+		textureHandle = m_handlePivotWorld;
 		textureScale = Vector3.one;
 		textureRotation = Quaternion.identity;
 
@@ -3027,9 +3003,6 @@ public class pb_Editor : EditorWindow
 	 */
 	private void ListenForTopLevelMovement()
 	{
-		if(selectedVertexCount > 1)// || GUIUtility.hotControl < 1)
-			return;
-
 		bool movementDetected = false;
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3037,7 +3010,10 @@ public class pb_Editor : EditorWindow
 				continue;
 
 			if(selection[i].transform.hasChanged)
+			{
 				movementDetected = true;
+				break;
+			}
 		}
 
 		if(movementDetected)
@@ -3197,7 +3173,6 @@ public class pb_Editor : EditorWindow
 	 */
 	private void PushToGrid(float snapVal)
 	{
-		Debug.Log("Push TO Grid");
 		pbUndo.RecordObjects(selection, "Push elements to Grid");
 
 		for(int i = 0; i  < selection.Length; i++)
@@ -3234,6 +3209,8 @@ public class pb_Editor : EditorWindow
 	 */
 	void OnBeginVertexMovement()
 	{
+		pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+
 		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
 		pref_snapValue = pb_ProGridsInterface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
@@ -3243,9 +3220,7 @@ public class pb_Editor : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			pb.msh.uv2 = null;
-			pb.ToMesh();
-			pb.Refresh();
+			pb.ResetMesh();
 		}
 	}
 
@@ -3282,18 +3257,9 @@ public class pb_Editor : EditorWindow
 			}
 
 			movingVertices = false;
-
 		}
 
 		scaling = false;
-	}
-#endregion
-
-#region WINDOW MANAGEMENT
-	
-	public void OpenGeometryInterface()
-	{
-		EditorWindow.GetWindow(typeof(pb_Geometry_Interface), true, "Shape Tool", true);
 	}
 #endregion
 

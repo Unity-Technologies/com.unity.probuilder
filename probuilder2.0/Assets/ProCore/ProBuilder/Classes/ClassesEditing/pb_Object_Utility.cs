@@ -56,46 +56,42 @@ public static class pb_Object_Utility
 	 */
 	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
 	{
-		pb.TranslateVertices_World(selectedTriangles, offset, 0f, false);
+		pb.TranslateVertices_World(selectedTriangles, offset, 0f, false, null);
 	}
 
-	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapMask)
+	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapMask, Dictionary<int, int> lookup)
 	{	
-		// translate_profiler.BeginSample("TranslateVertices_World");
-		
-		Vector3 orig = offset;
-		
 		int i = 0;
-		// translate_profiler.BeginSample("AllIndicesWithValues");
-		int[] indices = pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
-		// translate_profiler.EndSample();
+		int[] indices = lookup != null ? pb.sharedIndices.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
 
-		offset = pb.transform.worldToLocalMatrix * offset;
+		Matrix4x4 w2l = pb.transform.worldToLocalMatrix;
+
+		offset = w2l * offset;
 
 		Vector3[] verts = pb.vertices;
-		// translate_profiler.BeginSample("Offset");
-		for(i = 0; i < indices.Length; i++)
-			verts[indices[i]] += offset;
-		// translate_profiler.EndSample();
-		
+
 		// Snaps to world grid
-		// translate_profiler.BeginSample("Snap");
 		if(Mathf.Abs(snapValue) > Mathf.Epsilon)
 		{
+			Matrix4x4 l2w = pb.transform.localToWorldMatrix;
+			Vector3 v = Vector3.zero;
+
 			for(i = 0; i < indices.Length; i++)
 			{
-				verts[indices[i]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[i]]), snapMask ? orig : Vector3.one, snapValue));
+				v = l2w.MultiplyPoint3x4(verts[indices[i]] + offset);
+				verts[indices[i]] = w2l.MultiplyPoint3x4( pbUtil.SnapValue(v, offset, snapValue) );
 			}
 		}
-		// translate_profiler.EndSample();
+		else
+		{	
+			for(i = 0; i < indices.Length; i++)
+				verts[indices[i]] += offset;	
+		}
 
 		// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
 		// translate_profiler.BeginSample("Set mesh");
 		pb.SetVertices(verts);
 		pb.msh.vertices = verts;
-		// translate_profiler.EndSample();
-
-		// translate_profiler.EndSample();
 	}
 
 	/**
@@ -118,19 +114,18 @@ public static class pb_Object_Utility
 	}
 
 	/**
-	 *	\brief Given a triangle index, locate buddy indices and move all vertices to this new position
+	 *	\brief Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
+	 *	Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.
 	 */
-	public static void SetSharedVertexPosition(this pb_Object pb, int index, Vector3 position) { pb.SetSharedVertexPosition(index, position, false); }
+	public static void SetSharedVertexPosition(this pb_Object pb, int sharedIndex, Vector3 position) { pb.SetSharedVertexPosition(sharedIndex, position, false); }
 
-	public static void SetSharedVertexPosition(this pb_Object pb, int index, Vector3 position, bool snap)
+	public static void SetSharedVertexPosition(this pb_Object pb, int sharedIndex, Vector3 position, bool snap)
 	{
-		int sharedIndicesIndex = pb.sharedIndices.IndexOf(index);
 		Vector3[] v = pb.vertices;
+		int[] array = pb.sharedIndices[sharedIndex].array;
 
-		foreach(int n in pb.sharedIndices[sharedIndicesIndex].array)
-		{
-			v[n] = position;
-		}	
+		for(int i = 0; i < array.Length; i++)	
+			v[array[i]] = position;
 
 		pb.SetVertices(v);
 		pb.msh.vertices = v;
