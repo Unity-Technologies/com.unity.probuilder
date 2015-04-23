@@ -211,9 +211,6 @@ public class pb_Object : MonoBehaviour
 	private pb_IntArray[] 				_sharedIndicesUV = new pb_IntArray[0];
 
 	[SerializeField]
-	private int[] 						_submeshTriangleCount;	///< Used to detect changes to the material array
-
-	[SerializeField]
 	private Color[] 					_colors;
 
 	// UV2 generation params

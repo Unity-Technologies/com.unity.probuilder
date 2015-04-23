@@ -1355,8 +1355,7 @@ public class pb_Editor : EditorWindow
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 
 				List<pb_Face> selectedFaces;
-				Vector3 camPosition = SceneView.lastActiveSceneView.camera.transform.position;
-
+				
 				for(int i = 0; i < pool.Length; i++)
 				{
 					pb_Object pb = pool[i];
@@ -1370,10 +1369,8 @@ public class pb_Editor : EditorWindow
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
 						pb_Face face = pb.faces[n];
-						Vector3 nrm = pb_Math.Normal(pb, face);
-						Vector3 dir = camPosition - pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices));
 
-						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 || (!pref_backfaceSelect && Vector3.Dot(dir, nrm) < 0f))
+						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )//|| (!pref_backfaceSelect && Vector3.Dot(dir, nrm) > 0f))
 							continue;
 
 						// only check the first index per quad, and if it checks out, then check every other point

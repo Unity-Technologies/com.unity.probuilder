@@ -59,14 +59,11 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_AutoUV_Editor.cs">
       <Link>pb_AutoUV_Editor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_DebugWindow.cs">
-      <Link>pb_DebugWindow.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Debug_Window.cs">
+      <Link>pb_Debug_Window.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs">
       <Link>pb_Editor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorMeshUtility.cs">
-      <Link>pb_EditorMeshUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Enum.cs">
       <Link>pb_Editor_Enum.cs</Link>
@@ -76,6 +73,9 @@
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Graphics.cs">
       <Link>pb_Editor_Graphics.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Mesh_Utility.cs">
+      <Link>pb_Editor_Mesh_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Utility.cs">
       <Link>pb_Editor_Utility.cs</Link>
@@ -104,8 +104,8 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Menu_Commands.cs">
       <Link>pb_Menu_Commands.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MirrorTool.cs">
-      <Link>pb_MirrorTool.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Mirror_Tool.cs">
+      <Link>pb_Mirror_Tool.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ObjectArray.cs">
       <Link>pb_ObjectArray.cs</Link>
@@ -116,8 +116,8 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Preferences_Internal.cs">
       <Link>pb_Preferences_Internal.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ProGridsInterface.cs">
-      <Link>pb_ProGridsInterface.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ProGrids_Interface.cs">
+      <Link>pb_ProGrids_Interface.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Smoothing_Editor.cs">
       <Link>pb_Smoothing_Editor.cs</Link>
@@ -128,14 +128,14 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Editor.cs">
       <Link>pb_UV_Editor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_RenderOptions.cs">
-      <Link>pb_UV_RenderOptions.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Render_Options.cs">
+      <Link>pb_UV_Render_Options.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_VertexColorInterface.cs">
-      <Link>pb_VertexColorInterface.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Painter.cs">
+      <Link>pb_Vertex_Color_Painter.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_VertexColor_Editor.cs">
-      <Link>pb_VertexColor_Editor.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Toolbar.cs">
+      <Link>pb_Vertex_Color_Toolbar.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
