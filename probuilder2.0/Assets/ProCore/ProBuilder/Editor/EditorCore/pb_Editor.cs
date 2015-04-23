@@ -1541,10 +1541,7 @@ public class pb_Editor : EditorWindow
 		{
 			Vector3 diff = newPosition-cachedPosition;
 
-			Vector3 mask = new Vector3(
-				Mathf.Abs(diff.x) > .0001f ? 1f : 0f,
-				Mathf.Abs(diff.y) > .0001f ? 1f : 0f,
-				Mathf.Abs(diff.z) > .0001f ? 1f : 0f);
+			Vector3 mask = diff.ToMask();
 
 			if(snapToVertex)
 			{
@@ -1567,7 +1564,7 @@ public class pb_Editor : EditorWindow
 				OnBeginVertexMovement();
 			}
 
-			// For some insane reason, applying Snap() to vertices in TranslateVertices_World() causes
+			// For some reason, applying Snap() to vertices in TranslateVertices_World() causes
 			// the Undo stack to skip all handle movement.  This "fixes" it.
 			if(pref_snapEnabled)
 				pbUndo.RecordObjects(selection as Object[], "Move Vertices");
@@ -3179,12 +3176,9 @@ public class pb_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
-			int[] indices = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
+			int[] indices = pb.SelectedTriangleCount > 0 ? pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray() : pb.msh.triangles;
 
-			Vector3[] verts = pb.vertices;
-			
-			for(int n = 0; n < indices.Length; n++)
-				verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), Vector3.one, snapVal));
+			pbVertexOps.Quantize(pb, indices, Vector3.one * snapVal);
 				
 			pb.ToMesh();
 			pb.Refresh();

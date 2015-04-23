@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 			if(!EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
 				return;
 
-			pb_Object[] all = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
+			pb_Object[] all = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
 
 			Strip(all);
 		}

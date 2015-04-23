@@ -1328,7 +1328,7 @@ public class pb_UV_Editor : EditorWindow
 			if(ControlKey)
 			{
 				Vector2 uv = pb_Handle_Utility.GUIToUVPoint( t_handlePosition, uvGridSize);
-				handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(pbUtil.SnapValue(uv, handlePosition_canvas-t_handlePosition, pref_gridSnapValue), uvGridSize);
+				handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(pbUtil.SnapValue(uv, (handlePosition_canvas-t_handlePosition).ToMask() * pref_gridSnapValue), uvGridSize);
 			}
 			else
 			{		
@@ -1390,7 +1390,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition_canvas-t_handlePosition, pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition_canvas-t_handlePosition).ToMask() * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1493,7 +1493,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, handlePosition-t_handlePosition, pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{

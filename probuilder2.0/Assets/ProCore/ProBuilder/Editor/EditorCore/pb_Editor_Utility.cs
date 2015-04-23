@@ -158,10 +158,10 @@ namespace ProBuilder2.EditorCommon
 		 *	@param newEntityType The type to set.
 		 *	@param target The gameObject to apply the EntityType to.  Must contains pb_Object and pb_Entity components.  Method does contain null checks.
 		 */
-		public static void SetEntityType(this pb_Entity pb, EntityType newEntityType)
-		{
-			SetEntityType(newEntityType, pb.gameObject);
-		}
+		// public static void SetEntityType(this pb_Entity pb, EntityType newEntityType)
+		// {
+		// 	SetEntityType(newEntityType, pb.gameObject);
+		// }
 
 		public static void SetEntityType(EntityType newEntityType, GameObject target)
 		{

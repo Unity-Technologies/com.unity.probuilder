@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ProBuilder2.Math;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -59,7 +60,7 @@ public static class pb_Object_Utility
 		pb.TranslateVertices_World(selectedTriangles, offset, 0f, false, null);
 	}
 
-	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapMask, Dictionary<int, int> lookup)
+	public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 	{	
 		int i = 0;
 		int[] indices = lookup != null ? pb.sharedIndices.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
@@ -75,11 +76,12 @@ public static class pb_Object_Utility
 		{
 			Matrix4x4 l2w = pb.transform.localToWorldMatrix;
 			Vector3 v = Vector3.zero;
+			Vector3 mask = snapAxisOnly ? offset.ToMask() : Vector3.one;
 
 			for(i = 0; i < indices.Length; i++)
 			{
 				v = l2w.MultiplyPoint3x4(verts[indices[i]] + offset);
-				verts[indices[i]] = w2l.MultiplyPoint3x4( pbUtil.SnapValue(v, offset, snapValue) );
+				verts[indices[i]] = w2l.MultiplyPoint3x4( pbUtil.SnapValue(v, snapValue * mask) );
 			}
 		}
 		else

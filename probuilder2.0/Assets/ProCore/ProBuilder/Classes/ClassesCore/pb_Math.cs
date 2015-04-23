@@ -751,6 +751,15 @@ namespace ProBuilder2.Math
 				return plane.z > 0 ? ProjectionAxis.Z : ProjectionAxis.Z_Negative;
 		}
 	}
+
+	public static Vector3 ToMask(this Vector3 vec)
+	{
+		return new Vector3(
+			Mathf.Abs(vec.x) > .0001f ? 1f : 0f,
+			Mathf.Abs(vec.y) > .0001f ? 1f : 0f,
+			Mathf.Abs(vec.z) > .0001f ? 1f : 0f
+			);
+	}
 #endregion
 	}
 }

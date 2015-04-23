@@ -226,7 +226,7 @@ public static class pb_IntArrayUtility
 	 * Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and 
 	 * distinct.
 	 */
-	public static IEnumerable<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
+	public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 	{
 		int[] universal = pbIntArr.GetUniversalIndices(indices).ToArray();
 
@@ -240,7 +240,7 @@ public static class pb_IntArrayUtility
 		return shared;
 	}
 
-	public static IEnumerable<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IEnumerable<int> indices)
+	public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
 	{
 		int[] universal = GetUniversalIndices(lookup, indices).ToArray();
 
@@ -257,7 +257,7 @@ public static class pb_IntArrayUtility
 	/**
 	 *	Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
 	 */
-	public static IEnumerable<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
+	public static IList<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 	{
 		Dictionary<int, int> lookup = pbIntArr.ToDictionary();
 
@@ -277,7 +277,7 @@ public static class pb_IntArrayUtility
 	/**
 	 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (universal index).
 	 */
-	public static IEnumerable<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
+	public static ICollection<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, ICollection<int> indices)
 	{
 		Dictionary<int, int> lookup = pbIntArr.ToDictionary();
 		HashSet<int> universal = new HashSet<int>();
@@ -290,7 +290,7 @@ public static class pb_IntArrayUtility
 		return universal;
 	}
 
-	public static IEnumerable<int> GetUniversalIndices(Dictionary<int, int> lookup, IEnumerable<int> indices)
+	public static ICollection<int> GetUniversalIndices(Dictionary<int, int> lookup, ICollection<int> indices)
 	{
 		HashSet<int> universal = new HashSet<int>();
 

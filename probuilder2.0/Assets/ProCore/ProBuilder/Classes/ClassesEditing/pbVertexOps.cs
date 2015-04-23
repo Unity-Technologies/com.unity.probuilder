@@ -411,5 +411,20 @@ namespace ProBuilder2.MeshOperations
 		pb.ToMesh();	
 	}	
 #endregion
+
+#region Move
+
+	/**
+	 * Snap all vertices to an increment of @snapValue in world space.
+	 */
+	public static void Quantize(pb_Object pb, IList<int> indices, Vector3 snap)
+	{
+		Vector3[] verts = pb.vertices;
+		
+		for(int n = 0; n < indices.Count; n++)
+			verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
+
+	}	
+#endregion
 	}
 }

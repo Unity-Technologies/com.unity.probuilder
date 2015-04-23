@@ -717,7 +717,7 @@ namespace ProBuilder2.MeshOperations
 		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
 		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors;
+		Color[] m_colors = m.colors ?? new Color[m_vertices.Length];
 		Vector2[] m_uvs = m.uv;
 
 		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
@@ -775,9 +775,9 @@ namespace ProBuilder2.MeshOperations
 						verts.Add(m_vertices[tris[i+1]]);
 						verts.Add(m_vertices[tris[i+2]]);
 
-						cols.Add(m_colors[tris[i+0]]);
-						cols.Add(m_colors[tris[i+1]]);
-						cols.Add(m_colors[tris[i+2]]);
+						cols.Add(m_colors != null ? m_colors[tris[i+0]] : Color.white);
+						cols.Add(m_colors != null ? m_colors[tris[i+1]] : Color.white);
+						cols.Add(m_colors != null ? m_colors[tris[i+2]] : Color.white);
 
 						uvs.Add(m_uvs[tris[i+0]]);
 						uvs.Add(m_uvs[tris[i+1]]);
@@ -816,6 +816,118 @@ namespace ProBuilder2.MeshOperations
 		go.transform.localScale = t.localScale;
 
 		pb.CenterPivot(null);
+
+		return pb;
+	}
+
+	/**
+	* ProBuilderize in-place function.  You must call ToMesh() and Refresh() after
+	* returning from this function, as this only creates the pb_Object and sets its
+	* fields.  This allows you to record the mesh and gameObject for Undo operations.
+	*/
+	public static pb_Object AddPbObjectToObject(Transform t, bool preserveFaces)
+	{
+		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
+
+		pb_Object pb = t.GetComponent<pb_Object>();
+
+		if(pb != null)
+		{
+			Debug.Log(t.name + " is already a pb_Object!");
+			return pb;
+		}
+
+		Vector3[] m_vertices = m.vertices;
+		Color[] m_colors = m.colors ?? new Color[m_vertices.Length];
+		Vector2[] m_uvs = m.uv;
+
+		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
+		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
+		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
+		List<pb_Face> faces = new List<pb_Face>();
+
+		for(int n = 0; n < m.subMeshCount; n++)
+		{
+			int[] tris = m.GetTriangles(n);
+			for(int i = 0; i < tris.Length; i+=3)
+			{
+				int index = -1;
+				if(preserveFaces)
+				{
+					for(int j = 0; j < faces.Count; j++)
+					{
+						if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
+							faces[j].distinctIndices.Contains(tris[i+1]) ||
+							faces[j].distinctIndices.Contains(tris[i+2]))
+						{
+							index = j;
+							break;
+						}
+					}
+				}
+
+				if(index > -1 && preserveFaces)
+				{
+					int len = faces[index].indices.Length;
+					int[] arr = new int[len + 3];
+					System.Array.Copy(faces[index].indices, 0, arr, 0, len);
+					arr[len+0] = tris[i+0];
+					arr[len+1] = tris[i+1];
+					arr[len+2] = tris[i+2];
+					faces[index].SetIndices(arr);
+					faces[index].RebuildCaches();
+				}
+				else
+				{
+					int[] faceTris;
+
+					if(preserveFaces)
+					{
+						faceTris = new int[3]
+						{
+							tris[i+0],
+							tris[i+1],
+							tris[i+2]	
+						};
+					}
+					else
+					{
+						verts.Add(m_vertices[tris[i+0]]);
+						verts.Add(m_vertices[tris[i+1]]);
+						verts.Add(m_vertices[tris[i+2]]);
+
+						cols.Add(m_colors != null ? m_colors[tris[i+0]] : Color.white);
+						cols.Add(m_colors != null ? m_colors[tris[i+1]] : Color.white);
+						cols.Add(m_colors != null ? m_colors[tris[i+2]] : Color.white);
+
+						uvs.Add(m_uvs[tris[i+0]]);
+						uvs.Add(m_uvs[tris[i+1]]);
+						uvs.Add(m_uvs[tris[i+2]]);
+
+						faceTris = new int[3] { i+0, i+1, i+2 };
+					}
+
+					faces.Add( 
+						new pb_Face(
+							faceTris,
+							t.GetComponent<MeshRenderer>().sharedMaterials[n],
+							new pb_UV(),
+							0,		// smoothing group
+							-1,		// texture group
+							-1,		// element group
+							true 	// manualUV 
+						));					
+				}
+			}
+		}
+
+		pb = t.gameObject.AddComponent<pb_Object>();
+
+		pb.SetVertices(verts.ToArray());
+		pb.SetUV(uvs.ToArray());
+		pb.SetFaces(faces.ToArray());
+		pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(verts.ToArray()));
+		pb.SetColors(cols.ToArray());
 
 		return pb;
 	}
