@@ -796,7 +796,7 @@ public class pb_Object : MonoBehaviour
 
 		RefreshNormals();
 
-		pb_Mesh_Utility.GenerateTangent(ref m);
+		pb_MeshUtility.GenerateTangent(ref m);
 	}	
 #endregion
 
@@ -923,11 +923,11 @@ public class pb_Object : MonoBehaviour
 			if(kvp.Value[0].uv.useWorldSpace)
 			{
 				transform.TransformDirection(nrm);
-				uvs = pb_UV_Utility.PlanarMap( transform.ToWorldSpace(GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())), kvp.Value[0].uv, nrm);
+				uvs = pb_UVUtility.PlanarMap( transform.ToWorldSpace(GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())), kvp.Value[0].uv, nrm);
 			}
 			else
 			{
-				uvs = pb_UV_Utility.PlanarMap( GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
+				uvs = pb_UVUtility.PlanarMap( GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
 			}
 			
 			/**
@@ -979,10 +979,10 @@ public class pb_Object : MonoBehaviour
 			for(int i = 0; i < v.Length; i++)
 				v[i] = _vertices[face.distinctIndices[i]];
 
-			SetUVs(face, pb_UV_Utility.PlanarMap( v, face.uv) );
+			SetUVs(face, pb_UVUtility.PlanarMap( v, face.uv) );
 		}
 		else
-			SetUVs(face, pb_UV_Utility.PlanarMap( face.GetDistinctVertices(_vertices), face.uv) );
+			SetUVs(face, pb_UVUtility.PlanarMap( face.GetDistinctVertices(_vertices), face.uv) );
 	}
 
 	/**

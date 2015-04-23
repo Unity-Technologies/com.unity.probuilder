@@ -220,14 +220,14 @@ public class pb_UV_Editor : EditorWindow
 	{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
-		pb_UV_RenderOptions renderOptions = EditorWindow.GetWindow<pb_UV_RenderOptions>(true, "Save UV Image", true);
+		pb_UV_Render_Options renderOptions = EditorWindow.GetWindow<pb_UV_Render_Options>(true, "Save UV Image", true);
 		renderOptions.position = new Rect(	this.position.x + (Screen.width/2f - 128),
 		                                  	this.position.y + (Screen.height/2f - 76),
 		                                  	256f,
 		                                  	152f);
 		renderOptions.screenFunc = Screenshot;
 #else
-		pb_UV_RenderOptions renderOptions = (pb_UV_RenderOptions)ScriptableObject.CreateInstance(typeof(pb_UV_RenderOptions));
+		pb_UV_Render_Options renderOptions = (pb_UV_Render_Options)ScriptableObject.CreateInstance(typeof(pb_UV_Render_Options));
 		renderOptions.screenFunc = Screenshot;
 		renderOptions.ShowAsDropDown(new Rect(	this.position.x + 348,
 												this.position.y + 32,
@@ -719,11 +719,11 @@ public class pb_UV_Editor : EditorWindow
 						if(kvp.Value[0].uv.useWorldSpace)
 						{
 							pb.transform.TransformDirection(nrm);
-							pb_UV_Utility.PlanarMap( pb.transform.ToWorldSpace(pb.GetVertices(tris)), kvp.Value[0].uv, nrm );
+							pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.GetVertices(tris)), kvp.Value[0].uv, nrm );
 						}
 						else
 						{
-							pb_UV_Utility.PlanarMap( pb.GetVertices(tris), kvp.Value[0].uv, nrm );
+							pb_UVUtility.PlanarMap( pb.GetVertices(tris), kvp.Value[0].uv, nrm );
 						}
 
 						foreach(pb_Face face in kvp.Value)

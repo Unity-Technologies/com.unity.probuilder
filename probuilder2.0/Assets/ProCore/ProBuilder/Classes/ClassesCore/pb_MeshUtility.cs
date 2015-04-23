@@ -12,7 +12,7 @@ namespace ProBuilder2.Common
 	/**
 	 * Utilities for working with UnityEngine.Mesh.
 	 */
-	public class pb_Mesh_Utility
+	public class pb_MeshUtility
 	{
 		#if PB_DEBUG
 		static pb_Profiler profiler = new Parabox.Debug.pb_Profiler();
@@ -27,7 +27,7 @@ namespace ProBuilder2.Common
 			#if PB_DEBUG
 			profiler.BeginSample("FindDuplicateVertices");
 			#endif
-			List<List<int>> merge = pb_Mesh_Utility.FindDuplicateVertices(pb);
+			List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
 			#if PB_DEBUG
 			profiler.EndSample();
 			#endif
@@ -35,7 +35,7 @@ namespace ProBuilder2.Common
 			#if PB_DEBUG
 			profiler.BeginSample("MergeVertices");
 			#endif
-			pb_Mesh_Utility.MergeVertices(merge, ref m);		
+			pb_MeshUtility.MergeVertices(merge, ref m);		
 			#if PB_DEBUG
 			profiler.EndSample();
 			#endif

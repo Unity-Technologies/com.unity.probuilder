@@ -8,7 +8,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Popup window in UV editor with the "Render UV Template" options.
 	 */
-	public class pb_UV_RenderOptions : EditorWindow
+	public class pb_UV_Render_Options : EditorWindow
 	{
 		const string PREF_IMAGESIZE = "pb_UVTemplate_imageSize";
 		const string PREF_LINECOLOR = "pb_UVTemplate_lineColor";

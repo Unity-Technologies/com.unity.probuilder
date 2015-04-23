@@ -16,7 +16,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Debugging menu items for ProBuilder.
 	 */
-	public class pb_DebugWindow : EditorWindow 
+	public class pb_Debug_Window : EditorWindow 
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;
@@ -28,7 +28,7 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/ProBuilder Debug Window")]
 		public static void MenuSceneViewDebug()
 		{
-			EditorWindow.GetWindow<pb_DebugWindow>();
+			EditorWindow.GetWindow<pb_Debug_Window>();
 		}
 
 		void OnEnable()

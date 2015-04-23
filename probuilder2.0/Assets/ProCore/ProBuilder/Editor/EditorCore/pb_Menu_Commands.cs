@@ -22,11 +22,12 @@ public class pb_Menu_Commands : Editor
 	private static pb_Editor editor { get { return pb_Editor.instance; } }
 
 #region Object Level
+
+#if !PROTOTYPE
 	/**
 	 * Combine selected pb_Objects to a single object.
 	 * ProBuilder only.
 	 */
-#if !PROTOTYPE
 	public static void MenuMergeObjects(pb_Object[] selected)	
 	{
 		if(selected.Length < 2)
@@ -79,6 +80,51 @@ public class pb_Menu_Commands : Editor
 
 		if(editor)
 			editor.UpdateSelection();
+	}
+
+
+	/**
+	 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
+	 */
+	public static void ProBuilderize(GameObject[] selected, bool preserveFaces)
+	{
+		foreach(GameObject go in selected)
+		{
+			Undo.RegisterFullObjectHierarchyUndo(go, "ProBuilderize");
+
+			MeshRenderer mr = go.GetComponent<MeshRenderer>();
+
+			pb_Object pb = pbMeshOps.AddPbObjectToObject(go, preserveFaces);
+
+			EntityType entityType = EntityType.Detail;
+
+			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x.name.Contains("Collider")))
+				entityType = EntityType.Collider;
+			else
+			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x.name.Contains("Trigger")))
+				entityType = EntityType.Trigger;
+
+			// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
+			// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the 
+			// renderer so that we don't modify the asset.
+			if( AssetDatabase.GetAssetPath(go.GetComponent<MeshFilter>().sharedMesh) == "" )
+				Undo.DestroyObjectImmediate(go.GetComponent<MeshFilter>().sharedMesh);
+			else
+				go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+
+			pb.ToMesh();
+			pb.Refresh(); 
+			pb.Optimize();
+
+			// Don't call the editor version of SetEntityType because that will
+			// reset convexity and trigger settings, which we can assume are user
+			// set already.
+			pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
+			// pb_Editor_Utility.SetEntityType(entityType, t.gameObject);
+		}
+
+		if(pb_Editor.instance != null)
+			pb_Editor.instance.UpdateSelection();
 	}
 #endif
 

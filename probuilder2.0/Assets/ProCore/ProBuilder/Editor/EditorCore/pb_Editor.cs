@@ -164,9 +164,9 @@ public class pb_Editor : EditorWindow
 		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
 		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 
-		pref_snapEnabled 	= pb_ProGridsInterface.SnapEnabled();
-		pref_snapValue		= pb_ProGridsInterface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
+		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
+		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 				
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -183,7 +183,7 @@ public class pb_Editor : EditorWindow
 		if( OnSelectionUpdate != null )
 			OnSelectionUpdate(null);
 
-		pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
+		pb_ProGrids_Interface.UnsubscribePushToGridEvent(PushToGrid);
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
@@ -221,7 +221,7 @@ public class pb_Editor : EditorWindow
 
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		// Undo.postprocessModifications += PostprocessModifications;
-		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
+		pb_ProGrids_Interface.SubscribePushToGridEvent(PushToGrid);
 		EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
 	}
 #endregion
@@ -337,7 +337,7 @@ public class pb_Editor : EditorWindow
 			#endif
 
 			if(GUILayout.Button(new GUIContent("Vertex Colors", "Provides an interface to set vertex colors.  Note that your shader must support vertex colors in order for changes to be visible."), EditorStyles.miniButton))	
-				pb_VertexColorInterface.MenuOpenWindow();
+				pb_Vertex_Color_Toolbar.MenuOpenWindow();
 
 			#if !PROTOTYPE
 			if(GUILayout.Button("Smoothing", EditorStyles.miniButton))
@@ -361,7 +361,7 @@ public class pb_Editor : EditorWindow
 					pb_Menu_Commands.MenuMergeObjects(selection);
 
 				if(GUILayout.Button(new GUIContent("Mirror", "Open the Mirror Tool panel."), EditorStyles.miniButton)) 
-					EditorWindow.GetWindow<pb_MirrorTool>(true, "Mirror Tool", true).Show();
+					EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
 
 				#endif
 					
@@ -3205,9 +3205,9 @@ public class pb_Editor : EditorWindow
 	{
 		pbUndo.RecordObjects(selection as Object[], "Move Vertices");
 
-		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
-		pref_snapValue = pb_ProGridsInterface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
+		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
+		pref_snapValue = pb_ProGrids_Interface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();

@@ -16,9 +16,9 @@ public class ShowHideFlags : Editor
 	public static void dflkajsdkflj()
 	{
 		string txt = "Snap Enabled: ";
-		txt += pb_ProGridsInterface.SnapEnabled();
-		txt += "\nAxis Constraints: " + pb_ProGridsInterface.UseAxisConstraints();
-		txt += "\nSnap Value: " + pb_ProGridsInterface.SnapValue();
+		txt += pb_ProGrids_Interface.SnapEnabled();
+		txt += "\nAxis Constraints: " + pb_ProGrids_Interface.UseAxisConstraints();
+		txt += "\nSnap Value: " + pb_ProGrids_Interface.SnapValue();
 
 		Debug.Log(txt);
 	}

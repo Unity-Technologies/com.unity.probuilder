@@ -419,8 +419,8 @@ namespace ProBuilder2.EditorCommon
 			else
 				pb.CenterPivot(indicesToCenterPivot);
 
-			if(pb_ProGridsInterface.SnapEnabled())
-				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pb_ProGridsInterface.SnapValue());
+			if(pb_ProGrids_Interface.SnapEnabled())
+				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
 			else
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);

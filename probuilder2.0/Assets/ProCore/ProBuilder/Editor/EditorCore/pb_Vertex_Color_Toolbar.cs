@@ -4,7 +4,7 @@ using System.Collections;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
-public class pb_VertexColorInterface : EditorWindow
+public class pb_Vertex_Color_Toolbar : EditorWindow
 {
 #region CONSTANTS
 
@@ -33,7 +33,7 @@ public class pb_VertexColorInterface : EditorWindow
 	public static void MenuOpenWindow()
 	{
 		bool dockable = pb_Preferences_Internal.GetBool(pb_Constant.pbVertexPaletteDockable);
-		EditorWindow.GetWindow<pb_VertexColorInterface>(!dockable, "Vertex Colors", true);
+		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>(!dockable, "Vertex Colors", true);
 	}
 
 
@@ -61,16 +61,16 @@ public class pb_VertexColorInterface : EditorWindow
 	{
 		EditorPrefs.SetBool(pb_Constant.pbVertexPaletteDockable, true);
 
-		EditorWindow.GetWindow<pb_VertexColorInterface>().Close();
-		pb_VertexColorInterface.MenuOpenWindow();
+		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>().Close();
+		pb_Vertex_Color_Toolbar.MenuOpenWindow();
 	}
 
 	void Menu_OpenAsFloatingWindow()
 	{
 		EditorPrefs.SetBool(pb_Constant.pbVertexPaletteDockable, false);
 
-		EditorWindow.GetWindow<pb_VertexColorInterface>().Close();
-		pb_VertexColorInterface.MenuOpenWindow();
+		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>().Close();
+		pb_Vertex_Color_Toolbar.MenuOpenWindow();
 	}
 #endregion
 
@@ -189,9 +189,9 @@ public class pb_VertexColorInterface : EditorWindow
 	public static void SetFaceColors(int userPrefColorIndex)
 	{
 		if(USER_COLORS != null)
-			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.USER_COLORS[userPrefColorIndex]);
+			pb_Vertex_Color_Toolbar.SetFaceColors(pb_Vertex_Color_Toolbar.USER_COLORS[userPrefColorIndex]);
 		else
-			pb_VertexColorInterface.SetFaceColors(pb_VertexColorInterface.DEFAULT_COLORS[userPrefColorIndex]);
+			pb_Vertex_Color_Toolbar.SetFaceColors(pb_Vertex_Color_Toolbar.DEFAULT_COLORS[userPrefColorIndex]);
 	}
 
 	public static void SetFaceColors(Color col)

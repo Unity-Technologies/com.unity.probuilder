@@ -4,9 +4,9 @@ using System.Collections;
 using ProBuilder2.EditorCommon;
 
 [InitializeOnLoad]
-public class pb_HierarchyListener : Editor
+public class pb_Hierarchy_Listener : Editor
 {
-	static pb_HierarchyListener()
+	static pb_Hierarchy_Listener()
 	{
 		EditorApplication.hierarchyWindowChanged += HierarchyWindowChanged;
 
@@ -15,7 +15,7 @@ public class pb_HierarchyListener : Editor
 		// PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
 	}
 	
-	~pb_HierarchyListener()
+	~pb_Hierarchy_Listener()
 	{
 		EditorApplication.hierarchyWindowChanged -= HierarchyWindowChanged;
 	}

@@ -10,7 +10,7 @@ using ProBuilder2.Math;
  */
 namespace ProBuilder2.Common {
 
-public class pb_UV_Utility
+public class pb_UVUtility
 {
 
 #region Map

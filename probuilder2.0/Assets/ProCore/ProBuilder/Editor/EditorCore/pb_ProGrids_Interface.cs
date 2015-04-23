@@ -11,7 +11,7 @@ namespace ProBuilder2.Common
 	 * allows access to snap enabled, axis preference,
 	 * and grid size values.
 	 */
-	public static class pb_ProGridsInterface
+	public static class pb_ProGrids_Interface
 	{
 		/**
 		 * Returns the current UseAxisConstraints value from ProGrids.

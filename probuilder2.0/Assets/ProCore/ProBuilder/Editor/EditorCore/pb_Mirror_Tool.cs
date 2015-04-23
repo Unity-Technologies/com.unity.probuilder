@@ -10,14 +10,14 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Mirrors selected pb_Objects.
 	 */
-	public class pb_MirrorTool : EditorWindow 
+	public class pb_Mirror_Tool : EditorWindow 
 	{
 		#if !PROTOTYPE
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Tools/Mirror Tool")]
 		public static void InitMirrorTool()
 		{
-			EditorWindow win = EditorWindow.GetWindow(typeof(pb_MirrorTool), true, "Mirror Tool", true);
+			EditorWindow win = EditorWindow.GetWindow(typeof(pb_Mirror_Tool), true, "Mirror Tool", true);
 			win.Show();
 		}
 
@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 
 				foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 				{
-					pb_Object result = pb_MirrorTool.Mirror(pb, new Vector3(
+					pb_Object result = pb_Mirror_Tool.Mirror(pb, new Vector3(
 						(scaleX) ? -1f : 1f,
 						(scaleY) ? -1f : 1f,
 						(scaleZ) ? -1f : 1f

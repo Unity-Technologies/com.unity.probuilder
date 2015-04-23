@@ -825,15 +825,15 @@ namespace ProBuilder2.MeshOperations
 	* returning from this function, as this only creates the pb_Object and sets its
 	* fields.  This allows you to record the mesh and gameObject for Undo operations.
 	*/
-	public static pb_Object AddPbObjectToObject(Transform t, bool preserveFaces)
+	public static pb_Object AddPbObjectToObject(GameObject go, bool preserveFaces)
 	{
-		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
+		Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
 
-		pb_Object pb = t.GetComponent<pb_Object>();
+		pb_Object pb = go.GetComponent<pb_Object>();
 
 		if(pb != null)
 		{
-			Debug.Log(t.name + " is already a pb_Object!");
+			Debug.Log(go.name + " is already a pb_Object!");
 			return pb;
 		}
 
@@ -910,7 +910,7 @@ namespace ProBuilder2.MeshOperations
 					faces.Add( 
 						new pb_Face(
 							faceTris,
-							t.GetComponent<MeshRenderer>().sharedMaterials[n],
+							go.GetComponent<MeshRenderer>().sharedMaterials[n],
 							new pb_UV(),
 							0,		// smoothing group
 							-1,		// texture group
@@ -921,7 +921,7 @@ namespace ProBuilder2.MeshOperations
 			}
 		}
 
-		pb = t.gameObject.AddComponent<pb_Object>();
+		pb = go.AddComponent<pb_Object>();
 
 		pb.SetVertices(verts.ToArray());
 		pb.SetUV(uvs.ToArray());

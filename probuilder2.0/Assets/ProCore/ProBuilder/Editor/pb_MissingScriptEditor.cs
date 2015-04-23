@@ -19,16 +19,16 @@ namespace ProBuilder2.EditorCommon
 	{
 	#region Members
 
-		static bool applyDummyScript = false;	///< If true, any null components that can't be set will have this script applied to their reference, allowing us to later remove them.
+		static bool applyDummyScript = true;	///< If true, any null components that can't be set will have this script applied to their reference, allowing us to later remove them.
 		static int index = 0;					///< general idea of where we are in terms of processing this scene.
 		static float total;						///< general idea of how many missing script references are in this scene.
 
-		static bool doFix = false;	///< while true, the inspector will attempt to cycle to broken gameobjects until none are found.
+		static bool doFix = false;				///< while true, the inspector will attempt to cycle to broken gameobjects until none are found.
 		static List<GameObject> unfixable = new List<GameObject>();	///< if a non-pb missing reference is encountered, need to let the iterator know not to bother,
 
-		static MonoScript _mono_pb;	///< MonoScript assets
-		static MonoScript _mono_pe;	///< MonoScript assets
-		static MonoScript _mono_dummy;	///< MonoScript assets
+		static MonoScript _mono_pb;				///< MonoScript assets
+		static MonoScript _mono_pe;				///< MonoScript assets
+		static MonoScript _mono_dummy;			///< MonoScript assets
 
 		/**
 		 * Load the pb_Object and pb_Entity classes to MonoScript assets.  Saves us from having to fall back on Reflection.
@@ -331,11 +331,32 @@ namespace ProBuilder2.EditorCommon
 
 			if(dummies.Length > 0)
 			{
-				if( EditorUtility.DisplayDialog("Found Unrepairable Objects", "Repair script found " + dummies.Length + " missing components that could not be repaired.  Would you like to delete those components now?", "Delete", "Cancel"))
+				int ret = EditorUtility.DisplayDialogComplex("Found Unrepairable Objects", "Repair script found " + dummies.Length + " missing components that could not be repaired.  Would you like to delete those components now?", "Delete", "Cancel", "ProBuilderize");
+
+				switch(ret)
 				{
-					Undo.RecordObjects(dummies.Select(x=>x.gameObject).ToArray(), "Delete Broken Scripts");
-					for(int i = 0; i < dummies.Length; i++)
-						GameObject.DestroyImmediate( dummies[i] );
+					case 1:	// cancel
+					{}
+					break;
+
+					default:
+					{
+						// Delete and ProBuilderize
+						if(ret == 2)
+						{
+							// Only interested in objects that have 2 null components (pb_Object and pb_Entity)
+							GameObject[] broken = (GameObject[])Resources.FindObjectsOfTypeAll(typeof(GameObject)).Where(x => x is GameObject && ((GameObject)x).GetComponents<pb_DummyScript>().Length == 2).ToArray();
+
+							pb_Menu_Commands.ProBuilderize(broken, true);
+						}
+						
+						// Always delete components
+						Undo.RecordObjects(dummies.Select(x=>x.gameObject).ToArray(), "Delete Broken Scripts");
+
+						for(int i = 0; i < dummies.Length; i++)
+							GameObject.DestroyImmediate( dummies[i] );
+					}
+					break;
 				}
 				
 			}
