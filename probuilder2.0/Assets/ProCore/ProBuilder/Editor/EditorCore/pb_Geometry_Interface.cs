@@ -147,9 +147,9 @@ namespace ProBuilder2.EditorCommon
 				case Shape.Arch:
 					ArchGUI();
 					break;
-				// case Shape.Dome:
-				// 	DomeGUI();
-					// break;
+				case Shape.Icosahedron:
+					IcosahedronGUI();
+					break;
 				case Shape.Custom:
 					CustomGUI();
 					break;
@@ -777,22 +777,19 @@ namespace ProBuilder2.EditorCommon
 			GUI.backgroundColor = oldColor;
 		}
 
-		static float dome_radius = 2.0f;
-		static int dome_radialCuts = 6;
-		static int dome_depthCuts = 5;
-		static bool dome_bottomFaces = true;
-		void DomeGUI()
+		float ico_radius = 1f;
+		int ico_subdivisions = 1;
+
+		void IcosahedronGUI()
 		{
-			dome_radius = EditorGUILayout.FloatField("Radius", dome_radius);
-			dome_radius = arch_radius <= 0f ? .01f : dome_radius;
+			EditorGUI.BeginChangeCheck();
 
-			dome_bottomFaces = EditorGUILayout.Toggle("Bottom Faces", dome_bottomFaces);
+			ico_radius = EditorGUILayout.Slider("Radius", ico_radius, 0.01f, 10f);
 
-			dome_radialCuts = (int)Mathf.Clamp( EditorGUILayout.IntField("Number of Sides", dome_radialCuts), 3f, 64f);
-			dome_depthCuts = (int)Mathf.Clamp( EditorGUILayout.IntField("Longitudinal Segments", dome_depthCuts), 3f, 64f);
+			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 5);
 
-			if (showPreview && (GUI.changed || initPreview))
-				SetPreviewObject(pb_Shape_Generator.DomeGenerator(dome_radius, dome_radialCuts, dome_depthCuts));
+			if (showPreview && (EditorGUI.EndChangeCheck() || initPreview))
+				SetPreviewObject(pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -801,8 +798,17 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.DomeGenerator(dome_radius, dome_radialCuts, dome_depthCuts);
+				pb_Object pb = pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+
+				// To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator 
+				int[] welds;
+				pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
+				
+				pbUVOps.ProjectFacesBox(pb, pb.faces);
+
+				for(int i = 0; i < pb.faces.Length; i++)
+					pb.faces[i].manualUV = true;
 
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 				

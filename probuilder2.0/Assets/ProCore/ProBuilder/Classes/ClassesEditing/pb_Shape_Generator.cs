@@ -817,68 +817,153 @@ public class pb_Shape_Generator
 		return pb;
 	}
 	
+	static readonly Vector3[] ICOSAHEDRON_VERTICES = new Vector3[12]
+	{
+		new Vector3(-1f,  pb_Math.PHI,  0f),
+		new Vector3( 1f,  pb_Math.PHI,  0f),
+		new Vector3(-1f, -pb_Math.PHI,  0f),
+		new Vector3( 1f, -pb_Math.PHI,  0f),
+
+		new Vector3( 0f, -1f,  pb_Math.PHI),
+		new Vector3( 0f,  1f,  pb_Math.PHI),
+		new Vector3( 0f, -1f, -pb_Math.PHI),
+		new Vector3( 0f,  1f, -pb_Math.PHI),
+
+		new Vector3(  pb_Math.PHI, 0f, -1f),
+		new Vector3(  pb_Math.PHI, 0f,  1f),
+		new Vector3( -pb_Math.PHI, 0f, -1f),
+		new Vector3( -pb_Math.PHI, 0f,  1f)
+	};
+
+	static readonly int[] ICOSAHEDRON_TRIANGLES = new int[60]
+	{
+		0, 11, 5,
+		0, 5, 1,
+		0, 1, 7,
+		0, 7, 10,
+		0, 10, 11,
+
+		1, 5, 9,
+		5, 11, 4,
+		11, 10, 2,
+		10, 7, 6,
+		7, 1, 8,
+		 
+		3, 9, 4,
+		3, 4, 2,
+		3, 2, 6,
+		3, 6, 8,
+		3, 8, 9,
+
+		4, 9, 5,
+		2, 4, 11,
+		6, 2, 10,
+		8, 6, 7,
+		9, 8, 1
+	};
+
   	/**
-	  * \brief Returns a pb_Object dome with the passed size.
-	  * @param radialCuts how many blocks compose the dome
-	  * @param depthCuts how many horizontal cuts make up the dome
-	  * @param bottomFaces render outside faces toggle
-	  * \returns New #pb_Object.
+	  * \brief Creates an icosphere from a radius and subdivision count.
+	  * This method does not extract shared indices, so after generating
+	  * make sure to use pbVertexOps.Weldvertices() to generate them.
 	  */
-	public static pb_Object DomeGenerator(float radius, int longCuts, int latCuts)
+	public static pb_Object IcosahedronGenerator(float radius, int subdivisions)
 	{
-		// Vector3[] v = new Vector3[longCuts * latCuts];
-		// int[] indices = new int[v.Length];
-		// int i = 0;
+		// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
-		// for(int y = 0; y < longCuts; y++)
-		// {
-		// 	for(int x = 0; x < latCuts; x++)
-		// 	{
-		// 		indices[i] = i;
-		// 		v[i++] = pb_Math.PointInSphere(radius, (360f/latCuts) * x, (360f/longCuts) * y);
-		// 	}
-		// }
+		Vector3[] v = new Vector3[ICOSAHEDRON_TRIANGLES.Length];
 
-		// Mesh m = new Mesh();
-		// m.vertices = v;
-		// m.subMeshCount = 1;
-		// m.SetIndices(indices, MeshTopology.Points, 0);
+		/**
+		 * Regular Icosahedron - 12 vertices, 20 faces.
+		 */
+		for(int i = 0; i < ICOSAHEDRON_TRIANGLES.Length; i+=3)
+		{
+			v[i+0] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+0] ].normalized * radius;
+			v[i+1] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+1] ].normalized * radius;
+			v[i+2] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+2] ].normalized * radius;
+		}
 
-		return new pb_Object();
+		/**
+		 * Subdivide
+		 */
+		for(int i = 0; i < subdivisions; i++) {
+			v = SubdivideIcosahedron(v, radius);
+		}
 
+		/**
+		 * Wind faces
+		 */
+		pb_Face[] f = new pb_Face[v.Length/3];
+		for(int i = 0; i < v.Length; i+=3) {
+			f[i/3] = new pb_Face( new int[3] { i, i+1, i+2 } );
+		}
+
+		GameObject _gameObject = new GameObject();	
+		pb_Object pb = _gameObject.AddComponent<pb_Object>();
+
+		pb.SetVertices(v);
+		pb.SetUV(new Vector2[v.Length]);
+		pb.SetFaces(f);
+
+		pb_IntArray[] si = new pb_IntArray[v.Length];
+		for(int i = 0; i < si.Length; i++)
+			si[i] = new pb_IntArray(new int[] { i });
+
+		pb.SetSharedIndices(si);
+
+		pb.ToMesh();
+		pb.Refresh();
+
+		return pb;
 	}
 
-	public static Mesh DomeGeneratorMesh(float radius, int latCuts, int longCuts, float latDeg, float longDeg)
+	/**
+	 * Subdivides a set of vertices (wound as individual triangles) on an icosphere.
+	 *
+	 *	 /\			 /\
+	 * 	/  \	-> 	/--\
+	 * /____\	   /_\/_\
+	 *
+	 */
+	static Vector3[] SubdivideIcosahedron(Vector3[] vertices, float radius)
 	{
-		// longCuts -= 2;
-		// longDeg /= 2f;
+		Vector3[] v = new Vector3[vertices.Length * 4];
 
-		// Vector3[] v = new Vector3[longCuts * latCuts + 2];
-		// int[] indices = new int[v.Length];
-		// int i = 0;
+		int index = 0;
 
-		// indices[0] = 0;
-		// v[i++] = pb_Math.PointInSphere(radius, 0f, 0f);
+		Vector3 p0 = Vector3.zero,	//	    5
+				p1 = Vector3.zero,	//    3   4
+				p2 = Vector3.zero,	//	0,  1,  2
+				p3 = Vector3.zero,
+				p4 = Vector3.zero,
+				p5 = Vector3.zero;
 
-		// for(int y = 1; y <= longCuts; y++)
-		// {
-		// 	for(int x = 0; x < latCuts; x++)
-		// 	{
-		// 		indices[i] = i;
-		// 		v[i++] = pb_Math.PointInSphere(radius, (latDeg/latCuts) * x, (longDeg/(longCuts+1)) * y);
-		// 	}
-		// }
+		for(int i = 0; i < vertices.Length; i+=3)
+		{
+			p0 = vertices[i+0];
+			p2 = vertices[i+1];
+			p5 = vertices[i+2];
+			p1 = ((p0 + p2) * .5f).normalized * radius;
+			p3 = ((p0 + p5) * .5f).normalized * radius;
+			p4 = ((p2 + p5) * .5f).normalized * radius;
 
-		// indices[i] = i;
-		// v[i] = pb_Math.PointInSphere(radius, 0f, longDeg);
+			v[index++] = p0;
+			v[index++] = p1;
+			v[index++] = p3;
 
-		Mesh m = new Mesh();
-		// m.vertices = v;
-		// m.subMeshCount = 1;
-		// m.SetIndices(indices, MeshTopology.LineStrip, 0);
+			v[index++] = p1;
+			v[index++] = p2;
+			v[index++] = p4;
 
-		return m;
+			v[index++] = p1;
+			v[index++] = p4;
+			v[index++] = p3;
 
+			v[index++] = p3;
+			v[index++] = p4;
+			v[index++] = p5;
+		}
+
+		return v;
 	}
-	  
 }

@@ -15,6 +15,8 @@ namespace ProBuilder2.Math
 	 */
 	public static class pb_Math
 	{
+		public const float PHI = 1.618033988749895f;
+
 #region Geometry
 
 		// implementation snagged from: http://stackoverflow.com/questions/839899/how-do-i-calculate-a-point-on-a-circles-circumference

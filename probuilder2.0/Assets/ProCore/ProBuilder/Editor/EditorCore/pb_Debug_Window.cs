@@ -344,9 +344,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
 				DrawStats(pb);
-
-				if(elementLength > 0.01f)
-					DrawElements(pb);
+				DrawElements(pb);
 			}
 
 			Repaint();
@@ -480,7 +478,7 @@ namespace ProBuilder2.EditorCommon
 		{	
 			pb_Editor_Gizmos.ClearLines();
 
-			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length )
+			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
 				return;
 
 			int vertexCount = ntbSelectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;

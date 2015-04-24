@@ -1,7 +1,20 @@
--- ProBuilder 2.4.4b1 (r3330)
+-- ProBuilder 2.4.4b1 (r3340)
 
 # Bug Fixes
-	- Sttuff!
+	- Copy userCollisions field when serializing pb_Object.
+	- Fix bug where exiting to Top or Plugin level would not clear the selection mesh.
+	- When mirroring objects, make the mirrored results the new selection.
+	- Don't center pivot after detaching faces to new object.
+	- Fix bug where setting entity type then undoing wouldn't catch changes to collider.
+	- Improve performance when editing large numbers of vertices.
+	- When probuilder-izing objects, perform the action in-place (and add undo support).
+
+# Changes
+ 	- Remove dependency on ProCore lib to communicate with ProGrids.
+	- Rename scripts to uniformly follow pb_ prefix and pascal case for runtime, underscore case for editor.
+
+# API
+	- pb_Renderable now holds a matrix that may be used when rendering, allowing mesh generation to skip the matrix multiplication step.  Improves performance when editing large swathes of vertices.
 
 -- ProBuilder 2.4.4b0 (r3322)
 

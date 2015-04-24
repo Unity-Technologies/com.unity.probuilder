@@ -50,7 +50,7 @@ namespace ProBuilder2.Common
 		Cone,
 		Sprite,
 		Arch,
-		// Dome,
+		Icosahedron,
 		Custom
 	}
 

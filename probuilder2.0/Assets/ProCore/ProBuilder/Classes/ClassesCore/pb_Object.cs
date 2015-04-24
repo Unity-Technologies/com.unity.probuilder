@@ -674,7 +674,7 @@ public class pb_Object : MonoBehaviour
 			m.SetTriangles(tris[i], i);
 
 		m.RecalculateBounds();
-		m.Optimize();
+
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
@@ -740,14 +740,12 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	\brief Recalculates standard mesh properties - normals, bounds, collisions, UVs, tangents, and colors.
+	 *	\brief Recalculates standard mesh properties - normals, collisions, UVs, tangents, and colors.
 	 */
 	public void Refresh()
 	{	
 		// Mesh
 		Mesh m = msh;
-		
-		m.RecalculateBounds();
 		
 		if(!userCollisions && GetComponent<Collider>())
 		{
