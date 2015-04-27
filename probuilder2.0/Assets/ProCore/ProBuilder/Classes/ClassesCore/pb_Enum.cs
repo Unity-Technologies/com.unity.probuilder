@@ -90,4 +90,16 @@ namespace ProBuilder2.Common
 		Front = 0x1,
 		FrontBack = 0x2
 	}
+
+	/**
+	 * If Verify() rebuilds the pb_Object mesh, this describes the reasoning.
+	 */
+	public enum MeshRebuildReason
+	{
+		Null,
+		InstanceIDMismatch,
+		Lightmap,
+		None
+	}
+
 }

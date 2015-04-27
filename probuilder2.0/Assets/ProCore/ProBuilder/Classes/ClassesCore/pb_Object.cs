@@ -45,12 +45,6 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 	}
-
-	void OnValidate()
-	{
-		if(_colors == null || _colors.Length != vertexCount)
-			_colors = pbUtil.FilledArray(Color.white, vertexCount);
-	}
 #endregion
 
 #region INITIALIZATION
@@ -1197,13 +1191,6 @@ public class pb_Object : MonoBehaviour
 			f.RebuildCaches();
 	}
 
-	public enum MeshRebuildReason
-	{
-		Null,
-		InstanceIDMismatch,
-		Lightmap,
-		None
-	}
 	/**
 	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
 	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
@@ -1216,7 +1203,6 @@ public class pb_Object : MonoBehaviour
 			if( !ReconstructMesh() )	
 			{
 				// reconstruct failed.  this shouldn't happen, but sometimes it does?
-				Debug.LogError("ProBuilder Object " + id + " contains null geometry.  Self destruct in 5...4...3...");
 				DestroyImmediate(this.gameObject);
 			}
 

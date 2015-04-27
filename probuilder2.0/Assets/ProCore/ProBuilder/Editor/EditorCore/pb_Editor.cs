@@ -2997,20 +2997,7 @@ public class pb_Editor : EditorWindow
 	 */
 	private void ListenForTopLevelMovement()
 	{
-		bool movementDetected = false;
-		for(int i = 0; i < selection.Length; i++)
-		{
-			if(selection[i] == null)
-				continue;
-
-			if(selection[i].transform.hasChanged)
-			{
-				movementDetected = true;
-				break;
-			}
-		}
-
-		if(movementDetected)
+		if( selection.Any(x => x.transform.hasChanged) )
 			Internal_UpdateSelectionFast();
 	}
 

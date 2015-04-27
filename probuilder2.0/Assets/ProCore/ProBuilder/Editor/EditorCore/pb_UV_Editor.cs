@@ -2356,8 +2356,8 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
-			int len = pb.vertexCount;
 			Vector2[] mshUV = GetUVs(pb, channel);
+			int len = mshUV.Length;
 
 			uvs_canvas_space[i] = new Vector2[len];
 

@@ -317,12 +317,12 @@ namespace ProBuilder2.EditorCommon
 		 * Ensure that this object has a valid mesh reference, and the geometry is 
 		 * current.
 		 */
-		public static void VerifyMesh(pb_Object pb)
+		public static MeshRebuildReason VerifyMesh(pb_Object pb)
 		{
 		 	Mesh oldMesh = pb.msh;
-	 		pb_Object.MeshRebuildReason reason = pb.Verify();
+	 		MeshRebuildReason reason = pb.Verify();
 
-			if( reason != pb_Object.MeshRebuildReason.None )
+			if( reason != MeshRebuildReason.None )
 			{
 				/**
 				 * If the mesh ID doesn't match the gameObject Id, it could mean two things - 
@@ -353,13 +353,15 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				pb.Optimize();
+
+#if UNITY_5
+				EditorUtility.UnloadUnusedAssetsImmediate();
+#else
+				EditorUtility.UnloadUnusedAssets();
+#endif
 			}
 
-			#if UNITY_5
-			EditorUtility.UnloadUnusedAssetsImmediate();
-			#else
-			EditorUtility.UnloadUnusedAssets();
-			#endif
+			return reason;
 		}
 
 		/**

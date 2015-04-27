@@ -370,37 +370,44 @@ public class pb_Editor_Graphics
 		if( (editor == null || selection == null || editor.SelectedUniversalEdges == null) || selection.Length != editor.SelectedUniversalEdges.Length )
 			return;
 
-		for(int i = 0; i < selection.Length; i++)
+		try
 		{
-			pb_Renderable ren = renderablePool.Get();
-			ren.name = "Wireframe Renderable";
-			Mesh mesh = ren.mesh;
-			ren.materials[0] = WireframeMaterial;
-			ren.matrix = selection[i].transform.localToWorldMatrix;
-			pb_Object pb = selection[i];
-
-			Vector3[] pbverts = pb.vertices;
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-
-			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
-			pb_Edge[] universalEdges = editor.SelectedUniversalEdges[i];
-			Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
-		
-			int n = 0;
-			foreach(pb_Edge e in universalEdges)
+			for(int i = 0; i < selection.Length; i++)
 			{
-				edge_verts[n++] = pbverts[sharedIndices[e.x][0]];
-				edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
-			}
-			
-			mesh.Clear();
-			mesh.vertices = edge_verts;
-			mesh.uv = new Vector2[edge_verts.Length];
-			mesh.subMeshCount = 1;
-			mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
-			mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+				pb_Renderable ren = renderablePool.Get();
+				ren.name = "Wireframe Renderable";
+				Mesh mesh = ren.mesh;
+				ren.materials[0] = WireframeMaterial;
+				ren.matrix = selection[i].transform.localToWorldMatrix;
+				pb_Object pb = selection[i];
 
-			wireframeRenderer.renderables.Add(ren);
+				Vector3[] pbverts = pb.vertices;
+				pb_IntArray[] sharedIndices = pb.sharedIndices;
+
+				// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
+				pb_Edge[] universalEdges = editor.SelectedUniversalEdges[i];
+				Vector3[] edge_verts = new Vector3[universalEdges.Length*2];
+			
+				int n = 0;
+				foreach(pb_Edge e in universalEdges)
+				{
+					edge_verts[n++] = pbverts[sharedIndices[e.x][0]];
+					edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
+				}
+				
+				mesh.Clear();
+				mesh.vertices = edge_verts;
+				mesh.uv = new Vector2[edge_verts.Length];
+				mesh.subMeshCount = 1;
+				mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
+				mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+
+				wireframeRenderer.renderables.Add(ren);
+			}
+		}
+		catch(System.Exception e)
+		{
+			// Don't care.
 		}
 	}
 
