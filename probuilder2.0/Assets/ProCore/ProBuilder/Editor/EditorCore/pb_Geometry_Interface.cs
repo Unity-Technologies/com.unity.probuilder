@@ -786,7 +786,7 @@ namespace ProBuilder2.EditorCommon
 
 			ico_radius = EditorGUILayout.Slider("Radius", ico_radius, 0.01f, 10f);
 
-			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 5);
+			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 4);
 
 			if (showPreview && (EditorGUI.EndChangeCheck() || initPreview))
 				SetPreviewObject(pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions));

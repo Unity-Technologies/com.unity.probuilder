@@ -896,6 +896,7 @@ public class pb_Shape_Generator
 		pb_Face[] f = new pb_Face[v.Length/3];
 		for(int i = 0; i < v.Length; i+=3) {
 			f[i/3] = new pb_Face( new int[3] { i, i+1, i+2 } );
+			f[i/3].manualUV = true;
 		}
 
 		GameObject _gameObject = new GameObject();	
