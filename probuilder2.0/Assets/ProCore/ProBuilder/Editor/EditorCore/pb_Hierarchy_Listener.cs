@@ -63,7 +63,9 @@ namespace ProBuilder2.EditorCommon
 					if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance )
 					{
 						if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
+						{
 							prefabReverted = true;
+						}
 					}
 				}
 

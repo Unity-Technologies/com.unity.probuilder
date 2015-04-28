@@ -782,13 +782,14 @@ namespace ProBuilder2.EditorCommon
 
 		void IcosahedronGUI()
 		{
-			EditorGUI.BeginChangeCheck();
+			float t_ico_radius = ico_radius;
+			int t_ico_subdivisions = ico_subdivisions;
 
 			ico_radius = EditorGUILayout.Slider("Radius", ico_radius, 0.01f, 10f);
 
 			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 4);
 
-			if (showPreview && (EditorGUI.EndChangeCheck() || initPreview))
+			if (showPreview && ((t_ico_subdivisions != ico_subdivisions || t_ico_radius != ico_radius) || initPreview))
 				SetPreviewObject(pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions));
 
 			Color oldColor = GUI.backgroundColor;

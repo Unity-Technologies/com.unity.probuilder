@@ -345,9 +345,17 @@ namespace ProBuilder2.EditorCommon
 						if(ret == 2)
 						{
 							// Only interested in objects that have 2 null components (pb_Object and pb_Entity)
-							GameObject[] broken = (GameObject[])Resources.FindObjectsOfTypeAll(typeof(GameObject)).Where(x => x is GameObject && ((GameObject)x).GetComponents<pb_DummyScript>().Length == 2).ToArray();
+							Object[] broken = (Object[])Resources.FindObjectsOfTypeAll(typeof(GameObject))
+								.Where(x => !x.Equals(null) &&
+								x is GameObject &&
+								((GameObject)x).GetComponents<pb_DummyScript>().Length == 2 &&
+								((GameObject)x).GetComponent<MeshRenderer>() != null && 
+								((GameObject)x).GetComponent<MeshFilter>() != null && 
+								((GameObject)x).GetComponent<MeshFilter>().sharedMesh != null
+								).ToArray();
 
-							pb_Menu_Commands.ProBuilderize(broken, true);
+							broken = broken.Distinct().ToArray();
+							pb_Menu_Commands.ProBuilderize(System.Array.ConvertAll(broken, x => (GameObject)x).ToArray(), true);
 						}
 						
 						// Always delete components

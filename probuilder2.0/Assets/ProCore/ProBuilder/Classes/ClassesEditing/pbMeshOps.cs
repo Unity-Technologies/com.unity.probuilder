@@ -827,7 +827,15 @@ namespace ProBuilder2.MeshOperations
 	*/
 	public static pb_Object AddPbObjectToObject(GameObject go, bool preserveFaces)
 	{
-		Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
+		MeshFilter mf = go.GetComponent<MeshFilter>();
+
+		if(mf == null == mf.sharedMesh == null)
+		{
+			Debug.Log(go.name + " does not have a mesh or Mesh Filter component.");
+			return (pb_Object)null;
+		}
+
+		Mesh m = mf.sharedMesh;
 
 		pb_Object pb = go.GetComponent<pb_Object>();
 
