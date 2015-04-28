@@ -1,11 +1,16 @@
--- ProBuilder 2.4.4b1 (r3340)
+-- ProBuilder 2.4.4b1 (r3350)
+
+# Features
+	- Add Icosphere shape.
 
 # Bug Fixes
 	- Copy userCollisions field when serializing pb_Object.
+	- Fix regression in Unity 5 that causes prefabs to lose instance modifications on save and entering playmode.
 	- Fix bug where exiting to Top or Plugin level would not clear the selection mesh.
 	- When mirroring objects, make the mirrored results the new selection.
 	- Don't center pivot after detaching faces to new object.
 	- Fix bug where setting entity type then undoing wouldn't catch changes to collider.
+	- Fix bug where duplicating multiple objects would leave pb_Object references pointing to same object.
 	- Improve performance when editing large numbers of vertices.
 	- When probuilder-izing objects, perform the action in-place (and add undo support).
 

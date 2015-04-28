@@ -2942,7 +2942,6 @@ public class pb_Editor : EditorWindow
 		vertex = (bool)result ? (Vector3)parameters[2] : Vector3.zero;
 		return (bool)result;
 	}
-
 #endregion
 
 #region Selection Management and checks

@@ -47,10 +47,12 @@
 			{
 				v2f o;
 
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				// o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
+				o.pos.xyz *= .99;
+				o.pos = mul(UNITY_MATRIX_P, o.pos);
 
 				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
-
 				float4 clip = o.pos;
 
 				clip.xy /= clip.w;
@@ -58,17 +60,15 @@
 				clip.xy *= _ScreenParams.xy;
 
 				clip.xy += v.texcoord1.xy * _Scale;
-				clip.z -= (.0008 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
+				clip.z -= (.0001 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
 
 				clip.xy /= _ScreenParams.xy;
 				clip.xy = (clip.xy - .5) / .5;
 				clip.xy *= clip.w;
 
 				o.pos = clip;
-
 				o.uv = v.texcoord.xy;
 				o.color = v.color;
-				o.color.a = 1;
 
 				return o;
 			}
