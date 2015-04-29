@@ -3,10 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using ProBuilder2.Math;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.Common
 {
 	/**
@@ -14,31 +10,17 @@ namespace ProBuilder2.Common
 	 */
 	public class pb_MeshUtility
 	{
-		#if PB_DEBUG
-		static pb_Profiler profiler = new Parabox.Debug.pb_Profiler();
-		#endif
-
 		/**
 		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
 		 * pb_Object vertices.
 		 */
 		public static void CollapseSharedVertices(pb_Object pb)
 		{
-			#if PB_DEBUG
-			profiler.BeginSample("FindDuplicateVertices");
-			#endif
 			List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
+
 			Mesh m = pb.msh;
-			#if PB_DEBUG
-			profiler.BeginSample("MergeVertices");
-			#endif
+
 			pb_MeshUtility.MergeVertices(merge, ref m);		
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 		}
 
 		/**
@@ -46,10 +28,6 @@ namespace ProBuilder2.Common
 		 */
 		public static void MergeVertices(List<List<int>> InIndices, ref Mesh InMesh)
 		{
-			#if PB_DEBUG
-			profiler.BeginSample("First Pass - Point triangles to first index");
-			#endif
-
 			Dictionary<int, int> swapTable = new Dictionary<int, int>();
 
 			foreach(List<int> group in InIndices)
@@ -63,37 +41,15 @@ namespace ProBuilder2.Common
 			// Iterate triangles and point collapse-able verts to the first index
 			for(int submeshIndex = 0; submeshIndex < InMesh.subMeshCount; submeshIndex++)
 			{
-				#if PB_DEBUG
-				profiler.BeginSample("GetTriangles");
-				#endif
 				int[] tris = InMesh.GetTriangles(submeshIndex);
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
 
-				#if PB_DEBUG
-				profiler.BeginSample("Loop");
-				#endif
 				for(int i = 0; i < tris.Length; i++)
 				{
 					if( swapTable.ContainsKey(tris[i]) )
 						tris[i] = swapTable[tris[i]];
 				}
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
-
-				#if PB_DEBUG
-				profiler.BeginSample("SetTriangles");
-				#endif
 				InMesh.SetTriangles(tris, submeshIndex);
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
 			}
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			// populate list of unused vertices post-collapse
 			List<int> unused = InIndices.SelectMany( x => x.GetRange(1, x.Count - 1) ).ToList();
@@ -119,9 +75,6 @@ namespace ProBuilder2.Common
 
 			int unusedIndex = 0;
 
-			#if PB_DEBUG
-			profiler.BeginSample("Shift Triangles");
-			#endif
 			// shift triangles
 			for(int submeshIndex = 0; submeshIndex < InMesh.subMeshCount; submeshIndex++)
 			{
@@ -135,16 +88,9 @@ namespace ProBuilder2.Common
 
 				InMesh.SetTriangles(tris, submeshIndex);
 			}
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			unusedIndex = 0;
 			int newIndex = 0;
-
-			#if PB_DEBUG
-			profiler.BeginSample("Remove unused");
-			#endif
 
 			// rebuild vertex arrays without duplicate indices
 			for(int i = 0; i < vertexCount; i++)
@@ -163,9 +109,6 @@ namespace ProBuilder2.Common
 
 				newIndex++;
 			}
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 
 			InMesh.vertices = v_n;
 			InMesh.normals = n_n;
@@ -329,8 +272,6 @@ namespace ProBuilder2.Common
 				Vector3 n = normals[a];
 				Vector3 t = tan1[a];
 
-				//Vector3 tmp = (t - n * Vector3.Dot(n, t)).normalized;
-				//tangents[a] = new Vector4(tmp.x, tmp.y, tmp.z);
 				Vector3.OrthoNormalize(ref n, ref t);
 				tangents[a].x = t.x;
 				tangents[a].y = t.y;

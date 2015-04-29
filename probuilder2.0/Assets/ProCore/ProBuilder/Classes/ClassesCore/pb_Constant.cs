@@ -83,6 +83,7 @@ public static class pb_Constant
 	public const string pbShowSceneInfo 				= "pbShowSceneInfo";
 	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
 	public const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
+	public const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

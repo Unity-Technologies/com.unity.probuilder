@@ -369,7 +369,8 @@ public class pb_Menu_Commands : Editor
 				
 				extrudedFaceCount += pb.SelectedFaces.Length;
 
-				pb.Extrude(pb.SelectedFaces, pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance));
+				pb_Face[] result;
+				pb.Extrude(pb.SelectedFaces, pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance), pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out result);
 				
 				pb.SetSelectedFaces(pb.SelectedFaces);
 			}

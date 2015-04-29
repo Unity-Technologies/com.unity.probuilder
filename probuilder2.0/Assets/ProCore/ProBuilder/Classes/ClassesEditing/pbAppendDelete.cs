@@ -94,6 +94,7 @@ public static class pbAppendDelete
 
 			new_Faces[i].ShiftIndicesToZero();
 			new_Faces[i].ShiftIndices(vc);
+			new_Faces[i].RebuildCaches();
 			_faces.Add(new_Faces[i]);
 
 			if(new_SharedIndices != null && new_Vertices[i].Length != new_SharedIndices[i].Length)
