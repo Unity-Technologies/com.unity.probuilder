@@ -101,9 +101,6 @@ namespace ProBuilder2.MeshOperations
 			return false;
 		}
 
-		pb_Profiler profiler = new pb_Profiler();
-		profiler.BeginSample("Extrude Faces: " + (extrudeAsGroup ? "Group" : "Individual"));
-
 		pb_Face[][] edgeFaces = new pb_Face[perimeterEdges.Length][];	// can't assume faces and perimiter edges will be 1:1 - so calculate perimeters then extract face information
 		int[][] allEdgeIndices = new int[perimeterEdges.Length][];
 		int c = 0;
@@ -141,6 +138,7 @@ namespace ProBuilder2.MeshOperations
 		List<int[]> append_shared = new List<int[]>();
 
 		/// build out new faces around edges
+		
 		for(int i = 0; i < perimeterEdges.Length; i++)
 		{
 			extrudedIndices[i] = new List<pb_Edge>();
@@ -155,7 +153,7 @@ namespace ProBuilder2.MeshOperations
 				Vector3 ynorm = Vector3.zero;
 
 				// don't bother getting vertex normals if not auto-extruding
-				if(extrudeDistance > Mathf.Epsilon)
+				if( Mathf.Abs(extrudeDistance) > Mathf.Epsilon)
 				{
 					if( !extrudeAsGroup )
 					{
@@ -227,6 +225,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		pb_IntArray[] si = pb.sharedIndices;	// leave the sharedIndices copy alone since we need the un-altered version later
+		Dictionary<int, int> welds = si.ToDictionary();
 
 		// Weld side-wall top vertices together, both grouped and non-grouped need this.
 		for(int f = 0; f < extrudedIndices.Length; f++)
@@ -238,7 +237,7 @@ namespace ProBuilder2.MeshOperations
 				{
 					if(extrudedIndices[f][n].x == val)
 					{
-						pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[f][n].y, extrudedIndices[f][i].y);
+						welds[extrudedIndices[f][i].y] = welds[extrudedIndices[f][n].y];
 						break;
 					}
 				}
@@ -271,7 +270,7 @@ namespace ProBuilder2.MeshOperations
 						{
 							if(oldIndex == extrudedIndices[n][i].x)
 							{
-								pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[n][i].y, ind);
+								welds[ind] = welds[extrudedIndices[n][i].y];
 								break;
 							}
 						}
@@ -284,6 +283,8 @@ namespace ProBuilder2.MeshOperations
 		 * If extruding as separate faces, weld each face to the tops of the bridging faces
 		 */
 		{
+			// Dictionary<int, int> hold = si.ToDictionary();
+
 			for(int i = 0; i < edgeFaces.Length; i++)
 			{
 				foreach(int n in pb_Face.AllTrianglesDistinct(edgeFaces[i]))
@@ -296,10 +297,17 @@ namespace ProBuilder2.MeshOperations
 					
 					int match_tri_index = extrudedIndices[i][match].y;
 
-					pb_IntArrayUtility.MergeSharedIndices(ref si, match_tri_index, n);
+					if(welds.ContainsKey(match_tri_index))
+					{
+						welds[n] = welds[match_tri_index];
+					}
 				}
 			}
+
 		}
+		
+		si = welds.ToSharedIndices();
+
 
 		pb.SplitUVs(pb_Face.AllTriangles(faces));
 		
@@ -329,7 +337,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		// Test the winding of the first pulled face, and reverse if it's ccw
-		if( pb.GetWindingOrder(faces[0]) == WindingOrder.CounterClockwise )
+		if(pb.GetWindingOrder(faces[0]) == WindingOrder.CounterClockwise)
 		{
 			foreach(pb_Face face in appendedFaces)
 				face.ReverseIndices();
@@ -338,7 +346,6 @@ namespace ProBuilder2.MeshOperations
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
 
-		profiler.EndSample();
 
 		return true;
 	}
