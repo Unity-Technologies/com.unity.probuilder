@@ -95,9 +95,9 @@ namespace ProBuilder2.MeshOperations
 
 		Vector3[] localVerts = pb.vertices;
 
-		pb_Edge[] perimeterEdges = extrudeAsGroup ? pbMeshUtils.GetPerimeterEdges(pb, lookup, faces).ToArray() : faces.SelectMany(x => x.edges).ToArray();
+		pb_Edge[][] perimeterEdges = extrudeAsGroup ? new pb_Edge[1][] { pbMeshUtils.GetPerimeterEdges(pb, lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
 
-		if(perimeterEdges == null || perimeterEdges.Length < 3)
+		if(perimeterEdges == null || perimeterEdges.Length < 1 || (extrudeAsGroup && perimeterEdges[0].Length < 3))
 		{
 			Debug.LogWarning("No perimeter edges found.  Try deselecting and reselecting this object and trying again.");
 			return false;
@@ -106,22 +106,34 @@ namespace ProBuilder2.MeshOperations
 		pb_Profiler profiler = new pb_Profiler();
 		profiler.BeginSample("Extrude Faces: " + (extrudeAsGroup ? "Group" : "Individual"));
 
-		pb_Face[] edgeFaces = new pb_Face[perimeterEdges.Length];	// can't assume faces and perimiter edges will be 1:1 - so calculate perimeters then extract face information
-		int[] allEdgeIndices = new int[perimeterEdges.Length * 2];
+		pb_Face[][] edgeFaces = new pb_Face[perimeterEdges.Length][];	// can't assume faces and perimiter edges will be 1:1 - so calculate perimeters then extract face information
+		int[][] allEdgeIndices = new int[perimeterEdges.Length][];
 		int c = 0;
+
 		for(int i = 0; i < perimeterEdges.Length; i++)
 		{
-			// gets the faces associated with each perimeter edge
-			edgeFaces[i] = faces[0];
-			foreach(pb_Face face in faces)
-				if(face.edges.Contains(perimeterEdges[i]))
-					edgeFaces[i] = face;
+			c = 0;
+			allEdgeIndices[i] = new int[perimeterEdges[i].Length * 2];
+			edgeFaces[i] = new pb_Face[perimeterEdges[i].Length];
 
-			allEdgeIndices[c++] = perimeterEdges[i].x;
-			allEdgeIndices[c++] = perimeterEdges[i].y;
+			for(int n = 0; n < perimeterEdges[i].Length; n++)
+			{
+				// gets the faces associated with each perimeter edge
+				foreach(pb_Face face in faces)
+				{
+					if(face.edges.Contains(perimeterEdges[i][n]))
+					{
+						edgeFaces[i][n] = face;
+						break;
+					}
+				}
+
+				allEdgeIndices[i][c++] = perimeterEdges[i][n].x;
+				allEdgeIndices[i][c++] = perimeterEdges[i][n].y;
+			}
 		}
 
-		List<pb_Edge> extrudedIndices = new List<pb_Edge>();
+		List<pb_Edge>[] extrudedIndices = new List<pb_Edge>[perimeterEdges.Length];
 		Vector3[] normals = pb.msh.normals;
 
 		List<Vector3[]> append_vertices = new List<Vector3[]>();
@@ -133,127 +145,178 @@ namespace ProBuilder2.MeshOperations
 		/// build out new faces around edges
 		for(int i = 0; i < perimeterEdges.Length; i++)
 		{
-			pb_Edge edge = perimeterEdges[i];
-			pb_Face face = edgeFaces[i];
+			extrudedIndices[i] = new List<pb_Edge>();
 
-			// Averages the normals using only vertices that are on the edge
-			Vector3 xnorm = Vector3.zero;
-			Vector3 ynorm = Vector3.zero;
-
-			// don't bother getting vertex normals if not auto-extruding
-			if(extrudeDistance > Mathf.Epsilon)
+			for(int n = 0; n < perimeterEdges[i].Length; n++)
 			{
-				if( !extrudeAsGroup )
+				pb_Edge edge = perimeterEdges[i][n];
+				pb_Face face = edgeFaces[i][n];
+
+				// Averages the normals using only vertices that are on the edge
+				Vector3 xnorm = Vector3.zero;
+				Vector3 ynorm = Vector3.zero;
+
+				// don't bother getting vertex normals if not auto-extruding
+				if(extrudeDistance > Mathf.Epsilon)
 				{
-					xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
-					ynorm = xnorm;					
+					if( !extrudeAsGroup )
+					{
+						xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
+						ynorm = xnorm;					
+					}
+					else
+					{
+						xnorm = Norm(sharedIndices[lookup[edge.x]], allEdgeIndices[i], normals );
+						ynorm = Norm(sharedIndices[lookup[edge.y]], allEdgeIndices[i], normals );
+					}
 				}
-				else
-				{
-					xnorm = Norm(sharedIndices[lookup[edge.x]], allEdgeIndices, normals );
-					ynorm = Norm(sharedIndices[lookup[edge.y]], allEdgeIndices, normals );
-				}
+
+				int x_sharedIndex = lookup[edge.x];
+				int y_sharedIndex = lookup[edge.y];
+
+				// this could be condensed to a single call with an array of new faces
+				append_vertices.Add( new Vector3[]
+					{
+						localVerts [ edge.x ],
+						localVerts [ edge.y ],
+						localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
+						localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
+					});
+
+				append_color.Add( new Color[]
+					{	
+						pb.colors[ edge.x ],
+						pb.colors[ edge.y ],
+						pb.colors[ edge.x ],
+						pb.colors[ edge.y ]
+					});
+
+				append_uv.Add( new Vector2[4] );
+
+				append_face.Add( new pb_Face( 
+						new int[6] {0, 1, 2, 1, 3, 2},			// indices
+						face.material,							// material
+						new pb_UV(face.uv),						// UV material
+						face.smoothingGroup,					// smoothing group
+						-1,										// texture group
+						-1,										// uv element group
+						false)									// manualUV flag
+						);
+
+				append_shared.Add( new int[4]
+					{
+						x_sharedIndex,
+						y_sharedIndex,
+						-1,
+						-1 
+					});
+
+				extrudedIndices[i].Add(new pb_Edge(x_sharedIndex, -1));
+				extrudedIndices[i].Add(new pb_Edge(y_sharedIndex, -1));
 			}
-
-			int x_sharedIndex = lookup[edge.x];
-			int y_sharedIndex = lookup[edge.y];
-
-			// this could be condensed to a single call with an array of new faces
-			append_vertices.Add( new Vector3[]
-				{
-					localVerts [ edge.x ],
-					localVerts [ edge.y ],
-					localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
-					localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
-				});
-
-			append_color.Add( new Color[]
-				{	
-					pb.colors[ edge.x ],
-					pb.colors[ edge.y ],
-					pb.colors[ edge.x ],
-					pb.colors[ edge.y ]
-				});
-
-			append_uv.Add( new Vector2[4] );
-
-			append_face.Add( new pb_Face( 
-					new int[6] {0, 1, 2, 1, 3, 2},			// indices
-					face.material,							// material
-					new pb_UV(face.uv),						// UV material
-					face.smoothingGroup,					// smoothing group
-					-1,										// texture group
-					-1,										// uv element group
-					false)									// manualUV flag
-					);
-
-			append_shared.Add( new int[4]
-				{
-					x_sharedIndex,
-					y_sharedIndex,
-					-1,
-					-1 
-				});
-
-			extrudedIndices.Add(new pb_Edge(x_sharedIndex, -1));
-			extrudedIndices.Add(new pb_Edge(y_sharedIndex, -1));
 		}
 
 		appendedFaces = pb.AppendFaces( append_vertices.ToArray(), append_color.ToArray(), append_uv.ToArray(), append_face.ToArray(), append_shared.ToArray() );
 
-		for(int i = 0, n = 0; i < appendedFaces.Length; i++)
+		// x = shared index, y = triangle (only known once faces are appended to pb_Object)
+		for(int i = 0, f = 0; i < extrudedIndices.Length; i++)
 		{
-			extrudedIndices[n++].y = appendedFaces[i].indices[2];
-			extrudedIndices[n++].y = appendedFaces[i].indices[4];
+			for(int n = 0; n < extrudedIndices[i].Count; n+=2)
+			{
+				extrudedIndices[i][n+0].y = appendedFaces[f].indices[2];
+				extrudedIndices[i][n+1].y = appendedFaces[f++].indices[4];
+			}
 		}
 
-		// merge extruded vertex indices with each other
 		pb_IntArray[] si = pb.sharedIndices;	// leave the sharedIndices copy alone since we need the un-altered version later
-		for(int i = 0; i < extrudedIndices.Count-1; i++)
+
+		// Weld side-wall top vertices together, both grouped and non-grouped need this.
+		for(int f = 0; f < extrudedIndices.Length; f++)
 		{
-			int val = extrudedIndices[i].x;
-			for(int n = i+1; n < extrudedIndices.Count; n++)
+			for(int i = 0; i < extrudedIndices[f].Count-1; i++)
 			{
-				if(extrudedIndices[n].x == val)
+				int val = extrudedIndices[f][i].x;
+				for(int n = i+1; n < extrudedIndices[f].Count; n++)
 				{
-					pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[n].y, extrudedIndices[i].y);
-					break;
-				}
-			}
-		}
-
-		// Move extruded faces to top
-		localVerts = pb.vertices;
-		Dictionary<int, int> remappedTexGroups = new Dictionary<int, int>();
-		foreach(pb_Face f in faces)
-		{
-			// Remap texture groups
-			if(f.textureGroup > 0)
-			{
-				if(remappedTexGroups.ContainsKey(f.textureGroup))
-				{
-					f.textureGroup = remappedTexGroups[f.textureGroup];
-				}
-				else
-				{
-					int newTexGroup = pb.UnusedTextureGroup();
-					remappedTexGroups.Add(f.textureGroup, newTexGroup);
-					f.textureGroup = newTexGroup;
-				}
-			}
-
-			int[] distinctIndices = f.distinctIndices;
-
-			foreach(int ind in distinctIndices)
-			{
-				int oldIndex = si.IndexOf(ind);
-				for(int i = 0; i < extrudedIndices.Count; i++)
-				{
-					if(oldIndex == extrudedIndices[i].x)
+					if(extrudedIndices[f][n].x == val)
 					{
-						pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[i].y, ind);
+						pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[f][n].y, extrudedIndices[f][i].y);
 						break;
 					}
+				}
+			}
+		}
+
+		localVerts = pb.vertices;
+
+		// Weld in-group faces at the seams
+		// Dictionary<int, int> remappedTexGroups = new Dictionary<int, int>();
+		// Remap texture groups
+		// if(f.textureGroup > 0)
+		// {
+		// 	if(remappedTexGroups.ContainsKey(f.textureGroup))
+		// 	{
+		// 		f.textureGroup = remappedTexGroups[f.textureGroup];
+		// 	}
+		// 	else
+		// 	{
+		// 		int newTexGroup = pb.UnusedTextureGroup();
+		// 		remappedTexGroups.Add(f.textureGroup, newTexGroup);
+		// 		f.textureGroup = newTexGroup;
+		// 	}
+		// }
+
+		// Remove smoothing and texture group flags
+		foreach(pb_Face f in faces)
+		{
+			f.SetSmoothingGroup(-1);
+			f.textureGroup = -1;
+		}
+
+
+		if(extrudeAsGroup)
+		{
+			foreach(pb_Face f in faces)
+			{
+				int[] distinctIndices = f.distinctIndices;
+
+				// Merge in-group face seams
+				foreach(int ind in distinctIndices)
+				{
+					int oldIndex = si.IndexOf(ind);
+
+					for(int n = 0; n < allEdgeIndices.Length; n++)
+					{
+						for(int i = 0; i < extrudedIndices[n].Count; i++)
+						{
+							if(oldIndex == extrudedIndices[n][i].x)
+							{
+								pb_IntArrayUtility.MergeSharedIndices(ref si, extrudedIndices[n][i].y, ind);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		else
+		/**
+		 * If extruding as separate faces, weld each face to the tops of the bridging faces
+		 */
+		{
+			for(int i = 0; i < edgeFaces.Length; i++)
+			{
+				foreach(int n in pb_Face.AllTrianglesDistinct(edgeFaces[i]))
+				{
+					int old_si_index = lookup[n];
+					int match = extrudedIndices[i].FindIndex(x => x.x == old_si_index);
+
+					if(match < 0)
+						continue;
+					
+					int match_tri_index = extrudedIndices[i][match].y;
+
+					pb_IntArrayUtility.MergeSharedIndices(ref si, match_tri_index, n);
 				}
 			}
 		}
@@ -268,6 +331,7 @@ namespace ProBuilder2.MeshOperations
 		 *
 		 */
 		Vector3 norm = Vector3.zero;
+		int[] allIndices = pb_Face.AllTrianglesDistinct(faces);
 		foreach(pb_Face f in faces)
 		{
 			if(!extrudeAsGroup)
@@ -278,7 +342,7 @@ namespace ProBuilder2.MeshOperations
 			foreach(int ind in f.distinctIndices)
 			{
 				if(extrudeAsGroup)
-					norm = Norm( sharedIndices[lookup[ind]], allEdgeIndices, normals );
+					norm = Norm( sharedIndices[lookup[ind]], allIndices, normals );
 
 				localVerts[ind] += norm.normalized * extrudeDistance;
 			}
@@ -315,7 +379,7 @@ namespace ProBuilder2.MeshOperations
 				count++;
 			}
 		}
-		return n / (float)count;
+		return (n / (float)count);
 	}
 
 	/**

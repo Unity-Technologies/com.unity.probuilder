@@ -148,7 +148,6 @@ public class pb_Face : ISerializable
 	public int smoothingGroup { get { return _smoothingGroup; } }
 	public pb_UV uv { get { return _uv; } }
 	public Material material { get { return _mat; } }
-	public Material mat { get { Debug.LogWarning("pb_Face->mat property is deprecated.  Please use pb_Face->material instead."); return _mat; } }	// TODO -- remove me
 	public int textureGroup = -1;
 
 	public void SetUV(pb_UV u)

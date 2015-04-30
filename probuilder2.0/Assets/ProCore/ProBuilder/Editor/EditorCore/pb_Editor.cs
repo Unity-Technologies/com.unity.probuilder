@@ -192,6 +192,8 @@ public class pb_Editor : EditorWindow
 
 		pb_Editor_Graphics.OnDisable();
 
+		pb_Editor_Gizmos.ClearLines();
+
 		// re-enable unity wireframe
 		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
 		{
@@ -3242,7 +3244,11 @@ public class pb_Editor : EditorWindow
 
 #region DEBUG
 
-	static readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
+	static readonly Color[] ElementColors = new Color[] { 
+		new Color(.1f, .9f, .1f, .8f),	// Green (normal)
+		new Color(.1f, .1f, .9f, .3f),	// Blue (bitangent)
+		new Color(.9f, .1f, .1f, .3f),	// Red (tangent)
+	};
 	float elementLength = 0f;
 
 	/**
