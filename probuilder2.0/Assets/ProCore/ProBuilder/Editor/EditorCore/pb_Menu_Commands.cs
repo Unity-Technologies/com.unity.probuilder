@@ -314,14 +314,21 @@ public class pb_Menu_Commands : Editor
 	public static void ExtrudeButtonGUI(int width)
 	{
 		float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+		bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
 		
 		EditorGUI.BeginChangeCheck();
 
+		EditorGUIUtility.labelWidth = width - 28;
+		extrudeAsGroup = EditorGUILayout.Toggle("As Group", extrudeAsGroup);
+
 		EditorGUIUtility.labelWidth = width - 68;
-		extrudeAmount = EditorGUILayout.FloatField("Dist", extrudeAmount);
+		extrudeAmount = EditorGUILayout.FloatField("Dist", extrudeAmount, GUILayout.MaxWidth(width-12));
 		
 		if(EditorGUI.EndChangeCheck())
+		{
 			EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+			EditorPrefs.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+		}
 	}
 
 	/**
@@ -352,7 +359,11 @@ public class pb_Menu_Commands : Editor
 					extrudedFaceCount += pb.SelectedEdges.Length;
 					pb_Edge[] newEdges;
 					
-					success = pb.Extrude(pb.SelectedEdges, pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance), pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion), out newEdges);
+					success = pb.Extrude(	pb.SelectedEdges,
+											pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
+											pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
+											pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+											out newEdges);
 	
 					if(success)
 						pb.SetSelectedEdges(newEdges);
@@ -370,7 +381,10 @@ public class pb_Menu_Commands : Editor
 				extrudedFaceCount += pb.SelectedFaces.Length;
 
 				pb_Face[] result;
-				pb.Extrude(pb.SelectedFaces, pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance), pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out result);
+				pb.Extrude(	pb.SelectedFaces,
+							pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
+							pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
+							out result);
 				
 				pb.SetSelectedFaces(pb.SelectedFaces);
 			}
@@ -576,7 +590,7 @@ public class pb_Menu_Commands : Editor
 		GUI.enabled = te ? angleGrow : te;
 
 		EditorGUIUtility.labelWidth = width - 68;
-		angleVal = EditorGUILayout.FloatField("Max", angleVal);
+		angleVal = EditorGUILayout.FloatField("Max", angleVal, GUILayout.MaxWidth(width-12));
 
 		EditorGUIUtility.labelWidth = width - 28;
 		bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);

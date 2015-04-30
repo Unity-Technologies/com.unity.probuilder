@@ -113,6 +113,9 @@ public class pb_Preferences_Internal
 			
 			case pb_Constant.pbGrowSelectionAngleIterative:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
+			
+			case pb_Constant.pbExtrudeAsGroup:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
 
 			// When in doubt, say yes!
 			default:

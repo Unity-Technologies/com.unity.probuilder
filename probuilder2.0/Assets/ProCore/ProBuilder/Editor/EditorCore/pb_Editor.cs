@@ -539,7 +539,7 @@ public class pb_Editor : EditorWindow
 						pb_Menu_Commands.MenuExtrude,
 						pb_Menu_Commands.ExtrudeButtonGUI,
 						Screen.width,
-						20,
+						36,
 						selection);
 
 					GUI.enabled = selectedFaceCount > 0;
@@ -1845,7 +1845,11 @@ public class pb_Editor : EditorWindow
 						goto default;
 
 					pb_Edge[] newEdges;
-					bool success = pb.Extrude(pb.SelectedEdges, 0f, pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion), out newEdges);
+					bool success = pb.Extrude(	pb.SelectedEdges,
+												0f,
+												pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
+												pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+												out newEdges);
 
 					if(success)
 					{
@@ -1859,7 +1863,8 @@ public class pb_Editor : EditorWindow
 
 					if(len > 0)
 					{
-						pb.Extrude(pb.SelectedFaces, 0f);
+						pb_Face[] append = null;
+						pb.Extrude(pb.SelectedFaces, 0f, pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out append);
 						pb.SetSelectedFaces(pb.SelectedFaces);
 
 						ef += len;

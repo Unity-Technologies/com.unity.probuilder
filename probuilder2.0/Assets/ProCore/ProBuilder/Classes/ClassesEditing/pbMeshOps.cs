@@ -83,8 +83,6 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance, bool extrudeAsGroup, out pb_Face[] appendedFaces)
 	{
-		// extrudeAsGroup = false;
-
 		appendedFaces = null;
 
 		if(faces == null || faces.Length < 1)
@@ -249,30 +247,12 @@ namespace ProBuilder2.MeshOperations
 
 		localVerts = pb.vertices;
 
-		// Weld in-group faces at the seams
-		// Dictionary<int, int> remappedTexGroups = new Dictionary<int, int>();
-		// Remap texture groups
-		// if(f.textureGroup > 0)
-		// {
-		// 	if(remappedTexGroups.ContainsKey(f.textureGroup))
-		// 	{
-		// 		f.textureGroup = remappedTexGroups[f.textureGroup];
-		// 	}
-		// 	else
-		// 	{
-		// 		int newTexGroup = pb.UnusedTextureGroup();
-		// 		remappedTexGroups.Add(f.textureGroup, newTexGroup);
-		// 		f.textureGroup = newTexGroup;
-		// 	}
-		// }
-
 		// Remove smoothing and texture group flags
 		foreach(pb_Face f in faces)
 		{
 			f.SetSmoothingGroup(-1);
 			f.textureGroup = -1;
 		}
-
 
 		if(extrudeAsGroup)
 		{
@@ -385,7 +365,7 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 *	Edge extrusion override
 	 */
-	public static bool Extrude(this pb_Object pb, pb_Edge[] edges, float extrudeDistance, bool enableManifoldExtrude, out pb_Edge[] extrudedEdges)
+	public static bool Extrude(this pb_Object pb, pb_Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out pb_Edge[] extrudedEdges)
 	{
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -399,7 +379,7 @@ namespace ProBuilder2.MeshOperations
 			pb_Face fa = null;
 			foreach(pb_Face f in pb.faces)
 			{
-				if(f.edges.IndexOf(e, sharedIndices) > -1)
+				if(f.edges.IndexOf(e, lookup) > -1)
 				{
 					fa = f;
 					if(++faceCount > 1)
@@ -425,7 +405,7 @@ namespace ProBuilder2.MeshOperations
 		Vector3[] oNormals = pb.msh.normals;
 
 		int[] allEdgeIndices = new int[validEdges.Count * 2];
-		int c = 0;	// har har har
+		int c = 0;
 		for(int i = 0; i < validEdges.Count; i++)
 		{
 			allEdgeIndices[c++] = validEdges[i].x;
@@ -443,8 +423,8 @@ namespace ProBuilder2.MeshOperations
 			pb_Face face = edgeFaces[i];
 
 			// Averages the normals using only vertices that are on the edge
-			Vector3 xnorm = Norm( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals );
-			Vector3 ynorm = Norm( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals );
+			Vector3 xnorm = extrudeAsGroup ? Norm( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
+			Vector3 ynorm = extrudeAsGroup ? Norm( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
 
 			int x_sharedIndex = lookup[edge.x];
 			int y_sharedIndex = lookup[edge.y];
@@ -477,18 +457,21 @@ namespace ProBuilder2.MeshOperations
 		sharedIndices = pb.sharedIndices;
 
 		// merge extruded vertex indices with each other
-		for(int i = 0; i < extrudedIndices.Count; i++)
+		if(extrudeAsGroup)
 		{
-			int val = extrudedIndices[i].x;
-			for(int n = 0; n < extrudedIndices.Count; n++)
+			for(int i = 0; i < extrudedIndices.Count; i++)
 			{
-				if(n == i)
-					continue;
-
-				if(extrudedIndices[n].x == val)
+				int val = extrudedIndices[i].x;
+				for(int n = 0; n < extrudedIndices.Count; n++)
 				{
-					pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
-					break;
+					if(n == i)
+						continue;
+
+					if(extrudedIndices[n].x == val)
+					{
+						pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
+						break;
+					}
 				}
 			}
 		}

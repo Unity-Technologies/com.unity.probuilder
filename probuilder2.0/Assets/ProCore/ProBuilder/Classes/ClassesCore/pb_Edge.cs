@@ -103,6 +103,12 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 			return false;
 	}
 
+	public bool Equals(pb_Edge b, Dictionary<int, int> lookup)
+	{
+		int x0 = lookup[x], y0 = lookup[y], x1 = lookup[b.x], y1 = lookup[b.y];
+		return (x0 == x1 && y0 == y1) || (x0 == y1 && y0 == x1);
+	}
+
 	public bool Contains(int a)
 	{
 		return (x == a || y == a);
@@ -385,7 +391,7 @@ public static class EdgeExtensions
 	/**
 	 * Slow IndexOf - takes sharedIndices into account when searching the List.
 	 */
-	public static int IndexOf(this List<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
+	public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
 	{
 		for(int i = 0; i < edges.Count; i++)
 		{
@@ -396,15 +402,15 @@ public static class EdgeExtensions
 		return -1;	
 	}
 
-	public static int IndexOf(this pb_Edge[] edges, pb_Edge edge, pb_IntArray[] sharedIndices)
+	public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, Dictionary<int, int> lookup)
 	{
-		for(int i = 0; i < edges.Length; i++)
+		for(int i = 0; i < edges.Count; i++)
 		{
-			if(edges[i].Equals(edge, sharedIndices))
+			if(edges[i].Equals(edge, lookup))
 				return i;
 		}
 
-		return -1;
+		return -1;	
 	}
 
 	public static List<int> ToIntList(this List<pb_Edge> edges)
