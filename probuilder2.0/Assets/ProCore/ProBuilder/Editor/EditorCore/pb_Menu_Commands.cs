@@ -98,10 +98,10 @@ public class pb_Menu_Commands : Editor
 
 			EntityType entityType = EntityType.Detail;
 
-			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x.name.Contains("Collider")))
+			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Collider")))
 				entityType = EntityType.Collider;
 			else
-			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x.name.Contains("Trigger")))
+			if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Trigger")))
 				entityType = EntityType.Trigger;
 
 			// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
