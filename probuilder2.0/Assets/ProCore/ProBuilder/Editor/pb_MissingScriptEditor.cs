@@ -20,7 +20,7 @@ namespace ProBuilder2.EditorCommon
 	#region Members
 
 		static bool applyDummyScript = true;	///< If true, any null components that can't be set will have this script applied to their reference, allowing us to later remove them.
-		static int index = 0;					///< general idea of where we are in terms of processing this scene.
+		static float index = 0;					///< general idea of where we are in terms of processing this scene.
 		static float total;						///< general idea of how many missing script references are in this scene.
 
 		static bool doFix = false;				///< while true, the inspector will attempt to cycle to broken gameobjects until none are found.
@@ -114,37 +114,46 @@ namespace ProBuilder2.EditorCommon
 		 */
 		static void Next()
 		{
-			EditorUtility.DisplayProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) );
+			bool earlyExit = false;
 
-			// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
-			foreach(GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)))
+			if( EditorUtility.DisplayCancelableProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) ) )
 			{
-				if(go.GetComponents<Component>().Any(x => x == null) && !unfixable.Contains(go))
-				{
-					if(	(PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance ||
-						 PrefabUtility.GetPrefabType(go) == PrefabType.Prefab ) )
-					{
-						GameObject pref = (GameObject)PrefabUtility.GetPrefabParent(go);
+				earlyExit = true;
+				doFix = false;
+			}
 
-						if(pref && (pref.GetComponent<pb_Object>() || pref.GetComponent<pb_Entity>()))
+			if(!earlyExit)
+			{
+				// Cycle through FindObjectsOfType on every Next() because using a static list didn't work for some reason.
+				foreach(GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)))
+				{
+					if(go.GetComponents<Component>().Any(x => x == null) && !unfixable.Contains(go))
+					{
+						if(	(PrefabUtility.GetPrefabType(go) == PrefabType.PrefabInstance ||
+							 PrefabUtility.GetPrefabType(go) == PrefabType.Prefab ) )
+						{
+							GameObject pref = (GameObject)PrefabUtility.GetPrefabParent(go);
+
+							if(pref && (pref.GetComponent<pb_Object>() || pref.GetComponent<pb_Entity>()))
+							{
+								unfixable.Add(go);
+								continue;
+							}
+						}
+
+						if(go.hideFlags != HideFlags.None)
 						{
 							unfixable.Add(go);
 							continue;
 						}
+
+						Selection.activeObject = go;
+
+						return;
 					}
-
-					if(go.hideFlags != HideFlags.None)
-					{
-						unfixable.Add(go);
-						continue;
-					}
-
-					Selection.activeObject = go;
-
-					return;
 				}
 			}
-
+			
 			pb_Object[] pbs = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
 		
 			for(int i = 0; i < pbs.Length; i++)
@@ -252,6 +261,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if( applyDummyScript )
 					{
+						index += .5f;
 						scriptProperty.objectReferenceValue = dummy_monoscript;
 						scriptProperty.serializedObject.ApplyModifiedProperties();
 						scriptProperty = this.serializedObject.FindProperty("m_Script");

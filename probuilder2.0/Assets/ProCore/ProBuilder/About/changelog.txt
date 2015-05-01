@@ -1,3 +1,8 @@
+-- ProBuilder 2.4.4b2 (r3364)
+
+-- Bug Fixes
+	- Catch errors when repairing missing script references on objects with null materials.
+
 -- ProBuilder 2.4.4b1 (r3350)
 
 # Features
