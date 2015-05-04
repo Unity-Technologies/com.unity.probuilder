@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Default_Prototype
+  m_Name: Ico
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -33,34 +33,6 @@ Material:
           name: _DetailNormalMap
         second:
           m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _FirstTex
-        second:
-          m_Texture: {fileID: 2800000, guid: eb18006e3122d7e4a84e8ef8b708df02, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SecondTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 20fa208453803ab41b65dfe6fe92c848, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ThirdTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 478de9d1d3cbac64bad0d9feaad9e272, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _FourthTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 6b2e75e162ed72c428ddc9ca9cac6452, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -105,28 +77,10 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _Occlusion
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SpecGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _Cutoff
-        second: .270000011
-      data:
-        first:
-          name: _AlphaTestRef
         second: .5
       data:
         first:
@@ -147,7 +101,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: .479999989
+        second: .433999985
       data:
         first:
           name: _BumpScale
@@ -163,7 +117,7 @@ Material:
       data:
         first:
           name: _UVSec
-        second: 1
+        second: 0
       data:
         first:
           name: _EmissionScaleUI
@@ -175,31 +129,7 @@ Material:
       data:
         first:
           name: _Metallic
-        second: .564999998
-      data:
-        first:
-          name: _Lightmapping
-        second: 1
-      data:
-        first:
-          name: _Size
-        second: 25
-      data:
-        first:
-          name: _Angle
-        second: .464285731
-      data:
-        first:
-          name: _Amplitude
-        second: .339285731
-      data:
-        first:
-          name: _Wavelength
-        second: .178571418
-      data:
-        first:
-          name: _Phase
-        second: 1
+        second: .239999995
     m_Colors:
       data:
         first:
@@ -213,23 +143,3 @@ Material:
         first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _EmissionColorWithMapUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Color1
-        second: {r: .679104447, g: .679104447, b: .679104447, a: 1}
-      data:
-        first:
-          name: _Color2
-        second: {r: .141791046, g: .141791046, b: .141791046, a: 1}
-      data:
-        first:
-          name: _SpecularColor
-        second: {r: .200000003, g: .200000003, b: .200000003, a: 1}
-      data:
-        first:
-          name: _Indicator
-        second: {r: 1, g: 0, b: 0, a: 1}

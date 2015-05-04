@@ -116,7 +116,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			bool earlyExit = false;
 
-			if( EditorUtility.DisplayCancelableProgressBar("Repair ProBuilder Script References", "Fixing " + (index+1) + " out of " + total + " objects in scene.", ((float)index/total) ) )
+			if( EditorUtility.DisplayCancelableProgressBar("Repair ProBuilder Script References", "Fixing " + (int)(index+1) + " out of " + total + " objects in scene.", ((float)index/total) ) )
 			{
 				earlyExit = true;
 				doFix = false;
