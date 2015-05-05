@@ -620,41 +620,6 @@ namespace ProBuilder2.Common
 	}
 #endregion
 
-#region LINQ REPLACEMENT
-
-	public static T[] ToDistinctArray<T>(this T[] arr)
-	{
-		List<T> distinctList = new List<T>();
-		for(int i = 0; i < arr.Length; i++)
-		{
-			if(!distinctList.Contains(arr[i]))
-				distinctList.Add(arr[i]);
-		}
-		return distinctList.ToArray() as T[];
-	}
-
-	public static List<T> ToDistinctArray<T>(this List<T> arr)
-	{
-		List<T> distinctList = new List<T>();
-		for(int i = 0; i < arr.Count; i++)
-		{
-			if(!distinctList.Contains(arr[i]))
-				distinctList.Add(arr[i]);
-		}
-		return distinctList as List<T>;
-	}
-
-	public static bool Contains<T>(this T[] arr, T val)
-	{
-		for(int i = 0; i < arr.Length; i++)
-		{
-			if(arr[i].Equals(val))
-				return true;
-		}
-		return false;
-	}
-#endregion
-
 #region OVERRIDE
 
 	/**

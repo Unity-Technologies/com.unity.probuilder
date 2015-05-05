@@ -57,7 +57,11 @@ public class pb_ExportPackage : Editor
 	private static void Export(string SourceDirectory, string OutDirectory, string OutName, string suffix)
 	{	
 		// Read version number and revision number from changelog.txt
+		#if UNITY_5_1
+		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
+		#else
 		TextAsset changelog = (TextAsset)Resources.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
+		#endif
 
 		Regex reg = new Regex(@"([0-9].[0-9].[0-9][a-z][0-9]*)", RegexOptions.None);
 		Match first = reg.Match(changelog.text);

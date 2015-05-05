@@ -202,7 +202,8 @@ public class pb_Preferences_Internal
 				{
 					if(EditorPrefs.GetString(pref) == "Default-Diffuse") 
 						return pb_Preferences_Internal.DefaultDiffuse;
-					mat = (Material) Resources.LoadAssetAtPath(EditorPrefs.GetString(pref), typeof(Material));
+
+					mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(pref), typeof(Material));
 				}
 				break;
 

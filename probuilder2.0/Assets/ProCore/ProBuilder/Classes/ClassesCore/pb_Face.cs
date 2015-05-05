@@ -8,6 +8,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace ProBuilder2.Common {
 
@@ -219,7 +220,7 @@ public class pb_Face : ISerializable
 	public void SetIndices(int[] i)
 	{
 		_indices = i;
-		_distinctIndices = i.ToDistinctArray();
+		_distinctIndices = i.Distinct().ToArray();
 	}
 
 	/**
@@ -294,7 +295,7 @@ public class pb_Face : ISerializable
 
 	private int[] CacheDistinctIndices()
 	{
-		_distinctIndices = _indices.ToDistinctArray();
+		_distinctIndices = _indices.Distinct().ToArray();
 		return _distinctIndices;
 	}
 #endregion

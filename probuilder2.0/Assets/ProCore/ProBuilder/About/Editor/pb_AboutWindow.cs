@@ -123,7 +123,8 @@ public class pb_AboutWindow : EditorWindow
 		public AdvertisementThumb(string imagePath, string url, string about)
 		{
 			guiContent = new GUIContent("", about);
-			this.image = (Texture2D) Resources.LoadAssetAtPath(imagePath, typeof(Texture2D));
+			this.image = LoadAssetAtPath<Texture2D>(imagePath);
+
 			guiContent.image = this.image;
 			this.url = url;
 			this.about = about;
@@ -137,17 +138,6 @@ public class pb_AboutWindow : EditorWindow
 #endregion
 
 #region Init
-
-	// [MenuItem("Tools/Test Search About Window", false, 0)]
-	// public static void MenuInit()
-	// {
-	// 	// this could be slow in large projects?
-	// 	string[] allFiles = System.IO.Directory.GetFiles("Assets/", "*.*", System.IO.SearchOption.AllDirectories);
-	// 	string[] entries = System.Array.FindAll(allFiles, name => name.Contains("pc_AboutEntry"));
-		
-	// 	if(entries.Length > 0)
-	// 		AboutWindow.Init(entries[0], true);
-	// }
 
 	/**
 	 * Return true if Init took place, false if not.
@@ -184,23 +174,28 @@ public class pb_AboutWindow : EditorWindow
 
 	public void OnEnable()
 	{
-		banner = (Texture2D)Resources.LoadAssetAtPath(BannerPath, typeof(Texture2D));
+		banner = LoadAssetAtPath<Texture2D>(BannerPath);
 
 		// With Unity 4 (on PC) if you have different values for minSize and maxSize,
 		// they do not apply restrictions to window size.
-		#if !UNITY_5
+#if !UNITY_5
 		this.minSize = new Vector2(banner.width + 12, banner.height * 7);
 		this.maxSize = new Vector2(banner.width + 12, banner.height * 7);
-		#else
+#else
 		this.minSize = new Vector2(banner.width + 12, banner.height * 6);
 		this.maxSize = new Vector2(banner.width + 12, 1440);
-		#endif
+#endif
 	}
 
 	public void SetAboutEntryPath(string path)
 	{
 		AboutEntryPath = path;
 		PopulateDataFields(AboutEntryPath);
+	}
+
+	static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
+	{
+		return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
 	}
 #endregion
 
@@ -359,7 +354,7 @@ public class pb_AboutWindow : EditorWindow
 	void PopulateDataFields(string entryPath)
 	{
 		/* Get data from VersionInfo.txt */
-		TextAsset versionInfo = (TextAsset)Resources.LoadAssetAtPath( entryPath, typeof(TextAsset));
+		TextAsset versionInfo = LoadAssetAtPath<TextAsset>( entryPath );
 		
 		ProductName = "";
 		// ProductIdentifer = "";
@@ -389,7 +384,7 @@ public class pb_AboutWindow : EditorWindow
 		// notes = notes.Trim();
 
 		/* Get first entry in changelog.txt */
-		TextAsset changelogText = (TextAsset)Resources.LoadAssetAtPath( ChangelogPath, typeof(TextAsset));
+		TextAsset changelogText = LoadAssetAtPath<TextAsset>( ChangelogPath );
 
 		if(changelogText)
 		{
@@ -405,7 +400,8 @@ public class pb_AboutWindow : EditorWindow
 
 	private static bool GetField(string path, string field, out string value)
 	{
-		TextAsset entry = (TextAsset)Resources.LoadAssetAtPath(path, typeof(TextAsset));
+		TextAsset entry = LoadAssetAtPath<TextAsset>(path);
+
 		value = "";
 
 		if(!entry) return false;

@@ -171,7 +171,11 @@ public class AutomatedExport : MonoBehaviour
 
 		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
 
+		#if UNITY_5_1
+		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(changelog_path, typeof(TextAsset));
+		#else
 		TextAsset changelog = (TextAsset)Resources.LoadAssetAtPath(changelog_path, typeof(TextAsset));
+		#endif
 
 		Regex reg = new Regex(@"([0-9].[0-9].[0-9][a-z][0-9]*)", RegexOptions.None);
 		Match first = reg.Match(changelog.text);
