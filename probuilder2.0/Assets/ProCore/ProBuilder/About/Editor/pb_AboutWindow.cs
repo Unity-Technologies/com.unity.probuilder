@@ -31,12 +31,6 @@ public class pb_AboutWindowSetup : AssetPostprocessor
 			if( pb_AboutWindow.Init(str, false) )
 				break;
 	}
-
-	// [MenuItem("Edit/Preferences/Clear About Version: " + AboutWindow.PRODUCT_IDENTIFIER)]
-	// public static void MenuClearVersionPref()
-	// {
-	// 	EditorPrefs.DeleteKey(AboutWindow.PRODUCT_IDENTIFIER);
-	// }
 #endregion
 }
 
@@ -49,7 +43,7 @@ public class pb_AboutWindow : EditorWindow
 #region User Settings
 
 	 /* Path to the root folder */
-	const string ABOUT_ROOT = "Assets/ProCore/Shared/About";
+	const string ABOUT_ROOT = "Assets/ProCore/ProBuilder/About";
 	
 	/**
 	 * Changelog.txt file should follow this format:

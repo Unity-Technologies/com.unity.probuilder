@@ -1,7 +1,13 @@
 -- ProBuilder 2.4.4b2 (r3364)
 
+-- Features
+	- Unity 5.1 beta compatibility.
+	- New API example shows a deformed icosphere with FFT spectrum.
+
 -- Bug Fixes
 	- Catch errors when repairing missing script references on objects with null materials.
+	- Fix bug that caused normal / tangent gizmos to go haywire when translating faces.
+	- Repair Missing Script references is now cancelable.
 
 -- ProBuilder 2.4.4b1 (r3350)
 
