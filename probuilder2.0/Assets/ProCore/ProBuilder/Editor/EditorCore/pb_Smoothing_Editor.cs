@@ -35,7 +35,7 @@ public class pb_Smoothing_Editor : EditorWindow
 		if(pb_Editor.instance)
 		{
 			pb_Editor.instance.drawNormals = val;
-			pb_Editor.instance.DrawNormals(val);
+			pb_Editor.instance.UpdateSelection(false);
 		}
 
 		SceneView.RepaintAll();

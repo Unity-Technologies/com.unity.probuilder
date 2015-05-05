@@ -1573,7 +1573,6 @@ public class pb_Editor : EditorWindow
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
-
 			}
 
 			Internal_UpdateSelectionFast();
@@ -2723,6 +2722,7 @@ public class pb_Editor : EditorWindow
 		UpdateGraphics();
 		UpdateHandleRotation();
 		currentHandleRotation = handleRotation;
+
 		DrawNormals(drawNormals);
 
 		if(OnSelectionUpdate != null)
@@ -3243,6 +3243,7 @@ public class pb_Editor : EditorWindow
 			movingVertices = false;
 		}
 
+		DrawNormals(drawNormals);
 		scaling = false;
 	}
 #endregion
@@ -3259,9 +3260,9 @@ public class pb_Editor : EditorWindow
 	/**
 	 * Draw vertex normals, tangents, and bitangents.
 	 */
-	public void DrawNormals(float dist)
+	void DrawNormals(float dist)
 	{
-		if(dist <= Mathf.Epsilon)
+		if(dist <= Mathf.Epsilon || movingVertices)
 		{
 			if(elementLength > 0f)
 			{
