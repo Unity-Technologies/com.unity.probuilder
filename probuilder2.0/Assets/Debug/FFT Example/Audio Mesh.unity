@@ -242,13 +242,13 @@ MonoBehaviour:
   extrusion: 30
   fftBounds: 96
   verticalBounce: 2.5
-  lowEndCompensation:
+  frequencyCurve:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
+      value: 1
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     - time: 1
       value: 1
@@ -261,7 +261,7 @@ MonoBehaviour:
   waveformHeight: 4
   waveformRadius: 12
   waveformSpeed: .0500000007
-  rotateWaveformRing: 0
+  rotateWaveformRing: 1
   bounceWaveform: 0
 --- !u!82 &1253112523
 AudioSource:
@@ -272,7 +272,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 651dc2190b1c1a34eb972b60927c9a56, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 230e4e558ec625d4d8c951d858125e52, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
