@@ -116,7 +116,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			bool earlyExit = false;
 
-			if( EditorUtility.DisplayCancelableProgressBar("Repair ProBuilder Script References", "Fixing " + (int)(index+1) + " out of " + total + " objects in scene.", ((float)index/total) ) )
+			if( EditorUtility.DisplayCancelableProgressBar("Repair ProBuilder Script References", "Fixing " + (int)Mathf.Floor(index+1) + " out of " + total + " objects in scene.", ((float)index/total) ) )
 			{
 				earlyExit = true;
 				doFix = false;
@@ -347,7 +347,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(dummies.Length > 0)
 			{
-				int ret = EditorUtility.DisplayDialogComplex("Found Unrepairable Objects", "Repair script found " + dummies.Length + " missing components that could not be repaired.  Would you like to delete those components now?", "Delete", "Cancel", "ProBuilderize");
+				int ret = EditorUtility.DisplayDialogComplex("Found Unrepairable Objects", "Repair script found " + dummies.Length + " missing components that could not be repaired.  Would you like to delete those components now, or attempt to rebuild (ProBuilderize) them?", "Delete", "Cancel", "ProBuilderize");
 
 				switch(ret)
 				{
