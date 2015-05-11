@@ -25,7 +25,7 @@ public class pb_Editor_Graphics
 	const string SELECTION_MESH_NAME = "ProBuilderEditorSelectionMesh";
 	const string WIREFRAME_MESH_NAME = "ProBuilderEditorWireframeMesh";
 
-	static float vertexHandleSize = .04f;
+	static float vertexHandleSize = .03f;
 	
 	public static GameObject 	selectionObject { get; private set; }	// allow get so that pb_Editor can check that the user hasn't 
 	public static GameObject 	wireframeObject { get; private set; }	// selected the graphic objects on accident.
@@ -100,7 +100,7 @@ public class pb_Editor_Graphics
 				Texture2D dot = (Texture2D)Resources.Load("Textures/VertOff");
 				vertexMaterial.mainTexture = dot;
 				vertexMaterial.SetColor("_Color", vertexDotColor);
-				vertexMaterial.SetFloat("_Scale", vertexHandleSize * (dot == null ? 5f : 6f));
+				vertexMaterial.SetFloat("_Scale", vertexHandleSize * (dot == null ? 4f : 6f));
 				vertexMaterial.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 			}
 
@@ -397,6 +397,7 @@ public class pb_Editor_Graphics
 				
 				mesh.Clear();
 				mesh.vertices = edge_verts;
+				mesh.normals = edge_verts;	// appease unity 4
 				mesh.uv = new Vector2[edge_verts.Length];
 				mesh.subMeshCount = 1;
 				mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
