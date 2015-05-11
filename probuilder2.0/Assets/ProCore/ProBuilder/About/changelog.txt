@@ -18,6 +18,7 @@
 	- Improve performance when editing large numbers of vertices.
 	- Smooth Normals Window now displays vertex normals with culling, and much faster.
 	- Repair Missing Script references is now cancelable.
+	- Add option to extrude elements as a group or individual.
 
 # Bug Fixes
 	- Improve Flip Normals shortcut selection context handling.
