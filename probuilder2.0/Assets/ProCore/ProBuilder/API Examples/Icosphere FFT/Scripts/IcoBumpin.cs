@@ -89,6 +89,8 @@ namespace ProBuilder2.Examples
 		// If true, the waveform will bounce up and down with the icosphere.
 		public bool bounceWaveform = false;
 
+		public GameObject missingClipWarning;
+
 		// Icosphere's starting position.
 		Vector3 icoPosition = Vector3.zero;
 		float faces_length;
@@ -113,6 +115,9 @@ namespace ProBuilder2.Examples
 		void Start()
 		{
 			audioSource = GetComponent<AudioSource>();
+
+			if( audioSource.clip == null )
+				missingClipWarning.SetActive(true);
 
 			// Create a new icosphere.
 			ico = pb_Shape_Generator.IcosahedronGenerator(icoRadius, icoSubdivisions);

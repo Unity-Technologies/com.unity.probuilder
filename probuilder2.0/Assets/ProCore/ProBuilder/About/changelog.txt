@@ -1,52 +1,23 @@
--- ProBuilder 2.4.4b2 (r3372)
-
-# Features
-	- Unity 5.1 beta compatibility.
-	- New API example shows a deformed icosphere with FFT spectrum.
-
-# Bug Fixes
-	- Catch errors when repairing missing script references on objects with null materials.
-	- Fix bug that caused normal / tangent gizmos to go haywire when translating faces.
-	- Repair Missing Script references is now cancelable.
-
--- ProBuilder 2.4.4b1 (r3350)
-
-# Features
-	- Add Icosphere shape.
-
-# Bug Fixes
-	- Copy userCollisions field when serializing pb_Object.
-	- Fix regression in Unity 5 that causes prefabs to lose instance modifications on save and entering playmode.
-	- Fix bug where exiting to Top or Plugin level would not clear the selection mesh.
-	- When mirroring objects, make the mirrored results the new selection.
-	- Don't center pivot after detaching faces to new object.
-	- Fix bug where setting entity type then undoing wouldn't catch changes to collider.
-	- Fix bug where duplicating multiple objects would leave pb_Object references pointing to same object.
-	- Improve performance when editing large numbers of vertices.
-	- When probuilder-izing objects, perform the action in-place (and add undo support).
-
-# Changes
- 	- Remove dependency on ProCore lib to communicate with ProGrids.
-	- Rename scripts to uniformly follow pb_ prefix and pascal case for runtime, underscore case for editor.
-
-# API
-	- pb_Renderable now holds a matrix that may be used when rendering, allowing mesh generation to skip the matrix multiplication step.  Improves performance when editing large swathes of vertices.
-
--- ProBuilder 2.4.4b0 (r3322)
+-- ProBuilder 2.4.4f0 (r3375)
 
 # Features
 	- Where possible* indices are now collapsed to share a single vertex.
 	- Add context menu to swap between dockable window modes in vertex painter.
-	- New Repair/pb_RepairMeshReferences script fixes duplicate mesh references.
+	- Unity 5.1 beta compatibility.
+	- New Icosphere shape.
+	- New API example shows a deformed icosphere with FFT spectrum.
 	- Grow Selection is now roughly one gajillion times faster.
 	- Grow with Angle can now optionally select all faces on a plane instead of just the ones near the perimeter.
 	- New vertex handle gizmos are now culled (and much faster).
 	- Add option to select only visible elements (Select All or Select Visible toggles this).
+	- New Repair/pb_RepairMeshReferences script fixes duplicate mesh references.
 	- Improve edge selection logic, making edge selection much easier.
 	- Add a preference to enable backface selection on meshes.
 	- Re-enable 'NoDraw' faces (now implemented as a shader replacement at compile time).
 	- Improve subdivide action performance.
+	- Improve performance when editing large numbers of vertices.
 	- Smooth Normals Window now displays vertex normals with culling, and much faster.
+	- Repair Missing Script references is now cancelable.
 
 # Bug Fixes
 	- Improve Flip Normals shortcut selection context handling.
@@ -59,7 +30,7 @@
 	- Improve performance of MergeVertices function, helping to address lag after modifying large objects.
 	- Fix bug where selecting faces obscured by a culled face would sometimes not register.
 	- Remove obsolete preference entries.
-	- Add 'undo' when a click drag changes the selection in the UV editor.
+	- Add Undo support when a click drag changes the selection in the UV editor.
 	- Fix 'Quaternion Look Rotation is Zero' log spam when a face contains degenerate triangles.
 	- Fix most instances of mesh and material leaks in Editor.
 	- Fix bug where applying prefab changes to pb_Objects with the Editor closed would not propogate changes to instances.
@@ -70,11 +41,22 @@
 	- Fix bug where Connect Edges would mangle adjacent long skinny faces.
 	- When adding colliders via pb_Entity toolbar, scan current collider components for isTrigger values and apply to new collider if found.
 	- Fix some instances where convexity and trigger for EntityType.Collider & EntityType.Trigger types would not be set on initialization.
-	- When detaching faces to a new object, make the detached object selected and center the pivot.
+	- When detaching faces to a new object, make the detached object selected.
 	- Fix bug where exiting to Top or Plugin level would not clear the selection mesh.
+	- Copy userCollisions field when serializing pb_Object.
+	- Fix regression in Unity 5 that causes prefabs to lose instance modifications on save and entering playmode.
+	- When mirroring objects, make the mirrored results the new selection.
+	- Fix bug where setting entity type then undoing wouldn't catch changes to collider.
+	- Fix bug where duplicating multiple objects would leave pb_Object references pointing to same object.
+	- When probuilder-izing objects, perform the action in-place (and add undo support).
+	- Catch errors when repairing missing script references on objects with null materials.
+
+# Changes
+ 	- Remove dependency on ProCore lib to communicate with ProGrids.
+	- Rename scripts to uniformly follow pb_ prefix and pascal case for runtime, underscore case for editor.
 
 # API
-	- New `Optimize()` method calls CollapseSharedVertices and GenerateUV2.
+	- New `Optimize()` method calls CollapseSharedVertices and GenerateUV2.  Replaces GenerateUV2() in most cases.
 	- Move most of remaining scripts into proper namespaces.
 	- ProBuilder2.GUI namespace become ProBuilder2.Interface to avoid conflicts with UnityEngine.GUI.
 	- Move Triangulation code into pbTriangleOps.
@@ -86,7 +68,7 @@
 	- Significantly improve performance of many pbMeshOps methods.
 	- New pb_LineRenderer and pb_MeshRenderer provide fast gizmo drawing in the SceneView.
 
-* Vertices must be smoothed, and have the same texture coordinate.
+* Vertices must be smoothed, and have the same texture coordinate to qualify for weld.
 
 -- ProBuilder 2.4.3p0 (r3216) -
 
