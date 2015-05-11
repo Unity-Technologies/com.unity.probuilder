@@ -119,7 +119,10 @@ public class pb_Menu_Commands : Editor
 			// Don't call the editor version of SetEntityType because that will
 			// reset convexity and trigger settings, which we can assume are user
 			// set already.
-			pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
+			if( !pb.gameObject.GetComponent<pb_Entity>() )
+				pb.gameObject.AddComponent<pb_Entity>().SetEntity(entityType);
+			else
+				pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
 			// pb_Editor_Utility.SetEntityType(entityType, t.gameObject);
 		}
 
