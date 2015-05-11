@@ -160,9 +160,15 @@ namespace ProBuilder2.EditorCommon
 			{	
 				EditorUtility.DisplayProgressBar("Checking ProBuilder Meshes", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
 				
-				pbs[i].ToMesh();
-				pbs[i].Refresh();		
-				pbs[i].Optimize();		
+				try
+				{
+					pbs[i].ToMesh();
+					pbs[i].Refresh();		
+					pbs[i].Optimize();		
+				} catch (System.Exception e)
+				{
+					Debug.LogWarning("Failed reconstituting " + pbs[i].name + ".  Proceeding with upgrade anyways.  Usually this means a prefab is already fixed, and just needs to be instantiated to take effect.\n" + e.ToString());
+				}
 			}
 
 			EditorUtility.ClearProgressBar();
