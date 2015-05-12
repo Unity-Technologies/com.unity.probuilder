@@ -1,3 +1,0 @@
-Version: 2.3.4b0
-ReleaseMetric: 
-VelociraptorDanger: 

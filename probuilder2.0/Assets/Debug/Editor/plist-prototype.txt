@@ -1,3 +1,0 @@
-Version: 1.0.1
-ReleaseMetric: Code Name
-VelociraptorDanger: Prolific Porpoise

@@ -48,7 +48,7 @@ public class pb_Editor_Graphics
 	static Color 				vertSelectionColor = new Color(1f, .2f, .2f, 1f);
 
 	static Color 				wireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);	///< Unity's wireframe color (approximately)
-	static Color 				vertexDotColor = Color.white;
+	static Color 				vertexDotColor = new Color(.8f, .8f, .8f, 1f);
 
 	private static EditLevel 	_editLevel = EditLevel.Geometry;
 	private static SelectMode 	_selectMode = SelectMode.Face;

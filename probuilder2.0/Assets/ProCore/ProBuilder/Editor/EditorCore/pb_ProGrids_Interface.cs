@@ -14,11 +14,21 @@ namespace ProBuilder2.Common
 	public static class pb_ProGrids_Interface
 	{
 		/**
+		 * Get a pg_Editor type.
+		 */
+		public static Type GetProGridsType()
+		{
+			Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
+			Type type = editorAssembly.GetType("pg_Editor");
+			return type;
+		}
+
+		/**
 		 * Returns the current UseAxisConstraints value from ProGrids.
 		 */
 		public static bool UseAxisConstraints()
 		{
-			Type type = Type.GetType("pg_Editor");
+			Type type = GetProGridsType();
 
 			if( type != null )
 				return (bool) type.GetMethod("UseAxisConstraints").Invoke(null, null);
@@ -31,7 +41,7 @@ namespace ProBuilder2.Common
 		 */
 		public static bool SnapEnabled()
 		{
-			Type type = Type.GetType("pg_Editor");
+			Type type = GetProGridsType();
 
 			if( type != null )
 				return (bool) type.GetMethod("SnapEnabled").Invoke(null, null);
@@ -44,7 +54,7 @@ namespace ProBuilder2.Common
 		 */
 		public static float SnapValue()
 		{
-			Type type = Type.GetType("pg_Editor");
+			Type type = GetProGridsType();
 
 			if( type != null )
 				return (float) type.GetMethod("SnapValue").Invoke(null, null);
@@ -57,7 +67,7 @@ namespace ProBuilder2.Common
 		 */
 		public static void SubscribePushToGridEvent(System.Action<float> listener)
 		{
-			Type type = Type.GetType("pg_Editor");
+			Type type = GetProGridsType();
 
 			if( type != null )
 			{
@@ -72,7 +82,7 @@ namespace ProBuilder2.Common
 		 */
 		public static void UnsubscribePushToGridEvent(System.Action<float> listener)
 		{
-			Type type = Type.GetType("pg_Editor");
+			Type type = GetProGridsType();
 
 			if( type != null )
 			{
