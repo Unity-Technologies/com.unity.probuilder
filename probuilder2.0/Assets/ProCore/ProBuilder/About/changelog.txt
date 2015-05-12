@@ -1,4 +1,4 @@
--- ProBuilder 2.4.4f1 (r3375)
+-- ProBuilder 2.4.4f1 (r3385)
 
 # Features
 	- Where possible* indices are now collapsed to share a single vertex.
@@ -70,6 +70,10 @@
 	- New pb_LineRenderer and pb_MeshRenderer provide fast gizmo drawing in the SceneView.
 
 * Vertices must be smoothed, and have the same texture coordinate to qualify for weld.
+
+# f1 Patch Notes
+	- Fix ProGrids not affecting vertices / faces / edges in Edit mode.
+	- Minor tweak to vertex handle color.
 
 -- ProBuilder 2.4.3p0 (r3216) -
 
