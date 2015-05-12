@@ -6,6 +6,8 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 
+#if !PROTOTYPE
+
 /**
  * Merge 2 or more faces into a single face.  Merged face
  * retains the properties of the first selected face in the
@@ -15,14 +17,14 @@ using ProBuilder2.MeshOperations;
  */
 public class pb_MergeFaces : Editor
 {
-	[MenuItem("Tools/ProBuilder/Geometry/Merge Faces", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Merge Faces", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
 	public static bool MenuVerifyDeleteEdge()
 	{
 		pb_Editor editor = pb_Editor.instance;
 		return editor && editor.editLevel == EditLevel.Geometry && editor.selectedFaceCount > 0;
 	}
 
-	[MenuItem("Tools/ProBuilder/Geometry/Merge Faces", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Merge Faces", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE)]
 	public static void MenuMergeFaces()
 	{
 		pbUndo.RecordObjects(Selection.transforms, "Merge Faces");
@@ -43,3 +45,5 @@ public class pb_MergeFaces : Editor
 		}
 	}
 }
+
+#endif

@@ -40,16 +40,13 @@
 				"Doxygen",
 				"UVee"
 			],
-			"follow_symlinks": true,
-			"path": "Assets/ProCore/ProBuilder/"
+			"path": "Assets\\ProCore\\ProBuilder"
 		},
 		{
-			"follow_symlinks": true,
-			"path": "Assets/Debug"
+			"path": "Assets\\Debug"
 		},
 		{
-			"follow_symlinks": true,
-			"path": "Assets/ProBuilderUpgradeKit"
+			"path": "Assets\\ProBuilderUpgradeKit"
 		}
 	]
 }

@@ -1,5 +1,3 @@
-
-
 using UnityEngine;
 
 public static class pb_Constant

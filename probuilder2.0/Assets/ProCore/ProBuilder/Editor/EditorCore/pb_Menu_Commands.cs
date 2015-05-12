@@ -81,7 +81,7 @@ public class pb_Menu_Commands : Editor
 		if(editor)
 			editor.UpdateSelection();
 	}
-
+#endif
 
 	/**
 	 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
@@ -129,7 +129,6 @@ public class pb_Menu_Commands : Editor
 		if(pb_Editor.instance != null)
 			pb_Editor.instance.UpdateSelection();
 	}
-#endif
 
 	/**
 	 * Set the pivot to the center of the current element selection.

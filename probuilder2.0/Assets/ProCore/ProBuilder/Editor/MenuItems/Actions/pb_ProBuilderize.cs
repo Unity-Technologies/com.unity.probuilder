@@ -1,3 +1,4 @@
+#if !PROTOTYPE
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -32,24 +33,6 @@ namespace ProBuilder2.Actions
 		{
 			pb_Menu_Commands.ProBuilderize(Selection.gameObjects, false);
 		}
-
-	// /**
-	//  * Duplicates the object and makes it editable.
-	//  */
-	// public static pb_Object ProBuilderize(Transform t, bool preserveFaces)
-	// {
-
-	// 	pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(t, preserveFaces);
-
-	// 	pb_Editor_Utility.SetEntityType(EntityType.Detail, pb.gameObject);
-
-	// 	pb.ToMesh();
-	// 	pb.Refresh();
-	// 	pb.Optimize();
-		
-	// 	t.gameObject.SetActive(false);
-
-	// 	return pb;
-	// }
 	}
 }
+#endif

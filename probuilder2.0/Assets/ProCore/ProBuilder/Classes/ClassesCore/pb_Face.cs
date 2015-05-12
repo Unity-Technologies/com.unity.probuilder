@@ -385,10 +385,9 @@ public class pb_Face : ISerializable
 		
 		int i = 0;
 
-		#if PROTOTYPE
-			MeshRenderer mr = GetComponent<MeshRenderer>();
-			matDic.Add(mr.sharedMaterial == null ? pb_Constant.DefaultMaterial : mr.sharedMaterial, new List<pb_Face>(this.faces));
-		#else
+#if PROTOTYPE
+			matDic.Add(pb_Constant.DefaultMaterial, new List<pb_Face>(faces));
+#else
 			for(i = 0; i < faces.Length; i++)
 			{
 				Material face_mat = faces[i].material ?? pb_Constant.UnityDefaultDiffuse;
@@ -402,7 +401,7 @@ public class pb_Face : ISerializable
 					matDic.Add(face_mat, new List<pb_Face>(1) { faces[i] } );
 				}
 			}
-		#endif
+#endif
 
 		materials = new Material[matDic.Count];
 		submeshes = new int[materials.Length][];

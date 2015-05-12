@@ -3003,7 +3003,7 @@ public class pb_Editor : EditorWindow
 	 */
 	private void ListenForTopLevelMovement()
 	{
-		if( selection.Any(x => x.transform.hasChanged) )
+		if( selection.Any(x => x != null && !x.Equals(null) && x.transform.hasChanged) )
 			Internal_UpdateSelectionFast();
 	}
 

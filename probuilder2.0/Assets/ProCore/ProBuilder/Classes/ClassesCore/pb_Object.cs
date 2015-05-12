@@ -672,7 +672,12 @@ public class pb_Object : MonoBehaviour
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
+#if PROTOTYPE
+		MeshRenderer mr = GetComponent<MeshRenderer>();
+		if (mr.sharedMaterials == null || mr.sharedMaterials.Length < 1 || mr.sharedMaterials[0] == null) mr.sharedMaterials = mats;
+#else
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
+#endif
 	}
 
 	/**
