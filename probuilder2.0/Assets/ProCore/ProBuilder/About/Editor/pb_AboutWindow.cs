@@ -43,7 +43,7 @@ public class pb_AboutWindow : EditorWindow
 #region User Settings
 
 	 /* Path to the root folder */
-	const string ABOUT_ROOT = "Assets/ProCore/ProBuilder/About";
+	const string ABOUT_ROOT = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About";
 	
 	/**
 	 * Changelog.txt file should follow this format:
