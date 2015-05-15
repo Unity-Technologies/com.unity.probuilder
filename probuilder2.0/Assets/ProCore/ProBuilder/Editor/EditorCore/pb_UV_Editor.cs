@@ -60,7 +60,7 @@ public class pb_UV_Editor : EditorWindow
 	const float MIN_DIST_MOUSE_EDGE = 8f;
 
 	const int ACTION_WINDOW_WIDTH_MANUAL = 128;
-	const int ACTION_WINDOW_WIDTH_AUTO = 200;
+	const int ACTION_WINDOW_WIDTH_AUTO = 210;
 
 	private float pref_gridSnapValue = .0625f;
 
@@ -351,7 +351,7 @@ public class pb_UV_Editor : EditorWindow
 
 	Rect 	graphRect,
 			toolbarRect, 
-			actionWindowRect = new Rect(6, 64, 128, 200);
+			actionWindowRect = new Rect(6, 64, 128, 240);
 
 	#if PB_DEBUG
 	Rect buggerRect;
@@ -832,6 +832,32 @@ public class pb_UV_Editor : EditorWindow
 	{
 		Event e = Event.current;
 
+		// Copy UV settings
+		if(e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
+		{
+			// get first selected Auto UV face
+			pb_Face source = pb.SelectedFaces.Where(x => !x.manualUV).FirstOrDefault();
+
+			if( source != null )
+			{
+				pbUndo.RecordObject(pb, "Copy UV Settings");
+
+				selectedFace.SetUV( new pb_UV(source.uv) );
+				pb_Editor_Utility.ShowNotification("Copy UV Settings");
+
+				pb.RefreshUV();
+				RefreshUVCoordinates();
+
+				Repaint();
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
 		if(e.modifiers == EventModifiers.Control)
 		{
 			int len = pb.SelectedFaces == null ? 0 : pb.SelectedFaces.Length;

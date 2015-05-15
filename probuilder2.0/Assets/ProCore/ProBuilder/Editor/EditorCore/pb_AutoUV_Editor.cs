@@ -121,10 +121,23 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["scalex"] || uv_diff["scaley"];
 			tempVec2 = uv_gui.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
+			
 			uv_gui.scale = EditorGUILayout.Vector2Field("Scale", uv_gui.scale, GUILayout.MaxWidth(width));
+			
+			// Draw tiling shortcuts
+			GUILayout.BeginHorizontal();
+
+			if( GUILayout.Button(".5", EditorStyles.miniButtonLeft) )	uv_gui.scale = Vector2.one * 2f;
+			if( GUILayout.Button("1", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one;
+			if( GUILayout.Button("2", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .5f;
+			if( GUILayout.Button("4", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .25f;
+			if( GUILayout.Button("8", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .125f;
+			if( GUILayout.Button("16", EditorStyles.miniButtonRight) ) 	uv_gui.scale = Vector2.one * .0625f;
+
+			GUILayout.EndHorizontal();
+
 			if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
 			if(tempVec2.y != uv_gui.scale.y) { SetScale(uv_gui.scale, pb_Axis2d.Y, selection); }
-			
 
 			if(tempFloat != uv_gui.rotation) { SetRotation(uv_gui.rotation, selection); }
 
