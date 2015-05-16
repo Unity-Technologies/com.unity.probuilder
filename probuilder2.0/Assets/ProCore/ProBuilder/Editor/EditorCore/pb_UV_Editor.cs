@@ -843,9 +843,13 @@ public class pb_UV_Editor : EditorWindow
 				pbUndo.RecordObject(pb, "Copy UV Settings");
 
 				selectedFace.SetUV( new pb_UV(source.uv) );
+				selectedFace.SetMaterial( source.material );
 				pb_Editor_Utility.ShowNotification("Copy UV Settings");
 
-				pb.RefreshUV();
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+				
 				RefreshUVCoordinates();
 
 				Repaint();

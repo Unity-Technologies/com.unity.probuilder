@@ -1,3 +1,14 @@
+-- ProBuilder 2.4.5b1 (r3402)
+
+# Changes
+	- Ctrl-Shift-Click now copies texture too.
+
+-- ProBuilder 2.4.5b0 (r3400)
+
+# Features
+	- Add scale shortcut toolbar for Auto UVs.
+	- Add Control+Shift+Left-Click when UV editor is open to copy auto UV settings.
+
 -- ProBuilder 2.4.4f1 (r3385)
 
 # Features
