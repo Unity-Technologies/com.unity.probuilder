@@ -256,9 +256,9 @@ namespace ProBuilder2.EditorCommon
 		private static void SetTrigger(GameObject target)
 		{
 			#if !PROTOTYPE
-			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, (Material)Resources.Load("Materials/Trigger", typeof(Material)) );
+			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.TriggerMaterial );
 			#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = (Material)Resources.Load("Materials/Trigger", typeof(Material));
+			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.TriggerMaterial;
 			#endif
 
 			SetIsTrigger(true, target);
@@ -268,9 +268,9 @@ namespace ProBuilder2.EditorCommon
 		private static void SetCollider(GameObject target)
 		{
 			#if !PROTOTYPE
-			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, (Material)Resources.Load("Materials/Collider", typeof(Material)) );
+			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.ColliderMaterial );
 			#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = (Material)Resources.Load("Materials/Collider", typeof(Material));
+			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.ColliderMaterial;
 			#endif
 
 			SetEditorFlags( (StaticEditorFlags)(StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration), target);

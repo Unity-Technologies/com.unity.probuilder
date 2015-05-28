@@ -389,7 +389,9 @@ PlayerSettings:
   iOS::Architecture: 2
   iOS::ScriptingBackend: 0
   boolPropertyNames:
+  - WebGL::analyzeBuildSize
   - WebGL::dataCaching
+  WebGL::analyzeBuildSize: 0
   WebGL::dataCaching: 0
   stringPropertyNames:
   - WebGL::emscriptenArgs

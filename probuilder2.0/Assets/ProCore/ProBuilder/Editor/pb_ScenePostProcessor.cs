@@ -23,7 +23,10 @@ namespace ProBuilder2.EditorCommon
 			 */
 			foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
 			{
-				if( pb.GetComponent<MeshRenderer>().sharedMaterials.Any(x => x.name.Contains("NoDraw")) )
+				if(pb.GetComponent<MeshRenderer>() == null)
+					continue;
+
+				if( pb.GetComponent<MeshRenderer>().sharedMaterials.Any(x => x != null && x.name.Contains("NoDraw")) )
 				{
 					Material[] mats = pb.GetComponent<MeshRenderer>().sharedMaterials;
 
@@ -45,6 +48,9 @@ namespace ProBuilder2.EditorCommon
 				GameObject go = pb.gameObject;
 
 				pb_Entity entity = pb.gameObject.GetComponent<pb_Entity>();
+
+				if( entity == null )
+					continue;
 
 				if(entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)	
 					go.GetComponent<MeshRenderer>().enabled = false;

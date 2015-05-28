@@ -5,7 +5,10 @@ public static class pb_Constant
 	public static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
 
 	public static Material DefaultMaterial { get{ return (Material)Resources.Load("Materials/Default_Prototype", typeof(Material)); } }
-	
+	public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
+	public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
+	public static Material NoDrawMaterial { get{ return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
+		
 	private static Material _UnityDefaultDiffuse = null;
 	public static Material UnityDefaultDiffuse
 	{
