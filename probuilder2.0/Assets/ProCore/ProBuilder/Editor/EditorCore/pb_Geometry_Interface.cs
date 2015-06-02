@@ -856,8 +856,8 @@ namespace ProBuilder2.EditorCommon
 			torus_rows = (int) EditorGUILayout.Slider("Rows", torus_rows, 3, 32);
 			torus_colums = (int) EditorGUILayout.Slider("Columns", torus_colums, 3, 64);
 
-			torus_radius = EditorGUILayout.Slider("Radius", torus_radius, .1f, 100f);
-			torus_tubeRadius = EditorGUILayout.Slider("Tube Radius", torus_tubeRadius, .1f, 100f);
+			torus_radius = EditorGUILayout.Slider("Radius", torus_radius, .1f, 10f);
+			torus_tubeRadius = EditorGUILayout.Slider("Tube Radius", torus_tubeRadius, .1f, 10f);
 
 			torus_smooth = EditorGUILayout.Toggle("Smooth", torus_smooth);
 
