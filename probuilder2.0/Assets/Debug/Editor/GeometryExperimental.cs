@@ -2,12 +2,25 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
+using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.EditorCommon
 
 {
 	public class SharedVerticesGen : Editor
 	{
+
+		[MenuItem("Tools/ProBuilder/Create TORUS %T")]
+		static void INtsdt()
+		{
+			GameObject go = GameObject.Find("TORUS_DEBUG");
+			if(go != null)
+				GameObject.DestroyImmediate(go);
+
+			pb_Object pb = pb_ShapeGenerator.TorusGenerator(16, 32, 2f, .5f, true);
+			pb.gameObject.name = "TORUS_DEBUG";
+		}
+
 
 		[MenuItem("Tools/ProBuilder/Create Vertex Billboard")]
 		static void initdsafd()

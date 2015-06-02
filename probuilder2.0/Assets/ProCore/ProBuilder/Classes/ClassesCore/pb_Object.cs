@@ -145,8 +145,6 @@ public class pb_Object : MonoBehaviour
 	 *	\sa pb_Face pb_UV
 	 *	\returns The newly created pb_Object.
 	 */
-
-	///< @todo REMOVE ME
 	public static pb_Object CreateInstanceWithVerticesFaces(Vector3[] v, pb_Face[] f)
 	{
 		GameObject _gameObject = new GameObject();	

@@ -18,9 +18,7 @@ public class ProfileLooper : Editor
 	{
 		profiler = new pb_Profiler();
 
-
-		// pb_Object pb = pb_Shape_Generator.CylinderGenerator(4, 15f, 20f, 4);
-		pb_Object pb = pb_Shape_Generator.CylinderGenerator(32, 15f, 20f, 32);
+		pb_Object pb = pb_ShapeGenerator.CylinderGenerator(32, 15f, 20f, 32);
 		
 		profiler.BeginSample("GetUniversalEdges");
 		for(int i = 0; i < REPEAT; i++)

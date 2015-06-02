@@ -108,7 +108,7 @@ public class ProBuilderInstantiate : MonoBehaviour
 					
 					// Using the basic Shape instantiation, build a cube.  CreatePrimitive() returns a 
 					// pb_Object, so get the GameObject after instantiation.
-					pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+					pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 
 					// Cubes alone are a little boring, so let's add some color to it
 					Color[] cubeColors = new Color[6]
@@ -149,7 +149,7 @@ public class ProBuilderInstantiate : MonoBehaviour
 					// would also work here.  See the pb_Shape docs for full lists with params.
 				
 					// axisDivisions, radius, height, heightCuts
-					myInstantiatedObject = pb_Shape_Generator.CylinderGenerator(12, .7f, .5f, 0).gameObject;
+					myInstantiatedObject = pb_ShapeGenerator.CylinderGenerator(12, .7f, .5f, 0).gameObject;
 
 					// A convex MeshCollider suits a Cylinder nicely
 					myInstantiatedObject.gameObject.AddComponent<MeshCollider>().convex = true;
@@ -164,7 +164,7 @@ public class ProBuilderInstantiate : MonoBehaviour
 				
 					// axisDivisions, radius, height, heightCuts
 					// float radius, float height, float thickness, int subdivAxis, int subdivHeight) 
-					myInstantiatedObject = pb_Shape_Generator.PipeGenerator(1f, 1f, .3f, 8, 0).gameObject;
+					myInstantiatedObject = pb_ShapeGenerator.PipeGenerator(1f, 1f, .3f, 8, 0).gameObject;
 
 					// A convex MeshCollider suits a Pipe nicely
 					myInstantiatedObject.gameObject.AddComponent<MeshCollider>().convex = true;

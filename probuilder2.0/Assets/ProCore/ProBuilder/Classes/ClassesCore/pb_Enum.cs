@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections;
 
@@ -51,6 +52,7 @@ namespace ProBuilder2.Common
 		Sprite,
 		Arch,
 		Icosahedron,
+		Torus,
 		Custom
 	}
 

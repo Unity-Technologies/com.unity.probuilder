@@ -120,7 +120,7 @@ namespace ProBuilder2.Examples
 				missingClipWarning.SetActive(true);
 
 			// Create a new icosphere.
-			ico = pb_Shape_Generator.IcosahedronGenerator(icoRadius, icoSubdivisions);
+			ico = pb_ShapeGenerator.IcosahedronGenerator(icoRadius, icoSubdivisions);
 
 			// Shell is all the faces on the new icosphere.
 			pb_Face[] shell = ico.faces;

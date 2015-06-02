@@ -129,7 +129,7 @@ public class UnitTests : Editor
 
 	private static bool VerifyAppendFace()
 	{
-		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+		pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 		pb_Face face = new pb_Face( new int[6] {0, 1, 2, 1, 3, 2} );
 		Vector3[] vertices = new Vector3[4] {
 			new Vector3(0f, 0f, 0f),
@@ -156,7 +156,7 @@ public class UnitTests : Editor
 	private static bool VerifySubdividePipe()
 	{
 		#if PB_DEBUG && !PROTOTYPE
-			pb_Object pb = pb_Shape_Generator.CylinderGenerator(12, 5f, 5f, 6);
+			pb_Object pb = pb_ShapeGenerator.CylinderGenerator(12, 5f, 5f, 6);
 			
 			profiler.BeginSample("Subdivide Pipe");
 			bool success = pb.Subdivide();
@@ -180,7 +180,7 @@ public class UnitTests : Editor
 		#if PB_DEBUG && !PROTOTYPE
 
 		// float radius, float height, float thickness, int subdivAxis, int subdivHeight) 
-		pb_Object pb = pb_Shape_Generator.PipeGenerator(50f, 50f, 10f, 32, 32);
+		pb_Object pb = pb_ShapeGenerator.PipeGenerator(50f, 50f, 10f, 32, 32);
 
 		profiler.BeginSample("GetUniversalEdges");
 		pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), pb.sharedIndices).Distinct().ToArray();
@@ -197,7 +197,7 @@ public class UnitTests : Editor
 
 	private static bool VerifyAppendVertices()
 	{
-		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+		pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 		Vector3[] v = pb.vertices;
 
 		pb_Face face = pb.faces[0];

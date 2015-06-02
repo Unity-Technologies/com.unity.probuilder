@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ProBuilder2.Math;
-using ProBuilder2.Common;
 
 #if PB_DEBUG
 using Parabox.Debug;
 #endif
+
+namespace ProBuilder2.Common
+{
 
 /**
  *	\brief Static utility class for generating pb_Object geometry.
@@ -13,7 +15,7 @@ using Parabox.Debug;
  *	class contains methods for creating #pb_Objects with parameters
  *	for shape.
  */
-public class pb_Shape_Generator
+public class pb_ShapeGenerator
 {
 	/**
 	 *	\brief Creates a stair set with the given parameters.
@@ -90,6 +92,9 @@ public class pb_Shape_Generator
 		return pb;
 	}
 
+	/**
+	 * Create a new cube with the specified size.  Size is baked (eg, not applied as a scale value in the transform).
+	 */
 	public static pb_Object CubeGenerator(Vector3 size)
 	{
 		Vector3[] points = new Vector3[pb_Constant.TRIANGLES_CUBE.Length];
@@ -967,4 +972,82 @@ public class pb_Shape_Generator
 
 		return v;
 	}
+
+	static Vector3[] CircleVertices(int segments, float radius, Quaternion rotation, float offset)
+	{
+		float seg = (float)segments-1;
+
+		Vector3[] v = new Vector3[ (segments -1 ) * 2];
+		v[0] = new Vector3(Mathf.Cos( ((0f/seg) * 360f) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((0f/seg) * 360f) * Mathf.Deg2Rad) * radius, 0f);
+		v[1] = new Vector3(Mathf.Cos( ((1f/seg) * 360f) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((1f/seg) * 360f) * Mathf.Deg2Rad) * radius, 0f);
+
+		v[0] = rotation * ((v[0] + Vector3.right * offset));
+		v[1] = rotation * ((v[1] + Vector3.right * offset));
+
+		int n = 2;
+
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		for(int i = 2; i < segments; i++)
+		{
+			float rad = ((i/seg) * 360f) * Mathf.Deg2Rad;
+			sb.AppendLine(rad.ToString());
+
+			v[n+0] = v[n-1];
+			v[n+1] = rotation * (new Vector3(Mathf.Cos(rad) * radius, Mathf.Sin(rad) * radius, 0f) + Vector3.right * offset);
+
+			n += 2;
+		}
+
+		return v;
+	}
+
+	/**
+	 * Create a torus mesh.
+	 */
+	public static pb_Object TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth)
+	{
+		int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
+		int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );
+		float radius = Mathf.Clamp( InRadius, .01f, 2048f);
+		float tubeRadius = Mathf.Clamp( InTubeRadius, .01f, 2048f);
+
+		List<Vector3> vertices = new List<Vector3>();
+
+		int col = columns - 1;
+
+		Vector3[] cir = CircleVertices(rows, tubeRadius, Quaternion.Euler(Vector3.up * 0f * 360f), radius);
+
+		for(int i = 1; i < columns; i++)
+		{
+			vertices.AddRange(cir);
+			Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * 360f));
+			cir = CircleVertices(rows, tubeRadius, rotation, radius);
+			vertices.AddRange(cir);
+		}
+
+		// List<int> ind = new List<int>();
+		List<pb_Face> faces = new List<pb_Face>();
+		int fc = 0;
+
+		// faces
+		for(int i = 0; i < (columns-1) * 2; i += 2)
+		{
+			for(int n = 0; n < rows-1; n++)
+			{
+				int a = (i+0) * ((rows-1) * 2) + (n * 2);
+				int b = (i+1) * ((rows-1) * 2) + (n * 2);
+
+				int c = (i+0) * ((rows-1) * 2) + (n * 2) + 1;
+				int d = (i+1) * ((rows-1) * 2) + (n * 2) + 1;
+
+				faces.Add( new pb_Face(new int[] { a, b, c, b, d, c } ) );
+				faces[fc].SetSmoothingGroup(InSmooth ? 1 : 0);
+				faces[fc++].manualUV = true;
+			}
+		}
+
+		return pb_Object.CreateInstanceWithVerticesFaces(vertices.ToArray(), faces.ToArray());
+	}
+}
 }

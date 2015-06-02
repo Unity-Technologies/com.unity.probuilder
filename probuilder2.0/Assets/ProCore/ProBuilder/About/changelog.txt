@@ -1,8 +1,10 @@
--- ProBuilder 2.4.5f0 (r3423)
+-- ProBuilder 2.4.4p1 (r3425)
 
 # Features
 	- Add scale shortcut toolbar for Auto UVs.
 	- Add Control+Shift+Left-Click when UV editor is open to copy auto UV settings (including texture).
+
+# Bug Fixes
 	- Fix errors when building a project with geometry containing null materials.
 	- Fix rare null reference error when switching scenes.
 

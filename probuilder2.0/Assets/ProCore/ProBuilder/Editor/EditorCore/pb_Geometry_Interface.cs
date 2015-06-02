@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("GameObject/Create Other/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
-			pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			
 			Material mat = null;
@@ -93,7 +93,14 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.BeginHorizontal();
 				bool sp = showPreview;
 				showPreview = GUILayout.Toggle(showPreview, "Show Preview");
-				if(sp != showPreview && !showPreview) DestroyPreviewObject();
+
+				if(sp != showPreview)
+				{
+					if(showPreview)
+						initPreview = true;
+					else
+						DestroyPreviewObject();
+				}
 
 				if(GUILayout.Button("Center Preview"))
 				{
@@ -103,6 +110,8 @@ namespace ProBuilder2.EditorCommon
 					Selection.activeTransform = previewObject.transform;
 					Selection.activeObject = previewObject;
 					RegisterPreviewObjectTransform();
+					
+					SceneView.RepaintAll();
 				}
 			GUILayout.EndHorizontal();
 
@@ -151,6 +160,9 @@ namespace ProBuilder2.EditorCommon
 				case Shape.Icosahedron:
 					IcosahedronGUI();
 					break;
+				case Shape.Torus:
+					TorusGUI();
+					break;
 				case Shape.Custom:
 					CustomGUI();
 					break;
@@ -175,7 +187,7 @@ namespace ProBuilder2.EditorCommon
 			if(cubeSize.y <= 0) cubeSize.y = .01f;
 			if(cubeSize.z <= 0) cubeSize.z = .01f;
 
-			if( showPreview && (GUI.changed || initPreview) ) SetPreviewObject(pb_Shape_Generator.CubeGenerator(cubeSize));
+			if( showPreview && (GUI.changed || initPreview) ) SetPreviewObject(pb_ShapeGenerator.CubeGenerator(cubeSize));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -184,7 +196,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.CubeGenerator(cubeSize);
+				pb_Object pb = pb_ShapeGenerator.CubeGenerator(cubeSize);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
@@ -218,7 +230,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( showPreview && (GUI.changed || initPreview) ) 
 				SetPreviewObject(
-					 pb_Shape_Generator.PlaneGenerator(
+					 pb_ShapeGenerator.PlaneGenerator(
 					 	1,
 					 	1,
 					 	0,
@@ -233,7 +245,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.PlaneGenerator(
+				pb_Object pb = pb_ShapeGenerator.PlaneGenerator(
 					 	1,
 					 	1,
 					 	0,
@@ -274,7 +286,7 @@ namespace ProBuilder2.EditorCommon
 			if(prismSize.y < 0) prismSize.y = 0.01f;
 			if(prismSize.z < 0) prismSize.z = 0.01f;
 
-			if( showPreview && (GUI.changed || initPreview) ) SetPreviewObject(pb_Shape_Generator.PrismGenerator(prismSize));
+			if( showPreview && (GUI.changed || initPreview) ) SetPreviewObject(pb_ShapeGenerator.PrismGenerator(prismSize));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -283,7 +295,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.PrismGenerator(prismSize);
+				pb_Object pb = pb_ShapeGenerator.PrismGenerator(prismSize);
 				
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
@@ -332,7 +344,7 @@ namespace ProBuilder2.EditorCommon
 			GUI.enabled = true;
 
 			if( showPreview && (GUI.changed || initPreview) ) 
-				SetPreviewObject(pb_Shape_Generator.StairGenerator(
+				SetPreviewObject(pb_ShapeGenerator.StairGenerator(
 					stair_steps, 
 					stair_width,
 					stair_height,
@@ -348,7 +360,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.StairGenerator(stair_steps, stair_width, stair_height, stair_depth, extendSidesToFloor, generateBack, stair_platformsOnly);
+				pb_Object pb = pb_ShapeGenerator.StairGenerator(stair_steps, stair_width, stair_height, stair_depth, extendSidesToFloor, generateBack, stair_platformsOnly);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
@@ -397,7 +409,7 @@ namespace ProBuilder2.EditorCommon
 			if( showPreview && (GUI.changed || initPreview) ) 
 			{
 				SetPreviewObject(
-					pb_Shape_Generator.CylinderGenerator(
+					pb_ShapeGenerator.CylinderGenerator(
 					cyl_axisCuts,
 					cyl_radius,
 					cyl_height,
@@ -412,7 +424,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts);
+				pb_Object pb = pb_ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 				
 				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
@@ -461,7 +473,7 @@ namespace ProBuilder2.EditorCommon
 			door_legWidth = Mathf.Clamp(door_legWidth, 0.01f, 2.0f);
 
 			if (showPreview && (GUI.changed || initPreview))
-				SetPreviewObject(pb_Shape_Generator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth));
+				SetPreviewObject(pb_ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -470,7 +482,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
+				pb_Object pb = pb_ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 				 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
@@ -520,7 +532,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( showPreview && (GUI.changed || initPreview) ) 
 				SetPreviewObject(
-					 pb_Shape_Generator.PlaneGenerator(
+					 pb_ShapeGenerator.PlaneGenerator(
 					 	plane_height,
 					 	plane_width,
 					 	plane_height_cuts,
@@ -535,7 +547,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis, plane_smooth);
+				pb_Object pb = pb_ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis, plane_smooth);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 				
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
@@ -581,7 +593,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( showPreview && (GUI.changed || initPreview) ) 
 				SetPreviewObject(
-					 pb_Shape_Generator.PipeGenerator(	
+					 pb_ShapeGenerator.PipeGenerator(	
 					 	pipe_radius,
 						pipe_height,
 						pipe_thickness,
@@ -596,7 +608,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.PipeGenerator(	
+				pb_Object pb = pb_ShapeGenerator.PipeGenerator(	
 					 	pipe_radius,
 						pipe_height,
 						pipe_thickness,
@@ -644,7 +656,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( showPreview && (GUI.changed || initPreview) ) 
 				SetPreviewObject(
-					 pb_Shape_Generator.ConeGenerator(	
+					 pb_ShapeGenerator.ConeGenerator(	
 					 	cone_radius,
 						cone_height,
 						cone_subdivAxis
@@ -657,7 +669,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.ConeGenerator(	
+				pb_Object pb = pb_ShapeGenerator.ConeGenerator(	
 					 	cone_radius,
 						cone_height,
 						cone_subdivAxis
@@ -724,7 +736,7 @@ namespace ProBuilder2.EditorCommon
 				arch_endCaps = EditorGUILayout.Toggle("End Caps", arch_endCaps);
 
 		  	if (showPreview && (GUI.changed || initPreview))
-				SetPreviewObject( pb_Shape_Generator.ArchGenerator(	arch_angle,
+				SetPreviewObject( pb_ShapeGenerator.ArchGenerator(	arch_angle,
 																	arch_radius,
 																	Mathf.Clamp(arch_width, 0.01f, arch_radius),
 																	arch_depth,
@@ -742,7 +754,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.ArchGenerator(
+				pb_Object pb = pb_ShapeGenerator.ArchGenerator(
 					arch_angle,
 					arch_radius,
 					Mathf.Clamp(arch_width, 0.01f, arch_radius),
@@ -791,7 +803,7 @@ namespace ProBuilder2.EditorCommon
 			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 4);
 
 			if (showPreview && ((t_ico_subdivisions != ico_subdivisions || t_ico_radius != ico_radius) || initPreview))
-				SetPreviewObject(pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions));
+				SetPreviewObject(pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -800,7 +812,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Shape_Generator.IcosahedronGenerator(ico_radius, ico_subdivisions);
+				pb_Object pb = pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				// To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator 
@@ -829,6 +841,61 @@ namespace ProBuilder2.EditorCommon
 
 			GUI.backgroundColor = oldColor;
 
+		}
+
+		float 	torus_radius = 1f;
+		float 	torus_tubeRadius = .2f;
+		int 	torus_rows = 8;
+		int 	torus_colums = 16;
+		bool 	torus_smooth = true;
+
+		void TorusGUI()
+		{
+			EditorGUI.BeginChangeCheck();
+
+			torus_rows = (int) EditorGUILayout.Slider("Rows", torus_rows, 3, 32);
+			torus_colums = (int) EditorGUILayout.Slider("Columns", torus_colums, 3, 64);
+
+			torus_radius = EditorGUILayout.Slider("Radius", torus_radius, .1f, 100f);
+			torus_tubeRadius = EditorGUILayout.Slider("Tube Radius", torus_tubeRadius, .1f, 100f);
+
+			torus_smooth = EditorGUILayout.Toggle("Smooth", torus_smooth);
+
+			if (showPreview && (EditorGUI.EndChangeCheck() || initPreview))
+				SetPreviewObject(pb_ShapeGenerator.TorusGenerator(torus_rows, torus_colums, torus_radius, torus_tubeRadius, torus_smooth));
+
+			Color oldColor = GUI.backgroundColor;
+			GUI.backgroundColor = COLOR_GREEN;
+			
+			EditorGUILayout.EndScrollView();
+
+			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
+			{
+				pb_Object pb = pb_ShapeGenerator.TorusGenerator(torus_rows, torus_colums, torus_radius, torus_tubeRadius, torus_smooth);
+				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+
+				// // To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator 
+				// int[] welds;
+				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
+				
+				pbUVOps.ProjectFacesBox(pb, pb.faces);
+
+				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
+				
+				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
+				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				
+				AlignWithPreviewObject(pb.gameObject);
+				DestroyPreviewObject();
+				showPreview = false;
+				
+				if (prefClose)
+				{
+					this.Close();
+				}
+			}
+
+			GUI.backgroundColor = oldColor;
 		}
 
 		static string verts = "//Vertical Plane\n0, 0, 0\n1, 0, 0\n0, 1, 0\n1, 1, 0\n";

@@ -311,32 +311,25 @@ public static class pb_IntArrayUtility
 	 */
 	public static pb_IntArray[] ExtractSharedIndices(Vector3[] v)
 	{
-		int len = v.Length;
-		bool[] assigned = pbUtil.FilledArray(false, len);
+		Dictionary<pb_IntVec3, List<int>> sorted = new Dictionary<pb_IntVec3, List<int>>();
 
-		List<pb_IntArray> shared = new List<pb_IntArray>();
-		for(int i = 0; i < len-1; i++)
+		List<int> ind;
+
+		for(int i = 0; i < v.Length; i++)
 		{
-			if(assigned[i])	// already assigned this vertex to a sharedIndex
-				continue;
-
-			List<int> indices = new List<int>(1) {i};
-			for(int n = i+1; n < len; n++)
-			{
-				if( v[i] == v[n] )
-				{
-					indices.Add(n);
-					assigned[n] = true;
-				}
-			}
-
-			shared.Add(new pb_IntArray(indices.ToArray()));
+			if( sorted.TryGetValue(v[i], out ind) )
+				ind.Add(i);
+			else
+				sorted.Add(new pb_IntVec3(v[i]), new List<int>() { i });
 		}
 
-		if(!assigned[len-1])
-			shared.Add(new pb_IntArray(new int[1]{len-1}));
+		pb_IntArray[] share = new pb_IntArray[sorted.Count];
 
-		return shared.ToArray();
+		int t = 0;
+		foreach(KeyValuePair<pb_IntVec3, List<int>> kvp in sorted)	
+			share[t++] = new pb_IntArray( kvp.Value.ToArray() );
+
+		return share;
 	}
 #region ArrayUtil
 

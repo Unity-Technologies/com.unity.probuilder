@@ -440,6 +440,7 @@ namespace ProBuilder2.EditorCommon
 						if(!pb_Handle_Utility.PointIsOccluded(pb, v))
 						{
 							Vector2 cen = HandleUtility.WorldToGUIPoint( v );
+							
 							GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
 
 							DrawSceneLabel(gc, cen);

@@ -87,7 +87,7 @@ public class RuntimeEdit : MonoBehaviour
 	{
 		// This creates a basic cube with ProBuilder features enabled.  See the ProBuilder.Shape enum to 
 		// see all possible primitive types.
-		pb_Object pb = pb_Shape_Generator.CubeGenerator(Vector3.one);
+		pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 		
 		// The runtime component requires that a concave mesh collider be present in order for face selection
 		// to work.
