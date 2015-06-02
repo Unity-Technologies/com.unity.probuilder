@@ -973,13 +973,13 @@ public class pb_ShapeGenerator
 		return v;
 	}
 
-	static Vector3[] CircleVertices(int segments, float radius, Quaternion rotation, float offset)
+	static Vector3[] CircleVertices(int segments, float radius, float circumference, Quaternion rotation, float offset)
 	{
 		float seg = (float)segments-1;
 
 		Vector3[] v = new Vector3[ (segments -1 ) * 2];
-		v[0] = new Vector3(Mathf.Cos( ((0f/seg) * 360f) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((0f/seg) * 360f) * Mathf.Deg2Rad) * radius, 0f);
-		v[1] = new Vector3(Mathf.Cos( ((1f/seg) * 360f) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((1f/seg) * 360f) * Mathf.Deg2Rad) * radius, 0f);
+		v[0] = new Vector3(Mathf.Cos( ((0f/seg) * circumference) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((0f/seg) * circumference) * Mathf.Deg2Rad) * radius, 0f);
+		v[1] = new Vector3(Mathf.Cos( ((1f/seg) * circumference) * Mathf.Deg2Rad ) * radius, Mathf.Sin(((1f/seg) * circumference) * Mathf.Deg2Rad) * radius, 0f);
 
 		v[0] = rotation * ((v[0] + Vector3.right * offset));
 		v[1] = rotation * ((v[1] + Vector3.right * offset));
@@ -990,7 +990,7 @@ public class pb_ShapeGenerator
 
 		for(int i = 2; i < segments; i++)
 		{
-			float rad = ((i/seg) * 360f) * Mathf.Deg2Rad;
+			float rad = ((i/seg) * circumference) * Mathf.Deg2Rad;
 			sb.AppendLine(rad.ToString());
 
 			v[n+0] = v[n-1];
@@ -1005,24 +1005,27 @@ public class pb_ShapeGenerator
 	/**
 	 * Create a torus mesh.
 	 */
-	public static pb_Object TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth)
+	public static pb_Object TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference)
 	{
 		int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
 		int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );
-		float radius = Mathf.Clamp( InRadius, .01f, 2048f);
-		float tubeRadius = Mathf.Clamp( InTubeRadius, .01f, 2048f);
+		float radius = Mathf.Clamp(InRadius, .01f, 2048f);
+		float tubeRadius = Mathf.Clamp(InTubeRadius, .01f, radius);
+		radius -= tubeRadius;
+		float horizontalCircumference = Mathf.Clamp(InHorizontalCircumference, .01f, 360f);
+		float verticalCircumference = Mathf.Clamp(InVerticalCircumference, .01f, 360f);
 
 		List<Vector3> vertices = new List<Vector3>();
 
 		int col = columns - 1;
 
-		Vector3[] cir = CircleVertices(rows, tubeRadius, Quaternion.Euler(Vector3.up * 0f * 360f), radius);
+		Vector3[] cir = CircleVertices(rows, tubeRadius, verticalCircumference, Quaternion.Euler(Vector3.up * 0f * horizontalCircumference), radius);
 
 		for(int i = 1; i < columns; i++)
 		{
 			vertices.AddRange(cir);
-			Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * 360f));
-			cir = CircleVertices(rows, tubeRadius, rotation, radius);
+			Quaternion rotation = Quaternion.Euler(Vector3.up * ((i/(float)col) * horizontalCircumference));
+			cir = CircleVertices(rows, tubeRadius, verticalCircumference, rotation, radius);
 			vertices.AddRange(cir);
 		}
 

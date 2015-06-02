@@ -123,6 +123,24 @@ namespace ProBuilder2.Interface
 
 			return showSettings;
 		}
+
+		/**
+		 * Similar to EditorGUILayout.Slider, except that this won't return clamped values
+		 * unless the user modifies the value.
+		 */
+		public static float Slider(GUIContent content, float value, float min, float max)
+		{
+			float tmp = value;
+
+			EditorGUI.BeginChangeCheck();
+
+			tmp = EditorGUILayout.Slider(content, value, min, max);
+
+			if( EditorGUI.EndChangeCheck() )
+				return tmp;
+			else
+				return value;
+		}
 	}
 
 }

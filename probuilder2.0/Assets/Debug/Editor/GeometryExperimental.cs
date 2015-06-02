@@ -17,7 +17,7 @@ namespace ProBuilder2.EditorCommon
 			if(go != null)
 				GameObject.DestroyImmediate(go);
 
-			pb_Object pb = pb_ShapeGenerator.TorusGenerator(16, 32, 2f, .5f, true);
+			pb_Object pb = pb_ShapeGenerator.TorusGenerator(16, 32, 2f, .5f, true, 360f, 360f);
 			pb.gameObject.name = "TORUS_DEBUG";
 		}
 

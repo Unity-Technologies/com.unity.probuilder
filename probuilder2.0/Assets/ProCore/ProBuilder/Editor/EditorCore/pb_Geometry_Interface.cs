@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
+using ProBuilder2.Interface;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -844,25 +845,37 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		float 	torus_radius = 1f;
-		float 	torus_tubeRadius = .2f;
-		int 	torus_rows = 8;
-		int 	torus_colums = 16;
+		float 	torus_tubeRadius = .3f;
+		int 	torus_rows = 16;
+		int 	torus_colums = 24;
 		bool 	torus_smooth = true;
-
+		float 	torus_horizontalCircumference = 360f;
+		float 	torus_verticalCircumference = 360f;
+		
 		void TorusGUI()
 		{
 			EditorGUI.BeginChangeCheck();
 
-			torus_rows = (int) EditorGUILayout.Slider("Rows", torus_rows, 3, 32);
-			torus_colums = (int) EditorGUILayout.Slider("Columns", torus_colums, 3, 64);
+			torus_rows = (int) EditorGUILayout.IntSlider(new GUIContent("Rows", "How many rows the torus will have.  More equates to smoother geometry."), torus_rows, 3, 32);
+			torus_colums = (int) EditorGUILayout.IntSlider(new GUIContent("Columns", "How many columns the torus will have.  More equates to smoother geometry."), torus_colums, 3, 64);
 
 			torus_radius = EditorGUILayout.Slider("Radius", torus_radius, .1f, 10f);
-			torus_tubeRadius = EditorGUILayout.Slider("Tube Radius", torus_tubeRadius, .1f, 10f);
+			torus_tubeRadius = pb_GUI_Utility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
+
+			torus_horizontalCircumference = EditorGUILayout.Slider("Horizontal Circumference", torus_horizontalCircumference, .01f, 360f);
+			torus_verticalCircumference = EditorGUILayout.Slider("Vertical Circumference", torus_verticalCircumference, .01f, 360f);
 
 			torus_smooth = EditorGUILayout.Toggle("Smooth", torus_smooth);
 
 			if (showPreview && (EditorGUI.EndChangeCheck() || initPreview))
-				SetPreviewObject(pb_ShapeGenerator.TorusGenerator(torus_rows, torus_colums, torus_radius, torus_tubeRadius, torus_smooth));
+				SetPreviewObject(pb_ShapeGenerator.TorusGenerator(
+					torus_rows,
+					torus_colums,
+					torus_radius,
+					torus_tubeRadius,
+					torus_smooth,
+					torus_horizontalCircumference,
+					torus_verticalCircumference));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -871,13 +884,16 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_ShapeGenerator.TorusGenerator(torus_rows, torus_colums, torus_radius, torus_tubeRadius, torus_smooth);
+				pb_Object pb = pb_ShapeGenerator.TorusGenerator(
+					torus_rows,
+					torus_colums,
+					torus_radius,
+					torus_tubeRadius,
+					torus_smooth,
+					torus_horizontalCircumference,
+					torus_verticalCircumference);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				// // To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator 
-				// int[] welds;
-				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
-				
 				pbUVOps.ProjectFacesBox(pb, pb.faces);
 
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
