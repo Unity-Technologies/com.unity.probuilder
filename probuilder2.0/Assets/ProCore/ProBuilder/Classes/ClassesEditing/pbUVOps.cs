@@ -240,6 +240,48 @@ public static class pbUVOps
 		pb.ToMesh();
 		pb.Refresh();
 	}
+
+	public static void UnwrapSpherical(pb_Object pb, int[] indices)
+	{
+		Vector2[] uv = pb.uv;
+		Vector3[] v = pb.vertices;
+		Vector3 cen = pb.msh.bounds.center;
+		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
+
+		for(int i = 0; i < indices.Length; i++)
+		{
+			Vector3 p = (v[i] - cen).normalized;
+			uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
+			uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
+			uv[i] *= radius;
+		}
+
+		SplitUVs(pb, indices);
+		pb.SetUV(uv);
+	}
+
+	public static void UnwrapSphericalPB(pb_Object pb, int[] indices)
+	{
+		Vector2[] uv = pb.uv;
+		Vector3[] v = pb.vertices;
+		Vector3 cen = pb.msh.bounds.center;
+		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
+
+		for(int i = 0; i < indices.Length; i++)
+		{
+			Vector3 p = (v[i] - cen).normalized;
+			
+			uv[i].y = Mathf.Acos(p.z/radius) / Mathf.PI;
+
+			if (p.y >= 0)
+				uv[i].x = Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y)))) / (Mathf.PI * 2f);
+			else
+				uv[i].x = (Mathf.PI + Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y))))) / (Mathf.PI * 2f);
+		}
+
+		SplitUVs(pb, indices);
+		pb.SetUV(uv);
+	}
 #endregion
 
 #region Fill Modes

@@ -109,6 +109,19 @@ public class pb_Face : ISerializable
 		RebuildCaches();
 	}
 
+	public override int GetHashCode()
+	{
+		// http://stackoverflow.com/questions/3404715/c-sharp-hashcode-for-array-of-ints
+		int hc = _indices.Length;
+
+		for(int i = 0; i <_indices.Length; ++i)
+		{
+			hc = unchecked(hc * 17 + _indices[i]);
+		}
+
+		return hc;
+	}
+
 	public static explicit operator pb_EdgeConnection(pb_Face face)
 	{
 		return new pb_EdgeConnection(face, null);

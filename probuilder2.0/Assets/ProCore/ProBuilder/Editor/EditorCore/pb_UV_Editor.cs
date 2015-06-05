@@ -788,22 +788,23 @@ public class pb_UV_Editor : EditorWindow
 		// Append shared UV indices to SelectedTriangles array (if necessary)
 		for(int i = 0; i < selection.Length; i++)
 		{
+			if( selection[i].sharedIndicesUV == null )
+				continue;
+
 			pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
-			
-			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
+			Dictionary<int, int> uvLookup = sharedUVs.ToDictionary();
+			int[] tris = selection[i].SelectedTriangles;
+			List<int> selectedTris = new List<int>();
 
 			/**
 			 * Put sewn UVs into the selection if they aren't already.
 			 */	
-			if(sharedUVs != null)
+			for(int n = 0; n < selectedTris.Count; n++)
 			{
-				foreach(int[] arr in sharedUVs)
-				{
-					if( System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].SelectedTriangles, element) > -1 ) )
-					{
-						selectedTris.AddRange( arr );
-					}
-				}
+				if( uvLookup[selectedTris[n]] > -1 )
+					selectedTris.AddRange((int[])sharedUVs[uvLookup[tris[n]]]);
+				else
+					selectedTris.Add(tris[n]);
 			}
 
 
@@ -1171,7 +1172,7 @@ public class pb_UV_Editor : EditorWindow
 					{
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
+							if( pb_Math.PointInPolygon(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles(), mpos) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1992,8 +1993,8 @@ public class pb_UV_Editor : EditorWindow
 						x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
 						y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
 
-						GL.Vertex(x);
-						GL.Vertex(y);
+						GL.Vertex3(x.x, x.y, 0f);
+						GL.Vertex3(y.x, y.y, 0f);
 					}
 				}	
 			}
@@ -2038,8 +2039,8 @@ public class pb_UV_Editor : EditorWindow
 						Vector2 x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
 						Vector2 y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
 
-						GL.Vertex(x);
-						GL.Vertex(y);
+						GL.Vertex3(x.x, x.y, 0f);
+						GL.Vertex3(y.x, y.y, 0f);
 						
 						// #if PB_DEBUG
 						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
@@ -2082,10 +2083,12 @@ public class pb_UV_Editor : EditorWindow
 				break;
 
 			case SelectMode.Face:
-
+			{
 				#if PB_DEBUG
 				profiler.BeginSample("Draw Nearest Face Highlight GL");
 				#endif
+
+				Vector3 v = Vector3.zero;
 
 				if(nearestElement.valid && !m_mouseDragging)
 				{
@@ -2093,12 +2096,15 @@ public class pb_UV_Editor : EditorWindow
 
 					GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
 					int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
-
+					
 					for(int i = 0; i < tris.Length; i+=3)
 					{
-						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+0]]) );
-						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+1]]) );
-						GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+2]]) );
+						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+0]]);
+						GL.Vertex3(v.x, v.y, 0f);
+						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+1]]);
+						GL.Vertex3(v.x, v.y, 0f);
+						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+2]]);
+						GL.Vertex3(v.x, v.y, 0f);
 					}
 
 					GL.End();
@@ -2122,9 +2128,12 @@ public class pb_UV_Editor : EditorWindow
 
 							for(int n = 0; n < tris.Length; n+=3)
 							{
-								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+0]]) );
-								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+1]]) );
-								GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[i][tris[n+2]]) );
+								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+0]]);
+								GL.Vertex3(v.x, v.y, 0f);
+								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+1]]);
+								GL.Vertex3(v.x, v.y, 0f);
+								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+2]]);
+								GL.Vertex3(v.x, v.y, 0f);
 							}
 						}
 					}
@@ -2134,7 +2143,8 @@ public class pb_UV_Editor : EditorWindow
 				#if PB_DEBUG
 				profiler.EndSample();
 				#endif
-				break;
+			}
+			break;
 
 		}
 
@@ -2171,9 +2181,9 @@ public class pb_UV_Editor : EditorWindow
 
 		UVColorGroupIndicator = EditorGUILayout.ColorField("Groups", UVColorGroupIndicator);
 
-		if(GUILayout.Button("Screenshot"))
+		if(GUILayout.Button("PROFILE"))
 		{
-			ScreenshotMenu();
+			PROFILE_CANVASTOGUIPOINT();
 		}
 		
 		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
@@ -2273,9 +2283,16 @@ public class pb_UV_Editor : EditorWindow
 	/**
 	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
 	 */
-	Vector2 CanvasToGUIPoint(Vector2 v)
+	// Vector2 CanvasToGUIPoint(Vector2 v)
+	// {
+	// 	return UVGraphCenter + (v * uvGraphScale + uvCanvasOffset);
+	// }
+
+	Vector3 CanvasToGUIPoint(Vector2 v)
 	{
-		return UVGraphCenter + (v * uvGraphScale + uvCanvasOffset);
+		v.x = UVGraphCenter.x + (v.x * uvGraphScale + uvCanvasOffset.x);
+		v.y = UVGraphCenter.y + (v.y * uvGraphScale + uvCanvasOffset.y);
+		return v;
 	}
 
 	/**
@@ -2449,21 +2466,32 @@ public class pb_UV_Editor : EditorWindow
 					 */
 					case SelectMode.Face:
 
-						List<int> selectedFaces = new List<int>(selection[i].SelectedFaceIndices);
+						HashSet<int> selectedFaces = new HashSet<int>(selection[i].SelectedFaceIndices);
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
-							Vector2[] uvs = pbUtil.ValuesWithIndices(uvs_canvas_space[i], pb.faces[n].distinctIndices);
+							// Vector2[] uvs = pbUtil.ValuesWithIndices(, pb.faces[n].distinctIndices);
+							int[] distinctIndices = pb.faces[n].distinctIndices;
+
 							bool allPointsContained = true;
 
-							// if(dragBounds.Intersects(faceBounds))
-							for(int t = 0; t < uvs.Length; t++)
+							for(int t = 0; t < distinctIndices.Length; t++)
 							{
-								if(!dragBounds.ContainsPoint(uvs[t]))
+								if( ! dragBounds.ContainsPoint(uvs_canvas_space[i][distinctIndices[t]]) )
 								{
 									allPointsContained = false;
 									break;
 								}
 							}
+
+							// // if(dragBounds.Intersects(faceBounds))
+							// for(int t = 0; t < uvs.Length; t++)
+							// {
+							// 	if(!dragBounds.ContainsPoint(uvs[t]))
+							// 	{
+							// 		allPointsContained = false;
+							// 		break;
+							// 	}
+							// }
 
 							if(allPointsContained)
 							{
@@ -2721,6 +2749,16 @@ public class pb_UV_Editor : EditorWindow
 
 			if(GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				Menu_BoxProject();
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+
+		GUI.enabled = selectedUVCount > 0;
+			if(GUILayout.Button("Spherical", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+				Menu_SphericalProject();
+
+			// if(GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+				// Menu_BoxProject();
 		GUILayout.EndHorizontal();
 
 		/**
@@ -3068,6 +3106,36 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		pb_Editor_Utility.ShowNotification(this, "Box Project UVs");
+		
+		// Special case
+		RefreshUVCoordinates();
+		needsRepaint = true;
+	}
+
+	public void Menu_SphericalProject()
+	{
+		pbUndo.RecordObjects(selection, "Spherical Project UVs");
+		int count = 0;
+
+		foreach(pb_Object pb in selection)
+		{
+			if(pb.SelectedTriangleCount > 1)
+			{
+				count += pb.SelectedTriangleCount;
+
+				pb.ToMesh();
+				pbUVOps.UnwrapSpherical(pb, pb.SelectedTriangles.Distinct().ToArray());
+				pb.Refresh();
+				pb.Optimize();
+			}
+		}
+
+		if(count > 0)
+		{
+			ResetUserPivot();
+		}
+
+		pb_Editor_Utility.ShowNotification(this, "Spherical Project UVs");
 		
 		// Special case
 		RefreshUVCoordinates();

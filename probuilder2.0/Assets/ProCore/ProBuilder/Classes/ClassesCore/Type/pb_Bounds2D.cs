@@ -76,6 +76,37 @@ namespace ProBuilder2.Common
 			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 
+		/**
+		 * Create bounds from a set of 2d points.
+		 */
+		public pb_Bounds2D(Vector2[] points, int[] indices)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+		
+			if(points.Length > 0 && indices.Length > 0)
+			{
+				xMin = points[indices[0]].x;
+				yMin = points[indices[0]].y;
+				xMax = xMin;
+				yMax = yMin;
+
+				for(int i = 1; i < indices.Length; i++)
+				{
+					xMin = Mathf.Min(xMin, points[indices[i]].x);
+					yMin = Mathf.Min(yMin, points[indices[i]].y);
+
+					xMax = Mathf.Max(xMax, points[indices[i]].x);
+					yMax = Mathf.Max(yMax, points[indices[i]].y);
+				}
+			}
+
+			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
+		}
+
 		public pb_Bounds2D(Vector2[] points, int length)
 		{
 			float 	xMin = 0f,

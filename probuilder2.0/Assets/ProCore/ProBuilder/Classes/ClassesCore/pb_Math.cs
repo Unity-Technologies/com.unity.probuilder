@@ -235,6 +235,34 @@ namespace ProBuilder2.Math
 		}
 
 		/**
+		 * Returns true if the polygon contains point.  False otherwise.
+		 * Casts a ray from outside the bounds to the polygon and checks how 
+		 * many edges are hit.
+		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
+		 * This overload accepts an array of points and an array of indices that compose the polygon.
+		 */
+		public static bool PointInPolygon(Vector2[] polygon, int[] indices, Vector2 point)
+		{
+			pb_Bounds2D bounds = new pb_Bounds2D(polygon, indices);
+
+			if(bounds.ContainsPoint(point))
+			{
+				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
+				int collisions = 0;
+
+				for(int i = 0; i < polygon.Length; i += 2)
+				{
+					if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
+						collisions++;
+				}
+		
+				return collisions % 2 != 0;
+			}
+			else
+				return false;
+		}
+
+		/**
 		 * Returns true if a raycast intersects a triangle.
 		 * http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 		 * http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
