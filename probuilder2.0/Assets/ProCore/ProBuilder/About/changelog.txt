@@ -1,3 +1,15 @@
+-- ProBuilder 2.4.5b0 (r3446)
+
+# Features
+	- New Torus shape.
+
+# Bug Fixes
+	- Fix bug where reverting a prefab with non-prefab ProBuilder children would throw errors.
+	- Merge now retains the GameObject properties of the first selected object.
+	- Axis snapping with ProGrids now translates correctly when object rotation is non-identity.
+	- Performance improvements in UV editor for large meshes.
+	- Fix bug where OBJ exporter wouldn't properly write submeshes.
+
 -- ProBuilder 2.4.4p1 (r3425)
 
 # Features
