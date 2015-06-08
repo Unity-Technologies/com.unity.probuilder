@@ -2753,9 +2753,9 @@ public class pb_UV_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 
-		GUI.enabled = selectedUVCount > 0;
-			if(GUILayout.Button("Spherical", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-				Menu_SphericalProject();
+		// GUI.enabled = selectedUVCount > 0;
+		// 	if(GUILayout.Button("Spherical", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+		// 		Menu_SphericalProject();
 
 			// if(GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				// Menu_BoxProject();
