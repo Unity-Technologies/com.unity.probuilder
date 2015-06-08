@@ -73,8 +73,8 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_Object_Utility.cs">
       <Link>pb_Object_Utility.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_Shape_Generator.cs">
-      <Link>pb_Shape_Generator.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_ShapeGenerator.cs">
+      <Link>pb_ShapeGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Delauney.cs">
       <Link>Delauney.cs</Link>

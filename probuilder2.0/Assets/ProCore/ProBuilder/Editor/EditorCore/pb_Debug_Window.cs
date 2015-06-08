@@ -386,13 +386,15 @@ namespace ProBuilder2.EditorCommon
 
 			if(elementGroupInfo || textureGroupInfo)
 			{
+				Camera cam = SceneView.lastActiveSceneView.camera;
+
 				foreach(pb_Face f in pb.faces)
 				{
 					Vector3 v = pb_Math.Average( pb.GetVertices(f.distinctIndices) );
 					v += pb_Math.Normal(pb, f) * .01f;
 					v = pb.transform.TransformPoint(v);
 
-					if(!pb_Handle_Utility.PointIsOccluded(pb, v))
+					if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
 					{
 						Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 						GUIContent gc;
@@ -431,13 +433,14 @@ namespace ProBuilder2.EditorCommon
 			{
 				try
 				{
+					Camera cam = SceneView.lastActiveSceneView.camera;
 					Vector3[] normals = pb.msh.normals;
 					int index = 0;
 					foreach(pb_IntArray arr in pb.sharedIndices)
 					{
 						Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
 
-						if(!pb_Handle_Utility.PointIsOccluded(pb, v))
+						if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
 						{
 							Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 							

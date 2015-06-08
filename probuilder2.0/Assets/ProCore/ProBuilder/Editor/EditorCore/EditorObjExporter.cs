@@ -98,6 +98,7 @@ public class EditorObjExporter : ScriptableObject
 		for (int i = 0; i < m.subMeshCount; i ++)
 		{
 			sb.Append("\n");
+			sb.Append("g ").Append(mats[i].name).Append("\n");
 			sb.Append("usemtl ").Append(mats[i].name).Append("\n");
 			sb.Append("usemap ").Append(mats[i].name).Append("\n");
 

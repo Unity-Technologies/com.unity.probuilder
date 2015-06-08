@@ -1057,6 +1057,8 @@ public class pb_Editor : EditorWindow
 
 					if(pb_Handle_Utility.MeshRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
 					{
+						Camera cam = SceneView.lastActiveSceneView.camera;
+
 						// Sort from nearest hit to farthest
 						hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
 						
@@ -1067,7 +1069,7 @@ public class pb_Editor : EditorWindow
 
 						for(int i = 0; i < hits.Count; i++)
 						{
-							if( pb_Handle_Utility.PointIsOccluded(bestObj, bestObj.transform.TransformPoint(hits[i].Point)) )
+							if( pb_HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].Point)) )
 								continue;
 
 							foreach(pb_Edge edge in bestObj.faces[hits[i].FaceIndex].edges)
@@ -1213,6 +1215,8 @@ public class pb_Editor : EditorWindow
 	{
 		if(!shiftKey && !ctrlKey) ClearFaceSelection();
 
+		Camera cam = SceneView.lastActiveSceneView.camera;
+
 		for(int i = 0; i < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
@@ -1224,7 +1228,7 @@ public class pb_Editor : EditorWindow
 
 				if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 				{
-					if( pb_Handle_Utility.PointIsOccluded(pb, v) )
+					if( pb_HandleUtility.PointIsOccluded(cam, pb, v) )
 					{
 						continue;
 					}
@@ -1326,7 +1330,7 @@ public class pb_Editor : EditorWindow
 
 						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
-							if( !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(selection[i], v) )	
+							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )	
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
@@ -1390,7 +1394,7 @@ public class pb_Editor : EditorWindow
 
 							if(!nope)
 							{
-								if( pref_backfaceSelect || !pb_Handle_Utility.PointIsOccluded(pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+								if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 								{
 									int indx =  selectedFaces.IndexOf(face);
 									
@@ -1444,7 +1448,7 @@ public class pb_Editor : EditorWindow
 
 						if( rectContains )
 						{
-							bool occluded = !pref_backfaceSelect && pb_Handle_Utility.PointIsOccluded(pb, cen);
+							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
 
 							if(!occluded)
 							{
@@ -1468,7 +1472,6 @@ public class pb_Editor : EditorWindow
 
 				if(!vertexSelectionMask)
 				{
-					Debug.Log("DragObjectCheck");
 					DragObjectCheck(true);
 				}
 				
@@ -3161,6 +3164,9 @@ public class pb_Editor : EditorWindow
 	private void PushToGrid(float snapVal)
 	{
 		pbUndo.RecordObjects(selection, "Push elements to Grid");
+
+		if( editLevel == EditLevel.Top )
+			return;
 
 		for(int i = 0; i  < selection.Length; i++)
 		{

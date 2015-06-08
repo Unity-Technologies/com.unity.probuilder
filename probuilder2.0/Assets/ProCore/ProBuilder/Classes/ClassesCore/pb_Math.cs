@@ -166,6 +166,28 @@ namespace ProBuilder2.Math
 			return Vector2.Distance(p, projection);	
 		}
 
+		public static float DistancePointLineSegment(Vector3 p, Vector3 v, Vector3 w)
+		{
+			// Return minimum distance between line segment vw and point p
+			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y)) + ((v.z - w.z)*(v.z - w.z));  // i.e. |w-v|^2 -  avoid a sqrt
+			
+			if (l2 == 0.0f) return Vector3.Distance(p, v);   // v == w case
+			
+			// Consider the line extending the segment, parameterized as v + t (w - v).
+			// We find projection of point p onto the line. 
+			// It falls where t = [(p-v) . (w-v)] / |w-v|^2
+			float t = Vector3.Dot(p - v, w - v) / l2;
+
+			if (t < 0.0)
+				return Vector3.Distance(p, v);       		// Beyond the 'v' end of the segment
+			else if (t > 1.0) 
+				return Vector3.Distance(p, w);  			// Beyond the 'w' end of the segment
+			
+			Vector3 projection = v + t * (w - v);  	// Projection falls on the segment
+			
+			return Vector3.Distance(p, projection);		
+		}
+
 		// http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines 
 		// intersect the intersection point may be stored in the intersect var
@@ -331,6 +353,48 @@ namespace ProBuilder2.Math
 
 			return false;
 		}
+
+		// public static bool RayIntersectsAABB(Ray ray, Bounds bounds, out float distance)
+		// {
+		// 	// r.dir is unit direction vector of ray
+		// 	dirfrac.x = 1.0f / r.dir.x;
+		// 	dirfrac.y = 1.0f / r.dir.y;
+		// 	dirfrac.z = 1.0f / r.dir.z;
+
+		// 	return RayIntersectsAABB(ray.origin, dirFrac, bounds.center - bounds.extents, bounds.center + bounds.extents, out distance);
+		// }
+
+		// internal static bool RayIntersectsAABB(Vector3 rayOrigin, Vector3 dirFrac, Vector3 aabbMin, Vector3 aabbMax)
+		// {
+		// 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+		// 	// r.org is origin of ray
+		// 	float t1 = (lb.x - r.org.x)*dirfrac.x;
+		// 	float t2 = (rt.x - r.org.x)*dirfrac.x;
+		// 	float t3 = (lb.y - r.org.y)*dirfrac.y;
+		// 	float t4 = (rt.y - r.org.y)*dirfrac.y;
+		// 	float t5 = (lb.z - r.org.z)*dirfrac.z;
+		// 	float t6 = (rt.z - r.org.z)*dirfrac.z;
+
+		// 	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+		// 	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+		// 	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
+		// 	if (tmax < 0)
+		// 	{
+		// 	t = tmax;
+		// 	return false;
+		// 	}
+
+		// 	// if tmin > tmax, ray doesn't intersect AABB
+		// 	if (tmin > tmax)
+		// 	{
+		// 	t = tmax;
+		// 	return false;
+		// 	}
+
+		// 	t = tmin;
+		// 	return true;
+		// }
 #endregion
 
 #region Normal and Tangents

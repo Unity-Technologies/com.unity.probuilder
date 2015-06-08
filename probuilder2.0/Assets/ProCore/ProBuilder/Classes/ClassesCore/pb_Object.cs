@@ -285,6 +285,87 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
+	 *	\brief Gets all vertices in local space from face.
+	 *	@param _face The #pb_Face to draw vertices from.
+	 *	\returns A Vector3[] array containing all vertices contained within a #pb_Face.
+	 */
+	public Vector3[] GetVertices(pb_Face face)
+	{
+		Vector3[] v = new Vector3[face.indices.Length];
+		for(int i = 0; i < face.indices.Length; i++)
+			v[i] = vertices[face.indices[i]];
+		
+		return v;
+	}
+
+	/**
+	 * \brief Gets vertex normals for the selected face. 
+	 * @param face
+	 * \returns Vector3[] containing all normals for a face.
+	 */
+	public Vector3[] GetNormals(pb_Face face)
+	{
+		// muhahaha
+		Vector3[] normals = msh.normals;
+		Vector3[] v = new Vector3[face.indices.Length];
+		for(int i = 0; i < face.indices.Length; i++)
+			v[i] = normals[face.indices[i]];
+		
+		return v;
+	}
+
+	/**
+	 *	\brief Returns vertices in local space.
+	 *	\returns Vector3[] Vertices for passed indices in local space.
+	 */
+	public Vector3[] GetVertices(int[] indices)
+	{
+		Vector3[] v = new Vector3[indices.Length];
+		
+		for(int i = 0; i < v.Length; i++)
+			v[i] = _vertices[indices[i]];
+
+		return v;
+	}
+
+	/**
+	 * \brief Returns an array of UV coordinates.
+	 */
+	public Vector2[] GetUVs(int[] indices)
+	{
+		Vector2[] uv = new Vector2[indices.Length];
+		for(int i = 0; i < uv.Length; i++)
+			uv[i] = _uv[indices[i]];
+		return uv;
+	}
+
+	/**
+	 * Get vertices at x,y index with edge.
+	 */
+	public Vector3[] GetVertices(pb_Edge edge)
+	{
+		return new Vector3[]
+		{
+			_vertices[edge.x],
+			_vertices[edge.y]
+		};
+	}
+
+	/**
+	 *	\brief Returns vertices in local space.
+	 *	\returns List<Vector3> Vertices for passed indices in local space.
+	 */
+	public List<Vector3> GetVertices(List<int> indices)
+	{
+		List<Vector3> v = new List<Vector3>(indices.Count);
+		
+		for(int i = 0; i < indices.Count; i++)
+			v.Add( _vertices[indices[i]] );
+
+		return v;
+	}
+
+	/**
 	 *	\brief Returns a copy of the sharedIndices array.
 	 */
 	public pb_IntArray[] GetSharedIndices()
@@ -544,90 +625,6 @@ public class pb_Object : MonoBehaviour
 		Refresh();
 
 		return true;
-	}
-#endregion
-
-#region INTERNAL BUILDING STUFF
-
-	/**
-	 *	\brief Gets all vertices in local space from face.
-	 *	@param _face The #pb_Face to draw vertices from.
-	 *	\returns A Vector3[] array containing all vertices contained within a #pb_Face.
-	 */
-	public Vector3[] GetVertices(pb_Face face)
-	{
-		Vector3[] v = new Vector3[face.indices.Length];
-		for(int i = 0; i < face.indices.Length; i++)
-			v[i] = vertices[face.indices[i]];
-		
-		return v;
-	}
-
-	/**
-	 * \brief Gets vertex normals for the selected face. 
-	 * @param face
-	 * \returns Vector3[] containing all normals for a face.
-	 */
-	public Vector3[] GetNormals(pb_Face face)
-	{
-		// muhahaha
-		Vector3[] normals = msh.normals;
-		Vector3[] v = new Vector3[face.indices.Length];
-		for(int i = 0; i < face.indices.Length; i++)
-			v[i] = normals[face.indices[i]];
-		
-		return v;
-	}
-
-	/**
-	 *	\brief Returns vertices in local space.
-	 *	\returns Vector3[] Vertices for passed indices in local space.
-	 */
-	public Vector3[] GetVertices(int[] indices)
-	{
-		Vector3[] v = new Vector3[indices.Length];
-		
-		for(int i = 0; i < v.Length; i++)
-			v[i] = _vertices[indices[i]];
-
-		return v;
-	}
-
-	/**
-	 * \brief Returns an array of UV coordinates.
-	 */
-	public Vector2[] GetUVs(int[] indices)
-	{
-		Vector2[] uv = new Vector2[indices.Length];
-		for(int i = 0; i < uv.Length; i++)
-			uv[i] = _uv[indices[i]];
-		return uv;
-	}
-
-	/**
-	 * Get vertices at x,y index with edge.
-	 */
-	public Vector3[] GetVertices(pb_Edge edge)
-	{
-		return new Vector3[]
-		{
-			_vertices[edge.x],
-			_vertices[edge.y]
-		};
-	}
-
-	/**
-	 *	\brief Returns vertices in local space.
-	 *	\returns List<Vector3> Vertices for passed indices in local space.
-	 */
-	public List<Vector3> GetVertices(List<int> indices)
-	{
-		List<Vector3> v = new List<Vector3>(indices.Count);
-		
-		for(int i = 0; i < indices.Count; i++)
-			v.Add( _vertices[indices[i]] );
-
-		return v;
 	}
 #endregion
 
