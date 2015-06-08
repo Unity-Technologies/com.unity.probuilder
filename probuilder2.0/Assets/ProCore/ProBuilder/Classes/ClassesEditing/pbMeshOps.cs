@@ -50,6 +50,9 @@ namespace ProBuilder2.MeshOperations
 		pb.TranslateVertices_World(pb.msh.triangles, dir);
 	}
 
+	/**
+	 * Move the object pivot to @worldPosition.
+	 */
 	public static void CenterPivot(this pb_Object pb, Vector3 worldPosition)
 	{
 		Vector3 offset = pb.transform.position - worldPosition;

@@ -312,6 +312,8 @@ public class pb_Editor_Graphics
 
 					foreach(pb_Object pb in _selection)			
 					{
+						if(pb == null) continue;
+						
 						int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
 						Vector3[] 	v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);

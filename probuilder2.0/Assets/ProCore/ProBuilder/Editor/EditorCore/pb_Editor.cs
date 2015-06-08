@@ -2695,6 +2695,8 @@ public class pb_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
+			if(pb == null) continue;
+
 			pb.transform.hasChanged = false;
 	
 			m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
