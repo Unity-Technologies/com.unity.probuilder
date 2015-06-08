@@ -43,14 +43,20 @@ namespace ProBuilder2.MeshOperations
 			center = pb.transform.TransformPoint(pb.msh.bounds.center);
 		}
 
-		// if(pbUtil.SharedSnapEnabled)
-		// 	center = pbUtil.SnapValue(center, pbUtil.SharedSnapValue);
-
 		Vector3 dir = (pb.transform.position - center);
 
 		pb.transform.position = center;
 
 		pb.TranslateVertices_World(pb.msh.triangles, dir);
+	}
+
+	public static void CenterPivot(this pb_Object pb, Vector3 worldPosition)
+	{
+		Vector3 offset = pb.transform.position - worldPosition;
+
+		pb.transform.position = worldPosition;
+
+		pb.TranslateVertices_World(pb.msh.triangles, offset);
 	}
 
 	/**
@@ -751,6 +757,7 @@ namespace ProBuilder2.MeshOperations
 	 		for(int i = 0; i < faces.Length; i++)
 	 		{
 	 			faces[i] = new pb_Face(pb.faces[i]);
+	 			faces[i].manualUV = true;
 	 			faces[i].ShiftIndices(vertexCount);
 	 			faces[i].RebuildCaches();
 	 		}
@@ -778,9 +785,35 @@ namespace ProBuilder2.MeshOperations
 		 	}
 	 	}
 
-	 	combined = pb_Object.CreateInstanceWithElements(v.ToArray(), u.ToArray(), c.ToArray(), f.ToArray(), s.ToArray(), suv.ToArray());
+	 	GameObject go = GameObject.Instantiate(pbs[0].gameObject);
+	 	go.transform.position = Vector3.zero;
+	 	go.transform.localRotation = Quaternion.identity;
+	 	go.transform.localScale = Vector3.one;
+
+	 	// Destroy the children
+	 	foreach(Transform t in go.transform)
+	 		GameObject.DestroyImmediate(t.gameObject);
+
+	 	if(go.GetComponent<pb_Object>()) GameObject.DestroyImmediate(go.GetComponent<pb_Object>());
+	 	if(go.GetComponent<pb_Entity>()) GameObject.DestroyImmediate(go.GetComponent<pb_Entity>());
+
+	 	combined = go.AddComponent<pb_Object>();
+
+		combined.SetVertices(v.ToArray());
+		combined.SetUV(u.ToArray());
+		combined.SetColors(c.ToArray());
+		combined.SetFaces(f.ToArray());
+
+		combined.SetSharedIndices( s.ToArray() ?? pb_IntArrayUtility.ExtractSharedIndices(v.ToArray()) );
+		combined.SetSharedIndicesUV( suv.ToArray() ?? new pb_IntArray[0] {});
+
+		combined.ToMesh();
+
+		combined.GetComponent<pb_Entity>().SetEntity( pbs[0].GetComponent<pb_Entity>().entityType );
 	 	
-	 	combined.CenterPivot(new int[1]{0});
+	 	combined.CenterPivot( pbs[0].transform.position );
+
+		combined.Refresh();
 
 	 	return true;
 	 }

@@ -62,7 +62,8 @@ public class pb_Menu_Commands : Editor
 				case 0: 	// Delete donor objects
 					for(int i = 0; i < selected.Length; i++)
 					{
-						pbUndo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
+						if(selected[i] != null)
+							pbUndo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
 					}
 
 					break;
