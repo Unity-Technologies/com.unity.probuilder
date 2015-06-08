@@ -788,7 +788,7 @@ namespace ProBuilder2.MeshOperations
 		 	}
 	 	}
 
-	 	GameObject go = GameObject.Instantiate(pbs[0].gameObject);
+		GameObject go = (GameObject)GameObject.Instantiate(pbs[0].gameObject);
 	 	go.transform.position = Vector3.zero;
 	 	go.transform.localRotation = Quaternion.identity;
 	 	go.transform.localScale = Vector3.one;
