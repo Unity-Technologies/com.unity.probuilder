@@ -67,7 +67,7 @@ public static class pb_Object_Utility
 
 		Matrix4x4 w2l = pb.transform.worldToLocalMatrix;
 
-		offset = w2l * offset;
+		Vector3 localOffset = w2l * offset;
 
 		Vector3[] verts = pb.vertices;
 
@@ -80,14 +80,14 @@ public static class pb_Object_Utility
 
 			for(i = 0; i < indices.Length; i++)
 			{
-				v = l2w.MultiplyPoint3x4(verts[indices[i]] + offset);
+				v = l2w.MultiplyPoint3x4(verts[indices[i]] + localOffset);
 				verts[indices[i]] = w2l.MultiplyPoint3x4( pbUtil.SnapValue(v, snapValue * mask) );
 			}
 		}
 		else
 		{	
 			for(i = 0; i < indices.Length; i++)
-				verts[indices[i]] += offset;	
+				verts[indices[i]] += localOffset;	
 		}
 
 		// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length

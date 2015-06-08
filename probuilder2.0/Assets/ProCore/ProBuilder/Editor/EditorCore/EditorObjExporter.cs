@@ -71,7 +71,7 @@ public class EditorObjExporter : ScriptableObject
 		
 		foreach(Vector3 lv in m.vertices) 
 		{
-			Vector3 wv = mf.transform.TransformPoint(lv);
+			Vector3 wv = lv;
 				
 			// this is not how to convert from left to right handed coordinates
 			//This is sort of ugly - inverting x-component since we're in
@@ -83,7 +83,7 @@ public class EditorObjExporter : ScriptableObject
 
 		foreach(Vector3 lv in m.normals) 
 		{
-			Vector3 wv = mf.transform.TransformDirection(lv);
+			Vector3 wv = lv;
 
 			sb.Append(string.Format("vn {0} {1} {2}\n",-wv.x,wv.y,wv.z));
 		}
