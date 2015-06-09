@@ -32,17 +32,10 @@ public class pb_Object : MonoBehaviour
 		if(GetComponent<MeshRenderer>().isPartOfStaticBatch)
 			return;
 
-		if(msh == null)
+		// Absolutely no idea why normals sometimes go haywire
+		if(msh == null || msh.normals[0] == Vector3.zero)
 		{
 			ReconstructMesh();
-		}
-		else
-		{
-			// No clue why this happens
-			if(msh.normals[0] == Vector3.zero)
-			{
-				Refresh();		
-			}
 		}
 	}
 #endregion
@@ -858,13 +851,10 @@ public class pb_Object : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("Big UV kerfuffle.  Resetting all faces to auto projection");
-				
-				// awwww snap - now we've gon' and lost any hand done uv modifications.  sorry bra.
 				foreach(pb_Face f in this.faces)
 					f.manualUV = false;
 
-				// this also necessitates rebuilding ALL the face uvs, so make sure we do that.
+				// this necessitates rebuilding ALL the face uvs, so make sure we do that.
 				faces = this.faces;
 
 				newUVs = new Vector2[vertexCount];
@@ -911,7 +901,7 @@ public class pb_Object : MonoBehaviour
 
 			if(kvp.Value[0].uv.useWorldSpace)
 			{
-				transform.TransformDirection(nrm);
+				nrm = transform.TransformDirection(nrm);
 				uvs = pb_UVUtility.PlanarMap( transform.ToWorldSpace(GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())), kvp.Value[0].uv, nrm);
 			}
 			else
@@ -1040,8 +1030,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshColor()
 	{
-		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
-
+		if(_colors == null || _colors.Length != vertexCount) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 		msh.colors = _colors;
 	}
 #endregion
