@@ -1,4 +1,4 @@
--- ProBuilder 2.4.5b0 (r3446)
+-- ProBuilder 2.4.5b1 (r3448)
 
 # Features
 	- New Torus shape.
@@ -9,6 +9,7 @@
 	- Axis snapping with ProGrids now translates correctly when object rotation is non-identity.
 	- Performance improvements in UV editor for large meshes.
 	- Fix bug where OBJ exporter wouldn't properly write submeshes.
+	- Fix one possible cause of "Mesh.{uv, colors} is out of bounds" errors.
 
 -- ProBuilder 2.4.4p1 (r3425)
 
