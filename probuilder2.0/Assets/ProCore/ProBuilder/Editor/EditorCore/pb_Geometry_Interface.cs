@@ -81,7 +81,12 @@ namespace ProBuilder2.EditorCommon
 			if(EditorPrefs.HasKey(pb_Constant.pbDefaultMaterial))
 				mat = (Material)AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(pb_Constant.pbDefaultMaterial), typeof(Material));
 
-			if(mat != null) pb.SetFaceMaterial(pb.faces, mat);
+			if(mat != null)
+			{
+				pb.SetFaceMaterial(pb.faces, mat);
+				pb.ToMesh();
+				pb.Refresh();
+			}
 
 			pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);

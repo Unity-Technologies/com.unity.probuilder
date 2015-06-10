@@ -124,6 +124,7 @@ namespace ProBuilder2.Common
 		public static List<List<int>> FindDuplicateVertices(pb_Object pb)
 		{
 			Vector3[] normals = pb.msh.normals;
+			Color[] colors = pb.colors;
 			Vector2[] textures = pb.uv;
 
 			int[] smoothGroup = new int[normals.Length];
@@ -184,7 +185,8 @@ namespace ProBuilder2.Common
 
 						for(int n = 0; n < textureMatches.Count; n++)
 						{
-							if( textures[textureMatches[n][0]].Approx(textures[tri], .001f) )
+							if( textures[textureMatches[n][0]].Approx(textures[tri], .001f) &&
+								(colors == null || colors[textureMatches[n][0]].Approx(colors[tri], .001f)))
 							{
 								textureMatches[n].Add(tri);
 								foundMatch = true;
