@@ -604,10 +604,10 @@ public class pb_Handle_Utility
 		/**
 		 * Generate a line segment bounds representation.
 		 */
-		public static Mesh BoundsWireframe(Bounds bounds)
+		public static Mesh BoundsWireframe(Bounds bounds, ref Mesh m)
 		{
 			Vector3 cen = bounds.center;
-			Vector3 ext = bounds.extents;
+			Vector3 ext = bounds.extents + (bounds.extents.normalized * .02f);
 
 			// Draw Wireframe
 			List<Vector3> v = new List<Vector3>();
@@ -634,7 +634,7 @@ public class pb_Handle_Utility
 				c[i].a = .5f;
 			}
 
-			Mesh m = new Mesh();
+			m.Clear();
 			m.vertices = v.ToArray();
 			m.subMeshCount = 1;
 			m.SetIndices(t, MeshTopology.Lines, 0);

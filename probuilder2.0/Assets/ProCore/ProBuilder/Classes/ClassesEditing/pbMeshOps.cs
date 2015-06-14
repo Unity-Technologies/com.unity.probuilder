@@ -48,6 +48,8 @@ namespace ProBuilder2.MeshOperations
 		pb.transform.position = center;
 
 		pb.TranslateVertices_World(pb.msh.triangles, dir);
+
+		pb.msh.RecalculateBounds();
 	}
 
 	/**
@@ -60,6 +62,8 @@ namespace ProBuilder2.MeshOperations
 		pb.transform.position = worldPosition;
 
 		pb.TranslateVertices_World(pb.msh.triangles, offset);
+		
+		pb.msh.RecalculateBounds();
 	}
 
 	/**

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
@@ -34,7 +35,13 @@ namespace ProBuilder2.Actions
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
 				string meshPath = AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".asset");
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+
 				AssetDatabase.CreateAsset(pb.msh, meshPath);
+				
 				pb.MakeUnique();
 
 				meshAsset = (Mesh) AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
