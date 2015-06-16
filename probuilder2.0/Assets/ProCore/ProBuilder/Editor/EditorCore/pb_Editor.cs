@@ -2034,11 +2034,13 @@ public class pb_Editor : EditorWindow
 		if(movingVertices)
 		{
 			GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			// Handles.Label(newPosition,
-			// 	"Translate: " + (newPosition-translateOrigin).ToString() + 
-			// 	"\nRotate: " + (currentHandleRotation.eulerAngles-rotateOrigin).ToString() +
-			// 	"\nScale: " + (currentHandleScale-scaleOrigin).ToString()
-			// 	, VertexTranslationInfoStyle);
+
+			// using( System.Text.StringBuilder sb = new System.Text.StringBuilder() )
+			// {
+				
+			// }
+
+
 			GUI.Label(new Rect(Screen.width-200, Screen.height-120, 162, 48), 
 				"Translate: " + (newPosition-translateOrigin).ToString() + 
 				"\nRotate: " + (currentHandleRotation.eulerAngles-rotateOrigin).ToString() +

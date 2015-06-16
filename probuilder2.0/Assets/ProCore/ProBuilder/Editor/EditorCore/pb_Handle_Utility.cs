@@ -604,7 +604,7 @@ public class pb_Handle_Utility
 		/**
 		 * Generate a line segment bounds representation.
 		 */
-		public static Mesh BoundsWireframe(Bounds bounds, ref Mesh m)
+		public static Mesh BoundsWireframe(Bounds bounds, Color color, ref Mesh m)
 		{
 			Vector3 cen = bounds.center;
 			Vector3 ext = bounds.extents + (bounds.extents.normalized * .02f);
@@ -630,7 +630,7 @@ public class pb_Handle_Utility
 			{
 				t[i] = i;
 				u[i] = Vector2.zero;
-				c[i] = Color.white;
+				c[i] = color;
 				c[i].a = .5f;
 			}
 
