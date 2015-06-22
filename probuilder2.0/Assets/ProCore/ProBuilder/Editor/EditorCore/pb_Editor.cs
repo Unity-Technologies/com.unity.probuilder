@@ -168,6 +168,11 @@ public class pb_Editor : EditorWindow
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 				
+		if(pb_ProGrids_Interface.GetProGridsType() != null)
+			sceneInfoRect.x = 64;
+		else
+			sceneInfoRect.x = 18;
+
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 	}
@@ -1576,6 +1581,7 @@ public class pb_Editor : EditorWindow
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
+				selection[i].msh.RecalculateBounds();
 			}
 
 			Internal_UpdateSelectionFast();
@@ -1680,6 +1686,7 @@ public class pb_Editor : EditorWindow
 			
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
+				selection[i].msh.RecalculateBounds();
 			}
 
 			Internal_UpdateSelectionFast();
@@ -1813,6 +1820,7 @@ public class pb_Editor : EditorWindow
 
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
+				selection[i].msh.RecalculateBounds();
 			}
 
 			// don't modify the handle rotation because otherwise rotating with plane coordinates
@@ -2020,6 +2028,7 @@ public class pb_Editor : EditorWindow
 
 	Color handleBgColor;
 	Rect sceneInfoRect = new Rect(18, 0, 200, 40);
+
 	public void DrawHandleGUI()
 	{
 		Handles.BeginGUI();
@@ -2052,11 +2061,11 @@ public class pb_Editor : EditorWindow
 		if( pref_showSceneInfo )
 		{
 			sceneInfoRect.y = 12;
+
 			/**
 			 * Show the PB cached and Unity mesh element counts if in Debug mode.
 			 */
 			#if PB_DEBUG
-			 	
 			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, 164, 185), new Color(.1f,.1f,.1f,.65f));
 
 				try {

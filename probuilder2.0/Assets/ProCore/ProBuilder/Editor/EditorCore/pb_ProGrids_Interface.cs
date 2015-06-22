@@ -19,7 +19,8 @@ namespace ProBuilder2.Common
 		public static Type GetProGridsType()
 		{
 			Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
-			Type type = editorAssembly.GetType("pg_Editor");
+			Type type = editorAssembly.GetType("ProGrids.pg_Editor");
+			if( type == null ) type = editorAssembly.GetType("pg_Editor");
 			return type;
 		}
 

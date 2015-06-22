@@ -52,19 +52,14 @@ public class DimensionsOverlay : ISceneEditor
 
 	Mesh mesh;
 	Material material;
+	
 	// readonly Color wirecolor = new Color(.9f, .9f, .9f, .6f);
 	readonly Color background = new Color(.3f, .3f, .3f, .6f);
-	readonly Color LightWhite = new Color(.8f, .8f, .8f, .5f);
+	readonly Color LightWhite = new Color(.6f, .6f, .6f, .5f);
 
 	void RenderBounds(MeshFilter mf)
 	{
 		if(!mesh) return;
-
-		mf.sharedMesh.RecalculateBounds();
-
-		// pb_Handle_Utility.BoundsWireframe(mf.sharedMesh.bounds, wirecolor, ref mesh);
-		// material.SetPass(0);
-		// Graphics.DrawMeshNow(mesh, mf.transform.localToWorldMatrix);
 
 		// show labels
 		Bounds wb = mf.transform.GetComponent<MeshRenderer>().bounds;
@@ -75,7 +70,13 @@ public class DimensionsOverlay : ISceneEditor
 		
 	}
 
-	const float DISTANCE_LINE_OFFSET = .1f;
+	const float DISTANCE_LINE_OFFSET = .2f;
+	
+	float LineDistance()
+	{
+		return HandleUtility.GetHandleSize(Selection.activeTransform.position) * DISTANCE_LINE_OFFSET;
+	}
+
 	Transform cam { get { return SceneView.lastActiveSceneView.camera.transform; } }
 
 	void DrawHeight(Vector3 cen, Vector3 ext)
@@ -116,11 +117,11 @@ public class DimensionsOverlay : ISceneEditor
 			}
 		}
 
-		Vector3 left = Vector3.Cross(cam.forward, Vector3.up).normalized * DISTANCE_LINE_OFFSET;
+		Vector3 left = Vector3.Cross(cam.forward, Vector3.up).normalized * LineDistance();
 
 		Handles.color = LightWhite;
-		Handles.DrawLine(a, a + left);
-		Handles.DrawLine(b, b + left);
+		Handles.DrawLine(a + left * .1f, a + left);
+		Handles.DrawLine(b + left * .1f, b + left);
 
 		a += left;
 		b += left;
@@ -174,15 +175,17 @@ public class DimensionsOverlay : ISceneEditor
 			}
 		}
 
-		float sign = -1f;//a.x - cen.x < 0f ? -1f : 1f;
-		Vector3 offset = sign * cam.up * DISTANCE_LINE_OFFSET;
+		float dot = Vector3.Dot(cam.transform.forward, Vector3.right);
+		float sign = dot < 0f ? -1f : 1f;
+		Vector3 offset = -(Vector3.up + (Vector3.right * sign)).normalized * LineDistance();
 
 		Handles.color = LightWhite;
-		Handles.DrawLine(a, a + offset);
-		Handles.DrawLine(b, b + offset);
+		Handles.DrawLine(a + offset * .1f, a + offset);
+		Handles.DrawLine(b + offset * .1f, b + offset);
 
 		a += offset;
 		b += offset;
+
 		Handles.color = Color.blue;
 		Handles.DrawLine(a, b);
 
@@ -236,12 +239,17 @@ public class DimensionsOverlay : ISceneEditor
 			}
 		}
 
-		Vector3 offset = -Vector3.up;
-		offset = -Vector3.Cross(Vector3.Cross(cam.forward, Vector3.up), cam.forward).normalized * DISTANCE_LINE_OFFSET;
+		// Vector3 offset = -Vector3.up;
+		// offset = -Vector3.Cross(Vector3.Cross(cam.forward, Vector3.up), cam.forward).normalized * LineDistance();
+
+		float dot = Vector3.Dot(cam.transform.forward, Vector3.forward);
+		float sign = dot < 0f ? -1f : 1f;
+		Vector3 offset = -(Vector3.up + (Vector3.forward * sign)).normalized * LineDistance();
+
 
 		Handles.color = LightWhite;
-		Handles.DrawLine(a, a + offset);
-		Handles.DrawLine(b, b + offset);
+		Handles.DrawLine(a + offset * .1f, a + offset);
+		Handles.DrawLine(b + offset * .1f, b + offset);
 
 		a += offset;
 		b += offset;
