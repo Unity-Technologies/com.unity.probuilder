@@ -92,5 +92,21 @@ namespace ProBuilder2.Common
 					mi.Invoke(null, new object[] { listener } );
 			}
 		}
+
+		/**
+		 * Tell ProGrids that a non-Unity handle has moved in some direction (in world space).
+		 */
+		public static void OnHandleMove(Vector3 worldDirection)
+		{
+			Type type = GetProGridsType();
+
+			if(type != null )
+			{
+				MethodInfo mi = type.GetMethod("OnHandleMove");
+
+				if(mi != null)
+					mi.Invoke(null, new object[] { worldDirection });
+			}
+		}
 	}
 }

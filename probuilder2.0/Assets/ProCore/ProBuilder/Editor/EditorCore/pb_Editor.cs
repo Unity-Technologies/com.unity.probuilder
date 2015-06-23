@@ -1568,6 +1568,8 @@ public class pb_Editor : EditorWindow
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
+				pb_ProGrids_Interface.OnHandleMove(mask);
+
 				OnBeginVertexMovement();
 			}
 
