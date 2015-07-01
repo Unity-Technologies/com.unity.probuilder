@@ -274,7 +274,7 @@ namespace ProBuilder2.Math
 
 				for(int i = 0; i < polygon.Length; i += 2)
 				{
-					if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
+					if( GetLineSegmentIntersect(rayStart, point, polygon[indices[i]], polygon[indices[i+1]]) )
 						collisions++;
 				}
 		

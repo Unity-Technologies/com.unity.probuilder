@@ -791,23 +791,39 @@ public class pb_UV_Editor : EditorWindow
 			if( selection[i].sharedIndicesUV == null )
 				continue;
 
+			// pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
+			// Dictionary<int, int> uvLookup = sharedUVs.ToDictionary();
+			// int[] tris = selection[i].SelectedTriangles;
+			// List<int> selectedTris = new List<int>();
+
+			// *
+			//  * Put sewn UVs into the selection if they aren't already.
+			 	
+			// for(int n = 0; n < selectedTris.Count; n++)
+			// {
+			// 	if( uvLookup[selectedTris[n]] > -1 )
+			// 		selectedTris.AddRange((int[])sharedUVs[uvLookup[tris[n]]]);
+			// 	else
+			// 		selectedTris.Add(tris[n]);
+			// }
+
 			pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
-			Dictionary<int, int> uvLookup = sharedUVs.ToDictionary();
-			int[] tris = selection[i].SelectedTriangles;
-			List<int> selectedTris = new List<int>();
+			
+			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
 
 			/**
 			 * Put sewn UVs into the selection if they aren't already.
 			 */	
-			for(int n = 0; n < selectedTris.Count; n++)
+			if(sharedUVs != null)
 			{
-				if( uvLookup[selectedTris[n]] > -1 )
-					selectedTris.AddRange((int[])sharedUVs[uvLookup[tris[n]]]);
-				else
-					selectedTris.Add(tris[n]);
+				foreach(int[] arr in sharedUVs)
+				{
+					if( System.Array.Exists(arr, element => System.Array.IndexOf(selection[i].SelectedTriangles, element) > -1 ) )
+					{
+						selectedTris.AddRange( arr );
+					}
+				}
 			}
-
-
 			distinct_indices[i] = selectedTris.Distinct().ToArray();
 		}
 	}
@@ -1172,7 +1188,9 @@ public class pb_UV_Editor : EditorWindow
 					{
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles(), mpos) )
+							if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
+
+							// if( pb_Math.PointInPolygon(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles(), mpos) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
