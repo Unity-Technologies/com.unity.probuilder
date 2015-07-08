@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
+using System.Collections;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -18,7 +19,7 @@ public class pb_Preferences
 	static bool defaultOpenInDockableWindow;
 	static Material pbDefaultMaterial;
 	static Vector2 settingsScroll = Vector2.zero;
-	static int defaultColliderType = 2;
+	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static bool pbShowEditorNotifications;
 	static bool pbForceConvex = false;
 	static bool pbDragCheckLimit = false;
@@ -69,7 +70,7 @@ public class pb_Preferences
 
 		GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Collider");
-			defaultColliderType = (int)((ColliderType)EditorGUILayout.EnumPopup( (ColliderType)defaultColliderType ));
+			defaultColliderType = ((ColliderType)EditorGUILayout.EnumPopup( (ColliderType)defaultColliderType ));
 		GUILayout.EndHorizontal();
 
 		if((ColliderType)defaultColliderType == ColliderType.MeshCollider)
@@ -242,53 +243,72 @@ public class pb_Preferences
 
 	static void LoadPrefs()
 	{
-		pbStripProBuilderOnBuild = pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
-		pbDisableAutoUV2Generation = pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
-		pbShowSceneInfo = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
-		pbEnableBackfaceSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+		pbStripProBuilderOnBuild 			= pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
+		pbDisableAutoUV2Generation 			= pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+		pbShowSceneInfo 					= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
+		pbEnableBackfaceSelection 			= pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+		defaultOpenInDockableWindow 		= pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
+		pbDragCheckLimit 					= pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
+		pbForceConvex 						= pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex);
+		pbForceGridPivot 					= pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot);
+		pbForceVertexPivot 					= pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot);
+		pbManifoldEdgeExtrusion 			= pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
+		pbPerimeterEdgeBridgeOnly 			= pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
+		pbPBOSelectionOnly 					= pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly);
+		pbCloseShapeWindow 					= pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow);		
+		pbUVEditorFloating 					= pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating);
+		pbShowSceneToolbar 					= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
+		pbShowEditorNotifications 			= pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications);
 
-		pbDefaultFaceColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
-		pbDefaultEdgeColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
-		
-		pbDefaultSelectedVertexColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
+		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
+		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
+		pbDefaultSelectedVertexColor 		= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
 
-		if(!EditorPrefs.HasKey( pb_Constant.pbDefaultOpenInDockableWindow))
-			EditorPrefs.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
+		pbUVGridSnapValue 					= pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
+		pbVertexHandleSize 					= pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 
-			
-		defaultOpenInDockableWindow = EditorPrefs.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
+		pbDefaultSelectionMode 				= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
+		defaultColliderType 				= pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 
-		pbDefaultSelectionMode = pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
-		defaultColliderType = (int)pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
+		pbDefaultMaterial 					= pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
-		pbUVGridSnapValue = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
-		
-		pbDragCheckLimit 	= pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
-		pbForceConvex 		= pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex);
-		pbForceGridPivot 	= pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot);
-		pbForceVertexPivot 	= pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot);
-		
-		pbManifoldEdgeExtrusion = pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
-		pbPerimeterEdgeBridgeOnly = pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
-
-		pbPBOSelectionOnly = pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly);
-
-		pbCloseShapeWindow = pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow);
-
-		pbVertexHandleSize = pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
-
-		pbUVEditorFloating = pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating);
-
-		pbShowSceneToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
-
-		pbDefaultMaterial = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
-
-		defaultShortcuts = EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ? 
+		defaultShortcuts 					= EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ? 
 			pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) : 
 			pb_Shortcut.DefaultShortcuts();
 
-		pbShowEditorNotifications = EditorPrefs.HasKey(pb_Constant.pbShowEditorNotifications) ?
-			EditorPrefs.GetBool(pb_Constant.pbShowEditorNotifications) : true;
+	}
+
+	public static Hashtable ToHashtable()
+	{
+		Hashtable table = new Hashtable();
+
+		table.Add(pb_Constant.pbStripProBuilderOnBuild,			pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild));
+		table.Add(pb_Constant.pbDisableAutoUV2Generation,		pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation));
+		table.Add(pb_Constant.pbShowSceneInfo,					pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo));
+		table.Add(pb_Constant.pbEnableBackfaceSelection,		pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection));
+		table.Add(pb_Constant.pbDefaultOpenInDockableWindow,	pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow));
+		table.Add(pb_Constant.pbDragCheckLimit,					pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit));
+		table.Add(pb_Constant.pbForceConvex,					pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex));
+		table.Add(pb_Constant.pbForceGridPivot,					pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot));
+		table.Add(pb_Constant.pbForceVertexPivot,				pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot));
+		table.Add(pb_Constant.pbManifoldEdgeExtrusion,			pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion));
+		table.Add(pb_Constant.pbPerimeterEdgeBridgeOnly,		pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly));
+		table.Add(pb_Constant.pbPBOSelectionOnly,				pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly));
+		table.Add(pb_Constant.pbCloseShapeWindow,				pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow));		
+		table.Add(pb_Constant.pbUVEditorFloating,				pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating));
+		table.Add(pb_Constant.pbShowSceneToolbar,				pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar));
+		table.Add(pb_Constant.pbShowEditorNotifications,		pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications));
+		table.Add(pb_Constant.pbDefaultFaceColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor ));
+		table.Add(pb_Constant.pbDefaultEdgeColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor ));
+		table.Add(pb_Constant.pbDefaultSelectedVertexColor,		pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor ));
+		table.Add(pb_Constant.pbUVGridSnapValue,				pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue));
+		table.Add(pb_Constant.pbVertexHandleSize,				pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize));
+		table.Add(pb_Constant.pbDefaultMaterial,				pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial));
+
+		table.Add(pb_Constant.pbDefaultSelectionMode,			pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode));
+		table.Add(pb_Constant.pbDefaultCollider,			 	pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider));
+
+		return table;
 	}
 
 	public static void SetPrefs()
@@ -308,7 +328,7 @@ public class pb_Preferences
 		string matPath = pbDefaultMaterial != null ? AssetDatabase.GetAssetPath(pbDefaultMaterial) : "";
 		EditorPrefs.SetString	(pb_Constant.pbDefaultMaterial, matPath == "" ? pbDefaultMaterial.name : matPath);
 		
-		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, defaultColliderType);	
+		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int)defaultColliderType);	
 		EditorPrefs.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
 		EditorPrefs.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
 		EditorPrefs.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);
@@ -326,7 +346,9 @@ public class pb_Preferences
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
 
 
-		pb_Editor_Graphics.LoadPrefs();
+		if(pb_Editor_Graphics.instance != null)
+			pb_Editor_Graphics.instance.LoadPrefs( ToHashtable() );
+
 		SceneView.RepaintAll();
 	}
 }

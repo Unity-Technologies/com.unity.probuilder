@@ -60,7 +60,8 @@ namespace ProBuilder2.Common
 
 		void OnDestroy()
 		{
-			renderables.Clear();
+			foreach(pb_Renderable ren in renderables)
+				GameObject.DestroyImmediate(ren); 
 		}
 	}
 }

@@ -30,21 +30,33 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Destroy the mesh and materials associated with this object.  Do not call Destroy() if 
-		 * any of the materials or mesh is not an instance value.
+		 * Create a new pb_Renderable with an empty mesh and no materials.
 		 */
-		public void OnDestroy()
+		public static pb_Renderable CreateInstance()
 		{
-			GameObject.DestroyImmediate(mesh);
+			pb_Renderable ren = CreateInstance(new Mesh(), (Material)null);
+			ren.mesh.name = "pb_Renderable::Mesh";
+			ren.mesh.hideFlags = HideFlags.DontSave;
+			ren.mesh.MarkDynamic();
+			ren.hideFlags = HideFlags.DontSave;
 
-			if(materials != null)
-			{
-				for(int i = 0; i < materials.Length; i++)
-				{
-					if(materials[i] != null)
-						GameObject.DestroyImmediate(materials[i]);
-				}
-			}
+			// ren.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+			// ren.mesh.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
+			return ren;
+		}
+
+		/**
+		 * Destructor for wireframe pb_Renderables.
+		 */
+		public static void DestroyInstance(UnityEngine.Object ren)
+		{
+			GameObject.DestroyImmediate(ren);
+		}
+
+		void OnDestroy()
+		{
+			if(mesh != null)
+				GameObject.DestroyImmediate(mesh);
 		}
 	}
 }

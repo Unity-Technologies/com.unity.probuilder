@@ -18,23 +18,30 @@ using Parabox.Debug;
 
 namespace ProBuilder2.EditorCommon
 {
-public class pb_Editor : EditorWindow
+public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 {
-#region CONSTANT
+	pb_Editor_Graphics graphics { get { return pb_Editor_Graphics.instance; } }
+
+	public void OnAfterDeserialize()
+	{
+		// Debug.Log("OnAf terDeserialize");
+	}
+
+	public void OnBeforeSerialize()
+	{
+		// Debug.Log("OnBeforeSerialize");
+	}
+
+#region LOCAL MEMBERS && EDITOR PREFS
 	
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 244;
-
 	const int WINDOW_WIDTH_FlOATING = 102;
 	const int WINDOW_WIDTH_DOCKABLE = 105;
 
 	// Toggles for Face, Vertex, and Edge mode.
 	const int SELECT_MODE_LENGTH = 3;
-#endregion
-
-#region LOCAL MEMBERS && EDITOR PREFS
-	
 	GUIContent[] SelectionIcons;
 	Texture2D eye_on, eye_off;
 	GUIStyle VertexTranslationInfoStyle;
@@ -69,7 +76,7 @@ public class pb_Editor : EditorWindow
 	private bool pref_snapEnabled = false;
 
 	private bool limitFaceDragCheckToSelection = true;
-	internal bool isFloatingWindow = false;
+	private bool isFloatingWindow = false;
 #endregion
 
 #region INITIALIZATION AND ONDISABLE
@@ -89,15 +96,14 @@ public class pb_Editor : EditorWindow
 	{
 		_instance = this;
 
+		graphics.LoadPrefs( pb_Preferences.ToHashtable() );
+
 		HookDelegates();
 
 		// make sure load prefs is called first, because other methods depend on the preferences set here
 		LoadPrefs();
 
 		InitGUI();
-
-		// checks for duplicate meshes created while probuilder was not open
-		SceneWideNullCheck();
 
 		show_Detail 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail);
 		show_Mover 		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover);
@@ -177,6 +183,12 @@ public class pb_Editor : EditorWindow
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 	}
 
+	private void OnDestroy()
+	{	
+		if(graphics != null)
+			GameObject.DestroyImmediate(graphics.gameObject);
+	}
+
 	private void OnDisable()
 	{
 		_instance = null;
@@ -195,9 +207,7 @@ public class pb_Editor : EditorWindow
 
 		EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
-		pb_Editor_Graphics.OnDisable();
-
-		pb_Editor_Gizmos.ClearLines();
+		// pb_Editor_Gizmos.ClearLines();
 
 		// re-enable unity wireframe
 		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
@@ -674,7 +684,7 @@ public class pb_Editor : EditorWindow
 #region ONSCENEGUI
 
 	// GUI Caches
-	public pb_Object[] selection = new pb_Object[0];							// All selected pb_Objects
+	public pb_Object[] selection = new pb_Object[0];						// All selected pb_Objects
 	
 	public int selectedVertexCount { get; private set; }					// Sum of all vertices sleected
 	public int selectedFaceCount { get; private set; }						// Sum of all faces sleected
@@ -959,11 +969,6 @@ public class pb_Editor : EditorWindow
 					DragCheck();
 				}
 			}
-		}
-
-		if(GUI.changed) {
-			foreach(pb_Object pb in selection)
-				EditorUtility.SetDirty(pb);
 		}
 	}
 
@@ -2602,7 +2607,7 @@ public class pb_Editor : EditorWindow
 			m_universalEdges 		= new pb_Edge[selection.Length][];
 			m_verticesInWorldSpace 	= new Vector3[selection.Length][];
 			m_uniqueIndices			= new int[selection.Length][];
-			m_sharedIndicesLookup 			= new Dictionary<int, int>[selection.Length];
+			m_sharedIndicesLookup 	= new Dictionary<int, int>[selection.Length];
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -2749,7 +2754,8 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		pb_Editor_Graphics.UpdateSelectionMesh(selection, editLevel, selectionMode);
+		graphics.UpdateGraphics(selection, editLevel, selectionMode);
+		// graphics.UpdateSelectionMesh(selection, editLevel, selectionMode);
 	}
 
 	public void AddToSelection(GameObject t)
@@ -2971,6 +2977,9 @@ public class pb_Editor : EditorWindow
 
 #region Selection Management and checks
 
+	/**
+	 * If dragging a texture aroudn, this method ensures that if it's a member of a texture group it's cronies are also selected
+	 */
 	private void VerifyTextureGroupSelection()
 	{
 		foreach(pb_Object pb in selection)
@@ -3029,13 +3038,6 @@ public class pb_Editor : EditorWindow
 	{
 		nearestEdge = null;
 		nearestEdgeObject = null;
-
-		// not sure if this is still necessary?
-		if(Selection.objects.Contains(pb_Editor_Graphics.selectionObject))
-			RemoveFromSelection(pb_Editor_Graphics.selectionObject);
-
-		if(Selection.objects.Contains(pb_Editor_Graphics.wireframeObject))
-			RemoveFromSelection(pb_Editor_Graphics.wireframeObject);
 
 		UpdateSelection(false);
 
@@ -3145,13 +3147,6 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
-	void SceneWideNullCheck()
-	{
-		pb_Object[] allPBObjects = FindObjectsOfType(typeof(pb_Object)) as pb_Object[];
-		foreach(pb_Object pb in allPBObjects)
-			pb.Verify();
-	}
-	
 	void UndoRedoPerformed()
 	{
 		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(Selection.transforms);
@@ -3200,7 +3195,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	/**
-	 *	A tool, any tool, has just been engaged
+	 *	A tool, any tool, has just been engaged while in texture mode
 	 */
 	public void OnBeginTextureModification()
 	{
@@ -3288,7 +3283,7 @@ public class pb_Editor : EditorWindow
 			if(elementLength > 0f)
 			{
 				elementLength = 0f;
-				pb_Editor_Gizmos.CleanUp();
+				// pb_Editor_Gizmos.CleanUp();
 				SceneView.RepaintAll();
 			}
 
@@ -3298,7 +3293,7 @@ public class pb_Editor : EditorWindow
 		float elementOffset = .01f;
 		elementLength = dist;
 
-		pb_Editor_Gizmos.ClearLines();
+		// pb_Editor_Gizmos.ClearLines();
 
 		foreach(pb_Object pb in selection)
 		{
@@ -3332,7 +3327,7 @@ public class pb_Editor : EditorWindow
 				n += 6;
 			}
 
-			pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
+			// pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 

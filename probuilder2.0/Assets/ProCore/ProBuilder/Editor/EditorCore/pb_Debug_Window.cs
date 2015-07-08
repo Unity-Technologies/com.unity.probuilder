@@ -48,7 +48,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnDisable()
 		{
-			pb_Editor_Gizmos.ClearLines();
+			// pb_Editor_Gizmos.ClearLines();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		}
 
@@ -480,7 +480,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		void DrawElements(pb_Object pb)
 		{	
-			pb_Editor_Gizmos.ClearLines();
+			// pb_Editor_Gizmos.ClearLines();
 
 			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
 				return;
@@ -514,7 +514,7 @@ namespace ProBuilder2.EditorCommon
 				n += 6;
 			}
 
-			pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
+			// pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
 		}
 	}
 }

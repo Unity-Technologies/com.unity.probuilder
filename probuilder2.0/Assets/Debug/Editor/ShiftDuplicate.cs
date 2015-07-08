@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
-
 
 [InitializeOnLoad]
 public class ShiftDuplicate : Editor

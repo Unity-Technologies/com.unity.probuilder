@@ -8,6 +8,32 @@ using System.Collections;
 namespace ProBuilder2.Common
 {
 	/**
+	 * Element selection mode.
+	 */
+	public enum SelectMode
+	{
+		Vertex,
+		Edge,
+		Face
+	}
+	
+	/**
+	 * The editor level - top (no pb action), geo, texture, plugin.
+	 */
+	public enum EditLevel {
+		Top,
+		Geometry,
+		Texture,
+		Plugin
+	}
+
+	public enum HandleAlignment {
+		World,
+		Plane,
+		Local
+	}
+
+	/**
 	 * Determines what GameObject flags this object will have.
 	 */
 	public enum EntityType {
