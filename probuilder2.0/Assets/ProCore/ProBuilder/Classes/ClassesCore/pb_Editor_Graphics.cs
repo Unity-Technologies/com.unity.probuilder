@@ -19,16 +19,17 @@ public class pb_Editor_Graphics : MonoBehaviour
 			if(_instance == null)
 			{
 				pb_Editor_Graphics[] danglers = Resources.FindObjectsOfTypeAll<pb_Editor_Graphics>();
+
 				if(danglers == null || danglers.Length < 1)
 				{
-					Debug.Log("_instance == null");
 					GameObject go = new GameObject();
 					go.name = "pb_Editor_Graphics";
 					_instance = go.AddComponent<pb_Editor_Graphics>();
-					_instance.gameObject.hideFlags = HideFlags.DontSave;//InBuild | HideFlags.DontSaveInEditor;
+					_instance.gameObject.hideFlags = HideFlags.DontSave;
 				}
 				else
 				{
+					// shouldn't ever have dangling instances, but just in case...
 					_instance = danglers[0];
 					for(int i = 1; i < danglers.Length; i++)
 						GameObject.DestroyImmediate(danglers[i]);
@@ -41,7 +42,7 @@ public class pb_Editor_Graphics : MonoBehaviour
 
 	private static pb_Editor_Graphics _instance;
 
-	const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";// "Hidden/ProBuilder/UnlitColor";
+	const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";
 	const string EDGE_SHADER = "Hidden/ProBuilder/FaceHighlight";
 	const string VERT_SHADER = "Hidden/ProBuilder/pb_VertexShader";
 
@@ -66,11 +67,10 @@ public class pb_Editor_Graphics : MonoBehaviour
 
 	static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
 
-	[SerializeField] pb_ObjectPool pool;
+	pb_ObjectPool<pb_Renderable> pool;
 
 	void Awake()
 	{
-		Debug.Log("Awake()");
 		_instance = this;
 
 		renderer = gameObject.AddComponent<pb_MeshRenderer>();
@@ -96,15 +96,14 @@ public class pb_Editor_Graphics : MonoBehaviour
 
 	void OnEnable()
 	{
-		pool = pb_ObjectPool.CreateInstance(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
-		pool.name = "pb_Editor_Graphics::Pool";
+		_instance = this;
+		pool = new pb_ObjectPool<pb_Renderable>(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
 
 	}
 
 	void OnDisable()
 	{
-		Debug.Log("OnEnable()");
-		GameObject.DestroyImmediate(pool);	
+		pool.Empty();	
 	}
 
 	Material CreateMaterial(Shader shader, string materialName)
@@ -175,7 +174,7 @@ public class pb_Editor_Graphics : MonoBehaviour
 
 		Vector3[] 	v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);
 
-		pb_Renderable ren = pool.Get<pb_Renderable>();
+		pb_Renderable ren = pool.Get();
 
 		ren.name = "Faces Renderable";
 		ren.matrix = pb.transform.localToWorldMatrix;
@@ -269,7 +268,7 @@ public class pb_Editor_Graphics : MonoBehaviour
 			n+=6;				
 		}
 
-		pb_Renderable ren = pool.Get<pb_Renderable>();
+		pb_Renderable ren = pool.Get();
 
 		ren.name = "Vertex Renderable";
 		ren.matrix = pb.transform.localToWorldMatrix;
@@ -301,7 +300,7 @@ public class pb_Editor_Graphics : MonoBehaviour
 			edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
 		}
 
-		pb_Renderable ren = pool.Get<pb_Renderable>();
+		pb_Renderable ren = pool.Get();
 
 		ren.name = "Wireframe Renderable";
 		ren.materials = new Material[] { wireframeMaterial };
