@@ -195,6 +195,34 @@ public class pb_Menu_Commands : Editor
 	}
 
 
+	public static void MenuOpenVertexColorsEditor(pb_Object[] selection)
+	{
+		
+		switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+		{
+			case VertexColorTool.Palette:
+				pb_Vertex_Color_Toolbar.MenuOpenWindow();
+				break;
+
+			default:
+				pb_VertexColor_Editor.MenuOpenWindow();
+				break;
+		}
+	}
+
+	public static void VertexColorsGUI(int width)
+	{
+		VertexColorTool tool = pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
+		VertexColorTool prev = tool;
+
+
+		GUILayout.Label("Color Editor");
+
+		tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-12));
+
+		if(prev != tool)
+			EditorPrefs.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+	}
 #if !PROTOTYPE
 
 	enum BooleanOperation
@@ -1268,8 +1296,10 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.ShowNotification("Nothing Selected");
 			return;
 		}
+		Debug.Log("SUBDIVIDE");
 
-		pbUndo.RecordObjects(selection, "Subdivide Selection");
+		Undo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
+
 		int success = 0;
 
 		foreach(pb_Object pb in selection)
@@ -1320,8 +1350,8 @@ public class pb_Menu_Commands : Editor
 
 		foreach(pb_Object pb in selection)
 		{
-			pbUndo.RecordObject(pb, "Subdivide Face");
-			
+			Undo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
+
 			pb_Face[] faces;
 
 			if(pb.SubdivideFace(pb.SelectedFaces, out faces))
@@ -1356,7 +1386,9 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuConnectEdges(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Connect Edges");
+		// pbUndo.RecordObjects(selection, "Connect Edges");
+		Undo.RegisterCompleteObjectUndo(selection, "Connect Edges");
+
 		int success = 0;
 
 		foreach(pb_Object pb in selection)

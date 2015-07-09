@@ -241,6 +241,10 @@ public class pb_Preferences_Internal
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)ColliderType.MeshCollider;
 				return (T)System.Convert.ChangeType( (ColliderType)key, typeof(T));
 			
+			case pb_Constant.pbVertexColorTool:
+				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)VertexColorTool.Painter;
+				return (T)System.Convert.ChangeType( (VertexColorTool) key, typeof(T));
+			
 			default:
 				return (T)System.Convert.ChangeType( 0, typeof(T));
 		}

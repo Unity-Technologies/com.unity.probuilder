@@ -17,14 +17,14 @@ public class pb_VertexColor_Editor : EditorWindow
 	/**
 	 * Public call to inititalize window.
 	 */
-	public static void Init()
+	public static void MenuOpenWindow()
 	{
 		EditorWindow.GetWindow<pb_VertexColor_Editor>(true, "ProBuilder Vertex Painter", true).Show();
 	}
 
  	void OnEnable()
 	{
-		pb_Lightmapping.PushGIWorkflowMode();
+		// pb_Lightmapping.PushGIWorkflowMode();
 
 		if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
 		{
@@ -53,7 +53,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	void OnDisable()
 	{
-		pb_Lightmapping.PopGIWorkflowMode();
+		// pb_Lightmapping.PopGIWorkflowMode();
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 
@@ -379,14 +379,14 @@ public class pb_VertexColor_Editor : EditorWindow
 		if(editor && editor.editLevel != EditLevel.Plugin)
 			editor.SetEditLevel(EditLevel.Plugin);
  
-#if UNITY_5
-		if( Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative )
-		{
-			pb_Lightmapping.PushGIWorkflowMode();
-			Lightmapping.Cancel();
-			Debug.LogWarning("Vertex Painter requires Continuous Baking to be Off.  When you close the Vertex Painter tool, Continuous Baking will returned to it's previous state automatically.\nIf you toggle Continuous Baking On while the Vertex Painter is open, you may lose all mesh vertex colors.");
-		}
-#endif
+// #if UNITY_5
+// 		if( Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative )
+// 		{
+// 			pb_Lightmapping.PushGIWorkflowMode();
+// 			Lightmapping.Cancel();
+// 			Debug.LogWarning("Vertex Painter requires Continuous Baking to be Off.  When you close the Vertex Painter tool, Continuous Baking will returned to it's previous state automatically.\nIf you toggle Continuous Baking On while the Vertex Painter is open, you may lose all mesh vertex colors.");
+// 		}
+// #endif
 
 		currentEvent = Event.current;
 		sceneCamera = scnview.camera;

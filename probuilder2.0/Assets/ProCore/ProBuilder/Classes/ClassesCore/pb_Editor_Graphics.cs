@@ -120,8 +120,8 @@ namespace ProBuilder2.Common
 			// update wireframe
 			wireframeMaterial.SetColor("_Color", (selectionMode == SelectMode.Edge && editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 
-			// foreach(pb_Object pb in selection)
-			// 	renderer.renderables.Add( BuildEdgeMesh(pb) );
+			foreach(pb_Object pb in selection)
+				renderer.renderables.Add( BuildEdgeMesh(pb) );
 
 			// update vert / edge / face
 			switch(selectionMode)

@@ -260,6 +260,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	/**
 	 * Tool setting foldouts
 	 */
+	bool tool_vertexColors = false;
 	bool tool_growSelection = false;
 	bool tool_extrudeButton = false;
 	#if !PROTOTYPE
@@ -357,8 +358,13 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				pb_UV_Editor.MenuOpenUVEditor();
 			#endif
 
-			if(GUILayout.Button(new GUIContent("Vertex Colors", "Provides an interface to set vertex colors.  Note that your shader must support vertex colors in order for changes to be visible."), EditorStyles.miniButton))	
-				pb_Vertex_Color_Toolbar.MenuOpenWindow();
+			tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Colors", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
+				tool_vertexColors,
+				pb_Menu_Commands.MenuOpenVertexColorsEditor,
+				pb_Menu_Commands.VertexColorsGUI,
+				Screen.width,
+				36,
+				selection);
 
 			#if !PROTOTYPE
 			if(GUILayout.Button("Smoothing", EditorStyles.miniButton))

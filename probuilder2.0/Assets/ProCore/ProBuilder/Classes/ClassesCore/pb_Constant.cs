@@ -53,6 +53,7 @@ public static class pb_Constant
 	public const string pbDefaultEditLevel 				= "pbDefaultEditLevel";
 	public const string pbDefaultSelectionMode 			= "pbDefaultSelectionMode";
 	public const string pbHandleAlignment 				= "pbHandleAlignment";
+	public const string pbVertexColorTool 				= "pbVertexColorTool";
 
 	// Color
 	public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
