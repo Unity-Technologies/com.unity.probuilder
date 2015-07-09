@@ -1078,8 +1078,8 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object pb = go.GetComponent<pb_Object>();
 
-			pb.ToMesh();
 			pb.FreezeScaleTransform();
+			pb.ToMesh();
 			pb.Refresh();
 		}
 	#endregion

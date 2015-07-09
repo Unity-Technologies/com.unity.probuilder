@@ -1,5 +1,4 @@
 ﻿#if !PROTOTYPE
-#pragma warning disable 0168	///< Disable unused var (that exception hack)
 
 using UnityEngine;
 using UnityEditor;
@@ -9,6 +8,7 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Interface;
 using ProBuilder2.Math;
+using System.Linq;
 
 public class pb_VertexColor_Editor : EditorWindow
 {
@@ -116,7 +116,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	float handleDistance = 10f;
 	bool lockhandleToCenter = false;
 	Vector2 screenCenter = Vector2.zero;
-
+	bool isPainting = false;
 	HashSet<pb_Object> modified = new HashSet<pb_Object>();	// list of all objects that have been modified by the painter, stored so that we can regenerate UV2 on disable
 
 	Texture[] textures = new Texture[0];
@@ -473,7 +473,7 @@ public class pb_VertexColor_Editor : EditorWindow
 								}
 							}
 						}
-	 				} catch (System.Exception e) { /* shhhhh */ }
+	 				} catch { /* shhhhh */ }
 
 					// show a preview
 					pb.msh.colors = colors;
@@ -535,20 +535,21 @@ public class pb_VertexColor_Editor : EditorWindow
 
 			Dictionary<pb_Object, Color[]> sticky = new Dictionary<pb_Object, Color[]>();
  	
+			if(!isPainting)
+			{
+				Undo.RegisterCompleteObjectUndo(hovering.Keys.ToArray(), "Apply Vertex Colors");
+				isPainting = true;
+			}
+
+
  			// Apply colors
 			foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
 			{
 				Color[] colors = kvp.Key.msh.colors;
 
 				sticky.Add(kvp.Key, colors);
- 
-				// kvp.Key.msh.colors = kvp.Value;
-
-				pbUndo.RecordObjects(new Object[] {kvp.Key}, "Apply Vertex Colors");
 
 				kvp.Key.SetColors(colors);
-
-				// kvp.Key.msh.colors = colors;
 			}
  
 			hovering = sticky;
@@ -562,6 +563,9 @@ public class pb_VertexColor_Editor : EditorWindow
 
 			Repaint();
 		}
+
+		if(currentEvent.type == EventType.MouseUp)
+			isPainting = false;
  
 		if(mpos != currentEvent.mousePosition && currentEvent.type == EventType.Repaint)
 		{

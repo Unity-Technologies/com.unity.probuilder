@@ -158,54 +158,59 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, pb_IntArray[] sharedIndices)
 	{
-		int len = edges.Length;
-		int slen = sharedIndices.Length;
-
-		pb_Range[] bounds = new pb_Range[sharedIndices.Length];
-		for(int i = 0; i < slen; i++)
-			bounds[i] = new pb_Range( pb_Math.Min(sharedIndices[i].array), pb_Math.Max(sharedIndices[i].array));
-
-		pb_Edge[] uniEdges = new pb_Edge[len];
-		for(int i = 0; i < len; i++)
-		{
-			int x = -1, y = -1;
-
-			// X
-			for(int t = 0; t < slen; t++)
-			{
-				if(!bounds[t].Contains(edges[i].x)) continue;
-
-				for(int n = 0; n < sharedIndices[t].Length; n++)
-				{
-					if(sharedIndices[t][n] == edges[i].x)	
-					{
-						x = t;
-						break;
-					}
-				}
-				if(x > -1) break;
-			}
-
-			// Y
-			for(int t = 0; t < slen; t++)
-			{
-				if(!bounds[t].Contains(edges[i].y)) continue;
-
-				for(int n = 0; n < sharedIndices[t].Length; n++)
-				{
-					if(sharedIndices[t][n] == edges[i].y)	
-					{
-						y = t;
-						break;
-					}
-				}
-				if(y > -1) break;
-			}
-
-			uniEdges[i] = new pb_Edge(x, y);		
-		}
-		return uniEdges;
+		return GetUniversalEdges(edges, sharedIndices.ToDictionary());
 	}
+
+	// public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, pb_IntArray[] sharedIndices)
+	// {
+	// 	int len = edges.Length;
+	// 	int slen = sharedIndices.Length;
+
+	// 	pb_Range[] bounds = new pb_Range[sharedIndices.Length];
+	// 	for(int i = 0; i < slen; i++)
+	// 		bounds[i] = new pb_Range( pb_Math.Min(sharedIndices[i].array), pb_Math.Max(sharedIndices[i].array));
+
+	// 	pb_Edge[] uniEdges = new pb_Edge[len];
+	// 	for(int i = 0; i < len; i++)
+	// 	{
+	// 		int x = -1, y = -1;
+
+	// 		// X
+	// 		for(int t = 0; t < slen; t++)
+	// 		{
+	// 			if(!bounds[t].Contains(edges[i].x)) continue;
+
+	// 			for(int n = 0; n < sharedIndices[t].Length; n++)
+	// 			{
+	// 				if(sharedIndices[t][n] == edges[i].x)	
+	// 				{
+	// 					x = t;
+	// 					break;
+	// 				}
+	// 			}
+	// 			if(x > -1) break;
+	// 		}
+
+	// 		// Y
+	// 		for(int t = 0; t < slen; t++)
+	// 		{
+	// 			if(!bounds[t].Contains(edges[i].y)) continue;
+
+	// 			for(int n = 0; n < sharedIndices[t].Length; n++)
+	// 			{
+	// 				if(sharedIndices[t][n] == edges[i].y)	
+	// 				{
+	// 					y = t;
+	// 					break;
+	// 				}
+	// 			}
+	// 			if(y > -1) break;
+	// 		}
+
+	// 		uniEdges[i] = new pb_Edge(x, y);		
+	// 	}
+	// 	return uniEdges;
+	// }
 
 	/**
 	 * Returns a new pb_Edge containing the index of each element in the sharedIndices array.

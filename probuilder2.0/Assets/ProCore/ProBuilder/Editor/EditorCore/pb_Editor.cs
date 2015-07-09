@@ -32,6 +32,10 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		// Debug.Log("OnBeforeSerialize");
 	}
 
+	#if PB_DEBUG
+	static pb_Profiler profiler = new pb_Profiler();
+	#endif
+
 #region LOCAL MEMBERS && EDITOR PREFS
 	
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
@@ -801,13 +805,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			}
 		#endif
 
-		if(edgeWorkerFinished > 0)
-		{
-			edgeWorkerFinished = 0;
-			UpdateGraphics();
-			SceneView.RepaintAll();
-		}
-
 		DrawHandleGUI();
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
@@ -1551,6 +1548,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		if(newPosition != cachedPosition)
 		{
+			profiler.BeginSample("VertexMoveTool()");
 			Vector3 diff = newPosition-cachedPosition;
 
 			Vector3 mask = diff.ToMask();
@@ -1566,16 +1564,25 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 			if(previouslyMoving == false)
 			{
+				profiler.BeginSample("Cache");
+
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
+				profiler.EndSample();
 				
+				profiler.BeginSample("Extrude");
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
+				profiler.EndSample();
 
+				profiler.BeginSample("Check PG");
 				pb_ProGrids_Interface.OnHandleMove(mask);
+				profiler.EndSample();
 
+				profiler.BeginSample("OnBeginVertexMovement");
 				OnBeginVertexMovement();
+				profiler.EndSample();
 			}
 
 			// For some reason, applying Snap() to vertices in TranslateVertices_World() causes
@@ -1591,6 +1598,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				selection[i].msh.RecalculateBounds();
 			}
 
+			profiler.EndSample();
 			Internal_UpdateSelectionFast();
 		}
 
@@ -1852,7 +1860,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			pb.ToMesh();
 			pb.Refresh();
 
-			pbUndo.RecordObject(pb, "Shift-Extrude Faces");
+			Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
 
 			switch(selectionMode)
 			{
@@ -2552,13 +2560,11 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
 
 	// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
-	int 				per_object_vertexCount_distinct = 0;
+	int per_object_vertexCount_distinct = 0;
 
 	int faceCount = 0;
 	int vertexCount = 0;
 	int triangleCount = 0;
-
-	int selectionHash;
 
 	/**
 	 * used to compare selection values when returning from GetUniversalEdges worker - should not be trusted anywhere that really matters.
@@ -2582,6 +2588,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{		
+		profiler.BeginSample("UpdateSelection()");
 		per_object_vertexCount_distinct = 0;
 		
 		selectedVertexCount = 0;
@@ -2596,11 +2603,12 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
+
 		// If the top level selection has changed, update all the heavy cache things
 		// that don't change based on element selction
 		if(forceUpdate || !t_selection.SequenceEqual(selection))
 		{
-			selectionHash = GetSelectionHash(selection);
+			profiler.BeginSample("Heavy Update");
 
 			forceUpdate = true;	// If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
 								// can be trusted.
@@ -2611,19 +2619,25 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 			for(int i = 0; i < selection.Length; i++)
 			{
+				profiler.BeginSample("Unique Indices");
 				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
+				profiler.EndSample();
 
-				// necessary only once on selection modification
-				m_universalEdges[i] = new pb_Edge[0];// pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), selection[i].sharedIndices).Distinct().ToArray();
-
+				profiler.BeginSample("sharedIndices.ToDictionary()");
 				m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
-				
-				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
-			}
+				profiler.EndSample();
 
-			Thread edgesThread = new Thread( () => GetUniversalEdgesWorker(selection) );
-			edgesThread.Start(selection);
+				profiler.BeginSample("GetUniversalEdges (dictionary)");
+				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
+				profiler.EndSample();
+				
+				profiler.BeginSample("VerticesInWorldSpace");
+				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
+				profiler.EndSample();
+			}
+			profiler.EndSample();
 		}
+
 
 		SelectedFacesInEditZone 			= new pb_Face[selection.Length][];
 		
@@ -2697,11 +2711,14 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
+		
+		profiler.EndSample();
 	}
 
 	// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 	private void Internal_UpdateSelectionFast()
 	{
+		profiler.BeginSample("Internal_UpdateSelectionFast");
 		selectedVertexCount = 0;
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
@@ -2750,11 +2767,15 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
+
+		profiler.EndSample();
 	}
 
 	private void UpdateGraphics()
 	{
+		profiler.BeginSample("UpdateGraphics()");
 		graphics.UpdateGraphics(selection, editLevel, selectionMode);
+		profiler.EndSample();
 		// graphics.UpdateSelectionMesh(selection, editLevel, selectionMode);
 	}
 
@@ -2835,42 +2856,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		}
 
 		Selection.objects = new Object[0];
-	}
-
-	int edgeWorkerFinished = 0;
-
-	/**
-	 * Get universal edges on a separate thread, since it can be expensive.
-	 */
-	void GetUniversalEdgesWorker(pb_Object[] objects)
-	{
-		pb_Object[] sel;
-
-		lock(objects)
-		{
-			sel = new pb_Object[objects.Length];
-			System.Array.Copy(objects, 0, sel, 0, objects.Length);
-		}
-
-		pb_Edge[][] edges = new pb_Edge[sel.Length][];
-
-		for(int i = 0; i < sel.Length; i++)
-		{
-			edges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(sel[i].faces), sel[i].sharedIndices).Distinct().ToArray();
-		}
-
-		lock(selection)
-		{
-			if( GetSelectionHash(sel) == selectionHash )
-			{
-				m_universalEdges = edges;
-
-				// if we changed something, also update the editor graphics so that the wireframe
-				// syncs.  can't just call pb_Editor_Graphics.Update() for some thread-y reason
-				// on Unity's side (I think... something about CompareBaseObjectsInternal)
-				edgeWorkerFinished = 1;
-			}
-		}
 	}
 #endregion
 
@@ -3209,7 +3194,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	 */
 	void OnBeginVertexMovement()
 	{
-		pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+		Undo.RegisterCompleteObjectUndo(selection, "Move Vertices");
 
 		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue = pb_ProGrids_Interface.SnapValue();
@@ -3218,10 +3203,12 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();
 
+		profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
 		{
 			pb.ResetMesh();
 		}
+		profiler.EndSample();
 	}
 
 	public void OnFinishedVertexModification()

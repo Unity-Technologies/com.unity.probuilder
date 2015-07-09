@@ -2198,11 +2198,6 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label(BasicBackgroundColor.ToString("F2"));
 
 		UVColorGroupIndicator = EditorGUILayout.ColorField("Groups", UVColorGroupIndicator);
-
-		if(GUILayout.Button("PROFILE"))
-		{
-			PROFILE_CANVASTOGUIPOINT();
-		}
 		
 		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
 		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));
