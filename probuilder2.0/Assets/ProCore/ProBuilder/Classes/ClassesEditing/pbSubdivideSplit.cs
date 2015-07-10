@@ -112,7 +112,8 @@ public static class pbSubdivideSplit
 			{
 				for(int n = 0; n < faces[i].edges.Length; n++)
 				{
-					if( vertices.Contains(pb.vertices[faces[i].edges[n].x]) || vertices.Contains(pb.vertices[faces[i].edges[n].y]) )
+					if( pb_Math.ContainsApprox(vertices, pb.vertices[faces[i].edges[n].x], .001f) ||
+						pb_Math.ContainsApprox(vertices, pb.vertices[faces[i].edges[n].y], .001f) )
 						continue;
 					else
 						nedges.Add( faces[i].edges[n] );

@@ -730,6 +730,17 @@ namespace ProBuilder2.Math
 					Mathf.Abs(a.b - b.b) < delta &&
 					Mathf.Abs(a.a - b.a) < delta;
 		}
+
+		/**
+		 * Search a vector3 array for a matching point within range.
+		 */
+		public static bool ContainsApprox(Vector3[] v, Vector3 p, float eps)
+		{
+			for(int i = 0; i < v.Length; i++)
+				if(pb_Math.Approx(v[i], p, eps))
+					return true;
+			return false;
+		}
 #endregion
 
 #region Projection 3d -> 2d
