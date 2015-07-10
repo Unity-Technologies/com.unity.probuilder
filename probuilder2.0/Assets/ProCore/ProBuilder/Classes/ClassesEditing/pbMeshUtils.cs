@@ -468,29 +468,23 @@ namespace ProBuilder2.MeshOperations
 
 #region Edge Ring / Loop
 	
-		static Parabox.Debug.pb_Profiler rp = new Parabox.Debug.pb_Profiler();
-
 		/**
 		 * Iterates through face edges and builds a list using the opposite edge.
 		 * @todo Lots of slow stuff in here
 		 */
 		public static pb_Edge[] GetEdgeRing(pb_Object pb, pb_Edge[] edges)
 		{
-			rp.BeginSample("GetEdgeRing()");
 			List<pb_Edge> usedEdges = new List<pb_Edge>();
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-			rp.BeginSample("foreach(pb_Edge in edges)");
 			foreach(pb_Edge e in edges)
 			{	
 				List<pb_Face> origFace;
 				List<pb_Edge> origEdge;
 
 				// ValidFaceAndEdgeWithEdge will return false if < 1 face and edge combo is found.
-				rp.BeginSample("ValidFaceAndEdgeWithEdge");
 				if( !ValidFaceAndEdgeWithEdge(pb, e, lookup, out origFace, out origEdge) )
 					continue;
-				rp.EndSample();
 					
 				// Only add the initial edge once
 				usedEdges.Add(origEdge[0]);
@@ -498,14 +492,12 @@ namespace ProBuilder2.MeshOperations
 				pb_Face opFace;
 				pb_Edge opEdge;
 
-				rp.BeginSample("foreach(origFace)");
 				bool superBreak = false;
 				for(int i = 0; i < origFace.Count; i++)
 				{
 					pb_Face curFace = origFace[i];
 					pb_Edge curEdge = origEdge[i];
 
-					rp.BeginSample("while( GetOppositeEdge )");
 					while( GetOppositeEdge(pb, curFace, curEdge, lookup, out opFace, out opEdge) )
 					{
 						curFace = opFace;
@@ -522,21 +514,14 @@ namespace ProBuilder2.MeshOperations
 							break;
 						}
 					}
-					rp.EndSample();
 
 					if(superBreak)
 						break;
 				}
-				rp.EndSample();
 			}
-			rp.EndSample();
 
-			rp.BeginSample("GetUniversalEdges()");
 			pb_Edge[] dist = pb_Edge.GetUniversalEdges(usedEdges.ToArray(), lookup);
-			rp.EndSample();
 
-			rp.EndSample();
-			Debug.Log(rp.ToString());
 
 			return pb_Edge.GetLocalEdges_Fast(dist.Distinct().ToArray(), pb.sharedIndices);
 		}
