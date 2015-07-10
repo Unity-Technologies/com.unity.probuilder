@@ -155,7 +155,11 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			return GetNeighborFaces(pb, edge, pb.sharedIndices.ToDictionary());
+		}
+
+		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge, Dictionary<int, int> lookup)
+		{
 			List<pb_Face> faces = new List<pb_Face>();
 
 			pb_Edge uni = new pb_Edge(lookup[edge.x], lookup[edge.y]);
@@ -184,7 +188,7 @@ namespace ProBuilder2.MeshOperations
 		public static pb_Face[] GetNeighborFaces(pb_Object pb, pb_Edge[] edges)
 		{
 			List<pb_Face> faces = new List<pb_Face>();
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> sharedIndices = pb.sharedIndices.ToDictionary();
 			foreach(pb_Face f in pb.faces)
 			{
 				foreach(pb_Edge e in edges)
@@ -464,7 +468,7 @@ namespace ProBuilder2.MeshOperations
 
 #region Edge Ring / Loop
 	
-		// static pb_Profiler rp = new pb_Profiler();
+		static Parabox.Debug.pb_Profiler rp = new Parabox.Debug.pb_Profiler();
 
 		/**
 		 * Iterates through face edges and builds a list using the opposite edge.
@@ -472,20 +476,21 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static pb_Edge[] GetEdgeRing(pb_Object pb, pb_Edge[] edges)
 		{
-			// rp.BeginSample("GetEdgeRing()");
+			rp.BeginSample("GetEdgeRing()");
 			List<pb_Edge> usedEdges = new List<pb_Edge>();
-			
-			// rp.BeginSample("foreach(pb_Edge in edges)");
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
+			rp.BeginSample("foreach(pb_Edge in edges)");
 			foreach(pb_Edge e in edges)
 			{	
 				List<pb_Face> origFace;
 				List<pb_Edge> origEdge;
 
 				// ValidFaceAndEdgeWithEdge will return false if < 1 face and edge combo is found.
-				// rp.BeginSample("ValidFaceAndEdgeWithEdge");
-				if( !ValidFaceAndEdgeWithEdge(pb, e, out origFace, out origEdge) )
+				rp.BeginSample("ValidFaceAndEdgeWithEdge");
+				if( !ValidFaceAndEdgeWithEdge(pb, e, lookup, out origFace, out origEdge) )
 					continue;
-				// rp.EndSample();
+				rp.EndSample();
 					
 				// Only add the initial edge once
 				usedEdges.Add(origEdge[0]);
@@ -493,15 +498,15 @@ namespace ProBuilder2.MeshOperations
 				pb_Face opFace;
 				pb_Edge opEdge;
 
-				// rp.BeginSample("foreach(origFace)");
+				rp.BeginSample("foreach(origFace)");
 				bool superBreak = false;
 				for(int i = 0; i < origFace.Count; i++)
 				{
 					pb_Face curFace = origFace[i];
 					pb_Edge curEdge = origEdge[i];
 
-					// rp.BeginSample("while( GetOppositeEdge )");
-					while( GetOppositeEdge(pb, curFace, curEdge, out opFace, out opEdge) )
+					rp.BeginSample("while( GetOppositeEdge )");
+					while( GetOppositeEdge(pb, curFace, curEdge, lookup, out opFace, out opEdge) )
 					{
 						curFace = opFace;
 						curEdge = opEdge;
@@ -517,21 +522,21 @@ namespace ProBuilder2.MeshOperations
 							break;
 						}
 					}
-					// rp.EndSample();
+					rp.EndSample();
 
 					if(superBreak)
 						break;
 				}
-				// rp.EndSample();
+				rp.EndSample();
 			}
-			// rp.EndSample();
+			rp.EndSample();
 
-			// rp.BeginSample("GetUniversalEdges()");
-			pb_Edge[] dist = pb_Edge.GetUniversalEdges(usedEdges.ToArray(), pb.sharedIndices);
-			// rp.EndSample();
+			rp.BeginSample("GetUniversalEdges()");
+			pb_Edge[] dist = pb_Edge.GetUniversalEdges(usedEdges.ToArray(), lookup);
+			rp.EndSample();
 
-			// rp.EndSample();
-			// Debug.Log(rp.ToString());
+			rp.EndSample();
+			Debug.Log(rp.ToString());
 
 			return pb_Edge.GetLocalEdges_Fast(dist.Distinct().ToArray(), pb.sharedIndices);
 		}
@@ -547,6 +552,7 @@ namespace ProBuilder2.MeshOperations
 		public static bool GetEdgeLoop(pb_Object pb, pb_Edge[] edges, out pb_Edge[] loop)
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 			List<pb_Edge> loopEdges = new List<pb_Edge>();
 			int largestPossibleLoop = pb.vertexCount;
@@ -556,7 +562,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_Edge edge in edges)
 			{
-				if(	loopEdges.IndexOf(edge, sharedIndices) > -1 )
+				if(	loopEdges.IndexOf(edge, lookup) > -1 )
 					continue;
 
 				// First go in the Y direction.  If that doesn't loop, then go in the X direction
@@ -572,16 +578,17 @@ namespace ProBuilder2.MeshOperations
 						cycles++;
 
 					// get the index of this triangle in the sharedIndices array
-					int[] si = sharedIndices[sharedIndices.IndexOf( useY ? curEdge.y : curEdge.x )].array;
+					// int[] si = sharedIndices[sharedIndices.IndexOf( useY ? curEdge.y : curEdge.x )].array;
+					int[] si = sharedIndices[lookup[useY ? curEdge.y : curEdge.x]].array;
 
 					// Get all faces connected to this vertex
 					pb_Face[] faces = pbMeshUtils.GetNeighborFaces(pb, si).ToArray();
 
-					pb_Face[] edgeAdjacent = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, sharedIndices) > -1);
+					pb_Face[] edgeAdjacent = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, lookup) > -1);
 					pb_Edge[] invalidEdges_universal = pb_Edge.GetUniversalEdges( pb_Edge.AllEdges(edgeAdjacent), sharedIndices ).Distinct().ToArray();
 
 					// these are faces that do NOT border the current edge
-					pb_Face[] nextFaces = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, sharedIndices) < 0);
+					pb_Face[] nextFaces = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, lookup) < 0);
 
 					if(nextFaces.Length != 2)
 					{
@@ -614,7 +621,7 @@ namespace ProBuilder2.MeshOperations
 
 							if(  xindex > -1 || yindex > -1 )
 							{
-								if( e.Equals(edge, sharedIndices) )
+								if( e.Equals(edge, lookup) )
 								{
 									// we've completed the loop.  exit.
 									superBreak = true;
@@ -669,13 +676,11 @@ namespace ProBuilder2.MeshOperations
 		 * @param edges - An edge composed of indices that belong to a same face (matching face in faces List).
 		 * @returns True if at least one valid edge is found, false if not.
 		 */
-		public static bool ValidFaceAndEdgeWithEdge(pb_Object pb, pb_Edge faceIndependentEdge, out List<pb_Face> faces, out List<pb_Edge> edges)
+		public static bool ValidFaceAndEdgeWithEdge(pb_Object pb, pb_Edge faceIndependentEdge, Dictionary<int, int> sharedIndices, out List<pb_Face> faces, out List<pb_Edge> edges)
 		{
 			faces = new List<pb_Face>();
 			edges = new List<pb_Edge>();
 
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			
 			foreach(pb_Face f in pb.faces)
 			{
 				int ind = f.edges.IndexOf(faceIndependentEdge, sharedIndices);
@@ -693,7 +698,7 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Returns the opposite edge on the neighboring face (if possible - if the edge does not connect to an additional face opposite_face will be null).
 		 */
-		public static bool GetOppositeEdge(pb_Object pb, pb_Face face, pb_Edge edge, out pb_Face opposite_face, out pb_Edge opposite_edge)
+		public static bool GetOppositeEdge(pb_Object pb, pb_Face face, pb_Edge edge, Dictionary<int, int> lookup, out pb_Face opposite_face, out pb_Edge opposite_edge)
 		{
 			opposite_face = null;
 			opposite_edge = null;
@@ -717,7 +722,7 @@ namespace ProBuilder2.MeshOperations
 			}
 			pb_Edge opEdgeLocal = ordered_edges[face.edges.Length/2];
 
-			List<pb_Face> connectedFaces = pbMeshUtils.GetNeighborFaces(pb, opEdgeLocal);
+			List<pb_Face> connectedFaces = pbMeshUtils.GetNeighborFaces(pb, opEdgeLocal, lookup);
 			connectedFaces.Remove(face);
 
 			if(connectedFaces.Count < 1)
@@ -730,7 +735,7 @@ namespace ProBuilder2.MeshOperations
 			
 			for(int i = 0; i < opposite_face.edges.Length; i++)
 			{
-				if(opposite_face.edges[i].Equals(opEdgeLocal, pb.sharedIndices))
+				if(opposite_face.edges[i].Equals(opEdgeLocal, lookup))
 				{
 					opposite_edge = opposite_face.edges[i];
 					break;

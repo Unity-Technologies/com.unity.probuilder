@@ -38,18 +38,31 @@ namespace ProBuilder2.EditorCommon
 
 		private void HookSceneViewDelegate()
 		{
-			if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
-			{
-				SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-				SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-			}
+			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 
+			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+			pb_Editor.OnVertexMovementFinished += OnVertexMovementFinished;
 		}
 
 		void OnDisable()
 		{
 			// pb_Editor_Gizmos.ClearLines();
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
+			pb_Editor.OnVertexMovementFinished -= OnVertexMovementFinished;
+		}
+
+		void OnSelectionUpdate(pb_Object[] selection)
+		{
+			foreach(pb_Object pb in selection)
+				DrawElements(pb);
+		}
+
+		void OnVertexMovementFinished(pb_Object[] selection)
+		{
+			foreach(pb_Object pb in selection)
+				DrawElements(pb);
 		}
 
 		public bool edgeInfo = false;
@@ -126,6 +139,9 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
+				foreach(pb_Object pb in selection)
+					DrawElements(pb);
+
 				SceneView.RepaintAll();
 			}
 
@@ -344,7 +360,6 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
 				DrawStats(pb);
-				DrawElements(pb);
 			}
 
 			Repaint();
@@ -479,8 +494,8 @@ namespace ProBuilder2.EditorCommon
 		 * Red = bitangents
 		 */
 		void DrawElements(pb_Object pb)
-		{	
-			// pb_Editor_Gizmos.ClearLines();
+		{
+			pb_LineRenderer.instance.Clear();
 
 			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
 				return;
@@ -514,7 +529,7 @@ namespace ProBuilder2.EditorCommon
 				n += 6;
 			}
 
-			// pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
+			pb_LineRenderer.instance.AddLineSegments(segments, ElementColors);
 		}
 	}
 }

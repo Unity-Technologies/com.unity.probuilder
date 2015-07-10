@@ -189,8 +189,11 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 	private void OnDestroy()
 	{	
-		if(graphics != null)
-			GameObject.DestroyImmediate(graphics.gameObject);
+		if(pb_Editor_Graphics.nullableInstance != null)
+			GameObject.DestroyImmediate(pb_Editor_Graphics.nullableInstance.gameObject);
+
+		if(pb_LineRenderer.nullableInstance != null)
+			GameObject.DestroyImmediate(pb_LineRenderer.nullableInstance.gameObject);
 	}
 
 	private void OnDisable()
@@ -211,7 +214,8 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
-		// pb_Editor_Gizmos.ClearLines();
+		if(pb_LineRenderer.Valid())
+			pb_LineRenderer.instance.Clear();
 
 		// re-enable unity wireframe
 		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
@@ -226,6 +230,9 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 #region EVENT HANDLERS
 	
+	/**
+	 * Delegate called on element or object selection change.
+	 */
 	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
 	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
 
@@ -1288,7 +1295,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				if( pb_Edge.ValidateEdge(pb, nearestEdge, out edge) )
 					nearestEdge = edge;
 
-				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices);
+				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 				
 				pbUndo.RecordObject(pb, "Change Edge Selection");
 				
@@ -3198,16 +3205,16 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	 * using PB data so that triangles match vertices (and no inserted vertices
 	 * from the Unwrapping.GenerateSecondaryUVSet() remain).
 	 */
-	void OnBeginVertexMovement()
+	private void OnBeginVertexMovement()
 	{
-		Undo.RegisterCompleteObjectUndo(selection, "Move Vertices");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Move Vertices");
 
 		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue = pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
-		pb_Lightmapping.PushGIWorkflowMode();
+		// pb_Lightmapping.PushGIWorkflowMode();
 
 		profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
@@ -3217,12 +3224,9 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		profiler.EndSample();
 	}
 
-	public void OnFinishedVertexModification()
+	private void OnFinishedVertexModification()
 	{	
-		pb_Lightmapping.PopGIWorkflowMode();
-
-		if(OnVertexMovementFinished != null)
-			OnVertexMovementFinished(selection);
+		// pb_Lightmapping.PopGIWorkflowMode();
 
 		currentHandleScale = Vector3.one;
 		currentHandleRotation = handleRotation;
@@ -3252,6 +3256,9 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			movingVertices = false;
 		}
 
+		if(OnVertexMovementFinished != null)
+			OnVertexMovementFinished(selection);
+
 		DrawNormals(drawNormals);
 		scaling = false;
 	}
@@ -3276,7 +3283,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			if(elementLength > 0f)
 			{
 				elementLength = 0f;
-				// pb_Editor_Gizmos.CleanUp();
+				pb_LineRenderer.instance.Clear();
 				SceneView.RepaintAll();
 			}
 
@@ -3286,7 +3293,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		float elementOffset = .01f;
 		elementLength = dist;
 
-		// pb_Editor_Gizmos.ClearLines();
+		pb_LineRenderer.instance.Clear();
 
 		foreach(pb_Object pb in selection)
 		{
@@ -3320,7 +3327,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				n += 6;
 			}
 
-			// pb_Editor_Gizmos.DrawLineSegments(segments, ElementColors);
+			pb_LineRenderer.instance.AddLineSegments(segments, ElementColors);
 		}
 	}
 

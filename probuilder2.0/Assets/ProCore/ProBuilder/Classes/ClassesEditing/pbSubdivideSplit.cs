@@ -68,6 +68,7 @@ public static class pbSubdivideSplit
 
 		int len = edges.Length;
 		List<pb_EdgeConnection> splits = new List<pb_EdgeConnection>();
+		Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 		// profiler.BeginSample("Split Edges");
 		for(int i = 0; i < len; i++)
@@ -81,7 +82,7 @@ public static class pbSubdivideSplit
 					List<pb_Edge> faceEdges = new List<pb_Edge>();
 					foreach(pb_Edge e in edges)
 					{
-						int localEdgeIndex = face.edges.IndexOf(e, pb.sharedIndices);
+						int localEdgeIndex = face.edges.IndexOf(e, lookup);
 						if(localEdgeIndex > -1)
 							faceEdges.Add(face.edges[localEdgeIndex]);
 					}
@@ -743,7 +744,7 @@ public static class pbSubdivideSplit
 
 		// cache all the things
 		pb_Face face = pb_edgeConnection.face;
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
+		Dictionary<int, int> sharedIndices = pb.sharedIndices.ToDictionary();
 		Vector3[] vertices = pb.vertices;
 		Vector2[] uvs = pb.uv;
 
@@ -875,7 +876,7 @@ public static class pbSubdivideSplit
 			quadrantsUV[quad].Add(faceUVs[i]);
 			quadrantsCol[quad].Add(colors[i]);
 
-			sharedIndex[quad].Add(pb.sharedIndices.IndexOf(face.distinctIndices[i]));
+			sharedIndex[quad].Add( sharedIndices[face.distinctIndices[i]] );
 		}
 
 		int len = quadrants2d.Length;

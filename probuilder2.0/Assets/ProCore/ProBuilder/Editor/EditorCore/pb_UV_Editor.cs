@@ -656,7 +656,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(mode == UVMode.Mixed || mode == UVMode.Auto)
 		{
-			pbUndo.RecordObjects(selection, "Apply AutoUV Transform");
+			pbUndo.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs") );
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1258,7 +1258,7 @@ public class pb_UV_Editor : EditorWindow
 					pb_Object pb = selection[nearestElement.objectIndex];
 
 					pb_Edge edge = pb.faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-					int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices);
+					int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices.ToDictionary());
 
 					if( ind > -1 )
 						pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
@@ -1430,7 +1430,10 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Move UVs");
+				// if auto uvs, the changes are applied after action is complete
+				if(mode != UVMode.Auto)
+					pbUndo.RegisterCompleteObjectUndo(selection, "Translate UVs");
+
 				OnBeginUVModification();
 			}
 
@@ -1572,7 +1575,9 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Rotate UVs");
+				if(mode != UVMode.Auto)
+					pbUndo.RegisterCompleteObjectUndo(selection, "Rotate UVs");
+
 				OnBeginUVModification();
 			}
 
@@ -1647,7 +1652,9 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{		
-				pbUndo.RecordObjects(selection, "Scale UVs");
+				if(mode != UVMode.Auto)
+					pbUndo.RegisterCompleteObjectUndo(selection, "Scale UVs");
+					
 				OnBeginUVModification();
 			}
 
@@ -3092,7 +3099,7 @@ public class pb_UV_Editor : EditorWindow
 	public void Menu_BoxProject()
 	{
 		int p = 0;
-		pbUndo.RecordObjects(selection, "Box Project Faces");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Box Project Faces");
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3174,7 +3181,7 @@ public class pb_UV_Editor : EditorWindow
 
 	public void SetIsManual(bool isManual)
 	{
-		pbUndo.RecordObjects(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
+		pbUndo.RegisterCompleteObjectUndo(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
 		
 		foreach(pb_Object pb in selection)
 		{

@@ -81,27 +81,27 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	 * @param sharedIndices A pb_IntArray[] containing int[] of triangles that share a vertex.
 	 * \returns True or false if edge a is equal to b.
 	 */
-	public bool Equals(pb_Edge b, pb_IntArray[] sharedIndices)
-	{
-		int index = -1;
+	// public bool Equals(pb_Edge b, pb_IntArray[] sharedIndices)
+	// {
+	// 	int index = -1;
 
-		index = sharedIndices.IndexOf(x);
-		int[] ax = (index > -1) ? sharedIndices[index].array : new int[1]{x};
+	// 	index = sharedIndices.IndexOf(x);
+	// 	int[] ax = (index > -1) ? sharedIndices[index].array : new int[1]{x};
 		
-		index = sharedIndices.IndexOf(y);
-		int[] ay = (index > -1) ? sharedIndices[index].array : new int[1]{y};
+	// 	index = sharedIndices.IndexOf(y);
+	// 	int[] ay = (index > -1) ? sharedIndices[index].array : new int[1]{y};
 
-		index = sharedIndices.IndexOf(b.x);
-		int[] bx = (index > -1) ? sharedIndices[index].array : new int[1]{b.x};
+	// 	index = sharedIndices.IndexOf(b.x);
+	// 	int[] bx = (index > -1) ? sharedIndices[index].array : new int[1]{b.x};
 		
-		index = sharedIndices.IndexOf(b.y);
-		int[] by = (index > -1) ? sharedIndices[index].array : new int[1]{b.y};
+	// 	index = sharedIndices.IndexOf(b.y);
+	// 	int[] by = (index > -1) ? sharedIndices[index].array : new int[1]{b.y};
 
-		if( (ax.ContainsMatch(bx) || ax.ContainsMatch(by)) && (ay.ContainsMatch(bx) || ay.ContainsMatch(by)) ) 
-			return true;
-		else
-			return false;
-	}
+	// 	if( (ax.ContainsMatch(bx) || ax.ContainsMatch(by)) && (ay.ContainsMatch(bx) || ay.ContainsMatch(by)) ) 
+	// 		return true;
+	// 	else
+	// 		return false;
+	// }
 
 	public bool Equals(pb_Edge b, Dictionary<int, int> lookup)
 	{
@@ -352,13 +352,13 @@ public static class EdgeExtensions
 	/**
 	 *	Checks for duplicates taking sharedIndices into account
 	 */
-	public static bool ContainsDuplicate(this List<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
+	public static bool ContainsDuplicate(this List<pb_Edge> edges, pb_Edge edge, Dictionary<int, int> lookup)// pb_IntArray[] sharedIndices)
 	{
 		int c = 0;
 
 		for(int i = 0; i < edges.Count; i++)
 		{
-			if(edges[i].Equals(edge, sharedIndices))
+			if(edges[i].Equals(edge, lookup))
 				if(++c > 1) return true;
 		}
 
@@ -396,16 +396,16 @@ public static class EdgeExtensions
 	/**
 	 * Slow IndexOf - takes sharedIndices into account when searching the List.
 	 */
-	public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
-	{
-		for(int i = 0; i < edges.Count; i++)
-		{
-			if(edges[i].Equals(edge, sharedIndices))
-				return i;
-		}
+	// public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
+	// {
+	// 	for(int i = 0; i < edges.Count; i++)
+	// 	{
+	// 		if(edges[i].Equals(edge, sharedIndices))
+	// 			return i;
+	// 	}
 
-		return -1;	
-	}
+	// 	return -1;	
+	// }
 
 	public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, Dictionary<int, int> lookup)
 	{

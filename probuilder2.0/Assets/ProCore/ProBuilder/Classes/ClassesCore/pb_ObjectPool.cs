@@ -25,12 +25,15 @@ namespace ProBuilder2.Common
 			this.desiredSize = desiredSize;
 
 			for(int i = 0; i < initialSize && i < desiredSize; i++)
-				this.pool.Enqueue( constructor() );
+				this.pool.Enqueue( constructor != null ? constructor() : new T() );
 		}
  
 		public T Get()
 		{
-			return (T) (pool.Count > 0 ? (T)pool.Dequeue() : constructor != null ? constructor() : new T());
+			T obj = pool.Count > 0 ? (T)pool.Dequeue() : null;
+			if(obj == null)
+				obj = constructor == null ? new T() : constructor();
+			return obj;
 		}
 
 		public void Put(T obj)

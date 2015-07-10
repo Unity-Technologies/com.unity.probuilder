@@ -320,7 +320,7 @@ public static class pbUVOps
 	public static bool AutoStitch(pb_Object pb, pb_Face f1, pb_Face f2)
 	{
 		// Cache shared indices (we gon' use 'em a lot)
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
+		Dictionary<int, int> sharedIndices = pb.sharedIndices.ToDictionary();
 
 		for(int i = 0; i < f1.edges.Length; i++)
 		{

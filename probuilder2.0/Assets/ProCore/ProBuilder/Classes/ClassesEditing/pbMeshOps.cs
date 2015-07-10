@@ -566,6 +566,7 @@ namespace ProBuilder2.MeshOperations
 		public static bool Bridge(this pb_Object pb, pb_Edge a, pb_Edge b, bool enforcePerimiterEdgesOnly)
 		{
 			pb_IntArray[] sharedIndices = pb.GetSharedIndices();
+			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 			// Check to see if a face already exists
 			if(enforcePerimiterEdgesOnly)
@@ -578,7 +579,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_Face face in pb.faces)
 			{
-				if(face.edges.IndexOf(a, sharedIndices) >= 0 && face.edges.IndexOf(b, sharedIndices) >= 0)
+				if(face.edges.IndexOf(a, lookup) >= 0 && face.edges.IndexOf(b, lookup) >= 0)
 				{
 					Debug.LogWarning("Face already exists between these two edges!");
 					return false;

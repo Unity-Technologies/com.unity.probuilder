@@ -12,6 +12,7 @@ public class pbUndo : Editor
 	 */
 	public static void RecordObject(Object obj, string msg)
 	{
+		Debug.Log("RecordObject()");	
 		Undo.RecordObject(obj, msg);
 	}
 
@@ -20,9 +21,19 @@ public class pbUndo : Editor
 	 */
 	public static void RecordObjects(Object[] objs, string msg)
 	{
+		Debug.Log("RecordObjects()");	
 		if(objs == null) return;
 		
 		Undo.RecordObjects(objs, msg);
+	}
+
+	/**
+	 * Undo.RegisterCompleteObjectUndo
+	 */
+	public static void RegisterCompleteObjectUndo(Object[] objs, string msg)
+	{
+		Debug.Log("RegisterCompleteObjectUndo()");	
+		Undo.RegisterCompleteObjectUndo(objs, msg);
 	}
 
 	/**
@@ -30,11 +41,13 @@ public class pbUndo : Editor
 	 */
 	public static void DestroyImmediate(Object obj, string msg)
 	{
+		Debug.Log("DestroyImmediate()");	
 		Undo.DestroyObjectImmediate(obj);
 	}
 
 	public static void RegisterCreatedObjectUndo(Object obj, string msg)
 	{
+		Debug.Log("RegisterCreatedObjectUndo()");	
 		Undo.RegisterCreatedObjectUndo(obj, msg);
 	}
 }

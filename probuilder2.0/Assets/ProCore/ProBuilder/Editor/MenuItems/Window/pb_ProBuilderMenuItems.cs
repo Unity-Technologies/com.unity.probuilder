@@ -25,6 +25,13 @@ namespace ProBuilder2.Actions
 		{
 			pb_Material_Editor.MenuOpenMaterialEditor();
 		}
+		
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Color Painter", false, pb_Constant.MENU_WINDOW + 4)]
+		public static void InitVertexColorPainter()
+		{
+			pb_VertexColor_Editor.MenuOpenWindow();
+		}
+
 	#endif
 	}
 }

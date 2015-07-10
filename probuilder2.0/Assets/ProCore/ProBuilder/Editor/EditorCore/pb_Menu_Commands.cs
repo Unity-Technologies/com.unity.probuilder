@@ -74,7 +74,7 @@ public class pb_Menu_Commands : Editor
 					break;
 			}
 
-			Undo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
+			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
 
 			Selection.activeTransform = pb.transform;
 		}
@@ -367,14 +367,12 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuExtrude(pb_Object[] selection)
 	{
-		pb_Object[] pbs = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-
-		pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Extrude selected.");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Extrude");
 
 		int extrudedFaceCount = 0;
 		bool success = false;
 
-		foreach(pb_Object pb in pbs)
+		foreach(pb_Object pb in selection)
 		{
 			pb.ToMesh();
 			pb.RefreshNormals();
@@ -773,11 +771,6 @@ public class pb_Menu_Commands : Editor
 	{
 		pbUndo.RecordObjects(selection, "Select Edge Ring");
 
-		#if PB_DEBUG
-		pb_Profiler profiler = new pb_Profiler();
-		profiler.BeginSample("MenuRingSelection");
-		#endif
-
 		bool success = false;
 
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
@@ -789,11 +782,6 @@ public class pb_Menu_Commands : Editor
 
 			pb.SetSelectedEdges( edges );
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		Bugger.Log( profiler.ToString() );
-		#endif
 
 		if(editor)
 			editor.UpdateSelection(false);
@@ -844,7 +832,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuDeleteFace(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection as Object[], "Delete Face(s)");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Delete Face");
 
 		foreach(pb_Object pb in selection)
 		{
@@ -1049,7 +1037,7 @@ public class pb_Menu_Commands : Editor
 
 	public static void MenuMergeFaces(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Merge Faces");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Merge Faces");
 
 		int success = 0;
 
@@ -1093,7 +1081,7 @@ public class pb_Menu_Commands : Editor
 	{
 		bool success = false;
 		
-		pbUndo.RecordObjects(selection, "Collapse Vertices");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 		
 		foreach(pb_Object pb in selection)
 		{
@@ -1298,7 +1286,7 @@ public class pb_Menu_Commands : Editor
 		}
 		Debug.Log("SUBDIVIDE");
 
-		Undo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
 
 		int success = 0;
 
@@ -1350,7 +1338,7 @@ public class pb_Menu_Commands : Editor
 
 		foreach(pb_Object pb in selection)
 		{
-			Undo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
+			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
 			pb_Face[] faces;
 
@@ -1386,8 +1374,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuConnectEdges(pb_Object[] selection)
 	{
-		// pbUndo.RecordObjects(selection, "Connect Edges");
-		Undo.RegisterCompleteObjectUndo(selection, "Connect Edges");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
 		int success = 0;
 

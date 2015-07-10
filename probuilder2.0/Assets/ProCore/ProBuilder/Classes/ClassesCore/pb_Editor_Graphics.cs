@@ -25,9 +25,9 @@ namespace ProBuilder2.Common
 
 		static float vertexHandleSize = .03f;
 
-		[SerializeField] Material 			faceMaterial;
-		[SerializeField] Material 			vertexMaterial;
-		[SerializeField] Material 			wireframeMaterial;
+		[SerializeField] Material faceMaterial;
+		[SerializeField] Material vertexMaterial;
+		[SerializeField] Material wireframeMaterial;
 
 		[SerializeField] new pb_MeshRenderer renderer;
 
@@ -46,7 +46,6 @@ namespace ProBuilder2.Common
 			base.Awake();
 
 			gameObject.hideFlags = HideFlags.HideAndDontSave;
-
 			renderer = gameObject.AddComponent<pb_MeshRenderer>();
 
 			// Initialize materials
