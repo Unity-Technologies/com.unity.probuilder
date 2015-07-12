@@ -47,7 +47,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnDisable()
 		{
-			// pb_Editor_Gizmos.ClearLines();
+			if(pb_LineRenderer.Valid())
+				pb_LineRenderer.instance.Clear();
+
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
 			pb_Editor.OnVertexMovementFinished -= OnVertexMovementFinished;

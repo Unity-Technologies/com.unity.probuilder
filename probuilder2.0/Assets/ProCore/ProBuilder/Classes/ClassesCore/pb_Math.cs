@@ -860,17 +860,17 @@ namespace ProBuilder2.Math
 	public static Vector2 ToMask(this Vector2 vec)
 	{
 		return new Vector2(
-			Mathf.Abs(vec.x) > .0001f ? 1f : 0f,
-			Mathf.Abs(vec.y) > .0001f ? 1f : 0f
+			Mathf.Abs(vec.x) > Mathf.Epsilon ? 1f : 0f,
+			Mathf.Abs(vec.y) > Mathf.Epsilon ? 1f : 0f
 			);
 	}
 
 	public static Vector3 ToMask(this Vector3 vec)
 	{
 		return new Vector3(
-			Mathf.Abs(vec.x) > .0001f ? 1f : 0f,
-			Mathf.Abs(vec.y) > .0001f ? 1f : 0f,
-			Mathf.Abs(vec.z) > .0001f ? 1f : 0f
+			Mathf.Abs(vec.x) > Mathf.Epsilon ? 1f : 0f,
+			Mathf.Abs(vec.y) > Mathf.Epsilon ? 1f : 0f,
+			Mathf.Abs(vec.z) > Mathf.Epsilon ? 1f : 0f
 			);
 	}
 #endregion

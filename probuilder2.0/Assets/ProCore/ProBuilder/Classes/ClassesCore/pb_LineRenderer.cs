@@ -22,7 +22,7 @@ namespace ProBuilder2.Common
 		static Mesh MeshConstructor()
 		{
 			Mesh m = new Mesh();
-			// m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
+			m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
 			m.name = "pb_LineRenderer::Mesh";
 			return m;
 		}
@@ -48,7 +48,6 @@ namespace ProBuilder2.Common
 		{
 			base.Awake();
 			
-			Debug.Log("pb_LineRenderer::Awake");
 			gameObject.hideFlags = HideFlags.HideAndDontSave;
 
 			mat = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
@@ -59,7 +58,6 @@ namespace ProBuilder2.Common
 
 		void OnDestroy()
 		{
-			Debug.Log("pb_LineRenderer::OnDestroy");
 			foreach(Mesh m in gizmos)
 			{
 				if(m != null)

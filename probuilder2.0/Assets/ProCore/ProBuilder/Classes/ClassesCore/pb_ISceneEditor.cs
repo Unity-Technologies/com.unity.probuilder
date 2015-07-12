@@ -2,11 +2,11 @@
 using UnityEditor;
 using System.Collections;
 
-public class ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
+public class pb_ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
 {
-	protected static ISceneEditor instance;
+	protected static pb_ISceneEditor instance;
 
-	public static ISceneEditor Create<T>() where T : ISceneEditor
+	public static pb_ISceneEditor Create<T>() where T : pb_ISceneEditor
 	{
 		if( instance != null )
 			return instance;

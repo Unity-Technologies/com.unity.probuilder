@@ -245,6 +245,10 @@ public class pb_Preferences_Internal
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)VertexColorTool.Painter;
 				return (T)System.Convert.ChangeType( (VertexColorTool) key, typeof(T));
 			
+			case pb_Constant.pbToolbarLocation:
+				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)SceneToolbarLocation.UpperCenter;
+				return (T)System.Convert.ChangeType( (SceneToolbarLocation) key, typeof(T));
+			
 			default:
 				return (T)System.Convert.ChangeType( 0, typeof(T));
 		}

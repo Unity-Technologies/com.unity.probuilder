@@ -9,4 +9,17 @@ namespace ProBuilder2.EditorCommon
 		Palette,
 		Painter
 	}
+
+	/**
+	 * Where the sceneview toolbar sits in relation the scene view rect.
+	 */
+	public enum SceneToolbarLocation
+	{
+		UpperCenter,
+		UpperLeft,
+		UpperRight,
+		BottomCenter,
+		BottomLeft,
+		BottomRight
+	}
 }

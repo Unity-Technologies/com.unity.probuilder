@@ -24,20 +24,11 @@ public class pb_Object_Editor : Editor
 	Renderer ren;
 	Vector3 offset = Vector3.zero;
 
-	const int EDITLEVEL_TOOLBAR_WIDTH = 222;
-	const int TOOLBAR_BUTTON_WIDTH = EDITLEVEL_TOOLBAR_WIDTH / 2;
-	static Color SceneToolbarColor_Active;							// Set in OnEnable because it depends on pro/free skin
-	bool showToolbar = true;
-
 	public void OnEnable()
 	{	
 		if(EditorApplication.isPlayingOrWillChangePlaymode)
 			return;
 		
-		showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
-		// pb_Editor.OnVertexMovementFinished += OnSelectionChange;
-		// pb_Editor.OnSelectionUpdate += OnSelectionChange;
-
 		if(target is pb_Object)
 			pb = (pb_Object)target;
 		else
@@ -47,7 +38,6 @@ public class pb_Object_Editor : Editor
 		ren = pb.gameObject.GetComponent<Renderer>();
 		EditorUtility.SetSelectedWireframeHidden(ren, editor != null);
 
- 		SceneToolbarColor_Active = EditorGUIUtility.isProSkin ? new Color(.35f, .35f, .35f, 1f) : new Color(.8f, .8f, .8f, 1f);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 
@@ -104,45 +94,6 @@ public class pb_Object_Editor : Editor
 					editor.UpdateSelection();
 			}
 		}
-	}
-
-	Rect LeftButton 	= new Rect(	0, 12, TOOLBAR_BUTTON_WIDTH, 16);
-	Rect RightButton 	= new Rect(	0, 12, TOOLBAR_BUTTON_WIDTH, 16);
-
-	GUIContent ObjectMode = new GUIContent("Object", "Edit top level transforms, including non-ProBuilder objects.");
-	GUIContent ElementMode = new GUIContent("Element", "Allows editing of vertices, faces, and edges.");
-
-	void OnSceneGUI()
-	{
-		if(editor != null && showToolbar)
-		{
-			LeftButton.x = Screen.width/2f - EDITLEVEL_TOOLBAR_WIDTH/2f;
-			RightButton.x = LeftButton.x + TOOLBAR_BUTTON_WIDTH;
-
-			Handles.BeginGUI();
-				GUI.backgroundColor = (editor.editLevel == EditLevel.Top) ? SceneToolbarColor_Active : Color.white;
-				if(GUI.Button(LeftButton, ObjectMode, EditorStyles.miniButtonLeft))
-				{
-					pb_Editor_Utility.ShowNotification("Top Level Editing");
-					editor.SetEditLevel(EditLevel.Top);
-				}
-				
-				GUI.backgroundColor = (editor.editLevel == EditLevel.Geometry) ? SceneToolbarColor_Active : Color.white;
-				if(GUI.Button(RightButton, ElementMode, EditorStyles.miniButtonRight))
-				{
-					pb_Editor_Utility.ShowNotification("Geometry Editing");
-					editor.SetEditLevel(EditLevel.Geometry);
-				}
-			GUI.backgroundColor = Color.white;
-			Handles.EndGUI();
-		}
-
-		// Material mat = pb_Constant.UnlitVertexColor;
-		// if(mat != null)
-		// {
-		// 	if(boundsMesh && mat.SetPass(0))
-		// 		Graphics.DrawMeshNow(boundsMesh, pb.transform.localToWorldMatrix, 0);
-		// }
 	}
 
 	bool HasFrameBounds() 

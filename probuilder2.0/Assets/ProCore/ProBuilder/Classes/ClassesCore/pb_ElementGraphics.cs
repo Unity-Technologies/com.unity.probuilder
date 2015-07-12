@@ -12,7 +12,7 @@ namespace ProBuilder2.Common
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
 	[System.Serializable]
-	public class pb_Editor_Graphics : pb_MonoBehaviourSingleton<pb_Editor_Graphics>
+	public class pb_ElementGraphics : pb_MonoBehaviourSingleton<pb_ElementGraphics>
 	{
 		const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";
 		const string EDGE_SHADER = "Hidden/ProBuilder/FaceHighlight";
@@ -122,21 +122,24 @@ namespace ProBuilder2.Common
 			foreach(pb_Object pb in selection)
 				renderer.renderables.Add( BuildEdgeMesh(pb) );
 
-			// update vert / edge / face
-			switch(selectionMode)
+			if(editLevel == EditLevel.Geometry)
 			{
-				case SelectMode.Face:
-					foreach(pb_Object pb in selection)
-						renderer.renderables.Add( BuildFaceMesh(pb) );
-					break;
+				// update vert / edge / face
+				switch(selectionMode)
+				{
+					case SelectMode.Face:
+						foreach(pb_Object pb in selection)
+							renderer.renderables.Add( BuildFaceMesh(pb) );
+						break;
 
-				case SelectMode.Vertex:
-					foreach(pb_Object pb in selection)
-						renderer.renderables.Add( BuildVertexMesh(pb) );
-					break;
+					case SelectMode.Vertex:
+						foreach(pb_Object pb in selection)
+							renderer.renderables.Add( BuildVertexMesh(pb) );
+						break;
 
-				default:
-					break;
+					default:
+						break;
+				}
 			}
 		}
 
@@ -158,7 +161,11 @@ namespace ProBuilder2.Common
 			ren.mesh.Clear();
 			ren.mesh.vertices = v;
 			ren.mesh.normals = v;
+#if UNITY_5
 			ren.mesh.uv = null;
+#else
+			ren.mesh.uv = new Vector2[v.Length];
+#endif
 			ren.mesh.triangles = SequentialTriangles(v.Length);
 
 			return ren;
@@ -264,8 +271,7 @@ namespace ProBuilder2.Common
 			Vector3[] pbverts = pb.vertices;
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-			// not exactly loosely coupled, but GetUniversal edges is ~40ms on a 2000 vertex object
-			IEnumerable<pb_Edge> universalEdges = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), pb.sharedIndices).Distinct();//.ToArray();
+			IEnumerable<pb_Edge> universalEdges = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), pb.sharedIndices).Distinct();
 			Vector3[] edge_verts = new Vector3[universalEdges.Count()*2];
 
 			int n = 0;
@@ -283,8 +289,10 @@ namespace ProBuilder2.Common
 			ren.mesh.name = "Wireframe Mesh";
 			ren.mesh.Clear();
 			ren.mesh.vertices = edge_verts;
+#if !UNITY_5
 			ren.mesh.normals = edge_verts;	// appease unity 4
 			ren.mesh.uv = new Vector2[edge_verts.Length];
+#endif
 			ren.mesh.subMeshCount = 1;
 			ren.mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
 			

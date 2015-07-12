@@ -18,19 +18,9 @@ using Parabox.Debug;
 
 namespace ProBuilder2.EditorCommon
 {
-public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
+public class pb_Editor : EditorWindow
 {
-	pb_Editor_Graphics graphics { get { return pb_Editor_Graphics.instance; } }
-
-	public void OnAfterDeserialize()
-	{
-		// Debug.Log("OnAf terDeserialize");
-	}
-
-	public void OnBeforeSerialize()
-	{
-		// Debug.Log("OnBeforeSerialize");
-	}
+	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
 	#if PB_DEBUG
 	// static pb_Profiler profiler = new pb_Profiler();
@@ -46,7 +36,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 	// Toggles for Face, Vertex, and Edge mode.
 	const int SELECT_MODE_LENGTH = 3;
-	GUIContent[] SelectionIcons;
+	GUIContent[] EditModeIcons;
 	Texture2D eye_on, eye_off;
 	GUIStyle VertexTranslationInfoStyle;
 	GUIStyle eye_style;
@@ -79,6 +69,9 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	private bool pref_snapAxisConstraints = true;
 	private bool pref_snapEnabled = false;
 
+	private bool pref_showToolbar = true;
+	private SceneToolbarLocation pref_sceneToolbarLocation = SceneToolbarLocation.UpperCenter;
+
 	private bool limitFaceDragCheckToSelection = true;
 	private bool isFloatingWindow = false;
 #endregion
@@ -96,7 +89,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		return editor;
 	}
 
-	private void OnEnable()
+	public void OnEnable()
 	{
 		_instance = this;
 
@@ -126,8 +119,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 	private void InitGUI()
 	{	
- 		// pbStyle = new GUIStyle();
-
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
 		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
@@ -136,16 +127,47 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
 		eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
 
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		bool isProSkin = true; // EditorUtility.isProSkin;
 
-		SelectionIcons = new GUIContent[3]
+		// Texture2D object_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Object" : "GUI/ProBuilderGUI_Mode_Object_Pro", typeof(Texture2D)));
+		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
+
+		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
+		// Texture2D face_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
+
+		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
+		// Texture2D vertex_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
+
+		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		// Texture2D edge_Graphic_on = (Texture2D)(Resources.Load(!EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+
+		// objectLevelStyle = new GUIStyle();
+		// objectLevelStyle.normal.background = object_Graphic_off;
+		// objectLevelStyle.hover.background = object_Graphic_on;
+
+		// vertexLevelStyle = new GUIStyle();
+		// vertexLevelStyle.normal.background = vertex_Graphic_off;
+		// vertexLevelStyle.hover.background = vertex_Graphic_on;
+
+		if(pref_showToolbar)
 		{
-			new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-			new GUIContent(edge_Graphic_off, "Edge Selection"),
-			new GUIContent(face_Graphic_off, "Face Selection")
-		};
+			EditModeIcons = new GUIContent[]
+			{
+				new GUIContent(object_Graphic_off, "Object Selection"),
+				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
+				new GUIContent(edge_Graphic_off, "Edge Selection"),
+				new GUIContent(face_Graphic_off, "Face Selection")
+			};
+		}
+		else
+		{
+			EditModeIcons = new GUIContent[]
+			{
+				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
+				new GUIContent(edge_Graphic_off, "Edge Selection"),
+				new GUIContent(face_Graphic_off, "Face Selection")
+			};
+		}
 
 		show_Detail = true;
 		show_Mover = true;
@@ -185,12 +207,16 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
+
+
+		pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
+		pref_sceneToolbarLocation = pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 	}
 
 	private void OnDestroy()
 	{	
-		if(pb_Editor_Graphics.nullableInstance != null)
-			GameObject.DestroyImmediate(pb_Editor_Graphics.nullableInstance.gameObject);
+		if(pb_ElementGraphics.nullableInstance != null)
+			GameObject.DestroyImmediate(pb_ElementGraphics.nullableInstance.gameObject);
 
 		if(pb_LineRenderer.nullableInstance != null)
 			GameObject.DestroyImmediate(pb_LineRenderer.nullableInstance.gameObject);
@@ -274,7 +300,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	bool tool_weldButton = false;
 	#endif
 	Vector2 scroll = Vector2.zero;
-	Rect ToolbarRect_Select = new Rect(3,6,96,24);
+	Rect ToolbarRect_Select = new Rect(3,6,128,24);
 	void OnGUI()
 	{
 		Event e = Event.current;	/// Different than OnSceneGUI currentEvent ?
@@ -292,14 +318,14 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			eye_style.padding = new RectOffset(0,0,0,0);
 		}
 
-		#region Static
-
+		if(!pref_showToolbar)
+		{
 			int t_selectionMode = editLevel != EditLevel.Top ? (int)selectionMode : -1;
 			ToolbarRect_Select.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
 
 			EditorGUI.BeginChangeCheck();
 			
-			t_selectionMode = GUI.Toolbar(ToolbarRect_Select, (int)t_selectionMode, SelectionIcons, "Command");
+			t_selectionMode = GUI.Toolbar(ToolbarRect_Select, (int)t_selectionMode, EditModeIcons, "Command");
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -326,31 +352,35 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 			pb_GUI_Utility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
+		}
 
-			if(editLevel == EditLevel.Geometry)
-			{
-				EditorGUI.BeginChangeCheck();
-					handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment);
-				if(EditorGUI.EndChangeCheck())
-					SetHandleAlignment(handleAlignment);
-				
-				EditorGUI.BeginChangeCheck();
+		GUILayout.Label("Selection", EditorStyles.boldLabel);
+		
+		if(editLevel == EditLevel.Geometry)
+		{
+			EditorGUI.BeginChangeCheck();
+				handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment);
+			if(EditorGUI.EndChangeCheck())
+				SetHandleAlignment(handleAlignment);
+			
+			EditorGUI.BeginChangeCheck();
 
-					if( GUILayout.Button(pref_backfaceSelect ? "Select All" : "Select Visible", EditorStyles.miniButton) )
-						pref_backfaceSelect = !pref_backfaceSelect;
+				if( GUILayout.Button(pref_backfaceSelect ? "Select All" : "Select Visible", EditorStyles.miniButton) )
+					pref_backfaceSelect = !pref_backfaceSelect;
 
-				if(EditorGUI.EndChangeCheck())
-					EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
-
-				GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-				pb_GUI_Utility.DrawSeparator(1);
-				GUI.backgroundColor = Color.white;
-			}
-		#endregion
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+		}
 
 		scroll = GUILayout.BeginScrollView(scroll);
 
 		#region Tools
+
+			GUILayout.Label("Tools", EditorStyles.boldLabel);
+
+			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
+			pb_GUI_Utility.DrawSeparator(1);
+			GUI.backgroundColor = Color.white;
 
 			if(GUILayout.Button(new GUIContent("Shape", "Open Shape Creation Panel"), EditorStyles.miniButton))
 				pb_Geometry_Interface.MenuOpenShapeCreator();
@@ -378,6 +408,8 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				pb_Smoothing_Editor.Init();
 			#endif
 		#endregion
+
+		GUILayout.Label("Actions", EditorStyles.boldLabel);
 
 		GUILayout.Space(2);
 		GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
@@ -818,7 +850,10 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			}
 		#endif
 
-		DrawHandleGUI();
+		DrawHandleGUI(scnView);
+
+		if(editLevelToolbarRect.Contains(currentEvent.mousePosition))
+			scnView.Repaint();
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
 		{
@@ -1569,6 +1604,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			if(snapToVertex)
 			{
 				Vector3 v;
+
 				if( FindNearestVertex(mousePosition, out v) )
 					diff = Vector3.Scale(v-cachedPosition, mask);
 			}
@@ -1577,32 +1613,18 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 			if(previouslyMoving == false)
 			{
-				// profiler.BeginSample("Cache");
-
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
-				// profiler.EndSample();
-				
-				// profiler.BeginSample("Extrude");
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
-				// profiler.EndSample();
 
-				// profiler.BeginSample("Check PG");
 				pb_ProGrids_Interface.OnHandleMove(mask);
-				// profiler.EndSample();
 
-				// profiler.BeginSample("OnBeginVertexMovement");
 				OnBeginVertexMovement();
-				// profiler.EndSample();
 			}
 
-			// For some reason, applying Snap() to vertices in TranslateVertices_World() causes
-			// the Undo stack to skip all handle movement.  This "fixes" it.
-			// if(pref_snapEnabled)
-			// 	pbUndo.RecordObjects(selection as Object[], "Move Vertices");
-			
 			for(int i = 0; i < selection.Length; i++)
 			{			
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
@@ -1611,7 +1633,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 				selection[i].msh.RecalculateBounds();
 			}
 
-			// profiler.EndSample();
 			Internal_UpdateSelectionFast();
 		}
 
@@ -2016,7 +2037,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 		Handles.lighting = false;
 			
 		/**
-		 * Edge wireframe and selected faces are drawn in pb_Editor_Graphics, selected edges & vertices 
+		 * Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices 
 		 * are drawn here.
 		 */
 		switch(selectionMode)
@@ -2056,27 +2077,78 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 	Color handleBgColor;
 	Rect sceneInfoRect = new Rect(18, 0, 200, 40);
+	Rect editLevelToolbarRect = new Rect(0,0,0,0);
 
-	public void DrawHandleGUI()
+	public void DrawHandleGUI(SceneView sceneView)
 	{
+		if(sceneView != SceneView.lastActiveSceneView)
+			return;
+
 		Handles.BeginGUI();
+
+		if(pref_showToolbar)
+		{
+			int t_selectionMode = editLevel != EditLevel.Top ? ((int)selectionMode) + 1 : 0;
+
+			switch(pref_sceneToolbarLocation)
+			{
+				case SceneToolbarLocation.BottomCenter:
+					ToolbarRect_Select.x = (Screen.width/2 - 96);
+					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					break;
+
+				case SceneToolbarLocation.BottomLeft:
+					ToolbarRect_Select.x = 12;
+					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					break;
+
+				case SceneToolbarLocation.BottomRight:
+					ToolbarRect_Select.x = Screen.width - (ToolbarRect_Select.width + 12);
+					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					break;
+
+				case SceneToolbarLocation.UpperLeft:
+					ToolbarRect_Select.x = 12;
+					ToolbarRect_Select.y = 10;
+					break;
+
+				case SceneToolbarLocation.UpperRight:
+					ToolbarRect_Select.x = Screen.width - (ToolbarRect_Select.width + 96);
+					ToolbarRect_Select.y = 10;
+					break;
+
+				default:
+				case SceneToolbarLocation.UpperCenter:
+					ToolbarRect_Select.x = (Screen.width/2 - 96);
+					ToolbarRect_Select.y = 10;
+					break;
+			}
+
+			EditorGUI.BeginChangeCheck();
+
+			t_selectionMode = GUI.Toolbar(ToolbarRect_Select, (int)t_selectionMode, EditModeIcons, "Command");
+
+			if(EditorGUI.EndChangeCheck())
+			{
+				if(t_selectionMode == 0)
+				{
+					SetEditLevel(EditLevel.Top);
+				}
+				else
+				{
+					if(editLevel != EditLevel.Geometry)
+						SetEditLevel(EditLevel.Geometry);
+
+					SetSelectionMode( (SelectMode)(t_selectionMode - 1));
+				}
+			}
+		}
 
 		handleBgColor = GUI.backgroundColor;
 
-		#if SVN_EXISTS
-		// SVN
-		GUI.Label(new Rect(4, 4, 200, 40), "r" + revisionNo);
-		#endif
-
-		if(movingVertices)
+		if(movingVertices && pref_showSceneInfo)
 		{
 			GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-
-			// using( System.Text.StringBuilder sb = new System.Text.StringBuilder() )
-			// {
-				
-			// }
-
 
 			GUI.Label(new Rect(Screen.width-200, Screen.height-120, 162, 48), 
 				"Translate: " + (newPosition-translateOrigin).ToString() + 
@@ -2163,11 +2235,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 			return false;
 
 		bool used = true;
-
-		// #if PROTOTYPE
-		// if(shortcuts[shortcut].action == "Texture Mode")
-		// 	return false;
-		// #endif
 
 		used = AllLevelShortcuts(shortcuts[shortcut]);		
 
@@ -2579,25 +2646,6 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 	int vertexCount = 0;
 	int triangleCount = 0;
 
-	/**
-	 * used to compare selection values when returning from GetUniversalEdges worker - should not be trusted anywhere that really matters.
-	 * @todo use FNV-1a hash? 
-	 */
-	int GetSelectionHash(pb_Object[] sel)
-	{
-		if(sel.Length < 1)
-			return 0;
-		
-		int hash = sel[0].GetInstanceID();
-
-		for(int i = 1; i < sel.Length; i++)
-		{
-			hash = hash ^ sel[i].GetHashCode();
-		}
-
-		return hash;
-	}
-
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{		
@@ -2786,10 +2834,7 @@ public class pb_Editor : EditorWindow, ISerializationCallbackReceiver
 
 	private void UpdateGraphics()
 	{
-		// profiler.BeginSample("UpdateGraphics()");
 		graphics.UpdateGraphics(selection, editLevel, selectionMode);
-		// profiler.EndSample();
-		// graphics.UpdateSelectionMesh(selection, editLevel, selectionMode);
 	}
 
 	public void AddToSelection(GameObject t)
