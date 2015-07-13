@@ -1,3 +1,29 @@
+-- ProBuilder 2.4.5b2 (r3511)
+
+# Features
+	- Significantly improve performance when extruding or moving elements on high vertex count objects.
+	- Add mesh dimension overlay extension.
+	- Make vertex colors button extendable, with the option to set which color editor the shortcut should open (Palette or Painter).
+	- New option to show element/object mode toolbar in scene (default), including positioning parameters. 
+
+# Bug Fixes
+	- Add pb_Entity in ProBuilderize if the RequireComponent attribute fails to do so.
+	- Fix bug where ProGrids wouldn't affect elements when PB is built to a dll.
+	- Fix bug where the cube shortcut would ignore material preference.
+	- Fix vertex merging incorrectly in Optimize function when colors don't match.
+	- Recalculate mesh bounds after moving the pivot.
+	- Always refresh/rebuild meshes after making them assets, fixing issues with duplicate mesh references.
+	- Fix a few more causes of leaks in the mesh and line rendering systems.
+	- Fix bug where scaling a new object in the shape tool wouldn't take effect until after first refresh.
+	- Improve vertex painter performance with large meshes.
+	- Fix bug where Insert Edge Loop and ConnectEdges would sometimes select too many edges after application.
+	- Fix progrids overzealously collapsing vertices when in axis snapping mode.
+
+# Changes
+	- Move default textures out of resources folder.
+	- On pb_Object::Start, call ToMesh before Refresh since Refresh could try to set UVs or Colors to a mesh that has inconsistent vertex counts.
+	- Remove most functions accepting a pb_IntArray[] sharedIndex cache and replace with Dictionary versions.
+
 -- ProBuilder 2.4.5b1 (r3451)
 
 # Features

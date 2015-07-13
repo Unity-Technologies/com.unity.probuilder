@@ -86,7 +86,7 @@ public class pb_Preferences
 
 		GUI.enabled = pbShowSceneToolbar;
 		pbToolbarLocation = (SceneToolbarLocation) EditorGUILayout.EnumPopup("Toolbar Location", pbToolbarLocation);
-		GUI.enabled = false;
+		GUI.enabled = true;
 
 		GUILayout.Space(4);
 		

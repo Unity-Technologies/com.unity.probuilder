@@ -43,20 +43,20 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Debug_Window.cs">
       <Link>pb_Debug_Window.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Dimensions_Overlay.cs">
+      <Link>pb_Dimensions_Overlay.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs">
       <Link>pb_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Enum.cs">
       <Link>pb_Editor_Enum.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Gizmos.cs">
-      <Link>pb_Editor_Gizmos.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Graphics.cs">
-      <Link>pb_Editor_Graphics.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Mesh_Utility.cs">
       <Link>pb_Editor_Mesh_Utility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Override.cs">
+      <Link>pb_Editor_Override.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Utility.cs">
       <Link>pb_Editor_Utility.cs</Link>
@@ -72,6 +72,9 @@
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Handle_Utility.cs">
       <Link>pb_Handle_Utility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ISceneEditor.cs">
+      <Link>pb_ISceneEditor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Lightmapping.cs">
       <Link>pb_Lightmapping.cs</Link>
@@ -127,15 +130,12 @@
     <Reference Include="ProBuilderMeshOps-Unity4">
       <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Debug\ProBuilderMeshOps-Unity4.dll</HintPath>
     </Reference>
-    <Reference Include="ProCore">
-      <HintPath>..\..\ProCore\ProCore\bin\Debug\ProCore.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor">
-      <HintPath>G:\Applications\Unity 4.5.0f6\Editor\Data\Managed\UnityEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Unity 4.6.3\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Unity 4.3.0\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Unity 4.6.3\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

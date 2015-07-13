@@ -46,6 +46,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Edge.cs">
       <Link>pb_Edge.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ElementGraphics.cs">
+      <Link>pb_ElementGraphics.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Entity.cs">
       <Link>pb_Entity.cs</Link>
     </Compile>
@@ -72,6 +75,9 @@
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshUtility.cs">
       <Link>pb_MeshUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MonoBehaviourSingleton.cs">
+      <Link>pb_MonoBehaviourSingleton.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Object.cs">
       <Link>pb_Object.cs</Link>
@@ -130,9 +136,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ProCore">
-      <HintPath>..\..\ProCore\ProCore\bin\Debug\ProCore.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.1\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>

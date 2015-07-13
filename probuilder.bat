@@ -43,7 +43,7 @@ set u5editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5
  
  :: Copy ProCore folder into staging project
  :: ====================
- xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Assets\ProCore
+ xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProCore\ProBuilder %CD%\probuilder-staging\Assets\ProCore\ProBuilder
  
  :: Copy pb_ExportPackage into staging project
  :: ====================

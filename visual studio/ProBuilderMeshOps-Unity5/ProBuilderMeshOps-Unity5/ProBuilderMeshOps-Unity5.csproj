@@ -94,9 +94,6 @@
     <Reference Include="ProBuilderCore-Unity5">
       <HintPath>..\..\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll</HintPath>
     </Reference>
-    <Reference Include="ProCore">
-      <HintPath>..\..\ProCore\ProCore\bin\Debug\ProCore.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.0f4\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
