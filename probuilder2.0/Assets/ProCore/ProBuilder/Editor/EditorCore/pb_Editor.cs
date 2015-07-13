@@ -200,11 +200,6 @@ public class pb_Editor : EditorWindow
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 				
-		if(pb_ProGrids_Interface.GetProGridsType() != null)
-			sceneInfoRect.x = 64;
-		else
-			sceneInfoRect.x = 18;
-
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
@@ -275,7 +270,9 @@ public class pb_Editor : EditorWindow
 
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		// Undo.postprocessModifications += PostprocessModifications;
+
 		pb_ProGrids_Interface.SubscribePushToGridEvent(PushToGrid);
+		pb_ProGrids_Interface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 		EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
 	}
 #endregion
@@ -2076,7 +2073,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	Color handleBgColor;
-	Rect sceneInfoRect = new Rect(18, 0, 200, 40);
+	Rect sceneInfoRect = new Rect(10, 10, 200, 40);
 	Rect editLevelToolbarRect = new Rect(0,0,0,0);
 
 	public void DrawHandleGUI(SceneView sceneView)
@@ -2160,39 +2157,31 @@ public class pb_Editor : EditorWindow
 
 		if( pref_showSceneInfo )
 		{
-			sceneInfoRect.y = 12;
-
 			/**
 			 * Show the PB cached and Unity mesh element counts if in Debug mode.
 			 */
-			#if PB_DEBUG
-			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, 164, 185), new Color(.1f,.1f,.1f,.65f));
+			try
+			{
+			 	System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-				try {
-				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Vertices (User): " + vertexCount);
-				sceneInfoRect.y += 20;
-					GUI.Label(sceneInfoRect, "Vertices (Mesh): " + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString());
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Vertices (pb_Object): " + (selection != null ? selection.Select(x=>x.vertexCount).Sum() : 0).ToString());
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "UVs: " + (selection != null && selection.Length > 0 ? (selection[0].uv.Length.ToString() + " : " + selection[0].msh.uv.Length.ToString()) : "0") );
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Triangles: " + triangleCount);
-				sceneInfoRect.y += 40;
-				
-				GUI.Label(sceneInfoRect, "Selected Faces: " + selectedFaceCount);
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Selected Vertices: " + selectedVertexCount);
-				} catch (System.Exception e) { /**do not care**/; }
-			#else
-				GUI.Label(sceneInfoRect, "Vertices: " + vertexCount);
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Faces: " + faceCount);
-				sceneInfoRect.y += 20;
-				GUI.Label(sceneInfoRect, "Triangles: " + triangleCount);
-			#endif
+				sb.AppendLine("Faces: " + faceCount);
+				sb.AppendLine("Triangles: " + triangleCount);
+				sb.AppendLine("Vertices: " + vertexCount + " (" + (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString() + ")\n");
+				sb.AppendLine("Selected Faces: " + selectedFaceCount);
+				sb.AppendLine("Selected Edges: " + selectedEdgeCount);
+				sb.AppendLine("Selected Vertices: " + selectedVertexCount);
+
+				GUIContent gc = new GUIContent(sb.ToString(), "");
+
+				Vector2 size = EditorStyles.label.CalcSize(gc);
+
+				sceneInfoRect.width = size.x + 8;
+				sceneInfoRect.height = size.y - 4;
+
+			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, sceneInfoRect.width, sceneInfoRect.height), new Color(.1f,.1f,.1f,.55f));
+
+				GUI.Label(sceneInfoRect, gc);
+			} catch {}
 		}
 
 		// Enables vertex selection with a mouse click
@@ -3235,6 +3224,13 @@ public class pb_Editor : EditorWindow
 		}
 
 		Internal_UpdateSelectionFast();
+	}
+
+	private void ProGridsToolbarOpen(bool menuOpen)
+	{
+		bool active = pb_ProGrids_Interface.ProGridsActive();
+		sceneInfoRect.y = active && !menuOpen ? 28 : 10;
+		sceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
 	}
 
 	/**

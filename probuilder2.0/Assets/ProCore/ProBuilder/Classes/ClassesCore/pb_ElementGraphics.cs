@@ -94,6 +94,8 @@ namespace ProBuilder2.Common
 			faceSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultFaceColor];
 			edgeSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultEdgeColor];
 			vertSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultSelectedVertexColor];
+			vertexDotColor 		= (Color) prefs[pb_Constant.pbDefaultVertexColor];
+
 			vertexHandleSize 	= (float) prefs[pb_Constant.pbVertexHandleSize];
 
 			wireframeMaterial.SetColor("_Color", wireframeColor);// (_selectMode == SelectMode.Edge && _editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);

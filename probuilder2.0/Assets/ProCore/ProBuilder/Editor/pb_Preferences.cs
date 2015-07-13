@@ -15,6 +15,8 @@ public class pb_Preferences
 	static Color pbDefaultFaceColor;
 	static Color pbDefaultEdgeColor;
 	static Color pbDefaultSelectedVertexColor;
+	static Color pbDefaultVertexColor;
+
 	static bool defaultOpenInDockableWindow;
 	static Material pbDefaultMaterial;
 	static Vector2 settingsScroll = Vector2.zero;
@@ -35,7 +37,6 @@ public class pb_Preferences
 	static bool pbEnableBackfaceSelection = false;
 	
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
-	static SelectMode pbDefaultSelectionMode;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
 
 	static float pbUVGridSnapValue;
@@ -97,6 +98,7 @@ public class pb_Preferences
 
 		pbDefaultFaceColor = EditorGUILayout.ColorField("Selected Face Color", pbDefaultFaceColor);
 		pbDefaultEdgeColor = EditorGUILayout.ColorField("Edge Wireframe Color", pbDefaultEdgeColor);
+		pbDefaultVertexColor = EditorGUILayout.ColorField("Vertex Color", pbDefaultVertexColor);
 		pbDefaultSelectedVertexColor = EditorGUILayout.ColorField("Selected Vertex Color", pbDefaultSelectedVertexColor);
 		pbVertexHandleSize = EditorGUILayout.Slider("Vertex Handle Size", pbVertexHandleSize, 0f, 1f);
 		pbForceVertexPivot = EditorGUILayout.Toggle(new GUIContent("Force Pivot to Vertex Point", "If true, new objects will automatically have their pivot point set to a vertex instead of the center."), pbForceVertexPivot);
@@ -140,7 +142,6 @@ public class pb_Preferences
 	public static void ResetToDefaults()
 	{
 		if(EditorUtility.DisplayDialog("Delete ProBuilder editor preferences?", "Are you sure you want to delete these?, this action cannot be undone.", "Yes", "No")) {
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectionMode);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
@@ -155,6 +156,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbManifoldEdgeExtrusion);
 			EditorPrefs.DeleteKey(pb_Constant.pbPerimeterEdgeBridgeOnly);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbVertexHandleSize);
 			EditorPrefs.DeleteKey(pb_Constant.pbPBOSelectionOnly);
 			EditorPrefs.DeleteKey(pb_Constant.pbCloseShapeWindow);
@@ -270,11 +272,11 @@ public class pb_Preferences
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
 		pbDefaultSelectedVertexColor 		= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
+		pbDefaultVertexColor 				= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultVertexColor );
 
 		pbUVGridSnapValue 					= pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
 		pbVertexHandleSize 					= pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize);
 
-		pbDefaultSelectionMode 				= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		defaultColliderType 				= pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 		pbToolbarLocation	 				= pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 
@@ -293,12 +295,12 @@ public class pb_Preferences
 		EditorPrefs.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
 		EditorPrefs.SetBool  	(pb_Constant.pbEnableBackfaceSelection, pbEnableBackfaceSelection);
 
-		EditorPrefs.SetInt		(pb_Constant.pbDefaultSelectionMode, (int)pbDefaultSelectionMode);
 		EditorPrefs.SetInt		(pb_Constant.pbToolbarLocation, (int)pbToolbarLocation);
 
 		EditorPrefs.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString());
 		EditorPrefs.SetString	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor.ToString());
 		EditorPrefs.SetString	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor.ToString());
+		EditorPrefs.SetString	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor.ToString());
 		EditorPrefs.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
 		EditorPrefs.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts));
 

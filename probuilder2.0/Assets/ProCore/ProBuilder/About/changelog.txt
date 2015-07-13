@@ -5,6 +5,7 @@
 	- Add mesh dimension overlay extension.
 	- Make vertex colors button extendable, with the option to set which color editor the shortcut should open (Palette or Painter).
 	- New option to show element/object mode toolbar in scene (default), including positioning parameters. 
+	- Unity 5.2 compatibility.
 
 # Bug Fixes
 	- Add pb_Entity in ProBuilderize if the RequireComponent attribute fails to do so.

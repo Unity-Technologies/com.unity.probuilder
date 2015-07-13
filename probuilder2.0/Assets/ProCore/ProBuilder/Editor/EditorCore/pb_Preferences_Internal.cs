@@ -170,7 +170,7 @@ public class pb_Preferences_Internal
 				break;
 				
 			case pb_Constant.pbDefaultVertexColor:
-					col = Color.blue;
+					col = new Color(.8f, .8f, .8f, 1f);
 				break;
 			
 			case pb_Constant.pbDefaultSelectedVertexColor:
@@ -280,6 +280,7 @@ public class pb_Preferences_Internal
 		table.Add(pb_Constant.pbDefaultFaceColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor ));
 		table.Add(pb_Constant.pbDefaultEdgeColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor ));
 		table.Add(pb_Constant.pbDefaultSelectedVertexColor,		pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor ));
+		table.Add(pb_Constant.pbDefaultVertexColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor ));
 		table.Add(pb_Constant.pbUVGridSnapValue,				pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue));
 		table.Add(pb_Constant.pbVertexHandleSize,				pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize));
 		table.Add(pb_Constant.pbDefaultMaterial,				pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial));

@@ -25,6 +25,16 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * True if ProGrids is open in scene.
+		 */
+		public static bool ProGridsActive()
+		{
+			Type type = GetProGridsType();
+
+			return type != null && (bool) type.GetMethod("SceneToolbarActive").Invoke(null, null);
+		}
+
+		/**
 		 * Returns the current UseAxisConstraints value from ProGrids.
 		 */
 		public static bool UseAxisConstraints()
@@ -108,5 +118,36 @@ namespace ProBuilder2.Common
 					mi.Invoke(null, new object[] { worldDirection });
 			}
 		}
+
+		/**
+		 * Subscribe to toolbar extendo/retracto events.  Delegates are called with bool paramater Listener(bool menuOpen);
+		 */
+		public static void SubscribeToolbarEvent(System.Action<bool> listener)
+		{
+			Type type = GetProGridsType();
+
+			if( type != null )
+			{
+				MethodInfo mi = type.GetMethod("AddToolbarEventSubscriber");
+				if(mi != null)
+					mi.Invoke(null, new object[] { listener } );
+			}
+		}
+
+		/**
+		 * Remove subscription from extendo/retracto tooblar events.
+		 */
+		public static void UnsubscribeToolbarEvent(System.Action<bool> listener)
+		{
+			Type type = GetProGridsType();
+
+			if( type != null )
+			{
+				MethodInfo mi = type.GetMethod("RemoveToolbarEventSubscriber");
+				if(mi != null)
+					mi.Invoke(null, new object[] { listener } );
+			}
+		}
+
 	}
 }
