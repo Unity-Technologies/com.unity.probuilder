@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ProBuilder2.Common
 {
@@ -16,7 +14,7 @@ namespace ProBuilder2.Common
 		public System.Func<T> constructor;
 		public System.Action<T> destructor;
 
-		private Queue<T> pool = new Queue<T>();
+		private Queue pool = new Queue();	// VS compiler doesn't recognize Queue<T> as existing?
 
 		public pb_ObjectPool(int initialSize, int desiredSize, System.Func<T> constructor, System.Action<T> destructor)
 		{

@@ -253,4 +253,41 @@ public class pb_Preferences_Internal
 				return (T)System.Convert.ChangeType( 0, typeof(T));
 		}
 	}
+
+	/**
+	 * Returns all preferences as a hashtable where key matches the pb_Constant name.
+	 */
+	public static Hashtable ToHashtable()
+	{
+		Hashtable table = new Hashtable();
+
+		table.Add(pb_Constant.pbStripProBuilderOnBuild,			pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild));
+		table.Add(pb_Constant.pbDisableAutoUV2Generation,		pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation));
+		table.Add(pb_Constant.pbShowSceneInfo,					pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo));
+		table.Add(pb_Constant.pbEnableBackfaceSelection,		pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection));
+		table.Add(pb_Constant.pbDefaultOpenInDockableWindow,	pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow));
+		table.Add(pb_Constant.pbDragCheckLimit,					pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit));
+		table.Add(pb_Constant.pbForceConvex,					pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex));
+		table.Add(pb_Constant.pbForceGridPivot,					pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot));
+		table.Add(pb_Constant.pbForceVertexPivot,				pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot));
+		table.Add(pb_Constant.pbManifoldEdgeExtrusion,			pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion));
+		table.Add(pb_Constant.pbPerimeterEdgeBridgeOnly,		pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly));
+		table.Add(pb_Constant.pbPBOSelectionOnly,				pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly));
+		table.Add(pb_Constant.pbCloseShapeWindow,				pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow));		
+		table.Add(pb_Constant.pbUVEditorFloating,				pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating));
+		table.Add(pb_Constant.pbShowSceneToolbar,				pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar));
+		table.Add(pb_Constant.pbShowEditorNotifications,		pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications));
+		table.Add(pb_Constant.pbDefaultFaceColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor ));
+		table.Add(pb_Constant.pbDefaultEdgeColor,				pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor ));
+		table.Add(pb_Constant.pbDefaultSelectedVertexColor,		pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor ));
+		table.Add(pb_Constant.pbUVGridSnapValue,				pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue));
+		table.Add(pb_Constant.pbVertexHandleSize,				pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize));
+		table.Add(pb_Constant.pbDefaultMaterial,				pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial));
+
+		table.Add(pb_Constant.pbDefaultSelectionMode,			pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode));
+		table.Add(pb_Constant.pbDefaultCollider,			 	pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider));
+		table.Add(pb_Constant.pbToolbarLocation,			 	pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation));
+
+		return table;
+	}
 }

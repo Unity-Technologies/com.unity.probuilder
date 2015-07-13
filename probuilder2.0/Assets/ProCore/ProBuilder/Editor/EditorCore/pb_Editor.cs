@@ -93,7 +93,7 @@ public class pb_Editor : EditorWindow
 	{
 		_instance = this;
 
-		graphics.LoadPrefs( pb_Preferences.ToHashtable() );
+		graphics.LoadPrefs( pb_Preferences_Internal.ToHashtable() );
 
 		HookDelegates();
 
