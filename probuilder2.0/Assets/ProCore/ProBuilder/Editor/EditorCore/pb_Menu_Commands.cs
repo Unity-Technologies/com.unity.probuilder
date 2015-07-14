@@ -147,7 +147,7 @@ public class pb_Menu_Commands : Editor
 		for(int i = selection.Length; i < objects.Length; i++)
 			objects[i] = selection[i-selection.Length].transform;
 
-		pbUndo.RecordObjects(objects, "Set Pivot");
+		pbUndo.RegisterCompleteObjectUndo(objects, "Set Pivot");
 
 		foreach (pb_Object pb in selection)
 		{
@@ -481,7 +481,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuGrowSelection(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Grow Selection");
+		pbUndo.RecordSelection(selection, "Grow Selection");
 
 		int grown = 0;
 
@@ -649,6 +649,8 @@ public class pb_Menu_Commands : Editor
 			return;
 		}
 
+		pbUndo.RecordSelection(selection, "Shrink Selection");
+
 		// find perimeter edges
 		int rc = 0;
 		for(int i = 0; i < selection.Length; i++)
@@ -700,7 +702,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuInvertSelection(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Invert Selection");
+		pbUndo.RecordSelection(selection, "Invert Selection");
 
 		switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 		{
@@ -769,7 +771,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuRingSelection(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Select Edge Ring");
+		pbUndo.RecordSelection(selection, "Select Edge Ring");
 
 		bool success = false;
 
@@ -796,7 +798,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuLoopSelection(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Select Edge Loop");
+		pbUndo.RecordSelection(selection, "Select Edge Loop");
 
 		bool foundLoop = false;
 
@@ -1121,7 +1123,7 @@ public class pb_Menu_Commands : Editor
 	{
 		bool success = false;
 
-		pbUndo.RecordObjects(selection, "Weld Vertices");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
 		float weld = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
 		int weldCount = 0;
 
@@ -1284,7 +1286,6 @@ public class pb_Menu_Commands : Editor
 			pb_Editor_Utility.ShowNotification("Nothing Selected");
 			return;
 		}
-		Debug.Log("SUBDIVIDE");
 
 		pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
 
@@ -1416,7 +1417,7 @@ public class pb_Menu_Commands : Editor
 	{
 		int success = 0;
 
-		pbUndo.RecordObjects(selection, "Connect Vertices");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
 		
 		foreach(pb_Object pb in selection)
 		{

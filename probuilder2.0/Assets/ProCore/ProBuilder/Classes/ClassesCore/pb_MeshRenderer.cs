@@ -53,7 +53,7 @@ namespace ProBuilder2.Common
 						continue;
 					}
 
-					Graphics.DrawMeshNow(renderables[i].mesh, renderables[i].matrix, n);
+					Graphics.DrawMeshNow(renderables[i].mesh, renderables[i].transform != null ? renderables[i].transform.localToWorldMatrix : Matrix4x4.identity, n);
 				}
 			}
 		}

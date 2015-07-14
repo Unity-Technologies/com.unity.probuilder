@@ -107,7 +107,7 @@ namespace ProBuilder2.Common
 		/**
 		 * Update the highlight and wireframe graphics.
 		 */
-		public void UpdateGraphics(pb_Object[] selection, EditLevel editLevel, SelectMode selectionMode)
+		public void RebuildGraphics(pb_Object[] selection, pb_Edge[][] universalEdgesDistinct, EditLevel editLevel, SelectMode selectionMode)
 		{
 			// in the event that the editor starts calling UpdateGraphics before the object has run OnEnable() (which happens on script reloads)
 			if(pool == null) return;
@@ -121,8 +121,8 @@ namespace ProBuilder2.Common
 			// update wireframe
 			wireframeMaterial.SetColor("_Color", (selectionMode == SelectMode.Edge && editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 
-			foreach(pb_Object pb in selection)
-				renderer.renderables.Add( BuildEdgeMesh(pb) );
+			for(int i = 0; i < selection.Length; i++)
+				renderer.renderables.Add( BuildEdgeMesh(selection[i], universalEdgesDistinct[i]) );
 
 			if(editLevel == EditLevel.Geometry)
 			{
@@ -157,7 +157,7 @@ namespace ProBuilder2.Common
 			pb_Renderable ren = pool.Get();
 
 			ren.name = "Faces Renderable";
-			ren.matrix = pb.transform.localToWorldMatrix;
+			ren.transform = pb.transform;
 			ren.materials = new Material[] { faceMaterial };
 
 			ren.mesh.Clear();
@@ -255,7 +255,7 @@ namespace ProBuilder2.Common
 			pb_Renderable ren = pool.Get();
 
 			ren.name = "Vertex Renderable";
-			ren.matrix = pb.transform.localToWorldMatrix;
+			ren.transform = pb.transform;
 			ren.materials = new Material[] { vertexMaterial };
 			ren.mesh.Clear();
 			ren.mesh.vertices = t_billboards;
@@ -268,16 +268,15 @@ namespace ProBuilder2.Common
 			return ren;
 		}
 
-		private pb_Renderable BuildEdgeMesh(pb_Object pb)
+		private pb_Renderable BuildEdgeMesh(pb_Object pb, pb_Edge[] universalEdgesDistinct)
 		{
 			Vector3[] pbverts = pb.vertices;
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-			IEnumerable<pb_Edge> universalEdges = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(pb.faces), pb.sharedIndices).Distinct();
-			Vector3[] edge_verts = new Vector3[universalEdges.Count()*2];
+			Vector3[] edge_verts = new Vector3[universalEdgesDistinct.Count()*2];
 
 			int n = 0;
-			foreach(pb_Edge e in universalEdges)
+			foreach(pb_Edge e in universalEdgesDistinct)
 			{
 				edge_verts[n++] = pbverts[sharedIndices[e.x][0]];
 				edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
@@ -287,7 +286,7 @@ namespace ProBuilder2.Common
 
 			ren.name = "Wireframe Renderable";
 			ren.materials = new Material[] { wireframeMaterial };
-			ren.matrix = pb.transform.localToWorldMatrix;
+			ren.transform = pb.transform;
 			ren.mesh.name = "Wireframe Mesh";
 			ren.mesh.Clear();
 			ren.mesh.vertices = edge_verts;

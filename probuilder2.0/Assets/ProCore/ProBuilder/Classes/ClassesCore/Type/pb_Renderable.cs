@@ -11,7 +11,7 @@ namespace ProBuilder2.Common
 	{
 		public Mesh mesh;
 		public Material[] materials;
-		public Matrix4x4 matrix = Matrix4x4.identity;
+		public Transform transform;
 
 		public static pb_Renderable CreateInstance(Mesh InMesh, Material[] InMaterials)
 		{

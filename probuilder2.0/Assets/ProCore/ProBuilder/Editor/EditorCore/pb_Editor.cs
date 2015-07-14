@@ -167,6 +167,8 @@ public class pb_Editor : EditorWindow
 				new GUIContent(edge_Graphic_off, "Edge Selection"),
 				new GUIContent(face_Graphic_off, "Face Selection")
 			};
+
+			elementModeToolbarRect.y = 6;
 		}
 
 		show_Detail = true;
@@ -297,7 +299,8 @@ public class pb_Editor : EditorWindow
 	bool tool_weldButton = false;
 	#endif
 	Vector2 scroll = Vector2.zero;
-	Rect ToolbarRect_Select = new Rect(3,6,128,24);
+	Rect elementModeToolbarRect = new Rect(3,6,128,24);
+
 	void OnGUI()
 	{
 		Event e = Event.current;	/// Different than OnSceneGUI currentEvent ?
@@ -318,11 +321,11 @@ public class pb_Editor : EditorWindow
 		if(!pref_showToolbar)
 		{
 			int t_selectionMode = editLevel != EditLevel.Top ? (int)selectionMode : -1;
-			ToolbarRect_Select.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
+			elementModeToolbarRect.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
 
 			EditorGUI.BeginChangeCheck();
 			
-			t_selectionMode = GUI.Toolbar(ToolbarRect_Select, (int)t_selectionMode, EditModeIcons, "Command");
+			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -1242,7 +1245,7 @@ public class pb_Editor : EditorWindow
 
 
 				// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-				pbUndo.RecordObject(pb, "Change Face Selection");
+				pbUndo.RecordSelection(pb, "Change Face Selection");
 
 				int indx = System.Array.IndexOf(pb.SelectedFaces, selectedFace);
 				if( indx > -1 ) {
@@ -1329,7 +1332,7 @@ public class pb_Editor : EditorWindow
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 				
-				pbUndo.RecordObject(pb, "Change Edge Selection");
+				pbUndo.RecordSelection(pb, "Change Edge Selection");
 				
 				if( ind > -1 )
 					pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
@@ -1357,7 +1360,7 @@ public class pb_Editor : EditorWindow
 		Camera cam = SceneView.lastActiveSceneView.camera;
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
-		pbUndo.RecordObjects(selection, "Drag Select");
+		pbUndo.RecordSelection(selection, "Drag Select");
 
 		switch(selectionMode)
 		{
@@ -2090,40 +2093,40 @@ public class pb_Editor : EditorWindow
 			switch(pref_sceneToolbarLocation)
 			{
 				case SceneToolbarLocation.BottomCenter:
-					ToolbarRect_Select.x = (Screen.width/2 - 96);
-					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					elementModeToolbarRect.x = (Screen.width/2 - 64);
+					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.BottomLeft:
-					ToolbarRect_Select.x = 12;
-					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					elementModeToolbarRect.x = 12;
+					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.BottomRight:
-					ToolbarRect_Select.x = Screen.width - (ToolbarRect_Select.width + 12);
-					ToolbarRect_Select.y = Screen.height - ToolbarRect_Select.height * 3;
+					elementModeToolbarRect.x = Screen.width - (elementModeToolbarRect.width + 12);
+					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.UpperLeft:
-					ToolbarRect_Select.x = 12;
-					ToolbarRect_Select.y = 10;
+					elementModeToolbarRect.x = 12;
+					elementModeToolbarRect.y = 10;
 					break;
 
 				case SceneToolbarLocation.UpperRight:
-					ToolbarRect_Select.x = Screen.width - (ToolbarRect_Select.width + 96);
-					ToolbarRect_Select.y = 10;
+					elementModeToolbarRect.x = Screen.width - (elementModeToolbarRect.width + 96);
+					elementModeToolbarRect.y = 10;
 					break;
 
 				default:
 				case SceneToolbarLocation.UpperCenter:
-					ToolbarRect_Select.x = (Screen.width/2 - 96);
-					ToolbarRect_Select.y = 10;
+					elementModeToolbarRect.x = (Screen.width/2 - 64);
+					elementModeToolbarRect.y = 10;
 					break;
 			}
 
 			EditorGUI.BeginChangeCheck();
 
-			t_selectionMode = GUI.Toolbar(ToolbarRect_Select, (int)t_selectionMode, EditModeIcons, "Command");
+			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -2823,7 +2826,7 @@ public class pb_Editor : EditorWindow
 
 	private void UpdateGraphics()
 	{
-		graphics.UpdateGraphics(selection, editLevel, selectionMode);
+		graphics.RebuildGraphics(selection, m_universalEdges, editLevel, selectionMode);
 	}
 
 	public void AddToSelection(GameObject t)
@@ -2859,7 +2862,7 @@ public class pb_Editor : EditorWindow
 
 	public void SetSelection(GameObject[] newSelection)
 	{
-		pbUndo.RecordObjects(selection, "Change Selection");
+		pbUndo.RecordSelection(selection, "Change Selection");
 		
 		ClearSelection();
 
@@ -2877,7 +2880,7 @@ public class pb_Editor : EditorWindow
 
 	public void SetSelection(GameObject go)
 	{
-		pbUndo.RecordObjects(selection, "Change Selection");
+		pbUndo.RecordSelection(selection, "Change Selection");
 		
 		ClearSelection();
 		AddToSelection(go);
@@ -3062,8 +3065,8 @@ public class pb_Editor : EditorWindow
 	 */
 	private void ListenForTopLevelMovement()
 	{
-		if( selection.Any(x => x != null && !x.Equals(null) && x.transform.hasChanged) )
-			Internal_UpdateSelectionFast();
+		// if( selection.Any(x => x != null && !x.Equals(null) && x.transform.hasChanged) )
+		// 	Internal_UpdateSelectionFast();
 	}
 
 	private void OnSelectionChange()

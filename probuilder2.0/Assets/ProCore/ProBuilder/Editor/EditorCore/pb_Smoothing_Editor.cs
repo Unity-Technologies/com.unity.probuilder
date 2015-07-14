@@ -152,7 +152,7 @@ public class pb_Smoothing_Editor : EditorWindow
 	 */
 	void SetSmoothingGroup(pb_Object[] _selection, int sg)
 	{
-		pbUndo.RecordObjects(_selection, "Set Smoothing Groups");
+		pbUndo.RecordSelection(_selection, "Set Smoothing Groups");
 
 		// If all selected are of the same group, act as a toggle
 		if(smoothGroups.Count == 1 && smoothGroups[0] == sg)
@@ -184,7 +184,7 @@ public class pb_Smoothing_Editor : EditorWindow
 
 	void ClearAllSmoothingGroups(pb_Object[] _selection)
 	{
-		pbUndo.RecordObjects(_selection, "Clear Smoothing Groups");
+		pbUndo.RecordSelection(_selection, "Clear Smoothing Groups");
 
 		foreach(pb_Object pb in _selection)
 		{

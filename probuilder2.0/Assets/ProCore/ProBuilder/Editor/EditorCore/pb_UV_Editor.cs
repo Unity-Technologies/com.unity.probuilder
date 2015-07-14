@@ -1030,7 +1030,7 @@ public class pb_UV_Editor : EditorWindow
 					}
 					else
 					{
-						pbUndo.RecordObjects(selection, "Change Selection");
+						pbUndo.RecordSelection(selection, "Change Selection");
 
 						if(Event.current.modifiers == (EventModifiers)0 && editor)
 							editor.ClearFaceSelection();
@@ -1322,7 +1322,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(editor && !e.shift && !e.control && !e.command)
 		{
-			pbUndo.RecordObjects(selection, "Change Selection");
+			pbUndo.RecordSelection(selection, "Change Selection");
 			editor.ClearFaceSelection();
 		}
 
