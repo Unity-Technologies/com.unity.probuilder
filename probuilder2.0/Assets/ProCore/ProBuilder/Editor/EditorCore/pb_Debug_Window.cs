@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 		public bool elementGroupInfo = false;
 		public bool textureGroupInfo = false;
 		public bool smoothingGroupInfo = false;
-		public bool vertexInfo = true;
+		// public bool vertexInfo = false;
 		public bool autoUVInfo = false;
 		Vector2 scroll = Vector2.zero;
 		public bool ntbSelectedOnly = false;
@@ -113,10 +113,16 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 				edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
 				faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
-				elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
-				textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
-				smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
-				vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
+
+				GUI.enabled = faceInfo;
+				{
+					elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
+					textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
+					smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
+				}
+				GUI.enabled = true;
+
+				// vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
 
 				GUILayout.BeginHorizontal();
 					Color pop = GUI.color;
@@ -137,7 +143,7 @@ namespace ProBuilder2.EditorCommon
 
 				elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
 				elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
-				ntbSelectedOnly = EditorGUILayout.Toggle("Selection Only Selected", ntbSelectedOnly);
+				ntbSelectedOnly = EditorGUILayout.Toggle("Selection Only", ntbSelectedOnly);
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -396,42 +402,22 @@ namespace ProBuilder2.EditorCommon
 			{
 				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.GetVertices(f.distinctIndices) ) ) );
 				
-				GUIContent gc = new GUIContent("Face: " + f.ToString() + "\nElement Group: " + f.elementGroup, "");
+				GUIContent gc = new GUIContent("Face: " + f.ToString(), "");
+
+				if(smoothingGroupInfo || elementGroupInfo || textureGroupInfo)
+					gc.text += "\nGroups:";
+
+				if(smoothingGroupInfo)
+					gc.text += "\nSmoothing: " + f.smoothingGroup;
+				if(elementGroupInfo)
+					gc.text += "\nElement: " + f.elementGroup;
+				if(textureGroupInfo)
+					gc.text += "\nTexture: " + f.textureGroup;
 
 				DrawSceneLabel(gc, cen);
 			}
 
-			if(elementGroupInfo || textureGroupInfo)
-			{
-				Camera cam = SceneView.lastActiveSceneView.camera;
-
-				foreach(pb_Face f in pb.faces)
-				{
-					Vector3 v = pb_Math.Average( pb.GetVertices(f.distinctIndices) );
-					v += pb_Math.Normal(pb, f) * .01f;
-					v = pb.transform.TransformPoint(v);
-
-					if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
-					{
-						Vector2 cen = HandleUtility.WorldToGUIPoint( v );
-						GUIContent gc;
-						
-						if( elementGroupInfo && textureGroupInfo)
-							gc = new GUIContent("E: " + f.elementGroup + "\nT: " + f.textureGroup, "");
-						else if(elementGroupInfo)
-							gc = new GUIContent("E: " + f.elementGroup, "");
-						else
-							gc = new GUIContent("T: " + f.textureGroup, "");
-
-						if(smoothingGroupInfo)
-							gc.text += "\nS: " + f.smoothingGroup;
-
-						DrawSceneLabel(gc, cen);
-					}
-				}
-			}
-
-				// sb.AppendLine(f.ToString() + ", ");
+			// sb.AppendLine(f.ToString() + ", ");
 
 
 			// foreach(pb_Face face in pb.SelectedFaces)
@@ -446,28 +432,28 @@ namespace ProBuilder2.EditorCommon
 
 			// sb.AppendLine("\n");
 
-			if(vertexInfo)
-			{
-				try
-				{
-					Camera cam = SceneView.lastActiveSceneView.camera;
-					Vector3[] normals = pb.msh.normals;
-					int index = 0;
-					foreach(pb_IntArray arr in pb.sharedIndices)
-					{
-						Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
+			// if(vertexInfo)
+			// {
+			// 	try
+			// 	{
+			// 		Camera cam = SceneView.lastActiveSceneView.camera;
+			// 		Vector3[] normals = pb.msh.normals;
+			// 		int index = 0;
+			// 		foreach(pb_IntArray arr in pb.sharedIndices)
+			// 		{
+			// 			Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
 
-						if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
-						{
-							Vector2 cen = HandleUtility.WorldToGUIPoint( v );
+			// 			if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
+			// 			{
+			// 				Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 							
-							GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
+			// 				GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
 
-							DrawSceneLabel(gc, cen);
-						}
-					}
-				} catch (System.Exception e) { /* do not care */; }
-			}
+			// 				DrawSceneLabel(gc, cen);
+			// 			}
+			// 		}
+			// 	} catch { /* do not care */; }
+			// }
 
 			Handles.EndGUI();
 

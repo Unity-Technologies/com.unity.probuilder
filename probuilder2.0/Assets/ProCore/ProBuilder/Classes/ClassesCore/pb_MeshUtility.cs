@@ -154,7 +154,7 @@ namespace ProBuilder2.Common
 				 */
 				foreach(int tri in pb.sharedIndices[i].array)
 				{
-					if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)	
+					if(smoothGroup[tri] > 24)	
 						continue;
 
 					if( shareable.TryGetValue(smoothGroup[tri], out list) )
@@ -177,28 +177,29 @@ namespace ProBuilder2.Common
 
 				foreach(KeyValuePair<int, List<int>> group in shareable)
 				{			
-					List<List<int>> textureMatches = new List<List<int>>();
+					List<List<int>> matches = new List<List<int>>();
 
 					foreach(int tri in group.Value)
 					{
 						bool foundMatch = false;
 
-						for(int n = 0; n < textureMatches.Count; n++)
+						for(int n = 0; n < matches.Count; n++)
 						{
-							if( textures[textureMatches[n][0]].Approx(textures[tri], .001f) &&
-								(colors == null || colors[textureMatches[n][0]].Approx(colors[tri], .001f)))
+							if( textures[matches[n][0]].Approx(textures[tri], .001f) &&
+								normals[matches[n][0]].Approx(normals[tri], .001f) &&
+								(colors == null || colors[matches[n][0]].Approx(colors[tri], .001f)))
 							{
-								textureMatches[n].Add(tri);
+								matches[n].Add(tri);
 								foundMatch = true;
 								break;
 							}
 						}
 
 						if(!foundMatch)
-							textureMatches.Add( new List<int>() { tri } );
+							matches.Add( new List<int>() { tri } );
 					}
 	
-					merge.AddRange( textureMatches.Where(x => x.Count > 1) );
+					merge.AddRange( matches.Where(x => x.Count > 1) );
 				}
 			}
 
