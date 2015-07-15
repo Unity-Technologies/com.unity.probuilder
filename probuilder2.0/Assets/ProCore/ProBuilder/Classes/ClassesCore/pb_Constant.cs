@@ -157,4 +157,6 @@ public static class pb_Constant
 	public static int[] TRIANGLES_CUBE = new int[] {
 		0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
 	};
+
+	public const int MAX_VERTEX_COUNT = 65000;
 }

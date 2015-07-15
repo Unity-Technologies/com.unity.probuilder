@@ -270,16 +270,18 @@ namespace ProBuilder2.Common
 
 		private pb_Renderable BuildEdgeMesh(pb_Object pb, pb_Edge[] universalEdgesDistinct)
 		{
+
 			Vector3[] pbverts = pb.vertices;
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-			Vector3[] edge_verts = new Vector3[universalEdgesDistinct.Count()*2];
+			int vertexCount = System.Math.Min(universalEdgesDistinct.Count() * 2, pb_Constant.MAX_VERTEX_COUNT);
+			Vector3[] edge_verts = new Vector3[vertexCount];
 
 			int n = 0;
-			foreach(pb_Edge e in universalEdgesDistinct)
+			for(int i = 0; i < vertexCount / 2; i++) // (pb_Edge e in universalEdgesDistinct)
 			{
-				edge_verts[n++] = pbverts[sharedIndices[e.x][0]];
-				edge_verts[n++] = pbverts[sharedIndices[e.y][0]];
+				edge_verts[n++] = pbverts[sharedIndices[universalEdgesDistinct[i].x][0]];
+				edge_verts[n++] = pbverts[sharedIndices[universalEdgesDistinct[i].y][0]];
 			}
 
 			pb_Renderable ren = pool.Get();

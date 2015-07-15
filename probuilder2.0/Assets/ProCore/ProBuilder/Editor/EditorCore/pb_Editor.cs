@@ -23,7 +23,7 @@ public class pb_Editor : EditorWindow
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
 	#if PB_DEBUG
-	// static pb_Profiler profiler = new pb_Profiler();
+	static pb_Profiler profiler = new pb_Profiler();
 	#endif
 
 #region LOCAL MEMBERS && EDITOR PREFS
@@ -871,12 +871,12 @@ public class pb_Editor : EditorWindow
 		#if PROTOTYPE
 		if( (movingVertices || scaling) && GUIUtility.hotControl < 1)
 		{
-			OnFinishedVertexModification();
+			OnFinishVertexModification();
 		}
 		#else
 		if( (movingVertices || movingPictures || scaling) && GUIUtility.hotControl < 1)
 		{
-			OnFinishedVertexModification();
+			OnFinishVertexModification();
 			UpdateHandleRotation();
 			UpdateTextureHandles();
 		}
@@ -1596,7 +1596,7 @@ public class pb_Editor : EditorWindow
 
 		if(newPosition != cachedPosition)
 		{
-			// profiler.BeginSample("VertexMoveTool()");
+			profiler.BeginSample("VertexMoveTool()");
 			Vector3 diff = newPosition-cachedPosition;
 
 			Vector3 mask = diff.ToMask();
@@ -1634,6 +1634,8 @@ public class pb_Editor : EditorWindow
 			}
 
 			Internal_UpdateSelectionFast();
+
+			profiler.EndSample();
 		}
 
 	}
@@ -1686,41 +1688,50 @@ public class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
+
+				// get the plane rotation in local space
+				Vector3 nrm = pb_Math.Normal(vertexOrigins[i]);
+				Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);	
+
+				Vector3[] v = selection[i].vertices;
+				pb_IntArray[] sharedIndices = selection[i].sharedIndices;
+
 				for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
 				{
 					switch(handleAlignment)
 					{
 						case HandleAlignment.Plane:
+						{
 							if(gotoWorld)
 								goto case HandleAlignment.World;
 
 							if(gotoLocal)
 								goto case HandleAlignment.Local;
 
-							Quaternion localRot = Quaternion.identity;
-
-							// get the plane rotation in local space
-							Vector3 nrm = pb_Math.Normal(vertexOrigins[i]);
-
-							localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);	
-	
 							// move center of vertices to 0,0,0 and set rotation as close to identity as possible					
 							over = Quaternion.Inverse(localRot) * (vertexOrigins[i][n] - vertexOffset[i]);
 
 							// apply scale
 							ver = Vector3.Scale(over, currentHandleScale);
+							
 							// re-apply original rotation
 							if(vertexOrigins[i].Length > 2)
 								ver = localRot * ver;
+							
 							// re-apply world position offset
 							ver += vertexOffset[i];
-							// set the vertex in local space
-							selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
-							
+
+							int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+
+							for(int t = 0; t < array.Length; t++)	
+								v[array[t]] = ver;
+
 							break;
+						}
 
 						case HandleAlignment.World:
 						case HandleAlignment.Local:
+						{
 							// move vertex to relative origin from center of selection
 							over = vertexOrigins[i][n] - vertexOffset[i];
 							// apply scale
@@ -1728,11 +1739,19 @@ public class pb_Editor : EditorWindow
 							// move vertex back to locally offset position
 							ver += vertexOffset[i];
 							// set vertex in local space on pb-Object
-							selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
+
+							int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+
+							for(int t = 0; t < array.Length; t++)	
+								v[array[t]] = ver;
+
 							break;
+						}
 					}
 				}
-			
+				
+				selection[i].SetVertices(v);
+				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
@@ -1758,6 +1777,7 @@ public class pb_Editor : EditorWindow
 
 		if(currentHandleRotation != previousHandleRotation)
 		{
+			profiler.BeginSample("Rotate");
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
@@ -1790,6 +1810,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
+			profiler.BeginSample("Calc Matrix");
 			Quaternion transformedRotation;
 			switch(handleAlignment)
 			{
@@ -1818,14 +1839,15 @@ public class pb_Editor : EditorWindow
 					transformedRotation = currentHandleRotation;
 					break;
 			}
+			profiler.EndSample();
 
-			// if(pref_snapEnabled)
-			// 	pbUndo.RecordObjects(selection as Object[], "Move Vertices");
-
-
+			profiler.BeginSample("matrix mult");
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
 			{
+				Vector3[] v = selection[i].vertices;
+				pb_IntArray[] sharedIndices = selection[i].sharedIndices;
+
 				if(selection.Length > 1)	// use world when selection is > 1 objects
 				{
 					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
@@ -1846,11 +1868,14 @@ public class pb_Editor : EditorWindow
 						ver += vertexOffset[i];
 
 						// now set in the msh.vertices array
-						selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
+						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+
+						for(int t = 0; t < array.Length; t++)	
+							v[array[t]] = ver;
 					}
 				}
 				else
-				{
+				{			
 					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
 					{
 						// move vertex to relative origin from center of selection
@@ -1861,9 +1886,16 @@ public class pb_Editor : EditorWindow
 						// move vertex back to locally offset position
 						ver += vertexOffset[i];
 
-						selection[i].SetSharedVertexPosition(m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]], ver);
+						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+
+						for(int t = 0; t < array.Length; t++)	
+							v[array[t]] = ver;
 					}
+
 				}
+
+				selection[i].SetVertices(v);
+				selection[i].msh.vertices = v;
 
 				// set vertex in local space on pb-Object
 
@@ -1871,6 +1903,7 @@ public class pb_Editor : EditorWindow
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
 			}
+			profiler.EndSample();
 
 			// don't modify the handle rotation because otherwise rotating with plane coordinates
 			// updates the handle rotation with every change, making moving things a changing target
@@ -1879,6 +1912,7 @@ public class pb_Editor : EditorWindow
 			Internal_UpdateSelectionFast();
 			
 			currentHandleRotation = rotateToolHandleRotation;
+			profiler.EndSample();
 		}
 	}
 
@@ -2641,7 +2675,7 @@ public class pb_Editor : EditorWindow
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{		
-		// profiler.BeginSample("UpdateSelection()");
+		profiler.BeginSample("UpdateSelection()");
 		per_object_vertexCount_distinct = 0;
 		
 		selectedVertexCount = 0;
@@ -2661,7 +2695,7 @@ public class pb_Editor : EditorWindow
 		// that don't change based on element selction
 		if(forceUpdate || !t_selection.SequenceEqual(selection))
 		{
-			// profiler.BeginSample("Heavy Update");
+			profiler.BeginSample("Heavy Update");
 
 			forceUpdate = true;	// If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
 								// can be trusted.
@@ -2672,23 +2706,23 @@ public class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				// profiler.BeginSample("Unique Indices");
+				profiler.BeginSample("Unique Indices");
 				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
-				// profiler.EndSample();
+				profiler.EndSample();
 
-				// profiler.BeginSample("sharedIndices.ToDictionary()");
+				profiler.BeginSample("sharedIndices.ToDictionary()");
 				m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
-				// profiler.EndSample();
+				profiler.EndSample();
 
-				// profiler.BeginSample("GetUniversalEdges (dictionary)");
+				profiler.BeginSample("GetUniversalEdges (dictionary)");
 				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
-				// profiler.EndSample();
+				profiler.EndSample();
 				
-				// profiler.BeginSample("VerticesInWorldSpace");
+				profiler.BeginSample("VerticesInWorldSpace");
 				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
-				// profiler.EndSample();
+				profiler.EndSample();
 			}
-			// profiler.EndSample();
+			profiler.EndSample();
 		}
 
 
@@ -2765,13 +2799,13 @@ public class pb_Editor : EditorWindow
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
 		
-		// profiler.EndSample();
+		profiler.EndSample();
 	}
 
 	// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 	private void Internal_UpdateSelectionFast()
 	{
-		// profiler.BeginSample("Internal_UpdateSelectionFast");
+		profiler.BeginSample("Internal_UpdateSelectionFast");
 		selectedVertexCount = 0;
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
@@ -2821,12 +2855,14 @@ public class pb_Editor : EditorWindow
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
 
-		// profiler.EndSample();
+		profiler.EndSample();
 	}
 
 	private void UpdateGraphics()
 	{
+		profiler.BeginSample("UpdateGraphics");
 		graphics.RebuildGraphics(selection, m_universalEdges, editLevel, selectionMode);
+		profiler.EndSample();
 	}
 
 	public void AddToSelection(GameObject t)
@@ -3251,7 +3287,24 @@ public class pb_Editor : EditorWindow
 	 */
 	private void OnBeginVertexMovement()
 	{
-		pbUndo.RegisterCompleteObjectUndo(selection, "Move Vertices");
+		switch(currentHandle)
+		{
+			case Tool.Move:
+				pbUndo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
+				break;
+
+			case Tool.Rotate:
+				pbUndo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
+				break;
+
+			case Tool.Scale:
+				pbUndo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
+				break;
+
+			default:
+				pbUndo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
+				break;
+		}
 
 		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue = pb_ProGrids_Interface.SnapValue();
@@ -3260,15 +3313,15 @@ public class pb_Editor : EditorWindow
 		// Disable iterative lightmapping
 		// pb_Lightmapping.PushGIWorkflowMode();
 
-		// profiler.BeginSample("ResetMesh");
+		profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
 		{
 			pb.ResetMesh();
 		}
-		// profiler.EndSample();
+		profiler.EndSample();
 	}
 
-	private void OnFinishedVertexModification()
+	private void OnFinishVertexModification()
 	{	
 		// pb_Lightmapping.PopGIWorkflowMode();
 

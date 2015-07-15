@@ -1,3 +1,15 @@
+-- ProBuilder 2.4.5b3 (r3516)
+
+# Features
+	- Better skin for scene info label.
+	- Massive performance improvements when editing large vertex count objects.
+	- Automatically batch vertices even if they don't belong to a smoothing group.
+
+# Bug Fixes
+	- Correctly set element toolbar position when toggling between scene and editor window placement.
+	- Re-enable user set vertex handle color preferences.
+	- Fix hangs caused by editing large vertex count objects.
+
 -- ProBuilder 2.4.5b2 (r3511)
 
 # Features
