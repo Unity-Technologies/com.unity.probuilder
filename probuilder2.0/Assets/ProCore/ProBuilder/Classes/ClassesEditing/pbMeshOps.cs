@@ -823,6 +823,10 @@ namespace ProBuilder2.MeshOperations
 
 		combined.Refresh();
 
+		// refresh donors since deleting the children of the instantiated object could cause them to lose references
+		foreach(pb_Object pb in pbs)
+			pb.Verify();
+
 	 	return true;
 	 }
 #endregion

@@ -716,9 +716,12 @@ public class pb_Object : MonoBehaviour
 		System.Array.Copy(_vertices, v, vertexCount);
 		SetVertices(v);
 
-		Vector2[] u = new Vector2[vertexCount];
-		System.Array.Copy(_uv, u, vertexCount);
-		SetUV(u);
+		if(_uv != null && _uv.Length == vertexCount)
+		{
+			Vector2[] u = new Vector2[vertexCount];
+			System.Array.Copy(_uv, u, vertexCount);
+			SetUV(u);
+		}
 
 		msh = pbUtil.DeepCopyMesh(msh);
 		

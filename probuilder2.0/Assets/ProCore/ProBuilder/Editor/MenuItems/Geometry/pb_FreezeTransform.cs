@@ -13,7 +13,7 @@ namespace ProBuilder2.Actions
 	public class pb_FreezeTransform : Editor
 	{
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 		public static bool MenuVerifyFreezeTransforms()
 		{
 			return Selection.transforms.GetComponents<pb_Object>().Length > 0;
