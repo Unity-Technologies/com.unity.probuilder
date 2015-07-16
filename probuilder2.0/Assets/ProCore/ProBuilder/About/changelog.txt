@@ -1,3 +1,11 @@
+-- ProBuilder 2.4.5f0 (r3520)
+
+# Features
+	- Improve performace of Rotate and Scale tools.
+
+# Bug Fixes
+	- Catch null reference errors when creating wireframe overlays for meshes exceeding Unity's max vertex count.
+
 -- ProBuilder 2.4.5b3 (r3516)
 
 # Features

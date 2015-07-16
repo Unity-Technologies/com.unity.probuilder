@@ -7,7 +7,21 @@ using Parabox.Debug;
 
 public class pb_Profiler_Interface : EditorWindow
 {
+	/// Every other row in the times display will be drawn with this color
 	Color odd_column_color = new Color(.86f, .86f, .86f, 1f);
+
+	/**
+	 * Determines how the gui displays stopwatch values.
+	 */
+	enum Resolution
+	{
+		Tick,
+		Nanosecond,
+		Millisecond
+	}
+
+	/// The resolution (ticks, nanoseconds, milliseconds) to display information.
+	Resolution resolution = Resolution.Nanosecond;
 
 	List<pb_Profiler> profiles
 	{
@@ -16,7 +30,6 @@ public class pb_Profiler_Interface : EditorWindow
 			return pb_Profiler.activeProfilers.FindAll(x => x.GetRootSample().children.Count > 0);
 		}
 	}
-	// bool update_gui = true;
 
 	[MenuItem("Window/pb_Profiler")]
 	public static void MenuInitProfilerWindow()
@@ -40,7 +53,6 @@ public class pb_Profiler_Interface : EditorWindow
 		}
 	}
 
-	// int n = 0;
 	int view = 0;
 	Vector2 scroll = Vector2.zero;
 
@@ -48,15 +60,11 @@ public class pb_Profiler_Interface : EditorWindow
 
 	void OnGUI()
 	{
-		// odd_column_color = EditorGUILayout.ColorField("col", odd_column_color);
-		// GUILayout.Label(odd_column_color.r + ", " + odd_column_color.g+ ", " + odd_column_color.b + ", " + odd_column_color.a);
-		// n = EditorGUILayout.IntField("n", n);
-
 		string[] display = new string[profiles.Count];
 		int[] values = new int[display.Length];
 		for(int i = 0; i < values.Length; i++)
 		{
-			display[i] = "Profiler: " + i;
+			display[i] = profiles[i].name;
 			values[i] = i;
 		}
 
@@ -67,7 +75,8 @@ public class pb_Profiler_Interface : EditorWindow
 			if(EditorGUI.EndChangeCheck())
 				row_visibility.Clear();
 
-			// update_gui = EditorGUILayout.Toggle("Update", update_gui, GUILayout.MaxWidth(165));
+			resolution = (Resolution) EditorGUILayout.EnumPopup("Resolution", resolution);
+			
 		GUILayout.EndHorizontal();
 
 		// DRAW
@@ -116,13 +125,16 @@ public class pb_Profiler_Interface : EditorWindow
 		GUILayout.EndHorizontal();
 	}
 
-
 	int name_width = 300;
 	int sample_width = 64;
 	int percent_width = 64;
 	int sum_width = 80;
 	int avg_width = 80;
 	int range_width = 80;
+
+	Color color = new Color(0,0,0,1);
+	const float COLOR_BLOCK_SIZE = 16f;
+	const int COLOR_BLOCK_PAD = 6;
 
 	void DrawSampleTree(pb_Sample sample) { DrawSampleTree(sample, 0, ""); }
 	void DrawSampleTree(pb_Sample sample, int indent, string key_prefix)
@@ -146,14 +158,56 @@ public class pb_Profiler_Interface : EditorWindow
 
 			GUILayout.EndHorizontal();
 
+			Rect r = GUILayoutUtility.GetLastRect();
+
+			color.r = sample.Percentage() / 100f;
+			color.b = 1f - color.r;
+
+			r.x = (r.width + r.x) - COLOR_BLOCK_SIZE - COLOR_BLOCK_PAD;
+			r.width = COLOR_BLOCK_SIZE;
+			r.y += (r.height-COLOR_BLOCK_SIZE)/2f;
+			r.height = COLOR_BLOCK_SIZE;
+
+			DrawSolidColor(r, color);
+
+			string avg, sum, min, max, lastSample;
+
+			switch(resolution)
+			{				
+				case Resolution.Nanosecond:
+					avg 		= string.Format("{0} n", pb_Profiler.TicksToNanosecond(sample.average));
+					sum 		= string.Format("{0} n", pb_Profiler.TicksToNanosecond(sample.sum));
+					min 		= string.Format("{0} n", pb_Profiler.TicksToNanosecond(sample.min));
+					max 		= string.Format("{0} n", pb_Profiler.TicksToNanosecond(sample.max));
+					lastSample	= string.Format("{0} n", pb_Profiler.TicksToNanosecond(sample.lastSample));
+					break;
+
+				case Resolution.Millisecond:
+					avg 		= string.Format("{0} ms", pb_Profiler.TicksToMillisecond(sample.average));
+					sum 		= string.Format("{0} ms", pb_Profiler.TicksToMillisecond(sample.sum));
+					min 		= string.Format("{0} ms", pb_Profiler.TicksToMillisecond(sample.min));
+					max 		= string.Format("{0} ms", pb_Profiler.TicksToMillisecond(sample.max));
+					lastSample	= string.Format("{0} ms", pb_Profiler.TicksToMillisecond(sample.lastSample));
+					break;
+
+				default:
+				case Resolution.Tick:
+					avg 		= sample.average.ToString();
+					sum 		= sample.sum.ToString();
+					min 		= sample.min.ToString();
+					max 		= sample.max.ToString();
+					lastSample	= sample.lastSample.ToString();
+					break;
+			}
+
 			GUILayout.Label(sample.sampleCount.ToString(), GUILayout.MinWidth(sample_width), GUILayout.MaxWidth(sample_width));
 			GUILayout.Label(sample.Percentage().ToString("F2"), GUILayout.MinWidth(percent_width), GUILayout.MaxWidth(percent_width));
-			GUILayout.Label(sample.average.ToString() + " ms", GUILayout.MinWidth(avg_width), GUILayout.MaxWidth(avg_width));
-			GUILayout.Label(sample.sum.ToString() + " ms", GUILayout.MinWidth(sum_width), GUILayout.MaxWidth(sum_width));
+			GUILayout.Label(avg, GUILayout.MinWidth(avg_width), GUILayout.MaxWidth(avg_width));
+			GUILayout.Label(sum, GUILayout.MinWidth(sum_width), GUILayout.MaxWidth(sum_width));
 
-			GUILayout.Label(sample.min.ToString() + " ms", GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
-			GUILayout.Label(sample.max.ToString() + " ms", GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
-			GUILayout.Label(sample.lastSample.ToString() + " ms", GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
+			GUILayout.Label(min, GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
+			GUILayout.Label(max, GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
+			GUILayout.Label(lastSample, GUILayout.MinWidth(range_width), GUILayout.MaxWidth(range_width));
 
 		GUILayout.EndHorizontal();
 	
@@ -165,5 +219,33 @@ public class pb_Profiler_Interface : EditorWindow
 				DrawSampleTree(child, indent, key);
 			}
 		}
+	}
+
+	private static GUIStyle _splitStyle;
+	private static GUIStyle SplitStyle
+	{
+		get
+		{
+			if(_splitStyle == null)
+			{
+				_splitStyle = new GUIStyle();
+				_splitStyle.normal.background = EditorGUIUtility.whiteTexture;
+				_splitStyle.margin = new RectOffset(6,6,0,0);
+			}
+			return _splitStyle;
+		}
+	}
+
+	/**
+	 * Draw a solid color block at rect.
+	 */
+	public static void DrawSolidColor(Rect rect, Color col)
+	{
+		Color old = UnityEngine.GUI.backgroundColor;
+		UnityEngine.GUI.backgroundColor = col;
+
+		UnityEngine.GUI.Box(rect, "", SplitStyle);
+
+		UnityEngine.GUI.backgroundColor = old;
 	}
 }

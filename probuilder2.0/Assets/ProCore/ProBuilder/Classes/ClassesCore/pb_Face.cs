@@ -10,13 +10,13 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
 
-namespace ProBuilder2.Common {
-
+namespace ProBuilder2.Common
+{
 [System.Serializable]
 /**
  *	\brief Contains mesh and material information.  Used in the creation of #pb_Objects.
  */
-public class pb_Face : ISerializable
+public class pb_Face : ISerializable, IEquatable<pb_Face>
 {
 
 #region SERIALIZATION
@@ -107,6 +107,22 @@ public class pb_Face : ISerializable
 		manualUV = face.manualUV;
 
 		RebuildCaches();
+	}
+
+	public bool Equals(pb_Face b)
+	{
+		if(!pbUtil.IsEqual<int>(_indices, b.indices))
+			return false;
+
+		// at the moment PB doesn't allow faces that share indices,
+		// so don't bother comparing anything else.
+
+		return true;
+	}
+
+	public override bool Equals(System.Object b)
+	{
+		return b is pb_Face && ((pb_Face)b).Equals(this);
 	}
 
 	public override int GetHashCode()
@@ -326,15 +342,6 @@ public class pb_Face : ISerializable
 		}
 
 		return false;
-	}
-
-	public bool Equals(pb_Face face)
-	{
-		int triCount = face.indices.Length/3;
-		for(int i = 0; i < triCount; i++)
-			if(!Contains(face.GetTriangle(i)))
-				return false;
-		return true;
 	}
 #endregion
 

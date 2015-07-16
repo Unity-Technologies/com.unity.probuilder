@@ -16,7 +16,7 @@ public class ProfileLooper : Editor
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Run Loop x1000")]
 	public static void RunLoop()
 	{
-		profiler = new pb_Profiler();
+		profiler = new pb_Profiler("Test Profiler");
 
 		pb_Object pb = pb_ShapeGenerator.CylinderGenerator(32, 15f, 20f, 32);
 		

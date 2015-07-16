@@ -21,6 +21,10 @@ public class pb_Menu_Commands : Editor
 {
 	private static pb_Editor editor { get { return pb_Editor.instance; } }
 
+#if PB_DEBUG
+	// static pb_Profiler profiler = new pb_Profiler("pb_Menu_Commands");
+#endif
+
 #region Object Level
 
 #if !PROTOTYPE
@@ -483,6 +487,8 @@ public class pb_Menu_Commands : Editor
 	{
 		pbUndo.RecordSelection(selection, "Grow Selection");
 
+		// profiler.BeginSample("MenuGrowSelection");
+
 		int grown = 0;
 
 		foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
@@ -513,25 +519,39 @@ public class pb_Menu_Commands : Editor
 							/**
 							 * Grow by angle flood fill
 							 */
+							// profiler.BeginSample("GenerateNeighborLookup");
 							Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
+							// profiler.EndSample();
 
 							bool facesAdded = true;
 
 							List<pb_Face> newFaces = new List<pb_Face>();
+							Vector3[] v = pb.vertices;
+							Vector3 a, b, c;
 
+							// profiler.BeginSample("while(facesAdded");
 							while(facesAdded)
 							{
 								facesAdded = false;
 
+								// profiler.BeginSample("Walk Perimeter");
 								foreach(pb_Face f in perimeterFaces)
 								{
+									// profiler.BeginSample("Face Normal");
 									Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
+									// profiler.EndSample();
 
-									List<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x)).ToList();
+									// profiler.BeginSample("Face Lookup Contains");
+									IEnumerable<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x));
+									// profiler.EndSample();
 
+									// profiler.BeginSample("Add Faces");
 									foreach(pb_Face connectedFace in adjacent)
 									{
-										float angle = Vector3.Angle( nrm, pb_Math.Normal( pb.GetVertices(connectedFace.indices)) );
+										a = v[connectedFace.indices[0]];
+										b = v[connectedFace.indices[1]];
+										c = v[connectedFace.indices[2]];
+										float angle = Vector3.Angle(nrm, Vector3.Cross(b-a, c-a));
 
 										if( angle < growSelectionAngle )
 										{
@@ -540,11 +560,14 @@ public class pb_Menu_Commands : Editor
 											facesAdded = true;
 										}
 									}
+									// profiler.EndSample();
 								}
+								// profiler.EndSample();
 
 								perimeterFaces = new List<pb_Face>(newFaces);
 								newFaces.Clear();
 							}
+							// profiler.EndSample();
 
 							pb.SetSelectedFaces(selected.ToArray());
 						}
@@ -594,6 +617,8 @@ public class pb_Menu_Commands : Editor
 
 			grown += pb.SelectedTriangleCount - sel;
 		}
+
+		// profiler.EndSample();
 
 		if(editor != null)
 			editor.UpdateSelection(false);
@@ -925,7 +950,7 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void MenuDetachFacesToSubmesh(pb_Object[] selection)
 	{
-		pbUndo.RecordObjects(selection, "Detach Face(s)");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
 
 		foreach(pb_Object pb in selection)
 		{
@@ -955,7 +980,7 @@ public class pb_Menu_Commands : Editor
 	{
 		if(!editor) return;
 
-		pbUndo.RecordObjects(selection, "Detach Selection to PBO");
+		pbUndo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
 
 		int detachedFaceCount = 0;
 		List<GameObject> detached = new List<GameObject>();

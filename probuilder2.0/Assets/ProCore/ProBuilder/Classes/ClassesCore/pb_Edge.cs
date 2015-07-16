@@ -50,23 +50,8 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 	public override int GetHashCode()
 	{
-		// return base.GetHashCode();
-		int hashX;
-		int hashY;
-
-		if(x < y)
-		{
-			hashX = x.GetHashCode();
-			hashY = y.GetHashCode();	
-		}
-		else
-		{
-			hashX = y.GetHashCode();
-			hashY = x.GetHashCode();
-		}
-
 		//Calculate the hash code for the product. 
-		return hashX ^ hashY;
+		return x > y ? y ^ x : x ^ y;
 	}
 
 	public int[] ToArray()

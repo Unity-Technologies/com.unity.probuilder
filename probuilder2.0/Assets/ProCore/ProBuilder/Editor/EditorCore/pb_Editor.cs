@@ -23,7 +23,7 @@ public class pb_Editor : EditorWindow
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
 	#if PB_DEBUG
-	static pb_Profiler profiler = new pb_Profiler();
+	// static pb_Profiler profiler = new pb_Profiler("pb_Editor");
 	#endif
 
 #region LOCAL MEMBERS && EDITOR PREFS
@@ -1368,39 +1368,63 @@ public class pb_Editor : EditorWindow
 			{
 				if(!shiftKey && !ctrlKey) ClearFaceSelection();
 
+				// profiler.BeginSample("Drag Select Vertices");
 				for(int i = 0; i < selection.Length; i++)
 				{
 					pb_Object pb = selection[i];
 					if(!pb.isSelectable) continue;
 
-					List<int> selectedTriangles = new List<int>(pb.SelectedTriangles);
+					// profiler.BeginSample("Create HashSet");
+					HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
+					// profiler.EndSample();
 
 					for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 					{
 						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
 
-						// if point is behind the camera, ignore it.
-						if(cam.WorldToScreenPoint(v).z < 0)
-							continue;
-
-						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(v)))
+						// profiler.BeginSample("Contains");
+						bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
+						// profiler.EndSample();
+						
+						if(contains)
 						{
-							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )	
+							// if point is behind the camera, ignore it.
+							// profiler.BeginSample("WorldToScreenPoint");
+							if(cam.WorldToScreenPoint(v).z < 0)
+							{
+								// profiler.EndSample();
 								continue;
+							}
+							// profiler.EndSample();
+
+
+							// profiler.BeginSample("backface culling");
+							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )	
+							{
+								// profiler.EndSample();
+								continue;
+							}
+							// profiler.EndSample();
 
 							// Check if index is already selected, and if not add it to the pot
-							int indx = selectedTriangles.IndexOf(m_uniqueIndices[i][n]);
+							// profiler.BeginSample("selected triangles contains");
+							contains = selectedTriangles.Contains(m_uniqueIndices[i][n]);
+							// profiler.EndSample();
 
-							// @todo condense this to a single array rebuild
-							if(indx > -1)
-								selectedTriangles.RemoveAt(indx);
+							// profiler.BeginSample("add / remove");
+							if( contains )
+								selectedTriangles.Remove(m_uniqueIndices[i][n]);
 							else
 								selectedTriangles.Add(m_uniqueIndices[i][n]);
+							// profiler.EndSample();
 						}
 					}
 					
+					// profiler.BeginSample("SetSelectedTriangles");
 					pb.SetSelectedTriangles(selectedTriangles.ToArray());
+					// profiler.EndSample();
 				}
+				// profiler.EndSample();
 
 				if(!vertexSelectionMask)
 					DragObjectCheck(true);
@@ -1596,7 +1620,7 @@ public class pb_Editor : EditorWindow
 
 		if(newPosition != cachedPosition)
 		{
-			profiler.BeginSample("VertexMoveTool()");
+			// profiler.BeginSample("VertexMoveTool()");
 			Vector3 diff = newPosition-cachedPosition;
 
 			Vector3 mask = diff.ToMask();
@@ -1635,7 +1659,7 @@ public class pb_Editor : EditorWindow
 
 			Internal_UpdateSelectionFast();
 
-			profiler.EndSample();
+			// profiler.EndSample();
 		}
 
 	}
@@ -1777,7 +1801,7 @@ public class pb_Editor : EditorWindow
 
 		if(currentHandleRotation != previousHandleRotation)
 		{
-			profiler.BeginSample("Rotate");
+			// profiler.BeginSample("Rotate");
 			movingVertices = true;
 			if(previouslyMoving == false)
 			{
@@ -1810,7 +1834,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 			
-			profiler.BeginSample("Calc Matrix");
+			// profiler.BeginSample("Calc Matrix");
 			Quaternion transformedRotation;
 			switch(handleAlignment)
 			{
@@ -1839,9 +1863,9 @@ public class pb_Editor : EditorWindow
 					transformedRotation = currentHandleRotation;
 					break;
 			}
-			profiler.EndSample();
+			// profiler.EndSample();
 
-			profiler.BeginSample("matrix mult");
+			// profiler.BeginSample("matrix mult");
 			Vector3 ver;	// resulting vertex from modification
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -1903,7 +1927,7 @@ public class pb_Editor : EditorWindow
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
 			}
-			profiler.EndSample();
+			// profiler.EndSample();
 
 			// don't modify the handle rotation because otherwise rotating with plane coordinates
 			// updates the handle rotation with every change, making moving things a changing target
@@ -1912,7 +1936,7 @@ public class pb_Editor : EditorWindow
 			Internal_UpdateSelectionFast();
 			
 			currentHandleRotation = rotateToolHandleRotation;
-			profiler.EndSample();
+			// profiler.EndSample();
 		}
 	}
 
@@ -2675,7 +2699,7 @@ public class pb_Editor : EditorWindow
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
 	{		
-		profiler.BeginSample("UpdateSelection()");
+		// profiler.BeginSample("UpdateSelection()");
 		per_object_vertexCount_distinct = 0;
 		
 		selectedVertexCount = 0;
@@ -2695,7 +2719,7 @@ public class pb_Editor : EditorWindow
 		// that don't change based on element selction
 		if(forceUpdate || !t_selection.SequenceEqual(selection))
 		{
-			profiler.BeginSample("Heavy Update");
+			// profiler.BeginSample("Heavy Update");
 
 			forceUpdate = true;	// If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
 								// can be trusted.
@@ -2706,23 +2730,23 @@ public class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				profiler.BeginSample("Unique Indices");
+				// profiler.BeginSample("Unique Indices");
 				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
-				profiler.EndSample();
+				// profiler.EndSample();
 
-				profiler.BeginSample("sharedIndices.ToDictionary()");
+				// profiler.BeginSample("sharedIndices.ToDictionary()");
 				m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
-				profiler.EndSample();
+				// profiler.EndSample();
 
-				profiler.BeginSample("GetUniversalEdges (dictionary)");
+				// profiler.BeginSample("GetUniversalEdges (dictionary)");
 				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
-				profiler.EndSample();
+				// profiler.EndSample();
 				
-				profiler.BeginSample("VerticesInWorldSpace");
+				// profiler.BeginSample("VerticesInWorldSpace");
 				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
-				profiler.EndSample();
+				// profiler.EndSample();
 			}
-			profiler.EndSample();
+			// profiler.EndSample();
 		}
 
 
@@ -2799,13 +2823,13 @@ public class pb_Editor : EditorWindow
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
 		
-		profiler.EndSample();
+		// profiler.EndSample();
 	}
 
 	// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 	private void Internal_UpdateSelectionFast()
 	{
-		profiler.BeginSample("Internal_UpdateSelectionFast");
+		// profiler.BeginSample("Internal_UpdateSelectionFast");
 		selectedVertexCount = 0;
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
@@ -2855,14 +2879,14 @@ public class pb_Editor : EditorWindow
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
 
-		profiler.EndSample();
+		// profiler.EndSample();
 	}
 
 	private void UpdateGraphics()
 	{
-		profiler.BeginSample("UpdateGraphics");
+		// profiler.BeginSample("UpdateGraphics");
 		graphics.RebuildGraphics(selection, m_universalEdges, editLevel, selectionMode);
-		profiler.EndSample();
+		// profiler.EndSample();
 	}
 
 	public void AddToSelection(GameObject t)
@@ -3313,12 +3337,12 @@ public class pb_Editor : EditorWindow
 		// Disable iterative lightmapping
 		// pb_Lightmapping.PushGIWorkflowMode();
 
-		profiler.BeginSample("ResetMesh");
+		// profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
 		{
 			pb.ResetMesh();
 		}
-		profiler.EndSample();
+		// profiler.EndSample();
 	}
 
 	private void OnFinishVertexModification()

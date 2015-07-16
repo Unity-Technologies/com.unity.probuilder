@@ -27,7 +27,7 @@ public class TestProfiler : Editor
 			}
 		stopwatch.Stop();
 
-		pb_Profiler profiler = new pb_Profiler();
+		pb_Profiler profiler = new pb_Profiler("pb_Profiler Tests");
 			profiler.BeginSample("Sleep");
 				for(int i = 0; i < ITERATIONS; i++)
 				{

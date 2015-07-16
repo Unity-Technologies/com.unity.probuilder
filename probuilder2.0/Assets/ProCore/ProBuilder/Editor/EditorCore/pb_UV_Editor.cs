@@ -31,7 +31,7 @@ public class pb_UV_Editor : EditorWindow
 #region DEBUG
    
     #if PB_DEBUG
-    static pb_Profiler profiler = new pb_Profiler();
+    static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
     #endif
 #endregion
 

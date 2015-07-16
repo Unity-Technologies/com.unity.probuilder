@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 		{
 			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-			pbUndo.RecordObjects(selection, "Triangulate Objects");
+			pbUndo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
 
 			for(int i = 0; i < selection.Length; i++)
 			{

@@ -36,26 +36,31 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Face> faces = new List<pb_Face>();
 
-			pb_Edge[] sharedEdges = new pb_Edge[originFace.edges.Length];
+			HashSet<pb_Edge> sharedEdges = new HashSet<pb_Edge>();
 
-			for(int i = 0; i < sharedEdges.Length; i++)
+			for(int i = 0; i < originFace.edges.Length; i++)
 			{
-				sharedEdges[i] = new pb_Edge(lookup[originFace.edges[i].x], lookup[originFace.edges[i].y]);
+				sharedEdges.Add(new pb_Edge(lookup[originFace.edges[i].x], lookup[originFace.edges[i].y]));
 			}
 
 			pb_Edge edge_s = new pb_Edge(-1,-1);
 
 			for(int i = 0; i < pb.faces.Length; i++)
-			{
-				if(mask.Contains(pb.faces[i])) continue;
-
+			{		
 				foreach(pb_Edge edge in pb.faces[i].edges)
 				{
 					edge_s.x = lookup[edge.x];
 					edge_s.y = lookup[edge.y];
 
-					if( sharedEdges.Contains(edge_s) )
+					bool contains = sharedEdges.Contains(edge_s);
+
+					if( contains )
 					{
+						if(mask.Contains(pb.faces[i]))
+						{
+							continue;
+						}
+
 						faces.Add(pb.faces[i]);
 						break;
 					}
@@ -68,19 +73,19 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Generates a Dictionary where each face is a key, and its value is a list of all faces adjacent.
 		 */
-		public static Dictionary<pb_Face, List<pb_Face>> GenerateNeighborLookup(pb_Object pb, IEnumerable<pb_Face> InFaces)
+		public static Dictionary<pb_Face, List<pb_Face>> GenerateNeighborLookup(pb_Object pb, IList<pb_Face> InFaces)
 		{
 			Dictionary<int, int> sharedLookup = pb.sharedIndices.ToDictionary();
 			Dictionary<pb_Face, List<pb_Face>> faceLookup = new Dictionary<pb_Face, List<pb_Face>>();
 
-			List<pb_Face> faces = InFaces.ToList();
-			int faceCount = faces.Count;
+			IList<pb_Face> faces = InFaces;
+			int faceCount = faces.Count();
 			List<pb_Face> list;
 
 			HashSet<pb_Edge>[] universal = new HashSet<pb_Edge>[faceCount];
 
 			for(int i = 0; i < faceCount; i++)
-				universal[i] = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(faces[i].edges, sharedLookup)); 
+				universal[i] = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(faces[i].edges, sharedLookup));
 
 			for(int i = 0; i < faceCount-1; i++)
 			{
@@ -89,7 +94,9 @@ namespace ProBuilder2.MeshOperations
 
 				for(int n = i+1; n < faceCount; n++)
 				{
-					if( universal[i].Overlaps(universal[n]) )
+					bool overlaps = universal[i].Overlaps(universal[n]);
+					
+					if( overlaps )
 					{
 						faceLookup[faces[i]].Add(faces[n]);
 
@@ -100,7 +107,6 @@ namespace ProBuilder2.MeshOperations
 					}
 				}
 			}
-
 
 			return faceLookup;
 		}
