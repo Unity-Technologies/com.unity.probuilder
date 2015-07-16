@@ -29,7 +29,7 @@ namespace ProBuilder2.Common
 		[SerializeField] Material vertexMaterial;
 		[SerializeField] Material wireframeMaterial;
 
-		[SerializeField] new pb_MeshRenderer renderer;
+		[SerializeField] pb_MeshRenderer pbRenderer;
 
 		[SerializeField] Color faceSelectionColor 	= new Color(0f, 1f, 1f, .275f);
 		[SerializeField] Color edgeSelectionColor 	= new Color(0f, .6f, .7f, 1f);
@@ -46,7 +46,7 @@ namespace ProBuilder2.Common
 			base.Awake();
 
 			gameObject.hideFlags = HideFlags.HideAndDontSave;
-			renderer = gameObject.AddComponent<pb_MeshRenderer>();
+			pbRenderer = gameObject.AddComponent<pb_MeshRenderer>();
 
 			// Initialize materials
 			wireframeMaterial = CreateMaterial(Shader.Find(EDGE_SHADER), "WIREFRAME_MATERIAL");
@@ -113,16 +113,16 @@ namespace ProBuilder2.Common
 			if(pool == null) return;
 
 			// clear t he current renderables
-			foreach(pb_Renderable ren in renderer.renderables)
+			foreach(pb_Renderable ren in pbRenderer.renderables)
 				pool.Put(ren);
 
-			renderer.renderables.Clear();
+			pbRenderer.renderables.Clear();
 
 			// update wireframe
 			wireframeMaterial.SetColor("_Color", (selectionMode == SelectMode.Edge && editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 
 			for(int i = 0; i < selection.Length; i++)
-				renderer.renderables.Add( BuildEdgeMesh(selection[i], universalEdgesDistinct[i]) );
+				pbRenderer.renderables.Add( BuildEdgeMesh(selection[i], universalEdgesDistinct[i]) );
 
 			if(editLevel == EditLevel.Geometry)
 			{
@@ -131,12 +131,12 @@ namespace ProBuilder2.Common
 				{
 					case SelectMode.Face:
 						foreach(pb_Object pb in selection)
-							renderer.renderables.Add( BuildFaceMesh(pb) );
+							pbRenderer.renderables.Add( BuildFaceMesh(pb) );
 						break;
 
 					case SelectMode.Vertex:
 						foreach(pb_Object pb in selection)
-							renderer.renderables.Add( BuildVertexMesh(pb) );
+							pbRenderer.renderables.Add( BuildVertexMesh(pb) );
 						break;
 
 					default:

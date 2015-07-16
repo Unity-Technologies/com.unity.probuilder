@@ -55,6 +55,10 @@ namespace ProBuilder2.EditorCommon
 				if(entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)	
 					go.GetComponent<MeshRenderer>().enabled = false;
 
+				// clear hideflags on prefab meshes
+				if(pb.msh != null)
+					pb.msh.hideFlags = HideFlags.None;
+
 				if(!pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
 				   return;
 
