@@ -1,11 +1,13 @@
 @echo off
 
-set unity_path_4="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
+:: Builds for Unity 4.6 & 5.0.1
+
+set unity_path_4="C:\Program Files (x86)\Unity 4.6.3\Editor\Unity.exe"
 set unity_path_5="C:\Program Files\Unity 5.0.0f4\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
-set force_revision="3385"	:: If left empty, build process will use the current revision.
+set force_revision="3519"	:: If left empty, build process will use the current revision.
 
 svn update
 
@@ -31,7 +33,8 @@ echo Prefix files with #define PROTOTYPE
 
 echo Remove core, mesh ops, and editor core
 
-rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesCore
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesEditing
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 
 :: for prototype, remove all kinds of other stuff 
@@ -40,6 +43,7 @@ rd /S /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\API Examples"
 rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Debug
 rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\File
 rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Tools
+rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Window
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_ExportObj.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_MakeMeshAsset.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Actions\pb_ProBuilderize.cs
@@ -52,6 +56,10 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_MergeFaces.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_Triangulate.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_VertexMergeWeld.cs
+
+:: then bring in the automated export script
+xcopy "%CD%\probuilder2.0\Assets\Debug\Editor\AutomatedExport.cs" "%CD%\probuilder-staging\Assets\Debug\Editor\"
+xcopy "%CD%\probuilder2.0\Assets\Debug\Editor\SvnManager.cs" "%CD%\probuilder-staging\Assets\Debug\Editor\"
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
 
@@ -87,7 +95,7 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geomet
 	echo ================================== EXPORT UNITY 4 PACK ==================================
 
 	:: Export release pack for Unity 4.3 +
-	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype packageName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.3-compile-log.txt
+	%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod AutomatedExport.ExportRelease revisionNo:%force_revision% installDir:..\..\bin\temp\ ignore:UserMaterials.asset;plist.txt;Debug folderRootName:Prototype packageName:Prototype suffix:-unity4 generateVersionInfo:TRUE -logFile %CD%/logs/probuilder4.6-compile-log.txt
 
 :: ================================ END   4.3 + LIBRARIES ================================ }
 

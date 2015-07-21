@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Text;
 using System;
 using System.IO;
-using Ionic.Zip;
+// using Ionic.Zip;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -236,27 +236,28 @@ public class AutomatedExport : MonoBehaviour
 		// puts a zipped copy on the desktop
 		if(generateZip)
 		{
-			string DESKTOP = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-			string TEMP_PATH = DESKTOP + "\\" + Path.GetFileNameWithoutExtension(buildPath) + " (" + VERSION_NUMBER + ")";
+			Debug.LogWarning("ZIP DISABLED");
+			// string DESKTOP = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+			// string TEMP_PATH = DESKTOP + "\\" + Path.GetFileNameWithoutExtension(buildPath) + " (" + VERSION_NUMBER + ")";
 			
-			if(Directory.Exists(TEMP_PATH))
-				Directory.Delete(TEMP_PATH, true);
+			// if(Directory.Exists(TEMP_PATH))
+			// 	Directory.Delete(TEMP_PATH, true);
 				
-			Directory.CreateDirectory(TEMP_PATH);
+			// Directory.CreateDirectory(TEMP_PATH);
 
-			File.Copy(buildPath, TEMP_PATH + "\\" + Path.GetFileName(buildPath), true);
+			// File.Copy(buildPath, TEMP_PATH + "\\" + Path.GetFileName(buildPath), true);
 					
-			using (ZipFile zip = new ZipFile())
-			{
-				zip.AddDirectory(TEMP_PATH);
+			// using (ZipFile zip = new ZipFile())
+			// {
+			// 	zip.AddDirectory(TEMP_PATH);
 
-				zip.Comment = "ProBuilder2 Zip File";
+			// 	zip.Comment = "ProBuilder2 Zip File";
 
-				zip.Save(TEMP_PATH + ".zip");
-			}
+			// 	zip.Save(TEMP_PATH + ".zip");
+			// }
 
-			// clean up
-			Directory.Delete(TEMP_PATH, true);
+			// // clean up
+			// Directory.Delete(TEMP_PATH, true);
 		}
 	}
 

@@ -37,6 +37,7 @@ public class pb_ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
 	}
 
 	public void OnBeforeSerialize() { OnSerialize(); }
+	
 	public void OnAfterDeserialize() 
 	{
 		instance = this;

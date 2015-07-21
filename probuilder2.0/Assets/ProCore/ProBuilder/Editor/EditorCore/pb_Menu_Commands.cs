@@ -208,9 +208,11 @@ public class pb_Menu_Commands : Editor
 				pb_Vertex_Color_Toolbar.MenuOpenWindow();
 				break;
 
+#if !PROTOTYPE
 			default:
 				pb_VertexColor_Editor.MenuOpenWindow();
 				break;
+#endif
 		}
 	}
 

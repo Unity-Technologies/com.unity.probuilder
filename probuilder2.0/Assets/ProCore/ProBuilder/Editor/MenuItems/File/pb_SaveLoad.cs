@@ -1,5 +1,7 @@
 ﻿#if !UNITY_WP8
 
+#if !PROTOTYPE
+
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -68,5 +70,7 @@ namespace ProBuilder2.Serialization
 		}
 	}
 }
+
+#endif
 
 #endif
