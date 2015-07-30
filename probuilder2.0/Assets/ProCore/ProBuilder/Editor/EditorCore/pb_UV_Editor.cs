@@ -853,7 +853,10 @@ public class pb_UV_Editor : EditorWindow
 		if(e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
 		{
 			// get first selected Auto UV face
-			pb_Face source = pb.SelectedFaces.Where(x => !x.manualUV).FirstOrDefault();
+			pb_Object firstObj;
+			pb_Face source;
+
+			pb_Editor.instance.GetFirstSelectedFace(out firstObj, out source);
 
 			if( source != null )
 			{

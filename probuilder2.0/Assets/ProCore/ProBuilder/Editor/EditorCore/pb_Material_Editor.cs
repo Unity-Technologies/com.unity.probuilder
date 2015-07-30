@@ -284,13 +284,16 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public bool ClickShortcutCheck(EventModifiers em, pb_Object pb, pb_Face quad)
 		{
-			if(em == (EventModifiers.Control | EventModifiers.Shift))
+			if(pb_UV_Editor.instance == null)
 			{
-				pbUndo.RecordObject(pb, "Quick Apply NoDraw");
-				pb.SetFaceMaterial(quad, queuedMaterial);
-				OnFaceChanged(pb);
-				pb_Editor_Utility.ShowNotification("Quick Apply Material");
-				return true;
+				if(em == (EventModifiers.Control | EventModifiers.Shift))
+				{
+					pbUndo.RecordObject(pb, "Quick Apply NoDraw");
+					pb.SetFaceMaterial(quad, queuedMaterial);
+					OnFaceChanged(pb);
+					pb_Editor_Utility.ShowNotification("Quick Apply Material");
+					return true;
+				}
 			}
 
 			return false;
