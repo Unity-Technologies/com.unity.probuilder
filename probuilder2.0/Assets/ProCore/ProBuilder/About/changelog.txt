@@ -1,3 +1,8 @@
+-- ProBuilder 2.4.5p0 (r3531)
+
+# Bug Fixes
+	- Fix bugs in Copy UV Settings and Quick Apply Material shortcuts.
+
 -- ProBuilder 2.4.5f1 (r3519)
 
 # Features

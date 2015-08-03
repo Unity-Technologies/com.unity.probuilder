@@ -49,7 +49,7 @@ namespace ProBuilder2.Actions
 		public static bool MenuVerifySmartConnect()
 		{
 			pb_Editor editor = pb_Editor.instance;
-			return editor != null && editor.selectedVertexCount > 3;
+			return editor != null && editor.selectedVertexCount > 2;
 		}
 		/**
 		 * "Smart Connect" exists because even if shortcuts are mutually exclusive via Verify, they can't share.

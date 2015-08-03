@@ -2276,7 +2276,7 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region SHORTCUT
-
+	
 	private bool ShortcutCheck()
 	{
 		int shortcut = pb_Shortcut.IndexOf(shortcuts, Event.current.keyCode, Event.current.modifiers);
