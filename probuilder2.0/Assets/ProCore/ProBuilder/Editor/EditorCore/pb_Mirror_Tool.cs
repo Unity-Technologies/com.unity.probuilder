@@ -86,7 +86,17 @@ namespace ProBuilder2.EditorCommon
 			p.Refresh();
 			p.Optimize();
 
-			pb_Editor_Utility.InitObjectFlags(p, ColliderType.MeshCollider, pb.GetComponent<pb_Entity>().entityType);
+			Collider col = pb.GetComponent<Collider>();
+			ColliderType colType = ColliderType.None;
+			if(col != null)
+			{
+				if(col is MeshCollider)
+					colType = ColliderType.MeshCollider;
+				else
+					colType = ColliderType.BoxCollider;
+			}
+
+			pb_Editor_Utility.InitObjectFlags(p, colType, pb.GetComponent<pb_Entity>().entityType);
 			
 			// InitObjectFlags runs ScreenCenter()
 			p.transform.position = pb.transform.position;

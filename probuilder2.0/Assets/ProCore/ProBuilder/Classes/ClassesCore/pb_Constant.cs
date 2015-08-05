@@ -7,7 +7,7 @@ public static class pb_Constant
 	public static Material DefaultMaterial { get{ return (Material)Resources.Load("Materials/Default_Prototype", typeof(Material)); } }
 	public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
 	public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
-	public static Material NoDrawMaterial { get{ return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
+	public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
 		
 	private static Material _UnityDefaultDiffuse = null;
 	public static Material UnityDefaultDiffuse
@@ -55,6 +55,7 @@ public static class pb_Constant
 	public const string pbHandleAlignment 				= "pbHandleAlignment";
 	public const string pbVertexColorTool 				= "pbVertexColorTool";
 	public const string pbToolbarLocation 				= "pbToolbarLocation";
+	public const string pbDefaultEntity 				= "pbDefaultEntity";
 
 	// Color
 	public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";

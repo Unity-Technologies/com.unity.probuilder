@@ -158,11 +158,6 @@ namespace ProBuilder2.EditorCommon
 		 *	@param newEntityType The type to set.
 		 *	@param target The gameObject to apply the EntityType to.  Must contains pb_Object and pb_Entity components.  Method does contain null checks.
 		 */
-		// public static void SetEntityType(this pb_Entity pb, EntityType newEntityType)
-		// {
-		// 	SetEntityType(newEntityType, pb.gameObject);
-		// }
-
 		public static void SetEntityType(EntityType newEntityType, GameObject target)
 		{
 			pb_Entity ent = target.GetComponent<pb_Entity>();
@@ -210,11 +205,16 @@ namespace ProBuilder2.EditorCommon
 			if(	et == EntityType.Trigger || 
 				et == EntityType.Collider )
 			{
+				pb_Object pb = target.GetComponent<pb_Object>();
+				
 				#if !PROTOTYPE
-				target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.DefaultMaterial );
+				pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
 				#else
 				target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 				#endif
+
+				pb.ToMesh();
+				pb.Refresh();
 			}
 		}
 
@@ -226,11 +226,18 @@ namespace ProBuilder2.EditorCommon
 
 			if(	et == EntityType.Trigger || 
 				et == EntityType.Collider )
-			#if !PROTOTYPE
-				target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.DefaultMaterial );
+			{
+				pb_Object pb = target.GetComponent<pb_Object>();
+
+				#if !PROTOTYPE
+					pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
 				#else
-				target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+					target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 				#endif
+
+				pb.ToMesh();
+				pb.Refresh();
+			}
 		}
 
 		private static void SetOccluder(GameObject target)
@@ -240,11 +247,16 @@ namespace ProBuilder2.EditorCommon
 			if(	et == EntityType.Trigger || 
 				et == EntityType.Collider )
 			{
+				pb_Object pb = target.GetComponent<pb_Object>();
+
 				#if !PROTOTYPE
-				target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.DefaultMaterial );
+					pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
 				#else
-				target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+					target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 				#endif
+
+				pb.ToMesh();
+				pb.Refresh();
 			}
 
 			StaticEditorFlags editorFlags;
@@ -255,23 +267,33 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetTrigger(GameObject target)
 		{
+			pb_Object pb = target.GetComponent<pb_Object>();
+
 			#if !PROTOTYPE
-			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.TriggerMaterial );
+			pb.SetFaceMaterial(pb.faces, pb_Constant.TriggerMaterial );
 			#else
 			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.TriggerMaterial;
 			#endif
 
 			SetIsTrigger(true, target);
 			SetEditorFlags((StaticEditorFlags)0, target);
+			
+			pb.ToMesh();
+			pb.Refresh();
 		}
 
 		private static void SetCollider(GameObject target)
 		{
+			pb_Object pb = target.GetComponent<pb_Object>();
+
 			#if !PROTOTYPE
-			target.GetComponent<pb_Object>().SetFaceMaterial(target.GetComponent<pb_Object>().faces, pb_Constant.ColliderMaterial );
+			pb.SetFaceMaterial(pb.faces, pb_Constant.ColliderMaterial );
 			#else
 			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.ColliderMaterial;
 			#endif
+
+			pb.ToMesh();
+			pb.Refresh();
 
 			SetEditorFlags( (StaticEditorFlags)(StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration), target);
 		}
@@ -375,9 +397,17 @@ namespace ProBuilder2.EditorCommon
 		 *	This method provides an easy method of doing so in a single call.  #InitObjectFlags will set the Entity Type, generate 
 		 *	a UV2 channel, set the unwrapping parameters, and center the object in the screen. 
 		 */
-		public static void InitObjectFlags(pb_Object pb, ColliderType col, EntityType et)
+		public static void InitObjectFlags(pb_Object pb)
 		{
-			switch(col)
+			ColliderType col = pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
+			EntityType et = pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
+
+			InitObjectFlags(pb, col, et);
+		}
+
+		public static void InitObjectFlags(pb_Object pb, ColliderType colliderType, EntityType entityType)
+		{
+			switch(colliderType)
 			{
 				case ColliderType.BoxCollider:
 					pb.gameObject.AddComponent<BoxCollider>();
@@ -389,7 +419,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
-			pb_Editor_Utility.SetEntityType(et, pb.gameObject);
+			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
 			pb_Editor_Utility.ScreenCenter( pb.gameObject );
 			pb.Optimize();
 		}

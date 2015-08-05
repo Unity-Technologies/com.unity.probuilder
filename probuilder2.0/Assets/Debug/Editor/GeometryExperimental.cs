@@ -96,7 +96,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 
-			pb_Editor_Utility.InitObjectFlags(pb, ColliderType.None, EntityType.Detail);
+			pb_Editor_Utility.InitObjectFlags(pb);
 		}
 	}
 }

@@ -57,12 +57,12 @@ public class pb_UV : ISerializable {
 		info.AddValue("flipV", 				flipV,					typeof(bool));
 		info.AddValue("swapUV", 			swapUV,					typeof(bool));
 		info.AddValue("fill", 				fill,					typeof(Fill));
-		info.AddValue("scale", 				(pb_Vector2)scale,		typeof(pb_Vector2));
-		info.AddValue("offset", 			(pb_Vector2)offset,		typeof(pb_Vector2));
+		info.AddValue("scale", 				(Vector2)scale,			typeof(Vector2));
+		info.AddValue("offset", 			(Vector2)offset,		typeof(Vector2));
 		info.AddValue("rotation", 			rotation,				typeof(float));
 		info.AddValue("justify", 			justify,				typeof(Justify));
-		info.AddValue("localPivot", 		(pb_Vector2)localPivot,	typeof(pb_Vector2));
-		info.AddValue("localSize", 			(pb_Vector2)localSize,	typeof(pb_Vector2));
+		info.AddValue("localPivot", 		(Vector2)localPivot,	typeof(Vector2));
+		info.AddValue("localSize", 			(Vector2)localSize,		typeof(Vector2));
 	}
 
 	// The pb_SerializedMesh constructor is used to deserialize values. 
@@ -73,12 +73,12 @@ public class pb_UV : ISerializable {
 		this.flipV					= (bool)		info.GetValue("flipV", 			typeof(bool));
 		this.swapUV					= (bool)		info.GetValue("swapUV", 		typeof(bool));
 		this.fill					= (Fill)		info.GetValue("fill", 			typeof(Fill));
-		this.scale					= (pb_Vector2) 	info.GetValue("scale", 			typeof(pb_Vector2));
-		this.offset					= (pb_Vector2) 	info.GetValue("offset", 		typeof(pb_Vector2));
+		this.scale					= (Vector2) 	info.GetValue("scale", 			typeof(Vector2));
+		this.offset					= (Vector2) 	info.GetValue("offset", 		typeof(Vector2));
 		this.rotation				= (float)		info.GetValue("rotation", 		typeof(float));
 		this.justify				= (Justify)		info.GetValue("justify", 		typeof(Justify));
-		this.localPivot				= (pb_Vector2)	info.GetValue("localPivot", 	typeof(pb_Vector2));
-		this.localSize				= (pb_Vector2)	info.GetValue("localSize", 		typeof(pb_Vector2));
+		this.localPivot				= (Vector2)		info.GetValue("localPivot", 	typeof(Vector2));
+		this.localSize				= (Vector2)		info.GetValue("localSize", 		typeof(Vector2));
 	}
 #endregion
 

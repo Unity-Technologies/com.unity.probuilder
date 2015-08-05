@@ -49,7 +49,8 @@ namespace ProBuilder2.MeshOperations
 
 		pb.TranslateVertices_World(pb.msh.triangles, dir);
 
-		pb.msh.RecalculateBounds();
+		pb.ToMesh();
+		pb.Refresh();
 	}
 
 	/**
@@ -63,7 +64,8 @@ namespace ProBuilder2.MeshOperations
 
 		pb.TranslateVertices_World(pb.msh.triangles, offset);
 		
-		pb.msh.RecalculateBounds();
+		pb.ToMesh();
+		pb.Refresh();
 	}
 
 	/**

@@ -88,7 +88,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 			}
 
-			pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+			pb_Editor_Utility.InitObjectFlags(pb);
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
 		}
 
@@ -208,7 +208,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -264,7 +264,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -308,7 +308,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 		
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -372,7 +372,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -438,7 +438,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, new int[1] {centerIndex});
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				
@@ -494,7 +494,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -559,7 +559,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -626,7 +626,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -685,7 +685,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -781,7 +781,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -833,7 +833,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 				
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 				
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -904,7 +904,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 				
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 				
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -950,7 +950,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
-				pb_Editor_Utility.InitObjectFlags(pb, pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider), EntityType.Detail);
+				pb_Editor_Utility.InitObjectFlags(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();

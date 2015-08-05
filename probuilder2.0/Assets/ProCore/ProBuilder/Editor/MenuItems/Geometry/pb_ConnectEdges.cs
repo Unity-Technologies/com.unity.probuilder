@@ -16,41 +16,42 @@ namespace ProBuilder2.Actions
 {
 	public class pb_ConnectEdges : Editor
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Subdivide Face", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 2)]
-		public static bool MenuVerifySplitOperationGeometryFace()
-		{
-			pb_Editor editor = pb_Editor.instance;
-			return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Face && editor.selectedFaceCount > 0;
-		}
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Subdivide Face", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_FACE + 2)]
+		// public static bool MenuVerifySplitOperationGeometryFace()
+		// {
+		// 	pb_Editor editor = pb_Editor.instance;
+		// 	return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Face && editor.selectedFaceCount > 0;
+		// }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Connect Vertices", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
-		public static bool MenuVerifySplitOperationVertex()
-		{
-			pb_Editor editor = pb_Editor.instance;
-			return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Vertex && editor.selectedVertexCount > 0;
-		}
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Connect Vertices", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
+		// public static bool MenuVerifySplitOperationVertex()
+		// {
+		// 	pb_Editor editor = pb_Editor.instance;
+		// 	return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Vertex && editor.selectedVertexCount > 0;
+		// }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Insert Edge Loop &u", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Connect Edges", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
-		public static bool MenuVerifySplitOperationEdge()
-		{
-			pb_Editor editor = pb_Editor.instance;
-			return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Edge && editor.selectedEdgeCount > 0;
-		}
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Insert Edge Loop &u", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_EDGE)]
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Connect Edges", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
+		// public static bool MenuVerifySplitOperationEdge()
+		// {
+		// 	pb_Editor editor = pb_Editor.instance;
+		// 	return editor && editor.editLevel == EditLevel.Geometry && editor.selectionMode == SelectMode.Edge && editor.selectedEdgeCount > 0;
+		// }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Subdivide Object", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
-		public static bool MenuVerifySplitOperationObject()
-		{
-			pb_Editor editor = pb_Editor.instance;
-			return editor && editor.selection.Length > 0;
-		}
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Subdivide Object", true, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
+		// public static bool MenuVerifySplitOperationObject()
+		// {
+		// 	pb_Editor editor = pb_Editor.instance;
+		// 	return editor && editor.selection.Length > 0;
+		// }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Smart Connect _&e", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
-		public static bool MenuVerifySmartConnect()
-		{
-			pb_Editor editor = pb_Editor.instance;
-			return editor != null && editor.selectedVertexCount > 2;
-		}
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Smart Connect _&e", true,  pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_USEINFERRED)]
+		// public static bool MenuVerifySmartConnect()
+		// {
+		// 	pb_Editor editor = pb_Editor.instance;
+		// 	return editor != null && editor.selectedVertexCount > 2;
+		// }
+		
 		/**
 		 * "Smart Connect" exists because even if shortcuts are mutually exclusive via Verify, they can't share.
 		 */

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
 using ProBuilder2.Math;
-using ProBuilder2.Serialization;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -68,29 +67,6 @@ public class pb_Object : MonoBehaviour
 		p.gameObject.name = pb.gameObject.name + "-clone";
 
 		return p;
-	}
-
-	/**
-	 * Since MonoBehaviour objects cannot be serialized, use @c pb_SerializableObject to store mesh and
-	 * transform data.  This is the constructor for a serialized pb_Object - it retains all information
-	 * necessary to reconstruct a pb_Object as well as transform data (position, local rotation, local
-	 * scale).
-	 */
-	public static pb_Object InitWithSerializableObject(pb_SerializableObject serialized)
-	{
-		pb_Object pb = CreateInstanceWithElements(
-			serialized.vertices,
-			serialized.uv,
-			serialized.color,
-			serialized.faces,
-			serialized.sharedIndices.ToPbIntArray(),
-			serialized.sharedIndicesUV.ToPbIntArray());
-
-		pb.transform.position 		= serialized.t_position;
-		pb.transform.localRotation 	= serialized.t_rotation;
-		pb.transform.localScale 	= serialized.t_scale;
-
-		return pb;
 	}
 
 	/**
