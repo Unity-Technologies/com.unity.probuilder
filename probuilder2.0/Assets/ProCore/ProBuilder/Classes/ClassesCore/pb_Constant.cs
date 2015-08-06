@@ -38,7 +38,7 @@ public static class pb_Constant
 	}
 
 	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string pbVersion = "2.4.4";			///< The currently install ProBuilder version.
+	public const string pbVersion = "2.4.6";			///< The currently install ProBuilder version.
 
 
 #if PROTOTYPE
@@ -88,6 +88,7 @@ public static class pb_Constant
 	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
 	public const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
 	public const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
+	public const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

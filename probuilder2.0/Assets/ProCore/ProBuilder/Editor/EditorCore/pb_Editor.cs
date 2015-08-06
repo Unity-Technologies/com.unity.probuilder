@@ -10,7 +10,6 @@ using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
 using ProBuilder2.Interface;
-using System.Threading;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -202,7 +201,7 @@ public class pb_Editor : EditorWindow
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 				
-		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts));
+		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
 
@@ -2279,55 +2278,70 @@ public class pb_Editor : EditorWindow
 	
 	private bool ShortcutCheck()
 	{
-		int shortcut = pb_Shortcut.IndexOf(shortcuts, Event.current.keyCode, Event.current.modifiers);
+		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(Event.current.keyCode, Event.current.modifiers)).ToList();
 
-		if( shortcut < 0 )
+		if(matches.Count < 1)
 			return false;
 
-		bool used = true;
+		bool used = false;
+		pb_Shortcut usedShortcut = null;
 
-		used = AllLevelShortcuts(shortcuts[shortcut]);		
+		foreach(pb_Shortcut cut in matches)
+		{
+			if(AllLevelShortcuts(cut))
+			{
+				used = true;
+				usedShortcut = cut;
+				break;
+			}
+		}
 
 		if(!used)
-		switch(editLevel)
 		{
-			case EditLevel.Top:
-				used = TopLevelShortcuts(shortcuts[shortcut]);
-				break;
+			foreach(pb_Shortcut cut in matches)
+			{
+				switch(editLevel)
+				{
+					case EditLevel.Top:
+						used = TopLevelShortcuts(cut);
+						break;
 
-			case EditLevel.Texture:
-				goto case EditLevel.Geometry;
+					case EditLevel.Texture:
+						goto case EditLevel.Geometry;
 
-			case EditLevel.Geometry:
-				used = GeoLevelShortcuts(shortcuts[shortcut]);
-				break;
+					case EditLevel.Geometry:
+						used = GeoLevelShortcuts(cut);
+						break;
+				}
 
-			default:
-				used = false;
-				break;
+				if(used)
+				{
+					usedShortcut = cut;
+					break;
+				}
+			}
 		}
 
 		if(used)
 		{
-			if(	shortcuts[shortcut].action != "Delete Face" &&
-				shortcuts[shortcut].action != "Escape" &&
-				shortcuts[shortcut].action != "Quick Apply Nodraw" &&
-				shortcuts[shortcut].action != "Toggle Geometry Mode" &&
-				shortcuts[shortcut].action != "Toggle Handle Pivot" &&
-				shortcuts[shortcut].action != "Toggle Selection Mode" )
-				pb_Editor_Utility.ShowNotification(shortcuts[shortcut].action);
+			if(	usedShortcut.action != "Delete Face" &&
+				usedShortcut.action != "Escape" &&
+				usedShortcut.action != "Quick Apply Nodraw" &&
+				usedShortcut.action != "Toggle Geometry Mode" &&
+				usedShortcut.action != "Toggle Handle Pivot" &&
+				usedShortcut.action != "Toggle Selection Mode" )
+				pb_Editor_Utility.ShowNotification(usedShortcut.action);
 	
 			Event.current.Use();
 		}
-
-		shortcut = -1;
 
 		return used;
 	}
 
 	private bool AllLevelShortcuts(pb_Shortcut shortcut)
 	{
-		bool used = true;
+		bool uniqueModeShortcuts = pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts);
+	
 		switch(shortcut.action)
 		{
 			// TODO Remove once a workaround for non-upper-case shortcut chars is found
@@ -2338,37 +2352,52 @@ public class pb_Editor : EditorWindow
 					pb_Editor_Utility.ShowNotification("Top Level Editing");
 					SetEditLevel(EditLevel.Top);
 				}
-				else
+				else if( !uniqueModeShortcuts )
 				{
 					pb_Editor_Utility.ShowNotification("Geometry Editing");
 					SetEditLevel(EditLevel.Geometry);
 				}
-				break;
+				return true;
 
 			case "Vertex Mode":
+			{
+				if(!uniqueModeShortcuts)
+					return false;
+
 				if(editLevel == EditLevel.Top)	
 					SetEditLevel(EditLevel.Geometry);
+
 				SetSelectionMode( SelectMode.Vertex );
-				break;
+				return true;
+			}
 
 			case "Edge Mode":
+			{
+				if(!uniqueModeShortcuts)
+					return false;
+	
 				if(editLevel == EditLevel.Top)	
 					SetEditLevel(EditLevel.Geometry);
+
 				SetSelectionMode( SelectMode.Edge );
-				break;
+				return true;
+			}
 
 			case "Face Mode":
+			{
+				if(!uniqueModeShortcuts)
+					return false;
+
 				if(editLevel == EditLevel.Top)	
 					SetEditLevel(EditLevel.Geometry);
+
 				SetSelectionMode( SelectMode.Face );
-				break;
+				return true;
+			}
 
 			default:
-				used = false;
-				break;
+				return false;
 		}
-
-		return used;
 	}
 
 	private bool TopLevelShortcuts(pb_Shortcut shortcut)
@@ -2376,44 +2405,38 @@ public class pb_Editor : EditorWindow
 		if(selection == null || selection.Length < 1 || editLevel != EditLevel.Top)
 			return false;
 
-		bool used = true;
-
 		switch(shortcut.action)
 		{
 			/* ENTITY TYPES */
 			case "Set Trigger":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
-				break;
+				return true;
 
 			#if !PROTOTYPE
 			case "Set Occluder":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Occluder);
-				break;
+				return true;
 			#endif
 
 			case "Set Collider":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
-				break;
+				return true;
 
 			case "Set Mover":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
-				break;
+				return true;
 				
 			case "Set Detail":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
-				break;
+				return true;
 
 			default:	
-				used = false;
-				break;
+				return true;
 		}
-
-		return used;
 	}
 
 	private bool GeoLevelShortcuts(pb_Shortcut shortcut)
 	{
-		bool used = true;
 		switch(shortcut.action)
 		{
 			case "Escape":
@@ -2421,10 +2444,14 @@ public class pb_Editor : EditorWindow
 				pb_Editor_Utility.ShowNotification("Top Level");
 				UpdateSelection(false);
 				SetEditLevel(EditLevel.Top);
-			break;
+				return true;
 		
 			// TODO Remove once a workaround for non-upper-case shortcut chars is found			
 			case "Toggle Selection Mode":
+
+				if( pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts) )
+					return false;
+
 				ToggleSelectionMode();
 				switch(selectionMode)
 				{
@@ -2440,37 +2467,25 @@ public class pb_Editor : EditorWindow
 						pb_Editor_Utility.ShowNotification("Editing Edges");
 						break;
 				}
-				break;
-
-			// #if !PROTOTYPE
-			// case "Quick Apply Nodraw":
-		
-			// 	if(editLevel != EditLevel.Top)
-			// 		pb_Editor_Utility.ShowNotification(shortcut.action);
-
-			// 	pb_Material_Editor.ApplyMaterial(selection, pb_Constant.NoDrawMaterial);
-			// 	ClearFaceSelection();
-			// 	break;
-			// #endif
-
+				return true;
+				
 			#if !PROTOTYPE
 			case "Delete Face":
 				pb_Menu_Commands.MenuDeleteFace(selection);
-				break;
+				return true;
 			#endif
 
 			/* handle alignment */
-			// TODO Remove once a workaround for non-upper-case shortcut chars is found
 			case "Toggle Handle Pivot":
 				if(selectedVertexCount < 1)
-					break;
+					return false;
 
 				if(editLevel != EditLevel.Texture)
 				{		
 					ToggleHandleAlignment();
 					pb_Editor_Utility.ShowNotification("Handle Alignment: " + ((HandleAlignment)handleAlignment).ToString());
 				}
-				break;
+				return true;
 
 			case "Set Pivot":
 
@@ -2490,13 +2505,11 @@ public class pb_Editor : EditorWindow
 						}
 					}
 				}
-				break;
+				return true;
 
 			default:
-				used = false;
-				break;
+				return false;
 		}
-		return used;
 	}
 #endregion
 

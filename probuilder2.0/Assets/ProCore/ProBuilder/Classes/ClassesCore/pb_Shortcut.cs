@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /**
  *	\brief Base class for creating and parsing shortcuts within ProBuilder.
@@ -47,6 +48,11 @@ public class pb_Shortcut
 		// return new Shortcut(split[0], split[1], k, e);
 	}
 
+	public bool Matches(KeyCode key, EventModifiers modifiers)
+	{
+		return this.key == key && this.eventModifiers == modifiers;
+	}
+
 	public static int IndexOf(pb_Shortcut[] shortcuts, KeyCode k, EventModifiers e)
 	{
 		for(int i = 0; i < shortcuts.Length; i++)
@@ -61,55 +67,42 @@ public class pb_Shortcut
 	 *	\brief Returns a new Shortcut array containing the default values.
 	 *	\returns The default Shortcut array.
 	 */
-	public static pb_Shortcut[] DefaultShortcuts()
+	public static IEnumerable<pb_Shortcut> DefaultShortcuts()
 	{
+		List<pb_Shortcut> shortcuts = new List<pb_Shortcut>();
+
+		shortcuts.Add( new pb_Shortcut("Escape", "Top Level", KeyCode.Escape, 0) );
+		shortcuts.Add( new pb_Shortcut("Toggle Geometry Mode", "Geometry Level", KeyCode.G, 0) );
+		shortcuts.Add( new pb_Shortcut("Toggle Selection Mode", "Toggle Selection Mode.  If Toggle Mode Shortcuts is disabled, this shortcut does not apply.", KeyCode.H, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Trigger", "Sets all selected objects to entity type Trigger.", KeyCode.T, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Occluder", "Sets all selected objects to entity type Occluder.", KeyCode.O, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Collider", "Sets all selected objects to entity type Collider.", KeyCode.C, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Mover", "Sets all selected objects to entity type Mover.", KeyCode.M, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Detail", "Sets all selected objects to entity type Brush.", KeyCode.B, 0) );
+		shortcuts.Add( new pb_Shortcut("Toggle Handle Pivot", "Toggles the orientation of the ProBuilder selection handle.", KeyCode.P, 0) );
+		shortcuts.Add( new pb_Shortcut("Set Pivot", "Center pivot around current selection.", KeyCode.J, EventModifiers.Command) );
 		#if !PROTOTYPE
-		pb_Shortcut[] shortcuts = new pb_Shortcut[13];
-		#else
-		pb_Shortcut[] shortcuts = new pb_Shortcut[11];
+		shortcuts.Add( new pb_Shortcut("Delete Face", "Deletes all selected faces.", KeyCode.Backspace, EventModifiers.FunctionKey) );
 		#endif
 
-		int i = 0;
-		shortcuts[i++] = new pb_Shortcut("Escape", "Top Level", KeyCode.Escape, 0);
-/**/	shortcuts[i++] = new pb_Shortcut("Toggle Geometry Mode", "Geometry Level", KeyCode.G, 0);
-/**/	shortcuts[i++] = new pb_Shortcut("Texture Window", "Opens the UV editor", KeyCode.J, 0);
-/**/	shortcuts[i++] = new pb_Shortcut("Toggle Selection Mode", "Toggle Selection Mode", KeyCode.H, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Trigger", "Sets all selected objects to entity type Trigger.", KeyCode.T, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Occluder", "Sets all selected objects to entity type Occluder.", KeyCode.O, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Collider", "Sets all selected objects to entity type Collider.", KeyCode.C, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Mover", "Sets all selected objects to entity type Mover.", KeyCode.M, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Detail", "Sets all selected objects to entity type Brush.", KeyCode.B, 0);
-		shortcuts[i++] = new pb_Shortcut("Toggle Handle Pivot", "Toggles the orientation of the ProBuilder selection handle.", KeyCode.P, 0);
-		shortcuts[i++] = new pb_Shortcut("Set Pivot", "Center pivot around current selection.", KeyCode.J, EventModifiers.Command);
-		#if !PROTOTYPE
-		shortcuts[i++] = new pb_Shortcut("Quick Apply Nodraw", "When the Texture Window is open, this shortcut will apply the Nodraw material to every selected face.", KeyCode.N, 0);
-		shortcuts[i++] = new pb_Shortcut("Delete Face", "Deletes all selected faces.", KeyCode.Backspace, EventModifiers.FunctionKey);
-		#endif
-
-		// shortcuts[i++] = new pb_Shortcut("Vertex Mode", "Enter Vertex editing mode.  Automatically swaps to Element level editing.", KeyCode.A, (EventModifiers)0);
-		// shortcuts[i++] = new pb_Shortcut("Edge Mode", "Enter Edge editing mode.  Automatically swaps to Element level editing.", KeyCode.S, (EventModifiers)0);
-		// shortcuts[i++] = new pb_Shortcut("Face Mode", "Enter Face editing mode.  Automatically swaps to Element level editing.", KeyCode.D, (EventModifiers)0);
+		shortcuts.Add( new pb_Shortcut("Vertex Mode", "Enter Vertex editing mode.  Automatically swaps to Element level editing.", KeyCode.H, (EventModifiers)0) );
+		shortcuts.Add( new pb_Shortcut("Edge Mode", "Enter Edge editing mode.  Automatically swaps to Element level editing.", KeyCode.J, (EventModifiers)0) );
+		shortcuts.Add( new pb_Shortcut("Face Mode", "Enter Face editing mode.  Automatically swaps to Element level editing.", KeyCode.K, (EventModifiers)0) );
 
 		return shortcuts;
 	}
 
-	public static pb_Shortcut[] ParseShortcuts(string str)
+	public static IEnumerable<pb_Shortcut> ParseShortcuts(string str)
 	{
-		pb_Shortcut[] shortcuts;
-		
 		// Initialize Defaults if no string argument passed, or string ain't right
 		if(str == null || str.Length < 3)
-		{
-			shortcuts = DefaultShortcuts();
-		}
-		else
-		{
-			string[] split = str.Split('*');
-			shortcuts = new pb_Shortcut[split.Length];
+			return DefaultShortcuts();
 
-			for(int i = 0; i < shortcuts.Length; i++)
-				shortcuts[i] = new pb_Shortcut(split[i]);
-		}
+		string[] split = str.Split('*');
+		pb_Shortcut[] shortcuts = new pb_Shortcut[split.Length];
+
+		for(int i = 0; i < shortcuts.Length; i++)
+			shortcuts[i] = new pb_Shortcut(split[i]);
 
 		return shortcuts;
 	}
