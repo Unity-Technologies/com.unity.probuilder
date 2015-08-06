@@ -606,6 +606,7 @@ public class pb_Object : MonoBehaviour
 	{
 		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
 		Mesh m;
+
 		if(msh != null)
 		{
 			m = msh;
@@ -666,6 +667,8 @@ public class pb_Object : MonoBehaviour
 			RefreshUV();
 		else
 			m.uv = _uv;
+
+		m.uv2 = null;
 
 		RefreshColor();
 

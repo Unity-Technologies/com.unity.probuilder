@@ -1092,6 +1092,8 @@ public class pb_UV_Editor : EditorWindow
 		if(e.type != EventType.KeyUp || !GUI.GetNameOfFocusedControl().Equals(""))
 			return;
 
+		bool used = false;
+
 		switch(e.keyCode)
 		{
 			case KeyCode.Keypad0: 
@@ -1100,29 +1102,32 @@ public class pb_UV_Editor : EditorWindow
 				uvCanvasOffset = Vector2.zero;
 				e.Use();
 				needsRepaint = true;
+				used = true;
 				break;
 
 			case KeyCode.W:
 				SetTool_Internal(Tool.Move);
+				used = true;
 				break;
 			
 			case KeyCode.E:
 				SetTool_Internal(Tool.Rotate);
+				used = true;
 				break;
 
 			case KeyCode.R:
 				SetTool_Internal(Tool.Scale);
+				used = true;
 				break;
 
 			case KeyCode.F:
 				FrameSelection();
-				break;
-
-			case KeyCode.H:
-				if(editor)
-					editor.ToggleSelectionMode();
+				used = true;
 				break;
 		}
+
+		if(!used && pb_Editor.instance)
+			pb_Editor.instance.ShortcutCheck(e);
 	}
 
 	/**

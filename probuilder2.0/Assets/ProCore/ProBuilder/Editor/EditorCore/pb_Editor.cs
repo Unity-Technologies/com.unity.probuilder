@@ -31,7 +31,7 @@ public class pb_Editor : EditorWindow
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 244;
 	const int WINDOW_WIDTH_FlOATING = 102;
-	const int WINDOW_WIDTH_DOCKABLE = 105;
+	const int WINDOW_WIDTH_DOCKABLE = 108;
 
 	// Toggles for Face, Vertex, and Edge mode.
 	const int SELECT_MODE_LENGTH = 3;
@@ -353,10 +353,11 @@ public class pb_Editor : EditorWindow
 			GUI.backgroundColor = Color.white;
 		}
 
-		GUILayout.Label("Selection", EditorStyles.boldLabel);
 		
 		if(editLevel == EditLevel.Geometry)
 		{
+			GUILayout.Label("Selection", EditorStyles.boldLabel);
+
 			EditorGUI.BeginChangeCheck();
 				handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment);
 			if(EditorGUI.EndChangeCheck())
@@ -856,7 +857,7 @@ public class pb_Editor : EditorWindow
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
 		{
-			if(ShortcutCheck())
+			if(ShortcutCheck(currentEvent))
 			{
 				currentEvent.Use();
 				return;
@@ -2276,9 +2277,9 @@ public class pb_Editor : EditorWindow
 
 #region SHORTCUT
 	
-	private bool ShortcutCheck()
+	public bool ShortcutCheck(Event e)
 	{
-		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(Event.current.keyCode, Event.current.modifiers)).ToList();
+		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
 		if(matches.Count < 1)
 			return false;

@@ -224,7 +224,7 @@ public class pb_Menu_Commands : Editor
 
 		GUILayout.Label("Color Editor");
 
-		tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-12));
+		tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-14));
 
 		if(prev != tool)
 			EditorPrefs.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
