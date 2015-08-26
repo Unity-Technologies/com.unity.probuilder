@@ -971,8 +971,9 @@ namespace ProBuilder2.MeshOperations
 			return pb;
 		}
 
+		int vertexCount = m.vertexCount;
 		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors ?? new Color[m_vertices.Length];
+		Color[] m_colors = m.colors != null && m.colors.Length == vertexCount ? m.colors : new Color[vertexCount];
 		Vector2[] m_uvs = m.uv;
 
 		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
@@ -1030,9 +1031,9 @@ namespace ProBuilder2.MeshOperations
 						verts.Add(m_vertices[tris[i+1]]);
 						verts.Add(m_vertices[tris[i+2]]);
 
-						cols.Add(m_colors != null ? m_colors[tris[i+0]] : Color.white);
-						cols.Add(m_colors != null ? m_colors[tris[i+1]] : Color.white);
-						cols.Add(m_colors != null ? m_colors[tris[i+2]] : Color.white);
+						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+0]] : Color.white);
+						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+1]] : Color.white);
+						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+2]] : Color.white);
 
 						uvs.Add(m_uvs[tris[i+0]]);
 						uvs.Add(m_uvs[tris[i+1]]);

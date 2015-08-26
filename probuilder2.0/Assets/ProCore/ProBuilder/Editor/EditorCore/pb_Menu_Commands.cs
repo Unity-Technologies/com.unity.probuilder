@@ -93,8 +93,13 @@ public class pb_Menu_Commands : Editor
 	 */
 	public static void ProBuilderize(GameObject[] selected, bool preserveFaces)
 	{
-		foreach(GameObject go in selected)
+		foreach(MeshFilter mf in selected.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()))
 		{
+			if(mf.sharedMesh == null)
+				continue;
+
+			GameObject go = mf.gameObject;
+
 			Undo.RegisterFullObjectHierarchyUndo(go, "ProBuilderize");
 
 			MeshRenderer mr = go.GetComponent<MeshRenderer>();
@@ -112,9 +117,9 @@ public class pb_Menu_Commands : Editor
 			// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
 			// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the 
 			// renderer so that we don't modify the asset.
-			if( AssetDatabase.GetAssetPath(go.GetComponent<MeshFilter>().sharedMesh) == "" )
-				Undo.DestroyObjectImmediate(go.GetComponent<MeshFilter>().sharedMesh);
-			else
+			if(AssetDatabase.GetAssetPath(mf.sharedMesh) == "" )
+				Undo.DestroyObjectImmediate(mf.sharedMesh);
+			else if(mf != null)
 				go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
 			pb.ToMesh();
