@@ -55,8 +55,7 @@ public class pb_Menu_Commands : Editor
 		{
 			pb_Editor_Utility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
 			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);			
-			pb.gameObject.AddComponent<MeshCollider>().convex = false;
-
+			
 			pb.Optimize();
 
 			pb.gameObject.name = "pb-MergedObject" + pb.id;

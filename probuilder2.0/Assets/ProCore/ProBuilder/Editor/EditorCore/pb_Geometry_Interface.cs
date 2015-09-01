@@ -334,9 +334,9 @@ namespace ProBuilder2.EditorCommon
 
 			stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
 
-			stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 64f);
-			stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 64f);
-			stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 64f);
+			stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
+			stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 10f);
+			stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 10f);
 
 			stair_sides = EditorGUILayout.Toggle("Build Sides", stair_sides);
 

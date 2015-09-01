@@ -99,8 +99,6 @@ namespace ProBuilder2.Interface
 		 */
 		public static float FreeSlider(GUIContent content, float value, float min, float max)
 		{
-			bool snap = Event.current.control;
-
 			const float PAD = 4f;
 			const float SLIDER_HEIGHT = 16f;
 			const float MIN_LABEL_WIDTH = 0f;
@@ -131,7 +129,7 @@ namespace ProBuilder2.Interface
 				tmp = GUI.Slider(sliderRect, tmp, 0f, min, max, GUI.skin.horizontalSlider, (!EditorGUI.showMixedValue) ? GUI.skin.horizontalSliderThumb : "SliderMixed", true, controlID);
 
 			if(EditorGUI.EndChangeCheck())
-				value = snap ? 1f * Mathf.Round(tmp / 1f) : tmp;
+				value = Event.current.control ? 1f * Mathf.Round(tmp / 1f) : tmp;
 
 			value = EditorGUI.FloatField(floatRect, value);
 
