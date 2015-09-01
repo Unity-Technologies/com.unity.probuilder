@@ -9,21 +9,14 @@ using ProBuilder2.MeshOperations;
 
 public class colorwheel : EditorWindow {
 
-	[MenuItem("Tools/SELECT PERIMETER FACES")]
+	[MenuItem("Tools/Generate Stairs #&S")]
 	public static void intdtas()
 	{
-		// foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
-		// {
-		// 	pb_Face[] perim = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
-		// 	pb.SetSelectedFaces( perim );
-		// }
+		pb_Object pb = pb_ShapeGenerator.StairGenerator(new Vector3(2f, 4f, 6f), 6, true);
+		pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-		// if(pb_Editor.instance != null)
-		// 	pb_Editor.instance.UpdateSelection();
-
-		// SceneView.RepaintAll();
-
-		EditorWindow.GetWindow<colorwheel>().Show();
+		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
+		pb_Editor_Utility.InitObjectFlags(pb);
 	}
 
 	Color col = new Color(0f, .7f, 1f, 1f);

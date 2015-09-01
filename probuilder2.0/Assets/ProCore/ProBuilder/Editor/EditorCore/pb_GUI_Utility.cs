@@ -86,6 +86,57 @@ namespace ProBuilder2.Interface
 
 			return value;
 		}
+
+		static GUIContent slider_guicontent = new GUIContent("", "");
+		public static float FreeSlider(string content, float value, float min, float max)
+		{
+			slider_guicontent.text = content;
+			return FreeSlider(slider_guicontent, value, min, max);
+		}
+
+		/**
+		 * Similar to EditorGUILayoutUtility.Slider, except this allows for values outside of the min/max bounds via the float field.
+		 */
+		public static float FreeSlider(GUIContent content, float value, float min, float max)
+		{
+			bool snap = Event.current.control;
+
+			const float PAD = 4f;
+			const float SLIDER_HEIGHT = 16f;
+			const float MIN_LABEL_WIDTH = 0f;
+			const float MAX_LABEL_WIDTH = 128f;
+			const float MIN_FIELD_WIDTH = 48f;
+
+			GUILayoutUtility.GetRect(Screen.width, 18);
+
+			Rect previousRect = GUILayoutUtility.GetLastRect();
+			float y = previousRect.y;
+
+			float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
+			float remaining = (Screen.width - (PAD * 2f)) - labelWidth;
+			float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD);
+			float floatWidth = MIN_FIELD_WIDTH;
+
+			Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
+			Rect sliderRect = new Rect(labelRect.x + labelWidth, y + 1f, sliderWidth, SLIDER_HEIGHT);
+			Rect floatRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, floatWidth, SLIDER_HEIGHT);
+
+			if(content != null)
+				GUI.Label(labelRect, content);
+
+			EditorGUI.BeginChangeCheck();
+
+				int controlID = GUIUtility.GetControlID(FocusType.Native, sliderRect);
+				float tmp = value;
+				tmp = GUI.Slider(sliderRect, tmp, 0f, min, max, GUI.skin.horizontalSlider, (!EditorGUI.showMixedValue) ? GUI.skin.horizontalSliderThumb : "SliderMixed", true, controlID);
+
+			if(EditorGUI.EndChangeCheck())
+				value = snap ? 1f * Mathf.Round(tmp / 1f) : tmp;
+
+			value = EditorGUI.FloatField(floatRect, value);
+
+			return value;
+		}
 	
 		public static bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action<int> gui, int guiWidth, int guiHeight, pb_Object[] selection)
 		{

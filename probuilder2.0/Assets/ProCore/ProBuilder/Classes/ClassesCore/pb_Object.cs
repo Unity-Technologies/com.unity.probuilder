@@ -494,7 +494,9 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void SetFaces(pb_Face[] _qds)
 	{
-		_quads = _qds;
+		_quads = _qds.Where(x => x != null).ToArray();
+		if(_quads.Length != _qds.Length)
+			Debug.LogWarning("SetFaces() pruned " + (_qds.Length - _quads.Length) + " null faces from this object.");
 	}
 
 	/**
@@ -846,7 +848,7 @@ public class pb_Object : MonoBehaviour
 		int n = -2;
 		foreach(pb_Face f in faces)
 		{
-			if(f.manualUV) 
+			if(f == null || f.manualUV) 
 				continue;
 
 			if(f.textureGroup > 0 && tex_groups.ContainsKey(f.textureGroup))

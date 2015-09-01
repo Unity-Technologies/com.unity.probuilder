@@ -410,6 +410,12 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 #else
 			for(i = 0; i < faces.Length; i++)
 			{
+				if(faces[i] == null)
+				{
+					Debug.LogWarning("Null face found!  Skipping these triangles.");
+					continue;
+				}
+
 				Material face_mat = faces[i].material ?? pb_Constant.UnityDefaultDiffuse;
 
 				if(matDic.ContainsKey(face_mat))

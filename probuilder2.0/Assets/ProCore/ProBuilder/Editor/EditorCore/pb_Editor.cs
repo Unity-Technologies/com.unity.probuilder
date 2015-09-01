@@ -1,5 +1,3 @@
-#pragma warning disable 0168	///< Disable unused var (that exception hack)
-
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -1101,8 +1099,7 @@ public class pb_Editor : EditorWindow
 								}
 							}			
 						}
-					} catch( System.Exception e) {
-					}
+					} catch {}
 				}
 				else
 				{
@@ -2124,7 +2121,7 @@ public class pb_Editor : EditorWindow
 						Handles.DrawLine( 	nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.x]),
 											nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.y]) );
 					}
-				} catch (System.Exception e) {}
+				} catch {}
 				Handles.color = Color.white;
 				
 				break;
@@ -2745,7 +2742,7 @@ public class pb_Editor : EditorWindow
 			for(int i = 0; i < selection.Length; i++)
 			{
 				// profiler.BeginSample("Unique Indices");
-				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x.distinctIndices).ToArray();// pb_Face.AllTriangles(selection[i].faces).Distinct().ToArray();
+				m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x != null ? x.distinctIndices : null).ToArray();
 				// profiler.EndSample();
 
 				// profiler.BeginSample("sharedIndices.ToDictionary()");

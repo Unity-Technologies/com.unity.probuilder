@@ -62,11 +62,8 @@ namespace ProBuilder2.EditorCommon
 			initPreview = true;
 		}
 
-		void OnDisable()
+		void OnDestroy()
 		{
-			if(previewMat != null)
-				DestroyImmediate(previewObject);
-
 			DestroyPreviewObject();
 		}
 
@@ -324,40 +321,32 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**** Stair Generator ***/
-		static bool extendSidesToFloor = true;
-		static bool generateBack = true;
 		static int stair_steps = 6;
-		static float stair_width = 4f, stair_height = 5f, stair_depth = 8f;
-		static bool stair_platformsOnly = false;
+		static Vector3 stair_size = new Vector3(2f, 4f, 6f);
+		// static float stair_rotation = 0f;
+		static bool stair_sides = true;
+
 		void StairGUI()
 		{
-			stair_steps = EditorGUILayout.IntField("Number of Steps", stair_steps);
-			stair_steps = Clamp(stair_steps, 2, 50);
+			stair_steps = (int) Mathf.Max(pb_GUI_Utility.FreeSlider("Steps", stair_steps, 2, 24), 2);
 
-			stair_width = EditorGUILayout.FloatField("Width", stair_width);
-			stair_width = Mathf.Clamp(stair_width, 0.01f, 500f);
+			// stair_rotation = EditorGUILayout.Slider("Rotation", stair_rotation, 0f, 360f);
 
-			stair_height = EditorGUILayout.FloatField("Height", stair_height);
-			stair_height = Mathf.Clamp(stair_height, .01f, 500f);
+			stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
 
-			stair_depth = EditorGUILayout.FloatField("Depth", stair_depth);
-			stair_depth = Mathf.Clamp(stair_depth, .01f, 500f);
+			stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 64f);
+			stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 64f);
+			stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 64f);
 
-			stair_platformsOnly = EditorGUILayout.Toggle("Platforms Only", stair_platformsOnly);
-			if(stair_platformsOnly) { GUI.enabled = false; extendSidesToFloor = false; generateBack = false; }
-			extendSidesToFloor = EditorGUILayout.Toggle("Extend sides to floor", extendSidesToFloor);
-			generateBack = EditorGUILayout.Toggle("Generate Back", generateBack);
+			stair_sides = EditorGUILayout.Toggle("Build Sides", stair_sides);
+
 			GUI.enabled = true;
 
 			if( showPreview && (GUI.changed || initPreview) ) 
 				SetPreviewObject(pb_ShapeGenerator.StairGenerator(
+					stair_size,
 					stair_steps, 
-					stair_width,
-					stair_height,
-					stair_depth,
-					extendSidesToFloor,
-					generateBack,
-					stair_platformsOnly));
+					stair_sides));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -366,7 +355,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_ShapeGenerator.StairGenerator(stair_steps, stair_width, stair_height, stair_depth, extendSidesToFloor, generateBack, stair_platformsOnly);
+				pb_Object pb = pb_ShapeGenerator.StairGenerator(stair_size, stair_steps, stair_sides);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
@@ -864,7 +853,11 @@ namespace ProBuilder2.EditorCommon
 			torus_rows = (int) EditorGUILayout.IntSlider(new GUIContent("Rows", "How many rows the torus will have.  More equates to smoother geometry."), torus_rows, 3, 32);
 			torus_colums = (int) EditorGUILayout.IntSlider(new GUIContent("Columns", "How many columns the torus will have.  More equates to smoother geometry."), torus_colums, 3, 64);
 
-			torus_radius = EditorGUILayout.Slider("Radius", torus_radius, .1f, 10f);
+			torus_radius = EditorGUILayout.FloatField("Radius", torus_radius);
+			
+			if(torus_radius < .001f)	
+				torus_radius = .001f;
+
 			torus_tubeRadius = pb_GUI_Utility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
 
 			torus_horizontalCircumference = EditorGUILayout.Slider("Horizontal Circumference", torus_horizontalCircumference, .01f, 360f);
@@ -998,7 +991,6 @@ namespace ProBuilder2.EditorCommon
 			initPreview = false;
 			bool prevTransform = false;
 			
-
 			if(previewObject != null)
 			{
 				prevTransform = true;
@@ -1038,14 +1030,16 @@ namespace ProBuilder2.EditorCommon
 			if(previewObject.GetComponent<pb_Entity>())
 				GameObject.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
 
-			m.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-			previewMat.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-			previewObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave; // pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;// HideFlags.HideInInspector | HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			HideFlags flags = HideFlags.HideInHierarchy | HideFlags.DontSave | HideFlags.DontUnloadUnusedAsset;
+
+			m.hideFlags = flags;
+			previewMat.hideFlags = flags;
+			previewObject.hideFlags = flags;
 
 			previewObject.GetComponent<MeshFilter>().sharedMesh = m;
 			previewObject.GetComponent<MeshRenderer>().sharedMaterial = previewMat;
 
-			Selection.activeTransform = previewObject.transform;//pb.transform;
+			Selection.activeTransform = previewObject.transform;
 		}
 
 		Vector3 m_pos = Vector3.zero;

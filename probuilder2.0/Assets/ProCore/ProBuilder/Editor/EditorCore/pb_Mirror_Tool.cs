@@ -81,11 +81,6 @@ namespace ProBuilder2.EditorCommon
 
 			p.transform.localScale = pb.transform.localScale;
 			
-			// Regenerate normals
-			p.ToMesh();
-			p.Refresh();
-			p.Optimize();
-
 			Collider col = pb.GetComponent<Collider>();
 			ColliderType colType = ColliderType.None;
 			if(col != null)
@@ -98,6 +93,9 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Editor_Utility.InitObjectFlags(p, colType, pb.GetComponent<pb_Entity>().entityType);
 			
+			p.ToMesh();
+			p.Refresh();
+
 			// InitObjectFlags runs ScreenCenter()
 			p.transform.position = pb.transform.position;
 

@@ -57,8 +57,11 @@ namespace ProBuilder2.EditorCommon
 
 		void OnSelectionUpdate(pb_Object[] selection)
 		{
-			foreach(pb_Object pb in selection)
-				DrawElements(pb);
+			try
+			{
+				foreach(pb_Object pb in selection)
+					DrawElements(pb);
+			} catch {}
 		}
 
 		void OnVertexMovementFinished(pb_Object[] selection)

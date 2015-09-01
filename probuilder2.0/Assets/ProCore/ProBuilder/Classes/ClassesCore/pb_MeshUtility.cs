@@ -124,6 +124,13 @@ namespace ProBuilder2.Common
 		public static List<List<int>> FindDuplicateVertices(pb_Object pb)
 		{
 			Vector3[] normals = pb.msh.normals;
+
+			if(pb.vertexCount != normals.Length)
+			{
+				pb.Refresh();
+				normals = pb.msh.normals;
+			}
+
 			Color[] colors = pb.colors;
 			Vector2[] textures = pb.uv;
 
