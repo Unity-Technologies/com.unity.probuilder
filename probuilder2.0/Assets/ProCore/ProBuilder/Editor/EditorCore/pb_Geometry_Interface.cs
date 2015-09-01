@@ -322,31 +322,55 @@ namespace ProBuilder2.EditorCommon
 
 		/**** Stair Generator ***/
 		static int stair_steps = 6;
-		static Vector3 stair_size = new Vector3(2f, 4f, 6f);
-		// static float stair_rotation = 0f;
+		static Vector3 stair_size = new Vector3(2f, 2.5f, 4f);
+		static float stair_cirumference = 0f;
 		static bool stair_sides = true;
 
 		void StairGUI()
 		{
+			EditorGUI.BeginChangeCheck();
+
 			stair_steps = (int) Mathf.Max(pb_GUI_Utility.FreeSlider("Steps", stair_steps, 2, 24), 2);
-
-			// stair_rotation = EditorGUILayout.Slider("Rotation", stair_rotation, 0f, 360f);
-
-			stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
-
-			stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
-			stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 10f);
-			stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 10f);
 
 			stair_sides = EditorGUILayout.Toggle("Build Sides", stair_sides);
 
-			GUI.enabled = true;
+			stair_cirumference = EditorGUILayout.Slider("Curvature", stair_cirumference, 0f, 360f);
 
-			if( showPreview && (GUI.changed || initPreview) ) 
-				SetPreviewObject(pb_ShapeGenerator.StairGenerator(
-					stair_size,
-					stair_steps, 
-					stair_sides));
+			if(stair_cirumference > 0f)
+			{
+				stair_size.x = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Width", "The width of an individual stair step."), stair_size.x, .01f, 10f), .01f);				
+				stair_size.y = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Height", "The total height of this staircase.  You may enter any value in the float field."), stair_size.y, .01f, 10f), .01f);				
+				stair_size.z = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, .01f, 10f), .01f);				
+			}
+			else
+			{
+				stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
+
+				stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
+				stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 10f);
+				stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 10f);
+			}
+
+			if( showPreview && (EditorGUI.EndChangeCheck() || initPreview) ) 
+			{
+				if(stair_cirumference > 0f)
+				{
+					SetPreviewObject(pb_ShapeGenerator.CurvedStairGenerator(
+						stair_size.x,
+						stair_size.y,
+						stair_size.z,
+						stair_cirumference,
+						stair_steps,
+						stair_sides));
+				}
+				else
+				{
+					SetPreviewObject(pb_ShapeGenerator.StairGenerator(
+						stair_size,
+						stair_steps, 
+						stair_sides));
+				}
+			}
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -355,7 +379,10 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_ShapeGenerator.StairGenerator(stair_size, stair_steps, stair_sides);
+				pb_Object pb = stair_cirumference > 0f ?
+					pb_ShapeGenerator.CurvedStairGenerator(stair_size.x, stair_size.y, stair_size.z, stair_cirumference, stair_steps, stair_sides) :
+					pb_ShapeGenerator.StairGenerator(stair_size, stair_steps, stair_sides);
+
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );

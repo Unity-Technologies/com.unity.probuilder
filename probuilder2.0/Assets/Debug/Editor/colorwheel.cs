@@ -12,7 +12,8 @@ public class colorwheel : EditorWindow {
 	[MenuItem("Tools/Generate Stairs #&S")]
 	public static void intdtas()
 	{
-		pb_Object pb = pb_ShapeGenerator.StairGenerator(new Vector3(2f, 4f, 6f), 6, true);
+		pb_Object pb = pb_ShapeGenerator.CurvedStairGenerator(2f, 4f, .2f, 180f, 8, false);
+
 		pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 		pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);

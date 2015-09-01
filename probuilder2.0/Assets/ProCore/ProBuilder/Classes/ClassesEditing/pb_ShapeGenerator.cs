@@ -141,6 +141,158 @@ public class pb_ShapeGenerator
 		return pb;	
 	}
 
+	public static pb_Object CurvedStairGenerator(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
+	{
+		/// 4 vertices per quad, 2 quads per step.
+		Vector3[] vertices = new Vector3[4 * steps * 2];
+		pb_Face[] faces = new pb_Face[steps * 2];
+
+		/// vertex index, face index
+		int v = 0, t = 0;
+
+		float cir = circumference * Mathf.Deg2Rad;
+		float outerRadius = innerRadius + stairWidth;
+
+		for(int i = 0; i < steps; i++)
+		{
+			float inc0 = (i / (float) steps) * cir;
+			float inc1 = ((i + 1) / (float) steps) * cir;
+
+			float h0 = ((i / (float) steps) * height);
+			float h1 = (((i+1) / (float) steps) * height);
+
+			Vector3 v0 = new Vector3( -Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) );
+			Vector3 v1 = new Vector3( -Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) );
+
+			vertices[v+0] = v0 * innerRadius;
+			vertices[v+1] = v0 * outerRadius;
+			vertices[v+2] = v0 * innerRadius;
+			vertices[v+3] = v0 * outerRadius;
+
+			vertices[v+0].y = h0;
+			vertices[v+1].y = h0;
+			vertices[v+2].y = h1;
+			vertices[v+3].y = h1;
+
+			vertices[v+4] = vertices[v+2];
+			vertices[v+5] = vertices[v+3];
+
+			vertices[v+6] = v1 * innerRadius;
+			vertices[v+7] = v1 * outerRadius;
+
+			vertices[v+6].y = h1;
+			vertices[v+7].y = h1;
+
+			faces[t+0] = new pb_Face( new int[] { 	v + 0,
+													v + 1,
+													v + 2,
+													v + 1,
+													v + 3,
+													v + 2 });
+
+			faces[t+1] = new pb_Face( new int[] { 	v + 4,
+													v + 5,
+													v + 6,
+													v + 5,
+													v + 7,
+													v + 6 });
+
+			v += 8;
+			t += 2;
+		}
+
+		/// sides
+		if(buildSides)
+		{
+			/// first step is special case - only needs a quad, but all other steps need
+			/// a quad and tri.
+			float x = innerRadius;
+
+			for(int side = 0; side < 2; side++)
+			{
+				Vector3[] sides_v = new Vector3[ steps * 4 + (steps - 1) * 3 ];
+				pb_Face[] sides_f = new pb_Face[ steps + steps-1 ];
+
+				int sv = 0, st = 0;
+
+				for(int i = 0; i < steps; i++)
+				{
+					float inc0 = (i / (float) steps) * cir;
+					float inc1 = ((i + 1) / (float) steps) * cir;
+
+					float h0 = ((Mathf.Max(i, 1) / (float) steps) * height);
+					float h1 = (((i+1) / (float) steps) * height);
+
+					Vector3 v0 = new Vector3( -Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) ) * x;
+					Vector3 v1 = new Vector3( -Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) ) * x;	
+
+					sides_v[sv+0] = v0;
+					sides_v[sv+1] = v1;
+					sides_v[sv+2] = v0;
+					sides_v[sv+3] = v1;
+
+					sides_v[sv+0].y = 0f;
+					sides_v[sv+1].y = 0f;
+					sides_v[sv+2].y = h0;
+					sides_v[sv+3].y = h1;
+
+					sides_f[st++] = new pb_Face( side % 2 == 0 ?
+						new int[] { v+2, v+1, v+0, v+2, v+3, v+1 } :
+						new int[] { v+0, v+1, v+2, v+1, v+3, v+2 } );
+
+					
+					v += 4;
+					sv += 4;
+
+					/// that connecting triangle
+					if(i > 0)
+					{
+						sides_f[st-1].textureGroup = (side * steps) + i;
+
+						sides_v[sv+0] = v0;
+						sides_v[sv+1] = v1;
+						sides_v[sv+2] = v0;
+						sides_v[sv+0].y = h0;
+						sides_v[sv+1].y = h1;
+						sides_v[sv+2].y = h1;
+
+						sides_f[st++] = new pb_Face( side % 2 == 0 ? 
+							new int[] { v+2, v+1, v+0 } :
+							new int[] { v+0, v+1, v+2 } );
+
+						sides_f[st-1].textureGroup = (side * steps) + i;
+
+						v += 3;
+						sv += 3;
+					}
+				}
+
+				vertices = vertices.Concat(sides_v);
+				faces = faces.Concat(sides_f);
+
+				x += stairWidth;
+			}
+
+			// // add that last back face
+			float cos = -Mathf.Cos(cir), sin = Mathf.Sin(cir);
+
+			vertices = vertices.Concat(new Vector3[] 
+			{
+				new Vector3(cos, 0f, sin) * innerRadius,
+				new Vector3(cos, 0f, sin) * outerRadius,
+				new Vector3(cos * innerRadius, height, sin * innerRadius),
+				new Vector3(cos * outerRadius, height, sin * outerRadius)
+				});
+
+			faces = faces.Add(new pb_Face(new int[] {v+2, v+1, v+0, v+2, v+3, v+1}));
+		}
+
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
+		pb.SetName("Stairs"); 
+
+		return pb;	
+	}
+
 	/**
 	 *	\brief Creates a stair set with the given parameters.
 	 *	@param steps How many steps should this stairwell have?
