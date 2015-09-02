@@ -175,8 +175,15 @@ namespace ProBuilder2.UpgradeKit
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts")]
-		// [MenuItem("Tools/UN - SERIALIZE SCENE")]
 		static void MenuDeserialize()
+		{
+			SceneInfo sceneInfo = DeserializeScene(DisplayLog, DisplayProgress);
+
+			if( EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + sceneInfo.success + " / " + sceneInfo.total + " objects.", "Save", "Don't Save"))
+				EditorApplication.SaveScene("", false);
+		}
+
+		public static SceneInfo DeserializeScene(LogMessage log, LogProgress progress)
 		{
 			pb_SerializedComponent[] scene = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
 			pb_SerializedComponent[] prefabs = FindPrefabsWithComponent<pb_SerializedComponent>();
@@ -185,18 +192,20 @@ namespace ProBuilder2.UpgradeKit
 
 			if( serializedComponents.Length < 1 )
 			{
-				EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "No serialized ProBuilder components found in this scene.", "Okay");
+				if(log != null) log("No serialized ProBuilder components found in this scene.", MessageType.Info);
+				return new SceneInfo(0,0,0);
 			}
 			else
 			{
-				int success = 0, c = 0;
-				float len = serializedComponents.Length;
+				int success = 0, c = 0, failed = 0;
+				int total = serializedComponents.Length;
 
 				for(int i = 0; i < serializedComponents.Length; i++)
 				{
 					pb_SerializedComponent ser = serializedComponents[i];
 
-					EditorUtility.DisplayProgressBar("Deserialize ProBuilder Data", "Object: " + ser.gameObject.name, c++ / len);
+					if(progress != null && progress(success + failed, total, ser.gameObject.name))
+						return new SceneInfo(total, success, failed);
 
 					try
 					{
@@ -251,9 +260,11 @@ namespace ProBuilder2.UpgradeKit
 					catch(System.Exception e)
 					{
 						if(ser != null)
-							Debug.LogError("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString());
+							if(log != null) log("Failed deserializing object: " + ser.gameObject.name + "\nObject ID: " + ser.gameObject.GetInstanceID() + "\n" + e.ToString(), MessageType.Error);
 						else
-							Debug.LogError("Failed deserializing object\n" + e.ToString());
+							if(log != null) log("Failed deserializing object\n" + e.ToString(), MessageType.Error);
+
+						failed++;
 
 						continue;
 					}
@@ -266,12 +277,10 @@ namespace ProBuilder2.UpgradeKit
 				#else
 				EditorUtility.UnloadUnusedAssets();
 				#endif
-
-				EditorUtility.ClearProgressBar();
-
-				if( EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + success + " / " + (int)len + " objects.", "Save", "Don't Save"))
-					EditorApplication.SaveScene("", false);
+				
+				return new SceneInfo(total, success, failed);
 			}
+
 		}
 
 		static void RemoveProBuilderScripts(pb_Object pb)
