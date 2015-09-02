@@ -161,8 +161,8 @@ public class pb_ShapeGenerator
 			float h0 = ((i / (float) steps) * height);
 			float h1 = (((i+1) / (float) steps) * height);
 
-			Vector3 v0 = new Vector3( -Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) );
-			Vector3 v1 = new Vector3( -Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) );
+			Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) );
+			Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) );
 
 			vertices[v+0] = v0 * innerRadius;
 			vertices[v+1] = v0 * outerRadius;
@@ -206,9 +206,9 @@ public class pb_ShapeGenerator
 		{
 			/// first step is special case - only needs a quad, but all other steps need
 			/// a quad and tri.
-			float x = innerRadius;
+			float x = innerRadius < Mathf.Epsilon ? innerRadius + stairWidth : innerRadius;;
 
-			for(int side = 0; side < 2; side++)
+			for(int side = (innerRadius < Mathf.Epsilon ? 1 : 0); side < 2; side++)
 			{
 				Vector3[] sides_v = new Vector3[ steps * 4 + (steps - 1) * 3 ];
 				pb_Face[] sides_f = new pb_Face[ steps + steps-1 ];
@@ -223,8 +223,8 @@ public class pb_ShapeGenerator
 					float h0 = ((Mathf.Max(i, 1) / (float) steps) * height);
 					float h1 = (((i+1) / (float) steps) * height);
 
-					Vector3 v0 = new Vector3( -Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) ) * x;
-					Vector3 v1 = new Vector3( -Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) ) * x;	
+					Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) ) * x;
+					Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) ) * x;	
 
 					sides_v[sv+0] = v0;
 					sides_v[sv+1] = v1;

@@ -330,7 +330,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
-			stair_steps = (int) Mathf.Max(pb_GUI_Utility.FreeSlider("Steps", stair_steps, 2, 24), 2);
+			stair_steps = (int) Mathf.Max(pb_GUI_Utility.FreeSlider("Steps", stair_steps, 2, 64), 2);
 
 			stair_sides = EditorGUILayout.Toggle("Build Sides", stair_sides);
 
@@ -340,7 +340,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				stair_size.x = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Width", "The width of an individual stair step."), stair_size.x, .01f, 10f), .01f);				
 				stair_size.y = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Height", "The total height of this staircase.  You may enter any value in the float field."), stair_size.y, .01f, 10f), .01f);				
-				stair_size.z = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, .01f, 10f), .01f);				
+				stair_size.z = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, 0f, 10f), 0f);				
 			}
 			else
 			{
