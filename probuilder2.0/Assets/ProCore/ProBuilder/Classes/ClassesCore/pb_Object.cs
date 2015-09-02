@@ -32,7 +32,7 @@ public class pb_Object : MonoBehaviour
 			return;
 
 		// Absolutely no idea why normals sometimes go haywire
-		if(msh == null || msh.normals[0] == Vector3.zero)
+		if(msh == null || msh.normals == null || msh.normals[0] == Vector3.zero)
 		{
 			ReconstructMesh();
 		}

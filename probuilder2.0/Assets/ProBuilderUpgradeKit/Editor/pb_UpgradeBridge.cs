@@ -28,51 +28,108 @@ namespace ProBuilder2.UpgradeKit
 	{
 		const string MaterialFieldRegex = "\"material\": [\\-0-9]{2,20}";
 
+		public struct SceneInfo
+		{
+			public int total;
+			public int success;
+			public int failed;
+
+			public SceneInfo(int total, int success, int failed)
+			{
+				this.total		= total;
+				this.success 	= success;
+				this.failed		= failed;
+			}
+
+			public override string ToString()
+			{
+				return success + " out of " + total + " ProBuilder objects serialized and " + failed + " failed.";
+			}
+		}
+
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade")]
-		// [MenuItem("Tools/SERIALIZE SCENE")]
-		static void MenuSerialize()
+		public static void PrepareScene()
+		{
+			if( !EditorUtility.DisplayDialog("Prepare Scene", "This will safely store all ProBuilder data in a new component, and remove ProBuilder components from all objects in the scene.\n\nThis must be run for each scene in your project.", "Okay", "Cancel") )
+				return;
+
+			PrepareScene(DisplayLog, DisplayProgress);
+
+			EditorUtility.ClearProgressBar();
+			
+			if( EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized this scene.  Please save your scene now or these changes will be lost.", "Save Scene", "Don't Save"))
+				EditorApplication.SaveScene("", false);
+		}
+
+		public static void DisplayLog(string msg, MessageType type)
+		{
+			switch(type)
+			{
+				case MessageType.Error:
+					Debug.LogError(msg);
+					break;
+
+				case MessageType.Warning:
+					Debug.LogWarning(msg);
+					break;
+
+				default:
+					Debug.Log(msg);
+					break;
+			}
+		}
+
+		public static bool DisplayProgress(int index, int length, string current)
+		{
+			return EditorUtility.DisplayCancelableProgressBar("Serialize ProBuilder Data", "Serializing: " + current + " (" + index + " / " + length + ")", index / (float) length);
+		}
+
+		public static SceneInfo PrepareScene(LogMessage log, LogProgress progress)
 		{
 			pb_Object[] objects = ((pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object))).Where(x => x.gameObject.hideFlags == HideFlags.None).ToArray();
 			pb_Object[] prefabs = FindPrefabsWithComponent<pb_Object>();
-
 			objects = pbUtil.Concat(objects, prefabs).Distinct().ToArray();
 
-			MakeSerializedComponent(objects);
-
+			return MakeSerializedComponent(objects, log, progress);
 		}
+
+		public delegate void LogMessage(string log, MessageType type);
+		public delegate bool LogProgress(int index, int length, string current);
 
 		/**
 		 * Serialize and store pb_Object and pb_Entity data in a new pb_SerializableComponent MonoBehaviour, then 
 		 * remove pb_Object and pb_Entity components.
 		 */
-		static void MakeSerializedComponent(pb_Object[] objects)
+		private static SceneInfo MakeSerializedComponent(pb_Object[] objects, LogMessage log, LogProgress progress)
 		{
 			if(pb_Editor.instance != null)
 				pb_Editor.instance.Close();
 
-			float len = objects.Length;
+			int len = objects.Length;
 			int success = 0;
+			int failed = 0;
 
 			if( len < 1 )
 			{
 				int c = ((pb_SerializedComponent[]) Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent))).Length;
 
 				if( c > 0 )
-					EditorUtility.DisplayDialog("Prepare Scene", "There are " + c + " serialized components ready to be rebuilt into ProBuilder components in this scene.", "Okay");
+					if(log != null) log("There are " + c + " serialized components ready to be rebuilt into ProBuilder components in this scene. No more preparation necessary!", MessageType.Info);
 				else
-					EditorUtility.DisplayDialog("Prepare Scene", "No ProBuilder components found in scene.", "Okay");
+					if(log != null) log("No ProBuilder components found in scene.", MessageType.Info);
 			}
 			else
 			{
-				if( !EditorUtility.DisplayDialog("Prepare Scene", "This will safely store all ProBuilder data in a new component, and remove ProBuilder components from all objects in the scene.\n\nThis must be run for each scene in your project.", "Okay", "Cancel") )
-					return;
-
 				foreach(pb_Object pb in objects)
 				{
 					if(pb == null)
 						continue;
 
-					EditorUtility.DisplayProgressBar("Serialize ProBuilder Data", "Object: " + pb.name, success / len);
+					if( progress != null && progress(success + failed, len, pb.name) )
+					{
+						if(log != null) log("Canceling upgrade with " + (len - success) + " out of " + len + " objects remaining un-serialized.", MessageType.Warning);
+						return new SceneInfo(len, success, failed);
+					}
 
 					try
 					{
@@ -99,24 +156,22 @@ namespace ProBuilder2.UpgradeKit
 					}
 					catch (System.Exception e)
 					{
+						failed++;
 						if( IsPrefabRoot(pb.gameObject) )
-							Debug.LogWarning("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object is a prefab parent, and not in the current scene.  If this prefab is not used in another scene, it may not be safely saved.  To fix this warning, please place an instance of this prefab in a scene and run the \"Prepare Scene for Upgrade\" menu item");
+							if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object is a prefab parent, and not in the current scene.  If this prefab is not used in another scene, it may not be safely saved.  To fix this warning, please place an instance of this prefab in a scene and run the \"Prepare Scene for Upgrade\" menu item", MessageType.Error);
 						else
-							Debug.LogError("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object will not be safely upgraded if you continue the process!\n" + e.ToString());
+							if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object may not be upgraded, but can still be ProBuilder-ized when finished.\n" + e.ToString(), MessageType.Error);
 					}
 				}
 
-				EditorUtility.ClearProgressBar();
-
-				#if UNITY_5
+#if UNITY_5
 				EditorUtility.UnloadUnusedAssetsImmediate();
-				#else
+#else
 				EditorUtility.UnloadUnusedAssets();
-				#endif
-
-				if( EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized " + success + " / " + (int)len + " objects.", "Save Scene", "Don't Save"))
-					EditorApplication.SaveScene("", false);
+#endif
 			}			
+
+			return new SceneInfo(len, success, failed);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts")]
