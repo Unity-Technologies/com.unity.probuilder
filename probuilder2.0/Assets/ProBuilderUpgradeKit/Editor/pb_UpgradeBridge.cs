@@ -47,7 +47,7 @@ namespace ProBuilder2.UpgradeKit
 			}
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade")]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade", false, 0)]
 		public static void PrepareScene()
 		{
 			if( !EditorUtility.DisplayDialog("Prepare Scene", "This will safely store all ProBuilder data in a new component, and remove ProBuilder components from all objects in the scene.\n\nThis must be run for each scene in your project.", "Okay", "Cancel") )
@@ -58,6 +58,16 @@ namespace ProBuilder2.UpgradeKit
 			EditorUtility.ClearProgressBar();
 			
 			if( EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized this scene.  Please save your scene now or these changes will be lost.", "Save Scene", "Don't Save"))
+				EditorApplication.SaveScene("", false);
+		}
+
+
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts", false, 1)]
+		static void MenuDeserialize()
+		{
+			SceneInfo sceneInfo = DeserializeScene(DisplayLog, DisplayProgress);
+
+			if( EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + sceneInfo.success + " / " + sceneInfo.total + " objects.", "Save", "Don't Save"))
 				EditorApplication.SaveScene("", false);
 		}
 
@@ -174,15 +184,6 @@ namespace ProBuilder2.UpgradeKit
 			return new SceneInfo(len, success, failed);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts")]
-		static void MenuDeserialize()
-		{
-			SceneInfo sceneInfo = DeserializeScene(DisplayLog, DisplayProgress);
-
-			if( EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + sceneInfo.success + " / " + sceneInfo.total + " objects.", "Save", "Don't Save"))
-				EditorApplication.SaveScene("", false);
-		}
-
 		public static SceneInfo DeserializeScene(LogMessage log, LogProgress progress)
 		{
 			pb_SerializedComponent[] scene = (pb_SerializedComponent[])Resources.FindObjectsOfTypeAll(typeof(pb_SerializedComponent));
@@ -197,7 +198,7 @@ namespace ProBuilder2.UpgradeKit
 			}
 			else
 			{
-				int success = 0, c = 0, failed = 0;
+				int success = 0, failed = 0;
 				int total = serializedComponents.Length;
 
 				for(int i = 0; i < serializedComponents.Length; i++)
@@ -280,7 +281,6 @@ namespace ProBuilder2.UpgradeKit
 				
 				return new SceneInfo(total, success, failed);
 			}
-
 		}
 
 		static void RemoveProBuilderScripts(pb_Object pb)

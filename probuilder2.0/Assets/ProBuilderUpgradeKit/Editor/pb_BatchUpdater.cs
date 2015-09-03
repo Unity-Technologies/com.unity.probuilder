@@ -19,12 +19,12 @@ namespace ProBuilder2.UpgradeKit
 		/**
 		 * Iterate all scenes in project and run the updater.
 		 */
-		[MenuItem("Tools/ProBuilder/Upgrade/Batch Prepare Scenes for Upgrade %g")]
+		[MenuItem("Tools/ProBuilder/Upgrade/Batch Prepare Scenes for Upgrade", false, 20)]
 		static void MenuBatchUpdate()
 		{
 			/// If the current scene is dirty and the user opts to cancel instead of discarding or saving,
 			/// exit the batch update.
-			if(EditorApplication.isSceneDirty && !EditorApplication.SaveCurrentSceneIfUserWantsTo() )
+			if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
 				return;
 
 			if(!EditorUtility.DisplayDialog("Batch Prepare Scenes for Upgrade", "This tool will open every scene in your project and run the pre-upgrade process, and may take a few minutes.  Once complete, a log of the upgrade activity will be available in the Assets folder", "Okay", "Cancel"))
@@ -36,10 +36,10 @@ namespace ProBuilder2.UpgradeKit
 			EditorUtility.DisplayDialog("Batch Prepare Scene for Upgrade", "A log of the upgrade has been placed in \"Assets/ProBuilderUpgradeLog.txt.\".\nPlease delete the ProCore/ProBuilder, import the new version, then run \"Batch Re-Attach ProBuilder Scripts\".", "Okay");
 		}
 
-		[MenuItem("Tools/ProBuilder/Upgrade/Batch re-attach ProBuilder Scripts")]
+		[MenuItem("Tools/ProBuilder/Upgrade/Batch Re-Attach ProBuilder Scripts", false, 21)]
 		static void MenuBatchReattach()
 		{
-			if(EditorApplication.isSceneDirty && !EditorApplication.SaveCurrentSceneIfUserWantsTo() )
+			if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
 				return;
 			
 			string[] scenes = FindAssetsWithExtension(".unity");
