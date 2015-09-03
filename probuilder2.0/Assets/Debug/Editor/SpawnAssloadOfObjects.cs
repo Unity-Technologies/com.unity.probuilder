@@ -60,7 +60,6 @@ namespace ProBuilder2.Common
 				if(cancel)
 					break;
 
-				go.name = go.name + "  (" + i + ")";
 				go.transform.position = RandVec(-50f, 50f);
 			}
 
@@ -98,14 +97,19 @@ namespace ProBuilder2.Common
 
 		static pb_Object Torus()
 		{
-			return pb_ShapeGenerator.TorusGenerator(
-				RandInt(3, 10),
-				RandInt(3, 10),
-				RandFloat(.5f, 10f),
-				RandFloat(.5f, 8f),
-				RandBool(),
-				RandFloat(25f, 360f),
-				RandFloat(25f, 360f) );
+			int 	a = RandInt(3, 10);
+			int 	b = RandInt(3, 10);
+			float 	c = RandFloat(.5f, 10f);
+			float 	d = RandFloat(.5f, 8f);
+			bool 	e = RandBool();
+			float 	f = RandFloat(25f, 360f);
+			float 	g = RandFloat(25f, 360f);
+
+			pb_Object pb = pb_ShapeGenerator.TorusGenerator(a, b, c, d, e, f, g);
+
+			pb.name = "Torus [" + a + ", " + b + ", " + c + ", " + d + ", " + e + ", " + f + ", " + g + "]"; 
+
+			return pb;
 		}
 
 		static pb_Object Icosphere()

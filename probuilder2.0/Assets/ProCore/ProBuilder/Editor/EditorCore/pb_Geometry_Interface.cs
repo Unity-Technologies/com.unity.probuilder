@@ -1057,7 +1057,7 @@ namespace ProBuilder2.EditorCommon
 			if(previewObject.GetComponent<pb_Entity>())
 				GameObject.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
 
-			HideFlags flags = HideFlags.HideAndDontSave;
+			HideFlags flags = HideFlags.DontSave;
 
 			m.hideFlags = flags;
 			previewMat.hideFlags = flags;

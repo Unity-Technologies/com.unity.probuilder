@@ -143,8 +143,11 @@ public class pb_ShapeGenerator
 
 	public static pb_Object CurvedStairGenerator(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
 	{
-		/// 4 vertices per quad, 2 quads per step.
-		Vector3[] vertices = new Vector3[4 * steps * 2];
+		bool noInnerSide = innerRadius < Mathf.Epsilon;
+
+		/// 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
+		/// if the inner radius is 0 or not.
+		Vector3[] vertices = new Vector3[(4 * steps) + ((noInnerSide ? 3 : 4) * steps)];
 		pb_Face[] faces = new pb_Face[steps * 2];
 
 		/// vertex index, face index
@@ -164,6 +167,17 @@ public class pb_ShapeGenerator
 			Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) );
 			Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) );
 
+			/**
+			 * 
+			 *		/6-----/7
+			 *	   /	  /
+			 *	  /5_____/4
+			 *	  |3	 |2
+			 *	  |		 |
+			 *	  |1_____|0
+			 *
+			 */
+
 			vertices[v+0] = v0 * innerRadius;
 			vertices[v+1] = v0 * outerRadius;
 			vertices[v+2] = v0 * innerRadius;
@@ -177,27 +191,42 @@ public class pb_ShapeGenerator
 			vertices[v+4] = vertices[v+2];
 			vertices[v+5] = vertices[v+3];
 
-			vertices[v+6] = v1 * innerRadius;
-			vertices[v+7] = v1 * outerRadius;
-
+			vertices[v+6] = v1 * outerRadius;
 			vertices[v+6].y = h1;
-			vertices[v+7].y = h1;
 
-			faces[t+0] = new pb_Face( new int[] { 	v + 0,
-													v + 1,
-													v + 2,
-													v + 1,
-													v + 3,
-													v + 2 });
+			if(!noInnerSide)
+			{
+				vertices[v+7] = v1 * innerRadius;
+				vertices[v+7].y = h1;
+			}
+			
+			faces[t+0] = new pb_Face( new int[] { 	
+				v + 0,
+				v + 1,
+				v + 2,
+				v + 1,
+				v + 3,
+				v + 2 });
 
-			faces[t+1] = new pb_Face( new int[] { 	v + 4,
-													v + 5,
-													v + 6,
-													v + 5,
-													v + 7,
-													v + 6 });
+			if(noInnerSide)
+			{
+				faces[t+1] = new pb_Face( new int[] {
+					v + 4,
+					v + 5,
+					v + 6 });
+			}
+			else
+			{
+				faces[t+1] = new pb_Face( new int[] {
+					v + 4,
+					v + 5,
+					v + 6,
+					v + 4,
+					v + 6,
+					v + 7 });
+			}
 
-			v += 8;
+			v += noInnerSide ? 7 : 8;
 			t += 2;
 		}
 
@@ -206,9 +235,9 @@ public class pb_ShapeGenerator
 		{
 			/// first step is special case - only needs a quad, but all other steps need
 			/// a quad and tri.
-			float x = innerRadius < Mathf.Epsilon ? innerRadius + stairWidth : innerRadius;;
+			float x = noInnerSide ? innerRadius + stairWidth : innerRadius;;
 
-			for(int side = (innerRadius < Mathf.Epsilon ? 1 : 0); side < 2; side++)
+			for(int side = (noInnerSide ? 1 : 0); side < 2; side++)
 			{
 				Vector3[] sides_v = new Vector3[ steps * 4 + (steps - 1) * 3 ];
 				pb_Face[] sides_f = new pb_Face[ steps + steps-1 ];
@@ -1196,6 +1225,8 @@ public class pb_ShapeGenerator
 		pb.ToMesh();
 		pb.Refresh();
 
+		pb.SetName("Icosphere");
+
 		return pb;
 	}
 
@@ -1326,7 +1357,10 @@ public class pb_ShapeGenerator
 			}
 		}
 
-		return pb_Object.CreateInstanceWithVerticesFaces(vertices.ToArray(), faces.ToArray());
+		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices.ToArray(), faces.ToArray());
+		pb.SetName("Torus");
+
+		return pb;
 	}
 }
 }

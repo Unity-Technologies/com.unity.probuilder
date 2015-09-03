@@ -861,9 +861,6 @@ public class pb_Editor : EditorWindow
 				return;
 			}
 		}
-
-		// Listen for top level movement	
-		ListenForTopLevelMovement();
 		
 		// Finished moving vertices, scaling, or adjusting uvs
 		#if PROTOTYPE
@@ -3130,15 +3127,6 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region EVENTS AND LISTENERS
-
-	/**
-	 * Returns true if any of the selected pb_Object transforms have changed.
-	 */
-	private void ListenForTopLevelMovement()
-	{
-		// if( selection.Any(x => x != null && !x.Equals(null) && x.transform.hasChanged) )
-		// 	Internal_UpdateSelectionFast();
-	}
 
 	private void OnSelectionChange()
 	{
