@@ -1,5 +1,22 @@
--- ProBuilder 2.4.6b0 (r3531)
+-- ProBuilder 2.4.6b0 (r3595)
 
+# Features
+	- Add preference to set default Entity type.
+	- Add preference to set dedicated keyboard shortcuts for entering Object, Face, Vertex, and Edge mode.
+	- New Curved Stair generator, and stairs now produce manifold geometry.
+	- Add "Batch Upgrade" menu items to Upgrade Kit, allowing users to run one action for an entire project.
+	- New GUI slider allows un-clamped input to the float field in Shape Tool.
+
+# Bug Fixes
+	- Alt + E shortcut now works with only 2 vertices selected.
+	- Fix bug where colliders would be incorrect when instantiating trigger entities.
+	- Fix some cases where "Connect" would result in incorrect geometry.
+	- Fix UV editor not recognizing shortcuts sent from scene view.
+	- Fix occasional "Non-finite value in mesh vertices" error when extruding.
+	- Account for inconsistently sized vertex color arrays when ProBuilder-izing meshes.
+	- Fix null reference errors when Shape Creation Tool is open with preview enabled and a script reload takes place.
+	- Fix null reference sometimes caused by a Mirror action.
+	- Fix bug where merging objects would always add a MeshCollider, even if one already exists.
 
 -- ProBuilder 2.4.5p0 (r3531)
 

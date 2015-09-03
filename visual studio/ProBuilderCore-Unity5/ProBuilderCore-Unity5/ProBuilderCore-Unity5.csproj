@@ -115,20 +115,8 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Renderable.cs">
       <Link>pb_Renderable.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_SerializableObject.cs">
-      <Link>pb_SerializableObject.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Transform2D.cs">
       <Link>pb_Transform2D.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Vector2.cs">
-      <Link>pb_Vector2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Vector3.cs">
-      <Link>pb_Vector3.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Vector4.cs">
-      <Link>pb_Vector4.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_VertexConnection.cs">
       <Link>pb_VertexConnection.cs</Link>
