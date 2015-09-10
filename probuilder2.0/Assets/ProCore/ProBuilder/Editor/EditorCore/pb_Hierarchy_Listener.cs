@@ -55,6 +55,12 @@ namespace ProBuilder2.EditorCommon
 
 			if(!EditorApplication.isPlaying)
 			{
+				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+				{
+					if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
+						prefabReverted = true;
+				}
+
 				foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
 				{
 					/**
