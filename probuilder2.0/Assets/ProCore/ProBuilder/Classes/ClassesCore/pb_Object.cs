@@ -634,8 +634,6 @@ public class pb_Object : MonoBehaviour
 		for(int i = 0; i < tris.Length; i++)
 			m.SetTriangles(tris[i], i);
 
-		m.RecalculateBounds();
-
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
@@ -717,6 +715,8 @@ public class pb_Object : MonoBehaviour
 	{	
 		// Mesh
 		Mesh m = msh;
+
+		m.RecalculateBounds();
 		
 		if(!userCollisions && GetComponent<Collider>())
 		{

@@ -45,20 +45,6 @@ public class pb_Object_Editor : Editor
 	 		pb_Editor_Utility.VerifyMesh(selpb);
 	}
 
-	// void OnDisable()
-	// {
-	// 	if(boundsMesh)
-	// 		DestroyImmediate(boundsMesh);
-	// }
-
-	// private Mesh boundsMesh = null;
-	// private void OnSelectionChange(pb_Object[] selection)
-	// {
-	// 	if(selection.Contains(pb))
-	// 		boundsMesh = pb_Mesh_Utility.BoundsWireframe( pb.GetComponent<MeshFilter>().sharedMesh.bounds );
-	// }
-
-	// bool pbInspectorFoldout = false;
 	public override void OnInspectorGUI()
 	{
 		GUI.backgroundColor = Color.green;
@@ -79,6 +65,7 @@ public class pb_Object_Editor : Editor
 			GUILayout.Space(5);
 
 			offset = EditorGUILayout.Vector3Field("Quick Offset", offset);
+			
 			if(GUILayout.Button("Apply Offset"))
 			{
 				pbUndo.RecordObject(pb, "Offset Vertices");
