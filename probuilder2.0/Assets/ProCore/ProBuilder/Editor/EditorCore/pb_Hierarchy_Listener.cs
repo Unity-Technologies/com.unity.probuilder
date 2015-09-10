@@ -9,6 +9,10 @@ namespace ProBuilder2.EditorCommon
 {
 
 	[InitializeOnLoad]
+	/**
+	 * Static delegates listen for hierarchy changes (duplication, delete, copy/paste) and rebuild the mesh components
+	 * of pb_Objects if necessary.
+	 */
 	public class pb_Hierarchy_Listener : Editor
 	{
 		static pb_Hierarchy_Listener()
@@ -34,9 +38,7 @@ namespace ProBuilder2.EditorCommon
 			if(EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			pb_Object pb = go.GetComponent<pb_Object>();
-
-			if(pb != null)
+			foreach(pb_Object pb in go.GetComponentsInChildren<pb_Object>())
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -55,25 +57,27 @@ namespace ProBuilder2.EditorCommon
 
 			if(!EditorApplication.isPlaying)
 			{
+				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 				{
 					if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
 						prefabReverted = true;
 				}
 
-				foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-				{
-					/**
-					 * If it's a prefab instance, reconstruct submesh structure.
-					 */
-					if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance )
-					{
-						if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
-						{
-							prefabReverted = true;
-						}
-					}
-				}
+				// foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
+				// {
+				// 	/**
+				// 	 * If it's a prefab instance, reconstruct submesh structure.
+				// 	 */
+				// 	if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance )
+				// 	{
+				// 		if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
+				// 		{
+				// 			Debug.Log("rebuilt " + pb.name);
+				// 			prefabReverted = true;
+				// 		}
+				// 	}
+				// }
 
 				if(prefabReverted)
 				{
