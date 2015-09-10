@@ -339,14 +339,14 @@ namespace ProBuilder2.EditorCommon
 
 			if(stair_cirumference > 0f)
 			{
+				stair_mirror = EditorGUILayout.Toggle("Mirror", stair_mirror);
+				
 				stair_size.x = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Width", "The width of an individual stair step."), stair_size.x, .01f, 10f), .01f);				
 				stair_size.y = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Height", "The total height of this staircase.  You may enter any value in the float field."), stair_size.y, .01f, 10f), .01f);				
 				stair_size.z = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, 0f, 10f), 0f);				
 			}
 			else
 			{
-				stair_mirror = EditorGUILayout.Toggle("Mirror", stair_mirror);
-
 				stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
 
 				stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
