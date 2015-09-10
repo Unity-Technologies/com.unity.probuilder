@@ -153,7 +153,7 @@ public class pb_ShapeGenerator
 		/// vertex index, face index
 		int v = 0, t = 0;
 
-		float cir = circumference * Mathf.Deg2Rad;
+		float cir = Mathf.Abs(circumference) * Mathf.Deg2Rad;
 		float outerRadius = innerRadius + stairWidth;
 
 		for(int i = 0; i < steps; i++)
@@ -314,6 +314,19 @@ public class pb_ShapeGenerator
 				});
 
 			faces = faces.Add(new pb_Face(new int[] {v+2, v+1, v+0, v+2, v+3, v+1}));
+		}
+
+		if(circumference < 0f)
+		{
+			Vector3 flip = new Vector3(-1f, 1f, 1f);
+
+			for(int i = 0; i < vertices.Length; i++)
+			{
+				vertices[i].Scale(flip);
+			}
+
+			foreach(pb_Face f in faces)
+				f.ReverseIndices();
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);

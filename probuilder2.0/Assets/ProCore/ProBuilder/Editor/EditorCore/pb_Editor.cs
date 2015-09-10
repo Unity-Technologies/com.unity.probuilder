@@ -20,7 +20,7 @@ public class pb_Editor : EditorWindow
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
 	#if PB_DEBUG
-	// static pb_Profiler profiler = new pb_Profiler("pb_Editor");
+	static pb_Profiler profiler = new pb_Profiler("pb_Editor");
 	#endif
 
 #region LOCAL MEMBERS && EDITOR PREFS
@@ -1372,6 +1372,12 @@ public class pb_Editor : EditorWindow
 					HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
 					// profiler.EndSample();
 
+					// selection[i].ToMesh();
+					// selection[i].Refresh();
+					// Vector3[] normals = selection[i].msh.normals;
+					// selection[i].Optimize();
+					// Vector3 camDirLocal = -selection[i].transform.InverseTransformDirection(cam.transform.forward);
+
 					for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 					{
 						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
@@ -1393,6 +1399,9 @@ public class pb_Editor : EditorWindow
 
 
 							// profiler.BeginSample("backface culling");
+							// Vector3 nrm = normals[m_uniqueIndices[i][n]];
+							// float dot = Vector3.Dot(camDirLocal, nrm);
+							// if(!pref_backfaceSelect && (dot < 0 || pb_HandleUtility.PointIsOccluded(cam, selection[i], v)))
 							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )	
 							{
 								// profiler.EndSample();
@@ -1440,15 +1449,17 @@ public class pb_Editor : EditorWindow
 					pb_Object pb = pool[i];
 					selectedFaces = new List<pb_Face>(pb.SelectedFaces);
 
-					if(!pb.isSelectable) continue;
+					if(!pb.isSelectable)
+						continue;
 
-					Vector3[] verticesInWorldSpace = limitFaceDragCheckToSelection ? m_verticesInWorldSpace[i] : pb.VerticesInWorldSpace();
+					Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
 					bool addToSelection = false;
 
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
 						pb_Face face = pb.faces[n];
 
+						/// face is behind the camera
 						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )//|| (!pref_backfaceSelect && Vector3.Dot(dir, nrm) > 0f))
 							continue;
 
@@ -2749,18 +2760,13 @@ public class pb_Editor : EditorWindow
 				// profiler.BeginSample("GetUniversalEdges (dictionary)");
 				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
 				// profiler.EndSample();
-				
-				// profiler.BeginSample("VerticesInWorldSpace");
-				m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
-				// profiler.EndSample();
 			}
 			// profiler.EndSample();
 		}
 
-
-		SelectedFacesInEditZone 			= new pb_Face[selection.Length][];
+		SelectedFacesInEditZone = new pb_Face[selection.Length][];
 		
-		m_handlePivotWorld			= Vector3.zero;
+		m_handlePivotWorld = Vector3.zero;
 
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool boundsInitialized = false;
@@ -2770,6 +2776,10 @@ public class pb_Editor : EditorWindow
 			pb_Object pb = selection[i];
 			
 			pb.transform.hasChanged = false;
+	
+			// profiler.BeginSample("VerticesInWorldSpace");
+			m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
+			// profiler.EndSample();
 
 			if(!boundsInitialized && pb.SelectedTriangleCount > 0)	
 			{
@@ -2852,7 +2862,7 @@ public class pb_Editor : EditorWindow
 			if(pb == null) continue;
 
 			pb.transform.hasChanged = false;
-	
+
 			m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 
 			if(selection[i].SelectedTriangleCount > 0)

@@ -325,6 +325,7 @@ namespace ProBuilder2.EditorCommon
 		static Vector3 stair_size = new Vector3(2f, 2.5f, 4f);
 		static float stair_cirumference = 0f;
 		static bool stair_sides = true;
+		static bool stair_mirror = false;
 
 		void StairGUI()
 		{
@@ -344,6 +345,8 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
+				stair_mirror = EditorGUILayout.Toggle("Mirror", stair_mirror);
+
 				stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
 
 				stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
@@ -359,7 +362,7 @@ namespace ProBuilder2.EditorCommon
 						stair_size.x,
 						stair_size.y,
 						stair_size.z,
-						stair_cirumference,
+						stair_mirror ? -stair_cirumference : stair_cirumference,
 						stair_steps,
 						stair_sides));
 				}
@@ -380,8 +383,17 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = stair_cirumference > 0f ?
-					pb_ShapeGenerator.CurvedStairGenerator(stair_size.x, stair_size.y, stair_size.z, stair_cirumference, stair_steps, stair_sides) :
-					pb_ShapeGenerator.StairGenerator(stair_size, stair_steps, stair_sides);
+					pb_ShapeGenerator.CurvedStairGenerator(
+						stair_size.x,
+						stair_size.y,
+						stair_size.z,
+						stair_mirror ? -stair_cirumference : stair_cirumference,
+						stair_steps,
+						stair_sides) :
+					pb_ShapeGenerator.StairGenerator(
+						stair_size,
+						stair_steps,
+						stair_sides);
 
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
