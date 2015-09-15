@@ -1,3 +1,10 @@
+-- ProBuilder 2.4.7f0 (r3634)
+
+# Bug Fixes
+	- Fix possible null reference error when working with prefabs that have been duplicated.
+	- Additional error checking when stripping pb_Objects from scene added.
+	- When ProBuilder-izing objects, ask user whether or not to traverse children.
+
 -- ProBuilder 2.4.6f0 (r3616)
 
 # Features
