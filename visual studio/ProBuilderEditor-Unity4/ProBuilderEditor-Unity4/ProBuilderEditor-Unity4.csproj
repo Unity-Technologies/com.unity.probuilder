@@ -73,6 +73,9 @@
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Handle_Utility.cs">
       <Link>pb_Handle_Utility.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Hierarchy_Listener.cs">
+      <Link>pb_Hierarchy_Listener.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ISceneEditor.cs">
       <Link>pb_ISceneEditor.cs</Link>
     </Compile>
