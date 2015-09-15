@@ -1,18 +1,6 @@
 -- ProBuilder 2.4.6f0 (r3616)
 
 # Features
-	- Add option to mirror curved stairs.
-
-# Bug Fixes
-	- Fix mesh bounds not refreshing when adjusting vertices with Quick Offset tool.
-	- Fix mis-calibrated drag selection wwhen first entering element mode after moving an object.
-	- Fix issue where duplicating GameObjects with child pb_Objects would leave references to original meshes intact, resulting in odd behavior when deleting objects.
-	- Fix bug where prefabs would not "Apply" changes to all children equally.
-	- Improve performance when editing scenes with many ProBuilder object prefabs.
-
--- ProBuilder 2.4.6b0 (r3595)
-
-# Features
 	- Add preference to set default Entity type.
 	- Add preference to set dedicated keyboard shortcuts for entering Object, Face, Vertex, and Edge mode.
 	- New Curved Stair generator, and stairs now produce manifold geometry.
@@ -29,6 +17,11 @@
 	- Fix null reference errors when Shape Creation Tool is open with preview enabled and a script reload takes place.
 	- Fix null reference sometimes caused by a Mirror action.
 	- Fix bug where merging objects would always add a MeshCollider, even if one already exists.
+	- Fix mesh bounds not refreshing when adjusting vertices with Quick Offset tool.
+	- Fix mis-calibrated drag selection wwhen first entering element mode after moving an object.
+	- Fix issue where duplicating GameObjects with child pb_Objects would leave references to original meshes intact, resulting in odd behavior when deleting objects.
+	- Fix bug where prefabs would not "Apply" changes to all children equally.
+	- Improve performance when editing scenes with many ProBuilder object prefabs.
 
 -- ProBuilder 2.4.5p0 (r3531)
 

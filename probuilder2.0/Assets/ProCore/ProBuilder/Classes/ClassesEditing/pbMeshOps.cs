@@ -951,25 +951,17 @@ namespace ProBuilder2.MeshOperations
 	* returning from this function, as this only creates the pb_Object and sets its
 	* fields.  This allows you to record the mesh and gameObject for Undo operations.
 	*/
-	public static pb_Object AddPbObjectToObject(GameObject go, bool preserveFaces)
+	public static bool ResetPbObjectWithMeshFilter(pb_Object pb, bool preserveFaces)
 	{
-		MeshFilter mf = go.GetComponent<MeshFilter>();
+		MeshFilter mf = pb.gameObject.GetComponent<MeshFilter>();
 
 		if(mf == null || mf.sharedMesh == null)
 		{
-			Debug.Log(go.name + " does not have a mesh or Mesh Filter component.");
-			return (pb_Object)null;
+			Debug.Log(pb.name + " does not have a mesh or Mesh Filter component.");
+			return false;
 		}
 
 		Mesh m = mf.sharedMesh;
-
-		pb_Object pb = go.GetComponent<pb_Object>();
-
-		if(pb != null)
-		{
-			Debug.Log(go.name + " is already a pb_Object!");
-			return pb;
-		}
 
 		int vertexCount = m.vertexCount;
 		Vector3[] m_vertices = m.vertices;
@@ -980,6 +972,12 @@ namespace ProBuilder2.MeshOperations
 		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
 		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
 		List<pb_Face> faces = new List<pb_Face>();
+
+		MeshRenderer mr = pb.gameObject.GetComponent<MeshRenderer>();
+		if(mr == null) mr = pb.gameObject.AddComponent<MeshRenderer>();
+
+		Material[] sharedMaterials = mr.sharedMaterials;
+		int mat_length = sharedMaterials.Length;
 
 		for(int n = 0; n < m.subMeshCount; n++)
 		{
@@ -1045,7 +1043,7 @@ namespace ProBuilder2.MeshOperations
 					faces.Add( 
 						new pb_Face(
 							faceTris,
-							go.GetComponent<MeshRenderer>().sharedMaterials[n],
+							sharedMaterials[n >= mat_length ? mat_length - 1 : n],
 							new pb_UV(),
 							0,		// smoothing group
 							-1,		// texture group
@@ -1056,15 +1054,13 @@ namespace ProBuilder2.MeshOperations
 			}
 		}
 
-		pb = go.AddComponent<pb_Object>();
-
 		pb.SetVertices(verts.ToArray());
 		pb.SetUV(uvs.ToArray());
 		pb.SetFaces(faces.ToArray());
 		pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(verts.ToArray()));
 		pb.SetColors(cols.ToArray());
 
-		return pb;
+		return true;
 	}
 #endregion
 	}

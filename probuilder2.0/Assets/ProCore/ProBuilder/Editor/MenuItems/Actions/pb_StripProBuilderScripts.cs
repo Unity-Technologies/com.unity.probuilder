@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 			if(!EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
 				return;
 
-			pb_Object[] all = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
+			pb_Object[] all = (pb_Object[]) Resources.FindObjectsOfTypeAll(typeof(pb_Object) );
 
 			Strip(all);
 		}
@@ -33,28 +33,63 @@ namespace ProBuilder2.Actions
 			if(!EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
 				return;
 
-			pb_Object[] all = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-
-			GameObject[] gos = new GameObject[all.Length];
-			for(int i = 0; i < all.Length; i++) gos[i] = all[i].gameObject;
-
-			Strip(all);
+			foreach(Transform t in Selection.transforms)
+			{
+				foreach(pb_Object pb in t.GetComponentsInChildren<pb_Object>(true))
+					DoStrip(pb);
+			}
 		}
 
 		public static void Strip(pb_Object[] all)
 		{
-			for(int i = 0; i < all.Length; i++)
+				for(int i = 0; i < all.Length; i++)
+				{
+					if( EditorUtility.DisplayCancelableProgressBar(
+						"Stripping ProBuilder Scripts",
+						"Working over " + all[i].id + ".",
+						((float)i / all.Length)) )
+						break;
+
+					DoStrip(all[i]);
+				}
+
+			EditorUtility.ClearProgressBar();
+			EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
+
+			if(pb_Editor.instance)
+				pb_Editor.instance.UpdateSelection();
+		}
+
+
+		public static void DoStrip(pb_Object pb)
+		{
+			try
 			{
-				EditorUtility.DisplayProgressBar(
-					"Stripping ProBuilder Scripts",
-					"Working over " + all[i].id + ".",
-					((float)i / all.Length));
+				GameObject go = pb.gameObject;
 
-				Mesh m = pbUtil.DeepCopyMesh(all[i].msh);
+				Renderer ren = go.GetComponent<Renderer>();
 
-				GameObject go = all[i].gameObject;
+				if(ren != null)
+					EditorUtility.SetSelectedWireframeHidden(ren, false);
 
-				DestroyImmediate(all[i]);
+				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
+					return;
+
+				pb_Editor_Utility.VerifyMesh(pb);
+
+				if(pb.msh == null)	
+				{
+					DestroyImmediate(pb);
+
+					if(go.GetComponent<pb_Entity>())
+						DestroyImmediate(go.GetComponent<pb_Entity>());
+
+					return;
+				}
+
+				Mesh m = pbUtil.DeepCopyMesh(pb.msh);
+
+				DestroyImmediate(pb);
 				
 				if(go.GetComponent<pb_Entity>())
 					DestroyImmediate(go.GetComponent<pb_Entity>());
@@ -63,12 +98,7 @@ namespace ProBuilder2.Actions
 				if(go.GetComponent<MeshCollider>())
 					go.GetComponent<MeshCollider>().sharedMesh = m;
 			}
-
-			EditorUtility.ClearProgressBar();
-			EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
-
-			if(pb_Editor.instance)
-				pb_Editor.instance.UpdateSelection();
+			catch {}
 		}
 	}
 }

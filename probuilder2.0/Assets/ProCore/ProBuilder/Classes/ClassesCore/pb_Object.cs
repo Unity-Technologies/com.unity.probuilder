@@ -26,13 +26,13 @@ public class pb_Object : MonoBehaviour
 {
 #region MONOBEHAVIOUR
 
-	void Start()
+	void Awake()
 	{
 		if(GetComponent<MeshRenderer>().isPartOfStaticBatch)
 			return;
 
 		// Absolutely no idea why normals sometimes go haywire
-		if(msh == null || msh.normals == null || msh.normals[0] == Vector3.zero)
+		if(msh == null || msh.normals == null || msh.normals.Length < 1 || msh.normals[0] == Vector3.zero)
 		{
 			ReconstructMesh();
 		}

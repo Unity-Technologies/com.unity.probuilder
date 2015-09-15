@@ -90,20 +90,18 @@ public class pb_Menu_Commands : Editor
 	/**
 	 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
 	 */
-	public static void ProBuilderize(GameObject[] selected, bool preserveFaces)
+	public static void ProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
 	{
-		foreach(MeshFilter mf in selected.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()))
+		foreach(MeshFilter mf in selected)
 		{
 			if(mf.sharedMesh == null)
 				continue;
 
 			GameObject go = mf.gameObject;
-
-			Undo.RegisterFullObjectHierarchyUndo(go, "ProBuilderize");
-
 			MeshRenderer mr = go.GetComponent<MeshRenderer>();
 
-			pb_Object pb = pbMeshOps.AddPbObjectToObject(go, preserveFaces);
+			pb_Object pb = Undo.AddComponent<pb_Object>(go);
+			pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
 
 			EntityType entityType = EntityType.Detail;
 
@@ -129,9 +127,9 @@ public class pb_Menu_Commands : Editor
 			// reset convexity and trigger settings, which we can assume are user
 			// set already.
 			if( !pb.gameObject.GetComponent<pb_Entity>() )
-				pb.gameObject.AddComponent<pb_Entity>().SetEntity(entityType);
+				Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
 			else
-				pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
+				Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
 			// pb_Editor_Utility.SetEntityType(entityType, t.gameObject);
 		}
 

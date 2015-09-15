@@ -61,23 +61,10 @@ namespace ProBuilder2.EditorCommon
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 				{
 					if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
+					{
 						prefabReverted = true;
+					}
 				}
-
-				// foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-				// {
-				// 	/**
-				// 	 * If it's a prefab instance, reconstruct submesh structure.
-				// 	 */
-				// 	if(	PrefabUtility.GetPrefabType(pb.gameObject) == PrefabType.PrefabInstance )
-				// 	{
-				// 		if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
-				// 		{
-				// 			Debug.Log("rebuilt " + pb.name);
-				// 			prefabReverted = true;
-				// 		}
-				// 	}
-				// }
 
 				if(prefabReverted)
 				{
