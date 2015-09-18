@@ -1,4 +1,7 @@
--- ProBuilder 2.4.7f0 (r3634)
+-- ProBuilder 2.4.7f0 (r3664)
+
+# Changes
+	- New upgrade procedure skips complicated Upgrade Kit in favor of a slightly more manual but more reliable approach.  See FAQ or ProBuilder Documentation for more information.
 
 # Bug Fixes
 	- Fix possible null reference error when working with prefabs that have been duplicated.
