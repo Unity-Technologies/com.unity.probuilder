@@ -54,6 +54,7 @@ public class pb_UV_Editor : EditorWindow
 	const int HANDLE_SIZE = 128;
 	const int MIN_ACTION_WINDOW_SIZE = 128;
 	const float MAX_GRAPH_SCALE = 15f;
+	const float MIN_GRAPH_SCALE = .0001f;
 
 	const float MAX_PROXIMITY_SNAP_DIST_UV = .15f; 		///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (UV coordinates)
 	const float MAX_PROXIMITY_SNAP_DIST_CANVAS = 12f;	///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
@@ -500,7 +501,7 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("MouseDrag");
 		#endif
 
-		if(m_mouseDragging && !modifyingUVs && !m_draggingCanvas && !m_rightMouseDrag)
+		if(m_mouseDragging && pb_Handle_Utility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
 		{
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = DRAG_BOX_COLOR;
@@ -2264,7 +2265,7 @@ public class pb_UV_Editor : EditorWindow
 	void SetCanvasScale(float zoom)
 	{
 		Vector2 center = -(uvCanvasOffset / uvGraphScale);
-		uvGraphScale = Mathf.Clamp(zoom, .01f, MAX_GRAPH_SCALE);
+		uvGraphScale = Mathf.Clamp(zoom, MIN_GRAPH_SCALE, MAX_GRAPH_SCALE);
 		SetCanvasCenter( center * uvGraphScale );
 	}
 
@@ -3425,7 +3426,7 @@ public class pb_UV_Editor : EditorWindow
 		// if line color and background color are the same but we want transparent backgruond,
 		// make sure that the background fill will be distinguishable from the lines during the
 		// opacity wipe
-		if(TransparentBackground && (screenshot_lineColor.Approx(screenshot_backgroundColor, .01f)))
+		if(TransparentBackground && (screenshot_lineColor.Approx(screenshot_backgroundColor, .001f)))
 		{
 			screenshot_backgroundColor.r += screenshot_backgroundColor.r < .9f ? .1f : -.1f;
 			screenshot_backgroundColor.g += screenshot_backgroundColor.g < .9f ? .1f : -.1f;
