@@ -50,6 +50,7 @@ public class pb_Editor : EditorWindow
 	private SelectMode previousSelectMode;
 
 	public HandleAlignment handleAlignment { get; private set; }
+	
 	#if !PROTOTYPE
 	private HandleAlignment previousHandleAlignment;
 	#endif
@@ -124,27 +125,12 @@ public class pb_Editor : EditorWindow
 		eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
 		eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
 
-		bool isProSkin = true; // EditorUtility.isProSkin;
+		bool isProSkin = EditorGUIUtility.isProSkin;
 
-		// Texture2D object_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Object" : "GUI/ProBuilderGUI_Mode_Object_Pro", typeof(Texture2D)));
 		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
-
 		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		// Texture2D face_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-
 		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		// Texture2D vertex_Graphic_on = (Texture2D)(Resources.Load(!isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-
 		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
-		// Texture2D edge_Graphic_on = (Texture2D)(Resources.Load(!EditorGUIUtility.isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
-
-		// objectLevelStyle = new GUIStyle();
-		// objectLevelStyle.normal.background = object_Graphic_off;
-		// objectLevelStyle.hover.background = object_Graphic_on;
-
-		// vertexLevelStyle = new GUIStyle();
-		// vertexLevelStyle.normal.background = vertex_Graphic_off;
-		// vertexLevelStyle.hover.background = vertex_Graphic_on;
 
 		if(pref_showToolbar)
 		{
@@ -292,15 +278,49 @@ public class pb_Editor : EditorWindow
 	bool tool_vertexColors = false;
 	bool tool_growSelection = false;
 	bool tool_extrudeButton = false;
-	#if !PROTOTYPE
 	bool tool_weldButton = false;
-	#endif
 	Vector2 scroll = Vector2.zero;
 	Rect elementModeToolbarRect = new Rect(3,6,128,24);
+	private static GUIContent gui_content_bridge = new GUIContent("", "");
+#if PROTOTYPE
+	private static readonly Color ProOnlyTint = new Color(1f, .65f, .65f, 1f);
+#endif
+
+	/**
+	 *	Set GUI.enabled to true or false based on whether PROTOTYPE is defined or not.
+	 */
+	private bool ProOnlyButton(string content, string tooltip, GUIStyle style = null)
+	{
+#if PROTOTYPE
+		pb_GUI_Utility.PushGUIEnabled(false);
+		gui_content_bridge.text = content;
+		gui_content_bridge.tooltip = tooltip + (string.IsNullOrEmpty(tooltip) ? "(ProBuilder Advanced Feature" : "\n(ProBuilder Advanced Feature)");
+		pb_GUI_Utility.PushGUIContentColor(ProOnlyTint);
+		bool ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
+		pb_GUI_Utility.PopGUIContentColor();
+		pb_GUI_Utility.PopGUIEnabled();
+		return ret;
+#else
+		gui_content_bridge.text = content;
+		gui_content_bridge.tooltip = tooltip;
+		return style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
+#endif
+	}
+
+	private bool AutoContentButton(string content, string tooltip, GUIStyle style = null)
+	{
+		gui_content_bridge.text = content;
+		gui_content_bridge.tooltip = tooltip;
+
+		if(style != null)
+			return GUILayout.Button(gui_content_bridge, style);
+		else
+			return GUILayout.Button(gui_content_bridge);
+	}
 
 	void OnGUI()
 	{
-		Event e = Event.current;	/// Different than OnSceneGUI currentEvent ?
+		Event e = Event.current;
 
 		switch(e.type)
 		{
@@ -350,64 +370,37 @@ public class pb_Editor : EditorWindow
 			pb_GUI_Utility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 		}
-
 		
-		if(editLevel == EditLevel.Geometry)
-		{
-			GUILayout.Label("Selection", EditorStyles.boldLabel);
-
-			EditorGUI.BeginChangeCheck();
-				handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment);
-			if(EditorGUI.EndChangeCheck())
-				SetHandleAlignment(handleAlignment);
-			
-			EditorGUI.BeginChangeCheck();
-
-				if( GUILayout.Button(pref_backfaceSelect ? "Select All" : "Select Visible", EditorStyles.miniButton) )
-					pref_backfaceSelect = !pref_backfaceSelect;
-
-			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
-		}
-
 		scroll = GUILayout.BeginScrollView(scroll);
 
-		#region Tools
+		GUILayout.Label("Tools", EditorStyles.boldLabel);
+		ToolsGUI();
 
-			GUILayout.Label("Tools", EditorStyles.boldLabel);
+		GUILayout.Label("Selection", EditorStyles.boldLabel);
+		SelectionGUI();
 
-			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-			pb_GUI_Utility.DrawSeparator(1);
-			GUI.backgroundColor = Color.white;
+		GUILayout.Label("Object Actions", EditorStyles.boldLabel);
+		ObjectGUI();
 
-			if(GUILayout.Button(new GUIContent("Shape", "Open Shape Creation Panel"), EditorStyles.miniButton))
-				pb_Geometry_Interface.MenuOpenShapeCreator();
+		if(editLevel == EditLevel.Geometry)
+		{
+			switch(selectionMode)
+			{
+				case SelectMode.Edge:
+					GUILayout.Label("Edge Actions", EditorStyles.boldLabel);
+					break;
 
-			#if !PROTOTYPE
-			if(GUILayout.Button(new GUIContent("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces."), EditorStyles.miniButton))	
-				pb_Material_Editor.MenuOpenMaterialEditor();
-			#endif
+				case SelectMode.Vertex:
+					GUILayout.Label("Vertex Actions", EditorStyles.boldLabel);
+					break;
 
-			#if !PROTOTYPE
-			if(GUILayout.Button(new GUIContent("UV Editor", "Open UV Editor Window"), EditorStyles.miniButton))	
-				pb_UV_Editor.MenuOpenUVEditor();
-			#endif
+				case SelectMode.Face:
+					GUILayout.Label("Face Actions", EditorStyles.boldLabel);
+					break;
+			}
 
-			tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Colors", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
-				tool_vertexColors,
-				pb_Menu_Commands.MenuOpenVertexColorsEditor,
-				pb_Menu_Commands.VertexColorsGUI,
-				Screen.width,
-				36,
-				selection);
-
-			#if !PROTOTYPE
-			if(GUILayout.Button("Smoothing", EditorStyles.miniButton))
-				pb_Smoothing_Editor.Init();
-			#endif
-		#endregion
-
-		GUILayout.Label("Actions", EditorStyles.boldLabel);
+			ActionsGUI();
+		}	
 
 		GUILayout.Space(2);
 		GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
@@ -415,286 +408,288 @@ public class pb_Editor : EditorWindow
 		GUI.backgroundColor = Color.white;
 		GUILayout.Space(2);
 
-		#region Top
-			if(editLevel == EditLevel.Top)
-			{
-				#if !PROTOTYPE
+		EntityGUI();
 
-				GUI.enabled = true;
-				if(GUILayout.Button(new GUIContent("Merge", "Combine all selected ProBuilder objects into a single object."), EditorStyles.miniButton))
-					pb_Menu_Commands.MenuMergeObjects(selection);
-
-				if(GUILayout.Button(new GUIContent("Mirror", "Open the Mirror Tool panel."), EditorStyles.miniButton)) 
-					EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
-
-				#endif
-					
-				if(GUILayout.Button(new GUIContent("Flip Normal", "If Top level, entire object normals are reversed.  Else only selected face normals are flipped."), EditorStyles.miniButton))
-					pb_Menu_Commands.MenuFlipNormals(selection);
-
-				#if !PROTOTYPE
-
-				if(GUILayout.Button("Subdivide", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuSubdivide(selection);
-
-				if(GUILayout.Button("Set Pivot", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuSetPivot(selection);
-
-				GUILayout.Space(2);
-				GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-				pb_GUI_Utility.DrawSeparator(1);
-				GUI.backgroundColor = Color.white;
-				GUILayout.Space(2);
-
-				// Boolean operations
-
-				// @todo Remove!
-				// if(GUILayout.Button("Union"))
-				// 	pb_Menu_Commands.MenuUnion(selection);
-
-				// if(GUILayout.Button("Subtract"))
-				// 	pb_Menu_Commands.MenuSubtract(selection);
-
-				// if(GUILayout.Button("Intersect"))
-				// 	pb_Menu_Commands.MenuIntersect(selection);
-
-				#endif
-
-				GUI.enabled = !EditorApplication.isPlaying;
-
-				GUILayout.BeginHorizontal();
-					if(GUILayout.Button("Set Detail", EditorStyles.miniButtonLeft))
-					{
-						pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
-						ToggleEntityVisibility(EntityType.Detail, show_Detail);
-					}
-
-					if(GUILayout.Button( show_Detail ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) ))
-					{
-						show_Detail = !show_Detail;
-						EditorPrefs.SetBool(pb_Constant.pbShowDetail, show_Detail);
-						ToggleEntityVisibility(EntityType.Detail, show_Detail);
-					}
-				GUILayout.EndHorizontal();
-
-					GUILayout.BeginHorizontal();
-					if(GUILayout.Button("Set Mover", EditorStyles.miniButtonLeft)) 
-					{
-						pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
-						ToggleEntityVisibility(EntityType.Mover, show_Mover);
-					}
-
-					if(GUILayout.Button( show_Mover ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-						show_Mover = !show_Mover;
-						EditorPrefs.SetBool(pb_Constant.pbShowMover, show_Mover);
-						ToggleEntityVisibility(EntityType.Mover, show_Mover);
-					}
-				GUILayout.EndHorizontal();
-
-				GUILayout.BeginHorizontal();
-					if(GUILayout.Button("Set Collider", EditorStyles.miniButtonLeft)) 
-					{
-						pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
-						ToggleEntityVisibility(EntityType.Collider, show_Collider);
-					}
-
-					if(GUILayout.Button( show_Collider ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-						show_Collider = !show_Collider;
-						EditorPrefs.SetBool(pb_Constant.pbShowCollider, show_Collider);
-						ToggleEntityVisibility(EntityType.Collider, show_Collider);
-					}
-				GUILayout.EndHorizontal();
-
-				GUILayout.BeginHorizontal();
-					if(GUILayout.Button("Set Trigger", EditorStyles.miniButtonLeft)) 
-					{
-						pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
-						ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-					}
-
-					if(GUILayout.Button( show_Trigger ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-						show_Trigger = !show_Trigger;
-						EditorPrefs.SetBool(pb_Constant.pbShowTrigger, show_Trigger);
-						ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-					}
-				GUILayout.EndHorizontal();
-
-				GUILayout.Space(3);
-				GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-				pb_GUI_Utility.DrawSeparator(1);
-				GUI.backgroundColor = Color.white;
-				GUILayout.Space(3);
-
-
-				GUI.enabled = true;
-			}
-		#endregion
-
-		#region Geometry
-
-			// Soft Select
-			// Soft Selection Distance Value
-			// Soft Selection Falloff Value
-			// Use Angle
-			// Angle Value
-			GUI.enabled = true;
-			
-			if(editLevel != EditLevel.Top)
-			{
-				/********************************************************
-				*						Selection 						*
-				********************************************************/
-				GUI.enabled = selectedVertexCount > 0;
-				
-				tool_growSelection = pb_GUI_Utility.ToolSettingsGUI("Grow", "Adds adjacent faces to the current selection.  Optionally can restrict augmentation to faces within a restricted angle difference.",
-					tool_growSelection,
-					pb_Menu_Commands.MenuGrowSelection,
-					pb_Menu_Commands.GrowSelectionGUI,
-					selectionMode == SelectMode.Face,
-					Screen.width,
-					54,
-					selection);
-
-				if(GUILayout.Button("Shrink", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuShrinkSelection(selection);
-
-				if(GUILayout.Button("Invert", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuInvertSelection(selection);
-
-				/********************************************************
-				*						Edge Level 						*
-				********************************************************/
-				if(selectionMode == SelectMode.Edge)
-				{
-					GUI.enabled = selectedEdgeCount > 0;
-					if(GUILayout.Button("Loop", EditorStyles.miniButton)) 
-						pb_Menu_Commands.MenuLoopSelection(selection);
-
-					if(GUILayout.Button("Ring", EditorStyles.miniButton))
-						pb_Menu_Commands.MenuRingSelection(selection);
-				}
-
-				/********************************************************
-				*						Face Level 						*
-				********************************************************/
-				if(editLevel == EditLevel.Geometry)
-				{
-					GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-					GUILayout.Space(2);
-					pb_GUI_Utility.DrawSeparator(1);
-					GUILayout.Space(2);
-					GUI.backgroundColor = Color.white;
-
-					/********************************************************
-					*					Always Show 						*
-					********************************************************/
-
-					GUI.enabled = selectedVertexCount > 0;
-
-					if(GUILayout.Button(new GUIContent("Set Pivot", "Set the pivot of selected geometry to the center of the current element selection."), EditorStyles.miniButton))
-						pb_Menu_Commands.MenuSetPivot(selection);
-
-					GUI.enabled = selectedFaceCount > 0 || selectedEdgeCount > 0;
-					
-					tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
-						tool_extrudeButton,
-						pb_Menu_Commands.MenuExtrude,
-						pb_Menu_Commands.ExtrudeButtonGUI,
-						Screen.width,
-						36,
-						selection);
-
-					GUI.enabled = selectedFaceCount > 0;
-
-					#if !PROTOTYPE
-
-					if(GUILayout.Button("Flip Normals", EditorStyles.miniButton))
-						pb_Menu_Commands.MenuFlipNormals(selection);
-
-					if(GUILayout.Button("Delete", EditorStyles.miniButton)) 
-						pb_Menu_Commands.MenuDeleteFace(selection);
-
-					if(GUILayout.Button("Detach", EditorStyles.miniButton))
-						pb_Menu_Commands.MenuDetachFacesContext(selection);
-
-					GUI.enabled = selectedFaceCount > 1;
-					if(GUILayout.Button("Merge Faces", EditorStyles.miniButton))
-						pb_Menu_Commands.MenuMergeFaces(selection);
-
-					switch(selectionMode)
-					{
-						case SelectMode.Face:
-
-							GUI.enabled = selectedFaceCount > 0;
-							if(GUILayout.Button("Subdiv Face", EditorStyles.miniButton))
-								pb_Menu_Commands.MenuSubdivideFace(selection);
-							break;
-
-						case SelectMode.Edge:
-
-							GUI.enabled = selectedEdgeCount == 2;
-							if(GUILayout.Button("Bridge", EditorStyles.miniButton))
-								pb_Menu_Commands.MenuBridgeEdges(selection);
-
-							GUI.enabled = selectedEdgeCount > 1;
-							if(GUILayout.Button("Connect", EditorStyles.miniButton)) 
-								pb_Menu_Commands.MenuConnectEdges(selection);
-
-							GUI.enabled = selectedEdgeCount > 0;
-							if(GUILayout.Button(new GUIContent("Insert Loop", "Inserts an Edge loop by selecting the edge ring, then connecting the centers of all edges."), EditorStyles.miniButton))
-								pb_Menu_Commands.MenuInsertEdgeLoop(selection);
-
-							break;
-
-						case SelectMode.Vertex:
-
-							GUI.enabled = per_object_vertexCount_distinct > 1;
-							if(GUILayout.Button("Connect", EditorStyles.miniButton))
-								pb_Menu_Commands.MenuConnectVertices(selection);
-
-							tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
-								tool_weldButton,
-								pb_Menu_Commands.MenuWeldVertices,
-								pb_Menu_Commands.WeldButtonGUI,
-								Screen.width,
-								20,
-								selection);
-
-							if(GUILayout.Button("Collapse", EditorStyles.miniButton))
-								pb_Menu_Commands.MenuCollapseVertices(selection);
-
-							GUI.enabled = per_object_vertexCount_distinct > 0;
-							if(GUILayout.Button("Split", EditorStyles.miniButton))
-								pb_Menu_Commands.MenuSplitVertices(selection);
-							
-							break;
-					}
-
-					#endif
-				}
-			}
-
-			GUI.enabled = true;
-
-			#if PB_DEBUG && BUGGER
-			
-			GUILayout.Space(4);
-			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-			pb_GUI_Utility.DrawSeparator(2);
-			GUI.backgroundColor = Color.white;
-			GUILayout.Space(4);
-
-			if(GUILayout.Button("times",GUILayout.MinWidth(20)))
-			{
-			}
-
-			if(GUILayout.Button("reset",GUILayout.MinWidth(20)))
-			{
-			}
-			#endif
-		#endregion
-		
 		GUILayout.EndScrollView();
+	}
+
+	void SelectionGUI()
+	{
+		bool wasEnabled = GUI.enabled;
+
+		EditorGUI.BeginChangeCheck();
+		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - 8));
+		
+		if(EditorGUI.EndChangeCheck())
+			SetHandleAlignment(handleAlignment);
+		
+		EditorGUI.BeginChangeCheck();
+
+			if( AutoContentButton(pref_backfaceSelect ? "Select All" : "Select Visible", "If Select All is enabled, drag and click selections will select elements hidden behind faces.  If Select Visible is on, only elements that are viewable in the scene will be selected.", EditorStyles.miniButton) )
+				pref_backfaceSelect = !pref_backfaceSelect;
+
+		if(EditorGUI.EndChangeCheck())
+			EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+
+		GUI.enabled = selectedVertexCount > 0;
+
+		tool_growSelection = pb_GUI_Utility.ToolSettingsGUI("Grow", "Adds adjacent faces to the current selection.  Optionally can restrict augmentation to faces within a restricted angle difference.",
+			tool_growSelection,
+			pb_Menu_Commands.MenuGrowSelection,
+			pb_Menu_Commands.GrowSelectionGUI,
+			selectionMode == SelectMode.Face,
+			Screen.width,
+			54,
+			selection);
+
+		if(AutoContentButton("Shrink", "Remove outside elements from the current selection.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuShrinkSelection(selection);
+
+		if(AutoContentButton("Invert", "Set the element selection to the inverse of what is currently selected.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuInvertSelection(selection);
+
+		switch(selectionMode)
+		{
+			case SelectMode.Edge:
+				GUI.enabled = selectedEdgeCount > 0;
+				if(AutoContentButton("Loop", "Select all edges in a loop using the current edge selection as a starting point.", EditorStyles.miniButton)) 
+					pb_Menu_Commands.MenuLoopSelection(selection);
+
+				if(AutoContentButton("Ring", "Select all edges that form a ring, using the current edge selection as a starting point.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuRingSelection(selection);
+				break;
+		}
+
+		GUI.enabled = wasEnabled;
+	}
+
+	void ToolsGUI()
+	{
+		if(AutoContentButton("Shape", "Open Shape Creation Panel", EditorStyles.miniButton))
+			pb_Geometry_Interface.MenuOpenShapeCreator();
+
+#if !PROTOTYPE
+		if(ProOnlyButton("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces.", EditorStyles.miniButton))
+			pb_Material_Editor.MenuOpenMaterialEditor();
+
+		if (ProOnlyButton("UV Editor", "Open UV Editor Window", EditorStyles.miniButton))
+			pb_UV_Editor.MenuOpenUVEditor();
+#else
+		ProOnlyButton("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces.", EditorStyles.miniButton);
+		ProOnlyButton("UV Editor", "Open UV Editor Window", EditorStyles.miniButton);
+#endif
+
+		tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Colors", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
+			tool_vertexColors,
+			pb_Menu_Commands.MenuOpenVertexColorsEditor,
+			pb_Menu_Commands.VertexColorsGUI,
+			Screen.width,
+			36,
+			selection);
+
+#if !PROTOTYPE
+		if(ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton))
+			pb_Smoothing_Editor.Init();
+#else
+		ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton);
+#endif
+	}
+
+	void ObjectGUI()
+	{
+		pb_GUI_Utility.PushGUIEnabled( selection != null && selection.Length > 1 );
+
+		if(ProOnlyButton("Merge", "Combine all selected ProBuilder objects into a single object.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuMergeObjects(selection);
+
+		pb_GUI_Utility.PopGUIEnabled();
+
+		pb_GUI_Utility.PushGUIEnabled( selection != null && selection.Length > 0 );
+
+		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton)) 
+			EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
+		
+		if(GUILayout.Button(new GUIContent("Flip All Normals", "If Top level, entire object normals are reversed.  Else only selected face normals are flipped."), EditorStyles.miniButton))
+			pb_Menu_Commands.MenuFlipNormals(selection);
+
+		if(ProOnlyButton("Subdivide", "Split all selected faces (or entire object) smaller faces", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuSubdivide(selection);
+
+		if(ProOnlyButton("Set Pivot", "Move the mesh pivot to the center of the current element selection", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuSetPivot(selection);
+
+		pb_GUI_Utility.PopGUIEnabled();
+	}
+
+	void ActionsGUI()
+	{
+		pb_GUI_Utility.PushGUIEnabled(selectedVertexCount > 0);
+
+		if(AutoContentButton("Set Pivot", "Set the pivot of selected geometry to the center of the current element selection.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuSetPivot(selection);
+
+		GUI.enabled = selectedFaceCount > 0 || selectedEdgeCount > 0;
+	
+		tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
+			tool_extrudeButton,
+			pb_Menu_Commands.MenuExtrude,
+			pb_Menu_Commands.ExtrudeButtonGUI,
+			Screen.width,
+			36,
+			selection);
+
+		GUI.enabled = selectedFaceCount > 0;
+
+		if(AutoContentButton("Flip Normals", "Reverses the direction of the selected faces.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuFlipNormals(selection);
+
+		if(AutoContentButton("Delete", "Delete the selected faces.", EditorStyles.miniButton)) 
+			pb_Menu_Commands.MenuDeleteFace(selection);
+
+		if(ProOnlyButton("Detach", "Split selected faces off to a new submesh or object.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuDetachFaces(selection);
+
+		GUI.enabled = selectedFaceCount > 1;
+		if(ProOnlyButton("Merge Faces", "Merge the selected faces to a single face.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuMergeFaces(selection);
+
+		switch(selectionMode)
+		{
+			case SelectMode.Face:
+
+				GUI.enabled = selectedFaceCount > 0;
+				if(ProOnlyButton("Subdiv Face", "Split the face selection into multiple faces by connecting the edges of each face at the center of the face.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuSubdivideFace(selection);
+				break;
+
+			case SelectMode.Edge:
+
+				GUI.enabled = selectedEdgeCount == 2;
+
+				if(ProOnlyButton("Bridge", "Create a face between two selected edges.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuBridgeEdges(selection);
+
+				GUI.enabled = selectedEdgeCount > 1;
+
+				if(ProOnlyButton("Connect", "Create an edge by connecting the center of each selected edge.", EditorStyles.miniButton)) 
+					pb_Menu_Commands.MenuConnectEdges(selection);
+
+				GUI.enabled = selectedEdgeCount > 0;
+
+				if(ProOnlyButton("Insert Loop", "Inserts an Edge loop by selecting the edge ring, then connecting the centers of all edges.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuInsertEdgeLoop(selection);
+
+				break;
+
+			case SelectMode.Vertex:
+
+				GUI.enabled = per_object_vertexCount_distinct > 1;
+
+				if(ProOnlyButton("Connect", "Insert edges connecting all selected vertices.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuConnectVertices(selection);
+
+#if PROTOTYPE
+				pb_GUI_Utility.PushGUIEnabled(false);
+				tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.\n(ProBuilder Advanced Feature)",
+					tool_weldButton,
+					pb_Menu_Commands.MenuWeldVertices,
+					pb_Menu_Commands.WeldButtonGUI,
+					Screen.width,
+					20,
+					selection);
+				pb_GUI_Utility.PopGUIEnabled();
+#else
+				tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
+					tool_weldButton,
+					pb_Menu_Commands.MenuWeldVertices,
+					pb_Menu_Commands.WeldButtonGUI,
+					Screen.width,
+					20,
+					selection);
+#endif
+
+				if(ProOnlyButton("Collapse", "Merge all selected vertices to a single vertex positioned at the center of the selection.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuCollapseVertices(selection);
+
+				GUI.enabled = per_object_vertexCount_distinct > 0;
+
+				if(ProOnlyButton("Split", "Make each selected vertex move independently.", EditorStyles.miniButton))
+					pb_Menu_Commands.MenuSplitVertices(selection);
+			
+				break;
+		}
+	}
+
+	void EntityGUI()
+	{
+		pb_GUI_Utility.PushGUIEnabled( !EditorApplication.isPlaying );
+
+		GUILayout.BeginHorizontal();
+			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+			if(GUILayout.Button("Set Detail", EditorStyles.miniButtonLeft))
+			{
+				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
+				ToggleEntityVisibility(EntityType.Detail, show_Detail);
+			}
+			pb_GUI_Utility.PopGUIEnabled();
+
+			if(GUILayout.Button( show_Detail ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) ))
+			{
+				show_Detail = !show_Detail;
+				EditorPrefs.SetBool(pb_Constant.pbShowDetail, show_Detail);
+				ToggleEntityVisibility(EntityType.Detail, show_Detail);
+			}
+		GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+			if(GUILayout.Button("Set Mover", EditorStyles.miniButtonLeft)) 
+			{
+				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
+				ToggleEntityVisibility(EntityType.Mover, show_Mover);
+			}
+			pb_GUI_Utility.PopGUIEnabled();
+
+			if(GUILayout.Button( show_Mover ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+				show_Mover = !show_Mover;
+				EditorPrefs.SetBool(pb_Constant.pbShowMover, show_Mover);
+				ToggleEntityVisibility(EntityType.Mover, show_Mover);
+			}
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+			if(GUILayout.Button("Set Collider", EditorStyles.miniButtonLeft)) 
+			{
+				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
+				ToggleEntityVisibility(EntityType.Collider, show_Collider);
+			}
+			pb_GUI_Utility.PopGUIEnabled();
+
+			if(GUILayout.Button( show_Collider ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+				show_Collider = !show_Collider;
+				EditorPrefs.SetBool(pb_Constant.pbShowCollider, show_Collider);
+				ToggleEntityVisibility(EntityType.Collider, show_Collider);
+			}
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+			if(GUILayout.Button("Set Trigger", EditorStyles.miniButtonLeft)) 
+			{
+				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
+				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
+			}
+			pb_GUI_Utility.PopGUIEnabled();
+
+			if(GUILayout.Button( show_Trigger ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+				show_Trigger = !show_Trigger;
+				EditorPrefs.SetBool(pb_Constant.pbShowTrigger, show_Trigger);
+				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
+			}
+		GUILayout.EndHorizontal();
+
+		pb_GUI_Utility.PopGUIEnabled();
 	}
 #endregion
 
@@ -782,7 +777,7 @@ public class pb_Editor : EditorWindow
 		if(currentEvent.type == EventType.MouseUp && currentEvent.button == 1 || currentEvent.type == EventType.Ignore)
 			rightMouseDown = false;
 
-		#if !PROTOTYPE
+#if !PROTOTYPE
 			// e.type == EventType.DragUpdated || 
 			if(currentEvent.type == EventType.DragPerform)
 			{
@@ -846,7 +841,7 @@ public class pb_Editor : EditorWindow
 					}
 				}
 			}
-		#endif
+#endif
 
 		DrawHandleGUI(scnView);
 
@@ -863,19 +858,19 @@ public class pb_Editor : EditorWindow
 		}
 		
 		// Finished moving vertices, scaling, or adjusting uvs
-		#if PROTOTYPE
+#if PROTOTYPE
 		if( (movingVertices || scaling) && GUIUtility.hotControl < 1)
 		{
 			OnFinishVertexModification();
 		}
-		#else
+#else
 		if( (movingVertices || movingPictures || scaling) && GUIUtility.hotControl < 1)
 		{
 			OnFinishVertexModification();
 			UpdateHandleRotation();
 			UpdateTextureHandles();
 		}
-		#endif
+#endif
 
 		// Check mouse position in scene and determine if we should highlight something
 		if(currentEvent.type == EventType.MouseMove)
@@ -907,7 +902,7 @@ public class pb_Editor : EditorWindow
 							break;
 					}
 				}
-				#if !PROTOTYPE	// TEXTURE HANDLES
+#if !PROTOTYPE  // TEXTURE HANDLES
 				else if(editLevel == EditLevel.Texture && selectedVertexCount > 0)
 				{
 					switch(currentHandle)
@@ -922,9 +917,9 @@ public class pb_Editor : EditorWindow
 							TextureScaleTool();
 							break;
 					}
-		 		}
-		 		#endif
-		 	}
+				}
+#endif
+			}
 		}
 		else
 		{
@@ -990,10 +985,10 @@ public class pb_Editor : EditorWindow
 			{
 				if(!dragging)
 				{
-					#if !PROTOTYPE
+#if !PROTOTYPE
 					if(pb_UV_Editor.instance)
 						pb_UV_Editor.instance.ResetUserPivot();
-					#endif
+#endif
 
 					RaycastCheck(currentEvent.mousePosition);
 				}
@@ -1001,10 +996,10 @@ public class pb_Editor : EditorWindow
 				{
 					dragging = false;
 
-					#if !PROTOTYPE
+#if !PROTOTYPE
 					if(pb_UV_Editor.instance)
 						pb_UV_Editor.instance.ResetUserPivot();
-					#endif
+#endif
 
 					DragCheck();
 				}
@@ -1165,7 +1160,7 @@ public class pb_Editor : EditorWindow
 		 * first.  If no hits, move on to face selection or object change.
 		 */
 		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) || 
-		   	(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
+			(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
 		{
 			UpdateSelection(false);
 			SceneView.RepaintAll();
@@ -1227,7 +1222,7 @@ public class pb_Editor : EditorWindow
 				 * Check for other editor mouse shortcuts first - todo: better way to do this.
 				 */
 
-				#if !PROTOTYPE
+#if !PROTOTYPE
 				pb_Material_Editor matEditor = pb_Material_Editor.instance;
 				if( matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pb, selectedFace) )
 					return pb;
@@ -1235,7 +1230,7 @@ public class pb_Editor : EditorWindow
 				pb_UV_Editor uvEditor = pb_UV_Editor.instance;
 				if(uvEditor != null && uvEditor.ClickShortcutCheck(pb, selectedFace))
 					return pb;
-				#endif
+#endif
 
 
 				// Check to see if we've already selected this quad.  If so, remove it from selection cache.
@@ -1431,8 +1426,8 @@ public class pb_Editor : EditorWindow
 
 				if(!vertexSelectionMask)
 					DragObjectCheck(true);
-                
-                UpdateSelection(false);
+				
+				UpdateSelection(false);
 			}
 			break;
 
@@ -2002,7 +1997,7 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
-	#if !PROTOTYPE
+#if !PROTOTYPE
 	Vector3 textureHandle = Vector3.zero;
 	Vector3 handleOrigin = Vector3.zero;
 	bool movingPictures = false;
@@ -2090,7 +2085,7 @@ public class pb_Editor : EditorWindow
 
 		Handles.matrix = prev;
 	}
-	#endif
+#endif
 #endregion
 
 #region HANDLE DRAWING
@@ -2228,7 +2223,7 @@ public class pb_Editor : EditorWindow
 			 */
 			try
 			{
-			 	System.Text.StringBuilder sb = new System.Text.StringBuilder();
+				System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 				sb.AppendLine("Faces: " + faceCount);
 				sb.AppendLine("Triangles: " + triangleCount);
@@ -2244,7 +2239,7 @@ public class pb_Editor : EditorWindow
 				sceneInfoRect.width = size.x + 8;
 				sceneInfoRect.height = size.y - 4;
 
-			 	pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, sceneInfoRect.width, sceneInfoRect.height), new Color(.1f,.1f,.1f,.55f));
+				pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, sceneInfoRect.width, sceneInfoRect.height), new Color(.1f,.1f,.1f,.55f));
 
 				GUI.Label(sceneInfoRect, gc);
 			} catch {}
@@ -2418,11 +2413,11 @@ public class pb_Editor : EditorWindow
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
 				return true;
 
-			#if !PROTOTYPE
+#if !PROTOTYPE
 			case "Set Occluder":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Occluder);
 				return true;
-			#endif
+#endif
 
 			case "Set Collider":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
@@ -2475,11 +2470,11 @@ public class pb_Editor : EditorWindow
 				}
 				return true;
 				
-			#if !PROTOTYPE
+#if !PROTOTYPE
 			case "Delete Face":
 				pb_Menu_Commands.MenuDeleteFace(selection);
 				return true;
-			#endif
+#endif
 
 			/* handle alignment */
 			case "Toggle Handle Pivot":
@@ -2495,8 +2490,8 @@ public class pb_Editor : EditorWindow
 
 			case "Set Pivot":
 
-		        if (selection.Length > 0)
-		        {
+				if (selection.Length > 0)
+				{
 					foreach (pb_Object pbo in selection)
 					{
 						pbUndo.RecordObjects(new Object[2] {pbo, pbo.transform}, "Set Pivot");
@@ -2557,10 +2552,10 @@ public class pb_Editor : EditorWindow
 	{
 		SetTool(newTool);
 
-		#if !PROTOTYPE
+#if !PROTOTYPE
 		if(pb_UV_Editor.instance != null)
 			pb_UV_Editor.instance.SetTool(newTool);
-		#endif
+#endif
 	}
 
 	public void SetHandleAlignment(HandleAlignment ha)
@@ -2663,7 +2658,7 @@ public class pb_Editor : EditorWindow
 				SceneView.RepaintAll();
 				break;
 
-			#if !PROTOTYPE
+#if !PROTOTYPE
 			case EditLevel.Texture:
 				
 				previousHandleAlignment = handleAlignment;
@@ -2671,17 +2666,17 @@ public class pb_Editor : EditorWindow
 
 				SetHandleAlignment(HandleAlignment.Plane);
 				break;
-			#endif
+#endif
 		}
 
 
-		#if !PROTOTYPE
+#if !PROTOTYPE
 		if(previousEditLevel == EditLevel.Texture && el != EditLevel.Texture)
 		{
 			SetSelectionMode(previousSelectMode);
 			SetHandleAlignment(previousHandleAlignment);
 		}
-		#endif
+#endif
 
 		if(editLevel != EditLevel.Texture)
 			EditorPrefs.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
@@ -2832,9 +2827,9 @@ public class pb_Editor : EditorWindow
 
 		DrawNormals(drawNormals);
 
-		#if !PROTOTYPE
+#if !PROTOTYPE
 		UpdateTextureHandles();
-		#endif
+#endif
 		
 		currentHandleRotation = handleRotation;
 
@@ -2989,7 +2984,7 @@ public class pb_Editor : EditorWindow
 
 #region HANDLE AND GUI CALCULTATIONS
 
-	#if !PROTOTYPE
+#if !PROTOTYPE
 
 	Matrix4x4 handleMatrix = Matrix4x4.identity;
 
@@ -3022,7 +3017,7 @@ public class pb_Editor : EditorWindow
 			handleMatrix *= Matrix4x4.TRS( pb_Math.BoundsCenter( pb.GetVertices(face.distinctIndices) ), Quaternion.LookRotation(nrm, bitan), Vector3.one);
 		}
 	}
-	#endif
+#endif
 
 	Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 	public void UpdateHandleRotation()
@@ -3361,7 +3356,7 @@ public class pb_Editor : EditorWindow
 		currentHandleScale = Vector3.one;
 		currentHandleRotation = handleRotation;
 
-		#if !PROTOTYPE
+#if !PROTOTYPE
 		if(movingPictures)
 		{
 			if(pb_UV_Editor.instance != null)
@@ -3372,7 +3367,7 @@ public class pb_Editor : EditorWindow
 			movingPictures = false;
 		}
 		else
-		#endif
+#endif
 		if(movingVertices)
 		{
 			foreach(pb_Object sel in selection)

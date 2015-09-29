@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
 /**
  * Generic GUI utility methods used in ProBuilder windows.
@@ -28,6 +29,31 @@ namespace ProBuilder2.Interface
 			}
 		}
 #endregion
+
+		private static Stack<bool> guiEnabled = new Stack<bool>();
+		private static Stack<Color> guiColor = new Stack<Color>();
+
+		public static void PushGUIEnabled(bool enabled)
+		{
+			guiEnabled.Push(GUI.enabled);
+			GUI.enabled = enabled;
+		}
+
+		public static void PopGUIEnabled()
+		{
+			GUI.enabled = guiEnabled.Pop();
+		}
+
+		public static void PushGUIContentColor(Color color)
+		{
+			guiColor.Push(GUI.color);
+			GUI.contentColor = color;
+		}
+
+		public static void PopGUIContentColor()
+		{
+			GUI.contentColor = guiColor.Pop();
+		}
 
 		/**
 		 * Draws a horizontal line and inserts a GUILayout.Space(2).

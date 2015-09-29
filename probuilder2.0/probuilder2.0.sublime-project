@@ -47,6 +47,10 @@
 		},
 		{
 			"path": "Assets/ProBuilderUpgradeKit"
+		},
+		{
+			"path": "../",
+			"folder_exclude_patterns": [ "*" ]
 		}
 	]
 }

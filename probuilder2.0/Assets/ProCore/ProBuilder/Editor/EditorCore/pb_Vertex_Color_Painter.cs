@@ -1,6 +1,4 @@
-﻿#if !PROTOTYPE
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System.Collections.Generic;
@@ -618,5 +616,3 @@ public class pb_VertexColor_Editor : EditorWindow
 	}
 #endregion
 }
- 
-#endif
