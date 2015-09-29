@@ -125,7 +125,7 @@ public class pb_Editor : EditorWindow
 		eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
 		eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
 
-		bool isProSkin = EditorGUIUtility.isProSkin;
+		bool isProSkin = true; // EditorGUIUtility.isProSkin;
 
 		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
 		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
@@ -283,7 +283,13 @@ public class pb_Editor : EditorWindow
 	Rect elementModeToolbarRect = new Rect(3,6,128,24);
 	private static GUIContent gui_content_bridge = new GUIContent("", "");
 #if PROTOTYPE
-	private static readonly Color ProOnlyTint = new Color(1f, .65f, .65f, 1f);
+	private static Color ProOnlyTint
+	{
+		get
+		{
+			return EditorGUIUtility.isProSkin ? new Color(1f, .65f, .65f, 1f) : Color.red;
+		}
+	}
 #endif
 
 	/**
@@ -296,7 +302,21 @@ public class pb_Editor : EditorWindow
 		gui_content_bridge.text = content;
 		gui_content_bridge.tooltip = tooltip + (string.IsNullOrEmpty(tooltip) ? "(ProBuilder Advanced Feature" : "\n(ProBuilder Advanced Feature)");
 		pb_GUI_Utility.PushGUIContentColor(ProOnlyTint);
-		bool ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
+
+		bool ret = false;
+
+		if(!EditorGUIUtility.isProSkin && style != null)
+		{
+			Color tc = style.normal.textColor;
+			style.normal.textColor = ProOnlyTint;
+			ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
+			style.normal.textColor = tc;
+		}
+		else
+		{
+			ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
+		}
+
 		pb_GUI_Utility.PopGUIContentColor();
 		pb_GUI_Utility.PopGUIEnabled();
 		return ret;
@@ -318,6 +338,7 @@ public class pb_Editor : EditorWindow
 			return GUILayout.Button(gui_content_bridge);
 	}
 
+	bool doOpen = false;
 	void OnGUI()
 	{
 		Event e = Event.current;
@@ -334,6 +355,22 @@ public class pb_Editor : EditorWindow
 			eye_style = new GUIStyle( EditorStyles.miniButtonRight );
 			eye_style.padding = new RectOffset(0,0,0,0);
 		}
+
+#if PROTOTYPE
+		if(doOpen && e.type == EventType.Repaint)
+		{
+			Application.OpenURL("com.unity3d.kharma:content/3558");
+			doOpen = false;			
+		}
+
+		GUI.backgroundColor = Color.cyan;
+		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional modeling tools."))
+		{
+			EditorApplication.ExecuteMenuItem("Window/Asset Store");
+			doOpen = true;
+		}
+		GUI.backgroundColor = Color.white;
+#endif
 
 		if(!pref_showToolbar)
 		{
@@ -844,9 +881,6 @@ public class pb_Editor : EditorWindow
 #endif
 
 		DrawHandleGUI(scnView);
-
-		if(editLevelToolbarRect.Contains(currentEvent.mousePosition))
-			scnView.Repaint();
 
 		if(!rightMouseDown && getKeyUp != KeyCode.None)
 		{
@@ -2135,7 +2169,6 @@ public class pb_Editor : EditorWindow
 
 	Color handleBgColor;
 	Rect sceneInfoRect = new Rect(10, 10, 200, 40);
-	Rect editLevelToolbarRect = new Rect(0,0,0,0);
 
 	public void DrawHandleGUI(SceneView sceneView)
 	{
@@ -2470,11 +2503,9 @@ public class pb_Editor : EditorWindow
 				}
 				return true;
 				
-#if !PROTOTYPE
 			case "Delete Face":
 				pb_Menu_Commands.MenuDeleteFace(selection);
 				return true;
-#endif
 
 			/* handle alignment */
 			case "Toggle Handle Pivot":
