@@ -19,6 +19,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			// When a prefab is updated, this is raised.  For some reason it's
 			// called twice?
+			EditorApplication.hierarchyWindowChanged -= HierarchyWindowChanged;
 			EditorApplication.hierarchyWindowChanged += HierarchyWindowChanged;
 
 			// prefabInstanceUpdated is not called when dragging out of Project view,

@@ -1518,7 +1518,7 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				Debug.LogWarning("No valid split paths found.  This is most likely because you are attempting to split between vertices that do not belong to the same face.");
+				Debug.LogWarning("No valid split paths found.  This is could be because you are attempting to split between vertices that do not belong to the same face, or the split function can't find a good plane to re-triangulate from.");
 			}
 		}
 
