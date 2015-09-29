@@ -135,10 +135,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Unity 4.6.3\Editor\Data\Managed\UnityEditor.dll</HintPath>
+      <HintPath>D:\Applications\Unity 4.6.8f1\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Unity 4.6.3\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\Applications\Unity 4.6.8f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

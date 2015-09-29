@@ -125,7 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Unity 5.0.1\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\Applications\Unity 5.0.0f4\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
