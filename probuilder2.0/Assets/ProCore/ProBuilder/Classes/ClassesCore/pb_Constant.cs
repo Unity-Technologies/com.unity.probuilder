@@ -37,12 +37,8 @@ public static class pb_Constant
 		}
 	}
 
-	// ProBuilder versions	- only store major/minor/update info - not beta / final status
-	public const string pbVersion = "2.4.6";			///< The currently install ProBuilder version.
-
-
 #if PROTOTYPE
-	public const string PRODUCT_NAME = "Prototype";
+	public const string PRODUCT_NAME = "ProBuilder";
 #else
 	public const string PRODUCT_NAME = "ProBuilder";
 #endif
@@ -114,7 +110,7 @@ public static class pb_Constant
 	public const string pbShowTrigger					= "pbShowTrigger";
 	public const string pbShowNoDraw					= "pbShowNoDraw";
 
-	public static Rect RectZero = new Rect(0,0,0,0);
+	public readonly static Rect RectZero = new Rect(0,0,0,0);
 	
  	public static Color ProBuilderBlue = new Color(0f, .682f, .937f, 1f);
  	public static Color ProBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
@@ -132,7 +128,7 @@ public static class pb_Constant
 	public const int MENU_TOOLS = 630;
 	public const int MENU_VERTEX_COLORS = 740;
 	public const int MENU_MATERIAL_COLORS = 750;
-	public const int MENU_EXPERIMENTAL = 850;
+	public const int MENU_MISC = 850;
 
 	// Second Tier
 	public const int MENU_GEOMETRY_FACE = 0;

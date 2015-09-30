@@ -5,14 +5,14 @@ using ProBuilder2.Common;
 
 public class ShowHideFlags : Editor
 {
-	[MenuItem("Tools/Show HideFalgs")]
+	[MenuItem("Tools/Debug/Show HideFalgs")]
 	static void Indot()
 	{
 		foreach(Transform t in Selection.transforms)
 			Debug.Log(t.gameObject.hideFlags);
 	}
 
-	[MenuItem("Tools/Print Snap Settings")]
+	[MenuItem("Tools/Debug/Print Snap Settings")]
 	public static void dflkajsdkflj()
 	{
 		string txt = "Snap Enabled: ";
@@ -23,7 +23,7 @@ public class ShowHideFlags : Editor
 		Debug.Log(txt);
 	}
 
-	[MenuItem("Tools/Show Prefab Info")]
+	[MenuItem("Tools/Debug/Show Prefab Info")]
 	static void Indoadfadsfadsft()
 	{
 		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
@@ -45,7 +45,7 @@ public class ShowHideFlags : Editor
 		}
 	}
 
-	[MenuItem("Tools/ProBuilder/Subdivide Triangles")]
+	[MenuItem("Tools/Debug/Subdivide Triangles")]
 	public static void Subdivid()
 	{
 		Undo.RecordObjects(Selection.transforms.GetComponents<pb_Object>(), "Subdivide");

@@ -338,7 +338,6 @@ public class pb_Editor : EditorWindow
 			return GUILayout.Button(gui_content_bridge);
 	}
 
-	bool doOpen = false;
 	void OnGUI()
 	{
 		Event e = Event.current;
@@ -357,17 +356,11 @@ public class pb_Editor : EditorWindow
 		}
 
 #if PROTOTYPE
-		if(doOpen && e.type == EventType.Repaint)
-		{
-			Application.OpenURL("com.unity3d.kharma:content/3558");
-			doOpen = false;			
-		}
-
 		GUI.backgroundColor = Color.cyan;
 		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional modeling tools."))
 		{
-			EditorApplication.ExecuteMenuItem("Window/Asset Store");
-			doOpen = true;
+			// EditorApplication.ExecuteMenuItem("Window/Asset Store");
+			Application.OpenURL("com.unity3d.kharma:content/3558");
 		}
 		GUI.backgroundColor = Color.white;
 #endif

@@ -21,7 +21,7 @@ namespace ProBuilder2.EditorCommon
 			Subtraction
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, pb_Constant.MENU_EXPERIMENTAL + 10)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, pb_Constant.MENU_MISC)]
 		public static void MenuOpenBooleanTool()
 		{
 			EditorWindow.GetWindow<pb_BooleanInterface>(true, "Boolean (Experimental)", true).Show();
@@ -285,7 +285,7 @@ namespace ProBuilder2.EditorCommon
 				DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
 				
 				if(Event.current.type == EventType.DragPerform)
-				{                                      
+				{
 					DragAndDrop.AcceptDrag();
 				
 					foreach(Object pb in DragAndDrop.objectReferences)
@@ -309,5 +309,5 @@ namespace ProBuilder2.EditorCommon
 			return false;
 		}
 	}
-	#endif
 }
+#endif

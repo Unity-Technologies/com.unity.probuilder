@@ -47,7 +47,7 @@ namespace ProBuilder2.UpgradeKit
 			}
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade", false, 0)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Prepare Scene for Upgrade", false, pb_Constant.MENU_MISC)]
 		public static void PrepareScene()
 		{
 			if( !EditorUtility.DisplayDialog("Prepare Scene", "This will safely store all ProBuilder data in a new component, and remove ProBuilder components from all objects in the scene.\n\nThis must be run for each scene in your project.", "Okay", "Cancel") )
@@ -62,7 +62,7 @@ namespace ProBuilder2.UpgradeKit
 		}
 
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts", false, 1)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Re-attach ProBuilder Scripts", false, pb_Constant.MENU_MISC)]
 		static void MenuDeserialize()
 		{
 			SceneInfo sceneInfo = DeserializeScene(DisplayLog, DisplayProgress);

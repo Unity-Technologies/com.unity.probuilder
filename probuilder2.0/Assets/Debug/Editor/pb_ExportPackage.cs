@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
  */
 public class pb_ExportPackage : Editor
 {
-	[MenuItem("Tools/TEST EXPORT")]
+	[MenuItem("Tools/Debug/Test Export Source")]
 	static void DOIT()
 	{
 		Export("ProCore", Application.dataPath, "ProBuilder2", "-unity4");

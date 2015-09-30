@@ -14,7 +14,7 @@ namespace ProBuilder2.EditorCommon
 	{
 		#if !PROTOTYPE
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Tools/Mirror Tool")]
+		// [MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Tools/Mirror Tool")]
 		public static void InitMirrorTool()
 		{
 			EditorWindow win = EditorWindow.GetWindow(typeof(pb_Mirror_Tool), true, "Mirror Tool", true);

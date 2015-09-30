@@ -1,9 +1,7 @@
 @echo off
 
-:: set unity_path_43="C:\Program Files (x86)\Unity 4.3.0\Editor\Unity.exe"
-:: set unity_path_45="G:\Applications\Unity 4.5.0f6\Editor\Unity.exe"
-set unity_path_46="C:\Program Files (x86)\Unity 4.6.3\Editor\Unity.exe"
-set unity_path_5="C:\Program Files\Unity 5.0.0f4\Editor\Unity.exe"
+set unity_path_4="D:\Applications\Unity 4.6.8f1\Editor\Unity.exe"
+set unity_path_5="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\Debug"
 
@@ -16,44 +14,49 @@ set u5core="%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5.sln"
 set u5mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5.sln"
 set u5editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
 
+echo UNITY 4 PATH IS %unity_path_4%
+echo UNITY 5 PATH IS %unity_path_5%
 
- echo UNITY 4 PATH IS %unity_path_46%
- echo UNITY 5 PATH IS %unity_path_5%
- 
- :: Update SVN
- :: ====================
- svn update
- 
- :: clean out temp directory.
- :: ====================
- rd /s /q bin\temp\
- rd /s /q probuilder2.0\Library
- rd /s /q probuilder-staging\
- 
- mkdir bin\
- mkdir bin\temp
- mkdir bin\Debug
- mkdir bin\logs
- 
- :: Create an empty project to stage package exports from
- :: ====================
- %unity_path_46% -quit -batchMode -createProject %CD%\probuilder-staging
- 
- echo Copy resources
- 
- :: Copy ProCore folder into staging project
- :: ====================
- xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProCore\ProBuilder %CD%\probuilder-staging\Assets\ProCore\ProBuilder
- 
- :: Copy pb_ExportPackage into staging project
- :: ====================
- mkdir %CD%\probuilder-staging\Assets\Editor\
- xcopy %CD%\probuilder2.0\Assets\Debug\Editor\pb_ExportPackage.cs %CD%\probuilder-staging\Assets\Editor\
- 
- :: Export Source
+:: Update SVN
+:: ====================
+svn update
+
+:: clean out temp directory.
+:: ====================
+echo Clean temp and library
+
+rd /s /q bin\temp\
+rd /s /q probuilder2.0\Library
+rd /s /q probuilder-staging\
+
+echo Make bin folders
+
+mkdir bin\
+mkdir bin\temp
+mkdir bin\Debug
+mkdir bin\logs
+
+echo Create empty project
+
+:: Create an empty project to stage package exports from
+:: ====================
+%unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
+
+echo Copy resources
+
+:: Copy ProCore folder into staging project
+:: ====================
+xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProCore\ProBuilder %CD%\probuilder-staging\Assets\ProCore\ProBuilder
+
+:: Copy pb_ExportPackage into staging project
+:: ====================
+mkdir %CD%\probuilder-staging\Assets\Editor\
+xcopy %CD%\probuilder2.0\Assets\Debug\Editor\pb_ExportPackage.cs %CD%\probuilder-staging\Assets\Editor\
+
+:: Export Source
  :: ====================
 echo Export source
-%unity_path_46% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-source-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-source
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-source-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-source
 
 :: Build Unity DLLs
 :: ====================
@@ -92,7 +95,7 @@ xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\De
 :: Export Unity 4
 :: ====================
 echo Export Unity 4 DLL project
-%unity_path_46% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
 
 :: Remove Unity 4 DLL from staging, and rebuild with 5 libs
 :: ====================
@@ -114,6 +117,6 @@ echo Export Unity 5 DLL project
 
 :: Export UpgradeKit
 xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProBuilderUpgradeKit %CD%\probuilder-staging\Assets\ProBuilderUpgradeKit
-%unity_path_46% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\ProBuilderUpgradeKit-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProBuilderUpgradeKit outDir:%build_directory% outName:ProBuilderUpgradeKit
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\ProBuilderUpgradeKit-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProBuilderUpgradeKit outDir:%build_directory% outName:ProBuilderUpgradeKit
 
 pause

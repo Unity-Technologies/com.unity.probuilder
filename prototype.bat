@@ -2,10 +2,13 @@
 
 :: Builds for Unity 4.6 & 5.0.1
 
-set unity_path_4="C:\Program Files (x86)\Unity 4.6.3\Editor\Unity.exe"
-set unity_path_5="C:\Program Files\Unity 5.0.0f4\Editor\Unity.exe"
+set unity_path_4="D:\Applications\Unity 4.6.8f1\Editor\Unity.exe"
+set unity_path_5="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
+set build_directory="%CD%\bin\Debug"
+
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
+
 echo This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
 set force_revision="3519"	:: If left empty, build process will use the current revision.
 

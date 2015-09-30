@@ -4,7 +4,7 @@ using UnityEditor;
 public class TakeScreenshotInEditor : ScriptableObject
 {
 
-	[MenuItem ("Tools/Screenshot/Take Screenshot of Game View %^s")]
+	[MenuItem ("Tools/Debug/Screenshot/Take Screenshot of Game View %^s")]
 	static void TakeScreenshot()
 	{
 		string path = EditorUtility.SaveFilePanel("Save GameView Screenshot",
@@ -16,7 +16,7 @@ public class TakeScreenshotInEditor : ScriptableObject
 	}
 
 
-	[MenuItem ("Tools/Screenshot/Take Screenshot of Scene View")]
+	[MenuItem ("Tools/Debug/Screenshot/Take Screenshot of Scene View")]
 	static void TakeSceneViewScreenshot()
 	{
 		Camera cam = (Camera)SceneView.lastActiveSceneView.camera;
