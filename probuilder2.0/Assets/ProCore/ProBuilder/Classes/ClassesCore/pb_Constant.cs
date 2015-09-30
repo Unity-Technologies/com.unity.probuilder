@@ -38,7 +38,7 @@ public static class pb_Constant
 	}
 
 #if PROTOTYPE
-	public const string PRODUCT_NAME = "ProBuilder";
+	public const string PRODUCT_NAME = "ProBuilder Basic";
 #else
 	public const string PRODUCT_NAME = "ProBuilder";
 #endif

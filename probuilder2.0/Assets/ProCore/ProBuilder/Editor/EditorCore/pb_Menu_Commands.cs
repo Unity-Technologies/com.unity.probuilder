@@ -29,7 +29,6 @@ namespace ProBuilder2.EditorCommon
 #if PROTOTYPE
 		internal static void MenuMergeObjects(pb_Object[] selection) {}
 		internal static void MenuSubdivide(pb_Object[] selection) {}
-		internal static void MenuSetPivot(pb_Object[] selection) {}
 		internal static void MenuDetachFaces(pb_Object[] selection) {}
 		internal static void MenuSubdivideFace(pb_Object[] selection) {}
 		internal static void MenuBridgeEdges(pb_Object[] selection) {}
@@ -102,6 +101,7 @@ namespace ProBuilder2.EditorCommon
 			if(editor)
 				editor.UpdateSelection();
 		}
+#endif
 
 		/**
 		 * Set the pivot to the center of the current element selection.
@@ -138,8 +138,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor != null)
 				editor.UpdateSelection();
-		}	
-#endif
+		}
 
 		/**
 		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
