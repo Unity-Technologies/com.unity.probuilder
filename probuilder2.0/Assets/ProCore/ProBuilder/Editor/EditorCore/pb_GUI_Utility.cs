@@ -172,7 +172,8 @@ namespace ProBuilder2.Interface
 			if(enabled)
 			{
 				GUILayout.BeginHorizontal();
-				if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButtonLeft))
+
+				if(GUILayout.Button(new GUIContent(text, description), EditorStyles.miniButtonLeft, GUILayout.MaxWidth(guiWidth-24-6)))
 					action(selection);
 
 				if(GUILayout.Button( showSettings ? "-" : "+", EditorStyles.miniButtonRight, GUILayout.MaxWidth(24)))

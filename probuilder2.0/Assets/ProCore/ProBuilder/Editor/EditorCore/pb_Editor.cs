@@ -27,7 +27,7 @@ public class pb_Editor : EditorWindow
 	
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
-	const int EDITOR_PREF_VERSION = 244;
+	const int EDITOR_PREF_VERSION = 2080;
 	const int WINDOW_WIDTH_FlOATING = 102;
 	const int WINDOW_WIDTH_DOCKABLE = 108;
 
@@ -173,6 +173,7 @@ public class pb_Editor : EditorWindow
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
 		}
 
 		editLevel 			= pb_Preferences_Internal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
@@ -287,9 +288,10 @@ public class pb_Editor : EditorWindow
 	{
 		get
 		{
-			return EditorGUIUtility.isProSkin ? new Color(1f, .65f, .65f, 1f) : Color.red;
+			return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
 		}
 	}
+	private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
 #endif
 
 	/**
@@ -327,15 +329,15 @@ public class pb_Editor : EditorWindow
 #endif
 	}
 
-	private bool AutoContentButton(string content, string tooltip, GUIStyle style = null)
+	private bool AutoContentButton(string content, string tooltip, GUIStyle style = null, params GUILayoutOption[] options)
 	{
 		gui_content_bridge.text = content;
 		gui_content_bridge.tooltip = tooltip;
 
 		if(style != null)
-			return GUILayout.Button(gui_content_bridge, style);
+			return GUILayout.Button(gui_content_bridge, style, options);
 		else
-			return GUILayout.Button(gui_content_bridge);
+			return GUILayout.Button(gui_content_bridge, options);
 	}
 
 	void OnGUI()
@@ -356,11 +358,14 @@ public class pb_Editor : EditorWindow
 		}
 
 #if PROTOTYPE
-		GUI.backgroundColor = Color.cyan;
-		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional modeling tools."))
+		GUI.backgroundColor = UpgradeTint;
+		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional features."))
 		{
-			// EditorApplication.ExecuteMenuItem("Window/Asset Store");
-			Application.OpenURL("com.unity3d.kharma:content/3558");
+			// due to bug in asset store window, this only works if the window is already open
+			if(pb_Editor_Utility.AssetStoreWindowIsOpen())
+				Application.OpenURL("com.unity3d.kharma:content/3558");
+			else
+				Application.OpenURL("http://u3d.as/30b");
 		}
 		GUI.backgroundColor = Color.white;
 #endif
@@ -409,7 +414,7 @@ public class pb_Editor : EditorWindow
 		GUILayout.Label("Selection", EditorStyles.boldLabel);
 		SelectionGUI();
 
-		GUILayout.Label("Object Actions", EditorStyles.boldLabel);
+		GUILayout.Label("Object", EditorStyles.boldLabel);
 		ObjectGUI();
 
 		if(editLevel == EditLevel.Geometry)
@@ -417,15 +422,15 @@ public class pb_Editor : EditorWindow
 			switch(selectionMode)
 			{
 				case SelectMode.Edge:
-					GUILayout.Label("Edge Actions", EditorStyles.boldLabel);
+					GUILayout.Label("Edge", EditorStyles.boldLabel);
 					break;
 
 				case SelectMode.Vertex:
-					GUILayout.Label("Vertex Actions", EditorStyles.boldLabel);
+					GUILayout.Label("Vertex", EditorStyles.boldLabel);
 					break;
 
 				case SelectMode.Face:
-					GUILayout.Label("Face Actions", EditorStyles.boldLabel);
+					GUILayout.Label("Face", EditorStyles.boldLabel);
 					break;
 			}
 
@@ -448,7 +453,7 @@ public class pb_Editor : EditorWindow
 		bool wasEnabled = GUI.enabled;
 
 		EditorGUI.BeginChangeCheck();
-		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - 8));
+		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - 11));
 		
 		if(EditorGUI.EndChangeCheck())
 			SetHandleAlignment(handleAlignment);
@@ -509,7 +514,7 @@ public class pb_Editor : EditorWindow
 		ProOnlyButton("UV Editor", "Open UV Editor Window", EditorStyles.miniButton);
 #endif
 
-		tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Colors", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
+		tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Color", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
 			tool_vertexColors,
 			pb_Menu_Commands.MenuOpenVertexColorsEditor,
 			pb_Menu_Commands.VertexColorsGUI,
@@ -539,7 +544,7 @@ public class pb_Editor : EditorWindow
 		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton)) 
 			EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
 		
-		if(GUILayout.Button(new GUIContent("Flip All Normals", "If Top level, entire object normals are reversed.  Else only selected face normals are flipped."), EditorStyles.miniButton))
+		if(GUILayout.Button(new GUIContent("Flip Normals", "If Top level, entire object normals are reversed.  Else only selected face normals are flipped."), EditorStyles.miniButton))
 			pb_Menu_Commands.MenuFlipNormals(selection);
 
 		if(ProOnlyButton("Subdivide", "Split all selected faces (or entire object) smaller faces", EditorStyles.miniButton))
@@ -656,7 +661,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(GUILayout.Button("Set Detail", EditorStyles.miniButtonLeft))
+			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39)))
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
@@ -673,7 +678,7 @@ public class pb_Editor : EditorWindow
 
 			GUILayout.BeginHorizontal();
 				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(GUILayout.Button("Set Mover", EditorStyles.miniButtonLeft)) 
+			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
@@ -689,7 +694,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(GUILayout.Button("Set Collider", EditorStyles.miniButtonLeft)) 
+			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
@@ -705,7 +710,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(GUILayout.Button("Set Trigger", EditorStyles.miniButtonLeft)) 
+			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
@@ -2439,11 +2444,9 @@ public class pb_Editor : EditorWindow
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
 				return true;
 
-#if !PROTOTYPE
 			case "Set Occluder":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Occluder);
 				return true;
-#endif
 
 			case "Set Collider":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);

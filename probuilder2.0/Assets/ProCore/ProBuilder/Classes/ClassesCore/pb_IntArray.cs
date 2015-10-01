@@ -114,8 +114,13 @@ public static class pb_IntArrayUtility
 	}
 
 	/**
-	 * Returns a dictionary where Key is equal to sharedIndices index, and Value
-	 * is equal to the triangle value.
+	 * Returns a dictionary where Key is equal to triangle index, and Value
+	 * is equal to the sharedIndices index.  In this way you can quickly check
+	 * which indices are sharing a vertex.  Ex:
+	 * if(dictionary[triangles[0]] == dictionary[triangles[4]])
+	 *		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] share a vertex");
+	 *	else
+	 *		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] do not share a vertex");
 	 */
 	public static Dictionary<int, int> ToDictionary(this pb_IntArray[] array)
 	{

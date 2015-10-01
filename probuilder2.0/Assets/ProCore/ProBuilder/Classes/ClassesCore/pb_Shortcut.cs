@@ -81,10 +81,7 @@ public class pb_Shortcut
 		shortcuts.Add( new pb_Shortcut("Set Detail", "Sets all selected objects to entity type Brush.", KeyCode.B, 0) );
 		shortcuts.Add( new pb_Shortcut("Toggle Handle Pivot", "Toggles the orientation of the ProBuilder selection handle.", KeyCode.P, 0) );
 		shortcuts.Add( new pb_Shortcut("Set Pivot", "Center pivot around current selection.", KeyCode.J, EventModifiers.Command) );
-		#if !PROTOTYPE
 		shortcuts.Add( new pb_Shortcut("Delete Face", "Deletes all selected faces.", KeyCode.Backspace, EventModifiers.FunctionKey) );
-		#endif
-
 		shortcuts.Add( new pb_Shortcut("Vertex Mode", "Enter Vertex editing mode.  Automatically swaps to Element level editing.", KeyCode.H, (EventModifiers)0) );
 		shortcuts.Add( new pb_Shortcut("Edge Mode", "Enter Edge editing mode.  Automatically swaps to Element level editing.", KeyCode.J, (EventModifiers)0) );
 		shortcuts.Add( new pb_Shortcut("Face Mode", "Enter Face editing mode.  Automatically swaps to Element level editing.", KeyCode.K, (EventModifiers)0) );

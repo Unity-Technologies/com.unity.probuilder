@@ -106,7 +106,7 @@ namespace ProBuilder2.EditorCommon
 		}
 #endregion
 
-#region Screenshots
+#region SCREENSHOTS
 
 		/**
 		 * Open a save file dialog, and save the image to that path.
@@ -334,6 +334,14 @@ namespace ProBuilder2.EditorCommon
 #endregion
 
 #region EDITOR
+
+		/**
+		 *	Returns true if Asset Store window is open, false otherwise.
+		 */
+		public static bool AssetStoreWindowIsOpen()
+		{
+			return Resources.FindObjectsOfTypeAll<EditorWindow>().Any(x => x.GetType().ToString().Contains("AssetStoreWindow"));
+		}
 
 		/**
 		 * Ensure that this object has a valid mesh reference, and the geometry is 
