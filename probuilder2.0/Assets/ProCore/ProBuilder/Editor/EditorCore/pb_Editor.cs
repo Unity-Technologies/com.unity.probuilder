@@ -544,8 +544,8 @@ public class pb_Editor : EditorWindow
 		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton)) 
 			EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
 		
-		if(GUILayout.Button(new GUIContent("Flip Normals", "If Top level, entire object normals are reversed.  Else only selected face normals are flipped."), EditorStyles.miniButton))
-			pb_Menu_Commands.MenuFlipNormals(selection);
+		if(GUILayout.Button(new GUIContent("Flip Normals", "Reverse the direction of all faces on selected objects."), EditorStyles.miniButton))
+			pb_Menu_Commands.MenuFlipObjectNormals(selection);
 
 		if(ProOnlyButton("Subdivide", "Split all selected faces (or entire object) smaller faces", EditorStyles.miniButton))
 			pb_Menu_Commands.MenuSubdivide(selection);

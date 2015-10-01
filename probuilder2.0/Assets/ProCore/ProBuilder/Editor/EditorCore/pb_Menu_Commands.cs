@@ -331,6 +331,30 @@ namespace ProBuilder2.EditorCommon
 #region Normals
 
 		/**
+		 *	Reverse the direction of all faces on each object.
+		 */
+		public static void MenuFlipObjectNormals(pb_Object[] selected)
+		{
+			if(selected == null || selected.Length < 1)
+			{
+				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
+				return;
+			}
+			
+			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
+
+			foreach(pb_Object pb in selected)
+			{
+				pb.ReverseWindingOrder(pb.faces);
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+			
+			pb_Editor_Utility.ShowNotification("Flip Normals on " + selected.Length + " objects");
+		}
+
+		/**
 		 * Flips all face normals if editLevel == EditLevel.Top, else flips only pb_Object->SelectedFaces
 		 */
 		public static void MenuFlipNormals(pb_Object[] selected)
