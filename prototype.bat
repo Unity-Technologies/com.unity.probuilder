@@ -9,9 +9,6 @@ set build_directory="%CD%\bin\Debug"
 
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
  
-::      echo ===: This assumes you have .NET 3.5 installed (Unity doesn't support 4 yet)
-::      set force_revision="3519"	:: If left empty, build process will use the current revision.
-::      
 svn update
 
 echo ===: UNITY 4 PATH IS %unity_path_4%
