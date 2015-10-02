@@ -94,18 +94,17 @@ move /Y "%CD%\probuilder-staging\Assets\ProCore\ProBuilder" "%CD%\probuilder-sta
 
 echo ===: Export Unity 4 Package
 
+echo ===: Override DLL GUIDs
+%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
+
 :: Export release pack for Unity 4.3 +
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\prototype4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilderBasic outSuffix:-unity4
-
-:: ================================ END   4.3 + LIBRARIES ================================ }
 
 echo ===: Clean Staging
 
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Classes\ProBuilderCore-Unity4.dll"
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Classes\ProBuilderMeshOps-Unity4.dll"
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Editor\ProBuilderEditor-Unity4.dll"
-
-:: ================================ BUILD 5.0 + LIBRARIES ================================ {
 
 echo ===: Build U5 DLL
 
@@ -133,7 +132,10 @@ xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Editor\"
 
-echo ===: ================================== EXPORT UNITY 5 PACK ==================================
+echo ===: EXPORT UNITY 5 PACK
+
+echo ===: Override DLL GUIDs
+%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
 :: Export release pack for Unity 5.0 +
 %unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\prototype5.0-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilderBasic outSuffix:-unity5
