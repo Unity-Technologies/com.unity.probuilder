@@ -62,11 +62,7 @@ public class pb_ExportPackage : Editor
 	private static void Export(string SourceDirectory, string OutDirectory, string OutName, string suffix)
 	{	
 		// Read version number and revision number from changelog.txt
-		#if UNITY_5_1
 		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
-		#else
-		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
-		#endif
 
 		Regex reg = new Regex(@"([0-9].[0-9].[0-9][a-z][0-9]*)", RegexOptions.None);
 		Match first = reg.Match(changelog.text);
@@ -149,11 +145,19 @@ public class pb_ExportPackage : Editor
 
 	private static void SetGUID(string asset_path, string new_guid)
 	{
+#if UNITY_4_6
+		string meta_path = asset_path + ".meta";
+#else
 		string meta_path = AssetDatabase.GetTextMetaFilePathFromAssetPath(asset_path);
+#endif
 		StringBuilder sb = new StringBuilder();
 		Encoding encoding;
 
-		Debug.Log(meta_path + " was: " + AssetDatabase.AssetPathToGUID(asset_path));
+		FileInfo meta_file = new FileInfo(meta_path);
+		bool hiddenMetaFiles = (meta_file.Attributes & FileAttributes.Hidden) != 0;
+
+		if(hiddenMetaFiles)
+			meta_file.Attributes &= ~FileAttributes.Hidden;
 
 		using (StreamReader sr = new StreamReader(meta_path))
 		{
@@ -173,6 +177,9 @@ public class pb_ExportPackage : Editor
 		{
 			writer.Write(sb.ToString());
 		}
+		
+		if(hiddenMetaFiles)
+			meta_file.Attributes |= FileAttributes.Hidden;
 	}
 }
 
