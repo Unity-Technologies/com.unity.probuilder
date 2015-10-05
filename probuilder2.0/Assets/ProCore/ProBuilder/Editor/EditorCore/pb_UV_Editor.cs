@@ -1,6 +1,3 @@
-// #pragma warning disable 0414
-#pragma warning disable 0168	///< Disable unused var (that exception hack)
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -47,14 +44,15 @@ public class pb_UV_Editor : EditorWindow
 	const int RIGHT_MOUSE_BUTTON = 1;
 	const int MIDDLE_MOUSE_BUTTON = 2;
 	const int PAD = 4;
-	const float SCROLL_MODIFIER = .5f;
+	const float SCROLL_MODIFIER = 1f;
 	const float ALT_SCROLL_MODIFIER = .07f;
 	const int DOT_SIZE = 6;
 	const int HALF_DOT = 3;
 	const int HANDLE_SIZE = 128;
 	const int MIN_ACTION_WINDOW_SIZE = 128;
-	const float MAX_GRAPH_SCALE = 15f;
 	const float MIN_GRAPH_SCALE = .0001f;
+	const float MAX_GRAPH_SCALE = 250f;			/// Max canvas zoom
+	const float MAX_GRAPH_SCALE_SCROLL = 20f;	/// When scrolling use this value to taper the scroll effect
 
 	const float MAX_PROXIMITY_SNAP_DIST_UV = .15f; 		///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (UV coordinates)
 	const float MAX_PROXIMITY_SNAP_DIST_CANVAS = 12f;	///< The maximum allowable distance magnitude between coords to be considered for proximity snapping (Canvas coordinates)
@@ -580,11 +578,7 @@ public class pb_UV_Editor : EditorWindow
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
-					{
-						Vector2 cur = pb_Bounds2D.Center( pb.GetUVs( face.distinctIndices ) );
-						cur = UVToGUIPoint(cur);
-						coords.Add(cur);
-					}
+						coords.Add(pb_Bounds2D.Center(pb.GetUVs(face.distinctIndices)));
 
 					coords.Insert(0, pb_Bounds2D.Center(coords));
 
@@ -1002,7 +996,7 @@ public class pb_UV_Editor : EditorWindow
 					}
 					else if(e.alt && e.button == RIGHT_MOUSE_BUTTON)
 					{
-						SetCanvasScale(uvGraphScale + (e.delta.x - e.delta.y) * ((uvGraphScale/MAX_GRAPH_SCALE) * ALT_SCROLL_MODIFIER) );
+						SetCanvasScale(uvGraphScale + (e.delta.x - e.delta.y) * ((uvGraphScale/MAX_GRAPH_SCALE_SCROLL) * ALT_SCROLL_MODIFIER) );
 					}
 				}
 				break;
@@ -1067,7 +1061,7 @@ public class pb_UV_Editor : EditorWindow
 
 			case EventType.ScrollWheel:
 				
-				SetCanvasScale( uvGraphScale - e.delta.y * ((uvGraphScale/MAX_GRAPH_SCALE) * SCROLL_MODIFIER) );
+				SetCanvasScale( uvGraphScale - e.delta.y * ((uvGraphScale/MAX_GRAPH_SCALE_SCROLL) * SCROLL_MODIFIER) );
 				e.Use();
 				
 				needsRepaint = true;
@@ -1189,7 +1183,8 @@ public class pb_UV_Editor : EditorWindow
 							}
 						}
 					}
-				} catch(System.Exception e) {}
+				}
+				catch {}
 
 				nearestElement.valid = best < MIN_DIST_MOUSE_EDGE;
 				break;
@@ -1217,7 +1212,7 @@ public class pb_UV_Editor : EditorWindow
 							if(superBreak) break;
 						}
 					}
-				} catch(System.Exception e) {}
+				} catch {}
 				break;
 		}
 
@@ -1972,7 +1967,8 @@ public class pb_UV_Editor : EditorWindow
 		if(debug_showCoordinates)
 		{
 			Handles.BeginGUI();
-			Rect r = new Rect(0,0,256,40);
+			r.width = 256f;
+			r.height = 40f;
 			foreach(pb_Object pb in selection)
 			{
 				foreach(int i in pb.SelectedTriangles)
@@ -2153,28 +2149,25 @@ public class pb_UV_Editor : EditorWindow
 				#endif
 
 				GL.Begin(GL.TRIANGLES);
-				try
+				for(int i = 0; i < selection.Length; i++)
 				{
-					for(int i = 0; i < selection.Length; i++)
+					foreach(pb_Face face in selection[i].SelectedFaces)
 					{
-						foreach(pb_Face face in selection[i].SelectedFaces)
+						GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
+
+						int[] tris = face.indices;
+
+						for(int n = 0; n < tris.Length; n+=3)
 						{
-							GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
-
-							int[] tris = face.indices;
-
-							for(int n = 0; n < tris.Length; n+=3)
-							{
-								v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
-								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
-								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
-								GL.Vertex3(v.x, v.y, 0f);
-							}
+							v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+							GL.Vertex3(v.x, v.y, 0f);
+							v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+							GL.Vertex3(v.x, v.y, 0f);
+							v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+							GL.Vertex3(v.x, v.y, 0f);
 						}
 					}
-				} catch(System.Exception e) {}
+				}
 				GL.End();
 
 				#if PB_DEBUG
@@ -2194,6 +2187,8 @@ public class pb_UV_Editor : EditorWindow
 	{
 		GUI.BeginGroup(rect);
 		GUILayout.BeginVertical(GUILayout.MaxWidth(rect.width-6));
+
+		GUILayout.Label("Scale: " + uvGraphScale);
 
 		GUILayout.Label("Object: " + nearestElement.ToString());
 
