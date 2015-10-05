@@ -460,9 +460,7 @@ public class pb_UV_Editor : EditorWindow
 
 		try{
 			DrawUVGraph( graphRect );		
-		} catch(System.Exception e) {
-
-		}
+		} catch {}
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -584,7 +582,7 @@ public class pb_UV_Editor : EditorWindow
 					foreach(pb_Face face in incomplete_group)
 					{
 						Vector2 cur = pb_Bounds2D.Center( pb.GetUVs( face.distinctIndices ) );
-						cur = pb_Handle_Utility.UVToGUIPoint(cur, uvGridSize);
+						cur = UVToGUIPoint(cur);
 						coords.Add(cur);
 					}
 
@@ -1090,7 +1088,7 @@ public class pb_UV_Editor : EditorWindow
 
 	void HandleKeyInput(Event e)
 	{
-		if(e.type != EventType.KeyUp || !GUI.GetNameOfFocusedControl().Equals(""))
+		if(e.type != EventType.KeyUp)
 			return;
 
 		bool used = false;
@@ -1099,10 +1097,18 @@ public class pb_UV_Editor : EditorWindow
 		{
 			case KeyCode.Keypad0: 
 			case KeyCode.Alpha0:
-				ResetCanvas();
-				uvCanvasOffset = Vector2.zero;
-				e.Use();
-				needsRepaint = true;
+				if(!GUI.GetNameOfFocusedControl().Equals(""))
+				{
+					ResetCanvas();
+					uvCanvasOffset = Vector2.zero;
+					e.Use();
+					needsRepaint = true;
+					used = true;
+				}
+				break;
+
+			case KeyCode.Q:
+				SetTool_Internal(Tool.View);
 				used = true;
 				break;
 
@@ -1375,7 +1381,7 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .9f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .0001f))
 		{
 			#if PB_DEBUG
 			profiler.BeginSample("Set Custom Pivot");
@@ -1432,7 +1438,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .9f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .0001f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1539,7 +1545,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition, .9f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1884,6 +1890,8 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	Rect UVRectIdentity = new Rect(0,0,1,1);
+	/// re-usable rect for drawing graphs
+	Rect r = new Rect(0,0,0,0);
 
 	void DrawUVGraph(Rect rect)
 	{
@@ -1919,39 +1927,46 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("Draw Base Edges + Vertices");
 		#endif
 
+		Vector2 p = Vector2.zero;
+		Vector2[] uv;
+		r.width = DOT_SIZE;
+		r.height = DOT_SIZE;
+
 		/**
 		 * Draw all vertices if in vertex mode
 		 */
-		try 
+		if(selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 		{
-			Vector2 p = Vector2.zero;
-			if(selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
-			{
-				// GUI.color = UVColorSecondary;
 
-				for(int i = 0; i < uvs_canvas_space.Length; i++)
+			for(int i = 0; i < selection.Length; i++)
+			{
+				uv = selection[i].uv;
+
+				GUI.color = UVColorSecondary;
+				for(int n = 0; n < uv.Length; n++)
 				{
-					GUI.color = UVColorSecondary;
-					for(int n = 0; n < uvs_canvas_space[i].Length; n++)
-					{
-						p = CanvasToGUIPoint(uvs_canvas_space[i][n]);
-						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
-					}
-		
-					GUI.color = UVColorPrimary;
-					foreach(int index in selection[i].SelectedTriangles)
-					{
-						p = CanvasToGUIPoint(uvs_canvas_space[i][index]);
-						GUI.DrawTexture(new Rect(p.x-HALF_DOT, p.y-HALF_DOT, DOT_SIZE, DOT_SIZE), dot, ScaleMode.ScaleToFit);
-					}
+					p = UVToGUIPoint(selection[i].uv[n]);
+					r.x = p.x - HALF_DOT;
+					r.y = p.y - HALF_DOT;
+					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
+				}
+	
+				GUI.color = UVColorPrimary;
+				foreach(int index in selection[i].SelectedTriangles)
+				{
+					p = UVToGUIPoint(uv[index]);
+					r.x = p.x - HALF_DOT;
+					r.y = p.y - HALF_DOT;
+					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
 				}
 			}
-		} catch(System.Exception e) { }
+		}
 
 		Handles.color = UVColorGroupIndicator;
+
 		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 			for(int i = 1; i < lines.Count; i++)
-				Handles.CircleCap(-1, CanvasToGUIPoint(lines[i]), Quaternion.identity, 8f);
+				Handles.CircleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f);
 
 		#if PB_DEBUG
 		if(debug_showCoordinates)
@@ -1963,7 +1978,7 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in pb.SelectedTriangles)
 				{
 					Vector2 v = pb.uv[i];
-					Vector2 sv = CanvasToGUIPoint( pb_Handle_Utility.UVToGUIPoint(v, uvGridSize) );
+					Vector2 sv =  UVToGUIPoint(v);
 					r.x = sv.x;
 					r.y = sv.y;
 					GUI.Label(r, "UV:" + v.ToString("F2") + "\nScreen: " + (int)sv.x + ", " + (int)sv.y);
@@ -1987,14 +2002,12 @@ public class pb_UV_Editor : EditorWindow
 
 			foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 			{
-				Vector2 cen = CanvasToGUIPoint(lines[0]);
+				Vector2 cen = lines[0];
 
 				for(int i = 1; i < lines.Count; i++)
 				{
-					GL.Vertex(cen);
-
-					Vector2 v = CanvasToGUIPoint(lines[i]);
-					GL.Vertex(v);
+					GL.Vertex(UVToGUIPoint(cen));
+					GL.Vertex(UVToGUIPoint(lines[i]));
 				}
 			}
 			GL.End();
@@ -2007,33 +2020,26 @@ public class pb_UV_Editor : EditorWindow
 		else
 			GL.Color(UVColorSecondary);
 
-		// Here because when you undo a geometry action that involved deleting or adding vertices,
-		// the UpdateSelection() delegate doesn't call UV editor's updateselection fast enough,
-		// meaning that uvs_canvas_space[][] can get some out of bounds values.  this  seemed like the
-		// lesser of two evils, the second being an "if (out of bounds) continue"
-		try
+		Vector2 x = Vector2.zero, y = Vector2.zero;
+
+		for(int i = 0; i < selection.Length; i++)
 		{
-			Vector2 x = Vector2.zero, y = Vector2.zero;
-			for(int i = 0; i < selection.Length; i++)
+			pb_Object pb = selection[i];
+			uv = pb.uv;
+
+			for(int n = 0; n < pb.faces.Length; n++)
 			{
-				pb_Object pb = selection[i];
+				pb_Face face = pb.faces[n];
 
-				for(int n = 0; n < pb.faces.Length; n++)
+				foreach(pb_Edge edge in face.edges)
 				{
-					pb_Face face = pb.faces[n];
+					x = UVToGUIPoint(uv[edge.x]);
+					y = UVToGUIPoint(uv[edge.y]);
 
-					foreach(pb_Edge edge in face.edges)
-					{
-						x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
-						y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
-
-						GL.Vertex3(x.x, x.y, 0f);
-						GL.Vertex3(y.x, y.y, 0f);
-					}
-				}	
-			}
-		} catch(System.Exception e) {
-			// sshhhh...
+					GL.Vertex3(x.x, x.y, 0f);
+					GL.Vertex3(y.x, y.y, 0f);
+				}
+			}	
 		}
 		GL.End();
 
@@ -2063,27 +2069,24 @@ public class pb_UV_Editor : EditorWindow
 		for(int i = 0; i < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
+			uv = pb.uv;
 
-			try
+			if(pb.SelectedEdges.Length > 0)
 			{
-				if(pb.SelectedEdges.Length > 0)
+				foreach(pb_Edge edge in pb.SelectedEdges)
 				{
-					foreach(pb_Edge edge in pb.SelectedEdges)
-					{
-						Vector2 x = CanvasToGUIPoint(uvs_canvas_space[i][edge.x]);
-						Vector2 y = CanvasToGUIPoint(uvs_canvas_space[i][edge.y]);
+					x = UVToGUIPoint(uv[edge.x]);
+					y = UVToGUIPoint(uv[edge.y]);
 
-						GL.Vertex3(x.x, x.y, 0f);
-						GL.Vertex3(y.x, y.y, 0f);
-						
-						// #if PB_DEBUG
-						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
-						// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
-						// #endif
-					}
+					GL.Vertex3(x.x, x.y, 0f);
+					GL.Vertex3(y.x, y.y, 0f);
+					
+					// #if PB_DEBUG
+					// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
+					// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
+					// #endif
 				}
-	
-			} catch(System.Exception e) {}
+			}
 		}
 
 		GL.End();
@@ -2105,8 +2108,8 @@ public class pb_UV_Editor : EditorWindow
 				if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 				{
 					pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-					GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][edge.x]) );
-					GL.Vertex( CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][edge.y]) );
+					GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
+					GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
 				}
 				GL.End();
 				
@@ -2133,11 +2136,11 @@ public class pb_UV_Editor : EditorWindow
 					
 					for(int i = 0; i < tris.Length; i+=3)
 					{
-						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+0]]);
+						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
 						GL.Vertex3(v.x, v.y, 0f);
-						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+1]]);
+						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
 						GL.Vertex3(v.x, v.y, 0f);
-						v = CanvasToGUIPoint(uvs_canvas_space[nearestElement.objectIndex][tris[i+2]]);
+						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
 						GL.Vertex3(v.x, v.y, 0f);
 					}
 
@@ -2162,11 +2165,11 @@ public class pb_UV_Editor : EditorWindow
 
 							for(int n = 0; n < tris.Length; n+=3)
 							{
-								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+0]]);
+								v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+1]]);
+								v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = CanvasToGUIPoint(uvs_canvas_space[i][tris[n+2]]);
+								v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
 								GL.Vertex3(v.x, v.y, 0f);
 							}
 						}
@@ -2312,10 +2315,11 @@ public class pb_UV_Editor : EditorWindow
 	/**
 	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
 	 */
-	// Vector2 CanvasToGUIPoint(Vector2 v)
-	// {
-	// 	return UVGraphCenter + (v * uvGraphScale + uvCanvasOffset);
-	// }
+	Vector2 UVToGUIPoint(Vector2 v)
+	{
+		Vector2 p = new Vector2(v.x, -v.y);
+		return UVGraphCenter + (p * uvGridSize * uvGraphScale) + uvCanvasOffset;
+	}
 
 	Vector3 CanvasToGUIPoint(Vector2 v)
 	{
