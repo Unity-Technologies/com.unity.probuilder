@@ -58,7 +58,7 @@ namespace ProBuilder2.UpgradeKit
 			EditorUtility.ClearProgressBar();
 			
 			if( EditorUtility.DisplayDialog("Prepare Scene", "Successfully serialized this scene.  Please save your scene now or these changes will be lost.", "Save Scene", "Don't Save"))
-				EditorApplication.SaveScene("", false);
+				pb_EditorSceneUtility.SaveScene("", false);
 		}
 
 
@@ -68,7 +68,7 @@ namespace ProBuilder2.UpgradeKit
 			SceneInfo sceneInfo = DeserializeScene(DisplayLog, DisplayProgress);
 
 			if( EditorUtility.DisplayDialog("Deserialize ProBuilder Data", "Successfully deserialized " + sceneInfo.success + " / " + sceneInfo.total + " objects.", "Save", "Don't Save"))
-				EditorApplication.SaveScene("", false);
+				pb_EditorSceneUtility.SaveScene("", false);
 		}
 
 		public static void DisplayLog(string msg, MessageType type)

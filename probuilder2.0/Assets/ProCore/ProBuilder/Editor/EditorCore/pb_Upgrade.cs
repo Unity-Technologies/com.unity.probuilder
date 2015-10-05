@@ -27,7 +27,7 @@ namespace ProBuilder2.EditorCommon
 		public static void InvertUVScale_Scene()
 		{
 			InvertUVScale( (pb_Object[])FindObjectsOfType(typeof(pb_Object)), true );
-			EditorApplication.SaveCurrentSceneIfUserWantsTo();
+			pb_EditorSceneUtility.SaveCurrentSceneIfUserWantsTo();
 		}
 
 		public static void InvertUVScale_SelectedFaces()

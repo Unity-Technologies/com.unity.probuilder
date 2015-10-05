@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.UpgradeKit
 {
@@ -24,7 +25,7 @@ namespace ProBuilder2.UpgradeKit
 		{
 			/// If the current scene is dirty and the user opts to cancel instead of discarding or saving,
 			/// exit the batch update.
-			if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
+			if(!pb_EditorSceneUtility.SaveCurrentSceneIfUserWantsTo())
 				return;
 
 			if(!EditorUtility.DisplayDialog("Batch Prepare Scenes for Upgrade", "This tool will open every scene in your project and run the pre-upgrade process, and may take a few minutes.  Once complete, a log of the upgrade activity will be available in the Assets folder", "Okay", "Cancel"))
@@ -39,7 +40,7 @@ namespace ProBuilder2.UpgradeKit
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Batch Re-Attach ProBuilder Scripts", false, pb_Constant.MENU_MISC)]
 		static void MenuBatchReattach()
 		{
-			if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
+			if(!pb_EditorSceneUtility.SaveCurrentSceneIfUserWantsTo())
 				return;
 			
 			string[] scenes = FindAssetsWithExtension(".unity");
@@ -63,9 +64,9 @@ namespace ProBuilder2.UpgradeKit
 				sb.AppendLine("Open scene: " + sceneName);
 				sb.AppendLine("----");
 
-				EditorApplication.OpenScene(scenePaths[i]);
+				pb_EditorSceneUtility.OpenScene(scenePaths[i]);
 				string backup_path = AssetDatabase.GenerateUniqueAssetPath("Assets/" + SCENE_BACKUP_FOLDER + "/" + sceneName);
-				EditorApplication.SaveScene(backup_path, true);
+				pb_EditorSceneUtility.SaveScene(backup_path, true);
 
 				EditorUtility.DisplayProgressBar("Batch Prepare Scenes for Upgrade", sceneName, i / (float)scenePaths.Length);
 
@@ -74,7 +75,7 @@ namespace ProBuilder2.UpgradeKit
 				sb.AppendLine("Results: " + info.ToString() );
 				sb.AppendLine("\n");
 
-				EditorApplication.SaveScene();
+				pb_EditorSceneUtility.SaveScene();
 			}
 
 			EditorUtility.ClearProgressBar();
@@ -94,7 +95,7 @@ namespace ProBuilder2.UpgradeKit
 				sb.AppendLine("Open scene: " + sceneName);
 				sb.AppendLine("----");
 
-				EditorApplication.OpenScene(scenePaths[i]);
+				pb_EditorSceneUtility.OpenScene(scenePaths[i]);
 
 				EditorUtility.DisplayProgressBar("Batch Re-attach ProBuilder Scripts", sceneName, i / (float)scenePaths.Length);
 
@@ -103,7 +104,7 @@ namespace ProBuilder2.UpgradeKit
 				sb.AppendLine("Results: " + info.ToString() );
 				sb.AppendLine("\n");
 
-				EditorApplication.SaveScene();
+				pb_EditorSceneUtility.SaveScene();
 
 			}
 

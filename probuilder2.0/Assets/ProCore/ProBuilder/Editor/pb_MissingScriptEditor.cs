@@ -178,7 +178,7 @@ namespace ProBuilder2.EditorCommon
 
 			EditorUtility.DisplayDialog("Success", "Successfully repaired " + total + " ProBuilder objects.", "Okay");
 
-			if(!EditorApplication.SaveCurrentSceneIfUserWantsTo())
+			if(!pb_EditorSceneUtility.SaveCurrentSceneIfUserWantsTo())
 				Debug.LogWarning("Repaired script references will be lost on exit if this scene is not saved!");
 
 			doFix = false;
