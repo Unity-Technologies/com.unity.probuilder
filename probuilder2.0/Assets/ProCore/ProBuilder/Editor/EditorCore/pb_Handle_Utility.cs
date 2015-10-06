@@ -130,7 +130,7 @@ public class pb_Handle_Utility
 
 		Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size+HANDLE_PADDING);
 		Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
-				
+		
 		Handles.color = Color.yellow;
 		Handles.CircleCap(-1, position, Quaternion.identity, width/2);
 		Handles.color = HANDLE_COLOR_UP;

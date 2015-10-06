@@ -265,6 +265,12 @@ namespace ProBuilder2.Math
 		 */
 		public static bool PointInPolygon(Vector2[] polygon, int[] indices, Vector2 point)
 		{
+			if(indices.Length % 2 != 0)
+			{
+				Debug.LogError("PointInPolygon requires polygon indices be divisible by 2!");
+				return false;
+			}
+
 			pb_Bounds2D bounds = new pb_Bounds2D(polygon, indices);
 
 			if(bounds.ContainsPoint(point))
@@ -272,7 +278,7 @@ namespace ProBuilder2.Math
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < polygon.Length; i += 2)
+				for(int i = 0; i < indices.Length; i += 2)
 				{
 					if( GetLineSegmentIntersect(rayStart, point, polygon[indices[i]], polygon[indices[i+1]]) )
 						collisions++;

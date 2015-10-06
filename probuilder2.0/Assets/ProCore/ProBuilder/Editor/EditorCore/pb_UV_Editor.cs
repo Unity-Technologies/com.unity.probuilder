@@ -1,3 +1,5 @@
+#define PB_DEBUG
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -14,13 +16,6 @@ using ProBuilder2.Interface;
 using Parabox.Debug;
 #endif
 
-/**
- * Space Conversion:
- * 	- UV - The actual UV coordinates.
- * 	- Canvas - uv * uvGridSize
- * 	- GUI - (canvas * uvGraphScale) + GUI offset
- */
-
 #if !PROTOTYPE
 public class pb_UV_Editor : EditorWindow
 {
@@ -30,9 +25,11 @@ public class pb_UV_Editor : EditorWindow
     #if PB_DEBUG
     static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
     #endif
+
+    Vector2[][] uvs_canvas_space;
 #endregion
 
-#region CONST & PREF
+#region Fields
 
 	pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -63,15 +60,15 @@ public class pb_UV_Editor : EditorWindow
 
 	private float pref_gridSnapValue = .0625f;
 
-	Color DRAG_BOX_COLOR_BASIC 	= new Color(0f, .7f, 1f, .2f);
-	Color DRAG_BOX_COLOR_PRO 	= new Color(0f, .7f, 1f, 1f);
-	Color DRAG_BOX_COLOR;
+	static readonly Color DRAG_BOX_COLOR_BASIC 	= new Color(0f, .7f, 1f, .2f);
+	static readonly Color DRAG_BOX_COLOR_PRO 	= new Color(0f, .7f, 1f, 1f);
+	static readonly Color DRAG_BOX_COLOR = EditorGUIUtility.isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
 
-	Color HOVER_COLOR_MANUAL 	= new Color(1f, .68f, 0f, .23f);
-	Color HOVER_COLOR_AUTO 		= new Color(0f, 1f, 1f, .23f);
+	static readonly Color HOVER_COLOR_MANUAL 	= new Color(1f, .68f, 0f, .23f);
+	static readonly Color HOVER_COLOR_AUTO 		= new Color(0f, 1f, 1f, .23f);
 
-	Color SELECTED_COLOR_MANUAL = new Color(1f, .68f, 0f, .39f);
-	Color SELECTED_COLOR_AUTO	= new Color(0f, .785f, 1f, .39f);
+	static readonly Color SELECTED_COLOR_MANUAL = new Color(1f, .68f, 0f, .39f);
+	static readonly Color SELECTED_COLOR_AUTO	= new Color(0f, .785f, 1f, .39f);
 
 	#if UNITY_STANDALONE_OSX
 	public bool ControlKey { get { return Event.current.modifiers == EventModifiers.Command; } }
@@ -81,16 +78,16 @@ public class pb_UV_Editor : EditorWindow
 	public bool ShiftKey { get { return Event.current.modifiers == EventModifiers.Shift; } }
 
 	private bool pref_showMaterial = true;	///< Show a preview texture for the first selected face in UV space 0,1?
-#endregion
-
-#region GUI Properties
 
 	Color GridColorPrimary;
 	Color BasicBackgroundColor;
 	Color UVColorPrimary, UVColorSecondary, UVColorGroupIndicator;
-	Texture2D dot;
-	Texture2D icon_textureMode_on, icon_textureMode_off;
-	Texture2D icon_sceneUV_on, icon_sceneUV_off;
+
+	Texture2D 	dot,
+				icon_textureMode_on,
+				icon_textureMode_off,
+				icon_sceneUV_on,
+				icon_sceneUV_off;
 
 	GUIContent gc_SceneViewUVHandles = new GUIContent("", (Texture2D)null, "Lock the SceneView handle tools to UV manipulation mode.  This allows you to move UV coordinates directly on your 3d object.");
 	GUIContent gc_ShowPreviewTexture = new GUIContent("", (Texture2D)null, "When toggled on, a preview image of the first selected face's material will be drawn from coordinates 0,0 - 1,1.\n\nNote that this depends on the Material's shader having a _mainTexture property.");
@@ -99,20 +96,20 @@ public class pb_UV_Editor : EditorWindow
 	GUIContent gc_ConvertToAuto = new GUIContent("Convert to Auto", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
 
 	GUIContent gc_RenderUV = new GUIContent((Texture2D)null, "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image.");
-#endregion
 
-#region Properties
-
-	private int uvGridSize = 256;	// Full grid size in pixels (-1, 1)
+	// Full grid size in pixels (-1, 1)
+	private int uvGridSize = 256;
 	private float uvGraphScale = 1f;
 
 	private pb_Bounds2D selected_canvas_bounds = new pb_Bounds2D(Vector2.zero, Vector2.zero);
+
 	enum UVMode 
 	{
 		Auto,
 		Manual,
 		Mixed
 	};
+
 	UVMode mode = UVMode.Auto;
 
 	#if PB_DEBUG
@@ -120,29 +117,28 @@ public class pb_UV_Editor : EditorWindow
 	bool debug_showCoordinates = false;
 	#endif
 	
+	// what uv channel to modify
 	int channel = 0;
 
-	private Vector2 uvCanvasOffset = Vector2.zero;
+	private Vector2 uvGraphOffset = Vector2.zero;
 
-	// All UV coordinates
+	/// inspected data
 	pb_Object[] selection;
 	int[][] distinct_indices;
-	Vector2[][] uvs_canvas_space;	// mirror of each selected pbo's UV coorindates in GUI window coordinates, but not transformed to offset or scale
 
 	List<pb_Face[]>[] incompleteTextureGroupsInSelection = new List<pb_Face[]>[0];
 	List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
 
 	int selectedUVCount = 0;
 	int selectedFaceCount = 0;
-	// int selectedEdgeCount = 0;
 	int screenWidth, screenHeight;
 
-	// Modifying state
+	// true when uvs are being moved around
 	bool modifyingUVs = false;
 
-	Material preview_material;		///< The first selected face's material.  Used to draw texture preview in 0,0 - 1,1 space.
+	// The first selected face's material.  Used to draw texture preview in 0,0 - 1,1 space.
+	Material preview_material;
 
-	// Tooools
 	Tool tool = Tool.Move;
 	SelectMode selectionMode { get { return editor != null ? editor.selectionMode : SelectMode.Face; } set { if(editor) editor.SetSelectionMode(value); } }
 
@@ -310,7 +306,6 @@ public class pb_UV_Editor : EditorWindow
 		MethodInfo loadIconMethod = typeof(EditorGUIUtility).GetMethod("LoadIcon", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 		
 		isProSkin = EditorGUIUtility.isProSkin;
-		DRAG_BOX_COLOR = isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
 
 		Texture2D moveIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
 		Texture2D rotateIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
@@ -592,8 +587,8 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * Automatically select textureGroup kin, and copy origins of all UVs.
-	 * Also resets the mesh to PB data - removing vertices appended by 
+	 * Automatically select textureGroup buddies, and copy origins of all UVs.
+	 * Also resets the mesh to PB data, removing vertices appended by 
 	 * UV2 generation.
 	 */
 	internal void OnBeginUVModification()
@@ -602,7 +597,6 @@ public class pb_UV_Editor : EditorWindow
 
 		modifyingUVs = true;
 
-		Vector2 handle = handlePosition_canvas;
 		bool update = false;
 
 		// Make sure all TextureGroups are auto-selected
@@ -625,11 +619,11 @@ public class pb_UV_Editor : EditorWindow
 		if(update)
 		{
 			editor.UpdateSelection();
-			SetHandlePosition(handle, true);
+			SetHandlePosition(handlePosition, true);
 		}
 
 		CopySelectionUVs(out uv_origins);
-		uvOrigin = pb_Handle_Utility.GUIToUVPoint(handle, uvGridSize);
+		uvOrigin = handlePosition;
 	}
 
 	/**
@@ -644,7 +638,7 @@ public class pb_UV_Editor : EditorWindow
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
 		{
 			selected_canvas_bounds = CanvasSelectionBounds();
-			SetHandlePosition(handlePosition_canvas, true);
+			SetHandlePosition(handlePosition, true);
 		}
 
 		if(mode == UVMode.Mixed || mode == UVMode.Auto)
@@ -725,7 +719,7 @@ public class pb_UV_Editor : EditorWindow
 						/**
 						 * Translation - applies for every tool
 						 */
-						Vector2 handle = pb_Handle_Utility.GUIToUVPoint(handlePosition_canvas, uvGridSize);
+						Vector2 handle = handlePosition;
 						Vector2 cen = pb_Bounds2D.Center(pb.GetUVs(tris));
 
 						foreach(pb_Face face in kvp.Value)
@@ -985,7 +979,7 @@ public class pb_UV_Editor : EditorWindow
 					if( (e.alt && e.button == LEFT_MOUSE_BUTTON) || e.button == MIDDLE_MOUSE_BUTTON || Tools.current == Tool.View)
 					{
 						m_draggingCanvas = true;
-						uvCanvasOffset += e.delta;
+						uvGraphOffset += e.delta;
 					}
 					else if(e.button == LEFT_MOUSE_BUTTON)
 					{
@@ -1018,7 +1012,7 @@ public class pb_UV_Editor : EditorWindow
 
 				if(e.button == LEFT_MOUSE_BUTTON && !m_rightMouseDrag && !modifyingUVs && !m_draggingCanvas)
 				{
-					Vector2 hp = handlePosition_canvas;
+					Vector2 hp = handlePosition;
 
 					if(m_mouseDragging)
 					{
@@ -1038,7 +1032,7 @@ public class pb_UV_Editor : EditorWindow
 					}
 
 					if(!e.shift || !userPivot)
-						SetHandlePosition( selected_canvas_bounds.center, false );
+						SetHandlePosition( pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize), false );
 					else
 						SetHandlePosition( hp, true );
 				}
@@ -1091,10 +1085,10 @@ public class pb_UV_Editor : EditorWindow
 		{
 			case KeyCode.Keypad0: 
 			case KeyCode.Alpha0:
-				if(!GUI.GetNameOfFocusedControl().Equals(""))
+				if(GUI.GetNameOfFocusedControl().Equals(""))
 				{
 					ResetCanvas();
-					uvCanvasOffset = Vector2.zero;
+					uvGraphOffset = Vector2.zero;
 					e.Use();
 					needsRepaint = true;
 					used = true;
@@ -1149,7 +1143,9 @@ public class pb_UV_Editor : EditorWindow
 			}
 		}
 
-		Vector2 mpos = GUIToCanvasPoint(mousePosition);
+		Vector2 mpos = GUIToUVPoint(mousePosition);
+		Vector2[] uv;
+		Vector2 x, y;
 		ObjectElementIndex oei = nearestElement;
 		nearestElement.valid = false;
 
@@ -1163,13 +1159,14 @@ public class pb_UV_Editor : EditorWindow
 					for(int i = 0; i < selection.Length; i++)
 					{
 						pb_Object pb = selection[i];
+						uv = pb.uv;
 
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
 							for(int p = 0; p < pb.faces[n].edges.Length; p++)
 							{
-								Vector2 x = uvs_canvas_space[i][pb.faces[n].edges[p].x];
-								Vector2 y = uvs_canvas_space[i][pb.faces[n].edges[p].y];
+								x = uv[pb.faces[n].edges[p].x];
+								y = uv[pb.faces[n].edges[p].y];
 
 								dist = pb_Math.DistancePointLineSegment(mpos, x, y);
 
@@ -1196,11 +1193,11 @@ public class pb_UV_Editor : EditorWindow
 					bool superBreak = false;
 					for(int i = 0; i < selection.Length; i++)
 					{
+						uv = selection[i].uv;
+
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
-
-							// if( pb_Math.PointInPolygon(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles(), mpos) )
+							if( pb_Math.PointInPolygon(uv, selection[i].faces[n].edges.AllTriangles(), mpos) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1348,7 +1345,8 @@ public class pb_UV_Editor : EditorWindow
 	Vector2 uvOrigin = Vector2.zero;
 
 	Vector2[][] uv_origins = null;
-	Vector2 handlePosition_canvas = Vector2.zero, handlePosition_offset = Vector2.zero;
+	Vector2 handlePosition = Vector2.zero,
+			handlePosition_offset = Vector2.zero;
 
 	/**
 	 * Draw an interactive 2d Move tool that affects the current selection of UV coordinates.
@@ -1357,14 +1355,18 @@ public class pb_UV_Editor : EditorWindow
 	{
 		Event e = Event.current;
 
-		Vector2 t_handlePosition = handlePosition_canvas;
+		Vector2 t_handlePosition = UVToGUIPoint(handlePosition);
 
 		#if PB_DEBUG
 		profiler.BeginSample("Handle");
 		#endif
 
+		Bugger.SetKey("handle uv", handlePosition.ToString("F3"));
+		Bugger.SetKey("handle gui", UVToGUIPoint(handlePosition));
+
 		pb_Handle_Utility.limitToLeftButton = false; // enable right click drag
-		t_handlePosition = GUIToCanvasPoint( pb_Handle_Utility.PositionHandle2d(1, CanvasToGUIPoint(handlePosition_canvas), HANDLE_SIZE) );
+		t_handlePosition = pb_Handle_Utility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
+		t_handlePosition = GUIToUVPoint(t_handlePosition);
 		pb_Handle_Utility.limitToLeftButton = true;
 
 		#if PB_DEBUG
@@ -1376,7 +1378,7 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .0001f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition, .0001f))
 		{
 			#if PB_DEBUG
 			profiler.BeginSample("Set Custom Pivot");
@@ -1386,41 +1388,44 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 			{
-				Vector2 uv = pb_Handle_Utility.GUIToUVPoint( t_handlePosition, uvGridSize);
-				handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(pbUtil.SnapValue(uv, (handlePosition_canvas-t_handlePosition).ToMask() * pref_gridSnapValue), uvGridSize);
+				handlePosition = pb_Handle_Utility.UVToGUIPoint(
+					pbUtil.SnapValue(
+						t_handlePosition,
+						(handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue),
+						uvGridSize);
 			}
 			else
 			{		
-				handlePosition_canvas = t_handlePosition;
+				handlePosition = t_handlePosition;
 
 				/**
 				 * Attempt vertex proximity snap if shift key is held
 				 */
 				if(ShiftKey)
 				{
-
 					float dist, minDist = MAX_PROXIMITY_SNAP_DIST_CANVAS;
 					Vector2 offset = Vector2.zero;
 					for(int i = 0; i < selection.Length; i++)
 					{
-						int index = pb_Handle_Utility.NearestPoint( handlePosition_canvas, uvs_canvas_space[i], MAX_PROXIMITY_SNAP_DIST_CANVAS);
+						/// todo reset MAX_PROXIMITY_SNAP_DIST
+						int index = pb_Handle_Utility.NearestPoint(handlePosition, selection[i].uv, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 						if(index < 0) continue;
 						
-						dist = Vector2.Distance( uvs_canvas_space[i][index], handlePosition_canvas );
+						dist = Vector2.Distance( selection[i].uv[index], handlePosition );
 
 						if(dist < minDist)
 						{
 							minDist = dist;
-							offset = uvs_canvas_space[i][index] - handlePosition_canvas;
+							offset = selection[i].uv[index] - handlePosition;
 						}
 					}
 
-					handlePosition_canvas += offset;
+					handlePosition += offset;
 				}
 			}
 
-			SetHandlePosition(handlePosition_canvas, true);
+			SetHandlePosition(handlePosition, true);
 
 			#if PB_DEBUG
 			profiler.EndSample();
@@ -1433,7 +1438,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition_canvas, .0001f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1449,10 +1454,10 @@ public class pb_UV_Editor : EditorWindow
 
 			needsRepaint = true;
 
-			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
+			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition_canvas-t_handlePosition).ToMask() * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask() * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1461,7 +1466,7 @@ public class pb_UV_Editor : EditorWindow
 
 				foreach(int i in distinct_indices[n])
 				{
-					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
+					uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
 				}
 
 				// set uv positions before figuring snap dist stuff
@@ -1512,7 +1517,7 @@ public class pb_UV_Editor : EditorWindow
 						ApplyUVs(selection[i], uvs, channel);
 					}
 
-					handlePosition_canvas = pb_Handle_Utility.UVToGUIPoint(newUVPosition + nearestDelta, uvGridSize);
+					handlePosition = newUVPosition + nearestDelta;
 				}
 				else
 				{
@@ -1532,54 +1537,55 @@ public class pb_UV_Editor : EditorWindow
 
 	internal void SceneMoveTool(Vector2 t_handlePosition, Vector2 handlePosition)
 	{
-		t_handlePosition = pb_Handle_Utility.UVToGUIPoint(t_handlePosition, uvGridSize);
-		handlePosition = pb_Handle_Utility.UVToGUIPoint(handlePosition, uvGridSize);
+		/// todo implement SceneMoveTool
+		// t_handlePosition = pb_Handle_Utility.UVToGUIPoint(t_handlePosition, uvGridSize);
+		// handlePosition = pb_Handle_Utility.UVToGUIPoint(handlePosition, uvGridSize);
 
-		/**
-		 *	Tool activated - moving some UVs around.
-		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
-		 *	in OnFinishUVModification, not at real time.
-		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
-		{
-			/**
-			 * Start of move UV operation
-			 */
-			if(!modifyingUVs)
-			{
-				pbUndo.RecordObjects(selection, "Move UVs");
-				OnBeginUVModification();
-				uvOrigin = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);	// have to set this one special
-			}
+		// /**
+		//  *	Tool activated - moving some UVs around.
+		//  * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
+		//  *	in OnFinishUVModification, not at real time.
+		//  */
+		// if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
+		// {
+		// 	/**
+		// 	 * Start of move UV operation
+		// 	 */
+		// 	if(!modifyingUVs)
+		// 	{
+		// 		pbUndo.RecordObjects(selection, "Move UVs");
+		// 		OnBeginUVModification();
+		// 		uvOrigin = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);	// have to set this one special
+		// 	}
 
-			Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
+		// 	Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
 
-			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
+		// 	if(ControlKey)
+		// 		newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
 
-			for(int n = 0; n < selection.Length; n++)
-			{
-				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
+		// 	for(int n = 0; n < selection.Length; n++)
+		// 	{
+		// 		pb_Object pb = selection[n];
+		// 		Vector2[] uvs = pb.uv;
 
-				foreach(int i in distinct_indices[n])
-				{
-					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
-				}
+		// 		foreach(int i in distinct_indices[n])
+		// 		{
+		// 			uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
+		// 		}
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
-			}
+		// 		pb.SetUV(uvs);
+		// 		pb.msh.uv = uvs;
+		// 	}
 
-			RefreshSelectedUVCoordinates();
-		}
+		// 	RefreshSelectedUVCoordinates();
+		// }
 	}
 
 	void RotateTool()
 	{
 		float t_uvRotation = uvRotation;
 
-		uvRotation = pb_Handle_Utility.RotationHandle2d(0, CanvasToGUIPoint(handlePosition_canvas), uvRotation, 128);
+		uvRotation = pb_Handle_Utility.RotationHandle2d(0, UVToGUIPoint(handlePosition), uvRotation, 128);
 
 		if(uvRotation != t_uvRotation)
 		{
@@ -1653,7 +1659,7 @@ public class pb_UV_Editor : EditorWindow
 	void ScaleTool()
 	{
 		Vector2 t_uvScale = uvScale;
-		uvScale = pb_Handle_Utility.ScaleHandle2d(2, CanvasToGUIPoint(handlePosition_canvas), uvScale, 128);
+		uvScale = pb_Handle_Utility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 		if(ControlKey)
 			uvScale = pbUtil.SnapValue(uvScale, pref_gridSnapValue);
@@ -1812,8 +1818,8 @@ public class pb_UV_Editor : EditorWindow
 		while(StepSize * uvGridSize * uvGraphScale < uvGridSize/10)
 			StepSize *= 2f;
 
-		// Calculate what offset the grid should be (different from uvCanvasOffset in that we always want to render the grid)
-		Vector2 gridOffset = uvCanvasOffset;
+		// Calculate what offset the grid should be (different from uvGraphOffset in that we always want to render the grid)
+		Vector2 gridOffset = uvGraphOffset;
 		gridOffset.x = gridOffset.x % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
 		gridOffset.y = gridOffset.y % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
 
@@ -1850,19 +1856,19 @@ public class pb_UV_Editor : EditorWindow
 		{
 			GL.Color( Color.gray );
 
-			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
-			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
 
-			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
-			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
 
 			GL.Color( pb_Constant.ProBuilderBlue );
 
-			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvCanvasOffset );
-			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
 
-			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
-			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvCanvasOffset );
+			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
 		}
 
 		GL.End();
@@ -1888,15 +1894,15 @@ public class pb_UV_Editor : EditorWindow
 	/// re-usable rect for drawing graphs
 	Rect r = new Rect(0,0,0,0);
 
-	void DrawUVGraph(Rect rect)
+	private void DrawUVGraph(Rect rect)
 	{
 		UVGraphCenter = rect.center;
 
 		UVRectIdentity.width = uvGridSize * uvGraphScale;
 		UVRectIdentity.height = UVRectIdentity.width;
 
-		UVRectIdentity.x = UVGraphCenter.x + uvCanvasOffset.x;
-		UVRectIdentity.y = UVGraphCenter.y + uvCanvasOffset.y - UVRectIdentity.height;
+		UVRectIdentity.x = UVGraphCenter.x + uvGraphOffset.x;
+		UVRectIdentity.y = UVGraphCenter.y + uvGraphOffset.y - UVRectIdentity.height;
 
 		if(pref_showMaterial && preview_material && preview_material.mainTexture)
 			EditorGUI.DrawPreviewTexture(UVRectIdentity, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
@@ -2197,34 +2203,15 @@ public class pb_UV_Editor : EditorWindow
 		if(channel != t_channel)
 			RefreshUVCoordinates();
 
-		if(GUILayout.Button("Dump Times"))
-			Debug.Log( profiler.ToString() );
-
-		if(GUILayout.Button("Clear Profiler"))
-			profiler.Reset();
-		
-		GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
-		GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
-		GUILayout.Label("m_draggingCanvas: " + m_draggingCanvas);
-		GUILayout.Label("modifyingUVs: " + modifyingUVs);
-
-		BasicBackgroundColor = EditorGUILayout.ColorField("BACKGROUND", BasicBackgroundColor);
-		GUILayout.Label(BasicBackgroundColor.ToString("F2"));
-
-		UVColorGroupIndicator = EditorGUILayout.ColorField("Groups", UVColorGroupIndicator);
-		
-		GUILayout.Label("Canvas Zoom: " + uvGraphScale, GUILayout.MaxWidth(rect.width-6));
-		GUILayout.Label("Canvas Offset: " + uvCanvasOffset, GUILayout.MaxWidth(rect.width-6));
+		// GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
+		// GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
+		// GUILayout.Label("m_draggingCanvas: " + m_draggingCanvas);
+		// GUILayout.Label("modifyingUVs: " + modifyingUVs);
 
 		debug_showCoordinates = EditorGUILayout.Toggle("Show UV coordinates", debug_showCoordinates);
 
-		float tmp = pref_gridSnapValue;
-		pref_gridSnapValue = EditorGUILayout.FloatField("Grid Snap", pref_gridSnapValue, GUILayout.MaxWidth(rect.width-6));
-		if(tmp != pref_gridSnapValue)
-		{
-			pref_gridSnapValue = Mathf.Clamp(pref_gridSnapValue, .015625f, 2f);
-			EditorPrefs.SetFloat(pb_Constant.pbUVGridSnapValue, pref_gridSnapValue);
-		}
+		GUILayout.Label("Handle: " + handlePosition.ToString("F3"));
+		GUILayout.Label("Offset: " + handlePosition_offset.ToString("F3"));
 
 		GUI.EndGroup();
 	}
@@ -2262,7 +2249,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	void SetCanvasScale(float zoom)
 	{
-		Vector2 center = -(uvCanvasOffset / uvGraphScale);
+		Vector2 center = -(uvGraphOffset / uvGraphScale);
 		uvGraphScale = Mathf.Clamp(zoom, MIN_GRAPH_SCALE, MAX_GRAPH_SCALE);
 		SetCanvasCenter( center * uvGraphScale );
 	}
@@ -2272,9 +2259,9 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	void SetCanvasCenter(Vector2 center)
 	{
-		uvCanvasOffset = center;
-		uvCanvasOffset.x = -uvCanvasOffset.x;
-		uvCanvasOffset.y = -uvCanvasOffset.y;
+		uvGraphOffset = center;
+		uvGraphOffset.x = -uvGraphOffset.x;
+		uvGraphOffset.y = -uvGraphOffset.y;
 	}
 
 	void ResetCanvas()
@@ -2284,14 +2271,15 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * Set the handlePosition to this canvas space coordinate
+	 * Set the handlePosition to this UV coordinate.
 	 */
 	bool userPivot = false;
-	void SetHandlePosition(Vector2 canvasPoint, bool isUserSet)
+	void SetHandlePosition(Vector2 uvPoint, bool isUserSet)
 	{
+		Debug.Log("SetHandlePosition");
 		userPivot = isUserSet;
-		handlePosition_offset = selected_canvas_bounds.center - canvasPoint;
-		handlePosition_canvas = canvasPoint;
+		handlePosition_offset = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - uvPoint;
+		handlePosition = uvPoint;
 	}
 
 	/**
@@ -2313,13 +2301,20 @@ public class pb_UV_Editor : EditorWindow
 	Vector2 UVToGUIPoint(Vector2 v)
 	{
 		Vector2 p = new Vector2(v.x, -v.y);
-		return UVGraphCenter + (p * uvGridSize * uvGraphScale) + uvCanvasOffset;
+		return UVGraphCenter + (p * uvGridSize * uvGraphScale) + uvGraphOffset;
+	}
+
+	Vector2 GUIToUVPoint(Vector2 v)
+	{
+		Vector2 p = (v - (UVGraphCenter + uvGraphOffset)) / (uvGraphScale * uvGridSize);
+		p.y = -p.y;
+		return p;
 	}
 
 	Vector3 CanvasToGUIPoint(Vector2 v)
 	{
-		v.x = UVGraphCenter.x + (v.x * uvGraphScale + uvCanvasOffset.x);
-		v.y = UVGraphCenter.y + (v.y * uvGraphScale + uvCanvasOffset.y);
+		v.x = UVGraphCenter.x + (v.x * uvGraphScale + uvGraphOffset.x);
+		v.y = UVGraphCenter.y + (v.y * uvGraphScale + uvGraphOffset.y);
 		return v;
 	}
 
@@ -2328,7 +2323,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	Vector2 GUIToCanvasPoint(Vector2 v)
 	{
-		return ((v-UVGraphCenter)-uvCanvasOffset)/uvGraphScale;
+		return ((v-UVGraphCenter)-uvGraphOffset)/uvGraphScale;
 	}
 
 	/**
@@ -2560,7 +2555,7 @@ public class pb_UV_Editor : EditorWindow
 		editor.GetFirstSelectedMaterial(ref preview_material);
 
 		selected_canvas_bounds = CanvasSelectionBounds();
-		handlePosition_canvas = selected_canvas_bounds.center - handlePosition_offset;
+		handlePosition = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - handlePosition_offset;
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -2614,7 +2609,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		selected_canvas_bounds = CanvasSelectionBounds();
-		handlePosition_canvas = selected_canvas_bounds.center - handlePosition_offset;
+		handlePosition = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - handlePosition_offset;
 	}
 #endregion
 
@@ -3089,7 +3084,7 @@ public class pb_UV_Editor : EditorWindow
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
 				Menu_FitUVs();
 			else
-				CenterUVsAtPoint( pb_Handle_Utility.GUIToUVPoint(handlePosition_canvas, uvGridSize) );
+				CenterUVsAtPoint( handlePosition );
 
 			ResetUserPivot();
 		}
@@ -3128,7 +3123,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(p > 0)
 		{
-			CenterUVsAtPoint( pb_Handle_Utility.GUIToUVPoint(handlePosition_canvas, uvGridSize) );
+			CenterUVsAtPoint( handlePosition );
 
 			ResetUserPivot();
 		}
@@ -3306,7 +3301,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		pbUndo.RecordObjects(selection, "Flip " + direction);
 
-		Vector2 center = pb_Handle_Utility.GUIToUVPoint( handlePosition_canvas, uvGridSize );
+		Vector2 center = handlePosition;
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3447,11 +3442,11 @@ public class pb_UV_Editor : EditorWindow
 				// A new screenshot has been initiated
 			case ScreenshotStatus.Done:
 				curUvScale = uvGraphScale;
-				curUvPosition = uvCanvasOffset;
+				curUvPosition = uvGraphOffset;
 
 				uvGraphScale = screenshot_size / 256;
 				// always begin texture grabs at bottom left
-				uvCanvasOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f);
+				uvGraphOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f);
 
 				screenshot = new Texture2D(screenshot_size, screenshot_size);
 				screenshot.hideFlags = (HideFlags)( 1 | 2 | 4 );
@@ -3480,7 +3475,7 @@ public class pb_UV_Editor : EditorWindow
 					if(screenshotTexturePosition.y < screenshot_size)
 					{
 						// reposition canvas
-						uvCanvasOffset.y += screenshotCanvasRect.height;
+						uvGraphOffset.y += screenshotCanvasRect.height;
 						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height);
 						screenshotStatus = ScreenshotStatus.PrepareCanvas;
 						Repaint();
@@ -3492,8 +3487,8 @@ public class pb_UV_Editor : EditorWindow
 
 						if(screenshotTexturePosition.x < screenshot_size)
 						{
-							uvCanvasOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
-							uvCanvasOffset.y = ScreenRect.height/2f;	// reset canvas offset y value
+							uvGraphOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
+							uvGraphOffset.y = ScreenRect.height/2f;	// reset canvas offset y value
 							screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
 							screenshotTexturePosition.y = 0;
 							screenshotStatus = ScreenshotStatus.PrepareCanvas;
@@ -3505,7 +3500,7 @@ public class pb_UV_Editor : EditorWindow
 
 				// reset the canvas to it's original position and scale
 				uvGraphScale = curUvScale;
-				uvCanvasOffset = curUvPosition;
+				uvGraphOffset = curUvPosition;
 
 				this.RemoveNotification();
 				screenshotStatus = ScreenshotStatus.RenderComplete;
