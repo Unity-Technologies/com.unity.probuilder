@@ -101,8 +101,6 @@ public class pb_UV_Editor : EditorWindow
 	private int uvGridSize = 256;
 	private float uvGraphScale = 1f;
 
-	private pb_Bounds2D selected_canvas_bounds = new pb_Bounds2D(Vector2.zero, Vector2.zero);
-
 	enum UVMode 
 	{
 		Auto,
@@ -618,8 +616,10 @@ public class pb_UV_Editor : EditorWindow
 
 		if(update)
 		{
+			/// UpdateSelection clears handlePosition
+			Vector2 storedHandlePosition = handlePosition;
 			editor.UpdateSelection();
-			SetHandlePosition(handlePosition, true);
+			SetHandlePosition(storedHandlePosition, true);
 		}
 
 		CopySelectionUVs(out uv_origins);
@@ -636,10 +636,7 @@ public class pb_UV_Editor : EditorWindow
 		modifyingUVs = false;
 
 		if((tool == Tool.Rotate || tool == Tool.Scale) && userPivot)
-		{
-			selected_canvas_bounds = CanvasSelectionBounds();
 			SetHandlePosition(handlePosition, true);
-		}
 
 		if(mode == UVMode.Mixed || mode == UVMode.Auto)
 		{
@@ -1032,7 +1029,7 @@ public class pb_UV_Editor : EditorWindow
 					}
 
 					if(!e.shift || !userPivot)
-						SetHandlePosition( pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize), false );
+						SetHandlePosition(UVSelectionBounds().center, false);
 					else
 						SetHandlePosition( hp, true );
 				}
@@ -1361,9 +1358,6 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("Handle");
 		#endif
 
-		Bugger.SetKey("handle uv", handlePosition.ToString("F3"));
-		Bugger.SetKey("handle gui", UVToGUIPoint(handlePosition));
-
 		pb_Handle_Utility.limitToLeftButton = false; // enable right click drag
 		t_handlePosition = pb_Handle_Utility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
 		t_handlePosition = GUIToUVPoint(t_handlePosition);
@@ -1388,11 +1382,7 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 			{
-				handlePosition = pb_Handle_Utility.UVToGUIPoint(
-					pbUtil.SnapValue(
-						t_handlePosition,
-						(handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue),
-						uvGridSize);
+				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
 			}
 			else
 			{		
@@ -1465,9 +1455,7 @@ public class pb_UV_Editor : EditorWindow
 				Vector2[] uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
-				{
 					uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
-				}
 
 				// set uv positions before figuring snap dist stuff
 				// don't use ApplyUVs() here because we don't actually want to access the msh
@@ -1663,6 +1651,9 @@ public class pb_UV_Editor : EditorWindow
 
 		if(ControlKey)
 			uvScale = pbUtil.SnapValue(uvScale, pref_gridSnapValue);
+
+		if(pb_Math.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
+		if(pb_Math.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
 
 		if(t_uvScale != uvScale)
 		{
@@ -2191,6 +2182,8 @@ public class pb_UV_Editor : EditorWindow
 	#if PB_DEBUG
 	void DrawDebugInfo(Rect rect)
 	{
+		Vector2 mpos = Event.current.mousePosition;
+
 		GUI.BeginGroup(rect);
 		GUILayout.BeginVertical(GUILayout.MaxWidth(rect.width-6));
 
@@ -2202,6 +2195,8 @@ public class pb_UV_Editor : EditorWindow
 		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2"}, UV_CHANNELS);
 		if(channel != t_channel)
 			RefreshUVCoordinates();
+
+			GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
 
 		// GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
 		// GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
@@ -2229,16 +2224,18 @@ public class pb_UV_Editor : EditorWindow
 
 		if(selection == null || selection.Length < 1 || (editor && editor.selectedVertexCount < 1))
 		{
-			SetCanvasCenter( GUIToCanvasPoint( Event.current.mousePosition ) * uvGraphScale );
+			SetCanvasCenter(Event.current.mousePosition - UVGraphCenter - uvGraphOffset);
 			return;
 		}
 
-		SetCanvasCenter( selected_canvas_bounds.center * uvGraphScale );
+		SetCanvasCenter(selectedGuiBounds.center - uvGraphOffset - UVGraphCenter);
 
-		if(selected_canvas_bounds.size.sqrMagnitude > 0f)
+		if(UVSelectionBounds().size.sqrMagnitude > 0f)
 		{
-			float x = (float)screenWidth / (selected_canvas_bounds.size.x*2f);
-			float y = (float)(screenHeight-96) / (selected_canvas_bounds.size.y*2f);
+			pb_Bounds2D bounds = UVSelectionBounds();
+
+			float x = (float) screenWidth / ((bounds.size.x * uvGridSize) * 1.5f);
+			float y = (float) (screenHeight-96) / ((bounds.size.y * uvGridSize) * 1.5f);
 
 			SetCanvasScale( Mathf.Min(x, y) );
 		}
@@ -2255,7 +2252,7 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * Center the canvas on this point.  Should be GUI coordinates.
+	 * Center the canvas on this point.  Should be in GUI coordinates.
 	 */
 	void SetCanvasCenter(Vector2 center)
 	{
@@ -2276,9 +2273,11 @@ public class pb_UV_Editor : EditorWindow
 	bool userPivot = false;
 	void SetHandlePosition(Vector2 uvPoint, bool isUserSet)
 	{
-		Debug.Log("SetHandlePosition");
+		if(float.IsNaN(uvPoint.x) || float.IsNaN(uvPoint.y))
+			return;
+
 		userPivot = isUserSet;
-		handlePosition_offset = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - uvPoint;
+		handlePosition_offset = UVSelectionBounds().center - uvPoint;
 		handlePosition = uvPoint;
 	}
 
@@ -2326,34 +2325,20 @@ public class pb_UV_Editor : EditorWindow
 		return ((v-UVGraphCenter)-uvGraphOffset)/uvGraphScale;
 	}
 
+	private pb_Bounds2D _selected_gui_bounds = new pb_Bounds2D(Vector2.zero, Vector2.zero);
+
 	/**
-	 * Returns the bounds of the current selection in canvas space (multiplied by uvGridSize but not scaled or offset).
+	 * Returns the bounds of the current selection in GUI space.
 	 */
-	pb_Bounds2D CanvasSelectionBounds()
-	{	
-		float xMin = 0f, xMax = 0f, yMin = 0f, yMax = 0f;
-		bool first = true;
-		for(int n = 0; n < selection.Length; n++)
+	pb_Bounds2D selectedGuiBounds
+	{
+		get
 		{
-			foreach(int i in distinct_indices[n])
-			{
-				if(first) { 
-					xMin = uvs_canvas_space[n][i].x; 
-					xMax = xMin; 
-					yMin = uvs_canvas_space[n][i].y; 
-					yMax = yMin; 
-					first = false;
-				} else {
-					xMin = Mathf.Min(xMin, uvs_canvas_space[n][i].x);
-					yMin = Mathf.Min(yMin, uvs_canvas_space[n][i].y);
-
-					xMax = Mathf.Max(xMax, uvs_canvas_space[n][i].x);
-					yMax = Mathf.Max(yMax, uvs_canvas_space[n][i].y);
-				}
-			}
+			pb_Bounds2D uvBounds = UVSelectionBounds();
+			_selected_gui_bounds.center = UVToGUIPoint(uvBounds.center);
+			_selected_gui_bounds.size = uvBounds.size * uvGridSize * uvGraphScale;
+			return _selected_gui_bounds;
 		}
-
-		return new pb_Bounds2D( new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f ), new Vector2(xMax-xMin, yMax-yMin) );
 	}
 
 	/**
@@ -2427,6 +2412,14 @@ public class pb_UV_Editor : EditorWindow
 			pb_Object pb = selection[i];
 
 			Vector2[] mshUV = GetUVs(pb, channel);
+
+			// if this isn't the uv2 channel and the uv count doesn't match pb vertex count, reset
+			if(channel != 1 && (mshUV == null || mshUV.Length != pb.vertexCount || mshUV.Any(x => float.IsNaN(x.x) || float.IsNaN(x.y))))
+			{
+				mshUV = new Vector2[pb.vertexCount];
+				ApplyUVs(pb, mshUV, channel);
+			}
+			
 			int len = mshUV.Length;
 
 			uvs_canvas_space[i] = new Vector2[len];
@@ -2554,8 +2547,7 @@ public class pb_UV_Editor : EditorWindow
 
 		editor.GetFirstSelectedMaterial(ref preview_material);
 
-		selected_canvas_bounds = CanvasSelectionBounds();
-		handlePosition = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - handlePosition_offset;
+		handlePosition = UVSelectionBounds().center - handlePosition_offset;
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -2608,8 +2600,7 @@ public class pb_UV_Editor : EditorWindow
 				uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 		}
 
-		selected_canvas_bounds = CanvasSelectionBounds();
-		handlePosition = pb_Handle_Utility.GUIToUVPoint(selected_canvas_bounds.center, uvGridSize) - handlePosition_offset;
+		handlePosition = UVSelectionBounds().center - handlePosition_offset;
 	}
 #endregion
 

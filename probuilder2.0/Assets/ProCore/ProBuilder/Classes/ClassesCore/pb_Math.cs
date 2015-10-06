@@ -738,6 +738,14 @@ namespace ProBuilder2.Math
 		}
 
 		/**
+		 *	\brief Compares float values, allowing for a margin of error.
+		 */
+		public static bool Approx(this float a, float b, float delta)
+		{
+			return Mathf.Abs(b - a) < Mathf.Abs(delta);
+		}
+
+		/**
 		 * Search a vector3 array for a matching point within range.
 		 */
 		public static bool ContainsApprox(Vector3[] v, Vector3 p, float eps)
