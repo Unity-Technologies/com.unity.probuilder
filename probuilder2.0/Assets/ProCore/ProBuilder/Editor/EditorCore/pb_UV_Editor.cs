@@ -21,12 +21,10 @@ public class pb_UV_Editor : EditorWindow
 {
 
 #region DEBUG
-   
-    #if PB_DEBUG
-    static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
-    #endif
 
-    Vector2[][] uvs_canvas_space;
+	#if PB_DEBUG
+	static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
+	#endif
 #endregion
 
 #region Fields
@@ -215,9 +213,9 @@ public class pb_UV_Editor : EditorWindow
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
 		pb_UV_Render_Options renderOptions = EditorWindow.GetWindow<pb_UV_Render_Options>(true, "Save UV Image", true);
 		renderOptions.position = new Rect(	this.position.x + (Screen.width/2f - 128),
-		                                  	this.position.y + (Screen.height/2f - 76),
-		                                  	256f,
-		                                  	152f);
+											this.position.y + (Screen.height/2f - 76),
+											256f,
+											152f);
 		renderOptions.screenFunc = Screenshot;
 #else
 		pb_UV_Render_Options renderOptions = (pb_UV_Render_Options)ScriptableObject.CreateInstance(typeof(pb_UV_Render_Options));
@@ -782,7 +780,7 @@ public class pb_UV_Editor : EditorWindow
 
 			// *
 			//  * Put sewn UVs into the selection if they aren't already.
-			 	
+				
 			// for(int n = 0; n < selectedTris.Count; n++)
 			// {
 			// 	if( uvLookup[selectedTris[n]] > -1 )
@@ -1273,15 +1271,15 @@ public class pb_UV_Editor : EditorWindow
 
 			case SelectMode.Face:
 
-				Vector2 mpos = GUIToCanvasPoint(mousePosition);
+				Vector2 mpos = GUIToUVPoint(mousePosition);
 				bool superBreak = false;
 				for(int i = 0; i < selection.Length; i++)
 				{
-					// List<int> selectedFaces = new List<int>(selection[i].SelectedFaceIndices);
-					List<pb_Face> selectedFaces = new List<pb_Face>(selection[i].SelectedFaces);
+					HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(selection[i].SelectedFaces);
+
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
-						if( pb_Math.PointInPolygon( pbUtil.ValuesWithIndices(uvs_canvas_space[i], selection[i].faces[n].edges.AllTriangles()), mpos) )
+						if( pb_Math.PointInPolygon(selection[i].uv, selection[i].faces[n].edges.AllTriangles(), mpos) )
 						{						
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
@@ -1594,10 +1592,7 @@ public class pb_UV_Editor : EditorWindow
 				Vector2[] uvs = pb.uv;
 
 				foreach(int i in distinct_indices[n])
-				{
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
-					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
-				}
 
 				pb.SetUV(uvs);
 				pb.msh.uv = uvs;
@@ -1632,7 +1627,6 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, rotation );
-					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 				}
 
 				pb.SetUV(uvs);
@@ -1675,7 +1669,6 @@ public class pb_UV_Editor : EditorWindow
 					foreach(int i in distinct_indices[n])
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
-						uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 					}
 					
 					pb.SetUV(uvs);
@@ -1738,7 +1731,6 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
-					uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
 				}
 				
 				pb.SetUV(uvs);
@@ -1915,7 +1907,7 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 * Draw regular old outlines
 		 */
-	 	#if PB_DEBUG
+		#if PB_DEBUG
 		profiler.BeginSample("Draw Base Edges + Vertices");
 		#endif
 
@@ -1990,7 +1982,7 @@ public class pb_UV_Editor : EditorWindow
 		 */
 		if(screenshotStatus == ScreenshotStatus.Done)
 		{
-	 		GL.Begin(GL.LINES);
+			GL.Begin(GL.LINES);
 			GL.Color(UVColorGroupIndicator);
 
 			foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
@@ -2395,17 +2387,15 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("RefreshUVCoordinates");
 		#endif
 
-		// Collect drawables
-		uvs_canvas_space = new Vector2[selection.Length][];
-
-		// Convert dragrect from Unity GUI space to uv_gui_space
-		pb_Bounds2D dragBounds = dragRect != null ? 
-			new pb_Bounds2D( GUIToCanvasPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / uvGraphScale ) :
-			new pb_Bounds2D( Vector2.zero, Vector2.zero );
-
+		// Convert dragrect from Unity GUI space to UV coordinates
+		pb_Bounds2D dragBounds;
+		if(dragRect != null)
+			dragBounds = new pb_Bounds2D( GUIToUVPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / (uvGraphScale * uvGridSize) );
+		else
+			dragBounds = new pb_Bounds2D( Vector2.zero, Vector2.zero );
+	
 		selectedUVCount   = editor.selectedVertexCount;
 		selectedFaceCount = editor.selectedFaceCount;
-		// selectedEdgeCount = editor.selectedEdgeCount;
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -2422,12 +2412,7 @@ public class pb_UV_Editor : EditorWindow
 			
 			int len = mshUV.Length;
 
-			uvs_canvas_space[i] = new Vector2[len];
-
-			for(int j = 0; j < len; j++)
-				uvs_canvas_space[i][j] = pb_Handle_Utility.UVToGUIPoint(mshUV[j], uvGridSize);
-
-			// this should probably be separate from RefreshUVCoordinates
+			// this should be separate from RefreshUVCoordinates
 			if(dragRect != null)
 			{	
 				switch(selectionMode)
@@ -2437,7 +2422,7 @@ public class pb_UV_Editor : EditorWindow
 
 						for(int j = 0; j < len; j++)
 						{
-							if( dragBounds.ContainsPoint( uvs_canvas_space[i][j] ) )
+							if( dragBounds.ContainsPoint( mshUV[j] ) )
 							{
 								int indx = selectedTris.IndexOf(j);
 
@@ -2464,7 +2449,7 @@ public class pb_UV_Editor : EditorWindow
 							{
 								pb_Edge edge = pb.faces[n].edges[p];
 
-								if( dragBounds.IntersectsLineSegment( uvs_canvas_space[i][edge.x],  uvs_canvas_space[i][edge.y]) )	
+								if( dragBounds.IntersectsLineSegment( mshUV[edge.x], mshUV[edge.y]) )	
 								{
 									if(!selectedEdges.Contains(edge))
 										selectedEdges.Add( edge );
@@ -2485,14 +2470,13 @@ public class pb_UV_Editor : EditorWindow
 						HashSet<int> selectedFaces = new HashSet<int>(selection[i].SelectedFaceIndices);
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
-							// Vector2[] uvs = pbUtil.ValuesWithIndices(, pb.faces[n].distinctIndices);
 							int[] distinctIndices = pb.faces[n].distinctIndices;
 
 							bool allPointsContained = true;
 
 							for(int t = 0; t < distinctIndices.Length; t++)
 							{
-								if( ! dragBounds.ContainsPoint(uvs_canvas_space[i][distinctIndices[t]]) )
+								if( !dragBounds.ContainsPoint(mshUV[distinctIndices[t]]) )
 								{
 									allPointsContained = false;
 									break;
@@ -2592,14 +2576,6 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	void RefreshSelectedUVCoordinates()
 	{	
-		for(int n = 0; n < selection.Length; n++)
-		{
-			Vector2[] uvs = GetUVs(selection[n], channel);
-			
-			foreach(int i in distinct_indices[n])
-				uvs_canvas_space[n][i] = pb_Handle_Utility.UVToGUIPoint(uvs[i], uvGridSize);
-		}
-
 		handlePosition = UVSelectionBounds().center - handlePosition_offset;
 	}
 #endregion
@@ -2879,8 +2855,8 @@ public class pb_UV_Editor : EditorWindow
 			}
 
 			IEnumerable<pb_Face> matches = System.Array.FindAll(pb.faces, x => 
-			                                                    (x.manualUV && x.elementGroup > -1 && elementGroups.Contains(x.elementGroup)) ||
-			                                                    (!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)) );
+																(x.manualUV && x.elementGroup > -1 && elementGroups.Contains(x.elementGroup)) ||
+																(!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)) );
 
 			pb.SetSelectedFaces( faces.Union(matches).ToArray() );
 	
@@ -3507,8 +3483,8 @@ public class pb_UV_Editor : EditorWindow
 					for(int i = 0; i < px.Length; i++)
 
 						if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f && 
-						 	Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
-						  	Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
+							Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
+							Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
 							px[i] = Color.clear;
 
 					screenshot.SetPixels(px);
