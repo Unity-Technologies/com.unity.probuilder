@@ -1,5 +1,3 @@
-#define PB_DEBUG
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -20,12 +18,9 @@ using Parabox.Debug;
 public class pb_UV_Editor : EditorWindow
 {
 
-#region DEBUG
-
-	#if PB_DEBUG
+#if PB_DEBUG
 	static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
-	#endif
-#endregion
+#endif
 
 #region Fields
 
@@ -216,10 +211,10 @@ public class pb_UV_Editor : EditorWindow
 											this.position.y + (Screen.height/2f - 76),
 											256f,
 											152f);
-		renderOptions.screenFunc = Screenshot;
+		renderOptions.screenFunc = InitiateScreenshot;
 #else
 		pb_UV_Render_Options renderOptions = (pb_UV_Render_Options)ScriptableObject.CreateInstance(typeof(pb_UV_Render_Options));
-		renderOptions.screenFunc = Screenshot;
+		renderOptions.screenFunc = InitiateScreenshot;
 		renderOptions.ShowAsDropDown(new Rect(	this.position.x + 348,
 												this.position.y + 32,
 												0,
@@ -381,22 +376,22 @@ public class pb_UV_Editor : EditorWindow
 				if(Event.current.type == EventType.Repaint)
 				{
 					screenshotStatus = ScreenshotStatus.CanvasReady;
-					Screenshot();
+					DoScreenshot();
 				}
 
 				return;
 			}
 			else
 			{
-				Screenshot();
+				DoScreenshot();
 			}
 		}		
 
 		if(tool == Tool.View || m_draggingCanvas)	
 			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.Pan);
 
-		ScreenRect.width = Screen.width;
-		ScreenRect.height = Screen.height;
+		ScreenRect.width = this.position.width;
+		ScreenRect.height = this.position.height;
 
 		/**
 		 * if basic skin, manually tint the background
@@ -449,7 +444,7 @@ public class pb_UV_Editor : EditorWindow
 
 		try{
 			DrawUVGraph( graphRect );		
-		} catch {}
+		} catch(System.Exception e) { Debug.LogError(e.ToString()); }
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -3360,6 +3355,8 @@ public class pb_UV_Editor : EditorWindow
 	}
 #endregion
 
+#region Screenshot Rendering
+
 	float curUvScale = 0f;					///< Store the user set positioning and scale before modifying them for a screenshot
 	Vector2 curUvPosition = Vector2.zero;	///< ditto ^
 	Texture2D screenshot;
@@ -3376,7 +3373,7 @@ public class pb_UV_Editor : EditorWindow
 
 	readonly Color UV_FILL_COLOR = new Color(.192f,.192f,.192f,1f);	///< This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
 
-	void Screenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor)
+	void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor)
 	{
 		screenshot_size = ImageSize;
 		screenshot_hideGrid = HideGrid;
@@ -3395,33 +3392,54 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		screenshot_path = EditorUtility.SaveFilePanel("Save UV Template", Application.dataPath, "", "png");
+	
 		if(screenshot_path == "")
 			return;
 
 		screenshotStatus = ScreenshotStatus.Done;
-		Screenshot();
+		DoScreenshot();
 	}
 
-	void Screenshot()
+	/// Unity 5 changes the starting y position of a window now account for the tab
+	float editorWindowTabOffset 
+	{
+		get
+		{
+			if( pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating) )
+				return 0;
+			else
+#if UNITY_4_6
+				return EDITOR_WINDOW_TAB;
+#else
+				return 11;
+#endif
+		}
+	}
+
+	void DoScreenshot()
 	{
 		switch(screenshotStatus)
 		{
-				// A new screenshot has been initiated
+			// A new screenshot has been initiated
 			case ScreenshotStatus.Done:
 				curUvScale = uvGraphScale;
 				curUvPosition = uvGraphOffset;
 
 				uvGraphScale = screenshot_size / 256;
+
 				// always begin texture grabs at bottom left
-				uvGraphOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f);
+				uvGraphOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f - editorWindowTabOffset);
 
 				screenshot = new Texture2D(screenshot_size, screenshot_size);
 				screenshot.hideFlags = (HideFlags)( 1 | 2 | 4 );
 				screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
-				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent
-				// passes
-				screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height) );
+				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
+				if( (bool) pb_Reflection.GetValue(this, "docked") )
+					screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2) );
+				else
+					screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height) );
+
 				screenshotTexturePosition = new Vector2(0,0);
 
 				this.ShowNotification(new GUIContent("Rendering UV Graph\n..."));
@@ -3431,19 +3449,18 @@ public class pb_UV_Editor : EditorWindow
 				return;
 
 			case ScreenshotStatus.CanvasReady:
-					
+				
 				// take screenshots vertically, then move right, repeat if necessary
 				if(screenshotTexturePosition.y < screenshot_size)
 				{
 					screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
-
 					screenshotTexturePosition.y += screenshotCanvasRect.height;
 
 					if(screenshotTexturePosition.y < screenshot_size)
 					{
 						// reposition canvas
 						uvGraphOffset.y += screenshotCanvasRect.height;
-						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height);
+						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
 						screenshotStatus = ScreenshotStatus.PrepareCanvas;
 						Repaint();
 						return;
@@ -3455,7 +3472,7 @@ public class pb_UV_Editor : EditorWindow
 						if(screenshotTexturePosition.x < screenshot_size)
 						{
 							uvGraphOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
-							uvGraphOffset.y = ScreenRect.height/2f;	// reset canvas offset y value
+							uvGraphOffset.y = ScreenRect.height/2f - editorWindowTabOffset;	// reset canvas offset y value
 							screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
 							screenshotTexturePosition.y = 0;
 							screenshotStatus = ScreenshotStatus.PrepareCanvas;
@@ -3491,6 +3508,8 @@ public class pb_UV_Editor : EditorWindow
 					screenshot.Apply();
 				}
 
+				this.minSize = Vector2.zero;
+				this.maxSize = Vector2.one * 100000f;
 				EditorApplication.delayCall += SaveUVRender;	// don't run the save image stuff in the UI loop
 				screenshotStatus = ScreenshotStatus.Done;
 				break;
@@ -3505,6 +3524,7 @@ public class pb_UV_Editor : EditorWindow
 			DestroyImmediate(screenshot);
 		}
 	}
+#endregion
 }
 
 #endif
