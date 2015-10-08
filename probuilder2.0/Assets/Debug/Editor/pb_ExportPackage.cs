@@ -24,7 +24,7 @@ public class pb_ExportPackage : Editor
 		Export("ProCore", Application.dataPath, "ProBuilder2", "-unity4");
 	}
 
-	static string CHANGELOG_PATH { get { return "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/changelog.txt"; } }
+	static string CHANGELOG_PATH { get { return "Assets/ProCore/" + "ProBuilder" + "/About/changelog.txt"; } }
 	const string DateTimeFormat = "MM-dd-yyyy";
 
 	public static void ExportCommandLine()
@@ -99,7 +99,7 @@ public class pb_ExportPackage : Editor
 			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 			"changelog: " + changelog;
 
-		string version_entry_path = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/pc_AboutEntry_ProBuilder.txt";
+		string version_entry_path = "Assets/ProCore/" + "ProBuilder" + "/About/pc_AboutEntry_ProBuilder.txt";
 
 		if(File.Exists(version_entry_path))
 			File.Delete(version_entry_path);
