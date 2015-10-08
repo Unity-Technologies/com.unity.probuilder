@@ -2021,9 +2021,9 @@ public class pb_Editor : EditorWindow
 			switch(selectionMode)
 			{
 				case SelectMode.Edge:
-#if !PROTOTYPE
 					if(pb.SelectedFaceCount > 0)
 						goto default;
+#if !PROTOTYPE
 
 					pb_Edge[] newEdges;
 					bool success = pb.Extrude(	pb.SelectedEdges,
