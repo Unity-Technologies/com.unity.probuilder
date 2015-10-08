@@ -1,4 +1,4 @@
--- ProBuilder 2.4.8f0 (r3730)
+-- ProBuilder 2.4.8f0 (r3747)
 
 # Features
 	- Enable Set Pivot, Delete, and Vertex Painter in ProBuilder Basic.
@@ -8,6 +8,9 @@
 	- Fix consistent horizontal scrollbar showing in ProBuilder window.
 	- Use white text color in Dimensions Overlay when Unity Personal skin is used.
 	- Ensure DLLs retain GUID between releases, enabling simpler upgrades.
+	- Fix poor UV editor precision when working with small distances.
+	- Fix ~10px vertical offset image when rendering UV template in Unity 5.
+	- Fix slightly offset image when rendering UV template from docked UV Editor window.
 
 # Changes
 	- Increase minimum allowed zoom in UV editor.
