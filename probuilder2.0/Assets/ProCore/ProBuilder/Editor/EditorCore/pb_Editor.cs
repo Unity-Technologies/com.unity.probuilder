@@ -563,8 +563,26 @@ public class pb_Editor : EditorWindow
 		if(AutoContentButton("Set Pivot", "Set the pivot of selected geometry to the center of the current element selection.", EditorStyles.miniButton))
 			pb_Menu_Commands.MenuSetPivot(selection);
 
+#if PROTOTYPE
+		GUI.enabled = selectedFaceCount > 0;
+
+		if(selectedEdgeCount > 0 && selectedFaceCount < 1)
+		{
+			ProOnlyButton("Extrude", "Extrude selected edges.  Also try holding 'Shift' while moving the scene handle.", EditorStyles.miniButton);
+		}
+		else
+		{
+			tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
+				tool_extrudeButton,
+				pb_Menu_Commands.MenuExtrude,
+				pb_Menu_Commands.ExtrudeButtonGUI,
+				Screen.width,
+				36,
+				selection);
+		}
+#else
 		GUI.enabled = selectedFaceCount > 0 || selectedEdgeCount > 0;
-	
+
 		tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
 			tool_extrudeButton,
 			pb_Menu_Commands.MenuExtrude,
@@ -572,6 +590,7 @@ public class pb_Editor : EditorWindow
 			Screen.width,
 			36,
 			selection);
+#endif
 
 		GUI.enabled = selectedFaceCount > 0;
 
@@ -1989,7 +2008,7 @@ public class pb_Editor : EditorWindow
 			switch(selectionMode)
 			{
 				case SelectMode.Edge:
-
+#if !PROTOTYPE
 					if(pb.SelectedFaceCount > 0)
 						goto default;
 
@@ -2005,6 +2024,7 @@ public class pb_Editor : EditorWindow
 						ef += newEdges.Length;
 						pb.SetSelectedEdges(newEdges);
 					}
+#endif
 					break;
 
 				default:
