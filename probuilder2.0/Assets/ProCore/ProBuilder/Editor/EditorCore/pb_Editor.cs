@@ -448,12 +448,23 @@ public class pb_Editor : EditorWindow
 		GUILayout.EndScrollView();
 	}
 
+	int buttonPad
+	{
+		get
+		{
+			if( pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow))
+				return (int) ((bool)pb_Reflection.GetValue(this, "docked") ? 11 : 7);
+			else
+				return 11;
+		}
+	}
+
 	void SelectionGUI()
 	{
 		bool wasEnabled = GUI.enabled;
 
 		EditorGUI.BeginChangeCheck();
-		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - 11));
+		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - buttonPad));
 		
 		if(EditorGUI.EndChangeCheck())
 			SetHandleAlignment(handleAlignment);
@@ -678,9 +689,11 @@ public class pb_Editor : EditorWindow
 	{
 		pb_GUI_Utility.PushGUIEnabled( !EditorApplication.isPlaying );
 
+		float entityButtonWidth = this.position.width - 28 - buttonPad;
+
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39)))
+			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
@@ -697,7 +710,7 @@ public class pb_Editor : EditorWindow
 
 			GUILayout.BeginHorizontal();
 				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
+			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
@@ -713,7 +726,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
+			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
@@ -729,7 +742,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(Screen.width-39))) 
+			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);

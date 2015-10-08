@@ -1,4 +1,4 @@
-Shader "ProBuilder/HideVertices" 
+Shader "Hidden/ProBuilder/HideVertices" 
 {
 	SubShader
 	{
