@@ -72,19 +72,19 @@ set u4mesh="%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4
 set u4editor="%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4.sln"
 
 :: Build Core - (post-build script places dll in staging project)
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build %u4core%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_4_6;" /t:Clean,Build %u4core%
 
 echo ===: Copy core lib to staging
 xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Debug\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: Build mesh editing classes
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;" /t:Clean,Build %u4mesh%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_4_6;" /t:Clean,Build %u4mesh%
 
 echo ===: Copy mesh ops lib to staging
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Debug\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;" /v:q /t:Clean,Build %u4editor%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_4_6;" /v:q /t:Clean,Build %u4editor%
 
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Debug\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
@@ -115,19 +115,19 @@ set u5mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5
 set u5editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
 
 :: Build Core against Unity 5 libs
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5core%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0;" /t:Clean,Build %u5core%
 
 echo ===: Copy core 5 to staging
 xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Classes\"
 
 :: Build Mesh ops against Unity 5
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;" /t:Clean,Build %u5mesh%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0;" /t:Clean,Build %u5mesh%
 
 echo ===: Copy mesh ops 5 to staging
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Classes\"
 
 :: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;" /v:q /t:Clean,Build %u5editor%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;UNITY_5_0;" /v:q /t:Clean,Build %u5editor%
 
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic\Editor\"
