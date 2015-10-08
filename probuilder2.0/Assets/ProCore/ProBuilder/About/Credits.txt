@@ -14,3 +14,7 @@
 
 # Diffuse Vertex Color Shaders
 	- @Snoopbaron (Fernando Zapata)
+
+# Standard Vertex Color Shaders
+	- Unity Forums user @defaxer
+	- http://forum.unity3d.com/threads/standard-shader-with-vertex-colors.316529/

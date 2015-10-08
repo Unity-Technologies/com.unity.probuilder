@@ -2,6 +2,7 @@
 
 # Features
 	- Enable Set Pivot, Delete, and Vertex Painter in ProBuilder Basic.
+	- New Standard Shader with vertex color support (thanks to Unity Forum user @defaxer).
 
 # Bug Fixes
 	- Add tooltips for every action in the ProBuilder toolbar.
