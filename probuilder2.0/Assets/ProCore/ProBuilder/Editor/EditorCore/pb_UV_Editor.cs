@@ -3409,7 +3409,7 @@ public class pb_UV_Editor : EditorWindow
 				return 0;
 			else
 #if UNITY_4_6
-				return EDITOR_WINDOW_TAB;
+				return 0;
 #else
 				return 11;
 #endif

@@ -61,22 +61,22 @@ echo Export source
 :: Build Unity DLLs
 :: ====================
 echo Build Unity 4 Core
-%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build %u4core%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_4_6;" /t:Clean,Build %u4core%
 
 echo Build Unity 5 Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_5;" /t:Clean,Build %u5core%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_5;UNITY_5_0;" /t:Clean,Build %u5core%
 
 echo Build Unity 4 Mesh Ops
-%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build %u4mesh%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_4_6;" /t:Clean,Build %u4mesh%
 
 echo Build Unity 5 Mesh Ops
-%msbuild% /p:DefineConstants="RELEASE;UNITY_5;" /t:Clean,Build %u5mesh%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_5;UNITY_5_0;" /t:Clean,Build %u5mesh%
 
 echo Build Unity 4 Editor Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;" /v:q /t:Clean,Build %u4editor%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_6;" /v:q /t:Clean,Build %u4editor%
 
 echo Build Unity 5 Editor Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;" /v:q /t:Clean,Build %u5editor%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_0;" /v:q /t:Clean,Build %u5editor%
 
 :: Remove scripts from staging project
 :: ====================
