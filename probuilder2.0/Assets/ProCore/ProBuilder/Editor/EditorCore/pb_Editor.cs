@@ -279,7 +279,9 @@ public class pb_Editor : EditorWindow
 	bool tool_vertexColors = false;
 	bool tool_growSelection = false;
 	bool tool_extrudeButton = false;
+#if !PROTOTYPE
 	bool tool_weldButton = false;
+#endif
 	Vector2 scroll = Vector2.zero;
 	Rect elementModeToolbarRect = new Rect(3,6,128,24);
 	private static GUIContent gui_content_bridge = new GUIContent("", "");
@@ -654,15 +656,7 @@ public class pb_Editor : EditorWindow
 					pb_Menu_Commands.MenuConnectVertices(selection);
 
 #if PROTOTYPE
-				pb_GUI_Utility.PushGUIEnabled(false);
-				tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.\n(ProBuilder Advanced Feature)",
-					tool_weldButton,
-					pb_Menu_Commands.MenuWeldVertices,
-					pb_Menu_Commands.WeldButtonGUI,
-					Screen.width,
-					20,
-					selection);
-				pb_GUI_Utility.PopGUIEnabled();
+				ProOnlyButton("Weld", "Merge selected vertices that are within a specified distance of one another.", EditorStyles.miniButton);
 #else
 				tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
 					tool_weldButton,
