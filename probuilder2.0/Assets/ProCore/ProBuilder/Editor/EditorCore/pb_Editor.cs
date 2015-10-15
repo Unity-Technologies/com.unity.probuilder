@@ -3447,8 +3447,8 @@ public class pb_Editor : EditorWindow
 
 	static readonly Color[] ElementColors = new Color[] { 
 		new Color(.1f, .9f, .1f, .8f),	// Green (normal)
-		new Color(.1f, .1f, .9f, .3f),	// Blue (bitangent)
-		new Color(.9f, .1f, .1f, .3f),	// Red (tangent)
+		// new Color(.1f, .1f, .9f, .3f),	// Blue (bitangent)
+		// new Color(.9f, .1f, .1f, .3f),	// Red (tangent)
 	};
 	float elementLength = 0f;
 
@@ -3481,11 +3481,12 @@ public class pb_Editor : EditorWindow
  
 			Vector3[] vertices = m.vertices;
 			Vector3[] normals  = m.normals;
-			Vector4[] tangents = m.tangents;
+			// Vector4[] tangents = m.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 
-			Vector3[] segments = new Vector3[vertexCount * 3 * 2];
+			// Vector3[] segments = new Vector3[vertexCount * 3 * 2];
+			Vector3[] segments = new Vector3[vertexCount * 2];
 
 			int n = 0;
 			Vector3 pivot = Vector3.zero;
@@ -3494,16 +3495,13 @@ public class pb_Editor : EditorWindow
 			{
 				pivot = vertices[i] + normals[i] * elementOffset;
 
-				segments[n+0] = matrix.MultiplyPoint3x4( pivot );
-				segments[n+1] = matrix.MultiplyPoint3x4( (pivot + normals[i] * elementLength) );
+				segments[n++] = matrix.MultiplyPoint3x4( pivot );
+				segments[n++] = matrix.MultiplyPoint3x4( (pivot + normals[i] * elementLength) );
 
-				segments[n+2] = segments[n];
-				segments[n+3] = matrix.MultiplyPoint3x4( (pivot + (Vector3)tangents[i] * elementLength) );
-
-				segments[n+4] = segments[n];
-				segments[n+5] = matrix.MultiplyPoint3x4( (pivot + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength) );
-
-				n += 6;
+				// segments[n++] = segments[n];
+				// segments[n++] = matrix.MultiplyPoint3x4( (pivot + (Vector3)tangents[i] * elementLength) );
+				// segments[n++] = segments[n];
+				// segments[n++] = matrix.MultiplyPoint3x4( (pivot + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength) );
 			}
 
 			pb_LineRenderer.instance.AddLineSegments(segments, ElementColors);

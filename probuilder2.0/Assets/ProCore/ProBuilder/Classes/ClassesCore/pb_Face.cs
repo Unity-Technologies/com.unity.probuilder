@@ -175,7 +175,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : 
 		_distinctIndices; } }
 	public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }	// todo -- remove this after a while
-	public int smoothingGroup { get { return _smoothingGroup; } }
+	public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
 	public pb_UV uv { get { return _uv; } }
 	public Material material { get { return _mat; } }
 	public int textureGroup = -1;

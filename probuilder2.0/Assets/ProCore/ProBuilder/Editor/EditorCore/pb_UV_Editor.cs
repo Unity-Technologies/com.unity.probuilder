@@ -1518,48 +1518,46 @@ public class pb_UV_Editor : EditorWindow
 
 	internal void SceneMoveTool(Vector2 t_handlePosition, Vector2 handlePosition)
 	{
-		/// todo implement SceneMoveTool
-		// t_handlePosition = pb_Handle_Utility.UVToGUIPoint(t_handlePosition, uvGridSize);
-		// handlePosition = pb_Handle_Utility.UVToGUIPoint(handlePosition, uvGridSize);
+		t_handlePosition = UVToGUIPoint(t_handlePosition);
 
-		// /**
-		//  *	Tool activated - moving some UVs around.
-		//  * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
-		//  *	in OnFinishUVModification, not at real time.
-		//  */
-		// if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
-		// {
-		// 	/**
-		// 	 * Start of move UV operation
-		// 	 */
-		// 	if(!modifyingUVs)
-		// 	{
-		// 		pbUndo.RecordObjects(selection, "Move UVs");
-		// 		OnBeginUVModification();
-		// 		uvOrigin = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);	// have to set this one special
-		// 	}
+		/**
+		 *	Tool activated - moving some UVs around.
+		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
+		 *	in OnFinishUVModification, not at real time.
+		 */
+		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
+		{
+			/**
+			 * Start of move UV operation
+			 */
+			if(!modifyingUVs)
+			{
+				pbUndo.RecordObjects(selection, "Move UVs");
+				OnBeginUVModification();
+				uvOrigin = GUIToUVPoint(t_handlePosition);	// have to set this one special
+			}
 
-		// 	Vector2 newUVPosition = pb_Handle_Utility.GUIToUVPoint(t_handlePosition, uvGridSize);
+			Vector2 newUVPosition = GUIToUVPoint(t_handlePosition);
 
-		// 	if(ControlKey)
-		// 		newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
+			if(ControlKey)
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
 
-		// 	for(int n = 0; n < selection.Length; n++)
-		// 	{
-		// 		pb_Object pb = selection[n];
-		// 		Vector2[] uvs = pb.uv;
+			for(int n = 0; n < selection.Length; n++)
+			{
+				pb_Object pb = selection[n];
+				Vector2[] uvs = pb.uv;
 
-		// 		foreach(int i in distinct_indices[n])
-		// 		{
-		// 			uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
-		// 		}
+				foreach(int i in distinct_indices[n])
+				{
+					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
+				}
 
-		// 		pb.SetUV(uvs);
-		// 		pb.msh.uv = uvs;
-		// 	}
+				pb.SetUV(uvs);
+				pb.msh.uv = uvs;
+			}
 
-		// 	RefreshSelectedUVCoordinates();
-		// }
+			RefreshSelectedUVCoordinates();
+		}
 	}
 
 	void RotateTool()

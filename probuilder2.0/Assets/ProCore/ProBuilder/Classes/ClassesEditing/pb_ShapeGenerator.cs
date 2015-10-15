@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections.Generic;
 using ProBuilder2.Math;
@@ -274,6 +275,7 @@ public class pb_ShapeGenerator
 					sides_f[st++] = new pb_Face( side % 2 == 0 ?
 						new int[] { v+2, v+1, v+0, v+2, v+3, v+1 } :
 						new int[] { v+0, v+1, v+2, v+1, v+3, v+2 } );
+					sides_f[st-1].smoothingGroup = side + 1;
 
 					v += 4;
 					sv += 4;
@@ -295,6 +297,7 @@ public class pb_ShapeGenerator
 							new int[] { v+0, v+1, v+2 } );
 
 						sides_f[st-1].textureGroup = (side * steps) + i;
+						sides_f[st-1].smoothingGroup = side + 1;
 
 						v += 3;
 						sv += 3;
