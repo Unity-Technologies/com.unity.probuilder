@@ -4,10 +4,10 @@
 using UnityEngine;
 using System.Runtime.Serialization;
 
-[System.Serializable]
 /**
  *	\brief Container for UV mapping parameters per face.
  */
+[System.Serializable]
 public class pb_UV : ISerializable {
 
 #region ENUM
@@ -86,32 +86,32 @@ public class pb_UV : ISerializable {
 
 	public pb_UV()
 	{
-		useWorldSpace = false;
-		justify = Justify.None;
-		flipU = false;
-		flipV = false;
-		swapUV = false;
-		fill = Fill.Tile;
-		scale = new Vector2(1f, 1f);
-		offset = new Vector2(0f, 0f);
-		rotation = 0f;
+		this.useWorldSpace = false;
+		this.justify = Justify.None;
+		this.flipU = false;
+		this.flipV = false;
+		this.swapUV = false;
+		this.fill = Fill.Tile;
+		this.scale = new Vector2(1f, 1f);
+		this.offset = new Vector2(0f, 0f);
+		this.rotation = 0f;
 	}
 
 	public pb_UV(pb_UV uvs)
 	{
-		useWorldSpace = uvs.useWorldSpace;
-		flipU = uvs.flipU;
-		flipV = uvs.flipV;
-		swapUV = uvs.swapUV;
-		fill = uvs.fill;
-		scale = uvs.scale;
-		offset = uvs.offset;
-		rotation = uvs.rotation;
-		justify = uvs.justify;
+		this.useWorldSpace = uvs.useWorldSpace;
+		this.flipU = uvs.flipU;
+		this.flipV = uvs.flipV;
+		this.swapUV = uvs.swapUV;
+		this.fill = uvs.fill;
+		this.scale = uvs.scale;
+		this.offset = uvs.offset;
+		this.rotation = uvs.rotation;
+		this.justify = uvs.justify;
 	}
 
 	public pb_UV(
-		// ProjectionAxis	_projectionAxis,
+		// ProjectionAxis	 _projectionAxis,
 		bool 			_useWorldSpace,
 		bool 			_flipU,
 		bool 			_flipV,

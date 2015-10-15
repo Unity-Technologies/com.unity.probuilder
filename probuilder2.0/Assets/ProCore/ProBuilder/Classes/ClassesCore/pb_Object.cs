@@ -33,9 +33,7 @@ public class pb_Object : MonoBehaviour
 
 		// Absolutely no idea why normals sometimes go haywire
 		if(msh == null || msh.normals == null || msh.normals.Length < 1 || msh.normals[0] == Vector3.zero)
-		{
 			ReconstructMesh();
-		}
 	}
 #endregion
 
@@ -119,10 +117,7 @@ public class pb_Object : MonoBehaviour
 		GameObject _gameObject = new GameObject();	
 		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
 		pb_obj.SetName("Object");
-
 		pb_obj.GeometryWithVerticesFaces(v, f);
-
-
 		return pb_obj;
 	}
 
@@ -1026,10 +1021,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshNormals()
 	{
-		Mesh m = msh;
-
 		// All hard edges
-		m.RecalculateNormals();
+		msh.RecalculateNormals();
 			
 		// average the soft edge faces
 		SmoothPerGroups();
@@ -1047,7 +1040,7 @@ public class pb_Object : MonoBehaviour
 		/**
 		 * Create a lookup of each triangles smoothing group.
 		 */
-		foreach(pb_Face face in faces) // .Where(x => x.smoothingGroup > 0 && x.smoothingGroup < 25))
+		foreach(pb_Face face in faces)
 		{
 			foreach(int tri in face.distinctIndices)
 				smoothGroup[tri] = face.smoothingGroup;

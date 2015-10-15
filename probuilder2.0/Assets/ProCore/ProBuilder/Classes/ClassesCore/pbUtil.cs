@@ -561,6 +561,22 @@ namespace ProBuilder2.Common
 		return str;
 	}
 
+	/**
+	 * Convert a collection of items to a string with delimiter.
+	 */
+	public static string ToStringF(this IEnumerable val, char delimiter)
+	{
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		foreach(var obj in val)
+		{
+			sb.Append(obj.ToString());
+			sb.Append(delimiter);
+		}
+
+		return sb.ToString();
+	}
+
 	public static bool ColorWithString(string value, out Color col)
 	{
 		string valid = "01234567890.,";

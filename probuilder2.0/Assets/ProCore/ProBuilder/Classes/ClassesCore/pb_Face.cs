@@ -79,7 +79,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public pb_Face(int[] i, Material m, pb_UV u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
 	{
 		this._indices = i;
-		this._uv = u;
+		this._uv = new pb_UV(u);
 		this._mat = m;
 		this._smoothingGroup = smoothingGroup;
 		this.textureGroup = textureGroup;

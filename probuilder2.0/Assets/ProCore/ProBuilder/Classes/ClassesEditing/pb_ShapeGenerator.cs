@@ -226,6 +226,12 @@ public class pb_ShapeGenerator
 					v + 7 });
 			}
 
+			float uvRotation = ((inc1 + inc0) * -.5f) * Mathf.Rad2Deg;
+			uvRotation %= 360f;
+			if(uvRotation < 0f)
+				uvRotation = 360f + uvRotation;
+			faces[t+1].uv.rotation = uvRotation;
+
 			v += noInnerSide ? 7 : 8;
 			t += 2;
 		}
@@ -269,7 +275,6 @@ public class pb_ShapeGenerator
 						new int[] { v+2, v+1, v+0, v+2, v+3, v+1 } :
 						new int[] { v+0, v+1, v+2, v+1, v+3, v+2 } );
 
-					
 					v += 4;
 					sv += 4;
 
@@ -330,6 +335,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
+
 		pb.SetName("Stairs"); 
 
 		return pb;	
@@ -420,6 +426,7 @@ public class pb_ShapeGenerator
 			points[i] = Vector3.Scale(pb_Constant.VERTICES_CUBE[pb_Constant.TRIANGLES_CUBE[i]], size);
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(points);
+
 		pb.SetName("Cube");
 		return pb;
 	}
