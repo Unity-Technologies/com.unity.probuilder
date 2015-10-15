@@ -1,4 +1,4 @@
--- ProBuilder 2.4.8f0 (r3747)
+-- ProBuilder 2.4.8f1 (r3764)
 
 # Features
 	- Enable Set Pivot, Delete, and Vertex Painter in ProBuilder Basic.
@@ -7,6 +7,7 @@
 # Bug Fixes
 	- Add tooltips for every action in the ProBuilder toolbar.
 	- Fix consistent horizontal scrollbar showing in ProBuilder window.
+	- Smooth edges of curved  stair sides, and align step UVs to match rotation.
 	- Use white text color in Dimensions Overlay when Unity Personal skin is used.
 	- Ensure DLLs retain GUID between releases, enabling simpler upgrades.
 	- Fix poor UV editor precision when working with small distances.
@@ -16,6 +17,7 @@
 # Changes
 	- Increase minimum allowed zoom in UV editor.
 	- Make warning shown when connecting edges or vertices fails a bit more descriptive.
+	- Don't show tangents and bitangents when Show Normals is enabled in the smoothing editor.
 	- Prototype becomes ProBuilder Basic.
 
 -- ProBuilder 2.4.7f0 (r3664)
