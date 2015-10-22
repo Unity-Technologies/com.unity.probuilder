@@ -82,6 +82,9 @@
 			#pragma vertex vertForwardBase_VC
 			#pragma fragment fragForwardBase_VC
 
+			// exclude dx9 hardware masquerading as dx11
+			#pragma exclude_renderers d3d11_9x
+
 			#include "UnityStandardCore.cginc"
             #include "UnityVC.cginc"
 
