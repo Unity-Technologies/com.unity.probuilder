@@ -1552,7 +1552,7 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuInsertEdgeLoop(pb_Object[] selection)
 		{
 			int success = 0;
-			pbUndo.RecordObjects(selection, "Insert Edge Loop");
+			pbUndo.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
 
 			foreach(pb_Object pb in selection)
 			{

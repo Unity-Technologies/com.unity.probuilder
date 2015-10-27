@@ -41,15 +41,11 @@ public class pb_Entity : MonoBehaviour
 			break;
 
 			case EntityType.Trigger:
-				#if !DEBUG
 				GetComponent<MeshRenderer>().enabled = false;
-				#endif
 			break;
 
 			case EntityType.Collider:
-				#if !DEBUG
 				GetComponent<MeshRenderer>().enabled = false;
-				#endif
 			break;
 		}
 	}
