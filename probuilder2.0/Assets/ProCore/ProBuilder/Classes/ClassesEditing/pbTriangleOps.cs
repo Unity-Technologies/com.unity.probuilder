@@ -20,10 +20,10 @@ namespace ProBuilder2.MeshOperations
 		{
 			for(int i = 0; i < faces.Length; i++)
 				faces[i].ReverseIndices();
-		}	
+		}
 
 		/**
-		 * Attempt to figure out the winding order the passed face.  Note that 
+		 * Attempt to figure out the winding order the passed face.  Note that
 		 * this may return WindingOrder.Unknown.
 		 */
 		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
@@ -45,7 +45,66 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 *	Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and 
+		 * Reverses the orientation of the middle edge in a quad.
+		 */
+		public static bool FlipEdge(this pb_Object pb, pb_Face face)
+		{
+			int[] indices = face.indices;
+
+			if(indices.Length != 6)
+				return false;
+
+			int[] mode = pbUtil.FilledArray<int>(1, indices.Length);
+
+			for(int x = 0; x < indices.Length - 1; x++)
+			{
+				for(int y = x+1; y < indices.Length; y++)
+				{
+					if(indices[x] == indices[y])
+					{
+						mode[x]++;
+						mode[y]++;
+					}
+				}
+			}
+
+			if(	mode[0] + mode[1] + mode[2] != 5 ||
+				mode[3] + mode[4] + mode[5] != 5 )
+				return false;
+
+			int i0 = indices[ mode[0] == 1 ? 0 : mode[1] == 1 ? 1 : 2 ];
+			int i1 = indices[ mode[3] == 1 ? 3 : mode[4] == 1 ? 4 : 5 ];
+
+			int used = -1;
+
+			if(mode[0] == 2)
+			{
+				used = indices[0];
+				indices[0] =  i1;
+			}
+			else if(mode[1] == 2)
+			{
+				used = indices[1];
+				indices[1] = i1;
+			}
+			else if(mode[2] == 2)
+			{
+				used = indices[2];
+				indices[2] = i1;
+			}
+
+			if(mode[3] == 2 && indices[3] != used)
+				indices[3] = i0;
+			else if(mode[4] == 2 && indices[4] != used)
+				indices[4] = i0;
+			else if(mode[5] == 2 && indices[5] != used)
+				indices[5] = i0;
+
+			return true;
+		}
+
+		/**
+		 *	Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and
 		 *	tris with indices that point to the same vertex.
 		 * \returns True if Degenerate tris were found, false if no changes.
 		 */
@@ -60,7 +119,7 @@ namespace ProBuilder2.MeshOperations
 			foreach(pb_Face face in pb.faces)
 			{
 				List<int> tris = new List<int>();
-		
+
 				int[] ind = face.indices;
 				for(int i = 0; i < ind.Length; i+=3)
 				{
@@ -111,7 +170,7 @@ namespace ProBuilder2.MeshOperations
 		public static pb_Face MergeFaces(this pb_Object pb, pb_Face[] faces)
 		{
 			List<int> collectedIndices = new List<int>(faces[0].indices);
-			
+
 			for(int i = 1; i < faces.Length; i++)
 			{
 				collectedIndices.AddRange(faces[i].indices);
@@ -135,7 +194,7 @@ namespace ProBuilder2.MeshOperations
 					rebuiltFaces[n++] = f;
 				}
 			}
-			
+
 			rebuiltFaces[n] = mergedFace;
 
 			pb.SetFaces(rebuiltFaces);
@@ -228,7 +287,7 @@ namespace ProBuilder2.MeshOperations
 					tri_uvs[n+0] = u[indices[i+0]];
 					tri_uvs[n+1] = u[indices[i+1]];
 					tri_uvs[n+2] = u[indices[i+2]];
-		
+
 					tri_faces[f++] = new pb_Face( new int[] { n+0, n+1, n+2 },
 												face.material,
 												face.uv,
@@ -236,7 +295,7 @@ namespace ProBuilder2.MeshOperations
 												face.textureGroup,		// textureGroup -> force to manual uv mode
 												face.elementGroup,
 												face.manualUV
-											);	
+											);
 					n += 3;
 				}
 

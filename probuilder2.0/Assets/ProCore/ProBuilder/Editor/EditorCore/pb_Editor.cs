@@ -24,7 +24,7 @@ public class pb_Editor : EditorWindow
 	#endif
 
 #region LOCAL MEMBERS && EDITOR PREFS
-	
+
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 2080;
@@ -40,17 +40,17 @@ public class pb_Editor : EditorWindow
 
 	public static pb_Editor instance { get { return _instance; } }
 	private static pb_Editor _instance;
-	
+
 	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
 
 	public EditLevel editLevel { get; private set; }
 	private EditLevel previousEditLevel;
-	
+
 	public SelectMode selectionMode { get; private set; }
 	private SelectMode previousSelectMode;
 
 	public HandleAlignment handleAlignment { get; private set; }
-	
+
 	#if !PROTOTYPE
 	private HandleAlignment previousHandleAlignment;
 	#endif
@@ -111,12 +111,12 @@ public class pb_Editor : EditorWindow
 		UpdateSelection(true);
 
 		HideSelectedWireframe();
-		
+
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 
 	private void InitGUI()
-	{	
+	{
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
 		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
@@ -185,7 +185,7 @@ public class pb_Editor : EditorWindow
 		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
-				
+
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
@@ -195,7 +195,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	private void OnDestroy()
-	{	
+	{
 		if(pb_ElementGraphics.nullableInstance != null)
 			GameObject.DestroyImmediate(pb_ElementGraphics.nullableInstance.gameObject);
 
@@ -236,7 +236,7 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region EVENT HANDLERS
-	
+
 	/**
 	 * Delegate called on element or object selection change.
 	 */
@@ -378,7 +378,7 @@ public class pb_Editor : EditorWindow
 			elementModeToolbarRect.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
 
 			EditorGUI.BeginChangeCheck();
-			
+
 			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
 
 			if(EditorGUI.EndChangeCheck())
@@ -407,7 +407,7 @@ public class pb_Editor : EditorWindow
 			pb_GUI_Utility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 		}
-		
+
 		scroll = GUILayout.BeginScrollView(scroll);
 
 		GUILayout.Label("Tools", EditorStyles.boldLabel);
@@ -437,7 +437,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			ActionsGUI();
-		}	
+		}
 
 		GUILayout.Space(2);
 		GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
@@ -467,10 +467,10 @@ public class pb_Editor : EditorWindow
 
 		EditorGUI.BeginChangeCheck();
 		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - buttonPad));
-		
+
 		if(EditorGUI.EndChangeCheck())
 			SetHandleAlignment(handleAlignment);
-		
+
 		EditorGUI.BeginChangeCheck();
 
 			if( AutoContentButton(pref_backfaceSelect ? "Select All" : "Select Visible", "If Select All is enabled, drag and click selections will select elements hidden behind faces.  If Select Visible is on, only elements that are viewable in the scene will be selected.", EditorStyles.miniButton) )
@@ -500,7 +500,7 @@ public class pb_Editor : EditorWindow
 		{
 			case SelectMode.Edge:
 				GUI.enabled = selectedEdgeCount > 0;
-				if(AutoContentButton("Loop", "Select all edges in a loop using the current edge selection as a starting point.", EditorStyles.miniButton)) 
+				if(AutoContentButton("Loop", "Select all edges in a loop using the current edge selection as a starting point.", EditorStyles.miniButton))
 					pb_Menu_Commands.MenuLoopSelection(selection);
 
 				if(AutoContentButton("Ring", "Select all edges that form a ring, using the current edge selection as a starting point.", EditorStyles.miniButton))
@@ -554,9 +554,9 @@ public class pb_Editor : EditorWindow
 
 		pb_GUI_Utility.PushGUIEnabled( selection != null && selection.Length > 0 );
 
-		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton)) 
+		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton))
 			EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
-		
+
 		if(GUILayout.Button(new GUIContent("Flip Normals", "Reverse the direction of all faces on selected objects."), EditorStyles.miniButton))
 			pb_Menu_Commands.MenuFlipObjectNormals(selection);
 
@@ -607,10 +607,16 @@ public class pb_Editor : EditorWindow
 
 		GUI.enabled = selectedFaceCount > 0;
 
+		if(AutoContentButton("Conform Normals", "Automatically attempts to make selected face normals face the same direction.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuConformNormals(selection);
+
 		if(AutoContentButton("Flip Normals", "Reverses the direction of the selected faces.", EditorStyles.miniButton))
 			pb_Menu_Commands.MenuFlipNormals(selection);
 
-		if(AutoContentButton("Delete", "Delete the selected faces.", EditorStyles.miniButton)) 
+		if(AutoContentButton("Flip Edge", "Swaps the orientation of the connecting edge in a quad.", EditorStyles.miniButton))
+			pb_Menu_Commands.MenuFlipEdges(selection);
+
+		if(AutoContentButton("Delete", "Delete the selected faces.", EditorStyles.miniButton))
 			pb_Menu_Commands.MenuDeleteFace(selection);
 
 		if(ProOnlyButton("Detach", "Split selected faces off to a new submesh or object.", EditorStyles.miniButton))
@@ -638,7 +644,7 @@ public class pb_Editor : EditorWindow
 
 				GUI.enabled = selectedEdgeCount > 1;
 
-				if(ProOnlyButton("Connect", "Create an edge by connecting the center of each selected edge.", EditorStyles.miniButton)) 
+				if(ProOnlyButton("Connect", "Create an edge by connecting the center of each selected edge.", EditorStyles.miniButton))
 					pb_Menu_Commands.MenuConnectEdges(selection);
 
 				GUI.enabled = selectedEdgeCount > 0;
@@ -674,7 +680,7 @@ public class pb_Editor : EditorWindow
 
 				if(ProOnlyButton("Split", "Make each selected vertex move independently.", EditorStyles.miniButton))
 					pb_Menu_Commands.MenuSplitVertices(selection);
-			
+
 				break;
 		}
 	}
@@ -704,7 +710,7 @@ public class pb_Editor : EditorWindow
 
 			GUILayout.BeginHorizontal();
 				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
+			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
@@ -720,7 +726,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
+			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
@@ -736,7 +742,7 @@ public class pb_Editor : EditorWindow
 
 		GUILayout.BeginHorizontal();
 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth))) 
+			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
 			{
 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
@@ -755,7 +761,7 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region CONTEXT MENU
-	
+
 	void OpenContextMenu()
 	{
 		GenericMenu menu = new GenericMenu();
@@ -765,7 +771,7 @@ public class pb_Editor : EditorWindow
 
 		// menu.AddSeparator("");
 		menu.ShowAsContext ();
-	}		
+	}
 
 	void Menu_OpenAsDockableWindow()
 	{
@@ -788,7 +794,7 @@ public class pb_Editor : EditorWindow
 
 	// GUI Caches
 	public pb_Object[] selection = new pb_Object[0];						// All selected pb_Objects
-	
+
 	public int selectedVertexCount { get; private set; }					// Sum of all vertices sleected
 	public int selectedFaceCount { get; private set; }						// Sum of all faces sleected
 	public int selectedEdgeCount { get; private set; }						// Sum of all edges sleected
@@ -817,9 +823,9 @@ public class pb_Editor : EditorWindow
 	Event currentEvent;// = (Event)0;
 
 	void OnSceneGUI(SceneView scnView)
-	{			
+	{
 		currentEvent = Event.current;
-		
+
 		if(editLevel == EditLevel.Geometry && currentEvent.Equals(Event.KeyboardEvent("v")))
 		{
 			currentEvent.Use();
@@ -839,7 +845,7 @@ public class pb_Editor : EditorWindow
 			rightMouseDown = false;
 
 #if !PROTOTYPE
-			// e.type == EventType.DragUpdated || 
+			// e.type == EventType.DragUpdated ||
 			if(currentEvent.type == EventType.DragPerform)
 			{
 				GameObject go = HandleUtility.PickGameObject(currentEvent.mousePosition, false);
@@ -914,7 +920,7 @@ public class pb_Editor : EditorWindow
 				return;
 			}
 		}
-		
+
 		// Finished moving vertices, scaling, or adjusting uvs
 #if PROTOTYPE
 		if( (movingVertices || scaling) && GUIUtility.hotControl < 1)
@@ -937,13 +943,13 @@ public class pb_Editor : EditorWindow
 		// Draw GUI Handles
 		if(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
 			DrawHandles();
-		
+
 		if(Tools.current != Tool.None && Tools.current != currentHandle)
 			SetTool_Internal(Tools.current);
 
 		if( (editLevel == EditLevel.Geometry || editLevel == EditLevel.Texture) && Tools.current != Tool.View)
 		{
-			if( selectedVertexCount > 0 ) 
+			if( selectedVertexCount > 0 )
 			{
 				if(editLevel == EditLevel.Geometry)
 				{
@@ -1028,7 +1034,7 @@ public class pb_Editor : EditorWindow
 				dragging = false;
 				DragCheck();
 			}
-			
+
 			if(doubleClicked)
 				doubleClicked = false;
 		}
@@ -1091,7 +1097,7 @@ public class pb_Editor : EditorWindow
 
 	public const float MAX_EDGE_SELECT_DISTANCE = 12;
 	pb_Object nearestEdgeObject = null;
-	pb_Edge nearestEdge;	
+	pb_Edge nearestEdge;
 
 	/**
 	 * If in Edge mode, finds the nearest Edge to the mouse
@@ -1123,14 +1129,14 @@ public class pb_Editor : EditorWindow
 				if(bestObj == null)
 				{
 					// TODO
-					float bestDistance = MAX_EDGE_SELECT_DISTANCE;				
+					float bestDistance = MAX_EDGE_SELECT_DISTANCE;
 
-					try 
+					try
 					{
 						for(int i = 0; i < m_universalEdges.Length; i++)
 						{
 							pb_Edge[] edges = m_universalEdges[i];
-							
+
 							for(int j = 0; j < edges.Length; j++)
 							{
 								int x = selection[i].sharedIndices[edges[j].x][0];
@@ -1140,14 +1146,14 @@ public class pb_Editor : EditorWindow
 								Vector3 world_vert_y = m_verticesInWorldSpace[i][y];
 
 								float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
-								
+
 								if(d < bestDistance)
 								{
 									bestObj = selection[i];
 									bestEdge = new pb_Edge(x, y);
 									bestDistance = d;
 								}
-							}			
+							}
 						}
 					} catch {}
 				}
@@ -1163,7 +1169,7 @@ public class pb_Editor : EditorWindow
 
 						// Sort from nearest hit to farthest
 						hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
-						
+
 						// Find the nearest edge in the hit faces
 
 						float bestDistance = Mathf.Infinity;
@@ -1192,7 +1198,7 @@ public class pb_Editor : EditorWindow
 						if(bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > MAX_EDGE_SELECT_DISTANCE)
 							bestEdge = null;
 					}
-				}	
+				}
 
 				SkipMouseCheck:
 
@@ -1217,7 +1223,7 @@ public class pb_Editor : EditorWindow
 		 * Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
 		 * first.  If no hits, move on to face selection or object change.
 		 */
-		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) || 
+		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) ||
 			(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
 		{
 			UpdateSelection(false);
@@ -1264,7 +1270,7 @@ public class pb_Editor : EditorWindow
 
 		// Face click check
 		{
-			// Check for face hit	
+			// Check for face hit
 			pb_Face selectedFace;
 
 			//  MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
@@ -1369,18 +1375,18 @@ public class pb_Editor : EditorWindow
 		if(nearestEdgeObject != null)
 		{
 			pb = nearestEdgeObject;
-	
+
 			if(nearestEdge != null && nearestEdge.IsValid())
 			{
 				pb_Edge edge;
-				
+
 				if( pb_Edge.ValidateEdge(pb, nearestEdge, out edge) )
 					nearestEdge = edge;
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
-				
+
 				pbUndo.RecordSelection(pb, "Change Edge Selection");
-				
+
 				if( ind > -1 )
 					pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
 				else
@@ -1438,7 +1444,7 @@ public class pb_Editor : EditorWindow
 						// profiler.BeginSample("Contains");
 						bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
 						// profiler.EndSample();
-						
+
 						if(contains)
 						{
 							// if point is behind the camera, ignore it.
@@ -1455,7 +1461,7 @@ public class pb_Editor : EditorWindow
 							// Vector3 nrm = normals[m_uniqueIndices[i][n]];
 							// float dot = Vector3.Dot(camDirLocal, nrm);
 							// if(!pref_backfaceSelect && (dot < 0 || pb_HandleUtility.PointIsOccluded(cam, selection[i], v)))
-							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )	
+							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )
 							{
 								// profiler.EndSample();
 								continue;
@@ -1475,7 +1481,7 @@ public class pb_Editor : EditorWindow
 							// profiler.EndSample();
 						}
 					}
-					
+
 					// profiler.BeginSample("SetSelectedTriangles");
 					pb.SetSelectedTriangles(selectedTriangles.ToArray());
 					// profiler.EndSample();
@@ -1484,7 +1490,7 @@ public class pb_Editor : EditorWindow
 
 				if(!vertexSelectionMask)
 					DragObjectCheck(true);
-				
+
 				UpdateSelection(false);
 			}
 			break;
@@ -1496,7 +1502,7 @@ public class pb_Editor : EditorWindow
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 
 				List<pb_Face> selectedFaces;
-				
+
 				for(int i = 0; i < pool.Length; i++)
 				{
 					pb_Object pb = pool[i];
@@ -1534,7 +1540,7 @@ public class pb_Editor : EditorWindow
 								if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 								{
 									int indx =  selectedFaces.IndexOf(face);
-									
+
 									if( indx > -1 ) {
 										selectedFaces.RemoveAt(indx);
 									} else {
@@ -1611,7 +1617,7 @@ public class pb_Editor : EditorWindow
 				{
 					DragObjectCheck(true);
 				}
-				
+
 				UpdateSelection(false);
 			}
 			break;
@@ -1627,7 +1633,7 @@ public class pb_Editor : EditorWindow
 	// Emulates the usual Unity drag to select objects functionality
 	private void DragObjectCheck(bool vertexMode)
 	{
-		// if we're in vertex selection mode, only add to selection if shift key is held, 
+		// if we're in vertex selection mode, only add to selection if shift key is held,
 		// and don't clear the selection if shift isn't held.
 		// if not, behave regularly (clear selection if shift isn't held)
 		if(!vertexMode) {
@@ -1656,14 +1662,14 @@ public class pb_Editor : EditorWindow
 	private Vector3[] vertexOffset;
 	private Quaternion previousHandleRotation = Quaternion.identity;
 	private Quaternion currentHandleRotation = Quaternion.identity;
-	
+
 	// Use for delta display
 	private Vector3 translateOrigin = Vector3.zero;
 	private Vector3 rotateOrigin = Vector3.zero;
 	private Vector3 scaleOrigin = Vector3.zero;
 
 	private void VertexMoveTool()
-	{		
+	{
 		newPosition = m_handlePivotWorld;
 		cachedPosition = newPosition;
 
@@ -1690,7 +1696,7 @@ public class pb_Editor : EditorWindow
 				if( FindNearestVertex(mousePosition, out v) )
 					diff = Vector3.Scale(v-cachedPosition, mask);
 			}
-	
+
 			movingVertices = true;
 
 			if(previouslyMoving == false)
@@ -1708,7 +1714,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			for(int i = 0; i < selection.Length; i++)
-			{			
+			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
@@ -1733,7 +1739,7 @@ public class pb_Editor : EditorWindow
 		if(altClick) return;
 
 		bool previouslyMoving = movingVertices;
-	
+
 		if(previousHandleScale != currentHandleScale)
 		{
 			movingVertices = true;
@@ -1753,7 +1759,7 @@ public class pb_Editor : EditorWindow
 				vertexOffset = new Vector3[selection.Length];
 
 				for(int i = 0; i < selection.Length; i++)
-				{	
+				{
 					vertexOrigins[i] = selection[i].GetVertices(selection[i].SelectedTriangles);
 					vertexOffset[i] = pb_Math.Average(vertexOrigins[i]);
 				}
@@ -1761,7 +1767,7 @@ public class pb_Editor : EditorWindow
 
 			Vector3 ver;	// resulting vertex from modification
 			Vector3 over;	// vertex point to modify. different for world, local, and plane
-			
+
 			bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
 			bool gotoLocal = selectedFaceCount < 1;
 
@@ -1773,7 +1779,7 @@ public class pb_Editor : EditorWindow
 
 				// get the plane rotation in local space
 				Vector3 nrm = pb_Math.Normal(vertexOrigins[i]);
-				Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);	
+				Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);
 
 				Vector3[] v = selection[i].vertices;
 				pb_IntArray[] sharedIndices = selection[i].sharedIndices;
@@ -1790,22 +1796,22 @@ public class pb_Editor : EditorWindow
 							if(gotoLocal)
 								goto case HandleAlignment.Local;
 
-							// move center of vertices to 0,0,0 and set rotation as close to identity as possible					
+							// move center of vertices to 0,0,0 and set rotation as close to identity as possible
 							over = Quaternion.Inverse(localRot) * (vertexOrigins[i][n] - vertexOffset[i]);
 
 							// apply scale
 							ver = Vector3.Scale(over, currentHandleScale);
-							
+
 							// re-apply original rotation
 							if(vertexOrigins[i].Length > 2)
 								ver = localRot * ver;
-							
+
 							// re-apply world position offset
 							ver += vertexOffset[i];
 
 							int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
-							for(int t = 0; t < array.Length; t++)	
+							for(int t = 0; t < array.Length; t++)
 								v[array[t]] = ver;
 
 							break;
@@ -1824,14 +1830,14 @@ public class pb_Editor : EditorWindow
 
 							int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
-							for(int t = 0; t < array.Length; t++)	
+							for(int t = 0; t < array.Length; t++)
 								v[array[t]] = ver;
 
 							break;
 						}
 					}
 				}
-				
+
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
@@ -1886,12 +1892,12 @@ public class pb_Editor : EditorWindow
 				vertexOffset = new Vector3[selection.Length];
 
 				for(int i = 0; i < selection.Length; i++)
-				{					
+				{
 					vertexOrigins[i] = selection[i].GetVertices(selection[i].SelectedTriangles).ToArray();
 					vertexOffset[i] = pb_Math.BoundsCenter(vertexOrigins[i]);
 				}
 			}
-			
+
 			// profiler.BeginSample("Calc Matrix");
 			Quaternion transformedRotation;
 			switch(handleAlignment)
@@ -1952,12 +1958,12 @@ public class pb_Editor : EditorWindow
 						// now set in the msh.vertices array
 						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
-						for(int t = 0; t < array.Length; t++)	
+						for(int t = 0; t < array.Length; t++)
 							v[array[t]] = ver;
 					}
 				}
 				else
-				{			
+				{
 					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
 					{
 						// move vertex to relative origin from center of selection
@@ -1970,7 +1976,7 @@ public class pb_Editor : EditorWindow
 
 						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
-						for(int t = 0; t < array.Length; t++)	
+						for(int t = 0; t < array.Length; t++)
 							v[array[t]] = ver;
 					}
 
@@ -1990,9 +1996,9 @@ public class pb_Editor : EditorWindow
 			// don't modify the handle rotation because otherwise rotating with plane coordinates
 			// updates the handle rotation with every change, making moving things a changing target
 			Quaternion rotateToolHandleRotation = currentHandleRotation;
-			
+
 			Internal_UpdateSelectionFast();
-			
+
 			currentHandleRotation = rotateToolHandleRotation;
 			// profiler.EndSample();
 		}
@@ -2006,7 +2012,7 @@ public class pb_Editor : EditorWindow
 		int ef = 0;
 		foreach(pb_Object pb in selection)
 		{
-			// @todo - If caching normals, remove this 'ToMesh' and move 
+			// @todo - If caching normals, remove this 'ToMesh' and move
 			pb.ToMesh();
 			pb.Refresh();
 
@@ -2071,7 +2077,7 @@ public class pb_Editor : EditorWindow
 		textureHandle = Handles.PositionHandle(textureHandle, handleRotation);
 
 		if(altClick) return;
-		
+
 		if(textureHandle != cached)
 		{
 			if(!movingPictures)
@@ -2152,9 +2158,9 @@ public class pb_Editor : EditorWindow
 	public void DrawHandles ()
 	{
 		Handles.lighting = false;
-			
+
 		/**
-		 * Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices 
+		 * Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices
 		 * are drawn here.
 		 */
 		switch(selectionMode)
@@ -2172,7 +2178,7 @@ public class pb_Editor : EditorWindow
 						{
 							pb_Object pb = selection[i];
 							Vector3[] v = m_verticesInWorldSpace[i];
-		
+
 							Handles.DrawLine(v[pb.SelectedEdges[j].x], v[pb.SelectedEdges[j].y]);
 						}
 					}
@@ -2185,7 +2191,7 @@ public class pb_Editor : EditorWindow
 					}
 				} catch {}
 				Handles.color = Color.white;
-				
+
 				break;
 		}
 
@@ -2266,8 +2272,8 @@ public class pb_Editor : EditorWindow
 		{
 			GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
 
-			GUI.Label(new Rect(Screen.width-200, Screen.height-120, 162, 48), 
-				"Translate: " + (newPosition-translateOrigin).ToString() + 
+			GUI.Label(new Rect(Screen.width-200, Screen.height-120, 162, 48),
+				"Translate: " + (newPosition-translateOrigin).ToString() +
 				"\nRotate: " + (currentHandleRotation.eulerAngles-rotateOrigin).ToString() +
 				"\nScale: " + (currentHandleScale-scaleOrigin).ToString()
 				, VertexTranslationInfoStyle
@@ -2319,10 +2325,10 @@ public class pb_Editor : EditorWindow
 			Vector2 start = Vector2.Min(mousePosition_initial, mousePosition);
 			Vector2 end = Vector2.Max(mousePosition_initial, mousePosition);
 
-			selectionRect = new Rect(start.x, start.y, 
+			selectionRect = new Rect(start.x, start.y,
 				end.x - start.x, end.y - start.y);
 
-			GUI.Box(selectionRect, "");			
+			GUI.Box(selectionRect, "");
 
 			HandleUtility.Repaint();
 		}
@@ -2334,7 +2340,7 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region SHORTCUT
-	
+
 	public bool ShortcutCheck(Event e)
 	{
 		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
@@ -2390,7 +2396,7 @@ public class pb_Editor : EditorWindow
 				usedShortcut.action != "Toggle Handle Pivot" &&
 				usedShortcut.action != "Toggle Selection Mode" )
 				pb_Editor_Utility.ShowNotification(usedShortcut.action);
-	
+
 			Event.current.Use();
 		}
 
@@ -2400,7 +2406,7 @@ public class pb_Editor : EditorWindow
 	private bool AllLevelShortcuts(pb_Shortcut shortcut)
 	{
 		bool uniqueModeShortcuts = pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts);
-	
+
 		switch(shortcut.action)
 		{
 			// TODO Remove once a workaround for non-upper-case shortcut chars is found
@@ -2423,7 +2429,7 @@ public class pb_Editor : EditorWindow
 				if(!uniqueModeShortcuts)
 					return false;
 
-				if(editLevel == EditLevel.Top)	
+				if(editLevel == EditLevel.Top)
 					SetEditLevel(EditLevel.Geometry);
 
 				SetSelectionMode( SelectMode.Vertex );
@@ -2434,8 +2440,8 @@ public class pb_Editor : EditorWindow
 			{
 				if(!uniqueModeShortcuts)
 					return false;
-	
-				if(editLevel == EditLevel.Top)	
+
+				if(editLevel == EditLevel.Top)
 					SetEditLevel(EditLevel.Geometry);
 
 				SetSelectionMode( SelectMode.Edge );
@@ -2447,7 +2453,7 @@ public class pb_Editor : EditorWindow
 				if(!uniqueModeShortcuts)
 					return false;
 
-				if(editLevel == EditLevel.Top)	
+				if(editLevel == EditLevel.Top)
 					SetEditLevel(EditLevel.Geometry);
 
 				SetSelectionMode( SelectMode.Face );
@@ -2482,12 +2488,12 @@ public class pb_Editor : EditorWindow
 			case "Set Mover":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
 				return true;
-				
+
 			case "Set Detail":
 					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
 				return true;
 
-			default:	
+			default:
 				return true;
 		}
 	}
@@ -2502,8 +2508,8 @@ public class pb_Editor : EditorWindow
 				UpdateSelection(false);
 				SetEditLevel(EditLevel.Top);
 				return true;
-		
-			// TODO Remove once a workaround for non-upper-case shortcut chars is found			
+
+			// TODO Remove once a workaround for non-upper-case shortcut chars is found
 			case "Toggle Selection Mode":
 
 				if( pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts) )
@@ -2525,7 +2531,7 @@ public class pb_Editor : EditorWindow
 						break;
 				}
 				return true;
-				
+
 			case "Delete Face":
 				pb_Menu_Commands.MenuDeleteFace(selection);
 				return true;
@@ -2536,7 +2542,7 @@ public class pb_Editor : EditorWindow
 					return false;
 
 				if(editLevel != EditLevel.Texture)
-				{		
+				{
 					ToggleHandleAlignment();
 					pb_Editor_Utility.ShowNotification("Handle Alignment: " + ((HandleAlignment)handleAlignment).ToString());
 				}
@@ -2584,7 +2590,7 @@ public class pb_Editor : EditorWindow
 				if(sel.GetComponent<MeshCollider>())
 					sel.GetComponent<MeshCollider>().enabled = isVisible;
 			}
-		}		
+		}
 	}
 #endregion
 
@@ -2597,7 +2603,7 @@ public class pb_Editor : EditorWindow
 	public void SetTool(Tool newTool)
 	{
 		currentHandle = newTool;
-	}	
+	}
 
 	/**
 	 * Calls SetTool(), then Updates the UV Editor window if applicable.
@@ -2618,7 +2624,7 @@ public class pb_Editor : EditorWindow
 			ha = HandleAlignment.Plane;
 		else
 			EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)ha);
-		
+
 		handleAlignment = ha;
 
 		UpdateHandleRotation();
@@ -2686,21 +2692,21 @@ public class pb_Editor : EditorWindow
 	 * Changes the current Editor level - switches between Object, Sub-object, and Texture (hidden).
 	 */
 	public void SetEditLevel(EditLevel el)
-	{	
+	{
 		previousEditLevel = editLevel;
 		editLevel = el;
 
 		switch(el)
 		{
 			case EditLevel.Top:
-				ClearFaceSelection();		
+				ClearFaceSelection();
 				UpdateSelection(true);
 
 				SetSelection(Selection.gameObjects);
 				break;
 
 			case EditLevel.Geometry:
-				
+
 				Tools.current = Tool.None;
 
 				UpdateSelection(false);
@@ -2714,7 +2720,7 @@ public class pb_Editor : EditorWindow
 
 #if !PROTOTYPE
 			case EditLevel.Texture:
-				
+
 				previousHandleAlignment = handleAlignment;
 				previousSelectMode = selectionMode;
 
@@ -2738,10 +2744,10 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region SELECTION CACHING
-	
-	/** 
+
+	/**
 	 *	\brief Updates the arrays used to draw GUI elements (both Window and Scene).
-	 *	@selection_vertex should already be populated at this point.  UpdateSelection 
+	 *	@selection_vertex should already be populated at this point.  UpdateSelection
 	 *	just removes duplicate indices, and populates the gui arrays for displaying
 	 *	 things like quad faces and vertex billboards.
 	 */
@@ -2766,10 +2772,10 @@ public class pb_Editor : EditorWindow
 
 	public void UpdateSelection() { UpdateSelection(true); }
 	public void UpdateSelection(bool forceUpdate)
-	{		
+	{
 		// profiler.BeginSample("UpdateSelection()");
 		per_object_vertexCount_distinct = 0;
-		
+
 		selectedVertexCount = 0;
 		selectedFaceCount = 0;
 		selectedEdgeCount = 0;
@@ -2814,29 +2820,29 @@ public class pb_Editor : EditorWindow
 		}
 
 		SelectedFacesInEditZone = new pb_Face[selection.Length][];
-		
+
 		m_handlePivotWorld = Vector3.zero;
 
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool boundsInitialized = false;
 
 		for(int i = 0; i < selection.Length; i++)
-		{			
+		{
 			pb_Object pb = selection[i];
-			
+
 			pb.transform.hasChanged = false;
-	
+
 			// profiler.BeginSample("VerticesInWorldSpace");
 			m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 			// profiler.EndSample();
 
-			if(!boundsInitialized && pb.SelectedTriangleCount > 0)	
+			if(!boundsInitialized && pb.SelectedTriangleCount > 0)
 			{
 				boundsInitialized = true;
 				min = pb.transform.TransformPoint(pb.vertices[pb.SelectedTriangles[0]]);
 				max = min;
 			}
-			
+
 			if(pb.SelectedTriangles.Length > 0)
 			{
 				if(forceUpdate)
@@ -2856,9 +2862,9 @@ public class pb_Editor : EditorWindow
 					}
 				}
 			}
-			
+
 			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToArray();
-			
+
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
 			selectedFaceCount += selection[i].SelectedFaceIndices.Length;
 			selectedEdgeCount += selection[i].SelectedEdges.Length;
@@ -2884,12 +2890,12 @@ public class pb_Editor : EditorWindow
 #if !PROTOTYPE
 		UpdateTextureHandles();
 #endif
-		
+
 		currentHandleRotation = handleRotation;
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
-		
+
 		// profiler.EndSample();
 	}
 
@@ -2922,14 +2928,14 @@ public class pb_Editor : EditorWindow
 					min = m_verticesInWorldSpace[i][selection[i].SelectedTriangles[0]];
 					max = min;
 				}
-				
+
 				for(int n = 0; n < selection[i].SelectedTriangleCount; n++)
-				{					
+				{
 					min = Vector3.Min(min, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
 					max = Vector3.Max(max, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
 				}
 			}
-	
+
 			selectedVertexCount += selection[i].SelectedTriangleCount;
 			selectedFaceCount 	+= selection[i].SelectedFaceIndices.Length;
 			selectedEdgeCount 	+= selection[i].SelectedEdges.Length;
@@ -2990,7 +2996,7 @@ public class pb_Editor : EditorWindow
 	public void SetSelection(GameObject[] newSelection)
 	{
 		pbUndo.RecordSelection(selection, "Change Selection");
-		
+
 		ClearSelection();
 
 		// if the previous tool was set to none, use Tool.Move
@@ -3008,7 +3014,7 @@ public class pb_Editor : EditorWindow
 	public void SetSelection(GameObject go)
 	{
 		pbUndo.RecordSelection(selection, "Change Selection");
-		
+
 		ClearSelection();
 		AddToSelection(go);
 	}
@@ -3094,7 +3100,7 @@ public class pb_Editor : EditorWindow
 				// use average normal, tangent, and bitangent to calculate rotation relative to local space
 				Vector3 nrm, bitan, tan;
 				pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
-				
+
 				if(nrm == Vector3.zero || bitan == Vector3.zero)
 				{
 					nrm = Vector3.up;
@@ -3121,7 +3127,7 @@ public class pb_Editor : EditorWindow
 	private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
 	{
 		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
-		
+
 		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
 		if(nearest != null)
 			t.Add(nearest.transform);
@@ -3131,7 +3137,7 @@ public class pb_Editor : EditorWindow
 		if(findNearestVertex == null)
 			findNearestVertex = typeof(HandleUtility).GetMethod("findNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
 
-		object result = findNearestVertex.Invoke(this, parameters);	
+		object result = findNearestVertex.Invoke(this, parameters);
 		vertex = (bool)result ? (Vector3)parameters[2] : Vector3.zero;
 		return (bool)result;
 	}
@@ -3148,7 +3154,7 @@ public class pb_Editor : EditorWindow
 		{
 			List<int> alreadyChecked = new List<int>();
 
-			foreach(pb_Face f in pb.SelectedFaces)	
+			foreach(pb_Face f in pb.SelectedFaces)
 			{
 				int tg = f.textureGroup;
 				if(tg > 0 && !alreadyChecked.Contains(f.textureGroup))
@@ -3215,7 +3221,7 @@ public class pb_Editor : EditorWindow
 	 * Registered to EditorApplication.onPlaymodeStateChanged
 	 */
 	private void OnPlayModeStateChanged()
-	{		
+	{
 		if(EditorApplication.isPlaying)
 		{
 			foreach(pb_Entity entity in FindObjectsOfType(typeof(pb_Entity)))
@@ -3238,7 +3244,7 @@ public class pb_Editor : EditorWindow
 							entity.transform.GetComponent<Collider>().enabled = true;
 						}
 						break;
-	
+
 					case EntityType.Collider:
 						if(!show_Collider)
 						{
@@ -3314,7 +3320,7 @@ public class pb_Editor : EditorWindow
 			pb.Optimize();
 
 			if( pb.SelectedFaces.Length > 0 )
-				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );	
+				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
 		}
 
 		UpdateSelection(true);
@@ -3338,7 +3344,7 @@ public class pb_Editor : EditorWindow
 			int[] indices = pb.SelectedTriangleCount > 0 ? pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray() : pb.msh.triangles;
 
 			pbVertexOps.Quantize(pb, indices, Vector3.one * snapVal);
-				
+
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
@@ -3404,7 +3410,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	private void OnFinishVertexModification()
-	{	
+	{
 		// pb_Lightmapping.PopGIWorkflowMode();
 
 		currentHandleScale = Vector3.one;
@@ -3445,7 +3451,7 @@ public class pb_Editor : EditorWindow
 
 #region DEBUG
 
-	static readonly Color[] ElementColors = new Color[] { 
+	static readonly Color[] ElementColors = new Color[] {
 		new Color(.1f, .9f, .1f, .8f),	// Green (normal)
 		// new Color(.1f, .1f, .9f, .3f),	// Blue (bitangent)
 		// new Color(.9f, .1f, .1f, .3f),	// Red (tangent)
@@ -3478,7 +3484,7 @@ public class pb_Editor : EditorWindow
 		{
 			Mesh m = pb.msh;
 			int vertexCount = m.vertexCount;
- 
+
 			Vector3[] vertices = m.vertices;
 			Vector3[] normals  = m.normals;
 			// Vector4[] tangents = m.tangents;
@@ -3521,12 +3527,12 @@ public class pb_Editor : EditorWindow
 		face = null;
 
 		if(selection.Length < 1) return false;
-		
+
 		pb = selection.FirstOrDefault(x => x.SelectedFaceIndices.Length > 0);
-		
+
 		if(pb == null)
 			return false;
-		
+
 		face = pb.faces[pb.SelectedFaceIndices[0]];
 
 		return true;

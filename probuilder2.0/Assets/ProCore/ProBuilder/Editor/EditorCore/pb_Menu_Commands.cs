@@ -16,7 +16,7 @@ using Parabox.Debug;
 namespace ProBuilder2.EditorCommon
 {
 	/**
-	 * Contains Menu commands for most ProBuilder operations.  Will 
+	 * Contains Menu commands for most ProBuilder operations.  Will
 	 * also attempt to Update the pb_Editor.
 	 */
 	public class pb_Menu_Commands : Editor
@@ -48,7 +48,7 @@ namespace ProBuilder2.EditorCommon
 		 * Combine selected pb_Objects to a single object.
 		 * ProBuilder only.
 		 */
-		public static void MenuMergeObjects(pb_Object[] selected)	
+		public static void MenuMergeObjects(pb_Object[] selected)
 		{
 			if(selected.Length < 2)
 			{
@@ -70,8 +70,8 @@ namespace ProBuilder2.EditorCommon
 			if( pbMeshOps.CombineObjects(selected, out pb) )
 			{
 				pb_Editor_Utility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
-				pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);			
-				
+				pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
+
 				pb.Optimize();
 
 				pb.gameObject.name = "pb-MergedObject" + pb.id;
@@ -129,11 +129,11 @@ namespace ProBuilder2.EditorCommon
 					pb.CenterPivot(pb.SelectedTriangles);
 				else
 					pb.CenterPivot(null);
-		
+
 				pb.Refresh();
 				pb.Optimize();
 			}
-			
+
 			SceneView.RepaintAll();
 
 			if(editor != null)
@@ -165,7 +165,7 @@ namespace ProBuilder2.EditorCommon
 					entityType = EntityType.Trigger;
 
 				// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
-				// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the 
+				// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
 				// renderer so that we don't modify the asset.
 				if(AssetDatabase.GetAssetPath(mf.sharedMesh) == "" )
 					Undo.DestroyObjectImmediate(mf.sharedMesh);
@@ -173,7 +173,7 @@ namespace ProBuilder2.EditorCommon
 					go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
 				pb.ToMesh();
-				pb.Refresh(); 
+				pb.Refresh();
 				pb.Optimize();
 
 				// Don't call the editor version of SetEntityType because that will
@@ -200,7 +200,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification("Nothing Selected");
 				return;
 			}
-			
+
 			Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
 
 			pbUndo.RecordObjects(undoObjects, "Set Entity Type");
@@ -222,7 +222,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void MenuOpenVertexColorsEditor(pb_Object[] selection)
 		{
-			
+
 			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
@@ -261,7 +261,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(lhs == null || rhs == null)
 			{
-				pb_Editor_Utility.ShowNotification("Must Select 2 Objects");	
+				pb_Editor_Utility.ShowNotification("Must Select 2 Objects");
 				return;
 			}
 
@@ -282,7 +282,7 @@ namespace ProBuilder2.EditorCommon
 				case BooleanOperation.Subtract:
 					c = Parabox.CSG.CSG.Subtract(lhs.gameObject, rhs.gameObject);
 					break;
-		
+
 				default:
 					c = Parabox.CSG.CSG.Intersect(lhs.gameObject, rhs.gameObject);
 					break;
@@ -316,7 +316,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
 		}
-		
+
 		/**
 		 * Intersect boolean operation between two pb_Objects.
 		 */
@@ -340,7 +340,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
 				return;
 			}
-			
+
 			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
 
 			foreach(pb_Object pb in selected)
@@ -350,7 +350,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 				pb.Optimize();
 			}
-			
+
 			pb_Editor_Utility.ShowNotification("Flip Normals on " + selected.Length + " objects");
 		}
 
@@ -375,17 +375,62 @@ namespace ProBuilder2.EditorCommon
 					pb.ReverseWindingOrder(pb.SelectedFaces);
 					c += pb.SelectedFaceCount;
 				}
-				
-				
+
+
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
-			
+
 			if(c > 0)
-				pb_Editor_Utility.ShowNotification("Flip " + c + (c > 1 ? " Faces" : " Face"));
+				pb_Editor_Utility.ShowNotification("Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
 			else
 				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
+		}
+
+		/**
+		 * Attempt to make face normals uniform.
+		 */
+		public static void MenuConformNormals(pb_Object[] selection)
+		{
+			pbUndo.RecordObjects(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+			int flipped = 0;
+
+			foreach(pb_Object pb in selection)
+			{
+				pb_Face[] faces = pb.SelectedFaceCount > 0 ? pb.SelectedFaces : pb.faces;
+				int len = faces.Length;
+
+				int toggle = 0;
+				WindingOrder[] winding = new WindingOrder[len];
+
+				// First figure out what the majority of the faces' winding order is
+				for(int i = 0; i < len; i++)
+				{
+					winding[i] = pb.GetWindingOrder( faces[i] );
+					toggle += (winding[i] == WindingOrder.Unknown ? 0: (winding[i] == WindingOrder.Clockwise ? 1 : -1));
+				}
+
+				// if toggle >= 0 wind clockwise, else ccw
+				for(int i = 0; i < len; i++)
+				{
+					if( (toggle >= 0 && winding[i] == WindingOrder.CounterClockwise) ||
+						(toggle < 0 && winding[i] == WindingOrder.Clockwise) )
+					{
+						faces[i].ReverseIndices();
+						flipped++;
+					}
+				}
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			if(pb_Editor.instance != null)
+				pb_Editor.instance.UpdateSelection();
+
+			pb_Editor_Utility.ShowNotification(flipped > 0 ? "Reversed " + flipped + " Faces" : "Normals Already Uniform");
 		}
 #endregion
 
@@ -395,7 +440,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
-			
+
 			EditorGUI.BeginChangeCheck();
 
 			EditorGUIUtility.labelWidth = width - 28;
@@ -403,7 +448,7 @@ namespace ProBuilder2.EditorCommon
 
 			EditorGUIUtility.labelWidth = width - 68;
 			extrudeAmount = EditorGUILayout.FloatField("Dist", extrudeAmount, GUILayout.MaxWidth(width-12));
-			
+
 			if(EditorGUI.EndChangeCheck())
 			{
 				EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
@@ -436,13 +481,13 @@ namespace ProBuilder2.EditorCommon
 					{
 						extrudedFaceCount += pb.SelectedEdges.Length;
 						pb_Edge[] newEdges;
-						
+
 						success = pb.Extrude(	pb.SelectedEdges,
 												pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
 												pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
 												pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
 												out newEdges);
-		
+
 						if(success)
 							pb.SetSelectedEdges(newEdges);
 						else
@@ -455,7 +500,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if(pb.SelectedFaces.Length < 1)
 						continue;
-					
+
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
 					pb_Face[] result;
@@ -463,7 +508,7 @@ namespace ProBuilder2.EditorCommon
 								pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
 								pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
 								out result);
-					
+
 					pb.SetSelectedFaces(pb.SelectedFaces);
 				}
 
@@ -477,23 +522,23 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor != null)
 				editor.UpdateSelection();
-				
+
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			SceneView.RepaintAll();
 		}
 
+#if !PROTOTYPE
 		/**
 		 * Create a face between two edges.
 		 */
-#if !PROTOTYPE
 		public static void MenuBridgeEdges(pb_Object[] selection)
 		{
 			pbUndo.RecordObjects(selection, "Bridge Edges");
 
 			bool success = false;
 			bool limitToPerimeterEdges = pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
-		
+
 			foreach(pb_Object pb in selection)
 			{
 				if(pb.SelectedEdges.Length == 2)
@@ -517,7 +562,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				Debug.LogWarning("Failed Bridge Edges.  Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
 			}
-			
+
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 		}
 #endif
@@ -549,9 +594,9 @@ namespace ProBuilder2.EditorCommon
 					case SelectMode.Edge:
 						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
 						break;
-					
+
 					case SelectMode.Face:
-						
+
 						if( pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle) )
 						{
 							bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
@@ -731,7 +776,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					case SelectMode.Edge:
 					{
-						int[] perimeter = pbMeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);		
+						int[] perimeter = pbMeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);
 						pb.SetSelectedEdges( pb.SelectedEdges.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
@@ -783,7 +828,7 @@ namespace ProBuilder2.EditorCommon
 						List<int> selSharedIndices = new List<int>();
 
 						foreach(int i in pb.SelectedTriangles)
-							selSharedIndices.Add( sharedIndices.IndexOf(i) );				
+							selSharedIndices.Add( sharedIndices.IndexOf(i) );
 
 						List<int> inverse = new List<int>();
 
@@ -805,13 +850,13 @@ namespace ProBuilder2.EditorCommon
 						for(int i = 0; i < pb.faces.Length; i++)
 							if( System.Array.IndexOf(pb.SelectedFaceIndices, i) < 0 )
 								inverse.Add(pb.faces[i]);
-						
-						pb.SetSelectedFaces(inverse.ToArray());	
+
+						pb.SetSelectedFaces(inverse.ToArray());
 					}
 					break;
 
 				case SelectMode.Edge:
-					
+
 					if(!editor) break;
 
 					for(int i = 0; i < selection.Length; i++)
@@ -819,7 +864,7 @@ namespace ProBuilder2.EditorCommon
 						pb_Edge[] universal_selected_edges = pb_Edge.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndices).Distinct().ToArray();
 						pb_Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						pb_Edge[] inverse = new pb_Edge[inverse_universal.Length];
-						
+
 						for(int n = 0; n < inverse_universal.Length; n++)
 							inverse[n] = new pb_Edge( selection[i].sharedIndices[inverse_universal[n].x][0], selection[i].sharedIndices[inverse_universal[n].y][0] );
 
@@ -830,7 +875,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection();
-			
+
 			pb_Editor_Utility.ShowNotification("Invert Selection");
 
 			SceneView.RepaintAll();
@@ -862,7 +907,7 @@ namespace ProBuilder2.EditorCommon
 
 			SceneView.RepaintAll();
 		}
-			
+
 		/**
 		 * Selects an Edge loop. Todo - support for face loops.
 		 */
@@ -918,7 +963,7 @@ namespace ProBuilder2.EditorCommon
 				editor.ClearFaceSelection();
 				editor.UpdateSelection();
 			}
-			
+
 			pb_Editor_Utility.ShowNotification("Delete Elements");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
@@ -1004,7 +1049,7 @@ namespace ProBuilder2.EditorCommon
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
-				
+
 				pb.SetSelectedFaces(pb.SelectedFaces);
 			}
 
@@ -1034,16 +1079,16 @@ namespace ProBuilder2.EditorCommon
 				if(pb.SelectedFaceIndices.Length < 1 || pb.SelectedFaceIndices.Length == pb.faces.Length) continue;
 
 				int[] primary = pb.SelectedFaceIndices;
-				
+
 				detachedFaceCount += primary.Length;
 
 				List<int> inverse_list = new List<int>();
 				for(int i = 0; i < pb.faces.Length; i++)
 					if(System.Array.IndexOf(primary, i) < 0)
 						inverse_list.Add(i);
-						
+
 				int[] inverse = inverse_list.ToArray();
-			
+
 				pb_Object copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<pb_Object>();
 				copy.MakeUnique();
 
@@ -1071,22 +1116,22 @@ namespace ProBuilder2.EditorCommon
 
 				pb.ToMesh();
 				copy.ToMesh();
-				
+
 				// copy.CenterPivot(null);
 
 				pb.Refresh();
 				copy.Refresh();
-				
+
 				pb.Optimize();
 				copy.Optimize();
 
 				pb.ClearSelection();
 				copy.ClearSelection();
-			
+
 				copy.gameObject.name = pb.gameObject.name + "-detach";
 				detached.Add(copy.gameObject);
 			}
-		
+
 			if(editor)
 			{
 				editor.SetSelection(detached.ToArray());
@@ -1138,6 +1183,35 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection();
 			}
 		}
+
+		/**
+		 * Turn / flip / swap a quad connecting edge.
+		 */
+		public static void MenuFlipEdges(pb_Object[] selection)
+		{
+			pbUndo.RecordSelection(selection, "Flip Face Edges");
+			int success = 0;
+
+			foreach(pb_Object pb in selection)
+			{
+
+				foreach(pb_Face face in pb.SelectedFaces)
+				{
+					if( pb.FlipEdge(face) )
+						success++;
+				}
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			if(success > 0)
+				pb_Editor_Utility.ShowNotification("Flipped " + success + " Edges");
+
+			if(editor)
+				editor.UpdateSelection();
+		}
 #endregion
 
 #region Vertex Operations
@@ -1151,9 +1225,9 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuCollapseVertices(pb_Object[] selection)
 		{
 			bool success = false;
-			
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
-			
+
 			foreach(pb_Object pb in selection)
 			{
 				if(pb.SelectedTriangles.Length > 1)
@@ -1162,14 +1236,14 @@ namespace ProBuilder2.EditorCommon
 
 					int newIndex = -1;
 					success = pb.MergeVertices(pb.SelectedTriangles, out newIndex);
-						
+
 					if(success)
 					{
 						int[] removed;
 						pb.RemoveDegenerateTriangles(out removed);
 						pb.SetSelectedTriangles(new int[] { newIndex });
 					}
-					
+
 					pb.Refresh();
 					pb.Optimize();
 				}
@@ -1203,7 +1277,7 @@ namespace ProBuilder2.EditorCommon
 				if(pb.SelectedTriangles.Length > 1)
 				{
 					pb.ToMesh();
-					
+
 					int[] welds;
 					success = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
 
@@ -1247,13 +1321,13 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 
 			float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
-			
+
 			if(weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
 
 			EditorGUIUtility.labelWidth = width - 68;
 			weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
-		
+
 			if( EditorGUI.EndChangeCheck() )
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
@@ -1294,12 +1368,12 @@ namespace ProBuilder2.EditorCommon
 							faceSharedIndices.Add( sharedIndices.IndexOf(face.distinctIndices[j]) );
 
 						List<int> usedTris = new List<int>();
-						for(int i = 0; i < selTrisIndices.Length; i++)	
+						for(int i = 0; i < selTrisIndices.Length; i++)
 							if( faceSharedIndices.Contains(selTrisIndices[i]) )
 								usedTris.Add(pb.SelectedTriangles[i]);
 
 						// This face *is* composed of selected tris.  Remove these tris from the loose index list
-						foreach(int i in usedTris)	
+						foreach(int i in usedTris)
 							if(tris.Contains(i))
 								tris.Remove(i);
 					}
@@ -1311,19 +1385,19 @@ namespace ProBuilder2.EditorCommon
 
 				splitCount += pb.SelectedTriangles.Length;
 				pb.SplitVertices(pb.SelectedTriangles);
-		
+
 				// Reattach detached face vertices (if any are to be had)
 				if(pb.SelectedFaces.Length > 0)
 				{
 					int[] welds;
 					pb.WeldVertices( pb_Face.AllTriangles(pb.SelectedFaces), Mathf.Epsilon, out welds);
 				}
-		
+
 				// And set the selected triangles to the newly split
 				List<int> newTriSelection = new List<int>(pb_Face.AllTriangles(pb.SelectedFaces));
 				newTriSelection.AddRange(tris);
 				pb.SetSelectedTriangles(newTriSelection.ToArray());
-				
+
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
@@ -1344,7 +1418,7 @@ namespace ProBuilder2.EditorCommon
 #if !PROTOTYPE
 
 		/**
-		 * Attempts to subdivide the selected objects.  If Edge or Face selection mode, splits at the 
+		 * Attempts to subdivide the selected objects.  If Edge or Face selection mode, splits at the
 		 * center of the edge.  Otherwise from Vertex.
 		 * ProBuilder only.
 		 */
@@ -1381,7 +1455,7 @@ namespace ProBuilder2.EditorCommon
 
 					pb_Face[] faces;
 
-					if(pb.ConnectVertices(vertexConnections, out faces))	
+					if(pb.ConnectVertices(vertexConnections, out faces))
 					{
 						pb.SetSelectedFaces(faces);
 						success++;
@@ -1426,7 +1500,7 @@ namespace ProBuilder2.EditorCommon
 			if(success > 0)
 			{
 		        pb_Editor_Utility.ShowNotification("Subdivide " + success + ((success > 1) ? " faces" : " face"));
-				
+
 				if(editor)
 					editor.UpdateSelection(true);
 			}
@@ -1458,7 +1532,7 @@ namespace ProBuilder2.EditorCommon
 					pb.ToMesh();
 					pb.Refresh();
 					pb.Optimize();
-					
+
 					success++;
 				}
 			}
@@ -1487,7 +1561,7 @@ namespace ProBuilder2.EditorCommon
 			int success = 0;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
-			
+
 			foreach(pb_Object pb in selection)
 			{
 				int[] selectedTriangles = pb.SelectedTriangles.Distinct().ToArray();
@@ -1522,7 +1596,7 @@ namespace ProBuilder2.EditorCommon
 					pb.SetSelectedTriangles(f);
 				}
 			}
-			
+
 			foreach(pb_Object pb in selection)
 			{
 				pb.ToMesh();
