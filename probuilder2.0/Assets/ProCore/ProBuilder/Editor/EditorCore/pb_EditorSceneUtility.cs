@@ -1,9 +1,10 @@
-#if UNITY_4_6 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 #define PRE_UNITY_5_3
 #endif
 
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -33,7 +34,7 @@ namespace ProBuilder2.EditorCommon
 #if PRE_UNITY_5_3
 			EditorApplication.OpenScene(sceneName);
 #else
-			EditorSceneManager.OpenScene(sceneName, false);
+			EditorSceneManager.OpenScene(sceneName);
 #endif
 		}
 

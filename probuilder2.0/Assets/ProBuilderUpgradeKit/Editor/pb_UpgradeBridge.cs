@@ -167,12 +167,17 @@ namespace ProBuilder2.UpgradeKit
 					catch (System.Exception e)
 					{
 						failed++;
-						if( IsPrefabRoot(pb.gameObject) )
-							if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object is a prefab parent, and not in the current scene.  If this prefab is not used in another scene, it may not be safely saved.  To fix this warning, please place an instance of this prefab in a scene and run the \"Prepare Scene for Upgrade\" menu item", MessageType.Error);
-						else
-							if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object may not be upgraded, but can still be ProBuilder-ized when finished.\n" + e.ToString(), MessageType.Error);
+
+						if(pb != null)
+						{
+							if( IsPrefabRoot(pb.gameObject) )
+								if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object is a prefab parent, and not in the current scene.  If this prefab is not used in another scene, it may not be safely saved.  To fix this warning, please place an instance of this prefab in a scene and run the \"Prepare Scene for Upgrade\" menu item", MessageType.Error);
+							else
+								if(log != null) log("Failed serializing: " + pb.name + "\nId: " + pb.gameObject.GetInstanceID() + "\nThis object may not be upgraded, but can still be ProBuilder-ized when finished.\n" + e.ToString(), MessageType.Error);
+						}
 					}
 				}
+
 
 #if UNITY_5
 				EditorUtility.UnloadUnusedAssetsImmediate();

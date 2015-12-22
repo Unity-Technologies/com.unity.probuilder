@@ -43,7 +43,25 @@
 			"path": "Assets/ProCore/ProBuilder"
 		},
 		{
-			"path": "Assets/Debug"
+			"path": "Assets/Debug",
+						"file_exclude_patterns":
+			[
+				"*.unity",
+				"*.guiskin",
+				"*.dll",
+				"*.meta",
+				"*.prefab",
+				"*.anim",
+				"*.physicMaterial",
+				"*.flare",
+				"*.cubemap",
+				"*.font",
+				"*.fontsettings",
+				"*.renderTexture",
+				"defines.txt",
+				".boo*",
+				"*us.rsp"
+			],
 		},
 		{
 			"path": "Assets/ProBuilderUpgradeKit"

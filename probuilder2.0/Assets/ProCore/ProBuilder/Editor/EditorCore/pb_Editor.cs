@@ -367,7 +367,7 @@ public class pb_Editor : EditorWindow
 			if(pb_Editor_Utility.AssetStoreWindowIsOpen())
 				Application.OpenURL("com.unity3d.kharma:content/3558");
 			else
-				Application.OpenURL("http://u3d.as/30b");
+				Application.OpenURL("http://bit.ly/1GJEuIG"); // "http://u3d.as/30b");
 		}
 		GUI.backgroundColor = Color.white;
 #endif
