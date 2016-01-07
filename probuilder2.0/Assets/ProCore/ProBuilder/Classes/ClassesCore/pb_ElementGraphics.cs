@@ -152,7 +152,7 @@ namespace ProBuilder2.Common
 		{	
 			int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
-			Vector3[] 	v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);
+			Vector3[] v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);
 
 			pb_Renderable ren = pool.Get();
 
@@ -164,6 +164,7 @@ namespace ProBuilder2.Common
 			ren.mesh.vertices = v;
 			ren.mesh.normals = v;
 #if UNITY_5
+			if(ren.mesh == null) Debug.Log("for reals");
 			ren.mesh.uv = null;
 #else
 			ren.mesh.uv = new Vector2[v.Length];

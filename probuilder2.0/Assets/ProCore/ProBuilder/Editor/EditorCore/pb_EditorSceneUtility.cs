@@ -4,7 +4,9 @@
 
 using UnityEngine;
 using UnityEditor;
+#if !PRE_UNITY_5_3
 using UnityEditor.SceneManagement;
+#endif
 
 namespace ProBuilder2.EditorCommon
 {

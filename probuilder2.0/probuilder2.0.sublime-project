@@ -40,11 +40,10 @@
 				"Doxygen",
 				"UVee"
 			],
-			"path": "Assets/ProCore/ProBuilder"
+			"path": "Assets\\ProCore\\ProBuilder"
 		},
 		{
-			"path": "Assets/Debug",
-						"file_exclude_patterns":
+			"file_exclude_patterns":
 			[
 				"*.unity",
 				"*.guiskin",
@@ -62,13 +61,17 @@
 				".boo*",
 				"*us.rsp"
 			],
+			"path": "Assets\\Debug"
 		},
 		{
-			"path": "Assets/ProBuilderUpgradeKit"
+			"path": "Assets\\ProBuilderUpgradeKit"
 		},
 		{
-			"path": "../",
-			"folder_exclude_patterns": [ "*" ]
+			"folder_exclude_patterns":
+			[
+				"*"
+			],
+			"path": "C:\\Users\\karl\\probuilder\\prj\\probuilder2"
 		}
 	]
 }
