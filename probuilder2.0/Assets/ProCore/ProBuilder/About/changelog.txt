@@ -2,7 +2,7 @@
 
 # Features
 
-- New "Flip Edge" tool swaps the direction of a connecting edge in a quad.
+	- New "Flip Edge" tool swaps the direction of a connecting edge in a quad.
 
 # Bug Fixes
 	- Fix bug where Trigger or Collider entities could remain visible in play mode when using source.

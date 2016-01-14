@@ -19,10 +19,6 @@ public class pb_Editor : EditorWindow
 {
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
-	#if PB_DEBUG
-	static pb_Profiler profiler = new pb_Profiler("pb_Editor");
-	#endif
-
 #region LOCAL MEMBERS && EDITOR PREFS
 
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
