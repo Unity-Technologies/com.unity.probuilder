@@ -104,10 +104,14 @@ echo Export Unity 4 DLL project
 echo Remove 4.7 Editor DLL
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity4.dll"
 
-:: Rename Core and MeshOps libs to -Unity5
-ren "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\*-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\*-Unity5.dll"
+set cur_dir="%CD%"
 
-pause
+cd "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+
+:: Rename Core and MeshOps libs to -Unity5
+ren "*-Unity4.dll" "*-Unity5.dll"
+
+cd "%cur_dir%"
 
 echo Copy Unity 5.0 build artifacts
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"

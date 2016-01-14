@@ -38,9 +38,30 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _MetallicGlossMap
+          name: _FirstTex
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: eb18006e3122d7e4a84e8ef8b708df02, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _SecondTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 20fa208453803ab41b65dfe6fe92c848, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ThirdTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 478de9d1d3cbac64bad0d9feaad9e272, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _FourthTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 6b2e75e162ed72c428ddc9ca9cac6452, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -80,30 +101,9 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _FirstTex
+          name: _MetallicGlossMap
         second:
-          m_Texture: {fileID: 2800000, guid: eb18006e3122d7e4a84e8ef8b708df02, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SecondTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 20fa208453803ab41b65dfe6fe92c848, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ThirdTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 478de9d1d3cbac64bad0d9feaad9e272, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _FourthTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 6b2e75e162ed72c428ddc9ca9cac6452, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -139,6 +139,18 @@ Material:
         second: 0.5
       data:
         first:
+          name: _Metallic
+        second: 0.5
+      data:
+        first:
+          name: _Gloss
+        second: 0.5
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
           name: _ZWrite
         second: 1
       data:
@@ -147,16 +159,8 @@ Material:
         second: 0.48
       data:
         first:
-          name: _Metallic
-        second: 0.5
-      data:
-        first:
           name: _BumpScale
         second: 1
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
       data:
         first:
           name: _OcclusionStrength
@@ -171,11 +175,11 @@ Material:
         second: 1
       data:
         first:
-          name: _EmissionScaleUI
+          name: _Mode
         second: 0
       data:
         first:
-          name: _Mode
+          name: _EmissionScaleUI
         second: 0
       data:
         first:
@@ -201,10 +205,6 @@ Material:
         first:
           name: _Phase
         second: 1
-      data:
-        first:
-          name: _Gloss
-        second: 0.5
     m_Colors:
       data:
         first:
