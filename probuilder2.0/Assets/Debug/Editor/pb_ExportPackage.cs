@@ -122,8 +122,8 @@ public class pb_ExportPackage : Editor
 	[MenuItem("Tools/Find DLLs")]
 	public static void OverrideDLLGUIDs()
 	{
-		string[] core_dll = Directory.GetFiles("Assets", "ProBuilderCore.dll", SearchOption.AllDirectories);
-		string[] mesh_dll = Directory.GetFiles("Assets", "ProBuilderMeshOps.dll", SearchOption.AllDirectories);
+		string[] core_dll = Directory.GetFiles("Assets", "ProBuilderCore-Unity*.dll", SearchOption.AllDirectories);
+		string[] mesh_dll = Directory.GetFiles("Assets", "ProBuilderMeshOps-Unity*.dll", SearchOption.AllDirectories);
 		string[] editor_dll = Directory.GetFiles("Assets", "ProBuilderEditor-Unity*.dll", SearchOption.AllDirectories);
 
 		/// purposefully don't return from function if files aren't found - batch export should
