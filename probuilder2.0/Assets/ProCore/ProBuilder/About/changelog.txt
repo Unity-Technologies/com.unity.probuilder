@@ -1,3 +1,15 @@
+-- ProBuilder 2.4.9f1 (r3978)
+
+# Features
+
+- New "Flip Edge" tool swaps the direction of a connecting edge in a quad.
+
+# Bug Fixes
+	- Fix bug where Trigger or Collider entities could remain visible in play mode when using source.
+	- Fix slowdowns when inserting edge loops due to undo.
+	- Fix missing namespace errors in Unity 5.3.
+	- Increase the resolution with which vertex positions are compared to avoid incorrectly merging distinct vertices (often causing trouble when modeling at very small dimensions).
+
 -- ProBuilder 2.4.8f1 (r3764)
 
 # Features
