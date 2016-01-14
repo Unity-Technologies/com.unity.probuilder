@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProBuilderCore</RootNamespace>
-    <AssemblyName>ProBuilderCore-Unity4</AssemblyName>
+    <AssemblyName>ProBuilderCore</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -132,7 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>D:\Applications\Unity 4.6.8f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\Applications\Unity 4.7.0f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

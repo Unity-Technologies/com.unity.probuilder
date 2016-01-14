@@ -187,7 +187,9 @@ public class BuggerWindow : EditorWindow
 		UnityEngine.Debug.LogWarning("YOU'RE ON UNITY_WEBPLAYER YOU DICKHEAD");
 #endif
 		// Application.stackTraceLogType = StackTraceLogType.Full;
+#if !UNITY_4_7
 		Application.logMessageReceivedThreaded += Bugger.DebugLogHandler;
+#endif
 
 		if(EditorPrefs.HasKey(bugger_ShowUpdatedDelta))
 			_showUpdatedDelta = EditorPrefs.GetBool(bugger_ShowUpdatedDelta);
@@ -258,7 +260,9 @@ public class BuggerWindow : EditorWindow
 
 	public void OnDisable()
 	{
+#if !UNITY_4_7
 		Application.logMessageReceivedThreaded -= Bugger.DebugLogHandler;
+#endif
 
 		EditorPrefs.SetInt("BuggerSplitA", splitA);
 		EditorPrefs.SetInt("BuggerSplitB", splitB);

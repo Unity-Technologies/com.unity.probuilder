@@ -163,12 +163,7 @@ namespace ProBuilder2.Common
 			ren.mesh.Clear();
 			ren.mesh.vertices = v;
 			ren.mesh.normals = v;
-#if UNITY_5
-			if(ren.mesh == null) Debug.Log("for reals");
-			ren.mesh.uv = null;
-#else
 			ren.mesh.uv = new Vector2[v.Length];
-#endif
 			ren.mesh.triangles = SequentialTriangles(v.Length);
 
 			return ren;

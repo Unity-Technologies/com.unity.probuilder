@@ -32,11 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ProBuilderCore-Unity5">
-      <HintPath>..\..\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll</HintPath>
+    <Reference Include="ProBuilderCore">
+      <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore.dll</HintPath>
     </Reference>
-    <Reference Include="ProBuilderMeshOps-Unity5">
-      <HintPath>..\..\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll</HintPath>
+    <Reference Include="ProBuilderMeshOps">
+      <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor">
@@ -144,6 +144,9 @@
       <Link>pb_Vertex_Color_Toolbar.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

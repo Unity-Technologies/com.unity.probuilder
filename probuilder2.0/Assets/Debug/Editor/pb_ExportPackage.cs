@@ -122,8 +122,8 @@ public class pb_ExportPackage : Editor
 	[MenuItem("Tools/Find DLLs")]
 	public static void OverrideDLLGUIDs()
 	{
-		string[] core_dll = Directory.GetFiles("Assets", "ProBuilderCore-Unity*.dll", SearchOption.AllDirectories);
-		string[] mesh_dll = Directory.GetFiles("Assets", "ProBuilderMeshOps-Unity*.dll", SearchOption.AllDirectories);
+		string[] core_dll = Directory.GetFiles("Assets", "ProBuilderCore.dll", SearchOption.AllDirectories);
+		string[] mesh_dll = Directory.GetFiles("Assets", "ProBuilderMeshOps.dll", SearchOption.AllDirectories);
 		string[] editor_dll = Directory.GetFiles("Assets", "ProBuilderEditor-Unity*.dll", SearchOption.AllDirectories);
 
 		/// purposefully don't return from function if files aren't found - batch export should
@@ -145,7 +145,7 @@ public class pb_ExportPackage : Editor
 
 	private static void SetGUID(string asset_path, string new_guid)
 	{
-#if UNITY_4_6
+#if UNITY_4_7
 		string meta_path = asset_path + ".meta";
 #else
 		string meta_path = AssetDatabase.GetTextMetaFilePathFromAssetPath(asset_path);
