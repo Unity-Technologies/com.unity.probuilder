@@ -88,7 +88,7 @@ public class Bugger
 
 	public static void DebugLogHandler(string logString, string stackTrace, LogType type)
 	{
-		#if !UNITY_WEBPLAYER && !UNITY_WP8
+#if !UNITY_WEBPLAYER && !UNITY_WP8
 
 		string json = UnityLogToJSON(logString, stackTrace, type);
 
@@ -101,8 +101,8 @@ public class Bugger
 			#if UNITY_EDITOR
 			lastLogEntryTime = EditorApplication.timeSinceStartup;
 			#endif
-		}	
-		#endif
+		}			
+#endif
 	}
 
 	public static void SetKey<T>(string key, T value)

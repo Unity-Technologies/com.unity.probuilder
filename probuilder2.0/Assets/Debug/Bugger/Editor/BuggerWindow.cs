@@ -1,15 +1,3 @@
-#if UNITY_5_0_0
-#define UNITY_5
-#endif
-
-#if UNITY_4_3 || UNITY_4_3_0 || UNITY_4_3_1 || UNITY_4_3_2 || UNITY_4_3_3 || UNITY_4_3_4 || UNITY_4_3_5 || UNITY_4_3_6 || UNITY_4_3_7 || UNITY_4_3_8 || UNITY_4_3_9 || UNITY_4_4 || UNITY_4_4_0 || UNITY_4_4_1 || UNITY_4_4_2 || UNITY_4_4_3 || UNITY_4_4_4 || UNITY_4_4_5 || UNITY_4_4_6 || UNITY_4_4_7 || UNITY_4_4_8 || UNITY_4_4_9 || UNITY_4_5 || UNITY_4_5_0 || UNITY_4_5_1 || UNITY_4_5_2 || UNITY_4_5_3 || UNITY_4_5_4 || UNITY_4_5_5 || UNITY_4_5_6 || UNITY_4_5_7 || UNITY_4_5_8 || UNITY_4_5_9 || UNITY_4_6 || UNITY_4_6_0 || UNITY_4_6_1 || UNITY_4_6_2 || UNITY_4_6_3 || UNITY_4_6_4 || UNITY_4_6_5 || UNITY_4_6_6 || UNITY_4_6_7 || UNITY_4_6_8 || UNITY_4_6_9 || UNITY_4_7 || UNITY_4_7_0 || UNITY_4_7_1 || UNITY_4_7_2 || UNITY_4_7_3 || UNITY_4_7_4 || UNITY_4_7_5 || UNITY_4_7_6 || UNITY_4_7_7 || UNITY_4_7_8 || UNITY_4_7_9 || UNITY_4_8 || UNITY_4_8_0 || UNITY_4_8_1 || UNITY_4_8_2 || UNITY_4_8_3 || UNITY_4_8_4 || UNITY_4_8_5 || UNITY_4_8_6 || UNITY_4_8_7 || UNITY_4_8_8 || UNITY_4_8_9 || UNITY_5
-#define UNITY_4_3
-#elif UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2
-#define UNITY_4
-#elif UNITY_3_0 || UNITY_3_0_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_3_6 || UNITY_3_5_7 || UNITY_3_8
-#define UNITY_3
-#endif
-
 /* Todo:
 	- Step through StackFrames and allow user to double click to open file to line.
 	- live update toggle
@@ -40,7 +28,7 @@ public class BuggerWindow : EditorWindow
 	Color PRO_PRIMARY_TEXT_COLOR = new Color(1f, 1f, 1f, .8f);
 	Color BASIC_PRIMARY_TEXT_COLOR = new Color(0f, 0f, 0f, .8f);
 
-	Color PRO_SECONDARY_TEXT_COLOR = Color.red;//new Color(1f, 1f, 1f, .4f);
+	Color PRO_SECONDARY_TEXT_COLOR = new Color(1f, 1f, 1f, .4f);
 	Color BASIC_SECONDARY_TEXT_COLOR = new Color(0f, 0f, 0f, .6f);
 
 	Color TOOLBAR_TOGGLED_COLOR = Color.gray;
@@ -54,7 +42,7 @@ public class BuggerWindow : EditorWindow
 	// gui const
 	const int SCROLL_PIXEL_PAD = 4;
 
-	GUIStyle stackStyle = new GUIStyle();
+	GUIStyle stackStyle = new GUIStyle(), wordWrappedLabel = null;
 
 	// Bugger UI icons
 	Texture2D logIcon;
@@ -193,26 +181,14 @@ public class BuggerWindow : EditorWindow
 		EditorWindow.GetWindow<BuggerWindow>(false, "Bugger", false);
 	}
 
-	static BuggerWindow()
-	{
-		// Hook existing DebugLogs
-		#if UNITY_5
-		Application.logMessageReceived -= Bugger.DebugLogHandler;
-		Application.logMessageReceived += Bugger.DebugLogHandler;
-		#else
-		Application.RegisterLogCallback(Bugger.DebugLogHandler);
-		#endif
-	}
-
 	public void OnEnable()
 	{
-		#if UNITY_5
-		Application.logMessageReceived -= Bugger.DebugLogHandler;
-		Application.logMessageReceived += Bugger.DebugLogHandler;
-		#else
-		Application.RegisterLogCallback(Bugger.DebugLogHandler);
-		#endif		
-		
+#if UNITY_WEBPLAYER || UNITY_WP8
+		UnityEngine.Debug.LogWarning("YOU'RE ON UNITY_WEBPLAYER YOU DICKHEAD");
+#endif
+		// Application.stackTraceLogType = StackTraceLogType.Full;
+		Application.logMessageReceivedThreaded += Bugger.DebugLogHandler;
+
 		if(EditorPrefs.HasKey(bugger_ShowUpdatedDelta))
 			_showUpdatedDelta = EditorPrefs.GetBool(bugger_ShowUpdatedDelta);
 
@@ -237,6 +213,7 @@ public class BuggerWindow : EditorWindow
 
 		// Initialize GUIStyles
 		rowTextStyle = new GUIStyle();
+		rowTextStyle.font = Resources.Load<Font>("monkey");
 		rowTextStyle.normal.textColor = Color.black;
 		rowTextStyle.contentOffset = new Vector2(4, 1);
 		rowTextStyle.clipping = TextClipping.Clip;
@@ -247,15 +224,19 @@ public class BuggerWindow : EditorWindow
 		rowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
 
 		stackStyle = new GUIStyle();
+		stackStyle.font = Resources.Load<Font>("monkey");
 		stackStyle.normal.textColor = EditorGUIUtility.isProSkin ? PRO_SECONDARY_TEXT_COLOR : BASIC_SECONDARY_TEXT_COLOR;
 		stackStyle.alignment = TextAnchor.MiddleLeft;
 		stackStyle.contentOffset = new Vector2(4, 2);
-		stackStyle.normal.background = EditorGUIUtility.whiteTexture;
+		stackStyle.wordWrap = true;
+		// stackStyle.normal.background = EditorGUIUtility.whiteTexture;
 
 		splitStyle = new GUIStyle();
 		splitStyle.normal.background = EditorGUIUtility.whiteTexture;
 
 		centeredLabel = new GUIStyle();
+		centeredLabel.font = Resources.Load<Font>("monkey");
+		centeredLabel.normal.textColor = PRO_SECONDARY_TEXT_COLOR;
 		centeredLabel.alignment = TextAnchor.MiddleCenter;
 
 		splitColor = new Color(0f, 0f, 0f, .8f);
@@ -277,11 +258,7 @@ public class BuggerWindow : EditorWindow
 
 	public void OnDisable()
 	{
-		#if UNITY_5
-		Application.logMessageReceived -= Bugger.DebugLogHandler;
-		#else
-		Application.RegisterLogCallback(null);
-		#endif
+		Application.logMessageReceivedThreaded -= Bugger.DebugLogHandler;
 
 		EditorPrefs.SetInt("BuggerSplitA", splitA);
 		EditorPrefs.SetInt("BuggerSplitB", splitB);
@@ -320,6 +297,14 @@ public class BuggerWindow : EditorWindow
 	{
 		Event e = Event.current;
 		SetBuggerEvent(e);
+
+		if(wordWrappedLabel == null)
+		{
+			wordWrappedLabel = new GUIStyle(EditorStyles.wordWrappedLabel);
+			wordWrappedLabel.font = Resources.Load<Font>("monkey");
+			wordWrappedLabel.normal.textColor = rowTextColorWhite;
+			wordWrappedLabel.contentOffset = new Vector2(4,4);
+		}
 
 		curY = 0;
 
@@ -796,7 +781,9 @@ public class BuggerWindow : EditorWindow
 
 		string logMessage;
 
-		logRect = new Rect(0f, 0, rect.width-16, logEntries.Count * rowHeight);
+		int logCount = logEntries == null ? 0 : logEntries.Count;
+
+		logRect = new Rect(0f, 0, rect.width-16, logCount * rowHeight);
 
 		if(scrollToBottom)
 			logScroll.y = logRect.height - (rect.height-16);
@@ -804,7 +791,7 @@ public class BuggerWindow : EditorWindow
 
 		logScroll = GUI.BeginScrollView(new Rect(0, headerHeight-2, rect.width, rect.height-16), logScroll, logRect);
 
-		for(int i = 0; i < logEntries.Count; i++)
+		for(int i = 0; i < logCount; i++)
 		{
 			BugLog entry = logEntries[i];
 
@@ -917,15 +904,13 @@ public class BuggerWindow : EditorWindow
 		int[] contentHeight = new int[selectedValue.Count];
 
 		// Set up GUIContent for render - need this to correctly calculate height for view portion of scrollvieew
-		#if UNITY_4_3
 		int lineHeight = (int)Mathf.Ceil(EditorGUIUtility.singleLineHeight);
-		#else
-		int lineHeight = (int)Mathf.Ceil(EditorStyles.label.lineHeight);
-		#endif
+		// int lineHeight = (int)Mathf.Ceil(EditorStyles.label.lineHeight);
+		
 		int viewHeight = 0;
 		for(int i = 0; i < selectedValue.Count; i++)
 		{
-			contentHeight[i] = (int)Mathf.Ceil(EditorStyles.wordWrappedLabel.CalcHeight(new GUIContent(selectedValue[i].message, ""), rect.width));
+			contentHeight[i] = (int)Mathf.Ceil(stackStyle.CalcHeight(new GUIContent(selectedValue[i].message, ""), rect.width));
 			viewHeight += contentHeight[i];
 			viewHeight += (int)Mathf.Ceil(selectedValue[i].stack.Count * lineHeight+1);
 		}
@@ -946,7 +931,7 @@ public class BuggerWindow : EditorWindow
 				messageRect.y = curHeight;
 				messageRect.height = contentHeight[j];
 
-				GUI.Label(messageRect, selectedLog.message, EditorStyles.wordWrappedLabel);
+				GUI.Label(messageRect, selectedLog.message, stackStyle);
 				curHeight += contentHeight[j++];
 
 				messageRect.y = curHeight;

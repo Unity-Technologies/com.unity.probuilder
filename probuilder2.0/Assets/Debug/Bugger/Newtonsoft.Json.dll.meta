@@ -13,7 +13,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
     Any:
-      enabled: 0
+      enabled: 1
       settings: {}
     Editor:
       enabled: 0

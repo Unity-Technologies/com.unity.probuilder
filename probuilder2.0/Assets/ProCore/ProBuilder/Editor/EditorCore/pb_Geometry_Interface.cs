@@ -801,7 +801,7 @@ namespace ProBuilder2.EditorCommon
 					arch_endCaps);
 
 				int[] removed;
-				// happens when radius and width are the same :/
+
 				pb.RemoveDegenerateTriangles(out removed);
 
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");

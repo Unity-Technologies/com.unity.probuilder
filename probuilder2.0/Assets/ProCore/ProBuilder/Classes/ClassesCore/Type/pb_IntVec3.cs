@@ -10,7 +10,7 @@ namespace ProBuilder2.Common
 		public float y { get { return vec.y; } }
 		public float z { get { return vec.z; } }
 
-		const float resolution = 100f;
+		const float resolution = 1000f;
 
 		public pb_IntVec3(Vector3 vector)
 		{

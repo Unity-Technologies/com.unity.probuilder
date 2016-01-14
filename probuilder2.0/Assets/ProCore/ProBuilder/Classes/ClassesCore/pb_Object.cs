@@ -607,7 +607,7 @@ public class pb_Object : MonoBehaviour
 		if(msh != null)
 		{
 			m = msh;
-			// m.triangles = null;
+			m.triangles = null;
 			m.vertices = _vertices;
 			if(_uv != null) m.uv = _uv; // we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
 		}
