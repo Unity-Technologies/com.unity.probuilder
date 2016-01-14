@@ -85,8 +85,8 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 :: Copy Unity 4 build artifacts
 :: ====================
 echo Copy Unity 4 build artifacts
-xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Release\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 echo Override DLL GUIDs
@@ -103,6 +103,11 @@ echo Export Unity 4 DLL project
 :: Remove Unity 4 editor DLL from staging, and rebuild with 5.0 libs
 echo Remove 4.7 Editor DLL
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity4.dll"
+
+:: Rename Core and MeshOps libs to -Unity5
+ren "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\*-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\*-Unity5.dll"
+
+pause
 
 echo Copy Unity 5.0 build artifacts
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
@@ -121,7 +126,7 @@ echo Remove 5.0 Editor DLL
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity5.dll"
 
 echo Copy Unity 5.3 build artifacts
-xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5_3.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 echo Override DLL GUIDs
 %unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5_3-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs

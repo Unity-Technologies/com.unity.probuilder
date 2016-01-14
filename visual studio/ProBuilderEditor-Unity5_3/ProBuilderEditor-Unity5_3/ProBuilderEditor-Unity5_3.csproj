@@ -7,8 +7,8 @@
     <ProjectGuid>{B633C261-21D8-4947-85FD-D7014FA9CAF9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProBuilderEditor_Unity5_3</RootNamespace>
-    <AssemblyName>ProBuilderEditor-Unity5_3</AssemblyName>
+    <RootNamespace>ProBuilderEditor</RootNamespace>
+    <AssemblyName>ProBuilderEditor-Unity5</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,11 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ProBuilderCore">
-      <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore.dll</HintPath>
+    <Reference Include="ProBuilderCore-Unity4">
+      <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll</HintPath>
     </Reference>
-    <Reference Include="ProBuilderMeshOps">
-      <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps.dll</HintPath>
+    <Reference Include="ProBuilderMeshOps-Unity4">
+      <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor">

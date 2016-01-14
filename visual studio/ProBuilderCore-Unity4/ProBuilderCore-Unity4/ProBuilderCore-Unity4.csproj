@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProBuilderCore</RootNamespace>
-    <AssemblyName>ProBuilderCore</AssemblyName>
+    <AssemblyName>ProBuilderCore-Unity4</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

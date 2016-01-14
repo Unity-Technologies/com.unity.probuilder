@@ -130,11 +130,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ProBuilderCore">
-      <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore.dll</HintPath>
+    <Reference Include="ProBuilderCore-Unity4">
+      <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll</HintPath>
     </Reference>
-    <Reference Include="ProBuilderMeshOps">
-      <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps.dll</HintPath>
+    <Reference Include="ProBuilderMeshOps-Unity4">
+      <HintPath>..\..\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
