@@ -375,5 +375,6 @@ Shader "ProBuilder/StandardVertexColor_Spec" {
         }
     }
     FallBack "Diffuse"
-    CustomEditor "ShaderForgeMaterialInspector"
+    // Commented out because it throws warnings when ShaderForge is not installed.
+//    CustomEditor "ShaderForgeMaterialInspector"
 }

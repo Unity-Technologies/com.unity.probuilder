@@ -80,8 +80,6 @@ echo Build Unity 5.0 Editor Core
 echo Build Unity 5.3 Editor Core
 %msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_3;";Configuration=Release /v:q /t:Clean,Build %u5_3editor%
 
-pause
-
 :: Remove scripts from staging project
 :: ====================
 echo Remove Core, Mesh, and Editor scripts
