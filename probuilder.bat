@@ -9,7 +9,9 @@ set build_directory="%CD%\bin\Debug"
 :: DLL VS project paths for Unity 4, 5.0, and 5.3
 :: ====================
 set u4core="%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4.sln"
+set u5core="%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5.sln"
 set u4mesh="%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4.sln"
+set u5mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5.sln"
 set u4editor="%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4.sln"
 set u5_0editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
 set u5_3editor="%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3.sln"
@@ -60,20 +62,25 @@ echo Export source
 
 :: Build Unity DLLs
 :: ====================
-echo Build Unity 4 Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_4_6;" /t:Clean,Build /p:Configuration=Release %u4core%
 
-echo Build Unity 4 Mesh Ops
-%msbuild% /p:DefineConstants="RELEASE;UNITY_4_6;" /t:Clean,Build /p:Configuration=Release %u4mesh%
+echo Build Unity 4 Core and Mesh Operations
+%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build /p:Configuration=Release %u4core%
+%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build /p:Configuration=Release %u4mesh%
+
+echo Build Unity 5 Core and Mesh Operations
+%msbuild% /p:DefineConstants="RELEASE;";AssemblyName=ProBuilderCore-Unity5;Configuration=Release /t:Build %u5core%
+%msbuild% /p:DefineConstants="RELEASE;";AssemblyName=ProBuilderMeshOps-Unity5;Configuration=Release /t:Build %u5mesh%
 
 echo Build Unity 4 Editor Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_6;" /p:Configuration=Release /v:q /t:Clean,Build %u4editor%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_4_6;UNITY_4_7;";Configuration=Release /v:q /t:Clean,Build %u4editor%
 
 echo Build Unity 5.0 Editor Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_0;" /p:Configuration=Release /v:q /t:Clean,Build %u5_0editor%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_0;";Configuration=Release /v:q /t:Clean,Build %u5_0editor%
 
 echo Build Unity 5.3 Editor Core
-%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_3;" /p:Configuration=Release /v:q /t:Clean,Build %u5_3editor%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_3;";Configuration=Release /v:q /t:Clean,Build %u5_3editor%
+
+pause
 
 :: Remove scripts from staging project
 :: ====================
@@ -84,12 +91,12 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 
 :: Copy Unity 4 build artifacts
 :: ====================
-echo Copy Unity 4 build artifacts
+echo Copy Unity 4 Core and MeshOps to Staging
 xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Release\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
-echo Override DLL GUIDs
+echo Override DLL GUIDs Unity 4
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
 :: Export Unity 4
@@ -102,21 +109,16 @@ echo Export Unity 4 DLL project
 
 :: Remove Unity 4 editor DLL from staging, and rebuild with 5.0 libs
 echo Remove 4.7 Editor DLL
+del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderCore-Unity4.dll"
+del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderMeshOps-Unity4.dll"
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity4.dll"
 
-set cur_dir="%CD%"
-
-cd "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
-:: Rename Core and MeshOps libs to -Unity5
-ren "*-Unity4.dll" "*-Unity5.dll"
-
-cd "%cur_dir%"
-
-echo Copy Unity 5.0 build artifacts
+echo Copy Unity 5 Core and MeshOps to Staging
+xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Release\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Release\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
-echo Override DLL GUIDs
+echo Override DLL GUIDs Unity 5
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
 echo Export Unity 5 DLL project
@@ -132,7 +134,7 @@ del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEdito
 echo Copy Unity 5.3 build artifacts
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
-echo Override DLL GUIDs
+echo Override DLL GUIDs Unity 5.3
 %unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5_3-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
 echo Export Unity 5 DLL project
@@ -142,4 +144,5 @@ echo Export Unity 5 DLL project
 xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProBuilderUpgradeKit %CD%\probuilder-staging\Assets\ProBuilderUpgradeKit
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\ProBuilderUpgradeKit-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProBuilderUpgradeKit outDir:%build_directory% outName:ProBuilderUpgradeKit
 
+echo DONE BUILDINGS
 pause
