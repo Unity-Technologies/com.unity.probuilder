@@ -372,6 +372,26 @@ public class pb_Handle_Utility
 
 #region Raycast
 
+	public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit)
+	{
+		pb = null;
+		hit = null;
+
+		GameObject go = HandleUtility.PickGameObject(mousePosition, false);
+
+		if(go == null)
+			return false;
+
+		pb = go.GetComponent<pb_Object>();
+
+		if(pb == null)
+			return false;
+
+		Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+		return MeshRaycast(ray, pb, out hit);
+	}
+
 	/**
 	 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
 	 */

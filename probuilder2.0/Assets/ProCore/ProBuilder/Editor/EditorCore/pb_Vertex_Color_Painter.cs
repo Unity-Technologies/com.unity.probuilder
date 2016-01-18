@@ -446,9 +446,9 @@ public class pb_VertexColor_Editor : EditorWindow
 
 				if ( pb_Handle_Utility.MeshRaycast(ray, pb, out hit) )
 				{
-					handlePosition = pb.transform.TransformPoint(hit.Point);
+					handlePosition = pb.transform.TransformPoint(hit.point);
 					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);					
-					handleRotation = Quaternion.LookRotation(nonzero(pb.transform.TransformDirection(hit.Normal)), Vector3.up);
+					handleRotation = Quaternion.LookRotation(nonzero(pb.transform.TransformDirection(hit.normal)), Vector3.up);
  
 					Color[] colors = pb.msh.colors;
 
@@ -461,7 +461,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					{
 						for(int i = 0; i < sharedIndices.Length; i++)
 						{
-							float dist = Vector3.Distance(hit.Point, pb.vertices[sharedIndices[i][0]]);
+							float dist = Vector3.Distance(hit.point, pb.vertices[sharedIndices[i][0]]);
 
 							if(dist < brushSize)
 							{

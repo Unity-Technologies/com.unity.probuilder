@@ -822,17 +822,22 @@ public class pb_Editor : EditorWindow
 	{
 		currentEvent = Event.current;
 
-		if(editLevel == EditLevel.Geometry && currentEvent.Equals(Event.KeyboardEvent("v")))
+		if(editLevel == EditLevel.Geometry)
 		{
-			currentEvent.Use();
-			snapToVertex = true;
+			if( currentEvent.Equals(Event.KeyboardEvent("v")) )
+				snapToVertex = true;
+			else if( currentEvent.Equals(Event.KeyboardEvent("c")) )
+				snapToFace = true;
 		}
 
 		/**
 		 * Snap stuff
 		 */
 		if(currentEvent.type == EventType.KeyUp)
+		{
+			snapToFace = false;
 			snapToVertex = false;
+		}
 
 		if(currentEvent.type == EventType.MouseDown && currentEvent.button == 1)
 			rightMouseDown = true;
@@ -1164,7 +1169,7 @@ public class pb_Editor : EditorWindow
 						Camera cam = SceneView.lastActiveSceneView.camera;
 
 						// Sort from nearest hit to farthest
-						hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
+						hits.Sort( (x, y) => x.distance.CompareTo(y.distance) );
 
 						// Find the nearest edge in the hit faces
 
@@ -1173,12 +1178,12 @@ public class pb_Editor : EditorWindow
 
 						for(int i = 0; i < hits.Count; i++)
 						{
-							if( pb_HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].Point)) )
+							if( pb_HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].point)) )
 								continue;
 
-							foreach(pb_Edge edge in bestObj.faces[hits[i].FaceIndex].edges)
+							foreach(pb_Edge edge in bestObj.faces[hits[i].face].edges)
 							{
-								float d = HandleUtility.DistancePointLine(hits[i].Point, v[edge.x], v[edge.y]);
+								float d = HandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
 
 								if(d < bestDistance)
 								{
@@ -1187,7 +1192,7 @@ public class pb_Editor : EditorWindow
 								}
 							}
 
-							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].Normal)) < 0f )
+							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].normal)) < 0f )
 								break;
 						}
 
@@ -1276,7 +1281,7 @@ public class pb_Editor : EditorWindow
 
 			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
 			{
-				selectedFace = pb.faces[hit.FaceIndex];
+				selectedFace = pb.faces[hit.face];
 
 				/**
 				 * Check for other editor mouse shortcuts first - todo: better way to do this.
@@ -1300,7 +1305,7 @@ public class pb_Editor : EditorWindow
 				if( indx > -1 ) {
 					pb.RemoveFromFaceSelectionAtIndex(indx);
 				} else {
-					pb.AddToFaceSelection(hit.FaceIndex);
+					pb.AddToFaceSelection(hit.face);
 				}
 			}
 		}
@@ -1652,6 +1657,8 @@ public class pb_Editor : EditorWindow
 #region VERTEX TOOLS
 
 	private bool snapToVertex = false;
+	// private bool snapToEdge = false;
+	private bool snapToFace = false;
 	private Vector3 previousHandleScale = Vector3.one;
 	private Vector3 currentHandleScale = Vector3.one;
 	private Vector3[][] vertexOrigins;
@@ -1683,7 +1690,7 @@ public class pb_Editor : EditorWindow
 			// profiler.BeginSample("VertexMoveTool()");
 			Vector3 diff = newPosition-cachedPosition;
 
-			Vector3 mask = diff.ToMask();
+			Vector3 mask = diff.ToMask(pb_Math.HANDLE_EPSILON);
 
 			if(snapToVertex)
 			{
@@ -1692,6 +1699,43 @@ public class pb_Editor : EditorWindow
 				if( FindNearestVertex(mousePosition, out v) )
 					diff = Vector3.Scale(v-cachedPosition, mask);
 			}
+			else if(snapToFace)
+			{
+				pb_Object obj = null;
+				pb_RaycastHit hit;
+
+				if( pb_Handle_Utility.FaceRaycast(mousePosition, out obj, out hit) && !(selection.Contains(obj) && SelectedFacesInEditZone.Any(x => x.Contains(obj.faces[hit.face]))))
+				{
+					if( mask.Sum() == 1 )
+					{
+						Ray r = new Ray(cachedPosition, -mask);
+						Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized, obj.transform.TransformPoint(hit.point));
+
+						float forward, backward;
+						plane.Raycast(r, out forward);
+						plane.Raycast(r, out backward);
+						float planeHit = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
+						r.direction = -r.direction;
+						plane.Raycast(r, out forward);
+						plane.Raycast(r, out backward);
+						float rev = Mathf.Abs(forward) < Mathf.Abs(backward) ? forward : backward;
+						if( Mathf.Abs(rev) > Mathf.Abs(planeHit) )
+							planeHit = rev;
+
+						if(Mathf.Abs(planeHit) > Mathf.Epsilon)
+							diff = mask * -planeHit;
+					}
+					else
+					{
+						diff = Vector3.Scale(obj.transform.TransformPoint(hit.point) - cachedPosition, mask.Abs());
+					}
+				}
+			}
+			// else if(snapToEdge && nearestEdge.IsValid())
+			// {
+			// 	// FINDME
+
+			// }
 
 			movingVertices = true;
 

@@ -101,6 +101,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _Occlusion
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _MetallicGlossMap
         second:
           m_Texture: {fileID: 0}
@@ -109,13 +116,6 @@ Material:
       data:
         first:
           name: _SpecGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _Occlusion
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -132,23 +132,23 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: 0.27
+        second: .270000011
       data:
         first:
           name: _AlphaTestRef
-        second: 0.5
+        second: .5
       data:
         first:
           name: _Metallic
-        second: 0.5
+        second: .5
       data:
         first:
           name: _Gloss
-        second: 0.5
+        second: .5
       data:
         first:
           name: _Parallax
-        second: 0.02
+        second: .0199999996
       data:
         first:
           name: _ZWrite
@@ -156,7 +156,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0.48
+        second: .479999989
       data:
         first:
           name: _BumpScale
@@ -179,12 +179,12 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Lightmapping
         second: 1
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
       data:
         first:
           name: _Size
@@ -192,15 +192,15 @@ Material:
       data:
         first:
           name: _Angle
-        second: 0.46428573
+        second: .464285731
       data:
         first:
           name: _Amplitude
-        second: 0.33928573
+        second: .339285731
       data:
         first:
           name: _Wavelength
-        second: 0.17857142
+        second: .178571418
       data:
         first:
           name: _Phase
@@ -225,15 +225,15 @@ Material:
       data:
         first:
           name: _Color1
-        second: {r: 0.67910445, g: 0.67910445, b: 0.67910445, a: 1}
+        second: {r: .679104447, g: .679104447, b: .679104447, a: 1}
       data:
         first:
           name: _Color2
-        second: {r: 0.14179105, g: 0.14179105, b: 0.14179105, a: 1}
+        second: {r: .141791046, g: .141791046, b: .141791046, a: 1}
       data:
         first:
           name: _SpecularColor
-        second: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+        second: {r: .200000003, g: .200000003, b: .200000003, a: 1}
       data:
         first:
           name: _Indicator

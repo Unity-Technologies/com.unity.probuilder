@@ -229,19 +229,19 @@ namespace ProBuilder2.Common
 				if( FaceRaycast(ray, mesh, out hits, Mathf.Infinity, Culling.FrontBack) )
 				{
 					// Sort from nearest hit to farthest
-					hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
+					hits.Sort( (x, y) => x.distance.CompareTo(y.distance) );
 					
 					// Find the nearest edge in the hit faces
 					Vector3[] v = mesh.vertices;
 
 					for(int i = 0; i < hits.Count; i++)
 					{
-						if( pb_HandleUtility.PointIsOccluded(cam, mesh, mesh.transform.TransformPoint(hits[i].Point)) )
+						if( pb_HandleUtility.PointIsOccluded(cam, mesh, mesh.transform.TransformPoint(hits[i].point)) )
 							continue;
 
-						foreach(pb_Edge e in mesh.faces[hits[i].FaceIndex].GetEdges())
+						foreach(pb_Edge e in mesh.faces[hits[i].face].GetEdges())
 						{
-							float d = pb_Math.DistancePointLineSegment(hits[i].Point, v[e.x], v[e.y]);
+							float d = pb_Math.DistancePointLineSegment(hits[i].point, v[e.x], v[e.y]);
 
 							if(d < bestDistance)
 							{
@@ -250,7 +250,7 @@ namespace ProBuilder2.Common
 							}
 						}
 
-						if( Vector3.Dot(ray.direction, mesh.transform.TransformDirection(hits[i].Normal)) < 0f )
+						if( Vector3.Dot(ray.direction, mesh.transform.TransformDirection(hits[i].normal)) < 0f )
 							break;
 					}
 

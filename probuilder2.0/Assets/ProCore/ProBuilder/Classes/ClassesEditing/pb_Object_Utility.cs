@@ -76,7 +76,7 @@ public static class pb_Object_Utility
 		{
 			Matrix4x4 l2w = pb.transform.localToWorldMatrix;
 			Vector3 v = Vector3.zero;
-			Vector3 mask = snapAxisOnly ? offset.ToMask() : Vector3.one;
+			Vector3 mask = snapAxisOnly ? offset.ToMask(pb_Math.HANDLE_EPSILON) : Vector3.one;
 
 			for(i = 0; i < indices.Length; i++)
 			{

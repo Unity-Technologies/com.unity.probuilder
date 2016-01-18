@@ -1375,7 +1375,7 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 			{
-				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
+				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 			}
 			else
 			{		
@@ -1421,7 +1421,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
+		if( !pb_Math.Approx(t_handlePosition, handlePosition, pb_Math.HANDLE_EPSILON) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1440,7 +1440,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask() * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1540,7 +1540,7 @@ public class pb_UV_Editor : EditorWindow
 			Vector2 newUVPosition = GUIToUVPoint(t_handlePosition);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask() * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{

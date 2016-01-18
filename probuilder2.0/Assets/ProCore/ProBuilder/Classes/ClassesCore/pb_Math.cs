@@ -16,6 +16,9 @@ namespace ProBuilder2.Math
 	public static class pb_Math
 	{
 		public const float PHI = 1.618033988749895f;
+		public const float FLT_EPSILON = float.Epsilon;
+		// The minimum distance a handle must move on an axis before considering that axis as engaged.
+		public const float HANDLE_EPSILON = .0001f;
 
 #region Geometry
 
@@ -871,21 +874,40 @@ namespace ProBuilder2.Math
 		}
 	}
 
-	public static Vector2 ToMask(this Vector2 vec)
+	public static Vector2 ToMask(this Vector2 vec, float delta = FLT_EPSILON)
 	{
 		return new Vector2(
-			Mathf.Abs(vec.x) > Mathf.Epsilon ? 1f : 0f,
-			Mathf.Abs(vec.y) > Mathf.Epsilon ? 1f : 0f
+			Mathf.Abs(vec.x) > delta ? 1f : 0f,
+			Mathf.Abs(vec.y) > delta ? 1f : 0f
 			);
 	}
 
-	public static Vector3 ToMask(this Vector3 vec)
+	public static Vector3 ToMask(this Vector3 vec, float delta = FLT_EPSILON)
 	{
 		return new Vector3(
-			Mathf.Abs(vec.x) > Mathf.Epsilon ? 1f : 0f,
-			Mathf.Abs(vec.y) > Mathf.Epsilon ? 1f : 0f,
-			Mathf.Abs(vec.z) > Mathf.Epsilon ? 1f : 0f
+			Mathf.Abs(vec.x) > delta ? 1f : 0f,
+			Mathf.Abs(vec.y) > delta ? 1f : 0f,
+			Mathf.Abs(vec.z) > delta ? 1f : 0f
 			);
+	}
+
+	public static Vector3 ToSignedMask(this Vector3 vec, float delta = FLT_EPSILON)
+	{
+		return new Vector3(
+			Mathf.Abs(vec.x) > delta ? vec.x/Mathf.Abs(vec.x) : 0f,
+			Mathf.Abs(vec.y) > delta ? vec.y/Mathf.Abs(vec.y) : 0f,
+			Mathf.Abs(vec.z) > delta ? vec.z/Mathf.Abs(vec.z) : 0f
+			);
+	}
+
+	public static Vector3 Abs(this Vector3 v)
+	{
+		return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
+	}
+
+	public static int Sum(this Vector3 mask)
+	{
+		return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
 	}
 #endregion
 	}
