@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 {
 	public class pb_MaterialSelectionShortcut : EditorWindow
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Faces with Material", true, pb_Constant.MENU_TOOLS)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Faces with Material %m", true, pb_Constant.MENU_TOOLS)]
 		public static bool VerifySelectFaces()
 		{
 			return pb_Editor.instance != null && pb_Editor.instance.selectedFaceCount > 0;
