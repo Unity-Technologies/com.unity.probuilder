@@ -671,6 +671,7 @@ public class pb_Object : MonoBehaviour
 		m.uv2 = null;
 		RefreshColor();
 		RefreshNormals();
+		pb_MeshUtility.GenerateTangent(ref m);
 	}
 
 	/**
