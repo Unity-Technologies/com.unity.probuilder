@@ -1,4 +1,4 @@
--- ProBuilder 2.4.10b0 (r4002)
+-- ProBuilder 2.4.10b0 (r4007)
 
 # Features
 	- Add "Snap to Face" shortcut when dragging the move tool (hold 'C' while dragging to snap tool to the nearest face).
@@ -7,6 +7,9 @@
 
 	- Fix meshes going completely black when modifying them in any way.
 	- Fix NullRef error when scaling a single selected edge.
+
+# Changes
+	- Remove Instantiation API Example (there's nothing special about instantiating ProBuilder meshes anymore).
 
 -- ProBuilder 2.4.9f1 (r3978)
 
