@@ -510,6 +510,8 @@ namespace ProBuilder2.Math
 		 */
 		public static Vector3 Normal(Vector3[] p)
 		{
+			if(p.Length < 3) return Vector3.zero;
+			
 			if(p.Length % 3 == 0)
 			{
 				Vector3 nrm = Vector3.zero;
@@ -535,6 +537,8 @@ namespace ProBuilder2.Math
 
 		public static Vector3 Normal(List<Vector3> p)
 		{
+			if(p.Count < 3) return Vector3.zero;
+
 			Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
 			if (cross.magnitude < Mathf.Epsilon)
 				return new Vector3(0f, 0f, 0f); // bad triangle

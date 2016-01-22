@@ -649,14 +649,19 @@ public class pb_Object : MonoBehaviour
 	{
 		Mesh m = msh;
 
+		if(m.vertexCount == _vertices.Length)
+			return;
+
 		m.Clear();
 		m.vertices = _vertices;
 
 		int[][] tris;
 		Material[] mats;
+
 		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
 
-		for(int i = 0; i < tris.Length; i++) m.SetTriangles(tris[i], i);
+		for(int i = 0; i < tris.Length; i++)
+			m.SetTriangles(tris[i], i);
 
 		if( _uv == null || _uv.Length != vertexCount )
 			RefreshUV();
@@ -664,9 +669,7 @@ public class pb_Object : MonoBehaviour
 			m.uv = _uv;
 
 		m.uv2 = null;
-
 		RefreshColor();
-
 		RefreshNormals();
 	}
 

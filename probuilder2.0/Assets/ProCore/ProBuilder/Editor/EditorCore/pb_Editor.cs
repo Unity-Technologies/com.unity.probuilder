@@ -393,11 +393,11 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
-			#if UNITY_5
+#if UNITY_5
 			GUILayout.Space( isFloatingWindow ? 30 : 34 );
-			#else
+#else
 			GUILayout.Space( isFloatingWindow ? 28 : 34 );
-			#endif
+#endif
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
 			pb_GUI_Utility.DrawSeparator(2);
@@ -1657,7 +1657,6 @@ public class pb_Editor : EditorWindow
 #region VERTEX TOOLS
 
 	private bool snapToVertex = false;
-	// private bool snapToEdge = false;
 	private bool snapToFace = false;
 	private Vector3 previousHandleScale = Vector3.one;
 	private Vector3 currentHandleScale = Vector3.one;
@@ -1679,9 +1678,7 @@ public class pb_Editor : EditorWindow
 		newPosition = Handles.PositionHandle(newPosition, handleRotation);
 
 		if(altClick)
-		{
 			return;
-		}
 
 		bool previouslyMoving = movingVertices;
 
@@ -1745,12 +1742,12 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
+				OnBeginVertexMovement();
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
 				pb_ProGrids_Interface.OnHandleMove(mask);
-
-				OnBeginVertexMovement();
 			}
 
 			for(int i = 0; i < selection.Length; i++)
@@ -1789,10 +1786,10 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
+				OnBeginVertexMovement();
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
-
-				OnBeginVertexMovement();
 
 				// cache vertex positions for scaling later
 				vertexOrigins = new Vector3[selection.Length][];
@@ -1816,7 +1813,6 @@ public class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-
 				// get the plane rotation in local space
 				Vector3 nrm = pb_Math.Normal(vertexOrigins[i]);
 				Quaternion localRot = Quaternion.LookRotation(nrm == Vector3.zero ? Vector3.forward : nrm, Vector3.up);
@@ -1922,10 +1918,10 @@ public class pb_Editor : EditorWindow
 					c_inversePlaneRotation = Quaternion.Inverse( Quaternion.LookRotation(nrm, bitan) );
 				}
 
+				OnBeginVertexMovement();
+
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
-
-				OnBeginVertexMovement();
 
 				// cache vertex positions for modifying later
 				vertexOrigins = new Vector3[selection.Length][];
@@ -2053,9 +2049,6 @@ public class pb_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 		{
 			// @todo - If caching normals, remove this 'ToMesh' and move
-			pb.ToMesh();
-			pb.Refresh();
-
 			Undo.RegisterCompleteObjectUndo(selection, "Extrude Vertices");
 
 			switch(selectionMode)
@@ -2067,7 +2060,7 @@ public class pb_Editor : EditorWindow
 
 					pb_Edge[] newEdges;
 					bool success = pb.Extrude(	pb.SelectedEdges,
-												0f,
+												0.0001f,
 												pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
 												pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
 												out newEdges);
@@ -2086,13 +2079,16 @@ public class pb_Editor : EditorWindow
 					if(len > 0)
 					{
 						pb_Face[] append = null;
-						pb.Extrude(pb.SelectedFaces, 0f, pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out append);
+						pb.Extrude(pb.SelectedFaces, 0.0001f, pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out append);
 						pb.SetSelectedFaces(pb.SelectedFaces);
 
 						ef += len;
 					}
 					break;
 			}
+
+			pb.ToMesh();
+			pb.Refresh();
 		}
 
 		if(ef > 0)
@@ -3443,9 +3439,8 @@ public class pb_Editor : EditorWindow
 
 		// profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
-		{
 			pb.ResetMesh();
-		}
+
 		// profiler.EndSample();
 	}
 
