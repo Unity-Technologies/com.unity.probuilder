@@ -33,7 +33,15 @@ public class pb_Object : MonoBehaviour
 
 		// Absolutely no idea why normals sometimes go haywire
 		if(msh == null || msh.normals == null || msh.normals.Length < 1 || msh.normals[0] == Vector3.zero)
-			ReconstructMesh();
+		{
+			if(_vertices == null)
+			{
+				Debug.LogError("Vertex array is null!  This mesh cannot be rebuilt.");
+				return;
+			}
+			ToMesh();
+			Refresh();
+		}
 	}
 #endregion
 
@@ -226,87 +234,6 @@ public class pb_Object : MonoBehaviour
 
 	public int faceCount { get { return _faces.Length; } }
 	public int vertexCount { get { return _vertices.Length; } }
-
-	// /**
-	//  *	\brief Gets all vertices in local space from face.
-	//  *	@param _face The #pb_Face to draw vertices from.
-	//  *	\returns A Vector3[] array containing all vertices contained within a #pb_Face.
-	//  */
-	// public Vector3[] GetVertices(pb_Face face)
-	// {
-	// 	Vector3[] v = new Vector3[face.indices.Length];
-	// 	for(int i = 0; i < face.indices.Length; i++)
-	// 		v[i] = vertices[face.indices[i]];
-		
-	// 	return v;
-	// }
-
-	// /**
-	//  * \brief Gets vertex normals for the selected face. 
-	//  * @param face
-	//  * \returns Vector3[] containing all normals for a face.
-	//  */
-	// public Vector3[] GetNormals(pb_Face face)
-	// {
-	// 	// muhahaha
-	// 	Vector3[] normals = msh.normals;
-	// 	Vector3[] v = new Vector3[face.indices.Length];
-	// 	for(int i = 0; i < face.indices.Length; i++)
-	// 		v[i] = normals[face.indices[i]];
-		
-	// 	return v;
-	// }
-
-	// /**
-	//  *	\brief Returns vertices in local space.
-	//  *	\returns Vector3[] Vertices for passed indices in local space.
-	//  */
-	// public Vector3[] GetVertices(int[] indices)
-	// {
-	// 	Vector3[] v = new Vector3[indices.Length];
-		
-	// 	for(int i = 0; i < v.Length; i++)
-	// 		v[i] = _vertices[indices[i]];
-
-	// 	return v;
-	// }
-
-	// /**
-	//  * \brief Returns an array of UV coordinates.
-	//  */
-	// public Vector2[] GetUVs(int[] indices)
-	// {
-	// 	Vector2[] uv = new Vector2[indices.Length];
-	// 	for(int i = 0; i < uv.Length; i++)
-	// 		uv[i] = _uv[indices[i]];
-	// 	return uv;
-	// }
-
-	// /**
-	//  * Get vertices at x,y index with edge.
-	//  */
-	// public Vector3[] GetVertices(pb_Edge edge)
-	// {
-	// 	return new Vector3[]
-	// 	{
-	// 		_vertices[edge.x],
-	// 		_vertices[edge.y]
-	// 	};
-	// }
-
-	// /**
-	//  *	\brief Returns vertices in local space.
-	//  *	\returns List<Vector3> Vertices for passed indices in local space.
-	//  */
-	// public List<Vector3> GetVertices(List<int> indices)
-	// {
-	// 	List<Vector3> v = new List<Vector3>(indices.Count);
-		
-	// 	for(int i = 0; i < indices.Count; i++)
-	// 		v.Add( _vertices[indices[i]] );
-
-	// 	return v;
-	// }
 
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.
@@ -551,53 +478,75 @@ public class pb_Object : MonoBehaviour
 		// Refresh builds out the UV, Normal, Tangents, etc.
 		Refresh();
 	}
-
-	/**
-	 * Wraps a ToMesh() and Refresh() call and returns true/false on reconstruct success.
-	 */
-	private bool ReconstructMesh()
-	{
-		if(msh != null)
-			DestroyImmediate(msh);
-
-		if(_vertices == null)
-		{
-			msh = null;
-			return false;
-		}
-
-		ToMesh();
-		Refresh();
-
-		return true;
-	}
 #endregion
 
 #region MESH CONSTRUCTION
+
+	/**
+	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
+	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
+	 */
+	public MeshRebuildReason Verify()
+	{	
+		if(msh == null)
+		{
+			// attempt reconstruction
+			if(_vertices == null)
+			{
+				Debug.LogError("Vertex array is null, cannot rebuild this mesh!");
+
+				// // reconstruct failed.  this shouldn't happen, but sometimes it does?
+				// DestroyImmediate(this.gameObject);
+			}
+			else
+			{
+				ToMesh();
+				Refresh();
+			}
+
+			return MeshRebuildReason.Null;
+		}
+
+
+		int meshNo;
+		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
+
+		if(meshNo != id)
+		{
+			MakeUnique();
+			return MeshRebuildReason.InstanceIDMismatch;
+		}
+
+
+		return msh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
+	}
 
 	/**
 	 *	\brief Force regenerate geometry.  Also responsible for sorting faces with shared materials into the same submeshes.
 	 */
 	public void ToMesh()
 	{
-		// dont clear the mesh, cause we want to save everything except triangle data.  Unless it's null, then init stuff
-		Mesh m;
+		Mesh m = msh;
 
-		if(msh != null)
+		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
+		if(m != null && m.vertexCount == _vertices.Length)
 		{
 			m = msh;
-			// m.triangles = null;
 			m.vertices = _vertices;
-			if(_uv != null) m.uv = _uv; // we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
+			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
+			if(_uv != null) m.uv = _uv;
 		}
 		else
 		{
-			m = new Mesh();
+			if(m == null)
+				m = new Mesh();
+			else
+				m.Clear();
 	
 			m.vertices = _vertices;
-			m.uv = new Vector2[vertexCount];
-			m.tangents = new Vector4[vertexCount];
-			m.normals = new Vector3[vertexCount];
+			// m.uv = new Vector2[vertexCount];
+			// m.tangents = new Vector4[vertexCount];
+			// m.normals = new Vector3[vertexCount];
 		}
 
 		int[][] tris;
@@ -611,12 +560,15 @@ public class pb_Object : MonoBehaviour
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
-#if PROTOTYPE
-		MeshRenderer mr = GetComponent<MeshRenderer>();
-		if (mr.sharedMaterials == null || mr.sharedMaterials.Length < 1 || mr.sharedMaterials[0] == null) mr.sharedMaterials = mats;
-#else
-		GetComponent<MeshRenderer>().sharedMaterials = mats;
-#endif
+
+		#if PROTOTYPE
+			MeshRenderer mr = GetComponent<MeshRenderer>();
+
+			if (mr.sharedMaterials == null || mr.sharedMaterials.Length < 1 || mr.sharedMaterials[0] == null)
+				mr.sharedMaterials = mats;
+		#else
+			GetComponent<MeshRenderer>().sharedMaterials = mats;
+		#endif
 	}
 
 	/**
@@ -642,13 +594,9 @@ public class pb_Object : MonoBehaviour
 		for(int i = 0; i < tris.Length; i++)
 			m.SetTriangles(tris[i], i);
 
-		if( _uv == null || _uv.Length != vertexCount )
-			RefreshUV();
-		else
-			m.uv = _uv;
+		RefreshUV();
 
 		m.uv2 = null;
-		RefreshColor();
 		RefreshNormals();
 		pb_MeshUtility.GenerateTangent(ref m);
 	}
@@ -732,11 +680,15 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 
+		// mesh.Optimize - not pb_Editor_Mesh_Utility
 		m.Optimize();
 
-		RefreshColor();
-
 		RefreshUV();
+
+		if(_colors == null || _colors.Length != vertexCount)
+			_colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
+
+		m.colors = _colors;
 
 		RefreshNormals();
 
@@ -987,15 +939,6 @@ public class pb_Object : MonoBehaviour
 			_colors[i] = color;
 		}
 	}
-
-	/**
-	 * Apply pb_Object._colors to mesh.
-	 */
-	public void RefreshColor()
-	{
-		if(_colors == null || _colors.Length != vertexCount) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
-		msh.colors = _colors;
-	}
 #endregion
 
 #region NORMALS
@@ -1009,15 +952,7 @@ public class pb_Object : MonoBehaviour
 		msh.RecalculateNormals();
 			
 		// average the soft edge faces
-		SmoothPerGroups();
-	}
-
-	/**
-	 * Iterate mesh vertices and average shared indices that match smoothing groups.
-	 */
-	private void SmoothPerGroups()
-	{
-		Vector3[] normals = msh.normals;
+				Vector3[] normals = msh.normals;
 
 		int[] smoothGroup = new int[normals.Length];
 
@@ -1139,38 +1074,6 @@ public class pb_Object : MonoBehaviour
 	{
 		foreach(pb_Face f in faces)
 			f.RebuildCaches();
-	}
-
-	/**
-	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
-	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
-	 */
-	public MeshRebuildReason Verify()
-	{	
-		if(msh == null)
-		{
-			// attempt reconstruction...
-			if( !ReconstructMesh() )	
-			{
-				// reconstruct failed.  this shouldn't happen, but sometimes it does?
-				DestroyImmediate(this.gameObject);
-			}
-
-			return MeshRebuildReason.Null;
-		}
-
-
-		int meshNo;
-		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
-
-		if(meshNo != id)
-		{
-			MakeUnique();
-			return MeshRebuildReason.InstanceIDMismatch;
-		}
-
-
-		return msh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
 	}
 #endregion
 }

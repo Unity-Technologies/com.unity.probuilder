@@ -292,44 +292,5 @@ namespace ProBuilder2.Common
 
 			InMesh.tangents = tangents;
 		}
-
-		/**
-		 * Create and return a deep copy of @mesh.
-		 */
-		public static Mesh Clone(Mesh mesh)
-		{
-			Mesh clonedMesh = new Mesh();
-
-			Copy(clonedMesh, mesh);
-
-			return clonedMesh;
-		}
-
-		/**
-		 * Duplicate @src mesh to @dstMesh
-		 */
-		public static void Copy(Mesh destMesh, Mesh src)
-		{
-			destMesh.Clear();
-
-			destMesh.name = src.name;
-			destMesh.vertices = src.vertices;
-			destMesh.uv = src.uv;
-			destMesh.uv2 = src.uv2;
-#if UNITY_5
-			destMesh.uv3 = src.uv3;
-			destMesh.uv4 = src.uv4;
-#endif
-			destMesh.normals = src.normals;
-			destMesh.tangents = src.tangents;
-			destMesh.boneWeights = src.boneWeights;
-			destMesh.colors = src.colors;
-			destMesh.colors32 = src.colors32;
-			destMesh.bindposes = src.bindposes;
-
-			destMesh.subMeshCount = src.subMeshCount;
-			for(int i = 0; i < src.subMeshCount; i++)
-				destMesh.SetIndices(src.GetIndices(i), src.GetTopology(i), i);
-		}
 	}
 }

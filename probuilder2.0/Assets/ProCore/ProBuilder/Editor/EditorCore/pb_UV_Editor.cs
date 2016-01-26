@@ -442,9 +442,9 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("DrawUVGraph");
 		#endif
 
-		try{
+		// try{
 			DrawUVGraph( graphRect );		
-		} catch(System.Exception e) { Debug.LogError(e.ToString()); }
+		// } catch(System.Exception e) { Debug.LogError(e.ToString()); }
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -1384,7 +1384,7 @@ public class pb_UV_Editor : EditorWindow
 				/**
 				 * Attempt vertex proximity snap if shift key is held
 				 */
-				if(ShiftKey)
+				if( ShiftKey )
 				{
 					float dist, minDist = MAX_PROXIMITY_SNAP_DIST_CANVAS;
 					Vector2 offset = Vector2.zero;
@@ -1779,76 +1779,79 @@ public class pb_UV_Editor : EditorWindow
 		Color col = GUI.color;
 		gridColor.a = .1f;
 
-		GL.PushMatrix();
-		pb_Handle_Utility.handleMaterial.SetPass(0);
-		GL.MultMatrix(Handles.matrix);
-
-		GL.Begin( GL.LINES );
-		GL.Color( gridColor );
-
-		// Grid temp vars
-		int GridLines = 64;
-		float StepSize = pref_gridSnapValue;	// In UV coordinates
-
-		// Exponentially scale grid size
-		while(StepSize * uvGridSize * uvGraphScale < uvGridSize/10)
-			StepSize *= 2f;
-
-		// Calculate what offset the grid should be (different from uvGraphOffset in that we always want to render the grid)
-		Vector2 gridOffset = uvGraphOffset;
-		gridOffset.x = gridOffset.x % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
-		gridOffset.y = gridOffset.y % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
-
-		Vector2 p0 = Vector2.zero, p1 = Vector2.zero;
-
-		///==== X axis lines
-		p0.x = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
-		p1.x = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
-
-		for(int i = 0; i < GridLines + 1; i++)
+		if(Event.current.type == EventType.Repaint)
 		{
-			p0.y = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.y + gridOffset.y;
-			p1.y = p0.y;
+			GL.PushMatrix();
+			pb_Handle_Utility.handleMaterial.SetPass(0);
+			GL.MultMatrix(Handles.matrix);
 
-			GL.Vertex( p0 );
-			GL.Vertex( p1 );
+			GL.Begin( GL.LINES );
+			GL.Color( gridColor );
+
+			// Grid temp vars
+			int GridLines = 64;
+			float StepSize = pref_gridSnapValue;	// In UV coordinates
+
+			// Exponentially scale grid size
+			while(StepSize * uvGridSize * uvGraphScale < uvGridSize/10)
+				StepSize *= 2f;
+
+			// Calculate what offset the grid should be (different from uvGraphOffset in that we always want to render the grid)
+			Vector2 gridOffset = uvGraphOffset;
+			gridOffset.x = gridOffset.x % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
+			gridOffset.y = gridOffset.y % (StepSize * uvGridSize * uvGraphScale); // (uvGridSize * uvGraphScale);
+
+			Vector2 p0 = Vector2.zero, p1 = Vector2.zero;
+
+			///==== X axis lines
+			p0.x = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
+			p1.x = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.x + gridOffset.x;
+
+			for(int i = 0; i < GridLines + 1; i++)
+			{
+				p0.y = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.y + gridOffset.y;
+				p1.y = p0.y;
+
+				GL.Vertex( p0 );
+				GL.Vertex( p1 );
+			}
+
+			///==== Y axis lines
+			p0.y = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
+			p1.y = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
+
+			for(int i = 0; i < GridLines + 1; i++)
+			{
+				p0.x = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.x + gridOffset.x;
+				p1.x = p0.x;
+
+				GL.Vertex( p0 );
+				GL.Vertex( p1 );
+			}
+
+			// Box
+			if(screenshotStatus == ScreenshotStatus.Done)
+			{
+				GL.Color( Color.gray );
+
+				GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+				GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+
+				GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+				GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+
+				GL.Color( pb_Constant.ProBuilderBlue );
+
+				GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
+				GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+
+				GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+				GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
+			}
+
+			GL.End();
+			GL.PopMatrix();	// Pop pop!
 		}
-
-		///==== Y axis lines
-		p0.y = ( ( StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
-		p1.y = ( ( -StepSize * (GridLines/2) * uvGridSize ) * uvGraphScale) + UVGraphCenter.y + gridOffset.y;
-
-		for(int i = 0; i < GridLines + 1; i++)
-		{
-			p0.x = (((StepSize * i) - ((GridLines*StepSize)/2)) * uvGridSize) * uvGraphScale + UVGraphCenter.x + gridOffset.x;
-			p1.x = p0.x;
-
-			GL.Vertex( p0 );
-			GL.Vertex( p1 );
-		}
-
-		// Box
-		if(screenshotStatus == ScreenshotStatus.Done)
-		{
-			GL.Color( Color.gray );
-
-			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
-			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
-
-			GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
-			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
-
-			GL.Color( pb_Constant.ProBuilderBlue );
-
-			GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
-			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
-
-			GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
-			GL.Vertex(UVGraphCenter + (UpperLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
-		}
-
-		GL.End();
-		GL.PopMatrix();	// Pop pop!
 
 		GUI.color = gridColor;
 
@@ -1966,202 +1969,203 @@ public class pb_UV_Editor : EditorWindow
 		}
 		#endif
 
-		GL.PushMatrix();
-		pb_Handle_Utility.handleMaterial.SetPass(0);
-		GL.MultMatrix(Handles.matrix);
+		GUI.color = Color.white;
 
-		/**
-		 * Draw incomplete texture group indicators (unless taking a screenshot)
-		 */
-		if(screenshotStatus == ScreenshotStatus.Done)
+		if( Event.current.type == EventType.Repaint )
 		{
-			GL.Begin(GL.LINES);
-			GL.Color(UVColorGroupIndicator);
+			GL.PushMatrix();
+			pb_Handle_Utility.handleMaterial.SetPass(0);
+			GL.MultMatrix(Handles.matrix);
 
-			foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+			/**
+			 * Draw incomplete texture group indicators (unless taking a screenshot)
+			 */
+			if(screenshotStatus == ScreenshotStatus.Done)
 			{
-				Vector2 cen = lines[0];
+				GL.Begin(GL.LINES);
+				GL.Color(UVColorGroupIndicator);
 
-				for(int i = 1; i < lines.Count; i++)
+				foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 				{
-					GL.Vertex(UVToGUIPoint(cen));
-					GL.Vertex(UVToGUIPoint(lines[i]));
+					Vector2 cen = lines[0];
+
+					for(int i = 1; i < lines.Count; i++)
+					{
+						GL.Vertex(UVToGUIPoint(cen));
+						GL.Vertex(UVToGUIPoint(lines[i]));
+					}
 				}
+				GL.End();
+			}
+
+			GL.Begin(GL.LINES);
+
+			if(screenshotStatus != ScreenshotStatus.Done)
+				GL.Color(screenshot_lineColor);
+			else
+				GL.Color(UVColorSecondary);
+
+			Vector2 x = Vector2.zero, y = Vector2.zero;
+
+			for(int i = 0; i < selection.Length; i++)
+			{
+				pb_Object pb = selection[i];
+				uv = pb.uv;
+
+				for(int n = 0; n < pb.faces.Length; n++)
+				{
+					pb_Face face = pb.faces[n];
+
+					foreach(pb_Edge edge in face.edges)
+					{
+						x = UVToGUIPoint(uv[edge.x]);
+						y = UVToGUIPoint(uv[edge.y]);
+
+						GL.Vertex3(x.x, x.y, 0f);
+						GL.Vertex3(y.x, y.y, 0f);
+					}
+				}	
 			}
 			GL.End();
-		}
 
-		GL.Begin(GL.LINES);
+			#if PB_DEBUG
+			profiler.EndSample();
+			#endif
 
-		if(screenshotStatus != ScreenshotStatus.Done)
-			GL.Color(screenshot_lineColor);
-		else
-			GL.Color(UVColorSecondary);
+			/**
+			 * Draw selected UVs with shiny green color and dots
+			 */
+			#if PB_DEBUG
+			profiler.BeginSample("Draw Selected Edges + Vertices");
+			#endif
 
-		Vector2 x = Vector2.zero, y = Vector2.zero;
-
-		for(int i = 0; i < selection.Length; i++)
-		{
-			pb_Object pb = selection[i];
-			uv = pb.uv;
-
-			for(int n = 0; n < pb.faces.Length; n++)
+			if(screenshotStatus != ScreenshotStatus.Done)
 			{
-				pb_Face face = pb.faces[n];
+				GL.PopMatrix();
+				return;
+			}
 
-				foreach(pb_Edge edge in face.edges)
-				{
-					x = UVToGUIPoint(uv[edge.x]);
-					y = UVToGUIPoint(uv[edge.y]);
+			GL.Begin(GL.LINES);
+			GL.Color(UVColorPrimary);
 
-					GL.Vertex3(x.x, x.y, 0f);
-					GL.Vertex3(y.x, y.y, 0f);
-				}
-			}	
-		}
-		GL.End();
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
-
-		/**
-		 * Draw selected UVs with shiny green color and dots
-		 */
-		#if PB_DEBUG
-		profiler.BeginSample("Draw Selected Edges + Vertices");
-		#endif
-
-		if(screenshotStatus != ScreenshotStatus.Done)
-		{
-			GL.PopMatrix();
-			GUI.color = Color.white;
-			return;
-		}
-
-		GUI.color = UVColorPrimary;
-
-		GL.Begin(GL.LINES);
-		GL.Color(UVColorPrimary);
-
-		for(int i = 0; i < selection.Length; i++)
-		{
-			pb_Object pb = selection[i];
-			uv = pb.uv;
-
-			if(pb.SelectedEdges.Length > 0)
+			for(int i = 0; i < selection.Length; i++)
 			{
-				foreach(pb_Edge edge in pb.SelectedEdges)
-				{
-					x = UVToGUIPoint(uv[edge.x]);
-					y = UVToGUIPoint(uv[edge.y]);
+				pb_Object pb = selection[i];
+				uv = pb.uv;
 
-					GL.Vertex3(x.x, x.y, 0f);
-					GL.Vertex3(y.x, y.y, 0f);
-					
-					// #if PB_DEBUG
-					// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
-					// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
-					// #endif
+				if(pb.SelectedEdges.Length > 0)
+				{
+					foreach(pb_Edge edge in pb.SelectedEdges)
+					{
+						x = UVToGUIPoint(uv[edge.x]);
+						y = UVToGUIPoint(uv[edge.y]);
+
+						GL.Vertex3(x.x, x.y, 0f);
+						GL.Vertex3(y.x, y.y, 0f);
+						
+						// #if PB_DEBUG
+						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
+						// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
+						// #endif
+					}
 				}
 			}
-		}
 
-		GL.End();
+			GL.End();
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
+			#if PB_DEBUG
+			profiler.EndSample();
+			#endif
 
-		switch(selectionMode)
-		{
-			case SelectMode.Edge:
-
-				#if PB_DEBUG
-				profiler.BeginSample("Draw Nearest Edge Highlight");
-				#endif
-
-				GL.Begin(GL.LINES);
-				GL.Color(Color.red);
-				if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
-				{
-					pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-					GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
-					GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
-				}
-				GL.End();
-				
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
-
-				break;
-
-			case SelectMode.Face:
+			switch(selectionMode)
 			{
-				#if PB_DEBUG
-				profiler.BeginSample("Draw Nearest Face Highlight GL");
-				#endif
+				case SelectMode.Edge:
 
-				Vector3 v = Vector3.zero;
+					#if PB_DEBUG
+					profiler.BeginSample("Draw Nearest Edge Highlight");
+					#endif
 
-				if(nearestElement.valid && !m_mouseDragging)
-				{
-					GL.Begin(GL.TRIANGLES);
-
-					GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
-					int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
-					
-					for(int i = 0; i < tris.Length; i+=3)
+					GL.Begin(GL.LINES);
+					GL.Color(Color.red);
+					if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 					{
-						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
-						GL.Vertex3(v.x, v.y, 0f);
-						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
-						GL.Vertex3(v.x, v.y, 0f);
-						v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
-						GL.Vertex3(v.x, v.y, 0f);
+						pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
+						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
 					}
-
 					GL.End();
-				}
+					
+					#if PB_DEBUG
+					profiler.EndSample();
+					#endif
 
-				#if PB_DEBUG
-				profiler.EndSample();
-				profiler.BeginSample("Draw Selected Face Highlights GL");
-				#endif
+					break;
 
-				GL.Begin(GL.TRIANGLES);
-				for(int i = 0; i < selection.Length; i++)
+				case SelectMode.Face:
 				{
-					foreach(pb_Face face in selection[i].SelectedFaces)
+					#if PB_DEBUG
+					profiler.BeginSample("Draw Nearest Face Highlight GL");
+					#endif
+
+					Vector3 v = Vector3.zero;
+
+					if(nearestElement.valid && !m_mouseDragging)
 					{
-						GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
+						GL.Begin(GL.TRIANGLES);
 
-						int[] tris = face.indices;
-
-						for(int n = 0; n < tris.Length; n+=3)
+						GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
+						int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
+						
+						for(int i = 0; i < tris.Length; i+=3)
 						{
-							v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
 							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
 							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
 							GL.Vertex3(v.x, v.y, 0f);
 						}
+
+						GL.End();
 					}
+
+					#if PB_DEBUG
+					profiler.EndSample();
+					profiler.BeginSample("Draw Selected Face Highlights GL");
+					#endif
+
+					GL.Begin(GL.TRIANGLES);
+					for(int i = 0; i < selection.Length; i++)
+					{
+						foreach(pb_Face face in selection[i].SelectedFaces)
+						{
+							GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
+
+							int[] tris = face.indices;
+
+							for(int n = 0; n < tris.Length; n+=3)
+							{
+								v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+								GL.Vertex3(v.x, v.y, 0f);
+								v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+								GL.Vertex3(v.x, v.y, 0f);
+								v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+								GL.Vertex3(v.x, v.y, 0f);
+							}
+						}
+					}
+					GL.End();
+
+					#if PB_DEBUG
+					profiler.EndSample();
+					#endif
 				}
-				GL.End();
+				break;
 
-				#if PB_DEBUG
-				profiler.EndSample();
-				#endif
 			}
-			break;
 
+			GL.PopMatrix();
 		}
-
-		GL.PopMatrix();
-		GUI.color = Color.white;
 	}	
 
 	#if PB_DEBUG

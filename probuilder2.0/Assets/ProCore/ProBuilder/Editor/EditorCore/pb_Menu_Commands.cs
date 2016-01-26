@@ -951,6 +951,12 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
+				if(pb.SelectedFaceCount == pb.faces.Length)
+				{
+					Debug.LogWarning("Attempting to delete all faces on this mesh...  I'm afraid I can't let you do that.");
+					continue;
+				}
+				
 				pb.DeleteFaces(pb.SelectedFaces);
 
 				pb.ToMesh();
