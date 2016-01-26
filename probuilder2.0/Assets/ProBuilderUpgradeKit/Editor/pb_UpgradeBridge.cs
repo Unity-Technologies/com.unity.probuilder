@@ -179,11 +179,12 @@ namespace ProBuilder2.UpgradeKit
 				}
 
 
-#if UNITY_5
-				EditorUtility.UnloadUnusedAssetsImmediate();
-#else
-				EditorUtility.UnloadUnusedAssets();
-#endif
+				// @todo crashes in unity 5.3.1b4
+// #if UNITY_5
+// 				EditorUtility.UnloadUnusedAssetsImmediate();
+// #else
+// 				EditorUtility.UnloadUnusedAssets();
+// #endif
 			}			
 
 			return new SceneInfo(len, success, failed);
