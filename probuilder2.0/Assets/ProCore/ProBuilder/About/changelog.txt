@@ -1,7 +1,11 @@
--- ProBuilder 2.4.10f2 (r4012)
+-- ProBuilder 2.4.10f2 (r4021)
+
+# Features
+	- Shape and Material windows are now dockable (context click in window and select Window/Set {Floating, Dockable}).
 
 # Bug Fixes
-	- 
+	- Unity 5.4 compatibility.
+	- Workaround for Unity crash "Check DisallowAllocation Error"
 
 # Changes
 	- Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
