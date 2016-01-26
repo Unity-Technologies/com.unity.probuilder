@@ -20,7 +20,10 @@ namespace ProBuilder2.EditorCommon
 
 		public static void MenuOpenShapeCreator()
 		{
-			EditorWindow.GetWindow(typeof(pb_Geometry_Interface), true, "Shape Tool", true);
+			EditorWindow.GetWindow<pb_Geometry_Interface>(
+				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				"Shape Tool",
+				true).Show();
 		}
 
 		static Color COLOR_GREEN = new Color(0f, .8f, 0f, .8f);
@@ -67,6 +70,23 @@ namespace ProBuilder2.EditorCommon
 			DestroyPreviewObject();
 		}
 
+		void OpenContextMenu()
+		{
+			GenericMenu menu = new GenericMenu();
+
+			menu.AddItem (new GUIContent("Window/Open as Floating Window", ""), false, () => { SetFloating(true); } );
+			menu.AddItem (new GUIContent("Window/Open as Dockable Window", ""), false, () => { SetFloating(false); } );
+
+			menu.ShowAsContext ();
+		}
+
+		void SetFloating(bool floating)
+		{
+			EditorPrefs.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			this.Close();
+			MenuOpenShapeCreator();
+		}
+
 		[MenuItem("GameObject/Create Other/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
@@ -93,6 +113,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnGUI()
 		{	
+			if(Event.current.type == EventType.ContextClick)
+				OpenContextMenu();
+
 			GUILayout.BeginHorizontal();
 				bool sp = showPreview;
 				showPreview = GUILayout.Toggle(showPreview, "Show Preview");
@@ -175,6 +198,8 @@ namespace ProBuilder2.EditorCommon
 					return;
 			}
 
+			// if( !pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating) )
+			GUILayout.FlexibleSpace();
 		}
 
 		/**

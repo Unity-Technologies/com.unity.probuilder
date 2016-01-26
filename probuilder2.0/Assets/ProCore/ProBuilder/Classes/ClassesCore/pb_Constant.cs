@@ -86,6 +86,7 @@ public static class pb_Constant
 	public const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
 	public const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
 	public const string pbMaterialEditorFloating 		= "pbMaterialEditorFloating";
+	public const string pbShapeWindowFloating	 		= "pbShapeWindowFloating";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
