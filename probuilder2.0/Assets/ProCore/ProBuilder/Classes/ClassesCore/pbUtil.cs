@@ -125,11 +125,21 @@ namespace ProBuilder2.Common
 
 #region ARRAY / LIST UTILITY
 	
-	public static T[] ValuesWithIndices<T>(T[] arr, int[] indices)
+	public static T[] ValuesWithIndices<T>(this T[] arr, int[] indices)
 	{
 		T[] vals = new T[indices.Length];
 		for(int i = 0; i < indices.Length; i++)
 			vals[i] = arr[indices[i]];
+		return vals;
+	}
+
+	public static IList<T> ValuesWithIndices<T>(this IList<T> arr, IList<int> indices)
+	{
+		List<T> vals = new List<T>();
+
+		foreach(int i in indices)
+			vals.Add(arr[i]);
+		
 		return vals;
 	}
 

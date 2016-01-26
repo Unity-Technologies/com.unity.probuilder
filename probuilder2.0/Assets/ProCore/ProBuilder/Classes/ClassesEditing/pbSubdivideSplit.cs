@@ -94,7 +94,7 @@ public static class pbSubdivideSplit
 		}
 		// profiler.EndSample();
 
-		Vector3[] vertices = pb.GetVertices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
+		Vector3[] vertices = pb.vertices.ValuesWithIndices( pb_EdgeConnection.AllTriangles(splits).Distinct().ToArray() );
 
 
 		pb_Face[] faces;
@@ -370,7 +370,7 @@ public static class pbSubdivideSplit
 			return false;
 		}
 
-		List<Vector3> selectedVertices = pb.GetVertices( pb_VertexConnection.AllTriangles(vertexConnections) );
+		List<Vector3> selectedVertices = pb.vertices.ValuesWithIndices( pb_VertexConnection.AllTriangles(vertexConnections) ).ToList();
 
 		int len = vertexConnections.Count;
 
@@ -568,9 +568,9 @@ public static class pbSubdivideSplit
 			sharedIndex[i] = sharedIndices.IndexOf(indices[i]);
 
 		// First order of business is to translate the face to 2D plane.
-		Vector3[] verts = pb.GetVertices(face.distinctIndices);
+		Vector3[] verts = pb.vertices.ValuesWithIndices(face.distinctIndices);
 		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
-		Vector2[] uvs = pb.GetUVs(face.distinctIndices);
+		Vector2[] uvs = pb.uv.ValuesWithIndices(face.distinctIndices);
 
 		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
 		Vector2[] plane = pb_Math.PlanarProject(verts, projAxis);
@@ -702,7 +702,7 @@ public static class pbSubdivideSplit
 			return false;
 
 		// figure out the face normals for the new faces and check to make sure they match the original face
-		Vector2[] pln = pb_Math.PlanarProject( pb.GetVertices(face.indices), projAxis );
+		Vector2[] pln = pb_Math.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projAxis );
 
 		Vector3 nrm = Vector3.Cross( pln[2] - pln[0], pln[1] - pln[0]);
 		Vector3 nrmA = Vector3.Cross( v_polyA_2d[ t_polyA[2] ]-v_polyA_2d[ t_polyA[0] ], v_polyA_2d[ t_polyA[1] ]-v_polyA_2d[ t_polyA[0] ] );
@@ -780,10 +780,10 @@ public static class pbSubdivideSplit
 		}
 
 		// now we have all the vertices of the old face, plus the new edge center vertices
-		Vector3 nrm = pb_Math.Normal(pb.GetVertices(face.indices));
+		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
 
-		Vector3[] verts3d = pb.GetVertices(face.distinctIndices);
-		Vector2[] faceUVs = pb.GetUVs(face.distinctIndices);
+		Vector3[] verts3d = pb.vertices.ValuesWithIndices(face.distinctIndices);
+		Vector2[] faceUVs = pb.uv.ValuesWithIndices(face.distinctIndices);
 		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
 		Vector2[] verts2d = pb_Math.PlanarProject(verts3d, nrm);
@@ -991,19 +991,19 @@ public static class pbSubdivideSplit
 		 *	then a pie, then a basketball again.  I'm on a horse.
 		 */
 
-		Vector3[] verts 	= pb.GetVertices(face.distinctIndices);
-		Vector2[] uvs 		= pb.GetUVs(face.distinctIndices);
+		Vector3[] verts 	= pb.vertices.ValuesWithIndices(face.distinctIndices);
+		Vector2[] uvs 		= pb.uv.ValuesWithIndices(face.distinctIndices);
 		Color[] colors  	= pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
 		Vector2 cenUV		= pb_Bounds2D.Center(uvs);
 		Vector3 cen3d 		= pb_Math.Average(verts);
 		pokedVertex 		= cen3d;
-		Vector3 nrm 		= pb_Math.Normal(pb.GetVertices(face.indices));
+		Vector3 nrm 		= pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
 		Color cenColor 		= pb_Math.Average(colors);
 
 		// this should be cleaned up
 		Vector2[] plane 	= pb_Math.PlanarProject(verts, nrm);
-		Vector2[] indPlane 	= pb_Math.PlanarProject(pb.GetVertices(indices), nrm);
+		Vector2[] indPlane 	= pb_Math.PlanarProject(pb.vertices.ValuesWithIndices(indices), nrm);
 		Vector2 cen2d 		= pb_Math.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];
 
 		// Get the directions from which to segment this face

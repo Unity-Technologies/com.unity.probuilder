@@ -38,7 +38,7 @@ public static class pb_Object_Utility
 		if(indices == null)
 			Debug.LogWarning("indices == null -> VerticesInWorldSpace");
 
-		Vector3[] worldPoints = pb.GetVertices(indices);
+		Vector3[] worldPoints = pb.vertices.ValuesWithIndices(indices);
 
 		for(int i = 0; i < worldPoints.Length; i++)
 			worldPoints[i] = pb.transform.TransformPoint(worldPoints[i]);

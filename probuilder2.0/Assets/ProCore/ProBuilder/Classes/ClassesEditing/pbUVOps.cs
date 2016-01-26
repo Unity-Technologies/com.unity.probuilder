@@ -226,7 +226,7 @@ public static class pbUVOps
 		{
 			int[] distinct = pb_Face.AllTrianglesDistinct(kvp.Value.ToArray());
 
-			Vector2[] uvs = pb_Math.PlanarProject( pb.GetVertices(distinct), pb_Math.ProjectionAxisToVector(kvp.Key), kvp.Key );
+			Vector2[] uvs = pb_Math.PlanarProject( pb.vertices.ValuesWithIndices(distinct), pb_Math.ProjectionAxisToVector(kvp.Key), kvp.Key );
 
 			for(int n = 0; n < distinct.Length; n++)
 				uv[distinct[n]] = uvs[n];
@@ -507,7 +507,7 @@ public static class pbUVOps
 
 			Vector2[][] uv_origins = new Vector2[faces.Length][];
 			for(int i = 0; i < faces.Length; i++)
-				uv_origins[i] = pb.GetUVs(faces[i].distinctIndices);
+				uv_origins[i] = pb.uv.ValuesWithIndices(faces[i].distinctIndices);
 
 			for(int f = 0; f < faces.Length; f++)
 			{
@@ -520,7 +520,7 @@ public static class pbUVOps
 
 			for(int i = 0; i < faces.Length; i++)
 			{
-				pb_Transform2D transform = MatchCoordinates(pb.GetUVs(faces[i].distinctIndices), uv_origins[i]);
+				pb_Transform2D transform = MatchCoordinates(pb.uv.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
 
 				faces[i].uv.offset = -transform.position;
 				faces[i].uv.rotation = transform.rotation;

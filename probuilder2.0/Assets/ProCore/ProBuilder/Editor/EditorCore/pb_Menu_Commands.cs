@@ -628,7 +628,7 @@ namespace ProBuilder2.EditorCommon
 									foreach(pb_Face f in perimeterFaces)
 									{
 										// profiler.BeginSample("Face Normal");
-										Vector3 nrm = pb_Math.Normal( pb.GetVertices(f.indices) );
+										Vector3 nrm = pb_Math.Normal( pb.vertices.ValuesWithIndices(f.indices) );
 										// profiler.EndSample();
 
 										// profiler.BeginSample("Face Lookup Contains");
@@ -672,11 +672,11 @@ namespace ProBuilder2.EditorCommon
 								{
 									List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, lookup, perimeterFaces, perimeterFaces[i]);
 
-									Vector3 perim_normal = pb_Math.Normal(pb.GetVertices(perimeterFaces[i].indices));
+									Vector3 perim_normal = pb_Math.Normal(pb.vertices.ValuesWithIndices(perimeterFaces[i].indices));
 
 									for(int n = 0; n < adjacent.Count; n++)
 									{
-										Vector3 adjacent_normal = pb_Math.Normal( pb.GetVertices(adjacent[n].indices) );
+										Vector3 adjacent_normal = pb_Math.Normal( pb.vertices.ValuesWithIndices(adjacent[n].indices) );
 
 										float angle = Vector3.Angle( perim_normal, adjacent_normal );
 

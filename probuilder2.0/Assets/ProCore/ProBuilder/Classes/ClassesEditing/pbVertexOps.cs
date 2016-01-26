@@ -197,11 +197,11 @@ namespace ProBuilder2.MeshOperations
 		// First order of business - project face to 2d
 		int[] distinctIndices = face.distinctIndices;
 		int len = distinctIndices.Length;
-		Vector3[] verts = pb.GetVertices(distinctIndices);
+		Vector3[] verts = pb.vertices.ValuesWithIndices(distinctIndices);
 		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
 
 		// Get the face normal before modifying the vertex array
-		Vector3 nrm = pb_Math.Normal(pb.GetVertices(face.indices));
+		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
 		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(nrm) );
 		
 		// Add the new point
@@ -229,7 +229,7 @@ namespace ProBuilder2.MeshOperations
 		 * attempt to figure out where the new UV coordinate should go
 		 */
 		Vector2[] uvs = new Vector2[len+1];
-		System.Array.Copy(pb.GetUVs(distinctIndices), 0, uvs, 0, len);
+		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, len);
 
 		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
@@ -271,10 +271,10 @@ namespace ProBuilder2.MeshOperations
 
 		// First order of business - project face to 2d
 		int[] distinctIndices = face.distinctIndices;
-		Vector3[] verts = pb.GetVertices(distinctIndices);
+		Vector3[] verts = pb.vertices.ValuesWithIndices(distinctIndices);
 		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
 		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Length];
-		System.Array.Copy(pb.GetUVs(distinctIndices), 0, uvs, 0, distinctIndices.Length);
+		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, distinctIndices.Length);
 
 		// Add the new point
 		Vector3[] t_verts = new Vector3[verts.Length + points.Length];
@@ -289,7 +289,7 @@ namespace ProBuilder2.MeshOperations
 		cols = t_col;
 
 		// Get the face normal before modifying the vertex array
-		Vector3 nrm = pb_Math.Normal(pb.GetVertices(face.indices));
+		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
 		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(nrm) );
 		
 		// Project

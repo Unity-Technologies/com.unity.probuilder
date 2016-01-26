@@ -1797,7 +1797,7 @@ public class pb_Editor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					vertexOrigins[i] = selection[i].GetVertices(selection[i].SelectedTriangles);
+					vertexOrigins[i] = selection[i].vertices.ValuesWithIndices(selection[i].SelectedTriangles);
 					vertexOffset[i] = pb_Math.Average(vertexOrigins[i]);
 				}
 			}
@@ -1929,7 +1929,7 @@ public class pb_Editor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					vertexOrigins[i] = selection[i].GetVertices(selection[i].SelectedTriangles).ToArray();
+					vertexOrigins[i] = selection[i].vertices.ValuesWithIndices(selection[i].SelectedTriangles).ToArray();
 					vertexOffset[i] = pb_Math.BoundsCenter(vertexOrigins[i]);
 				}
 			}
@@ -3110,7 +3110,7 @@ public class pb_Editor : EditorWindow
 				tan = Vector3.forward;
 			}
 
-			handleMatrix *= Matrix4x4.TRS( pb_Math.BoundsCenter( pb.GetVertices(face.distinctIndices) ), Quaternion.LookRotation(nrm, bitan), Vector3.one);
+			handleMatrix *= Matrix4x4.TRS( pb_Math.BoundsCenter( pb.vertices.ValuesWithIndices(face.distinctIndices) ), Quaternion.LookRotation(nrm, bitan), Vector3.one);
 		}
 	}
 #endif

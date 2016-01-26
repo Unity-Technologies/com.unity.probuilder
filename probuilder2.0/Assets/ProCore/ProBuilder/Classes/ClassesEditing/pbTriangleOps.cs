@@ -5,6 +5,7 @@ using ProBuilder2.Common;
 using ProBuilder2.Math;
 using ProBuilder2.Triangulator;
 using ProBuilder2.Triangulator.Geometry;
+using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
@@ -28,7 +29,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
 		{
-			Vector2[] p = pb_Math.PlanarProject(pb.GetVertices( face.edges.AllTriangles() ), pb_Math.Normal(pb, face));
+			Vector2[] p = pb_Math.PlanarProject(pb.vertices.ValuesWithIndices( face.edges.AllTriangles() ), pb_Math.Normal(pb, face));
 
 			float sum = 0f;
 
@@ -253,7 +254,7 @@ namespace ProBuilder2.MeshOperations
 			Color[] 	c = pb.colors;
 			Vector2[] 	u = pb.uv;
 
-			int triangleCount = pb.TriangleCount();
+			int triangleCount = pb.faces.Sum(x => x.indices.Length); // pb.TriangleCount();
 			// int triangleCount = pb_Face.AllTriangles(pb.faces).Length; // pb.msh.triangles.Length;
 
 			if(triangleCount == v.Length)

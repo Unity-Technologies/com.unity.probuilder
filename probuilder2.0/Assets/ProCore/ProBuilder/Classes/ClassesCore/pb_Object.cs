@@ -227,107 +227,86 @@ public class pb_Object : MonoBehaviour
 	public int faceCount { get { return _faces.Length; } }
 	public int vertexCount { get { return _vertices.Length; } }
 
-	/**
-	 * pb_Object doesn't keep an active count of triangles, so this is an instance method to reflect that.
-	 */
-	public int TriangleCount()
-	{
-		int count = 0;
-		for(int i = 0; i < faces.Length; i++)
-			count += faces[i].indices.Length;
-		return count;
-	}
-
-	/**
-	 * \brief Returns the material property of the specified #pb_Face. 
-	 * \returns Returns the material property of the specified #pb_Face. 
-	 * @param face The face to extract material data from.
-	 */
-	public Material GetMaterial(pb_Face face)
-	{
-		return face.material;
-	}
-
-	/**
-	 *	\brief Gets all vertices in local space from face.
-	 *	@param _face The #pb_Face to draw vertices from.
-	 *	\returns A Vector3[] array containing all vertices contained within a #pb_Face.
-	 */
-	public Vector3[] GetVertices(pb_Face face)
-	{
-		Vector3[] v = new Vector3[face.indices.Length];
-		for(int i = 0; i < face.indices.Length; i++)
-			v[i] = vertices[face.indices[i]];
+	// /**
+	//  *	\brief Gets all vertices in local space from face.
+	//  *	@param _face The #pb_Face to draw vertices from.
+	//  *	\returns A Vector3[] array containing all vertices contained within a #pb_Face.
+	//  */
+	// public Vector3[] GetVertices(pb_Face face)
+	// {
+	// 	Vector3[] v = new Vector3[face.indices.Length];
+	// 	for(int i = 0; i < face.indices.Length; i++)
+	// 		v[i] = vertices[face.indices[i]];
 		
-		return v;
-	}
+	// 	return v;
+	// }
 
-	/**
-	 * \brief Gets vertex normals for the selected face. 
-	 * @param face
-	 * \returns Vector3[] containing all normals for a face.
-	 */
-	public Vector3[] GetNormals(pb_Face face)
-	{
-		// muhahaha
-		Vector3[] normals = msh.normals;
-		Vector3[] v = new Vector3[face.indices.Length];
-		for(int i = 0; i < face.indices.Length; i++)
-			v[i] = normals[face.indices[i]];
+	// /**
+	//  * \brief Gets vertex normals for the selected face. 
+	//  * @param face
+	//  * \returns Vector3[] containing all normals for a face.
+	//  */
+	// public Vector3[] GetNormals(pb_Face face)
+	// {
+	// 	// muhahaha
+	// 	Vector3[] normals = msh.normals;
+	// 	Vector3[] v = new Vector3[face.indices.Length];
+	// 	for(int i = 0; i < face.indices.Length; i++)
+	// 		v[i] = normals[face.indices[i]];
 		
-		return v;
-	}
+	// 	return v;
+	// }
 
-	/**
-	 *	\brief Returns vertices in local space.
-	 *	\returns Vector3[] Vertices for passed indices in local space.
-	 */
-	public Vector3[] GetVertices(int[] indices)
-	{
-		Vector3[] v = new Vector3[indices.Length];
+	// /**
+	//  *	\brief Returns vertices in local space.
+	//  *	\returns Vector3[] Vertices for passed indices in local space.
+	//  */
+	// public Vector3[] GetVertices(int[] indices)
+	// {
+	// 	Vector3[] v = new Vector3[indices.Length];
 		
-		for(int i = 0; i < v.Length; i++)
-			v[i] = _vertices[indices[i]];
+	// 	for(int i = 0; i < v.Length; i++)
+	// 		v[i] = _vertices[indices[i]];
 
-		return v;
-	}
+	// 	return v;
+	// }
 
-	/**
-	 * \brief Returns an array of UV coordinates.
-	 */
-	public Vector2[] GetUVs(int[] indices)
-	{
-		Vector2[] uv = new Vector2[indices.Length];
-		for(int i = 0; i < uv.Length; i++)
-			uv[i] = _uv[indices[i]];
-		return uv;
-	}
+	// /**
+	//  * \brief Returns an array of UV coordinates.
+	//  */
+	// public Vector2[] GetUVs(int[] indices)
+	// {
+	// 	Vector2[] uv = new Vector2[indices.Length];
+	// 	for(int i = 0; i < uv.Length; i++)
+	// 		uv[i] = _uv[indices[i]];
+	// 	return uv;
+	// }
 
-	/**
-	 * Get vertices at x,y index with edge.
-	 */
-	public Vector3[] GetVertices(pb_Edge edge)
-	{
-		return new Vector3[]
-		{
-			_vertices[edge.x],
-			_vertices[edge.y]
-		};
-	}
+	// /**
+	//  * Get vertices at x,y index with edge.
+	//  */
+	// public Vector3[] GetVertices(pb_Edge edge)
+	// {
+	// 	return new Vector3[]
+	// 	{
+	// 		_vertices[edge.x],
+	// 		_vertices[edge.y]
+	// 	};
+	// }
 
-	/**
-	 *	\brief Returns vertices in local space.
-	 *	\returns List<Vector3> Vertices for passed indices in local space.
-	 */
-	public List<Vector3> GetVertices(List<int> indices)
-	{
-		List<Vector3> v = new List<Vector3>(indices.Count);
+	// /**
+	//  *	\brief Returns vertices in local space.
+	//  *	\returns List<Vector3> Vertices for passed indices in local space.
+	//  */
+	// public List<Vector3> GetVertices(List<int> indices)
+	// {
+	// 	List<Vector3> v = new List<Vector3>(indices.Count);
 		
-		for(int i = 0; i < indices.Count; i++)
-			v.Add( _vertices[indices[i]] );
+	// 	for(int i = 0; i < indices.Count; i++)
+	// 		v.Add( _vertices[indices[i]] );
 
-		return v;
-	}
+	// 	return v;
+	// }
 
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.
@@ -607,7 +586,7 @@ public class pb_Object : MonoBehaviour
 		if(msh != null)
 		{
 			m = msh;
-			m.triangles = null;
+			// m.triangles = null;
 			m.vertices = _vertices;
 			if(_uv != null) m.uv = _uv; // we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
 		}
@@ -885,11 +864,12 @@ public class pb_Object : MonoBehaviour
 			if(kvp.Value[0].uv.useWorldSpace)
 			{
 				nrm = transform.TransformDirection(nrm);
-				uvs = pb_UVUtility.PlanarMap( transform.ToWorldSpace(GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())), kvp.Value[0].uv, nrm);
+				uvs = pb_UVUtility.PlanarMap( transform.ToWorldSpace(vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())),
+					kvp.Value[0].uv, nrm);
 			}
 			else
 			{
-				uvs = pb_UVUtility.PlanarMap( GetVertices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
+				uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
 			}
 			
 			/**

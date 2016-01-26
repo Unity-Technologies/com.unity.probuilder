@@ -213,7 +213,7 @@ namespace ProBuilder2.EditorCommon
 										GUILayout.BeginVertical();
 										for(int i = 0; i < m.subMeshCount; i++)
 										{
-											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.GetVertices( m.GetTriangles(i) ).ToFormattedString("\n") + "\n");
+											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToFormattedString("\n") + "\n");
 										}
 										GUILayout.EndVertical();
 									}
@@ -403,7 +403,7 @@ namespace ProBuilder2.EditorCommon
 			if(faceInfo)
 			foreach(pb_Face f in pb.SelectedFaces)
 			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.GetVertices(f.distinctIndices) ) ) );
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.vertices.ValuesWithIndices(f.distinctIndices) ) ) );
 				
 				GUIContent gc = new GUIContent("Face: " + f.ToString(), "");
 

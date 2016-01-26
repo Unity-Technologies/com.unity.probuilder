@@ -564,7 +564,7 @@ public class pb_UV_Editor : EditorWindow
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
-						coords.Add(pb_Bounds2D.Center(pb.GetUVs(face.distinctIndices)));
+						coords.Add(pb_Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
 
 					coords.Insert(0, pb_Bounds2D.Center(coords));
 
@@ -696,11 +696,11 @@ public class pb_UV_Editor : EditorWindow
 						if(kvp.Value[0].uv.useWorldSpace)
 						{
 							pb.transform.TransformDirection(nrm);
-							pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.GetVertices(tris)), kvp.Value[0].uv, nrm );
+							pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.vertices.ValuesWithIndices(tris)), kvp.Value[0].uv, nrm );
 						}
 						else
 						{
-							pb_UVUtility.PlanarMap( pb.GetVertices(tris), kvp.Value[0].uv, nrm );
+							pb_UVUtility.PlanarMap( pb.vertices.ValuesWithIndices(tris), kvp.Value[0].uv, nrm );
 						}
 
 						foreach(pb_Face face in kvp.Value)
@@ -710,7 +710,7 @@ public class pb_UV_Editor : EditorWindow
 						 * Translation - applies for every tool
 						 */
 						Vector2 handle = handlePosition;
-						Vector2 cen = pb_Bounds2D.Center(pb.GetUVs(tris));
+						Vector2 cen = pb_Bounds2D.Center(pb.uv.ValuesWithIndices(tris));
 
 						foreach(pb_Face face in kvp.Value)
 							face.uv.offset = -((handle - face.uv.localPivot) - (handle-cen));

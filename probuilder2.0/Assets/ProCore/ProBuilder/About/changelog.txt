@@ -1,11 +1,20 @@
--- ProBuilder 2.4.10b0 (r4007)
+-- ProBuilder 2.4.10f2 (r4012)
+
+# Bug Fixes
+	- 
+
+# Changes
+	- Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
+
+
+-- ProBuilder 2.4.10f1 (r4009)
 
 # Features
 	- Add "Snap to Face" shortcut when dragging the move tool (hold 'C' while dragging to snap tool to the nearest face).
 
 # Bug Fixes
 
-	- Fix meshes going completely black when modifying them in any way.
+	- Fix most cases of meshes going completely black when modifying them in any way.
 	- Fix NullRef error when scaling a single selected edge.
 
 # Changes
