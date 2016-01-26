@@ -384,11 +384,12 @@ namespace ProBuilder2.EditorCommon
 
 				pb.Optimize();
 
-#if UNITY_5
-				EditorUtility.UnloadUnusedAssetsImmediate();
-#else
-				EditorUtility.UnloadUnusedAssets();
-#endif
+				Debug.Log("UnloadUnusedAssetsImmediate");
+// #if UNITY_5
+// 				EditorUtility.UnloadUnusedAssetsImmediate();
+// #else
+// 				EditorUtility.UnloadUnusedAssets();
+// #endif
 			}
 
 			return reason;

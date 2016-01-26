@@ -2866,7 +2866,7 @@ public class pb_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
-			pb.transform.hasChanged = false;
+			// pb.transform.hasChanged = false;
 
 			// profiler.BeginSample("VerticesInWorldSpace");
 			m_verticesInWorldSpace[i] = selection[i].VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
@@ -2952,7 +2952,7 @@ public class pb_Editor : EditorWindow
 
 			if(pb == null) continue;
 
-			pb.transform.hasChanged = false;
+			// pb.transform.hasChanged = false;
 
 			m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 
