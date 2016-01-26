@@ -1755,6 +1755,7 @@ public class pb_Editor : EditorWindow
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
 				selection[i].RefreshNormals();
+				// selection[i].RefreshTangents();
 				selection[i].msh.RecalculateBounds();
 			}
 

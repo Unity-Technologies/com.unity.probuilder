@@ -543,9 +543,6 @@ public class pb_Object : MonoBehaviour
 				m.Clear();
 	
 			m.vertices = _vertices;
-			// m.uv = new Vector2[vertexCount];
-			// m.tangents = new Vector4[vertexCount];
-			// m.normals = new Vector3[vertexCount];
 		}
 
 		int[][] tris;
@@ -559,45 +556,19 @@ public class pb_Object : MonoBehaviour
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
-
-		#if PROTOTYPE
-			MeshRenderer mr = GetComponent<MeshRenderer>();
-
-			if (mr.sharedMaterials == null || mr.sharedMaterials.Length < 1 || mr.sharedMaterials[0] == null)
-				mr.sharedMaterials = mats;
-		#else
-			GetComponent<MeshRenderer>().sharedMaterials = mats;
-		#endif
+		GetComponent<MeshRenderer>().sharedMaterials = mats;
 	}
 
 	/**
-	 * Set the MeshComponent.sharedMesh back to matching the pb_Object.vertices cache.
-	 * Does not recalculate UVs unless _uv is null, but does rebuild normals and smoothing
-	 * by necessity.
+	 * Set the MeshComponent.sharedMesh back to matching the pb_Object.vertices cache if necessary.
 	 */
 	public void ResetMesh()
 	{
-		Mesh m = msh;
-
-		if(m.vertexCount == _vertices.Length)
+		if(msh.vertexCount == _vertices.Length)
 			return;
 
-		m.Clear();
-		m.vertices = _vertices;
-
-		int[][] tris;
-		Material[] mats;
-
-		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
-
-		for(int i = 0; i < tris.Length; i++)
-			m.SetTriangles(tris[i], i);
-
-		RefreshUV();
-
-		m.uv2 = null;
-		RefreshNormals();
-		pb_MeshUtility.GenerateTangent(ref m);
+		ToMesh();
+		Refresh();
 	}
 
 	/**
@@ -683,15 +654,9 @@ public class pb_Object : MonoBehaviour
 		m.Optimize();
 
 		RefreshUV();
-
-		if(_colors == null || _colors.Length != vertexCount)
-			_colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
-
-		m.colors = _colors;
-
+		RefreshColors();
 		RefreshNormals();
-
-		pb_MeshUtility.GenerateTangent(ref m);
+		RefreshTangents();
 	}	
 #endregion
 
@@ -921,6 +886,16 @@ public class pb_Object : MonoBehaviour
 
 #region COLORS
 
+	public void RefreshColors()
+	{
+		Mesh m = GetComponent<MeshFilter>().sharedMesh;
+
+		if(_colors == null || _colors.Length != vertexCount)
+			_colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
+
+		m.colors = _colors;
+	}
+
 	/**
 	 * Set the internal color array.
 	 */
@@ -940,7 +915,7 @@ public class pb_Object : MonoBehaviour
 	}
 #endregion
 
-#region NORMALS
+#region NORMALS AND TANGENTS
 
 	/**
 	 * Refreshes the normals of this object taking into account the smoothing groups.
@@ -1011,6 +986,12 @@ public class pb_Object : MonoBehaviour
 		}
 
 		GetComponent<MeshFilter>().sharedMesh.normals = normals;
+	}
+
+	public void RefreshTangents()
+	{
+		Mesh m = GetComponent<MeshFilter>().sharedMesh;
+		pb_MeshUtility.GenerateTangent(ref m);
 	}
 #endregion
 
