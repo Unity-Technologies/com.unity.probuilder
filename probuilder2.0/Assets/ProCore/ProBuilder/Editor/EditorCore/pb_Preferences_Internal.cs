@@ -25,107 +25,26 @@ public class pb_Preferences_Internal
 	/**
 	 * Checks if pref key exists in library, and if so return the value.  If not, return the default value.
 	 */
-	public static bool GetBool(string pref) { return GetBool(pref, false); }
-	public static bool GetBool(string pref, bool forceDefault)
+	public static bool GetBool(string pref, bool forceDefault = false)
 	{
+		if(!forceDefault && EditorPrefs.HasKey(pref))
+			return EditorPrefs.GetBool(pref);
 
-		switch(pref)
-		{
-			case pb_Constant.pbDefaultOpenInDockableWindow:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-		
-			case pb_Constant.pbShowEditorNotifications:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbDragCheckLimit:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbForceGridPivot:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbForceVertexPivot:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbForceConvex:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-
-			case pb_Constant.pbManifoldEdgeExtrusion:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbPerimeterEdgeBridgeOnly:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbPBOSelectionOnly:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbCloseShapeWindow:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbUVEditorFloating:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-			
-			case pb_Constant.pbGrowSelectionUsingAngle:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbUVMaterialPreview:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-			
-			case pb_Constant.pbShowSceneToolbar:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-			
-			case pb_Constant.pbShowUVEditorTooltip:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-			
-			case pb_Constant.pbShowDetail:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbShowOccluder:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbShowMover:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbShowCollider:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbShowTrigger:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbShowNoDraw:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-
-			case pb_Constant.pbNormalizeUVsOnPlanarProjection:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-				
-			case pb_Constant.pbStripProBuilderOnBuild:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-				
-			case pb_Constant.pbDisableAutoUV2Generation:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-				
-			case pb_Constant.pbShowSceneInfo:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbEnableBackfaceSelection:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbVertexPaletteDockable:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbGrowSelectionAngleIterative:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-			
-			case pb_Constant.pbExtrudeAsGroup:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : true;
-			
-			case pb_Constant.pbUniqueModeShortcuts:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetBool(pref) : false;
-
-			// When in doubt, say yes!
-			default:
-				return true;
-
-		}
+		if(	pref == pb_Constant.pbForceConvex ||
+			pref == pb_Constant.pbManifoldEdgeExtrusion ||
+			pref == pb_Constant.pbPBOSelectionOnly ||
+			pref == pb_Constant.pbCloseShapeWindow ||
+			pref == pb_Constant.pbGrowSelectionUsingAngle ||
+			pref == pb_Constant.pbNormalizeUVsOnPlanarProjection ||
+			pref == pb_Constant.pbDisableAutoUV2Generation ||
+			pref == pb_Constant.pbShowSceneInfo ||
+			pref == pb_Constant.pbEnableBackfaceSelection ||
+			pref == pb_Constant.pbVertexPaletteDockable ||
+			pref == pb_Constant.pbGrowSelectionAngleIterative ||
+			pref == pb_Constant.pbUniqueModeShortcuts)
+			return false;
+		else
+			return true;
 	}
 
 	public static float GetFloat(string pref) { return GetFloat(pref, false); }

@@ -41,7 +41,10 @@ namespace ProBuilder2.EditorCommon
 
 		public static void MenuOpenMaterialEditor()
 		{
-			EditorWindow.GetWindow<pb_Material_Editor>(true, "Material Editor", true).Show();
+			EditorWindow.GetWindow<pb_Material_Editor>(
+				pb_Preferences_Internal.GetBool(pb_Constant.pbMaterialEditorFloating),
+				"Material Editor",
+				true).Show();
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", false, pb_Constant.MENU_MATERIAL_COLORS)]
@@ -151,6 +154,23 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		void OpenContextMenu()
+		{
+			GenericMenu menu = new GenericMenu();
+
+			menu.AddItem (new GUIContent("Window/Open as Floating Window", ""), false, () => { SetFloating(true); } );
+			menu.AddItem (new GUIContent("Window/Open as Dockable Window", ""), false, () => { SetFloating(false); } );
+
+			menu.ShowAsContext ();
+		}
+
+		void SetFloating(bool floating)
+		{
+			EditorPrefs.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
+			this.Close();
+			MenuOpenMaterialEditor();
+		}
+
 		void SaveUserMaterials()
 		{
 			pb_ObjectArray poa = (pb_ObjectArray)ScriptableObject.CreateInstance(typeof(pb_ObjectArray));
@@ -179,6 +199,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnGUI()
 		{
+			if(Event.current.type == EventType.ContextClick)
+				OpenContextMenu();
+
 			GUILayout.Label("Quick Material", EditorStyles.boldLabel);
 			Rect r = GUILayoutUtility.GetLastRect();
 			int left = Screen.width - 68;
