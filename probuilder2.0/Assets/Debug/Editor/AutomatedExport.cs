@@ -178,7 +178,8 @@ public class AutomatedExport : MonoBehaviour
 		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(changelog_path, typeof(TextAsset));
 		#endif
 
-		Match first = Regex.Match("(?<=--\\sProBuilder\\s)([0-9]*\\.[0-9]*\\.[0-9b|f|p]*)(?=\\s\\(r)", changelog.text);
+		// (?<=--\sProBuilder\s).*(?=\s\(r[0-9]{1,9})
+		Match first = Regex.Match("(?<=--\\sProBuilder\\s).*(?=\\s\\(r[0-9]{1,9})", changelog.text);
 		string VERSION_NUMBER = first.Success ? first.Value : "Failed parsing version number!";
 
 		// write the about entry info file
