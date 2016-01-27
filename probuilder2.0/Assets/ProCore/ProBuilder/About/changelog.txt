@@ -1,4 +1,4 @@
--- ProBuilder 2.4.10f2 (r4021)
+-- ProBuilder 2.4.10f2 (r4027)
 
 # Features
 	- Shape and Material windows are now dockable (context click in window and select Window/Set {Floating, Dockable}).
