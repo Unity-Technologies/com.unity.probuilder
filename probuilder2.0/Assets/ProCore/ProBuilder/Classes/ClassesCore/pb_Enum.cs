@@ -21,10 +21,10 @@ namespace ProBuilder2.Common
 	 * The editor level - top (no pb action), geo, texture, plugin.
 	 */
 	public enum EditLevel {
-		Top,
-		Geometry,
-		Texture,
-		Plugin
+		Top = 0,
+		Geometry = 1,
+		Texture = 2,
+		Plugin = 4
 	}
 
 	public enum HandleAlignment {

@@ -2,26 +2,17 @@
 
 # Features
 	- Shape and Material windows are now dockable (context click in window and select Window/Set {Floating, Dockable}).
+	- Add "Snap to Face" shortcut when dragging the move tool (hold 'C' while dragging to snap tool to the nearest face).
+	- New ShaderForge compatible Standard Vertex Color shader on ProBuilder default material.
 
 # Bug Fixes
 	- Unity 5.4 compatibility.
 	- Workaround for Unity crash "Check DisallowAllocation Error"
-
-# Changes
-	- Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
-
-
--- ProBuilder 2.4.10f1 (r4009)
-
-# Features
-	- Add "Snap to Face" shortcut when dragging the move tool (hold 'C' while dragging to snap tool to the nearest face).
-
-# Bug Fixes
-
 	- Fix most cases of meshes going completely black when modifying them in any way.
 	- Fix NullRef error when scaling a single selected edge.
 
 # Changes
+	- Remove various `Get{Vertices, UVs, Triangles}` functions from `pb_Object`.  Use `pbUtil.ValuesWithIndices` directly instead.
 	- Remove Instantiation API Example (there's nothing special about instantiating ProBuilder meshes anymore).
 
 -- ProBuilder 2.4.9f1 (r3978)
