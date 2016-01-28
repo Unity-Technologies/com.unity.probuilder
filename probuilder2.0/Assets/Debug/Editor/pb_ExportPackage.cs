@@ -64,10 +64,10 @@ public class pb_ExportPackage : Editor
 		// Read version number and revision number from changelog.txt
 		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
 
-		Match first = Regex.Match("(?<=-- ProBuilder\\s).*?(?=\\s)", changelog.text);
+		Match first = Regex.Match(changelog.text, "(?<=--\\sProBuilder\\s).*?(?=\\s)");
 		string version = first.Success ? first.Value : "Failed parsing version number!";
 
-		first = Regex.Match("(?<=--\\sProBuilder\\s.*\\s\\(r)[0-9]{1,5}(?=\\))", changelog.text);
+		first = Regex.Match(changelog.text, "(?<=--\\sProBuilder\\s.*\\s\\(r)[0-9]{1,5}(?=\\))");
 		string revision = first.Success ? first.Value : "Failed parsing SVN revision!";
 
 		// Populate the about entry information text file.
