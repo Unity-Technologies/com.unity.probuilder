@@ -45,6 +45,11 @@ public class pb_Editor : EditorWindow
 		onEditLevelChanged += listener;
 	}
 
+	public static void RemoveOnEditLevelChangedListener( System.Action<int> listener )
+	{
+		onEditLevelChanged -= listener;
+	}
+
 	public static System.Action<int> onEditLevelChanged;
 
 	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
@@ -119,6 +124,9 @@ public class pb_Editor : EditorWindow
 		HideSelectedWireframe();
 
 		findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+
+		if( onEditLevelChanged != null )
+			onEditLevelChanged( (int) editLevel );
 	}
 
 	private void InitGUI()
