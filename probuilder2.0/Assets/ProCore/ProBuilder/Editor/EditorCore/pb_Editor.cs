@@ -37,7 +37,15 @@ public class pb_Editor : EditorWindow
 	public static pb_Editor instance { get { return _instance; } }
 	private static pb_Editor _instance;
 
-	public System.Action<int> onEditLevelChanged;
+	/**
+	 *	Subscribe to notifications of edit level changes.
+	 */
+	public static void AddOnEditLevelChangedListener( System.Action<int> listener )
+	{
+		onEditLevelChanged += listener;
+	}
+
+	public static System.Action<int> onEditLevelChanged;
 
 	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
 
