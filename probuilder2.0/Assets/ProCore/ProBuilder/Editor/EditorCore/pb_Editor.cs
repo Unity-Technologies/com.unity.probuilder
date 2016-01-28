@@ -37,6 +37,8 @@ public class pb_Editor : EditorWindow
 	public static pb_Editor instance { get { return _instance; } }
 	private static pb_Editor _instance;
 
+	public System.Action<int> onEditLevelChanged;
+
 	MethodInfo findNearestVertex;	///< Needs to be initialized from an instance, not a static class. Don't move to HandleUtility, you tried that already.
 
 	public EditLevel editLevel { get; private set; }
@@ -2777,6 +2779,9 @@ public class pb_Editor : EditorWindow
 
 		if(editLevel != EditLevel.Texture)
 			EditorPrefs.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
+
+		if( onEditLevelChanged != null )
+			onEditLevelChanged( (int) editLevel );
 	}
 #endregion
 
