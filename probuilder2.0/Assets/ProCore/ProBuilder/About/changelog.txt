@@ -1,3 +1,13 @@
+-- ProBuilder 2.4.11n0 (r4030)
+
+# Features
+
+# Bug Fixes
+
+# API
+	- Add `onEditLevelChanged` delegate to pb_Editor to notify other classes of edit level changes.
+
+
 -- ProBuilder 2.4.10f2 (r4027)
 
 # Features
