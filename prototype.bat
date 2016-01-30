@@ -33,7 +33,7 @@ md bin\temp
 rd /s /q probuilder-staging\
 
 echo ===: Create staging project
-%unity_path_4% -quit -batchMode -createProject %CD%\probuilder-staging
+%unity_path_5% -quit -batchMode -createProject %CD%\probuilder-staging
 
 echo ===: Copy export scripts
 xcopy /E /Y /I %CD%\probuilder2.0\Assets\Debug\Editor\pb_AddDefine.cs %CD%\probuilder-staging\Assets\Debug\Editor\
@@ -41,6 +41,10 @@ xcopy /E /Y /I %CD%\probuilder2.0\Assets\Debug\Editor\pb_ExportPackage.cs %CD%\p
 
 echo ===: Copy Resources
 xcopy /E /Y /I /q %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Assets\ProCore
+
+:: do this before removing shit because otherwise unity can't run
+echo ===: Prefix files with #define PROTOTYPE
+%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod pb_AddDefine.PrependDefine define:PROTOTYPE ignore:Debug
 
 echo ===: Remove core, mesh ops, and editor core
 
@@ -52,8 +56,9 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProGrids
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProGrids.meta
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProGrids_Documentation*
 
+
 :: for prototype, remove all kinds of other stuff 
-@echo on
+:: @echo on
 :: rd /S /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\API Examples"
 :: rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Debug
 rd /S /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Tools
@@ -65,18 +70,12 @@ del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Action
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_BridgeEdges.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_ConformNormals.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_ConnectEdges.cs
-:: del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_DetachDeleteFace.cs
-:: del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_SetPivot.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_FreezeTransform.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_MergeFaces.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_Triangulate.cs
 del /Q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\MenuItems\Geometry\pb_VertexMergeWeld.cs
 
-@echo off
-
-echo ===: Prefix files with #define PROTOTYPE
-
-%unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod pb_AddDefine.PrependDefine define:PROTOTYPE ignore:Debug
+:: @echo off
 
 :: ================================ BUILD 4.3 + LIBRARIES ================================ {
 
