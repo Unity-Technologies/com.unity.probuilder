@@ -27,18 +27,18 @@ namespace ProBuilder2.EditorCommon
 		 *	Define "headers" for pro only functions.
 		 */
 #if PROTOTYPE
-		internal static void MenuMergeObjects(pb_Object[] selection) {}
-		internal static void MenuSubdivide(pb_Object[] selection) {}
-		internal static void MenuDetachFaces(pb_Object[] selection) {}
-		internal static void MenuSubdivideFace(pb_Object[] selection) {}
-		internal static void MenuBridgeEdges(pb_Object[] selection) {}
-		internal static void MenuConnectEdges(pb_Object[] selection) {}
-		internal static void MenuConnectVertices(pb_Object[] selection) {}
-		internal static void MenuInsertEdgeLoop(pb_Object[] selection) {}
-		internal static void MenuWeldVertices(pb_Object[] selection) {}
-		internal static void MenuCollapseVertices(pb_Object[] selection) {}
-		internal static void MenuSplitVertices(pb_Object[] selection) {}
-		internal static void WeldButtonGUI(int width) {}
+		public static void MenuMergeObjects(pb_Object[] selection) { Debug.LogWarning("MenuMergeObjects is a ProBuilder Advanced feature."); }
+		public static void MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature."); }
+		public static void MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature."); }
+		public static void MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature."); }
+		public static void MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature."); }
+		public static void MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature."); }
+		public static void MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature."); }
+		public static void MenuInsertEdgeLoop(pb_Object[] selection) { Debug.LogWarning("MenuInsertEdgeLoop is a ProBuilder Advanced feature."); }
+		public static void MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature."); }
+		public static void MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature."); }
+		public static void MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature."); }
+		public static void WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature."); }
 #endif
 
 #region Object Level
