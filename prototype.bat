@@ -11,9 +11,9 @@ set u5_mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity
 set u5_editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
 
 :: Path to Unity 5.3 VS projects
-set u53_core="%CD%\visual studio\ProBuilderCore-Unity53\ProBuilderCore-Unity53.sln"
-set u53_mesh="%CD%\visual studio\ProBuilderMeshOps-Unity53\ProBuilderMeshOps-Unity53.sln"
-set u53_editor="%CD%\visual studio\ProBuilderEditor-Unity53\ProBuilderEditor-Unity53.sln"
+:: set u53_core="%CD%\visual studio\ProBuilderCore-Unity53\ProBuilderCore-Unity53.sln"
+:: set u53_mesh="%CD%\visual studio\ProBuilderMeshOps-Unity53\ProBuilderMeshOps-Unity53.sln"
+set u53_editor="%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3.sln"
 
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\Debug"
@@ -48,6 +48,10 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesCore
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesEditing
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProGrids
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProGrids.meta
+del /Q %CD%\probuilder-staging\Assets\ProCore\ProGrids_Documentation*
+
 :: for prototype, remove all kinds of other stuff 
 @echo on
 :: rd /S /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\API Examples"
@@ -80,22 +84,22 @@ echo ===: Build Unity 5.0 DLL
 
 
 :: Build Core - (post-build script places dll in staging project)
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0" /t:Clean,Build %u5_core%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0;" /p:Configuration=Release /t:Clean,Build %u5_core%
 
 echo ===: Copy core lib to staging
-xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Debug\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Release\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: Build mesh editing classes
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0" /t:Clean,Build %u5_mesh%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_0;" /p:Configuration=Release /t:Clean,Build %u5_mesh%
 
 echo ===: Copy mesh ops lib to staging
-xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Debug\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Release\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;UNITY_5_0" /v:q /t:Clean,Build %u5_editor%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;UNITY_5_0" /p:Configuration=Release /v:q /t:Clean,Build %u5_editor%
 
 echo ===: Copy editor lib to staging
-xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Debug\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 :: echo ===: renaming ProBuilder to ProBuilder Basic
 :: move /Y "%CD%\probuilder-staging\Assets\ProCore\ProBuilder" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder Basic"
@@ -108,36 +112,35 @@ echo ===: Export release pack for Unity 5.0
 
 echo ===: Clean Staging
 
-del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderCore-Unity5.dll"
-del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderMeshOps-Unity5.dll"
+:: del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderCore-Unity5.dll"
+:: del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ProBuilderMeshOps-Unity5.dll"
 del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity5.dll"
 
 echo ===: Build Unity 5.3 DLL
 
-:: Build Core against Unity 5 libs
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_3;" /t:Clean,Build %u53_core%
-
-echo ===: Copy Core 5.3 to staging
-xcopy "%CD%\visual studio\ProBuilderCore-Unity53\ProBuilderCore-Unity53\bin\Debug\ProBuilderCore-Unity53.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
-
-:: Build Mesh ops against Unity 5
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_3;" /t:Clean,Build %u53_mesh%
-
-echo ===: Copy mesh ops 5 to staging
-xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity53\ProBuilderMeshOps-Unity53\bin\Debug\ProBuilderMeshOps-Unity53.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+:: :: Build Core against Unity 5 libs
+:: %msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_3;" /t:Clean,Build %u53_core%
+:: 
+:: echo ===: Copy Core 5.3 to staging
+:: xcopy "%CD%\visual studio\ProBuilderCore-Unity53\ProBuilderCore-Unity53\bin\Release\ProBuilderCore-Unity53.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
+:: 
+:: :: Build Mesh ops against Unity 5
+:: %msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_5;UNITY_5_3;" /t:Clean,Build %u53_mesh%
+:: 
+:: echo ===: Copy mesh ops 5 to staging
+:: xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity53\ProBuilderMeshOps-Unity53\bin\Release\ProBuilderMeshOps-Unity53.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 
 :: /clp:ErrorsOnly  <--- This flag for ErrorsOnly
-%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;UNITY_5_3;" /v:q /t:Clean,Build %u53_editor%
+%msbuild% /p:DefineConstants="RELEASE;PROTOTYPE;UNITY_EDITOR;UNITY_5;UNITY_5_3;" /p:Configuration=Release /v:q /t:Clean,Build %u53_editor%
 
 echo ===: Copy editor lib to staging
-xcopy "%CD%\visual studio\ProBuilderEditor-Unity53\ProBuilderEditor-Unity53\bin\Debug\ProBuilderEditor-Unity53.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
-
-echo ===: EXPORT UNITY 5 PACK
+xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
 echo ===: Override DLL GUIDs
 %unity_path_53% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.3-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
 :: Export release pack for Unity 5.3 +
+echo ===: EXPORT UNITY 5.3 PACK
 %unity_path_53% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\prototype5.3-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilderBasic outSuffix:-unity53
 
 echo ===: Done building Unity 5, Unity 5.3 project packages.
