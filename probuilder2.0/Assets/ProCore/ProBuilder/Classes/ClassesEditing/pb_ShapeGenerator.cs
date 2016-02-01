@@ -137,7 +137,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
-		pb.SetName("Stairs"); 
+		pb.gameObject.name = "Stairs"; 
 
 		return pb;	
 	}
@@ -339,7 +339,7 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
 
-		pb.SetName("Stairs"); 
+		pb.gameObject.name = "Stairs"; 
 
 		return pb;	
 	}
@@ -415,7 +415,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(verts.ToArray());
-		pb.SetName("Stairs"); 
+		pb.gameObject.name = "Stairs"; 
 		return pb;
 	}
 
@@ -430,7 +430,7 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(points);
 
-		pb.SetName("Cube");
+		pb.gameObject.name = "Cube";
 		return pb;
 	}
 
@@ -552,7 +552,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(verts, faces);
-		pb.SetName("Cylinder");
+		pb.gameObject.name = "Cylinder";
 		return pb;
 	}
 
@@ -610,7 +610,7 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 		pb.RebuildFaceCaches();
-		pb.SetName("Prism");
+		pb.gameObject.name = "Prism";
 		return pb;
 	}
 
@@ -763,7 +763,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
-		pb.SetName("Door");
+		pb.gameObject.name = "Door";
 		return pb;
 	}
 
@@ -852,7 +852,7 @@ public class pb_ShapeGenerator
 
 		pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 		
-		pb.SetName("Plane");
+		pb.gameObject.name = "Plane";
 
 		Vector3 center = Vector3.zero;
 		Vector3[] verts = pb.VerticesInWorldSpace();
@@ -967,7 +967,7 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(v.ToArray());
 
-		pb.SetName("Pipe");
+		pb.gameObject.name = "Pipe";
 
 		return pb;
 	}
@@ -1015,7 +1015,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v.ToArray(), f.ToArray());
-		pb.SetName("Cone");
+		pb.gameObject.name = "Cone";
 		return pb;
 	}
 
@@ -1146,7 +1146,7 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(v.ToArray());
 
-		pb.SetName("Arch");
+		pb.gameObject.name = "Arch";
 		return pb;
 	}
 	
@@ -1248,7 +1248,7 @@ public class pb_ShapeGenerator
 		pb.ToMesh();
 		pb.Refresh();
 
-		pb.SetName("Icosphere");
+		pb.gameObject.name = "Icosphere";
 
 		return pb;
 	}
@@ -1381,7 +1381,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices.ToArray(), faces.ToArray());
-		pb.SetName("Torus");
+		pb.gameObject.name = "Torus";
 
 		return pb;
 	}

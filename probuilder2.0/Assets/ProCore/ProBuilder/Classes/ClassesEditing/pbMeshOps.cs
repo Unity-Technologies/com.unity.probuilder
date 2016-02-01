@@ -935,7 +935,7 @@ namespace ProBuilder2.MeshOperations
 		pb.SetColors(cols.ToArray());
 		pb.SetUV(uvs.ToArray());
 
-		pb.SetName(t.name);
+		pb.gameObject.name = t.name;
 			
 		go.transform.position = t.position;
 		go.transform.localRotation = t.localRotation;

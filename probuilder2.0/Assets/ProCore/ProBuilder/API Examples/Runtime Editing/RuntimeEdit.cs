@@ -223,7 +223,6 @@ namespace ProBuilder2.Examples
 				Destroy(preview.gameObject);
 
 			preview = pb_Object.CreateInstanceWithVerticesFaces(verts, new pb_Face[1]{face});
-			preview.SetName("Preview");
 			preview.SetFaceMaterial(preview.faces, previewMaterial);
 			preview.ToMesh();
 			preview.Refresh();

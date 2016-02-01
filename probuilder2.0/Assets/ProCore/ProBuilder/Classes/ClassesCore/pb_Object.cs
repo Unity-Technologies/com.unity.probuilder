@@ -103,7 +103,7 @@ public class pb_Object : MonoBehaviour
 			
 		GameObject _gameObject = new GameObject();	
 		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
-		pb_obj.SetName("Object");
+		_gameObject.name = "ProBuilder Mesh";
 
 		pb_obj.GeometryWithPoints(vertices);
 
@@ -123,7 +123,7 @@ public class pb_Object : MonoBehaviour
 	{
 		GameObject _gameObject = new GameObject();	
 		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
-		pb_obj.SetName("Object");
+		_gameObject.name = "ProBuilder Mesh";
 		pb_obj.GeometryWithVerticesFaces(v, f);
 		return pb_obj;
 	}
@@ -196,13 +196,12 @@ public class pb_Object : MonoBehaviour
 	public Vector3 						previousTransform = new Vector3(0f, 0f, 0f);
 	public bool 						userCollisions = false;	///< If false, ProBuilder will automatically create and scale colliders.
 
-	public bool 						isSelectable = true;	///< Optional flag - if true editor should ignore clicks on this object.
+	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
 
-	[SerializeField]
-	private string _name = "Object";
+	///< usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
+	/// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
+	public bool dontDestroyMeshOnDelete = false;	
 
-	public bool 						dontDestroyMeshOnDelete = false;	///< usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
-																			/// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 #endregion
 
 #region ACCESS
@@ -359,17 +358,6 @@ public class pb_Object : MonoBehaviour
 #endregion
 
 #region SET
-
-	/**
-	 *	\brief Sets the #pb_Object name that is shown in the hierarchy.
-	 *	@param __name The name to apply.  Format is pb-Name[#pb_EntityType]-id
-	 *	\sa RefreshName
-	 */
-	public void SetName(string __name)
-	{
-		_name = __name;
-		gameObject.name = "pb-" + _name + id;
-	}
 
 	/**
 	 * Sets the internal vertex cache, but does NOT rebuild the mesh.vertices array.
