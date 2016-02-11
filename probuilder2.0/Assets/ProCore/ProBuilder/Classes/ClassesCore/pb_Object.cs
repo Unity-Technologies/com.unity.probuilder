@@ -544,7 +544,9 @@ public class pb_Object : MonoBehaviour
 		m.name = "pb_Mesh" + id;
 
 		GetComponent<MeshFilter>().sharedMesh = m;
+#if !PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
+#endif
 	}
 
 	/**
@@ -797,19 +799,16 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 * Set the material for this face to use.  Also updates the Mesh so that
-	 * changes are apparent to user.
+	 *	Set the material on all faces.  Call ToMesh() and Refresh() after to force these changes to take effect.
 	 */
-	public void SetFaceMaterial(pb_Face quad, Material mat)
-	{
-		quad.SetMaterial(mat);
-		RefreshUV(new pb_Face[]{quad});
-	}
-
 	public void SetFaceMaterial(pb_Face[] quad, Material mat)
 	{
+#if PROTOTYPE
+		GetComponent<MeshRenderer>().sharedMaterials = new Material[1] { mat };
+#else
 		for(int i = 0; i < quad.Length; i++)
 			quad[i].SetMaterial(mat);
+#endif
 	}
 
 	/**
