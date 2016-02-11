@@ -93,10 +93,7 @@ namespace ProBuilder2.EditorCommon
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 			
-			Material mat = null;
-
-			if(EditorPrefs.HasKey(pb_Constant.pbDefaultMaterial))
-				mat = (Material)AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(pb_Constant.pbDefaultMaterial), typeof(Material));
+			Material mat = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 			if(mat != null)
 			{
