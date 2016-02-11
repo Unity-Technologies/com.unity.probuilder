@@ -1,11 +1,10 @@
--- ProBuilder 2.4.11b00 (r4030)
-
-# Features
+-- ProBuilder 2.4.11f0 (r4081)
 
 # Bug Fixes
+	- Fix regression in 2.4.10f2 that broke assigning materials in ProBuilder Basic.
 
 # API
-	- Add `onEditLevelChanged` delegate to pb_Editor to notify other classes of edit level changes.
+	- Add `onEditLevelChanged` delegate to pb_Editor to notify other classes of edit level changes (Polybrush compatibility).
 
 -- ProBuilder 2.4.10f2 (r4027)
 
