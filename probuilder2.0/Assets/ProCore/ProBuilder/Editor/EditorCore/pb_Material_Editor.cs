@@ -311,8 +311,8 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(em == (EventModifiers.Control | EventModifiers.Shift))
 				{
-					pbUndo.RecordObject(pb, "Quick Apply NoDraw");
-					pb.SetFaceMaterial(quad, queuedMaterial);
+					pbUndo.RecordObject(pb, "Quick Apply");
+					pb.SetFaceMaterial( new pb_Face[1] { quad }, queuedMaterial);
 					OnFaceChanged(pb);
 					pb_Editor_Utility.ShowNotification("Quick Apply Material");
 					return true;
