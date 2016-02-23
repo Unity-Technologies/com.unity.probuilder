@@ -84,7 +84,6 @@ public class pb_VertexColor_Editor : EditorWindow
 	};
 	private Color[] UserColors;
 
-
 	public pb_Editor editor { get { return pb_Editor.instance; } }		///< Convenience getter for pb_Editor.instance
 
 	static readonly Color OuterRingColor = new Color(.4f, .7f, .4f, .5f);
@@ -99,6 +98,8 @@ public class pb_VertexColor_Editor : EditorWindow
 	string colorName = "Green";											///< Human readable color name.
 	bool enabled = true;												///< Is the tool enabled?
 	float brushSize = .5f;												///< The brush size to use.
+
+	ColorMask colorMask = new ColorMask(true,true,true,true);			///< Apply all colors by default.
 
 	Event currentEvent;													///< Cache the current event at start of OnSceneGUI.
 	Camera sceneCamera;													///< Cache the sceneview camera at start of OnSceneGUI.
@@ -210,6 +211,15 @@ public class pb_VertexColor_Editor : EditorWindow
 		if(EditorGUI.EndChangeCheck())
 			SceneView.RepaintAll();
 
+		GUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Channel Mask");
+			EditorGUIUtility.labelWidth = 18;
+			colorMask.r = EditorGUILayout.Toggle("R", colorMask.r);
+			colorMask.g = EditorGUILayout.Toggle("G", colorMask.g);
+			colorMask.b = EditorGUILayout.Toggle("B", colorMask.b);
+			colorMask.a = EditorGUILayout.Toggle("A", colorMask.a);
+			EditorGUIUtility.labelWidth = 0;
+		GUILayout.EndHorizontal();
 
 		GUILayout.Space(6);
 		pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
@@ -294,7 +304,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	int pad = 4;
 	int ButtonWidth = 50;
 	void ColorGUI()
-	{	
+	{
 		Rect r = GUILayoutUtility.GetLastRect();
 		r.x = 6;
 		r.y += r.height;
@@ -467,7 +477,7 @@ public class pb_VertexColor_Editor : EditorWindow
 							{
 								for(int n = 0; n < sharedIndices[i].Length; n++)
 								{
-									colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color, (1f-(dist/brushSize)) * brushOpacity );
+									colors[sharedIndices[i][n]] = Lerp(hovering[pb][sharedIndices[i][n]], color, (1f-(dist/brushSize)) * brushOpacity, colorMask );
 								}
 							}
 						}
@@ -575,12 +585,28 @@ public class pb_VertexColor_Editor : EditorWindow
 
 #region Utility
 
-	static Color Lerp(Color lhs, Color rhs, float alpha)
+	struct ColorMask
 	{
-		return new Color(lhs.r * (1f-alpha) + rhs.r * alpha,
-		                 lhs.g * (1f-alpha) + rhs.g * alpha,
-		                 lhs.b * (1f-alpha) + rhs.b * alpha,
-		                 lhs.a * (1f-alpha) + rhs.a * alpha );
+		public bool r;
+		public bool g;
+		public bool b;
+		public bool a;
+
+		public ColorMask(bool r, bool g, bool b, bool a)
+		{
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
+		}
+	}
+
+	static Color Lerp(Color lhs, Color rhs, float alpha, ColorMask mask)
+	{
+		return new Color(	mask.r ? (lhs.r * (1f-alpha) + rhs.r * alpha) : lhs.r,
+		                 	mask.g ? (lhs.g * (1f-alpha) + rhs.g * alpha) : lhs.g,
+		                 	mask.b ? (lhs.b * (1f-alpha) + rhs.b * alpha) : lhs.b,
+		                 	mask.a ? (lhs.a * (1f-alpha) + rhs.a * alpha) : lhs.a );
 	}
 
 	private static List<Texture> GetTextures(Material mat)
