@@ -1,21 +1,8 @@
 {
-	"build_systems":
-	[
-		{
-			"cmd":
-			[
-				"C:\\Program Files (x86)\\Unity\\Editor\\Data\\Mono\\bin\\xbuild.bat",
-				"${project_path}/${project_base_name}.sln",
-				"/noconsolelogger",
-				"/logger:${project_path}\\SublimeUnity\\SublimeLogger.dll"
-			],
-			"file_regex": "([^(]*)\\((\\d*),(\\d*)\\)\\s*(.*)",
-			"name": "Unity Mono"
-		}
-	],
 	"folders":
 	[
 		{
+			"path": "Assets\\ProCore\\ProBuilder",
 			"file_exclude_patterns":
 			[
 				"*.unity",
@@ -39,10 +26,10 @@
 				"*test*",
 				"Doxygen",
 				"UVee"
-			],
-			"path": "Assets\\ProCore\\ProBuilder"
+			]
 		},
 		{
+			"path": "Assets\\Debug",
 			"file_exclude_patterns":
 			[
 				"*.unity",
@@ -61,17 +48,17 @@
 				".boo*",
 				"*us.rsp"
 			],
-			"path": "Assets\\Debug"
 		},
 		{
-			"path": "Assets\\ProBuilderUpgradeKit"
+			"path": "Assets\\ProBuilderUpgradeKit",
+			"file_exclude_patterns": [ "*.meta" ]
 		},
 		{
-			"folder_exclude_patterns":
-			[
-				"*"
-			],
-			"path": "C:\\Users\\karl\\probuilder\\prj\\probuilder2"
+			"path": "../",
+			"folder_exclude_patterns": [ "*" ]
+		},
+		{
+			"path": "../docs"
 		}
 	]
 }

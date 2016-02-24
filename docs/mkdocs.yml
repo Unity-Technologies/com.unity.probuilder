@@ -1,0 +1,4 @@
+site_name: ProBuilder Documentation
+
+pages:
+  - Home: index.md
