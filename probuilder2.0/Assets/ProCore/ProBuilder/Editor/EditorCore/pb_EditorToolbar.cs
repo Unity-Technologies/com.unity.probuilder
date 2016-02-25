@@ -25,22 +25,32 @@ namespace ProBuilder2.EditorCommon
 		void OnGUI()
 		{
 			int max = ((int)this.position.width);
-			int rows = max / (int)actions[0].GetSize().x;
-
-			int i = 1;
+			int actionWidth = (int)actions[0].GetSize().x;
+			Vector2 iconSize = new Vector2(actions[0].icon.width, actions[0].icon.height);
+			int columns = System.Math.Max(max / actionWidth - 1, 1);
+			int rows = (actions.Count / columns) + (actions.Count % columns != 0 ? 1 : 0);
 
 			GUILayout.BeginHorizontal();
 
-			foreach(pb_MenuAction action in actions)
+			for(int i = 0; i < rows; i++)
 			{
-				action.DoButton();
-
-				if(++i >= rows)
+				for(int n = 0; n < columns; n++)
 				{
-					i = 1;
-					GUILayout.EndHorizontal();
-					GUILayout.BeginHorizontal();
+					int index = i * columns + n;
+
+					if(index < actions.Count)
+					{
+						pb_MenuAction action = actions[index];
+						action.DoButton();
+					}
+					else
+					{
+						pb_MenuAction.DoSpace(iconSize);
+					}
 				}
+
+				GUILayout.EndHorizontal();
+				GUILayout.BeginHorizontal();
 			}
 
 			GUILayout.FlexibleSpace();

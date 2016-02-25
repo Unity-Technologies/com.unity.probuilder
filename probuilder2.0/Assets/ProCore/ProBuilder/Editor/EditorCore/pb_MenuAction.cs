@@ -46,6 +46,14 @@ namespace ProBuilder2.EditorCommon
 				Debug.Log(DoAction().notification);
 		}
 
+		public static void DoSpace(Vector2 size)
+		{
+			GUILayout.Label("", buttonStyle, 
+				GUILayout.MinWidth(size.x),
+				GUILayout.MinHeight(size.y)
+				);
+		}
+
 		/**
 		 *	Get the rendered width of this GUI item.
 		 */
