@@ -30,6 +30,19 @@ namespace ProBuilder2.Interface
 		}
 #endregion
 
+		static GUIContent _guiContent = null;
+
+		public static GUIContent TempGUIContent(string label, Texture2D icon = null)
+		{
+			if(_guiContent == null)
+				_guiContent = new GUIContent();
+
+			_guiContent.text = label;
+			_guiContent.image = icon;
+
+			return _guiContent;
+		}
+
 		private static Stack<bool> guiEnabled = new Stack<bool>();
 		private static Stack<Color> guiColor = new Stack<Color>();
 
