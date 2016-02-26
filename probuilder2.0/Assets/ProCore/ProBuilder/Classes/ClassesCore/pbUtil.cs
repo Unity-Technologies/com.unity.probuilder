@@ -496,11 +496,13 @@ namespace ProBuilder2.Common
 	 *	@param _delimiter Inserts this string between entries.
 	 *	\returns Formatted string.
 	 */
+	[Obsolete]
 	public static string ToFormattedString<T>(this T[] t, string _delimiter)
 	{
 		return t.ToFormattedString(_delimiter, 0, -1);
 	}
 
+	[Obsolete]
 	public static string ToFormattedString<T>(this T[] t, string _delimiter, int entriesPerLine, int maxEntries)
 	{
 		int len = maxEntries > 0 ? (int)Mathf.Min(t.Length, maxEntries) : t.Length;
@@ -524,6 +526,7 @@ namespace ProBuilder2.Common
 		return str.ToString();		
 	}
 
+	[Obsolete]
 	public static string ToFormattedString(this pb_UV[] t, string _delimiter)
 	{
 		int len = t.Length;
@@ -552,11 +555,13 @@ namespace ProBuilder2.Common
 	 *	@param _delimiter Inserts this string between entries.
 	 *	\returns Formatted string.
 	 */
+	[Obsolete]
 	public static string ToFormattedString<T>(this List<T> t, string _delimiter)
 	{
 		return t.ToArray().ToFormattedString(_delimiter);
 	}
 
+	[Obsolete]
 	public static string ToFormattedString<T>(this HashSet<T> t, string _delimiter)
 	{
 		return t.ToArray().ToFormattedString(_delimiter);
@@ -571,20 +576,9 @@ namespace ProBuilder2.Common
 		return str;
 	}
 
-	/**
-	 * Convert a collection of items to a string with delimiter.
-	 */
-	public static string ToStringF(this IEnumerable val, char delimiter)
+	public static string ToString<T>(this IEnumerable<T> arr, string separator = ", ")
 	{
-		System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-		foreach(var obj in val)
-		{
-			sb.Append(obj.ToString());
-			sb.Append(delimiter);
-		}
-
-		return sb.ToString();
+		return string.Join(separator, arr.Select(x => x.ToString()).ToArray());
 	}
 
 	public static bool ColorWithString(string value, out Color col)

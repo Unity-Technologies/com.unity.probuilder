@@ -87,10 +87,10 @@ namespace ProBuilder2.UpgradeKit
 
 		public void Print()
 		{
-			Debug.Log(	"vertices: " + vertices.ToFormattedString(", ") +
-						"\nuv: " + uv.ToFormattedString(", ") +
-						// "\nsharedIndices: " + ((pb_IntArray[])sharedIndices.ToPbIntArray()).ToFormattedString(", ") +
-						"\nfaces: " + faces.ToFormattedString(", ")
+			Debug.Log(	"vertices: " + vertices.ToString(", ") +
+						"\nuv: " + uv.ToString(", ") +
+						// "\nsharedIndices: " + ((pb_IntArray[])sharedIndices.ToPbIntArray()).ToString(", ") +
+						"\nfaces: " + faces.ToString(", ")
 						);
 		}
 

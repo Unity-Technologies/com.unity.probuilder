@@ -47,7 +47,7 @@ public class MeshVisualizerEditor : Editor {
 			Vector3 world = transform.TransformPoint(kvp.Key);
 			Vector2 screen = HandleUtility.WorldToGUIPoint(world);
 
-			gc.text = kvp.Value.ToFormattedString(",");
+			gc.text = kvp.Value.ToString(",");
 			DrawSceneLabel(gc, screen);
 		}
 		Handles.EndGUI();

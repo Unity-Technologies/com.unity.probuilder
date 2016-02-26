@@ -1021,11 +1021,11 @@ public class pb_Object : MonoBehaviour
 			"Faces: " + faces.Length + "\n" +
 			"Submesh: " + msh.subMeshCount + "\n" +
 
-			"# Vertices\n" + pbUtil.ToFormattedString(_vertices, "\n\t") + "\n" +
-			"# UVs\n" + pbUtil.ToFormattedString(_uv, "\n\t") + "\n" +
-			"# Shared:\n" + sharedIndices.ToFormattedString("\n\t") + "\n" + 
-			"# Faces:\n" + pbUtil.ToFormattedString(_faces, "\n\t") + "\n"+
-			"# UV:\n" + _faces.Select(x => x.uv).ToArray().ToFormattedString("\n\t");
+			"# Vertices\n" + pbUtil.ToString(_vertices, "\n\t") + "\n" +
+			"# UVs\n" + pbUtil.ToString(_uv, "\n\t") + "\n" +
+			"# Shared:\n" + sharedIndices.ToString("\n\t") + "\n" + 
+			"# Faces:\n" + pbUtil.ToString(_faces, "\n\t") + "\n"+
+			"# UV:\n" + _faces.Select(x => x.uv).ToArray().ToString("\n\t");
 
 		return str;
 	}

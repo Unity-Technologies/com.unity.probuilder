@@ -162,9 +162,9 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(selection[0].SelectedTriangles.Length < 256)
 				{
-					GUILayout.Label("Faces: [" + selection[0].SelectedFaceIndices.Length + "/" + selection[0].faces.Length + "]  " + selection[0].SelectedFaceIndices.ToFormattedString(", "));
-					GUILayout.Label("Edges: [" + selection[0].SelectedEdges.Length + "]  " + selection[0].SelectedEdges.ToFormattedString(", "));
-					GUILayout.Label("Triangles: [" + selection[0].SelectedTriangles.Length + "]  " + selection[0].SelectedTriangles.ToFormattedString(", "));
+					GUILayout.Label("Faces: [" + selection[0].SelectedFaceIndices.Length + "/" + selection[0].faces.Length + "]  " + selection[0].SelectedFaceIndices.ToString(", "));
+					GUILayout.Label("Edges: [" + selection[0].SelectedEdges.Length + "]  " + selection[0].SelectedEdges.ToString(", "));
+					GUILayout.Label("Triangles: [" + selection[0].SelectedTriangles.Length + "]  " + selection[0].SelectedTriangles.ToString(", "));
 				}
 			}
 
@@ -206,14 +206,14 @@ namespace ProBuilder2.EditorCommon
 								{
 									if(m == null)
 									{
-										GUILayout.Label("" + pb.vertices.ToFormattedString("\n"));						
+										GUILayout.Label("" + pb.vertices.ToString("\n"));						
 									}
 									else
 									{
 										GUILayout.BeginVertical();
 										for(int i = 0; i < m.subMeshCount; i++)
 										{
-											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToFormattedString("\n") + "\n");
+											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
 										}
 										GUILayout.EndVertical();
 									}
@@ -248,7 +248,16 @@ namespace ProBuilder2.EditorCommon
 												GUILayout.Space(16);
 		
 												GUILayout.BeginVertical();
-													GUILayout.Label( tris.ToFormattedString("\n", 0, 256) + "\n" );
+													if(tris.Length > 256)
+													{
+														int[] dup = new int[256];
+														System.Array.Copy(tris, 0, dup, 0, 256);
+														GUILayout.Label( dup.ToString("\n") + "\n" );
+													}
+													else
+													{
+														GUILayout.Label( tris.ToString("\n") + "\n" );
+													}
 												GUILayout.EndVertical();
 											GUILayout.EndHorizontal();
 
@@ -270,7 +279,7 @@ namespace ProBuilder2.EditorCommon
 							GUILayout.Space(48);
 								if(pv.showColors)
 								{
-									GUILayout.Label("" + pb.colors.ToFormattedString("\n"));						
+									GUILayout.Label("" + pb.colors.ToString("\n"));						
 								}
 							GUILayout.EndHorizontal();
 						}
@@ -285,7 +294,7 @@ namespace ProBuilder2.EditorCommon
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(48);
 								if(pv.showUv)
-									GUILayout.Label("" + pb.uv.ToFormattedString("\n"));
+									GUILayout.Label("" + pb.uv.ToString("\n"));
 							GUILayout.EndHorizontal();
 						}
 
@@ -299,7 +308,7 @@ namespace ProBuilder2.EditorCommon
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(48);
 								if(pv.showUv2 && m != null)
-									GUILayout.Label("" + m.uv2.ToFormattedString("\n"));
+									GUILayout.Label("" + m.uv2.ToString("\n"));
 							GUILayout.EndHorizontal();
 						}
 
@@ -313,7 +322,7 @@ namespace ProBuilder2.EditorCommon
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(48);
 								if(pv.showAutoUV)
-									GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToFormattedString("\n"));
+									GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToString("\n"));
 							GUILayout.EndHorizontal();
 						}
 
@@ -331,7 +340,7 @@ namespace ProBuilder2.EditorCommon
 									GUILayout.BeginVertical();
 									for(int i = 0; i < pb.sharedIndicesUV.Length; i++)
 									{
-										if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToFormattedString(", "), EditorStyles.label))
+										if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToString(", "), EditorStyles.label))
 										{
 											pb.SetSelectedTriangles(pb.sharedIndicesUV[i]);
 
@@ -343,7 +352,7 @@ namespace ProBuilder2.EditorCommon
 										}
 									}
 									GUILayout.EndVertical();
-									// GUILayout.Label("" + pb.sharedIndicesUV.ToFormattedString("\n"));
+									// GUILayout.Label("" + pb.sharedIndicesUV.ToString("\n"));
 								}
 							GUILayout.EndHorizontal();
 						}
@@ -358,7 +367,7 @@ namespace ProBuilder2.EditorCommon
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(48);
 								if(pv.showSharedTris)
-									GUILayout.Label("" + pb.sharedIndices.ToFormattedString("\n"));
+									GUILayout.Label("" + pb.sharedIndices.ToString("\n"));
 							GUILayout.EndHorizontal();
 						}
 					}
@@ -397,7 +406,7 @@ namespace ProBuilder2.EditorCommon
 			// {
 			// 	Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(pb.vertices[arr[0]]) );
 							
-			// 	GUI.Label(new Rect(cen.x, cen.y, 200, 200), ((int[])arr).ToFormattedString("\n"));
+			// 	GUI.Label(new Rect(cen.x, cen.y, 200, 200), ((int[])arr).ToString("\n"));
 			// }
 
 			if(faceInfo)
@@ -424,13 +433,13 @@ namespace ProBuilder2.EditorCommon
 
 
 			// foreach(pb_Face face in pb.SelectedFaces)
-			// 	sb.AppendLine(face.colors.ToFormattedString("\n") + "\n");
+			// 	sb.AppendLine(face.colors.ToString("\n") + "\n");
 
 			// sb.AppendLine("\n");
 
 			// foreach(pb_IntArray si in pb.sharedIndices)
 			// {
-			// 	sb.AppendLine(si.array.ToFormattedString(", "));
+			// 	sb.AppendLine(si.array.ToString(", "));
 			// }
 
 			// sb.AppendLine("\n");
@@ -450,7 +459,7 @@ namespace ProBuilder2.EditorCommon
 			// 			{
 			// 				Vector2 cen = HandleUtility.WorldToGUIPoint( v );
 							
-			// 				GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToFormattedString(", "), "");
+			// 				GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToString(", "), "");
 
 			// 				DrawSceneLabel(gc, cen);
 			// 			}

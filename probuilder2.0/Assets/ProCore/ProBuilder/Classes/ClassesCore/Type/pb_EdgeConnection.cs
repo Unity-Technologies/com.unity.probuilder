@@ -42,7 +42,7 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			return face.ToString() + " : " + edges.ToFormattedString(", ");
+			return face.ToString() + " : " + edges.ToString(", ");
 		}
 
 		public static List<int> AllTriangles(List<pb_EdgeConnection> ec)

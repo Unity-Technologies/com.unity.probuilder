@@ -189,7 +189,7 @@ public static class pb_IntArrayUtility
 	{
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < arr.Length; i++)
-			sb.Append( "[" + arr[i].array.ToFormattedString(", ") + "] " );
+			sb.Append( "[" + arr[i].array.ToString(", ") + "] " );
 		
 		return sb.ToString();
 	}

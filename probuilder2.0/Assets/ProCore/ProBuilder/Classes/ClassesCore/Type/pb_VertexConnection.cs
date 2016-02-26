@@ -51,7 +51,7 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			return face.ToString() + " : " + indices.ToFormattedString(", ");
+			return face.ToString() + " : " + indices.ToString(", ");
 		}
 
 		/**

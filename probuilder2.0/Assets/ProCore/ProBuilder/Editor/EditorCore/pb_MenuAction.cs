@@ -46,14 +46,6 @@ namespace ProBuilder2.EditorCommon
 				Debug.Log(DoAction().notification);
 		}
 
-		public static void DoSpace(Vector2 size)
-		{
-			GUILayout.Label("", buttonStyle, 
-				GUILayout.MinWidth(size.x),
-				GUILayout.MinHeight(size.y)
-				);
-		}
-
 		/**
 		 *	Get the rendered width of this GUI item.
 		 */
@@ -70,6 +62,8 @@ namespace ProBuilder2.EditorCommon
 		public pb_MenuAction_Simple(Texture2D icon, System.Func<pb_Object[], pb_ActionResult> action)
 		{
 			this.icon = icon;
+			// @todo
+			this.tooltip = action(null).notification;
 			this.action = action;
 		}
 
