@@ -1,4 +1,7 @@
 site_name: ProBuilder Documentation
-
+theme: slate
 pages:
-  - Home: index.md
+- Home: index.md
+- Tools:
+  - Toolbar: toolbar/index.md
+  - Editors: toolbar/editors.md

@@ -57,8 +57,8 @@ namespace ProBuilder2.EditorCommon
 		{
 			Event e = Event.current;
 
-			int max = ((int)this.position.width);
-			int rows = max / (int)actions[0].GetSize().x;
+			int max = (int)this.position.width - 24;
+			int rows = System.Math.Max(max / (int)actions[0].GetSize().x, 1);
 
 			int i = 1;
 
