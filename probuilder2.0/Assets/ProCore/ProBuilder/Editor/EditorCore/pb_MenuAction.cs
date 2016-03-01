@@ -31,9 +31,9 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		public Texture2D icon;
-
 		public string tooltip;
 
+		// If this action has special extra settings, override this property to enable DoSettings().
 		public virtual bool HasSettings { get { return false; } }
 
 		public abstract pb_ActionResult DoAction();
@@ -52,24 +52,6 @@ namespace ProBuilder2.EditorCommon
 		public Vector2 GetSize()
 		{
 			return buttonStyle.CalcSize( pb_GUI_Utility.TempGUIContent(null, icon) );
-		}
-	}
-
-	public class pb_MenuAction_Simple : pb_MenuAction
-	{
-		public System.Func<pb_Object[], pb_ActionResult> action;
-
-		public pb_MenuAction_Simple(Texture2D icon, System.Func<pb_Object[], pb_ActionResult> action)
-		{
-			this.icon = icon;
-			// @todo
-			this.tooltip = action(null).notification;
-			this.action = action;
-		}
-
-		public override pb_ActionResult DoAction()
-		{
-			return action(new pb_Object[] { null });
 		}
 	}
 }

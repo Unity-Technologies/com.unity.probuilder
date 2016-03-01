@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using ProBuilder2.EditorCommon;
 
 /**
  * Generic GUI utility methods used in ProBuilder windows.
@@ -175,12 +176,27 @@ namespace ProBuilder2.Interface
 			return value;
 		}
 	
-		public static bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action<int> gui, int guiWidth, int guiHeight, pb_Object[] selection)
+		public static bool ToolSettingsGUI(	string text,
+											string description,
+											bool showSettings,
+											System.Func<pb_Object[], pb_ActionResult> action,
+											System.Action<int> gui,
+											int guiWidth,
+											int guiHeight,
+											pb_Object[] selection)
 		{
 			return ToolSettingsGUI(text, description, showSettings, action, gui, true, guiWidth, guiHeight , selection);
 		}
 
-		public static bool ToolSettingsGUI(string text, string description, bool showSettings, System.Action<pb_Object[]> action, System.Action<int> gui, bool enabled, int guiWidth, int guiHeight, pb_Object[] selection)
+		public static bool ToolSettingsGUI(	string text,
+											string description,
+											bool showSettings,
+											System.Func<pb_Object[], pb_ActionResult> action,
+											System.Action<int> gui,
+											bool enabled,
+											int guiWidth,
+											int guiHeight,
+											pb_Object[] selection)
 		{
 			if(enabled)
 			{

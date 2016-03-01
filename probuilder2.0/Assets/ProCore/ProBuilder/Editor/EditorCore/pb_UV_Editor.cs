@@ -3205,12 +3205,12 @@ public class pb_UV_Editor : EditorWindow
 		pb_Editor_Utility.ShowNotification(this, "Collapse UVs");
 	}
 
-	public void Menu_SewUVs(pb_Object[] selection)
+	public pb_ActionResult Menu_SewUVs(pb_Object[] selection)
 	{
 		if(channel == 1)
 		{
 			pb_Editor_Utility.ShowNotification(this, "Invalid UV2 Operation");
-			return;
+			return new pb_ActionResult(Status.Canceled, "Invalid UV2 Operation");
 		}
 
 		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
@@ -3228,7 +3228,9 @@ public class pb_UV_Editor : EditorWindow
 		}
 		
 		RefreshSelectedUVCoordinates();
+
 		pb_Editor_Utility.ShowNotification(this, "Weld UVs");
+			return new pb_ActionResult(Status.Success, "Invalid UV2 Operation");
 	}
 
 	public void Menu_SplitUVs()

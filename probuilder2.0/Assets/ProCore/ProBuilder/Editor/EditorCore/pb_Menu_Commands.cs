@@ -27,18 +27,18 @@ namespace ProBuilder2.EditorCommon
 		 *	Define "headers" for pro only functions.
 		 */
 #if PROTOTYPE
-		public static void MenuMergeObjects(pb_Object[] selection) { Debug.LogWarning("MenuMergeObjects is a ProBuilder Advanced feature."); }
-		public static void MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature."); }
-		public static void MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature."); }
-		public static void MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature."); }
-		public static void MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature."); }
-		public static void MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature."); }
-		public static void MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature."); }
-		public static void MenuInsertEdgeLoop(pb_Object[] selection) { Debug.LogWarning("MenuInsertEdgeLoop is a ProBuilder Advanced feature."); }
-		public static void MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature."); }
-		public static void MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature."); }
-		public static void MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature."); }
-		public static void WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature."); }
+		public static pb_ActionResult MenuMergeObjects(pb_Object[] selection) { Debug.LogWarning("MenuMergeObjects is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuInsertEdgeLoop(pb_Object[] selection) { Debug.LogWarning("MenuInsertEdgeLoop is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 #endif
 
 #region Object Level
@@ -48,12 +48,12 @@ namespace ProBuilder2.EditorCommon
 		 * Combine selected pb_Objects to a single object.
 		 * ProBuilder only.
 		 */
-		public static void MenuMergeObjects(pb_Object[] selected)
+		public static pb_ActionResult MenuMergeObjects(pb_Object[] selected)
 		{
 			if(selected.Length < 2)
 			{
 				pb_Editor_Utility.ShowNotification("Must Select 2+ Objects");
-				return;
+				return new pb_ActionResult(Status.Failure, "Must Select 2+ Objects");
 			}
 
 			int option = EditorUtility.DisplayDialogComplex(
@@ -65,7 +65,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object pb = null;
 
-			if(option == 2) return;
+			if(option == 2) return new pb_ActionResult(Status.Canceled, "Merge Canceled");
 
 			if( pbMeshOps.CombineObjects(selected, out pb) )
 			{
@@ -100,6 +100,8 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection();
+
+			return new pb_ActionResult(Status.Success, "Merged Objects");
 		}
 #endif
 
@@ -107,12 +109,18 @@ namespace ProBuilder2.EditorCommon
 		 * Set the pivot to the center of the current element selection.
 		 * ProBuilder only.
 		 */
-		public static void MenuSetPivot(pb_Object[] selection)
+		public static pb_ActionResult MenuSetPivot(pb_Object[] selection)
 		{
 			if(selection.Length > 0)
+			{
 				pb_Editor_Utility.ShowNotification("Set Pivot");
+			}
 			else
+			{
 				pb_Editor_Utility.ShowNotification("Nothing Selected");
+				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+			}
+
 
 			Object[] objects = new Object[selection.Length * 2];
 			System.Array.Copy(selection, 0, objects, 0, selection.Length);
@@ -138,13 +146,20 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor != null)
 				editor.UpdateSelection();
+
+			return new pb_ActionResult(Status.Success, "Set Pivot");
 		}
 
 		/**
 		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
 		 */
-		public static void ProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
+		public static pb_ActionResult ProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
 		{
+			if(selected.Count() < 1)
+				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+
+			int i = 0;
+
 			foreach(MeshFilter mf in selected)
 			{
 				if(mf.sharedMesh == null)
@@ -176,6 +191,8 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 				pb.Optimize();
 
+				i++;
+
 				// Don't call the editor version of SetEntityType because that will
 				// reset convexity and trigger settings, which we can assume are user
 				// set already.
@@ -188,17 +205,19 @@ namespace ProBuilder2.EditorCommon
 
 			if(pb_Editor.instance != null)
 				pb_Editor.instance.UpdateSelection();
+
+			return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
 		}
 
 		/**
 		 * Set the pb_Entity entityType on selection.
 		 */
-		public static void MenuSetEntityType(pb_Object[] selection, EntityType entityType)
+		public static pb_ActionResult MenuSetEntityType(pb_Object[] selection, EntityType entityType)
 		{
 			if(selection.Length < 1)
 			{
 				pb_Editor_Utility.ShowNotification("Nothing Selected");
-				return;
+				return pb_ActionResult.NoSelection;
 			}
 
 			Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
@@ -214,15 +233,15 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			pb_Editor_Utility.ShowNotification("Set " + entityType);
+			return new pb_ActionResult(Status.Success, "Set " + entityType);
 		}
 
 
 		/**
 		 *	Open the vertex coloring editor as stored by user prefs.
 		 */
-		public static void MenuOpenVertexColorsEditor(pb_Object[] selection)
+		public static pb_ActionResult MenuOpenVertexColorsEditor(pb_Object[] selection)
 		{
-
 			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
@@ -233,13 +252,14 @@ namespace ProBuilder2.EditorCommon
 					pb_VertexColor_Editor.MenuOpenWindow();
 					break;
 			}
+
+			return new pb_ActionResult(Status.Success, "Open Vertex Colors Editor");
 		}
 
 		public static void VertexColorsGUI(int width)
 		{
 			VertexColorTool tool = pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
 			VertexColorTool prev = tool;
-
 
 			GUILayout.Label("Color Editor");
 
@@ -257,12 +277,12 @@ namespace ProBuilder2.EditorCommon
 			Intersect
 		}
 
-		static void MenuBooleanOperation(BooleanOperation operation, pb_Object lhs, pb_Object rhs)
+		static pb_ActionResult MenuBooleanOperation(BooleanOperation operation, pb_Object lhs, pb_Object rhs)
 		{
 			if(lhs == null || rhs == null)
 			{
 				pb_Editor_Utility.ShowNotification("Must Select 2 Objects");
-				return;
+				return new pb_ActionResult(Status.Failure, "Must Select 2 Objects");
 			}
 
 			string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
@@ -299,30 +319,31 @@ namespace ProBuilder2.EditorCommon
 			Selection.objects = new Object[] { pb.gameObject };
 
 			pb_Editor_Utility.ShowNotification(op_string);
+			return new pb_ActionResult(Status.Success, op_string);
 		}
 
 		/**
 		 * Union operation between two ProBuilder objects.
 		 */
-		public static void MenuUnion(pb_Object lhs, pb_Object rhs)
+		public static pb_ActionResult MenuUnion(pb_Object lhs, pb_Object rhs)
 		{
-			MenuBooleanOperation(BooleanOperation.Union, lhs, rhs);
+			return MenuBooleanOperation(BooleanOperation.Union, lhs, rhs);
 		}
 
 		/**
 		 * Subtract boolean operation between two pb_Objects.
 		 */
-		public static void MenuSubtract(pb_Object lhs, pb_Object rhs)
+		public static pb_ActionResult MenuSubtract(pb_Object lhs, pb_Object rhs)
 		{
-			MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
+			return MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
 		}
 
 		/**
 		 * Intersect boolean operation between two pb_Objects.
 		 */
-		public static void MenuIntersect(pb_Object lhs, pb_Object rhs)
+		public static pb_ActionResult MenuIntersect(pb_Object lhs, pb_Object rhs)
 		{
-			MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
+			return MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
 		}
 #endif
 
@@ -333,12 +354,12 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	Reverse the direction of all faces on each object.
 		 */
-		public static void MenuFlipObjectNormals(pb_Object[] selected)
+		public static pb_ActionResult MenuFlipObjectNormals(pb_Object[] selected)
 		{
 			if(selected == null || selected.Length < 1)
 			{
-				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
-				return;
+				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Objects Selected!");
+				return pb_ActionResult.NoSelection;
 			}
 
 			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
@@ -351,14 +372,21 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			pb_Editor_Utility.ShowNotification("Flip Normals on " + selected.Length + " objects");
+			pb_Editor_Utility.ShowNotification("Flip Object Normals");
+			return new pb_ActionResult(Status.Success, "Flip Object Normals");
 		}
 
 		/**
 		 * Flips all face normals if editLevel == EditLevel.Top, else flips only pb_Object->SelectedFaces
 		 */
-		public static void MenuFlipNormals(pb_Object[] selected)
+		public static pb_ActionResult MenuFlipNormals(pb_Object[] selected)
 		{
+			if(selected == null || selected.Length < 1)
+			{
+				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
+				return pb_ActionResult.NoSelection;
+			}
+
 			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
 			int c = 0;
 			int faceCount = pb_Editor.instance.selectedFaceCount;
@@ -383,16 +411,25 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(c > 0)
+			{
 				pb_Editor_Utility.ShowNotification("Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
+				return new pb_ActionResult(Status.Success, "Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
+			}
 			else
-				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
+			{
+				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected");
+				return new pb_ActionResult(Status.Canceled, "Flip Normals\nNo Faces Selected");
+			}
 		}
 
 		/**
 		 * Attempt to make face normals uniform.
 		 */
-		public static void MenuConformNormals(pb_Object[] selection)
+		public static pb_ActionResult MenuConformNormals(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordObjects(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
 			int flipped = 0;
 
@@ -431,6 +468,11 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor.instance.UpdateSelection();
 
 			pb_Editor_Utility.ShowNotification(flipped > 0 ? "Reversed " + flipped + " Faces" : "Normals Already Uniform");
+
+			if(flipped > 0)
+				return new pb_ActionResult(Status.Success, "Reversed " + flipped + " Faces");
+			else
+				return new pb_ActionResult(Status.Canceled, "Normals Already Uniform");
 		}
 #endregion
 
@@ -459,8 +501,11 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Infers the correct context and extrudes the selected elements.
 		 */
-		public static void MenuExtrude(pb_Object[] selection)
+		public static pb_ActionResult MenuExtrude(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Extrude");
 
 			int extrudedFaceCount = 0;
@@ -526,14 +571,22 @@ namespace ProBuilder2.EditorCommon
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			SceneView.RepaintAll();
+
+			if( extrudedFaceCount > 0 )
+				return new pb_ActionResult(Status.Success, "Extrude");
+			else
+				return new pb_ActionResult(Status.Canceled, "Extrude\nEmpty Selection");
 		}
 
 #if !PROTOTYPE
 		/**
 		 * Create a face between two edges.
 		 */
-		public static void MenuBridgeEdges(pb_Object[] selection)
+		public static pb_ActionResult MenuBridgeEdges(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordObjects(selection, "Bridge Edges");
 
 			bool success = false;
@@ -553,17 +606,19 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
+			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
 			if(success)
 			{
 				pb_Editor.instance.UpdateSelection();
 				pb_Editor_Utility.ShowNotification("Bridge Edges");
+				return new pb_ActionResult(Status.Success, "Bridge Edges");
 			}
 			else
 			{
 				Debug.LogWarning("Failed Bridge Edges.  Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
+				return new pb_ActionResult(Status.Failure, "Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
 			}
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 		}
 #endif
 #endregion
@@ -573,8 +628,11 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Grow selection to plane using max angle diff.
 		 */
-		public static void MenuGrowSelection(pb_Object[] selection)
+		public static pb_ActionResult MenuGrowSelection(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
 			// profiler.BeginSample("MenuGrowSelection");
@@ -714,8 +772,12 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection(false);
 
 			pb_Editor_Utility.ShowNotification(grown > 0 ? "Grow Selection" : "Nothing to Grow");
-
 			SceneView.RepaintAll();
+
+			if(grown > 0)
+				return new pb_ActionResult(Status.Success, "Grow Selection");
+			else
+				return new pb_ActionResult(Status.Failure, "Nothing to Grow");
 		}
 
 		public static void GrowSelectionGUI(int width)
@@ -755,14 +817,16 @@ namespace ProBuilder2.EditorCommon
 		 * Note - requires a reference to an open pb_Editor be passed.  This is because shrink
 		 * vertices requires access to the Selected_Universal_Edges_All array.
 		 */
-		public static void MenuShrinkSelection(pb_Object[] selection)
+		public static pb_ActionResult MenuShrinkSelection(pb_Object[] selection)
 		{
 			// @TODO
 			if(editor == null)
 			{
 				pb_Editor_Utility.ShowNotification("ProBuilder Editor Not Open!");
-				return;
+				return new pb_ActionResult(Status.Canceled, "ProBuilder Editor Not Open!");
 			}
+			else if (selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
 
 			pbUndo.RecordSelection(selection, "Shrink Selection");
 
@@ -810,13 +874,21 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection(false);
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if( rc > 0 )
+				return new pb_ActionResult(Status.Success, "Shrink Selection");
+			else
+				return new pb_ActionResult(Status.Canceled, "Nothing to Shrink");
 		}
 
 		/**
 		 * Invert the current selection.
 		 */
-		public static void MenuInvertSelection(pb_Object[] selection)
+		public static pb_ActionResult MenuInvertSelection(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Invert Selection");
 
 			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
@@ -879,13 +951,18 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor_Utility.ShowNotification("Invert Selection");
 
 			SceneView.RepaintAll();
+
+			return new pb_ActionResult(Status.Success, "Invert Selection");
 		}
 
 		/**
 		 * Expands the current selection using a "Ring" method.
 		 */
-		public static void MenuRingSelection(pb_Object[] selection)
+		public static pb_ActionResult MenuRingSelection(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Select Edge Ring");
 
 			bool success = false;
@@ -906,13 +983,21 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor_Utility.ShowNotification(success ? "Select Edge Ring" : "Nothing to Ring");
 
 			SceneView.RepaintAll();
+
+			if(success)
+				return new pb_ActionResult(Status.Success, "Select Edge Ring");
+			else
+				return new pb_ActionResult(Status.Failure, "Nothing to Ring");
 		}
 
 		/**
 		 * Selects an Edge loop. Todo - support for face loops.
 		 */
-		public static void MenuLoopSelection(pb_Object[] selection)
+		public static pb_ActionResult MenuLoopSelection(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Select Edge Loop");
 
 			bool foundLoop = false;
@@ -936,6 +1021,11 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor_Utility.ShowNotification(foundLoop ? "Select Edge Loop" : "Nothing to Loop");
 
 			SceneView.RepaintAll();
+
+			if(foundLoop)
+				return new pb_ActionResult(Status.Success, "Select Edge Loop");
+			else
+				return new pb_ActionResult(Status.Failure, "Nothing to Loop");
 		}
 #endregion
 
@@ -945,9 +1035,14 @@ namespace ProBuilder2.EditorCommon
 		 * Delete selected faces.
 		 * ProBuilder only.
 		 */
-		public static void MenuDeleteFace(pb_Object[] selection)
+		public static pb_ActionResult MenuDeleteFace(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Delete Face");
+
+			int count = 0;
 
 			foreach(pb_Object pb in selection)
 			{
@@ -958,6 +1053,7 @@ namespace ProBuilder2.EditorCommon
 				}
 				
 				pb.DeleteFaces(pb.SelectedFaces);
+				count += pb.SelectedFaceCount;
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -973,14 +1069,22 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor_Utility.ShowNotification("Delete Elements");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(count > 0)
+				return new pb_ActionResult(Status.Success, "Delete " + count + " Faces");
+			else
+				return new pb_ActionResult(Status.Failure, "No Faces Selected");
 		}
 
 #if !PROTOTYPE
 		/**
 		 * Delete selected vertices and attempt to retriangulate a super face.
 		 */
-		public static void MenuDeleteVertices(pb_Object[] selection)
+		public static pb_ActionResult MenuDeleteVertices(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordObjects(selection, "Delete Vertices");
 
 			foreach(pb_Object pb in selection)
@@ -1015,10 +1119,15 @@ namespace ProBuilder2.EditorCommon
 
 			if(pb_Editor.instance)
 				pb_Editor.instance.UpdateSelection();
+
+			return new pb_ActionResult(Status.Success, "Delete Vertices");
 		}
 
-		public static void MenuDetachFaces(pb_Object[] selection)
+		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			int option = EditorUtility.DisplayDialogComplex(
 				"Rules of Detachment",
 				"Detach face selection to submesh or new ProBuilder object?",
@@ -1029,13 +1138,13 @@ namespace ProBuilder2.EditorCommon
 			switch(option)
 			{
 				case 0:
-					MenuDetachFacesToObject(selection);
-					break;
+					return MenuDetachFacesToObject(selection);
+
 				case 1:
-					MenuDetachFacesToSubmesh(selection);
-					break;
-				case 2:
-					break;
+					return MenuDetachFacesToSubmesh(selection);
+
+				default:
+					return pb_ActionResult.UserCanceled;
 			}
 		}
 
@@ -1043,9 +1152,14 @@ namespace ProBuilder2.EditorCommon
 		 * Detach selected faces to submesh.
 		 * ProBuilder only.
 		 */
-		public static void MenuDetachFacesToSubmesh(pb_Object[] selection)
+		public static pb_ActionResult MenuDetachFacesToSubmesh(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
+
+			int count = 0;
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1057,6 +1171,8 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 
 				pb.SetSelectedFaces(pb.SelectedFaces);
+
+				count += pb.SelectedFaceCount;
 			}
 
 			if(editor)
@@ -1065,15 +1181,21 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor_Utility.ShowNotification("Detach Face");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(count > 0)
+				return new pb_ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));	
+			else
+				return new pb_ActionResult(Status.Success, "Detach Faces");
 		}
 
 		/**
 		 * Detaches currently selected faces to a new ProBuilder object.
 		 * ProBuilder only.
 		 */
-		public static void MenuDetachFacesToObject(pb_Object[] selection)
+		public static pb_ActionResult MenuDetachFacesToObject(pb_Object[] selection)
 		{
-			if(!editor) return;
+			if(!editor || selection == null || selection.Length < 1)	
+				return pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
 
@@ -1150,6 +1272,11 @@ namespace ProBuilder2.EditorCommon
 				Debug.LogWarning("No faces selected! Please select some faces and try again.");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(detachedFaceCount > 0)
+				return new pb_ActionResult(Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
+			else
+				return new pb_ActionResult(Status.Failure, "No Faces Selected");
 		}
 
 #endif
@@ -1157,8 +1284,14 @@ namespace ProBuilder2.EditorCommon
 
 #region Face / Triangles
 
-		public static void MenuMergeFaces(pb_Object[] selection)
+		/**
+		 *	Treat selected faces as a single face.
+		 */
+		public static pb_ActionResult MenuMergeFaces(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Merge Faces");
 
 			int success = 0;
@@ -1179,22 +1312,26 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
+			if(editor)
+				editor.UpdateSelection();
+
 			if(success > 0)
 			{
 				pb_Editor_Utility.ShowNotification("Merged " + success + " Faces");
+				return new pb_ActionResult(Status.Success, "Merged " + success + " Faces");
 			}
-
-			if(editor)
-			{
-				editor.UpdateSelection();
-			}
+			else
+				return new pb_ActionResult(Status.Failure, "Merge Faces\nNo Faces Selected");
 		}
 
 		/**
 		 * Turn / flip / swap a quad connecting edge.
 		 */
-		public static void MenuFlipEdges(pb_Object[] selection)
+		public static pb_ActionResult MenuFlipEdges(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Flip Face Edges");
 			int success = 0;
 
@@ -1212,11 +1349,15 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			if(success > 0)
-				pb_Editor_Utility.ShowNotification("Flipped " + success + " Edges");
-
 			if(editor)
 				editor.UpdateSelection();
+
+			if(success > 0)
+			{
+				pb_Editor_Utility.ShowNotification("Flipped " + success + " Edges");
+				return new pb_ActionResult(Status.Success, "Flipped " + success + " Edges");
+			}
+				return new pb_ActionResult(Status.Failure, "Flip Edges\nNo Faces Selected");
 		}
 #endregion
 
@@ -1228,8 +1369,11 @@ namespace ProBuilder2.EditorCommon
 		 * Collapse selected vertices
 		 * ProBuilder only.
 		 */
-		public static void MenuCollapseVertices(pb_Object[] selection)
+		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			bool success = false;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
@@ -1255,21 +1399,32 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			if(success)
-				pb_Editor_Utility.ShowNotification("Collapse Vertices");
 
 			if(editor)
 				editor.UpdateSelection();
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(success)
+			{
+				pb_Editor_Utility.ShowNotification("Collapse Vertices");
+				return new pb_ActionResult(Status.Success, "Collapse Vertices");
+			}
+			else
+			{
+				return new pb_ActionResult(Status.Failure, "Collapse Vertices\nNo Vertices Selected");
+			}
 		}
 
 		/**
 		 * Weld all selected vertices.
 		 * ProBuilder only.
 		 */
-		public static void MenuWeldVertices(pb_Object[] selection)
+		public static pb_ActionResult MenuWeldVertices(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			bool success = false;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
@@ -1304,16 +1459,21 @@ namespace ProBuilder2.EditorCommon
 				weldCount -= pb.sharedIndices.Length;
 			}
 
-
-			if(success && weldCount > 0)
-				pb_Editor_Utility.ShowNotification("Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
-			else
-				pb_Editor_Utility.ShowNotification("Nothing to Weld");
-
 			if(editor)
 				editor.UpdateSelection(true);
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+			
+			if(success && weldCount > 0)
+			{
+				pb_Editor_Utility.ShowNotification("Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
+				return new pb_ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
+			}
+			else
+			{
+				pb_Editor_Utility.ShowNotification("Nothing to Weld");
+				return new pb_ActionResult(Status.Failure, "Nothing to Weld");
+			}
 		}
 
 		const float MIN_WELD_DISTANCE = .0001f;
@@ -1346,8 +1506,11 @@ namespace ProBuilder2.EditorCommon
 		 * Split selected vertices from shared vertices.
 		 * ProBuilder only.
 		 */
-		public static void MenuSplitVertices(pb_Object[] selection)
+		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection)
 		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			int splitCount = 0;
 			pbUndo.RecordObjects(selection, "Split Vertices");
 
@@ -1413,7 +1576,13 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection();
+
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(splitCount > 0)
+				return new pb_ActionResult(Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
+			else
+				return new pb_ActionResult(Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
 		}
 
 #endif
@@ -1428,12 +1597,12 @@ namespace ProBuilder2.EditorCommon
 		 * center of the edge.  Otherwise from Vertex.
 		 * ProBuilder only.
 		 */
-		public static void MenuSubdivide(pb_Object[] selection)
+		public static pb_ActionResult MenuSubdivide(pb_Object[] selection)
 		{
-			if(selection.Length < 1)
+			if(!editor || selection == null || selection.Length < 1)
 			{
 				pb_Editor_Utility.ShowNotification("Nothing Selected");
-				return;
+				return pb_ActionResult.NoSelection;
 			}
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
@@ -1476,14 +1645,19 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection(true);
+
+			return new pb_ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
 		}
 
 		/**
 		 * Subdivides all currently selected faces.
 		 * ProBuilder only.
 		 */
-		public static void MenuSubdivideFace(pb_Object[] selection)
+		public static pb_ActionResult MenuSubdivideFace(pb_Object[] selection)
 		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			int success = 0;
 
 			foreach(pb_Object pb in selection)
@@ -1503,27 +1677,33 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
+			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
 			if(success > 0)
 			{
 		        pb_Editor_Utility.ShowNotification("Subdivide " + success + ((success > 1) ? " faces" : " face"));
 
 				if(editor)
 					editor.UpdateSelection(true);
+
+				return new pb_ActionResult(Status.Success, "Subdivide " + success + ((success > 1) ? " faces" : " face"));
 			}
 			else
 			{
 				Debug.LogWarning("Subdivide faces failed - did you not have any faces selected?");
+				return new pb_ActionResult(Status.Failure, "Subdivide Faces\nNo faces selected");
 			}
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 		}
 
 		/**
 		 * Connects all currently selected edges.
 		 * ProBuilder only.
 		 */
-		public static void MenuConnectEdges(pb_Object[] selection)
+		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection)
 		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
 			int success = 0;
@@ -1546,15 +1726,16 @@ namespace ProBuilder2.EditorCommon
 			if(success > 0)
 			{
 				if(editor)
-				{
 					editor.UpdateSelection(true);
-				}
 
 				pb_Editor_Utility.ShowNotification("Connect Edges");
+
+				return new pb_ActionResult(Status.Success, "Connect Edges");
 			}
 			else
 			{
 				Debug.LogWarning("No valid split paths found.  This is most likely because you are attempting to split edges that do belong to the same face, or do not have more than one edge selected.");
+				return new pb_ActionResult(Status.Failure, "Connect Edges\nNo Edges Selected");
 			}
 		}
 
@@ -1562,8 +1743,11 @@ namespace ProBuilder2.EditorCommon
 		 * Connects all currently selected vertices.
 		 * ProBuilder only.
 		 */
-		public static void MenuConnectVertices(pb_Object[] selection)
+		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection)
 		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			int success = 0;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
@@ -1615,13 +1799,14 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification("Connect Vertices");
 
 				if(editor)
-				{
 					editor.UpdateSelection(true);
-				}
+
+				return new pb_ActionResult(Status.Success, "Connect Vertices");
 			}
 			else
 			{
 				Debug.LogWarning("No valid split paths found.  This is could be because you are attempting to split between vertices that do not belong to the same face, or the split function can't find a good plane to re-triangulate from.");
+				return new pb_ActionResult(Status.Failure, "Connect Vertices\nNo Valid Split Paths Found");
 			}
 		}
 
@@ -1629,8 +1814,11 @@ namespace ProBuilder2.EditorCommon
 		 * Inserts an edge loop along currently selected Edges.
 		 * ProBuilder only.
 		 */
-		public static void MenuInsertEdgeLoop(pb_Object[] selection)
+		public static pb_ActionResult MenuInsertEdgeLoop(pb_Object[] selection)
 		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			int success = 0;
 			pbUndo.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
 
@@ -1647,15 +1835,20 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			if(success > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Insert Edge Loop");
-			}
-
 			if(editor)
 				editor.UpdateSelection(true);
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
+
+			if(success > 0)
+			{
+				pb_Editor_Utility.ShowNotification("Insert Edge Loop");
+				return new pb_ActionResult(Status.Success, "Insert Edge Loop");
+			}
+			else
+			{
+				return new pb_ActionResult(Status.Success, "Insert Edge Loop");
+			}
 		}
 
 #endif
