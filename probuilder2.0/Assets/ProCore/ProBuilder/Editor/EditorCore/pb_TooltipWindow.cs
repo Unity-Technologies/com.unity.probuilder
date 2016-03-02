@@ -1,10 +1,19 @@
 using UnityEngine;
 using UnityEditor;
+using System.Reflection;
+using System;
 
 namespace ProBuilder2.EditorCommon
 {
 	public class pb_TooltipWindow : EditorWindow
 	{
+		// yoinked from EditorWindow class, sans automatic focusing
+		internal void Show(Rect buttonRect)
+		{
+			this.position = buttonRect;
+			this.ShowPopup();
+		}
+
 		public GUIContent content = new GUIContent("");
 
 		public void SetTooltip(string text)

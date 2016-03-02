@@ -51,15 +51,15 @@ namespace ProBuilder2.EditorCommon
 			Vector2 size = EditorStyles.boldLabel.CalcSize( pb_GUI_Utility.TempGUIContent(action.tooltip) );
 			size += new Vector2(8,8);
 
-			Rect tooltipRect = new Rect((window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
-										(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y,
-										size.x,
-										size.y);
+			Rect r = new Rect(	(window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
+								(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y,
+								size.x,
+								size.y);
 
 			if(tooltipWindow == null)
 			{
 				tooltipWindow = ScriptableObject.CreateInstance<pb_TooltipWindow>();
-				tooltipWindow.ShowAsDropDown(tooltipRect, new Vector2(size.x, size.y));	
+				tooltipWindow.Show(r);
 				tooltipWindow.SetTooltip(action.tooltip);
 			}
 		}
