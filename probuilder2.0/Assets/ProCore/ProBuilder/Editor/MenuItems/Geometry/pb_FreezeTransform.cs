@@ -22,37 +22,7 @@ namespace ProBuilder2.Actions
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Freeze Transforms", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 		public static void MenuFreezeTransforms()
 		{
-			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-
-			pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
-			pbUndo.RecordObjects(selection, "Freeze Transforms");
-
-			foreach(pb_Object pb in selection)
-			{
-				pb.ToMesh();
-
-				Vector3[] v = pb.VerticesInWorldSpace();
-
-				pb.transform.position = Vector3.zero;
-				pb.transform.localRotation = Quaternion.identity;
-				pb.transform.localScale = Vector3.one;
-
-				foreach(pb_Face face in pb.faces)
-				{
-					face.manualUV = true;
-				}
-
-				pb.SetVertices(v);
-
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-			}
-
-			if(pb_Editor.instance)
-				pb_Editor.instance.UpdateSelection();
-
-			SceneView.RepaintAll();
+			pb_Menu_Commands.MenuFreezeTransforms( pbUtil.GetComponents<pb_Object>(Selection.transforms) );
 		}
 	}
 }

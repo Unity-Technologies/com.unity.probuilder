@@ -24,13 +24,22 @@ namespace ProBuilder2.EditorCommon
 		{
 			actions = pb_EditorToolbarLoader.GetActions();
 			this.wantsMouseMove = true;
+			this.autoRepaintOnSceneChange = true;
 			this.minSize = actions[0].GetSize() + new Vector2(6, 6);
-
-			EditorApplication.update += this.Update;
+			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
+			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
 		}
 
-		void Update()
+		void OnDisable()
 		{
+			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
+		}
+
+		void OnElementSelectionChange(pb_Object[] selection) { OnSelectionChange(); }
+
+		void OnSelectionChange()
+		{
+			this.Repaint();
 		}
 
 		Vector2 scroll = Vector2.zero;

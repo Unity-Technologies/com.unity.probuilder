@@ -38,12 +38,21 @@ namespace ProBuilder2.EditorCommon
 
 		public abstract pb_ActionResult DoAction();
 
+		// Is this action valid based on the current selection and context?
+		public abstract bool IsEnabled();
+
 		public virtual void DoSettings() {}
 
 		public void DoButton()
 		{
+			bool wasEnabled = GUI.enabled;
+			
+			GUI.enabled = IsEnabled();
+
 			if( GUILayout.Button(icon, buttonStyle) )
 				Debug.Log(DoAction().notification);
+
+			GUI.enabled = wasEnabled;
 		}
 
 		/**

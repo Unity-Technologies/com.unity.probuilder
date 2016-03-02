@@ -23,11 +23,15 @@ public class pb_Smoothing_Editor : EditorWindow
 
 #region INITIALIZATION CALLBACKS
 
+	[System.Obsolete("Use MenuOpenSmoothingEditor instead.")]
 	public static pb_Smoothing_Editor Init()
 	{
-		pb_Smoothing_Editor pse = (pb_Smoothing_Editor)EditorWindow.GetWindow(typeof(pb_Smoothing_Editor), true, "Smoothing Groups", true);
+		return EditorWindow.GetWindow<pb_Smoothing_Editor>(true, "Smoothing Groups", true);
+	}
 
-		return pse;
+	public static void MenuOpenSmoothingEditor()
+	{
+		EditorWindow.GetWindow<pb_Smoothing_Editor>(true, "Smoothing Groups", true);
 	}
 
 	void SetDrawNormals(float val)

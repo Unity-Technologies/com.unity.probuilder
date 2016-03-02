@@ -543,7 +543,7 @@ public class pb_Editor : EditorWindow
 
 		tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Color", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
 			tool_vertexColors,
-			pb_Menu_Commands.MenuOpenVertexColorsEditor,
+			pb_Menu_Commands.MenuOpenVertexColorsEditor2,
 			pb_Menu_Commands.VertexColorsGUI,
 			Screen.width,
 			36,
@@ -551,7 +551,7 @@ public class pb_Editor : EditorWindow
 
 #if !PROTOTYPE
 		if(ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton))
-			pb_Smoothing_Editor.Init();
+			pb_Smoothing_Editor.MenuOpenSmoothingEditor();
 #else
 		ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton);
 #endif

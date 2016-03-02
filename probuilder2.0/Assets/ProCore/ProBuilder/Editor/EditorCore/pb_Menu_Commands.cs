@@ -111,7 +111,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuSetPivot(pb_Object[] selection)
 		{
-			if(selection.Length > 0)
+			if(selection != null && selection.Length > 0)
 			{
 				pb_Editor_Utility.ShowNotification("Set Pivot");
 			}
@@ -148,6 +148,47 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection();
 
 			return new pb_ActionResult(Status.Success, "Set Pivot");
+		}
+
+					
+		public static pb_ActionResult MenuFreezeTransforms(pb_Object[] selection)
+		{
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
+			pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
+			pbUndo.RecordObjects(selection, "Freeze Transforms");
+
+			foreach(pb_Object pb in selection)
+			{
+				pb.ToMesh();
+
+				Vector3[] v = pb.VerticesInWorldSpace();
+
+				pb.transform.position = Vector3.zero;
+				pb.transform.localRotation = Quaternion.identity;
+				pb.transform.localScale = Vector3.one;
+
+				foreach(pb_Face face in pb.faces)
+				{
+					face.manualUV = true;
+				}
+
+				pb.SetVertices(v);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			if(pb_Editor.instance)
+				pb_Editor.instance.UpdateSelection();
+
+			SceneView.RepaintAll();
+
+			pb_Editor_Utility.ShowNotification("Freeze Transforms");
+
+			return new pb_ActionResult(Status.Success, "Freeze Transforms");
 		}
 
 		/**
@@ -236,11 +277,27 @@ namespace ProBuilder2.EditorCommon
 			return new pb_ActionResult(Status.Success, "Set " + entityType);
 		}
 
+		/**
+		 *	Open the vertex color editor (palette or painter) based on prefs. 
+		 */
+		public static void MenuOpenVertexColorsEditor()
+		{
+			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+			{
+				case VertexColorTool.Palette:
+					pb_Vertex_Color_Toolbar.MenuOpenWindow();
+					break;
+
+				default:
+					pb_VertexColor_Editor.MenuOpenWindow();
+					break;
+			}
+		}
 
 		/**
 		 *	Open the vertex coloring editor as stored by user prefs.
 		 */
-		public static pb_ActionResult MenuOpenVertexColorsEditor(pb_Object[] selection)
+		public static pb_ActionResult MenuOpenVertexColorsEditor2(pb_Object[] selection)
 		{
 			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
 			{
@@ -269,6 +326,27 @@ namespace ProBuilder2.EditorCommon
 				EditorPrefs.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
 		}
 #if !PROTOTYPE
+
+		public static pb_ActionResult MenuTriangulateObject(pb_Object[] selection)
+		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
+			pbUndo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
+
+			for(int i = 0; i < selection.Length; i++)
+			{
+				pbTriangleOps.Triangulate(selection[i]);
+				selection[i].ToMesh();
+				selection[i].Refresh();
+				selection[i].Optimize();
+			}
+
+			editor.UpdateSelection();
+			pb_Editor_Utility.ShowNotification(selection.Length > 0 ? "Triangulate" : "Nothing Selected");
+
+			return new pb_ActionResult(Status.Success, "Triangulate " + selection.Length + (selection.Length > 1 ? " Objects" : " Object"));
+		}
 
 		enum BooleanOperation
 		{
@@ -425,17 +503,32 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Attempt to make face normals uniform.
 		 */
+		public static pb_ActionResult MenuConformObjectNormals(pb_Object[] selection)
+		{
+			return DoConformNormals(selection, false);
+		}
+
 		public static pb_ActionResult MenuConformNormals(pb_Object[] selection)
 		{
-			if(selection == null || selection.Length < 1)
+			return DoConformNormals(selection, true);
+		}
+
+		public static pb_ActionResult DoConformNormals(pb_Object[] selection, bool perFace = true)
+		{
+			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
 			pbUndo.RecordObjects(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+
 			int flipped = 0;
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Face[] faces = pb.SelectedFaceCount > 0 ? pb.SelectedFaces : pb.faces;
+				pb_Face[] faces = perFace ? pb.SelectedFaces : pb.faces;
+
+				if(faces == null)
+					continue;
+
 				int len = faces.Length;
 
 				int toggle = 0;
@@ -464,8 +557,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			if(pb_Editor.instance != null)
-				pb_Editor.instance.UpdateSelection();
+			editor.UpdateSelection();
 
 			pb_Editor_Utility.ShowNotification(flipped > 0 ? "Reversed " + flipped + " Faces" : "Normals Already Uniform");
 

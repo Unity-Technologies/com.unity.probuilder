@@ -23,26 +23,7 @@ namespace ProBuilder2.Actions
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Triangulate Object", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 		public static void MenuTriangulatePbObjects()
 		{
-			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-
-			pbUndo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
-
-			for(int i = 0; i < selection.Length; i++)
-			{
-
-				pbTriangleOps.Triangulate(selection[i]);
-
-				selection[i].ToMesh();
-				selection[i].Refresh();
-				selection[i].Optimize();
-			}
-
-			if(pb_Editor.instance)
-			{
-				pb_Editor.instance.UpdateSelection();
-			}
-
-			pb_Editor_Utility.ShowNotification(selection.Length > 0 ? "Triangulate" : "Nothing Selected");
+			pb_Menu_Commands.MenuTriangulateObject(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 		}
 	}
 }

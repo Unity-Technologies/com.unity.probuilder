@@ -24,6 +24,8 @@ namespace ProBuilder2.EditorCommon
 			this.notification = notification;
 		}
 
+		public static pb_ActionResult Success { get { return new pb_ActionResult(Status.Success, ""); } }
+
 		public static pb_ActionResult NoSelection { get {
 			return new pb_ActionResult(Status.Canceled, "Nothing Selected");
 		} }

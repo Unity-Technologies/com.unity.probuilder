@@ -22,8 +22,14 @@ namespace ProBuilder2.Actions
 		public static void MenuConformNormals()
 		{
 			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-			pb_Menu_Commands.MenuConformNormals(selection);
 
+			if(pb_Editor.instance != null)
+			{
+				if(pb_Editor.instance.selectedFaceCount > 0)
+					pb_Menu_Commands.MenuConformNormals(selection);
+				else
+					pb_Menu_Commands.MenuConformObjectNormals(selection);
+			}
 		}
 	}
 }
