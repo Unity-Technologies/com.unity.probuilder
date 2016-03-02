@@ -76,9 +76,14 @@ namespace ProBuilder2.EditorCommon
 				// new pb_MenuAction_Simple( Icon("HandleAlign_World"), "Handle Alignment World", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment World"); }),
 				// new pb_MenuAction_Simple( Icon("HandleAlign_Local"), "Handle Alignment Object", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Object"); }),
 				// new pb_MenuAction_Simple( Icon("HandleAlign_Plane"), "Handle Alignment Plane", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Plane"); }),
-				// new pb_MenuAction_Simple( Icon("Selection_SelectHidden-ON"), "Select All | Select Visible", (x) => { return new pb_ActionResult(Status.Success, "Select All | Select Visible"); }),
+				// new pb_MenuAction_Toggle( 
+				// 	new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
+				// 	"Select All | Select Visible",
+										
+				// 	),
 
 				// selection
+				new pb_MenuAction_Element(Icon("Selection_Grow"), "Grow Selection", pb_Menu_Commands.MenuGrowSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyGrowSelection),
 				// new pb_MenuAction_Simple( Icon("Selection_Grow"), "Grow Selection", pb_Menu_Commands.MenuGrowSelection ),
 				// new pb_MenuAction_Simple( Icon("Selection_Shrink"), "Shrink Selection", pb_Menu_Commands.MenuShrinkSelection ),
 				// new pb_MenuAction_Simple( Icon("Selection_Invert"), "Invert Selection", pb_Menu_Commands.MenuInvertSelection ),

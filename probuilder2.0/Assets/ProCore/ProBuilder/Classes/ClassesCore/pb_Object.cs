@@ -188,6 +188,7 @@ public class pb_Object : MonoBehaviour
 	public int[]						SelectedTriangles { get { return m_selectedTriangles; } }
 	public int 							SelectedTriangleCount { get { return m_selectedTriangles.Length; } }
 	public pb_Edge[]					SelectedEdges { get { return m_SelectedEdges; } }
+	public int							SelectedEdgeCount { get { return m_SelectedEdges.Length; } }
 
 	[SerializeField] private int[]		m_selectedFaces 		= new int[]{};
 	[SerializeField] private pb_Edge[]	m_SelectedEdges 		= new pb_Edge[]{};
@@ -232,6 +233,7 @@ public class pb_Object : MonoBehaviour
 
 	public int faceCount { get { return _faces.Length; } }
 	public int vertexCount { get { return _vertices.Length; } }
+	public int triangleCount { get { return _faces.Sum(x => x.indices.Length ); } }
 
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.

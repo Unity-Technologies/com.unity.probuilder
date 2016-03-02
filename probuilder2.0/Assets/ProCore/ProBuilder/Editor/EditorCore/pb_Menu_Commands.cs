@@ -717,12 +717,44 @@ namespace ProBuilder2.EditorCommon
 
 #region Selection
 
+		public static bool VerifyGrowSelection(pb_Object[] selection)
+		{
+			if(	!editor ||
+				selection == null ||
+				selection.Length < 1 ||
+				editor.editLevel == EditLevel.Top
+				)
+				return false;
+
+			int sel = 0, max = 0;
+
+			switch(editor.selectionMode)
+			{
+				case SelectMode.Vertex:
+					sel = selection.Sum(x => x.SelectedTriangleCount);
+					max = selection.Sum(x => x.triangleCount);
+					break;
+
+				case SelectMode.Face:
+					sel = selection.Sum(x => x.SelectedFaceCount);
+					max = selection.Sum(x => x.faceCount);
+					break;
+
+				case SelectMode.Edge:
+					sel = selection.Sum(x => x.SelectedEdgeCount);
+					max = selection.Sum(x => x.faces.Sum(y=>y.edges.Length));
+					break;
+			}
+
+			return sel > 0 && sel < max;
+		}
+
 		/**
 		 * Grow selection to plane using max angle diff.
 		 */
 		public static pb_ActionResult MenuGrowSelection(pb_Object[] selection)
 		{
-			if(selection == null || selection.Length < 1)
+			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
 			pbUndo.RecordSelection(selection, "Grow Selection");
