@@ -7,25 +7,26 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_EditorToolbar_Mockup : EditorWindow
+	[System.Serializable]
+	public class pb_EditorToolbar : ScriptableObject
 	{
 		const int TOOLTIP_OFFSET = 4;
 
-		[MenuItem("Tools/ProBuilder Window")]
-		static void Init()
-		{
-			EditorWindow.GetWindow<pb_EditorToolbar_Mockup>(false, "ProBuilder", true);
-		}
-
 		pb_TooltipWindow tooltipWindow = null;
-		List<pb_MenuAction> actions;
+		[SerializeField] EditorWindow window = null;
+		[SerializeField] List<pb_MenuAction> actions;
+
+		public void InitWindowProperties(EditorWindow win)
+		{
+			win.wantsMouseMove = true;
+			win.autoRepaintOnSceneChange = true;
+			win.minSize = actions[0].GetSize() + new Vector2(6, 6);
+			this.window = win;
+		}
 
 		void OnEnable()
 		{
 			actions = pb_EditorToolbarLoader.GetActions();
-			this.wantsMouseMove = true;
-			this.autoRepaintOnSceneChange = true;
-			this.minSize = actions[0].GetSize() + new Vector2(6, 6);
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
 		}
@@ -35,11 +36,12 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 		}
 
-		void OnElementSelectionChange(pb_Object[] selection) { OnSelectionChange(); }
-
-		void OnSelectionChange()
+		void OnElementSelectionChange(pb_Object[] selection)
 		{
-			this.Repaint();
+			if(!window)
+				GameObject.DestroyImmediate(this);
+			else
+				window.Repaint();
 		}
 
 		Vector2 scroll = Vector2.zero;
@@ -49,8 +51,8 @@ namespace ProBuilder2.EditorCommon
 			Vector2 size = EditorStyles.boldLabel.CalcSize( pb_GUI_Utility.TempGUIContent(action.tooltip) );
 			size += new Vector2(8,8);
 
-			Rect tooltipRect = new Rect((this.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
-										(this.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y,
+			Rect tooltipRect = new Rect((window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
+										(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y,
 										size.x,
 										size.y);
 
@@ -62,11 +64,11 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		void OnGUI()
+		public void OnGUI()
 		{
 			Event e = Event.current;
 
-			int max = (int)this.position.width - 24;
+			int max = (int)window.position.width - 24;
 			int rows = System.Math.Max(max / (int)actions[0].GetSize().x, 1);
 
 			int i = 1;
@@ -110,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if( (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
-				Repaint();
+				window.Repaint();
 		}
 	}
 }

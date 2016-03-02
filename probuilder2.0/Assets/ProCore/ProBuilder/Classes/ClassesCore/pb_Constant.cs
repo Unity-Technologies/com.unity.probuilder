@@ -87,6 +87,7 @@ public static class pb_Constant
 	public const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
 	public const string pbMaterialEditorFloating 		= "pbMaterialEditorFloating";
 	public const string pbShapeWindowFloating	 		= "pbShapeWindowFloating";
+	public const string pbIconGUI	 					= "pbIconGUI";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

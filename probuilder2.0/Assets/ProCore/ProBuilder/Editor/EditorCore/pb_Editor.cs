@@ -66,6 +66,8 @@ public class pb_Editor : EditorWindow
 	private HandleAlignment previousHandleAlignment;
 	#endif
 
+	pb_EditorToolbar iconGui = null;
+
 	pb_Shortcut[] shortcuts;
 
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
@@ -77,6 +79,7 @@ public class pb_Editor : EditorWindow
 	private float pref_snapValue = .25f;
 	private bool pref_snapAxisConstraints = true;
 	private bool pref_snapEnabled = false;
+	private bool prefs_iconGui = false;
 
 	private bool pref_showToolbar = true;
 	private SceneToolbarLocation pref_sceneToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -131,49 +134,57 @@ public class pb_Editor : EditorWindow
 
 	private void InitGUI()
 	{
-		VertexTranslationInfoStyle = new GUIStyle();
-		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
-		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
-		VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
-
-		eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
-		eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
-
-		bool isProSkin = true; // EditorGUIUtility.isProSkin;
-
-		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
-
-		if(pref_showToolbar)
+		if( prefs_iconGui )
 		{
-			EditModeIcons = new GUIContent[]
-			{
-				new GUIContent(object_Graphic_off, "Object Selection"),
-				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-				new GUIContent(edge_Graphic_off, "Edge Selection"),
-				new GUIContent(face_Graphic_off, "Face Selection")
-			};
+			iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+			iconGui.InitWindowProperties(this);
 		}
 		else
 		{
-			EditModeIcons = new GUIContent[]
+			VertexTranslationInfoStyle = new GUIStyle();
+			VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
+			VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
+			VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
+
+			eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
+			eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
+
+			bool isProSkin = true; // EditorGUIUtility.isProSkin;
+
+			Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
+			Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
+			Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
+			Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+
+			if(pref_showToolbar)
 			{
-				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-				new GUIContent(edge_Graphic_off, "Edge Selection"),
-				new GUIContent(face_Graphic_off, "Face Selection")
-			};
+				EditModeIcons = new GUIContent[]
+				{
+					new GUIContent(object_Graphic_off, "Object Selection"),
+					new GUIContent(vertex_Graphic_off, "Vertex Selection"),
+					new GUIContent(edge_Graphic_off, "Edge Selection"),
+					new GUIContent(face_Graphic_off, "Face Selection")
+				};
+			}
+			else
+			{
+				EditModeIcons = new GUIContent[]
+				{
+					new GUIContent(vertex_Graphic_off, "Vertex Selection"),
+					new GUIContent(edge_Graphic_off, "Edge Selection"),
+					new GUIContent(face_Graphic_off, "Face Selection")
+				};
 
-			elementModeToolbarRect.y = 6;
+				elementModeToolbarRect.y = 6;
+			}
+
+			show_Detail = true;
+			show_Mover = true;
+			show_Collider = true;
+			show_Trigger = true;
+
+			this.minSize = new Vector2( isFloatingWindow ? WINDOW_WIDTH_FlOATING : WINDOW_WIDTH_DOCKABLE, 200 );
 		}
-
-		show_Detail = true;
-		show_Mover = true;
-		show_Collider = true;
-		show_Trigger = true;
-
-		this.minSize = new Vector2( isFloatingWindow ? WINDOW_WIDTH_FlOATING : WINDOW_WIDTH_DOCKABLE, 200 );
 	}
 
 	private void LoadPrefs()
@@ -203,9 +214,9 @@ public class pb_Editor : EditorWindow
 		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
-
 		pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
 		pref_sceneToolbarLocation = pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
+		prefs_iconGui = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 	}
 
 	private void OnDestroy()
@@ -365,6 +376,12 @@ public class pb_Editor : EditorWindow
 			case EventType.ContextClick:
 				OpenContextMenu();
 				break;
+		}
+
+		if( prefs_iconGui )
+		{
+			iconGui.OnGUI();
+			return;
 		}
 
 		if(!guiInitialized)

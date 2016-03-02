@@ -41,6 +41,7 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbEnableBackfaceSelection ||
 			pref == pb_Constant.pbVertexPaletteDockable ||
 			pref == pb_Constant.pbGrowSelectionAngleIterative ||
+			pref == pb_Constant.pbIconGUI ||
 			pref == pb_Constant.pbUniqueModeShortcuts)
 			return false;
 		else
