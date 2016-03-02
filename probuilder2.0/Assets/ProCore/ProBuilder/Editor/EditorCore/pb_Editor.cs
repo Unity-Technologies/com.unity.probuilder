@@ -159,7 +159,7 @@ public class pb_Editor : EditorWindow
 
 		// always need the toolbar loaded	
 		bool isProSkin = true; // EditorGUIUtility.isProSkin;
-		
+
 		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
 		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
 		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
@@ -491,6 +491,12 @@ public class pb_Editor : EditorWindow
 			else
 				return 11;
 		}
+	}
+
+	public void SetSelectHiddenEnabled(bool isEnabled)
+	{
+		pref_backfaceSelect = isEnabled;
+		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
 	}
 
 	void SelectionGUI()

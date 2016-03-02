@@ -11,8 +11,8 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public abstract class pb_MenuAction
 	{
-		static GUIStyle _buttonStyle = null;
-		static GUIStyle buttonStyle
+		protected static GUIStyle _buttonStyle = null;
+		protected static GUIStyle buttonStyle
 		{
 			get
 			{

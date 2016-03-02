@@ -76,11 +76,11 @@ namespace ProBuilder2.EditorCommon
 				// new pb_MenuAction_Simple( Icon("HandleAlign_World"), "Handle Alignment World", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment World"); }),
 				// new pb_MenuAction_Simple( Icon("HandleAlign_Local"), "Handle Alignment Object", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Object"); }),
 				// new pb_MenuAction_Simple( Icon("HandleAlign_Plane"), "Handle Alignment Plane", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Plane"); }),
-				// new pb_MenuAction_Toggle( 
-				// 	new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
-				// 	"Select All | Select Visible",
-										
-				// 	),
+				new pb_MenuAction_Toggle( 
+					new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
+					"Select All | Select Visible",
+					(x) => { pb_Editor.instance.SetSelectHiddenEnabled(x == 0); }
+					),
 
 				// selection
 				new pb_MenuAction_Element(Icon("Selection_Grow"), "Grow Selection", pb_Menu_Commands.MenuGrowSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyGrowSelection),
