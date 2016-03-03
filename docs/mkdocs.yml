@@ -1,5 +1,5 @@
 site_name: ProBuilder Documentation
-theme: slate
+theme: readthedocs
 pages:
 - Home: index.md
 - Tools:

@@ -13,7 +13,7 @@ namespace ProBuilder2.EditorCommon
 	{
 		public System.Action menuOpenDelegate;
 
-		public pb_MenuAction_Tool(Texture2D icon, string tooltip, System.Action menuOpenDelegate)
+		public pb_MenuAction_Tool(Texture2D icon, pb_TooltipContent tooltip, System.Action menuOpenDelegate)
 		{
 			this.icon = icon;
 			this.tooltip = tooltip;

@@ -12,8 +12,8 @@ namespace ProBuilder2.EditorCommon
 	{
 		const int TOOLTIP_OFFSET = 4;
 
-		pb_TooltipWindow tooltipWindow = null;
-		[SerializeField] EditorWindow window = null;
+		[SerializeField] EditorWindow window;
+
 		[SerializeField] List<pb_MenuAction> actions;
 
 		public void InitWindowProperties(EditorWindow win)
@@ -51,17 +51,11 @@ namespace ProBuilder2.EditorCommon
 			Vector2 size = EditorStyles.boldLabel.CalcSize( pb_GUI_Utility.TempGUIContent(action.tooltip) );
 			size += new Vector2(8,8);
 
-			Rect r = new Rect(	(window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
-								(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y,
-								size.x,
-								size.y);
+			Vector2 p = new Vector2(
+				(window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
+				(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y);
 
-			if(tooltipWindow == null)
-			{
-				tooltipWindow = ScriptableObject.CreateInstance<pb_TooltipWindow>();
-				tooltipWindow.Show(r);
-				tooltipWindow.SetTooltip(action.tooltip);
-			}
+			pb_TooltipWindow.Show(p, action.tooltip);
 		}
 
 		public void OnGUI()
@@ -105,11 +99,8 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.EndScrollView();
 
-			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown && tooltipWindow != null)
-			{
-				tooltipWindow.Close();
-				tooltipWindow = null;
-			}
+			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)
+				pb_TooltipWindow.Hide();
 
 			if( (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
 				window.Repaint();

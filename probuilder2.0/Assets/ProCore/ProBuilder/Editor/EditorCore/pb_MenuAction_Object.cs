@@ -14,8 +14,8 @@ namespace ProBuilder2.EditorCommon
 		public System.Func<pb_Object[], pb_ActionResult> action;
 		public System.Func<pb_Object[], bool> enabledFunc;
 
-		public pb_MenuAction_Object(	Texture2D icon,
-									string tooltip,
+		public pb_MenuAction_Object(Texture2D icon,
+									pb_TooltipContent tooltip,
 									System.Func<pb_Object[], pb_ActionResult> action,
 									System.Func<pb_Object[], bool> enabledOverride = null)
 		{

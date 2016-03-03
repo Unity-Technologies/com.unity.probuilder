@@ -16,7 +16,7 @@ namespace ProBuilder2.EditorCommon
 		Texture2D[] icons = null;
 		System.Action<int> action = null;
 
-		public pb_MenuAction_Toggle(Texture2D[] icons, string tooltip, System.Action<int> action)
+		public pb_MenuAction_Toggle(Texture2D[] icons, pb_TooltipContent tooltip, System.Action<int> action)
 		{
 			this.count = icons.Length;
 			this.current = 0;

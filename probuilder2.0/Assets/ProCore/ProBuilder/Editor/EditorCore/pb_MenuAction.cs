@@ -31,7 +31,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		public Texture2D icon;
-		public string tooltip;
+		public pb_TooltipContent tooltip;
 
 		// If this action has special extra settings, override this property to enable DoSettings().
 		public virtual bool HasSettings { get { return false; } }
@@ -50,7 +50,7 @@ namespace ProBuilder2.EditorCommon
 			GUI.enabled = IsEnabled();
 
 			if( GUILayout.Button(icon, buttonStyle) )
-				Debug.Log(DoAction().notification);
+				DoAction();
 
 			GUI.enabled = wasEnabled;
 		}

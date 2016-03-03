@@ -8,10 +8,12 @@ namespace ProBuilder2.Common
 	 */
 	public static class pb_Reflection
 	{
+		const BindingFlags ALL_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
 		/**
 		 *	Fetch a value using GetProperty or GetField.
 		 */
-		public static object GetValue(object target, string member, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+		public static object GetValue(object target, string member, BindingFlags flags = ALL_FLAGS)
 		{
 			if(target == null)
 				return null;
@@ -27,6 +29,24 @@ namespace ProBuilder2.Common
 				return fi.GetValue(target);
 
 			return null;
+		}
+
+		public static bool SetValue(object target, string member, object value)
+		{
+			if(target == null)
+				return false;
+
+			PropertyInfo pi = target.GetType().GetProperty(member, ALL_FLAGS);
+
+			if(pi != null)
+				pi.SetValue(target, value, ALL_FLAGS, null, null, null);
+
+			FieldInfo fi = target.GetType().GetField(member, ALL_FLAGS);
+
+			if(fi != null)
+				fi.SetValue(target, value);
+
+			return pi != null || fi != null;
 		}
 	}
 }

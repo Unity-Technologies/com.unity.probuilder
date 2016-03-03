@@ -17,11 +17,11 @@ namespace ProBuilder2.EditorCommon
 		public SelectMode selectionMode = SelectMode.Face;
 
 		public pb_MenuAction_Element(	Texture2D icon,
-									string tooltip,
-									System.Func<pb_Object[], pb_ActionResult> action,
-									SelectMode selectionMode,
-									bool enforceElementMode = false,
-									System.Func<pb_Object[], bool> additionalCheck = null)
+										pb_TooltipContent tooltip,
+										System.Func<pb_Object[], pb_ActionResult> action,
+										SelectMode selectionMode,
+										bool enforceElementMode = false,
+										System.Func<pb_Object[], bool> additionalCheck = null)
 		{
 			this.icon = icon;
 			this.tooltip = tooltip;
