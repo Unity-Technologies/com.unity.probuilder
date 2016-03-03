@@ -21,6 +21,7 @@ namespace ProBuilder2.EditorCommon
 				_instance = ScriptableObject.CreateInstance<pb_TooltipWindow>();
 				_instance.minSize = Vector2.zero;
 				_instance.maxSize = Vector2.zero;
+				_instance.hideFlags = HideFlags.HideAndDontSave;
 				_instance.ShowPopup();
 
 				object parent = pb_Reflection.GetValue(_instance, "m_Parent");
@@ -35,10 +36,13 @@ namespace ProBuilder2.EditorCommon
 
 		public static void Hide()
 		{
-			if(_instance != null)
+			pb_TooltipWindow[] windows = Resources.FindObjectsOfTypeAll<pb_TooltipWindow>();
+
+			for(int i = 0; i < windows.Length; i++)
 			{
-				_instance.Close();
-				_instance = null;
+				windows[i].Close();
+				GameObject.DestroyImmediate(windows[i]);
+				windows[i] = null;
 			}
 		}
 

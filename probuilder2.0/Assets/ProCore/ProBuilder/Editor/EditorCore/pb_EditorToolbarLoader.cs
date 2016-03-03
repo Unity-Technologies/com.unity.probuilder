@@ -23,167 +23,167 @@ namespace ProBuilder2.EditorCommon
 			);
 
 		private static readonly pb_TooltipContent tt_VertexColors = new pb_TooltipContent(
-			"Vertex Colors",
-			"DESCRIPTION GOES HERE"
+			"Vertex Color Editor",
+			"Opens either the Vertex Color Palette or the Vertex Color Painter.\n\nThe Palette is useful for applying colors to selected faces with hard edges, where the Painter is good for brush strokes and soft edges."
 			);
 
 		private static readonly pb_TooltipContent tt_SmoothingEditor = new pb_TooltipContent(
 			"Smoothing Editor",
-			"DESCRIPTION GOES HERE"
+			"opens the Smoothing Groups Editor.\n\nSmoothing groups are how you mark edges as being soft or hard, which means the light will either blend between two faces or create a seam."
 			);
 
 		private static readonly pb_TooltipContent tt_MirrorObjects = new pb_TooltipContent(
-			"Mirror Objects",
-			"DESCRIPTION GOES HERE"
+			"Mirror Objects Editor",
+			"Opens the Mirror Editor.\n\nMirroring objects will duplicate an flip objects on the specified axes."
 			);
 
 		private static readonly pb_TooltipContent tt_SelectBackFaces = new pb_TooltipContent(
 			"Select Hidden Faces",
-			"When drag selecting or clicking, this will ignore faces that are either not facing the camera or behind other geometery."
+			"Toggles back-face selection on or off.\n\nWhen drag selecting or clicking, back-face selection off will ignore faces that are either not facing the camera or behind other geometery."
 			);
 		private static readonly pb_TooltipContent tt_SetHandleAlignment = new pb_TooltipContent(
 			"Set Handle Alignment",
-			"DESCRIPTION GOES HERE"
+			"Toggles the transform gizmo's coordinate space."
 			);
 
 		private static readonly pb_TooltipContent tt_GrowSelection = new pb_TooltipContent(
 			"Grow Selection",
-			"DESCRIPTION GOES HERE"
+			"Expands the current element selection to include nearby elements."
 			);
 
 		private static readonly pb_TooltipContent tt_ShrinkSelection = new pb_TooltipContent(
 			"Shrink Selection",
-			"DESCRIPTION GOES HERE"
+			"Removes the elements on the outer edges of the current selection."
 			);
 
 		private static readonly pb_TooltipContent tt_InvertSelection = new pb_TooltipContent(
 			"Invert Selection",
-			"DESCRIPTION GOES HERE"
+			"Set the element selection to the opposite of what is currently selected."
 			);
 
 		private static readonly pb_TooltipContent tt_SelectEdgeRing = new pb_TooltipContent(
 			"Select Edge Ring",
-			"DESCRIPTION GOES HERE"
+			"Select all edges that are opposite the selected."
 			);
 
 		private static readonly pb_TooltipContent tt_SelectEdgeLoop = new pb_TooltipContent(
 			"Select Edge Loop",
-			"DESCRIPTION GOES HERE"
+			"Select a loop of connected edges."
 			);
 
 		private static readonly pb_TooltipContent tt_MergeObjects = new pb_TooltipContent(
 			"Merge Objects",
-			"DESCRIPTION GOES HERE"
+			"Merges all selected ProBuilder objects to a single mesh."
 			);
 
 		private static readonly pb_TooltipContent tt_FlipObjectNormals = new pb_TooltipContent(
 			"Flip Object Normals",
-			"DESCRIPTION GOES HERE"
+			"Reverse the direction of all faces on the selected objects."
 			);
 
 		private static readonly pb_TooltipContent tt_SubdivideObject = new pb_TooltipContent(
 			"Subdivide Object",
-			"DESCRIPTION GOES HERE"
+			"Increase the number of edges and vertices on this object by creating 4 new quads in every face."
 			);
 
 		private static readonly pb_TooltipContent tt_FreezeTransform = new pb_TooltipContent(
 			"Freeze Transform",
-			"DESCRIPTION GOES HERE"
+			"Set the pivot point to world coordinates (0,0,0) and clear all Transform values while keeping the mesh in place."
 			);
 
 		private static readonly pb_TooltipContent tt_ConformObjectNormals = new pb_TooltipContent(
 			"Conform Object Normals",
-			"DESCRIPTION GOES HERE"
+			"Check the object for faces that are flipped in the opposite direction of most other faces, then reverses any dissenters."
 			);
 
 		private static readonly pb_TooltipContent tt_TriangulateObject = new pb_TooltipContent(
 			"Triangulate Object",
-			"DESCRIPTION GOES HERE"
+			"Removes all quads and n-gons on the mesh and inserts triangles instead.  Use this and a hard smoothing group to achieve a low-poly facetized look."
 			);
 
 		private static readonly pb_TooltipContent tt_SetPivotToSelection = new pb_TooltipContent(
 			"Set Pivot to Center of Selection",
-			"DESCRIPTION GOES HERE"
+			"Sets the pivot point of the selected mesh to the position the transform gizmo is currently in."
 			);
 
 		private static readonly pb_TooltipContent tt_ExtrudeFaces = new pb_TooltipContent(
 			"Extrude Faces",
-			"DESCRIPTION GOES HERE"
+			"Extrude all selected faces."
 			);
 
 		private static readonly pb_TooltipContent tt_ConformFaceNormals = new pb_TooltipContent(
 			"Conform Face Normals",
-			"DESCRIPTION GOES HERE"
+			"Orients all selected faces to face the same direction."
 			);
 
 		private static readonly pb_TooltipContent tt_FlipFaceNormals = new pb_TooltipContent(
 			"Flip Face Normals",
-			"DESCRIPTION GOES HERE"
+			"Reverse the direction that the selected faces are pointing."
 			);
 
 		private static readonly pb_TooltipContent tt_FlipFaceEdge = new pb_TooltipContent(
 			"Flip Face Edge",
-			"DESCRIPTION GOES HERE"
+			"Also called \"turning\" and edge, this action changes the vertices that a quad's connecting edge points to.  This is useful if a quad has one vertex that is raised or lowered and the \"hump\" of the face is in the wrong direction."
 			);
 
 		private static readonly pb_TooltipContent tt_DeleteFaces = new pb_TooltipContent(
 			"Delete Faces",
-			"DESCRIPTION GOES HERE"
+			"Deletes the selected faces."
 			);
 
 		private static readonly pb_TooltipContent tt_DetachFaces = new pb_TooltipContent(
 			"Detach Faces",
-			"DESCRIPTION GOES HERE"
+			"Detach selected faces to a new object or submesh."
 			);
 
 		private static readonly pb_TooltipContent tt_MergeFaces = new pb_TooltipContent(
 			"Merge Faces",
-			"DESCRIPTION GOES HERE"
+			"Tells ProBuilder to treat the selected faces as if they were a single face.  Be careful not to use this with unconnected faces!"
 			);
 
 		private static readonly pb_TooltipContent tt_SubdivideFaces = new pb_TooltipContent(
 			"Subdivide Faces",
-			"DESCRIPTION GOES HERE"
+			"Adds extra vertices and edges to the selected faces by inserting a new vertex in the middle and connecting the middle of all edges to it."
 			);
 
 		private static readonly pb_TooltipContent tt_ExtrudeEdges = new pb_TooltipContent(
 			"Extrude Edges",
-			"DESCRIPTION GOES HERE"
+			"Extrudes the selected edges."
 			);
 
 		private static readonly pb_TooltipContent tt_BridgeEdges = new pb_TooltipContent(
 			"Bridge Edges",
-			"DESCRIPTION GOES HERE"
+			"Add a new face connecting two edges."
 			);
 
 		private static readonly pb_TooltipContent tt_ConnectEdges = new pb_TooltipContent(
 			"Connect Edges",
-			"DESCRIPTION GOES HERE"
+			"Insert a new edge from the centers of each selected edge to the others."
 			);
 
 		private static readonly pb_TooltipContent tt_InsertEdgeLoop = new pb_TooltipContent(
 			"Insert Edge Loop",
-			"DESCRIPTION GOES HERE"
+			"Creates a series of new edges from the center of the selected edge to it's ringed edges."
 			);
 
 		private static readonly pb_TooltipContent tt_ConnectVertices = new pb_TooltipContent(
 			"Connect Vertices",
-			"DESCRIPTION GOES HERE"
+			"Creates a new edge connecting two or more vertices."
 			);
 
 		private static readonly pb_TooltipContent tt_WeldVertices = new pb_TooltipContent(
 			"Weld Vertices",
-			"DESCRIPTION GOES HERE"
+			"Checks all selected vertices for neighbors within a certain distance of one another, and if they are close enough they will be collapsed to a single vertex."
 			);
 
 		private static readonly pb_TooltipContent tt_CollapseVertices = new pb_TooltipContent(
 			"Collapse Vertices",
-			"DESCRIPTION GOES HERE"
+			"Merges selected vertices to a single vertex."
 			);
 
 		private static readonly pb_TooltipContent tt_SplitVertices = new pb_TooltipContent(
 			"Split Vertices",
-			"DESCRIPTION GOES HERE"
+			"Splits a vertex into separate vertices for each attached edge."
 			);
 
 
@@ -195,7 +195,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static pb_MenuAction_Element CreateFaceAction(
 			string icon,
-			string tooltip,
+			pb_TooltipContent tooltip,
 			System.Func<pb_Object[], pb_ActionResult> action,
 			bool enforceMode = false,
 			int minFaceCount = 1)
@@ -211,7 +211,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static pb_MenuAction_Element CreateEdgeAction(
 			string icon,
-			string tooltip,
+			pb_TooltipContent tooltip,
 			System.Func<pb_Object[], pb_ActionResult> action,
 			bool enforceMode = false,
 			int minEdgeCount = 1)
@@ -227,7 +227,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static pb_MenuAction_Element CreateVertexAction(
 			string icon,
-			string tooltip,
+			pb_TooltipContent tooltip,
 			System.Func<pb_Object[], pb_ActionResult> action,
 			bool enforceMode = false,
 			int minVertCount = 1)
