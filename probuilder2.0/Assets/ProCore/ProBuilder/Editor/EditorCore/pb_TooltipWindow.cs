@@ -8,6 +8,11 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_TooltipWindow : EditorWindow
 	{
+		static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
+
+		private static pb_TooltipWindow _instance;
+		private static Rect windowRect = new Rect(0,0,0,0);
+
 		// much like highlander, there can only be one
 		public static pb_TooltipWindow instance()
 		{
@@ -27,8 +32,6 @@ namespace ProBuilder2.EditorCommon
 			return _instance;
 		}
 
-		public static pb_TooltipWindow nullableInstance { get { return _instance; } }
-		private static pb_TooltipWindow _instance;
 
 		public static void Hide()
 		{
@@ -57,12 +60,21 @@ namespace ProBuilder2.EditorCommon
 				position.y,
 				size.x,
 				size.y);
+
+			windowRect = new Rect(0,0,size.x, size.y);
 		}
 
 		public pb_TooltipContent content = null;
 
 		void OnGUI()
 		{
+			if(!EditorGUIUtility.isProSkin)
+			{
+				GUI.backgroundColor = BasicBackgroundColor;
+				GUI.Box(windowRect, "");
+				GUI.backgroundColor = Color.white;
+			}
+
 			if(content == null)
 				return;
 

@@ -11,23 +11,37 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public class pb_TooltipContent : System.IEquatable<pb_TooltipContent>
 	{
+		static GUIStyle TitleStyle { get { if(_titleStyle == null) InitStyles(); return _titleStyle; } }
+		static GUIStyle _titleStyle = null;
+
+		static void InitStyles()
+		{
+			_titleStyle = new GUIStyle();
+			_titleStyle.margin = new RectOffset(4,4,4,4);
+			_titleStyle.padding = new RectOffset(4,4,4,4);
+			_titleStyle.fontSize = 14;
+			_titleStyle.fontStyle = FontStyle.Bold;
+			_titleStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
+			_titleStyle.richText = true;
+		}
+
+		static readonly Color separatorColor = new Color(.65f, .65f, .65f, .5f);
+
 		public string name;
-		public string documentationLink;
 		public string summary;
 
-		public pb_TooltipContent(string name, string summary, string documentationLink = "")
+		public pb_TooltipContent(string name, string summary)
 		{
 			this.name = name;
 			this.summary = summary;
-			this.documentationLink = documentationLink;
 		}
 
 		public Vector2 CalcSize()
 		{
-			const float pad = 16;
+			const float pad = 20;
 			Vector2 total = new Vector2(256, 256);
 
-			Vector2 ns = EditorStyles.boldLabel.CalcSize(pb_GUI_Utility.TempGUIContent(name));
+			Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(name));
 
 			float width = Mathf.Max(ns.x + pad, 256);
 
@@ -41,13 +55,10 @@ namespace ProBuilder2.EditorCommon
 
 		public void Draw()
 		{
-			GUILayout.Label(name, EditorStyles.boldLabel);
+			GUILayout.Label(name, TitleStyle);
 
-			if(!string.IsNullOrEmpty(documentationLink))
-			{
-				if(GUILayout.Button(documentationLink))
-					Application.OpenURL(documentationLink);
-			}
+			pb_GUI_Utility.DrawSeparator(1, separatorColor);
+			GUILayout.Space(2);
 
 			GUILayout.Label(summary, EditorStyles.wordWrappedLabel);
 		}
