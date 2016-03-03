@@ -73,22 +73,22 @@ namespace ProBuilder2.EditorCommon
 				new pb_MenuAction_Tool( Icon("Object_Mirror"), "Mirror Objects", pb_Mirror_Tool.MenuOpenMirrorEditor ),
 
 				// interaction
-				// new pb_MenuAction_Simple( Icon("HandleAlign_World"), "Handle Alignment World", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment World"); }),
-				// new pb_MenuAction_Simple( Icon("HandleAlign_Local"), "Handle Alignment Object", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Object"); }),
-				// new pb_MenuAction_Simple( Icon("HandleAlign_Plane"), "Handle Alignment Plane", (x) => { return new pb_ActionResult(Status.Failure, "Handle Alignment Plane"); }),
 				new pb_MenuAction_Toggle( 
 					new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
 					"Select All | Select Visible",
-					(x) => { pb_Editor.instance.SetSelectHiddenEnabled(x == 0); }
-					),
+					(x) => { pb_Editor.instance.SetSelectHiddenEnabled(x == 0); }),
+				new pb_MenuAction_Toggle( 
+					new Texture2D[] { Icon("HandleAlign_World"), Icon("HandleAlign_Local"), Icon("HandleAlign_Plane") },
+					"Set Handle Alignment",
+					(x) => { pb_Editor.instance.SetHandleAlignment((HandleAlignment)x); }),
 
 				// selection
 				new pb_MenuAction_Element(Icon("Selection_Grow"), "Grow Selection", pb_Menu_Commands.MenuGrowSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyGrowSelection),
-				// new pb_MenuAction_Simple( Icon("Selection_Grow"), "Grow Selection", pb_Menu_Commands.MenuGrowSelection ),
-				// new pb_MenuAction_Simple( Icon("Selection_Shrink"), "Shrink Selection", pb_Menu_Commands.MenuShrinkSelection ),
-				// new pb_MenuAction_Simple( Icon("Selection_Invert"), "Invert Selection", pb_Menu_Commands.MenuInvertSelection ),
-				// new pb_MenuAction_Simple( Icon("Selection_Ring"), "Select Edge Ring", pb_Menu_Commands.MenuRingSelection ),
-				// new pb_MenuAction_Simple( Icon("Selection_Loop"), "Select Edge Loop", pb_Menu_Commands.MenuLoopSelection ),
+				new pb_MenuAction_Element(Icon("Selection_Shrink"), "Shrink Selection", pb_Menu_Commands.MenuShrinkSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyShrinkSelection),
+				new pb_MenuAction_Element(Icon("Selection_Invert"), "Invert Selection", pb_Menu_Commands.MenuInvertSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyInvertSelection),
+				new pb_MenuAction_Element(Icon("Selection_Ring"), "Select Edge Ring", pb_Menu_Commands.MenuRingSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
+				new pb_MenuAction_Element(Icon("Selection_Loop"), "Select Edge Loop", pb_Menu_Commands.MenuLoopSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
+
 					
 				// object
 				new pb_MenuAction_Object( Icon("Object_Merge"), "Merge Objects", pb_Menu_Commands.MenuMergeObjects, (x) => { return x != null && x.Length >= 2;} ),

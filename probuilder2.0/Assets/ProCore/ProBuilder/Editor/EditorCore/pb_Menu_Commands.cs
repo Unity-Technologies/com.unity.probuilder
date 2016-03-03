@@ -717,24 +717,10 @@ namespace ProBuilder2.EditorCommon
 
 #region Selection
 
-		public static bool VerifyGrowSelection(pb_Object[] selection)
+		private static void GetSelectedElementCount(pb_Object[] selection, out int sel, out int max)
 		{
-			if(	!editor ||
-				selection == null ||
-				selection.Length < 1 ||
-				editor.editLevel == EditLevel.Top
-				)
-				return false;
-
-			int sel = 0, max = 0;
-
 			switch(editor.selectionMode)
 			{
-				case SelectMode.Vertex:
-					sel = selection.Sum(x => x.SelectedTriangleCount);
-					max = selection.Sum(x => x.triangleCount);
-					break;
-
 				case SelectMode.Face:
 					sel = selection.Sum(x => x.SelectedFaceCount);
 					max = selection.Sum(x => x.faceCount);
@@ -744,7 +730,25 @@ namespace ProBuilder2.EditorCommon
 					sel = selection.Sum(x => x.SelectedEdgeCount);
 					max = selection.Sum(x => x.faces.Sum(y=>y.edges.Length));
 					break;
+
+				default:
+					sel = selection.Sum(x => x.SelectedTriangleCount);
+					max = selection.Sum(x => x.triangleCount);
+					break;
 			}
+		}
+
+		public static bool VerifyGrowSelection(pb_Object[] selection)
+		{
+			if(	!editor ||
+				selection == null ||
+				selection.Length < 1 ||
+				editor.editLevel == EditLevel.Top
+				)
+				return false;
+
+			int sel, max;
+			GetSelectedElementCount(selection, out sel, out max);
 
 			return sel > 0 && sel < max;
 		}
@@ -936,6 +940,20 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		public static bool VerifyShrinkSelection(pb_Object[] selection)
+		{
+			if(	!editor ||
+				selection == null ||
+				selection.Length < 1 ||
+				editor.editLevel == EditLevel.Top)
+				return false;
+
+			int sel = 0, max = 0;
+			GetSelectedElementCount(selection, out sel, out max);
+
+			return sel > 1 && sel < max;
+		}
+
 		/**
 		 * Shrink selection.
 		 * Note - requires a reference to an open pb_Editor be passed.  This is because shrink
@@ -1003,6 +1021,16 @@ namespace ProBuilder2.EditorCommon
 				return new pb_ActionResult(Status.Success, "Shrink Selection");
 			else
 				return new pb_ActionResult(Status.Canceled, "Nothing to Shrink");
+		}
+
+		public static bool VerifyInvertSelection(pb_Object[] selection)
+		{
+			if(	!editor ||
+				selection == null ||
+				selection.Length < 1 ||
+				editor.editLevel == EditLevel.Top)
+				return false;
+			return true;
 		}
 
 		/**
@@ -1077,6 +1105,19 @@ namespace ProBuilder2.EditorCommon
 			SceneView.RepaintAll();
 
 			return new pb_ActionResult(Status.Success, "Invert Selection");
+		}
+
+		public static bool VerifyEdgeRingLoop(pb_Object[] selection)
+		{
+			if(	!editor ||
+				selection == null ||
+				selection.Length < 1 ||
+				editor.editLevel == EditLevel.Top)
+				return false;	
+
+			int sel, max;
+			GetSelectedElementCount(selection, out sel, out max);
+			return sel > 0 && sel < max;
 		}
 
 		/**

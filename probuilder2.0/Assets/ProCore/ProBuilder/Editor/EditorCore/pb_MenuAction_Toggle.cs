@@ -37,7 +37,7 @@ namespace ProBuilder2.EditorCommon
 
 			action(current);
 
-			return pb_ActionResult.Success;
+			return new pb_ActionResult(Status.Success, tooltip);
 		}
 
 		// Is this action valid based on the current selection and context?

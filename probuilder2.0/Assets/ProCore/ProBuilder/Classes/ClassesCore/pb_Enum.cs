@@ -28,9 +28,9 @@ namespace ProBuilder2.Common
 	}
 
 	public enum HandleAlignment {
-		World,
-		Plane,
-		Local
+		World = 0,
+		Local = 1,
+		Plane = 2
 	}
 
 	/**

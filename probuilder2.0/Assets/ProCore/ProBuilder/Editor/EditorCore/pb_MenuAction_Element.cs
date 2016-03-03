@@ -26,6 +26,7 @@ namespace ProBuilder2.EditorCommon
 			this.icon = icon;
 			this.tooltip = tooltip;
 			this.action = action;
+			this.selectionMode = selectionMode;
 			this.enforceElementMode = enforceElementMode;
 			this.additionalCheck = additionalCheck;
 		}
