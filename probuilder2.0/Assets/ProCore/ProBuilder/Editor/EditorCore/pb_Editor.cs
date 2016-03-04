@@ -141,11 +141,6 @@ public class pb_Editor : EditorWindow
 		}
 		else
 		{
-			VertexTranslationInfoStyle = new GUIStyle();
-			VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
-			VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
-			VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
-
 			eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
 			eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
 
@@ -156,6 +151,11 @@ public class pb_Editor : EditorWindow
 
 			this.minSize = new Vector2( isFloatingWindow ? WINDOW_WIDTH_FlOATING : WINDOW_WIDTH_DOCKABLE, 200 );
 		}
+
+		VertexTranslationInfoStyle = new GUIStyle();
+		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
+		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
+		VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
 
 		// always need the toolbar loaded	
 		bool isProSkin = true; // EditorGUIUtility.isProSkin;
