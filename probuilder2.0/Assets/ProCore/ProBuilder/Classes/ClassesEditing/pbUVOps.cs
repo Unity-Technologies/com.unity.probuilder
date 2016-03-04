@@ -23,7 +23,10 @@ public static class pbUVOps
 	public static bool SewUVs(this pb_Object pb, int[] indices, float delta)
 	{
 		int[] si = new int[indices.Length];
-		Vector2[] uvs = pb.msh.uv;
+		Vector2[] uvs = pb.uv;
+		
+		if(uvs == null || uvs.Length != pb.vertexCount)
+			uvs = new Vector2[pb.vertexCount];
 
 		// set the shared indices cache to a unique non-used index
 		for(int i = 0; i < indices.Length; i++)

@@ -3230,7 +3230,7 @@ public class pb_UV_Editor : EditorWindow
 		RefreshSelectedUVCoordinates();
 
 		pb_Editor_Utility.ShowNotification(this, "Weld UVs");
-			return new pb_ActionResult(Status.Success, "Invalid UV2 Operation");
+		return new pb_ActionResult(Status.Success, "Invalid UV2 Operation");
 	}
 
 	public void Menu_SplitUVs()
