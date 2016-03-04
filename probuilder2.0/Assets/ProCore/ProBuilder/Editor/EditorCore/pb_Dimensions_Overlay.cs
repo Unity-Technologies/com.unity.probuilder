@@ -23,7 +23,6 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 		return pb_Dimensions_Overlay.instance == null;
 	}
 
-
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Object Info/Show Dimensions Overlay", false, pb_Constant.MENU_WINDOW + 10)]
 	public static void Init()
 	{

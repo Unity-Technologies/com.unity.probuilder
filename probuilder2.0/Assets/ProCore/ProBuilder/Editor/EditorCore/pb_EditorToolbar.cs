@@ -48,9 +48,6 @@ namespace ProBuilder2.EditorCommon
 
 		private void ShowTooltip(Rect rect, pb_MenuAction action, Vector2 scrollOffset)
 		{
-			Vector2 size = EditorStyles.boldLabel.CalcSize( pb_GUI_Utility.TempGUIContent(action.tooltip) );
-			size += new Vector2(8,8);
-
 			Vector2 p = new Vector2(
 				(window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
 				(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y);

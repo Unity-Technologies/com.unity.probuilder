@@ -2,6 +2,7 @@ site_name: ProBuilder Documentation
 theme: readthedocs
 pages:
 - Home: index.md
-- Tools:
-  - Toolbar: toolbar/index.md
-  - Editors: toolbar/editors.md
+- Editors:
+  - Overview: editors/overview.md
+  - Text Toolbar: editors/toolbar_text.md
+  - Icon Toolbar: editors/toolbar_icons.md
