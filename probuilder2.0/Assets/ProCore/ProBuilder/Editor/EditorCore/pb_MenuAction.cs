@@ -79,7 +79,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public Vector2 GetSize()
 		{
-			return buttonStyle.CalcSize( pb_GUI_Utility.TempGUIContent(null, icon) );
+			return buttonStyle.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) );
 		}
 	}
 }

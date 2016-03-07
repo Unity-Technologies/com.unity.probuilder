@@ -30,12 +30,13 @@ namespace ProBuilder2.Interface
 
 		static GUIContent _guiContent = null;
 
-		public static GUIContent TempGUIContent(string label, Texture2D icon = null)
+		public static GUIContent TempGUIContent(string label, string tooltip = null, Texture2D icon = null)
 		{
 			if(_guiContent == null)
 				_guiContent = new GUIContent();
 
 			_guiContent.text = label;
+			_guiContent.tooltip = tooltip;
 			_guiContent.image = icon;
 
 			return _guiContent;

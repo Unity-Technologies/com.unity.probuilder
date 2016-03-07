@@ -147,10 +147,10 @@ namespace ProBuilder2.EditorCommon
 			"Adds extra vertices and edges to the selected faces by inserting a new vertex in the middle and connecting the middle of all edges to it."
 			);
 
-		private static readonly pb_TooltipContent tt_ExtrudeEdges = new pb_TooltipContent(
-			"Extrude Edges",
-			"Extrudes the selected edges."
-			);
+		// private static readonly pb_TooltipContent tt_ExtrudeEdges = new pb_TooltipContent(
+		// 	"Extrude Edges",
+		// 	"Extrudes the selected edges."
+		// 	);
 
 		private static readonly pb_TooltipContent tt_BridgeEdges = new pb_TooltipContent(
 			"Bridge Edges",
@@ -186,7 +186,6 @@ namespace ProBuilder2.EditorCommon
 			"Split Vertices",
 			"Splits a vertex into separate vertices for each attached edge."
 			);
-
 
 
 		private static Texture2D Icon(string path)
@@ -250,7 +249,7 @@ namespace ProBuilder2.EditorCommon
 				new pb_MenuAction_Tool( Icon("Panel_Shapes"), tt_ShapeEditor, pb_Geometry_Interface.MenuOpenShapeCreator ),
 				new pb_MenuAction_Tool( Icon("Panel_Materials"), tt_MaterialEditor, pb_Material_Editor.MenuOpenMaterialEditor ),
 				new pb_MenuAction_Tool( Icon("Panel_UVEditor"), tt_UVEditor, pb_UV_Editor.MenuOpenUVEditor ),
-				new pb_MenuAction_Tool( Icon("Panel_VertColors"), tt_VertexColors, pb_Menu_Commands.MenuOpenVertexColorsEditor ),
+				new pb_MenuAction_Tool( Icon("Panel_VertColors"), tt_VertexColors, pb_Menu_Commands.MenuOpenVertexColorsEditor, typeof(pb_MenuOption_VertexColors) ),
 				new pb_MenuAction_Tool( Icon("Panel_Smoothing"), tt_SmoothingEditor, pb_Smoothing_Editor.MenuOpenSmoothingEditor ),
 				new pb_MenuAction_Tool( Icon("Object_Mirror"), tt_MirrorObjects, pb_Mirror_Tool.MenuOpenMirrorEditor ),
 
@@ -292,7 +291,15 @@ namespace ProBuilder2.EditorCommon
 				CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
 
 				// elements face
-				CreateFaceAction("Face_Extrude", tt_ExtrudeFaces, pb_Menu_Commands.MenuExtrude),							// @todo
+				new pb_MenuAction_Element(
+					Icon("Face_Extrude"),
+					tt_ExtrudeFaces,
+					pb_Menu_Commands.MenuExtrude,
+					SelectMode.Edge,
+					false,
+					(x) => { return x.Sum(y => y.SelectedFaceCount) >= 1 || x.Sum(z => z.SelectedEdgeCount) >= 1; },
+					typeof(pb_MenuOption_Extrude)),
+
 				CreateFaceAction("null", tt_ConformFaceNormals, pb_Menu_Commands.MenuConformNormals, false, 3),
 				CreateFaceAction("Face_FlipNormals", tt_FlipFaceNormals, pb_Menu_Commands.MenuFlipNormals ),
 				CreateFaceAction("null", tt_FlipFaceEdge, pb_Menu_Commands.MenuFlipEdges),
@@ -302,15 +309,23 @@ namespace ProBuilder2.EditorCommon
 				CreateFaceAction("Face_Subdivide", tt_SubdivideFaces, pb_Menu_Commands.MenuSubdivideFace),
 				
 				// elements edge
-				CreateEdgeAction("Edge_Extrude", tt_ExtrudeEdges, pb_Menu_Commands.MenuExtrude),							// @todo
+				// CreateEdgeAction("Edge_Extrude", tt_ExtrudeEdges, pb_Menu_Commands.MenuExtrude),							// @todo
 				CreateEdgeAction("Edge_Bridge", tt_BridgeEdges, pb_Menu_Commands.MenuBridgeEdges, true, 2),
 				CreateEdgeAction("Edge_Connect", tt_ConnectEdges, pb_Menu_Commands.MenuConnectEdges, true, 2),
 				CreateEdgeAction("Edge_InsertLoop", tt_InsertEdgeLoop, pb_Menu_Commands.MenuInsertEdgeLoop),
 
 				CreateVertexAction("Vert_Connect", tt_ConnectVertices, pb_Menu_Commands.MenuConnectVertices, false, 2),
-				CreateVertexAction("Vert_Weld", tt_WeldVertices, pb_Menu_Commands.MenuWeldVertices, false, 2),				// @todo
+				new pb_MenuAction_Element( 
+					Icon("Vert_Weld"),
+					tt_WeldVertices,
+					pb_Menu_Commands.MenuWeldVertices,
+					SelectMode.Vertex,
+					false,
+					(x) => { return x.Sum(y => y.SelectedTriangleCount) >= 2; },
+					typeof(pb_MenuOption_Weld)),
 				CreateVertexAction("Vert_Collapse", tt_CollapseVertices, pb_Menu_Commands.MenuCollapseVertices, false, 2),	// @todo
 				CreateVertexAction("Vert_Split", tt_SplitVertices, pb_Menu_Commands.MenuSplitVertices)						// @todo
+
 			};
 		}
 	}

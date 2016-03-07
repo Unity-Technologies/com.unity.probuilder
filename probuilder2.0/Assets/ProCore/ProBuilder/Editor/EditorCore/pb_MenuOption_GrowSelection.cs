@@ -34,6 +34,8 @@ namespace ProBuilder2.EditorCommon
 				EditorPrefs.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
 			}
 
+			GUILayout.FlexibleSpace();
+			
 			if(GUILayout.Button("Grow Selection"))
 				pb_Menu_Commands.MenuGrowSelection(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 		}
