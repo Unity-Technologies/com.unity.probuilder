@@ -1,59 +1,46 @@
-The ProBuilder toolbar contains the following actions:
+The text **ProBuilder** toolbar contains access to functionality with text labeled buttons, and dynamically updates it's contents with only the applicable buttons.
 
-# [Editors](editors.md)
+| Label | Editor | Summary |
+|-|-|-|
+| Shape | Shape Editor(editors/ShapeEditor.md) | |
+| Material | Material Editor(editors/MaterialEditor.md) | |
+| UV Editor | UV Editor(editors/UVEditor.md) | |
+| Vertex Color | Vertex Colors(editors/VertexColors.md) | |
+| Smoothing | Smoothing Editor(editors/SmoothingEditor.md) | |
+| Mirror | Mirror Objects(editors/MirrorObjects.md) | |
 
-| Icon name             | Action                                        | Description          |  
-| -                     | -                                             | -                    |  
-| New3DShape            | [Shape](editors.md#shape)                     |                      |  
-| MaterialToolsPanel    | [Material Editor](editors.md#material_editor) |                      |  
-| UV                    | [UV Editor](editors.md#uv_editor)             |                      |  
-| VertexColorToolsPanel | [Vertex Painter / Palette](editors.md#colors) |                      |  
-| SmoothingToolsPanel   | [Smoothing Editor](editors.md#smoothing)      |                      |  
+- Interaction:
+  - interaction/SelectBackFaces.md
+  - interaction/SetHandleAlignment.md
 
-# Selection
+- Selection:
+  - selection/GrowSelection.md
+  - selection/ShrinkSelection.md
+  - selection/InvertSelection.md
+  - selection/SelectEdgeRing.md
+  - selection/SelectEdgeLoop.md
 
-| Icon Name             | Action                                        | Description          |  
-| -                     | -                                             | -                    |  
-| HandleAlignment-World | Handle Alignment World                        |                      |  
-| HandleAlignment-Local | Handle Alignment Object                       |                      |  
-| HandleAlignment-Plane | Handle Alignment Plane                        |                      |  
-| SelectVisibleOnly     | Select All / Visible                          | 					   |  
-| Selection-Grow        | Grow Selection                                |                      |  
-| Selection-Shrink      | Shrink Selection                              |                      |  
-| Selection-Invert      | Invert Selection                              |                      |  
-|                       | Select Edge Ring                              |                      |  
-|                       | Select Edge Loop                              |                      |  
-
-# Object
-
-| Icon Name             | Action                                        | Description          |  
-| -                     | -                                             | -                    |  
-| MergeObjects          | Merge                                         |                      |  
-| MirrorObject          | Mirror                                        |                      |  
-| FlipObjectNormals     | Flip Normals                                  |                      |  
-|                       | Subdivide                                     |                      |  
-| ResetPivot            | Freeze Transform                              |                      |  
-|                       | Conform Object Normals                        |                      |  
-|                       | Triangulate                                   |                      |  
-
-# Element
-
-| Icon Name             | Action                                        | Description          |  
-| -                     | -                                             | -                    |  
-| EditPivot             | Set Pivot                                     |                      |  
-| ExtrudeFace           | Extrude Face                                  |                      |  
-|                       | Extrude Edge                                  |                      |  
-|                       | Conform Face Normals                          |                      |  
-|                       | Flip Face Normals                             |                      |  
-|                       | Flip Edge                                     |                      |  
-| DeleteSelectedFaces   | Delete Face                                   |                      |  
-| DetachFaces           | Detach Face                                   |                      |  
-| MergeFaces            | Merge Faces                                   |                      |  
-|                       | Bridge Edges                                  |                      |  
-|                       | Connect Edges                                 |                      |  
-| ConnectVerts          | Connect Vertices                              |                      |  
-| SubdivideFace         | Subdivide Faces                               |                      |  
-| WeldVerts             | Weld Vertices                                 |                      |  
-| CollapseVerts         | Collapse Vertices                             |                      |  
-|                       | Split Vertices                                |                      |  
-|                       | Insert Edge Loop                              |                      |  
+- Actions:
+  - actions/MergeObjects.md
+  - actions/FlipObjectNormals.md
+  - actions/SubdivideObject.md
+  - actions/FreezeTransform.md
+  - actions/ConformObjectNormals.md
+  - actions/TriangulateObject.md
+  - actions/SetPivotToSelection.md
+  - actions/ExtrudeFaces.md
+  - actions/ConformFaceNormals.md
+  - actions/FlipFaceNormals.md
+  - actions/FlipFaceEdge.md
+  - actions/DeleteFaces.md
+  - actions/DetachFaces.md
+  - actions/MergeFaces.md
+  - actions/SubdivideFaces.md
+  - actions/ExtrudeEdges.md
+  - actions/BridgeEdges.md
+  - actions/ConnectEdges.md
+  - actions/InsertEdgeLoop.md
+  - actions/ConnectVertices.md
+  - actions/WeldVertices.md
+  - actions/CollapseVertices.md
+  - actions/SplitVertices.md

@@ -9,6 +9,7 @@ namespace ProBuilder2.EditorCommon
 	public class pb_TooltipWindow : EditorWindow
 	{
 		static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
+		const int POSITION_PADDING = 4;
 
 		private static pb_TooltipWindow _instance;
 		private static Rect windowRect = new Rect(0,0,0,0);
@@ -33,7 +34,7 @@ namespace ProBuilder2.EditorCommon
 			return _instance;
 		}
 
-
+		// unlike highlander, this will hide
 		public static void Hide()
 		{
 			pb_TooltipWindow[] windows = Resources.FindObjectsOfTypeAll<pb_TooltipWindow>();
@@ -46,22 +47,25 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public static void Show(Vector2 position, pb_TooltipContent content)
+		public static void Show(Rect rect, pb_TooltipContent content)
 		{
-			instance().ShowInternal(position, content);
+			instance().ShowInternal(rect, content);
 		}
 
-		public void ShowInternal(Vector2 position, pb_TooltipContent content)
+		public void ShowInternal(Rect rect, pb_TooltipContent content)
 		{
 			this.content = content;
 			Vector2 size = content.CalcSize();
+
+			Vector2 p = new Vector2(rect.x + rect.width + POSITION_PADDING, rect.y);
+			// if(p.x > Screen.width) p.x = rect.x - POSITION_PADDING - size.x;
 
 			this.minSize = size;
 			this.maxSize = size;
 
 			this.position = new Rect(
-				position.x,
-				position.y,
+				p.x,
+				p.y,
 				size.x,
 				size.y);
 

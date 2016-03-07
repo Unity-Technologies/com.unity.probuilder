@@ -21,7 +21,9 @@ namespace ProBuilder2.EditorCommon
 										System.Func<pb_Object[], pb_ActionResult> action,
 										SelectMode selectionMode,
 										bool enforceElementMode = false,
-										System.Func<pb_Object[], bool> additionalCheck = null)
+										System.Func<pb_Object[], bool> additionalCheck = null,
+										System.Type optionsWindowType = null,
+										System.Func<EditLevel, SelectMode, pb_Object[], bool> optionsWindowEnabled = null)
 		{
 			this.icon = icon;
 			this.tooltip = tooltip;
@@ -29,6 +31,8 @@ namespace ProBuilder2.EditorCommon
 			this.selectionMode = selectionMode;
 			this.enforceElementMode = enforceElementMode;
 			this.additionalCheck = additionalCheck;
+			this.optionsWindowType = optionsWindowType;
+			this.optionsWindowEnabled = optionsWindowEnabled;
 		}
 
 		public override bool IsEnabled()

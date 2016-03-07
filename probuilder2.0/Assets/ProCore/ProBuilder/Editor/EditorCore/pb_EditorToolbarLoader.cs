@@ -41,6 +41,7 @@ namespace ProBuilder2.EditorCommon
 			"Select Hidden Faces",
 			"Toggles back-face selection on or off.\n\nWhen drag selecting or clicking, back-face selection off will ignore faces that are either not facing the camera or behind other geometery."
 			);
+		
 		private static readonly pb_TooltipContent tt_SetHandleAlignment = new pb_TooltipContent(
 			"Set Handle Alignment",
 			"Toggles the transform gizmo's coordinate space."
@@ -265,13 +266,20 @@ namespace ProBuilder2.EditorCommon
 					(x) => { pb_Editor.instance.SetHandleAlignment((HandleAlignment)x); }),
 
 				// selection
-				new pb_MenuAction_Element(Icon("Selection_Grow"), tt_GrowSelection, pb_Menu_Commands.MenuGrowSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyGrowSelection),
+				new pb_MenuAction_Element(Icon("Selection_Grow"),
+					tt_GrowSelection,
+					pb_Menu_Commands.MenuGrowSelection,
+					SelectMode.Vertex,
+					false,
+					pb_Menu_Commands.VerifyGrowSelection,
+					typeof(pb_MenuOption_GrowSelection),
+					(x, y, z) => { return x == EditLevel.Geometry && y == SelectMode.Face; }
+					),
 				new pb_MenuAction_Element(Icon("Selection_Shrink"), tt_ShrinkSelection, pb_Menu_Commands.MenuShrinkSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyShrinkSelection),
 				new pb_MenuAction_Element(Icon("Selection_Invert"), tt_InvertSelection, pb_Menu_Commands.MenuInvertSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyInvertSelection),
 				new pb_MenuAction_Element(Icon("Selection_Ring"), tt_SelectEdgeRing, pb_Menu_Commands.MenuRingSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
 				new pb_MenuAction_Element(Icon("Selection_Loop"), tt_SelectEdgeLoop, pb_Menu_Commands.MenuLoopSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
 
-					
 				// object
 				new pb_MenuAction_Object( Icon("Object_Merge"), tt_MergeObjects, pb_Menu_Commands.MenuMergeObjects, (x) => { return x != null && x.Length >= 2;} ),
 				new pb_MenuAction_Object( Icon("Object_FlipNormals"), tt_FlipObjectNormals, pb_Menu_Commands.MenuFlipObjectNormals ),
@@ -280,10 +288,10 @@ namespace ProBuilder2.EditorCommon
 				new pb_MenuAction_Object( Icon("null"), tt_ConformObjectNormals, pb_Menu_Commands.MenuConformObjectNormals ),
 				new pb_MenuAction_Object( Icon("null"), tt_TriangulateObject, pb_Menu_Commands.MenuTriangulateObject ),
 				
-				// // elements all
+				// elements all
 				CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
 
-				// // elements face
+				// elements face
 				CreateFaceAction("Face_Extrude", tt_ExtrudeFaces, pb_Menu_Commands.MenuExtrude),							// @todo
 				CreateFaceAction("null", tt_ConformFaceNormals, pb_Menu_Commands.MenuConformNormals, false, 3),
 				CreateFaceAction("Face_FlipNormals", tt_FlipFaceNormals, pb_Menu_Commands.MenuFlipNormals ),

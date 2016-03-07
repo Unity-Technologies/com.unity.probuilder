@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -33,24 +34,42 @@ namespace ProBuilder2.EditorCommon
 		public Texture2D icon;
 		public pb_TooltipContent tooltip;
 
-		// If this action has special extra settings, override this property to enable DoSettings().
-		public virtual bool HasSettings { get { return false; } }
-
 		public abstract pb_ActionResult DoAction();
+
+		// 
+		public System.Type optionsWindowType = null;
+		public System.Func<EditLevel, SelectMode, pb_Object[], bool> optionsWindowEnabled;
 
 		// Is this action valid based on the current selection and context?
 		public abstract bool IsEnabled();
 
-		public virtual void DoSettings() {}
-
-		public void DoButton()
+		public void DoButton(bool showOptions)
 		{
 			bool wasEnabled = GUI.enabled;
 			
 			GUI.enabled = IsEnabled();
 
+			pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+			EditLevel el = pb_Editor.instance != null ? pb_Editor.instance.editLevel : EditLevel.Top;
+			SelectMode sm = pb_Editor.instance != null ? pb_Editor.instance.selectionMode : SelectMode.Face;
+
+			bool canShowOptions = optionsWindowType != null && (optionsWindowEnabled == null || optionsWindowEnabled(el, sm, sel));
+
 			if( GUILayout.Button(icon, buttonStyle) )
-				DoAction();
+			{
+				if(showOptions && canShowOptions)
+					pb_MenuOption.Show(optionsWindowType);
+				else
+					DoAction();
+			}
+
+			if(canShowOptions)
+			{
+				Rect r = GUILayoutUtility.GetLastRect();
+				r.x = r.x + r.width - 18;
+				r.y += 2;
+				GUI.Label(r, pb_IconUtility.GetIcon("Options"));
+			}
 
 			GUI.enabled = wasEnabled;
 		}

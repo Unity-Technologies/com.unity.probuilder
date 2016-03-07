@@ -10,8 +10,6 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public class pb_EditorToolbar : ScriptableObject
 	{
-		const int TOOLTIP_OFFSET = 4;
-
 		[SerializeField] EditorWindow window;
 
 		[SerializeField] List<pb_MenuAction> actions;
@@ -20,7 +18,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize() + new Vector2(6, 6);
+			win.minSize = actions[0].GetSize() + new Vector2(10, 10);
 			this.window = win;
 		}
 
@@ -48,11 +46,13 @@ namespace ProBuilder2.EditorCommon
 
 		private void ShowTooltip(Rect rect, pb_MenuAction action, Vector2 scrollOffset)
 		{
-			Vector2 p = new Vector2(
-				(window.position.x + rect.x + rect.width + TOOLTIP_OFFSET) - scrollOffset.x,
-				(window.position.y + rect.y + TOOLTIP_OFFSET) - scrollOffset.y);
+			Rect buttonRect = new Rect(
+				(window.position.x + rect.x) - scrollOffset.x,
+				(window.position.y + rect.y) - scrollOffset.y, 
+				rect.width,
+				rect.height);
 
-			pb_TooltipWindow.Show(p, action.tooltip);
+			pb_TooltipWindow.Show(buttonRect, action.tooltip);
 		}
 
 		public void OnGUI()
@@ -71,7 +71,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_MenuAction action in actions)
 			{
-				action.DoButton();
+				action.DoButton(e.alt);
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 

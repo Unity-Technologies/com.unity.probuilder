@@ -11,8 +11,6 @@ namespace ProBuilder2.Interface
 {
 	public class pb_GUI_Utility
 	{
-#region Private
-
 		static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
 
 		private static GUIStyle _splitStyle;
@@ -29,7 +27,6 @@ namespace ProBuilder2.Interface
 				return _splitStyle;
 			}
 		}
-#endregion
 
 		static GUIContent _guiContent = null;
 
