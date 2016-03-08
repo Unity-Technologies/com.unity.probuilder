@@ -6,25 +6,22 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	public abstract class pb_MenuOption : EditorWindow
+	public class pb_MenuOption : EditorWindow
 	{
-		public static pb_MenuOption Show(System.Type type)
+		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsGUI = null;
+
+		public static pb_MenuOption Show(pb_MenuAction.SettingsDelegate onSettingsGUI)
 		{
-			if( !type.IsSubclassOf(typeof(pb_MenuOption)) )
-			{
-				Debug.Log(type.ToString() + " is not of type pb_MenuOption");
-				return null;
-			}
-
-			foreach(EditorWindow win in Resources.FindObjectsOfTypeAll(type))
-				win.Close();
-
-			return EditorWindow.GetWindow(type, true, "Option", true) as pb_MenuOption;
+			pb_MenuOption win = EditorWindow.GetWindow<pb_MenuOption>(true, "Options", true);
+			win.onSettingsGUI = onSettingsGUI;
+			win.Show();
+			return win;
 		}
 
-		public virtual bool IsEnabled(EditLevel editLevel, SelectMode selectionMode, pb_Object[] selection)
+		void OnGUI()
 		{
-			return true;
+			if(onSettingsGUI != null)
+				onSettingsGUI();
 		}
 	}
 }

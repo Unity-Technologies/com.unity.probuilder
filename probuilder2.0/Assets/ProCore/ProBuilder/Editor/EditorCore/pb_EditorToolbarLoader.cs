@@ -227,6 +227,7 @@ namespace ProBuilder2.EditorCommon
 				new ToggleSelectBackFaces(),
 				new ToggleHandleAlignment(),
 
+				new GrowSelection(),
 				// // selection
 				// new pb_MenuAction_Element(
 				// 	Icon("Selection_Grow"),

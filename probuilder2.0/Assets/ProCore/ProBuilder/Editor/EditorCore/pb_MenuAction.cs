@@ -12,6 +12,16 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public abstract class pb_MenuAction
 	{
+		public delegate void SettingsDelegate();
+
+		public static pb_Object[] selection 
+		{
+			get
+			{
+				return pbUtil.GetComponents<pb_Object>(Selection.transforms);
+			}
+		}
+
 		protected static GUIStyle _buttonStyle = null;
 		protected static GUIStyle buttonStyle
 		{
@@ -35,15 +45,12 @@ namespace ProBuilder2.EditorCommon
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
 
-		public abstract pb_ActionResult DoAction();
-
-		public virtual System.Type optionsWindowType { get { return null; } }
-		public virtual System.Func<EditLevel, SelectMode, pb_Object[], bool> optionsWindowEnabled { get { return null; } }
-
-		// Is this action valid based on the current selection and context?
-		public abstract bool IsEnabled();
-
 		public virtual bool IsHidden() { return false; }
+		public abstract bool IsEnabled();
+		public virtual bool SettingsEnabled() { return false; }
+		
+		public abstract pb_ActionResult DoAction();
+		public virtual void OnSettingsGUI() {}
 
 		public bool DoButton(bool showOptions, ref Rect optionsRect)
 		{
@@ -51,16 +58,10 @@ namespace ProBuilder2.EditorCommon
 			
 			GUI.enabled = IsEnabled();
 
-			pb_Object[] sel = pbUtil.GetComponents<pb_Object>(Selection.transforms);
-			EditLevel el = pb_Editor.instance != null ? pb_Editor.instance.editLevel : EditLevel.Top;
-			SelectMode sm = pb_Editor.instance != null ? pb_Editor.instance.selectionMode : SelectMode.Face;
-
-			bool canShowOptions = optionsWindowType != null && (optionsWindowEnabled == null || optionsWindowEnabled(el, sm, sel));
-
 			if( GUILayout.Button(icon, buttonStyle) )
 			{
-				if(showOptions && canShowOptions)
-					pb_MenuOption.Show(optionsWindowType);
+				if(showOptions && SettingsEnabled())
+					pb_MenuOption.Show(OnSettingsGUI);
 				else
 				{
 					pb_ActionResult result = DoAction();
@@ -68,7 +69,7 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			if(canShowOptions)
+			if(SettingsEnabled())
 			{
 				Rect r = GUILayoutUtility.GetLastRect();
 				r.x = r.x + r.width - 18;

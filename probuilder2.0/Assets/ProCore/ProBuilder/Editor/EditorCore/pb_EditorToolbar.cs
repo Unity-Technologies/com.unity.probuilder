@@ -102,7 +102,7 @@ namespace ProBuilder2.EditorCommon
 
 				if( e.type != EventType.Layout )
 				{
-					if( buttonRect.Contains(e.mousePosition) )
+					if( !tooltipShown && buttonRect.Contains(e.mousePosition) )
 					{
 						if(!shiftOnlyTooltips)
 						{
