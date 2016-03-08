@@ -15,8 +15,13 @@ namespace ProBuilder2.EditorCommon
 			if(!m_icons.TryGetValue(iconName, out icon))
 			{
 				icon = Resources.Load<Texture2D>("Icons/" + iconName);
+				
 				if(icon == null)
+				{
 					Debug.LogWarning("failed to find icon: " + iconName);
+					icon = Resources.Load<Texture2D>("Icons/null");
+				}
+
 				m_icons.Add(iconName, icon);
 			}
 

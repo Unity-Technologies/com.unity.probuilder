@@ -44,7 +44,14 @@ namespace ProBuilder2.EditorCommon
 
 		Vector2 scroll = Vector2.zero;
 
-		private void ShowTooltip(Rect rect, pb_MenuAction action, Vector2 scrollOffset)
+		private void ShowTooltip(Rect rect, string content, Vector2 scrollOffset)
+		{
+			pb_TooltipContent c = pb_TooltipContent.TempContent;
+			c.summary = content;
+			ShowTooltip(rect, c, scrollOffset);
+		}
+
+		private void ShowTooltip(Rect rect, pb_TooltipContent content, Vector2 scrollOffset)
 		{
 			Rect buttonRect = new Rect(
 				(window.position.x + rect.x) - scrollOffset.x,
@@ -52,7 +59,7 @@ namespace ProBuilder2.EditorCommon
 				rect.width,
 				rect.height);
 
-			pb_TooltipWindow.Show(buttonRect, action.tooltip);
+			pb_TooltipWindow.Show(buttonRect, content);
 		}
 
 		public void OnGUI()
@@ -69,9 +76,21 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.BeginHorizontal();
 
+			Rect optionRect = new Rect(0f, 0f, 0f, 0f);
+
 			foreach(pb_MenuAction action in actions)
 			{
-				action.DoButton(e.alt);
+				if( action.DoButton(e.alt, ref optionRect) && !e.shift)
+				{
+					optionRect.x -= scroll.x;
+					optionRect.y -= scroll.y;
+
+					if(optionRect.Contains(e.mousePosition) && e.type != EventType.Layout)
+					{
+						tooltipShown = true;
+						ShowTooltip(optionRect, "Alt+Click for Options", scroll);
+					}	
+				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 
@@ -80,7 +99,7 @@ namespace ProBuilder2.EditorCommon
 					buttonRect.Contains(e.mousePosition) )
 				{
 					tooltipShown = true;
-					ShowTooltip(buttonRect, action, scroll);
+					ShowTooltip(buttonRect, action.tooltip, scroll);
 				}
 
 				if(++i >= rows)

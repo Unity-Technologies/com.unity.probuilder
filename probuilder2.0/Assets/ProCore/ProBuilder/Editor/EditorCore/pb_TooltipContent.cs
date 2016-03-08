@@ -14,6 +14,11 @@ namespace ProBuilder2.EditorCommon
 		static GUIStyle TitleStyle { get { if(_titleStyle == null) InitStyles(); return _titleStyle; } }
 		static GUIStyle _titleStyle = null;
 
+		const float MIN_WIDTH = 128;
+		const float MAX_WIDTH = 512;
+		const float MIN_HEIGHT = 0;
+		const float MAX_HEIGHT = 1024;
+
 		static void InitStyles()
 		{
 			_titleStyle = new GUIStyle();
@@ -30,6 +35,8 @@ namespace ProBuilder2.EditorCommon
 		public string name;
 		public string summary;
 
+		public static pb_TooltipContent TempContent = new pb_TooltipContent("", "");
+
 		public pb_TooltipContent(string name, string summary)
 		{
 			this.name = name;
@@ -38,29 +45,54 @@ namespace ProBuilder2.EditorCommon
 
 		public Vector2 CalcSize()
 		{
-			const float pad = 20;
-			Vector2 total = new Vector2(256, 256);
+			const float pad = 8;
+			Vector2 total = new Vector2(MIN_WIDTH, MIN_HEIGHT);
 
-			Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(name));
+			bool hasName = !string.IsNullOrEmpty(name);
+			bool hasSummary = !string.IsNullOrEmpty(summary);
 
-			float width = Mathf.Max(ns.x + pad, 256);
+			if(hasName)
+			{
+				Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(name));
+				total.x += Mathf.Max(ns.x, 256);
+				total.y += ns.y;
+			}
 
-			float dh = EditorStyles.wordWrappedLabel.CalcHeight(pb_GUI_Utility.TempGUIContent(summary), width);
+			if(hasSummary)
+			{
+				if(!hasName)
+				{
+					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(pb_GUI_Utility.TempGUIContent(summary));
+					total.x = Mathf.Min(sumSize.x, MAX_WIDTH);
+				}
 
-			total.x = width;
-			total.y = ns.y + dh + pad;
+				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(pb_GUI_Utility.TempGUIContent(summary), total.x);
+				total.y += summaryHeight;
+			}
+
+			if(hasName && hasSummary)
+				total.y += 16;
+
+			total.x += pad;
+			total.y += pad;
 
 			return total;
 		}
 
 		public void Draw()
 		{
-			GUILayout.Label(name, TitleStyle);
+			if(!string.IsNullOrEmpty(name))
+			{
+				GUILayout.Label(name, TitleStyle);
 
-			pb_GUI_Utility.DrawSeparator(1, separatorColor);
-			GUILayout.Space(2);
+				pb_GUI_Utility.DrawSeparator(1, separatorColor);
+				GUILayout.Space(2);
+			}
 
-			GUILayout.Label(summary, EditorStyles.wordWrappedLabel);
+			if(!string.IsNullOrEmpty(summary))
+			{
+				GUILayout.Label(summary, EditorStyles.wordWrappedLabel);
+			}
 		}
 
 		public bool Equals(pb_TooltipContent tooltip)

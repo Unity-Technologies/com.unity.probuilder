@@ -43,7 +43,9 @@ namespace ProBuilder2.EditorCommon
 		// Is this action valid based on the current selection and context?
 		public abstract bool IsEnabled();
 
-		public void DoButton(bool showOptions)
+		public virtual bool IsHidden() { return false; }
+
+		public bool DoButton(bool showOptions, ref Rect optionsRect)
 		{
 			bool wasEnabled = GUI.enabled;
 			
@@ -68,10 +70,18 @@ namespace ProBuilder2.EditorCommon
 				Rect r = GUILayoutUtility.GetLastRect();
 				r.x = r.x + r.width - 18;
 				r.y += 2;
+				r.width = 17;
+				r.height = 17;
 				GUI.Label(r, pb_IconUtility.GetIcon("Options"));
+				optionsRect = r;
+				GUI.enabled = wasEnabled;
+				return true;
 			}
-
-			GUI.enabled = wasEnabled;
+			else
+			{
+				GUI.enabled = wasEnabled;
+				return false;
+			}
 		}
 
 		/**
