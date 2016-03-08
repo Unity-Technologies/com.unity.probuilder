@@ -31,14 +31,14 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public Texture2D icon;
-		public pb_TooltipContent tooltip;
+		public abstract string group { get; }
+		public abstract Texture2D icon { get; }
+		public abstract pb_TooltipContent tooltip { get; }
 
 		public abstract pb_ActionResult DoAction();
 
-		// 
-		public System.Type optionsWindowType = null;
-		public System.Func<EditLevel, SelectMode, pb_Object[], bool> optionsWindowEnabled;
+		public virtual System.Type optionsWindowType { get { return null; } }
+		public virtual System.Func<EditLevel, SelectMode, pb_Object[], bool> optionsWindowEnabled { get { return null; } }
 
 		// Is this action valid based on the current selection and context?
 		public abstract bool IsEnabled();
@@ -62,7 +62,10 @@ namespace ProBuilder2.EditorCommon
 				if(showOptions && canShowOptions)
 					pb_MenuOption.Show(optionsWindowType);
 				else
-					DoAction();
+				{
+					pb_ActionResult result = DoAction();
+					pb_Editor_Utility.ShowNotification(result.notification);
+				}
 			}
 
 			if(canShowOptions)
