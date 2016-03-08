@@ -38,6 +38,7 @@ public class pb_Preferences
 	static bool pbEnableBackfaceSelection = false;
 	static bool pbUniqueModeShortcuts = false;
 	static bool pbIconGUI = false;
+	static bool pbShiftOnlyTooltips = false;
 	
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -100,6 +101,9 @@ public class pb_Preferences
 
 		pbUniqueModeShortcuts = EditorGUILayout.Toggle(new GUIContent("Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively."), pbUniqueModeShortcuts);
 		pbIconGUI = EditorGUILayout.Toggle(new GUIContent("Use Icon Only GUI", "Toggles the ProBuilder window interface between text and icon versions."), pbIconGUI);
+		GUI.enabled = pbIconGUI;
+		pbShiftOnlyTooltips = EditorGUILayout.Toggle(new GUIContent("Shift Key Tooltips", "When in Icon mode, tooltips will only show when the Shift key is held"), pbShiftOnlyTooltips);
+		GUI.enabled = true;
 
 		GUILayout.Space(4);
 		
@@ -183,6 +187,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEntity);
 			EditorPrefs.DeleteKey(pb_Constant.pbUniqueModeShortcuts);
 			EditorPrefs.DeleteKey(pb_Constant.pbIconGUI);
+			EditorPrefs.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
 		}
 
 		LoadPrefs();
@@ -285,6 +290,7 @@ public class pb_Preferences
 		pbShowEditorNotifications 			= pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications);
 		pbUniqueModeShortcuts 				= pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts);
 		pbIconGUI 							= pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+		pbShiftOnlyTooltips 				= pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
@@ -338,6 +344,7 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbShowSceneToolbar, pbShowSceneToolbar);
 		EditorPrefs.SetBool		(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts);
 		EditorPrefs.SetBool		(pb_Constant.pbIconGUI, pbIconGUI);
+		EditorPrefs.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
 		
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);

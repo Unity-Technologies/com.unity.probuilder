@@ -11,6 +11,9 @@ namespace ProBuilder2.EditorCommon
 	public class pb_EditorToolbar : ScriptableObject
 	{
 		[SerializeField] EditorWindow window;
+		[SerializeField] bool shiftOnlyTooltips = false;
+		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
+		const double TOOLTIP_TIMER = 1.0;
 
 		[SerializeField] List<pb_MenuAction> actions;
 
@@ -27,6 +30,7 @@ namespace ProBuilder2.EditorCommon
 			actions = pb_EditorToolbarLoader.GetActions();
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
+			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 		}
 
 		void OnDisable()
@@ -72,7 +76,9 @@ namespace ProBuilder2.EditorCommon
 			int i = 1;
 
 			scroll = GUILayout.BeginScrollView(scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
-			bool tooltipShown = false;
+
+			bool 	tooltipShown = false,
+					hovering = false;
 
 			GUILayout.BeginHorizontal();
 
@@ -94,12 +100,29 @@ namespace ProBuilder2.EditorCommon
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 
-				if( e.shift &&
-					e.type != EventType.Layout &&
-					buttonRect.Contains(e.mousePosition) )
+				if( e.type != EventType.Layout )
 				{
-					tooltipShown = true;
-					ShowTooltip(buttonRect, action.tooltip, scroll);
+					if( buttonRect.Contains(e.mousePosition) )
+					{
+						if(!shiftOnlyTooltips)
+						{
+							if( !tooltipTimer.Item1.Equals(action.tooltip.name) )
+							{
+								tooltipTimer.Item1 = action.tooltip.name;
+								tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
+							}
+						}
+
+						if( e.shift || ( 	!shiftOnlyTooltips &&
+											tooltipTimer.Item1.Equals(action.tooltip.name) &&
+											EditorApplication.timeSinceStartup - tooltipTimer.Item2 > TOOLTIP_TIMER ))
+						{
+							tooltipShown = true;
+							ShowTooltip(buttonRect, action.tooltip, scroll);
+						}
+
+						hovering = true;
+					}
 				}
 
 				if(++i >= rows)
@@ -117,6 +140,9 @@ namespace ProBuilder2.EditorCommon
 
 			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)
 				pb_TooltipWindow.Hide();
+
+			if(e.type != EventType.Layout && !hovering)
+				tooltipTimer.Item1 = "";
 
 			if( (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
 				window.Repaint();

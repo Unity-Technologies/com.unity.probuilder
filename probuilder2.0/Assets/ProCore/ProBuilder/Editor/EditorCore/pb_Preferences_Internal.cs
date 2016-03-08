@@ -42,7 +42,8 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbVertexPaletteDockable ||
 			pref == pb_Constant.pbGrowSelectionAngleIterative ||
 			pref == pb_Constant.pbIconGUI ||
-			pref == pb_Constant.pbUniqueModeShortcuts)
+			pref == pb_Constant.pbUniqueModeShortcuts || 
+			pref == pb_Constant.pbShiftOnlyTooltips)
 			return false;
 		else
 			return true;

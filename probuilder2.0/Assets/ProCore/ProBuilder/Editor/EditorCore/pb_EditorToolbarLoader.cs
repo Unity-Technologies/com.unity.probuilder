@@ -224,12 +224,7 @@ namespace ProBuilder2.EditorCommon
 				new OpenSmoothingEditor(),
 				new OpenMirrorObjectsEditor(),
 
-				// // interaction
-				// new pb_MenuAction_Toggle(
-				// 	new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
-				// 	tt_SelectBackFaces,
-				// 	(x) => { pb_Editor.instance.SetSelectHiddenEnabled(x == 0); }),
-
+				new ToggleSelectBackFaces(),
 				new ToggleHandleAlignment(),
 
 				// // selection

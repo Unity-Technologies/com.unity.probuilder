@@ -15,7 +15,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Shape Editor",
-			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves."
+			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves.\n\n<b>Shortcut</b>: <i>Control/Command + Shift + K</i>"
 		);
 
 		public override bool IsEnabled()

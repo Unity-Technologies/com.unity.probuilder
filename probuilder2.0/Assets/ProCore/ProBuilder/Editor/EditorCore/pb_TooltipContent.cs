@@ -28,6 +28,8 @@ namespace ProBuilder2.EditorCommon
 			_titleStyle.fontStyle = FontStyle.Bold;
 			_titleStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
 			_titleStyle.richText = true;
+
+			EditorStyles.wordWrappedLabel.richText = true;
 		}
 
 		static readonly Color separatorColor = new Color(.65f, .65f, .65f, .5f);
