@@ -41,7 +41,7 @@ namespace ProBuilder2.EditorCommon
 			"Select Hidden Faces",
 			"Toggles back-face selection on or off.\n\nWhen drag selecting or clicking, back-face selection off will ignore faces that are either not facing the camera or behind other geometery."
 			);
-		
+
 		private static readonly pb_TooltipContent tt_SetHandleAlignment = new pb_TooltipContent(
 			"Set Handle Alignment",
 			"Toggles the transform gizmo's coordinate space."
@@ -216,7 +216,7 @@ namespace ProBuilder2.EditorCommon
 			bool enforceMode = false,
 			int minEdgeCount = 1)
 		{
-			return new pb_MenuAction_Element( 
+			return new pb_MenuAction_Element(
 				Icon(icon),
 				tooltip,
 				action,
@@ -232,7 +232,7 @@ namespace ProBuilder2.EditorCommon
 			bool enforceMode = false,
 			int minVertCount = 1)
 		{
-			return new pb_MenuAction_Element( 
+			return new pb_MenuAction_Element(
 				Icon(icon),
 				tooltip,
 				action,
@@ -254,12 +254,12 @@ namespace ProBuilder2.EditorCommon
 				new pb_MenuAction_Tool( Icon("Object_Mirror"), tt_MirrorObjects, pb_Mirror_Tool.MenuOpenMirrorEditor ),
 
 				// interaction
-				new pb_MenuAction_Toggle( 
+				new pb_MenuAction_Toggle(
 					new Texture2D[] { Icon("Selection_SelectHidden-ON"), Icon("Selection_SelectHidden-OFF") },
 					tt_SelectBackFaces,
 					(x) => { pb_Editor.instance.SetSelectHiddenEnabled(x == 0); }),
 
-				new pb_MenuAction_Toggle( 
+				new pb_MenuAction_Toggle(
 					new Texture2D[] { Icon("HandleAlign_World"), Icon("HandleAlign_Local"), Icon("HandleAlign_Plane") },
 					tt_SetHandleAlignment,
 					(x) => { pb_Editor.instance.SetHandleAlignment((HandleAlignment)x); }),
@@ -284,9 +284,9 @@ namespace ProBuilder2.EditorCommon
 				new pb_MenuAction_Object( Icon("Object_FlipNormals"), tt_FlipObjectNormals, pb_Menu_Commands.MenuFlipObjectNormals ),
 				new pb_MenuAction_Object( Icon("Object_Subdivide"), tt_SubdivideObject, pb_Menu_Commands.MenuSubdivide ),
 				new pb_MenuAction_Object( Icon("Pivot_Reset"), tt_FreezeTransform, pb_Menu_Commands.MenuFreezeTransforms ),
-				new pb_MenuAction_Object( Icon("null"), tt_ConformObjectNormals, pb_Menu_Commands.MenuConformObjectNormals ),
-				new pb_MenuAction_Object( Icon("null"), tt_TriangulateObject, pb_Menu_Commands.MenuTriangulateObject ),
-				
+				new pb_MenuAction_Object( Icon("Object_ConformNormals"), tt_ConformObjectNormals, pb_Menu_Commands.MenuConformObjectNormals ),
+				new pb_MenuAction_Object( Icon("Object_Triangulate"), tt_TriangulateObject, pb_Menu_Commands.MenuTriangulateObject ),
+
 				// elements all
 				CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
 
@@ -300,14 +300,14 @@ namespace ProBuilder2.EditorCommon
 					(x) => { return x.Sum(y => y.SelectedFaceCount) >= 1 || x.Sum(z => z.SelectedEdgeCount) >= 1; },
 					typeof(pb_MenuOption_Extrude)),
 
-				CreateFaceAction("null", tt_ConformFaceNormals, pb_Menu_Commands.MenuConformNormals, false, 3),
+				CreateFaceAction("Face_ConformNormals", tt_ConformFaceNormals, pb_Menu_Commands.MenuConformNormals, false, 3),
 				CreateFaceAction("Face_FlipNormals", tt_FlipFaceNormals, pb_Menu_Commands.MenuFlipNormals ),
-				CreateFaceAction("null", tt_FlipFaceEdge, pb_Menu_Commands.MenuFlipEdges),
+				CreateFaceAction("Face_FlipEdge", tt_FlipFaceEdge, pb_Menu_Commands.MenuFlipEdges),
 				CreateFaceAction("Face_Delete", tt_DeleteFaces, pb_Menu_Commands.MenuDeleteFace),
 				CreateFaceAction("Face_Detach", tt_DetachFaces, pb_Menu_Commands.MenuDetachFaces),
 				CreateFaceAction("Face_Merge", tt_MergeFaces, pb_Menu_Commands.MenuMergeFaces, false, 2),
 				CreateFaceAction("Face_Subdivide", tt_SubdivideFaces, pb_Menu_Commands.MenuSubdivideFace),
-				
+
 				// elements edge
 				// CreateEdgeAction("Edge_Extrude", tt_ExtrudeEdges, pb_Menu_Commands.MenuExtrude),							// @todo
 				CreateEdgeAction("Edge_Bridge", tt_BridgeEdges, pb_Menu_Commands.MenuBridgeEdges, true, 2),
@@ -315,7 +315,7 @@ namespace ProBuilder2.EditorCommon
 				CreateEdgeAction("Edge_InsertLoop", tt_InsertEdgeLoop, pb_Menu_Commands.MenuInsertEdgeLoop),
 
 				CreateVertexAction("Vert_Connect", tt_ConnectVertices, pb_Menu_Commands.MenuConnectVertices, false, 2),
-				new pb_MenuAction_Element( 
+				new pb_MenuAction_Element(
 					Icon("Vert_Weld"),
 					tt_WeldVertices,
 					pb_Menu_Commands.MenuWeldVertices,

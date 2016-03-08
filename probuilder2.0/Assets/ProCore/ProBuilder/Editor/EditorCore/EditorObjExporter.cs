@@ -1,6 +1,6 @@
 /*
 Based on ObjExporter.cs, this "wrapper" lets you export to .OBJ directly from the editor menu.
- 
+
 This should be put in your "Editor"-folder. Use by selecting the objects you want to export, and select
 the appropriate menu item from "Custom->Export". Exported models are put in a folder called
 "ExportedObj" in the root of your Unity-project. Textures should also be copied and placed in the
@@ -20,20 +20,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System;
- 
+
 struct ObjMaterial
 {
 	public string name;
 	public string textureName;
 }
- 
+
 public class EditorObjExporter : ScriptableObject
 {
 	private static int vertexOffset = 0;
 	private static int normalOffset = 0;
 	private static int uvOffset = 0;
 
-	public static void MeshToFile(MeshFilter mf, string path) 
+	public static void MeshToFile(MeshFilter mf, string path)
 	{
 		vertexOffset = 0;
 		normalOffset = 0;
@@ -50,7 +50,7 @@ public class EditorObjExporter : ScriptableObject
 
 		Dictionary<string, ObjMaterial> materialList = new Dictionary<string, ObjMaterial>();
 
-		using (StreamWriter sw = new StreamWriter(folder +"/" + filename + ".obj")) 
+		using (StreamWriter sw = new StreamWriter(folder +"/" + filename + ".obj"))
 		{
 			sw.Write("mtllib ./" + filename + ".mtl\n");
 
@@ -60,7 +60,7 @@ public class EditorObjExporter : ScriptableObject
 		MaterialsToFile(materialList, folder, filename);
 	}
 
-	private static string MeshToString(MeshFilter mf, Dictionary<string, ObjMaterial> materialList) 
+	private static string MeshToString(MeshFilter mf, Dictionary<string, ObjMaterial> materialList)
 	{
 		Mesh m = mf.sharedMesh;
 		Material[] mats = mf.GetComponent<Renderer>().sharedMaterials;
@@ -68,11 +68,11 @@ public class EditorObjExporter : ScriptableObject
 		StringBuilder sb = new StringBuilder();
 
 		sb.Append("g ").Append(mf.name).Append("\n");
-		
-		foreach(Vector3 lv in m.vertices) 
+
+		foreach(Vector3 lv in m.vertices)
 		{
 			Vector3 wv = lv;
-				
+
 			// this is not how to convert from left to right handed coordinates
 			//This is sort of ugly - inverting x-component since we're in
 			//a different coordinate system than "everyone" is "used to".
@@ -81,7 +81,7 @@ public class EditorObjExporter : ScriptableObject
 
 		sb.Append("\n");
 
-		foreach(Vector3 lv in m.normals) 
+		foreach(Vector3 lv in m.normals)
 		{
 			Vector3 wv = lv;
 
@@ -90,7 +90,7 @@ public class EditorObjExporter : ScriptableObject
 
 		sb.Append("\n");
 
-		foreach(Vector3 v in m.uv) 
+		foreach(Vector2 v in m.uv)
 		{
 			sb.Append(string.Format("vt {0} {1}\n",v.x,v.y));
 		}
@@ -108,16 +108,16 @@ public class EditorObjExporter : ScriptableObject
 
 			if (mats[i].mainTexture)
 				objMaterial.textureName = UnityEditor.AssetDatabase.GetAssetPath(mats[i].mainTexture);
-			else 
+			else
 				objMaterial.textureName = null;
 
 			materialList.Add(objMaterial.name, objMaterial);
 
 			int[] tri = m.GetTriangles(i);
-			for (int n = 0; n < tri.Length; n += 3) 
+			for (int n = 0; n < tri.Length; n += 3)
 			{
 				//Because we inverted the x-component, we also needed to alter the triangle winding.
-				sb.Append(string.Format("f {1}/{1}/{1} {0}/{0}/{0} {2}/{2}/{2}\n", 
+				sb.Append(string.Format("f {1}/{1}/{1} {0}/{0}/{0} {2}/{2}/{2}\n",
 				tri[n]+1 + vertexOffset, tri[n+1]+1 + normalOffset, tri[n+2]+1 + uvOffset));
 			}
 		}
@@ -138,7 +138,7 @@ public class EditorObjExporter : ScriptableObject
 
 	private static void MaterialsToFile(Dictionary<string, ObjMaterial> materialList, string folder, string filename)
 	{
-		using (StreamWriter sw = new StreamWriter(folder + "/" + filename + ".mtl")) 
+		using (StreamWriter sw = new StreamWriter(folder + "/" + filename + ".mtl"))
 		{
 			foreach( KeyValuePair<string, ObjMaterial> kvp in materialList )
 			{
