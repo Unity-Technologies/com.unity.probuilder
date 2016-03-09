@@ -21,7 +21,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize() + new Vector2(10, 10);
+			win.minSize = actions[0].GetSize() + new Vector2(6, 6);
 			this.window = win;
 		}
 
@@ -70,10 +70,10 @@ namespace ProBuilder2.EditorCommon
 		{
 			Event e = Event.current;
 
-			int max = (int)window.position.width - 24;
-			int rows = System.Math.Max(max / (int)actions[0].GetSize().x, 1);
+			int max = (int)window.position.width - 4;
+			int rows = System.Math.Max(max / (int)(actions[0].GetSize().x + 4), 1);
 
-			int i = 1;
+			int i = 0;
 
 			scroll = GUILayout.BeginScrollView(scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
@@ -127,7 +127,8 @@ namespace ProBuilder2.EditorCommon
 
 				if(++i >= rows)
 				{
-					i = 1;
+					i = 0;
+
 					GUILayout.EndHorizontal();
 					GUILayout.BeginHorizontal();
 				}
