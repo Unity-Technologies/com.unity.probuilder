@@ -8,7 +8,7 @@ namespace ProBuilder2.Actions
 {
 	public class OpenUVEditor : pb_MenuAction
 	{
-		public override string group { get { return "Editor"; } }
+		public override pb_IconGroup group { get { return pb_IconGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Panel_UVEditor"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 

@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
+using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -12,10 +13,12 @@ namespace ProBuilder2.EditorCommon
 	public class pb_TooltipContent : System.IEquatable<pb_TooltipContent>
 	{
 		static GUIStyle TitleStyle { get { if(_titleStyle == null) InitStyles(); return _titleStyle; } }
+		static GUIStyle ShortcutStyle { get { if(_shortcutStyle == null) InitStyles(); return _shortcutStyle; } }
 		static GUIStyle _titleStyle = null;
+		static GUIStyle _shortcutStyle = null;
 
 		const float MIN_WIDTH = 128;
-		const float MAX_WIDTH = 512;
+		const float MAX_WIDTH = 330;
 		const float MIN_HEIGHT = 0;
 		const float MAX_HEIGHT = 1024;
 
@@ -29,6 +32,10 @@ namespace ProBuilder2.EditorCommon
 			_titleStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
 			_titleStyle.richText = true;
 
+			_shortcutStyle = new GUIStyle(_titleStyle);
+			_shortcutStyle.fontSize = 14;
+			_shortcutStyle.fontStyle = FontStyle.Normal;
+
 			EditorStyles.wordWrappedLabel.richText = true;
 		}
 
@@ -36,13 +43,26 @@ namespace ProBuilder2.EditorCommon
 
 		public string name;
 		public string summary;
+		public string shortcut;
 
 		public static pb_TooltipContent TempContent = new pb_TooltipContent("", "");
 
-		public pb_TooltipContent(string name, string summary)
+		public pb_TooltipContent(string name, string summary, params char[] shortcut) : this(name, summary, "")
+		{
+			if(shortcut != null && shortcut.Length > 0)
+			{
+				this.shortcut = string.Empty;
+				for(int i = 0; i < shortcut.Length - 1; i++)
+					this.shortcut += shortcut[i] + " + ";
+				this.shortcut += shortcut[shortcut.Length - 1];
+			}
+		}
+		
+		public pb_TooltipContent(string name, string summary, string shortcut = "")
 		{
 			this.name = name;
 			this.summary = summary;
+			this.shortcut = shortcut;
 		}
 
 		public Vector2 CalcSize()
@@ -52,10 +72,17 @@ namespace ProBuilder2.EditorCommon
 
 			bool hasName = !string.IsNullOrEmpty(name);
 			bool hasSummary = !string.IsNullOrEmpty(summary);
+			bool hasShortcut = !string.IsNullOrEmpty(shortcut);
 
 			if(hasName)
 			{
 				Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(name));
+
+				if(hasShortcut)
+				{
+					ns.x += EditorStyles.boldLabel.CalcSize(pb_GUI_Utility.TempGUIContent(shortcut)).x + pad;
+				}
+
 				total.x += Mathf.Max(ns.x, 256);
 				total.y += ns.y;
 			}
@@ -85,7 +112,19 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!string.IsNullOrEmpty(name))
 			{
-				GUILayout.Label(name, TitleStyle);
+
+				if(!string.IsNullOrEmpty(shortcut))
+				{
+					GUILayout.BeginHorizontal();
+					GUILayout.Label(name, TitleStyle);
+					GUILayout.FlexibleSpace();
+					GUILayout.Label(shortcut, ShortcutStyle);
+					GUILayout.EndHorizontal();
+				}
+				else
+				{
+					GUILayout.Label(name, TitleStyle);
+				}
 
 				pb_GUI_Utility.DrawSeparator(1, separatorColor);
 				GUILayout.Space(2);

@@ -9,7 +9,7 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public class ToggleSelectBackFaces : pb_MenuAction
 	{
-		public override string group { get { return "Interaction"; } }
+		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
 		public override Texture2D icon
 		{
 			get

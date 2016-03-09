@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public override string group { get { return "Interaction"; } }
+		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
 		public override Texture2D icon
 		{
 			get

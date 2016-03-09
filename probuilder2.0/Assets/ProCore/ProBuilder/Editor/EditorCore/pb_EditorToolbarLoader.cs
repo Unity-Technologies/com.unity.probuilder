@@ -8,25 +8,6 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_EditorToolbarLoader
 	{
-		// private static readonly pb_TooltipContent tt_SelectBackFaces = new pb_TooltipContent(
-		// 	"Select Hidden Faces",
-		// 	"Toggles back-face selection on or off.\n\nWhen drag selecting or clicking, back-face selection off will ignore faces that are either not facing the camera or behind other geometery."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_SetHandleAlignment = new pb_TooltipContent(
-		// 	"Set Handle Alignment",
-		// 	"Toggles the transform gizmo's coordinate space."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_GrowSelection = new pb_TooltipContent(
-		// 	"Grow Selection",
-		// 	"Expands the current element selection to include nearby elements."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_ShrinkSelection = new pb_TooltipContent(
-		// 	"Shrink Selection",
-		// 	"Removes the elements on the outer edges of the current selection."
-		// 	);
 
 		// private static readonly pb_TooltipContent tt_InvertSelection = new pb_TooltipContent(
 		// 	"Invert Selection",
@@ -228,18 +209,9 @@ namespace ProBuilder2.EditorCommon
 				new ToggleHandleAlignment(),
 
 				new GrowSelection(),
-				// // selection
-				// new pb_MenuAction_Element(
-				// 	Icon("Selection_Grow"),
-				// 	tt_GrowSelection,
-				// 	pb_Menu_Commands.MenuGrowSelection,
-				// 	SelectMode.Vertex,
-				// 	false,
-				// 	pb_Menu_Commands.VerifyGrowSelection,
-				// 	typeof(pb_MenuOption_GrowSelection),
-				// 	(x, y, z) => { return x == EditLevel.Geometry && y == SelectMode.Face; }
-				// 	),
-				// new pb_MenuAction_Element(Icon("Selection_Shrink"), tt_ShrinkSelection, pb_Menu_Commands.MenuShrinkSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyShrinkSelection),
+				new ShrinkSelection(),
+				new InvertSelection(),
+				
 				// new pb_MenuAction_Element(Icon("Selection_Invert"), tt_InvertSelection, pb_Menu_Commands.MenuInvertSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyInvertSelection),
 				// new pb_MenuAction_Element(Icon("Selection_Ring"), tt_SelectEdgeRing, pb_Menu_Commands.MenuRingSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
 				// new pb_MenuAction_Element(Icon("Selection_Loop"), tt_SelectEdgeLoop, pb_Menu_Commands.MenuLoopSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),

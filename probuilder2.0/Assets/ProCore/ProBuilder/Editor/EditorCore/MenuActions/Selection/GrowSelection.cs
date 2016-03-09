@@ -8,14 +8,17 @@ namespace ProBuilder2.Actions
 {
 	public class GrowSelection : pb_MenuAction
 	{
-		public override string group { get { return "Selection"; } }
+		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Selection_Grow"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Grow Selection",
-			"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.\n\nGrow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.\n\n<b>Shortcut</b>: <i>Alt + G</i>"
+			@"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.
+
+Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.",
+			CMD_ALT, 'G'
 		);
 
 		public override bool IsEnabled()

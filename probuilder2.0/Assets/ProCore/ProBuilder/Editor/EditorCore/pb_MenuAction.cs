@@ -12,6 +12,11 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public abstract class pb_MenuAction
 	{
+		protected const char CMD_SUPER = '\u2318';
+		protected const char CMD_SHIFT = '\u21E7';
+		protected const char CMD_OPTION = '\u2325';
+		protected const char CMD_ALT = '\u2387';
+
 		public delegate void SettingsDelegate();
 
 		public static pb_Object[] selection 
@@ -41,7 +46,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public abstract string group { get; }
+		public abstract pb_IconGroup group { get; }
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
 
@@ -58,6 +63,8 @@ namespace ProBuilder2.EditorCommon
 			
 			GUI.enabled = IsEnabled();
 
+			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
+
 			if( GUILayout.Button(icon, buttonStyle) )
 			{
 				if(showOptions && SettingsEnabled())
@@ -68,6 +75,8 @@ namespace ProBuilder2.EditorCommon
 					pb_Editor_Utility.ShowNotification(result.notification);
 				}
 			}
+
+			GUI.backgroundColor = Color.white;
 
 			if(SettingsEnabled())
 			{
