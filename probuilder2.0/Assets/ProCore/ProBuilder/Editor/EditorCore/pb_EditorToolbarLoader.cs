@@ -8,12 +8,6 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_EditorToolbarLoader
 	{
-
-		// private static readonly pb_TooltipContent tt_TriangulateObject = new pb_TooltipContent(
-		// 	"Triangulate Object",
-		// 	""
-		// 	);
-
 		// private static readonly pb_TooltipContent tt_SetPivotToSelection = new pb_TooltipContent(
 		// 	"Set Pivot to Center of Selection",
 		// 	"Sets the pivot point of the selected mesh to the position the transform gizmo is currently in."
@@ -99,60 +93,6 @@ namespace ProBuilder2.EditorCommon
 		// 	"Splits a vertex into separate vertices for each attached edge."
 		// 	);
 
-
-		// private static Texture2D Icon(string path)
-		// {
-		// 	return pb_IconUtility.GetIcon(path);
-		// }
-
-		// private static pb_MenuAction_Element CreateFaceAction(
-		// 	string icon,
-		// 	pb_TooltipContent tooltip,
-		// 	System.Func<pb_Object[], pb_ActionResult> action,
-		// 	bool enforceMode = false,
-		// 	int minFaceCount = 1)
-		// {
-		// 	return new pb_MenuAction_Element(
-		// 		Icon(icon),
-		// 		tooltip,
-		// 		action,
-		// 		SelectMode.Face,
-		// 		false,
-		// 		(x) => { return x.Sum(y => y.SelectedFaceCount) >= minFaceCount; });
-		// }
-
-		// private static pb_MenuAction_Element CreateEdgeAction(
-		// 	string icon,
-		// 	pb_TooltipContent tooltip,
-		// 	System.Func<pb_Object[], pb_ActionResult> action,
-		// 	bool enforceMode = false,
-		// 	int minEdgeCount = 1)
-		// {
-		// 	return new pb_MenuAction_Element(
-		// 		Icon(icon),
-		// 		tooltip,
-		// 		action,
-		// 		SelectMode.Edge,
-		// 		false,
-		// 		(x) => { return x.Sum(y => y.SelectedEdges.Length) >= minEdgeCount; });
-		// }
-
-		// private static pb_MenuAction_Element CreateVertexAction(
-		// 	string icon,
-		// 	pb_TooltipContent tooltip,
-		// 	System.Func<pb_Object[], pb_ActionResult> action,
-		// 	bool enforceMode = false,
-		// 	int minVertCount = 1)
-		// {
-		// 	return new pb_MenuAction_Element(
-		// 		Icon(icon),
-		// 		tooltip,
-		// 		action,
-		// 		SelectMode.Vertex,
-		// 		false,
-		// 		(x) => { return x.Sum(y => y.SelectedTriangleCount) >= minVertCount; });
-		// }
-
 		public static List<pb_MenuAction> GetActions()
 		{
 			return new List<pb_MenuAction>()
@@ -181,17 +121,14 @@ namespace ProBuilder2.EditorCommon
 				new FreezeTransform(),
 				new ConformObjectNormals(),
 				new TriangulateObject(),
-				// new pb_MenuAction_Object( Icon("Object_Merge"), tt_MergeObjects, pb_Menu_Commands.MenuMergeObjects, (x) => { return x != null && x.Length >= 2;} ),
-				// new pb_MenuAction_Object( Icon("Object_FlipNormals"), tt_FlipObjectNormals, pb_Menu_Commands.MenuFlipObjectNormals ),
-				// new pb_MenuAction_Object( Icon("Object_Subdivide"), tt_SubdivideObject, pb_Menu_Commands.MenuSubdivide ),
-				// new pb_MenuAction_Object( Icon("Pivot_Reset"), tt_FreezeTransform, pb_Menu_Commands.MenuFreezeTransforms ),
-				// new pb_MenuAction_Object( Icon("Object_ConformNormals"), tt_ConformObjectNormals, pb_Menu_Commands.MenuConformObjectNormals ),
-				// new pb_MenuAction_Object( Icon("Object_Triangulate"), tt_TriangulateObject, pb_Menu_Commands.MenuTriangulateObject ),
 
 				// // elements all
+				new DeleteFaces(),
+				new DetachFaces(),
+				new ExtrudeFaces(),
+				
 				// CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
 
-				// // elements face
 				// new pb_MenuAction_Element(
 				// 	Icon("Face_Extrude"),
 				// 	tt_ExtrudeFaces,

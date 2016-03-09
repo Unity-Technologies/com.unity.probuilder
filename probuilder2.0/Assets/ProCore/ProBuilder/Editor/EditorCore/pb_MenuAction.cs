@@ -16,6 +16,7 @@ namespace ProBuilder2.EditorCommon
 		protected const char CMD_SHIFT = '\u21E7';
 		protected const char CMD_OPTION = '\u2325';
 		protected const char CMD_ALT = '\u2387';
+		protected const char CMD_DELETE = '\u232B';
 
 		public delegate void SettingsDelegate();
 
