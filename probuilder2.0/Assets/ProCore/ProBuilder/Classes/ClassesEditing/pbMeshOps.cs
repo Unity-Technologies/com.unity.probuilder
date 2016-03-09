@@ -394,16 +394,18 @@ namespace ProBuilder2.MeshOperations
 
 		List<pb_Edge> validEdges = new List<pb_Edge>();
 		List<pb_Face> edgeFaces = new List<pb_Face>();
-		
+
 		foreach(pb_Edge e in edges)
 		{
 			int faceCount = 0;
 			pb_Face fa = null;
+
 			foreach(pb_Face f in pb.faces)
 			{
 				if(f.edges.IndexOf(e, lookup) > -1)
 				{
 					fa = f;
+
 					if(++faceCount > 1)
 						break;
 				}
@@ -469,6 +471,13 @@ namespace ProBuilder2.MeshOperations
 				new Vector2[4],
 				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
 				new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
+
+			// check that the new face has the correct winding order
+			WindingOrder owo = pb.GetWindingOrder(face);
+			WindingOrder nwo = pb.GetWindingOrder(newFace);
+
+			if(owo != nwo)
+				newFace.ReverseIndices();
 
 			newEdges.Add(new pb_Edge(newFace.indices[3], newFace.indices[4]));
 

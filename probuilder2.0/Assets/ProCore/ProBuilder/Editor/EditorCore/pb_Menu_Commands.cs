@@ -538,7 +538,7 @@ namespace ProBuilder2.EditorCommon
 				for(int i = 0; i < len; i++)
 				{
 					winding[i] = pb.GetWindingOrder( faces[i] );
-					toggle += (winding[i] == WindingOrder.Unknown ? 0: (winding[i] == WindingOrder.Clockwise ? 1 : -1));
+					toggle += (winding[i] == WindingOrder.Unknown ? 0 : (winding[i] == WindingOrder.Clockwise ? 1 : -1));
 				}
 
 				// if toggle >= 0 wind clockwise, else ccw
