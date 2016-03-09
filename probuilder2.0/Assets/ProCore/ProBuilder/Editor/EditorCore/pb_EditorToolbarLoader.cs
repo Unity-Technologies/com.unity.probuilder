@@ -9,49 +9,9 @@ namespace ProBuilder2.EditorCommon
 	public class pb_EditorToolbarLoader
 	{
 
-		// private static readonly pb_TooltipContent tt_InvertSelection = new pb_TooltipContent(
-		// 	"Invert Selection",
-		// 	"Set the element selection to the opposite of what is currently selected."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_SelectEdgeRing = new pb_TooltipContent(
-		// 	"Select Edge Ring",
-		// 	"Select all edges that are opposite the selected."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_SelectEdgeLoop = new pb_TooltipContent(
-		// 	"Select Edge Loop",
-		// 	"Select a loop of connected edges."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_MergeObjects = new pb_TooltipContent(
-		// 	"Merge Objects",
-		// 	"Merges all selected ProBuilder objects to a single mesh."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_FlipObjectNormals = new pb_TooltipContent(
-		// 	"Flip Object Normals",
-		// 	"Reverse the direction of all faces on the selected objects."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_SubdivideObject = new pb_TooltipContent(
-		// 	"Subdivide Object",
-		// 	"Increase the number of edges and vertices on this object by creating 4 new quads in every face."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_FreezeTransform = new pb_TooltipContent(
-		// 	"Freeze Transform",
-		// 	"Set the pivot point to world coordinates (0,0,0) and clear all Transform values while keeping the mesh in place."
-		// 	);
-
-		// private static readonly pb_TooltipContent tt_ConformObjectNormals = new pb_TooltipContent(
-		// 	"Conform Object Normals",
-		// 	"Check the object for faces that are flipped in the opposite direction of most other faces, then reverses any dissenters."
-		// 	);
-
 		// private static readonly pb_TooltipContent tt_TriangulateObject = new pb_TooltipContent(
 		// 	"Triangulate Object",
-		// 	"Removes all quads and n-gons on the mesh and inserts triangles instead.  Use this and a hard smoothing group to achieve a low-poly facetized look."
+		// 	""
 		// 	);
 
 		// private static readonly pb_TooltipContent tt_SetPivotToSelection = new pb_TooltipContent(
@@ -211,12 +171,16 @@ namespace ProBuilder2.EditorCommon
 				new GrowSelection(),
 				new ShrinkSelection(),
 				new InvertSelection(),
-				
-				// new pb_MenuAction_Element(Icon("Selection_Invert"), tt_InvertSelection, pb_Menu_Commands.MenuInvertSelection, SelectMode.Vertex, false, pb_Menu_Commands.VerifyInvertSelection),
-				// new pb_MenuAction_Element(Icon("Selection_Ring"), tt_SelectEdgeRing, pb_Menu_Commands.MenuRingSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
-				// new pb_MenuAction_Element(Icon("Selection_Loop"), tt_SelectEdgeLoop, pb_Menu_Commands.MenuLoopSelection, SelectMode.Edge, true, pb_Menu_Commands.VerifyEdgeRingLoop),
+				new SelectEdgeLoop(),
+				new SelectEdgeRing(),
 
-				// // object
+				// object
+				new MergeObjects(),
+				new FlipObjectNormals(),
+				new SubdivideObject(),
+				new FreezeTransform(),
+				new ConformObjectNormals(),
+				new TriangulateObject(),
 				// new pb_MenuAction_Object( Icon("Object_Merge"), tt_MergeObjects, pb_Menu_Commands.MenuMergeObjects, (x) => { return x != null && x.Length >= 2;} ),
 				// new pb_MenuAction_Object( Icon("Object_FlipNormals"), tt_FlipObjectNormals, pb_Menu_Commands.MenuFlipObjectNormals ),
 				// new pb_MenuAction_Object( Icon("Object_Subdivide"), tt_SubdivideObject, pb_Menu_Commands.MenuSubdivide ),

@@ -15,9 +15,8 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Shrink Selection",
-			@"Does the opposite of Grow.  This removes the elements on the perimeter of the current selection.
-
-<b>Shortcut</b>: <i>Shift + Alt + G</i>"
+			@"Removes elements on the edge of the current selection.",
+			CMD_ALT, CMD_SHIFT, 'G'
 		);
 
 		public override bool IsEnabled()
@@ -32,4 +31,3 @@ namespace ProBuilder2.Actions
 		}
 	}
 }
-

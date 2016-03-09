@@ -1,13 +1,8 @@
 #!/bin/bash
 
-echo "" > Selection/SelectBackFaces.cs
-echo "" > Selection/SetHandleAlignment.cs
-echo "" > Selection/GrowSelection.cs
-echo "" > Selection/ShrinkSelection.cs
-echo "" > Selection/InvertSelection.cs
-echo "" > Selection/SelectEdgeRing.cs
-echo "" > Selection/SelectEdgeLoop.cs
-
-
-
-
+echo "Object_Merge" > Object/MergeObjects.cs
+echo "Object_FlipNormals" > Object/FlipObjectNormals.cs
+echo "Object_Subdivide" > Object/SubdivideObject.cs
+echo "Pivot_Reset" > Object/FreezeTransform.cs
+echo "Object_ConformNormals" > Object/ConformObjectNormals.cs
+echo "Object_Triangulate" > Object/TriangulateObject.cs
