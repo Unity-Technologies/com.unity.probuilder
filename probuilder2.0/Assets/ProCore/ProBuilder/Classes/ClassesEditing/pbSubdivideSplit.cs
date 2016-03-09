@@ -488,6 +488,7 @@ public static class pbSubdivideSplit
 		}
 
 		triangles = seltris.Distinct().ToArray();
+
 		return true;
 	}
 #endregion
