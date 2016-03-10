@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
 using System.Linq;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -35,6 +36,7 @@ namespace ProBuilder2.EditorCommon
 			_shortcutStyle = new GUIStyle(_titleStyle);
 			_shortcutStyle.fontSize = 14;
 			_shortcutStyle.fontStyle = FontStyle.Normal;
+			_shortcutStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.5f, .5f, .5f, 1f) : new Color(.3f, .3f, .3f, 1f);
 
 			EditorStyles.wordWrappedLabel.richText = true;
 		}
@@ -52,9 +54,19 @@ namespace ProBuilder2.EditorCommon
 			if(shortcut != null && shortcut.Length > 0)
 			{
 				this.shortcut = string.Empty;
+
 				for(int i = 0; i < shortcut.Length - 1; i++)
-					this.shortcut += shortcut[i] + " + ";
-				this.shortcut += shortcut[shortcut.Length - 1];
+				{
+					if( !pb_Editor_Utility.IsUnix() )
+						this.shortcut += pbUtil.ControlKeyString(shortcut[i]) + " + ";		
+					else
+						this.shortcut += shortcut[i] + " + ";
+				}
+
+				if( !pb_Editor_Utility.IsUnix() )
+					this.shortcut += pbUtil.ControlKeyString(shortcut[shortcut.Length - 1]);		
+				else
+					this.shortcut += shortcut[shortcut.Length - 1];
 			}
 		}
 		

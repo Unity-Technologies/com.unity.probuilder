@@ -12,11 +12,11 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public abstract class pb_MenuAction
 	{
-		protected const char CMD_SUPER = '\u2318';
-		protected const char CMD_SHIFT = '\u21E7';
-		protected const char CMD_OPTION = '\u2325';
-		protected const char CMD_ALT = '\u2387';
-		protected const char CMD_DELETE = '\u232B';
+		protected const char CMD_SUPER 	= pb_Constant.CMD_SUPER;
+		protected const char CMD_SHIFT 	= pb_Constant.CMD_SHIFT;
+		protected const char CMD_OPTION = pb_Constant.CMD_OPTION;
+		protected const char CMD_ALT 	= pb_Constant.CMD_ALT;
+		protected const char CMD_DELETE = pb_Constant.CMD_DELETE;
 
 		public delegate void SettingsDelegate();
 

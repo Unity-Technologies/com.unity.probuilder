@@ -581,6 +581,22 @@ namespace ProBuilder2.Common
 		return string.Join(separator, arr.Select(x => x.ToString()).ToArray());
 	}
 
+	public static string ControlKeyString(char character)
+	{
+		if( character == pb_Constant.CMD_SUPER )
+			return "Control";
+		else if( character == pb_Constant.CMD_SHIFT )
+			return "Shift";
+		else if( character == pb_Constant.CMD_OPTION )
+			return "Alt";
+		else if( character == pb_Constant.CMD_ALT )
+			return "Alt";
+		else if( character == pb_Constant.CMD_DELETE )
+			return "Delete";
+		else
+			return character.ToString();
+	}
+
 	public static bool ColorWithString(string value, out Color col)
 	{
 		string valid = "01234567890.,";

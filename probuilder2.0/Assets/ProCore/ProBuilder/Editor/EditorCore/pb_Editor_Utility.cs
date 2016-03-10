@@ -473,6 +473,19 @@ namespace ProBuilder2.EditorCommon
 		{
 			return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
 		}
+
+		/**
+		 *	Is this code running on a Unix OS?
+		 *
+		 *	Alt summary: Do you know this?
+		 */
+		public static bool IsUnix()
+		{
+			System.PlatformID platform = System.Environment.OSVersion.Platform;
+			return 	platform == System.PlatformID.MacOSX ||
+					platform == System.PlatformID.Unix ||
+					(int)platform == 128;
+		}
 #endregion
 	}
 }

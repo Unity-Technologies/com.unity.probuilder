@@ -44,6 +44,11 @@ public static class pb_Constant
 #endif
 
 	public const char DEGREE_SYMBOL = (char)176;	///< Degree symbol char.
+	public const char CMD_SUPER  = '\u2318';
+	public const char CMD_SHIFT  = '\u21E7';
+	public const char CMD_OPTION  = '\u2325';
+	public const char CMD_ALT  = '\u2387';
+	public const char CMD_DELETE  = '\u232B';
 
 	// Enum
 	public const string pbDefaultEditLevel 				= "pbDefaultEditLevel";

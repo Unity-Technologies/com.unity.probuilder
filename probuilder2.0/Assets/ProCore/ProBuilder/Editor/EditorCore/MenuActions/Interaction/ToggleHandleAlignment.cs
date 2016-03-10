@@ -32,9 +32,8 @@ namespace ProBuilder2.EditorCommon
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Set Handle Alignment",
-@"Toggles the coordinate space that the transform gizmo is rendered in.
-
-<b>Shortcut</b>: <i>P</i>"
+			@"Toggles the coordinate space that the transform gizmo is rendered in.",
+			'P'
 		);
 
 		public ToggleHandleAlignment()
