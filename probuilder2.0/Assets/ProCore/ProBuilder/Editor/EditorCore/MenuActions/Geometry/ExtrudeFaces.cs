@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Extrude Faces",
-			@"Extrude selected faces, either as a group or individually.",
+			"Extrude selected faces, either as a group or individually.\n\nAlt + Click this button to show additional Extrude options.",
 			CMD_SUPER, 'E'
 		);
 

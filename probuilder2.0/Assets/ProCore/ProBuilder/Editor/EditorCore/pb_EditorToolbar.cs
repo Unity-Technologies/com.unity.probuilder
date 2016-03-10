@@ -11,11 +11,16 @@ namespace ProBuilder2.EditorCommon
 	public class pb_EditorToolbar : ScriptableObject
 	{
 		[SerializeField] EditorWindow window;
-		[SerializeField] bool shiftOnlyTooltips = false;
+
+		bool shiftOnlyTooltips = false;
 		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
+		// the element currently being hovered
 		string hoveringTooltipName = "";
+		// the mouse has hovered > tooltipTimerRefresh
 		bool showTooltipTimer = false;
-		const double TOOLTIP_TIMER = 1.0;
+		// how long a tooltip will wait before showing
+		float tooltipTimerRefresh = 1f;
+		
 		[SerializeField] List<pb_MenuAction> actions;
 
 		public void InitWindowProperties(EditorWindow win)
@@ -34,6 +39,10 @@ namespace ProBuilder2.EditorCommon
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
 			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
+
+			tooltipTimer.Item1 = "";
+			tooltipTimer.Item2 = 0.0;
+			showTooltipTimer = false;
 		}
 
 		void OnDisable()
@@ -72,19 +81,29 @@ namespace ProBuilder2.EditorCommon
 
 		void Update()
 		{
-			if(!shiftOnlyTooltips &&
-				tooltipTimer.Item1.Equals(hoveringTooltipName) &&
-				EditorApplication.timeSinceStartup - tooltipTimer.Item2 > TOOLTIP_TIMER )
+			if(!shiftOnlyTooltips)
 			{
-				if( !showTooltipTimer )
+				if( !tooltipTimer.Item1.Equals(hoveringTooltipName) )
 				{
-					showTooltipTimer = true;
-					window.Repaint();
+					tooltipTimer.Item1 = hoveringTooltipName;
+					tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
 				}
-			}
-			else
-			{
-				showTooltipTimer = false;
+
+				if(string.IsNullOrEmpty(tooltipTimer.Item1))
+					return;
+
+				if( EditorApplication.timeSinceStartup - tooltipTimer.Item2 > tooltipTimerRefresh )
+				{
+					if( !showTooltipTimer )
+					{
+						showTooltipTimer = true;
+						window.Repaint();
+					}
+				}
+				else
+				{
+					showTooltipTimer = false;
+				}
 			}
 		}
 
@@ -102,9 +121,10 @@ namespace ProBuilder2.EditorCommon
 			bool 	tooltipShown = false,
 					hovering = false;
 
+			Rect optionRect = new Rect(0f, 0f, 0f, 0f);
+
 			GUILayout.BeginHorizontal();
 
-			Rect optionRect = new Rect(0f, 0f, 0f, 0f);
 
 			foreach(pb_MenuAction action in actions)
 			{
@@ -118,39 +138,34 @@ namespace ProBuilder2.EditorCommon
 
 					if(optionRect.Contains(e.mousePosition) && e.type != EventType.Layout)
 					{
-						tooltipShown = true;
-						ShowTooltip(optionRect, "Alt+Click for Options", scroll);
+						hoveringTooltipName = action.tooltip.name + "_alt";
+						tooltipTimerRefresh = .5f;
+						hovering = true;
+						
+						if( showTooltipTimer )
+						{
+							tooltipShown = true;
+							ShowTooltip(optionRect, "Alt+Click for Options", scroll);
+						}
 					}	
 				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 
-				if( e.type != EventType.Layout )
+				if( e.type != EventType.Layout &&
+					!hovering &&
+					buttonRect.Contains(e.mousePosition) )
 				{
-					if( buttonRect.Contains(e.mousePosition) )
+					hoveringTooltipName = action.tooltip.name;
+					tooltipTimerRefresh = 1f;
+
+					if( e.shift || showTooltipTimer )
 					{
-						hoveringTooltipName = action.tooltip.name;
-
-						if(!tooltipShown)
-						{
-							if(!shiftOnlyTooltips)
-							{
-								if( !tooltipTimer.Item1.Equals(action.tooltip.name) )
-								{
-									tooltipTimer.Item1 = action.tooltip.name;
-									tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
-								}
-							}
-
-							if( e.shift || showTooltipTimer )
-							{
-								tooltipShown = true;
-								ShowTooltip(buttonRect, action.tooltip, scroll);
-							}
-
-							hovering = true;
-						}
+						tooltipShown = true;
+						ShowTooltip(buttonRect, action.tooltip, scroll);
 					}
+
+					hovering = true;
 				}
 
 				if(++i >= rows)
