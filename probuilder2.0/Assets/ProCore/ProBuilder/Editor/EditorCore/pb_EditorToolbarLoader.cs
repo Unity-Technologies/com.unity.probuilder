@@ -13,11 +13,6 @@ namespace ProBuilder2.EditorCommon
 		// 	"Sets the pivot point of the selected mesh to the position the transform gizmo is currently in."
 		// 	);
 
-		// private static readonly pb_TooltipContent tt_ExtrudeFaces = new pb_TooltipContent(
-		// 	"Extrude Faces",
-		// 	"Extrude all selected faces."
-		// 	);
-
 		// private static readonly pb_TooltipContent tt_ConformFaceNormals = new pb_TooltipContent(
 		// 	"Conform Face Normals",
 		// 	"Orients all selected faces to face the same direction."
@@ -58,10 +53,6 @@ namespace ProBuilder2.EditorCommon
 		// // 	"Extrudes the selected edges."
 		// // 	);
 
-		// private static readonly pb_TooltipContent tt_BridgeEdges = new pb_TooltipContent(
-		// 	"Bridge Edges",
-		// 	"Add a new face connecting two edges."
-		// 	);
 
 		// private static readonly pb_TooltipContent tt_ConnectEdges = new pb_TooltipContent(
 		// 	"Connect Edges",
@@ -128,6 +119,18 @@ namespace ProBuilder2.EditorCommon
 				new ExtrudeFaces(),
 				
 				// CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
+
+				// Edge
+				new BridgeEdges(),
+				new ConnectEdges(),
+				new ExtrudeEdges(),
+				new InsertEdgeLoop(),
+
+				// Vertex
+				new CollapseVertices(),
+				new WeldVertices(),
+				new ConnectVertices(),
+				new SplitVertices(),
 
 				// new pb_MenuAction_Element(
 				// 	Icon("Face_Extrude"),

@@ -35,7 +35,21 @@ namespace ProBuilder2.Actions
 
 		public override void OnSettingsGUI()
 		{
-			GUILayout.Label("EAT BOOGERS");
+			GUILayout.Label("Extrude Settings", EditorStyles.boldLabel);
+			
+			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
+
+			EditorGUI.BeginChangeCheck();
+
+			extrudeAsGroup = EditorGUILayout.Toggle("As Group", extrudeAsGroup);
+			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
+
+			if(EditorGUI.EndChangeCheck())
+			{
+				EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+				EditorPrefs.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+			}
 		}
 
 		public override pb_ActionResult DoAction()
