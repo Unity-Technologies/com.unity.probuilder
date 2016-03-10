@@ -108,6 +108,9 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_MenuAction action in actions)
 			{
+				if(action.IsHidden())
+					continue;
+
 				if( action.DoButton(e.alt, ref optionRect) && !e.shift)
 				{
 					optionRect.x -= scroll.x;

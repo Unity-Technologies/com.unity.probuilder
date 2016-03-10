@@ -113,13 +113,21 @@ namespace ProBuilder2.EditorCommon
 				new ConformObjectNormals(),
 				new TriangulateObject(),
 
-				// // elements all
+				// All
+				new SetPivotToSelection(),
+
+				// Faces (All)
 				new DeleteFaces(),
 				new DetachFaces(),
 				new ExtrudeFaces(),
-				
-				// CreateVertexAction("Pivot_MoveToCenter", tt_SetPivotToSelection, pb_Menu_Commands.MenuSetPivot, false, 1),	// @todo
 
+				// Face
+				new ConformFaceNormals(),
+				new FlipFaceEdge(),
+				new FlipFaceNormals(),
+				new MergeFaces(),
+				new SubdivideFaces(),
+				
 				// Edge
 				new BridgeEdges(),
 				new ConnectEdges(),
@@ -131,42 +139,6 @@ namespace ProBuilder2.EditorCommon
 				new WeldVertices(),
 				new ConnectVertices(),
 				new SplitVertices(),
-
-				// new pb_MenuAction_Element(
-				// 	Icon("Face_Extrude"),
-				// 	tt_ExtrudeFaces,
-				// 	pb_Menu_Commands.MenuExtrude,
-				// 	SelectMode.Edge,
-				// 	false,
-				// 	(x) => { return x.Sum(y => y.SelectedFaceCount) >= 1 || x.Sum(z => z.SelectedEdgeCount) >= 1; },
-				// 	typeof(pb_MenuOption_Extrude)),
-
-				// CreateFaceAction("Face_ConformNormals", tt_ConformFaceNormals, pb_Menu_Commands.MenuConformNormals, false, 3),
-				// CreateFaceAction("Face_FlipNormals", tt_FlipFaceNormals, pb_Menu_Commands.MenuFlipNormals ),
-				// CreateFaceAction("Face_FlipEdge", tt_FlipFaceEdge, pb_Menu_Commands.MenuFlipEdges),
-				// CreateFaceAction("Face_Delete", tt_DeleteFaces, pb_Menu_Commands.MenuDeleteFace),
-				// CreateFaceAction("Face_Detach", tt_DetachFaces, pb_Menu_Commands.MenuDetachFaces),
-				// CreateFaceAction("Face_Merge", tt_MergeFaces, pb_Menu_Commands.MenuMergeFaces, false, 2),
-				// CreateFaceAction("Face_Subdivide", tt_SubdivideFaces, pb_Menu_Commands.MenuSubdivideFace),
-
-				// // elements edge
-				// // CreateEdgeAction("Edge_Extrude", tt_ExtrudeEdges, pb_Menu_Commands.MenuExtrude),							// @todo
-				// CreateEdgeAction("Edge_Bridge", tt_BridgeEdges, pb_Menu_Commands.MenuBridgeEdges, true, 2),
-				// CreateEdgeAction("Edge_Connect", tt_ConnectEdges, pb_Menu_Commands.MenuConnectEdges, true, 2),
-				// CreateEdgeAction("Edge_InsertLoop", tt_InsertEdgeLoop, pb_Menu_Commands.MenuInsertEdgeLoop),
-
-				// CreateVertexAction("Vert_Connect", tt_ConnectVertices, pb_Menu_Commands.MenuConnectVertices, false, 2),
-				// new pb_MenuAction_Element(
-				// 	Icon("Vert_Weld"),
-				// 	tt_WeldVertices,
-				// 	pb_Menu_Commands.MenuWeldVertices,
-				// 	SelectMode.Vertex,
-				// 	false,
-				// 	(x) => { return x.Sum(y => y.SelectedTriangleCount) >= 2; },
-				// 	typeof(pb_MenuOption_Weld)),
-				// CreateVertexAction("Vert_Collapse", tt_CollapseVertices, pb_Menu_Commands.MenuCollapseVertices, false, 2),	// @todo
-				// CreateVertexAction("Vert_Split", tt_SplitVertices, pb_Menu_Commands.MenuSplitVertices)						// @todo
-
 			};
 		}
 	}

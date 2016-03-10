@@ -61,8 +61,9 @@ namespace ProBuilder2.EditorCommon
 		public bool DoButton(bool showOptions, ref Rect optionsRect)
 		{
 			bool wasEnabled = GUI.enabled;
+			bool buttonEnabled = IsEnabled();
 			
-			GUI.enabled = IsEnabled();
+			GUI.enabled = buttonEnabled;
 
 			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
 
@@ -89,7 +90,7 @@ namespace ProBuilder2.EditorCommon
 				GUI.Label(r, pb_IconUtility.GetIcon("Options"));
 				optionsRect = r;
 				GUI.enabled = wasEnabled;
-				return true;
+				return buttonEnabled;
 			}
 			else
 			{

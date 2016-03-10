@@ -30,7 +30,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return pb_Editor.instance == null ||
+			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode != SelectMode.Edge;
 		}
