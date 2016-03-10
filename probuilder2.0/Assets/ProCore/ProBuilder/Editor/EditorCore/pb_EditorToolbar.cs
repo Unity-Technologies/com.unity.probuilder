@@ -13,8 +13,9 @@ namespace ProBuilder2.EditorCommon
 		[SerializeField] EditorWindow window;
 		[SerializeField] bool shiftOnlyTooltips = false;
 		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
+		string hoveringTooltipName = "";
+		bool showTooltipTimer = false;
 		const double TOOLTIP_TIMER = 1.0;
-
 		[SerializeField] List<pb_MenuAction> actions;
 
 		public void InitWindowProperties(EditorWindow win)
@@ -30,12 +31,15 @@ namespace ProBuilder2.EditorCommon
 			actions = pb_EditorToolbarLoader.GetActions();
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
+			EditorApplication.update -= Update;
+			EditorApplication.update += Update;
 			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 		}
 
 		void OnDisable()
 		{
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
+			EditorApplication.update -= Update;
 		}
 
 		void OnElementSelectionChange(pb_Object[] selection)
@@ -64,6 +68,24 @@ namespace ProBuilder2.EditorCommon
 				rect.height);
 
 			pb_TooltipWindow.Show(buttonRect, content);
+		}
+
+		void Update()
+		{
+			if(!shiftOnlyTooltips &&
+				tooltipTimer.Item1.Equals(hoveringTooltipName) &&
+				EditorApplication.timeSinceStartup - tooltipTimer.Item2 > TOOLTIP_TIMER )
+			{
+				if( !showTooltipTimer )
+				{
+					showTooltipTimer = true;
+					window.Repaint();
+				}
+			}
+			else
+			{
+				showTooltipTimer = false;
+			}
 		}
 
 		public void OnGUI()
@@ -102,26 +124,29 @@ namespace ProBuilder2.EditorCommon
 
 				if( e.type != EventType.Layout )
 				{
-					if( !tooltipShown && buttonRect.Contains(e.mousePosition) )
+					if( buttonRect.Contains(e.mousePosition) )
 					{
-						if(!shiftOnlyTooltips)
+						hoveringTooltipName = action.tooltip.name;
+
+						if(!tooltipShown)
 						{
-							if( !tooltipTimer.Item1.Equals(action.tooltip.name) )
+							if(!shiftOnlyTooltips)
 							{
-								tooltipTimer.Item1 = action.tooltip.name;
-								tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
+								if( !tooltipTimer.Item1.Equals(action.tooltip.name) )
+								{
+									tooltipTimer.Item1 = action.tooltip.name;
+									tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
+								}
 							}
-						}
 
-						if( e.shift || ( 	!shiftOnlyTooltips &&
-											tooltipTimer.Item1.Equals(action.tooltip.name) &&
-											EditorApplication.timeSinceStartup - tooltipTimer.Item2 > TOOLTIP_TIMER ))
-						{
-							tooltipShown = true;
-							ShowTooltip(buttonRect, action.tooltip, scroll);
-						}
+							if( e.shift || showTooltipTimer )
+							{
+								tooltipShown = true;
+								ShowTooltip(buttonRect, action.tooltip, scroll);
+							}
 
-						hovering = true;
+							hovering = true;
+						}
 					}
 				}
 
