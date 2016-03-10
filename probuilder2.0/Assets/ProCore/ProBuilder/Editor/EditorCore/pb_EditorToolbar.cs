@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.Interface;
+using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -113,6 +114,7 @@ namespace ProBuilder2.EditorCommon
 
 			int max = (int)window.position.width - 4;
 			int rows = System.Math.Max(max / (int)(actions[0].GetSize().x + 4), 1);
+			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden());
 
 			int i = 0;
 
@@ -126,11 +128,8 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.BeginHorizontal();
 
 
-			foreach(pb_MenuAction action in actions)
+			foreach(pb_MenuAction action in available)
 			{
-				if(action.IsHidden())
-					continue;
-
 				if( action.DoButton(e.alt, ref optionRect) && !e.shift)
 				{
 					optionRect.x -= scroll.x;
@@ -145,7 +144,7 @@ namespace ProBuilder2.EditorCommon
 						if( showTooltipTimer )
 						{
 							tooltipShown = true;
-							ShowTooltip(optionRect, "Alt+Click for Options", scroll);
+							ShowTooltip(optionRect, "Alt + Click for Options", scroll);
 						}
 					}	
 				}
