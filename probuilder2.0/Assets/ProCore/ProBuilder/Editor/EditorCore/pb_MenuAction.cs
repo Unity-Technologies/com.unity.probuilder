@@ -36,13 +36,13 @@ namespace ProBuilder2.EditorCommon
 				if(_buttonStyle == null)
 				{
 					_buttonStyle = new GUIStyle();
-					_buttonStyle.border = new RectOffset(1,1,1,1);
+					_buttonStyle.border = new RectOffset(4,0,0,0);
 					_buttonStyle.alignment = TextAnchor.MiddleCenter;
 					_buttonStyle.normal.background = pb_IconUtility.GetIcon("Button_Normal");
 					_buttonStyle.hover.background = pb_IconUtility.GetIcon("Button_Hover");
 					_buttonStyle.active.background = pb_IconUtility.GetIcon("Button_Pressed");
 					_buttonStyle.margin = new RectOffset(4,4,4,4);
-					_buttonStyle.padding = new RectOffset(4,4,4,4);
+					_buttonStyle.padding = new RectOffset(8,0,4,4);
 				}
 				return _buttonStyle;
 			}
@@ -60,7 +60,7 @@ namespace ProBuilder2.EditorCommon
 
 					_desaturatedIcon = pb_IconUtility.GetIcon(icon.name + "_disabled");
 
-					// @todo
+				// 	// @todo
 					// if(!_desaturatedIcon)
 					// {
 					// 	string path = AssetDatabase.GetAssetPath(icon);

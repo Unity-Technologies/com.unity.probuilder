@@ -12,6 +12,17 @@ namespace ProBuilder2.EditorCommon
 		{
 			Texture2D icon = null;
 
+			if(!EditorGUIUtility.isProSkin && !(iconName.EndsWith("_disabled") || iconName.EndsWith("_Light")))
+			{
+				icon = GetIcon(iconName + "_Light");
+
+				if(icon != null)
+					return icon;
+			}
+
+			if(iconName.EndsWith("_Light_disabled"))
+				iconName = iconName.Replace("_Light_disabled", "_disabled");
+
 			if(!m_icons.TryGetValue(iconName, out icon))
 			{
 				icon = Resources.Load<Texture2D>("Icons/" + iconName);
@@ -19,6 +30,7 @@ namespace ProBuilder2.EditorCommon
 				if(icon == null)
 				{
 					Debug.LogWarning("failed to find icon: " + iconName);
+					m_icons.Add(iconName, null);
 					return null;
 				}
 

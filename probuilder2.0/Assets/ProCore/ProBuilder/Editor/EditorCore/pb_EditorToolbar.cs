@@ -25,9 +25,9 @@ namespace ProBuilder2.EditorCommon
 		float tooltipTimerRefresh = 1f;
 		
 		Texture2D 	scrollIconUp = null,
-					scrollIconDown = null,
-					scrollIconRight = null,
-					scrollIconLeft = null;
+					scrollIconDown = null;
+					// scrollIconRight = null,
+					// scrollIconLeft = null;
 
 		[SerializeField] List<pb_MenuAction> actions;
 
@@ -53,8 +53,8 @@ namespace ProBuilder2.EditorCommon
 			showTooltipTimer = false;
 			scrollIconUp = pb_IconUtility.GetIcon("ShowNextPage_Up");
 			scrollIconDown = pb_IconUtility.GetIcon("ShowNextPage_Down");
-			scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
-			scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
+			// scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
+			// scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
 		}
 
 		void OnDisable()
