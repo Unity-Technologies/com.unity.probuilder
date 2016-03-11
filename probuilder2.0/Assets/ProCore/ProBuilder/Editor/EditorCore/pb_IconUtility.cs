@@ -19,7 +19,6 @@ namespace ProBuilder2.EditorCommon
 				if(icon == null)
 				{
 					Debug.LogWarning("failed to find icon: " + iconName);
-					// icon = Resources.Load<Texture2D>("Icons/null");
 					return null;
 				}
 

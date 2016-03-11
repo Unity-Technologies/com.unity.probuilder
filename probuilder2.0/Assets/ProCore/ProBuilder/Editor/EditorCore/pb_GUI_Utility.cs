@@ -28,6 +28,36 @@ namespace ProBuilder2.Interface
 			}
 		}
 
+		private static GUIStyle _solidBackgroundStyle;
+		public static GUIStyle solidBackgroundStyle
+		{
+			get
+			{
+				if(_solidBackgroundStyle == null)
+				{
+					_solidBackgroundStyle = new GUIStyle();
+					_solidBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
+				}
+				return _solidBackgroundStyle;
+			}
+		}
+
+		private static GUIStyle _buttonNoBackgroundSmallMarginStyle = null;
+		public static GUIStyle ButtonNoBackgroundSmallMarginStyle
+		{
+			get
+			{
+				if(_buttonNoBackgroundSmallMarginStyle == null)
+				{
+					_buttonNoBackgroundSmallMarginStyle = new GUIStyle();
+					_buttonNoBackgroundSmallMarginStyle.margin = new RectOffset(2,2,2,2);
+					_buttonNoBackgroundSmallMarginStyle.alignment = TextAnchor.MiddleCenter;
+					_buttonNoBackgroundSmallMarginStyle.padding = new RectOffset(0,0,0,0);
+				}
+				return _buttonNoBackgroundSmallMarginStyle;
+			}
+		}
+
 		static GUIContent _guiContent = null;
 
 		public static GUIContent TempGUIContent(string label, string tooltip = null, Texture2D icon = null)

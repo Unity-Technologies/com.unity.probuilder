@@ -85,7 +85,7 @@ public class pb_Editor : EditorWindow
 	private SceneToolbarLocation pref_sceneToolbarLocation = SceneToolbarLocation.UpperCenter;
 
 	private bool limitFaceDragCheckToSelection = true;
-	private bool isFloatingWindow = false;
+	public bool isFloatingWindow { get; private set; }
 #endregion
 
 #region INITIALIZATION AND ONDISABLE

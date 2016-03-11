@@ -13,6 +13,8 @@ namespace ProBuilder2.EditorCommon
 	{
 		[SerializeField] EditorWindow window;
 
+		bool isFloating { get { return pb_Editor.instance.isFloatingWindow; } }
+
 		bool shiftOnlyTooltips = false;
 		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
 		// the element currently being hovered
@@ -22,6 +24,11 @@ namespace ProBuilder2.EditorCommon
 		// how long a tooltip will wait before showing
 		float tooltipTimerRefresh = 1f;
 		
+		Texture2D 	scrollIconUp = null,
+					scrollIconDown = null,
+					scrollIconRight = null,
+					scrollIconLeft = null;
+
 		[SerializeField] List<pb_MenuAction> actions;
 
 		public void InitWindowProperties(EditorWindow win)
@@ -44,6 +51,10 @@ namespace ProBuilder2.EditorCommon
 			tooltipTimer.Item1 = "";
 			tooltipTimer.Item2 = 0.0;
 			showTooltipTimer = false;
+			scrollIconUp = pb_IconUtility.GetIcon("ShowNextPage_Up");
+			scrollIconDown = pb_IconUtility.GetIcon("ShowNextPage_Down");
+			scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
+			scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
 		}
 
 		void OnDisable()
@@ -106,17 +117,81 @@ namespace ProBuilder2.EditorCommon
 					showTooltipTimer = false;
 				}
 			}
+
+			// do scroll animations
+			if(doAnimateScroll)
+			{
+				double scrollTimer = EditorApplication.timeSinceStartup - scrollStartTime;
+				scroll = Vector2.Lerp(scrollOrigin, scrollTarget, (float)scrollTimer / scrollTotalTime);
+
+				if(scrollTimer >= scrollTotalTime)
+					doAnimateScroll = false;
+
+				window.Repaint();
+			}
 		}
+
+		// animated scrolling vars
+		bool doAnimateScroll = false;
+		Vector2 scrollOrigin = Vector2.zero;
+		Vector2 scrollTarget = Vector2.zero;
+		double scrollStartTime = 0;
+		float scrollTotalTime = 0f;
+		const float SCROLL_PIXELS_PER_SECOND = 1250f;
+
+		void StartScrollAnimation(float x, float y)
+		{
+			scrollOrigin = scroll;
+			scrollTarget.x = x;
+			scrollTarget.y = y;
+			scrollStartTime = EditorApplication.timeSinceStartup;
+			scrollTotalTime = Vector2.Distance(scrollOrigin, scrollTarget) / SCROLL_PIXELS_PER_SECOND;
+			doAnimateScroll = true;
+		}
+
+		int SCROLL_BTN_HEIGHT { get { return isFloating ? 12 : 11; } }
+		int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
+		int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
+
+		bool m_showScrollButtons = false;
 
 		public void OnGUI()
 		{
 			Event e = Event.current;
 
-			int max = (int)window.position.width - 4;
-			int rows = System.Math.Max(max / (int)(actions[0].GetSize().x + 4), 1);
 			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden());
 
-			int i = 0;
+			int max = windowWidth - 4;
+			int iconWidth = (int)(actions[0].GetSize().x + 4);
+			int iconHeight = (int)(actions[0].GetSize().y + 4);
+			int columns = System.Math.Max(max / iconWidth, 1);
+			int iconCount = available.Count();
+			int rows = iconCount / columns + (iconCount % columns != 0 ? 1 : 0);
+			int contentHeight = rows * iconHeight + 4;
+
+			int availableHeight = windowHeight;
+
+			bool showScrollButtons = contentHeight > availableHeight;
+
+			if(showScrollButtons)
+				availableHeight -= SCROLL_BTN_HEIGHT * 2;
+
+			int maxScroll = contentHeight - availableHeight;
+
+			Parabox.Debug.Bugger.SetKey("Est. Scroll", maxScroll);
+			Parabox.Debug.Bugger.SetKey("Act. Scroll", (int)scroll.y);
+
+			// only change before a layout event
+			if(m_showScrollButtons != showScrollButtons && e.type == EventType.Layout)
+				m_showScrollButtons = showScrollButtons;
+
+			if(m_showScrollButtons)
+			{
+				GUI.enabled = scroll.y > 0;
+				if(GUILayout.Button(scrollIconUp, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+					StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
+				GUI.enabled = true;
+			}
 
 			scroll = GUILayout.BeginScrollView(scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
@@ -127,7 +202,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.BeginHorizontal();
 
-
+			int i = 0;
 			foreach(pb_MenuAction action in available)
 			{
 				if( action.DoButton(e.alt, ref optionRect) && !e.shift)
@@ -135,7 +210,8 @@ namespace ProBuilder2.EditorCommon
 					optionRect.x -= scroll.x;
 					optionRect.y -= scroll.y;
 
-					if(optionRect.Contains(e.mousePosition) && e.type != EventType.Layout)
+					if(	e.type != EventType.Layout &&
+						optionRect.Contains(e.mousePosition) )
 					{
 						hoveringTooltipName = action.tooltip.name + "_alt";
 						tooltipTimerRefresh = .5f;
@@ -167,7 +243,7 @@ namespace ProBuilder2.EditorCommon
 					hovering = true;
 				}
 
-				if(++i >= rows)
+				if(++i >= columns)
 				{
 					i = 0;
 
@@ -180,6 +256,14 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.EndHorizontal();
 
 			GUILayout.EndScrollView();
+
+			if( m_showScrollButtons )
+			{
+				GUI.enabled = scroll.y < maxScroll;
+				if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+					StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxScroll) );
+				GUI.enabled = true;
+			}
 
 			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)
 				pb_TooltipWindow.Hide();
