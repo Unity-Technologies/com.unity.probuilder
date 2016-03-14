@@ -259,7 +259,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( m_showScrollButtons )
 			{
-				GUI.enabled = scroll.y < maxScroll;
+				GUI.enabled = scroll.y < maxScroll - 2;
 				if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
 					StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxScroll) );
 				GUI.enabled = true;

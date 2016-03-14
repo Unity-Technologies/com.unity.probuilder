@@ -41,8 +41,8 @@ namespace ProBuilder2.EditorCommon
 					_buttonStyle.normal.background = pb_IconUtility.GetIcon("Button_Normal");
 					_buttonStyle.hover.background = pb_IconUtility.GetIcon("Button_Hover");
 					_buttonStyle.active.background = pb_IconUtility.GetIcon("Button_Pressed");
-					_buttonStyle.margin = new RectOffset(4,4,4,4);
-					_buttonStyle.padding = new RectOffset(8,0,4,4);
+					_buttonStyle.margin = new RectOffset(4,5,4,4);
+					_buttonStyle.padding = new RectOffset(8,0,2,2);
 				}
 				return _buttonStyle;
 			}
