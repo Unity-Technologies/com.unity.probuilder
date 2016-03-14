@@ -41,6 +41,8 @@ namespace ProBuilder2.EditorCommon
 					_buttonStyle.normal.background = pb_IconUtility.GetIcon("Button_Normal");
 					_buttonStyle.hover.background = pb_IconUtility.GetIcon("Button_Hover");
 					_buttonStyle.active.background = pb_IconUtility.GetIcon("Button_Pressed");
+					_buttonStyle.stretchWidth = true;
+					_buttonStyle.stretchHeight = true;
 					_buttonStyle.margin = new RectOffset(4,5,4,4);
 					_buttonStyle.padding = new RectOffset(8,0,2,2);
 				}
@@ -124,7 +126,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
 
-			if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, buttonStyle) )
+			if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, buttonStyle, GUILayout.MaxHeight(40)) )
 			{
 				if(showOptions && SettingsEnabled())
 					pb_MenuOption.Show(OnSettingsGUI);

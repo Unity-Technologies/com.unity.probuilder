@@ -25,9 +25,9 @@ namespace ProBuilder2.EditorCommon
 		float tooltipTimerRefresh = 1f;
 		
 		Texture2D 	scrollIconUp = null,
-					scrollIconDown = null;
-					// scrollIconRight = null,
-					// scrollIconLeft = null;
+					scrollIconDown = null,
+					scrollIconRight = null,
+					scrollIconLeft = null;
 
 		[SerializeField] List<pb_MenuAction> actions;
 
@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize() + new Vector2(6, 6);
+			win.minSize = actions[0].GetSize() + new Vector2(6, 12);
 			this.window = win;
 		}
 
@@ -53,8 +53,8 @@ namespace ProBuilder2.EditorCommon
 			showTooltipTimer = false;
 			scrollIconUp = pb_IconUtility.GetIcon("ShowNextPage_Up");
 			scrollIconDown = pb_IconUtility.GetIcon("ShowNextPage_Down");
-			// scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
-			// scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
+			scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
+			scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
 		}
 
 		void OnDisable()
@@ -161,25 +161,38 @@ namespace ProBuilder2.EditorCommon
 
 			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden());
 
-			int max = windowWidth - 4;
+			int availableWidth = windowWidth;
+			int availableHeight = windowHeight;
+			int iconCount = available.Count();
+			bool horizontalScroll = windowWidth > windowHeight * 2;
+
 			int iconWidth = (int)(actions[0].GetSize().x + 4);
 			int iconHeight = (int)(actions[0].GetSize().y + 4);
-			int columns = System.Math.Max(max / iconWidth, 1);
-			int iconCount = available.Count();
-			int rows = iconCount / columns + (iconCount % columns != 0 ? 1 : 0);
+
+			int columns;
+			int rows;
+
+			if(horizontalScroll)
+			{
+				rows = System.Math.Max((windowHeight-4) / iconHeight, 1);
+				columns = (iconCount / rows) + (iconCount % rows != 0 ? 1 : 0);
+			}
+			else
+			{
+				columns = System.Math.Max((windowWidth - 4) / iconWidth, 1);
+				rows = (iconCount / columns) + (iconCount % columns != 0 ? 1 : 0);
+			}
+
+			int contentWidth = (iconCount / rows) * iconWidth + 4;
 			int contentHeight = rows * iconHeight + 4;
 
-			int availableHeight = windowHeight;
-
-			bool showScrollButtons = contentHeight > availableHeight;
+			bool showScrollButtons = horizontalScroll ? contentWidth > availableWidth : contentHeight > availableHeight;
 
 			if(showScrollButtons)
 				availableHeight -= SCROLL_BTN_HEIGHT * 2;
 
-			int maxScroll = contentHeight - availableHeight;
-
-			Parabox.Debug.Bugger.SetKey("Est. Scroll", maxScroll);
-			Parabox.Debug.Bugger.SetKey("Act. Scroll", (int)scroll.y);
+			int maxHorizontalScroll = contentWidth - availableWidth;
+			int maxVerticalScroll = contentHeight - availableHeight;
 
 			// only change before a layout event
 			if(m_showScrollButtons != showScrollButtons && e.type == EventType.Layout)
@@ -187,10 +200,22 @@ namespace ProBuilder2.EditorCommon
 
 			if(m_showScrollButtons)
 			{
-				GUI.enabled = scroll.y > 0;
-				if(GUILayout.Button(scrollIconUp, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
-					StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
-				GUI.enabled = true;
+				if(horizontalScroll)
+				{
+					GUILayout.BeginHorizontal();
+
+					GUI.enabled = scroll.x > 0;
+					if(GUILayout.Button(scrollIconLeft, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
+						StartScrollAnimation(Mathf.Max(scroll.x - availableWidth, 0f), 0f);
+					GUI.enabled = true;
+				}
+				else
+				{
+					GUI.enabled = scroll.y > 0;
+					if(GUILayout.Button(scrollIconUp, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+						StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
+					GUI.enabled = true;
+				}
 			}
 
 			scroll = GUILayout.BeginScrollView(scroll, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
@@ -199,7 +224,7 @@ namespace ProBuilder2.EditorCommon
 					hovering = false;
 
 			Rect optionRect = new Rect(0f, 0f, 0f, 0f);
-
+			
 			GUILayout.BeginHorizontal();
 
 			int i = 0;
@@ -259,10 +284,22 @@ namespace ProBuilder2.EditorCommon
 
 			if( m_showScrollButtons )
 			{
-				GUI.enabled = scroll.y < maxScroll - 2;
-				if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
-					StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxScroll) );
-				GUI.enabled = true;
+				if(horizontalScroll)
+				{
+					GUI.enabled = scroll.x < maxHorizontalScroll - 2;
+					if(GUILayout.Button(scrollIconRight, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
+						StartScrollAnimation( Mathf.Min(scroll.x + availableWidth + 2, maxHorizontalScroll), 0f );
+					GUI.enabled = true;
+
+					GUILayout.EndHorizontal();
+				}
+				else
+				{
+					GUI.enabled = scroll.y < maxVerticalScroll - 2;
+					if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+						StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxVerticalScroll) );
+					GUI.enabled = true;
+				}				
 			}
 
 			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)
