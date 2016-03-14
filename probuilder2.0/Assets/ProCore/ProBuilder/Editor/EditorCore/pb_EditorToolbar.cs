@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize() + new Vector2(6, 12);
+			win.minSize = actions[0].GetSize(win.position.width > win.position.height) + new Vector2(6, 12);
 			this.window = win;
 		}
 
@@ -149,7 +149,7 @@ namespace ProBuilder2.EditorCommon
 			doAnimateScroll = true;
 		}
 
-		int SCROLL_BTN_HEIGHT { get { return isFloating ? 12 : 11; } }
+		int SCROLL_BTN_SIZE { get { return isFloating ? 12 : 11; } }
 		int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
 		int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
 
@@ -164,32 +164,35 @@ namespace ProBuilder2.EditorCommon
 			int availableWidth = windowWidth;
 			int availableHeight = windowHeight;
 			int iconCount = available.Count();
-			bool horizontalScroll = windowWidth > windowHeight * 2;
+			bool isHorizontal = windowWidth > windowHeight * 2;
 
-			int iconWidth = (int)(actions[0].GetSize().x + 4);
-			int iconHeight = (int)(actions[0].GetSize().y + 4);
+			int iconWidth = (int)(actions[0].GetSize(isHorizontal).x + 4);
+			int iconHeight = (int)(actions[0].GetSize(isHorizontal).y + 4);
 
 			int columns;
 			int rows;
 
-			if(horizontalScroll)
+			if(isHorizontal)
 			{
-				rows = System.Math.Max((windowHeight-4) / iconHeight, 1);
-				columns = (iconCount / rows) + (iconCount % rows != 0 ? 1 : 0);
+				rows = ((windowHeight-4) / iconHeight);
+				columns = System.Math.Max(windowWidth / iconWidth, (iconCount / rows) + (iconCount % rows != 0 ? 1 : 0));
 			}
 			else
 			{
 				columns = System.Math.Max((windowWidth - 4) / iconWidth, 1);
 				rows = (iconCount / columns) + (iconCount % columns != 0 ? 1 : 0);
 			}
-
+			
 			int contentWidth = (iconCount / rows) * iconWidth + 4;
 			int contentHeight = rows * iconHeight + 4;
 
-			bool showScrollButtons = horizontalScroll ? contentWidth > availableWidth : contentHeight > availableHeight;
+			bool showScrollButtons = isHorizontal ? contentWidth > availableWidth : contentHeight > availableHeight;
 
 			if(showScrollButtons)
-				availableHeight -= SCROLL_BTN_HEIGHT * 2;
+			{
+				availableHeight -= SCROLL_BTN_SIZE * 2;
+				availableWidth -= SCROLL_BTN_SIZE * 2;
+			}
 
 			int maxHorizontalScroll = contentWidth - availableWidth;
 			int maxVerticalScroll = contentHeight - availableHeight;
@@ -200,7 +203,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(m_showScrollButtons)
 			{
-				if(horizontalScroll)
+				if(isHorizontal)
 				{
 					GUILayout.BeginHorizontal();
 
@@ -230,7 +233,7 @@ namespace ProBuilder2.EditorCommon
 			int i = 0;
 			foreach(pb_MenuAction action in available)
 			{
-				if( action.DoButton(e.alt, ref optionRect) && !e.shift)
+				if( action.DoButton(isHorizontal, e.alt, ref optionRect) && !e.shift)
 				{
 					optionRect.x -= scroll.x;
 					optionRect.y -= scroll.y;
@@ -284,7 +287,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( m_showScrollButtons )
 			{
-				if(horizontalScroll)
+				if(isHorizontal)
 				{
 					GUI.enabled = scroll.x < maxHorizontalScroll - 2;
 					if(GUILayout.Button(scrollIconRight, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))

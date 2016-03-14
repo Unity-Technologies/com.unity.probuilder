@@ -50,9 +50,9 @@ namespace ProBuilder2.Interface
 				if(_buttonNoBackgroundSmallMarginStyle == null)
 				{
 					_buttonNoBackgroundSmallMarginStyle = new GUIStyle();
-					_buttonNoBackgroundSmallMarginStyle.margin = new RectOffset(2,2,2,2);
+					_buttonNoBackgroundSmallMarginStyle.margin = new RectOffset(0,0,0,0);
 					_buttonNoBackgroundSmallMarginStyle.alignment = TextAnchor.MiddleCenter;
-					_buttonNoBackgroundSmallMarginStyle.padding = new RectOffset(0,0,0,0);
+					_buttonNoBackgroundSmallMarginStyle.padding = new RectOffset(2,2,2,2);
 				}
 				return _buttonNoBackgroundSmallMarginStyle;
 			}

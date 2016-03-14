@@ -28,25 +28,47 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		protected static GUIStyle _buttonStyle = null;
-		protected static GUIStyle buttonStyle
+		protected static GUIStyle _buttonStyleVertical = null;
+		protected static GUIStyle buttonStyleVertical
 		{
 			get
 			{
-				if(_buttonStyle == null)
+				if(_buttonStyleVertical == null)
 				{
-					_buttonStyle = new GUIStyle();
-					_buttonStyle.border = new RectOffset(4,0,0,0);
-					_buttonStyle.alignment = TextAnchor.MiddleCenter;
-					_buttonStyle.normal.background = pb_IconUtility.GetIcon("Button_Normal");
-					_buttonStyle.hover.background = pb_IconUtility.GetIcon("Button_Hover");
-					_buttonStyle.active.background = pb_IconUtility.GetIcon("Button_Pressed");
-					_buttonStyle.stretchWidth = true;
-					_buttonStyle.stretchHeight = true;
-					_buttonStyle.margin = new RectOffset(4,5,4,4);
-					_buttonStyle.padding = new RectOffset(8,0,2,2);
+					_buttonStyleVertical = new GUIStyle();
+					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
+					_buttonStyleVertical.alignment = TextAnchor.MiddleCenter;
+					_buttonStyleVertical.normal.background = pb_IconUtility.GetIcon("Button_Normal");
+					_buttonStyleVertical.hover.background = pb_IconUtility.GetIcon("Button_Hover");
+					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Button_Pressed");
+					_buttonStyleVertical.stretchWidth = true;
+					_buttonStyleVertical.stretchHeight = false;
+					_buttonStyleVertical.margin = new RectOffset(4,5,4,4);
+					_buttonStyleVertical.padding = new RectOffset(8,0,2,2);
 				}
-				return _buttonStyle;
+				return _buttonStyleVertical;
+			}
+		}
+
+		protected static GUIStyle _buttonStyleHorizontal = null;
+		protected static GUIStyle buttonStyleHorizontal
+		{
+			get
+			{
+				if(_buttonStyleHorizontal == null)
+				{
+					_buttonStyleHorizontal = new GUIStyle();
+					_buttonStyleHorizontal.border = new RectOffset(0,0,4,0);
+					_buttonStyleHorizontal.alignment = TextAnchor.MiddleCenter;
+					_buttonStyleHorizontal.normal.background = pb_IconUtility.GetIcon("Button_Normal_Horizontal");
+					_buttonStyleHorizontal.hover.background = pb_IconUtility.GetIcon("Button_Hover_Horizontal");
+					_buttonStyleHorizontal.active.background = pb_IconUtility.GetIcon("Button_Pressed_Horizontal");
+					_buttonStyleHorizontal.stretchWidth = true;
+					_buttonStyleHorizontal.stretchHeight = true;
+					_buttonStyleHorizontal.margin = new RectOffset(4,4,4,5);
+					_buttonStyleHorizontal.padding = new RectOffset(2,2,8,0);
+				}
+				return _buttonStyleHorizontal;
 			}
 		}
 
@@ -117,7 +139,7 @@ namespace ProBuilder2.EditorCommon
 		public abstract pb_ActionResult DoAction();
 		public virtual void OnSettingsGUI() {}
 
-		public bool DoButton(bool showOptions, ref Rect optionsRect)
+		public bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect)
 		{
 			bool wasEnabled = GUI.enabled;
 			bool buttonEnabled = IsEnabled();
@@ -126,7 +148,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
 
-			if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, buttonStyle, GUILayout.MaxHeight(40)) )
+			if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical) )
 			{
 				if(showOptions && SettingsEnabled())
 					pb_MenuOption.Show(OnSettingsGUI);
@@ -161,9 +183,11 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	Get the rendered width of this GUI item.
 		 */
-		public Vector2 GetSize()
+		public Vector2 GetSize(bool isHorizontal)
 		{
-			return buttonStyle.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) );
+			return isHorizontal ?
+				buttonStyleHorizontal.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) ) :
+				buttonStyleVertical.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) );
 		}
 	}
 }
