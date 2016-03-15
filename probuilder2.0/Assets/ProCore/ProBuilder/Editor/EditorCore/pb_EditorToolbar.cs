@@ -192,8 +192,11 @@ namespace ProBuilder2.EditorCommon
 			{
 				availableHeight -= SCROLL_BTN_SIZE * 2;
 				availableWidth -= SCROLL_BTN_SIZE * 2;
-			}
 
+				if(isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
+					scroll.x += e.delta.y * 10f;
+			}
+	
 			int maxHorizontalScroll = contentWidth - availableWidth;
 			int maxVerticalScroll = contentHeight - availableHeight;
 
