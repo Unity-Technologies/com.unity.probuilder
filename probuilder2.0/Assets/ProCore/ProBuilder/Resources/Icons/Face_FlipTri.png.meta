@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 94259495e2e9ae34c84dfd5613241a6c
-timeCreated: 1457718908
+timeCreated: 1458136592
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName: {}
@@ -32,7 +32,7 @@ TextureImporter:
     filterMode: 0
     aniso: -1
     mipBias: -1
-    wrapMode: 0
+    wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   rGBM: 0
