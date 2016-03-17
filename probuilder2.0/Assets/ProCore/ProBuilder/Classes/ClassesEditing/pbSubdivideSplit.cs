@@ -147,205 +147,209 @@ public static class pbSubdivideSplit
 
 	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
-		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
-		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
-			if(ec.isValid)
-				pb_edgeConnections.Add(ec);
+		// @todo
+		faces = null;
+		return false;
 
-		int len = pb_edgeConnections.Count;
+// 		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
+// 		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
+// 			if(ec.isValid)
+// 				pb_edgeConnections.Add(ec);
 
-		if(len < 1)
-		{
-			faces = null;
-			return false;
-		}
+// 		int len = pb_edgeConnections.Count;
 
-		Vector3[] vertices = pb.vertices;
-		Color[] colors = pb.colors;
+// 		if(len < 1)
+// 		{
+// 			faces = null;
+// 			return false;
+// 		}
 
-		List<pb_Face> successfullySplitFaces = new List<pb_Face>();
+// 		Vector3[] vertices = pb.vertices;
+// 		Color[] colors = pb.colors;
 
-		List<pb_Face> 	all_splitFaces 			= new List<pb_Face>();
-		List<Vector3[]> all_splitVertices 		= new List<Vector3[]>();
-		List<Color[]> 	all_splitColors			= new List<Color[]>();
-		List<List<Vector4>> all_splitUVs	 	= new List<List<Vector4>>();
-#if UNITY_5_3
-		List<List<Vector4>> all_splitUV3s	 	= pb.uv3 == null ? null : new List<List<Vector4>>();
-		List<List<Vector4>> all_splitUV4s	 	= pb.uv4 == null ? null : new List<List<Vector4>>();
-#endif
-		List<int[]> 	all_splitSharedIndices	= new List<int[]>();
-		bool[] success 							= new bool[len];
+// 		List<pb_Face> successfullySplitFaces = new List<pb_Face>();
 
-		// use a nullable type because in order for the adjacent face triangulation
-		// code to work, it needs to know what dangling vert belongs to which edge, 
-		// if we out a vector3[] with each index corresponding to the passed edges
-		// in pb_EdgeConnection, it's easy to maintain the relationship.
-		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
+// 		List<pb_Face> 	all_splitFaces 			= new List<pb_Face>();
+// 		List<Vector3[]> all_splitVertices 		= new List<Vector3[]>();
+// 		List<Color[]> 	all_splitColors			= new List<Color[]>();
+// 		List<List<Vector4>> all_splitUVs	 	= new List<List<Vector4>>();
+// #if UNITY_5_3
+// 		List<List<Vector4>> all_splitUV3s	 	= pb.uv3 == null ? null : new List<List<Vector4>>();
+// 		List<List<Vector4>> all_splitUV4s	 	= pb.uv4 == null ? null : new List<List<Vector4>>();
+// #endif
+// 		List<int[]> 	all_splitSharedIndices	= new List<int[]>();
+// 		bool[] success 							= new bool[len];
 
-		// profiler.BeginSample("foreach(edge connection)");
-		int i = 0;
-		foreach(pb_EdgeConnection fc in pb_edgeConnections)
-		{	
-			pb_Face[] splitFaces 		= null;
-			Vector3[][] splitVertices 	= null;
-			Color[][] splitColors  		= null;
-			List<List<Vector4>> splitUVs = null;
-			int[][] splitSharedIndices 	= null;
+// 		// use a nullable type because in order for the adjacent face triangulation
+// 		// code to work, it needs to know what dangling vert belongs to which edge, 
+// 		// if we out a vector3[] with each index corresponding to the passed edges
+// 		// in pb_EdgeConnection, it's easy to maintain the relationship.
+// 		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
+
+// 		// profiler.BeginSample("foreach(edge connection)");
+// 		int i = 0;
+// 		foreach(pb_EdgeConnection fc in pb_edgeConnections)
+// 		{	
+// 			pb_Face[] splitFaces 		= null;
+// 			Vector3[][] splitVertices 	= null;
+// 			Color[][] splitColors  		= null;
+// 			List<List<Vector4>> splitUVs = null;
+// 			int[][] splitSharedIndices 	= null;
 	
-			if( fc.edges.Count < 3 )
-			{
-				Vector3 edgeACen = (vertices[fc.edges[0].x] + vertices[fc.edges[0].y]) / 2f; 
-				Vector3 edgeBCen = (vertices[fc.edges[1].x] + vertices[fc.edges[1].y]) / 2f;
+// 			if( fc.edges.Count < 3 )
+// 			{
+// 				Vector3 edgeACen = (vertices[fc.edges[0].x] + vertices[fc.edges[0].y]) / 2f; 
+// 				Vector3 edgeBCen = (vertices[fc.edges[1].x] + vertices[fc.edges[1].y]) / 2f;
 
-				Color cola = (colors[fc.edges[0].x] + colors[fc.edges[0].y]) / 2f;
-				Color colb = (colors[fc.edges[1].x] + colors[fc.edges[1].y]) / 2f;
+// 				Color cola = (colors[fc.edges[0].x] + colors[fc.edges[0].y]) / 2f;
+// 				Color colb = (colors[fc.edges[1].x] + colors[fc.edges[1].y]) / 2f;
 
-				danglingVertices[i] = new DanglingVertex?[2] { new DanglingVertex(edgeACen, cola), new DanglingVertex(edgeBCen, colb) };
+// 				danglingVertices[i] = new DanglingVertex?[2] { new DanglingVertex(edgeACen, cola), new DanglingVertex(edgeBCen, colb) };
 
-				success[i] = SplitFace_Internal(
-					new SplitSelection(pb, fc.face, edgeACen, edgeBCen, cola, colb, false, false, new int[]{fc.edges[0].x, fc.edges[0].y}, new int[]{fc.edges[1].x, fc.edges[1].y}),
-					out splitFaces,
-					out splitVertices, 
-					out splitColors,
-					out splitUVs,
-					out splitSharedIndices);
+// 				success[i] = SplitFace_Internal(
+// 					new SplitSelection(pb, fc.face, edgeACen, edgeBCen, cola, colb, false, false, new int[]{fc.edges[0].x, fc.edges[0].y}, new int[]{fc.edges[1].x, fc.edges[1].y}),
+// 					out splitFaces,
+// 					out splitVertices, 
+// 					out splitColors,
+// 					out splitUVs,
+// 					out splitSharedIndices);
 				
-				if(success[i])
-					successfullySplitFaces.Add(fc.face);
-			}
-			else
-			{
-				DanglingVertex?[] appendedVertices = null;
+// 				if(success[i])
+// 					successfullySplitFaces.Add(fc.face);
+// 			}
+// 			else
+// 			{
+// 				DanglingVertex?[] appendedVertices = null;
 
-				success[i] = SubdivideFace_Internal(pb, fc,
-					out appendedVertices,
-					out splitFaces,
-					out splitVertices,
-					out splitColors,
-					out splitUVs,
-					out splitSharedIndices);
+// 				success[i] = SubdivideFace_Internal(pb, fc,
+// 					out appendedVertices,
+// 					out splitFaces,
+// 					out splitVertices,
+// 					out splitColors,
+// 					out splitUVs,
+// 					out splitSharedIndices);
 
-				if(success[i])
-					successfullySplitFaces.Add(fc.face);
+// 				if(success[i])
+// 					successfullySplitFaces.Add(fc.face);
 	
-				danglingVertices[i] = appendedVertices;
-			}
+// 				danglingVertices[i] = appendedVertices;
+// 			}
 
-			if(success[i])
-			{
-				int texGroup = fc.face.textureGroup < 0 ? pb.UnusedTextureGroup(i+1) : fc.face.textureGroup;
+// 			if(success[i])
+// 			{
+// 				int texGroup = fc.face.textureGroup < 0 ? pb.UnusedTextureGroup(i+1) : fc.face.textureGroup;
 				
-				for(int j = 0; j < splitFaces.Length; j++)
-				{
-					splitFaces[j].textureGroup = texGroup;
-					all_splitFaces.Add(splitFaces[j]);
-					all_splitVertices.Add(splitVertices[j]);
-					all_splitColors.Add(splitColors[j]);
-					all_splitUVs.Add(splitUVs[j]);
-					all_splitSharedIndices.Add(splitSharedIndices[j]);
-				}
-			}
+// 				for(int j = 0; j < splitFaces.Length; j++)
+// 				{
+// 					splitFaces[j].textureGroup = texGroup;
+// 					all_splitFaces.Add(splitFaces[j]);
+// 					all_splitVertices.Add(splitVertices[j]);
+// 					all_splitColors.Add(splitColors[j]);
+// 					all_splitUVs.Add(splitUVs[j]);
+// 					all_splitSharedIndices.Add(splitSharedIndices[j]);
+// 				}
+// 			}
 
-			i++;
-		}
-		// profiler.EndSample();
+// 			i++;
+// 		}
+// 		// profiler.EndSample();
 
-		// profiler.BeginSample("Retrianguate");
-		/**
-		 *	Figure out which faces need to be re-triangulated
-		 */
-		pb_Edge[][] tedges = new pb_Edge[pb_edgeConnections.Count][];
-		int n = 0;
-		for(i = 0; i < pb_edgeConnections.Count; i++)
-			tedges[n++] = pb_edgeConnections[i].edges.ToArray();
+// 		// profiler.BeginSample("Retrianguate");
+// 		/**
+// 		 *	Figure out which faces need to be re-triangulated
+// 		 */
+// 		pb_Edge[][] tedges = new pb_Edge[pb_edgeConnections.Count][];
+// 		int n = 0;
+// 		for(i = 0; i < pb_edgeConnections.Count; i++)
+// 			tedges[n++] = pb_edgeConnections[i].edges.ToArray();
 
-		List<pb_Face>[][] allConnects = pbMeshUtils.GetNeighborFacesJagged(pb, tedges);		
+// 		List<pb_Face>[][] allConnects = pbMeshUtils.GetNeighborFacesJagged(pb, tedges);		
 
 
-		Dictionary<pb_Face, List<DanglingVertex>> addVertex = new Dictionary<pb_Face, List<DanglingVertex>>();
-		List<pb_Face> temp = new List<pb_Face>();
-		for(int j = 0; j < pb_edgeConnections.Count; j++)
-		{
-			if(!success[j]) continue;
+// 		Dictionary<pb_Face, List<DanglingVertex>> addVertex = new Dictionary<pb_Face, List<DanglingVertex>>();
+// 		List<pb_Face> temp = new List<pb_Face>();
+// 		for(int j = 0; j < pb_edgeConnections.Count; j++)
+// 		{
+// 			if(!success[j]) continue;
 
-			// check that this edge has a buddy that it welded it's new vertex to, and if not,
-			// create one
-			for(i = 0; i < pb_edgeConnections[j].edges.Count; i++)
-			{
-				if(danglingVertices[j][i] == null) 
-					continue;
+// 			// check that this edge has a buddy that it welded it's new vertex to, and if not,
+// 			// create one
+// 			for(i = 0; i < pb_edgeConnections[j].edges.Count; i++)
+// 			{
+// 				if(danglingVertices[j][i] == null) 
+// 					continue;
 
-				List<pb_Face> connected = allConnects[j][i];
+// 				List<pb_Face> connected = allConnects[j][i];
 
-				foreach(pb_Face face in connected)
-				{
-					int ind = successfullySplitFaces.IndexOf(face);
+// 				foreach(pb_Face face in connected)
+// 				{
+// 					int ind = successfullySplitFaces.IndexOf(face);
 
-					if(ind < 0)
-					{
-						if(addVertex.ContainsKey(face))
-							addVertex[face].Add( (DanglingVertex)danglingVertices[j][i] );
-						else
-						{
-							temp.Add(face);
-							addVertex.Add(face, new List<DanglingVertex>(1) { (DanglingVertex)danglingVertices[j][i] });
-						}
-					}
-				}
-			}
-		}
-		// profiler.EndSample();
+// 					if(ind < 0)
+// 					{
+// 						if(addVertex.ContainsKey(face))
+// 							addVertex[face].Add( (DanglingVertex)danglingVertices[j][i] );
+// 						else
+// 						{
+// 							temp.Add(face);
+// 							addVertex.Add(face, new List<DanglingVertex>(1) { (DanglingVertex)danglingVertices[j][i] });
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 		// profiler.EndSample();
 
-		// profiler.BeginSample("Append vertices to faces");
-		pb_Face[] appendedFaces = pb.AppendFaces(
-			all_splitVertices.ToArray(),
-			all_splitColors.ToArray(),
-			all_splitUVs.ToArray(),
-			all_splitFaces.ToArray(),
-			all_splitSharedIndices.ToArray());
+// 		// profiler.BeginSample("Append vertices to faces");
+// 		pb_Face[] appendedFaces = pb.AppendFaces(
+// 			all_splitVertices.ToArray(),
+// 			all_splitColors.ToArray(),
+// 			all_splitUVs.ToArray(),
+// 			all_splitFaces.ToArray(),
+// 			all_splitSharedIndices.ToArray());
 		
-		List<pb_Face> triangulatedFaces = new List<pb_Face>();
-		foreach(KeyValuePair<pb_Face, List<DanglingVertex>> add in addVertex)
-		{
-			pb_Face newFace;
+// 		List<pb_Face> triangulatedFaces = new List<pb_Face>();
+// 		foreach(KeyValuePair<pb_Face, List<DanglingVertex>> add in addVertex)
+// 		{
+// 			pb_Face newFace;
 
-			if( pb.AppendVerticesToFace(add.Key, add.Value.Select(x => x.position).ToArray(), add.Value.Select(x => x.color).ToArray(), out newFace) )
-				triangulatedFaces.Add(newFace);
-			else
-				Debug.LogError("Mesh re-triangulation failed.");//  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
-		}
-		// profiler.EndSample();
+// 			if( pb.AppendVerticesToFace(add.Key, add.Value.Select(x => x.position).ToArray(), add.Value.Select(x => x.color).ToArray(), out newFace) )
+// 				triangulatedFaces.Add(newFace);
+// 			else
+// 				Debug.LogError("Mesh re-triangulation failed.");//  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
+// 		}
+// 		// profiler.EndSample();
 
-		// profiler.BeginSample("rebuild mesh");
+// 		// profiler.BeginSample("rebuild mesh");
 
-		// Re-triangulate any faces left with dangling verts at edges
-		// Weld verts, including those added in re-triangu
-		int[] splitFaceTris = pb_Face.AllTriangles(appendedFaces);
-		int[] triangulatedFaceTris = pb_Face.AllTriangles(triangulatedFaces);
-		int[] allModifiedTris = new int[splitFaceTris.Length + triangulatedFaceTris.Length];
+// 		// Re-triangulate any faces left with dangling verts at edges
+// 		// Weld verts, including those added in re-triangu
+// 		int[] splitFaceTris = pb_Face.AllTriangles(appendedFaces);
+// 		int[] triangulatedFaceTris = pb_Face.AllTriangles(triangulatedFaces);
+// 		int[] allModifiedTris = new int[splitFaceTris.Length + triangulatedFaceTris.Length];
 		
-		System.Array.Copy(splitFaceTris, 0, allModifiedTris, 0, splitFaceTris.Length);
-		System.Array.Copy(triangulatedFaceTris, 0, allModifiedTris, splitFaceTris.Length, triangulatedFaceTris.Length);
+// 		System.Array.Copy(splitFaceTris, 0, allModifiedTris, 0, splitFaceTris.Length);
+// 		System.Array.Copy(triangulatedFaceTris, 0, allModifiedTris, splitFaceTris.Length, triangulatedFaceTris.Length);
 		
-		// safe to assume that we probably didn't delete anything :/
-		int[] welds;
+// 		// safe to assume that we probably didn't delete anything :/
+// 		int[] welds;
 
-		// profiler.BeginSample("weld vertices");
-		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+// 		// profiler.BeginSample("weld vertices");
+// 		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
 
-		// profiler.EndSample();
-		// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+// 		// profiler.EndSample();
+// 		// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 
-		// Now that we're done screwing with geo, delete all the old faces (that were successfully split)		
-		// profiler.BeginSample("delete faces");
-		pb.DeleteFaces( successfullySplitFaces.ToArray() );
-		faces = appendedFaces;
-		// profiler.EndSample();
-		// profiler.EndSample();
-		// profiler.EndSample();
-		// Debug.Log(profiler.ToString());
+// 		// Now that we're done screwing with geo, delete all the old faces (that were successfully split)		
+// 		// profiler.BeginSample("delete faces");
+// 		pb.DeleteFaces( successfullySplitFaces.ToArray() );
+// 		faces = appendedFaces;
+// 		// profiler.EndSample();
+// 		// profiler.EndSample();
+// 		// profiler.EndSample();
+// 		// Debug.Log(profiler.ToString());
 
-		return true;
+// 		return true;
 	}
 
 	/**
