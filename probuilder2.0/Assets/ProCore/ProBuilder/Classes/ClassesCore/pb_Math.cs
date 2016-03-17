@@ -362,48 +362,6 @@ namespace ProBuilder2.Math
 
 			return false;
 		}
-
-		// public static bool RayIntersectsAABB(Ray ray, Bounds bounds, out float distance)
-		// {
-		// 	// r.dir is unit direction vector of ray
-		// 	dirfrac.x = 1.0f / r.dir.x;
-		// 	dirfrac.y = 1.0f / r.dir.y;
-		// 	dirfrac.z = 1.0f / r.dir.z;
-
-		// 	return RayIntersectsAABB(ray.origin, dirFrac, bounds.center - bounds.extents, bounds.center + bounds.extents, out distance);
-		// }
-
-		// internal static bool RayIntersectsAABB(Vector3 rayOrigin, Vector3 dirFrac, Vector3 aabbMin, Vector3 aabbMax)
-		// {
-		// 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-		// 	// r.org is origin of ray
-		// 	float t1 = (lb.x - r.org.x)*dirfrac.x;
-		// 	float t2 = (rt.x - r.org.x)*dirfrac.x;
-		// 	float t3 = (lb.y - r.org.y)*dirfrac.y;
-		// 	float t4 = (rt.y - r.org.y)*dirfrac.y;
-		// 	float t5 = (lb.z - r.org.z)*dirfrac.z;
-		// 	float t6 = (rt.z - r.org.z)*dirfrac.z;
-
-		// 	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
-		// 	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
-
-		// 	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
-		// 	if (tmax < 0)
-		// 	{
-		// 	t = tmax;
-		// 	return false;
-		// 	}
-
-		// 	// if tmin > tmax, ray doesn't intersect AABB
-		// 	if (tmin > tmax)
-		// 	{
-		// 	t = tmax;
-		// 	return false;
-		// 	}
-
-		// 	t = tmin;
-		// 	return true;
-		// }
 #endregion
 
 #region Normal and Tangents
@@ -458,17 +416,17 @@ namespace ProBuilder2.Math
 			Vector3 tan2 = Vector3.zero;
 			Vector4 tan = new Vector4(0f,0f,0f,1f);
 
-			long i1 = face.indices[0];
-			long i2 = face.indices[1];
-			long i3 = face.indices[2];
+			int i1 = face.indices[0];
+			int i2 = face.indices[1];
+			int i3 = face.indices[2];
 
 			Vector3 v1 = pb.vertices[i1];
 			Vector3 v2 = pb.vertices[i2];
 			Vector3 v3 = pb.vertices[i3];
 
-			Vector2 w1 = pb.uv[i1];
-			Vector2 w2 = pb.uv[i2];
-			Vector2 w3 = pb.uv[i3];
+			Vector4 w1 = pb.uv0[i1];
+			Vector4 w2 = pb.uv0[i2];
+			Vector4 w3 = pb.uv0[i3];
 
 			float x1 = v2.x - v1.x;
 			float x2 = v3.x - v1.x;
@@ -713,6 +671,16 @@ namespace ProBuilder2.Math
 		}
 
 		/**
+		 *	\brief Compares 2 vector2 objects, allowing for a margin of error.
+		 */
+		public static bool Approx(this Vector2 v, Vector2 b, float delta)
+		{
+			return 
+				Mathf.Abs(v.x - b.x) < delta &&
+				Mathf.Abs(v.y - b.y) < delta;
+		}
+
+		/**
 		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */
 		public static bool Approx(this Vector3 v, Vector3 b, float delta)
@@ -724,13 +692,15 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
+		 *	\brief Compares 2 vector4 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector2 v, Vector2 b, float delta)
+		public static bool Approx(this Vector4 v, Vector4 b, float delta)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta;
+				Mathf.Abs(v.y - b.y) < delta &&
+				Mathf.Abs(v.z - b.z) < delta &&
+				Mathf.Abs(v.w - b.w) < delta;
 		}
 
 		/**

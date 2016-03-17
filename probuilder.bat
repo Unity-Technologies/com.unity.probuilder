@@ -17,7 +17,8 @@ set u5_0editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unit
 set u5_3editor="%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3.sln"
 
 echo UNITY 4 PATH IS %unity_path_4%
-echo UNITY 5 PATH IS %unity_path_5_0%
+echo UNITY 5.0 PATH IS %unity_path_5_0%
+echo UNITY 5.3 PATH IS %unity_path_5_3%
 
 :: Update SVN
 :: ====================

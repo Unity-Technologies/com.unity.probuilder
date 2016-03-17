@@ -206,12 +206,32 @@ namespace ProBuilder2.Common
 
 	public static T[] RemoveAt<T>(this T[] arr, int index)
 	{
-		T[] newArray = new T[arr.Length-1];
+		T[] newArray = new T[arr.Length - 1];
 		int n = 0;
+
 		for(int i = 0; i < arr.Length; i++)
 		{
-			if(i != index) {
+			if(i != index)
+			{
 				newArray[n] = arr[i];
+				n++;
+			}
+		}
+		return newArray;
+	}
+
+	// @todo
+	public static List<T> RemoveAt2<T>(this IList<T> arr, int index)
+	{
+		if(index < 0 || index > arr.Count)
+			return new List<T>(arr);
+
+		List<T> newArray = new List<T>(arr.Count - 1);
+		int n = 0;
+		for(int i = 0; i < arr.Count; i++)
+		{
+			if(i != index) {
+				newArray.Add(arr[i]);
 				n++;
 			}
 		}
@@ -328,6 +348,14 @@ namespace ProBuilder2.Common
 			arr[i] = val;
 		}
 		return arr;
+	}
+
+	public static List<T> Fill<T>(T value, int length)
+	{
+		List<T> l = new List<T>(length);
+		for(int i = 0; i < length; i++)
+			l.Add(value);
+		return l;
 	}
 	
 	/**

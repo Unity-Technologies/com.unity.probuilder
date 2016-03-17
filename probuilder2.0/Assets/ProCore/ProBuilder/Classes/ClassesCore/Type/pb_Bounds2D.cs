@@ -187,16 +187,17 @@ namespace ProBuilder2.Common
 		 * Returns the center of the bounding box of points.  Optional parameter @length limits the 
 		 * bounds calculations to only the points up to length in array.
 		 */
-		public static Vector2 Center(List<Vector2> points) { return Center(points.ToArray()); }
-		public static Vector2 Center(Vector2[] points) { return Center(points, points.Length); }
-		public static Vector2 Center(Vector2[] points, int length)
+		public static Vector2 Center(IList<Vector2> points, int length = -1)
 		{
+			if(length < 0)
+				length = points.Count;
+				
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 		
-			if(points.Length > 0)
+			if(points.Count > 0)
 			{
 				xMin = points[0].x;
 				yMin = points[0].y;

@@ -148,7 +148,7 @@ namespace ProBuilder2.MeshOperations
 
 		List<Vector3[]> append_vertices = new List<Vector3[]>();
 		List<Color[]> append_color = new List<Color[]>();
-		List<Vector2[]> append_uv = new List<Vector2[]>();
+		List<Vector4[]> append_uv = new List<Vector4[]>();
 		List<pb_Face> append_face = new List<pb_Face>();
 		List<int[]> append_shared = new List<int[]>();
 
@@ -202,7 +202,7 @@ namespace ProBuilder2.MeshOperations
 						pb.colors[ edge.y ]
 					});
 
-				append_uv.Add( new Vector2[4] );
+				append_uv.Add( new Vector4[4] );
 
 				append_face.Add( new pb_Face( 
 						new int[6] {0, 1, 2, 1, 3, 2},			// indices
@@ -468,7 +468,7 @@ namespace ProBuilder2.MeshOperations
 					pb.colors[ edge.x ],
 					pb.colors[ edge.y ]
 				},
-				new Vector2[4],
+				new Vector4[4],
 				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
 				new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
@@ -683,7 +683,7 @@ namespace ProBuilder2.MeshOperations
 				pb.AppendFace(
 					v,
 					c,
-					new Vector2[v.Length],
+					new Vector4[v.Length],
 					new pb_Face( axbx || axby ? new int[3] {2, 1, 0} : new int[3] {0, 1, 2}, mat, uvs, 0, -1, -1, false ),
 					s);
 
@@ -731,7 +731,7 @@ namespace ProBuilder2.MeshOperations
 			pb.AppendFace(
 				v,
 				c,
-				new Vector2[v.Length],
+				new Vector4[v.Length],
 				new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, mat, uvs, 0, -1, -1, false ),
 				s);
 
@@ -749,10 +749,24 @@ namespace ProBuilder2.MeshOperations
 	 {
 	 	combined = null;
 
-	 	if(pbs.Length < 1) return false;
+	 	if(pbs.Length < 1)
+	 		return false;
+
+	 	int projectedVertexCount = pbs.Sum(x => x.vertexCount);
+	 	if( projectedVertexCount > System.UInt16.MaxValue )
+	 	{
+	 		Debug.LogWarning("Resulting mesh would be larger than Unity can handle (" + projectedVertexCount + " > " + System.UInt16.MaxValue + ").");
+	 		return false;
+	 	}
 
 	 	List<Vector3> v = new List<Vector3>();
-	 	List<Vector2> u = new List<Vector2>();
+	 	List<Vector4> u0 = new List<Vector4>();
+	 	List<Vector4> u3 = new List<Vector4>();
+	 	List<Vector4> u4 = new List<Vector4>();
+
+	 	bool hasUV3 = pbs.Any(x => x.uv3 != null && x.uv3.Count == x.vertexCount);
+	 	bool hasUV4 = pbs.Any(x => x.uv4 != null && x.uv4.Count == x.vertexCount);
+
 	 	List<Color> c = new List<Color>();
 	 	List<pb_Face> f = new List<pb_Face>();
 	 	List<pb_IntArray> s = new List<pb_IntArray>();
@@ -766,7 +780,10 @@ namespace ProBuilder2.MeshOperations
 	 		v.AddRange(pb.VerticesInWorldSpace());
 
 	 		// UVs
-	 		u.AddRange(pb.uv);
+	 		u0.AddRange(pb.GetUVs(0));
+
+	 		if(hasUV3) u3.AddRange(pb.GetUVs(3));
+	 		if(hasUV4) u4.AddRange(pb.GetUVs(4));
 
 	 		// Colors
 	 		c.AddRange(pb.colors);
@@ -819,7 +836,9 @@ namespace ProBuilder2.MeshOperations
 	 	combined = go.AddComponent<pb_Object>();
 
 		combined.SetVertices(v.ToArray());
-		combined.SetUV(u.ToArray());
+		combined.SetUVs(0, u0);
+		if(hasUV3) combined.SetUVs(3, u3);
+		if(hasUV4) combined.SetUVs(4, u4);
 		combined.SetColors(c.ToArray());
 		combined.SetFaces(f.ToArray());
 
@@ -844,20 +863,63 @@ namespace ProBuilder2.MeshOperations
 
 #region Init
 
-	/**
-	* "ProBuilder-ize function"
-	*/
-	public static pb_Object CreatePbObjectWithTransform(Transform t, bool preserveFaces)
-	{
-		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
+	// /**
+	// * "ProBuilder-ize function"
+	// */
+	// public static pb_Object CreatePbObjectWithTransform(Transform t, bool preserveFaces)
+	// {
+	// 	GameObject go = (GameObject)GameObject.Instantiate(t.gameObject);
 
-		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors ?? new Color[m_vertices.Length];
-		Vector2[] m_uvs = m.uv;
+	// 	pb_Object pb = go.AddComponent<pb_Object>();
+	// 	go.AddComponent<pb_Entity>();
+
+	// 	ResetPbObjectWithMeshFilter(pb, preserveFaces);
+		
+	// 	pb.CenterPivot(null);
+
+	// 	return pb;
+	// }
+
+	/**
+	* ProBuilderize in-place function.  You must call ToMesh() and Refresh() after
+	* returning from this function, as this only creates the pb_Object and sets its
+	* fields.  This allows you to record the mesh and gameObject for Undo operations.
+	*/
+	public static bool ResetPbObjectWithMeshFilter(pb_Object pb, bool preserveFaces)
+	{
+		MeshFilter mf = pb.transform.GetComponent<MeshFilter>();
+
+		if(mf == null || mf.sharedMesh == null)
+		{
+			Debug.LogWarning("No mesh associated with " + pb.gameObject.name);
+			return false;
+		}
+
+		Mesh m = mf.sharedMesh;
+		Material[] sharedMaterials = pb.transform.GetComponent<MeshRenderer>().sharedMaterials;
+
+		int vertexCount = m.vertexCount;
+		Vector3[] 		m_vertices = m.vertices;
+		Color[] 		m_colors = m.colors ?? new Color[vertexCount];
+		List<Vector4>	m_uvs;
+		List<Vector4>	m_uvs3 = null;
+		List<Vector4>	m_uvs4 = null;
 
 		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
-		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
-		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
+		List<Color> cols 	= preserveFaces ? new List<Color>(m.colors) : new List<Color>();
+#if UNITY_5_3
+		m_uvs = new List<Vector4>();
+		m.GetUVs(0, m_uvs);
+		m.GetUVs(3, m_uvs3);
+		m.GetUVs(4, m_uvs4);
+		List<Vector4> uvs3 = (m_uvs3 == null || m_uvs3.Count != vertexCount) ? null : (preserveFaces ? m_uvs3 : new List<Vector4>());
+		List<Vector4> uvs4 = (m_uvs4 == null || m_uvs4.Count != vertexCount) ? null : (preserveFaces ? m_uvs4 : new List<Vector4>());
+#else
+ 		m_uvs = m.uv != null ? m.uv.Cast<Vector4>().ToList() : new List<Vector4>(vertexCount);
+		List<Vector4> uvs3 = null;
+		List<Vector4> uvs4 = null;
+#endif
+		List<Vector4> uvs = preserveFaces ? m_uvs : new List<Vector4>();
 		List<pb_Face> faces = new List<pb_Face>();
 
 		for(int n = 0; n < m.subMeshCount; n++)
@@ -918,133 +980,20 @@ namespace ProBuilder2.MeshOperations
 						uvs.Add(m_uvs[tris[i+1]]);
 						uvs.Add(m_uvs[tris[i+2]]);
 
-						faceTris = new int[3] { i+0, i+1, i+2 };
-					}
-
-					faces.Add( 
-						new pb_Face(
-							faceTris,
-							t.GetComponent<MeshRenderer>().sharedMaterials[n],
-							new pb_UV(),
-							0,		// smoothing group
-							-1,		// texture group
-							-1,		// element group
-							true 	// manualUV 
-						));					
-				}
-			}
-		}
-
-		GameObject go = (GameObject)GameObject.Instantiate(t.gameObject);
-		go.GetComponent<MeshFilter>().sharedMesh = null;
-
-		pb_Object pb = go.AddComponent<pb_Object>();
-		pb.GeometryWithVerticesFaces(verts.ToArray(), faces.ToArray());
-
-		pb.SetColors(cols.ToArray());
-		pb.SetUV(uvs.ToArray());
-
-		pb.gameObject.name = t.name;
-			
-		go.transform.position = t.position;
-		go.transform.localRotation = t.localRotation;
-		go.transform.localScale = t.localScale;
-
-		pb.CenterPivot(null);
-
-		return pb;
-	}
-
-	/**
-	* ProBuilderize in-place function.  You must call ToMesh() and Refresh() after
-	* returning from this function, as this only creates the pb_Object and sets its
-	* fields.  This allows you to record the mesh and gameObject for Undo operations.
-	*/
-	public static bool ResetPbObjectWithMeshFilter(pb_Object pb, bool preserveFaces)
-	{
-		MeshFilter mf = pb.gameObject.GetComponent<MeshFilter>();
-
-		if(mf == null || mf.sharedMesh == null)
-		{
-			Debug.Log(pb.name + " does not have a mesh or Mesh Filter component.");
-			return false;
-		}
-
-		Mesh m = mf.sharedMesh;
-
-		int vertexCount = m.vertexCount;
-		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors != null && m.colors.Length == vertexCount ? m.colors : new Color[vertexCount];
-		Vector2[] m_uvs = m.uv;
-
-		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
-		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
-		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
-		List<pb_Face> faces = new List<pb_Face>();
-
-		MeshRenderer mr = pb.gameObject.GetComponent<MeshRenderer>();
-		if(mr == null) mr = pb.gameObject.AddComponent<MeshRenderer>();
-
-		Material[] sharedMaterials = mr.sharedMaterials;
-		int mat_length = sharedMaterials.Length;
-
-		for(int n = 0; n < m.subMeshCount; n++)
-		{
-			int[] tris = m.GetTriangles(n);
-			for(int i = 0; i < tris.Length; i+=3)
-			{
-				int index = -1;
-				if(preserveFaces)
-				{
-					for(int j = 0; j < faces.Count; j++)
-					{
-						if(	faces[j].distinctIndices.Contains(tris[i+0]) ||
-							faces[j].distinctIndices.Contains(tris[i+1]) ||
-							faces[j].distinctIndices.Contains(tris[i+2]))
+#if UNITY_5_3
+						if(m_uvs3 != null)
 						{
-							index = j;
-							break;
+							uvs3.Add(m_uvs3[tris[i+0]]);
+							uvs3.Add(m_uvs3[tris[i+2]]);
+							uvs3.Add(m_uvs3[tris[i+3]]);
 						}
-					}
-				}
-
-				if(index > -1 && preserveFaces)
-				{
-					int len = faces[index].indices.Length;
-					int[] arr = new int[len + 3];
-					System.Array.Copy(faces[index].indices, 0, arr, 0, len);
-					arr[len+0] = tris[i+0];
-					arr[len+1] = tris[i+1];
-					arr[len+2] = tris[i+2];
-					faces[index].SetIndices(arr);
-					faces[index].RebuildCaches();
-				}
-				else
-				{
-					int[] faceTris;
-
-					if(preserveFaces)
-					{
-						faceTris = new int[3]
+						if(m_uvs4 != null)
 						{
-							tris[i+0],
-							tris[i+1],
-							tris[i+2]	
-						};
-					}
-					else
-					{
-						verts.Add(m_vertices[tris[i+0]]);
-						verts.Add(m_vertices[tris[i+1]]);
-						verts.Add(m_vertices[tris[i+2]]);
-
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+0]] : Color.white);
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+1]] : Color.white);
-						cols.Add(m_colors != null && m_colors.Length == vertexCount ? m_colors[tris[i+2]] : Color.white);
-
-						uvs.Add(m_uvs[tris[i+0]]);
-						uvs.Add(m_uvs[tris[i+1]]);
-						uvs.Add(m_uvs[tris[i+2]]);
+							uvs4.Add(m_uvs4[tris[i+0]]);
+							uvs4.Add(m_uvs4[tris[i+2]]);
+							uvs4.Add(m_uvs4[tris[i+3]]);
+						}
+#endif
 
 						faceTris = new int[3] { i+0, i+1, i+2 };
 					}
@@ -1052,7 +1001,7 @@ namespace ProBuilder2.MeshOperations
 					faces.Add( 
 						new pb_Face(
 							faceTris,
-							sharedMaterials[n >= mat_length ? mat_length - 1 : n],
+							sharedMaterials[n],
 							new pb_UV(),
 							0,		// smoothing group
 							-1,		// texture group
@@ -1064,7 +1013,9 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		pb.SetVertices(verts.ToArray());
-		pb.SetUV(uvs.ToArray());
+		pb.SetUVs(0, uvs);
+		if(uvs3 != null) pb.SetUVs(3, uvs3);
+		if(uvs4 != null) pb.SetUVs(4, uvs4);
 		pb.SetFaces(faces.ToArray());
 		pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(verts.ToArray()));
 		pb.SetColors(cols.ToArray());

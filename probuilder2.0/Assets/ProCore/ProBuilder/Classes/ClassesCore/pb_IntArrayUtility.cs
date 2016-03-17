@@ -326,7 +326,7 @@ namespace ProBuilder2.Common
 			pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, aIndex, b);
 
 			int[] arr = sharedIndices[oldBIndex].array;
-			sharedIndices[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b));
+			sharedIndices[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b)).ToArray();
 			pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
 		}	
 
@@ -371,7 +371,7 @@ namespace ProBuilder2.Common
 					int ind = System.Array.IndexOf(sharedIndices[i], remove[n]);
 
 					if(ind > -1)
-						sharedIndices[i].array = sharedIndices[i].array.RemoveAt(ind);
+						sharedIndices[i].array = sharedIndices[i].array.RemoveAt(ind).ToArray();
 				}
 			}
 
