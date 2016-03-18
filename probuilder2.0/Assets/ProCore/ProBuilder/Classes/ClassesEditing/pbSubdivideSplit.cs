@@ -147,7 +147,7 @@ public static class pbSubdivideSplit
 
 	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
-		// @todo
+		// @todo refactor
 		faces = null;
 		return false;
 

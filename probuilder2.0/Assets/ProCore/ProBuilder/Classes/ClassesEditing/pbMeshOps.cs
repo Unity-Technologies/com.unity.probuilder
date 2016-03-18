@@ -980,7 +980,6 @@ namespace ProBuilder2.MeshOperations
 						uvs.Add(m_uvs[tris[i+1]]);
 						uvs.Add(m_uvs[tris[i+2]]);
 
-#if UNITY_5_3
 						if(m_uvs3 != null)
 						{
 							uvs3.Add(m_uvs3[tris[i+0]]);
@@ -993,7 +992,6 @@ namespace ProBuilder2.MeshOperations
 							uvs4.Add(m_uvs4[tris[i+2]]);
 							uvs4.Add(m_uvs4[tris[i+3]]);
 						}
-#endif
 
 						faceTris = new int[3] { i+0, i+1, i+2 };
 					}

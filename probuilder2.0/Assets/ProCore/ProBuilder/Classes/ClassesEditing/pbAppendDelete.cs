@@ -139,6 +139,8 @@ public static class pbAppendDelete
 	 */
 	public static void DeleteFaces(this pb_Object pb, pb_Face[] faces)
 	{	
+		// @todo refactor
+
 		int[] f_ind = new int[faces.Length];
 
 		// test for triangle array equality, not reference equality
@@ -181,10 +183,9 @@ public static class pbAppendDelete
 		pb.SetVertices(verts);
 		pb.SetColors(cols);
 		pb.SetUVs(0, pb.uv0.SortedRemoveAt(indices_to_remove));
-#if UNITY_5_3
 		if(pb.uv3 != null) pb.SetUVs(3, new List<Vector4>(pb.uv3.SortedRemoveAt(indices_to_remove)));
 		if(pb.uv4 != null) pb.SetUVs(4, new List<Vector4>(pb.uv4.SortedRemoveAt(indices_to_remove)));
-#endif
+
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();
 	}

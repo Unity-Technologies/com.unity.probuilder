@@ -172,7 +172,6 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private Vector3[] 					_vertices;
 
-#if UNITY_5_3
 	[SerializeField] [System.Obsolete("pb_Object._uv is obsolete.  Please use uv0 (reference) or GetUVs(int index) (copy) to fetch Vector4 UVs.")]
 	private Vector2[] 					_uv;
 
@@ -184,11 +183,6 @@ public class pb_Object : MonoBehaviour
 
 	[SerializeField]
 	private List<Vector4>				_uv4;
-#else
-	[SerializeField]
-	private Vector2[] 					_uv;
-#endif
-
 
 	[SerializeField]
 	private pb_IntArray[] 				_sharedIndicesUV = new pb_IntArray[0];
@@ -411,6 +405,33 @@ public class pb_Object : MonoBehaviour
 	public void SetVertices(Vector3[] v)
 	{
 		_vertices = v;
+	}
+
+	/**
+	 *	Sets internal vertex data with pb_Vertex[] information.  Does not perform error checking.
+	 */
+	public void SetVertices(IList<pb_Vertex> vertices)
+	{
+		int vc = vertices.Count;
+
+		_vertices 	= new Vector3[vc];
+		_colors 	= new Color[vc];
+		_uv0		= pbUtil.Fill<Vector4>(Vector4.zero, vc);
+		if(_uv3 != null) _uv3.Clear();
+		if(_uv4 != null) _uv4.Clear();
+
+		for(int i = 0; i < vc; i++)
+		{
+			_vertices[i] 	= vertices[i].position;
+			_colors[i] 		= vertices[i].color;
+			_uv0[i] 		= vertices[i].uv0;
+
+			if(vertices[i].uv3 != null) _uv3.Add( (Vector4) vertices[i].uv3 );
+			if(vertices[i].uv4 != null) _uv4.Add( (Vector4) vertices[i].uv4 );
+		}
+
+		if(_uv3.Count != vc) _uv3 = null;
+		if(_uv4.Count != vc) _uv4 = null;
 	}
 
 	/**
@@ -796,7 +817,7 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 
-		// @todo?
+		// @todo ?
 		// SetUVs(0, newUVs);
 #if UNITY_5_3
 		msh.SetUVs(0, uv0);
@@ -911,7 +932,6 @@ public class pb_Object : MonoBehaviour
 			default:
 				_uv0 = uvs.ToList();
 				break;
-
 			case 2:
 				Debug.Log("Use SetUV2");
 				break;
@@ -930,7 +950,7 @@ public class pb_Object : MonoBehaviour
 		if(_uv0 != null && _uv0.Count < count)
 			for(int i = _uv0.Count; i < count; i++)
 				_uv0.Add(new Vector4(0,0,0,0));
-
+				
 		if(_uv3 != null && _uv3.Count > 0 && _uv3.Count < count)
 			for(int i = _uv3.Count; i < count; i++)
 				_uv3.Add(new Vector4(0,0,0,0));

@@ -250,24 +250,20 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static void Triangulate(pb_Object pb)
 		{
-			Vector3[] 	v = pb.vertices;
-			Color[] 	c = pb.colors;
-			Vector2[] 	u = pb.uv;
+			List<pb_Vertex> v = pb.vertices.Select((val, index) => { return new pb_Vertex(pb, index); }).ToList();
 
-			int triangleCount = pb.faces.Sum(x => x.indices.Length); // pb.TriangleCount();
-			// int triangleCount = pb_Face.AllTriangles(pb.faces).Length; // pb.msh.triangles.Length;
+			int triangleCount = pb.faces.Sum(x => x.indices.Length);
 
-			if(triangleCount == v.Length)
+			if(triangleCount == v.Count)
 			{
 				Debug.LogWarning("We can't pull over any further!\npb_Object: " + pb.name + " is already triangulated.");
+				return;
 			}
 
 			int vertexCount = triangleCount;
 			int faceCount = vertexCount / 3;
 
-			Vector3[]	tri_vertices = new Vector3[vertexCount];
-			Color[] 	tri_colors = new Color[vertexCount];
-			Vector2[]	tri_uvs = new Vector2[vertexCount];
+			pb_Vertex[] tri_vertices = new pb_Vertex[vertexCount];
 			pb_Face[]	tri_faces = new pb_Face[faceCount];
 
 			int n = 0, f = 0;
@@ -280,15 +276,7 @@ namespace ProBuilder2.MeshOperations
 					tri_vertices[n+0] = v[indices[i+0]];
 					tri_vertices[n+1] = v[indices[i+1]];
 					tri_vertices[n+2] = v[indices[i+2]];
-
-					tri_colors[n+0] = c[indices[i+0]];
-					tri_colors[n+1] = c[indices[i+1]];
-					tri_colors[n+2] = c[indices[i+2]];
-
-					tri_uvs[n+0] = u[indices[i+0]];
-					tri_uvs[n+1] = u[indices[i+1]];
-					tri_uvs[n+2] = u[indices[i+2]];
-
+					
 					tri_faces[f++] = new pb_Face( new int[] { n+0, n+1, n+2 },
 												face.material,
 												face.uv,
@@ -303,11 +291,9 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb.SetVertices(tri_vertices);
-			pb.SetColors(tri_colors);
-			pb.SetUV(tri_uvs);
 			pb.SetFaces(tri_faces);
 
-			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(tri_vertices) );
+			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 			pb.SetSharedIndicesUV( new pb_IntArray[0] );
 		}
 	}
