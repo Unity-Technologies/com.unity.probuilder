@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Math;
+using System.Linq;
 
 namespace ProBuilder2.Common
 {
@@ -189,6 +190,11 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector2 Center(IList<Vector2> points, int length = -1)
 		{
+			return (Vector2) Center(points.Cast<Vector4>().ToList(), length);
+		}
+
+		public static Vector4 Center(IList<Vector4> points, int length = -1)
+		{
 			if(length < 0)
 				length = points.Count;
 				
@@ -214,7 +220,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			return new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			return new Vector4( (xMin+xMax)/2f, (yMin+yMax)/2f );
 		}
 #endregion
 

@@ -266,6 +266,9 @@ public class pb_Object : MonoBehaviour
 	public List<Vector4> uv3 { get { return _uv3; } }
 	public List<Vector4> uv4 { get { return _uv4; } }
 
+	public bool hasUv3 { get { return _uv3 != null && _uv3.Count == vertexCount; } }
+	public bool hasUv4 { get { return _uv4 != null && _uv4.Count == vertexCount; } }
+
 	public Color[] colors { get { return _colors; } }
 
 	public int faceCount { get { return _faces.Length; } }
@@ -417,8 +420,8 @@ public class pb_Object : MonoBehaviour
 		_vertices 	= new Vector3[vc];
 		_colors 	= new Color[vc];
 		_uv0		= pbUtil.Fill<Vector4>(Vector4.zero, vc);
-		if(_uv3 != null) _uv3.Clear();
-		if(_uv4 != null) _uv4.Clear();
+		if(hasUv3) _uv3.Clear();
+		if(hasUv4) _uv4.Clear();
 
 		for(int i = 0; i < vc; i++)
 		{
@@ -587,15 +590,7 @@ public class pb_Object : MonoBehaviour
 		{
 			m = msh;
 			m.vertices = _vertices;
-
-#if UNITY_5_3
-			m.SetUVs(0, uv0);
-			if( _uv3 != null ) m.SetUVs(2, _uv3);
-			if( _uv4 != null ) m.SetUVs(3, _uv4);
-#else
-			// 2.2.5 and lower didn't store UVs
-			if(_uv != null) m.uv = _uv;
-#endif
+			ApplyUVs();
 		}
 		else
 		{
@@ -921,6 +916,9 @@ public class pb_Object : MonoBehaviour
 		}
 	}
 
+	/**
+	 *	Sets the UV channel to uvs.  Does not apply to UnityEngine.Mesh.
+	 */
 	public void SetUVs(int index, IList<Vector4> uvs)
 	{
 		int count = uvs.Count;
@@ -958,6 +956,20 @@ public class pb_Object : MonoBehaviour
 		if(_uv4 != null && _uv4.Count > 0 && _uv4.Count < count)
 			for(int i = _uv4.Count; i < count; i++)
 				_uv4.Add(new Vector4(0,0,0,0));
+	}
+
+	/**
+	 *	Applies UV channels to mesh.
+	 */
+	public void ApplyUVs()
+	{
+#if UNITY_5_3
+		msh.SetUVs(0, uv0);
+		if(hasUv3) msh.SetUVs(3, _uv3);
+		if(hasUv4) msh.SetUVs(4, _uv4);
+#else
+		msh.uv = uv0.Cast<Vector2>().ToArray();
+#endif
 	}
 #endregion
 

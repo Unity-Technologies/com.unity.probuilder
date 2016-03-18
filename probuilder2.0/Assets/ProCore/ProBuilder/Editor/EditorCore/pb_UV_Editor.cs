@@ -564,7 +564,7 @@ public class pb_UV_Editor : EditorWindow
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
-						coords.Add(pb_Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
+						coords.Add(pb_Bounds2D.Center(pb.uv0.ValuesWithIndices(face.distinctIndices)));
 
 					coords.Insert(0, pb_Bounds2D.Center(coords));
 

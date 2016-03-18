@@ -609,55 +609,31 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 *	\brief Gets the center point of the supplied Vector3[] array.
-		 *	\returns Average Vector3 of passed vertex array.
+		 *	\brief Averages an array.
+		 *	\returns The average.
 		 */
-		public static Vector3 Average(List<Vector3> v)
-		{
-			Vector3 sum = Vector3.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
-		}
-
-		public static Vector3 Average(Vector3[] v)
-		{
-			Vector3 sum = Vector3.zero;
-			for(int i = 0; i < v.Length; i++)
-				sum += v[i];
-			return sum/(float)v.Length;
-		}
-
-		public static Vector2 Average(List<Vector2> v)
+		public static Vector2 Average(IList<Vector2> v)
 		{
 			Vector2 sum = Vector2.zero;
 			for(int i = 0; i < v.Count; i++)
 				sum += v[i];
-			return sum/(float)v.Count;
+			return sum / (float) v.Count;
 		}
 
-		public static Vector2 Average(Vector2[] v)
+		public static Vector3 Average(IList<Vector3> v)
 		{
-			Vector2 sum = Vector2.zero;
-			for(int i = 0; i < v.Length; i++)
+			Vector3 sum = Vector3.zero;
+			for(int i = 0; i < v.Count; i++)
 				sum += v[i];
-			return sum/(float)v.Length;
+			return sum / (float) v.Count;
 		}
 
-		public static Vector4 Average(List<Vector4> v)
+		public static Vector4 Average(IList<Vector4> v)
 		{
 			Vector4 sum = Vector4.zero;
 			for(int i = 0; i < v.Count; i++)
 				sum += v[i];
-			return sum/(float)v.Count;
-		}
-
-		public static Vector4 Average(Vector4[] v)
-		{
-			Vector4 sum = Vector4.zero;
-			for(int i = 0; i < v.Length; i++)
-				sum += v[i];
-			return sum/(float)v.Length;
+			return sum / (float) v.Count;
 		}
 
 		public static Color Average(Color[] Array)
