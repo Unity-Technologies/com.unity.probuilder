@@ -65,6 +65,19 @@ namespace ProBuilder2.Math
 		}
 
 		/**
+		 * Scales a Vector2 using origin as the pivot point.
+		 */
+		public static Vector4 RotateAroundPoint(this Vector4 v, Vector2 origin, float theta)
+		{
+			tmp.x = v.x;
+			tmp.y = v.y;
+			tmp = RotateAroundPoint(tmp, origin, theta);
+			v.x = tmp.x;
+			v.y = tmp.y;
+			return v;
+		}
+
+		/**
 		 * Returns a new point by rotating the Vector2 around an origin point.
 		 * @param v this - Vector2 original point.
 		 * @param origin The origin point to use as a pivot point.
@@ -93,9 +106,21 @@ namespace ProBuilder2.Math
 			return new Vector2(px, py);
 		}
 
+		static Vector2 tmp = new Vector2(0, 0);
+
 		/**
 		 * Scales a Vector2 using origin as the pivot point.
 		 */
+		public static Vector4 ScaleAroundPoint(this Vector4 v, Vector2 origin, Vector2 scale)
+		{
+			tmp.x = v.x;
+			tmp.y = v.y;
+			tmp = ScaleAroundPoint(tmp, origin, scale);
+			v.x = tmp.x;
+			v.y = tmp.y;
+			return v;
+		}
+
 		public static Vector2 ScaleAroundPoint(this Vector2 v, Vector2 origin, Vector2 scale)
 		{
 			Vector2 tp = v-origin;

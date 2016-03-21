@@ -1155,8 +1155,10 @@ public class pb_UV_Editor : EditorWindow
 						{
 							for(int p = 0; p < pb.faces[n].edges.Length; p++)
 							{
-								x = uv[pb.faces[n].edges[p].x];
-								y = uv[pb.faces[n].edges[p].y];
+								x.x = uv[pb.faces[n].edges[p].x].x;
+								x.y = uv[pb.faces[n].edges[p].x].y;
+								y.x = uv[pb.faces[n].edges[p].y].x;
+								y.y = uv[pb.faces[n].edges[p].y].y;
 
 								dist = pb_Math.DistancePointLineSegment(mpos, x, y);
 
@@ -1378,7 +1380,7 @@ public class pb_UV_Editor : EditorWindow
 
 			if(ControlKey)
 			{
-				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition - t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 			}
 			else
 			{		
@@ -1441,10 +1443,10 @@ public class pb_UV_Editor : EditorWindow
 
 			needsRepaint = true;
 
-			Vector4 newUVPosition = t_handlePosition;
+			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1452,12 +1454,11 @@ public class pb_UV_Editor : EditorWindow
 				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
-					uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
+					uvs[i] = pb_VectorUtility.Subtract2D(newUVPosition, pb_VectorUtility.Subtract2D(uvOrigin, uv_origins[n][i]));
 
 				// set uv positions before figuring snap dist stuff
 				// don't use ApplyUVs() here because we don't actually want to access the msh
 				// til we have to.
-				// @todo setuvs not necessary?
 				pb.SetUVs(channel, uvs);
 
 				if(!ShiftKey || ControlKey)
@@ -1469,7 +1470,7 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(ShiftKey && !ControlKey)
 			{
-				Vector4 nearestDelta = Vector4.one;
+				Vector2 nearestDelta = Vector2.one;
 
 				for(int i = 0; i < selection.Length; i++)
 				{
@@ -1495,7 +1496,7 @@ public class pb_UV_Editor : EditorWindow
 						List<Vector4> uvs = GetUVs(selection[i], channel);
 
 						foreach(int n in distinct_indices[i])
-							uvs[n] += nearestDelta;
+							uvs[n] = pb_VectorUtility.Add2D(nearestDelta, uvs[n]);
 
 						selection[i].SetUVs(channel, uvs);
 						selection[i].ApplyUVs();
@@ -1506,7 +1507,7 @@ public class pb_UV_Editor : EditorWindow
 				else
 				{
 					for(int i = 0; i < selection.Length; i++)
-						selection[i].ApplyUVs();				
+						selection[i].ApplyUVs();
 				}
 			}
 
@@ -1535,20 +1536,20 @@ public class pb_UV_Editor : EditorWindow
 				uvOrigin = GUIToUVPoint(t_handlePosition);	// have to set this one special
 			}
 
-			Vector4 newUVPosition = GUIToUVPoint(t_handlePosition);
+			Vector2 newUVPosition = GUIToUVPoint(t_handlePosition);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
-			for(int n = 0; n < selection.Length; n++)
+			Vector4 newPosVec4 = (Vector4)newUVPosition;
+
+			for (int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				List<Vector4> uvs = pb.uv0;
+				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
-				{
-					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
-				}
+					uvs[i] = newPosVec4 - (uvOrigin - uv_origins[n][i]);
 
 				pb.SetUVs(channel, uvs);
 				pb.ApplyUVs(channel);
@@ -1585,8 +1586,6 @@ public class pb_UV_Editor : EditorWindow
 				foreach(int i in distinct_indices[n])
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
-					// @todo is set necessary?
-				pb.SetUVs(channel, uvs);
 				pb.ApplyUVs(channel);
 			}
 
@@ -1621,8 +1620,6 @@ public class pb_UV_Editor : EditorWindow
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, rotation );
 				}
 
-				// @todo
-				// pb.SetUVs(uvs);
 				pb.ApplyUVs(channel);
 			}
 
@@ -2298,6 +2295,16 @@ public class pb_UV_Editor : EditorWindow
 			_selected_gui_bounds.size = uvBounds.size * uvGridSize * uvGraphScale;
 			return _selected_gui_bounds;
 		}
+	}
+
+	public Vector2 UVToGUIPoint(Vector2 v)
+	{
+		return pb_Handle_Utility.UVToGUIPoint(v, UVGraphCenter, uvGraphOffset, uvGraphScale, uvGridSize);
+	}
+
+	public Vector2 GUIToUVPoint(Vector2 v)
+	{
+		return pb_Handle_Utility.GUIToUVPoint(v, UVGraphCenter, uvGraphOffset, uvGraphScale, uvGridSize);
 	}
 
 	public Vector4 UVToGUIPoint(Vector4 v)

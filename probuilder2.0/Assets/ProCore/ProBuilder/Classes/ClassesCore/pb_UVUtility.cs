@@ -39,9 +39,6 @@ public class pb_UVUtility
 				break;
 		}
 
-		// if(uvSettings.justify != pb_UV.Justify.None)
-		// 	uvs = JustifyUVs(uvs, uvSettings.justify);
-
 		// Apply transform last, so that fill and justify don't override it.
 		pb_Bounds2D bounds = new pb_Bounds2D(uvs);
 
@@ -53,10 +50,9 @@ public class pb_UVUtility
 
 		for(int i = 0; i < uvs.Length; i++)
 		{
-			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);			
+			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);
 			uvs[i] = uvs[i].RotateAroundPoint(bounds.center, uvSettings.rotation);
 		}
-
 
 		for(int i = 0; i < len; i++)
 		{

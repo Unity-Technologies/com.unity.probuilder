@@ -14,5 +14,37 @@ namespace ProBuilder2.Common
 		{
 			return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 		}
+
+		/**
+		 *	Subtract a - b keeping b.z and b.w intact.
+		 */
+		public static Vector4 Subtract2D(Vector4 a, Vector4 b)
+		{
+			return new Vector4(a.x - b.x, a.y - b.y, b.z, b.w);
+		}
+
+		/**
+		 *	Subtract a - b keeping b.z and b.w intact.
+		 */
+		public static Vector4 Subtract2D(Vector2 a, Vector4 b)
+		{
+			return new Vector4(a.x - b.x, a.y - b.y, b.z, b.w);
+		}
+
+		/**
+		 *	Add (a + b) keeping b.z and b.w intact.
+		 */
+		public static Vector4 Add2D(Vector4 a, Vector4 b)
+		{
+			return new Vector4(a.x + b.x, a.y + b.y, b.z, b.w);
+		}
+
+		/**
+		 *	Add (a + b) keeping b.z and b.w intact.
+		 */
+		public static Vector4 Add2D(Vector2 a, Vector4 b)
+		{
+			return new Vector4(a.x + b.x, a.y + b.y, b.z, b.w);
+		}
 	}
 }

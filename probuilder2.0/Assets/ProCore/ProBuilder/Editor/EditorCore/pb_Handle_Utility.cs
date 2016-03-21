@@ -66,7 +66,6 @@ public class pb_Handle_Utility
 		{
 			if(_edgeMaterial == null)
 				_edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
-				// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
 
 			return _edgeMaterial;
 		}
@@ -120,11 +119,31 @@ public class pb_Handle_Utility
 	/**
 	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
 	 */
+	public static Vector2 UVToGUIPoint(Vector2 uvPoint, Vector2 uvGraphCenter, Vector2 uvGraphOffset, float uvGraphScale, int uvGridSize)
+	{
+		Vector2 p = new Vector2(uvPoint.x, -uvPoint.y);
+		p.x = uvGraphCenter.x + (p.x * uvGraphScale * uvGridSize) + uvGraphOffset.x;
+		p.y = uvGraphCenter.y + (p.y * uvGraphScale * uvGridSize) + uvGraphOffset.y;
+		return p;
+	}
+
+	/**
+	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
+	 */
 	public static Vector4 UVToGUIPoint(Vector4 uvPoint, Vector2 uvGraphCenter, Vector2 uvGraphOffset, float uvGraphScale, int uvGridSize)
 	{
 		Vector4 p = new Vector4(uvPoint.x, -uvPoint.y, uvPoint.z, uvPoint.w);
 		p.x = uvGraphCenter.x + (p.x * uvGraphScale * uvGridSize) + uvGraphOffset.x;
 		p.y = uvGraphCenter.y + (p.y * uvGraphScale * uvGridSize) + uvGraphOffset.y;
+		return p;
+	}
+
+	public static Vector2 GUIToUVPoint(Vector2 guiPoint, Vector2 uvGraphCenter, Vector2 uvGraphOffset, float uvGraphScale, int uvGridSize)
+	{
+		Vector2 p = new Vector2(
+			(guiPoint.x - (uvGraphCenter.x + uvGraphOffset.x)) / (uvGraphScale * uvGridSize),
+			-(guiPoint.y - (uvGraphCenter.y + uvGraphOffset.y)) / (uvGraphScale * uvGridSize)
+			);
 		return p;
 	}
 
