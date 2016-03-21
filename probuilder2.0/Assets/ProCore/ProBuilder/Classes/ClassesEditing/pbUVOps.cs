@@ -295,22 +295,25 @@ public static class pbUVOps
 	/*
 	 *	Returns normalized UV values for a mesh uvs (0,0) - (1,1)
 	 */
-	public static Vector2[] FitUVs(Vector2[] uvs)
+	public static List<Vector4> FitUVs(List<Vector4> uvs)
 	{
-		// shift UVs to zeroed coordinates
-		Vector2 smallestVector2 = pb_Math.SmallestVector2(uvs);
+		Vector4 s = uvs[0];
+		Vector4 l = uvs[0];
 
-		int i;
-		for(i = 0; i < uvs.Length; i++)
+		for(int i = 1; i < uvs.Count; i++)
 		{
-			uvs[i] -= smallestVector2;
+			s.x = Mathf.Min(uvs[i].x, s.x);
+			s.y = Mathf.Min(uvs[i].y, s.y);
+			l.x = Mathf.Max(uvs[i].x, l.x);
+			l.y = Mathf.Max(uvs[i].y, l.y);
 		}
 
-		float scale = pb_Math.LargestValue( pb_Math.LargestVector2(uvs) );
+		float scale = 1f / Mathf.Max( l.x - s.x, l.y - s.y );
 
-		for(i = 0; i < uvs.Length; i++)
+		for(int i = 0; i < uvs.Count; i++)
 		{
-			uvs[i] /= scale;
+			uvs[i] -= s;
+			uvs[i] *= scale;
 		}
 
 		return uvs;
@@ -463,17 +466,17 @@ public static class pbUVOps
 	 * Only points[0, target.Length] coordinates are used in the matching process - points[target.Length, points.Length]
 	 * are just along for the ride.
 	 */
-	public static pb_Transform2D MatchCoordinates(Vector2[] points, Vector2[] target)
+	public static pb_Transform2D MatchCoordinates(IList<Vector4> points, IList<Vector4> target)
 	{
-		int length = points.Length < target.Length ? points.Length : target.Length;
+		int length = System.Math.Max(points.Count, target.Count);
 
 		pb_Bounds2D t_bounds = new pb_Bounds2D(target, length); // only match the bounds of known matching points
 
 		// move points to the center of target
-		Vector2 translation = t_bounds.center - pb_Bounds2D.Center(points, length);
+		Vector4 translation = (Vector4)(t_bounds.center - pb_Bounds2D.Center(points, length));
 
-		Vector2[] transformed = new Vector2[points.Length];
-		for(int i = 0; i < points.Length; i++)
+		Vector4[] transformed = new Vector4[points.Count];
+		for(int i = 0; i < points.Count; i++)
 			transformed[i] = points[i] + translation;
 
 		// rotate to match target points
@@ -484,7 +487,7 @@ public static class pbUVOps
 
 		if(dot < 0) angle = 360f - angle;
 
-		for(int i = 0; i < points.Length; i++)
+		for(int i = 0; i < points.Count; i++)
 			transformed[i] = transformed[i].RotateAroundPoint(t_bounds.center, angle);
 
 		// and lastly scale
@@ -511,9 +514,10 @@ public static class pbUVOps
 
 			pb.SplitUVs( pb_Face.AllTriangles(faces) );
 
-			Vector2[][] uv_origins = new Vector2[faces.Length][];
+			List<Vector4>[] uv_origins = new List<Vector4>[faces.Length];
+
 			for(int i = 0; i < faces.Length; i++)
-				uv_origins[i] = pb.uv.ValuesWithIndices(faces[i].distinctIndices);
+				uv_origins[i] = pb.uv0.ValuesWithIndices(faces[i].distinctIndices);
 
 			for(int f = 0; f < faces.Length; f++)
 			{
@@ -526,7 +530,7 @@ public static class pbUVOps
 
 			for(int i = 0; i < faces.Length; i++)
 			{
-				pb_Transform2D transform = MatchCoordinates(pb.uv.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
+				pb_Transform2D transform = MatchCoordinates(pb.uv0.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
 
 				faces[i].uv.offset = -transform.position;
 				faces[i].uv.rotation = transform.rotation;

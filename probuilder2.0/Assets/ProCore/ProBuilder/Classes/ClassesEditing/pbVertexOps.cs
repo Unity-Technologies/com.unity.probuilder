@@ -229,8 +229,8 @@ namespace ProBuilder2.MeshOperations
 		 * attempt to figure out where the new UV coordinate should go
 		 */
 		List<Vector4> uv0 = new List<Vector4>(pb.uv0.ValuesWithIndices(distinctIndices));
-		List<Vector4> uv3 = pb.uv3 == null ? null : new List<Vector4>(pb.uv3.ValuesWithIndices(distinctIndices));
-		List<Vector4> uv4 = pb.uv4 == null ? null : new List<Vector4>(pb.uv4.ValuesWithIndices(distinctIndices));
+		List<Vector4> uv3 = pb.hasUv3 ? new List<Vector4>(pb.uv3.ValuesWithIndices(distinctIndices)) : null;
+		List<Vector4> uv4 = pb.hasUv4 ? new List<Vector4>(pb.uv4.ValuesWithIndices(distinctIndices)) : null;
 
 		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
@@ -372,13 +372,8 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static void DeleteVerticesWithIndices(this pb_Object pb, int[] distInd)
 	{
-		Vector3[] verts = pb.vertices;
-		Color[] cols = pb.colors;
-		Vector2[] uvs = pb.uv;
-
-		verts = verts.RemoveAt(distInd);
-		cols = cols.RemoveAt(distInd);
-		uvs = uvs.RemoveAt(distInd);
+		pb_Vertex[] v = pb.vertices.Select((x,i)=>{return new pb_Vertex(pb, i);}).ToArray();
+		v = v.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces;
 
@@ -405,9 +400,7 @@ namespace ProBuilder2.MeshOperations
 		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
 		
 		pb.SetSharedIndices(si);
-		pb.SetVertices(verts);
-		pb.SetColors(cols);
-		pb.SetUV(uvs);
+		pb.SetVertices(v);
 
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();

@@ -133,7 +133,7 @@ namespace ProBuilder2.Common
 		return vals;
 	}
 
-	public static IList<T> ValuesWithIndices<T>(this IList<T> arr, IList<int> indices)
+	public static List<T> ValuesWithIndices<T>(this IList<T> arr, IList<int> indices)
 	{
 		List<T> vals = new List<T>();
 
@@ -445,6 +445,24 @@ namespace ProBuilder2.Common
 			);
 		return v;
 	}
+	/**
+	 *	An override that accepts a Vector4 to use as a mask for which values to snap.  Ex;
+	 *	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values.
+	 */
+	public static Vector4 SnapValue(Vector4 vertex, Vector4 snap)
+	{
+		float 	_x = vertex.x,
+				_y = vertex.y,
+				_z = vertex.z,
+				_w = vertex.w;
+		Vector4 v = new Vector4(
+			( Mathf.Abs(snap.x) < 0.0001f ? _x : snap.x * Mathf.Round(_x / snap.x) ),
+			( Mathf.Abs(snap.y) < 0.0001f ? _y : snap.y * Mathf.Round(_y / snap.y) ),
+			( Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z) ),
+			( Mathf.Abs(snap.w) < 0.0001f ? _w : snap.w * Mathf.Round(_w / snap.w) )
+			);
+		return v;
+	}
 #endregion
 
 #region ENUM
@@ -700,6 +718,14 @@ namespace ProBuilder2.Common
 	public static Vector3 DivideBy(this Vector3 v, Vector3 o)
 	{
 		return new Vector3(v.x/o.x, v.y/o.y, v.z/o.z);
+	}
+
+	/**
+	 * Component-wise division.
+	 */
+	public static Vector4 DivideBy(this Vector4 v, Vector4 o)
+	{
+		return new Vector4(v.x/o.x, v.y/o.y, v.z/o.z, v.w/o.w);
 	}
 #endregion
 }

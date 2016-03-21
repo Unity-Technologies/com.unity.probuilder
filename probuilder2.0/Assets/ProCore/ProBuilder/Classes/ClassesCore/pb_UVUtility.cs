@@ -19,14 +19,12 @@ public class pb_UVUtility
 	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings, Vector3? nrm)
 	{
 		Vector2[] uvs = pb_Math.PlanarProject(verts, nrm == null ? pb_Math.Normal(verts[0], verts[1], verts[2]) : (Vector3)nrm);
-		
 		uvs = ApplyUVSettings(uvs, uvSettings);
 		return uvs;
 	}
 	
 	private static Vector2[] ApplyUVSettings(Vector2[] uvs, pb_UV uvSettings)
 	{
-
 		int len = uvs.Length;
 
 		switch(uvSettings.fill)
@@ -34,10 +32,10 @@ public class pb_UVUtility
 			case pb_UV.Fill.Tile:
 				break;
 			case pb_UV.Fill.Fit:
-				uvs = NormalizeUVs(uvs);
+				NormalizeUVs(uvs);
 				break;
 			case pb_UV.Fill.Stretch:
-				uvs = StretchUVs(uvs);
+				StretchUVs(uvs);
 				break;
 		}
 
@@ -90,72 +88,53 @@ public class pb_UVUtility
 	
 #region UTILITY
 
-	private static Vector2[] StretchUVs(Vector2[] uvs)
+	private static void StretchUVs(Vector2[] uvs)
 	{
-		Vector2 scale = pb_Math.LargestVector2(uvs) - pb_Math.SmallestVector2(uvs);
+		Vector2 s = uvs[0];
+		Vector2 l = uvs[0];
+
+		for(int i = 1; i < uvs.Length; i++)
+		{
+			s.x = Mathf.Min(uvs[i].x, s.x);
+			s.y = Mathf.Min(uvs[i].y, s.y);
+			l.x = Mathf.Max(uvs[i].x, l.x);
+			l.y = Mathf.Max(uvs[i].y, l.y);
+		}
+
+		Vector4 scale = l - s;
 
 		for(int i = 0; i < uvs.Length; i++)
 			uvs[i] = new Vector2(uvs[i].x/scale.x, uvs[i].y/scale.y);
-
-		return uvs;
 	}
 
 	/*
 	 *	Returns normalized UV values for a mesh uvs (0,0) - (1,1)
 	 */
-	private static Vector2[] NormalizeUVs(Vector2[] uvs)
+	private static void NormalizeUVs(Vector2[] uvs)
 	{
 		/*
 		 *	how this works -
 		 *		- shift uv coordinates such that the lowest value x and y coordinates are zero
 		 *		- scale non-zeroed coordinates uniformly to normalized values (0,0) - (1,1)
 		 */
+		Vector2 s = uvs[0];
+		Vector2 l = uvs[0];
 
-		// shift UVs to zeroed coordinates
-		Vector2 smallestVector2 = pb_Math.SmallestVector2(uvs);
-
-		int i;
-		for(i = 0; i < uvs.Length; i++)
+		for(int i = 1; i < uvs.Length; i++)
 		{
-			uvs[i] -= smallestVector2;
+			s.x = Mathf.Min(uvs[i].x, s.x);
+			s.y = Mathf.Min(uvs[i].y, s.y);
+			l.x = Mathf.Max(uvs[i].x, l.x);
+			l.y = Mathf.Max(uvs[i].y, l.y);
 		}
 
-		float scale = pb_Math.LargestValue( pb_Math.LargestVector2(uvs) );
-
-		for(i = 0; i < uvs.Length; i++)
-		{
-			uvs[i] /= scale;
-		}
-
-		return uvs;
-	}
-
-	private static Vector2[] JustifyUVs(Vector2[] uvs, pb_UV.Justify j)
-	{
-		Vector2 amt = new Vector2(0f, 0f);
-		switch(j)
-		{
-			case pb_UV.Justify.Left:
-				amt = new Vector2(pb_Math.SmallestVector2(uvs).x, 0f);
-				break;
-			case pb_UV.Justify.Right:
-				amt = new Vector2(pb_Math.LargestVector2(uvs).x - 1f, 0f);
-				break;
-			case pb_UV.Justify.Top:
-				amt = new Vector2(0f, pb_Math.LargestVector2(uvs).y - 1f);
-				break;
-			case pb_UV.Justify.Bottom:
-				amt = new Vector2(0f, pb_Math.SmallestVector2(uvs).y);
-				break;
-			case pb_UV.Justify.Center:
-				amt = pb_Math.Average(uvs) - (new Vector2(.5f, .5f));
-				break;
-		}
+		float scale = Mathf.Max(l.x - s.x, l.y - s.y);
 
 		for(int i = 0; i < uvs.Length; i++)
-			uvs[i] -= amt;
-	
-		return uvs;
+		{
+			uvs[i] -= s;
+			uvs[i] /= scale;
+		}
 	}
 #endregion
 }

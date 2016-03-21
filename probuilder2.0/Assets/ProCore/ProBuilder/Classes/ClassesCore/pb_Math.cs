@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using System.Linq;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -238,7 +239,13 @@ namespace ProBuilder2.Math
 		 * many edges are hit.
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 */
-		public static bool PointInPolygon(Vector2[] polygon, Vector2 point)
+		[System.Obsolete("warning slow cast")]
+		public static bool PointInPolygon(IList<Vector2> polygon, Vector2 point)
+		{
+			return PointInPolygon(polygon.Cast<Vector4>().ToList(), point);
+		}
+
+		public static bool PointInPolygon(IList<Vector4> polygon, Vector2 point)
 		{
 			pb_Bounds2D bounds = new pb_Bounds2D(polygon);
 
@@ -247,7 +254,7 @@ namespace ProBuilder2.Math
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < polygon.Length; i += 2)
+				for(int i = 0; i < polygon.Count; i += 2)
 				{
 					if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
 						collisions++;
@@ -266,9 +273,15 @@ namespace ProBuilder2.Math
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 * This overload accepts an array of points and an array of indices that compose the polygon.
 		 */
-		public static bool PointInPolygon(Vector2[] polygon, int[] indices, Vector2 point)
+		[System.Obsolete("warning slow cast")]
+		public static bool PointInPolygon(IList<Vector2> polygon, int[] indices, Vector2 point)
 		{
-			if(indices.Length % 2 != 0)
+			return PointInPolygon(polygon.Cast<Vector4>().ToList(), indices, point);
+		}
+
+		public static bool PointInPolygon(IList<Vector4> polygon, IList<int> indices, Vector2 point)
+		{
+			if(indices.Count % 2 != 0)
 			{
 				Debug.LogError("PointInPolygon requires polygon indices be divisible by 2!");
 				return false;
@@ -281,7 +294,7 @@ namespace ProBuilder2.Math
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < indices.Length; i += 2)
+				for(int i = 0; i < indices.Count; i += 2)
 				{
 					if( GetLineSegmentIntersect(rayStart, point, polygon[indices[i]], polygon[indices[i+1]]) )
 						collisions++;
@@ -552,38 +565,6 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 * The smallest X and Y value found in an array of Vector2.  May or may not belong to the same Vector2.
-		 */
-		public static Vector2 SmallestVector2(Vector2[] v)
-		{
-			Vector2 s = v[0];
-			for(int i = 1; i < v.Length; i++)
-			{
-				if(v[i].x < s.x)
-					s.x = v[i].x;
-				if(v[i].y < s.y)
-					s.y = v[i].y;
-			}
-			return s;
-		}
-
-		/**
-		 * The largest X and Y value in an array.  May or may not belong to the same Vector2.
-		 */
-		public static Vector2 LargestVector2(Vector2[] v)
-		{
-			Vector2 l = v[0];
-			for(int i = 0; i < v.Length; i++)
-			{
-				if(v[i].x > l.x)
-					l.x = v[i].x;
-				if(v[i].y > l.y)
-					l.y = v[i].y;
-			}
-			return l;
-		}
-
-		/**
 		 * Creates an AABB with vertices and returns the Center point.
 		 */
 		public static Vector3 BoundsCenter(Vector3[] verts)
@@ -839,6 +820,15 @@ namespace ProBuilder2.Math
 			Mathf.Abs(vec.y) > delta ? 1f : 0f,
 			Mathf.Abs(vec.z) > delta ? 1f : 0f
 			);
+	}
+
+	public static Vector4 ToMask2D(this Vector4 vec, float delta = FLT_EPSILON)
+	{
+		return new Vector4(
+			Mathf.Abs(vec.x) > delta ? 1f : 0f,
+			Mathf.Abs(vec.y) > delta ? 1f : 0f,
+			1f,
+			1f);
 	}
 
 	public static Vector3 ToSignedMask(this Vector3 vec, float delta = FLT_EPSILON)

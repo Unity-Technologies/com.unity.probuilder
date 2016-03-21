@@ -764,8 +764,8 @@ namespace ProBuilder2.MeshOperations
 	 	List<Vector4> u3 = new List<Vector4>();
 	 	List<Vector4> u4 = new List<Vector4>();
 
-	 	bool hasUV3 = pbs.Any(x => x.uv3 != null && x.uv3.Count == x.vertexCount);
-	 	bool hasUV4 = pbs.Any(x => x.uv4 != null && x.uv4.Count == x.vertexCount);
+	 	bool hasUV3 = pbs.Any(x => x.hasUv3);
+	 	bool hasUV4 = pbs.Any(x => x.hasUv4);
 
 	 	List<Color> c = new List<Color>();
 	 	List<pb_Face> f = new List<pb_Face>();

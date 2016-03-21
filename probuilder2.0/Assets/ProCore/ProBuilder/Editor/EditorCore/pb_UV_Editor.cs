@@ -15,6 +15,8 @@ using Parabox.Debug;
 #endif
 
 #if !PROTOTYPE
+namespace ProBuilder2.EditorCommon
+{
 public class pb_UV_Editor : EditorWindow
 {
 
@@ -84,10 +86,8 @@ public class pb_UV_Editor : EditorWindow
 
 	GUIContent gc_SceneViewUVHandles = new GUIContent("", (Texture2D)null, "Lock the SceneView handle tools to UV manipulation mode.  This allows you to move UV coordinates directly on your 3d object.");
 	GUIContent gc_ShowPreviewTexture = new GUIContent("", (Texture2D)null, "When toggled on, a preview image of the first selected face's material will be drawn from coordinates 0,0 - 1,1.\n\nNote that this depends on the Material's shader having a _mainTexture property.");
-
 	GUIContent gc_ConvertToManual = new GUIContent("Convert to Manual", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
 	GUIContent gc_ConvertToAuto = new GUIContent("Convert to Auto", "There are 2 methods of unwrapping UVs in ProBuilder; Automatic unwrapping and Manual.  Auto unwrapped UVs are generated dynamically using a set of parameters, which may be set.  Manual UVs are akin to traditional UV unwrapping, in that once you set them they will not be updated as your mesh changes.");
-
 	GUIContent gc_RenderUV = new GUIContent((Texture2D)null, "Renders the current UV workspace from coordinates {0,0} to {1,1} to a 256px image.");
 
 	// Full grid size in pixels (-1, 1)
@@ -103,10 +103,10 @@ public class pb_UV_Editor : EditorWindow
 
 	UVMode mode = UVMode.Auto;
 
-	#if PB_DEBUG
-	int[] UV_CHANNELS = new int[] { 0, 1 };
+#if PB_DEBUG
+	int[] UV_CHANNELS = new int[] { 0, 2, 3, 4 };
 	bool debug_showCoordinates = false;
-	#endif
+#endif
 	
 	// what uv channel to modify
 	int channel = 0;
@@ -118,7 +118,7 @@ public class pb_UV_Editor : EditorWindow
 	int[][] distinct_indices;
 
 	List<pb_Face[]>[] incompleteTextureGroupsInSelection = new List<pb_Face[]>[0];
-	List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
+	List<List<Vector4>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector4>>();
 
 	int selectedUVCount = 0;
 	int selectedFaceCount = 0;
@@ -298,14 +298,14 @@ public class pb_UV_Editor : EditorWindow
 		
 		isProSkin = EditorGUIUtility.isProSkin;
 
-		Texture2D moveIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
-		Texture2D rotateIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
-		Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
-		Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
+		Texture2D moveIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
+		Texture2D rotateIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
+		Texture2D scaleIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
+		Texture2D viewIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
 
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		Texture2D face_Graphic_off 		= (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
+		Texture2D vertex_Graphic_off 	= (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
+		Texture2D edge_Graphic_off 		= (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
 
 		icon_textureMode_on		= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_On", typeof(Texture2D)));
 		icon_textureMode_off	= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_Off", typeof(Texture2D)));
@@ -338,11 +338,11 @@ public class pb_UV_Editor : EditorWindow
 			toolbarRect, 
 			actionWindowRect = new Rect(6, 64, 128, 240);
 
-	#if PB_DEBUG
+#if PB_DEBUG
 	Rect buggerRect;
-	#endif
+#endif
 
-	Vector2 mousePosition_initial;
+	Vector4 mousePosition_initial;
 
 	Rect dragRect = new Rect(0,0,0,0);
 	bool m_mouseDragging = false;
@@ -398,7 +398,7 @@ public class pb_UV_Editor : EditorWindow
 		 */
 		if(!EditorGUIUtility.isProSkin)
 		{
-			GUI.backgroundColor = BasicBackgroundColor; //new Color(.13f, .13f, .13f, .7f);
+			GUI.backgroundColor = BasicBackgroundColor;
 			GUI.Box(ScreenRect, "");
 			GUI.backgroundColor = Color.white;
 		}
@@ -417,6 +417,7 @@ public class pb_UV_Editor : EditorWindow
 		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, Screen.width-PAD-PAD-actionWindowRect.width);
 		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, Screen.height-MIN_ACTION_WINDOW_SIZE);
 		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 350);
+
 		switch(mode)
 		{
 			case UVMode.Manual:
@@ -442,9 +443,7 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("DrawUVGraph");
 		#endif
 
-		// try{
-			DrawUVGraph( graphRect );		
-		// } catch(System.Exception e) { Debug.LogError(e.ToString()); }
+		DrawUVGraph( graphRect );		
 
 		#if PB_DEBUG
 		profiler.EndSample();
@@ -561,7 +560,7 @@ public class pb_UV_Editor : EditorWindow
 
 				foreach(pb_Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
 				{
-					List<Vector2> coords = new List<Vector2>();
+					List<Vector4> coords = new List<Vector4>();
 
 					foreach(pb_Face face in incomplete_group)
 						coords.Add(pb_Bounds2D.Center(pb.uv0.ValuesWithIndices(face.distinctIndices)));
@@ -710,7 +709,7 @@ public class pb_UV_Editor : EditorWindow
 						 * Translation - applies for every tool
 						 */
 						Vector2 handle = handlePosition;
-						Vector2 cen = pb_Bounds2D.Center(pb.uv.ValuesWithIndices(tris));
+						Vector2 cen = (Vector2) pb_Bounds2D.Center(pb.uv0.ValuesWithIndices(tris));
 
 						foreach(pb_Face face in kvp.Value)
 							face.uv.offset = -((handle - face.uv.localPivot) - (handle-cen));
@@ -969,7 +968,8 @@ public class pb_UV_Editor : EditorWindow
 					if( (e.alt && e.button == LEFT_MOUSE_BUTTON) || e.button == MIDDLE_MOUSE_BUTTON || Tools.current == Tool.View)
 					{
 						m_draggingCanvas = true;
-						uvGraphOffset += e.delta;
+						uvGraphOffset.x += e.delta.x;
+						uvGraphOffset.y += e.delta.y;
 					}
 					else if(e.button == LEFT_MOUSE_BUTTON)
 					{
@@ -1134,7 +1134,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		Vector2 mpos = GUIToUVPoint(mousePosition);
-		Vector2[] uv;
+		List<Vector4> uv;
 		Vector2 x, y;
 		ObjectElementIndex oei = nearestElement;
 		nearestElement.valid = false;
@@ -1149,7 +1149,7 @@ public class pb_UV_Editor : EditorWindow
 					for(int i = 0; i < selection.Length; i++)
 					{
 						pb_Object pb = selection[i];
-						uv = pb.uv;
+						uv = GetUVs(pb, channel);
 
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
@@ -1183,7 +1183,7 @@ public class pb_UV_Editor : EditorWindow
 					bool superBreak = false;
 					for(int i = 0; i < selection.Length; i++)
 					{
-						uv = selection[i].uv;
+						uv = GetUVs(selection[i], channel);
 
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
@@ -1274,7 +1274,7 @@ public class pb_UV_Editor : EditorWindow
 
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
-						if( pb_Math.PointInPolygon(selection[i].uv, selection[i].faces[n].edges.AllTriangles(), mpos) )
+						if( pb_Math.PointInPolygon(selection[i].uv0, selection[i].faces[n].edges.AllTriangles(), mpos) )
 						{						
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
@@ -1332,9 +1332,8 @@ public class pb_UV_Editor : EditorWindow
 
 	// tool properties
 	float uvRotation = 0f;
-	Vector2 uvOrigin = Vector2.zero;
-
-	Vector2[][] uv_origins = null;
+	Vector4 uvOrigin = Vector4.zero;
+	Vector4[][] uv_origins = null;
 	Vector2 handlePosition = Vector2.zero,
 			handlePosition_offset = Vector2.zero;
 
@@ -1351,8 +1350,11 @@ public class pb_UV_Editor : EditorWindow
 		profiler.BeginSample("Handle");
 		#endif
 
-		pb_Handle_Utility.limitToLeftButton = false; // enable right click drag
+		// enable right click drag
+		pb_Handle_Utility.limitToLeftButton = false;
+
 		t_handlePosition = pb_Handle_Utility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
+
 		t_handlePosition = GUIToUVPoint(t_handlePosition);
 		pb_Handle_Utility.limitToLeftButton = true;
 
@@ -1371,11 +1373,12 @@ public class pb_UV_Editor : EditorWindow
 			profiler.BeginSample("Set Custom Pivot");
 			#endif
 
-			userPivot = true;	// flag the handle as having been user set.
+			// flag the handle as having been user set.
+			userPivot = true;
 
 			if(ControlKey)
 			{
-				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 			}
 			else
 			{		
@@ -1391,16 +1394,17 @@ public class pb_UV_Editor : EditorWindow
 					for(int i = 0; i < selection.Length; i++)
 					{
 						/// todo reset MAX_PROXIMITY_SNAP_DIST
-						int index = pb_Handle_Utility.NearestPoint(handlePosition, selection[i].uv, MAX_PROXIMITY_SNAP_DIST_CANVAS);
+						int index = pb_Handle_Utility.NearestPoint(handlePosition, selection[i].uv0, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 						if(index < 0) continue;
 						
-						dist = Vector2.Distance( selection[i].uv[index], handlePosition );
+						dist = pb_VectorUtility.Distance2D(selection[i].uv0[index], handlePosition);
 
 						if(dist < minDist)
 						{
 							minDist = dist;
-							offset = selection[i].uv[index] - handlePosition;
+							offset.x = selection[i].uv0[index].x - handlePosition.x;
+							offset.y = selection[i].uv0[index].y - handlePosition.y;
 						}
 					}
 
@@ -1437,15 +1441,15 @@ public class pb_UV_Editor : EditorWindow
 
 			needsRepaint = true;
 
-			Vector2 newUVPosition = t_handlePosition;
+			Vector4 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				Vector2[] uvs = GetUVs(pb, channel);
+				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
 					uvs[i] = newUVPosition - (uvOrigin - uv_origins[n][i]);
@@ -1453,13 +1457,11 @@ public class pb_UV_Editor : EditorWindow
 				// set uv positions before figuring snap dist stuff
 				// don't use ApplyUVs() here because we don't actually want to access the msh
 				// til we have to.
-				if(channel == 0)
-					pb.SetUV(uvs);
-				else
-					pb.msh.uv2 = uvs;
+				// @todo setuvs not necessary?
+				pb.SetUVs(channel, uvs);
 
-				if( (!ShiftKey || ControlKey) && channel == 0)
-					pb.msh.uv = uvs;
+				if(!ShiftKey || ControlKey)
+					pb.ApplyUVs();
 			}
 
 			/**
@@ -1467,15 +1469,15 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(ShiftKey && !ControlKey)
 			{
-				Vector2 nearestDelta = Vector2.one;
+				Vector4 nearestDelta = Vector4.one;
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					Vector2[] sel = pbUtil.ValuesWithIndices(GetUVs(selection[i], channel), distinct_indices[i]);
+					List<Vector4> sel = pbUtil.ValuesWithIndices(GetUVs(selection[i], channel), distinct_indices[i]);
 
 					for(int n = 0; n < selection.Length; n++)
 					{
-						Vector2 offset;
+						Vector4 offset;
 						if( pb_Handle_Utility.NearestPointDelta(sel, GetUVs(selection[n], channel), i == n ? distinct_indices[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset) )
 						{
 							if( pb_Handle_Utility.CurrentAxisConstraint.Mask(offset).sqrMagnitude < nearestDelta.sqrMagnitude)
@@ -1490,25 +1492,21 @@ public class pb_UV_Editor : EditorWindow
 
 					for(int i = 0; i < selection.Length; i++)
 					{
-						Vector2[] uvs = GetUVs(selection[i], channel);
+						List<Vector4> uvs = GetUVs(selection[i], channel);
 
 						foreach(int n in distinct_indices[i])
 							uvs[n] += nearestDelta;
 
-						ApplyUVs(selection[i], uvs, channel);
+						selection[i].SetUVs(channel, uvs);
+						selection[i].ApplyUVs();
 					}
 
 					handlePosition = newUVPosition + nearestDelta;
 				}
 				else
 				{
-					if(channel == 0)
-					{
-						for(int i = 0; i < selection.Length; i++)
-						{
-							selection[i].msh.uv = selection[i].uv;
-						}
-					}
+					for(int i = 0; i < selection.Length; i++)
+						selection[i].ApplyUVs();				
 				}
 			}
 
@@ -1537,23 +1535,23 @@ public class pb_UV_Editor : EditorWindow
 				uvOrigin = GUIToUVPoint(t_handlePosition);	// have to set this one special
 			}
 
-			Vector2 newUVPosition = GUIToUVPoint(t_handlePosition);
+			Vector4 newUVPosition = GUIToUVPoint(t_handlePosition);
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask2D(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
+				List<Vector4> uvs = pb.uv0;
 
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
 				}
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				pb.SetUVs(channel, uvs);
+				pb.ApplyUVs(channel);
 			}
 
 			RefreshSelectedUVCoordinates();
@@ -1582,13 +1580,14 @@ public class pb_UV_Editor : EditorWindow
 			for(int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
+				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+					// @todo is set necessary?
+				pb.SetUVs(channel, uvs);
+				pb.ApplyUVs(channel);
 			}
 
 			nearestElement.valid = false;
@@ -1615,15 +1614,16 @@ public class pb_UV_Editor : EditorWindow
 			for(int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
+				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, rotation );
 				}
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				// @todo
+				// pb.SetUVs(uvs);
+				pb.ApplyUVs(channel);
 			}
 
 			nearestElement.valid = false;
@@ -1657,15 +1657,15 @@ public class pb_UV_Editor : EditorWindow
 				for(int n = 0; n < selection.Length; n++)
 				{
 					pb_Object pb = selection[n];
-					Vector2[] uvs = pb.msh.uv;
+					List<Vector4> uvs = GetUVs(pb, channel);
 
 					foreach(int i in distinct_indices[n])
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
 					}
 					
-					pb.SetUV(uvs);
-					pb.msh.uv = uvs;
+					pb.SetUVs(channel, uvs);
+					pb.ApplyUVs(channel);
 				}
 			}
 
@@ -1713,21 +1713,20 @@ public class pb_UV_Editor : EditorWindow
 			OnBeginUVModification();
 		}
 
-
 		if(mode == UVMode.Mixed || mode == UVMode.Manual)
 		{
 			for(int n = 0; n < selection.Length; n++)
 			{
 				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.msh.uv;
+				List<Vector4> uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
 				{
 					uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
 				}
 				
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				pb.SetUVs(channel, uvs);
+				pb.ApplyUVs(channel);
 			}
 		}
 
@@ -1908,7 +1907,7 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		Vector2 p = Vector2.zero;
-		Vector2[] uv;
+		List<Vector4> uv;
 		r.width = DOT_SIZE;
 		r.height = DOT_SIZE;
 
@@ -1920,12 +1919,12 @@ public class pb_UV_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				uv = selection[i].uv;
+				uv = selection[i].uv0;
 
 				GUI.color = UVColorSecondary;
-				for(int n = 0; n < uv.Length; n++)
+				for(int n = 0; n < uv.Count; n++)
 				{
-					p = UVToGUIPoint(selection[i].uv[n]);
+					p = UVToGUIPoint(uv[n]);
 					r.x = p.x - HALF_DOT;
 					r.y = p.y - HALF_DOT;
 					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
@@ -1944,7 +1943,7 @@ public class pb_UV_Editor : EditorWindow
 
 		Handles.color = UVColorGroupIndicator;
 
-		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+		foreach(List<Vector4> lines in incompleteTextureGroupsInSelection_CoordCache)
 			for(int i = 1; i < lines.Count; i++)
 				Handles.CircleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f);
 
@@ -1985,7 +1984,7 @@ public class pb_UV_Editor : EditorWindow
 				GL.Begin(GL.LINES);
 				GL.Color(UVColorGroupIndicator);
 
-				foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
+				foreach(List<Vector4> lines in incompleteTextureGroupsInSelection_CoordCache)
 				{
 					Vector2 cen = lines[0];
 
@@ -2010,7 +2009,7 @@ public class pb_UV_Editor : EditorWindow
 			for(int i = 0; i < selection.Length; i++)
 			{
 				pb_Object pb = selection[i];
-				uv = pb.uv;
+				uv = pb.uv0;
 
 				for(int n = 0; n < pb.faces.Length; n++)
 				{
@@ -2051,7 +2050,7 @@ public class pb_UV_Editor : EditorWindow
 			for(int i = 0; i < selection.Length; i++)
 			{
 				pb_Object pb = selection[i];
-				uv = pb.uv;
+				uv = GetUVs(pb, channel);
 
 				if(pb.SelectedEdges.Length > 0)
 				{
@@ -2090,8 +2089,8 @@ public class pb_UV_Editor : EditorWindow
 					if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 					{
 						pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
-						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
+						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv0[edge.x]) );
+						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv0[edge.y]) );
 					}
 					GL.End();
 					
@@ -2115,14 +2114,15 @@ public class pb_UV_Editor : EditorWindow
 
 						GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
 						int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
+						uv = GetUVs(selection[nearestElement.objectIndex], channel);
 						
 						for(int i = 0; i < tris.Length; i+=3)
 						{
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
+							v = UVToGUIPoint(uv[tris[i+0]]);
 							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
+							v = UVToGUIPoint(uv[tris[i+1]]);
 							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
+							v = UVToGUIPoint(uv[tris[i+2]]);
 							GL.Vertex3(v.x, v.y, 0f);
 						}
 
@@ -2142,14 +2142,15 @@ public class pb_UV_Editor : EditorWindow
 							GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
 
 							int[] tris = face.indices;
+							uv = GetUVs(selection[i], channel);
 
 							for(int n = 0; n < tris.Length; n+=3)
 							{
-								v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+								v = UVToGUIPoint(uv[tris[n+0]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+								v = UVToGUIPoint(uv[tris[n+1]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+								v = UVToGUIPoint(uv[tris[n+2]]);
 								GL.Vertex3(v.x, v.y, 0f);
 							}
 						}
@@ -2181,7 +2182,7 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Object: " + nearestElement.ToString());
 
 		int t_channel = channel;
-		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2"}, UV_CHANNELS);
+		channel = EditorGUILayout.IntPopup(channel, new string[] {"0/1", "2", "3", "4"}, UV_CHANNELS);
 		if(channel != t_channel)
 			RefreshUVCoordinates();
 
@@ -2275,43 +2276,12 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	public void ResetUserPivot()
 	{
-		handlePosition_offset = Vector2.zero;
+		handlePosition_offset = Vector4.zero;
 	}
 
 	pb_Bounds2D GetBounds(int i, int f, Vector2[][] array)
 	{
 		return new pb_Bounds2D( pbUtil.ValuesWithIndices(array[i], selection[i].faces[f].distinctIndices) );
-	}
-
-	/**
-	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
-	 */
-	Vector2 UVToGUIPoint(Vector2 v)
-	{
-		Vector2 p = new Vector2(v.x, -v.y);
-		return UVGraphCenter + (p * uvGridSize * uvGraphScale) + uvGraphOffset;
-	}
-
-	Vector2 GUIToUVPoint(Vector2 v)
-	{
-		Vector2 p = (v - (UVGraphCenter + uvGraphOffset)) / (uvGraphScale * uvGridSize);
-		p.y = -p.y;
-		return p;
-	}
-
-	Vector3 CanvasToGUIPoint(Vector2 v)
-	{
-		v.x = UVGraphCenter.x + (v.x * uvGraphScale + uvGraphOffset.x);
-		v.y = UVGraphCenter.y + (v.y * uvGraphScale + uvGraphOffset.y);
-		return v;
-	}
-
-	/**
-	 * Convert a mouse position in GUI space to a canvas relative point
-	 */
-	Vector2 GUIToCanvasPoint(Vector2 v)
-	{
-		return ((v-UVGraphCenter)-uvGraphOffset)/uvGraphScale;
 	}
 
 	private pb_Bounds2D _selected_gui_bounds = new pb_Bounds2D(Vector2.zero, Vector2.zero);
@@ -2330,6 +2300,16 @@ public class pb_UV_Editor : EditorWindow
 		}
 	}
 
+	public Vector4 UVToGUIPoint(Vector4 v)
+	{
+		return pb_Handle_Utility.UVToGUIPoint(v, UVGraphCenter, uvGraphOffset, uvGraphScale, uvGridSize);
+	}
+
+	public Vector4 GUIToUVPoint(Vector4 v)
+	{
+		return pb_Handle_Utility.GUIToUVPoint(v, UVGraphCenter, uvGraphOffset, uvGraphScale, uvGridSize);
+	}
+
 	/**
 	 * Returns the bounds of the current selection in UV space
 	 */
@@ -2339,7 +2319,7 @@ public class pb_UV_Editor : EditorWindow
 		bool first = true;
 		for(int n = 0; n < selection.Length; n++)
 		{
-			Vector2[] uv = selection[n].uv;
+			List<Vector4> uv = GetUVs(selection[n], channel);
 
 			foreach(int i in distinct_indices[n])
 			{
@@ -2398,16 +2378,18 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb_Object pb = selection[i];
 
-			Vector2[] mshUV = GetUVs(pb, channel);
+			List<Vector4> mshUV = GetUVs(pb, channel);
 
 			// if this isn't the uv2 channel and the uv count doesn't match pb vertex count, reset
-			if(channel != 1 && (mshUV == null || mshUV.Length != pb.vertexCount || mshUV.Any(x => float.IsNaN(x.x) || float.IsNaN(x.y))))
+			if(channel != 2 && (mshUV == null || mshUV.Count != pb.vertexCount || mshUV.Any(x => float.IsNaN(x.x) || float.IsNaN(x.y))))
 			{
-				mshUV = new Vector2[pb.vertexCount];
-				ApplyUVs(pb, mshUV, channel);
+				Debug.LogWarning("RefreshUVCoordinates reset UV channel " + channel + " due to null or invalid UV data.");
+				mshUV = pbUtil.Fill<Vector4>(Vector4.zero, pb.vertexCount);
+				pb.SetUVs(channel, mshUV);
+				pb.ApplyUVs(channel);
 			}
 			
-			int len = mshUV.Length;
+			int len = mshUV.Count;
 
 			// this should be separate from RefreshUVCoordinates
 			if(dragRect != null)
@@ -2536,35 +2518,23 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/**
-	 * Sets an array to the appropriate UV channel, but don't refresh the Mesh.
-	 */
-	static void ApplyUVs(pb_Object pb, Vector2[] uvs, int channel)
-	{
-		switch(channel)
-		{
-			case 0:
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
-				break;
-
-			case 1:
-				pb.msh.uv2 = uvs;
-				break;
-		}
-	}
-
-	/**
 	 * Get a UV channel.
 	 */
-	static Vector2[] GetUVs(pb_Object pb, int channel)
+	static List<Vector4> GetUVs(pb_Object pb, int channel)
 	{
 		switch(channel)
 		{
-			case 1:
-				return pb.msh.uv2;
+			case 2:
+				return pb.uv2;
+
+			case 3:
+				return pb.uv3;
+
+			case 4:
+				return pb.uv4;
 
 			default:
-				return pb.uv;
+				return pb.uv0;
 		}
 	}
 
@@ -2996,14 +2966,14 @@ public class pb_UV_Editor : EditorWindow
 	/**
 	 * Creates a copy of each msh.uv array in a jagged array, and stores the average of all points.
 	 */
-	private void CopySelectionUVs(out Vector2[][] uvCopy)
+	private void CopySelectionUVs(out Vector4[][] uvCopy)
 	{		
-		uvCopy = new Vector2[selection.Length][];
+		uvCopy = new Vector4[selection.Length][];
+
 		for(int i = 0; i < selection.Length; i++)
 		{
 			pb_Object pb = selection[i];
-			uvCopy[i] = new Vector2[pb.vertexCount];
-			System.Array.Copy( GetUVs(pb, channel), uvCopy[i], pb.vertexCount);
+			uvCopy[i] = GetUVs(pb, channel).ToArray();
 		}
 	}
 #endregion
@@ -3275,12 +3245,12 @@ public class pb_UV_Editor : EditorWindow
 
 			selection[i].SplitUVs(selection[i].SelectedTriangles);
 
-			Vector2[] uv = channel == 0 ? selection[i].uv : selection[i].msh.uv2;
+			List<Vector4> uv = GetUVs(selection[i], channel);
 
 			foreach(int n in selection[i].SelectedTriangles.Distinct())
 				uv[n] = pb_Math.ReflectPoint(uv[n], center, center + direction);
 
-			ApplyUVs(selection[i], uv, channel);
+			selection[i].ApplyUVs(channel);
 			
 			RefreshElementGroups(selection[i]);
 
@@ -3318,15 +3288,13 @@ public class pb_UV_Editor : EditorWindow
 
 			selection[i].ToMesh();
 
-			Vector2[] uv = selection[i].uv;
-			Vector2[] uvs = pbUtil.ValuesWithIndices( uv, distinct_indices[i] );
+			List<Vector4> uv = GetUVs(selection[i], channel);
+			List<Vector4> uvs = pbUtil.ValuesWithIndices( uv, distinct_indices[i] );
 
 			uvs = pbUVOps.FitUVs(uvs);
 
-			for(int n = 0; n < uvs.Length; n++)
+			for(int n = 0; n < uvs.Count; n++)
 				uv[ distinct_indices[i][n] ] = uvs[n];
-
-			selection[i].SetUV(uv);
 
 			selection[i].Refresh();
 			selection[i].Optimize();
@@ -3343,18 +3311,16 @@ public class pb_UV_Editor : EditorWindow
 	private void CenterUVsAtPoint(Vector2 point)
 	{
 		Vector2 uv_cen = UVSelectionBounds().center;
-		Vector2 delta = uv_cen - point;
+		Vector4 delta = uv_cen - point;
 
 		for(int i = 0; i < selection.Length; i++)
 		{
-			Vector2[] uv = selection[i].uv;
+			List<Vector4> uv = GetUVs(selection[i], channel);
 
 			foreach(int n in selection[i].SelectedTriangles.Distinct())
-			{
 				uv[n] -= delta;
-			}
 
-			selection[i].SetUV(uv);
+			selection[i].SetUVs(channel, uv);
 		}
 	}
 #endregion
@@ -3530,5 +3496,5 @@ public class pb_UV_Editor : EditorWindow
 	}
 #endregion
 }
-
+}
 #endif

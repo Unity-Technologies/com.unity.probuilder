@@ -49,6 +49,14 @@ namespace ProBuilder2.Common
 				this.uv4 = pb.uv4[index];
 		}
 
+		public static pb_Vertex[] CreateArray(pb_Object pb)
+		{
+			pb_Vertex[] v = new pb_Vertex[pb.vertexCount];
+			for(int i = 0; i < pb.vertexCount; i++)
+				v[i] = new pb_Vertex(pb, i);
+			return v;
+		}
+
 		public static pb_Vertex Average(IList<pb_Vertex> vertices)
 		{
 			pb_Vertex v = new pb_Vertex();

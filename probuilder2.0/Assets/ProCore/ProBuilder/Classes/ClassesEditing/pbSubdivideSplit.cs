@@ -592,8 +592,8 @@ public static class pbSubdivideSplit
 		// Vector3[] verts = pb.vertices.ValuesWithIndices(face.distinctIndices);
 		// Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 		// Vector4[] uvs = pb.uv0.ValuesWithIndices(face.distinctIndices);
-		// Vector4[] uv3 = pb.uv3 == null ? null : pb.uv3.ValuesWithIndices(face.distinctIndices);
-		// Vector4[] uv4 = pb.uv4 == null ? null : pb.uv4.ValuesWithIndices(face.distinctIndices);
+		// Vector4[] uv3 = pb.hasUv3 == null ? null : pb.uv3.ValuesWithIndices(face.distinctIndices);
+		// Vector4[] uv4 = pb.hasUv4 == null ? null : pb.uv4.ValuesWithIndices(face.distinctIndices);
 
 		// Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
 		// Vector2[] plane = pb_Math.PlanarProject(verts, projAxis);

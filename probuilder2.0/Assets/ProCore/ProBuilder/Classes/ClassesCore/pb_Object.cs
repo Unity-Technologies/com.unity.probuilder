@@ -263,6 +263,7 @@ public class pb_Object : MonoBehaviour
 #pragma warning restore 0612, 0618
 	}
 
+	public List<Vector4> uv2 { get { if (msh != null && msh.uv2 != null) return msh.uv2.Cast<Vector4>().ToList(); else return null; } }
 	public List<Vector4> uv3 { get { return _uv3; } }
 	public List<Vector4> uv4 { get { return _uv4; } }
 
@@ -433,8 +434,8 @@ public class pb_Object : MonoBehaviour
 			if(vertices[i].uv4 != null) _uv4.Add( (Vector4) vertices[i].uv4 );
 		}
 
-		if(_uv3.Count != vc) _uv3 = null;
-		if(_uv4.Count != vc) _uv4 = null;
+		if(hasUv3 && _uv3.Count != vc) _uv3 = null;
+		if(hasUv4 && _uv4.Count != vc) _uv4 = null;
 	}
 
 	/**
@@ -961,14 +962,23 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	Applies UV channels to mesh.
 	 */
-	public void ApplyUVs()
+	public void ApplyUVs(int index = -1)
 	{
 #if UNITY_5_3
-		msh.SetUVs(0, uv0);
-		if(hasUv3) msh.SetUVs(3, _uv3);
-		if(hasUv4) msh.SetUVs(4, _uv4);
+		if(index < 0)
+		{
+			msh.SetUVs(0, uv0);
+			if(hasUv3) msh.SetUVs(3, _uv3);
+			if(hasUv4) msh.SetUVs(4, _uv4);
+		}
+		else
+		{
+			msh.SetUVs(index, index < 2 ? uv0 : (index == 3 ? uv3 : uv4) );
+		}
 #else
-		msh.uv = uv0.Cast<Vector2>().ToArray();
+		msh.uv0 = uv0.Cast<Vector2>().ToList();
+		if(hasUv3) msh.uv3 = uv3.Cast<Vector2>().ToList();
+		if(hasUv4) msh.uv4 = uv4.Cast<Vector2>().ToList();
 #endif
 	}
 #endregion

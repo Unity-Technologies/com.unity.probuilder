@@ -93,12 +93,14 @@ public class pb_Handle_Utility
 	 * Convert a UV point to a GUI point with relative size.
 	 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
 	 */
-	internal static Vector2 UVToGUIPoint(Vector2 uv, int pixelSize)
+	internal static Vector4 UVToGUIPoint(Vector4 uv, int pixelSize)
 	{
 		// flip y
-		Vector2 u = new Vector2(uv.x, -uv.y);
-		u *= pixelSize;
-		u = new Vector2(Mathf.Round(u.x), Mathf.Round(u.y));
+		Vector4 u = new Vector4(
+			uv.x * pixelSize,
+			-uv.y * pixelSize,
+			uv.z,
+			uv.w);
 
 		return u;
 	}
@@ -108,11 +110,32 @@ public class pb_Handle_Utility
 	 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
 	 * @sa UVToGUIPoint
 	 */
-	internal static Vector2 GUIToUVPoint(Vector2 gui, int pixelSize)
+	internal static Vector4 GUIToUVPoint(Vector4 gui, int pixelSize)
 	{
 		gui /= (float)pixelSize;
-		Vector2 u = new Vector2(gui.x, -gui.y);
+		Vector4 u = new Vector4(gui.x, -gui.y, gui.z, gui.w);
 		return u;
+	}
+
+	/**
+	 * Convert a point on the UV canvas (0,1 scaled to guisize) to a GUI coordinate.
+	 */
+	public static Vector4 UVToGUIPoint(Vector4 uvPoint, Vector2 uvGraphCenter, Vector2 uvGraphOffset, float uvGraphScale, int uvGridSize)
+	{
+		Vector4 p = new Vector4(uvPoint.x, -uvPoint.y, uvPoint.z, uvPoint.w);
+		p.x = uvGraphCenter.x + (p.x * uvGraphScale * uvGridSize) + uvGraphOffset.x;
+		p.y = uvGraphCenter.y + (p.y * uvGraphScale * uvGridSize) + uvGraphOffset.y;
+		return p;
+	}
+
+	public static Vector4 GUIToUVPoint(Vector4 guiPoint, Vector2 uvGraphCenter, Vector2 uvGraphOffset, float uvGraphScale, int uvGridSize)
+	{
+		Vector4 p = new Vector4(
+			(guiPoint.x - (uvGraphCenter.x + uvGraphOffset.x)) / (uvGraphScale * uvGridSize),
+			-(guiPoint.y - (uvGraphCenter.y + uvGraphOffset.y)) / (uvGraphScale * uvGridSize),
+			guiPoint.z,
+			guiPoint.w );
+		return p;
 	}
 #endregion
 
@@ -556,27 +579,27 @@ public class pb_Handle_Utility
 #region Point Methods
 
 	/**
-	 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset. 
-	 * @param points First Vector2[] array.
-	 * @param compare The Vector2[] array to compare @c points againts.
+	 * Given two Vector4[] arrays, find the nearest two points (x,y) within maxDelta and return the difference in offset. 
+	 * @param points First Vector4[] array.
+	 * @param compare The Vector4[] array to compare @c points againts.
 	 * @mask If mask is not null, any index in mask will not be used in the compare array.
 	 * @param maxDelta The maximum distance for two points to be apart to be considered for nearness.
 	 * @notes This should probably use a divide and conquer algorithm instead of the O(n^2) approach (http://www.geeksforgeeks.org/closest-pair-of-points/)
 	 */
-	public static bool NearestPointDelta(Vector2[] points, Vector2[] compare, int[] mask, float maxDelta, out Vector2 offset)
+	public static bool NearestPointDelta(IList<Vector4> points, IList<Vector4> compare, int[] mask, float maxDelta, out Vector4 offset)
 	{
 		float dist = 0f;
-		float minDist = maxDelta;
+		float minDist = maxDelta * maxDelta;
 		bool foundMatch = false;
-		offset = Vector2.zero;
+		offset = Vector4.zero;
 
-		for(int i = 0; i < points.Length; i++)
+		for(int i = 0; i < points.Count; i++)
 		{
-			for(int n = 0; n < compare.Length; n++)
+			for(int n = 0; n < compare.Count; n++)
 			{
 				if(points[i] == compare[n]) continue;
 
-				dist = Vector2.Distance(points[i], compare[n]);
+				dist = pb_VectorUtility.SqrDistance2D(points[i], compare[n]);
 				
 				if(dist < minDist)
 				{
@@ -584,7 +607,7 @@ public class pb_Handle_Utility
 						continue;
 
 					minDist = dist;
-					offset = compare[n]-points[i];
+					offset = compare[n] - points[i];
 					foundMatch = true;
 				}
 			}
@@ -596,17 +619,17 @@ public class pb_Handle_Utility
 	/**
 	 * Returns the index of the nearest point in the points array, or -1 if no point is within maxDelta range.
 	 */
-	public static int NearestPoint(Vector2 point, Vector2[] points, float maxDelta)
+	public static int NearestPoint(Vector4 point, IList<Vector4> points, float maxDelta)
 	{
 		float dist = 0f;
-		float minDist = maxDelta;
+		float minDist = maxDelta * maxDelta;
 		int index = -1;
 
-		for(int i = 0; i < points.Length; i++)
+		for(int i = 0; i < points.Count; i++)
 		{
 			if(point == points[i]) continue;
 
-			dist = Vector2.Distance(point, points[i]);
+			dist = pb_VectorUtility.SqrDistance2D(point, points[i]);
 
 			if(dist < minDist)
 			{
@@ -686,169 +709,5 @@ public class pb_Handle_Utility
 
 			return v;
 		}
-#endregion
-
-#region Fill
-
-	#if PB_DEBUG
-	public static bool GeneratePolygonCrosshatch(pb_Profiler profiler, Vector2[] polygon, float scale, Color color, int lineSpacing, ref Texture2D texture)
-	#else
-	public static bool GeneratePolygonCrosshatch(Vector2[] polygon, float scale, Color color, int lineSpacing, ref Texture2D texture)
-	#endif
-	{
-		#if PB_DEBUG
-		profiler.BeginSample("GeneratePolygonCrosshatch");
-		#endif
-
-		pb_Bounds2D bounds = new pb_Bounds2D(polygon);
-
-		Vector2 offset = bounds.center - bounds.extents;
-
-		/// shift polygon to origin 0,0
-		for(int i = 0; i < polygon.Length; i++)
-		{
-			polygon[i] -= offset;
-			polygon[i] *= scale;
-		}
-
-		bounds.center -= offset;
-		bounds.size *= scale;
-
-		int width = (int)(bounds.size.x);
-		int height = (int)(bounds.size.y);
-
-		if(width <= 0 || height <= 0)
-			return false;
-
-		#if PB_DEBUG
-		profiler.BeginSample("Allocate Texture");
-		#endif
-
-		if(texture == null)
-		{
-			texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-			texture.filterMode = FilterMode.Point;
-			texture.wrapMode = TextureWrapMode.Clamp;
-		}
-		else
-		{
-			if(texture.width != width || texture.height != height)
-				texture.Resize(width, height, TextureFormat.ARGB32, false);
-		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("Fill Clear");
-		#endif
-
-		Color[] colors = new Color[width*height];
-		List<int> intersects = new List<int>();
-
-		for(int i = 0; i < width*height; i++)
-			colors[i] = Color.clear;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
-
-		/**
-		 *	Horizontal lines
-		 */
-		for(int h = 0; h < height/lineSpacing; h++)
-		{	
-			int y = (h*lineSpacing);
-			intersects.Clear();
-
-			#if PB_DEBUG
-			profiler.BeginSample("Find Intersections");
-			#endif
-
-			Vector2 start = new Vector2(bounds.center.x - bounds.size.x, y);
-			Vector2 end = new Vector2(bounds.center.x + bounds.size.x, y);
-
-			for(int i = 0; i < polygon.Length; i+=2)
-			{
-				Vector2 intersect = Vector2.zero;
-
-				if( pb_Math.GetLineSegmentIntersect(polygon[i], polygon[i+1], start, end, ref intersect) )
-					intersects.Add((int)intersect.x);
-			}
-
-			intersects = intersects.Distinct().ToList();
-			intersects.Sort();
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			profiler.BeginSample("Fill Color");
-			#endif
-
-			for(int i = 0; i < intersects.Count-1; i++)
-			{
-				// can't just use Dot product because we the winding order isn't consistent
-				if( pb_Math.PointInPolygon(polygon, new Vector2(intersects[i]+2, y)) )
-				{
-					for(int n = intersects[i]; n < intersects[i+1]; n++)
-					{
-						colors[ ((height-1)-y) * width + n] = color;
-					}
-				}
-			}
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
-		}
-
-		/**
-		 *	Vertical lines
-		 */
-		if(lineSpacing > 1)
-		{
-			for(int w = 0; w < width/lineSpacing; w++)
-			{	
-				int x = (w*lineSpacing);
-
-				intersects.Clear();
-
-				Vector2 start = new Vector2(x, bounds.center.y - bounds.size.y);
-				Vector2 end = new Vector2(x, bounds.center.y + bounds.size.y);
-
-				for(int i = 0; i < polygon.Length; i+=2)
-				{
-					Vector2 intersect = Vector2.zero;
-					if( pb_Math.GetLineSegmentIntersect(polygon[i], polygon[i+1], start, end, ref intersect) )
-						intersects.Add((int)intersect.y);
-				}
-
-				intersects = intersects.Distinct().ToList();
-				intersects.Sort();
-
-				for(int i = 0; i < intersects.Count-1; i++)
-				{
-					if(pb_Math.PointInPolygon(polygon, new Vector2(x, intersects[i]+2)))
-					{
-						for(int y = intersects[i]; y < intersects[i+1]; y++)
-						{	
-							colors[ ((height-1)-y) * width + x] = color;
-						}
-					}
-				}
-			}
-		}
-
-		#if PB_DEBUG
-		profiler.BeginSample("SetPixels");
-		#endif
-	
-		texture.SetPixels(colors);
-		texture.Apply(false);
-		
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.EndSample();
-		#endif
-
-		return true;
-	}
 #endregion	
 }

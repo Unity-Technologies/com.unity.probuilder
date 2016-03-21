@@ -150,9 +150,7 @@ public static class pbAppendDelete
 		List<int> indices_to_remove = new List<int>( pb_Face.AllTrianglesDistinct(faces) );
 		indices_to_remove.Sort();
 
-		Vector3[] verts = pb.vertices.SortedRemoveAt(indices_to_remove);
-		Color[] cols = pb.colors.SortedRemoveAt(indices_to_remove);
-
+		pb_Vertex[] verts = pb_Vertex.CreateArray(pb).SortedRemoveAt(indices_to_remove);
 		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
 
 		// shift all other face indices down to account for moved vertex positions
@@ -181,10 +179,6 @@ public static class pbAppendDelete
 		pb.SetSharedIndicesUV(si_uv);
 		
 		pb.SetVertices(verts);
-		pb.SetColors(cols);
-		pb.SetUVs(0, pb.uv0.SortedRemoveAt(indices_to_remove));
-		if(pb.uv3 != null) pb.SetUVs(3, new List<Vector4>(pb.uv3.SortedRemoveAt(indices_to_remove)));
-		if(pb.uv4 != null) pb.SetUVs(4, new List<Vector4>(pb.uv4.SortedRemoveAt(indices_to_remove)));
 
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();

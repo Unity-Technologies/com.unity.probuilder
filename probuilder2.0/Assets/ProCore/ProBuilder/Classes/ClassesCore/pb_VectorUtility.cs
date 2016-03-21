@@ -9,5 +9,10 @@ namespace ProBuilder2.Common
 		{
 			return Mathf.Sqrt( (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) );
 		}
+
+		public static float SqrDistance2D(Vector4 a, Vector4 b)
+		{
+			return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+		}
 	}
 }
