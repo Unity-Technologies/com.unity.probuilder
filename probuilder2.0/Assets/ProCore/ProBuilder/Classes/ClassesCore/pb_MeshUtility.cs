@@ -132,7 +132,7 @@ namespace ProBuilder2.Common
 			}
 
 			Color[] colors = pb.colors;
-			List<Vector4> textures = pb.uv0;
+			Vector2[] textures = pb.uv;
 
 			int[] smoothGroup = new int[normals.Length];
 

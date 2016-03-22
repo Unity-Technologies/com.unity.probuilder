@@ -3485,13 +3485,7 @@ public class pb_Editor : EditorWindow
 
 		// profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
-		{
-			if(pb.vertexCount != pb.msh.vertexCount)
-			{
-				pb.ToMesh();
-				pb.Refresh();
-			}
-		}
+			pb.ResetMesh();
 
 		// profiler.EndSample();
 	}

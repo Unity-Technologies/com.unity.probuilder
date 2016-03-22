@@ -14,7 +14,7 @@ namespace ProBuilder2.MeshOperations {
 public static class pbUVOps
 {
 
-#region Sew / Split	
+#region Sew / Split
 
 	/**
 	 * Sews a UV seam using delta to determine which UVs are close enough to be merged.
@@ -23,8 +23,11 @@ public static class pbUVOps
 	public static bool SewUVs(this pb_Object pb, int[] indices, float delta)
 	{
 		int[] si = new int[indices.Length];
-		List<Vector4> uvs = pb.uv0;
+		Vector2[] uvs = pb.uv;
 		
+		if(uvs == null || uvs.Length != pb.vertexCount)
+			uvs = new Vector2[pb.vertexCount];
+
 		// set the shared indices cache to a unique non-used index
 		for(int i = 0; i < indices.Length; i++)
 			si[i] = -(i+1);
@@ -50,7 +53,7 @@ public static class pbUVOps
 			}
 		}
 
-		pb.SetUVs(0, uvs);
+		pb.SetUV(uvs);
 		pb.SetSharedIndicesUV(sharedIndices);
 
 		return true;
@@ -61,7 +64,7 @@ public static class pbUVOps
 	 */
 	public static void CollapseUVs(this pb_Object pb, int[] indices)
 	{
-		List<Vector4> uvs = pb.uv0;
+		Vector2[] uvs = pb.uv;
 
 		// set the shared indices cache to a unique non-used index
 		Vector2 cen = pb_Math.Average(pbUtil.ValuesWithIndices(uvs, indices) );
@@ -72,7 +75,7 @@ public static class pbUVOps
 		pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
 		pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
 		
-		pb.SetUVs(0, uvs);
+		pb.SetUV(uvs);
 		pb.SetSharedIndicesUV(sharedIndices);
 	}
 
@@ -135,13 +138,13 @@ public static class pbUVOps
 		Vector2[] uvs = pb_Math.PlanarProject(verts, nrm);
 
 		/* re-assign new projected coords back into full uv array */
-		List<Vector4> rebuiltUVs = pb.uv0;
+		Vector2[] rebuiltUVs = pb.uv;
 		for(int i = 0; i < ind.Length; i++)
 			rebuiltUVs[ind[i]] = uvs[i];
 
 		/* and set the msh uv array using the new coordintaes */
-		pb.SetUVs(0, rebuiltUVs);
-		pb.ApplyUVs();
+		pb.SetUV(rebuiltUVs);
+		pb.msh.uv = rebuiltUVs;
 		
 		/* now go trhough and set all adjacent face groups to use matching element groups */
 		foreach(pb_Face f in faces)
@@ -200,7 +203,7 @@ public static class pbUVOps
 	 */
 	public  static void ProjectFacesBox(pb_Object pb, pb_Face[] faces)
 	{
-		List<Vector4> uv = pb.uv0;
+		Vector2[] uv = pb.uv;
 
 		Dictionary<ProjectionAxis, List<pb_Face>> sorted = new Dictionary<ProjectionAxis, List<pb_Face>>();
 
@@ -235,7 +238,7 @@ public static class pbUVOps
 		}
 
 		/* and set the msh uv array using the new coordintaes */
-		pb.SetUVs(0, uv);
+		pb.SetUV(uv);
 		
 		pb.ToMesh();
 		pb.Refresh();
@@ -243,7 +246,7 @@ public static class pbUVOps
 
 	public static void UnwrapSpherical(pb_Object pb, int[] indices)
 	{
-		List<Vector4> uv = pb.uv0;
+		Vector2[] uv = pb.uv;
 		Vector3[] v = pb.vertices;
 		Vector3 cen = pb.msh.bounds.center;
 		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
@@ -251,42 +254,36 @@ public static class pbUVOps
 		for(int i = 0; i < indices.Length; i++)
 		{
 			Vector3 p = (v[i] - cen).normalized;
-			uv[i] = new Vector4(
-				(.5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI))) * radius,
-				(.5f - (Mathf.Asin(p.y) / Mathf.PI)) * radius,
-				0f, 
-				0f);
+			uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
+			uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
+			uv[i] *= radius;
 		}
 
 		SplitUVs(pb, indices);
-		pb.SetUVs(0, uv);
+		pb.SetUV(uv);
 	}
 
 	public static void UnwrapSphericalPB(pb_Object pb, int[] indices)
 	{
-		List<Vector4> uv = pb.uv0;
+		Vector2[] uv = pb.uv;
 		Vector3[] v = pb.vertices;
 		Vector3 cen = pb.msh.bounds.center;
 		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
-
-		Vector4 a = Vector4.zero;
 
 		for(int i = 0; i < indices.Length; i++)
 		{
 			Vector3 p = (v[i] - cen).normalized;
 			
-			a.y = Mathf.Acos(p.z/radius) / Mathf.PI;
+			uv[i].y = Mathf.Acos(p.z/radius) / Mathf.PI;
 
 			if (p.y >= 0)
-				a.x = Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(a.y)))) / (Mathf.PI * 2f);
+				uv[i].x = Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y)))) / (Mathf.PI * 2f);
 			else
-				a.x = (Mathf.PI + Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(a.y))))) / (Mathf.PI * 2f);
-			
-			uv[i] = a;
+				uv[i].x = (Mathf.PI + Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y))))) / (Mathf.PI * 2f);
 		}
 
 		SplitUVs(pb, indices);
-		pb.SetUVs(0, uv);
+		pb.SetUV(uv);
 	}
 #endregion
 
@@ -295,25 +292,22 @@ public static class pbUVOps
 	/*
 	 *	Returns normalized UV values for a mesh uvs (0,0) - (1,1)
 	 */
-	public static List<Vector4> FitUVs(List<Vector4> uvs)
+	public static Vector2[] FitUVs(Vector2[] uvs)
 	{
-		Vector4 s = uvs[0];
-		Vector4 l = uvs[0];
+		// shift UVs to zeroed coordinates
+		Vector2 smallestVector2 = pb_Math.SmallestVector2(uvs);
 
-		for(int i = 1; i < uvs.Count; i++)
+		int i;
+		for(i = 0; i < uvs.Length; i++)
 		{
-			s.x = Mathf.Min(uvs[i].x, s.x);
-			s.y = Mathf.Min(uvs[i].y, s.y);
-			l.x = Mathf.Max(uvs[i].x, l.x);
-			l.y = Mathf.Max(uvs[i].y, l.y);
+			uvs[i] -= smallestVector2;
 		}
 
-		float scale = 1f / Mathf.Max( l.x - s.x, l.y - s.y );
+		float scale = pb_Math.LargestValue( pb_Math.LargestVector2(uvs) );
 
-		for(int i = 0; i < uvs.Count; i++)
+		for(i = 0; i < uvs.Length; i++)
 		{
-			uvs[i] -= s;
-			uvs[i] *= scale;
+			uvs[i] /= scale;
 		}
 
 		return uvs;
@@ -362,7 +356,7 @@ public static class pbUVOps
 	 */
 	static bool AlignEdges(pb_Object pb, pb_Face f1, pb_Face f2, pb_Edge edge1, pb_Edge edge2)
 	{
-		List<Vector4> uvs = pb.uv0;
+		Vector2[] uvs = pb.uv;
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 		pb_IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
 
@@ -388,8 +382,8 @@ public static class pbUVOps
 		}
 
 		// scale face 2 to match the edge size of f1
-		float dist_e1 = pb_VectorUtility.Distance2D(uvs[edge1.x], uvs[edge1.y]);
-		float dist_e2 = pb_VectorUtility.Distance2D(uvs[edge2.x], uvs[edge2.y]);
+		float dist_e1 = Vector2.Distance(uvs[edge1.x], uvs[edge1.y]);
+		float dist_e2 = Vector2.Distance(uvs[edge2.x], uvs[edge2.y]);
 		
 		float scale = dist_e1/dist_e2;
 		
@@ -400,10 +394,10 @@ public static class pbUVOps
 		/**
 		 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin 
 		 */
-		Vector4 f1_center = (uvs[edge1.x] + uvs[edge1.y]) / 2f;
-		Vector4 f2_center = (uvs[edge2.x] + uvs[edge2.y]) / 2f;
+		Vector2 f1_center = (uvs[edge1.x] + uvs[edge1.y]) / 2f;
+		Vector2 f2_center = (uvs[edge2.x] + uvs[edge2.y]) / 2f;
 
-		Vector4 diff = f1_center - f2_center;
+		Vector2 diff = f1_center - f2_center;
 
 		/**
 		 * Move f2 face to where it's matching edge center is on top of f1's center
@@ -456,7 +450,7 @@ public static class pbUVOps
 
 		// @todo Update Element Groups here?
 
-		pb.SetUVs(0, uvs);
+		pb.SetUV(uvs);
 
 		return true;
 	}
@@ -466,17 +460,17 @@ public static class pbUVOps
 	 * Only points[0, target.Length] coordinates are used in the matching process - points[target.Length, points.Length]
 	 * are just along for the ride.
 	 */
-	public static pb_Transform2D MatchCoordinates(IList<Vector4> points, IList<Vector4> target)
+	public static pb_Transform2D MatchCoordinates(Vector2[] points, Vector2[] target)
 	{
-		int length = System.Math.Max(points.Count, target.Count);
+		int length = points.Length < target.Length ? points.Length : target.Length;
 
 		pb_Bounds2D t_bounds = new pb_Bounds2D(target, length); // only match the bounds of known matching points
 
 		// move points to the center of target
-		Vector4 translation = (Vector4)(t_bounds.center - pb_Bounds2D.Center(points, length));
+		Vector2 translation = t_bounds.center - pb_Bounds2D.Center(points, length);
 
-		Vector4[] transformed = new Vector4[points.Count];
-		for(int i = 0; i < points.Count; i++)
+		Vector2[] transformed = new Vector2[points.Length];
+		for(int i = 0; i < points.Length; i++)
 			transformed[i] = points[i] + translation;
 
 		// rotate to match target points
@@ -487,7 +481,7 @@ public static class pbUVOps
 
 		if(dot < 0) angle = 360f - angle;
 
-		for(int i = 0; i < points.Count; i++)
+		for(int i = 0; i < points.Length; i++)
 			transformed[i] = transformed[i].RotateAroundPoint(t_bounds.center, angle);
 
 		// and lastly scale
@@ -514,10 +508,9 @@ public static class pbUVOps
 
 			pb.SplitUVs( pb_Face.AllTriangles(faces) );
 
-			List<Vector4>[] uv_origins = new List<Vector4>[faces.Length];
-
+			Vector2[][] uv_origins = new Vector2[faces.Length][];
 			for(int i = 0; i < faces.Length; i++)
-				uv_origins[i] = pb.uv0.ValuesWithIndices(faces[i].distinctIndices);
+				uv_origins[i] = pb.uv.ValuesWithIndices(faces[i].distinctIndices);
 
 			for(int f = 0; f < faces.Length; f++)
 			{
@@ -530,7 +523,7 @@ public static class pbUVOps
 
 			for(int i = 0; i < faces.Length; i++)
 			{
-				pb_Transform2D transform = MatchCoordinates(pb.uv0.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
+				pb_Transform2D transform = MatchCoordinates(pb.uv.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
 
 				faces[i].uv.offset = -transform.position;
 				faces[i].uv.rotation = transform.rotation;

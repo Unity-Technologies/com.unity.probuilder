@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Math;
-using System.Linq;
 
 namespace ProBuilder2.Common
 {
@@ -49,85 +48,21 @@ namespace ProBuilder2.Common
 		/**
 		 * Create bounds from a set of 2d points.
 		 */
-		public pb_Bounds2D(IList<Vector2> points, IList<int> indices)
+		public pb_Bounds2D(Vector2[] points)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 		
-			if(points.Count > 0 && indices.Count > 0)
-			{
-				xMin = points[indices[0]].x;
-				yMin = points[indices[0]].y;
-				xMax = xMin;
-				yMax = yMin;
-
-				for(int i = 1; i < indices.Count; i++)
-				{
-					xMin = Mathf.Min(xMin, points[indices[i]].x);
-					yMin = Mathf.Min(yMin, points[indices[i]].y);
-
-					xMax = Mathf.Max(xMax, points[indices[i]].x);
-					yMax = Mathf.Max(yMax, points[indices[i]].y);
-				}
-			}
-
-			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
-			this.size = new Vector2(xMax-xMin, yMax-yMin);
-		}
-
-		/**
-		 * Create bounds from a set of 2d points.
-		 */
-		public pb_Bounds2D(IList<Vector4> points, IList<int> indices)
-		{
-			float 	xMin = 0f,
-					xMax = 0f,
-					yMin = 0f,
-					yMax = 0f;
-		
-			if(points.Count > 0 && indices.Count > 0)
-			{
-				xMin = points[indices[0]].x;
-				yMin = points[indices[0]].y;
-				xMax = xMin;
-				yMax = yMin;
-
-				for(int i = 1; i < indices.Count; i++)
-				{
-					xMin = Mathf.Min(xMin, points[indices[i]].x);
-					yMin = Mathf.Min(yMin, points[indices[i]].y);
-
-					xMax = Mathf.Max(xMax, points[indices[i]].x);
-					yMax = Mathf.Max(yMax, points[indices[i]].y);
-				}
-			}
-
-			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
-			this.size = new Vector2(xMax-xMin, yMax-yMin);
-		}
-
-		/**
-		 * Create bounds from a set of 2d points.
-		 */
-		public pb_Bounds2D(IList<Vector2> points, int length = -1)
-		{
-			float 	xMin = 0f,
-					xMax = 0f,
-					yMin = 0f,
-					yMax = 0f;
-		
-			if(points.Count > 0)
+			if(points.Length > 0)
 			{
 				xMin = points[0].x;
 				yMin = points[0].y;
 				xMax = xMin;
 				yMax = yMin;
 
-				int c = length > -1 ? length : points.Count;
-
-				for(int i = 1; i < c; i++)
+				for(int i = 1; i < points.Length; i++)
 				{
 					xMin = Mathf.Min(xMin, points[i].x);
 					yMin = Mathf.Min(yMin, points[i].y);
@@ -138,29 +73,55 @@ namespace ProBuilder2.Common
 			}
 
 			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
-			this.size = new Vector2(xMax-xMin, yMax-yMin);
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 
 		/**
-		 * Create bounds from a set of 4d points (uses only x,y)
+		 * Create bounds from a set of 2d points.
 		 */
-		public pb_Bounds2D(IList<Vector4> points, int length = -1)
+		public pb_Bounds2D(Vector2[] points, int[] indices)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 		
-			if(points.Count > 0)
+			if(points.Length > 0 && indices.Length > 0)
+			{
+				xMin = points[indices[0]].x;
+				yMin = points[indices[0]].y;
+				xMax = xMin;
+				yMax = yMin;
+
+				for(int i = 1; i < indices.Length; i++)
+				{
+					xMin = Mathf.Min(xMin, points[indices[i]].x);
+					yMin = Mathf.Min(yMin, points[indices[i]].y);
+
+					xMax = Mathf.Max(xMax, points[indices[i]].x);
+					yMax = Mathf.Max(yMax, points[indices[i]].y);
+				}
+			}
+
+			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
+		}
+
+		public pb_Bounds2D(Vector2[] points, int length)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+		
+			if(points.Length > 0)
 			{
 				xMin = points[0].x;
 				yMin = points[0].y;
 				xMax = xMin;
 				yMax = yMin;
 
-				int c = length > -1 ? length : points.Count;
-
-				for(int i = 1; i < c; i++)
+				for(int i = 1; i < length; i++)
 				{
 					xMin = Mathf.Min(xMin, points[i].x);
 					yMin = Mathf.Min(yMin, points[i].y);
@@ -171,7 +132,7 @@ namespace ProBuilder2.Common
 			}
 
 			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
-			this.size = new Vector2(xMax-xMin, yMax-yMin);
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 #endregion
 
@@ -226,23 +187,16 @@ namespace ProBuilder2.Common
 		 * Returns the center of the bounding box of points.  Optional parameter @length limits the 
 		 * bounds calculations to only the points up to length in array.
 		 */
-		[System.Obsolete("warning slow cast")]
-		public static Vector2 Center(IList<Vector2> points, int length = -1)
+		public static Vector2 Center(List<Vector2> points) { return Center(points.ToArray()); }
+		public static Vector2 Center(Vector2[] points) { return Center(points, points.Length); }
+		public static Vector2 Center(Vector2[] points, int length)
 		{
-			return (Vector2) Center(points.Cast<Vector4>().ToList(), length);
-		}
-
-		public static Vector2 Center(IList<Vector4> points, int length = -1)
-		{
-			if(length < 0)
-				length = points.Count;
-				
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 		
-			if(points.Count > 0)
+			if(points.Length > 0)
 			{
 				xMin = points[0].x;
 				yMin = points[0].y;
@@ -259,7 +213,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			return new Vector4( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			return new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
 		}
 #endregion
 

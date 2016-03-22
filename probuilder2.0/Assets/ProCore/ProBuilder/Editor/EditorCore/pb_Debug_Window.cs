@@ -288,13 +288,13 @@ namespace ProBuilder2.EditorCommon
 						{		
 							GUILayout.BeginHorizontal();
 								GUILayout.Space(24);
-								pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv0.Count);
+								pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
 							GUILayout.EndHorizontal();
 				
 							GUILayout.BeginHorizontal();
 							GUILayout.Space(48);
 								if(pv.showUv)
-									GUILayout.Label("" + pb.uv0.ToString("\n"));
+									GUILayout.Label("" + pb.uv.ToString("\n"));
 							GUILayout.EndHorizontal();
 						}
 

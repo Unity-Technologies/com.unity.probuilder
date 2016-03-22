@@ -56,7 +56,8 @@ public class pb_Object : MonoBehaviour
 		Vector3[] v = new Vector3[pb.vertexCount];
 		System.Array.Copy(pb.vertices, v, pb.vertexCount);
 		
-		List<Vector4> u = new List<Vector4>(pb.uv0);
+		Vector2[] u = new Vector2[pb.vertexCount];
+		System.Array.Copy(pb.uv, u, pb.vertexCount);
 
 		Color[] c = new Color[pb.vertexCount];
 		System.Array.Copy(pb.colors, c, pb.vertexCount);
@@ -132,17 +133,11 @@ public class pb_Object : MonoBehaviour
 	 */
 	public static pb_Object CreateInstanceWithElements(Vector3[] v, Vector2[] u, Color[] c, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
 	{
-		List<Vector4> uvs = u.Cast<Vector4>().ToList();
-		return CreateInstanceWithElements(v, uvs, c, f, si, si_uv);
-	}
-
-	public static pb_Object CreateInstanceWithElements(Vector3[] v, List<Vector4> u, Color[] c, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
-	{
 		GameObject _gameObject = new GameObject();
 		pb_Object pb = _gameObject.AddComponent<pb_Object>();
 
 		pb.SetVertices(v);
-		pb.SetUVs(0, u);
+		pb.SetUV(u);
 		pb.SetColors(c);
 
 		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(v) );
@@ -172,17 +167,8 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private Vector3[] 					_vertices;
 
-	[SerializeField] [System.Obsolete("pb_Object._uv is obsolete.  Please use uv0 (reference) or GetUVs(int index) (copy) to fetch Vector4 UVs.")]
+	[SerializeField]
 	private Vector2[] 					_uv;
-
-	[SerializeField]
-	private List<Vector4>				_uv0;
-
-	[SerializeField]
-	private List<Vector4>				_uv3;
-
-	[SerializeField]
-	private List<Vector4>				_uv4;
 
 	[SerializeField]
 	private pb_IntArray[] 				_sharedIndicesUV = new pb_IntArray[0];
@@ -242,34 +228,7 @@ public class pb_Object : MonoBehaviour
 	public int id { get { return gameObject.GetInstanceID(); } }
 
 	public Vector3[] vertices { get { return _vertices; } }
-
-	[System.Obsolete("pb_Object.uv is obsolete.  Use GetUVs(int, Vector4[]) or pb_Object.uv0 instead.")]
 	public Vector2[] uv { get { return _uv; } }
-
-	public List<Vector4> uv0
-	{
-#pragma warning disable 0612, 0618
-		get
-		{
-			if( _uv0 == null || _uv0.Count != vertexCount )
-			{
-				if( _uv != null && _uv.Length == vertexCount )
-					_uv0 = _uv.Select(x => (Vector4)x).ToList();
-				else
-					_uv0 = pbUtil.Fill<Vector4>(Vector4.zero, vertexCount);
-			}
-			return _uv0;
-		}
-#pragma warning restore 0612, 0618
-	}
-
-	public List<Vector4> uv2 { get { if (msh != null && msh.uv2 != null) return msh.uv2.Cast<Vector4>().ToList(); else return null; } }
-	public List<Vector4> uv3 { get { return _uv3; } }
-	public List<Vector4> uv4 { get { return _uv4; } }
-
-	public bool hasUv3 { get { return _uv3 != null && _uv3.Count == vertexCount; } }
-	public bool hasUv4 { get { return _uv4 != null && _uv4.Count == vertexCount; } }
-
 	public Color[] colors { get { return _colors; } }
 
 	public int faceCount { get { return _faces.Length; } }
@@ -375,7 +334,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RemoveFromFaceSelectionAtIndex(int index)
 	{
-		SetSelectedFaces(m_selectedFaces.RemoveAt(index).ToArray());
+		SetSelectedFaces(m_selectedFaces.RemoveAt(index));
 	}
 
 	/**
@@ -412,36 +371,8 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	Sets internal vertex data with pb_Vertex[] information.  Does not perform error checking.
-	 */
-	public void SetVertices(IList<pb_Vertex> vertices)
-	{
-		int vc = vertices.Count;
-
-		_vertices 	= new Vector3[vc];
-		_colors 	= new Color[vc];
-		_uv0		= pbUtil.Fill<Vector4>(Vector4.zero, vc);
-		if(hasUv3) _uv3.Clear();
-		if(hasUv4) _uv4.Clear();
-
-		for(int i = 0; i < vc; i++)
-		{
-			_vertices[i] 	= vertices[i].position;
-			_colors[i] 		= vertices[i].color;
-			_uv0[i] 		= vertices[i].uv0;
-
-			if(vertices[i].uv3 != null) _uv3.Add( (Vector4) vertices[i].uv3 );
-			if(vertices[i].uv4 != null) _uv4.Add( (Vector4) vertices[i].uv4 );
-		}
-
-		if(hasUv3 && _uv3.Count != vc) _uv3 = null;
-		if(hasUv4 && _uv4.Count != vc) _uv4 = null;
-	}
-
-	/**
 	 * Must match size of vertex array.
 	 */
-	[System.Obsolete("Use SetUVs(int index, List<Vector4>) instead.")]
 	public void SetUV(Vector2[] uvs)
 	{
 		_uv = uvs;
@@ -495,7 +426,7 @@ public class pb_Object : MonoBehaviour
 		}
 
 		SetVertices(v);
-		SetUVs(0, new List<Vector4>(v.Length));
+		SetUV(new Vector2[v.Length]);
 		SetColors( pbUtil.FilledArray<Color>(Color.white, v.Length) );
 
 		SetFaces(f);
@@ -512,7 +443,7 @@ public class pb_Object : MonoBehaviour
 	public void GeometryWithVerticesFaces(Vector3[] v, pb_Face[] f)
 	{
 		SetVertices(v);
-		SetUVs(0, new List<Vector4>(v.Length));
+		SetUV(new Vector2[v.Length]);
 
 		SetFaces(f);
 		SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(v));
@@ -525,7 +456,7 @@ public class pb_Object : MonoBehaviour
 	{
 		SetFaces(f);
 		SetVertices(v);
-		SetUVs(0, new List<Vector4>(v.Length));
+		SetUV(new Vector2[v.Length]);
 
 		SetSharedIndices(s);
 
@@ -591,7 +522,8 @@ public class pb_Object : MonoBehaviour
 		{
 			m = msh;
 			m.vertices = _vertices;
-			ApplyUVs();
+			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
+			if(_uv != null) m.uv = _uv;
 		}
 		else
 		{
@@ -620,6 +552,18 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
+	 * Set the MeshComponent.sharedMesh back to matching the pb_Object.vertices cache if necessary.
+	 */
+	public void ResetMesh()
+	{
+		if(msh.vertexCount == _vertices.Length)
+			return;
+
+		ToMesh();
+		Refresh();
+	}
+
+	/**
 	 *	\brief Call this to ensure that the mesh is unique.  Basically performs a DeepCopy and assigns back to self.
 	 */
 	public void MakeUnique()
@@ -638,9 +582,13 @@ public class pb_Object : MonoBehaviour
 		Vector3[] v = new Vector3[vertexCount];
 		System.Array.Copy(_vertices, v, vertexCount);
 		SetVertices(v);
-		SetUVs(0, new List<Vector4>(uv0));
-		SetUVs(3, new List<Vector4>(uv3));
-		SetUVs(4, new List<Vector4>(uv4));
+
+		if(_uv != null && _uv.Length == vertexCount)
+		{
+			Vector2[] u = new Vector2[vertexCount];
+			System.Array.Copy(_uv, u, vertexCount);
+			SetUV(u);
+		}
 
 		msh = pbUtil.DeepCopyMesh(msh);
 		
@@ -708,12 +656,11 @@ public class pb_Object : MonoBehaviour
 
 	/**
 	 *	Returns a new unused texture group id.
-	 *  Will be greater than or equal to i.
 	 */
-	public int UnusedTextureGroup(int i = 0)
+	public int UnusedTextureGroup(int i)
 	{
 		int[] used = new int[faces.Length];
-		for(int j = 0; j < faces.Length; j++)
+		for(int j = 0; j < faces.Length; j++)	
 			used[j] = faces[j].textureGroup;
 		while(System.Array.IndexOf(used, i) > -1)
 			i++;
@@ -723,11 +670,25 @@ public class pb_Object : MonoBehaviour
 	/**
 	 * Returns a new unused element group.   Will be greater than or equal to i.
 	 */
-	public int UnusedElementGroup(int i = 0)
+	public int UnusedElementGroup(int i)
 	{
 		while( System.Array.Exists(faces, element => element.elementGroup == i) )
 			i++;
 		
+		return i;
+	}
+
+	public int UnusedTextureGroup()
+	{
+		int i = 1;
+	
+		int[] used = new int[faces.Length];
+		for(int j = 0; j < faces.Length; j++)	
+			used[j] = faces[j].textureGroup;
+	
+		while(System.Array.IndexOf(used, i) > -1)
+			i++;
+
 		return i;
 	}
 
@@ -745,8 +706,30 @@ public class pb_Object : MonoBehaviour
 	public void RefreshUV(pb_Face[] faces)
 	{
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
-		
-		List<Vector4> newUVs = uv0;
+		Vector2[] newUVs;
+
+		// thanks to the upgrade path, this is necessary.  maybe someday remove it.
+		if(_uv != null && _uv.Length == vertexCount)
+		{
+			newUVs = _uv;
+		}
+		else
+		{
+			if(msh.uv != null && msh.uv.Length == vertexCount)
+			{
+				newUVs = msh.uv;
+			}
+			else
+			{
+				foreach(pb_Face f in this.faces)
+					f.manualUV = false;
+
+				// this necessitates rebuilding ALL the face uvs, so make sure we do that.
+				faces = this.faces;
+
+				newUVs = new Vector2[vertexCount];
+			}
+		}
 
 		int n = -2;
 		foreach(pb_Face f in faces)
@@ -813,13 +796,8 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 
-		// @todo ?
-		// SetUVs(0, newUVs);
-#if UNITY_5_3
-		msh.SetUVs(0, uv0);
-#else
-		msh.uv = newUVs.Cast<Vector2>().ToArray();
-#endif
+		_uv = newUVs;
+		msh.uv = newUVs;
 	}
 
 	/**
@@ -838,52 +816,53 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	\brief Sets the pb_Face uvSettings param to match the passed #pv_UV _uv 
 	 */
-	// public void SetFaceUV(pb_Face face, pb_UV uvParams)
-	// {
-	// 	face.SetUV(uvParams);
+	public void SetFaceUV(pb_Face face, pb_UV uvParams)
+	{
+		face.SetUV(uvParams);
 
-	// 	if(face.uv.useWorldSpace)
-	// 	{
-	// 		Vector3[] v = new Vector3[face.distinctIndices.Length];
-	// 		for(int i = 0; i < v.Length; i++)
-	// 			v[i] = _vertices[face.distinctIndices[i]];
+		if(face.uv.useWorldSpace)
+		{
+			Vector3[] v = new Vector3[face.distinctIndices.Length];
+			for(int i = 0; i < v.Length; i++)
+				v[i] = _vertices[face.distinctIndices[i]];
 
-	// 		SetUVs(face, pb_UVUtility.PlanarMap( v, face.uv) );
-	// 	}
-	// 	else
-	// 		SetUVs(face, pb_UVUtility.PlanarMap( face.GetDistinctVertices(_vertices), face.uv) );
-	// }
+			SetUVs(face, pb_UVUtility.PlanarMap( v, face.uv) );
+		}
+		else
+			SetUVs(face, pb_UVUtility.PlanarMap( face.GetDistinctVertices(_vertices), face.uv) );
+	}
 
 	/**
 	 * Apply the UV to the mesh UV channel.
 	 */
-	// private void SetUVs(pb_Face face, Vector2[] uvs)
-	// {
-	// 	int[] vertIndices = face.distinctIndices;
-	// 	Vector2[] newUV = new Vector2[msh.uv.Length];
-	// 	System.Array.Copy(msh.uv, newUV, msh.uv.Length);
+	private void SetUVs(pb_Face face, Vector2[] uvs)
+	{
+		int[] vertIndices = face.distinctIndices;
+		Vector2[] newUV = new Vector2[msh.uv.Length];
+		System.Array.Copy(msh.uv, newUV, msh.uv.Length);
 		
-	// 	for(int i = 0; i < vertIndices.Length; i++) {
-	// 		newUV[vertIndices[i]] = uvs[i];
-	// 	}
+		for(int i = 0; i < vertIndices.Length; i++) {
+			newUV[vertIndices[i]] = uvs[i];
+		}
 
-	// 	gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;		
-	// }
+		gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;		
+	}
 
-	// private void SetUVs(pb_Face[] quad, Vector2[][] uvs)
-	// {
-	// 	Vector2[] newUV = new Vector2[msh.uv.Length];
-	// 	System.Array.Copy(msh.uv, newUV, msh.uv.Length);
+	private void SetUVs(pb_Face[] quad, Vector2[][] uvs)
+	{
+		Vector2[] newUV = new Vector2[msh.uv.Length];
+		System.Array.Copy(msh.uv, newUV, msh.uv.Length);
 		
-	// 	for(int i = 0; i < quad.Length; i++) {
+		for(int i = 0; i < quad.Length; i++) {
 
-	// 		int[] vertIndices = quad[i].distinctIndices;
-	// 		for(int n = 0; n < vertIndices.Length; n++)
-	// 			newUV[vertIndices[n]] = uvs[i][n];
-	// 	}
+			int[] vertIndices = quad[i].distinctIndices;
+			for(int n = 0; n < vertIndices.Length; n++)
+				newUV[vertIndices[n]] = uvs[i][n];
+		
+		}
 
-	// 	gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;
-	// }
+		gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;
+	}
 
 	/**
 	 * Set mesh UV2.
@@ -891,95 +870,6 @@ public class pb_Object : MonoBehaviour
 	public void SetUV2(Vector2[] v)
 	{
 		GetComponent<MeshFilter>().sharedMesh.uv2 = v;
-	}
-
-	/**
-	 *	Fill uvs with the UV channel values at index.
-	 */
-	public List<Vector4> GetUVs(int index)
-	{
-		switch(index)
-		{
-			case 2:
-				Debug.LogWarning("ProBuilder does not support editing UV2 channel.");
-				return (msh != null ? msh.uv2 : new Vector2[0]).Cast<Vector4>().ToList();
-
-			case 3:
-				return uv3 ?? pbUtil.Fill<Vector4>(Vector4.zero, vertexCount);
-
-			case 4:
-				return uv4 ?? pbUtil.Fill<Vector4>(Vector4.zero, vertexCount);
-
-			case 0:
-			case 1:
-			default:
-				return new List<Vector4>(uv0);
-		}
-	}
-
-	/**
-	 *	Sets the UV channel to uvs.  Does not apply to UnityEngine.Mesh.
-	 */
-	public void SetUVs(int index, IList<Vector4> uvs)
-	{
-		int count = uvs.Count;
-
-		switch(index)
-		{
-			case 0:
-			case 1:
-			default:
-				_uv0 = uvs.ToList();
-				break;
-			case 2:
-				Debug.Log("Use SetUV2");
-				break;
-
-			case 3:
-				_uv3 = uvs.ToList();
-				break;
-
-			case 4:
-				_uv4 = uvs.ToList();
-				break;
-		}
-
-		// make sure other uv channels are expanded to match
-
-		if(_uv0 != null && _uv0.Count < count)
-			for(int i = _uv0.Count; i < count; i++)
-				_uv0.Add(new Vector4(0,0,0,0));
-				
-		if(_uv3 != null && _uv3.Count > 0 && _uv3.Count < count)
-			for(int i = _uv3.Count; i < count; i++)
-				_uv3.Add(new Vector4(0,0,0,0));
-
-		if(_uv4 != null && _uv4.Count > 0 && _uv4.Count < count)
-			for(int i = _uv4.Count; i < count; i++)
-				_uv4.Add(new Vector4(0,0,0,0));
-	}
-
-	/**
-	 *	Applies UV channels to mesh.
-	 */
-	public void ApplyUVs(int index = -1)
-	{
-#if UNITY_5_3
-		if(index < 0)
-		{
-			msh.SetUVs(0, uv0);
-			if(hasUv3) msh.SetUVs(3, _uv3);
-			if(hasUv4) msh.SetUVs(4, _uv4);
-		}
-		else
-		{
-			msh.SetUVs(index, index < 2 ? uv0 : (index == 3 ? uv3 : uv4) );
-		}
-#else
-		msh.uv0 = uv0.Cast<Vector2>().ToList();
-		if(hasUv3) msh.uv3 = uv3.Cast<Vector2>().ToList();
-		if(hasUv4) msh.uv4 = uv4.Cast<Vector2>().ToList();
-#endif
 	}
 #endregion
 
@@ -1128,13 +1018,13 @@ public class pb_Object : MonoBehaviour
 			"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
 			"Shared Vertices: " + sharedIndices.Length + "\n" +
 			"Vertices int/msh: " + _vertices.Length + ", " + msh.vertices.Length + "\n" +
-			"UVs int/msh: " + uv0.Count + ", " + msh.uv.Length + "\n" +
+			"UVs int/msh: " + _uv.Length + ", " + msh.uv.Length + "\n" +
 			"Triangles: " + msh.triangles.Length + "\n" + 
 			"Faces: " + faces.Length + "\n" +
 			"Submesh: " + msh.subMeshCount + "\n" +
 
 			"# Vertices\n" + pbUtil.ToString(_vertices, "\n\t") + "\n" +
-			"# UVs\n" + pbUtil.ToString(uv0, "\n\t") + "\n" +
+			"# UVs\n" + pbUtil.ToString(_uv, "\n\t") + "\n" +
 			"# Shared:\n" + sharedIndices.ToString("\n\t") + "\n" + 
 			"# Faces:\n" + pbUtil.ToString(_faces, "\n\t") + "\n"+
 			"# UV:\n" + _faces.Select(x => x.uv).ToArray().ToString("\n\t");

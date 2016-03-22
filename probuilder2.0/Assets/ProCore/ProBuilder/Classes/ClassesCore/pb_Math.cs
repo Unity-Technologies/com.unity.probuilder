@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using System.Linq;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -65,19 +64,6 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 * Scales a Vector2 using origin as the pivot point.
-		 */
-		public static Vector4 RotateAroundPoint(this Vector4 v, Vector2 origin, float theta)
-		{
-			tmp.x = v.x;
-			tmp.y = v.y;
-			tmp = RotateAroundPoint(tmp, origin, theta);
-			v.x = tmp.x;
-			v.y = tmp.y;
-			return v;
-		}
-
-		/**
 		 * Returns a new point by rotating the Vector2 around an origin point.
 		 * @param v this - Vector2 original point.
 		 * @param origin The origin point to use as a pivot point.
@@ -106,21 +92,9 @@ namespace ProBuilder2.Math
 			return new Vector2(px, py);
 		}
 
-		static Vector2 tmp = new Vector2(0, 0);
-
 		/**
 		 * Scales a Vector2 using origin as the pivot point.
 		 */
-		public static Vector4 ScaleAroundPoint(this Vector4 v, Vector2 origin, Vector2 scale)
-		{
-			tmp.x = v.x;
-			tmp.y = v.y;
-			tmp = ScaleAroundPoint(tmp, origin, scale);
-			v.x = tmp.x;
-			v.y = tmp.y;
-			return v;
-		}
-
 		public static Vector2 ScaleAroundPoint(this Vector2 v, Vector2 origin, Vector2 scale)
 		{
 			Vector2 tp = v-origin;
@@ -264,13 +238,7 @@ namespace ProBuilder2.Math
 		 * many edges are hit.
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 */
-		[System.Obsolete("warning slow cast")]
-		public static bool PointInPolygon(IList<Vector2> polygon, Vector2 point)
-		{
-			return PointInPolygon(polygon.Cast<Vector4>().ToList(), point);
-		}
-
-		public static bool PointInPolygon(IList<Vector4> polygon, Vector2 point)
+		public static bool PointInPolygon(Vector2[] polygon, Vector2 point)
 		{
 			pb_Bounds2D bounds = new pb_Bounds2D(polygon);
 
@@ -279,7 +247,7 @@ namespace ProBuilder2.Math
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < polygon.Count; i += 2)
+				for(int i = 0; i < polygon.Length; i += 2)
 				{
 					if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
 						collisions++;
@@ -298,15 +266,9 @@ namespace ProBuilder2.Math
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 * This overload accepts an array of points and an array of indices that compose the polygon.
 		 */
-		[System.Obsolete("warning slow cast")]
-		public static bool PointInPolygon(IList<Vector2> polygon, int[] indices, Vector2 point)
+		public static bool PointInPolygon(Vector2[] polygon, int[] indices, Vector2 point)
 		{
-			return PointInPolygon(polygon.Cast<Vector4>().ToList(), indices, point);
-		}
-
-		public static bool PointInPolygon(IList<Vector4> polygon, IList<int> indices, Vector2 point)
-		{
-			if(indices.Count % 2 != 0)
+			if(indices.Length % 2 != 0)
 			{
 				Debug.LogError("PointInPolygon requires polygon indices be divisible by 2!");
 				return false;
@@ -319,7 +281,7 @@ namespace ProBuilder2.Math
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < indices.Count; i += 2)
+				for(int i = 0; i < indices.Length; i += 2)
 				{
 					if( GetLineSegmentIntersect(rayStart, point, polygon[indices[i]], polygon[indices[i+1]]) )
 						collisions++;
@@ -400,6 +362,48 @@ namespace ProBuilder2.Math
 
 			return false;
 		}
+
+		// public static bool RayIntersectsAABB(Ray ray, Bounds bounds, out float distance)
+		// {
+		// 	// r.dir is unit direction vector of ray
+		// 	dirfrac.x = 1.0f / r.dir.x;
+		// 	dirfrac.y = 1.0f / r.dir.y;
+		// 	dirfrac.z = 1.0f / r.dir.z;
+
+		// 	return RayIntersectsAABB(ray.origin, dirFrac, bounds.center - bounds.extents, bounds.center + bounds.extents, out distance);
+		// }
+
+		// internal static bool RayIntersectsAABB(Vector3 rayOrigin, Vector3 dirFrac, Vector3 aabbMin, Vector3 aabbMax)
+		// {
+		// 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+		// 	// r.org is origin of ray
+		// 	float t1 = (lb.x - r.org.x)*dirfrac.x;
+		// 	float t2 = (rt.x - r.org.x)*dirfrac.x;
+		// 	float t3 = (lb.y - r.org.y)*dirfrac.y;
+		// 	float t4 = (rt.y - r.org.y)*dirfrac.y;
+		// 	float t5 = (lb.z - r.org.z)*dirfrac.z;
+		// 	float t6 = (rt.z - r.org.z)*dirfrac.z;
+
+		// 	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+		// 	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+		// 	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
+		// 	if (tmax < 0)
+		// 	{
+		// 	t = tmax;
+		// 	return false;
+		// 	}
+
+		// 	// if tmin > tmax, ray doesn't intersect AABB
+		// 	if (tmin > tmax)
+		// 	{
+		// 	t = tmax;
+		// 	return false;
+		// 	}
+
+		// 	t = tmin;
+		// 	return true;
+		// }
 #endregion
 
 #region Normal and Tangents
@@ -454,17 +458,17 @@ namespace ProBuilder2.Math
 			Vector3 tan2 = Vector3.zero;
 			Vector4 tan = new Vector4(0f,0f,0f,1f);
 
-			int i1 = face.indices[0];
-			int i2 = face.indices[1];
-			int i3 = face.indices[2];
+			long i1 = face.indices[0];
+			long i2 = face.indices[1];
+			long i3 = face.indices[2];
 
 			Vector3 v1 = pb.vertices[i1];
 			Vector3 v2 = pb.vertices[i2];
 			Vector3 v3 = pb.vertices[i3];
 
-			Vector4 w1 = pb.uv0[i1];
-			Vector4 w2 = pb.uv0[i2];
-			Vector4 w3 = pb.uv0[i3];
+			Vector2 w1 = pb.uv[i1];
+			Vector2 w2 = pb.uv[i2];
+			Vector2 w3 = pb.uv[i3];
 
 			float x1 = v2.x - v1.x;
 			float x2 = v3.x - v1.x;
@@ -590,6 +594,38 @@ namespace ProBuilder2.Math
 		}
 
 		/**
+		 * The smallest X and Y value found in an array of Vector2.  May or may not belong to the same Vector2.
+		 */
+		public static Vector2 SmallestVector2(Vector2[] v)
+		{
+			Vector2 s = v[0];
+			for(int i = 1; i < v.Length; i++)
+			{
+				if(v[i].x < s.x)
+					s.x = v[i].x;
+				if(v[i].y < s.y)
+					s.y = v[i].y;
+			}
+			return s;
+		}
+
+		/**
+		 * The largest X and Y value in an array.  May or may not belong to the same Vector2.
+		 */
+		public static Vector2 LargestVector2(Vector2[] v)
+		{
+			Vector2 l = v[0];
+			for(int i = 0; i < v.Length; i++)
+			{
+				if(v[i].x > l.x)
+					l.x = v[i].x;
+				if(v[i].y > l.y)
+					l.y = v[i].y;
+			}
+			return l;
+		}
+
+		/**
 		 * Creates an AABB with vertices and returns the Center point.
 		 */
 		public static Vector3 BoundsCenter(Vector3[] verts)
@@ -615,31 +651,55 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 *	\brief Averages an array.
-		 *	\returns The average.
+		 *	\brief Gets the center point of the supplied Vector3[] array.
+		 *	\returns Average Vector3 of passed vertex array.
 		 */
-		public static Vector2 Average(IList<Vector2> v)
-		{
-			Vector2 sum = Vector2.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum / (float) v.Count;
-		}
-
-		public static Vector3 Average(IList<Vector3> v)
+		public static Vector3 Average(List<Vector3> v)
 		{
 			Vector3 sum = Vector3.zero;
 			for(int i = 0; i < v.Count; i++)
 				sum += v[i];
-			return sum / (float) v.Count;
+			return sum/(float)v.Count;
 		}
 
-		public static Vector4 Average(IList<Vector4> v)
+		public static Vector3 Average(Vector3[] v)
+		{
+			Vector3 sum = Vector3.zero;
+			for(int i = 0; i < v.Length; i++)
+				sum += v[i];
+			return sum/(float)v.Length;
+		}
+
+		public static Vector2 Average(List<Vector2> v)
+		{
+			Vector2 sum = Vector2.zero;
+			for(int i = 0; i < v.Count; i++)
+				sum += v[i];
+			return sum/(float)v.Count;
+		}
+
+		public static Vector2 Average(Vector2[] v)
+		{
+			Vector2 sum = Vector2.zero;
+			for(int i = 0; i < v.Length; i++)
+				sum += v[i];
+			return sum/(float)v.Length;
+		}
+
+		public static Vector4 Average(List<Vector4> v)
 		{
 			Vector4 sum = Vector4.zero;
 			for(int i = 0; i < v.Count; i++)
 				sum += v[i];
-			return sum / (float) v.Count;
+			return sum/(float)v.Count;
+		}
+
+		public static Vector4 Average(Vector4[] v)
+		{
+			Vector4 sum = Vector4.zero;
+			for(int i = 0; i < v.Length; i++)
+				sum += v[i];
+			return sum/(float)v.Length;
 		}
 
 		public static Color Average(Color[] Array)
@@ -650,16 +710,6 @@ namespace ProBuilder2.Math
 				sum += Array[i];
 
 			return sum / (float)Array.Length;
-		}
-
-		/**
-		 *	\brief Compares 2 vector2 objects, allowing for a margin of error.
-		 */
-		public static bool Approx(this Vector2 v, Vector2 b, float delta)
-		{
-			return 
-				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta;
 		}
 
 		/**
@@ -674,15 +724,13 @@ namespace ProBuilder2.Math
 		}
 
 		/**
-		 *	\brief Compares 2 vector4 objects, allowing for a margin of error.
+		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector4 v, Vector4 b, float delta)
+		public static bool Approx(this Vector2 v, Vector2 b, float delta)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta &&
-				Mathf.Abs(v.z - b.z) < delta &&
-				Mathf.Abs(v.w - b.w) < delta;
+				Mathf.Abs(v.y - b.y) < delta;
 		}
 
 		/**
@@ -845,15 +893,6 @@ namespace ProBuilder2.Math
 			Mathf.Abs(vec.y) > delta ? 1f : 0f,
 			Mathf.Abs(vec.z) > delta ? 1f : 0f
 			);
-	}
-
-	public static Vector4 ToMask2D(this Vector4 vec, float delta = FLT_EPSILON)
-	{
-		return new Vector4(
-			Mathf.Abs(vec.x) > delta ? 1f : 0f,
-			Mathf.Abs(vec.y) > delta ? 1f : 0f,
-			1f,
-			1f);
 	}
 
 	public static Vector3 ToSignedMask(this Vector3 vec, float delta = FLT_EPSILON)

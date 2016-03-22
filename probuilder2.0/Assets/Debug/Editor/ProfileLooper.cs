@@ -18,48 +18,46 @@ public class ProfileLooper : Editor
 	{
 		profiler = new pb_Profiler("Test Profiler");
 
-		List<Vector4> uvs = pbUtil.Fill<Vector4>(Vector4.zero, 6000);
+		pb_Object pb = pb_ShapeGenerator.CylinderGenerator(32, 15f, 20f, 32);
 		
-		profiler.BeginSample("Vec 2");
+		profiler.BeginSample("GetUniversalEdges");
 		for(int i = 0; i < REPEAT; i++)
 		{
-			profiler.BeginSample("Alloc Vector2");
-			MethodA(uvs);
+			profiler.BeginSample("IndexOf");
+			MethodA(pb);
 			profiler.EndSample();
 		}
 
 		for(int i = 0; i < REPEAT; i++)
 		{
-			profiler.BeginSample("Assign Vec2 Component");			
-			MethodB(uvs);
+			profiler.BeginSample("Sorted IndexOf");			
+			MethodB(pb);
 			profiler.EndSample();
 		}
 		profiler.EndSample();
 
+		GameObject go = pb.gameObject;
+		DestroyImmediate(pb);
+		DestroyImmediate(go);
+
 		Debug.Log( profiler.ToString() );
 	}
 
-	public static void MethodA(List<Vector4> uvs)
+	public static void MethodA(pb_Object pb)
 	{
-		Vector2 x = Vector2.zero;
+		pb_Edge[] edges = pb_Edge.AllEdges(pb.faces);
+		int len = edges.Length;
 
-		for(int i = 0; i < uvs.Count; i++)
-		{
-			x = uvs[i];
-			if(Vector2.Distance(x, Vector2.one) > 2f) Debug.Log("doesn't matter");
-		}
+		pb_IntArray[] sharedIndices = pb.sharedIndices;
+
+		pb_Edge[] uniEdges = new pb_Edge[len];
+		for(int i = 0; i < len; i++)
+			uniEdges[i] = new pb_Edge(sharedIndices.IndexOf(edges[i].x), sharedIndices.IndexOf(edges[i].y));
 	}
 
-	public static void MethodB(List<Vector4> uvs)
+	public static void MethodB(pb_Object pb)
 	{
-		Vector2 x = Vector2.zero;
 
-		for(int i = 0; i < uvs.Count; i++)
-		{
-			x.x = uvs[i].x;
-			x.y = uvs[i].y;
-			if(Vector2.Distance(x, Vector2.one) > 2f) Debug.Log("doesn't matter");
-		}
 	}
 }
 #endif

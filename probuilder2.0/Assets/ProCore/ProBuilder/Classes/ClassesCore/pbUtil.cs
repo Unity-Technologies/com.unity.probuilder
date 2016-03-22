@@ -133,7 +133,7 @@ namespace ProBuilder2.Common
 		return vals;
 	}
 
-	public static List<T> ValuesWithIndices<T>(this IList<T> arr, IList<int> indices)
+	public static IList<T> ValuesWithIndices<T>(this IList<T> arr, IList<int> indices)
 	{
 		List<T> vals = new List<T>();
 
@@ -206,32 +206,12 @@ namespace ProBuilder2.Common
 
 	public static T[] RemoveAt<T>(this T[] arr, int index)
 	{
-		T[] newArray = new T[arr.Length - 1];
+		T[] newArray = new T[arr.Length-1];
 		int n = 0;
-
 		for(int i = 0; i < arr.Length; i++)
 		{
-			if(i != index)
-			{
-				newArray[n] = arr[i];
-				n++;
-			}
-		}
-		return newArray;
-	}
-
-	// @todo
-	public static List<T> RemoveAt2<T>(this IList<T> arr, int index)
-	{
-		if(index < 0 || index > arr.Count)
-			return new List<T>(arr);
-
-		List<T> newArray = new List<T>(arr.Count - 1);
-		int n = 0;
-		for(int i = 0; i < arr.Count; i++)
-		{
 			if(i != index) {
-				newArray.Add(arr[i]);
+				newArray[n] = arr[i];
 				n++;
 			}
 		}
@@ -349,14 +329,6 @@ namespace ProBuilder2.Common
 		}
 		return arr;
 	}
-
-	public static List<T> Fill<T>(T value, int length)
-	{
-		List<T> l = new List<T>(length);
-		for(int i = 0; i < length; i++)
-			l.Add(value);
-		return l;
-	}
 	
 	/**
 	 * True if any value is present in both arrays.
@@ -413,73 +385,35 @@ namespace ProBuilder2.Common
 
 		return -1;
 	}
-		#endregion
+#endregion
 
 #region SNAP
 
-	public static float SnapValue(float val, float snpVal)
-	{
-		return snpVal * Mathf.Round(val / snpVal);
-	}
-
-	public static Vector2 SnapValue(Vector2 vertex, float snpVal)
-	{
-		return new Vector3(
-			snpVal * Mathf.Round(vertex.x / snpVal),
-			snpVal * Mathf.Round(vertex.y / snpVal));
-	}
-
 	public static Vector3 SnapValue(Vector3 vertex, float snpVal)
 	{
+		// snapValue is a global setting that comes from ProGrids
 		return new Vector3(
 			snpVal * Mathf.Round(vertex.x / snpVal),
 			snpVal * Mathf.Round(vertex.y / snpVal),
 			snpVal * Mathf.Round(vertex.z / snpVal));
 	}
 
+	public static float SnapValue(float val, float snpVal)
+	{
+		return snpVal * Mathf.Round(val / snpVal);
+	}
+
 	/**
 	 *	An override that accepts a vector3 to use as a mask for which values to snap.  Ex;
 	 *	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values.
 	 */
-	public static Vector2 SnapValue(Vector2 vertex, Vector2 snap)
-	{
-		float _x = vertex.x, _y = vertex.y;
-		Vector2 v = new Vector2(
-			(Mathf.Abs(snap.x) < 0.0001f ? _x : snap.x * Mathf.Round(_x / snap.x)),
-			(Mathf.Abs(snap.y) < 0.0001f ? _y : snap.y * Mathf.Round(_y / snap.y)) );
-		return v;
-	}
-
-	/**
-		*	An override that accepts a vector3 to use as a mask for which values to snap.  Ex;
-		*	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values.
-		*/
 	public static Vector3 SnapValue(Vector3 vertex, Vector3 snap)
 	{
 		float _x = vertex.x, _y = vertex.y, _z = vertex.z;
 		Vector3 v = new Vector3(
-			(Mathf.Abs(snap.x) < 0.0001f ? _x : snap.x * Mathf.Round(_x / snap.x)),
-			(Mathf.Abs(snap.y) < 0.0001f ? _y : snap.y * Mathf.Round(_y / snap.y)),
-			(Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z))
-			);
-		return v;
-	}
-
-		/**
-		 *	An override that accepts a Vector4 to use as a mask for which values to snap.  Ex;
-		 *	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values.
-		 */
-		public static Vector4 SnapValue(Vector4 vertex, Vector4 snap)
-	{
-		float 	_x = vertex.x,
-				_y = vertex.y,
-				_z = vertex.z,
-				_w = vertex.w;
-		Vector4 v = new Vector4(
 			( Mathf.Abs(snap.x) < 0.0001f ? _x : snap.x * Mathf.Round(_x / snap.x) ),
 			( Mathf.Abs(snap.y) < 0.0001f ? _y : snap.y * Mathf.Round(_y / snap.y) ),
-			( Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z) ),
-			( Mathf.Abs(snap.w) < 0.0001f ? _w : snap.w * Mathf.Round(_w / snap.w) )
+			( Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z) )
 			);
 		return v;
 	}
@@ -738,14 +672,6 @@ namespace ProBuilder2.Common
 	public static Vector3 DivideBy(this Vector3 v, Vector3 o)
 	{
 		return new Vector3(v.x/o.x, v.y/o.y, v.z/o.z);
-	}
-
-	/**
-	 * Component-wise division.
-	 */
-	public static Vector4 DivideBy(this Vector4 v, Vector4 o)
-	{
-		return new Vector4(v.x/o.x, v.y/o.y, v.z/o.z, v.w/o.w);
 	}
 #endregion
 }

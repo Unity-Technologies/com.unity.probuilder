@@ -228,33 +228,29 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * attempt to figure out where the new UV coordinate should go
 		 */
-		List<Vector4> uv0 = new List<Vector4>(pb.uv0.ValuesWithIndices(distinctIndices));
-		List<Vector4> uv3 = pb.hasUv3 ? new List<Vector4>(pb.uv3.ValuesWithIndices(distinctIndices)) : null;
-		List<Vector4> uv4 = pb.hasUv4 ? new List<Vector4>(pb.uv4.ValuesWithIndices(distinctIndices)) : null;
+		Vector2[] uvs = new Vector2[len+1];
+		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, len);
 
 		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
+		/**
+		 * Attempt to figure out where the new UV point should go
+		 */
 		// these are the two vertices that are split by the new vertex
 		int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(len)).Select(x => x.x != len ? x.x : x.y).ToArray();
 
 		if(adjacent_vertex.Length == 2)
 		{
-			uv0.Add( (uv0[adjacent_vertex[0]] + uv0[adjacent_vertex[1]]) * .5f);
-			if(uv3 != null) uv3.Add( (uv3[adjacent_vertex[0]] + uv3[adjacent_vertex[1]]) * .5f);
-			if(uv4 != null) uv4.Add( (uv4[adjacent_vertex[0]] + uv4[adjacent_vertex[1]]) * .5f);
+			uvs[len] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
 		}
 		else
 		{
 			Debug.LogError("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
 			triangulated_face.manualUV = false;
-
-			uv0.Add(Vector4.zero);
-			if(uv3 != null) uv3.Add(Vector4.zero);
-			if(uv4 != null) uv4.Add(Vector4.zero);
 		}
 
 		// Compose new face
-		newFace = pb.AppendFace(verts, cols, uv0, triangulated_face, sharedIndex);
+		newFace = pb.AppendFace(verts, cols, uvs, triangulated_face, sharedIndex);
 
 		// And delete the old
 		pb.DeleteFace(face);
@@ -277,7 +273,8 @@ namespace ProBuilder2.MeshOperations
 		int[] distinctIndices = face.distinctIndices;
 		Vector3[] verts = pb.vertices.ValuesWithIndices(distinctIndices);
 		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
-		List<Vector4> uvs = new List<Vector4>( pb.uv0.ValuesWithIndices(distinctIndices) );
+		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Length];
+		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, distinctIndices.Length);
 
 		// Add the new point
 		Vector3[] t_verts = new Vector3[verts.Length + points.Length];
@@ -323,20 +320,19 @@ namespace ProBuilder2.MeshOperations
 		 */
 		if(triangulated_face.manualUV)
 		{
-			for(int n = distinctIndices.Length; n < distinctIndices.Length + points.Length; n++)
+			for(int n = distinctIndices.Length; n < uvs.Length; n++)
 			{
 				// these are the two vertices that are split by the new vertex
 				int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(n)).Select(x => x.x != n ? x.x : x.y).ToArray();
 
 				if(adjacent_vertex.Length == 2)
 				{
-					uvs.Add( (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]]) * .5f );
+					uvs[n] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
 				}
 				else
 				{
 					Debug.LogWarning("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
 					triangulated_face.manualUV = false;
-					uvs.Add( Vector4.zero );
 				}
 			}
 		}
@@ -372,8 +368,13 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static void DeleteVerticesWithIndices(this pb_Object pb, int[] distInd)
 	{
-		pb_Vertex[] v = pb.vertices.Select((x,i)=>{return new pb_Vertex(pb, i);}).ToArray();
-		v = v.RemoveAt(distInd);
+		Vector3[] verts = pb.vertices;
+		Color[] cols = pb.colors;
+		Vector2[] uvs = pb.uv;
+
+		verts = verts.RemoveAt(distInd);
+		cols = cols.RemoveAt(distInd);
+		uvs = uvs.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces;
 
@@ -400,7 +401,9 @@ namespace ProBuilder2.MeshOperations
 		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
 		
 		pb.SetSharedIndices(si);
-		pb.SetVertices(v);
+		pb.SetVertices(verts);
+		pb.SetColors(cols);
+		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
 		pb.RebuildFaceCaches();

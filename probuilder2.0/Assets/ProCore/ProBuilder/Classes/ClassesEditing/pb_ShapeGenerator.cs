@@ -1236,7 +1236,7 @@ public class pb_ShapeGenerator
 		pb_Object pb = _gameObject.AddComponent<pb_Object>();
 
 		pb.SetVertices(v);
-		pb.SetUVs(0, new Vector4[v.Length]);
+		pb.SetUV(new Vector2[v.Length]);
 		pb.SetFaces(f);
 
 		pb_IntArray[] si = new pb_IntArray[v.Length];

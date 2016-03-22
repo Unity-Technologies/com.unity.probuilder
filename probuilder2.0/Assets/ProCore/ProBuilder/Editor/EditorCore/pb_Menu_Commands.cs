@@ -391,11 +391,10 @@ namespace ProBuilder2.EditorCommon
 			go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
-			pbMeshOps.ResetPbObjectWithMeshFilter( go.AddComponent<pb_Object>(), false );
-			// pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(go.transform, false);
+			pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(go.transform, false);
 			DestroyImmediate(go);
 
-			Selection.objects = new Object[] { go };
+			Selection.objects = new Object[] { pb.gameObject };
 
 			pb_Editor_Utility.ShowNotification(op_string);
 			return new pb_ActionResult(Status.Success, op_string);

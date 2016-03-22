@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize(win.position.width > win.position.height) + new Vector2(8, 12);
+			win.minSize = actions[0].GetSize(win.position.width > win.position.height) + new Vector2(6, 12);
 			this.window = win;
 		}
 
