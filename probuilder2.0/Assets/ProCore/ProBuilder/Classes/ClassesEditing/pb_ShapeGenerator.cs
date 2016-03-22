@@ -609,7 +609,6 @@ public class pb_ShapeGenerator
 		};
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
-		pb.RebuildFaceCaches();
 		pb.gameObject.name = "Prism";
 		return pb;
 	}

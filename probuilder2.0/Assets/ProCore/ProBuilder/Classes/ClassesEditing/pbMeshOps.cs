@@ -508,7 +508,9 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		pb.SetSharedIndices(sharedIndices);
-		pb.RebuildFaceCaches();
+
+		foreach(pb_Face f in pb.faces)
+			f.RebuildCaches();
 		
 		extrudedEdges = newEdges.ToArray();
 		return true;

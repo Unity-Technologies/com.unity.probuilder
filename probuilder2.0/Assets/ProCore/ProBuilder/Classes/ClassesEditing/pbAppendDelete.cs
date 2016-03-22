@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using System.Linq;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -139,48 +140,7 @@ public static class pbAppendDelete
 	 */
 	public static void DeleteFace(this pb_Object pb, pb_Face face)
 	{		
-		int f_ind = System.Array.IndexOf(pb.faces, face);
-		int[] distInd = face.distinctIndices;
-		
-		Vector3[] verts = pb.vertices.RemoveAt(distInd);
-		Color[] cols = pb.colors.RemoveAt(distInd);
-		Vector2[] uvs = pb.uv.RemoveAt(distInd);
-
-		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
-
-		// shift all other face indices down to account for moved vertex positions
-		for(int i = 0; i < nFaces.Length; i++)
-		{
-			int[] tris = nFaces[i].indices;
-			for(int n = 0; n < tris.Length; n++)
-			{
-				int sub = 0;
-				for(int d = 0; d < distInd.Length; d++)
-				{
-					if(tris[n] > distInd[d])
-						sub++;
-				}
-				tris[n] -= sub;
-			}
-			nFaces[i].SetIndices(tris);
-		}
-
-		// shift all other face indices in the shared index array down to account for moved vertex positions
-		pb_IntArray[] si = pb.sharedIndices;
-		pb_IntArray[] si_uv = pb.sharedIndicesUV;
-
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, distInd);
-
-		pb.SetSharedIndices(si);		
-		pb.SetSharedIndicesUV(si_uv);		
-
-		pb.SetVertices(verts);
-		pb.SetColors(cols);
-		pb.SetUV(uvs);
-
-		pb.SetFaces(nFaces);
-		pb.RebuildFaceCaches();
+		DeleteFaces(pb, new pb_Face[] { face });
 	}
 
 	/**
@@ -189,61 +149,16 @@ public static class pbAppendDelete
 	 */
 	public static void DeleteFaces(this pb_Object pb, pb_Face[] faces)
 	{	
-		int[] f_ind = new int[faces.Length];
-
-		// test for triangle array equality, not reference equality
-		for(int i = 0; i < faces.Length; i++)
-			f_ind[i] = System.Array.IndexOf(pb.faces, faces[i]);
-		
-		List<int> indices_to_remove = new List<int>( pb_Face.AllTrianglesDistinct(faces) );
-		indices_to_remove.Sort();
-
-		Vector3[] verts = pb.vertices.SortedRemoveAt(indices_to_remove);
-		Color[] cols = pb.colors.SortedRemoveAt(indices_to_remove);
-		Vector2[] uvs = pb.uv.SortedRemoveAt(indices_to_remove);
-
-		pb_Face[] nFaces = pb.faces.RemoveAt(f_ind);
-
-		// shift all other face indices down to account for moved vertex positions
-		for(int i = 0; i < nFaces.Length; i++)
-		{
-			int[] tris = nFaces[i].indices;
-
-			for(int n = 0; n < tris.Length; n++)
-			{
-				int index = pbUtil.NearestIndexPriorToValue(indices_to_remove, tris[n]);
-				// add 1 because index is zero based
-				tris[n] -= index + 1;
-			}
-
-			nFaces[i].SetIndices(tris);
-		}
-
-		// shift all other face indices in the shared index array down to account for moved vertex positions
-		pb_IntArray[] si = pb.sharedIndices;
-		pb_IntArray[] si_uv = pb.sharedIndicesUV;
-
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si, indices_to_remove);
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, indices_to_remove);
-		
-		pb.SetSharedIndices(si);
-		pb.SetSharedIndicesUV(si_uv);
-		
-		pb.SetVertices(verts);
-		pb.SetColors(cols);
-		pb.SetUV(uvs);
-
-		pb.SetFaces(nFaces);
-		pb.RebuildFaceCaches();
+		DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 	}
 
 	/**
 	 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
 	 * all the sharedIndices moving stuff for you.
 	 */
-	public static void DeleteFaces(this pb_Object pb, int[] faceIndices)
+	public static void DeleteFaces(this pb_Object pb, IList<int> faceIndices)
 	{	
-		pb_Face[] faces = new pb_Face[faceIndices.Length];
+		pb_Face[] faces = new pb_Face[faceIndices.Count];
 
 		for(int i = 0; i < faces.Length; i++)
 			faces[i] = pb.faces[faceIndices[i]];
@@ -251,8 +166,8 @@ public static class pbAppendDelete
 		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
 
 		Vector3[] verts = pb.vertices.RemoveAt(distInd);
-		Color[] cols = pb.colors.RemoveAt(distInd);
-		Vector2[] uvs = pb.uv.RemoveAt(distInd);
+		Color[] cols 	= pb.colors.RemoveAt(distInd);
+		Vector2[] uvs 	= pb.uv.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(faceIndices);
 
@@ -288,8 +203,6 @@ public static class pbAppendDelete
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
-		pb.RebuildFaceCaches();
-		
 	}
 #endregion
 }

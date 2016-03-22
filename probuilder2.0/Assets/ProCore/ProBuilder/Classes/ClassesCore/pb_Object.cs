@@ -1035,14 +1035,14 @@ public class pb_Object : MonoBehaviour
 
 #region REBUILDING / INSTANTIATION
 
-	/**
-	 *	\brief Forces each pb_Face in the object to rebuild it's edge arrays.
-	 *	Recommended to be done after adding or removing vertices / triangles
-	 */
-	public void RebuildFaceCaches()
-	{
-		foreach(pb_Face f in faces)
-			f.RebuildCaches();
-	}
+	// /**
+	//  *	\brief Forces each pb_Face in the object to rebuild it's edge arrays.
+	//  *	Recommended to be done after adding or removing vertices / triangles
+	//  */
+	// public void RebuildFaceCaches()
+	// {
+	// 	foreach(pb_Face f in faces)
+	// 		f.RebuildCaches();
+	// }
 #endregion
 }

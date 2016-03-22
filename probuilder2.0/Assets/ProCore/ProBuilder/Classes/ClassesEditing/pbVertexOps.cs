@@ -406,8 +406,6 @@ namespace ProBuilder2.MeshOperations
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
-		pb.RebuildFaceCaches();
-
 		pb.ToMesh();	
 	}	
 #endregion

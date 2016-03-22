@@ -249,7 +249,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public void SetIndices(int[] i)
 	{
 		_indices = i;
-		_distinctIndices = i.Distinct().ToArray();
+		RebuildCaches();
 	}
 
 	/**
