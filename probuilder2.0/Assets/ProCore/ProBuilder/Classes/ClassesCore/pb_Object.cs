@@ -171,6 +171,12 @@ public class pb_Object : MonoBehaviour
 	private Vector2[] 					_uv;
 
 	[SerializeField]
+	private List<Vector4>				_uv3;
+
+	[SerializeField]
+	private List<Vector4>				_uv4;
+
+	[SerializeField]
 	private pb_IntArray[] 				_sharedIndicesUV = new pb_IntArray[0];
 
 	[SerializeField]
@@ -181,28 +187,14 @@ public class pb_Object : MonoBehaviour
 	public float areaError = 15f;
 	public float hardAngle = 88f;
 	public float packMargin = 20f;
-	
-	public pb_Face[]					SelectedFaces { get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); } }
-	public int 							SelectedFaceCount { get { return m_selectedFaces.Length; } }
-	public int[]						SelectedFaceIndices { get { return m_selectedFaces; } }
-	public int[]						SelectedTriangles { get { return m_selectedTriangles; } }
-	public int 							SelectedTriangleCount { get { return m_selectedTriangles.Length; } }
-	public pb_Edge[]					SelectedEdges { get { return m_SelectedEdges; } }
-	public int							SelectedEdgeCount { get { return m_SelectedEdges.Length; } }
-
-	[SerializeField] private int[]		m_selectedFaces 		= new int[]{};
-	[SerializeField] private pb_Edge[]	m_SelectedEdges 		= new pb_Edge[]{};
-	[SerializeField] private int[]		m_selectedTriangles 	= new int[]{};
 
 	public Vector3 						previousTransform = new Vector3(0f, 0f, 0f);
-	public bool 						userCollisions = false;	///< If false, ProBuilder will automatically create and scale colliders.
-
+	public bool 						userCollisions = false;	/// If false, ProBuilder will automatically create and scale colliders.
 	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
 
-	///< usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
-	/// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
-	public bool dontDestroyMeshOnDelete = false;	
-
+	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
+	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
+	public bool dontDestroyMeshOnDelete = false;
 #endregion
 
 #region ACCESS
@@ -228,8 +220,15 @@ public class pb_Object : MonoBehaviour
 	public int id { get { return gameObject.GetInstanceID(); } }
 
 	public Vector3[] vertices { get { return _vertices; } }
-	public Vector2[] uv { get { return _uv; } }
 	public Color[] colors { get { return _colors; } }
+
+	public Vector2[] uv { get { return _uv; } }
+
+	public bool hasUv3 { get { return _uv3 != null && _uv3.Count == vertexCount; } }
+	public bool hasUv4 { get { return _uv4 != null && _uv4.Count == vertexCount; } }
+
+	public List<Vector4> uv3 { get { return _uv3; } }
+	public List<Vector4> uv4 { get { return _uv4; } }
 
 	public int faceCount { get { return _faces.Length; } }
 	public int vertexCount { get { return _vertices.Length; } }
@@ -271,6 +270,18 @@ public class pb_Object : MonoBehaviour
 #endregion
 
 #region SELECTION
+
+	public pb_Face[]					SelectedFaces { get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); } }
+	public int 							SelectedFaceCount { get { return m_selectedFaces.Length; } }
+	public int[]						SelectedFaceIndices { get { return m_selectedFaces; } }
+	public int[]						SelectedTriangles { get { return m_selectedTriangles; } }
+	public int 							SelectedTriangleCount { get { return m_selectedTriangles.Length; } }
+	public pb_Edge[]					SelectedEdges { get { return m_SelectedEdges; } }
+	public int							SelectedEdgeCount { get { return m_SelectedEdges.Length; } }
+
+	[SerializeField] private int[]		m_selectedFaces 		= new int[]{};
+	[SerializeField] private pb_Edge[]	m_SelectedEdges 		= new pb_Edge[]{};
+	[SerializeField] private int[]		m_selectedTriangles 	= new int[]{};
 
 	/**
 	 *	Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
@@ -496,7 +507,6 @@ public class pb_Object : MonoBehaviour
 			return MeshRebuildReason.Null;
 		}
 
-
 		int meshNo;
 		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
 
@@ -549,18 +559,6 @@ public class pb_Object : MonoBehaviour
 #if !PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
 #endif
-	}
-
-	/**
-	 * Set the MeshComponent.sharedMesh back to matching the pb_Object.vertices cache if necessary.
-	 */
-	public void ResetMesh()
-	{
-		if(msh.vertexCount == _vertices.Length)
-			return;
-
-		ToMesh();
-		Refresh();
 	}
 
 	/**

@@ -242,8 +242,8 @@ public class pb_Preferences
 
 	}
 
-	static Rect keyRect = new Rect(324, 240, 168, 18);
-	static Rect keyInputRect = new Rect(356, 240, 133, 18);
+	static Rect keyRect 		= new Rect(324, 248, 168, 18);
+	static Rect keyInputRect 	= new Rect(356, 248, 133, 18);
 
 	static Rect descriptionTitleRect = new Rect(324, 300, 168, 200);
 	static Rect descriptionRect = new Rect(324, 320, 168, 200);
@@ -255,15 +255,13 @@ public class pb_Preferences
 	{
 		// descriptionTitleRect = EditorGUI.RectField(new Rect(240,150,200,50), descriptionTitleRect);
 
-		string keyString = defaultShortcuts[shortcutIndex].key.ToString();
-	
 		GUI.Label(keyRect, "Key");
-		keyString = EditorGUI.TextField(keyInputRect, keyString);
-		defaultShortcuts[shortcutIndex].key = pbUtil.ParseEnum(keyString, KeyCode.None);
+		KeyCode key = defaultShortcuts[shortcutIndex].key;
+		key = (KeyCode) EditorGUI.EnumPopup(keyInputRect, key);
+		defaultShortcuts[shortcutIndex].key = key;
 
 		GUI.Label(modifiersRect, "Modifiers");
-		defaultShortcuts[shortcutIndex].eventModifiers = 
-			(EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, defaultShortcuts[shortcutIndex].eventModifiers);
+		defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, defaultShortcuts[shortcutIndex].eventModifiers);
 
 		GUI.Label(descriptionTitleRect, "Description", EditorStyles.boldLabel);
 
