@@ -214,8 +214,8 @@ public class pb_Object : MonoBehaviour
 	public pb_Face[] faces { get { return _quads; } }// == null ? Extractfaces(msh) : _faces; } }
 	public pb_Face[] quads {get { Debug.LogWarning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
 
-	public pb_IntArray[] 	sharedIndices { get { return _sharedIndices; } }	// returns a reference
-	public pb_IntArray[] 	sharedIndicesUV { get { return _sharedIndicesUV; } } 
+	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }	// returns a reference
+	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } } 
 
 	public int id { get { return gameObject.GetInstanceID(); } }
 
@@ -655,38 +655,22 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	Returns a new unused texture group id.
 	 */
-	public int UnusedTextureGroup(int i)
+	public int UnusedTextureGroup(int i = 1)
 	{
-		int[] used = new int[faces.Length];
-		for(int j = 0; j < faces.Length; j++)	
-			used[j] = faces[j].textureGroup;
-		while(System.Array.IndexOf(used, i) > -1)
+		while( System.Array.Exists(faces, element => element.textureGroup == i) )
 			i++;
+
 		return i;
 	}
 
 	/**
 	 * Returns a new unused element group.   Will be greater than or equal to i.
 	 */
-	public int UnusedElementGroup(int i)
+	public int UnusedElementGroup(int i = 1)
 	{
 		while( System.Array.Exists(faces, element => element.elementGroup == i) )
 			i++;
 		
-		return i;
-	}
-
-	public int UnusedTextureGroup()
-	{
-		int i = 1;
-	
-		int[] used = new int[faces.Length];
-		for(int j = 0; j < faces.Length; j++)	
-			used[j] = faces[j].textureGroup;
-	
-		while(System.Array.IndexOf(used, i) > -1)
-			i++;
-
 		return i;
 	}
 
@@ -913,7 +897,7 @@ public class pb_Object : MonoBehaviour
 		msh.RecalculateNormals();
 			
 		// average the soft edge faces
-				Vector3[] normals = msh.normals;
+		Vector3[] normals = msh.normals;
 
 		int[] smoothGroup = new int[normals.Length];
 
@@ -993,54 +977,4 @@ public class pb_Object : MonoBehaviour
 	}
 #endregion
 
-#region OVERRIDES
-
-	public override string ToString()
-	{
-		return gameObject.name;
-		// string str =  
-		// 	"Name: " + gameObject.name + "\n" +
-		// 	"ID: " + id + "\n" +
-		// 	"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
-		// 	"Shared / Total Vertices: " + sharedIndices.Length + " , " + msh.vertices.Length + "\n" +
-		// 	"faces: " + faces.Length;
-		// return str;
-	}
-
-	public string ToStringDetailed()
-	{
-		string str =  
-			"Name: " + gameObject.name + "\n" +
-			"Static: " + gameObject.isStatic + "\n" + 
-			"ID: " + id + "\n" +
-			"Entity Type: " + GetComponent<pb_Entity>().entityType + "\n" +
-			"Shared Vertices: " + sharedIndices.Length + "\n" +
-			"Vertices int/msh: " + _vertices.Length + ", " + msh.vertices.Length + "\n" +
-			"UVs int/msh: " + _uv.Length + ", " + msh.uv.Length + "\n" +
-			"Triangles: " + msh.triangles.Length + "\n" + 
-			"Faces: " + faces.Length + "\n" +
-			"Submesh: " + msh.subMeshCount + "\n" +
-
-			"# Vertices\n" + pbUtil.ToString(_vertices, "\n\t") + "\n" +
-			"# UVs\n" + pbUtil.ToString(_uv, "\n\t") + "\n" +
-			"# Shared:\n" + sharedIndices.ToString("\n\t") + "\n" + 
-			"# Faces:\n" + pbUtil.ToString(_faces, "\n\t") + "\n"+
-			"# UV:\n" + _faces.Select(x => x.uv).ToArray().ToString("\n\t");
-
-		return str;
-	}
-#endregion
-
-#region REBUILDING / INSTANTIATION
-
-	// /**
-	//  *	\brief Forces each pb_Face in the object to rebuild it's edge arrays.
-	//  *	Recommended to be done after adding or removing vertices / triangles
-	//  */
-	// public void RebuildFaceCaches()
-	// {
-	// 	foreach(pb_Face f in faces)
-	// 		f.RebuildCaches();
-	// }
-#endregion
 }

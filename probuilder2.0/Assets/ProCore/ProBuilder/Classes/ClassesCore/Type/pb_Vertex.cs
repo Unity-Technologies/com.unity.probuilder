@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProBuilder2.Common
 {
@@ -27,26 +28,25 @@ namespace ProBuilder2.Common
 		public pb_Vertex(pb_Object pb, int index)
 		{
 			int vertexCount = pb.vertexCount;
-			bool hasMesh = pb.msh != null;
+			Mesh m = pb.msh;
+			bool hasMesh = m != null;
 
 			this.position = pb.vertices[index];
 			this.color = pb.colors[index];
 			this.uv0 = pb.uv[index];
 
-			if(hasMesh && pb.msh.normals != null && pb.msh.normals.Length == vertexCount)
-				this.normal = pb.msh.normals[index];
+			if(hasMesh && m.normals != null && m.normals.Length == vertexCount)
+				this.normal = m.normals[index];
 
-			if(hasMesh && pb.msh.tangents != null && pb.msh.tangents.Length == vertexCount)
-				this.tangent = pb.msh.tangents[index];
+			if(hasMesh && m.tangents != null && m.tangents.Length == vertexCount)
+				this.tangent = m.tangents[index];
 
-			if(hasMesh && pb.msh.uv2 != null && pb.msh.uv2.Length == vertexCount)
-				this.uv2 = pb.msh.uv2[index];
+			if(hasMesh && m.uv2 != null && m.uv2.Length == vertexCount)
+				this.uv2 = m.uv2[index];
 
-			if(pb.uv3 != null && pb.uv3.Count == vertexCount)
-				this.uv3 = pb.uv3[index];
+			if(pb.hasUv3) this.uv3 = pb.uv3[index];
 
-			if(pb.uv4 != null && pb.uv4.Count == vertexCount)
-				this.uv4 = pb.uv4[index];
+			if(pb.hasUv4) this.uv4 = pb.uv4[index];
 		}
 
 		public static pb_Vertex[] CreateArray(pb_Object pb)
@@ -55,6 +55,27 @@ namespace ProBuilder2.Common
 			for(int i = 0; i < pb.vertexCount; i++)
 				v[i] = new pb_Vertex(pb, i);
 			return v;
+		}
+
+		public static void GetArrays(	pb_Vertex[] vertices,
+										out Vector3[] position,
+										out Color[] color,
+										out Vector2[] uv0,
+										out Vector3[] normal,
+										out Vector4[] tangent,
+										out Vector2[] uv2,
+										out Vector4[] uv3,
+										out Vector4[] uv4)
+		{
+			position 	= vertices.Select(x => x.position).ToArray();
+			color 		= vertices.Select(x => x.color).ToArray();
+			uv0 		= vertices.Select(x => x.uv0).ToArray();
+
+			normal		= vertices.Any(x => x.normal != null) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
+			tangent		= vertices.Any(x => x.tangent != null) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
+			uv2			= vertices.Any(x => x.uv2 != null) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
+			uv3			= vertices.Any(x => x.uv3 != null) ? vertices.Select(x => (Vector4) x.uv3).ToArray() : null;
+			uv4			= vertices.Any(x => x.uv4 != null) ? vertices.Select(x => (Vector4) x.uv4).ToArray() : null;
 		}
 
 		public static pb_Vertex Average(IList<pb_Vertex> vertices)
