@@ -164,8 +164,9 @@ namespace ProBuilder2.EditorCommon
 			if(SettingsEnabled())
 			{
 				Rect r = GUILayoutUtility.GetLastRect();
-				r.x = r.x + r.width - 18;
-				r.y += 2;
+				// options icon is 16x16
+				r.x = r.x + r.width - 14;
+				r.y -= 2;
 				r.width = 17;
 				r.height = 17;
 				GUI.Label(r, pb_IconUtility.GetIcon("Options"));

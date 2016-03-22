@@ -153,6 +153,44 @@ public class pb_Object : MonoBehaviour
 
 		return pb;
 	}
+
+	/**
+	 * Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
+	 */
+	public static pb_Object CreateInstanceWithElements(pb_Vertex[] vertices, pb_Face[] faces, pb_IntArray[] si, pb_IntArray[] si_uv)
+	{
+		GameObject _gameObject = new GameObject();
+		pb_Object pb = _gameObject.AddComponent<pb_Object>();
+
+		Vector3[] 	position;
+		Color[] 	color;
+		Vector2[] 	uv0;
+		Vector3[] 	normal;
+		Vector4[] 	tangent;
+		Vector2[] 	uv2;
+		Vector4[] 	uv3;
+		Vector4[] 	uv4;
+
+		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+
+		pb.SetVertices(position);
+		pb.SetColors(color);
+		pb.SetUV(uv0);
+		if(uv3 != null) pb._uv3 = new List<Vector4>(uv3);
+		if(uv4 != null) pb._uv4 = new List<Vector4>(uv4);
+
+		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(position) );
+		pb.SetSharedIndicesUV( si_uv ?? new pb_IntArray[0] {});
+
+		pb.SetFaces(faces);
+
+		pb.ToMesh();
+		pb.Refresh();
+
+		pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+
+		return pb;
+	}
 #endregion
 
 #region INTERNAL MEMBERS
@@ -780,6 +818,10 @@ public class pb_Object : MonoBehaviour
 
 		_uv = newUVs;
 		msh.uv = newUVs;
+#if UNITY_5_3
+		if(hasUv3) msh.SetUVs(3, uv3);
+		if(hasUv4) msh.SetUVs(4, uv4);
+#endif
 	}
 
 	/**
