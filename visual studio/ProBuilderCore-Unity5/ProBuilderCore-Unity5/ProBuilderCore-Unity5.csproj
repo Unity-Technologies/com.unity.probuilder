@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KDTree, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesLib\KDTree.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>D:\Applications\Unity 4.7.0f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
@@ -38,102 +42,224 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pbUtil.cs">
-      <Link>pbUtil.cs</Link>
+      <Link>Classes\ClassesCore\pbUtil.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ColorUtil.cs">
-      <Link>pb_ColorUtil.cs</Link>
+      <Link>Classes\ClassesCore\pb_ColorUtil.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Constant.cs">
-      <Link>pb_Constant.cs</Link>
+      <Link>Classes\ClassesCore\pb_Constant.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_DummyScript.cs">
-      <Link>pb_DummyScript.cs</Link>
+      <Link>Classes\ClassesCore\pb_DummyScript.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Edge.cs">
-      <Link>pb_Edge.cs</Link>
+      <Link>Classes\ClassesCore\pb_Edge.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ElementGraphics.cs">
-      <Link>pb_ElementGraphics.cs</Link>
+      <Link>Classes\ClassesCore\pb_ElementGraphics.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Entity.cs">
-      <Link>pb_Entity.cs</Link>
+      <Link>Classes\ClassesCore\pb_Entity.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Enum.cs">
-      <Link>pb_Enum.cs</Link>
+      <Link>Classes\ClassesCore\pb_Enum.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Face.cs">
-      <Link>pb_Face.cs</Link>
+      <Link>Classes\ClassesCore\pb_Face.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_HandleUtility.cs">
-      <Link>pb_HandleUtility.cs</Link>
+      <Link>Classes\ClassesCore\pb_HandleUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_IntArray.cs">
-      <Link>pb_IntArray.cs</Link>
+      <Link>Classes\ClassesCore\pb_IntArray.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_IntArrayUtility.cs">
+      <Link>Classes\ClassesCore\pb_IntArrayUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_LineRenderer.cs">
-      <Link>pb_LineRenderer.cs</Link>
+      <Link>Classes\ClassesCore\pb_LineRenderer.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Math.cs">
-      <Link>pb_Math.cs</Link>
+      <Link>Classes\ClassesCore\pb_Math.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshRenderer.cs">
-      <Link>pb_MeshRenderer.cs</Link>
+      <Link>Classes\ClassesCore\pb_MeshRenderer.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshUtility.cs">
-      <Link>pb_MeshUtility.cs</Link>
+      <Link>Classes\ClassesCore\pb_MeshUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MonoBehaviourSingleton.cs">
-      <Link>pb_MonoBehaviourSingleton.cs</Link>
+      <Link>Classes\ClassesCore\pb_MonoBehaviourSingleton.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Object.cs">
-      <Link>pb_Object.cs</Link>
+      <Link>Classes\ClassesCore\pb_Object.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ObjectPool.cs">
-      <Link>pb_ObjectPool.cs</Link>
+      <Link>Classes\ClassesCore\pb_ObjectPool.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Reflection.cs">
-      <Link>pb_Reflection.cs</Link>
+      <Link>Classes\ClassesCore\pb_Reflection.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Shortcut.cs">
-      <Link>pb_Shortcut.cs</Link>
+      <Link>Classes\ClassesCore\pb_Shortcut.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_UV.cs">
-      <Link>pb_UV.cs</Link>
+      <Link>Classes\ClassesCore\pb_UV.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_UVUtility.cs">
-      <Link>pb_UVUtility.cs</Link>
+      <Link>Classes\ClassesCore\pb_UVUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Bounds2D.cs">
-      <Link>pb_Bounds2D.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_Bounds2D.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Color.cs">
-      <Link>pb_Color.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_Color.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_EdgeConnection.cs">
-      <Link>pb_EdgeConnection.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_EdgeConnection.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_HandleConstraint2D.cs">
-      <Link>pb_HandleConstraint2D.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_HandleConstraint2D.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_IntVec3.cs">
-      <Link>pb_IntVec3.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_IntVec3.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_RaycastHit.cs">
-      <Link>pb_RaycastHit.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_RaycastHit.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Renderable.cs">
-      <Link>pb_Renderable.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_Renderable.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Transform2D.cs">
-      <Link>pb_Transform2D.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_Transform2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Tuple.cs">
+      <Link>Classes\ClassesCore\Type\pb_Tuple.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Type.cs">
-      <Link>pb_Type.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_Type.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Vertex.cs">
+      <Link>Classes\ClassesCore\Type\pb_Vertex.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_VertexConnection.cs">
-      <Link>pb_VertexConnection.cs</Link>
+      <Link>Classes\ClassesCore\Type\pb_VertexConnection.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore.meta">
+      <Link>Classes\ClassesCore.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pbUtil.cs.meta">
+      <Link>Classes\ClassesCore\pbUtil.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ColorUtil.cs.meta">
+      <Link>Classes\ClassesCore\pb_ColorUtil.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Constant.cs.meta">
+      <Link>Classes\ClassesCore\pb_Constant.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_DummyScript.cs.meta">
+      <Link>Classes\ClassesCore\pb_DummyScript.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Edge.cs.meta">
+      <Link>Classes\ClassesCore\pb_Edge.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ElementGraphics.cs.meta">
+      <Link>Classes\ClassesCore\pb_ElementGraphics.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Entity.cs.meta">
+      <Link>Classes\ClassesCore\pb_Entity.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Enum.cs.meta">
+      <Link>Classes\ClassesCore\pb_Enum.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Face.cs.meta">
+      <Link>Classes\ClassesCore\pb_Face.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_HandleUtility.cs.meta">
+      <Link>Classes\ClassesCore\pb_HandleUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_IntArray.cs.meta">
+      <Link>Classes\ClassesCore\pb_IntArray.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_IntArrayUtility.cs.meta">
+      <Link>Classes\ClassesCore\pb_IntArrayUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_LineRenderer.cs.meta">
+      <Link>Classes\ClassesCore\pb_LineRenderer.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Math.cs.meta">
+      <Link>Classes\ClassesCore\pb_Math.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshRenderer.cs.meta">
+      <Link>Classes\ClassesCore\pb_MeshRenderer.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MeshUtility.cs.meta">
+      <Link>Classes\ClassesCore\pb_MeshUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_MonoBehaviourSingleton.cs.meta">
+      <Link>Classes\ClassesCore\pb_MonoBehaviourSingleton.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Object.cs.meta">
+      <Link>Classes\ClassesCore\pb_Object.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_ObjectPool.cs.meta">
+      <Link>Classes\ClassesCore\pb_ObjectPool.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Reflection.cs.meta">
+      <Link>Classes\ClassesCore\pb_Reflection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_Shortcut.cs.meta">
+      <Link>Classes\ClassesCore\pb_Shortcut.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_UV.cs.meta">
+      <Link>Classes\ClassesCore\pb_UV.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\pb_UVUtility.cs.meta">
+      <Link>Classes\ClassesCore\pb_UVUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type.meta">
+      <Link>Classes\ClassesCore\Type.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Bounds2D.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Bounds2D.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Color.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Color.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_EdgeConnection.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_EdgeConnection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_HandleConstraint2D.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_HandleConstraint2D.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_IntVec3.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_IntVec3.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_RaycastHit.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_RaycastHit.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Renderable.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Renderable.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Transform2D.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Transform2D.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Tuple.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Tuple.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Type.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Type.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_Vertex.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_Vertex.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesCore\Type\pb_VertexConnection.cs.meta">
+      <Link>Classes\ClassesCore\Type\pb_VertexConnection.cs.meta</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -48,105 +48,521 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\EditorObjExporter.cs">
-      <Link>EditorObjExporter.cs</Link>
+      <Link>EditorCore\EditorObjExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenMaterialEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenMaterialEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenMirrorObjectsEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenMirrorObjectsEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenShapeEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenShapeEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenSmoothingEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenSmoothingEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenUVEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenUVEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenVertexColorEditor.cs">
+      <Link>EditorCore\MenuActions\Editors\OpenVertexColorEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\BridgeEdges.cs">
+      <Link>EditorCore\MenuActions\Geometry\BridgeEdges.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\CollapseVertices.cs">
+      <Link>EditorCore\MenuActions\Geometry\CollapseVertices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConformFaceNormals.cs">
+      <Link>EditorCore\MenuActions\Geometry\ConformFaceNormals.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConnectEdges.cs">
+      <Link>EditorCore\MenuActions\Geometry\ConnectEdges.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConnectVertices.cs">
+      <Link>EditorCore\MenuActions\Geometry\ConnectVertices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\DeleteFaces.cs">
+      <Link>EditorCore\MenuActions\Geometry\DeleteFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\DetachFaces.cs">
+      <Link>EditorCore\MenuActions\Geometry\DetachFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ExtrudeEdges.cs">
+      <Link>EditorCore\MenuActions\Geometry\ExtrudeEdges.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ExtrudeFaces.cs">
+      <Link>EditorCore\MenuActions\Geometry\ExtrudeFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\FlipFaceEdge.cs">
+      <Link>EditorCore\MenuActions\Geometry\FlipFaceEdge.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\FlipFaceNormals.cs">
+      <Link>EditorCore\MenuActions\Geometry\FlipFaceNormals.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\InsertEdgeLoop.cs">
+      <Link>EditorCore\MenuActions\Geometry\InsertEdgeLoop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\MergeFaces.cs">
+      <Link>EditorCore\MenuActions\Geometry\MergeFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SetPivotToSelection.cs">
+      <Link>EditorCore\MenuActions\Geometry\SetPivotToSelection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SplitVertices.cs">
+      <Link>EditorCore\MenuActions\Geometry\SplitVertices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SubdivideFaces.cs">
+      <Link>EditorCore\MenuActions\Geometry\SubdivideFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\WeldVertices.cs">
+      <Link>EditorCore\MenuActions\Geometry\WeldVertices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Interaction\ToggleHandleAlignment.cs">
+      <Link>EditorCore\MenuActions\Interaction\ToggleHandleAlignment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Interaction\ToggleSelectBackFaces.cs">
+      <Link>EditorCore\MenuActions\Interaction\ToggleSelectBackFaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\ConformObjectNormals.cs">
+      <Link>EditorCore\MenuActions\Object\ConformObjectNormals.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\FlipObjectNormals.cs">
+      <Link>EditorCore\MenuActions\Object\FlipObjectNormals.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\FreezeTransform.cs">
+      <Link>EditorCore\MenuActions\Object\FreezeTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\MergeObjects.cs">
+      <Link>EditorCore\MenuActions\Object\MergeObjects.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\SubdivideObject.cs">
+      <Link>EditorCore\MenuActions\Object\SubdivideObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\TriangulateObject.cs">
+      <Link>EditorCore\MenuActions\Object\TriangulateObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\GrowSelection.cs">
+      <Link>EditorCore\MenuActions\Selection\GrowSelection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\InvertSelection.cs">
+      <Link>EditorCore\MenuActions\Selection\InvertSelection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\SelectEdgeLoop.cs">
+      <Link>EditorCore\MenuActions\Selection\SelectEdgeLoop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\SelectEdgeRing.cs">
+      <Link>EditorCore\MenuActions\Selection\SelectEdgeRing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\ShrinkSelection.cs">
+      <Link>EditorCore\MenuActions\Selection\ShrinkSelection.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pbUndo.cs">
-      <Link>pbUndo.cs</Link>
+      <Link>EditorCore\pbUndo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ActionResult.cs">
+      <Link>EditorCore\pb_ActionResult.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_AutoUV_Editor.cs">
-      <Link>pb_AutoUV_Editor.cs</Link>
+      <Link>EditorCore\pb_AutoUV_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Debug_Window.cs">
-      <Link>pb_Debug_Window.cs</Link>
+      <Link>EditorCore\pb_Debug_Window.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Dimensions_Overlay.cs">
-      <Link>pb_Dimensions_Overlay.cs</Link>
+      <Link>EditorCore\pb_Dimensions_Overlay.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs">
-      <Link>pb_Editor.cs</Link>
+      <Link>EditorCore\pb_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorSceneUtility.cs">
-      <Link>pb_EditorSceneUtility.cs</Link>
+      <Link>EditorCore\pb_EditorSceneUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorToolbar.cs">
+      <Link>EditorCore\pb_EditorToolbar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorToolbarLoader.cs">
+      <Link>EditorCore\pb_EditorToolbarLoader.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Enum.cs">
-      <Link>pb_Editor_Enum.cs</Link>
+      <Link>EditorCore\pb_Editor_Enum.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Mesh_Utility.cs">
-      <Link>pb_Editor_Mesh_Utility.cs</Link>
+      <Link>EditorCore\pb_Editor_Mesh_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Override.cs">
-      <Link>pb_Editor_Override.cs</Link>
+      <Link>EditorCore\pb_Editor_Override.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Utility.cs">
-      <Link>pb_Editor_Utility.cs</Link>
+      <Link>EditorCore\pb_Editor_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Entity_Editor.cs">
-      <Link>pb_Entity_Editor.cs</Link>
+      <Link>EditorCore\pb_Entity_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Geometry_Interface.cs">
-      <Link>pb_Geometry_Interface.cs</Link>
+      <Link>EditorCore\pb_Geometry_Interface.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_GUI_Utility.cs">
-      <Link>pb_GUI_Utility.cs</Link>
+      <Link>EditorCore\pb_GUI_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Handle_Utility.cs">
-      <Link>pb_Handle_Utility.cs</Link>
+      <Link>EditorCore\pb_Handle_Utility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Hierarchy_Listener.cs">
-      <Link>pb_Hierarchy_Listener.cs</Link>
+      <Link>EditorCore\pb_Hierarchy_Listener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_IconGroup.cs">
+      <Link>EditorCore\pb_IconGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_IconUtility.cs">
+      <Link>EditorCore\pb_IconUtility.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ISceneEditor.cs">
-      <Link>pb_ISceneEditor.cs</Link>
+      <Link>EditorCore\pb_ISceneEditor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Lightmapping.cs">
-      <Link>pb_Lightmapping.cs</Link>
+      <Link>EditorCore\pb_Lightmapping.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Lightmap_Editor.cs">
-      <Link>pb_Lightmap_Editor.cs</Link>
+      <Link>EditorCore\pb_Lightmap_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Material_Editor.cs">
-      <Link>pb_Material_Editor.cs</Link>
+      <Link>EditorCore\pb_Material_Editor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction.cs">
+      <Link>EditorCore\pb_MenuAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Element.cs">
+      <Link>EditorCore\pb_MenuAction_Element.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Toggle.cs">
+      <Link>EditorCore\pb_MenuAction_Toggle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Tool.cs">
+      <Link>EditorCore\pb_MenuAction_Tool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption.cs">
+      <Link>EditorCore\pb_MenuOption.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption_Extrude.cs">
+      <Link>EditorCore\pb_MenuOption_Extrude.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption_Weld.cs">
+      <Link>EditorCore\pb_MenuOption_Weld.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Menu_Commands.cs">
-      <Link>pb_Menu_Commands.cs</Link>
+      <Link>EditorCore\pb_Menu_Commands.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Mirror_Tool.cs">
-      <Link>pb_Mirror_Tool.cs</Link>
+      <Link>EditorCore\pb_Mirror_Tool.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ObjectArray.cs">
-      <Link>pb_ObjectArray.cs</Link>
+      <Link>EditorCore\pb_ObjectArray.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Object_Editor.cs">
-      <Link>pb_Object_Editor.cs</Link>
+      <Link>EditorCore\pb_Object_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Preferences_Internal.cs">
-      <Link>pb_Preferences_Internal.cs</Link>
+      <Link>EditorCore\pb_Preferences_Internal.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ProGrids_Interface.cs">
-      <Link>pb_ProGrids_Interface.cs</Link>
+      <Link>EditorCore\pb_ProGrids_Interface.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Smoothing_Editor.cs">
-      <Link>pb_Smoothing_Editor.cs</Link>
+      <Link>EditorCore\pb_Smoothing_Editor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_TooltipContent.cs">
+      <Link>EditorCore\pb_TooltipContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_TooltipWindow.cs">
+      <Link>EditorCore\pb_TooltipWindow.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Upgrade.cs">
-      <Link>pb_Upgrade.cs</Link>
+      <Link>EditorCore\pb_Upgrade.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Editor.cs">
-      <Link>pb_UV_Editor.cs</Link>
+      <Link>EditorCore\pb_UV_Editor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Render_Options.cs">
-      <Link>pb_UV_Render_Options.cs</Link>
+      <Link>EditorCore\pb_UV_Render_Options.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Painter.cs">
-      <Link>pb_Vertex_Color_Painter.cs</Link>
+      <Link>EditorCore\pb_Vertex_Color_Painter.cs</Link>
     </Compile>
     <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Toolbar.cs">
-      <Link>pb_Vertex_Color_Toolbar.cs</Link>
+      <Link>EditorCore\pb_Vertex_Color_Toolbar.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\EditorObjExporter.cs.meta">
+      <Link>EditorCore\EditorObjExporter.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions.meta">
+      <Link>EditorCore\MenuActions.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors.meta">
+      <Link>EditorCore\MenuActions\Editors.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenMaterialEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenMaterialEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenMirrorObjectsEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenMirrorObjectsEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenShapeEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenShapeEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenSmoothingEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenSmoothingEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenUVEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenUVEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Editors\OpenVertexColorEditor.cs.meta">
+      <Link>EditorCore\MenuActions\Editors\OpenVertexColorEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry.meta">
+      <Link>EditorCore\MenuActions\Geometry.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\BridgeEdges.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\BridgeEdges.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\CollapseVertices.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\CollapseVertices.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConformFaceNormals.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\ConformFaceNormals.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConnectEdges.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\ConnectEdges.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ConnectVertices.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\ConnectVertices.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\DeleteFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\DeleteFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\DetachFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\DetachFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ExtrudeEdges.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\ExtrudeEdges.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\ExtrudeFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\ExtrudeFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\FlipFaceEdge.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\FlipFaceEdge.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\FlipFaceNormals.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\FlipFaceNormals.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\InsertEdgeLoop.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\InsertEdgeLoop.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\MergeFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\MergeFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SetPivotToSelection.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\SetPivotToSelection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SplitVertices.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\SplitVertices.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\SubdivideFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\SubdivideFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Geometry\WeldVertices.cs.meta">
+      <Link>EditorCore\MenuActions\Geometry\WeldVertices.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Interaction.meta">
+      <Link>EditorCore\MenuActions\Interaction.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Interaction\ToggleHandleAlignment.cs.meta">
+      <Link>EditorCore\MenuActions\Interaction\ToggleHandleAlignment.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Interaction\ToggleSelectBackFaces.cs.meta">
+      <Link>EditorCore\MenuActions\Interaction\ToggleSelectBackFaces.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object.meta">
+      <Link>EditorCore\MenuActions\Object.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\ConformObjectNormals.cs.meta">
+      <Link>EditorCore\MenuActions\Object\ConformObjectNormals.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\FlipObjectNormals.cs.meta">
+      <Link>EditorCore\MenuActions\Object\FlipObjectNormals.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\FreezeTransform.cs.meta">
+      <Link>EditorCore\MenuActions\Object\FreezeTransform.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\MergeObjects.cs.meta">
+      <Link>EditorCore\MenuActions\Object\MergeObjects.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\SubdivideObject.cs.meta">
+      <Link>EditorCore\MenuActions\Object\SubdivideObject.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Object\TriangulateObject.cs.meta">
+      <Link>EditorCore\MenuActions\Object\TriangulateObject.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection.meta">
+      <Link>EditorCore\MenuActions\Selection.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\GrowSelection.cs.meta">
+      <Link>EditorCore\MenuActions\Selection\GrowSelection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\InvertSelection.cs.meta">
+      <Link>EditorCore\MenuActions\Selection\InvertSelection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\SelectEdgeLoop.cs.meta">
+      <Link>EditorCore\MenuActions\Selection\SelectEdgeLoop.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\SelectEdgeRing.cs.meta">
+      <Link>EditorCore\MenuActions\Selection\SelectEdgeRing.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\MenuActions\Selection\ShrinkSelection.cs.meta">
+      <Link>EditorCore\MenuActions\Selection\ShrinkSelection.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pbUndo.cs.meta">
+      <Link>EditorCore\pbUndo.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ActionResult.cs.meta">
+      <Link>EditorCore\pb_ActionResult.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_AutoUV_Editor.cs.meta">
+      <Link>EditorCore\pb_AutoUV_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Debug_Window.cs.meta">
+      <Link>EditorCore\pb_Debug_Window.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Dimensions_Overlay.cs.meta">
+      <Link>EditorCore\pb_Dimensions_Overlay.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor.cs.meta">
+      <Link>EditorCore\pb_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorSceneUtility.cs.meta">
+      <Link>EditorCore\pb_EditorSceneUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorToolbar.cs.meta">
+      <Link>EditorCore\pb_EditorToolbar.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_EditorToolbarLoader.cs.meta">
+      <Link>EditorCore\pb_EditorToolbarLoader.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Enum.cs.meta">
+      <Link>EditorCore\pb_Editor_Enum.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Mesh_Utility.cs.meta">
+      <Link>EditorCore\pb_Editor_Mesh_Utility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Override.cs.meta">
+      <Link>EditorCore\pb_Editor_Override.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Editor_Utility.cs.meta">
+      <Link>EditorCore\pb_Editor_Utility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Entity_Editor.cs.meta">
+      <Link>EditorCore\pb_Entity_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Geometry_Interface.cs.meta">
+      <Link>EditorCore\pb_Geometry_Interface.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_GUI_Utility.cs.meta">
+      <Link>EditorCore\pb_GUI_Utility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Handle_Utility.cs.meta">
+      <Link>EditorCore\pb_Handle_Utility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Hierarchy_Listener.cs.meta">
+      <Link>EditorCore\pb_Hierarchy_Listener.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_IconGroup.cs.meta">
+      <Link>EditorCore\pb_IconGroup.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_IconUtility.cs.meta">
+      <Link>EditorCore\pb_IconUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ISceneEditor.cs.meta">
+      <Link>EditorCore\pb_ISceneEditor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Lightmapping.cs.meta">
+      <Link>EditorCore\pb_Lightmapping.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Lightmap_Editor.cs.meta">
+      <Link>EditorCore\pb_Lightmap_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Material_Editor.cs.meta">
+      <Link>EditorCore\pb_Material_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction.cs.meta">
+      <Link>EditorCore\pb_MenuAction.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Element.cs.meta">
+      <Link>EditorCore\pb_MenuAction_Element.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Toggle.cs.meta">
+      <Link>EditorCore\pb_MenuAction_Toggle.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuAction_Tool.cs.meta">
+      <Link>EditorCore\pb_MenuAction_Tool.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption.cs.meta">
+      <Link>EditorCore\pb_MenuOption.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption_Extrude.cs.meta">
+      <Link>EditorCore\pb_MenuOption_Extrude.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_MenuOption_Weld.cs.meta">
+      <Link>EditorCore\pb_MenuOption_Weld.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Menu_Commands.cs.meta">
+      <Link>EditorCore\pb_Menu_Commands.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Mirror_Tool.cs.meta">
+      <Link>EditorCore\pb_Mirror_Tool.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ObjectArray.cs.meta">
+      <Link>EditorCore\pb_ObjectArray.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Object_Editor.cs.meta">
+      <Link>EditorCore\pb_Object_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Preferences_Internal.cs.meta">
+      <Link>EditorCore\pb_Preferences_Internal.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_ProGrids_Interface.cs.meta">
+      <Link>EditorCore\pb_ProGrids_Interface.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Smoothing_Editor.cs.meta">
+      <Link>EditorCore\pb_Smoothing_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_TooltipContent.cs.meta">
+      <Link>EditorCore\pb_TooltipContent.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_TooltipWindow.cs.meta">
+      <Link>EditorCore\pb_TooltipWindow.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Upgrade.cs.meta">
+      <Link>EditorCore\pb_Upgrade.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Editor.cs.meta">
+      <Link>EditorCore\pb_UV_Editor.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_UV_Render_Options.cs.meta">
+      <Link>EditorCore\pb_UV_Render_Options.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Painter.cs.meta">
+      <Link>EditorCore\pb_Vertex_Color_Painter.cs.meta</Link>
+    </None>
+    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Editor\EditorCore\pb_Vertex_Color_Toolbar.cs.meta">
+      <Link>EditorCore\pb_Vertex_Color_Toolbar.cs.meta</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
