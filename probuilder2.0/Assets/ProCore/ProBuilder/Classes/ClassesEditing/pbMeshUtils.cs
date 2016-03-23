@@ -24,16 +24,11 @@ namespace ProBuilder2.MeshOperations
 		 * Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that 
 		 * accepts a dictionary lookup to  save to the cost of generating it each call.
 		 */
-		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Face originFace)
+		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Face originFace, Dictionary<int, int> lookup = null, IEnumerable<pb_Face> mask = null)
 		{
-			return GetNeighborFaces(pb, pb.sharedIndices.ToDictionary(), new List<pb_Face>() { originFace }, originFace);
-		}
+			if(lookup == null)
+				lookup = pb.sharedIndices.ToDictionary();
 
-		/**
-		 * Returns all faces that share an edge with originFace.
-		 */
-		public static List<pb_Face> GetNeighborFaces(pb_Object pb, Dictionary<int, int> lookup, IEnumerable<pb_Face> mask, pb_Face originFace)
-		{
 			List<pb_Face> faces = new List<pb_Face>();
 
 			HashSet<pb_Edge> sharedEdges = new HashSet<pb_Edge>();
@@ -54,12 +49,8 @@ namespace ProBuilder2.MeshOperations
 
 					bool contains = sharedEdges.Contains(edge_s);
 
-					if( contains )
+					if( contains && (mask == null || !mask.Contains(pb.faces[i])) )
 					{
-						if(mask.Contains(pb.faces[i]))
-						{
-							continue;
-						}
 
 						faces.Add(pb.faces[i]);
 						break;
@@ -159,13 +150,11 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 *	Returns all faces connected to the passed edge.
 		 */
-		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge)
+		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge, Dictionary<int, int> lookup = null)
 		{
-			return GetNeighborFaces(pb, edge, pb.sharedIndices.ToDictionary());
-		}
+			if(lookup == null)
+				lookup = pb.sharedIndices.ToDictionary();
 
-		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge, Dictionary<int, int> lookup)
-		{
 			List<pb_Face> faces = new List<pb_Face>();
 
 			pb_Edge uni = new pb_Edge(lookup[edge.x], lookup[edge.y]);

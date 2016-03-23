@@ -721,6 +721,68 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
+	 *	Copy values in UV channel to uvs.
+	 */
+	public void GetUVs(int channel, List<Vector4> uvs)
+	{
+		uvs.Clear();
+
+		switch(channel)
+		{
+			case 0:
+			case 1:
+			default:
+				for(int i = 0; i < vertexCount; i++)
+					uvs.Add((Vector4)_uv[i]);
+				break;
+
+			case 2:
+				if(msh != null && msh.uv2 != null)
+				{
+					Vector2[] uv2 = msh.uv2;
+					for(int i = 0; i < uv2.Length; i++)
+						uvs.Add((Vector4)uv2[i]);
+				}
+				break;
+
+			case 3:
+				uvs.AddRange(_uv3);
+				break;
+
+			case 4:
+				uvs.AddRange(_uv4);
+				break;
+		}
+	}
+
+	/**
+	 *	Sets the UVs on channel.  Does not apply to mesh (use RefreshUV).
+	 */
+	public void SetUVs(int channel, List<Vector4> uvs)
+	{
+		switch(channel)
+		{
+			case 0:
+			case 1:
+			default:
+				msh.uv = uvs.Cast<Vector2>().ToArray();
+				break;
+
+			case 2:
+				msh.uv2 = uvs.Cast<Vector2>().ToArray();
+				break;
+
+			case 3:
+				_uv3 = uvs;
+				break;
+
+			case 4:
+				_uv4 = uvs;
+				break;
+		}
+	}
+
+	/**
 	 * Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
 	 */
 	public void RefreshUV(pb_Face[] faces)
@@ -835,57 +897,6 @@ public class pb_Object : MonoBehaviour
 		for(int i = 0; i < quad.Length; i++)
 			quad[i].SetMaterial(mat);
 #endif
-	}
-
-	/**
-	 *	\brief Sets the pb_Face uvSettings param to match the passed #pv_UV _uv 
-	 */
-	public void SetFaceUV(pb_Face face, pb_UV uvParams)
-	{
-		face.SetUV(uvParams);
-
-		if(face.uv.useWorldSpace)
-		{
-			Vector3[] v = new Vector3[face.distinctIndices.Length];
-			for(int i = 0; i < v.Length; i++)
-				v[i] = _vertices[face.distinctIndices[i]];
-
-			SetUVs(face, pb_UVUtility.PlanarMap( v, face.uv) );
-		}
-		else
-			SetUVs(face, pb_UVUtility.PlanarMap( face.GetDistinctVertices(_vertices), face.uv) );
-	}
-
-	/**
-	 * Apply the UV to the mesh UV channel.
-	 */
-	private void SetUVs(pb_Face face, Vector2[] uvs)
-	{
-		int[] vertIndices = face.distinctIndices;
-		Vector2[] newUV = new Vector2[msh.uv.Length];
-		System.Array.Copy(msh.uv, newUV, msh.uv.Length);
-		
-		for(int i = 0; i < vertIndices.Length; i++) {
-			newUV[vertIndices[i]] = uvs[i];
-		}
-
-		gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;		
-	}
-
-	private void SetUVs(pb_Face[] quad, Vector2[][] uvs)
-	{
-		Vector2[] newUV = new Vector2[msh.uv.Length];
-		System.Array.Copy(msh.uv, newUV, msh.uv.Length);
-		
-		for(int i = 0; i < quad.Length; i++) {
-
-			int[] vertIndices = quad[i].distinctIndices;
-			for(int n = 0; n < vertIndices.Length; n++)
-				newUV[vertIndices[n]] = uvs[i][n];
-		
-		}
-
-		gameObject.GetComponent<MeshFilter>().sharedMesh.uv = newUV;
 	}
 
 	/**

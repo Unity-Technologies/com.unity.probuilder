@@ -57,7 +57,7 @@ namespace ProBuilder2.Common
 		{
 			c.AddRange(_gameObjects[i].transform.GetComponentsInChildren<T>());
 		}
-		return c.ToArray() as T[];
+		return c.ToArray();
 	}
 
 	/**

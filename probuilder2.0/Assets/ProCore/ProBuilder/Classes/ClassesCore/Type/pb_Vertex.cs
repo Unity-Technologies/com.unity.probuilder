@@ -78,6 +78,9 @@ namespace ProBuilder2.Common
 			uv4			= vertices.Any(x => x.uv4 != null) ? vertices.Select(x => (Vector4) x.uv4).ToArray() : null;
 		}
 
+		/**
+		 *	Average all vertices to a single vertices.
+		 */
 		public static pb_Vertex Average(IList<pb_Vertex> vertices)
 		{
 			pb_Vertex v = new pb_Vertex();

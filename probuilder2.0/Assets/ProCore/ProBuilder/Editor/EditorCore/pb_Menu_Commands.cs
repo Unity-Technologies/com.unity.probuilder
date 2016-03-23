@@ -856,7 +856,7 @@ namespace ProBuilder2.EditorCommon
 
 								for(int i = 0; i < perimeterFaces.Count; i++)
 								{
-									List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, lookup, perimeterFaces, perimeterFaces[i]);
+									List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, perimeterFaces[i], lookup, perimeterFaces);
 
 									Vector3 perim_normal = pb_Math.Normal(pb.vertices.ValuesWithIndices(perimeterFaces[i].indices));
 
