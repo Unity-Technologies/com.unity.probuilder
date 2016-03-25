@@ -68,7 +68,7 @@ namespace ProBuilder2.Triangulator
 		{
 			List<Vector2> Vertex = new List<Vector2>();
 
-			Vector2 avg = ProBuilder2.Math.pb_Math.Average(verts);
+			Vector2 avg = ProBuilder2.Common.pb_Math.Average(verts);
 
 			// Blow out triangle scale to avoid rounding error on sliver pieces.
 			for(int i = 0; i < verts.Count; i++)

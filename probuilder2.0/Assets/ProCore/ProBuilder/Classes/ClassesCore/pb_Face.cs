@@ -109,6 +109,22 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		RebuildCaches();
 	}
 
+	/**
+	 *	Copies values from other to this face.
+	 */
+	public void CopyFrom(pb_Face other)
+	{
+		int len = other.indices == null ? 0 : other.indices.Length;
+		_indices = new int[len];
+		System.Array.Copy(other.indices, _indices, len);
+		_smoothingGroup = other.smoothingGroup;
+		_uv = new pb_UV(other.uv);
+		_mat = other.material;
+		manualUV = other.manualUV;
+		elementGroup = other.elementGroup;
+		RebuildCaches();
+	}
+
 	public bool Equals(pb_Face b)
 	{
 		if(!pbUtil.IsEqual<int>(_indices, b.indices))

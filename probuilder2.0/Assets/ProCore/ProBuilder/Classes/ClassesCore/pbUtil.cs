@@ -221,7 +221,7 @@ namespace ProBuilder2.Common
 	/**
 	 * Remove elements at @indices from an array.
 	 */
-	public static T[] RemoveAt<T>(this IList<T> list, IList<int> indices)
+	public static T[] RemoveAt<T>(this IList<T> list, IEnumerable<int> indices)
 	{
 		List<int> indices_sorted = new List<int>(indices);
 		indices_sorted.Sort();
@@ -319,6 +319,11 @@ namespace ProBuilder2.Common
 		}
 	
 		return 0;
+	}
+
+	public static T[] Fill<T>(T val, int length)
+	{
+		return FilledArray<T>(val, length); 
 	}
 
 	public static T[] FilledArray<T>(T val, int length)

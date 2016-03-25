@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -148,14 +147,14 @@ namespace ProBuilder2.MeshOperations
 	#region EDGE
 
 		/**
-		 *	Returns all faces connected to the passed edge.
+		 *	Returns a list of pb_Tuple<pb_Face, pb_Edge> where each face is connected to the passed edge.
 		 */
-		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Edge edge, Dictionary<int, int> lookup = null)
+		public static List<pb_Tuple<pb_Face, pb_Edge>> GetNeighborFaces(pb_Object pb, pb_Edge edge, Dictionary<int, int> lookup = null)
 		{
 			if(lookup == null)
 				lookup = pb.sharedIndices.ToDictionary();
 
-			List<pb_Face> faces = new List<pb_Face>();
+			List<pb_Tuple<pb_Face, pb_Edge>> faces = new List<pb_Tuple<pb_Face, pb_Edge>>();
 
 			pb_Edge uni = new pb_Edge(lookup[edge.x], lookup[edge.y]);
 			pb_Edge e = new pb_Edge(0,0);
@@ -171,7 +170,7 @@ namespace ProBuilder2.MeshOperations
 					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) || 
 						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
 					{
-						faces.Add(pb.faces[i]);
+						faces.Add(new pb_Tuple<pb_Face, pb_Edge>(pb.faces[i], new pb_Edge(edges[n])));
 						break;
 					}
 				}
@@ -702,8 +701,8 @@ namespace ProBuilder2.MeshOperations
 			}
 			pb_Edge opEdgeLocal = ordered_edges[face.edges.Length/2];
 
-			List<pb_Face> connectedFaces = pbMeshUtils.GetNeighborFaces(pb, opEdgeLocal, lookup);
-			connectedFaces.Remove(face);
+			List<pb_Tuple<pb_Face, pb_Edge>> connectedFaces = pbMeshUtils.GetNeighborFaces(pb, opEdgeLocal, lookup);
+			connectedFaces.RemoveAll(x => x.Item1 == face);
 
 			if(connectedFaces.Count < 1)
 			{
@@ -711,7 +710,7 @@ namespace ProBuilder2.MeshOperations
 				return true;
 			}
 
-			opposite_face = connectedFaces[0];
+			opposite_face = connectedFaces[0].Item1;
 			
 			for(int i = 0; i < opposite_face.edges.Length; i++)
 			{

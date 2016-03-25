@@ -6,7 +6,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 using System.Reflection;
 
 #if PB_DEBUG

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
-using ProBuilder2.Math;
 using ProBuilder2.Interface;
 
 #if PB_DEBUG
@@ -36,6 +35,12 @@ public class pb_Editor : EditorWindow
 
 	public static pb_Editor instance { get { return _instance; } }
 	private static pb_Editor _instance;
+
+	public static void Refresh(bool force = true)
+	{
+		if(instance != null)
+			instance.UpdateSelection(force);
+	}
 
 	/**
 	 *	Subscribe to notifications of edit level changes.

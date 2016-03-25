@@ -49,7 +49,10 @@ namespace ProBuilder2.Common
 			if(pb.hasUv4) this.uv4 = pb.uv4[index];
 		}
 
-		public static pb_Vertex[] CreateArray(pb_Object pb)
+		/**
+		 *	Creates a new array of pb_Vertex with the provide pb_Object data.
+		 */
+		public static pb_Vertex[] GetVertices(pb_Object pb)
 		{
 			pb_Vertex[] v = new pb_Vertex[pb.vertexCount];
 			for(int i = 0; i < pb.vertexCount; i++)
@@ -57,7 +60,7 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		public static void GetArrays(	pb_Vertex[] vertices,
+		public static void GetArrays(	IEnumerable<pb_Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
 										out Vector2[] uv0,
@@ -139,6 +142,57 @@ namespace ProBuilder2.Common
 			v.uv2 		*= (1f/uv2Count);
 			v.uv3 		*= (1f/uv3Count);
 			v.uv4 		*= (1f/uv4Count);
+
+			return v;
+		}
+
+		/**
+		 *	Returns a new vertex mixed between x and y.  1 is fully y, 0 is fully x.
+		 */
+		public static pb_Vertex Mix(pb_Vertex x, pb_Vertex y, float a)
+		{
+			float i = 1f - a;
+
+			pb_Vertex v = new pb_Vertex();
+
+			v.position 	= x.position * i + y.position * a;
+			v.color 	= x.color * i + y.color * a;
+			v.uv0 		= x.uv0 * i + y.uv0 * a;
+
+			if(x.normal != null && y.normal != null)
+				v.normal = x.normal * i + y.normal * a;
+			else if(x.normal != null)
+				v.normal = x.normal;
+			else if(y.normal != null)
+				v.normal = y.normal;
+
+			if(x.tangent != null && y.tangent != null)
+				v.tangent = x.tangent * i + y.tangent * a;
+			else if(x.tangent != null)
+				v.tangent = x.tangent;
+			else if(y.tangent != null)
+				v.tangent = y.tangent;
+
+			if(x.uv2 != null && y.uv2 != null)
+				v.uv2 = x.uv2 * i + y.uv2 * a;
+			else if(x.uv2 != null)
+				v.uv2 = x.uv2;
+			else if(y.uv2 != null)
+				v.uv2 = y.uv2;
+
+			if(x.uv3 != null && y.uv3 != null)
+				v.uv3 = x.uv3 * i + y.uv3 * a;
+			else if(x.uv3 != null)
+				v.uv3 = x.uv3;
+			else if(y.uv3 != null)
+				v.uv3 = y.uv3;
+
+			if(x.uv4 != null && y.uv4 != null)
+				v.uv4 = x.uv4 * i + y.uv4 * a;
+			else if(x.uv4 != null)
+				v.uv4 = x.uv4;
+			else if(y.uv4 != null)
+				v.uv4 = y.uv4;
 
 			return v;
 		}

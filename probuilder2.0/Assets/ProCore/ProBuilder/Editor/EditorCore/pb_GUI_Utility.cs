@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.Common;
 
 /**
  * Generic GUI utility methods used in ProBuilder windows.

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 using ProBuilder2.Interface;
 using ProBuilder2.MeshOperations;
 

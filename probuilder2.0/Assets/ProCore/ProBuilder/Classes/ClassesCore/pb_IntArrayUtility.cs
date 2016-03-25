@@ -379,20 +379,18 @@ namespace ProBuilder2.Common
 			pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
 		}
 
-
-
 		/**
 		 *	\brief Removes the specified indices from the array, and shifts all values 
 		 *	down to account for removal in the vertex array.  Only use when deleting
 		 *	faces or vertices.  For general moving around and modification of shared 
 		 *	index array, use #RemoveValuesAtIndex.
 		 */
-		public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, IList<int> remove)
+		public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, IEnumerable<int> remove)
 		{
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
-			for(int i = 0; i < remove.Count; i++)
-				lookup[remove[i]] = -1;
+			foreach(int i in remove)
+				lookup[i] = -1;
 
 			sharedIndices = lookup.Where(x => x.Value > -1).ToSharedIndices();
 

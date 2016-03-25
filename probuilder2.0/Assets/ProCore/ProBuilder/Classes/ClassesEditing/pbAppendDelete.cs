@@ -147,7 +147,7 @@ public static class pbAppendDelete
 	 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
 	 * all the sharedIndices moving stuff for you.
 	 */
-	public static void DeleteFaces(this pb_Object pb, pb_Face[] faces)
+	public static void DeleteFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
 	{	
 		DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 	}

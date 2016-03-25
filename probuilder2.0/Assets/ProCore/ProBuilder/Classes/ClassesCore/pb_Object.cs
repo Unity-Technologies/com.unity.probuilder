@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -417,6 +416,26 @@ public class pb_Object : MonoBehaviour
 	public void SetVertices(Vector3[] v)
 	{
 		_vertices = v;
+	}
+
+	public void SetVertices(IList<pb_Vertex> vertices)
+	{
+		Vector3[] position;
+		Color[] color;
+		Vector2[] uv0;
+		Vector3[] normal;
+		Vector4[] tangent;
+		Vector2[] uv2;
+		Vector4[] uv3;
+		Vector4[] uv4;
+
+		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+
+		SetVertices(position);
+		SetColors(color);
+		SetUV(uv0);
+		if(uv3 != null) _uv3 = new List<Vector4>(uv3);
+		if(uv4 != null) _uv4 = new List<Vector4>(uv4);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using ProBuilder2.Math;
 
 #if PB_DEBUG
 using Parabox.Debug;

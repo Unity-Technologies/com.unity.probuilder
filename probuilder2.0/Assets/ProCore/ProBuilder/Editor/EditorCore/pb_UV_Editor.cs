@@ -3,7 +3,6 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Math;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;

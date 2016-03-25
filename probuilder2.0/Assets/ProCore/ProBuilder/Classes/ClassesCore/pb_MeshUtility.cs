@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder2.Math;
 
 namespace ProBuilder2.Common
 {

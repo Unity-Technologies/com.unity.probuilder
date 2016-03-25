@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Math;
 
 /**
  *	\brief Responsible for mapping UV coordinates.  

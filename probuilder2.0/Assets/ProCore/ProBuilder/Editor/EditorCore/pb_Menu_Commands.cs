@@ -7,7 +7,6 @@ using ProBuilder2.EditorCommon;
 using System.Reflection;
 using ProBuilder2.MeshOperations;
 using System.Linq;
-using ProBuilder2.Math;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -1718,7 +1717,7 @@ namespace ProBuilder2.EditorCommon
 					pb.DetachFace(f);
 
 				splitCount += pb.SelectedTriangles.Length;
-				pb.SplitVertices(pb.SelectedTriangles);
+				pb.SplitCommonVertices(pb.SelectedTriangles);
 
 				// Reattach detached face vertices (if any are to be had)
 				if(pb.SelectedFaces.Length > 0)
@@ -1784,32 +1783,43 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			/*
-				// Vertex subdivision
-				foreach(pb_Object pb in selection)
-				{
-					List<pb_VertexConnection> vertexConnections = new List<pb_VertexConnection>();
-
-					foreach(pb_Face f in pb.faces)
-						vertexConnections.Add( new pb_VertexConnection(f, new List<int>(f.distinctIndices) ) );
-
-					pb_Face[] faces;
-
-					if(pb.ConnectVertices(vertexConnections, out faces))
-					{
-						pb.SetSelectedFaces(faces);
-						success++;
-
-						pb.GenerateUV2(pb_Editor.show_NoDraw);
-						pb.Refresh();
-					}
-				}
-			h*/
-
 			pb_Editor_Utility.ShowNotification("Subdivide Object");
 
 			if(editor)
 				editor.UpdateSelection(true);
+
+			return new pb_ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
+		}
+
+		/**
+		 * Attempts to subdivide the selected object edges.
+		 * ProBuilder only.
+		 */
+		public static pb_ActionResult MenuSubdivideEdge(pb_Object[] selection)
+		{
+			if(!editor || selection == null || selection.Length < 1)
+			{
+				pb_Editor_Utility.ShowNotification("Nothing Selected");
+				return pb_ActionResult.NoSelection;
+			}
+
+			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
+
+			int success = 0;
+			pb_ActionResult result = pb_ActionResult.NoSelection;
+
+			foreach(pb_Object pb in selection)
+			{
+				result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3);
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			pb_Editor_Utility.ShowNotification("Subdivide Object");
+
+			pb_Editor.Refresh(true);
 
 			return new pb_ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
 		}

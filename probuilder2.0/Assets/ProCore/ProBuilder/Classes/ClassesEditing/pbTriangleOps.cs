@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 using ProBuilder2.Triangulator;
 using ProBuilder2.Triangulator.Geometry;
 using System.Linq;

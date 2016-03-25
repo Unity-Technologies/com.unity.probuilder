@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Interface;
-using ProBuilder2.Math;
 using System.Linq;
 
 public class pb_VertexColor_Editor : EditorWindow

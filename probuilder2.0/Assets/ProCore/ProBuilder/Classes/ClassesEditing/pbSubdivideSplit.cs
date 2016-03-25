@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ProBuilder2.Common;
-using ProBuilder2.Math;
 using ProBuilder2.Triangulator;
 using ProBuilder2.Triangulator.Geometry;
 
@@ -73,10 +72,12 @@ public static class pbSubdivideSplit
 		// profiler.BeginSample("Split Edges");
 		for(int i = 0; i < len; i++)
 		{
-			List<pb_Face> neighbors = pbMeshUtils.GetNeighborFaces(pb, edges[i]);
+			List<pb_Tuple<pb_Face, pb_Edge>> neighbors = pbMeshUtils.GetNeighborFaces(pb, edges[i]);
 
-			foreach(pb_Face face in neighbors)
+			foreach(pb_Tuple<pb_Face, pb_Edge> faceAndEdge in neighbors)
 			{
+				pb_Face face = faceAndEdge.Item1;
+
 				if(!splits.Contains((pb_EdgeConnection)face))
 				{
 					List<pb_Edge> faceEdges = new List<pb_Edge>();

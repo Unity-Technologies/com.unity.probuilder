@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder2.Common
 {
 	public enum Status
 	{

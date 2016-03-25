@@ -1,5 +1,4 @@
 using UnityEngine;
-using ProBuilder2.Math;
 
 namespace ProBuilder2.Common
 {	

@@ -9,6 +9,14 @@ using Parabox.Debug;
 
 namespace ProBuilder2.Math
 {
+	[System.Obsolete("pb_Math has moved to ProBuilder2.Common")]
+	public static class pb_Math
+	{
+	}
+}
+
+namespace ProBuilder2.Common
+{
 
 	/**
 	 * Geometry math and Array extensions.
@@ -773,14 +781,15 @@ namespace ProBuilder2.Math
 	 * v = Vector3.Dot( Vector3.Cross(uDirection, planeNormal), verts[i] );
 	 * \sa GetProjectionAxis()
 	 */
-	public static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal)
+	public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal, IList<int> indices = null)
 	{
 		return PlanarProject(verts, planeNormal, pb_Math.VectorToProjectionAxis(planeNormal));
 	}
 
-	public static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis)
+	public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal, ProjectionAxis projectionAxis, IList<int> indices = null)
 	{
-		Vector2[] uvs = new Vector2[verts.Length];
+		int len = indices == null || indices.Count < 1 ? verts.Count : indices.Count;
+		Vector2[] uvs = new Vector2[len];
 		Vector3 vec = Vector3.zero;
 
 		switch(projectionAxis)
@@ -817,12 +826,13 @@ namespace ProBuilder2.Math
 		vAxis = Vector3.Cross(uAxis, planeNormal);
 		vAxis.Normalize();
 		
-		for(int i = 0; i < verts.Length; i++)
+		for(int i = 0; i < len; i++)
 		{
+			int x = indices != null ? indices[i] : i;
 			float u, v;
 
-			u = Vector3.Dot(uAxis, verts[i]);
-			v = Vector3.Dot(vAxis, verts[i]);
+			u = Vector3.Dot(uAxis, verts[x]);
+			v = Vector3.Dot(vAxis, verts[x]);
 
 			uvs[i] = new Vector2(u, v);
 		}
