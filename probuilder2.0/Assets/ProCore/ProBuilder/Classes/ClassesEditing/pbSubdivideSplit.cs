@@ -697,8 +697,8 @@ public static class pbSubdivideSplit
 		}
 
 		// triangulate new polygons
-		int[] t_polyA = Delaunay.Triangulate(v_polyA_2d).ToIntArray();
-		int[] t_polyB = Delaunay.Triangulate(v_polyB_2d).ToIntArray();
+		int[] t_polyA = pb_Triangulation.SortAndTriangulate(v_polyA_2d).ToArray();
+		int[] t_polyB = pb_Triangulation.SortAndTriangulate(v_polyB_2d).ToArray();
 
 		if(t_polyA.Length < 3 || t_polyB.Length < 3)
 			return false;
@@ -894,7 +894,7 @@ public static class pbSubdivideSplit
 				return false;
 			}
 		
-			tris[i] = Delaunay.Triangulate(quadrants2d[i]).ToIntArray();
+			tris[i] = pb_Triangulation.SortAndTriangulate(quadrants2d[i]).ToArray();
 
 			if(tris[i].Length < 3)	///< #521
 				return false;
@@ -1083,7 +1083,7 @@ public static class pbSubdivideSplit
 		for(int i = 0; i < len; i++)
 		{
 			try {
-				tris[i] = Delaunay.Triangulate(quadrants2d[i]).ToIntArray();
+				tris[i] = pb_Triangulation.SortAndTriangulate(quadrants2d[i]).ToArray();
 			
 				if(tris[i] == null || tris[i].Length < 3)
 				{

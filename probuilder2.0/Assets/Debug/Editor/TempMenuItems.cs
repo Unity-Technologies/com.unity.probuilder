@@ -17,20 +17,25 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		const int VERTEX_COUNT = 128;
-		
-		Vector2[] v = new Vector2[VERTEX_COUNT];
+		const int VERTEX_COUNT = 4;
+		Vector2[] v = new Vector2[VERTEX_COUNT]
+		{
+			new Vector2(.5f, -.5f),
+			new Vector2(.5f,  0f),
+			new Vector2(1f, -.5f),
+			new Vector2(1f, 0f),
+		};
 
-		for(int i = 0; i < v.Length; i++)
-			v[i] = new Vector2( Random.Range(-10f, 10f), Random.Range(-10f, 10f) );
+		// for(int i = 0; i < v.Length; i++)
+		// 	v[i] = new Vector2( Random.Range(-10f, 10f), Random.Range(-10f, 10f) );
 
-		List<Vector2> v2 = pb_Math.SortCounterClockwise(v);
+		Vector2[] v2 = pb_Math.Sort(v).ToArray();
 
-		List<int> indices = pb_Triangulation.Triangulate(v2);
+		List<int> indices = pb_Triangulation.Triangulate(v2, true);
 	
 		UMesh m = new UMesh();
 		m.vertices = v2.Select(x=>(Vector3)x).ToArray();
-		m.uv = v2.ToArray();
+		m.uv = v2;
 		m.triangles = indices.ToArray();
 		m.normals = pbUtil.Fill<Vector3>(-Vector3.forward, VERTEX_COUNT);
 

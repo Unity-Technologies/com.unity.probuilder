@@ -110,6 +110,14 @@ namespace ProBuilder2.Common
 	}
 
 	/**
+	 *	Describes methods of sorting 2d vertices.
+	 */
+	public enum SortMethod {
+		Clockwise,
+		CounterClockwise
+	};
+
+	/**
 	 * Describes different culling options.
 	 */
 	public enum Culling

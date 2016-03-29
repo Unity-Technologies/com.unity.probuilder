@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.Triangulator;
-using ProBuilder2.Triangulator.Geometry;
 using System.Linq;
 
 namespace ProBuilder2.MeshOperations
@@ -222,29 +220,6 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 * Re-triangulates a face with existing indices and vertices.
-		 */
-		public static void TriangulateFace(this pb_Object pb, pb_Face face, Vector3? projectionAxis)
-		{
-			int[] orig = face.indices;
-
-			Vector3[] v3d = pbUtil.ValuesWithIndices(pb.vertices, orig);
-			Vector3 nrm = (Vector3)(projectionAxis ?? Vector3.Cross(v3d[2]-v3d[0], v3d[1]-v3d[0]));
-			Vector2[] v2d = pb_Math.PlanarProject(v3d, nrm);
-
-			int[] tris = Delaunay.Triangulate(new List<Vector2>( v2d )).ToIntArray();
-
-			int[] new_indices = new int[tris.Length];
-
-			for(int i = 0; i < tris.Length; i++)
-			{
-				new_indices[i] = orig[ tris[i] ];
-			}
-
-			face.SetIndices(new_indices);
-		}
-
-		/**
 		 * Triangulate an entire pb_Object.
 		 */
 		public static void Triangulate(pb_Object pb)
@@ -253,8 +228,7 @@ namespace ProBuilder2.MeshOperations
 			Color[] 	c = pb.colors;
 			Vector2[] 	u = pb.uv;
 
-			int triangleCount = pb.faces.Sum(x => x.indices.Length); // pb.TriangleCount();
-			// int triangleCount = pb_Face.AllTriangles(pb.faces).Length; // pb.msh.triangles.Length;
+			int triangleCount = pb.faces.Sum(x => x.indices.Length);
 
 			if(triangleCount == v.Length)
 			{

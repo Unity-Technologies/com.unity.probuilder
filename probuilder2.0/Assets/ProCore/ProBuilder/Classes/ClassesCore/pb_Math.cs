@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using System.Linq;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -50,6 +51,17 @@ namespace ProBuilder2.Common
 			float z = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * longitudeAngle));
 	
 			return new Vector3(x, y, z);
+		}
+
+		/**
+		 *	Returns the signed angle from a to b.
+		 */
+		public static float SignedAngle(Vector2 a, Vector2 b)
+		{
+			float t = Vector2.Angle(a, b);
+			if( b.x - a.x < 0 )
+				t = 360f - t;
+			return t;
 		}
 
 		/**
@@ -780,21 +792,31 @@ namespace ProBuilder2.Common
 	/**
 	 *	Returns a new set of points wound as a contour counter-clockwise.
 	 */
-	public static List<Vector2> SortCounterClockwise(IList<Vector2> verts)
+	public static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
 	{
-		Vector2 cen = pb_Math.Average(verts);
-		Vector2 up = Vector2.up;
-		List<Vector2> organized = new List<Vector2>(verts);
-
-		organized.Sort( (a, b) =>
+		switch(method)
 		{
-			float at = Vector2.Angle(up, a - cen);
-			float bt = Vector2.Angle(up, b - cen);
-			if(a.x - cen.x < 0) at = 360f - at;
-			if(b.x - cen.x < 0) bt = 360f - bt;
-			return at < bt ? -1 : 1;
-		} );
-		return organized;
+			default:
+			{
+				Vector2 cen = pb_Math.Average(verts);
+				Vector2 up = Vector2.up;
+				int count = verts.Count;
+
+				List<pb_Tuple<float, Vector2>> angles = new List<pb_Tuple<float, Vector2>>(count);
+
+				for(int i = 0; i < count; i++)
+					angles.Add(new pb_Tuple<float, Vector2>(SignedAngle(up, verts[i] - cen), verts[i]));
+
+				angles.Sort((a, b) => { return a.Item1 < b.Item1 ? -1 : 1; });
+				
+				IList<Vector2> values = angles.Select(x => x.Item2).ToList();
+
+				if(method == SortMethod.Clockwise)
+					values.Reverse();
+
+				return values;
+			}
+		}
 	}
 
 	/**

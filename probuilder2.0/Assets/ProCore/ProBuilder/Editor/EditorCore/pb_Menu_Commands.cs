@@ -1260,13 +1260,11 @@ namespace ProBuilder2.EditorCommon
 				if(selected_faces.Length < 1)
 					continue;
 
-				Vector3 nrm = pb_Math.Normal(pb, selected_faces[0]);
-
 				pb.DeleteVerticesWithIndices(selected);
 
 				pb_Face composite = pb.MergeFaces(selected_faces);
 
-				pb.TriangulateFace(composite, nrm);
+				pb.Triangulate(composite);
 
 				int[] removed;
 				pb.RemoveDegenerateTriangles(out removed);
