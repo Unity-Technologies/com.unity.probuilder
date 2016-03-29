@@ -64,17 +64,17 @@ namespace ProBuilder2.Triangulator
 		/// </remarks>
 		/// <param name="Vertex">List of vertices to triangulate.</param>
 		/// <returns>Triangles referencing vertex indices arranged in clockwise order</returns>
-		public static List<Geometry.Triangle> Triangulate(List<Vector2> verts)
+		public static List<Geometry.Triangle> Triangulate(IEnumerable<Vector2> verts)
 		{
 			List<Vector2> Vertex = new List<Vector2>();
 
 			Vector2 avg = ProBuilder2.Common.pb_Math.Average(verts);
 
 			// Blow out triangle scale to avoid rounding error on sliver pieces.
-			for(int i = 0; i < verts.Count; i++)
+			foreach(Vector2 v in verts)
 			{
-				Vector2 dir = (verts[i] - avg).normalized;
-				Vertex.Add(verts[i] + (dir * 10f));
+				Vector2 dir = (v - avg).normalized;
+				Vertex.Add(v + (dir * 100f));
 			}
 
 			int nv = Vertex.Count;

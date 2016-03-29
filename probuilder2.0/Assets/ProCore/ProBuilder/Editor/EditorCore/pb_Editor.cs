@@ -77,7 +77,6 @@ public class pb_Editor : EditorWindow
 
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
 	public float drawNormals = 0f;
-	public bool drawFaceNormals = false;
 	private bool pref_showSceneInfo = false;
 	private bool pref_backfaceSelect = false;
 

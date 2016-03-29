@@ -48,12 +48,7 @@ namespace ProBuilder2.Common
 			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
 			float y = (float)(radius * Mathf.Sin( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
 			float z = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * longitudeAngle));
-			
-			// round numbers to 2nd decimal
-			x = (float)System.Math.Round(x, 2);
-			y = (float)System.Math.Round(y, 2);
-			z = (float)System.Math.Round(z, 2);
-
+	
 			return new Vector3(x, y, z);
 		}
 
@@ -113,7 +108,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Return the perpindicular direction to a 2d line
+		 *	Return the perpindicular direction to a 2d line `Perpendicular(b - y)`
 		 */
 		public static Vector2 Perpendicular(Vector2 a, Vector2 b)
 		{
@@ -245,38 +240,13 @@ namespace ProBuilder2.Common
 		 * Casts a ray from outside the bounds to the polygon and checks how 
 		 * many edges are hit.
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
-		 */
-		public static bool PointInPolygon(Vector2[] polygon, Vector2 point)
-		{
-			pb_Bounds2D bounds = new pb_Bounds2D(polygon);
-
-			if(bounds.ContainsPoint(point))
-			{
-				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
-				int collisions = 0;
-
-				for(int i = 0; i < polygon.Length; i += 2)
-				{
-					if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
-						collisions++;
-				}
-		
-				return collisions % 2 != 0;
-			}
-			else
-				return false;
-		}
-
-		/**
-		 * Returns true if the polygon contains point.  False otherwise.
-		 * Casts a ray from outside the bounds to the polygon and checks how 
-		 * many edges are hit.
-		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 * This overload accepts an array of points and an array of indices that compose the polygon.
 		 */
-		public static bool PointInPolygon(Vector2[] polygon, int[] indices, Vector2 point)
+		public static bool PointInPolygon(Vector2[] polygon, Vector2 point, int[] indices = null)
 		{
-			if(indices.Length % 2 != 0)
+			int len = indices != null ? indices.Length : polygon.Length;
+
+			if(len % 2 != 0)
 			{
 				Debug.LogError("PointInPolygon requires polygon indices be divisible by 2!");
 				return false;
@@ -289,9 +259,12 @@ namespace ProBuilder2.Common
 				Vector2 rayStart = bounds.center + Vector2.up * (bounds.size.y+2f);
 				int collisions = 0;
 
-				for(int i = 0; i < indices.Length; i += 2)
+				for(int i = 0; i < len; i += 2)
 				{
-					if( GetLineSegmentIntersect(rayStart, point, polygon[indices[i]], polygon[indices[i+1]]) )
+					int a = indices != null ? indices[i] : i;
+					int b = indices != null ? indices[i + 1] : i + 1;
+
+					if( GetLineSegmentIntersect(rayStart, point, polygon[a], polygon[b]) )
 						collisions++;
 				}
 		
@@ -370,48 +343,6 @@ namespace ProBuilder2.Common
 
 			return false;
 		}
-
-		// public static bool RayIntersectsAABB(Ray ray, Bounds bounds, out float distance)
-		// {
-		// 	// r.dir is unit direction vector of ray
-		// 	dirfrac.x = 1.0f / r.dir.x;
-		// 	dirfrac.y = 1.0f / r.dir.y;
-		// 	dirfrac.z = 1.0f / r.dir.z;
-
-		// 	return RayIntersectsAABB(ray.origin, dirFrac, bounds.center - bounds.extents, bounds.center + bounds.extents, out distance);
-		// }
-
-		// internal static bool RayIntersectsAABB(Vector3 rayOrigin, Vector3 dirFrac, Vector3 aabbMin, Vector3 aabbMax)
-		// {
-		// 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-		// 	// r.org is origin of ray
-		// 	float t1 = (lb.x - r.org.x)*dirfrac.x;
-		// 	float t2 = (rt.x - r.org.x)*dirfrac.x;
-		// 	float t3 = (lb.y - r.org.y)*dirfrac.y;
-		// 	float t4 = (rt.y - r.org.y)*dirfrac.y;
-		// 	float t5 = (lb.z - r.org.z)*dirfrac.z;
-		// 	float t6 = (rt.z - r.org.z)*dirfrac.z;
-
-		// 	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
-		// 	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
-
-		// 	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
-		// 	if (tmax < 0)
-		// 	{
-		// 	t = tmax;
-		// 	return false;
-		// 	}
-
-		// 	// if tmin > tmax, ray doesn't intersect AABB
-		// 	if (tmin > tmax)
-		// 	{
-		// 	t = tmax;
-		// 	return false;
-		// 	}
-
-		// 	t = tmin;
-		// 	return true;
-		// }
 #endregion
 
 #region Normal and Tangents
@@ -678,12 +609,18 @@ namespace ProBuilder2.Common
 			return sum/(float)v.Length;
 		}
 
-		public static Vector2 Average(List<Vector2> v)
+		public static Vector2 Average(IEnumerable<Vector2> vec)
 		{
 			Vector2 sum = Vector2.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
+			float c = 0f;
+
+			foreach(Vector2 v in vec)
+			{
+				sum += v;
+				c++;
+			}
+
+			return sum/c;
 		}
 
 		public static Vector2 Average(Vector2[] v)
@@ -772,7 +709,7 @@ namespace ProBuilder2.Common
 		}
 #endregion
 
-#region Projection 3d -> 2d
+#region Projection
 
 	/**
 	 * Maps an array of 3d points to 2d space given the vertices' normal.
@@ -838,6 +775,26 @@ namespace ProBuilder2.Common
 		}
 
 		return uvs;
+	}
+
+	/**
+	 *	Returns a new set of points wound as a contour counter-clockwise.
+	 */
+	public static List<Vector2> SortCounterClockwise(IList<Vector2> verts)
+	{
+		Vector2 cen = pb_Math.Average(verts);
+		Vector2 up = Vector2.up;
+		List<Vector2> organized = new List<Vector2>(verts);
+
+		organized.Sort( (a, b) =>
+		{
+			float at = Vector2.Angle(up, a - cen);
+			float bt = Vector2.Angle(up, b - cen);
+			if(a.x - cen.x < 0) at = 360f - at;
+			if(b.x - cen.x < 0) bt = 360f - bt;
+			return at < bt ? -1 : 1;
+		} );
+		return organized;
 	}
 
 	/**

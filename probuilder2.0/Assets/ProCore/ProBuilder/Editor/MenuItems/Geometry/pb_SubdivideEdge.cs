@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Edges #&c")]
 		static void Doit()
 		{
-			pb_ActionResult result = pb_Menu_Commands.MenuSubdivideEdge(Selection.transforms.GetComponents<pb_Object>());
+// 			pb_ActionResult result = pb_Menu_Commands.MenuSubdivideEdge(Selection.transforms.GetComponents<pb_Object>());
 		}
 	}
 }

@@ -35,6 +35,7 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 		material = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 		mesh.hideFlags = HideFlags.DontSave;
 		material.hideFlags = HideFlags.DontSave;
+		drawAxisLines = pb_Preferences_Internal.GetBool(pb_Constant.pbDrawAxisLines);
 	}
 
 	public override void OnDestroy()
@@ -51,6 +52,7 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 
 	Mesh mesh;
 	Material material;
+	bool drawAxisLines = true;
 	
 	// readonly Color wirecolor = new Color(.9f, .9f, .9f, .6f);
 	readonly Color background = new Color(.3f, .3f, .3f, .6f);
@@ -118,15 +120,17 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 
 		Vector3 left = Vector3.Cross(cam.forward, Vector3.up).normalized * LineDistance();
 
-		Handles.color = LightWhite;
-		Handles.DrawLine(a + left * .1f, a + left);
-		Handles.DrawLine(b + left * .1f, b + left);
+		if(drawAxisLines)
+		{
+			Handles.color = LightWhite;
+			Handles.DrawLine(a + left * .1f, a + left);
+			Handles.DrawLine(b + left * .1f, b + left);
+			Handles.color = Color.green;
+			Handles.DrawLine(a + left, b + left);
+		}
 
 		a += left;
 		b += left;
-		
-		Handles.color = Color.green;
-		Handles.DrawLine(a, b);
 
 		Handles.BeginGUI();
 		gc.text = Vector3.Distance(a,b).ToString("F2");
@@ -178,19 +182,24 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 		float sign = dot < 0f ? -1f : 1f;
 		Vector3 offset = -(Vector3.up + (Vector3.right * sign)).normalized * LineDistance();
 
-		Handles.color = LightWhite;
-		Handles.DrawLine(a + offset * .1f, a + offset);
-		Handles.DrawLine(b + offset * .1f, b + offset);
+		if(drawAxisLines)
+		{
+			Handles.color = LightWhite;
+			Handles.DrawLine(a + offset * .1f, a + offset);
+			Handles.DrawLine(b + offset * .1f, b + offset);
+		}
 
 		a += offset;
 		b += offset;
 
-		Handles.color = Color.blue;
-		Handles.DrawLine(a, b);
+		if(drawAxisLines)
+		{
+			Handles.color = Color.blue;
+			Handles.DrawLine(a, b);
+		}
 
 		Handles.BeginGUI();
 		gc.text = Vector3.Distance(a,b).ToString("F2");
-		// pos.x += EditorStyles.label.CalcSize(gc).x;
 		pos.y += EditorStyles.label.CalcHeight(gc, 20000);
 		DrawSceneLabel(gc, pos);
 
@@ -245,16 +254,21 @@ public class pb_Dimensions_Overlay : pb_ISceneEditor
 		float sign = dot < 0f ? -1f : 1f;
 		Vector3 offset = -(Vector3.up + (Vector3.forward * sign)).normalized * LineDistance();
 
-
-		Handles.color = LightWhite;
-		Handles.DrawLine(a + offset * .1f, a + offset);
-		Handles.DrawLine(b + offset * .1f, b + offset);
+		if(drawAxisLines)
+		{
+			Handles.color = LightWhite;
+			Handles.DrawLine(a + offset * .1f, a + offset);
+			Handles.DrawLine(b + offset * .1f, b + offset);
+		}
 
 		a += offset;
 		b += offset;
 
-		Handles.color = Color.red;
-		Handles.DrawLine(a, b);
+		if(drawAxisLines)
+		{
+			Handles.color = Color.red;
+			Handles.DrawLine(a, b);
+		}
 
 
 		Handles.BeginGUI();

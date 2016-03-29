@@ -1186,7 +1186,7 @@ public class pb_UV_Editor : EditorWindow
 
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon(uv, selection[i].faces[n].edges.AllTriangles(), mpos) )
+							if( pb_Math.PointInPolygon(uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1273,7 +1273,7 @@ public class pb_UV_Editor : EditorWindow
 
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
-						if( pb_Math.PointInPolygon(selection[i].uv, selection[i].faces[n].edges.AllTriangles(), mpos) )
+						if( pb_Math.PointInPolygon(selection[i].uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
 						{						
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);

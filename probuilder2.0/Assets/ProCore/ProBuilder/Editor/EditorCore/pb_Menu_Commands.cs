@@ -1805,12 +1805,12 @@ namespace ProBuilder2.EditorCommon
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 
-			int success = 0;
-			pb_ActionResult result = pb_ActionResult.NoSelection;
+			// pb_ActionResult result = pb_ActionResult.NoSelection;
 
 			foreach(pb_Object pb in selection)
 			{
-				result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3);
+				// result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3);
+				pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3);
 
 				pb.ToMesh();
 				pb.Refresh();
