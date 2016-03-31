@@ -1,20 +1,23 @@
-# Triangulation Library
-	- Credit to Paul Bourke (pbourke@swin.edu.au) for the original Fortran 77 Program
-	- Converted to a standalone C# 2.0 library by Morten Nielsen (www.iter.dk)
+# External Libraries
 
-# CSG
-	- Ported from Javascript project by Evan Wallace
-	- https://github.com/evanw/csg.js
+## Triangle.NET
+	- https://github.com/zon/triangle
 
-# kd-sharp
+## CSG
+	- Original by Evan Wallace: https://github.com/evanw/csg.js
+	- C# port: https://github.com/karl-/pb_CSG
+
+## kd-sharp
 	- https://code.google.com/p/kd-sharp/
 
-# PivotTool
+# Legacy
+
+## PivotTool
 	- @Matt1988
 
-# Diffuse Vertex Color Shaders
+## Diffuse Vertex Color Shaders
 	- @Snoopbaron (Fernando Zapata)
 
-# Standard Vertex Color Shaders
+## Standard Vertex Color Shaders
 	- Unity Forums user @defaxer
 	- http://forum.unity3d.com/threads/standard-shader-with-vertex-colors.316529/

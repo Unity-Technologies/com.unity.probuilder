@@ -23,6 +23,7 @@ public class pb_Editor : EditorWindow
 	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 2080;
+	const int EDITOR_SHORTCUTS_VERSION = 250;
 	const int WINDOW_WIDTH_FlOATING = 102;
 	const int WINDOW_WIDTH_DOCKABLE = 108;
 
@@ -204,6 +205,13 @@ public class pb_Editor : EditorWindow
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
 			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
+		}
+
+		if( EditorPrefs.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
+		{
+			EditorPrefs.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION);
+			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			Debug.LogWarning("ProBuilder had to reset it's shortcuts back to defaults due to internal changes in this update.");
 		}
 
 		editLevel 			= pb_Preferences_Internal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
@@ -2426,6 +2434,8 @@ public class pb_Editor : EditorWindow
 
 	public bool ShortcutCheck(Event e)
 	{
+		Debug.Log(e.ToString() + "\n" + (int)e.modifiers);
+
 		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
 		if(matches.Count < 1)
@@ -2583,6 +2593,8 @@ public class pb_Editor : EditorWindow
 
 	private bool GeoLevelShortcuts(pb_Shortcut shortcut)
 	{
+		Debug.Log(shortcut);
+
 		switch(shortcut.action)
 		{
 			case "Escape":

@@ -334,12 +334,18 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	
 	private pb_Edge[] CacheEdges()
 	{
+		if(_indices == null)
+			return null;
+			
 		_edges = pb_Edge.GetPerimeterEdges( GetEdges() );
 		return _edges;
 	}
 
 	private int[] CacheDistinctIndices()
 	{
+		if(_indices == null)
+			return null;
+
 		_distinctIndices = _indices.Distinct().ToArray();
 		return _distinctIndices;
 	}

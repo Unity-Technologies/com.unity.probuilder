@@ -67,6 +67,7 @@ public static class pb_Constant
 	// Bool
 	public const string pbDefaultOpenInDockableWindow	= "pbDefaultOpenInDockableWindow";
 	public const string pbEditorPrefVersion 			= "pbEditorPrefVersion";
+	public const string pbEditorShortcutsVersion		= "pbEditorShortcutsVersion";
 	public const string pbDefaultCollider 				= "pbDefaultCollider";
 	public const string pbForceConvex 					= "pbForceConvex";
 	public const string pbVertexColorPrefs 				= "pbVertexColorPrefs";

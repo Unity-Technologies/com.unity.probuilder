@@ -326,7 +326,7 @@ namespace ProBuilder2.EditorCommon
 		}
 #if !PROTOTYPE
 
-		public static pb_ActionResult MenuTriangulateObject(pb_Object[] selection)
+		public static pb_ActionResult MenuFacetizeObject(pb_Object[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
@@ -335,7 +335,7 @@ namespace ProBuilder2.EditorCommon
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pbTriangleOps.Triangulate(selection[i]);
+				pbTriangleOps.Facetize(selection[i]);
 				selection[i].ToMesh();
 				selection[i].Refresh();
 				selection[i].Optimize();
@@ -1244,46 +1244,47 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Delete selected vertices and attempt to retriangulate a super face.
 		 */
-		public static pb_ActionResult MenuDeleteVertices(pb_Object[] selection)
-		{
-			if(selection == null || selection.Length < 1)
-				return pb_ActionResult.NoSelection;
+		// public static pb_ActionResult MenuDeleteVertices(pb_Object[] selection)
+		// {
+		// 	if(selection == null || selection.Length < 1)
+		// 		return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Delete Vertices");
+		// 	pbUndo.RecordObjects(selection, "Delete Vertices");
 
-			foreach(pb_Object pb in selection)
-			{
-				int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
+		// 	foreach(pb_Object pb in selection)
+		// 	{
+		// 		int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
 
-				pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected).ToArray();
+		// 		pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected).ToArray();
 
-				if(selected_faces.Length < 1)
-					continue;
+		// 		if(selected_faces.Length < 1)
+		// 			continue;
 
-				pb.DeleteVerticesWithIndices(selected);
+		// 		pb.DeleteVerticesWithIndices(selected);
 
-				pb_Face composite = pb.MergeFaces(selected_faces);
+		// 		pb_Face composite = pb.MergeFaces(selected_faces);
 
-				pb.Triangulate(composite);
+		// 		// retriangulate face
+		// 		// pb.Triangulate(composite);
 
-				int[] removed;
-				pb.RemoveDegenerateTriangles(out removed);
+		// 		int[] removed;
+		// 		pb.RemoveDegenerateTriangles(out removed);
 
-				if(composite != null)
-				{
-					pb.ToMesh();
-					pb.Refresh();
-					pb.Optimize();
+		// 		if(composite != null)
+		// 		{
+		// 			pb.ToMesh();
+		// 			pb.Refresh();
+		// 			pb.Optimize();
 
-					pb.SetSelectedFaces( new pb_Face[] { composite } );
-				}
-			}
+		// 			pb.SetSelectedFaces( new pb_Face[] { composite } );
+		// 		}
+		// 	}
 
-			if(pb_Editor.instance)
-				pb_Editor.instance.UpdateSelection();
+		// 	if(pb_Editor.instance)
+		// 		pb_Editor.instance.UpdateSelection();
 
-			return new pb_ActionResult(Status.Success, "Delete Vertices");
-		}
+		// 	return new pb_ActionResult(Status.Success, "Delete Vertices");
+		// }
 
 		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection)
 		{

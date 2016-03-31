@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuTriangulateObject(selection);
+			return pb_Menu_Commands.MenuFacetizeObject(selection);
 		}
 	}
 }

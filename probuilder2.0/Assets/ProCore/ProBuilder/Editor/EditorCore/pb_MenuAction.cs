@@ -12,6 +12,8 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public abstract class pb_MenuAction
 	{
+		public const string PROBUILDER_MENU_PATH = "Tools/ProBuilder/";
+
 		protected const char CMD_SUPER 	= pb_Constant.CMD_SUPER;
 		protected const char CMD_SHIFT 	= pb_Constant.CMD_SHIFT;
 		protected const char CMD_OPTION = pb_Constant.CMD_OPTION;

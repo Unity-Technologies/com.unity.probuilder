@@ -224,7 +224,8 @@ public class pb_Preferences
 
 		for(int n = 1; n < defaultShortcuts.Length; n++)
 		{
-			if(n == shortcutIndex) {
+			if(n == shortcutIndex) 
+			{
 				GUI.backgroundColor = new Color(0.23f, .49f, .89f, 1f);
 					labelStyle.normal.background = EditorGUIUtility.whiteTexture;
 					Color oc = labelStyle.normal.textColor;
@@ -238,7 +239,9 @@ public class pb_Preferences
 			{
 
 				if(GUILayout.Button(defaultShortcuts[n].action, labelStyle, GUILayout.MinHeight(CELL_HEIGHT), GUILayout.MaxHeight(CELL_HEIGHT)))
+				{
 					shortcutIndex = n;
+				}
 			}
 		}
 
@@ -258,14 +261,15 @@ public class pb_Preferences
 	static void ShortcutEditPanel()
 	{
 		// descriptionTitleRect = EditorGUI.RectField(new Rect(240,150,200,50), descriptionTitleRect);
-
 		GUI.Label(keyRect, "Key");
 		KeyCode key = defaultShortcuts[shortcutIndex].key;
 		key = (KeyCode) EditorGUI.EnumPopup(keyInputRect, key);
 		defaultShortcuts[shortcutIndex].key = key;
 
 		GUI.Label(modifiersRect, "Modifiers");
-		defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, defaultShortcuts[shortcutIndex].eventModifiers);
+		EventModifiers em = (EventModifiers)(((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
+		em = (EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, em);
+		defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
 
 		GUI.Label(descriptionTitleRect, "Description", EditorStyles.boldLabel);
 

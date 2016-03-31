@@ -1,13 +1,11 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using KDTree;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
-using ProBuilder2.Triangulator;
-using ProBuilder2.Triangulator.Geometry;
-using System.Linq;
-using KDTree;
-using System.Text;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -235,11 +233,14 @@ namespace ProBuilder2.MeshOperations
 		sharedIndex[len] = -1;	// add the new vertex to it's own sharedIndex
 
 		// Triangulate the face with the new point appended
-		int[] tris = Delaunay.Triangulate(plane).ToIntArray();
+		List<int> tris; 
+
+		if(!pb_Triangulation.SortAndTriangulate(plane, out tris))
+			return false;
 
 		// Check to make sure the triangulated face is facing the same direction, and flip if not
 		Vector3 del = Vector3.Cross( verts[tris[2]] - verts[tris[0]], verts[tris[1]]-verts[tris[0]]).normalized;
-		if(Vector3.Dot(nrm, del) > 0) System.Array.Reverse(tris);
+		if(Vector3.Dot(nrm, del) > 0) tris.Reverse();
 
 		/**
 		 * attempt to figure out where the new UV coordinate should go
@@ -247,7 +248,7 @@ namespace ProBuilder2.MeshOperations
 		Vector2[] uvs = new Vector2[len+1];
 		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, len);
 
-		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+		pb_Face triangulated_face = new pb_Face(tris.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
 		/**
 		 * Attempt to figure out where the new UV point should go
@@ -321,15 +322,22 @@ namespace ProBuilder2.MeshOperations
 			sharedIndex[i] = -1;	// add the new vertex to it's own sharedIndex
 
 		// Triangulate the face with the new point appended
-		int[] tris = Delaunay.Triangulate(plane).ToIntArray();
+		List<int> tris;
+
+		if(!pb_Triangulation.SortAndTriangulate(plane, out tris))
+		{
+			newFace = null;
+			return false;
+		}
 		
 		// Check to make sure the triangulated face is facing the same direction, and flip if not
 		Vector3 del = Vector3.Cross( verts[tris[2]] - verts[tris[0]], verts[tris[1]]-verts[tris[0]]).normalized;
+
 		if(Vector3.Dot(nrm, del) > 0)
-			System.Array.Reverse(tris);
+			tris.Reverse();
 		
 		// Build the new face
-		pb_Face triangulated_face = new pb_Face(tris, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+		pb_Face triangulated_face = new pb_Face(tris.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 
 		/**
 		 * Attempt to figure out where the new UV point(s) should go (if auto uv'ed face)
@@ -370,61 +378,167 @@ namespace ProBuilder2.MeshOperations
 		return AppendVerticesToEdge(pb, new pb_Edge[] { edge }, count);
 	}
 
+	private class FaceRebuildData
+	{
+		// new pb_Face
+		public pb_Face face;
+		// new vertices (all vertices required to rebuild, not just new)
+		public List<pb_Vertex> vertices;
+		// shared indices pointers (must match vertices length)
+		public List<int> sharedIndices;
+		// shared UV indices pointers (must match vertices length)
+		public List<int> sharedIndicesUV;
+	}
+
 	public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count)
 	{
-		if(count < 1 || count > 32)
-			return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 32.");
+		if(count < 1 || count > 128)
+			return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 128.");
 
-		List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-		Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-		List<int> indicesToDelete = new List<int>();
+		List<pb_Vertex> vertices 		= new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+		Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
+		Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
+		List<int> indicesToDelete		= new List<int>();
+		pb_Edge[] commonEdges	 		= pb_Edge.GetUniversalEdges(edges, lookup);
+		List<pb_Edge> distinctEdges 	= commonEdges.Distinct().ToList();
 
-		foreach(pb_Edge edge in edges)
+		Dictionary<pb_Face, FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, FaceRebuildData>();
+
+		int sharedIndicesCount = lookup.Count();
+
+		foreach(pb_Edge edge in distinctEdges)
 		{
-			List<pb_Vertex> appended = new List<pb_Vertex>(count);
-
+			// Generate the new vertices that will be inserted on this edge
+			List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);
 			for(int i = 0; i < count; i++)
-				appended.Add( pb_Vertex.Mix(vertices[edge.x], vertices[edge.y], (i+1)/((float)count+1) ) );
+				verticesToAppend.Add( pb_Vertex.Mix(vertices[edge.x], vertices[edge.y], (i+1)/((float)count+1) ) );
 
-			List<pb_Tuple<pb_Face, pb_Edge>> adjFaces = pbMeshUtils.GetNeighborFaces(pb, edge);
+			List<pb_Tuple<pb_Face, pb_Edge>> adjacentFaces = pbMeshUtils.GetNeighborFaces(pb, pb_Edge.GetLocalEdgeFast(edge, pb.sharedIndices));
 
-			int si_max = lookup.Count();
-
-			for(int n = 0; n < adjFaces.Count; n++)
+			// foreach face attached to common edge, append vertices
+			foreach(pb_Tuple<pb_Face, pb_Edge> tup in adjacentFaces)
 			{
-				pb_Face f = adjFaces[n].Item1;
-				indicesToDelete.AddRange(f.distinctIndices);
+				pb_Face face = tup.Item1;
 
-				int dist_len = f.distinctIndices.Length;
-				int[] newSharedIndices = new int[f.distinctIndices.Length + count];
+				FaceRebuildData data;
 
-				for(int i = 0; i < f.distinctIndices.Length; i++)
-					newSharedIndices[i] = lookup[f.distinctIndices[i]];
+				if( !modifiedFaces.TryGetValue(face, out data) )
+				{
+					data = new FaceRebuildData();
+					data.face = new pb_Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+					data.vertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, face.distinctIndices));
+					data.sharedIndices = new List<int>();
+					data.sharedIndicesUV = new List<int>();
+
+					foreach(int i in face.distinctIndices)
+					{
+						int shared;
+
+						if(lookup.TryGetValue(i, out shared)) 
+							data.sharedIndices.Add(shared);
+						
+						if(lookupUV.TryGetValue(i, out shared)) 
+							data.sharedIndicesUV.Add(shared);
+					}
+
+					indicesToDelete.AddRange(face.distinctIndices);
+				}
+
+				data.vertices.AddRange(verticesToAppend);
 
 				for(int i = 0; i < count; i++)
-					newSharedIndices[i + dist_len] = si_max + i;
-
-				List<pb_Vertex> faceVertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, f.distinctIndices));
-				faceVertices.AddRange(appended);
-
-				Vector3 nrm = pb_Math.Normal(pb, f);
-				List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(faceVertices.Select(x=>x.position).ToArray(), nrm, f.indices));
-				int[] tris = Delaunay.Triangulate(plane).ToIntArray();
-							
-				int vc = vertices.Count;
-				vertices.AddRange(faceVertices);
-				pb_Face faceToAppend = new pb_Face(tris, f.material, new pb_UV(f.uv), f.smoothingGroup, f.textureGroup, -1, f.manualUV);
-				faceToAppend.ShiftIndices(vc);
-
-				adjFaces[n].Item1.CopyFrom(faceToAppend);
-
-				for(int i = 0; i < faceVertices.Count; i++)
-					lookup.Add(vc + i, newSharedIndices[i]);
+				{
+					data.sharedIndices.Add(sharedIndicesCount + i);			
+					data.sharedIndicesUV.Add(-1);				
+				}
 			}
+
+			sharedIndicesCount += count;
 		}
+
+		// now apply the changes
+		List<pb_Face> dic_face = modifiedFaces.Keys.ToList();
+		List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
+
+		for(int i = 0; i < dic_face.Count; i++)
+		{
+			pb_Face face = dic_face[i];
+			FaceRebuildData data = dic_data[i];
+
+			Vector3 nrm = pb_Math.Normal(pb, face);
+			Vector2[] projection = pb_Math.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
+
+			int vertexCount = vertices.Count;
+
+			// triangulate and set new face indices to end of current vertex list
+			List<int> indices;
+			if(pb_Triangulation.SortAndTriangulate(projection, out indices))
+				data.face.SetIndices(indices.ToArray());
+			else
+				continue;
+
+			data.face.ShiftIndices(vertexCount);
+			face.CopyFrom(data.face);
+
+			for(int n = 0; n < data.vertices.Count; n++) 
+				lookup.Add(vertexCount + n, data.sharedIndices[n]);
+
+			if(data.sharedIndicesUV.Count == data.vertices.Count)
+			{
+				for(int n = 0; n < data.vertices.Count; n++) 
+					lookupUV.Add(vertexCount + n, data.sharedIndicesUV[n]);
+			}
+
+			vertices.AddRange(data.vertices);
+		}
+
+		// foreach(pb_Edge edge in edges)
+		// {
+		// 	List<pb_Vertex> appended = new List<pb_Vertex>(count);
+
+		// 	for(int i = 0; i < count; i++)
+		// 		appended.Add( pb_Vertex.Mix(vertices[edge.x], vertices[edge.y], (i+1)/((float)count+1) ) );
+
+		// 	List<pb_Tuple<pb_Face, pb_Edge>> adjFaces = pbMeshUtils.GetNeighborFaces(pb, edge);
+
+		// 	int si_max = lookup.Count();
+
+		// 	for(int n = 0; n < adjFaces.Count; n++)
+		// 	{
+		// 		pb_Face f = adjFaces[n].Item1;
+		// 		indicesToDelete.AddRange(f.distinctIndices);
+
+		// 		int dist_len = f.distinctIndices.Length;
+		// 		int[] newSharedIndices = new int[f.distinctIndices.Length + count];
+
+		// 		for(int i = 0; i < f.distinctIndices.Length; i++)
+		// 			newSharedIndices[i] = lookup[f.distinctIndices[i]];
+
+		// 		for(int i = 0; i < count; i++)
+		// 			newSharedIndices[i + dist_len] = si_max + i;
+
+		// 		List<pb_Vertex> faceVertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, f.distinctIndices));
+		// 		faceVertices.AddRange(appended);
+
+		// 		Vector3 nrm = pb_Math.Normal(pb, f);
+		// 		List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(faceVertices.Select(x=>x.position).ToArray(), nrm, f.indices));
+		// 		int[] tris = pb_Triangulation.SortAndTriangulate(plane).ToArray();
+							
+		// 		int vc = vertices.Count;
+		// 		vertices.AddRange(faceVertices);
+		// 		pb_Face faceToAppend = new pb_Face(tris, f.material, new pb_UV(f.uv), f.smoothingGroup, f.textureGroup, -1, f.manualUV);
+		// 		faceToAppend.ShiftIndices(vc);
+
+		// 		adjFaces[n].Item1.CopyFrom(faceToAppend);
+
+		// 		for(int i = 0; i < faceVertices.Count; i++)
+		// 			lookup.Add(vc + i, newSharedIndices[i]);
+		// 	}
+		// }
 
 		pb.SetVertices(vertices);
 		pb.SetSharedIndices(lookup.ToSharedIndices());
+		pb.SetSharedIndicesUV(lookupUV.ToSharedIndices());
 		pb.DeleteVerticesWithIndices(indicesToDelete.Distinct());
 
 		return pb_ActionResult.Success;

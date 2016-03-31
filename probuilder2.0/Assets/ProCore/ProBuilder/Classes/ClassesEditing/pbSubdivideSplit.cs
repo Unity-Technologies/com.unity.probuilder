@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ProBuilder2.Common;
-using ProBuilder2.Triangulator;
-using ProBuilder2.Triangulator.Geometry;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -697,10 +695,13 @@ public static class pbSubdivideSplit
 		}
 
 		// triangulate new polygons
-		int[] t_polyA = pb_Triangulation.SortAndTriangulate(v_polyA_2d).ToArray();
-		int[] t_polyB = pb_Triangulation.SortAndTriangulate(v_polyB_2d).ToArray();
+		List<int> t_polyA;
+		List<int> t_polyB;
 
-		if(t_polyA.Length < 3 || t_polyB.Length < 3)
+		if(!pb_Triangulation.SortAndTriangulate(v_polyA_2d, out t_polyA) || t_polyA.Count < 3)
+			return false;
+			
+		if(!pb_Triangulation.SortAndTriangulate(v_polyB_2d, out t_polyB) || t_polyB.Count < 3)
 			return false;
 
 		// figure out the face normals for the new faces and check to make sure they match the original face
@@ -710,12 +711,12 @@ public static class pbSubdivideSplit
 		Vector3 nrmA = Vector3.Cross( v_polyA_2d[ t_polyA[2] ]-v_polyA_2d[ t_polyA[0] ], v_polyA_2d[ t_polyA[1] ]-v_polyA_2d[ t_polyA[0] ] );
 		Vector3 nrmB = Vector3.Cross( v_polyB_2d[ t_polyB[2] ]-v_polyB_2d[ t_polyB[0] ], v_polyB_2d[ t_polyB[1] ]-v_polyB_2d[ t_polyB[0] ] );
 
-		if(Vector3.Dot(nrm, nrmA) < 0) System.Array.Reverse(t_polyA);
-		if(Vector3.Dot(nrm, nrmB) < 0) System.Array.Reverse(t_polyB);
+		if(Vector3.Dot(nrm, nrmA) < 0) t_polyA.Reverse();
+		if(Vector3.Dot(nrm, nrmB) < 0) t_polyB.Reverse();
 
 		// triangles, material, pb_UV, smoothing group, shared index
-		pb_Face faceA = new pb_Face( t_polyA, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
-		pb_Face faceB = new pb_Face( t_polyB, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
+		pb_Face faceA = new pb_Face( t_polyA.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
+		pb_Face faceB = new pb_Face( t_polyB.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
 
 		splitFaces = new pb_Face[2] { faceA, faceB };
 		splitVertices = new Vector3[2][] { v_polyA.ToArray(), v_polyB.ToArray() };
@@ -894,10 +895,11 @@ public static class pbSubdivideSplit
 				return false;
 			}
 		
-			tris[i] = pb_Triangulation.SortAndTriangulate(quadrants2d[i]).ToArray();
-
-			if(tris[i].Length < 3)	///< #521
+			List<int> triangulated;
+			if( !pb_Triangulation.SortAndTriangulate(quadrants2d[i], out triangulated) || triangulated.Count < 3 )
 				return false;
+			else
+				tris[i] = triangulated.ToArray();
 			
 			if( Vector3.Dot(nrm, pb_Math.Normal(quadrants3d[i][tris[i][0]], quadrants3d[i][tris[i][1]], quadrants3d[i][tris[i][2]])) < 0 )
 				System.Array.Reverse(tris[i]);
@@ -1082,18 +1084,15 @@ public static class pbSubdivideSplit
 		int[][] tris = new int[len][];
 		for(int i = 0; i < len; i++)
 		{
-			try {
-				tris[i] = pb_Triangulation.SortAndTriangulate(quadrants2d[i]).ToArray();
-			
-				if(tris[i] == null || tris[i].Length < 3)
-				{
-					Debug.Log("Fail triangulation");
-					return false;
-				}
-			} catch (System.Exception error) {
-				Debug.LogError("PokeFace internal failed triangulation. Bail!\n" + error);
+			List<int> triangulated;
+
+			if(!pb_Triangulation.SortAndTriangulate(quadrants2d[i], out triangulated) || triangulated.Count < 3)
+			{
+				Debug.LogError("PokeFace internal failed triangulation. Bail!");
 				return false;
 			}
+
+			tris[i] = triangulated.ToArray();
 
 			// todo - check that face normal is correct
 		}

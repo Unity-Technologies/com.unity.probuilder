@@ -130,11 +130,11 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	 *	Returns new edges where each edge is composed not of vertex indices, but rather the index in pb.sharedIndices of each
 	 *	vertex.
 	 */
-	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, Dictionary<int, int> sharedIndicesLookup)
+	public static pb_Edge[] GetUniversalEdges(IList<pb_Edge> edges, Dictionary<int, int> sharedIndicesLookup)
 	{
-		pb_Edge[] uni = new pb_Edge[edges.Length];
+		pb_Edge[] uni = new pb_Edge[edges.Count];
 
-		for(int i = 0; i < edges.Length; i++)
+		for(int i = 0; i < edges.Count; i++)
 			uni[i] = new pb_Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
 
 		return uni;
@@ -227,6 +227,14 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		}
 
 		return null;
+	}
+
+	/**
+	 * Converts a universal edge to local.  Does *not* guarantee that edges will be valid (indices belong to the same face and edge).
+	 */
+	public static pb_Edge GetLocalEdgeFast(pb_Edge edge, pb_IntArray[] sharedIndices)
+	{
+		return new pb_Edge(sharedIndices[edge.x][0], sharedIndices[edge.y][0]);
 	}
 
 	/**

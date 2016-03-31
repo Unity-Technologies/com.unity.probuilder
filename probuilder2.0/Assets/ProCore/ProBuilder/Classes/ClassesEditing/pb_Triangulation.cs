@@ -12,6 +12,7 @@ namespace ProBuilder2.MeshOperations
 {
 	/**
 	 *	Wrapper around Triangle.NET triangulation methods.
+	 *	https://github.com/zon/triangle
 	 */
 	public static class pb_Triangulation
 	{
@@ -19,7 +20,7 @@ namespace ProBuilder2.MeshOperations
 		 *	Given a set of points this method will format the points into a boundary contour and triangulate,
 		 *	returning a set of indices that corresponds to the original ordering.
 		 */
-		public static List<int> SortAndTriangulate(IList<Vector2> points, bool convex = false)
+		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
 			IList<Vector2> sorted = pb_Math.Sort(points, SortMethod.CounterClockwise);
 
@@ -28,20 +29,23 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
 
-			List<int> indices = Triangulate(sorted, convex);
+			if(!Triangulate(sorted, out indices, convex))
+				return false;
 
 			for(int i = 0; i < indices.Count; i++)
 				indices[i] = map[indices[i]];
 
-			return indices;
+			return true;
 		}
 
 		/**
 		 *	Given a set of points ordered counter-clockwise along a contour, return triangle indices.
 		 *	Triangulation may optionally be set to convex, which will result in some a convex shape.
 		 */
-		public static List<int> Triangulate(IList<Vector2> points, bool convex = false)
+		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
+			indices = new List<int>();
+
 			int vertexCount = points.Count;
 			InputGeometry input = new InputGeometry(vertexCount);
 
@@ -60,11 +64,17 @@ namespace ProBuilder2.MeshOperations
 
 			TMesh tm = new TMesh(b);
 			tm.Triangulate(input);
+
+			if(tm.Vertices.Count != points.Count)
+			{
+				Debug.LogWarning("Triangulation has inserted additional vertices.");
+				return false;
+			}
+
 			// Ensures vertex indices are kept linear so that triangles match the points array.
 			tm.Renumber(NodeNumbering.Linear);
 
 			IEnumerable<Triangle> triangles = tm.Triangles;
-			List<int> indices = new List<int>();
 
 			foreach(Triangle t in triangles)
 			{
@@ -74,18 +84,7 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( t.P0 );
 			}
 
-			return indices;
-		}
-
-		/**
-		 * Re-triangulates a face with existing indices and vertices.  This function assumes that if convex is false
-		 * the points are already sorted.  If points are not sorted to a contour, use pb_Math.SortCounterClockwise.
-		 */
-		public static void Triangulate(this pb_Object pb, pb_Face face, bool convex = false)
-		{
-			Vector2[] v2d = pb_Math.PlanarProject(pb.vertices, pb_Math.Normal(pb, face), face.indices);
-			List<int> indices = Triangulate(v2d, convex);
-			face.SetIndices(indices.ToArray());
+			return true;
 		}
 	}
 }

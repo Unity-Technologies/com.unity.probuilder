@@ -220,9 +220,9 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 * Triangulate an entire pb_Object.
+		 * Facetize an entire pb_Object (remove quads and n-gons by replacing them with explicit triangles).
 		 */
-		public static void Triangulate(pb_Object pb)
+		public static void Facetize(pb_Object pb)
 		{
 			Vector3[] 	v = pb.vertices;
 			Color[] 	c = pb.colors;

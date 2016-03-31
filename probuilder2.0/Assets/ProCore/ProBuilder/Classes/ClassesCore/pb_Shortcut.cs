@@ -22,30 +22,27 @@ public class pb_Shortcut
 	public KeyCode key;
 	public EventModifiers eventModifiers;
 
-	public override string ToString()
-	{
-		string val = action + "-" + description + "-" + key + "-" + eventModifiers;
-		return val; 
-	}
-
 	public pb_Shortcut(string str)
 	{
-		string[] split = str.Split('-');
-		// split[0] = action
-		// split[1] = description
-		KeyCode k = pbUtil.ParseEnum(split[2], KeyCode.None);
-		string[] modSplit = split[3].Split(',');
-		EventModifiers e = (EventModifiers)0;
-		for(int i = 0; i < modSplit.Length; i++)
+		try
 		{
-			e |= pbUtil.ParseEnum(modSplit[i], (EventModifiers)0);
+			string[] split = str.Split('-');
+
+			action = split[0];
+			description = split[1];
+
+			int t;
+
+			if(int.TryParse(split[2], out t))
+				key = (KeyCode)t;
+
+			if(int.TryParse(split[3], out t))
+				eventModifiers = (EventModifiers)t;
 		}
-		
-		action = split[0];
-		description = split[1];
-		key = k;
-		eventModifiers = e;
-		// return new Shortcut(split[0], split[1], k, e);
+		catch
+		{
+			Debug.LogWarning("Failed parsing shortcut: " + str);
+		}
 	}
 
 	public bool Matches(KeyCode key, EventModifiers modifiers)
@@ -104,12 +101,28 @@ public class pb_Shortcut
 		return shortcuts;
 	}
 
+	public override string ToString()
+	{
+		return string.Format("{0}: {1}, {2} ({3})", action, key.ToString(), eventModifiers.ToString(), (int)eventModifiers);
+	}
+
+	public string Serialize()
+	{
+		// lazy sanitize action and description action, description, and key
+		action = action.Replace("-", " ").Replace("*", "");
+		description = description.Replace("-", " ").Replace("*", "");
+		string val = action + "-" + description + "-" + (int)key + "-" + (int)eventModifiers;
+		return val; 
+	}
+
 	public static string ShortcutsToString(pb_Shortcut[] shortcuts)
 	{
 		string val = "";
+
 		for(int i = 0; i < shortcuts.Length; i++)
 		{
-			val += shortcuts[i].ToString();
+			val += shortcuts[i].Serialize();
+
 			if(i!=shortcuts.Length-1)
 				val += "*";
 		}

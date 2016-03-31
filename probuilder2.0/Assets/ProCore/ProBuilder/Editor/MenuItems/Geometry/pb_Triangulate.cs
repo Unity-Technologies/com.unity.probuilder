@@ -23,7 +23,7 @@ namespace ProBuilder2.Actions
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Triangulate Object", false, pb_Constant.MENU_GEOMETRY + pb_Constant.MENU_GEOMETRY_OBJECT)]
 		public static void MenuTriangulatePbObjects()
 		{
-			pb_Menu_Commands.MenuTriangulateObject(pbUtil.GetComponents<pb_Object>(Selection.transforms));
+			pb_Menu_Commands.MenuFacetizeObject(pbUtil.GetComponents<pb_Object>(Selection.transforms));
 		}
 	}
 }
