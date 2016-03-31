@@ -72,21 +72,17 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		_mat = pb_Constant.DefaultMaterial;
 		_smoothingGroup = 0;
 		elementGroup = 0;
-
-		RebuildCaches();
 	}
 
 	public pb_Face(int[] i, Material m, pb_UV u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
 	{
-		this._indices = i;
+		this.SetIndices(i);
 		this._uv = new pb_UV(u);
 		this._mat = m;
 		this._smoothingGroup = smoothingGroup;
 		this.textureGroup = textureGroup;
 		this.elementGroup = elementGroup;
 		this.manualUV = manualUV;
-
-		RebuildCaches();
 	}
 
 	/**
@@ -96,11 +92,8 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	{
 		_indices = new int[face.indices.Length];
 		System.Array.Copy(face.indices, _indices, face.indices.Length);
-		
 		_uv = new pb_UV(face.uv);
-
 		_mat = face.material;
-
 		_smoothingGroup = face.smoothingGroup;
 		textureGroup = face.textureGroup;
 		elementGroup = face.elementGroup;

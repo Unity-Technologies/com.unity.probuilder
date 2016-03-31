@@ -373,25 +373,15 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 *	Appends count number of vertices to an edge.
 	 */
-	public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, pb_Edge edge, int count)
+	public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, pb_Edge edge, int count, out List<pb_Edge> newEdges)
 	{
-		return AppendVerticesToEdge(pb, new pb_Edge[] { edge }, count);
+		return AppendVerticesToEdge(pb, new pb_Edge[] { edge }, count, out newEdges);
 	}
 
-	private class FaceRebuildData
+	public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count, out List<pb_Edge> newEdges)
 	{
-		// new pb_Face
-		public pb_Face face;
-		// new vertices (all vertices required to rebuild, not just new)
-		public List<pb_Vertex> vertices;
-		// shared indices pointers (must match vertices length)
-		public List<int> sharedIndices;
-		// shared UV indices pointers (must match vertices length)
-		public List<int> sharedIndicesUV;
-	}
+		newEdges = new List<pb_Edge>();
 
-	public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count)
-	{
 		if(count < 1 || count > 128)
 			return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 128.");
 
@@ -402,29 +392,33 @@ namespace ProBuilder2.MeshOperations
 		pb_Edge[] commonEdges	 		= pb_Edge.GetUniversalEdges(edges, lookup);
 		List<pb_Edge> distinctEdges 	= commonEdges.Distinct().ToList();
 
-		Dictionary<pb_Face, FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, FaceRebuildData>();
+		Dictionary<pb_Face, pb_FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, pb_FaceRebuildData>();
 
-		int sharedIndicesCount = lookup.Count();
+		int originalSharedIndicesCount = lookup.Count();
+		int sharedIndicesCount = originalSharedIndicesCount;
 
 		foreach(pb_Edge edge in distinctEdges)
 		{
+			pb_Edge localEdge = pb_Edge.GetLocalEdgeFast(edge, pb.sharedIndices);
+
 			// Generate the new vertices that will be inserted on this edge
 			List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);
-			for(int i = 0; i < count; i++)
-				verticesToAppend.Add( pb_Vertex.Mix(vertices[edge.x], vertices[edge.y], (i+1)/((float)count+1) ) );
 
-			List<pb_Tuple<pb_Face, pb_Edge>> adjacentFaces = pbMeshUtils.GetNeighborFaces(pb, pb_Edge.GetLocalEdgeFast(edge, pb.sharedIndices));
+			for(int i = 0; i < count; i++)
+				verticesToAppend.Add( pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count+1) ) );
+
+			List<pb_Tuple<pb_Face, pb_Edge>> adjacentFaces = pbMeshUtils.GetNeighborFaces(pb, localEdge);
 
 			// foreach face attached to common edge, append vertices
 			foreach(pb_Tuple<pb_Face, pb_Edge> tup in adjacentFaces)
 			{
 				pb_Face face = tup.Item1;
 
-				FaceRebuildData data;
+				pb_FaceRebuildData data;
 
 				if( !modifiedFaces.TryGetValue(face, out data) )
 				{
-					data = new FaceRebuildData();
+					data = new pb_FaceRebuildData();
 					data.face = new pb_Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 					data.vertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, face.distinctIndices));
 					data.sharedIndices = new List<int>();
@@ -442,13 +436,15 @@ namespace ProBuilder2.MeshOperations
 					}
 
 					indicesToDelete.AddRange(face.distinctIndices);
+
+					modifiedFaces.Add(face, data);
 				}
 
 				data.vertices.AddRange(verticesToAppend);
 
 				for(int i = 0; i < count; i++)
 				{
-					data.sharedIndices.Add(sharedIndicesCount + i);			
+					data.sharedIndices.Add(sharedIndicesCount + i);		
 					data.sharedIndicesUV.Add(-1);				
 				}
 			}
@@ -458,12 +454,13 @@ namespace ProBuilder2.MeshOperations
 
 		// now apply the changes
 		List<pb_Face> dic_face = modifiedFaces.Keys.ToList();
-		List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
+		List<pb_FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
+		List<pb_EdgeLookup> appendedEdges = new List<pb_EdgeLookup>();
 
 		for(int i = 0; i < dic_face.Count; i++)
 		{
 			pb_Face face = dic_face[i];
-			FaceRebuildData data = dic_data[i];
+			pb_FaceRebuildData data = dic_data[i];
 
 			Vector3 nrm = pb_Math.Normal(pb, face);
 			Vector2[] projection = pb_Math.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
@@ -472,6 +469,7 @@ namespace ProBuilder2.MeshOperations
 
 			// triangulate and set new face indices to end of current vertex list
 			List<int> indices;
+
 			if(pb_Triangulation.SortAndTriangulate(projection, out indices))
 				data.face.SetIndices(indices.ToArray());
 			else
@@ -490,56 +488,25 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			vertices.AddRange(data.vertices);
+
+			foreach(pb_Edge e in face.edges)
+			{
+				pb_EdgeLookup el = new pb_EdgeLookup(new pb_Edge(lookup[e.x], lookup[e.y]), e);
+
+				if(el.common.x >= originalSharedIndicesCount || el.common.y >= originalSharedIndicesCount)
+					appendedEdges.Add(el);
+			}
 		}
 
-		// foreach(pb_Edge edge in edges)
-		// {
-		// 	List<pb_Vertex> appended = new List<pb_Vertex>(count);
+		indicesToDelete = indicesToDelete.Distinct().ToList();
+		int delCount = indicesToDelete.Count;
 
-		// 	for(int i = 0; i < count; i++)
-		// 		appended.Add( pb_Vertex.Mix(vertices[edge.x], vertices[edge.y], (i+1)/((float)count+1) ) );
-
-		// 	List<pb_Tuple<pb_Face, pb_Edge>> adjFaces = pbMeshUtils.GetNeighborFaces(pb, edge);
-
-		// 	int si_max = lookup.Count();
-
-		// 	for(int n = 0; n < adjFaces.Count; n++)
-		// 	{
-		// 		pb_Face f = adjFaces[n].Item1;
-		// 		indicesToDelete.AddRange(f.distinctIndices);
-
-		// 		int dist_len = f.distinctIndices.Length;
-		// 		int[] newSharedIndices = new int[f.distinctIndices.Length + count];
-
-		// 		for(int i = 0; i < f.distinctIndices.Length; i++)
-		// 			newSharedIndices[i] = lookup[f.distinctIndices[i]];
-
-		// 		for(int i = 0; i < count; i++)
-		// 			newSharedIndices[i + dist_len] = si_max + i;
-
-		// 		List<pb_Vertex> faceVertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, f.distinctIndices));
-		// 		faceVertices.AddRange(appended);
-
-		// 		Vector3 nrm = pb_Math.Normal(pb, f);
-		// 		List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(faceVertices.Select(x=>x.position).ToArray(), nrm, f.indices));
-		// 		int[] tris = pb_Triangulation.SortAndTriangulate(plane).ToArray();
-							
-		// 		int vc = vertices.Count;
-		// 		vertices.AddRange(faceVertices);
-		// 		pb_Face faceToAppend = new pb_Face(tris, f.material, new pb_UV(f.uv), f.smoothingGroup, f.textureGroup, -1, f.manualUV);
-		// 		faceToAppend.ShiftIndices(vc);
-
-		// 		adjFaces[n].Item1.CopyFrom(faceToAppend);
-
-		// 		for(int i = 0; i < faceVertices.Count; i++)
-		// 			lookup.Add(vc + i, newSharedIndices[i]);
-		// 	}
-		// }
+		newEdges = appendedEdges.Distinct().Select(x => x.local - delCount).ToList();
 
 		pb.SetVertices(vertices);
 		pb.SetSharedIndices(lookup.ToSharedIndices());
 		pb.SetSharedIndicesUV(lookupUV.ToSharedIndices());
-		pb.DeleteVerticesWithIndices(indicesToDelete.Distinct());
+		pb.DeleteVerticesWithIndices(indicesToDelete);
 
 		return pb_ActionResult.Success;
 	}

@@ -220,13 +220,11 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 * Facetize an entire pb_Object (remove quads and n-gons by replacing them with explicit triangles).
+		 *	Split all n-gons into triangles.
 		 */
 		public static void Facetize(pb_Object pb)
 		{
-			Vector3[] 	v = pb.vertices;
-			Color[] 	c = pb.colors;
-			Vector2[] 	u = pb.uv;
+			pb_Vertex[] v = pb_Vertex.GetVertices(pb);
 
 			int triangleCount = pb.faces.Sum(x => x.indices.Length);
 
@@ -238,9 +236,7 @@ namespace ProBuilder2.MeshOperations
 			int vertexCount = triangleCount;
 			int faceCount = vertexCount / 3;
 
-			Vector3[]	tri_vertices = new Vector3[vertexCount];
-			Color[] 	tri_colors = new Color[vertexCount];
-			Vector2[]	tri_uvs = new Vector2[vertexCount];
+			pb_Vertex[] tri_vertices = new pb_Vertex[triangleCount];
 			pb_Face[]	tri_faces = new pb_Face[faceCount];
 
 			int n = 0, f = 0;
@@ -253,14 +249,6 @@ namespace ProBuilder2.MeshOperations
 					tri_vertices[n+0] = v[indices[i+0]];
 					tri_vertices[n+1] = v[indices[i+1]];
 					tri_vertices[n+2] = v[indices[i+2]];
-
-					tri_colors[n+0] = c[indices[i+0]];
-					tri_colors[n+1] = c[indices[i+1]];
-					tri_colors[n+2] = c[indices[i+2]];
-
-					tri_uvs[n+0] = u[indices[i+0]];
-					tri_uvs[n+1] = u[indices[i+1]];
-					tri_uvs[n+2] = u[indices[i+2]];
 
 					tri_faces[f++] = new pb_Face( new int[] { n+0, n+1, n+2 },
 												face.material,
@@ -276,11 +264,8 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb.SetVertices(tri_vertices);
-			pb.SetColors(tri_colors);
-			pb.SetUV(tri_uvs);
 			pb.SetFaces(tri_faces);
-
-			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(tri_vertices) );
+			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 			pb.SetSharedIndicesUV( new pb_IntArray[0] );
 		}
 	}

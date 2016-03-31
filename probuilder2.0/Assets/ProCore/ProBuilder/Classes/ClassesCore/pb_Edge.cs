@@ -53,6 +53,26 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		return x > y ? y ^ x : x ^ y;
 	}
 
+	public static pb_Edge operator +(pb_Edge a, pb_Edge b)
+	{
+		return new pb_Edge(a.x + b.x, a.y + b.y);
+	}
+
+	public static pb_Edge operator -(pb_Edge a, pb_Edge b)
+	{
+		return new pb_Edge(a.x - b.x, a.y - b.y);
+	}
+
+	public static pb_Edge operator +(pb_Edge a, int b)
+	{
+		return new pb_Edge(a.x + b, a.y + b);
+	}
+
+	public static pb_Edge operator -(pb_Edge a, int b)
+	{
+		return new pb_Edge(a.x - b, a.y - b);
+	}
+
 	public int[] ToArray()
 	{
 		return new int[2] {x, y};
@@ -144,57 +164,6 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	{
 		return GetUniversalEdges(edges, sharedIndices.ToDictionary());
 	}
-
-	// public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, pb_IntArray[] sharedIndices)
-	// {
-	// 	int len = edges.Length;
-	// 	int slen = sharedIndices.Length;
-
-	// 	pb_Range[] bounds = new pb_Range[sharedIndices.Length];
-	// 	for(int i = 0; i < slen; i++)
-	// 		bounds[i] = new pb_Range( pb_Math.Min(sharedIndices[i].array), pb_Math.Max(sharedIndices[i].array));
-
-	// 	pb_Edge[] uniEdges = new pb_Edge[len];
-	// 	for(int i = 0; i < len; i++)
-	// 	{
-	// 		int x = -1, y = -1;
-
-	// 		// X
-	// 		for(int t = 0; t < slen; t++)
-	// 		{
-	// 			if(!bounds[t].Contains(edges[i].x)) continue;
-
-	// 			for(int n = 0; n < sharedIndices[t].Length; n++)
-	// 			{
-	// 				if(sharedIndices[t][n] == edges[i].x)	
-	// 				{
-	// 					x = t;
-	// 					break;
-	// 				}
-	// 			}
-	// 			if(x > -1) break;
-	// 		}
-
-	// 		// Y
-	// 		for(int t = 0; t < slen; t++)
-	// 		{
-	// 			if(!bounds[t].Contains(edges[i].y)) continue;
-
-	// 			for(int n = 0; n < sharedIndices[t].Length; n++)
-	// 			{
-	// 				if(sharedIndices[t][n] == edges[i].y)	
-	// 				{
-	// 					y = t;
-	// 					break;
-	// 				}
-	// 			}
-	// 			if(y > -1) break;
-	// 		}
-
-	// 		uniEdges[i] = new pb_Edge(x, y);		
-	// 	}
-	// 	return uniEdges;
-	// }
 
 	/**
 	 * Returns a new pb_Edge containing the index of each element in the sharedIndices array.
@@ -386,18 +355,14 @@ public static class EdgeExtensions
 	}
 
 	/**
-	 * Slow IndexOf - takes sharedIndices into account when searching the List.
+	 *	Returns a set of edges where no edge overlaps another.
 	 */
-	// public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, pb_IntArray[] sharedIndices)
-	// {
-	// 	for(int i = 0; i < edges.Count; i++)
-	// 	{
-	// 		if(edges[i].Equals(edge, sharedIndices))
-	// 			return i;
-	// 	}
-
-	// 	return -1;	
-	// }
+	public static IEnumerable<pb_Edge> DistinctCommon(this IEnumerable<pb_Edge> edges, Dictionary<int, int> lookup)
+	{
+		IEnumerable<pb_EdgeLookup> lup = edges.Select(x => new pb_EdgeLookup(new pb_Edge(lookup[x.x], lookup[x.y]), x));
+		lup = lup.Distinct();
+		return lup.Select(x => x.local);
+	}
 
 	public static int IndexOf(this IList<pb_Edge> edges, pb_Edge edge, Dictionary<int, int> lookup)
 	{

@@ -331,15 +331,9 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	Sets this pb_Object's SelectedFaces array, as well as SelectedEdges and SelectedTriangles.
 	 */
-	public void SetSelectedFaces(pb_Face[] faces)
+	public void SetSelectedFaces(IEnumerable<pb_Face> faces)
 	{
-		int len = faces.Length;
-		int[] ind = new int[len];
-
-		for(int i = 0; i < len; i++)
-			ind[i] = System.Array.IndexOf(this.faces, faces[i]);
-
-		SetSelectedFaces(ind);
+		SetSelectedFaces(faces.Select(x => System.Array.IndexOf(this.faces, x)).ToArray());
 	}
 
 	public void SetSelectedFaces(int[] t_faces)
@@ -355,15 +349,10 @@ public class pb_Object : MonoBehaviour
 			this.m_SelectedEdges[i] = new pb_Edge(edges[i]);
 	}
 
-	public void SetSelectedEdges(pb_Edge[] edges)
+	public void SetSelectedEdges(IEnumerable<pb_Edge> edges)
 	{
 		this.m_selectedFaces = new int[0];
-
-		int len = edges.Length;
-		this.m_SelectedEdges = new pb_Edge[len];
-		for(int i = 0; i < len; i++)
-			this.m_SelectedEdges[i] = new pb_Edge(edges[i]);
-
+		this.m_SelectedEdges = edges.Select(x => new pb_Edge(x)).ToArray();
 		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();				
 	}
 

@@ -50,6 +50,26 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Copy constructor.
+		 */
+		public pb_Vertex(pb_Vertex v)
+		{
+			this.position 	= v.position;
+			this.color 		= v.color;
+			this.uv0 		= v.uv0;
+			this.normal 	= v.normal;
+			this.tangent 	= v.tangent;
+			this.uv2 		= v.uv2;
+			this.uv3 		= v.uv3;
+			this.uv4 		= v.uv4;
+		}
+
+		public override string ToString()
+		{
+			return this.position.ToString();
+		}
+
+		/**
 		 *	Creates a new array of pb_Vertex with the provide pb_Object data.
 		 */
 		public static pb_Vertex[] GetVertices(pb_Object pb)

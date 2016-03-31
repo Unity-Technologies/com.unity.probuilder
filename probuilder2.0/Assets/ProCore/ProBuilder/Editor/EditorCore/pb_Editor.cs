@@ -2434,8 +2434,6 @@ public class pb_Editor : EditorWindow
 
 	public bool ShortcutCheck(Event e)
 	{
-		Debug.Log(e.ToString() + "\n" + (int)e.modifiers);
-
 		List<pb_Shortcut> matches = shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
 		if(matches.Count < 1)
@@ -2593,8 +2591,6 @@ public class pb_Editor : EditorWindow
 
 	private bool GeoLevelShortcuts(pb_Shortcut shortcut)
 	{
-		Debug.Log(shortcut);
-
 		switch(shortcut.action)
 		{
 			case "Escape":

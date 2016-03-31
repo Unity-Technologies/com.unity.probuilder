@@ -86,7 +86,7 @@ namespace ProBuilder2.EditorCommon
 
 					_desaturatedIcon = pb_IconUtility.GetIcon(icon.name + "_disabled");
 
-				// 	// @todo
+				// 	// @todo move to a separate post-processing script
 					// if(!_desaturatedIcon)
 					// {
 					// 	string path = AssetDatabase.GetAssetPath(icon);
