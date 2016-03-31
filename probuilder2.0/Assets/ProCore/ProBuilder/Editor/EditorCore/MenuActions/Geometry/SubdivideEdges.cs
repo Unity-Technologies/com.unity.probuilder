@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Subdivide Edges",
-			@"Adds new vertices to each selected edge."
+			@"Appends evenly spaced new vertices to the selected edges.  Option + Click the button to set the number of vertices to add."
 		);
 
 		public override bool IsEnabled()
@@ -48,6 +48,11 @@ namespace ProBuilder2.Actions
 
 			if(EditorGUI.EndChangeCheck())
 				EditorPrefs.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Subdivide Edges"))
+				DoAction();
 		}
 
 		public override bool IsHidden()

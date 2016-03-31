@@ -86,28 +86,28 @@ namespace ProBuilder2.EditorCommon
 
 					_desaturatedIcon = pb_IconUtility.GetIcon(icon.name + "_disabled");
 
-				// 	// @todo move to a separate post-processing script
+					// @todo
 					// if(!_desaturatedIcon)
 					// {
 					// 	string path = AssetDatabase.GetAssetPath(icon);
 					// 	TextureImporter imp = (TextureImporter) AssetImporter.GetAtPath( path );
-
+					
 					// 	if(!imp)
 					// 	{
 					// 		Debug.Log("Couldn't find importer : " + icon);
 					// 		return null;
 					// 	}
-
+					
 					// 	imp.isReadable = true;
 					// 	imp.SaveAndReimport();
-
+					
 					// 	Color32[] px = icon.GetPixels32();
-
+					
 					// 	imp.isReadable = false;
 					// 	imp.SaveAndReimport();
-
+					
 					// 	int gray = 0;
-
+					
 					// 	for(int i = 0; i < px.Length; i++)
 					// 	{
 					// 		gray = (System.Math.Min(px[i].r, System.Math.Min(px[i].g, px[i].b)) + System.Math.Max(px[i].r, System.Math.Max(px[i].g, px[i].b))) / 2;
@@ -115,12 +115,12 @@ namespace ProBuilder2.EditorCommon
 					// 		px[i].g = (byte) gray;
 					// 		px[i].b = (byte) gray;
 					// 	}
-
+					
 					// 	_desaturatedIcon = new Texture2D(icon.width, icon.height);
 					// 	_desaturatedIcon.hideFlags = HideFlags.HideAndDontSave;
 					// 	_desaturatedIcon.SetPixels32(px);
 					// 	_desaturatedIcon.Apply();
-
+					
 					// 	byte[] bytes = _desaturatedIcon.EncodeToPNG();
 					// 	System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
 					// }
