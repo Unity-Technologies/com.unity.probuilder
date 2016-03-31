@@ -2,9 +2,9 @@
 
 # Features
 	- New Color Mask setting in Vertex Painter Editor enables painting only to specified component.
-	- New Icon toolbar operates in both vertical and horizontal modes (revert to Text-only toolbar in Preferences/ProBuilder/Toolbar).
+	- New Icon toolbar operates in both vertical and horizontal modes (swap between Text-only toolbar in Preferences/ProBuilder/Toolbar).
 	- New tooltips show inline documentation and keyboard shortcuts (currently only available in Icon toolbar).
-	- Vector4 UV{0, 3, 4} channels can now be stored in pb_Object.
+	- Vector4 UV{3, 4} channels can now be stored in pb_Object (use pb.SetUVs(index, List<Vec4>)).
 
 # Bug Fixes
 	- Fix UVs all being crammed to {0,0} when using Sew in the UV Editor.
