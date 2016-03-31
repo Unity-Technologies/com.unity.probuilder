@@ -55,7 +55,7 @@ namespace ProBuilder2.Actions
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button("Subdivide Edges"))
+			if(GUILayout.Button("Extrude Faces"))
 				DoAction();
 		}
 

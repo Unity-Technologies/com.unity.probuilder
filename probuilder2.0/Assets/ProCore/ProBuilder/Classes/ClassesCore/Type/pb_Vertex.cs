@@ -75,8 +75,26 @@ namespace ProBuilder2.Common
 		public static pb_Vertex[] GetVertices(pb_Object pb)
 		{
 			pb_Vertex[] v = new pb_Vertex[pb.vertexCount];
-			for(int i = 0; i < pb.vertexCount; i++)
-				v[i] = new pb_Vertex(pb, i);
+
+			int vertexCount = pb.vertexCount;
+
+			Mesh m = pb.msh;
+			bool hasMesh = m != null;
+
+			for(int i = 0; i < vertexCount; i++)
+			{
+				v[i] 			= new pb_Vertex();
+				v[i].position 	= pb.vertices[i];
+				v[i].color 		= pb.colors[i];
+				v[i].uv0 		= pb.uv[i];
+
+				if(hasMesh && m.normals != null && m.normals.Length == vertexCount) v[i].normal = m.normals[i];
+				if(hasMesh && m.tangents != null && m.tangents.Length == vertexCount) v[i].tangent = m.tangents[i];
+				if(hasMesh && m.uv2 != null && m.uv2.Length == vertexCount) v[i].uv2 = m.uv2[i];
+				if(pb.hasUv3) v[i].uv3 = pb.uv3[i];
+				if(pb.hasUv4) v[i].uv4 = pb.uv4[i];
+			}
+
 			return v;
 		}
 

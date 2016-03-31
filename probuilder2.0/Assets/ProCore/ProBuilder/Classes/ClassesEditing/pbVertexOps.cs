@@ -405,7 +405,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);
 
 			for(int i = 0; i < count; i++)
-				verticesToAppend.Add( pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count+1) ) );
+				verticesToAppend.Add(pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
 
 			List<pb_Tuple<pb_Face, pb_Edge>> adjacentFaces = pbMeshUtils.GetNeighborFaces(pb, localEdge);
 
