@@ -31,62 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Model.cs">
-      <Link>ClassesEditing\CSG\Classes\CSG_Model.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Node.cs">
-      <Link>ClassesEditing\CSG\Classes\CSG_Node.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Plane.cs">
-      <Link>ClassesEditing\CSG\Classes\CSG_Plane.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Polygon.cs">
-      <Link>ClassesEditing\CSG\Classes\CSG_Polygon.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Vertex.cs">
-      <Link>ClassesEditing\CSG\Classes\CSG_Vertex.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\CSG.cs">
-      <Link>ClassesEditing\CSG\CSG.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbAppendDelete.cs">
-      <Link>ClassesEditing\pbAppendDelete.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbMeshOps.cs">
-      <Link>ClassesEditing\pbMeshOps.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbMeshUtils.cs">
-      <Link>ClassesEditing\pbMeshUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbSubdivideSplit.cs">
-      <Link>ClassesEditing\pbSubdivideSplit.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbTriangleOps.cs">
-      <Link>ClassesEditing\pbTriangleOps.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbUVOps.cs">
-      <Link>ClassesEditing\pbUVOps.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbVertexOps.cs">
-      <Link>ClassesEditing\pbVertexOps.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_ConnectEdges.cs">
-      <Link>ClassesEditing\pb_ConnectEdges.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_Object_Utility.cs">
-      <Link>ClassesEditing\pb_Object_Utility.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_ShapeGenerator.cs">
-      <Link>ClassesEditing\pb_ShapeGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Delauney.cs">
-      <Link>ClassesEditing\Triangulation\Delauney.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Edge.cs">
-      <Link>ClassesEditing\Triangulation\Edge.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Triangle.cs">
-      <Link>ClassesEditing\Triangulation\Triangle.cs</Link>
+    <Compile Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\**\*.cs">
+      <Link>%(RecursiveDir)%(FileName)</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -94,80 +40,15 @@
     <Reference Include="KDTree">
       <HintPath>..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesLib\KDTree.dll</HintPath>
     </Reference>
+    <Reference Include="Triangle.NET">
+      <HintPath>..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesLib\Triangle.dll</HintPath>
+    </Reference>
     <Reference Include="ProBuilderCore-Unity4">
       <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>D:\Applications\Unity 4.7.0f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG.meta">
-      <Link>ClassesEditing\CSG.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes.meta">
-      <Link>ClassesEditing\CSG\Classes.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Model.cs.meta">
-      <Link>ClassesEditing\CSG\Classes\CSG_Model.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Node.cs.meta">
-      <Link>ClassesEditing\CSG\Classes\CSG_Node.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Plane.cs.meta">
-      <Link>ClassesEditing\CSG\Classes\CSG_Plane.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Polygon.cs.meta">
-      <Link>ClassesEditing\CSG\Classes\CSG_Polygon.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\Classes\CSG_Vertex.cs.meta">
-      <Link>ClassesEditing\CSG\Classes\CSG_Vertex.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\CSG\CSG.cs.meta">
-      <Link>ClassesEditing\CSG\CSG.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbAppendDelete.cs.meta">
-      <Link>ClassesEditing\pbAppendDelete.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbMeshOps.cs.meta">
-      <Link>ClassesEditing\pbMeshOps.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbMeshUtils.cs.meta">
-      <Link>ClassesEditing\pbMeshUtils.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbSubdivideSplit.cs.meta">
-      <Link>ClassesEditing\pbSubdivideSplit.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbTriangleOps.cs.meta">
-      <Link>ClassesEditing\pbTriangleOps.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbUVOps.cs.meta">
-      <Link>ClassesEditing\pbUVOps.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pbVertexOps.cs.meta">
-      <Link>ClassesEditing\pbVertexOps.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_ConnectEdges.cs.meta">
-      <Link>ClassesEditing\pb_ConnectEdges.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_Object_Utility.cs.meta">
-      <Link>ClassesEditing\pb_Object_Utility.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\pb_ShapeGenerator.cs.meta">
-      <Link>ClassesEditing\pb_ShapeGenerator.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation.meta">
-      <Link>ClassesEditing\Triangulation.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Delauney.cs.meta">
-      <Link>ClassesEditing\Triangulation\Delauney.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Edge.cs.meta">
-      <Link>ClassesEditing\Triangulation\Edge.cs.meta</Link>
-    </None>
-    <None Include="..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesEditing\Triangulation\Triangle.cs.meta">
-      <Link>ClassesEditing\Triangulation\Triangle.cs.meta</Link>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
