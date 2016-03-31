@@ -508,7 +508,7 @@ namespace ProBuilder2.MeshOperations
 		pb.SetSharedIndicesUV(lookupUV.ToSharedIndices());
 		pb.DeleteVerticesWithIndices(indicesToDelete);
 
-		return pb_ActionResult.Success;
+		return new pb_ActionResult(Status.Success, "Subdivide Edges");
 	}
 
 	/**

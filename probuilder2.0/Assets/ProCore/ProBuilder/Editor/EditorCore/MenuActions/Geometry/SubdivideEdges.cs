@@ -29,6 +29,27 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedEdgeCount > 0);
 		}
 		
+		public override bool SettingsEnabled()
+		{
+			return true;
+		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
+			
+			int subdivisions = EditorPrefs.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+
+			EditorGUI.BeginChangeCheck();
+
+			EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
+
+			subdivisions = (int) pb_GUI_Utility.FreeSlider("Subdivisions", subdivisions, 1, 32);
+
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+		}
+
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||

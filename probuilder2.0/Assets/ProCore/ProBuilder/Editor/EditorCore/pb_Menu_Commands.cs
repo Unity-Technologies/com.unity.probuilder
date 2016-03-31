@@ -1802,16 +1802,17 @@ namespace ProBuilder2.EditorCommon
 				return pb_ActionResult.NoSelection;
 			}
 
+			int subdivisions = EditorPrefs.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 
 			pb_ActionResult result = pb_ActionResult.NoSelection;
 
 			foreach(pb_Object pb in selection)
 			{
-				// result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3);
 				List<pb_Edge> newEdgeSelection;
 
-				result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, 3, out newEdgeSelection);
+				result = pbVertexOps.AppendVerticesToEdge(pb, pb.SelectedEdges, subdivisions, out newEdgeSelection);
 
 				if(result.status == Status.Success)
 					pb.SetSelectedEdges(newEdgeSelection);
@@ -1825,7 +1826,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Editor.Refresh(true);
 
-			return new pb_ActionResult(Status.Success, "Subdivide " + selection.Length + " Objects");
+			return result;
 		}
 
 		/**

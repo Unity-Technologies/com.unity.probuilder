@@ -168,7 +168,7 @@ namespace ProBuilder2.Interface
 		 */
 		public static float FreeSlider(GUIContent content, float value, float min, float max)
 		{
-			const float PAD = 4f;
+			const float PAD = 8f;
 			const float SLIDER_HEIGHT = 16f;
 			const float MIN_LABEL_WIDTH = 0f;
 			const float MAX_LABEL_WIDTH = 128f;

@@ -104,10 +104,12 @@ public static class pb_Constant
 	public const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
 	public const string pbExtrudeDistance 				= "pbExtrudeDistance";
 
+	// Int
+	public const string pbEdgeSubdivisions				= "pbEdgeSubdivisions";
+
 	// Misc
 	public const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
 	public const string pbDefaultMaterial 				= "pbDefaultMaterial";
-
 
 	// usablility settings (not preferences, just things that need to be saved)
 	public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?
