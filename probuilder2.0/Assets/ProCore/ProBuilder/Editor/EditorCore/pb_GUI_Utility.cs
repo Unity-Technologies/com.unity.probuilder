@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.EditorCommon;
@@ -73,8 +74,8 @@ namespace ProBuilder2.Interface
 			return _guiContent;
 		}
 
-		private static Stack<bool> guiEnabled = new Stack<bool>();
-		private static Stack<Color> guiColor = new Stack<Color>();
+		private static System.Collections.Generic.Stack<bool> guiEnabled = new System.Collections.Generic.Stack<bool>();
+		private static System.Collections.Generic.Stack<Color> guiColor = new System.Collections.Generic.Stack<Color>();
 
 		public static void PushGUIEnabled(bool enabled)
 		{
