@@ -43,13 +43,13 @@ namespace ProBuilder2.EditorCommon
 
 		static readonly Color separatorColor = new Color(.65f, .65f, .65f, .5f);
 
-		public string name;
+		public string title;
 		public string summary;
 		public string shortcut;
 
 		public static pb_TooltipContent TempContent = new pb_TooltipContent("", "");
 
-		public pb_TooltipContent(string name, string summary, params char[] shortcut) : this(name, summary, "")
+		public pb_TooltipContent(string title, string summary, params char[] shortcut) : this(title, summary, "")
 		{
 			if(shortcut != null && shortcut.Length > 0)
 			{
@@ -70,9 +70,9 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 		
-		public pb_TooltipContent(string name, string summary, string shortcut = "")
+		public pb_TooltipContent(string title, string summary, string shortcut = "")
 		{
-			this.name = name;
+			this.title = title;
 			this.summary = summary;
 			this.shortcut = shortcut;
 		}
@@ -82,13 +82,13 @@ namespace ProBuilder2.EditorCommon
 			const float pad = 8;
 			Vector2 total = new Vector2(MIN_WIDTH, MIN_HEIGHT);
 
-			bool hasName = !string.IsNullOrEmpty(name);
+			bool hastitle = !string.IsNullOrEmpty(title);
 			bool hasSummary = !string.IsNullOrEmpty(summary);
 			bool hasShortcut = !string.IsNullOrEmpty(shortcut);
 
-			if(hasName)
+			if(hastitle)
 			{
-				Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(name));
+				Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(title));
 
 				if(hasShortcut)
 				{
@@ -101,7 +101,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(hasSummary)
 			{
-				if(!hasName)
+				if(!hastitle)
 				{
 					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(pb_GUI_Utility.TempGUIContent(summary));
 					total.x = Mathf.Min(sumSize.x, MAX_WIDTH);
@@ -111,7 +111,7 @@ namespace ProBuilder2.EditorCommon
 				total.y += summaryHeight;
 			}
 
-			if(hasName && hasSummary)
+			if(hastitle && hasSummary)
 				total.y += 16;
 
 			total.x += pad;
@@ -122,20 +122,20 @@ namespace ProBuilder2.EditorCommon
 
 		public void Draw()
 		{
-			if(!string.IsNullOrEmpty(name))
+			if(!string.IsNullOrEmpty(title))
 			{
 
 				if(!string.IsNullOrEmpty(shortcut))
 				{
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(name, TitleStyle);
+					GUILayout.Label(title, TitleStyle);
 					GUILayout.FlexibleSpace();
 					GUILayout.Label(shortcut, ShortcutStyle);
 					GUILayout.EndHorizontal();
 				}
 				else
 				{
-					GUILayout.Label(name, TitleStyle);
+					GUILayout.Label(title, TitleStyle);
 				}
 
 				pb_GUI_Utility.DrawSeparator(1, separatorColor);
@@ -150,27 +150,27 @@ namespace ProBuilder2.EditorCommon
 
 		public bool Equals(pb_TooltipContent tooltip)
 		{
-			return tooltip.name.Equals(this.name);
+			return tooltip.title.Equals(this.title);
 		}
 
 		public override bool Equals(System.Object b)
 		{
-			return b is pb_TooltipContent && ((pb_TooltipContent)b).name.Equals(name);
+			return b is pb_TooltipContent && ((pb_TooltipContent)b).title.Equals(title);
 		}
 
 		public override int GetHashCode()
 		{
-			return name.GetHashCode();
+			return title.GetHashCode();
 		}
 
-		public static implicit operator string(pb_TooltipContent content)
+		public static explicit operator string(pb_TooltipContent content)
 		{
-			return content.name;
+			return content.title;
 		}
 
-		public static implicit operator pb_TooltipContent(string name)
+		public static explicit operator pb_TooltipContent(string title)
 		{
-			return new pb_TooltipContent(name, "");
+			return new pb_TooltipContent(title, "");
 		}
 	}
 }

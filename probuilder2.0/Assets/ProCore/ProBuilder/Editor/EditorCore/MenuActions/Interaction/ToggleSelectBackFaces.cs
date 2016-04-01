@@ -21,12 +21,13 @@ namespace ProBuilder2.EditorCommon
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Set Hiden Element Selection",
+			"Set Hidden Element Selection",
 @"Setting Hidden Element Selection to <b>On</b> allows you to select faces that are either obscured by geometry or facing away from the scene camera (backfaces).
 
 The default value is <b>On</b>.
 "
 		);
+		public override string MenuTitle { get { return "Select Hidden"; } }
 
 		private Texture2D[] icons;
 

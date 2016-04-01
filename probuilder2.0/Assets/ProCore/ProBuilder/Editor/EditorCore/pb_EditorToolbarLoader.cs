@@ -8,9 +8,30 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_EditorToolbarLoader
 	{
+		public delegate pb_MenuAction OnLoadActionsDelegate();
+		public static OnLoadActionsDelegate onLoadMenu;
+
+		public static void RegisterMenuItem(OnLoadActionsDelegate getMenuAction)
+		{
+			if(onLoadMenu != null)
+			{
+				onLoadMenu -= getMenuAction;
+				onLoadMenu += getMenuAction;
+			}
+			else
+			{
+				onLoadMenu = getMenuAction;
+			}
+		}
+
+		public static void UnRegisterMenuItem(OnLoadActionsDelegate getMenuAction)
+		{
+			onLoadMenu -= getMenuAction;
+		}
+
 		public static List<pb_MenuAction> GetActions()
 		{
-			return new List<pb_MenuAction>()
+			List<pb_MenuAction> defaults = new List<pb_MenuAction>()
 			{
 				// tools
 				new OpenShapeEditor(),
@@ -58,6 +79,7 @@ namespace ProBuilder2.EditorCommon
 				new ExtrudeEdges(),
 				new InsertEdgeLoop(),
 				new SubdivideEdges(),
+				new BevelEdges(),
 
 				// Vertex
 				new CollapseVertices(),
@@ -65,6 +87,14 @@ namespace ProBuilder2.EditorCommon
 				new ConnectVertices(),
 				new SplitVertices(),
 			};
+
+			if(onLoadMenu != null)
+			{
+				foreach(OnLoadActionsDelegate del in onLoadMenu.GetInvocationList())
+					defaults.Add(del());
+			}
+
+			return defaults;
 		}
 	}
 }

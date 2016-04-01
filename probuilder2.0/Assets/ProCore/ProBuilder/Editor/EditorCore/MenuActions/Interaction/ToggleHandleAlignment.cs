@@ -36,6 +36,8 @@ namespace ProBuilder2.EditorCommon
 			'P'
 		);
 
+		public override string MenuTitle { get { return "Handle: " + ((HandleAlignment)handleAlignment).ToString(); } }
+
 		public ToggleHandleAlignment()
 		{
 			icons = new Texture2D[]

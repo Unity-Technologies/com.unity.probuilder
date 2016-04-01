@@ -12,6 +12,7 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Pivot_MoveToCenter"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override string MenuTitle { get { return "Set Pivot"; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

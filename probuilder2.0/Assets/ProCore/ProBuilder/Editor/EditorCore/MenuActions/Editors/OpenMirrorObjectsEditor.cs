@@ -11,6 +11,7 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Object_Mirror"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override string MenuTitle { get { return "Mirror"; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

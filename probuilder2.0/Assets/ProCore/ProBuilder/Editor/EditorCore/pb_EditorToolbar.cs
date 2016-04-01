@@ -11,10 +11,10 @@ namespace ProBuilder2.EditorCommon
 	[System.Serializable]
 	public class pb_EditorToolbar : ScriptableObject
 	{
-		[SerializeField] EditorWindow window;
+		public EditorWindow window;
 
 		bool isFloating { get { return pb_Editor.instance.isFloatingWindow; } }
-
+		bool isIconMode = true;
 		bool shiftOnlyTooltips = false;
 		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
 		// the element currently being hovered
@@ -35,7 +35,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			win.wantsMouseMove = true;
 			win.autoRepaintOnSceneChange = true;
-			win.minSize = actions[0].GetSize(win.position.width > win.position.height) + new Vector2(6, 12);
 			this.window = win;
 		}
 
@@ -55,6 +54,10 @@ namespace ProBuilder2.EditorCommon
 			scrollIconDown = pb_IconUtility.GetIcon("ShowNextPage_Down");
 			scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
 			scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
+
+			isIconMode = false; // pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+			this.window = pb_Editor.instance;
+			CalculateMaxIconSize();
 		}
 
 		void OnDisable()
@@ -131,6 +134,32 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		void CalculateMaxIconSize()
+		{
+			isHorizontalMenu = window.position.width > window.position.height;			
+
+			Vector2 iconSize = actions[0].GetSize(isHorizontalMenu);
+			
+			iconWidth = (int)iconSize.x + 4;
+			iconHeight = (int)iconSize.y + 4;
+
+			// if not in icon mode, we have to iterate all buttons to figure out what the maximum size is
+			if(!isIconMode)
+			{
+				for(int i = 1; i < actions.Count; i++)
+				{
+					iconSize = actions[i].GetSize(isHorizontalMenu);
+					iconWidth = System.Math.Max(iconWidth, (int)iconSize.x);
+					iconHeight = System.Math.Max(iconHeight, (int)iconSize.y);
+				}
+			}
+
+			Debug.Log(iconWidth);
+
+			window.minSize = new Vector2(iconWidth + 6, iconHeight + 12);
+			window.Repaint();
+		}
+
 		// animated scrolling vars
 		bool doAnimateScroll = false;
 		Vector2 scrollOrigin = Vector2.zero;
@@ -154,11 +183,14 @@ namespace ProBuilder2.EditorCommon
 		int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
 
 		bool m_showScrollButtons = false;
+		bool isHorizontalMenu = false;
+		int iconWidth = 1, iconHeight = 1;
 
 		public void OnGUI()
 		{
 			Event e = Event.current;
-
+			bool forceRepaint = false;
+					
 			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden());
 
 			int availableWidth = windowWidth;
@@ -166,8 +198,8 @@ namespace ProBuilder2.EditorCommon
 			int iconCount = available.Count();
 			bool isHorizontal = windowWidth > windowHeight * 2;
 
-			int iconWidth = (int)(actions[0].GetSize(isHorizontal).x + 4);
-			int iconHeight = (int)(actions[0].GetSize(isHorizontal).y + 4);
+			if(isHorizontalMenu != isHorizontal)
+				CalculateMaxIconSize();
 
 			int columns;
 			int rows;
@@ -192,9 +224,12 @@ namespace ProBuilder2.EditorCommon
 			{
 				availableHeight -= SCROLL_BTN_SIZE * 2;
 				availableWidth -= SCROLL_BTN_SIZE * 2;
+			}
 
-				if(isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
-					scroll.x += e.delta.y * 10f;
+			if(isHorizontal && e.type == EventType.ScrollWheel && e.delta.sqrMagnitude > .001f)
+			{
+				scroll.x += e.delta.y * 10f;
+				forceRepaint = true;
 			}
 	
 			int maxHorizontalScroll = contentWidth - availableWidth;
@@ -233,27 +268,34 @@ namespace ProBuilder2.EditorCommon
 			
 			GUILayout.BeginHorizontal();
 
-			int i = 0;
+			int columnCount = 0;
 			foreach(pb_MenuAction action in available)
 			{
-				if( action.DoButton(isHorizontal, e.alt, ref optionRect) && !e.shift)
+				if(isIconMode)
 				{
-					optionRect.x -= scroll.x;
-					optionRect.y -= scroll.y;
-
-					if(	e.type != EventType.Layout &&
-						optionRect.Contains(e.mousePosition) )
+					if( action.DoButton(isHorizontal, e.alt, ref optionRect) && !e.shift)
 					{
-						hoveringTooltipName = action.tooltip.name + "_alt";
-						tooltipTimerRefresh = .5f;
-						hovering = true;
-						
-						if( showTooltipTimer )
+						optionRect.x -= scroll.x;
+						optionRect.y -= scroll.y;
+
+						if(	e.type != EventType.Layout &&
+							optionRect.Contains(e.mousePosition) )
 						{
-							tooltipShown = true;
-							ShowTooltip(optionRect, "Alt + Click for Options", scroll);
-						}
-					}	
+							hoveringTooltipName = action.tooltip.title + "_alt";
+							tooltipTimerRefresh = .5f;
+							hovering = true;
+							
+							if( showTooltipTimer )
+							{
+								tooltipShown = true;
+								ShowTooltip(optionRect, "Alt + Click for Options", scroll);
+							}
+						}	
+					}
+				}
+				else
+				{
+					action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(iconWidth));
 				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
@@ -262,7 +304,7 @@ namespace ProBuilder2.EditorCommon
 					!hovering &&
 					buttonRect.Contains(e.mousePosition) )
 				{
-					hoveringTooltipName = action.tooltip.name;
+					hoveringTooltipName = action.tooltip.title;
 					tooltipTimerRefresh = 1f;
 
 					if( e.shift || showTooltipTimer )
@@ -274,9 +316,9 @@ namespace ProBuilder2.EditorCommon
 					hovering = true;
 				}
 
-				if(++i >= columns)
+				if(++columnCount >= columns)
 				{
-					i = 0;
+					columnCount = 0;
 
 					GUILayout.EndHorizontal();
 					GUILayout.BeginHorizontal();
@@ -314,7 +356,7 @@ namespace ProBuilder2.EditorCommon
 			if(e.type != EventType.Layout && !hovering)
 				tooltipTimer.Item1 = "";
 
-			if( (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
+			if( forceRepaint || (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
 				window.Repaint();
 		}
 	}

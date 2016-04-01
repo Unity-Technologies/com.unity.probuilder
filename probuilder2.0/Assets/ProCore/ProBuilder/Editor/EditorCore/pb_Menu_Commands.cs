@@ -30,6 +30,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivideEdge(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideEdge is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
@@ -1828,6 +1829,19 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor.Refresh(true);
 
 			return result;
+		}
+
+		public static pb_ActionResult MenuBevelEdge(pb_Object[] selection)
+		{
+			foreach(pb_Object pb in selection)
+			{
+				pbBevel.Bevel(pb, pb.SelectedEdges);
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			return pb_ActionResult.Success;
 		}
 
 		/**
