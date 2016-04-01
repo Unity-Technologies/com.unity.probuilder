@@ -29,7 +29,33 @@ namespace ProBuilder2.Actions
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedTriangleCount > 1);
 		}
-		
+
+		public override bool SettingsEnabled()
+		{
+			return true;
+		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Collapse Vertices Settings", EditorStyles.boldLabel);
+
+			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertices.", MessageType.Info);
+			
+			bool collapseToFirst = pb_Preferences_Internal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+
+			EditorGUI.BeginChangeCheck();
+
+			collapseToFirst = EditorGUILayout.Toggle("Collapse To First", collapseToFirst);
+
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Collapse Vertices"))
+				DoAction();
+		}
+
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||

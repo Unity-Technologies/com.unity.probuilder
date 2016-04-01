@@ -96,6 +96,7 @@ public static class pb_Constant
 	public const string pbIconGUI	 					= "pbIconGUI";
 	public const string pbShiftOnlyTooltips	 			= "pbShiftOnlyTooltips";
 	public const string pbDrawAxisLines					= "pbDrawAxisLines";
+	public const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

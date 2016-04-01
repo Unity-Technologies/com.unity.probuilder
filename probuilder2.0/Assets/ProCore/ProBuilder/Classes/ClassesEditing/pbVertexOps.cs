@@ -21,21 +21,22 @@ namespace ProBuilder2.MeshOperations
 		 *	\brief Collapses all passed indices to a single shared index.  Retains vertex normals.
 		 *	
 		 */
-		public static bool MergeVertices(this pb_Object pb, int[] indices, out int collapsedIndex)
+		public static bool MergeVertices(this pb_Object pb, int[] indices, out int collapsedIndex, bool collapseToFirst = false)
 		{
-			Vector3[] verts = pb.vertices;
-			Vector3 cen = Vector3.zero;
+			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 
-			foreach(int i in indices)
-				cen += verts[i];
-				
-			cen /= (float)indices.Length;
+			pb_Vertex cen = collapseToFirst ? vertices[indices[0]] : pb_Vertex.Average(vertices, indices);
 
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			int newIndex = pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
-			pb.SetSharedIndices(sharedIndices);
+			pb_IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
 
-			pb.SetSharedVertexPosition(newIndex, cen);
+			int newIndex = pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
+			pb_IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indices);
+
+			pb.SetSharedIndices(sharedIndices);
+			pb.SetSharedIndicesUV(sharedIndicesUV);
+
+			pb.SetSharedVertexValues(newIndex, cen);
 
 			int[] mergedSharedIndex = pb.GetSharedIndices()[newIndex].array;
 			

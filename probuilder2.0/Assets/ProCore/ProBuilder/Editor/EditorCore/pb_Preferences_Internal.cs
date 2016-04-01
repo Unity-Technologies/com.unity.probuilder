@@ -43,7 +43,8 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbGrowSelectionAngleIterative ||
 			pref == pb_Constant.pbIconGUI ||
 			pref == pb_Constant.pbUniqueModeShortcuts || 
-			pref == pb_Constant.pbShiftOnlyTooltips)
+			pref == pb_Constant.pbShiftOnlyTooltips ||
+			pref == pb_Constant.pbCollapseVertexToFirst)
 			return false;
 		else
 			return true;

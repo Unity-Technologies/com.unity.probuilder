@@ -1539,16 +1539,16 @@ namespace ProBuilder2.EditorCommon
 
 			bool success = false;
 
+			bool collapseToFirst = pb_Preferences_Internal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+
 			pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
 				if(pb.SelectedTriangles.Length > 1)
 				{
-					pb.ToMesh();
-
 					int newIndex = -1;
-					success = pb.MergeVertices(pb.SelectedTriangles, out newIndex);
+					success = pb.MergeVertices(pb.SelectedTriangles, out newIndex, collapseToFirst);
 
 					if(success)
 					{
@@ -1557,6 +1557,7 @@ namespace ProBuilder2.EditorCommon
 						pb.SetSelectedTriangles(new int[] { newIndex });
 					}
 
+					pb.ToMesh();
 					pb.Refresh();
 					pb.Optimize();
 				}

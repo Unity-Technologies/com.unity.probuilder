@@ -112,21 +112,21 @@ namespace ProBuilder2.Common
 			color 		= vertices.Select(x => x.color).ToArray();
 			uv0 		= vertices.Select(x => x.uv0).ToArray();
 
-			normal		= vertices.Any(x => x.normal != null) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
-			tangent		= vertices.Any(x => x.tangent != null) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
-			uv2			= vertices.Any(x => x.uv2 != null) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
-			uv3			= vertices.Any(x => x.uv3 != null) ? vertices.Select(x => (Vector4) x.uv3).ToArray() : null;
-			uv4			= vertices.Any(x => x.uv4 != null) ? vertices.Select(x => (Vector4) x.uv4).ToArray() : null;
+			normal		= vertices.All(x => x.normal != null) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
+			tangent		= vertices.All(x => x.tangent != null) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
+			uv2			= vertices.All(x => x.uv2 != null) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
+			uv3			= vertices.All(x => x.uv3 != null) ? vertices.Select(x => (Vector4) x.uv3).ToArray() : null;
+			uv4			= vertices.All(x => x.uv4 != null) ? vertices.Select(x => (Vector4) x.uv4).ToArray() : null;
 		}
 
 		/**
-		 *	Average all vertices to a single vertices.
+		 *	Average all vertices to a single vertex.
 		 */
-		public static pb_Vertex Average(IList<pb_Vertex> vertices)
+		public static pb_Vertex Average(IList<pb_Vertex> vertices, IList<int> indices = null)
 		{
 			pb_Vertex v = new pb_Vertex();
 
-			int vertexCount = vertices.Count;
+			int vertexCount = indices != null ? indices.Count : vertices.Count;
 
 			int normalCount = 0,
 				tangentCount = 0,
@@ -136,38 +136,35 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < vertexCount; i++)
 			{
-				v.position += vertices[i].position;
-				v.color += vertices[i].color;
-				v.uv0 += vertices[i].uv0;
+				int index = indices == null ? i : indices[i];
 
-				if(vertices[i].normal != null)
-				{
+				v.position += vertices[index].position;
+				v.color += vertices[index].color;
+				v.uv0 += vertices[index].uv0;
+
+				if(vertices[index].normal != null) {
 					normalCount++;
-					v.normal += vertices[i].normal;
+					v.normal += vertices[index].normal;
 				}
 
-				if(vertices[i].tangent != null)
-				{
+				if(vertices[index].tangent != null) {
 					tangentCount++;
-					v.tangent += vertices[i].tangent;
+					v.tangent += vertices[index].tangent;
 				}
 
-				if(vertices[i].uv2 != null)
-				{
+				if(vertices[index].uv2 != null) {
 					uv2Count++;
-					v.uv2 += vertices[i].uv2;
+					v.uv2 += vertices[index].uv2;
 				}
 
-				if(vertices[i].uv3 != null)
-				{
+				if(vertices[index].uv3 != null) {
 					uv3Count++;
-					v.uv3 += vertices[i].uv3;
+					v.uv3 += vertices[index].uv3;
 				}
 
-				if(vertices[i].uv4 != null)
-				{
+				if(vertices[index].uv4 != null) {
 					uv4Count++;
-					v.uv4 += vertices[i].uv4;
+					v.uv4 += vertices[index].uv4;
 				}
 			}
 
