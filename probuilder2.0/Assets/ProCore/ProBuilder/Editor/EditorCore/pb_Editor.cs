@@ -816,17 +816,32 @@ public class pb_Editor : EditorWindow
 	{
 		GenericMenu menu = new GenericMenu();
 
-		menu.AddItem (new GUIContent("Open As Floating Window", ""), false, Menu_OpenAsFloatingWindow);
-		menu.AddItem (new GUIContent("Open As Dockable Window", ""), false, Menu_OpenAsDockableWindow);
+		menu.AddItem (new GUIContent("Open As Floating Window", ""), !EditorPrefs.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
+		menu.AddItem (new GUIContent("Open As Dockable Window", ""), EditorPrefs.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
 
-		// menu.AddSeparator("");
+		menu.AddSeparator("");
+
+		menu.AddItem (new GUIContent("Use Icon Mode", ""), pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
+		menu.AddItem (new GUIContent("Use Text Mode", ""), !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
+
 		menu.ShowAsContext ();
+	}
+
+	void Menu_ToggleIconMode()
+	{
+		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
+
+		if(!iconGui)
+		{
+			iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+			iconGui.InitWindowProperties(this);
+		}
 	}
 
 	void Menu_OpenAsDockableWindow()
 	{
 		EditorPrefs.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
-
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
@@ -834,7 +849,6 @@ public class pb_Editor : EditorWindow
 	void Menu_OpenAsFloatingWindow()
 	{
 		EditorPrefs.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
-
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
