@@ -136,6 +136,8 @@ namespace ProBuilder2.EditorCommon
 
 		void CalculateMaxIconSize()
 		{
+			if(!window) return;
+
 			isHorizontalMenu = window.position.width > window.position.height;			
 
 			Vector2 iconSize = actions[0].GetSize(isHorizontalMenu);
@@ -153,8 +155,6 @@ namespace ProBuilder2.EditorCommon
 					iconHeight = System.Math.Max(iconHeight, (int)iconSize.y);
 				}
 			}
-
-			Debug.Log(iconWidth);
 
 			window.minSize = new Vector2(iconWidth + 6, iconHeight + 12);
 			window.Repaint();
@@ -275,6 +275,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if( action.DoButton(isHorizontal, e.alt, ref optionRect) && !e.shift)
 					{
+						// test for alt click / hover
 						optionRect.x -= scroll.x;
 						optionRect.y -= scroll.y;
 
@@ -314,6 +315,7 @@ namespace ProBuilder2.EditorCommon
 					}
 
 					hovering = true;
+					forceRepaint = true;
 				}
 
 				if(++columnCount >= columns)
