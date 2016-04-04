@@ -91,6 +91,12 @@ public class pb_Editor : EditorWindow
 
 	private bool limitFaceDragCheckToSelection = true;
 	public bool isFloatingWindow { get; private set; }
+
+	public void SetSelectHiddenEnabled(bool isEnabled)
+	{
+		pref_backfaceSelect = isEnabled;
+		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+	}
 #endregion
 
 #region INITIALIZATION AND ONDISABLE
@@ -139,23 +145,8 @@ public class pb_Editor : EditorWindow
 
 	private void InitGUI()
 	{
-		if( prefs_iconGui )
-		{
-			iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-			iconGui.InitWindowProperties(this);
-		}
-		else
-		{
-			eye_on = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_On" : "GUI/GenericIcons_16px_Eye_Off", typeof(Texture2D)));
-			eye_off = (Texture2D)(Resources.Load(EditorGUIUtility.isProSkin ? "GUI/GenericIcons_16px_Eye_Off" : "GUI/GenericIcons_16px_Eye_On", typeof(Texture2D)));
-
-			show_Detail = true;
-			show_Mover = true;
-			show_Collider = true;
-			show_Trigger = true;
-
-			this.minSize = new Vector2( isFloatingWindow ? WINDOW_WIDTH_FlOATING : WINDOW_WIDTH_DOCKABLE, 200 );
-		}
+		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		iconGui.InitWindowProperties(this);
 
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
@@ -309,76 +300,7 @@ public class pb_Editor : EditorWindow
 			Repaint();
 	}
 
-	bool guiInitialized = false;
-
-	/**
-	 * Tool setting foldouts
-	 */
-	bool tool_vertexColors = false;
-	bool tool_growSelection = false;
-	bool tool_extrudeButton = false;
-#if !PROTOTYPE
-	bool tool_weldButton = false;
-#endif
-	Vector2 scroll = Vector2.zero;
 	Rect elementModeToolbarRect = new Rect(3,6,128,24);
-	private static GUIContent gui_content_bridge = new GUIContent("", "");
-#if PROTOTYPE
-	private static Color ProOnlyTint
-	{
-		get
-		{
-			return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
-		}
-	}
-	private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
-#endif
-
-	/**
-	 *	Set GUI.enabled to true or false based on whether PROTOTYPE is defined or not.
-	 */
-	private bool ProOnlyButton(string content, string tooltip, GUIStyle style = null)
-	{
-#if PROTOTYPE
-		pb_GUI_Utility.PushGUIEnabled(false);
-		gui_content_bridge.text = content;
-		gui_content_bridge.tooltip = tooltip + (string.IsNullOrEmpty(tooltip) ? "(ProBuilder Advanced Feature" : "\n(ProBuilder Advanced Feature)");
-		pb_GUI_Utility.PushGUIContentColor(ProOnlyTint);
-
-		bool ret = false;
-
-		if(!EditorGUIUtility.isProSkin && style != null)
-		{
-			Color tc = style.normal.textColor;
-			style.normal.textColor = ProOnlyTint;
-			ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
-			style.normal.textColor = tc;
-		}
-		else
-		{
-			ret = style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
-		}
-
-		pb_GUI_Utility.PopGUIContentColor();
-		pb_GUI_Utility.PopGUIEnabled();
-		return ret;
-#else
-		gui_content_bridge.text = content;
-		gui_content_bridge.tooltip = tooltip;
-		return style != null ? GUILayout.Button(gui_content_bridge, style) : GUILayout.Button(gui_content_bridge);
-#endif
-	}
-
-	private bool AutoContentButton(string content, string tooltip, GUIStyle style = null, params GUILayoutOption[] options)
-	{
-		gui_content_bridge.text = content;
-		gui_content_bridge.tooltip = tooltip;
-
-		if(style != null)
-			return GUILayout.Button(gui_content_bridge, style, options);
-		else
-			return GUILayout.Button(gui_content_bridge, options);
-	}
 
 	void OnGUI()
 	{
@@ -391,423 +313,121 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 
-		if( prefs_iconGui )
-		{
-			iconGui.OnGUI();
-			return;
-		}
+		iconGui.OnGUI();
 
-		if(!guiInitialized)
-		{
-			eye_style = new GUIStyle( EditorStyles.miniButtonRight );
-			eye_style.padding = new RectOffset(0,0,0,0);
-		}
+// #if PROTOTYPE
+// 		GUI.backgroundColor = UpgradeTint;
+// 		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional features."))
+// 		{
+// 			// due to bug in asset store window, this only works if the window is already open
+// 			if(pb_Editor_Utility.AssetStoreWindowIsOpen())
+// 				Application.OpenURL("com.unity3d.kharma:content/3558");
+// 			else
+// 				Application.OpenURL("http://bit.ly/1GJEuIG"); // "http://u3d.as/30b");
+// 		}
+// 		GUI.backgroundColor = Color.white;
+// #endif
 
-#if PROTOTYPE
-		GUI.backgroundColor = UpgradeTint;
-		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional features."))
-		{
-			// due to bug in asset store window, this only works if the window is already open
-			if(pb_Editor_Utility.AssetStoreWindowIsOpen())
-				Application.OpenURL("com.unity3d.kharma:content/3558");
-			else
-				Application.OpenURL("http://bit.ly/1GJEuIG"); // "http://u3d.as/30b");
-		}
-		GUI.backgroundColor = Color.white;
-#endif
+// 		if(!pref_showToolbar)
+// 		{
+// 			int t_selectionMode = editLevel != EditLevel.Top ? (int)selectionMode : -1;
+// 			elementModeToolbarRect.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
 
-		if(!pref_showToolbar)
-		{
-			int t_selectionMode = editLevel != EditLevel.Top ? (int)selectionMode : -1;
-			elementModeToolbarRect.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
+// 			EditorGUI.BeginChangeCheck();
 
-			EditorGUI.BeginChangeCheck();
+// 			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
 
-			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
+// 			if(EditorGUI.EndChangeCheck())
+// 			{
+// 				if(t_selectionMode == (int)selectionMode && editLevel != EditLevel.Top)
+// 				{
+// 					SetEditLevel( EditLevel.Top );
+// 				}
+// 				else
+// 				{
+// 					if(editLevel == EditLevel.Top)
+// 						SetEditLevel( EditLevel.Geometry );
 
-			if(EditorGUI.EndChangeCheck())
-			{
-				if(t_selectionMode == (int)selectionMode && editLevel != EditLevel.Top)
-				{
-					SetEditLevel( EditLevel.Top );
-				}
-				else
-				{
-					if(editLevel == EditLevel.Top)
-						SetEditLevel( EditLevel.Geometry );
-
-					SetSelectionMode( (SelectMode)t_selectionMode );
-					selectionMode = (SelectMode)t_selectionMode;
-				}
-			}
-
-#if UNITY_5
-			GUILayout.Space( isFloatingWindow ? 30 : 34 );
-#else
-			GUILayout.Space( isFloatingWindow ? 28 : 34 );
-#endif
-
-			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-			pb_GUI_Utility.DrawSeparator(2);
-			GUI.backgroundColor = Color.white;
-		}
-
-		scroll = GUILayout.BeginScrollView(scroll);
-
-		GUILayout.Label("Tools", EditorStyles.boldLabel);
-		ToolsGUI();
-
-		GUILayout.Label("Selection", EditorStyles.boldLabel);
-		SelectionGUI();
-
-		GUILayout.Label("Object", EditorStyles.boldLabel);
-		ObjectGUI();
-
-		if(editLevel == EditLevel.Geometry)
-		{
-			switch(selectionMode)
-			{
-				case SelectMode.Edge:
-					GUILayout.Label("Edge", EditorStyles.boldLabel);
-					break;
-
-				case SelectMode.Vertex:
-					GUILayout.Label("Vertex", EditorStyles.boldLabel);
-					break;
-
-				case SelectMode.Face:
-					GUILayout.Label("Face", EditorStyles.boldLabel);
-					break;
-			}
-
-			ActionsGUI();
-		}
-
-		GUILayout.Space(2);
-		GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-		pb_GUI_Utility.DrawSeparator(1);
-		GUI.backgroundColor = Color.white;
-		GUILayout.Space(2);
-
-		EntityGUI();
-
-		GUILayout.EndScrollView();
+// 					SetSelectionMode( (SelectMode)t_selectionMode );
+// 					selectionMode = (SelectMode)t_selectionMode;
+// 				}
+// 			}
 	}
 
-	int buttonPad
-	{
-		get
-		{
-			if( pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow))
-				return (int) ((bool)pb_Reflection.GetValue(this, "docked") ? 11 : 7);
-			else
-				return 11;
-		}
-	}
 
-	public void SetSelectHiddenEnabled(bool isEnabled)
-	{
-		pref_backfaceSelect = isEnabled;
-		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
-	}
-
-	void SelectionGUI()
-	{
-		bool wasEnabled = GUI.enabled;
-
-		EditorGUI.BeginChangeCheck();
-		handleAlignment = (HandleAlignment)EditorGUILayout.EnumPopup(new GUIContent("", "Toggle between Global, Local, and Plane Coordinates"), handleAlignment, GUILayout.MaxWidth(Screen.width - buttonPad));
-
-		if(EditorGUI.EndChangeCheck())
-			SetHandleAlignment(handleAlignment);
-
-		EditorGUI.BeginChangeCheck();
-
-			if( AutoContentButton(pref_backfaceSelect ? "Select All" : "Select Visible", "If Select All is enabled, drag and click selections will select elements hidden behind faces.  If Select Visible is on, only elements that are viewable in the scene will be selected.", EditorStyles.miniButton) )
-				pref_backfaceSelect = !pref_backfaceSelect;
-
-		if(EditorGUI.EndChangeCheck())
-			EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
-
-		GUI.enabled = selectedVertexCount > 0;
-
-		tool_growSelection = pb_GUI_Utility.ToolSettingsGUI("Grow", "Adds adjacent faces to the current selection.  Optionally can restrict augmentation to faces within a restricted angle difference.",
-			tool_growSelection,
-			pb_Menu_Commands.MenuGrowSelection,
-			pb_Menu_Commands.GrowSelectionGUI,
-			selectionMode == SelectMode.Face,
-			Screen.width,
-			54,
-			selection);
-
-		if(AutoContentButton("Shrink", "Remove outside elements from the current selection.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuShrinkSelection(selection);
-
-		if(AutoContentButton("Invert", "Set the element selection to the inverse of what is currently selected.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuInvertSelection(selection);
-
-		switch(selectionMode)
-		{
-			case SelectMode.Edge:
-				GUI.enabled = selectedEdgeCount > 0;
-				if(AutoContentButton("Loop", "Select all edges in a loop using the current edge selection as a starting point.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuLoopSelection(selection);
-
-				if(AutoContentButton("Ring", "Select all edges that form a ring, using the current edge selection as a starting point.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuRingSelection(selection);
-				break;
-		}
-
-		GUI.enabled = wasEnabled;
-	}
-
-	void ToolsGUI()
-	{
-		if(AutoContentButton("Shape", "Open Shape Creation Panel", EditorStyles.miniButton))
-			pb_Geometry_Interface.MenuOpenShapeCreator();
-
-#if !PROTOTYPE
-		if(ProOnlyButton("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces.", EditorStyles.miniButton))
-			pb_Material_Editor.MenuOpenMaterialEditor();
-
-		if (ProOnlyButton("UV Editor", "Open UV Editor Window", EditorStyles.miniButton))
-			pb_UV_Editor.MenuOpenUVEditor();
-#else
-		ProOnlyButton("Material", "Open Material Editor Window.  You can also Drag and Drop materials or textures to selected faces.", EditorStyles.miniButton);
-		ProOnlyButton("UV Editor", "Open UV Editor Window", EditorStyles.miniButton);
-#endif
-
-		tool_vertexColors = pb_GUI_Utility.ToolSettingsGUI("Vertex Color", "Open the vertex color editor.  Assign colors by face and selection with the Color Palette, or paint with a brush using the Color Painter.",
-			tool_vertexColors,
-			pb_Menu_Commands.MenuOpenVertexColorsEditor2,
-			pb_Menu_Commands.VertexColorsGUI,
-			Screen.width,
-			36,
-			selection);
-
-#if !PROTOTYPE
-		if(ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton))
-			pb_Smoothing_Editor.MenuOpenSmoothingEditor();
-#else
-		ProOnlyButton("Smoothing", "Opens the Smoothing Groups window.  Use this to achieve either faceted or smooth edges", EditorStyles.miniButton);
-#endif
-	}
-
-	void ObjectGUI()
-	{
-		pb_GUI_Utility.PushGUIEnabled( selection != null && selection.Length > 1 );
-
-		if(ProOnlyButton("Merge", "Combine all selected ProBuilder objects into a single object.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuMergeObjects(selection);
-
-		pb_GUI_Utility.PopGUIEnabled();
-
-		pb_GUI_Utility.PushGUIEnabled( selection != null && selection.Length > 0 );
-
-		if(ProOnlyButton("Mirror", "Open the Mirror Tool panel.", EditorStyles.miniButton))
-			EditorWindow.GetWindow<pb_Mirror_Tool>(true, "Mirror Tool", true).Show();
-
-		if(GUILayout.Button(new GUIContent("Flip Normals", "Reverse the direction of all faces on selected objects."), EditorStyles.miniButton))
-			pb_Menu_Commands.MenuFlipObjectNormals(selection);
-
-		if(ProOnlyButton("Subdivide", "Split all selected faces (or entire object) smaller faces", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuSubdivide(selection);
-
-		if(ProOnlyButton("Set Pivot", "Move the mesh pivot to the center of the current element selection", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuSetPivot(selection);
-
-		pb_GUI_Utility.PopGUIEnabled();
-	}
-
-	void ActionsGUI()
-	{
-		pb_GUI_Utility.PushGUIEnabled(selectedVertexCount > 0);
-
-		if(AutoContentButton("Set Pivot", "Set the pivot of selected geometry to the center of the current element selection.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuSetPivot(selection);
-
-#if PROTOTYPE
-		GUI.enabled = selectedFaceCount > 0;
-
-		if(selectedEdgeCount > 0 && selectedFaceCount < 1)
-		{
-			ProOnlyButton("Extrude", "Extrude selected edges.  Also try holding 'Shift' while moving the scene handle.", EditorStyles.miniButton);
-		}
-		else
-		{
-			tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
-				tool_extrudeButton,
-				pb_Menu_Commands.MenuExtrude,
-				pb_Menu_Commands.ExtrudeButtonGUI,
-				Screen.width,
-				36,
-				selection);
-		}
-#else
-		GUI.enabled = selectedFaceCount > 0 || selectedEdgeCount > 0;
-
-		tool_extrudeButton = pb_GUI_Utility.ToolSettingsGUI("Extrude", "Extrude the currently selected elements by a set amount.  Also try holding 'Shift' while moving the handle tool.",
-			tool_extrudeButton,
-			pb_Menu_Commands.MenuExtrude,
-			pb_Menu_Commands.ExtrudeButtonGUI,
-			Screen.width,
-			36,
-			selection);
-#endif
-
-		GUI.enabled = selectedFaceCount > 0;
-
-		if(AutoContentButton("Conform Normals", "Automatically attempts to make selected face normals face the same direction.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuConformNormals(selection);
-
-		if(AutoContentButton("Flip Normals", "Reverses the direction of the selected faces.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuFlipNormals(selection);
-
-		if(AutoContentButton("Flip Edge", "Swaps the orientation of the connecting edge in a quad.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuFlipEdges(selection);
-
-		if(AutoContentButton("Delete", "Delete the selected faces.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuDeleteFace(selection);
-
-		if(ProOnlyButton("Detach", "Split selected faces off to a new submesh or object.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuDetachFaces(selection);
-
-		GUI.enabled = selectedFaceCount > 1;
-		if(ProOnlyButton("Merge Faces", "Merge the selected faces to a single face.", EditorStyles.miniButton))
-			pb_Menu_Commands.MenuMergeFaces(selection);
-
-		switch(selectionMode)
-		{
-			case SelectMode.Face:
-
-				GUI.enabled = selectedFaceCount > 0;
-				if(ProOnlyButton("Subdiv Face", "Split the face selection into multiple faces by connecting the edges of each face at the center of the face.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuSubdivideFace(selection);
-				break;
-
-			case SelectMode.Edge:
-
-				GUI.enabled = selectedEdgeCount == 2;
-
-				if(ProOnlyButton("Bridge", "Create a face between two selected edges.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuBridgeEdges(selection);
-
-				GUI.enabled = selectedEdgeCount > 1;
-
-				if(ProOnlyButton("Connect", "Create an edge by connecting the center of each selected edge.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuConnectEdges(selection);
-
-				GUI.enabled = selectedEdgeCount > 0;
-
-				if(ProOnlyButton("Insert Loop", "Inserts an Edge loop by selecting the edge ring, then connecting the centers of all edges.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuInsertEdgeLoop(selection);
-
-				break;
-
-			case SelectMode.Vertex:
-
-				GUI.enabled = per_object_vertexCount_distinct > 1;
-
-				if(ProOnlyButton("Connect", "Insert edges connecting all selected vertices.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuConnectVertices(selection);
-
-#if PROTOTYPE
-				ProOnlyButton("Weld", "Merge selected vertices that are within a specified distance of one another.", EditorStyles.miniButton);
-#else
-				tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
-					tool_weldButton,
-					pb_Menu_Commands.MenuWeldVertices,
-					pb_Menu_Commands.WeldButtonGUI,
-					Screen.width,
-					20,
-					selection);
-#endif
-
-				if(ProOnlyButton("Collapse", "Merge all selected vertices to a single vertex positioned at the center of the selection.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuCollapseVertices(selection);
-
-				GUI.enabled = per_object_vertexCount_distinct > 0;
-
-				if(ProOnlyButton("Split", "Make each selected vertex move independently.", EditorStyles.miniButton))
-					pb_Menu_Commands.MenuSplitVertices(selection);
-
-				break;
-		}
-	}
-
-	void EntityGUI()
-	{
-		pb_GUI_Utility.PushGUIEnabled( !EditorApplication.isPlaying );
-
-		float entityButtonWidth = this.position.width - 28 - buttonPad;
-
-		GUILayout.BeginHorizontal();
-			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-			{
-				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
-				ToggleEntityVisibility(EntityType.Detail, show_Detail);
-			}
-			pb_GUI_Utility.PopGUIEnabled();
-
-			if(GUILayout.Button( show_Detail ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) ))
-			{
-				show_Detail = !show_Detail;
-				EditorPrefs.SetBool(pb_Constant.pbShowDetail, show_Detail);
-				ToggleEntityVisibility(EntityType.Detail, show_Detail);
-			}
-		GUILayout.EndHorizontal();
-
-			GUILayout.BeginHorizontal();
-				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-			{
-				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
-				ToggleEntityVisibility(EntityType.Mover, show_Mover);
-			}
-			pb_GUI_Utility.PopGUIEnabled();
-
-			if(GUILayout.Button( show_Mover ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-				show_Mover = !show_Mover;
-				EditorPrefs.SetBool(pb_Constant.pbShowMover, show_Mover);
-				ToggleEntityVisibility(EntityType.Mover, show_Mover);
-			}
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-			{
-				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
-				ToggleEntityVisibility(EntityType.Collider, show_Collider);
-			}
-			pb_GUI_Utility.PopGUIEnabled();
-
-			if(GUILayout.Button( show_Collider ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-				show_Collider = !show_Collider;
-				EditorPrefs.SetBool(pb_Constant.pbShowCollider, show_Collider);
-				ToggleEntityVisibility(EntityType.Collider, show_Collider);
-			}
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-			{
-				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
-				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-			}
-			pb_GUI_Utility.PopGUIEnabled();
-
-			if(GUILayout.Button( show_Trigger ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-				show_Trigger = !show_Trigger;
-				EditorPrefs.SetBool(pb_Constant.pbShowTrigger, show_Trigger);
-				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-			}
-		GUILayout.EndHorizontal();
-
-		pb_GUI_Utility.PopGUIEnabled();
-	}
+// 	void EntityGUI()
+// 	{
+// 		pb_GUI_Utility.PushGUIEnabled( !EditorApplication.isPlaying );
+
+// 		float entityButtonWidth = this.position.width - 28 - buttonPad;
+
+// 		GUILayout.BeginHorizontal();
+// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+// 			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
+// 			{
+// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
+// 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
+// 			}
+// 			pb_GUI_Utility.PopGUIEnabled();
+
+// 			if(GUILayout.Button( show_Detail ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) ))
+// 			{
+// 				show_Detail = !show_Detail;
+// 				EditorPrefs.SetBool(pb_Constant.pbShowDetail, show_Detail);
+// 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
+// 			}
+// 		GUILayout.EndHorizontal();
+
+// 			GUILayout.BeginHorizontal();
+// 				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+// 			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
+// 			{
+// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
+// 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
+// 			}
+// 			pb_GUI_Utility.PopGUIEnabled();
+
+// 			if(GUILayout.Button( show_Mover ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+// 				show_Mover = !show_Mover;
+// 				EditorPrefs.SetBool(pb_Constant.pbShowMover, show_Mover);
+// 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
+// 			}
+// 		GUILayout.EndHorizontal();
+
+// 		GUILayout.BeginHorizontal();
+// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+// 			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
+// 			{
+// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
+// 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
+// 			}
+// 			pb_GUI_Utility.PopGUIEnabled();
+
+// 			if(GUILayout.Button( show_Collider ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+// 				show_Collider = !show_Collider;
+// 				EditorPrefs.SetBool(pb_Constant.pbShowCollider, show_Collider);
+// 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
+// 			}
+// 		GUILayout.EndHorizontal();
+
+// 		GUILayout.BeginHorizontal();
+// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
+// 			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
+// 			{
+// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
+// 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
+// 			}
+// 			pb_GUI_Utility.PopGUIEnabled();
+
+// 			if(GUILayout.Button( show_Trigger ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
+// 				show_Trigger = !show_Trigger;
+// 				EditorPrefs.SetBool(pb_Constant.pbShowTrigger, show_Trigger);
+// 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
+// 			}
+// 		GUILayout.EndHorizontal();
+
+// 		pb_GUI_Utility.PopGUIEnabled();
+// 	}
 #endregion
 
 #region CONTEXT MENU
@@ -831,12 +451,9 @@ public class pb_Editor : EditorWindow
 	{
 		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
-
-		if(!iconGui)
-		{
-			iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-			iconGui.InitWindowProperties(this);
-		}
+		if(iconGui != null) GameObject.DestroyImmediate(iconGui);
+		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		iconGui.InitWindowProperties(this);
 	}
 
 	void Menu_OpenAsDockableWindow()
@@ -884,7 +501,7 @@ public class pb_Editor : EditorWindow
 	bool scaling = false;
 
 	private bool rightMouseDown = false;
-	Event currentEvent;// = (Event)0;
+	Event currentEvent;
 
 	void OnSceneGUI(SceneView scnView)
 	{

@@ -66,6 +66,11 @@ namespace ProBuilder2.EditorCommon
 			EditorApplication.update -= Update;
 		}
 
+		void OnDestroy()
+		{
+			pb_MenuAction.ResetStyles();
+		}
+
 		void OnElementSelectionChange(pb_Object[] selection)
 		{
 			if(!window)

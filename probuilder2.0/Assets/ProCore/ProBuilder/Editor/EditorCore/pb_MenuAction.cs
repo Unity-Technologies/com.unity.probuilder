@@ -23,6 +23,17 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
 		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
+#if PROTOTYPE
+	private static Color ProOnlyTint
+	{
+		get
+		{
+			return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
+		}
+	}
+	private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
+#endif
+
 		public delegate void SettingsDelegate();
 
 		public static pb_Object[] selection 
@@ -33,9 +44,13 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private static void FillCommonStyleFields(GUIStyle style)
+		/**
+		 *	Reset static GUIStyle objects so that they will be re-initialized the next time used. 
+		 */
+		public static void ResetStyles()
 		{
-
+			_buttonStyleVertical = null;
+			_buttonStyleHorizontal = null;
 		}
 
 		protected static GUIStyle _buttonStyleVertical = null;
@@ -52,8 +67,7 @@ namespace ProBuilder2.EditorCommon
 					_buttonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
 					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Button_Pressed");
 					_buttonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_buttonStyleVertical.alignment = false ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-					// _buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					_buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
 					_buttonStyleVertical.stretchWidth = true;
 					_buttonStyleVertical.stretchHeight = false;
@@ -181,7 +195,6 @@ namespace ProBuilder2.EditorCommon
 		public virtual bool IsHidden() { return false; }
 		public abstract bool IsEnabled();
 		public virtual bool SettingsEnabled() { return false; }
-		
 		public abstract pb_ActionResult DoAction();
 		public virtual void OnSettingsGUI() {}
 
@@ -189,7 +202,7 @@ namespace ProBuilder2.EditorCommon
 
 		public pb_MenuAction()
 		{
-			isIconMode = false; // pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		}
 
 		/**
