@@ -42,9 +42,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			icons = new Texture2D[]
 			{
-				pb_IconUtility.GetIcon("HandleAlign_World"),
-				pb_IconUtility.GetIcon("HandleAlign_Local"),
-				pb_IconUtility.GetIcon("HandleAlign_Plane"),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_World"),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Local"),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Plane"),
 			};
 
 			this.count = icons.Length;

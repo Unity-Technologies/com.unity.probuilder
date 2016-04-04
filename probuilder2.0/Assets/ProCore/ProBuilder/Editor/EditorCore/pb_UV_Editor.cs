@@ -302,17 +302,17 @@ public class pb_UV_Editor : EditorWindow
 		Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
 		Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
 
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("UVEditor/Mode_Face");
+		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("UVEditor/Mode_Vertex");
+		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("UVEditor/Mode_Edge");
 
-		icon_textureMode_on		= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_On", typeof(Texture2D)));
-		icon_textureMode_off	= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_ShowTexture_Off", typeof(Texture2D)));
+		icon_textureMode_on				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On");
+		icon_textureMode_off			= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off");
 
-		icon_sceneUV_on			= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_Manip_On", typeof(Texture2D)));
-		icon_sceneUV_off		= (Texture2D)(Resources.Load("GUI/ProBuilderGUI_UV_Manip_Off", typeof(Texture2D)));
+		icon_sceneUV_on					= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On");
+		icon_sceneUV_off				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off");
 
-		gc_RenderUV.image = (Texture2D)(Resources.Load(isProSkin ? "GUI/camera-64x64" : "GUI/camera-64x64-dark", typeof(Texture2D)));
+		gc_RenderUV.image 				= pb_IconUtility.GetIcon("UVEditor/camera-64x64");
 
 		ToolIcons = new GUIContent[4]
 		{

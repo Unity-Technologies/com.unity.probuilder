@@ -50,12 +50,12 @@ namespace ProBuilder2.EditorCommon
 			tooltipTimer.Item1 = "";
 			tooltipTimer.Item2 = 0.0;
 			showTooltipTimer = false;
-			scrollIconUp = pb_IconUtility.GetIcon("ShowNextPage_Up");
-			scrollIconDown = pb_IconUtility.GetIcon("ShowNextPage_Down");
-			scrollIconRight = pb_IconUtility.GetIcon("ShowNextPage_Right");
-			scrollIconLeft = pb_IconUtility.GetIcon("ShowNextPage_Left");
+			scrollIconUp = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Up");
+			scrollIconDown = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Down");
+			scrollIconRight = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Right");
+			scrollIconLeft = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
-			isIconMode = false; // pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 			this.window = pb_Editor.instance;
 			CalculateMaxIconSize();
 		}
@@ -101,6 +101,8 @@ namespace ProBuilder2.EditorCommon
 
 		void Update()
 		{
+			if(!window)	return;
+
 			if(!shiftOnlyTooltips)
 			{
 				if( !tooltipTimer.Item1.Equals(hoveringTooltipName) )
@@ -199,7 +201,17 @@ namespace ProBuilder2.EditorCommon
 			Event e = Event.current;
 			bool forceRepaint = false;
 					
-			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden());
+			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden() && (!isIconMode || x.icon != null) );
+
+			// if icon mode and no actions are found, that probably means icons failed to load.  revert to text mode.
+			if(isIconMode && available.Count() < 1)
+			{
+				isIconMode = false;
+				EditorPrefs.SetBool(pb_Constant.pbIconGUI, isIconMode);
+				CalculateMaxIconSize();
+				Debug.LogWarning("ProBuilder: Toolbar icons failed to load.  Please ensure that the ProBuilder folder content paths are unmodified.  Reverting to text mode.");
+				return;
+			}
 
 			int availableWidth = windowWidth;
 			int availableHeight = windowHeight;

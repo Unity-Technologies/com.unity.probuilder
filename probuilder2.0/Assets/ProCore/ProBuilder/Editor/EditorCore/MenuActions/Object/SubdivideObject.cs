@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 	public class SubdivideObject : pb_MenuAction
 	{
 		public override pb_IconGroup group { get { return pb_IconGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Object_Subdivide"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_Subdivide"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent

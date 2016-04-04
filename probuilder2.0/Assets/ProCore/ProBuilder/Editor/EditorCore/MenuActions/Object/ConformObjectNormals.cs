@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 	public class ConformObjectNormals : pb_MenuAction
 	{
 		public override pb_IconGroup group { get { return pb_IconGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Object_ConformNormals"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_ConformNormals"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string MenuTitle { get { return "Conform Normals"; } }
 

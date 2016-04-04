@@ -153,13 +153,10 @@ public class pb_Editor : EditorWindow
 		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
 		VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
 
-		// always need the toolbar loaded	
-		bool isProSkin = true; // EditorGUIUtility.isProSkin;
-
-		Texture2D object_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Object_Pro" : "GUI/ProBuilderGUI_Mode_Object", typeof(Texture2D)));
-		Texture2D face_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Face-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Face-Off_Small", typeof(Texture2D)));
-		Texture2D vertex_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Vertex-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Vertex-Off_Small", typeof(Texture2D)));
-		Texture2D edge_Graphic_off = (Texture2D)(Resources.Load(isProSkin ? "GUI/ProBuilderGUI_Mode_Edge-Off_Small-Pro" : "GUI/ProBuilderGUI_Mode_Edge-Off_Small", typeof(Texture2D)));
+		Texture2D object_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Object");
+		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face");
+		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex");
+		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge");
 	
 		if(pref_showToolbar)
 		{

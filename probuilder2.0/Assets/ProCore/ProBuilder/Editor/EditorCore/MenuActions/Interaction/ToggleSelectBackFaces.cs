@@ -31,8 +31,8 @@ The default value is <b>On</b>.
 		{
 			icons = new Texture2D[]
 			{
-				pb_IconUtility.GetIcon("Selection_SelectHidden-Off"),
-				pb_IconUtility.GetIcon("Selection_SelectHidden-On")
+				pb_IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off"),
+				pb_IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On")
 			};
 		}
 
