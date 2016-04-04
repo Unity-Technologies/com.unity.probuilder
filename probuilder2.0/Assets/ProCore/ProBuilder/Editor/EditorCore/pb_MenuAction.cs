@@ -263,8 +263,10 @@ namespace ProBuilder2.EditorCommon
 
 					if(SettingsEnabled() && GUILayout.Button("+", altButtonStyle, GUILayout.MaxWidth(21)))
 						pb_MenuOption.Show(OnSettingsGUI);
-
 				GUILayout.EndHorizontal();
+
+				GUI.enabled = wasEnabled;
+				
 				return false;
 			}
 		}
