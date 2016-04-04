@@ -155,7 +155,8 @@ namespace ProBuilder2.EditorCommon
 					iconHeight = System.Math.Max(iconHeight, (int)iconSize.y);
 				}
 
-				iconWidth += 8;
+				iconWidth += 4;
+				iconHeight += 4;
 			}
 
 			window.minSize = new Vector2(iconWidth + 6, iconHeight + 12);

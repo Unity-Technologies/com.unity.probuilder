@@ -33,6 +33,11 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		private static void FillCommonStyleFields(GUIStyle style)
+		{
+
+		}
+
 		protected static GUIStyle _buttonStyleVertical = null;
 		protected static GUIStyle buttonStyleVertical
 		{
@@ -41,14 +46,15 @@ namespace ProBuilder2.EditorCommon
 				if(_buttonStyleVertical == null)
 				{
 					_buttonStyleVertical = new GUIStyle();
-					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
-					_buttonStyleVertical.alignment = TextAnchor.MiddleCenter;
 					_buttonStyleVertical.normal.background = pb_IconUtility.GetIcon("Button_Normal");
 					_buttonStyleVertical.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
 					_buttonStyleVertical.hover.background = pb_IconUtility.GetIcon("Button_Hover");
 					_buttonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
 					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Button_Pressed");
 					_buttonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+					_buttonStyleVertical.alignment = false ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					// _buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
 					_buttonStyleVertical.stretchWidth = true;
 					_buttonStyleVertical.stretchHeight = false;
 					_buttonStyleVertical.margin = new RectOffset(4,5,4,4);
@@ -66,20 +72,47 @@ namespace ProBuilder2.EditorCommon
 				if(_buttonStyleHorizontal == null)
 				{
 					_buttonStyleHorizontal = new GUIStyle();
-					_buttonStyleHorizontal.border = new RectOffset(0,0,4,0);
-					_buttonStyleHorizontal.alignment = TextAnchor.MiddleCenter;
-					_buttonStyleHorizontal.normal.background = pb_IconUtility.GetIcon("Button_Normal_Horizontal");
-					_buttonStyleHorizontal.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_buttonStyleHorizontal.hover.background = pb_IconUtility.GetIcon("Button_Hover_Horizontal");
-					_buttonStyleHorizontal.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_buttonStyleHorizontal.active.background = pb_IconUtility.GetIcon("Button_Pressed_Horizontal");
-					_buttonStyleHorizontal.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_buttonStyleHorizontal.stretchWidth = true;
-					_buttonStyleHorizontal.stretchHeight = true;
-					_buttonStyleHorizontal.margin = new RectOffset(4,4,4,5);
-					_buttonStyleHorizontal.padding = new RectOffset(2,2,8,0);
+
+					_buttonStyleHorizontal.normal.background 	= pb_IconUtility.GetIcon("Button_Normal_Horizontal");
+					_buttonStyleHorizontal.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
+					_buttonStyleHorizontal.hover.background 	= pb_IconUtility.GetIcon("Button_Hover_Horizontal");
+					_buttonStyleHorizontal.hover.textColor 		= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
+					_buttonStyleHorizontal.active.background 	= pb_IconUtility.GetIcon("Button_Pressed_Horizontal");
+					_buttonStyleHorizontal.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+					_buttonStyleHorizontal.alignment 			= TextAnchor.MiddleCenter;
+					_buttonStyleHorizontal.border 				= new RectOffset(0,0,4,0);
+					_buttonStyleHorizontal.stretchWidth 		= true;
+					_buttonStyleHorizontal.stretchHeight 		= true;
+					_buttonStyleHorizontal.margin 				= new RectOffset(4,4,4,5);
+					_buttonStyleHorizontal.padding 				= new RectOffset(2,2,8,0);
 				}
 				return _buttonStyleHorizontal;
+			}
+		}
+
+		protected static GUIStyle _altButtonStyle = null;
+		protected static GUIStyle altButtonStyle
+		{
+			get
+			{
+				if(_altButtonStyle == null)
+				{
+					_altButtonStyle = new GUIStyle();
+
+					_altButtonStyle.normal.background 	= pb_IconUtility.GetIcon("AltButton_Normal");
+					_altButtonStyle.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
+					_altButtonStyle.hover.background 	= pb_IconUtility.GetIcon("AltButton_Hover");
+					_altButtonStyle.hover.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
+					_altButtonStyle.active.background 	= pb_IconUtility.GetIcon("AltButton_Pressed");
+					_altButtonStyle.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+					_altButtonStyle.alignment 			= TextAnchor.MiddleCenter;
+					_altButtonStyle.border 				= new RectOffset(1,1,1,1);
+					_altButtonStyle.stretchWidth 		= false;
+					_altButtonStyle.stretchHeight 		= false;
+					_altButtonStyle.margin 				= new RectOffset(4,4,4,4);
+					_altButtonStyle.padding 			= new RectOffset(2,2,1,3);
+				}
+				return _altButtonStyle;
 			}
 		}
 
@@ -207,15 +240,23 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				if(GUILayout.Button(MenuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical, layoutOptions))
-				{
-					pb_ActionResult res = DoAction();
-					pb_Editor_Utility.ShowNotification(res.notification);
-				}
 
+				GUILayout.BeginHorizontal(layoutOptions);
+					if(GUILayout.Button(MenuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
+					{
+						pb_ActionResult res = DoAction();
+						pb_Editor_Utility.ShowNotification(res.notification);
+					}
+
+					if(SettingsEnabled() && GUILayout.Button("+", altButtonStyle, GUILayout.MaxWidth(21)))
+						pb_MenuOption.Show(OnSettingsGUI);
+
+				GUILayout.EndHorizontal();
 				return false;
 			}
 		}
+
+		public static readonly Vector2 AltButtonSize = new Vector2(21, 0);
 
 		/**
 		 *	Get the rendered width of this GUI item.
@@ -223,17 +264,9 @@ namespace ProBuilder2.EditorCommon
 		public Vector2 GetSize(bool isHorizontal)
 		{
 			if(isIconMode)
-			{
-				return isHorizontal ?
-					buttonStyleHorizontal.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) ) :
-					buttonStyleVertical.CalcSize( pb_GUI_Utility.TempGUIContent(null, null, icon) );			
-			}
+				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
 			else
-			{
-				return isHorizontal ?
-					buttonStyleHorizontal.CalcSize( pb_GUI_Utility.TempGUIContent(MenuTitle) ) :
-					buttonStyleVertical.CalcSize( pb_GUI_Utility.TempGUIContent(MenuTitle) );			
-			}
+				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(MenuTitle)) + AltButtonSize;
 		}
 	}
 }
