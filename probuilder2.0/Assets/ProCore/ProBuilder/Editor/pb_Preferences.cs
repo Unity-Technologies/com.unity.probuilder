@@ -217,11 +217,9 @@ public class pb_Preferences
 	static Rect resetRect = new Rect(0,0,0,0);
 	static Vector2 shortcutScroll = Vector2.zero;
 	static int CELL_HEIGHT = 20;
-	// static int tmp = 0;
+
 	static void ShortcutSelectPanel()
 	{
-		// tmp = EditorGUI.IntField(new Rect(400, 340, 80, 24), "", tmp);
-
 		GUILayout.Space(4);
 		GUI.contentColor = Color.white;
 		GUI.Box(selectBox, "");
@@ -281,7 +279,10 @@ public class pb_Preferences
 		defaultShortcuts[shortcutIndex].key = key;
 
 		GUI.Label(modifiersRect, "Modifiers");
-		EventModifiers em = (EventModifiers)(((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
+
+		// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
+		// so this isn't technically correct.
+		EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
 		em = (EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, em);
 		defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
 

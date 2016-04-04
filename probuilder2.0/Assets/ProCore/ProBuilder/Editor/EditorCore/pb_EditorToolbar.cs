@@ -154,6 +154,8 @@ namespace ProBuilder2.EditorCommon
 					iconWidth = System.Math.Max(iconWidth, (int)iconSize.x);
 					iconHeight = System.Math.Max(iconHeight, (int)iconSize.y);
 				}
+
+				iconWidth += 8;
 			}
 
 			window.minSize = new Vector2(iconWidth + 6, iconHeight + 12);
@@ -232,7 +234,10 @@ namespace ProBuilder2.EditorCommon
 				forceRepaint = true;
 			}
 	
-			int maxHorizontalScroll = contentWidth - availableWidth;
+			// the math for matching layout group width for icons is easy enough, but text 
+			// is a lot more complex.  so for horizontal text toolbars always show the horizontal
+			// scroll buttons.
+			int maxHorizontalScroll = !isIconMode ? 10000 : contentWidth - availableWidth;
 			int maxVerticalScroll = contentHeight - availableHeight;
 
 			// only change before a layout event
