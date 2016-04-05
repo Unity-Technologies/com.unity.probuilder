@@ -61,11 +61,11 @@ namespace ProBuilder2.EditorCommon
 				if(_buttonStyleVertical == null)
 				{
 					_buttonStyleVertical = new GUIStyle();
-					_buttonStyleVertical.normal.background = pb_IconUtility.GetIcon("Toolbar/Button_Normal");
+					_buttonStyleVertical.normal.background = pb_IconUtility.GetIcon("Toolbar/Button_Normal", IconSkin.Pro);
 					_buttonStyleVertical.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_buttonStyleVertical.hover.background = pb_IconUtility.GetIcon("Toolbar/Button_Hover");
+					_buttonStyleVertical.hover.background = pb_IconUtility.GetIcon("Toolbar/Button_Hover", IconSkin.Pro);
 					_buttonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Toolbar/Button_Pressed");
+					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Toolbar/Button_Pressed", IconSkin.Pro);
 					_buttonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
 					_buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
@@ -87,11 +87,11 @@ namespace ProBuilder2.EditorCommon
 				{
 					_buttonStyleHorizontal = new GUIStyle();
 
-					_buttonStyleHorizontal.normal.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Normal_Horizontal");
 					_buttonStyleHorizontal.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_buttonStyleHorizontal.hover.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Hover_Horizontal");
+					_buttonStyleHorizontal.normal.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Normal_Horizontal", IconSkin.Pro);
+					_buttonStyleHorizontal.hover.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Hover_Horizontal", IconSkin.Pro);
 					_buttonStyleHorizontal.hover.textColor 		= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_buttonStyleHorizontal.active.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Pressed_Horizontal");
+					_buttonStyleHorizontal.active.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Pressed_Horizontal", IconSkin.Pro);
 					_buttonStyleHorizontal.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
 					_buttonStyleHorizontal.alignment 			= TextAnchor.MiddleCenter;
 					_buttonStyleHorizontal.border 				= new RectOffset(0,0,4,0);
@@ -113,11 +113,11 @@ namespace ProBuilder2.EditorCommon
 				{
 					_altButtonStyle = new GUIStyle();
 
-					_altButtonStyle.normal.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Normal");
+					_altButtonStyle.normal.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Normal", IconSkin.Pro);
 					_altButtonStyle.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_altButtonStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Hover");
+					_altButtonStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Hover", IconSkin.Pro);
 					_altButtonStyle.hover.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_altButtonStyle.active.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Pressed");
+					_altButtonStyle.active.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Pressed", IconSkin.Pro);
 					_altButtonStyle.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
 					_altButtonStyle.alignment 			= TextAnchor.MiddleCenter;
 					_altButtonStyle.border 				= new RectOffset(1,1,1,1);

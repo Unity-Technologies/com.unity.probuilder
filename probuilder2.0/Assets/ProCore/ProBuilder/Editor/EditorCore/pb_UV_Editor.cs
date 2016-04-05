@@ -297,14 +297,14 @@ public class pb_UV_Editor : EditorWindow
 		
 		isProSkin = EditorGUIUtility.isProSkin;
 
-		Texture2D moveIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
-		Texture2D rotateIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
-		Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
-		Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
+		Texture2D moveIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
+		Texture2D rotateIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
+		Texture2D scaleIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
+		Texture2D viewIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
 
-		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("UVEditor/Mode_Face");
-		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("UVEditor/Mode_Vertex");
-		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("UVEditor/Mode_Edge");
+		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face");
+		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex");
+		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge");
 
 		icon_textureMode_on				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On");
 		icon_textureMode_off			= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off");
@@ -2580,9 +2580,20 @@ public class pb_UV_Editor : EditorWindow
 
 	Rect toolbarRect_tool = new Rect(PAD, PAD, 130f, 24f);
 	Rect toolbarRect_select = new Rect(PAD + 130 + PAD, PAD, 130f, 24f);
+	
+	GUIStyle commandStyle = null;
+
 	void DrawUVTools(Rect rect)
 	{
 		GUI.BeginGroup(rect);
+
+		if(	commandStyle == null )
+		{
+			// commandStyle = new GUIStyle((GUIStyle)"Command");
+			commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
+			Debug.Log(commandStyle.normal.background);
+		}
+
 
 		/**
 		 * Handle toggles and SelectionMode toggles.

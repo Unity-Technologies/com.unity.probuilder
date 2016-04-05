@@ -153,10 +153,10 @@ public class pb_Editor : EditorWindow
 		VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
 		VertexTranslationInfoStyle.padding = new RectOffset(3,3,3,0);
 
-		Texture2D object_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Object");
-		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face");
-		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex");
-		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge");
+		Texture2D object_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Object", IconSkin.Pro);
+		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face", IconSkin.Pro);
+		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex", IconSkin.Pro);
+		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge", IconSkin.Pro);
 	
 		if(pref_showToolbar)
 		{
@@ -297,10 +297,14 @@ public class pb_Editor : EditorWindow
 			Repaint();
 	}
 
+	GUIStyle commandStyle = null;
 	Rect elementModeToolbarRect = new Rect(3,6,128,24);
 
 	void OnGUI()
 	{
+		if(	commandStyle == null )
+			commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
+
 		Event e = Event.current;
 
 		switch(e.type)
@@ -1967,7 +1971,7 @@ public class pb_Editor : EditorWindow
 
 			EditorGUI.BeginChangeCheck();
 
-			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
+			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, commandStyle);
 
 			if(EditorGUI.EndChangeCheck())
 			{

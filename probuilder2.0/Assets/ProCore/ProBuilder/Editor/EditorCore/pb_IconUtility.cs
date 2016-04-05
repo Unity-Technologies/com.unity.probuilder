@@ -6,6 +6,13 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
+	public enum IconSkin
+	{
+		Default,
+		Light,
+		Pro
+	};
+
 	[InitializeOnLoad]
 	public static class pb_IconUtility
 	{
@@ -49,24 +56,49 @@ namespace ProBuilder2.EditorCommon
 		private static Dictionary<string, Texture2D> m_icons = new Dictionary<string, Texture2D>();
 		private static string iconFolderPath = "Assets/ProCore/ProBuilder/GUI/Icons/";
 
-		public static Texture2D GetIcon(string iconName)
+		public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
 		{
+			int ext = iconName.LastIndexOf('.');
+			string nameWithoutExtension = ext < 0 ? iconName : iconName.Substring(0, ext);
 			Texture2D icon = null;
 
-			if(!EditorGUIUtility.isProSkin && !(iconName.EndsWith("_disabled") || iconName.EndsWith("_Light")))
+			if( !nameWithoutExtension.EndsWith("_disabled") )
 			{
-				icon = GetIcon(string.Format("{0}_Light", iconName.Replace(".png", "")));
+				switch(skin)
+				{
+					case IconSkin.Default:
+
+						if( !EditorGUIUtility.isProSkin && !nameWithoutExtension.EndsWith("_Light") )
+						{
+							icon = GetIcon(string.Format("{0}_Light", nameWithoutExtension));
+
+							if(icon != null)
+								return icon;
+						}
+						break;
+
+					case IconSkin.Pro:
+						if(nameWithoutExtension.EndsWith("_Light"))
+							nameWithoutExtension = nameWithoutExtension.Replace("_Light", "");
+						break;
+
+					case IconSkin.Light:
+						if(!nameWithoutExtension.EndsWith("_Light"))
+							nameWithoutExtension = string.Format("{0}_Light", nameWithoutExtension);
+						break;
+				}
 
 				if(icon != null)
 					return icon;
 			}
-
-			if(iconName.EndsWith("_Light_disabled"))
-				iconName = iconName.Replace("_Light_disabled", "_disabled");
-
-			if(!m_icons.TryGetValue(iconName, out icon))
+			else if(nameWithoutExtension.EndsWith("_Light_disabled"))
 			{
-				string fullPath = iconFolderPath + iconName;
+				nameWithoutExtension = nameWithoutExtension.Replace("_Light_disabled", "_disabled");
+			}
+
+			if(!m_icons.TryGetValue(nameWithoutExtension, out icon))
+			{
+				string fullPath = iconFolderPath + nameWithoutExtension;
 
 				if(!fullPath.EndsWith(".png"))
 					fullPath += ".png";
@@ -76,11 +108,11 @@ namespace ProBuilder2.EditorCommon
 				if(icon == null)
 				{
 					Debug.LogWarning("failed to find icon: " + fullPath);
-					m_icons.Add(iconName, null);
+					m_icons.Add(nameWithoutExtension, null);
 					return null;
 				}
 
-				m_icons.Add(iconName, icon);
+				m_icons.Add(nameWithoutExtension, icon);
 			}
 
 			return icon;
