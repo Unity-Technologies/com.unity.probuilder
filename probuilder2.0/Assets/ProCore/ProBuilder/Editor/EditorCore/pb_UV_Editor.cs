@@ -2580,7 +2580,7 @@ public class pb_UV_Editor : EditorWindow
 
 	Rect toolbarRect_tool = new Rect(PAD, PAD, 130f, 24f);
 	Rect toolbarRect_select = new Rect(PAD + 130 + PAD, PAD, 130f, 24f);
-	
+
 	GUIStyle commandStyle = null;
 
 	void DrawUVTools(Rect rect)
@@ -2588,11 +2588,7 @@ public class pb_UV_Editor : EditorWindow
 		GUI.BeginGroup(rect);
 
 		if(	commandStyle == null )
-		{
-			// commandStyle = new GUIStyle((GUIStyle)"Command");
 			commandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
-			Debug.Log(commandStyle.normal.background);
-		}
 
 
 		/**
