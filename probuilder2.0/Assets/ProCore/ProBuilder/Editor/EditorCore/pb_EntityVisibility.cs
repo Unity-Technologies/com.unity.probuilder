@@ -11,20 +11,20 @@ namespace ProBuilder2.EditorCommon
 	public static class pb_EntityVisibility
 	{
 		private static bool show_Detail 	= true;
-		private static bool show_Occluder 	= true;
+		// private static bool show_Occluder 	= true;
 		private static bool show_Mover 		= true;
 		private static bool show_Collider 	= true;
 		private static bool show_Trigger 	= true;
-		private static bool show_NoDraw 	= true;
+		// private static bool show_NoDraw 	= true;
 
 		static pb_EntityVisibility()
 		{
 			show_Detail		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail);
-			show_Occluder	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowOccluder);
+			// show_Occluder	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowOccluder);
 			show_Mover		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover);
 			show_Collider	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowCollider);
 			show_Trigger	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowTrigger);
-			show_NoDraw		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowNoDraw);
+			// show_NoDraw		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowNoDraw);
 
 			EditorApplication.playmodeStateChanged -= OnPlayModeStateChanged;
 			EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;

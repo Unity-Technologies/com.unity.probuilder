@@ -88,7 +88,11 @@ namespace ProBuilder2.EditorCommon
 				new SplitVertices(),
 
 				// Entity
-				new EntityType_Detail(),
+				new SetEntityType_Detail(),
+				// new SetEntityType_Occluder(),
+				new SetEntityType_Mover(),
+				new SetEntityType_Collider(),
+				new SetEntityType_Trigger(),
 			};
 
 			if(onLoadMenu != null)
