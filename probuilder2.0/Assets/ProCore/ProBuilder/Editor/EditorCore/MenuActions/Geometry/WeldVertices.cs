@@ -38,9 +38,9 @@ namespace ProBuilder2.Actions
 					
 		}
 
-		public override bool SettingsEnabled()
+		public override MenuActionState AltState()
 		{
-			return true;
+			return MenuActionState.VisibleAndEnabled;
 		}
 
 		static readonly GUIContent gc_weldDistance = new GUIContent("Weld Distance", "The maximum distance between two vertices in order to be welded together.");

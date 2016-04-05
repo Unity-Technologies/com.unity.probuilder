@@ -86,6 +86,9 @@ namespace ProBuilder2.EditorCommon
 				new WeldVertices(),
 				new ConnectVertices(),
 				new SplitVertices(),
+
+				// Entity
+				new EntityType_Detail(),
 			};
 
 			if(onLoadMenu != null)

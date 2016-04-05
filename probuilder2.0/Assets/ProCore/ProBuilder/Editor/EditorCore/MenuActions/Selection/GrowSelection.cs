@@ -27,11 +27,15 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 					pb_Menu_Commands.VerifyGrowSelection(selection);
 		}
 
-		public override bool SettingsEnabled()
+
+		public override MenuActionState AltState()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Face;
+			if(	IsEnabled() &&
+				pb_Editor.instance.editLevel == EditLevel.Geometry &&
+				pb_Editor.instance.selectionMode == SelectMode.Face)
+				return MenuActionState.VisibleAndEnabled;
+
+			return MenuActionState.Hidden;
 		}
 
 		public override void OnSettingsGUI()

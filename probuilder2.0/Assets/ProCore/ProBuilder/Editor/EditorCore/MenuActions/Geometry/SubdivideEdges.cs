@@ -29,9 +29,9 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedEdgeCount > 0);
 		}
 		
-		public override bool SettingsEnabled()
+		public override MenuActionState AltState()
 		{
-			return true;
+			return MenuActionState.VisibleAndEnabled;
 		}
 
 		public override void OnSettingsGUI()

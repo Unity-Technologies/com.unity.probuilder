@@ -125,13 +125,7 @@ public class pb_Editor : EditorWindow
 
 		InitGUI();
 
-		show_Detail 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail);
-		show_Mover 		= pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover);
-		show_Collider 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowCollider);
-		show_Trigger 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowTrigger);
-
 		// EditorUtility.UnloadUnusedAssets();
-		ToggleEntityVisibility(EntityType.Detail, true);
 
 		UpdateSelection(true);
 
@@ -285,7 +279,6 @@ public class pb_Editor : EditorWindow
 
 		pb_ProGrids_Interface.SubscribePushToGridEvent(PushToGrid);
 		pb_ProGrids_Interface.SubscribeToolbarEvent(ProGridsToolbarOpen);
-		EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
 	}
 #endregion
 
@@ -329,30 +322,6 @@ public class pb_Editor : EditorWindow
 // 		GUI.backgroundColor = Color.white;
 // #endif
 
-// 		if(!pref_showToolbar)
-// 		{
-// 			int t_selectionMode = editLevel != EditLevel.Top ? (int)selectionMode : -1;
-// 			elementModeToolbarRect.x = (Screen.width/2 - 48) + (isFloatingWindow ? 1 : -1);
-
-// 			EditorGUI.BeginChangeCheck();
-
-// 			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, "Command");
-
-// 			if(EditorGUI.EndChangeCheck())
-// 			{
-// 				if(t_selectionMode == (int)selectionMode && editLevel != EditLevel.Top)
-// 				{
-// 					SetEditLevel( EditLevel.Top );
-// 				}
-// 				else
-// 				{
-// 					if(editLevel == EditLevel.Top)
-// 						SetEditLevel( EditLevel.Geometry );
-
-// 					SetSelectionMode( (SelectMode)t_selectionMode );
-// 					selectionMode = (SelectMode)t_selectionMode;
-// 				}
-// 			}
 	}
 
 
@@ -2297,26 +2266,6 @@ public class pb_Editor : EditorWindow
 	}
 #endregion
 
-#region VIS GROUPS
-
-	bool show_Detail;
-	bool show_Mover;
-	bool show_Collider;
-	bool show_Trigger;
-
-	public void ToggleEntityVisibility(EntityType entityType, bool isVisible)
-	{
-		foreach(pb_Entity sel in Object.FindObjectsOfType(typeof(pb_Entity)))
-		{
-			if(sel.entityType == entityType) {
-				sel.GetComponent<MeshRenderer>().enabled = isVisible;
-				if(sel.GetComponent<MeshCollider>())
-					sel.GetComponent<MeshCollider>().enabled = isVisible;
-			}
-		}
-	}
-#endregion
-
 #region TOOL SETTINGS
 
 	/**
@@ -2941,95 +2890,6 @@ public class pb_Editor : EditorWindow
 		}
 
 		SceneView.RepaintAll();
-	}
-
-	/**
-	 * Registered to EditorApplication.onPlaymodeStateChanged
-	 */
-	private void OnPlayModeStateChanged()
-	{
-		if(EditorApplication.isPlaying)
-		{
-			foreach(pb_Entity entity in FindObjectsOfType(typeof(pb_Entity)))
-			{
-				switch(entity.entityType)
-				{
-					case EntityType.Occluder:
-					case EntityType.Detail:
-						if(!show_Detail)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = true;
-							entity.transform.GetComponent<Collider>().enabled = true;
-						}
-						break;
-
-					case EntityType.Mover:
-						if(!show_Mover)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = true;
-							entity.transform.GetComponent<Collider>().enabled = true;
-						}
-						break;
-
-					case EntityType.Collider:
-						if(!show_Collider)
-						{
-							entity.transform.GetComponent<Collider>().enabled = true;
-						}
-						break;
-
-					case EntityType.Trigger:
-						if(!show_Trigger)
-						{
-							entity.transform.GetComponent<Collider>().enabled = true;
-						}
-						break;
-				}
-			}
-
-		}
-		else
-		{
-			// Turn stuff back off that's not supposed to be on
-			foreach(pb_Entity entity in FindObjectsOfType(typeof(pb_Entity)))
-			{
-				switch(entity.entityType)
-				{
-					case EntityType.Occluder:
-					case EntityType.Detail:
-						if(!show_Detail)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<Collider>().enabled = false;
-						}
-						break;
-
-					case EntityType.Mover:
-						if(!show_Mover)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<Collider>().enabled = false;
-						}
-						break;
-
-					case EntityType.Collider:
-						if(!show_Collider)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<Collider>().enabled = false;
-						}
-						break;
-
-					case EntityType.Trigger:
-						if(!show_Trigger)
-						{
-							entity.transform.GetComponent<MeshRenderer>().enabled = false;
-							entity.transform.GetComponent<Collider>().enabled = false;
-						}
-						break;
-				}
-			}
-		}
 	}
 
 	void UndoRedoPerformed()

@@ -11,6 +11,15 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public abstract class pb_MenuAction
 	{
+		[System.Flags]
+		public enum MenuActionState
+		{
+			Hidden = 0x0,
+			Visible = 0x1,
+			Enabled = 0x2,
+			VisibleAndEnabled = 0x3
+		};
+
 		public const string PROBUILDER_MENU_PATH = "Tools/ProBuilder/";
 
 		protected const char CMD_SUPER 	= pb_Constant.CMD_SUPER;
@@ -23,16 +32,23 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
 		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
+		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
+
 #if PROTOTYPE
-	private static Color ProOnlyTint
-	{
-		get
+		private static Color ProOnlyTint
 		{
-			return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
+			get
+			{
+				return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
+			}
 		}
-	}
-	private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
+		private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
 #endif
+	
+		public pb_MenuAction()
+		{
+			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+		}
 
 		public delegate void SettingsDelegate();
 
@@ -189,29 +205,69 @@ namespace ProBuilder2.EditorCommon
 		public abstract pb_IconGroup group { get; }
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
-		// Optional override for the action title displayed in the toolbar button.  If unimplemented the tooltip title is used.
+
+		/**
+		 *	Optional override for the action title displayed in the toolbar button.  If unimplemented the tooltip title
+		 *	is used.
+		 */
 		public virtual string MenuTitle { get { return tooltip.title; } }
 
-		public virtual bool IsHidden() { return false; }
+		/**
+		 *	Is the current mode and selection valid for this action?
+		 */
+		public MenuActionState ActionState()
+		{
+			if( IsHidden() )
+				return MenuActionState.Hidden;
+			else if( IsEnabled() )
+				return MenuActionState.VisibleAndEnabled;
+			else
+				return MenuActionState.Visible;
+		}
+
+		/**
+		 *	True if this action is valid with current selection and mode.
+		 */
 		public abstract bool IsEnabled();
-		public virtual bool SettingsEnabled() { return false; }
+
+		/**
+		 *	True if this action should be shown in the toolbar with the current
+		 *	mode and settings, false otherwise.  This returns false by default.
+		 */
+		public virtual bool IsHidden() { return false; }
+
+		/**
+		 *	True if this button should show the alternate button (which by default will open an Options window with 
+		 *	OnSettingsGUI delegate).
+		 */
+		public virtual MenuActionState AltState() { return MenuActionState.Hidden; }
+
+		/**
+		 *	Perform whatever action this menu item is supposed to do.  Must implement undo/redo here.
+		 */
 		public abstract pb_ActionResult DoAction();
+
+		/**
+		 *	The 'Alt' button has been pressed.  The default action is to 
+		 *	open a new Options window with the OnSettingsGUI delegate.
+		 */
+		public virtual void DoAlt()
+		{
+			pb_MenuOption.Show(OnSettingsGUI);
+		}
+
 		public virtual void OnSettingsGUI() {}
 
 		protected bool isIconMode = true;
 
-		public pb_MenuAction()
-		{
-			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
-		}
-
 		/**
-		 *	Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are not enabled.
+		 *	Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are 
+		 * 	not enabled.
 		 */
 		public bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
 		{
 			bool wasEnabled = GUI.enabled;
-			bool buttonEnabled = IsEnabled();
+			bool buttonEnabled = (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
 			
 			GUI.enabled = buttonEnabled;
 
@@ -221,8 +277,10 @@ namespace ProBuilder2.EditorCommon
 			{
 				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical) )
 				{
-					if(showOptions && SettingsEnabled())
-						pb_MenuOption.Show(OnSettingsGUI);
+					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+					{
+						DoAlt();
+					}	
 					else
 					{
 						pb_ActionResult result = DoAction();
@@ -232,7 +290,7 @@ namespace ProBuilder2.EditorCommon
 
 				GUI.backgroundColor = Color.white;
 
-				if(SettingsEnabled())
+				if((AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 				{
 					Rect r = GUILayoutUtility.GetLastRect();
 					// options icon is 16x16
@@ -253,7 +311,6 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-
 				GUILayout.BeginHorizontal(layoutOptions);
 					if(GUILayout.Button(MenuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
 					{
@@ -261,14 +318,26 @@ namespace ProBuilder2.EditorCommon
 						pb_Editor_Utility.ShowNotification(res.notification);
 					}
 
-					if(SettingsEnabled() && GUILayout.Button("+", altButtonStyle, GUILayout.MaxWidth(21)))
-						pb_MenuOption.Show(OnSettingsGUI);
+					MenuActionState altState = AltState();
+
+					if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
+					{
+						GUI.enabled = (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
+
+						if(DoAltButton(GUILayout.MaxWidth(21), GUILayout.MaxHeight(16)))
+							DoAlt();
+					}
 				GUILayout.EndHorizontal();
 
 				GUI.enabled = wasEnabled;
 				
 				return false;
 			}
+		}
+
+		protected virtual bool DoAltButton(params GUILayoutOption[] options)
+		{
+			return GUILayout.Button(AltButtonContent, altButtonStyle, options);
 		}
 
 		public static readonly Vector2 AltButtonSize = new Vector2(21, 0);

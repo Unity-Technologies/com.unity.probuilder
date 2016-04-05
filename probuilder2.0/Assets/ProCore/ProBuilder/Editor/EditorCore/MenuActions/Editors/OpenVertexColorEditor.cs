@@ -21,12 +21,12 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null;
+			return pb_Editor.instance != null;
 		}
 
-		public override bool SettingsEnabled()
+		public override MenuActionState AltState()
 		{
-			return true;
+			return MenuActionState.VisibleAndEnabled;
 		}
 
 		public override pb_ActionResult DoAction()

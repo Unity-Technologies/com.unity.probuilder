@@ -30,9 +30,17 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedTriangleCount > 1);
 		}
 
-		public override bool SettingsEnabled()
+		public override bool IsHidden()
 		{
-			return true;
+			return 	pb_Editor.instance == null ||
+					pb_Editor.instance.editLevel != EditLevel.Geometry ||
+					pb_Editor.instance.selectionMode != SelectMode.Vertex;
+					
+		}
+
+		public override MenuActionState AltState()
+		{
+			return MenuActionState.VisibleAndEnabled;
 		}
 
 		public override void OnSettingsGUI()
@@ -54,14 +62,6 @@ namespace ProBuilder2.Actions
 
 			if(GUILayout.Button("Collapse Vertices"))
 				DoAction();
-		}
-
-		public override bool IsHidden()
-		{
-			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Vertex;
-					
 		}
 
 		public override pb_ActionResult DoAction()
