@@ -159,22 +159,23 @@ namespace ProBuilder2.EditorCommon
 			pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
 			pbUndo.RecordObjects(selection, "Freeze Transforms");
 
-			foreach(pb_Object pb in selection)
+			Vector3[][] vertices = new Vector3[selection.Length][];
+
+			for(int i = 0; i < selection.Length; i++)
+				vertices[i] = selection[i].VerticesInWorldSpace();
+
+			for(int i = 0; i < selection.Length; i++)
 			{
-				pb.ToMesh();
-
-				Vector3[] v = pb.VerticesInWorldSpace();
-
+				pb_Object pb = selection[i];
+				
 				pb.transform.position = Vector3.zero;
 				pb.transform.localRotation = Quaternion.identity;
 				pb.transform.localScale = Vector3.one;
 
 				foreach(pb_Face face in pb.faces)
-				{
 					face.manualUV = true;
-				}
 
-				pb.SetVertices(v);
+				pb.SetVertices(vertices[i]);
 
 				pb.ToMesh();
 				pb.Refresh();
