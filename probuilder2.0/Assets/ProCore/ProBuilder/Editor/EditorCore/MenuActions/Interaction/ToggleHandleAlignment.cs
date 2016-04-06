@@ -36,7 +36,7 @@ namespace ProBuilder2.EditorCommon
 			'P'
 		);
 
-		public override string MenuTitle { get { return "Handle: " + ((HandleAlignment)handleAlignment).ToString(); } }
+		public override string menuTitle { get { return "Handle: " + ((HandleAlignment)handleAlignment).ToString(); } }
 
 		public ToggleHandleAlignment()
 		{

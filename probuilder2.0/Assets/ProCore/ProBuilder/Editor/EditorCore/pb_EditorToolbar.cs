@@ -209,7 +209,7 @@ namespace ProBuilder2.EditorCommon
 				isIconMode = false;
 				EditorPrefs.SetBool(pb_Constant.pbIconGUI, isIconMode);
 				CalculateMaxIconSize();
-				Debug.LogWarning("ProBuilder: Toolbar icons failed to load.  Please ensure that the ProBuilder folder content paths are unmodified.  Reverting to text mode.");
+				Debug.LogWarning("ProBuilder: Toolbar icons failed to load.  Please ensure that the ProBuilder folder content paths are unmodified.  Reverting to text mode.  If the menu is still not visible, try closing and re-opening Unity.");
 				return;
 			}
 
@@ -296,7 +296,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(isIconMode)
 				{
-					if( action.DoButton(isHorizontal, e.alt, ref optionRect) && !e.shift)
+					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(iconHeight + 12)) && !e.shift )
 					{
 						// test for alt click / hover
 						optionRect.x -= scroll.x;

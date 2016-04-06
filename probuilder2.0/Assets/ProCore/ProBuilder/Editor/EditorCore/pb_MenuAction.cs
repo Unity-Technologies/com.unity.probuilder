@@ -112,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 					_buttonStyleHorizontal.alignment 			= TextAnchor.MiddleCenter;
 					_buttonStyleHorizontal.border 				= new RectOffset(0,0,4,0);
 					_buttonStyleHorizontal.stretchWidth 		= true;
-					_buttonStyleHorizontal.stretchHeight 		= true;
+					_buttonStyleHorizontal.stretchHeight 		= false;
 					_buttonStyleHorizontal.margin 				= new RectOffset(4,4,4,5);
 					_buttonStyleHorizontal.padding 				= new RectOffset(2,2,8,0);
 				}
@@ -138,7 +138,7 @@ namespace ProBuilder2.EditorCommon
 					_altButtonStyle.alignment 			= TextAnchor.MiddleCenter;
 					_altButtonStyle.border 				= new RectOffset(1,1,1,1);
 					_altButtonStyle.stretchWidth 		= false;
-					_altButtonStyle.stretchHeight 		= false;
+					_altButtonStyle.stretchHeight 		= true;
 					_altButtonStyle.margin 				= new RectOffset(4,4,4,4);
 					_altButtonStyle.padding 			= new RectOffset(2,2,1,3);
 				}
@@ -210,7 +210,7 @@ namespace ProBuilder2.EditorCommon
 		 *	Optional override for the action title displayed in the toolbar button.  If unimplemented the tooltip title
 		 *	is used.
 		 */
-		public virtual string MenuTitle { get { return tooltip.title; } }
+		public virtual string menuTitle { get { return tooltip.title; } }
 
 		/**
 		 *	Is the current mode and selection valid for this action?
@@ -275,7 +275,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(isIconMode)
 			{
-				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical) )
+				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical, layoutOptions) )
 				{
 					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
@@ -312,7 +312,7 @@ namespace ProBuilder2.EditorCommon
 			else
 			{
 				GUILayout.BeginHorizontal(layoutOptions);
-					if(GUILayout.Button(MenuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
+					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
 					{
 						pb_ActionResult res = DoAction();
 						pb_Editor_Utility.ShowNotification(res.notification);
@@ -322,7 +322,7 @@ namespace ProBuilder2.EditorCommon
 
 					if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
 					{
-						GUI.enabled = (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
+						GUI.enabled = GUI.enabled && (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
 
 						if(DoAltButton(GUILayout.MaxWidth(21), GUILayout.MaxHeight(16)))
 							DoAlt();
@@ -350,7 +350,7 @@ namespace ProBuilder2.EditorCommon
 			if(isIconMode)
 				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
 			else
-				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(MenuTitle)) + AltButtonSize;
+				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
 		}
 	}
 }

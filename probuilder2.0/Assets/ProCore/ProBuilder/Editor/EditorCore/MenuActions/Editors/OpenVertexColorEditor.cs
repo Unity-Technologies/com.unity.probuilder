@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_VertColors"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override string MenuTitle { get { return "Vertex Colors"; } }
+		public override string menuTitle { get { return "Vertex Colors"; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

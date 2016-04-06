@@ -79,7 +79,7 @@ namespace ProBuilder2.Actions
 
 	public class SetEntityType_Detail : SetEntityType
 	{
-		public override string MenuTitle { get { return "Set Detail"; } }
+		public override string menuTitle { get { return "Set Detail"; } }
 		protected override string entityPref { get { return pb_Constant.pbShowDetail; } }
 		protected override EntityType entityType { get { return EntityType.Detail; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
@@ -95,7 +95,7 @@ A Detail type is marked with all static flags except Occluding and Reflection Pr
 
 	public class SetEntityType_Mover : SetEntityType
 	{
-		public override string MenuTitle { get { return "Set Mover"; } }
+		public override string menuTitle { get { return "Set Mover"; } }
 		protected override string entityPref { get { return pb_Constant.pbShowMover; } }
 		protected override EntityType entityType { get { return EntityType.Mover; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
@@ -107,7 +107,7 @@ A Detail type is marked with all static flags except Occluding and Reflection Pr
 
 	public class SetEntityType_Collider : SetEntityType
 	{
-		public override string MenuTitle { get { return "Set Collider"; } }
+		public override string menuTitle { get { return "Set Collider"; } }
 		protected override string entityPref { get { return pb_Constant.pbShowCollider; } }
 		protected override EntityType entityType { get { return EntityType.Collider; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
@@ -119,7 +119,7 @@ A Detail type is marked with all static flags except Occluding and Reflection Pr
 
 	public class SetEntityType_Trigger : SetEntityType
 	{
-		public override string MenuTitle { get { return "Set Trigger"; } }
+		public override string menuTitle { get { return "Set Trigger"; } }
 		protected override string entityPref { get { return pb_Constant.pbShowTrigger; } }
 		protected override EntityType entityType { get { return EntityType.Trigger; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }

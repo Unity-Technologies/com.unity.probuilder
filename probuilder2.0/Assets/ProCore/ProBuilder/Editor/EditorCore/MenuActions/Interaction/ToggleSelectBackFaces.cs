@@ -23,7 +23,7 @@ namespace ProBuilder2.EditorCommon
 The default value is <b>On</b>.
 ");
 
-		public override string MenuTitle { get { return isEnabled ? "Select Hidden: On" : "Select Hidden: Off"; } }
+		public override string menuTitle { get { return isEnabled ? "Select Hidden: On" : "Select Hidden: Off"; } }
 
 		private Texture2D[] icons;
 

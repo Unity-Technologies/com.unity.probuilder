@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_ConformNormals"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override string MenuTitle { get { return "Conform Normals"; } }
+		public override string menuTitle { get { return "Conform Normals"; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
