@@ -12,40 +12,33 @@ using ProBuilder2.Common;	// Can't assign components to namespaces
  */
 public class pb_Entity : MonoBehaviour
 {
-	pb_Object pb;
-
 	public EntityType entityType { get { return _entityType; } }
 
-	[SerializeField]
-	[HideInInspector]
-	private EntityType _entityType;
+	[SerializeField] [HideInInspector] private EntityType _entityType;
 
 	/**
 	 *	\brief Performs Entity specific initialization tasks (turn off renderer for nodraw faces, hide colliders, etc)
 	 */
 	public void Awake()
 	{
-		pb = GetComponent<pb_Object>();
-		if(pb == null) 
-		{
-			return;
-		}
+		MeshRenderer mr = GetComponent<MeshRenderer>();
+
+		if(!mr) return;
 
 		switch(entityType)
 		{
 			case EntityType.Occluder:
-				// Destroy(gameObject);
 			break;
 
 			case EntityType.Detail:
 			break;
 
 			case EntityType.Trigger:
-				GetComponent<MeshRenderer>().enabled = false;
+				mr.enabled = false;
 			break;
 
 			case EntityType.Collider:
-				GetComponent<MeshRenderer>().enabled = false;
+				mr.enabled = false;
 			break;
 		}
 	}

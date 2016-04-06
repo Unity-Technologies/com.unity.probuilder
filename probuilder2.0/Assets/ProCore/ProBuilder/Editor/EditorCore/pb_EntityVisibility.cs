@@ -57,11 +57,11 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-			foreach(pb_Entity sel in Object.FindObjectsOfType(typeof(pb_Entity)))
+			foreach(pb_Entity entity in Object.FindObjectsOfType(typeof(pb_Entity)))
 			{
-				if(sel.entityType == entityType)
+				if(entity.entityType == entityType)
 				{
-					MeshRenderer mr = sel.GetComponent<MeshRenderer>();
+					MeshRenderer mr = entity.GetComponent<MeshRenderer>();
 					if(mr != null) mr.enabled = isVisible;
 				}
 			}
@@ -82,30 +82,32 @@ namespace ProBuilder2.EditorCommon
 				return;
 
 			bool isEntering = isPlaying && orWillPlay;
-			bool isEnabled = true;
 
-			foreach(pb_Entity sel in Resources.FindObjectsOfTypeAll(typeof(pb_Entity)))
+			if(!isEntering)
+				return;
+
+			bool detailEnabled	 = show_Detail;
+			bool moverEnabled	 = show_Mover;
+
+			foreach(pb_Entity entity in Resources.FindObjectsOfTypeAll(typeof(pb_Entity)))
 			{
-				switch(sel.entityType)
+				MeshRenderer mr = entity.gameObject.GetComponent<MeshRenderer>();
+
+				if(mr == null)
+					continue;
+
+				switch(entity.entityType)
 				{
 					case EntityType.Detail:
-						isEnabled = isEntering || show_Detail;
+						if(!detailEnabled)
+							mr.enabled = true;
 						break;
+
 					case EntityType.Mover:
-						isEnabled = isEnabled || show_Mover;
-						break;
-					case EntityType.Collider:
-						isEnabled = !isEntering && show_Collider;
-						break;
-					case EntityType.Trigger:
-						isEnabled = !isEntering && show_Trigger;
+						if(!moverEnabled)
+							mr.enabled = true;
 						break;
 				}
-
-				MeshRenderer mr = sel.gameObject.GetComponent<MeshRenderer>();
-
-				if(mr != null)
-					mr.enabled = isEnabled;
 			}
 		}
 	}
