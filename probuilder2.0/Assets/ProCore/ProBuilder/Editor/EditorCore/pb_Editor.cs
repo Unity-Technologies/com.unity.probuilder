@@ -149,7 +149,7 @@ public class pb_Editor : EditorWindow
 		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face", IconSkin.Pro);
 		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex", IconSkin.Pro);
 		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge", IconSkin.Pro);
-	
+
 		if(pref_showToolbar)
 		{
 			EditModeIcons = new GUIContent[]
@@ -1825,23 +1825,26 @@ public class pb_Editor : EditorWindow
 
 		if(pref_showToolbar)
 		{
+			int screenWidth = (int)sceneView.position.width;
+			int screenHeight = (int)sceneView.position.height;
+
 			int t_selectionMode = editLevel != EditLevel.Top ? ((int)selectionMode) + 1 : 0;
 
 			switch(pref_sceneToolbarLocation)
 			{
 				case SceneToolbarLocation.BottomCenter:
-					elementModeToolbarRect.x = (Screen.width/2 - 64);
-					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
+					elementModeToolbarRect.x = (screenWidth/2 - 64);
+					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.BottomLeft:
 					elementModeToolbarRect.x = 12;
-					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
+					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.BottomRight:
-					elementModeToolbarRect.x = Screen.width - (elementModeToolbarRect.width + 12);
-					elementModeToolbarRect.y = Screen.height - elementModeToolbarRect.height * 3;
+					elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 12);
+					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
 					break;
 
 				case SceneToolbarLocation.UpperLeft:
@@ -1850,13 +1853,13 @@ public class pb_Editor : EditorWindow
 					break;
 
 				case SceneToolbarLocation.UpperRight:
-					elementModeToolbarRect.x = Screen.width - (elementModeToolbarRect.width + 96);
+					elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 96);
 					elementModeToolbarRect.y = 10;
 					break;
 
 				default:
 				case SceneToolbarLocation.UpperCenter:
-					elementModeToolbarRect.x = (Screen.width/2 - 64);
+					elementModeToolbarRect.x = (screenWidth/2 - 64);
 					elementModeToolbarRect.y = 10;
 					break;
 			}
