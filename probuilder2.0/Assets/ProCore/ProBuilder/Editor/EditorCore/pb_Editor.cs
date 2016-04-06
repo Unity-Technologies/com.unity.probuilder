@@ -30,9 +30,7 @@ public class pb_Editor : EditorWindow
 	// Toggles for Face, Vertex, and Edge mode.
 	const int SELECT_MODE_LENGTH = 3;
 	GUIContent[] EditModeIcons;
-	Texture2D eye_on, eye_off;
 	GUIStyle VertexTranslationInfoStyle;
-	GUIStyle eye_style;
 
 	public static pb_Editor instance { get { return _instance; } }
 	private static pb_Editor _instance;
@@ -323,81 +321,6 @@ public class pb_Editor : EditorWindow
 // #endif
 
 	}
-
-
-// 	void EntityGUI()
-// 	{
-// 		pb_GUI_Utility.PushGUIEnabled( !EditorApplication.isPlaying );
-
-// 		float entityButtonWidth = this.position.width - 28 - buttonPad;
-
-// 		GUILayout.BeginHorizontal();
-// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-// 			if(AutoContentButton("Detail", "Sets all objects in selection to the entity type Detail.  Detail objects are marked with all static flags except Occluding and Reflection Probes.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-// 			{
-// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
-// 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
-// 			}
-// 			pb_GUI_Utility.PopGUIEnabled();
-
-// 			if(GUILayout.Button( show_Detail ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) ))
-// 			{
-// 				show_Detail = !show_Detail;
-// 				EditorPrefs.SetBool(pb_Constant.pbShowDetail, show_Detail);
-// 				ToggleEntityVisibility(EntityType.Detail, show_Detail);
-// 			}
-// 		GUILayout.EndHorizontal();
-
-// 			GUILayout.BeginHorizontal();
-// 				pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-// 			if(AutoContentButton("Mover", "Sets all objects in selection to the entity type Mover.  Mover types have no static flags, so they may be moved during play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-// 			{
-// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
-// 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
-// 			}
-// 			pb_GUI_Utility.PopGUIEnabled();
-
-// 			if(GUILayout.Button( show_Mover ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-// 				show_Mover = !show_Mover;
-// 				EditorPrefs.SetBool(pb_Constant.pbShowMover, show_Mover);
-// 				ToggleEntityVisibility(EntityType.Mover, show_Mover);
-// 			}
-// 		GUILayout.EndHorizontal();
-
-// 		GUILayout.BeginHorizontal();
-// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-// 			if(AutoContentButton("Collider", "Sets all objects in selection to the entity type Collider.  Collider types have Navigation and Off-Link Nav static flags set by default, and will have their MeshRenderer disabled on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-// 			{
-// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
-// 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
-// 			}
-// 			pb_GUI_Utility.PopGUIEnabled();
-
-// 			if(GUILayout.Button( show_Collider ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-// 				show_Collider = !show_Collider;
-// 				EditorPrefs.SetBool(pb_Constant.pbShowCollider, show_Collider);
-// 				ToggleEntityVisibility(EntityType.Collider, show_Collider);
-// 			}
-// 		GUILayout.EndHorizontal();
-
-// 		GUILayout.BeginHorizontal();
-// 			pb_GUI_Utility.PushGUIEnabled(GUI.enabled && selection != null && selection.Length > 0);
-// 			if(AutoContentButton("Trigger", "Sets all objects in selection to the entity type Trigger.  Trigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(entityButtonWidth)))
-// 			{
-// 				pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
-// 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-// 			}
-// 			pb_GUI_Utility.PopGUIEnabled();
-
-// 			if(GUILayout.Button( show_Trigger ? eye_on : eye_off, eye_style, GUILayout.MinWidth(28), GUILayout.MaxWidth(28), GUILayout.MaxHeight(15) )) {
-// 				show_Trigger = !show_Trigger;
-// 				EditorPrefs.SetBool(pb_Constant.pbShowTrigger, show_Trigger);
-// 				ToggleEntityVisibility(EntityType.Trigger, show_Trigger);
-// 			}
-// 		GUILayout.EndHorizontal();
-
-// 		pb_GUI_Utility.PopGUIEnabled();
-// 	}
 #endregion
 
 #region CONTEXT MENU

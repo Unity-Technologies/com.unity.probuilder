@@ -81,14 +81,8 @@ public class pb_Preferences
 		GUILayout.Label("Toolbar Settings", EditorStyles.boldLabel);
 
 		pbIconGUI = EditorGUILayout.Toggle(new GUIContent("Use Icon GUI", "Toggles the ProBuilder window interface between text and icon versions."), pbIconGUI);
-		GUI.enabled = pbIconGUI;
-		pbShiftOnlyTooltips = EditorGUILayout.Toggle(new GUIContent("Shift Key Tooltips", "When in Icon mode, tooltips will only show when the Shift key is held"), pbShiftOnlyTooltips);
-		GUI.enabled = true;
-		// GUI.enabled = !pbIconGUI;
-		// pbShowSceneToolbar = EditorGUILayout.Toggle(new GUIContent("Show Scene Toolbar", "Hide or show the SceneView mode toolbar."), pbShowSceneToolbar);
-		// GUI.enabled = pbIconGUI || pbShowSceneToolbar;
+		pbShiftOnlyTooltips = EditorGUILayout.Toggle(new GUIContent("Shift Key Tooltips", "Tooltips will only show when the Shift key is held"), pbShiftOnlyTooltips);
 		pbToolbarLocation = (SceneToolbarLocation) EditorGUILayout.EnumPopup("Toolbar Location", pbToolbarLocation);
-		// GUI.enabled = true;
 
 		pbUniqueModeShortcuts = EditorGUILayout.Toggle(new GUIContent("Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively."), pbUniqueModeShortcuts);
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);

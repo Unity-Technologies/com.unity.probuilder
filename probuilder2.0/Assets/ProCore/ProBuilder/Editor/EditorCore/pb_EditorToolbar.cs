@@ -58,16 +58,26 @@ namespace ProBuilder2.EditorCommon
 			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 			this.window = pb_Editor.instance;
 			CalculateMaxIconSize();
+
+			scroll.x = EditorPrefs.GetFloat("pbEditorScroll.x", 0f);
+			scroll.y = EditorPrefs.GetFloat("pbEditorScroll.y", 0f);
 		}
 
 		void OnDisable()
 		{
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			EditorApplication.update -= Update;
+			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
+			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
 		}
 
 		void OnDestroy()
 		{
+			// store the scroll in both disable & destroy because there are
+			// situations where one gets updated over the other and it's all
+			// screwy.  script reloads in particular?
+			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
+			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
 			pb_MenuAction.ResetStyles();
 		}
 
