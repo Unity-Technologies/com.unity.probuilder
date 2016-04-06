@@ -1,3 +1,19 @@
+-- ProBuilder 2.5.0b1 (r4231)
+
+# Features
+	- New Text Mode toolbar (right click in the ProBuilder window to swap between Icons and Text, or in the Preferences/ProBuilder menu).
+	- Add preference toggle to disable Dimension Overlay lines.
+	- Add option to collapse vertices to the first selected vertex instead of always averaging.
+	- Mark the current mode and floating state in the toolbar context menu.
+	- GUI items are no longer stored in Resources.  Changing the location of the ProBuilder directory is still supported.
+
+# Bug Fixes
+	- Fix shortcut editor modifier keys not being correctly stored.
+	- Fix Freeze Transforms moving objects when selection contains hierarchies of meshes.
+
+# Changes
+	- Remove option to display Mode Toolbar in the Inspector window.
+
 -- ProBuilder 2.5.0b0 (r4209)
 
 # Features
