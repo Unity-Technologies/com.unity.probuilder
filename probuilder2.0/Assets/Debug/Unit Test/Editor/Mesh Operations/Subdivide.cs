@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if !UNITY_4_7
+using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -56,3 +57,5 @@ namespace ProBuilder2.Test
 		}
 	}
 }
+
+#endif

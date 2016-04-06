@@ -103,7 +103,7 @@ namespace ProBuilder2.EditorCommon
 				if(!fullPath.EndsWith(".png"))
 					fullPath += ".png";
 
-				icon = AssetDatabase.LoadAssetAtPath<Texture2D>(fullPath);
+				icon = (Texture2D) AssetDatabase.LoadAssetAtPath(fullPath, typeof(Texture2D));
 				
 				if(icon == null)
 				{
