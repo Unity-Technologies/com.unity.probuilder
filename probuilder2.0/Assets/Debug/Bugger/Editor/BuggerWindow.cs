@@ -386,16 +386,15 @@ public class BuggerWindow : EditorWindow
 
 	private void OpenSelectedInText()
 	{
-		#if !UNITY_WEBPLAYER
-		#if UNITY_STANDALONE_OSX
+#if !UNITY_WEBPLAYER
+#if UNITY_STANDALONE_OSX
 		string filePath = Directory.GetParent(Application.dataPath) + "/" + FileUtil.GetUniqueTempPathInProject() + ".txt";
-		#else
+#else
 		string filePath = Directory.GetParent(Application.dataPath) + "\\" + FileUtil.GetUniqueTempPathInProject() + ".txt";
-		#endif
+#endif
 		File.WriteAllText(filePath, selectedValue.ToFormattedString("\n"));
 		System.Diagnostics.Process.Start( filePath );
-
-		#endif
+#endif
 	}
 
 	private void CopySelectedToBuffer()

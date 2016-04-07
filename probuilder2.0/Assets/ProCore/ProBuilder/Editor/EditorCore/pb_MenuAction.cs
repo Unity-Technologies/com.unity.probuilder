@@ -298,7 +298,7 @@ namespace ProBuilder2.EditorCommon
 					r.y -= 2;
 					r.width = 17;
 					r.height = 17;
-					GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options"));
+					GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro));
 					optionsRect = r;
 					GUI.enabled = wasEnabled;
 					return buttonEnabled;

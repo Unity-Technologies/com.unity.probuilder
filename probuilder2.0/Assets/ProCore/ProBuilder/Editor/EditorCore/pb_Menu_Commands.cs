@@ -1832,19 +1832,6 @@ namespace ProBuilder2.EditorCommon
 			return result;
 		}
 
-		public static pb_ActionResult MenuBevelEdge(pb_Object[] selection)
-		{
-			foreach(pb_Object pb in selection)
-			{
-				pbBevel.Bevel(pb, pb.SelectedEdges);
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-			}
-
-			return pb_ActionResult.Success;
-		}
-
 		/**
 		 * Subdivides all currently selected faces.
 		 * ProBuilder only.

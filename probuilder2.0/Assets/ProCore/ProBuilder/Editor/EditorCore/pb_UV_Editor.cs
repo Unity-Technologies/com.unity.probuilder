@@ -297,20 +297,20 @@ public class pb_UV_Editor : EditorWindow
 		
 		isProSkin = EditorGUIUtility.isProSkin;
 
-		Texture2D moveIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"MoveTool"} );
-		Texture2D rotateIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"RotateTool"} );
-		Texture2D scaleIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ScaleTool"} );
-		Texture2D viewIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] {"ViewToolMove"} );
+		Texture2D moveIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] { "MoveTool" } );
+		Texture2D rotateIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] { "RotateTool" } );
+		Texture2D scaleIcon 	= (Texture2D)loadIconMethod.Invoke(null, new object[] { "ScaleTool" } );
+		Texture2D viewIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] { "ViewToolMove" } );
 
 		Texture2D face_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Face");
 		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex");
 		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge");
 
-		icon_textureMode_on				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On");
-		icon_textureMode_off			= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off");
+		icon_textureMode_on				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On", IconSkin.Pro);
+		icon_textureMode_off			= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off", IconSkin.Pro);
 
-		icon_sceneUV_on					= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On");
-		icon_sceneUV_off				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off");
+		icon_sceneUV_on					= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On", IconSkin.Pro);
+		icon_sceneUV_off				= pb_IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off", IconSkin.Pro);
 
 		gc_RenderUV.image 				= pb_IconUtility.GetIcon("UVEditor/camera-64x64");
 

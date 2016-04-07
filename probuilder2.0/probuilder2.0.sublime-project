@@ -2,7 +2,7 @@
 	"folders":
 	[
 		{
-			"path": "Assets\\ProCore\\ProBuilder",
+			"path": "Assets/ProCore/ProBuilder",
 			"file_exclude_patterns":
 			[
 				"*.unity",
@@ -29,7 +29,7 @@
 			]
 		},
 		{
-			"path": "Assets\\Debug",
+			"path": "Assets/Debug",
 			"file_exclude_patterns":
 			[
 				"*.unity",
@@ -50,7 +50,7 @@
 			],
 		},
 		{
-			"path": "Assets\\ProBuilderUpgradeKit",
+			"path": "Assets/ProBuilderUpgradeKit",
 			"file_exclude_patterns": [ "*.meta" ]
 		},
 		{

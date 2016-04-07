@@ -79,7 +79,6 @@ namespace ProBuilder2.EditorCommon
 				new ExtrudeEdges(),
 				new InsertEdgeLoop(),
 				new SubdivideEdges(),
-				new BevelEdges(),
 
 				// Vertex
 				new CollapseVertices(),
