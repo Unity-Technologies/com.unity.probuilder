@@ -5,6 +5,11 @@ probuilder2.0/[Oo]bj/
 # so it's easier to just not deal with it.
 probuilder2.0/ProjectSettings
 bin/debug
+bin/logs
+
+probuilder-staging/
+visual studio/*/*/bin/
+visual studio/*/*/obj/
 
 probuilder2.0/*sublime-workspace
 
