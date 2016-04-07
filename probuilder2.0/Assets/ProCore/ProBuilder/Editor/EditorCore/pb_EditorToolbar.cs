@@ -50,10 +50,10 @@ namespace ProBuilder2.EditorCommon
 			tooltipTimer.Item1 = "";
 			tooltipTimer.Item2 = 0.0;
 			showTooltipTimer = false;
-			scrollIconUp = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Up");
-			scrollIconDown = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Down");
+			scrollIconUp 	= pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Up");
+			scrollIconDown 	= pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Down");
 			scrollIconRight = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Right");
-			scrollIconLeft = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
+			scrollIconLeft 	= pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
 			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 			this.window = pb_Editor.instance;
@@ -65,8 +65,10 @@ namespace ProBuilder2.EditorCommon
 
 		void OnDisable()
 		{
+			// don't unsubscribe here because on exiting playmode OnEnable/OnDisable
+			// is called.  no clue why.
+			// EditorApplication.update -= Update;
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
-			EditorApplication.update -= Update;
 			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
 			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
 		}
@@ -111,7 +113,8 @@ namespace ProBuilder2.EditorCommon
 
 		void Update()
 		{
-			if(!window)	return;
+			if(!window)
+				return;
 
 			if(!shiftOnlyTooltips)
 			{
@@ -121,20 +124,20 @@ namespace ProBuilder2.EditorCommon
 					tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
 				}
 
-				if(string.IsNullOrEmpty(tooltipTimer.Item1))
-					return;
-
-				if( EditorApplication.timeSinceStartup - tooltipTimer.Item2 > tooltipTimerRefresh )
+				if(!string.IsNullOrEmpty(tooltipTimer.Item1))
 				{
-					if( !showTooltipTimer )
+					if( EditorApplication.timeSinceStartup - tooltipTimer.Item2 > tooltipTimerRefresh )
 					{
-						showTooltipTimer = true;
-						window.Repaint();
+						if( !showTooltipTimer )
+						{
+							showTooltipTimer = true;
+							window.Repaint();
+						}
 					}
-				}
-				else
-				{
-					showTooltipTimer = false;
+					else
+					{
+						showTooltipTimer = false;
+					}
 				}
 			}
 
@@ -279,15 +282,19 @@ namespace ProBuilder2.EditorCommon
 					GUILayout.BeginHorizontal();
 
 					GUI.enabled = scroll.x > 0;
+
 					if(GUILayout.Button(scrollIconLeft, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
 						StartScrollAnimation(Mathf.Max(scroll.x - availableWidth, 0f), 0f);
+
 					GUI.enabled = true;
 				}
 				else
 				{
 					GUI.enabled = scroll.y > 0;
+
 					if(GUILayout.Button(scrollIconUp, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
 						StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
+
 					GUI.enabled = true;
 				}
 			}

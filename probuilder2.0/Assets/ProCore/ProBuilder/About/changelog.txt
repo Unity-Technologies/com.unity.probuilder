@@ -1,4 +1,4 @@
--- ProBuilder 2.5.0b1 (r4231)
+-- ProBuilder 2.5.0b1 (r4233)
 
 # Features
 	- New Text Mode toolbar (right click in the ProBuilder window to swap between Icons and Text, or in the Preferences/ProBuilder menu).
@@ -10,6 +10,8 @@
 # Bug Fixes
 	- Fix shortcut editor modifier keys not being correctly stored.
 	- Fix Freeze Transforms moving objects when selection contains hierarchies of meshes.
+	- Entity visibility toggles no longer interferes with Collisions, as well as remembers manually changed object's visibility.
+	- Fix Element Toolbar placement in Scene view on Retina display Macs.
 
 # Changes
 	- Remove option to display Mode Toolbar in the Inspector window.
