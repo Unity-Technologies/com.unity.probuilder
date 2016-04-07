@@ -2916,11 +2916,8 @@ public class pb_Editor : EditorWindow
 		// profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
 		{
-			if(pb.msh == null || pb.msh.vertexCount != pb.vertexCount)
-			{
-				pb.ToMesh();
-				pb.Refresh();
-			}
+			pb.ToMesh();
+			pb.Refresh();
 		}
 
 		// profiler.EndSample();
