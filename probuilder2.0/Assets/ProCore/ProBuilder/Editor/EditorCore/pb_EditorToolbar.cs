@@ -336,7 +336,10 @@ namespace ProBuilder2.EditorCommon
 				}
 				else
 				{
-					action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(iconWidth));
+					if(columns < 2)
+						action.DoButton(isHorizontal, e.alt, ref optionRect);
+					else
+						action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(iconWidth));
 				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();

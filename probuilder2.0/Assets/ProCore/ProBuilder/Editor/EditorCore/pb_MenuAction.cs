@@ -389,6 +389,7 @@ namespace ProBuilder2.EditorCommon
 						pb_Editor_Utility.ShowNotification(res.notification);
 					}
 
+					GUILayout.FlexibleSpace();
 #if PROTOTYPE
 					if( isProOnly )
 					{
