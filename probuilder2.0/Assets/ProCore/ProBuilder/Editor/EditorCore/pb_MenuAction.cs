@@ -48,7 +48,7 @@ namespace ProBuilder2.EditorCommon
 		}
 		// private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
 #endif
-	
+
 		public pb_MenuAction()
 		{
 			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
@@ -56,7 +56,7 @@ namespace ProBuilder2.EditorCommon
 
 		public delegate void SettingsDelegate();
 
-		public static pb_Object[] selection 
+		public static pb_Object[] selection
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 *	Reset static GUIStyle objects so that they will be re-initialized the next time used. 
+		 *	Reset static GUIStyle objects so that they will be re-initialized the next time used.
 		 */
 		public static void ResetStyles()
 		{
@@ -166,6 +166,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+#if PROTOTYPE
 		protected static GUIStyle _advancedOnlyStyle = null;
 		protected static GUIStyle advancedOnlyStyle
 		{
@@ -184,6 +185,7 @@ namespace ProBuilder2.EditorCommon
 				return _advancedOnlyStyle;
 			}
 		}
+#endif
 
 		protected Texture2D _desaturatedIcon = null;
 		protected Texture2D desaturatedIcon
@@ -202,23 +204,23 @@ namespace ProBuilder2.EditorCommon
 					{
 						string path = AssetDatabase.GetAssetPath(icon);
 						TextureImporter imp = (TextureImporter) AssetImporter.GetAtPath( path );
-					
+
 						if(!imp)
 						{
 							Debug.Log("Couldn't find importer : " + icon);
 							return null;
 						}
-					
+
 						imp.isReadable = true;
 						imp.SaveAndReimport();
-					
+
 						Color32[] px = icon.GetPixels32();
-					
+
 						imp.isReadable = false;
 						imp.SaveAndReimport();
-					
+
 						int gray = 0;
-					
+
 						for(int i = 0; i < px.Length; i++)
 						{
 							gray = (System.Math.Min(px[i].r, System.Math.Min(px[i].g, px[i].b)) + System.Math.Max(px[i].r, System.Math.Max(px[i].g, px[i].b))) / 2;
@@ -226,12 +228,12 @@ namespace ProBuilder2.EditorCommon
 							px[i].g = (byte) gray;
 							px[i].b = (byte) gray;
 						}
-					
+
 						_desaturatedIcon = new Texture2D(icon.width, icon.height);
 						_desaturatedIcon.hideFlags = HideFlags.HideAndDontSave;
 						_desaturatedIcon.SetPixels32(px);
 						_desaturatedIcon.Apply();
-					
+
 						byte[] bytes = _desaturatedIcon.EncodeToPNG();
 						System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
 					}
@@ -288,7 +290,7 @@ namespace ProBuilder2.EditorCommon
 		public virtual bool IsHidden() { return false; }
 
 		/**
-		 *	True if this button should show the alternate button (which by default will open an Options window with 
+		 *	True if this button should show the alternate button (which by default will open an Options window with
 		 *	OnSettingsGUI delegate).
 		 */
 		public virtual MenuActionState AltState() { return MenuActionState.Hidden; }
@@ -299,7 +301,7 @@ namespace ProBuilder2.EditorCommon
 		public abstract pb_ActionResult DoAction();
 
 		/**
-		 *	The 'Alt' button has been pressed.  The default action is to 
+		 *	The 'Alt' button has been pressed.  The default action is to
 		 *	open a new Options window with the OnSettingsGUI delegate.
 		 */
 		public virtual void DoAlt()
@@ -312,7 +314,7 @@ namespace ProBuilder2.EditorCommon
 		protected bool isIconMode = true;
 
 		/**
-		 *	Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are 
+		 *	Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are
 		 * 	not enabled.
 		 */
 		public bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
@@ -323,7 +325,7 @@ namespace ProBuilder2.EditorCommon
 #else
 			bool buttonEnabled = (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
 #endif
-			
+
 			GUI.enabled = buttonEnabled;
 
 			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
@@ -335,7 +337,7 @@ namespace ProBuilder2.EditorCommon
 					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
 						DoAlt();
-					}	
+					}
 					else
 					{
 						pb_ActionResult result = DoAction();
@@ -412,7 +414,7 @@ namespace ProBuilder2.EditorCommon
 				GUILayout.EndHorizontal();
 
 				GUI.enabled = wasEnabled;
-				
+
 				return false;
 			}
 		}
