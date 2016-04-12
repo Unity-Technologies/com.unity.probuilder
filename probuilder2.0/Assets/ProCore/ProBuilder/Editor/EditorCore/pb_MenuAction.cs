@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// #define GENERATE_DESATURATED_ICONS
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
@@ -33,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
 		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
-		private static readonly GUIContent ProOnlyContent = new GUIContent("P", "");
+		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
 
 		public virtual bool isProOnly { get { return false; } }
 
@@ -148,6 +150,25 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		protected static GUIStyle _advancedOnlyStyle = null;
+		protected static GUIStyle advancedOnlyStyle
+		{
+			get
+			{
+				if(_advancedOnlyStyle == null)
+				{
+					_advancedOnlyStyle = new GUIStyle();
+					_advancedOnlyStyle.normal.textColor = ProOnlyTint;
+					_advancedOnlyStyle.hover.textColor = ProOnlyTint;
+					_advancedOnlyStyle.active.textColor = ProOnlyTint;
+					_advancedOnlyStyle.alignment = TextAnchor.MiddleCenter;
+					_advancedOnlyStyle.margin = new RectOffset(4,4,4,4);
+					_advancedOnlyStyle.padding = new RectOffset(2,2,2,2);
+				}
+				return _advancedOnlyStyle;
+			}
+		}
+
 		protected Texture2D _desaturatedIcon = null;
 		protected Texture2D desaturatedIcon
 		{
@@ -160,44 +181,45 @@ namespace ProBuilder2.EditorCommon
 
 					_desaturatedIcon = pb_IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
 
-					// @todo
-					// if(!_desaturatedIcon)
-					// {
-					// 	string path = AssetDatabase.GetAssetPath(icon);
-					// 	TextureImporter imp = (TextureImporter) AssetImporter.GetAtPath( path );
+#if GENERATE_DESATURATED_ICONS
+					if(!_desaturatedIcon)
+					{
+						string path = AssetDatabase.GetAssetPath(icon);
+						TextureImporter imp = (TextureImporter) AssetImporter.GetAtPath( path );
 					
-					// 	if(!imp)
-					// 	{
-					// 		Debug.Log("Couldn't find importer : " + icon);
-					// 		return null;
-					// 	}
+						if(!imp)
+						{
+							Debug.Log("Couldn't find importer : " + icon);
+							return null;
+						}
 					
-					// 	imp.isReadable = true;
-					// 	imp.SaveAndReimport();
+						imp.isReadable = true;
+						imp.SaveAndReimport();
 					
-					// 	Color32[] px = icon.GetPixels32();
+						Color32[] px = icon.GetPixels32();
 					
-					// 	imp.isReadable = false;
-					// 	imp.SaveAndReimport();
+						imp.isReadable = false;
+						imp.SaveAndReimport();
 					
-					// 	int gray = 0;
+						int gray = 0;
 					
-					// 	for(int i = 0; i < px.Length; i++)
-					// 	{
-					// 		gray = (System.Math.Min(px[i].r, System.Math.Min(px[i].g, px[i].b)) + System.Math.Max(px[i].r, System.Math.Max(px[i].g, px[i].b))) / 2;
-					// 		px[i].r = (byte) gray;
-					// 		px[i].g = (byte) gray;
-					// 		px[i].b = (byte) gray;
-					// 	}
+						for(int i = 0; i < px.Length; i++)
+						{
+							gray = (System.Math.Min(px[i].r, System.Math.Min(px[i].g, px[i].b)) + System.Math.Max(px[i].r, System.Math.Max(px[i].g, px[i].b))) / 2;
+							px[i].r = (byte) gray;
+							px[i].g = (byte) gray;
+							px[i].b = (byte) gray;
+						}
 					
-					// 	_desaturatedIcon = new Texture2D(icon.width, icon.height);
-					// 	_desaturatedIcon.hideFlags = HideFlags.HideAndDontSave;
-					// 	_desaturatedIcon.SetPixels32(px);
-					// 	_desaturatedIcon.Apply();
+						_desaturatedIcon = new Texture2D(icon.width, icon.height);
+						_desaturatedIcon.hideFlags = HideFlags.HideAndDontSave;
+						_desaturatedIcon.SetPixels32(px);
+						_desaturatedIcon.Apply();
 					
-					// 	byte[] bytes = _desaturatedIcon.EncodeToPNG();
-					// 	System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
-					// }
+						byte[] bytes = _desaturatedIcon.EncodeToPNG();
+						System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
+					}
+#endif
 				}
 
 				return _desaturatedIcon;
@@ -338,9 +360,7 @@ namespace ProBuilder2.EditorCommon
 #if PROTOTYPE
 					if( isProOnly )
 					{
-						GUI.backgroundColor = ProOnlyTint;
-						GUILayout.Label(ProOnlyContent, altButtonStyle, GUILayout.MaxWidth(21), GUILayout.MaxHeight(16));
-						GUI.backgroundColor = Color.white;
+						GUILayout.Label(ProOnlyContent, advancedOnlyStyle, GUILayout.MaxWidth(21), GUILayout.MaxHeight(16));
 					}
 					else
 #endif

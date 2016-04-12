@@ -111,7 +111,7 @@ namespace ProBuilder2.EditorCommon
 				return;
 
 			if(isProOnly)
-				GUI.Label(windowRect, "Pro Only", proOnlyStyle);
+				GUI.Label(windowRect, "Advanced Only", proOnlyStyle);
 
 			content.Draw(isProOnly);
 		}
