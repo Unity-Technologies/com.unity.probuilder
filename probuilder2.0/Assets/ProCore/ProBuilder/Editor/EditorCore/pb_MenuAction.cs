@@ -150,6 +150,22 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		protected static GUIStyle _proOnlyStyle = null;
+		protected static GUIStyle proOnlyStyle
+		{
+			get
+			{
+				if(_proOnlyStyle == null)
+				{
+					_proOnlyStyle = new GUIStyle(EditorStyles.label);
+					_proOnlyStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
+					_proOnlyStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
+					_proOnlyStyle.active.background = pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
+				}
+				return _proOnlyStyle;
+			}
+		}
+
 		protected static GUIStyle _advancedOnlyStyle = null;
 		protected static GUIStyle advancedOnlyStyle
 		{
@@ -329,7 +345,11 @@ namespace ProBuilder2.EditorCommon
 
 				GUI.backgroundColor = Color.white;
 
+#if PROTOTYPE
+				if(isProOnly || (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+#else
 				if((AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
+#endif
 				{
 					Rect r = GUILayoutUtility.GetLastRect();
 					// options icon is 16x16
@@ -337,7 +357,19 @@ namespace ProBuilder2.EditorCommon
 					r.y -= 2;
 					r.width = 17;
 					r.height = 17;
-					GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro));
+#if PROTOTYPE
+					if(isProOnly)
+					{
+						GUI.backgroundColor = ProOnlyTint;
+						GUI.Label(r, "", proOnlyStyle);
+						GUI.backgroundColor = Color.white;
+					}
+					else
+#endif
+					{
+						GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro));
+					}
+
 					optionsRect = r;
 					GUI.enabled = wasEnabled;
 					return buttonEnabled;
