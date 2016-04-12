@@ -14,6 +14,27 @@ namespace ProBuilder2.EditorCommon
 		private static pb_TooltipWindow _instance;
 		private static Rect windowRect = new Rect(0,0,0,0);
 
+		static GUIStyle _proOnlyStyle = null;
+		static GUIStyle proOnlyStyle
+		{
+			get
+			{
+				if(_proOnlyStyle == null)
+				{
+					_proOnlyStyle = new GUIStyle(EditorStyles.largeLabel);
+					Color c = _proOnlyStyle.normal.textColor;
+					c.a = .20f; 
+					_proOnlyStyle.normal.textColor = c;
+					_proOnlyStyle.fontStyle = FontStyle.Bold;
+					_proOnlyStyle.alignment = TextAnchor.UpperRight;
+					_proOnlyStyle.fontSize += 22;
+					_proOnlyStyle.padding.top += 1;
+					_proOnlyStyle.padding.right += 4;
+				}
+				return _proOnlyStyle;
+			}
+		}
+
 		// much like highlander, there can only be one
 		public static pb_TooltipWindow instance()
 		{
@@ -47,14 +68,16 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public static void Show(Rect rect, pb_TooltipContent content)
+		public static void Show(Rect rect, pb_TooltipContent content, bool isProOnly)
 		{
-			instance().ShowInternal(rect, content);
+			instance().ShowInternal(rect, content, isProOnly);
 		}
 
-		public void ShowInternal(Rect rect, pb_TooltipContent content)
+		public void ShowInternal(Rect rect, pb_TooltipContent content, bool isProOnly)
 		{
 			this.content = content;
+			this.isProOnly = isProOnly;
+
 			Vector2 size = content.CalcSize();
 
 			Vector2 p = new Vector2(rect.x + rect.width + POSITION_PADDING, rect.y);
@@ -73,6 +96,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		public pb_TooltipContent content = null;
+		public bool isProOnly = false;
 
 		void OnGUI()
 		{
@@ -86,7 +110,10 @@ namespace ProBuilder2.EditorCommon
 			if(content == null)
 				return;
 
-			content.Draw();
+			if(isProOnly)
+				GUI.Label(windowRect, "Pro Only", proOnlyStyle);
+
+			content.Draw(isProOnly);
 		}
 	}
 }

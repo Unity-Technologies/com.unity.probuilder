@@ -33,16 +33,18 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
 		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
+		private static readonly GUIContent ProOnlyContent = new GUIContent("P", "");
+
+		public virtual bool isProOnly { get { return false; } }
 
 #if PROTOTYPE
+		private static Color _proOnlyTintLight = new Color(0f, .5f, 1f, 1f);
+		private static Color _proOnlyTintDark = new Color(.25f, 1f, 1f, 1f);
 		private static Color ProOnlyTint
 		{
-			get
-			{
-				return EditorGUIUtility.isProSkin ? new Color(.25f, 1f, 1f, 1f) : new Color(0f, .5f, 1f, 1f);
-			}
+			get { return EditorGUIUtility.isProSkin ? _proOnlyTintDark : _proOnlyTintLight; }
 		}
-		private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
+		// private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
 #endif
 	
 		public pb_MenuAction()
@@ -202,6 +204,17 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		protected Texture2D _proOnlyIcon = null;
+		protected Texture2D proOnlyIcon
+		{
+			get
+			{
+				if(_proOnlyIcon == null)
+					_proOnlyIcon = pb_IconUtility.GetIcon("Toolbar/ProOnly");
+				return _proOnlyIcon;
+			}
+		}
+
 		public abstract pb_IconGroup group { get; }
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
@@ -267,7 +280,11 @@ namespace ProBuilder2.EditorCommon
 		public bool DoButton(bool isHorizontal, bool showOptions, ref Rect optionsRect, params GUILayoutOption[] layoutOptions)
 		{
 			bool wasEnabled = GUI.enabled;
+#if PROTOTYPE
+			bool buttonEnabled = !isProOnly && (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
+#else
 			bool buttonEnabled = (ActionState() & MenuActionState.Enabled) == MenuActionState.Enabled;
+#endif
 			
 			GUI.enabled = buttonEnabled;
 
@@ -318,15 +335,27 @@ namespace ProBuilder2.EditorCommon
 						pb_Editor_Utility.ShowNotification(res.notification);
 					}
 
-					MenuActionState altState = AltState();
-
-					if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
+#if PROTOTYPE
+					if( isProOnly )
 					{
-						GUI.enabled = GUI.enabled && (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
-
-						if(DoAltButton(GUILayout.MaxWidth(21), GUILayout.MaxHeight(16)))
-							DoAlt();
+						GUI.backgroundColor = ProOnlyTint;
+						GUILayout.Label(ProOnlyContent, altButtonStyle, GUILayout.MaxWidth(21), GUILayout.MaxHeight(16));
+						GUI.backgroundColor = Color.white;
 					}
+					else
+#endif
+					{
+						MenuActionState altState = AltState();
+
+						if( (altState & MenuActionState.Visible) == MenuActionState.Visible )
+						{
+							GUI.enabled = GUI.enabled && (altState & MenuActionState.Enabled) == MenuActionState.Enabled;
+
+							if(DoAltButton(GUILayout.MaxWidth(21), GUILayout.MaxHeight(16)))
+								DoAlt();
+						}
+					}
+
 				GUILayout.EndHorizontal();
 
 				GUI.enabled = wasEnabled;

@@ -11,14 +11,17 @@ using Parabox.Debug;
 
 namespace ProBuilder2.EditorCommon
 {
-
-#if !PROTOTYPE
-
 	/**
 	 * Assign materials to faces and objects.
 	 */
 	public class pb_Material_Editor : EditorWindow
 	{
+#if PROTOTYPE
+		public static void MenuOpenMaterialEditor()
+		{
+			Debug.LogWarning("Material Editor is ProBuilder Advanced feature.");
+		}
+#else
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", true, pb_Constant.MENU_MATERIAL_COLORS)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", true, pb_Constant.MENU_MATERIAL_COLORS)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", true, pb_Constant.MENU_MATERIAL_COLORS)]
@@ -355,6 +358,6 @@ namespace ProBuilder2.EditorCommon
 			// 	GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
 			// }
 		}
+#endif
 	}
-	#endif
 }

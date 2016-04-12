@@ -12,6 +12,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_Triangulate"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Triangulate"; } }
+		public override bool isProOnly { get { return true; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

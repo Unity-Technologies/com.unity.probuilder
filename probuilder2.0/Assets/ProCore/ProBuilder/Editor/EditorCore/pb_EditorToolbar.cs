@@ -100,7 +100,7 @@ namespace ProBuilder2.EditorCommon
 			ShowTooltip(rect, c, scrollOffset);
 		}
 
-		private void ShowTooltip(Rect rect, pb_TooltipContent content, Vector2 scrollOffset)
+		private void ShowTooltip(Rect rect, pb_TooltipContent content, Vector2 scrollOffset, bool isProOnly = false)
 		{
 			Rect buttonRect = new Rect(
 				(window.position.x + rect.x) - scrollOffset.x,
@@ -108,7 +108,7 @@ namespace ProBuilder2.EditorCommon
 				rect.width,
 				rect.height);
 
-			pb_TooltipWindow.Show(buttonRect, content);
+			pb_TooltipWindow.Show(buttonRect, content, isProOnly);
 		}
 
 		void Update()
@@ -351,7 +351,7 @@ namespace ProBuilder2.EditorCommon
 					if( e.shift || showTooltipTimer )
 					{
 						tooltipShown = true;
-						ShowTooltip(buttonRect, action.tooltip, scroll);
+						ShowTooltip(buttonRect, action.tooltip, scroll, action.isProOnly);
 					}
 
 					hovering = true;

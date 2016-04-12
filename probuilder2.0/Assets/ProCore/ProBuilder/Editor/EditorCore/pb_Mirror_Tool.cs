@@ -12,8 +12,13 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_Mirror_Tool : EditorWindow 
 	{
-		#if !PROTOTYPE
 
+#if PROTOTYPE
+		public static void MenuOpenMirrorEditor()
+		{
+			Debug.LogWarning("Mirror Tool is ProBuilder Advanced feature.");
+		}
+#else
 		[System.Obsolete("Use MenuOpenMirrorEditor instead.")]
 		public static void InitMirrorTool()
 		{
@@ -108,7 +113,6 @@ namespace ProBuilder2.EditorCommon
 
 			return p;
 		}
-
-		#endif
+#endif
 	}
 }

@@ -13,10 +13,15 @@ using ProBuilder2.Interface;
 using Parabox.Debug;
 #endif
 
-#if !PROTOTYPE
 public class pb_UV_Editor : EditorWindow
 {
 
+#if PROTOTYPE
+	public static void MenuOpenUVEditor()
+	{
+		Debug.LogWarning("UV Editor is ProBuilder Advanced feature.");
+	}
+#else
 #if PB_DEBUG
 	static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
 #endif
@@ -3535,6 +3540,6 @@ public class pb_UV_Editor : EditorWindow
 		}
 	}
 #endregion
+#endif
 }
 
-#endif

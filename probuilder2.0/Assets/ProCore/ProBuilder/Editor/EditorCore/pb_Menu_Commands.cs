@@ -26,19 +26,20 @@ namespace ProBuilder2.EditorCommon
 		 *	Define "headers" for pro only functions.
 		 */
 #if PROTOTYPE
-		public static pb_ActionResult MenuMergeObjects(pb_Object[] selection) { Debug.LogWarning("MenuMergeObjects is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuSubdivideEdge(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideEdge is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuInsertEdgeLoop(pb_Object[] selection) { Debug.LogWarning("MenuInsertEdgeLoop is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
-		public static pb_ActionResult WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature.");  return new pb_MenuAction(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuMergeObjects(pb_Object[] selection) { Debug.LogWarning("MenuMergeObjects is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuFacetizeObject(pb_Object[] selection) { Debug.LogWarning("MenuFacetizeObject is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivide(pb_Object[] selection) { Debug.LogWarning("MenuSubdivide is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection) { Debug.LogWarning("MenuDetachFaces is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivideFace(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideFace is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSubdivideEdge(pb_Object[] selection) { Debug.LogWarning("MenuSubdivideEdge is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuBridgeEdges(pb_Object[] selection) { Debug.LogWarning("MenuBridgeEdges is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection) { Debug.LogWarning("MenuConnectEdges is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection) { Debug.LogWarning("MenuConnectVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuInsertEdgeLoop(pb_Object[] selection) { Debug.LogWarning("MenuInsertEdgeLoop is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 #endif
 
 #region Object Level
@@ -1243,50 +1244,6 @@ namespace ProBuilder2.EditorCommon
 		}
 
 #if !PROTOTYPE
-		/**
-		 * Delete selected vertices and attempt to retriangulate a super face.
-		 */
-		// public static pb_ActionResult MenuDeleteVertices(pb_Object[] selection)
-		// {
-		// 	if(selection == null || selection.Length < 1)
-		// 		return pb_ActionResult.NoSelection;
-
-		// 	pbUndo.RecordObjects(selection, "Delete Vertices");
-
-		// 	foreach(pb_Object pb in selection)
-		// 	{
-		// 		int[] selected = pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray();
-
-		// 		pb_Face[] selected_faces = pbMeshUtils.GetNeighborFaces(pb, selected).ToArray();
-
-		// 		if(selected_faces.Length < 1)
-		// 			continue;
-
-		// 		pb.DeleteVerticesWithIndices(selected);
-
-		// 		pb_Face composite = pb.MergeFaces(selected_faces);
-
-		// 		// retriangulate face
-		// 		// pb.Triangulate(composite);
-
-		// 		int[] removed;
-		// 		pb.RemoveDegenerateTriangles(out removed);
-
-		// 		if(composite != null)
-		// 		{
-		// 			pb.ToMesh();
-		// 			pb.Refresh();
-		// 			pb.Optimize();
-
-		// 			pb.SetSelectedFaces( new pb_Face[] { composite } );
-		// 		}
-		// 	}
-
-		// 	if(pb_Editor.instance)
-		// 		pb_Editor.instance.UpdateSelection();
-
-		// 	return new pb_ActionResult(Status.Success, "Delete Vertices");
-		// }
 
 		public static pb_ActionResult MenuDetachFaces(pb_Object[] selection)
 		{

@@ -1,4 +1,4 @@
-﻿#if !UNITY_4_7 && !UNITY_5_0
+﻿#if !UNITY_4_7 && !UNITY_5_0 && !PROTOTYPE
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;

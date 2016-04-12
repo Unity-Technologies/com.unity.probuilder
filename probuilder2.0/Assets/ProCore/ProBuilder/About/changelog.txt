@@ -1,28 +1,31 @@
--- ProBuilder 2.5.0f0 (r4241)
+# ProBuilder 2.5.0f0 (r4241)
 
-# Features
-	- Toolbar redesign now adapts to both vertical and horizontal layouts (swap between Text and Icons by context clicking in the Inspector).
-	- New tooltips show inline documentation and keyboard shortcuts.  Hold `Shift` to instantly view hovered tooltip, and turn off tooltips on hover in Preferences menu.
-	- New `Subdivide Edges` action inserts vertices along selected edges.
-	- GUI items are no longer stored in Resources.  Changing the location of the ProBuilder directory is still supported.
-	- Add option to collapse vertices to the first selected vertex instead of always averaging.
-	- Mark the current mode and floating state in the toolbar context menu.
-	- Add preference toggle to disable Dimension Overlay lines.
-	- New Color Mask setting in Vertex Painter Editor enables painting only to specified component.
-	- Vector4 UV{3, 4} channels can now be stored in pb_Object (use pb.SetUVs(index, List<Vec4>)).
+## Features
 
-# Bug Fixes
-	- Fix shortcut editor modifier keys not being correctly stored.
-	- Fix Freeze Transforms moving objects when selection contains hierarchies of meshes.
-	- Entity visibility toggles no longer interferes with Collisions, as well as remembers all manually changed object visibility.
-	- Fix Element Toolbar placement in Scene view on Retina display Macs.
-	- Fix UVs all being set to {0,0} when using Weld in the UV Editor.
-	- When extruding an edge check that the new face winding order is equivalent to the face of the donor edge and flip if necessary.
-	- Fix shortcut editor not recognizing all keycode values (notably Alpha0-9).
+- Toolbar redesign now adapts to both vertical and horizontal layouts (swap between Text and Icons by context clicking in the Inspector).
+- New tooltips show inline documentation and keyboard shortcuts.  Hold `Shift` to instantly view hovered tooltip, and turn off tooltips on hover in Preferences menu.
+- New `Subdivide Edges` action inserts vertices along selected edges.
+- GUI items are no longer stored in Resources.  Changing the location of the ProBuilder directory is still supported.
+- Add option to collapse vertices to the first selected vertex instead of always averaging.
+- Mark the current mode and floating state in the toolbar context menu.
+- Add preference toggle to disable Dimension Overlay lines.
+- New Color Mask setting in Vertex Painter Editor enables painting only to specified component.
+- Vector4 UV{3, 4} channels can now be stored in pb_Object (use pb.SetUVs(index, List<Vec4>)).
 
-# Changes
-	- Remove option to display Mode Toolbar in the Inspector window.
-	- ProBuilder2.Math namespace removed, pb_Math now belongs to ProBuilder2.Common.
+## Bug Fixes
+
+- Fix shortcut editor modifier keys not being correctly stored.
+- Fix Freeze Transforms moving objects when selection contains hierarchies of meshes.
+- Entity visibility toggles no longer interferes with Collisions, as well as remembers all manually changed object visibility.
+- Fix Element Toolbar placement in Scene view on Retina display Macs.
+- Fix UVs all being set to {0,0} when using Weld in the UV Editor.
+- When extruding an edge check that the new face winding order is equivalent to the face of the donor edge and flip if necessary.
+- Fix shortcut editor not recognizing all keycode values (notably Alpha0-9).
+
+## Changes
+
+- Remove option to display Mode Toolbar in the Inspector window.
+- ProBuilder2.Math namespace removed, pb_Math now belongs to ProBuilder2.Common.
 
 -- ProBuilder 2.4.11f0 (r4081)
 

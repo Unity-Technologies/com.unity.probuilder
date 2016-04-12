@@ -6,8 +6,12 @@ using ProBuilder2.EditorCommon;
 
 public class pb_Smoothing_Editor : EditorWindow
 {
-#if !PROTOTYPE
-#region MEMBERS
+#if PROTOTYPE
+	public static void MenuOpenSmoothingEditor()
+	{
+		Debug.LogWarning("Smoothing Editor is ProBuilder Advanced feature.");
+	}
+#else
 
 	pb_Editor editor { get { return pb_Editor.instance; } }
 	pb_Object[] selection;
@@ -19,9 +23,6 @@ public class pb_Smoothing_Editor : EditorWindow
 	float normalsLength = 0f;
 
 	int oldWidth = 0, oldHeight = 0;
-#endregion
-
-#region INITIALIZATION CALLBACKS
 
 	[System.Obsolete("Use MenuOpenSmoothingEditor instead.")]
 	public static pb_Smoothing_Editor Init()
@@ -76,10 +77,7 @@ public class pb_Smoothing_Editor : EditorWindow
 		clearAllRect = new Rect(Screen.width-68-pad, Screen.height-20-pad, 68, 18);
 		drawNormalsRect = new Rect(pad, Screen.height-18-pad, 252, 18);
 	}
-#endregion
 
-#region INTERFACE
-	
 	Rect smoothLabelRect = new Rect(pad, pad, 200, 18);
 	Rect hardLabelRect = new Rect(pad, pad, 200, 18);
 	Rect clearAllRect = new Rect(0f, 0f, 0f, 0f);
@@ -147,9 +145,6 @@ public class pb_Smoothing_Editor : EditorWindow
 			buttonRect = new Rect(buttonRect.x + BUTTON_WIDTH + pad, buttonRect.y, BUTTON_WIDTH, BUTTON_WIDTH);
 		}
 	}
-#endregion
-
-#region APPLY
 	
 	/**
 	 * Apply smoothing group to all selected faces in _selection.
@@ -207,9 +202,6 @@ public class pb_Smoothing_Editor : EditorWindow
 		else
 			OnSelectionUpdate(selection);
 	}
-#endregion
-
-#region SELECTION CACHE
 
 	void OnSelectionUpdate(pb_Object[] _selection)
 	{
@@ -230,14 +222,10 @@ public class pb_Smoothing_Editor : EditorWindow
 
 		Repaint();
 	}
-#endregion
-
-#region VISUALIZATION
 
 	void DrawPreviewMesh(pb_Object pb)
 	{
 
 	}
-#endregion
-	#endif
+#endif
 }

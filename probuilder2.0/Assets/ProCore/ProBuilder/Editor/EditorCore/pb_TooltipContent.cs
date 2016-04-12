@@ -120,12 +120,12 @@ namespace ProBuilder2.EditorCommon
 			return total;
 		}
 
-		public void Draw()
+		public void Draw(bool hideShortcutText = false)
 		{
 			if(!string.IsNullOrEmpty(title))
 			{
 
-				if(!string.IsNullOrEmpty(shortcut))
+				if(!hideShortcutText && !string.IsNullOrEmpty(shortcut))
 				{
 					GUILayout.BeginHorizontal();
 					GUILayout.Label(title, TitleStyle);
