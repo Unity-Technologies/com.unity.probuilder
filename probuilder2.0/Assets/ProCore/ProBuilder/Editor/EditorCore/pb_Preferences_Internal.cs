@@ -116,8 +116,7 @@ public class pb_Preferences_Internal
 	}
 
 
-	public static Material GetMaterial(string pref) { return GetMaterial(pref, false); }
-	public static Material GetMaterial(string pref, bool forceDefault)
+	public static Material GetMaterial(string pref, bool forceDefault = false)
 	{
 		Material mat = null;
 
@@ -137,7 +136,9 @@ public class pb_Preferences_Internal
 				return pb_Constant.DefaultMaterial;
 		}
 
-		if(!mat) mat = pb_Constant.DefaultMaterial;
+		if(!mat)
+			mat = pb_Constant.DefaultMaterial;
+			
 		return mat;
 	}
 

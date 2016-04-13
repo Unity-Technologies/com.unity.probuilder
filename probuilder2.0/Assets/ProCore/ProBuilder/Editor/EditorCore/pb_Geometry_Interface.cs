@@ -107,6 +107,10 @@ namespace ProBuilder2.EditorCommon
 				pb.ToMesh();
 				pb.Refresh();
 			}
+			else
+			{
+				Debug.Log("mat is null");
+			}
 
 			pb_Editor_Utility.InitObjectFlags(pb);
 			pb_Editor_Utility.SetPivotAndSnapWithPref(pb, null);
