@@ -74,8 +74,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			GenericMenu menu = new GenericMenu();
 
-			menu.AddItem (new GUIContent("Window/Open as Floating Window", ""), false, () => { SetFloating(true); } );
-			menu.AddItem (new GUIContent("Window/Open as Dockable Window", ""), false, () => { SetFloating(false); } );
+			menu.AddItem (
+				new GUIContent("Window/Open as Floating Window", ""),
+				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				() => { SetFloating(true); } );
+			menu.AddItem (
+				new GUIContent("Window/Open as Dockable Window", ""),
+				!pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				() => { SetFloating(false); } );
 
 			menu.ShowAsContext ();
 		}
