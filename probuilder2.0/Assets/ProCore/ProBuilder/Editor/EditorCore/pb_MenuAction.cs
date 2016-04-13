@@ -1,4 +1,6 @@
-﻿// #define GENERATE_DESATURATED_ICONS
+﻿
+
+// #define GENERATE_DESATURATED_ICONS
 
 using UnityEngine;
 using UnityEditor;
@@ -30,23 +32,11 @@ namespace ProBuilder2.EditorCommon
 		protected const char CMD_ALT 	= pb_Constant.CMD_ALT;
 		protected const char CMD_DELETE = pb_Constant.CMD_DELETE;
 
-		private static readonly Color TEXT_COLOR_WHITE_NORMAL = new Color(0.82f, 0.82f, 0.82f, 1f);
-		private static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
-		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
-
 		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
 		public virtual bool isProOnly { get { return false; } }
 
 #if PROTOTYPE
 		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
-
-		private static Color _proOnlyTintLight = new Color(0f, .5f, 1f, 1f);
-		private static Color _proOnlyTintDark = new Color(.25f, 1f, 1f, 1f);
-		private static Color ProOnlyTint
-		{
-			get { return EditorGUIUtility.isProSkin ? _proOnlyTintDark : _proOnlyTintLight; }
-		}
-		// private static readonly Color UpgradeTint = new Color(.5f, 1f, 1f, 1f);
 #endif
 
 		public pb_MenuAction()
@@ -64,131 +54,19 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		/**
-		 *	Reset static GUIStyle objects so that they will be re-initialized the next time used.
-		 */
-		public static void ResetStyles()
-		{
-			_buttonStyleVertical = null;
-			_buttonStyleHorizontal = null;
-		}
-
-		protected static GUIStyle _buttonStyleVertical = null;
-		protected static GUIStyle buttonStyleVertical
-		{
-			get
-			{
-				if(_buttonStyleVertical == null)
-				{
-					_buttonStyleVertical = new GUIStyle();
-					_buttonStyleVertical.normal.background = pb_IconUtility.GetIcon("Toolbar/Button_Normal", IconSkin.Pro);
-					_buttonStyleVertical.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_buttonStyleVertical.hover.background = pb_IconUtility.GetIcon("Toolbar/Button_Hover", IconSkin.Pro);
-					_buttonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Toolbar/Button_Pressed", IconSkin.Pro);
-					_buttonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
-					_buttonStyleVertical.stretchWidth = true;
-					_buttonStyleVertical.stretchHeight = false;
-					_buttonStyleVertical.margin = new RectOffset(4,5,4,4);
-					_buttonStyleVertical.padding = new RectOffset(8,0,2,2);
-				}
-				return _buttonStyleVertical;
-			}
-		}
-
-		protected static GUIStyle _buttonStyleHorizontal = null;
-		protected static GUIStyle buttonStyleHorizontal
-		{
-			get
-			{
-				if(_buttonStyleHorizontal == null)
-				{
-					_buttonStyleHorizontal = new GUIStyle();
-
-					_buttonStyleHorizontal.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_buttonStyleHorizontal.normal.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Normal_Horizontal", IconSkin.Pro);
-					_buttonStyleHorizontal.hover.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Hover_Horizontal", IconSkin.Pro);
-					_buttonStyleHorizontal.hover.textColor 		= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_buttonStyleHorizontal.active.background 	= pb_IconUtility.GetIcon("Toolbar/Button_Pressed_Horizontal", IconSkin.Pro);
-					_buttonStyleHorizontal.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_buttonStyleHorizontal.alignment 			= TextAnchor.MiddleCenter;
-					_buttonStyleHorizontal.border 				= new RectOffset(0,0,4,0);
-					_buttonStyleHorizontal.stretchWidth 		= true;
-					_buttonStyleHorizontal.stretchHeight 		= false;
-					_buttonStyleHorizontal.margin 				= new RectOffset(4,4,4,5);
-					_buttonStyleHorizontal.padding 				= new RectOffset(2,2,8,0);
-				}
-				return _buttonStyleHorizontal;
-			}
-		}
-
-		protected static GUIStyle _altButtonStyle = null;
-		protected static GUIStyle altButtonStyle
-		{
-			get
-			{
-				if(_altButtonStyle == null)
-				{
-					_altButtonStyle = new GUIStyle();
-
-					_altButtonStyle.normal.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Normal", IconSkin.Pro);
-					_altButtonStyle.normal.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
-					_altButtonStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Hover", IconSkin.Pro);
-					_altButtonStyle.hover.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
-					_altButtonStyle.active.background 	= pb_IconUtility.GetIcon("Toolbar/AltButton_Pressed", IconSkin.Pro);
-					_altButtonStyle.active.textColor 	= EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_altButtonStyle.alignment 			= TextAnchor.MiddleCenter;
-					_altButtonStyle.border 				= new RectOffset(1,1,1,1);
-					_altButtonStyle.stretchWidth 		= false;
-					_altButtonStyle.stretchHeight 		= true;
-					_altButtonStyle.margin 				= new RectOffset(4,4,4,4);
-					_altButtonStyle.padding 			= new RectOffset(2,2,1,3);
-				}
-				return _altButtonStyle;
-			}
-		}
-
-		protected static GUIStyle _proOnlyStyle = null;
-		protected static GUIStyle proOnlyStyle
-		{
-			get
-			{
-				if(_proOnlyStyle == null)
-				{
-					_proOnlyStyle = new GUIStyle(EditorStyles.label);
-					_proOnlyStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
-					_proOnlyStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
-					_proOnlyStyle.active.background = pb_IconUtility.GetIcon("Toolbar/ProOnly", IconSkin.Pro);
-				}
-				return _proOnlyStyle;
-			}
-		}
-
+		public static GUIStyle buttonStyleVertical 		{ get { return pb_MenuActionStyles.buttonStyleVertical; } }
+		public static GUIStyle buttonStyleHorizontal 	{ get { return pb_MenuActionStyles.buttonStyleHorizontal; } }
+		public static GUIStyle rowStyleVertical 		{ get { return pb_MenuActionStyles.rowStyleVertical; } }
+		public static GUIStyle rowStyleHorizontal 		{ get { return pb_MenuActionStyles.rowStyleHorizontal; } }
+		public static GUIStyle altButtonStyle 			{ get { return pb_MenuActionStyles.altButtonStyle; } }
+		public static GUIStyle proOnlyStyle 			{ get { return pb_MenuActionStyles.proOnlyStyle; } }
 #if PROTOTYPE
-		protected static GUIStyle _advancedOnlyStyle = null;
-		protected static GUIStyle advancedOnlyStyle
-		{
-			get
-			{
-				if(_advancedOnlyStyle == null)
-				{
-					_advancedOnlyStyle = new GUIStyle();
-					_advancedOnlyStyle.normal.textColor = ProOnlyTint;
-					_advancedOnlyStyle.hover.textColor = ProOnlyTint;
-					_advancedOnlyStyle.active.textColor = ProOnlyTint;
-					_advancedOnlyStyle.alignment = TextAnchor.MiddleCenter;
-					_advancedOnlyStyle.margin = new RectOffset(4,4,4,4);
-					_advancedOnlyStyle.padding = new RectOffset(2,2,2,2);
-				}
-				return _advancedOnlyStyle;
-			}
-		}
+		public static GUIStyle advancedOnlyStyle 		{ get { return pb_MenuActionStyles.advancedOnlyStyle; } }
 #endif
+		public static Texture2D proOnlyIcon				{ get { return pb_MenuActionStyles.proOnlyIcon; } }
 
-		protected Texture2D _desaturatedIcon = null;
-		protected Texture2D desaturatedIcon
+		private Texture2D _desaturatedIcon = null;
+		public Texture2D desaturatedIcon
 		{
 			get
 			{
@@ -241,17 +119,6 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				return _desaturatedIcon;
-			}
-		}
-
-		protected Texture2D _proOnlyIcon = null;
-		protected Texture2D proOnlyIcon
-		{
-			get
-			{
-				if(_proOnlyIcon == null)
-					_proOnlyIcon = pb_IconUtility.GetIcon("Toolbar/ProOnly");
-				return _proOnlyIcon;
 			}
 		}
 
@@ -363,7 +230,7 @@ namespace ProBuilder2.EditorCommon
 					if(isProOnly)
 					{
 						GUI.backgroundColor = ProOnlyTint;
-						GUI.Label(r, "", proOnlyStyle);
+						GUI.Label(r, GUIContent.none, proOnlyStyle);
 						GUI.backgroundColor = Color.white;
 					}
 					else
@@ -384,14 +251,15 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				GUILayout.BeginHorizontal( layoutOptions );
-					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical, GUILayout.MaxHeight(lastCalculatedSize.y)))
+				// in text mode always use the vertical layout.
+				isHorizontal = false;
+				GUILayout.BeginHorizontal(isHorizontal ? rowStyleHorizontal : rowStyleVertical, layoutOptions);
+					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
 					{
 						pb_ActionResult res = DoAction();
 						pb_Editor_Utility.ShowNotification(res.notification);
 					}
 
-					GUILayout.FlexibleSpace();
 #if PROTOTYPE
 					if( isProOnly )
 					{
@@ -434,9 +302,15 @@ namespace ProBuilder2.EditorCommon
 		public Vector2 GetSize(bool isHorizontal)
 		{
 			if(isIconMode)
+			{
 				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
+			}
 			else
+			{
+				// in text mode always use the vertical layout.
+				isHorizontal = false;
 				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
+			}
 			return lastCalculatedSize;
 		}
 	}

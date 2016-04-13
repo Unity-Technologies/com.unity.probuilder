@@ -80,7 +80,7 @@ namespace ProBuilder2.EditorCommon
 			// screwy.  script reloads in particular?
 			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
 			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
-			pb_MenuAction.ResetStyles();
+			pb_MenuActionStyles.ResetStyles();
 		}
 
 		void OnElementSelectionChange(pb_Object[] selection)
@@ -163,7 +163,7 @@ namespace ProBuilder2.EditorCommon
 			Vector2 iconSize = actions[0].GetSize(isHorizontalMenu);
 			
 			iconWidth = (int)iconSize.x + 4;
-			iconHeight = (int)iconSize.y; // + 4;
+			iconHeight = (int)iconSize.y + 4;
 
 			// if not in icon mode, we have to iterate all buttons to figure out what the maximum size is
 			if(!isIconMode)
