@@ -150,27 +150,14 @@ public class pb_Editor : EditorWindow
 		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex", IconSkin.Pro);
 		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge", IconSkin.Pro);
 
-		if(pref_showToolbar)
-		{
-			EditModeIcons = new GUIContent[]
-			{
-				new GUIContent(object_Graphic_off, "Object Selection"),
-				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-				new GUIContent(edge_Graphic_off, "Edge Selection"),
-				new GUIContent(face_Graphic_off, "Face Selection")
-			};
-		}
-		else
-		{
-			EditModeIcons = new GUIContent[]
-			{
-				new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-				new GUIContent(edge_Graphic_off, "Edge Selection"),
-				new GUIContent(face_Graphic_off, "Face Selection")
-			};
 
-			elementModeToolbarRect.y = 6;
-		}
+		EditModeIcons = new GUIContent[]
+		{
+			new GUIContent(object_Graphic_off, "Object Selection"),
+			new GUIContent(vertex_Graphic_off, "Vertex Selection"),
+			new GUIContent(edge_Graphic_off, "Edge Selection"),
+			new GUIContent(face_Graphic_off, "Face Selection")
+		};
 	}
 
 	private void LoadPrefs()

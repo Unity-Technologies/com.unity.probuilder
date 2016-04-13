@@ -35,11 +35,11 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
 
 		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
-		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
-
 		public virtual bool isProOnly { get { return false; } }
 
 #if PROTOTYPE
+		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
+
 		private static Color _proOnlyTintLight = new Color(0f, .5f, 1f, 1f);
 		private static Color _proOnlyTintDark = new Color(.25f, 1f, 1f, 1f);
 		private static Color ProOnlyTint
@@ -384,8 +384,8 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				GUILayout.BeginHorizontal(layoutOptions);
-					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
+				GUILayout.BeginHorizontal( layoutOptions );
+					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical, GUILayout.MaxHeight(lastCalculatedSize.y)))
 					{
 						pb_ActionResult res = DoAction();
 						pb_Editor_Utility.ShowNotification(res.notification);
@@ -426,15 +426,18 @@ namespace ProBuilder2.EditorCommon
 
 		public static readonly Vector2 AltButtonSize = new Vector2(21, 0);
 
+		private Vector2 lastCalculatedSize = Vector2.zero;
+
 		/**
 		 *	Get the rendered width of this GUI item.
 		 */
 		public Vector2 GetSize(bool isHorizontal)
 		{
 			if(isIconMode)
-				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
+				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
 			else
-				return (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
+				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
+			return lastCalculatedSize;
 		}
 	}
 }
