@@ -577,9 +577,12 @@ public class pb_Object : MonoBehaviour
 		if(m != null && m.vertexCount == _vertices.Length)
 		{
 			m = msh;
+
 			m.vertices = _vertices;
+			
 			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
-			if(_uv != null) m.uv = _uv;
+			if(_uv != null)
+				m.uv = _uv;
 		}
 		else
 		{
@@ -590,6 +593,8 @@ public class pb_Object : MonoBehaviour
 	
 			m.vertices = _vertices;
 		}
+
+		m.uv2 = null;
 
 		int[][] tris;
 		Material[] mats;
