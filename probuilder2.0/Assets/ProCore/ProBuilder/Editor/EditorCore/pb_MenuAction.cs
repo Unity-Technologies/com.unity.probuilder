@@ -36,6 +36,9 @@ namespace ProBuilder2.EditorCommon
 		public virtual bool isProOnly { get { return false; } }
 
 #if PROTOTYPE
+		private static Color _proOnlyTintLight = new Color(0f, .5f, 1f, 1f);
+  		private static Color _proOnlyTintDark = new Color(.25f, 1f, 1f, 1f);
+  		private static Color ProOnlyTint { get { return EditorGUIUtility.isProSkin ? _proOnlyTintDark : _proOnlyTintLight; } }
 		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
 #endif
 
