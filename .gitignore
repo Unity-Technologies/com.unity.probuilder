@@ -6,6 +6,7 @@ probuilder2.0/[Oo]bj/
 probuilder2.0/ProjectSettings
 bin/debug
 bin/logs
+bin/temp
 
 probuilder-staging/
 visual studio/*/*/bin/
