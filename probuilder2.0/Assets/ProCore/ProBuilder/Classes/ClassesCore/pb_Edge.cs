@@ -49,8 +49,18 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 	public override int GetHashCode()
 	{
-		//Calculate the hash code for the product. 
-		return x > y ? y ^ x : x ^ y;
+		// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode/263416#263416
+		int a = (x < y ? x : y).GetHashCode();
+		int b = (x < y ? y : x).GetHashCode();
+		int hash = 27;
+
+		unchecked
+		{
+			hash = hash * 29 + a.GetHashCode();
+			hash = hash * 29 + b.GetHashCode();
+		}
+
+		return hash;
 	}
 
 	public static pb_Edge operator +(pb_Edge a, pb_Edge b)
