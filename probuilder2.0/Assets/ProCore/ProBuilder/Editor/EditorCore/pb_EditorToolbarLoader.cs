@@ -55,6 +55,7 @@ namespace ProBuilder2.EditorCommon
 				new FlipObjectNormals(),
 				new SubdivideObject(),
 				new FreezeTransform(),
+				new CenterPivot(),
 				new ConformObjectNormals(),
 				new TriangulateObject(),
 
