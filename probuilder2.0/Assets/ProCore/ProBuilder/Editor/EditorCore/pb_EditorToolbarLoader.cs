@@ -11,6 +11,8 @@ namespace ProBuilder2.EditorCommon
 		public delegate pb_MenuAction OnLoadActionsDelegate();
 		public static OnLoadActionsDelegate onLoadMenu;
 
+		private static List<pb_MenuAction> _defaults;
+
 		public static void RegisterMenuItem(OnLoadActionsDelegate getMenuAction)
 		{
 			if(onLoadMenu != null)
@@ -29,9 +31,28 @@ namespace ProBuilder2.EditorCommon
 			onLoadMenu -= getMenuAction;
 		}
 
-		public static List<pb_MenuAction> GetActions()
+		public static T GetInstance<T>() where T : pb_MenuAction, new()
 		{
-			List<pb_MenuAction> defaults = new List<pb_MenuAction>()
+			T instance = (T) GetActions().FirstOrDefault(x => x is T);
+
+			if(instance == null)
+			{
+				instance = new T();
+				if(_defaults != null)
+					_defaults.Add(instance);
+				else
+					_defaults = new List<pb_MenuAction>() { instance };
+			}
+
+			return instance;
+		}
+
+		public static List<pb_MenuAction> GetActions(bool forceReload = false)
+		{
+			if(_defaults != null && !forceReload)
+				return _defaults;
+
+			_defaults = new List<pb_MenuAction>()
 			{
 				// tools
 				new OpenShapeEditor(),
@@ -98,10 +119,10 @@ namespace ProBuilder2.EditorCommon
 			if(onLoadMenu != null)
 			{
 				foreach(OnLoadActionsDelegate del in onLoadMenu.GetInvocationList())
-					defaults.Add(del());
+					_defaults.Add(del());
 			}
 
-			return defaults;
+			return _defaults;
 		}
 	}
 }

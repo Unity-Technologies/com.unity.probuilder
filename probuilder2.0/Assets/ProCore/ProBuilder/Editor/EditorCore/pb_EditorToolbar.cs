@@ -29,7 +29,7 @@ namespace ProBuilder2.EditorCommon
 					scrollIconRight = null,
 					scrollIconLeft = null;
 
-		[SerializeField] List<pb_MenuAction> actions;
+		[SerializeField] internal List<pb_MenuAction> actions;
 
 		public void InitWindowProperties(EditorWindow win)
 		{

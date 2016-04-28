@@ -3,8 +3,9 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder2.Actions
 {
 	[System.Serializable]
 	public class ToggleSelectBackFaces : pb_MenuAction

@@ -124,8 +124,8 @@ namespace ProBuilder2.EditorCommon
 
 		private static pb_ActionResult _SetPivot(pb_Object[] selection, int[][] triangles = null)
 		{
-			if(selection != null && selection.Length > 0)
-				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+			if(selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
 
 			Object[] objects = new Object[selection.Length * 2];
 			System.Array.Copy(selection, 0, objects, 0, selection.Length);
