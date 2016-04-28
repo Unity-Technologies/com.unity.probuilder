@@ -52,10 +52,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuMergeObjects(pb_Object[] selected)
 		{
 			if(selected.Length < 2)
-			{
-				pb_Editor_Utility.ShowNotification("Must Select 2+ Objects");
 				return new pb_ActionResult(Status.Failure, "Must Select 2+ Objects");
-			}
 
 			int option = EditorUtility.DisplayDialogComplex(
 				"Save or Delete Originals?",
@@ -110,18 +107,25 @@ namespace ProBuilder2.EditorCommon
 		 * Set the pivot to the center of the current element selection.
 		 * ProBuilder only.
 		 */
+		public static pb_ActionResult MenuCenterPivot(pb_Object[] selection)
+		{
+			return _SetPivot(selection, null);
+		}
+
 		public static pb_ActionResult MenuSetPivot(pb_Object[] selection)
 		{
-			if(selection != null && selection.Length > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Set Pivot");
-			}
-			else
-			{
-				pb_Editor_Utility.ShowNotification("Nothing Selected");
-				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
-			}
+			int[][] tri = new int[selection.Length][];
+			
+			for(int i = 0; i < tri.Length; i++)
+				tri[i] = selection[i].SelectedTriangles;
 
+			return _SetPivot(selection, tri);
+		}
+
+		private static pb_ActionResult _SetPivot(pb_Object[] selection, int[][] triangles = null)
+		{
+			if(selection != null && selection.Length > 0)
+				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
 
 			Object[] objects = new Object[selection.Length * 2];
 			System.Array.Copy(selection, 0, objects, 0, selection.Length);
@@ -130,17 +134,17 @@ namespace ProBuilder2.EditorCommon
 
 			pbUndo.RegisterCompleteObjectUndo(objects, "Set Pivot");
 
-			foreach (pb_Object pb in selection)
+			for(int i = 0; i < selection.Length; i++)
 			{
-				pb.ToMesh();
+				selection[i].ToMesh();
 
-				if (pb.SelectedTriangles.Length > 0)
-					pb.CenterPivot(pb.SelectedTriangles);
+				if(triangles != null)
+					selection[i].CenterPivot(triangles[i]);
 				else
-					pb.CenterPivot(null);
+					selection[i].CenterPivot(null);
 
-				pb.Refresh();
-				pb.Optimize();
+				selection[i].Refresh();
+				selection[i].Optimize();
 			}
 
 			SceneView.RepaintAll();
@@ -150,7 +154,6 @@ namespace ProBuilder2.EditorCommon
 
 			return new pb_ActionResult(Status.Success, "Set Pivot");
 		}
-
 					
 		public static pb_ActionResult MenuFreezeTransforms(pb_Object[] selection)
 		{
@@ -187,8 +190,6 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor.instance.UpdateSelection();
 
 			SceneView.RepaintAll();
-
-			pb_Editor_Utility.ShowNotification("Freeze Transforms");
 
 			return new pb_ActionResult(Status.Success, "Freeze Transforms");
 		}
@@ -258,10 +259,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuSetEntityType(pb_Object[] selection, EntityType entityType)
 		{
 			if(selection.Length < 1)
-			{
-				pb_Editor_Utility.ShowNotification("Nothing Selected");
 				return pb_ActionResult.NoSelection;
-			}
 
 			Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
 
@@ -275,7 +273,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			pb_Editor_Utility.ShowNotification("Set " + entityType);
 			return new pb_ActionResult(Status.Success, "Set " + entityType);
 		}
 
@@ -345,7 +342,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			editor.UpdateSelection();
-			pb_Editor_Utility.ShowNotification(selection.Length > 0 ? "Triangulate" : "Nothing Selected");
 
 			return new pb_ActionResult(Status.Success, "Triangulate " + selection.Length + (selection.Length > 1 ? " Objects" : " Object"));
 		}
@@ -360,10 +356,7 @@ namespace ProBuilder2.EditorCommon
 		static pb_ActionResult MenuBooleanOperation(BooleanOperation operation, pb_Object lhs, pb_Object rhs)
 		{
 			if(lhs == null || rhs == null)
-			{
-				pb_Editor_Utility.ShowNotification("Must Select 2 Objects");
 				return new pb_ActionResult(Status.Failure, "Must Select 2 Objects");
-			}
 
 			string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
 
@@ -398,7 +391,6 @@ namespace ProBuilder2.EditorCommon
 
 			Selection.objects = new Object[] { pb.gameObject };
 
-			pb_Editor_Utility.ShowNotification(op_string);
 			return new pb_ActionResult(Status.Success, op_string);
 		}
 
@@ -437,10 +429,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuFlipObjectNormals(pb_Object[] selected)
 		{
 			if(selected == null || selected.Length < 1)
-			{
-				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Objects Selected!");
 				return pb_ActionResult.NoSelection;
-			}
 
 			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
 
@@ -452,7 +441,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			pb_Editor_Utility.ShowNotification("Flip Object Normals");
 			return new pb_ActionResult(Status.Success, "Flip Object Normals");
 		}
 
@@ -462,10 +450,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuFlipNormals(pb_Object[] selected)
 		{
 			if(selected == null || selected.Length < 1)
-			{
-				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected!");
 				return pb_ActionResult.NoSelection;
-			}
 
 			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
 			int c = 0;
@@ -491,15 +476,9 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(c > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
 				return new pb_ActionResult(Status.Success, "Flip " + c + (c > 1 ? " Face Normals" : " Face Normal"));
-			}
 			else
-			{
-				pb_Editor_Utility.ShowNotification("Flip Normals\nNo Faces Selected");
 				return new pb_ActionResult(Status.Canceled, "Flip Normals\nNo Faces Selected");
-			}
 		}
 
 		/**
@@ -560,8 +539,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			editor.UpdateSelection();
-
-			pb_Editor_Utility.ShowNotification(flipped > 0 ? "Reversed " + flipped + " Faces" : "Normals Already Uniform");
 
 			if(flipped > 0)
 				return new pb_ActionResult(Status.Success, "Reversed " + flipped + " Faces");
@@ -656,9 +633,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			if(extrudedFaceCount > 0)
-				pb_Editor_Utility.ShowNotification("Extrude");// + val, "Extrudes the selected faces / edges.");
-
 			if(editor != null)
 				editor.UpdateSelection();
 
@@ -705,7 +679,6 @@ namespace ProBuilder2.EditorCommon
 			if(success)
 			{
 				pb_Editor.instance.UpdateSelection();
-				pb_Editor_Utility.ShowNotification("Bridge Edges");
 				return new pb_ActionResult(Status.Success, "Bridge Edges");
 			}
 			else
@@ -901,7 +874,6 @@ namespace ProBuilder2.EditorCommon
 			if(editor != null)
 				editor.UpdateSelection(false);
 
-			pb_Editor_Utility.ShowNotification(grown > 0 ? "Grow Selection" : "Nothing to Grow");
 			SceneView.RepaintAll();
 
 			if(grown > 0)
@@ -965,10 +937,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			// @TODO
 			if(editor == null)
-			{
-				pb_Editor_Utility.ShowNotification("ProBuilder Editor Not Open!");
 				return new pb_ActionResult(Status.Canceled, "ProBuilder Editor Not Open!");
-			}
 			else if (selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
@@ -1008,11 +977,6 @@ namespace ProBuilder2.EditorCommon
 				}
 
 			}
-
-			if(selection.Length > 0 && rc > 0)
-				pb_Editor_Utility.ShowNotification("Shrink Selection");
-			else
-				pb_Editor_Utility.ShowNotification("Unable to Shrink");
 
 			if(editor)
 				editor.UpdateSelection(false);
@@ -1102,8 +1066,6 @@ namespace ProBuilder2.EditorCommon
 			if(editor)
 				editor.UpdateSelection();
 
-			pb_Editor_Utility.ShowNotification("Invert Selection");
-
 			SceneView.RepaintAll();
 
 			return new pb_ActionResult(Status.Success, "Invert Selection");
@@ -1147,8 +1109,6 @@ namespace ProBuilder2.EditorCommon
 			if(editor)
 				editor.UpdateSelection(false);
 
-			pb_Editor_Utility.ShowNotification(success ? "Select Edge Ring" : "Nothing to Ring");
-
 			SceneView.RepaintAll();
 
 			if(success)
@@ -1184,8 +1144,6 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection(false);
-
-			pb_Editor_Utility.ShowNotification(foundLoop ? "Select Edge Loop" : "Nothing to Loop");
 
 			SceneView.RepaintAll();
 
@@ -1232,8 +1190,6 @@ namespace ProBuilder2.EditorCommon
 				editor.ClearFaceSelection();
 				editor.UpdateSelection();
 			}
-
-			pb_Editor_Utility.ShowNotification("Delete Elements");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
@@ -1299,8 +1255,6 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 				editor.UpdateSelection();
-
-			pb_Editor_Utility.ShowNotification("Detach Face");
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
@@ -1388,11 +1342,6 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection();
 			}
 
-			if(detachedFaceCount > 0)
-				pb_Editor_Utility.ShowNotification("Detach " + detachedFaceCount + " faces to new Object");
-			else
-				Debug.LogWarning("No faces selected! Please select some faces and try again.");
-
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(detachedFaceCount > 0)
@@ -1438,10 +1387,7 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection();
 
 			if(success > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Merged " + success + " Faces");
 				return new pb_ActionResult(Status.Success, "Merged " + success + " Faces");
-			}
 			else
 				return new pb_ActionResult(Status.Failure, "Merge Faces\nNo Faces Selected");
 		}
@@ -1475,10 +1421,8 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection();
 
 			if(success > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Flipped " + success + " Edges");
 				return new pb_ActionResult(Status.Success, "Flipped " + success + " Edges");
-			}
+			else
 				return new pb_ActionResult(Status.Failure, "Flip Edges\nNo Faces Selected");
 		}
 #endregion
@@ -1529,14 +1473,9 @@ namespace ProBuilder2.EditorCommon
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(success)
-			{
-				pb_Editor_Utility.ShowNotification("Collapse Vertices");
 				return new pb_ActionResult(Status.Success, "Collapse Vertices");
-			}
 			else
-			{
 				return new pb_ActionResult(Status.Failure, "Collapse Vertices\nNo Vertices Selected");
-			}
 		}
 
 		/**
@@ -1588,15 +1527,9 @@ namespace ProBuilder2.EditorCommon
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 			
 			if(success && weldCount > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
 				return new pb_ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
-			}
 			else
-			{
-				pb_Editor_Utility.ShowNotification("Nothing to Weld");
 				return new pb_ActionResult(Status.Failure, "Nothing to Weld");
-			}
 		}
 
 		const float MIN_WELD_DISTANCE = .0001f;
@@ -1695,8 +1628,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			pb_Editor_Utility.ShowNotification("Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
-
 			if(editor)
 				editor.UpdateSelection();
 
@@ -1723,10 +1654,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuSubdivide(pb_Object[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
-			{
-				pb_Editor_Utility.ShowNotification("Nothing Selected");
 				return pb_ActionResult.NoSelection;
-			}
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
 
@@ -1742,8 +1670,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			pb_Editor_Utility.ShowNotification("Subdivide Object");
-
 			if(editor)
 				editor.UpdateSelection(true);
 
@@ -1757,10 +1683,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuSubdivideEdge(pb_Object[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
-			{
-				pb_Editor_Utility.ShowNotification("Nothing Selected");
 				return pb_ActionResult.NoSelection;
-			}
 
 			int subdivisions = EditorPrefs.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
@@ -1781,8 +1704,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 				pb.Optimize();
 			}
-
-			pb_Editor_Utility.ShowNotification("Subdivide Object");
 
 			pb_Editor.Refresh(true);
 
@@ -1821,8 +1742,6 @@ namespace ProBuilder2.EditorCommon
 
 			if(success > 0)
 			{
-		        pb_Editor_Utility.ShowNotification("Subdivide " + success + ((success > 1) ? " faces" : " face"));
-
 				if(editor)
 					editor.UpdateSelection(true);
 
@@ -1867,8 +1786,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(editor)
 					editor.UpdateSelection(true);
-
-				pb_Editor_Utility.ShowNotification("Connect Edges");
 
 				return new pb_ActionResult(Status.Success, "Connect Edges");
 			}
@@ -1936,8 +1853,6 @@ namespace ProBuilder2.EditorCommon
 
 			if(success > 0)
 			{
-				pb_Editor_Utility.ShowNotification("Connect Vertices");
-
 				if(editor)
 					editor.UpdateSelection(true);
 
@@ -1981,14 +1896,9 @@ namespace ProBuilder2.EditorCommon
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(success > 0)
-			{
-				pb_Editor_Utility.ShowNotification("Insert Edge Loop");
 				return new pb_ActionResult(Status.Success, "Insert Edge Loop");
-			}
 			else
-			{
 				return new pb_ActionResult(Status.Success, "Insert Edge Loop");
-			}
 		}
 
 #endif
