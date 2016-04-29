@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Reflection;
 using System.IO;
+using ProBuilder2.EditorCommon;
 
 /**
  *	Editor utility to generate the pb_EditorToolbarMenuItems class from
@@ -42,12 +44,14 @@ class pb_GenerateMenuItems : Editor
 			.Select(x => x.Replace("\\", "/"))
 				.Where(y => !IgnoreActions.Contains(GetClassName(y)));
 
-		sb.AppendLine(@"/**
+		sb.AppendLine(
+@"/**
  *	IMPORTANT
  *
  *	This is a generated file. Any changes will be overwritten.
- *	See pb_GenerateMenuItems.
+ *	See pb_GenerateMenuItems to make modifications.
  */
+
 using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Actions;
@@ -84,10 +88,16 @@ namespace ProBuilder2.EditorCommon
 
 		StringBuilder sb = new StringBuilder();
 
+		object o = System.Activator.CreateInstance( System.Type.GetType("ProBuilder2.Actions." + class_name) );
+		PropertyInfo pi = typeof(pb_MenuAction).GetProperty("tooltip");
+		string shortcut = GetMenuFormattedShortcut( ((pb_TooltipContent)pi.GetValue(o, null)).shortcut );
+
 		/// VERIFY
 		sb.Append("\t\t[MenuItem(\"");
 		sb.Append(PB_MENU_PREFIX);
 		sb.Append(pretty_path);
+		sb.Append(" ");
+		sb.Append(shortcut);
 		sb.Append("\", true)]");
 		sb.AppendLine("");
 
@@ -102,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 		sb.Append(" instance = pb_EditorToolbarLoader.GetInstance<");
 		sb.Append(class_name);
 		sb.AppendLine(">();");
-		sb.AppendLine("\t\t\treturn instance != null && instance.IsEnabled();");
+		sb.AppendLine("\t\t\treturn instance != null && (!instance.IsHidden()) && instance.IsEnabled();");
 		sb.AppendLine("\t\t}");
 
 		sb.AppendLine("");
@@ -111,9 +121,10 @@ namespace ProBuilder2.EditorCommon
 		sb.Append("\t\t[MenuItem(\"");
 		sb.Append(PB_MENU_PREFIX);
 		sb.Append(pretty_path);
+		sb.Append(" ");
+		sb.Append(shortcut);
 		sb.Append("\", false, ");
 		sb.Append(menu_priority);
-		// sb.Append(" < < " + category + " > > ");
 		sb.Append(")]");
 		sb.AppendLine("");
 
@@ -157,5 +168,38 @@ namespace ProBuilder2.EditorCommon
 			menu_priority = "0";
 
 		return menu_priority;
+	}
+
+	static string GetMenuFormattedShortcut(string shortcut)
+	{
+		string res = "";
+		string[] keys = shortcut.Split('+');
+		bool inSceneShortcut = true;
+
+		foreach(string s in keys)
+		{
+			if(s.Contains(pb_Constant.CMD_SUPER) || s.Contains("Control") )
+			{
+				res += "%";
+				inSceneShortcut = false;
+			}
+			else if(s.Contains(pb_Constant.CMD_OPTION) || s.Contains(pb_Constant.CMD_ALT) || s.Contains("Alt")  || s.Contains("Option") )
+			{
+				res += "&";
+				inSceneShortcut = false;
+			}
+			else if(s.Contains(pb_Constant.CMD_SHIFT) || s.Contains("Shift") )
+			{
+				res += "#";
+				inSceneShortcut = false;
+			}
+			else
+				res += s.Trim();
+		}
+
+		if(res.Length > 0 && inSceneShortcut)
+			res = string.Format(" [{0}]", res);
+
+		return res;
 	}
 }
