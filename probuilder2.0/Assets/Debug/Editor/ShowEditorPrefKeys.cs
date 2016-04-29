@@ -7,7 +7,7 @@ using ProBuilder2.Interface;
 
 public class ShowEditorPrefKeys : EditorWindow
 {
-	[MenuItem("Tools/ProBuilder/Debug/Show Editor Prefs")]
+	[MenuItem("Tools/Debug/ProBuilder/Show Editor Prefs")]
 	public static void Init()
 	{
 		EditorWindow.GetWindow<ShowEditorPrefKeys>().ShowUtility();

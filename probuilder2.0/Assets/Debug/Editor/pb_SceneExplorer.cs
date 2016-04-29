@@ -11,7 +11,7 @@ public class pb_SceneExplorer : EditorWindow
 {
 #region Initialization
 
-	[MenuItem("Tools/ProBuilder/Debug/Scene Explorer")]
+	[MenuItem("Tools/Debug/ProBuilder/Scene Explorer")]
 	public static void MenuInitSceneExplorer()
 	{
 		EditorWindow.GetWindow<pb_SceneExplorer>(true, "Scene Explorer", true).Show();

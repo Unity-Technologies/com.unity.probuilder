@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
 
@@ -20,6 +21,15 @@ class pb_GenerateMenuItems : Editor
 		"SetEntityType"
 	};
 
+	static readonly Dictionary<string, string> MenuPriorityLookup = new Dictionary<string, string>()
+	{
+		{ "Editors",		"pb_Constant.MENU_EDITOR + 1" },
+		{ "Object", 		"pb_Constant.MENU_GEOMETRY + 2" },
+		{ "Geometry", 		"pb_Constant.MENU_GEOMETRY + 3" },
+		{ "Interaction", 	"pb_Constant.MENU_SELECTION + 1" },
+		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" }
+	};
+
 	[MenuItem("Tools/Do the thing &d")]
 	static void doit()
 	{
@@ -32,7 +42,13 @@ class pb_GenerateMenuItems : Editor
 			.Select(x => x.Replace("\\", "/"))
 				.Where(y => !IgnoreActions.Contains(GetClassName(y)));
 
-		sb.AppendLine(@"using UnityEngine;
+		sb.AppendLine(@"/**
+ *	IMPORTANT
+ *
+ *	This is a generated file. Any changes will be overwritten.
+ *	See pb_GenerateMenuItems.
+ */
+using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Actions;
 using System.Collections.Generic;
@@ -52,7 +68,7 @@ namespace ProBuilder2.EditorCommon
 
 		File.WriteAllText(GENERATED_FILE_PATH, sb.ToString());
 
-		Debug.Log(sb.ToString());
+		// Debug.Log(sb.ToString());
 	}
 
 	/**
@@ -61,16 +77,17 @@ namespace ProBuilder2.EditorCommon
 	static string GenerateMenuItemFunctions(string scriptPath)
 	{
 		string action = scriptPath.Replace("\\", "/").Replace(MENU_ACTIONS_PATH, "").Replace(".cs", "");
-
 		string category = GetActionCategory(action);
+		string menu_priority = GetMenuPriority(category);
 		string class_name = GetClassName(action);
+		string pretty_path = Regex.Replace(action, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $0");
 
 		StringBuilder sb = new StringBuilder();
 
 		/// VERIFY
 		sb.Append("\t\t[MenuItem(\"");
 		sb.Append(PB_MENU_PREFIX);
-		sb.Append(action);
+		sb.Append(pretty_path);
 		sb.Append("\", true)]");
 		sb.AppendLine("");
 
@@ -93,8 +110,11 @@ namespace ProBuilder2.EditorCommon
 		/// PERFORM
 		sb.Append("\t\t[MenuItem(\"");
 		sb.Append(PB_MENU_PREFIX);
-		sb.Append(action);
-		sb.Append("\", false)]");
+		sb.Append(pretty_path);
+		sb.Append("\", false, ");
+		sb.Append(menu_priority);
+		// sb.Append(" < < " + category + " > > ");
+		sb.Append(")]");
 		sb.AppendLine("");
 
 		sb.Append("\t\tstatic void MenuDo");
@@ -126,6 +146,16 @@ namespace ProBuilder2.EditorCommon
 	static string GetActionCategory(string scriptPath)
 	{
 		string[] split = scriptPath.Split('/');
-		return split[ System.Math.Max(0, split.Length - 1) ];
+		return split[0];
+	}
+
+	static string GetMenuPriority(string category)
+	{
+		string menu_priority;
+
+		if( !MenuPriorityLookup.TryGetValue(category, out menu_priority) )
+			menu_priority = "0";
+
+		return menu_priority;
 	}
 }

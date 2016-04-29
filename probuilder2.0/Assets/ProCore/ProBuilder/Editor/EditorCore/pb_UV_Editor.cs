@@ -182,7 +182,6 @@ public class pb_UV_Editor : EditorWindow
 
 #region Menu
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/UV Editor Window", false, pb_Constant.MENU_WINDOW + 0)]
 	public static void MenuOpenUVEditor()
 	{
 		if(pb_Editor.instance != null && pb_Editor.instance.editLevel == EditLevel.Top)

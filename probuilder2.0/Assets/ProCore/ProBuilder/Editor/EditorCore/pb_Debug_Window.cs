@@ -24,7 +24,7 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/ProBuilder Debug Window", false, pb_Constant.MENU_MISC)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/ProBuilder Debug Window", false, pb_Constant.MENU_REPAIR)]
 		public static void MenuSceneViewDebug()
 		{
 			EditorWindow.GetWindow<pb_Debug_Window>();

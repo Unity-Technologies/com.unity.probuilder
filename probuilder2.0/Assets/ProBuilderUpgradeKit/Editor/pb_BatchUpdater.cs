@@ -20,7 +20,7 @@ namespace ProBuilder2.UpgradeKit
 		/**
 		 * Iterate all scenes in project and run the updater.
 		 */
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Batch Prepare Scenes for Upgrade", false, pb_Constant.MENU_MISC)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Batch Prepare Scenes for Upgrade", false, pb_Constant.MENU_REPAIR)]
 		static void MenuBatchUpdate()
 		{
 			/// If the current scene is dirty and the user opts to cancel instead of discarding or saving,
@@ -37,7 +37,7 @@ namespace ProBuilder2.UpgradeKit
 			EditorUtility.DisplayDialog("Batch Prepare Scene for Upgrade", "A log of the upgrade has been placed in \"Assets/ProBuilderUpgradeLog.txt.\".\nPlease delete the ProCore/ProBuilder, import the new version, then run \"Batch Re-Attach ProBuilder Scripts\".", "Okay");
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Batch Re-Attach ProBuilder Scripts", false, pb_Constant.MENU_MISC)]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Upgrade/Batch Re-Attach ProBuilder Scripts", false, pb_Constant.MENU_REPAIR)]
 		static void MenuBatchReattach()
 		{
 			if(!pb_EditorSceneUtility.SaveCurrentSceneIfUserWantsTo())

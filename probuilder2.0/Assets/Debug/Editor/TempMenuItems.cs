@@ -14,20 +14,20 @@ using TriangleNet.Geometry;
 
 public class TempMenuItems : EditorWindow
 {
-	[MenuItem("Tools/Temp Menu Item &d")]
-	static void MenuInit()
-	{
-		EditorWindow.GetWindow<TempMenuItems>().ShowUtility();
-	}
+	// [MenuItem("Tools/Temp Menu Item &d")]
+	// static void MenuInit()
+	// {
+	// 	EditorWindow.GetWindow<TempMenuItems>().ShowUtility();
+	// }
 
-	EventModifiers em = EventModifiers.None;
+	// EventModifiers em = EventModifiers.None;
 
-	void OnGUI()
-	{
-		em = (EventModifiers) EditorGUILayout.EnumMaskField(em);
+	// void OnGUI()
+	// {
+	// 	em = (EventModifiers) EditorGUILayout.EnumMaskField(em);
 
-		GUILayout.Label(em.ToString() +  " : " + (int) em);
-	}
+	// 	GUILayout.Label(em.ToString() +  " : " + (int) em);
+	// }
 
 	// 	List<pb_Shortcut> shortcuts = pb_Shortcut.DefaultShortcuts().ToList();
 	// 	Debug.Log(shortcuts.ToString("\n"));

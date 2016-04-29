@@ -5,25 +5,25 @@ using ProBuilder2.Interface;
 
 public class pb_Dimensions_Overlay : pb_ISceneEditor
 {
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Object Info/Hide Dimensions Overlay", true, pb_Constant.MENU_WINDOW + 11)]
+	[MenuItem("Tools/Dimensions Overlay/Hide", true, pb_Constant.MENU_EDITOR)]
 	public static bool HideVerify()
 	{
 		return pb_Dimensions_Overlay.instance != null;
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Object Info/Hide Dimensions Overlay", false, pb_Constant.MENU_WINDOW + 11)]
+	[MenuItem("Tools/Dimensions Overlay/Hide", false, pb_Constant.MENU_EDITOR)]
 	public static void Hide()
 	{
 		pb_Dimensions_Overlay.instance.Close();
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Object Info/Show Dimensions Overlay", true, pb_Constant.MENU_WINDOW + 10)]
+	[MenuItem("Tools/Dimensions Overlay/Show", true, pb_Constant.MENU_EDITOR)]
 	public static bool InitVerify()
 	{
 		return pb_Dimensions_Overlay.instance == null;
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Object Info/Show Dimensions Overlay", false, pb_Constant.MENU_WINDOW + 10)]
+	[MenuItem("Tools/Dimensions Overlay/Show", false, pb_Constant.MENU_EDITOR)]
 	public static void Init()
 	{
 		pb_ISceneEditor.Create<pb_Dimensions_Overlay>();

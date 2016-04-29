@@ -26,7 +26,7 @@ namespace ProBuilder2.Test
 			}
 		}
 
-		[MenuItem("Tools/ProBuilder/Test/Subdivide/Vertex Count Test")]
+		// [MenuItem("Tools/ProBuilder/Debug/Test/Subdivide/Vertex Count Test")]
 		[Test]
 		public static void VertexCountTest()
 		{
@@ -46,7 +46,7 @@ namespace ProBuilder2.Test
 			}
 		}
 
-		[MenuItem("Tools/ProBuilder/Test/Subdivide/Empty Channel Test")]
+		// [MenuItem("Tools/ProBuilder/Debug/Test/Subdivide/Empty Channel Test")]
 		[Test]
 		public static void EmptyChannelTest()
 		{

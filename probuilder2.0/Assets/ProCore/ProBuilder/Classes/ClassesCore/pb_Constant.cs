@@ -148,24 +148,18 @@ public static class pb_Constant
 
 	// First Tier
 	public const int MENU_ABOUT = 0;
-	public const int MENU_WINDOW = 100;
-	public const int MENU_EDITOR = 200;
-	public const int MENU_SELECTION = 300;
-	public const int MENU_GEOMETRY = 400;
-	public const int MENU_UV = 410;
-	public const int MENU_ACTIONS = 610;
-	public const int MENU_REPAIR = 620;
-	public const int MENU_TOOLS = 630;
-	public const int MENU_VERTEX_COLORS = 740;
-	public const int MENU_MATERIAL_COLORS = 750;
-	public const int MENU_MISC = 850;
+	public const int MENU_EDITOR = 100;
 
-	// Second Tier
-	public const int MENU_GEOMETRY_FACE = 0;
-	public const int MENU_GEOMETRY_EDGE = 20;
-	public const int MENU_GEOMETRY_VERTEX = 40;
-	public const int MENU_GEOMETRY_USEINFERRED = 80;
-	public const int MENU_GEOMETRY_OBJECT = 100;
+	public const int MENU_SELECTION 		= 200;
+	public const int MENU_GEOMETRY 			= 200;
+
+	public const int MENU_ACTIONS 			= 300;
+
+	public const int MENU_MATERIAL_COLORS 	= 400;
+	public const int MENU_VERTEX_COLORS	 	= 400;
+
+	public const int MENU_REPAIR 			= 600;
+	public const int MENU_MISC 				= 600;
 
 
 	public static Vector3[] VERTICES_CUBE = new Vector3[] {

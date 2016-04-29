@@ -13,49 +13,28 @@ public class pb_MenuItems : EditorWindow
 
 #region WINDOW
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/About", false, 0)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/About", false, pb_Constant.MENU_ABOUT)]
 	public static void MenuInitAbout()
 	{
 		pb_AboutWindow.Init("Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt", true);
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, 0)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, pb_Constant.MENU_ABOUT)]
 	public static void MenuInitDocumentation()
 	{
 		Application.OpenURL(DOCUMENTATION_URL);
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/" + pb_Constant.PRODUCT_NAME + " Window", false, pb_Constant.MENU_WINDOW + 0)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/" + pb_Constant.PRODUCT_NAME + " Window", false, pb_Constant.MENU_EDITOR)]
 	public static void OpenEditorWindow()
 	{
 		pb_Editor.MenuOpenWindow();
-	}
-
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Shape Window %#k", false, pb_Constant.MENU_WINDOW + 2)]
-	public static void ShapeMenu()
-	{
-		EditorWindow.GetWindow(typeof(pb_Geometry_Interface), true, "Shape Menu", true);
-	}
-
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Color Palette", false, pb_Constant.MENU_WINDOW + 3)]
-	public static void InitVertexColorEditor()
-	{
-		// bool openInDockableWindow = !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
-		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>(true, "Vertex Colors", true);
-	}
-
-	/**
-	 * Finds a pb_Editor window (or makes one), then closes it.
-	 */
-	public static void ForceCloseEditor()
-	{
-		EditorWindow.GetWindow<pb_Editor>().Close();
 	}
 #endregion
 
 #region ProBuilder/Edit
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Editor/Lightmap Settings Window", false, pb_Constant.MENU_EDITOR + 3)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Lightmap Settings Tool", false, pb_Constant.MENU_REPAIR)]
 	public static void LightmapWindowInit()
 	{
 		pb_Lightmap_Editor.Init(editor);

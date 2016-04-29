@@ -16,7 +16,7 @@ namespace ProBuilder2.Common
 		static float RandFloat(float min, float max) { return (float) r.NextDouble() * (max-min) + min; }
 		static bool RandBool() { return r.Next(0,100) % 2 == 0; }
 
-		[MenuItem("Tools/ProBuilder/Debug/Spawn Random Objects")]
+		[MenuItem("Tools/Debug/ProBuilder/Spawn Random Objects")]
 		static void Doit()
 		{
 			for(int i = 0; i < OBJ_COUNT; i++)
