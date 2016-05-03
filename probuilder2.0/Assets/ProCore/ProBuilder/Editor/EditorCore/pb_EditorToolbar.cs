@@ -40,7 +40,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			actions = pb_EditorToolbarLoader.GetActions();
+			actions = pb_EditorToolbarLoader.GetActions(true);
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
 			EditorApplication.update -= Update;
@@ -213,7 +213,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			Event e = Event.current;
 			bool forceRepaint = false;
-					
+
 			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden() && (!isIconMode || x.icon != null) );
 
 			// if icon mode and no actions are found, that probably means icons failed to load.  revert to text mode.

@@ -47,10 +47,7 @@ namespace ProBuilder2.Actions
 
 		public override MenuActionState AltState()
 		{
-			if(	IsEnabled() )
-				return MenuActionState.VisibleAndEnabled;
-
-			return MenuActionState.Hidden;
+			return MenuActionState.VisibleAndEnabled;
 		}
 
 		public override void OnSettingsGUI()

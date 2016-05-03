@@ -331,7 +331,8 @@ public class pb_Editor : EditorWindow
 	{
 		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
-		if(iconGui != null) GameObject.DestroyImmediate(iconGui);
+		if(iconGui != null)
+			GameObject.DestroyImmediate(iconGui);
 		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
 		iconGui.InitWindowProperties(this);
 	}
