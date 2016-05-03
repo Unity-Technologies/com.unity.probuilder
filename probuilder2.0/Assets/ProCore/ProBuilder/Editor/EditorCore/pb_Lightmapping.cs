@@ -16,16 +16,7 @@ public static class pb_Lightmapping
 		if(pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) && !forceUpdate)
 			return;
 
-		// SetUVParams(8f, 15f, 15f, 20f);
-		UnwrapParam param;
-		UnwrapParam.SetDefaults(out param);
-		
-		param.angleError = Mathf.Clamp(pb.angleError, 1f, 75f) * .01f;
-		param.areaError  = Mathf.Clamp(pb.areaError , 1f, 75f) * .01f;
-		param.hardAngle  = Mathf.Clamp(pb.hardAngle , 0f, 180f);
-		param.packMargin = Mathf.Clamp(pb.packMargin, 1f, 64) * .001f;
-
-		Unwrapping.GenerateSecondaryUVSet(pb.GetComponent<MeshFilter>().sharedMesh, param);
+		Unwrapping.GenerateSecondaryUVSet(pb.GetComponent<MeshFilter>().sharedMesh);
 
 		EditorUtility.SetDirty(pb);
 	}

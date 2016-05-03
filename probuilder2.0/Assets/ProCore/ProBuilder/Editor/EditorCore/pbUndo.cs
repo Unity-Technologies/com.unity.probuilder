@@ -47,11 +47,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RecordObjects(Object[] objs, string msg)
 		{
-			#if PB_DEBUG
-			Debug.Log("RecordObjects()  ->  " + msg);
-			#endif
-			if(objs == null) return;
-			
+			if(objs == null) return;		
 			Undo.RecordObjects(objs, msg);
 		}
 
@@ -60,9 +56,6 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RegisterCompleteObjectUndo(Object[] objs, string msg)
 		{
-			#if PB_DEBUG
-			Debug.Log("RegisterCompleteObjectUndo()  ->  " + msg);
-			#endif
 			Undo.RegisterCompleteObjectUndo(objs, msg);
 		}
 
@@ -71,17 +64,11 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void DestroyImmediate(Object obj, string msg)
 		{
-			#if PB_DEBUG
-			Debug.Log("DestroyImmediate()  ->  " + msg);
-			#endif
 			Undo.DestroyObjectImmediate(obj);
 		}
 
 		public static void RegisterCreatedObjectUndo(Object obj, string msg)
 		{
-			#if PB_DEBUG
-			Debug.Log("RegisterCreatedObjectUndo()  ->  " + msg);
-			#endif
 			Undo.RegisterCreatedObjectUndo(obj, msg);
 		}
 	}

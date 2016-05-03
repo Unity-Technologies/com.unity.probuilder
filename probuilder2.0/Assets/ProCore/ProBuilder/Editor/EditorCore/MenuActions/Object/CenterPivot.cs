@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_MoveToCenter"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override bool isProOnly { get { return true; } }
+		public override bool isProOnly { get { return false; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

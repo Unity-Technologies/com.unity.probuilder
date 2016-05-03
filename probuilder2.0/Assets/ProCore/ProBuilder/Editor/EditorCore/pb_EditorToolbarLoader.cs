@@ -79,6 +79,7 @@ namespace ProBuilder2.EditorCommon
 				new CenterPivot(),
 				new ConformObjectNormals(),
 				new TriangulateObject(),
+				new GenerateUV2(),
 
 				// All
 				new SetPivotToSelection(),

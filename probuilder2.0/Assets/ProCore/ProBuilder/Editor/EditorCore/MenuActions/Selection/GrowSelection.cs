@@ -27,7 +27,6 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 					pb_Menu_Commands.VerifyGrowSelection(selection);
 		}
 
-
 		public override MenuActionState AltState()
 		{
 			if(	IsEnabled() &&

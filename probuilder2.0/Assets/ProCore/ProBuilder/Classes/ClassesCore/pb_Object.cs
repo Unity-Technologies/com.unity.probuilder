@@ -594,6 +594,7 @@ public class pb_Object : MonoBehaviour
 			m.vertices = _vertices;
 		}
 
+		Debug.Log("uv2 = null");
 		m.uv2 = null;
 
 		int[][] tris;
@@ -778,7 +779,7 @@ public class pb_Object : MonoBehaviour
 			case 0:
 			case 1:
 			default:
-				msh.uv = uvs.Cast<Vector2>().ToArray();
+				_uv = uvs.Cast<Vector2>().ToArray();
 				break;
 
 			case 2:
@@ -893,6 +894,7 @@ public class pb_Object : MonoBehaviour
 
 		_uv = newUVs;
 		msh.uv = newUVs;
+		
 #if UNITY_5_3
 		if(hasUv3) msh.SetUVs(3, uv3);
 		if(hasUv4) msh.SetUVs(4, uv4);

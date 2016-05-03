@@ -89,8 +89,13 @@ namespace ProBuilder2.EditorCommon
 		StringBuilder sb = new StringBuilder();
 
 		object o = System.Activator.CreateInstance( System.Type.GetType("ProBuilder2.Actions." + class_name) );
-		PropertyInfo pi = typeof(pb_MenuAction).GetProperty("tooltip");
-		string shortcut = GetMenuFormattedShortcut( ((pb_TooltipContent)pi.GetValue(o, null)).shortcut );
+		PropertyInfo hasMenuEntryProperty = typeof(pb_MenuAction).GetProperty("hasMenuEntry");
+
+		if( (bool)hasMenuEntryProperty.GetValue(o, null) == false )
+			return "";
+
+		PropertyInfo tooltipProperty = typeof(pb_MenuAction).GetProperty("tooltip");
+		string shortcut = GetMenuFormattedShortcut( ((pb_TooltipContent)tooltipProperty.GetValue(o, null)).shortcut );
 
 		/// VERIFY
 		sb.Append("\t\t[MenuItem(\"");

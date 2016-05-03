@@ -136,6 +136,11 @@ namespace ProBuilder2.EditorCommon
 		public virtual string menuTitle { get { return tooltip.title; } }
 
 		/**
+		 *	True if this class should have an entry built into the hardware menu.
+		 */
+		public virtual bool hasMenuEntry { get { return true; } }
+
+		/**
 		 *	Is the current mode and selection valid for this action?
 		 */
 		public MenuActionState ActionState()
