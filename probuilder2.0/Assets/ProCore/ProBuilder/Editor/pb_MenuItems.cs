@@ -32,15 +32,6 @@ public class pb_MenuItems : EditorWindow
 	}
 #endregion
 
-#region ProBuilder/Edit
-
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Lightmap Settings Tool", false, pb_Constant.MENU_REPAIR)]
-	public static void LightmapWindowInit()
-	{
-		pb_Lightmap_Editor.Init(editor);
-	}
-#endregion
-
 #region VERTEX COLORS
 
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", true, pb_Constant.MENU_VERTEX_COLORS)]

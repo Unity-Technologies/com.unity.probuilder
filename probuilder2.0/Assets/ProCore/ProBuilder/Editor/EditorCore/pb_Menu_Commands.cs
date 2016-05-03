@@ -68,7 +68,6 @@ namespace ProBuilder2.EditorCommon
 			if( pbMeshOps.CombineObjects(selected, out pb) )
 			{
 				pb_Editor_Utility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
-				pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
 
 				pb.Optimize();
 

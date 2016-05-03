@@ -420,7 +420,6 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-			pb_Lightmap_Editor.SetObjectUnwrapParamsToDefault(pb);
 			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
 			pb_Editor_Utility.ScreenCenter( pb.gameObject );
 			pb.Optimize();

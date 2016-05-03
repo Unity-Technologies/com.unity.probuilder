@@ -219,12 +219,6 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private Color[] 					_colors;
 
-	// UV2 generation params
-	public float angleError = 8f;
-	public float areaError = 15f;
-	public float hardAngle = 88f;
-	public float packMargin = 20f;
-
 	public Vector3 						previousTransform = new Vector3(0f, 0f, 0f);
 	public bool 						userCollisions = false;	/// If false, ProBuilder will automatically create and scale colliders.
 	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
