@@ -1305,7 +1305,7 @@ namespace ProBuilder2.EditorCommon
 						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(pb_Object pb_child in pb.transform.GetComponentsInChildren<pb_Object>())
-						pb_child.Verify();
+						pb_Editor_Utility.VerifyMesh(pb_child);
 				}
 
 				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Face");

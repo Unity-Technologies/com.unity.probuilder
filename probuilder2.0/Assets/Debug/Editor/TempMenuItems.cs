@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 using System.Linq;
+using System.Text;
+using System.Reflection;
 
 using TMesh = TriangleNet.Mesh;
 using UMesh = UnityEngine.Mesh;
@@ -14,11 +16,39 @@ using TriangleNet.Geometry;
 
 public class TempMenuItems : EditorWindow
 {
-	// [MenuItem("Tools/Temp Menu Item &d")]
-	// static void MenuInit()
-	// {
-	// 	EditorWindow.GetWindow<TempMenuItems>().ShowUtility();
-	// }
+	[MenuItem("Tools/Temp Menu Item &d")]
+	static void MenuInit()
+	{
+		// EditorWindow.GetWindow<TempMenuItems>().ShowUtility();
+
+		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		{
+			Debug.Log(pb.GetHashCode() + "\n" + pb.id);
+
+			// SerializedObject so = new SerializedObject(pb.gameObject);
+
+			// StringBuilder sb = new StringBuilder();
+
+			// sb.AppendLine(pb.name);
+
+			// MethodInfo getInstanceHash = typeof(LightmapEditorSettings).GetMethod("GetInstanceHash", BindingFlags.NonPublic | BindingFlags.Static);
+			// MethodInfo getGeometryHash = typeof(LightmapEditorSettings).GetMethod("GetGeometryHash", BindingFlags.NonPublic | BindingFlags.Static);
+			// MethodInfo getInputSystemHash = typeof(LightmapEditorSettings).GetMethod("GetInputSystemHash", BindingFlags.NonPublic | BindingFlags.Static);
+
+			// object[] res = new object[2] { pb.GetComponent<MeshRenderer>(), null };
+
+			// if( getInstanceHash != null && (bool) getInstanceHash.Invoke(null, res) )
+			// 	sb.AppendLine("Instance Hash: " + (Hash128) res[1]);
+
+			// if( getGeometryHash != null && (bool) getGeometryHash.Invoke(null, res) )
+			// 	sb.AppendLine("Geometry Hash: " + (Hash128) res[1]);
+
+			// if( getInputSystemHash != null && (bool) getInputSystemHash.Invoke(null, res) )
+			// 	sb.AppendLine("Input Hash: " + (Hash128) res[1]);
+
+			// Debug.Log(sb.ToString());
+		}
+	}
 
 	// EventModifiers em = EventModifiers.None;
 

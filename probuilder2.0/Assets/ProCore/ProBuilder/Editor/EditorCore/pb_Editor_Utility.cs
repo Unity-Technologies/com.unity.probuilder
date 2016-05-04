@@ -392,9 +392,9 @@ namespace ProBuilder2.EditorCommon
 				 * If the latter, we need to clean up the old mesh.  If the former,
 				 * the old mesh needs to *not* be destroyed.
 				 */
-				int meshNo = -1;
 				if(oldMesh)
 				{
+					int meshNo = -1;
 					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
 					GameObject go = null;
@@ -404,16 +404,23 @@ namespace ProBuilder2.EditorCommon
 
 					if(go == null)
 					{
-						GameObject.DestroyImmediate(oldMesh);
+						// Debug.Log("scene reloaded - false positive.");
+						// GameObject.DestroyImmediate(oldMesh);
+						pb.msh.name = "pb_Mesh" + pb.id;
+					}
+					else
+					{
+						// Debug.Log("Duplicate mesh");
+						pb.MakeUnique();
+						pb.Optimize();
 					}
 				}
 				else
 				{
 					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
+					pb.Optimize();
 				}
-
-				pb.Optimize();
 			}
 
 			return reason;

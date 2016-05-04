@@ -531,17 +531,14 @@ public class pb_Object : MonoBehaviour
 		if(msh == null)
 		{
 			// attempt reconstruction
-			if(_vertices == null)
-			{
-				Debug.LogError("Vertex array is null, cannot rebuild this mesh!");
-
-				// // reconstruct failed.  this shouldn't happen, but sometimes it does?
-				// DestroyImmediate(this.gameObject);
-			}
-			else
+			try
 			{
 				ToMesh();
 				Refresh();
+			}
+			catch(System.Exception e)
+			{
+				Debug.LogError("Failed rebuilding null pb_Object.  Cached mesh attributes are invalid or missing.\n" + e.ToString());
 			}
 
 			return MeshRebuildReason.Null;
@@ -551,11 +548,7 @@ public class pb_Object : MonoBehaviour
 		int.TryParse(msh.name.Replace("pb_Mesh", ""), out meshNo);
 
 		if(meshNo != id)
-		{
-			MakeUnique();
 			return MeshRebuildReason.InstanceIDMismatch;
-		}
-
 
 		return msh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
 	}
@@ -588,7 +581,6 @@ public class pb_Object : MonoBehaviour
 			m.vertices = _vertices;
 		}
 
-		Debug.Log("uv2 = null");
 		m.uv2 = null;
 
 		int[][] tris;
@@ -634,7 +626,7 @@ public class pb_Object : MonoBehaviour
 			SetUV(u);
 		}
 
-		msh = pbUtil.DeepCopyMesh(msh);
+		msh = new Mesh();
 		
 		ToMesh();
 		Refresh();
