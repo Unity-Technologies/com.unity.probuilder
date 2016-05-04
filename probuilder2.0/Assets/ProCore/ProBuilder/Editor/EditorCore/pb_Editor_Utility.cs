@@ -28,6 +28,37 @@ namespace ProBuilder2.EditorCommon
 		private static EditorWindow notifWindow;
 		private static bool notifDisplayed = false;
 
+		public delegate void OnObjectCreated(pb_Object pb);
+
+		/**
+		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
+		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't 
+		 * 	fire this callback.
+		 *
+		 *	\sa pb_Editor_Utility.InitObjectFlags
+		 */
+		public static OnObjectCreated onObjectCreated = null;
+
+		/**
+		 *	Add a listener to the multicast onObjectCreated delegate.
+		 */
+		public static void AddOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
+		{
+			if(onObjectCreated == null)
+				onObjectCreated = onProBuilderObjectCreated;
+			else
+				onObjectCreated += onProBuilderObjectCreated;
+		}
+
+		/**
+		 *	Remove a listener from the onObjectCreated delegate.
+		 */
+		public static void RemoveOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
+		{
+			if(onObjectCreated != null)
+				onObjectCreated -= onProBuilderObjectCreated;
+		}
+
 		/**
 		 * Show a timed notification in the SceneView window.
 		 */
@@ -403,8 +434,10 @@ namespace ProBuilder2.EditorCommon
 		{
 			ColliderType col = pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 			EntityType et = pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
-
 			InitObjectFlags(pb, col, et);
+
+			if( onObjectCreated != null )
+				onObjectCreated(pb);
 		}
 
 		public static void InitObjectFlags(pb_Object pb, ColliderType colliderType, EntityType entityType)
