@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <title>What Upgrade Procedure Should I Follow? - ProBuilder Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../css/alerts.css" rel="stylesheet">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "What Upgrade Procedure Should I Follow?";
+    var mkdocs_page_input_path = "upgrading\index.md";
+    var mkdocs_page_url = "/upgrading/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ProBuilder Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Upgrading</span></li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">What Upgrade Procedure Should I Follow?</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#standard">Standard</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#prototype">Prototype</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#dll-rename">DLL Rename</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#upgrade-kit">Upgrade Kit</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../troubleshooting/">Troubleshooting</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ProBuilder Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Upgrading &raquo;</li>
+        
+      
+    
+    <li>What Upgrade Procedure Should I Follow?</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <div class="alert-box warning">
+<h2>Important!</h2>
+The upgrade process is <b>not</b> reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.
+</div>
+
+<p>If you are using <strong>ProBuilder 2.4.7</strong> or later (you can check in the <strong>Tools &gt; ProBuilder &gt; About</strong> window) you can skip this entirely and just import the new version.</p>
+<p>If you're running an older version of <strong>ProBuilder</strong> you'll need to follow a slightly more complex path.  <strong>Make a backup of your entire project before proceeding!</strong></p>
+<p>Depending on the version of ProBuilder you currently have installed, the process differs.  Use this chart to decide which guide you should follow.</p>
+<table>
+<thead>
+<tr>
+<th>Currently Using</th>
+<th>Upgrading To</th>
+<th>Process</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None (no ProBuilder install)</td>
+<td>ProBuilder Basic</td>
+<td><a href="#standard">Standard</a></td>
+</tr>
+<tr>
+<td>None (no ProBuilder install)</td>
+<td>ProBuilder Advanced</td>
+<td><a href="#standard">Standard</a></td>
+</tr>
+<tr>
+<td>ProBuilder Basic 2.4.8+</td>
+<td>ProBuilder Basic 2.4.8+</td>
+<td><a href="#standard">Standard</a></td>
+</tr>
+<tr>
+<td>ProBuilder Advanced 2.4.8+</td>
+<td>ProBuilder Advanced 2.4.8+</td>
+<td><a href="#standard">Standard</a></td>
+</tr>
+<tr>
+<td>ProBuilder 2.1.0 - 2.3.x</td>
+<td>ProBuilder Advanced</td>
+<td><a href="#upgradekit">Upgrade Kit</a></td>
+</tr>
+<tr>
+<td>ProBuilder 2.4.0 - 2.4.7</td>
+<td>ProBuilder Advanced</td>
+<td><a href="#dll_rename">DLL Rename Upgrade</a></td>
+</tr>
+<tr>
+<td>Prototype 2.4 - 2.6</td>
+<td>ProBuilder Basic/Advanced</td>
+<td><a href="#prototype">Prototype Upgrade</a></td>
+</tr>
+<tr>
+<td>ProBuilder Source (any version)</td>
+<td>ProBuilder (any version)</td>
+<td><a href="#upgradekit">Upgrade Kit</a></td>
+</tr>
+<tr>
+<td>ProBuilder (any version)</td>
+<td>ProBuilder Source (any version)</td>
+<td><a href="#upgradekit">Upgrade Kit</a></td>
+</tr>
+</tbody>
+</table>
+<p><a name="standard"></a></p>
+<h1 id="standard">Standard</h1>
+<p>If you're upgrading from version 2.4.7 or higher (either ProBuilder Basic or ProBuilder Advanced), updating a ProBuilder project is as simple as importing the new package.  </p>
+<p>There are some circumstances where this will fail however, so always be sure to make a backup prior to upgrading your project.  In the event that simply importing the new package fails, follow this the <a href="#dll_rename">DLL Rename Upgrade</a> guide.</p>
+<p><a name="prototype"></a></p>
+<h1 id="prototype">Prototype</h1>
+<p>If you're using <strong>Prototype</strong> (the precursor to **ProBuilder Basic) you'll need to perform one additional step prior to using the <a href="#dll_rename">DLL Rename</a> guide.</p>
+<ul>
+<li>Rename <code>ProCore/Prototype</code> folder to <code>ProCore/ProBuilder</code></li>
+<li>Follow <a href="#dll_rename">DLL Rename Upgrade</a></li>
+</ul>
+<p><a name="dll_rename"></a></p>
+<h1 id="dll-rename">DLL Rename</h1>
+<div class="alert-box warning">
+<h2>Important!</h2>
+As of Unity 5.3 this guide no longer applies.  Use the <a href="standard.html">Standard</a> upgrade procedure.
+</div>
+
+<p><a href="https://www.youtube.com/watch?v=mpluzo9Zrxs&amp;feature=youtu.be">Video tutorial</a></p>
+<ul>
+<li>Import the new ProBuilder unity package.  Make sure all items are toggled in the Importing Package window.</li>
+<li>After import, close the ProBuilder About Window with this version's changelog.</li>
+<li>There are now errors in the Console.  This is expected.</li>
+<li>Navigate to the <code>ProCore &gt; ProBuilder &gt; Classes</code> folder.</li>
+<li>Right-Click (Context-Click Mac) the <code>ProBuilderCore-Unity5</code> file and select <code>Show In Explorer</code>.</li>
+<li>In the File Explorer (or Finder, on Mac), delete the <code>ProBuilderCore-Unity5</code> and <code>ProBuilderMeshOps-Unity5</code></li>
+<li>Next (still in the File Explorer) rename <code>ProBuilderCore-Unity6</code> and <code>ProBuilderMeshOps-Unity6</code> to <code>ProBuilderCore-Unity5</code> and <code>ProBuilderMeshOps-Unity5</code>.  If visible meta files are enabled, don't worry about changing their file names.  Unity will take care of that for you.</li>
+<li>Staying in the File Explorer, navigate one folder up and into the <code>Editor</code> folder.</li>
+<li>Follow the same procedure with the <code>ProBuilderEditor-Unity5</code> files.  Delete <code>ProBuilderEditor-Unity5</code> then rename <code>ProBuilderEditor-Unity6</code> to <code>ProBuilderEditor-Unity5</code>.</li>
+<li>Open Unity again.  The project will recompile.</li>
+<li>Depending on what version of ProBuilder you are upgrading from, you may see some errors in the Console from deprecated scripts.  Just click the error to find the file, then delete it (making sure that it is in the ProBuilder folder, don't delete any of your own scripts!).<ul>
+<li>Common deprecated files to delete:<ul>
+<li><code>ProBuilder &gt; Editor &gt; MenuItems &gt; File &gt; pb_SaveLoad</code></li>
+<li><code>ProBuilder &gt; Editor &gt; MenuItems &gt; Tools &gt; pb_VertexPainter</code></li>
+<li><code>ProBuilder &gt; Editor &gt; MenuItems &gt; Tools &gt; pb_MaterialSelectionTool</code></li>
+<li><code>ProCore &gt; Shared</code> (entire folder is deprecated)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Done!</li>
+</ul>
+<p><a name="upgradekit"></a></p>
+<h1 id="upgrade-kit">Upgrade Kit</h1>
+<p>Follow these steps if you are upgrading a ProBuilder project from a version less than 2.4 (Tools / ProBuilder / About to check your current version).  If you are switching from the Source version of ProBuilder to the DLL version this guide also applies.</p>
+<p><a href="https://www.youtube.com/watch?v=O-Dz0Q3KgCs">Youtube Tutorial</a></p>
+<p><a href="http://parabox.co/probuilder/upgrade.html">Upgrade Kit Download</a></p>
+<ul>
+<li><strong>Back up your project</strong></li>
+<li>Import the ProBuilderUpgradeKit package before importing the new version of ProBuilder (downloadable in the User Toolbox, or bundled in the ProBuilder package).</li>
+<li>Run <code>Tools &gt; ProBuilder &gt; Upgrade &gt; Batch Prepare Scenes for Upgrade</code>.</li>
+<li>Delete the ProBuilder folder, and optionally the ProCore &gt; Shared folder (if you delete this, make sure to also update ProGrids).</li>
+<li>Import the new ProBuilder package.</li>
+<li>Run <code>Tools &gt; ProBuilder &gt; Upgrade &gt; Batch Re-attach ProBuilder Scripts</code>.</li>
+<li>Delete ProBuilderUpgradeKit folder.</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>
