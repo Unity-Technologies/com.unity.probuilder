@@ -12,6 +12,9 @@ probuilder-staging/
 visual studio/*/*/bin/
 visual studio/*/*/obj/
 
+# generated
+docs/site
+
 probuilder2.0/*sublime-workspace
 probuilder2.0/Assets/ShaderForge*
 probuilder2.0/Assets/Debug/UVee*
