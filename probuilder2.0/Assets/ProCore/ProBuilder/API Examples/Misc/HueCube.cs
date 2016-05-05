@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR || UNITY_STANDALONE
+using UnityEngine;
 using System.Collections;
 using ProBuilder2.Common;
 using System.Collections.Generic;
@@ -106,3 +107,4 @@ namespace ProBuilder2.Examples
 		}
 	}
 }
+#endif
