@@ -36,3 +36,14 @@
   .alert-box .close {
     font-size: 2rem;
     line-height: 1.25rem; }
+
+.sub-header {
+  color:#2980B9;
+  padding-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+img {
+  padding-top: 4px;
+  padding-bottom: 16px;
+}
