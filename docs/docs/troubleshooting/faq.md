@@ -1,6 +1,10 @@
-## Error building Player: UnityException: Failed to run serialization weaver with command
+## Error building Player
 
-To get things compiling again, you just need to mark the ProBuilder DLLs as Editor only.
+Usually seen with console errors:
+
+- `Error building Player: UnityException: Failed to run serialization weaver with command`
+
+To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.
 
 > This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.
 

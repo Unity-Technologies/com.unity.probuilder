@@ -1,63 +1,30 @@
 site_name: ProBuilder Documentation
 theme: readthedocs
+
 pages:
+
 - Home: index.md
 
-- Upgrading: 
+- Fundamentals: general/fundamentals.md
+
+- Toolbar:
+  - Overview: toolbar/overview.md
+  - Editors: toolbar/editors.md
+  - Selection Tools: toolbar/selection.md
+  - Geometry Actions:
+    - toolbar/actions/all.md
+    - toolbar/actions/object.md
+    - toolbar/actions/face.md
+    - toolbar/actions/edge.md
+    - toolbar/actions/vertex.md
+
+- Troubleshooting:
+  - troubleshooting/faq.md
+
+- Upgrading:
   - What Upgrade Procedure Should I Follow?: upgrading/overview.md
   - Standard: upgrading/standard.md
   - DLL Rename: upgrading/dllrename.md
   - Upgrade Kit: upgrading/upgradekit.md
   - Prototype: upgrading/prototypeupgrade.md
 
-- Troubleshooting: troubleshooting/troubleshooting.md
-
-# - Toolbar:
-#   - Overview: toolbar/overview.md
-#   - Icon Toolbar: toolbar/toolbar_icons.md
-#   - Text Toolbar: toolbar/toolbar_text.md
-
-# - Editors:
-#   - Overview: editors/overview.md
-#   - Shape Editor: editors/ShapeEditor.md
-#   - Material Editor: editors/MaterialEditor.md
-#   - UV Editor: editors/UVEditor.md
-#   - Vertex Colors: editors/VertexColors.md
-#   - Smoothing Editor: editors/SmoothingEditor.md
-#   - Mirror Objects: editors/MirrorObjects.md
-
-# - Interaction:
-#   - interaction/SelectBackFaces.md
-#   - interaction/SetHandleAlignment.md
-
-# - Selection:
-#   - selection/GrowSelection.md
-#   - selection/ShrinkSelection.md
-#   - selection/InvertSelection.md
-#   - selection/SelectEdgeRing.md
-#   - selection/SelectEdgeLoop.md
-
-# - Actions:
-#   - actions/MergeObjects.md
-#   - actions/FlipObjectNormals.md
-#   - actions/SubdivideObject.md
-#   - actions/FreezeTransform.md
-#   - actions/ConformObjectNormals.md
-#   - actions/TriangulateObject.md
-#   - actions/SetPivotToSelection.md
-#   - actions/ExtrudeFaces.md
-#   - actions/ConformFaceNormals.md
-#   - actions/FlipFaceNormals.md
-#   - actions/FlipFaceEdge.md
-#   - actions/DeleteFaces.md
-#   - actions/DetachFaces.md
-#   - actions/MergeFaces.md
-#   - actions/SubdivideFaces.md
-#   - actions/ExtrudeEdges.md
-#   - actions/BridgeEdges.md
-#   - actions/ConnectEdges.md
-#   - actions/InsertEdgeLoop.md
-#   - actions/ConnectVertices.md
-#   - actions/WeldVertices.md
-#   - actions/CollapseVertices.md
-#   - actions/SplitVertices.md
