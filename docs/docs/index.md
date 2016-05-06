@@ -1,4 +1,4 @@
-![procorebanner](images/procore_banner.png)
+﻿![procorebanner](images/procore_banner.png)
 
 ## What is ProBuilder?
 
@@ -34,6 +34,5 @@ Once you have registered (by forwarding your purchase invoice to [contact@procor
 - [Tutorial Videos](http://www.procore3d.com/videos)
 - [Support and Troubleshooting](http://www.procore3d.com/forum)
 
-**[Newsletter](http://eepurl.com/waKUX):** Subscribe to receive info on ProCore tools via email.
 
 **[Video Tutorials](http://www.procore3d.com/probuilder):** Take a short break to watch the video tutorials before using ProBuilder.  You’ll be an expert in no time!
