@@ -1,28 +1,28 @@
-﻿![procorebanner](images/procore_banner.png)
-
+﻿
 ## What is ProBuilder?
 
-[Video Overview](http://www.youtube.com/watch?v=Nomx1LNk7r8) 
+**ProBuilder** is a 3D modeling tool built directly into the Unity editor, useful for rapid prototyping, level design, props, volumes/zones, and other custom geometry.
 
-**ProBuilder** is an editor extension that enables you to seamlessly build, edit, and texture custom geometry, directly in the Unity editor, with an extremely fluid and intuitive workflow. It's a mixture of old-school "BSP-style construction", and full-featured 3D modeling and UV Unwrapping toolsets.
+Video: [ProBuilder Intro](http://www.youtube.com/watch?v=Nomx1LNk7r8)
 
 ## ProBuilder Advanced vs. ProBuilder Basic
 
-**ProBuilder Basic** is the core of ProBuilder, streamlined to the necessities for speed and simplicity.  Using Basic, you can quickly build great looking early-stage structures, props, walls, bunkers, vehicles, virtually anything at all. Test and tweak instantly, then replace with final models once your artists catch up- if they can!  ProBuilder Basic includes the ability to quickly colorize faces without adding a single draw call, so you can designate team areas, or just get creative with colorful dev textures.
+**ProBuilder Basic** is entirely free, and includes the core ProBuilder features for building and editing basic geometry. [Download ProBuilder Basic](http://u3d.as/62y)
+
+**ProBuilder Advanced** is a paid extension that adds "advanced" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization. [Purchase ProBuilder Advanced](http://u3d.as/30b)
 
 <div class="alert-box warning">
 <h2>Important!</h2>
-This documentation encompasses <i>all</i> features, actions, and tools available in ProBuilder Advanced.  ProBuilder Basic features a subset of these.  If you are using ProBuilder Basic, please view the full <a href="@todo">Advanced vs Basic Comparision</a>.  ProBuilder Advanced tools will be shown with a blue tint in the menu.
+This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full <a href="@todo">Advanced vs Basic Comparision</a>.
 </div>
 
-## Access source files, beta builds, and online download links
+## Optional: Register for access to Source Files and Online Downloads
 
-Once you have registered (by forwarding your purchase invoice to [contact@procore3d.com](mailto:contact@procore3d.com)) you can:
+1. Forward your Unity Asset Store invoice to [register@procore3d.com](mailto:register@procore3d.com)
+2. Create an account on the [User Toolbox](http://www.procore3d.com/usertoolbox) (if you don't already have one)
+3. Once we have verified the invoice, the latest downloads will always be available via your [User Toolbox](http://www.procore3d.com/usertoolbox) account
 
-- Create an account at the [ProCore3D User Toolbox](http://www.procore3d.com/usertoolbox) website for online access to your files, including ProBuilder source files.
-- Join the Beta Testing Group, to help us test early builds of ProBuilder!
-
-*Thanks for purchasing ProBuilder, your support allows us to keep updating and developing all the ProCore tools!*
+*Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!*
 
 ## Helpful Links and Info
 
@@ -36,3 +36,7 @@ Once you have registered (by forwarding your purchase invoice to [contact@procor
 
 
 **[Video Tutorials](http://www.procore3d.com/probuilder):** Take a short break to watch the video tutorials before using ProBuilder.  You’ll be an expert in no time!
+
+@todo: setup "register@procore3d.com" email
+
+@todo: setup "support@procore3d.com" email
