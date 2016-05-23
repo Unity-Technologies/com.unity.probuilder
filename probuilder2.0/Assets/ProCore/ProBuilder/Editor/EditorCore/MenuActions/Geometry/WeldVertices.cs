@@ -66,6 +66,11 @@ namespace ProBuilder2.Actions
 					weldDistance = MIN_WELD_DISTANCE;
 				EditorPrefs.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
 			}
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Weld Vertices"))
+				DoAction();
 		}
 
 		public override pb_ActionResult DoAction()

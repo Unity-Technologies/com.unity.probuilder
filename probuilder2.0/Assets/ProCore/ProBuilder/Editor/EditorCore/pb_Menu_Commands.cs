@@ -609,13 +609,11 @@ namespace ProBuilder2.EditorCommon
 							extrudedFaceCount -= pb.SelectedEdges.Length;
 					}
 
+					pb.ToMesh();
 				}
 
-				if(!success)
+				if(!success && pb.SelectedFaces.Length > 0)
 				{
-					if(pb.SelectedFaces.Length < 1)
-						continue;
-
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
 					pb_Face[] result;
@@ -625,9 +623,10 @@ namespace ProBuilder2.EditorCommon
 								out result);
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
+					
+					pb.ToMesh();
 				}
 
-				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}

@@ -322,7 +322,6 @@ namespace ProBuilder2.MeshOperations
 		
 		si = welds.ToSharedIndices();
 
-
 		pb.SplitUVs(pb_Face.AllTriangles(faces));
 		
 		/**

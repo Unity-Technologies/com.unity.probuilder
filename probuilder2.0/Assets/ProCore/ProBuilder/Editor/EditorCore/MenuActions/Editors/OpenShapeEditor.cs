@@ -22,7 +22,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return pb_Editor.instance != null;
+			return true;
 		}
 
 		public override pb_ActionResult DoAction()
