@@ -16,7 +16,23 @@ class EditorCallbackViewer : EditorWindow
 
 	List<string> logs = new List<string>();
 	Vector2 scroll = Vector2.zero;
-	Color logBackgroundColor = new Color(.15f, .15f, .15f, 1f);
+	bool collapse = true;
+
+	static Color logBackgroundColor
+	{
+		get
+		{
+			return EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, .5f) : new Color(.8f, .8f, .8f, 1f);
+		}
+	}
+
+	static Color disabledColor
+	{
+		get
+		{
+			return EditorGUIUtility.isProSkin ? new Color(.3f, .3f, .3f, .5f) : new Color(.8f, .8f, .8f, 1f);
+		}
+	}
 
 	void OnEnable()
 	{
@@ -31,8 +47,11 @@ class EditorCallbackViewer : EditorWindow
 		// Also called when the geometry is modified by ProBuilder.
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 
+		// Called when vertices are about to be modified.
+		pb_Editor.OnVertexMovementBegin += OnVertexMovementBegin;
+
 		// Called when vertices have been moved by ProBuilder.
-		pb_Editor.OnVertexMovementFinish += OnVertexMovementFinished;
+		pb_Editor.OnVertexMovementFinish += OnVertexMovementFinish;
 	}
 
 	void OnDisable()
@@ -40,7 +59,7 @@ class EditorCallbackViewer : EditorWindow
 		pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
 		pb_Editor_Utility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
 		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinished;
+		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;
 	}
 
 	void OnProBuilderObjectCreated(pb_Object pb)
@@ -60,24 +79,40 @@ class EditorCallbackViewer : EditorWindow
 			selection != null ? selection.Sum(x => x.SelectedTriangleCount) : 0));
 	}
 
-	void OnVertexMovementFinished(pb_Object[] selection)
+	void OnVertexMovementBegin(pb_Object[] selection)
+	{
+		AddLog("Began Moving Vertices");
+	}
+
+	void OnVertexMovementFinish(pb_Object[] selection)
 	{
 		AddLog("Finished Moving Vertices");
 	}
 
 	void AddLog(string summary)
 	{
-		logs.Add(logs.Count + ": " + summary);
+		logs.Add(summary);
 		Repaint();
 	}
 
 	void OnGUI()
 	{
+		GUILayout.BeginHorizontal(EditorStyles.toolbar);
+	
+			GUILayout.FlexibleSpace();
+
+			GUI.backgroundColor = collapse ? disabledColor : Color.white; 
+			if(GUILayout.Button("Collapse", EditorStyles.toolbarButton))
+				collapse = !collapse;
+			GUI.backgroundColor = Color.white;
+
+			if(GUILayout.Button("Clear", EditorStyles.toolbarButton))
+				logs.Clear();
+
+		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
 			GUILayout.Label("Callback Log", EditorStyles.boldLabel);
-			GUILayout.FlexibleSpace();
-			if(GUILayout.Button("Clear"))
-				logs.Clear();
 		GUILayout.EndHorizontal();
 
 		Rect r = GUILayoutUtility.GetLastRect();
@@ -92,8 +127,20 @@ class EditorCallbackViewer : EditorWindow
 
 		scroll = GUILayout.BeginScrollView(scroll);
 
-		for(int i = logs.Count - 1; i >= 0; i--)
-			GUILayout.Label(logs[i]);
+		int len = logs.Count;
+		int min = System.Math.Max(0, len - 1024);
+
+		for(int i = len - 1; i >= min; i--)
+		{
+			if(	collapse &&
+				i > 0 &&
+				i < len - 1 && 
+				logs[i].Equals(logs[i-1]) && 
+				logs[i].Equals(logs[i+1]) )
+				continue;
+
+			GUILayout.Label(string.Format("{0,3}: {1}", i, logs[i]));
+		}
 
 		GUILayout.EndScrollView();
 	}
