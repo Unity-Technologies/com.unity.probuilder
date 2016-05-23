@@ -41,7 +41,7 @@ namespace ProBuilder2.EditorCommon
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 
 			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinished += OnVertexMovementFinished;
+			pb_Editor.OnVertexMovementFinish += OnVertexMovementFinish;
 		}
 
 		void OnDisable()
@@ -51,7 +51,7 @@ namespace ProBuilder2.EditorCommon
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinished -= OnVertexMovementFinished;
+			pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;
 		}
 
 		void OnSelectionUpdate(pb_Object[] selection)
@@ -63,7 +63,7 @@ namespace ProBuilder2.EditorCommon
 			} catch {}
 		}
 
-		void OnVertexMovementFinished(pb_Object[] selection)
+		void OnVertexMovementFinish(pb_Object[] selection)
 		{
 			foreach(pb_Object pb in selection)
 				DrawElements(pb);

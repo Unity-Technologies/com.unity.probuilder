@@ -210,35 +210,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Extrude Edges &E", true)]
-		static bool MenuVerifyExtrudeEdges()
-		{
-			ExtrudeEdges instance = pb_EditorToolbarLoader.GetInstance<ExtrudeEdges>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
-		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Extrude Edges &E", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoExtrudeEdges()
-		{
-			ExtrudeEdges instance = pb_EditorToolbarLoader.GetInstance<ExtrudeEdges>();
-			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Extrude Faces %E", true)]
-		static bool MenuVerifyExtrudeFaces()
-		{
-			ExtrudeFaces instance = pb_EditorToolbarLoader.GetInstance<ExtrudeFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Extrude Faces %E", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoExtrudeFaces()
-		{
-			ExtrudeFaces instance = pb_EditorToolbarLoader.GetInstance<ExtrudeFaces>();
-			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
-		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Flip Face Edge ", true)]
 		static bool MenuVerifyFlipFaceEdge()
@@ -464,6 +436,7 @@ namespace ProBuilder2.EditorCommon
 			if(instance != null)
 				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
 		}
+
 
 		[MenuItem("Tools/ProBuilder/Object/Merge Objects ", true)]
 		static bool MenuVerifyMergeObjects()

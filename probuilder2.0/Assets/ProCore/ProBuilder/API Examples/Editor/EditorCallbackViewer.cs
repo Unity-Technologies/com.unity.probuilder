@@ -28,19 +28,19 @@ class EditorCallbackViewer : EditorWindow
 		pb_Editor_Utility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
 
 		// Called when the ProBuilder selection changes (can be object or element change).
-		// @todo add OnSelectionChange, since this also indicates when the mesh is being modified
+		// Also called when the geometry is modified by ProBuilder.
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 
 		// Called when vertices have been moved by ProBuilder.
-		pb_Editor.OnVertexMovementFinished += OnVertexMovementFinished;
+		pb_Editor.OnVertexMovementFinish += OnVertexMovementFinished;
 	}
 
 	void OnDisable()
 	{
 		pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
-		// pb_Editor_Utility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
+		pb_Editor_Utility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
 		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-		pb_Editor.OnVertexMovementFinished -= OnVertexMovementFinished;
+		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinished;
 	}
 
 	void OnProBuilderObjectCreated(pb_Object pb)
@@ -55,7 +55,7 @@ class EditorCallbackViewer : EditorWindow
 
 	void OnSelectionUpdate(pb_Object[] selection)
 	{
-		AddLog("Selection Changed: " + string.Format("{0} objects and {1} vertices selected.",
+		AddLog("Selection Updated: " + string.Format("{0} objects and {1} vertices selected.",
 			selection != null ? selection.Length : 0,
 			selection != null ? selection.Sum(x => x.SelectedTriangleCount) : 0));
 	}

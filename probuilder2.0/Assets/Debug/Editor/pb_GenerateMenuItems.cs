@@ -32,7 +32,7 @@ class pb_GenerateMenuItems : Editor
 		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" }
 	};
 
-	[MenuItem("Tools/Do the thing &d")]
+	[MenuItem("Tools/Debug/ProBuilder/Generate Menu Items")]
 	static void doit()
 	{
 		if( File.Exists(GENERATED_FILE_PATH) )
@@ -72,7 +72,9 @@ namespace ProBuilder2.EditorCommon
 
 		File.WriteAllText(GENERATED_FILE_PATH, sb.ToString());
 
-		// Debug.Log(sb.ToString());
+		Debug.Log(sb.ToString());
+
+		AssetDatabase.Refresh();
 	}
 
 	/**

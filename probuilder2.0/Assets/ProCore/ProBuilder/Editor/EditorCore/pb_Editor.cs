@@ -1,3 +1,5 @@
+#pragma warning disable 0612 // OnVertexMovementFinished
+
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -249,7 +251,18 @@ public class pb_Editor : EditorWindow
 	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
 
 	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
+
+	[System.Obsolete]
 	public static event OnVertexMovementFinishedEventHandler OnVertexMovementFinished;
+
+	// Called when vertex modifications are complete.
+	public static event OnVertexMovementFinishedEventHandler OnVertexMovementFinish;
+
+	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
+
+	// Called immediately prior to beginning vertex modifications.  pb_Object will be 
+	// in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
+	public static event OnVertexMovementBeginEventHandler OnVertexMovementBegin;
 
 	public void HookDelegates()
 	{
@@ -2909,6 +2922,9 @@ public class pb_Editor : EditorWindow
 		}
 
 		// profiler.EndSample();
+
+		if(OnVertexMovementBegin != null)
+			OnVertexMovementBegin(selection);
 	}
 
 	private void OnFinishVertexModification()
@@ -2943,6 +2959,10 @@ public class pb_Editor : EditorWindow
 			movingVertices = false;
 		}
 
+		if(OnVertexMovementFinish != null)
+			OnVertexMovementFinish(selection);
+
+		// @todo obsolete
 		if(OnVertexMovementFinished != null)
 			OnVertexMovementFinished(selection);
 

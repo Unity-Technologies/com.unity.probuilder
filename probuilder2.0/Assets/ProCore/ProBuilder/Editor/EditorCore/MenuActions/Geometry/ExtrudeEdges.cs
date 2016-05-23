@@ -12,12 +12,13 @@ namespace ProBuilder2.Actions
 		public override pb_IconGroup group { get { return pb_IconGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Extrude"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override bool hasMenuEntry { get { return false; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Extrude Edges",
 			@"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
-			CMD_ALT, 'E'
+			CMD_SUPER, 'E'
 		);
 
 		public override bool IsEnabled()
@@ -37,7 +38,7 @@ namespace ProBuilder2.Actions
 					pb_Editor.instance.selectionMode != SelectMode.Edge;
 					
 		}
-		
+
 		public override MenuActionState AltState()
 		{
 			return MenuActionState.VisibleAndEnabled;
@@ -71,7 +72,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuExtrude(selection);
+			return pb_Menu_Commands.MenuExtrude(selection, true);
 		}
 	}
 }

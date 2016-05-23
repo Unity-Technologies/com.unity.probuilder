@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
@@ -29,6 +30,29 @@ public class pb_MenuItems : EditorWindow
 	public static void OpenEditorWindow()
 	{
 		pb_Editor.MenuOpenWindow();
+	}
+#endregion
+
+#region CONTEXT SENSITIVE SHORTCUTS
+
+	[MenuItem("Tools/ProBuilder/Geometry/Extrude %E", true)]
+	static bool MenuVerifyExtrude()
+	{
+		pb_Editor e = pb_Editor.instance;
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+
+		return 	e != null &&
+				e.editLevel == EditLevel.Geometry &&
+				selection != null &&
+				selection.Length > 0 &&
+				(selection.Any(x => x.SelectedEdgeCount > 0) || selection.Any(x => x.SelectedFaces.Length > 0));
+	}
+
+	[MenuItem("Tools/ProBuilder/Geometry/Extrude %E", false, pb_Constant.MENU_GEOMETRY + 3)]
+	static void MenuDoExtrude()
+	{
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		pb_Menu_Commands.MenuExtrude(selection, false);
 	}
 #endregion
 
