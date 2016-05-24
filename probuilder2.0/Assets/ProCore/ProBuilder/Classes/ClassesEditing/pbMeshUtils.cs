@@ -335,7 +335,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static IEnumerable<pb_Edge> GetPerimeterEdges(pb_Object pb, Dictionary<int, int> sharedIndicesLookup, IEnumerable<pb_Face> faces)
 		{
-			List<pb_Edge> faceEdges = faces.SelectMany(x => x.edges).ToList();	/// actual edges
+			List<pb_Edge> faceEdges = faces.SelectMany(x => x.edges).ToList();	// actual edges
 			int edgeCount = faceEdges.Count;
 
 			// translate all face edges to universal edges

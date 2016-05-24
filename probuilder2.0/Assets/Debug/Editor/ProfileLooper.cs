@@ -1,9 +1,11 @@
-#if PB_DEBUG
+#pragma warning disable 0219
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using ProBuilder2.MeshOperations;
 using ProBuilder2.Math;
 
 using Parabox.Debug;
@@ -13,51 +15,33 @@ public class ProfileLooper : Editor
 	const int REPEAT = 10;
 	static pb_Profiler profiler;
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Run Loop x1000")]
+	[MenuItem("Tools/Debug/" + pb_Constant.PRODUCT_NAME + "/Run Profiler Loop %&P")]
 	public static void RunLoop()
 	{
 		profiler = new pb_Profiler("Test Profiler");
 
-		pb_Object pb = pb_ShapeGenerator.CylinderGenerator(32, 15f, 20f, 32);
-		
-		profiler.BeginSample("GetUniversalEdges");
-		for(int i = 0; i < REPEAT; i++)
-		{
-			profiler.BeginSample("IndexOf");
-			MethodA(pb);
-			profiler.EndSample();
-		}
+		const string METHOD_A = "Get Perimeter Edges (Old)";
+		const string METHOD_B = "Get Perimeter Edges (New)";
 
-		for(int i = 0; i < REPEAT; i++)
-		{
-			profiler.BeginSample("Sorted IndexOf");			
-			MethodB(pb);
-			profiler.EndSample();
-		}
-		profiler.EndSample();
+		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		{		
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-		GameObject go = pb.gameObject;
-		DestroyImmediate(pb);
-		DestroyImmediate(go);
+			for(int i = 0; i < REPEAT; i++)	
+			{
+				profiler.BeginSample(METHOD_A);
+				{
+					IEnumerable<pb_Edge> e = pbMeshUtils.GetPerimeterEdges(pb, lookup, pb.faces);
+				}
+				profiler.EndSample();
+
+				profiler.BeginSample(METHOD_B);
+				{
+				}
+				profiler.EndSample();
+			}
+		}
 
 		Debug.Log( profiler.ToString() );
 	}
-
-	public static void MethodA(pb_Object pb)
-	{
-		pb_Edge[] edges = pb_Edge.AllEdges(pb.faces);
-		int len = edges.Length;
-
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-
-		pb_Edge[] uniEdges = new pb_Edge[len];
-		for(int i = 0; i < len; i++)
-			uniEdges[i] = new pb_Edge(sharedIndices.IndexOf(edges[i].x), sharedIndices.IndexOf(edges[i].y));
-	}
-
-	public static void MethodB(pb_Object pb)
-	{
-
-	}
 }
-#endif

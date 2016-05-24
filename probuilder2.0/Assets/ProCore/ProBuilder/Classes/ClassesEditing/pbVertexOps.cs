@@ -202,83 +202,14 @@ namespace ProBuilder2.MeshOperations
 
 #region Add / Subtract
 
-	/**
-	 *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
-	 */
-	public static bool AppendVertexToFace(this pb_Object pb, pb_Face face, Vector3 point, ref pb_Face newFace)
-	{
-		if(!face.IsValid()) return false;
+	// /**
+	//  *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
+	//  */
+	// public static bool AppendVerticesToFace(pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
+	// {
 
-		// First order of business - project face to 2d
-		int[] distinctIndices = face.distinctIndices;
-		int len = distinctIndices.Length;
-		Vector3[] verts = pb.vertices.ValuesWithIndices(distinctIndices);
-		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
+	// }
 
-		// Get the face normal before modifying the vertex array
-		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
-		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(nrm) );
-		
-		// Add the new point
-		verts = verts.Add(point);
-		cols = cols.Add( pb_Math.Average(cols) );
-
-		// Project
-		List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(verts, projAxis));
-
-		// Save the sharedIndices index for each distinct vertex
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		int[] sharedIndex = new int[len+1];
-		for(int i = 0; i < len; i++)
-			sharedIndex[i] = sharedIndices.IndexOf(distinctIndices[i]);
-		sharedIndex[len] = -1;	// add the new vertex to it's own sharedIndex
-
-		// Triangulate the face with the new point appended
-		List<int> tris; 
-
-		if(!pb_Triangulation.SortAndTriangulate(plane, out tris))
-			return false;
-
-		// Check to make sure the triangulated face is facing the same direction, and flip if not
-		Vector3 del = Vector3.Cross( verts[tris[2]] - verts[tris[0]], verts[tris[1]]-verts[tris[0]]).normalized;
-		if(Vector3.Dot(nrm, del) > 0) tris.Reverse();
-
-		/**
-		 * attempt to figure out where the new UV coordinate should go
-		 */
-		Vector2[] uvs = new Vector2[len+1];
-		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, len);
-
-		pb_Face triangulated_face = new pb_Face(tris.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-
-		/**
-		 * Attempt to figure out where the new UV point should go
-		 */
-		// these are the two vertices that are split by the new vertex
-		int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(len)).Select(x => x.x != len ? x.x : x.y).ToArray();
-
-		if(adjacent_vertex.Length == 2)
-		{
-			uvs[len] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
-		}
-		else
-		{
-			Debug.LogError("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
-			triangulated_face.manualUV = false;
-		}
-
-		// Compose new face
-		newFace = pb.AppendFace(verts, cols, uvs, triangulated_face, sharedIndex);
-
-		// And delete the old
-		pb.DeleteFace(face);
-
-		return true;
-	}
-
-	/**
-	 *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
-	 */
 	public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
 	{
 		if(!face.IsValid())
@@ -294,7 +225,7 @@ namespace ProBuilder2.MeshOperations
 		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Length];
 		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, distinctIndices.Length);
 
-		// Add the new point
+		// Add the new points
 		Vector3[] t_verts = new Vector3[verts.Length + points.Length];
 		System.Array.Copy(verts, 0, t_verts, 0, verts.Length);
 		System.Array.Copy(points, 0, t_verts, verts.Length, points.Length);
@@ -383,8 +314,8 @@ namespace ProBuilder2.MeshOperations
 	{
 		newEdges = new List<pb_Edge>();
 
-		if(count < 1 || count > 128)
-			return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 128.");
+		if(count < 1 || count > 512)
+			return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
 
 		List<pb_Vertex> vertices 		= new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 		Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();

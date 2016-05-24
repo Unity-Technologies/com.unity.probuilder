@@ -71,6 +71,7 @@ namespace ProBuilder2.EditorCommon
 
 		public bool edgeInfo = false;
 		public bool faceInfo = false;
+		public bool triInfo = false;
 		public bool elementGroupInfo = false;
 		public bool textureGroupInfo = false;
 		public bool smoothingGroupInfo = false;
@@ -115,6 +116,7 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 				edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
 				faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
+				triInfo = EditorGUILayout.Toggle("Index Info", triInfo);
 
 				GUI.enabled = faceInfo;
 				{
@@ -394,77 +396,36 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Edge f in pb.SelectedEdges)
 			{
 				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint((pb.vertices[f.x] + pb.vertices[f.y])/ 2f) );
-				GUIContent gc = new GUIContent(f.ToString(), "");
-				DrawSceneLabel(gc, cen);
+				DrawSceneLabel(f.ToString(), cen);
 			}
 
-			/**
-			 * SHARED INDICES
-			 */
-			// foreach(pb_IntArray arr in pb.sharedIndices)
-			// {
-			// 	Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(pb.vertices[arr[0]]) );
+			if(triInfo)
+			foreach(pb_IntArray arr in pb.sharedIndices)
+			{
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(pb.vertices[arr[0]]) );
 							
-			// 	GUI.Label(new Rect(cen.x, cen.y, 200, 200), ((int[])arr).ToString("\n"));
-			// }
+				DrawSceneLabel( ((int[])arr).ToString("\n"), cen );
+			}
 
 			if(faceInfo)
 			foreach(pb_Face f in pb.SelectedFaces)
 			{
 				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.vertices.ValuesWithIndices(f.distinctIndices) ) ) );
 				
-				GUIContent gc = new GUIContent("Face: " + f.ToString(), "");
+				string str = "Face: " + f.ToString();
 
 				if(smoothingGroupInfo || elementGroupInfo || textureGroupInfo)
-					gc.text += "\nGroups:";
+					str += "\nGroups:";
 
 				if(smoothingGroupInfo)
-					gc.text += "\nSmoothing: " + f.smoothingGroup;
+					str += "\nSmoothing: " + f.smoothingGroup;
 				if(elementGroupInfo)
-					gc.text += "\nElement: " + f.elementGroup;
+					str += "\nElement: " + f.elementGroup;
 				if(textureGroupInfo)
-					gc.text += "\nTexture: " + f.textureGroup;
+					str += "\nTexture: " + f.textureGroup;
 
-				DrawSceneLabel(gc, cen);
+				DrawSceneLabel(str, cen);
 			}
-
-			// sb.AppendLine(f.ToString() + ", ");
-
-
-			// foreach(pb_Face face in pb.SelectedFaces)
-			// 	sb.AppendLine(face.colors.ToString("\n") + "\n");
-
-			// sb.AppendLine("\n");
-
-			// foreach(pb_IntArray si in pb.sharedIndices)
-			// {
-			// 	sb.AppendLine(si.array.ToString(", "));
-			// }
-
-			// sb.AppendLine("\n");
-
-			// if(vertexInfo)
-			// {
-			// 	try
-			// 	{
-			// 		Camera cam = SceneView.lastActiveSceneView.camera;
-			// 		Vector3[] normals = pb.msh.normals;
-			// 		int index = 0;
-			// 		foreach(pb_IntArray arr in pb.sharedIndices)
-			// 		{
-			// 			Vector3 v = pb.transform.TransformPoint(pb.vertices[arr[0]] + normals[arr[0]] * .01f);
-
-			// 			if(!pb_HandleUtility.PointIsOccluded(cam, pb, v))
-			// 			{
-			// 				Vector2 cen = HandleUtility.WorldToGUIPoint( v );
-							
-			// 				GUIContent gc = new GUIContent(index++ + ": " + arr.array.ToString(", "), "");
-
-			// 				DrawSceneLabel(gc, cen);
-			// 			}
-			// 		}
-			// 	} catch { /* do not care */; }
-			// }
 
 			Handles.EndGUI();
 
@@ -475,13 +436,16 @@ namespace ProBuilder2.EditorCommon
 			Handles.EndGUI();
 		}
 
-		void DrawSceneLabel(GUIContent content, Vector2 position)
+		void DrawSceneLabel(string text, Vector2 position)
 		{
-			float width = EditorStyles.boldLabel.CalcSize(content).x;
-			float height = EditorStyles.label.CalcHeight(content, width) + 4;
+			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
+			
+			float width = EditorStyles.boldLabel.CalcSize(gc).x;
+			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
 
-			pb_GUI_Utility.DrawSolidColor( new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
-			GUI.Label( new Rect(position.x, position.y, width, height), content, EditorStyles.boldLabel );
+			pb_GUI_Utility.DrawSolidColor(new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
+
+			GUI.Label( new Rect(position.x, position.y, width, height), gc, EditorStyles.boldLabel );
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
