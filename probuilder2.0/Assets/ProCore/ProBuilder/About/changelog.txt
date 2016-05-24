@@ -1,3 +1,31 @@
+# ProBuilder 2.5.1b0
+
+## Features
+
+- Improve performance of some topology query operations.
+- Center Pivot now available in Basic.
+- Add GenerateUV2 toolbar entry when 'Disable Auto UV2 Generation is enabled.
+- Add a delegate in pb_Editor_Utility to notify subscribers when a new pb_Object has been initialized.
+- New API example "Tools > ProBuilder > API Examples > Log Callbacks Window" demonstrates hooking into various editor delegates.
+
+## Bug Fixes
+
+- Fix some instances where modifying a mesh would result in NaN warnings.
+- Fix icosphere audio example scene in ProBuilder Basic.
+- Add 'Center Pivot' action to menu.
+- Bypass sRGB sampling for icons, fixing dark appearance in pro skin.
+- Fix regression where switching between icon mode and text mode in toolbar would sometimes not immediately reload the toolbar.
+- Fix an issue where meshes would be discarded and rebuilt on every instance id change, which Unity does a lot.  The result of constant mesh rebuilds being invalidating the lightmap, making getting a decent bake very difficult.
+- Ignore API examples in any build target that hasn't been tested (which is all of them save for standalones).
+- Fix Edge Extrude leaving black geometry when extrusion fails.
+- Add extrude settings button to Edge extrude.
+- Add a single context-sensitive Extrude shortcut so that super+e works properly in both edge & face modes.
+
+## Changes
+
+- Menu toolbar re-arranged for consistency.
+- Remove UV2 generation parameters from pb_Object since that info is stored in the lightmap data somewhere.
+
 # ProBuilder 2.5.0f0 (r4241)
 
 ## Features

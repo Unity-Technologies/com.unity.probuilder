@@ -128,7 +128,6 @@ public class AutomatedExport : MonoBehaviour
 		string path = "";
 		string[] addlIgnore = new string[0];
 		string packName = "ProBuilder2";
-		bool generateZip = false;
 		string define = "";
 		string exportFolderPath = "";
 		string folderRootName = "ProBuilder";
@@ -157,9 +156,6 @@ public class AutomatedExport : MonoBehaviour
 			if(str.StartsWith("generateVersionInfo:"))
 				generateAboutEntry = (str.Replace("generateVersionInfo:","").Trim() == "TRUE") ? true : false;
 
-			if(str.StartsWith("generateZip:"))
-				generateZip = (str.Replace("generateZip:","").Trim() == "TRUE") ? true : false;
-
 			if(str.StartsWith("define:"))
 				define = str.Replace("define:", "");
 
@@ -170,49 +166,10 @@ public class AutomatedExport : MonoBehaviour
 				revisionNo = str.Replace("revisionNo:", "");
 		}
 
-		string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
-
-		#if UNITY_5_1
-		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(changelog_path, typeof(TextAsset));
-		#else
-		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(changelog_path, typeof(TextAsset));
-		#endif
-
-		// (?<=--\sProBuilder\s).*(?=\s\(r[0-9]{1,9})
-		Match first = Regex.Match("(?<=--\\sProBuilder\\s).*(?=\\s\\(r[0-9]{1,9})", changelog.text);
-		string VERSION_NUMBER = first.Success ? first.Value : "Failed parsing version number!";
-
-		// write the about entry info file
 		if(generateAboutEntry)
 		{
-			string hiddenVersionInfo = "Assets/ProCore/" + folderRootName + "/About/pc_AboutEntry_ProBuilder.txt";
-			string versionInfoText = 
-				"name: " + folderRootName + "\n" + 
-				"identifier: ProBuilder2_AboutWindowIdentifier\n" +
-				"version: " + VERSION_NUMBER + "\n" +
-				"revision: " + (revisionNo == "" ? SvnManager.GetRevisionNumber() : revisionNo) + "\n" +
-				"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
-				"changelog: Assets/ProCore/" + folderRootName + "/About/changelog.txt";
-			
-			// name: ProBuilder
-			// identifier: ProBuilder2_AboutWindowIdentifier
-			// version: 2.2.5b0
-			// revision: 2176
-			// date: 04-18-2014
-			// changelog: Assets/changelog.txt
-
-			if(File.Exists(hiddenVersionInfo))
-			{
-				File.Delete(hiddenVersionInfo);
-			}
-			
-			using (FileStream fs = File.Create(hiddenVersionInfo))
-			{
-				Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
-				fs.Write(contents, 0, contents.Length);
-			}
-
-			AssetDatabase.Refresh();
+			string changelog_path = "Assets/ProCore/" + folderRootName + "/About/changelog.txt";
+			RebuildAboutWindowData(changelog_path);
 		}
 		
 		string[] ignore = new string[3 + addlIgnore.Length];
@@ -233,33 +190,68 @@ public class AutomatedExport : MonoBehaviour
 			append,
 			define,
 			revisionNo));
+	}
 
-		// puts a zipped copy on the desktop
-		if(generateZip)
+	[MenuItem("Tools/Debug/ProBuilder/Rebuild About Window Data", false, 800)]	
+	static void _RebuildAboutWindowData()
+	{
+		RebuildAboutWindowData("Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/changelog.txt");
+	}
+
+	static void RebuildAboutWindowData(string changelog_path)
+	{
+		string version_number = "";
+
+		using(StreamReader sr = new StreamReader(changelog_path))
 		{
-			Debug.LogWarning("ZIP DISABLED");
-			// string DESKTOP = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-			// string TEMP_PATH = DESKTOP + "\\" + Path.GetFileNameWithoutExtension(buildPath) + " (" + VERSION_NUMBER + ")";
-			
-			// if(Directory.Exists(TEMP_PATH))
-			// 	Directory.Delete(TEMP_PATH, true);
-				
-			// Directory.CreateDirectory(TEMP_PATH);
+			for(int i = 0; i < 32; i++)
+			{
+				string line = sr.ReadLine();
 
-			// File.Copy(buildPath, TEMP_PATH + "\\" + Path.GetFileName(buildPath), true);
-					
-			// using (ZipFile zip = new ZipFile())
-			// {
-			// 	zip.AddDirectory(TEMP_PATH);
+				Match m = Regex.Match(line, @"(?<=^#\sProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[a-z][0-9]*");
 
-			// 	zip.Comment = "ProBuilder2 Zip File";
+				if(m.Success)
+				{
+					version_number = m.Value;
 
-			// 	zip.Save(TEMP_PATH + ".zip");
-			// }
-
-			// // clean up
-			// Directory.Delete(TEMP_PATH, true);
+					if(i > 1)
+						Debug.LogWarning("First matching changelog header was not the first line.");
+					break;
+				}
+			}
 		}
+
+		Debug.Log("version:  " + version_number);
+
+		string hiddenVersionInfo = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/pc_AboutEntry_ProBuilder.txt";
+
+		string versionInfoText = 
+			"name: " + pb_Constant.PRODUCT_NAME + "\n" + 
+			"identifier: ProBuilder2_AboutWindowIdentifier\n" +
+			"version: " + version_number + "\n" +
+			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
+			"changelog: Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/About/changelog.txt";
+		
+		// name: ProBuilder
+		// identifier: ProBuilder2_AboutWindowIdentifier
+		// version: 2.2.5b0
+		// revision: 2176
+		// date: 04-18-2014
+		// changelog: Assets/changelog.txt
+
+		if(File.Exists(hiddenVersionInfo))
+			File.Delete(hiddenVersionInfo);
+			
+		using (FileStream fs = File.Create(hiddenVersionInfo))
+		{
+			Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
+			fs.Write(contents, 0, contents.Length);
+		}
+
+		AssetDatabase.Refresh();
+
+		TextAsset res = AssetDatabase.LoadAssetAtPath<TextAsset>(hiddenVersionInfo);
+		EditorGUIUtility.PingObject(res);
 	}
 
 	public static string Export(Config config)

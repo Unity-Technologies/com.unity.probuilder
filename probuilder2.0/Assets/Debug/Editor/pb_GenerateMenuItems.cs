@@ -32,7 +32,7 @@ class pb_GenerateMenuItems : Editor
 		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" }
 	};
 
-	[MenuItem("Tools/Debug/ProBuilder/Generate Menu Items")]
+	[MenuItem("Tools/Debug/ProBuilder/Generate Menu Items", false, 800)]
 	static void doit()
 	{
 		if( File.Exists(GENERATED_FILE_PATH) )

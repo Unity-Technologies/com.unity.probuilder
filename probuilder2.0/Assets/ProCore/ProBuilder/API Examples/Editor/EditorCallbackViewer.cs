@@ -59,6 +59,7 @@ class EditorCallbackViewer : EditorWindow
 		pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
 		pb_Editor_Utility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
 		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
+		pb_Editor.OnVertexMovementBegin -= OnVertexMovementBegin;
 		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;
 	}
 
