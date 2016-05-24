@@ -59,21 +59,23 @@ public class pb_ExportPackage : Editor
 	/**
 	 * Recursively export a package from SourcePath.  SourcePath is relative to Assets/ directory.
 	 */
-	private static void Export(string SourceDirectory, string OutDirectory, string OutName, string suffix)
+	private static void Export(string sourceDirectory, string outDirectory, string outName, string suffix)
 	{	
 		// Read version number and revision number from changelog.txt
-		TextAsset changelog = (TextAsset)AssetDatabase.LoadAssetAtPath(CHANGELOG_PATH, typeof(TextAsset));
-
-		Match first = Regex.Match(changelog.text, "(?<=--\\sProBuilder\\s).*?(?=\\s)");
-		string version = first.Success ? first.Value : "Failed parsing version number!";
-
-		first = Regex.Match(changelog.text, "(?<=--\\sProBuilder\\s.*\\s\\(r)[0-9]{1,5}(?=\\))");
-		string revision = first.Success ? first.Value : "Failed parsing SVN revision!";
+		string version = GetVersionNumber();
 
 		// Populate the about entry information text file.
-		WriteAboutEntry(CHANGELOG_PATH, version, revision);
+		WriteAboutEntry(CHANGELOG_PATH, version);
 
-		AssetDatabase.ExportPackage("Assets/" + SourceDirectory, (OutDirectory.EndsWith("/") ? OutDirectory : OutDirectory + "/") + OutName + "-v" + revision + suffix + ".unitypackage", ExportPackageOptions.Recurse);
+		string outDir = outDirectory.Replace("\\", "/");
+
+		if(!outDir.EndsWith("/"))
+			outDir += "/";
+
+		AssetDatabase.ExportPackage(
+			"Assets/" + sourceDirectory,
+			string.Format("{0}{1}/-v{2}{3}.unitypackage", outDir, outName, version, suffix),
+			ExportPackageOptions.Recurse);
 	}
 
 	/**
@@ -87,13 +89,12 @@ public class pb_ExportPackage : Editor
 	 *	date: 04-18-2014
 	 *	changelog: Assets/changelog.txt
 	 */
-	private static void WriteAboutEntry(string changelog, string version, string svnRevision)
+	private static void WriteAboutEntry(string changelog, string version, bool inEditor = false)
 	{
 		string versionInfoText = 
 			"name: " + pb_Constant.PRODUCT_NAME + "\n" + 
 			"identifier: " + pb_Constant.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
 			"version: " + version + "\n" +
-			"revision: " + svnRevision + "\n" +
 			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 			"changelog: " + changelog;
 
@@ -107,8 +108,47 @@ public class pb_ExportPackage : Editor
 			Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
 			fs.Write(contents, 0, contents.Length);
 		}
-
+		
 		AssetDatabase.Refresh();
+
+		if(inEditor)
+		{
+			TextAsset res = AssetDatabase.LoadAssetAtPath<TextAsset>(version_entry_path);
+			EditorGUIUtility.PingObject(res);
+		}
+	}
+
+	[MenuItem("Tools/Debug/ProBuilder/Rebuild About Entry", false, 800)]
+	private static void MenuWriteAboutEntry()
+	{
+		WriteAboutEntry(CHANGELOG_PATH, GetVersionNumber(), true);
+	}
+
+
+	private static string GetVersionNumber()
+	{
+		string version_number = "";
+
+		using(StreamReader sr = new StreamReader(CHANGELOG_PATH))
+		{
+			for(int i = 0; i < 32; i++)
+			{
+				string line = sr.ReadLine();
+
+				Match m = Regex.Match(line, @"(?<=^#\sProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[a-z][0-9]*");
+
+				if(m.Success)
+				{
+					version_number = m.Value;
+
+					if(i > 1)
+						Debug.LogWarning("First matching changelog header was not the first line.");
+					break;
+				}
+			}
+		}
+
+		return version_number;
 	}
 
 	/**
