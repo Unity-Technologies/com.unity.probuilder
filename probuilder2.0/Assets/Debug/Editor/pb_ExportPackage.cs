@@ -111,11 +111,13 @@ public class pb_ExportPackage : Editor
 		
 		AssetDatabase.Refresh();
 
+#if !UNITY_4_7
 		if(inEditor)
 		{
 			TextAsset res = AssetDatabase.LoadAssetAtPath<TextAsset>(version_entry_path);
 			EditorGUIUtility.PingObject(res);
 		}
+#endif
 	}
 
 	[MenuItem("Tools/Debug/ProBuilder/Rebuild About Entry", false, 800)]

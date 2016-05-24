@@ -30,6 +30,7 @@ echo UNITY 5.3 PATH IS %unity_path_5_3%
 echo Clean temp and library
 
 rd /s /q bin\temp\
+rd /s /q bin\debug\
 rd /s /q probuilder2.0\Library
 rd /s /q probuilder-staging\
 
@@ -106,6 +107,8 @@ echo Override DLL GUIDs Unity 4
 :: ====================
 echo Export Unity 4 DLL project
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
+
+pause
 
 :: Export Unity 5
 :: ====================
