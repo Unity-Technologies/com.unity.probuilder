@@ -74,7 +74,7 @@ public class pb_ExportPackage : Editor
 
 		AssetDatabase.ExportPackage(
 			"Assets/" + sourceDirectory,
-			string.Format("{0}{1}/-v{2}{3}.unitypackage", outDir, outName, version, suffix),
+			string.Format("{0}{1}-v{2}{3}.unitypackage", outDir, outName, version, suffix),
 			ExportPackageOptions.Recurse);
 	}
 
@@ -111,7 +111,7 @@ public class pb_ExportPackage : Editor
 		
 		AssetDatabase.Refresh();
 
-#if !UNITY_4_7
+#if !UNITY_4_7 && !UNITY_5_0
 		if(inEditor)
 		{
 			TextAsset res = AssetDatabase.LoadAssetAtPath<TextAsset>(version_entry_path);

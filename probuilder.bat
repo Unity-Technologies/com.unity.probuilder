@@ -108,8 +108,6 @@ echo Override DLL GUIDs Unity 4
 echo Export Unity 4 DLL project
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
 
-pause
-
 :: Export Unity 5
 :: ====================
 
