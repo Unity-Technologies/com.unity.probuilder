@@ -9,6 +9,62 @@ namespace ProBuilder2.Common
 	 */
 	public class pb_MeshUtility
 	{
+		public static string Print(Mesh m)
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			sb.AppendLine(string.Format("{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+				"Positions",
+				"Colors",
+				"Tangents",
+				"UV0",
+				"UV2",
+				"UV3",
+				"UV4"));
+
+			sb.AppendLine(string.Format("vertices: {0}   triangles: {1}", m.vertexCount, m.triangles.Length));
+
+			Vector3[] positions = m.vertices;
+			Color[] colors = m.colors;
+			Vector4[] tangents = m.tangents;
+
+			List<Vector4> uv0 = new List<Vector4>();
+			m.GetUVs(0, uv0);
+			Vector2[] uv2 = m.uv2;
+			List<Vector4> uv3 = new List<Vector4>();
+			m.GetUVs(2, uv3);
+			List<Vector4> uv4 = new List<Vector4>();
+			m.GetUVs(3, uv4);
+
+			if( positions != null && positions.Count() != m.vertexCount)
+				positions = null;
+			if( colors != null && colors.Count() != m.vertexCount)
+				colors = null;
+			if( tangents != null && tangents.Count() != m.vertexCount)
+				tangents = null;
+			if( uv0 != null && uv0.Count() != m.vertexCount)
+				uv0 = null;
+			if( uv2 != null && uv2.Count() != m.vertexCount)
+				uv2 = null;
+			if( uv3 != null && uv3.Count() != m.vertexCount)
+				uv3 = null;
+			if( uv4 != null && uv4.Count() != m.vertexCount)
+				uv4 = null;
+
+			for(int i = 0; i < m.vertexCount; i ++)
+			{
+				sb.AppendLine(string.Format("{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+					positions == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}", positions[i].x, positions[i].y, positions[i].z),
+					colors == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
+					tangents == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
+					uv0 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
+					uv2 == null 		? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
+					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
+					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w)));
+			}
+			return sb.ToString();
+		}
+
 		/**
 		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
 		 * pb_Object vertices.
