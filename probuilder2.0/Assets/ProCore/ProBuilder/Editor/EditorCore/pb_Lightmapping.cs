@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using ProBuilder2.Common;
 
 /**
  * Methods used in manipulating or creating Lightmaps.
@@ -16,10 +17,14 @@ public static class pb_Lightmapping
 		if(pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) && !forceUpdate)
 			return;
 
-		Unwrapping.GenerateSecondaryUVSet(pb.msh);
+		Mesh m = pb.msh;
+		Debug.Log(pb_MeshUtility.Print(m));
+		Unwrapping.GenerateSecondaryUVSet(m);
+		Debug.Log(pb_MeshUtility.Print(m));
 
 		// Unity 5 lightmapping uses uv0 channel for baked directional maps unless this line is here
-		pb.msh.uv2 = pb.msh.uv2;
+		// m.uv2 = m.uv2;
+		m.vertices = m.vertices;
 
 		EditorUtility.SetDirty(pb);
 	}

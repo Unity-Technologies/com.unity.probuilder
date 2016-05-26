@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-using TMesh = TriangleNet.Mesh;
-using UMesh = UnityEngine.Mesh;
-using TriangleNet;
-using TriangleNet.Data;
-using TriangleNet.Geometry;
+// using TMesh = TriangleNet.Mesh;
+// using UMesh = UnityEngine.Mesh;
+// using TriangleNet;
+// using TriangleNet.Data;
+// using TriangleNet.Geometry;
 
 using Parabox.Debug;
 
@@ -25,7 +25,8 @@ public class TempMenuItems : EditorWindow
 	{
 		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 		{
-			
+			Mesh m = pb.msh;
+			m.uv2 = m.uv2;
 		}
 	}
 

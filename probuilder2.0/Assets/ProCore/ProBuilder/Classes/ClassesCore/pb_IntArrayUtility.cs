@@ -214,7 +214,11 @@ namespace ProBuilder2.Common
 
 			foreach(int i in indices)
 			{
-				universal.Add( lookup[i] );
+				int v;
+				if(lookup.TryGetValue(i, out v))
+					universal.Add( v );
+				else
+					Debug.Log("not found: " + i);
 			}
 
 			return universal;

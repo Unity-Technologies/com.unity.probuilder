@@ -62,6 +62,10 @@ namespace ProBuilder2.Common
 					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
 					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w)));
 			}
+
+			for(int i = 0; i < m.triangles.Length; i+=3)
+				sb.AppendLine(string.Format("{0}, {1}, {2}", m.triangles[i], m.triangles[i+1], m.triangles[i+2]));
+
 			return sb.ToString();
 		}
 
@@ -76,6 +80,23 @@ namespace ProBuilder2.Common
 			Mesh m = pb.msh;
 
 			pb_MeshUtility.MergeVertices(merge, ref m);		
+		}
+
+		public static void GeneratePerTriangleMesh(Mesh m)
+		{
+			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
+			pb_Vertex[] tv = new pb_Vertex[m.triangles.Length];
+			int[] t = m.triangles;
+
+			for(int i = 0; i < t.Length; i++)
+			{
+				tv[i] = vertices[t[i]];
+				t[i] = i;
+			}
+
+			pb_Vertex.SetMesh(m, tv);
+			m.triangles = t;
+			Debug.Log("GeneratePerTriangleMesh");
 		}
 
 		/**

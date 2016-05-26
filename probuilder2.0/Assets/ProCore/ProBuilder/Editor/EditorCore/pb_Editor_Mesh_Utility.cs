@@ -17,10 +17,24 @@ namespace ProBuilder2.EditorCommon
 		public static void Optimize(this pb_Object InObject)
 		{
 			EditorUtility.SetDirty(InObject);
-			pb_MeshUtility.CollapseSharedVertices(InObject);	///< Merge compatible shared vertices to a single vertex.	
+			// pb_MeshUtility.CollapseSharedVertices(InObject);	///< Merge compatible shared vertices to a single vertex.	
+
+			profiler.Begin("Optimize");
+			profiler.Begin("GeneratePerTriangleMesh");
+			pb_MeshUtility.GeneratePerTriangleMesh(InObject.msh);
+			profiler.End();
+
+			profiler.Begin("GeneratePerTriangleUV");
+			Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(InObject.msh);
+			profiler.End();
+
+			InObject.msh.uv2 = uv2;
+			profiler.End();
+
+			profiler.Print();
 
 			float time = Time.realtimeSinceStartup;
-			InObject.GenerateUV2();
+			// InObject.GenerateUV2();
 
 			// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
 			// to disable auto-uv2 generation.
