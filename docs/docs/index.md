@@ -1,7 +1,7 @@
 ﻿
 ## What is ProBuilder?
 
-**ProBuilder** is a 3D modeling tool built directly into the Unity editor, useful for rapid prototyping, level design, props, volumes/zones, and other custom geometry.
+**ProBuilder** is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!
 
 Video: [ProBuilder Intro](http://www.youtube.com/watch?v=Nomx1LNk7r8)
 
@@ -36,7 +36,3 @@ This documentation encompasses <i>all</i> features, actions, and tools available
 
 
 **[Video Tutorials](http://www.procore3d.com/probuilder):** Take a short break to watch the video tutorials before using ProBuilder.  You’ll be an expert in no time!
-
-@todo: setup "register@procore3d.com" email
-
-@todo: setup "support@procore3d.com" email
