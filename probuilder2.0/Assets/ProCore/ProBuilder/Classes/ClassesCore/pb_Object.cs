@@ -725,6 +725,11 @@ public class pb_Object : MonoBehaviour
 
 	/**
 	 *	Copy values in UV channel to uvs.
+	 *	channel is zero indexed.
+	 *		mesh.uv0/1 = 0
+	 *		mesh.uv2 = 1
+	 *		mesh.uv3 = 2
+	 *		mesh.uv4 = 3
 	 */
 	public void GetUVs(int channel, List<Vector4> uvs)
 	{
@@ -733,13 +738,12 @@ public class pb_Object : MonoBehaviour
 		switch(channel)
 		{
 			case 0:
-			case 1:
 			default:
 				for(int i = 0; i < vertexCount; i++)
 					uvs.Add((Vector4)_uv[i]);
 				break;
 
-			case 2:
+			case 1:
 				if(msh != null && msh.uv2 != null)
 				{
 					Vector2[] uv2 = msh.uv2;
@@ -748,11 +752,11 @@ public class pb_Object : MonoBehaviour
 				}
 				break;
 
-			case 3:
+			case 2:
 				uvs.AddRange(_uv3);
 				break;
 
-			case 4:
+			case 3:
 				uvs.AddRange(_uv4);
 				break;
 		}
@@ -765,22 +769,21 @@ public class pb_Object : MonoBehaviour
 	{
 		switch(channel)
 		{
-			case 0:
 			case 1:
-			default:
-				_uv = uvs.Cast<Vector2>().ToArray();
-				break;
-
-			case 2:
 				msh.uv2 = uvs.Cast<Vector2>().ToArray();
 				break;
 
-			case 3:
+			case 2:
 				_uv3 = uvs;
 				break;
 
-			case 4:
+			case 3:
 				_uv4 = uvs;
+				break;
+
+			case 0:
+			default:
+				_uv = uvs.Cast<Vector2>().ToArray();
 				break;
 		}
 	}
@@ -885,8 +888,8 @@ public class pb_Object : MonoBehaviour
 		msh.uv = newUVs;
 		
 #if UNITY_5_3
-		if(hasUv3) msh.SetUVs(3, uv3);
-		if(hasUv4) msh.SetUVs(4, uv4);
+		if(hasUv3) msh.SetUVs(2, uv3);
+		if(hasUv4) msh.SetUVs(3, uv4);
 #endif
 	}
 
