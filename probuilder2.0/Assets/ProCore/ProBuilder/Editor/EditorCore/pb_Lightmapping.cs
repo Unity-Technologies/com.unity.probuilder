@@ -18,6 +18,7 @@ public static class pb_Lightmapping
 
 		Unwrapping.GenerateSecondaryUVSet(pb.msh);
 
+		// Unity 5 lightmapping uses uv0 channel for baked directional maps unless this line is here
 		pb.msh.uv2 = pb.msh.uv2;
 
 		EditorUtility.SetDirty(pb);

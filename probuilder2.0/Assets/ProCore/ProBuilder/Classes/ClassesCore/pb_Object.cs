@@ -214,6 +214,9 @@ public class pb_Object : MonoBehaviour
 	private List<Vector4>				_uv4;
 
 	[SerializeField]
+	private Vector4[] 					_tangents;
+
+	[SerializeField]
 	private pb_IntArray[] 				_sharedIndicesUV = new pb_IntArray[0];
 
 	[SerializeField]
@@ -943,6 +946,14 @@ public class pb_Object : MonoBehaviour
 #region NORMALS AND TANGENTS
 
 	/**
+	 *	Set the tangent array on this mesh.
+	 */
+	public void SetTangents(Vector4[] tangents)
+	{
+		_tangents = tangents;
+	}
+
+	/**
 	 * Refreshes the normals of this object taking into account the smoothing groups.
 	 */
 	public void RefreshNormals()
@@ -1016,7 +1027,11 @@ public class pb_Object : MonoBehaviour
 	public void RefreshTangents()
 	{
 		Mesh m = GetComponent<MeshFilter>().sharedMesh;
-		pb_MeshUtility.GenerateTangent(ref m);
+
+		if(_tangents != null && _tangents.Length == vertexCount)
+			m.tangents = _tangents;
+		else
+			pb_MeshUtility.GenerateTangent(ref m);
 	}
 #endregion
 
