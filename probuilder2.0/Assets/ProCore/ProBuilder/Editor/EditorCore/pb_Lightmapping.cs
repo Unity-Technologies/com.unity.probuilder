@@ -16,7 +16,9 @@ public static class pb_Lightmapping
 		if(pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) && !forceUpdate)
 			return;
 
-		Unwrapping.GenerateSecondaryUVSet(pb.GetComponent<MeshFilter>().sharedMesh);
+		Unwrapping.GenerateSecondaryUVSet(pb.msh);
+
+		pb.msh.uv2 = pb.msh.uv2;
 
 		EditorUtility.SetDirty(pb);
 	}
