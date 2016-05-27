@@ -73,39 +73,41 @@ namespace ProBuilder2.Common
 		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
 		 * pb_Object vertices.
 		 */
-		public static void CollapseSharedVertices(pb_Object pb)
-		{
-			List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
+		// public static void CollapseSharedVertices(pb_Object pb)
+		// {
+		// 	List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
 
-			Mesh m = pb.msh;
+		// 	Mesh m = pb.msh;
 
-			pb_MeshUtility.MergeVertices(merge, ref m);		
-		}
+		// 	pb_MeshUtility.MergeVertices(merge, ref m);		
+		// }
 
 		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
 			int smc = m.subMeshCount;
 			pb_Vertex[] tv = new pb_Vertex[m.triangles.Length];
-			int[][] tris = new int[smc][];
+			int[][] triangles = new int[smc][];
 			int triIndex = 0;
 
 			for(int s = 0; s < smc; s++)
 			{
-				tris[s] = m.GetTriangles(s);
-				int tl = tris[s].Length;
+				triangles[s] = m.GetTriangles(s);
+				int tl = triangles[s].Length;
 
 				for(int i = 0; i < tl; i++)
 				{
-					tv[triIndex++] = vertices[tris[s][i]];
-					tris[s][i] = i;
+					tv[triIndex++] = vertices[triangles[s][i]];
+					triangles[s][i] = i;
 				}
 			}
 
 			pb_Vertex.SetMesh(m, tv);
+
+			m.subMeshCount = smc;
 			
 			for(int s = 0; s < smc; s++)
-				m.SetTriangles(tris[s], s);
+				m.SetTriangles(triangles[s], s);
 
 			return tv;
 		}
@@ -113,14 +115,35 @@ namespace ProBuilder2.Common
 		/**
 		 *	Collapse vertices where possible and apply to mesh m.
 		 */
-		public static void MergeVerticesAndApply(pb_Vertex[] vertices, Mesh m)
+		public static void CollapseSharedVertices(pb_Vertex[] vertices, Mesh m)
 		{
-			List<pb_Vertex> combined = new List<pb_Vertex>();
+			// pb_Vertex[] vertices = pb_Vertex.GetVertices(pb.msh);
+			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
+			List<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 ).ToList();
 
-			for(int s = 0; s < m.subMeshCount; s++)
+			Dictionary<int, int> lookup = new Dictionary<int, int>();
+
+			for(int i = 0; i < common.Count; i++)	
+				foreach(int n in common[i])
+					if(!lookup.ContainsKey(n))
+						lookup.Add(n, i);
+
+			pb_Vertex[] condensed = common.Select(x => x.Key).ToArray();
+
+			int smc = m.subMeshCount;
+			int[][] t = new int[smc][];
+			for(int i = 0; i < smc; i++) t[i] = m.GetTriangles(i);
+
+			pb_Vertex.SetMesh(m, condensed);
+
+			m.subMeshCount = smc;
+
+			for(int i = 0; i < smc; i++)
 			{
-				int[] t = m.GetTriangles(s);
-				
+				for(int n = 0; n < t[i].Length; n++)
+					t[i][n] = lookup[t[i][n]];
+
+				m.SetTriangles(t[i], i);
 			}
 		}
 
