@@ -25,16 +25,10 @@ public class TempMenuItems : EditorWindow
 	{
 		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 		{
-			IEnumerable<pb_IntVec3> va = pb.vertices.Select( x => (pb_IntVec3) x );
-
-			StringBuilder sb = new StringBuilder();
-
-			foreach(pb_IntVec3 v in va)
-			{
-				sb.AppendLine(string.Format("{0,-8} {1}", v.GetHashCode(), v.ToString()));
-			}
-
-			// Debug.Log( GetCollisionsCount(va) + "\n" + sb.ToString() );
+			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb.msh);
+			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
+			IEnumerable<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 );
+			Debug.Log(pb.sharedIndices.Count() + " -> " + common.Count());
 		}
 	}
 }

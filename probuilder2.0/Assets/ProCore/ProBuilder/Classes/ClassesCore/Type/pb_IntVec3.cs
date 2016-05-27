@@ -10,7 +10,7 @@ namespace ProBuilder2.Common
 		public float y { get { return vec.y; } }
 		public float z { get { return vec.z; } }
 
-		const float resolution = 1000f;
+		public const float RESOLUTION = pb_Vector.FLT_COMPARE_RESOLUTION;
 
 		public pb_IntVec3(Vector3 vector)
 		{
@@ -54,23 +54,12 @@ namespace ProBuilder2.Common
 
 		public override int GetHashCode()
 		{
-			// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode/263416#263416
-			int hash = 27;
-
-			unchecked
-			{
-				hash = hash * 29 + round(x);
-				hash = hash * 29 + round(y);
-				hash = hash * 29 + round(z);
-			}
-
-			return hash;
-
+			return pb_Vector.GetHashCode(vec);
 		}
 
-		private int round(float v)
+		private static int round(float v)
 		{
-			return (int) (v * resolution);
+			return (int) (v * RESOLUTION);
 		}
 
 		public static implicit operator Vector3(pb_IntVec3 p)

@@ -20,13 +20,31 @@ namespace ProBuilder2.Test
 				UnityEngine.Random.Range(-10f, 10f));
 		}
 
+		static float RandFlt()
+		{
+			return UnityEngine.Random.Range(0f, 100f) * .001f;
+		}
+
+		static pb_Vertex RandVertex()
+		{
+			pb_Vertex v = new pb_Vertex(true);
+			v.position = RandVec3();
+			v.color = new Color(RandFlt(), RandFlt(), RandFlt(), RandFlt());
+			v.normal = RandVec3();
+			v.tangent = (Vector4) RandVec3();
+			v.uv0 = (Vector2) RandVec3();
+			v.uv2 = (Vector2) RandVec3();
+			v.uv3 = (Vector4) RandVec3();
+			v.uv4 = (Vector4) RandVec3();
+			return v;
+		}
+
 		static System.Random _random = new System.Random();
 
 		static pb_Edge RandEdge()
 		{
 			return new pb_Edge(_random.Next(0, 1024), _random.Next(0, 1024));
 		}
-
 
 		[Test]
 		public static void TestHashCollisions_IVEC3()
@@ -43,7 +61,7 @@ namespace ProBuilder2.Test
 		}
 
 		[Test]
-		public static void TestHashComparison_IVEC3()
+		public static void TestComparison_IVEC3()
 		{
 			pb_IntVec3 a = (pb_IntVec3) RandVec3();
 			pb_IntVec3 b = (pb_IntVec3) (a.vec * 2.3f);
@@ -55,11 +73,14 @@ namespace ProBuilder2.Test
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);
 			Assert.IsTrue(a == d);
+			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
+			Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
+			Assert.IsTrue(a.GetHashCode() == d.GetHashCode());
 			Assert.AreEqual(13, arr.Distinct().Count());
 		}
 
 		[Test]
-		public static void TestHashComparison_EDGE()
+		public static void TestComparison_EDGE()
 		{
 			pb_Edge a = (pb_Edge) RandEdge();
 			pb_Edge b = (pb_Edge) (a + 20);
@@ -70,9 +91,42 @@ namespace ProBuilder2.Test
 
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);
+			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
+			Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
+			Assert.IsTrue(a.GetHashCode() == d.GetHashCode());
 			Assert.AreEqual(a, d);
 			Assert.IsTrue(a != d);
 			Assert.AreEqual(13, arr.Distinct().Count());
+		}
+
+		[Test]
+		public static void TestComparison_VERTEX()
+		{
+			pb_Vertex a = RandVertex();
+			pb_Vertex b = RandVertex();
+			pb_Vertex c = RandVertex();
+			pb_Vertex d = new pb_Vertex(a);
+
+			// reference
+			Assert.IsFalse(a == b);
+			Assert.IsFalse(a == c);
+			Assert.IsFalse(a == d);
+
+			// hash
+			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
+			Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
+			Assert.True(a.GetHashCode() == d.GetHashCode());
+
+			// value
+			Assert.AreNotEqual(a, b);
+			Assert.AreNotEqual(a, c);
+			Assert.AreEqual(a, d);
+			
+			d.hasNormal = false;
+			Assert.AreNotEqual(a, d);
+			d.hasNormal = true;
+			d.normal *= 3f;
+			Assert.AreNotEqual(a, d);
 		}
 
 		static int GetCollisionsCount<T>(IEnumerable<T> list)

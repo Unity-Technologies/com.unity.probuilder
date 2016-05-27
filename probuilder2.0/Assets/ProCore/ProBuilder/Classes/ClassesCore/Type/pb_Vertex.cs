@@ -28,7 +28,17 @@ namespace ProBuilder2.Common
 		public bool hasUv3		= false;
 		public bool hasUv4		= false;
 
-		public pb_Vertex() {}
+		public pb_Vertex(bool hasAllValues = false)
+		{
+			hasPosition = hasAllValues;
+			hasColor = hasAllValues;
+			hasNormal = hasAllValues;
+			hasTangent = hasAllValues;
+			hasUv0 = hasAllValues;
+			hasUv2 = hasAllValues;
+			hasUv3 = hasAllValues;
+			hasUv4 = hasAllValues;
+		}
 
 		/**
 		 *	New pb_Vertex from a vertex index in pb_Object.
@@ -85,13 +95,34 @@ namespace ProBuilder2.Common
 
 		public bool Equals(pb_Vertex other)
 		{
-			return other != null &&
-				((hasPosition && other.hasPosition && pb_Math.Approx3(position, other.position)) || (!hasPosition && !other.hasPosition));
+			if(other == null)
+				return false;
+
+			return 	pb_Math.Approx3(position, other.position) &&
+					pb_Math.ApproxC(color, other.color) &&
+					pb_Math.Approx3(normal, other.normal) &&
+					pb_Math.Approx4(tangent, other.tangent) &&
+					pb_Math.Approx2(uv0, other.uv0) &&
+					pb_Math.Approx2(uv2, other.uv2) &&
+					pb_Math.Approx4(uv3, other.uv3) &&
+					pb_Math.Approx4(uv4, other.uv4);
 		}
 
+		/**
+		 *	GetHashCode creates a new hashcode from position, uv0, and normal since those are the values most likely to be different.
+		 */
 		public override int GetHashCode()
 		{
-			return -1;
+			// 783 is 27 * 29
+			int hash = 783 + pb_Vector.GetHashCode(position);
+
+			unchecked
+			{
+				hash = hash * 29 + pb_Vector.GetHashCode(uv0);
+				hash = hash * 31 + pb_Vector.GetHashCode(normal);
+			}
+
+			return hash;
 		}
 
 		/**
@@ -156,14 +187,15 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < vertexCount; i++)
 			{
-				if( _hasPositions )	{ v[i].hasPosition = true; v[i].position = positions[i]; }
-				if( _hasColors ) 	{ v[i].hasColor = true; v[i].color = colors[i]; }
-				if( _hasNormals ) 	{ v[i].hasNormal = true; v[i].normal = normals[i]; }
-				if( _hasTangents ) 	{ v[i].hasTangent = true; v[i].tangent = tangents[i]; }
-				if( _hasUv0 ) 		{ v[i].hasUv0 = true; v[i].uv0 = uv0s[i]; }
-				if( _hasUv2 ) 		{ v[i].hasUv2 = true; v[i].uv2 = uv2s[i]; }
-				if( _hasUv3 ) 		{ v[i].hasUv3 = true; v[i].uv3 = uv3s[i]; }
-				if( _hasUv4 ) 		{ v[i].hasUv4 = true; v[i].uv4 = uv4s[i]; }
+				v[i] = new pb_Vertex();
+				if( _hasPositions )	{ v[i].hasPosition = true;	 v[i].position = positions[i]; }
+				if( _hasColors ) 	{ v[i].hasColor = true;		 v[i].color = colors[i]; }
+				if( _hasNormals ) 	{ v[i].hasNormal = true;	 v[i].normal = normals[i]; }
+				if( _hasTangents ) 	{ v[i].hasTangent = true;	 v[i].tangent = tangents[i]; }
+				if( _hasUv0 ) 		{ v[i].hasUv0 = true;		 v[i].uv0 = uv0s[i]; }
+				if( _hasUv2 ) 		{ v[i].hasUv2 = true;		 v[i].uv2 = uv2s[i]; }
+				if( _hasUv3 ) 		{ v[i].hasUv3 = true;		 v[i].uv3 = uv3s[i]; }
+				if( _hasUv4 ) 		{ v[i].hasUv4 = true;		 v[i].uv4 = uv4s[i]; }
 			}
 
 			return v;
