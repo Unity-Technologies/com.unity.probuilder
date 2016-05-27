@@ -22,6 +22,16 @@ namespace ProBuilder2.Common
 			return string.Format("({0:F2}, {1:F2}, {2:F2})", x, y, z);
 		}
 		
+		public static bool operator ==(pb_IntVec3 a, pb_IntVec3 b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(pb_IntVec3 a, pb_IntVec3 b)
+		{
+			return !(a == b);
+		}
+
 		public bool Equals(pb_IntVec3 p)
 		{
 			return  round(x) == round(p.x) &&

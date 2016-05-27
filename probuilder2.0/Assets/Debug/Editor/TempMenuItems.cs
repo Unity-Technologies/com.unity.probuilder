@@ -25,9 +25,16 @@ public class TempMenuItems : EditorWindow
 	{
 		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 		{
-			Mesh m = pb.msh;
-			m.uv2 = m.uv2;
+			IEnumerable<pb_IntVec3> va = pb.vertices.Select( x => (pb_IntVec3) x );
+
+			StringBuilder sb = new StringBuilder();
+
+			foreach(pb_IntVec3 v in va)
+			{
+				sb.AppendLine(string.Format("{0,-8} {1}", v.GetHashCode(), v.ToString()));
+			}
+
+			// Debug.Log( GetCollisionsCount(va) + "\n" + sb.ToString() );
 		}
 	}
-
 }
