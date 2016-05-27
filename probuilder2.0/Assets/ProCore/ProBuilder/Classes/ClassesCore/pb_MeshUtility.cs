@@ -82,21 +82,46 @@ namespace ProBuilder2.Common
 			pb_MeshUtility.MergeVertices(merge, ref m);		
 		}
 
-		public static void GeneratePerTriangleMesh(Mesh m)
+		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
+			int smc = m.subMeshCount;
 			pb_Vertex[] tv = new pb_Vertex[m.triangles.Length];
-			int[] t = m.triangles;
+			int[][] tris = new int[smc][];
+			int triIndex = 0;
 
-			for(int i = 0; i < t.Length; i++)
+			for(int s = 0; s < smc; s++)
 			{
-				tv[i] = vertices[t[i]];
-				t[i] = i;
+				tris[s] = m.GetTriangles(s);
+				int tl = tris[s].Length;
+
+				for(int i = 0; i < tl; i++)
+				{
+					tv[triIndex++] = vertices[tris[s][i]];
+					tris[s][i] = i;
+				}
 			}
 
 			pb_Vertex.SetMesh(m, tv);
-			m.triangles = t;
-			Debug.Log("GeneratePerTriangleMesh");
+			
+			for(int s = 0; s < smc; s++)
+				m.SetTriangles(tris[s], s);
+
+			return tv;
+		}
+
+		/**
+		 *	Collapse vertices where possible and apply to mesh m.
+		 */
+		public static void MergeVerticesAndApply(pb_Vertex[] vertices, Mesh m)
+		{
+			List<pb_Vertex> combined = new List<pb_Vertex>();
+
+			for(int s = 0; s < m.subMeshCount; s++)
+			{
+				int[] t = m.GetTriangles(s);
+				
+			}
 		}
 
 		/**
@@ -268,9 +293,9 @@ namespace ProBuilder2.Common
 
 						for(int n = 0; n < matches.Count; n++)
 						{
-							if( textures[matches[n][0]].Approx(textures[tri], .001f) &&
-								normals[matches[n][0]].Approx(normals[tri], .001f) &&
-								(colors == null || colors[matches[n][0]].Approx(colors[tri], .001f)))
+							if( textures[matches[n][0]].Approx2(textures[tri], .001f) &&
+								normals[matches[n][0]].Approx3(normals[tri], .001f) &&
+								(colors == null || colors[matches[n][0]].ApproxC(colors[tri], .001f)))
 							{
 								matches[n].Add(tri);
 								foundMatch = true;

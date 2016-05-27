@@ -26,6 +26,7 @@ namespace ProBuilder2.Common
 	{
 		public const float PHI = 1.618033988749895f;
 		public const float FLT_EPSILON = float.Epsilon;
+		public const float FLT_COMPARE_EPSILON = .0001f;
 		// The minimum distance a handle must move on an axis before considering that axis as engaged.
 		public const float HANDLE_EPSILON = .0001f;
 
@@ -670,9 +671,24 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Approx functions are suffixed with 2/3/4/c to make implicit casting vectors
+		 *	less likely.
+		 */
+
+		/**
+		 *	\brief Compares 2 vector2 objects, allowing for a margin of error.
+		 */
+		public static bool Approx2(this Vector2 v, Vector2 b, float delta = FLT_COMPARE_EPSILON)
+		{
+			return 
+				Mathf.Abs(v.x - b.x) < delta &&
+				Mathf.Abs(v.y - b.y) < delta;
+		}
+
+		/**
 		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector3 v, Vector3 b, float delta)
+		public static bool Approx3(this Vector3 v, Vector3 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
@@ -681,19 +697,21 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
+		 *	\brief Compares 2 vector4 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector2 v, Vector2 b, float delta)
+		public static bool Approx4(this Vector4 v, Vector4 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta;
+				Mathf.Abs(v.y - b.y) < delta &&
+				Mathf.Abs(v.z - b.z) < delta &&
+				Mathf.Abs(v.w - b.w) < delta;
 		}
 
 		/**
 		 *	\brief Compares 2 color objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Color a, Color b, float delta)
+		public static bool ApproxC(this Color a, Color b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 	Mathf.Abs(a.r - b.r) < delta &&
 					Mathf.Abs(a.g - b.g) < delta &&
@@ -715,7 +733,7 @@ namespace ProBuilder2.Common
 		public static bool ContainsApprox(Vector3[] v, Vector3 p, float eps)
 		{
 			for(int i = 0; i < v.Length; i++)
-				if(pb_Math.Approx(v[i], p, eps))
+				if(pb_Math.Approx3(v[i], p, eps))
 					return true;
 			return false;
 		}

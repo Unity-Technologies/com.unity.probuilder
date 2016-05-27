@@ -85,7 +85,8 @@ namespace ProBuilder2.Common
 
 		public bool Equals(pb_Vertex other)
 		{
-			return other != null && this.position == other.position;
+			return other != null &&
+				((hasPosition && other.hasPosition && pb_Math.Approx3(position, other.position)) || (!hasPosition && !other.hasPosition));
 		}
 
 		public override int GetHashCode()

@@ -21,14 +21,25 @@ namespace ProBuilder2.EditorCommon
 
 			profiler.Begin("Optimize");
 			profiler.Begin("GeneratePerTriangleMesh");
-			pb_MeshUtility.GeneratePerTriangleMesh(InObject.msh);
+			pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(InObject.msh);
 			profiler.End();
 
 			profiler.Begin("GeneratePerTriangleUV");
 			Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(InObject.msh);
 			profiler.End();
 
-			InObject.msh.uv2 = uv2;
+			profiler.Begin("Apply UV2 to vertices");
+			for(int i = 0; i < uv2.Length; i++)
+			{
+				vertices[i].uv2 = uv2[i];
+				vertices[i].hasUv2 = true;
+			}
+			profiler.End();
+
+			profiler.Begin("Merge and Apply");
+			pb_MeshUtility.MergeVerticesAndApply(vertices, InObject.msh);
+			profiler.End();
+
 			profiler.End();
 
 			profiler.Print();
