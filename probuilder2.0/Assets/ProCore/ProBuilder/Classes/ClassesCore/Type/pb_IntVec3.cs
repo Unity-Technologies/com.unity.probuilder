@@ -16,6 +16,11 @@ namespace ProBuilder2.Common
 		{
 			this.vec = vector;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("({0:F2}, {1:F2}, {2:F2})", x, y, z);
+		}
 		
 		public bool Equals(pb_IntVec3 p)
 		{
@@ -39,7 +44,18 @@ namespace ProBuilder2.Common
 
 		public override int GetHashCode()
 		{
-			return round(x) ^ round(y) ^ round(z);
+			// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode/263416#263416
+			int hash = 27;
+
+			unchecked
+			{
+				hash = hash * 29 + round(x);
+				hash = hash * 29 + round(y);
+				hash = hash * 29 + round(z);
+			}
+
+			return hash;
+
 		}
 
 		private int round(float v)

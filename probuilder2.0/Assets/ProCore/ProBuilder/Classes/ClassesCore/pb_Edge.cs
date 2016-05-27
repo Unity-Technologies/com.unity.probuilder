@@ -50,14 +50,12 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	public override int GetHashCode()
 	{
 		// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode/263416#263416
-		int a = (x < y ? x : y).GetHashCode();
-		int b = (x < y ? y : x).GetHashCode();
 		int hash = 27;
 
 		unchecked
 		{
-			hash = hash * 29 + a.GetHashCode();
-			hash = hash * 29 + b.GetHashCode();
+			hash = hash * 29 + (x < y ? x : y);
+			hash = hash * 29 + (x < y ? y : x);
 		}
 
 		return hash;

@@ -8,7 +8,7 @@ namespace ProBuilder2.Common
 	/**
 	 *	Holds information about a single vertex, and provides methods for averaging between many.
 	 */
-	public class pb_Vertex
+	public class pb_Vertex : System.IEquatable<pb_Vertex>
 	{
 		public Vector3 position;
 		public Color color;
@@ -33,6 +33,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	New pb_Vertex from a vertex index in pb_Object.
 		 */
+		[System.Obsolete]
 		public pb_Vertex(pb_Object pb, int index)
 		{
 			int vertexCount = pb.vertexCount;
@@ -75,6 +76,21 @@ namespace ProBuilder2.Common
 				this.hasUv4 = true;
 				this.uv4 = pb.uv4[index];
 			}
+		}
+
+		public override bool Equals(object other)
+		{
+			return other is pb_Vertex && this.Equals(other as pb_Vertex);
+		}
+
+		public bool Equals(pb_Vertex other)
+		{
+			return other != null && this.position == other.position;
+		}
+
+		public override int GetHashCode()
+		{
+			return -1;
 		}
 
 		/**
@@ -197,7 +213,7 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		public static void GetArrays(	IEnumerable<pb_Vertex> vertices,
+		public static void GetArrays(	IList<pb_Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
 										out Vector2[] uv0,
@@ -211,11 +227,17 @@ namespace ProBuilder2.Common
 			color 		= vertices.Select(x => x.color).ToArray();
 			uv0 		= vertices.Select(x => x.uv0).ToArray();
 
-			normal		= vertices.All(x => x.hasNormal) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
-			tangent		= vertices.All(x => x.hasTangent) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
-			uv2			= vertices.All(x => x.hasUv2) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
-			uv3			= vertices.All(x => x.hasUv3) ? vertices.Select(x => (Vector4) x.uv3).ToList() : null;
-			uv4			= vertices.All(x => x.hasUv4) ? vertices.Select(x => (Vector4) x.uv4).ToList() : null;
+			// normal		= vertices.All(x => x.hasNormal) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
+			// tangent		= vertices.All(x => x.hasTangent) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
+			// uv2			= vertices.All(x => x.hasUv2) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
+			// uv3			= vertices.All(x => x.hasUv3) ? vertices.Select(x => (Vector4) x.uv3).ToList() : null;
+			// uv4			= vertices.All(x => x.hasUv4) ? vertices.Select(x => (Vector4) x.uv4).ToList() : null;
+
+			normal		= vertices[0].hasNormal ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
+			tangent		= vertices[0].hasTangent ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
+			uv2			= vertices[0].hasUv2 ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
+			uv3			= vertices[0].hasUv3 ? vertices.Select(x => (Vector4) x.uv3).ToList() : null;
+			uv4			= vertices[0].hasUv4 ? vertices.Select(x => (Vector4) x.uv4).ToList() : null;
 		}
 
 		/**
