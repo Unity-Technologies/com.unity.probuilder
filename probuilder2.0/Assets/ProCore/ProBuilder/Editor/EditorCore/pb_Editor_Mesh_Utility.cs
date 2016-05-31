@@ -14,31 +14,37 @@ namespace ProBuilder2.EditorCommon
 		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
 		 * Also sets the pb_Object to 'Dirty' so that changes are stored.
 		 */
-		public static void Optimize(this pb_Object InObject)
+		public static void Optimize(this pb_Object InObject, bool forceRebuildUV2 = false)
 		{
 			EditorUtility.SetDirty(InObject);
 
 			profiler.Begin("Optimize");
 			profiler.Begin("GeneratePerTriangleMesh");
-			int[][] triangles;
 			pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(InObject.msh);
 			profiler.End();
 
-			profiler.Begin("GeneratePerTriangleUV");
-			InObject.msh.uv2 = Unwrapping.GeneratePerTriangleUV(InObject.msh);
-			profiler.End();
+			if(!pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
+			{
+				profiler.Begin("GeneratePerTriangleUV");
+				Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(InObject.msh);
+				profiler.End();
 
-			// profiler.Begin("Apply UV2 to vertices");
-			// for(int i = 0; i < uv2.Length; i++)
-			// {
-			// 	vertices[i].uv2 = uv2[i];
-			// 	vertices[i].hasUv2 = true;
-			// }
-			// profiler.End();
+				if(uv2.Length == vertices.Length)
+				{
+					profiler.Begin("Apply UV2 to vertices");
+					for(int i = 0; i < uv2.Length; i++)
+					{
+						vertices[i].uv2 = uv2[i];
+						vertices[i].hasUv2 = true;
+					}
+					profiler.End();
+				}
+				else
+				{
+					Debug.LogWarning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
+				}
+			}
 
-			// profiler.Begin("Merge and Apply");
-			// pb_MeshUtility.MergeVerticesAndApply(vertices, InObject.msh);
-			// profiler.End();
 
 			profiler.Begin("CollapseSharedVertices");
 			// Merge compatible shared vertices to a single vertex.	

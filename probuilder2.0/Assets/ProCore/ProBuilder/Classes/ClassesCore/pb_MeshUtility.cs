@@ -70,18 +70,9 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
-		 * pb_Object vertices.
+		 *	Set a mesh to use individual triangle topology.  Returns a pb_Vertex array
+		 *	of the per-triangle vertices.
 		 */
-		// public static void CollapseSharedVertices(pb_Object pb)
-		// {
-		// 	List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
-
-		// 	Mesh m = pb.msh;
-
-		// 	pb_MeshUtility.MergeVertices(merge, ref m);		
-		// }
-
 		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
@@ -117,7 +108,6 @@ namespace ProBuilder2.Common
 		 */
 		public static void CollapseSharedVertices(pb_Vertex[] vertices, Mesh m)
 		{
-			// pb_Vertex[] vertices = pb_Vertex.GetVertices(pb.msh);
 			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
 			List<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 ).ToList();
 
@@ -147,6 +137,19 @@ namespace ProBuilder2.Common
 			}
 		}
 
+		/**
+		 * Collapse shared vertices to a single vertex on the mesh object.  Does not affect
+		 * pb_Object vertices.
+		 */
+		public static void CollapseSharedVertices(pb_Object pb)
+		{
+			List<List<int>> merge = pb_MeshUtility.FindDuplicateVertices(pb);
+
+			Mesh m = pb.msh;
+
+			pb_MeshUtility.MergeVertices(merge, ref m);		
+		}
+		 
 		/**
 		 * Merge indices to a single vertex.  Operates on a Mesh, not pb_Object.
 		 */
