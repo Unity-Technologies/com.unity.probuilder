@@ -1,3 +1,24 @@
+# ProBuilder 2.5.1b1
+
+## Features
+
+- Replace mesh compression function with faster and more accurate version using pb_Vertex class.
+
+## Bug Fixes
+
+- Fix 'KeyNotFound' exception when centering pivot sometimes.
+- Fix regression where baked lightmaps would use uv0 channel instead of 2.
+- Fix UV3/4 assignment and getter functions reading out of bounds channel index.
+- Fix Alt-E (subdivide, connect) shortcuts not working.
+- Fix Delete key notification not showing.
+
+## Changes
+
+- Add a public function for setting tangents on pb_Objects.
+- Deprecate GenerateUV2 extension method since mesh optimization is now an intertwined process.
+- Improve hashing function in IntVec3 and Edge.
+- Suffix pb_Math.Approx functions to make implicit casting of vectors more difficult to do accidentally.
+
 # ProBuilder 2.5.1b0
 
 ## Features
