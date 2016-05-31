@@ -221,13 +221,13 @@ namespace ProBuilder2.Common
 			m.GetUVs(3, uv4s);
 
 			bool _hasPositions	= positions != null && positions.Count() == vertexCount;
-			bool _hasColors		= colors != null && colors.Count() == vertexCount;
-			bool _hasNormals	= normals != null && normals.Count() == vertexCount;
-			bool _hasTangents	= tangents != null && tangents.Count() == vertexCount;
-			bool _hasUv0		= uv0s != null && uv0s.Count() == vertexCount;
-			bool _hasUv2		= uv2s != null && uv2s.Count() == vertexCount;
-			bool _hasUv3		= uv3s != null && uv3s.Count() == vertexCount;
-			bool _hasUv4		= uv4s != null && uv4s.Count() == vertexCount;
+			bool _hasColors		= colors != null 	&& colors.Count() == vertexCount;
+			bool _hasNormals	= normals != null 	&& normals.Count() == vertexCount;
+			bool _hasTangents	= tangents != null 	&& tangents.Count() == vertexCount;
+			bool _hasUv0		= uv0s != null 		&& uv0s.Count() == vertexCount;
+			bool _hasUv2		= uv2s != null 		&& uv2s.Count() == vertexCount;
+			bool _hasUv3		= uv3s != null 		&& uv3s.Count() == vertexCount;
+			bool _hasUv4		= uv4s != null 		&& uv4s.Count() == vertexCount;
 
 			for(int i = 0; i < vertexCount; i++)
 			{
@@ -246,6 +246,12 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
+		/**
+		 *	Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
+		 *	or not real data populates the values (eg, hasPosition, hasNormal, etc).  If you are using
+		 *	this function to rebuild a mesh use SetMesh instead, as that method handles setting null 
+		 *	arrays where appropriate for you.
+		 */
 		public static void GetArrays(	IList<pb_Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
@@ -256,27 +262,34 @@ namespace ProBuilder2.Common
 										out List<Vector4> uv3,
 										out List<Vector4> uv4)
 		{
-			position 	= vertices.Select(x => x.position).ToArray();
-			color 		= vertices.Select(x => x.color).ToArray();
-			uv0 		= vertices.Select(x => x.uv0).ToArray();
+			int vc = vertices.Count;
 
-			// normal		= vertices.All(x => x.hasNormal) ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
-			// tangent		= vertices.All(x => x.hasTangent) ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
-			// uv2			= vertices.All(x => x.hasUv2) ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
-			// uv3			= vertices.All(x => x.hasUv3) ? vertices.Select(x => (Vector4) x.uv3).ToList() : null;
-			// uv4			= vertices.All(x => x.hasUv4) ? vertices.Select(x => (Vector4) x.uv4).ToList() : null;
+			position 	= new Vector3[vc];
+			color 		= new Color[vc];
+			uv0 		= new Vector2[vc];
+			normal 		= new Vector3[vc];
+			tangent 	= new Vector4[vc];
+			uv2 		= new Vector2[vc];
+			uv3 		= new List<Vector4>(vc);
+			uv4 		= new List<Vector4>(vc);
 
-			normal		= vertices[0].hasNormal ? vertices.Select(x => (Vector3) x.normal).ToArray() : null;
-			tangent		= vertices[0].hasTangent ? vertices.Select(x => (Vector4) x.tangent).ToArray() : null;
-			uv2			= vertices[0].hasUv2 ? vertices.Select(x => (Vector2) x.uv2).ToArray() : null;
-			uv3			= vertices[0].hasUv3 ? vertices.Select(x => (Vector4) x.uv3).ToList() : null;
-			uv4			= vertices[0].hasUv4 ? vertices.Select(x => (Vector4) x.uv4).ToList() : null;
+			for(int i = 0; i < vc; i++)
+			{
+				position[i] = vertices[i].position;
+				color[i] 	= vertices[i].color;
+				uv0[i] 		= vertices[i].uv0;
+				normal[i] 	= vertices[i].normal;
+				tangent[i] 	= vertices[i].tangent;
+				uv2[i] 		= vertices[i].uv2;
+				uv3.Add(vertices[i].uv3);
+				uv4.Add(vertices[i].uv4);
+			}
 		}
 
 		/**
 		 *	Replace mesh values with vertex array.  This function clears the mesh, so be sure to set triangles after.
 		 */
-		public static void SetMesh(Mesh m, pb_Vertex[] vertices)
+		public static void SetMesh(Mesh m, IList<pb_Vertex> vertices)
 		{
 			Vector3[] positions	= null;
  			Color[] colors		= null;
@@ -297,15 +310,17 @@ namespace ProBuilder2.Common
 								out uv4s);
 
 			m.Clear();
-			m.vertices = positions;
-			m.colors = colors;
-			m.uv = uv0s;
-			m.normals = normals;
-			m.tangents = tangents;
-			m.uv2 = uv2s;
 
-			if(uv3s != null) m.SetUVs(2, uv3s);
-			if(uv4s != null) m.SetUVs(3, uv4s);
+			pb_Vertex first = vertices[0];
+
+			if(first.hasPosition)	m.vertices = positions;
+			if(first.hasColor)		m.colors = colors;
+			if(first.hasUv0)		m.uv = uv0s;
+			if(first.hasNormal)		m.normals = normals;
+			if(first.hasTangent)	m.tangents = tangents;
+			if(first.hasUv2)		m.uv2 = uv2s;
+			if(first.hasUv3)		if(uv3s != null) m.SetUVs(2, uv3s);
+			if(first.hasUv4)		if(uv4s != null) m.SetUVs(3, uv4s);
 		}
 
 		/**

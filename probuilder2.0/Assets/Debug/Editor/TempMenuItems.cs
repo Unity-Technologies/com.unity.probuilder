@@ -18,36 +18,65 @@ using Parabox.Debug;
 
 public class TempMenuItems : EditorWindow
 {
+	static pb_Object _pb = null;
+	static pb_Object pbi
+	{
+		get
+		{
+			if(_pb == null)
+			{
+				GameObject go = GameObject.Find("_test_subd");
+				_pb = go == null ? null : go.GetComponent<pb_Object>();
+				if(_pb == null)
+				{
+					_pb = pb_ShapeGenerator.CubeGenerator(Vector3.one * 4f);
+					_pb.Subdivide();
+					_pb.Subdivide();
+					_pb.Subdivide();
+					_pb.Subdivide();
+				}
+			}
+			return _pb;
+		}
+	}
+
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		pb_Object pb = pbi;
+
+		int ITERATIONS = 10;
+
+		profiler.Begin("old");
+		for(int i = 0; i < ITERATIONS; ++i)
 		{
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb.msh);
-			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
-			List<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 ).ToList();
+			profiler.Begin("ToMesh");
+			pb.ToMesh();
+			profiler.End();
+			profiler.Begin("Refresh");
+			pb.Refresh();
+			profiler.End();
 
-			Dictionary<int, int> lookup = new Dictionary<int, int>();
-
-			for(int i = 0; i < common.Count; i++)	
-				foreach(int n in common[i])
-					if(!lookup.ContainsKey(n))
-						lookup.Add(n, i);
-
-			pb_Vertex[] condensed = common.Select(x => x.Key).ToArray();
-			int[] tris = pb.msh.triangles;
-
-			for(int i = 0; i < tris.Length; i++)
-				tris[i] = lookup[tris[i]];
-
-			// Mesh m = new Mesh();
-			// pb_Vertex.SetMesh(m, condensed);
-			// m.triangles = tris;
-
-			// GameObject go = GameObject.Instantiate(pb.gameObject);
-			// GameObject.DestroyImmediate(go.GetComponent<pb_Object>());
-			// GameObject.DestroyImmediate(go.GetComponent<pb_Entity>());
-			// go.GetComponent<MeshFilter>().sharedMesh = m;
+			profiler.Begin("CollapseSharedVertices Old");
+			pb_MeshUtility.CollapseSharedVertices(pb);
+			profiler.End();
 		}
+		profiler.End();
+
+		profiler.Begin("new");
+		for(int i = 0; i < ITERATIONS; ++i)
+		{
+			profiler.Begin("ToMesh");
+			pb.ToMesh();
+			profiler.End();
+			profiler.Begin("Refresh");
+			pb.Refresh();
+			profiler.End();
+
+			profiler.Begin("CollapseSharedVertices New");
+			pb_MeshUtility.CollapseSharedVertices(pb.msh);
+			profiler.End();
+		}
+		profiler.End();
 	}
 }

@@ -106,35 +106,49 @@ namespace ProBuilder2.Common
 		/**
 		 *	Collapse vertices where possible and apply to mesh m.
 		 */
-		public static void CollapseSharedVertices(pb_Vertex[] vertices, Mesh m)
+		public static void CollapseSharedVertices(Mesh m, pb_Vertex[] vertices = null)
 		{
-			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
-			List<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 ).ToList();
-
-			Dictionary<int, int> lookup = new Dictionary<int, int>();
-
-			for(int i = 0; i < common.Count; i++)	
-				foreach(int n in common[i])
-					if(!lookup.ContainsKey(n))
-						lookup.Add(n, i);
-
-			pb_Vertex[] condensed = common.Select(x => x.Key).ToArray();
+			if(vertices == null)
+				vertices = pb_Vertex.GetVertices(m);
 
 			int smc = m.subMeshCount;
-			int[][] t = new int[smc][];
-			for(int i = 0; i < smc; i++) t[i] = m.GetTriangles(i);
+			List<Dictionary<pb_Vertex, int>> sub_vertices = new List<Dictionary<pb_Vertex, int>>();
+			int[][] tris = new int[smc][];
+			int sub_index = 0;
 
-			pb_Vertex.SetMesh(m, condensed);
+			for(int i = 0; i < smc; ++i)
+			{
+				tris[i] = m.GetTriangles(i);
+				Dictionary<pb_Vertex, int> new_vertices = new Dictionary<pb_Vertex, int>();
+
+				for(int n = 0; n < tris[i].Length; n++)
+				{
+					pb_Vertex v = vertices[tris[i][n]];
+					int index;
+
+					if(new_vertices.TryGetValue(v, out index))
+					{
+						tris[i][n] = index;
+					}
+					else
+					{
+						tris[i][n] = sub_index;
+						new_vertices.Add(v, sub_index);
+						sub_index++;
+					}
+				}
+
+				sub_vertices.Add(new_vertices);
+			}
+
+			pb_Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
+			
+			pb_Vertex.SetMesh(m, collapsed);
 
 			m.subMeshCount = smc;
-
+			
 			for(int i = 0; i < smc; i++)
-			{
-				for(int n = 0; n < t[i].Length; n++)
-					t[i][n] = lookup[t[i][n]];
-
-				m.SetTriangles(t[i], i);
-			}
+				m.SetTriangles(tris[i], i);
 		}
 
 		/**

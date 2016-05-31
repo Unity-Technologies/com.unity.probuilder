@@ -561,8 +561,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
-		Debug.Log("ToMesh");
-
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
@@ -642,8 +640,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void Refresh()
 	{	
-		Debug.Log("Refresh");
-
 		// Mesh
 		Mesh m = msh;
 
@@ -684,9 +680,6 @@ public class pb_Object : MonoBehaviour
 				} 
 			}
 		}
-
-		// mesh.Optimize - not pb_Editor_Mesh_Utility
-		m.Optimize();
 
 		RefreshUV();
 		RefreshColors();

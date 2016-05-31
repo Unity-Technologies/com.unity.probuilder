@@ -186,7 +186,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }	// todo -- remove this after a while
 	public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
 	public pb_UV uv { get { return _uv; } }
-	public Material material { get { return _mat; } }
+	public Material material { get { return _mat; } set { _mat = value; } }
 	public int textureGroup = -1;
 
 	public void SetUV(pb_UV u)

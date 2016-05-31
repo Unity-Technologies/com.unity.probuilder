@@ -1,3 +1,4 @@
+#if !UNITY_4_7 && !UNITY_5_0 && !PROTOTYPE
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
@@ -122,9 +123,6 @@ namespace ProBuilder2.Test
 			Assert.AreNotEqual(a, c);
 			Assert.AreEqual(a, d);
 			
-			d.hasNormal = false;
-			Assert.AreNotEqual(a, d);
-			d.hasNormal = true;
 			d.normal *= 3f;
 			Assert.AreNotEqual(a, d);
 		}
@@ -146,3 +144,4 @@ namespace ProBuilder2.Test
 		}
 	}
 }
+#endif
