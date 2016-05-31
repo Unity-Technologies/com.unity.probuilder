@@ -10,13 +10,28 @@ namespace ProBuilder2.Common
 		public float y { get { return vec.y; } }
 		public float z { get { return vec.z; } }
 
-		const float resolution = 1000f;
+		public const float RESOLUTION = pb_Vector.FLT_COMPARE_RESOLUTION;
 
 		public pb_IntVec3(Vector3 vector)
 		{
 			this.vec = vector;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("({0:F2}, {1:F2}, {2:F2})", x, y, z);
+		}
 		
+		public static bool operator ==(pb_IntVec3 a, pb_IntVec3 b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(pb_IntVec3 a, pb_IntVec3 b)
+		{
+			return !(a == b);
+		}
+
 		public bool Equals(pb_IntVec3 p)
 		{
 			return  round(x) == round(p.x) &&
@@ -39,12 +54,12 @@ namespace ProBuilder2.Common
 
 		public override int GetHashCode()
 		{
-			return round(x) ^ round(y) ^ round(z);
+			return pb_Vector.GetHashCode(vec);
 		}
 
-		private int round(float v)
+		private static int round(float v)
 		{
-			return (int) (v * resolution);
+			return (int) (v * RESOLUTION);
 		}
 
 		public static implicit operator Vector3(pb_IntVec3 p)

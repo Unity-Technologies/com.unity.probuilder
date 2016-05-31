@@ -390,6 +390,17 @@ namespace ProBuilder2.Common
 
 		return -1;
 	}
+
+	/**
+	 *	Generate a new array with count using the constructor.  ctor recieves the index and returns a new instance of T.
+	 */
+	public static T[] Fill<T>(int count, System.Func<int, T> ctor)
+	{
+		T[] arr = new T[count];
+		for(int i = 0; i < count; i++)
+			arr[i] = ctor(i);
+		return arr;
+	}
 #endregion
 
 #region SNAP

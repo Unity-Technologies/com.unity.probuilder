@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return null; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
-		public override bool hasMenuEntry { get { return false; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
 		private static bool generateUV2PerObject
 		{
@@ -95,7 +95,7 @@ You can use the button below to rebuild all scene UV2s quickly.", MessageType.In
 				}
 
 				// True parameter forcibly generates UV2.  Otherwise if pbDisableAutoUV2Generation is true then UV2 wouldn't be built.
-				selected[i].GenerateUV2(true);
+				selected[i].Optimize(true);
 			}
 
 			EditorUtility.ClearProgressBar();

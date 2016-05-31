@@ -1368,7 +1368,7 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx(t_handlePosition, handlePosition, .0001f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx2(t_handlePosition, handlePosition, .0001f))
 		{
 			#if PB_DEBUG
 			profiler.BeginSample("Set Custom Pivot");
@@ -1424,7 +1424,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition, pb_Math.HANDLE_EPSILON) )
+		if( !pb_Math.Approx2(t_handlePosition, handlePosition, pb_Math.HANDLE_EPSILON) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1528,7 +1528,7 @@ public class pb_UV_Editor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx(t_handlePosition, handlePosition, .0001f) )
+		if( !pb_Math.Approx2(t_handlePosition, handlePosition, .0001f) )
 		{
 			/**
 			 * Start of move UV operation
@@ -3398,7 +3398,7 @@ public class pb_UV_Editor : EditorWindow
 		// if line color and background color are the same but we want transparent backgruond,
 		// make sure that the background fill will be distinguishable from the lines during the
 		// opacity wipe
-		if(TransparentBackground && (screenshot_lineColor.Approx(screenshot_backgroundColor, .001f)))
+		if(TransparentBackground && (screenshot_lineColor.ApproxC(screenshot_backgroundColor, .001f)))
 		{
 			screenshot_backgroundColor.r += screenshot_backgroundColor.r < .9f ? .1f : -.1f;
 			screenshot_backgroundColor.g += screenshot_backgroundColor.g < .9f ? .1f : -.1f;

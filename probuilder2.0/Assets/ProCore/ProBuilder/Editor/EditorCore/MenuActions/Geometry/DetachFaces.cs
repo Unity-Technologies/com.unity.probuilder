@@ -17,7 +17,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Detach Faces",
-			@"Creates a new object (or submesh) from the selected faces."
+			"Creates a new object (or submesh) from the selected faces."
 		);
 
 		public override bool IsEnabled()

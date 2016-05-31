@@ -26,6 +26,7 @@ namespace ProBuilder2.Common
 	{
 		public const float PHI = 1.618033988749895f;
 		public const float FLT_EPSILON = float.Epsilon;
+		public const float FLT_COMPARE_EPSILON = .0001f;
 		// The minimum distance a handle must move on an axis before considering that axis as engaged.
 		public const float HANDLE_EPSILON = .0001f;
 
@@ -604,75 +605,60 @@ namespace ProBuilder2.Common
 		/**
 		 *	\brief Gets the center point of the supplied Vector3[] array.
 		 *	\returns Average Vector3 of passed vertex array.
+		 */	 
+		public static Vector2 Average(IList<Vector2> v)
+		{
+			Vector2 sum = Vector2.zero;
+			for(int i = 0; i < v.Count; i++)
+				sum += v[i];
+			return sum/(float)v.Count;
+		}
+
+		public static Vector3 Average(IList<Vector3> v)
+		{
+			Vector3 sum = Vector3.zero;
+			for(int i = 0; i < v.Count; i++)
+				sum += v[i];
+			return sum/(float)v.Count;
+		}
+
+		public static Vector4 Average(IList<Vector4> v)
+		{
+			Vector4 sum = Vector4.zero;
+			for(int i = 0; i < v.Count; i++)
+				sum += v[i];
+			return sum/(float)v.Count;
+		}
+
+		public static Color Average(IList<Color> c)
+		{
+			Color sum = c[0];
+
+			for(int i = 1; i < c.Count; i++)
+				sum += c[i];
+
+			return sum / (float)c.Count;
+		}
+
+		/**
+		 *	Approx functions are suffixed with 2/3/4/c to make implicit casting vectors
+		 *	less likely.
 		 */
-		public static Vector3 Average(List<Vector3> v)
+
+		/**
+		 *	\brief Compares 2 vector2 objects, allowing for a margin of error.
+		 */
+		public static bool Approx2(this Vector2 v, Vector2 b, float delta = FLT_COMPARE_EPSILON)
 		{
-			Vector3 sum = Vector3.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
-		}
-
-		public static Vector3 Average(Vector3[] v)
-		{
-			Vector3 sum = Vector3.zero;
-			for(int i = 0; i < v.Length; i++)
-				sum += v[i];
-			return sum/(float)v.Length;
-		}
-
-		public static Vector2 Average(IEnumerable<Vector2> vec)
-		{
-			Vector2 sum = Vector2.zero;
-			float c = 0f;
-
-			foreach(Vector2 v in vec)
-			{
-				sum += v;
-				c++;
-			}
-
-			return sum/c;
-		}
-
-		public static Vector2 Average(Vector2[] v)
-		{
-			Vector2 sum = Vector2.zero;
-			for(int i = 0; i < v.Length; i++)
-				sum += v[i];
-			return sum/(float)v.Length;
-		}
-
-		public static Vector4 Average(List<Vector4> v)
-		{
-			Vector4 sum = Vector4.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
-		}
-
-		public static Vector4 Average(Vector4[] v)
-		{
-			Vector4 sum = Vector4.zero;
-			for(int i = 0; i < v.Length; i++)
-				sum += v[i];
-			return sum/(float)v.Length;
-		}
-
-		public static Color Average(Color[] Array)
-		{
-			Color sum = Array[0];
-
-			for(int i = 1; i < Array.Length; i++)
-				sum += Array[i];
-
-			return sum / (float)Array.Length;
+			return 
+				Mathf.Abs(v.x - b.x) < delta &&
+				Mathf.Abs(v.y - b.y) < delta;
 		}
 
 		/**
 		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector3 v, Vector3 b, float delta)
+		public static bool Approx3(this Vector3 v, Vector3 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
@@ -681,19 +667,21 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
+		 *	\brief Compares 2 vector4 objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Vector2 v, Vector2 b, float delta)
+		public static bool Approx4(this Vector4 v, Vector4 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 
 				Mathf.Abs(v.x - b.x) < delta &&
-				Mathf.Abs(v.y - b.y) < delta;
+				Mathf.Abs(v.y - b.y) < delta &&
+				Mathf.Abs(v.z - b.z) < delta &&
+				Mathf.Abs(v.w - b.w) < delta;
 		}
 
 		/**
 		 *	\brief Compares 2 color objects, allowing for a margin of error.
 		 */
-		public static bool Approx(this Color a, Color b, float delta)
+		public static bool ApproxC(this Color a, Color b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 	Mathf.Abs(a.r - b.r) < delta &&
 					Mathf.Abs(a.g - b.g) < delta &&
@@ -715,7 +703,7 @@ namespace ProBuilder2.Common
 		public static bool ContainsApprox(Vector3[] v, Vector3 p, float eps)
 		{
 			for(int i = 0; i < v.Length; i++)
-				if(pb_Math.Approx(v[i], p, eps))
+				if(pb_Math.Approx3(v[i], p, eps))
 					return true;
 			return false;
 		}

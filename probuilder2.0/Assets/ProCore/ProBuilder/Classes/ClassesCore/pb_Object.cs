@@ -167,16 +167,16 @@ public class pb_Object : MonoBehaviour
 		Vector3[] 	normal;
 		Vector4[] 	tangent;
 		Vector2[] 	uv2;
-		Vector4[] 	uv3;
-		Vector4[] 	uv4;
+		List<Vector4> uv3;
+		List<Vector4> uv4;
 
 		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
 		pb.SetVertices(position);
 		pb.SetColors(color);
 		pb.SetUV(uv0);
-		if(uv3 != null) pb._uv3 = new List<Vector4>(uv3);
-		if(uv4 != null) pb._uv4 = new List<Vector4>(uv4);
+		if(uv3 != null) pb._uv3 = uv3;
+		if(uv4 != null) pb._uv4 = uv4;
 
 		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(position) );
 		pb.SetSharedIndicesUV( si_uv ?? new pb_IntArray[0] {});
@@ -412,16 +412,16 @@ public class pb_Object : MonoBehaviour
 		Vector3[] normal;
 		Vector4[] tangent;
 		Vector2[] uv2;
-		Vector4[] uv3;
-		Vector4[] uv4;
+		List<Vector4> uv3;
+		List<Vector4> uv4;
 
 		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
 		SetVertices(position);
 		SetColors(color);
 		SetUV(uv0);
-		if(uv3 != null) _uv3 = new List<Vector4>(uv3);
-		if(uv4 != null) _uv4 = new List<Vector4>(uv4);
+		if(uv3 != null) _uv3 = uv3;
+		if(uv4 != null) _uv4 = uv4;
 	}
 
 	/**
@@ -561,6 +561,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
+		Debug.Log("ToMesh");
+
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
@@ -640,6 +642,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void Refresh()
 	{	
+		Debug.Log("Refresh");
+
 		// Mesh
 		Mesh m = msh;
 
@@ -753,11 +757,13 @@ public class pb_Object : MonoBehaviour
 				break;
 
 			case 2:
-				uvs.AddRange(_uv3);
+				if(_uv3 != null)
+					uvs.AddRange(_uv3);
 				break;
 
 			case 3:
-				uvs.AddRange(_uv4);
+				if(_uv4 != null)
+					uvs.AddRange(_uv4);
 				break;
 		}
 	}

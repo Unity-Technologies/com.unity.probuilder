@@ -35,11 +35,12 @@ public class pb_MenuItems : EditorWindow
 
 #region CONTEXT SENSITIVE SHORTCUTS
 
-	[MenuItem("Tools/ProBuilder/Geometry/Extrude %E", true)]
+	static pb_Object[] selection { get { return Selection.transforms.GetComponents<pb_Object>(); } }
+
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %E", true)]
 	static bool MenuVerifyExtrude()
 	{
 		pb_Editor e = pb_Editor.instance;
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
 		return 	e != null &&
 				e.editLevel == EditLevel.Geometry &&
@@ -48,11 +49,42 @@ public class pb_MenuItems : EditorWindow
 				(selection.Any(x => x.SelectedEdgeCount > 0) || selection.Any(x => x.SelectedFaces.Length > 0));
 	}
 
-	[MenuItem("Tools/ProBuilder/Geometry/Extrude %E", false, pb_Constant.MENU_GEOMETRY + 3)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %E", false, pb_Constant.MENU_GEOMETRY + 3)]
 	static void MenuDoExtrude()
 	{
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 		pb_Menu_Commands.MenuExtrude(selection, false);
+	}
+
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Smart Connect &E", true)]
+	static bool MenuVerifyConnect()
+	{
+		return 	pb_Editor.instance != null &&
+				pb_Editor.instance.editLevel == EditLevel.Geometry &&
+				selection != null &&
+				selection.Length > 0 &&
+				selection.Any(x => x.SelectedTriangleCount > 1);
+	}
+
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Smart Connect &E")]
+	static void MenuDoConnect()
+	{
+		switch(pb_Editor.instance.selectionMode)
+		{
+			case SelectMode.Vertex:
+				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuConnectVertices(selection).notification);
+				break;
+
+			case SelectMode.Edge:
+				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuConnectEdges(selection).notification);
+				// pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuSubdivideEdge(selection).notification);			
+				break;
+
+			case SelectMode.Face:
+			default:
+				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuSubdivideFace(selection).notification);
+				break;
+		}
+
 	}
 #endregion
 

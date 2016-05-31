@@ -62,7 +62,79 @@ namespace ProBuilder2.Common
 					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
 					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w)));
 			}
+
+			for(int i = 0; i < m.triangles.Length; i+=3)
+				sb.AppendLine(string.Format("{0}, {1}, {2}", m.triangles[i], m.triangles[i+1], m.triangles[i+2]));
+
 			return sb.ToString();
+		}
+
+		/**
+		 *	Set a mesh to use individual triangle topology.  Returns a pb_Vertex array
+		 *	of the per-triangle vertices.
+		 */
+		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
+		{
+			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
+			int smc = m.subMeshCount;
+			pb_Vertex[] tv = new pb_Vertex[m.triangles.Length];
+			int[][] triangles = new int[smc][];
+			int triIndex = 0;
+
+			for(int s = 0; s < smc; s++)
+			{
+				triangles[s] = m.GetTriangles(s);
+				int tl = triangles[s].Length;
+
+				for(int i = 0; i < tl; i++)
+				{
+					tv[triIndex++] = vertices[triangles[s][i]];
+					triangles[s][i] = i;
+				}
+			}
+
+			pb_Vertex.SetMesh(m, tv);
+
+			m.subMeshCount = smc;
+			
+			for(int s = 0; s < smc; s++)
+				m.SetTriangles(triangles[s], s);
+
+			return tv;
+		}
+
+		/**
+		 *	Collapse vertices where possible and apply to mesh m.
+		 */
+		public static void CollapseSharedVertices(pb_Vertex[] vertices, Mesh m)
+		{
+			IEnumerable<pb_Tuple<pb_Vertex, int>> indexed = vertices.Select((x,i)=>new pb_Tuple<pb_Vertex, int>(x, i));
+			List<IGrouping<pb_Vertex, int>> common = indexed.GroupBy( x => x.Item1, x => x.Item2 ).ToList();
+
+			Dictionary<int, int> lookup = new Dictionary<int, int>();
+
+			for(int i = 0; i < common.Count; i++)	
+				foreach(int n in common[i])
+					if(!lookup.ContainsKey(n))
+						lookup.Add(n, i);
+
+			pb_Vertex[] condensed = common.Select(x => x.Key).ToArray();
+
+			int smc = m.subMeshCount;
+			int[][] t = new int[smc][];
+			for(int i = 0; i < smc; i++) t[i] = m.GetTriangles(i);
+
+			pb_Vertex.SetMesh(m, condensed);
+
+			m.subMeshCount = smc;
+
+			for(int i = 0; i < smc; i++)
+			{
+				for(int n = 0; n < t[i].Length; n++)
+					t[i][n] = lookup[t[i][n]];
+
+				m.SetTriangles(t[i], i);
+			}
 		}
 
 		/**
@@ -77,7 +149,7 @@ namespace ProBuilder2.Common
 
 			pb_MeshUtility.MergeVertices(merge, ref m);		
 		}
-
+		 
 		/**
 		 * Merge indices to a single vertex.  Operates on a Mesh, not pb_Object.
 		 */
@@ -247,9 +319,9 @@ namespace ProBuilder2.Common
 
 						for(int n = 0; n < matches.Count; n++)
 						{
-							if( textures[matches[n][0]].Approx(textures[tri], .001f) &&
-								normals[matches[n][0]].Approx(normals[tri], .001f) &&
-								(colors == null || colors[matches[n][0]].Approx(colors[tri], .001f)))
+							if( textures[matches[n][0]].Approx2(textures[tri], .001f) &&
+								normals[matches[n][0]].Approx3(normals[tri], .001f) &&
+								(colors == null || colors[matches[n][0]].ApproxC(colors[tri], .001f)))
 							{
 								matches[n].Add(tri);
 								foundMatch = true;
