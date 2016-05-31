@@ -215,10 +215,12 @@ namespace ProBuilder2.Common
 			Vector4[] tangents 	= m.tangents;
 			Vector2[] uv0s 		= m.uv;
 			Vector2[] uv2s 		= m.uv2;
+#if !UNITY_4_7
 			List<Vector4> uv3s = new List<Vector4>();
 			List<Vector4> uv4s = new List<Vector4>();
 			m.GetUVs(2, uv3s);
 			m.GetUVs(3, uv4s);
+#endif
 
 			bool _hasPositions	= positions != null && positions.Count() == vertexCount;
 			bool _hasColors		= colors != null 	&& colors.Count() == vertexCount;
@@ -226,8 +228,10 @@ namespace ProBuilder2.Common
 			bool _hasTangents	= tangents != null 	&& tangents.Count() == vertexCount;
 			bool _hasUv0		= uv0s != null 		&& uv0s.Count() == vertexCount;
 			bool _hasUv2		= uv2s != null 		&& uv2s.Count() == vertexCount;
+#if !UNITY_4_7
 			bool _hasUv3		= uv3s != null 		&& uv3s.Count() == vertexCount;
 			bool _hasUv4		= uv4s != null 		&& uv4s.Count() == vertexCount;
+#endif
 
 			for(int i = 0; i < vertexCount; i++)
 			{
@@ -239,8 +243,10 @@ namespace ProBuilder2.Common
 				if( _hasTangents ) 	{ v[i].hasTangent = true; v[i].tangent = tangents[i]; }
 				if( _hasUv0 ) 		{ v[i].hasUv0 = true; v[i].uv0 = uv0s[i]; }
 				if( _hasUv2 ) 		{ v[i].hasUv2 = true; v[i].uv2 = uv2s[i]; }
+#if !UNITY_4_7
 				if( _hasUv3 ) 		{ v[i].hasUv3 = true; v[i].uv3 = uv3s[i]; }
 				if( _hasUv4 ) 		{ v[i].hasUv4 = true; v[i].uv4 = uv4s[i]; }
+#endif
 			}
 
 			return v;
@@ -319,8 +325,10 @@ namespace ProBuilder2.Common
 			if(first.hasNormal)		m.normals = normals;
 			if(first.hasTangent)	m.tangents = tangents;
 			if(first.hasUv2)		m.uv2 = uv2s;
+#if !UNITY_4_7
 			if(first.hasUv3)		if(uv3s != null) m.SetUVs(2, uv3s);
 			if(first.hasUv4)		if(uv4s != null) m.SetUVs(3, uv4s);
+#endif
 		}
 
 		/**

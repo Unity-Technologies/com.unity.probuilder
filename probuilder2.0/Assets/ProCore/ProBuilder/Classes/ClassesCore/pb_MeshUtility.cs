@@ -29,12 +29,16 @@ namespace ProBuilder2.Common
 			Vector4[] tangents = m.tangents;
 
 			List<Vector4> uv0 = new List<Vector4>();
-			m.GetUVs(0, uv0);
 			Vector2[] uv2 = m.uv2;
 			List<Vector4> uv3 = new List<Vector4>();
-			m.GetUVs(2, uv3);
 			List<Vector4> uv4 = new List<Vector4>();
+#if !UNITY_4_7
+			m.GetUVs(0, uv0);
+			m.GetUVs(2, uv3);
 			m.GetUVs(3, uv4);
+#else
+			uv0 = m.uv.Cast<Vector4>().ToList();
+#endif
 
 			if( positions != null && positions.Count() != m.vertexCount)
 				positions = null;
