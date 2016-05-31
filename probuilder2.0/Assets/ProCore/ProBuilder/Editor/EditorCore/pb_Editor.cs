@@ -2152,7 +2152,7 @@ public class pb_Editor : EditorWindow
 				return true;
 
 			case "Delete Face":
-				pb_Menu_Commands.MenuDeleteFace(selection);
+				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuDeleteFace(selection).notification);
 				return true;
 
 			/* handle alignment */

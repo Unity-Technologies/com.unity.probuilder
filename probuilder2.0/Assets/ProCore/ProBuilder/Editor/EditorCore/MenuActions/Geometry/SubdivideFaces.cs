@@ -13,6 +13,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Subdivide"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

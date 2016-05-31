@@ -138,7 +138,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	True if this class should have an entry built into the hardware menu.
 		 */
-		public virtual bool hasMenuEntry { get { return true; } }
+		public virtual bool hasFileMenuEntry { get { return true; } }
 
 		/**
 		 *	Is the current mode and selection valid for this action?

@@ -32,7 +32,7 @@ class pb_GenerateMenuItems : Editor
 		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" }
 	};
 
-	[MenuItem("Tools/Debug/ProBuilder/Generate Menu Items", false, 800)]
+	[MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items", false, 800)]
 	static void doit()
 	{
 		if( File.Exists(GENERATED_FILE_PATH) )
@@ -73,6 +73,7 @@ namespace ProBuilder2.EditorCommon
 		File.WriteAllText(GENERATED_FILE_PATH, sb.ToString());
 
 		Debug.Log(sb.ToString());
+		pb_Editor_Utility.ShowNotification("Successfully Generated\nMenu Items");
 
 		AssetDatabase.Refresh();
 	}
@@ -91,7 +92,7 @@ namespace ProBuilder2.EditorCommon
 		StringBuilder sb = new StringBuilder();
 
 		object o = System.Activator.CreateInstance( System.Type.GetType("ProBuilder2.Actions." + class_name) );
-		PropertyInfo hasMenuEntryProperty = typeof(pb_MenuAction).GetProperty("hasMenuEntry");
+		PropertyInfo hasMenuEntryProperty = typeof(pb_MenuAction).GetProperty("hasFileMenuEntry");
 
 		if( (bool)hasMenuEntryProperty.GetValue(o, null) == false )
 			return "";

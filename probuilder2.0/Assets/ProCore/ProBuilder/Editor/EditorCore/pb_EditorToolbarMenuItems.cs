@@ -150,35 +150,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Connect Edges &E", true)]
-		static bool MenuVerifyConnectEdges()
-		{
-			ConnectEdges instance = pb_EditorToolbarLoader.GetInstance<ConnectEdges>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
-		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Connect Edges &E", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoConnectEdges()
-		{
-			ConnectEdges instance = pb_EditorToolbarLoader.GetInstance<ConnectEdges>();
-			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Connect Vertices &E", true)]
-		static bool MenuVerifyConnectVertices()
-		{
-			ConnectVertices instance = pb_EditorToolbarLoader.GetInstance<ConnectVertices>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Connect Vertices &E", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoConnectVertices()
-		{
-			ConnectVertices instance = pb_EditorToolbarLoader.GetInstance<ConnectVertices>();
-			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
-		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [Delete]", true)]
 		static bool MenuVerifyDeleteFaces()
@@ -317,20 +289,6 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Faces &E", true)]
-		static bool MenuVerifySubdivideFaces()
-		{
-			SubdivideFaces instance = pb_EditorToolbarLoader.GetInstance<SubdivideFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Faces &E", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoSubdivideFaces()
-		{
-			SubdivideFaces instance = pb_EditorToolbarLoader.GetInstance<SubdivideFaces>();
-			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
-		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Weld Vertices &V", true)]
 		static bool MenuVerifyWeldVertices()

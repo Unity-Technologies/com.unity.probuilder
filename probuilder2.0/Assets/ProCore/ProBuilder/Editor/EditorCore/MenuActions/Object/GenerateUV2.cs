@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return null; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
-		public override bool hasMenuEntry { get { return false; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
 		private static bool generateUV2PerObject
 		{
