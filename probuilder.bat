@@ -67,12 +67,12 @@ echo Export source
 :: ====================
 
 echo Build Unity 4 Core and Mesh Operations
-%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build /p:Configuration=Release %u4core%
-%msbuild% /p:DefineConstants="RELEASE;" /t:Clean,Build /p:Configuration=Release %u4mesh%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_4_7;" /t:Clean,Build /p:Configuration=Release %u4core%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_4_7;" /t:Clean,Build /p:Configuration=Release %u4mesh%
 
 echo Build Unity 5 Core and Mesh Operations
-%msbuild% /p:DefineConstants="RELEASE;";AssemblyName=ProBuilderCore-Unity5;Configuration=Release /t:Build %u5core%
-%msbuild% /p:DefineConstants="RELEASE;";AssemblyName=ProBuilderMeshOps-Unity5;Configuration=Release /t:Build %u5mesh%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_5_0;";AssemblyName=ProBuilderCore-Unity5;Configuration=Release /t:Build %u5core%
+%msbuild% /p:DefineConstants="RELEASE;UNITY_5_0;";AssemblyName=ProBuilderMeshOps-Unity5;Configuration=Release /t:Build %u5mesh%
 
 echo Build Unity 5.3 Core
 %msbuild% /p:DefineConstants="RELEASE;";AssemblyName=ProBuilderCore-Unity5;Configuration=Release /t:Build %u53core%
