@@ -32,7 +32,7 @@ namespace ProBuilder2.Common
 			Vector2[] uv2 = m.uv2;
 			List<Vector4> uv3 = new List<Vector4>();
 			List<Vector4> uv4 = new List<Vector4>();
-#if !UNITY_4_7
+#if !UNITY_4_7 && !UNITY_5_0
 			m.GetUVs(0, uv0);
 			m.GetUVs(2, uv3);
 			m.GetUVs(3, uv4);

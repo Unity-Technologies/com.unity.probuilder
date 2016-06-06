@@ -425,7 +425,6 @@ public class pb_Editor : EditorWindow
 			rightMouseDown = false;
 
 #if !PROTOTYPE
-			// e.type == EventType.DragUpdated ||
 			if(currentEvent.type == EventType.DragPerform)
 			{
 				GameObject go = HandleUtility.PickGameObject(currentEvent.mousePosition, false);
