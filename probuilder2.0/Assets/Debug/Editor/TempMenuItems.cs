@@ -3,80 +3,58 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using System.Linq;
 using System.Text;
 using System.Reflection;
 
-// using TMesh = TriangleNet.Mesh;
-// using UMesh = UnityEngine.Mesh;
-// using TriangleNet;
-// using TriangleNet.Data;
-// using TriangleNet.Geometry;
-
 using Parabox.Debug;
 
 public class TempMenuItems : EditorWindow
 {
-	static pb_Object _pb = null;
-	static pb_Object pbi
-	{
-		get
-		{
-			if(_pb == null)
-			{
-				GameObject go = GameObject.Find("_test_subd");
-				_pb = go == null ? null : go.GetComponent<pb_Object>();
-				if(_pb == null)
-				{
-					_pb = pb_ShapeGenerator.CubeGenerator(Vector3.one * 4f);
-					_pb.Subdivide();
-					_pb.Subdivide();
-					_pb.Subdivide();
-					_pb.Subdivide();
-				}
-			}
-			return _pb;
-		}
-	}
-
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		pb_Object pb = pbi;
+		// GameObject go = GameObject.Find("bevel_test");
+		// if(go != null)
+		// 	GameObject.DestroyImmediate(go);
+		// pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
+		// go = pb.gameObject;
 
-		int ITERATIONS = 10;
 
-		profiler.Begin("old");
-		for(int i = 0; i < ITERATIONS; ++i)
+		// pb_Edge edge = pb.faces[0].edges[0];
+
+		// pb.ToMesh();
+		// pb_Bevel.BevelEdge(pb, edge, .2f);
+
+		// pb.Refresh();
+		// pb.Optimize();
+
+		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 		{
-			profiler.Begin("ToMesh");
-			pb.ToMesh();
-			profiler.End();
-			profiler.Begin("Refresh");
-			pb.Refresh();
+			profiler.Begin("gen winged edge");
+
+			List<pb_WingedEdge> wingedEdges = pb_WingedEdge.GenerateWingedEdges(pb);
+
+			List<pb_Edge> selection = new List<pb_Edge>();
+			
+			foreach(pb_Edge e in pb.SelectedEdges)
+			{
+				pb_WingedEdge wing = wingedEdges.FirstOrDefault(x => x.edge.local.Equals(e));
+				pb_WingedEdge opp = wing.opposite;
+
+				int loopbreaker = 0;
+				while(opp != null && opp != wing && loopbreaker++ < 500)
+				{
+					selection.Add(opp.edge.local);
+					opp = opp.next.next.opposite;
+				}
+			}
 			profiler.End();
 
-			profiler.Begin("CollapseSharedVertices Old");
-			pb_MeshUtility.CollapseSharedVertices(pb);
-			profiler.End();
+			pb.SetSelectedEdges(selection);
+			pb_Editor.instance.UpdateSelection();
 		}
-		profiler.End();
-
-		profiler.Begin("new");
-		for(int i = 0; i < ITERATIONS; ++i)
-		{
-			profiler.Begin("ToMesh");
-			pb.ToMesh();
-			profiler.End();
-			profiler.Begin("Refresh");
-			pb.Refresh();
-			profiler.End();
-
-			profiler.Begin("CollapseSharedVertices New");
-			pb_MeshUtility.CollapseSharedVertices(pb.msh);
-			profiler.End();
-		}
-		profiler.End();
 	}
 }

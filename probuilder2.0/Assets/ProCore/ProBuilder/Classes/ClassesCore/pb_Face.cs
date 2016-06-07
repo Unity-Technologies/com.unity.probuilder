@@ -238,7 +238,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 			return new int[3]{indices[index*3+0],indices[index*3+1],indices[index*3+2]};
 	}
 
-	public pb_Edge[] GetEdges()
+	public pb_Edge[] GetAllEdges()
 	{
 		pb_Edge[] edges = new pb_Edge[indices.Length];
 		for(int i = 0; i < indices.Length; i+=3) {
@@ -324,13 +324,12 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		CacheEdges();
 	}
 
-	
 	private pb_Edge[] CacheEdges()
 	{
 		if(_indices == null)
 			return null;
 			
-		_edges = pb_Edge.GetPerimeterEdges( GetEdges() );
+		_edges = pb_Edge.GetPerimeterEdges( GetAllEdges() );
 		return _edges;
 	}
 

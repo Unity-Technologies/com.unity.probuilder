@@ -43,36 +43,6 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 *	Get face perimeter indices sorted in order of winding.
-		 */
-		public static List<int> GetPerimeterIndicesInWindingOrder(pb_Face face)
-		{
-			List<int> sorted = new List<int>();
-			int len = face.edges.Length;
-
-			int last = face.edges[0].y, first = face.edges[0].x;
-			sorted.Add(first);
-			sorted.Add(last);
-
-			for(int i = 1; i < len; i++)
-			{
-				pb_Edge next = face.edges.FirstOrDefault(x => x.Contains(last));
-
-				if(next == null)
-					break;
-
-				last = next.x == last ? next.y : next.x;
-
-				if(last == first)
-					break;
-
-				sorted.Add(last);
-			}
-
-			return sorted;
-		}
-
-		/**
 		 * Reverses the orientation of the middle edge in a quad.
 		 */
 		public static bool FlipEdge(this pb_Object pb, pb_Face face)

@@ -238,7 +238,7 @@ namespace ProBuilder2.Common
 						if( pb_HandleUtility.PointIsOccluded(cam, mesh, mesh.transform.TransformPoint(hits[i].point)) )
 							continue;
 
-						foreach(pb_Edge e in mesh.faces[hits[i].face].GetEdges())
+						foreach(pb_Edge e in mesh.faces[hits[i].face].GetAllEdges())
 						{
 							float d = pb_Math.DistancePointLineSegment(hits[i].point, v[e.x], v[e.y]);
 

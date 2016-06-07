@@ -93,28 +93,6 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	 * @param sharedIndices A pb_IntArray[] containing int[] of triangles that share a vertex.
 	 * \returns True or false if edge a is equal to b.
 	 */
-	// public bool Equals(pb_Edge b, pb_IntArray[] sharedIndices)
-	// {
-	// 	int index = -1;
-
-	// 	index = sharedIndices.IndexOf(x);
-	// 	int[] ax = (index > -1) ? sharedIndices[index].array : new int[1]{x};
-		
-	// 	index = sharedIndices.IndexOf(y);
-	// 	int[] ay = (index > -1) ? sharedIndices[index].array : new int[1]{y};
-
-	// 	index = sharedIndices.IndexOf(b.x);
-	// 	int[] bx = (index > -1) ? sharedIndices[index].array : new int[1]{b.x};
-		
-	// 	index = sharedIndices.IndexOf(b.y);
-	// 	int[] by = (index > -1) ? sharedIndices[index].array : new int[1]{b.y};
-
-	// 	if( (ax.ContainsMatch(bx) || ax.ContainsMatch(by)) && (ay.ContainsMatch(bx) || ay.ContainsMatch(by)) ) 
-	// 		return true;
-	// 	else
-	// 		return false;
-	// }
-
 	public bool Equals(pb_Edge b, Dictionary<int, int> lookup)
 	{
 		int x0 = lookup[x], y0 = lookup[y], x1 = lookup[b.x], y1 = lookup[b.y];

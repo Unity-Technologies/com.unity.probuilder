@@ -16,6 +16,7 @@ visual studio/*/*/obj/
 
 # generated
 docs/site
+probuilder2.0/Assets/test*
 
 probuilder2.0/*sublime-workspace
 probuilder2.0/Assets/ShaderForge*
