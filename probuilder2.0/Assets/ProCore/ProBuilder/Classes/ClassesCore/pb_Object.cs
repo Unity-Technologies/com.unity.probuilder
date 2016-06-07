@@ -226,6 +226,8 @@ public class pb_Object : MonoBehaviour
 	public bool 						userCollisions = false;	/// If false, ProBuilder will automatically create and scale colliders.
 	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
 
+	public string						asset_guid;
+
 	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
 	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 	public bool dontDestroyMeshOnDelete = false;
@@ -1039,12 +1041,10 @@ public class pb_Object : MonoBehaviour
 
 #region CLEANUP
 
-	// This won't run unless ExecuteInEditMode is set.  If we destroy the mesh, there's no going back,
-	// so unless people really complain about that mesh leak when deleting objects, we'll just let it be.
 	public void OnDestroy()
 	{
 		if(!dontDestroyMeshOnDelete)
-			DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh);
+			DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 	}
 #endregion
 

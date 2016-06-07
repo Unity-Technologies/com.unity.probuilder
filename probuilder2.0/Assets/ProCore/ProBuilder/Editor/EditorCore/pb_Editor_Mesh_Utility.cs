@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
+using System;
+using System.IO;
 using System.Collections;
 
 namespace ProBuilder2.EditorCommon
@@ -58,6 +60,45 @@ namespace ProBuilder2.EditorCommon
 
 			// UnityEngine.Mesh.Optimize
 			mesh.Optimize();
+
+			// check for an existing mesh in the mesh cache and update or create a new one so
+			// as not to clutter the scene yaml.
+			string mesh_path = AssetDatabase.GetAssetPath(mesh);
+
+			// if mesh is already an asset any changes will already have been applied since 
+			// pb_Object is directly modifying the mesh asset
+			if(string.IsNullOrEmpty(mesh_path))
+			{
+				// at the moment the asset_guid is only used to name the mesh something unique
+				string guid = InObject.asset_guid;
+
+				if(string.IsNullOrEmpty(guid))
+				{
+					guid = Guid.NewGuid().ToString("N");
+					InObject.asset_guid = guid;
+				}
+
+				string path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", guid);
+
+				if(!Directory.Exists("Assets/ProBuilderMeshCache"))
+					Directory.CreateDirectory("Assets/ProBuilderMeshCache");
+
+				// should be redundant, but unity loses asset references in lots of edge
+				// cases so always check (on penalty of editor-crashing error spam)
+				Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+
+				if(m != null)
+				{
+					// duplicated mesh
+					if(InObject.msh != m)
+					{
+						InObject.asset_guid = Guid.NewGuid().ToString("N");
+						path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", InObject.asset_guid);
+					}	
+				}
+
+				AssetDatabase.CreateAsset(mesh, path);
+			}
 
 			EditorUtility.SetDirty(InObject);
 		}
