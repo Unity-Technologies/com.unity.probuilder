@@ -1,3 +1,14 @@
+# ProBuilder 2.5.1b2
+
+## Features
+
+- Adds an experimental new option to store Mesh objects as Assets in the project so as not to clutter the Unity scene file. Use with a prefab for maximum scene lean-ness.  Enable this feature in Preferences/ProBuilder/Experimental/Meshes Are Assets.
+
+## Bug Fixes
+
+- Fix editor toolbar "leaking" due to incorrect hideflags
+- Setting vec4 uv3/4 wasn't available in Unity 5.0.
+
 # ProBuilder 2.5.1b1
 
 ## Features
