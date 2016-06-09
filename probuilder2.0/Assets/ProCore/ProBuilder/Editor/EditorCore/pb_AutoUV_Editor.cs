@@ -122,7 +122,7 @@ namespace ProBuilder2.EditorCommon
 			tempVec2 = uv_gui.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
 			
-			uv_gui.scale = EditorGUILayout.Vector2Field("Scale", uv_gui.scale, GUILayout.MaxWidth(width));
+			uv_gui.scale = EditorGUILayout.Vector2Field("Tiling", uv_gui.scale, GUILayout.MaxWidth(width));
 			
 			// Draw tiling shortcuts
 			GUILayout.BeginHorizontal();
