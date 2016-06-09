@@ -96,7 +96,7 @@ namespace ProBuilder2.EditorCommon
 				if(!Directory.Exists(PB_MESH_CACHE))
 					Directory.CreateDirectory(PB_MESH_CACHE);
 
-				Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+				Mesh m = pb_Editor_Utility.LoadAssetAtPath<Mesh>(path);
 				
 				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
@@ -145,7 +145,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			string guid = pb.asset_guid;
 			string path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
-			Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+			Mesh m = pb_Editor_Utility.LoadAssetAtPath<Mesh>(path);
 			return m;
 		}
 	}

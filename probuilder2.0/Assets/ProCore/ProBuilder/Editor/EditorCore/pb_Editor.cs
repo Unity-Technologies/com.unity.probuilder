@@ -1,4 +1,5 @@
 #pragma warning disable 0612 // OnVertexMovementFinished
+#define unsafe
 
 using UnityEngine;
 using UnityEditor;
@@ -72,7 +73,7 @@ public class pb_Editor : EditorWindow
 	private HandleAlignment previousHandleAlignment;
 	#endif
 
-	pb_EditorToolbar iconGui = null;
+	private static pb_EditorToolbar editorToolbar = null;
 
 	pb_Shortcut[] shortcuts;
 
@@ -139,8 +140,12 @@ public class pb_Editor : EditorWindow
 
 	private void InitGUI()
 	{
-		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-		iconGui.InitWindowProperties(this);
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
+
+		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		editorToolbar.hideFlags = HideFlags.HideAndDontSave;
+		editorToolbar.InitWindowProperties(this);
 
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
@@ -213,6 +218,9 @@ public class pb_Editor : EditorWindow
 	private void OnDisable()
 	{
 		_instance = null;
+
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
 
 		ClearFaceSelection();
 
@@ -305,7 +313,7 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 
-		iconGui.OnGUI();
+		editorToolbar.OnGUI();
 
 // #if PROTOTYPE
 // 		GUI.backgroundColor = UpgradeTint;
@@ -344,10 +352,11 @@ public class pb_Editor : EditorWindow
 	{
 		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
-		if(iconGui != null)
-			GameObject.DestroyImmediate(iconGui);
-		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-		iconGui.InitWindowProperties(this);
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
+		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		editorToolbar.hideFlags = HideFlags.HideAndDontSave;
+		editorToolbar.InitWindowProperties(this);
 	}
 
 	void Menu_OpenAsDockableWindow()
