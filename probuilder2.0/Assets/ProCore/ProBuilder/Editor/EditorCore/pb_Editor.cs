@@ -1,5 +1,4 @@
 #pragma warning disable 0612 // OnVertexMovementFinished
-#define unsafe
 
 using UnityEngine;
 using UnityEditor;
