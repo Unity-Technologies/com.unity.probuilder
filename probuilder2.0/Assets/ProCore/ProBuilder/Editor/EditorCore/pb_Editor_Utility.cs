@@ -382,7 +382,7 @@ namespace ProBuilder2.EditorCommon
 		{
 		 	Mesh oldMesh = pb.msh;
 	 		MeshRebuildReason reason = pb.Verify();
-	 		Debug.Log("verify mesh");
+			bool meshesAreAssets = pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
 
 			if( reason != MeshRebuildReason.None )
 			{
@@ -403,16 +403,16 @@ namespace ProBuilder2.EditorCommon
 
 					if(go == null)
 					{
-						Debug.Log("scene reloaded - false positive.");
+						// Debug.Log("scene reloaded - false positive.");
 						pb.msh.name = "pb_Mesh" + pb.id;
 					}
 					else
 					{
-						Debug.Log("Duplicate mesh");
+						// Debug.Log("duplicate mesh");
 						
-						if(!(pb_Editor_Utility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						if(!meshesAreAssets || !(pb_Editor_Utility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
 						{
-							Debug.Log("\tmade unique");
+							// deep copy arrays & ToMesh/Refresh
 							pb.MakeUnique();
 							pb.Optimize();
 						}
@@ -420,18 +420,18 @@ namespace ProBuilder2.EditorCommon
 				}
 				else
 				{
-					Debug.Log("was maybe prefab");
+					// old mesh didn't exist, so this is probably a prefab being instanced
+
 					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
-					{
-						Debug.Log("Prefab - Set HideFlags");
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
-					}
+
 					pb.Optimize();
 				}
 			}
 			else
 			{
-				pb_EditorMeshUtility.TryCacheMesh(pb);
+				if(meshesAreAssets)
+					pb_EditorMeshUtility.TryCacheMesh(pb);
 			}
 
 			return reason;

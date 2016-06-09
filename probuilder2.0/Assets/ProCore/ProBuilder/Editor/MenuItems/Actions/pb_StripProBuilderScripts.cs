@@ -87,7 +87,7 @@ namespace ProBuilder2.Actions
 					return;
 				}
 
-				Mesh m = pbUtil.DeepCopyMesh(pb.msh);
+				Mesh m = pb_MeshUtility.DeepCopy(pb.msh);
 
 				DestroyImmediate(pb);
 				

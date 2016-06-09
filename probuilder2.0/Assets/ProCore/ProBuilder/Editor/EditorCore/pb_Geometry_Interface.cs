@@ -1093,7 +1093,7 @@ namespace ProBuilder2.EditorCommon
 				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object
-			Mesh m = pbUtil.DeepCopyMesh( pb.msh );
+			Mesh m = pb_MeshUtility.DeepCopy( pb.msh );
 			
 			GameObject.DestroyImmediate(pb.msh);
 			GameObject.DestroyImmediate(pb);

@@ -12,6 +12,7 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public static class pb_EditorMeshUtility
 	{
+		// @todo make customizable
 		const string PB_MESH_CACHE = "Assets/ProCore/ProBuilder/ProBuilderMeshCache";
 
 		/**
@@ -63,7 +64,8 @@ namespace ProBuilder2.EditorCommon
 			// UnityEngine.Mesh.Optimize
 			mesh.Optimize();
 
-			TryCacheMesh(InObject);
+			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
+				TryCacheMesh(InObject);
 
 			EditorUtility.SetDirty(InObject);
 		}
@@ -99,15 +101,19 @@ namespace ProBuilder2.EditorCommon
 				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
 				{
-					if(pb.msh != m)
+					if(mesh != m)
 					{
 						// prefab instances should always point to the same mesh
 						if(pb_Editor_Utility.IsPrefabInstance(pb.gameObject) || pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
 						{
-							Debug.Log("reconnect prefab to mesh");
+							// Debug.Log("reconnect prefab to mesh");
 			
+							// use the most recent mesh iteration (when undoing for example)
+							pb_MeshUtility.CopyTo(mesh, m);
+
 							GameObject.DestroyImmediate(mesh);
 							pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
+
 							// also set the MeshCollider if it exists
 							MeshCollider mc = pb.gameObject.GetComponent<MeshCollider>();
 							if(mc != null) mc.sharedMesh = m;
@@ -116,21 +122,20 @@ namespace ProBuilder2.EditorCommon
 						else
 						{
 							// duplicate mesh
-
-							Debug.Log("create new mesh in cache from disconnect");
+							// Debug.Log("create new mesh in cache from disconnect");
 							pb.asset_guid = Guid.NewGuid().ToString("N");
-							path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", pb.asset_guid);
+							path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, pb.asset_guid);
 						}
 					}	
 					else
 					{
-						Debug.Log("they match?");
+						Debug.LogWarning("Mesh found in cache and scene mesh references match, but pb.asset_guid doesn't point to asset.  Please report the circumstances leading to this event to Karl.");
 					}
 				}
-				else
-				{
-					Debug.Log("no cache found, creating new");
-				}
+				// else
+				// {
+				// 	Debug.Log("no cache found, creating new");
+				// }
 
 				AssetDatabase.CreateAsset(mesh, path);
 			}
