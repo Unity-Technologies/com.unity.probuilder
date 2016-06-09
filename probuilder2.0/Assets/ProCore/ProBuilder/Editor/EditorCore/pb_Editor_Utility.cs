@@ -382,6 +382,7 @@ namespace ProBuilder2.EditorCommon
 		{
 		 	Mesh oldMesh = pb.msh;
 	 		MeshRebuildReason reason = pb.Verify();
+	 		Debug.Log("verify mesh");
 
 			if( reason != MeshRebuildReason.None )
 			{
@@ -397,30 +398,40 @@ namespace ProBuilder2.EditorCommon
 					int meshNo = -1;
 					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-					GameObject go = null;
 					Object dup = EditorUtility.InstanceIDToObject(meshNo);
-					try { go = (GameObject)dup; }
-					catch(System.Exception e) {}
+					GameObject go = dup as GameObject;
 
 					if(go == null)
 					{
-						// Debug.Log("scene reloaded - false positive.");
-						// GameObject.DestroyImmediate(oldMesh);
+						Debug.Log("scene reloaded - false positive.");
 						pb.msh.name = "pb_Mesh" + pb.id;
 					}
 					else
 					{
-						// Debug.Log("Duplicate mesh");
-						pb.MakeUnique();
-						pb.Optimize();
+						Debug.Log("Duplicate mesh");
+						
+						if(!(pb_Editor_Utility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						{
+							Debug.Log("\tmade unique");
+							pb.MakeUnique();
+							pb.Optimize();
+						}
 					}
 				}
 				else
 				{
+					Debug.Log("was maybe prefab");
 					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+					{
+						Debug.Log("Prefab - Set HideFlags");
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
+					}
 					pb.Optimize();
 				}
+			}
+			else
+			{
+				pb_EditorMeshUtility.TryCacheMesh(pb);
 			}
 
 			return reason;
@@ -429,7 +440,6 @@ namespace ProBuilder2.EditorCommon
 		public static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
 		{
 			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
-			// return (T) Resources.LoadAssetAtPath(InPath, typeof(T));
 		}
 
 		/**

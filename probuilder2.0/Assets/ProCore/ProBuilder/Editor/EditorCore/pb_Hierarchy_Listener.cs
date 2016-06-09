@@ -62,9 +62,7 @@ namespace ProBuilder2.EditorCommon
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 				{
 					if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
-					{
 						prefabReverted = true;
-					}
 				}
 
 				if(prefabReverted)

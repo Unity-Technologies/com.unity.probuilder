@@ -643,6 +643,15 @@ public class pb_Object : MonoBehaviour
 	public void Refresh()
 	{	
 		// Mesh
+		RefreshUV();
+		RefreshColors();
+		RefreshNormals();
+		RefreshTangents();
+		RefreshCollisions();
+	}	
+
+	public void RefreshCollisions()
+	{
 		Mesh m = msh;
 
 		m.RecalculateBounds();
@@ -682,12 +691,7 @@ public class pb_Object : MonoBehaviour
 				} 
 			}
 		}
-
-		RefreshUV();
-		RefreshColors();
-		RefreshNormals();
-		RefreshTangents();
-	}	
+	}
 #endregion
 
 #region UV
@@ -1043,8 +1047,8 @@ public class pb_Object : MonoBehaviour
 
 	public void OnDestroy()
 	{
-		if(!dontDestroyMeshOnDelete)
-			DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+		// if(!dontDestroyMeshOnDelete)
+		// 	DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 	}
 #endregion
 

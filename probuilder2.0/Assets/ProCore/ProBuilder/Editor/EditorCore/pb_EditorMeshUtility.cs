@@ -10,8 +10,10 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Helper functions that are only available in the Editor.
 	 */
-	public static class pb_Editor_Mesh_Utility
+	public static class pb_EditorMeshUtility
 	{
+		const string PB_MESH_CACHE = "Assets/ProCore/ProBuilder/ProBuilderMeshCache";
+
 		/**
 		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
 		 * Also sets the pb_Object to 'Dirty' so that changes are stored.
@@ -61,6 +63,15 @@ namespace ProBuilder2.EditorCommon
 			// UnityEngine.Mesh.Optimize
 			mesh.Optimize();
 
+			TryCacheMesh(InObject);
+
+			EditorUtility.SetDirty(InObject);
+		}
+
+		public static void TryCacheMesh(pb_Object pb)
+		{
+			Mesh mesh = pb.msh;
+
 			// check for an existing mesh in the mesh cache and update or create a new one so
 			// as not to clutter the scene yaml.
 			string mesh_path = AssetDatabase.GetAssetPath(mesh);
@@ -70,37 +81,67 @@ namespace ProBuilder2.EditorCommon
 			if(string.IsNullOrEmpty(mesh_path))
 			{
 				// at the moment the asset_guid is only used to name the mesh something unique
-				string guid = InObject.asset_guid;
+				string guid = pb.asset_guid;
 
 				if(string.IsNullOrEmpty(guid))
 				{
 					guid = Guid.NewGuid().ToString("N");
-					InObject.asset_guid = guid;
+					pb.asset_guid = guid;
 				}
 
-				string path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", guid);
+				string path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
 
-				if(!Directory.Exists("Assets/ProBuilderMeshCache"))
-					Directory.CreateDirectory("Assets/ProBuilderMeshCache");
+				if(!Directory.Exists(PB_MESH_CACHE))
+					Directory.CreateDirectory(PB_MESH_CACHE);
 
-				// should be redundant, but unity loses asset references in lots of edge
-				// cases so always check (on penalty of editor-crashing error spam)
 				Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-
+				
+				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
 				{
-					// duplicated mesh
-					if(InObject.msh != m)
+					if(pb.msh != m)
 					{
-						InObject.asset_guid = Guid.NewGuid().ToString("N");
-						path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", InObject.asset_guid);
+						// prefab instances should always point to the same mesh
+						if(pb_Editor_Utility.IsPrefabInstance(pb.gameObject) || pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+						{
+							Debug.Log("reconnect prefab to mesh");
+			
+							GameObject.DestroyImmediate(mesh);
+							pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
+							// also set the MeshCollider if it exists
+							MeshCollider mc = pb.gameObject.GetComponent<MeshCollider>();
+							if(mc != null) mc.sharedMesh = m;
+							return;
+						}
+						else
+						{
+							// duplicate mesh
+
+							Debug.Log("create new mesh in cache from disconnect");
+							pb.asset_guid = Guid.NewGuid().ToString("N");
+							path = string.Format("Assets/ProBuilderMeshCache/{0}.asset", pb.asset_guid);
+						}
 					}	
+					else
+					{
+						Debug.Log("they match?");
+					}
+				}
+				else
+				{
+					Debug.Log("no cache found, creating new");
 				}
 
 				AssetDatabase.CreateAsset(mesh, path);
 			}
+		}
 
-			EditorUtility.SetDirty(InObject);
+		public static Mesh GetCachedMesh(pb_Object pb)
+		{
+			string guid = pb.asset_guid;
+			string path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
+			Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+			return m;
 		}
 	}
 }
