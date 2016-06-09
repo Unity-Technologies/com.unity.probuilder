@@ -453,55 +453,6 @@ namespace ProBuilder2.Common
 	}
 #endregion
 
-#region Mesh
-	
-	/**
-	 *	\brief Performs a deep copy of a mesh and returns a new mesh object.
-	 *	@param _mesh The mesh to copy.
-	 *	\returns Copied mesh object.
-	 */
-	public static Mesh DeepCopyMesh(Mesh _mesh)
-	{
-		Vector3[] v = new Vector3[_mesh.vertices.Length];
-		int[][]   t = new int[_mesh.subMeshCount][];
-		Vector2[] u = new Vector2[_mesh.uv.Length];
-		Vector2[] u2 = new Vector2[_mesh.uv2.Length];
-		Vector4[] tan = new Vector4[_mesh.tangents.Length];
-		Vector3[] n = new Vector3[_mesh.normals.Length];
-		Color32[] c = new Color32[_mesh.colors32.Length];
-
-		System.Array.Copy(_mesh.vertices, v, v.Length);
-
-		for(int i = 0; i < t.Length; i++)
-			t[i] = _mesh.GetTriangles(i);
-
-		System.Array.Copy(_mesh.uv, u, u.Length);
-		System.Array.Copy(_mesh.uv2, u2, u2.Length);
-		System.Array.Copy(_mesh.normals, n, n.Length);
-		System.Array.Copy(_mesh.tangents, tan, tan.Length);
-		System.Array.Copy(_mesh.colors32, c, c.Length);
-
-		Mesh m = new Mesh();
-
-		m.Clear();
-		m.name = _mesh.name;
-
-		m.vertices = v;
-		
-		m.subMeshCount = t.Length;
-		for(int i = 0; i < t.Length; i++)
-			m.SetTriangles(t[i], i);
-
-		m.uv = u;
-		m.uv2 = u2; 
-		m.tangents = tan;
-		m.normals = n;
-		m.colors32 = c;
-
-		return m;
-	}
-#endregion
-
 #region STRING UTILITY
 
 	/**

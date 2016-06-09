@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 	 * Utilities for working in Unity editor.  Showing notifications in windows, getting the sceneview,
 	 * setting EntityTypes, OBJ export, etc.
 	 */
-	public static class pb_Editor_Utility
+	public static class pb_EditorUtility
 	{
 #region NOTIFICATION MANAGER
 
@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't 
 		 * 	fire this callback.
 		 *
-		 *	\sa pb_Editor_Utility.InitObjectFlags
+		 *	\sa pb_EditorUtility.InitObjectFlags
 		 */
 		public static OnObjectCreated onObjectCreated = null;
 
@@ -382,6 +382,7 @@ namespace ProBuilder2.EditorCommon
 		{
 		 	Mesh oldMesh = pb.msh;
 	 		MeshRebuildReason reason = pb.Verify();
+			bool meshesAreAssets = pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
 
 			if( reason != MeshRebuildReason.None )
 			{
@@ -397,30 +398,40 @@ namespace ProBuilder2.EditorCommon
 					int meshNo = -1;
 					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-					GameObject go = null;
 					Object dup = EditorUtility.InstanceIDToObject(meshNo);
-					try { go = (GameObject)dup; }
-					catch(System.Exception e) {}
+					GameObject go = dup as GameObject;
 
 					if(go == null)
 					{
 						// Debug.Log("scene reloaded - false positive.");
-						// GameObject.DestroyImmediate(oldMesh);
 						pb.msh.name = "pb_Mesh" + pb.id;
 					}
 					else
 					{
-						// Debug.Log("Duplicate mesh");
-						pb.MakeUnique();
-						pb.Optimize();
+						// Debug.Log("duplicate mesh");
+						
+						if(!meshesAreAssets || !(pb_EditorUtility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						{
+							// deep copy arrays & ToMesh/Refresh
+							pb.MakeUnique();
+							pb.Optimize();
+						}
 					}
 				}
 				else
 				{
-					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+					// old mesh didn't exist, so this is probably a prefab being instanced
+
+					if(pb_EditorUtility.IsPrefabRoot(pb.gameObject))
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
+
 					pb.Optimize();
 				}
+			}
+			else
+			{
+				if(meshesAreAssets)
+					pb_EditorMeshUtility.TryCacheMesh(pb);
 			}
 
 			return reason;
@@ -429,7 +440,6 @@ namespace ProBuilder2.EditorCommon
 		public static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
 		{
 			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
-			// return (T) Resources.LoadAssetAtPath(InPath, typeof(T));
 		}
 
 		/**
@@ -460,8 +470,8 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
-			pb_Editor_Utility.ScreenCenter( pb.gameObject );
+			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
+			pb_EditorUtility.ScreenCenter( pb.gameObject );
 			pb.Optimize();
 		}
 

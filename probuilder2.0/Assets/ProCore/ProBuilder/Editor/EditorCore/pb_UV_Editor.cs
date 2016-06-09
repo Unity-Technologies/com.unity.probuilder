@@ -844,7 +844,7 @@ public class pb_UV_Editor : EditorWindow
 
 				selectedFace.SetUV( new pb_UV(source.uv) );
 				selectedFace.SetMaterial( source.material );
-				pb_Editor_Utility.ShowNotification("Copy UV Settings");
+				pb_EditorUtility.ShowNotification("Copy UV Settings");
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -896,7 +896,7 @@ public class pb_UV_Editor : EditorWindow
 
 				RefreshUVCoordinates();
 
-				pb_Editor_Utility.ShowNotification("Autostitch");
+				pb_EditorUtility.ShowNotification("Autostitch");
 
 				if(editor != null)
 					editor.UpdateSelection(false);
@@ -3063,7 +3063,7 @@ public class pb_UV_Editor : EditorWindow
 			ResetUserPivot();
 		}
 		
-		pb_Editor_Utility.ShowNotification(this, projected > 0 ? "Planar Project" : "Nothing Selected");
+		pb_EditorUtility.ShowNotification(this, projected > 0 ? "Planar Project" : "Nothing Selected");
 	
 		// Special case
 		RefreshUVCoordinates();
@@ -3102,7 +3102,7 @@ public class pb_UV_Editor : EditorWindow
 			ResetUserPivot();
 		}
 
-		pb_Editor_Utility.ShowNotification(this, "Box Project UVs");
+		pb_EditorUtility.ShowNotification(this, "Box Project UVs");
 		
 		// Special case
 		RefreshUVCoordinates();
@@ -3132,7 +3132,7 @@ public class pb_UV_Editor : EditorWindow
 			ResetUserPivot();
 		}
 
-		pb_Editor_Utility.ShowNotification(this, "Spherical Project UVs");
+		pb_EditorUtility.ShowNotification(this, "Spherical Project UVs");
 		
 		// Special case
 		RefreshUVCoordinates();
@@ -3171,7 +3171,7 @@ public class pb_UV_Editor : EditorWindow
 		SetSelectedUVsWithSceneView();
 		RefreshUVCoordinates();
 
-		pb_Editor_Utility.ShowNotification(this, "Set " + selectedFaceCount + " Faces " + (isManual ? "Manual" : "Auto"));
+		pb_EditorUtility.ShowNotification(this, "Set " + selectedFaceCount + " Faces " + (isManual ? "Manual" : "Auto"));
 	}
 
 	public void Menu_SelectUVIsland()
@@ -3179,7 +3179,7 @@ public class pb_UV_Editor : EditorWindow
 		pbUndo.RecordObjects(selection, "Select Island");
 		
 		SelectUVShell(); 
-		pb_Editor_Utility.ShowNotification(this, "Select UV Island");
+		pb_EditorUtility.ShowNotification(this, "Select UV Island");
 	}
 
 	public void Menu_SelectUVFace()
@@ -3187,14 +3187,14 @@ public class pb_UV_Editor : EditorWindow
 		pbUndo.RecordObjects(selection, "Select Face");
 
 		SelectUVFace(); 
-		pb_Editor_Utility.ShowNotification(this, "Select UV Face");
+		pb_EditorUtility.ShowNotification(this, "Select UV Face");
 	}
 
 	public void Menu_CollapseUVs()
 	{
 		if(channel == 1)
 		{
-			pb_Editor_Utility.ShowNotification(this, "Invalid UV2 Operation");
+			pb_EditorUtility.ShowNotification(this, "Invalid UV2 Operation");
 			return;
 		}
 
@@ -3212,14 +3212,14 @@ public class pb_UV_Editor : EditorWindow
 
 		RefreshSelectedUVCoordinates();
 
-		pb_Editor_Utility.ShowNotification(this, "Collapse UVs");
+		pb_EditorUtility.ShowNotification(this, "Collapse UVs");
 	}
 
 	public pb_ActionResult Menu_SewUVs(pb_Object[] selection)
 	{
 		if(channel == 1)
 		{
-			pb_Editor_Utility.ShowNotification(this, "Invalid UV2 Operation");
+			pb_EditorUtility.ShowNotification(this, "Invalid UV2 Operation");
 			return new pb_ActionResult(Status.Canceled, "Invalid UV2 Operation");
 		}
 
@@ -3239,7 +3239,7 @@ public class pb_UV_Editor : EditorWindow
 		
 		RefreshSelectedUVCoordinates();
 
-		pb_Editor_Utility.ShowNotification(this, "Weld UVs");
+		pb_EditorUtility.ShowNotification(this, "Weld UVs");
 		return new pb_ActionResult(Status.Success, "Invalid UV2 Operation");
 	}
 
@@ -3247,7 +3247,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		if(channel == 1)
 		{
-			pb_Editor_Utility.ShowNotification(this, "Invalid UV2 Operation");
+			pb_EditorUtility.ShowNotification(this, "Invalid UV2 Operation");
 			return;
 		}
 
@@ -3267,7 +3267,7 @@ public class pb_UV_Editor : EditorWindow
 		SetSelectedUVsWithSceneView();
 		RefreshSelectedUVCoordinates();
 
-		pb_Editor_Utility.ShowNotification(this, "Split UVs");
+		pb_EditorUtility.ShowNotification(this, "Split UVs");
 	}
 
 	/**
@@ -3303,15 +3303,15 @@ public class pb_UV_Editor : EditorWindow
 
 		if( direction == Vector2.right )
 		{
-			pb_Editor_Utility.ShowNotification(this, "Flip UVs Vertically");
+			pb_EditorUtility.ShowNotification(this, "Flip UVs Vertically");
 		}
 		else if( direction == Vector2.up )
 		{
-			pb_Editor_Utility.ShowNotification(this, "Flip UVs Horizontally");
+			pb_EditorUtility.ShowNotification(this, "Flip UVs Horizontally");
 		} 
 		else
 		{
-			pb_Editor_Utility.ShowNotification(this, "Flip UVs");
+			pb_EditorUtility.ShowNotification(this, "Flip UVs");
 		}
 	}
 
@@ -3343,7 +3343,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		RefreshSelectedUVCoordinates();
-		pb_Editor_Utility.ShowNotification(this, "Fit UVs");
+		pb_EditorUtility.ShowNotification(this, "Fit UVs");
 	}
 
 	/**
@@ -3534,7 +3534,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		if(screenshot && screenshot_path != "")
 		{
-			pb_Editor_Utility.SaveTexture(screenshot, screenshot_path);
+			pb_EditorUtility.SaveTexture(screenshot, screenshot_path);
 			DestroyImmediate(screenshot);
 		}
 	}

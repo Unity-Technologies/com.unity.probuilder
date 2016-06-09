@@ -40,6 +40,7 @@ public class pb_Preferences
 	static bool pbIconGUI = false;
 	static bool pbShiftOnlyTooltips = false;
 	static bool pbDrawAxisLines = true;
+	static bool pbMeshesAreAssets = false;
 	
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -135,6 +136,12 @@ public class pb_Preferences
 
 		GUILayout.Space(4);
 
+		GUILayout.Label("Experimental", EditorStyles.boldLabel);
+
+		pbMeshesAreAssets = EditorGUILayout.Toggle(new GUIContent("Meshes Are Assets", "Experimental!  Instead of storing mesh data in the scene, this toggle creates a Mesh cache in the Project that ProBuilder will use."), pbMeshesAreAssets);
+
+		GUILayout.Space(4);
+
 		/**
 		 * UV EDITOR SETTINGS
 		 */
@@ -200,6 +207,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbIconGUI);
 			EditorPrefs.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
 			EditorPrefs.DeleteKey(pb_Constant.pbDrawAxisLines);
+			EditorPrefs.DeleteKey(pb_Constant.pbMeshesAreAssets);
 		}
 
 		LoadPrefs();
@@ -307,6 +315,7 @@ public class pb_Preferences
 		pbIconGUI 							= pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		pbShiftOnlyTooltips 				= pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 		pbDrawAxisLines 					= pb_Preferences_Internal.GetBool(pb_Constant.pbDrawAxisLines);
+		pbMeshesAreAssets 					= pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
 
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
@@ -362,6 +371,7 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbIconGUI, pbIconGUI);
 		EditorPrefs.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
 		EditorPrefs.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
+		EditorPrefs.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
 		
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);

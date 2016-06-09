@@ -73,7 +73,7 @@ namespace ProBuilder2.EditorCommon
 		File.WriteAllText(GENERATED_FILE_PATH, sb.ToString());
 
 		Debug.Log(sb.ToString());
-		pb_Editor_Utility.ShowNotification("Successfully Generated\nMenu Items");
+		pb_EditorUtility.ShowNotification("Successfully Generated\nMenu Items");
 
 		AssetDatabase.Refresh();
 	}
@@ -148,7 +148,7 @@ namespace ProBuilder2.EditorCommon
 		sb.Append(class_name);
 		sb.AppendLine(">();");
 		sb.AppendLine("\t\t\tif(instance != null)");
-		sb.AppendLine("\t\t\t\tpb_Editor_Utility.ShowNotification(instance.DoAction().notification);");
+		sb.AppendLine("\t\t\t\tpb_EditorUtility.ShowNotification(instance.DoAction().notification);");
 		sb.AppendLine("\t\t}");
 
 		return sb.ToString();

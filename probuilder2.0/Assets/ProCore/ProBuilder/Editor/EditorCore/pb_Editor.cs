@@ -72,7 +72,7 @@ public class pb_Editor : EditorWindow
 	private HandleAlignment previousHandleAlignment;
 	#endif
 
-	pb_EditorToolbar iconGui = null;
+	private static pb_EditorToolbar editorToolbar = null;
 
 	pb_Shortcut[] shortcuts;
 
@@ -139,8 +139,12 @@ public class pb_Editor : EditorWindow
 
 	private void InitGUI()
 	{
-		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-		iconGui.InitWindowProperties(this);
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
+
+		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		editorToolbar.hideFlags = HideFlags.HideAndDontSave;
+		editorToolbar.InitWindowProperties(this);
 
 		VertexTranslationInfoStyle = new GUIStyle();
 		VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
@@ -213,6 +217,9 @@ public class pb_Editor : EditorWindow
 	private void OnDisable()
 	{
 		_instance = null;
+
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
 
 		ClearFaceSelection();
 
@@ -305,14 +312,14 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 
-		iconGui.OnGUI();
+		editorToolbar.OnGUI();
 
 // #if PROTOTYPE
 // 		GUI.backgroundColor = UpgradeTint;
 // 		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional features."))
 // 		{
 // 			// due to bug in asset store window, this only works if the window is already open
-// 			if(pb_Editor_Utility.AssetStoreWindowIsOpen())
+// 			if(pb_EditorUtility.AssetStoreWindowIsOpen())
 // 				Application.OpenURL("com.unity3d.kharma:content/3558");
 // 			else
 // 				Application.OpenURL("http://bit.ly/1GJEuIG"); // "http://u3d.as/30b");
@@ -344,10 +351,11 @@ public class pb_Editor : EditorWindow
 	{
 		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
-		if(iconGui != null)
-			GameObject.DestroyImmediate(iconGui);
-		iconGui = ScriptableObject.CreateInstance<pb_EditorToolbar>();
-		iconGui.InitWindowProperties(this);
+		if(editorToolbar != null)
+			GameObject.DestroyImmediate(editorToolbar);
+		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
+		editorToolbar.hideFlags = HideFlags.HideAndDontSave;
+		editorToolbar.InitWindowProperties(this);
 	}
 
 	void Menu_OpenAsDockableWindow()
@@ -1672,7 +1680,7 @@ public class pb_Editor : EditorWindow
 
 		if(ef > 0)
 		{
-			pb_Editor_Utility.ShowNotification("Extrude");
+			pb_EditorUtility.ShowNotification("Extrude");
 			UpdateSelection(true);
 		}
 	}
@@ -2013,7 +2021,7 @@ public class pb_Editor : EditorWindow
 				usedShortcut.action != "Toggle Geometry Mode" &&
 				usedShortcut.action != "Toggle Handle Pivot" &&
 				usedShortcut.action != "Toggle Selection Mode" )
-				pb_Editor_Utility.ShowNotification(usedShortcut.action);
+				pb_EditorUtility.ShowNotification(usedShortcut.action);
 
 			Event.current.Use();
 		}
@@ -2032,12 +2040,12 @@ public class pb_Editor : EditorWindow
 
 				if(editLevel == EditLevel.Geometry)
 				{
-					pb_Editor_Utility.ShowNotification("Top Level Editing");
+					pb_EditorUtility.ShowNotification("Top Level Editing");
 					SetEditLevel(EditLevel.Top);
 				}
 				else if( !uniqueModeShortcuts )
 				{
-					pb_Editor_Utility.ShowNotification("Geometry Editing");
+					pb_EditorUtility.ShowNotification("Geometry Editing");
 					SetEditLevel(EditLevel.Geometry);
 				}
 				return true;
@@ -2122,7 +2130,7 @@ public class pb_Editor : EditorWindow
 		{
 			case "Escape":
 				ClearFaceSelection();
-				pb_Editor_Utility.ShowNotification("Top Level");
+				pb_EditorUtility.ShowNotification("Top Level");
 				UpdateSelection(false);
 				SetEditLevel(EditLevel.Top);
 				return true;
@@ -2137,21 +2145,21 @@ public class pb_Editor : EditorWindow
 				switch(selectionMode)
 				{
 					case SelectMode.Face:
-						pb_Editor_Utility.ShowNotification("Editing Faces");
+						pb_EditorUtility.ShowNotification("Editing Faces");
 						break;
 
 					case SelectMode.Vertex:
-						pb_Editor_Utility.ShowNotification("Editing Vertices");
+						pb_EditorUtility.ShowNotification("Editing Vertices");
 						break;
 
 					case SelectMode.Edge:
-						pb_Editor_Utility.ShowNotification("Editing Edges");
+						pb_EditorUtility.ShowNotification("Editing Edges");
 						break;
 				}
 				return true;
 
 			case "Delete Face":
-				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuDeleteFace(selection).notification);
+				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuDeleteFace(selection).notification);
 				return true;
 
 			/* handle alignment */
@@ -2162,7 +2170,7 @@ public class pb_Editor : EditorWindow
 				if(editLevel != EditLevel.Texture)
 				{
 					ToggleHandleAlignment();
-					pb_Editor_Utility.ShowNotification("Handle Alignment: " + ((HandleAlignment)handleAlignment).ToString());
+					pb_EditorUtility.ShowNotification("Handle Alignment: " + ((HandleAlignment)handleAlignment).ToString());
 				}
 				return true;
 

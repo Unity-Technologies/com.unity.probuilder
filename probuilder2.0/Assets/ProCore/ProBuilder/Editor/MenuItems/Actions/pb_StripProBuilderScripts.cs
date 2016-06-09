@@ -75,7 +75,7 @@ namespace ProBuilder2.Actions
 				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
 					return;
 
-				pb_Editor_Utility.VerifyMesh(pb);
+				pb_EditorUtility.VerifyMesh(pb);
 
 				if(pb.msh == null)	
 				{
@@ -87,7 +87,7 @@ namespace ProBuilder2.Actions
 					return;
 				}
 
-				Mesh m = pbUtil.DeepCopyMesh(pb.msh);
+				Mesh m = pb_MeshUtility.DeepCopy(pb.msh);
 
 				DestroyImmediate(pb);
 				

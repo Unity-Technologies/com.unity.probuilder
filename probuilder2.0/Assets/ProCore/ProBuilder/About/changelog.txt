@@ -26,7 +26,7 @@
 - Improve performance of some topology query operations.
 - Center Pivot now available in Basic.
 - Add GenerateUV2 toolbar entry when 'Disable Auto UV2 Generation is enabled.
-- Add a delegate in pb_Editor_Utility to notify subscribers when a new pb_Object has been initialized.
+- Add a delegate in pb_EditorUtility to notify subscribers when a new pb_Object has been initialized.
 - New API example "Tools > ProBuilder > API Examples > Log Callbacks Window" demonstrates hooking into various editor delegates.
 
 ## Bug Fixes
@@ -290,7 +290,7 @@
 	- ProBuilder2.GUI namespace become ProBuilder2.Interface to avoid conflicts with UnityEngine.GUI.
 	- Move Triangulation code into pbTriangleOps.
 	- Significantly improved performance of RefreshNormals() function.
-	- New VerifyMesh() function in pb_Editor_Utility guarantees good mesh reference and geometry.
+	- New VerifyMesh() function in pb_EditorUtility guarantees good mesh reference and geometry.
 	- Add ability to delete unfixable components in pb_MissingScriptEditor.
 	- New PointIsOccluded() check in pb_Handle_Utility tests if a point is visible in editor.
 	- Significantly improve performance of pbUtil.RemoveAt().

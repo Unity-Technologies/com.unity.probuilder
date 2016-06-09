@@ -247,7 +247,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 			pb.Optimize();
 		}
 
-		pb_Editor_Utility.ShowNotification("Set Vertex Colors\n" + pb_ColorUtil.GetColorName(col));
+		pb_EditorUtility.ShowNotification("Set Vertex Colors\n" + pb_ColorUtil.GetColorName(col));
 	}
 #endregion
 }

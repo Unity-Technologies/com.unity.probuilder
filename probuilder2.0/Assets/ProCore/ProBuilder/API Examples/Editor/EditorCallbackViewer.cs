@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder2.EditorCommon;	// pb_Editor and pb_Editor_Utility
+using ProBuilder2.EditorCommon;	// pb_Editor and pb_EditorUtility
 using ProBuilder2.Interface;	// pb_GUI_Utility
 using ProBuilder2.Common;		// EditLevel
 using System.Linq;				// Sum()
@@ -41,7 +41,7 @@ class EditorCallbackViewer : EditorWindow
 
 		// Called when a new ProBuilder object is created.
 		// note - this was added in ProBuilder 2.5.1
-		pb_Editor_Utility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
+		pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
 
 		// Called when the ProBuilder selection changes (can be object or element change).
 		// Also called when the geometry is modified by ProBuilder.
@@ -57,7 +57,7 @@ class EditorCallbackViewer : EditorWindow
 	void OnDisable()
 	{
 		pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
-		pb_Editor_Utility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
+		pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
 		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
 		pb_Editor.OnVertexMovementBegin -= OnVertexMovementBegin;
 		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;

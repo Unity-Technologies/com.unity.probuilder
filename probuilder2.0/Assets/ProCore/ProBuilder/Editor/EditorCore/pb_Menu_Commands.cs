@@ -67,7 +67,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( pbMeshOps.CombineObjects(selected, out pb) )
 			{
-				pb_Editor_Utility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
+				pb_EditorUtility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
 
 				pb.Optimize();
 
@@ -243,7 +243,7 @@ namespace ProBuilder2.EditorCommon
 					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
 				else
 					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
-				// pb_Editor_Utility.SetEntityType(entityType, t.gameObject);
+				// pb_EditorUtility.SetEntityType(entityType, t.gameObject);
 			}
 
 			if(pb_Editor.instance != null)
@@ -266,7 +266,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
+				pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
@@ -1295,7 +1295,7 @@ namespace ProBuilder2.EditorCommon
 				copy.MakeUnique();
 
 				// if is prefab, break connection and destroy children
-				if( pb_Editor_Utility.IsPrefabInstance(copy.gameObject) || pb_Editor_Utility.IsPrefabRoot(copy.gameObject) )
+				if( pb_EditorUtility.IsPrefabInstance(copy.gameObject) || pb_EditorUtility.IsPrefabRoot(copy.gameObject) )
 					PrefabUtility.DisconnectPrefabInstance(copy.gameObject);
 
 				if(copy.transform.childCount > 0)
@@ -1304,7 +1304,7 @@ namespace ProBuilder2.EditorCommon
 						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
 					foreach(pb_Object pb_child in pb.transform.GetComponentsInChildren<pb_Object>())
-						pb_Editor_Utility.VerifyMesh(pb_child);
+						pb_EditorUtility.VerifyMesh(pb_child);
 				}
 
 				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Face");

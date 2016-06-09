@@ -293,7 +293,7 @@ namespace ProBuilder2.UpgradeKit
 		{
 			GameObject go = pb.gameObject;
 
-			pb_Editor_Utility.VerifyMesh(pb);
+			pb_EditorUtility.VerifyMesh(pb);
 
 			if(pb.msh == null)
 				return;

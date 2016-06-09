@@ -50,28 +50,31 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Used to catch prefab modifications that otherwise wouldn't be registered on the usual 'Awake' verify.
 		 *	- Dragging prefabs out of Project
+		 *	- 'Revert' prefab changes
 		 *	- 'Apply' prefab changes
 		 */
 		static void HierarchyWindowChanged()
 		{
-			bool prefabReverted = false;
-
 			if(!EditorApplication.isPlaying)
 			{
+				bool meshesAreAssets = pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
+
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 				{
-					if( pb_Editor_Utility.VerifyMesh(pb) != MeshRebuildReason.None )
+					if(meshesAreAssets)
 					{
-						prefabReverted = true;
+						pb.ToMesh();
+						pb.Refresh();
+						pb.Optimize();
+					}
+					else
+					{
+						pb_EditorUtility.VerifyMesh(pb);
 					}
 				}
 
-				if(prefabReverted)
-				{
-					if(pb_Editor.instance != null)
-						pb_Editor.instance.UpdateSelection();
-				}
+				pb_Editor.Refresh();
 			}
 		}
 	}

@@ -29,7 +29,6 @@ namespace ProBuilder2.EditorCommon
 
 			if(ent != null)
 				pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
-			// if(ent.colliderType != pb_Entity.ColliderType.Upgraded) ent.GenerateCollisions();
 		}
 
 		public override void OnInspectorGUI()
@@ -43,7 +42,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				pbUndo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
 
-				pb_Editor_Utility.SetEntityType(et, ent.gameObject);
+				pb_EditorUtility.SetEntityType(et, ent.gameObject);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();

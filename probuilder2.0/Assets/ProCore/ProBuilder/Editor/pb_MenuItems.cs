@@ -71,17 +71,17 @@ public class pb_MenuItems : EditorWindow
 		switch(pb_Editor.instance.selectionMode)
 		{
 			case SelectMode.Vertex:
-				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuConnectVertices(selection).notification);
+				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuConnectVertices(selection).notification);
 				break;
 
 			case SelectMode.Edge:
-				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuConnectEdges(selection).notification);
-				// pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuSubdivideEdge(selection).notification);			
+				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuConnectEdges(selection).notification);
+				// pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuSubdivideEdge(selection).notification);			
 				break;
 
 			case SelectMode.Face:
 			default:
-				pb_Editor_Utility.ShowNotification(pb_Menu_Commands.MenuSubdivideFace(selection).notification);
+				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuSubdivideFace(selection).notification);
 				break;
 		}
 

@@ -27,7 +27,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenMaterialEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Mirror Objects Editor ", true)]
@@ -42,7 +42,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenMirrorObjectsEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMirrorObjectsEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Shape Editor %#K", true)]
@@ -57,7 +57,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenShapeEditor instance = pb_EditorToolbarLoader.GetInstance<OpenShapeEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Smoothing Editor ", true)]
@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenSmoothingEditor instance = pb_EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open UV Editor ", true)]
@@ -87,7 +87,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenUVEditor instance = pb_EditorToolbarLoader.GetInstance<OpenUVEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Vertex Color Editor ", true)]
@@ -102,7 +102,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			OpenVertexColorEditor instance = pb_EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Bridge Edges &B", true)]
@@ -117,7 +117,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			BridgeEdges instance = pb_EditorToolbarLoader.GetInstance<BridgeEdges>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Collapse Vertices &C", true)]
@@ -132,7 +132,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			CollapseVertices instance = pb_EditorToolbarLoader.GetInstance<CollapseVertices>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Conform Face Normals ", true)]
@@ -147,7 +147,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			ConformFaceNormals instance = pb_EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 
@@ -164,7 +164,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Detach Faces ", true)]
@@ -179,7 +179,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			DetachFaces instance = pb_EditorToolbarLoader.GetInstance<DetachFaces>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 
@@ -196,7 +196,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			FlipFaceEdge instance = pb_EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Flip Face Normals &N", true)]
@@ -211,7 +211,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			FlipFaceNormals instance = pb_EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Insert Edge Loop &U", true)]
@@ -226,7 +226,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			InsertEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Merge Faces ", true)]
@@ -241,7 +241,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			MergeFaces instance = pb_EditorToolbarLoader.GetInstance<MergeFaces>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Set Pivot To Selection %J", true)]
@@ -256,7 +256,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SetPivotToSelection instance = pb_EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Split Vertices &X", true)]
@@ -271,7 +271,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SplitVertices instance = pb_EditorToolbarLoader.GetInstance<SplitVertices>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Edges ", true)]
@@ -286,7 +286,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SubdivideEdges instance = pb_EditorToolbarLoader.GetInstance<SubdivideEdges>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 
@@ -302,7 +302,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			WeldVertices instance = pb_EditorToolbarLoader.GetInstance<WeldVertices>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Interaction/Toggle Handle Alignment  [P]", true)]
@@ -317,7 +317,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			ToggleHandleAlignment instance = pb_EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Interaction/Toggle Select Back Faces ", true)]
@@ -332,7 +332,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			ToggleSelectBackFaces instance = pb_EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Center Pivot ", true)]
@@ -347,7 +347,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			CenterPivot instance = pb_EditorToolbarLoader.GetInstance<CenterPivot>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Conform Object Normals ", true)]
@@ -362,7 +362,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			ConformObjectNormals instance = pb_EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Flip Object Normals ", true)]
@@ -377,7 +377,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			FlipObjectNormals instance = pb_EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Freeze Transform ", true)]
@@ -392,7 +392,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			FreezeTransform instance = pb_EditorToolbarLoader.GetInstance<FreezeTransform>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 
@@ -408,7 +408,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			MergeObjects instance = pb_EditorToolbarLoader.GetInstance<MergeObjects>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", true)]
@@ -423,7 +423,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Triangulate Object ", true)]
@@ -438,7 +438,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			TriangulateObject instance = pb_EditorToolbarLoader.GetInstance<TriangulateObject>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Grow Selection &G", true)]
@@ -453,7 +453,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			GrowSelection instance = pb_EditorToolbarLoader.GetInstance<GrowSelection>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Invert Selection %#I", true)]
@@ -468,7 +468,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			InvertSelection instance = pb_EditorToolbarLoader.GetInstance<InvertSelection>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Select Edge Loop &L", true)]
@@ -483,7 +483,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SelectEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeLoop>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Select Edge Ring &R", true)]
@@ -498,7 +498,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SelectEdgeRing instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeRing>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Shrink Selection &#G", true)]
@@ -513,7 +513,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			ShrinkSelection instance = pb_EditorToolbarLoader.GetInstance<ShrinkSelection>();
 			if(instance != null)
-				pb_Editor_Utility.ShowNotification(instance.DoAction().notification);
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
 	}
