@@ -201,16 +201,13 @@ namespace ProBuilder2.EditorCommon
 			if(!ent || !pb)
 				return;
 
-			SetDefaultEditorFlags(target);
+			SetEditorFlags(StaticEditorFlags_All, target);
 
 			switch(newEntityType)
 			{
 				case EntityType.Detail:
-					SetBrush(target);
-					break;
-
 				case EntityType.Occluder:
-					SetOccluder(target);
+					SetBrush(target);
 					break;
 
 				case EntityType.Trigger:
@@ -271,31 +268,6 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private static void SetOccluder(GameObject target)
-		{
-			EntityType et = target.GetComponent<pb_Entity>().entityType;	
-			
-			if(	et == EntityType.Trigger || 
-				et == EntityType.Collider )
-			{
-				pb_Object pb = target.GetComponent<pb_Object>();
-
-				#if !PROTOTYPE
-					pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
-				#else
-					target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-				#endif
-
-				pb.ToMesh();
-				pb.Refresh();
-			}
-
-			StaticEditorFlags editorFlags;
-			editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.OccluderStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
-			
-			SetEditorFlags(editorFlags, target);
-		}
-
 		private static void SetTrigger(GameObject target)
 		{
 			pb_Object pb = target.GetComponent<pb_Object>();
@@ -345,23 +317,14 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		/**
-		 * Use Default static flags - StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration
-		 * If NoDraw is present, BatchingStatic will not be flagged.
-		 */
-		private static void SetDefaultEditorFlags(GameObject target)
-		{
-			SetIsTrigger(false, target);
-			
-			StaticEditorFlags editorFlags;
-
-			editorFlags = StaticEditorFlags.BatchingStatic | StaticEditorFlags.LightmapStatic | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration;
-
-			// if(target.GetComponent<pb_Entity>().entityType == EntityType.Occluder)
-			// 	SetEditorFlagsWithBounds(editorFlags, target);
-
-			SetEditorFlags(editorFlags, target);
-		}
+		const StaticEditorFlags StaticEditorFlags_All =
+				StaticEditorFlags.LightmapStatic |
+				StaticEditorFlags.OccluderStatic |
+				StaticEditorFlags.BatchingStatic |
+				StaticEditorFlags.OccludeeStatic |
+				StaticEditorFlags.NavigationStatic |
+				StaticEditorFlags.OffMeshLinkGeneration |
+				StaticEditorFlags.ReflectionProbeStatic;
 #endregion
 
 #region EDITOR
