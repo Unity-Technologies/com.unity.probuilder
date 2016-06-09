@@ -65,7 +65,7 @@ You can use the button below to rebuild all scene UV2s quickly.", MessageType.In
 			GUILayout.FlexibleSpace();
 			
 			if(GUILayout.Button("Rebuild All ProBuilder UV2s"))
-				pb_Editor_Utility.ShowNotification(DoGenerateUV2( GameObject.FindObjectsOfType<pb_Object>() ).notification);
+				pb_EditorUtility.ShowNotification(DoGenerateUV2( GameObject.FindObjectsOfType<pb_Object>() ).notification);
 		}
 
 		public override pb_ActionResult DoAction()

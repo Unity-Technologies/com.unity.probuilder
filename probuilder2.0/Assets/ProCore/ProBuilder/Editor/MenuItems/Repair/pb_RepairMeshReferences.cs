@@ -34,7 +34,7 @@ namespace ProBuilder2.Actions
 		 		
 				pb_Object pb = all[i];
 
-				pb_Editor_Utility.VerifyMesh(pb);
+				pb_EditorUtility.VerifyMesh(pb);
 			}
 			if(interactive)
 			{

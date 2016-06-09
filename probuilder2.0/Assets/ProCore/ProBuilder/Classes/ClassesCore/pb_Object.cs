@@ -228,6 +228,8 @@ public class pb_Object : MonoBehaviour
 
 	public string						asset_guid;
 
+	public static event System.Action<pb_Object> onDestroyObject;
+
 	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
 	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 	public bool dontDestroyMeshOnDelete = false;
@@ -1047,8 +1049,10 @@ public class pb_Object : MonoBehaviour
 
 	public void OnDestroy()
 	{
-		// if(!dontDestroyMeshOnDelete)
-		// 	DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+		if(onDestroyObject != null)
+			onDestroyObject(this);
+		else if(!dontDestroyMeshOnDelete)
+			GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
 	}
 #endregion
 

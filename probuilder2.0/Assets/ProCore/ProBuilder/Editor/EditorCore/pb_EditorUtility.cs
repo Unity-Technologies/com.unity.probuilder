@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 	 * Utilities for working in Unity editor.  Showing notifications in windows, getting the sceneview,
 	 * setting EntityTypes, OBJ export, etc.
 	 */
-	public static class pb_Editor_Utility
+	public static class pb_EditorUtility
 	{
 #region NOTIFICATION MANAGER
 
@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't 
 		 * 	fire this callback.
 		 *
-		 *	\sa pb_Editor_Utility.InitObjectFlags
+		 *	\sa pb_EditorUtility.InitObjectFlags
 		 */
 		public static OnObjectCreated onObjectCreated = null;
 
@@ -410,7 +410,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						// Debug.Log("duplicate mesh");
 						
-						if(!meshesAreAssets || !(pb_Editor_Utility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
+						if(!meshesAreAssets || !(pb_EditorUtility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
 						{
 							// deep copy arrays & ToMesh/Refresh
 							pb.MakeUnique();
@@ -422,7 +422,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					// old mesh didn't exist, so this is probably a prefab being instanced
 
-					if(pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+					if(pb_EditorUtility.IsPrefabRoot(pb.gameObject))
 						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 					pb.Optimize();
@@ -470,8 +470,8 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-			pb_Editor_Utility.SetEntityType(entityType, pb.gameObject);
-			pb_Editor_Utility.ScreenCenter( pb.gameObject );
+			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
+			pb_EditorUtility.ScreenCenter( pb.gameObject );
 			pb.Optimize();
 		}
 

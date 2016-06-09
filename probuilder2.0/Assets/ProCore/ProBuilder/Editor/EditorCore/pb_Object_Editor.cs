@@ -42,7 +42,7 @@ public class pb_Object_Editor : Editor
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 
  		foreach(pb_Object selpb in Selection.transforms.GetComponents<pb_Object>())
-	 		pb_Editor_Utility.VerifyMesh(selpb);
+	 		pb_EditorUtility.VerifyMesh(selpb);
 	}
 
 	public override void OnInspectorGUI()

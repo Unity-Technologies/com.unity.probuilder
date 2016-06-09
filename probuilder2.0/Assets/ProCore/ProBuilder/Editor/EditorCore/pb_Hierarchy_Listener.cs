@@ -70,7 +70,7 @@ namespace ProBuilder2.EditorCommon
 					}
 					else
 					{
-						pb_Editor_Utility.VerifyMesh(pb);
+						pb_EditorUtility.VerifyMesh(pb);
 					}
 				}
 

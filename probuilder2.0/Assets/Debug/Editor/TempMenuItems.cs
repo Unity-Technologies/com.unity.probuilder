@@ -16,8 +16,9 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		// foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
-		// {
-		// }
+		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		{
+			Debug.Log( PrefabUtility.GetPrefabType(pb.gameObject).ToString());
+		}
 	}
 }

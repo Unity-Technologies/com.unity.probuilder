@@ -317,7 +317,7 @@ namespace ProBuilder2.EditorCommon
 					pbUndo.RecordObject(pb, "Quick Apply");
 					pb.SetFaceMaterial( new pb_Face[1] { quad }, queuedMaterial);
 					OnFaceChanged(pb);
-					pb_Editor_Utility.ShowNotification("Quick Apply Material");
+					pb_EditorUtility.ShowNotification("Quick Apply Material");
 					return true;
 				}
 			}
@@ -340,7 +340,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(pb_Editor.instance != null && pb_Editor.instance.selectedFaceCount > 0)
-				pb_Editor_Utility.ShowNotification("Set Material\n" + mat.name);
+				pb_EditorUtility.ShowNotification("Set Material\n" + mat.name);
 		}
 
 		private static void OnFaceChanged( pb_Object pb )

@@ -57,7 +57,7 @@ namespace ProBuilder2.EditorCommon
 				pb.RefreshUV();
 			}
 
-			SceneView scn = pb_Editor_Utility.GetSceneView();
+			SceneView scn = pb_EditorUtility.GetSceneView();
 			if(fc > 0)
 				scn.ShowNotification(new GUIContent("Success! Inverted UV Scale of\n" + selection.Length + (selection.Length > 1 ? " objects" : " object") + " and " + fc + " faces.", ""));
 			else

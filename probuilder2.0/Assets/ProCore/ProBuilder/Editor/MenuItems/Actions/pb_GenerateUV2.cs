@@ -24,9 +24,9 @@ namespace ProBuilder2.Actions
 				return;	/// user canceled
 
 			if(sel.Length > 0)
-				pb_Editor_Utility.ShowNotification("Generated UV2 for " + sel.Length + " Meshes");
+				pb_EditorUtility.ShowNotification("Generated UV2 for " + sel.Length + " Meshes");
 			else
-				pb_Editor_Utility.ShowNotification("Nothing Selected");
+				pb_EditorUtility.ShowNotification("Nothing Selected");
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Scene", false, pb_Constant.MENU_ACTIONS + 20)]
@@ -38,9 +38,9 @@ namespace ProBuilder2.Actions
 				return;
 
 			if(sel.Length > 0)
-				pb_Editor_Utility.ShowNotification("Generated UV2 for " + sel.Length + " Meshes");
+				pb_EditorUtility.ShowNotification("Generated UV2 for " + sel.Length + " Meshes");
 			else
-				pb_Editor_Utility.ShowNotification("No ProBuilder Objects Found");
+				pb_EditorUtility.ShowNotification("No ProBuilder Objects Found");
 		}
 
 		static bool Menu_GenerateUV2(pb_Object[] selected)

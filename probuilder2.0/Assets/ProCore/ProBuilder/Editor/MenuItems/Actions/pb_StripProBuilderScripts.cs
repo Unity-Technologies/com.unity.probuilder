@@ -75,7 +75,7 @@ namespace ProBuilder2.Actions
 				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
 					return;
 
-				pb_Editor_Utility.VerifyMesh(pb);
+				pb_EditorUtility.VerifyMesh(pb);
 
 				if(pb.msh == null)	
 				{

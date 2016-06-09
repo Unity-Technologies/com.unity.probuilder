@@ -55,7 +55,7 @@ namespace ProBuilder2.UpgradeKit
 			pb_UpgradeKitUtils.InvokeFunction(entity, "SetEntity", new object[] { System.Enum.ToObject(entity.entityType.GetType(), serialized.entityType) });
 		
 			// Leave commented because if the user made modifications to the colliders or flags this will reset them.
-		//	pb_Editor_Utility.SetEntityType( entity.entityType, entity.gameObject );
+		//	pb_EditorUtility.SetEntityType( entity.entityType, entity.gameObject );
 		}
 	}
 #endregion

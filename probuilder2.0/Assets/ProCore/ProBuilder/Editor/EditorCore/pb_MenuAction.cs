@@ -216,7 +216,7 @@ namespace ProBuilder2.EditorCommon
 					else
 					{
 						pb_ActionResult result = DoAction();
-						pb_Editor_Utility.ShowNotification(result.notification);
+						pb_EditorUtility.ShowNotification(result.notification);
 					}
 				}
 
@@ -265,7 +265,7 @@ namespace ProBuilder2.EditorCommon
 					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
 					{
 						pb_ActionResult res = DoAction();
-						pb_Editor_Utility.ShowNotification(res.notification);
+						pb_EditorUtility.ShowNotification(res.notification);
 					}
 
 #if PROTOTYPE

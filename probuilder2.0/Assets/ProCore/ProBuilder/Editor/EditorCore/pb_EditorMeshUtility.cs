@@ -96,7 +96,7 @@ namespace ProBuilder2.EditorCommon
 				if(!Directory.Exists(PB_MESH_CACHE))
 					Directory.CreateDirectory(PB_MESH_CACHE);
 
-				Mesh m = pb_Editor_Utility.LoadAssetAtPath<Mesh>(path);
+				Mesh m = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
 				
 				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
@@ -104,7 +104,7 @@ namespace ProBuilder2.EditorCommon
 					if(mesh != m)
 					{
 						// prefab instances should always point to the same mesh
-						if(pb_Editor_Utility.IsPrefabInstance(pb.gameObject) || pb_Editor_Utility.IsPrefabRoot(pb.gameObject))
+						if(pb_EditorUtility.IsPrefabInstance(pb.gameObject) || pb_EditorUtility.IsPrefabRoot(pb.gameObject))
 						{
 							// Debug.Log("reconnect prefab to mesh");
 			
@@ -141,12 +141,12 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public static Mesh GetCachedMesh(pb_Object pb)
+		public static bool GetCachedMesh(pb_Object pb, out string path, out Mesh mesh)
 		{
 			string guid = pb.asset_guid;
-			string path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
-			Mesh m = pb_Editor_Utility.LoadAssetAtPath<Mesh>(path);
-			return m;
+			path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
+			mesh = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
+			return mesh != null;
 		}
 	}
 }

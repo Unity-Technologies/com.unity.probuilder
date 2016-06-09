@@ -101,7 +101,7 @@ namespace ProBuilder2.EditorCommon
 					colType = ColliderType.BoxCollider;
 			}
 
-			pb_Editor_Utility.InitObjectFlags(p, colType, pb.GetComponent<pb_Entity>().entityType);
+			pb_EditorUtility.InitObjectFlags(p, colType, pb.GetComponent<pb_Entity>().entityType);
 			
 			p.ToMesh();
 			p.Refresh();
