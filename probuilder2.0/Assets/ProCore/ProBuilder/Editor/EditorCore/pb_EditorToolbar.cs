@@ -319,7 +319,8 @@ namespace ProBuilder2.EditorCommon
 						optionRect.x -= scroll.x;
 						optionRect.y -= scroll.y;
 
-						if(	e.type != EventType.Layout &&
+						if(	window.position.Contains(e.mousePosition + window.position.position) &&
+							e.type != EventType.Layout &&
 							optionRect.Contains(e.mousePosition) )
 						{
 							hoveringTooltipName = action.tooltip.title + "_alt";
@@ -344,7 +345,8 @@ namespace ProBuilder2.EditorCommon
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 
-				if( e.type != EventType.Layout &&
+				if( window.position.Contains(e.mousePosition + window.position.position) &&
+					e.type != EventType.Layout &&
 					!hovering &&
 					buttonRect.Contains(e.mousePosition) )
 				{
