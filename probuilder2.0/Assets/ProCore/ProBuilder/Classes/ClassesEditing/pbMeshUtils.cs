@@ -461,62 +461,72 @@ namespace ProBuilder2.MeshOperations
 
 #region Edge Ring / Loop
 	
+		private static pb_WingedEdge GetOppositeEdge(pb_WingedEdge edge)
+		{
+			if(edge == null) 
+				return null;
+
+			pb_WingedEdge next = edge.next, prev = edge.previous;
+
+			while(next != prev && next != edge)
+			{
+				next = next.next;
+				prev = prev.previous;
+			}
+
+			if(next == edge)
+				next = null;
+
+			return next;
+		}
+
 		/**
 		 * Iterates through face edges and builds a list using the opposite edge.
 		 * @todo Lots of slow stuff in here
 		 */
-		public static pb_Edge[] GetEdgeRing(pb_Object pb, pb_Edge[] edges)
+		public static IEnumerable<pb_Edge> GetEdgeRing(pb_Object pb, pb_Edge[] edges)
 		{
-			List<pb_Edge> usedEdges = new List<pb_Edge>();
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+			List<pb_EdgeLookup> edge_lookup = pb_EdgeLookup.GetEdgeLookup(edges, pb.sharedIndices.ToDictionary()).ToList();
+			edge_lookup.Distinct();
 
-			foreach(pb_Edge e in edges)
-			{	
-				List<pb_Face> origFace;
-				List<pb_Edge> origEdge;
+			Dictionary<pb_Edge, pb_WingedEdge> wings_dic = new Dictionary<pb_Edge, pb_WingedEdge>();
 
-				// ValidFaceAndEdgeWithEdge will return false if < 1 face and edge combo is found.
-				if( !ValidFaceAndEdgeWithEdge(pb, e, lookup, out origFace, out origEdge) )
+			for(int i = 0; i < wings.Count; i++) 
+				if(!wings_dic.ContainsKey(wings[i].edge.common))
+					wings_dic.Add(wings[i].edge.common, wings[i]); 
+
+			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();			
+
+			for(int i = 0; i < edge_lookup.Count; i++)
+			{
+				pb_WingedEdge we;
+
+				if(!wings_dic.TryGetValue(edge_lookup[i].common, out we) || used.Contains(we.edge))
 					continue;
-					
-				// Only add the initial edge once
-				usedEdges.Add(origEdge[0]);
 
-				pb_Face opFace;
-				pb_Edge opEdge;
+				pb_WingedEdge cur = we;
 
-				bool superBreak = false;
-				for(int i = 0; i < origFace.Count; i++)
+				while(cur != null)
 				{
-					pb_Face curFace = origFace[i];
-					pb_Edge curEdge = origEdge[i];
+					if(!used.Add(cur.edge)) break;
+					cur = GetOppositeEdge(cur);
+					if(cur != null && cur.opposite != null) cur = cur.opposite;
+				}
 
-					while( GetOppositeEdge(pb, curFace, curEdge, lookup, out opFace, out opEdge) )
-					{
-						curFace = opFace;
-						curEdge = opEdge;
+				cur = GetOppositeEdge(we.opposite);
+				if(cur != null && cur.opposite != null) cur = cur.opposite;
 
-						usedEdges.Add(curEdge);
-						
-						if(curFace == null)
-							break;	
-
-						if(curFace == origFace[i])
-						{
-							superBreak = true;
-							break;
-						}
-					}
-
-					if(superBreak)
-						break;
+				// run in both directions
+				while(cur != null)
+				{
+					if(!used.Add(cur.edge)) break;
+					cur = GetOppositeEdge(cur);
+					if(cur != null && cur.opposite != null) cur = cur.opposite;
 				}
 			}
 
-			pb_Edge[] dist = pb_Edge.GetUniversalEdges(usedEdges.ToArray(), lookup);
-
-
-			return pb_Edge.GetLocalEdges_Fast(dist.Distinct().ToArray(), pb.sharedIndices);
+			return used.Select(x => x.local);
 		}
 
 		/**

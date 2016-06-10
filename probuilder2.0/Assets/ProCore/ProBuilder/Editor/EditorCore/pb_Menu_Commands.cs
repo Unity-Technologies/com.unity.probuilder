@@ -1096,7 +1096,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
-				pb_Edge[] edges = pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges);
+				pb_Edge[] edges = pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
 
 				if(edges.Length > pb.SelectedEdges.Length)
 					success = true;
@@ -1878,7 +1878,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] edges;
-				if( pb.ConnectEdges( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
+				if( pb.ConnectEdges( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray(), out edges) )
 				{
 					pb.SetSelectedEdges(edges);
 					pb.ToMesh();
