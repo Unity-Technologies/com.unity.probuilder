@@ -321,7 +321,7 @@ namespace ProBuilder2.MeshOperations
 		Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
 		Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
 		List<int> indicesToDelete		= new List<int>();
-		pb_Edge[] commonEdges	 		= pb_Edge.GetUniversalEdges(edges, lookup);
+		pb_Edge[] commonEdges	 		= pb_Edge.GetUniversalEdges(edges.ToArray(), lookup);
 		List<pb_Edge> distinctEdges 	= commonEdges.Distinct().ToList();
 
 		Dictionary<pb_Face, pb_FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, pb_FaceRebuildData>();

@@ -91,9 +91,8 @@ namespace ProBuilder2.Common
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();
-			int index = 0;
-
 			Dictionary<pb_Edge, pb_WingedEdge> opposites = new Dictionary<pb_Edge, pb_WingedEdge>();
+			int index = 0;
 
 			for(int i = 0; i < pb.faces.Length; i++)
 			{

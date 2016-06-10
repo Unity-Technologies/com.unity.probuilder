@@ -15,7 +15,6 @@ namespace ProBuilder2.MeshOperations
 {
 	public class pbMeshUtils
 	{
-
 #region Get Connected Elements
 
 	#region FACE
@@ -530,118 +529,74 @@ namespace ProBuilder2.MeshOperations
 		 */	
 		public static bool GetEdgeLoop(pb_Object pb, pb_Edge[] edges, out pb_Edge[] loop)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			List<pb_Edge> valid_edges = pb_Edge.ValidateEdges(pb, edges);
 
-			List<pb_Edge> loopEdges = new List<pb_Edge>();
-			int largestPossibleLoop = pb.vertexCount;
+			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+			Dictionary<pb_Edge, pb_WingedEdge> wings_dic = new Dictionary<pb_Edge, pb_WingedEdge>();
+			for(int i = 0; i < wings.Count; i++)
+				wings_dic.Add(wings[i].edge.local, wings[i]);
 
-			int c = 0;
-			bool useY = true;
+			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
 
-			foreach(pb_Edge edge in edges)
-			{
-				if(	loopEdges.IndexOf(edge, lookup) > -1 )
+			for(int i = 0; i < edges.Length; i++)
+			{		
+				pb_WingedEdge we = null;
+
+				if(!wings_dic.TryGetValue(valid_edges[i], out we) || used.Contains(we.edge))
 					continue;
 
-				// First go in the Y direction.  If that doesn't loop, then go in the X direction
-				int cycles = 0;
-				bool nextEdge = false;
-				pb_Edge curEdge = edge;
+				pb_WingedEdge cur = we;
 
-				do
+				int superBreak = 0;
+				const int LOOP_BREAKER_MAX = 65000;
+
+				while(cur != null && superBreak++ < LOOP_BREAKER_MAX)
 				{
-					if(cycles != 1)
-						loopEdges.Add(curEdge);
-					else
-						cycles++;
-
-					// get the index of this triangle in the sharedIndices array
-					// int[] si = sharedIndices[sharedIndices.IndexOf( useY ? curEdge.y : curEdge.x )].array;
-					int[] si = sharedIndices[lookup[useY ? curEdge.y : curEdge.x]].array;
-
-					// Get all faces connected to this vertex
-					pb_Face[] faces = pbMeshUtils.GetNeighborFaces(pb, si).ToArray();
-
-					pb_Face[] edgeAdjacent = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, lookup) > -1);
-					pb_Edge[] invalidEdges_universal = pb_Edge.GetUniversalEdges( pb_Edge.AllEdges(edgeAdjacent), sharedIndices ).Distinct().ToArray();
-
-					// these are faces that do NOT border the current edge
-					pb_Face[] nextFaces = System.Array.FindAll(faces, x => x.edges.IndexOf(curEdge, lookup) < 0);
-
-					if(nextFaces.Length != 2)
-					{
-						if(cycles < 1)
-						{
-							curEdge = edge;
-							nextEdge = true;
-							useY = false;
-							cycles++;
-							continue;
-						}
-						else
-						{
-							nextEdge = false;
-							break;
-						}
-					}
-
-					nextEdge = false;
-					bool superBreak = false;
-					for(int i = 0; i < nextFaces.Length; i++)
-					{
-						foreach(pb_Edge e in nextFaces[i].edges)
-						{
-							if( invalidEdges_universal.Contains(pb_Edge.GetUniversalEdge(e, sharedIndices)) )
-								continue;
-
-							int xindex = System.Array.IndexOf(si, e.x);
-							int yindex = System.Array.IndexOf(si, e.y);
-
-							if(  xindex > -1 || yindex > -1 )
-							{
-								if( e.Equals(edge, lookup) )
-								{
-									// we've completed the loop.  exit.
-									superBreak = true;
-								}
-								else
-								{
-									useY = xindex > -1;
-									curEdge = e;
-									superBreak = true;
-									nextEdge = true;
-								}
-								
-								break;
-							}
-						}
-
-						if(superBreak) break;
-					}
-					
-					if(!nextEdge && cycles < 1)
-					{
-						curEdge = edge;
-						nextEdge = true;
-						useY = false;
-						cycles++;
-					}
-
-					// This is a little arbitrary...
-					if(c++ > largestPossibleLoop)
-					{
-						Debug.LogError("Caught in a loop while searching for a loop! Oh the irony...\n" + loopEdges.Count);
-						nextEdge = false;
-					}
+					if(!used.Add(cur.edge)) break;
+					cur = EdgeLoopNext(cur, true);
 				}
-				while(nextEdge);
 
+				superBreak = 0;
+				cur = EdgeLoopNext(we, false);
+
+				// have to test in both directions
+				while(cur != null && superBreak++ < LOOP_BREAKER_MAX)
+				{
+					if(!used.Add(cur.edge)) break;
+					cur = EdgeLoopNext(cur, false);
+				}
 			}
 
-			loop = loopEdges.Distinct().ToArray();
+			loop = used.Select(x => x.local).ToArray();
+			return true;
+		}
 
-			return loopEdges.Count > 0;
+		private static pb_WingedEdge EdgeLoopNext(pb_WingedEdge edge, bool forward)
+		{
+			if(edge == null)
+				return null;
+
+			pb_WingedEdge next = forward ? edge.next : edge.previous;
+
+			if(next == null)
+				return null;
+
+			pb_WingedEdge opposite = next.opposite;
+
+			if(opposite == null)
+				return null;
+
+			pb_WingedEdge opposite_next = opposite.next;
+
+			if(opposite_next != null && opposite_next.edge.common.Contains(edge.edge.common))
+				return opposite_next;
+
+			pb_WingedEdge opposite_previous = opposite.previous;
+
+			if(opposite_previous != null && opposite_previous.edge.common.Contains(edge.edge.common))
+				return opposite_previous;
+
+			return null;
 		}
 #endregion
 

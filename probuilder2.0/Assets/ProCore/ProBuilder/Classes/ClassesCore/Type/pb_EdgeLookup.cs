@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ProBuilder2.Common
@@ -52,6 +53,11 @@ namespace ProBuilder2.Common
 		public override string ToString()
 		{
 			return string.Format("c({0}, {1})  l({2}, {3})", common.x, common.y, local.x, local.y);
+		}
+
+		public static pb_EdgeLookup[] GetEdgeLookup(pb_Edge[] edges, Dictionary<int, int> lookup)
+		{
+			return edges.Select(x => new pb_EdgeLookup(new pb_Edge(lookup[x.x], lookup[x.y]), x)).ToArray();
 		}
 	}
 }

@@ -104,6 +104,11 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		return (x == a || y == a);
 	}
 
+	public bool Contains(pb_Edge b)
+	{
+		return (x == b.x || y == b.x || x == b.y || y == b.x);
+	}
+
 	public bool Contains(int a, pb_IntArray[] sharedIndices)
 	{
 		// @todo optimize
@@ -113,34 +118,15 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 #region static methods
 
-	struct pb_Range
-	{
-		public int min, max;
-		public pb_Range (int min, int max)
-		{
-			this.min = min;
-			this.max = max;
-		}
-		public bool Contains(int x)
-		{
-			return x >= min && x <= max;
-		}
-
-		public override string ToString()
-		{
-			return "(" + min + ", " + max +")";
-		}
-	}
-
 	/**
 	 *	Returns new edges where each edge is composed not of vertex indices, but rather the index in pb.sharedIndices of each
 	 *	vertex.
 	 */
-	public static pb_Edge[] GetUniversalEdges(IList<pb_Edge> edges, Dictionary<int, int> sharedIndicesLookup)
+	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, Dictionary<int, int> sharedIndicesLookup)
 	{
-		pb_Edge[] uni = new pb_Edge[edges.Count];
+		pb_Edge[] uni = new pb_Edge[edges.Length];
 
-		for(int i = 0; i < edges.Count; i++)
+		for(int i = 0; i < edges.Length; i++)
 			uni[i] = new pb_Edge( sharedIndicesLookup[edges[i].x], sharedIndicesLookup[edges[i].y] );
 
 		return uni;
@@ -149,39 +135,6 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	public static pb_Edge[] GetUniversalEdges(pb_Edge[] edges, pb_IntArray[] sharedIndices)
 	{
 		return GetUniversalEdges(edges, sharedIndices.ToDictionary());
-	}
-
-	/**
-	 * Returns a new pb_Edge containing the index of each element in the sharedIndices array.
-	 */
-	public static pb_Edge GetUniversalEdge(pb_Edge edge, pb_IntArray[] sharedIndices)
-	{
-		return new pb_Edge(sharedIndices.IndexOf(edge.x), sharedIndices.IndexOf(edge.y));
-	}
-
-	/**
-	 * Converts a universal edge to a local edge, guaranteeing that the local edge is
-	 * valid (indices point to the same face).
-	 */
-	public static pb_Edge GetLocalEdge(pb_Object pb, pb_Edge edge)
-	{
-		pb_Face[] faces = pb.faces;
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-
-		int dist_x = -1, dist_y = -1, shared_x = -1, shared_y = -1;
-		for(int i = 0; i < faces.Length; i++)
-		{
-			if( faces[i].distinctIndices.ContainsMatch(sharedIndices[edge.x].array, out dist_x, out shared_x) &&
-				faces[i].distinctIndices.ContainsMatch(sharedIndices[edge.y].array, out dist_y, out shared_y) )
-			{
-				int x = faces[i].distinctIndices[dist_x];
-				int y = faces[i].distinctIndices[dist_y];
-
-				return new pb_Edge(x, y);
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -202,7 +155,7 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		pb_Face[] faces = pb.faces;
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-		pb_Edge universal = GetUniversalEdge(edge, sharedIndices);
+		pb_Edge universal = new pb_Edge(sharedIndices.IndexOf(edge.x), sharedIndices.IndexOf(edge.y));
 
 		int dist_x = -1, dist_y = -1, shared_x = -1, shared_y = -1;
 		for(int i = 0; i < faces.Length; i++)
@@ -220,6 +173,37 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 		validEdge = edge;
 		return false;
+	}
+
+	/**
+	 *	Returns a new array of edges guaranteed to be distinct and valid to face.
+	 */
+	public static List<pb_Edge> ValidateEdges(pb_Object pb, pb_Edge[] edges)
+	{
+		pb_Face[] faces = pb.faces;
+		Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+		HashSet<pb_EdgeLookup> edge_lookup = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
+		List<pb_Edge> valid = new List<pb_Edge>();
+		bool superBreak = false;
+		
+		for(int i = 0; i < faces.Length && !superBreak; i++)
+		{
+			pb_Edge[] ea = faces[i].edges;
+
+			for(int n = 0; n < ea.Length && !superBreak; n++)
+			{
+				pb_EdgeLookup le = new pb_EdgeLookup(lookup[ea[n].x], lookup[ea[n].y], ea[n].x, ea[n].y);
+
+				if( edge_lookup.Contains(le) )
+				{
+					edge_lookup.Remove(le);
+					superBreak = edge_lookup.Count < 1;
+					valid.Add(le.local);
+				}
+			}
+		}
+
+		return valid;
 	}
 
 	/**
