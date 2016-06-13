@@ -181,8 +181,7 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 #region ACCESS
 
 	public int[] indices { get { return _indices; } }
-	public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : 
-		_distinctIndices; } }
+	public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : _distinctIndices; } }
 	public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }	// todo -- remove this after a while
 	public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
 	public pb_UV uv { get { return _uv; } }

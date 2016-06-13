@@ -408,7 +408,14 @@ public class pb_Object : MonoBehaviour
 		_vertices = v;
 	}
 
-	public void SetVertices(IList<pb_Vertex> vertices)
+	/**
+	 *	Set the vertex element arrays on this pb_Object.  By default this function does 
+	 *	not apply these values to the mesh.  An optional parameter `applyMesh` will apply
+	 *	elements to the mesh - note that this should only be used when the mesh is in 
+	 *	its original state, not optimized (meaning it won't affect triangles which can be
+	 *	modified by Optimize).
+	 */
+	public void SetVertices(IList<pb_Vertex> vertices, bool applyMesh = false)
 	{
 		Vector3[] position;
 		Color[] color;
@@ -426,6 +433,24 @@ public class pb_Object : MonoBehaviour
 		SetUV(uv0);
 		if(uv3 != null) _uv3 = uv3;
 		if(uv4 != null) _uv4 = uv4;
+
+		if(applyMesh)
+		{
+			Mesh m = msh;
+
+			pb_Vertex first = vertices[0];
+
+			if(first.hasPosition)	m.vertices = position;
+			if(first.hasColor)		m.colors = color;
+			if(first.hasUv0)		m.uv = uv0;
+			if(first.hasNormal)		m.normals = normal;
+			if(first.hasTangent)	m.tangents = tangent;
+			if(first.hasUv2)		m.uv2 = uv2;
+#if !UNITY_4_7 && !UNITY_5_0
+			if(first.hasUv3)		if(uv3 != null) m.SetUVs(2, uv3);
+			if(first.hasUv4)		if(uv4 != null) m.SetUVs(3, uv4);
+#endif
+		}
 	}
 
 	/**

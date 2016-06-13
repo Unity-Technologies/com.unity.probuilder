@@ -318,7 +318,7 @@ namespace ProBuilder2.MeshOperations
 
 		}
 		
-		si = welds.ToSharedIndices();
+		si = pb_IntArrayUtility.ToSharedIndices(welds);
 
 		pb.SplitUVs(pb_Face.AllTriangles(faces));
 		
@@ -705,9 +705,9 @@ namespace ProBuilder2.MeshOperations
 			Vector2[] planed = pb_Math.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
 
 			Vector2 ipoint = Vector2.zero;
-			bool interescts = pb_Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
+			bool intersects = pb_Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);
 
-			if(!interescts)
+			if(!intersects)
 			{
 				v[2] = verts[b.x];
 				c[2] = pb.colors[b.x];

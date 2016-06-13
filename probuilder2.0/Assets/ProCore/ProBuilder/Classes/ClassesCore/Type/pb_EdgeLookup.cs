@@ -55,7 +55,7 @@ namespace ProBuilder2.Common
 			return string.Format("c({0}, {1})  l({2}, {3})", common.x, common.y, local.x, local.y);
 		}
 
-		public static IEnumerable<pb_EdgeLookup> GetEdgeLookup(pb_Edge[] edges, Dictionary<int, int> lookup)
+		public static IEnumerable<pb_EdgeLookup> GetEdgeLookup(IEnumerable<pb_Edge> edges, Dictionary<int, int> lookup)
 		{
 			return edges.Select(x => new pb_EdgeLookup(new pb_Edge(lookup[x.x], lookup[x.y]), x));
 		}

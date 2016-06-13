@@ -196,20 +196,15 @@ namespace ProBuilder2.MeshOperations
 			int max = lookup.Count();
 			foreach(int i in indices)
 				lookup[i] = ++max;
-			pb.SetSharedIndices(lookup.ToSharedIndices());
+			pb.SetSharedIndices(pb_IntArrayUtility.ToSharedIndices(lookup));
 		}
 #endregion
 
 #region Add / Subtract
 
-	// /**
-	//  *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
-	//  */
-	// public static bool AppendVerticesToFace(pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
-	// {
-
-	// }
-
+	/**
+	 *	Given a face and a point, this will add a vertex to the pb_Object and retriangulate the face.
+	 */
 	public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
 	{
 		if(!face.IsValid())

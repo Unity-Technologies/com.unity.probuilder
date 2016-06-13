@@ -16,9 +16,25 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+
+		pbUndo.RecordSelection(selection, "Bevel Edges");
+
+		foreach(pb_Object pb in selection)
 		{
-			Debug.Log( PrefabUtility.GetPrefabType(pb.gameObject).ToString());
+			profiler.Begin("bevel edges");
+
+			pb.ToMesh();
+			
+			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			pb_EditorUtility.ShowNotification(result.notification);
+
+			pb.Refresh();
+			pb.Optimize();
+
+			profiler.End();
 		}
+
+		pb_Editor.Refresh();
 	}
 }

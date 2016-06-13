@@ -2379,8 +2379,7 @@ public class pb_Editor : EditorWindow
 	int vertexCount = 0;
 	int triangleCount = 0;
 
-	public void UpdateSelection() { UpdateSelection(true); }
-	public void UpdateSelection(bool forceUpdate)
+	public void UpdateSelection(bool forceUpdate = true)
 	{
 		// profiler.BeginSample("UpdateSelection()");
 		per_object_vertexCount_distinct = 0;

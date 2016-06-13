@@ -45,24 +45,54 @@ namespace ProBuilder2.Common
 		 */
 		public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
 		{
-			Dictionary<int, int> indexes = new Dictionary<int, int>();
+			Dictionary<int, int> map = new Dictionary<int, int>();
 			List<List<int>> shared = new List<List<int>>();
 
-			foreach(KeyValuePair<int, int> pair in lookup)
+			foreach(var kvp in lookup)
 			{
-				if( indexes.ContainsKey(pair.Value) )
+				if(kvp.Value < 0)
 				{
-					shared[indexes[pair.Value]].Add(pair.Key);
+					shared.Add(new List<int>() { kvp.Key });
 				}
 				else
 				{
-					shared.Add( new List<int>() { pair.Key } );
-					indexes.Add(pair.Value, shared.Count-1);
+					int index = -1;
+
+					if(map.TryGetValue(kvp.Value, out index))
+					{
+						shared[index].Add(kvp.Key);
+					}
+					else
+					{
+						map.Add(kvp.Value, shared.Count);
+						shared.Add(new List<int>() { kvp.Key });
+					}
 				}
 			}
 
 			return shared.ToPbIntArray();
 		}
+		
+		// public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
+		// {
+		// 	Dictionary<int, int> indexes = new Dictionary<int, int>();
+		// 	List<List<int>> shared = new List<List<int>>();
+
+		// 	foreach(KeyValuePair<int, int> pair in lookup)
+		// 	{
+		// 		if( indexes.ContainsKey(pair.Value) )
+		// 		{
+		// 			shared[indexes[pair.Value]].Add(pair.Key);
+		// 		}
+		// 		else
+		// 		{
+		// 			shared.Add( new List<int>() { pair.Key } );
+		// 			indexes.Add(pair.Value, shared.Count-1);
+		// 		}
+		// 	}
+
+		// 	return shared.ToPbIntArray();
+		// }
 
 		/**
 		 * Convert a jagged int array to a pb_IntArray.
@@ -396,7 +426,7 @@ namespace ProBuilder2.Common
 			foreach(int i in remove)
 				lookup[i] = -1;
 
-			sharedIndices = lookup.Where(x => x.Value > -1).ToSharedIndices();
+			sharedIndices = ToSharedIndices(lookup.Where(x => x.Value > -1));
 
 			List<int> removed_values = new List<int>(remove);
 

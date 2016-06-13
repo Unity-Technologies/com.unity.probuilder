@@ -247,18 +247,16 @@ namespace ProBuilder2.EditorCommon
 		
 											GUILayout.BeginHorizontal();
 												GUILayout.Space(16);
-		
+
 												GUILayout.BeginVertical();
-													if(tris.Length > 256)
-													{
-														int[] dup = new int[256];
-														System.Array.Copy(tris, 0, dup, 0, 256);
-														GUILayout.Label( dup.ToString("\n") + "\n" );
-													}
-													else
-													{
-														GUILayout.Label( tris.ToString("\n") + "\n" );
-													}
+
+												StringBuilder sb = new StringBuilder();
+
+												for(int n = 0; n < tris.Length && n < 300; n+=3)
+													sb.AppendLine(string.Format("{0}, {1}, {2}", tris[n], tris[n+1], tris[n+2]));
+
+												GUILayout.Label(sb.ToString());
+
 												GUILayout.EndVertical();
 											GUILayout.EndHorizontal();
 

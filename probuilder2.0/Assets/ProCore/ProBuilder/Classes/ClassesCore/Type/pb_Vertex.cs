@@ -293,7 +293,8 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Replace mesh values with vertex array.  This function clears the mesh, so be sure to set triangles after.
+		 *	Replace mesh values with vertex array.  Mesh is cleared during this function,
+		 *	so be sure to set the triangles after calling.
 		 */
 		public static void SetMesh(Mesh m, IList<pb_Vertex> vertices)
 		{
