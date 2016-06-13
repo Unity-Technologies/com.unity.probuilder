@@ -12,17 +12,13 @@ namespace ProBuilder2.MeshOperations
 	public static class pb_Bevel
 	{
 
-		public static List<pb_Edge> BevelEdge(pb_Object pb, pb_Edge edge, float amount)
+		public static List<pb_Edge> BevelEdge(pb_Object pb, IList<pb_Edge> edges, float amount)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			List<pb_EdgeLookup> 
+			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
 
-			pb_Edge common = new pb_Edge(lookup[edge.x], lookup[edge.y]);
-
-			List<pb_Edge> edges = pb.faces.SelectMany(x => x.edges.Where( y => 
-				((lookup[y.x] == common.x && lookup[y.y] == common.y) ||
-				(lookup[y.x] == common.y && lookup[y.y] == common.x)))).ToList();
-
-			return edges;
+			return null;
  		}
 	}
 }

@@ -461,7 +461,7 @@ namespace ProBuilder2.MeshOperations
 
 #region Edge Ring / Loop
 	
-		private static pb_WingedEdge GetOppositeEdge(pb_WingedEdge edge)
+		private static pb_WingedEdge EdgeRingNext(pb_WingedEdge edge)
 		{
 			if(edge == null) 
 				return null;
@@ -482,7 +482,6 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 * Iterates through face edges and builds a list using the opposite edge.
-		 * @todo Lots of slow stuff in here
 		 */
 		public static IEnumerable<pb_Edge> GetEdgeRing(pb_Object pb, pb_Edge[] edges)
 		{
@@ -510,18 +509,18 @@ namespace ProBuilder2.MeshOperations
 				while(cur != null)
 				{
 					if(!used.Add(cur.edge)) break;
-					cur = GetOppositeEdge(cur);
+					cur = EdgeRingNext(cur);
 					if(cur != null && cur.opposite != null) cur = cur.opposite;
 				}
 
-				cur = GetOppositeEdge(we.opposite);
+				cur = EdgeRingNext(we.opposite);
 				if(cur != null && cur.opposite != null) cur = cur.opposite;
 
 				// run in both directions
 				while(cur != null)
 				{
 					if(!used.Add(cur.edge)) break;
-					cur = GetOppositeEdge(cur);
+					cur = EdgeRingNext(cur);
 					if(cur != null && cur.opposite != null) cur = cur.opposite;
 				}
 			}
@@ -609,85 +608,5 @@ namespace ProBuilder2.MeshOperations
 			return null;
 		}
 #endregion
-
-#region Utility
-
-		/**
-		 * The SelectedEdges array contains Edges made up of indices that aren't guaranteed to be 'valid' - that is, they
-		 * may not belong to the same face.  This method extracts an edge and face combo from the face independent edge
-		 * selection.
-		 * @param faces - Corresponding face to edge list
-		 * @param edges - An edge composed of indices that belong to a same face (matching face in faces List).
-		 * @returns True if at least one valid edge is found, false if not.
-		 */
-		public static bool ValidFaceAndEdgeWithEdge(pb_Object pb, pb_Edge faceIndependentEdge, Dictionary<int, int> sharedIndices, out List<pb_Face> faces, out List<pb_Edge> edges)
-		{
-			faces = new List<pb_Face>();
-			edges = new List<pb_Edge>();
-
-			foreach(pb_Face f in pb.faces)
-			{
-				int ind = f.edges.IndexOf(faceIndependentEdge, sharedIndices);
-				
-				if(ind > -1)
-				{
-					faces.Add(f);
-					edges.Add(f.edges[ind]);
-				}
-			}
-
-			return faces.Count > 0;
-		}
-
-		/**
-		 * Returns the opposite edge on the neighboring face (if possible - if the edge does not connect to an additional face opposite_face will be null).
-		 */
-		public static bool GetOppositeEdge(pb_Object pb, pb_Face face, pb_Edge edge, Dictionary<int, int> lookup, out pb_Face opposite_face, out pb_Edge opposite_edge)
-		{
-			opposite_face = null;
-			opposite_edge = null;
-			
-			if(face.edges.Length != 4) return false;
- 
-			// Construct a list of all edges starting at vertex edge.y and going around the face.  Then grab the middle edge.
-			pb_Edge[] ordered_edges = new pb_Edge[face.edges.Length];
-			ordered_edges[0] = edge;
-
-			for(int i = 1; i < face.edges.Length; i++)
-			{
-				foreach(pb_Edge e in face.edges)
-				{
-					if(e.x == ordered_edges[i-1].y)
-					{
-						ordered_edges[i] = e;
-						break;
-					}
-				}
-			}
-			pb_Edge opEdgeLocal = ordered_edges[face.edges.Length/2];
-
-			List<pb_Tuple<pb_Face, pb_Edge>> connectedFaces = pbMeshUtils.GetNeighborFaces(pb, opEdgeLocal, lookup);
-			connectedFaces.RemoveAll(x => x.Item1 == face);
-
-			if(connectedFaces.Count < 1)
-			{
-				opposite_edge = opEdgeLocal;	// sometimes ya still want this edge (planes, for example)
-				return true;
-			}
-
-			opposite_face = connectedFaces[0].Item1;
-			
-			for(int i = 0; i < opposite_face.edges.Length; i++)
-			{
-				if(opposite_face.edges[i].Equals(opEdgeLocal, lookup))
-				{
-					opposite_edge = opposite_face.edges[i];
-					break;
-				}
-			}
-
-			return true;
-		}
 	}
-#endregion
 }
