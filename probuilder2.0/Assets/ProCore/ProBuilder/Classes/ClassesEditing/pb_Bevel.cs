@@ -11,11 +11,6 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Bevel
 	{
-		// class pb_BevelEdge
-		// {
-		// 	public pb_WingedEdge a, b;
-		// }
-
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount)
 		{
 			int maxCommonIndex = pb.sharedIndices.Length;
@@ -27,6 +22,9 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 
+			HashSet<int> ignore = new HashSet<int>();
+			HashSet<int> slide = new HashSet<int>();
+	
 			foreach(pb_EdgeLookup lup in m_edges)
 			{
 				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
@@ -34,17 +32,23 @@ namespace ProBuilder2.MeshOperations
 				if(we == null || we.opposite == null)
 					continue;
 
+				ignore.Add(we.edge.local.x);
+				ignore.Add(we.edge.local.y);
+				ignore.Add(we.opposite.edge.local.x);
+				ignore.Add(we.opposite.edge.local.y);
+
+				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
+
+				slide.Add(we.edge.common.x);
+				slide.Add(we.edge.common.y);
+
 				SlideEdge(vertices, we, amount);
 				SlideEdge(vertices, we.opposite, amount);
 
-				we.edge.common.x = -1;
-				we.edge.common.y = -1;
-				we.opposite.edge.common.x = -1;
-				we.opposite.edge.common.y = -1;
-				lookup[we.edge.local.x] = we.edge.common.x;
-				lookup[we.edge.local.y] = we.edge.common.y;
-				lookup[we.opposite.edge.local.x] = we.opposite.edge.common.x;
-				lookup[we.opposite.edge.local.y] = we.opposite.edge.common.y;
+				lookup[we.edge.local.x] = -1;
+				lookup[we.edge.local.y] = -1;
+				lookup[we.opposite.edge.local.x] = -1;
+				lookup[we.opposite.edge.local.y] = -1;
 
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
 			}
@@ -77,14 +81,6 @@ namespace ProBuilder2.MeshOperations
  				vertices[b.local.x]
  			};
 
- 			rf.sharedIndices = new List<int>()
- 			{
- 				a.common.x,
- 				a.common.y,
- 				b.common.y,
- 				b.common.x
- 			};
-
  			rf.face = new pb_Face(
  				new int[] { 2, 1, 0, 2, 3, 1 },
  				left.face.material,
@@ -99,19 +95,43 @@ namespace ProBuilder2.MeshOperations
  			return faces;
  		}
 
+ 		// private static void SlideVertex()
+
  		private static void SlideEdge(IList<pb_Vertex> vertices, pb_WingedEdge we, float amount)
  		{
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
 
-			pb_Edge local = we.edge.local;
-			int[] i = we.face.indices;
-			Vector3 n = Vector3.Cross(vertices[i[1]].position - vertices[i[0]].position, vertices[i[2]].position - vertices[i[0]].position);
-			Vector3 e = vertices[local.y].position - vertices[local.x].position;
-			Vector3 c = Vector3.Cross(n, e);
+			pb_Edge slide_x = GetLeadingEdge(we, we.edge.common.x);
+			pb_Edge slide_y = GetLeadingEdge(we, we.edge.common.y);
+			
+			if(slide_x == null || slide_y == null) 
+				return;
 
-			vertices[local.x].position += c.normalized * amount;
-			vertices[local.y].position += c.normalized * amount;
+			Vector3 x = (vertices[slide_x.x].position - vertices[slide_x.y].position).normalized;
+			Vector3 y = (vertices[slide_y.x].position - vertices[slide_y.y].position).normalized;
+
+			vertices[we.edge.local.x].position += x * amount;
+			vertices[we.edge.local.y].position += y * amount;
+
+			// pb_Edge local = we.edge.local;
+			// int[] i = we.face.indices;
+			// Vector3 n = Vector3.Cross(vertices[i[1]].position - vertices[i[0]].position, vertices[i[2]].position - vertices[i[0]].position);
+			// Vector3 e = vertices[local.y].position - vertices[local.x].position;
+			// Vector3 c = Vector3.Cross(n, e);
+		}
+
+		private static pb_Edge GetLeadingEdge(pb_WingedEdge wing, int common)
+		{
+			if(wing.previous.edge.common.x == common)
+				return new pb_Edge(wing.previous.edge.local.y, wing.previous.edge.local.x);
+			else if(wing.previous.edge.common.y == common)
+				return new pb_Edge(wing.previous.edge.local.x, wing.previous.edge.local.y);
+			else if(wing.next.edge.common.x == common)
+				return new pb_Edge(wing.next.edge.local.y, wing.next.edge.local.x);
+			else if(wing.next.edge.common.y == common)
+				return new pb_Edge(wing.next.edge.local.x, wing.next.edge.local.y);
+			return null;
 		}
 	}
 }

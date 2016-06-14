@@ -35,16 +35,16 @@ namespace ProBuilder2.Common
 			{
 				pb_FaceRebuildData rd = new_faces[i];
 				pb_Face face = rd.face;
+				int faceVertexCount = face.distinctIndices.Length;
+				bool hasSharedIndices = sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;
+				bool hasSharedIndicesUV = sharedIndicesUV != null && rd.sharedIndicesUV != null && rd.sharedIndicesUV.Count == faceVertexCount;
 
-				for(int n = 0; n < face.distinctIndices.Length; n++)
+				for(int n = 0; n < faceVertexCount; n++)
 				{
 					int localIndex = face.distinctIndices[n];
 
-					if(sharedIndices != null && rd.sharedIndices != null)
-						sharedIndices.Add(localIndex + index, rd.sharedIndices[localIndex]);
-
-					if(sharedIndicesUV != null && rd.sharedIndicesUV != null)
-						sharedIndicesUV.Add(localIndex + index, rd.sharedIndicesUV[localIndex]);
+					sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);
+					sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);
 				}
 
 

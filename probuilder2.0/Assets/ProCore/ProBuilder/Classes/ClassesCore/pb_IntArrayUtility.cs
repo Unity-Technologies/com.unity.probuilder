@@ -32,9 +32,8 @@ namespace ProBuilder2.Common
 			for(int i = 0; i < array.Length; i++)
 			{
 				for(int n = 0; n < array[i].array.Length; n++)
-				{
-					dic.Add(array[i][n], i);
-				}
+					if(!dic.ContainsKey(array[i][n]))
+						dic.Add(array[i][n], i);
 			}
 
 			return dic;

@@ -401,6 +401,19 @@ namespace ProBuilder2.Common
 			arr[i] = ctor(i);
 		return arr;
 	}
+
+	/**
+	 *	Add a value to a key in dictionary, adding a new entry if necessray.
+	 */
+	public static void AddOrAppend<T, K>(this Dictionary<T, List<K>> dictionary, T key, K value)
+	{
+		List<K> list;
+
+		if(dictionary.TryGetValue(key, out list))
+			list.Add(value);
+		else
+			dictionary.Add(key, new List<K>() { value });
+	}
 #endregion
 
 #region SNAP
