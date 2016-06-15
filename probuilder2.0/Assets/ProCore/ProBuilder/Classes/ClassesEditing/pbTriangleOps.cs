@@ -26,7 +26,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
 		{
-			Vector2[] p = pb_Math.PlanarProject(pb.vertices.ValuesWithIndices( face.edges.AllTriangles() ), pb_Math.Normal(pb, face));
+			Vector2[] p = pb_Projection.PlanarProject(pb.vertices.ValuesWithIndices( face.edges.AllTriangles() ), pb_Math.Normal(pb, face));
 
 			float sum = 0f;
 

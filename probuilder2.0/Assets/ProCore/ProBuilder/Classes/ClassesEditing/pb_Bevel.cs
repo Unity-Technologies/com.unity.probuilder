@@ -22,7 +22,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 
-			HashSet<int> ignore = new HashSet<int>();
+			HashSet<pb_WingedEdge> ignore = new HashSet<pb_WingedEdge>();
 			HashSet<int> slide = new HashSet<int>();
 	
 			foreach(pb_EdgeLookup lup in m_edges)
@@ -32,10 +32,10 @@ namespace ProBuilder2.MeshOperations
 				if(we == null || we.opposite == null)
 					continue;
 
-				ignore.Add(we.edge.local.x);
-				ignore.Add(we.edge.local.y);
-				ignore.Add(we.opposite.edge.local.x);
-				ignore.Add(we.opposite.edge.local.y);
+				ignore.Add(we);
+				ignore.Add(we);
+				ignore.Add(we.opposite);
+				ignore.Add(we.opposite);
 
 				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
 
@@ -51,6 +51,12 @@ namespace ProBuilder2.MeshOperations
 				lookup[we.opposite.edge.local.y] = -1;
 
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
+			}
+
+			foreach(int common in slide)
+			{
+				IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x));
+				
 			}
 			
 			List<pb_Face> faces = new List<pb_Face>(pb.faces);

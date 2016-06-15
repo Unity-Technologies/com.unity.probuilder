@@ -234,10 +234,10 @@ namespace ProBuilder2.MeshOperations
 
 		// Get the face normal before modifying the vertex array
 		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
-		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(nrm) );
+		Vector3 projAxis = pb_Projection.ProjectionAxisToVector( pb_Projection.VectorToProjectionAxis(nrm) );
 		
 		// Project
-		List<Vector2> plane = new List<Vector2>(pb_Math.PlanarProject(verts, projAxis));
+		List<Vector2> plane = new List<Vector2>(pb_Projection.PlanarProject(verts, projAxis));
 
 		// Save the sharedIndices index for each distinct vertex
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
@@ -390,7 +390,7 @@ namespace ProBuilder2.MeshOperations
 			pb_FaceRebuildData data = dic_data[i];
 
 			Vector3 nrm = pb_Math.Normal(pb, face);
-			Vector2[] projection = pb_Math.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
+			Vector2[] projection = pb_Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
 
 			int vertexCount = vertices.Count;
 

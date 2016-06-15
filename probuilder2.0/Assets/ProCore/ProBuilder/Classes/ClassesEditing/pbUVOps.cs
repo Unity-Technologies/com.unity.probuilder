@@ -125,7 +125,6 @@ public static class pbUVOps
 	public static void ProjectFacesAuto(pb_Object pb, pb_Face[] faces)
 	{
 		int[] ind = pb_Face.AllTrianglesDistinct(faces);
-		Vector3[] verts = pbUtil.ValuesWithIndices(pb.vertices, ind);
 		
 		/* get average face normal */
 		Vector3 nrm = Vector3.zero;
@@ -134,7 +133,7 @@ public static class pbUVOps
 		nrm /= (float)faces.Length;
 
 		/* project uv coordinates */
-		Vector2[] uvs = pb_Math.PlanarProject(verts, nrm);
+		Vector2[] uvs = pb_Projection.PlanarProject(pbUtil.ValuesWithIndices(pb.vertices, ind), nrm);
 
 		/* re-assign new projected coords back into full uv array */
 		Vector2[] rebuiltUVs = pb.uv;
@@ -209,7 +208,7 @@ public static class pbUVOps
 		for(int i = 0; i < faces.Length; i++)
 		{
 			Vector3 nrm = pb_Math.Normal(pb, faces[i]);
-			ProjectionAxis axis = pb_Math.VectorToProjectionAxis(nrm);
+			ProjectionAxis axis = pb_Projection.VectorToProjectionAxis(nrm);
 
 			if(sorted.ContainsKey(axis))
 			{
@@ -228,7 +227,7 @@ public static class pbUVOps
 		{
 			int[] distinct = pb_Face.AllTrianglesDistinct(kvp.Value.ToArray());
 
-			Vector2[] uvs = pb_Math.PlanarProject( pb.vertices.ValuesWithIndices(distinct), pb_Math.ProjectionAxisToVector(kvp.Key), kvp.Key );
+			Vector2[] uvs = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(distinct), pb_Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
 
 			for(int n = 0; n < distinct.Length; n++)
 				uv[distinct[n]] = uvs[n];

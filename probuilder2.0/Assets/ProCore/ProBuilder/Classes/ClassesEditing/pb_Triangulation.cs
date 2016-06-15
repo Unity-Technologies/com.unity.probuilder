@@ -22,7 +22,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
-			IList<Vector2> sorted = pb_Math.Sort(points, SortMethod.CounterClockwise);
+			IList<Vector2> sorted = pb_Projection.Sort(points, SortMethod.CounterClockwise);
 
 			Dictionary<int, int> map = new Dictionary<int, int>();
 

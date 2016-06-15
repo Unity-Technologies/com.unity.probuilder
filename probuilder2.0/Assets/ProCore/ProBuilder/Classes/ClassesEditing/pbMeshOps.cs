@@ -702,7 +702,7 @@ namespace ProBuilder2.MeshOperations
 			s[1] = sharedIndices.IndexOf(a.y);
 
 			Vector3 nrm = Vector3.Cross( verts[b.x]-verts[a.x], verts[a.y]-verts[a.x] ).normalized;
-			Vector2[] planed = pb_Math.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
+			Vector2[] planed = pb_Projection.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
 
 			Vector2 ipoint = Vector2.zero;
 			bool intersects = pb_Math.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);

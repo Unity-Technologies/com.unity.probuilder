@@ -26,8 +26,10 @@ public class TempMenuItems : EditorWindow
 
 			pb.ToMesh();
 			
-			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
-			pb_EditorUtility.ShowNotification(result.notification);
+			SplitVertex(pb, 0);
+
+			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			// pb_EditorUtility.ShowNotification(result.notification);
 
 			pb.Refresh();
 			pb.Optimize();
@@ -36,5 +38,70 @@ public class TempMenuItems : EditorWindow
 		}
 
 		pb_Editor.Refresh();
+	}
+
+	static void SplitVertex(pb_Object pb, int commonIndex)
+	{
+		List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+		pb_WingedEdge wing = wings.FirstOrDefault(x => x.edge.local.Contains(commonIndex));
+
+		if(wing == null)
+			return;
+
+		List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+
+		pb_Edge ae = AlignEdgeWithDirection(wing.edge, commonIndex);
+		pb_WingedEdge next = wing.next.edge.common.Contains(commonIndex) ? wing.next : wing.previous;
+		pb_Edge an = AlignEdgeWithDirection(next.edge, commonIndex);
+		Debug.Log(ae + " : " + an);
+
+		int[] fi = wing.face.indices;
+		List<int> indices = new List<int>(wing.face.distinctIndices);
+
+		Vector3 normal = pb_Math.Normal(vertices[fi[0]].position, vertices[fi[1]].position, vertices[fi[2]].position);
+		Vector3 adir = vertices[ae.y].position - vertices[ae.x].position;
+		Vector3 bdir = vertices[an.y].position - vertices[an.x].position;
+
+		if(ae.x == an.x)
+		{
+			Debug.Log("append vertex");
+			indices.Add(vertices.Count);
+			an.x = vertices.Count;
+			vertices.Add(new pb_Vertex(vertices[ae.x]));
+		}
+
+		vertices[ae.x].position += adir.normalized * .2f;
+		vertices[an.x].position += bdir.normalized * .2f;
+
+		Vector3[] facePoints = new Vector3[indices.Count];
+		for(int i = 0; i < indices.Count; ++i)
+			facePoints[i] = vertices[indices[i]].position;
+
+		Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
+		List<int> triangles;
+
+			Debug.Log(points2d.ToString("\n"));
+
+		if(pb_Triangulation.SortAndTriangulate(points2d, out triangles))
+		{
+			int[] faceTris = new int[triangles.Count];
+
+			for(int i = 0; i < triangles.Count; i++)
+				faceTris[i] = indices[triangles[i]];
+
+			wing.face.SetIndices(faceTris);
+		}
+
+		pb.SetVertices(vertices);
+		pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+		pb.ToMesh();
+	}
+
+	static pb_Edge AlignEdgeWithDirection(pb_EdgeLookup edge, int commonIndex)
+	{
+		if(edge.common.x == commonIndex)
+			return new pb_Edge(edge.local.x, edge.local.y);
+		else
+			return new pb_Edge(edge.local.y, edge.local.x);
 	}
 }

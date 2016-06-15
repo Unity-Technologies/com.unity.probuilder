@@ -572,8 +572,8 @@ public static class pbSubdivideSplit
 		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 		Vector2[] uvs = pb.uv.ValuesWithIndices(face.distinctIndices);
 
-		Vector3 projAxis = pb_Math.ProjectionAxisToVector( pb_Math.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
-		Vector2[] plane = pb_Math.PlanarProject(verts, projAxis);
+		Vector3 projAxis = pb_Projection.ProjectionAxisToVector( pb_Projection.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
+		Vector2[] plane = pb_Projection.PlanarProject(verts, projAxis);
 
 		// Split points
  		Vector3 splitPointA_3d = splitSelection.pointA;
@@ -582,8 +582,8 @@ public static class pbSubdivideSplit
  		Vector2 splitPointA_uv = splitSelection.aIsVertex ? pb.uv[splitSelection.indexA[0]] : (pb.uv[splitSelection.indexA[0]] + pb.uv[splitSelection.indexA[1]]) /2f;
  		Vector2 splitPointB_uv = splitSelection.bIsVertex ? pb.uv[splitSelection.indexB[0]] : (pb.uv[splitSelection.indexB[0]] + pb.uv[splitSelection.indexB[1]]) /2f;
 
-		Vector2 splitPointA_2d = pb_Math.PlanarProject( new Vector3[1] { splitPointA_3d }, projAxis )[0];
-		Vector2 splitPointB_2d = pb_Math.PlanarProject( new Vector3[1] { splitPointB_3d }, projAxis )[0];
+		Vector2 splitPointA_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointA_3d }, projAxis )[0];
+		Vector2 splitPointB_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointB_3d }, projAxis )[0];
 
 		List<Vector3> v_polyA = new List<Vector3>();	// point in object space
 		List<Vector3> v_polyB = new List<Vector3>();	// point in object space
@@ -705,7 +705,7 @@ public static class pbSubdivideSplit
 			return false;
 
 		// figure out the face normals for the new faces and check to make sure they match the original face
-		Vector2[] pln = pb_Math.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projAxis );
+		Vector2[] pln = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projAxis );
 
 		Vector3 nrm = Vector3.Cross( pln[2] - pln[0], pln[1] - pln[0]);
 		Vector3 nrmA = Vector3.Cross( v_polyA_2d[ t_polyA[2] ]-v_polyA_2d[ t_polyA[0] ], v_polyA_2d[ t_polyA[1] ]-v_polyA_2d[ t_polyA[0] ] );
@@ -789,13 +789,13 @@ public static class pbSubdivideSplit
 		Vector2[] faceUVs = pb.uv.ValuesWithIndices(face.distinctIndices);
 		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 
-		Vector2[] verts2d = pb_Math.PlanarProject(verts3d, nrm);
-		Vector2[] edgeCenters2d = pb_Math.PlanarProject(edgeCenters3d.ToArray(), nrm);
+		Vector2[] verts2d = pb_Projection.PlanarProject(verts3d, nrm);
+		Vector2[] edgeCenters2d = pb_Projection.PlanarProject(edgeCenters3d.ToArray(), nrm);
 		
 		Vector3 cen3d = pb_Math.Average(verts3d);
 		Vector2 cenUV = pb_Bounds2D.Center(faceUVs);
 
-		Vector2 cen2d = pb_Math.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];
+		Vector2 cen2d = pb_Projection.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];
 
 		// Get the directions from which to segment this face
 		Vector2[] dividers = new Vector2[edgeCenters2d.Length];
@@ -1006,9 +1006,9 @@ public static class pbSubdivideSplit
 		Color cenColor 		= pb_Math.Average(colors);
 
 		// this should be cleaned up
-		Vector2[] plane 	= pb_Math.PlanarProject(verts, nrm);
-		Vector2[] indPlane 	= pb_Math.PlanarProject(pb.vertices.ValuesWithIndices(indices), nrm);
-		Vector2 cen2d 		= pb_Math.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];
+		Vector2[] plane 	= pb_Projection.PlanarProject(verts, nrm);
+		Vector2[] indPlane 	= pb_Projection.PlanarProject(pb.vertices.ValuesWithIndices(indices), nrm);
+		Vector2 cen2d 		= pb_Projection.PlanarProject( new Vector3[1] { cen3d }, nrm)[0];
 
 		// Get the directions from which to segment this face
 		Vector2[] dividers = new Vector2[indices.Length];
