@@ -39,6 +39,28 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
+		 *	Attempts to triangulate a set of vertices (assumes vertices are already sorted in counter-clockwise order).
+		 */
+		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles)
+		{
+			triangles = null;
+
+			if(vertices.Count < 3)
+				return false;
+
+			Vector3[] facePoints = new Vector3[vertices.Count];
+
+			for(int i = 0; i < vertices.Count; ++i)
+				facePoints[i] = vertices[i].position;
+
+			Vector3 normal = pb_Math.Normal(facePoints[0], facePoints[1], facePoints[2]);
+
+			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
+
+			return pb_Triangulation.SortAndTriangulate(points2d, out triangles);
+		}
+
+		/**
 		 *	Given a set of points ordered counter-clockwise along a contour, return triangle indices.
 		 *	Triangulation may optionally be set to convex, which will result in some a convex shape.
 		 */

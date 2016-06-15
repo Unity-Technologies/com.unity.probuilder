@@ -26,10 +26,8 @@ public class TempMenuItems : EditorWindow
 
 			pb.ToMesh();
 			
-			SplitVertex(pb, 0);
-
-			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
-			// pb_EditorUtility.ShowNotification(result.notification);
+			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			pb_EditorUtility.ShowNotification(result.notification);
 
 			pb.Refresh();
 			pb.Optimize();

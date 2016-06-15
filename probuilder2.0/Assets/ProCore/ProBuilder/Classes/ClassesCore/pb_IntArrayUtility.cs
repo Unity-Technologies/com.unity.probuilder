@@ -72,27 +72,6 @@ namespace ProBuilder2.Common
 			return shared.ToPbIntArray();
 		}
 		
-		// public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
-		// {
-		// 	Dictionary<int, int> indexes = new Dictionary<int, int>();
-		// 	List<List<int>> shared = new List<List<int>>();
-
-		// 	foreach(KeyValuePair<int, int> pair in lookup)
-		// 	{
-		// 		if( indexes.ContainsKey(pair.Value) )
-		// 		{
-		// 			shared[indexes[pair.Value]].Add(pair.Key);
-		// 		}
-		// 		else
-		// 		{
-		// 			shared.Add( new List<int>() { pair.Key } );
-		// 			indexes.Add(pair.Value, shared.Count-1);
-		// 		}
-		// 	}
-
-		// 	return shared.ToPbIntArray();
-		// }
-
 		/**
 		 * Convert a jagged int array to a pb_IntArray.
 		 */
@@ -236,7 +215,7 @@ namespace ProBuilder2.Common
 		/**
 		 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (universal index).
 		 */
-		public static ICollection<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, ICollection<int> indices)
+		public static HashSet<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pbIntArr.ToDictionary();
 			HashSet<int> universal = new HashSet<int>();
@@ -253,7 +232,7 @@ namespace ProBuilder2.Common
 			return universal;
 		}
 
-		public static ICollection<int> GetUniversalIndices(Dictionary<int, int> lookup, ICollection<int> indices)
+		public static HashSet<int> GetUniversalIndices(Dictionary<int, int> lookup, IList<int> indices)
 		{
 			HashSet<int> universal = new HashSet<int>();
 

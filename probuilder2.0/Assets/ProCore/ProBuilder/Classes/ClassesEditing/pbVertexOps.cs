@@ -495,7 +495,71 @@ namespace ProBuilder2.MeshOperations
 		
 		pb.SetVertices(vertices);
 		pb.SetFaces(nFaces);
-	}	
+	}
+
+	public static pb_FaceRebuildData ExplodeVertex(IList<pb_Vertex> vertices, pb_WingedEdge edge, int commonIndex, float distance)	
+	{
+		pb_Edge ae = AlignEdgeWithDirection(edge.edge, commonIndex);
+		pb_WingedEdge next = edge.next.edge.common.Contains(commonIndex) ? edge.next : edge.previous;
+		pb_Edge an = AlignEdgeWithDirection(next.edge, commonIndex);
+		Debug.Log(ae + " : " + an);
+
+		int[] fi = edge.face.indices;
+		int[] di = edge.face.distinctIndices;
+
+		Vector3 normal = pb_Math.Normal(vertices[fi[0]].position, vertices[fi[1]].position, vertices[fi[2]].position);
+		Vector3 adir = vertices[ae.y].position - vertices[ae.x].position;
+		Vector3 bdir = vertices[an.y].position - vertices[an.x].position;
+
+		List<pb_Vertex> v = new List<pb_Vertex>();
+
+		for(int i = 0; i < di.Length; i++)
+		{
+			if(di[i] == ae.x || di[i] == an.x)
+			{
+				if(di[i] == ae.x)
+					v.Add(vertices[di[i]] + adir.normalized * distance);
+
+				if(di[i] == an.x)
+					v.Add(vertices[di[i]] + bdir.normalized * distance);
+			}
+			else
+			{
+				v.Add(new pb_Vertex(vertices[di[i]]));
+			}
+		}
+
+		Vector3[] facePoints = new Vector3[v.Count];
+
+		for(int i = 0; i < v.Count; ++i)
+			facePoints[i] = v[i].position;
+
+		Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
+		List<int> triangles;
+
+		Debug.Log(points2d.ToString("\n"));
+
+		if(pb_Triangulation.SortAndTriangulate(points2d, out triangles))
+		{
+			pb_FaceRebuildData data = new pb_FaceRebuildData();
+
+			data.vertices = v;
+			data.face = new pb_Face(edge.face);
+			data.face.SetIndices(triangles.ToArray());
+			
+			return data;
+		}
+
+		return null;
+	}
+
+	static pb_Edge AlignEdgeWithDirection(pb_EdgeLookup edge, int commonIndex)
+	{
+		if(edge.common.x == commonIndex)
+			return new pb_Edge(edge.local.x, edge.local.y);
+		else
+			return new pb_Edge(edge.local.y, edge.local.x);
+	}
 #endregion
 
 #region Move

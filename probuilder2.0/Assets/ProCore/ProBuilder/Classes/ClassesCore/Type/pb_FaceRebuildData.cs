@@ -23,11 +23,12 @@ namespace ProBuilder2.Common
 		 *	Shift face rebuild data to appropriate positions and update the vertex, face, and
 		 *	shared indices arrays.
 		 */
-		public static void Apply(IList<pb_FaceRebuildData> new_faces,
-			ref List<pb_Vertex> vertices,
-			ref List<pb_Face> faces,
-			ref Dictionary<int, int> sharedIndices,
-			ref Dictionary<int, int> sharedIndicesUV)
+		public static void Apply(
+			IList<pb_FaceRebuildData> new_faces,
+			List<pb_Vertex> vertices,
+			List<pb_Face> faces,
+			Dictionary<int, int> sharedIndices,
+			Dictionary<int, int> sharedIndicesUV = null)
 		{
 			int index = vertices.Count;
 
@@ -44,7 +45,9 @@ namespace ProBuilder2.Common
 					int localIndex = face.distinctIndices[n];
 
 					sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);
-					sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);
+
+					if(sharedIndicesUV != null)
+						sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);
 				}
 
 

@@ -480,6 +480,11 @@ public class pb_Object : MonoBehaviour
 		_sharedIndices = si;
 	}
 
+	public void SetSharedIndices(Dictionary<int, int> si)
+	{
+		_sharedIndices = pb_IntArrayUtility.ToSharedIndices(si);
+	}
+
 	public void SetSharedIndicesUV(pb_IntArray[] si)
 	{
 		_sharedIndicesUV = si;

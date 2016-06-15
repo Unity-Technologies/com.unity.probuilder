@@ -15,7 +15,7 @@ public static class pbAppendDelete
 
 #region Append Face
 
-/**
+	/**
 	 *	\brief
 	 *	param sharedIndex An optional array that sets the new pb_Face indices to use the _sharedIndices array.
 	 *	\returns The newly appended pb_Face.

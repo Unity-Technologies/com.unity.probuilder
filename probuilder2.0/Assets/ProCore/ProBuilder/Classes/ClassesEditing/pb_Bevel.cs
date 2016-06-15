@@ -13,7 +13,6 @@ namespace ProBuilder2.MeshOperations
 	{
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount)
 		{
-			int maxCommonIndex = pb.sharedIndices.Length;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
 			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).ToList();
@@ -22,7 +21,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 
-			HashSet<pb_WingedEdge> ignore = new HashSet<pb_WingedEdge>();
+			HashSet<pb_Face> ignore = new HashSet<pb_Face>();
 			HashSet<int> slide = new HashSet<int>();
 	
 			foreach(pb_EdgeLookup lup in m_edges)
@@ -32,10 +31,10 @@ namespace ProBuilder2.MeshOperations
 				if(we == null || we.opposite == null)
 					continue;
 
-				ignore.Add(we);
-				ignore.Add(we);
-				ignore.Add(we.opposite);
-				ignore.Add(we.opposite);
+				ignore.Add(we.face);
+				ignore.Add(we.face);
+				ignore.Add(we.opposite.face);
+				ignore.Add(we.opposite.face);
 
 				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
 
@@ -53,18 +52,31 @@ namespace ProBuilder2.MeshOperations
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
 			}
 
+			HashSet<pb_Face> remove = new HashSet<pb_Face>();
+
 			foreach(int common in slide)
 			{
-				IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x));
-				
-			}
-			
-			List<pb_Face> faces = new List<pb_Face>(pb.faces);
-			pb_FaceRebuildData.Apply(appendFaces, ref vertices, ref faces, ref lookup, ref lookupUV);
+				IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x.face));
 
-			pb.SetFaces(faces.ToArray());
+				foreach(pb_WingedEdge neighbor in split)
+				{
+					if(!remove.Add(neighbor.face))
+						continue;
+
+					pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, neighbor, common, amount);	
+					appendFaces.Add(f);
+				}
+			}
+
+			Debug.Log("remove: " + remove.Count);
+
+			List<pb_Face> faces = new List<pb_Face>(pb.faces);
+			pb_FaceRebuildData.Apply(appendFaces, vertices, faces, lookup, lookupUV);
 			pb.SetVertices(vertices);
+			pb.SetFaces(faces.ToArray());
 			pb.SetSharedIndices(lookup.ToSharedIndices());
+			pb.DeleteFaces(remove);
+			
 			pb.ToMesh();
 
 			return new pb_ActionResult(Status.Success, "Bevel Edges");
@@ -100,8 +112,6 @@ namespace ProBuilder2.MeshOperations
 
  			return faces;
  		}
-
- 		// private static void SlideVertex()
 
  		private static void SlideEdge(IList<pb_Vertex> vertices, pb_WingedEdge we, float amount)
  		{

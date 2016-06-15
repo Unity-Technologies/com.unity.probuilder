@@ -148,6 +148,25 @@ namespace ProBuilder2.Common
 			this.hasUv4 	= v.hasUv4;
 		}
 
+		/**
+		 *	Addition operator overload returns a new vertex with `vertex.position + position`.
+		 */
+		public static pb_Vertex operator +(pb_Vertex vertex, Vector3 position)
+		{
+			pb_Vertex v = new pb_Vertex(vertex);
+			v.position += position;
+			return v;
+		}
+		/**
+		 *	Subtraction operator overload returns a new vertex with `vertex.position - position`.
+		 */
+		public static pb_Vertex operator -(pb_Vertex vertex, Vector3 position)
+		{
+			pb_Vertex v = new pb_Vertex(vertex);
+			v.position -= position;
+			return v;
+		}
+
 		public override string ToString()
 		{
 			return this.position.ToString();
