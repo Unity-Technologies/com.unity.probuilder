@@ -16,6 +16,10 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
+
+		EditorWindow.GetWindow<TempMenuItems>().Show();
+		return;
+
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
 		pbUndo.RecordSelection(selection, "Bevel Edges");
@@ -26,8 +30,12 @@ public class TempMenuItems : EditorWindow
 
 			pb.ToMesh();
 			
-			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			int[] welds;
+			pb_ActionResult result = pb.WeldVertices(pb.SelectedTriangles, .001f, out welds);
 			pb_EditorUtility.ShowNotification(result.notification);
+						
+			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			// pb_EditorUtility.ShowNotification(result.notification);
 
 			pb.Refresh();
 			pb.Optimize();
@@ -36,6 +44,13 @@ public class TempMenuItems : EditorWindow
 		}
 
 		pb_Editor.Refresh();
+	}
+
+	static pb_ActionResult WeldVertices(pb_Object pb, int[] indices, out int[] welds, float distance)
+	{
+		welds = null;
+
+		return pb_ActionResult.Success;
 	}
 
 	static void SplitVertex(pb_Object pb, int commonIndex)
@@ -77,8 +92,7 @@ public class TempMenuItems : EditorWindow
 
 		Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 		List<int> triangles;
-
-			Debug.Log(points2d.ToString("\n"));
+		Debug.Log(points2d.ToString("\n"));
 
 		if(pb_Triangulation.SortAndTriangulate(points2d, out triangles))
 		{

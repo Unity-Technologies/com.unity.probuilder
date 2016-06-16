@@ -11,7 +11,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = pb_IntArrayUtility.GetUniversalIndices(lookup, indices);
+			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 

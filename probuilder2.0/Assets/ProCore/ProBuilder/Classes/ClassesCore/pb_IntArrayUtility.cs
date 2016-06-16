@@ -166,7 +166,7 @@ namespace ProBuilder2.Common
 		 */
 		public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
-			int[] universal = pbIntArr.GetUniversalIndices(indices).ToArray();
+			int[] universal = pbIntArr.GetCommonIndices(indices).ToArray();
 
 			List<int> shared = new List<int>();
 
@@ -180,7 +180,7 @@ namespace ProBuilder2.Common
 
 		public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
 		{
-			int[] universal = GetUniversalIndices(lookup, indices).ToArray();
+			int[] universal = GetCommonIndices(lookup, indices).ToArray();
 
 			List<int> shared = new List<int>();
 
@@ -215,7 +215,7 @@ namespace ProBuilder2.Common
 		/**
 		 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (universal index).
 		 */
-		public static HashSet<int> GetUniversalIndices(this pb_IntArray[] pbIntArr, IList<int> indices)
+		public static HashSet<int> GetCommonIndices(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pbIntArr.ToDictionary();
 			HashSet<int> universal = new HashSet<int>();
@@ -232,7 +232,7 @@ namespace ProBuilder2.Common
 			return universal;
 		}
 
-		public static HashSet<int> GetUniversalIndices(Dictionary<int, int> lookup, IList<int> indices)
+		public static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IList<int> indices)
 		{
 			HashSet<int> universal = new HashSet<int>();
 

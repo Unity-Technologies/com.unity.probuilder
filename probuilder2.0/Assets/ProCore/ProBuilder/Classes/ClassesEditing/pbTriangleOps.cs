@@ -157,8 +157,8 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb.SetFaces(f.ToArray());
-
 			removed = pb.RemoveUnusedVertices();
+
 			return removed.Length > 0;
 		}
 

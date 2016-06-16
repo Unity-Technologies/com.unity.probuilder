@@ -71,81 +71,80 @@ namespace ProBuilder2.MeshOperations
 		 *	a specified distance of one another (typically epsilon).  Returns true if any action
 		 * 	was taken, false otherwise.  Outputs indices that have been welded in the @welds var.
 		 */
-		public static bool WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
+		public static pb_ActionResult WeldVertices(this pb_Object pb, int[] indices, float delta, out int[] welds)
 		{
-			List<int> universal = pb.sharedIndices.GetUniversalIndices(indices).ToList();
-			Vector3[] v = pb.vertices;
+			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 
-			HashSet<int> used = new HashSet<int>();
-			KDTree<int> tree = new KDTree<int>(3, 48);	// dimensions (xyz), node size
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			Dictionary<int, Vector3> average = new Dictionary<int, Vector3>();
+			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 
-			for(int i = 0; i < universal.Count; i++)
+			KDTree<int> tree = new KDTree<int>(3, 48);
+
+			foreach(int i in common)
 			{
-				Vector3 vert = v[pb.sharedIndices[universal[i]][0]];
-				tree.AddPoint( new double[] { vert.x, vert.y, vert.z }, universal[i]);
+				Vector3 v = vertices[sharedIndices[i][0]].position;
+				tree.AddPoint( new double[] { v.x, v.y, v.z }, i);
 			}
 
-			List<List<int>> groups = new List<List<int>>();
-
 			double[] point = new double[3] { 0, 0, 0 };
+			Dictionary<int, int> remapped = new Dictionary<int, int>();
+			Dictionary<int, Vector3> averages = new Dictionary<int, Vector3>();
+			int index = sharedIndices.Length;
 
-			int[][] si = pb.sharedIndices.ToArray();
-			for(int i = 0; i < universal.Count; i++)
+			foreach(int i in common)
 			{
-				if(used.Contains(universal[i]))
-				{
+				if(remapped.ContainsKey(i))
 					continue;
-				}
 
-				int tri = si[universal[i]][0];
-				
-				point[0] = v[tri].x;
-				point[1] = v[tri].y;
-				point[2] = v[tri].z;
+				Vector3 v = vertices[sharedIndices[i][0]].position;
+				point[0] = v.x;
+				point[1] = v.y;
+				point[2] = v.z;
 
 				NearestNeighbour<int> neighborIterator = tree.NearestNeighbors( point, 64, delta );
 
 				List<int> neighbors = new List<int>();
+				Vector3 avg = Vector3.zero;
+				int count = 0;
 
 				while(neighborIterator.MoveNext())
 				{
-					if( used.Contains(neighborIterator.Current) )
-						continue;
-	
-					used.Add( neighborIterator.Current );
-					neighbors.Add( neighborIterator.Current );
+					int c = neighborIterator.Current;
+					avg += vertices[sharedIndices[c][0]].position;
+					remapped.Add(c, index);
+					count++;
 				}
 
-				used.Add( universal[i] );
-				groups.Add( neighbors );
+				avg /= count;
+				averages.Add(index, avg);
+
+				index++;
 			}
 
-			pb_IntArray[] rebuilt = new pb_IntArray[groups.Count];// + remainingCount ];
-			welds = new int[groups.Count];
+			welds = new int[remapped.Count];
+			int n = 0;
 
-			for(int i = 0; i < groups.Count; i++)
+			foreach(var kvp in remapped)
 			{
-				rebuilt[i] = new pb_IntArray( groups[i].SelectMany(x => pb.sharedIndices[x].array).ToArray() );
-				welds[i] = rebuilt[i][0];
+				Vector3 avg = Vector3.zero;
+				int[] tris = sharedIndices[kvp.Key];
+				
+				welds[n++] = tris[0];
+
+				for(int i = 0; i < tris.Length; i++)
+				{
+					lookup[tris[i]] = kvp.Value;
+					vertices[tris[i]].position = averages[kvp.Value];
+				}
 			}
 
-			foreach(pb_IntArray arr in rebuilt)
-			{
-				Vector3 avg = pb_Math.Average(pbUtil.ValuesWithIndices(v, arr.array));
-				foreach(int i in arr.array)
-					v[i] = avg;
-			}
+			pb.SetSharedIndices(lookup);
+			pb.SetVertices(vertices);
+			pb.ToMesh();
 
-			pb.SetVertices(v);
-			// profiler.EndSample();
-
-			pb_IntArray[] remaining = pb.sharedIndices.Where( (val, index) => !used.Contains(index) ).ToArray();
-
-			rebuilt = pbUtil.Concat(rebuilt, remaining);
-
-			pb.SetSharedIndices(rebuilt);
-
-			return true;	
+			return new pb_ActionResult(Status.Success, "Weld Vertices");
 		}
 		
 		/**
@@ -492,9 +491,9 @@ namespace ProBuilder2.MeshOperations
 		pb_IntArrayUtility.RemoveValuesAndShift(ref su, distInd);
 		pb.SetSharedIndices(si);
 		pb.SetSharedIndicesUV(su);
-		
 		pb.SetVertices(vertices);
 		pb.SetFaces(nFaces);
+		pb.ToMesh();
 	}
 
 	public static pb_FaceRebuildData ExplodeVertex(IList<pb_Vertex> vertices, pb_WingedEdge edge, int commonIndex, float distance)	

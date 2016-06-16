@@ -1485,7 +1485,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			bool success = false;
+			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
 			float weld = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
@@ -1500,9 +1500,9 @@ namespace ProBuilder2.EditorCommon
 					pb.ToMesh();
 
 					int[] welds;
-					success = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
+					res = pb.WeldVertices(pb.SelectedTriangles, weld, out welds);
 
-					if(success)
+					if(res)
 					{
 						int[] removed;
 
@@ -1524,7 +1524,7 @@ namespace ProBuilder2.EditorCommon
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 			
-			if(success && weldCount > 0)
+			if(res && weldCount > 0)
 				return new pb_ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
 			else
 				return new pb_ActionResult(Status.Failure, "Nothing to Weld");

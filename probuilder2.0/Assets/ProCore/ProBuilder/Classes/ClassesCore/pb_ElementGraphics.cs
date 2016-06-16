@@ -177,7 +177,7 @@ namespace ProBuilder2.Common
 			int vcount = 0;
 
 			Vector3[] v = new Vector3[pb.sharedIndices.Length];
-			HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetUniversalIndices(pb.SelectedTriangles));
+			HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetCommonIndices(pb.SelectedTriangles));
 
 			for(int i = 0; i < v.Length; i++)	
 				v[i] = pb.vertices[pb.sharedIndices[i][0]];

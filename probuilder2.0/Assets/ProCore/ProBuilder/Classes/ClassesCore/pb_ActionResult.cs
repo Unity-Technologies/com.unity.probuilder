@@ -24,6 +24,11 @@ namespace ProBuilder2.Common
 			this.notification = notification;
 		}
 
+		public static implicit operator bool(pb_ActionResult res)
+		{
+			return res.status == Status.Success;
+		}
+
 		public static pb_ActionResult Success { get { return new pb_ActionResult(Status.Success, ""); } }
 
 		public static pb_ActionResult NoSelection { get {
