@@ -26,10 +26,10 @@ public class TempMenuItems : EditorWindow
 
 			pb.ToMesh();
 
-			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
-			// pb_EditorUtility.ShowNotification(result.notification);
+			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			pb_EditorUtility.ShowNotification(result.notification);
 
-			pb_EditorUtility.ShowNotification(SplitVertices(pb, pb.SelectedTriangles, .2f).notification);
+			// pb_EditorUtility.ShowNotification(SplitVertices(pb, pb.SelectedTriangles, .2f).notification);
 			pb.SetSelectedTriangles(null);
 
 			pb.Refresh();
@@ -64,7 +64,7 @@ public class TempMenuItems : EditorWindow
 			{
 				if(!used.Add(match.face))
 					continue;
-
+ 
 				sorted.AddOrAppend(match.face, new pb_Tuple<pb_WingedEdge, int>(match, c));
 			}
 		}

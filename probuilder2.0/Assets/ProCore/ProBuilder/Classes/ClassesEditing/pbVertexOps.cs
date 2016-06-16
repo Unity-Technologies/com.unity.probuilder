@@ -77,7 +77,6 @@ namespace ProBuilder2.MeshOperations
 
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			Dictionary<int, Vector3> average = new Dictionary<int, Vector3>();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 
 			KDTree<int> tree = new KDTree<int>(3, 48);
@@ -105,7 +104,6 @@ namespace ProBuilder2.MeshOperations
 
 				NearestNeighbour<int> neighborIterator = tree.NearestNeighbors( point, 64, delta );
 
-				List<int> neighbors = new List<int>();
 				Vector3 avg = Vector3.zero;
 				int count = 0;
 
@@ -128,7 +126,6 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(var kvp in remapped)
 			{
-				Vector3 avg = Vector3.zero;
 				int[] tris = sharedIndices[kvp.Key];
 				
 				welds[n++] = tris[0];
@@ -523,7 +520,7 @@ namespace ProBuilder2.MeshOperations
 			vertices[fi[1]].position,
 			vertices[fi[2]].position);
 
-		foreach(var edgeAndIndex in edgeAndCommonIndex) // commonIndex in commonIndices)
+		foreach(var edgeAndIndex in edgeAndCommonIndex)
 		{
 			pb_WingedEdge edge = edgeAndIndex.Item1;
 			int commonIndex = edgeAndIndex.Item2;

@@ -52,30 +52,36 @@ namespace ProBuilder2.MeshOperations
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
 			}
 
-			HashSet<pb_Face> remove = new HashSet<pb_Face>();
+			Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
-			// foreach(int common in slide)
-			// {
-			// 	IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x.face));
+			foreach(int c in slide)
+			{
+				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !ignore.Contains(x.face));
+				HashSet<pb_Face> used = new HashSet<pb_Face>();
 
-			// 	foreach(pb_WingedEdge neighbor in split)
-			// 	{
-			// 		if(!remove.Add(neighbor.face))
-			// 			continue;
+				foreach(pb_WingedEdge match in matches)
+				{
+					if(!used.Add(match.face))
+						continue;
 
-			// 		pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, neighbor, common, amount);	
-			// 		appendFaces.Add(f);
-			// 	}
-			// }
+					sorted.AddOrAppend(match.face, new pb_Tuple<pb_WingedEdge, int>(match, c));
+				}
+			}
 
-			Debug.Log("remove: " + remove.Count);
+			foreach(var kvp in sorted)
+			{
+				pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, amount);
+
+				if(f != null)
+					appendFaces.Add(f);
+			}
 
 			List<pb_Face> faces = new List<pb_Face>(pb.faces);
 			pb_FaceRebuildData.Apply(appendFaces, vertices, faces, lookup, lookupUV);
 			pb.SetVertices(vertices);
 			pb.SetFaces(faces.ToArray());
 			pb.SetSharedIndices(lookup.ToSharedIndices());
-			pb.DeleteFaces(remove);
+			pb.DeleteFaces(sorted.Keys);
 			
 			pb.ToMesh();
 
