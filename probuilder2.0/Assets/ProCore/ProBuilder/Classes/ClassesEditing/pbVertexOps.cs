@@ -195,7 +195,7 @@ namespace ProBuilder2.MeshOperations
 			int max = lookup.Count();
 			foreach(int i in indices)
 				lookup[i] = ++max;
-			pb.SetSharedIndices(pb_IntArrayUtility.ToSharedIndices(lookup));
+			pb.SetSharedIndices(lookup);
 		}
 #endregion
 
@@ -496,31 +496,62 @@ namespace ProBuilder2.MeshOperations
 		pb.ToMesh();
 	}
 
-	public static pb_FaceRebuildData ExplodeVertex(IList<pb_Vertex> vertices, pb_WingedEdge edge, int commonIndex, float distance)	
+	/**
+	 *	Split a common index on a face into two vertices and slide each vertex backwards along it's feeding edge by distance.
+	 *	This method does not perform any input validation, so make sure commonIndices is distinct and all winged edges belong
+	 *	to the same face.
+	 *
+	 *	_ _ _ _          _ _ _
+	 *	|              /
+	 *	|         ->   |
+	 *	|              |
+	 */
+	public static pb_FaceRebuildData ExplodeVertex(IList<pb_Vertex> vertices, IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex, float distance)	
 	{
-		pb_Edge ae = AlignEdgeWithDirection(edge.edge, commonIndex);
-		pb_WingedEdge next = edge.next.edge.common.Contains(commonIndex) ? edge.next : edge.previous;
-		pb_Edge an = AlignEdgeWithDirection(next.edge, commonIndex);
-		Debug.Log(ae + " : " + an);
+		Dictionary<int, List<Vector3>> splits = new Dictionary<int, List<Vector3>>();
 
-		int[] fi = edge.face.indices;
-		int[] di = edge.face.distinctIndices;
+		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
 
-		Vector3 normal = pb_Math.Normal(vertices[fi[0]].position, vertices[fi[1]].position, vertices[fi[2]].position);
-		Vector3 adir = vertices[ae.y].position - vertices[ae.x].position;
-		Vector3 bdir = vertices[an.y].position - vertices[an.x].position;
+		if(face == null)
+			return null;
+
+		int[] fi = face.indices;
+		int[] di = face.distinctIndices;
+
+		Vector3 normal = pb_Math.Normal(
+			vertices[fi[0]].position,
+			vertices[fi[1]].position,
+			vertices[fi[2]].position);
+
+		foreach(var edgeAndIndex in edgeAndCommonIndex) // commonIndex in commonIndices)
+		{
+			pb_WingedEdge edge = edgeAndIndex.Item1;
+			int commonIndex = edgeAndIndex.Item2;
+
+			pb_Edge ae = AlignEdgeWithDirection(edge.edge, commonIndex);
+			pb_WingedEdge next = edge.next.edge.common.Contains(commonIndex) ? edge.next : edge.previous;
+			pb_Edge an = AlignEdgeWithDirection(next.edge, commonIndex);
+
+			if(ae == null || an == null)
+				continue;
+
+			Vector3 adir = (vertices[ae.y].position - vertices[ae.x].position).normalized;
+			Vector3 bdir = (vertices[an.y].position - vertices[an.x].position).normalized;
+			
+			splits.AddOrAppend<int, Vector3>(ae.x, adir);
+			splits.AddOrAppend<int, Vector3>(an.x, bdir);
+		}
 
 		List<pb_Vertex> v = new List<pb_Vertex>();
 
 		for(int i = 0; i < di.Length; i++)
 		{
-			if(di[i] == ae.x || di[i] == an.x)
-			{
-				if(di[i] == ae.x)
-					v.Add(vertices[di[i]] + adir.normalized * distance);
+			List<Vector3> split_dir;
 
-				if(di[i] == an.x)
-					v.Add(vertices[di[i]] + bdir.normalized * distance);
+			if( splits.TryGetValue(di[i], out split_dir) )
+			{
+				for(int n = 0; n < split_dir.Count; n++)
+					v.Add(vertices[di[i]] + split_dir[n] * distance);
 			}
 			else
 			{
@@ -536,14 +567,12 @@ namespace ProBuilder2.MeshOperations
 		Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 		List<int> triangles;
 
-		Debug.Log(points2d.ToString("\n"));
-
 		if(pb_Triangulation.SortAndTriangulate(points2d, out triangles))
 		{
 			pb_FaceRebuildData data = new pb_FaceRebuildData();
 
 			data.vertices = v;
-			data.face = new pb_Face(edge.face);
+			data.face = new pb_Face(face);
 			data.face.SetIndices(triangles.ToArray());
 			
 			return data;

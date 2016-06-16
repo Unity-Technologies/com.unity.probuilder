@@ -364,7 +364,7 @@ public class pb_Object : MonoBehaviour
 	{
 		m_selectedFaces = new int[0];
 		m_SelectedEdges = new pb_Edge[0];
-		m_selectedTriangles = tris;
+		m_selectedTriangles = tris ?? new int[0] {};
 	}
 
 	/**
@@ -473,7 +473,7 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 * Sets the internal sharedIndices cache.  Also takes care of refreshing the uniqueIndices cache for you.
+	 * Sets the internal sharedIndices cache.
 	 */
 	public void SetSharedIndices(pb_IntArray[] si)
 	{
@@ -488,6 +488,11 @@ public class pb_Object : MonoBehaviour
 	public void SetSharedIndicesUV(pb_IntArray[] si)
 	{
 		_sharedIndicesUV = si;
+	}
+
+	public void SetSharedIndicesUV(Dictionary<int, int> si)
+	{
+		_sharedIndicesUV = pb_IntArrayUtility.ToSharedIndices(si);
 	}
 #endregion
 

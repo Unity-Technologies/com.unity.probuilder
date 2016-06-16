@@ -54,19 +54,19 @@ namespace ProBuilder2.MeshOperations
 
 			HashSet<pb_Face> remove = new HashSet<pb_Face>();
 
-			foreach(int common in slide)
-			{
-				IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x.face));
+			// foreach(int common in slide)
+			// {
+			// 	IEnumerable<pb_WingedEdge> split = wings.Where(x => x.edge.common.Contains(common) && !ignore.Contains(x.face));
 
-				foreach(pb_WingedEdge neighbor in split)
-				{
-					if(!remove.Add(neighbor.face))
-						continue;
+			// 	foreach(pb_WingedEdge neighbor in split)
+			// 	{
+			// 		if(!remove.Add(neighbor.face))
+			// 			continue;
 
-					pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, neighbor, common, amount);	
-					appendFaces.Add(f);
-				}
-			}
+			// 		pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, neighbor, common, amount);	
+			// 		appendFaces.Add(f);
+			// 	}
+			// }
 
 			Debug.Log("remove: " + remove.Count);
 

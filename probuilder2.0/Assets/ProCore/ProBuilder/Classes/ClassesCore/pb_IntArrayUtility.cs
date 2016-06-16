@@ -213,34 +213,22 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (universal index).
+		 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (common index).
 		 */
 		public static HashSet<int> GetCommonIndices(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
-			Dictionary<int, int> lookup = pbIntArr.ToDictionary();
-			HashSet<int> universal = new HashSet<int>();
-
-			foreach(int i in indices)
-			{
-				int v;
-				if(lookup.TryGetValue(i, out v))
-					universal.Add( v );
-				else
-					Debug.Log("not found: " + i);
-			}
-
-			return universal;
+			return GetCommonIndices(pbIntArr.ToDictionary(), indices);
 		}
 
 		public static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IList<int> indices)
 		{
-			HashSet<int> universal = new HashSet<int>();
+			HashSet<int> common = new HashSet<int>();
 
 			foreach(int i in indices) {
-				universal.Add( lookup[i] );
+				common.Add( lookup[i] );
 			}
 
-			return universal;
+			return common;
 		}
 
 		/**
