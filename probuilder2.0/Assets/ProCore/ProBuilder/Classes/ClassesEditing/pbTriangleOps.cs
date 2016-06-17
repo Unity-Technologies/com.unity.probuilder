@@ -21,22 +21,30 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 * Attempt to figure out the winding order the passed face.  Note that
-		 * this may return WindingOrder.Unknown.
+		 *	Attempt to figure out the winding order the passed face.  
+		 *
+		 *	Note that this may return WindingOrder.Unknown.
 		 */
 		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
 		{
 			Vector2[] p = pb_Projection.PlanarProject(pb.vertices.ValuesWithIndices( face.edges.AllTriangles() ), pb_Math.Normal(pb, face));
 
+			return GetWindingOrder(p);
+		}
+
+		public static WindingOrder GetWindingOrder(IList<Vector2> points)
+		{
 			float sum = 0f;
 
-			// http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
-			for(int i = 0; i < p.Length; i++)
-			{
-				Vector2 a = p[i];
-				Vector2 b = i < p.Length - 1 ? p[i+1] : p[0];
+			int len = points.Count;
 
-				sum += ( (b.x-a.x) * (b.y+a.y) );
+			// http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+			for(int i = 0; i < len; i++)
+			{
+				Vector2 a = points[i];
+				Vector2 b = i < len - 1 ? points[i+1] : points[0];
+
+				sum += ( (b.x - a.x) * (b.y+a.y) );
 			}
 
 			return sum == 0f ? WindingOrder.Unknown : (sum >= 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);

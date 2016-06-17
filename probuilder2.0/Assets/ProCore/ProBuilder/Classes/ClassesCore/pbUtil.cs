@@ -414,6 +414,19 @@ namespace ProBuilder2.Common
 		else
 			dictionary.Add(key, new List<K>() { value });
 	}
+
+	/**
+	 *	Add a value to a key in dictionary, adding a new entry if necessray.
+	 */
+	public static void AddOrAppendRange<T, K>(this Dictionary<T, List<K>> dictionary, T key, List<K> value)
+	{
+		List<K> list;
+
+		if(dictionary.TryGetValue(key, out list))
+			list.AddRange(value);
+		else
+			dictionary.Add(key, value);
+	}
 #endregion
 
 #region SNAP

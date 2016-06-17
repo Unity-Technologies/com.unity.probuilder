@@ -44,7 +44,8 @@ namespace ProBuilder2.Common
 				{
 					int localIndex = face.distinctIndices[n];
 
-					sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);
+					if(sharedIndices != null)
+						sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);
 
 					if(sharedIndicesUV != null)
 						sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);

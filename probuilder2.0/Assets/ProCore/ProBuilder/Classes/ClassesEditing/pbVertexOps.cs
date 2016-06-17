@@ -497,15 +497,24 @@ namespace ProBuilder2.MeshOperations
 	 *	Split a common index on a face into two vertices and slide each vertex backwards along it's feeding edge by distance.
 	 *	This method does not perform any input validation, so make sure commonIndices is distinct and all winged edges belong
 	 *	to the same face.
+	 * 
+	 *	`appendedVertices` is common index and a list of vertices it was split into.
 	 *
 	 *	_ _ _ _          _ _ _
 	 *	|              /
 	 *	|         ->   |
 	 *	|              |
 	 */
-	public static pb_FaceRebuildData ExplodeVertex(IList<pb_Vertex> vertices, IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex, float distance)	
+	public static pb_FaceRebuildData ExplodeVertex(
+		IList<pb_Vertex> vertices,
+		IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex,
+		float distance,
+		out Dictionary<int, List<pb_Vertex>> appendedVertices)
 	{
+		// organize all common splits with directions so that they can all be executed at once
 		Dictionary<int, List<Vector3>> splits = new Dictionary<int, List<Vector3>>();
+		
+		appendedVertices = new Dictionary<int, List<pb_Vertex>>();
 
 		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
 
@@ -514,6 +523,7 @@ namespace ProBuilder2.MeshOperations
 
 		int[] fi = face.indices;
 		int[] di = face.distinctIndices;
+		Dictionary<int, int> ci = new Dictionary<int, int>();
 
 		Vector3 normal = pb_Math.Normal(
 			vertices[fi[0]].position,
@@ -535,6 +545,9 @@ namespace ProBuilder2.MeshOperations
 			Vector3 adir = (vertices[ae.y].position - vertices[ae.x].position).normalized;
 			Vector3 bdir = (vertices[an.y].position - vertices[an.x].position).normalized;
 			
+			if(!ci.ContainsKey(ae.x)) ci.Add(ae.x, commonIndex);
+			if(!ci.ContainsKey(an.x)) ci.Add(an.x, commonIndex);
+
 			splits.AddOrAppend<int, Vector3>(ae.x, adir);
 			splits.AddOrAppend<int, Vector3>(an.x, bdir);
 		}
@@ -548,7 +561,11 @@ namespace ProBuilder2.MeshOperations
 			if( splits.TryGetValue(di[i], out split_dir) )
 			{
 				for(int n = 0; n < split_dir.Count; n++)
-					v.Add(vertices[di[i]] + split_dir[n] * distance);
+				{
+					pb_Vertex nv = vertices[di[i]] + split_dir[n] * distance;
+					appendedVertices.AddOrAppend(ci[di[i]], nv);
+					v.Add(nv);
+				}
 			}
 			else
 			{
