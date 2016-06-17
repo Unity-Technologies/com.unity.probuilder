@@ -95,9 +95,10 @@ namespace ProBuilder2.EditorCommon
 				new FlipFaceNormals(),
 				new MergeFaces(),
 				new SubdivideFaces(),
-				
+
 				// Edge
 				new BridgeEdges(),
+				new BevelEdges(),
 				new ConnectEdges(),
 				new ExtrudeEdges(),
 				new InsertEdgeLoop(),

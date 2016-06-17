@@ -24,7 +24,7 @@ public static class pb_Constant
 	public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
 	public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
 	public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
-		
+
 	private static Material _UnityDefaultDiffuse = null;
 	public static Material UnityDefaultDiffuse
 	{
@@ -36,7 +36,7 @@ public static class pb_Constant
 				_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
 				GameObject.DestroyImmediate(go);
 			}
-			
+
 			return _UnityDefaultDiffuse;
 		}
 	}
@@ -121,6 +121,7 @@ public static class pb_Constant
 	public const string pbUVWeldDistance				= "pbUVWeldDistance";
 	public const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
 	public const string pbExtrudeDistance 				= "pbExtrudeDistance";
+	public const string pbBevelAmount 					= "pbBevelAmount";
 
 	// Int
 	public const string pbEdgeSubdivisions				= "pbEdgeSubdivisions";
@@ -142,7 +143,7 @@ public static class pb_Constant
 	public const string pbShowNoDraw					= "pbShowNoDraw";
 
 	public readonly static Rect RectZero = new Rect(0,0,0,0);
-	
+
  	public static Color ProBuilderBlue = new Color(0f, .682f, .937f, 1f);
  	public static Color ProBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
  	public static Color ProBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
@@ -165,7 +166,7 @@ public static class pb_Constant
 
 	public static Vector3[] VERTICES_CUBE = new Vector3[] {
 		// bottom 4 verts
-		new Vector3(-.5f, -.5f, .5f),		// 0	
+		new Vector3(-.5f, -.5f, .5f),		// 0
 		new Vector3(.5f, -.5f, .5f),		// 1
 		new Vector3(.5f, -.5f, -.5f),		// 2
 		new Vector3(-.5f, -.5f, -.5f),		// 3

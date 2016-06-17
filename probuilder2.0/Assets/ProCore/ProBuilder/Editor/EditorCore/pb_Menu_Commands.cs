@@ -39,6 +39,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuWeldVertices(pb_Object[] selection) { Debug.LogWarning("MenuWeldVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection) { Debug.LogWarning("MenuBevelEdges is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 #endif
 
@@ -114,7 +115,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuSetPivot(pb_Object[] selection)
 		{
 			int[][] tri = new int[selection.Length][];
-			
+
 			for(int i = 0; i < tri.Length; i++)
 				tri[i] = selection[i].SelectedTriangles;
 
@@ -153,7 +154,7 @@ namespace ProBuilder2.EditorCommon
 
 			return new pb_ActionResult(Status.Success, "Set Pivot");
 		}
-					
+
 		public static pb_ActionResult MenuFreezeTransforms(pb_Object[] selection)
 		{
 			if(selection == null || selection.Length < 1)
@@ -170,7 +171,7 @@ namespace ProBuilder2.EditorCommon
 			for(int i = 0; i < selection.Length; i++)
 			{
 				pb_Object pb = selection[i];
-				
+
 				pb.transform.position = Vector3.zero;
 				pb.transform.localRotation = Quaternion.identity;
 				pb.transform.localScale = Vector3.one;
@@ -276,7 +277,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 *	Open the vertex color editor (palette or painter) based on prefs. 
+		 *	Open the vertex color editor (palette or painter) based on prefs.
 		 */
 		public static void MenuOpenVertexColorsEditor()
 		{
@@ -623,7 +624,7 @@ namespace ProBuilder2.EditorCommon
 								out result);
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
-					
+
 					pb.ToMesh();
 				}
 
@@ -684,6 +685,31 @@ namespace ProBuilder2.EditorCommon
 				Debug.LogWarning("Failed Bridge Edges.  Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
 				return new pb_ActionResult(Status.Failure, "Bridge Edges requires that only 2 edges be selected, and they must both only have one connecting face (non-manifold).");
 			}
+		}
+
+		/**
+		 * Bevel selected edges.
+		 */
+		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection)
+		{
+			pbUndo.RecordSelection(selection, "Bevel Edges");
+			pb_ActionResult res = pb_ActionResult.NoSelection;
+
+			float amount = pb_Preferences_Internal.GetFloat(pb_Constant.pbBevelAmount);
+
+			foreach(pb_Object pb in selection)
+			{
+				pb.ToMesh();
+
+				res = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, amount);
+
+				pb.Refresh();
+				pb.Optimize();
+			}
+
+			pb_Editor.Refresh();
+
+			return res;
 		}
 #endif
 #endregion
@@ -1075,7 +1101,7 @@ namespace ProBuilder2.EditorCommon
 				selection == null ||
 				selection.Length < 1 ||
 				editor.editLevel == EditLevel.Top)
-				return false;	
+				return false;
 
 			int sel, max;
 			GetSelectedElementCount(selection, out sel, out max);
@@ -1174,7 +1200,7 @@ namespace ProBuilder2.EditorCommon
 					Debug.LogWarning("Attempting to delete all faces on this mesh...  I'm afraid I can't let you do that.");
 					continue;
 				}
-				
+
 				pb.DeleteFaces(pb.SelectedFaces);
 				count += pb.SelectedFaceCount;
 
@@ -1257,7 +1283,7 @@ namespace ProBuilder2.EditorCommon
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(count > 0)
-				return new pb_ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));	
+				return new pb_ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
 			else
 				return new pb_ActionResult(Status.Success, "Detach Faces");
 		}
@@ -1268,7 +1294,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuDetachFacesToObject(pb_Object[] selection)
 		{
-			if(!editor || selection == null || selection.Length < 1)	
+			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
@@ -1523,7 +1549,7 @@ namespace ProBuilder2.EditorCommon
 				editor.UpdateSelection(true);
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
-			
+
 			if(res && weldCount > 0)
 				return new pb_ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
 			else

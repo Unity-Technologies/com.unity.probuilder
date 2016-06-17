@@ -42,9 +42,9 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbVertexPaletteDockable ||
 			pref == pb_Constant.pbGrowSelectionAngleIterative ||
 			pref == pb_Constant.pbIconGUI ||
-			pref == pb_Constant.pbUniqueModeShortcuts || 
+			pref == pb_Constant.pbUniqueModeShortcuts ||
 			pref == pb_Constant.pbShiftOnlyTooltips ||
-			pref == pb_Constant.pbCollapseVertexToFirst || 
+			pref == pb_Constant.pbCollapseVertexToFirst ||
 			pref == pb_Constant.pbMeshesAreAssets)
 			return false;
 		else
@@ -58,14 +58,14 @@ public class pb_Preferences_Internal
 		{
 			case pb_Constant.pbVertexHandleSize:
 				return EditorPrefs.HasKey(pref) && !forceDefault ?  EditorPrefs.GetFloat(pref) : .5f;
-			
+
 			case pb_Constant.pbGrowSelectionAngle:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : 42f;
 
 			case pb_Constant.pbExtrudeDistance:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : .5f;
 
-			case pb_Constant.pbWeldDistance:	
+			case pb_Constant.pbWeldDistance:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : Mathf.Epsilon;
 
 			case pb_Constant.pbUVGridSnapValue:
@@ -73,6 +73,9 @@ public class pb_Preferences_Internal
 
 			case pb_Constant.pbUVWeldDistance:
 				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), Mathf.Epsilon, 10f) : .01f;
+
+			case pb_Constant.pbBevelAmount:
+				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), Mathf.Epsilon, 1000f) : .05f;
 
 			default:
 				return 1f;
@@ -91,15 +94,15 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbDefaultFaceColor:
 					col = new Color(0f, .86f, 1f, .275f);
 				break;
-				
+
 			case pb_Constant.pbDefaultEdgeColor:
 					col = new Color(0f, .25f, 1f, 1f);
 				break;
-				
+
 			case pb_Constant.pbDefaultVertexColor:
 					col = new Color(.8f, .8f, .8f, 1f);
 				break;
-			
+
 			case pb_Constant.pbDefaultSelectedVertexColor:
 					col = Color.green;
 				break;
@@ -126,7 +129,7 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbDefaultMaterial:
 				if(!forceDefault && EditorPrefs.HasKey(pref))
 				{
-					if(EditorPrefs.GetString(pref) == "Default-Diffuse") 
+					if(EditorPrefs.GetString(pref) == "Default-Diffuse")
 						return pb_Preferences_Internal.DefaultDiffuse;
 
 					mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(pref), typeof(Material));
@@ -139,7 +142,7 @@ public class pb_Preferences_Internal
 
 		if(!mat)
 			mat = pb_Constant.DefaultMaterial;
-			
+
 		return mat;
 	}
 
@@ -168,19 +171,19 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbDefaultCollider:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)ColliderType.MeshCollider;
 				return (T)System.Convert.ChangeType( (ColliderType)key, typeof(T));
-			
+
 			case pb_Constant.pbVertexColorTool:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)VertexColorTool.Painter;
 				return (T)System.Convert.ChangeType( (VertexColorTool) key, typeof(T));
-			
+
 			case pb_Constant.pbToolbarLocation:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)SceneToolbarLocation.UpperCenter;
 				return (T)System.Convert.ChangeType( (SceneToolbarLocation) key, typeof(T));
-						
+
 			case pb_Constant.pbDefaultEntity:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)EntityType.Detail;
 				return (T)System.Convert.ChangeType( (EntityType) key, typeof(T));
-			
+
 			default:
 				return (T)System.Convert.ChangeType( 0, typeof(T));
 		}
@@ -205,7 +208,7 @@ public class pb_Preferences_Internal
 		table.Add(pb_Constant.pbManifoldEdgeExtrusion,			pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion));
 		table.Add(pb_Constant.pbPerimeterEdgeBridgeOnly,		pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly));
 		table.Add(pb_Constant.pbPBOSelectionOnly,				pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly));
-		table.Add(pb_Constant.pbCloseShapeWindow,				pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow));		
+		table.Add(pb_Constant.pbCloseShapeWindow,				pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow));
 		table.Add(pb_Constant.pbUVEditorFloating,				pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating));
 		table.Add(pb_Constant.pbShowSceneToolbar,				pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar));
 		table.Add(pb_Constant.pbShowEditorNotifications,		pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications));
