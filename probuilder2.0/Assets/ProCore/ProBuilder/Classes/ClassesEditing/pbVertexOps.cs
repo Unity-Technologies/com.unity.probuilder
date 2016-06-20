@@ -512,7 +512,7 @@ namespace ProBuilder2.MeshOperations
 		out Dictionary<int, List<pb_Vertex>> appendedVertices)
 	{
 		// organize all common splits with directions so that they can all be executed at once
-		Dictionary<int, List<Vector3>> splits = new Dictionary<int, List<Vector3>>();
+		Dictionary<int, List<pb_Vertex>> splits = new Dictionary<int, List<pb_Vertex>>();
 		
 		appendedVertices = new Dictionary<int, List<pb_Vertex>>();
 
@@ -542,21 +542,23 @@ namespace ProBuilder2.MeshOperations
 			if(ae == null || an == null)
 				continue;
 
-			Vector3 adir = (vertices[ae.y].position - vertices[ae.x].position).normalized;
-			Vector3 bdir = (vertices[an.y].position - vertices[an.x].position).normalized;
+			pb_Vertex adir = (vertices[ae.y] - vertices[ae.x]);
+			pb_Vertex bdir = (vertices[an.y] - vertices[an.x]);
+			adir.Normalize();
+			bdir.Normalize();
 			
 			if(!ci.ContainsKey(ae.x)) ci.Add(ae.x, commonIndex);
 			if(!ci.ContainsKey(an.x)) ci.Add(an.x, commonIndex);
 
-			splits.AddOrAppend<int, Vector3>(ae.x, adir);
-			splits.AddOrAppend<int, Vector3>(an.x, bdir);
+			splits.AddOrAppend<int, pb_Vertex>(ae.x, adir);
+			splits.AddOrAppend<int, pb_Vertex>(an.x, bdir);
 		}
 
 		List<pb_Vertex> v = new List<pb_Vertex>();
 
 		for(int i = 0; i < di.Length; i++)
 		{
-			List<Vector3> split_dir;
+			List<pb_Vertex> split_dir;
 
 			if( splits.TryGetValue(di[i], out split_dir) )
 			{

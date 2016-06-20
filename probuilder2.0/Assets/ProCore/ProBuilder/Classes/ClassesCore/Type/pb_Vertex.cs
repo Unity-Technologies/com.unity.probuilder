@@ -40,54 +40,6 @@ namespace ProBuilder2.Common
 			hasUv4 = hasAllValues;
 		}
 
-		/**
-		 *	New pb_Vertex from a vertex index in pb_Object.
-		 */
-		[System.Obsolete]
-		public pb_Vertex(pb_Object pb, int index)
-		{
-			int vertexCount = pb.vertexCount;
-			Mesh m = pb.msh;
-			bool hasMesh = m != null;
-
-			this.position = pb.vertices[index];
-			this.color = pb.colors[index];
-			this.uv0 = pb.uv[index];
-			this.hasPosition = true;
-			this.hasColor = true;
-			this.hasUv0 = true;
-
-			if(hasMesh && m.normals != null && m.normals.Length == vertexCount)
-			{
-				this.hasNormal = true;
-				this.normal = m.normals[index];
-			}
-
-			if(hasMesh && m.tangents != null && m.tangents.Length == vertexCount)
-			{
-				this.hasTangent = true;
-				this.tangent = m.tangents[index];
-			}
-
-			if(hasMesh && m.uv2 != null && m.uv2.Length == vertexCount)
-			{
-				this.hasUv2 = true;
-				this.uv2 = m.uv2[index];
-			}
-
-			if(pb.hasUv3)
-			{
-				this.hasUv3 = true;
-				this.uv3 = pb.uv3[index];
-			}
-
-			if(pb.hasUv4)
-			{
-				this.hasUv4 = true;
-				this.uv4 = pb.uv4[index];
-			}
-		}
-
 		public override bool Equals(object other)
 		{
 			return other is pb_Vertex && this.Equals(other as pb_Vertex);
@@ -114,15 +66,13 @@ namespace ProBuilder2.Common
 		public override int GetHashCode()
 		{
 			// 783 is 27 * 29
-			int hash = 783 + pb_Vector.GetHashCode(position);
-
 			unchecked
 			{
+				int hash = 783 + pb_Vector.GetHashCode(position);
 				hash = hash * 29 + pb_Vector.GetHashCode(uv0);
 				hash = hash * 31 + pb_Vector.GetHashCode(normal);
+				return hash;
 			}
-
-			return hash;
 		}
 
 		/**
@@ -149,22 +99,99 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Addition operator overload returns a new vertex with `vertex.position + position`.
+		 *	Addition operator overload passes on to each vector.
 		 */
-		public static pb_Vertex operator +(pb_Vertex vertex, Vector3 position)
+		public static pb_Vertex operator +(pb_Vertex a, pb_Vertex b)
 		{
-			pb_Vertex v = new pb_Vertex(vertex);
-			v.position += position;
+			pb_Vertex v = new pb_Vertex(a);
+
+			v.position	+= b.position;
+			v.color		+= b.color;
+			v.normal	+= b.normal;
+			v.tangent	+= b.tangent;
+			v.uv0		+= b.uv0;
+			v.uv2		+= b.uv2;
+			v.uv3		+= b.uv3;
+			v.uv4		+= b.uv4;
+
 			return v;
 		}
+
 		/**
-		 *	Subtraction operator overload returns a new vertex with `vertex.position - position`.
+		 *	Subtraction operator overload passes on to each vector.
 		 */
-		public static pb_Vertex operator -(pb_Vertex vertex, Vector3 position)
+		public static pb_Vertex operator -(pb_Vertex a, pb_Vertex b)
 		{
-			pb_Vertex v = new pb_Vertex(vertex);
-			v.position -= position;
+			pb_Vertex v = new pb_Vertex(a);
+
+			v.position	-= b.position;
+			v.color		-= b.color;
+			v.normal	-= b.normal;
+			v.tangent	-= b.tangent;
+			v.uv0		-= b.uv0;
+			v.uv2		-= b.uv2;
+			v.uv3		-= b.uv3;
+			v.uv4		-= b.uv4;
+
 			return v;
+		}
+
+		/**
+		 *	Multiplication operator overload passes * float to each vector.
+		 */
+		public static pb_Vertex operator *(pb_Vertex a, float value)
+		{
+			pb_Vertex v = new pb_Vertex(a);
+
+			v.position	*= value;
+			v.color		*= value;
+			v.normal	*= value;
+			v.tangent	*= value;
+			v.uv0		*= value;
+			v.uv2		*= value;
+			v.uv3		*= value;
+			v.uv4		*= value;
+
+			return v;
+		}
+
+		/**
+		 *	Division operator overload passes on to each vector.
+		 */
+		public static pb_Vertex operator /(pb_Vertex a, float value)
+		{
+			pb_Vertex v = new pb_Vertex(a);
+
+			v.position	/= value;
+			v.color		/= value;
+			v.normal	/= value;
+			v.tangent	/= value;
+			v.uv0		/= value;
+			v.uv2		/= value;
+			v.uv3		/= value;
+			v.uv4		/= value;
+
+			return v;
+		}
+
+		/**
+		 *	Normalize vector values in place.
+		 */
+		public void Normalize()
+		{
+			position.Normalize();
+			Vector4 color4 = (Vector4) color;
+			color4.Normalize();
+			color.r = color4.x;
+			color.g = color4.y;
+			color.b = color4.z;
+			color.a = color4.w;
+			normal.Normalize();
+			tangent.Normalize();
+			uv0.Normalize();
+			uv2.Normalize();
+			uv3.Normalize();
+			uv4.Normalize();
 		}
 
 		public override string ToString()

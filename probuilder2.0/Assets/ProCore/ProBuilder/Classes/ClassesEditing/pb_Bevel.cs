@@ -19,7 +19,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 
-			HashSet<pb_Face> ignore = new HashSet<pb_Face>();
+			Dictionary<pb_Face, List<int>> ignore = new Dictionary<pb_Face, List<int>>();
 			HashSet<int> slide = new HashSet<int>();
 			Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes = new Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>>();
 	
@@ -32,10 +32,10 @@ namespace ProBuilder2.MeshOperations
 				if(we == null || we.opposite == null)
 					continue;
 
-				ignore.Add(we.face);
-				ignore.Add(we.face);
-				ignore.Add(we.opposite.face);
-				ignore.Add(we.opposite.face);
+				ignore.AddOrAppend(we.face, we.edge.common.x);
+				ignore.AddOrAppend(we.face, we.edge.common.y);
+				ignore.AddOrAppend(we.opposite.face, we.edge.common.x);
+				ignore.AddOrAppend(we.opposite.face, we.edge.common.y);
 
 				// after initial slides go back and split indirect triangles at the intersecting index into two vertices
 				slide.Add(we.edge.common.x);
@@ -57,7 +57,7 @@ namespace ProBuilder2.MeshOperations
 			// unique winged edges pointing to the same face
 			foreach(int c in slide)
 			{
-				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !ignore.Contains(x.face));
+				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !(ignore.ContainsKey(x.face) && ignore[x.face].Contains(c)));
 
 				HashSet<pb_Face> used = new HashSet<pb_Face>();
 

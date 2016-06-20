@@ -22,10 +22,10 @@ public class TempMenuItems : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			// foreach(pb_Face f in pb.SelectedFaces)
-			// {
-			// 	Debug.Log( pb.GetWindingOrder(f) );
-			// }
+			foreach(pb_Face f in pb.SelectedFaces)
+			{
+				Debug.Log( pb.GetWindingOrder(f) );
+			}
 
 			// profiler.Begin("bevel edges");
 
