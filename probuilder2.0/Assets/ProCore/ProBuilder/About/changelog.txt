@@ -1,3 +1,24 @@
+# ProBuilder 2.5.1b3
+
+## Features
+
+- Add `Fill Hole` action.
+
+## Bug Fixes
+
+- Fix odd behavior in Weld function, and address potentials for out of bounds assignments after removing unused vertices.
+
+Add method for splitting a vertex and inserting a new edge between.  Move 3d to 2d projection to its own class
+[wip] slide vertices along their previous/next edge directions instead of the cross product of edge and face normals.
+Naive implementation of bevel
+Remove unused code in MeshUtils and minor name/formatting
+Improve performance of edge ring function using winged edge structure
+Replace Edge Loop function with winged edge version.  Big performance increase (~10x) and better handling of edge cases
+Don't show hover tooltips if mouse is outside window bounds
+In Auto UV mode rename the scale property 'Tiling' closes #8
+Set detail pb_Objects with ReflectionProbeStatic flags
+Fix cases where user could provide bad input to Arch generator
+
 # ProBuilder 2.5.1b2
 
 ## Features

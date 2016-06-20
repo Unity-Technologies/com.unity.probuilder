@@ -12,14 +12,12 @@ namespace ProBuilder2.MeshOperations
 		 *	with the correct winding order already applied.  FillHole projects and attempts to figure
 		 *	out the winding order.
 		 */
-		public static pb_ActionResult FillHole(this pb_Object pb, IList<int> indices, WindingOrder preferredWindingOrder = WindingOrder.CounterClockwise)
+		public static pb_ActionResult FillHole(this pb_Object pb, IList<int> indices, out pb_Face face)
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
-
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-
 			List<pb_Vertex> append_vertices = new List<pb_Vertex>();
 
 			foreach(int i in common)
@@ -40,8 +38,17 @@ namespace ProBuilder2.MeshOperations
 				pb.SetSharedIndices(lookup);
 				pb.ToMesh();
 
+				// find an adjacent faces and test that the normals are correct
+				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
+				face = newFace.face;
+
+				
+
 				return new pb_ActionResult(Status.Success, "Fill Hole");
 			}
+
+			face = null;
 
 			return new pb_ActionResult(Status.Failure, "Insufficient Points");
 		}

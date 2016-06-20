@@ -15,7 +15,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 

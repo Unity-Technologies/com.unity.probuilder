@@ -485,7 +485,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static IEnumerable<pb_Edge> GetEdgeRing(pb_Object pb, pb_Edge[] edges)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 			List<pb_EdgeLookup> edge_lookup = pb_EdgeLookup.GetEdgeLookup(edges, pb.sharedIndices.ToDictionary()).ToList();
 			edge_lookup.Distinct();
 
@@ -540,7 +540,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Edge> valid_edges = pb_Edge.ValidateEdges(pb, edges);
 
-			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 			Dictionary<pb_Edge, pb_WingedEdge> wings_dic = new Dictionary<pb_Edge, pb_WingedEdge>();
 			for(int i = 0; i < wings.Count; i++)
 				wings_dic.Add(wings[i].edge.local, wings[i]);

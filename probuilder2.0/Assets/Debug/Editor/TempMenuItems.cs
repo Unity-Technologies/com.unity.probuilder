@@ -57,7 +57,7 @@ public class TempMenuItems : EditorWindow
 	{
 		HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(pb.sharedIndices, indices);
 
-		List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
+		List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 		Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
 		foreach(int c in common)

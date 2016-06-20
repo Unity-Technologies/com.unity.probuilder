@@ -108,6 +108,7 @@ namespace ProBuilder2.EditorCommon
 				new CollapseVertices(),
 				new WeldVertices(),
 				new ConnectVertices(),
+				new FillHole(),
 				new SplitVertices(),
 
 				// Entity

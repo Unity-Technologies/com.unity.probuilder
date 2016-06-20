@@ -40,6 +40,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuCollapseVertices(pb_Object[] selection) { Debug.LogWarning("MenuCollapseVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuSplitVertices(pb_Object[] selection) { Debug.LogWarning("MenuSplitVertices is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection) { Debug.LogWarning("MenuBevelEdges is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
+		public static pb_ActionResult MenuFillHole(pb_Object[] selection) { Debug.LogWarning("MenuFillHole is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 		public static pb_ActionResult WeldButtonGUI(int width) { Debug.LogWarning("WeldButtonGUI is a ProBuilder Advanced feature.");  return new pb_ActionResult(Status.Failure, "ProBuilder Advanced Feature"); }
 #endif
 
@@ -1667,6 +1668,31 @@ namespace ProBuilder2.EditorCommon
 				return new pb_ActionResult(Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
 		}
 
+		public static pb_ActionResult MenuFillHole(pb_Object[] selection)
+		{
+			pbUndo.RecordObjects(selection, "Fill Hole");
+
+			pb_ActionResult res = pb_ActionResult.NoSelection;
+
+			foreach(pb_Object pb in selection)
+			{
+				pb_Face face;
+
+				pb.ToMesh();
+				
+				res = pb_AppendPolygon.FillHole(pb, pb.SelectedTriangles, out face);
+
+				if(res)
+				{
+					pb.SetSelectedFaces(new pb_Face[] { face });
+					
+					pb.Refresh();
+					pb.Optimize();
+				}
+			}
+
+			return res;
+		}
 #endif
 #endregion
 

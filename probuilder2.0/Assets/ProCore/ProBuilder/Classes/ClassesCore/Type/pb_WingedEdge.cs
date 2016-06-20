@@ -86,7 +86,7 @@ namespace ProBuilder2.Common
 			return edges;
 		}
 
-		public static List<pb_WingedEdge> GenerateWingedEdges(pb_Object pb)
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
