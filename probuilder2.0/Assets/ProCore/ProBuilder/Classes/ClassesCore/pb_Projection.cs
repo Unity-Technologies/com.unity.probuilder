@@ -18,6 +18,12 @@ namespace ProBuilder2.Common
 			return PlanarProject(verts, planeNormal, VectorToProjectionAxis(planeNormal));
 		}
 
+		public static Vector2[] PlanarProject(pb_Object pb, pb_Face face)
+		{
+			Vector3 normal = pb_Math.Normal(pb, face);
+			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
+		}
+
 		public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal, ProjectionAxis projectionAxis, IList<int> indices = null)
 		{
 			int len = indices == null || indices.Count < 1 ? verts.Count : indices.Count;
@@ -65,6 +71,45 @@ namespace ProBuilder2.Common
 
 				uvs[i] = new Vector2(u, v);
 			}
+
+			return uvs;
+		}
+
+		public static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
+		{
+			int len = indices.Count;
+			Vector2[] uvs = new Vector2[len];
+			Vector3 vec = Vector3.zero;
+			Vector3 normal = pb_Math.Normal(vertices, indices);
+			ProjectionAxis axis = VectorToProjectionAxis(normal);
+
+			switch(axis)
+			{
+				case ProjectionAxis.X:
+				case ProjectionAxis.X_Negative:
+					vec = Vector3.up;
+					break;
+
+				case ProjectionAxis.Y:
+				case ProjectionAxis.Y_Negative:
+					vec = Vector3.forward;
+					break;
+				
+				case ProjectionAxis.Z:
+				case ProjectionAxis.Z_Negative:
+					vec = Vector3.up;
+					break;
+			}
+			
+			Vector3 uAxis = Vector3.Cross(normal, vec);
+			uAxis.Normalize();
+			Vector3 vAxis = Vector3.Cross(uAxis, normal);
+			vAxis.Normalize();
+			
+			for(int i = 0; i < len; i++)
+				uvs[i] = new Vector2(
+					Vector3.Dot(uAxis, vertices[indices[i]].position),
+					Vector3.Dot(vAxis, vertices[indices[i]].position));
 
 			return uvs;
 		}

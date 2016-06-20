@@ -677,7 +677,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(success)
 			{
-				pb_Editor.instance.UpdateSelection();
+				pb_Editor.Refresh();
 				return new pb_ActionResult(Status.Success, "Bridge Edges");
 			}
 			else

@@ -17,14 +17,14 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Bevel Edges",
-			@"Smooth the selected edges by adding a slanted face."
+			@"Smooth the selected edges by adding a slanted face.",
+			CMD_ALT, 'Z'
 		);
 
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
 					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Edge &&
 					selection != null &&
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedEdgeCount > 0);
@@ -38,8 +38,7 @@ namespace ProBuilder2.Actions
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
+					pb_Editor.instance.editLevel != EditLevel.Geometry;
 		}
 
 		public override void OnSettingsGUI()

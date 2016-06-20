@@ -120,7 +120,7 @@ namespace ProBuilder2.EditorCommon
 		sb.Append(" instance = pb_EditorToolbarLoader.GetInstance<");
 		sb.Append(class_name);
 		sb.AppendLine(">();");
-		sb.AppendLine("\t\t\treturn instance != null && (!instance.IsHidden()) && instance.IsEnabled();");
+		sb.AppendLine("\t\t\treturn instance != null && instance.IsEnabled();");
 		sb.AppendLine("\t\t}");
 
 		sb.AppendLine("");

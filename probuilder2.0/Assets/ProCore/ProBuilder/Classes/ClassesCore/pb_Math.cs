@@ -375,6 +375,36 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Calculate the normal of a set of vertices.  If indices is null or not divisible by 3, the first 3 positions
+		 *	are used.  If indices is valid, an average of each set of 3 is taken.
+		 */
+		public static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices)
+		{
+			if(indices == null || indices.Count % 3 != 0)
+			{
+				Vector3 cross = Vector3.Cross(vertices[1].position - vertices[0].position, vertices[2].position - vertices[0].position);
+
+				if (cross.magnitude < Mathf.Epsilon)
+					return Vector3.zero;
+				else
+					return cross.normalized;
+			}
+			else
+			{
+				int len = indices.Count;
+				Vector3 nrm = Vector3.zero;
+
+				for(int i = 0; i < len; i += 3)
+					nrm += Normal(vertices[indices[i]].position, vertices[indices[i+1]].position, vertices[indices[i+2]].position);
+
+				nrm /= (len/3f);
+				nrm.Normalize();
+
+				return nrm;
+			}
+		}
+
+		/**
 		 * Finds the normal of each triangle in a face and returns the average.
 		 */
 		public static Vector3 Normal(pb_Object pb, pb_Face face)
@@ -386,7 +416,40 @@ namespace ProBuilder2.Common
 								pb.vertices[face.indices[i+1]], 
 								pb.vertices[face.indices[i+2]]);
 
-			return nrm / (face.indices.Length/3f);
+			nrm /= (face.indices.Length/3f);
+			nrm.Normalize();
+
+			return nrm;
+		}
+
+		/**
+		 * If p.Length % 3 == 0, finds the normal of each triangle in a face and returns the average.
+		 * Otherwise return the normal of the first three points.
+		 */
+		public static Vector3 Normal(IList<Vector3> p)
+		{
+			if(p == null || p.Count < 3)
+				return Vector3.zero;
+			
+			int c = p.Count;
+
+			if(c % 3 == 0)
+			{
+				Vector3 nrm = Vector3.zero;
+				for(int i = 0; i < c; i+=3)
+					nrm += Normal(p[i+0], p[i+1], p[i+2]);
+				nrm /= (c/3f);
+				nrm.Normalize();
+				return nrm;
+			}
+			else
+			{
+				Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
+				if (cross.magnitude < Mathf.Epsilon)
+					return new Vector3(0f, 0f, 0f); // bad triangle
+				else
+					return cross.normalized;
+			}
 		}
 
 		/**
@@ -454,50 +517,6 @@ namespace ProBuilder2.Common
 
 			tangent = ((Vector3)tan) * tan.w;
 			bitangent = Vector3.Cross(normal, tangent);
-		}
-
-		/**
-		 * If p.Length % 3 == 0, finds the normal of each triangle in a face and returns the average.
-		 * Otherwise return the normal of the first three points.
-		 */
-		public static Vector3 Normal(Vector3[] p)
-		{
-			if(p.Length < 3) return Vector3.zero;
-			
-			if(p.Length % 3 == 0)
-			{
-				Vector3 nrm = Vector3.zero;
-
-				for(int i = 0; i < p.Length; i+=3)
-					nrm += Normal(	p[i+0], 
-									p[i+1], 
-									p[i+2]);
-
-				return nrm / (p.Length/3f);
-			}
-			else
-			{
-				Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
-				if (cross.magnitude < Mathf.Epsilon)
-					return new Vector3(0f, 0f, 0f); // bad triangle
-				else
-				{
-					return cross.normalized;
-				}
-			}
-		}
-
-		public static Vector3 Normal(List<Vector3> p)
-		{
-			if(p.Count < 3) return Vector3.zero;
-
-			Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
-			if (cross.magnitude < Mathf.Epsilon)
-				return new Vector3(0f, 0f, 0f); // bad triangle
-			else
-			{
-				return cross.normalized;
-			}
 		}
 #endregion
 

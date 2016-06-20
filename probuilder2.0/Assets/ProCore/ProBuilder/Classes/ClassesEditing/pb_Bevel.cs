@@ -22,7 +22,7 @@ namespace ProBuilder2.MeshOperations
 
 			HashSet<pb_Face> ignore = new HashSet<pb_Face>();
 			HashSet<int> slide = new HashSet<int>();
-			Dictionary<int, List<pb_Vertex>> holes = new Dictionary<int, List<pb_Vertex>>();
+			Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes = new Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>>();
 	
 			foreach(pb_EdgeLookup lup in m_edges)
 			{
@@ -70,7 +70,14 @@ namespace ProBuilder2.MeshOperations
 				pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
 
 				foreach(var apv in appendedVertices)
-					holes.AddOrAppendRange(apv.Key, apv.Value);
+				{
+					pb_Tuple<pb_Face, List<pb_Vertex>> entries;
+
+					if(holes.TryGetValue(apv.Key, out entries))
+						entries.Item2.AddRange(apv.Value);
+					else
+						holes.Add(apv.Key, new pb_Tuple<pb_Face, List<pb_Vertex>>(kvp.Key, apv.Value));
+				}
 
 				if(f != null)
 					appendFaces.Add(f);
@@ -81,7 +88,7 @@ namespace ProBuilder2.MeshOperations
 				HashSet<int> used = new HashSet<int>();
 				List<pb_Vertex> v = new List<pb_Vertex>();
 
-				foreach(pb_Vertex vert in k.Value)
+				foreach(pb_Vertex vert in k.Value.Item2)
 					if(used.Add(pb_Vector.GetHashCode(vert.position)))
 						v.Add(vert);
 
@@ -91,7 +98,15 @@ namespace ProBuilder2.MeshOperations
 				pb_FaceRebuildData filledHole = pb_AppendPolygon.FaceWithVertices(v);
 				
 				if(filledHole != null)
+				{
+					Vector3 adjacentNormal = pb_Math.Normal(vertices, k.Value.Item1.indices);
+					Vector3 filledNormal = pb_Math.Normal(filledHole.vertices, filledHole.face.indices);
+
+					if(Vector3.Dot(adjacentNormal, filledNormal) < 0f)
+						System.Array.Reverse(filledHole.face.indices);
+
 					appendFaces.Add(filledHole);
+				}
 			}
 
 			List<pb_Face> faces = new List<pb_Face>(pb.faces);
@@ -105,6 +120,8 @@ namespace ProBuilder2.MeshOperations
 
 			return new pb_ActionResult(Status.Success, "Bevel Edges");
  		}
+
+ 		private static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };
 
  		private static List<pb_FaceRebuildData> GetBridgeFaces(IList<pb_Vertex> vertices, pb_WingedEdge left, pb_WingedEdge right)
  		{
@@ -123,8 +140,16 @@ namespace ProBuilder2.MeshOperations
  				vertices[b.local.x]
  			};
 
+ 			Vector3 an = pb_Math.Normal(vertices, left.face.indices);
+ 			Vector3 bn = pb_Math.Normal(rf.vertices, BRIDGE_INDICES_NRM);
+
+ 			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };
+
+ 			if( Vector3.Dot(an, bn) < 0f)
+ 				System.Array.Reverse(triangles);
+
  			rf.face = new pb_Face(
- 				new int[] { 2, 1, 0, 2, 3, 1 },
+ 				triangles,
  				left.face.material,
  				new pb_UV(),
  				-1,
@@ -137,7 +162,7 @@ namespace ProBuilder2.MeshOperations
  			return faces;
  		}
 
- 		private static void SlideEdge(IList<pb_Vertex> vertices, pb_WingedEdge we, Dictionary<int, List<pb_Vertex>> holes, float amount)
+ 		private static void SlideEdge(IList<pb_Vertex> vertices, pb_WingedEdge we, Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes, float amount)
  		{
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
@@ -154,8 +179,17 @@ namespace ProBuilder2.MeshOperations
 			vertices[we.edge.local.x].position += x * amount;
 			vertices[we.edge.local.y].position += y * amount;
 
-			holes.AddOrAppend(we.edge.common.x, vertices[we.edge.local.x]);
-			holes.AddOrAppend(we.edge.common.y, vertices[we.edge.local.y]);
+			pb_Tuple<pb_Face, List<pb_Vertex>> tup;
+
+			if(holes.TryGetValue(we.edge.common.x, out tup))
+				tup.Item2.Add(vertices[we.edge.local.x]);
+			else
+				holes.Add(we.edge.common.x, new pb_Tuple<pb_Face, List<pb_Vertex>>(we.face, new List<pb_Vertex>() { vertices[we.edge.local.x] } ));
+
+			if(holes.TryGetValue(we.edge.common.y, out tup))
+				tup.Item2.Add(vertices[we.edge.local.y]);
+			else
+				holes.Add(we.edge.common.y, new pb_Tuple<pb_Face, List<pb_Vertex>>(we.face, new List<pb_Vertex>() { vertices[we.edge.local.y] } ));
 		}
 
 		private static pb_Edge GetLeadingEdge(pb_WingedEdge wing, int common)

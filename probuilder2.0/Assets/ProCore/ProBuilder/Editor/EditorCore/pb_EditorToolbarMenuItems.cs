@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenMaterialEditor()
 		{
 			OpenMaterialEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Material Editor ", false, pb_Constant.MENU_EDITOR + 1)]
@@ -34,7 +34,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenMirrorObjectsEditor()
 		{
 			OpenMirrorObjectsEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMirrorObjectsEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Mirror Objects Editor ", false, pb_Constant.MENU_EDITOR + 1)]
@@ -49,7 +49,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenShapeEditor()
 		{
 			OpenShapeEditor instance = pb_EditorToolbarLoader.GetInstance<OpenShapeEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Shape Editor %#K", false, pb_Constant.MENU_EDITOR + 1)]
@@ -64,7 +64,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenSmoothingEditor()
 		{
 			OpenSmoothingEditor instance = pb_EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Smoothing Editor ", false, pb_Constant.MENU_EDITOR + 1)]
@@ -79,7 +79,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenUVEditor()
 		{
 			OpenUVEditor instance = pb_EditorToolbarLoader.GetInstance<OpenUVEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open UV Editor ", false, pb_Constant.MENU_EDITOR + 1)]
@@ -94,7 +94,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyOpenVertexColorEditor()
 		{
 			OpenVertexColorEditor instance = pb_EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Editors/Open Vertex Color Editor ", false, pb_Constant.MENU_EDITOR + 1)]
@@ -105,11 +105,26 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem("Tools/ProBuilder/Geometry/Bevel Edges &Z", true)]
+		static bool MenuVerifyBevelEdges()
+		{
+			BevelEdges instance = pb_EditorToolbarLoader.GetInstance<BevelEdges>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Bevel Edges &Z", false, pb_Constant.MENU_GEOMETRY + 3)]
+		static void MenuDoBevelEdges()
+		{
+			BevelEdges instance = pb_EditorToolbarLoader.GetInstance<BevelEdges>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Geometry/Bridge Edges &B", true)]
 		static bool MenuVerifyBridgeEdges()
 		{
 			BridgeEdges instance = pb_EditorToolbarLoader.GetInstance<BridgeEdges>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Bridge Edges &B", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -124,7 +139,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyCollapseVertices()
 		{
 			CollapseVertices instance = pb_EditorToolbarLoader.GetInstance<CollapseVertices>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Collapse Vertices &C", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -139,7 +154,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyConformFaceNormals()
 		{
 			ConformFaceNormals instance = pb_EditorToolbarLoader.GetInstance<ConformFaceNormals>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Conform Face Normals ", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -156,7 +171,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyDeleteFaces()
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [Delete]", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -171,7 +186,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyDetachFaces()
 		{
 			DetachFaces instance = pb_EditorToolbarLoader.GetInstance<DetachFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Detach Faces ", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -188,7 +203,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyFlipFaceEdge()
 		{
 			FlipFaceEdge instance = pb_EditorToolbarLoader.GetInstance<FlipFaceEdge>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Flip Face Edge ", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -203,7 +218,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyFlipFaceNormals()
 		{
 			FlipFaceNormals instance = pb_EditorToolbarLoader.GetInstance<FlipFaceNormals>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Flip Face Normals &N", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -218,7 +233,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyInsertEdgeLoop()
 		{
 			InsertEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Insert Edge Loop &U", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -233,7 +248,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyMergeFaces()
 		{
 			MergeFaces instance = pb_EditorToolbarLoader.GetInstance<MergeFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Merge Faces ", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -248,7 +263,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySetPivotToSelection()
 		{
 			SetPivotToSelection instance = pb_EditorToolbarLoader.GetInstance<SetPivotToSelection>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Set Pivot To Selection %J", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -263,7 +278,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySplitVertices()
 		{
 			SplitVertices instance = pb_EditorToolbarLoader.GetInstance<SplitVertices>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Split Vertices &X", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -278,7 +293,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySubdivideEdges()
 		{
 			SubdivideEdges instance = pb_EditorToolbarLoader.GetInstance<SubdivideEdges>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Edges ", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -294,7 +309,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyWeldVertices()
 		{
 			WeldVertices instance = pb_EditorToolbarLoader.GetInstance<WeldVertices>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Geometry/Weld Vertices &V", false, pb_Constant.MENU_GEOMETRY + 3)]
@@ -309,7 +324,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyToggleHandleAlignment()
 		{
 			ToggleHandleAlignment instance = pb_EditorToolbarLoader.GetInstance<ToggleHandleAlignment>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Interaction/Toggle Handle Alignment  [P]", false, pb_Constant.MENU_SELECTION + 1)]
@@ -324,7 +339,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyToggleSelectBackFaces()
 		{
 			ToggleSelectBackFaces instance = pb_EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Interaction/Toggle Select Back Faces ", false, pb_Constant.MENU_SELECTION + 1)]
@@ -339,7 +354,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyCenterPivot()
 		{
 			CenterPivot instance = pb_EditorToolbarLoader.GetInstance<CenterPivot>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Center Pivot ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -354,7 +369,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyConformObjectNormals()
 		{
 			ConformObjectNormals instance = pb_EditorToolbarLoader.GetInstance<ConformObjectNormals>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Conform Object Normals ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -369,7 +384,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyFlipObjectNormals()
 		{
 			FlipObjectNormals instance = pb_EditorToolbarLoader.GetInstance<FlipObjectNormals>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Flip Object Normals ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -384,7 +399,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyFreezeTransform()
 		{
 			FreezeTransform instance = pb_EditorToolbarLoader.GetInstance<FreezeTransform>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Freeze Transform ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -400,7 +415,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyMergeObjects()
 		{
 			MergeObjects instance = pb_EditorToolbarLoader.GetInstance<MergeObjects>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Merge Objects ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -415,7 +430,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySubdivideObject()
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -430,7 +445,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyTriangulateObject()
 		{
 			TriangulateObject instance = pb_EditorToolbarLoader.GetInstance<TriangulateObject>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Object/Triangulate Object ", false, pb_Constant.MENU_GEOMETRY + 2)]
@@ -445,7 +460,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyGrowSelection()
 		{
 			GrowSelection instance = pb_EditorToolbarLoader.GetInstance<GrowSelection>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Grow Selection &G", false, pb_Constant.MENU_SELECTION + 0)]
@@ -460,7 +475,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyInvertSelection()
 		{
 			InvertSelection instance = pb_EditorToolbarLoader.GetInstance<InvertSelection>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Invert Selection %#I", false, pb_Constant.MENU_SELECTION + 0)]
@@ -475,7 +490,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySelectEdgeLoop()
 		{
 			SelectEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeLoop>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Select Edge Loop &L", false, pb_Constant.MENU_SELECTION + 0)]
@@ -490,7 +505,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifySelectEdgeRing()
 		{
 			SelectEdgeRing instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeRing>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Select Edge Ring &R", false, pb_Constant.MENU_SELECTION + 0)]
@@ -505,7 +520,7 @@ namespace ProBuilder2.EditorCommon
 		static bool MenuVerifyShrinkSelection()
 		{
 			ShrinkSelection instance = pb_EditorToolbarLoader.GetInstance<ShrinkSelection>();
-			return instance != null && (!instance.IsHidden()) && instance.IsEnabled();
+			return instance != null && instance.IsEnabled();
 		}
 
 		[MenuItem("Tools/ProBuilder/Selection/Shrink Selection &#G", false, pb_Constant.MENU_SELECTION + 0)]

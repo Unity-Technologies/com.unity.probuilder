@@ -22,20 +22,25 @@ public class TempMenuItems : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			profiler.Begin("bevel edges");
+			foreach(pb_Face f in pb.SelectedFaces)
+			{
+				Debug.Log( pb.GetWindingOrder(f) );
+			}
 
-			pb.ToMesh();
+			// profiler.Begin("bevel edges");
 
-			pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
-			pb_EditorUtility.ShowNotification(result.notification);
+			// pb.ToMesh();
 
-			// pb_EditorUtility.ShowNotification(SplitVertices(pb, pb.SelectedTriangles, .2f).notification);
-			// pb.SetSelectedTriangles(null);
+			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
+			// pb_EditorUtility.ShowNotification(result.notification);
 
-			pb.Refresh();
-			pb.Optimize();
+			// // pb_EditorUtility.ShowNotification(SplitVertices(pb, pb.SelectedTriangles, .2f).notification);
+			// // pb.SetSelectedTriangles(null);
 
-			profiler.End();
+			// pb.Refresh();
+			// pb.Optimize();
+
+			// profiler.End();
 		}
 
 		pb_Editor.Refresh();
