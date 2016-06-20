@@ -367,11 +367,8 @@ namespace ProBuilder2.Common
 		{
 			Vector3 cross = Vector3.Cross(p1 - p0, p2 - p0);
 			if (cross.magnitude < Mathf.Epsilon)
-				return new Vector3(0f, 0f, 0f); // bad triangle
-			else
-			{
-				return cross.normalized;
-			}
+				return Vector3.zero;
+			return cross.normalized;
 		}
 
 		/**
@@ -383,11 +380,9 @@ namespace ProBuilder2.Common
 			if(indices == null || indices.Count % 3 != 0)
 			{
 				Vector3 cross = Vector3.Cross(vertices[1].position - vertices[0].position, vertices[2].position - vertices[0].position);
-
 				if (cross.magnitude < Mathf.Epsilon)
 					return Vector3.zero;
-				else
-					return cross.normalized;
+				return cross.normalized;
 			}
 			else
 			{

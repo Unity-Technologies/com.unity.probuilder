@@ -32,7 +32,8 @@ namespace ProBuilder2.Common
 
 		public override bool Equals(System.Object b)
 		{
-			return b is pb_EdgeLookup && common.Equals(((pb_EdgeLookup)b).common);
+			pb_EdgeLookup be = b as pb_EdgeLookup;
+			return be != null && common.Equals(be.common);
 		}
 
 		public static bool operator ==(pb_EdgeLookup a, pb_EdgeLookup b)
@@ -52,7 +53,7 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			return string.Format("c({0}, {1})  l({2}, {3})", common.x, common.y, local.x, local.y);
+			return string.Format("c({0}, {1})  l({2}, {3})  > {4}", common.x, common.y, local.x, local.y, GetHashCode());
 		}
 
 		public static IEnumerable<pb_EdgeLookup> GetEdgeLookup(IEnumerable<pb_Edge> edges, Dictionary<int, int> lookup)

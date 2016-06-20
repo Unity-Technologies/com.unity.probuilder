@@ -39,12 +39,12 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 	public bool Equals(pb_Edge edge)
 	{
-		return (this.x == edge.x && this.y == edge.y) || (this.x == edge.y && this.y == edge.x);
+		return 	edge != null && ((x == edge.x && y == edge.y) || (x == edge.y && y == edge.x));
 	}
 
 	public override bool Equals(System.Object b)
 	{
-		return b is pb_Edge && (this.x == ((pb_Edge)b).x || this.x == ((pb_Edge)b).y) && (this.y == ((pb_Edge)b).x || this.y == ((pb_Edge)b).y);
+		return this.Equals(b as pb_Edge);
 	}
 
 	public override int GetHashCode()

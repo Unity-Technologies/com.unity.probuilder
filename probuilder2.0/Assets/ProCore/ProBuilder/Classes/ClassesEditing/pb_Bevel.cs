@@ -11,11 +11,10 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Bevel
 	{
-		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount)
+		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).ToList();
-			m_edges.Distinct();
+			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<pb_WingedEdge> wings = pb_WingedEdge.GenerateWingedEdges(pb);
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
@@ -24,6 +23,8 @@ namespace ProBuilder2.MeshOperations
 			HashSet<int> slide = new HashSet<int>();
 			Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes = new Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>>();
 	
+			// iterate selected edges and move each leading edge back along it's direction
+			// storing information about adjacent faces in the process
 			foreach(pb_EdgeLookup lup in m_edges)
 			{
 				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
@@ -45,9 +46,15 @@ namespace ProBuilder2.MeshOperations
 
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
 			}
+			
+			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
+			// then add holes later
+			createdFaces = appendFaces.Select(x => x.face).ToList();
 
 			Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
+			// sort the adjacent but affected faces into winged edge groups where each group contains a set of 
+			// unique winged edges pointing to the same face
 			foreach(int c in slide)
 			{
 				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !ignore.Contains(x.face));
@@ -63,6 +70,7 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
+			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
 			foreach(var kvp in sorted)
 			{
 				Dictionary<int, List<pb_Vertex>> appendedVertices;
@@ -83,6 +91,8 @@ namespace ProBuilder2.MeshOperations
 					appendFaces.Add(f);
 			}
 
+			// iterate each common index affected and see if it contained more than 2 leading edges.  if it did,
+			// a hole was created and needs to be filled.
 			foreach(var k in holes)
 			{		
 				HashSet<int> used = new HashSet<int>();
@@ -105,6 +115,7 @@ namespace ProBuilder2.MeshOperations
 					if(Vector3.Dot(adjacentNormal, filledNormal) < 0f)
 						System.Array.Reverse(filledHole.face.indices);
 
+					createdFaces.Add(filledHole.face);
 					appendFaces.Add(filledHole);
 				}
 			}
@@ -113,9 +124,9 @@ namespace ProBuilder2.MeshOperations
 			pb_FaceRebuildData.Apply(appendFaces, vertices, faces, null, null);
 			pb.SetVertices(vertices);
 			pb.SetFaces(faces.ToArray());
-			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+			pb.SetSharedIndicesUV(new pb_IntArray[0]);
+			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 			pb.DeleteFaces(sorted.Keys);
-			
 			pb.ToMesh();
 
 			return new pb_ActionResult(Status.Success, "Bevel Edges");

@@ -701,7 +701,11 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb.ToMesh();
 
-				res = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, amount);
+				List<pb_Face> faces;
+				res = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, amount, out faces);
+
+				if(res)	
+					pb.SetSelectedFaces(faces);
 
 				pb.Refresh();
 				pb.Optimize();
