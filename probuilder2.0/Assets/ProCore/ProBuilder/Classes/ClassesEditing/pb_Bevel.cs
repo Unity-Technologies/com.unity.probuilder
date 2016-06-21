@@ -184,11 +184,13 @@ namespace ProBuilder2.MeshOperations
 			if(slide_x == null || slide_y == null) 
 				return;
 
-			Vector3 x = (vertices[slide_x.x].position - vertices[slide_x.y].position).normalized;
-			Vector3 y = (vertices[slide_y.x].position - vertices[slide_y.y].position).normalized;
+			pb_Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
+			x.Normalize();
+			pb_Vertex y = (vertices[slide_y.x] - vertices[slide_y.y]);
+			y.Normalize();
 
-			vertices[we.edge.local.x].position += x * amount;
-			vertices[we.edge.local.y].position += y * amount;
+			vertices[we.edge.local.x] += x * amount;
+			vertices[we.edge.local.y] += y * amount;
 
 			pb_Tuple<pb_Face, List<pb_Vertex>> tup;
 
