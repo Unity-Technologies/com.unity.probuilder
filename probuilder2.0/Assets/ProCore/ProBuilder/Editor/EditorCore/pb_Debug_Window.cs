@@ -41,7 +41,7 @@ namespace ProBuilder2.EditorCommon
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 
 			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinish += OnVertexMovementFinish;
+			pb_Editor.OnVertexMovementFinish += OnSelectionUpdate;
 		}
 
 		void OnDisable()
@@ -51,7 +51,7 @@ namespace ProBuilder2.EditorCommon
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;
+			pb_Editor.OnVertexMovementFinish -= OnSelectionUpdate;
 		}
 
 		void OnSelectionUpdate(pb_Object[] selection)
@@ -63,22 +63,24 @@ namespace ProBuilder2.EditorCommon
 			} catch {}
 		}
 
-		void OnVertexMovementFinish(pb_Object[] selection)
+		public enum IndexFormat
 		{
-			foreach(pb_Object pb in selection)
-				DrawElements(pb);
-		}
+			Local = 0x0,
+			Common = 0x1,
+			Both = 0x2
+		};
 
 		public bool edgeInfo = false;
 		public bool faceInfo = false;
+		public bool faceIndicesAreCommon = false;
 		public bool triInfo = false;
+		public IndexFormat triIndexFormat = IndexFormat.Local;
 		public bool elementGroupInfo = false;
 		public bool textureGroupInfo = false;
 		public bool smoothingGroupInfo = false;
-		// public bool vertexInfo = false;
 		public bool autoUVInfo = false;
 		Vector2 scroll = Vector2.zero;
-		public bool ntbSelectedOnly = false;
+		public bool selectedOnly = false;
 
 		class ParamView
 		{
@@ -105,7 +107,7 @@ namespace ProBuilder2.EditorCommon
 				this.showTriangles = false;
 			}
 		}
-		Hashtable showParams = new Hashtable();
+		Dictionary<int, ParamView> showParams = new Dictionary<int, ParamView>();
 		
 		pb_Object[] selection = new pb_Object[0];
 
@@ -114,19 +116,18 @@ namespace ProBuilder2.EditorCommon
 			selection = editor != null ? editor.selection : new pb_Object[0];
 
 			EditorGUI.BeginChangeCheck();
-				edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
-				faceInfo = EditorGUILayout.Toggle("Face Info", faceInfo);
-				triInfo = EditorGUILayout.Toggle("Index Info", triInfo);
 
-				GUI.enabled = faceInfo;
-				{
+				edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
+				triInfo = EditorGUILayout.BeginToggleGroup("Index Info", triInfo);
+				triIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(triIndexFormat);
+				EditorGUILayout.EndToggleGroup();
+
+				faceInfo = EditorGUILayout.BeginToggleGroup("Face Info", faceInfo);
+					faceIndicesAreCommon = EditorGUILayout.Toggle("Common Indices", faceIndicesAreCommon);
 					elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
 					textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
 					smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
-				}
-				GUI.enabled = true;
-
-				// vertexInfo = EditorGUILayout.Toggle("Vertex Info", vertexInfo);
+				EditorGUILayout.EndToggleGroup();
 
 				GUILayout.BeginHorizontal();
 					Color pop = GUI.color;
@@ -147,7 +148,7 @@ namespace ProBuilder2.EditorCommon
 
 				elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
 				elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
-				ntbSelectedOnly = EditorGUILayout.Toggle("Selection Only", ntbSelectedOnly);
+				selectedOnly = EditorGUILayout.Toggle("Selection Only", selectedOnly);
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -159,6 +160,7 @@ namespace ProBuilder2.EditorCommon
 
 
 			GUILayout.Label("Active Selection", EditorStyles.boldLabel);
+
 			if(selection.Length > 0)
 			{
 				if(selection[0].SelectedTriangles.Length < 256)
@@ -181,14 +183,10 @@ namespace ProBuilder2.EditorCommon
 					ParamView pv;
 					int id = pb.gameObject.GetInstanceID();
 
-					if(showParams.ContainsKey(id))
+					if(!showParams.TryGetValue(id, out pv))
 					{
-						pv = (ParamView)showParams[id];
-					}
-					else
-					{
-						showParams.Add(id, new ParamView());
-						pv = (ParamView)showParams[id];
+						pv = new ParamView();
+						showParams.Add(id, pv);
 					}
 
 					pv.showObject = EditorGUILayout.Foldout(pv.showObject, pb.name + "(" + pb.id +")");
@@ -386,8 +384,6 @@ namespace ProBuilder2.EditorCommon
 
 		void DrawStats(pb_Object pb)
 		{
-			StringBuilder sb = new StringBuilder();
-
 			Handles.BeginGUI();
 
 			if(edgeInfo)
@@ -398,40 +394,114 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(triInfo)
-			foreach(pb_IntArray arr in pb.sharedIndices)
-			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(pb.vertices[arr[0]]) );
-							
-				DrawSceneLabel( ((int[])arr).ToString("\n"), cen );
-			}
+				DrawTriangleInfo(pb);
 
 			if(faceInfo)
-			foreach(pb_Face f in pb.SelectedFaces)
+				DrawFaceInfo(pb);
+
+			Handles.EndGUI();
+		}
+
+		void DrawTriangleInfo(pb_Object pb)
+		{
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+			Vector3[] vertices = pb.vertices;
+
+			HashSet<int> common = new HashSet<int>();
+
+			if(selectedOnly)
 			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average( pb.vertices.ValuesWithIndices(f.distinctIndices) ) ) );
+				foreach(int i in pb.SelectedTriangles)
+					common.Add(lookup[i]);
+			}
+			else
+			{
+				for(int i = 0; i < sharedIndices.Length; i++)
+					common.Add(i);
+			}
+
+			foreach(int i in common)
+			{
+				int[] indices = sharedIndices[i];
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(vertices[indices[0]]) );		
+
+				StringBuilder sb = new StringBuilder();
+
+				if(triIndexFormat == IndexFormat.Common || triIndexFormat == IndexFormat.Both)
+					sb.Append(i);
 				
-				string str = "Face: " + f.ToString();
+				if(triIndexFormat == IndexFormat.Both)
+					sb.Append(": ");
+
+				if(triIndexFormat == IndexFormat.Local || triIndexFormat == IndexFormat.Both)
+				{
+
+					sb.Append(indices[0].ToString());
+
+					for(int n = 1; n < indices.Length; n++)
+					{
+						sb.Append(", ");
+						sb.Append(indices[n].ToString());
+					}
+				}
+
+				DrawSceneLabel(sb.ToString(), cen);
+			}
+		}
+
+		void DrawFaceInfo(pb_Object pb)
+		{
+			pb_Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
+			Dictionary<int, int> lookup = null;
+			if(faceIndicesAreCommon) lookup = pb.sharedIndices.ToDictionary();
+
+			foreach(pb_Face f in faces)
+			{
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average(pb.vertices, f.distinctIndices) ) );
+				
+				StringBuilder sb = new StringBuilder();
+
+				if(faceIndicesAreCommon)
+				{
+					for(int i = 0; i < f.indices.Length; i+=3)
+					{
+						sb.Append("[");
+						sb.Append(lookup[i]);
+						sb.Append(", ");
+						sb.Append(lookup[i+1]);
+						sb.Append(", ");
+						sb.Append(lookup[i+2]);
+						sb.Append("] ");
+					}
+				}
+				else
+					sb.AppendLine( f.ToString() );
 
 				if(smoothingGroupInfo || elementGroupInfo || textureGroupInfo)
-					str += "\nGroups:";
+					sb.AppendLine("\nGroups:");
 
 				if(smoothingGroupInfo)
-					str += "\nSmoothing: " + f.smoothingGroup;
+				{
+					sb.Append("Smoothing: ");
+					sb.AppendLine(f.smoothingGroup.ToString());
+				}
+				
 				if(elementGroupInfo)
-					str += "\nElement: " + f.elementGroup;
+				{
+					sb.Append("Element: ");
+					sb.AppendLine(f.elementGroup.ToString());
+				}
+				
 				if(textureGroupInfo)
-					str += "\nTexture: " + f.textureGroup;
+				{
+					sb.Append("Texture: ");
+					sb.AppendLine(f.textureGroup.ToString());
+				}
+				
 
-				DrawSceneLabel(str, cen);
+				DrawSceneLabel(sb.ToString(), cen);
 			}
-
-			Handles.EndGUI();
-
-			Handles.BeginGUI();
-			{
-				GUI.Label(new Rect(10, 10, 400, 800), sb.ToString());
-			}
-			Handles.EndGUI();
 		}
 
 		void DrawSceneLabel(string text, Vector2 position)
@@ -458,14 +528,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_LineRenderer.instance.Clear();
 
-			if( ntbSelectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
+			if( selectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
 				return;
 
-			int vertexCount = ntbSelectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
+			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
 
-			Vector3[] vertices = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
-			Vector3[] normals  = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
-			Vector4[] tangents = ntbSelectedOnly ?  pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
+			Vector3[] vertices = selectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
+			Vector3[] normals  = selectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
+			Vector4[] tangents = selectedOnly ?  pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

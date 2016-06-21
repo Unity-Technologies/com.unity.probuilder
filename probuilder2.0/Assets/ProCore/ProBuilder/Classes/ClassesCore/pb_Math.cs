@@ -620,38 +620,48 @@ namespace ProBuilder2.Common
 		 *	\brief Gets the center point of the supplied Vector3[] array.
 		 *	\returns Average Vector3 of passed vertex array.
 		 */	 
-		public static Vector2 Average(IList<Vector2> v)
+		public static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
 		{
 			Vector2 sum = Vector2.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
+			float len = indices == null ? v.Count : indices.Count;
+			if( indices == null )
+				for(int i = 0; i < len; i++) sum += v[i];
+			else
+				for(int i = 0; i < len; i++) sum += v[indices[i]];
+			return sum/len;
 		}
 
-		public static Vector3 Average(IList<Vector3> v)
+		public static Vector3 Average(IList<Vector3> v, IList<int> indices = null)
 		{
 			Vector3 sum = Vector3.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
+			float len = indices == null ? v.Count : indices.Count;
+			if( indices == null )
+				for(int i = 0; i < len; i++) sum += v[i];
+			else
+				for(int i = 0; i < len; i++) sum += v[indices[i]];
+			return sum/len;
 		}
 
-		public static Vector4 Average(IList<Vector4> v)
+		public static Vector4 Average(IList<Vector4> v, IList<int> indices = null)
 		{
 			Vector4 sum = Vector4.zero;
-			for(int i = 0; i < v.Count; i++)
-				sum += v[i];
-			return sum/(float)v.Count;
+			float len = indices == null ? v.Count : indices.Count;
+			if( indices == null )
+				for(int i = 0; i < len; i++) sum += v[i];
+			else
+				for(int i = 0; i < len; i++) sum += v[indices[i]];
+			return sum/len;
 		}
 
-		public static Color Average(IList<Color> c)
+		public static Color Average(IList<Color> c, IList<int> indices = null)
 		{
 			Color sum = c[0];
-
-			for(int i = 1; i < c.Count; i++)
-				sum += c[i];
-
-			return sum / (float)c.Count;
+			float len = indices == null ? c.Count : indices.Count;
+			if( indices == null )
+				for(int i = 1; i < len; i++) sum += c[i];
+			else
+				for(int i = 1; i < len; i++) sum += c[indices[i]];
+			return sum/len;
 		}
 
 		/**

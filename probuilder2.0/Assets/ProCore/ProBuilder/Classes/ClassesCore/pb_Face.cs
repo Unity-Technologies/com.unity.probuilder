@@ -467,7 +467,6 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 
 		System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-		sb.Append("{ ");
 		for(int i = 0; i < indices.Length; i += 3)
 		{	
 			sb.Append("[");
@@ -481,9 +480,6 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 			if(i < indices.Length-3)
 				sb.Append(", ");
 		}
-		sb.Append(" }"); // \nMaterial: " + material.name + "\n" + (manualUV ? "Manual UV" : "Auto UV") + "\nSmoothing: " + smoothingGroup + "\nTexture: " + textureGroup);
-
-		// sb.Append(edges.ToFormattedString(", "));
 
 		return sb.ToString();
 	}
