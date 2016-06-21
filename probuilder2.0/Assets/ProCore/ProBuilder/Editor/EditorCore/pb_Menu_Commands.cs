@@ -1657,8 +1657,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			if(editor)
-				editor.UpdateSelection();
+			pb_Editor.Refresh();
 
 			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
@@ -1690,6 +1689,8 @@ namespace ProBuilder2.EditorCommon
 					pb.Optimize();
 				}
 			}
+
+			pb_Editor.Refresh();
 
 			return res;
 		}

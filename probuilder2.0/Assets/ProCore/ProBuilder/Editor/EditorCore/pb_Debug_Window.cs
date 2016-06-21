@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 
 		public bool edgeInfo = false;
 		public bool faceInfo = false;
-		public bool faceIndicesAreCommon = false;
+		public IndexFormat faceIndexFormat = IndexFormat.Local;
 		public bool triInfo = false;
 		public IndexFormat triIndexFormat = IndexFormat.Local;
 		public bool elementGroupInfo = false;
@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 				EditorGUILayout.EndToggleGroup();
 
 				faceInfo = EditorGUILayout.BeginToggleGroup("Face Info", faceInfo);
-					faceIndicesAreCommon = EditorGUILayout.Toggle("Common Indices", faceIndicesAreCommon);
+					faceIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(faceIndexFormat);
 					elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
 					textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
 					smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
@@ -453,8 +453,7 @@ namespace ProBuilder2.EditorCommon
 		void DrawFaceInfo(pb_Object pb)
 		{
 			pb_Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
-			Dictionary<int, int> lookup = null;
-			if(faceIndicesAreCommon) lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 			foreach(pb_Face f in faces)
 			{
@@ -462,21 +461,40 @@ namespace ProBuilder2.EditorCommon
 				
 				StringBuilder sb = new StringBuilder();
 
-				if(faceIndicesAreCommon)
+				if(faceIndexFormat == IndexFormat.Local || faceIndexFormat == IndexFormat.Both)
 				{
+					if(faceIndexFormat == IndexFormat.Both) sb.Append("local: ");
+
 					for(int i = 0; i < f.indices.Length; i+=3)
 					{
 						sb.Append("[");
-						sb.Append(lookup[i]);
+						sb.Append(f.indices[i+0]);
 						sb.Append(", ");
-						sb.Append(lookup[i+1]);
+						sb.Append(f.indices[i+1]);
 						sb.Append(", ");
-						sb.Append(lookup[i+2]);
+						sb.Append(f.indices[i+2]);
 						sb.Append("] ");
 					}
 				}
-				else
-					sb.AppendLine( f.ToString() );
+
+				if(faceIndexFormat == IndexFormat.Both)
+					sb.AppendLine("");
+
+				if(faceIndexFormat == IndexFormat.Common || faceIndexFormat == IndexFormat.Both)
+				{
+					if(faceIndexFormat == IndexFormat.Both) sb.Append("common: ");
+					
+					for(int i = 0; i < f.indices.Length; i+=3)
+					{
+						sb.Append("[");
+						sb.Append(lookup[f.indices[i+0]]);
+						sb.Append(", ");
+						sb.Append(lookup[f.indices[i+1]]);
+						sb.Append(", ");
+						sb.Append(lookup[f.indices[i+2]]);
+						sb.Append("] ");
+					}
+				}
 
 				if(smoothingGroupInfo || elementGroupInfo || textureGroupInfo)
 					sb.AppendLine("\nGroups:");

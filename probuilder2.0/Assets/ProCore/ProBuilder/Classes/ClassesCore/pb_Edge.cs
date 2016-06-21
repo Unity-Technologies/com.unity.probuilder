@@ -263,7 +263,7 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 
 		for(int i = 0; i < edges.Length-1; i++)
 		{
-			for(int n = i+1; n < edges.Length; n++)
+			for(int n = i + 1; n < edges.Length; n++)
 			{
 				if(edges[i].Equals(edges[n]))
 				{

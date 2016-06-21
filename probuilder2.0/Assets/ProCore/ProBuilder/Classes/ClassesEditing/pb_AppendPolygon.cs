@@ -43,7 +43,20 @@ namespace ProBuilder2.MeshOperations
 				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
 				face = newFace.face;
 
-				
+				pb_WingedEdge orig = newFace;
+
+				// grab first edge with a valid opposite face
+				while(newFace.opposite == null)
+				{
+					newFace = newFace.next;
+					if(newFace == orig) break;
+				}
+
+				if(orig.opposite != null)
+				{
+					if(pb_ConformNormals.ConformOppositeNormal(orig.opposite))
+						pb.ToMesh();
+				}
 
 				return new pb_ActionResult(Status.Success, "Fill Hole");
 			}

@@ -22,28 +22,60 @@ public class TempMenuItems : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			foreach(pb_Face f in pb.SelectedFaces)
+			pb_Face[] faces = pb.SelectedFaces;
+
+			if(faces == null || faces.Length != 2)
+				continue;
+
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			
+			pb_WingedEdge wing = wings.FirstOrDefault(x => x.face == faces[0]);
+			pb_WingedEdge first = wing;
+
+			while( wing.opposite == null || wing.opposite.face != faces[1] )
 			{
-				Debug.Log( pb.GetWindingOrder(f) );
+				wing = wing.next;
+
+				if(wing == first)
+					break;
 			}
 
-			// profiler.Begin("bevel edges");
+			pb_Edge cea = GetCommonEdgeInWindingOrder(wing);
+			pb_Edge ceb = GetCommonEdgeInWindingOrder(wing.opposite);
 
-			// pb.ToMesh();
-
-			// pb_ActionResult result = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, .05f);
-			// pb_EditorUtility.ShowNotification(result.notification);
-
-			// // pb_EditorUtility.ShowNotification(SplitVertices(pb, pb.SelectedTriangles, .2f).notification);
-			// // pb.SetSelectedTriangles(null);
-
-			// pb.Refresh();
-			// pb.Optimize();
-
-			// profiler.End();
+			if( cea.x == ceb.x )
+				Debug.Log("BAD NORMAL");
+			else
+				Debug.Log("GOOD NORMAL");
 		}
 
 		pb_Editor.Refresh();
+	}
+
+	static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
+	{
+		int[] indices = wing.face.indices;
+		int len = indices.Length;
+
+		for(int i = 0; i < len; i += 3)
+		{
+			pb_Edge e = wing.edge.local;
+			int a = indices[i], b = indices[i+1], c = indices[i+2];
+
+			if(e.x == a && e.y == b)
+				return new pb_Edge(wing.edge.common);
+			else if(e.x == b && e.y == a)
+				return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+			else if(e.x == b && e.y == c)
+				return new pb_Edge(wing.edge.common);
+			else if(e.x == c && e.y == b)
+				return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+			else if(e.x == c && e.y == a)
+				return new pb_Edge(wing.edge.common);
+			else if(e.x == a && e.y == c)
+				return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+		}
+		return null;
 	}
 
 	static pb_ActionResult WeldVertices(pb_Object pb, int[] indices, out int[] welds, float distance)

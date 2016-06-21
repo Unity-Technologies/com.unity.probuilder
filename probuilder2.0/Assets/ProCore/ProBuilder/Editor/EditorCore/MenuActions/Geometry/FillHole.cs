@@ -24,7 +24,7 @@ namespace ProBuilder2.Actions
 		{
 			return 	pb_Editor.instance != null &&
 					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Vertex &&
+					pb_Editor.instance.selectionMode != SelectMode.Face &&
 					selection != null &&
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedTriangleCount > 2);

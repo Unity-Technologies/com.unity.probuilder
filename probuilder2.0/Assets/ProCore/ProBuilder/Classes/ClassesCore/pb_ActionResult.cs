@@ -6,7 +6,8 @@ namespace ProBuilder2.Common
 	{
 		Success,
 		Failure,
-		Canceled
+		Canceled,
+		NoChange
 	}
 
 	/**
