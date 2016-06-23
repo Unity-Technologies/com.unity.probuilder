@@ -1675,34 +1675,29 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-
 				pb.ToMesh();
 
-				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(pb, pb.SelectedTriangles);
+				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+				HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles);
+				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(pb, common);
+
 				List<pb_Face> faces = new List<pb_Face>();
 
-				for(int i = 0; i < holes.Count; i++)
-					Debug.Log(holes[i].Select(y => y.edge.common).ToString("\n") + "\n----\n");
+				foreach(List<pb_WingedEdge> hole in holes)
+				{
+					List<int> holeIndices = hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
 
-				List<pb_Edge> edges = holes.SelectMany( x => x.Select(y => y.edge.local) ).ToList();
-				pb.SetSelectedEdges(edges);
+					pb_Face face;
+					res = pb_AppendPolygon.FillHole(pb, holeIndices, out face);
 
-				// foreach(List<pb_WingedEdge> hole in holes)
-				// {
-				// 	List<int> holeIndices = hole.Select(x => x.edge.local.x).ToList();
-
-				// 	pb_Face face;
-				// 	res = pb_AppendPolygon.FillHole(pb, holeIndices, out face);
-
-				// 	if(res)
-				// 	{
-				// 		faces.Add(face);					
-				// 		pb.Refresh();
-				// 		pb.Optimize();
-				// 	}
-				// }
+					if(res)
+						faces.Add(face);					
+				}
 				
-				// pb.SetSelectedFaces(faces);				
+				pb.Refresh();
+				pb.Optimize();
+
+				pb.SetSelectedFaces(faces);				
 			}
 
 			pb_Editor.Refresh();

@@ -42,7 +42,6 @@ namespace ProBuilder2.MeshOperations
 				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
 				face = newFace.face;
-
 				pb_WingedEdge orig = newFace;
 
 				// grab first edge with a valid opposite face
@@ -52,9 +51,9 @@ namespace ProBuilder2.MeshOperations
 					if(newFace == orig) break;
 				}
 
-				if(orig.opposite != null)
+				if(newFace.opposite != null)
 				{
-					if(pb_ConformNormals.ConformOppositeNormal(orig.opposite))
+					if(pb_ConformNormals.ConformOppositeNormal(newFace.opposite))
 						pb.ToMesh();
 				}
 
@@ -81,12 +80,21 @@ namespace ProBuilder2.MeshOperations
 			return null;
 		}
 
+		/**
+		 *	Find any holes touching one of the passed vertex indices.
+		 */
 		public static List<List<pb_WingedEdge>> FindHoles(pb_Object pb, IList<int> indices)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(pb.sharedIndices.ToDictionary(), indices);
+			return FindHoles(pb, common);
+		}
 
-			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+		/**
+		 *	Find any holes touching one of the passed common indices.
+		 */
+		public static List<List<pb_WingedEdge>> FindHoles(pb_Object pb, HashSet<int> common)
+		{
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 			HashSet<pb_WingedEdge> used = new HashSet<pb_WingedEdge>();
 			List<List<pb_WingedEdge>> holes = new List<List<pb_WingedEdge>>();
 
@@ -127,27 +135,61 @@ namespace ProBuilder2.MeshOperations
 					for(int p = n - 1; p > -1; p--)
 					{
 						if( wing.edge.common.y == hole[p].edge.common.x )
+						{
 							splits.Add( new pb_Tuple<int, int>(p, n) );
+							break;
+						}
 					}
 				}
 
-				int removed = 0;
-
-				Debug.Log(hole.Select(x=>x.edge.common).ToString("\n") + " \n\n" + splits.ToString("\n"));				
-				
 				// create new lists from each segment
-				for(int n = 0; n < splits.Count; n++)
+				// holes paths are tiered like so coming in:
+				//
+				//	[2, 0]
+				// 	[0, 9]
+				// 	[9, 10]
+				// 		[10, 7]
+				// 			[7, 6]
+				// 			[6, 1]
+				// 			[1, 4]
+				// 			[4, 7]	<- (y == x)
+				// 		[7, 8]
+				// 		[8, 5]
+				// 		[5, 3]
+				// 		[3, 11]
+				// 		[11, 10]	<- (y == x)
+				// [10, 2] 			<- (y == x)
+				// 
+				// paths may also contain multiple segments non-tiered
+
+				int rx = 0, ry = 0, px = 0, splitCount = splits.Count;
+
+				for(int n = 0; n < splitCount; n++)
 				{
-					int range = ((splits[n].Item2 - removed) - splits[n].Item1) + 1;
-					holes.Add( hole.GetRange(splits[n].Item1, range) );
-					hole.RemoveRange(splits[n].Item1, range);
-					removed += range;
+					int x = splits[n].Item1, y = splits[n].Item2;
+
+					if(x > px)
+					{
+						rx += ry;
+						ry = 0;
+						px = x;
+					}
+
+					y = y - ry;
+					int range = (y-x) + 1;
+					x = x - rx;
+					ry += range;
+
+					List<pb_WingedEdge> sec = hole.GetRange(x, range);
+					hole.RemoveRange(x, range);
+
+					// verify that this path has at least one index that was asked for
+					if(splitCount < 2 || sec.Any(w => common.Contains(w.edge.common.x)) || sec.Any(w => common.Contains(w.edge.common.y)))
+						holes.Add( sec );
 				}
 
 				if(loopBreaker > 64999)
 					Debug.LogError("find holes loop went crazy");
-
-				// holes.Add(hole);
 			}
 
 			return holes;
