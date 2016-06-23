@@ -1678,6 +1678,8 @@ namespace ProBuilder2.EditorCommon
 				pb_Face face;
 
 				pb.ToMesh();
+
+				List<int> holes = pb_AppendPolygon.FindHoles(pb, pb.SelectedTriangles);
 				
 				res = pb_AppendPolygon.FillHole(pb, pb.SelectedTriangles, out face);
 

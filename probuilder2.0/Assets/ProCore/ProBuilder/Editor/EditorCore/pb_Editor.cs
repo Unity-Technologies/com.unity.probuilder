@@ -682,7 +682,7 @@ public class pb_Editor : EditorWindow
 
 #region RAYCASTING AND DRAGGING
 
-	public const float MAX_EDGE_SELECT_DISTANCE = 12;
+	public const float MAX_EDGE_SELECT_DISTANCE = 128;
 	pb_Object nearestEdgeObject = null;
 	pb_Edge nearestEdge;
 

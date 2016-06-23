@@ -15,7 +15,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Shape Editor",
+			"New Shape Tool",
 			"Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitves.",
 			CMD_SUPER, CMD_SHIFT, 'K'
 		);
@@ -28,7 +28,7 @@ namespace ProBuilder2.Actions
 		public override pb_ActionResult DoAction()
 		{
 			pb_Geometry_Interface.MenuOpenShapeCreator();
-			return new pb_ActionResult(Status.Success, "Open Shape Window");
+			return new pb_ActionResult(Status.Success, "Open Shape Tool");
 		}
 	}
 }

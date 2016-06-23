@@ -13,7 +13,7 @@ namespace ProBuilder2.EditorCommon
 	{
 		public EditorWindow window;
 
-		bool isFloating { get { return pb_Editor.instance.isFloatingWindow; } }
+		bool isFloating { get { return pb_Editor.instance != null && pb_Editor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
 		bool shiftOnlyTooltips = false;
 		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
