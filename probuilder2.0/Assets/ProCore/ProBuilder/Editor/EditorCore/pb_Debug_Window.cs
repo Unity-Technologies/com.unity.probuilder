@@ -32,6 +32,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
+			elementLength = EditorPrefs.GetFloat("pb_Debug_elementLength", .1f);
+			elementOffset = EditorPrefs.GetFloat("pb_Debug_elementOffset", .01f);
+
 			HookSceneViewDelegate();
 		}
 
@@ -152,6 +155,9 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
+				EditorPrefs.SetFloat("pb_Debug_elementLength", elementLength);
+				EditorPrefs.SetFloat("pb_Debug_elementOffset", elementOffset);
+
 				foreach(pb_Object pb in selection)
 					DrawElements(pb);
 

@@ -13,5 +13,10 @@ namespace ProBuilder2.Common
 			this.Item1 = item1;
 			this.Item2 = item2;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}, {1}", Item1.ToString(), Item2.ToString());
+		}
 	}
 }

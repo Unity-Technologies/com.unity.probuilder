@@ -80,5 +80,112 @@ namespace ProBuilder2.MeshOperations
 
 			return null;
 		}
+
+		public static List<List<pb_WingedEdge>> FindHoles(pb_Object pb, IList<int> indices)
+		{
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
+			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+			HashSet<pb_WingedEdge> used = new HashSet<pb_WingedEdge>();
+			List<List<pb_WingedEdge>> holes = new List<List<pb_WingedEdge>>();
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				pb_WingedEdge c = wings[i];
+
+				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
+				// or if there's an opposite face, this edge doesn't belong to a hole.  move along
+				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.x) || common.Contains(c.edge.common.y)))
+					continue;
+
+				List<pb_WingedEdge> hole = new List<pb_WingedEdge>();
+				pb_WingedEdge it = c;
+				int ind = it.edge.common.x;
+
+				int loopBreaker = 0;
+
+				while(it != null && loopBreaker++ < 65000)
+				{
+					used.Add(it);
+					hole.Add(it);
+
+					ind = it.edge.common.x == ind ? it.edge.common.y : it.edge.common.x;
+					it = FindNextEdgeInHole(it, ind);
+
+					if(it == c)
+						break;
+				}
+
+				List<pb_Tuple<int, int>> splits = new List<pb_Tuple<int, int>>();
+
+				for(int n = 0; n < hole.Count; n++)
+				{
+					pb_WingedEdge wing = hole[n];
+
+					// check previous wings for y == x (closed loop).
+					for(int p = n - 1; p > -1; p--)
+					{
+						if( wing.edge.common.y == hole[p].edge.common.x )
+							splits.Add( new pb_Tuple<int, int>(p, n) );
+					}
+				}
+
+				int removed = 0;
+
+				Debug.Log(hole.Select(x=>x.edge.common).ToString("\n") + " \n\n" + splits.ToString("\n"));				
+				
+				// create new lists from each segment
+				for(int n = 0; n < splits.Count; n++)
+				{
+					int range = ((splits[n].Item2 - removed) - splits[n].Item1) + 1;
+					holes.Add( hole.GetRange(splits[n].Item1, range) );
+					hole.RemoveRange(splits[n].Item1, range);
+					removed += range;
+				}
+
+				if(loopBreaker > 64999)
+					Debug.LogError("find holes loop went crazy");
+
+				// holes.Add(hole);
+			}
+
+			return holes;
+		}
+
+		private static pb_WingedEdge FindNextEdgeInHole(pb_WingedEdge wing, int common)
+		{
+			pb_WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
+
+			while(next != null && next != wing)
+			{
+				if(next.opposite == null)
+					return next;
+
+				next = next.opposite.GetAdjacentEdgeWithCommonIndex(common);
+			}
+
+			return null;
+		}
+
+		// private static void FollowNonManifoldPath(pb_WingedEdge edge, HashSet<pb_WingedEdge> path)
+		// {
+		// 	// came full circle
+		// 	if(path.Contains(edge))
+		// 		return;
+
+		// 	if(edge.opposite == null)
+		// 	{
+		// 		path.Add(edge);
+
+		// 		pb_WingedEdge next = edge.opposite.next;
+		// 		pb_WingedEdge prev = edge.opposite.previous;
+
+		// 		if(next.edge.common.Contains(edge.edge.common))	
+		// 			FollowNonManifoldPath(next, path);
+		// 		else if(prev.edge.opposite.Contains(edge.edge.common))
+		// 			FollowNonManifoldPath(prev, path);
+		// 	}
+		// }
 	}
 }

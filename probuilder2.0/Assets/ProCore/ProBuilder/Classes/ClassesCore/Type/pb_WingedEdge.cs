@@ -59,6 +59,16 @@ namespace ProBuilder2.Common
 				opposite.edge.local.ToString());
 		}
 
+		public pb_WingedEdge GetAdjacentEdgeWithCommonIndex(int common)
+		{
+			if(next.edge.common.Contains(common))
+				return next;
+			else if(previous.edge.common.Contains(common))
+				return previous;
+
+			return null;
+		}
+
 		/**
 		 *	Returns a new set of edges where each edge's y matches the next edge x.
 		 *	The first edge is used as a starting point.
