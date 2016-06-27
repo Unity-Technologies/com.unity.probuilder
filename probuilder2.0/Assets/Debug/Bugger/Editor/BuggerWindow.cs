@@ -25,6 +25,8 @@ public class BuggerWindow : EditorWindow
 	const string SHOW_KEYED_LOGS = "Bugger_Show_Keyed_Logs";
 	const string SHOW_REGULAR_LOGS = "Bugger_Show_Regular_Logs";
 
+	const int MAX_CHAR_LABEL = 15000;
+
 	Color PRO_PRIMARY_TEXT_COLOR = new Color(1f, 1f, 1f, .8f);
 	Color BASIC_PRIMARY_TEXT_COLOR = new Color(0f, 0f, 0f, .8f);
 
@@ -846,6 +848,12 @@ public class BuggerWindow : EditorWindow
 					GUI.DrawTexture(new Rect(0, row.yMin, icon_width, icon_width), icon, ScaleMode.ScaleToFit, true, 0f);
 
 				Rect rowMod = new Rect(row.xMin + 30, row.yMin, row.width, row.height);
+
+				if(logMessage.Length > MAX_CHAR_LABEL)
+				{
+					logMessage = string.Format("{0}\n...Log was too long, truncated text.", logMessage.Substring(0, MAX_CHAR_LABEL));
+				}
+
 				GUI.Label(rowMod, logMessage, rowTextStyle);
 
 				/* */

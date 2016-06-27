@@ -1638,6 +1638,8 @@ namespace ProBuilder2.EditorCommon
 			pbUndo.RecordObjects(selection, "Fill Hole");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
+			int filled = 0;
+			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1651,13 +1653,18 @@ namespace ProBuilder2.EditorCommon
 
 				foreach(List<pb_WingedEdge> hole in holes)
 				{
-					List<int> holeIndices = hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
+					List<int> holeIndices = wholePath ?
+						hole.Select(x => x.edge.local.x).ToList() :
+						hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
 
 					pb_Face face;
 					res = pb_AppendPolygon.FillHole(pb, holeIndices, out face);
 
 					if(res)
+					{
+						filled++;
 						faces.Add(face);					
+					}
 				}
 				
 				pb.Refresh();
@@ -1667,6 +1674,9 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			pb_Editor.Refresh();
+
+			if(filled > 0 && res.status != Status.Success)	
+				res.status = Status.Success;
 
 			return res;
 		}

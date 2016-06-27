@@ -36,7 +36,34 @@ namespace ProBuilder2.Actions
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode == SelectMode.Face;
 					
+		}		
+
+		public override MenuActionState AltState()
+		{
+			return MenuActionState.VisibleAndEnabled;
 		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Fill Hole Settings", EditorStyles.boldLabel);
+
+			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.", MessageType.Info);
+			
+			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
+
+			EditorGUI.BeginChangeCheck();
+
+			wholePath = EditorGUILayout.Toggle("Fill Entire Hole", wholePath);
+
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool(pb_Constant.pbFillHoleSelectsEntirePath, wholePath);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Fill Hole"))
+				pb_EditorUtility.ShowNotification( DoAction().notification );
+		}
+
 
 		public override pb_ActionResult DoAction()
 		{

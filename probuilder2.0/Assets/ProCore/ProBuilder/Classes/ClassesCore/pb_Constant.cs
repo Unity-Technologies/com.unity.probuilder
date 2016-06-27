@@ -115,6 +115,7 @@ public static class pb_Constant
 	public const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
 	public const string pbMeshesAreAssets				= "pbMeshesAreAssets";
 	public const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
+	public const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

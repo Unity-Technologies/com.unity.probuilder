@@ -199,6 +199,21 @@ namespace ProBuilder2.EditorCommon
 
 
 
+		[MenuItem("Tools/ProBuilder/Geometry/Fill Hole ", true)]
+		static bool MenuVerifyFillHole()
+		{
+			FillHole instance = pb_EditorToolbarLoader.GetInstance<FillHole>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Fill Hole ", false, pb_Constant.MENU_GEOMETRY + 3)]
+		static void MenuDoFillHole()
+		{
+			FillHole instance = pb_EditorToolbarLoader.GetInstance<FillHole>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Geometry/Flip Face Edge ", true)]
 		static bool MenuVerifyFlipFaceEdge()
 		{
@@ -270,6 +285,21 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoSetPivotToSelection()
 		{
 			SetPivotToSelection instance = pb_EditorToolbarLoader.GetInstance<SetPivotToSelection>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Smart Connect &E", true)]
+		static bool MenuVerifySmartConnect()
+		{
+			SmartConnect instance = pb_EditorToolbarLoader.GetInstance<SmartConnect>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Smart Connect &E", false, pb_Constant.MENU_GEOMETRY + 3)]
+		static void MenuDoSmartConnect()
+		{
+			SmartConnect instance = pb_EditorToolbarLoader.GetInstance<SmartConnect>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
@@ -512,6 +542,21 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoSelectEdgeRing()
 		{
 			SelectEdgeRing instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeRing>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem("Tools/ProBuilder/Selection/Select Hole ", true)]
+		static bool MenuVerifySelectHole()
+		{
+			SelectHole instance = pb_EditorToolbarLoader.GetInstance<SelectHole>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Selection/Select Hole ", false, pb_Constant.MENU_SELECTION + 0)]
+		static void MenuDoSelectHole()
+		{
+			SelectHole instance = pb_EditorToolbarLoader.GetInstance<SelectHole>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

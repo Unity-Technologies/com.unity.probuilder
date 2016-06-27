@@ -65,6 +65,9 @@ namespace ProBuilder2.MeshOperations
 			return new pb_ActionResult(Status.Failure, "Insufficient Points");
 		}
 
+		/**
+		 *	Create a new face given a set of unordered vertices.
+		 */
 		public static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices)
 		{
 			List<int> triangles;
@@ -83,10 +86,16 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 *	Find any holes touching one of the passed vertex indices.
 		 */
-		public static List<List<pb_WingedEdge>> FindHoles(pb_Object pb, IList<int> indices)
+		public static List<List<pb_Edge>> FindHoles(pb_Object pb, IList<int> indices)
 		{
-			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(pb.sharedIndices.ToDictionary(), indices);
-			return FindHoles(pb, common);
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+			List<List<pb_Edge>> holes = new List<List<pb_Edge>>();
+
+			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(pb, common))
+				holes.Add( hole.Select(x => x.edge.local).ToList() );
+				
+			return holes;
 		}
 
 		/**
