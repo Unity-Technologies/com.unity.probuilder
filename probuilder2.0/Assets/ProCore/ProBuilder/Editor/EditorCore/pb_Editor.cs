@@ -911,10 +911,14 @@ public class pb_Editor : EditorWindow
 
 		Camera cam = SceneView.lastActiveSceneView.camera;
 		Vector2 m = Event.current.mousePosition;
+		List<pb_Tuple<float, Vector3, int, int>> nearest = new List<pb_Tuple<float, Vector3, int, int>>();
+
+		// this could be much faster by raycasting against the mesh and doing a 3d space
+		// distance check first
 
 		if(pref_hamSelection)
 		{
-			float best = MAX_EDGE_SELECT_DISTANCE_HAM;
+			float best = MAX_EDGE_SELECT_DISTANCE_HAM * MAX_EDGE_SELECT_DISTANCE_HAM;
 			int obj = -1, tri = -1;
 
 			for(int i = 0; i < selection.Length; i++)
@@ -930,14 +934,22 @@ public class pb_Editor : EditorWindow
 					Vector2 p = HandleUtility.WorldToGUIPoint(v);
 
 					float dist = (p - m).sqrMagnitude;
-					// float dist = HandleUtility.DistanceToCircle(v, 0f);
 
-					if(dist < best && !pb_HandleUtility.PointIsOccluded(cam, pb, v))
-					{
-						best = dist;
-						obj = i;
-						tri = m_uniqueIndices[i][n];
-					}
+					if(dist < best)
+						nearest.Add(new pb_Tuple<float, Vector3, int, int>(dist, v, i, m_uniqueIndices[i][n]));
+				}
+			}
+
+			nearest.Sort( (x, y) => x.Item1.CompareTo(y.Item1) );
+
+			for(int i = 0; i < nearest.Count; i++)
+			{
+				obj = nearest[i].Item3;
+
+				if(!pb_HandleUtility.PointIsOccluded(cam, selection[obj], nearest[i].Item2))
+				{
+					tri = nearest[i].Item4;
+					break;
 				}
 			}
 
@@ -994,7 +1006,7 @@ public class pb_Editor : EditorWindow
 				}				
 			}
 		}
-		
+
 		vpb = null;
 		return false;
 	}
@@ -1064,15 +1076,7 @@ public class pb_Editor : EditorWindow
 					pb_Object pb = selection[i];
 					if(!pb.isSelectable) continue;
 
-					// profiler.BeginSample("Create HashSet");
 					HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
-					// profiler.EndSample();
-
-					// selection[i].ToMesh();
-					// selection[i].Refresh();
-					// Vector3[] normals = selection[i].msh.normals;
-					// selection[i].Optimize();
-					// Vector3 camDirLocal = -selection[i].transform.InverseTransformDirection(cam.transform.forward);
 
 					for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 					{
