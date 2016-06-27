@@ -9,14 +9,14 @@ pages:
 
 - Toolbar:
   - Overview: toolbar/overview.md
-  - Editors: toolbar/editors.md
-  - Selection Tools: toolbar/selection.md
+  - Tool Panels: toolbar/tool-panels.md
+  - Selection Tools: toolbar/selection-tools.md
+  - Object Actions: toolbar/object-actions.md
   - Geometry Actions:
-    - toolbar/actions/all.md
-    - toolbar/actions/object.md
-    - toolbar/actions/face.md
-    - toolbar/actions/edge.md
-    - toolbar/actions/vertex.md
+    - toolbar/geo-actions/all.md
+    - toolbar/geo-actions/face.md
+    - toolbar/geo-actions/edge.md
+    - toolbar/geo-actions/vertex.md
 
 - Troubleshooting:
   - troubleshooting/faq.md
@@ -25,6 +25,6 @@ pages:
   - What Upgrade Procedure Should I Follow?: upgrading/overview.md
   - Standard: upgrading/standard.md
   - DLL Rename: upgrading/dllrename.md
-  - Upgrade Kit: upgrading/upgradekit.md
-  - Prototype: upgrading/prototypeupgrade.md
+  - Upgrade Kit: upgrading/upgrade-kit.md
+  - Prototype: upgrading/prototype.md
 

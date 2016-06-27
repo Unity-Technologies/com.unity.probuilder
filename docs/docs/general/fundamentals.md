@@ -1,5 +1,3 @@
-@todo: add links to pages, items, etc
-@todo: vid for this page
 
 ## Creating a New Mesh
 
@@ -14,11 +12,9 @@ You can also start with an imported mesh by "ProBuilderizing" it.
 ProBuilder is always in one of 2 major modes: **Object** or **Element**.
 
 * **Object Mode** is standard Unity mode, no surprises.
-* **Element Mode** activates ProBuilder's geometry editing features for **Vertex**, **Edge**, and **Face** elements. 
+* **Element Mode** activates ProBuilder's mesh editing features. 
 
-### Element Editing: Vertex, Edge, Face
-
-**Elements** are the individual parts that make up a mesh: Vertices, Edges, and Faces. If it helps, you can think of these like levels of detail on a map- for example, "city, state, country".
+**Elements** are the individual parts that make up a mesh: **Vertices**, **Edges**, and **Faces**. If it helps, you can think of these like levels of detail on a map- for example, "city, state, country".
 
 * **Vertex Editing**: Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.
 * **Edge Editing**: Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.
@@ -26,17 +22,15 @@ ProBuilder is always in one of 2 major modes: **Object** or **Element**.
 
 ### Element Selection and Manipulation
 
-Good news- if you know how to select and move, rotate, or scale objects in Unity, you already know this part!
-
-The only extra step is to choose which Element type you'd like to edit, by clicking it's button in the "Edit Mode Toolbar".
+First, choose which Element type you'd like to edit, by clicking it's button in the Edit Mode Toolbar.
 
 Then, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).
 
-### Extrude Faces, Collapse Vertices, Connect Edges, Etc
+### Complex Editing Functions
 
-All of ProBuilder's element-editing functions are available via the ProBuilder Toolbar, which dynamically adapts to your Edit Mode and selection.
+All of ProBuilder's specialized editing functions are available via ProBuilder Toolbar, which dynamically adapts to your Edit Mode and selection.
 
-There are also custom, detailed tooltips tooltips for each button, a great way to start learning ProBuilder's deeper functionality.
+Each Toolbar button will display detailed information about it's use, options, and keyboard shortcuts, when hovered over. Viewing these is a great way to start learning ProBuilder's deeper functionality.
 
 ## Materials and Texturing / UV Editing
 
@@ -55,5 +49,9 @@ ProBuilder includes both a simple, automatic texturing system, and a full UV Edi
 * **Auto UVs** lets you to easily tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automoatically
 * **Manual UVs** gives you complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc.   
 
+@todo: add links to pages, items, etc
 
+@todo: vid for this page
+
+@todo: add images
 
