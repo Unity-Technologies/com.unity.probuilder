@@ -48,7 +48,6 @@ namespace ProBuilder2.Actions
 			foreach(pb_Object pb in selection)
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				
 				int[] indices = selectAll ? pb_Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
 
 				List<List<pb_Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);

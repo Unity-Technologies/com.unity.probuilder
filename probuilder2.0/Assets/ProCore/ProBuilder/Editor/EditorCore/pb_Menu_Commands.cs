@@ -1643,10 +1643,13 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
+				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
+				int[] indices = selectAll ? pb_Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
+
 				pb.ToMesh();
 
 				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-				HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles);
+				HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(pb, common);
 
 				List<pb_Face> faces = new List<pb_Face>();

@@ -26,8 +26,7 @@ namespace ProBuilder2.Actions
 					pb_Editor.instance.editLevel == EditLevel.Geometry &&
 					pb_Editor.instance.selectionMode != SelectMode.Face &&
 					selection != null &&
-					selection.Length > 0 &&
-					selection.Any(x => x.SelectedTriangleCount > 2);
+					selection.Length > 0;
 		}
 
 		public override bool IsHidden()
@@ -47,7 +46,7 @@ namespace ProBuilder2.Actions
 		{
 			GUILayout.Label("Fill Hole Settings", EditorStyles.boldLabel);
 
-			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.", MessageType.Info);
+			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.\n\nIf no elements are selected, the entire object will be scanned for holes.", MessageType.Info);
 			
 			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
 
