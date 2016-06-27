@@ -910,6 +910,7 @@ public class pb_Editor : EditorWindow
 			ClearFaceSelection();
 
 		Camera cam = SceneView.lastActiveSceneView.camera;
+		Vector2 m = Event.current.mousePosition;
 
 		if(pref_hamSelection)
 		{
@@ -926,8 +927,10 @@ public class pb_Editor : EditorWindow
 				for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 				{
 					Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+					Vector2 p = HandleUtility.WorldToGUIPoint(v);
 
-					float dist = HandleUtility.DistanceToCircle(v, 0f);
+					float dist = (p - m).sqrMagnitude;
+					// float dist = HandleUtility.DistanceToCircle(v, 0f);
 
 					if(dist < best && !pb_HandleUtility.PointIsOccluded(cam, pb, v))
 					{
@@ -991,7 +994,7 @@ public class pb_Editor : EditorWindow
 				}				
 			}
 		}
-
+		
 		vpb = null;
 		return false;
 	}
