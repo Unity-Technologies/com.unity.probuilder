@@ -562,13 +562,13 @@ namespace ProBuilder2.Common
 		return t.ToArray().ToFormattedString(_delimiter);
 	}
 
-	public static string StringWithDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dict)
+	public static string ToString<TKey, TValue>(this Dictionary<TKey, TValue> dict)
 	{
-		string str = "";
-		foreach(KeyValuePair<TKey, TValue> kvp in dict) {
-			str += "Key:" + kvp.Key + "  Val: " + kvp.Value + "\n";
-		}
-		return str;
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		foreach(KeyValuePair<TKey, TValue> kvp in dict)
+			sb.AppendLine( string.Format("Key: {0}  Value: {1}", kvp.Key, kvp.Value));
+		return sb.ToString();
 	}
 
 	public static string ToString<T>(this IEnumerable<T> arr, string separator = ", ")

@@ -502,7 +502,7 @@ namespace ProBuilder2.EditorCommon
 
 			pbUndo.RecordObjects(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
 
-			int flipped = 0;
+			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			foreach(pb_Object pb in selection)
 			{
@@ -511,40 +511,16 @@ namespace ProBuilder2.EditorCommon
 				if(faces == null)
 					continue;
 
-				int len = faces.Length;
-
-				int toggle = 0;
-				WindingOrder[] winding = new WindingOrder[len];
-
-				// First figure out what the majority of the faces' winding order is
-				for(int i = 0; i < len; i++)
-				{
-					winding[i] = pb.GetWindingOrder( faces[i] );
-					toggle += (winding[i] == WindingOrder.Unknown ? 0 : (winding[i] == WindingOrder.Clockwise ? 1 : -1));
-				}
-
-				// if toggle >= 0 wind clockwise, else ccw
-				for(int i = 0; i < len; i++)
-				{
-					if( (toggle >= 0 && winding[i] == WindingOrder.CounterClockwise) ||
-						(toggle < 0 && winding[i] == WindingOrder.Clockwise) )
-					{
-						faces[i].ReverseIndices();
-						flipped++;
-					}
-				}
+				res = pb_ConformNormals.ConformNormals(pb, faces);
 
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
 
-			editor.UpdateSelection();
+			pb_Editor.Refresh();
 
-			if(flipped > 0)
-				return new pb_ActionResult(Status.Success, "Reversed " + flipped + " Faces");
-			else
-				return new pb_ActionResult(Status.Canceled, "Normals Already Uniform");
+			return res;
 		}
 #endregion
 

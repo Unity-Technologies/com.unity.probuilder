@@ -52,11 +52,13 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			return string.Format("Edge: {0}\nNext: {1}\nPrevious: {2}\nOpposite: {3}", 
-				edge.local.ToString(),
-				next.edge.local.ToString(),
-				previous.edge.local.ToString(),
-				opposite.edge.local.ToString());
+			// return string.Format("Edge: {0}\nNext: {1}\nPrevious: {2}\nOpposite: {3}", 
+			// 	edge.local.ToString(),
+			// 	next.edge.local.ToString(),
+			// 	previous.edge.local.ToString(),
+			// 	opposite.edge.local.ToString());
+
+			return string.Format("Common: {0}   Local: {1}", edge.common.ToString(), edge.local.ToString());
 		}
 
 		public pb_WingedEdge GetAdjacentEdgeWithCommonIndex(int common)
@@ -98,15 +100,20 @@ namespace ProBuilder2.Common
 
 		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb)
 		{
+			return GetWingedEdges(pb, pb.faces);
+		}
+
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IList<pb_Face> faces)
+		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();
 			Dictionary<pb_Edge, pb_WingedEdge> opposites = new Dictionary<pb_Edge, pb_WingedEdge>();
 			int index = 0;
 
-			for(int i = 0; i < pb.faces.Length; i++)
+			for(int i = 0; i < faces.Count; i++)
 			{
-				pb_Face f = pb.faces[i];
+				pb_Face f = faces[i];
 				List<pb_Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
 
