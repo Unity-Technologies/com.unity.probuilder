@@ -80,6 +80,7 @@ public class pb_Editor : EditorWindow
 	public float drawNormals = 0f;
 	private bool pref_showSceneInfo = false;
 	private bool pref_backfaceSelect = false;
+	private bool pref_hamSelection = false;
 
 	private float pref_snapValue = .25f;
 	private bool pref_snapAxisConstraints = true;
@@ -192,6 +193,7 @@ public class pb_Editor : EditorWindow
 		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
 		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
 		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+		pref_hamSelection	= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
 		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
@@ -682,7 +684,9 @@ public class pb_Editor : EditorWindow
 
 #region RAYCASTING AND DRAGGING
 
-	public const float MAX_EDGE_SELECT_DISTANCE = 128;
+	public const float MAX_EDGE_SELECT_DISTANCE_HAM = 128;
+	public const float MAX_EDGE_SELECT_DISTANCE_CTX = 12;
+
 	pb_Object nearestEdgeObject = null;
 	pb_Edge nearestEdge;
 
@@ -691,112 +695,106 @@ public class pb_Editor : EditorWindow
 	 */
 	private void UpdateMouse(Vector3 mousePosition)
 	{
-		if(selection.Length < 1) return;
+		if(selection.Length < 1 || selectionMode != SelectMode.Edge)
+			return;
 
-		switch(selectionMode)
+		GameObject go = HandleUtility.PickGameObject(mousePosition, false);
+
+		pb_Edge bestEdge = null;
+		pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
+
+		if(bestObj != null && !selection.Contains(bestObj))
 		{
-			// default:
-			case SelectMode.Edge:
+			bestObj = null;
+			bestEdge = null;
+			goto SkipMouseCheck;
+		}
 
-				GameObject go = HandleUtility.PickGameObject(mousePosition, false);
+		/**
+		 * If mouse isn't over a pb object, it still may be near enough to an edge.
+		 */
+		if(bestObj == null)
+		{
+			// TODO
+			float bestDistance = pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX;
 
-				pb_Edge bestEdge = null;
-				pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
-
-				if(bestObj != null && !selection.Contains(bestObj))
+			try
+			{
+				for(int i = 0; i < m_universalEdges.Length; i++)
 				{
-					bestObj = null;
-					bestEdge = null;
-					goto SkipMouseCheck;
-				}
+					pb_Edge[] edges = m_universalEdges[i];
 
-				/**
-				 * If mouse isn't over a pb object, it still may be near enough to an edge.
-				 */
-				if(bestObj == null)
-				{
-					// TODO
-					float bestDistance = MAX_EDGE_SELECT_DISTANCE;
-
-					try
+					for(int j = 0; j < edges.Length; j++)
 					{
-						for(int i = 0; i < m_universalEdges.Length; i++)
+						int x = selection[i].sharedIndices[edges[j].x][0];
+						int y = selection[i].sharedIndices[edges[j].y][0];
+
+						Vector3 world_vert_x = m_verticesInWorldSpace[i][x];
+						Vector3 world_vert_y = m_verticesInWorldSpace[i][y];
+
+						float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
+
+						if(d < bestDistance)
 						{
-							pb_Edge[] edges = m_universalEdges[i];
-
-							for(int j = 0; j < edges.Length; j++)
-							{
-								int x = selection[i].sharedIndices[edges[j].x][0];
-								int y = selection[i].sharedIndices[edges[j].y][0];
-
-								Vector3 world_vert_x = m_verticesInWorldSpace[i][x];
-								Vector3 world_vert_y = m_verticesInWorldSpace[i][y];
-
-								float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
-
-								if(d < bestDistance)
-								{
-									bestObj = selection[i];
-									bestEdge = new pb_Edge(x, y);
-									bestDistance = d;
-								}
-							}
+							bestObj = selection[i];
+							bestEdge = new pb_Edge(x, y);
+							bestDistance = d;
 						}
-					} catch {}
-				}
-				else
-				{
-					// Test culling
-					List<pb_RaycastHit> hits;
-					Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-					if(pb_Handle_Utility.MeshRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
-					{
-						Camera cam = SceneView.lastActiveSceneView.camera;
-
-						// Sort from nearest hit to farthest
-						hits.Sort( (x, y) => x.distance.CompareTo(y.distance) );
-
-						// Find the nearest edge in the hit faces
-
-						float bestDistance = Mathf.Infinity;
-						Vector3[] v = bestObj.vertices;
-
-						for(int i = 0; i < hits.Count; i++)
-						{
-							if( pb_HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].point)) )
-								continue;
-
-							foreach(pb_Edge edge in bestObj.faces[hits[i].face].edges)
-							{
-								float d = HandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
-
-								if(d < bestDistance)
-								{
-									bestDistance = d;
-									bestEdge = edge;
-								}
-							}
-
-							if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].normal)) < 0f )
-								break;
-						}
-
-						if(bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > MAX_EDGE_SELECT_DISTANCE)
-							bestEdge = null;
 					}
 				}
+			} catch {}
+		}
+		else
+		{
+			// Test culling
+			List<pb_RaycastHit> hits;
+			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-				SkipMouseCheck:
+			if(pb_Handle_Utility.MeshRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
+			{
+				Camera cam = SceneView.lastActiveSceneView.camera;
 
-				if(bestEdge != nearestEdge || bestObj != nearestEdgeObject)
+				// Sort from nearest hit to farthest
+				hits.Sort( (x, y) => x.distance.CompareTo(y.distance) );
+
+				// Find the nearest edge in the hit faces
+
+				float bestDistance = Mathf.Infinity;
+				Vector3[] v = bestObj.vertices;
+
+				for(int i = 0; i < hits.Count; i++)
 				{
-					nearestEdge = bestEdge;
-					nearestEdgeObject = bestObj;
+					if( pb_HandleUtility.PointIsOccluded(cam, bestObj, bestObj.transform.TransformPoint(hits[i].point)) )
+						continue;
 
-					SceneView.RepaintAll();
+					foreach(pb_Edge edge in bestObj.faces[hits[i].face].edges)
+					{
+						float d = HandleUtility.DistancePointLine(hits[i].point, v[edge.x], v[edge.y]);
+
+						if(d < bestDistance)
+						{
+							bestDistance = d;
+							bestEdge = edge;
+						}
+					}
+
+					if( Vector3.Dot(ray.direction, bestObj.transform.TransformDirection(hits[i].normal)) < 0f )
+						break;
 				}
-				break;
+
+				if(	bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > (pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
+					bestEdge = null;
+			}
+		}
+
+		SkipMouseCheck:
+
+		if(bestEdge != nearestEdge || bestObj != nearestEdgeObject)
+		{
+			nearestEdge = bestEdge;
+			nearestEdgeObject = bestObj;
+
+			SceneView.RepaintAll();
 		}
 	}
 
@@ -908,40 +906,89 @@ public class pb_Editor : EditorWindow
 
 	private bool VertexClickCheck(out pb_Object vpb)
 	{
-		if(!shiftKey && !ctrlKey) ClearFaceSelection();
+		if(!shiftKey && !ctrlKey) 
+			ClearFaceSelection();
 
 		Camera cam = SceneView.lastActiveSceneView.camera;
 
-		for(int i = 0; i < selection.Length; i++)
+		if(pref_hamSelection)
 		{
-			pb_Object pb = selection[i];
-			if(!pb.isSelectable) continue;
+			float best = MAX_EDGE_SELECT_DISTANCE_HAM;
+			int obj = -1, tri = -1;
 
-			for(int n = 0; n < m_uniqueIndices[i].Length; n++)
+			for(int i = 0; i < selection.Length; i++)
 			{
-				Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+				pb_Object pb = selection[i];
 
-				if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
+				if(!pb.isSelectable) 
+					continue;
+
+				for(int n = 0; n < m_uniqueIndices[i].Length; n++)
 				{
-					if( pb_HandleUtility.PointIsOccluded(cam, pb, v) )
+					Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+
+					float dist = HandleUtility.DistanceToCircle(v, 0f);
+
+					if(dist < best && !pb_HandleUtility.PointIsOccluded(cam, pb, v))
 					{
-						continue;
+						best = dist;
+						obj = i;
+						tri = m_uniqueIndices[i][n];
 					}
-
-					// Check if index is already selected, and if not add it to the pot
-					int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
-
-					pbUndo.RecordObject(pb, "Change Vertex Selection");
-
-					// If we get a match, check to see if it exists in our selection array already, then add / remove
-					if( indx > -1 )
-						pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
-					else
-						pb.SetSelectedTriangles(pb.SelectedTriangles.Add(m_uniqueIndices[i][n]));
-
-					vpb = pb;
-					return true;
 				}
+			}
+
+			if(obj > -1 && tri > -1)
+			{
+				pb_Object pb = selection[obj];
+
+				int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
+
+				pbUndo.RecordObject(pb, "Change Vertex Selection");
+
+				// If we get a match, check to see if it exists in our selection array already, then add / remove
+				if( indx > -1 )
+					pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
+				else
+					pb.SetSelectedTriangles(pb.SelectedTriangles.Add(tri));
+
+				vpb = pb;
+				return true;
+			}
+		}
+		else
+		{
+			for(int i = 0; i < selection.Length; i++)
+			{
+				pb_Object pb = selection[i];
+
+				if(!pb.isSelectable) 
+					continue;
+
+				for(int n = 0; n < m_uniqueIndices[i].Length; n++)
+				{
+					Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+
+					if(mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
+					{
+						if( pb_HandleUtility.PointIsOccluded(cam, pb, v) )
+							continue;
+
+						// Check if index is already selected, and if not add it to the pot
+						int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
+
+						pbUndo.RecordObject(pb, "Change Vertex Selection");
+
+						// If we get a match, check to see if it exists in our selection array already, then add / remove
+						if( indx > -1 )
+							pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
+						else
+							pb.SetSelectedTriangles(pb.SelectedTriangles.Add(m_uniqueIndices[i][n]));
+
+						vpb = pb;
+						return true;
+					}
+				}				
 			}
 		}
 
@@ -2737,6 +2784,7 @@ public class pb_Editor : EditorWindow
 		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
 
 		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
+
 		if(nearest != null)
 			t.Add(nearest.transform);
 

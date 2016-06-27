@@ -114,6 +114,7 @@ public static class pb_Constant
 	public const string pbDrawAxisLines					= "pbDrawAxisLines";
 	public const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
 	public const string pbMeshesAreAssets				= "pbMeshesAreAssets";
+	public const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

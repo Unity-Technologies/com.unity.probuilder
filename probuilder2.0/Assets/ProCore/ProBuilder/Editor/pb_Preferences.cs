@@ -41,6 +41,7 @@ public class pb_Preferences
 	static bool pbShiftOnlyTooltips = false;
 	static bool pbDrawAxisLines = true;
 	static bool pbMeshesAreAssets = false;
+	static bool pbElementSelectIsHamFisted = false;
 	
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -124,6 +125,7 @@ public class pb_Preferences
 		 */
 		GUILayout.Label("Geometry Editing Settings", EditorStyles.boldLabel);
 
+		pbElementSelectIsHamFisted = !EditorGUILayout.Toggle(new GUIContent("Precise Element Selection", "When enabled you will be able to select object faces when in Vertex of Edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."), !pbElementSelectIsHamFisted);
 		pbDefaultFaceColor = EditorGUILayout.ColorField("Selected Face Color", pbDefaultFaceColor);
 		pbDefaultEdgeColor = EditorGUILayout.ColorField("Edge Wireframe Color", pbDefaultEdgeColor);
 		pbDefaultVertexColor = EditorGUILayout.ColorField("Vertex Color", pbDefaultVertexColor);
@@ -208,6 +210,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
 			EditorPrefs.DeleteKey(pb_Constant.pbDrawAxisLines);
 			EditorPrefs.DeleteKey(pb_Constant.pbMeshesAreAssets);
+			EditorPrefs.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
 		}
 
 		LoadPrefs();
@@ -316,6 +319,7 @@ public class pb_Preferences
 		pbShiftOnlyTooltips 				= pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 		pbDrawAxisLines 					= pb_Preferences_Internal.GetBool(pb_Constant.pbDrawAxisLines);
 		pbMeshesAreAssets 					= pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
+		pbElementSelectIsHamFisted			= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
@@ -372,6 +376,7 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
 		EditorPrefs.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
 		EditorPrefs.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
+		EditorPrefs.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
 		
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
