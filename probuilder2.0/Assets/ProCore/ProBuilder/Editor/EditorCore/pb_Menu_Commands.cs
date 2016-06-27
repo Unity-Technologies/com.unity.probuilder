@@ -767,8 +767,6 @@ namespace ProBuilder2.EditorCommon
 
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
-			// profiler.BeginSample("MenuGrowSelection");
-
 			int grown = 0;
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
@@ -909,38 +907,6 @@ namespace ProBuilder2.EditorCommon
 				return new pb_ActionResult(Status.Success, "Grow Selection");
 			else
 				return new pb_ActionResult(Status.Failure, "Nothing to Grow");
-		}
-
-		public static void GrowSelectionGUI(int width)
-		{
-			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
-
-			EditorGUI.BeginChangeCheck();
-
-			EditorGUIUtility.labelWidth = width - 28;
-			angleGrow = EditorGUILayout.Toggle("Angle", angleGrow);
-
-			float angleVal = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
-
-			bool te = GUI.enabled;
-
-			GUI.enabled = te ? angleGrow : te;
-
-			EditorGUIUtility.labelWidth = width - 68;
-			angleVal = EditorGUILayout.FloatField("Max", angleVal, GUILayout.MaxWidth(width-12));
-
-			EditorGUIUtility.labelWidth = width - 28;
-			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-			iterative = EditorGUILayout.Toggle("Iterative", iterative);
-
-			GUI.enabled = te;
-
-			if( EditorGUI.EndChangeCheck() )
-			{
-				EditorPrefs.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
-				EditorPrefs.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
-				EditorPrefs.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
-			}
 		}
 
 		public static bool VerifyShrinkSelection(pb_Object[] selection)

@@ -78,13 +78,6 @@ public class TempMenuItems : EditorWindow
 		return null;
 	}
 
-	static pb_ActionResult WeldVertices(pb_Object pb, int[] indices, out int[] welds, float distance)
-	{
-		welds = null;
-
-		return pb_ActionResult.Success;
-	}
-
 	static pb_ActionResult SplitVertices(pb_Object pb, int[] indices, float distance)
 	{
 		HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(pb.sharedIndices, indices);
