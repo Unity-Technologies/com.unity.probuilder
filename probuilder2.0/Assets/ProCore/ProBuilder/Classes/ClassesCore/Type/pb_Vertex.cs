@@ -104,17 +104,23 @@ namespace ProBuilder2.Common
 		public static pb_Vertex operator +(pb_Vertex a, pb_Vertex b)
 		{
 			pb_Vertex v = new pb_Vertex(a);
-
-			v.position	+= b.position;
-			v.color		+= b.color;
-			v.normal	+= b.normal;
-			v.tangent	+= b.tangent;
-			v.uv0		+= b.uv0;
-			v.uv2		+= b.uv2;
-			v.uv3		+= b.uv3;
-			v.uv4		+= b.uv4;
-
+			v.Add(b);
 			return v;
+		}
+
+		/**
+		 *	In-place addition.
+		 */
+		public void Add(pb_Vertex b)
+		{
+			this.position	+= b.position;
+			this.color		+= b.color;
+			this.normal		+= b.normal;
+			this.tangent	+= b.tangent;
+			this.uv0		+= b.uv0;
+			this.uv2		+= b.uv2;
+			this.uv3		+= b.uv3;
+			this.uv4		+= b.uv4;
 		}
 
 		/**
@@ -123,17 +129,23 @@ namespace ProBuilder2.Common
 		public static pb_Vertex operator -(pb_Vertex a, pb_Vertex b)
 		{
 			pb_Vertex v = new pb_Vertex(a);
-
-			v.position	-= b.position;
-			v.color		-= b.color;
-			v.normal	-= b.normal;
-			v.tangent	-= b.tangent;
-			v.uv0		-= b.uv0;
-			v.uv2		-= b.uv2;
-			v.uv3		-= b.uv3;
-			v.uv4		-= b.uv4;
-
+			v.Subtract(b);
 			return v;
+		}
+
+		/**
+		 *	In-place subtraction.
+		 */
+		public void Subtract(pb_Vertex b)
+		{
+			this.position	-= b.position;
+			this.color		-= b.color;
+			this.normal		-= b.normal;
+			this.tangent	-= b.tangent;
+			this.uv0		-= b.uv0;
+			this.uv2		-= b.uv2;
+			this.uv3		-= b.uv3;
+			this.uv4		-= b.uv4;
 		}
 
 		/**
@@ -142,17 +154,23 @@ namespace ProBuilder2.Common
 		public static pb_Vertex operator *(pb_Vertex a, float value)
 		{
 			pb_Vertex v = new pb_Vertex(a);
-
-			v.position	*= value;
-			v.color		*= value;
-			v.normal	*= value;
-			v.tangent	*= value;
-			v.uv0		*= value;
-			v.uv2		*= value;
-			v.uv3		*= value;
-			v.uv4		*= value;
-
+			v.Multiply(value);
 			return v;
+		}
+
+		/**
+		 *	In place multiplation.
+		 */
+		public void Multiply(float value)
+		{
+			this.position	*= value;
+			this.color		*= value;
+			this.normal		*= value;
+			this.tangent	*= value;
+			this.uv0		*= value;
+			this.uv2		*= value;
+			this.uv3		*= value;
+			this.uv4		*= value;
 		}
 
 		/**
@@ -161,18 +179,25 @@ namespace ProBuilder2.Common
 		public static pb_Vertex operator /(pb_Vertex a, float value)
 		{
 			pb_Vertex v = new pb_Vertex(a);
-
-			v.position	/= value;
-			v.color		/= value;
-			v.normal	/= value;
-			v.tangent	/= value;
-			v.uv0		/= value;
-			v.uv2		/= value;
-			v.uv3		/= value;
-			v.uv4		/= value;
-
+			v.Divide(value);
 			return v;
 		}
+
+		/**
+		 *	In place division.
+		 */
+		public void Divide(float value)
+		{
+			this.position	/= value;
+			this.color		/= value;
+			this.normal		/= value;
+			this.tangent	/= value;
+			this.uv0		/= value;
+			this.uv2		/= value;
+			this.uv3		/= value;
+			this.uv4		/= value;
+		}
+
 
 		/**
 		 *	Normalize vector values in place.

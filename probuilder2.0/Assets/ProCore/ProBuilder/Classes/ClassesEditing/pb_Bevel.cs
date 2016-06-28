@@ -186,11 +186,13 @@ namespace ProBuilder2.MeshOperations
 
 			pb_Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
 			x.Normalize();
+
 			pb_Vertex y = (vertices[slide_y.x] - vertices[slide_y.y]);
 			y.Normalize();
 
-			vertices[we.edge.local.x] += x * amount;
-			vertices[we.edge.local.y] += y * amount;
+			// need the pb_Vertex value to be modified, not reassigned in this array (which += does)
+			vertices[we.edge.local.x].Add(x * amount);
+			vertices[we.edge.local.y].Add(y * amount);
 
 			pb_Tuple<pb_Face, List<pb_Vertex>> tup;
 
