@@ -49,13 +49,9 @@ namespace ProBuilder2.EditorCommon
 
 		public delegate void SettingsDelegate();
 
-		public static pb_Object[] selection
-		{
-			get
-			{
-				return pbUtil.GetComponents<pb_Object>(Selection.transforms);
-			}
-		}
+		public static pb_Object[] selection { get { return pbUtil.GetComponents<pb_Object>(Selection.transforms); }	}
+		protected EditLevel editLevel { get { return pb_Editor.instance.editLevel; } }
+		protected SelectMode selectionMode { get { return pb_Editor.instance.selectionMode; } }
 
 		public static GUIStyle buttonStyleVertical 		{ get { return pb_MenuActionStyles.buttonStyleVertical; } }
 		public static GUIStyle buttonStyleHorizontal 	{ get { return pb_MenuActionStyles.buttonStyleHorizontal; } }

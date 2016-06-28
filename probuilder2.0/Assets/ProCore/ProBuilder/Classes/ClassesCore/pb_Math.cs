@@ -447,15 +447,19 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector3 Normal(pb_Object pb, pb_Face face)
 		{
-			Vector3 nrm = Vector3.zero;
+			Vector3 nrm;
 
-			for(int i = 0; i < face.indices.Length; i+=3)
-				nrm += Normal(	pb.vertices[face.indices[i+0]], 
-								pb.vertices[face.indices[i+1]], 
-								pb.vertices[face.indices[i+2]]);
+			Vector3[] _vertices = pb.vertices;
 
-			nrm /= (face.indices.Length/3f);
-			nrm.Normalize();
+			// if the face is just a quad, use the normal
+			// otherwise it's not safe to assume that the face
+			// has even generally uniform normals
+			if(face.indices.Length < 7)
+				nrm = pb_Math.Normal(	_vertices[face.indices[0]],
+										_vertices[face.indices[1]],
+										_vertices[face.indices[2]] ); 
+			else
+				nrm = pb_Math.FindBestPlane(_vertices, face.distinctIndices).normal;
 
 			return nrm;
 		}

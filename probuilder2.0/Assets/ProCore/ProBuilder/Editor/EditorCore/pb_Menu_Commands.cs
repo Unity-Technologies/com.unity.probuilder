@@ -1613,7 +1613,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pbUndo.RecordObjects(selection, "Fill Hole");
 
-			pb_ActionResult res = pb_ActionResult.NoSelection;
+			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
 			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
 

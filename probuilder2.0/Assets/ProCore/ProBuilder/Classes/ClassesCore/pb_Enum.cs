@@ -10,16 +10,18 @@ namespace ProBuilder2.Common
 	/**
 	 * Element selection mode.
 	 */
+	[System.Flags]
 	public enum SelectMode
 	{
-		Vertex,
-		Edge,
-		Face
+		Vertex = 0,
+		Edge = 1,
+		Face = 2
 	}
 	
 	/**
 	 * The editor level - top (no pb action), geo, texture, plugin.
 	 */
+	[System.Flags]
 	public enum EditLevel {
 		Top = 0,
 		Geometry = 1,

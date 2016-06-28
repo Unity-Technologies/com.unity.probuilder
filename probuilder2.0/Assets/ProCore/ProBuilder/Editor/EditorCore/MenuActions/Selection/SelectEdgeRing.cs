@@ -23,6 +23,8 @@ namespace ProBuilder2.Actions
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
+					editLevel == EditLevel.Geometry &&
+					selectionMode == SelectMode.Edge &&
 					selection != null &&
 					selection.Length > 0 &&
 					selection.Sum(x => x.SelectedEdgeCount) > 0;
@@ -30,9 +32,9 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Edge;
+			return 	pb_Editor.instance == null ||
+					editLevel != EditLevel.Geometry ||
+					selectionMode != SelectMode.Edge;
 		}
 
 		public override pb_ActionResult DoAction()

@@ -152,6 +152,16 @@ namespace ProBuilder2.EditorCommon
 			 */
 			GUILayout.Label("Special", EditorStyles.boldLabel);
 
+			tempBool = uv_gui.useWorldSpace;
+			EditorGUI.showMixedValue = uv_diff["useWorldSpace"];
+			uv_gui.useWorldSpace = EditorGUILayout.Toggle("World Space", uv_gui.useWorldSpace);
+			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);  
+
+			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
+			pb_GUI_Utility.DrawSeparator(1);
+			UnityEngine.GUI.backgroundColor = Color.white;
+
+
 			// Flip U
 			tempBool = uv_gui.flipU;
 			EditorGUI.showMixedValue = uv_diff["flipU"];
@@ -168,16 +178,6 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["swapUV"];
 			uv_gui.swapUV = EditorGUILayout.Toggle("Swap U/V", uv_gui.swapUV);
 			if(tempBool != uv_gui.swapUV) SetSwapUV(uv_gui.swapUV, selection);  
-
-			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			pb_GUI_Utility.DrawSeparator(1);
-			UnityEngine.GUI.backgroundColor = Color.white;
-
-			tempBool = uv_gui.useWorldSpace;
-			EditorGUI.showMixedValue = uv_diff["useWorldSpace"];
-			uv_gui.useWorldSpace = EditorGUILayout.Toggle("World Space", uv_gui.useWorldSpace);
-			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);  
-
 
 			/**
 			 * Texture Groups
@@ -205,9 +205,21 @@ namespace ProBuilder2.EditorCommon
 			if(GUILayout.Button(new GUIContent("Group Selected Faces", "This sets all selected faces to share a texture group.  What that means is that the UVs on these faces will all be projected as though they are a single plane.  Ideal candidates for texture groups are floors with multiple faces, walls with edge loops, flat surfaces, etc."), GUILayout.MaxWidth(width)))
 			{
 				for(int i = 0; i < selection.Length; i++)
-				{
 					TextureGroupSelectedFaces(selection[i]);
-				}
+
+				pb_Editor.instance.UpdateSelection();
+			}
+
+			if(GUILayout.Button(new GUIContent("Break Selected Groups", "This resets all the selected face Texture Groups."), GUILayout.MaxWidth(width)))
+			{
+				SetTextureGroup(selection, -1);
+				
+				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
+					selection[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
+				
+				SceneView.RepaintAll();
+
+				uv_diff["textureGroup"] = false;
 
 				pb_Editor.instance.UpdateSelection();
 			}

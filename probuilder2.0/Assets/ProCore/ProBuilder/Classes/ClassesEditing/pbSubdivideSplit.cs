@@ -572,8 +572,8 @@ public static class pbSubdivideSplit
 		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
 		Vector2[] uvs = pb.uv.ValuesWithIndices(face.distinctIndices);
 
-		Vector3 projAxis = pb_Projection.ProjectionAxisToVector( pb_Projection.VectorToProjectionAxis(pb_Math.Normal(pb, face) ) );
-		Vector2[] plane = pb_Projection.PlanarProject(verts, projAxis);
+		Vector3 projectionNormal = pb_Math.Normal(pb, face);
+		Vector2[] plane = pb_Projection.PlanarProject(verts, projectionNormal);
 
 		// Split points
  		Vector3 splitPointA_3d = splitSelection.pointA;
@@ -582,8 +582,8 @@ public static class pbSubdivideSplit
  		Vector2 splitPointA_uv = splitSelection.aIsVertex ? pb.uv[splitSelection.indexA[0]] : (pb.uv[splitSelection.indexA[0]] + pb.uv[splitSelection.indexA[1]]) /2f;
  		Vector2 splitPointB_uv = splitSelection.bIsVertex ? pb.uv[splitSelection.indexB[0]] : (pb.uv[splitSelection.indexB[0]] + pb.uv[splitSelection.indexB[1]]) /2f;
 
-		Vector2 splitPointA_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointA_3d }, projAxis )[0];
-		Vector2 splitPointB_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointB_3d }, projAxis )[0];
+		Vector2 splitPointA_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointA_3d }, projectionNormal )[0];
+		Vector2 splitPointB_2d = pb_Projection.PlanarProject( new Vector3[1] { splitPointB_3d }, projectionNormal )[0];
 
 		List<Vector3> v_polyA = new List<Vector3>();	// point in object space
 		List<Vector3> v_polyB = new List<Vector3>();	// point in object space
@@ -705,7 +705,7 @@ public static class pbSubdivideSplit
 			return false;
 
 		// figure out the face normals for the new faces and check to make sure they match the original face
-		Vector2[] pln = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projAxis );
+		Vector2[] pln = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projectionNormal );
 
 		Vector3 nrm = Vector3.Cross( pln[2] - pln[0], pln[1] - pln[0]);
 		Vector3 nrmA = Vector3.Cross( v_polyA_2d[ t_polyA[2] ]-v_polyA_2d[ t_polyA[0] ], v_polyA_2d[ t_polyA[1] ]-v_polyA_2d[ t_polyA[0] ] );
