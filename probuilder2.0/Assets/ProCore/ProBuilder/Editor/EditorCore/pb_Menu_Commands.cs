@@ -1659,6 +1659,37 @@ namespace ProBuilder2.EditorCommon
 
 			return res;
 		}
+
+		public static pb_ActionResult MenuCreatePolygon(pb_Object[] selection)
+		{
+			pbUndo.RecordObjects(selection, "Create Polygon");
+
+			pb_ActionResult res = pb_ActionResult.NoSelection;
+
+			foreach(pb_Object pb in selection)
+			{
+				int[] indices = pb.SelectedTriangles;
+
+				if(indices == null || indices.Length < 2)
+					continue;
+
+				pb.ToMesh();
+
+				pb_Face face;
+
+				res = pb_AppendPolygon.CreatePolygon(pb, indices, out face);
+
+				pb.Refresh();
+				pb.Optimize();
+
+				if(res)
+					pb.SetSelectedFaces(new pb_Face[] { face });
+			}
+
+			pb_Editor.Refresh();
+
+			return res;
+		}
 #endif
 #endregion
 

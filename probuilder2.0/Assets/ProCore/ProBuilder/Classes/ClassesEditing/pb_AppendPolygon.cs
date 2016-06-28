@@ -14,6 +14,18 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static pb_ActionResult FillHole(this pb_Object pb, IList<int> indices, out pb_Face face)
 		{
+			return AppendFaceWithVertices(pb, indices, true, out face);
+		}
+	
+		public static pb_ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, out pb_Face face)
+		{
+			pb_ActionResult res = AppendFaceWithVertices(pb, indices, false, out face);
+			if(res) res.notification = "Create Polygon";
+			return res;
+		}
+
+		private static pb_ActionResult AppendFaceWithVertices(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
+		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
@@ -26,7 +38,7 @@ namespace ProBuilder2.MeshOperations
 				append_vertices.Add(new pb_Vertex(vertices[index]));
 			}
 
-			pb_FaceRebuildData data = FaceWithVertices(append_vertices);
+			pb_FaceRebuildData data = FaceWithVertices(append_vertices, unordered);
 
 			if(data != null)
 			{
@@ -36,43 +48,55 @@ namespace ProBuilder2.MeshOperations
 				pb.SetVertices(vertices);
 				pb.SetFaces(faces.ToArray());
 				pb.SetSharedIndices(lookup);
+
+				// if the points are unordered, find an adjacent faces and test that the normals are correct.
+				// if unordered, respect the winding order the calling function specified.
+				if(unordered)
+				{
+					List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+					pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
+					face = newFace.face;
+					pb_WingedEdge orig = newFace;
+
+					// grab first edge with a valid opposite face
+					while(newFace.opposite == null)
+					{
+						newFace = newFace.next;
+
+						if(newFace == orig)
+							break;
+					}
+
+					if(newFace.opposite != null)
+						pb_ConformNormals.ConformOppositeNormal(newFace.opposite);
+				}
+				else
+				{
+					face = data.face;
+				}
+
+				// call ToMesh after possibly flipping face normals
 				pb.ToMesh();
-
-				// find an adjacent faces and test that the normals are correct
-				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
-				face = newFace.face;
-				pb_WingedEdge orig = newFace;
-
-				// grab first edge with a valid opposite face
-				while(newFace.opposite == null)
-				{
-					newFace = newFace.next;
-					if(newFace == orig) break;
-				}
-
-				if(newFace.opposite != null)
-				{
-					if(pb_ConformNormals.ConformOppositeNormal(newFace.opposite))
-						pb.ToMesh();
-				}
 
 				return new pb_ActionResult(Status.Success, "Fill Hole");
 			}
 
 			face = null;
 
-			return new pb_ActionResult(Status.Failure, "Insufficient Points");
+			const string INSUF_PTS = "Too Few Unique Points Selected";
+			const string BAD_WINDING = "Points not ordered correctly";
+
+			return new pb_ActionResult(Status.Failure, unordered ? INSUF_PTS : BAD_WINDING);
 		}
 
 		/**
-		 *	Create a new face given a set of unordered vertices.
+		 *	Create a new face given a set of unordered vertices (or ordered, if unordered param is set to false).
 		 */
-		public static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices)
+		public static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
 		{
 			List<int> triangles;
 
-			if(pb_Triangulation.TriangulateVertices(vertices, out triangles))
+			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, unordered))
 			{
 				pb_FaceRebuildData data = new pb_FaceRebuildData();
 				data.vertices = vertices;
@@ -171,7 +195,7 @@ namespace ProBuilder2.MeshOperations
 				// 
 				// paths may also contain multiple segments non-tiered
 
-				int rx = 0, ry = 0, px = 0, splitCount = splits.Count;
+				int splitCount = splits.Count;
 
 				splits.Sort( (x, y) => x.Item1.CompareTo(y.Item1) );
 

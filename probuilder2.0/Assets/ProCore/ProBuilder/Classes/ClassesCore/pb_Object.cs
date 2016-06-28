@@ -862,6 +862,7 @@ public class pb_Object : MonoBehaviour
 		}
 
 		int n = -2;
+		
 		foreach(pb_Face f in faces)
 		{
 			if(f == null || f.manualUV) 
@@ -902,8 +903,10 @@ public class pb_Object : MonoBehaviour
 			if(kvp.Value[0].uv.useWorldSpace)
 			{
 				nrm = transform.TransformDirection(nrm);
-				uvs = pb_UVUtility.PlanarMap( transform.ToWorldSpace(vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())),
-					kvp.Value[0].uv, nrm);
+				uvs = pb_UVUtility.PlanarMap(
+					transform.ToWorldSpace(vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())),
+					kvp.Value[0].uv,
+					nrm);
 			}
 			else
 			{

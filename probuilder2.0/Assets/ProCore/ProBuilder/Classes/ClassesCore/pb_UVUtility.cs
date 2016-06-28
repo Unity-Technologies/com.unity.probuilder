@@ -14,11 +14,9 @@ public class pb_UVUtility
 
 #region Map
 
-	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings) { return PlanarMap(verts, uvSettings, null); }
-	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings, Vector3? nrm)
+	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings, Vector3 normal)
 	{
-		Vector2[] uvs = pb_Projection.PlanarProject(verts, nrm == null ? pb_Math.Normal(verts[0], verts[1], verts[2]) : (Vector3)nrm);
-		
+		Vector2[] uvs = pb_Projection.PlanarProject(verts, normal);
 		uvs = ApplyUVSettings(uvs, uvSettings);
 		return uvs;
 	}

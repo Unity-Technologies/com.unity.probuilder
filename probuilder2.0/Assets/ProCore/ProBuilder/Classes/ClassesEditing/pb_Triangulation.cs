@@ -39,9 +39,10 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 *	Attempts to triangulate a set of vertices (assumes vertices are already sorted in counter-clockwise order).
+		 *	Attempts to triangulate a set of vertices.
+		 *	If unordered is specified as false vertices will not be reordered before triangulation.
 		 */
-		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles)
+		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
 			triangles = null;
 
@@ -53,13 +54,16 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < vertices.Count; ++i)
 				facePoints[i] = vertices[i].position;
 
-			Vector3 normal = pb_Math.Normal(facePoints[0], facePoints[1], facePoints[2]);
+			Vector3 normal = pb_Math.FindBestPlane(facePoints).normal;
 
 			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 
-			return pb_Triangulation.SortAndTriangulate(points2d, out triangles);
+			if(unordered)
+				return pb_Triangulation.SortAndTriangulate(points2d, out triangles, convex);
+			else
+				return Triangulate(points2d, out triangles, convex);
 		}
-
+		
 		/**
 		 *	Given a set of points ordered counter-clockwise along a contour, return triangle indices.
 		 *	Triangulation may optionally be set to convex, which will result in some a convex shape.
@@ -89,7 +93,7 @@ namespace ProBuilder2.MeshOperations
 
 			if(tm.Vertices.Count != points.Count)
 			{
-				Debug.LogWarning("Triangulation has inserted additional vertices.");
+				Debug.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
 				return false;
 			}
 

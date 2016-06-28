@@ -76,7 +76,48 @@ namespace ProBuilder2.Common
 			float p = (da + db + dc) / 2f;
 
 			return Mathf.Sqrt( p*(p-da)*(p-db)*(p-dc) );
+		}
 
+		/**
+		 *	Find a plane that best fits a set of 3d points.
+		 *	
+		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
+		 */
+		public static Plane FindBestPlane(IList<Vector3> points)
+		{
+			float 	xx = 0f, xy = 0f, xz = 0f,
+					yy = 0f, yz = 0f, zz = 0f;
+
+			Vector3 c = pb_Math.Average(points);
+
+			for(int i = 0; i < points.Count; i++)
+			{
+				Vector3 r = points[i] - c;
+
+				xx += r.x * r.x;
+				xy += r.x * r.y;
+				xz += r.x * r.z;
+				yy += r.y * r.y;
+				yz += r.y * r.z;
+				zz += r.z * r.z;
+			}
+
+			float det_x = yy * zz - yz * yz;
+			float det_y = xx * zz - xz * xz;
+			float det_z = xx * yy - xy * xy;
+
+			Vector3 n;
+
+			if(det_x > det_y && det_x > det_z)
+				n = new Vector3(1f, (xz*yz - xy*zz) / det_x, (xy*yz - xz*yy) / det_x);
+			else if(det_y > det_z)
+				n = new Vector3((yz*xz - xy*zz) / det_y, 1f, (xy*xz - yz*xx) / det_y);
+			else
+				n = new Vector3((yz*xy - xz*yy) / det_z, (xz*xy - yz*xx) / det_z, 1f);
+
+			n.Normalize();
+
+			return new Plane(n, c);
 		}
 
 		/**

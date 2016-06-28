@@ -16,9 +16,7 @@ public static class pbAppendDelete
 #region Append Face
 
 	/**
-	 *	\brief
-	 *	param sharedIndex An optional array that sets the new pb_Face indices to use the _sharedIndices array.
-	 *	\returns The newly appended pb_Face.
+	 * Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
 	 */
 	public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face)
 	{

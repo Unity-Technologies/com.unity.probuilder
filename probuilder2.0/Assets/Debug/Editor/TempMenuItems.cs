@@ -16,40 +16,16 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		pbUndo.RecordSelection(selection, "Bevel Edges");
+		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		foreach(pb_Object pb in selection)
-		{
-			pb_Face[] faces = pb.SelectedFaces;
+		// pbUndo.RecordSelection(selection, "Bevel Edges");
 
-			if(faces == null || faces.Length != 2)
-				continue;
+		// foreach(pb_Object pb in selection)
+		// {
+		// }
 
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			
-			pb_WingedEdge wing = wings.FirstOrDefault(x => x.face == faces[0]);
-			pb_WingedEdge first = wing;
-
-			while( wing.opposite == null || wing.opposite.face != faces[1] )
-			{
-				wing = wing.next;
-
-				if(wing == first)
-					break;
-			}
-
-			pb_Edge cea = GetCommonEdgeInWindingOrder(wing);
-			pb_Edge ceb = GetCommonEdgeInWindingOrder(wing.opposite);
-
-			if( cea.x == ceb.x )
-				Debug.Log("BAD NORMAL");
-			else
-				Debug.Log("GOOD NORMAL");
-		}
-
-		pb_Editor.Refresh();
+		// pb_Editor.Refresh();
 	}
 
 	static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
