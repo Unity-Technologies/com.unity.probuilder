@@ -212,6 +212,7 @@ namespace ProBuilder2.EditorCommon
 		public void OnGUI()
 		{
 			Event e = Event.current;
+			Vector2 mpos = e.mousePosition;
 			bool forceRepaint = false;
 
 			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden() && (!isIconMode || x.icon != null) );
@@ -308,6 +309,10 @@ namespace ProBuilder2.EditorCommon
 			
 			GUILayout.BeginHorizontal();
 
+			// e.mousePosition != mpos at this point - @todo figure out why
+			bool windowContainsMouse = 	mpos.x > 0 && mpos.x < window.position.width &&
+										mpos.y > 0 && mpos.y < window.position.height;
+
 			int columnCount = 0;
 			foreach(pb_MenuAction action in available)
 			{
@@ -319,7 +324,7 @@ namespace ProBuilder2.EditorCommon
 						optionRect.x -= scroll.x;
 						optionRect.y -= scroll.y;
 
-						if(	window.position.Contains(e.mousePosition + window.position.position) &&
+						if(	windowContainsMouse &&
 							e.type != EventType.Layout &&
 							optionRect.Contains(e.mousePosition) )
 						{
@@ -345,7 +350,7 @@ namespace ProBuilder2.EditorCommon
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
 
-				if( window.position.Contains(e.mousePosition + window.position.position) &&
+				if( windowContainsMouse &&
 					e.type != EventType.Layout &&
 					!hovering &&
 					buttonRect.Contains(e.mousePosition) )
