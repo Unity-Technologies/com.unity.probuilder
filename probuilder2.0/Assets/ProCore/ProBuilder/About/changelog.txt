@@ -2,22 +2,32 @@
 
 ## Features
 
+- Add `Bevel` action to insert bevels along edges.
 - Add `Fill Hole` action.
+- Add `Create Polygon` action.
+- Large perfomance improvement for `Select Edge Ring` and `Select Edge Loop` actions.
+- Add additional settings to debug window to hide/show common or local indices.
+- Add `Select Hole` menu action to quickly select the edges of any hole touching a selected vertex.
+- Add a preference to disable "Precise Element Selection."  When disabled edge and vertex modes will always select an edge or vertex no matter how far from the element they are.
+- Add "Break Texture Groups" button to UV editor.
+- Add non-manifold edge extrusion pref to Extrude Edge settings window.
 
 ## Bug Fixes
 
-- Fix odd behavior in Weld function, and address potentials for out of bounds assignments after removing unused vertices.
+- Fix cases where user could provide bad input to Arch generator.
+- Fix `Weld Vertices` not welding vertices in some cases.
+- Set detail pb_Objects with ReflectionProbeStatic flags.
+- Fix key shortcuts for hidden but enabled menu actions not working.
+- Don't show hover tooltips if mouse is outside window bounds.
+- Fix edge cases in `Conform Normals` action.
+- Fix Grow Selection itererative field incorrectly being disabled when "Grow by Angle" is off.
+- Fix issue where n-gons with > 90 degree angles would not UV map correctly.
+- Fix some cases where subdivide would fail due to non-planar vertex positions on a face.
 
-Add method for splitting a vertex and inserting a new edge between.  Move 3d to 2d projection to its own class
-[wip] slide vertices along their previous/next edge directions instead of the cross product of edge and face normals.
-Naive implementation of bevel
-Remove unused code in MeshUtils and minor name/formatting
-Improve performance of edge ring function using winged edge structure
-Replace Edge Loop function with winged edge version.  Big performance increase (~10x) and better handling of edge cases
-Don't show hover tooltips if mouse is outside window bounds
-In Auto UV mode rename the scale property 'Tiling' closes #8
-Set detail pb_Objects with ReflectionProbeStatic flags
-Fix cases where user could provide bad input to Arch generator
+## Changes
+
+- Move "World Space" toggle up in the Auto UV editor
+- In Auto UV mode rename the scale property `Tiling`.
 
 # ProBuilder 2.5.1b2
 
