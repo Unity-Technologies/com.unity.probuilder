@@ -30,6 +30,11 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedTriangleCount > 1);
 		}
 
+		public override bool IsHidden()
+		{
+			return true;
+		}
+
 		public override pb_ActionResult DoAction()
 		{
 			switch(pb_Editor.instance.selectionMode)

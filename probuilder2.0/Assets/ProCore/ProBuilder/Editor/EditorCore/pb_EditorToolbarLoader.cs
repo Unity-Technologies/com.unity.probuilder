@@ -114,7 +114,6 @@ namespace ProBuilder2.EditorCommon
 
 				// Entity
 				new SetEntityType_Detail(),
-				// new SetEntityType_Occluder(),
 				new SetEntityType_Mover(),
 				new SetEntityType_Collider(),
 				new SetEntityType_Trigger(),

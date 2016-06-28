@@ -52,16 +52,20 @@ namespace ProBuilder2.Actions
 			
 			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
+			bool manifoldEdgeExtrusion = pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
 
 			EditorGUI.BeginChangeCheck();
 
 			extrudeAsGroup = EditorGUILayout.Toggle("As Group", extrudeAsGroup);
+			manifoldEdgeExtrusion = EditorGUILayout.Toggle(new GUIContent("Manifold Edge Extrusion", "If false, only non-manifold (edges touching two faces) edges may be extruded.  If true, you may extrude any edge you like (for those who like to live dangerously)."), manifoldEdgeExtrusion);
+
 			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
 				EditorPrefs.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+				EditorPrefs.SetBool(pb_Constant.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
 			}
 
 			GUILayout.FlexibleSpace();
