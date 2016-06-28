@@ -83,16 +83,18 @@ namespace ProBuilder2.Common
 		 *	
 		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
 		 */
-		public static Plane FindBestPlane(IList<Vector3> points)
+		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indices = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
 
-			Vector3 c = pb_Math.Average(points);
+			bool ind = indices != null && indices.Count > 0;
+			int len = ind ? indices.Count : points.Count;
+			Vector3 c = pb_Math.Average(points, indices);
 
-			for(int i = 0; i < points.Count; i++)
+			for(int i = 0; i < len; i++)
 			{
-				Vector3 r = points[i] - c;
+				Vector3 r = points[ ind ? indices[i] : i ] - c;
 
 				xx += r.x * r.x;
 				xy += r.x * r.y;

@@ -889,16 +889,26 @@ public class pb_Object : MonoBehaviour
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
 		{
 			Vector2[] uvs;
-			Vector3 nrm = Vector3.zero;
+			Vector3 nrm;
 
-			foreach(pb_Face face in kvp.Value)
+			if(kvp.Value.Count > 1)
 			{
-				nrm += pb_Math.Normal( 	_vertices[face.indices[0]],
-										_vertices[face.indices[1]],
-										_vertices[face.indices[2]] ); 
+				nrm = pb_Math.FindBestPlane(_vertices, kvp.Value.SelectMany(x => x.distinctIndices).ToList()).normal;
 			}
+			else
+			{
+				pb_Face face = kvp.Value[0];
 
-			nrm /= (float)kvp.Value.Count;
+				// if the face is just a quad, use the normal
+				// otherwise it's not safe to assume that the face
+				// has even generally uniform normals
+				if(face.indices.Length < 7)
+					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
+											_vertices[face.indices[1]],
+											_vertices[face.indices[2]] ); 
+				else
+					nrm = pb_Math.FindBestPlane(_vertices, face.distinctIndices).normal;
+			}
 
 			if(kvp.Value[0].uv.useWorldSpace)
 			{
