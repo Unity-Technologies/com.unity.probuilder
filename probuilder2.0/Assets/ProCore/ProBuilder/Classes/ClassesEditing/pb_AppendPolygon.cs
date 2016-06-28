@@ -120,9 +120,7 @@ namespace ProBuilder2.MeshOperations
 				pb_WingedEdge it = c;
 				int ind = it.edge.common.x;
 
-				int loopBreaker = 0;
-
-				while(it != null && loopBreaker++ < 65000)
+				while(it != null)
 				{
 					used.Add(it);
 					hole.Add(it);
@@ -136,11 +134,11 @@ namespace ProBuilder2.MeshOperations
 
 				List<pb_Tuple<int, int>> splits = new List<pb_Tuple<int, int>>();
 
+				// check previous wings for y == x (closed loop).
 				for(int n = 0; n < hole.Count; n++)
 				{
 					pb_WingedEdge wing = hole[n];
 
-					// check previous wings for y == x (closed loop).
 					for(int p = n - 1; p > -1; p--)
 					{
 						if( wing.edge.common.y == hole[p].edge.common.x )
@@ -152,53 +150,52 @@ namespace ProBuilder2.MeshOperations
 				}
 
 				// create new lists from each segment
-				// holes paths are tiered like so coming in:
-				//
-				//	[2, 0]
-				// 	[0, 9]
-				// 	[9, 10]
-				// 		[10, 7]
-				// 			[7, 6]
-				// 			[6, 1]
-				// 			[1, 4]
-				// 			[4, 7]	<- (y == x)
-				// 		[7, 8]
-				// 		[8, 5]
-				// 		[5, 3]
-				// 		[3, 11]
-				// 		[11, 10]	<- (y == x)
-				// [10, 2] 			<- (y == x)
+				// holes paths are nested, with holes
+				// possibly split between multiple nested
+				// holes                                                       
+				//                                                       
+				//	[2, 0]                                     [5, 3]                  
+				// 	[0, 9]                                     [3, 11]                  
+				// 	[9, 10]                                    [11, 10]                   
+				// 		[10, 7]                                    [10, 2]                       
+				// 			[7, 6]             or with split   	    [2, 0]                          
+				// 			[6, 1]             nesting ->   	    [0, 9]                          
+				// 			[1, 4]                             	    [9, 10]                          
+				// 			[4, 7]	<- (y == x)                [10, 7]                                       
+				// 		[7, 8]                                 	    [7, 6]                      
+				// 		[8, 5]                                 	    [6, 1]                      
+				// 		[5, 3]                                 	    [1, 4]                      
+				// 		[3, 11]                                	    [4, 7]                       
+				// 		[11, 10]	<- (y == x)                [7, 8]                                       
+				// [10, 2] 			<- (y == x)                [8, 5]                                       
 				// 
 				// paths may also contain multiple segments non-tiered
 
 				int rx = 0, ry = 0, px = 0, splitCount = splits.Count;
 
-				for(int n = 0; n < splitCount; n++)
+				splits.Sort( (x, y) => x.Item1.CompareTo(y.Item1) );
+
+				int[] shift = new int[splitCount];
+
+				// Debug.Log(hole.ToString("\n") + "\n" + splits.ToString("\n"));
+
+				for(int n = splitCount - 1; n > -1; n--)
 				{
-					int x = splits[n].Item1, y = splits[n].Item2;
+					int x = splits[n].Item1, y = splits[n].Item2 - shift[n];
+					int range = (y - x) + 1;
 
-					if(x > px)
-					{
-						rx += ry;
-						ry = 0;
-						px = x;
-					}
+					List<pb_WingedEdge> section = hole.GetRange(x, range);
 
-					y = y - ry;
-					int range = (y-x) + 1;
-					x = x - rx;
-					ry += range;
-
-					List<pb_WingedEdge> sec = hole.GetRange(x, range);
 					hole.RemoveRange(x, range);
 
-					// verify that this path has at least one index that was asked for
-					if(splitCount < 2 || sec.Any(w => common.Contains(w.edge.common.x)) || sec.Any(w => common.Contains(w.edge.common.y)))
-						holes.Add( sec );
-				}
+					for(int m = n - 1; m > -1; m--)
+						if(splits[m].Item2 > splits[n].Item2)
+							shift[m] += range;
 
-				if(loopBreaker > 64999)
-					Debug.LogError("find holes loop went crazy");
+					// verify that this path has at least one index that was asked for
+					if(splitCount < 2 || section.Any(w => common.Contains(w.edge.common.x)) || section.Any(w => common.Contains(w.edge.common.y)))
+						holes.Add( section );
+				}
 			}
 
 			return holes;
@@ -218,25 +215,5 @@ namespace ProBuilder2.MeshOperations
 
 			return null;
 		}
-
-		// private static void FollowNonManifoldPath(pb_WingedEdge edge, HashSet<pb_WingedEdge> path)
-		// {
-		// 	// came full circle
-		// 	if(path.Contains(edge))
-		// 		return;
-
-		// 	if(edge.opposite == null)
-		// 	{
-		// 		path.Add(edge);
-
-		// 		pb_WingedEdge next = edge.opposite.next;
-		// 		pb_WingedEdge prev = edge.opposite.previous;
-
-		// 		if(next.edge.common.Contains(edge.edge.common))	
-		// 			FollowNonManifoldPath(next, path);
-		// 		else if(prev.edge.opposite.Contains(edge.edge.common))
-		// 			FollowNonManifoldPath(prev, path);
-		// 	}
-		// }
 	}
 }
