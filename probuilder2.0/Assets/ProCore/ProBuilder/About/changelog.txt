@@ -3,8 +3,8 @@
 ## Features
 
 - Add `Bevel` action to insert bevels along edges.
-- Add `Fill Hole` action.
-- Add `Create Polygon` action.
+- Add `Fill Hole` action to quickly insert a face in a mesh hole.
+- Add `Create Polygon` action to precisely insert a face constructed from a set of points.
 - Large perfomance improvement for `Select Edge Ring` and `Select Edge Loop` actions.
 - Add additional settings to debug window to hide/show common or local indices.
 - Add `Select Hole` menu action to quickly select the edges of any hole touching a selected vertex.

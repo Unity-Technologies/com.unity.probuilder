@@ -317,6 +317,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+#if !UNITY_4_7
 		const StaticEditorFlags StaticEditorFlags_All =
 				StaticEditorFlags.LightmapStatic |
 				StaticEditorFlags.OccluderStatic |
@@ -325,6 +326,16 @@ namespace ProBuilder2.EditorCommon
 				StaticEditorFlags.NavigationStatic |
 				StaticEditorFlags.OffMeshLinkGeneration |
 				StaticEditorFlags.ReflectionProbeStatic;
+#else
+		const StaticEditorFlags StaticEditorFlags_All =
+				StaticEditorFlags.LightmapStatic |
+				StaticEditorFlags.OccluderStatic |
+				StaticEditorFlags.BatchingStatic |
+				StaticEditorFlags.OccludeeStatic |
+				StaticEditorFlags.NavigationStatic |
+				StaticEditorFlags.OffMeshLinkGeneration;
+#endif
+
 #endregion
 
 #region EDITOR
