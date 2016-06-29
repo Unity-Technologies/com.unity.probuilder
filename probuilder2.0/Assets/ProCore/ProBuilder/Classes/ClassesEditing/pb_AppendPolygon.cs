@@ -7,24 +7,10 @@ namespace ProBuilder2.MeshOperations
 {
 	public static class pb_AppendPolygon
 	{
-		/**
-		 *	FillHole differs from CreatePolygon in that CreatePolygon expects vertices to be passed
-		 *	with the correct winding order already applied.  FillHole projects and attempts to figure
-		 *	out the winding order.
-		 */
-		public static pb_ActionResult FillHole(this pb_Object pb, IList<int> indices, out pb_Face face)
-		{
-			return AppendFaceWithVertices(pb, indices, true, out face);
-		}
-	
-		public static pb_ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, out pb_Face face)
-		{
-			pb_ActionResult res = AppendFaceWithVertices(pb, indices, false, out face);
-			if(res) res.notification = "Create Polygon";
-			return res;
-		}
-
-		private static pb_ActionResult AppendFaceWithVertices(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
+		 /**
+		  *	Create a new face connecting the vertices selected by indices.
+		  */
+		public static pb_ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -78,7 +64,7 @@ namespace ProBuilder2.MeshOperations
 				// call ToMesh after possibly flipping face normals
 				pb.ToMesh();
 
-				return new pb_ActionResult(Status.Success, "Fill Hole");
+				return new pb_ActionResult(Status.Success, "Create Polygon");
 			}
 
 			face = null;

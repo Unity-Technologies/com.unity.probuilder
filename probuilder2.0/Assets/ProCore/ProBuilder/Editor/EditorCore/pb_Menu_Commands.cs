@@ -1611,6 +1611,9 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuFillHole(pb_Object[] selection)
 		{
+			if(editor == null)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordObjects(selection, "Fill Hole");
 
 			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
@@ -1632,12 +1635,26 @@ namespace ProBuilder2.EditorCommon
 
 				foreach(List<pb_WingedEdge> hole in holes)
 				{
-					List<int> holeIndices = wholePath ?
-						hole.Select(x => x.edge.local.x).ToList() :
-						hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
+					List<int> holeIndices;
+
+					if(wholePath)
+					{
+						// if selecting whole path and in edge mode, make sure the path contains 
+						// at least one complete edge from the selection.
+						if(	editor.selectionMode == SelectMode.Edge && 
+							!hole.Any(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)))
+							continue;
+
+						holeIndices = hole.Select(x => x.edge.local.x).ToList();
+					}
+					else
+					{
+						holeIndices = hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
+					}
 
 					pb_Face face;
-					res = pb_AppendPolygon.FillHole(pb, holeIndices, out face);
+
+					res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 
 					if(res)
 					{
@@ -1654,8 +1671,11 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Editor.Refresh();
 
-			if(filled > 0 && res.status != Status.Success)	
+			if(filled > 0)
+			{
 				res.status = Status.Success;
+				res.notification = filled > 1 ? string.Format("Filled {0} Holes", filled) : "Fill Hole";
+			}
 
 			return res;
 		}
@@ -1677,7 +1697,7 @@ namespace ProBuilder2.EditorCommon
 
 				pb_Face face;
 
-				res = pb_AppendPolygon.CreatePolygon(pb, indices, out face);
+				res = pb_AppendPolygon.CreatePolygon(pb, indices, false, out face);
 
 				pb.Refresh();
 				pb.Optimize();

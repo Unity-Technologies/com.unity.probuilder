@@ -704,10 +704,7 @@ public class pb_Editor : EditorWindow
 		pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
 
 		if(bestObj != null && !selection.Contains(bestObj))
-		{
 			bestObj = null;
-			// goto SkipMouseCheck;
-		}
 
 		/**
 		 * If mouse isn't over a pb object, it still may be near enough to an edge.
@@ -784,8 +781,6 @@ public class pb_Editor : EditorWindow
 					bestEdge = null;
 			}
 		}
-
-		SkipMouseCheck:
 
 		if(bestEdge != nearestEdge || bestObj != nearestEdgeObject)
 		{
