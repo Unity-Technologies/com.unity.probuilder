@@ -29,6 +29,11 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedTriangleCount > 0);
 		}
 
+		public override bool IsHidden()
+		{
+			return editLevel != EditLevel.Geometry;
+		}
+
 		public override pb_ActionResult DoAction()
 		{
 			return pb_Menu_Commands.MenuSetPivot(selection);

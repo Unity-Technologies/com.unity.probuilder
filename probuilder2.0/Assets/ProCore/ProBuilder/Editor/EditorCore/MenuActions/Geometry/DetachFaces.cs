@@ -27,6 +27,12 @@ namespace ProBuilder2.Actions
 					selection.Length > 0 &&
 					selection.Sum(x => x.SelectedFaceCount) > 0;
 		}
+		
+		public override bool IsHidden()
+		{
+			return 	editLevel != EditLevel.Geometry ||
+					(pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+		}
 
 		public override pb_ActionResult DoAction()
 		{

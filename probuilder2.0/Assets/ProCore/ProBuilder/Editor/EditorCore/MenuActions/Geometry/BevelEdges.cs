@@ -17,8 +17,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Bevel Edges",
-			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces.",
-			CMD_ALT, 'Z'
+			@"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
 		);
 
 		public override bool IsEnabled()
@@ -38,7 +37,8 @@ namespace ProBuilder2.Actions
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||
-					pb_Editor.instance.editLevel != EditLevel.Geometry;
+					editLevel != EditLevel.Geometry ||
+					(selectionMode & (SelectMode.Face | SelectMode.Edge)) == 0;
 		}
 
 		public override void OnSettingsGUI()

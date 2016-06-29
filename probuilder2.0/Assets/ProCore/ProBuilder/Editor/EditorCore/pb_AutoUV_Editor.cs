@@ -215,7 +215,11 @@ namespace ProBuilder2.EditorCommon
 				SetTextureGroup(selection, -1);
 				
 				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
-					selection[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
+				{
+					selection[i].ToMesh();
+					selection[i].Refresh();
+					selection[i].Optimize();
+				}
 				
 				SceneView.RepaintAll();
 
