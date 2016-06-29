@@ -706,8 +706,7 @@ public class pb_Editor : EditorWindow
 		if(bestObj != null && !selection.Contains(bestObj))
 		{
 			bestObj = null;
-			bestEdge = null;
-			goto SkipMouseCheck;
+			// goto SkipMouseCheck;
 		}
 
 		/**
@@ -718,8 +717,7 @@ public class pb_Editor : EditorWindow
 			// TODO
 			float bestDistance = pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX;
 
-			try
-			{
+			try {
 				for(int i = 0; i < m_universalEdges.Length; i++)
 				{
 					pb_Edge[] edges = m_universalEdges[i];
