@@ -19,7 +19,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Select Holes",
-			"Selects any holes on the mesh.  Must be in Edge or Vertex selection moode."
+			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
 		);
 
 		public override bool IsEnabled()
@@ -37,6 +37,20 @@ namespace ProBuilder2.Actions
 				return false;
 
 			return true;
+		}
+
+		public override bool IsHidden()
+		{
+			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
+				return true;
+
+			if(selection == null || selection.Length < 1)
+				return true;
+			
+			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
+				return true;
+
+			return false;
 		}
 
 		public override pb_ActionResult DoAction()

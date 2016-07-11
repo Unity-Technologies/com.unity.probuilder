@@ -65,11 +65,13 @@ namespace ProBuilder2.EditorCommon
 				new ToggleSelectBackFaces(),
 				new ToggleHandleAlignment(),
 
+				// selection
 				new GrowSelection(),
 				new ShrinkSelection(),
 				new InvertSelection(),
 				new SelectEdgeLoop(),
 				new SelectEdgeRing(),
+				new SelectHole(),
 
 				// object
 				new MergeObjects(),
