@@ -22,6 +22,7 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<pb_Face, List<int>> ignore = new Dictionary<pb_Face, List<int>>();
 			HashSet<int> slide = new HashSet<int>();
 			Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes = new Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>>();
+			int beveled = 0;
 	
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
@@ -31,6 +32,8 @@ namespace ProBuilder2.MeshOperations
 
 				if(we == null || we.opposite == null)
 					continue;
+
+				beveled++;
 
 				ignore.AddOrAppend(we.face, we.edge.common.x);
 				ignore.AddOrAppend(we.face, we.edge.common.y);
@@ -45,6 +48,12 @@ namespace ProBuilder2.MeshOperations
 				SlideEdge(vertices, we.opposite, holes, amount);
 
 				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
+			}
+
+			if(beveled < 1)
+			{
+				createdFaces = null;
+				return new pb_ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
 			}
 			
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
