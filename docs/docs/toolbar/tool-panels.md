@@ -55,6 +55,8 @@ You may also hold "CTRL and SHIFT" while clicking on a face, to apply the Quick 
  
 **Purpose:** Opens the UV Editor Panel for both simple Texturing control and more complex UV Editing.
 
+![UV Editor Example Image](ExampleImage_UVEditor.png "UV Editor Example Image")
+
 See the "Texturing and UV Editing" section for full details. 
 
 # Vertex Color Tools

@@ -17,6 +17,8 @@ pages:
     - toolbar/geo-actions/face.md
     - toolbar/geo-actions/edge.md
     - toolbar/geo-actions/vertex.md
+    
+- UV Editing And Texturing: uv-and-texture
 
 - Troubleshooting:
   - troubleshooting/faq.md
