@@ -21,6 +21,7 @@ namespace ProBuilder2.EditorCommon
 		float elementOffset = .01f;
 
 		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
+		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -34,6 +35,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			elementLength = EditorPrefs.GetFloat("pb_Debug_elementLength", .1f);
 			elementOffset = EditorPrefs.GetFloat("pb_Debug_elementOffset", .01f);
+			testOcclusion = EditorPrefs.GetBool("pb_Debug_testOcclusion", false);
 
 			HookSceneViewDelegate();
 		}
@@ -74,6 +76,7 @@ namespace ProBuilder2.EditorCommon
 		};
 
 		public bool edgeInfo = false;
+		public IndexFormat edgeIndexFormat = IndexFormat.Local;
 		public bool faceInfo = false;
 		public IndexFormat faceIndexFormat = IndexFormat.Local;
 		public bool triInfo = false;
@@ -84,6 +87,7 @@ namespace ProBuilder2.EditorCommon
 		public bool autoUVInfo = false;
 		Vector2 scroll = Vector2.zero;
 		public bool selectedOnly = false;
+		public bool testOcclusion = false;
 
 		class ParamView
 		{
@@ -110,53 +114,76 @@ namespace ProBuilder2.EditorCommon
 				this.showTriangles = false;
 			}
 		}
+
 		Dictionary<int, ParamView> showParams = new Dictionary<int, ParamView>();
-		
 		pb_Object[] selection = new pb_Object[0];
 
 		void OnGUI()
 		{
 			selection = editor != null ? editor.selection : new pb_Object[0];
 
+			scroll = GUILayout.BeginScrollView(scroll);
+
 			EditorGUI.BeginChangeCheck();
 
-				edgeInfo = EditorGUILayout.Toggle("Edge Info", edgeInfo);
-				triInfo = EditorGUILayout.BeginToggleGroup("Index Info", triInfo);
+			triInfo = EditorGUILayout.BeginToggleGroup("Index Info", triInfo);
+			if(triInfo)
+			{
 				triIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(triIndexFormat);
-				EditorGUILayout.EndToggleGroup();
+			}
+			EditorGUILayout.EndToggleGroup();
 
-				faceInfo = EditorGUILayout.BeginToggleGroup("Face Info", faceInfo);
-					faceIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(faceIndexFormat);
-					elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
-					textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
-					smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
-				EditorGUILayout.EndToggleGroup();
+			edgeInfo = EditorGUILayout.BeginToggleGroup("Edge Info", edgeInfo);
+			if(edgeInfo)
+			{
+				edgeIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(edgeIndexFormat);
+			}
+			EditorGUILayout.EndToggleGroup();
 
-				GUILayout.BeginHorizontal();
-					Color pop = GUI.color;
-					GUI.color = Color.green;
-					GUILayout.Label("Normals", EditorStyles.boldLabel);
-					GUI.color = pop;
-					GUILayout.Label(" / ", EditorStyles.boldLabel);
-					GUI.color = Color.red;
-					GUILayout.Label("Tangents", EditorStyles.boldLabel);
-					GUI.color = pop;
-					GUILayout.Label(" / ", EditorStyles.boldLabel);
-					GUI.color = Color.blue;
-					GUILayout.Label("Bitangents", EditorStyles.boldLabel);
-					GUI.color = pop;
+			faceInfo = EditorGUILayout.BeginToggleGroup("Face Info", faceInfo);
+			if(faceInfo)
+			{
+				faceIndexFormat = (IndexFormat) EditorGUILayout.EnumPopup(faceIndexFormat);
+				elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
+				textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
+				smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
+			}
+			EditorGUILayout.EndToggleGroup();
 
-					GUILayout.FlexibleSpace();
-				GUILayout.EndHorizontal();
+			GUILayout.Label("Scene Label Settings", EditorStyles.boldLabel);
 
-				elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
-				elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
-				selectedOnly = EditorGUILayout.Toggle("Selection Only", selectedOnly);
+			selectedOnly = EditorGUILayout.Toggle("Selection Only", selectedOnly);
+			testOcclusion = EditorGUILayout.Toggle("Depth Test", testOcclusion);
+
+			GUILayout.Space(4);
+
+			pb_GUI_Utility.DrawSeparator(1, SplitterColor);
+
+			GUILayout.BeginHorizontal();
+				Color pop = GUI.color;
+				GUI.color = Color.green;
+				GUILayout.Label("Normals", EditorStyles.boldLabel);
+				GUI.color = pop;
+				GUILayout.Label(" / ", EditorStyles.boldLabel);
+				GUI.color = Color.red;
+				GUILayout.Label("Tangents", EditorStyles.boldLabel);
+				GUI.color = pop;
+				GUILayout.Label(" / ", EditorStyles.boldLabel);
+				GUI.color = Color.blue;
+				GUILayout.Label("Bitangents", EditorStyles.boldLabel);
+				GUI.color = pop;
+
+				GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
+
+			elementLength = EditorGUILayout.Slider("Line Length", elementLength, 0f, 1f);
+			elementOffset = EditorGUILayout.Slider("Vertex Offset", elementOffset, 0f, .1f);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				EditorPrefs.SetFloat("pb_Debug_elementLength", elementLength);
 				EditorPrefs.SetFloat("pb_Debug_elementOffset", elementOffset);
+				EditorPrefs.SetBool("pb_Debug_testOcclusion", testOcclusion);
 
 				foreach(pb_Object pb in selection)
 					DrawElements(pb);
@@ -164,6 +191,8 @@ namespace ProBuilder2.EditorCommon
 				SceneView.RepaintAll();
 			}
 
+			GUILayout.Space(8);
+			pb_GUI_Utility.DrawSeparator(1, SplitterColor);
 
 			GUILayout.Label("Active Selection", EditorStyles.boldLabel);
 
@@ -177,204 +206,200 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			GUILayout.Space(8);
+			foreach(pb_Object pb in selection)
+			{
+				Mesh m = pb.msh;
+				Renderer ren = pb.GetComponent<MeshRenderer>();
 
-			scroll = GUILayout.BeginScrollView(scroll);
+				ParamView pv;
+				int id = pb.gameObject.GetInstanceID();
 
-				foreach(pb_Object pb in selection)
+				if(!showParams.TryGetValue(id, out pv))
 				{
-					Mesh m = pb.msh;
-					Renderer ren = pb.GetComponent<MeshRenderer>();
+					pv = new ParamView();
+					showParams.Add(id, pv);
+				}
 
-					ParamView pv;
-					int id = pb.gameObject.GetInstanceID();
-
-					if(!showParams.TryGetValue(id, out pv))
+				pv.showObject = EditorGUILayout.Foldout(pv.showObject, pb.name + "(" + pb.id +")");
+				if(pv.showObject)
+				{
+					/* VERTICES */			
 					{
-						pv = new ParamView();
-						showParams.Add(id, pv);
-					}
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount + " / " + pb.msh.vertexCount);
+						GUILayout.EndHorizontal();
 
-					pv.showObject = EditorGUILayout.Foldout(pv.showObject, pb.name + "(" + pb.id +")");
-					if(pv.showObject)
-					{
-						/* VERTICES */			
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount + " / " + pb.msh.vertexCount);
-							GUILayout.EndHorizontal();
-
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showVertices)
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showVertices)
+							{
+								if(m == null)
 								{
-									if(m == null)
-									{
-										GUILayout.Label("" + pb.vertices.ToString("\n"));						
-									}
-									else
-									{
-										GUILayout.BeginVertical();
-										for(int i = 0; i < m.subMeshCount; i++)
-										{
-											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
-										}
-										GUILayout.EndVertical();
-									}
+									GUILayout.Label("" + pb.vertices.ToString("\n"));						
 								}
-							GUILayout.EndHorizontal();						
-						}
-
-						/* Triangles */			
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showTriangles = EditorGUILayout.Foldout(pv.showTriangles, "Triangles: " + pb.msh.triangles.Length);
-							GUILayout.EndHorizontal();
-
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showTriangles)
-								{
-									if(m == null)
-									{
-										GUILayout.Label("Faces: " + pb.faces.Length);
-									}
-									else
-									{
-										GUILayout.BeginVertical();
-										for(int i = 0; i < m.subMeshCount; i++)
-										{
-											int[] tris = pb.msh.GetTriangles(i);
-											GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + " : " + tris.Length);
-		
-											GUILayout.BeginHorizontal();
-												GUILayout.Space(16);
-
-												GUILayout.BeginVertical();
-
-												StringBuilder sb = new StringBuilder();
-
-												for(int n = 0; n < tris.Length && n < 300; n+=3)
-													sb.AppendLine(string.Format("{0}, {1}, {2}", tris[n], tris[n+1], tris[n+2]));
-
-												GUILayout.Label(sb.ToString());
-
-												GUILayout.EndVertical();
-											GUILayout.EndHorizontal();
-
-										}
-										GUILayout.EndVertical();
-									}
-								}
-							GUILayout.EndHorizontal();						
-						}
-						
-						/* Colors */			
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showColors = EditorGUILayout.Foldout(pv.showColors, "colors: " + (pb.colors != null ? pb.colors.Length : 0).ToString());
-							GUILayout.EndHorizontal();
-
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showColors)
-								{
-									GUILayout.Label("" + pb.colors.ToString("\n"));						
-								}
-							GUILayout.EndHorizontal();
-						}
-						
-						/* UV  */	
-						{		
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
-							GUILayout.EndHorizontal();
-				
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showUv)
-									GUILayout.Label("" + pb.uv.ToString("\n"));
-							GUILayout.EndHorizontal();
-						}
-
-						/* UV 2 */			
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
-							GUILayout.EndHorizontal();
-				
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showUv2 && m != null)
-									GUILayout.Label("" + m.uv2.ToString("\n"));
-							GUILayout.EndHorizontal();
-						}
-
-						/* Auto UV params */
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showAutoUV = EditorGUILayout.Foldout(pv.showAutoUV, "Auto-UV Params");
-							GUILayout.EndHorizontal();
-
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showAutoUV)
-									GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToString("\n"));
-							GUILayout.EndHorizontal();
-						}
-
-						/* Shared UVs */
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showSharedUV = EditorGUILayout.Foldout(pv.showSharedUV, "Shared UV");
-							GUILayout.EndHorizontal();
-
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showSharedUV)
+								else
 								{
 									GUILayout.BeginVertical();
-									for(int i = 0; i < pb.sharedIndicesUV.Length; i++)
+									for(int i = 0; i < m.subMeshCount; i++)
 									{
-										if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToString(", "), EditorStyles.label))
-										{
-											pb.SetSelectedTriangles(pb.sharedIndicesUV[i]);
-
-											if(pb_Editor.instance)
-											{
-												pb_Editor.instance.UpdateSelection();
-												SceneView.RepaintAll();
-											}
-										}
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
 									}
 									GUILayout.EndVertical();
-									// GUILayout.Label("" + pb.sharedIndicesUV.ToString("\n"));
 								}
-							GUILayout.EndHorizontal();
-						}
+							}
+						GUILayout.EndHorizontal();						
+					}
 
-						/* Shared Triangle */
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Space(24);
-								pv.showSharedTris = EditorGUILayout.Foldout(pv.showSharedTris, "Shared Indices");
-							GUILayout.EndHorizontal();
+					/* Triangles */			
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showTriangles = EditorGUILayout.Foldout(pv.showTriangles, "Triangles: " + pb.msh.triangles.Length);
+						GUILayout.EndHorizontal();
 
-							GUILayout.BeginHorizontal();
-							GUILayout.Space(48);
-								if(pv.showSharedTris)
-									GUILayout.Label("" + pb.sharedIndices.ToString("\n"));
-							GUILayout.EndHorizontal();
-						}
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showTriangles)
+							{
+								if(m == null)
+								{
+									GUILayout.Label("Faces: " + pb.faces.Length);
+								}
+								else
+								{
+									GUILayout.BeginVertical();
+									for(int i = 0; i < m.subMeshCount; i++)
+									{
+										int[] tris = pb.msh.GetTriangles(i);
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + " : " + tris.Length);
+	
+										GUILayout.BeginHorizontal();
+											GUILayout.Space(16);
+
+											GUILayout.BeginVertical();
+
+											StringBuilder sb = new StringBuilder();
+
+											for(int n = 0; n < tris.Length && n < 300; n+=3)
+												sb.AppendLine(string.Format("{0}, {1}, {2}", tris[n], tris[n+1], tris[n+2]));
+
+											GUILayout.Label(sb.ToString());
+
+											GUILayout.EndVertical();
+										GUILayout.EndHorizontal();
+
+									}
+									GUILayout.EndVertical();
+								}
+							}
+						GUILayout.EndHorizontal();						
+					}
+					
+					/* Colors */			
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showColors = EditorGUILayout.Foldout(pv.showColors, "colors: " + (pb.colors != null ? pb.colors.Length : 0).ToString());
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showColors)
+							{
+								GUILayout.Label("" + pb.colors.ToString("\n"));						
+							}
+						GUILayout.EndHorizontal();
+					}
+					
+					/* UV  */	
+					{		
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
+						GUILayout.EndHorizontal();
+			
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showUv)
+								GUILayout.Label("" + pb.uv.ToString("\n"));
+						GUILayout.EndHorizontal();
+					}
+
+					/* UV 2 */			
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
+						GUILayout.EndHorizontal();
+			
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showUv2 && m != null)
+								GUILayout.Label("" + m.uv2.ToString("\n"));
+						GUILayout.EndHorizontal();
+					}
+
+					/* Auto UV params */
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showAutoUV = EditorGUILayout.Foldout(pv.showAutoUV, "Auto-UV Params");
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showAutoUV)
+								GUILayout.Label("" + pb.SelectedFaces.Select(x => x.uv).ToArray().ToString("\n"));
+						GUILayout.EndHorizontal();
+					}
+
+					/* Shared UVs */
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showSharedUV = EditorGUILayout.Foldout(pv.showSharedUV, "Shared UV");
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showSharedUV)
+							{
+								GUILayout.BeginVertical();
+								for(int i = 0; i < pb.sharedIndicesUV.Length; i++)
+								{
+									if(GUILayout.Button("" + pb.sharedIndicesUV[i].array.ToString(", "), EditorStyles.label))
+									{
+										pb.SetSelectedTriangles(pb.sharedIndicesUV[i]);
+
+										if(pb_Editor.instance)
+										{
+											pb_Editor.instance.UpdateSelection();
+											SceneView.RepaintAll();
+										}
+									}
+								}
+								GUILayout.EndVertical();
+								// GUILayout.Label("" + pb.sharedIndicesUV.ToString("\n"));
+							}
+						GUILayout.EndHorizontal();
+					}
+
+					/* Shared Triangle */
+					{
+						GUILayout.BeginHorizontal();
+							GUILayout.Space(24);
+							pv.showSharedTris = EditorGUILayout.Foldout(pv.showSharedTris, "Shared Indices");
+						GUILayout.EndHorizontal();
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(48);
+							if(pv.showSharedTris)
+								GUILayout.Label("" + pb.sharedIndices.ToString("\n"));
+						GUILayout.EndHorizontal();
 					}
 				}
+			}
 			GUILayout.EndScrollView();
 		}
 
@@ -393,11 +418,7 @@ namespace ProBuilder2.EditorCommon
 			Handles.BeginGUI();
 
 			if(edgeInfo)
-			foreach(pb_Edge f in pb.SelectedEdges)
-			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint((pb.vertices[f.x] + pb.vertices[f.y])/ 2f) );
-				DrawSceneLabel(f.ToString(), cen);
-			}
+				DrawEdgeInfo(pb);
 
 			if(triInfo)
 				DrawTriangleInfo(pb);
@@ -456,14 +477,45 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		void DrawEdgeInfo(pb_Object pb)
+		{
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			pb_Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
+			IEnumerable<pb_EdgeLookup> edges = pb_EdgeLookup.GetEdgeLookup(source, lookup);
+
+			foreach(pb_EdgeLookup edge in edges)
+			{
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint((pb.vertices[edge.local.x] + pb.vertices[edge.local.y])/ 2f) );
+
+				switch(edgeIndexFormat)
+				{
+					case IndexFormat.Both:
+						DrawSceneLabel(string.Format("common: [{0}, {1}]", edge.common.x, edge.common.y), cen);
+						break;
+					case IndexFormat.Local:
+						DrawSceneLabel(string.Format("local: [{0}, {1}]", edge.local.x, edge.local.y), cen);
+						break;
+					case IndexFormat.Common:
+						DrawSceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
+						break;
+				}
+			}
+		}
+
 		void DrawFaceInfo(pb_Object pb)
 		{
 			pb_Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			foreach(pb_Face f in faces)
 			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint( pb_Math.Average(pb.vertices, f.distinctIndices) ) );
+				Vector3 point = pb.transform.TransformPoint( pb_Math.Average(pb.vertices, f.distinctIndices) );
+				
+				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+					continue;
+
+				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 				
 				StringBuilder sb = new StringBuilder();
 
@@ -503,24 +555,26 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				if(smoothingGroupInfo || elementGroupInfo || textureGroupInfo)
-					sb.AppendLine("\nGroups:");
+					sb.AppendLine("");
 
 				if(smoothingGroupInfo)
 				{
 					sb.Append("Smoothing: ");
-					sb.AppendLine(f.smoothingGroup.ToString());
+					sb.Append(f.smoothingGroup.ToString());
+					if(elementGroupInfo || textureGroupInfo) sb.AppendLine("");
 				}
 				
 				if(elementGroupInfo)
 				{
 					sb.Append("Element: ");
-					sb.AppendLine(f.elementGroup.ToString());
+					sb.Append(f.elementGroup.ToString());
+					if(textureGroupInfo) sb.AppendLine("");
 				}
 				
 				if(textureGroupInfo)
 				{
 					sb.Append("Texture: ");
-					sb.AppendLine(f.textureGroup.ToString());
+					sb.Append(f.textureGroup.ToString());
 				}
 				
 

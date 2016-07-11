@@ -34,7 +34,6 @@ public class pb_Preferences
 	static bool pbStripProBuilderOnBuild = true;
 	static bool pbDisableAutoUV2Generation = false;
 	static bool pbShowSceneInfo = false;
-	static bool pbEnableBackfaceSelection = false;
 	static bool pbUniqueModeShortcuts = false;
 	static bool pbIconGUI = false;
 	static bool pbShiftOnlyTooltips = false;
@@ -74,7 +73,6 @@ public class pb_Preferences
 		pbDisableAutoUV2Generation = EditorGUILayout.Toggle(new GUIContent("Disable Auto UV2 Generation", "Disables automatic generation of UV2 channel.  If Unity is sluggish when working with large ProBuilder objects, disabling UV2 generation will improve performance.  Use `Actions/Generate UV2` or `Actions/Generate Scene UV2` to build lightmap UVs prior to baking."), pbDisableAutoUV2Generation);
 		pbShowSceneInfo = EditorGUILayout.Toggle(new GUIContent("Show Scene Info", "Displays the selected object vertex and triangle counts in the scene view."), pbShowSceneInfo);
 		pbShowEditorNotifications = EditorGUILayout.Toggle("Show Editor Notifications", pbShowEditorNotifications);
-		pbEnableBackfaceSelection = EditorGUILayout.Toggle(new GUIContent("Enable Back-face Selection", "If enabled, you may select faces that have been culled by their back face."), pbEnableBackfaceSelection);
 
 		/**
 		 * TOOLBAR SETTINGS
@@ -299,7 +297,6 @@ public class pb_Preferences
 		pbStripProBuilderOnBuild 			= pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
 		pbDisableAutoUV2Generation 			= pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 		pbShowSceneInfo 					= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
-		pbEnableBackfaceSelection 			= pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 		defaultOpenInDockableWindow 		= pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
 		pbDragCheckLimit 					= pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 		pbForceConvex 						= pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex);
@@ -341,7 +338,6 @@ public class pb_Preferences
 		EditorPrefs.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
 		EditorPrefs.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 		EditorPrefs.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
-		EditorPrefs.SetBool  	(pb_Constant.pbEnableBackfaceSelection, pbEnableBackfaceSelection);
 
 		EditorPrefs.SetInt		(pb_Constant.pbToolbarLocation, (int)pbToolbarLocation);
 		EditorPrefs.SetInt		(pb_Constant.pbDefaultEntity, (int)pbDefaultEntity);

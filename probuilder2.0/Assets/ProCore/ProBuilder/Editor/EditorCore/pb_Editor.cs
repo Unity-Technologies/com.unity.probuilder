@@ -2571,8 +2571,6 @@ public class pb_Editor : EditorWindow
 
 			if(pb == null) continue;
 
-			// pb.transform.hasChanged = false;
-
 			m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace();	// to speed this up, could just get uniqueIndices vertiecs
 
 			if(selection[i].SelectedTriangleCount > 0)
