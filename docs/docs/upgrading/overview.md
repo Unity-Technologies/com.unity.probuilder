@@ -15,8 +15,8 @@ Depending on the version of ProBuilder you currently have installed, the process
 | None (no ProBuilder install) | ProBuilder Advanced | [Standard](standard.md) |
 | ProBuilder Basic 2.4.8+ | ProBuilder Basic 2.4.8+ | [Standard](standard.md) |
 | ProBuilder Advanced 2.4.8+ | ProBuilder Advanced 2.4.8+ | [Standard](standard.md) |
-| ProBuilder 2.1.0 - 2.3.x | ProBuilder Advanced | [Upgrade Kit](upgradekit.md) |
+| ProBuilder 2.1.0 - 2.3.x | ProBuilder Advanced | [Upgrade Kit](upgrade-kit.md) |
 | ProBuilder 2.4.0 - 2.4.7 | ProBuilder Advanced | [DLL Rename Upgrade](dllrename.md) |
-| Prototype 2.4 - 2.6 | ProBuilder Basic/Advanced | [Prototype Upgrade](prototypeupgrade.md) |
-| ProBuilder Source (any version) | ProBuilder (any version) | [Upgrade Kit](upgradekit.md) |
-| ProBuilder (any version) | ProBuilder Source (any version) | [Upgrade Kit](upgradekit.md) |
+| Prototype 2.4 - 2.6 | ProBuilder Basic/Advanced | [Prototype Upgrade](prototype.md) |
+| ProBuilder Source (any version) | ProBuilder (any version) | [Upgrade Kit](upgrade-kit.md) |
+| ProBuilder (any version) | ProBuilder Source (any version) | [Upgrade Kit](upgrade-kit.md) |

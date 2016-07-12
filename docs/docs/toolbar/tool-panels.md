@@ -1,3 +1,4 @@
+<a id="shape-tool"></a>
 # New Shape Tool
 
 **Toolbar Icon:** ![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon") ~ ![Shape Tool Icon](Panel_Shapes_Light.png "Create New Shape Icon")
