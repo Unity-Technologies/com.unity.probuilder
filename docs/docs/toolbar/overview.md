@@ -1,4 +1,16 @@
-# Main ProBuilder Toolbar
+# The ProBuilder Toolbar
+
+<div class="info-box warning">
+Watch Full Video: <a href="@todo make vid and link to it here">Using the ProBuilder Toolbar</a> 
+</div>
+
+ProBuilder is controlled almost entirely via the **Main Toolbar**, which contains all commonly used functions.
+
+A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.
+
+---
+
+### Main Toolbar
 
 All of ProBuilder's geometry functions can be found in the "ProBuilder Toolbar". 
 
@@ -8,7 +20,7 @@ You can choose between a Text-Based interface, or Icons, and each button has cus
 
 ![Toolbar Categories Example](ExampleImage_Toolbar_ColorCategories.png "Toolbar Categories Example")
 
-## Extra: Edit Mode Toolbar
+### Edit Mode Toolbar
 
 This is actually an extension of the main Toolbar, and is located separately, at the top-middle of your active sceneview.
 

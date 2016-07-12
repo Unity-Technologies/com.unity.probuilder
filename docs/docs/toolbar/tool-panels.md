@@ -10,7 +10,7 @@
 
 Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.
 
-![Stair Example](ExampleImage_ShapeTool_CurvedStairs.jpg "Creating a new Stairway shape")
+![Shape Tool Example](../images/Example_ShapeToolsWithCurvedStair.png)
 
 **Usage:** To create a new shape, do the following:
  
