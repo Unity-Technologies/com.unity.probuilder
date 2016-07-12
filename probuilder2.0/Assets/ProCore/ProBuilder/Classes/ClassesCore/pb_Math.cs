@@ -24,11 +24,13 @@ namespace ProBuilder2.Common
 	 */
 	public static class pb_Math
 	{
+#region CONST
 		public const float PHI = 1.618033988749895f;
 		public const float FLT_EPSILON = float.Epsilon;
 		public const float FLT_COMPARE_EPSILON = .0001f;
 		// The minimum distance a handle must move on an axis before considering that axis as engaged.
 		public const float HANDLE_EPSILON = .0001f;
+#endregion
 
 #region Geometry
 
@@ -155,15 +157,15 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * 	Get the distance between a point and a finite line segment.
-		 * http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+		 *	Get the distance between a point and a finite line segment.
+		 *	http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+		 *
+		 *	v = lineStart
+		 *	w = lineEnd
+		 *	p = point
 		 */
 		public static float DistancePointLineSegment(Vector2 p, Vector2 v, Vector2 w)
 		{
-			// lineStart = v 
-			// lineEnd = w
-			// point = p
-
 			// Return minimum distance between line segment vw and point p
 			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y));  // i.e. |w-v|^2 -  avoid a sqrt
 			
@@ -184,6 +186,13 @@ namespace ProBuilder2.Common
 			return Vector2.Distance(p, projection);	
 		}
 
+		/**
+		 * 	Get the distance between a point and a finite line segment.
+		 *
+		 *	v = lineStart
+		 *	w = lineEnd
+		 *	p = point
+		 */
 		public static float DistancePointLineSegment(Vector3 p, Vector3 v, Vector3 w)
 		{
 			// Return minimum distance between line segment vw and point p

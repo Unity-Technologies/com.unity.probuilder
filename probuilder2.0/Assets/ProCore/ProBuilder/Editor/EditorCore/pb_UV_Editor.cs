@@ -2750,16 +2750,16 @@ public class pb_UV_Editor : EditorWindow
 
 		GUILayout.EndHorizontal();
 		
-		GUILayout.BeginHorizontal();
+		// GUILayout.BeginHorizontal();
 
-			GUI.enabled = selectedUVCount > 0;		
-			if(GUILayout.Button("Sphere", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-				Menu_SphericalProject();
-			GUI.enabled = true;
+		// 	GUI.enabled = selectedUVCount > 0;		
+		// 	if(GUILayout.Button("Sphere", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+		// 		Menu_SphericalProject();
+		// 	GUI.enabled = true;
 
-			GUILayout.FlexibleSpace();
+		// 	GUILayout.FlexibleSpace();
 			
-		GUILayout.EndHorizontal();
+		// GUILayout.EndHorizontal();
 
 		/**
 		 * Selection

@@ -218,7 +218,7 @@ namespace ProBuilder2.MeshOperations
 
 		List<pb_Vertex> n_vertices 	= new List<pb_Vertex>();
 		List<int> n_shared 			= new List<int>();
-		List<int> n_sharedUV 		= new List<int>();
+		List<int> n_sharedUV 		= lookupUV != null ? new List<int>() : null;
 
 		for(int i = 0; i < wound.Count; i++)
 		{
@@ -235,6 +235,41 @@ namespace ProBuilder2.MeshOperations
 					n_sharedUV.Add(-1);
 			}
 		}
+
+		// now insert the new points on the nearest edge
+		for(int i = 0; i < points.Length; i++)
+		{
+			int index = -1;
+			float best = Mathf.Infinity;
+			Vector3 p = points[i];
+			int vc = n_vertices.Count;
+
+			for(int n = 0; n < vc; n++)
+			{
+				Vector3 v = n_vertices[n].position;
+				Vector3 w = n_vertices[(n + 1) % vc].position;
+
+				float dist = pb_Math.DistancePointLineSegment(p, v, w);
+
+				if(dist < best)
+				{
+					best = dist;
+					index = n;
+				}
+			}
+
+			pb_Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
+
+			float x = (p - left.position).sqrMagnitude;
+			float y = (p - right.position).sqrMagnitude;
+
+			pb_Vertex insert = pb_Vertex.Mix(left, right, x / (x + y));
+
+			n_vertices.Insert((index + 1) % vc, insert);
+			n_shared.Insert((index + 1) % vc, -1);
+			if(n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
+		}
+
 
 		List<int> triangles;
 

@@ -29,8 +29,6 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
 
-			Debug.Log("Sort and Triangulate Vertices");
-
 			if(!Triangulate(sorted, out indices, convex))
 				return false;
 
