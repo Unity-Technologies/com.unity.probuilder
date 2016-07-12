@@ -1846,16 +1846,13 @@ namespace ProBuilder2.EditorCommon
 				pb_Edge[] edges;
 				pb.ToMesh();
 				
-				if(useOld ? pb.ConnectEdges(pb.SelectedEdges, out edges) : pb.Connect(pb.SelectedEdges, out edges))
+				if(pb.ConnectEdges(pb.SelectedEdges, out edges))
 				{
 					pb.SetSelectedEdges(edges);
-
-					if(useOld)
-						pb.ToMesh();
-
 					success++;
 				}
 				
+				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}

@@ -58,7 +58,6 @@ namespace ProBuilder2.MeshOperations
 
 			Vector3 normal = pb_Projection.FindBestPlane(facePoints).normal;
 
-			// Vector2[] points2d = pb_Projection.SphericalProject(facePoints);
 			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 
 			if(unordered)

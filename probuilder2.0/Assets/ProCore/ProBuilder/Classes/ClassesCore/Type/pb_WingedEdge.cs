@@ -75,7 +75,7 @@ namespace ProBuilder2.Common
 		 *	Returns a new set of edges where each edge's y matches the next edge x.
 		 *	The first edge is used as a starting point.
 		 */
-		private static List<pb_Edge> SortEdgesByAdjacency(pb_Face face)
+		public static List<pb_Edge> SortEdgesByAdjacency(pb_Face face)
 		{
 			// grab perimeter edges
 			List<pb_Edge> edges = new List<pb_Edge>(face.edges);

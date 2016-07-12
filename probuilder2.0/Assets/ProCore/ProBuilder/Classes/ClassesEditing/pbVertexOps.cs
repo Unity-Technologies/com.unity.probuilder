@@ -209,86 +209,74 @@ namespace ProBuilder2.MeshOperations
 			return false;
 		}
 
-		// First order of business - project face to 2d
-		int[] distinctIndices = face.distinctIndices;
-		Vector3[] verts = pb.vertices.ValuesWithIndices(distinctIndices);
-		Color[] cols = pbUtil.ValuesWithIndices(pb.colors, distinctIndices);
-		Vector2[] uvs = new Vector2[distinctIndices.Length+points.Length];
-		System.Array.Copy(pb.uv.ValuesWithIndices(distinctIndices), 0, uvs, 0, distinctIndices.Length);
+		List<pb_Vertex> vertices = pb_Vertex.GetVertices(pb).ToList();
+		List<pb_Face> faces = new List<pb_Face>( pb.faces );
+		Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+		Dictionary<int, int> lookupUV = pb.sharedIndicesUV == null ? null : pb.sharedIndicesUV.ToDictionary();
 
-		// Add the new points
-		Vector3[] t_verts = new Vector3[verts.Length + points.Length];
-		System.Array.Copy(verts, 0, t_verts, 0, verts.Length);
-		System.Array.Copy(points, 0, t_verts, verts.Length, points.Length);
-		verts = t_verts;
+		List<pb_Edge> wound = pb_WingedEdge.SortEdgesByAdjacency(face);
 
-		// Add the new color
-		Color[] t_col = new Color[cols.Length + addColors.Length];
-		System.Array.Copy(cols, 0, t_col, 0, cols.Length);
-		System.Array.Copy(addColors, 0, t_col, cols.Length, addColors.Length);
-		cols = t_col;
+		List<pb_Vertex> n_vertices 	= new List<pb_Vertex>();
+		List<int> n_shared 			= new List<int>();
+		List<int> n_sharedUV 		= new List<int>();
 
-		// Get the face normal before modifying the vertex array
-		Vector3 nrm = pb_Math.Normal(pb.vertices.ValuesWithIndices(face.indices));
-		Vector3 projAxis = pb_Projection.ProjectionAxisToVector( pb_Projection.VectorToProjectionAxis(nrm) );
-		
-		// Project
-		List<Vector2> plane = new List<Vector2>(pb_Projection.PlanarProject(verts, projAxis));
-
-		// Save the sharedIndices index for each distinct vertex
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		int[] sharedIndex = new int[distinctIndices.Length+points.Length];
-		for(int i = 0; i < distinctIndices.Length; i++)
-			sharedIndex[i] = sharedIndices.IndexOf(distinctIndices[i]);
-		
-		for(int i = distinctIndices.Length; i < distinctIndices.Length+points.Length; i++)
-			sharedIndex[i] = -1;	// add the new vertex to it's own sharedIndex
-
-		// Triangulate the face with the new point appended
-		List<int> tris;
-
-		if(!pb_Triangulation.SortAndTriangulate(plane, out tris))
+		for(int i = 0; i < wound.Count; i++)
 		{
-			newFace = null;
-			return false;
-		}
-		
-		// Check to make sure the triangulated face is facing the same direction, and flip if not
-		Vector3 del = Vector3.Cross( verts[tris[2]] - verts[tris[0]], verts[tris[1]]-verts[tris[0]]).normalized;
+			n_vertices.Add(vertices[wound[i].x]);
+			n_shared.Add(lookup[wound[i].x]);
 
-		if(Vector3.Dot(nrm, del) > 0)
-			tris.Reverse();
-		
-		// Build the new face
-		pb_Face triangulated_face = new pb_Face(tris.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-
-		/**
-		 * Attempt to figure out where the new UV point(s) should go (if auto uv'ed face)
-		 */
-		if(triangulated_face.manualUV)
-		{
-			for(int n = distinctIndices.Length; n < uvs.Length; n++)
+			if(lookupUV != null)
 			{
-				// these are the two vertices that are split by the new vertex
-				int[] adjacent_vertex = System.Array.FindAll(triangulated_face.edges, x => x.Contains(n)).Select(x => x.x != n ? x.x : x.y).ToArray();
+				int uv;
 
-				if(adjacent_vertex.Length == 2)
-				{
-					uvs[n] = (uvs[adjacent_vertex[0]] + uvs[adjacent_vertex[1]])/2f;
-				}
+				if(lookupUV.TryGetValue(wound[i].x, out uv))
+					n_sharedUV.Add(uv);
 				else
-				{
-					Debug.LogWarning("Failed to find appropriate UV coordinate for new vertex point.  Setting face to AutoUV.");
-					triangulated_face.manualUV = false;
-				}
+					n_sharedUV.Add(-1);
 			}
 		}
 
-		// Compose new face
-		newFace = pb.AppendFace(verts, cols, uvs, triangulated_face, sharedIndex);
+		List<int> triangles;
 
-		// And delete the old
-		pb.DeleteFace(face);	
+		try
+		{
+			pb_Triangulation.TriangulateVertices(n_vertices, out triangles, false);
+		}
+		catch
+		{
+			Debug.Log("Failed triangulating face after appending vertices.");
+			newFace = null;
+			return false;
+		}
+
+		pb_FaceRebuildData data = new pb_FaceRebuildData();
+
+		data.face = new pb_Face(triangles.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+		data.vertices 			= n_vertices;
+		data.sharedIndices 		= n_shared;
+		data.sharedIndicesUV 	= n_sharedUV;
+
+		pb_FaceRebuildData.Apply(	new List<pb_FaceRebuildData>() { data },
+									vertices,
+									faces,
+									lookup,
+									lookupUV);
+
+		newFace = data.face;
+
+		pb.SetVertices(vertices);
+		pb.SetFaces(faces.ToArray());
+		pb.SetSharedIndices(lookup);
+		pb.SetSharedIndicesUV(lookupUV);
+
+		// check old normal and make sure this new face is pointing the same direction
+		Vector3 oldNrm = pb_Math.Normal(pb, face);
+		Vector3 newNrm = pb_Math.Normal(pb, newFace);
+
+		if( Vector3.Dot(oldNrm, newNrm) < 0 )
+			newFace.ReverseIndices();
+
+		pb.DeleteFace(face);
 
 		return true;
 	}
