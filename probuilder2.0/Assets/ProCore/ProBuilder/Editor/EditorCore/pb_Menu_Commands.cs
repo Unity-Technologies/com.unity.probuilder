@@ -1829,7 +1829,7 @@ namespace ProBuilder2.EditorCommon
 		 * Connects all currently selected edges.
 		 * ProBuilder only.
 		 */
-		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection)
+		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection, bool useOld = false)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
@@ -1841,16 +1841,20 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] edges;
-				if(pb.ConnectEdges(pb.SelectedEdges, out edges))
+				pb.ToMesh();
+				
+				if(useOld ? pb.ConnectEdges(pb.SelectedEdges, out edges) : pb.Connect(pb.SelectedEdges, out edges))
 				{
 					pb.SetSelectedEdges(edges);
 
-					pb.ToMesh();
-					pb.Refresh();
-					pb.Optimize();
+					if(useOld)
+						pb.ToMesh();
 
 					success++;
 				}
+				
+				pb.Refresh();
+				pb.Optimize();
 			}
 
 			if(success > 0)

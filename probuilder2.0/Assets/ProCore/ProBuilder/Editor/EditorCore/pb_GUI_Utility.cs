@@ -158,6 +158,7 @@ namespace ProBuilder2.Interface
 		}
 
 		static GUIContent slider_guicontent = new GUIContent("", "");
+		
 		public static float FreeSlider(string content, float value, float min, float max)
 		{
 			slider_guicontent.text = content;
@@ -277,5 +278,4 @@ namespace ProBuilder2.Interface
 				return value;
 		}
 	}
-
 }

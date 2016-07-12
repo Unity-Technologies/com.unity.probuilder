@@ -29,6 +29,8 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
 
+			Debug.Log("Sort and Triangulate Vertices");
+
 			if(!Triangulate(sorted, out indices, convex))
 				return false;
 
@@ -54,8 +56,9 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < vertices.Count; ++i)
 				facePoints[i] = vertices[i].position;
 
-			Vector3 normal = pb_Math.FindBestPlane(facePoints).normal;
+			Vector3 normal = pb_Projection.FindBestPlane(facePoints).normal;
 
+			// Vector2[] points2d = pb_Projection.SphericalProject(facePoints);
 			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 
 			if(unordered)

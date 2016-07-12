@@ -199,7 +199,7 @@ public static class pbUVOps
 	/**
 	 * Projects UVs for each face using the closest normal on a box.
 	 */
-	public  static void ProjectFacesBox(pb_Object pb, pb_Face[] faces)
+	public static void ProjectFacesBox(pb_Object pb, pb_Face[] faces)
 	{
 		Vector2[] uv = pb.uv;
 
@@ -221,6 +221,7 @@ public static class pbUVOps
 
 			// clean up UV stuff - no shared UV indices and remove element group
 			faces[i].elementGroup = -1;
+			faces[i].manualUV = true;
 		}
 
 		foreach(KeyValuePair<ProjectionAxis, List<pb_Face>> kvp in sorted)
@@ -237,50 +238,32 @@ public static class pbUVOps
 
 		/* and set the msh uv array using the new coordintaes */
 		pb.SetUV(uv);
-		
-		pb.ToMesh();
-		pb.Refresh();
 	}
 
-	public static void UnwrapSpherical(pb_Object pb, int[] indices)
+	/**
+	 * Projects UVs for each face using the closest normal on a box.
+	 */
+	public  static void ProjectFacesSphere(pb_Object pb, int[] indices)
 	{
-		Vector2[] uv = pb.uv;
-		Vector3[] v = pb.vertices;
-		Vector3 cen = pb.msh.bounds.center;
-		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
-
-		for(int i = 0; i < indices.Length; i++)
+		foreach(pb_Face f in pb.faces)
 		{
-			Vector3 p = (v[i] - cen).normalized;
-			uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
-			uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
-			uv[i] *= radius;
+			if(pbUtil.ContainsMatch<int>(f.distinctIndices, indices))
+			{
+				f.elementGroup = -1;
+				f.manualUV = true;
+			}
 		}
 
 		SplitUVs(pb, indices);
-		pb.SetUV(uv);
-	}
 
-	public static void UnwrapSphericalPB(pb_Object pb, int[] indices)
-	{
+		Vector2[] projected = pb_Projection.SphericalProject(pb.vertices, indices);
+
 		Vector2[] uv = pb.uv;
-		Vector3[] v = pb.vertices;
-		Vector3 cen = pb.msh.bounds.center;
-		float radius = Vector3.Distance(pb.msh.bounds.extents, cen);
 
 		for(int i = 0; i < indices.Length; i++)
-		{
-			Vector3 p = (v[i] - cen).normalized;
-			
-			uv[i].y = Mathf.Acos(p.z/radius) / Mathf.PI;
+			uv[indices[i]] = projected[i];
 
-			if (p.y >= 0)
-				uv[i].x = Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y)))) / (Mathf.PI * 2f);
-			else
-				uv[i].x = (Mathf.PI + Mathf.Acos(p.x/(radius * Mathf.Sin(Mathf.PI*(uv[i].y))))) / (Mathf.PI * 2f);
-		}
-
-		SplitUVs(pb, indices);
+		/* and set the msh uv array using the new coordintaes */
 		pb.SetUV(uv);
 	}
 #endregion

@@ -423,10 +423,10 @@ namespace ProBuilder2.EditorCommon
 			if(triInfo)
 				DrawTriangleInfo(pb);
 
+			Handles.EndGUI();
+
 			if(faceInfo)
 				DrawFaceInfo(pb);
-
-			Handles.EndGUI();
 		}
 
 		void DrawTriangleInfo(pb_Object pb)
@@ -515,7 +515,7 @@ namespace ProBuilder2.EditorCommon
 				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
-				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
+				Vector3 normal = pb.transform.TransformDirection( pb_Math.Normal(pb, f) );
 				
 				StringBuilder sb = new StringBuilder();
 
@@ -576,9 +576,17 @@ namespace ProBuilder2.EditorCommon
 					sb.Append("Texture: ");
 					sb.Append(f.textureGroup.ToString());
 				}
-				
+					
+				Vector3 labelPos = point + (normal.normalized + cam.transform.up.normalized) * .2f;
 
+				Handles.DrawLine(point, labelPos);
+
+				Vector2 cen = HandleUtility.WorldToGUIPoint(labelPos);
+				cen.y -= 5f;
+
+				Handles.BeginGUI();
 				DrawSceneLabel(sb.ToString(), cen);
+				Handles.EndGUI();
 			}
 		}
 

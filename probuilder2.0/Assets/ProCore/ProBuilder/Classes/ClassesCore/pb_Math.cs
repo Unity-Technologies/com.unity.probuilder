@@ -79,50 +79,6 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Find a plane that best fits a set of 3d points.
-		 *	
-		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
-		 */
-		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indices = null)
-		{
-			float 	xx = 0f, xy = 0f, xz = 0f,
-					yy = 0f, yz = 0f, zz = 0f;
-
-			bool ind = indices != null && indices.Count > 0;
-			int len = ind ? indices.Count : points.Count;
-			Vector3 c = pb_Math.Average(points, indices);
-
-			for(int i = 0; i < len; i++)
-			{
-				Vector3 r = points[ ind ? indices[i] : i ] - c;
-
-				xx += r.x * r.x;
-				xy += r.x * r.y;
-				xz += r.x * r.z;
-				yy += r.y * r.y;
-				yz += r.y * r.z;
-				zz += r.z * r.z;
-			}
-
-			float det_x = yy * zz - yz * yz;
-			float det_y = xx * zz - xz * xz;
-			float det_z = xx * yy - xy * xy;
-
-			Vector3 n;
-
-			if(det_x > det_y && det_x > det_z)
-				n = new Vector3(1f, (xz*yz - xy*zz) / det_x, (xy*yz - xz*yy) / det_x);
-			else if(det_y > det_z)
-				n = new Vector3((yz*xz - xy*zz) / det_y, 1f, (xy*xz - yz*xx) / det_y);
-			else
-				n = new Vector3((yz*xy - xz*yy) / det_z, (xz*xy - yz*xx) / det_z, 1f);
-
-			n.Normalize();
-
-			return new Plane(n, c);
-		}
-
-		/**
 		 * Returns a new point by rotating the Vector2 around an origin point.
 		 * @param v this - Vector2 original point.
 		 * @param origin The origin point to use as a pivot point.
@@ -451,7 +407,7 @@ namespace ProBuilder2.Common
 
 			Vector3[] _vertices = pb.vertices;
 
-			// if the face is just a quad, use the normal
+			// if the face is just a quad, use the normal.
 			// otherwise it's not safe to assume that the face
 			// has even generally uniform normals
 			if(face.indices.Length < 7)
@@ -459,7 +415,7 @@ namespace ProBuilder2.Common
 										_vertices[face.indices[1]],
 										_vertices[face.indices[2]] ); 
 			else
-				nrm = pb_Math.FindBestPlane(_vertices, face.distinctIndices).normal;
+				nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
 
 			return nrm;
 		}

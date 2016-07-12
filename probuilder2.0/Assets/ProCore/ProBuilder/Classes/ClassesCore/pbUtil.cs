@@ -350,7 +350,8 @@ namespace ProBuilder2.Common
 	}
 
 	/**
-	 * True if any value is present in both arrays.
+	 * True if any value is present in both arrays, setting index_a and index_b to the index in the
+	 * array of each match.
 	 */
 	public static bool ContainsMatch<T>(this T[] a, T[] b, out int index_a, out int index_b)
 	{

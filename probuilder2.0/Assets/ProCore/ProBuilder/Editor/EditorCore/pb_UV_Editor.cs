@@ -2730,6 +2730,7 @@ public class pb_UV_Editor : EditorWindow
 	void DrawManualModeUI(int width)
 	{
 		GUI.enabled = selectedFaceCount > 0;
+		
 		if(GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
 			Menu_SetAutoUV();
 
@@ -2746,16 +2747,18 @@ public class pb_UV_Editor : EditorWindow
 
 			if(GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 				Menu_BoxProject();
-		GUILayout.EndHorizontal();
 
+		GUILayout.EndHorizontal();
+		
 		GUILayout.BeginHorizontal();
 
-		// GUI.enabled = selectedUVCount > 0;
-		// 	if(GUILayout.Button("Spherical", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-		// 		Menu_SphericalProject();
+			GUI.enabled = selectedUVCount > 0;		
+			if(GUILayout.Button("Sphere", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
+				Menu_SphericalProject();
+			GUI.enabled = true;
 
-			// if(GUILayout.Button("Box", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
-				// Menu_BoxProject();
+			GUILayout.FlexibleSpace();
+			
 		GUILayout.EndHorizontal();
 
 		/**
@@ -3083,12 +3086,11 @@ public class pb_UV_Editor : EditorWindow
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				pbUVOps.ProjectFacesBox(selection[i], selection[i].SelectedFaces);
-				
-				foreach(int f in selection[i].SelectedFaceIndices)
-					selection[i].faces[f].manualUV = true;
 
-				p ++;
+				p++;
 
+				selection[i].ToMesh();
+				selection[i].Refresh();
 				selection[i].Optimize();
 			}
 		}
@@ -3109,26 +3111,33 @@ public class pb_UV_Editor : EditorWindow
 		needsRepaint = true;
 	}
 
+	/**
+	 * Spherically project all selected indices in selection.
+	 */
 	public void Menu_SphericalProject()
 	{
-		pbUndo.RecordObjects(selection, "Spherical Project UVs");
-		int count = 0;
+		int p = 0;
+		pbUndo.RegisterCompleteObjectUndo(selection, "Spherical Project UVs");
 
-		foreach(pb_Object pb in selection)
+		for(int i = 0; i < selection.Length; i++)
 		{
-			if(pb.SelectedTriangleCount > 1)
+			if(selection[i].SelectedTriangleCount > 0)
 			{
-				count += pb.SelectedTriangleCount;
+				pbUVOps.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles);
+				
+				p++;
 
-				pb.ToMesh();
-				pbUVOps.UnwrapSpherical(pb, pb.SelectedTriangles.Distinct().ToArray());
-				pb.Refresh();
-				pb.Optimize();
+				selection[i].ToMesh();
+				selection[i].Refresh();
+				selection[i].Optimize();
 			}
 		}
 
-		if(count > 0)
+		SetSelectedUVsWithSceneView();
+
+		if(p > 0)
 		{
+			CenterUVsAtPoint( handlePosition );
 			ResetUserPivot();
 		}
 

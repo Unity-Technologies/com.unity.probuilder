@@ -14,9 +14,9 @@ namespace ProBuilder2.MeshOperations
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
 
 			Dictionary<pb_Face, List<int>> ignore = new Dictionary<pb_Face, List<int>>();

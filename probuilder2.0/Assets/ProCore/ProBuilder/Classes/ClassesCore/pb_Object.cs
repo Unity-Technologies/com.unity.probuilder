@@ -893,7 +893,7 @@ public class pb_Object : MonoBehaviour
 
 			if(kvp.Value.Count > 1)
 			{
-				nrm = pb_Math.FindBestPlane(_vertices, kvp.Value.SelectMany(x => x.distinctIndices).ToList()).normal;
+				nrm = pb_Projection.FindBestPlane(_vertices, kvp.Value.SelectMany(x => x.distinctIndices).ToList()).normal;
 			}
 			else
 			{
@@ -907,7 +907,7 @@ public class pb_Object : MonoBehaviour
 											_vertices[face.indices[1]],
 											_vertices[face.indices[2]] ); 
 				else
-					nrm = pb_Math.FindBestPlane(_vertices, face.distinctIndices).normal;
+					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
 			}
 
 			if(kvp.Value[0].uv.useWorldSpace)
