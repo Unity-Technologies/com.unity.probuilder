@@ -24,24 +24,6 @@ namespace ProBuilder2.Common
 			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
-		public static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
-		{
-			int len = indices == null ? vertices.Count : indices.Count;
-			Vector2[] uv = new Vector2[len];
-			Vector3 cen = pb_Math.Average(vertices, indices);
-
-			for(int i = 0; i < len; i++)
-			{
-				int indx = indices == null ? i : indices[i];
-				Vector3 p = (vertices[indx] - cen);
-				p.Normalize();
-				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
-				uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
-			}
-
-			return uv;
-		}
-
 		public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal, ProjectionAxis projectionAxis, IList<int> indices = null)
 		{
 			int len = indices == null || indices.Count < 1 ? verts.Count : indices.Count;
@@ -106,6 +88,24 @@ namespace ProBuilder2.Common
 			ProjectionAxis axis = VectorToProjectionAxis(normal);
 
 			return PlanarProject(v, normal, axis, null);
+		}
+
+		public static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
+		{
+			int len = indices == null ? vertices.Count : indices.Count;
+			Vector2[] uv = new Vector2[len];
+			Vector3 cen = pb_Math.Average(vertices, indices);
+
+			for(int i = 0; i < len; i++)
+			{
+				int indx = indices == null ? i : indices[i];
+				Vector3 p = (vertices[indx] - cen);
+				p.Normalize();
+				uv[i].x = .5f + (Mathf.Atan2(p.z, p.x) / (2f * Mathf.PI));
+				uv[i].y = .5f - (Mathf.Asin(p.y) / Mathf.PI);
+			}
+
+			return uv;
 		}
 
 		/**

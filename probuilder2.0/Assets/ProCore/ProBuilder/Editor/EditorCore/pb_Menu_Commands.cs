@@ -1637,24 +1637,27 @@ namespace ProBuilder2.EditorCommon
 				{
 					List<int> holeIndices;
 
+					pb_Face face;
+
 					if(wholePath)
 					{
 						// if selecting whole path and in edge mode, make sure the path contains 
 						// at least one complete edge from the selection.
 						if(	editor.selectionMode == SelectMode.Edge && 
-							!hole.Any(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)))
+							!hole.Any(x => common.Contains(x.edge.common.x) &&
+							common.Contains(x.edge.common.y)))
 							continue;
 
 						holeIndices = hole.Select(x => x.edge.local.x).ToList();
+						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, false, out face);
 					}
 					else
 					{
 						holeIndices = hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
+						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 					}
 
-					pb_Face face;
 
-					res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 
 					if(res)
 					{

@@ -42,14 +42,16 @@ namespace ProBuilder2.MeshOperations
 			////// DEBUG }
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+			List<Vector3> positions = vertices.Select(x => x.position).ToList();
 
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> splits in affected)
 			{
 				pb_Face f = splits.Key;
 				List<pb_WingedEdge> e = splits.Value;
+				int[] indices = f.distinctIndices;
 
-				List<Vector3> positions = vertices.Select(x => x.position).ToList();
-				Vector3 normal = pb_Projection.FindBestPlane(positions, f.distinctIndices).normal;
+				Vector3 normal = pb_Projection.FindBestPlane(positions, indices).normal;
+				Vector2[] uv = pb_Projection.PlanarProject(positions, normal, pb_Projection.VectorToProjectionAxis(normal), indices);
 
 				if(e.Count < 3)
 				{
