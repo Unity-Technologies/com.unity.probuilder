@@ -81,7 +81,6 @@ Materials can also be applied to individual faces of a ProBuilder mesh, while in
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 
-
 *More Info: [**Applying Materials**](@todo)*
 
 ---
