@@ -1,8 +1,20 @@
+@todo: smoothing groups text
+@todo: mirror tool image
+
+# Video: Tool Panels
+
+[![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels")
+
+These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), [Smoothing Groups](@todo), and [Mirroring](@todo). 
+Each panel can be docked, kept floating, or simply closed immediately after use.
+
+---
+
 <a id="shape-tool"></a>
-# New Shape Tool
+## Shape Tool
 
 <div class="info-box warning">
-Jump to Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Shape Tool</a>
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Shape Tool</a>
 </div> 
 
 **Toolbar Icon:** ![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon") ~ ![Shape Tool Icon](Panel_Shapes_Light.png "Create New Shape Icon")
@@ -27,16 +39,18 @@ Each shape has specific properties which can be customized before creation- for 
 
 ---
 
-# Material Tools
+## Material Tools
 
 <div class="info-box warning">
-Jump to Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Material Tools</a>
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Material Tools</a>
+<br>
+Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 </div> 
 
 **Toolbar Icon:** ![Material Tools Icon](Panel_Materials.png "Material Tools Icon") ~ ![Material Tools Icon](Panel_Materials_Light.png "Material Tools Icon")
  ~ ![Material Tools Text Button](ExampleImage_MaterialTools_TextButton.jpg "Material Tools Text Button")
 
-**Purpose:** Tools for getting materials from a face, setting materials with a single click, and saving frequently used materials for quick application.
+**Purpose:** Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
 
 ![Material Tools](../images/MaterialTools_WithExample.png "Material Tools")
 
@@ -55,22 +69,34 @@ You may also hold `CTRL SHIFT` while clicking on a face, to apply the Quick Mate
 * **(F)** Click to apply a material to the selected faces **or** objects
 * **(G)** Create additional Material Palette slots
 
-You may also press `ALT (number key)` to apply materials from the Palette.
+You can also press `ALT (number key)` to apply materials from the Palette.
 
 ---
 
-# UV Editor
+## Texturing and UVs
+
+<div class="info-box warning">
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Texturing and UVs</a>
+</div> 
 
 **Toolbar Icon:** ![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon") ~ ![UV Editor Icon](Panel_UVeditor_Light.png "UV Editor Icon")
  ~ ![UV Editor Text Button](Panel_UVEditor_TextButton.png "UV Editor Text Button")
  
-**Purpose:** Opens the UV Editor Panel for both simple Texturing control and more complex UV Editing.
+**Purpose:** Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
 
-![UV Editor Example Image](ExampleImage_UVEditor.png "UV Editor Example Image")
+![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 
-See the "Texturing and UV Editing" section for full details. 
+The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual UV Editing and Unwrapping](@todo) system.
 
-# Vertex Color Tools
+> *More Info: [**Texturing and UVs**](@todo)*
+
+---
+
+## Vertex Color Tools
+
+<div class="info-box warning">
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Vertex Color Tools</a>
+</div>
 
 **Toolbar Icon:** ![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon")
  ~ ![Vertex Color Tools Text Button](Panel_VertexColors_TextButton.png "UV Editor Text Button")
@@ -81,7 +107,13 @@ See the "Texturing and UV Editing" section for full details.
 
 See the "Vertex Coloring" section for full details. 
 
-# Smoothing Groups
+---
+
+## Smoothing Groups
+
+<div class="info-box warning">
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Smoothing Groups</a>
+</div>
 
 **Toolbar Icon:** ![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon") ~ ![Smoothing Groups Icon](Panel_Smoothing_Light.png "Smoothing Groups Icon")
  ~ ![Smoothign Groups Text Button](Panel_Smoothing_TextButton.png "Smoothing Groups Text Button")
@@ -90,7 +122,13 @@ See the "Vertex Coloring" section for full details.
 
 ![Smoothing Groups Example](ExampleImage_SmoothingGroups_Torus.png "Smoothing Groups Example")
 
-# Mirror Tool
+---
+
+## Mirror Tool
+
+<div class="info-box warning">
+Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Mirror Tool</a>
+</div>
 
 **Toolbar Icon:** ![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon")
  ~ ![Mirror Tool Text Button](Object_Mirror_TextButton.png "Mirror Tool Text Button")

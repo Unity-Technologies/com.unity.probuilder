@@ -1,8 +1,6 @@
-# The ProBuilder Toolbar
+# Video: Toolbar Overview
 
-<div class="info-box warning">
-Watch Full Video: <a href="@todo make vid and link to it here">Using the ProBuilder Toolbar</a> 
-</div>
+[![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
 
 ProBuilder is controlled almost entirely via the **Main Toolbar**, which contains all commonly used functions.
 
