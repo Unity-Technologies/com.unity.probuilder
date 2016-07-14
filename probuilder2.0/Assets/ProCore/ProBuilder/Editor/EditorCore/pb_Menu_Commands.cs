@@ -1734,6 +1734,7 @@ namespace ProBuilder2.EditorCommon
 
 			int success = 0;
 
+			profiler.Begin("Subdivide");
 			foreach(pb_Object pb in selection)
 			{
 				if( pbSubdivideSplit.Subdivide(pb) )
@@ -1743,6 +1744,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 				pb.Optimize();
 			}
+			profiler.End();
 
 			if(editor)
 				editor.UpdateSelection(true);
@@ -1846,11 +1848,14 @@ namespace ProBuilder2.EditorCommon
 				pb_Edge[] edges;
 				pb.ToMesh();
 				
+				profiler.Begin("ConnectEdges");
+
 				if(pb.ConnectEdges(pb.SelectedEdges, out edges))
 				{
 					pb.SetSelectedEdges(edges);
 					success++;
 				}
+				profiler.End();
 				
 				pb.ToMesh();
 				pb.Refresh();

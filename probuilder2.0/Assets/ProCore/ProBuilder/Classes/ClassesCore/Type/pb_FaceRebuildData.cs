@@ -19,12 +19,26 @@ namespace ProBuilder2.Common
 			return string.Format("{0}\n{1}", vertices.ToString(", "), sharedIndices.ToString(", "));
 		}
 
+		public static void Apply(
+			IList<pb_FaceRebuildData> newFaces,
+			pb_Object pb,
+			List<pb_Vertex> vertices = null,
+			List<pb_Face> faces = null,
+			Dictionary<int, int> lookup = null,
+			Dictionary<int, int> lookupUV = null)
+		{
+			List<pb_Face> _faces = faces == null ? new List<pb_Face>(pb.faces) : faces;
+			pb_FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
+			pb.SetVertices(vertices);
+			pb.SetFaces(_faces.ToArray());		
+		}
+
 		/**
 		 *	Shift face rebuild data to appropriate positions and update the vertex, face, and
 		 *	shared indices arrays.
 		 */
 		public static void Apply(
-			IList<pb_FaceRebuildData> new_faces,
+			IList<pb_FaceRebuildData> newFaces,
 			List<pb_Vertex> vertices,
 			List<pb_Face> faces,
 			Dictionary<int, int> sharedIndices,
@@ -32,9 +46,9 @@ namespace ProBuilder2.Common
 		{
 			int index = vertices.Count;
 
-			for(int i = 0; i < new_faces.Count; i++)
+			for(int i = 0; i < newFaces.Count; i++)
 			{
-				pb_FaceRebuildData rd = new_faces[i];
+				pb_FaceRebuildData rd = newFaces[i];
 				pb_Face face = rd.face;
 				int faceVertexCount = face.distinctIndices.Length;
 				bool hasSharedIndices = sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;

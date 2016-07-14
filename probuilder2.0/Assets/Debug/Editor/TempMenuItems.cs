@@ -17,15 +17,20 @@ public class TempMenuItems : EditorWindow
 	static void MenuInit()
 	{
 
-		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		// pbUndo.RecordSelection(selection, "Bevel Edges");
+		pbUndo.RecordSelection(selection, "connect edges new");
 
-		// foreach(pb_Object pb in selection)
-		// {
-		// }
+		foreach(pb_Object pb in selection)
+		{
+			pb_Edge[] results = null;
+			pb.ToMesh();
+			pb_EditorUtility.ShowNotification( pb_ConnectEdges.Connect(pb, pb.SelectedEdges, out results).notification );
+			pb.Refresh();
+			pb.Optimize();
+		}
 
-		// pb_Editor.Refresh();
+		pb_Editor.Refresh();
 	}
 
 	static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)

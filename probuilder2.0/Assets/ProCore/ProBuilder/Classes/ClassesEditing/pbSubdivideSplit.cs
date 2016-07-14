@@ -31,7 +31,9 @@ public static class pbSubdivideSplit
 
 			pb_Face[] faces;
 
+			profiler.Begin("ConnectEdges");
 			ConnectEdges(pb, ec, out faces);
+			profiler.End();
 		}
 		catch(System.Exception e)
 		{
@@ -45,6 +47,7 @@ public static class pbSubdivideSplit
 	public static bool SubdivideFace(this pb_Object pb, pb_Face[] faces, out pb_Face[] splitFaces)
 	{
 		List<pb_EdgeConnection> split = new List<pb_EdgeConnection>();
+
 		foreach(pb_Face face in faces)
 			split.Add(new pb_EdgeConnection(face, new List<pb_Edge>(face.edges)));
 
@@ -147,9 +150,12 @@ public static class pbSubdivideSplit
 	private static bool ConnectEdges(this pb_Object pb, List<pb_EdgeConnection> pb_edgeConnectionsUnfiltered, out pb_Face[] faces)
 	{
 		List<pb_EdgeConnection> pb_edgeConnections = new List<pb_EdgeConnection>();
+
+		profiler.Begin("is valid");
 		foreach(pb_EdgeConnection ec in pb_edgeConnectionsUnfiltered)
 			if(ec.isValid)
 				pb_edgeConnections.Add(ec);
+		profiler.End();
 
 		int len = pb_edgeConnections.Count;
 
@@ -178,6 +184,7 @@ public static class pbSubdivideSplit
 		DanglingVertex?[][] danglingVertices = new DanglingVertex?[len][];	
 
 		// profiler.BeginSample("foreach(edge connection)");
+		profiler.Begin("do primary splits");
 		int i = 0;
 		foreach(pb_EdgeConnection fc in pb_edgeConnections)
 		{	
@@ -243,10 +250,10 @@ public static class pbSubdivideSplit
 
 			i++;
 		}
-		// profiler.EndSample();
+		profiler.End();
 
 
-		// profiler.BeginSample("Retrianguate");
+		profiler.Begin("retrianguate adjacent");
 		/**
 		 *	Figure out which faces need to be re-triangulated
 		 */
@@ -290,9 +297,9 @@ public static class pbSubdivideSplit
 				}
 			}
 		}
-		// profiler.EndSample();
+		profiler.End();
 
-		// profiler.BeginSample("Append vertices to faces");
+		profiler.Begin("append vertices to faces");
 		pb_Face[] appendedFaces = pb.AppendFaces(all_splitVertices.ToArray(), all_splitColors.ToArray(), all_splitUVs.ToArray(), all_splitFaces.ToArray(), all_splitSharedIndices.ToArray());
 		
 		List<pb_Face> triangulatedFaces = new List<pb_Face>();
@@ -305,9 +312,9 @@ public static class pbSubdivideSplit
 			else
 				Debug.LogError("Mesh re-triangulation failed.");//  Specifically, AppendVerticesToFace(" + add.Key + " : " + add.Value.ToFormattedString(", "));
 		}
-		// profiler.EndSample();
+		profiler.End();
 
-		// profiler.BeginSample("rebuild mesh");
+		profiler.Begin("rebuild mesh");
 
 		// Re-triangulate any faces left with dangling verts at edges
 		// Weld verts, including those added in re-triangu
@@ -321,20 +328,21 @@ public static class pbSubdivideSplit
 		// safe to assume that we probably didn't delete anything :/
 		int[] welds;
 
-		// profiler.BeginSample("weld vertices");
+		profiler.Begin("weld vertices");
 		pb.WeldVertices(allModifiedTris, Mathf.Epsilon, out welds);
+		profiler.End();
 
 		// profiler.EndSample();
 		// pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
 
 		// Now that we're done screwing with geo, delete all the old faces (that were successfully split)		
 		// profiler.BeginSample("delete faces");
+		profiler.Begin("delete faces");
 		pb.DeleteFaces( successfullySplitFaces.ToArray() );
+		profiler.End();
+
 		faces = appendedFaces;
-		// profiler.EndSample();
-		// profiler.EndSample();
-		// profiler.EndSample();
-		// Debug.Log(profiler.ToString());
+		profiler.End();
 
 		return true;
 	}
@@ -569,12 +577,12 @@ public static class pbSubdivideSplit
 
 		// First order of business is to translate the face to 2D plane.
 		Vector3[] verts = pb.vertices.ValuesWithIndices(face.distinctIndices);
-		Color[] colors = pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
-		Vector2[] uvs = pb.uv.ValuesWithIndices(face.distinctIndices);
+		Color[] colors 	= pbUtil.ValuesWithIndices(pb.colors, face.distinctIndices);
+		Vector2[] uvs 	= pb.uv.ValuesWithIndices(face.distinctIndices);
 
 		Vector3 projectionNormal = pb_Math.Normal(pb, face);
 		Vector2[] plane = pb_Projection.PlanarProject(verts, projectionNormal);
-
+		
 		// Split points
  		Vector3 splitPointA_3d = splitSelection.pointA;
  		Vector3 splitPointB_3d = splitSelection.pointB;
@@ -604,6 +612,7 @@ public static class pbSubdivideSplit
 		List<int> nedgeB = new List<int>();
 
 		// Sort points into two separate polygons
+		profiler.Begin("sort points");
 		for(int i = 0; i < indices.Length; i++)
 		{
 			// is this point (a) a vertex to split or (b) on the negative or positive side of this split line
@@ -648,6 +657,7 @@ public static class pbSubdivideSplit
 				}
 			}
 		}
+		profiler.End();
 
 		if(!splitSelection.aIsVertex)
 		{
@@ -694,6 +704,10 @@ public static class pbSubdivideSplit
 			return false;
 		}
 
+		profiler.Begin("triangulate points");
+
+		profiler.Begin("SortAndTriangulate");
+
 		// triangulate new polygons
 		List<int> t_polyA;
 		List<int> t_polyB;
@@ -703,8 +717,11 @@ public static class pbSubdivideSplit
 			
 		if(!pb_Triangulation.SortAndTriangulate(v_polyB_2d, out t_polyB) || t_polyB.Count < 3)
 			return false;
+		profiler.End();
 
 		// figure out the face normals for the new faces and check to make sure they match the original face
+		
+		profiler.Begin("test normal");
 		Vector2[] pln = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(face.indices), projectionNormal );
 
 		Vector3 nrm = Vector3.Cross( pln[2] - pln[0], pln[1] - pln[0]);
@@ -713,6 +730,7 @@ public static class pbSubdivideSplit
 
 		if(Vector3.Dot(nrm, nrmA) < 0) t_polyA.Reverse();
 		if(Vector3.Dot(nrm, nrmB) < 0) t_polyB.Reverse();
+		profiler.End();
 
 		// triangles, material, pb_UV, smoothing group, shared index
 		pb_Face faceA = new pb_Face( t_polyA.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, face.elementGroup, face.manualUV);
@@ -723,6 +741,7 @@ public static class pbSubdivideSplit
 		splitColors = new Color[2][] { c_polyA.ToArray(), c_polyB.ToArray() };
 		splitUVs = new Vector2[2][] { u_polyA.ToArray(), u_polyB.ToArray() };
 		splitSharedIndices = new int[2][] { i_polyA.ToArray(), i_polyB.ToArray() };
+		profiler.End();
 
 		return true;
 	}

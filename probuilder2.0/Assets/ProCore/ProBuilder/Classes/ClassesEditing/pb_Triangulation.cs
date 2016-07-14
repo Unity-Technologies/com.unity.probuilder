@@ -22,18 +22,24 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
+			profiler.Begin("sort");
 			IList<Vector2> sorted = pb_Projection.Sort(points, SortMethod.CounterClockwise);
+			profiler.End();
 
 			Dictionary<int, int> map = new Dictionary<int, int>();
 
+			profiler.Begin("map");
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
+			profiler.End();
 
+			profiler.Begin("triangulate");
 			if(!Triangulate(sorted, out indices, convex))
 				return false;
 
 			for(int i = 0; i < indices.Count; i++)
 				indices[i] = map[indices[i]];
+			profiler.End();
 
 			return true;
 		}
@@ -70,6 +76,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
+			profiler.Begin("alloc");
 			indices = new List<int>();
 
 			int vertexCount = points.Count;
@@ -89,8 +96,13 @@ namespace ProBuilder2.MeshOperations
 			b.Jettison = false;		// don't jettison unused vertices
 
 			TMesh tm = new TMesh(b);
+			profiler.End();
+			
+			profiler.Begin("do");
 			tm.Triangulate(input);
+			profiler.End();
 
+			profiler.Begin("rest");
 			if(tm.Vertices.Count != points.Count)
 			{
 				Debug.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
@@ -109,6 +121,7 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( t.P1 );
 				indices.Add( t.P0 );
 			}
+			profiler.End();
 
 			return true;
 		}

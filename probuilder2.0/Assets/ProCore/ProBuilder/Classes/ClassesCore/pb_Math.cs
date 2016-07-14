@@ -654,6 +654,17 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
+		public static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)
+		{
+			Vector3 sum = Vector3.zero;
+			float len = indices == null ? v.Count : indices.Count;
+			if( indices == null )
+				for(int i = 0; i < len; i++) sum += selector(v[i]);
+			else
+				for(int i = 0; i < len; i++) sum += selector(v[indices[i]]);
+			return sum/len;
+		}
+
 		public static Vector4 Average(IList<Vector4> v, IList<int> indices = null)
 		{
 			Vector4 sum = Vector4.zero;

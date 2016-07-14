@@ -129,12 +129,10 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			List<pb_Face> faces = new List<pb_Face>(pb.faces);
-			pb_FaceRebuildData.Apply(appendFaces, vertices, faces, null, null);
-			pb.SetVertices(vertices);
-			pb.SetFaces(faces.ToArray());
+			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+
 			pb.DeleteFaces(sorted.Keys);
 			pb.ToMesh();
 
