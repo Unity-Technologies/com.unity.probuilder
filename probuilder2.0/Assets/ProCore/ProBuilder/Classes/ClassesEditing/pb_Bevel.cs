@@ -132,7 +132,6 @@ namespace ProBuilder2.MeshOperations
 			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-
 			pb.DeleteFaces(sorted.Keys);
 			pb.ToMesh();
 

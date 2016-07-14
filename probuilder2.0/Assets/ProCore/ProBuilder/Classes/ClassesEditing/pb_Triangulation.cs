@@ -78,6 +78,8 @@ namespace ProBuilder2.MeshOperations
 		{
 			profiler.Begin("alloc");
 			indices = new List<int>();
+			
+			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
 
 			int vertexCount = points.Count;
 			InputGeometry input = new InputGeometry(vertexCount);
@@ -112,9 +114,7 @@ namespace ProBuilder2.MeshOperations
 			// Ensures vertex indices are kept linear so that triangles match the points array.
 			tm.Renumber(NodeNumbering.Linear);
 
-			IEnumerable<Triangle> triangles = tm.Triangles;
-
-			foreach(Triangle t in triangles)
+			foreach(Triangle t in tm.Triangles)
 			{
 				// Triangle.NET assumes right-handed coordinates; flip tris
 				indices.Add( t.P2 );
@@ -122,6 +122,15 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( t.P0 );
 			}
 			profiler.End();
+
+			// if the re-triangulated first tri doesn't match the winding order of the original
+			// vertices, flip 'em
+			if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
+				points[indices[0]],
+				points[indices[1]],
+				points[indices[2]],
+				}) != originalWinding)
+				indices.Reverse();
 
 			return true;
 		}

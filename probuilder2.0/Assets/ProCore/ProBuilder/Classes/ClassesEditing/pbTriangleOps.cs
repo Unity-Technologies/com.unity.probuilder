@@ -52,7 +52,7 @@ namespace ProBuilder2.MeshOperations
 				sum += ( (b.x - a.x) * (b.y+a.y) );
 			}
 
-			return sum == 0f ? WindingOrder.Unknown : (sum >= 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);
+			return sum == 0f ? WindingOrder.Unknown : (sum > 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);
 		}
 
 		/**

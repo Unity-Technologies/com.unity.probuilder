@@ -56,7 +56,8 @@ namespace ProBuilder2.MeshOperations
 				else
 				if(inserts == 2)
 				{
-					results.AddRange(ConnectEdgesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup, lookupUV));
+					List<pb_FaceRebuildData> res = ConnectEdgesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup, lookupUV);
+					results.AddRange(res);
 				}
 				if(inserts > 2)
 				{
@@ -67,7 +68,7 @@ namespace ProBuilder2.MeshOperations
 			pb_FaceRebuildData.Apply(results, pb, vertices, null, lookup, lookupUV);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-			pb.DeleteFaces(affected.Keys);
+			pb.DeleteFaces(affected.Keys );
 			pb.ToMesh();
 
 			return pb_ActionResult.NoSelection;
@@ -121,7 +122,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
 
 			foreach(List<pb_Vertex> poly in n_vertices)
-				faces.Add( pb_AppendPolygon.FaceWithVertices(poly, false) );
+				faces.Add(pb_AppendPolygon.FaceWithVertices(poly, false));
 
 			return faces;
 		}
@@ -140,7 +141,16 @@ namespace ProBuilder2.MeshOperations
 					n_vertices.Add(pb_Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f));
 			}
 
-			return pb_AppendPolygon.FaceWithVertices(n_vertices, false);
+			pb_FaceRebuildData res = pb_AppendPolygon.FaceWithVertices(n_vertices, false);
+
+			// make sure face is aligned with old
+			Vector3 o = pb_Math.Normal(vertices, face.indices);
+			Vector3 n = pb_Math.Normal(n_vertices, res.face.indices);
+
+			if(Vector3.Dot(o, n) < 0f)
+				res.face.ReverseIndices();
+
+			return res;
 		}
 	}
 }
