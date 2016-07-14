@@ -160,22 +160,30 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 
 #region MEMBERS
 
-	[SerializeField]
-	int[] 	_indices;
-	[SerializeField]
-	int[]	_distinctIndices;
-	[SerializeField]
-	pb_Edge[] _edges;			///< A cache of the calculated #pb_Edge edges for this face.  Call pb_Face::RebuildCaches to update. 
-	[SerializeField]
-	int 	_smoothingGroup;	///< Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
-	[SerializeField]
-	pb_UV 	_uv;				///< If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
-	[SerializeField]
-	Material _mat;				///< What material does this face use.
-	[SerializeField]
-	public bool manualUV;		///< If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
-	[SerializeField]	
-	public int elementGroup;	///< UV Element group.
+	[SerializeField] int[] _indices;
+	[SerializeField] int[] _distinctIndices;
+
+	///< A cache of the calculated #pb_Edge edges for this face.  Call pb_Face::RebuildCaches to update. 
+	[SerializeField] pb_Edge[] _edges;
+
+	///< Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
+	[SerializeField] int _smoothingGroup;
+
+	///< If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
+	[SerializeField] pb_UV _uv;
+
+	///< What material does this face use.
+	[SerializeField] Material _mat;
+
+	///< If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
+	public bool manualUV;
+
+	///< UV Element group.
+	public int elementGroup;
+
+	///< What texture group this face belongs to.
+	public int textureGroup = -1;
+
 #endregion
 
 #region ACCESS
@@ -184,24 +192,17 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : _distinctIndices; } }
 	public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }	// todo -- remove this after a while
 	public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
-	public pb_UV uv { get { return _uv; } }
 	public Material material { get { return _mat; } set { _mat = value; } }
-	public int textureGroup = -1;
+	public pb_UV uv { get { return _uv; } set { _uv = value; } }
 
-	public void SetUV(pb_UV u)
-	{
-		_uv = u;
-	}
+	[System.Obsolete("Use face.material property.")]
+	public void SetMaterial(Material material) { _mat = material; }
 
-	public void SetMaterial(Material m)
-	{
-		_mat = m;
-	}
+	[System.Obsolete("Use face.uv property.")]
+	public void SetUV(pb_UV uvs) { _uv = uvs; }
 
-	public void SetSmoothingGroup(int i)
-	{
-		_smoothingGroup = i;
-	}
+	[System.Obsolete("Use face.smoothingGroup property.")]
+	public void SetSmoothingGroup(int smoothing) { _smoothingGroup = smoothing; }
 #endregion
 
 #region GET

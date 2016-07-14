@@ -261,7 +261,7 @@ namespace ProBuilder2.MeshOperations
 		// Remove smoothing and texture group flags
 		foreach(pb_Face f in faces)
 		{
-			f.SetSmoothingGroup(-1);
+			f.smoothingGroup = -1;
 			f.textureGroup = -1;
 		}
 

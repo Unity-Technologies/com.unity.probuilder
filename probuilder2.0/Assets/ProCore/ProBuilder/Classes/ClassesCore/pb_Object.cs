@@ -736,7 +736,7 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	Returns a new unused texture group id.
 	 */
-	public int UnusedTextureGroup(int i = 1)
+	public int GetUnusedTextureGroup(int i = 1)
 	{
 		while( System.Array.Exists(faces, element => element.textureGroup == i) )
 			i++;
@@ -957,7 +957,7 @@ public class pb_Object : MonoBehaviour
 		GetComponent<MeshRenderer>().sharedMaterials = new Material[1] { mat };
 #else
 		for(int i = 0; i < quad.Length; i++)
-			quad[i].SetMaterial(mat);
+			quad[i].material = mat;
 #endif
 	}
 

@@ -842,8 +842,8 @@ public class pb_UV_Editor : EditorWindow
 			{
 				pbUndo.RecordObject(pb, "Copy UV Settings");
 
-				selectedFace.SetUV( new pb_UV(source.uv) );
-				selectedFace.SetMaterial( source.material );
+				selectedFace.uv = new pb_UV(source.uv);
+				selectedFace.material = source.material;
 				pb_EditorUtility.ShowNotification("Copy UV Settings");
 
 				pb.ToMesh();

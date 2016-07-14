@@ -35,28 +35,46 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			////// DEBUG {
-			foreach(var k in affected)
-			{
-				Debug.Log(k.Key + "\n" + k.Value.Count);
-			}
-			////// DEBUG }
+			// ////// DEBUG {
+			// foreach(var k in affected)
+			// {
+			// 	Debug.Log(k.Key + "\n" + k.Value.Count);
+			// }
+			// ////// DEBUG }
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> results = new List<pb_FaceRebuildData>();
 
+			int newTextureGroupIndex = pb.GetUnusedTextureGroup();
+
+			// do the splits
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> split in affected)
 			{
-				int inserts = split.Value.Count;
+				pb_Face face = split.Key;
+				List<pb_WingedEdge> targetEdges = split.Value;
+
+				int inserts = targetEdges.Count;
 
 				if(inserts == 1)
 				{
-					results.Add( InsertVertices(split.Key, split.Value, vertices) );
+					results.Add( InsertVertices(face, targetEdges, vertices) );
 				}
 				else
 				if(inserts == 2)
 				{
-					List<pb_FaceRebuildData> res = ConnectEdgesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup, lookupUV);
+					List<pb_FaceRebuildData> res = ConnectEdgesInFace(face, targetEdges[0], targetEdges[1], vertices, lookup, lookupUV);
+
+					foreach(pb_FaceRebuildData frd in res)
+					{
+						frd.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+						frd.face.uv 			= new pb_UV(face.uv);
+						frd.face.smoothingGroup = face.smoothingGroup;
+						frd.face.manualUV 		= face.manualUV;
+						frd.face.material 		= face.material;
+					}
+
+					newTextureGroupIndex++;
+
 					results.AddRange(res);
 				}
 				if(inserts > 2)
@@ -142,13 +160,12 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb_FaceRebuildData res = pb_AppendPolygon.FaceWithVertices(n_vertices, false);
-
-			// make sure face is aligned with old
-			Vector3 o = pb_Math.Normal(vertices, face.indices);
-			Vector3 n = pb_Math.Normal(n_vertices, res.face.indices);
-
-			if(Vector3.Dot(o, n) < 0f)
-				res.face.ReverseIndices();
+			
+			res.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+			res.face.uv 			= new pb_UV(face.uv);
+			res.face.smoothingGroup = face.smoothingGroup;
+			res.face.manualUV 		= face.manualUV;
+			res.face.material 		= face.material;
 
 			return res;
 		}

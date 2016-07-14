@@ -235,7 +235,7 @@ public static class pbSubdivideSplit
 
 			if(success[i])
 			{
-				int texGroup = fc.face.textureGroup < 0 ? pb.UnusedTextureGroup(i+1) : fc.face.textureGroup;
+				int texGroup = fc.face.textureGroup < 0 ? pb.GetUnusedTextureGroup(i+1) : fc.face.textureGroup;
 				
 				for(int j = 0; j < splitFaces.Length; j++)
 				{
@@ -449,7 +449,7 @@ public static class pbSubdivideSplit
 
 			if(success[i])
 			{
-				int texGroup = pb.UnusedTextureGroup(i+1);
+				int texGroup = pb.GetUnusedTextureGroup(i+1);
 
 				for(int j = 0; j < splitFaces.Length; j++)
 				{

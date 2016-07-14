@@ -129,7 +129,7 @@ namespace ProBuilder2.Examples
 			// condense the mesh to the smallest set of subMeshes possible based on materials.
 #if !PROTOTYPE
 			foreach(pb_Face f in shell)
-				f.SetMaterial( material );
+				f.material = material;
 #else
 			ico.gameObject.GetComponent<MeshRenderer>().sharedMaterial = material;
 #endif

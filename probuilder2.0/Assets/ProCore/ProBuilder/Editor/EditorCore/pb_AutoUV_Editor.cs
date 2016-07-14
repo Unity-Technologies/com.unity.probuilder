@@ -455,7 +455,7 @@ namespace ProBuilder2.EditorCommon
 				foreach(pb_Face f in faces)
 				{
 					f.textureGroup = tex;
-					f.SetUV( new pb_UV(cuv) );
+					f.uv = new pb_UV(cuv);
 				}
 			}
 
@@ -469,13 +469,13 @@ namespace ProBuilder2.EditorCommon
 
 			pb_UV cont_uv = faces[0].uv;
 
-			int texGroup = pb.UnusedTextureGroup();
+			int texGroup = pb.GetUnusedTextureGroup();
 
 			pbUndo.RecordObject(pb, "Create Texture Group" + textureGroup);
 
 			foreach(pb_Face f in faces)
 			{
-				f.SetUV( new pb_UV(cont_uv) );
+				f.uv = new pb_UV(cont_uv);
 				f.textureGroup = texGroup;
 			}
 		}

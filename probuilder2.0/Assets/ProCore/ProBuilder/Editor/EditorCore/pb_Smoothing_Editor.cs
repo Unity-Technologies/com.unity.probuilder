@@ -162,12 +162,12 @@ public class pb_Smoothing_Editor : EditorWindow
 			if(pb.SelectedFaceCount > 0)
 			{
 				foreach(pb_Face face in pb.SelectedFaces)
-					face.SetSmoothingGroup(sg);
+					face.smoothingGroup = sg;
 			}
 			else
 			{
 				foreach(pb_Face face in pb.faces)
-					face.SetSmoothingGroup(sg);
+					face.smoothingGroup = sg;
 			}
 
 			pb.ToMesh();
@@ -189,7 +189,7 @@ public class pb_Smoothing_Editor : EditorWindow
 		{
 			foreach(pb_Face face in pb.faces)
 			{
-				face.SetSmoothingGroup(0);
+				face.smoothingGroup = -1;
 			}
 			
 			pb.ToMesh();

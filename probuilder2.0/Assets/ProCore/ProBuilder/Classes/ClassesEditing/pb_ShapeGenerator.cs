@@ -1373,8 +1373,10 @@ public class pb_ShapeGenerator
 				int d = (i+1) * ((rows-1) * 2) + (n * 2) + 1;
 
 				faces.Add( new pb_Face(new int[] { a, b, c, b, d, c } ) );
-				faces[fc].SetSmoothingGroup(InSmooth ? 1 : 0);
-				faces[fc++].manualUV = true;
+				faces[fc].smoothingGroup = InSmooth ? 1 : -1;
+				faces[fc].manualUV = true;
+				
+				fc++;
 			}
 		}
 

@@ -49,9 +49,9 @@ namespace ProBuilder2.UpgradeKit
 		{
 			pb_Face face = new pb_Face( serialized.indices );
 
-			face.SetUV( serialized.uv );
-			face.SetMaterial( serialized.material);
-			face.SetSmoothingGroup( serialized.smoothingGroup );
+			face.uv = serialized.uv;
+			face.material = serialized.material;
+			face.smoothingGroup = serialized.smoothingGroup;
 			face.RebuildCaches();	// set distinct indices and edges
 
 			pb_UpgradeKitUtils.TrySetField(face, "manualUV", serialized.manualUV);
