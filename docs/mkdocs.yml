@@ -7,8 +7,8 @@ pages:
 
 - Fundamentals: general/fundamentals.md
 
-- Toolbar:
-  - Overview: toolbar/overview.md
+- Toolbar: 
+  - Overview: toolbar/overview-toolbar.md
   - Tool Panels: toolbar/tool-panels.md
   - Selection Tools: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
