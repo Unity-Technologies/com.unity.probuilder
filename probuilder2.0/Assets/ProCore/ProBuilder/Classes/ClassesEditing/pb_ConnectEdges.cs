@@ -45,7 +45,8 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_FaceRebuildData> results = new List<pb_FaceRebuildData>();
 
-			int newTextureGroupIndex = pb.GetUnusedTextureGroup();
+			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
+			int newTextureGroupIndex = 1;
 
 			// do the splits
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> split in affected)
@@ -66,14 +67,22 @@ namespace ProBuilder2.MeshOperations
 
 					foreach(pb_FaceRebuildData frd in res)
 					{
+						if(face.textureGroup < 0)
+						{
+							while(usedTextureGroups.Contains(newTextureGroupIndex))
+							{
+								newTextureGroupIndex++;
+							}
+
+							usedTextureGroups.Add(newTextureGroupIndex);
+						}
+
 						frd.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 						frd.face.uv 			= new pb_UV(face.uv);
 						frd.face.smoothingGroup = face.smoothingGroup;
 						frd.face.manualUV 		= face.manualUV;
 						frd.face.material 		= face.material;
 					}
-
-					newTextureGroupIndex++;
 
 					results.AddRange(res);
 				}
@@ -161,7 +170,7 @@ namespace ProBuilder2.MeshOperations
 
 			pb_FaceRebuildData res = pb_AppendPolygon.FaceWithVertices(n_vertices, false);
 			
-			res.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+			res.face.textureGroup 	= face.textureGroup;
 			res.face.uv 			= new pb_UV(face.uv);
 			res.face.smoothingGroup = face.smoothingGroup;
 			res.face.manualUV 		= face.manualUV;
