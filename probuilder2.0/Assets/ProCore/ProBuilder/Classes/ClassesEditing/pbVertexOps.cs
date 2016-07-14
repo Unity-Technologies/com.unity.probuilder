@@ -270,7 +270,6 @@ namespace ProBuilder2.MeshOperations
 			if(n_sharedUV != null) n_sharedUV.Insert((index + 1) % vc, -1);
 		}
 
-
 		List<int> triangles;
 
 		try

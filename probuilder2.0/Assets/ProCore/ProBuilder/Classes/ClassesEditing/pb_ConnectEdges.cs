@@ -47,22 +47,27 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> split in affected)
 			{
-				List<pb_FaceRebuildData> res;
-				List<pb_WingedEdge> collateral;
+				int inserts = split.Value.Count;
 
-				if(split.Value.Count == 2)
+				if(inserts == 1)
 				{
-					Debug.Log("SPLIT 1");
-					ConnectEdgesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup, lookupUV, out res, out collateral);
-					results.AddRange(res);
+					results.Add( InsertVertices(split.Key, split.Value, vertices) );
 				}
+				else
+				if(inserts == 2)
+				{
+					results.AddRange(ConnectEdgesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup, lookupUV));
+				}
+				if(inserts > 2)
+				{
 
+				}
 			}
 
 			pb_FaceRebuildData.Apply(results, pb, vertices, null, lookup, lookupUV);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-			pb.DeleteFaces(affected.Keys.Where(x => affected[x].Count == 2));
+			pb.DeleteFaces(affected.Keys);
 			pb.ToMesh();
 
 			return pb_ActionResult.NoSelection;
@@ -71,15 +76,13 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 *	Accepts a key value pair of face and list of edges to split on.
 		 */
-		private static bool ConnectEdgesInFace(
+		private static List<pb_FaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,
 			pb_WingedEdge a,
 			pb_WingedEdge b,
 			List<pb_Vertex> vertices,
 			Dictionary<int, int> lookup,
-			Dictionary<int, int> lookupUV,
-			out List<pb_FaceRebuildData> faces,
-			out List<pb_WingedEdge> adjacent)
+			Dictionary<int, int> lookupUV)
 		{
 			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 
@@ -115,19 +118,29 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			faces = new List<pb_FaceRebuildData>();
+			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
 
 			foreach(List<pb_Vertex> poly in n_vertices)
-			{
 				faces.Add( pb_AppendPolygon.FaceWithVertices(poly, false) );
+
+			return faces;
+		}
+
+		private static pb_FaceRebuildData InsertVertices(pb_Face face, List<pb_WingedEdge> edges, List<pb_Vertex> vertices)
+		{
+			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<pb_Vertex> n_vertices = new List<pb_Vertex>();
+			HashSet<pb_Edge> affected = new HashSet<pb_Edge>( edges.Select(x=>x.edge.local) );
+
+			for(int i = 0; i < perimeter.Count; i++)
+			{
+				n_vertices.Add(vertices[perimeter[i].x]);
+
+				if(affected.Contains(perimeter[i]))
+					n_vertices.Add(pb_Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f));
 			}
 
-			foreach(List<int> poly in n_indices)
-				Debug.Log(poly.ToString(","));
-
-			adjacent = null;
-
-			return true;
+			return pb_AppendPolygon.FaceWithVertices(n_vertices, false);
 		}
 	}
 }
