@@ -169,7 +169,7 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb_FaceRebuildData res = pb_AppendPolygon.FaceWithVertices(n_vertices, false);
-			
+
 			res.face.textureGroup 	= face.textureGroup;
 			res.face.uv 			= new pb_UV(face.uv);
 			res.face.smoothingGroup = face.smoothingGroup;
