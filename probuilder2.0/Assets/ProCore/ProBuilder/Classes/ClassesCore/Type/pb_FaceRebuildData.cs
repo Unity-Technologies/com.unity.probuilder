@@ -19,7 +19,7 @@ namespace ProBuilder2.Common
 			return string.Format("{0}\n{1}", vertices.ToString(", "), sharedIndices.ToString(", "));
 		}
 
-		public static void Apply(
+		public static List<int> Apply(
 			IEnumerable<pb_FaceRebuildData> newFaces,
 			pb_Object pb,
 			List<pb_Vertex> vertices = null,
@@ -28,16 +28,18 @@ namespace ProBuilder2.Common
 			Dictionary<int, int> lookupUV = null)
 		{
 			List<pb_Face> _faces = faces == null ? new List<pb_Face>(pb.faces) : faces;
-			pb_FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
+			List<int> offsets = pb_FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
 			pb.SetVertices(vertices);
 			pb.SetFaces(_faces.ToArray());
+			return offsets;
 		}
 
 		/**
 		 *	Shift face rebuild data to appropriate positions and update the vertex, face, and
-		 *	shared indices arrays.
+		 *	shared indices arrays.  Returns a list of vertex array offsets applied to each face
+		 *	respectively.
 		 */
-		public static void Apply(
+		public static List<int> Apply(
 			IEnumerable<pb_FaceRebuildData> newFaces,
 			List<pb_Vertex> vertices,
 			List<pb_Face> faces,
@@ -45,6 +47,7 @@ namespace ProBuilder2.Common
 			Dictionary<int, int> sharedIndicesUV = null)
 		{
 			int index = vertices.Count;
+			List<int> offsets = new List<int>();
 
 			foreach(pb_FaceRebuildData rd in newFaces)
 			{
@@ -64,6 +67,7 @@ namespace ProBuilder2.Common
 						sharedIndicesUV.Add(localIndex + index, hasSharedIndicesUV ? rd.sharedIndicesUV[localIndex] : -1);
 				}
 
+				offsets.Add(index);
 
 				for(int n = 0; n < face.indices.Length; n++)
 					face.indices[n] += index;
@@ -75,6 +79,8 @@ namespace ProBuilder2.Common
 				faces.Add(face);
 				vertices.AddRange(rd.vertices);
 			}
+
+			return offsets;
 		}
 	}
 }

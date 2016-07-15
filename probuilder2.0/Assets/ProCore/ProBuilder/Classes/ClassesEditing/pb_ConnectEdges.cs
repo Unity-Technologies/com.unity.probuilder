@@ -28,8 +28,6 @@ namespace ProBuilder2.MeshOperations
 
 		public static pb_ActionResult Connect(this pb_Object pb, IList<pb_Edge> edges, out pb_Edge[] connections)
 		{
-			connections = null;
-
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
 			List<pb_EdgeLookup> distinctEdges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
@@ -106,13 +104,26 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
+			List<int> offsets = pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-			pb.DeleteFaces(affected.Keys );
+			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
 			pb.ToMesh();
 
-			return pb_ActionResult.NoSelection;
+			// offset the newVertexIndices by whatever the FaceRebuildData did so we can search for the new edges by index
+			HashSet<int> appendedIndices = new HashSet<int>();
+
+			for(int n = 0; n < results.Count; n++)
+				for(int i = 0; i < results[n].newVertexIndices.Count; i++)
+					appendedIndices.Add( ( results[n].newVertexIndices[i] + offsets[n] ) - removedVertexCount );
+			Debug.Log(appendedIndices.ToString("\n"));
+
+			Dictionary<int, int> lup = pb.sharedIndices.ToDictionary();
+			IEnumerable<pb_Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
+			IEnumerable<pb_EdgeLookup> distNewEdges = pb_EdgeLookup.GetEdgeLookup(newEdges, lup);
+			connections = distNewEdges.Distinct().Select(x => x.local).ToArray();
+
+			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count));
 		}
 
 		/**
@@ -144,17 +155,16 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < perimeter.Count; i++)
 			{
 				n_vertices[index % 2].Add(vertices[perimeter[i].x]);
-				n_indices[index % 2].Add(lookup[perimeter[i].x]);
 
 				if(perimeter[i].Equals(a.edge.local) || perimeter[i].Equals(b.edge.local))
 				{
 					pb_Vertex mix = pb_Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f);
 
-					n_vertices[index % 2].Add(mix);
 					n_indices[index % 2].Add(n_vertices[index % 2].Count);
+					n_vertices[index % 2].Add(mix);
 					index++;
-					n_vertices[index % 2].Add(mix);
 					n_indices[index % 2].Add(n_vertices[index % 2].Count);
+					n_vertices[index % 2].Add(mix);
 				}
 			}
 

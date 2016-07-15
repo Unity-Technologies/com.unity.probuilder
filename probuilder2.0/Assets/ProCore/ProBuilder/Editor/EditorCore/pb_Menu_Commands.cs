@@ -1843,8 +1843,10 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] connections;
+
 				res = pb.Connect(pb.SelectedEdges, out connections);
 
+				pb.SetSelectedEdges(connections);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();

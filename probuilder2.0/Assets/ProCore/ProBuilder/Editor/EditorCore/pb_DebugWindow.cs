@@ -15,13 +15,15 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Debugging menu items for ProBuilder.
 	 */
-	public class pb_DebugWindow : EditorWindow 
+	public class pb_DebugWindow : EditorWindow
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;
 
 		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
+
+		GUIStyle boldLabel = null;
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -120,6 +122,12 @@ namespace ProBuilder2.EditorCommon
 
 		void OnGUI()
 		{
+			if(boldLabel == null)
+			{
+				boldLabel = new GUIStyle(EditorStyles.boldLabel);
+				boldLabel.normal.textColor = Color.white;
+			}
+
 			selection = editor != null ? editor.selection : new pb_Object[0];
 
 			scroll = GUILayout.BeginScrollView(scroll);
@@ -223,7 +231,7 @@ namespace ProBuilder2.EditorCommon
 				pv.showObject = EditorGUILayout.Foldout(pv.showObject, pb.name + "(" + pb.id +")");
 				if(pv.showObject)
 				{
-					/* VERTICES */			
+					/* VERTICES */
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
@@ -236,7 +244,7 @@ namespace ProBuilder2.EditorCommon
 							{
 								if(m == null)
 								{
-									GUILayout.Label("" + pb.vertices.ToString("\n"));						
+									GUILayout.Label("" + pb.vertices.ToString("\n"));
 								}
 								else
 								{
@@ -248,10 +256,10 @@ namespace ProBuilder2.EditorCommon
 									GUILayout.EndVertical();
 								}
 							}
-						GUILayout.EndHorizontal();						
+						GUILayout.EndHorizontal();
 					}
 
-					/* Triangles */			
+					/* Triangles */
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
@@ -273,7 +281,7 @@ namespace ProBuilder2.EditorCommon
 									{
 										int[] tris = pb.msh.GetTriangles(i);
 										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + " : " + tris.Length);
-	
+
 										GUILayout.BeginHorizontal();
 											GUILayout.Space(16);
 
@@ -293,10 +301,10 @@ namespace ProBuilder2.EditorCommon
 									GUILayout.EndVertical();
 								}
 							}
-						GUILayout.EndHorizontal();						
+						GUILayout.EndHorizontal();
 					}
-					
-					/* Colors */			
+
+					/* Colors */
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
@@ -307,18 +315,18 @@ namespace ProBuilder2.EditorCommon
 						GUILayout.Space(48);
 							if(pv.showColors)
 							{
-								GUILayout.Label("" + pb.colors.ToString("\n"));						
+								GUILayout.Label("" + pb.colors.ToString("\n"));
 							}
 						GUILayout.EndHorizontal();
 					}
-					
-					/* UV  */	
-					{		
+
+					/* UV  */
+					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
 							pv.showUv = EditorGUILayout.Foldout(pv.showUv, "UVs: " + pb.uv.Length);
 						GUILayout.EndHorizontal();
-			
+
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showUv)
@@ -326,13 +334,13 @@ namespace ProBuilder2.EditorCommon
 						GUILayout.EndHorizontal();
 					}
 
-					/* UV 2 */			
+					/* UV 2 */
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
 							pv.showUv2 = EditorGUILayout.Foldout(pv.showUv2, "UV2: " + (m ? m.uv2.Length.ToString() : "NULL"));
 						GUILayout.EndHorizontal();
-			
+
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(48);
 							if(pv.showUv2 && m != null)
@@ -451,13 +459,13 @@ namespace ProBuilder2.EditorCommon
 			foreach(int i in common)
 			{
 				int[] indices = sharedIndices[i];
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(vertices[indices[0]]) );		
+				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(vertices[indices[0]]) );
 
 				StringBuilder sb = new StringBuilder();
 
 				if(triIndexFormat == IndexFormat.Common || triIndexFormat == IndexFormat.Both)
 					sb.Append(i);
-				
+
 				if(triIndexFormat == IndexFormat.Both)
 					sb.Append(": ");
 
@@ -511,12 +519,12 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Face f in faces)
 			{
 				Vector3 point = pb.transform.TransformPoint( pb_Math.Average(pb.vertices, f.distinctIndices) );
-				
+
 				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
 				Vector3 normal = pb.transform.TransformDirection( pb_Math.Normal(pb, f) );
-				
+
 				StringBuilder sb = new StringBuilder();
 
 				if(faceIndexFormat == IndexFormat.Local || faceIndexFormat == IndexFormat.Both)
@@ -541,7 +549,7 @@ namespace ProBuilder2.EditorCommon
 				if(faceIndexFormat == IndexFormat.Common || faceIndexFormat == IndexFormat.Both)
 				{
 					if(faceIndexFormat == IndexFormat.Both) sb.Append("common: ");
-					
+
 					for(int i = 0; i < f.indices.Length; i+=3)
 					{
 						sb.Append("[");
@@ -563,20 +571,20 @@ namespace ProBuilder2.EditorCommon
 					sb.Append(f.smoothingGroup.ToString());
 					if(elementGroupInfo || textureGroupInfo) sb.AppendLine("");
 				}
-				
+
 				if(elementGroupInfo)
 				{
 					sb.Append("Element: ");
 					sb.Append(f.elementGroup.ToString());
 					if(textureGroupInfo) sb.AppendLine("");
 				}
-				
+
 				if(textureGroupInfo)
 				{
 					sb.Append("Texture: ");
 					sb.Append(f.textureGroup.ToString());
 				}
-					
+
 				Vector3 labelPos = point + (normal.normalized + cam.transform.up.normalized) * .2f;
 
 				Handles.DrawLine(point, labelPos);
@@ -593,13 +601,13 @@ namespace ProBuilder2.EditorCommon
 		void DrawSceneLabel(string text, Vector2 position)
 		{
 			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
-			
+
 			float width = EditorStyles.boldLabel.CalcSize(gc).x;
 			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
 
 			pb_GUI_Utility.DrawSolidColor(new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
 
-			GUI.Label( new Rect(position.x, position.y, width, height), gc, EditorStyles.boldLabel );
+			GUI.Label( new Rect(position.x, position.y, width, height), gc, boldLabel );
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
