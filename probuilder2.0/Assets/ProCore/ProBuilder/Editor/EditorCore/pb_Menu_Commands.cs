@@ -1836,44 +1836,22 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection, bool useOld = false)
 		{
-			if(!editor || selection == null || selection.Length < 1)
-				return pb_ActionResult.NoSelection;
+			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
-			int success = 0;
-
 			foreach(pb_Object pb in selection)
 			{
-				pb_Edge[] edges;
-				pb.ToMesh();
-
-				profiler.Begin("ConnectEdges");
-
-				if(pb.Connect(pb.SelectedEdges, out edges))
-				{
-					pb.SetSelectedEdges(edges);
-					success++;
-				}
-				profiler.End();
+				pb_Edge[] connections;
+				res = pb.Connect(pb.SelectedEdges, out connections);
 
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
 
-			if(success > 0)
-			{
-				if(editor)
-					editor.UpdateSelection(true);
-
-				return new pb_ActionResult(Status.Success, "Connect Edges");
-			}
-			else
-			{
-				Debug.LogWarning("No valid split paths found.  This is most likely because you are attempting to split edges that do belong to the same face, or do not have more than one edge selected.");
-				return new pb_ActionResult(Status.Failure, "Connect Edges\nNo Edges Selected");
-			}
+			pb_Editor.Refresh();
+			return res;
 		}
 
 		/**
@@ -1891,6 +1869,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Edge[] connections;
 				res = pb.Connect(pb.SelectedTriangles, out connections);
 			}
+			pb_Editor.Refresh();
 
 			return res;
 
