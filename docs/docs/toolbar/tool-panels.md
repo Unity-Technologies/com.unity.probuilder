@@ -1,12 +1,10 @@
-@todo: smoothing groups text
-@todo: mirror tool image
-
 # Video: Tool Panels
 
 [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels")
 
 These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), [Smoothing Groups](@todo), and [Mirroring](@todo). 
-Each panel can be docked, kept floating, or simply closed immediately after use.
+
+> Tip: Each panel can be docked, kept floating, or simply closed immediately after use.
 
 ---
 
@@ -14,7 +12,7 @@ Each panel can be docked, kept floating, or simply closed immediately after use.
 ## Shape Tool
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Shape Tool</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div> 
 
 **Toolbar Icon:** ![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon") ~ ![Shape Tool Icon](Panel_Shapes_Light.png "Create New Shape Icon")
@@ -42,7 +40,7 @@ Each shape has specific properties which can be customized before creation- for 
 ## Material Tools
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Material Tools</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
 <br>
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 </div> 
@@ -76,7 +74,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 ## Texturing and UVs
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Texturing and UVs</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div> 
 
 **Toolbar Icon:** ![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon") ~ ![UV Editor Icon](Panel_UVeditor_Light.png "UV Editor Icon")
@@ -95,7 +93,7 @@ The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual
 ## Vertex Color Tools
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Vertex Color Tools</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
 
 **Toolbar Icon:** ![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon")
@@ -103,31 +101,46 @@ Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Ve
  
 **Purpose:** Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
-![Vertex Coloring](ExampleImage_VertexColoring.png "Vertex Coloring")
+Not all shaders will show vertex colors on a mesh: [Vertex Colors FAQ](@todo)
 
-See the "Vertex Coloring" section for full details. 
+![Vertex Coloring](../images/VertexColor_WithLevelExample.png "Vertex Coloring")
+
+Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.
+
+> *More Info: [**Vertex Coloring**](@todo)* 
 
 ---
 
 ## Smoothing Groups
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Smoothing Groups</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
 **Toolbar Icon:** ![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon") ~ ![Smoothing Groups Icon](Panel_Smoothing_Light.png "Smoothing Groups Icon")
- ~ ![Smoothign Groups Text Button](Panel_Smoothing_TextButton.png "Smoothing Groups Text Button")
+ ~ ![Smoothing Groups Text Button](Panel_Smoothing_TextButton.png "Smoothing Groups Text Button")
 
-**Purpose:** Use Smoothing Groups to either smooth between adjacent faces or to force hard edges and corners.
+**Purpose:** Create a smooth and rounded look, or sharp-edged and faceted.
 
-![Smoothing Groups Example](ExampleImage_SmoothingGroups_Torus.png "Smoothing Groups Example")
+**Usage:**
+
+First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and select the faces you wish to make smooth or faceted.
+
+> *If no faces are selected, or you are in [Object Mode](@todo), any Smoothing actions will be applied to the entire object*
+
+![Smoothing Groups Example](../images/SmoothingGroups-Panel_WithLettersAndExample.png "Smoothing Groups Example")
+
+* **(A)** If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.
+* **(B)** To assign the selected faces to a new Smoothing Group, click any available group button
+* **(C)** You can also assign Hard groups
+* **(D)** Press the "Clear" button to clear all Smoothing from the selected faces
 
 ---
 
 ## Mirror Tool
 
 <div class="info-box warning">
-Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Mirror Tool</a>
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
 </div>
 
 **Toolbar Icon:** ![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon")
@@ -138,7 +151,7 @@ Section Video: <a href="@todo link vid section">Using the ProBuilder Toolbar: Mi
 The Mirror Tool is especially useful when creating symetrical items- build one half, mirror it, then weld the two together
 for a perfectly symetrical result.
 
-![Mirror Tool Example](ExampleImage_Mirror.png "Mirror Tool Example")
+![Mirror Tool Example](../images/Mirror-Panel_WithExample.png "Mirror Tool Example")
 
 **Usage:**
 
