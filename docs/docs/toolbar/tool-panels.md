@@ -11,7 +11,7 @@ These **Tool Panels** contain important tools for [Shape Creation](@todo), [Mate
 <a id="shape-tool"></a>
 ## Shape Tool
 
-<div class="info-box warning">
+<div class="alert-box info">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div> 
 
