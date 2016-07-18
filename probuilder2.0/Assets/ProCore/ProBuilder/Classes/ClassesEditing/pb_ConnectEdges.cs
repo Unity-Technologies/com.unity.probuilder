@@ -26,36 +26,63 @@ namespace ProBuilder2.MeshOperations
 			}
 		};
 
-		public static pb_ActionResult Connect(this pb_Object pb, IList<pb_Edge> edges, out pb_Edge[] connections)
+		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] faces)
 		{
+			pb_Edge[] empty;
+			return Connect(pb, edges, out faces, out empty, true, false);
+		}
+
+		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Edge[] connections)
+		{
+			pb_Face[] empty;
+			return Connect(pb, edges, out empty, out connections, false, true);
+		}
+
+		private static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] addedFaces, out pb_Edge[] connections, bool returnFaces = false, bool returnEdges = false)
+		{
+			profiler.Begin("Connect Edges");
+
+			profiler.Begin("lookup");
+			profiler.Begin("ToDictionary");
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
-			List<pb_EdgeLookup> distinctEdges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
+			profiler.End();
+			profiler.Begin("GetEdgeLookup");
+			HashSet<pb_EdgeLookup> distinctEdges = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
+			profiler.End();
+			profiler.Begin("GetWingedEdges");
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			profiler.End();
 
 			Dictionary<pb_Face, List<pb_WingedEdge>> affected = new Dictionary<pb_Face, List<pb_WingedEdge>>();
 
 			// map each edge to a face so that we have a list of all touched faces with their to-be-subdivided edges
-			foreach(pb_EdgeLookup e in distinctEdges)
-			{
-				IEnumerable<pb_WingedEdge> touching = wings.Where(x => x.edge.Equals(e));
+			profiler.Begin("map edges to face");
 
-				foreach(pb_WingedEdge wing in touching)
+			List<pb_WingedEdge> faceEdges;
+
+			foreach(pb_WingedEdge wing in wings)
+			{
+				if( distinctEdges.Contains(wing.edge) )
 				{
-					if(affected.ContainsKey(wing.face))
-						affected[wing.face].Add(wing);
+					if(affected.TryGetValue(wing.face, out faceEdges))
+						faceEdges.Add(wing);
 					else
 						affected.Add(wing.face, new List<pb_WingedEdge>() { wing });
 				}
 			}
 
-			// ////// DEBUG {
+			profiler.End();
+			profiler.End();
+
+			////// DEBUG {
 			// foreach(var k in affected)
 			// {
 			// 	Debug.Log(k.Key + "\n" + k.Value.Count);
 			// }
-			// ////// DEBUG }
+			////// DEBUG }
 
+			profiler.Begin("do splits");
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
 
@@ -75,20 +102,22 @@ namespace ProBuilder2.MeshOperations
 					results.Add( InsertVertices(face, targetEdges, vertices) );
 				}
 				else
-				if(inserts == 2)
+				if(inserts > 1)
 				{
-					List<ConnectFaceRebuildData> res = ConnectEdgesInFace(face, targetEdges[0], targetEdges[1], vertices, lookup, lookupUV);
+					List<ConnectFaceRebuildData> res = inserts == 2 ?
+						ConnectEdgesInFace(face, targetEdges[0], targetEdges[1], vertices) :
+						ConnectEdgesInFace(face, targetEdges, vertices);
+
+					if(face.textureGroup < 0)
+					{
+						while(usedTextureGroups.Contains(newTextureGroupIndex))
+							newTextureGroupIndex++;
+
+						usedTextureGroups.Add(newTextureGroupIndex);
+					}
 
 					foreach(ConnectFaceRebuildData c in res)
 					{
-						if(face.textureGroup < 0)
-						{
-							while(usedTextureGroups.Contains(newTextureGroupIndex))
-								newTextureGroupIndex++;
-
-							usedTextureGroups.Add(newTextureGroupIndex);
-						}
-
 						c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 						c.faceRebuildData.face.uv 				= new pb_UV(face.uv);
 						c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
@@ -98,44 +127,67 @@ namespace ProBuilder2.MeshOperations
 
 					results.AddRange(res);
 				}
-				if(inserts > 2)
-				{
+			}
+			profiler.End();
 
-				}
+
+			profiler.Begin("apply vertices");
+			List<int> offsets = pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
+			profiler.End();
+			pb.SetSharedIndicesUV(new pb_IntArray[0]);
+			profiler.Begin("delete faces");
+			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
+			profiler.End();
+			profiler.Begin("extract shared");
+			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			profiler.End();
+
+			profiler.Begin("ToMesh");
+			pb.ToMesh();
+			profiler.End();
+			
+
+			// figure out where the new edges where inserted
+			profiler.Begin("find new edges");
+			if(returnEdges)
+			{
+				// offset the newVertexIndices by whatever the FaceRebuildData did so we can search for the new edges by index
+				HashSet<int> appendedIndices = new HashSet<int>();
+
+				for(int n = 0; n < results.Count; n++)
+					for(int i = 0; i < results[n].newVertexIndices.Count; i++)
+						appendedIndices.Add( ( results[n].newVertexIndices[i] + offsets[n] ) - removedVertexCount );
+
+				Dictionary<int, int> lup = pb.sharedIndices.ToDictionary();
+				IEnumerable<pb_Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
+				IEnumerable<pb_EdgeLookup> distNewEdges = pb_EdgeLookup.GetEdgeLookup(newEdges, lup);
+
+				connections = distNewEdges.Distinct().Select(x => x.local).ToArray();
+			}
+			else
+			{
+				connections = null;
 			}
 
-			List<int> offsets = pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
-			pb.SetSharedIndicesUV(new pb_IntArray[0]);
-			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.ToMesh();
+			if(returnFaces)
+				addedFaces = results.Select(x => x.faceRebuildData.face).ToArray();
+			else
+				addedFaces = null;
 
-			// offset the newVertexIndices by whatever the FaceRebuildData did so we can search for the new edges by index
-			HashSet<int> appendedIndices = new HashSet<int>();
-
-			for(int n = 0; n < results.Count; n++)
-				for(int i = 0; i < results[n].newVertexIndices.Count; i++)
-					appendedIndices.Add( ( results[n].newVertexIndices[i] + offsets[n] ) - removedVertexCount );
-			Debug.Log(appendedIndices.ToString("\n"));
-
-			Dictionary<int, int> lup = pb.sharedIndices.ToDictionary();
-			IEnumerable<pb_Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));
-			IEnumerable<pb_EdgeLookup> distNewEdges = pb_EdgeLookup.GetEdgeLookup(newEdges, lup);
-			connections = distNewEdges.Distinct().Select(x => x.local).ToArray();
+			profiler.End();
+			profiler.End();
 
 			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count));
 		}
 
 		/**
-		 *	Accepts a key value pair of face and list of edges to split on.
+		 *	Accepts a face and set of edges to split on.
 		 */
 		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,
 			pb_WingedEdge a,
 			pb_WingedEdge b,
-			List<pb_Vertex> vertices,
-			Dictionary<int, int> lookup,
-			Dictionary<int, int> lookupUV)
+			List<pb_Vertex> vertices)
 		{
 			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 
@@ -179,27 +231,59 @@ namespace ProBuilder2.MeshOperations
 			return faces;
 		}
 
-		// public static List<ConnectFaceRebuildData> ConnectEdgesInFace(
-		// 	pb_Face face,
-		// 	List<pb_WingedEdge> edges,
-		// 	List<pb_Vertex> vertices,
-		// 	Dictionary<int, int> lookup,
-		// 	Dictionary<int, int> lookupUV)
-		// {
-		// 	List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
+			pb_Face face,
+			List<pb_WingedEdge> edges,
+			List<pb_Vertex> vertices)
+		{
+			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 
-		// 	List<pb_Vertex>[] n_vertices = new List<pb_Vertex>[2] {
-		// 		new List<pb_Vertex>(),
-		// 		new List<pb_Vertex>()
-		// 	};
+			int splitCount = edges.Count;
 
-		// 	List<int>[] n_indices = new List<int>[2] {
-		// 		new List<int>(),
-		// 		new List<int>()
-		// 	};
+			pb_Vertex centroid = pb_Vertex.Average(vertices, face.distinctIndices);
 
-		// 	for(int i = 0; i < )
-		// }
+			List<List<pb_Vertex>> n_vertices = pbUtil.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
+			List<List<int>> n_indices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+
+			HashSet<pb_Edge> edgesToSplit = new HashSet<pb_Edge>(edges.Select(x => x.edge.local));
+
+			int index = 0;
+
+			// creates two new polygon perimeter lines by stepping the current face perimeter and inserting new vertices where edges match
+			for(int i = 0; i < perimeter.Count; i++)
+			{
+				n_vertices[index % splitCount].Add(vertices[perimeter[i].x]);
+
+				if( edgesToSplit.Contains(perimeter[i]) )
+				{
+					pb_Vertex mix = pb_Vertex.Mix(vertices[perimeter[i].x], vertices[perimeter[i].y], .5f);
+
+					// split current poly line
+					n_indices[index].Add(n_vertices[index].Count);
+					n_vertices[index].Add(mix);
+
+					// add the centroid vertex
+					n_indices[index].Add(n_vertices[index].Count);
+					n_vertices[index].Add(centroid);
+
+					// advance the poly line index
+					index = (index + 1) % splitCount;
+
+					// then add the edge center vertex and move on
+					n_vertices[index].Add(mix);
+				}
+			}
+
+			List<ConnectFaceRebuildData> faces = new List<ConnectFaceRebuildData>();
+
+			for(int i = 0; i < n_vertices.Count; i++)
+			{
+				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
+			}
+
+			return faces;
+		}
 
 		private static ConnectFaceRebuildData InsertVertices(pb_Face face, List<pb_WingedEdge> edges, List<pb_Vertex> vertices)
 		{

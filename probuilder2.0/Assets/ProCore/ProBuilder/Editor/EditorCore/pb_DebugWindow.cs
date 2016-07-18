@@ -23,7 +23,17 @@ namespace ProBuilder2.EditorCommon
 		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
 
-		GUIStyle boldLabel = null;
+		GUIStyle boldLabel {
+			get {
+				if(_boldLabel == null) {
+					_boldLabel = new GUIStyle(EditorStyles.boldLabel);
+					_boldLabel.normal.textColor = Color.white;
+				}
+				return _boldLabel;
+			}
+		}
+
+		GUIStyle _boldLabel = null;
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -125,12 +135,6 @@ namespace ProBuilder2.EditorCommon
 
 		void OnGUI()
 		{
-			if(boldLabel == null)
-			{
-				boldLabel = new GUIStyle(EditorStyles.boldLabel);
-				boldLabel.normal.textColor = Color.white;
-			}
-
 			selection = editor != null ? editor.selection : new pb_Object[0];
 
 			scroll = GUILayout.BeginScrollView(scroll);

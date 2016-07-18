@@ -156,19 +156,24 @@ public static class pbAppendDelete
 	 */
 	public static int[] DeleteFaces(this pb_Object pb, IList<int> faceIndices)
 	{
+		profiler.Begin("get information");
 		pb_Face[] faces = new pb_Face[faceIndices.Count];
 
 		for(int i = 0; i < faces.Length; i++)
 			faces[i] = pb.faces[faceIndices[i]];
 
 		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
+		profiler.End();
 
+		profiler.Begin("remove");
 		Vector3[] verts = pb.vertices.RemoveAt(distInd);
 		Color[] cols 	= pb.colors.RemoveAt(distInd);
 		Vector2[] uvs 	= pb.uv.RemoveAt(distInd);
 
 		pb_Face[] nFaces = pb.faces.RemoveAt(faceIndices);
+		profiler.End();
 
+		profiler.Begin("shift");
 		// shift all other face indices down to account for moved vertex positions
 		for(int i = 0; i < nFaces.Length; i++)
 		{
@@ -185,8 +190,10 @@ public static class pbAppendDelete
 			}
 			nFaces[i].SetIndices(tris);
 		}
+		profiler.End();
 
 		// shift all other face indices in the shared index array down to account for moved vertex positions
+		profiler.Begin("shared indices");
 		pb_IntArray[] si = pb.sharedIndices;
 		pb_IntArray[] si_uv = pb.sharedIndicesUV;
 
@@ -195,12 +202,15 @@ public static class pbAppendDelete
 
 		pb.SetSharedIndices(si);
 		pb.SetSharedIndicesUV(si_uv);
+		profiler.End();
 
+		profiler.Begin("set");
 		pb.SetVertices(verts);
 		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
+		profiler.End();
 
 		return distInd;
 	}

@@ -19,16 +19,16 @@ public class TempMenuItems : EditorWindow
 
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		pbUndo.RecordSelection(selection, "connect edges new");
+		// pbUndo.RecordSelection(selection, "connect edges new");
 
-		foreach(pb_Object pb in selection)
-		{
-			pb_Edge[] results = null;
-			pb.ToMesh();
-			pb_EditorUtility.ShowNotification( pb_ConnectEdges.Connect(pb, pb.SelectedEdges, out results).notification );
-			pb.Refresh();
-			pb.Optimize();
-		}
+		// foreach(pb_Object pb in selection)
+		// {
+		// 	pb_Edge[] results = null;
+		// 	pb.ToMesh();
+		// 	pb_EditorUtility.ShowNotification( pb_ConnectEdges.Connect(pb, pb.SelectedEdges, out results).notification );
+		// 	pb.Refresh();
+		// 	pb.Optimize();
+		// }
 
 		pb_Editor.Refresh();
 	}

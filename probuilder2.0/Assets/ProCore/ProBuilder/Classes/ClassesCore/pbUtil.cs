@@ -326,6 +326,14 @@ namespace ProBuilder2.Common
 		return FilledArray<T>(val, length); 
 	}
 
+	public static List<T> Fill<T>(System.Func<int, T> ctor, int length)
+	{
+		List<T> list = new List<T>(length);
+		for(int i = 0; i < length; i++)
+			list.Add( ctor(i) );
+		return list;
+	}
+
 	public static T[] FilledArray<T>(T val, int length)
 	{
 		T[] arr = new T[length];

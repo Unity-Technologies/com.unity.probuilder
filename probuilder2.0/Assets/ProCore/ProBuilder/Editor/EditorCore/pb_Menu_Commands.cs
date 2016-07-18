@@ -1802,13 +1802,14 @@ namespace ProBuilder2.EditorCommon
 				pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
 				pb_Face[] faces;
+				
+				pb.ToMesh();
 
 				if(pb.Subdivide(pb.SelectedFaces, out faces))
 				{
 					success += pb.SelectedFaces.Length;
 					pb.SetSelectedFaces(faces);
 
-					pb.ToMesh();
 					pb.Refresh();
 					pb.Optimize();
 				}
@@ -1843,9 +1844,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] connections;
-
 				res = pb.Connect(pb.SelectedEdges, out connections);
-
 				pb.SetSelectedEdges(connections);
 				pb.ToMesh();
 				pb.Refresh();
@@ -1946,7 +1945,8 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] edges;
-				if( pb.Connect( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToList(), out edges) )
+
+				if( pb.Connect(pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
 				{
 					pb.SetSelectedEdges(edges);
 					pb.ToMesh();

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
@@ -20,8 +21,12 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static pb_ActionResult Subdivide(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] subdividedFaces)
 		{
-			subdividedFaces = null;
-			return pb_ActionResult.NoSelection;
+			IEnumerable<pb_Edge> affected = faces.SelectMany(x => x.edges);
+
+			Debug.Log("subdivide");
+			pb_ActionResult res = pb_ConnectEdges.Connect(pb, affected, out subdividedFaces);
+
+			return res;
 		}
 	}
 }
