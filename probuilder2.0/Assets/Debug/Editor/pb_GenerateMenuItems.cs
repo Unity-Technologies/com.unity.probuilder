@@ -202,7 +202,7 @@ namespace ProBuilder2.EditorCommon
 				inSceneShortcut = false;
 			}
 			else
-				res += s.Trim();
+				res += s.Trim().ToLower();
 		}
 
 		if(res.Length > 0 && inSceneShortcut)

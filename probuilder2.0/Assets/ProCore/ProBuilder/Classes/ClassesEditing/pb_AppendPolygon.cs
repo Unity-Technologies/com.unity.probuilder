@@ -35,31 +35,23 @@ namespace ProBuilder2.MeshOperations
 				pb.SetFaces(faces.ToArray());
 				pb.SetSharedIndices(lookup);
 
-				// if the points are unordered, find an adjacent faces and test that the normals are correct.
-				// if unordered, respect the winding order the calling function specified.
-				if(unordered)
+				// verify that the normal is correct
+				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
+				face = newFace.face;
+				pb_WingedEdge orig = newFace;
+
+				// grab first edge with a valid opposite face
+				while(newFace.opposite == null)
 				{
-					List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-					pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
-					face = newFace.face;
-					pb_WingedEdge orig = newFace;
+					newFace = newFace.next;
 
-					// grab first edge with a valid opposite face
-					while(newFace.opposite == null)
-					{
-						newFace = newFace.next;
-
-						if(newFace == orig)
-							break;
-					}
-
-					if(newFace.opposite != null)
-						pb_ConformNormals.ConformOppositeNormal(newFace.opposite);
+					if(newFace == orig)
+						break;
 				}
-				else
-				{
-					face = data.face;
-				}
+
+				if(newFace.opposite != null)
+					pb_ConformNormals.ConformOppositeNormal(newFace.opposite);
 
 				// call ToMesh after possibly flipping face normals
 				pb.ToMesh();
@@ -104,7 +96,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(pb, common))
 				holes.Add( hole.Select(x => x.edge.local).ToList() );
-				
+
 			return holes;
 		}
 
@@ -162,23 +154,23 @@ namespace ProBuilder2.MeshOperations
 				// create new lists from each segment
 				// holes paths are nested, with holes
 				// possibly split between multiple nested
-				// holes                                                       
-				//                                                       
-				//	[2, 0]                                     [5, 3]                  
-				// 	[0, 9]                                     [3, 11]                  
-				// 	[9, 10]                                    [11, 10]                   
-				// 		[10, 7]                                    [10, 2]                       
-				// 			[7, 6]             or with split   	    [2, 0]                          
-				// 			[6, 1]             nesting ->   	    [0, 9]                          
-				// 			[1, 4]                             	    [9, 10]                          
-				// 			[4, 7]	<- (y == x)                [10, 7]                                       
-				// 		[7, 8]                                 	    [7, 6]                      
-				// 		[8, 5]                                 	    [6, 1]                      
-				// 		[5, 3]                                 	    [1, 4]                      
-				// 		[3, 11]                                	    [4, 7]                       
-				// 		[11, 10]	<- (y == x)                [7, 8]                                       
-				// [10, 2] 			<- (y == x)                [8, 5]                                       
-				// 
+				// holes
+				//
+				//	[2, 0]                                     [5, 3]
+				// 	[0, 9]                                     [3, 11]
+				// 	[9, 10]                                    [11, 10]
+				// 		[10, 7]                                    [10, 2]
+				// 			[7, 6]             or with split   	    [2, 0]
+				// 			[6, 1]             nesting ->   	    [0, 9]
+				// 			[1, 4]                             	    [9, 10]
+				// 			[4, 7]	<- (y == x)                [10, 7]
+				// 		[7, 8]                                 	    [7, 6]
+				// 		[8, 5]                                 	    [6, 1]
+				// 		[5, 3]                                 	    [1, 4]
+				// 		[3, 11]                                	    [4, 7]
+				// 		[11, 10]	<- (y == x)                [7, 8]
+				// [10, 2] 			<- (y == x)                [8, 5]
+				//
 				// paths may also contain multiple segments non-tiered
 
 				int splitCount = splits.Count;

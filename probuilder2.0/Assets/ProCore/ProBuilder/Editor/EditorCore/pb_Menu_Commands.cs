@@ -681,7 +681,7 @@ namespace ProBuilder2.EditorCommon
 				List<pb_Face> faces;
 				res = pb_Bevel.BevelEdges(pb, pb.SelectedEdges, amount, out faces);
 
-				// if(res)	
+				// if(res)
 				// 	pb.SetSelectedFaces(faces);
 
 				pb.Refresh();
@@ -1641,9 +1641,9 @@ namespace ProBuilder2.EditorCommon
 
 					if(wholePath)
 					{
-						// if selecting whole path and in edge mode, make sure the path contains 
+						// if selecting whole path and in edge mode, make sure the path contains
 						// at least one complete edge from the selection.
-						if(	editor.selectionMode == SelectMode.Edge && 
+						if(	editor.selectionMode == SelectMode.Edge &&
 							!hole.Any(x => common.Contains(x.edge.common.x) &&
 							common.Contains(x.edge.common.y)))
 							continue;
@@ -1662,14 +1662,14 @@ namespace ProBuilder2.EditorCommon
 					if(res)
 					{
 						filled++;
-						faces.Add(face);					
+						faces.Add(face);
 					}
 				}
-				
+
 				pb.Refresh();
 				pb.Optimize();
 
-				pb.SetSelectedFaces(faces);				
+				pb.SetSelectedFaces(faces);
 			}
 
 			pb_Editor.Refresh();
@@ -1737,7 +1737,7 @@ namespace ProBuilder2.EditorCommon
 			profiler.Begin("Subdivide");
 			foreach(pb_Object pb in selection)
 			{
-				if( pbSubdivideSplit.Subdivide(pb) )
+				if( pb.Subdivide() )
 					success++;
 
 				pb.ToMesh();
@@ -1803,7 +1803,7 @@ namespace ProBuilder2.EditorCommon
 
 				pb_Face[] faces;
 
-				if(pb.SubdivideFace(pb.SelectedFaces, out faces))
+				if(pb.Subdivide(pb.SelectedFaces, out faces))
 				{
 					success += pb.SelectedFaces.Length;
 					pb.SetSelectedFaces(faces);
@@ -1836,44 +1836,24 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuConnectEdges(pb_Object[] selection, bool useOld = false)
 		{
-			if(!editor || selection == null || selection.Length < 1)
-				return pb_ActionResult.NoSelection;
+			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
-			int success = 0;
-
 			foreach(pb_Object pb in selection)
 			{
-				pb_Edge[] edges;
-				pb.ToMesh();
-				
-				profiler.Begin("ConnectEdges");
+				pb_Edge[] connections;
 
-				if(pb.ConnectEdges(pb.SelectedEdges, out edges))
-				{
-					pb.SetSelectedEdges(edges);
-					success++;
-				}
-				profiler.End();
-				
+				res = pb.Connect(pb.SelectedEdges, out connections);
+
+				pb.SetSelectedEdges(connections);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
 
-			if(success > 0)
-			{
-				if(editor)
-					editor.UpdateSelection(true);
-
-				return new pb_ActionResult(Status.Success, "Connect Edges");
-			}
-			else
-			{
-				Debug.LogWarning("No valid split paths found.  This is most likely because you are attempting to split edges that do belong to the same face, or do not have more than one edge selected.");
-				return new pb_ActionResult(Status.Failure, "Connect Edges\nNo Edges Selected");
-			}
+			pb_Editor.Refresh();
+			return res;
 		}
 
 		/**
@@ -1882,67 +1862,73 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuConnectVertices(pb_Object[] selection)
 		{
-			if(!editor || selection == null || selection.Length < 1)
-				return pb_ActionResult.NoSelection;
-
-			int success = 0;
+			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
-				int[] selectedTriangles = pb.SelectedTriangles.Distinct().ToArray();
-				int len = selectedTriangles.Length;
-
-				List<pb_VertexConnection> splits = new List<pb_VertexConnection>();
-				List<pb_Face>[] connectedFaces = new List<pb_Face>[len];
-
-				// For each vertex, get all it's connected faces
-				for(int i = 0; i < len; i++)
-					connectedFaces[i] = pbMeshUtils.GetNeighborFaces(pb, selectedTriangles[i]);
-
-				for(int i = 0; i < len; i++)
-				{
-					foreach(pb_Face face in connectedFaces[i])
-					{
-						int index = splits.IndexOf((pb_VertexConnection)face);	// pb_VertexConnection only compares face property
-						if(index < 0)
-							splits.Add( new pb_VertexConnection(face, new List<int>(1) { selectedTriangles[i] } ) );
-						else
-							splits[index].indices.Add(selectedTriangles[i]);
-					}
-				}
-
-				for(int i = 0; i < splits.Count; i++)
-					splits[i] = splits[i].Distinct(pb.sharedIndices);
-
-				int[] f;
-				if(pb.ConnectVertices(splits, out f))
-				{
-					success++;
-					pb.SetSelectedTriangles(f);
-				}
+				pb_Edge[] connections;
+				res = pb.Connect(pb.SelectedTriangles, out connections);
 			}
+			pb_Editor.Refresh();
 
-			foreach(pb_Object pb in selection)
-			{
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-			}
+			return res;
 
-			if(success > 0)
-			{
-				if(editor)
-					editor.UpdateSelection(true);
+			// foreach(pb_Object pb in selection)
+			// {
+			// 	int[] selectedTriangles = pb.SelectedTriangles.Distinct().ToArray();
+			// 	int len = selectedTriangles.Length;
 
-				return new pb_ActionResult(Status.Success, "Connect Vertices");
-			}
-			else
-			{
-				Debug.LogWarning("No valid split paths found.  This is could be because you are attempting to split between vertices that do not belong to the same face, or the split function can't find a good plane to re-triangulate from.");
-				return new pb_ActionResult(Status.Failure, "Connect Vertices\nNo Valid Split Paths Found");
-			}
+			// 	List<pb_VertexConnection> splits = new List<pb_VertexConnection>();
+			// 	List<pb_Face>[] connectedFaces = new List<pb_Face>[len];
+
+			// 	// For each vertex, get all it's connected faces
+			// 	for(int i = 0; i < len; i++)
+			// 		connectedFaces[i] = pbMeshUtils.GetNeighborFaces(pb, selectedTriangles[i]);
+
+			// 	for(int i = 0; i < len; i++)
+			// 	{
+			// 		foreach(pb_Face face in connectedFaces[i])
+			// 		{
+			// 			int index = splits.IndexOf((pb_VertexConnection)face);	// pb_VertexConnection only compares face property
+			// 			if(index < 0)
+			// 				splits.Add( new pb_VertexConnection(face, new List<int>(1) { selectedTriangles[i] } ) );
+			// 			else
+			// 				splits[index].indices.Add(selectedTriangles[i]);
+			// 		}
+			// 	}
+
+			// 	for(int i = 0; i < splits.Count; i++)
+			// 		splits[i] = splits[i].Distinct(pb.sharedIndices);
+
+			// 	int[] f;
+			// 	if(pb.ConnectVertices(splits, out f))
+			// 	{
+			// 		success++;
+			// 		pb.SetSelectedTriangles(f);
+			// 	}
+			// }
+
+			// foreach(pb_Object pb in selection)
+			// {
+			// 	pb.ToMesh();
+			// 	pb.Refresh();
+			// 	pb.Optimize();
+			// }
+
+			// if(success > 0)
+			// {
+			// 	if(editor)
+			// 		editor.UpdateSelection(true);
+
+			// 	return new pb_ActionResult(Status.Success, "Connect Vertices");
+			// }
+			// else
+			// {
+			// 	Debug.LogWarning("No valid split paths found.  This is could be because you are attempting to split between vertices that do not belong to the same face, or the split function can't find a good plane to re-triangulate from.");
+			// 	return new pb_ActionResult(Status.Failure, "Connect Vertices\nNo Valid Split Paths Found");
+			// }
 		}
 
 		/**
@@ -1960,7 +1946,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] edges;
-				if( pb.ConnectEdges( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray(), out edges) )
+				if( pb.Connect( pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToList(), out edges) )
 				{
 					pb.SetSelectedEdges(edges);
 					pb.ToMesh();

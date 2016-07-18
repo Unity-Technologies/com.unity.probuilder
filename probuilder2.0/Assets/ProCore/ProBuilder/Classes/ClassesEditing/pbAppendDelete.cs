@@ -25,7 +25,7 @@ public static class pbAppendDelete
 			shared[i] = -1;
 		return pb.AppendFace(v, c, u, face, shared);
 	}
-	
+
 	/**
 	 * Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
 	 */
@@ -64,7 +64,7 @@ public static class pbAppendDelete
 		pb.SetVertices( _verts );
 		pb.SetColors( _colors );
 		pb.SetUV( _uvs );
-		
+
 		pb.SetSharedIndices(sharedIndices);
 		pb.SetFaces(_faces.ToArray());
 
@@ -136,26 +136,26 @@ public static class pbAppendDelete
 	/**
 	 *	Removes the passed face from this pb_Object.  Handles shifting vertices and triangles, as well as messing with the sharedIndices cache.
 	 */
-	public static void DeleteFace(this pb_Object pb, pb_Face face)
-	{		
-		DeleteFaces(pb, new pb_Face[] { face });
+	public static int[] DeleteFace(this pb_Object pb, pb_Face face)
+	{
+		return DeleteFaces(pb, new pb_Face[] { face });
 	}
 
 	/**
 	 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
 	 * all the sharedIndices moving stuff for you.
 	 */
-	public static void DeleteFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
-	{	
-		DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
+	public static int[] DeleteFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
+	{
+		return DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 	}
 
 	/**
 	 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
 	 * all the sharedIndices moving stuff for you.
 	 */
-	public static void DeleteFaces(this pb_Object pb, IList<int> faceIndices)
-	{	
+	public static int[] DeleteFaces(this pb_Object pb, IList<int> faceIndices)
+	{
 		pb_Face[] faces = new pb_Face[faceIndices.Count];
 
 		for(int i = 0; i < faces.Length; i++)
@@ -192,15 +192,17 @@ public static class pbAppendDelete
 
 		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
 		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, distInd);
-		
+
 		pb.SetSharedIndices(si);
 		pb.SetSharedIndicesUV(si_uv);
-		
+
 		pb.SetVertices(verts);
 		pb.SetColors(cols);
 		pb.SetUV(uvs);
 
 		pb.SetFaces(nFaces);
+
+		return distInd;
 	}
 #endregion
 }
