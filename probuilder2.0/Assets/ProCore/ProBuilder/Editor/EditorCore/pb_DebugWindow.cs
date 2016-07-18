@@ -63,8 +63,11 @@ namespace ProBuilder2.EditorCommon
 		{
 			try
 			{
+				pb_LineRenderer.instance.Clear();
+
 				foreach(pb_Object pb in selection)
 					DrawElements(pb);
+
 			} catch {}
 		}
 
