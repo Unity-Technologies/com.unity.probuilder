@@ -162,34 +162,37 @@ public static class pbAppendDelete
 		for(int i = 0; i < faces.Length; i++)
 			faces[i] = pb.faces[faceIndices[i]];
 
-		int[] distInd = pb_Face.AllTrianglesDistinct(faces);
+		List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList(); // pb_Face.AllTrianglesDistinct(faces);
+		indicesToRemove.Sort();
+
+		int vertexCount = pb.vertexCount;
+		int removeCount = indicesToRemove.Count;
+
 		profiler.End();
 
 		profiler.Begin("remove");
-		Vector3[] verts = pb.vertices.RemoveAt(distInd);
-		Color[] cols 	= pb.colors.RemoveAt(distInd);
-		Vector2[] uvs 	= pb.uv.RemoveAt(distInd);
-
-		pb_Face[] nFaces = pb.faces.RemoveAt(faceIndices);
+		Vector3[] verts = pb.vertices.SortedRemoveAt(indicesToRemove);
+		Color[] cols 	= pb.colors.SortedRemoveAt(indicesToRemove);
+		Vector2[] uvs 	= pb.uv.SortedRemoveAt(indicesToRemove);
+		pb_Face[] nFaces = pb.faces.SortedRemoveAt(faceIndices);
 		profiler.End();
 
 		profiler.Begin("shift");
+
 		// shift all other face indices down to account for moved vertex positions
 		for(int i = 0; i < nFaces.Length; i++)
 		{
 			int[] tris = nFaces[i].indices;
+
 			for(int n = 0; n < tris.Length; n++)
 			{
-				int sub = 0;
-				for(int d = 0; d < distInd.Length; d++)
-				{
-					if(tris[n] > distInd[d])
-						sub++;
-				}
-				tris[n] -= sub;
+				int shift = pbUtil.NearestIndexPriorToValue<int>(indicesToRemove, tris[n]) + 1;
+				tris[n] -= shift;
 			}
+
 			nFaces[i].SetIndices(tris);
 		}
+
 		profiler.End();
 
 		// shift all other face indices in the shared index array down to account for moved vertex positions
@@ -197,8 +200,8 @@ public static class pbAppendDelete
 		pb_IntArray[] si = pb.sharedIndices;
 		pb_IntArray[] si_uv = pb.sharedIndicesUV;
 
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
-		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, distInd);
+		pb_IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
+		pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
 
 		pb.SetSharedIndices(si);
 		pb.SetSharedIndicesUV(si_uv);
@@ -212,7 +215,7 @@ public static class pbAppendDelete
 		pb.SetFaces(nFaces);
 		profiler.End();
 
-		return distInd;
+		return indicesToRemove.ToArray();
 	}
 #endregion
 }
