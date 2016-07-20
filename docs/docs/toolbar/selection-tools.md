@@ -12,6 +12,8 @@
 Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
 </div> 
 
+**Toolbar Icon** : ![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | ![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png)
+
 * Select Hidden **Off**: drag selection will ignore any [Elements](@todo) that cannot currently be seen 
 * Select Hidden **On**: all [Elements](@todo) are selectable, regardlesss of their visibility
 
@@ -22,6 +24,8 @@ Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
 <div class="info-box warning">
 Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 </div>
+
+**Toolbar Icon** : ![Handle Alignment Global](../images/icons/HandleAlign_World.png) | ![Handle Alignment Local](../images/icons/HandleAlign_Local.png) | ![Handle Alignment Planar](../images/icons/HandleAlign_Plane.png)
 
 **Keyboard Shortcut** : `P`
 
@@ -39,9 +43,11 @@ Choose how the scene handles will be oriented when selecting [Elements](@todo). 
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 </div> 
 
-Expands the selection outward, to adjacent faces. Also includes options to select by Angle and Iterative.
+**Toolbar Icon** : ![Grow Selection](../images/icons/Selection_Grow.png)
 
 **Keyboard Shortcut** : `ALT G`
+
+Expands the selection outward, to adjacent faces. Also includes options to select by Angle and Iterative.
 
 **Options:**
 

@@ -19,13 +19,13 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</
 
 **Keyboard Shortcut** : `CTRL SHIFT K`
 
-**Purpose:** Create new editable shapes such as Cylinder, Arch, and Stairs.
+**Purpose** : Create new editable shapes such as Cylinder, Arch, and Stairs.
 
 Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.
 
 ![Shape Tool Example](../images/Example_ShapeToolsWithCurvedStair.png)
 
-**Usage:** To create a new shape, do the following:
+**Usage** : To create a new shape, do the following:
  
 1. Open the New Shape Tool
 1. If "Shape Preview" is enabled, you will see a blue Preview Object in the scene
@@ -44,13 +44,13 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Too
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 </div> 
 
-**Toolbar Icon:** ![Material Tools Icon](Panel_Materials.png "Material Tools Icon")
+**Toolbar Icon** : ![Material Tools Icon](Panel_Materials.png "Material Tools Icon")
 
-**Purpose:** Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
+**Purpose** : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
 
 ![Material Tools](../images/MaterialTools_WithExample.png "Material Tools")
 
-**Quick Material Usage:**
+**Quick Material Usage** :
 
 * **(A)** The current "Quick Material"
 * **(B)** Apply the Quick Material to the selected faces **(G)**
@@ -59,7 +59,7 @@ Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 
 You may also hold `CTRL SHIFT` while clicking on a face, to apply the Quick Material to just that face.
 
-**Material Palette Usage:**
+**Material Palette Usage** :
 
 * **(E)** Drag-and-drop your often-used materials to these slots
 * **(F)** Click to apply a material to the selected faces **or** objects
@@ -75,9 +75,9 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div> 
 
-**Toolbar Icon:** ![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon")
+**Toolbar Icon** : ![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon")
  
-**Purpose:** Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
+**Purpose** : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 
@@ -93,9 +93,9 @@ The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
 
-**Toolbar Icon:** ![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon")
+**Toolbar Icon** : ![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon")
  
-**Purpose:** Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
+**Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
 Not all shaders will show vertex colors on a mesh: [Vertex Colors FAQ](@todo)
 
@@ -113,11 +113,11 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
-**Toolbar Icon:** ![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon")
+**Toolbar Icon** : ![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon")
 
-**Purpose:** Create a smooth and rounded look, or sharp-edged and faceted.
+**Purpose** : Create a smooth and rounded look, or sharp-edged and faceted.
 
-**Usage:**
+**Usage** :
 
 First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and select the faces you wish to make smooth or faceted.
 
@@ -138,16 +138,16 @@ First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and sel
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
 </div>
 
-**Toolbar Icon:** ![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon")
+**Toolbar Icon** : ![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon")
 
-**Purpose:** Use the Mirror Tool to create mirrored copies of objects.
+**Purpose** : Use the Mirror Tool to create mirrored copies of objects.
 
 The Mirror Tool is especially useful when creating symetrical items- build one half, mirror it, then weld the two together
 for a perfectly symetrical result.
 
 ![Mirror Tool Example](../images/Mirror-Panel_WithExample.png "Mirror Tool Example")
 
-**Usage:**
+**Usage** :
 
 1. Select the object to be mirrored
 1. Open the Mirror Tools
