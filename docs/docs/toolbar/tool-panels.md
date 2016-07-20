@@ -4,18 +4,22 @@
 
 These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), [Smoothing Groups](@todo), and [Mirroring](@todo). 
 
-> Each panel can be docked, kept floating, or simply closed immediately after use.
+**Note:** Each panel can be docked, kept floating, or simply closed immediately after use.
+
+---
+
+<div style="text-align:center">
+<img src="../../images/Toolbar_ToolPanels.png">
+</div>
 
 ---
 
 <a id="shape-tool"></a>
-## Shape Tool
+##![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div> 
-
-**Toolbar Icon** : ![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon")
 
 **Keyboard Shortcut** : `CTRL SHIFT K`
 
@@ -36,15 +40,13 @@ Each shape has specific properties which can be customized before creation- for 
 
 ---
 
-## Material Tools
+##![Material Tools Icon](Panel_Materials.png "Material Tools Icon") Material Tools
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
 <br>
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 </div> 
-
-**Toolbar Icon** : ![Material Tools Icon](Panel_Materials.png "Material Tools Icon")
 
 **Purpose** : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
 
@@ -69,13 +71,11 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 
 ---
 
-## Texturing and UVs
+##![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div> 
-
-**Toolbar Icon** : ![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon")
  
 **Purpose** : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
 
@@ -87,13 +87,11 @@ The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual
 
 ---
 
-## Vertex Color Tools
+##![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
-
-**Toolbar Icon** : ![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon")
  
 **Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
@@ -107,13 +105,11 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 
 ---
 
-## Smoothing Groups
+##![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
-
-**Toolbar Icon** : ![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon")
 
 **Purpose** : Create a smooth and rounded look, or sharp-edged and faceted.
 
@@ -132,13 +128,11 @@ First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and sel
 
 ---
 
-## Mirror Tool
+##![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon") Mirror Tool
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
 </div>
-
-**Toolbar Icon** : ![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon")
 
 **Purpose** : Use the Mirror Tool to create mirrored copies of objects.
 
@@ -153,5 +147,3 @@ for a perfectly symetrical result.
 1. Open the Mirror Tools
 1. Select which axis (or multiple axis) to mirror on
 1. Click "Mirror"- a mirrored duplicate will be created
-
-
