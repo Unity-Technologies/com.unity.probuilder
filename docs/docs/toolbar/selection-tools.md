@@ -1,75 +1,101 @@
-# Video: Selection Tools
+#Video: Selection Tools
 
 [![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "Selection Tools Video")
 
 ---
 
-![ProBuilder Fundamentals Video](../images/Toolbar_SelectionTools_WithLetters.png)
+<div style="text-align:center">
+<img src="../../images/Toolbar_SelectionTools.png">
+</div>
 
-### **A** : Select Hidden
+---
+
+##![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) Select Hidden
 
 <div class="info-box warning">
 Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
-</div> 
+</div>
 
-**Toolbar Icon** : ![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | ![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png)
+Determines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:
 
-* Select Hidden **Off**: drag selection will ignore any [Elements](@todo) that cannot currently be seen 
-* Select Hidden **On**: all [Elements](@todo) are selectable, regardlesss of their visibility
+Toolbar Icon | Description
+:---:|---
+![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | **On** : all [Elements](@todo) are selectable, regardlesss of their visibility
+![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png) |  **Off** : drag selection will ignore any [Elements](@todo) that cannot currently be seen
 
 ![Handle Alignment Examples](../images/SelectHidden_Example.png)
 
-### **B** : Handle Alignment
+---
+
+##![Handle Alignment Local](../images/icons/HandleAlign_Local.png) Handle Alignment
 
 <div class="info-box warning">
 Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 </div>
 
-**Toolbar Icon** : ![Handle Alignment Global](../images/icons/HandleAlign_World.png) | ![Handle Alignment Local](../images/icons/HandleAlign_Local.png) | ![Handle Alignment Planar](../images/icons/HandleAlign_Plane.png)
-
 **Keyboard Shortcut** : `P`
 
-Choose how the scene handles will be oriented when selecting [Elements](@todo). There are three options:
+Choose how the scene handles will be oriented when selecting [Elements](@todo). This is a toggle button, click to change modes:
 
-* Global: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.
-* Local: Similar to "left vs right", handle orientation is relative the object's rotation.
-* Planar: This special mode aligns the handles to exact normal direction of the selected face.
+Toolbar Icon | Description
+:---:|---
+![Handle Alignment Global](../images/icons/HandleAlign_World.png) | Global: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.
+![Handle Alignment Local](../images/icons/HandleAlign_Local.png) | Local: Similar to "left vs right", handle orientation is relative the object's rotation.
+![Handle Alignment Planar](../images/icons/HandleAlign_Plane.png) | Planar: This special mode aligns the handles to exact normal direction of the selected face.
 
 ![Handle Alignment Examples](../images/HandleAlign_ExamplesWithTextAndIcons.png)
 
-### **C** : Grow Selection
+---
+
+##![Grow Selection](../images/icons/Selection_Grow.png) Grow Selection
 
 <div class="info-box warning">
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 </div> 
 
-**Toolbar Icon** : ![Grow Selection](../images/icons/Selection_Grow.png)
-
 **Keyboard Shortcut** : `ALT G`
 
 Expands the selection outward, to adjacent faces. Also includes options to select by Angle and Iterative.
 
-**Options:**
-
-* **Restrict To Angle** : Only Grow Section to faces within a specified angle
-* **Max Angle** : The angle to use when Restrict to Angle is **On**
-* **Iterative** : Only Grow Selection to adjacent faces, with each button press
+Setting | Description
+--- | ---
+**Restrict To Angle** | Only Grow Selection to faces within a specified angle
+**Max Angle** | The angle to use when Restrict to Angle is **On**
+**Iterative** | Only Grow Selection to adjacent faces, with each button press
 
 ![Handle Alignment Examples](../images/GrowSelection_Example.png)
+
+---
  
-### **D** : Shrink Selection
+##![Shrink Selection](../images/icons/Selection_Shrink.png) Shrink Selection
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
+</div> 
 
 **Keyboard Shortcut** : `ALT SHIFT G`
 
 Does the opposite of Grow Selection- removes the elements on the perimiter of the current selection.
 
-### **E** : Invert Selection 
+---
+
+##![Invert Selection](../images/icons/Selection_Invert.png) Invert Selection
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
+</div> 
 
 **Keyboard Shortcut** : `ALT SHIFT G`
 
 Selects the inverse of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.
 
-### **F** : Select Edge Loop
+---
+
+##![Select Edge Loop Icon](../images/icons/Selection_Loop.png "Select Edge Loop Icon") Select Edge Loop
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
+</div> 
 
 **Keyboard Shortcut** : `ALT L`
 
@@ -77,7 +103,13 @@ Selects an edge loop from each selected edge.
 
 ![Handle Alignment Examples](../images/Selection_LoopExample.png)
 
-### **G** : Select Edge Ring
+---
+
+##![Select Edge Ring Icon](../images/icons/Selection_Ring.png "Select Edge Ring Icon") Select Edge Ring
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Selection Tools: Select Edge Ring</a>
+</div> 
 
 **Keyboard Shortcut** : `ALT R`
 
