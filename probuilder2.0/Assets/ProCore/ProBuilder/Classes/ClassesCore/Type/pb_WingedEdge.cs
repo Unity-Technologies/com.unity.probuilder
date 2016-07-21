@@ -58,7 +58,11 @@ namespace ProBuilder2.Common
 			// 	previous.edge.local.ToString(),
 			// 	opposite.edge.local.ToString());
 
-			return string.Format("Common: {0}   Local: {1}", edge.common.ToString(), edge.local.ToString());
+			return string.Format("Common: {0}\nLocal: {1}\nOpposite: {2}\nFace: {3}",
+				edge.common.ToString(),
+				edge.local.ToString(),
+				opposite == null ? "null" : opposite.edge.ToString(),
+				face.ToString());
 		}
 
 		public pb_WingedEdge GetAdjacentEdgeWithCommonIndex(int common)

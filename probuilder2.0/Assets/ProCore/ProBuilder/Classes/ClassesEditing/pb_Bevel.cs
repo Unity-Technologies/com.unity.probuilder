@@ -13,14 +13,14 @@ namespace ProBuilder2.MeshOperations
 	{
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
-			List<pb_EdgeLookup> m_edges = pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			List<pb_FaceRebuildData> appendFaces = new List<pb_FaceRebuildData>();
+			Dictionary<int, int> 		lookup 		= pb.sharedIndices.ToDictionary();
+			List<pb_Vertex> 			vertices 	= new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+			List<pb_EdgeLookup> 		m_edges 	= pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
+			List<pb_WingedEdge> 		wings 		= pb_WingedEdge.GetWingedEdges(pb);
+			List<pb_FaceRebuildData> 	appendFaces = new List<pb_FaceRebuildData>();
 
-			Dictionary<pb_Face, List<int>> ignore = new Dictionary<pb_Face, List<int>>();
-			HashSet<int> slide = new HashSet<int>();
+			Dictionary<pb_Face, List<int>> 	ignore 	= new Dictionary<pb_Face, List<int>>();
+			HashSet<int> 					slide 	= new HashSet<int>();
 			Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>> holes = new Dictionary<int, pb_Tuple<pb_Face, List<pb_Vertex>>>();
 			int beveled = 0;
 	
@@ -58,7 +58,7 @@ namespace ProBuilder2.MeshOperations
 			
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
 			// then add holes later
-			createdFaces = appendFaces.Select(x => x.face).ToList();
+			HashSet<pb_Face> bridgedFaces = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
 
 			Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
@@ -79,18 +79,12 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			// these are faces that have been vertex exploded and may have holes adjacent
-			HashSet<pb_Face> adjacentFaces = new HashSet<pb_Face>();
-			// these are the new holes that have been filled
-			HashSet<pb_Face> filledHoles = new HashSet<pb_Face>();
-
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
 			foreach(KeyValuePair<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
 			{
 				Dictionary<int, List<pb_Vertex>> appendedVertices;
 
 				pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
-				adjacentFaces.Add(f.face);
 
 				foreach(var apv in appendedVertices)
 				{
@@ -109,6 +103,9 @@ namespace ProBuilder2.MeshOperations
 
 			// iterate each common index affected and see if it contained more than 2 leading edges.  if it did,
 			// a hole was created and needs to be filled.
+
+			HashSet<pb_Face> holedFaces = new HashSet<pb_Face>();
+
 			foreach(var k in holes)
 			{		
 				HashSet<int> used = new HashSet<int>();
@@ -125,19 +122,15 @@ namespace ProBuilder2.MeshOperations
 				
 				if(filledHole != null)
 				{
-					filledHoles.Add(filledHole.face);
-
 					// later when the mesh is rebuilt conform new hole normal to it's donor face
-					// Vector3 adjacentNormal = pb_Math.Normal(vertices, k.Value.Item1.indices);
-					// Vector3 filledNormal = pb_Math.Normal(filledHole.vertices, filledHole.face.indices);
-
-					// if(Vector3.Dot(adjacentNormal, filledNormal) < 0f)
-					// 	System.Array.Reverse(filledHole.face.indices);
-
-					createdFaces.Add(filledHole.face);
+					holedFaces.Add(filledHole.face);
 					appendFaces.Add(filledHole);
 				}
 			}
+
+			createdFaces = new List<pb_Face>();
+			createdFaces.AddRange(bridgedFaces);
+			createdFaces.AddRange(holedFaces);
 
 			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
@@ -147,39 +140,30 @@ namespace ProBuilder2.MeshOperations
 			// make sure filled holes are oriented correclty
 			// using hashcode here because Contains() doesn't recognize faces for some reason?
 			// @todo figure out why...
-			/// {
-			// List<pb_Face> appended = new List<pb_Face>();
-			// appended.AddRange(adjacentFaces);
-			// appended.AddRange(filledHoles);
-			// Debug.Log("adj\n" + adjacentFaces.ToString("\n"));
-			// Debug.Log("fill\n" + filledHoles.ToString("\n"));
-			// List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, appended);
-			// Dictionary<int, int> sddfadsfads = pb.sharedIndices.ToDictionary();
-			// foreach(pb_WingedEdge f in created)
 			// {
-			// 	if(adjacentFaces.Contains(f.face))
-			// 	{
-			// 		adjacentFaces.Remove(f.face);
+			List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, createdFaces);
+			
+			foreach(pb_WingedEdge f in created)
+			{
+				if(bridgedFaces.Contains(f.face))
+				{
+					bridgedFaces.Remove(f.face);
+					pb_WingedEdge n = f;
 
-			// 		Debug.Log("adj: " + f.face.indices.Select(x => sddfadsfads[x]).ToString(","));
+					do
+					{
+						if(n.opposite != null && holedFaces.Contains(n.opposite.face))
+						{
+							holedFaces.Remove(n.opposite.face);
+							pb_ConformNormals.ConformOppositeNormal(n);
+						}
 
-			// 		pb_WingedEdge n = f;
-
-			// 		do
-			// 		{
-			// 			if(f.opposite != null)// && filledHoles.Contains(f.opposite.face))
-			// 			{
-			// 				Debug.Log("try: " + f.opposite.face.indices.Select(x => sddfadsfads[x]).ToString(","));
-			// 				// // Debug.Log("try flip:\n" + f.opposite.face);
-			// 				// filledHoles.Remove(f.opposite.face);
-			// 				pb_ConformNormals.ConformOppositeNormal(f);
-			// 			}
-			// 			n = n.next;
-			// 		}
-			// 		while(n != f);
-			// 	}
+						n = n.next;
+					}
+					while(n != f);
+				}
+			}
 			// }
-			/// }
 
 			pb.ToMesh();
 
