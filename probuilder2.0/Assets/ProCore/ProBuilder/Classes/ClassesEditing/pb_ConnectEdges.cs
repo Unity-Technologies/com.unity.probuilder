@@ -40,25 +40,14 @@ namespace ProBuilder2.MeshOperations
 
 		private static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] addedFaces, out pb_Edge[] connections, bool returnFaces = false, bool returnEdges = false)
 		{
-			profiler.Begin("Connect Edges");
 
-			profiler.Begin("lookup");
-			profiler.Begin("ToDictionary");
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
-			profiler.End();
-			profiler.Begin("GetEdgeLookup");
 			HashSet<pb_EdgeLookup> distinctEdges = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
-			profiler.End();
-			profiler.Begin("GetWingedEdges");
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			profiler.End();
-
-			Dictionary<pb_Face, List<pb_WingedEdge>> affected = new Dictionary<pb_Face, List<pb_WingedEdge>>();
 
 			// map each edge to a face so that we have a list of all touched faces with their to-be-subdivided edges
-			profiler.Begin("map edges to face");
-
+			Dictionary<pb_Face, List<pb_WingedEdge>> affected = new Dictionary<pb_Face, List<pb_WingedEdge>>();
 			List<pb_WingedEdge> faceEdges;
 
 			foreach(pb_WingedEdge wing in wings)
@@ -72,8 +61,6 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			profiler.End();
-			profiler.End();
 
 			////// DEBUG {
 			// foreach(var k in affected)
@@ -82,15 +69,12 @@ namespace ProBuilder2.MeshOperations
 			// }
 			////// DEBUG }
 
-			profiler.Begin("get vertices");
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
 
 			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
-			profiler.End();
 
-			profiler.Begin("do splits");
 			// do the splits
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> split in affected)
 			{
@@ -130,27 +114,15 @@ namespace ProBuilder2.MeshOperations
 					results.AddRange(res);
 				}
 			}
-			profiler.End();
 
 
-			profiler.Begin("apply vertices");
 			List<int> offsets = pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
-			profiler.End();
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
-			profiler.Begin("delete faces");
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			profiler.End();
-			profiler.Begin("extract shared");
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-			profiler.End();
-
-			profiler.Begin("ToMesh");
 			pb.ToMesh();
-			profiler.End();
-			
 
 			// figure out where the new edges where inserted
-			profiler.Begin("find new edges");
 			if(returnEdges)
 			{
 				// offset the newVertexIndices by whatever the FaceRebuildData did so we can search for the new edges by index
@@ -175,9 +147,6 @@ namespace ProBuilder2.MeshOperations
 				addedFaces = results.Select(x => x.faceRebuildData.face).ToArray();
 			else
 				addedFaces = null;
-
-			profiler.End();
-			profiler.End();
 
 			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count));
 		}

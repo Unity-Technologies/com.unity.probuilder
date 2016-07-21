@@ -257,11 +257,6 @@ namespace ProBuilder2.Common
 					{
 						edge = null;
 					}
-					// else
-					// {
-					// 	edge.x = mesh.ToUserIndex(edge.x);
-					// 	edge.y = mesh.ToUserIndex(edge.y);
-					// }
 				}
 			}
 

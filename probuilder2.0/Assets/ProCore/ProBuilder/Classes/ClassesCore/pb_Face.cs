@@ -241,10 +241,12 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 	public pb_Edge[] GetAllEdges()
 	{
 		pb_Edge[] edges = new pb_Edge[indices.Length];
-		for(int i = 0; i < indices.Length; i+=3) {
-			edges[i+0] = new pb_Edge(indices[i+0],indices[i+1]);
-			edges[i+1] = new pb_Edge(indices[i+1],indices[i+2]);
-			edges[i+2] = new pb_Edge(indices[i+2],indices[i+0]);
+
+		for(int i = 0; i < indices.Length; i+=3)
+		{
+			edges[i  ] = new pb_Edge(indices[i+0], indices[i+1]);
+			edges[i+1] = new pb_Edge(indices[i+1], indices[i+2]);
+			edges[i+2] = new pb_Edge(indices[i+2], indices[i+0]);
 		}
 		return edges;
 	}
@@ -329,7 +331,26 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		if(_indices == null)
 			return null;
 			
-		_edges = pb_Edge.GetPerimeterEdges( GetAllEdges() );
+		// _edges = pb_Edge.GetPerimeterEdges( GetAllEdges() );
+
+		HashSet<pb_Edge> dist = new HashSet<pb_Edge>();
+		List<pb_Edge> dup = new List<pb_Edge>();
+
+		for(int i = 0; i < indices.Length; i+=3)
+		{
+			pb_Edge a = new pb_Edge(indices[i+0],indices[i+1]);
+			pb_Edge b = new pb_Edge(indices[i+1],indices[i+2]);
+			pb_Edge c = new pb_Edge(indices[i+2],indices[i+0]);
+
+			if(!dist.Add(a)) dup.Add(a);
+			if(!dist.Add(b)) dup.Add(b);
+			if(!dist.Add(c)) dup.Add(c);
+		}
+
+		dist.ExceptWith(dup);
+
+		_edges = dist.ToArray();
+
 		return _edges;
 	}
 
@@ -338,8 +359,9 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		if(_indices == null)
 			return null;
 
-		_distinctIndices = _indices.Distinct().ToArray();
-		return _distinctIndices;
+		_distinctIndices = new HashSet<int>(_indices).ToArray();
+
+		return distinctIndices;
 	}
 #endregion
 

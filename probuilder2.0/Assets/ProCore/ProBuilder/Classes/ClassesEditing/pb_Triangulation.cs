@@ -16,30 +16,50 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Triangulation
 	{
+		static TMesh _tmesh;
+
+		/**
+		 *	Initializing a Triangle.Mesh is a non-trivial performance hit.  Cache the instance
+		 *	since it already clears the triangulation data on Mesh.Triangulate calls.
+		 */
+		static TMesh GetTMesh(bool convex)
+		{
+			if(_tmesh == null)
+			{
+				Behavior b = new Behavior();
+				b.Convex = convex;
+				b.ConformingDelaunay = false;
+				b.NoBisect = 2;			// prevent all splitting
+				b.NoHoles = true;
+				b.Jettison = false;		// don't jettison unused vertices
+				_tmesh = new TMesh(b);
+			}
+			else if(_tmesh.Behavior.Convex != convex)
+			{
+				_tmesh.Behavior.Convex = convex;
+			}
+
+			return _tmesh;
+		}
+
 		/**
 		 *	Given a set of points this method will format the points into a boundary contour and triangulate,
 		 *	returning a set of indices that corresponds to the original ordering.
 		 */
 		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
-			profiler.Begin("sort");
 			IList<Vector2> sorted = pb_Projection.Sort(points, SortMethod.CounterClockwise);
-			profiler.End();
 
 			Dictionary<int, int> map = new Dictionary<int, int>();
 
-			profiler.Begin("map");
 			for(int i = 0; i < sorted.Count; i++)
 				map.Add(i, points.IndexOf(sorted[i]));
-			profiler.End();
 
-			profiler.Begin("triangulate");
 			if(!Triangulate(sorted, out indices, convex))
 				return false;
 
 			for(int i = 0; i < indices.Count; i++)
 				indices[i] = map[indices[i]];
-			profiler.End();
 
 			return true;
 		}
@@ -76,45 +96,22 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
-			profiler.Begin("alloc");
-
-			profiler.Begin("get winding order");
+			int vertexCount = points.Count;
+			
 			indices = new List<int>();
 			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
-			int vertexCount = points.Count;
-			profiler.End();
-			profiler.Begin("InputGeometry");
 			InputGeometry input = new InputGeometry(vertexCount);
-			profiler.End();
 
-			profiler.Begin("add points");
 			for(int i = 0; i < vertexCount; i++)
 			{
 				input.AddPoint(points[i].x, points[i].y, 2);
 				input.AddSegment(i, (i + 1) % vertexCount, 2);
 			}
-			profiler.End();
 
-			profiler.Begin("Behavior");
-			Behavior b = new Behavior();
-			b.Convex = convex;
-			b.ConformingDelaunay = false;
-			b.NoBisect = 2;			// prevent all splitting
-			b.NoHoles = true;
-			b.Jettison = false;		// don't jettison unused vertices
-			profiler.End();
+			TMesh tm = GetTMesh(convex);
 
-			profiler.Begin("TMesh");
-			TMesh tm = new TMesh(b);
-			profiler.End();
-
-			profiler.End();
-			
-			profiler.Begin("do");
 			tm.Triangulate(input);
-			profiler.End();
 
-			profiler.Begin("rest");
 			if(tm.Vertices.Count != points.Count)
 			{
 				Debug.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
@@ -131,7 +128,6 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( t.P1 );
 				indices.Add( t.P0 );
 			}
-			profiler.End();
 
 			// if the re-triangulated first tri doesn't match the winding order of the original
 			// vertices, flip 'em

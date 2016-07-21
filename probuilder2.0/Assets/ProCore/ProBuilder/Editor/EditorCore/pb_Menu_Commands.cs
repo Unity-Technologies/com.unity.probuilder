@@ -1734,7 +1734,6 @@ namespace ProBuilder2.EditorCommon
 
 			int success = 0;
 
-			profiler.Begin("Subdivide");
 			foreach(pb_Object pb in selection)
 			{
 				if( pb.Subdivide() )
@@ -1744,7 +1743,6 @@ namespace ProBuilder2.EditorCommon
 				pb.Refresh();
 				pb.Optimize();
 			}
-			profiler.End();
 
 			if(editor)
 				editor.UpdateSelection(true);
