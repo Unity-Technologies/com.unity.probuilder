@@ -80,7 +80,7 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
-			foreach(var kvp in sorted)
+			foreach(KeyValuePair<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
 			{
 				Dictionary<int, List<pb_Vertex>> appendedVertices;
 
@@ -118,11 +118,11 @@ namespace ProBuilder2.MeshOperations
 				
 				if(filledHole != null)
 				{
-					Vector3 adjacentNormal = pb_Math.Normal(vertices, k.Value.Item1.indices);
-					Vector3 filledNormal = pb_Math.Normal(filledHole.vertices, filledHole.face.indices);
+					// Vector3 adjacentNormal = pb_Math.Normal(vertices, k.Value.Item1.indices);
+					// Vector3 filledNormal = pb_Math.Normal(filledHole.vertices, filledHole.face.indices);
 
-					if(Vector3.Dot(adjacentNormal, filledNormal) < 0f)
-						System.Array.Reverse(filledHole.face.indices);
+					// if(Vector3.Dot(adjacentNormal, filledNormal) < 0f)
+					// 	System.Array.Reverse(filledHole.face.indices);
 
 					createdFaces.Add(filledHole.face);
 					appendFaces.Add(filledHole);

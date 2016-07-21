@@ -517,7 +517,7 @@ namespace ProBuilder2.MeshOperations
 
 	/**
 	 *	Split a common index on a face into two vertices and slide each vertex backwards along it's feeding edge by distance.
-	 *	This method does not perform any input validation, so make sure commonIndices is distinct and all winged edges belong
+	 *	This method does not perform any input validation, so make sure edgeAndCommonIndex is distinct and all winged edges belong
 	 *	to the same face.
 	 * 
 	 *	`appendedVertices` is common index and a list of vertices it was split into.
@@ -533,89 +533,67 @@ namespace ProBuilder2.MeshOperations
 		float distance,
 		out Dictionary<int, List<pb_Vertex>> appendedVertices)
 	{
-		// organize all common splits with directions so that they can all be executed at once
-		Dictionary<int, List<pb_Vertex>> splits = new Dictionary<int, List<pb_Vertex>>();
-		
+		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
+		List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 		appendedVertices = new Dictionary<int, List<pb_Vertex>>();
 
-		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
+		// store local and common index of split points
+		Dictionary<int, int> toSplit = new Dictionary<int, int>();
 
-		if(face == null)
-			return null;
-
-		int[] fi = face.indices;
-		int[] di = face.distinctIndices;
-		Dictionary<int, int> ci = new Dictionary<int, int>();
-
-		Vector3 normal = pb_Math.Normal(
-			vertices[fi[0]].position,
-			vertices[fi[1]].position,
-			vertices[fi[2]].position);
-
-		foreach(var edgeAndIndex in edgeAndCommonIndex)
+		foreach(pb_Tuple<pb_WingedEdge, int> v in edgeAndCommonIndex)
 		{
-			pb_WingedEdge edge = edgeAndIndex.Item1;
-			int commonIndex = edgeAndIndex.Item2;
-
-			pb_Edge ae = AlignEdgeWithDirection(edge.edge, commonIndex);
-			pb_WingedEdge next = edge.next.edge.common.Contains(commonIndex) ? edge.next : edge.previous;
-			pb_Edge an = AlignEdgeWithDirection(next.edge, commonIndex);
-
-			if(ae == null || an == null)
-				continue;
-
-			pb_Vertex adir = (vertices[ae.y] - vertices[ae.x]);
-			pb_Vertex bdir = (vertices[an.y] - vertices[an.x]);
-			adir.Normalize();
-			bdir.Normalize();
-			
-			if(!ci.ContainsKey(ae.x)) ci.Add(ae.x, commonIndex);
-			if(!ci.ContainsKey(an.x)) ci.Add(an.x, commonIndex);
-
-			splits.AddOrAppend<int, pb_Vertex>(ae.x, adir);
-			splits.AddOrAppend<int, pb_Vertex>(an.x, bdir);
+			if( v.Item2 == v.Item1.edge.common.x)
+				toSplit.Add(v.Item1.edge.local.x, v.Item2);
+			else
+				toSplit.Add(v.Item1.edge.local.y, v.Item2);
 		}
 
-		List<pb_Vertex> v = new List<pb_Vertex>();
+		int pc = perimeter.Count;
+		List<pb_Vertex> n_vertices = new List<pb_Vertex>();
 
-		for(int i = 0; i < di.Length; i++)
+		for(int i = 0; i < pc; i++)
 		{
-			List<pb_Vertex> split_dir;
+			int index = perimeter[i].y;
 
-			if( splits.TryGetValue(di[i], out split_dir) )
+			// split this index into two
+			if(toSplit.ContainsKey(index))
 			{
-				for(int n = 0; n < split_dir.Count; n++)
-				{
-					pb_Vertex nv = vertices[di[i]] + split_dir[n] * distance;
-					appendedVertices.AddOrAppend(ci[di[i]], nv);
-					v.Add(nv);
-				}
+				// a --- b --- c
+				pb_Vertex a = vertices[perimeter[i].x];
+				pb_Vertex b = vertices[perimeter[i].y];
+				pb_Vertex c = vertices[perimeter[(i+1) % pc].y];
+
+				pb_Vertex leading_dir = a - b;
+				pb_Vertex following_dir = c - b; 
+				leading_dir.Normalize();
+				following_dir.Normalize();
+
+				pb_Vertex leading_insert = vertices[index] + leading_dir * distance;
+				pb_Vertex following_insert = vertices[index] + following_dir * distance;
+
+				n_vertices.Add(leading_insert);
+				n_vertices.Add(following_insert);
+
+				appendedVertices.AddOrAppend(toSplit[index], leading_insert);
+				appendedVertices.AddOrAppend(toSplit[index], following_insert);
 			}
 			else
 			{
-				v.Add(new pb_Vertex(vertices[di[i]]));
+				n_vertices.Add(vertices[index]);
 			}
 		}
 
-		Vector3[] facePoints = new Vector3[v.Count];
-
-		for(int i = 0; i < v.Count; ++i)
-			facePoints[i] = v[i].position;
-
-		Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 		List<int> triangles;
 
-		if(pb_Triangulation.SortAndTriangulate(points2d, out triangles))
+		if( pb_Triangulation.TriangulateVertices(n_vertices, out triangles, false) )
 		{
 			pb_FaceRebuildData data = new pb_FaceRebuildData();
-
-			data.vertices = v;
+			data.vertices = n_vertices;
 			data.face = new pb_Face(face);
 			data.face.SetIndices(triangles.ToArray());
-			
 			return data;
 		}
-
+		
 		return null;
 	}
 

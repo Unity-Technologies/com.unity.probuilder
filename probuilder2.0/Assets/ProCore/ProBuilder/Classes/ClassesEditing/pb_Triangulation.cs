@@ -16,13 +16,13 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Triangulation
 	{
-		static TMesh _tmesh;
+		private static TMesh _tmesh;
 
 		/**
 		 *	Initializing a Triangle.Mesh is a non-trivial performance hit.  Cache the instance
 		 *	since it already clears the triangulation data on Mesh.Triangulate calls.
 		 */
-		static TMesh GetTMesh(bool convex)
+		private static TMesh GetTMesh(bool convex)
 		{
 			if(_tmesh == null)
 			{
