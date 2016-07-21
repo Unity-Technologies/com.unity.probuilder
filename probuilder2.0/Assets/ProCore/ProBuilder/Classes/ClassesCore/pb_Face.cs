@@ -16,51 +16,8 @@ namespace ProBuilder2.Common
 /**
  *	\brief Contains mesh and material information.  Used in the creation of #pb_Objects.
  */
-public class pb_Face : ISerializable, IEquatable<pb_Face>
+public class pb_Face
 {
-
-#region SERIALIZATION
-
-	// OnSerialize
-	public void GetObjectData(SerializationInfo info, StreamingContext context)
-	{
-		info.AddValue("indices",			_indices, 					typeof(int[]));
-		info.AddValue("distinctIndices", 	_distinctIndices, 			typeof(int[]));
-		info.AddValue("edges", 				_edges, 					typeof(pb_Edge[]));
-		info.AddValue("smoothingGroup",	 	_smoothingGroup, 			typeof(int));
-		info.AddValue("uv",	 				_uv, 						typeof(pb_UV));
-		info.AddValue("material",			_mat.name,					typeof(string));
-		info.AddValue("manualUV", 			manualUV, 					typeof(bool));
-		info.AddValue("elementGroup", 		elementGroup, 				typeof(int));
-	}
-
-	// The pb_SerializedMesh constructor is used to deserialize values. 
-	public pb_Face(SerializationInfo info, StreamingContext context)
-	{
-		this._indices = 			(int[])		info.GetValue( "indices",			typeof(int[]));
-		this._distinctIndices = 	(int[])		info.GetValue( "distinctIndices",	typeof(int[]));
-		this._edges = 				(pb_Edge[])	info.GetValue( "edges",				typeof(pb_Edge[]));
-		this._smoothingGroup = 		(int) 		info.GetValue( "smoothingGroup",	typeof(int));
-		this._uv = 					(pb_UV) 	info.GetValue( "uv",				typeof(pb_UV));
-		this.manualUV = 			(bool) 		info.GetValue( "manualUV",			typeof(bool));
-		this.elementGroup = 		(int) 		info.GetValue( "elementGroup",		typeof(int));
-
-		// material is a little different - it requires some fanaglin'
-		this._mat = pb_Constant.DefaultMaterial;
-
-		string matName = (string)info.GetValue("material", typeof(string));
-
-		foreach(Material mat in Resources.FindObjectsOfTypeAll(typeof(Material)))
-		{
-			if(mat.name.Equals(matName))
-			{
-				this._mat = mat;
-				break;
-			}
-		}
-	}
-#endregion
-
 #region CONSTRUCTORS
 
 	public pb_Face() {}
@@ -116,45 +73,6 @@ public class pb_Face : ISerializable, IEquatable<pb_Face>
 		manualUV = other.manualUV;
 		elementGroup = other.elementGroup;
 		RebuildCaches();
-	}
-
-	public bool Equals(pb_Face b)
-	{
-		if(!pbUtil.IsEqual<int>(_indices, b.indices))
-			return false;
-
-		// at the moment PB doesn't allow faces that share indices,
-		// so don't bother comparing anything else.
-
-		return true;
-	}
-
-	public override bool Equals(System.Object b)
-	{
-		return b is pb_Face && ((pb_Face)b).Equals(this);
-	}
-
-	public override int GetHashCode()
-	{
-		// http://stackoverflow.com/questions/3404715/c-sharp-hashcode-for-array-of-ints
-		int hc = _indices.Length;
-
-		for(int i = 0; i <_indices.Length; ++i)
-		{
-			hc = unchecked(hc * 17 + _indices[i]);
-		}
-
-		return hc;
-	}
-
-	public static explicit operator pb_EdgeConnection(pb_Face face)
-	{
-		return new pb_EdgeConnection(face, null);
-	}
-
-	public static explicit operator pb_VertexConnection(pb_Face face)
-	{
-		return new pb_VertexConnection(face, null);
 	}
 #endregion
 

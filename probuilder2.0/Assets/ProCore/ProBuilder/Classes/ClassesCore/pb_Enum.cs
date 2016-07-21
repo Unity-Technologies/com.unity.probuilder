@@ -151,4 +151,11 @@ namespace ProBuilder2.Common
 		Normal,
 		Tangent
 	};
+	
+	public enum IndexFormat
+	{
+		Local = 0x0,
+		Common = 0x1,
+		Both = 0x2
+	};
 }

@@ -148,33 +148,37 @@ namespace ProBuilder2.MeshOperations
 			// using hashcode here because Contains() doesn't recognize faces for some reason?
 			// @todo figure out why...
 			/// {
-			List<pb_Face> appended = new List<pb_Face>();
-			HashSet<int> ah = new HashSet<int>(adjacentFaces.Select(x=>x.GetHashCode()));
-			HashSet<int> af = new HashSet<int>(filledHoles.Select(x=>x.GetHashCode()));
-			appended.AddRange(adjacentFaces);
-			appended.AddRange(filledHoles);
-			List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, appended);
+			// List<pb_Face> appended = new List<pb_Face>();
+			// appended.AddRange(adjacentFaces);
+			// appended.AddRange(filledHoles);
+			// Debug.Log("adj\n" + adjacentFaces.ToString("\n"));
+			// Debug.Log("fill\n" + filledHoles.ToString("\n"));
+			// List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, appended);
+			// Dictionary<int, int> sddfadsfads = pb.sharedIndices.ToDictionary();
+			// foreach(pb_WingedEdge f in created)
+			// {
+			// 	if(adjacentFaces.Contains(f.face))
+			// 	{
+			// 		adjacentFaces.Remove(f.face);
 
-			foreach(pb_WingedEdge f in created)
-			{
-				if(ah.Contains(f.face.GetHashCode()))
-				{
-					ah.Remove(f.face.GetHashCode());
+			// 		Debug.Log("adj: " + f.face.indices.Select(x => sddfadsfads[x]).ToString(","));
 
-					pb_WingedEdge n = f;
+			// 		pb_WingedEdge n = f;
 
-					do
-					{
-						if(f.opposite != null && af.Contains(f.opposite.face.GetHashCode()))
-						{
-							af.Remove(f.opposite.face.GetHashCode());
-							pb_ConformNormals.ConformOppositeNormal(f);
-						}
-						n = n.next;
-					}
-					while(n != f);
-				}
-			}
+			// 		do
+			// 		{
+			// 			if(f.opposite != null)// && filledHoles.Contains(f.opposite.face))
+			// 			{
+			// 				Debug.Log("try: " + f.opposite.face.indices.Select(x => sddfadsfads[x]).ToString(","));
+			// 				// // Debug.Log("try flip:\n" + f.opposite.face);
+			// 				// filledHoles.Remove(f.opposite.face);
+			// 				pb_ConformNormals.ConformOppositeNormal(f);
+			// 			}
+			// 			n = n.next;
+			// 		}
+			// 		while(n != f);
+			// 	}
+			// }
 			/// }
 
 			pb.ToMesh();
