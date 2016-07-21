@@ -40,7 +40,7 @@ Flips the normals of **all** faces on the selected object(s).
 ## ![Subdivide Objects Icon](../images/icons/Object_Subdivide.png "Subdivide Objects Icon") Subdivide Object
 
 <div class="info-box warning">
-Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
+Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
 </div> 
 
 **Keyboard Shortcut** : `ALT S`
