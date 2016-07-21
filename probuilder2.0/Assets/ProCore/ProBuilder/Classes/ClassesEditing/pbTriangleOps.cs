@@ -37,6 +37,10 @@ namespace ProBuilder2.MeshOperations
 			return GetWindingOrder(p);
 		}
 
+		/**
+		 *	Return the winding order of a set of ordered points.
+		 *	http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+		 */
 		public static WindingOrder GetWindingOrder(IList<Vector2> points)
 		{
 			float sum = 0f;
@@ -54,7 +58,7 @@ namespace ProBuilder2.MeshOperations
 
 			return sum == 0f ? WindingOrder.Unknown : (sum > 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);
 		}
-
+		
 		/**
 		 * Reverses the orientation of the middle edge in a quad.
 		 */

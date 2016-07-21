@@ -536,6 +536,7 @@ namespace ProBuilder2.MeshOperations
 		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
 		List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 		appendedVertices = new Dictionary<int, List<pb_Vertex>>();
+		Vector3 oldNormal = pb_Math.Normal(vertices, face.indices);
 
 		// store local and common index of split points
 		Dictionary<int, int> toSplit = new Dictionary<int, int>();
@@ -590,6 +591,11 @@ namespace ProBuilder2.MeshOperations
 			pb_FaceRebuildData data = new pb_FaceRebuildData();
 			data.vertices = n_vertices;
 			data.face = new pb_Face(face);
+
+			Vector3 newNormal = pb_Math.Normal(n_vertices, triangles);
+			if(Vector3.Dot(oldNormal, newNormal) < 0f)
+				triangles.Reverse();
+
 			data.face.SetIndices(triangles.ToArray());
 			return data;
 		}
