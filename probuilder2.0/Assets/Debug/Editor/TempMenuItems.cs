@@ -17,7 +17,7 @@ public class TempMenuItems : EditorWindow
 	static void MenuInit()
 	{
 
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
 		// pbUndo.RecordSelection(selection, "connect edges new");
 
@@ -30,7 +30,7 @@ public class TempMenuItems : EditorWindow
 		// 	pb.Optimize();
 		// }
 
-		pb_Editor.Refresh();
+		// pb_Editor.Refresh();
 	}
 
 	static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)

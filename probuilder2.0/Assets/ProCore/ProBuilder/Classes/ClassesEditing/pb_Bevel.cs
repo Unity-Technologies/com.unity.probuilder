@@ -79,21 +79,28 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
+			// these are faces that have been vertex exploded and may have holes adjacent
+			HashSet<pb_Face> adjacentFaces = new HashSet<pb_Face>();
+			// these are the new holes that have been filled
+			HashSet<pb_Face> filledHoles = new HashSet<pb_Face>();
+
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
 			foreach(KeyValuePair<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
 			{
 				Dictionary<int, List<pb_Vertex>> appendedVertices;
 
 				pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
+				adjacentFaces.Add(f.face);
 
 				foreach(var apv in appendedVertices)
 				{
 					pb_Tuple<pb_Face, List<pb_Vertex>> entries;
 
+					// organize holes by new face so that later we can compare the winding of the new face to the hole face
 					if(holes.TryGetValue(apv.Key, out entries))
 						entries.Item2.AddRange(apv.Value);
 					else
-						holes.Add(apv.Key, new pb_Tuple<pb_Face, List<pb_Vertex>>(kvp.Key, apv.Value));
+						holes.Add(apv.Key, new pb_Tuple<pb_Face, List<pb_Vertex>>(f.face, apv.Value));
 				}
 
 				if(f != null)
@@ -118,6 +125,9 @@ namespace ProBuilder2.MeshOperations
 				
 				if(filledHole != null)
 				{
+					filledHoles.Add(filledHole.face);
+
+					// later when the mesh is rebuilt conform new hole normal to it's donor face
 					// Vector3 adjacentNormal = pb_Math.Normal(vertices, k.Value.Item1.indices);
 					// Vector3 filledNormal = pb_Math.Normal(filledHole.vertices, filledHole.face.indices);
 
@@ -131,8 +141,42 @@ namespace ProBuilder2.MeshOperations
 
 			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
-			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 			pb.DeleteFaces(sorted.Keys);
+			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+
+			// make sure filled holes are oriented correclty
+			// using hashcode here because Contains() doesn't recognize faces for some reason?
+			// @todo figure out why...
+			/// {
+			List<pb_Face> appended = new List<pb_Face>();
+			HashSet<int> ah = new HashSet<int>(adjacentFaces.Select(x=>x.GetHashCode()));
+			HashSet<int> af = new HashSet<int>(filledHoles.Select(x=>x.GetHashCode()));
+			appended.AddRange(adjacentFaces);
+			appended.AddRange(filledHoles);
+			List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, appended);
+
+			foreach(pb_WingedEdge f in created)
+			{
+				if(ah.Contains(f.face.GetHashCode()))
+				{
+					ah.Remove(f.face.GetHashCode());
+
+					pb_WingedEdge n = f;
+
+					do
+					{
+						if(f.opposite != null && af.Contains(f.opposite.face.GetHashCode()))
+						{
+							af.Remove(f.opposite.face.GetHashCode());
+							pb_ConformNormals.ConformOppositeNormal(f);
+						}
+						n = n.next;
+					}
+					while(n != f);
+				}
+			}
+			/// }
+
 			pb.ToMesh();
 
 			return new pb_ActionResult(Status.Success, "Bevel Edges");

@@ -1,6 +1,7 @@
 using UnityEngine;
 using ProBuilder2.Common;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
@@ -9,7 +10,10 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_ConformNormals
 	{
-
+		/**
+		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but 
+		 *	it may not unify each island the same way.
+		 */
 		public static pb_ActionResult ConformNormals(this pb_Object pb, IList<pb_Face> faces)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces);
@@ -119,6 +123,34 @@ namespace ProBuilder2.MeshOperations
 					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
 			}
 			return null;
+		}
+
+		public static void MatchNormal(pb_Face source, pb_Face target, Dictionary<int, int> lookup)
+		{
+			List<pb_EdgeLookup> source_edges = pb_EdgeLookup.GetEdgeLookup(source.edges, lookup).ToList();
+			List<pb_EdgeLookup> target_edges = pb_EdgeLookup.GetEdgeLookup(target.edges, lookup).ToList();
+
+			bool superBreak = false;
+
+			pb_Edge src, tar;
+
+			for(int i = 0; !superBreak && i < source_edges.Count; i++)
+			{
+				src = source_edges[i].common;
+
+				for(int n = 0; !superBreak && n < target_edges.Count; n++)
+				{
+					tar = target_edges[n].common;
+
+					if(src.Equals(tar))
+					{
+						if(src.x == tar.x)
+							target.ReverseIndices();
+
+						superBreak = true;
+					}
+				}
+			}
 		}
 	}
 }
