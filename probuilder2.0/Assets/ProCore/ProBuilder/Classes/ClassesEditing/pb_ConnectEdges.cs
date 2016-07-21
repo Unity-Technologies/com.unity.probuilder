@@ -82,13 +82,15 @@ namespace ProBuilder2.MeshOperations
 			// }
 			////// DEBUG }
 
-			profiler.Begin("do splits");
+			profiler.Begin("get vertices");
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
 
 			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
+			profiler.End();
 
+			profiler.Begin("do splits");
 			// do the splits
 			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> split in affected)
 			{

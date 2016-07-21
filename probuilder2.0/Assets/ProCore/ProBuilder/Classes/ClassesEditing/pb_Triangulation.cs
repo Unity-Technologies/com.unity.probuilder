@@ -77,27 +77,37 @@ namespace ProBuilder2.MeshOperations
 		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
 			profiler.Begin("alloc");
+
+			profiler.Begin("get winding order");
 			indices = new List<int>();
-			
 			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
-
 			int vertexCount = points.Count;
+			profiler.End();
+			profiler.Begin("InputGeometry");
 			InputGeometry input = new InputGeometry(vertexCount);
+			profiler.End();
 
+			profiler.Begin("add points");
 			for(int i = 0; i < vertexCount; i++)
 			{
 				input.AddPoint(points[i].x, points[i].y, 2);
 				input.AddSegment(i, (i + 1) % vertexCount, 2);
 			}
+			profiler.End();
 
+			profiler.Begin("Behavior");
 			Behavior b = new Behavior();
 			b.Convex = convex;
 			b.ConformingDelaunay = false;
 			b.NoBisect = 2;			// prevent all splitting
 			b.NoHoles = true;
 			b.Jettison = false;		// don't jettison unused vertices
+			profiler.End();
 
+			profiler.Begin("TMesh");
 			TMesh tm = new TMesh(b);
+			profiler.End();
+
 			profiler.End();
 			
 			profiler.Begin("do");
