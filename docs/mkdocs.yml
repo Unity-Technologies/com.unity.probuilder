@@ -13,10 +13,9 @@ pages:
   - Selection Tools: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
   - Geometry Actions:
-    - toolbar/geo-actions/all.md
-    - toolbar/geo-actions/face.md
-    - toolbar/geo-actions/edge.md
-    - toolbar/geo-actions/vertex.md
+    - Vertex: toolbar/vertex.md
+    - Edge: toolbar/edge.md
+    - Face: toolbar/face.md
     
 - Texturing and UVs: texturing/texturing-and-uvs.md
 - Troubleshooting:

@@ -8,15 +8,67 @@ A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betw
 
 ---
 
-### Main Toolbar
+### Tool Catagories
 
-This is a "smart" toolbar, and dynamically changes to match your current editing method and selection.
+<div class="info-box warning">
+Section Video: <a href="@todo">Toolbar Overview: Catagories</a>
+</div> 
 
-You can choose between a Text-Based interface, or Icons, and each button has custom, highly detailed tooltops, which are a great way to begin learning the Toolbar.
+The Toolbar is color-coded to help you quickly choose tools by type:
+
+* **Orange** for [Tool Panels](@todo)
+* **Blue** for [Selection Tools](@todo)
+* **Green** for [Object Actions](@todo)
+* **Red** for [Geometry Actions](@todo)
 
 ![Toolbar Categories Example](ExampleImage_Toolbar_ColorCategories.png "Toolbar Categories Example")
 
+---
+
+### Resizing and Text vs Icon Mode
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Toolbar Overview: Text vs Icon Mode</a>
+</div> 
+
+You can resize the Toolbar however you like, and it will re-order and flow it's contents to match.
+
+Prefer the good 'ol Text Buttons? Right click on the toolbar and choose "Use Text Mode".
+
+![Toolbar Resizing Example](../images/Toolbar_ResizingExample.png "Toolbar Resizing Example")
+
+---
+
+### Dynamic Layout
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
+</div> 
+
+This is a "smart" toolbar, and dynamically changes to match your current editing method and selection. 
+
+* Buttons are only shown on the Toolbar if they are applicable in your current editing mode
+* Buttons that cannot be used on the current selection are automatically greyed-out and disabled.
+
+---
+
+### Custom Settings for Actions
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
+</div> 
+
+Some of the most-used actions ([Extrude](@todo), [Collapse](@todo), [Grow Selection](@todo), etc) also include Custom Settings, which can significantly modify the action.
+
+![Options Icon](../images/icons/options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
+
+---
+
 ### Edit Mode Toolbar
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Toolbar Overview: The Edit Mode Toolbar</a>
+</div> 
 
 This is actually an extension of the main Toolbar, and is located separately, at the top-middle of your active sceneview.
 

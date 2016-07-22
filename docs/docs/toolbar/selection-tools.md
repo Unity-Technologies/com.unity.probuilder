@@ -55,7 +55,9 @@ Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 
 **Keyboard Shortcut** : `ALT G`
 
-Expands the selection outward, to adjacent faces. Also includes options to select by Angle and Iterative.
+Expands the selection outward, to adjacent faces. 
+
+![Options Icon](../images/icons/options.png) **[Custom Settings](@todo) Available** :
 
 Setting | Description
 --- | ---
