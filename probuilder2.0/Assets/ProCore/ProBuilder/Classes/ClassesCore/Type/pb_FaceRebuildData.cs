@@ -28,9 +28,23 @@ namespace ProBuilder2.Common
 			Dictionary<int, int> lookupUV = null)
 		{
 			List<pb_Face> _faces = faces == null ? new List<pb_Face>(pb.faces) : faces;
+
+			if(vertices == null)
+				vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+
+			if(lookup == null)
+				lookup = pb.sharedIndices.ToDictionary();
+
+			if(lookupUV == null)
+				lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
+
 			List<int> offsets = pb_FaceRebuildData.Apply(newFaces, vertices, _faces, lookup, lookupUV);
+
 			pb.SetVertices(vertices);
 			pb.SetFaces(_faces.ToArray());
+			pb.SetSharedIndices(lookup);
+			pb.SetSharedIndicesUV(lookupUV);
+
 			return offsets;
 		}
 

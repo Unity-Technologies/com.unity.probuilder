@@ -40,7 +40,6 @@ namespace ProBuilder2.MeshOperations
 
 		private static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] addedFaces, out pb_Edge[] connections, bool returnFaces = false, bool returnEdges = false)
 		{
-
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
 			HashSet<pb_EdgeLookup> distinctEdges = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
@@ -60,7 +59,6 @@ namespace ProBuilder2.MeshOperations
 						affected.Add(wing.face, new List<pb_WingedEdge>() { wing });
 				}
 			}
-
 
 			////// DEBUG {
 			// foreach(var k in affected)
@@ -202,6 +200,11 @@ namespace ProBuilder2.MeshOperations
 			return faces;
 		}
 
+		/**
+		 * Insert a new vertex at the center of a face and connect the center of all edges to it.
+		 *	@todo test if all edges are selected, and if so, skip triangulation since they're always
+		 *	going to be in 0,1,2,1,3,2 order.
+		 */
 		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,
 			List<pb_WingedEdge> edges,

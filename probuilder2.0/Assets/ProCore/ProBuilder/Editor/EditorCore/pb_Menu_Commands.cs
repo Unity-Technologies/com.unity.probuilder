@@ -1628,8 +1628,9 @@ namespace ProBuilder2.EditorCommon
 				pb.ToMesh();
 
 				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 				HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
-				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(pb, common);
+				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
 
 				List<pb_Face> faces = new List<pb_Face>();
 
@@ -1800,7 +1801,7 @@ namespace ProBuilder2.EditorCommon
 				pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
 				pb_Face[] faces;
-				
+
 				pb.ToMesh();
 
 				if(pb.Subdivide(pb.SelectedFaces, out faces))

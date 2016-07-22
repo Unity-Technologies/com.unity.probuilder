@@ -86,6 +86,28 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
+		 * Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
+		 */
+		public static pb_FaceRebuildData TentCapWithVertices(List<pb_Vertex> path)
+		{
+			List<pb_Vertex> vertices = new List<pb_Vertex>(path);
+
+			int count = vertices.Count;
+			vertices.Add( pb_Vertex.Average(vertices) );
+			List<int> indices = new List<int>();
+			for(int i = 0; i < count; i++)
+			{
+				indices.Add(i+0);
+				indices.Add(count);
+				indices.Add((i+1)%count);
+			}
+			pb_FaceRebuildData data = new pb_FaceRebuildData();
+			data.vertices = vertices;
+			data.face = new pb_Face(indices.ToArray());
+			return data;
+		}
+
+		/**
 		 *	Find any holes touching one of the passed vertex indices.
 		 */
 		public static List<List<pb_Edge>> FindHoles(pb_Object pb, IList<int> indices)
@@ -93,8 +115,9 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 			List<List<pb_Edge>> holes = new List<List<pb_Edge>>();
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 
-			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(pb, common))
+			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(wings, common))
 				holes.Add( hole.Select(x => x.edge.local).ToList() );
 
 			return holes;
@@ -103,9 +126,8 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 *	Find any holes touching one of the passed common indices.
 		 */
-		public static List<List<pb_WingedEdge>> FindHoles(pb_Object pb, HashSet<int> common)
+		public static List<List<pb_WingedEdge>> FindHoles(List<pb_WingedEdge> wings, HashSet<int> common)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 			HashSet<pb_WingedEdge> used = new HashSet<pb_WingedEdge>();
 			List<List<pb_WingedEdge>> holes = new List<List<pb_WingedEdge>>();
 
@@ -114,7 +136,7 @@ namespace ProBuilder2.MeshOperations
 				pb_WingedEdge c = wings[i];
 
 				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
-				// or if there's an opposite face, this edge doesn't belong to a hole.  move along
+				// or if there's an opposite face, this edge doesn't belong to a hole.  move along.
 				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.x) || common.Contains(c.edge.common.y)))
 					continue;
 
