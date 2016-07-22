@@ -1,29 +1,158 @@
-Face actions.
+#Video: Face Actions
 
-# DeleteFaces
-@todo
+[![Face Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
 
-# DetachFaces
-@todo
+---
 
-# ExtrudeFaces
-@todo
+<div style="text-align:center">
+<img src="../../images/Toolbar_FaceActions.png">
+</div>
 
-# ConformFaceNormals
-@todo
+---
 
-# FlipFaceEdge
-@todo
+## ![Delete Face Icon](../images/icons/Face_Delete.png "Delete Faces Icon") Delete Face
 
-# FlipFaceNormals
-@todo
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Delete Faces</a>
+</div> 
 
-# MergeFaces
-@todo
+**Keyboard Shortcut** : `BACKSPACE`
 
-# SubdivideFaces
-@todo
+Deletes the selected face(s).
 
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
 
+---
+
+## ![Detach Face Icon](../images/icons/Face_Detach.png "Detach Faces Icon") Detach Face
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Detach Faces</a>
+</div> 
+
+Detach the selected face(s) to a new sub-mesh, or seperate object.
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Detach To New Object** | If **On**, the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.
+
+---
+
+## ![Extrude Face Icon](../images/icons/Face_Extrude.png "Detach Faces Icon") Extrude Face
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Extrude Faces</a>
+</div>
+
+**Keyboard Shortcut** : `SHIFT DRAG`
+
+Creates a new face by pulling out the currently selected face and attaching sides to each edge.
+
+You can also extrude by holding `SHIFT` while moving, rotating, or scaling the faces.
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**As Group** | If **On**, adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.
+**Distance** | Distance to extrude the selected faces(s).
+
+---
+
+## ![Flip Normals Icon](../images/icons/Face_FlipNormals.png "Flip Normals Icon") Flip Normals
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Flip Normals</a>
+</div>
+
+Flips the normals on the selected face(s).
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
+
+## ![Flip Triangles Icon](../images/icons/Face_FlipTri.png "Flip Triangles Icon") Flip Triangles
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Flip Triangles</a>
+</div>
+
+Flips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
+
+## ![Conform Normals Icon](../images/icons/Face_ConformNormals.png "Conform Normals Icon") Conform Normals
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Conform Normals</a>
+</div>
+
+Sets all selected face normals to the same relative direction.
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
+
+## ![Merge Faces Icon](../images/icons/Face_Merge.png "Merge Faces Icon") Merge Faces
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Merge Faces</a>
+</div>
+
+Merges selected faces into a single face, and removes any dividing edges.
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
+
+## ![Subdivide Face Icon](../images/icons/Face_Subdivide.png "Subdivide Face Icon") Subdivide Face
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
+</div>
+
+Split each selected face by adding a vertex at the center of each edge and connecting them in the center.
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
+
+## ![Bevel Face Icon](../images/icons/Edge_Bevel.png "Bevel Face Icon") Bevel Face
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Face Actions: Bevel Face</a>
+</div>
+
+Performs a [Bevel](@todo) action on all the edges of the selected face(s)
+
+<div style="text-align:center">
+<img src="../../images/PlaceholderImage.png">
+</div>
+
+---
 
 
