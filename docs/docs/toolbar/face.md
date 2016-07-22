@@ -147,11 +147,17 @@ Split each selected face by adding a vertex at the center of each edge and conne
 Section Video: <a href="@todo">Face Actions: Bevel Face</a>
 </div>
 
-Performs a [Bevel](@todo) action on all the edges of the selected face(s)
+Performs the [Bevel Edge](@todo) action on all the edges of the selected face(s).
 
 <div style="text-align:center">
 <img src="../../images/PlaceholderImage.png">
 </div>
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Distance** | Sets the distance each new edge is moved, from the position of the original.
 
 ---
 
