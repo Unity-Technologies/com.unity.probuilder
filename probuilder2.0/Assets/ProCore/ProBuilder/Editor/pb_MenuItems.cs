@@ -37,7 +37,7 @@ public class pb_MenuItems : EditorWindow
 
 	static pb_Object[] selection { get { return Selection.transforms.GetComponents<pb_Object>(); } }
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %E", true)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %e", true)]
 	static bool MenuVerifyExtrude()
 	{
 		pb_Editor e = pb_Editor.instance;
@@ -49,7 +49,7 @@ public class pb_MenuItems : EditorWindow
 				(selection.Any(x => x.SelectedEdgeCount > 0) || selection.Any(x => x.SelectedFaces.Length > 0));
 	}
 
-	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %E", false, pb_Constant.MENU_GEOMETRY + 3)]
+	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %e", false, pb_Constant.MENU_GEOMETRY + 3)]
 	static void MenuDoExtrude()
 	{
 		pb_Menu_Commands.MenuExtrude(selection, false);
