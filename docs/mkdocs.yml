@@ -16,6 +16,7 @@ pages:
     - Vertex: toolbar/vertex.md
     - Edge: toolbar/edge.md
     - Face: toolbar/face.md
+    - All: toolbar/all.md
     
 - Texturing and UVs: texturing/texturing-and-uvs.md
 - Troubleshooting:

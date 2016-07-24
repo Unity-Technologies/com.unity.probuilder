@@ -61,7 +61,7 @@ Sets the selected objects position, rotation, and scale to world-relative {0,0,0
 
 ---
 
-## ![Center Pivot Icon](../images/icons/Pivot_MoveToCenter.png "Center Pivot Icon") Center Pivot
+## ![Center Pivot Icon](../images/icons/Pivot_CenterOnObject.png "Center Pivot Icon") Move Pivot to Center of Object
 
 <div class="info-box warning">
 Section Video: <a href="@todo">Object Actions: Center Pivot</a>
