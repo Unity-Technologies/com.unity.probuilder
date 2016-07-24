@@ -29,7 +29,7 @@ public class TempMenuItems : EditorWindow
 			foreach(List<pb_Edge> hole in holes)
 			{
 				List<pb_Vertex> holeVertices = hole.Select(x => vertices[x.x]).ToList();
-				append.Add(pb_AppendPolygon.TentCapWithVertices(holeVertices));
+				append.AddRange(pb_AppendPolygon.TentCapWithVertices(holeVertices));
 			}
 
 			pb_FaceRebuildData.Apply(append, pb, vertices);

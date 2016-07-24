@@ -113,8 +113,8 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
+			pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
 
-			List<int> offsets = pb_FaceRebuildData.Apply(results.Select(x => x.faceRebuildData), pb, vertices, null, lookup, lookupUV);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
@@ -128,7 +128,7 @@ namespace ProBuilder2.MeshOperations
 
 				for(int n = 0; n < results.Count; n++)
 					for(int i = 0; i < results[n].newVertexIndices.Count; i++)
-						appendedIndices.Add( ( results[n].newVertexIndices[i] + offsets[n] ) - removedVertexCount );
+						appendedIndices.Add( ( results[n].newVertexIndices[i] + results[n].faceRebuildData.Offset() ) - removedVertexCount );
 
 				Dictionary<int, int> lup = pb.sharedIndices.ToDictionary();
 				IEnumerable<pb_Edge> newEdges = results.SelectMany(x => x.faceRebuildData.face.edges).Where(x => appendedIndices.Contains(x.x) && appendedIndices.Contains(x.y));

@@ -19,7 +19,7 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 *	\brief Collapses all passed indices to a single shared index.  Retains vertex normals.
-		 *	
+		 *
 		 */
 		public static bool MergeVertices(this pb_Object pb, int[] indices, out int collapsedIndex, bool collapseToFirst = false)
 		{
@@ -39,7 +39,7 @@ namespace ProBuilder2.MeshOperations
 			pb.SetSharedVertexValues(newIndex, cen);
 
 			int[] mergedSharedIndex = pb.GetSharedIndices()[newIndex].array;
-			
+
 			int[] removedIndices;
 			pb.RemoveDegenerateTriangles(out removedIndices);
 
@@ -51,7 +51,7 @@ namespace ProBuilder2.MeshOperations
 
 			int t = ind;
 			for(int i = 0; i < removedIndices.Length; i++)
-				if(ind > removedIndices[i])	
+				if(ind > removedIndices[i])
 					t--;
 
 			if(t > -1)
@@ -127,7 +127,7 @@ namespace ProBuilder2.MeshOperations
 			foreach(var kvp in remapped)
 			{
 				int[] tris = sharedIndices[kvp.Key];
-				
+
 				welds[n++] = tris[0];
 
 				for(int i = 0; i < tris.Length; i++)
@@ -143,7 +143,7 @@ namespace ProBuilder2.MeshOperations
 
 			return new pb_ActionResult(Status.Success, "Weld Vertices");
 		}
-		
+
 		/**
 		 * Creates separate entries in sharedIndices cache for all passed indices, and all indices in the shared array they belong to.
 		 */
@@ -373,10 +373,10 @@ namespace ProBuilder2.MeshOperations
 					{
 						int shared;
 
-						if(lookup.TryGetValue(i, out shared)) 
+						if(lookup.TryGetValue(i, out shared))
 							data.sharedIndices.Add(shared);
-						
-						if(lookupUV.TryGetValue(i, out shared)) 
+
+						if(lookupUV.TryGetValue(i, out shared))
 							data.sharedIndicesUV.Add(shared);
 					}
 
@@ -389,8 +389,8 @@ namespace ProBuilder2.MeshOperations
 
 				for(int i = 0; i < count; i++)
 				{
-					data.sharedIndices.Add(sharedIndicesCount + i);		
-					data.sharedIndicesUV.Add(-1);				
+					data.sharedIndices.Add(sharedIndicesCount + i);
+					data.sharedIndicesUV.Add(-1);
 				}
 			}
 
@@ -423,12 +423,12 @@ namespace ProBuilder2.MeshOperations
 			data.face.ShiftIndices(vertexCount);
 			face.CopyFrom(data.face);
 
-			for(int n = 0; n < data.vertices.Count; n++) 
+			for(int n = 0; n < data.vertices.Count; n++)
 				lookup.Add(vertexCount + n, data.sharedIndices[n]);
 
 			if(data.sharedIndicesUV.Count == data.vertices.Count)
 			{
-				for(int n = 0; n < data.vertices.Count; n++) 
+				for(int n = 0; n < data.vertices.Count; n++)
 					lookupUV.Add(vertexCount + n, data.sharedIndicesUV[n]);
 			}
 
@@ -467,9 +467,9 @@ namespace ProBuilder2.MeshOperations
 		for(int i = 0; i < pb.vertices.Length; i++)
 			if(!tris.Contains(i))
 				del.Add(i);
-		
+
 		pb.DeleteVerticesWithIndices(del);
-		
+
 		return del.ToArray();
 	}
 
@@ -519,8 +519,8 @@ namespace ProBuilder2.MeshOperations
 	 *	Split a common index on a face into two vertices and slide each vertex backwards along it's feeding edge by distance.
 	 *	This method does not perform any input validation, so make sure edgeAndCommonIndex is distinct and all winged edges belong
 	 *	to the same face.
-	 * 
-	 *	`appendedVertices` is common index and a list of vertices it was split into.
+	 *
+	 *	`appendedVertices` is common index and a list of the new face indices it was split into.
 	 *
 	 *	_ _ _ _          _ _ _
 	 *	|              /
@@ -531,11 +531,11 @@ namespace ProBuilder2.MeshOperations
 		IList<pb_Vertex> vertices,
 		IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex,
 		float distance,
-		out Dictionary<int, List<pb_Vertex>> appendedVertices)
+		out Dictionary<int, List<int>> appendedVertices)
 	{
 		pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
 		List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
-		appendedVertices = new Dictionary<int, List<pb_Vertex>>();
+		appendedVertices = new Dictionary<int, List<int>>();
 		Vector3 oldNormal = pb_Math.Normal(vertices, face.indices);
 
 		// store local and common index of split points
@@ -565,18 +565,18 @@ namespace ProBuilder2.MeshOperations
 				pb_Vertex c = vertices[perimeter[(i+1) % pc].y];
 
 				pb_Vertex leading_dir = a - b;
-				pb_Vertex following_dir = c - b; 
+				pb_Vertex following_dir = c - b;
 				leading_dir.Normalize();
 				following_dir.Normalize();
 
 				pb_Vertex leading_insert = vertices[index] + leading_dir * distance;
 				pb_Vertex following_insert = vertices[index] + following_dir * distance;
 
+				appendedVertices.AddOrAppend(toSplit[index], n_vertices.Count);
 				n_vertices.Add(leading_insert);
-				n_vertices.Add(following_insert);
 
-				appendedVertices.AddOrAppend(toSplit[index], leading_insert);
-				appendedVertices.AddOrAppend(toSplit[index], following_insert);
+				appendedVertices.AddOrAppend(toSplit[index], n_vertices.Count);
+				n_vertices.Add(following_insert);
 			}
 			else
 			{
@@ -593,13 +593,14 @@ namespace ProBuilder2.MeshOperations
 			data.face = new pb_Face(face);
 
 			Vector3 newNormal = pb_Math.Normal(n_vertices, triangles);
+
 			if(Vector3.Dot(oldNormal, newNormal) < 0f)
 				triangles.Reverse();
 
 			data.face.SetIndices(triangles.ToArray());
 			return data;
 		}
-		
+
 		return null;
 	}
 
@@ -620,11 +621,11 @@ namespace ProBuilder2.MeshOperations
 	public static void Quantize(pb_Object pb, IList<int> indices, Vector3 snap)
 	{
 		Vector3[] verts = pb.vertices;
-		
+
 		for(int n = 0; n < indices.Count; n++)
 			verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
 
-	}	
+	}
 #endregion
 	}
 }

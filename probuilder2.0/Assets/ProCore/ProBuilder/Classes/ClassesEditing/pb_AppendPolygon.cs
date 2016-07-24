@@ -88,23 +88,29 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
 		 */
-		public static pb_FaceRebuildData TentCapWithVertices(List<pb_Vertex> path)
+		public static List<pb_FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
 		{
-			List<pb_Vertex> vertices = new List<pb_Vertex>(path);
+			int count = path.Count;
+			pb_Vertex center = pb_Vertex.Average(path);
+			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
 
-			int count = vertices.Count;
-			vertices.Add( pb_Vertex.Average(vertices) );
-			List<int> indices = new List<int>();
 			for(int i = 0; i < count; i++)
 			{
-				indices.Add(i+0);
-				indices.Add(count);
-				indices.Add((i+1)%count);
+				List<pb_Vertex> vertices = new List<pb_Vertex>()
+				{
+					path[i],
+					center,
+					path[(i+1)%count]
+				};
+
+				pb_FaceRebuildData data = new pb_FaceRebuildData();
+				data.vertices = vertices;
+				data.face = new pb_Face(new int[] {0 , 1, 2});
+
+				faces.Add(data);
 			}
-			pb_FaceRebuildData data = new pb_FaceRebuildData();
-			data.vertices = vertices;
-			data.face = new pb_Face(indices.ToArray());
-			return data;
+
+			return faces;
 		}
 
 		/**

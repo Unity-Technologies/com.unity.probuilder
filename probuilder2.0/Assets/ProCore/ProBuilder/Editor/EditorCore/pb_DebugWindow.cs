@@ -607,7 +607,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_GUI_Utility.DrawSolidColor(new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
 
-			GUI.Label( new Rect(position.x, position.y, width, height), gc, EditorStyles.boldLabel );
+			GUI.Label( new Rect(position.x, position.y, width, height), gc, boldLabel );
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProBuilder2.Common
 {
@@ -11,7 +12,7 @@ namespace ProBuilder2.Common
 	 *  prev /             / next
 	 *      /    edge     /
 	 *     /_ _ _ _ _ _ _/
-	 *     |- - - - - - -| 
+	 *     |- - - - - - -|
 	 *     |  opposite   |
 	 *     |             |
 	 *     |             |
@@ -52,7 +53,7 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			// return string.Format("Edge: {0}\nNext: {1}\nPrevious: {2}\nOpposite: {3}", 
+			// return string.Format("Edge: {0}\nNext: {1}\nPrevious: {2}\nOpposite: {3}",
 			// 	edge.local.ToString(),
 			// 	next.edge.local.ToString(),
 			// 	previous.edge.local.ToString(),
@@ -100,6 +101,46 @@ namespace ProBuilder2.Common
 			}
 
 			return edges;
+		}
+
+		/**
+		 *	Given a set of winged edges and list of common indices, attempt to create a complete path of indices where each
+		 *	is connected by edge.  May be clockwise or counter-clockwise ordered, or null if no path is found.
+		 */
+		public static List<int> SortCommonIndicesByAdjacency(List<pb_WingedEdge> wings, HashSet<int> common)
+		{
+			pb_WingedEdge start = wings.FirstOrDefault(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y));
+
+			if(start == null)
+				return null;
+
+			pb_WingedEdge next = start;
+			List<int> path = new List<int>();
+			int seek = next.edge.common.x;
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			do
+			{
+				int x = next.edge.common.x, y = next.edge.common.y;
+
+				path.Add(seek);
+				sb.AppendLine("edge(" + x +", " + y+ ")  add: " + seek + " next: " + (x == seek ? y : x) );
+				seek = x == seek ? y : x;
+
+				if( next.next.edge.common.Contains(seek) && common.Contains(next.next.edge.common.x) && common.Contains(next.next.edge.common.y) )
+					next = next.next;
+				else if( next.previous.edge.common.Contains(seek) && common.Contains(next.next.edge.common.x) && common.Contains(next.next.edge.common.y) )
+					next = next.previous;
+				else
+					next = null;
+
+			} while(next != null && next != start);
+			Debug.Log(sb.ToString());
+
+			if(next == null)
+				return null;
+
+			return path;
 		}
 
 		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb)

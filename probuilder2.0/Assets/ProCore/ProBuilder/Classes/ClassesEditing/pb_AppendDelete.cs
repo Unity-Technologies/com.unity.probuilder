@@ -10,7 +10,7 @@ using Parabox.Debug;
 
 namespace ProBuilder2.MeshOperations
 {
-public static class pbAppendDelete
+public static class pb_AppendDelete
 {
 
 #region Append Face
