@@ -16,6 +16,7 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
+
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
 		pbUndo.RecordSelection(selection, "find holes");

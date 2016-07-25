@@ -57,7 +57,7 @@ namespace ProBuilder2.MeshOperations
 
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
 			// then add holes later
-			HashSet<pb_Face> bridgedFaces = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
+			createdFaces = new List<pb_Face>(appendFaces.Select(x => x.face));
 
 			Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
@@ -101,24 +101,22 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			createdFaces = new List<pb_Face>();
-			createdFaces.AddRange(bridgedFaces);
-			// createdFaces.AddRange(holedFaces);
-
 			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			lookup = pb.sharedIndices.ToDictionary(); 	// @todo don't rebuild sharedindices, keep 'em cahched
+			// @todo don't rebuild sharedindices, keep 'em cached
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			lookup = sharedIndices.ToDictionary();
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
 			// offset the indices of holes and cull any potential holes that are less than 3 indices (not a hole :)
 			foreach(KeyValuePair<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> hole in holes)
 			{
-				if(hole.Value.Sum(x=>x.Item2.Count) < 3)
+				// less than 3 indices in hole path; ain't a hole
+				if(hole.Value.Sum(x => x.Item2.Count) < 3)
 					continue;
 
 				HashSet<int> holeCommon = new HashSet<int>();
@@ -132,48 +130,33 @@ namespace ProBuilder2.MeshOperations
 				}
 
 				holesCommonIndices.Add(holeCommon);
-
-				sb.AppendLine(holeCommon.ToString(","));//  hole.Value.SelectMany(x => x.Item2).ToString(","));
 			}
 
-			Debug.Log(sb.ToString());
+			List<pb_WingedEdge> modified = pb_WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
 
-			List<pb_WingedEdge> modified = pb_WingedEdge.GetWingedEdges(pb, createdFaces);
+			// now go through the holes and create faces for them
+			vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 
-			// public static List<int> SortCommonIndicesByAdjacency(List<pb_WingedEdge> wings, HashSet<int> common)
+			List<pb_FaceRebuildData> holeFaces = new List<pb_FaceRebuildData>();
+
 			foreach(HashSet<int> h in holesCommonIndices)
 			{
-				Debug.Log( pb_WingedEdge.SortCommonIndicesByAdjacency(modified, h).ToString(",") );
+				if(h.Count < 4)
+				{
+					List<pb_Vertex> v = new List<pb_Vertex>( pb_Vertex.GetVertices(pb, h.Select(x => sharedIndices[x][0]).ToList()) );
+					holeFaces.Add(pb_AppendPolygon.FaceWithVertices(v));
+				}
+				else
+				{
+					List<int> holePath = pb_WingedEdge.SortCommonIndicesByAdjacency(modified, h);
+					List<pb_Vertex> v = new List<pb_Vertex>( pb_Vertex.GetVertices(pb, holePath.Select(x => sharedIndices[x][0]).ToList()) );
+					holeFaces.AddRange( pb_AppendPolygon.TentCapWithVertices(v) );
+				}
 			}
 
-			// Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes
-			// make sure filled holes are oriented correctly
-			// using hashcode here because Contains() doesn't recognize faces for some reason?
-			// @todo figure out why...
-			// {
-			// List<pb_WingedEdge> created = pb_WingedEdge.GetWingedEdges(pb, createdFaces);
+			pb_FaceRebuildData.Apply(holeFaces, pb, vertices);
 
-			// foreach(pb_WingedEdge f in created)
-			// {
-			// 	if(bridgedFaces.Contains(f.face))
-			// 	{
-			// 		bridgedFaces.Remove(f.face);
-			// 		pb_WingedEdge n = f;
-
-			// 		do
-			// 		{
-			// 			if(n.opposite != null && holedFaces.Contains(n.opposite.face))
-			// 			{
-			// 				holedFaces.Remove(n.opposite.face);
-			// 				pb_ConformNormals.ConformOppositeNormal(n);
-			// 			}
-
-			// 			n = n.next;
-			// 		}
-			// 		while(n != f);
-			// 	}
-			// }
-			// }
+			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
 			pb.ToMesh();
 

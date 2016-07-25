@@ -58,8 +58,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 *	Shift face rebuild data to appropriate positions and update the vertex, face, and
-		 *	shared indices arrays.  Returns a list of vertex array offsets applied to each face
-		 *	respectively.
+		 *	shared indices arrays.
 		 */
 		public static void Apply(
 			IEnumerable<pb_FaceRebuildData> newFaces,
@@ -69,7 +68,6 @@ namespace ProBuilder2.Common
 			Dictionary<int, int> sharedIndicesUV = null)
 		{
 			int index = vertices.Count;
-			List<int> offsets = new List<int>();
 
 			foreach(pb_FaceRebuildData rd in newFaces)
 			{

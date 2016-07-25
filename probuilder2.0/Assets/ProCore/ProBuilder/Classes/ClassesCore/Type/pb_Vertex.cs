@@ -227,9 +227,10 @@ namespace ProBuilder2.Common
 		/**
 		 *	Creates a new array of pb_Vertex with the provide pb_Object data.
 		 */
-		public static pb_Vertex[] GetVertices(pb_Object pb)
+		public static pb_Vertex[] GetVertices(pb_Object pb, IList<int> indices = null)
 		{
-			int vertexCount = pb.vertexCount;
+			int meshVertexCount = pb.vertexCount;
+			int vertexCount = indices != null ? indices.Count : pb.vertexCount;
 
 			pb_Vertex[] v = new pb_Vertex[vertexCount];
 
@@ -247,26 +248,28 @@ namespace ProBuilder2.Common
 			pb.GetUVs(2, uv3s);
 			pb.GetUVs(3, uv4s);
 
-			bool _hasPositions	= positions != null && positions.Count() == vertexCount;
-			bool _hasColors		= colors != null && colors.Count() == vertexCount;
-			bool _hasNormals	= normals != null && normals.Count() == vertexCount;
-			bool _hasTangents	= tangents != null && tangents.Count() == vertexCount;
-			bool _hasUv0		= uv0s != null && uv0s.Count() == vertexCount;
-			bool _hasUv2		= uv2s != null && uv2s.Count() == vertexCount;
-			bool _hasUv3		= uv3s != null && uv3s.Count() == vertexCount;
-			bool _hasUv4		= uv4s != null && uv4s.Count() == vertexCount;
+			bool _hasPositions	= positions != null && positions.Count() == meshVertexCount;
+			bool _hasColors		= colors != null 	&& colors.Count() == meshVertexCount;
+			bool _hasNormals	= normals != null 	&& normals.Count() == meshVertexCount;
+			bool _hasTangents	= tangents != null 	&& tangents.Count() == meshVertexCount;
+			bool _hasUv0		= uv0s != null 		&& uv0s.Count() == meshVertexCount;
+			bool _hasUv2		= uv2s != null 		&& uv2s.Count() == meshVertexCount;
+			bool _hasUv3		= uv3s != null 		&& uv3s.Count() == meshVertexCount;
+			bool _hasUv4		= uv4s != null 		&& uv4s.Count() == meshVertexCount;
 
 			for(int i = 0; i < vertexCount; i++)
 			{
 				v[i] = new pb_Vertex();
-				if( _hasPositions )	{ v[i].hasPosition = true;	 v[i].position = positions[i]; }
-				if( _hasColors ) 	{ v[i].hasColor = true;		 v[i].color = colors[i]; }
-				if( _hasNormals ) 	{ v[i].hasNormal = true;	 v[i].normal = normals[i]; }
-				if( _hasTangents ) 	{ v[i].hasTangent = true;	 v[i].tangent = tangents[i]; }
-				if( _hasUv0 ) 		{ v[i].hasUv0 = true;		 v[i].uv0 = uv0s[i]; }
-				if( _hasUv2 ) 		{ v[i].hasUv2 = true;		 v[i].uv2 = uv2s[i]; }
-				if( _hasUv3 ) 		{ v[i].hasUv3 = true;		 v[i].uv3 = uv3s[i]; }
-				if( _hasUv4 ) 		{ v[i].hasUv4 = true;		 v[i].uv4 = uv4s[i]; }
+				int ind = indices == null ? i : indices[i];
+
+				if( _hasPositions )	{ v[i].hasPosition = true; 	v[i].position 	= positions[ind];	 }
+				if( _hasColors ) 	{ v[i].hasColor = true;	 	v[i].color 		= colors[ind];		 }
+				if( _hasNormals ) 	{ v[i].hasNormal = true;	v[i].normal 	= normals[ind];		 }
+				if( _hasTangents ) 	{ v[i].hasTangent = true;	v[i].tangent 	= tangents[ind];	 }
+				if( _hasUv0 ) 		{ v[i].hasUv0 = true;		v[i].uv0 		= uv0s[ind];		 }
+				if( _hasUv2 ) 		{ v[i].hasUv2 = true;		v[i].uv2 		= uv2s[ind];		 }
+				if( _hasUv3 ) 		{ v[i].hasUv3 = true;		v[i].uv3 		= uv3s[ind];		 }
+				if( _hasUv4 ) 		{ v[i].hasUv4 = true;		v[i].uv4 		= uv4s[ind];		 }
 			}
 
 			return v;
@@ -326,7 +329,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
 		 *	or not real data populates the values (eg, hasPosition, hasNormal, etc).  If you are using
-		 *	this function to rebuild a mesh use SetMesh instead, as that method handles setting null 
+		 *	this function to rebuild a mesh use SetMesh instead, as that method handles setting null
 		 *	arrays where appropriate for you.
 		 */
 		public static void GetArrays(	IList<pb_Vertex> vertices,

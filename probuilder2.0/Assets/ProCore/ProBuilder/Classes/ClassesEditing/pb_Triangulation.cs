@@ -66,14 +66,21 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 *	Attempts to triangulate a set of vertices.
-		 *	If unordered is specified as false vertices will not be reordered before triangulation.
+		 *	If unordered is specified as false vertices will not be re-ordered before triangulation.
 		 */
 		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
 			triangles = null;
+			int vertexCount = vertices.Count;
 
-			if(vertices.Count < 3)
+			if(vertexCount < 3)
 				return false;
+
+			if(vertexCount == 3)
+			{
+				triangles = new List<int>() { 0, 1, 2 };
+				return true;
+			}
 
 			Vector3[] facePoints = new Vector3[vertices.Count];
 
@@ -81,7 +88,6 @@ namespace ProBuilder2.MeshOperations
 				facePoints[i] = vertices[i].position;
 
 			Vector3 normal = pb_Projection.FindBestPlane(facePoints).normal;
-
 			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
 
 			if(unordered)
@@ -89,7 +95,7 @@ namespace ProBuilder2.MeshOperations
 			else
 				return Triangulate(points2d, out triangles, convex);
 		}
-		
+
 		/**
 		 *	Given a set of points ordered counter-clockwise along a contour, return triangle indices.
 		 *	Triangulation may optionally be set to convex, which will result in some a convex shape.
@@ -97,9 +103,10 @@ namespace ProBuilder2.MeshOperations
 		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
 			int vertexCount = points.Count;
-			
+
 			indices = new List<int>();
-			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
+
+			// WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
 			InputGeometry input = new InputGeometry(vertexCount);
 
 			for(int i = 0; i < vertexCount; i++)
@@ -129,14 +136,14 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( t.P0 );
 			}
 
-			// if the re-triangulated first tri doesn't match the winding order of the original
-			// vertices, flip 'em
-			if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
-				points[indices[0]],
-				points[indices[1]],
-				points[indices[2]],
-				}) != originalWinding)
-				indices.Reverse();
+			// // if the re-triangulated first tri doesn't match the winding order of the original
+			// // vertices, flip 'em
+			// if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
+			// 	points[indices[0]],
+			// 	points[indices[1]],
+			// 	points[indices[2]],
+			// 	}) != originalWinding)
+			// 	indices.Reverse();
 
 			return true;
 		}
