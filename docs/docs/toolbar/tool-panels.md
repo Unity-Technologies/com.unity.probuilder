@@ -15,7 +15,7 @@ These **Tool Panels** contain important tools for [Shape Creation](@todo), [Mate
 ---
 
 <a id="shape-tool"></a>
-##![Shape Tool Icon](Panel_Shapes.png "Create New Shape Icon") Shape Tool
+##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
@@ -40,7 +40,7 @@ Each shape has specific properties which can be customized before creation- for 
 
 ---
 
-##![Material Tools Icon](Panel_Materials.png "Material Tools Icon") Material Tools
+##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
@@ -71,7 +71,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 
 ---
 
-##![UV Editor Icon](Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
+##![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
@@ -87,7 +87,7 @@ The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual
 
 ---
 
-##![Vertex Color Tools Icon](Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
+##![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
@@ -105,7 +105,7 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 
 ---
 
-##![Smoothing Groups Icon](Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
+##![Smoothing Groups Icon](../images/icons/Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
@@ -128,7 +128,7 @@ First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and sel
 
 ---
 
-##![Mirror Tool Icon](Object_Mirror.png "Mirror Tool Icon") Mirror Tool
+##![Mirror Tool Icon](../images/icons/Object_Mirror.png "Mirror Tool Icon") Mirror Tool
 
 <div class="info-box warning">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>

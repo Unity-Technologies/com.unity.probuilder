@@ -21,7 +21,7 @@ Section Video: <a href="@todo">Face Actions: Delete Faces</a>
 Deletes the selected face(s).
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/DeleteFace_Example.png">
 </div>
 
 ---
@@ -35,7 +35,7 @@ Section Video: <a href="@todo">Face Actions: Detach Faces</a>
 Detach the selected face(s) to a new sub-mesh, or seperate object.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/DetachFace_Example.png">
 </div>
 
 ![Options Icon](../images/icons/options.png) **Custom Settings Available** :
@@ -59,7 +59,7 @@ Creates a new face by pulling out the currently selected face and attaching side
 You can also extrude by holding `SHIFT` while moving, rotating, or scaling the faces.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/ExtrudeFace_Example.png">
 </div>
 
 ![Options Icon](../images/icons/options.png) **Custom Settings Available** :
@@ -80,7 +80,7 @@ Section Video: <a href="@todo">Face Actions: Flip Normals</a>
 Flips the normals on the selected face(s).
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/FlipFaceNormals_Example.png">
 </div>
 
 ---
@@ -94,7 +94,7 @@ Section Video: <a href="@todo">Face Actions: Flip Triangles</a>
 Flips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/FlipTri_Example.png">
 </div>
 
 ---
@@ -107,10 +107,6 @@ Section Video: <a href="@todo">Face Actions: Conform Normals</a>
 
 Sets all selected face normals to the same relative direction.
 
-<div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
-</div>
-
 ---
 
 ## ![Merge Faces Icon](../images/icons/Face_Merge.png "Merge Faces Icon") Merge Faces
@@ -122,7 +118,7 @@ Section Video: <a href="@todo">Face Actions: Merge Faces</a>
 Merges selected faces into a single face, and removes any dividing edges.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/MergeFaces_Example.png">
 </div>
 
 ---
@@ -136,7 +132,7 @@ Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
 Split each selected face by adding a vertex at the center of each edge and connecting them in the center.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/SubdivideFace_Example.png">
 </div>
 
 ---
@@ -150,7 +146,7 @@ Section Video: <a href="@todo">Face Actions: Bevel Face</a>
 Performs the [Bevel Edge](@todo) action on all the edges of the selected face(s).
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/BevelFace_Example.png">
 </div>
 
 ![Options Icon](../images/icons/options.png) **Custom Settings Available** :

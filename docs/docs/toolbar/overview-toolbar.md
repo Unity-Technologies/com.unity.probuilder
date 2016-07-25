@@ -21,7 +21,7 @@ The Toolbar is color-coded to help you quickly choose tools by type:
 * **Green** for [Object Actions](@todo)
 * **Red** for [Geometry Actions](@todo)
 
-![Toolbar Categories Example](ExampleImage_Toolbar_ColorCategories.png "Toolbar Categories Example")
+![Toolbar Categories Example](../images/ExampleImage_Toolbar_ColorCategories.png "Toolbar Categories Example")
 
 ---
 
@@ -78,7 +78,7 @@ Use this "mini-toolbar" to choose your Edit Mode, or use keyboard shortcuts:
 * `G` to toggle in/out of the Geometry editing modes
 * `H` to toggle through the available Element modes (Vertex, Edge, and Face)
 
-![Editing Modes Example](ExampleImage_ObjectAndElementEditingModes.png "Editing Modes Example")
+![Editing Modes Example](../images/ExampleImage_ObjectAndElementEditingModes.png "Editing Modes Example")
 
 
 
