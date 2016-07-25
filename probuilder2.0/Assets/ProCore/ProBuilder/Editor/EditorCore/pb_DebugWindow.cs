@@ -442,6 +442,7 @@ namespace ProBuilder2.EditorCommon
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			Vector3[] vertices = pb.vertices;
+			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			HashSet<int> common = new HashSet<int>();
 
@@ -459,7 +460,13 @@ namespace ProBuilder2.EditorCommon
 			foreach(int i in common)
 			{
 				int[] indices = sharedIndices[i];
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint(vertices[indices[0]]) );
+
+				Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
+
+				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+					continue;
+
+				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
 				StringBuilder sb = new StringBuilder();
 
@@ -490,10 +497,16 @@ namespace ProBuilder2.EditorCommon
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			pb_Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
 			IEnumerable<pb_EdgeLookup> edges = pb_EdgeLookup.GetEdgeLookup(source, lookup);
+			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			foreach(pb_EdgeLookup edge in edges)
 			{
-				Vector2 cen = HandleUtility.WorldToGUIPoint( pb.transform.TransformPoint((pb.vertices[edge.local.x] + pb.vertices[edge.local.y])/ 2f) );
+				Vector3 point = pb.transform.TransformPoint((pb.vertices[edge.local.x] + pb.vertices[edge.local.y])/ 2f);
+
+				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+					continue;
+
+				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
 				switch(edgeIndexFormat)
 				{
