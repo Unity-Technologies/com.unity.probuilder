@@ -1865,11 +1865,18 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Edge[] connections;
-				res = pb.Connect(pb.SelectedTriangles, out connections);
+				int[] splits;
+				
+				pb.ToMesh();
 
-				pb.Refresh();
-				pb.Optimize();
+				res = pb.Connect(pb.SelectedTriangles, out splits);
+
+				if(res)
+				{
+					pb.Refresh();
+					pb.Optimize();
+					pb.SetSelectedTriangles(splits);
+				}
 			}
 			pb_Editor.Refresh();
 

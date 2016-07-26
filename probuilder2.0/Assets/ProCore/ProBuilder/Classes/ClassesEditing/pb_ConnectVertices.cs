@@ -10,12 +10,17 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_ConnectVertices
 	{
-		public static pb_ActionResult Connect(this pb_Object pb, IList<int> indices, out pb_Edge[] connectingEdges)
+		public static pb_ActionResult Connect(this pb_Object pb, IList<int> indices, out int[] newVertices)
 		{
-			connectingEdges = null;
-
+			int sharedIndexOffset = pb.sharedIndices.Length;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			HashSet<int> affected = new HashSet<int>(pb_IntArrayUtility.AllIndicesWithValues(pb.sharedIndices, lookup, indices));
+
+			HashSet<int> distinct = new HashSet<int>(indices.Select(x=>lookup[x]));
+			HashSet<int> affected = new HashSet<int>();
+
+			foreach(int i in distinct)
+				affected.UnionWith(pb.sharedIndices[i].array);
+
 			Dictionary<pb_Face, List<int>> splits = new Dictionary<pb_Face, List<int>>();
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 
@@ -32,18 +37,39 @@ namespace ProBuilder2.MeshOperations
 
 			List<ConnectFaceRebuildData> appendFaces = new List<ConnectFaceRebuildData>();
 			List<pb_Face> successfulSplits = new List<pb_Face>();
+			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
+			int newTextureGroupIndex = 1;
 
 			foreach(KeyValuePair<pb_Face, List<int>> split in splits)
 			{
+				pb_Face face = split.Key;
+
 				List<ConnectFaceRebuildData> res = split.Value.Count == 2 ? 
-					ConnectIndicesInFace(split.Key, split.Value[0], split.Value[1], vertices, lookup) :
-					null;
+					ConnectIndicesInFace(face, split.Value[0], split.Value[1], vertices, lookup) :
+					ConnectIndicesInFace(face, split.Value, vertices, lookup, sharedIndexOffset++);
 
 				if(res == null)
 					continue;
 
-				successfulSplits.Add(split.Key);
-				appendFaces.AddRange( res );
+				if(face.textureGroup < 0)
+				{
+					while(usedTextureGroups.Contains(newTextureGroupIndex))
+						newTextureGroupIndex++;
+
+					usedTextureGroups.Add(newTextureGroupIndex);
+				}
+
+				foreach(ConnectFaceRebuildData c in res)
+				{
+					c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
+					c.faceRebuildData.face.uv 				= new pb_UV(face.uv);
+					c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
+					c.faceRebuildData.face.manualUV 		= face.manualUV;
+					c.faceRebuildData.face.material 		= face.material;
+				}
+
+				successfulSplits.Add(face);
+				appendFaces.AddRange(res);
 			}
 
 			// foreach(var kvp in splits)
@@ -54,9 +80,19 @@ namespace ProBuilder2.MeshOperations
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(successfulSplits).Length;
 
+			lookup = pb.sharedIndices.ToDictionary();
+
+			HashSet<int> newVertexIndices = new HashSet<int>();
+
+			for(int i = 0; i < appendFaces.Count; i++)
+				for(int n = 0; n < appendFaces[i].newVertexIndices.Count; n++)
+					newVertexIndices.Add( lookup[appendFaces[i].newVertexIndices[n] + (appendFaces[i].faceRebuildData.Offset() - removedVertexCount)] );
+
+			newVertices = newVertexIndices.Select(x => pb.sharedIndices[x][0]).ToArray();
+
 			pb.ToMesh();
 
-			return pb_ActionResult.NoSelection;
+			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Vertices", distinct.Count));
 		}
 
 		private static List<ConnectFaceRebuildData> ConnectIndicesInFace(
@@ -85,8 +121,6 @@ namespace ProBuilder2.MeshOperations
 
 			int index = 0;
 
-			Debug.Log(perimeter.ToString(",") + "\n" + a + ", " + b);
-
 			for(int i = 0; i < perimeter.Count; i++)
 			{
 				// trying to connect two vertices that are already connected
@@ -112,7 +146,61 @@ namespace ProBuilder2.MeshOperations
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
-				Debug.Log(n_vertices[i].ToString("\n"));
+				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				f.sharedIndices = n_sharedIndices[i];
+				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
+			}
+
+			return faces;
+		}
+
+		private static List<ConnectFaceRebuildData> ConnectIndicesInFace(
+			pb_Face face,
+			List<int> indices,
+			List<pb_Vertex> vertices,
+			Dictionary<int, int> lookup,
+			int sharedIndexOffset)
+		{
+			if(indices.Count < 3)
+				return null;
+
+			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+
+			int splitCount = indices.Count;
+
+			List<List<pb_Vertex>> n_vertices = pbUtil.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
+			List<List<int>> n_sharedIndices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<int>> n_indices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+
+			pb_Vertex center = pb_Vertex.Average(vertices, indices);
+
+			int index = 0;
+
+			for(int i = 0; i < perimeter.Count; i++)
+			{
+				int cur = perimeter[i].x;
+
+				n_vertices[index].Add(vertices[cur]);
+				n_sharedIndices[index].Add(lookup[cur]);
+
+				if( indices.Contains(cur) )
+				{
+					n_indices[index].Add(n_vertices[index].Count);
+					n_vertices[index].Add(center);
+					n_sharedIndices[index].Add(sharedIndexOffset);
+
+					index = (index + 1) % splitCount;
+
+					n_indices[index].Add(n_vertices[index].Count);
+					n_vertices[index].Add(vertices[cur]);
+					n_sharedIndices[index].Add(lookup[cur]);
+				}
+			}
+
+			List<ConnectFaceRebuildData> faces = new List<ConnectFaceRebuildData>();
+
+			for(int i = 0; i < n_vertices.Count; i++)
+			{
 				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
