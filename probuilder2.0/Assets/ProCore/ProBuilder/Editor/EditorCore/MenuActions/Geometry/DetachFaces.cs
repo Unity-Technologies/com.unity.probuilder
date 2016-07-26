@@ -34,6 +34,40 @@ namespace ProBuilder2.Actions
 					(pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
+		public override MenuActionState AltState()
+		{
+			return MenuActionState.VisibleAndEnabled;
+		}
+
+		enum DetachSetting
+		{
+			GameObject,
+			Submesh
+		};
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Detach Face Settings", EditorStyles.boldLabel);
+
+			EditorGUILayout.HelpBox("Detach Faces can separate the selection into either a new GameObject or a submesh.", MessageType.Info);
+			
+			bool detachToNewObject = pb_Preferences_Internal.GetBool(pb_Constant.pbDetachToNewObject);
+			DetachSetting setting = detachToNewObject ? DetachSetting.GameObject : DetachSetting.Submesh;
+
+			EditorGUI.BeginChangeCheck();
+
+			setting = (DetachSetting) EditorGUILayout.EnumPopup("Detach To", setting);
+
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool(pb_Constant.pbDetachToNewObject, setting == DetachSetting.GameObject);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Detach Selection"))
+				pb_EditorUtility.ShowNotification( DoAction().notification );
+		}
+
+
 		public override pb_ActionResult DoAction()
 		{
 			return pb_Menu_Commands.MenuDetachFaces(selection);

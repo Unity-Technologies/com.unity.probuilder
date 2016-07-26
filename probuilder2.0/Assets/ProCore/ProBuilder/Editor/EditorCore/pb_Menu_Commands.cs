@@ -1177,24 +1177,12 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			int option = EditorUtility.DisplayDialogComplex(
-				"Rules of Detachment",
-				"Detach face selection to submesh or new ProBuilder object?",
-				"New Object",		// 0
-				"Submesh",			// 1
-				"Cancel");			// 2
+			bool detachToNewObject = pb_Preferences_Internal.GetBool(pb_Constant.pbDetachToNewObject);
 
-			switch(option)
-			{
-				case 0:
-					return MenuDetachFacesToObject(selection);
-
-				case 1:
-					return MenuDetachFacesToSubmesh(selection);
-
-				default:
-					return pb_ActionResult.UserCanceled;
-			}
+			if(detachToNewObject)
+				return MenuDetachFacesToObject(selection);
+			else
+				return MenuDetachFacesToSubmesh(selection);
 		}
 
 		/**
@@ -1251,12 +1239,14 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				if(pb.SelectedFaceIndices.Length < 1 || pb.SelectedFaceIndices.Length == pb.faces.Length) continue;
+				if(pb.SelectedFaceIndices.Length < 1 || pb.SelectedFaceIndices.Length == pb.faces.Length)
+					continue;
 
 				int[] primary = pb.SelectedFaceIndices;
 
 				detachedFaceCount += primary.Length;
 
+				
 				List<int> inverse_list = new List<int>();
 				for(int i = 0; i < pb.faces.Length; i++)
 					if(System.Array.IndexOf(primary, i) < 0)
@@ -1280,7 +1270,7 @@ namespace ProBuilder2.EditorCommon
 						pb_EditorUtility.VerifyMesh(pb_child);
 				}
 
-				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Face");
+				Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
 
 				copy.transform.position = pb.transform.position;
 				copy.transform.localScale = pb.transform.localScale;

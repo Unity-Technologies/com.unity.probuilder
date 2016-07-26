@@ -63,7 +63,6 @@ namespace ProBuilder2.Actions
 				pb_EditorUtility.ShowNotification( DoAction().notification );
 		}
 
-
 		public override pb_ActionResult DoAction()
 		{
 			return pb_Menu_Commands.MenuFillHole(selection);
