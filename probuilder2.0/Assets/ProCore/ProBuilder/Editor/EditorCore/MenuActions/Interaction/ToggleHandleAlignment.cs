@@ -28,14 +28,34 @@ namespace ProBuilder2.Actions
 				return icons[handleAlignment];
 			}
 		}
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
-		(
+		public override pb_TooltipContent tooltip
+		{
+			get
+			{
+				if(handleAlignment == (int) HandleAlignment.World)
+					return _tooltip_world;
+				if(handleAlignment == (int) HandleAlignment.Local)
+					return _tooltip_local;
+				else
+					return _tooltip_plane;
+			}
+		}
+
+		static readonly pb_TooltipContent _tooltip_world = new pb_TooltipContent(
 			"Set Handle Alignment",
-			@"Toggles the coordinate space that the transform gizmo is rendered in.",
-			'P'
-		);
+			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: World (handle is always the same)",
+			'P');
+
+		static readonly pb_TooltipContent _tooltip_local = new pb_TooltipContent(
+			"Set Handle Alignment",
+			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Local (handle is relative to the GameObject selection)",
+			'P');
+
+		static readonly pb_TooltipContent _tooltip_plane = new pb_TooltipContent(
+			"Set Handle Alignment",
+			"Toggles the coordinate space that the transform gizmo is rendered in.\n\nCurrent: Plane (handle is relative to the element selection)",
+			'P');
 
 		public override string menuTitle { get { return "Handle: " + ((HandleAlignment)handleAlignment).ToString(); } }
 
