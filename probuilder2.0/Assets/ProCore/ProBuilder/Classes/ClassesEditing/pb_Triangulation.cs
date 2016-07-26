@@ -77,7 +77,15 @@ namespace ProBuilder2.MeshOperations
 				return false;
 
 			if(vertexCount == 3)
+			{
 				triangles = new List<int>() { 0, 1, 2 };
+				return true;
+			}
+			else if(!unordered && vertexCount == 4)
+			{
+				triangles = new List<int>() { 0, 1, 2, 2, 3, 0 };
+				return true;
+			}
 
 			Vector3[] facePoints = new Vector3[vertices.Count];
 
