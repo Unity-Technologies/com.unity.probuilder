@@ -54,18 +54,9 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuMergeObjects(pb_Object[] selected)
 		{
 			if(selected.Length < 2)
-				return new pb_ActionResult(Status.Failure, "Must Select 2+ Objects");
-
-			int option = EditorUtility.DisplayDialogComplex(
-				"Save or Delete Originals?",
-				"Saved originals will be deactivated and hidden from the Scene, but available in the Hierarchy.",
-				"Merge Delete",		// 0
-				"Merge Save",		// 1
-				"Cancel");			// 2
+				return new pb_ActionResult(Status.Canceled, "Must Select 2+ Objects");
 
 			pb_Object pb = null;
-
-			if(option == 2) return new pb_ActionResult(Status.Canceled, "Merge Canceled");
 
 			if( pbMeshOps.CombineObjects(selected, out pb) )
 			{
@@ -75,21 +66,11 @@ namespace ProBuilder2.EditorCommon
 
 				pb.gameObject.name = "pb-MergedObject" + pb.id;
 
-				switch(option)
+				// Delete donor objects
+				for(int i = 0; i < selected.Length; i++)
 				{
-					case 0: 	// Delete donor objects
-						for(int i = 0; i < selected.Length; i++)
-						{
-							if(selected[i] != null)
-								pbUndo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
-						}
-
-						break;
-
-					case 1:
-						foreach(pb_Object sel in selected)
-							sel.gameObject.SetActive(false);
-						break;
+					if(selected[i] != null)
+						pbUndo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
 				}
 
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
