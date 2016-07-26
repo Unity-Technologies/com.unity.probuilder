@@ -13,6 +13,8 @@ using ProBuilder2.Interface;
 using Parabox.Debug;
 #endif
 
+namespace ProBuilder2.EditorCommon
+{
 public class pb_UV_Editor : EditorWindow
 {
 
@@ -3550,4 +3552,4 @@ public class pb_UV_Editor : EditorWindow
 #endregion
 #endif
 }
-
+}

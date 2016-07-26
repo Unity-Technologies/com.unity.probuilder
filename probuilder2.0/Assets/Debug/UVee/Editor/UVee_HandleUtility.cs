@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
+namespace Parabox.UVee
+{
+
 /**
  * Utilities for creating and manipulating Handles and points in GUI space, based on pb_Handle_Utility.cs
  */
@@ -390,4 +393,5 @@ public class UVee_HandleUtility
 		return foundMatch;
 	}
 #endregion
+}
 }

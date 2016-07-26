@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+namespace Parabox.UVee
+{
 public class UVeeWindow : EditorWindow {
 
 #region ENUM / CLASS
@@ -87,7 +89,7 @@ public class UVeeWindow : EditorWindow {
 				else if(skinnedMeshRenderer != null)
 					skinnedMeshRenderer.sharedMesh = value;
 				else
-					Debug.LogError("MeshSelection is null");
+					UnityEngine.Debug.LogError("MeshSelection is null");
 			}
 		}
 
@@ -417,7 +419,7 @@ public class UVeeWindow : EditorWindow {
 
 			triangle_points[i] = lines.ToArray();
 			user_triangle_points[i] = u_lines.ToArray();
-			// Debug.Log(distinct_triangle_selection[i].ToFormattedString(", ") + "\n" + selected_triangles[i].ToArray().ToFormattedString(", "));
+			// UnityEngine.Debug.Log(distinct_triangle_selection[i].ToFormattedString(", ") + "\n" + selected_triangles[i].ToArray().ToFormattedString(", "));
 		}
 
 		uv_center = Average(user_points);
@@ -1522,7 +1524,7 @@ public class UVeeWindow : EditorWindow {
 	{
 		foreach(KeyValuePair<string, List<float>> kvp in methodExecutionTimes)
 		{
-			Debug.Log("Method: " + kvp.Key + "\nAvg. Time: " + Average(kvp.Value).ToString("F7") + "\nSamples: " + kvp.Value.Count);
+			UnityEngine.Debug.Log("Method: " + kvp.Key + "\nAvg. Time: " + Average(kvp.Value).ToString("F7") + "\nSamples: " + kvp.Value.Count);
 		}
 	}
 
@@ -1653,3 +1655,4 @@ public class UVeeWindow : EditorWindow {
 		}
 	}
 #endregion
+}
