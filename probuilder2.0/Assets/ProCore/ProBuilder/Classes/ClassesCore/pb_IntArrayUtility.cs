@@ -185,9 +185,7 @@ namespace ProBuilder2.Common
 			List<int> shared = new List<int>();
 
 			for(int i = 0; i < universal.Length; i++)
-			{
 				shared.AddRange(pbIntArr[universal[i]].array);
-			}
 
 			return shared;
 		}

@@ -1845,7 +1845,6 @@ namespace ProBuilder2.EditorCommon
 				pb_Edge[] connections;
 				res = pb.Connect(pb.SelectedEdges, out connections);
 				pb.SetSelectedEdges(connections);
-				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
@@ -1868,6 +1867,9 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_Edge[] connections;
 				res = pb.Connect(pb.SelectedTriangles, out connections);
+
+				pb.Refresh();
+				pb.Optimize();
 			}
 			pb_Editor.Refresh();
 

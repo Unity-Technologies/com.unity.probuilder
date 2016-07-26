@@ -6,26 +6,27 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
+	
+	/**
+	 * Store face rebuild data with indices to mark which vertices are new.
+	 */
+	class ConnectFaceRebuildData
+	{
+		public pb_FaceRebuildData faceRebuildData;
+		public List<int> newVertexIndices;
+
+		public ConnectFaceRebuildData(pb_FaceRebuildData faceRebuildData, List<int> newVertexIndices)
+		{
+			this.faceRebuildData = faceRebuildData;
+			this.newVertexIndices = newVertexIndices;
+		}
+	};
+	
 	/**
 	 *	Utility class for connecting edges.
 	 */
 	public static class pb_ConnectEdges
 	{
-		/**
-		 * Store face rebuild data with indices to mark which vertices are new.
-		 */
-		class ConnectFaceRebuildData
-		{
-			public pb_FaceRebuildData faceRebuildData;
-			public List<int> newVertexIndices;
-
-			public ConnectFaceRebuildData(pb_FaceRebuildData faceRebuildData, List<int> newVertexIndices)
-			{
-				this.faceRebuildData = faceRebuildData;
-				this.newVertexIndices = newVertexIndices;
-			}
-		};
-
 		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] faces)
 		{
 			pb_Edge[] empty;
@@ -59,13 +60,6 @@ namespace ProBuilder2.MeshOperations
 						affected.Add(wing.face, new List<pb_WingedEdge>() { wing });
 				}
 			}
-
-			////// DEBUG {
-			// foreach(var k in affected)
-			// {
-			// 	Debug.Log(k.Key + "\n" + k.Value.Count);
-			// }
-			////// DEBUG }
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();

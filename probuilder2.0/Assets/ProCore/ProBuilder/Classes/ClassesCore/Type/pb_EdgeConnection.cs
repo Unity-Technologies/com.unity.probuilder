@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
+	[System.Obsolete("Use pb_ConnectEdges class directly.")]
 	public class pb_EdgeConnection : System.IEquatable<pb_EdgeConnection>
 	{
 		public pb_EdgeConnection(pb_Face face, List<pb_Edge> edges)

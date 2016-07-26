@@ -510,13 +510,13 @@ namespace ProBuilder2.EditorCommon
 
 				switch(edgeIndexFormat)
 				{
-					case IndexFormat.Both:
-						DrawSceneLabel(string.Format("common: [{0}, {1}]", edge.common.x, edge.common.y), cen);
+					case IndexFormat.Common:
+						DrawSceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
 						break;
 					case IndexFormat.Local:
-						DrawSceneLabel(string.Format("local: [{0}, {1}]", edge.local.x, edge.local.y), cen);
+						DrawSceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
 						break;
-					case IndexFormat.Common:
+					case IndexFormat.Both:
 						DrawSceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
 						break;
 				}
@@ -611,16 +611,21 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		static Rect sceneLabelRect = new Rect(0,0,0,0);
+
 		void DrawSceneLabel(string text, Vector2 position)
 		{
 			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
 
 			float width = EditorStyles.boldLabel.CalcSize(gc).x;
 			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
+			sceneLabelRect.x = position.x - width * .5f;
+			sceneLabelRect.y = position.y - height * .5f;
+			sceneLabelRect.width = width;
+			sceneLabelRect.height = height;
 
-			pb_GUI_Utility.DrawSolidColor(new Rect(position.x, position.y, width, height), SceneLabelBackgroundColor);
-
-			GUI.Label( new Rect(position.x, position.y, width, height), gc, boldLabel );
+			pb_GUI_Utility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
+			GUI.Label(sceneLabelRect, gc, boldLabel );
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
