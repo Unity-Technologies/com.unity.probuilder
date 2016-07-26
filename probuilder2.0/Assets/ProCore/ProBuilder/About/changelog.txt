@@ -1,3 +1,37 @@
+# ProBuilder 2.5.1b4
+
+## Features
+
+- Completely rewritten documentation: http://procore3d.github.io/probuilder2/
+- Add support for local/common toggles in Edge Debug mode.
+- Add `Select Holes` action to editor toolbar (selects all connected open edge paths).
+- `Connect {Edge, Vertices}` refactored for speed and more robust edge case handling.
+- New "Options" button for toolbar icons.
+- Improve performance of `Delete Faces` action.
+- Improve performance of `Subdivide` action.
+- Add `Alt-S` shortcut for `Subdivide` action.
+
+## Bug Fixes
+
+- Fix compile errors in Unity 4.7 due to missing editor flag.
+- Hide geometry actions when in object mode.
+- Fix edge selection when mouse is hovering an object not in the selection but a valid edge is within distance of mouse.
+- When filling holes in edge mode with "fill entire hole" enabled, make sure that each found hole contains one complete edge from the selection.
+- Show a useful notification if attempting to bevel open edges.
+- When filling a hole, feed the vertices into face triangulation method in order to avoid convexity issues.
+- Fix bug where subdividing a face with an adjacent concave n-gon would break the adjacent face.
+- When generating the menu item text for shortcuts always use lower case, since Mac doesn't recognize upper case as shortcuts.  Fixes an issue with shortcuts not working on OSX.
+- Support cases where texture groups on pb_Object aren't in linear order.
+- Clear debug lines when a selected object is deleted.
+- Fix bug where `Detach Faces` to submesh would incorrectly split all the detached selection vertices.
+- Put UV Editor in namespace, preventing errors where common function names would be confused with other assets.
+
+## Changes
+
+- `Detach Selection` now behaves like toolbar option panel instead of popup.
+- Remove unnecessary option to save duplicates of selected gameobjects when using `Merge Objects` action.
+- In addition to changing the icon and text, also show a brief explanation of the current handle alignment mode in the tooltip.
+
 # ProBuilder 2.5.1b3
 
 ## Features
