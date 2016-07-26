@@ -21,7 +21,7 @@ Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 Create a new face between two selected edges. Each edge must have a free side.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/BridgeEdges_Example.png">
 </div>
 
 ---
@@ -37,7 +37,7 @@ Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 Splits the selected edge(s) into two edges, with a new face between.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/BevelEdges_Example.png">
 </div>
 
 ![Options Icon](../images/icons/options.png) **Custom Settings Available** :
@@ -59,7 +59,7 @@ Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 Insert an edge connecting the centers of each selected edge.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/ConnectEdges_Example.png">
 </div>
 
 ---
@@ -77,7 +77,7 @@ Pushes a new edge out from the selected edge, connected by a new face.
 You can also extrude edges by holding `SHIFT` while moving, rotating, or scaling them.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/ExtrudeEdges_Example.png">
 </div>
 
 > Note: By default, only open edges can be **Extruded**. You can change this in the [ProBuilder Preferences](@todo).
