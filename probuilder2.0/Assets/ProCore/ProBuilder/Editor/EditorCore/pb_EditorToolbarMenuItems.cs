@@ -182,14 +182,14 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [⌫]", true)]
+		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [delete]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
 			return instance != null && instance.IsEnabled();
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [⌫]", false, pb_Constant.MENU_GEOMETRY + 3)]
+		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [delete]", false, pb_Constant.MENU_GEOMETRY + 3)]
 		static void MenuDoDeleteFaces()
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -471,14 +471,14 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", true)]
+		[MenuItem("Tools/ProBuilder/Object/Subdivide Object &s", true)]
 		static bool MenuVerifySubdivideObject()
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();
 			return instance != null && instance.IsEnabled();
 		}
 
-		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", false, pb_Constant.MENU_GEOMETRY + 2)]
+		[MenuItem("Tools/ProBuilder/Object/Subdivide Object &s", false, pb_Constant.MENU_GEOMETRY + 2)]
 		static void MenuDoSubdivideObject()
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();
