@@ -1200,14 +1200,12 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				foreach(pb_Face face in pb.SelectedFaces)
-					pb.DetachFace(face);
-
 				pb.ToMesh();
+				List<pb_Face> res = pb.DetachFaces(pb.SelectedFaces);
 				pb.Refresh();
 				pb.Optimize();
 
-				pb.SetSelectedFaces(pb.SelectedFaces);
+				pb.SetSelectedFaces(res.ToArray());
 
 				count += pb.SelectedFaceCount;
 			}
@@ -1246,7 +1244,6 @@ namespace ProBuilder2.EditorCommon
 
 				detachedFaceCount += primary.Length;
 
-				
 				List<int> inverse_list = new List<int>();
 				for(int i = 0; i < pb.faces.Length; i++)
 					if(System.Array.IndexOf(primary, i) < 0)
@@ -1566,8 +1563,7 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				// Now split the faces, and any loose vertices
-				foreach(pb_Face f in pb.SelectedFaces)
-					pb.DetachFace(f);
+				pb.DetachFaces(pb.SelectedFaces);
 
 				splitCount += pb.SelectedTriangles.Length;
 				pb.SplitCommonVertices(pb.SelectedTriangles);

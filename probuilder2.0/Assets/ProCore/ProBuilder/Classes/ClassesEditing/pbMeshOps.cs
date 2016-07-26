@@ -518,54 +518,52 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 * Removes the vertex associations so that this face may be moved independently of the main object.
 	 */
-	public static void DetachFace(this pb_Object pb, pb_Face face)
+	public static List<pb_Face> DetachFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
 	{
-		pb_IntArray[] sharedIndices = pb.sharedIndices;
-		pb_IntArrayUtility.RemoveValues(ref sharedIndices, face.indices);
+		List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+		int sharedIndicesOffset = pb.sharedIndices.Length;
+		Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-		// Add these vertices back into the sharedIndices array under it's own entry
-		for(int i = 0; i < face.distinctIndices.Length; i++)
-		{			
-			int[] arr = new int[1] { face.distinctIndices[i] };
-			sharedIndices = pbUtil.Add(sharedIndices, new pb_IntArray(arr));
+		List<pb_FaceRebuildData> detached = new List<pb_FaceRebuildData>();
+
+		foreach(pb_Face face in faces)
+		{
+			pb_FaceRebuildData data = new pb_FaceRebuildData();
+			data.vertices = new List<pb_Vertex>();
+			data.sharedIndices = new List<int>();
+			data.face = new pb_Face(face);
+
+			Dictionary<int, int> match = new Dictionary<int, int>();
+			int[] indices = new int[face.indices.Length];
+
+			for(int i = 0; i < face.indices.Length; i++)
+			{
+				int local;
+
+				if( match.TryGetValue(face.indices[i], out local) )
+				{
+					indices[i] = local;
+				}
+				else
+				{
+					local = data.vertices.Count;
+					indices[i] = local;
+					match.Add(face.indices[i], local);
+					data.vertices.Add(vertices[face.indices[i]]);
+					data.sharedIndices.Add(lookup[face.indices[i]] + sharedIndicesOffset);
+				}
+			}
+
+			data.face.SetIndices(indices.ToArray());
+			detached.Add(data);
 		}
 
-		pb.SetSharedIndices(sharedIndices);
-	}
+		pb_FaceRebuildData.Apply(detached, pb, vertices, null, lookup);
+		pb.DeleteFaces(faces);
 
-	public static bool DetachFacesToObject(this pb_Object pb, pb_Face[] faces, out pb_Object detachedObject)
-	{
-		detachedObject = null;
+		pb.ToMesh();
 
-		if(faces.Length < 1 || faces.Length == pb.faces.Length)
-			return false;
-
-		int[] primary = new int[faces.Length];
-		for(int i = 0; i < primary.Length; i++)
-			primary[i] = System.Array.IndexOf(pb.faces, faces[i]);
-		
-		int[] inverse = new int[pb.faces.Length - primary.Length];
-		int n = 0;
-
-		for(int i = 0; i < pb.faces.Length; i++)
-			if(System.Array.IndexOf(primary, i) < 0)
-				inverse[n++] = i;
-				
-		detachedObject = pb_Object.InitWithObject(pb);
-
-		detachedObject.transform.position = pb.transform.position;
-		detachedObject.transform.localScale = pb.transform.localScale;
-		detachedObject.transform.localRotation = pb.transform.localRotation;
-
-		pb.DeleteFaces(primary);
-		detachedObject.DeleteFaces(inverse);
-
-		pb.Refresh();
-		detachedObject.Refresh();
-	
-		detachedObject.gameObject.name = pb.gameObject.name + "-detach";
-		
-		return true;
+		return detached.Select(x => x.face).ToList();
 	}
 #endregion
 
