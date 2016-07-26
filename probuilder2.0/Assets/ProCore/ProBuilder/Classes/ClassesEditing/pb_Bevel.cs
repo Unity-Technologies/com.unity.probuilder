@@ -158,6 +158,38 @@ namespace ProBuilder2.MeshOperations
 
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
+			// go through new faces and conform hole normals
+			// get a hash of just the adjacent and bridge faces
+			HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
+			// and also just the filled holes
+			HashSet<pb_Face> newHoles = new HashSet<pb_Face>(holeFaces.Select(x => x.face));
+			// now append filled holes to the full list of added faces
+			appendFaces.AddRange(holeFaces);
+			List<pb_WingedEdge> allNewFaceEdges = pb_WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
+
+			for(int i = 0; i < allNewFaceEdges.Count && newHoles.Count > 0; i++)
+			{
+				pb_WingedEdge wing = allNewFaceEdges[i];
+
+				if(adjacent.Contains(wing.face))
+				{
+					adjacent.Remove(wing.face);
+					pb_WingedEdge cur = wing;
+
+					do
+					{
+						if( cur.opposite != null && newHoles.Contains(cur.opposite.face) )
+						{
+							newHoles.Remove(cur.opposite.face);
+							pb_ConformNormals.ConformOppositeNormal(cur);
+						}
+
+						cur = cur.next;
+					}
+					while(cur != wing);
+				}
+			}					
+
 			pb.ToMesh();
 
 			return new pb_ActionResult(Status.Success, "Bevel Edges");

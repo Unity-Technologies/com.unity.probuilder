@@ -105,9 +105,9 @@ namespace ProBuilder2.MeshOperations
 			int vertexCount = points.Count;
 
 			indices = new List<int>();
-
-			// WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
 			InputGeometry input = new InputGeometry(vertexCount);
+
+			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
 
 			for(int i = 0; i < vertexCount; i++)
 			{
@@ -138,12 +138,12 @@ namespace ProBuilder2.MeshOperations
 
 			// // if the re-triangulated first tri doesn't match the winding order of the original
 			// // vertices, flip 'em
-			// if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
-			// 	points[indices[0]],
-			// 	points[indices[1]],
-			// 	points[indices[2]],
-			// 	}) != originalWinding)
-			// 	indices.Reverse();
+			if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
+				points[indices[0]],
+				points[indices[1]],
+				points[indices[2]],
+				}) != originalWinding)
+				indices.Reverse();
 
 			return true;
 		}

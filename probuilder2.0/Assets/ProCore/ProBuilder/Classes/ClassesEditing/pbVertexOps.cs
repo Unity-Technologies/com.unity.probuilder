@@ -598,6 +598,7 @@ namespace ProBuilder2.MeshOperations
 				triangles.Reverse();
 
 			data.face.SetIndices(triangles.ToArray());
+			
 			return data;
 		}
 
