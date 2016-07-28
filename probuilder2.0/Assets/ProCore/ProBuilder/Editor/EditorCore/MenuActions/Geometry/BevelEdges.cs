@@ -38,6 +38,7 @@ namespace ProBuilder2.Actions
 		{
 			return 	pb_Editor.instance == null ||
 					editLevel != EditLevel.Geometry ||
+					(pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Edge) ||
 					(selectionMode & (SelectMode.Face | SelectMode.Edge)) == 0;
 		}
 
