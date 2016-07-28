@@ -13,7 +13,7 @@ using Parabox.Debug;
 namespace ProBuilder2.MeshOperations
 {
 	/**
-	 * Utilities for working with pb_Object meshes.  The operations here only operate on the 
+	 * Utilities for working with pb_Object meshes.  The operations here only operate on the
 	 * element caches in pb_Object- they do not affect the UnityEngine.Mesh.  You should call
 	 * ToMesh() prior to invoking these methods, then Refresh() & optionally Optimize() post.
 	 */
@@ -25,7 +25,7 @@ namespace ProBuilder2.MeshOperations
 	 * Center the mesh pivot at the average of passed indices.
 	 */
 	public static void CenterPivot(this pb_Object pb, int[] indices)
-	{	
+	{
 		Vector3 center = Vector3.zero;
 
 		if(indices != null)
@@ -34,7 +34,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach (Vector3 v in verts)
 				center += v;
-		
+
 			center /= (float)verts.Length;
 		}
 		else
@@ -150,7 +150,7 @@ namespace ProBuilder2.MeshOperations
 		List<int[]> append_shared = new List<int[]>();
 
 		/// build out new faces around edges
-		
+
 		for(int i = 0; i < perimeterEdges.Length; i++)
 		{
 			extrudedIndices[i] = new List<pb_Edge>();
@@ -170,7 +170,7 @@ namespace ProBuilder2.MeshOperations
 					if( !extrudeAsGroup )
 					{
 						xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
-						ynorm = xnorm;					
+						ynorm = xnorm;
 					}
 					else
 					{
@@ -192,7 +192,7 @@ namespace ProBuilder2.MeshOperations
 					});
 
 				append_color.Add( new Color[]
-					{	
+					{
 						pb.colors[ edge.x ],
 						pb.colors[ edge.y ],
 						pb.colors[ edge.x ],
@@ -201,7 +201,7 @@ namespace ProBuilder2.MeshOperations
 
 				append_uv.Add( new Vector2[4] );
 
-				append_face.Add( new pb_Face( 
+				append_face.Add( new pb_Face(
 						new int[6] {0, 1, 2, 1, 3, 2},			// indices
 						face.material,							// material
 						new pb_UV(face.uv),						// UV material
@@ -216,7 +216,7 @@ namespace ProBuilder2.MeshOperations
 						x_sharedIndex,
 						y_sharedIndex,
 						-1,
-						-1 
+						-1
 					});
 
 				extrudedIndices[i].Add(new pb_Edge(x_sharedIndex, -1));
@@ -306,7 +306,7 @@ namespace ProBuilder2.MeshOperations
 
 					if(match < 0)
 						continue;
-					
+
 					int match_tri_index = extrudedIndices[i][match].y;
 
 					if(welds.ContainsKey(match_tri_index))
@@ -315,17 +315,16 @@ namespace ProBuilder2.MeshOperations
 					}
 				}
 			}
-
 		}
-		
+
 		si = pb_IntArrayUtility.ToSharedIndices(welds);
 
 		pb.SplitUVs(pb_Face.AllTriangles(faces));
-		
+
 		/**
 		 * Move the inside faces to the top of the extrusion
 		 *
-		 * This is a separate loop cause the one above this must completely merge all sharedindices prior to 
+		 * This is a separate loop cause the one above this must completely merge all sharedindices prior to
 		 * checking the normal averages
 		 *
 		 */
@@ -347,16 +346,24 @@ namespace ProBuilder2.MeshOperations
 			}
 		}
 
-		// Test the winding of the first pulled face, and reverse if it's ccw
-		if(pb.GetWindingOrder(faces[0]) == WindingOrder.CounterClockwise)
-		{
-			foreach(pb_Face face in appendedFaces)
-				face.ReverseIndices();
-		}
-
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
 
+		List<pb_Face> allModified = new List<pb_Face>(appendedFaces);
+		allModified.AddRange(faces);
+		HashSet<pb_Face> sources = new HashSet<pb_Face>(faces);
+		List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, allModified);
+
+		foreach(pb_WingedEdge wing in wings)
+		{
+			if(sources.Contains(wing.face))
+			{
+				sources.Remove(wing.face);
+
+				foreach(pb_WingedEdge w in wing)
+					pb_ConformNormals.ConformOppositeNormal(w);
+			}
+		}
 
 		return true;
 	}
@@ -457,7 +464,7 @@ namespace ProBuilder2.MeshOperations
 					localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
 					localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
 				},
-				new Color[4] 
+				new Color[4]
 				{
 					pb.colors[ edge.x ],
 					pb.colors[ edge.y ],
@@ -507,7 +514,7 @@ namespace ProBuilder2.MeshOperations
 
 		foreach(pb_Face f in pb.faces)
 			f.RebuildCaches();
-		
+
 		extrudedEdges = newEdges.ToArray();
 		return true;
 	}
@@ -592,7 +599,7 @@ namespace ProBuilder2.MeshOperations
 					return false;
 				}
 			}
-		
+
 			Vector3[] verts = pb.vertices;
 			Vector3[] v;
 			Color[] c;
@@ -600,10 +607,10 @@ namespace ProBuilder2.MeshOperations
 			pb_UV uvs = new pb_UV();
 			Material mat = pb_Constant.DefaultMaterial;
 
-			// Get material and UV stuff from the first edge face 
+			// Get material and UV stuff from the first edge face
 			foreach(pb_Face face in pb.faces)
 			{
-				if(face.edges.Contains(a))	
+				if(face.edges.Contains(a))
 				{
 					uvs = new pb_UV(face.uv);
 					mat = face.material;
@@ -620,12 +627,12 @@ namespace ProBuilder2.MeshOperations
 
 				bool axbx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.x)], b.x) > -1;
 				bool axby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.x)], b.y) > -1;
-				
+
 				bool aybx = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.y)], b.x) > -1;
 				bool ayby = System.Array.IndexOf(sharedIndices[sharedIndices.IndexOf(a.y)], b.y) > -1;
-				
+
 				if(axbx)
-				{	
+				{
 					v[0] = verts[a.x];
 					c[0] = pb.colors[a.x];
 					s[0] = sharedIndices.IndexOf(a.x);
@@ -825,7 +832,7 @@ namespace ProBuilder2.MeshOperations
 		combined.ToMesh();
 
 		combined.GetComponent<pb_Entity>().SetEntity( pbs[0].GetComponent<pb_Entity>().entityType );
-	 	
+
 	 	combined.CenterPivot( pbs[0].transform.position );
 
 		combined.Refresh();
@@ -897,7 +904,7 @@ namespace ProBuilder2.MeshOperations
 						{
 							tris[i+0],
 							tris[i+1],
-							tris[i+2]	
+							tris[i+2]
 						};
 					}
 					else
@@ -917,7 +924,7 @@ namespace ProBuilder2.MeshOperations
 						faceTris = new int[3] { i+0, i+1, i+2 };
 					}
 
-					faces.Add( 
+					faces.Add(
 						new pb_Face(
 							faceTris,
 							t.GetComponent<MeshRenderer>().sharedMaterials[n],
@@ -925,8 +932,8 @@ namespace ProBuilder2.MeshOperations
 							0,		// smoothing group
 							-1,		// texture group
 							-1,		// element group
-							true 	// manualUV 
-						));					
+							true 	// manualUV
+						));
 				}
 			}
 		}
@@ -941,7 +948,7 @@ namespace ProBuilder2.MeshOperations
 		pb.SetUV(uvs.ToArray());
 
 		pb.gameObject.name = t.name;
-			
+
 		go.transform.position = t.position;
 		go.transform.localRotation = t.localRotation;
 		go.transform.localScale = t.localScale;
@@ -1025,7 +1032,7 @@ namespace ProBuilder2.MeshOperations
 						{
 							tris[i+0],
 							tris[i+1],
-							tris[i+2]	
+							tris[i+2]
 						};
 					}
 					else
@@ -1045,7 +1052,7 @@ namespace ProBuilder2.MeshOperations
 						faceTris = new int[3] { i+0, i+1, i+2 };
 					}
 
-					faces.Add( 
+					faces.Add(
 						new pb_Face(
 							faceTris,
 							sharedMaterials[n >= mat_length ? mat_length - 1 : n],
@@ -1053,8 +1060,8 @@ namespace ProBuilder2.MeshOperations
 							0,		// smoothing group
 							-1,		// texture group
 							-1,		// element group
-							true 	// manualUV 
-						));					
+							true 	// manualUV
+						));
 				}
 			}
 		}

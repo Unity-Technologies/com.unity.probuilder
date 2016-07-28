@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace ProBuilder2.Common
 	 *     |             |
 	 *     |             |
 	 */
-	public class pb_WingedEdge : IEquatable<pb_WingedEdge>
+	public class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
 	{
 		public pb_EdgeLookup edge;
 		public pb_Face face;
@@ -49,6 +50,16 @@ namespace ProBuilder2.Common
 		public override int GetHashCode()
 		{
 			return edge.local.GetHashCode();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+		   return (IEnumerator) GetEnumerator();
+		}
+
+		public pb_WingedEdgeEnumerator GetEnumerator()
+		{
+		    return new pb_WingedEdgeEnumerator(this);
 		}
 
 		public override string ToString()
