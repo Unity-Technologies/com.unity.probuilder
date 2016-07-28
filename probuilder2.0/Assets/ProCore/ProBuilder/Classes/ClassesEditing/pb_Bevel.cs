@@ -23,6 +23,8 @@ namespace ProBuilder2.MeshOperations
 			HashSet<int> 					slide 	= new HashSet<int>();
 			int beveled = 0;
 
+			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>>();
+
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
 			foreach(pb_EdgeLookup lup in m_edges)
@@ -46,7 +48,7 @@ namespace ProBuilder2.MeshOperations
 				SlideEdge(vertices, we, amount);
 				SlideEdge(vertices, we.opposite, amount);
 
-				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite) );
+				appendFaces.AddRange( GetBridgeFaces(vertices, we, we.opposite, holes) );
 			}
 
 			if(beveled < 1)
@@ -77,8 +79,6 @@ namespace ProBuilder2.MeshOperations
 					sorted.AddOrAppend(match.face, new pb_Tuple<pb_WingedEdge, int>(match, c));
 				}
 			}
-
-			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>>();
 
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
 			foreach(KeyValuePair<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
@@ -141,11 +141,19 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(HashSet<int> h in holesCommonIndices)
 			{
+				// even if a set of hole indices made it past the initial culling, the distinct part 
+				// may have reduced the index count
+				if(h.Count < 3)
+				{
+					continue;
+				}
+				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
 					List<pb_Vertex> v = new List<pb_Vertex>( pb_Vertex.GetVertices(pb, h.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.Add(pb_AppendPolygon.FaceWithVertices(v));
 				}
+				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
 					List<int> holePath = pb_WingedEdge.SortCommonIndicesByAdjacency(modified, h);
@@ -158,6 +166,7 @@ namespace ProBuilder2.MeshOperations
 
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
+
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces
 			HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
@@ -165,6 +174,7 @@ namespace ProBuilder2.MeshOperations
 			HashSet<pb_Face> newHoles = new HashSet<pb_Face>(holeFaces.Select(x => x.face));
 			// now append filled holes to the full list of added faces
 			appendFaces.AddRange(holeFaces);
+
 			List<pb_WingedEdge> allNewFaceEdges = pb_WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
 
 			for(int i = 0; i < allNewFaceEdges.Count && newHoles.Count > 0; i++)
@@ -197,7 +207,11 @@ namespace ProBuilder2.MeshOperations
 
  		private static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };
 
- 		private static List<pb_FaceRebuildData> GetBridgeFaces(IList<pb_Vertex> vertices, pb_WingedEdge left, pb_WingedEdge right)
+ 		private static List<pb_FaceRebuildData> GetBridgeFaces(
+ 			IList<pb_Vertex> vertices,
+ 			pb_WingedEdge left,
+ 			pb_WingedEdge right, 
+ 			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes)
  		{
  			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
 
@@ -210,8 +224,8 @@ namespace ProBuilder2.MeshOperations
  			{
  				vertices[a.local.x],
  				vertices[a.local.y],
- 				vertices[b.local.y],
- 				vertices[b.local.x]
+ 				vertices[a.common.x == b.common.x ? b.local.x : b.local.y],
+ 				vertices[a.common.x == b.common.x ? b.local.y : b.local.x]
  			};
 
  			Vector3 an = pb_Math.Normal(vertices, left.face.indices);
@@ -233,6 +247,9 @@ namespace ProBuilder2.MeshOperations
 
  			faces.Add(rf);
 
+ 			holes.AddOrAppend(a.common.x, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
+ 			holes.AddOrAppend(a.common.y, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
+ 			
  			return faces;
  		}
 
