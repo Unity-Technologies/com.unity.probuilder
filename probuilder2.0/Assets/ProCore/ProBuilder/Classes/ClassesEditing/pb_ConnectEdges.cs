@@ -6,7 +6,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	
+
 	/**
 	 * Store face rebuild data with indices to mark which vertices are new.
 	 */
@@ -21,7 +21,7 @@ namespace ProBuilder2.MeshOperations
 			this.newVertexIndices = newVertexIndices;
 		}
 	};
-	
+
 	/**
 	 *	Utility class for connecting edges.
 	 */
@@ -63,6 +63,8 @@ namespace ProBuilder2.MeshOperations
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<ConnectFaceRebuildData> results = new List<ConnectFaceRebuildData>();
+			// just the faces that where connected with > 1 edge
+			List<pb_Face> connectedFaces = new List<pb_Face>();
 
 			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
@@ -96,6 +98,8 @@ namespace ProBuilder2.MeshOperations
 
 					foreach(ConnectFaceRebuildData c in res)
 					{
+						connectedFaces.Add(c.faceRebuildData.face);
+
 						c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 						c.faceRebuildData.face.uv 				= new pb_UV(face.uv);
 						c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
@@ -136,7 +140,7 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			if(returnFaces)
-				addedFaces = results.Select(x => x.faceRebuildData.face).ToArray();
+				addedFaces = connectedFaces.ToArray();
 			else
 				addedFaces = null;
 
