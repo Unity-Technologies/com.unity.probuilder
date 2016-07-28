@@ -18,7 +18,7 @@ Texturing is the process of applying materials ("textures") to an object, and ad
 
 UVs are used track these position, rotation, and tiling values. ProBuilder provides 3 methods of working with UVs:
 
-* Auto UVs : Use the standard Move, Rotate, and Scale tools for texturing, and ProBuilder automatically handles all the complex UV work.
+* Auto UVs : Use the standard Move, Rotate, and Scale tools for texturing, or direct numerical input, and ProBuilder automatically handles all the complex UV work.
 
 * Manual UVs : Use the full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.
 

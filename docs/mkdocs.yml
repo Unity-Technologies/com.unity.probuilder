@@ -18,7 +18,11 @@ pages:
     - Face: toolbar/face.md
     - All: toolbar/all.md
     
-- Texturing and UVs: texturing/texturing-and-uvs.md
+- Texturing and UVs: 
+    - Overview: texturing/overview-texturing.md
+    - Auto-Texturing: texturing/auto-texturing.md
+    - Manual UV Editing: texturing/manual-uv-editing.md
+    
 - Troubleshooting:
   - troubleshooting/faq.md
 

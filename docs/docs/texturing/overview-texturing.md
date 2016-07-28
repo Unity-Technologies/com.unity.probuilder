@@ -1,31 +1,68 @@
-# Video: Texturing and UVs
+# Video: Texturing and UVs Overview
 
-[![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
+[![ProBuilder Texturing and UVs Overview Video](../images/VideoLink_YouTube_768.png)](@todo)
 
-ProBuilder is controlled almost entirely via the **Main Toolbar**, which contains all commonly used functions.
+Texturing is the process of applying materials ("textures") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.
 
-A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.
+> (@todo: image: new cube -> applied material -> rotated -> scaled -> offset)
 
 ---
 
-## Overview: Texturing
+## Auto-Texturing vs Manual UVs
 
-Texturing is the process of applying materials ("textures") to an object, and adjusting position, rotation, and tiling.
+<div class="info-box warning">
+Section Video: <a href="@todo">Texturing and UVs: Auto-Texturing vs Manual UVs</a>
+</div> 
 
-![(new cube -> applied material -> rotated -> scaled -> offset)]
+ProBuilder provides both "Automatic" and "Manual" Texturing methods:
 
-## Overview: UVs
+* [Auto-Texturing](@todo) : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles the actual UV work.
 
-UVs are used track these position, rotation, and tiling values. ProBuilder provides 3 methods of working with UVs:
+* [Manual UV Editing](@todo) : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.
 
-* Auto UVs : Use the standard Move, Rotate, and Scale tools for texturing, and ProBuilder automatically handles all the complex UV work.
+You can also use a mix of Auto-Texturing and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.
 
-* Manual UVs : Use the full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.
+---
 
-* Combination : Use a mix of Auto and Manual UVs, even on the same object.
+## The Texturing and UVs Window
+
+<div class="info-box warning">
+Section Video: <a href="@todo">Texturing and UVs: The Texturing and UVs Window</a>
+</div> 
+
+Both [Auto-Texturing](@todo) and [Manual UV Editing](@todo) controls are located in Texturing and UVs Window.
+
+To open this window, click it's button in the [Main Toolbar](@todo). 
+
+* In [Text Mode](@todo), this will be the button labeled **UV Editor** 
+* In [Icon Mode](@todo), use the button with this icon: ![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon")
+
+![@todo](../images/PlaceholderImage.png)
+
+### (A) Toolbar
+
+General tools for working in both [Auto-Texturing](@todo) and [Manual UV Editing](@todo) modes. The buttons are, from left to right:
+
+* **Select, Move, Rotate, Scale** : this first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.
+
+* **Vertex, Edge Face** : the second button group contains shortcuts to ProBuilder's [Element Editing Modes](@todo). When using [Manual UV Editing](@todo), this allows you to select and manipulate UVs by Vertex, Edge, or Face.
+
+* **In-Scene Controls** : This button toggles On/Off the [In-Scene Controls](@todo).
+
+* **Texture Preview** : When **On**, the selected face's main texture will be displayed in the [UV Viewer](@todo).
+
+* Render UVs: Opens the [Render UVs](@todo) tool panel, for rendering UV Templates to paint over in Photoshop/etc. 
+
+### Actions Panel
 
 
 
-  
+### UV Viewer
 
-   
+---
+
+## Auto-Texturing Actions Panel
+
+---
+
+## Manual UV Editing Actions Panel
