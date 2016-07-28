@@ -100,7 +100,7 @@ namespace ProBuilder2.Common
 			pb_Vertex.SetMesh(m, tv);
 
 			m.subMeshCount = smc;
-			
+
 			for(int s = 0; s < smc; s++)
 				m.SetTriangles(triangles[s], s);
 
@@ -146,21 +146,20 @@ namespace ProBuilder2.Common
 			}
 
 			pb_Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
-			
+
 			pb_Vertex.SetMesh(m, collapsed);
 
 			m.subMeshCount = smc;
-			
+
 			for(int i = 0; i < smc; i++)
 				m.SetTriangles(tris[i], i);
 		}
-		
+
 		/**
 		 * Generate tangents for the mesh.
 		 */
 		public static void GenerateTangent(ref Mesh InMesh)
 		{
-			// implementation found here (no sense re-inventing the wheel, eh?)
 			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
 
 			//speed up math by copying the mesh arrays
@@ -275,14 +274,14 @@ namespace ProBuilder2.Common
 			destination.name = source.name;
 
 			destination.vertices = v;
-			
+
 			destination.subMeshCount = t.Length;
 
 			for(int i = 0; i < t.Length; i++)
 				destination.SetTriangles(t[i], i);
 
 			destination.uv = u;
-			destination.uv2 = u2; 
+			destination.uv2 = u2;
 			destination.tangents = tan;
 			destination.normals = n;
 			destination.colors32 = c;

@@ -100,7 +100,7 @@ public class pb_UV_Editor : EditorWindow
 	private int uvGridSize = 256;
 	private float uvGraphScale = 1f;
 
-	enum UVMode 
+	enum UVMode
 	{
 		Auto,
 		Manual,
@@ -113,7 +113,7 @@ public class pb_UV_Editor : EditorWindow
 	int[] UV_CHANNELS = new int[] { 0, 1 };
 	bool debug_showCoordinates = false;
 	#endif
-	
+
 	// what uv channel to modify
 	int channel = 0;
 
@@ -169,7 +169,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			return 	this.objectIndex == oei.objectIndex &&
 					this.elementIndex == oei.elementIndex &&
-					this.elementSubIndex == oei.elementSubIndex && 
+					this.elementSubIndex == oei.elementSubIndex &&
 					this.valid == oei.valid;
 		}
 
@@ -189,7 +189,7 @@ public class pb_UV_Editor : EditorWindow
 		if(pb_Editor.instance != null && pb_Editor.instance.editLevel == EditLevel.Top)
 			pb_Editor.instance.SetEditLevel(EditLevel.Geometry);
 
-		EditorWindow.GetWindow<pb_UV_Editor>(pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating), "UV Editor", true);		 
+		EditorWindow.GetWindow<pb_UV_Editor>(pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating), "UV Editor", true);
 	}
 
 	void OpenContextMenu()
@@ -225,7 +225,7 @@ public class pb_UV_Editor : EditorWindow
 												0,
 												0),
 												new Vector2(256, 152));
-#endif										
+#endif
 	}
 
 	static void ContextMenu_OpenFloatingWindow()
@@ -250,7 +250,7 @@ public class pb_UV_Editor : EditorWindow
 	void OnEnable()
 	{
 		this.minSize = new Vector2(500f, 300f);
-		
+
 		InitGUI();
 
 		this.wantsMouseMove = true;
@@ -264,7 +264,7 @@ public class pb_UV_Editor : EditorWindow
 		instance = this;
 
 		pb_Object_Editor.OnGetFrameBoundsEvent += OnGetFrameBoundsEvent;
-		
+
 		nearestElement.Clear();
 
 		// Find preferences
@@ -277,7 +277,7 @@ public class pb_UV_Editor : EditorWindow
 		instance = null;
 
 		if(editor && editor.editLevel == EditLevel.Texture)
-			editor.PopEditLevel();	
+			editor.PopEditLevel();
 
 		// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
 		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
@@ -300,7 +300,7 @@ public class pb_UV_Editor : EditorWindow
 		dot = EditorGUIUtility.whiteTexture;
 
 		MethodInfo loadIconMethod = typeof(EditorGUIUtility).GetMethod("LoadIcon", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-		
+
 		isProSkin = EditorGUIUtility.isProSkin;
 
 		Texture2D moveIcon 		= (Texture2D)loadIconMethod.Invoke(null, new object[] { "MoveTool" } );
@@ -340,8 +340,8 @@ public class pb_UV_Editor : EditorWindow
 #region GUI Loop
 
 	Rect 	graphRect,
-			toolbarRect, 
-			actionWindowRect = new Rect(6, 64, 128, 240);
+			toolbarRect,
+			actionWindowRect = new Rect(6, 64, 128, 340);
 
 	#if PB_DEBUG
 	Rect buggerRect;
@@ -390,9 +390,9 @@ public class pb_UV_Editor : EditorWindow
 			{
 				DoScreenshot();
 			}
-		}		
+		}
 
-		if(tool == Tool.View || m_draggingCanvas)	
+		if(tool == Tool.View || m_draggingCanvas)
 			EditorGUIUtility.AddCursorRect(new Rect(0,toolbarRect.y + toolbarRect.height,screenWidth,screenHeight), MouseCursor.Pan);
 
 		ScreenRect.width = this.position.width;
@@ -407,7 +407,7 @@ public class pb_UV_Editor : EditorWindow
 			GUI.Box(ScreenRect, "");
 			GUI.backgroundColor = Color.white;
 		}
-		
+
 		#if PB_DEBUG
 		profiler.BeginSample("pb_UV_Editor::OnGUI");
 		profiler.BeginSample("GUI Calculations");
@@ -421,7 +421,8 @@ public class pb_UV_Editor : EditorWindow
 
 		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, Screen.width-PAD-PAD-actionWindowRect.width);
 		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, Screen.height-MIN_ACTION_WINDOW_SIZE);
-		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 350);
+		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 400);
+
 		switch(mode)
 		{
 			case UVMode.Manual:
@@ -441,14 +442,14 @@ public class pb_UV_Editor : EditorWindow
 
 		// Mouse drags, canvas movement, etc
 		HandleInput();
-		
+
 		#if PB_DEBUG
 		profiler.EndSample();
 		profiler.BeginSample("DrawUVGraph");
 		#endif
 
 		// try{
-			DrawUVGraph( graphRect );		
+			DrawUVGraph( graphRect );
 		// } catch(System.Exception e) { Debug.LogError(e.ToString()); }
 
 		#if PB_DEBUG
@@ -468,7 +469,7 @@ public class pb_UV_Editor : EditorWindow
 				case Tool.Rotate:
 					RotateTool();
 					break;
-			
+
 				case Tool.Scale:
 					ScaleTool();
 					break;
@@ -482,7 +483,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(UpdateNearestElement(Event.current.mousePosition))
 			Repaint();
-		
+
 		#if PB_DEBUG
 		profiler.EndSample();
 		profiler.BeginSample("MouseDrag");
@@ -536,7 +537,7 @@ public class pb_UV_Editor : EditorWindow
 #region Editor Delegate and Event
 
 	void OnSelectionUpdate(pb_Object[] selection)
-	{	
+	{
 		this.selection = selection;
 
 		SetSelectedUVsWithSceneView();
@@ -554,7 +555,7 @@ public class pb_UV_Editor : EditorWindow
 		for(int i = 0; i < len; i++)
 		{
 			incompleteTextureGroupsInSelection[i] = GetIncompleteTextureGroups(selection[i], selection[i].SelectedFaces);
-			
+
 			if(incompleteTextureGroupsInSelection[i].Count < 1)
 			{
 				continue;
@@ -578,13 +579,13 @@ public class pb_UV_Editor : EditorWindow
 			}
 		}
 
-		
+
 		Repaint();
 	}
 
 	/**
 	 * Automatically select textureGroup buddies, and copy origins of all UVs.
-	 * Also resets the mesh to PB data, removing vertices appended by 
+	 * Also resets the mesh to PB data, removing vertices appended by
 	 * UV2 generation.
 	 */
 	internal void OnBeginUVModification()
@@ -628,7 +629,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Internal because pb_Editor needs to call this sometimes.
 	 */
 	internal void OnFinishUVModification()
-	{	
+	{
 		pb_Lightmapping.PopGIWorkflowMode();
 
 		modifyingUVs = false;
@@ -667,7 +668,7 @@ public class pb_UV_Editor : EditorWindow
 						{
 							foreach(pb_Face face in kvp.Value)
 							{
-								if((face.uv.flipU ^ face.uv.flipV) ^ face.uv.swapUV) 
+								if((face.uv.flipU ^ face.uv.flipV) ^ face.uv.swapUV)
 									uvRotation = -uvRotation;
 
 								face.uv.rotation += uvRotation;
@@ -691,7 +692,7 @@ public class pb_UV_Editor : EditorWindow
 						{
 							nrm += pb_Math.Normal( 	pb.vertices[face.indices[0]],
 													pb.vertices[face.indices[1]],
-													pb.vertices[face.indices[2]] ); 
+													pb.vertices[face.indices[2]] );
 						}
 
 						nrm /= (float)kvp.Value.Count;
@@ -780,7 +781,7 @@ public class pb_UV_Editor : EditorWindow
 
 			// *
 			//  * Put sewn UVs into the selection if they aren't already.
-				
+
 			// for(int n = 0; n < selectedTris.Count; n++)
 			// {
 			// 	if( uvLookup[selectedTris[n]] > -1 )
@@ -790,12 +791,12 @@ public class pb_UV_Editor : EditorWindow
 			// }
 
 			pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
-			
+
 			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
 
 			/**
 			 * Put sewn UVs into the selection if they aren't already.
-			 */	
+			 */
 			if(sharedUVs != null)
 			{
 				foreach(int[] arr in sharedUVs)
@@ -851,11 +852,11 @@ public class pb_UV_Editor : EditorWindow
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
-				
+
 				RefreshUVCoordinates();
 
 				Repaint();
-				
+
 				return true;
 			}
 			else
@@ -880,9 +881,9 @@ public class pb_UV_Editor : EditorWindow
 			pb.ToMesh();
 
 			bool success = pbUVOps.AutoStitch(pb, anchor, selectedFace);
-			
+
 			if(success)
-			{	
+			{
 				RefreshElementGroups(pb);
 
 				pb.SetSelectedFaces(new pb_Face[]{selectedFace});
@@ -937,8 +938,8 @@ public class pb_UV_Editor : EditorWindow
 
 		switch(e.type)
 		{
-			case EventType.MouseDown:			
-				
+			case EventType.MouseDown:
+
 				#if PB_DEBUG
 				if(toolbarRect.Contains(e.mousePosition) || actionWindowRect.Contains(e.mousePosition) || buggerRect.Contains(e.mousePosition))
 				#else
@@ -960,12 +961,12 @@ public class pb_UV_Editor : EditorWindow
 
 				if(m_ignore || (e.mousePosition.y <= toolbarRect.y && !m_mouseDragging))
 					break;
-				
+
 				m_mouseDragging = true;
 
 				if(e.button == RIGHT_MOUSE_BUTTON || (e.button == LEFT_MOUSE_BUTTON && e.alt))
 					m_rightMouseDrag = true;
-				
+
 				needsRepaint = true;
 
 				/* If no handle is selected, do other stuff */
@@ -981,7 +982,7 @@ public class pb_UV_Editor : EditorWindow
 						dragRect.x = mousePosition_initial.x < e.mousePosition.x ? mousePosition_initial.x : e.mousePosition.x;
 						dragRect.y = mousePosition_initial.y > e.mousePosition.y ? e.mousePosition.y : mousePosition_initial.y;
 						dragRect.width = Mathf.Abs(mousePosition_initial.x-e.mousePosition.x);
-						dragRect.height = Mathf.Abs(mousePosition_initial.y-e.mousePosition.y);	
+						dragRect.height = Mathf.Abs(mousePosition_initial.y-e.mousePosition.y);
 					}
 					else if(e.alt && e.button == RIGHT_MOUSE_BUTTON)
 					{
@@ -1049,21 +1050,21 @@ public class pb_UV_Editor : EditorWindow
 				break;
 
 			case EventType.ScrollWheel:
-				
+
 				SetCanvasScale( uvGraphScale - e.delta.y * ((uvGraphScale/MAX_GRAPH_SCALE_SCROLL) * SCROLL_MODIFIER) );
 				e.Use();
-				
+
 				needsRepaint = true;
 				break;
 
 			case EventType.ContextClick:
-					
+
 					if(!m_rightMouseDrag)
 						OpenContextMenu();
 					else
 						m_rightMouseDrag = false;
 					break;
-					
+
 			default:
 				return;
 		}
@@ -1078,7 +1079,7 @@ public class pb_UV_Editor : EditorWindow
 
 		switch(e.keyCode)
 		{
-			case KeyCode.Keypad0: 
+			case KeyCode.Keypad0:
 			case KeyCode.Alpha0:
 				if(GUI.GetNameOfFocusedControl().Equals(""))
 				{
@@ -1099,7 +1100,7 @@ public class pb_UV_Editor : EditorWindow
 				SetTool_Internal(Tool.Move);
 				used = true;
 				break;
-			
+
 			case KeyCode.E:
 				SetTool_Internal(Tool.Rotate);
 				used = true;
@@ -1232,7 +1233,7 @@ public class pb_UV_Editor : EditorWindow
 		if(tool == Tool.View)
 			Tools.current = Tool.View;
 		else
-			Tools.current = Tool.None;	
+			Tools.current = Tool.None;
 
 		if(editor)
 		{
@@ -1251,7 +1252,7 @@ public class pb_UV_Editor : EditorWindow
 		#if PB_DEBUG
 		profiler.BeginSample("OnMouseClick");
 		#endif
-		
+
 		switch(selectionMode)
 		{
 			case SelectMode.Edge:
@@ -1280,7 +1281,7 @@ public class pb_UV_Editor : EditorWindow
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
 						if( pb_Math.PointInPolygon(selection[i].uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
-						{						
+						{
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
 							else
@@ -1312,7 +1313,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			RefreshSelectedUVCoordinates();
 		}
-		
+
 		#if PB_DEBUG
 		profiler.EndSample();
 		#endif
@@ -1383,7 +1384,7 @@ public class pb_UV_Editor : EditorWindow
 				handlePosition = pbUtil.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 			}
 			else
-			{		
+			{
 				handlePosition = t_handlePosition;
 
 				/**
@@ -1399,7 +1400,7 @@ public class pb_UV_Editor : EditorWindow
 						int index = pb_Handle_Utility.NearestPoint(handlePosition, selection[i].uv, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 						if(index < 0) continue;
-						
+
 						dist = Vector2.Distance( selection[i].uv[index], handlePosition );
 
 						if(dist < minDist)
@@ -1650,10 +1651,10 @@ public class pb_UV_Editor : EditorWindow
 		if(t_uvScale != uvScale)
 		{
 			if(!modifyingUVs)
-			{		
+			{
 				if(mode != UVMode.Auto)
 					pbUndo.RegisterCompleteObjectUndo(selection, "Scale UVs");
-					
+
 				OnBeginUVModification();
 			}
 
@@ -1668,7 +1669,7 @@ public class pb_UV_Editor : EditorWindow
 					{
 						uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, uvScale);
 					}
-					
+
 					pb.SetUV(uvs);
 					pb.msh.uv = uvs;
 				}
@@ -1713,7 +1714,7 @@ public class pb_UV_Editor : EditorWindow
 			textureScale = pbUtil.SnapValue(textureScale, pref_gridSnapValue);
 
 		if(!modifyingUVs)
-		{		
+		{
 			pbUndo.RecordObjects(selection, "Scale UVs");
 			OnBeginUVModification();
 		}
@@ -1730,7 +1731,7 @@ public class pb_UV_Editor : EditorWindow
 				{
 					uvs[i] = uv_origins[n][i].ScaleAroundPoint(uvOrigin, textureScale);
 				}
-				
+
 				pb.SetUV(uvs);
 				pb.msh.uv = uvs;
 			}
@@ -1764,7 +1765,7 @@ public class pb_UV_Editor : EditorWindow
 #region UV Graph Drawing
 
 	Vector2 UVGraphCenter = Vector2.zero;
-	
+
 	// private class UVGraphCoordinates
 	// {
 		// Remember that Unity GUI coordinates Y origin is the bottom
@@ -1780,7 +1781,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Must be called inside GL immediate mode context
 	 */
 	internal void DrawUVGrid(Color gridColor)
-	{		
+	{
 		Color col = GUI.color;
 		gridColor.a = .1f;
 
@@ -1935,7 +1936,7 @@ public class pb_UV_Editor : EditorWindow
 					r.y = p.y - HALF_DOT;
 					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
 				}
-	
+
 				GUI.color = UVColorPrimary;
 				foreach(int index in selection[i].SelectedTriangles)
 				{
@@ -2029,7 +2030,7 @@ public class pb_UV_Editor : EditorWindow
 						GL.Vertex3(x.x, x.y, 0f);
 						GL.Vertex3(y.x, y.y, 0f);
 					}
-				}	
+				}
 			}
 			GL.End();
 
@@ -2067,7 +2068,7 @@ public class pb_UV_Editor : EditorWindow
 
 						GL.Vertex3(x.x, x.y, 0f);
 						GL.Vertex3(y.x, y.y, 0f);
-						
+
 						// #if PB_DEBUG
 						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
 						// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
@@ -2099,7 +2100,7 @@ public class pb_UV_Editor : EditorWindow
 						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
 					}
 					GL.End();
-					
+
 					#if PB_DEBUG
 					profiler.EndSample();
 					#endif
@@ -2120,7 +2121,7 @@ public class pb_UV_Editor : EditorWindow
 
 						GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
 						int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
-						
+
 						for(int i = 0; i < tris.Length; i+=3)
 						{
 							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
@@ -2171,7 +2172,7 @@ public class pb_UV_Editor : EditorWindow
 
 			GL.PopMatrix();
 		}
-	}	
+	}
 
 	#if PB_DEBUG
 	void DrawDebugInfo(Rect rect)
@@ -2339,7 +2340,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Returns the bounds of the current selection in UV space
 	 */
 	pb_Bounds2D UVSelectionBounds()
-	{	
+	{
 		float xMin = 0f, xMax = 0f, yMin = 0f, yMax = 0f;
 		bool first = true;
 		for(int n = 0; n < selection.Length; n++)
@@ -2349,11 +2350,11 @@ public class pb_UV_Editor : EditorWindow
 			foreach(int i in distinct_indices[n])
 			{
 				if(first)
-				{ 
-					xMin = uv[i].x; 
-					xMax = xMin; 
-					yMin = uv[i].y; 
-					yMax = yMin; 
+				{
+					xMin = uv[i].x;
+					xMax = xMin;
+					yMin = uv[i].y;
+					yMax = yMin;
 					first = false;
 				} else {
 					xMin = Mathf.Min(xMin, uv[i].x);
@@ -2382,7 +2383,7 @@ public class pb_UV_Editor : EditorWindow
 	 * If it ain't null, selected UVs will be set to the UV coordinates contained within the drag rect.
 	 */
 	void RefreshUVCoordinates(Rect? dragRect, bool isClick)
-	{	
+	{
 		if(editor == null || selection == null) return;
 
 		#if PB_DEBUG
@@ -2395,7 +2396,7 @@ public class pb_UV_Editor : EditorWindow
 			dragBounds = new pb_Bounds2D( GUIToUVPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / (uvGraphScale * uvGridSize) );
 		else
 			dragBounds = new pb_Bounds2D( Vector2.zero, Vector2.zero );
-	
+
 		selectedUVCount   = editor.selectedVertexCount;
 		selectedFaceCount = editor.selectedFaceCount;
 
@@ -2411,12 +2412,12 @@ public class pb_UV_Editor : EditorWindow
 				mshUV = new Vector2[pb.vertexCount];
 				ApplyUVs(pb, mshUV, channel);
 			}
-			
+
 			int len = mshUV.Length;
 
 			// this should be separate from RefreshUVCoordinates
 			if(dragRect != null)
-			{	
+			{
 				switch(selectionMode)
 				{
 					case SelectMode.Vertex:
@@ -2451,7 +2452,7 @@ public class pb_UV_Editor : EditorWindow
 							{
 								pb_Edge edge = pb.faces[n].edges[p];
 
-								if( dragBounds.IntersectsLineSegment( mshUV[edge.x], mshUV[edge.y]) )	
+								if( dragBounds.IntersectsLineSegment( mshUV[edge.x], mshUV[edge.y]) )
 								{
 									if(!selectedEdges.Contains(edge))
 										selectedEdges.Add( edge );
@@ -2463,7 +2464,7 @@ public class pb_UV_Editor : EditorWindow
 
 						pb.SetSelectedEdges(selectedEdges.ToArray());
 						break;
-				
+
 					/**
 					 * Check if any of the faces intersect with the mousedrag rect.
 					 */
@@ -2577,7 +2578,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Refresh only the selected UV coordinates.
 	 */
 	void RefreshSelectedUVCoordinates()
-	{	
+	{
 		handlePosition = UVSelectionBounds().center - handlePosition_offset;
 	}
 #endregion
@@ -2611,7 +2612,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		int t_selectionMode = (int)selectionMode;
-		
+
 		t_selectionMode = GUI.Toolbar(toolbarRect_select, (int)t_selectionMode, SelectionIcons, "Command");
 
 		if(t_selectionMode != (int)selectionMode)
@@ -2650,7 +2651,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			ScreenshotMenu();
 		}
-		
+
 		GUI.EndGroup();
 
 	}
@@ -2659,7 +2660,7 @@ public class pb_UV_Editor : EditorWindow
 	void DrawActionWindow(int windowIndex)
 	{
 		GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
-	
+
 		switch(mode)
 		{
 			case UVMode.Auto:
@@ -2700,7 +2701,7 @@ public class pb_UV_Editor : EditorWindow
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
 		{
 			if(!modifyingUVs_AutoPanel)
-			{				
+			{
 				modifyingUVs_AutoPanel = true;
 
 				foreach(pb_Object pb in selection)
@@ -2723,7 +2724,7 @@ public class pb_UV_Editor : EditorWindow
 		#endif
 
 		GUI.enabled = selectedFaceCount > 0;
-		
+
 	}
 
 	bool tool_weldButton = false;
@@ -2732,7 +2733,7 @@ public class pb_UV_Editor : EditorWindow
 	void DrawManualModeUI(int width)
 	{
 		GUI.enabled = selectedFaceCount > 0;
-		
+
 		if(GUILayout.Button(gc_ConvertToAuto, EditorStyles.miniButton))
 			Menu_SetAutoUV();
 
@@ -2751,16 +2752,16 @@ public class pb_UV_Editor : EditorWindow
 				Menu_BoxProject();
 
 		GUILayout.EndHorizontal();
-		
+
 		// GUILayout.BeginHorizontal();
 
-		// 	GUI.enabled = selectedUVCount > 0;		
+		// 	GUI.enabled = selectedUVCount > 0;
 		// 	if(GUILayout.Button("Sphere", EditorStyles.miniButton, GUILayout.MaxWidth(actionWindowRect.width)))
 		// 		Menu_SphericalProject();
 		// 	GUI.enabled = true;
 
 		// 	GUILayout.FlexibleSpace();
-			
+
 		// GUILayout.EndHorizontal();
 
 		/**
@@ -2826,13 +2827,13 @@ public class pb_UV_Editor : EditorWindow
 		EditorGUI.BeginChangeCheck();
 
 		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
-		
+
 		if(weldDistance <= MIN_WELD_DISTANCE)
 			weldDistance = MIN_WELD_DISTANCE;
 
 		EditorGUIUtility.labelWidth = width - 70;
 		weldDistance = EditorGUILayout.FloatField(new GUIContent("Max", "The maximum distance between two vertices in order to be welded together."), weldDistance);
-	
+
 		if( EditorGUI.EndChangeCheck() )
 		{
 			if(weldDistance < MIN_WELD_DISTANCE)
@@ -2854,10 +2855,10 @@ public class pb_UV_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 		{
 			pb_Face[] faces = GetFaces(pb, pb.SelectedTriangles);
-			
+
 			List<int> elementGroups = new List<int>();
 			List<int> textureGroups = new List<int>();
-			
+
 			foreach(pb_Face f in faces)
 			{
 				if(f.manualUV)
@@ -2866,23 +2867,23 @@ public class pb_UV_Editor : EditorWindow
 					textureGroups.Add(f.textureGroup);
 			}
 
-			IEnumerable<pb_Face> matches = System.Array.FindAll(pb.faces, x => 
+			IEnumerable<pb_Face> matches = System.Array.FindAll(pb.faces, x =>
 																(x.manualUV && x.elementGroup > -1 && elementGroups.Contains(x.elementGroup)) ||
 																(!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)) );
 
 			pb.SetSelectedFaces( faces.Union(matches).ToArray() );
-	
+
 			if(editor != null)
 				editor.UpdateSelection(false);
 		}
 	}
 
 	/**
-	 * If any of the faces in @selection are AutoUV and in a texture group, this 
+	 * If any of the faces in @selection are AutoUV and in a texture group, this
 	 * augments the texture group buddies to the selection and returns it.
 	 */
 	private pb_Face[] SelectTextureGroups(pb_Object pb, pb_Face[] selection)
-	{	
+	{
 		List<int> texGroups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
 		pb_Face[] sel = System.Array.FindAll(pb.faces, x => !x.manualUV && texGroups.Contains(x.textureGroup));
 
@@ -2897,9 +2898,9 @@ public class pb_UV_Editor : EditorWindow
 	{
 		// get distinct list of all selected texture groups
 		List<int> groups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
-		List<pb_Face[]> incompleteGroups = new List<pb_Face[]>(); 
-		
-		// figure out how many 
+		List<pb_Face[]> incompleteGroups = new List<pb_Face[]>();
+
+		// figure out how many
 		for(int i = 0; i < groups.Count; i++)
 		{
 			pb_Face[] whole_group = System.Array.FindAll(pb.faces, x => !x.manualUV && groups[i] == x.textureGroup);
@@ -2923,14 +2924,14 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb_Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 			pb.SetSelectedFaces(faces);
-	
+
 			if(editor != null)
 				editor.UpdateSelection(false);
 		}
 	}
 
 	/**
-	 *	Element Groups are used to associate faces that share UV seams.  In this 
+	 *	Element Groups are used to associate faces that share UV seams.  In this
 	 *	way, we can easily select UV shells by grouping all elements as opposed
 	 *	to iterating through and checking nearby faces every time.
 	 */
@@ -2960,7 +2961,7 @@ public class pb_UV_Editor : EditorWindow
 						if(fin.elementGroup == g)
 							fin.elementGroup = cur;
 				}
-				
+
 				f.elementGroup = cur;
 			}
 		}
@@ -3012,7 +3013,7 @@ public class pb_UV_Editor : EditorWindow
 	 * Creates a copy of each msh.uv array in a jagged array, and stores the average of all points.
 	 */
 	private void CopySelectionUVs(out Vector2[][] uvCopy)
-	{		
+	{
 		uvCopy = new Vector2[selection.Length][];
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3032,7 +3033,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		pbUndo.RecordObjects(selection, "Planar Project Faces");
 		int projected = 0;
-	
+
 		for(int i = 0; i < selection.Length; i++)
 		{
 			if(selection[i].SelectedFaces.Length > 0)
@@ -3042,13 +3043,13 @@ public class pb_UV_Editor : EditorWindow
 				pbUVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
 
 				pbUVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
-				
+
 				foreach(int f in selection[i].SelectedFaceIndices)
 					selection[i].faces[f].manualUV = true;
 
 				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
 				selection[i].Optimize();
-				
+
 				RefreshElementGroups(selection[i]);
 
 				projected++;
@@ -3067,9 +3068,9 @@ public class pb_UV_Editor : EditorWindow
 
 			ResetUserPivot();
 		}
-		
+
 		pb_EditorUtility.ShowNotification(this, projected > 0 ? "Planar Project" : "Nothing Selected");
-	
+
 		// Special case
 		RefreshUVCoordinates();
 		needsRepaint = true;
@@ -3107,7 +3108,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		pb_EditorUtility.ShowNotification(this, "Box Project UVs");
-		
+
 		// Special case
 		RefreshUVCoordinates();
 		needsRepaint = true;
@@ -3126,7 +3127,7 @@ public class pb_UV_Editor : EditorWindow
 			if(selection[i].SelectedTriangleCount > 0)
 			{
 				pbUVOps.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles);
-				
+
 				p++;
 
 				selection[i].ToMesh();
@@ -3144,7 +3145,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		pb_EditorUtility.ShowNotification(this, "Spherical Project UVs");
-		
+
 		// Special case
 		RefreshUVCoordinates();
 		needsRepaint = true;
@@ -3170,7 +3171,7 @@ public class pb_UV_Editor : EditorWindow
 	public void SetIsManual(bool isManual)
 	{
 		pbUndo.RegisterCompleteObjectUndo(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
-		
+
 		foreach(pb_Object pb in selection)
 		{
 			pb.ToMesh();
@@ -3188,8 +3189,8 @@ public class pb_UV_Editor : EditorWindow
 	public void Menu_SelectUVIsland()
 	{
 		pbUndo.RecordObjects(selection, "Select Island");
-		
-		SelectUVShell(); 
+
+		SelectUVShell();
 		pb_EditorUtility.ShowNotification(this, "Select UV Island");
 	}
 
@@ -3197,7 +3198,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		pbUndo.RecordObjects(selection, "Select Face");
 
-		SelectUVFace(); 
+		SelectUVFace();
 		pb_EditorUtility.ShowNotification(this, "Select UV Face");
 	}
 
@@ -3212,7 +3213,7 @@ public class pb_UV_Editor : EditorWindow
 		pbUndo.RecordObjects(selection, "Collapse UVs");
 
 		for(int i = 0; i < selection.Length; i++)
-		{			
+		{
 			selection[i].ToMesh();
 
 			selection[i].CollapseUVs(distinct_indices[i]);
@@ -3247,7 +3248,7 @@ public class pb_UV_Editor : EditorWindow
 			selection[i].Refresh();
 			selection[i].Optimize();
 		}
-		
+
 		RefreshSelectedUVCoordinates();
 
 		pb_EditorUtility.ShowNotification(this, "Weld UVs");
@@ -3267,7 +3268,7 @@ public class pb_UV_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 		{
 			pb.ToMesh();
-			
+
 			pb.SplitUVs(pb.SelectedTriangles);
 			RefreshElementGroups(pb);
 
@@ -3302,7 +3303,7 @@ public class pb_UV_Editor : EditorWindow
 				uv[n] = pb_Math.ReflectPoint(uv[n], center, center + direction);
 
 			ApplyUVs(selection[i], uv, channel);
-			
+
 			RefreshElementGroups(selection[i]);
 
 			selection[i].Refresh();
@@ -3319,7 +3320,7 @@ public class pb_UV_Editor : EditorWindow
 		else if( direction == Vector2.up )
 		{
 			pb_EditorUtility.ShowNotification(this, "Flip UVs Horizontally");
-		} 
+		}
 		else
 		{
 			pb_EditorUtility.ShowNotification(this, "Flip UVs");
@@ -3417,7 +3418,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		screenshot_path = EditorUtility.SaveFilePanel("Save UV Template", Application.dataPath, "", "png");
-	
+
 		if(screenshot_path == "")
 			return;
 
@@ -3426,7 +3427,7 @@ public class pb_UV_Editor : EditorWindow
 	}
 
 	/// Unity 5 changes the starting y position of a window now account for the tab
-	float editorWindowTabOffset 
+	float editorWindowTabOffset
 	{
 		get
 		{
@@ -3468,13 +3469,13 @@ public class pb_UV_Editor : EditorWindow
 				screenshotTexturePosition = new Vector2(0,0);
 
 				this.ShowNotification(new GUIContent("Rendering UV Graph\n..."));
-				
+
 				Repaint();
 
 				return;
 
 			case ScreenshotStatus.CanvasReady:
-				
+
 				// take screenshots vertically, then move right, repeat if necessary
 				if(screenshotTexturePosition.y < screenshot_size)
 				{
@@ -3524,8 +3525,8 @@ public class pb_UV_Editor : EditorWindow
 
 					for(int i = 0; i < px.Length; i++)
 
-						if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f && 
-							Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f && 
+						if( Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f &&
+							Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f &&
 							Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f )
 							px[i] = Color.clear;
 

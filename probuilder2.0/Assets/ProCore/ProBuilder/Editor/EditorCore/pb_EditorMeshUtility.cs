@@ -33,7 +33,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
 
-				float time = Time.realtimeSinceStartup;				
+				float time = Time.realtimeSinceStartup;
 				Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh);
 
 				// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
@@ -78,7 +78,7 @@ namespace ProBuilder2.EditorCommon
 			// as not to clutter the scene yaml.
 			string mesh_path = AssetDatabase.GetAssetPath(mesh);
 
-			// if mesh is already an asset any changes will already have been applied since 
+			// if mesh is already an asset any changes will already have been applied since
 			// pb_Object is directly modifying the mesh asset
 			if(string.IsNullOrEmpty(mesh_path))
 			{
@@ -97,7 +97,7 @@ namespace ProBuilder2.EditorCommon
 					Directory.CreateDirectory(PB_MESH_CACHE);
 
 				Mesh m = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
-				
+
 				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
 				{
@@ -107,7 +107,7 @@ namespace ProBuilder2.EditorCommon
 						if(pb_EditorUtility.IsPrefabInstance(pb.gameObject) || pb_EditorUtility.IsPrefabRoot(pb.gameObject))
 						{
 							// Debug.Log("reconnect prefab to mesh");
-			
+
 							// use the most recent mesh iteration (when undoing for example)
 							pb_MeshUtility.CopyTo(mesh, m);
 
@@ -126,7 +126,7 @@ namespace ProBuilder2.EditorCommon
 							pb.asset_guid = Guid.NewGuid().ToString("N");
 							path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, pb.asset_guid);
 						}
-					}	
+					}
 					else
 					{
 						Debug.LogWarning("Mesh found in cache and scene mesh references match, but pb.asset_guid doesn't point to asset.  Please report the circumstances leading to this event to Karl.");

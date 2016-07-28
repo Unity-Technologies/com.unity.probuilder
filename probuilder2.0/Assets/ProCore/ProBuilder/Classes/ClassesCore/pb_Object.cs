@@ -20,7 +20,7 @@ using Parabox.Debug;
 [ExecuteInEditMode]
 /**
  *	\brief Object class for all ProBuilder geometry.
- */	
+ */
 public class pb_Object : MonoBehaviour
 {
 #region MONOBEHAVIOUR
@@ -54,7 +54,7 @@ public class pb_Object : MonoBehaviour
 	{
 		Vector3[] v = new Vector3[pb.vertexCount];
 		System.Array.Copy(pb.vertices, v, pb.vertexCount);
-		
+
 		Vector2[] u = new Vector2[pb.vertexCount];
 		System.Array.Copy(pb.uv, u, pb.vertexCount);
 
@@ -62,7 +62,7 @@ public class pb_Object : MonoBehaviour
 		System.Array.Copy(pb.colors, c, pb.vertexCount);
 
 		pb_Face[] f = new pb_Face[pb.faces.Length];
-		
+
 		for(int i = 0; i < f.Length; i++)
 			f[i] = new pb_Face(pb.faces[i]);
 
@@ -77,10 +77,10 @@ public class pb_Object : MonoBehaviour
 	 *	\brief Creates a new #pb_Object using passed vertices to construct geometry.
 	 *	Typically you would not call this directly, as the #ProBuilder class contains
 	 *	a wrapper for this purpose.  In fact, I'm not sure why this is public...
-	 *	@param vertices A vertex array (Vector3[]) containing the points to be used in 
+	 *	@param vertices A vertex array (Vector3[]) containing the points to be used in
 	 *	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
 	 *	order.  Triangles will be wound in vertex groups of 4, with the winding order
-	 *	0,1,2 1,3,2.  Ex: 
+	 *	0,1,2 1,3,2.  Ex:
 	 *	\code{.cs}
 	 *	// Creates a pb_Object plane
 	 *	pb_Object.CreateInstanceWithPoints(new Vector3[4]{
@@ -99,8 +99,8 @@ public class pb_Object : MonoBehaviour
 			Debug.LogWarning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
 			return null;
 		}
-			
-		GameObject _gameObject = new GameObject();	
+
+		GameObject _gameObject = new GameObject();
 		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
 		_gameObject.name = "ProBuilder Mesh";
 
@@ -120,7 +120,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public static pb_Object CreateInstanceWithVerticesFaces(Vector3[] v, pb_Face[] f)
 	{
-		GameObject _gameObject = new GameObject();	
+		GameObject _gameObject = new GameObject();
 		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
 		_gameObject.name = "ProBuilder Mesh";
 		pb_obj.GeometryWithVerticesFaces(v, f);
@@ -230,20 +230,20 @@ public class pb_Object : MonoBehaviour
 
 	public static event System.Action<pb_Object> onDestroyObject;
 
-	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there 
+	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there
 	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 	public bool dontDestroyMeshOnDelete = false;
 #endregion
 
 #region ACCESS
-	
+
 	public Mesh msh
 	{
 		get
 		{
 			return GetComponent<MeshFilter>().sharedMesh;
 		}
-		set 
+		set
 		{
 			gameObject.GetComponent<MeshFilter>().sharedMesh = value;
 		}
@@ -253,7 +253,7 @@ public class pb_Object : MonoBehaviour
 	public pb_Face[] quads {get { Debug.LogWarning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
 
 	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }	// returns a reference
-	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } } 
+	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } }
 
 	public int id { get { return gameObject.GetInstanceID(); } }
 
@@ -341,8 +341,8 @@ public class pb_Object : MonoBehaviour
 	{
 		this.m_selectedFaces = t_faces;
 		this.m_selectedTriangles = pb_Face.AllTriangles( SelectedFaces );
-	
-		// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference		
+
+		// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
 		pb_Edge[] edges = pb_Edge.AllEdges(SelectedFaces);
 		int len = edges.Length;
 		this.m_SelectedEdges = new pb_Edge[len];
@@ -354,7 +354,7 @@ public class pb_Object : MonoBehaviour
 	{
 		this.m_selectedFaces = new int[0];
 		this.m_SelectedEdges = edges.Select(x => new pb_Edge(x)).ToArray();
-		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();				
+		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();
 	}
 
 	/**
@@ -379,9 +379,9 @@ public class pb_Object : MonoBehaviour
 	 *	Removes face from SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
 	 */
 	public void RemoveFromFaceSelection(pb_Face face)
-	{		
+	{
 		int indx = System.Array.IndexOf(this.faces, face);
-	
+
 		if(indx > -1)
 			SetSelectedFaces(m_selectedFaces.RemoveAt(indx));
 	}
@@ -409,9 +409,9 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	Set the vertex element arrays on this pb_Object.  By default this function does 
+	 *	Set the vertex element arrays on this pb_Object.  By default this function does
 	 *	not apply these values to the mesh.  An optional parameter `applyMesh` will apply
-	 *	elements to the mesh - note that this should only be used when the mesh is in 
+	 *	elements to the mesh - note that this should only be used when the mesh is in
 	 *	its original state, not optimized (meaning it won't affect triangles which can be
 	 *	modified by Optimize).
 	 */
@@ -569,7 +569,7 @@ public class pb_Object : MonoBehaviour
 	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
 	 */
 	public MeshRebuildReason Verify()
-	{	
+	{
 		if(msh == null)
 		{
 			// attempt reconstruction
@@ -608,7 +608,7 @@ public class pb_Object : MonoBehaviour
 			m = msh;
 
 			m.vertices = _vertices;
-			
+
 			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
 			if(_uv != null)
 				m.uv = _uv;
@@ -619,7 +619,7 @@ public class pb_Object : MonoBehaviour
 				m = new Mesh();
 			else
 				m.Clear();
-	
+
 			m.vertices = _vertices;
 		}
 
@@ -653,7 +653,7 @@ public class pb_Object : MonoBehaviour
 
 		pb_IntArray[] sv = new pb_IntArray[_sharedIndices.Length];
 		System.Array.Copy(_sharedIndices, sv, sv.Length);
-		
+
 		SetSharedIndices(sv);
 		SetFaces(q);
 
@@ -669,7 +669,7 @@ public class pb_Object : MonoBehaviour
 		}
 
 		msh = new Mesh();
-		
+
 		ToMesh();
 		Refresh();
 	}
@@ -678,21 +678,21 @@ public class pb_Object : MonoBehaviour
 	 *	\brief Recalculates standard mesh properties - normals, collisions, UVs, tangents, and colors.
 	 */
 	public void Refresh()
-	{	
+	{
 		// Mesh
 		RefreshUV();
 		RefreshColors();
 		RefreshNormals();
 		RefreshTangents();
 		RefreshCollisions();
-	}	
+	}
 
 	public void RefreshCollisions()
 	{
 		Mesh m = msh;
 
 		m.RecalculateBounds();
-		
+
 		if(!userCollisions && GetComponent<Collider>())
 		{
 			foreach(Collider c in gameObject.GetComponents<Collider>())
@@ -725,7 +725,7 @@ public class pb_Object : MonoBehaviour
 				{
 					gameObject.GetComponent<MeshCollider>().sharedMesh = null;	// this is stupid.
 					gameObject.GetComponent<MeshCollider>().sharedMesh = m;
-				} 
+				}
 			}
 		}
 	}
@@ -751,7 +751,7 @@ public class pb_Object : MonoBehaviour
 	{
 		while( System.Array.Exists(faces, element => element.elementGroup == i) )
 			i++;
-		
+
 		return i;
 	}
 
@@ -862,10 +862,10 @@ public class pb_Object : MonoBehaviour
 		}
 
 		int n = -2;
-		
+
 		foreach(pb_Face f in faces)
 		{
-			if(f == null || f.manualUV) 
+			if(f == null || f.manualUV)
 				continue;
 
 			if(f.textureGroup > 0 && tex_groups.ContainsKey(f.textureGroup))
@@ -905,7 +905,7 @@ public class pb_Object : MonoBehaviour
 				if(face.indices.Length < 7)
 					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
 											_vertices[face.indices[1]],
-											_vertices[face.indices[2]] ); 
+											_vertices[face.indices[2]] );
 				else
 					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
 			}
@@ -922,7 +922,7 @@ public class pb_Object : MonoBehaviour
 			{
 				uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
 			}
-			
+
 			/**
 			 * Apply UVs to array, and update the localPivot and localSize caches.
 			 */
@@ -941,7 +941,7 @@ public class pb_Object : MonoBehaviour
 
 		_uv = newUVs;
 		msh.uv = newUVs;
-		
+
 #if UNITY_5_3
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
@@ -1018,7 +1018,7 @@ public class pb_Object : MonoBehaviour
 	{
 		// All hard edges
 		msh.RecalculateNormals();
-			
+
 		// average the soft edge faces
 		Vector3[] normals = msh.normals;
 
@@ -1048,7 +1048,7 @@ public class pb_Object : MonoBehaviour
 			 */
 			foreach(int tri in sharedIndices[i].array)
 			{
-				if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)	
+				if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)
 					continue;
 
 				if( shareable.TryGetValue(smoothGroup[tri], out list) )
