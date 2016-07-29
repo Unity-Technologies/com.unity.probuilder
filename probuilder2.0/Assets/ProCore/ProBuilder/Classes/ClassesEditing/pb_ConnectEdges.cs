@@ -39,7 +39,13 @@ namespace ProBuilder2.MeshOperations
 			return Connect(pb, edges, out empty, out connections, false, true);
 		}
 
-		private static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] addedFaces, out pb_Edge[] connections, bool returnFaces = false, bool returnEdges = false)
+		private static pb_ActionResult Connect(
+			this pb_Object pb,
+			IEnumerable<pb_Edge> edges,
+			out pb_Face[] addedFaces,
+			out pb_Edge[] connections,
+			bool returnFaces = false,
+			bool returnEdges = false)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;

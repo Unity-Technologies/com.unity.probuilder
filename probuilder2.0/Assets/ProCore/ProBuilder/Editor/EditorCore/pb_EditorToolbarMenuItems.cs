@@ -319,6 +319,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem("Tools/ProBuilder/Geometry/Smart Subdivide &s", true)]
+		static bool MenuVerifySmartSubdivide()
+		{
+			SmartSubdivide instance = pb_EditorToolbarLoader.GetInstance<SmartSubdivide>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Smart Subdivide &s", false, pb_Constant.MENU_GEOMETRY + 3)]
+		static void MenuDoSmartSubdivide()
+		{
+			SmartSubdivide instance = pb_EditorToolbarLoader.GetInstance<SmartSubdivide>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Geometry/Split Vertices &x", true)]
 		static bool MenuVerifySplitVertices()
 		{
@@ -334,20 +349,6 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Edges ", true)]
-		static bool MenuVerifySubdivideEdges()
-		{
-			SubdivideEdges instance = pb_EditorToolbarLoader.GetInstance<SubdivideEdges>();
-			return instance != null && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Subdivide Edges ", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoSubdivideEdges()
-		{
-			SubdivideEdges instance = pb_EditorToolbarLoader.GetInstance<SubdivideEdges>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
 
 
 		[MenuItem("Tools/ProBuilder/Geometry/Weld Vertices &v", true)]
@@ -471,14 +472,14 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Object/Subdivide Object &s", true)]
+		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", true)]
 		static bool MenuVerifySubdivideObject()
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();
 			return instance != null && instance.IsEnabled();
 		}
 
-		[MenuItem("Tools/ProBuilder/Object/Subdivide Object &s", false, pb_Constant.MENU_GEOMETRY + 2)]
+		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", false, pb_Constant.MENU_GEOMETRY + 2)]
 		static void MenuDoSubdivideObject()
 		{
 			SubdivideObject instance = pb_EditorToolbarLoader.GetInstance<SubdivideObject>();

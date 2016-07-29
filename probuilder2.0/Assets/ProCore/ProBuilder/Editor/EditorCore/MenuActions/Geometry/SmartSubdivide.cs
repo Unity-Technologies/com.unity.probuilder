@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SmartConnect : pb_MenuAction
+	public class SmartSubdivide : pb_MenuAction
 	{
 		public override pb_IconGroup group { get { return pb_IconGroup.Geometry; } }
 		public override Texture2D icon { get { return null; } }
@@ -16,19 +16,19 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Smart Connect",
+			"Smart Subdivide",
 			"",
-			CMD_ALT, 'E'
+			CMD_ALT, 'S'
 		);
 
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
 					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode != SelectMode.Face &&
+					pb_Editor.instance.selectionMode != SelectMode.Vertex &&
 					selection != null &&
 					selection.Length > 0 &&
-					selection.Any(x => x.SelectedTriangleCount > 1);
+					selection.Any(x => x.SelectedEdgeCount > 0);
 		}
 
 		public override bool IsHidden()
@@ -40,15 +40,11 @@ namespace ProBuilder2.Actions
 		{
 			switch(pb_Editor.instance.selectionMode)
 			{
-				case SelectMode.Vertex:
-					return pb_Menu_Commands.MenuConnectVertices(selection);
-
 				case SelectMode.Edge:
-				default:
-					return pb_Menu_Commands.MenuConnectEdges(selection);
+					return pb_Menu_Commands.MenuSubdivideEdge(selection);
 
-				// default:
-				// 	return pb_Menu_Commands.MenuSubdivideFace(selection);
+				default:
+					return pb_Menu_Commands.MenuSubdivideFace(selection);
 			}
 		}
 	}
