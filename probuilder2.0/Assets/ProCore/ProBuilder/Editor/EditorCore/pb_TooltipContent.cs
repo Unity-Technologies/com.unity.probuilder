@@ -124,7 +124,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!string.IsNullOrEmpty(title))
 			{
-
 				if(!hideShortcutText && !string.IsNullOrEmpty(shortcut))
 				{
 					GUILayout.BeginHorizontal();

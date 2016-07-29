@@ -76,7 +76,11 @@ namespace ProBuilder2.EditorCommon
 		public void ShowInternal(Rect rect, pb_TooltipContent content, bool isProOnly)
 		{
 			this.content = content;
+#if PROTOTYPE
 			this.isProOnly = isProOnly;
+#else
+			this.isProOnly = false;
+#endif
 
 			Vector2 size = content.CalcSize();
 

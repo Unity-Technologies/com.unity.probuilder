@@ -26,6 +26,18 @@ namespace ProBuilder2.Actions
 			}
 		}
 
+		private static bool disableAutoUV2Generation
+		{
+			get 
+			{
+				return pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+			}
+			set
+			{
+				EditorPrefs.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
+			}
+		}
+
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Generate UV2",
@@ -34,7 +46,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return !pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+			return !disableAutoUV2Generation;
 		}
 
 		public override bool IsEnabled()
@@ -61,6 +73,12 @@ You can use the button below to rebuild all scene UV2s quickly.", MessageType.In
 			bool perSceneUV2s = !generateUV2PerObject;
 			perSceneUV2s = EditorGUILayout.Toggle("Generate Scene UV2s", perSceneUV2s);
 			generateUV2PerObject = !perSceneUV2s;
+
+			EditorGUI.BeginChangeCheck();
+			bool enableAutoUV2 = !disableAutoUV2Generation;
+			enableAutoUV2 = EditorGUILayout.Toggle("Enable Auto UV2", enableAutoUV2);
+			if(EditorGUI.EndChangeCheck())
+				disableAutoUV2Generation = !enableAutoUV2;
 
 			GUILayout.FlexibleSpace();
 			
