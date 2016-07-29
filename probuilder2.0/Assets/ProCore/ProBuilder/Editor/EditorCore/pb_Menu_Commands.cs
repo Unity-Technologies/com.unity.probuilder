@@ -1619,17 +1619,21 @@ namespace ProBuilder2.EditorCommon
 
 						holeIndices = hole.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, false, out face);
+						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
-						holeIndices = hole.Where(x => common.Contains(x.edge.common.x)).Select(x => x.edge.local.x).ToList();
+						IEnumerable<pb_WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
+						holeIndices = selected.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
+						
+						if(res)
+							adjacent.AddRange(selected.Select(x => x.face));
 					}
 
 					if(res)
 					{
 						filled++;
-						adjacent.AddRange(hole.Select(x => x.face));
 						adjacent.Add(face);
 						faces.Add(face);
 					}
