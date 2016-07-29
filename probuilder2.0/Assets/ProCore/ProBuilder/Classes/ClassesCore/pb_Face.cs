@@ -233,6 +233,7 @@ public class pb_Face
 	public void ReverseIndices()
 	{
 		System.Array.Reverse(_indices);
+		RebuildCaches();
 	}
 
 	/**
