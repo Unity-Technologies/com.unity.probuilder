@@ -59,8 +59,6 @@ del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data.meta
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache
 del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache.meta
 
-pause
-
 :: Copy pb_ExportPackage into staging project
 :: ====================
 mkdir %CD%\probuilder-staging\Assets\Editor\
