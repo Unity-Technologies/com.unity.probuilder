@@ -4,7 +4,15 @@
     
     <url>
      <loc>None/</loc>
-     <lastmod>2016-05-05</lastmod>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>None/general/fundamentals/</loc>
+     <lastmod>2016-07-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,19 +20,101 @@
     
         
     <url>
-     <loc>None/upgrading/</loc>
-     <lastmod>2016-05-05</lastmod>
+     <loc>None/toolbar/overview-toolbar/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/toolbar/tool-panels/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/toolbar/selection-tools/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/toolbar/object-actions/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None</loc>
+     <lastmod></lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     
 
     
+        
     <url>
-     <loc>None/troubleshooting/</loc>
-     <lastmod>2016-05-05</lastmod>
+     <loc>None/texturing/overview-texturing/</loc>
+     <lastmod>2016-07-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    <url>
+     <loc>None/texturing/auto-texturing/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/texturing/manual-uv-editing/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>None/troubleshooting/faq/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>None/upgrading/overview/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/upgrading/standard/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/upgrading/dllrename/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/upgrading/upgrade-kit/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/upgrading/prototype/</loc>
+     <lastmod>2016-07-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
 </urlset>

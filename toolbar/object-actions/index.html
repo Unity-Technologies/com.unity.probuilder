@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <title>Object Actions - ProBuilder Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link href="../../css/alerts.css" rel="stylesheet">
+  <link href="../../css/extra.css" rel="stylesheet">
+  <link href="../../css/general.css" rel="stylesheet">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Object Actions";
+    var mkdocs_page_input_path = "toolbar\object-actions.md";
+    var mkdocs_page_url = "/toolbar/object-actions/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+  <script src="../../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> ProBuilder Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../general/fundamentals/">Fundamentals</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Toolbar</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../overview-toolbar/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../tool-panels/">Tool Panels</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../selection-tools/">Selection Tools</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Object Actions</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#video-object-actions">Video: Object Actions</a></li>
+                
+                    <li><a class="toctree-l4" href="#merge-objects">Merge Objects</a></li>
+                
+                    <li><a class="toctree-l4" href="#flip-object-normals">Flip Object Normals</a></li>
+                
+                    <li><a class="toctree-l4" href="#subdivide-object">Subdivide Object</a></li>
+                
+                    <li><a class="toctree-l4" href="#reset-freeze-transform">Reset / Freeze Transform</a></li>
+                
+                    <li><a class="toctree-l4" href="#move-pivot-to-center-of-object">Move Pivot to Center of Object</a></li>
+                
+                    <li><a class="toctree-l4" href="#conform-normals">Conform Normals</a></li>
+                
+                    <li><a class="toctree-l4" href="#triangulate">Triangulate</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <ul class="subnav">
+    <li><span>Geometry Actions</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../vertex/">Vertex</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../edge/">Edge</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../face/">Face</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../all/">All</a>
+        
+    </li>
+
+        
+    </ul>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Texturing and UVs</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Troubleshooting</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../troubleshooting/faq/">Faq</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Upgrading</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/overview/">What Upgrade Procedure Should I Follow?</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/standard/">Standard</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/dllrename/">DLL Rename</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/upgrade-kit/">Upgrade Kit</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/prototype/">Prototype</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">ProBuilder Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Toolbar &raquo;</li>
+        
+      
+    
+    <li>Object Actions</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="video-object-actions">Video: Object Actions</h1>
+<p><a href="../@todo"><img alt="ProBuilder Fundamentals Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
+<hr />
+<div style="text-align:center">
+<img src="../../images/Toolbar_ObjectActions.png">
+</div>
+
+<hr />
+<h2 id="merge-objects"><img alt="Merge Objects Icon" src="../../images/icons/Object_Merge.png" title="Merge Objects Icon" /> Merge Objects</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Merge Objects</a>
+</div>
+
+<p>Merges the selected objects into one, single object. When clicked, you will be prompted to choose between two options:</p>
+<ul>
+<li>Merge Delete: Merge to a new object, and delete the source objects</li>
+<li>Merge Save: Merge to a new object, but only disable (not delete) the source objects</li>
+</ul>
+<hr />
+<h2 id="flip-object-normals"><img alt="Flip Object Normals Icon" src="../../images/icons/Object_FlipNormals.png" title="Flip Object Normals Icon" /> Flip Object Normals</h2>
+<div class="info-box warning">
+
+<p>Section Video: <a href="@todo">Object Actions: Flip Object Normals</a>
+</div> </p>
+<p>Flips the normals of <strong>all</strong> faces on the selected object(s). </p>
+<blockquote>
+<p>Especially useful for converting an exterior modeled shape into an interior space.</p>
+</blockquote>
+<p><img alt="Flip Object Normals Example" src="../../images/FlipObjectNormals_Example.png" title="Flip Object Normals Example" /></p>
+<hr />
+<h2 id="subdivide-object"><img alt="Subdivide Objects Icon" src="../../images/icons/Object_Subdivide.png" title="Subdivide Objects Icon" /> Subdivide Object</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
+</div>
+
+<p><strong>Keyboard Shortcut</strong> : <code>ALT S</code></p>
+<p>Divides every face on selected objects, allowing for greater levels of detail when modeling.</p>
+<p><img alt="Subdivide Object Example" src="../../images/SubdivideObject_Example.png" title="Subdivide Object Example" /></p>
+<hr />
+<h2 id="reset-freeze-transform"><img alt="Reset Transform Icon" src="../../images/icons/Pivot_Reset.png" title="Reset Transform Icon" /> Reset / Freeze Transform</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
+</div>
+
+<p>Sets the selected objects position, rotation, and scale to world-relative {0,0,0} without changing any vertex positions.</p>
+<hr />
+<h2 id="move-pivot-to-center-of-object"><img alt="Center Pivot Icon" src="../../images/icons/Pivot_CenterOnObject.png" title="Center Pivot Icon" /> Move Pivot to Center of Object</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Center Pivot</a>
+</div>
+
+<p><strong>Keyboard Shortcut</strong> : <code>CTRL J</code></p>
+<p>Moves the mesh pivot to the center of the object’s bounds.</p>
+<p><img alt="Center Pivot Example" src="../../images/CenterPivot_Example.png" title="Center Pivot Example" /></p>
+<hr />
+<h2 id="conform-normals"><img alt="Conform Normals Icon" src="../../images/icons/Object_ConformNormals.png" title="Conform Normals Icon" /> Conform Normals</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Conform Normals</a>
+</div>
+
+<p>Sets all face normals on the selected object to the same relative direction, in case you suspect a "leak".</p>
+<hr />
+<h2 id="triangulate"><img alt="Triangulate Icon" src="../../images/icons/Object_Triangulate.png" title="Triangulate Icon" /> Triangulate</h2>
+<div class="info-box warning">
+Section Video: <a href="@todo">Object Actions: Triangulate</a>
+</div>
+
+<p>Reduces all polygons to their base triangles, creating a "<a href="http://qt-ent.com/PolyWorld/">Polyworld-like</a>" effect.</p>
+<p><img alt="Triangulate Object Example" src="../../images/TriangulateObject_Example.png" title="Triangulate Object Example" /></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../vertex/" class="btn btn-neutral float-right" title="Vertex">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../selection-tools/" class="btn btn-neutral" title="Selection Tools"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../selection-tools/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../vertex/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>

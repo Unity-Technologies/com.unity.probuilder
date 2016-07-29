@@ -36,6 +36,17 @@
   .alert-box .close {
     font-size: 2rem;
     line-height: 1.25rem; }
+	
+.info-box {
+  background: #f7f7f7;
+  color: #333;
+  border: none;
+  border-left: 6px solid #00aaef;
+  box-shadow: 0 5px 8px -6px rgba(0, 0, 0, 0.2); }
+  .info-box.warning {
+    background: #f7f7f7;
+    color: #333; }
+
 
 .sub-header {
   color:#2980B9;
