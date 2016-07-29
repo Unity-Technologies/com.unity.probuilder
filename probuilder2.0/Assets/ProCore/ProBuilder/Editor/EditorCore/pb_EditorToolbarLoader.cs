@@ -111,7 +111,7 @@ namespace ProBuilder2.EditorCommon
 				new WeldVertices(),
 				new ConnectVertices(),
 				new FillHole(),
-				new CreatePolygon(),
+				// new CreatePolygon(),
 				new SplitVertices(),
 
 				// Entity

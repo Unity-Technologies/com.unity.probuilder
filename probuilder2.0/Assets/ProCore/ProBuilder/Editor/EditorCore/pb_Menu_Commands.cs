@@ -1599,7 +1599,8 @@ namespace ProBuilder2.EditorCommon
 				HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
 
-				List<pb_Face> faces = new List<pb_Face>();
+				HashSet<pb_Face> faces = new HashSet<pb_Face>();
+				List<pb_Face> adjacent = new List<pb_Face>();
 
 				foreach(List<pb_WingedEdge> hole in holes)
 				{
@@ -1625,19 +1626,43 @@ namespace ProBuilder2.EditorCommon
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 					}
 
-
-
 					if(res)
 					{
 						filled++;
+						adjacent.AddRange(hole.Select(x => x.face));
+						adjacent.Add(face);
 						faces.Add(face);
 					}
 				}
 
+				pb.SetSelectedFaces(faces);
+				
+				wings = pb_WingedEdge.GetWingedEdges(pb, adjacent);
+
+				// make sure the appended faces match the first adjacent face found
+				// both in winding and face properties
+				foreach(pb_WingedEdge wing in wings)
+				{
+					if( faces.Contains(wing.face) )
+					{
+						faces.Remove(wing.face);
+
+						foreach(pb_WingedEdge p in wing)
+						{
+							if(p.opposite != null)
+							{
+								p.face.material = p.opposite.face.material;
+								p.face.uv = new pb_UV(p.opposite.face.uv);
+								pb_ConformNormals.ConformOppositeNormal(p.opposite);
+								break;
+							}
+						}
+					}
+				}
+
+				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
-
-				pb.SetSelectedFaces(faces);
 			}
 
 			pb_Editor.Refresh();

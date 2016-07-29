@@ -34,27 +34,7 @@ namespace ProBuilder2.MeshOperations
 				pb.SetVertices(vertices);
 				pb.SetFaces(faces.ToArray());
 				pb.SetSharedIndices(lookup);
-
-				// verify that the normal is correct
-				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-				pb_WingedEdge newFace = wings.FirstOrDefault(x => x.face == data.face);
-				face = newFace.face;
-				pb_WingedEdge orig = newFace;
-
-				// grab first edge with a valid opposite face
-				while(newFace.opposite == null)
-				{
-					newFace = newFace.next;
-
-					if(newFace == orig)
-						break;
-				}
-
-				if(newFace.opposite != null)
-					pb_ConformNormals.ConformOppositeNormal(newFace.opposite);
-
-				// call ToMesh after possibly flipping face normals
-				pb.ToMesh();
+				face = data.face;
 
 				return new pb_ActionResult(Status.Success, "Create Polygon");
 			}
