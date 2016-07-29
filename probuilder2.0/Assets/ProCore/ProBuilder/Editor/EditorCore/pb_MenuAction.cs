@@ -1,6 +1,4 @@
-﻿
-
-// #define GENERATE_DESATURATED_ICONS
+﻿// #define GENERATE_DESATURATED_ICONS
 
 using UnityEngine;
 using UnityEditor;
