@@ -45,8 +45,7 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbUniqueModeShortcuts ||
 			pref == pb_Constant.pbShiftOnlyTooltips ||
 			pref == pb_Constant.pbCollapseVertexToFirst ||
-			pref == pb_Constant.pbMeshesAreAssets ||
-			pref == pb_Constant.pbElementSelectIsHamFisted)
+			pref == pb_Constant.pbMeshesAreAssets)
 			return false;
 		else
 			return true;

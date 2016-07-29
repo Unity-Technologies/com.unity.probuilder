@@ -1704,12 +1704,15 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
+				pb.ToMesh();
+
 				if( pb.Subdivide() )
 					success++;
 
-				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
+
+				pb.SetSelectedTriangles(new int[0]);
 			}
 
 			if(editor)

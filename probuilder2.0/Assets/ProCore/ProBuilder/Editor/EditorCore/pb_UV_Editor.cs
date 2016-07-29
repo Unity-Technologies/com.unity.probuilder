@@ -61,7 +61,7 @@ public class pb_UV_Editor : EditorWindow
 
 	static readonly Color DRAG_BOX_COLOR_BASIC 	= new Color(0f, .7f, 1f, .2f);
 	static readonly Color DRAG_BOX_COLOR_PRO 	= new Color(0f, .7f, 1f, 1f);
-	static readonly Color DRAG_BOX_COLOR = EditorGUIUtility.isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC;
+	static Color DRAG_BOX_COLOR { get { return EditorGUIUtility.isProSkin ? DRAG_BOX_COLOR_PRO : DRAG_BOX_COLOR_BASIC; } }
 
 	static readonly Color HOVER_COLOR_MANUAL 	= new Color(1f, .68f, 0f, .23f);
 	static readonly Color HOVER_COLOR_AUTO 		= new Color(0f, 1f, 1f, .23f);

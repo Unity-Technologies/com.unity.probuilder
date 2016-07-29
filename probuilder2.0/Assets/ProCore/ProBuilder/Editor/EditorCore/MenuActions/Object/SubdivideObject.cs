@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Subdivide Objects",
-			@"Increase the number of edges and vertices on this object by creating 4 new quads in every face.",
+			"Increase the number of edges and vertices on this object by creating 4 new quads in every face.",
 			CMD_ALT, 'S'
 		);
 

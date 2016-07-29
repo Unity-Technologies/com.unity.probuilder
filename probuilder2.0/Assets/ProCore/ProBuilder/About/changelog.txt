@@ -14,6 +14,7 @@
 ## Bug Fixes
 
 - Fix compile errors in Unity 4.7 due to missing editor flag.
+- Fix bug where extruding edges or faces would sometimes align the inserted face normals incorrectly.
 - Hide geometry actions when in object mode.
 - Fix edge selection when mouse is hovering an object not in the selection but a valid edge is within distance of mouse.
 - When filling holes in edge mode with "fill entire hole" enabled, make sure that each found hole contains one complete edge from the selection.
