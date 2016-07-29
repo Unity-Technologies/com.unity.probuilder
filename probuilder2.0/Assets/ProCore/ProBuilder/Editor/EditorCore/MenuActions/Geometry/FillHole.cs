@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class FillHole : pb_MenuAction
 	{
 		public override pb_IconGroup group { get { return pb_IconGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Vert_Fill"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_FillHole"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
