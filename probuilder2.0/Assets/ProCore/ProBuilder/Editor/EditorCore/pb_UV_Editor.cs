@@ -2622,7 +2622,7 @@ public class pb_UV_Editor : EditorWindow
 		 * Begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
 		 */
 
-		Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 130, PAD, 36f, 22f);
+		Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 130, PAD - 1, 36f, 22f);
 
 		if(editor)
 		{
