@@ -13,6 +13,8 @@ namespace ProBuilder2.MeshOperations
 	{
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
+			createdFaces = null;
+
 			Dictionary<int, int> 		lookup 		= pb.sharedIndices.ToDictionary();
 			List<pb_Vertex> 			vertices 	= new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			List<pb_EdgeLookup> 		m_edges 	= pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
@@ -25,15 +27,38 @@ namespace ProBuilder2.MeshOperations
 
 			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>>();
 
-			// iterate selected edges and move each leading edge back along it's direction
-			// storing information about adjacent faces in the process
+			List<pb_WingedEdge> edgesToBevel = new List<pb_WingedEdge>();
+
 			foreach(pb_EdgeLookup lup in m_edges)
 			{
 				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
 
-				if(we == null || we.opposite == null)
+				if(we.opposite == null)
 					continue;
 
+				edgesToBevel.Add(we);
+
+				pb_Edge next = we.next.edge.local;
+				pb_Edge prev = we.previous.edge.local;
+				pb_Edge op_next = we.opposite.next.edge.local;
+				pb_Edge op_prev = we.opposite.previous.edge.local;
+
+				amount = Mathf.Min( Vector3.Distance(vertices[next.x].position, vertices[next.y].position) - .001f, amount );
+				amount = Mathf.Min( Vector3.Distance(vertices[prev.x].position, vertices[prev.y].position) - .001f, amount );
+				amount = Mathf.Min( Vector3.Distance(vertices[op_next.x].position, vertices[op_next.y].position) - .001f, amount );
+				amount = Mathf.Min( Vector3.Distance(vertices[op_prev.x].position, vertices[op_prev.y].position) - .001f, amount );
+			}
+
+			if(edgesToBevel.Count < 1)
+				return new pb_ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
+			
+			if(amount < .001f)
+				return new pb_ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
+			
+			// iterate selected edges and move each leading edge back along it's direction
+			// storing information about adjacent faces in the process
+			foreach(pb_WingedEdge we in edgesToBevel)
+			{
 				beveled++;
 
 				ignore.AddOrAppend(we.face, we.edge.common.x);
@@ -105,7 +130,6 @@ namespace ProBuilder2.MeshOperations
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-
 
 			// @todo don't rebuild sharedindices, keep 'em cached
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
