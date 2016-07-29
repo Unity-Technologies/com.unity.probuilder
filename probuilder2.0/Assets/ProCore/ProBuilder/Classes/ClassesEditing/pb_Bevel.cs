@@ -187,13 +187,11 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb_FaceRebuildData.Apply(holeFaces, pb, vertices);
-
 			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
-
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces
-			HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
+			// HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
 			// and also just the filled holes
 			HashSet<pb_Face> newHoles = new HashSet<pb_Face>(holeFaces.Select(x => x.face));
 			// now append filled holes to the full list of added faces
@@ -205,24 +203,25 @@ namespace ProBuilder2.MeshOperations
 			{
 				pb_WingedEdge wing = allNewFaceEdges[i];
 
-				if(adjacent.Contains(wing.face))
+				if(newHoles.Contains(wing.face))
 				{
-					adjacent.Remove(wing.face);
-					pb_WingedEdge cur = wing;
+					newHoles.Remove(wing.face);
 
-					do
+					// find first edge whose opposite face isn't a filled hole* then
+					// conform normal by that.
+					// *or is a filled hole but has already been conformed
+					foreach(pb_WingedEdge w in wing)
 					{
-						if( cur.opposite != null && newHoles.Contains(cur.opposite.face) )
+						if(!newHoles.Contains(w.opposite.face))
 						{
-							newHoles.Remove(cur.opposite.face);
-							pb_ConformNormals.ConformOppositeNormal(cur);
+							w.face.material = w.opposite.face.material;
+							w.face.uv = new pb_UV(w.opposite.face.uv);
+							pb_ConformNormals.ConformOppositeNormal(w.opposite);
+							break;
 						}
-
-						cur = cur.next;
 					}
-					while(cur != wing);
 				}
-			}					
+			}	
 
 			pb.ToMesh();
 
