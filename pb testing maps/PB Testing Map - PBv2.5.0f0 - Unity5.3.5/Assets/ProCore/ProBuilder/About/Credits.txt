@@ -1,0 +1,23 @@
+# External Libraries
+
+## Triangle.NET
+	- https://github.com/zon/triangle
+
+## CSG
+	- Original by Evan Wallace: https://github.com/evanw/csg.js
+	- C# port: https://github.com/karl-/pb_CSG
+
+## kd-sharp
+	- https://code.google.com/p/kd-sharp/
+
+# Legacy
+
+## PivotTool
+	- @Matt1988
+
+## Diffuse Vertex Color Shaders
+	- @Snoopbaron (Fernando Zapata)
+
+## Standard Vertex Color Shaders
+	- Unity Forums user @defaxer
+	- http://forum.unity3d.com/threads/standard-shader-with-vertex-colors.316529/
