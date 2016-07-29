@@ -25,13 +25,14 @@ namespace ProBuilder2.Common
 			sb.AppendLine(string.Format("vertices: {0}   triangles: {1}", m.vertexCount, m.triangles.Length));
 
 			Vector3[] positions = m.vertices;
-			Color[] colors = m.colors;
-			Vector4[] tangents = m.tangents;
+			Color[] colors 		= m.colors;
+			Vector4[] tangents 	= m.tangents;
 
-			List<Vector4> uv0 = new List<Vector4>();
-			Vector2[] uv2 = m.uv2;
-			List<Vector4> uv3 = new List<Vector4>();
-			List<Vector4> uv4 = new List<Vector4>();
+			List<Vector4> uv0 	= new List<Vector4>();
+			Vector2[] uv2 		= m.uv2;
+			List<Vector4> uv3 	= new List<Vector4>();
+			List<Vector4> uv4 	= new List<Vector4>();
+
 #if !UNITY_4_7 && !UNITY_5_0
 			m.GetUVs(0, uv0);
 			m.GetUVs(2, uv3);
@@ -79,11 +80,11 @@ namespace ProBuilder2.Common
 		 */
 		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
 		{
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(m);
-			int smc = m.subMeshCount;
-			pb_Vertex[] tv = new pb_Vertex[m.triangles.Length];
-			int[][] triangles = new int[smc][];
-			int triIndex = 0;
+			pb_Vertex[] vertices 	= pb_Vertex.GetVertices(m);
+			int smc 				= m.subMeshCount;
+			pb_Vertex[] tv 			= new pb_Vertex[m.triangles.Length];
+			int[][] triangles 		= new int[smc][];
+			int triIndex 			= 0;
 
 			for(int s = 0; s < smc; s++)
 			{
@@ -93,7 +94,7 @@ namespace ProBuilder2.Common
 				for(int i = 0; i < tl; i++)
 				{
 					tv[triIndex++] = vertices[triangles[s][i]];
-					triangles[s][i] = i;
+					triangles[s][i] = triIndex - 1;
 				}
 			}
 
