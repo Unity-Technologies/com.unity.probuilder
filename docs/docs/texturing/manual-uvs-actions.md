@@ -29,7 +29,7 @@ Section Video: <a href="@todo">Manual UVs: Project UVs: Planar</a>
 Unwraps the selected face(s) using a Planar Projection method.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/PlanarProject_Example.png">
 </div>
 
 ---
@@ -43,7 +43,7 @@ Section Video: <a href="@todo">Manual UVs: Project UVs: Box</a>
 Unwraps the selected face(s) using a Box Projection method.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/BoxProject_Example.png">
 </div>
 
 ---
@@ -57,7 +57,7 @@ Section Video: <a href="@todo">Manual UVs: Select Island</a>
 With a UV element selected, clicking this will expand the selection to include all other connected UV elements.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_SelectIsland.png">
 </div>
 
 ---
@@ -71,7 +71,7 @@ Section Video: <a href="@todo">Manual UVs: Select Face</a>
 With a Vertex or Edge selected, click to select all elements on the same face.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_SelectFace.png">
 </div>
 
 ---
@@ -87,7 +87,7 @@ Collapses selected vertices together, but only if they are within a set distance
 To adjust the distance modifier, click the "+" button on the right side of the Weld button.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_WeldUVs.png">
 </div>
 
 ---
@@ -101,7 +101,7 @@ Section Video: <a href="@todo">Manual UVs: Collapse UVs</a>
 Collapses all selected Vertices to a single Vertice, regardless of distance.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_CollapseUVs.png">
 </div>
 
 ---
@@ -115,7 +115,7 @@ Section Video: <a href="@todo">Manual UVs: Split UVs</a>
 Breaks off the selected UV element(s)) from any UV element(s), allowing them to be manipulated independantly.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_SplitUVs.png">
 </div>
 
 ---
@@ -129,7 +129,7 @@ Section Video: <a href="@todo">Manual UVs: Flip Horizontal</a>
 Flip the selected UV element(s) in the horizontal direction.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_FlipHorizontal.png">
 </div>
 
 ---
@@ -143,7 +143,7 @@ Section Video: <a href="@todo">Manual UVs: Flip Vertical</a>
 Flip the selected UV element(s) in the vertical direction.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_FlipVertical.png">
 </div>
 
 ---
@@ -157,5 +157,5 @@ Section Video: <a href="@todo">Manual UVs: Fit</a>
 Scale and move the selected UV element(s) to fit exactly within the UV space.
 
 <div style="text-align:center">
-<img src="../../images/PlaceholderImage.png">
+<img src="../../images/UVExamples_FitUVs.png">
 </div>
