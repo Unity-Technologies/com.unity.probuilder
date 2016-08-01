@@ -457,6 +457,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem("Tools/ProBuilder/Object/Mirror Objects ", true)]
+		static bool MenuVerifyMirrorObjects()
+		{
+			MirrorObjects instance = pb_EditorToolbarLoader.GetInstance<MirrorObjects>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Object/Mirror Objects ", false, pb_Constant.MENU_GEOMETRY + 2)]
+		static void MenuDoMirrorObjects()
+		{
+			MirrorObjects instance = pb_EditorToolbarLoader.GetInstance<MirrorObjects>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", true)]
 		static bool MenuVerifySubdivideObject()
 		{
