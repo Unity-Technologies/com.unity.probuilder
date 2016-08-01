@@ -1,3 +1,26 @@
+# ProBuilder 2.6.0b6
+
+## Bug Fixes
+
+- When filling holes copy the fill face material and uv settings from the first adjacent face detected.
+- when filling holes from bevel use adjacent face material and uv.
+- When building ProBuilder delete user generated folders so that upgrades don't overwrite them.
+- Lower UV toolbar buttons by 1px when not using the Command GUIStyle since Button style adds 1px padding.
+- In `pbUndo` use each individual object vertex count when deciding whether to diff or store object state for undo.  Fixes hang when performing actions with small selections on large objects.
+- When subdividing faces only connect edges on faces that are in the selection, otherwise just insert vertices along the edges to accomodate new vertex positions.
+- When beveling, in addition to checking the leading edges to split vertices also check any touching edge of an affected vertex for maximumm allowable distance.
+
+## Changes
+
+- Change `Alt-S` shortcut to subdivide edges and faces, `Alt-E` now only connects edges and vertices in edge/vert mode closes.
+- Move Mirror to object level, making it an action instead of panel popup.  Also add an option to duplicate or not when mirroring. closes #75
+
+# ProBuilder 2.6.0b5
+
+## Bug Fixes
+
+- Fix multiple materials regression.
+
 # ProBuilder 2.6.0b4
 
 ## Features
