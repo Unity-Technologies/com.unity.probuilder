@@ -27,38 +27,41 @@ namespace ProBuilder2.MeshOperations
 
 			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>>();
 
-			List<pb_WingedEdge> edgesToBevel = new List<pb_WingedEdge>();
+			// test every edge that will be moved along to make sure the bevel distance is appropriate.  if it's not, adjust the max bevel amount
+			// to suit.
+			Dictionary<int, List<pb_WingedEdge>> spokes = pb_WingedEdge.GetSpokes(wings);
+			HashSet<int> tested_common = new HashSet<int>();
 
-			foreach(pb_EdgeLookup lup in m_edges)
+			foreach(pb_EdgeLookup e in m_edges)
 			{
-				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
+				if(tested_common.Add(e.common.x))
+				{
+					foreach(pb_WingedEdge w in spokes[e.common.x])
+					{
+						pb_Edge le = w.edge.local;
+						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
+					}
+				}
 
-				if(we.opposite == null)
-					continue;
-
-				edgesToBevel.Add(we);
-
-				pb_Edge next = we.next.edge.local;
-				pb_Edge prev = we.previous.edge.local;
-				pb_Edge op_next = we.opposite.next.edge.local;
-				pb_Edge op_prev = we.opposite.previous.edge.local;
-
-				amount = Mathf.Min( Vector3.Distance(vertices[next.x].position, vertices[next.y].position) - .001f, amount );
-				amount = Mathf.Min( Vector3.Distance(vertices[prev.x].position, vertices[prev.y].position) - .001f, amount );
-				amount = Mathf.Min( Vector3.Distance(vertices[op_next.x].position, vertices[op_next.y].position) - .001f, amount );
-				amount = Mathf.Min( Vector3.Distance(vertices[op_prev.x].position, vertices[op_prev.y].position) - .001f, amount );
+				if(tested_common.Add(e.common.y))
+				{
+					foreach(pb_WingedEdge w in spokes[e.common.y])
+					{
+						pb_Edge le = w.edge.local;
+						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
+					}
+				}
 			}
 
-			if(edgesToBevel.Count < 1)
-				return new pb_ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
-			
 			if(amount < .001f)
 				return new pb_ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
 			
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
-			foreach(pb_WingedEdge we in edgesToBevel)
+			foreach(pb_EdgeLookup lup in m_edges)
 			{
+				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
+
 				beveled++;
 
 				ignore.AddOrAppend(we.face, we.edge.common.x);

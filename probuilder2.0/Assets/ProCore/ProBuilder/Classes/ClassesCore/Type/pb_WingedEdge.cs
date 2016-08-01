@@ -120,6 +120,30 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Returns a dictionary where each key is a common index with a list of each winged edge touching it.
+		 */
+		public static Dictionary<int, List<pb_WingedEdge>> GetSpokes(List<pb_WingedEdge> wings)
+		{
+			Dictionary<int, List<pb_WingedEdge>> spokes = new Dictionary<int, List<pb_WingedEdge>>();
+			List<pb_WingedEdge> l = null;
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				if(spokes.TryGetValue(wings[i].edge.common.x, out l))
+					l.Add(wings[i]);
+				else
+					spokes.Add(wings[i].edge.common.x, new List<pb_WingedEdge>() { wings[i] });
+
+				if(spokes.TryGetValue(wings[i].edge.common.y, out l))
+					l.Add(wings[i]);
+				else
+					spokes.Add(wings[i].edge.common.y, new List<pb_WingedEdge>() { wings[i] });
+			}
+
+			return spokes;
+		}
+
+		/**
 		 *	Given a set of winged edges and list of common indices, attempt to create a complete path of indices where each
 		 *	is connected by edge.  May be clockwise or counter-clockwise ordered, or null if no path is found.
 		 */
