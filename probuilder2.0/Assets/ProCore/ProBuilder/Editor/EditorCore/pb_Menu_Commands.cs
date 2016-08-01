@@ -650,8 +650,8 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection)
 		{
-			pbUndo.RecordSelection(selection, "Bevel Edges");
 			pb_ActionResult res = pb_ActionResult.NoSelection;
+			pbUndo.RecordSelection(selection, "Bevel Edges");
 
 			float amount = pb_Preferences_Internal.GetFloat(pb_Constant.pbBevelAmount);
 

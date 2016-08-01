@@ -27,6 +27,17 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_ConnectEdges
 	{
+		/**
+		 *	Subdivide faces.
+		 */
+		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Face> faces, out pb_Face[] subdividedFaces)
+		{
+			IEnumerable<pb_Edge> edges = faces.SelectMany(x => x.edges);
+			HashSet<pb_Face> mask = new HashSet<pb_Face>(faces);
+			pb_Edge[] empty;
+			return Connect(pb, edges, out subdividedFaces, out empty, true, false, mask);
+		}
+
 		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] faces)
 		{
 			pb_Edge[] empty;
@@ -39,13 +50,17 @@ namespace ProBuilder2.MeshOperations
 			return Connect(pb, edges, out empty, out connections, false, true);
 		}
 
+		/**
+		 *	Inserts new edges connecting the passed edges, optionally restricting new edge insertion to faces in faceMask.
+		 */
 		private static pb_ActionResult Connect(
 			this pb_Object pb,
 			IEnumerable<pb_Edge> edges,
 			out pb_Face[] addedFaces,
 			out pb_Edge[] connections,
 			bool returnFaces = false,
-			bool returnEdges = false)
+			bool returnEdges = false,
+			HashSet<pb_Face> faceMask = null)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
@@ -83,7 +98,7 @@ namespace ProBuilder2.MeshOperations
 
 				int inserts = targetEdges.Count;
 
-				if(inserts == 1)
+				if(inserts == 1 || (faceMask != null && !faceMask.Contains(face)))
 				{
 					results.Add( InsertVertices(face, targetEdges, vertices) );
 				}

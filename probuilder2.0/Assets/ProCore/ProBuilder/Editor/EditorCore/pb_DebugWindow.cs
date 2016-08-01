@@ -19,6 +19,9 @@ namespace ProBuilder2.EditorCommon
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;
+		float faceInfoOffset = .05f;
+
+		const int MAX_SCENE_LABELS = 64;
 
 		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
@@ -47,6 +50,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			elementLength = EditorPrefs.GetFloat("pb_Debug_elementLength", .1f);
 			elementOffset = EditorPrefs.GetFloat("pb_Debug_elementOffset", .01f);
+			faceInfoOffset = EditorPrefs.GetFloat("pb_Debug_faceInfoOffset", .05f);
 			testOcclusion = EditorPrefs.GetBool("pb_Debug_testOcclusion", false);
 
 			HookSceneViewDelegate();
@@ -155,6 +159,8 @@ namespace ProBuilder2.EditorCommon
 				elementGroupInfo = EditorGUILayout.Toggle("Element Group Info", elementGroupInfo);
 				textureGroupInfo = EditorGUILayout.Toggle("Texture Group Info", textureGroupInfo);
 				smoothingGroupInfo = EditorGUILayout.Toggle("Smoothing Group Info", smoothingGroupInfo);
+				faceInfoOffset = EditorGUILayout.Slider("Label Offset", faceInfoOffset, 0f, .5f);
+
 			}
 			EditorGUILayout.EndToggleGroup();
 
@@ -457,6 +463,8 @@ namespace ProBuilder2.EditorCommon
 					common.Add(i);
 			}
 
+			int labelCount = 0;
+
 			foreach(int i in common)
 			{
 				int[] indices = sharedIndices[i];
@@ -489,6 +497,8 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				DrawSceneLabel(sb.ToString(), cen);
+
+				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
 		}
 
@@ -498,6 +508,8 @@ namespace ProBuilder2.EditorCommon
 			pb_Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
 			IEnumerable<pb_EdgeLookup> edges = pb_EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
+
+			int labelCount = 0;
 
 			foreach(pb_EdgeLookup edge in edges)
 			{
@@ -520,6 +532,8 @@ namespace ProBuilder2.EditorCommon
 						DrawSceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
 						break;
 				}
+
+				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
 		}
 
@@ -528,6 +542,8 @@ namespace ProBuilder2.EditorCommon
 			pb_Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Camera cam = SceneView.lastActiveSceneView.camera;
+
+			int labelCount = 0;
 
 			foreach(pb_Face f in faces)
 			{
@@ -598,9 +614,10 @@ namespace ProBuilder2.EditorCommon
 					sb.Append(f.textureGroup.ToString());
 				}
 
-				Vector3 labelPos = point + (normal.normalized + cam.transform.up.normalized) * .2f;
+				Vector3 labelPos = point + (normal.normalized + cam.transform.up.normalized) * faceInfoOffset;
 
-				Handles.DrawLine(point, labelPos);
+				if(faceInfoOffset > .001f)
+					Handles.DrawLine(point, labelPos);
 
 				Vector2 cen = HandleUtility.WorldToGUIPoint(labelPos);
 				cen.y -= 5f;
@@ -608,6 +625,8 @@ namespace ProBuilder2.EditorCommon
 				Handles.BeginGUI();
 				DrawSceneLabel(sb.ToString(), cen);
 				Handles.EndGUI();
+
+				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
 		}
 

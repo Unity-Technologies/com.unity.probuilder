@@ -21,8 +21,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static pb_ActionResult Subdivide(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] subdividedFaces)
 		{
-			IEnumerable<pb_Edge> affected = faces.SelectMany(x => x.edges);
-			pb_ActionResult res = pb_ConnectEdges.Connect(pb, affected, out subdividedFaces);
+			pb_ActionResult res = pb_ConnectEdges.Connect(pb, faces, out subdividedFaces);
 			return res;
 		}
 	}
