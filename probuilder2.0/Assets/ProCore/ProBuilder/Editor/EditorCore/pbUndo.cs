@@ -20,12 +20,12 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 * @todo - Remove this and implement a pb_Selection class that can easily be recorded for undo without
-		 * doing this weird hcak.
+		 *	Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object 
+		 * 	instead of diffing the serialized object (which is very slow for large arrays).
 		 */
 		public static void RecordSelection(pb_Object[] pb, string msg)
 		{
-			if( pb.Sum(x => x.SelectedTriangleCount) > 256 )
+			if( pb.Any(x => { return x.vertexCount > 256; }) )
 				RegisterCompleteObjectUndo(pb, msg);
 			else
 				RecordObjects(pb, msg);
