@@ -30,21 +30,6 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem("Tools/ProBuilder/Editors/Open Mirror Objects Editor ", true)]
-		static bool MenuVerifyOpenMirrorObjectsEditor()
-		{
-			OpenMirrorObjectsEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMirrorObjectsEditor>();
-			return instance != null && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Editors/Open Mirror Objects Editor ", false, pb_Constant.MENU_EDITOR + 1)]
-		static void MenuDoOpenMirrorObjectsEditor()
-		{
-			OpenMirrorObjectsEditor instance = pb_EditorToolbarLoader.GetInstance<OpenMirrorObjectsEditor>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
 		[MenuItem("Tools/ProBuilder/Editors/Open Shape Editor %#k", true)]
 		static bool MenuVerifyOpenShapeEditor()
 		{

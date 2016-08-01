@@ -60,7 +60,6 @@ namespace ProBuilder2.EditorCommon
 				new OpenUVEditor(),
 				new OpenVertexColorEditor(),
 				new OpenSmoothingEditor(),
-				new OpenMirrorObjectsEditor(),
 
 				new ToggleSelectBackFaces(),
 				new ToggleHandleAlignment(),
@@ -75,6 +74,7 @@ namespace ProBuilder2.EditorCommon
 
 				// object
 				new MergeObjects(),
+				new MirrorObjects(),
 				new FlipObjectNormals(),
 				new SubdivideObject(),
 				new FreezeTransform(),
