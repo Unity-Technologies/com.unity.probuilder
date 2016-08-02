@@ -24,7 +24,7 @@ The second button group contains shortcuts to ProBuilder's [Element Editing Mode
 
 ## ![In-Scene Controls Toggle](../images/icons/ProBuilderGUI_UV_Manip_On.png) In-Scene Controls
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">UV Editor Toolbar: In-Scene Controls</a>
 </div>
 
@@ -46,7 +46,7 @@ Toolbar Icon | Description
 
 ## ![Texture Preview Toggle](../images/icons/ProBuilderGUI_UV_ShowTexture_On.png) Texture Preview
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">UV Editor Toolbar: Texture Preview</a>
 </div>
 
@@ -65,7 +65,7 @@ Toolbar Icon | Description
 
 ## ![Render UV Template Button](../images/icons/ProBuilderGUI_UV_Manip_On.png) Render UV Template
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">UV Editor Toolbar: Render UV Template</a>
 </div>
 

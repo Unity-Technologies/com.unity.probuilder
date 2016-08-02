@@ -2,7 +2,7 @@
 
 [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels")
 
-These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), [Smoothing Groups](@todo), and [Mirroring](@todo). 
+These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), and [Smoothing Groups](@todo).
 
 **Note:** Each panel can be docked, kept floating, or simply closed immediately after use.
 
@@ -17,7 +17,7 @@ These **Tool Panels** contain important tools for [Shape Creation](@todo), [Mate
 <a id="shape-tool"></a>
 ##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div> 
 
@@ -33,8 +33,8 @@ Each shape has specific properties which can be customized before creation- for 
  
 1. Open the New Shape Tool
 1. If "Shape Preview" is enabled, you will see a blue Preview Object in the scene
-1. Choose the Shape you'd like to create (ie, Cube, Cylinder, Torus, etc)
-1. Set the options (ie, width, height, radius, number of stairs, etc)
+1. Choose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)
+1. Set the options (ex, width, height, radius, number of stairs, etc)
 1. You may Move or Rotate the Preview Object within your scene
 1. Once ready, click "Build Shape" to create your final Shape
 
@@ -42,7 +42,7 @@ Each shape has specific properties which can be customized before creation- for 
 
 ##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
 <br>
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
@@ -52,20 +52,19 @@ Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 
 ![Material Tools](../images/MaterialTools_WithExample.png "Material Tools")
 
-**Quick Material Usage** :
+**Quick Material Usage**:
 
 * **(A)** The current "Quick Material"
-* **(B)** Apply the Quick Material to the selected faces **(G)**
-* **(C)** Pick your Quick Material from the selected face **(G)**
+* **(B)** Apply the Quick Material to the selected faces
+* **(C)** Pick your Quick Material from the selected face
 * **(D)** Preview of the current Quick Material
 
-You may also hold `CTRL SHIFT` while clicking on a face, to apply the Quick Material to just that face.
+Hold `CTRL SHIFT` while clicking on a face to apply the Quick Material.
 
 **Material Palette Usage** :
 
 * **(E)** Drag-and-drop your often-used materials to these slots
-* **(F)** Click to apply a material to the selected faces **or** objects
-* **(G)** Create additional Material Palette slots
+* **(F)** Create additional Material Palette slots
 
 You can also press `ALT (number key)` to apply materials from the Palette.
 
@@ -73,7 +72,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 
 ##![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div> 
  
@@ -83,31 +82,33 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing an
 
 The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual UV Editing and Unwrapping](@todo) system.
 
-> *More Info: [**Texturing and UVs**](@todo)*
+*More Info: [**Texturing and UVs**](@todo)*
 
 ---
 
 ##![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
  
 **Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
-Not all shaders will show vertex colors on a mesh: [Vertex Colors FAQ](@todo)
+<div class="alert-box warning">
+<strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.<br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information.
+</div>
 
 ![Vertex Coloring](../images/VertexColor_WithLevelExample.png "Vertex Coloring")
 
 Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.
 
-> *More Info: [**Vertex Coloring**](@todo)* 
+*More Info: [**Vertex Coloring**](@todo)* 
 
 ---
 
 ##![Smoothing Groups Icon](../images/icons/Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
@@ -130,7 +131,7 @@ First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and sel
 
 ##![Mirror Tool Icon](../images/icons/Object_Mirror.png "Mirror Tool Icon") Mirror Tool
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
 </div>
 

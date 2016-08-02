@@ -12,7 +12,7 @@
 
 ## ![Merge Objects Icon](../images/icons/Object_Merge.png "Merge Objects Icon") Merge Objects
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Merge Objects</a>
 </div> 
 
@@ -24,7 +24,7 @@ Merges the selected objects into one, single object. When clicked, you will be p
 ---
 
 ## ![Flip Object Normals Icon](../images/icons/Object_FlipNormals.png "Flip Object Normals Icon") Flip Object Normals
-<div class="info-box warning">
+<div class="video-link">
 
 Section Video: <a href="@todo">Object Actions: Flip Object Normals</a>
 </div> 
@@ -39,7 +39,7 @@ Flips the normals of **all** faces on the selected object(s).
 
 ## ![Subdivide Objects Icon](../images/icons/Object_Subdivide.png "Subdivide Objects Icon") Subdivide Object
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
 </div> 
 
@@ -53,7 +53,7 @@ Divides every face on selected objects, allowing for greater levels of detail wh
 
 ## ![Reset Transform Icon](../images/icons/Pivot_Reset.png "Reset Transform Icon") Reset / Freeze Transform
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
 </div> 
 
@@ -63,7 +63,7 @@ Sets the selected objects position, rotation, and scale to world-relative {0,0,0
 
 ## ![Center Pivot Icon](../images/icons/Pivot_CenterOnObject.png "Center Pivot Icon") Move Pivot to Center of Object
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Center Pivot</a>
 </div> 
 
@@ -77,7 +77,7 @@ Moves the mesh pivot to the center of the object’s bounds.
 
 ## ![Conform Normals Icon](../images/icons/Object_ConformNormals.png "Conform Normals Icon") Conform Normals
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Conform Normals</a>
 </div> 
 
@@ -87,7 +87,7 @@ Sets all face normals on the selected object to the same relative direction, in 
 
 ## ![Triangulate Icon](../images/icons/Object_Triangulate.png "Triangulate Icon") Triangulate
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Triangulate</a>
 </div> 
 

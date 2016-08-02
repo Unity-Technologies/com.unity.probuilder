@@ -12,7 +12,7 @@
 
 ## ![Collapse Vertices Icon](../images/icons/Vert_Collapse.png "Collapse Vertices Icon") Collapse Vertices
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Collapse Vertices</a>
 </div> 
 
@@ -34,7 +34,7 @@ Setting | Description
 
 ## ![Weld Vertices Icon](../images/icons/Vert_Weld.png "Weld Vertices Icon") Weld Vertices
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Weld Vertices</a>
 </div> 
 
@@ -56,7 +56,7 @@ Setting | Description
 
 ## ![Connect Vertices Icon](../images/icons/Vert_Connect.png "Connect Vertices Icon") Connect Vertices
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Connect Vertices</a>
 </div> 
 
@@ -72,7 +72,7 @@ Create a new edge connecting the selected vertices.
 
 ## ![Split Vertices Icon](../images/icons/Vert_Split.png "Split Vertices Icon") Split Vertices
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Split Vertices</a>
 </div> 
 

@@ -152,21 +152,6 @@ namespace ProBuilder2.EditorCommon
 
 
 
-		[MenuItem("Tools/ProBuilder/Geometry/Create Polygon ", true)]
-		static bool MenuVerifyCreatePolygon()
-		{
-			CreatePolygon instance = pb_EditorToolbarLoader.GetInstance<CreatePolygon>();
-			return instance != null && instance.IsEnabled();
-		}
-
-		[MenuItem("Tools/ProBuilder/Geometry/Create Polygon ", false, pb_Constant.MENU_GEOMETRY + 3)]
-		static void MenuDoCreatePolygon()
-		{
-			CreatePolygon instance = pb_EditorToolbarLoader.GetInstance<CreatePolygon>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
 		[MenuItem("Tools/ProBuilder/Geometry/Delete Faces  [delete]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{

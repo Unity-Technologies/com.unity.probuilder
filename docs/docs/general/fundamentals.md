@@ -9,7 +9,7 @@ applying materials, and UV editing.
 
 ## The ProBuilder Toolbar
 
-<div class="info-box warning">
+<div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Toolbar</a>
 </div> 
 
@@ -17,14 +17,15 @@ All of ProBuilder's specialized editing functions are available via the [ProBuil
 
 ![Toolbar Example](../images/ProBuilderToolbar_GeoActionsArea.png "Toolbar Example")
 
-Each Toolbar button will display detailed information about it's use, options, and keyboard shortcuts, when hovered over. Viewing these is a great way to start learning ProBuilder's deeper functionality.
+Each Toolbar button will display detailed information about it's use, options, and keyboard shortcuts when hovered over. Viewing tooltips is a great way to start learning about ProBuilder's functionality.
 
-> *More Info: [**ProBuilder Toolbar**](@todo)*
+*More Info: [**ProBuilder Toolbar**](../toolbar/overview-toolbar)*
 
 ---
 
 ## Creating a New Mesh
-<div class="info-box warning">
+
+<div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Shape Tool</a>
 </div>
 
@@ -34,12 +35,12 @@ To start with a more complex shape, ProBuilder also includes a library of [Shape
 
 ![Shape Tool Example](../images/Example_ShapeToolsWithCurvedStair.png)
 
-> *More Info: [**Shape Tool**](@todo)* 
+*More Info: [**Shape Tool**](@todo)* 
 
 ---
 
 ## Editing Meshes
-<div class="info-box warning">
+<div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Basic Mesh Editing</a>
 </div> 
 
@@ -61,7 +62,7 @@ ProBuilder is always in one of 2 major modes: **Object** or **Element**.
 
 ### Element Selection and Manipulation
 
-First, choose which Element type you'd like to edit, by clicking it's button in the [Edit Mode Toolbar](@todo).
+First, choose which Element type you'd like to edit by clicking it's button in the [Edit Mode Toolbar](@todo).
 
 Then, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).
 
@@ -75,13 +76,13 @@ For those seeking greater knowledge, we highly recommend viewing the [3D Modelin
 * Workflow suggestions
 * Links to other useful sites, videos, etc
 
-> *More Info: [**3D Modeling**](@todo)*
+*More Info: [**3D Modeling**](@todo)*
 
 ---
 
 ## Texturing and UVs
 
-<div class="info-box warning">
+<div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Texturing and UVs</a>
 </div>
 
@@ -95,7 +96,7 @@ Materials can also be applied to individual faces of a ProBuilder mesh, while in
 
 
 
-> *More Info: [**Material Tools**](@todo)*
+*More Info: [**Material Tools**](@todo)*
 
 ### Editing UVs
 
@@ -107,5 +108,5 @@ ProBuilder includes both "[Auto UVs](@todo)" (default), and a complete [Manual U
 
 **You may use whichever you prefer, or a mix of both, even on the same mesh.**
 
-> *More Info: [**Texturing and UVs**](@todo)*
+*More Info: [**Texturing and UVs**](@todo)*
 

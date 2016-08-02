@@ -1,6 +1,6 @@
 ## ![Set Pivot Icon](../images/icons/Pivot_CenterOnElements.png "Set Pivot Icon") Move Pivot to Center of Selected Elements
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Geometry Actions: Set Pivot</a>
 </div> 
 

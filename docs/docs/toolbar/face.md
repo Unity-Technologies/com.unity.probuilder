@@ -12,7 +12,7 @@
 
 ## ![Delete Face Icon](../images/icons/Face_Delete.png "Delete Faces Icon") Delete Face
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Delete Faces</a>
 </div> 
 
@@ -28,7 +28,7 @@ Deletes the selected face(s).
 
 ## ![Detach Face Icon](../images/icons/Face_Detach.png "Detach Faces Icon") Detach Face
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Detach Faces</a>
 </div> 
 
@@ -48,7 +48,7 @@ Setting | Description
 
 ## ![Extrude Face Icon](../images/icons/Face_Extrude.png "Detach Faces Icon") Extrude Face
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Extrude Faces</a>
 </div>
 
@@ -73,7 +73,7 @@ Setting | Description
 
 ## ![Flip Normals Icon](../images/icons/Face_FlipNormals.png "Flip Normals Icon") Flip Normals
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Flip Normals</a>
 </div>
 
@@ -87,7 +87,7 @@ Flips the normals on the selected face(s).
 
 ## ![Flip Triangles Icon](../images/icons/Face_FlipTri.png "Flip Triangles Icon") Flip Triangles
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Flip Triangles</a>
 </div>
 
@@ -101,7 +101,7 @@ Flips the triangle orientation on the selected face(s). This will only work on q
 
 ## ![Conform Normals Icon](../images/icons/Face_ConformNormals.png "Conform Normals Icon") Conform Normals
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Conform Normals</a>
 </div>
 
@@ -111,7 +111,7 @@ Sets all selected face normals to the same relative direction.
 
 ## ![Merge Faces Icon](../images/icons/Face_Merge.png "Merge Faces Icon") Merge Faces
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Merge Faces</a>
 </div>
 
@@ -125,7 +125,7 @@ Merges selected faces into a single face, and removes any dividing edges.
 
 ## ![Subdivide Face Icon](../images/icons/Face_Subdivide.png "Subdivide Face Icon") Subdivide Face
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
 </div>
 
@@ -139,7 +139,7 @@ Split each selected face by adding a vertex at the center of each edge and conne
 
 ## ![Bevel Face Icon](../images/icons/Edge_Bevel.png "Bevel Face Icon") Bevel Face
 
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Bevel Face</a>
 </div>
 
