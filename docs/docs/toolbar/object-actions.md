@@ -1,8 +1,7 @@
-#Video: Object Actions
+<!-- #Video: Object Actions
 
 [![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo)
-
----
+ -->
 
 <div style="text-align:center">
 <img src="../../images/Toolbar_ObjectActions.png">
@@ -16,10 +15,7 @@
 Section Video: <a href="@todo">Object Actions: Merge Objects</a>
 </div> 
 
-Merges the selected objects into one, single object. When clicked, you will be prompted to choose between two options:
-
-* Merge Delete: Merge to a new object, and delete the source objects
-* Merge Save: Merge to a new object, but only disable (not delete) the source objects
+Merges the selected objects into a single object.
 
 ---
 
@@ -43,8 +39,6 @@ Flips the normals of **all** faces on the selected object(s).
 Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
 </div> 
 
-**Keyboard Shortcut** : `ALT S`
-
 Divides every face on selected objects, allowing for greater levels of detail when modeling.
 
 ![Subdivide Object Example](../images/SubdivideObject_Example.png "Subdivide Object Example")
@@ -57,7 +51,7 @@ Divides every face on selected objects, allowing for greater levels of detail wh
 Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
 </div> 
 
-Sets the selected objects position, rotation, and scale to world-relative {0,0,0} without changing any vertex positions.
+Sets the selected objects position, rotation, and scale to world-relative `{0,0,0}` without changing any vertex positions.
 
 ---
 
@@ -81,7 +75,7 @@ Moves the mesh pivot to the center of the object’s bounds.
 Section Video: <a href="@todo">Object Actions: Conform Normals</a>
 </div> 
 
-Sets all face normals on the selected object to the same relative direction, in case you suspect a "leak".
+Sets all face normals on the selected object to the same relative direction.
 
 ---
 
