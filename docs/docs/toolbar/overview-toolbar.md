@@ -66,6 +66,7 @@ When using the text toolbar the options menu for actions is shown as a `+` icon 
 
 ---
 
+<a id="edit-mode-toolbar" />
 ### Edit Mode Toolbar
 
 <div class="video-link">

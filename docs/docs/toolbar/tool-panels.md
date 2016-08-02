@@ -40,6 +40,7 @@ Each shape has specific properties which can be customized before creation- for 
 
 ---
 
+<a id="material-tools" />
 ##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
 
 <div class="video-link">
