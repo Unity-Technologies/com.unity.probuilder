@@ -3,6 +3,16 @@
 	display: inline-block;
 }
 
+.youtube-preview
+{
+	display: block;
+	width: 560px;
+	height: 315px;
+	margin: auto;
+	margin-bottom: 24px;
+	border: none;
+}
+
 .sub-header {
   color:#2980B9;
   padding-bottom: 8px;
@@ -16,6 +26,10 @@ img {
 
 .video-link
 {
+	/**
+	 *	@todo re-enable video links when they exist
+	 */
+	display: none;
 	background: #f7f7f7;
 	color: #333;
 	border: none;

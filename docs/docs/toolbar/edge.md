@@ -1,6 +1,6 @@
 #Video: Edge Actions
 
-[![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
+<!-- [![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
 
 ---
 
