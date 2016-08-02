@@ -1,9 +1,8 @@
-#Video: Selection Tools
+<!-- #Video: Selection Tools
 
 [![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "Selection Tools Video")
 
----
-
+ -->
 <div style="text-align:center">
 <img src="../../images/Toolbar_SelectionTools.png">
 </div>
@@ -20,8 +19,8 @@ Determines whether hidden elements are selected or ignored, when drag-selecting.
 
 Toolbar Icon | Description
 :---:|---
-![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | **On** : all [Elements](@todo) are selectable, regardlesss of their visibility
-![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png) |  **Off** : drag selection will ignore any [Elements](@todo) that cannot currently be seen
+![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | **On**: all [elements](../general/fundamentals/#editing-meshes) are selectable, regardlesss of their visibility
+![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png) |  **Off**: drag selection will ignore any [elements](../general/fundamentals/#editing-meshes) that cannot currently be seen
 
 ![Handle Alignment Examples](../images/SelectHidden_Example.png)
 
@@ -35,7 +34,7 @@ Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 
 **Keyboard Shortcut** : `P`
 
-Choose how the scene handles will be oriented when selecting [Elements](@todo). This is a toggle button, click to change modes:
+Choose how the scene handles will be oriented when selecting [elements](../general/fundamentals/#editing-meshes). This is a toggle button; click to change modes:
 
 Toolbar Icon | Description
 :---:|---
@@ -54,11 +53,11 @@ Toolbar Icon | Description
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 </div> 
 
-**Keyboard Shortcut** : `ALT G`
+**Keyboard Shortcut**: `ALT G`
 
-Expands the selection outward, to adjacent faces. 
+Expands the selection outward to adjacent faces, edges, or vertices.
 
-![Options Icon](../images/icons/options.png) **[Custom Settings](@todo) Available** :
+![Options Icon](../images/icons/options.png) **Options**:
 
 Setting | Description
 --- | ---
@@ -78,7 +77,7 @@ Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
 
 **Keyboard Shortcut** : `ALT SHIFT G`
 
-Does the opposite of Grow Selection- removes the elements on the perimiter of the current selection.
+Does the opposite of Grow Selection: removes the elements on the perimiter of the current selection.
 
 ---
 
@@ -88,9 +87,9 @@ Does the opposite of Grow Selection- removes the elements on the perimiter of th
 Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
 </div> 
 
-**Keyboard Shortcut** : `ALT SHIFT G`
+**Keyboard Shortcut** : `CTRL SHIFT I`
 
-Selects the inverse of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.
+Selects the inverse of the current selection. All unselected elements will become selected, the current selection will be unselected.
 
 ---
 
