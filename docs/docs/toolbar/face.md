@@ -46,6 +46,7 @@ Setting | Description
 
 ---
 
+<a id="extrude">
 ## ![Extrude Face Icon](../images/icons/Face_Extrude.png "Detach Faces Icon") Extrude Face
 
 <div class="video-link">

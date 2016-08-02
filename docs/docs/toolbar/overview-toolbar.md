@@ -1,8 +1,8 @@
 # Video: Toolbar Overview
 
-[![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
+<!-- [![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo) -->
 
-ProBuilder is controlled almost entirely via the **Main Toolbar**, which contains all commonly used functions.
+ProBuilder is controlled via the **Main Toolbar**, which contains all commonly used functions.
 
 A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.
 
@@ -16,10 +16,10 @@ Section Video: <a href="@todo">Toolbar Overview: Catagories</a>
 
 The Toolbar is color-coded to help you quickly choose tools by type:
 
-* **Orange** for [Tool Panels](@todo)
-* **Blue** for [Selection Tools](@todo)
-* **Green** for [Object Actions](@todo)
-* **Red** for [Geometry Actions](@todo)
+* **Orange** for [Tool Panels](tool-panels)
+* **Blue** for [Selection Tools](selection-tools)
+* **Green** for [Object Actions](object-actions)
+* **Red** for Geometry Actions ([Vertex](vertex), [Edge](edge), [Face](face))
 
 ![Toolbar Categories Example](../images/ExampleImage_Toolbar_ColorCategories.png "Toolbar Categories Example")
 
@@ -31,7 +31,7 @@ The Toolbar is color-coded to help you quickly choose tools by type:
 Section Video: <a href="@todo">Toolbar Overview: Text vs Icon Mode</a>
 </div> 
 
-You can resize the Toolbar however you like, and it will re-order and flow it's contents to match.
+You can resize the Toolbar however you like; ProBuilder will re-order the icon or text contents to best fit the window size.
 
 Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space and choose "Use Text Mode".  In this menu you can also change how this window is displayed (docking or floating).
 
@@ -58,7 +58,7 @@ This is a "smart" toolbar, and dynamically changes to match your current editing
 Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
 </div> 
 
-Some of the most-used actions ([Extrude](@todo), [Collapse](@todo), [Grow Selection](@todo), etc) also include Custom Settings, which can significantly modify the action.
+Some of the most-used actions ([Extrude](face/#extrude), [Collapse](vertex/#collapse), [Grow Selection](selection-tools/#grow), etc) also include Custom Settings, which can significantly modify the action.
 
 ![Options Icon](../images/icons/options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
 

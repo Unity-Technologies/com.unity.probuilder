@@ -47,6 +47,7 @@ Toolbar Icon | Description
 
 ---
 
+<a id="grow" />
 ##![Grow Selection](../images/icons/Selection_Grow.png) Grow Selection
 
 <div class="video-link">

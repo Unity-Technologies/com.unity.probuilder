@@ -10,6 +10,7 @@
 
 ---
 
+<a id="collapse" />
 ## ![Collapse Vertices Icon](../images/icons/Vert_Collapse.png "Collapse Vertices Icon") Collapse Vertices
 
 <div class="video-link">

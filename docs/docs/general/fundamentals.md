@@ -1,6 +1,6 @@
 # Video: ProBuilder Fundamentals
 
-First time using ProBuilder? Start here for an overview of creating your first mesh, editing it's geometry,
+First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,
 applying materials, and UV editing.
 
 <!-- [![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Fundamentals Video") -->
@@ -29,7 +29,7 @@ Each Toolbar button will display detailed information about it's use, options, a
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Shape Tool</a>
 </div>
 
-<img src="../../images/Cube_120x120.png" align="right"> Press `CTRL K` on your keyboard to spawn in a new, default, ProBuilder-editable cube.
+<img src="../../images/Cube_120x120.png" align="right"> Press `CTRL K` on your keyboard to spawn in a new ProBuilder-editable cube.
 
 To start with a more complex shape, ProBuilder also includes a library of shapes (cylinder, torus, stairs, etc), to begin modeling with. Which each of these shapes, you can customize both starting dimensions and unique parameters.
 
