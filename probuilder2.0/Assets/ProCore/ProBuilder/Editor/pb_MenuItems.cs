@@ -8,7 +8,8 @@ using ProBuilder2.EditorCommon;
 
 public class pb_MenuItems : EditorWindow
 {
-	const string DOCUMENTATION_URL = "http://www.protoolsforunity3d.com/docs/probuilder/";
+	// const string DOCUMENTATION_URL = "http://www.protoolsforunity3d.com/docs/probuilder/";
+	const string DOCUMENTATION_URL = "http://procore3d.github.io/probuilder2/";
 
 	static pb_Editor editor { get { return pb_Editor.instance; } }
 

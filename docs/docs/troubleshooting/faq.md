@@ -60,3 +60,7 @@ For example, here's what `RuntimeEdit.cs` looks like:
 	#endif
 
 Now compile your project and run!
+
+## Missing Icons
+
+If you upgraded ProBuilder and are now missing icons in the toolbar, first: restart Unity.  If that fails to bring icons back, re-import the ProBuilder package.
