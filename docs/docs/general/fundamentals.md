@@ -1,4 +1,4 @@
-# Video: ProBuilder Fundamentals
+<!-- # Video: ProBuilder Fundamentals -->
 
 First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,
 applying materials, and UV editing.

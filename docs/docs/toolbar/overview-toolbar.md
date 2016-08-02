@@ -1,5 +1,4 @@
-# Video: Toolbar Overview
-
+<!-- # Video: Toolbar Overview -->
 <!-- [![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo) -->
 
 ProBuilder is controlled via the **Main Toolbar**, which contains all commonly used functions.

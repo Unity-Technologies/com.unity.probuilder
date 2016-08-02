@@ -1,8 +1,7 @@
-# Video: Tool Panels
+<!-- # Video: Tool Panels -->
+<!-- [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels") -->
 
-[![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels")
-
-These **Tool Panels** contain important tools for [Shape Creation](@todo), [Materials](@todo), [Texturing and UVs](@todo), [Vertex Coloring](@todo), and [Smoothing Groups](@todo).
+These **Tool Panels** contain important tools for [Shape Creation](#shape-tool), [Materials](#material-tools), [Texturing and UVs](#texturing), [Vertex Coloring](#vertex-colors), and [Smoothing Groups](#smoothing-groups).
 
 **Note:** Each panel can be docked, kept floating, or simply closed immediately after use.
 
@@ -71,6 +70,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 
 ---
 
+<a id="texturing" />
 ##![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
 
 <div class="video-link">
@@ -81,12 +81,13 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing an
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 
-The UV Editor Panel includes both [Auto UV](@todo) tools, and a complete [Manual UV Editing and Unwrapping](@todo) system.
+The UV Editor Panel includes both [Auto UV](../texturing/auto-uvs-actions) tools, and a complete [Manual UV Editing and Unwrapping](../texturing/manual-uvs-actions) system.
 
-*More Info: [**Texturing and UVs**](@todo)*
+*More Info: [**Texturing and UVs**](../texturing/overview-texture-mapping)*
 
 ---
 
+<a id="vertex-colors" />
 ##![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
 <div class="video-link">
@@ -96,40 +97,42 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color
 **Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
 <div class="alert-box warning">
-<strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.<br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information.
+<strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.
+<!-- <br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information. -->
 </div>
 
 ![Vertex Coloring](../images/VertexColor_WithLevelExample.png "Vertex Coloring")
 
 Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.
 
-*More Info: [**Vertex Coloring**](@todo)* 
+<!-- *More Info: [**Vertex Coloring**](@todo)*  -->
 
 ---
 
+<a id="smoothing-groups" />
 ##![Smoothing Groups Icon](../images/icons/Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
 <div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
-**Purpose** : Create a smooth and rounded look, or sharp-edged and faceted.
+**Purpose**: Create a smooth and rounded look, or sharp-edged and faceted.
 
-**Usage** :
-
-First, choose [Face Editing](@todo) from the [Edit Mode Toolbar](@todo), and select the faces you wish to make smooth or faceted.
-
-> *If no faces are selected, or you are in [Object Mode](@todo), any Smoothing actions will be applied to the entire object*
+**Usage**:
 
 ![Smoothing Groups Example](../images/SmoothingGroups-Panel_WithLettersAndExample.png "Smoothing Groups Example")
 
-* **(A)** If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.
-* **(B)** To assign the selected faces to a new Smoothing Group, click any available group button
-* **(C)** You can also assign Hard groups
-* **(D)** Press the "Clear" button to clear all Smoothing from the selected faces
+- Choose Face editing from the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar)
+- Select a group of faces that you want to be smooth
+	- *If no faces are selected, or you are in [Object Mode](@todo), any Smoothing actions will be applied to the entire object*
+- **(A)** If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.
+- **(B)** To assign the selected faces to a new Smoothing Group, click any available group button
+- **(C)** You can also assign Hard groups
+- **(D)** Press the "Clear" button to clear all Smoothing from the selected faces
 
 ---
 
+<a id="mirror" />
 ##![Mirror Tool Icon](../images/icons/Object_Mirror.png "Mirror Tool Icon") Mirror Tool
 
 <div class="video-link">

@@ -4,19 +4,17 @@ theme: readthedocs
 pages:
 
 - Home: index.md
-
 - Fundamentals: general/fundamentals.md
 
 - Toolbar: 
   - Overview: toolbar/overview-toolbar.md
   - Tool Panels: toolbar/tool-panels.md
-  - Selection Tools: toolbar/selection-tools.md
+  - Selection Actions: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
-  - Geometry Actions:
-    - Vertex: toolbar/vertex.md
-    - Edge: toolbar/edge.md
-    - Face: toolbar/face.md
-    - All: toolbar/all.md
+  - Vertex Actions: toolbar/vertex.md
+  - Edge Actions: toolbar/edge.md
+  - Face Actions: toolbar/face.md
+  - Element Actions: toolbar/all.md
     
 - Texture Mapping: 
     - Overview: texturing/overview-texture-mapping.md
