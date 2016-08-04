@@ -6,9 +6,13 @@
 
 ## ProBuilder Advanced vs. ProBuilder Basic
 
-**ProBuilder Basic** is entirely free, and includes the core ProBuilder features for building and editing basic geometry. [Download ProBuilder Basic](http://u3d.as/62y)
+**ProBuilder Basic** is entirely free, and includes the core ProBuilder features for building and editing basic geometry.
 
-**ProBuilder Advanced** is a paid extension that adds "advanced" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization. [Purchase ProBuilder Advanced](http://u3d.as/30b)
+[Download ProBuilder Basic](http://u3d.as/62y)
+
+**ProBuilder Advanced** is a paid extension that adds "advanced" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization.
+
+[Purchase ProBuilder Advanced](http://u3d.as/30b)
 
 <div class="alert-box warning">
 <h2>Important!</h2>
