@@ -1,8 +1,6 @@
-#Video: Face Actions
+<!-- #Video: Face Actions
 
-[![Face Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
-
----
+[![Face Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
 
 <div style="text-align:center">
 <img src="../../images/Toolbar_FaceActions.png">
@@ -14,7 +12,7 @@
 
 <div class="video-link">
 Section Video: <a href="@todo">Face Actions: Delete Faces</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `BACKSPACE`
 
@@ -30,7 +28,7 @@ Deletes the selected face(s).
 
 <div class="video-link">
 Section Video: <a href="@todo">Face Actions: Detach Faces</a>
-</div> 
+</div>
 
 Detach the selected face(s) to a new sub-mesh, or seperate object.
 
@@ -86,13 +84,13 @@ Flips the normals on the selected face(s).
 
 ---
 
-## ![Flip Triangles Icon](../images/icons/Face_FlipTri.png "Flip Triangles Icon") Flip Triangles
+## ![Flip Triangles Icon](../images/icons/Face_FlipTri.png "Flip Face Edge Icon") Flip Face Edge
 
 <div class="video-link">
-Section Video: <a href="@todo">Face Actions: Flip Triangles</a>
+Section Video: <a href="@todo">Face Actions: Flip Face Edge</a>
 </div>
 
-Flips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
+Swap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
 
 <div style="text-align:center">
 <img src="../../images/FlipTri_Example.png">
@@ -138,13 +136,13 @@ Split each selected face by adding a vertex at the center of each edge and conne
 
 ---
 
-## ![Bevel Face Icon](../images/icons/Edge_Bevel.png "Bevel Face Icon") Bevel Face
+## ![Bevel Icon](../images/icons/Edge_Bevel.png "Bevel Icon") Bevel
 
 <div class="video-link">
 Section Video: <a href="@todo">Face Actions: Bevel Face</a>
 </div>
 
-Performs the [Bevel Edge](@todo) action on all the edges of the selected face(s).
+Performs the [Bevel Edge](edge/#bevel) action on all the edges of the selected face(s).
 
 <div style="text-align:center">
 <img src="../../images/BevelFace_Example.png">

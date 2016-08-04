@@ -95,13 +95,14 @@ If enabled, the selectable area for vertices and edges is smaller, but you may a
 ## Colors
 
 ProBuilder allows users to set the colors for element selections.
+
 <!--
 ## Selected Face Color
 ## Edge Wireframe Color
 ## Vertex Color
-## Selected Vertex Color
- -->
- ## Vertex Handle Size
+## Selected Vertex Color-->
+
+## Vertex Handle Size
 
  Determines how large vertex points are rendered in the scene.  This setting does not affect selection.
 

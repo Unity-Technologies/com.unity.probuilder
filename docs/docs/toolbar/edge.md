@@ -26,13 +26,14 @@ Create a new face between two selected edges. Each edge must have a free side.
 
 ---
 
-## ![Bevel Edges Icon](../images/icons/Edge_Bevel.png "Bevel Edges Icon") Bevel Edges
+<a id="bevel"></a>
+## ![Bevel Edges Icon](../images/icons/Edge_Bevel.png "Bevel Edges Icon") Bevel
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </div>
 
-**Keyboard Shortcut** : `ALT B`
+<!-- **Keyboard Shortcut** : `ALT B` -->
 
 Splits the selected edge(s) into two edges, with a new face between.
 
