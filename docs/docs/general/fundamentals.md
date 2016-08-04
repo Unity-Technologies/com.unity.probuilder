@@ -11,7 +11,7 @@ applying materials, and UV editing.
 
 <div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Toolbar</a>
-</div> 
+</div>
 
 All of ProBuilder's specialized editing functions are available via the [ProBuilder Toolbar](../toolbar/overview-toolbar), which dynamically adapts to your Edit Mode and selection.
 
@@ -35,15 +35,16 @@ To start with a more complex shape, ProBuilder also includes a library of shapes
 
 ![Shape Tool Example](../images/Example_ShapeToolsWithCurvedStair.png)
 
-*More Info: [**Shape Tool**](../toolbar/tool-panels/#shape-tool)* 
+*More Info: [**Shape Tool**](../toolbar/tool-panels/#shape-tool)*
 
 ---
 
 ## Editing Meshes
 <div class="video-link">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Basic Mesh Editing</a>
-</div> 
+</div>
 
+<a id="modes"></a>
 ### Object vs Element
 
 ![Editing Modes Example](ExampleImage_ObjectAndElementEditingModes.png "Editing Modes Example")
@@ -52,7 +53,7 @@ ProBuilder is always in one of 2 major modes: **Object** or **Element**.
 
 * **Object Mode** is standard Unity mode, no surprises.
 * **Element Mode** activates ProBuilder's mesh editing features.
-* *Click in the [Edit Mode Toolbar](../toolbar/overview-toolbar) to change Mode, or use it's shortcut keys.*
+* *Click in the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar) to change Mode, or use it's shortcut keys.*
 
 **Elements** are the individual parts that make up a mesh: **Vertices**, **Edges**, and **Faces**. If it helps, you can think of these like levels of detail on a map- for example, "city, state, country".
 
@@ -62,7 +63,7 @@ ProBuilder is always in one of 2 major modes: **Object** or **Element**.
 
 ### Element Selection and Manipulation
 
-First, choose which Element type you'd like to edit by clicking it's button in the [Edit Mode Toolbar](../toolbar/overview-toolbar).
+First, choose which Element type you'd like to edit by clicking it's button in the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar).
 
 Then, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).
 
@@ -104,9 +105,9 @@ Materials can also be applied to individual faces of a ProBuilder mesh, while in
 
 ProBuilder includes both [Auto UVs](../texturing/auto-uvs-actions) (default), and a complete [Manual UV Editing and Unwrapping](../texturing/manual-uvs-actions) system.
 
-**Auto UV** mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically. 
+**Auto UV** mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically.
 
-**Manual UV** mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc. 
+**Manual UV** mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc.
 
 **You may use whichever you prefer, or a mix of both, even on the same mesh.**
 
