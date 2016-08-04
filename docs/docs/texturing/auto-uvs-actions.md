@@ -1,8 +1,7 @@
-# Video: Auto UVs Actions
+<!-- # Video: Auto UVs Actions
 
 [![ Auto UVs Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
-
----
+ -->
 
 <div style="text-align:center">
 <img src="../../images/UV_AutoActions.png">
@@ -18,6 +17,8 @@ Section Video: <a href="@todo">Auto UVs Actions: Convert to Manual</a>
 
 Converts the selected Face(s) to using Manual UVs.
 
+When converting from Auto UVs to Manual there will be no loss of resolution, but if you modify vertices or edges individually in Manual Mode those changes will not be transferable to Auto Mode.
+
 ---
 
 ## Fill Mode
@@ -26,14 +27,12 @@ Converts the selected Face(s) to using Manual UVs.
 Section Video: <a href="@todo">Auto UVs Actions: Fill Mode</a>
 </div>
 
-Converts the selected Face(s) to using Auto UVs.
-
 Option | Description
 :---:|---
 **Tile** | Continously tiles (repeats) the UVs across the object
 **Fit** | Uniformly scales UVs to size
  **Stretch** | Expands the selection on all sides to fill space
- 
+
 <div style="text-align:center">
 <img src="../../images/UV_FillModes.png">
 </div>

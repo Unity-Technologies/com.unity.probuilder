@@ -26,9 +26,9 @@ This documentation encompasses <i>all</i> features, actions, and tools available
 ## Helpful Links and Info
 
 - [ProCore3D Website](http://www.procore3d.com)
-- [Email](mailto:contact@procore3d.com)  
-- [Facebook](http://www.facebook.com/probuilder3d)  
-- [Twitter](http://www.twitter.com/probuilder3d) 
+- [Email](mailto:contact@procore3d.com)
+- [Facebook](http://www.facebook.com/probuilder3d)
+- [Twitter](http://www.twitter.com/probuilder3d)
 - [Online Documentation](http://www.procore3d.com/docs/probuilder)
 - [Tutorial Videos](http://www.procore3d.com/videos)
 - [Support and Troubleshooting](http://www.procore3d.com/forum)

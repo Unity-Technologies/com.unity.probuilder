@@ -1,8 +1,7 @@
-# Video: UV Editor Toolbar
+<!-- # Video: UV Editor Toolbar
 
 [![UV Editor Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
-
----
+ -->
 
 <div style="text-align:center">
 <img src="../../images/UVToolbar.png">
@@ -18,7 +17,7 @@ This first group of buttons contains shortcuts to the standard Unity manipulatio
 
 ## Vertex, Edge Face
 
-The second button group contains shortcuts to ProBuilder's [Element Editing Modes](@todo). When using [Manual UV Editing](@todo), this allows you to select and manipulate UVs by Vertex, Edge, or Face.
+The second button group contains shortcuts to ProBuilder's [Element Editing Modes](../general/fundamentals/#modes). When using [Manual UV Editing](manual-uvs-actions), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  When using [Auto UVs](auto-uvs-actions) you may only edit UVs per-face.
 
 ---
 
@@ -40,7 +39,7 @@ Toolbar Icon | Description
 </div>
 
 
-> Snap to increments by holding `CTRL` . You can customize these increment values via the [ProBuilder Preferences](@todo)
+Snap to increments by holding `CTRL` . You can customize these increment values via the [ProBuilder Preferences](../preferences/preferences)
 
 ---
 
@@ -50,12 +49,12 @@ Toolbar Icon | Description
 Section Video: <a href="@todo">UV Editor Toolbar: Texture Preview</a>
 </div>
 
-When **On**, the selected face's main texture will be displayed in the [UV Viewer](@todo).
+When **On**, the selected face's main texture will be displayed in the UV Viewer.
 
 Toolbar Icon | Description
 :---:|---
-![In-Scene ON](../images/icons/ProBuilderGUI_UV_ShowTexture_On.png) | **On** : Selected element's Texture will be displayed in the [UV Viewer](@todo)
-![In-Scene OFF](../images/icons/ProBuilderGUI_UV_ShowTexture_Off.png) |  **Off** : No texture will be displayed in the [UV Viewer](@todo)
+![In-Scene ON](../images/icons/ProBuilderGUI_UV_ShowTexture_On.png) | **On** : Selected element's Texture will be displayed in the UV Viewer
+![In-Scene OFF](../images/icons/ProBuilderGUI_UV_ShowTexture_Off.png) |  **Off** : No texture will be displayed in the UV Viewer
 
 <div style="text-align:center">
 <img src="../../images/ShowTexturePreview_Example.png">
@@ -85,7 +84,7 @@ Opens the Render UVs tool panel, for rendering UV Templates to be used with text
 
 * **Background Color** : If you want a non-transparent background, set the color here
 
-* **Save UV Template** : Click to render the UV Template - a file dialogue will be opened to save the file. 
-  
+* **Save UV Template** : Click to render the UV Template - a file dialogue will be opened to save the file.
 
-   
+
+

@@ -1,8 +1,8 @@
-# Video: Manual UVs Actions
+<!-- # Video: Manual UVs Actions
 
 [![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
 
----
+-->
 
 <div style="text-align:center">
 <img src="../../images/UVPanel_ManualActions.png">
@@ -98,7 +98,7 @@ To adjust the distance modifier, click the "+" button on the right side of the W
 Section Video: <a href="@todo">Manual UVs: Collapse UVs</a>
 </div>
 
-Collapses all selected Vertices to a single Vertice, regardless of distance.
+Collapses all selected vertices to a single vertex, regardless of distance.
 
 <div style="text-align:center">
 <img src="../../images/UVExamples_CollapseUVs.png">
