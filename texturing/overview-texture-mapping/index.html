@@ -27,8 +27,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Overview";
-    var mkdocs_page_input_path = "texturing\overview-texturing.md";
-    var mkdocs_page_url = "/texturing/overview-texturing/";
+    var mkdocs_page_input_path = "texturing/overview-texture-mapping.md";
+    var mkdocs_page_url = "/texturing/overview-texture-mapping/";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js"></script>
@@ -92,7 +92,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../toolbar/selection-tools/">Selection Tools</a>
+        <a class="" href="../../toolbar/selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -105,39 +105,31 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../../toolbar/vertex/">Vertex</a>
+        <a class="" href="../../toolbar/vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../toolbar/edge/">Edge</a>
+        <a class="" href="../../toolbar/edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../toolbar/face/">Face</a>
+        <a class="" href="../../toolbar/face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../toolbar/all/">All</a>
+        <a class="" href="../../toolbar/all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -145,7 +137,7 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
@@ -154,15 +146,19 @@
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-texturing-and-uvs-overview">Video: Texturing and UVs Overview</a></li>
+                <li class="toctree-l3"><a href="#texture-mapping-101">Texture Mapping 101</a></li>
                 
-                    <li><a class="toctree-l4" href="#auto-texturing-vs-manual-uvs">Auto-Texturing vs Manual UVs</a></li>
+            
+                <li class="toctree-l3"><a href="#auto-vs-manual-uvs">Auto vs Manual UVs</a></li>
                 
-                    <li><a class="toctree-l4" href="#the-texturing-and-uvs-window">The Texturing and UVs Window</a></li>
+            
+                <li class="toctree-l3"><a href="#the-uv-editor-window">The UV Editor Window</a></li>
                 
-                    <li><a class="toctree-l4" href="#auto-texturing-actions-panel">Auto-Texturing Actions Panel</a></li>
+                    <li><a class="toctree-l4" href="#uv-editor-toolbar">UV Editor Toolbar</a></li>
                 
-                    <li><a class="toctree-l4" href="#manual-uv-editing-actions-panel">Manual UV Editing Actions Panel</a></li>
+                    <li><a class="toctree-l4" href="#actions-panel">Actions Panel</a></li>
+                
+                    <li><a class="toctree-l4" href="#uv-viewer">UV Viewer</a></li>
                 
             
             </ul>
@@ -172,19 +168,33 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -267,7 +277,7 @@
     
       
         
-          <li>Texturing and UVs &raquo;</li>
+          <li>Texture Mapping &raquo;</li>
         
       
     
@@ -281,66 +291,64 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-texturing-and-uvs-overview">Video: Texturing and UVs Overview</h1>
-<p><a href="../@todo"><img alt="ProBuilder Texturing and UVs Overview Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<p>Texturing is the process of applying materials ("textures") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.</p>
-<blockquote>
-<p>(@todo: image: new cube -&gt; applied material -&gt; rotated -&gt; scaled -&gt; offset)</p>
-</blockquote>
+                <!-- # Video: Texture Mapping Overview
+
+[![ProBuilder Texture Mapping Overview Video](../images/VideoLink_YouTube_768.png)](@todo)-->
+
+<h2 id="texture-mapping-101">Texture Mapping 101</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Texture Mapping: Texture Mapping 101</a>
+</div>
+
+<p><strong>Texture Mapping</strong> is the process of applying materials ("textures") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.</p>
+<div style="text-align:center">
+<img src="../../images/UVEditor_Example-BeforeAfter.png">
+</div>
+
+<p><strong>UVs</strong> are how the mesh stores this data. These are basically 2D "fold-outs" of the actual 3D mesh, like the image below.</p>
+<div style="text-align:center">
+<img src="../../images/UVEditor_Example-123.png">
+</div>
+
 <hr />
-<h2 id="auto-texturing-vs-manual-uvs">Auto-Texturing vs Manual UVs</h2>
-<div class="info-box warning">
-Section Video: <a href="@todo">Texturing and UVs: Auto-Texturing vs Manual UVs</a>
+<h2 id="auto-vs-manual-uvs">Auto vs Manual UVs</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Texture Mapping: Auto vs Manual UVs</a>
 </div>
 
 <p>ProBuilder provides both "Automatic" and "Manual" Texturing methods:</p>
 <ul>
 <li>
-<p><a href="../@todo">Auto-Texturing</a> : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles the actual UV work.</p>
+<p><a href="../auto-uvs-actions">Auto UVs</a> : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles projection and updates as you work.</p>
 </li>
 <li>
-<p><a href="../@todo">Manual UV Editing</a> : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.</p>
+<p><a href="../manual-uvs-actions">Manual UV Editing</a> : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.</p>
 </li>
 </ul>
-<p>You can also use a mix of Auto-Texturing and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.</p>
+<p>You can use a mix of Auto and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.</p>
 <hr />
-<h2 id="the-texturing-and-uvs-window">The Texturing and UVs Window</h2>
-<div class="info-box warning">
-Section Video: <a href="@todo">Texturing and UVs: The Texturing and UVs Window</a>
+<h2 id="the-uv-editor-window">The UV Editor Window</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Texture Mapping: The UV Editor Window</a>
 </div>
 
-<p>Both <a href="../@todo">Auto-Texturing</a> and <a href="../@todo">Manual UV Editing</a> controls are located in Texturing and UVs Window.</p>
-<p>To open this window, click it's button in the <a href="../@todo">Main Toolbar</a>. </p>
+<p>Both <a href="../auto-uvs-actions">Auto-Texturing</a> and <a href="../manual-uvs-actions">Manual UV Editing</a> controls are located in UV Editor Window.</p>
+<p>To open this window, click it's button in the <a href="../@todo">Main Toolbar</a>.</p>
 <ul>
-<li>In <a href="../@todo">Text Mode</a>, this will be the button labeled <strong>UV Editor</strong> </li>
-<li>In <a href="../@todo">Icon Mode</a>, use the button with this icon: <img alt="UV Editor Icon" src="../../images/icons/Panel_UVeditor.png" title="UV Editor Icon" /></li>
+<li>In Text Mode, this will be the button labeled <strong>UV Editor</strong></li>
+<li>In Icon Mode, use the button with this icon: <img alt="UV Editor Icon" src="../../images/icons/Panel_UVeditor.png" title="UV Editor Icon" /></li>
 </ul>
-<p><img alt="@todo" src="../../images/PlaceholderImage.png" /></p>
-<h3 id="a-toolbar">(A) Toolbar</h3>
-<p>General tools for working in both <a href="../@todo">Auto-Texturing</a> and <a href="../@todo">Manual UV Editing</a> modes. The buttons are, from left to right:</p>
-<ul>
-<li>
-<p><strong>Select, Move, Rotate, Scale</strong> : this first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.</p>
-</li>
-<li>
-<p><strong>Vertex, Edge Face</strong> : the second button group contains shortcuts to ProBuilder's <a href="../@todo">Element Editing Modes</a>. When using <a href="../@todo">Manual UV Editing</a>, this allows you to select and manipulate UVs by Vertex, Edge, or Face.</p>
-</li>
-<li>
-<p><strong>In-Scene Controls</strong> : This button toggles On/Off the <a href="../@todo">In-Scene Controls</a>.</p>
-</li>
-<li>
-<p><strong>Texture Preview</strong> : When <strong>On</strong>, the selected face's main texture will be displayed in the <a href="../@todo">UV Viewer</a>.</p>
-</li>
-<li>
-<p>Render UVs: Opens the <a href="../@todo">Render UVs</a> tool panel, for rendering UV Templates to paint over in Photoshop/etc. </p>
-</li>
-</ul>
-<h3 id="actions-panel">Actions Panel</h3>
-<h3 id="uv-viewer">UV Viewer</h3>
-<hr />
-<h2 id="auto-texturing-actions-panel">Auto-Texturing Actions Panel</h2>
-<hr />
-<h2 id="manual-uv-editing-actions-panel">Manual UV Editing Actions Panel</h2>
+<div style="text-align:center">
+<img src="../../images/UVPanel_FullWindow_Letters.png">
+</div>
+
+<h3 id="uv-editor-toolbar"><img alt="Item A" src="../../images/LetterCircle_A.png" /> UV Editor Toolbar</h3>
+<p>General tools and shortcuts for working with UVs- see the <a href="../uv-editor-toolbar">UV Editor Toolbar</a> section for details.</p>
+<h3 id="actions-panel"><img alt="Item B" src="../../images/LetterCircle_B.png" /> Actions Panel</h3>
+<p>This is a dynamic Panel, similar to the <a href="../../toolbar/overview-toolbar">Main Toolbar</a>- only actions available for the selected UV Element(s) type will be shown.</p>
+<p>For full info, see the <a href="../auto-uvs-actions">Auto UVs Actions</a> and <a href="../manual-uvs-actions">Manual UVs Actions</a> sections.</p>
+<h3 id="uv-viewer"><img alt="Item C" src="../../images/LetterCircle_C.png" /> UV Viewer</h3>
+<p>Here you can view and edit the selected object's UV Elements directly- see the <a href="../manual-uvs-actions">Manual UVs</a> section for full details.</p>
               
             </div>
           </div>
@@ -348,10 +356,10 @@ Section Video: <a href="@todo">Texturing and UVs: The Texturing and UVs Window</
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../auto-texturing/" class="btn btn-neutral float-right" title="Auto-Texturing">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../uv-editor-toolbar/" class="btn btn-neutral float-right" title="UV Editor Toolbar">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../../toolbar/all/" class="btn btn-neutral" title="All"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../toolbar/all/" class="btn btn-neutral" title="Element Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -380,7 +388,7 @@ Section Video: <a href="@todo">Texturing and UVs: The Texturing and UVs Window</
         <span><a href="../../toolbar/all/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../auto-texturing/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../uv-editor-toolbar/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

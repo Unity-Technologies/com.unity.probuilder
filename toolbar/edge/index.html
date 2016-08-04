@@ -8,7 +8,7 @@
   
   
   
-  <title>Edge - ProBuilder Documentation</title>
+  <title>Edge Actions - ProBuilder Documentation</title>
   
 
   <link rel="shortcut icon" href="../../img/favicon.ico">
@@ -26,8 +26,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Edge";
-    var mkdocs_page_input_path = "toolbar\edge.md";
+    var mkdocs_page_name = "Edge Actions";
+    var mkdocs_page_input_path = "toolbar/edge.md";
     var mkdocs_page_url = "/toolbar/edge/";
   </script>
   
@@ -92,7 +92,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../selection-tools/">Selection Tools</a>
+        <a class="" href="../selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -105,20 +105,15 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../vertex/">Vertex</a>
+        <a class="" href="../vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 current">
-        <a class="current" href="./">Edge</a>
+        <a class="current" href="./">Edge Actions</a>
         
             <ul>
             
@@ -126,7 +121,7 @@
                 
                     <li><a class="toctree-l4" href="#bridge-edges">Bridge Edges</a></li>
                 
-                    <li><a class="toctree-l4" href="#bevel-edges">Bevel Edges</a></li>
+                    <li><a class="toctree-l4" href="#bevel">Bevel</a></li>
                 
                     <li><a class="toctree-l4" href="#connect-edges">Connect Edges</a></li>
                 
@@ -140,19 +135,16 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../face/">Face</a>
+        <a class="" href="../face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -160,31 +152,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -270,12 +276,8 @@
           <li>Toolbar &raquo;</li>
         
       
-        
-          <li>Geometry Actions &raquo;</li>
-        
-      
     
-    <li>Edge</li>
+    <li>Edge Actions</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -286,7 +288,8 @@
             <div class="section">
               
                 <h1 id="video-edge-actions">Video: Edge Actions</h1>
-<p><a href="../@todo"><img alt="Edge Actions Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
+<!-- [![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
+
 <hr />
 <div style="text-align:center">
 <img src="../../images/Toolbar_EdgeActions.png">
@@ -294,7 +297,7 @@
 
 <hr />
 <h2 id="bridge-edges"><img alt="Bridge Edges Icon" src="../../images/icons/Edge_Bridge.png" title="Bridge Edges Icon" /> Bridge Edges</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 </div>
 
@@ -305,12 +308,14 @@ Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 </div>
 
 <hr />
-<h2 id="bevel-edges"><img alt="Bevel Edges Icon" src="../../images/icons/Edge_Bevel.png" title="Bevel Edges Icon" /> Bevel Edges</h2>
-<div class="info-box warning">
+<p><a id="bevel"></a></p>
+<h2 id="bevel"><img alt="Bevel Edges Icon" src="../../images/icons/Edge_Bevel.png" title="Bevel Edges Icon" /> Bevel</h2>
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </div>
 
-<p><strong>Keyboard Shortcut</strong> : <code>ALT B</code></p>
+<!-- **Keyboard Shortcut** : `ALT B` -->
+
 <p>Splits the selected edge(s) into two edges, with a new face between.</p>
 <div style="text-align:center">
 <img src="../../images/BevelEdges_Example.png">
@@ -333,7 +338,7 @@ Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </table>
 <hr />
 <h2 id="connect-edges"><img alt="Connect Edges Icon" src="../../images/icons/Edge_Connect.png" title="Connect Edges Icon" /> Connect Edges</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 </div>
 
@@ -345,11 +350,11 @@ Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 
 <hr />
 <h2 id="extrude-edges"><img alt="Extrude Edges Icon" src="../../images/icons/Edge_Extrude.png" title="Extrude Edges Icon" /> Extrude Edges</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
 </div>
 
-<p><strong>Keyboard Shortcut</strong> : <code>SHIFT DRAG</code></p>
+<p><strong>Keyboard Shortcut</strong> : <code>SHIFT DRAG</code> / <code>CONTROL E</code> (PC) / <code>COMMAND E</code> (Mac)</p>
 <p>Pushes a new edge out from the selected edge, connected by a new face.</p>
 <p>You can also extrude edges by holding <code>SHIFT</code> while moving, rotating, or scaling them.</p>
 <div style="text-align:center">
@@ -381,10 +386,10 @@ Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../face/" class="btn btn-neutral float-right" title="Face">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../face/" class="btn btn-neutral float-right" title="Face Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../vertex/" class="btn btn-neutral" title="Vertex"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../vertex/" class="btn btn-neutral" title="Vertex Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

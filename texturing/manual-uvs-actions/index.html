@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <title>Manual UVs Actions - ProBuilder Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link href="../../css/alerts.css" rel="stylesheet">
+  <link href="../../css/extra.css" rel="stylesheet">
+  <link href="../../css/general.css" rel="stylesheet">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Manual UVs Actions";
+    var mkdocs_page_input_path = "texturing/manual-uvs-actions.md";
+    var mkdocs_page_url = "/texturing/manual-uvs-actions/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+  <script src="../../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> ProBuilder Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../general/fundamentals/">Fundamentals</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Toolbar</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/overview-toolbar/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/tool-panels/">Tool Panels</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/selection-tools/">Selection Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/object-actions/">Object Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/vertex/">Vertex Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/edge/">Edge Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/face/">Face Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../toolbar/all/">Element Actions</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Texture Mapping</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../overview-texture-mapping/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../uv-editor-toolbar/">UV Editor Toolbar</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Manual UVs Actions</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#convert-to-auto">Convert to Auto</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#project-uvs-planar">Project UVs: Planar</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#project-uvs-box">Project UVs: Box</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#select-island">Select Island</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#select-face">Select Face</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#weld">Weld</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#collapse-uvs">Collapse UVs</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#split-uvs">Split UVs</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#flip-horizontal">Flip Horizontal</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#flip-vertical">Flip Vertical</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#fit">Fit</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Troubleshooting</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../troubleshooting/faq/">Faq</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Upgrading</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/overview/">What Upgrade Procedure Should I Follow?</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/standard/">Standard</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/dllrename/">DLL Rename</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/upgrade-kit/">Upgrade Kit</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/prototype/">Prototype</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">ProBuilder Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Texture Mapping &raquo;</li>
+        
+      
+    
+    <li>Manual UVs Actions</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <!-- # Video: Manual UVs Actions
+
+[![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
+
+-->
+
+<div style="text-align:center">
+<img src="../../images/UVPanel_ManualActions.png">
+</div>
+
+<hr />
+<h2 id="convert-to-auto">Convert to Auto</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Convert to Auto</a>
+</div>
+
+<p>Converts all selected faces to <a href="../@todo">Auto UVs</a>.</p>
+<hr />
+<h2 id="project-uvs-planar">Project UVs: Planar</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Project UVs: Planar</a>
+</div>
+
+<p>Unwraps the selected face(s) using a Planar Projection method.</p>
+<div style="text-align:center">
+<img src="../../images/PlanarProject_Example.png">
+</div>
+
+<hr />
+<h2 id="project-uvs-box">Project UVs: Box</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Project UVs: Box</a>
+</div>
+
+<p>Unwraps the selected face(s) using a Box Projection method.</p>
+<div style="text-align:center">
+<img src="../../images/BoxProject_Example.png">
+</div>
+
+<hr />
+<h2 id="select-island">Select Island</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Select Island</a>
+</div>
+
+<p>With a UV element selected, clicking this will expand the selection to include all other connected UV elements.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_SelectIsland.png">
+</div>
+
+<hr />
+<h2 id="select-face">Select Face</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Select Face</a>
+</div>
+
+<p>With a Vertex or Edge selected, click to select all elements on the same face.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_SelectFace.png">
+</div>
+
+<hr />
+<h2 id="weld">Weld</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Weld</a>
+</div>
+
+<p>Collapses selected vertices together, but only if they are within a set distance.</p>
+<p>To adjust the distance modifier, click the "+" button on the right side of the Weld button.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_WeldUVs.png">
+</div>
+
+<hr />
+<h2 id="collapse-uvs">Collapse UVs</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Collapse UVs</a>
+</div>
+
+<p>Collapses all selected vertices to a single vertex, regardless of distance.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_CollapseUVs.png">
+</div>
+
+<hr />
+<h2 id="split-uvs">Split UVs</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Split UVs</a>
+</div>
+
+<p>Breaks off the selected UV element(s)) from any UV element(s), allowing them to be manipulated independantly.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_SplitUVs.png">
+</div>
+
+<hr />
+<h2 id="flip-horizontal">Flip Horizontal</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Flip Horizontal</a>
+</div>
+
+<p>Flip the selected UV element(s) in the horizontal direction.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_FlipHorizontal.png">
+</div>
+
+<hr />
+<h2 id="flip-vertical">Flip Vertical</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Flip Vertical</a>
+</div>
+
+<p>Flip the selected UV element(s) in the vertical direction.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_FlipVertical.png">
+</div>
+
+<hr />
+<h2 id="fit">Fit</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Manual UVs: Fit</a>
+</div>
+
+<p>Scale and move the selected UV element(s) to fit exactly within the UV space.</p>
+<div style="text-align:center">
+<img src="../../images/UVExamples_FitUVs.png">
+</div>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../preferences/preferences/" class="btn btn-neutral float-right" title="Preferences">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../auto-uvs-actions/" class="btn btn-neutral" title="Auto UVs Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../auto-uvs-actions/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../preferences/preferences/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>

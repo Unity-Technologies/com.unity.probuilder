@@ -27,7 +27,7 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Object Actions";
-    var mkdocs_page_input_path = "toolbar\object-actions.md";
+    var mkdocs_page_input_path = "toolbar/object-actions.md";
     var mkdocs_page_url = "/toolbar/object-actions/";
   </script>
   
@@ -92,7 +92,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../selection-tools/">Selection Tools</a>
+        <a class="" href="../selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -103,21 +103,31 @@
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-object-actions">Video: Object Actions</a></li>
+                <li class="toctree-l3"><a href="#merge-objects">Merge Objects</a></li>
                 
-                    <li><a class="toctree-l4" href="#merge-objects">Merge Objects</a></li>
+            
+                <li class="toctree-l3"><a href="#flip-object-normals">Flip Object Normals</a></li>
                 
-                    <li><a class="toctree-l4" href="#flip-object-normals">Flip Object Normals</a></li>
+            
+                <li class="toctree-l3"><a href="#subdivide-object">Subdivide Object</a></li>
                 
-                    <li><a class="toctree-l4" href="#subdivide-object">Subdivide Object</a></li>
+            
+                <li class="toctree-l3"><a href="#reset-freeze-transform">Reset / Freeze Transform</a></li>
                 
-                    <li><a class="toctree-l4" href="#reset-freeze-transform">Reset / Freeze Transform</a></li>
+            
+                <li class="toctree-l3"><a href="#move-pivot-to-center-of-object">Move Pivot to Center of Object</a></li>
                 
-                    <li><a class="toctree-l4" href="#move-pivot-to-center-of-object">Move Pivot to Center of Object</a></li>
+            
+                <li class="toctree-l3"><a href="#conform-normals">Conform Normals</a></li>
                 
-                    <li><a class="toctree-l4" href="#conform-normals">Conform Normals</a></li>
+            
+                <li class="toctree-l3"><a href="#triangulate">Triangulate</a></li>
                 
-                    <li><a class="toctree-l4" href="#triangulate">Triangulate</a></li>
+            
+                <li class="toctree-l3"><a href="#mirror-tool">Mirror Tool</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#generate-uv2">Generate UV2</a></li>
                 
             
             </ul>
@@ -126,39 +136,31 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../vertex/">Vertex</a>
+        <a class="" href="../vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../edge/">Edge</a>
+        <a class="" href="../edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../face/">Face</a>
+        <a class="" href="../face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -166,31 +168,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -287,54 +303,51 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-object-actions">Video: Object Actions</h1>
-<p><a href="../@todo"><img alt="ProBuilder Fundamentals Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<hr />
+                <!-- #Video: Object Actions
+
+[![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo)
+ -->
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_ObjectActions.png">
 </div>
 
 <hr />
 <h2 id="merge-objects"><img alt="Merge Objects Icon" src="../../images/icons/Object_Merge.png" title="Merge Objects Icon" /> Merge Objects</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Merge Objects</a>
 </div>
 
-<p>Merges the selected objects into one, single object. When clicked, you will be prompted to choose between two options:</p>
-<ul>
-<li>Merge Delete: Merge to a new object, and delete the source objects</li>
-<li>Merge Save: Merge to a new object, but only disable (not delete) the source objects</li>
-</ul>
+<p>Merges the selected objects into a single object.</p>
 <hr />
 <h2 id="flip-object-normals"><img alt="Flip Object Normals Icon" src="../../images/icons/Object_FlipNormals.png" title="Flip Object Normals Icon" /> Flip Object Normals</h2>
-<div class="info-box warning">
+<div class="video-link">
 
 <p>Section Video: <a href="@todo">Object Actions: Flip Object Normals</a>
-</div> </p>
-<p>Flips the normals of <strong>all</strong> faces on the selected object(s). </p>
+</div></p>
+<p>Flips the normals of <strong>all</strong> faces on the selected object(s).</p>
 <blockquote>
 <p>Especially useful for converting an exterior modeled shape into an interior space.</p>
 </blockquote>
 <p><img alt="Flip Object Normals Example" src="../../images/FlipObjectNormals_Example.png" title="Flip Object Normals Example" /></p>
 <hr />
 <h2 id="subdivide-object"><img alt="Subdivide Objects Icon" src="../../images/icons/Object_Subdivide.png" title="Subdivide Objects Icon" /> Subdivide Object</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
 </div>
 
-<p><strong>Keyboard Shortcut</strong> : <code>ALT S</code></p>
 <p>Divides every face on selected objects, allowing for greater levels of detail when modeling.</p>
 <p><img alt="Subdivide Object Example" src="../../images/SubdivideObject_Example.png" title="Subdivide Object Example" /></p>
 <hr />
 <h2 id="reset-freeze-transform"><img alt="Reset Transform Icon" src="../../images/icons/Pivot_Reset.png" title="Reset Transform Icon" /> Reset / Freeze Transform</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
 </div>
 
-<p>Sets the selected objects position, rotation, and scale to world-relative {0,0,0} without changing any vertex positions.</p>
+<p>Sets the selected objects position, rotation, and scale to world-relative <code>{0,0,0}</code> without changing any vertex positions.</p>
 <hr />
 <h2 id="move-pivot-to-center-of-object"><img alt="Center Pivot Icon" src="../../images/icons/Pivot_CenterOnObject.png" title="Center Pivot Icon" /> Move Pivot to Center of Object</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Center Pivot</a>
 </div>
 
@@ -343,19 +356,41 @@ Section Video: <a href="@todo">Object Actions: Center Pivot</a>
 <p><img alt="Center Pivot Example" src="../../images/CenterPivot_Example.png" title="Center Pivot Example" /></p>
 <hr />
 <h2 id="conform-normals"><img alt="Conform Normals Icon" src="../../images/icons/Object_ConformNormals.png" title="Conform Normals Icon" /> Conform Normals</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Conform Normals</a>
 </div>
 
-<p>Sets all face normals on the selected object to the same relative direction, in case you suspect a "leak".</p>
+<p>Sets all face normals on the selected object to the same relative direction.</p>
 <hr />
 <h2 id="triangulate"><img alt="Triangulate Icon" src="../../images/icons/Object_Triangulate.png" title="Triangulate Icon" /> Triangulate</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Object Actions: Triangulate</a>
 </div>
 
 <p>Reduces all polygons to their base triangles, creating a "<a href="http://qt-ent.com/PolyWorld/">Polyworld-like</a>" effect.</p>
 <p><img alt="Triangulate Object Example" src="../../images/TriangulateObject_Example.png" title="Triangulate Object Example" /></p>
+<hr />
+<p><a id="mirror"></a></p>
+<h2 id="mirror-tool"><img alt="Mirror Tool Icon" src="../../images/icons/Object_Mirror.png" title="Mirror Tool Icon" /> Mirror Tool</h2>
+<div class="video-link">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
+</div>
+
+<p><strong>Purpose</strong> : Use the Mirror action to create mirrored copies of objects.</p>
+<p>Mirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together
+for a perfectly symmetrical result.</p>
+<p><img alt="Mirror Tool Example" src="../../images/Mirror-Panel_WithExample.png" title="Mirror Tool Example" /></p>
+<p><strong>Usage</strong> :</p>
+<ol>
+<li>Select the object to be mirrored</li>
+<li>Open the Mirror Tools</li>
+<li>Select which axis (or multiple axis) to mirror on</li>
+<li>Click "Mirror"- a mirrored duplicate will be created</li>
+</ol>
+<hr />
+<p><a id="generateuv2"></a></p>
+<h2 id="generate-uv2">Generate UV2</h2>
+<p><strong>Purpose</strong>: Build the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.</p>
               
             </div>
           </div>
@@ -363,10 +398,10 @@ Section Video: <a href="@todo">Object Actions: Triangulate</a>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../vertex/" class="btn btn-neutral float-right" title="Vertex">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../vertex/" class="btn btn-neutral float-right" title="Vertex Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../selection-tools/" class="btn btn-neutral" title="Selection Tools"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../selection-tools/" class="btn btn-neutral" title="Selection Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

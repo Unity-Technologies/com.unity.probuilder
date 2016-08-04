@@ -1,5 +1,41 @@
-
 .inline-image
 {
 	display: inline-block;
+}
+
+.youtube-preview
+{
+	display: block;
+	width: 560px;
+	height: 315px;
+	margin: auto;
+	margin-bottom: 24px;
+	border: none;
+}
+
+.sub-header {
+  color:#2980B9;
+  padding-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+img {
+  padding-top: 4px;
+  padding-bottom: 16px;
+}
+
+.video-link
+{
+	/**
+	 *	@todo re-enable video links when they exist
+	 */
+	display: none;
+	background: #f7f7f7;
+	color: #333;
+	border: none;
+	padding: 12px;
+	margin-bottom: 24px;
+	line-height: 24px;
+	border-left: 6px solid #00aaef;
+	box-shadow: 0 5px 8px -6px rgba(0, 0, 0, 0.2);
 }

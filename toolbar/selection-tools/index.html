@@ -8,7 +8,7 @@
   
   
   
-  <title>Selection Tools - ProBuilder Documentation</title>
+  <title>Selection Actions - ProBuilder Documentation</title>
   
 
   <link rel="shortcut icon" href="../../img/favicon.ico">
@@ -26,8 +26,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Selection Tools";
-    var mkdocs_page_input_path = "toolbar\selection-tools.md";
+    var mkdocs_page_name = "Selection Actions";
+    var mkdocs_page_input_path = "toolbar/selection-tools.md";
     var mkdocs_page_url = "/toolbar/selection-tools/";
   </script>
   
@@ -92,25 +92,29 @@
         
             
     <li class="toctree-l1 current">
-        <a class="current" href="./">Selection Tools</a>
+        <a class="current" href="./">Selection Actions</a>
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-selection-tools">Video: Selection Tools</a></li>
+                <li class="toctree-l3"><a href="#select-hidden">Select Hidden</a></li>
                 
-                    <li><a class="toctree-l4" href="#select-hidden">Select Hidden</a></li>
+            
+                <li class="toctree-l3"><a href="#handle-alignment">Handle Alignment</a></li>
                 
-                    <li><a class="toctree-l4" href="#handle-alignment">Handle Alignment</a></li>
+            
+                <li class="toctree-l3"><a href="#grow-selection">Grow Selection</a></li>
                 
-                    <li><a class="toctree-l4" href="#grow-selection">Grow Selection</a></li>
+            
+                <li class="toctree-l3"><a href="#shrink-selection">Shrink Selection</a></li>
                 
-                    <li><a class="toctree-l4" href="#shrink-selection">Shrink Selection</a></li>
+            
+                <li class="toctree-l3"><a href="#invert-selection">Invert Selection</a></li>
                 
-                    <li><a class="toctree-l4" href="#invert-selection">Invert Selection</a></li>
+            
+                <li class="toctree-l3"><a href="#select-edge-loop">Select Edge Loop</a></li>
                 
-                    <li><a class="toctree-l4" href="#select-edge-loop">Select Edge Loop</a></li>
-                
-                    <li><a class="toctree-l4" href="#select-edge-ring">Select Edge Ring</a></li>
+            
+                <li class="toctree-l3"><a href="#select-edge-ring">Select Edge Ring</a></li>
                 
             
             </ul>
@@ -126,39 +130,31 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../vertex/">Vertex</a>
+        <a class="" href="../vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../edge/">Edge</a>
+        <a class="" href="../edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../face/">Face</a>
+        <a class="" href="../face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -166,31 +162,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -277,7 +287,7 @@
         
       
     
-    <li>Selection Tools</li>
+    <li>Selection Actions</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -287,16 +297,19 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-selection-tools">Video: Selection Tools</h1>
-<p><a href="../@todo" title="Selection Tools Video"><img alt="ProBuilder Fundamentals Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<hr />
+                <!-- #Video: Selection Tools
+
+[![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "Selection Tools Video")
+
+ -->
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_SelectionTools.png">
 </div>
 
 <hr />
 <h2 id="select-hidden"><img alt="Select Hidden ON" src="../../images/icons/Selection_SelectHidden-ON.png" /> Select Hidden</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
 </div>
 
@@ -311,23 +324,23 @@ Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
 <tbody>
 <tr>
 <td align="center"><img alt="Select Hidden ON" src="../../images/icons/Selection_SelectHidden-ON.png" /></td>
-<td><strong>On</strong> : all <a href="../@todo">Elements</a> are selectable, regardlesss of their visibility</td>
+<td><strong>On</strong>: all <a href="../../general/fundamentals/#editing-meshes">elements</a> are selectable, regardlesss of their visibility</td>
 </tr>
 <tr>
 <td align="center"><img alt="Select Hidden OFF" src="../../images/icons/Selection_SelectHidden-OFF.png" /></td>
-<td><strong>Off</strong> : drag selection will ignore any <a href="../@todo">Elements</a> that cannot currently be seen</td>
+<td><strong>Off</strong>: drag selection will ignore any <a href="../../general/fundamentals/#editing-meshes">elements</a> that cannot currently be seen</td>
 </tr>
 </tbody>
 </table>
 <p><img alt="Handle Alignment Examples" src="../../images/SelectHidden_Example.png" /></p>
 <hr />
 <h2 id="handle-alignment"><img alt="Handle Alignment Local" src="../../images/icons/HandleAlign_Local.png" /> Handle Alignment</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 </div>
 
 <p><strong>Keyboard Shortcut</strong> : <code>P</code></p>
-<p>Choose how the scene handles will be oriented when selecting <a href="../@todo">Elements</a>. This is a toggle button, click to change modes:</p>
+<p>Choose how the scene handles will be oriented when selecting <a href="../../general/fundamentals/#editing-meshes">elements</a>. This is a toggle button; click to change modes:</p>
 <table>
 <thead>
 <tr>
@@ -352,14 +365,15 @@ Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 </table>
 <p><img alt="Handle Alignment Examples" src="../../images/HandleAlign_ExamplesWithTextAndIcons.png" /></p>
 <hr />
+<p><a id="grow"></a></p>
 <h2 id="grow-selection"><img alt="Grow Selection" src="../../images/icons/Selection_Grow.png" /> Grow Selection</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 </div>
 
-<p><strong>Keyboard Shortcut</strong> : <code>ALT G</code></p>
-<p>Expands the selection outward, to adjacent faces. </p>
-<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong><a href="../@todo">Custom Settings</a> Available</strong> :</p>
+<p><strong>Keyboard Shortcut</strong>: <code>ALT G</code></p>
+<p>Expands the selection outward to adjacent faces, edges, or vertices.</p>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Options</strong>:</p>
 <table>
 <thead>
 <tr>
@@ -385,23 +399,23 @@ Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 <p><img alt="Handle Alignment Examples" src="../../images/GrowSelection_Example.png" /></p>
 <hr />
 <h2 id="shrink-selection"><img alt="Shrink Selection" src="../../images/icons/Selection_Shrink.png" /> Shrink Selection</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
 </div>
 
 <p><strong>Keyboard Shortcut</strong> : <code>ALT SHIFT G</code></p>
-<p>Does the opposite of Grow Selection- removes the elements on the perimiter of the current selection.</p>
+<p>Does the opposite of Grow Selection: removes the elements on the perimiter of the current selection.</p>
 <hr />
 <h2 id="invert-selection"><img alt="Invert Selection" src="../../images/icons/Selection_Invert.png" /> Invert Selection</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
 </div>
 
-<p><strong>Keyboard Shortcut</strong> : <code>ALT SHIFT G</code></p>
-<p>Selects the inverse of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.</p>
+<p><strong>Keyboard Shortcut</strong> : <code>CTRL SHIFT I</code></p>
+<p>Selects the inverse of the current selection. All unselected elements will become selected, the current selection will be unselected.</p>
 <hr />
 <h2 id="select-edge-loop"><img alt="Select Edge Loop Icon" src="../../images/icons/Selection_Loop.png" title="Select Edge Loop Icon" /> Select Edge Loop</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
 </div>
 
@@ -410,7 +424,7 @@ Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
 <p><img alt="Handle Alignment Examples" src="../../images/Selection_LoopExample.png" /></p>
 <hr />
 <h2 id="select-edge-ring"><img alt="Select Edge Ring Icon" src="../../images/icons/Selection_Ring.png" title="Select Edge Ring Icon" /> Select Edge Ring</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Select Edge Ring</a>
 </div>
 

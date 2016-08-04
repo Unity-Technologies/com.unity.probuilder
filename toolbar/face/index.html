@@ -8,7 +8,7 @@
   
   
   
-  <title>Face - ProBuilder Documentation</title>
+  <title>Face Actions - ProBuilder Documentation</title>
   
 
   <link rel="shortcut icon" href="../../img/favicon.ico">
@@ -26,8 +26,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Face";
-    var mkdocs_page_input_path = "toolbar\face.md";
+    var mkdocs_page_name = "Face Actions";
+    var mkdocs_page_input_path = "toolbar/face.md";
     var mkdocs_page_url = "/toolbar/face/";
   </script>
   
@@ -92,7 +92,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../selection-tools/">Selection Tools</a>
+        <a class="" href="../selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -105,49 +105,50 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../vertex/">Vertex</a>
+        <a class="" href="../vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../edge/">Edge</a>
+        <a class="" href="../edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 current">
-        <a class="current" href="./">Face</a>
+        <a class="current" href="./">Face Actions</a>
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-face-actions">Video: Face Actions</a></li>
+                <li class="toctree-l3"><a href="#delete-face">Delete Face</a></li>
                 
-                    <li><a class="toctree-l4" href="#delete-face">Delete Face</a></li>
+            
+                <li class="toctree-l3"><a href="#detach-face">Detach Face</a></li>
                 
-                    <li><a class="toctree-l4" href="#detach-face">Detach Face</a></li>
+            
+                <li class="toctree-l3"><a href="#extrude-face">Extrude Face</a></li>
                 
-                    <li><a class="toctree-l4" href="#extrude-face">Extrude Face</a></li>
+            
+                <li class="toctree-l3"><a href="#flip-normals">Flip Normals</a></li>
                 
-                    <li><a class="toctree-l4" href="#flip-normals">Flip Normals</a></li>
+            
+                <li class="toctree-l3"><a href="#flip-face-edge">Flip Face Edge</a></li>
                 
-                    <li><a class="toctree-l4" href="#flip-triangles">Flip Triangles</a></li>
+            
+                <li class="toctree-l3"><a href="#conform-normals">Conform Normals</a></li>
                 
-                    <li><a class="toctree-l4" href="#conform-normals">Conform Normals</a></li>
+            
+                <li class="toctree-l3"><a href="#merge-faces">Merge Faces</a></li>
                 
-                    <li><a class="toctree-l4" href="#merge-faces">Merge Faces</a></li>
+            
+                <li class="toctree-l3"><a href="#subdivide-face">Subdivide Face</a></li>
                 
-                    <li><a class="toctree-l4" href="#subdivide-face">Subdivide Face</a></li>
-                
-                    <li><a class="toctree-l4" href="#bevel-face">Bevel Face</a></li>
+            
+                <li class="toctree-l3"><a href="#bevel">Bevel</a></li>
                 
             
             </ul>
@@ -157,12 +158,9 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -170,31 +168,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -280,12 +292,8 @@
           <li>Toolbar &raquo;</li>
         
       
-        
-          <li>Geometry Actions &raquo;</li>
-        
-      
     
-    <li>Face</li>
+    <li>Face Actions</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -295,16 +303,17 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-face-actions">Video: Face Actions</h1>
-<p><a href="../@todo"><img alt="Face Actions Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<hr />
+                <!-- #Video: Face Actions
+
+[![Face Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_FaceActions.png">
 </div>
 
 <hr />
 <h2 id="delete-face"><img alt="Delete Face Icon" src="../../images/icons/Face_Delete.png" title="Delete Faces Icon" /> Delete Face</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Delete Faces</a>
 </div>
 
@@ -316,7 +325,7 @@ Section Video: <a href="@todo">Face Actions: Delete Faces</a>
 
 <hr />
 <h2 id="detach-face"><img alt="Detach Face Icon" src="../../images/icons/Face_Detach.png" title="Detach Faces Icon" /> Detach Face</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Detach Faces</a>
 </div>
 
@@ -341,8 +350,9 @@ Section Video: <a href="@todo">Face Actions: Detach Faces</a>
 </tbody>
 </table>
 <hr />
+<p><a id="extrude"></p>
 <h2 id="extrude-face"><img alt="Extrude Face Icon" src="../../images/icons/Face_Extrude.png" title="Detach Faces Icon" /> Extrude Face</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Extrude Faces</a>
 </div>
 
@@ -374,7 +384,7 @@ Section Video: <a href="@todo">Face Actions: Extrude Faces</a>
 </table>
 <hr />
 <h2 id="flip-normals"><img alt="Flip Normals Icon" src="../../images/icons/Face_FlipNormals.png" title="Flip Normals Icon" /> Flip Normals</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Flip Normals</a>
 </div>
 
@@ -384,26 +394,26 @@ Section Video: <a href="@todo">Face Actions: Flip Normals</a>
 </div>
 
 <hr />
-<h2 id="flip-triangles"><img alt="Flip Triangles Icon" src="../../images/icons/Face_FlipTri.png" title="Flip Triangles Icon" /> Flip Triangles</h2>
-<div class="info-box warning">
-Section Video: <a href="@todo">Face Actions: Flip Triangles</a>
+<h2 id="flip-face-edge"><img alt="Flip Triangles Icon" src="../../images/icons/Face_FlipTri.png" title="Flip Face Edge Icon" /> Flip Face Edge</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Face Actions: Flip Face Edge</a>
 </div>
 
-<p>Flips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).</p>
+<p>Swap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).</p>
 <div style="text-align:center">
 <img src="../../images/FlipTri_Example.png">
 </div>
 
 <hr />
 <h2 id="conform-normals"><img alt="Conform Normals Icon" src="../../images/icons/Face_ConformNormals.png" title="Conform Normals Icon" /> Conform Normals</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Conform Normals</a>
 </div>
 
 <p>Sets all selected face normals to the same relative direction.</p>
 <hr />
 <h2 id="merge-faces"><img alt="Merge Faces Icon" src="../../images/icons/Face_Merge.png" title="Merge Faces Icon" /> Merge Faces</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Merge Faces</a>
 </div>
 
@@ -414,7 +424,7 @@ Section Video: <a href="@todo">Face Actions: Merge Faces</a>
 
 <hr />
 <h2 id="subdivide-face"><img alt="Subdivide Face Icon" src="../../images/icons/Face_Subdivide.png" title="Subdivide Face Icon" /> Subdivide Face</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
 </div>
 
@@ -424,12 +434,12 @@ Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
 </div>
 
 <hr />
-<h2 id="bevel-face"><img alt="Bevel Face Icon" src="../../images/icons/Edge_Bevel.png" title="Bevel Face Icon" /> Bevel Face</h2>
-<div class="info-box warning">
+<h2 id="bevel"><img alt="Bevel Icon" src="../../images/icons/Edge_Bevel.png" title="Bevel Icon" /> Bevel</h2>
+<div class="video-link">
 Section Video: <a href="@todo">Face Actions: Bevel Face</a>
 </div>
 
-<p>Performs the <a href="../@todo">Bevel Edge</a> action on all the edges of the selected face(s).</p>
+<p>Performs the <a href="../edge/#bevel">Bevel Edge</a> action on all the edges of the selected face(s).</p>
 <div style="text-align:center">
 <img src="../../images/BevelFace_Example.png">
 </div>
@@ -457,10 +467,10 @@ Section Video: <a href="@todo">Face Actions: Bevel Face</a>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../all/" class="btn btn-neutral float-right" title="All">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../all/" class="btn btn-neutral float-right" title="Element Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../edge/" class="btn btn-neutral" title="Edge"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../edge/" class="btn btn-neutral" title="Edge Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

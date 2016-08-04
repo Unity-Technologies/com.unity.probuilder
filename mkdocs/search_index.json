@@ -1,498 +1,708 @@
 {
     "docs": [
         {
-            "location": "/",
-            "text": "\ufeffWhat is ProBuilder?\n\n\nProBuilder\n is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!\n\n\nVideo: \nProBuilder Intro\n\n\nProBuilder Advanced vs. ProBuilder Basic\n\n\nProBuilder Basic\n is entirely free, and includes the core ProBuilder features for building and editing basic geometry. \nDownload ProBuilder Basic\n\n\nProBuilder Advanced\n is a paid extension that adds \"advanced\" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization. \nPurchase ProBuilder Advanced\n\n\n\n\nImportant!\n\nThis documentation encompasses \nall\n features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full \nAdvanced vs Basic Comparision\n.\n\n\n\n\nOptional: Register for access to Source Files and Online Downloads\n\n\n\n\nForward your Unity Asset Store invoice to \nregister@procore3d.com\n\n\nCreate an account on the \nUser Toolbox\n (if you don't already have one)\n\n\nOnce we have verified the invoice, the latest downloads will always be available via your \nUser Toolbox\n account\n\n\n\n\nThanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!\n\n\nHelpful Links and Info\n\n\n\n\nProCore3D Website\n\n\nEmail\n  \n\n\nFacebook\n  \n\n\nTwitter\n \n\n\nOnline Documentation\n\n\nTutorial Videos\n\n\nSupport and Troubleshooting\n\n\n\n\nVideo Tutorials\n:\n Take a short break to watch the video tutorials before using ProBuilder.  You\u2019ll be an expert in no time!",
+            "location": "/", 
+            "text": "\ufeff\nWhat is ProBuilder?\n\n\nProBuilder\n is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!\n\n\n\n\n\nProBuilder Advanced vs. ProBuilder Basic\n\n\nProBuilder Basic\n is entirely free, and includes the core ProBuilder features for building and editing basic geometry.\n\n\nDownload ProBuilder Basic\n\n\nProBuilder Advanced\n is a paid extension that adds \"advanced\" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization.\n\n\nPurchase ProBuilder Advanced\n\n\n\n\nImportant!\n\nThis documentation encompasses \nall\n features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full \nAdvanced vs Basic Comparision\n.\n\n\n\n\nOptional: Register for access to Source Files and Online Downloads\n\n\n\n\nForward your Unity Asset Store invoice to \nregister@procore3d.com\n\n\nCreate an account on the \nUser Toolbox\n (if you don't already have one)\n\n\nOnce we have verified the invoice, the latest downloads will always be available via your \nUser Toolbox\n account\n\n\n\n\nThanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!\n\n\nHelpful Links and Info\n\n\n\n\nProCore3D Website\n\n\nEmail\n\n\nFacebook\n\n\nTwitter\n\n\nOnline Documentation\n\n\nTutorial Videos\n\n\nSupport and Troubleshooting\n\n\n\n\nVideo Tutorials\n:\n Take a short break to watch the video tutorials before using ProBuilder.  You\u2019ll be an expert in no time!", 
             "title": "Home"
-        },
+        }, 
         {
-            "location": "/#what-is-probuilder",
-            "text": "ProBuilder  is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!  Video:  ProBuilder Intro",
-            "title": "\ufeffWhat is ProBuilder?"
-        },
-        {
-            "location": "/#probuilder-advanced-vs-probuilder-basic",
-            "text": "ProBuilder Basic  is entirely free, and includes the core ProBuilder features for building and editing basic geometry.  Download ProBuilder Basic  ProBuilder Advanced  is a paid extension that adds \"advanced\" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization.  Purchase ProBuilder Advanced",
+            "location": "/#probuilder-advanced-vs-probuilder-basic", 
+            "text": "ProBuilder Basic  is entirely free, and includes the core ProBuilder features for building and editing basic geometry.  Download ProBuilder Basic  ProBuilder Advanced  is a paid extension that adds \"advanced\" features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization.  Purchase ProBuilder Advanced", 
             "title": "ProBuilder Advanced vs. ProBuilder Basic"
-        },
+        }, 
         {
-            "location": "/#optional-register-for-access-to-source-files-and-online-downloads",
-            "text": "Forward your Unity Asset Store invoice to  register@procore3d.com  Create an account on the  User Toolbox  (if you don't already have one)  Once we have verified the invoice, the latest downloads will always be available via your  User Toolbox  account   Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!",
+            "location": "/#optional-register-for-access-to-source-files-and-online-downloads", 
+            "text": "Forward your Unity Asset Store invoice to  register@procore3d.com  Create an account on the  User Toolbox  (if you don't already have one)  Once we have verified the invoice, the latest downloads will always be available via your  User Toolbox  account   Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!", 
             "title": "Optional: Register for access to Source Files and Online Downloads"
-        },
+        }, 
         {
-            "location": "/#helpful-links-and-info",
-            "text": "ProCore3D Website  Email     Facebook     Twitter    Online Documentation  Tutorial Videos  Support and Troubleshooting   Video Tutorials :  Take a short break to watch the video tutorials before using ProBuilder.  You\u2019ll be an expert in no time!",
+            "location": "/#helpful-links-and-info", 
+            "text": "ProCore3D Website  Email  Facebook  Twitter  Online Documentation  Tutorial Videos  Support and Troubleshooting   Video Tutorials :  Take a short break to watch the video tutorials before using ProBuilder.  You\u2019ll be an expert in no time!", 
             "title": "Helpful Links and Info"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/",
-            "text": "Video: ProBuilder Fundamentals\n\n\nFirst time using ProBuilder? Start here for an overview of creating your first mesh, editing it's geometry,\napplying materials, and UV editing.\n\n\n\n\n\n\nThe ProBuilder Toolbar\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Toolbar\n\n\n\n\n\nAll of ProBuilder's specialized editing functions are available via the \nProBuilder Toolbar\n, which dynamically adapts to your Edit Mode and selection.\n\n\n\n\nEach Toolbar button will display detailed information about it's use, options, and keyboard shortcuts, when hovered over. Viewing these is a great way to start learning ProBuilder's deeper functionality.\n\n\n\n\nMore Info: \nProBuilder Toolbar\n\n\n\n\n\n\nCreating a New Mesh\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Shape Tool\n\n\n\n\n Press \nCTRL K\n on your keyboard to spawn in a new, default, ProBuilder-editable cube.\n\n\nTo start with a more complex shape, ProBuilder also includes a library of \nShapes\n (cylinder, torus, stairs, etc), to begin modeling with. Which each of these \nShapes\n, you can customize both starting dimensions and unique parameters.\n\n\n\n\n\n\nMore Info: \nShape Tool\n \n\n\n\n\n\n\nEditing Meshes\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Basic Mesh Editing\n\n\n \n\n\nObject vs Element\n\n\n\n\nProBuilder is always in one of 2 major modes: \nObject\n or \nElement\n.\n\n\n\n\nObject Mode\n is standard Unity mode, no surprises.\n\n\nElement Mode\n activates ProBuilder's mesh editing features.\n\n\nClick in the \nEdit Mode Toolbar\n to change Mode, or use it's shortcut keys.\n\n\n\n\nElements\n are the individual parts that make up a mesh: \nVertices\n, \nEdges\n, and \nFaces\n. If it helps, you can think of these like levels of detail on a map- for example, \"city, state, country\".\n\n\n\n\nVertex Editing\n: Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.\n\n\nEdge Editing\n: Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.\n\n\nFace Editing\n: Select and edit Faces on an object, performing basic tasks like deleting faces and extruding.\n\n\n\n\nElement Selection and Manipulation\n\n\nFirst, choose which Element type you'd like to edit, by clicking it's button in the \nEdit Mode Toolbar\n.\n\n\nThen, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).\n\n\nBuilding and Editing Complex Meshes\n\n\nProBuilder follows standard 3D modeling methods (and caveats), so experienced 3D artists can probably jump right in, after reading the \nProBuilder Toolbar\n section.\n\n\nFor those seeking greater knowledge, we highly recommend viewing the \n3D Modeling\n section. There, you can find:\n\n\n\n\nStep-by-step tutorials and videos\n\n\nWorkflow suggestions\n\n\nLinks to other useful sites, videos, etc\n\n\n\n\n\n\nMore Info: \n3D Modeling\n\n\n\n\n\n\nTexturing and UVs\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Texturing and UVs\n\n\n\n\n\n\n\nApplying Materials\n\n\nYou can apply \nany\n material (including Substance, etc) to ProBuilder meshes, using standard \"drag-n-drop\" method or the \nMaterial Palette\n.\n\n\nMaterials can also be applied to individual faces of a ProBuilder mesh, while in \nElement Mode\n.\n\n\n\n\nMore Info: \nMaterial Tools\n\n\n\n\nEditing UVs\n\n\nProBuilder includes both \"\nAuto UVs\n\" (default), and a complete \nManual UV Editing and Unwrapping\n system.\n\n\nAuto UV\n mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically. \n\n\nManual UV\n mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc. \n\n\nYou may use whichever you prefer, or a mix of both, even on the same mesh.\n\n\n\n\nMore Info: \nTexturing and UVs",
+            "location": "/general/fundamentals/", 
+            "text": "First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,\napplying materials, and UV editing.\n\n\n\n\n\n\n\nThe ProBuilder Toolbar\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Toolbar\n\n\n\n\n\nAll of ProBuilder's specialized editing functions are available via the \nProBuilder Toolbar\n, which dynamically adapts to your Edit Mode and selection.\n\n\n\n\nEach Toolbar button will display detailed information about it's use, options, and keyboard shortcuts when hovered over. Viewing tooltips is a great way to start learning about ProBuilder's functionality.\n\n\nMore Info: \nProBuilder Toolbar\n\n\n\n\nCreating a New Mesh\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Shape Tool\n\n\n\n\n\n Press \nCTRL K\n on your keyboard to spawn in a new ProBuilder-editable cube.\n\n\nTo start with a more complex shape, ProBuilder also includes a library of shapes (cylinder, torus, stairs, etc), to begin modeling with. Which each of these shapes, you can customize both starting dimensions and unique parameters.\n\n\n\n\nMore Info: \nShape Tool\n\n\n\n\nEditing Meshes\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Basic Mesh Editing\n\n\n\n\n\n\nObject vs Element\n\n\n\n\nProBuilder is always in one of 2 major modes: \nObject\n or \nElement\n.\n\n\n\n\nObject Mode\n is standard Unity mode, no surprises.\n\n\nElement Mode\n activates ProBuilder's mesh editing features.\n\n\nClick in the \nEdit Mode Toolbar\n to change Mode, or use it's shortcut keys.\n\n\n\n\nElements\n are the individual parts that make up a mesh: \nVertices\n, \nEdges\n, and \nFaces\n. If it helps, you can think of these like levels of detail on a map- for example, \"city, state, country\".\n\n\n\n\nVertex Editing\n: Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.\n\n\nEdge Editing\n: Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.\n\n\nFace Editing\n: Select and edit Faces on an object, performing basic tasks like deleting faces and extruding.\n\n\n\n\nElement Selection and Manipulation\n\n\nFirst, choose which Element type you'd like to edit by clicking it's button in the \nEdit Mode Toolbar\n.\n\n\nThen, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).\n\n\nBuilding and Editing Complex Meshes\n\n\nProBuilder follows many of the same conventions as other 3D modeling applications, so experienced 3D artists will likely be able to jump right in after reading the \nProBuilder Toolbar\n section.\n\n\nIf you are new to 3D modeling, ProBuilder is a great way to get your feet wet.  Now would be a good time to check out the tutorial videos on the ProCore \nYoutube playlist\n.\n\n\n\n\n\n\n\n\n\n\nTexturing and UVs\n\n\n\nQuick Video: \nFundamentals of ProBuilder: Texturing and UVs\n\n\n\n\n\n\n\nApplying Materials\n\n\nYou can apply \nany\n material (including Substance) to ProBuilder meshes using the Unity drag and drop method or the \nMaterial Palette\n.\n\n\nMaterials can also be applied to individual faces of a ProBuilder mesh, while in \nElement Mode\n.\n\n\nMore Info: \nMaterial Tools\n\n\nEditing UVs\n\n\nProBuilder includes both \nAuto UVs\n (default), and a complete \nManual UV Editing and Unwrapping\n system.\n\n\nAuto UV\n mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically.\n\n\nManual UV\n mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc.\n\n\nYou may use whichever you prefer, or a mix of both, even on the same mesh.\n\n\nMore Info: \nTexturing and UVs", 
             "title": "Fundamentals"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#video-probuilder-fundamentals",
-            "text": "First time using ProBuilder? Start here for an overview of creating your first mesh, editing it's geometry,\napplying materials, and UV editing.",
-            "title": "Video: ProBuilder Fundamentals"
-        },
-        {
-            "location": "/general/fundamentals/#the-probuilder-toolbar",
-            "text": "Quick Video:  Fundamentals of ProBuilder: Toolbar   All of ProBuilder's specialized editing functions are available via the  ProBuilder Toolbar , which dynamically adapts to your Edit Mode and selection.   Each Toolbar button will display detailed information about it's use, options, and keyboard shortcuts, when hovered over. Viewing these is a great way to start learning ProBuilder's deeper functionality.   More Info:  ProBuilder Toolbar",
+            "location": "/general/fundamentals/#the-probuilder-toolbar", 
+            "text": "Quick Video:  Fundamentals of ProBuilder: Toolbar   All of ProBuilder's specialized editing functions are available via the  ProBuilder Toolbar , which dynamically adapts to your Edit Mode and selection.   Each Toolbar button will display detailed information about it's use, options, and keyboard shortcuts when hovered over. Viewing tooltips is a great way to start learning about ProBuilder's functionality.  More Info:  ProBuilder Toolbar", 
             "title": "The ProBuilder Toolbar"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#creating-a-new-mesh",
-            "text": "Quick Video:  Fundamentals of ProBuilder: Shape Tool    Press  CTRL K  on your keyboard to spawn in a new, default, ProBuilder-editable cube.  To start with a more complex shape, ProBuilder also includes a library of  Shapes  (cylinder, torus, stairs, etc), to begin modeling with. Which each of these  Shapes , you can customize both starting dimensions and unique parameters.    More Info:  Shape Tool",
+            "location": "/general/fundamentals/#creating-a-new-mesh", 
+            "text": "Quick Video:  Fundamentals of ProBuilder: Shape Tool    Press  CTRL K  on your keyboard to spawn in a new ProBuilder-editable cube.  To start with a more complex shape, ProBuilder also includes a library of shapes (cylinder, torus, stairs, etc), to begin modeling with. Which each of these shapes, you can customize both starting dimensions and unique parameters.   More Info:  Shape Tool", 
             "title": "Creating a New Mesh"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#editing-meshes",
-            "text": "Quick Video:  Fundamentals of ProBuilder: Basic Mesh Editing",
+            "location": "/general/fundamentals/#editing-meshes", 
+            "text": "Quick Video:  Fundamentals of ProBuilder: Basic Mesh Editing", 
             "title": "Editing Meshes"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#object-vs-element",
-            "text": "ProBuilder is always in one of 2 major modes:  Object  or  Element .   Object Mode  is standard Unity mode, no surprises.  Element Mode  activates ProBuilder's mesh editing features.  Click in the  Edit Mode Toolbar  to change Mode, or use it's shortcut keys.   Elements  are the individual parts that make up a mesh:  Vertices ,  Edges , and  Faces . If it helps, you can think of these like levels of detail on a map- for example, \"city, state, country\".   Vertex Editing : Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.  Edge Editing : Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.  Face Editing : Select and edit Faces on an object, performing basic tasks like deleting faces and extruding.",
+            "location": "/general/fundamentals/#object-vs-element", 
+            "text": "ProBuilder is always in one of 2 major modes:  Object  or  Element .   Object Mode  is standard Unity mode, no surprises.  Element Mode  activates ProBuilder's mesh editing features.  Click in the  Edit Mode Toolbar  to change Mode, or use it's shortcut keys.   Elements  are the individual parts that make up a mesh:  Vertices ,  Edges , and  Faces . If it helps, you can think of these like levels of detail on a map- for example, \"city, state, country\".   Vertex Editing : Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.  Edge Editing : Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.  Face Editing : Select and edit Faces on an object, performing basic tasks like deleting faces and extruding.", 
             "title": "Object vs Element"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#element-selection-and-manipulation",
-            "text": "First, choose which Element type you'd like to edit, by clicking it's button in the  Edit Mode Toolbar .  Then, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).",
+            "location": "/general/fundamentals/#element-selection-and-manipulation", 
+            "text": "First, choose which Element type you'd like to edit by clicking it's button in the  Edit Mode Toolbar .  Then, use any of the standard Unity selection methods (click, drag, etc) and manipulation controls (move, rotate, scale), just as you would on any other object(s).", 
             "title": "Element Selection and Manipulation"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#building-and-editing-complex-meshes",
-            "text": "ProBuilder follows standard 3D modeling methods (and caveats), so experienced 3D artists can probably jump right in, after reading the  ProBuilder Toolbar  section.  For those seeking greater knowledge, we highly recommend viewing the  3D Modeling  section. There, you can find:   Step-by-step tutorials and videos  Workflow suggestions  Links to other useful sites, videos, etc    More Info:  3D Modeling",
+            "location": "/general/fundamentals/#building-and-editing-complex-meshes", 
+            "text": "ProBuilder follows many of the same conventions as other 3D modeling applications, so experienced 3D artists will likely be able to jump right in after reading the  ProBuilder Toolbar  section.  If you are new to 3D modeling, ProBuilder is a great way to get your feet wet.  Now would be a good time to check out the tutorial videos on the ProCore  Youtube playlist .", 
             "title": "Building and Editing Complex Meshes"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#texturing-and-uvs",
-            "text": "Quick Video:  Fundamentals of ProBuilder: Texturing and UVs",
+            "location": "/general/fundamentals/#texturing-and-uvs", 
+            "text": "Quick Video:  Fundamentals of ProBuilder: Texturing and UVs", 
             "title": "Texturing and UVs"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#applying-materials",
-            "text": "You can apply  any  material (including Substance, etc) to ProBuilder meshes, using standard \"drag-n-drop\" method or the  Material Palette .  Materials can also be applied to individual faces of a ProBuilder mesh, while in  Element Mode .   More Info:  Material Tools",
+            "location": "/general/fundamentals/#applying-materials", 
+            "text": "You can apply  any  material (including Substance) to ProBuilder meshes using the Unity drag and drop method or the  Material Palette .  Materials can also be applied to individual faces of a ProBuilder mesh, while in  Element Mode .  More Info:  Material Tools", 
             "title": "Applying Materials"
-        },
+        }, 
         {
-            "location": "/general/fundamentals/#editing-uvs",
-            "text": "ProBuilder includes both \" Auto UVs \" (default), and a complete  Manual UV Editing and Unwrapping  system.  Auto UV  mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically.   Manual UV  mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc.   You may use whichever you prefer, or a mix of both, even on the same mesh.   More Info:  Texturing and UVs",
+            "location": "/general/fundamentals/#editing-uvs", 
+            "text": "ProBuilder includes both  Auto UVs  (default), and a complete  Manual UV Editing and Unwrapping  system.  Auto UV  mode lets you tweak basics like Offset, Tiling, and Rotation, while ProBuilder handles the complex UV work automatically.  Manual UV  mode enables complete control of the UVs, including Projection Mapping, UV Stitching, and more, similar to UV editors in major tools like 3DS Max, Blender, etc.  You may use whichever you prefer, or a mix of both, even on the same mesh.  More Info:  Texturing and UVs", 
             "title": "Editing UVs"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/",
-            "text": "Video: Toolbar Overview\n\n\n\n\nProBuilder is controlled almost entirely via the \nMain Toolbar\n, which contains all commonly used functions.\n\n\nA second toolbar, the \nEdit Mode Toolbar\n, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.\n\n\n\n\nTool Catagories\n\n\n\nSection Video: \nToolbar Overview: Catagories\n\n\n\n\n\nThe Toolbar is color-coded to help you quickly choose tools by type:\n\n\n\n\nOrange\n for \nTool Panels\n\n\nBlue\n for \nSelection Tools\n\n\nGreen\n for \nObject Actions\n\n\nRed\n for \nGeometry Actions\n\n\n\n\n\n\n\n\nResizing and Text vs Icon Mode\n\n\n\nSection Video: \nToolbar Overview: Text vs Icon Mode\n\n\n\n\n\nYou can resize the Toolbar however you like, and it will re-order and flow it's contents to match.\n\n\nPrefer the good 'ol Text Buttons? Right click on the toolbar and choose \"Use Text Mode\".\n\n\n\n\n\n\nDynamic Layout\n\n\n\nSection Video: \nToolbar Overview: Dynamic Layout\n\n\n\n\n\nThis is a \"smart\" toolbar, and dynamically changes to match your current editing method and selection. \n\n\n\n\nButtons are only shown on the Toolbar if they are applicable in your current editing mode\n\n\nButtons that cannot be used on the current selection are automatically greyed-out and disabled.\n\n\n\n\n\n\nCustom Settings for Actions\n\n\n\nSection Video: \nToolbar Overview: Custom Settings for Actions\n\n\n\n\n\nSome of the most-used actions (\nExtrude\n, \nCollapse\n, \nGrow Selection\n, etc) also include Custom Settings, which can significantly modify the action.\n\n\n This symbol is shown next to a button if there are Custom Settings available. To edit these settings, \nALT CLICK\n on the button.\n\n\n\n\nEdit Mode Toolbar\n\n\n\nSection Video: \nToolbar Overview: The Edit Mode Toolbar\n\n\n\n\n\nThis is actually an extension of the main Toolbar, and is located separately, at the top-middle of your active sceneview.\n\n\nUse this \"mini-toolbar\" to choose your Edit Mode, or use keyboard shortcuts: \n\n\n\n\nEscape\n to exit back to Object mode\n\n\nG\n to toggle in/out of the Geometry editing modes\n\n\nH\n to toggle through the available Element modes (Vertex, Edge, and Face)",
+            "location": "/toolbar/overview-toolbar/", 
+            "text": "ProBuilder is controlled via the \nMain Toolbar\n, which contains all commonly used functions.\n\n\nA second toolbar, the \nEdit Mode Toolbar\n, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.\n\n\n\n\nTool Catagories\n\n\n\nSection Video: \nToolbar Overview: Catagories\n\n\n\n\n\nThe Toolbar is color-coded to help you quickly choose tools by type:\n\n\n\n\nOrange\n for \nTool Panels\n\n\nBlue\n for \nSelection Tools\n\n\nGreen\n for \nObject Actions\n\n\nRed\n for Geometry Actions (\nVertex\n, \nEdge\n, \nFace\n)\n\n\n\n\n\n\n\n\nResizing and Text vs Icon Mode\n\n\n\nSection Video: \nToolbar Overview: Text vs Icon Mode\n\n\n\n\n\nYou can resize the Toolbar however you like; ProBuilder will re-order the icon or text contents to best fit the window size.\n\n\nPrefer the good ol' Text Buttons? Right click on the toolbar in the empty space and choose \"Use Text Mode\".  In this menu you can also change how this window is displayed (docking or floating).\n\n\n\n\n\n\nDynamic Layout\n\n\n\nSection Video: \nToolbar Overview: Dynamic Layout\n\n\n\n\n\nThis is a \"smart\" toolbar, and dynamically changes to match your current editing method and selection.\n\n\n\n\nButtons are only shown on the Toolbar if they are applicable in your current editing mode\n\n\nButtons that cannot be used on the current selection are automatically greyed-out and disabled.\n\n\n\n\n\n\nCustom Settings for Actions\n\n\n\nSection Video: \nToolbar Overview: Custom Settings for Actions\n\n\n\n\n\nSome of the most-used actions (\nExtrude\n, \nCollapse\n, \nGrow Selection\n, etc) also include Custom Settings, which can significantly modify the action.\n\n\n This symbol is shown next to a button if there are Custom Settings available. To edit these settings, \nALT CLICK\n on the button.\n\n\nWhen using the text toolbar the options menu for actions is shown as a \n+\n icon to the right.  Simply click the icon to open the options window.\n\n\n\n\n\n\nEdit Mode Toolbar\n\n\n\nSection Video: \nToolbar Overview: The Edit Mode Toolbar\n\n\n\n\n\nThis toolbar switches ProBuilder between the available edit modes.\n\n\nBy default it is in the Top Middle of the Scene View, but you may change where this toolbar is positioned in the \nPreferences \n ProBuilder\n panel.\n\n\nUse this toolbar to choose your Edit Mode, or use keyboard shortcuts:\n\n\n\n\nEscape\n to exit back to Object mode\n\n\nG\n to toggle in/out of the Geometry editing modes\n\n\nH\n to toggle through the available Element modes (Vertex, Edge, and Face)\n\n\n\n\n\n\nIf you prefer to have dedicated keys for each mode (ex, \nJ\n opens \nVertex Mode\n, \nK\n opens \nFace Mode\n, etc) you can enable \"Unique Mode Shortcuts\" in the Preferences window.", 
             "title": "Overview"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/#video-toolbar-overview",
-            "text": "ProBuilder is controlled almost entirely via the  Main Toolbar , which contains all commonly used functions.  A second toolbar, the  Edit Mode Toolbar , is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.",
-            "title": "Video: Toolbar Overview"
-        },
-        {
-            "location": "/toolbar/overview-toolbar/#tool-catagories",
-            "text": "Section Video:  Toolbar Overview: Catagories   The Toolbar is color-coded to help you quickly choose tools by type:   Orange  for  Tool Panels  Blue  for  Selection Tools  Green  for  Object Actions  Red  for  Geometry Actions",
+            "location": "/toolbar/overview-toolbar/#tool-catagories", 
+            "text": "Section Video:  Toolbar Overview: Catagories   The Toolbar is color-coded to help you quickly choose tools by type:   Orange  for  Tool Panels  Blue  for  Selection Tools  Green  for  Object Actions  Red  for Geometry Actions ( Vertex ,  Edge ,  Face )", 
             "title": "Tool Catagories"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/#resizing-and-text-vs-icon-mode",
-            "text": "Section Video:  Toolbar Overview: Text vs Icon Mode   You can resize the Toolbar however you like, and it will re-order and flow it's contents to match.  Prefer the good 'ol Text Buttons? Right click on the toolbar and choose \"Use Text Mode\".",
+            "location": "/toolbar/overview-toolbar/#resizing-and-text-vs-icon-mode", 
+            "text": "Section Video:  Toolbar Overview: Text vs Icon Mode   You can resize the Toolbar however you like; ProBuilder will re-order the icon or text contents to best fit the window size.  Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space and choose \"Use Text Mode\".  In this menu you can also change how this window is displayed (docking or floating).", 
             "title": "Resizing and Text vs Icon Mode"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/#dynamic-layout",
-            "text": "Section Video:  Toolbar Overview: Dynamic Layout   This is a \"smart\" toolbar, and dynamically changes to match your current editing method and selection.    Buttons are only shown on the Toolbar if they are applicable in your current editing mode  Buttons that cannot be used on the current selection are automatically greyed-out and disabled.",
+            "location": "/toolbar/overview-toolbar/#dynamic-layout", 
+            "text": "Section Video:  Toolbar Overview: Dynamic Layout   This is a \"smart\" toolbar, and dynamically changes to match your current editing method and selection.   Buttons are only shown on the Toolbar if they are applicable in your current editing mode  Buttons that cannot be used on the current selection are automatically greyed-out and disabled.", 
             "title": "Dynamic Layout"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/#custom-settings-for-actions",
-            "text": "Section Video:  Toolbar Overview: Custom Settings for Actions   Some of the most-used actions ( Extrude ,  Collapse ,  Grow Selection , etc) also include Custom Settings, which can significantly modify the action.   This symbol is shown next to a button if there are Custom Settings available. To edit these settings,  ALT CLICK  on the button.",
+            "location": "/toolbar/overview-toolbar/#custom-settings-for-actions", 
+            "text": "Section Video:  Toolbar Overview: Custom Settings for Actions   Some of the most-used actions ( Extrude ,  Collapse ,  Grow Selection , etc) also include Custom Settings, which can significantly modify the action.   This symbol is shown next to a button if there are Custom Settings available. To edit these settings,  ALT CLICK  on the button.  When using the text toolbar the options menu for actions is shown as a  +  icon to the right.  Simply click the icon to open the options window.", 
             "title": "Custom Settings for Actions"
-        },
+        }, 
         {
-            "location": "/toolbar/overview-toolbar/#edit-mode-toolbar",
-            "text": "Section Video:  Toolbar Overview: The Edit Mode Toolbar   This is actually an extension of the main Toolbar, and is located separately, at the top-middle of your active sceneview.  Use this \"mini-toolbar\" to choose your Edit Mode, or use keyboard shortcuts:    Escape  to exit back to Object mode  G  to toggle in/out of the Geometry editing modes  H  to toggle through the available Element modes (Vertex, Edge, and Face)",
+            "location": "/toolbar/overview-toolbar/#edit-mode-toolbar", 
+            "text": "Section Video:  Toolbar Overview: The Edit Mode Toolbar   This toolbar switches ProBuilder between the available edit modes.  By default it is in the Top Middle of the Scene View, but you may change where this toolbar is positioned in the  Preferences   ProBuilder  panel.  Use this toolbar to choose your Edit Mode, or use keyboard shortcuts:   Escape  to exit back to Object mode  G  to toggle in/out of the Geometry editing modes  H  to toggle through the available Element modes (Vertex, Edge, and Face)    If you prefer to have dedicated keys for each mode (ex,  J  opens  Vertex Mode ,  K  opens  Face Mode , etc) you can enable \"Unique Mode Shortcuts\" in the Preferences window.", 
             "title": "Edit Mode Toolbar"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/",
-            "text": "Video: Tool Panels\n\n\n\n\nThese \nTool Panels\n contain important tools for \nShape Creation\n, \nMaterials\n, \nTexturing and UVs\n, \nVertex Coloring\n, \nSmoothing Groups\n, and \nMirroring\n. \n\n\nNote:\n Each panel can be docked, kept floating, or simply closed immediately after use.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Shape Tool\n\n\n\nSection Video: \nProBuilder Toolbar: Shape Tool\n\n\n\n\n\nKeyboard Shortcut\n : \nCTRL SHIFT K\n\n\nPurpose\n : Create new editable shapes such as Cylinder, Arch, and Stairs.\n\n\nEach shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.\n\n\n\n\nUsage\n : To create a new shape, do the following:\n\n\n\n\nOpen the New Shape Tool\n\n\nIf \"Shape Preview\" is enabled, you will see a blue Preview Object in the scene\n\n\nChoose the Shape you'd like to create (ie, Cube, Cylinder, Torus, etc)\n\n\nSet the options (ie, width, height, radius, number of stairs, etc)\n\n\nYou may Move or Rotate the Preview Object within your scene\n\n\nOnce ready, click \"Build Shape\" to create your final Shape\n\n\n\n\n\n\n Material Tools\n\n\n\nSection Video: \nProBuilder Toolbar: Material Tools\n\n\n\nRelated Video: \nTexturing and UVs\n\n\n\n\n\nPurpose\n : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.\n\n\n\n\nQuick Material Usage\n :\n\n\n\n\n(A)\n The current \"Quick Material\"\n\n\n(B)\n Apply the Quick Material to the selected faces \n(G)\n\n\n(C)\n Pick your Quick Material from the selected face \n(G)\n\n\n(D)\n Preview of the current Quick Material\n\n\n\n\nYou may also hold \nCTRL SHIFT\n while clicking on a face, to apply the Quick Material to just that face.\n\n\nMaterial Palette Usage\n :\n\n\n\n\n(E)\n Drag-and-drop your often-used materials to these slots\n\n\n(F)\n Click to apply a material to the selected faces \nor\n objects\n\n\n(G)\n Create additional Material Palette slots\n\n\n\n\nYou can also press \nALT (number key)\n to apply materials from the Palette.\n\n\n\n\n Texturing and UVs\n\n\n\nSection Video: \nProBuilder Toolbar: Texturing and UVs\n\n\n\n\n\nPurpose\n : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).\n\n\n\n\nThe UV Editor Panel includes both \nAuto UV\n tools, and a complete \nManual UV Editing and Unwrapping\n system.\n\n\n\n\nMore Info: \nTexturing and UVs\n\n\n\n\n\n\n Vertex Color Tools\n\n\n\nSection Video: \nProBuilder Toolbar: Vertex Color Tools\n\n\n\n\n\nPurpose\n : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.\n\n\nNot all shaders will show vertex colors on a mesh: \nVertex Colors FAQ\n\n\n\n\nApplying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.\n\n\n\n\nMore Info: \nVertex Coloring\n \n\n\n\n\n\n\n Smoothing Groups\n\n\n\nSection Video: \nProBuilder Toolbar: Smoothing Groups\n\n\n\n\n\nPurpose\n : Create a smooth and rounded look, or sharp-edged and faceted.\n\n\nUsage\n :\n\n\nFirst, choose \nFace Editing\n from the \nEdit Mode Toolbar\n, and select the faces you wish to make smooth or faceted.\n\n\n\n\nIf no faces are selected, or you are in \nObject Mode\n, any Smoothing actions will be applied to the entire object\n\n\n\n\n\n\n\n\n(A)\n If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.\n\n\n(B)\n To assign the selected faces to a new Smoothing Group, click any available group button\n\n\n(C)\n You can also assign Hard groups\n\n\n(D)\n Press the \"Clear\" button to clear all Smoothing from the selected faces\n\n\n\n\n\n\n Mirror Tool\n\n\n\nSection Video: \nProBuilder Toolbar: Mirror Tool\n\n\n\n\n\nPurpose\n : Use the Mirror Tool to create mirrored copies of objects.\n\n\nThe Mirror Tool is especially useful when creating symetrical items- build one half, mirror it, then weld the two together\nfor a perfectly symetrical result.\n\n\n\n\nUsage\n :\n\n\n\n\nSelect the object to be mirrored\n\n\nOpen the Mirror Tools\n\n\nSelect which axis (or multiple axis) to mirror on\n\n\nClick \"Mirror\"- a mirrored duplicate will be created",
+            "location": "/toolbar/tool-panels/", 
+            "text": "These \nTool Panels\n contain important tools for \nShape Creation\n, \nMaterials\n, \nTexturing and UVs\n, \nVertex Coloring\n, and \nSmoothing Groups\n.\n\n\nNote:\n Each panel can be docked, kept floating, or simply closed immediately after use.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Shape Tool\n\n\n\nSection Video: \nProBuilder Toolbar: Shape Tool\n\n\n\n\n\nKeyboard Shortcut\n : \nCTRL SHIFT K\n\n\nPurpose\n : Create new editable shapes such as Cylinder, Arch, and Stairs.\n\n\nEach shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.\n\n\n\n\nUsage\n : To create a new shape, do the following:\n\n\n\n\nOpen the New Shape Tool\n\n\nIf \"Shape Preview\" is enabled, you will see a blue Preview Object in the scene\n\n\nChoose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)\n\n\nSet the options (ex, width, height, radius, number of stairs, etc)\n\n\nYou may Move or Rotate the Preview Object within your scene\n\n\nOnce ready, click \"Build Shape\" to create your final Shape\n\n\n\n\n\n\n\n\n Material Tools\n\n\n\nSection Video: \nProBuilder Toolbar: Material Tools\n\n\n\nRelated Video: \nTexturing and UVs\n\n\n\n\n\nPurpose\n : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.\n\n\n\n\nQuick Material Usage\n:\n\n\n\n\n(A)\n The current \"Quick Material\"\n\n\n(B)\n Apply the Quick Material to the selected faces\n\n\n(C)\n Pick your Quick Material from the selected face\n\n\n(D)\n Preview of the current Quick Material\n\n\n\n\nHold \nCTRL SHIFT\n while clicking on a face to apply the Quick Material.\n\n\nMaterial Palette Usage\n :\n\n\n\n\n(E)\n Drag-and-drop your often-used materials to these slots\n\n\n(F)\n Create additional Material Palette slots\n\n\n\n\nYou can also press \nALT (number key)\n to apply materials from the Palette.\n\n\n\n\n\n\n Texturing and UVs\n\n\n\nSection Video: \nProBuilder Toolbar: Texturing and UVs\n\n\n\n\n\nPurpose\n : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).\n\n\n\n\nThe UV Editor Panel includes both \nAuto UV\n tools, and a complete \nManual UV Editing and Unwrapping\n system.\n\n\nMore Info: \nTexturing and UVs\n\n\n\n\n\n\n Vertex Color Tools\n\n\n\nSection Video: \nProBuilder Toolbar: Vertex Color Tools\n\n\n\n\n\nPurpose\n : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.\n\n\n\n\nWarning!\n  Not all shaders will show vertex colors on a mesh.\n\n\n\n\n\n\n\n\nApplying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.\n\n\n\n\n\n\n\n\n\n Smoothing Groups\n\n\n\nSection Video: \nProBuilder Toolbar: Smoothing Groups\n\n\n\n\n\nPurpose\n: Create a smooth and rounded look, or sharp-edged and faceted.\n\n\nUsage\n:\n\n\n\n\n\n\nChoose Face editing from the \nEdit Mode Toolbar\n\n\nSelect a group of faces that you want to be smooth\n\n\nIf no faces are selected, or you are in \nObject Mode\n, any Smoothing actions will be applied to the entire object\n\n\n\n\n\n\n(A)\n If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.\n\n\n(B)\n To assign the selected faces to a new Smoothing Group, click any available group button\n\n\n(C)\n You can also assign Hard groups\n\n\n(D)\n Press the \"Clear\" button to clear all Smoothing from the selected faces", 
             "title": "Tool Panels"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#video-tool-panels",
-            "text": "These  Tool Panels  contain important tools for  Shape Creation ,  Materials ,  Texturing and UVs ,  Vertex Coloring ,  Smoothing Groups , and  Mirroring .   Note:  Each panel can be docked, kept floating, or simply closed immediately after use.",
-            "title": "Video: Tool Panels"
-        },
-        {
-            "location": "/toolbar/tool-panels/#shape-tool",
-            "text": "Section Video:  ProBuilder Toolbar: Shape Tool   Keyboard Shortcut  :  CTRL SHIFT K  Purpose  : Create new editable shapes such as Cylinder, Arch, and Stairs.  Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.   Usage  : To create a new shape, do the following:   Open the New Shape Tool  If \"Shape Preview\" is enabled, you will see a blue Preview Object in the scene  Choose the Shape you'd like to create (ie, Cube, Cylinder, Torus, etc)  Set the options (ie, width, height, radius, number of stairs, etc)  You may Move or Rotate the Preview Object within your scene  Once ready, click \"Build Shape\" to create your final Shape",
+            "location": "/toolbar/tool-panels/#shape-tool", 
+            "text": "Section Video:  ProBuilder Toolbar: Shape Tool   Keyboard Shortcut  :  CTRL SHIFT K  Purpose  : Create new editable shapes such as Cylinder, Arch, and Stairs.  Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.   Usage  : To create a new shape, do the following:   Open the New Shape Tool  If \"Shape Preview\" is enabled, you will see a blue Preview Object in the scene  Choose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)  Set the options (ex, width, height, radius, number of stairs, etc)  You may Move or Rotate the Preview Object within your scene  Once ready, click \"Build Shape\" to create your final Shape", 
             "title": "Shape Tool"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#material-tools",
-            "text": "Section Video:  ProBuilder Toolbar: Material Tools  \nRelated Video:  Texturing and UVs   Purpose  : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.   Quick Material Usage  :   (A)  The current \"Quick Material\"  (B)  Apply the Quick Material to the selected faces  (G)  (C)  Pick your Quick Material from the selected face  (G)  (D)  Preview of the current Quick Material   You may also hold  CTRL SHIFT  while clicking on a face, to apply the Quick Material to just that face.  Material Palette Usage  :   (E)  Drag-and-drop your often-used materials to these slots  (F)  Click to apply a material to the selected faces  or  objects  (G)  Create additional Material Palette slots   You can also press  ALT (number key)  to apply materials from the Palette.",
+            "location": "/toolbar/tool-panels/#material-tools", 
+            "text": "Section Video:  ProBuilder Toolbar: Material Tools  \nRelated Video:  Texturing and UVs   Purpose  : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.   Quick Material Usage :   (A)  The current \"Quick Material\"  (B)  Apply the Quick Material to the selected faces  (C)  Pick your Quick Material from the selected face  (D)  Preview of the current Quick Material   Hold  CTRL SHIFT  while clicking on a face to apply the Quick Material.  Material Palette Usage  :   (E)  Drag-and-drop your often-used materials to these slots  (F)  Create additional Material Palette slots   You can also press  ALT (number key)  to apply materials from the Palette.", 
             "title": "Material Tools"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#texturing-and-uvs",
-            "text": "Section Video:  ProBuilder Toolbar: Texturing and UVs   Purpose  : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).   The UV Editor Panel includes both  Auto UV  tools, and a complete  Manual UV Editing and Unwrapping  system.   More Info:  Texturing and UVs",
+            "location": "/toolbar/tool-panels/#texturing-and-uvs", 
+            "text": "Section Video:  ProBuilder Toolbar: Texturing and UVs   Purpose  : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).   The UV Editor Panel includes both  Auto UV  tools, and a complete  Manual UV Editing and Unwrapping  system.  More Info:  Texturing and UVs", 
             "title": "Texturing and UVs"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#vertex-color-tools",
-            "text": "Section Video:  ProBuilder Toolbar: Vertex Color Tools   Purpose  : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.  Not all shaders will show vertex colors on a mesh:  Vertex Colors FAQ   Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.   More Info:  Vertex Coloring",
+            "location": "/toolbar/tool-panels/#vertex-color-tools", 
+            "text": "Section Video:  ProBuilder Toolbar: Vertex Color Tools   Purpose  : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.   Warning!   Not all shaders will show vertex colors on a mesh.    Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.", 
             "title": "Vertex Color Tools"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#smoothing-groups",
-            "text": "Section Video:  ProBuilder Toolbar: Smoothing Groups   Purpose  : Create a smooth and rounded look, or sharp-edged and faceted.  Usage  :  First, choose  Face Editing  from the  Edit Mode Toolbar , and select the faces you wish to make smooth or faceted.   If no faces are selected, or you are in  Object Mode , any Smoothing actions will be applied to the entire object     (A)  If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.  (B)  To assign the selected faces to a new Smoothing Group, click any available group button  (C)  You can also assign Hard groups  (D)  Press the \"Clear\" button to clear all Smoothing from the selected faces",
+            "location": "/toolbar/tool-panels/#smoothing-groups", 
+            "text": "Section Video:  ProBuilder Toolbar: Smoothing Groups   Purpose : Create a smooth and rounded look, or sharp-edged and faceted.  Usage :    Choose Face editing from the  Edit Mode Toolbar  Select a group of faces that you want to be smooth  If no faces are selected, or you are in  Object Mode , any Smoothing actions will be applied to the entire object    (A)  If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.  (B)  To assign the selected faces to a new Smoothing Group, click any available group button  (C)  You can also assign Hard groups  (D)  Press the \"Clear\" button to clear all Smoothing from the selected faces", 
             "title": "Smoothing Groups"
-        },
+        }, 
         {
-            "location": "/toolbar/tool-panels/#mirror-tool",
-            "text": "Section Video:  ProBuilder Toolbar: Mirror Tool   Purpose  : Use the Mirror Tool to create mirrored copies of objects.  The Mirror Tool is especially useful when creating symetrical items- build one half, mirror it, then weld the two together\nfor a perfectly symetrical result.   Usage  :   Select the object to be mirrored  Open the Mirror Tools  Select which axis (or multiple axis) to mirror on  Click \"Mirror\"- a mirrored duplicate will be created",
-            "title": "Mirror Tool"
-        },
+            "location": "/toolbar/selection-tools/", 
+            "text": "Select Hidden\n\n\n\nSection Video: \nSelection Tools: Select Hidden\n\n\n\n\n\nDetermines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nOn\n: all \nelements\n are selectable, regardlesss of their visibility\n\n\n\n\n\n\n\n\nOff\n: drag selection will ignore any \nelements\n that cannot currently be seen\n\n\n\n\n\n\n\n\n\n\n\n\n Handle Alignment\n\n\n\nSection Video: \nSelection Tools: Handle Alignment\n\n\n\n\n\nKeyboard Shortcut\n : \nP\n\n\nChoose how the scene handles will be oriented when selecting \nelements\n. This is a toggle button; click to change modes:\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nGlobal: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.\n\n\n\n\n\n\n\n\nLocal: Similar to \"left vs right\", handle orientation is relative the object's rotation.\n\n\n\n\n\n\n\n\nPlanar: This special mode aligns the handles to exact normal direction of the selected face.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Grow Selection\n\n\n\nSection Video: \nSelection Tools: Grow Selection\n\n\n\n\n\nKeyboard Shortcut\n: \nALT G\n\n\nExpands the selection outward to adjacent faces, edges, or vertices.\n\n\n \nOptions\n:\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nRestrict To Angle\n\n\nOnly Grow Selection to faces within a specified angle\n\n\n\n\n\n\nMax Angle\n\n\nThe angle to use when Restrict to Angle is \nOn\n\n\n\n\n\n\nIterative\n\n\nOnly Grow Selection to adjacent faces, with each button press\n\n\n\n\n\n\n\n\n\n\n\n\n Shrink Selection\n\n\n\nSection Video: \nSelection Tools: Shrink Selection\n\n\n\n\n\nKeyboard Shortcut\n : \nALT SHIFT G\n\n\nDoes the opposite of Grow Selection: removes the elements on the perimiter of the current selection.\n\n\n\n\n Invert Selection\n\n\n\nSection Video: \nSelection Tools: Invert Selection\n\n\n\n\n\nKeyboard Shortcut\n : \nCTRL SHIFT I\n\n\nSelects the inverse of the current selection. All unselected elements will become selected, the current selection will be unselected.\n\n\n\n\n Select Edge Loop\n\n\n\nSection Video: \nSelection Tools: Select Edge Loop\n\n\n\n\n\nKeyboard Shortcut\n : \nALT L\n\n\nSelects an edge loop from each selected edge.\n\n\n\n\n\n\n Select Edge Ring\n\n\n\nSection Video: \nSelection Tools: Select Edge Ring\n\n\n\n\n\nKeyboard Shortcut\n : \nALT R\n\n\nSelects an edge ring from each selected edge.", 
+            "title": "Selection Actions"
+        }, 
         {
-            "location": "/toolbar/selection-tools/",
-            "text": "Video: Selection Tools\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Select Hidden\n\n\n\nSection Video: \nSelection Tools: Select Hidden\n\n\n\n\n\nDetermines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nOn\n : all \nElements\n are selectable, regardlesss of their visibility\n\n\n\n\n\n\n\n\nOff\n : drag selection will ignore any \nElements\n that cannot currently be seen\n\n\n\n\n\n\n\n\n\n\n\n\n Handle Alignment\n\n\n\nSection Video: \nSelection Tools: Handle Alignment\n\n\n\n\n\nKeyboard Shortcut\n : \nP\n\n\nChoose how the scene handles will be oriented when selecting \nElements\n. This is a toggle button, click to change modes:\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nGlobal: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.\n\n\n\n\n\n\n\n\nLocal: Similar to \"left vs right\", handle orientation is relative the object's rotation.\n\n\n\n\n\n\n\n\nPlanar: This special mode aligns the handles to exact normal direction of the selected face.\n\n\n\n\n\n\n\n\n\n\n\n\n Grow Selection\n\n\n\nSection Video: \nSelection Tools: Grow Selection\n\n\n\n\n\nKeyboard Shortcut\n : \nALT G\n\n\nExpands the selection outward, to adjacent faces. \n\n\n \nCustom Settings\n Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nRestrict To Angle\n\n\nOnly Grow Selection to faces within a specified angle\n\n\n\n\n\n\nMax Angle\n\n\nThe angle to use when Restrict to Angle is \nOn\n\n\n\n\n\n\nIterative\n\n\nOnly Grow Selection to adjacent faces, with each button press\n\n\n\n\n\n\n\n\n\n\n\n\n Shrink Selection\n\n\n\nSection Video: \nSelection Tools: Shrink Selection\n\n\n\n\n\nKeyboard Shortcut\n : \nALT SHIFT G\n\n\nDoes the opposite of Grow Selection- removes the elements on the perimiter of the current selection.\n\n\n\n\n Invert Selection\n\n\n\nSection Video: \nSelection Tools: Invert Selection\n\n\n\n\n\nKeyboard Shortcut\n : \nALT SHIFT G\n\n\nSelects the inverse of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.\n\n\n\n\n Select Edge Loop\n\n\n\nSection Video: \nSelection Tools: Select Edge Loop\n\n\n\n\n\nKeyboard Shortcut\n : \nALT L\n\n\nSelects an edge loop from each selected edge.\n\n\n\n\n\n\n Select Edge Ring\n\n\n\nSection Video: \nSelection Tools: Select Edge Ring\n\n\n\n\n\nKeyboard Shortcut\n : \nALT R\n\n\nSelects an edge ring from each selected edge.",
-            "title": "Selection Tools"
-        },
-        {
-            "location": "/toolbar/selection-tools/#video-selection-tools",
-            "text": "",
-            "title": "Video: Selection Tools"
-        },
-        {
-            "location": "/toolbar/selection-tools/#select-hidden",
-            "text": "Section Video:  Selection Tools: Select Hidden   Determines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:     Toolbar Icon  Description       On  : all  Elements  are selectable, regardlesss of their visibility     Off  : drag selection will ignore any  Elements  that cannot currently be seen",
+            "location": "/toolbar/selection-tools/#select-hidden", 
+            "text": "Section Video:  Selection Tools: Select Hidden   Determines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:     Toolbar Icon  Description       On : all  elements  are selectable, regardlesss of their visibility     Off : drag selection will ignore any  elements  that cannot currently be seen", 
             "title": "Select Hidden"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#handle-alignment",
-            "text": "Section Video:  Selection Tools: Handle Alignment   Keyboard Shortcut  :  P  Choose how the scene handles will be oriented when selecting  Elements . This is a toggle button, click to change modes:     Toolbar Icon  Description       Global: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.     Local: Similar to \"left vs right\", handle orientation is relative the object's rotation.     Planar: This special mode aligns the handles to exact normal direction of the selected face.",
+            "location": "/toolbar/selection-tools/#handle-alignment", 
+            "text": "Section Video:  Selection Tools: Handle Alignment   Keyboard Shortcut  :  P  Choose how the scene handles will be oriented when selecting  elements . This is a toggle button; click to change modes:     Toolbar Icon  Description       Global: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.     Local: Similar to \"left vs right\", handle orientation is relative the object's rotation.     Planar: This special mode aligns the handles to exact normal direction of the selected face.", 
             "title": "Handle Alignment"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#grow-selection",
-            "text": "Section Video:  Selection Tools: Grow Selection   Keyboard Shortcut  :  ALT G  Expands the selection outward, to adjacent faces.     Custom Settings  Available  :     Setting  Description      Restrict To Angle  Only Grow Selection to faces within a specified angle    Max Angle  The angle to use when Restrict to Angle is  On    Iterative  Only Grow Selection to adjacent faces, with each button press",
+            "location": "/toolbar/selection-tools/#grow-selection", 
+            "text": "Section Video:  Selection Tools: Grow Selection   Keyboard Shortcut :  ALT G  Expands the selection outward to adjacent faces, edges, or vertices.    Options :     Setting  Description      Restrict To Angle  Only Grow Selection to faces within a specified angle    Max Angle  The angle to use when Restrict to Angle is  On    Iterative  Only Grow Selection to adjacent faces, with each button press", 
             "title": "Grow Selection"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#shrink-selection",
-            "text": "Section Video:  Selection Tools: Shrink Selection   Keyboard Shortcut  :  ALT SHIFT G  Does the opposite of Grow Selection- removes the elements on the perimiter of the current selection.",
+            "location": "/toolbar/selection-tools/#shrink-selection", 
+            "text": "Section Video:  Selection Tools: Shrink Selection   Keyboard Shortcut  :  ALT SHIFT G  Does the opposite of Grow Selection: removes the elements on the perimiter of the current selection.", 
             "title": "Shrink Selection"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#invert-selection",
-            "text": "Section Video:  Selection Tools: Invert Selection   Keyboard Shortcut  :  ALT SHIFT G  Selects the inverse of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.",
+            "location": "/toolbar/selection-tools/#invert-selection", 
+            "text": "Section Video:  Selection Tools: Invert Selection   Keyboard Shortcut  :  CTRL SHIFT I  Selects the inverse of the current selection. All unselected elements will become selected, the current selection will be unselected.", 
             "title": "Invert Selection"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#select-edge-loop",
-            "text": "Section Video:  Selection Tools: Select Edge Loop   Keyboard Shortcut  :  ALT L  Selects an edge loop from each selected edge.",
+            "location": "/toolbar/selection-tools/#select-edge-loop", 
+            "text": "Section Video:  Selection Tools: Select Edge Loop   Keyboard Shortcut  :  ALT L  Selects an edge loop from each selected edge.", 
             "title": "Select Edge Loop"
-        },
+        }, 
         {
-            "location": "/toolbar/selection-tools/#select-edge-ring",
-            "text": "Section Video:  Selection Tools: Select Edge Ring   Keyboard Shortcut  :  ALT R  Selects an edge ring from each selected edge.",
+            "location": "/toolbar/selection-tools/#select-edge-ring", 
+            "text": "Section Video:  Selection Tools: Select Edge Ring   Keyboard Shortcut  :  ALT R  Selects an edge ring from each selected edge.", 
             "title": "Select Edge Ring"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/",
-            "text": "Video: Object Actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Merge Objects\n\n\n\nSection Video: \nObject Actions: Merge Objects\n\n\n\n\n\nMerges the selected objects into one, single object. When clicked, you will be prompted to choose between two options:\n\n\n\n\nMerge Delete: Merge to a new object, and delete the source objects\n\n\nMerge Save: Merge to a new object, but only disable (not delete) the source objects\n\n\n\n\n\n\n Flip Object Normals\n\n\n\n\n\nSection Video: \nObject Actions: Flip Object Normals\n\n\n \n\n\nFlips the normals of \nall\n faces on the selected object(s). \n\n\n\n\nEspecially useful for converting an exterior modeled shape into an interior space.\n\n\n\n\n\n\n\n\n Subdivide Object\n\n\n\nSection Video: \nObject Actions: Subdivide Object\n\n\n\n\n\nKeyboard Shortcut\n : \nALT S\n\n\nDivides every face on selected objects, allowing for greater levels of detail when modeling.\n\n\n\n\n\n\n Reset / Freeze Transform\n\n\n\nSection Video: \nObject Actions: Reset / Freeze Transform\n\n\n\n\n\nSets the selected objects position, rotation, and scale to world-relative {0,0,0} without changing any vertex positions.\n\n\n\n\n Move Pivot to Center of Object\n\n\n\nSection Video: \nObject Actions: Center Pivot\n\n\n\n\n\nKeyboard Shortcut\n : \nCTRL J\n\n\nMoves the mesh pivot to the center of the object\u2019s bounds.\n\n\n\n\n\n\n Conform Normals\n\n\n\nSection Video: \nObject Actions: Conform Normals\n\n\n\n\n\nSets all face normals on the selected object to the same relative direction, in case you suspect a \"leak\".\n\n\n\n\n Triangulate\n\n\n\nSection Video: \nObject Actions: Triangulate\n\n\n\n\n\nReduces all polygons to their base triangles, creating a \"\nPolyworld-like\n\" effect.",
+            "location": "/toolbar/object-actions/", 
+            "text": "Merge Objects\n\n\n\nSection Video: \nObject Actions: Merge Objects\n\n\n\n\n\nMerges the selected objects into a single object.\n\n\n\n\n Flip Object Normals\n\n\n\n\n\nSection Video: \nObject Actions: Flip Object Normals\n\n\n\n\nFlips the normals of \nall\n faces on the selected object(s).\n\n\n\n\nEspecially useful for converting an exterior modeled shape into an interior space.\n\n\n\n\n\n\n\n\n Subdivide Object\n\n\n\nSection Video: \nObject Actions: Subdivide Object\n\n\n\n\n\nDivides every face on selected objects, allowing for greater levels of detail when modeling.\n\n\n\n\n\n\n Reset / Freeze Transform\n\n\n\nSection Video: \nObject Actions: Reset / Freeze Transform\n\n\n\n\n\nSets the selected objects position, rotation, and scale to world-relative \n{0,0,0}\n without changing any vertex positions.\n\n\n\n\n Move Pivot to Center of Object\n\n\n\nSection Video: \nObject Actions: Center Pivot\n\n\n\n\n\nKeyboard Shortcut\n : \nCTRL J\n\n\nMoves the mesh pivot to the center of the object\u2019s bounds.\n\n\n\n\n\n\n Conform Normals\n\n\n\nSection Video: \nObject Actions: Conform Normals\n\n\n\n\n\nSets all face normals on the selected object to the same relative direction.\n\n\n\n\n Triangulate\n\n\n\nSection Video: \nObject Actions: Triangulate\n\n\n\n\n\nReduces all polygons to their base triangles, creating a \"\nPolyworld-like\n\" effect.\n\n\n\n\n\n\n\n\n Mirror Tool\n\n\n\nSection Video: \nProBuilder Toolbar: Mirror Tool\n\n\n\n\n\nPurpose\n : Use the Mirror action to create mirrored copies of objects.\n\n\nMirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together\nfor a perfectly symmetrical result.\n\n\n\n\nUsage\n :\n\n\n\n\nSelect the object to be mirrored\n\n\nOpen the Mirror Tools\n\n\nSelect which axis (or multiple axis) to mirror on\n\n\nClick \"Mirror\"- a mirrored duplicate will be created\n\n\n\n\n\n\n\n\nGenerate UV2\n\n\nPurpose\n: Build the UV2 channel for each selected mesh, or all meshes in the scene if the \"Generate Scene UVs\" option is toggled.", 
             "title": "Object Actions"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#video-object-actions",
-            "text": "",
-            "title": "Video: Object Actions"
-        },
-        {
-            "location": "/toolbar/object-actions/#merge-objects",
-            "text": "Section Video:  Object Actions: Merge Objects   Merges the selected objects into one, single object. When clicked, you will be prompted to choose between two options:   Merge Delete: Merge to a new object, and delete the source objects  Merge Save: Merge to a new object, but only disable (not delete) the source objects",
+            "location": "/toolbar/object-actions/#merge-objects", 
+            "text": "Section Video:  Object Actions: Merge Objects   Merges the selected objects into a single object.", 
             "title": "Merge Objects"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#flip-object-normals",
-            "text": "Section Video:  Object Actions: Flip Object Normals     Flips the normals of  all  faces on the selected object(s).    Especially useful for converting an exterior modeled shape into an interior space.",
+            "location": "/toolbar/object-actions/#flip-object-normals", 
+            "text": "Section Video:  Object Actions: Flip Object Normals   Flips the normals of  all  faces on the selected object(s).   Especially useful for converting an exterior modeled shape into an interior space.", 
             "title": "Flip Object Normals"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#subdivide-object",
-            "text": "Section Video:  Object Actions: Subdivide Object   Keyboard Shortcut  :  ALT S  Divides every face on selected objects, allowing for greater levels of detail when modeling.",
+            "location": "/toolbar/object-actions/#subdivide-object", 
+            "text": "Section Video:  Object Actions: Subdivide Object   Divides every face on selected objects, allowing for greater levels of detail when modeling.", 
             "title": "Subdivide Object"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#reset-freeze-transform",
-            "text": "Section Video:  Object Actions: Reset / Freeze Transform   Sets the selected objects position, rotation, and scale to world-relative {0,0,0} without changing any vertex positions.",
+            "location": "/toolbar/object-actions/#reset-freeze-transform", 
+            "text": "Section Video:  Object Actions: Reset / Freeze Transform   Sets the selected objects position, rotation, and scale to world-relative  {0,0,0}  without changing any vertex positions.", 
             "title": "Reset / Freeze Transform"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#move-pivot-to-center-of-object",
-            "text": "Section Video:  Object Actions: Center Pivot   Keyboard Shortcut  :  CTRL J  Moves the mesh pivot to the center of the object\u2019s bounds.",
+            "location": "/toolbar/object-actions/#move-pivot-to-center-of-object", 
+            "text": "Section Video:  Object Actions: Center Pivot   Keyboard Shortcut  :  CTRL J  Moves the mesh pivot to the center of the object\u2019s bounds.", 
             "title": "Move Pivot to Center of Object"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#conform-normals",
-            "text": "Section Video:  Object Actions: Conform Normals   Sets all face normals on the selected object to the same relative direction, in case you suspect a \"leak\".",
+            "location": "/toolbar/object-actions/#conform-normals", 
+            "text": "Section Video:  Object Actions: Conform Normals   Sets all face normals on the selected object to the same relative direction.", 
             "title": "Conform Normals"
-        },
+        }, 
         {
-            "location": "/toolbar/object-actions/#triangulate",
-            "text": "Section Video:  Object Actions: Triangulate   Reduces all polygons to their base triangles, creating a \" Polyworld-like \" effect.",
+            "location": "/toolbar/object-actions/#triangulate", 
+            "text": "Section Video:  Object Actions: Triangulate   Reduces all polygons to their base triangles, creating a \" Polyworld-like \" effect.", 
             "title": "Triangulate"
-        },
+        }, 
         {
-            "location": "/toolbar/vertex/",
-            "text": "Video: Vertex Actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Collapse Vertices\n\n\n\nSection Video: \nVertex Actions: Collapse Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT C\n\n\nCollapses all selected vertices to a single point, regardless of distance.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nCollapse To First\n\n\nCollapse to first-selected vertex position, instead of selection center.\n\n\n\n\n\n\n\n\n\n\n Weld Vertices\n\n\n\nSection Video: \nVertex Actions: Weld Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT V\n\n\nMerge vertices within a set distance of one another.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nCollapse To First\n\n\nCollapse to first-selected vertex position, instead of selection center.\n\n\n\n\n\n\n\n\n\n\n Connect Vertices\n\n\n\nSection Video: \nVertex Actions: Connect Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT E\n\n\nCreate a new edge connecting the selected vertices.\n\n\n\n\n\n\n\n\n\n\n\n Split Vertices\n\n\n\nSection Video: \nVertex Actions: Split Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT X\n\n\nSplits a vertex into it\u2019s individual vertices so that they may be moved independently of one another.\n\n\n\n\n\n\n\n\n\n\n\nNote\n : When a vertex is \nSplit\n, the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.",
-            "title": "Vertex"
-        },
+            "location": "/toolbar/object-actions/#mirror-tool", 
+            "text": "Section Video:  ProBuilder Toolbar: Mirror Tool   Purpose  : Use the Mirror action to create mirrored copies of objects.  Mirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together\nfor a perfectly symmetrical result.   Usage  :   Select the object to be mirrored  Open the Mirror Tools  Select which axis (or multiple axis) to mirror on  Click \"Mirror\"- a mirrored duplicate will be created", 
+            "title": "Mirror Tool"
+        }, 
         {
-            "location": "/toolbar/vertex/#video-vertex-actions",
-            "text": "",
-            "title": "Video: Vertex Actions"
-        },
+            "location": "/toolbar/object-actions/#generate-uv2", 
+            "text": "Purpose : Build the UV2 channel for each selected mesh, or all meshes in the scene if the \"Generate Scene UVs\" option is toggled.", 
+            "title": "Generate UV2"
+        }, 
         {
-            "location": "/toolbar/vertex/#collapse-vertices",
-            "text": "Section Video:  Vertex Actions: Collapse Vertices   Keyboard Shortcut  :  ALT C  Collapses all selected vertices to a single point, regardless of distance.       Custom Settings Available  :     Setting  Description      Collapse To First  Collapse to first-selected vertex position, instead of selection center.",
+            "location": "/toolbar/vertex/", 
+            "text": "Collapse Vertices\n\n\n\nSection Video: \nVertex Actions: Collapse Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT C\n\n\nCollapses all selected vertices to a single point, regardless of distance.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nCollapse To First\n\n\nCollapse to first-selected vertex position, instead of selection center.\n\n\n\n\n\n\n\n\n\n\n Weld Vertices\n\n\n\nSection Video: \nVertex Actions: Weld Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT V\n\n\nMerge vertices within a set distance of one another.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nCollapse To First\n\n\nCollapse to first-selected vertex position, instead of selection center.\n\n\n\n\n\n\n\n\n\n\n Connect Vertices\n\n\n\nSection Video: \nVertex Actions: Connect Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT E\n\n\nCreate a new edge connecting the selected vertices.\n\n\n\n\n\n\n\n\n\n\n\n Split Vertices\n\n\n\nSection Video: \nVertex Actions: Split Vertices\n\n\n\n\n\nKeyboard Shortcut\n : \nALT X\n\n\nSplits a vertex into it\u2019s individual vertices so that they may be moved independently of one another.\n\n\n\n\n\n\n\n\n\n\n\nNote\n : When a vertex is \nSplit\n, the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.\n\n\n\n\n\n\n Fill Hole\n\n\n\nSection Video: \nAll Actions: Fill Hole\n\n\n\n\n\n\n\n\nCreates a new face filling any holes that touch the selected vertices.\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nFill Entire Hole\n\n\nIf enabled ProBuilder will automatically complete the selection to include the entire hole perimeter.  If disabled, the new face only connects the selected vertices.", 
+            "title": "Vertex Actions"
+        }, 
+        {
+            "location": "/toolbar/vertex/#collapse-vertices", 
+            "text": "Section Video:  Vertex Actions: Collapse Vertices   Keyboard Shortcut  :  ALT C  Collapses all selected vertices to a single point, regardless of distance.       Custom Settings Available  :     Setting  Description      Collapse To First  Collapse to first-selected vertex position, instead of selection center.", 
             "title": "Collapse Vertices"
-        },
+        }, 
         {
-            "location": "/toolbar/vertex/#weld-vertices",
-            "text": "Section Video:  Vertex Actions: Weld Vertices   Keyboard Shortcut  :  ALT V  Merge vertices within a set distance of one another.       Custom Settings Available  :     Setting  Description      Collapse To First  Collapse to first-selected vertex position, instead of selection center.",
+            "location": "/toolbar/vertex/#weld-vertices", 
+            "text": "Section Video:  Vertex Actions: Weld Vertices   Keyboard Shortcut  :  ALT V  Merge vertices within a set distance of one another.       Custom Settings Available  :     Setting  Description      Collapse To First  Collapse to first-selected vertex position, instead of selection center.", 
             "title": "Weld Vertices"
-        },
+        }, 
         {
-            "location": "/toolbar/vertex/#connect-vertices",
-            "text": "Section Video:  Vertex Actions: Connect Vertices   Keyboard Shortcut  :  ALT E  Create a new edge connecting the selected vertices.",
+            "location": "/toolbar/vertex/#connect-vertices", 
+            "text": "Section Video:  Vertex Actions: Connect Vertices   Keyboard Shortcut  :  ALT E  Create a new edge connecting the selected vertices.", 
             "title": "Connect Vertices"
-        },
+        }, 
         {
-            "location": "/toolbar/vertex/#split-vertices",
-            "text": "Section Video:  Vertex Actions: Split Vertices   Keyboard Shortcut  :  ALT X  Splits a vertex into it\u2019s individual vertices so that they may be moved independently of one another.      Note  : When a vertex is  Split , the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.",
+            "location": "/toolbar/vertex/#split-vertices", 
+            "text": "Section Video:  Vertex Actions: Split Vertices   Keyboard Shortcut  :  ALT X  Splits a vertex into it\u2019s individual vertices so that they may be moved independently of one another.      Note  : When a vertex is  Split , the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.", 
             "title": "Split Vertices"
-        },
+        }, 
         {
-            "location": "/toolbar/edge/",
-            "text": "Video: Edge Actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Bridge Edges\n\n\n\nSection Video: \nVertex Actions: Bridge Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nALT B\n\n\nCreate a new face between two selected edges. Each edge must have a free side.\n\n\n\n\n\n\n\n\n\n\n\n Bevel Edges\n\n\n\nSection Video: \nVertex Actions: Bevel Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nALT B\n\n\nSplits the selected edge(s) into two edges, with a new face between.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nSets the distance each new edge is moved, from the position of the original.\n\n\n\n\n\n\n\n\n\n\n Connect Edges\n\n\n\nSection Video: \nVertex Actions: Connect Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nALT E\n\n\nInsert an edge connecting the centers of each selected edge.\n\n\n\n\n\n\n\n\n\n\n\n Extrude Edges\n\n\n\nSection Video: \nVertex Actions: Extrude Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nSHIFT DRAG\n\n\nPushes a new edge out from the selected edge, connected by a new face.\n\n\nYou can also extrude edges by holding \nSHIFT\n while moving, rotating, or scaling them.\n\n\n\n\n\n\n\n\n\n\n\nNote: By default, only open edges can be \nExtruded\n. You can change this in the \nProBuilder Preferences\n.\n\n\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nDistance to extrude the edge(s).",
-            "title": "Edge"
-        },
+            "location": "/toolbar/vertex/#fill-hole", 
+            "text": "Section Video:  All Actions: Fill Hole    Creates a new face filling any holes that touch the selected vertices.    Custom Settings Available  :     Setting  Description      Fill Entire Hole  If enabled ProBuilder will automatically complete the selection to include the entire hole perimeter.  If disabled, the new face only connects the selected vertices.", 
+            "title": "Fill Hole"
+        }, 
         {
-            "location": "/toolbar/edge/#video-edge-actions",
-            "text": "",
+            "location": "/toolbar/edge/", 
+            "text": "Video: Edge Actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Bridge Edges\n\n\n\nSection Video: \nVertex Actions: Bridge Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nALT B\n\n\nCreate a new face between two selected edges. Each edge must have a free side.\n\n\n\n\n\n\n\n\n\n\n\n\n\n Bevel\n\n\n\nSection Video: \nVertex Actions: Bevel Edges\n\n\n\n\n\n\n\n\nSplits the selected edge(s) into two edges, with a new face between.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nSets the distance each new edge is moved, from the position of the original.\n\n\n\n\n\n\n\n\n\n\n Connect Edges\n\n\n\nSection Video: \nVertex Actions: Connect Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nALT E\n\n\nInsert an edge connecting the centers of each selected edge.\n\n\n\n\n\n\n\n\n\n\n\n Extrude Edges\n\n\n\nSection Video: \nVertex Actions: Extrude Edges\n\n\n\n\n\nKeyboard Shortcut\n : \nSHIFT DRAG\n / \nCONTROL E\n (PC) / \nCOMMAND E\n (Mac)\n\n\nPushes a new edge out from the selected edge, connected by a new face.\n\n\nYou can also extrude edges by holding \nSHIFT\n while moving, rotating, or scaling them.\n\n\n\n\n\n\n\n\n\n\n\nNote: By default, only open edges can be \nExtruded\n. You can change this in the \nProBuilder Preferences\n.\n\n\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nDistance to extrude the edge(s).", 
+            "title": "Edge Actions"
+        }, 
+        {
+            "location": "/toolbar/edge/#video-edge-actions", 
+            "text": "", 
             "title": "Video: Edge Actions"
-        },
+        }, 
         {
-            "location": "/toolbar/edge/#bridge-edges",
-            "text": "Section Video:  Vertex Actions: Bridge Edges   Keyboard Shortcut  :  ALT B  Create a new face between two selected edges. Each edge must have a free side.",
+            "location": "/toolbar/edge/#bridge-edges", 
+            "text": "Section Video:  Vertex Actions: Bridge Edges   Keyboard Shortcut  :  ALT B  Create a new face between two selected edges. Each edge must have a free side.", 
             "title": "Bridge Edges"
-        },
+        }, 
         {
-            "location": "/toolbar/edge/#bevel-edges",
-            "text": "Section Video:  Vertex Actions: Bevel Edges   Keyboard Shortcut  :  ALT B  Splits the selected edge(s) into two edges, with a new face between.       Custom Settings Available  :     Setting  Description      Distance  Sets the distance each new edge is moved, from the position of the original.",
-            "title": "Bevel Edges"
-        },
+            "location": "/toolbar/edge/#bevel", 
+            "text": "Section Video:  Vertex Actions: Bevel Edges    Splits the selected edge(s) into two edges, with a new face between.       Custom Settings Available  :     Setting  Description      Distance  Sets the distance each new edge is moved, from the position of the original.", 
+            "title": "Bevel"
+        }, 
         {
-            "location": "/toolbar/edge/#connect-edges",
-            "text": "Section Video:  Vertex Actions: Connect Edges   Keyboard Shortcut  :  ALT E  Insert an edge connecting the centers of each selected edge.",
+            "location": "/toolbar/edge/#connect-edges", 
+            "text": "Section Video:  Vertex Actions: Connect Edges   Keyboard Shortcut  :  ALT E  Insert an edge connecting the centers of each selected edge.", 
             "title": "Connect Edges"
-        },
+        }, 
         {
-            "location": "/toolbar/edge/#extrude-edges",
-            "text": "Section Video:  Vertex Actions: Extrude Edges   Keyboard Shortcut  :  SHIFT DRAG  Pushes a new edge out from the selected edge, connected by a new face.  You can also extrude edges by holding  SHIFT  while moving, rotating, or scaling them.      Note: By default, only open edges can be  Extruded . You can change this in the  ProBuilder Preferences .      Setting  Description      Distance  Distance to extrude the edge(s).",
+            "location": "/toolbar/edge/#extrude-edges", 
+            "text": "Section Video:  Vertex Actions: Extrude Edges   Keyboard Shortcut  :  SHIFT DRAG  /  CONTROL E  (PC) /  COMMAND E  (Mac)  Pushes a new edge out from the selected edge, connected by a new face.  You can also extrude edges by holding  SHIFT  while moving, rotating, or scaling them.      Note: By default, only open edges can be  Extruded . You can change this in the  ProBuilder Preferences .      Setting  Description      Distance  Distance to extrude the edge(s).", 
             "title": "Extrude Edges"
-        },
+        }, 
         {
-            "location": "/toolbar/face/",
-            "text": "Video: Face Actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Delete Face\n\n\n\nSection Video: \nFace Actions: Delete Faces\n\n\n\n\n\nKeyboard Shortcut\n : \nBACKSPACE\n\n\nDeletes the selected face(s).\n\n\n\n\n\n\n\n\n\n\n\n Detach Face\n\n\n\nSection Video: \nFace Actions: Detach Faces\n\n\n\n\n\nDetach the selected face(s) to a new sub-mesh, or seperate object.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDetach To New Object\n\n\nIf \nOn\n, the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.\n\n\n\n\n\n\n\n\n\n\n Extrude Face\n\n\n\nSection Video: \nFace Actions: Extrude Faces\n\n\n\n\n\nKeyboard Shortcut\n : \nSHIFT DRAG\n\n\nCreates a new face by pulling out the currently selected face and attaching sides to each edge.\n\n\nYou can also extrude by holding \nSHIFT\n while moving, rotating, or scaling the faces.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nAs Group\n\n\nIf \nOn\n, adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.\n\n\n\n\n\n\nDistance\n\n\nDistance to extrude the selected faces(s).\n\n\n\n\n\n\n\n\n\n\n Flip Normals\n\n\n\nSection Video: \nFace Actions: Flip Normals\n\n\n\n\n\nFlips the normals on the selected face(s).\n\n\n\n\n\n\n\n\n\n\n\n Flip Triangles\n\n\n\nSection Video: \nFace Actions: Flip Triangles\n\n\n\n\n\nFlips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).\n\n\n\n\n\n\n\n\n\n\n\n Conform Normals\n\n\n\nSection Video: \nFace Actions: Conform Normals\n\n\n\n\n\nSets all selected face normals to the same relative direction.\n\n\n\n\n Merge Faces\n\n\n\nSection Video: \nFace Actions: Merge Faces\n\n\n\n\n\nMerges selected faces into a single face, and removes any dividing edges.\n\n\n\n\n\n\n\n\n\n\n\n Subdivide Face\n\n\n\nSection Video: \nFace Actions: Subdivide Face\n\n\n\n\n\nSplit each selected face by adding a vertex at the center of each edge and connecting them in the center.\n\n\n\n\n\n\n\n\n\n\n\n Bevel Face\n\n\n\nSection Video: \nFace Actions: Bevel Face\n\n\n\n\n\nPerforms the \nBevel Edge\n action on all the edges of the selected face(s).\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nSets the distance each new edge is moved, from the position of the original.",
-            "title": "Face"
-        },
+            "location": "/toolbar/face/", 
+            "text": "Delete Face\n\n\n\nSection Video: \nFace Actions: Delete Faces\n\n\n\n\n\nKeyboard Shortcut\n : \nBACKSPACE\n\n\nDeletes the selected face(s).\n\n\n\n\n\n\n\n\n\n\n\n Detach Face\n\n\n\nSection Video: \nFace Actions: Detach Faces\n\n\n\n\n\nDetach the selected face(s) to a new sub-mesh, or seperate object.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDetach To New Object\n\n\nIf \nOn\n, the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.\n\n\n\n\n\n\n\n\n\n\n\n\n Extrude Face\n\n\n\nSection Video: \nFace Actions: Extrude Faces\n\n\n\n\n\nKeyboard Shortcut\n : \nSHIFT DRAG\n\n\nCreates a new face by pulling out the currently selected face and attaching sides to each edge.\n\n\nYou can also extrude by holding \nSHIFT\n while moving, rotating, or scaling the faces.\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nAs Group\n\n\nIf \nOn\n, adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.\n\n\n\n\n\n\nDistance\n\n\nDistance to extrude the selected faces(s).\n\n\n\n\n\n\n\n\n\n\n Flip Normals\n\n\n\nSection Video: \nFace Actions: Flip Normals\n\n\n\n\n\nFlips the normals on the selected face(s).\n\n\n\n\n\n\n\n\n\n\n\n Flip Face Edge\n\n\n\nSection Video: \nFace Actions: Flip Face Edge\n\n\n\n\n\nSwap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).\n\n\n\n\n\n\n\n\n\n\n\n Conform Normals\n\n\n\nSection Video: \nFace Actions: Conform Normals\n\n\n\n\n\nSets all selected face normals to the same relative direction.\n\n\n\n\n Merge Faces\n\n\n\nSection Video: \nFace Actions: Merge Faces\n\n\n\n\n\nMerges selected faces into a single face, and removes any dividing edges.\n\n\n\n\n\n\n\n\n\n\n\n Subdivide Face\n\n\n\nSection Video: \nFace Actions: Subdivide Face\n\n\n\n\n\nSplit each selected face by adding a vertex at the center of each edge and connecting them in the center.\n\n\n\n\n\n\n\n\n\n\n\n Bevel\n\n\n\nSection Video: \nFace Actions: Bevel Face\n\n\n\n\n\nPerforms the \nBevel Edge\n action on all the edges of the selected face(s).\n\n\n\n\n\n\n\n\n\n \nCustom Settings Available\n :\n\n\n\n\n\n\n\n\nSetting\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nDistance\n\n\nSets the distance each new edge is moved, from the position of the original.", 
+            "title": "Face Actions"
+        }, 
         {
-            "location": "/toolbar/face/#video-face-actions",
-            "text": "",
-            "title": "Video: Face Actions"
-        },
-        {
-            "location": "/toolbar/face/#delete-face",
-            "text": "Section Video:  Face Actions: Delete Faces   Keyboard Shortcut  :  BACKSPACE  Deletes the selected face(s).",
+            "location": "/toolbar/face/#delete-face", 
+            "text": "Section Video:  Face Actions: Delete Faces   Keyboard Shortcut  :  BACKSPACE  Deletes the selected face(s).", 
             "title": "Delete Face"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#detach-face",
-            "text": "Section Video:  Face Actions: Detach Faces   Detach the selected face(s) to a new sub-mesh, or seperate object.       Custom Settings Available  :     Setting  Description      Detach To New Object  If  On , the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.",
+            "location": "/toolbar/face/#detach-face", 
+            "text": "Section Video:  Face Actions: Detach Faces   Detach the selected face(s) to a new sub-mesh, or seperate object.       Custom Settings Available  :     Setting  Description      Detach To New Object  If  On , the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.", 
             "title": "Detach Face"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#extrude-face",
-            "text": "Section Video:  Face Actions: Extrude Faces   Keyboard Shortcut  :  SHIFT DRAG  Creates a new face by pulling out the currently selected face and attaching sides to each edge.  You can also extrude by holding  SHIFT  while moving, rotating, or scaling the faces.       Custom Settings Available  :     Setting  Description      As Group  If  On , adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.    Distance  Distance to extrude the selected faces(s).",
+            "location": "/toolbar/face/#extrude-face", 
+            "text": "Section Video:  Face Actions: Extrude Faces   Keyboard Shortcut  :  SHIFT DRAG  Creates a new face by pulling out the currently selected face and attaching sides to each edge.  You can also extrude by holding  SHIFT  while moving, rotating, or scaling the faces.       Custom Settings Available  :     Setting  Description      As Group  If  On , adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.    Distance  Distance to extrude the selected faces(s).", 
             "title": "Extrude Face"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#flip-normals",
-            "text": "Section Video:  Face Actions: Flip Normals   Flips the normals on the selected face(s).",
+            "location": "/toolbar/face/#flip-normals", 
+            "text": "Section Video:  Face Actions: Flip Normals   Flips the normals on the selected face(s).", 
             "title": "Flip Normals"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#flip-triangles",
-            "text": "Section Video:  Face Actions: Flip Triangles   Flips the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).",
-            "title": "Flip Triangles"
-        },
+            "location": "/toolbar/face/#flip-face-edge", 
+            "text": "Section Video:  Face Actions: Flip Face Edge   Swap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).", 
+            "title": "Flip Face Edge"
+        }, 
         {
-            "location": "/toolbar/face/#conform-normals",
-            "text": "Section Video:  Face Actions: Conform Normals   Sets all selected face normals to the same relative direction.",
+            "location": "/toolbar/face/#conform-normals", 
+            "text": "Section Video:  Face Actions: Conform Normals   Sets all selected face normals to the same relative direction.", 
             "title": "Conform Normals"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#merge-faces",
-            "text": "Section Video:  Face Actions: Merge Faces   Merges selected faces into a single face, and removes any dividing edges.",
+            "location": "/toolbar/face/#merge-faces", 
+            "text": "Section Video:  Face Actions: Merge Faces   Merges selected faces into a single face, and removes any dividing edges.", 
             "title": "Merge Faces"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#subdivide-face",
-            "text": "Section Video:  Face Actions: Subdivide Face   Split each selected face by adding a vertex at the center of each edge and connecting them in the center.",
+            "location": "/toolbar/face/#subdivide-face", 
+            "text": "Section Video:  Face Actions: Subdivide Face   Split each selected face by adding a vertex at the center of each edge and connecting them in the center.", 
             "title": "Subdivide Face"
-        },
+        }, 
         {
-            "location": "/toolbar/face/#bevel-face",
-            "text": "Section Video:  Face Actions: Bevel Face   Performs the  Bevel Edge  action on all the edges of the selected face(s).       Custom Settings Available  :     Setting  Description      Distance  Sets the distance each new edge is moved, from the position of the original.",
-            "title": "Bevel Face"
-        },
+            "location": "/toolbar/face/#bevel", 
+            "text": "Section Video:  Face Actions: Bevel Face   Performs the  Bevel Edge  action on all the edges of the selected face(s).       Custom Settings Available  :     Setting  Description      Distance  Sets the distance each new edge is moved, from the position of the original.", 
+            "title": "Bevel"
+        }, 
         {
-            "location": "/toolbar/all/",
-            "text": "Move Pivot to Center of Selected Elements\n\n\n\nSection Video: \nGeometry Actions: Set Pivot\n\n\n\n\n\nKeyboard Shortcut\n : \nALT J\n\n\nMove the pivot point of this mesh to the average center of the selected elements.\n\n\nThis action is available in all Element modes (Vertex, Edge, Face).",
-            "title": "All"
-        },
+            "location": "/toolbar/all/", 
+            "text": "Move Pivot to Center of Selected Elements\n\n\n\nSection Video: \nGeometry Actions: Set Pivot\n\n\n\n\n\nKeyboard Shortcut\n : \nALT J\n\n\nMove the pivot point of this mesh to the average center of the selected elements.\n\n\nThis action is available in all Element modes (Vertex, Edge, Face).", 
+            "title": "Element Actions"
+        }, 
         {
-            "location": "/toolbar/all/#move-pivot-to-center-of-selected-elements",
-            "text": "Section Video:  Geometry Actions: Set Pivot   Keyboard Shortcut  :  ALT J  Move the pivot point of this mesh to the average center of the selected elements.  This action is available in all Element modes (Vertex, Edge, Face).",
+            "location": "/toolbar/all/#move-pivot-to-center-of-selected-elements", 
+            "text": "Section Video:  Geometry Actions: Set Pivot   Keyboard Shortcut  :  ALT J  Move the pivot point of this mesh to the average center of the selected elements.  This action is available in all Element modes (Vertex, Edge, Face).", 
             "title": "Move Pivot to Center of Selected Elements"
-        },
+        }, 
         {
-            "location": "/texturing/overview-texturing/",
-            "text": "Video: Texturing and UVs Overview\n\n\n\n\nTexturing is the process of applying materials (\"textures\") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.\n\n\n\n\n(@todo: image: new cube -\n applied material -\n rotated -\n scaled -\n offset)\n\n\n\n\n\n\nAuto-Texturing vs Manual UVs\n\n\n\nSection Video: \nTexturing and UVs: Auto-Texturing vs Manual UVs\n\n\n\n\n\nProBuilder provides both \"Automatic\" and \"Manual\" Texturing methods:\n\n\n\n\n\n\nAuto-Texturing\n : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles the actual UV work.\n\n\n\n\n\n\nManual UV Editing\n : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.\n\n\n\n\n\n\nYou can also use a mix of Auto-Texturing and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.\n\n\n\n\nThe Texturing and UVs Window\n\n\n\nSection Video: \nTexturing and UVs: The Texturing and UVs Window\n\n\n\n\n\nBoth \nAuto-Texturing\n and \nManual UV Editing\n controls are located in Texturing and UVs Window.\n\n\nTo open this window, click it's button in the \nMain Toolbar\n. \n\n\n\n\nIn \nText Mode\n, this will be the button labeled \nUV Editor\n \n\n\nIn \nIcon Mode\n, use the button with this icon: \n\n\n\n\n\n\n(A) Toolbar\n\n\nGeneral tools for working in both \nAuto-Texturing\n and \nManual UV Editing\n modes. The buttons are, from left to right:\n\n\n\n\n\n\nSelect, Move, Rotate, Scale\n : this first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.\n\n\n\n\n\n\nVertex, Edge Face\n : the second button group contains shortcuts to ProBuilder's \nElement Editing Modes\n. When using \nManual UV Editing\n, this allows you to select and manipulate UVs by Vertex, Edge, or Face.\n\n\n\n\n\n\nIn-Scene Controls\n : This button toggles On/Off the \nIn-Scene Controls\n.\n\n\n\n\n\n\nTexture Preview\n : When \nOn\n, the selected face's main texture will be displayed in the \nUV Viewer\n.\n\n\n\n\n\n\nRender UVs: Opens the \nRender UVs\n tool panel, for rendering UV Templates to paint over in Photoshop/etc. \n\n\n\n\n\n\nActions Panel\n\n\nUV Viewer\n\n\n\n\nAuto-Texturing Actions Panel\n\n\n\n\nManual UV Editing Actions Panel",
+            "location": "/texturing/overview-texture-mapping/", 
+            "text": "Texture Mapping 101\n\n\n\nSection Video: \nTexture Mapping: Texture Mapping 101\n\n\n\n\n\nTexture Mapping\n is the process of applying materials (\"textures\") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.\n\n\n\n\n\n\n\n\n\nUVs\n are how the mesh stores this data. These are basically 2D \"fold-outs\" of the actual 3D mesh, like the image below.\n\n\n\n\n\n\n\n\n\n\n\nAuto vs Manual UVs\n\n\n\nSection Video: \nTexture Mapping: Auto vs Manual UVs\n\n\n\n\n\nProBuilder provides both \"Automatic\" and \"Manual\" Texturing methods:\n\n\n\n\n\n\nAuto UVs\n : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles projection and updates as you work.\n\n\n\n\n\n\nManual UV Editing\n : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.\n\n\n\n\n\n\nYou can use a mix of Auto and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.\n\n\n\n\nThe UV Editor Window\n\n\n\nSection Video: \nTexture Mapping: The UV Editor Window\n\n\n\n\n\nBoth \nAuto-Texturing\n and \nManual UV Editing\n controls are located in UV Editor Window.\n\n\nTo open this window, click it's button in the \nMain Toolbar\n.\n\n\n\n\nIn Text Mode, this will be the button labeled \nUV Editor\n\n\nIn Icon Mode, use the button with this icon: \n\n\n\n\n\n\n\n\n\n\n\n UV Editor Toolbar\n\n\nGeneral tools and shortcuts for working with UVs- see the \nUV Editor Toolbar\n section for details.\n\n\n Actions Panel\n\n\nThis is a dynamic Panel, similar to the \nMain Toolbar\n- only actions available for the selected UV Element(s) type will be shown.\n\n\nFor full info, see the \nAuto UVs Actions\n and \nManual UVs Actions\n sections.\n\n\n UV Viewer\n\n\nHere you can view and edit the selected object's UV Elements directly- see the \nManual UVs\n section for full details.", 
             "title": "Overview"
-        },
+        }, 
         {
-            "location": "/texturing/overview-texturing/#video-texturing-and-uvs-overview",
-            "text": "Texturing is the process of applying materials (\"textures\") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.   (@todo: image: new cube -  applied material -  rotated -  scaled -  offset)",
-            "title": "Video: Texturing and UVs Overview"
-        },
+            "location": "/texturing/overview-texture-mapping/#texture-mapping-101", 
+            "text": "Section Video:  Texture Mapping: Texture Mapping 101   Texture Mapping  is the process of applying materials (\"textures\") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.     UVs  are how the mesh stores this data. These are basically 2D \"fold-outs\" of the actual 3D mesh, like the image below.", 
+            "title": "Texture Mapping 101"
+        }, 
         {
-            "location": "/texturing/overview-texturing/#auto-texturing-vs-manual-uvs",
-            "text": "Section Video:  Texturing and UVs: Auto-Texturing vs Manual UVs   ProBuilder provides both \"Automatic\" and \"Manual\" Texturing methods:    Auto-Texturing  : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles the actual UV work.    Manual UV Editing  : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.    You can also use a mix of Auto-Texturing and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.",
-            "title": "Auto-Texturing vs Manual UVs"
-        },
+            "location": "/texturing/overview-texture-mapping/#auto-vs-manual-uvs", 
+            "text": "Section Video:  Texture Mapping: Auto vs Manual UVs   ProBuilder provides both \"Automatic\" and \"Manual\" Texturing methods:    Auto UVs  : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles projection and updates as you work.    Manual UV Editing  : Use a full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.    You can use a mix of Auto and Manual UVs, even on the same object. This is especially useful when some parts of a model need to have tiling textures, while others are unwrapped.", 
+            "title": "Auto vs Manual UVs"
+        }, 
         {
-            "location": "/texturing/overview-texturing/#the-texturing-and-uvs-window",
-            "text": "Section Video:  Texturing and UVs: The Texturing and UVs Window   Both  Auto-Texturing  and  Manual UV Editing  controls are located in Texturing and UVs Window.  To open this window, click it's button in the  Main Toolbar .    In  Text Mode , this will be the button labeled  UV Editor    In  Icon Mode , use the button with this icon:",
-            "title": "The Texturing and UVs Window"
-        },
+            "location": "/texturing/overview-texture-mapping/#the-uv-editor-window", 
+            "text": "Section Video:  Texture Mapping: The UV Editor Window   Both  Auto-Texturing  and  Manual UV Editing  controls are located in UV Editor Window.  To open this window, click it's button in the  Main Toolbar .   In Text Mode, this will be the button labeled  UV Editor  In Icon Mode, use the button with this icon:", 
+            "title": "The UV Editor Window"
+        }, 
         {
-            "location": "/texturing/overview-texturing/#a-toolbar",
-            "text": "General tools for working in both  Auto-Texturing  and  Manual UV Editing  modes. The buttons are, from left to right:    Select, Move, Rotate, Scale  : this first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.    Vertex, Edge Face  : the second button group contains shortcuts to ProBuilder's  Element Editing Modes . When using  Manual UV Editing , this allows you to select and manipulate UVs by Vertex, Edge, or Face.    In-Scene Controls  : This button toggles On/Off the  In-Scene Controls .    Texture Preview  : When  On , the selected face's main texture will be displayed in the  UV Viewer .    Render UVs: Opens the  Render UVs  tool panel, for rendering UV Templates to paint over in Photoshop/etc.",
-            "title": "(A) Toolbar"
-        },
+            "location": "/texturing/overview-texture-mapping/#uv-editor-toolbar", 
+            "text": "General tools and shortcuts for working with UVs- see the  UV Editor Toolbar  section for details.", 
+            "title": "UV Editor Toolbar"
+        }, 
         {
-            "location": "/texturing/overview-texturing/#actions-panel",
-            "text": "",
+            "location": "/texturing/overview-texture-mapping/#actions-panel", 
+            "text": "This is a dynamic Panel, similar to the  Main Toolbar - only actions available for the selected UV Element(s) type will be shown.  For full info, see the  Auto UVs Actions  and  Manual UVs Actions  sections.", 
             "title": "Actions Panel"
-        },
+        }, 
         {
-            "location": "/texturing/overview-texturing/#uv-viewer",
-            "text": "",
+            "location": "/texturing/overview-texture-mapping/#uv-viewer", 
+            "text": "Here you can view and edit the selected object's UV Elements directly- see the  Manual UVs  section for full details.", 
             "title": "UV Viewer"
-        },
+        }, 
         {
-            "location": "/texturing/overview-texturing/#auto-texturing-actions-panel",
-            "text": "",
-            "title": "Auto-Texturing Actions Panel"
-        },
+            "location": "/texturing/uv-editor-toolbar/", 
+            "text": "Select, Move, Rotate, Scale\n\n\nThis first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.\n\n\n\n\nVertex, Edge Face\n\n\nThe second button group contains shortcuts to ProBuilder's \nElement Editing Modes\n. When using \nManual UV Editing\n, this allows you to select and manipulate UVs by Vertex, Edge, or Face.  When using \nAuto UVs\n you may only edit UVs per-face.\n\n\n\n\n In-Scene Controls\n\n\n\nSection Video: \nUV Editor Toolbar: In-Scene Controls\n\n\n\n\n\nWhen \nOn\n, you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nOn\n : Move, Rotate, and Scale tools will affect UVs, geometry will not be affected\n\n\n\n\n\n\n\n\nOff\n : Move, Rotate, and Scale tools will return to normal geometry actions\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSnap to increments by holding \nCTRL\n . You can customize these increment values via the \nProBuilder Preferences\n\n\n\n\n Texture Preview\n\n\n\nSection Video: \nUV Editor Toolbar: Texture Preview\n\n\n\n\n\nWhen \nOn\n, the selected face's main texture will be displayed in the UV Viewer.\n\n\n\n\n\n\n\n\nToolbar Icon\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\nOn\n : Selected element's Texture will be displayed in the UV Viewer\n\n\n\n\n\n\n\n\nOff\n : No texture will be displayed in the UV Viewer\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Render UV Template\n\n\n\nSection Video: \nUV Editor Toolbar: Render UV Template\n\n\n\n\n\nOpens the Render UVs tool panel, for rendering UV Templates to be used with texture map painting, atlasing, sprite sheets, etc.\n\n\n\n\n\n\n\n\n\n\n\n\n\nImage Size\n : Total size of the rendered template (always square)\n\n\n\n\n\n\nHide Grid\n : Should the grid be hidden in the render?\n\n\n\n\n\n\nLine Color\n : What color should UV lines be rendered as?\n\n\n\n\n\n\nTransparent Background\n : Should the background be rendered transparent?\n\n\n\n\n\n\nBackground Color\n : If you want a non-transparent background, set the color here\n\n\n\n\n\n\nSave UV Template\n : Click to render the UV Template - a file dialogue will be opened to save the file.", 
+            "title": "UV Editor Toolbar"
+        }, 
         {
-            "location": "/texturing/overview-texturing/#manual-uv-editing-actions-panel",
-            "text": "",
-            "title": "Manual UV Editing Actions Panel"
-        },
+            "location": "/texturing/uv-editor-toolbar/#select-move-rotate-scale", 
+            "text": "This first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.", 
+            "title": "Select, Move, Rotate, Scale"
+        }, 
         {
-            "location": "/texturing/auto-texturing/",
-            "text": "Video: Auto-Texturing\n\n\n\n\nUse the standard Move, Rotate, and Scale tools for texturing, or direct numerical input, and ProBuilder automatically handles all the complex UV work.\n\n\n\n\nIn-Scene Controls\n\n\n\nSection Video: \nAuto-Texturing: In-Scene Controls\n\n\n\n\n\nThis is the simplest method of Texturing in ProBuilder. Using Unity's standard Move, Rotate, and Scale tools, you can directly manipulate Texturing per-face.\n\n\nHere's a step-by-step example of using the In-Scene Texturing Controls:\n\n\n\n\nOpen the \nTexturing and UVs Window\n\n\nIf the \nUse In-Scene Controls\n button is greyed out, click to enable\n\n\nSelect a face, or multiple faces, to edit\n\n\nMake sure the selected face(s) are using Auto-Texturing - if the \nTexturing and UVs Tool Panel\n shows a \"\nConvert to Auto-Texturing\n\" button, click that button\n\n\nUse the standard Unity Move, Rotate and Scale tools- notice that instead of editing the face's geometry, it is now editing Offset, Rotation, and Tiling\n\n\nClose the Texturing and UVs Panel when finished\n\n\n\n\n\n\nSnap to increments while Moving or Rotating by holding \nCTRL\n . You can customize these increment values via the \nProBuilder Preferences\n\n\n\n\n\n\n\n\nBasic Panel Controls\n\n\n\nSection Video: \nAuto-Texturing: Panel Controls\n\n\n\n\n\nWhen you need to set an exact Offset, Rotation, or Tiling amount, use the \nTexturing and UVs Panel\n.\n\n\nHere's a step-by-step example of using the Panel Controls:\n\n\n\n\nOpen the \nTexturing and UVs Window\n\n\nSelect a face, or multiple faces, to edit\n\n\nMake sure the selected face(s) are using Auto-Texturing - if the \nTexturing and UVs Tool Panel\n shows a \"\nConvert to Auto-Texturing\n\" button, click that button\n\n\nIn the \nTexturing and UVs Tool Panel\n, type in exact values for Offset, Rotation, and Tiling.\n\n\nYou can also \"drag\" the values to smoothly increase or decrease\n\n\nClose the Texturing and UVs Panel when finished\n\n\n\n\n\n\n\n\nAdvanced Panel Controls\n\n\n\nSection Video: \nAuto-Texturing: Panel Controls",
-            "title": "Auto-Texturing"
-        },
+            "location": "/texturing/uv-editor-toolbar/#vertex-edge-face", 
+            "text": "The second button group contains shortcuts to ProBuilder's  Element Editing Modes . When using  Manual UV Editing , this allows you to select and manipulate UVs by Vertex, Edge, or Face.  When using  Auto UVs  you may only edit UVs per-face.", 
+            "title": "Vertex, Edge Face"
+        }, 
         {
-            "location": "/texturing/auto-texturing/#video-auto-texturing",
-            "text": "Use the standard Move, Rotate, and Scale tools for texturing, or direct numerical input, and ProBuilder automatically handles all the complex UV work.",
-            "title": "Video: Auto-Texturing"
-        },
-        {
-            "location": "/texturing/auto-texturing/#in-scene-controls",
-            "text": "Section Video:  Auto-Texturing: In-Scene Controls   This is the simplest method of Texturing in ProBuilder. Using Unity's standard Move, Rotate, and Scale tools, you can directly manipulate Texturing per-face.  Here's a step-by-step example of using the In-Scene Texturing Controls:   Open the  Texturing and UVs Window  If the  Use In-Scene Controls  button is greyed out, click to enable  Select a face, or multiple faces, to edit  Make sure the selected face(s) are using Auto-Texturing - if the  Texturing and UVs Tool Panel  shows a \" Convert to Auto-Texturing \" button, click that button  Use the standard Unity Move, Rotate and Scale tools- notice that instead of editing the face's geometry, it is now editing Offset, Rotation, and Tiling  Close the Texturing and UVs Panel when finished    Snap to increments while Moving or Rotating by holding  CTRL  . You can customize these increment values via the  ProBuilder Preferences",
+            "location": "/texturing/uv-editor-toolbar/#in-scene-controls", 
+            "text": "Section Video:  UV Editor Toolbar: In-Scene Controls   When  On , you can use Unity's standard Move, Rotate, and Scale tools to directly manipulate UVs in the scene, without affecting geometry.     Toolbar Icon  Description       On  : Move, Rotate, and Scale tools will affect UVs, geometry will not be affected     Off  : Move, Rotate, and Scale tools will return to normal geometry actions        Snap to increments by holding  CTRL  . You can customize these increment values via the  ProBuilder Preferences", 
             "title": "In-Scene Controls"
-        },
+        }, 
         {
-            "location": "/texturing/auto-texturing/#basic-panel-controls",
-            "text": "Section Video:  Auto-Texturing: Panel Controls   When you need to set an exact Offset, Rotation, or Tiling amount, use the  Texturing and UVs Panel .  Here's a step-by-step example of using the Panel Controls:   Open the  Texturing and UVs Window  Select a face, or multiple faces, to edit  Make sure the selected face(s) are using Auto-Texturing - if the  Texturing and UVs Tool Panel  shows a \" Convert to Auto-Texturing \" button, click that button  In the  Texturing and UVs Tool Panel , type in exact values for Offset, Rotation, and Tiling.  You can also \"drag\" the values to smoothly increase or decrease  Close the Texturing and UVs Panel when finished",
-            "title": "Basic Panel Controls"
-        },
+            "location": "/texturing/uv-editor-toolbar/#texture-preview", 
+            "text": "Section Video:  UV Editor Toolbar: Texture Preview   When  On , the selected face's main texture will be displayed in the UV Viewer.     Toolbar Icon  Description       On  : Selected element's Texture will be displayed in the UV Viewer     Off  : No texture will be displayed in the UV Viewer", 
+            "title": "Texture Preview"
+        }, 
         {
-            "location": "/texturing/auto-texturing/#advanced-panel-controls",
-            "text": "Section Video:  Auto-Texturing: Panel Controls",
-            "title": "Advanced Panel Controls"
-        },
+            "location": "/texturing/uv-editor-toolbar/#render-uv-template", 
+            "text": "Section Video:  UV Editor Toolbar: Render UV Template   Opens the Render UVs tool panel, for rendering UV Templates to be used with texture map painting, atlasing, sprite sheets, etc.       Image Size  : Total size of the rendered template (always square)    Hide Grid  : Should the grid be hidden in the render?    Line Color  : What color should UV lines be rendered as?    Transparent Background  : Should the background be rendered transparent?    Background Color  : If you want a non-transparent background, set the color here    Save UV Template  : Click to render the UV Template - a file dialogue will be opened to save the file.", 
+            "title": "Render UV Template"
+        }, 
         {
-            "location": "/texturing/manual-uv-editing/",
-            "text": "Video: Texturing and UVs\n\n\n\n\nProBuilder is controlled almost entirely via the \nMain Toolbar\n, which contains all commonly used functions.\n\n\nA second toolbar, the \nEdit Mode Toolbar\n, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.\n\n\n\n\nOverview: Texturing\n\n\nTexturing is the process of applying materials (\"textures\") to an object, and adjusting position, rotation, and tiling.\n\n\n![(new cube -\n applied material -\n rotated -\n scaled -\n offset)]\n\n\nOverview: UVs\n\n\nUVs are used track these position, rotation, and tiling values. ProBuilder provides 3 methods of working with UVs:\n\n\n\n\n\n\nAuto UVs : Use the standard Move, Rotate, and Scale tools for texturing, or direct numerical input, and ProBuilder automatically handles all the complex UV work.\n\n\n\n\n\n\nManual UVs : Use the full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.\n\n\n\n\n\n\nCombination : Use a mix of Auto and Manual UVs, even on the same object.",
-            "title": "Manual UV Editing"
-        },
+            "location": "/texturing/auto-uvs-actions/", 
+            "text": "Convert to Manual\n\n\n\nSection Video: \nAuto UVs Actions: Convert to Manual\n\n\n\n\n\nConverts the selected Face(s) to using Manual UVs.\n\n\nWhen converting from Auto UVs to Manual there will be no loss of resolution, but if you modify vertices or edges individually in Manual Mode those changes will not be transferable to Auto Mode.\n\n\n\n\nFill Mode\n\n\n\nSection Video: \nAuto UVs Actions: Fill Mode\n\n\n\n\n\n\n\n\n\n\n\nOption\n\n\nDescription\n\n\n\n\n\n\n\n\n\n\nTile\n\n\nContinously tiles (repeats) the UVs across the object\n\n\n\n\n\n\nFit\n\n\nUniformly scales UVs to size\n\n\n\n\n\n\nStretch\n\n\nExpands the selection on all sides to fill space\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOffset\n\n\n\nSection Video: \nAuto UVs Actions: Offset\n\n\n\n\n\nEnter exact offset values here, or drag the input field to adjust.\n\n\n\n\nRotation\n\n\n\nSection Video: \nAuto UVs Actions: Rotation\n\n\n\n\n\nEnter exact rotation values here, or drag the slider to adjust.\n\n\n\n\nScale\n\n\n\nSection Video: \nAuto UVs Actions: Scale\n\n\n\n\n\nEnter exact Scale values here, or click the preset buttons.\n\n\n\n\nFlip U\n\n\n\nSection Video: \nAuto UVs Actions: Flip U\n\n\n\n\n\nFlip the UVs horizontally.\n\n\n\n\nFlip V\n\n\n\nSection Video: \nAuto UVs Actions: Flip V\n\n\n\n\n\nFlip the UVs vertically.\n\n\n\n\nSwap U/V\n\n\n\nSection Video: \nAuto UVs Actions: Swap U/V\n\n\n\n\n\nInvert the horizontal and vertical UVs.\n\n\n\n\nWorld Space\n\n\n\nSection Video: \nAuto UVs Actions: World Space\n\n\n\n\n\nUVs are aligned to the World - this ensures textures on same-angle faces will always line up, but UVs will not stay put when moving the object.\n\n\n\n\nTexture Group Number\n\n\n\nSection Video: \nAuto UVs Actions: Texture Group Number\n\n\n\n\n\nShows the Texture Group ID of the currently selected face, if applicable.\n\n\n\n\nGroup Selected Faces\n\n\n\nSection Video: \nAuto UVs Actions: Group Selected Faces\n\n\n\n\n\nCreate a new Texture Group from the selected faces.\n\n\n\n\nSelect Texture Group\n\n\n\nSection Video: \nAuto UVs Actions: Select Texture Group\n\n\n\n\n\nSelect all faces in the the Texture Group.", 
+            "title": "Auto UVs Actions"
+        }, 
         {
-            "location": "/texturing/manual-uv-editing/#video-texturing-and-uvs",
-            "text": "ProBuilder is controlled almost entirely via the  Main Toolbar , which contains all commonly used functions.  A second toolbar, the  Edit Mode Toolbar , is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active sceneview.",
-            "title": "Video: Texturing and UVs"
-        },
+            "location": "/texturing/auto-uvs-actions/#convert-to-manual", 
+            "text": "Section Video:  Auto UVs Actions: Convert to Manual   Converts the selected Face(s) to using Manual UVs.  When converting from Auto UVs to Manual there will be no loss of resolution, but if you modify vertices or edges individually in Manual Mode those changes will not be transferable to Auto Mode.", 
+            "title": "Convert to Manual"
+        }, 
         {
-            "location": "/texturing/manual-uv-editing/#overview-texturing",
-            "text": "Texturing is the process of applying materials (\"textures\") to an object, and adjusting position, rotation, and tiling.  ![(new cube -  applied material -  rotated -  scaled -  offset)]",
-            "title": "Overview: Texturing"
-        },
+            "location": "/texturing/auto-uvs-actions/#fill-mode", 
+            "text": "Section Video:  Auto UVs Actions: Fill Mode      Option  Description      Tile  Continously tiles (repeats) the UVs across the object    Fit  Uniformly scales UVs to size    Stretch  Expands the selection on all sides to fill space", 
+            "title": "Fill Mode"
+        }, 
         {
-            "location": "/texturing/manual-uv-editing/#overview-uvs",
-            "text": "UVs are used track these position, rotation, and tiling values. ProBuilder provides 3 methods of working with UVs:    Auto UVs : Use the standard Move, Rotate, and Scale tools for texturing, or direct numerical input, and ProBuilder automatically handles all the complex UV work.    Manual UVs : Use the full UV Editor to precisely unwrap and edit UVs, render UV Templates, project UVs, and more.    Combination : Use a mix of Auto and Manual UVs, even on the same object.",
-            "title": "Overview: UVs"
-        },
+            "location": "/texturing/auto-uvs-actions/#offset", 
+            "text": "Section Video:  Auto UVs Actions: Offset   Enter exact offset values here, or drag the input field to adjust.", 
+            "title": "Offset"
+        }, 
         {
-            "location": "/troubleshooting/faq/",
-            "text": "Error building Player\n\n\nUsually seen with console errors:\n\n\n\n\nError building Player: UnityException: Failed to run serialization weaver with command\n\n\n\n\nTo get things compiling again, you need to mark the ProBuilder DLLs as Editor only.\n\n\n\n\nThis does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.\n\n\n\n\nSteps to Fix\n\n\n\n\n\n\n\nFirst make sure that \nStrip PB Scripts on Build\n is checked in the Preferences/ProBuilder panel.\n\n\n\n\n\n\n\n\nNext, locate \nProBuilderCore-Unity5.dll\n and \nProBuilderMeshOps-Unity5.dll\n in your project.\n\n\n\n\n\n\n\n\nWith both \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n selected, in the Inspector window uncheck \"Any Platform.\"  Then toggle both \"Editor\" and \"Standalone.\"\n\n\n\n\n\n\n\n\nIf you're using ProBuilder 2.5 or lower, some errors will appear when scripts reload.  Open the following files (in ProBuilder/API Examples):\n\n\n\n\nIcoBumpin.cs\n\n\nHueCube.cs\n\n\nRuntimeEdit.cs\n\n\n\n\nIn each of these files, place this line at the very beginning:\n\n\n#if UNITY_EDITOR || UNITY_STANDALONE\n\n\n\nand this line at the very end:\n\n\n#endif\n\n\n\nFor example, here's what \nRuntimeEdit.cs\n looks like:\n\n\n#if UNITY_STANDALONE || UNITY_EDITOR\nusing UnityEngine;\nusing System.Collections;\nusing ProBuilder2.Common;\n\nnamespace ProBuilder2.Examples\n{\n\n    /**\n     *  \\brief This class allows the user to select a single face at a time and move it forwards or backwards.\n     *  More advanced usage of the ProBuilder API should make use of the pb_Object-\nSelectedFaces list to keep\n     *  track of the selected faces.\n     */\n    public class RuntimeEdit : MonoBehaviour \n    {\n        // ... etc\n    }\n}\n#endif\n\n\n\nNow compile your project and run!",
+            "location": "/texturing/auto-uvs-actions/#rotation", 
+            "text": "Section Video:  Auto UVs Actions: Rotation   Enter exact rotation values here, or drag the slider to adjust.", 
+            "title": "Rotation"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#scale", 
+            "text": "Section Video:  Auto UVs Actions: Scale   Enter exact Scale values here, or click the preset buttons.", 
+            "title": "Scale"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#flip-u", 
+            "text": "Section Video:  Auto UVs Actions: Flip U   Flip the UVs horizontally.", 
+            "title": "Flip U"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#flip-v", 
+            "text": "Section Video:  Auto UVs Actions: Flip V   Flip the UVs vertically.", 
+            "title": "Flip V"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#swap-uv", 
+            "text": "Section Video:  Auto UVs Actions: Swap U/V   Invert the horizontal and vertical UVs.", 
+            "title": "Swap U/V"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#world-space", 
+            "text": "Section Video:  Auto UVs Actions: World Space   UVs are aligned to the World - this ensures textures on same-angle faces will always line up, but UVs will not stay put when moving the object.", 
+            "title": "World Space"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#texture-group-number", 
+            "text": "Section Video:  Auto UVs Actions: Texture Group Number   Shows the Texture Group ID of the currently selected face, if applicable.", 
+            "title": "Texture Group Number"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#group-selected-faces", 
+            "text": "Section Video:  Auto UVs Actions: Group Selected Faces   Create a new Texture Group from the selected faces.", 
+            "title": "Group Selected Faces"
+        }, 
+        {
+            "location": "/texturing/auto-uvs-actions/#select-texture-group", 
+            "text": "Section Video:  Auto UVs Actions: Select Texture Group   Select all faces in the the Texture Group.", 
+            "title": "Select Texture Group"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/", 
+            "text": "Convert to Auto\n\n\n\nSection Video: \nManual UVs: Convert to Auto\n\n\n\n\n\nConverts all selected faces to \nAuto UVs\n.\n\n\n\n\nProject UVs: Planar\n\n\n\nSection Video: \nManual UVs: Project UVs: Planar\n\n\n\n\n\nUnwraps the selected face(s) using a Planar Projection method.\n\n\n\n\n\n\n\n\n\n\n\nProject UVs: Box\n\n\n\nSection Video: \nManual UVs: Project UVs: Box\n\n\n\n\n\nUnwraps the selected face(s) using a Box Projection method.\n\n\n\n\n\n\n\n\n\n\n\nSelect Island\n\n\n\nSection Video: \nManual UVs: Select Island\n\n\n\n\n\nWith a UV element selected, clicking this will expand the selection to include all other connected UV elements.\n\n\n\n\n\n\n\n\n\n\n\nSelect Face\n\n\n\nSection Video: \nManual UVs: Select Face\n\n\n\n\n\nWith a Vertex or Edge selected, click to select all elements on the same face.\n\n\n\n\n\n\n\n\n\n\n\nWeld\n\n\n\nSection Video: \nManual UVs: Weld\n\n\n\n\n\nCollapses selected vertices together, but only if they are within a set distance.\n\n\nTo adjust the distance modifier, click the \"+\" button on the right side of the Weld button.\n\n\n\n\n\n\n\n\n\n\n\nCollapse UVs\n\n\n\nSection Video: \nManual UVs: Collapse UVs\n\n\n\n\n\nCollapses all selected vertices to a single vertex, regardless of distance.\n\n\n\n\n\n\n\n\n\n\n\nSplit UVs\n\n\n\nSection Video: \nManual UVs: Split UVs\n\n\n\n\n\nBreaks off the selected UV element(s)) from any UV element(s), allowing them to be manipulated independantly.\n\n\n\n\n\n\n\n\n\n\n\nFlip Horizontal\n\n\n\nSection Video: \nManual UVs: Flip Horizontal\n\n\n\n\n\nFlip the selected UV element(s) in the horizontal direction.\n\n\n\n\n\n\n\n\n\n\n\nFlip Vertical\n\n\n\nSection Video: \nManual UVs: Flip Vertical\n\n\n\n\n\nFlip the selected UV element(s) in the vertical direction.\n\n\n\n\n\n\n\n\n\n\n\nFit\n\n\n\nSection Video: \nManual UVs: Fit\n\n\n\n\n\nScale and move the selected UV element(s) to fit exactly within the UV space.", 
+            "title": "Manual UVs Actions"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#convert-to-auto", 
+            "text": "Section Video:  Manual UVs: Convert to Auto   Converts all selected faces to  Auto UVs .", 
+            "title": "Convert to Auto"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#project-uvs-planar", 
+            "text": "Section Video:  Manual UVs: Project UVs: Planar   Unwraps the selected face(s) using a Planar Projection method.", 
+            "title": "Project UVs: Planar"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#project-uvs-box", 
+            "text": "Section Video:  Manual UVs: Project UVs: Box   Unwraps the selected face(s) using a Box Projection method.", 
+            "title": "Project UVs: Box"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#select-island", 
+            "text": "Section Video:  Manual UVs: Select Island   With a UV element selected, clicking this will expand the selection to include all other connected UV elements.", 
+            "title": "Select Island"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#select-face", 
+            "text": "Section Video:  Manual UVs: Select Face   With a Vertex or Edge selected, click to select all elements on the same face.", 
+            "title": "Select Face"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#weld", 
+            "text": "Section Video:  Manual UVs: Weld   Collapses selected vertices together, but only if they are within a set distance.  To adjust the distance modifier, click the \"+\" button on the right side of the Weld button.", 
+            "title": "Weld"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#collapse-uvs", 
+            "text": "Section Video:  Manual UVs: Collapse UVs   Collapses all selected vertices to a single vertex, regardless of distance.", 
+            "title": "Collapse UVs"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#split-uvs", 
+            "text": "Section Video:  Manual UVs: Split UVs   Breaks off the selected UV element(s)) from any UV element(s), allowing them to be manipulated independantly.", 
+            "title": "Split UVs"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#flip-horizontal", 
+            "text": "Section Video:  Manual UVs: Flip Horizontal   Flip the selected UV element(s) in the horizontal direction.", 
+            "title": "Flip Horizontal"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#flip-vertical", 
+            "text": "Section Video:  Manual UVs: Flip Vertical   Flip the selected UV element(s) in the vertical direction.", 
+            "title": "Flip Vertical"
+        }, 
+        {
+            "location": "/texturing/manual-uvs-actions/#fit", 
+            "text": "Section Video:  Manual UVs: Fit   Scale and move the selected UV element(s) to fit exactly within the UV space.", 
+            "title": "Fit"
+        }, 
+        {
+            "location": "/preferences/preferences/", 
+            "text": "ProBuilder contains many settings that can be customized to suit your needs.\n\n\n\n\nGeneral Settings\n\n\n\nStrip PB Scripts on Build\n\n\nIf enabled ProBuilder will automatically remove the extra data ProBuilder stores in a scene.  This includes all ProBuilder scripts, so if you are making use of the runtime API you will need to disable this feature.\n\n\nDisable Auto UV2 Generation\n\n\nGenerating a UV2 channel for meshes is necessary for lighting, but can be a time consuming operation.  If you are editing objects with large vertex counts it is beneficial to skip generating the UV2 channel after every geometry edit and do it manually (using the \nGenerate UV2\n toolbar item).\n\n\nShow Scene Info\n\n\nShow or hide the mesh information overlay in the top left of the Scene View.\n\n\nShow Editor Notifications\n\n\nThis preference enables or disables notification popups when performing actions.\n\n\nToolbar Settings\n\n\n\nUse Icon GUI\n\n\nToggles the toolbar between using Icons or Text.\n\n\nShift Key Tooltips\n\n\nIf enabled the ProBuilder toolbar will only show tooltips when the mouse is hovering an item and the \nShift\n key is held.\n\n\nBy default tooltips are shown when the mouse hovers an action for more than a second.\n\n\nToolbar Location\n\n\nControls where the \nElement Mode Toolbar\n is shown in the Scene View.\n\n\nUnique Mode Shortcuts\n\n\nIf Unique Mode Shorcuts is enabled ProBuilder assigns the \nG, H, J, K\n keys to \nObject\n, \nVertex\n, \nEdge\n, and \nFace\n modes respectively.  You can change which keys are mapped to these actions in the Shortcut Settings section.\n\n\nBy default ProBuilder assigns the \nG\n key to toggle between \nObject\n mode and \nVertex/Edge/Face\n modes.  \nH\n toggles between the different element modes \nVertex/Edge/Face\n.\n\n\n*More Info on Modes: \nObject and Element Modes\n;\n\n\nOpen in Dockable Window\n\n\nIf enabled the ProBuilder toolbar will be opened as a dockable window.  If disabled the window will be floating and always on top.\n\n\nResource Defaults\n\n\n\nDefault Material\n\n\nWhat material new shapes will be instantiated with.\n\n\nDefault Entity\n\n\nWhat entity type new shapes will be instantiated as.\n\n\nDefault Collider\n\n\nThe type of collider new shapes will be instantiated with.\n\n\nForce Convex Mesh Collider\n\n\nIf the default collider is \nMesh Collider\n, this setting controls the \nIs Convex\n setting of the collider.\n\n\nMiscellaneous Settings\n\n\n\nLimit Drag Check to Selection\n\n\nWhen enabled ProBuilder will restrict drag selection of elements to the current selection.  If disabled drag selecting in a scene will test every ProBuilder object, which may be slow in larger scenes.\n\n\nOnly PBO are Selectable\n\n\nIf enabled while ProBuilder is open only ProBuilder created GameObjects may be selected.\n\n\nClose Shape Window After Building\n\n\nIf enabled the \nShape Tool\n will automatically close itself after a new object is created.\n\n\nDimension Overlay Lines\n\n\nHide or show the bounding lines in the Dimensions Overlay.\n\n\nGeometry Editing Settings\n\n\n\nPrecise Element Selection\n\n\nThis controls how close to an element the cursor must be to register for selection.  By default this is disabled, meaning that vertex and edge selection are very forgiving when clicking.\n\n\nIf enabled, the selectable area for vertices and edges is smaller, but you may also select faces by clicking outside of vertices.\n\n\nColors\n\n\nProBuilder allows users to set the colors for element selections.\n\n\n\n\n\nVertex Handle Size\n\n\nDetermines how large vertex points are rendered in the scene.  This setting does not affect selection.\n\n\nForce Pivot to Vertex Point\n\n\nWhen instantiating new shapes ProBuilder will guarantee that the pivot point of the object coincides with a vertex position.\n\n\nForce Pivot to Grid\n\n\nWhen instantiating a new object ProBuilder will snap the object to the nearest grid point (as determined by ProGrids).\n\n\n\n\nBridge Perimeter Edges Only\n\n\nWhen enabled ProBuilder will not allow users to extrude edges from manifold edges.  Disable to remove this restriction.\n\n\nExperimental\n\n\n\n\n\nWarning!\n\nEnabling experimental features may break your project!  Please exercise caution.\n\n\n\n\nMeshes Are Assets\n\n\nProBuilder will store mesh information in the Project instead of per-scene.\n\n\nUV Editing Settings\n\n\n\nUV Snap Increment\n\n\nSet the snap increment in the UV Editor window.\n\n\nEditor Window Floating\n\n\nMake the UV Editor window floating or dock-able.", 
+            "title": "Preferences"
+        }, 
+        {
+            "location": "/preferences/preferences/#strip-pb-scripts-on-build", 
+            "text": "If enabled ProBuilder will automatically remove the extra data ProBuilder stores in a scene.  This includes all ProBuilder scripts, so if you are making use of the runtime API you will need to disable this feature.", 
+            "title": "Strip PB Scripts on Build"
+        }, 
+        {
+            "location": "/preferences/preferences/#disable-auto-uv2-generation", 
+            "text": "Generating a UV2 channel for meshes is necessary for lighting, but can be a time consuming operation.  If you are editing objects with large vertex counts it is beneficial to skip generating the UV2 channel after every geometry edit and do it manually (using the  Generate UV2  toolbar item).", 
+            "title": "Disable Auto UV2 Generation"
+        }, 
+        {
+            "location": "/preferences/preferences/#show-scene-info", 
+            "text": "Show or hide the mesh information overlay in the top left of the Scene View.", 
+            "title": "Show Scene Info"
+        }, 
+        {
+            "location": "/preferences/preferences/#show-editor-notifications", 
+            "text": "This preference enables or disables notification popups when performing actions.", 
+            "title": "Show Editor Notifications"
+        }, 
+        {
+            "location": "/preferences/preferences/#use-icon-gui", 
+            "text": "Toggles the toolbar between using Icons or Text.", 
+            "title": "Use Icon GUI"
+        }, 
+        {
+            "location": "/preferences/preferences/#shift-key-tooltips", 
+            "text": "If enabled the ProBuilder toolbar will only show tooltips when the mouse is hovering an item and the  Shift  key is held.  By default tooltips are shown when the mouse hovers an action for more than a second.", 
+            "title": "Shift Key Tooltips"
+        }, 
+        {
+            "location": "/preferences/preferences/#toolbar-location", 
+            "text": "Controls where the  Element Mode Toolbar  is shown in the Scene View.", 
+            "title": "Toolbar Location"
+        }, 
+        {
+            "location": "/preferences/preferences/#unique-mode-shortcuts", 
+            "text": "If Unique Mode Shorcuts is enabled ProBuilder assigns the  G, H, J, K  keys to  Object ,  Vertex ,  Edge , and  Face  modes respectively.  You can change which keys are mapped to these actions in the Shortcut Settings section.  By default ProBuilder assigns the  G  key to toggle between  Object  mode and  Vertex/Edge/Face  modes.   H  toggles between the different element modes  Vertex/Edge/Face .  *More Info on Modes:  Object and Element Modes ;", 
+            "title": "Unique Mode Shortcuts"
+        }, 
+        {
+            "location": "/preferences/preferences/#open-in-dockable-window", 
+            "text": "If enabled the ProBuilder toolbar will be opened as a dockable window.  If disabled the window will be floating and always on top.", 
+            "title": "Open in Dockable Window"
+        }, 
+        {
+            "location": "/preferences/preferences/#default-material", 
+            "text": "What material new shapes will be instantiated with.", 
+            "title": "Default Material"
+        }, 
+        {
+            "location": "/preferences/preferences/#default-entity", 
+            "text": "What entity type new shapes will be instantiated as.", 
+            "title": "Default Entity"
+        }, 
+        {
+            "location": "/preferences/preferences/#default-collider", 
+            "text": "The type of collider new shapes will be instantiated with.", 
+            "title": "Default Collider"
+        }, 
+        {
+            "location": "/preferences/preferences/#force-convex-mesh-collider", 
+            "text": "If the default collider is  Mesh Collider , this setting controls the  Is Convex  setting of the collider.", 
+            "title": "Force Convex Mesh Collider"
+        }, 
+        {
+            "location": "/preferences/preferences/#limit-drag-check-to-selection", 
+            "text": "When enabled ProBuilder will restrict drag selection of elements to the current selection.  If disabled drag selecting in a scene will test every ProBuilder object, which may be slow in larger scenes.", 
+            "title": "Limit Drag Check to Selection"
+        }, 
+        {
+            "location": "/preferences/preferences/#only-pbo-are-selectable", 
+            "text": "If enabled while ProBuilder is open only ProBuilder created GameObjects may be selected.", 
+            "title": "Only PBO are Selectable"
+        }, 
+        {
+            "location": "/preferences/preferences/#close-shape-window-after-building", 
+            "text": "If enabled the  Shape Tool  will automatically close itself after a new object is created.", 
+            "title": "Close Shape Window After Building"
+        }, 
+        {
+            "location": "/preferences/preferences/#dimension-overlay-lines", 
+            "text": "Hide or show the bounding lines in the Dimensions Overlay.", 
+            "title": "Dimension Overlay Lines"
+        }, 
+        {
+            "location": "/preferences/preferences/#precise-element-selection", 
+            "text": "This controls how close to an element the cursor must be to register for selection.  By default this is disabled, meaning that vertex and edge selection are very forgiving when clicking.  If enabled, the selectable area for vertices and edges is smaller, but you may also select faces by clicking outside of vertices.", 
+            "title": "Precise Element Selection"
+        }, 
+        {
+            "location": "/preferences/preferences/#colors", 
+            "text": "ProBuilder allows users to set the colors for element selections.", 
+            "title": "Colors"
+        }, 
+        {
+            "location": "/preferences/preferences/#vertex-handle-size", 
+            "text": "Determines how large vertex points are rendered in the scene.  This setting does not affect selection.", 
+            "title": "Vertex Handle Size"
+        }, 
+        {
+            "location": "/preferences/preferences/#force-pivot-to-vertex-point", 
+            "text": "When instantiating new shapes ProBuilder will guarantee that the pivot point of the object coincides with a vertex position.", 
+            "title": "Force Pivot to Vertex Point"
+        }, 
+        {
+            "location": "/preferences/preferences/#force-pivot-to-grid", 
+            "text": "When instantiating a new object ProBuilder will snap the object to the nearest grid point (as determined by ProGrids).", 
+            "title": "Force Pivot to Grid"
+        }, 
+        {
+            "location": "/preferences/preferences/#bridge-perimeter-edges-only", 
+            "text": "When enabled ProBuilder will not allow users to extrude edges from manifold edges.  Disable to remove this restriction.", 
+            "title": "Bridge Perimeter Edges Only"
+        }, 
+        {
+            "location": "/preferences/preferences/#meshes-are-assets", 
+            "text": "ProBuilder will store mesh information in the Project instead of per-scene.", 
+            "title": "Meshes Are Assets"
+        }, 
+        {
+            "location": "/preferences/preferences/#uv-snap-increment", 
+            "text": "Set the snap increment in the UV Editor window.", 
+            "title": "UV Snap Increment"
+        }, 
+        {
+            "location": "/preferences/preferences/#editor-window-floating", 
+            "text": "Make the UV Editor window floating or dock-able.", 
+            "title": "Editor Window Floating"
+        }, 
+        {
+            "location": "/troubleshooting/faq/", 
+            "text": "Error building Player\n\n\nUsually seen with console errors:\n\n\n\n\nError building Player: UnityException: Failed to run serialization weaver with command\n\n\n\n\nTo get things compiling again, you need to mark the ProBuilder DLLs as Editor only.\n\n\n\n\nThis does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.\n\n\n\n\nSteps to Fix\n\n\n\n\n\n\n\nFirst make sure that \nStrip PB Scripts on Build\n is checked in the Preferences/ProBuilder panel.\n\n\n\n\n\n\n\n\nNext, locate \nProBuilderCore-Unity5.dll\n and \nProBuilderMeshOps-Unity5.dll\n in your project.\n\n\n\n\n\n\n\n\nWith both \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n selected, in the Inspector window uncheck \"Any Platform.\"  Then toggle both \"Editor\" and \"Standalone.\"\n\n\n\n\n\n\n\n\nIf you're using ProBuilder 2.5 or lower, some errors will appear when scripts reload.  Open the following files (in ProBuilder/API Examples):\n\n\n\n\nIcoBumpin.cs\n\n\nHueCube.cs\n\n\nRuntimeEdit.cs\n\n\n\n\nIn each of these files, place this line at the very beginning:\n\n\n#if UNITY_EDITOR || UNITY_STANDALONE\n\n\n\nand this line at the very end:\n\n\n#endif\n\n\n\nFor example, here's what \nRuntimeEdit.cs\n looks like:\n\n\n#if UNITY_STANDALONE || UNITY_EDITOR\nusing UnityEngine;\nusing System.Collections;\nusing ProBuilder2.Common;\n\nnamespace ProBuilder2.Examples\n{\n\n    /**\n     *  \\brief This class allows the user to select a single face at a time and move it forwards or backwards.\n     *  More advanced usage of the ProBuilder API should make use of the pb_Object-\nSelectedFaces list to keep\n     *  track of the selected faces.\n     */\n    public class RuntimeEdit : MonoBehaviour \n    {\n        // ... etc\n    }\n}\n#endif\n\n\n\nNow compile your project and run!\n\n\nMissing Icons\n\n\nIf you upgraded ProBuilder and are now missing icons in the toolbar, first: restart Unity.  If that fails to bring icons back, re-import the ProBuilder package.", 
             "title": "Faq"
-        },
+        }, 
         {
-            "location": "/troubleshooting/faq/#error-building-player",
-            "text": "Usually seen with console errors:   Error building Player: UnityException: Failed to run serialization weaver with command   To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.   This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.   Steps to Fix    First make sure that  Strip PB Scripts on Build  is checked in the Preferences/ProBuilder panel.     Next, locate  ProBuilderCore-Unity5.dll  and  ProBuilderMeshOps-Unity5.dll  in your project.     With both  ProBuilderCore-Unity5  and  ProBuilderMeshOps-Unity5  selected, in the Inspector window uncheck \"Any Platform.\"  Then toggle both \"Editor\" and \"Standalone.\"     If you're using ProBuilder 2.5 or lower, some errors will appear when scripts reload.  Open the following files (in ProBuilder/API Examples):   IcoBumpin.cs  HueCube.cs  RuntimeEdit.cs   In each of these files, place this line at the very beginning:  #if UNITY_EDITOR || UNITY_STANDALONE  and this line at the very end:  #endif  For example, here's what  RuntimeEdit.cs  looks like:  #if UNITY_STANDALONE || UNITY_EDITOR\nusing UnityEngine;\nusing System.Collections;\nusing ProBuilder2.Common;\n\nnamespace ProBuilder2.Examples\n{\n\n    /**\n     *  \\brief This class allows the user to select a single face at a time and move it forwards or backwards.\n     *  More advanced usage of the ProBuilder API should make use of the pb_Object- SelectedFaces list to keep\n     *  track of the selected faces.\n     */\n    public class RuntimeEdit : MonoBehaviour \n    {\n        // ... etc\n    }\n}\n#endif  Now compile your project and run!",
+            "location": "/troubleshooting/faq/#error-building-player", 
+            "text": "Usually seen with console errors:   Error building Player: UnityException: Failed to run serialization weaver with command   To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.   This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.   Steps to Fix    First make sure that  Strip PB Scripts on Build  is checked in the Preferences/ProBuilder panel.     Next, locate  ProBuilderCore-Unity5.dll  and  ProBuilderMeshOps-Unity5.dll  in your project.     With both  ProBuilderCore-Unity5  and  ProBuilderMeshOps-Unity5  selected, in the Inspector window uncheck \"Any Platform.\"  Then toggle both \"Editor\" and \"Standalone.\"     If you're using ProBuilder 2.5 or lower, some errors will appear when scripts reload.  Open the following files (in ProBuilder/API Examples):   IcoBumpin.cs  HueCube.cs  RuntimeEdit.cs   In each of these files, place this line at the very beginning:  #if UNITY_EDITOR || UNITY_STANDALONE  and this line at the very end:  #endif  For example, here's what  RuntimeEdit.cs  looks like:  #if UNITY_STANDALONE || UNITY_EDITOR\nusing UnityEngine;\nusing System.Collections;\nusing ProBuilder2.Common;\n\nnamespace ProBuilder2.Examples\n{\n\n    /**\n     *  \\brief This class allows the user to select a single face at a time and move it forwards or backwards.\n     *  More advanced usage of the ProBuilder API should make use of the pb_Object- SelectedFaces list to keep\n     *  track of the selected faces.\n     */\n    public class RuntimeEdit : MonoBehaviour \n    {\n        // ... etc\n    }\n}\n#endif  Now compile your project and run!", 
             "title": "Error building Player"
-        },
+        }, 
         {
-            "location": "/upgrading/overview/",
-            "text": "Important!\n\nThe upgrade process is \nnot\n reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.\n\n\n\n\nIf you are using \nProBuilder 2.4.7\n or later (you can check in the \nTools \n ProBuilder \n About\n window) you can skip this entirely and just import the new version.\n\n\nIf you're running an older version of \nProBuilder\n you'll need to follow a slightly more complex path.  \nMake a backup of your entire project before proceeding!\n\n\nDepending on the version of ProBuilder you currently have installed, the process differs.  Use this chart to decide which guide you should follow.\n\n\n\n\n\n\n\n\nCurrently Using\n\n\nUpgrading To\n\n\nProcess\n\n\n\n\n\n\n\n\n\n\nNone (no ProBuilder install)\n\n\nProBuilder Basic\n\n\nStandard\n\n\n\n\n\n\nNone (no ProBuilder install)\n\n\nProBuilder Advanced\n\n\nStandard\n\n\n\n\n\n\nProBuilder Basic 2.4.8+\n\n\nProBuilder Basic 2.4.8+\n\n\nStandard\n\n\n\n\n\n\nProBuilder Advanced 2.4.8+\n\n\nProBuilder Advanced 2.4.8+\n\n\nStandard\n\n\n\n\n\n\nProBuilder 2.1.0 - 2.3.x\n\n\nProBuilder Advanced\n\n\nUpgrade Kit\n\n\n\n\n\n\nProBuilder 2.4.0 - 2.4.7\n\n\nProBuilder Advanced\n\n\nDLL Rename Upgrade\n\n\n\n\n\n\nPrototype 2.4 - 2.6\n\n\nProBuilder Basic/Advanced\n\n\nPrototype Upgrade\n\n\n\n\n\n\nProBuilder Source (any version)\n\n\nProBuilder (any version)\n\n\nUpgrade Kit\n\n\n\n\n\n\nProBuilder (any version)\n\n\nProBuilder Source (any version)\n\n\nUpgrade Kit",
+            "location": "/troubleshooting/faq/#missing-icons", 
+            "text": "If you upgraded ProBuilder and are now missing icons in the toolbar, first: restart Unity.  If that fails to bring icons back, re-import the ProBuilder package.", 
+            "title": "Missing Icons"
+        }, 
+        {
+            "location": "/upgrading/overview/", 
+            "text": "Important!\n\nThe upgrade process is \nnot\n reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.\n\n\n\n\nIf you are using \nProBuilder 2.4.7\n or later (you can check in the \nTools \n ProBuilder \n About\n window) you can skip this entirely and just import the new version.\n\n\nIf you're running an older version of \nProBuilder\n you'll need to follow a slightly more complex path.  \nMake a backup of your entire project before proceeding!\n\n\nDepending on the version of ProBuilder you currently have installed, the process differs.  Use this chart to decide which guide you should follow.\n\n\n\n\n\n\n\n\nCurrently Using\n\n\nUpgrading To\n\n\nProcess\n\n\n\n\n\n\n\n\n\n\nNone (no ProBuilder install)\n\n\nProBuilder Basic\n\n\nStandard\n\n\n\n\n\n\nNone (no ProBuilder install)\n\n\nProBuilder Advanced\n\n\nStandard\n\n\n\n\n\n\nProBuilder Basic 2.4.8+\n\n\nProBuilder Basic 2.4.8+\n\n\nStandard\n\n\n\n\n\n\nProBuilder Advanced 2.4.8+\n\n\nProBuilder Advanced 2.4.8+\n\n\nStandard\n\n\n\n\n\n\nProBuilder 2.1.0 - 2.3.x\n\n\nProBuilder Advanced\n\n\nUpgrade Kit\n\n\n\n\n\n\nProBuilder 2.4.0 - 2.4.7\n\n\nProBuilder Advanced\n\n\nDLL Rename Upgrade\n\n\n\n\n\n\nPrototype 2.4 - 2.6\n\n\nProBuilder Basic/Advanced\n\n\nPrototype Upgrade\n\n\n\n\n\n\nProBuilder Source (any version)\n\n\nProBuilder (any version)\n\n\nUpgrade Kit\n\n\n\n\n\n\nProBuilder (any version)\n\n\nProBuilder Source (any version)\n\n\nUpgrade Kit", 
             "title": "What Upgrade Procedure Should I Follow?"
-        },
+        }, 
         {
-            "location": "/upgrading/standard/",
-            "text": "If you're upgrading from version 2.4.7 or higher (either ProBuilder Basic or ProBuilder Advanced), updating a ProBuilder project is as simple as importing the new package.  \n\n\nThere are some circumstances where this will fail however, so always be sure to make a backup prior to upgrading your project.  In the event that simply importing the new package fails, follow this the \nDLL Rename Upgrade\n guide.",
+            "location": "/upgrading/standard/", 
+            "text": "If you're upgrading from version 2.4.7 or higher (either ProBuilder Basic or ProBuilder Advanced), updating a ProBuilder project is as simple as importing the new package.  \n\n\nThere are some circumstances where this will fail however, so always be sure to make a backup prior to upgrading your project.  In the event that simply importing the new package fails, follow this the \nDLL Rename Upgrade\n guide.", 
             "title": "Standard"
-        },
+        }, 
         {
-            "location": "/upgrading/dllrename/",
-            "text": "Important!\n\nAs of Unity 5.3 this guide no longer applies.  Use the \nStandard\n upgrade procedure.\n\n\n\n\nVideo tutorial\n\n\n\n\nImport the new ProBuilder unity package.  Make sure all items are toggled in the Importing Package window.\n\n\nAfter import, close the ProBuilder About Window with this version's changelog.\n\n\nThere are now errors in the Console.  This is expected.\n\n\nNavigate to the \nProCore \n ProBuilder \n Classes\n folder.\n\n\nRight-Click (Context-Click Mac) the \nProBuilderCore-Unity5\n file and select \nShow In Explorer\n.\n\n\nIn the File Explorer (or Finder, on Mac), delete the \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n\n\nNext (still in the File Explorer) rename \nProBuilderCore-Unity6\n and \nProBuilderMeshOps-Unity6\n to \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n.  If visible meta files are enabled, don't worry about changing their file names.  Unity will take care of that for you.\n\n\nStaying in the File Explorer, navigate one folder up and into the \nEditor\n folder.\n\n\nFollow the same procedure with the \nProBuilderEditor-Unity5\n files.  Delete \nProBuilderEditor-Unity5\n then rename \nProBuilderEditor-Unity6\n to \nProBuilderEditor-Unity5\n.\n\n\nOpen Unity again.  The project will recompile.\n\n\nDepending on what version of ProBuilder you are upgrading from, you may see some errors in the Console from deprecated scripts.  Just click the error to find the file, then delete it (making sure that it is in the ProBuilder folder, don't delete any of your own scripts!).\n\n\nCommon deprecated files to delete:\n\n\nProBuilder \n Editor \n MenuItems \n File \n pb_SaveLoad\n\n\nProBuilder \n Editor \n MenuItems \n Tools \n pb_VertexPainter\n\n\nProBuilder \n Editor \n MenuItems \n Tools \n pb_MaterialSelectionTool\n\n\nProCore \n Shared\n (entire folder is deprecated)\n\n\n\n\n\n\n\n\n\n\nDone!",
+            "location": "/upgrading/dllrename/", 
+            "text": "Important!\n\nAs of Unity 5.3 this guide no longer applies.  Use the \nStandard\n upgrade procedure.\n\n\n\n\nVideo tutorial\n\n\n\n\nImport the new ProBuilder unity package.  Make sure all items are toggled in the Importing Package window.\n\n\nAfter import, close the ProBuilder About Window with this version's changelog.\n\n\nThere are now errors in the Console.  This is expected.\n\n\nNavigate to the \nProCore \n ProBuilder \n Classes\n folder.\n\n\nRight-Click (Context-Click Mac) the \nProBuilderCore-Unity5\n file and select \nShow In Explorer\n.\n\n\nIn the File Explorer (or Finder, on Mac), delete the \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n\n\nNext (still in the File Explorer) rename \nProBuilderCore-Unity6\n and \nProBuilderMeshOps-Unity6\n to \nProBuilderCore-Unity5\n and \nProBuilderMeshOps-Unity5\n.  If visible meta files are enabled, don't worry about changing their file names.  Unity will take care of that for you.\n\n\nStaying in the File Explorer, navigate one folder up and into the \nEditor\n folder.\n\n\nFollow the same procedure with the \nProBuilderEditor-Unity5\n files.  Delete \nProBuilderEditor-Unity5\n then rename \nProBuilderEditor-Unity6\n to \nProBuilderEditor-Unity5\n.\n\n\nOpen Unity again.  The project will recompile.\n\n\nDepending on what version of ProBuilder you are upgrading from, you may see some errors in the Console from deprecated scripts.  Just click the error to find the file, then delete it (making sure that it is in the ProBuilder folder, don't delete any of your own scripts!).\n\n\nCommon deprecated files to delete:\n\n\nProBuilder \n Editor \n MenuItems \n File \n pb_SaveLoad\n\n\nProBuilder \n Editor \n MenuItems \n Tools \n pb_VertexPainter\n\n\nProBuilder \n Editor \n MenuItems \n Tools \n pb_MaterialSelectionTool\n\n\nProCore \n Shared\n (entire folder is deprecated)\n\n\n\n\n\n\n\n\n\n\nDone!", 
             "title": "DLL Rename"
-        },
+        }, 
         {
-            "location": "/upgrading/upgrade-kit/",
-            "text": "Follow these steps if you are upgrading a ProBuilder project from a version less than 2.4 (Tools / ProBuilder / About to check your current version).  If you are switching from the Source version of ProBuilder to the DLL version this guide also applies.\n\n\nYoutube Tutorial\n\n\nUpgrade Kit Download\n\n\n\n\nBack up your project\n\n\nImport the ProBuilderUpgradeKit package before importing the new version of ProBuilder (downloadable in the User Toolbox, or bundled in the ProBuilder package).\n\n\nRun \nTools \n ProBuilder \n Upgrade \n Batch Prepare Scenes for Upgrade\n.\n\n\nDelete the ProBuilder folder, and optionally the ProCore \n Shared folder (if you delete this, make sure to also update ProGrids).\n\n\nImport the new ProBuilder package.\n\n\nRun \nTools \n ProBuilder \n Upgrade \n Batch Re-attach ProBuilder Scripts\n.\n\n\nDelete ProBuilderUpgradeKit folder.",
+            "location": "/upgrading/upgrade-kit/", 
+            "text": "Follow these steps if you are upgrading a ProBuilder project from a version less than 2.4 (Tools / ProBuilder / About to check your current version).  If you are switching from the Source version of ProBuilder to the DLL version this guide also applies.\n\n\nYoutube Tutorial\n\n\nUpgrade Kit Download\n\n\n\n\nBack up your project\n\n\nImport the ProBuilderUpgradeKit package before importing the new version of ProBuilder (downloadable in the User Toolbox, or bundled in the ProBuilder package).\n\n\nRun \nTools \n ProBuilder \n Upgrade \n Batch Prepare Scenes for Upgrade\n.\n\n\nDelete the ProBuilder folder, and optionally the ProCore \n Shared folder (if you delete this, make sure to also update ProGrids).\n\n\nImport the new ProBuilder package.\n\n\nRun \nTools \n ProBuilder \n Upgrade \n Batch Re-attach ProBuilder Scripts\n.\n\n\nDelete ProBuilderUpgradeKit folder.", 
             "title": "Upgrade Kit"
-        },
+        }, 
         {
-            "location": "/upgrading/prototype/",
-            "text": "If you're using \nPrototype\n (the precursor to **ProBuilder Basic) you'll need to perform one additional step prior to using the \nDLL Rename\n guide.\n\n\n\n\nRename \nProCore/Prototype\n folder to \nProCore/ProBuilder\n\n\nFollow \nDLL Rename Upgrade",
+            "location": "/upgrading/prototype/", 
+            "text": "If you're using \nPrototype\n (the precursor to **ProBuilder Basic) you'll need to perform one additional step prior to using the \nDLL Rename\n guide.\n\n\n\n\nRename \nProCore/Prototype\n folder to \nProCore/ProBuilder\n\n\nFollow \nDLL Rename Upgrade", 
             "title": "Prototype"
         }
     ]

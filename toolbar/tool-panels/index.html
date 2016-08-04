@@ -27,7 +27,7 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Tool Panels";
-    var mkdocs_page_input_path = "toolbar\tool-panels.md";
+    var mkdocs_page_input_path = "toolbar/tool-panels.md";
     var mkdocs_page_url = "/toolbar/tool-panels/";
   </script>
   
@@ -89,19 +89,19 @@
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-tool-panels">Video: Tool Panels</a></li>
+                <li class="toctree-l3"><a href="#shape-tool">Shape Tool</a></li>
                 
-                    <li><a class="toctree-l4" href="#shape-tool">Shape Tool</a></li>
+            
+                <li class="toctree-l3"><a href="#material-tools">Material Tools</a></li>
                 
-                    <li><a class="toctree-l4" href="#material-tools">Material Tools</a></li>
+            
+                <li class="toctree-l3"><a href="#texturing-and-uvs">Texturing and UVs</a></li>
                 
-                    <li><a class="toctree-l4" href="#texturing-and-uvs">Texturing and UVs</a></li>
+            
+                <li class="toctree-l3"><a href="#vertex-color-tools">Vertex Color Tools</a></li>
                 
-                    <li><a class="toctree-l4" href="#vertex-color-tools">Vertex Color Tools</a></li>
-                
-                    <li><a class="toctree-l4" href="#smoothing-groups">Smoothing Groups</a></li>
-                
-                    <li><a class="toctree-l4" href="#mirror-tool">Mirror Tool</a></li>
+            
+                <li class="toctree-l3"><a href="#smoothing-groups">Smoothing Groups</a></li>
                 
             
             </ul>
@@ -111,7 +111,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../selection-tools/">Selection Tools</a>
+        <a class="" href="../selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -124,39 +124,31 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 ">
-        <a class="" href="../vertex/">Vertex</a>
+        <a class="" href="../vertex/">Vertex Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../edge/">Edge</a>
+        <a class="" href="../edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../face/">Face</a>
+        <a class="" href="../face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -164,31 +156,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -285,9 +291,11 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-tool-panels">Video: Tool Panels</h1>
-<p><a href="../@todo" title="ProBuilder Toolbar: Tool Panels"><img alt="ProBuilder Toolbar: Tool Panels" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<p>These <strong>Tool Panels</strong> contain important tools for <a href="../@todo">Shape Creation</a>, <a href="../@todo">Materials</a>, <a href="../@todo">Texturing and UVs</a>, <a href="../@todo">Vertex Coloring</a>, <a href="../@todo">Smoothing Groups</a>, and <a href="../@todo">Mirroring</a>. </p>
+                <!-- # Video: Tool Panels -->
+
+<!-- [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels") -->
+
+<p>These <strong>Tool Panels</strong> contain important tools for <a href="#shape-tool">Shape Creation</a>, <a href="#material-tools">Materials</a>, <a href="#texturing">Texturing and UVs</a>, <a href="#vertex-colors">Vertex Coloring</a>, and <a href="#smoothing-groups">Smoothing Groups</a>.</p>
 <p><strong>Note:</strong> Each panel can be docked, kept floating, or simply closed immediately after use.</p>
 <hr />
 <div style="text-align:center">
@@ -297,7 +305,7 @@
 <hr />
 <p><a id="shape-tool"></a></p>
 <h2 id="shape-tool"><img alt="Shape Tool Icon" src="../../images/icons/Panel_Shapes.png" title="Create New Shape Icon" /> Shape Tool</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div>
 
@@ -309,14 +317,15 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</
 <ol>
 <li>Open the New Shape Tool</li>
 <li>If "Shape Preview" is enabled, you will see a blue Preview Object in the scene</li>
-<li>Choose the Shape you'd like to create (ie, Cube, Cylinder, Torus, etc)</li>
-<li>Set the options (ie, width, height, radius, number of stairs, etc)</li>
+<li>Choose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)</li>
+<li>Set the options (ex, width, height, radius, number of stairs, etc)</li>
 <li>You may Move or Rotate the Preview Object within your scene</li>
 <li>Once ready, click "Build Shape" to create your final Shape</li>
 </ol>
 <hr />
+<p><a id="material-tools"></a></p>
 <h2 id="material-tools"><img alt="Material Tools Icon" src="../../images/icons/Panel_Materials.png" title="Material Tools Icon" /> Material Tools</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
 <br>
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
@@ -324,82 +333,69 @@ Related Video: <a href="@todo link vid section">Texturing and UVs</a>
 
 <p><strong>Purpose</strong> : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.</p>
 <p><img alt="Material Tools" src="../../images/MaterialTools_WithExample.png" title="Material Tools" /></p>
-<p><strong>Quick Material Usage</strong> :</p>
+<p><strong>Quick Material Usage</strong>:</p>
 <ul>
 <li><strong>(A)</strong> The current "Quick Material"</li>
-<li><strong>(B)</strong> Apply the Quick Material to the selected faces <strong>(G)</strong></li>
-<li><strong>(C)</strong> Pick your Quick Material from the selected face <strong>(G)</strong></li>
+<li><strong>(B)</strong> Apply the Quick Material to the selected faces</li>
+<li><strong>(C)</strong> Pick your Quick Material from the selected face</li>
 <li><strong>(D)</strong> Preview of the current Quick Material</li>
 </ul>
-<p>You may also hold <code>CTRL SHIFT</code> while clicking on a face, to apply the Quick Material to just that face.</p>
+<p>Hold <code>CTRL SHIFT</code> while clicking on a face to apply the Quick Material.</p>
 <p><strong>Material Palette Usage</strong> :</p>
 <ul>
 <li><strong>(E)</strong> Drag-and-drop your often-used materials to these slots</li>
-<li><strong>(F)</strong> Click to apply a material to the selected faces <strong>or</strong> objects</li>
-<li><strong>(G)</strong> Create additional Material Palette slots</li>
+<li><strong>(F)</strong> Create additional Material Palette slots</li>
 </ul>
 <p>You can also press <code>ALT (number key)</code> to apply materials from the Palette.</p>
 <hr />
+<p><a id="texturing"></a></p>
 <h2 id="texturing-and-uvs"><img alt="UV Editor Icon" src="../../images/icons/Panel_UVeditor.png" title="UV Editor Icon" /> Texturing and UVs</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div>
 
 <p><strong>Purpose</strong> : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).</p>
 <p><img alt="Materials Example" src="../../images/Example_MaterialsOnLevel.png" title="Materials Example" /></p>
-<p>The UV Editor Panel includes both <a href="../@todo">Auto UV</a> tools, and a complete <a href="../@todo">Manual UV Editing and Unwrapping</a> system.</p>
-<blockquote>
-<p><em>More Info: <a href="../@todo"><strong>Texturing and UVs</strong></a></em></p>
-</blockquote>
+<p>The UV Editor Panel includes both <a href="../../texturing/auto-uvs-actions">Auto UV</a> tools, and a complete <a href="../../texturing/manual-uvs-actions">Manual UV Editing and Unwrapping</a> system.</p>
+<p><em>More Info: <a href="../../texturing/overview-texture-mapping"><strong>Texturing and UVs</strong></a></em></p>
 <hr />
+<p><a id="vertex-colors"></a></p>
 <h2 id="vertex-color-tools"><img alt="Vertex Color Tools Icon" src="../../images/icons/Panel_VertColors.png" title="UV Editor Icon" /> Vertex Color Tools</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
 
 <p><strong>Purpose</strong> : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.</p>
-<p>Not all shaders will show vertex colors on a mesh: <a href="../@todo">Vertex Colors FAQ</a></p>
+<div class="alert-box warning">
+<strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.
+<!-- <br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information. -->
+</div>
+
 <p><img alt="Vertex Coloring" src="../../images/VertexColor_WithLevelExample.png" title="Vertex Coloring" /></p>
 <p>Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.</p>
-<blockquote>
-<p><em>More Info: <a href="../@todo"><strong>Vertex Coloring</strong></a></em> </p>
-</blockquote>
+<!-- *More Info: [**Vertex Coloring**](@todo)*  -->
+
 <hr />
+<p><a id="smoothing-groups"></a></p>
 <h2 id="smoothing-groups"><img alt="Smoothing Groups Icon" src="../../images/icons/Panel_Smoothing.png" title="Smoothing Groups Icon" /> Smoothing Groups</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
-<p><strong>Purpose</strong> : Create a smooth and rounded look, or sharp-edged and faceted.</p>
-<p><strong>Usage</strong> :</p>
-<p>First, choose <a href="../@todo">Face Editing</a> from the <a href="../@todo">Edit Mode Toolbar</a>, and select the faces you wish to make smooth or faceted.</p>
-<blockquote>
-<p><em>If no faces are selected, or you are in <a href="../@todo">Object Mode</a>, any Smoothing actions will be applied to the entire object</em></p>
-</blockquote>
+<p><strong>Purpose</strong>: Create a smooth and rounded look, or sharp-edged and faceted.</p>
+<p><strong>Usage</strong>:</p>
 <p><img alt="Smoothing Groups Example" src="../../images/SmoothingGroups-Panel_WithLettersAndExample.png" title="Smoothing Groups Example" /></p>
 <ul>
+<li>Choose Face editing from the <a href="../../toolbar/overview-toolbar/#edit-mode-toolbar">Edit Mode Toolbar</a></li>
+<li>Select a group of faces that you want to be smooth<ul>
+<li><em>If no faces are selected, or you are in <a href="../@todo">Object Mode</a>, any Smoothing actions will be applied to the entire object</em></li>
+</ul>
+</li>
 <li><strong>(A)</strong> If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.</li>
 <li><strong>(B)</strong> To assign the selected faces to a new Smoothing Group, click any available group button</li>
 <li><strong>(C)</strong> You can also assign Hard groups</li>
 <li><strong>(D)</strong> Press the "Clear" button to clear all Smoothing from the selected faces</li>
 </ul>
-<hr />
-<h2 id="mirror-tool"><img alt="Mirror Tool Icon" src="../../images/icons/Object_Mirror.png" title="Mirror Tool Icon" /> Mirror Tool</h2>
-<div class="info-box warning">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
-</div>
-
-<p><strong>Purpose</strong> : Use the Mirror Tool to create mirrored copies of objects.</p>
-<p>The Mirror Tool is especially useful when creating symetrical items- build one half, mirror it, then weld the two together
-for a perfectly symetrical result.</p>
-<p><img alt="Mirror Tool Example" src="../../images/Mirror-Panel_WithExample.png" title="Mirror Tool Example" /></p>
-<p><strong>Usage</strong> :</p>
-<ol>
-<li>Select the object to be mirrored</li>
-<li>Open the Mirror Tools</li>
-<li>Select which axis (or multiple axis) to mirror on</li>
-<li>Click "Mirror"- a mirrored duplicate will be created</li>
-</ol>
               
             </div>
           </div>
@@ -407,7 +403,7 @@ for a perfectly symetrical result.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../selection-tools/" class="btn btn-neutral float-right" title="Selection Tools">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../selection-tools/" class="btn btn-neutral float-right" title="Selection Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../overview-toolbar/" class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>

@@ -8,7 +8,7 @@
   
   
   
-  <title>Vertex - ProBuilder Documentation</title>
+  <title>Vertex Actions - ProBuilder Documentation</title>
   
 
   <link rel="shortcut icon" href="../../img/favicon.ico">
@@ -26,8 +26,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Vertex";
-    var mkdocs_page_input_path = "toolbar\vertex.md";
+    var mkdocs_page_name = "Vertex Actions";
+    var mkdocs_page_input_path = "toolbar/vertex.md";
     var mkdocs_page_url = "/toolbar/vertex/";
   </script>
   
@@ -92,7 +92,7 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../selection-tools/">Selection Tools</a>
+        <a class="" href="../selection-tools/">Selection Actions</a>
         
     </li>
 
@@ -105,25 +105,24 @@
 
         
             
-    <ul class="subnav">
-    <li><span>Geometry Actions</span></li>
-
-        
-            
     <li class="toctree-l1 current">
-        <a class="current" href="./">Vertex</a>
+        <a class="current" href="./">Vertex Actions</a>
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-vertex-actions">Video: Vertex Actions</a></li>
+                <li class="toctree-l3"><a href="#collapse-vertices">Collapse Vertices</a></li>
                 
-                    <li><a class="toctree-l4" href="#collapse-vertices">Collapse Vertices</a></li>
+            
+                <li class="toctree-l3"><a href="#weld-vertices">Weld Vertices</a></li>
                 
-                    <li><a class="toctree-l4" href="#weld-vertices">Weld Vertices</a></li>
+            
+                <li class="toctree-l3"><a href="#connect-vertices">Connect Vertices</a></li>
                 
-                    <li><a class="toctree-l4" href="#connect-vertices">Connect Vertices</a></li>
+            
+                <li class="toctree-l3"><a href="#split-vertices">Split Vertices</a></li>
                 
-                    <li><a class="toctree-l4" href="#split-vertices">Split Vertices</a></li>
+            
+                <li class="toctree-l3"><a href="#fill-hole">Fill Hole</a></li>
                 
             
             </ul>
@@ -133,26 +132,23 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../edge/">Edge</a>
+        <a class="" href="../edge/">Edge Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../face/">Face</a>
+        <a class="" href="../face/">Face Actions</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../all/">All</a>
+        <a class="" href="../all/">Element Actions</a>
         
     </li>
-
-        
-    </ul>
 
         
     </ul>
@@ -160,31 +156,45 @@
           
             <li>
     <ul class="subnav">
-    <li><span>Texturing and UVs</span></li>
+    <li><span>Texture Mapping</span></li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/overview-texturing/">Overview</a>
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/auto-texturing/">Auto-Texturing</a>
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../../texturing/manual-uv-editing/">Manual UV Editing</a>
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
         
     </li>
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
 <li>
           
             <li>
@@ -270,12 +280,8 @@
           <li>Toolbar &raquo;</li>
         
       
-        
-          <li>Geometry Actions &raquo;</li>
-        
-      
     
-    <li>Vertex</li>
+    <li>Vertex Actions</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -285,16 +291,19 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-vertex-actions">Video: Vertex Actions</h1>
-<p><a href="../@todo"><img alt="Vertex Actions Video" src="../../images/VideoLink_YouTube_768.png" /></a></p>
-<hr />
+                <!--
+#Video: Vertex Actions
+[![Vertex Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
+ -->
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_VertexActions.png">
 </div>
 
 <hr />
+<p><a id="collapse"></a></p>
 <h2 id="collapse-vertices"><img alt="Collapse Vertices Icon" src="../../images/icons/Vert_Collapse.png" title="Collapse Vertices Icon" /> Collapse Vertices</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Collapse Vertices</a>
 </div>
 
@@ -321,7 +330,7 @@ Section Video: <a href="@todo">Vertex Actions: Collapse Vertices</a>
 </table>
 <hr />
 <h2 id="weld-vertices"><img alt="Weld Vertices Icon" src="../../images/icons/Vert_Weld.png" title="Weld Vertices Icon" /> Weld Vertices</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Weld Vertices</a>
 </div>
 
@@ -348,7 +357,7 @@ Section Video: <a href="@todo">Vertex Actions: Weld Vertices</a>
 </table>
 <hr />
 <h2 id="connect-vertices"><img alt="Connect Vertices Icon" src="../../images/icons/Vert_Connect.png" title="Connect Vertices Icon" /> Connect Vertices</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Connect Vertices</a>
 </div>
 
@@ -360,7 +369,7 @@ Section Video: <a href="@todo">Vertex Actions: Connect Vertices</a>
 
 <hr />
 <h2 id="split-vertices"><img alt="Split Vertices Icon" src="../../images/icons/Vert_Split.png" title="Split Vertices Icon" /> Split Vertices</h2>
-<div class="info-box warning">
+<div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Split Vertices</a>
 </div>
 
@@ -373,6 +382,30 @@ Section Video: <a href="@todo">Vertex Actions: Split Vertices</a>
 <blockquote>
 <p><strong>Note</strong> : When a vertex is <strong>Split</strong>, the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.</p>
 </blockquote>
+<hr />
+<h2 id="fill-hole"><img alt="Fill Hole Icon" src="../../images/icons/Edge_FillHole_Light.png" /> Fill Hole</h2>
+<div class="video-link">
+Section Video: <a href="@todo">All Actions: Fill Hole</a>
+</div>
+
+<!-- @todo images -->
+
+<p>Creates a new face filling any holes that touch the selected vertices.</p>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fill Entire Hole</strong></td>
+<td>If enabled ProBuilder will automatically complete the selection to include the entire hole perimeter.  If disabled, the new face only connects the selected vertices.</td>
+</tr>
+</tbody>
+</table>
               
             </div>
           </div>
@@ -380,7 +413,7 @@ Section Video: <a href="@todo">Vertex Actions: Split Vertices</a>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../edge/" class="btn btn-neutral float-right" title="Edge">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../edge/" class="btn btn-neutral float-right" title="Edge Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../object-actions/" class="btn btn-neutral" title="Object Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
