@@ -1,8 +1,7 @@
+<!--
 #Video: Vertex Actions
-
 [![Vertex Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
-
----
+ -->
 
 <div style="text-align:center">
 <img src="../../images/Toolbar_VertexActions.png">
@@ -10,12 +9,12 @@
 
 ---
 
-<a id="collapse" />
+<a id="collapse"></a>
 ## ![Collapse Vertices Icon](../images/icons/Vert_Collapse.png "Collapse Vertices Icon") Collapse Vertices
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Collapse Vertices</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT C`
 
@@ -37,7 +36,7 @@ Setting | Description
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Weld Vertices</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT V`
 
@@ -59,7 +58,7 @@ Setting | Description
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Connect Vertices</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT E`
 
@@ -75,7 +74,7 @@ Create a new edge connecting the selected vertices.
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Split Vertices</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT X`
 
@@ -86,3 +85,25 @@ Splits a vertex into it’s individual vertices so that they may be moved indepe
 </div>
 
 >**Note** : When a vertex is **Split**, the newly seperated vertices will not actually move apart on there own. This was done for the image, to better illustrate the effect of this action.
+
+
+---
+
+## ![Fill Hole Icon](../images/icons/Edge_FillHole_Light.png) Fill Hole
+
+<div class="video-link">
+Section Video: <a href="@todo">All Actions: Fill Hole</a>
+</div>
+
+<!-- @todo images -->
+
+Creates a new face filling any holes that touch the selected vertices.
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Fill Entire Hole** | If enabled ProBuilder will automatically complete the selection to include the entire hole perimeter.  If disabled, the new face only connects the selected vertices.
+
+
+

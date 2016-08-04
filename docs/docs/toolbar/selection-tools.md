@@ -46,12 +46,12 @@ Toolbar Icon | Description
 
 ---
 
-<a id="grow" />
+<a id="grow"></a>
 ##![Grow Selection](../images/icons/Selection_Grow.png) Grow Selection
 
 <div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
-</div> 
+</div>
 
 **Keyboard Shortcut**: `ALT G`
 
@@ -68,12 +68,12 @@ Setting | Description
 ![Handle Alignment Examples](../images/GrowSelection_Example.png)
 
 ---
- 
+
 ##![Shrink Selection](../images/icons/Selection_Shrink.png) Shrink Selection
 
 <div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT SHIFT G`
 
@@ -85,7 +85,7 @@ Does the opposite of Grow Selection: removes the elements on the perimiter of th
 
 <div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `CTRL SHIFT I`
 
@@ -97,7 +97,7 @@ Selects the inverse of the current selection. All unselected elements will becom
 
 <div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT L`
 
@@ -111,7 +111,7 @@ Selects an edge loop from each selected edge.
 
 <div class="video-link">
 Section Video: <a href="@todo">Selection Tools: Select Edge Ring</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT R`
 

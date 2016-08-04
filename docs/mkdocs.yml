@@ -6,7 +6,7 @@ pages:
 - Home: index.md
 - Fundamentals: general/fundamentals.md
 
-- Toolbar: 
+- Toolbar:
   - Overview: toolbar/overview-toolbar.md
   - Tool Panels: toolbar/tool-panels.md
   - Selection Actions: toolbar/selection-tools.md
@@ -15,12 +15,14 @@ pages:
   - Edge Actions: toolbar/edge.md
   - Face Actions: toolbar/face.md
   - Element Actions: toolbar/all.md
-    
-- Texture Mapping: 
+
+- Texture Mapping:
     - Overview: texturing/overview-texture-mapping.md
     - UV Editor Toolbar: texturing/uv-editor-toolbar.md
     - Auto UVs Actions: texturing/auto-uvs-actions.md
     - Manual UVs Actions: texturing/manual-uvs-actions.md
+
+- Preferences: preferences/preferences.md
 
 - Troubleshooting:
   - troubleshooting/faq.md

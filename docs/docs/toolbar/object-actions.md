@@ -13,7 +13,7 @@
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Merge Objects</a>
-</div> 
+</div>
 
 Merges the selected objects into a single object.
 
@@ -23,9 +23,9 @@ Merges the selected objects into a single object.
 <div class="video-link">
 
 Section Video: <a href="@todo">Object Actions: Flip Object Normals</a>
-</div> 
+</div>
 
-Flips the normals of **all** faces on the selected object(s). 
+Flips the normals of **all** faces on the selected object(s).
 
 > Especially useful for converting an exterior modeled shape into an interior space.
 
@@ -37,7 +37,7 @@ Flips the normals of **all** faces on the selected object(s).
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
-</div> 
+</div>
 
 Divides every face on selected objects, allowing for greater levels of detail when modeling.
 
@@ -49,7 +49,7 @@ Divides every face on selected objects, allowing for greater levels of detail wh
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
-</div> 
+</div>
 
 Sets the selected objects position, rotation, and scale to world-relative `{0,0,0}` without changing any vertex positions.
 
@@ -59,7 +59,7 @@ Sets the selected objects position, rotation, and scale to world-relative `{0,0,
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Center Pivot</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `CTRL J`
 
@@ -73,7 +73,7 @@ Moves the mesh pivot to the center of the object’s bounds.
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Conform Normals</a>
-</div> 
+</div>
 
 Sets all face normals on the selected object to the same relative direction.
 
@@ -83,8 +83,38 @@ Sets all face normals on the selected object to the same relative direction.
 
 <div class="video-link">
 Section Video: <a href="@todo">Object Actions: Triangulate</a>
-</div> 
+</div>
 
 Reduces all polygons to their base triangles, creating a "[Polyworld-like](http://qt-ent.com/PolyWorld/)" effect.
 
 ![Triangulate Object Example](../images/TriangulateObject_Example.png "Triangulate Object Example")
+
+---
+
+<a id="mirror"></a>
+##![Mirror Tool Icon](../images/icons/Object_Mirror.png "Mirror Tool Icon") Mirror Tool
+
+<div class="video-link">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
+</div>
+
+**Purpose** : Use the Mirror action to create mirrored copies of objects.
+
+Mirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together
+for a perfectly symmetrical result.
+
+![Mirror Tool Example](../images/Mirror-Panel_WithExample.png "Mirror Tool Example")
+
+**Usage** :
+
+1. Select the object to be mirrored
+1. Open the Mirror Tools
+1. Select which axis (or multiple axis) to mirror on
+1. Click "Mirror"- a mirrored duplicate will be created
+
+---
+
+<a id="generateuv2"></a>
+## Generate UV2
+
+**Purpose**: Build the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.

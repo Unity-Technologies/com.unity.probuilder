@@ -11,7 +11,7 @@ A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betw
 
 <div class="video-link">
 Section Video: <a href="@todo">Toolbar Overview: Catagories</a>
-</div> 
+</div>
 
 The Toolbar is color-coded to help you quickly choose tools by type:
 
@@ -28,7 +28,7 @@ The Toolbar is color-coded to help you quickly choose tools by type:
 
 <div class="video-link">
 Section Video: <a href="@todo">Toolbar Overview: Text vs Icon Mode</a>
-</div> 
+</div>
 
 You can resize the Toolbar however you like; ProBuilder will re-order the icon or text contents to best fit the window size.
 
@@ -42,9 +42,9 @@ Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space 
 
 <div class="video-link">
 Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
-</div> 
+</div>
 
-This is a "smart" toolbar, and dynamically changes to match your current editing method and selection. 
+This is a "smart" toolbar, and dynamically changes to match your current editing method and selection.
 
 * Buttons are only shown on the Toolbar if they are applicable in your current editing mode
 * Buttons that cannot be used on the current selection are automatically greyed-out and disabled.
@@ -55,7 +55,7 @@ This is a "smart" toolbar, and dynamically changes to match your current editing
 
 <div class="video-link">
 Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
-</div> 
+</div>
 
 Some of the most-used actions ([Extrude](face/#extrude), [Collapse](vertex/#collapse), [Grow Selection](selection-tools/#grow), etc) also include Custom Settings, which can significantly modify the action.
 
@@ -65,18 +65,18 @@ When using the text toolbar the options menu for actions is shown as a `+` icon 
 
 ---
 
-<a id="edit-mode-toolbar" />
+<a id="edit-mode-toolbar"></a>
 ### Edit Mode Toolbar
 
 <div class="video-link">
 Section Video: <a href="@todo">Toolbar Overview: The Edit Mode Toolbar</a>
-</div> 
+</div>
 
-This toolbar switches ProBuilder between the available edit modes.  
+This toolbar switches ProBuilder between the available edit modes.
 
 By default it is in the Top Middle of the Scene View, but you may change where this toolbar is positioned in the `Preferences > ProBuilder` panel.
 
-Use this toolbar to choose your Edit Mode, or use keyboard shortcuts: 
+Use this toolbar to choose your Edit Mode, or use keyboard shortcuts:
 
 * `Escape` to exit back to Object mode
 * `G` to toggle in/out of the Geometry editing modes

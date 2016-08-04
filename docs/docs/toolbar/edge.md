@@ -14,7 +14,7 @@
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT B`
 
@@ -30,7 +30,7 @@ Create a new face between two selected edges. Each edge must have a free side.
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT B`
 
@@ -52,7 +52,7 @@ Setting | Description
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
-</div> 
+</div>
 
 **Keyboard Shortcut** : `ALT E`
 
@@ -68,9 +68,9 @@ Insert an edge connecting the centers of each selected edge.
 
 <div class="video-link">
 Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
-</div> 
+</div>
 
-**Keyboard Shortcut** : `SHIFT DRAG`
+**Keyboard Shortcut** : `SHIFT DRAG` / `CONTROL E` (PC) / `COMMAND E` (Mac)
 
 Pushes a new edge out from the selected edge, connected by a new face.
 
