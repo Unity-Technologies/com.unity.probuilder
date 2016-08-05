@@ -71,7 +71,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 ---
 
 <a id="texturing"></a>
-##![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon") Texturing and UVs
+##![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon") Texturing and UVs
 
 <div class="video-link">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>

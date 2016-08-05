@@ -6,7 +6,7 @@ Usually seen with console errors:
 
 To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.
 
-> This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.
+This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.
 
 <div class="sub-header">Steps to Fix</div>
 
