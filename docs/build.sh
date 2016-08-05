@@ -7,8 +7,6 @@ mkdocs build -c
 
 find site/ -name '*.psd' -exec rm {} \;
 
-exit
-
 # find site/ -name '*.html' -exec wkhtmltopdf {} {}.html \;
 
 SITE=../../site/probuilder
