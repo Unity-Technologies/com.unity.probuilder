@@ -27,7 +27,7 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Faq";
-    var mkdocs_page_input_path = "troubleshooting/faq.md";
+    var mkdocs_page_input_path = "troubleshooting\faq.md";
     var mkdocs_page_url = "/troubleshooting/faq/";
   </script>
   
@@ -246,6 +246,13 @@
     </ul>
 <li>
           
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../changelog/">Changelog</a>
+        
+    </li>
+<li>
+          
         </ul>
       </div>
       &nbsp;
@@ -288,9 +295,7 @@
 <li><code>Error building Player: UnityException: Failed to run serialization weaver with command</code></li>
 </ul>
 <p>To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.</p>
-<blockquote>
 <p>This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.</p>
-</blockquote>
 <div class="sub-header">Steps to Fix</div>
 
 <ol>
