@@ -17,7 +17,7 @@ visual studio/*/*/obj/
 # generated
 docs/site
 docs/pdf
-docs/changelog.md
+docs/docs/changelog.md
 probuilder2.0/Assets/test*
 
 probuilder2.0/*sublime-workspace
