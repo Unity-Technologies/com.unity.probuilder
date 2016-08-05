@@ -15,6 +15,7 @@ SITE=../../site/probuilder
 MKBUILD=$(pwd)
 
 cd $SITE
+git pull origin gh-pages
 git rm -r ./*
 echo $MKBUILD/site/
 cp -r $MKBUILD/site/* .
