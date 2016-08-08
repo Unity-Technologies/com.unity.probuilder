@@ -379,9 +379,9 @@ public class pb_AboutWindow : EditorWindow
 
 		if(changelogText)
 		{
-			string[] split = changelogText.text.Split( new string[] {"--"}, System.StringSplitOptions.RemoveEmptyEntries );
+			string[] split = Regex.Split(changelogText.text, "(?mi)^#\\s", RegexOptions.Multiline);
 			StringBuilder sb = new StringBuilder();
-			string[] newLineSplit = split[0].Trim().Split('\n');
+			string[] newLineSplit = split[1].Trim().Split('\n');
 			for(int i = 2; i < newLineSplit.Length; i++)
 				sb.AppendLine(newLineSplit[i]);
 			
