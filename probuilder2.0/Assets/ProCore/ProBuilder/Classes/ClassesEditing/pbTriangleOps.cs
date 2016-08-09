@@ -235,55 +235,5 @@ namespace ProBuilder2.MeshOperations
 
 			return mergedFace;
 		}
-
-		/**
-		 *	Split all n-gons into triangles.
-		 */
-		public static void Facetize(pb_Object pb)
-		{
-			pb_Vertex[] v = pb_Vertex.GetVertices(pb);
-
-			int triangleCount = pb.faces.Sum(x => x.indices.Length);
-
-			if(triangleCount == v.Length)
-			{
-				Debug.LogWarning("We can't pull over any further!\npb_Object: " + pb.name + " is already triangulated.");
-			}
-
-			int vertexCount = triangleCount;
-			int faceCount = vertexCount / 3;
-
-			pb_Vertex[] tri_vertices = new pb_Vertex[triangleCount];
-			pb_Face[]	tri_faces = new pb_Face[faceCount];
-
-			int n = 0, f = 0;
-			foreach(pb_Face face in pb.faces)
-			{
-				int[] indices = face.indices;
-
-				for(int i = 0; i < indices.Length; i+=3)
-				{
-					tri_vertices[n+0] = v[indices[i+0]];
-					tri_vertices[n+1] = v[indices[i+1]];
-					tri_vertices[n+2] = v[indices[i+2]];
-
-					tri_faces[f++] = new pb_Face( new int[] { n+0, n+1, n+2 },
-												face.material,
-												face.uv,
-												face.smoothingGroup,
-												face.textureGroup,		// textureGroup -> force to manual uv mode
-												face.elementGroup,
-												face.manualUV
-											);
-					n += 3;
-				}
-
-			}
-
-			pb.SetVertices(tri_vertices);
-			pb.SetFaces(tri_faces);
-			pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
-			pb.SetSharedIndicesUV( new pb_IntArray[0] );
-		}
 	}
 }

@@ -20,7 +20,7 @@ namespace ProBuilder2.Actions
 			}
 		}
 
-		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon
 		{
 			get

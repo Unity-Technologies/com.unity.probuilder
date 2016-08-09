@@ -90,7 +90,6 @@ public static class pb_Object_Utility
 		}
 
 		// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
-		// translate_profiler.BeginSample("Set mesh");
 		pb.SetVertices(verts);
 		pb.msh.vertices = verts;
 	}

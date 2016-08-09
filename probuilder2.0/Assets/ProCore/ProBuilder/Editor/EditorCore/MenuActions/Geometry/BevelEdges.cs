@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 {
 	public class BevelEdges : pb_MenuAction
 	{
-		public override pb_IconGroup group { get { return pb_IconGroup.Geometry; } }
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Bevel"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }

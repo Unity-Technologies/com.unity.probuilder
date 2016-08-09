@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 {
 	public class SelectHole : pb_MenuAction
 	{
-		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return null; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }

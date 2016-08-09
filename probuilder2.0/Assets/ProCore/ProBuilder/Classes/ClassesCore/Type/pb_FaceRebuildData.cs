@@ -72,13 +72,14 @@ namespace ProBuilder2.Common
 			foreach(pb_FaceRebuildData rd in newFaces)
 			{
 				pb_Face face = rd.face;
-				int faceVertexCount = face.distinctIndices.Length;
-				bool hasSharedIndices = sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;
+				int faceVertexCount = rd.vertices.Count;
+
+				bool hasSharedIndices 	= sharedIndices != null && rd.sharedIndices != null && rd.sharedIndices.Count == faceVertexCount;
 				bool hasSharedIndicesUV = sharedIndicesUV != null && rd.sharedIndicesUV != null && rd.sharedIndicesUV.Count == faceVertexCount;
 
 				for(int n = 0; n < faceVertexCount; n++)
 				{
-					int localIndex = face.distinctIndices[n];
+					int localIndex = n;
 
 					if(sharedIndices != null)
 						sharedIndices.Add(localIndex + index, hasSharedIndices ? rd.sharedIndices[localIndex] : -1);

@@ -317,8 +317,9 @@ namespace ProBuilder2.EditorCommon
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pbTriangleOps.Facetize(selection[i]);
+				pb_Face[] splits = null;
 				selection[i].ToMesh();
+				selection[i].Facetize(selection[i].faces, out splits);
 				selection[i].Refresh();
 				selection[i].Optimize();
 			}

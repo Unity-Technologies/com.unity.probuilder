@@ -8,7 +8,7 @@ namespace ProBuilder2.Actions
 {
 	public abstract class SetEntityType : pb_MenuAction
 	{
-		public override pb_IconGroup group { get { return pb_IconGroup.Object; } }
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Entity; } }
 		public override Texture2D icon { get { return null; } }
 
 		protected static GUIStyle _eyeconStyle = null;

@@ -119,7 +119,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public abstract pb_IconGroup group { get; }
+		public abstract pb_ToolbarGroup group { get; }
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
 
@@ -197,7 +197,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUI.enabled = buttonEnabled;
 
-			GUI.backgroundColor = pb_IconGroupUtility.GetColor(group);
+			GUI.backgroundColor = pb_ToolbarGroupUtility.GetColor(group);
 
 			if(isIconMode)
 			{

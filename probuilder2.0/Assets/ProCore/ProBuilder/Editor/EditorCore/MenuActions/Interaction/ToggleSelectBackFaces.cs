@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 	{
 		bool isEnabled { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection); } }
 
-		public override pb_IconGroup group { get { return pb_IconGroup.Selection; } }
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isEnabled ? icons[1] : icons[0]; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
