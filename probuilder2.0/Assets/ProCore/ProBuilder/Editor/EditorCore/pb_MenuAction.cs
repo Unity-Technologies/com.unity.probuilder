@@ -45,6 +45,40 @@ namespace ProBuilder2.EditorCommon
 			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
 		}
 
+		public static int CompareActionsByGroupAndPriority(pb_MenuAction left, pb_MenuAction right)
+		{
+			if(left == null)
+			{
+				if(right == null)
+					return 0;
+				else
+					return -1;
+			}
+			else
+			{
+				if(right == null)
+				{
+					return 1;
+				}
+				else
+				{
+					int l = (int) left.group, r = (int) right.group;
+
+					if(l < r)
+						return -1;
+					else if(l > r)
+						return 1;
+					else
+					{
+						int lp = left.toolbarPriority < 0 ? int.MaxValue : left.toolbarPriority,
+							rp = right.toolbarPriority < 0 ? int.MaxValue : right.toolbarPriority;
+
+						return lp.CompareTo(rp);
+					}
+				}
+			}
+		}
+
 		public delegate void SettingsDelegate();
 
 		public static pb_Object[] selection { get { return pbUtil.GetComponents<pb_Object>(Selection.transforms); }	}
@@ -119,7 +153,11 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		// What category this action belongs in.  See pb_ToolbarGroup.
 		public abstract pb_ToolbarGroup group { get; }
+		// Optional value influences where in the toolbar this menu item will be placed.  
+		// 0 is first, 1 is second, -1 is no preference.
+		public virtual int toolbarPriority { get { return -1; } }
 		public abstract Texture2D icon { get; }
 		public abstract pb_TooltipContent tooltip { get; }
 

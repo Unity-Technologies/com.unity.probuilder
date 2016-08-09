@@ -6,20 +6,23 @@ namespace ProBuilder2.EditorCommon
 	[System.Obsolete("Use pb_ToolbarGroup instead")]
 	public enum pb_IconGroup
 	{
-		Tool,
-		Selection,
-		Object,
-		Geometry,
-		Entity
+		Tool		= 0,
+		Selection	= 1,
+		Object		= 2,
+		Geometry	= 3,
+		Entity		= 4
 	}
 
+	/**
+	 *	Defines what area of the ProBuilder toolbar a pb_MenuAction should be grouped into.
+	 */
 	public enum pb_ToolbarGroup
 	{
-		Tool,
-		Selection,
-		Object,
-		Geometry,
-		Entity
+		Tool		= 0,
+		Selection	= 1,
+		Object		= 2,
+		Geometry	= 3,
+		Entity		= 4
 	}
 
 	public static class pb_ToolbarGroupUtility

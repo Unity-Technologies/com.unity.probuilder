@@ -12,22 +12,10 @@ namespace ProBuilder2.Actions
 	{
 		[SerializeField] int count = 0;
 		[SerializeField] Texture2D[] icons = null;
-		private int handleAlignment
-		{ 
-			get
-			{
-				return pb_Editor.instance == null ? 0 : (int)pb_Editor.instance.handleAlignment;
-			}
-		}
-
+		private int handleAlignment { get { return pb_Editor.instance == null ? 0 : (int)pb_Editor.instance.handleAlignment; } }
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon
-		{
-			get
-			{
-				return icons[handleAlignment];
-			}
-		}
+		public override Texture2D icon { get { return icons[handleAlignment]; } }
+		public override int toolbarPriority { get { return 0; } }
 
 		public override pb_TooltipContent tooltip
 		{

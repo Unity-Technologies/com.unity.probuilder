@@ -12,6 +12,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Shapes"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Shape"; } }
+		public override int toolbarPriority { get { return 0; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

@@ -15,6 +15,7 @@ namespace ProBuilder2.Actions
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isEnabled ? icons[1] : icons[0]; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override int toolbarPriority { get { return 1; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

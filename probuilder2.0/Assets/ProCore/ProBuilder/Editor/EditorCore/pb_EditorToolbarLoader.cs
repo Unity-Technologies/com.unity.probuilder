@@ -128,6 +128,8 @@ namespace ProBuilder2.EditorCommon
 					_defaults.Add(del());
 			}
 
+			_defaults.Sort(pb_MenuAction.CompareActionsByGroupAndPriority);
+
 			return _defaults;
 		}
 	}
