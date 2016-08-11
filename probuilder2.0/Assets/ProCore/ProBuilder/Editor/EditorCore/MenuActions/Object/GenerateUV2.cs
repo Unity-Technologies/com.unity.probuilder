@@ -14,11 +14,13 @@ namespace ProBuilder2.Actions
 		public override bool isProOnly { get { return false; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
+		private Editor uv2Editor = null;
+
 		private static bool generateUV2PerObject
 		{
 			get
 			{
-				return EditorPrefs.GetBool("pbGenerateUV2PerObject", true);
+				return EditorPrefs.GetBool("pbGenerateUV2PerObject", false);
 			}
 			set
 			{
@@ -44,11 +46,6 @@ namespace ProBuilder2.Actions
 			@"Create UV2 maps for all selected objects.\n\nCan optionally be set to Generate UV2 for the entire scene in the options panel."
 		);
 
-		public override bool IsHidden()
-		{
-			return !disableAutoUV2Generation;
-		}
-
 		public override bool IsEnabled()
 		{
 			if(generateUV2PerObject)
@@ -66,10 +63,7 @@ namespace ProBuilder2.Actions
 		{
 			GUILayout.Label("Generate UV2 Options", EditorStyles.boldLabel);
 
-			EditorGUILayout.HelpBox(
-@"Generate Scene UV2s will rebuild all ProBuilder mesh UV2s when invoked, instead of just the selection.  Usually you'll want to leave this off.
-
-You can use the button below to rebuild all scene UV2s quickly.", MessageType.Info);
+			EditorGUILayout.HelpBox("Generate Scene UV2s will rebuild all ProBuilder mesh UV2s when invoked, instead of just the selection.", MessageType.Info);
 			bool perSceneUV2s = !generateUV2PerObject;
 			perSceneUV2s = EditorGUILayout.Toggle("Generate Scene UV2s", perSceneUV2s);
 			generateUV2PerObject = !perSceneUV2s;
@@ -79,6 +73,14 @@ You can use the button below to rebuild all scene UV2s quickly.", MessageType.In
 			enableAutoUV2 = EditorGUILayout.Toggle("Enable Auto UV2", enableAutoUV2);
 			if(EditorGUI.EndChangeCheck())
 				disableAutoUV2Generation = !enableAutoUV2;
+
+			Editor.CreateCachedEditor(selection, typeof(pb_UV2ParametersEditor), ref uv2Editor);
+
+			if(uv2Editor != null)
+			{
+				GUILayout.Space(4);
+				uv2Editor.OnInspectorGUI();
+			}
 
 			GUILayout.FlexibleSpace();
 			

@@ -222,12 +222,16 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private Color[] 					_colors;
 
-	public Vector3 						previousTransform = new Vector3(0f, 0f, 0f);
-	public bool 						userCollisions = false;	/// If false, ProBuilder will automatically create and scale colliders.
+	public bool 						userCollisions = false;	// If false, ProBuilder will automatically create and scale colliders.
 	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
 
+	// UV2 generation parameters.
+	public pb_UV2Parameters 			uv2Parameters = new pb_UV2Parameters();
+
+	// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
 	public string						asset_guid;
 
+	// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	public static event System.Action<pb_Object> onDestroyObject;
 
 	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there
