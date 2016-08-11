@@ -3,10 +3,10 @@ using UnityEngine;
 namespace ProBuilder2.Common
 {
 	/**
-	 *	description
+	 *	Store UV2 unwrapping parameters.
 	 */
 	[System.Serializable]
-	public class pb_UV2Parameters
+	public class pb_UnwrapParameters
 	{
 		[Tooltip("Angle between neighbor triangles that will generate seam.")]
 		[Range(1f, 180f)] public float hardAngle = 88f; 

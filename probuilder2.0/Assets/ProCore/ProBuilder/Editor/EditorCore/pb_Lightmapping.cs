@@ -21,6 +21,26 @@ public static class pb_Lightmapping
 	}
 
 	/**
+	 *	Get the UnwrapParam values from a pb_UnwrapParameters object.
+	 *	Not in pb_UnwrapParameters because UnwrapParam is an Editor class.
+	 */
+	public static UnwrapParam GetUnwrapParam(pb_UnwrapParameters parameters)
+	{
+		UnwrapParam param;
+		UnwrapParam.SetDefaults(out param);
+
+		if(parameters != null)
+		{
+			param.angleError = Mathf.Clamp(parameters.angleError, 1f, 75f) * .01f;
+			param.areaError  = Mathf.Clamp(parameters.areaError , 1f, 75f) * .01f;
+			param.hardAngle  = Mathf.Clamp(parameters.hardAngle , 0f, 180f);
+			param.packMargin = Mathf.Clamp(parameters.packMargin, 1f, 64) * .001f;
+		}
+
+		return param;
+	}
+
+	/**
 	 * Store the previous GIWorkflowMode and set the current value to OnDemand (or leave it Legacy).
 	 */
 	[System.Diagnostics.Conditional("UNITY_5")]

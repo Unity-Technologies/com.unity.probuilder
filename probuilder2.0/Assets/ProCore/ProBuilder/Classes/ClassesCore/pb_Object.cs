@@ -226,7 +226,7 @@ public class pb_Object : MonoBehaviour
 	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
 
 	// UV2 generation parameters.
-	public pb_UV2Parameters 			uv2Parameters = new pb_UV2Parameters();
+	public pb_UnwrapParameters 			unwrapParameters = new pb_UnwrapParameters();
 
 	// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
 	public string						asset_guid;

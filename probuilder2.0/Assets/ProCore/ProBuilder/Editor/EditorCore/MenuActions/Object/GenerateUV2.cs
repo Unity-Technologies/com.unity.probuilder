@@ -74,7 +74,7 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				disableAutoUV2Generation = !enableAutoUV2;
 
-			Editor.CreateCachedEditor(selection, typeof(pb_UV2ParametersEditor), ref uv2Editor);
+			Editor.CreateCachedEditor(selection, typeof(pb_UnwrapParametersEditor), ref uv2Editor);
 
 			if(uv2Editor != null)
 			{

@@ -34,7 +34,10 @@ namespace ProBuilder2.EditorCommon
 				pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
 
 				float time = Time.realtimeSinceStartup;
-				Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh);
+
+				UnwrapParam unwrap = pb_Lightmapping.GetUnwrapParam(InObject.unwrapParameters);
+
+				Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh, unwrap);
 
 				// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
 				// to disable auto-uv2 generation.

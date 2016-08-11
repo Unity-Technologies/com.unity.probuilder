@@ -8,20 +8,20 @@ namespace ProBuilder2.EditorCommon
 	 *	Inspector for working with pb_Object lightmap UV generation params.
 	 */
 	[CanEditMultipleObjects]
-	public class pb_UV2ParametersEditor : Editor
+	public class pb_UnwrapParametersEditor : Editor
 	{
 		SerializedProperty p;
-		GUIContent gc_UV2GenParams = new GUIContent("UV2 Generation Params", "Settings for how Unity unwraps the UV2 (lightmap) UVs");
+		GUIContent gc_unwrapParameters = new GUIContent("UV2 Generation Params", "Settings for how Unity unwraps the UV2 (lightmap) UVs");
 
 		void OnEnable()
 		{
-			p = serializedObject.FindProperty("uv2Parameters");
+			p = serializedObject.FindProperty("unwrapParameters");
 		}
 
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
-			EditorGUILayout.PropertyField(p, gc_UV2GenParams, true);
+			EditorGUILayout.PropertyField(p, gc_unwrapParameters, true);
 			serializedObject.ApplyModifiedProperties();
 		}
 	}
