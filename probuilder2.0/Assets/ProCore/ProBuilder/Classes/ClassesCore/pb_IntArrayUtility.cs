@@ -223,6 +223,8 @@ namespace ProBuilder2.Common
 			HashSet<int> common = new HashSet<int>();
 
 			foreach(int i in indices) {
+				if(!lookup.ContainsKey(i))
+					Debug.Log("want: " + i +"\nhave: " + lookup.Keys.ToString("\n"));
 				common.Add( lookup[i] );
 			}
 
