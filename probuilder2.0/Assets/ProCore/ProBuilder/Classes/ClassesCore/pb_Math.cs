@@ -374,9 +374,8 @@ namespace ProBuilder2.Common
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
 			Vector3 cross = Vector3.Cross(p1 - p0, p2 - p0);
-			if (cross.magnitude < Mathf.Epsilon)
-				return Vector3.zero;
-			return cross.normalized;
+			cross.Normalize();
+			return cross;
 		}
 
 		/**
@@ -388,9 +387,8 @@ namespace ProBuilder2.Common
 			if(indices == null || indices.Count % 3 != 0)
 			{
 				Vector3 cross = Vector3.Cross(vertices[1].position - vertices[0].position, vertices[2].position - vertices[0].position);
-				if (cross.magnitude < Mathf.Epsilon)
-					return Vector3.zero;
-				return cross.normalized;
+				cross.Normalize();
+				return cross;
 			}
 			else
 			{
@@ -412,19 +410,34 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector3 Normal(pb_Object pb, pb_Face face)
 		{
-			Vector3 nrm;
-
 			Vector3[] _vertices = pb.vertices;
 
-			// if the face is just a quad, use the normal.
+			// if the face is just a quad, use the first
+			// triangle normal.
 			// otherwise it's not safe to assume that the face
 			// has even generally uniform normals
-			if(face.indices.Length < 7)
-				nrm = pb_Math.Normal(	_vertices[face.indices[0]],
-										_vertices[face.indices[1]],
-										_vertices[face.indices[2]] ); 
-			else
-				nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+			Vector3 nrm = pb_Math.Normal(
+				_vertices[face.indices[0]],
+				_vertices[face.indices[1]],
+				_vertices[face.indices[2]] ); 
+
+			if(face.indices.Length > 7)
+			{
+				Vector3 prj = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+
+				if(Vector3.Dot(nrm, prj) < 0f)
+				{
+					nrm.x = -prj.x;
+					nrm.y = -prj.y;
+					nrm.z = -prj.z;
+				}
+				else
+				{
+					nrm.x = prj.x;
+					nrm.y = prj.y;
+					nrm.z = prj.z;
+				}
+			}
 
 			return nrm;
 		}
