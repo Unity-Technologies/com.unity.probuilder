@@ -53,6 +53,8 @@ public class pb_UV_Editor : EditorWindow
 
 	const int ACTION_WINDOW_WIDTH_MANUAL = 128;
 	const int ACTION_WINDOW_WIDTH_AUTO = 210;
+	const int ACTION_WINDOW_WIDTH_UV2 = 300;
+	const int ACTION_WINDOW_HEIGHT_UV2 = 150;
 
 	private float pref_gridSnapValue = .0625f;
 
@@ -106,8 +108,10 @@ public class pb_UV_Editor : EditorWindow
 
 	UVMode mode = UVMode.Auto;
 
-	#if PB_DEBUG
 	int[] UV_CHANNELS = new int[] { 0, 1, 2, 3 };
+	string[] UV_CHANNELS_STR = new string[] {"UV 1", "UV 2 (read-only)", "UV 3 (read-only)", "UV 4 (read-only)"};
+
+	#if PB_DEBUG
 	bool debug_showCoordinates = false;
 	#endif
 
@@ -251,10 +255,8 @@ public class pb_UV_Editor : EditorWindow
 		InitGUI();
 
 		this.wantsMouseMove = true;
+		this.autoRepaintOnSceneChange = true;
 
-		/**
-		 * Register for delegates
-		 */
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 		if(editor != null) OnSelectionUpdate(editor.selection);
 
@@ -415,16 +417,24 @@ public class pb_UV_Editor : EditorWindow
 		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, Screen.height-MIN_ACTION_WINDOW_SIZE);
 		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 400);
 
-		switch(mode)
+		if(channel == 0)
 		{
-			case UVMode.Manual:
-			case UVMode.Mixed:
-				actionWindowRect.width = ACTION_WINDOW_WIDTH_MANUAL;
-				break;
+			switch(mode)
+			{
+				case UVMode.Manual:
+				case UVMode.Mixed:
+					actionWindowRect.width = ACTION_WINDOW_WIDTH_MANUAL;
+					break;
 
-			case UVMode.Auto:
-				actionWindowRect.width = ACTION_WINDOW_WIDTH_AUTO;
-				break;
+				case UVMode.Auto:
+					actionWindowRect.width = ACTION_WINDOW_WIDTH_AUTO;
+					break;
+			}
+		}
+		else if(channel == 1)
+		{
+			actionWindowRect.width = ACTION_WINDOW_WIDTH_UV2;
+			actionWindowRect.height = ACTION_WINDOW_HEIGHT_UV2;
 		}
 
 		// Mouse drags, canvas movement, etc
@@ -433,7 +443,7 @@ public class pb_UV_Editor : EditorWindow
 		DrawUVGraph( graphRect );
 
 		// Draw AND update translation handles
-		if(selection != null && selectedUVCount > 0)
+		if(channel == 0 && selection != null && selectedUVCount > 0)
 		{
 			switch(tool)
 			{
@@ -451,7 +461,7 @@ public class pb_UV_Editor : EditorWindow
 			}
 		}
 
-		if(UpdateNearestElement(Event.current.mousePosition))
+		if(channel == 0 && UpdateNearestElement(Event.current.mousePosition))
 			Repaint();
 
 		if(m_mouseDragging && pb_Handle_Utility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
@@ -464,9 +474,13 @@ public class pb_UV_Editor : EditorWindow
 
 		DrawUVTools(toolbarRect);
 
-		BeginWindows();
-			actionWindowRect = GUILayout.Window( 1, actionWindowRect, DrawActionWindow, "Actions" );
-		EndWindows();
+		// for now only uv channels 0 and 1 are editable in any way
+		if(channel == 0 || channel == 1)
+		{
+			BeginWindows();
+				actionWindowRect = GUILayout.Window( 1, actionWindowRect, DrawActionWindow, "Actions" );
+			EndWindows();
+		}
 
 		if(needsRepaint)
 		{
@@ -1838,12 +1852,15 @@ public class pb_UV_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				uv = selection[i].uv;
+				uv = GetUVs(selection[i], channel);
+
+				if(uv == null)
+					continue;
 
 				GUI.color = UVColorSecondary;
 				for(int n = 0; n < uv.Length; n++)
 				{
-					p = UVToGUIPoint(selection[i].uv[n]);
+					p = UVToGUIPoint(uv[n]);
 					r.x = p.x - HALF_DOT;
 					r.y = p.y - HALF_DOT;
 					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
@@ -1925,22 +1942,55 @@ public class pb_UV_Editor : EditorWindow
 
 			Vector2 x = Vector2.zero, y = Vector2.zero;
 
-			for(int i = 0; i < selection.Length; i++)
+			if(channel == 0)
 			{
-				pb_Object pb = selection[i];
-				uv = pb.uv;
-
-				for(int n = 0; n < pb.faces.Length; n++)
+				for(int i = 0; i < selection.Length; i++)
 				{
-					pb_Face face = pb.faces[n];
+					pb_Object pb = selection[i];
+					uv = pb.uv;
 
-					foreach(pb_Edge edge in face.edges)
+					for(int n = 0; n < pb.faces.Length; n++)
 					{
-						x = UVToGUIPoint(uv[edge.x]);
-						y = UVToGUIPoint(uv[edge.y]);
+						pb_Face face = pb.faces[n];
+
+						foreach(pb_Edge edge in face.edges)
+						{
+							x = UVToGUIPoint(uv[edge.x]);
+							y = UVToGUIPoint(uv[edge.y]);
+
+							GL.Vertex3(x.x, x.y, 0f);
+							GL.Vertex3(y.x, y.y, 0f);
+						}
+					}
+				}
+			}
+			else
+			{
+				Vector2 z = Vector2.zero;
+
+				for(int i = 0; i < selection.Length; i++)
+				{
+					uv = GetUVs(selection[i], channel);
+
+					if(uv == null || uv.Length != selection[i].msh.vertexCount)
+						continue;
+
+					int[] triangles = selection[i].msh.triangles;
+
+					for(int n = 0; n < triangles.Length; n += 3)
+					{
+						x = UVToGUIPoint(uv[triangles[n  ]]);
+						y = UVToGUIPoint(uv[triangles[n+1]]);
+						z = UVToGUIPoint(uv[triangles[n+2]]);
 
 						GL.Vertex3(x.x, x.y, 0f);
 						GL.Vertex3(y.x, y.y, 0f);
+
+						GL.Vertex3(y.x, y.y, 0f);
+						GL.Vertex3(z.x, z.y, 0f);
+						
+						GL.Vertex3(z.x, z.y, 0f);
+						GL.Vertex3(x.x, x.y, 0f);
 					}
 				}
 			}
@@ -1955,98 +2005,103 @@ public class pb_UV_Editor : EditorWindow
 				return;
 			}
 
-			GL.Begin(GL.LINES);
-			GL.Color(UVColorPrimary);
-
-			for(int i = 0; i < selection.Length; i++)
+			/**
+			 *	If in read-only mode (anything other than UV0) don't render selection stuff
+			 */
+			if(channel == 0)
 			{
-				pb_Object pb = selection[i];
-				uv = pb.uv;
+				GL.Begin(GL.LINES);
+				GL.Color(UVColorPrimary);
 
-				if(pb.SelectedEdges.Length > 0)
+				for(int i = 0; i < selection.Length; i++)
 				{
-					foreach(pb_Edge edge in pb.SelectedEdges)
+					pb_Object pb = selection[i];
+					uv = pb.uv;
+
+					if(pb.SelectedEdges.Length > 0)
 					{
-						x = UVToGUIPoint(uv[edge.x]);
-						y = UVToGUIPoint(uv[edge.y]);
+						foreach(pb_Edge edge in pb.SelectedEdges)
+						{
+							x = UVToGUIPoint(uv[edge.x]);
+							y = UVToGUIPoint(uv[edge.y]);
 
-						GL.Vertex3(x.x, x.y, 0f);
-						GL.Vertex3(y.x, y.y, 0f);
+							GL.Vertex3(x.x, x.y, 0f);
+							GL.Vertex3(y.x, y.y, 0f);
 
-						// #if PB_DEBUG
-						// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
-						// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
-						// #endif
+							// #if PB_DEBUG
+							// GUI.Label( new Rect(x.x, x.y, 120, 20), pb.uv[edge.x].ToString() );
+							// GUI.Label( new Rect(y.x, y.y, 120, 20), pb.uv[edge.y].ToString() );
+							// #endif
+						}
 					}
 				}
-			}
 
-			GL.End();
+				GL.End();
 
-			switch(selectionMode)
-			{
-				case SelectMode.Edge:
-
-					GL.Begin(GL.LINES);
-					GL.Color(Color.red);
-					if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
-					{
-						pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
-						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
-						GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
-					}
-					GL.End();
-
-					break;
-
-				case SelectMode.Face:
+				switch(selectionMode)
 				{
-					Vector3 v = Vector3.zero;
+					case SelectMode.Edge:
 
-					if(nearestElement.valid && !m_mouseDragging)
-					{
-						GL.Begin(GL.TRIANGLES);
-
-						GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
-						int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
-
-						for(int i = 0; i < tris.Length; i+=3)
+						GL.Begin(GL.LINES);
+						GL.Color(Color.red);
+						if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 						{
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
-							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
-							GL.Vertex3(v.x, v.y, 0f);
-							v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
-							GL.Vertex3(v.x, v.y, 0f);
+							pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
+							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
 						}
-
 						GL.End();
-					}
 
-					GL.Begin(GL.TRIANGLES);
-					for(int i = 0; i < selection.Length; i++)
+						break;
+
+					case SelectMode.Face:
 					{
-						foreach(pb_Face face in selection[i].SelectedFaces)
+						Vector3 v = Vector3.zero;
+
+						if(nearestElement.valid && !m_mouseDragging)
 						{
-							GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
+							GL.Begin(GL.TRIANGLES);
 
-							int[] tris = face.indices;
+							GL.Color( selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].manualUV ? HOVER_COLOR_MANUAL : HOVER_COLOR_AUTO);
+							int[] tris = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].indices;
 
-							for(int n = 0; n < tris.Length; n+=3)
+							for(int i = 0; i < tris.Length; i+=3)
 							{
-								v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+								v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+0]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+								v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+1]]);
 								GL.Vertex3(v.x, v.y, 0f);
-								v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+								v = UVToGUIPoint(selection[nearestElement.objectIndex].uv[tris[i+2]]);
 								GL.Vertex3(v.x, v.y, 0f);
 							}
-						}
-					}
-					GL.End();
-				}
-				break;
 
+							GL.End();
+						}
+
+						GL.Begin(GL.TRIANGLES);
+						for(int i = 0; i < selection.Length; i++)
+						{
+							foreach(pb_Face face in selection[i].SelectedFaces)
+							{
+								GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
+
+								int[] tris = face.indices;
+
+								for(int n = 0; n < tris.Length; n+=3)
+								{
+									v = UVToGUIPoint(selection[i].uv[tris[n+0]]);
+									GL.Vertex3(v.x, v.y, 0f);
+									v = UVToGUIPoint(selection[i].uv[tris[n+1]]);
+									GL.Vertex3(v.x, v.y, 0f);
+									v = UVToGUIPoint(selection[i].uv[tris[n+2]]);
+									GL.Vertex3(v.x, v.y, 0f);
+								}
+							}
+						}
+						GL.End();
+					}
+					break;
+				}
 			}
 
 			GL.PopMatrix();
@@ -2064,13 +2119,7 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Scale: " + uvGraphScale);
 
 		GUILayout.Label("Object: " + nearestElement.ToString());
-
-		int t_channel = channel;
-		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2", "3", "4"}, UV_CHANNELS);
-		if(channel != t_channel)
-			RefreshUVCoordinates();
-
-			GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
+		GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
 
 		// GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
 		// GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
@@ -2267,6 +2316,7 @@ public class pb_UV_Editor : EditorWindow
 
 		// Convert dragrect from Unity GUI space to UV coordinates
 		pb_Bounds2D dragBounds;
+
 		if(dragRect != null)
 			dragBounds = new pb_Bounds2D( GUIToUVPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / (uvGraphScale * uvGridSize) );
 		else
@@ -2281,8 +2331,8 @@ public class pb_UV_Editor : EditorWindow
 
 			Vector2[] mshUV = GetUVs(pb, channel);
 
-			// if this isn't the uv2 channel and the uv count doesn't match pb vertex count, reset
-			if(channel != 1 && (mshUV == null || mshUV.Length != pb.vertexCount || mshUV.Any(x => float.IsNaN(x.x) || float.IsNaN(x.y))))
+			// if this is the uv0 channel and the count doesn't match pb vertex count, reset
+			if(channel == 0 && (mshUV == null || mshUV.Length != pb.vertexCount || mshUV.Any(x => float.IsNaN(x.x) || float.IsNaN(x.y))))
 			{
 				mshUV = new Vector2[pb.vertexCount];
 				ApplyUVs(pb, mshUV, channel);
@@ -2291,7 +2341,7 @@ public class pb_UV_Editor : EditorWindow
 			int len = mshUV.Length;
 
 			// this should be separate from RefreshUVCoordinates
-			if(dragRect != null)
+			if(dragRect != null && channel == 0)
 			{
 				switch(selectionMode)
 				{
@@ -2438,7 +2488,20 @@ public class pb_UV_Editor : EditorWindow
 		switch(channel)
 		{
 			case 1:
+			{
+				Mesh m = pb.msh;
+				if(m == null)
+					return null;
 				return pb.msh.uv2;
+			}
+
+			case 2:
+			case 3:
+				Mesh m = pb.msh;
+				if(m == null) return null;
+				List<Vector2> v = new List<Vector2>();
+				m.GetUVs(channel, v);
+				return v.ToArray();
 
 			default:
 				return pb.uv;
@@ -2484,20 +2547,21 @@ public class pb_UV_Editor : EditorWindow
 
 		int t_selectionMode = (int)selectionMode;
 
+		GUI.enabled = channel == 0;
+
 		t_selectionMode = GUI.Toolbar(toolbarRect_select, (int)t_selectionMode, SelectionIcons, "Command");
 
 		if(t_selectionMode != (int)selectionMode)
 			selectionMode = (SelectMode)t_selectionMode;
 
-		/**
-		 * Begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
-		 */
+		// begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
 
 		Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 130, PAD - 1, 36f, 22f);
 
 		if(editor)
 		{
 			gc_SceneViewUVHandles.image = editor.editLevel == EditLevel.Texture ? icon_sceneUV_on : icon_sceneUV_off;
+
 			if(GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
 			{
 				if(editor.editLevel == EditLevel.Texture)
@@ -2506,6 +2570,8 @@ public class pb_UV_Editor : EditorWindow
 					editor.SetEditLevel(EditLevel.Texture);
 			}
 		}
+
+		GUI.enabled = true;
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
@@ -2519,41 +2585,85 @@ public class pb_UV_Editor : EditorWindow
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
 		if(GUI.Button(editor_toggles_rect, gc_RenderUV))
-		{
 			ScreenshotMenu();
+
+		int t_channel = channel;
+
+		Rect channelRect = new Rect(
+			this.position.width - (108 + 8),
+			editor_toggles_rect.y + 3,
+			108f,
+			20f);
+
+		channel = EditorGUI.IntPopup(channelRect, channel, UV_CHANNELS_STR, UV_CHANNELS);
+
+		if(channel != t_channel)
+		{
+			if(t_channel == 0)
+			{
+				foreach(pb_Object pb in selection)
+					pb.SetSelectedTriangles(new int[0] {});
+			}
+
+			RefreshUVCoordinates();
 		}
 
 		GUI.EndGroup();
 
 	}
 
-	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);
+	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);	
+	static Editor uv2Editor = null;
+
 	void DrawActionWindow(int windowIndex)
 	{
-		GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
 
-		switch(mode)
+		if(channel == 0)
 		{
-			case UVMode.Auto:
-				DrawAutoModeUI((int)actionWindowRect.width);
-				break;
+			GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
+			
+			switch(mode)
+			{
+				case UVMode.Auto:
+					DrawAutoModeUI((int)actionWindowRect.width);
+					break;
 
-			case UVMode.Manual:
-				DrawManualModeUI((int)actionWindowRect.width);
-				break;
+				case UVMode.Manual:
+					DrawManualModeUI((int)actionWindowRect.width);
+					break;
 
-			case UVMode.Mixed:
+				case UVMode.Mixed:
 
-				if(GUILayout.Button( gc_ConvertToManual, EditorStyles.miniButton))
-					Menu_SetManualUV();
+					if(GUILayout.Button( gc_ConvertToManual, EditorStyles.miniButton))
+						Menu_SetManualUV();
 
-				if(GUILayout.Button( gc_ConvertToAuto, EditorStyles.miniButton))
-					Menu_SetAutoUV();
+					if(GUILayout.Button( gc_ConvertToAuto, EditorStyles.miniButton))
+						Menu_SetAutoUV();
 
-				break;
+					break;
+			}
+		}
+		else if(channel == 1)
+		{
+			Editor.CreateCachedEditor(selection, typeof(pb_UnwrapParametersEditor), ref uv2Editor);
+
+			if(uv2Editor != null)
+			{
+				GUILayout.Space(4);
+				uv2Editor.OnInspectorGUI();
+			}
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Rebuild Selected UV2"))
+			{
+				foreach(pb_Object pb in selection)
+					pb.Optimize(true);
+			}
+
+			GUILayout.Space(5);
 		}
 
-		// Get some draggage up in hurrr
 		GUI.DragWindow(ActionWindowDragRect);
 	}
 
