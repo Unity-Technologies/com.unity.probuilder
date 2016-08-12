@@ -2570,7 +2570,7 @@ public class pb_UV_Editor : EditorWindow
 					editor.SetEditLevel(EditLevel.Texture);
 			}
 		}
-		
+
 		GUI.enabled = true;
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
@@ -2598,7 +2598,15 @@ public class pb_UV_Editor : EditorWindow
 		channel = EditorGUI.IntPopup(channelRect, channel, UV_CHANNELS_STR, UV_CHANNELS);
 
 		if(channel != t_channel)
+		{
+			if(t_channel == 0)
+			{
+				foreach(pb_Object pb in selection)
+					pb.SetSelectedTriangles(new int[0] {});
+			}
+
 			RefreshUVCoordinates();
+		}
 
 		GUI.EndGroup();
 
