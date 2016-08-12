@@ -16,108 +16,130 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		pbUndo.RecordSelection(selection, "find holes");
-
-		foreach(pb_Object pb in selection)
-		{
-			List<List<pb_Edge>> holes = pb_AppendPolygon.FindHoles(pb, pb.SelectedTriangles);
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-			List<pb_FaceRebuildData> append = new List<pb_FaceRebuildData>();
-
-			foreach(List<pb_Edge> hole in holes)
-			{
-				List<pb_Vertex> holeVertices = hole.Select(x => vertices[x.x]).ToList();
-				append.AddRange(pb_AppendPolygon.TentCapWithVertices(holeVertices));
-			}
-
-			pb_FaceRebuildData.Apply(append, pb, vertices);
-
-			pb.ToMesh();
-			pb.Refresh();
-			pb.Optimize();
-		}
+		// foreach(pb_Object pb in selection)
+		// {
+		// 	// profiler.Begin("Grow Selection (Old)");
+		// 	// pb_Menu_Commands.MenuGrowSelection(selection);
+		// 	// profiler.End();
+			
+			profiler.Begin("Grow Selection (New)");
+			MenuGrowSelection(selection);
+			profiler.End();
+		// }
 
 		pb_Editor.Refresh();
 	}
 
-	// static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
-	// {
-	// 	int[] indices = wing.face.indices;
-	// 	int len = indices.Length;
+	public static pb_ActionResult MenuGrowSelection(pb_Object[] selection)
+	{
+		pbUndo.RecordSelection(selection, "Grow Selection");
 
-	// 	for(int i = 0; i < len; i += 3)
-	// 	{
-	// 		pb_Edge e = wing.edge.local;
-	// 		int a = indices[i], b = indices[i+1], c = indices[i+2];
+		bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
+		float growSelectionAngle = pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle");
 
-	// 		if(e.x == a && e.y == b)
-	// 			return new pb_Edge(wing.edge.common);
-	// 		else if(e.x == b && e.y == a)
-	// 			return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
-	// 		else if(e.x == b && e.y == c)
-	// 			return new pb_Edge(wing.edge.common);
-	// 		else if(e.x == c && e.y == b)
-	// 			return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
-	// 		else if(e.x == c && e.y == a)
-	// 			return new pb_Edge(wing.edge.common);
-	// 		else if(e.x == a && e.y == c)
-	// 			return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
-	// 	}
-	// 	return null;
-	// }
+		foreach(pb_Object pb in selection)
+		{
+			pb_Face[] selectedFaces = pb.SelectedFaces;
 
-	// static pb_ActionResult SplitVertices(pb_Object pb, int[] indices, float distance)
-	// {
-	// 	HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(pb.sharedIndices, indices);
+			HashSet<pb_Face> sel;
 
-	// 	List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-	// 	Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
+			if(iterative)
+			{
+				sel = GrowSelection(pb, selectedFaces, growSelectionAngle);
+				sel.UnionWith(selectedFaces);
+			}
+			else
+			{
+				sel = FloodSelection(pb, selectedFaces, growSelectionAngle);
+			}
 
-	// 	foreach(int c in common)
-	// 	{
-	// 		IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c));
-	// 		HashSet<pb_Face> used = new HashSet<pb_Face>();
+			pb.SetSelectedFaces( sel.ToArray() );
+		}
 
-	// 		foreach(pb_WingedEdge match in matches)
-	// 		{
-	// 			if(!used.Add(match.face))
-	// 				continue;
+		pb_Editor.Refresh();
 
-	// 			sorted.AddOrAppend(match.face, new pb_Tuple<pb_WingedEdge, int>(match, c));
-	// 		}
-	// 	}
+		return new pb_ActionResult(Status.Success, "Grow Selection");
+	}
 
-	// 	List<pb_Face> faces = new List<pb_Face>(pb.faces);
-	// 	List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-	// 	List<pb_FaceRebuildData> newFaces = new List<pb_FaceRebuildData>();
+	private static HashSet<pb_Face> GrowSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff = -1f)
+	{
+		List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
+		HashSet<pb_Face> source = new HashSet<pb_Face>(faces);
+		HashSet<pb_Face> neighboring = new HashSet<pb_Face>();
 
-	// 	foreach(var kvp in sorted)
-	// 	{
-	// 		Dictionary<int, List<pb_Vertex>> dgaf = new Dictionary<int, List<pb_Vertex>>();
-	// 		pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, .2f, out dgaf);
-	// 		newFaces.Add(f);
-	// 	}
+		Vector3 srcNormal = Vector3.zero;
+		bool checkAngle = maxAngleDiff > 0f;
 
-	// 	Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-	// 	Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
+		for(int i = 0; i < wings.Count; i++)
+		{
+			if(!source.Contains(wings[i].face))
+				continue;
 
-	// 	pb_FaceRebuildData.Apply(
-	// 		newFaces,
-	// 		vertices,
-	// 		faces,
-	// 		lookup,
-	// 		lookupUV);
+			if(checkAngle)
+				srcNormal = pb_Math.Normal(pb, wings[i].face);
 
-	// 	pb.SetVertices(vertices);
-	// 	pb.SetFaces(faces.ToArray());
-	// 	pb.SetSharedIndices(lookup);
-	// 	pb.SetSharedIndicesUV(lookupUV);
-	// 	pb.DeleteFaces( sorted.Keys );
-	// 	pb.ToMesh();
+			foreach(pb_WingedEdge w in wings[i])
+			{
+				if(w.opposite != null && !source.Contains(w.opposite.face))
+				{
+					if(checkAngle)
+					{
+						Vector3 oppNormal = pb_Math.Normal(pb, w.opposite.face);
 
-	// 	return new pb_ActionResult(Status.Success, "Magic?");
-	// }
+						if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
+							neighboring.Add(w.opposite.face);
+					}
+					else
+					{
+						neighboring.Add(w.opposite.face);
+					}
+				}
+			}
+		}
+
+		return neighboring;
+	}
+
+	private static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
+	{
+		pb_WingedEdge next = wing.next;
+
+		while(next != wing)
+		{
+			pb_WingedEdge opp = next.opposite;
+
+			if(opp != null && !selection.Contains(opp.face))
+			{
+				
+				Vector3 oppNormal = pb_Math.Normal(pb, opp.face);
+
+				if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
+				{
+					selection.Add(opp.face);
+					Flood(pb, opp, oppNormal, maxAngle, selection);
+				}
+			}
+
+			next = next.next;
+		}
+	}
+
+	private static HashSet<pb_Face> FloodSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff)
+	{
+		List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
+		HashSet<pb_Face> source = new HashSet<pb_Face>(faces);
+		HashSet<pb_Face> flood = new HashSet<pb_Face>();
+
+		for(int i = 0; i < wings.Count; i++)
+		{
+			if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
+			{
+				flood.Add(wings[i].face);
+				Flood(pb, wings[i], pb_Math.Normal(pb, wings[i].face), maxAngleDiff, flood);
+			}
+		}
+		return flood;
+	}
 }

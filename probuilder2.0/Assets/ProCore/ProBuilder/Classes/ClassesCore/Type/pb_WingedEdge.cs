@@ -158,12 +158,15 @@ namespace ProBuilder2.Common
 			return SortEdgesByAdjacency(matches).Select(x => x.x).ToList();
 		}
 
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb)
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, bool oneWingPerFace = false)
 		{
-			return GetWingedEdges(pb, pb.faces);
+			return GetWingedEdges(pb, pb.faces, oneWingPerFace);
 		}
 
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces)
+		/**
+		 *	Generate a Winged Edge data structure.  If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
+		 */
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
@@ -175,6 +178,7 @@ namespace ProBuilder2.Common
 			{
 				List<pb_Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
+				pb_WingedEdge first = null, prev = null;
 
 				for(int n = 0; n < edgeLength; n++)
 				{
@@ -183,18 +187,21 @@ namespace ProBuilder2.Common
 					pb_WingedEdge w = new pb_WingedEdge();
 					w.edge = new pb_EdgeLookup(lookup[e.x], lookup[e.y], e.x, e.y);
 					w.face = f;
+					if(n < 1) first = w;
 
 					if(n > 0)
 					{
-						w.previous = winged[index + n - 1];
-						winged[index + n - 1].next = w;
+						w.previous = prev;
+						prev.next = w;
 					}
 
 					if(n == edgeLength - 1)
 					{
-						w.next = winged[index];
-						winged[index].previous = w;
+						w.next = first;
+						first.previous = w;
 					}
+
+					prev = w;
 
 					pb_WingedEdge opp;
 
@@ -209,9 +216,10 @@ namespace ProBuilder2.Common
 						opposites.Add(w.edge.common, w );
 					}
 
-					winged.Add(w);
+					if(!oneWingPerFace || n < 1)
+						winged.Add(w);
 				}
-
+				
 				index += edgeLength;
 			}
 
