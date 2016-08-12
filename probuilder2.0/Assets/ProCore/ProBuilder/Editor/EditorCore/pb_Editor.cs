@@ -879,10 +879,11 @@ public class pb_Editor : EditorWindow
 				pbUndo.RecordSelection(pb, "Change Face Selection");
 
 				int indx = System.Array.IndexOf(pb.SelectedFaces, selectedFace);
+
 				if( indx > -1 ) {
 					pb.RemoveFromFaceSelectionAtIndex(indx);
 				} else {
-					pb.AddToFaceSelection(hit.face);
+					pb.AddToFaceSelection(selectedFace);
 				}
 			}
 		}
@@ -2521,7 +2522,7 @@ public class pb_Editor : EditorWindow
 			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToArray();
 
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
-			selectedFaceCount += selection[i].SelectedFaceIndices.Length;
+			selectedFaceCount += selection[i].SelectedFaceCount;
 			selectedEdgeCount += selection[i].SelectedEdges.Length;
 
 			int distinctVertexCount = selection[i].sharedIndices.UniqueIndicesWithValues(selection[i].SelectedTriangles).ToList().Count;
@@ -2590,7 +2591,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			selectedVertexCount += selection[i].SelectedTriangleCount;
-			selectedFaceCount 	+= selection[i].SelectedFaceIndices.Length;
+			selectedFaceCount 	+= selection[i].SelectedFaceCount;
 			selectedEdgeCount 	+= selection[i].SelectedEdges.Length;
 		}
 
@@ -3102,12 +3103,12 @@ public class pb_Editor : EditorWindow
 
 		if(selection.Length < 1) return false;
 
-		pb = selection.FirstOrDefault(x => x.SelectedFaceIndices.Length > 0);
+		pb = selection.FirstOrDefault(x => x.SelectedFaceCount > 0);
 
 		if(pb == null)
 			return false;
 
-		face = pb.faces[pb.SelectedFaceIndices[0]];
+		face = pb.SelectedFaces[0];
 
 		return true;
 	}
@@ -3119,13 +3120,12 @@ public class pb_Editor : EditorWindow
 	{
 		for(int i = 0; i < selection.Length; i++)
 		{
-			for(int n = 0; n < selection[i].SelectedFaceIndices.Length; n++)
+			for(int n = 0; n < selection[i].SelectedFaceCount; n++)
 			{
-				if(selection[i].faces[selection[i].SelectedFaceIndices[n]].material != null)
-				{
-					mat = selection[i].faces[selection[i].SelectedFaceIndices[n]].material;
+				mat = selection[i].SelectedFaces[i].material;
+
+				if(mat != null)
 					return true;
-				}
 			}
 		}
 		return false;

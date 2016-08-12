@@ -692,7 +692,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			foreach(pb_Object pb in selection)
 			{
-				if(pb.SelectedFaceIndices.Length > 0)
+				if(pb.SelectedFaceCount > 0)
 				{
 					foreach(pb_Face face in pb.SelectedFaces)
 					{
@@ -2395,9 +2395,12 @@ public class pb_UV_Editor : EditorWindow
 					 */
 					case SelectMode.Face:
 
-						HashSet<int> selectedFaces = new HashSet<int>(selection[i].SelectedFaceIndices);
+						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(selection[i].SelectedFaces);
+
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
+							pb_Face face = pb.faces[n];
+
 							int[] distinctIndices = pb.faces[n].distinctIndices;
 
 							bool allPointsContained = true;
@@ -2423,10 +2426,10 @@ public class pb_UV_Editor : EditorWindow
 
 							if(allPointsContained)
 							{
-								if( selectedFaces.Contains(n) )
-										selectedFaces.Remove(n);
+								if( selectedFaces.Contains(face) )
+										selectedFaces.Remove(face);
 									else
-										selectedFaces.Add(n);
+										selectedFaces.Add(face);
 							}
 						}
 						selection[i].SetSelectedFaces(selectedFaces.ToArray());
@@ -3008,8 +3011,8 @@ public class pb_UV_Editor : EditorWindow
 
 				pbUVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
 
-				foreach(int f in selection[i].SelectedFaceIndices)
-					selection[i].faces[f].manualUV = true;
+				foreach(pb_Face f in selection[i].SelectedFaces)
+					f.manualUV = true;
 
 				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
 				selection[i].Optimize();

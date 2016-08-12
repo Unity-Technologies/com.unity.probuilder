@@ -214,7 +214,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(selection[0].SelectedTriangles.Length < 256)
 				{
-					GUILayout.Label("Faces: [" + selection[0].SelectedFaceIndices.Length + "/" + selection[0].faces.Length + "]  " + selection[0].SelectedFaceIndices.ToString(", "));
+					GUILayout.Label("Faces: [" + selection[0].SelectedFaceCount + "/" + selection[0].faces.Length + "]  ");
 					GUILayout.Label("Edges: [" + selection[0].SelectedEdges.Length + "]  " + selection[0].SelectedEdges.ToString(", "));
 					GUILayout.Label("Triangles: [" + selection[0].SelectedTriangles.Length + "]  " + selection[0].SelectedTriangles.ToString(", "));
 				}

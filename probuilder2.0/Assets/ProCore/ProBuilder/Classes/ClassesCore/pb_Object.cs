@@ -313,37 +313,28 @@ public class pb_Object : MonoBehaviour
 
 #region SELECTION
 
-	public pb_Face[]					SelectedFaces { get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); } }
+	public pb_Face[]					SelectedFaces { get { return m_selectedFaces; } }
 	public int 							SelectedFaceCount { get { return m_selectedFaces.Length; } }
-	public int[]						SelectedFaceIndices { get { return m_selectedFaces; } }
 	public int[]						SelectedTriangles { get { return m_selectedTriangles; } }
 	public int 							SelectedTriangleCount { get { return m_selectedTriangles.Length; } }
 	public pb_Edge[]					SelectedEdges { get { return m_SelectedEdges; } }
 	public int							SelectedEdgeCount { get { return m_SelectedEdges.Length; } }
 
-	[SerializeField] private int[]		m_selectedFaces 		= new int[]{};
+	[SerializeField] private pb_Face[]	m_selectedFaces 		= new pb_Face[]{};
 	[SerializeField] private pb_Edge[]	m_SelectedEdges 		= new pb_Edge[]{};
 	[SerializeField] private int[]		m_selectedTriangles 	= new int[]{};
 
 	/**
 	 *	Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
 	 */
-	public void AddToFaceSelection(int indx)
+	public void AddToFaceSelection(pb_Face face)
 	{
-		SetSelectedFaces(m_selectedFaces.Add(indx));
+		SetSelectedFaces(m_selectedFaces.Add(face));
 	}
 
-	/**
-	 *	Sets this pb_Object's SelectedFaces array, as well as SelectedEdges and SelectedTriangles.
-	 */
-	public void SetSelectedFaces(IEnumerable<pb_Face> faces)
+	public void SetSelectedFaces(IEnumerable<pb_Face> selected)
 	{
-		SetSelectedFaces(faces.Select(x => System.Array.IndexOf(this.faces, x)).ToArray());
-	}
-
-	public void SetSelectedFaces(int[] t_faces)
-	{
-		this.m_selectedFaces = t_faces;
+		this.m_selectedFaces = selected.ToArray();
 		this.m_selectedTriangles = pb_Face.AllTriangles( SelectedFaces );
 
 		// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
@@ -356,7 +347,7 @@ public class pb_Object : MonoBehaviour
 
 	public void SetSelectedEdges(IEnumerable<pb_Edge> edges)
 	{
-		this.m_selectedFaces = new int[0];
+		this.m_selectedFaces = new pb_Face[0];
 		this.m_SelectedEdges = edges.Select(x => new pb_Edge(x)).ToArray();
 		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();
 	}
@@ -366,7 +357,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void SetSelectedTriangles(int[] tris)
 	{
-		m_selectedFaces = new int[0];
+		m_selectedFaces = new pb_Face[0];
 		m_SelectedEdges = new pb_Edge[0];
 		m_selectedTriangles = tris ?? new int[0] {};
 	}
@@ -395,7 +386,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ClearSelection()
 	{
-		m_selectedFaces = new int[0];
+		m_selectedFaces = new pb_Face[0];
 		m_SelectedEdges = new pb_Edge[0];
 		m_selectedTriangles = new int[0];
 	}

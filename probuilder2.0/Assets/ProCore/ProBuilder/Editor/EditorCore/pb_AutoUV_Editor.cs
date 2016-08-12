@@ -447,7 +447,8 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				if(pb.SelectedFaceIndices.Length < 1) continue;
+				if(pb.SelectedFaceCount < 1)
+					continue;
 
 				pb_Face[] faces = pb.SelectedFaces;
 				pb_UV cuv = faces[0].uv;
@@ -463,7 +464,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void TextureGroupSelectedFaces(pb_Object pb)//, pb_Face face)
 		{
-			if(pb.SelectedFaceIndices.Length < 1) return;
+			if(pb.SelectedFaceCount < 1) return;
 
 			pb_Face[] faces = pb.SelectedFaces;
 

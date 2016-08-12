@@ -988,12 +988,7 @@ namespace ProBuilder2.EditorCommon
 				case SelectMode.Face:
 					foreach(pb_Object pb in selection)
 					{
-						List<pb_Face> inverse = new List<pb_Face>();
-
-						for(int i = 0; i < pb.faces.Length; i++)
-							if( System.Array.IndexOf(pb.SelectedFaceIndices, i) < 0 )
-								inverse.Add(pb.faces[i]);
-
+						IEnumerable<pb_Face> inverse = pb.faces.Where( x => !pb.SelectedFaces.Contains(x) );
 						pb.SetSelectedFaces(inverse.ToArray());
 					}
 					break;
@@ -1219,10 +1214,11 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				if(pb.SelectedFaceIndices.Length < 1 || pb.SelectedFaceIndices.Length == pb.faces.Length)
+				if(pb.SelectedFaceCount < 1 || pb.SelectedFaceCount == pb.faces.Length)
 					continue;
 
-				int[] primary = pb.SelectedFaceIndices;
+				// work with face indices here 'cause copying breaks the face ref
+				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf(pb.faces, x)).ToArray();
 
 				detachedFaceCount += primary.Length;
 

@@ -48,7 +48,7 @@ namespace ProBuilder2.Actions
 					if(mats.Contains(pb.faces[i].material))
 					{
 						addToSelection = true;
-						pb.AddToFaceSelection(i);
+						pb.AddToFaceSelection(pb.faces[i]);
 					}
 				}
 
