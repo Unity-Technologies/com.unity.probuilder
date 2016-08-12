@@ -53,6 +53,8 @@ public class pb_UV_Editor : EditorWindow
 
 	const int ACTION_WINDOW_WIDTH_MANUAL = 128;
 	const int ACTION_WINDOW_WIDTH_AUTO = 210;
+	const int ACTION_WINDOW_WIDTH_UV2 = 300;
+	const int ACTION_WINDOW_HEIGHT_UV2 = 150;
 
 	private float pref_gridSnapValue = .0625f;
 
@@ -106,8 +108,10 @@ public class pb_UV_Editor : EditorWindow
 
 	UVMode mode = UVMode.Auto;
 
-	#if PB_DEBUG
 	int[] UV_CHANNELS = new int[] { 0, 1, 2, 3 };
+	string[] UV_CHANNELS_STR = new string[] {"UV 1", "UV 2 (read-only)", "UV 3 (read-only)", "UV 4 (read-only)"};
+
+	#if PB_DEBUG
 	bool debug_showCoordinates = false;
 	#endif
 
@@ -253,9 +257,6 @@ public class pb_UV_Editor : EditorWindow
 		this.wantsMouseMove = true;
 		this.autoRepaintOnSceneChange = true;
 
-		/**
-		 * Register for delegates
-		 */
 		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 		if(editor != null) OnSelectionUpdate(editor.selection);
 
@@ -416,16 +417,24 @@ public class pb_UV_Editor : EditorWindow
 		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, Screen.height-MIN_ACTION_WINDOW_SIZE);
 		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 400);
 
-		switch(mode)
+		if(channel == 0)
 		{
-			case UVMode.Manual:
-			case UVMode.Mixed:
-				actionWindowRect.width = ACTION_WINDOW_WIDTH_MANUAL;
-				break;
+			switch(mode)
+			{
+				case UVMode.Manual:
+				case UVMode.Mixed:
+					actionWindowRect.width = ACTION_WINDOW_WIDTH_MANUAL;
+					break;
 
-			case UVMode.Auto:
-				actionWindowRect.width = ACTION_WINDOW_WIDTH_AUTO;
-				break;
+				case UVMode.Auto:
+					actionWindowRect.width = ACTION_WINDOW_WIDTH_AUTO;
+					break;
+			}
+		}
+		else if(channel == 1)
+		{
+			actionWindowRect.width = ACTION_WINDOW_WIDTH_UV2;
+			actionWindowRect.height = ACTION_WINDOW_HEIGHT_UV2;
 		}
 
 		// Mouse drags, canvas movement, etc
@@ -465,9 +474,13 @@ public class pb_UV_Editor : EditorWindow
 
 		DrawUVTools(toolbarRect);
 
-		BeginWindows();
-			actionWindowRect = GUILayout.Window( 1, actionWindowRect, DrawActionWindow, "Actions" );
-		EndWindows();
+		// for now only uv channels 0 and 1 are editable in any way
+		if(channel == 0 || channel == 1)
+		{
+			BeginWindows();
+				actionWindowRect = GUILayout.Window( 1, actionWindowRect, DrawActionWindow, "Actions" );
+			EndWindows();
+		}
 
 		if(needsRepaint)
 		{
@@ -2106,13 +2119,7 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Scale: " + uvGraphScale);
 
 		GUILayout.Label("Object: " + nearestElement.ToString());
-
-		int t_channel = channel;
-		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2", "3", "4"}, UV_CHANNELS);
-		if(channel != t_channel)
-			RefreshUVCoordinates();
-
-			GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
+		GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
 
 		// GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
 		// GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
@@ -2495,7 +2502,6 @@ public class pb_UV_Editor : EditorWindow
 				List<Vector2> v = new List<Vector2>();
 				m.GetUVs(channel, v);
 				return v.ToArray();
-				break;
 
 			default:
 				return pb.uv;
@@ -2541,20 +2547,21 @@ public class pb_UV_Editor : EditorWindow
 
 		int t_selectionMode = (int)selectionMode;
 
+		GUI.enabled = channel == 0;
+
 		t_selectionMode = GUI.Toolbar(toolbarRect_select, (int)t_selectionMode, SelectionIcons, "Command");
 
 		if(t_selectionMode != (int)selectionMode)
 			selectionMode = (SelectMode)t_selectionMode;
 
-		/**
-		 * Begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
-		 */
+		// begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
 
 		Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 130, PAD - 1, 36f, 22f);
 
 		if(editor)
 		{
 			gc_SceneViewUVHandles.image = editor.editLevel == EditLevel.Texture ? icon_sceneUV_on : icon_sceneUV_off;
+
 			if(GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
 			{
 				if(editor.editLevel == EditLevel.Texture)
@@ -2563,6 +2570,8 @@ public class pb_UV_Editor : EditorWindow
 					editor.SetEditLevel(EditLevel.Texture);
 			}
 		}
+		
+		GUI.enabled = true;
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
@@ -2576,41 +2585,77 @@ public class pb_UV_Editor : EditorWindow
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
 
 		if(GUI.Button(editor_toggles_rect, gc_RenderUV))
-		{
 			ScreenshotMenu();
-		}
+
+		int t_channel = channel;
+
+		Rect channelRect = new Rect(
+			this.position.width - (108 + 8),
+			editor_toggles_rect.y + 3,
+			108f,
+			20f);
+
+		channel = EditorGUI.IntPopup(channelRect, channel, UV_CHANNELS_STR, UV_CHANNELS);
+
+		if(channel != t_channel)
+			RefreshUVCoordinates();
 
 		GUI.EndGroup();
 
 	}
 
-	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);
+	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);	
+	static Editor uv2Editor = null;
+
 	void DrawActionWindow(int windowIndex)
 	{
-		GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
 
-		switch(mode)
+		if(channel == 0)
 		{
-			case UVMode.Auto:
-				DrawAutoModeUI((int)actionWindowRect.width);
-				break;
+			GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
+			
+			switch(mode)
+			{
+				case UVMode.Auto:
+					DrawAutoModeUI((int)actionWindowRect.width);
+					break;
 
-			case UVMode.Manual:
-				DrawManualModeUI((int)actionWindowRect.width);
-				break;
+				case UVMode.Manual:
+					DrawManualModeUI((int)actionWindowRect.width);
+					break;
 
-			case UVMode.Mixed:
+				case UVMode.Mixed:
 
-				if(GUILayout.Button( gc_ConvertToManual, EditorStyles.miniButton))
-					Menu_SetManualUV();
+					if(GUILayout.Button( gc_ConvertToManual, EditorStyles.miniButton))
+						Menu_SetManualUV();
 
-				if(GUILayout.Button( gc_ConvertToAuto, EditorStyles.miniButton))
-					Menu_SetAutoUV();
+					if(GUILayout.Button( gc_ConvertToAuto, EditorStyles.miniButton))
+						Menu_SetAutoUV();
 
-				break;
+					break;
+			}
+		}
+		else if(channel == 1)
+		{
+			Editor.CreateCachedEditor(selection, typeof(pb_UnwrapParametersEditor), ref uv2Editor);
+
+			if(uv2Editor != null)
+			{
+				GUILayout.Space(4);
+				uv2Editor.OnInspectorGUI();
+			}
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Rebuild Selected UV2"))
+			{
+				foreach(pb_Object pb in selection)
+					pb.Optimize(true);
+			}
+
+			GUILayout.Space(5);
 		}
 
-		// Get some draggage up in hurrr
 		GUI.DragWindow(ActionWindowDragRect);
 	}
 
