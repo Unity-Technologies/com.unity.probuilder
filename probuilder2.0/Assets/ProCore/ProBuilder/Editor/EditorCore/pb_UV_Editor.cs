@@ -24,9 +24,6 @@ public class pb_UV_Editor : EditorWindow
 		Debug.LogWarning("UV Editor is ProBuilder Advanced feature.");
 	}
 #else
-#if PB_DEBUG
-	static pb_Profiler profiler = new pb_Profiler("pb_UV_Editor");
-#endif
 
 #region Fields
 
@@ -110,7 +107,7 @@ public class pb_UV_Editor : EditorWindow
 	UVMode mode = UVMode.Auto;
 
 	#if PB_DEBUG
-	int[] UV_CHANNELS = new int[] { 0, 1 };
+	int[] UV_CHANNELS = new int[] { 0, 1, 2, 3 };
 	bool debug_showCoordinates = false;
 	#endif
 
@@ -408,11 +405,6 @@ public class pb_UV_Editor : EditorWindow
 			GUI.backgroundColor = Color.white;
 		}
 
-		#if PB_DEBUG
-		profiler.BeginSample("pb_UV_Editor::OnGUI");
-		profiler.BeginSample("GUI Calculations");
-		#endif
-
 		if(Screen.width != screenWidth || Screen.height != screenHeight)
 			OnScreenResize();
 
@@ -435,27 +427,10 @@ public class pb_UV_Editor : EditorWindow
 				break;
 		}
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("HandleInput");
-		#endif
-
 		// Mouse drags, canvas movement, etc
 		HandleInput();
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("DrawUVGraph");
-		#endif
-
-		// try{
-			DrawUVGraph( graphRect );
-		// } catch(System.Exception e) { Debug.LogError(e.ToString()); }
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("Tools");
-		#endif
+		DrawUVGraph( graphRect );
 
 		// Draw AND update translation handles
 		if(selection != null && selectedUVCount > 0)
@@ -476,18 +451,8 @@ public class pb_UV_Editor : EditorWindow
 			}
 		}
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("UpdateNearestElement");
-		#endif
-
 		if(UpdateNearestElement(Event.current.mousePosition))
 			Repaint();
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("MouseDrag");
-		#endif
 
 		if(m_mouseDragging && pb_Handle_Utility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
 		{
@@ -497,35 +462,17 @@ public class pb_UV_Editor : EditorWindow
 			GUI.backgroundColor = oldColor;
 		}
 
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("DrawUVTools");
-		#endif
-
 		DrawUVTools(toolbarRect);
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("DrawActionWindow");
-		#endif
 
 		BeginWindows();
 			actionWindowRect = GUILayout.Window( 1, actionWindowRect, DrawActionWindow, "Actions" );
 		EndWindows();
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		if(needsRepaint)
 		{
 			Repaint();
 			needsRepaint = false;
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		#if PB_DEBUG
 		buggerRect = new Rect(Screen.width - 226, PAD, 220, 300);
@@ -544,9 +491,7 @@ public class pb_UV_Editor : EditorWindow
 
 		RefreshUVCoordinates();
 
-		/**
-		 * Get incompletely selected texture groups
-		 */
+		// get incompletely selected texture groups
 		int len = selection == null ? 0 : selection.Length;
 
 		incompleteTextureGroupsInSelection = new List<pb_Face[]>[len];
@@ -1249,10 +1194,6 @@ public class pb_UV_Editor : EditorWindow
 	{
 		if (selection == null) return;
 
-		#if PB_DEBUG
-		profiler.BeginSample("OnMouseClick");
-		#endif
-
 		switch(selectionMode)
 		{
 			case SelectMode.Edge:
@@ -1313,10 +1254,6 @@ public class pb_UV_Editor : EditorWindow
 		{
 			RefreshSelectedUVCoordinates();
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 
 	void OnMouseDrag()
@@ -1353,18 +1290,10 @@ public class pb_UV_Editor : EditorWindow
 
 		Vector2 t_handlePosition = UVToGUIPoint(handlePosition);
 
-		#if PB_DEBUG
-		profiler.BeginSample("Handle");
-		#endif
-
 		pb_Handle_Utility.limitToLeftButton = false; // enable right click drag
 		t_handlePosition = pb_Handle_Utility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
 		t_handlePosition = GUIToUVPoint(t_handlePosition);
 		pb_Handle_Utility.limitToLeftButton = true;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		if (!e.isMouse) return;
 
@@ -1373,10 +1302,6 @@ public class pb_UV_Editor : EditorWindow
 		 */
 		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx2(t_handlePosition, handlePosition, .0001f))
 		{
-			#if PB_DEBUG
-			profiler.BeginSample("Set Custom Pivot");
-			#endif
-
 			userPivot = true;	// flag the handle as having been user set.
 
 			if(ControlKey)
@@ -1416,9 +1341,6 @@ public class pb_UV_Editor : EditorWindow
 
 			SetHandlePosition(handlePosition, true);
 
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
 			return;
 		}
 
@@ -1894,13 +1816,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if( (screenshotStatus != ScreenshotStatus.PrepareCanvas && screenshotStatus != ScreenshotStatus.CanvasReady) || !screenshot_hideGrid)
 		{
-			#if PB_DEBUG
-				profiler.BeginSample("Draw Base Graph");
-					DrawUVGrid(GridColorPrimary);
-				profiler.EndSample();
-			#else
-				DrawUVGrid(GridColorPrimary);
-			#endif
+			DrawUVGrid(GridColorPrimary);
 		}
 
 		if(selection == null || selection.Length < 1)
@@ -1909,10 +1825,6 @@ public class pb_UV_Editor : EditorWindow
 		/**
 		 * Draw regular old outlines
 		 */
-		#if PB_DEBUG
-		profiler.BeginSample("Draw Base Edges + Vertices");
-		#endif
-
 		Vector2 p = Vector2.zero;
 		Vector2[] uv;
 		r.width = DOT_SIZE;
@@ -2034,17 +1946,9 @@ public class pb_UV_Editor : EditorWindow
 			}
 			GL.End();
 
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
-
 			/**
 			 * Draw selected UVs with shiny green color and dots
 			 */
-			#if PB_DEBUG
-			profiler.BeginSample("Draw Selected Edges + Vertices");
-			#endif
-
 			if(screenshotStatus != ScreenshotStatus.Done)
 			{
 				GL.PopMatrix();
@@ -2079,17 +1983,9 @@ public class pb_UV_Editor : EditorWindow
 
 			GL.End();
 
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
-
 			switch(selectionMode)
 			{
 				case SelectMode.Edge:
-
-					#if PB_DEBUG
-					profiler.BeginSample("Draw Nearest Edge Highlight");
-					#endif
 
 					GL.Begin(GL.LINES);
 					GL.Color(Color.red);
@@ -2101,18 +1997,10 @@ public class pb_UV_Editor : EditorWindow
 					}
 					GL.End();
 
-					#if PB_DEBUG
-					profiler.EndSample();
-					#endif
-
 					break;
 
 				case SelectMode.Face:
 				{
-					#if PB_DEBUG
-					profiler.BeginSample("Draw Nearest Face Highlight GL");
-					#endif
-
 					Vector3 v = Vector3.zero;
 
 					if(nearestElement.valid && !m_mouseDragging)
@@ -2135,11 +2023,6 @@ public class pb_UV_Editor : EditorWindow
 						GL.End();
 					}
 
-					#if PB_DEBUG
-					profiler.EndSample();
-					profiler.BeginSample("Draw Selected Face Highlights GL");
-					#endif
-
 					GL.Begin(GL.TRIANGLES);
 					for(int i = 0; i < selection.Length; i++)
 					{
@@ -2161,10 +2044,6 @@ public class pb_UV_Editor : EditorWindow
 						}
 					}
 					GL.End();
-
-					#if PB_DEBUG
-					profiler.EndSample();
-					#endif
 				}
 				break;
 
@@ -2187,7 +2066,7 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Object: " + nearestElement.ToString());
 
 		int t_channel = channel;
-		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2"}, UV_CHANNELS);
+		channel = EditorGUILayout.IntPopup(channel, new string[] {"1", "2", "3", "4"}, UV_CHANNELS);
 		if(channel != t_channel)
 			RefreshUVCoordinates();
 
@@ -2386,10 +2265,6 @@ public class pb_UV_Editor : EditorWindow
 	{
 		if(editor == null || selection == null) return;
 
-		#if PB_DEBUG
-		profiler.BeginSample("RefreshUVCoordinates");
-		#endif
-
 		// Convert dragrect from Unity GUI space to UV coordinates
 		pb_Bounds2D dragBounds;
 		if(dragRect != null)
@@ -2535,10 +2410,6 @@ public class pb_UV_Editor : EditorWindow
 		editor.GetFirstSelectedMaterial(ref preview_material);
 
 		handlePosition = UVSelectionBounds().center - handlePosition_offset;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 	}
 
 	/**
@@ -2693,11 +2564,6 @@ public class pb_UV_Editor : EditorWindow
 		if(GUILayout.Button("Convert to Manual", EditorStyles.miniButton))
 			Menu_SetManualUV();
 
-		#if PB_DEBUG
-		profiler.BeginSample("pb_AutoUV_Editor");
-		#endif
-
-
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
 		{
 			if(!modifyingUVs_AutoPanel)
@@ -2718,10 +2584,6 @@ public class pb_UV_Editor : EditorWindow
 
 			RefreshSelectedUVCoordinates();
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		GUI.enabled = selectedFaceCount > 0;
 
@@ -2972,10 +2834,6 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	private pb_Face[] GetFaces(pb_Object pb, int[] indices)
 	{
-		#if PB_DEBUG
-		profiler.BeginSample("GetFaces");
-		#endif
-
 		List<pb_Face> faces = new List<pb_Face>();
 		foreach(pb_Face f in pb.faces)
 		{
@@ -2988,10 +2846,6 @@ public class pb_UV_Editor : EditorWindow
 				}
 			}
 		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		return faces.Distinct().ToArray();
 	}
