@@ -721,34 +721,61 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuGrowSelection(pb_Object[] selection)
 		{
+			if(!editor || selection == null || selection.Length < 1)
+				return pb_ActionResult.NoSelection;
+
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
+			int grown = 0;
 			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);			
 			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
 			float growSelectionAngle = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
+						
 
-			foreach(pb_Object pb in selection)
+			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
-				pb_Face[] selectedFaces = pb.SelectedFaces;
+				int previousTriCount = pb.SelectedTriangleCount;
 
-				HashSet<pb_Face> sel;
-
-				if(iterative)
+				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 				{
-					sel = pb_GrowShrink.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
-					sel.UnionWith(selectedFaces);
-				}
-				else
-				{
-					sel = pb_GrowShrink.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+					case SelectMode.Vertex:
+						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
+						break;
+
+					case SelectMode.Edge:
+						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
+						break;
+
+					case SelectMode.Face:
+
+						pb_Face[] selectedFaces = pb.SelectedFaces;
+
+						HashSet<pb_Face> sel;
+
+						if(iterative)
+						{
+							sel = pb_GrowShrink.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+							sel.UnionWith(selectedFaces);
+						}
+						else
+						{
+							sel = pb_GrowShrink.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+						}
+						
+						pb.SetSelectedFaces( sel.ToArray() );
+
+						break;
 				}
 
-				pb.SetSelectedFaces( sel.ToArray() );
+				grown += pb.SelectedTriangleCount - previousTriCount;
 			}
 
 			pb_Editor.Refresh();
 
-			return new pb_ActionResult(Status.Success, "Grow Selection");
+			if(grown > 0)
+				return new pb_ActionResult(Status.Success, "Grow Selection");
+			else
+				return new pb_ActionResult(Status.Failure, "Nothing to Grow");
 		}
 
 		public static bool VerifyShrinkSelection(pb_Object[] selection)
