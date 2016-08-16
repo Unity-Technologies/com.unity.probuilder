@@ -26,7 +26,7 @@ namespace ProBuilder2.EditorCommon
 		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
 
-		GUIStyle boldLabel {
+		static GUIStyle boldLabel {
 			get {
 				if(_boldLabel == null) {
 					_boldLabel = new GUIStyle(EditorStyles.boldLabel);
@@ -36,7 +36,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		GUIStyle _boldLabel = null;
+		static GUIStyle _boldLabel = null;
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -644,7 +644,7 @@ namespace ProBuilder2.EditorCommon
 			sceneLabelRect.height = height;
 
 			pb_GUI_Utility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
-			GUI.Label(sceneLabelRect, gc, boldLabel );
+			GUI.Label(sceneLabelRect, gc, boldLabel);
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };

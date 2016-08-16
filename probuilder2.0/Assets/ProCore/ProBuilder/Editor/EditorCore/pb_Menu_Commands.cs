@@ -722,8 +722,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
+			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);			
 			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-			float growSelectionAngle = pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle");
+			float growSelectionAngle = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -733,12 +734,12 @@ namespace ProBuilder2.EditorCommon
 
 				if(iterative)
 				{
-					sel = pbMeshUtils.GrowSelection(pb, selectedFaces, growSelectionAngle);
+					sel = pbMeshUtils.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
 					sel.UnionWith(selectedFaces);
 				}
 				else
 				{
-					sel = pbMeshUtils.FloodSelection(pb, selectedFaces, growSelectionAngle);
+					sel = pbMeshUtils.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
 				}
 
 				pb.SetSelectedFaces( sel.ToArray() );

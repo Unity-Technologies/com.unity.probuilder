@@ -655,25 +655,33 @@ namespace ProBuilder2.MeshOperations
 
 		private static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
 		{
-			pb_WingedEdge next = wing.next;
+			pb_WingedEdge next = wing;
 
-			while(next != wing)
+			do
 			{
 				pb_WingedEdge opp = next.opposite;
 
 				if(opp != null && !selection.Contains(opp.face))
 				{
-					Vector3 oppNormal = pb_Math.Normal(pb, opp.face);
-
-					if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
+					if(maxAngle > 0f)
 					{
-						selection.Add(opp.face);
-						Flood(pb, opp, oppNormal, maxAngle, selection);
+						Vector3 oppNormal = pb_Math.Normal(pb, opp.face);
+
+						if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
+						{
+							if( selection.Add(opp.face) )
+								Flood(pb, opp, oppNormal, maxAngle, selection);
+						}
+					}
+					else
+					{
+						if( selection.Add(opp.face) )
+							Flood(pb, opp, Vector3.zero, maxAngle, selection);
 					}
 				}
 
 				next = next.next;
-			}
+			} while(next != wing);
 		}
 
 		/**
@@ -690,7 +698,7 @@ namespace ProBuilder2.MeshOperations
 				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
 				{
 					flood.Add(wings[i].face);
-					Flood(pb, wings[i], pb_Math.Normal(pb, wings[i].face), maxAngleDiff, flood);
+					Flood(pb, wings[i], maxAngleDiff > 0f ? pb_Math.Normal(pb, wings[i].face) : Vector3.zero, maxAngleDiff, flood);
 				}
 			}
 			return flood;

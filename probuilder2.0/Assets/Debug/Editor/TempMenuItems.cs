@@ -16,7 +16,7 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
 		// foreach(pb_Object pb in selection)
 		// {
