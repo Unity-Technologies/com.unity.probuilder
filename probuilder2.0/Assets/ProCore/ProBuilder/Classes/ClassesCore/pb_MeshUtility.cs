@@ -13,6 +13,8 @@ namespace ProBuilder2.Common
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", m.vertexCount, m.triangles.Length, m.subMeshCount));
+
 			sb.AppendLine(string.Format("{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
 				"Positions",
 				"Colors",
@@ -21,8 +23,6 @@ namespace ProBuilder2.Common
 				"UV2",
 				"UV3",
 				"UV4"));
-
-			sb.AppendLine(string.Format("vertices: {0}   triangles: {1}", m.vertexCount, m.triangles.Length));
 
 			Vector3[] positions = m.vertices;
 			Color[] colors 		= m.colors;

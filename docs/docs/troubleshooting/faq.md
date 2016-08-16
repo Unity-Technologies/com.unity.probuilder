@@ -63,4 +63,10 @@ Now compile your project and run!
 
 ## Missing Icons
 
-If you upgraded ProBuilder and are now missing icons in the toolbar, first: restart Unity.  If that fails to bring icons back, re-import the ProBuilder package.
+If you upgraded ProBuilder and are now missing icons in the toolbar, first try restarting Unity.  
+
+If that does not work, 
+
+1. Delete this folder: `ProCore/ProBuilder/Resources/GUI`
+2. Re-import ProBuilder from Asset Store / ProCore Downloads
+

@@ -720,151 +720,33 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuGrowSelection(pb_Object[] selection)
 		{
-			if(!editor || selection == null || selection.Length < 1)
-				return pb_ActionResult.NoSelection;
-
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
-			int grown = 0;
+			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
+			float growSelectionAngle = pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle");
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in selection)
 			{
-				int sel = pb.SelectedTriangleCount;
+				pb_Face[] selectedFaces = pb.SelectedFaces;
 
-				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
+				HashSet<pb_Face> sel;
+
+				if(iterative)
 				{
-					case SelectMode.Vertex:
-						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
-						break;
-
-					case SelectMode.Edge:
-						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
-						break;
-
-					case SelectMode.Face:
-
-						if( pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle) )
-						{
-							bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-							float growSelectionAngle = pb_Preferences_Internal.GetFloat("pbGrowSelectionAngle");
-							HashSet<pb_Face> selected = new HashSet<pb_Face>( pb.SelectedFaces );
-							List<pb_Face> perimeterFaces = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToList();
-
-							if(!iterative)
-							{
-								/**
-								 * Grow by angle flood fill
-								 */
-								// profiler.BeginSample("GenerateNeighborLookup");
-								Dictionary<pb_Face, List<pb_Face>> faceLookup = pbMeshUtils.GenerateNeighborLookup(pb, pb.faces);
-								// profiler.EndSample();
-
-								bool facesAdded = true;
-
-								List<pb_Face> newFaces = new List<pb_Face>();
-								Vector3[] v = pb.vertices;
-								Vector3 a, b, c;
-
-								// profiler.BeginSample("while(facesAdded");
-								while(facesAdded)
-								{
-									facesAdded = false;
-
-									// profiler.BeginSample("Walk Perimeter");
-									foreach(pb_Face f in perimeterFaces)
-									{
-										// profiler.BeginSample("Face Normal");
-										Vector3 nrm = pb_Math.Normal( pb.vertices.ValuesWithIndices(f.indices) );
-										// profiler.EndSample();
-
-										// profiler.BeginSample("Face Lookup Contains");
-										IEnumerable<pb_Face> adjacent = faceLookup[f].Where(x => !selected.Contains(x));
-										// profiler.EndSample();
-
-										// profiler.BeginSample("Add Faces");
-										foreach(pb_Face connectedFace in adjacent)
-										{
-											a = v[connectedFace.indices[0]];
-											b = v[connectedFace.indices[1]];
-											c = v[connectedFace.indices[2]];
-											float angle = Vector3.Angle(nrm, Vector3.Cross(b-a, c-a));
-
-											if( angle < growSelectionAngle )
-											{
-												selected.Add(connectedFace);
-												newFaces.Add(connectedFace);
-												facesAdded = true;
-											}
-										}
-										// profiler.EndSample();
-									}
-									// profiler.EndSample();
-
-									perimeterFaces = new List<pb_Face>(newFaces);
-									newFaces.Clear();
-								}
-								// profiler.EndSample();
-
-								pb.SetSelectedFaces(selected.ToArray());
-							}
-							else
-							{
-								/**
-								 * Grow with angle iterative
-								 */
-								Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-
-								for(int i = 0; i < perimeterFaces.Count; i++)
-								{
-									List<pb_Face> adjacent = pbMeshUtils.GetNeighborFaces(pb, perimeterFaces[i], lookup, perimeterFaces);
-
-									Vector3 perim_normal = pb_Math.Normal(pb.vertices.ValuesWithIndices(perimeterFaces[i].indices));
-
-									for(int n = 0; n < adjacent.Count; n++)
-									{
-										Vector3 adjacent_normal = pb_Math.Normal( pb.vertices.ValuesWithIndices(adjacent[n].indices) );
-
-										float angle = Vector3.Angle( perim_normal, adjacent_normal );
-
-										if( angle < growSelectionAngle )
-										{
-											selected.Add(adjacent[n]);
-										}
-									}
-								}
-
-								pb.SetSelectedFaces(selected.ToArray());
-							}
-						}
-						else
-						{
-							/**
-							 * Grow by proximity
-							 */
-							pb_Face[] perimeter = pbMeshUtils.GetNeighborFaces(pb, pb.sharedIndices.ToDictionary(), pb.SelectedFaces);
-
-							perimeter = pbUtil.Concat(perimeter, pb.SelectedFaces);
-
-							pb.SetSelectedFaces(perimeter);
-						}
-
-						break;
+					sel = pbMeshUtils.GrowSelection(pb, selectedFaces, growSelectionAngle);
+					sel.UnionWith(selectedFaces);
+				}
+				else
+				{
+					sel = pbMeshUtils.FloodSelection(pb, selectedFaces, growSelectionAngle);
 				}
 
-				grown += pb.SelectedTriangleCount - sel;
+				pb.SetSelectedFaces( sel.ToArray() );
 			}
 
-			// profiler.EndSample();
+			pb_Editor.Refresh();
 
-			if(editor != null)
-				editor.UpdateSelection(false);
-
-			SceneView.RepaintAll();
-
-			if(grown > 0)
-				return new pb_ActionResult(Status.Success, "Grow Selection");
-			else
-				return new pb_ActionResult(Status.Failure, "Nothing to Grow");
+			return new pb_ActionResult(Status.Success, "Grow Selection");
 		}
 
 		public static bool VerifyShrinkSelection(pb_Object[] selection)
