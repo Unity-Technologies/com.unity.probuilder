@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.Actions;
+using Actions = ProBuilder2.Actions;
 using System.Linq;
 
 namespace ProBuilder2.EditorCommon
@@ -55,71 +55,72 @@ namespace ProBuilder2.EditorCommon
 			_defaults = new List<pb_MenuAction>()
 			{
 				// tools
-				new OpenShapeEditor(),
-				new OpenMaterialEditor(),
-				new OpenUVEditor(),
-				new OpenVertexColorEditor(),
-				new OpenSmoothingEditor(),
+				new Actions.OpenShapeEditor(),
+				new Actions.OpenMaterialEditor(),
+				new Actions.OpenUVEditor(),
+				new Actions.OpenVertexColorEditor(),
+				new Actions.OpenSmoothingEditor(),
 
-				new ToggleSelectBackFaces(),
-				new ToggleHandleAlignment(),
+				new Actions.ToggleSelectBackFaces(),
+				new Actions.ToggleHandleAlignment(),
 
 				// selection
-				new GrowSelection(),
-				new ShrinkSelection(),
-				new InvertSelection(),
-				new SelectEdgeLoop(),
-				new SelectEdgeRing(),
-				new SelectHole(),
+				new Actions.GrowSelection(),
+				new Actions.ShrinkSelection(),
+				new Actions.InvertSelection(),
+				new Actions.SelectEdgeLoop(),
+				new Actions.SelectEdgeRing(),
+				new Actions.SelectHole(),
 
 				// object
-				new MergeObjects(),
-				new MirrorObjects(),
-				new FlipObjectNormals(),
-				new SubdivideObject(),
-				new FreezeTransform(),
-				new CenterPivot(),
-				new ConformObjectNormals(),
-				new TriangulateObject(),
-				new GenerateUV2(),
+				new Actions.MergeObjects(),
+				new Actions.MirrorObjects(),
+				new Actions.FlipObjectNormals(),
+				new Actions.SubdivideObject(),
+				new Actions.FreezeTransform(),
+				new Actions.CenterPivot(),
+				new Actions.ConformObjectNormals(),
+				new Actions.TriangulateObject(),
+				new Actions.GenerateUV2(),
+				new Actions.ProBuilderize(),
 
 				// All
-				new SetPivotToSelection(),
+				new Actions.SetPivotToSelection(),
 
 				// Faces (All)
-				new DeleteFaces(),
-				new DetachFaces(),
-				new ExtrudeFaces(),
+				new Actions.DeleteFaces(),
+				new Actions.DetachFaces(),
+				new Actions.ExtrudeFaces(),
 
 				// Face
-				new ConformFaceNormals(),
-				new FlipFaceEdge(),
-				new FlipFaceNormals(),
-				new MergeFaces(),
-				new SubdivideFaces(),
-				new TriangulateFaces(),
+				new Actions.ConformFaceNormals(),
+				new Actions.FlipFaceEdge(),
+				new Actions.FlipFaceNormals(),
+				new Actions.MergeFaces(),
+				new Actions.SubdivideFaces(),
+				new Actions.TriangulateFaces(),
 
 				// Edge
-				new BridgeEdges(),
-				new BevelEdges(),
-				new ConnectEdges(),
-				new ExtrudeEdges(),
-				new InsertEdgeLoop(),
-				new SubdivideEdges(),
+				new Actions.BridgeEdges(),
+				new Actions.BevelEdges(),
+				new Actions.ConnectEdges(),
+				new Actions.ExtrudeEdges(),
+				new Actions.InsertEdgeLoop(),
+				new Actions.SubdivideEdges(),
 
 				// Vertex
-				new CollapseVertices(),
-				new WeldVertices(),
-				new ConnectVertices(),
-				new FillHole(),
-				// new CreatePolygon(),
-				new SplitVertices(),
+				new Actions.CollapseVertices(),
+				new Actions.WeldVertices(),
+				new Actions.ConnectVertices(),
+				new Actions.FillHole(),
+				// new Actions.CreatePolygon(),
+				new Actions.SplitVertices(),
 
 				// Entity
-				new SetEntityType_Detail(),
-				new SetEntityType_Mover(),
-				new SetEntityType_Collider(),
-				new SetEntityType_Trigger(),
+				new Actions.SetEntityType_Detail(),
+				new Actions.SetEntityType_Mover(),
+				new Actions.SetEntityType_Collider(),
+				new Actions.SetEntityType_Trigger(),
 			};
 
 			if(onLoadMenu != null)

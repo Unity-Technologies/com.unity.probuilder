@@ -321,6 +321,21 @@ namespace ProBuilder2.EditorCommon
 
 
 
+		[MenuItem("Tools/ProBuilder/Geometry/Triangulate Faces ", true)]
+		static bool MenuVerifyTriangulateFaces()
+		{
+			TriangulateFaces instance = pb_EditorToolbarLoader.GetInstance<TriangulateFaces>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Geometry/Triangulate Faces ", false, pb_Constant.MENU_GEOMETRY + 3)]
+		static void MenuDoTriangulateFaces()
+		{
+			TriangulateFaces instance = pb_EditorToolbarLoader.GetInstance<TriangulateFaces>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Geometry/Weld Vertices &v", true)]
 		static bool MenuVerifyWeldVertices()
 		{
@@ -457,6 +472,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem("Tools/ProBuilder/Object/Pro Builderize ", true)]
+		static bool MenuVerifyProBuilderize()
+		{
+			ProBuilderize instance = pb_EditorToolbarLoader.GetInstance<ProBuilderize>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Object/Pro Builderize ", false, pb_Constant.MENU_GEOMETRY + 2)]
+		static void MenuDoProBuilderize()
+		{
+			ProBuilderize instance = pb_EditorToolbarLoader.GetInstance<ProBuilderize>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem("Tools/ProBuilder/Object/Subdivide Object ", true)]
 		static bool MenuVerifySubdivideObject()
 		{
@@ -558,6 +588,21 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoSelectHole()
 		{
 			SelectHole instance = pb_EditorToolbarLoader.GetInstance<SelectHole>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem("Tools/ProBuilder/Selection/Select Material ", true)]
+		static bool MenuVerifySelectMaterial()
+		{
+			SelectMaterial instance = pb_EditorToolbarLoader.GetInstance<SelectMaterial>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem("Tools/ProBuilder/Selection/Select Material ", false, pb_Constant.MENU_SELECTION + 0)]
+		static void MenuDoSelectMaterial()
+		{
+			SelectMaterial instance = pb_EditorToolbarLoader.GetInstance<SelectMaterial>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

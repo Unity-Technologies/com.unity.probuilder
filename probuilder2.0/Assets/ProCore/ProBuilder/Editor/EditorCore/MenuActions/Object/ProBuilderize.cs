@@ -1,0 +1,113 @@
+using UnityEngine;
+using UnityEditor;
+using ProBuilder2.Common;
+using ProBuilder2.MeshOperations;
+using ProBuilder2.EditorCommon;
+using ProBuilder2.Interface;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace ProBuilder2.Actions
+{
+	public class ProBuilderize : pb_MenuAction
+	{
+		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
+		public override Texture2D icon { get { return null; } }
+		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override bool isProOnly { get { return true; } }
+
+		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		(
+			"ProBuilderize",
+			@"Creates ProBuilder-modifiable objects from meshes."
+		);
+
+		public override bool IsEnabled()
+		{
+			int meshCount = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Count();
+
+			return	meshCount > 0 &&
+					meshCount != selection.Length;
+		}
+
+		public override pb_ActionResult DoAction()
+		{
+			int result = EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
+				"ProBuilderize children of selection?",
+				"Yes",
+				"No",
+				"Cancel");
+
+			bool preserveFaces = pb_Preferences_Internal.GetBool(pb_Constant.pbPreserveFaces);
+
+			if(result == 0)
+				return DoProBuilderize(Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null), preserveFaces);
+			else if(result == 1)
+				return DoProBuilderize(Selection.gameObjects.Select(x => x.GetComponent<MeshFilter>()).Where(x => x != null), preserveFaces);
+			else
+				return pb_ActionResult.UserCanceled;
+		}
+
+		/**
+		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
+		 */
+		public static pb_ActionResult DoProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
+		{
+			if(selected.Count() < 1)
+				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+
+			int i = 0;
+			float count = selected.Count();
+
+			foreach(MeshFilter mf in selected)
+			{
+				if(mf.sharedMesh == null)
+					continue;
+
+				GameObject go = mf.gameObject;
+				MeshRenderer mr = go.GetComponent<MeshRenderer>();
+
+				pb_Object pb = Undo.AddComponent<pb_Object>(go);
+				pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
+
+				EntityType entityType = EntityType.Detail;
+
+				if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Collider")))
+					entityType = EntityType.Collider;
+				else
+				if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Trigger")))
+					entityType = EntityType.Trigger;
+
+				// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
+				// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
+				// renderer so that we don't modify the asset.
+				if(AssetDatabase.GetAssetPath(mf.sharedMesh) == "" )
+					Undo.DestroyObjectImmediate(mf.sharedMesh);
+				else if(mf != null)
+					go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+
+				i++;
+
+				// Don't call the editor version of SetEntityType because that will
+				// reset convexity and trigger settings, which we can assume are user
+				// set already.
+				if( !pb.gameObject.GetComponent<pb_Entity>() )
+					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
+				else
+					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
+
+				EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i/count);
+			}
+
+			EditorUtility.ClearProgressBar();
+
+			pb_Editor.Refresh();
+
+			return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+		}
+	}
+}

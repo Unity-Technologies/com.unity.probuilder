@@ -117,6 +117,7 @@ public static class pb_Constant
 	public const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
 	public const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
 	public const string pbDetachToNewObject				= "pbDetachToNewObject";
+	public const string pbPreserveFaces					= "pbPreserveFaces";
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

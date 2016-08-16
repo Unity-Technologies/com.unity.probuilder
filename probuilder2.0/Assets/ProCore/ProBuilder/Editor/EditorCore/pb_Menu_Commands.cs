@@ -177,65 +177,6 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
-		 */
-		public static pb_ActionResult ProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
-		{
-			if(selected.Count() < 1)
-				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
-
-			int i = 0;
-
-			foreach(MeshFilter mf in selected)
-			{
-				if(mf.sharedMesh == null)
-					continue;
-
-				GameObject go = mf.gameObject;
-				MeshRenderer mr = go.GetComponent<MeshRenderer>();
-
-				pb_Object pb = Undo.AddComponent<pb_Object>(go);
-				pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
-
-				EntityType entityType = EntityType.Detail;
-
-				if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Collider")))
-					entityType = EntityType.Collider;
-				else
-				if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Trigger")))
-					entityType = EntityType.Trigger;
-
-				// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
-				// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
-				// renderer so that we don't modify the asset.
-				if(AssetDatabase.GetAssetPath(mf.sharedMesh) == "" )
-					Undo.DestroyObjectImmediate(mf.sharedMesh);
-				else if(mf != null)
-					go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
-
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-
-				i++;
-
-				// Don't call the editor version of SetEntityType because that will
-				// reset convexity and trigger settings, which we can assume are user
-				// set already.
-				if( !pb.gameObject.GetComponent<pb_Entity>() )
-					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
-				else
-					Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
-				// pb_EditorUtility.SetEntityType(entityType, t.gameObject);
-			}
-
-			if(pb_Editor.instance != null)
-				pb_Editor.instance.UpdateSelection();
-
-			return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
-		}
-
-		/**
 		 * Set the pb_Entity entityType on selection.
 		 */
 		public static pb_ActionResult MenuSetEntityType(pb_Object[] selection, EntityType entityType)

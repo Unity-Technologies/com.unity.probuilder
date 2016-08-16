@@ -371,7 +371,7 @@ namespace ProBuilder2.EditorCommon
 								).ToArray();
 
 							broken = broken.Distinct().ToArray();
-							pb_Menu_Commands.ProBuilderize(System.Array.ConvertAll(broken, x => (GameObject)x).Select(x => x.GetComponent<MeshFilter>()), true);
+							ProBuilder2.Actions.ProBuilderize.DoProBuilderize(System.Array.ConvertAll(broken, x => (GameObject)x).Select(x => x.GetComponent<MeshFilter>()), true);
 						}
 						
 						// Always delete components
