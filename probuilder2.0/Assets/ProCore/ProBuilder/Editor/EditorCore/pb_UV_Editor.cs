@@ -213,8 +213,8 @@ public class pb_UV_Editor : EditorWindow
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
 		pb_UV_Render_Options renderOptions = EditorWindow.GetWindow<pb_UV_Render_Options>(true, "Save UV Image", true);
-		renderOptions.position = new Rect(	this.position.x + (Screen.width/2f - 128),
-											this.position.y + (Screen.height/2f - 76),
+		renderOptions.position = new Rect(	this.position.x + (this.position.width/2f - 128),
+											this.position.y + (this.position.height/2f - 76),
 											256f,
 											152f);
 		renderOptions.screenFunc = InitiateScreenshot;
@@ -407,15 +407,15 @@ public class pb_UV_Editor : EditorWindow
 			GUI.backgroundColor = Color.white;
 		}
 
-		if(Screen.width != screenWidth || Screen.height != screenHeight)
+		if(this.position.width != screenWidth || this.position.height != screenHeight)
 			OnScreenResize();
 
-		toolbarRect = new Rect(PAD, PAD, Screen.width-PAD*2, 29);
-		graphRect = new Rect(PAD, PAD, Screen.width-PAD*2, Screen.height-PAD*2);
+		toolbarRect = new Rect(PAD, PAD, this.position.width-PAD*2, 29);
+		graphRect = new Rect(PAD, PAD, this.position.width-PAD*2, this.position.height-PAD*2);
 
-		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, Screen.width-PAD-PAD-actionWindowRect.width);
-		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, Screen.height-MIN_ACTION_WINDOW_SIZE);
-		actionWindowRect.height = (int)Mathf.Min(Screen.height - actionWindowRect.y - 24, 400);
+		actionWindowRect.x = (int)Mathf.Clamp(actionWindowRect.x, PAD, this.position.width-PAD-PAD-actionWindowRect.width);
+		actionWindowRect.y = (int)Mathf.Clamp(actionWindowRect.y, PAD, this.position.height-MIN_ACTION_WINDOW_SIZE);
+		actionWindowRect.height = (int)Mathf.Min(this.position.height - actionWindowRect.y - 24, 400);
 
 		if(channel == 0)
 		{
@@ -489,7 +489,7 @@ public class pb_UV_Editor : EditorWindow
 		}
 
 		#if PB_DEBUG
-		buggerRect = new Rect(Screen.width - 226, PAD, 220, 300);
+		buggerRect = new Rect(this.position.width - 226, PAD, 220, 300);
 		DrawDebugInfo(buggerRect);
 		#endif
 	}
@@ -778,8 +778,8 @@ public class pb_UV_Editor : EditorWindow
 
 	void OnScreenResize()
 	{
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
+		screenWidth = (int) this.position.width;
+		screenHeight = (int) this.position.height;
 		RefreshUVCoordinates();
 		Repaint();
 	}
@@ -1988,7 +1988,7 @@ public class pb_UV_Editor : EditorWindow
 
 						GL.Vertex3(y.x, y.y, 0f);
 						GL.Vertex3(z.x, z.y, 0f);
-						
+
 						GL.Vertex3(z.x, z.y, 0f);
 						GL.Vertex3(x.x, x.y, 0f);
 					}
@@ -2119,7 +2119,7 @@ public class pb_UV_Editor : EditorWindow
 		GUILayout.Label("Scale: " + uvGraphScale);
 
 		GUILayout.Label("Object: " + nearestElement.ToString());
-		GUILayout.Label(mpos + " (" + Screen.width + ", " + Screen.height + ")");
+		GUILayout.Label(mpos + " (" + this.position.width + ", " + this.position.height + ")");
 
 		// GUILayout.Label("m_mouseDragging: " + m_mouseDragging);
 		// GUILayout.Label("m_rightMouseDrag: " + m_rightMouseDrag);
@@ -2615,7 +2615,7 @@ public class pb_UV_Editor : EditorWindow
 
 	}
 
-	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);	
+	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);
 	static Editor uv2Editor = null;
 
 	void DrawActionWindow(int windowIndex)
@@ -2624,7 +2624,7 @@ public class pb_UV_Editor : EditorWindow
 		if(channel == 0)
 		{
 			GUILayout.Label("UV Mode: " + mode.ToString(), EditorStyles.boldLabel);
-			
+
 			switch(mode)
 			{
 				case UVMode.Auto:

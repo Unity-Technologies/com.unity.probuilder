@@ -414,7 +414,7 @@ namespace ProBuilder2.EditorCommon
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
+			pbUndo.RecordSelection(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
 
 			foreach(pb_Object pb in selected)
 			{
@@ -435,7 +435,8 @@ namespace ProBuilder2.EditorCommon
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+			pbUndo.RecordSelection(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+
 			int c = 0;
 			int faceCount = pb_Editor.instance.selectedFaceCount;
 
@@ -1506,7 +1507,7 @@ namespace ProBuilder2.EditorCommon
 						IEnumerable<pb_WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
 						holeIndices = selected.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
-						
+
 						if(res)
 							adjacent.AddRange(selected.Select(x => x.face));
 					}
@@ -1520,7 +1521,7 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				pb.SetSelectedFaces(faces);
-				
+
 				wings = pb_WingedEdge.GetWingedEdges(pb, adjacent);
 
 				// make sure the appended faces match the first adjacent face found
@@ -1745,7 +1746,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				int[] splits;
-				
+
 				pb.ToMesh();
 
 				res = pb.Connect(pb.SelectedTriangles, out splits);
