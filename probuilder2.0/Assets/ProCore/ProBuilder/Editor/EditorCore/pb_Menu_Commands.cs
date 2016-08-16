@@ -735,12 +735,12 @@ namespace ProBuilder2.EditorCommon
 
 				if(iterative)
 				{
-					sel = pbMeshUtils.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+					sel = pb_GrowShrink.GrowSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
 					sel.UnionWith(selectedFaces);
 				}
 				else
 				{
-					sel = pbMeshUtils.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
+					sel = pb_GrowShrink.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
 				}
 
 				pb.SetSelectedFaces( sel.ToArray() );
@@ -767,8 +767,6 @@ namespace ProBuilder2.EditorCommon
 
 		/**
 		 * Shrink selection.
-		 * Note - requires a reference to an open pb_Editor be passed.  This is because shrink
-		 * vertices requires access to the Selected_Universal_Edges_All array.
 		 */
 		public static pb_ActionResult MenuShrinkSelection(pb_Object[] selection)
 		{
