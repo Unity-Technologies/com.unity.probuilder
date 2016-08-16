@@ -30,22 +30,61 @@ namespace ProBuilder2.Actions
 					meshCount != selection.Length;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override MenuActionState AltState()
 		{
-			int result = EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
-				"ProBuilderize children of selection?",
-				"Yes",
-				"No",
-				"Cancel");
+			return MenuActionState.VisibleAndEnabled;
+		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("ProBuilderize Options", EditorStyles.boldLabel);
+
+			EditorGUILayout.HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", MessageType.Info);
 
 			bool preserveFaces = pb_Preferences_Internal.GetBool(pb_Constant.pbPreserveFaces);
 
-			if(result == 0)
-				return DoProBuilderize(Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null), preserveFaces);
-			else if(result == 1)
-				return DoProBuilderize(Selection.gameObjects.Select(x => x.GetComponent<MeshFilter>()).Where(x => x != null), preserveFaces);
+			EditorGUI.BeginChangeCheck();
+
+			preserveFaces = EditorGUILayout.Toggle("Preserve Faces", preserveFaces);
+
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
+
+			GUILayout.FlexibleSpace();
+
+			GUI.enabled = IsEnabled();
+
+			if(GUILayout.Button("ProBuilderize"))
+				pb_EditorUtility.ShowNotification(DoAction().notification);
+
+			GUI.enabled = true;
+		}
+
+		public override pb_ActionResult DoAction()
+		{
+			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
+			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
+			bool preserveFaces = pb_Preferences_Internal.GetBool(pb_Constant.pbPreserveFaces);
+
+			if(top.Count() != all.Count())
+			{
+				int result = EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
+					"ProBuilderize children of selection?",
+					"Yes",
+					"No",
+					"Cancel");
+
+				if(result == 0)
+					return DoProBuilderize(all, preserveFaces);
+				else if(result == 1)
+					return DoProBuilderize(top, preserveFaces);
+				else
+					return pb_ActionResult.UserCanceled;
+			}
 			else
-				return pb_ActionResult.UserCanceled;
+			{	
+				return DoProBuilderize(all, preserveFaces);
+			}
 		}
 
 		/**
