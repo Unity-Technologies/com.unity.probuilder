@@ -3,30 +3,30 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
 
-public class pb_Dimensions_Overlay : pb_ISceneEditor
+public class pb_DimensionsOverlay : pb_ISceneEditor
 {
 	[MenuItem("Tools/Dimensions Overlay/Hide", true, pb_Constant.MENU_EDITOR)]
 	public static bool HideVerify()
 	{
-		return pb_Dimensions_Overlay.instance != null;
+		return pb_DimensionsOverlay.instance != null;
 	}
 
 	[MenuItem("Tools/Dimensions Overlay/Hide", false, pb_Constant.MENU_EDITOR)]
 	public static void Hide()
 	{
-		pb_Dimensions_Overlay.instance.Close();
+		pb_DimensionsOverlay.instance.Close();
 	}
 
 	[MenuItem("Tools/Dimensions Overlay/Show", true, pb_Constant.MENU_EDITOR)]
 	public static bool InitVerify()
 	{
-		return pb_Dimensions_Overlay.instance == null;
+		return pb_DimensionsOverlay.instance == null;
 	}
 
 	[MenuItem("Tools/Dimensions Overlay/Show", false, pb_Constant.MENU_EDITOR)]
 	public static void Init()
 	{
-		pb_ISceneEditor.Create<pb_Dimensions_Overlay>();
+		pb_ISceneEditor.Create<pb_DimensionsOverlay>();
 	}
 
 	public override void OnInitialize()
