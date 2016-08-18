@@ -2498,6 +2498,7 @@ public class pb_UV_Editor : EditorWindow
 				return pb.msh.uv2;
 			}
 
+#if !UNITY_5_0 && !UNITY_4_6
 			case 2:
 			case 3:
 				Mesh m = pb.msh;
@@ -2505,7 +2506,7 @@ public class pb_UV_Editor : EditorWindow
 				List<Vector2> v = new List<Vector2>();
 				m.GetUVs(channel, v);
 				return v.ToArray();
-
+#endif
 			default:
 				return pb.uv;
 		}

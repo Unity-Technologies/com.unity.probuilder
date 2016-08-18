@@ -19,8 +19,6 @@ set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\Debug"
 
 set editor_debug="%CD%\probuilder2.0\Assets\ProCore\ProBuilder\Editor\Debug"
- 
-svn update
 
 echo ===: UNITY 5 PATH IS %unity_path_5%
 echo ===: UNITY 5_3 PATH IS %unity_path_53%
@@ -45,6 +43,8 @@ xcopy /E /Y /I /q %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Asse
 :: do this before removing shit because otherwise unity can't run
 echo ===: Prefix files with #define PROTOTYPE
 %unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod pb_AddDefine.PrependDefine define:PROTOTYPE ignore:Debug
+
+pause
 
 echo ===: Remove core, mesh ops, and editor core
 
