@@ -19,6 +19,8 @@ namespace ProBuilder2.Common
 		[MenuItem("Tools/Debug/ProBuilder/Spawn Random Objects")]
 		static void Doit()
 		{
+			GameObject parent = new GameObject();
+
 			for(int i = 0; i < OBJ_COUNT; i++)
 			{
 				GameObject go;
@@ -61,6 +63,7 @@ namespace ProBuilder2.Common
 					break;
 
 				go.transform.position = RandVec(-50f, 50f);
+				go.transform.SetParent(parent.transform, true);
 			}
 
 			EditorUtility.ClearProgressBar();

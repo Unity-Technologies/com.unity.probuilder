@@ -15,8 +15,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			if(serializedObject != null)
+			try {
 				p = serializedObject.FindProperty("unwrapParameters");
+			} catch {}
 		}
 
 		public override void OnInspectorGUI()
