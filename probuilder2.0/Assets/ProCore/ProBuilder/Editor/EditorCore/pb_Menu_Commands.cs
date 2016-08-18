@@ -142,8 +142,9 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(Selection.transforms, "Freeze Transforms");
-			pbUndo.RecordObjects(selection, "Freeze Transforms");
+			List<Object> undoables = new List<Object>( selection.Select(x => (Object) x.transform) );
+			undoables.AddRange(selection);
+			pbUndo.RecordObjects(undoables.ToArray(), "Freeze Transforms");
 
 			Vector3[][] vertices = new Vector3[selection.Length][];
 
@@ -155,7 +156,7 @@ namespace ProBuilder2.EditorCommon
 				pb_Object pb = selection[i];
 
 				pb.transform.position = Vector3.zero;
-				pb.transform.localRotation = Quaternion.identity;
+				pb.transform.rotation = Quaternion.identity;
 				pb.transform.localScale = Vector3.one;
 
 				foreach(pb_Face face in pb.faces)
@@ -168,8 +169,7 @@ namespace ProBuilder2.EditorCommon
 				pb.Optimize();
 			}
 
-			if(pb_Editor.instance)
-				pb_Editor.instance.UpdateSelection();
+			pb_Editor.Refresh();
 
 			SceneView.RepaintAll();
 
