@@ -16,7 +16,6 @@ class pb_GenerateMenuItems : Editor
 {
 	const string GENERATED_FILE_PATH = "Assets/ProCore/ProBuilder/Editor/EditorCore/pb_EditorToolbarMenuItems.cs";
 	const string MENU_ACTIONS_PATH = "Assets/ProCore/ProBuilder/Editor/EditorCore/MenuActions/";
-	const string PB_MENU_PREFIX = "Tools/ProBuilder/";
 
 	static readonly HashSet<string> IgnoreActions = new HashSet<string>()
 	{
@@ -61,6 +60,12 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_EditorToolbarMenuItems : Editor
 	{
+
+#if PROTOTYPE
+	const string PB_MENU_PREFIX = ""Tools/ProBuilder Basic/"";
+#else
+	const string PB_MENU_PREFIX = ""Tools/ProBuilder/"";
+#endif
 ");
 		foreach(string action in actions)
 		{
@@ -101,8 +106,8 @@ namespace ProBuilder2.EditorCommon
 		string shortcut = GetMenuFormattedShortcut( ((pb_TooltipContent)tooltipProperty.GetValue(o, null)).shortcut );
 
 		/// VERIFY
-		sb.Append("\t\t[MenuItem(\"");
-		sb.Append(PB_MENU_PREFIX);
+		sb.Append("\t\t[MenuItem(");
+		sb.Append("PB_MENU_PREFIX + \"");
 		sb.Append(pretty_path);
 		sb.Append(" ");
 		sb.Append(shortcut);
@@ -126,8 +131,8 @@ namespace ProBuilder2.EditorCommon
 		sb.AppendLine("");
 
 		/// PERFORM
-		sb.Append("\t\t[MenuItem(\"");
-		sb.Append(PB_MENU_PREFIX);
+		sb.Append("\t\t[MenuItem(");
+		sb.Append("PB_MENU_PREFIX + \"");
 		sb.Append(pretty_path);
 		sb.Append(" ");
 		sb.Append(shortcut);
