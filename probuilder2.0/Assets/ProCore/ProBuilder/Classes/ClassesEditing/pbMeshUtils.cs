@@ -467,14 +467,21 @@ namespace ProBuilder2.MeshOperations
 				return null;
 
 			pb_WingedEdge next = edge.next, prev = edge.previous;
+			int i = 0;
 
 			while(next != prev && next != edge)
 			{
 				next = next.next;
+
+				if(next == prev)
+					return null;
+
 				prev = prev.previous;
+				
+				i++;
 			}
 
-			if(next == edge)
+			if(i % 2 == 0 || next == edge)
 				next = null;
 
 			return next;
