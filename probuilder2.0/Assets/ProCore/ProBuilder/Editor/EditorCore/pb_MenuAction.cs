@@ -261,14 +261,14 @@ namespace ProBuilder2.EditorCommon
 #endif
 				{
 					Rect r = GUILayoutUtility.GetLastRect();
-					// options icon is 16x16
-					r.x = r.x + r.width - 19;
-					r.y -= 4;
-					r.width = 24;
-					r.height = 24;
 #if PROTOTYPE
 					if(isProOnly)
 					{
+						r.x = r.x + r.width - 12;
+						r.y -= 4;
+						r.width = 16;
+						r.height = 16;
+
 						GUI.backgroundColor = ProOnlyTint;
 						GUI.Label(r, GUIContent.none, proOnlyStyle);
 						GUI.backgroundColor = Color.white;
@@ -276,6 +276,10 @@ namespace ProBuilder2.EditorCommon
 					else
 #endif
 					{
+						r.x = r.x + r.width - 19;
+						r.y -= 4;
+						r.width = 24;
+						r.height = 24;
 						GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro), GUIStyle.none);
 					}
 

@@ -40,6 +40,12 @@ xcopy /E /Y /I %CD%\probuilder2.0\Assets\Debug\Editor\pb_ExportPackage.cs %CD%\p
 echo ===: Copy Resources
 xcopy /E /Y /I /q %CD%\probuilder2.0\Assets\ProCore %CD%\probuilder-staging\Assets\ProCore
 
+:: Delete user stored data
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data
+del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data.meta
+rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache
+del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache.meta
+
 :: do this before removing shit because otherwise unity can't run
 echo ===: Prefix files with #define PROTOTYPE
 %unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod pb_AddDefine.PrependDefine define:PROTOTYPE ignore:Debug
