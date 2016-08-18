@@ -83,9 +83,51 @@ You can also extrude edges by holding `SHIFT` while moving, rotating, or scaling
 
 > Note: By default, only open edges can be **Extruded**. You can change this in the [ProBuilder Preferences](@todo).
 
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
 Setting | Description
 --- | ---
 **Distance** | Distance to extrude the edge(s).
+
+---
+
+## ![Subdivide Edge Icon](../images/icons/Edge_Subdivide.png "Subdivide Edge Icon") Subdivide Edge
+
+<div class="video-link">
+Section Video: <a href="@todo">Vertex Actions: Subdivide Edge</a>
+</div>
+
+**Keyboard Shortcut** : `ALT S`
+
+Divides the selected edge(s) into multiple edges.
+
+<div style="text-align:center">
+<img src="../../images/SubdivideEdge_Example.png">
+</div>
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Subdivisions** | Number of divisions to make in the selected edge(s).
+
+---
+
+## ![Fill Hole Icon](../images/icons/Edge_FillHole.png "Fill Hole Icon") Fill Hole
+
+<div class="video-link">
+Section Video: <a href="@todo">Vertex Actions: Fill Hole</a>
+</div>
+
+<div style="text-align:center">
+<img src="../../images/FillHole_Example.png">
+</div>
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Fill Entire Hole** | If **On**, the entire mesh opening will be filled. Otherwise, only the selected open edges will be capped.
 
 ---
 
