@@ -1867,12 +1867,16 @@ public class pb_UV_Editor : EditorWindow
 				}
 
 				GUI.color = UVColorPrimary;
-				foreach(int index in selection[i].SelectedTriangles)
+
+				if(channel < 1)
 				{
-					p = UVToGUIPoint(uv[index]);
-					r.x = p.x - HALF_DOT;
-					r.y = p.y - HALF_DOT;
-					GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
+					foreach(int index in selection[i].SelectedTriangles)
+					{
+						p = UVToGUIPoint(uv[index]);
+						r.x = p.x - HALF_DOT;
+						r.y = p.y - HALF_DOT;
+						GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
+					}
 				}
 			}
 		}

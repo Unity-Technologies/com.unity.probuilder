@@ -41,10 +41,13 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			actions = pb_EditorToolbarLoader.GetActions(true);
+
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
+
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
+			
 			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 
 			tooltipTimer.Item1 = "";

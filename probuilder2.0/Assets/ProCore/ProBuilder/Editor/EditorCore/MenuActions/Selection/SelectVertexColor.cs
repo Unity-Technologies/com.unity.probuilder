@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SelectMaterial : pb_MenuAction
+	public class SelectVertexColor : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return null; } }
@@ -16,8 +16,8 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Select Faces with Material",
-			"Selects all faces matching the selected materials."
+			"Select Faces with Vertex Colors",
+			"Selects all faces matching the selected vertex colors."
 		);
 
 		public override bool IsEnabled()
@@ -36,16 +36,48 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordSelection(selection, "Select Faces with Material");
+			pbUndo.RecordSelection(selection, "Select Faces with Vertex Colors");
+			
+			HashSet<Color32> colors = new HashSet<Color32>();			
 
-			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.material).Where( z => z != null)));
+			foreach(pb_Object pb in selection)
+			{
+				Color[] mesh_colors = pb.colors;
+
+				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
+					continue;
+
+				foreach(int i in pb.SelectedTriangles)
+					colors.Add(mesh_colors[i]);
+			}
+
 			List<GameObject> newSelection = new List<GameObject>();
 
 			foreach(pb_Object pb in Object.FindObjectsOfType<pb_Object>())
 			{
-				IEnumerable<pb_Face> matches = pb.faces.Where(x => sel.Contains(x.material));
+				Color[] mesh_colors = pb.colors;
 
-				if(matches.Count() > 0)
+				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
+					continue;
+
+				List<pb_Face> matches = new List<pb_Face>();
+				pb_Face[] faces = pb.faces;
+
+				for(int i = 0; i < faces.Length; i++)
+				{
+					int[] tris = faces[i].distinctIndices;
+
+					for(int n = 0; n < tris.Length; n++)
+					{
+						if( colors.Contains((Color32)mesh_colors[tris[n]]) )
+						{
+							matches.Add(faces[i]);
+							break;
+						}
+					}
+				}
+
+				if(matches.Count > 0)
 				{
 					newSelection.Add(pb.gameObject);
 					pb.SetSelectedFaces(matches);
@@ -56,7 +88,7 @@ namespace ProBuilder2.Actions
 			
 			pb_Editor.Refresh();
 
-			return new pb_ActionResult(Status.Success, "Select Faces with Material");
+			return new pb_ActionResult(Status.Success, "Select Faces with Vertex Colors");
 		}
 	}
 }

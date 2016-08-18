@@ -613,6 +613,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Vertex Color ", true)]
+		static bool MenuVerifySelectVertexColor()
+		{
+			SelectVertexColor instance = pb_EditorToolbarLoader.GetInstance<SelectVertexColor>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Vertex Color ", false, pb_Constant.MENU_SELECTION + 0)]
+		static void MenuDoSelectVertexColor()
+		{
+			SelectVertexColor instance = pb_EditorToolbarLoader.GetInstance<SelectVertexColor>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(PB_MENU_PREFIX + "Selection/Shrink Selection &#g", true)]
 		static bool MenuVerifyShrinkSelection()
 		{
