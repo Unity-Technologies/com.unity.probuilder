@@ -29,17 +29,15 @@ namespace ProBuilder2.Actions
 					selection.Length > 0;
 		}
 		
-		public override MenuActionState AltState()
-		{
-			return MenuActionState.VisibleAndEnabled;
-		}
+		// public override MenuActionState AltState()
+		// {
+		// 	return MenuActionState.VisibleAndEnabled;
+		// }
 
-		public override void OnSettingsGUI()
-		{
-			GUILayout.Label("Select Faces with Material", EditorStyles.boldLabel);
-
-
-		}
+		// public override void OnSettingsGUI()
+		// {
+		// 	GUILayout.Label("Select Faces with Material", EditorStyles.boldLabel);
+		// }
 
 		public override pb_ActionResult DoAction()
 		{
