@@ -14,7 +14,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Freeze Transforms",
+			"Freeze Transform",
 			@"Set the pivot point to world coordinates (0,0,0) and clear all Transform values while keeping the mesh in place."
 		);
 

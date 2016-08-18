@@ -29,8 +29,8 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
+			// HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.SelectedFaces.SelectMany(y => y.material)));
 			
-
 			return new pb_ActionResult(Status.Success, "Select Faces with Material");
 		}
 	}
