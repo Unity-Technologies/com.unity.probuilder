@@ -276,10 +276,10 @@ namespace ProBuilder2.EditorCommon
 					else
 #endif
 					{
-						r.x = r.x + r.width - 19;
-						r.y -= 4;
-						r.width = 24;
-						r.height = 24;
+						r.x = r.x + r.width - 16;
+						r.y += 0;
+						r.width = 14;
+						r.height = 14;
 						GUI.Label(r, pb_IconUtility.GetIcon("Toolbar/Options", IconSkin.Pro), GUIStyle.none);
 					}
 
