@@ -4,7 +4,7 @@
 
 ## Texture Mapping 101
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Texture Mapping: Texture Mapping 101</a>
 </div>
 
@@ -24,7 +24,7 @@ Section Video: <a href="@todo">Texture Mapping: Texture Mapping 101</a>
 
 ## Auto vs Manual UVs
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Texture Mapping: Auto vs Manual UVs</a>
 </div>
 
@@ -40,7 +40,7 @@ You can use a mix of Auto and Manual UVs, even on the same object. This is espec
 
 ## The UV Editor Window
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Texture Mapping: The UV Editor Window</a>
 </div>
 

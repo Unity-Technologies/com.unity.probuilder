@@ -9,7 +9,7 @@ applying materials, and UV editing.
 
 ## The ProBuilder Toolbar
 
-<div class="video-link">
+<div class="video-link-missing">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Toolbar</a>
 </div>
 
@@ -25,7 +25,7 @@ Each Toolbar button will display detailed information about it's use, options, a
 
 ## Creating a New Mesh
 
-<div class="video-link">
+<div class="video-link-missing">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Shape Tool</a>
 </div>
 
@@ -40,7 +40,7 @@ To start with a more complex shape, ProBuilder also includes a library of shapes
 ---
 
 ## Editing Meshes
-<div class="video-link">
+<div class="video-link-missing">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Basic Mesh Editing</a>
 </div>
 
@@ -87,7 +87,7 @@ If you are new to 3D modeling, ProBuilder is a great way to get your feet wet.  
 
 ## Texturing and UVs
 
-<div class="video-link">
+<div class="video-link-missing">
 Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Texturing and UVs</a>
 </div>
 

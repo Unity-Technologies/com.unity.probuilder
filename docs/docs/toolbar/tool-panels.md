@@ -16,7 +16,7 @@ These **Tool Panels** contain important tools for [Shape Creation](#shape-tool),
 <a id="shape-tool"></a>
 ##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
 </div>
 
@@ -42,7 +42,7 @@ Each shape has specific properties which can be customized before creation- for 
 <a id="material-tools"></a>
 ##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
 <br>
 Related Video: <a href="@todo link vid section">Texturing and UVs</a>
@@ -73,7 +73,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 <a id="texturing"></a>
 ##![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon") Texturing and UVs
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
 </div>
 
@@ -90,7 +90,7 @@ The UV Editor Panel includes both [Auto UV](../texturing/auto-uvs-actions) tools
 <a id="vertex-colors"></a>
 ##![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
 </div>
 
@@ -112,7 +112,7 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 <a id="smoothing-groups"></a>
 ##![Smoothing Groups Icon](../images/icons/Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 

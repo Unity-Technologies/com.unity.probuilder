@@ -12,7 +12,7 @@
 
 ## Convert to Auto
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Convert to Auto</a>
 </div>
 
@@ -22,7 +22,7 @@ Converts all selected faces to [Auto UVs](@todo).
 
 ## Project UVs: Planar
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Project UVs: Planar</a>
 </div>
 
@@ -36,7 +36,7 @@ Unwraps the selected face(s) using a Planar Projection method.
 
 ## Project UVs: Box
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Project UVs: Box</a>
 </div>
 
@@ -50,7 +50,7 @@ Unwraps the selected face(s) using a Box Projection method.
 
 ## Select Island
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Select Island</a>
 </div>
 
@@ -64,7 +64,7 @@ With a UV element selected, clicking this will expand the selection to include a
 
 ## Select Face
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Select Face</a>
 </div>
 
@@ -78,7 +78,7 @@ With a Vertex or Edge selected, click to select all elements on the same face.
 
 ## Weld
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Weld</a>
 </div>
 
@@ -94,7 +94,7 @@ To adjust the distance modifier, click the "+" button on the right side of the W
 
 ## Collapse UVs
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Collapse UVs</a>
 </div>
 
@@ -108,7 +108,7 @@ Collapses all selected vertices to a single vertex, regardless of distance.
 
 ## Split UVs
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Split UVs</a>
 </div>
 
@@ -122,7 +122,7 @@ Breaks off the selected UV element(s)) from any UV element(s), allowing them to 
 
 ## Flip Horizontal
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Flip Horizontal</a>
 </div>
 
@@ -136,7 +136,7 @@ Flip the selected UV element(s) in the horizontal direction.
 
 ## Flip Vertical
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Flip Vertical</a>
 </div>
 
@@ -150,7 +150,7 @@ Flip the selected UV element(s) in the vertical direction.
 
 ## Fit
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Manual UVs: Fit</a>
 </div>
 

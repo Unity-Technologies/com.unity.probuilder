@@ -12,7 +12,7 @@
 
 ## ![Bridge Edges Icon](../images/icons/Edge_Bridge.png "Bridge Edges Icon") Bridge Edges
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 </div>
 
@@ -29,7 +29,7 @@ Create a new face between two selected edges. Each edge must have a free side.
 <a id="bevel"></a>
 ## ![Bevel Edges Icon](../images/icons/Edge_Bevel.png "Bevel Edges Icon") Bevel
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </div>
 
@@ -51,7 +51,7 @@ Setting | Description
 
 ## ![Connect Edges Icon](../images/icons/Edge_Connect.png "Connect Edges Icon") Connect Edges
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 </div>
 
@@ -67,7 +67,7 @@ Insert an edge connecting the centers of each selected edge.
 
 ## ![Extrude Edges Icon](../images/icons/Edge_Extrude.png "Extrude Edges Icon") Extrude Edges
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
 </div>
 

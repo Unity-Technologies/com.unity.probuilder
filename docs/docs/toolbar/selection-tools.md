@@ -11,7 +11,7 @@
 
 ##![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) Select Hidden
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
 </div>
 
@@ -28,7 +28,7 @@ Toolbar Icon | Description
 
 ##![Handle Alignment Local](../images/icons/HandleAlign_Local.png) Handle Alignment
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
 </div>
 
@@ -49,7 +49,7 @@ Toolbar Icon | Description
 <a id="grow"></a>
 ##![Grow Selection](../images/icons/Selection_Grow.png) Grow Selection
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
 </div>
 
@@ -71,7 +71,7 @@ Setting | Description
 
 ##![Shrink Selection](../images/icons/Selection_Shrink.png) Shrink Selection
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
 </div>
 
@@ -83,7 +83,7 @@ Does the opposite of Grow Selection: removes the elements on the perimiter of th
 
 ##![Invert Selection](../images/icons/Selection_Invert.png) Invert Selection
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
 </div>
 
@@ -95,7 +95,7 @@ Selects the inverse of the current selection. All unselected elements will becom
 
 ##![Select Edge Loop Icon](../images/icons/Selection_Loop.png "Select Edge Loop Icon") Select Edge Loop
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
 </div>
 
@@ -109,7 +109,7 @@ Selects an edge loop from each selected edge.
 
 ##![Select Edge Ring Icon](../images/icons/Selection_Ring.png "Select Edge Ring Icon") Select Edge Ring
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Selection Tools: Select Edge Ring</a>
 </div>
 

@@ -9,7 +9,7 @@ A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betw
 
 ### Tool Catagories
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Toolbar Overview: Catagories</a>
 </div>
 
@@ -26,7 +26,7 @@ The Toolbar is color-coded to help you quickly choose tools by type:
 
 ### Resizing and Text vs Icon Mode
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Toolbar Overview: Text vs Icon Mode</a>
 </div>
 
@@ -40,7 +40,7 @@ Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space 
 
 ### Dynamic Layout
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
 </div>
 
@@ -53,7 +53,7 @@ This is a "smart" toolbar, and dynamically changes to match your current editing
 
 ### Custom Settings for Actions
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
 </div>
 
@@ -68,7 +68,7 @@ When using the text toolbar the options menu for actions is shown as a `+` icon 
 <a id="edit-mode-toolbar"></a>
 ### Edit Mode Toolbar
 
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Toolbar Overview: The Edit Mode Toolbar</a>
 </div>
 
