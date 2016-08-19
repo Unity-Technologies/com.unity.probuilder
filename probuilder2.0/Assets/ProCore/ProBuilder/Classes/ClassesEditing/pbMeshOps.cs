@@ -971,7 +971,7 @@ namespace ProBuilder2.MeshOperations
 		int vertexCount = m.vertexCount;
 		Vector3[] m_vertices = m.vertices;
 		Color[] m_colors = m.colors != null && m.colors.Length == vertexCount ? m.colors : new Color[vertexCount];
-		Vector2[] m_uvs = m.uv;
+		Vector2[] m_uvs = m.uv == null || m.uv.Length != vertexCount ? new Vector2[vertexCount] : m.uv;
 
 		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
 		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
