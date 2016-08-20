@@ -1,6 +1,6 @@
 site_name: ProBuilder Documentation
-theme: cinder
-# readthedocs
+theme: readthedocs
+# theme: cinder
 
 pages:
 
