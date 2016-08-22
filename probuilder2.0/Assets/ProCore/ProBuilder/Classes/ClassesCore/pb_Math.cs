@@ -382,7 +382,7 @@ namespace ProBuilder2.Common
 		 *	Calculate the normal of a set of vertices.  If indices is null or not divisible by 3, the first 3 positions
 		 *	are used.  If indices is valid, an average of each set of 3 is taken.
 		 */
-		public static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices)
+		public static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices = null)
 		{
 			if(indices == null || indices.Count % 3 != 0)
 			{

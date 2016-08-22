@@ -72,9 +72,6 @@ namespace ProBuilder2.MeshOperations
 				appendFaces.AddRange(res);
 			}
 
-			// foreach(var kvp in splits)
-			// 	Debug.Log(kvp.Key + "\n" + kvp.Value.ToString(","));
-
 			pb_FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), pb, vertices, null, lookup, null );
 			pb.SetSharedIndices(lookup);
 			pb.SetSharedIndicesUV(new pb_IntArray[0]);
@@ -143,11 +140,20 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			List<ConnectFaceRebuildData> faces = new List<ConnectFaceRebuildData>();
+			Vector3 nrm = pb_Math.Normal(vertices, face.indices);
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
 				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
+
+				Vector3 fn = pb_Math.Normal(n_vertices[i][0].position,
+											n_vertices[i][1].position,
+											n_vertices[i][2].position);
+
+				if(Vector3.Dot(nrm, fn) < 0)
+					f.face.ReverseIndices();
+
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}
 
@@ -173,6 +179,7 @@ namespace ProBuilder2.MeshOperations
 			List<List<int>> n_indices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			pb_Vertex center = pb_Vertex.Average(vertices, indices);
+			Vector3 nrm = pb_Math.Normal(vertices, face.indices);
 
 			int index = 0;
 
@@ -201,8 +208,19 @@ namespace ProBuilder2.MeshOperations
 
 			for(int i = 0; i < n_vertices.Count; i++)
 			{
+				if(n_vertices[i].Count < 3)
+					continue;
+
 				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
+
+				Vector3 fn = pb_Math.Normal(n_vertices[i][0].position,
+											n_vertices[i][1].position,
+											n_vertices[i][2].position);
+
+				if(Vector3.Dot(nrm, fn) < 0)
+					f.face.ReverseIndices();
+
 				faces.Add(new ConnectFaceRebuildData(f, n_indices[i]));
 			}
 

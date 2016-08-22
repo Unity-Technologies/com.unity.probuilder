@@ -1727,61 +1727,6 @@ namespace ProBuilder2.EditorCommon
 			pb_Editor.Refresh();
 
 			return res;
-
-			// foreach(pb_Object pb in selection)
-			// {
-			// 	int[] selectedTriangles = pb.SelectedTriangles.Distinct().ToArray();
-			// 	int len = selectedTriangles.Length;
-
-			// 	List<pb_VertexConnection> splits = new List<pb_VertexConnection>();
-			// 	List<pb_Face>[] connectedFaces = new List<pb_Face>[len];
-
-			// 	// For each vertex, get all it's connected faces
-			// 	for(int i = 0; i < len; i++)
-			// 		connectedFaces[i] = pbMeshUtils.GetNeighborFaces(pb, selectedTriangles[i]);
-
-			// 	for(int i = 0; i < len; i++)
-			// 	{
-			// 		foreach(pb_Face face in connectedFaces[i])
-			// 		{
-			// 			int index = splits.IndexOf((pb_VertexConnection)face);	// pb_VertexConnection only compares face property
-			// 			if(index < 0)
-			// 				splits.Add( new pb_VertexConnection(face, new List<int>(1) { selectedTriangles[i] } ) );
-			// 			else
-			// 				splits[index].indices.Add(selectedTriangles[i]);
-			// 		}
-			// 	}
-
-			// 	for(int i = 0; i < splits.Count; i++)
-			// 		splits[i] = splits[i].Distinct(pb.sharedIndices);
-
-			// 	int[] f;
-			// 	if(pb.ConnectVertices(splits, out f))
-			// 	{
-			// 		success++;
-			// 		pb.SetSelectedTriangles(f);
-			// 	}
-			// }
-
-			// foreach(pb_Object pb in selection)
-			// {
-			// 	pb.ToMesh();
-			// 	pb.Refresh();
-			// 	pb.Optimize();
-			// }
-
-			// if(success > 0)
-			// {
-			// 	if(editor)
-			// 		editor.UpdateSelection(true);
-
-			// 	return new pb_ActionResult(Status.Success, "Connect Vertices");
-			// }
-			// else
-			// {
-			// 	Debug.LogWarning("No valid split paths found.  This is could be because you are attempting to split between vertices that do not belong to the same face, or the split function can't find a good plane to re-triangulate from.");
-			// 	return new pb_ActionResult(Status.Failure, "Connect Vertices\nNo Valid Split Paths Found");
-			// }
 		}
 
 		/**
