@@ -62,25 +62,48 @@ namespace ProBuilder2.MeshOperations
 			bool returnEdges = false,
 			HashSet<pb_Face> faceMask = null)
 		{
-
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
 			HashSet<pb_EdgeLookup> distinctEdges = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 
 			// map each edge to a face so that we have a list of all touched faces with their to-be-subdivided edges
-			Dictionary<pb_Face, List<pb_WingedEdge>> affected = new Dictionary<pb_Face, List<pb_WingedEdge>>();
+			Dictionary<pb_Face, List<pb_WingedEdge>> touched = new Dictionary<pb_Face, List<pb_WingedEdge>>();
 			List<pb_WingedEdge> faceEdges;
 
 			foreach(pb_WingedEdge wing in wings)
 			{
 				if( distinctEdges.Contains(wing.edge) )
 				{
-					if(affected.TryGetValue(wing.face, out faceEdges))
+					if(touched.TryGetValue(wing.face, out faceEdges))
 						faceEdges.Add(wing);
 					else
-						affected.Add(wing.face, new List<pb_WingedEdge>() { wing });
+						touched.Add(wing.face, new List<pb_WingedEdge>() { wing });
 				}
+			}
+
+			Dictionary<pb_Face, List<pb_WingedEdge>> affected = new Dictionary<pb_Face, List<pb_WingedEdge>>();
+
+			// weed out edges that won't actually connect to other edges (if you don't play ya' can't stay)
+			foreach(KeyValuePair<pb_Face, List<pb_WingedEdge>> kvp in touched)
+			{
+				if(kvp.Value.Count <= 1)
+				{
+					pb_WingedEdge opp = kvp.Value[0].opposite;
+
+					if(opp == null)
+						continue;
+
+					List<pb_WingedEdge> opp_list;
+
+					if(!touched.TryGetValue(opp.face, out opp_list))
+						continue;
+
+					if(opp_list.Count <= 1)
+						continue;
+				}
+
+				affected.Add(kvp.Key, kvp.Value);
 			}
 
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
@@ -104,7 +127,7 @@ namespace ProBuilder2.MeshOperations
 					ConnectFaceRebuildData c = InsertVertices(face, targetEdges, vertices);
 
 					Vector3 fn = pb_Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
-					
+
 					if(Vector3.Dot(nrm, fn) < 0)
 						c.faceRebuildData.face.ReverseIndices();
 
