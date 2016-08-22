@@ -1,3 +1,37 @@
+# ProBuilder 2.6.1f0
+
+## Features
+
+- Add `Triangulate Face` action.
+- Add ability to view UV2/3/4 channels in UV Editor.
+- Add ability to edit per-object UV2 generation parameters in the Generate UV2 options menu.
+- Improve performance of "Grow Selection" when flood selecting with angle restriction.
+- Improve performance of some selection actions when in face mode.
+- Add RenameNewObjects script to API examples folder (shows use of OnProBuilderObjectCreated delegate).
+- Add "Select Faces with Material" and "Select Faces with Vertex Color" to the Selection menu.
+- New options icon in toolbar: gear instead of triple lines.
+
+## Bug Fixes
+
+- Fix "About" window showing every changelog ever instead of just the latest.
+- Fix bug in pb_Math.Normal(pb_Face) overload that would potentially return normals facing the wrong direction if fed ngons.
+- Fix UV Editor incompatibilities with retina display on macOS.
+- Fix bold label text color in Debug Window when Pro skin is used.
+- Increase max allowed vertex handle size to 3 to accomodate macOS retina display.
+- Fix import settings for `Center Elements` disabled icon.
+- In ProBuilder-ize function don't bother showing 'include children' dialog if the top selection already contains all valid meshfilters
+- Fix Advanced icon in PB Basic rendering blurry in toolbar.
+- When freezing transforms also apply rotation in world space.  Fixes some issues when freezing hierarchies of objects.
+- Fix bug where edge ring would include faces with odd number of edges.
+- Added "Fill Hole" and "Subdivide Edge" to documentation.
+- Fix occasionally flipped face normals when connecting edges or vertices on n-gons.
+- When connecting edges weed out any edges that don't connect to anything, preventing accidental edge subdivisions.
+
+## Changes
+
+- Make default angle error for uv2 unwrap a little higher to avoid bad unwraps in some common cases.
+- Move ProBuilder-ize function to menu actions.
+
 # ProBuilder 2.6.0f1
 
 ## Features
