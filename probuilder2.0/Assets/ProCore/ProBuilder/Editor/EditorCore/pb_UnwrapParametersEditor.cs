@@ -24,6 +24,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			serializedObject.Update();
 			EditorGUILayout.PropertyField(p, gc_unwrapParameters, true);
+
 			serializedObject.ApplyModifiedProperties();
 		}
 	}
