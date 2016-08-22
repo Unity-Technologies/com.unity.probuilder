@@ -524,7 +524,7 @@ namespace ProBuilder2.EditorCommon
 
 			previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
 #else
-			Editor.CreateCachedEditor(targetObjects, editorType, ref previousEditor);
+			Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 #endif
 		}
 #endregion
