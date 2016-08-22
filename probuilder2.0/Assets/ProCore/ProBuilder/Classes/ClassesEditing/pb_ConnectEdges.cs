@@ -62,6 +62,7 @@ namespace ProBuilder2.MeshOperations
 			bool returnEdges = false,
 			HashSet<pb_Face> faceMask = null)
 		{
+
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : null;
 			HashSet<pb_EdgeLookup> distinctEdges = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
@@ -95,12 +96,19 @@ namespace ProBuilder2.MeshOperations
 			{
 				pb_Face face = split.Key;
 				List<pb_WingedEdge> targetEdges = split.Value;
-
 				int inserts = targetEdges.Count;
+				Vector3 nrm = pb_Math.Normal(vertices, face.indices);
 
 				if(inserts == 1 || (faceMask != null && !faceMask.Contains(face)))
 				{
-					results.Add( InsertVertices(face, targetEdges, vertices) );
+					ConnectFaceRebuildData c = InsertVertices(face, targetEdges, vertices);
+
+					Vector3 fn = pb_Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
+					
+					if(Vector3.Dot(nrm, fn) < 0)
+						c.faceRebuildData.face.ReverseIndices();
+
+					results.Add( c );
 				}
 				else
 				if(inserts > 1)
@@ -120,6 +128,11 @@ namespace ProBuilder2.MeshOperations
 					foreach(ConnectFaceRebuildData c in res)
 					{
 						connectedFaces.Add(c.faceRebuildData.face);
+	
+						Vector3 fn = pb_Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
+
+						if(Vector3.Dot(nrm, fn) < 0)
+							c.faceRebuildData.face.ReverseIndices();
 
 						c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
 						c.faceRebuildData.face.uv 				= new pb_UV(face.uv);
@@ -221,8 +234,6 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 * Insert a new vertex at the center of a face and connect the center of all edges to it.
-		 *	@todo test if all edges are selected, and if so, skip triangulation since they're always
-		 *	going to be in 0,1,2,1,3,2 order.
 		 */
 		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,

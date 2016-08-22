@@ -147,9 +147,7 @@ namespace ProBuilder2.MeshOperations
 				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = pb_Math.Normal(n_vertices[i][0].position,
-											n_vertices[i][1].position,
-											n_vertices[i][2].position);
+				Vector3 fn = pb_Math.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.ReverseIndices();
@@ -214,9 +212,7 @@ namespace ProBuilder2.MeshOperations
 				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = pb_Math.Normal(n_vertices[i][0].position,
-											n_vertices[i][1].position,
-											n_vertices[i][2].position);
+				Vector3 fn = pb_Math.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.ReverseIndices();
