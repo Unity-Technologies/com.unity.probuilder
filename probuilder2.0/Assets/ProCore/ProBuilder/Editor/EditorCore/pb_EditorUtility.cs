@@ -509,6 +509,24 @@ namespace ProBuilder2.EditorCommon
 					platform == System.PlatformID.Unix ||
 					(int)platform == 128;
 		}
+
+		/**
+		 *	CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
+		 */
+		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref Editor previousEditor) where T : Editor
+		{
+#if UNITY_4_7
+			if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects) )
+				return;
+
+			if (previousEditor != null)
+				UnityEngine.Object.DestroyImmediate(previousEditor);
+
+			previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
+#else
+			Editor.CreateCachedEditor(targetObjects, editorType, ref previousEditor);
+#endif
+		}
 #endregion
 	}
 }

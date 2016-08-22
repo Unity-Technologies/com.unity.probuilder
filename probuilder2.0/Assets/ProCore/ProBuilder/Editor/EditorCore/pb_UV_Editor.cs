@@ -2502,7 +2502,7 @@ public class pb_UV_Editor : EditorWindow
 				return pb.msh.uv2;
 			}
 
-#if !UNITY_5_0 && !UNITY_4_6
+#if !UNITY_5_0 && !UNITY_4_7
 			case 2:
 			case 3:
 				Mesh m = pb.msh;
@@ -2653,11 +2653,12 @@ public class pb_UV_Editor : EditorWindow
 		}
 		else if(channel == 1)
 		{
-			Editor.CreateCachedEditor(selection, typeof(pb_UnwrapParametersEditor), ref uv2Editor);
+			pb_EditorUtility.CreateCachedEditor<pb_UnwrapParametersEditor>(selection, ref uv2Editor);
 
 			if(uv2Editor != null)
 			{
 				GUILayout.Space(4);
+				uv2Editor.hideFlags = HideFlags.HideAndDontSave;
 				uv2Editor.OnInspectorGUI();
 			}
 

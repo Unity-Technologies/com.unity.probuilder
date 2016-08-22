@@ -54,7 +54,9 @@ namespace ProBuilder2.EditorCommon
 		void OnGUI()
 		{
 			if(onSettingsGUI != null)
+			{
 				onSettingsGUI();
+			}
 			else if(Event.current.type == EventType.Repaint)
 			{
 				EditorApplication.delayCall += () => { pb_MenuOption.CloseAll(); };

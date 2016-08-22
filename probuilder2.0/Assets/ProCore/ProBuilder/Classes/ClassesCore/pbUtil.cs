@@ -157,18 +157,19 @@ namespace ProBuilder2.Common
 	/**
 	 * Equivalent to Linq EqualsAll()
 	 */
-	public static bool IsEqual<T>(this T[] a, T[] b)
+	public static bool IsEqual<T>(T[] a, T[] b)
 	{
-		if(a.Length != b.Length)
-		{
+		if(a == null && b == null)
+			return true;
+		else if( (a == null && b != null) || (a != null && b == null) )
 			return false;
-		}
+		if(a.Length != b.Length)
+			return false;
 		else
 		{
 			for(int i = 0; i < a.Length; i++)
 				if(!a[i].Equals(b[i]))
 					return false;
-	
 			return true;
 		}
 	}
