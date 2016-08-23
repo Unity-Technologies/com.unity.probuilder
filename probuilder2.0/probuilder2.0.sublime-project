@@ -58,7 +58,12 @@
 			"folder_exclude_patterns": [ "*" ]
 		},
 		{
-			"path": "../docs"
+			"path": "../docs",
+			"folder_exclude_patterns":
+			[
+				"site",
+				"pdfs"
+			]
 		}
 	]
 }

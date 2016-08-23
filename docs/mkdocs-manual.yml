@@ -1,5 +1,4 @@
 site_name: ProBuilder Documentation
-# theme: readthedocs
 theme_dir: 'cinder'
 
 pages:
@@ -34,5 +33,3 @@ pages:
   - DLL Rename: upgrading/dllrename.md
   - Upgrade Kit: upgrading/upgrade-kit.md
   - Prototype: upgrading/prototype.md
-
-- Changelog: changelog.md

@@ -46,36 +46,13 @@ for page in pdfs:
 
 	# print( path + " => " + pdf_dir + "/" + title)
 
-	# ignore exceptions because pdfkit (or more accurately, wkhtmltopdf) exits 1 with non-fatal
-	# errors
+	# ignore exceptions because pdfkit (or more accurately, wkhtmltopdf)
+	# exits 1 with non-fatal errors
 	try:
-		gen_pdfs.append( pdfkit.from_file(site_dir + "/" + path, pdf_dir + "/" + title, options={ 'load-error-handling': 'ignore', 'disable-plugins':'' }) )
+		gen_pdfs.append( pdf_dir + "/" + title )
+		pdfkit.from_file(site_dir + "/" + path, pdf_dir + "/" + title, options={ 'load-error-handling': 'ignore', 'disable-plugins':'' })
 	except:
 		pass
 
 print( str(gen_pdfs) )
 
-# [
-# 	('', 'Home', 'index.md'),
-# 	('', 'Fundamentals', 'general/fundamentals.md'),
-# 	('Toolbar', 'Overview', 'toolbar/overview-toolbar.md'),
-# 	('Toolbar', 'Tool Panels', 'toolbar/tool-panels.md'),
-# 	('Toolbar', 'Selection Actions', 'toolbar/selection-tools.md'),
-# 	('Toolbar', 'Object Actions', 'toolbar/object-actions.md'),
-# 	('Toolbar', 'Vertex Actions', 'toolbar/vertex.md'),
-# 	('Toolbar', 'Edge Actions', 'toolbar/edge.md'),
-# 	('Toolbar', 'Face Actions', 'toolbar/face.md'),
-# 	('Toolbar', 'Element Actions', 'toolbar/all.md'),
-# 	('Texture Mapping', 'Overview', 'texturing/overview-texture-mapping.md'),
-# 	('Texture Mapping', 'UV Editor Toolbar', 'texturing/uv-editor-toolbar.md'),
-# 	('Texture Mapping', 'Auto UVs Actions', 'texturing/auto-uvs-actions.md'),
-# 	('Texture Mapping', 'Manual UVs Actions', 'texturing/manual-uvs-actions.md'),
-# 	('', 'Preferences', 'preferences/preferences.md'),
-# 	('', 'Troubleshooting', 'troubleshooting/faq.md'),
-# 	('Upgrading', 'What Upgrade Procedure Should I Follow?', 'upgrading/overview.md'),
-# 	('Upgrading', 'Standard', 'upgrading/standard.md'),
-# 	('Upgrading', 'DLL Rename', 'upgrading/dllrename.md'),
-# 	('Upgrading', 'Upgrade Kit', 'upgrading/upgrade-kit.md'),
-# 	('Upgrading', 'Prototype', 'upgrading/prototype.md'),
-# 	('', 'Changelog', 'changelog.md')
-# ]
