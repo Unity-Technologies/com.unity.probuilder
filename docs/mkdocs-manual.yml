@@ -12,8 +12,8 @@ pages:
 - Fundamentals: general/fundamentals.md
 
 - Toolbar:
-  - Overview: toolbar/overview-toolbar.md
-  - Tool Panels: toolbar/tool-panels.md
+  - Toolbar Overview: toolbar/overview-toolbar.md
+  - Tool Windows: toolbar/tool-panels.md
   - Selection Actions: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
   - Vertex Actions: toolbar/vertex.md
@@ -22,21 +22,12 @@ pages:
   - Element Actions: toolbar/all.md
 
 - Texture Mapping:
-    - Overview: texturing/overview-texture-mapping.md
-    - UV Editor Toolbar: texturing/uv-editor-toolbar.md
-    - Auto UVs Actions: texturing/auto-uvs-actions.md
-    - Manual UVs Actions: texturing/manual-uvs-actions.md
+  - Texturing Overview: texturing/overview-texture-mapping.md
+  - UV Editor Toolbar: texturing/uv-editor-toolbar.md
+  - Auto UV Actions: texturing/auto-uvs-actions.md
+  - Manual UV Actions: texturing/manual-uvs-actions.md
 
 - Preferences: preferences/preferences.md
-
-- Troubleshooting:
-  - troubleshooting/faq.md
-
-- Upgrading:
-  - What Upgrade Procedure Should I Follow?: upgrading/overview.md
-  - Standard: upgrading/standard.md
-  - DLL Rename: upgrading/dllrename.md
-  - Upgrade Kit: upgrading/upgrade-kit.md
-  - Prototype: upgrading/prototype.md
-
+- Troubleshooting: troubleshooting/faq.md
 - Credits: credits.md
+

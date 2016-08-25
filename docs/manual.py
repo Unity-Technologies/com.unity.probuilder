@@ -47,13 +47,9 @@ for page in pdfs:
 
 	# print( path + " => " + pdf_dir + "/" + title)
 
-	# ignore exceptions because pdfkit (or more accurately, wkhtmltopdf)
-	# exits 1 with non-fatal errors
-	try:
-		gen_pdfs.append( pdf_dir + "/" + title )
-		pdfkit.from_file(site_dir + "/" + path, pdf_dir + "/" + title, options={ 'load-error-handling': 'ignore', 'disable-plugins':'' })
-	except:
-		pass
+	gen_pdfs.append( site_dir + "/" + path )
 
-print( str(gen_pdfs) )
+pdfkit.from_file(gen_pdfs, pdf_dir + "/manual.pdf", options={
+	'load-error-handling': 'ignore',
+	'disable-plugins':'' });
 
