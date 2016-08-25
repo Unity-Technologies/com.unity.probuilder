@@ -52,7 +52,7 @@ For example, here's what `RuntimeEdit.cs` looks like:
 		 *	More advanced usage of the ProBuilder API should make use of the pb_Object->SelectedFaces list to keep
 		 *	track of the selected faces.
 		 */
-		public class RuntimeEdit : MonoBehaviour 
+		public class RuntimeEdit : MonoBehaviour
 		{
 			// ... etc
 		}
@@ -63,9 +63,9 @@ Now compile your project and run!
 
 ## Missing Icons
 
-If you upgraded ProBuilder and are now missing icons in the toolbar, first try restarting Unity.  
+If you upgraded ProBuilder and are now missing icons in the toolbar, first try restarting Unity.
 
-If that does not work, 
+If that does not work,
 
 1. Delete this folder: `ProCore/ProBuilder/Resources/GUI`
 2. Re-import ProBuilder from Asset Store / ProCore Downloads

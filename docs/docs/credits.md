@@ -1,23 +1,25 @@
-# External Libraries
+<div></div>
 
-## Triangle.NET
+---
+
+### Triangle.NET
 
 - https://github.com/zon/triangle
 
-## CSG
+### CSG
 
 - Original by Evan Wallace: https://github.com/evanw/csg.js
 - C# port: https://github.com/karl-/pb_CSG
 
-## kd-sharp
+### kd-sharp
 
 - https://code.google.com/p/kd-sharp/
 
-## MkDocs
+### MkDocs
 
 - http://www.mkdocs.org/
 
-# Legacy
+### Asset Submissions
 
 - `Pivot Tool` : @Matt1988
 - `Diffuse Vertex Color Shaders` : @Snoopbaron (Fernando Zapata)
