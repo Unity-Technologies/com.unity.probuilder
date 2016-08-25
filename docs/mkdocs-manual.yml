@@ -1,5 +1,10 @@
 site_name: ProBuilder Documentation
 theme_dir: 'cinder'
+extra_css:
+  - css/alerts.css
+  - css/extra.css
+  - css/general.css
+  - css_manual/youtube.css
 
 pages:
 
@@ -33,3 +38,5 @@ pages:
   - DLL Rename: upgrading/dllrename.md
   - Upgrade Kit: upgrading/upgrade-kit.md
   - Prototype: upgrading/prototype.md
+
+- Credits: credits.md

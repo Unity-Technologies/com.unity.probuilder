@@ -61,7 +61,7 @@
 			"path": "../docs",
 			"folder_exclude_patterns":
 			[
-				"site",
+				"docs/site",
 				"pdfs"
 			]
 		}

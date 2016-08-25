@@ -7,13 +7,14 @@ import os
 import pdfkit
 import yaml
 
-directory = yaml.load( open("mkdocs.yml") )
+directory = yaml.load( open("mkdocs-manual.yml") )
 pages = directory["pages"]
 pdf_dir = "pdfs"
 site_dir = "site"
 pdfs = []
 
 # gather all the docs pages in a list of tuples (category, title, path)
+print("finding doc pages in mkdocs-manual.yml")
 
 for header in pages:
 	for key in header:

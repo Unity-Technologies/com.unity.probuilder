@@ -1,6 +1,10 @@
 site_name: ProBuilder Documentation
-# theme: readthedocs
-theme_dir: 'cinder'
+theme: readthedocs
+extra_css:
+  - css/alerts.css
+  - css/extra.css
+  - css/general.css
+  - css_site/youtube.css
 
 pages:
 
@@ -18,15 +22,14 @@ pages:
   - Element Actions: toolbar/all.md
 
 - Texture Mapping:
-    - Overview: texturing/overview-texture-mapping.md
-    - UV Editor Toolbar: texturing/uv-editor-toolbar.md
-    - Auto UVs Actions: texturing/auto-uvs-actions.md
-    - Manual UVs Actions: texturing/manual-uvs-actions.md
+  - Overview: texturing/overview-texture-mapping.md
+  - UV Editor Toolbar: texturing/uv-editor-toolbar.md
+  - Auto UVs Actions: texturing/auto-uvs-actions.md
+  - Manual UVs Actions: texturing/manual-uvs-actions.md
 
 - Preferences: preferences/preferences.md
 
-- Troubleshooting:
-  - troubleshooting/faq.md
+- Troubleshooting: troubleshooting/faq.md
 
 - Upgrading:
   - What Upgrade Procedure Should I Follow?: upgrading/overview.md
@@ -36,3 +39,4 @@ pages:
   - Prototype: upgrading/prototype.md
 
 - Changelog: changelog.md
+- Credits: credits.md
