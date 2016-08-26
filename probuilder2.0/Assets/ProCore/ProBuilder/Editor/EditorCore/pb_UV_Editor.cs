@@ -2505,11 +2505,13 @@ public class pb_UV_Editor : EditorWindow
 #if !UNITY_5_0 && !UNITY_4_7
 			case 2:
 			case 3:
+			{
 				Mesh m = pb.msh;
 				if(m == null) return null;
 				List<Vector2> v = new List<Vector2>();
 				m.GetUVs(channel, v);
 				return v.ToArray();
+			}
 #endif
 			default:
 				return pb.uv;
