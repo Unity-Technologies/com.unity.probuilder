@@ -1,0 +1,9 @@
+.youtube-preview
+{
+	display: none;
+	width: 560px;
+	height: 315px;
+	margin: auto;
+	margin-bottom: 24px;
+	border: none;
+}

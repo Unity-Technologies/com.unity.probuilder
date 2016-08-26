@@ -3,14 +3,12 @@
 	display: inline-block;
 }
 
-.youtube-preview
-{
-	display: block;
-	width: 560px;
-	height: 315px;
-	margin: auto;
-	margin-bottom: 24px;
-	border: none;
+/**
+ *	Synonym for h2, but without getting registered in the TOC
+ */
+.size2 {
+    font-size: 32px;
+    font-weight: bold;
 }
 
 .sub-header {
@@ -24,12 +22,24 @@ img {
   padding-bottom: 16px;
 }
 
-.video-link
+.video-link-missing
 {
 	/**
 	 *	@todo re-enable video links when they exist
 	 */
 	display: none;
+	background: #f7f7f7;
+	color: #333;
+	border: none;
+	padding: 12px;
+	margin-bottom: 24px;
+	line-height: 24px;
+	border-left: 6px solid #00aaef;
+	box-shadow: 0 5px 8px -6px rgba(0, 0, 0, 0.2);
+}
+
+.video-link
+{
 	background: #f7f7f7;
 	color: #333;
 	border: none;

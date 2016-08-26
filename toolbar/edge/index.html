@@ -22,6 +22,8 @@
   <link href="../../css/alerts.css" rel="stylesheet">
   <link href="../../css/extra.css" rel="stylesheet">
   <link href="../../css/general.css" rel="stylesheet">
+  <link href="../../css_site/site.css" rel="stylesheet">
+  <link href="../../css_site/youtube.css" rel="stylesheet">
 
   
   <script>
@@ -117,15 +119,22 @@
         
             <ul>
             
-                <li class="toctree-l3"><a href="#video-edge-actions">Video: Edge Actions</a></li>
+                <li class="toctree-l3"><a href="#bridge-edges">Bridge Edges</a></li>
                 
-                    <li><a class="toctree-l4" href="#bridge-edges">Bridge Edges</a></li>
+            
+                <li class="toctree-l3"><a href="#bevel">Bevel</a></li>
                 
-                    <li><a class="toctree-l4" href="#bevel">Bevel</a></li>
+            
+                <li class="toctree-l3"><a href="#connect-edges">Connect Edges</a></li>
                 
-                    <li><a class="toctree-l4" href="#connect-edges">Connect Edges</a></li>
+            
+                <li class="toctree-l3"><a href="#extrude-edges">Extrude Edges</a></li>
                 
-                    <li><a class="toctree-l4" href="#extrude-edges">Extrude Edges</a></li>
+            
+                <li class="toctree-l3"><a href="#subdivide-edge">Subdivide Edge</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#fill-hole">Fill Hole</a></li>
                 
             
             </ul>
@@ -253,6 +262,13 @@
           
             <li>
     <li class="toctree-l1 ">
+        <a class="" href="../../credits/">Credits</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
         <a class="" href="../../changelog/">Changelog</a>
         
     </li>
@@ -294,17 +310,20 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="video-edge-actions">Video: Edge Actions</h1>
-<!-- [![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
+                <!--
+#Video: Edge Actions
 
-<hr />
+[![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
+
+ -->
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_EdgeActions.png">
 </div>
 
 <hr />
 <h2 id="bridge-edges"><img alt="Bridge Edges Icon" src="../../images/icons/Edge_Bridge.png" title="Bridge Edges Icon" /> Bridge Edges</h2>
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 </div>
 
@@ -317,7 +336,7 @@ Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
 <hr />
 <p><a id="bevel"></a></p>
 <h2 id="bevel"><img alt="Bevel Edges Icon" src="../../images/icons/Edge_Bevel.png" title="Bevel Edges Icon" /> Bevel</h2>
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </div>
 
@@ -345,7 +364,7 @@ Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
 </table>
 <hr />
 <h2 id="connect-edges"><img alt="Connect Edges Icon" src="../../images/icons/Edge_Connect.png" title="Connect Edges Icon" /> Connect Edges</h2>
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 </div>
 
@@ -357,7 +376,7 @@ Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
 
 <hr />
 <h2 id="extrude-edges"><img alt="Extrude Edges Icon" src="../../images/icons/Edge_Extrude.png" title="Extrude Edges Icon" /> Extrude Edges</h2>
-<div class="video-link">
+<div class="video-link-missing">
 Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
 </div>
 
@@ -371,6 +390,7 @@ Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
 <blockquote>
 <p>Note: By default, only open edges can be <strong>Extruded</strong>. You can change this in the <a href="../@todo">ProBuilder Preferences</a>.</p>
 </blockquote>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
 <table>
 <thead>
 <tr>
@@ -382,6 +402,58 @@ Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
 <tr>
 <td><strong>Distance</strong></td>
 <td>Distance to extrude the edge(s).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="subdivide-edge"><img alt="Subdivide Edge Icon" src="../../images/icons/Edge_Subdivide.png" title="Subdivide Edge Icon" /> Subdivide Edge</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Vertex Actions: Subdivide Edge</a>
+</div>
+
+<p><strong>Keyboard Shortcut</strong> : <code>ALT S</code></p>
+<p>Divides the selected edge(s) into multiple edges.</p>
+<div style="text-align:center">
+<img src="../../images/SubdivideEdge_Example.png">
+</div>
+
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Subdivisions</strong></td>
+<td>Number of divisions to make in the selected edge(s).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="fill-hole"><img alt="Fill Hole Icon" src="../../images/icons/Edge_FillHole.png" title="Fill Hole Icon" /> Fill Hole</h2>
+<div class="video-link">
+Section Video: <a href="@todo">Vertex Actions: Fill Hole</a>
+</div>
+
+<div style="text-align:center">
+<img src="../../images/FillHole_Example.png">
+</div>
+
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fill Entire Hole</strong></td>
+<td>If <strong>On</strong>, the entire mesh opening will be filled. Otherwise, only the selected open edges will be capped.</td>
 </tr>
 </tbody>
 </table>

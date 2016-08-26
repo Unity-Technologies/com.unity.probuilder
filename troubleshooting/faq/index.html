@@ -22,6 +22,8 @@
   <link href="../../css/alerts.css" rel="stylesheet">
   <link href="../../css/extra.css" rel="stylesheet">
   <link href="../../css/general.css" rel="stylesheet">
+  <link href="../../css_site/site.css" rel="stylesheet">
+  <link href="../../css_site/youtube.css" rel="stylesheet">
 
   
   <script>
@@ -248,6 +250,13 @@
           
             <li>
     <li class="toctree-l1 ">
+        <a class="" href="../../credits/">Credits</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
         <a class="" href="../../changelog/">Changelog</a>
         
     </li>
@@ -289,7 +298,9 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="error-building-player">Error building Player</h2>
+                <div class="manual"><hr /></div>
+
+<h2 id="error-building-player">Error building Player</h2>
 <p>Usually seen with console errors:</p>
 <ul>
 <li><code>Error building Player: UnityException: Failed to run serialization weaver with command</code></li>
@@ -338,7 +349,7 @@ namespace ProBuilder2.Examples
      *  More advanced usage of the ProBuilder API should make use of the pb_Object-&gt;SelectedFaces list to keep
      *  track of the selected faces.
      */
-    public class RuntimeEdit : MonoBehaviour 
+    public class RuntimeEdit : MonoBehaviour
     {
         // ... etc
     }
@@ -347,7 +358,12 @@ namespace ProBuilder2.Examples
 </code></pre>
 <p>Now compile your project and run!</p>
 <h2 id="missing-icons">Missing Icons</h2>
-<p>If you upgraded ProBuilder and are now missing icons in the toolbar, first: restart Unity.  If that fails to bring icons back, re-import the ProBuilder package.</p>
+<p>If you upgraded ProBuilder and are now missing icons in the toolbar, first try restarting Unity.</p>
+<p>If that does not work,</p>
+<ol>
+<li>Delete this folder: <code>ProCore/ProBuilder/Resources/GUI</code></li>
+<li>Re-import ProBuilder from Asset Store / ProCore Downloads</li>
+</ol>
               
             </div>
           </div>

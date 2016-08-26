@@ -9,11 +9,11 @@ h1 {
 
 blockquote {
 	background: #f7f7f7;
-  border-left: 4px solid #dddddd;
-  padding: 0 15px;
-  color: #777777; }
-  blockquote > :first-child {
-    margin-top: 0; }
-  blockquote > :last-child {
-    margin-bottom: 0;
+	border-left: 4px solid #dddddd;
+	padding: 0 15px;
+	color: #777777; }
+	blockquote > :first-child {
+	margin-top: 0; }
+	blockquote > :last-child {
+	margin-bottom: 0;
 }
