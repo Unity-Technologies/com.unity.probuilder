@@ -1,3 +1,5 @@
+<div class="manual"><hr /></div>
+
 ## Error building Player
 
 Usually seen with console errors:

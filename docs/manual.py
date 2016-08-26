@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-# pip install pdfkit
-# pip install pyyaml
-
 import os
 import pdfkit
 import yaml
 
 directory = yaml.load( open("mkdocs-manual.yml") )
 pages = directory["pages"]
-pdf_dir = "pdfs"
 site_dir = "site"
 pdfs = []
 
@@ -28,9 +24,6 @@ for header in pages:
 					for kvp in item:
 						pdfs.append( (key, kvp, item[kvp]) )
 
-if not os.path.exists(pdf_dir):
-    os.makedirs(pdf_dir)
-
 gen_pdfs = []
 
 for page in pdfs:
@@ -45,11 +38,13 @@ for page in pdfs:
 	else:
 		title = page[1] + ".pdf";
 
-	# print( path + " => " + pdf_dir + "/" + title)
-
 	gen_pdfs.append( site_dir + "/" + path )
+	print("processed: " + site_dir + "/" + path)
 
-pdfkit.from_file(gen_pdfs, pdf_dir + "/manual.pdf", options={
+pdfkit.from_file(gen_pdfs, "manual.pdf", options={
+	'disable-javascript':'',
+	'quiet': '',
 	'load-error-handling': 'ignore',
 	'disable-plugins':'' });
 
+print("output pdf to: " + "manual.pdf")

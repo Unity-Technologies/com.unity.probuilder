@@ -4,12 +4,8 @@ cp ../probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt docs/changelog
 
 mkdocs build -c -f mkdocs-manual.yml
 
-if [ -d pdfs ]; then
-	rm -rf pdfs
-fi
-
-mkdir pdfs
+rm -f manual.pdf
 
 python manual.py
 
-cp pdfs/manual.pdf ../probuilder2.0/Assets/ProCore/ProBuilder/ProBuilderManual.pdf
+cp manual.pdf ../probuilder2.0/Assets/ProCore/ProBuilder/ProBuilderManual.pdf

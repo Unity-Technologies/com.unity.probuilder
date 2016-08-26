@@ -1,4 +1,4 @@
-﻿# What is ProBuilder?
+﻿<h1>What is ProBuilder?</h1>
 
 **ProBuilder** is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!
 
@@ -15,7 +15,7 @@
 [Purchase ProBuilder Advanced](http://u3d.as/30b)
 
 <div class="alert-box warning">
-<h2>Important!</h2>
+<div class="size2">Important!</div>
 This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full <a href="@todo">Advanced vs Basic Comparision</a>.
 </div>
 

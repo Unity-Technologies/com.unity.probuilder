@@ -16,7 +16,7 @@ visual studio/*/*/obj/
 
 # generated
 docs/site/
-docs/pdfs/
+docs/manual.pdf
 docs/docs/changelog.md
 probuilder2.0/Assets/test*
 
