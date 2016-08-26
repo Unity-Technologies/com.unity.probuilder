@@ -712,6 +712,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			pb_Editor.Refresh();
+			SceneView.RepaintAll();
 
 			if(grown > 0)
 				return new pb_ActionResult(Status.Success, "Grow Selection");
@@ -861,9 +862,7 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-			if(editor)
-				editor.UpdateSelection();
-
+			pb_Editor.Refresh();
 			SceneView.RepaintAll();
 
 			return new pb_ActionResult(Status.Success, "Invert Selection");
