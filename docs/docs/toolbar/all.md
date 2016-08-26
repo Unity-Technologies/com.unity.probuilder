@@ -1,7 +1,5 @@
 <div></div>
 
----
-
 ## ![Set Pivot Icon](../images/icons/Pivot_CenterOnElements.png "Set Pivot Icon") Move Pivot to Center of Selected Elements
 
 <div class="video-link-missing">
