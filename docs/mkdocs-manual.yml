@@ -5,6 +5,7 @@ extra_css:
   - css/extra.css
   - css/general.css
   - css_manual/youtube.css
+  - css_manual/manual.css
 
 pages:
 
