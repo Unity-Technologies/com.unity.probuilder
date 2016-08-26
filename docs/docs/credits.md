@@ -1,6 +1,4 @@
-<div></div>
-
----
+<div class="manual"><hr /></div>
 
 ### Triangle.NET
 
