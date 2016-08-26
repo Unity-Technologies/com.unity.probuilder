@@ -50,8 +50,6 @@ del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache.met
 echo ===: Prefix files with #define PROTOTYPE
 %unity_path_5% -quit -batchMode -projectPath %CD%\probuilder-staging -executeMethod pb_AddDefine.PrependDefine define:PROTOTYPE ignore:Debug
 
-pause
-
 echo ===: Remove core, mesh ops, and editor core
 
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesCore
