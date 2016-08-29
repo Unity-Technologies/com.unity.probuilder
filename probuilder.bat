@@ -132,14 +132,10 @@ xcopy "%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Releas
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\Release\ProBuilderMeshOps-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
+%unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity50.unitypackage
+
 echo Override DLL GUIDs Unity 5
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
-
-:: copy standard shader back in
-xcopy /q /y %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader
-xcopy /q /y %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader.meta %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader.meta
-
-pause
 
 echo Export Unity 5 DLL project
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.0-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity50
@@ -157,6 +153,8 @@ del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEdito
 echo Copy Unity 5.3 build artifacts
 xcopy "%CD%\visual studio\ProBuilderCore-Unity5_3\ProBuilderCore-Unity5_3\bin\Release\ProBuilderCore-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+
+%unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity53.unitypackage
 
 echo Override DLL GUIDs Unity 5.3
 %unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5_3-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
