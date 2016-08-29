@@ -25,8 +25,6 @@ public class BuggerWindow : EditorWindow
 	const string SHOW_KEYED_LOGS = "Bugger_Show_Keyed_Logs";
 	const string SHOW_REGULAR_LOGS = "Bugger_Show_Regular_Logs";
 
-	const int MAX_CHAR_LABEL = 15000;
-
 	Color PRO_PRIMARY_TEXT_COLOR = new Color(1f, 1f, 1f, .8f);
 	Color BASIC_PRIMARY_TEXT_COLOR = new Color(0f, 0f, 0f, .8f);
 
@@ -91,7 +89,7 @@ public class BuggerWindow : EditorWindow
 				sb.AppendLine(stack[i].methodName);
 				sb.AppendLine(stack[i].fullPath);
 				sb.AppendLine("Line: " + stack[i].lineNumber);
-
+				
 				if(i < stack.Count-1)
 					sb.AppendLine("\n");
 			}
@@ -223,7 +221,7 @@ public class BuggerWindow : EditorWindow
 		rowTextStyle.clipping = TextClipping.Clip;
 		rowTextStyle.fixedHeight = 28;
 		rowTextStyle.margin = new RectOffset(0, 0, 0, 0);
-
+		
 		rowBackgroundStyle = new GUIStyle();
 		rowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
 
@@ -255,8 +253,8 @@ public class BuggerWindow : EditorWindow
 		}
 		else
 		{
-			splitA = ((int)this.position.height) / 5;
-			splitB = (((int)this.position.height) / 3) * 2;
+			splitA = Screen.height/5;
+			splitB = (Screen.height/3)*2;
 		}
 	}
 
@@ -314,17 +312,24 @@ public class BuggerWindow : EditorWindow
 
 		curY = 0;
 
-		// Get rects for each displa
-		keyLogsRect = new Rect(0f, curY, Screen.width-SCROLL_PIXEL_PAD, showRegularLogs ? splitA-3 : splitB-17);
+		// Get rects for each display
 
+		tabToggleRect = new Rect(0f, Screen.height-36, Screen.width-SCROLL_PIXEL_PAD, 17);
+
+		keyLogsRect = new Rect(0f, curY, Screen.width-SCROLL_PIXEL_PAD, showRegularLogs ? splitA-3 : splitB-17);
+		
 		if(showKeyedLogs)
 			curY += splitA-3;
 		else
 			splitA = curY;
+
+		regLogsRect = new Rect(0f, splitA, Screen.width-SCROLL_PIXEL_PAD, splitB-splitA-SCROLL_PIXEL_PAD);
+		infoPaneRect = new Rect(0f, splitB, Screen.width-SCROLL_PIXEL_PAD, Screen.height-splitB-SCROLL_PIXEL_PAD-tabToggleRect.height);
+
 		if(showKeyedLogs && showRegularLogs)
 			EditorGUIUtility.AddCursorRect( splitRectA_selection, MouseCursor.ResizeVertical);
 
-		EditorGUIUtility.AddCursorRect( splitRectB_selection, MouseCursor.ResizeVertical);
+		EditorGUIUtility.AddCursorRect( splitRectB_selection, MouseCursor.ResizeVertical);	
 
 		// Dragging
 		{
@@ -335,7 +340,9 @@ public class BuggerWindow : EditorWindow
 					splitA = (int)Mathf.Clamp(e.mousePosition.y, keyLogsRect.y+headerHeight+rowHeight, splitB-3-headerHeight-rowHeight);
 			}
 
-			// the info pane should always sho
+			// the info pane should always show
+			if(be.type == BuggerEventType.DragSplitHandleB && e.type == EventType.Layout)
+				splitB = (int)Mathf.Clamp(e.mousePosition.y, splitA+3+headerHeight+rowHeight, Screen.height-20-tabToggleRect.height);
 		}
 
 		splitRectA_selection = new Rect(0f, splitA-(splitSelectionHeight/2), Screen.width, splitSelectionHeight);
@@ -344,7 +351,7 @@ public class BuggerWindow : EditorWindow
 		splitRectA_graphics = new Rect(0f, splitA-1, Screen.width, 2f);
 		splitRectB_graphics = new Rect(0f, splitB-1, Screen.width, 2f);
 
-		// Draw stuff and thigns
+		// Draw stuff and thigns	
 		// Header toggles
 		DrawTabToggles(tabToggleRect);
 
@@ -356,7 +363,7 @@ public class BuggerWindow : EditorWindow
 		GUI.backgroundColor = Color.white;
 
 		if(	be.type == BuggerEventType.MouseUp && !e.shift && (keyLogsRect.Contains(be.mousePosition) || regLogsRect.Contains(be.mousePosition)) )
-		{
+		{		
 			selectedKey.Clear();
 			selectedLog.Clear();
 		}
@@ -373,7 +380,7 @@ public class BuggerWindow : EditorWindow
 			be.type == BuggerEventType.DragSplitHandleA ||
 			be.type == BuggerEventType.DragSplitHandleB)
 			Repaint();
-
+	
 		GUI.backgroundColor = Color.white;
 	}
 
@@ -423,7 +430,7 @@ public class BuggerWindow : EditorWindow
 			case EventType.MouseDown:
 				be.type = BuggerEventType.MouseDown;
 
-				// check what was clicked
+				// check what was clicked 
 				if( splitRectA_selection.Contains(e.mousePosition) )
 				{
 					be.type = BuggerEventType.DragSplitHandleA;
@@ -440,15 +447,15 @@ public class BuggerWindow : EditorWindow
 
 			case EventType.ContextClick:
 				GenericMenu menu = new GenericMenu();
-
+				
 				menu.AddItem (new GUIContent("Open Bugger Log", ""), false, OpenBuggerLog);
 				menu.AddItem (new GUIContent("Clear Bugger Log", ""), false, ClearLog);
-
+				
 				menu.AddSeparator("");
-
+				
 				menu.AddItem (new GUIContent("Copy Selected Log to Buffer", ""), false, CopySelectedToBuffer);
 				menu.AddItem (new GUIContent("Open Selected in Text Editor", ""), false, OpenSelectedInText);
-
+				
 				// menu.AddSeparator("");
 
 				// menu.AddItem (new GUIContent("Make Log", ""), false, CreateLog);
@@ -467,7 +474,7 @@ public class BuggerWindow : EditorWindow
 				}
 				break;
 
-			case EventType.Ignore:
+			case EventType.Ignore:	
 				be.type = BuggerEventType.None;
 				break;
 
@@ -523,7 +530,7 @@ public class BuggerWindow : EditorWindow
 		GUI.BeginGroup(r);
 
 		GUILayout.BeginHorizontal(EditorStyles.toolbar);
-
+			
 			EditorGUILayout.Space();
 
 			GUI.backgroundColor = !showKeyedLogs ? TOOLBAR_TOGGLED_COLOR : Color.white;
@@ -531,9 +538,9 @@ public class BuggerWindow : EditorWindow
 			{
 				showKeyedLogs = !showKeyedLogs;
 				EditorPrefs.SetBool(SHOW_KEYED_LOGS, showKeyedLogs);
-
+				
 				if(showKeyedLogs)
-					splitA = (int)keyLogsRect.y + headerHeight + rowHeight + 32;
+					splitA = (int)keyLogsRect.y + headerHeight + rowHeight + 32; 
 			}
 			GUI.backgroundColor = Color.white;
 
@@ -542,9 +549,13 @@ public class BuggerWindow : EditorWindow
 			{
 				showRegularLogs = !showRegularLogs;
 				EditorPrefs.SetBool(SHOW_REGULAR_LOGS, showRegularLogs);
+				
+				// if(showRegularLogs)
+				// 	splitB = (int)Mathf.Clamp(e.mousePosition.y, splitA+3+headerHeight+rowHeight, Screen.height-20);
+
 			}
 			GUI.backgroundColor = Color.white;
-
+	
 			GUILayout.FlexibleSpace();
 
 
@@ -565,9 +576,9 @@ public class BuggerWindow : EditorWindow
 		messageColumn 	= new Rect(Screen.width/3f, 0f, Screen.width/3f, headerHeight);
 		dateColumn 		= new Rect((Screen.width/3f) * 2f, 0f, Screen.width/3f, headerHeight);
 
-		GUI.Label(keyColumn, "Key", EditorStyles.toolbarButton);
+		GUI.Label(keyColumn, "Key", EditorStyles.toolbarButton);	
 		GUI.Label(messageColumn, "Message", EditorStyles.toolbarButton);
-
+		
 		GUI.backgroundColor = showUpdatedDelta ? Color.gray : Color.white;
 		if(GUI.Button(dateColumn, (showUpdatedDelta) ? "Update Delta" : "Log Time", EditorStyles.toolbarButton))
 			showUpdatedDelta = !showUpdatedDelta;
@@ -584,15 +595,15 @@ public class BuggerWindow : EditorWindow
 
 		foreach(KeyValuePair<string, Bugger.LogEntry> kvp in Bugger.keyedLogs)
 		{
-			keyColumn.y 	= rowOffset;
+			keyColumn.y 	= rowOffset;	
 			messageColumn.y = rowOffset;
 			dateColumn.y 	= rowOffset;
 			row 	 		= new Rect(0f, rowOffset, Screen.width, rowHeight);
 
 			rowOffset += rowHeight;
 
-			GUI.backgroundColor = i++ % 2 == 0 ? rowColorEven : rowColorOdd;
-
+			GUI.backgroundColor = i++ % 2 == 0 ? rowColorEven : rowColorOdd;			
+			
 			if(selectedKey.Contains(kvp.Key))
 			{
 				GUI.backgroundColor = rowSelectedBlue;
@@ -638,13 +649,13 @@ public class BuggerWindow : EditorWindow
 
 		foreach(KeyValuePair<string, Bugger.TempLogEntry> kvp in Bugger.tempLog)
 		{
-			keyColumn.y 	= rowOffset;
+			keyColumn.y 	= rowOffset;	
 			messageColumn.y = rowOffset;
 			dateColumn.y 	= rowOffset;
 			row 	 		= new Rect(0f, rowOffset, Screen.width, rowHeight);
-
-			GUI.backgroundColor = i++ % 2 == 0 ? rowColorEven : rowColorOdd;
-
+			
+			GUI.backgroundColor = i++ % 2 == 0 ? rowColorEven : rowColorOdd;			
+			
 			if(selectedKey.Contains(kvp.Key))
 			{
 				GUI.backgroundColor = rowSelectedBlue;
@@ -788,8 +799,8 @@ public class BuggerWindow : EditorWindow
 			BugLog entry = logEntries[i];
 
 			logMessage = entry.message;
-
-			keyColumn.y 	= rowOffset;
+	
+			keyColumn.y 	= rowOffset;	
 			messageColumn.y = rowOffset;
 			dateColumn.y 	= rowOffset;
 			row 	 		= new Rect(0f, rowOffset, Screen.width, rowHeight);
@@ -803,14 +814,14 @@ public class BuggerWindow : EditorWindow
 				GUI.backgroundColor = rowSelectedBlue;
 			    rowTextStyle.normal.textColor = rowSelectedTextColorWhite;
 			}
-
+ 
 			else
 			{
 				rowTextStyle.normal.textColor = rowTextColor;
 			}
-
+			
 			GUI.Box(row, "", rowBackgroundStyle);
-
+			
 			Color og = GUI.color;
 
 				Texture2D icon;
@@ -835,12 +846,6 @@ public class BuggerWindow : EditorWindow
 					GUI.DrawTexture(new Rect(0, row.yMin, icon_width, icon_width), icon, ScaleMode.ScaleToFit, true, 0f);
 
 				Rect rowMod = new Rect(row.xMin + 30, row.yMin, row.width, row.height);
-
-				if(logMessage.Length > MAX_CHAR_LABEL)
-				{
-					logMessage = string.Format("{0}\n...Log was too long, truncated text.", logMessage.Substring(0, MAX_CHAR_LABEL));
-				}
-
 				GUI.Label(rowMod, logMessage, rowTextStyle);
 
 				/* */
@@ -887,7 +892,7 @@ public class BuggerWindow : EditorWindow
 	GUIStyle centeredLabel;// = new GUIStyle();
 
 	private void DrawInfoPane(Rect rect, BuggerEvent e)
-	{
+	{		
 
 		rect.height = rect.height - 16;
 
@@ -904,7 +909,7 @@ public class BuggerWindow : EditorWindow
 		// Set up GUIContent for render - need this to correctly calculate height for view portion of scrollvieew
 		int lineHeight = (int)Mathf.Ceil(EditorGUIUtility.singleLineHeight);
 		// int lineHeight = (int)Mathf.Ceil(EditorStyles.label.lineHeight);
-
+		
 		int viewHeight = 0;
 		for(int i = 0; i < selectedValue.Count; i++)
 		{
@@ -935,21 +940,21 @@ public class BuggerWindow : EditorWindow
 				messageRect.y = curHeight;
 				messageRect.height = lineHeight;
 				curHeight += lineHeight;
-
+				
 				GUI.Label(messageRect, " - - - - - - - - - -", centeredLabel);
 
 				stackIndent = "";
 				Rect stackRect = new Rect(2f, curHeight, rect.width, lineHeight);
 				for(int i = 0; i < selectedLog.stack.Count; i++)
-				{
+				{	
 					stackIndent += ">";
 					GUI.backgroundColor = selstack == i && sellog == j ? rowSelectedBlue : Color.clear;
 					stackRectBackground = stackRect;
 					stackRectBackground.height += 2;
 					GUI.Box(stackRectBackground, "", rowBackgroundStyle);
-
+			
 					GUI.Label(stackRect, stackIndent + " " + selectedLog.stack[i].methodName + " : " + selectedLog.stack[i].lineNumber);
-
+					
 					stackRect.y += (int)lineHeight;
 
 					if(e.type == BuggerEventType.MouseUp && rect.Contains(e.mousePosition) && stackRect.Contains(mPos))
@@ -1001,7 +1006,7 @@ public class BuggerWindow : EditorWindow
 		json += " ] }";
 
 		JsonTextReader reader = new JsonTextReader(new StringReader(json));
-
+		
 		List<BugLog> entries = new List<BugLog>();
 		int index = -1, stackIndex = -1;
 		while (reader.Read())
@@ -1067,15 +1072,15 @@ public class BuggerWindow : EditorWindow
 							break;
 					}
 					break;
-
+				
 				default:
 					parseStatus = ParsingStatus.None;
 					break;
 			}
 		}
-
+			
 		// Todo!
-		entries = entries.FindAll(x =>
+		entries = entries.FindAll(x => 
 			(infoLogs && x.logType == UnityEngine.LogType.Log) ||
 			(warningLogs && x.logType == UnityEngine.LogType.Warning) ||
 			(errorLogs && (x.logType == UnityEngine.LogType.Error || x.logType == UnityEngine.LogType.Assert || x.logType == UnityEngine.LogType.Exception))
@@ -1091,8 +1096,10 @@ public class BuggerWindow : EditorWindow
 
 	public static void OpenBuggerLog()
 	{
-		if(File.Exists(Bugger.LogPath))
-			System.Diagnostics.Process.Start( Bugger.LogPath );
+		if(!File.Exists(Bugger.LogPath))
+			File.WriteAllText(Bugger.LogPath, "");
+		
+		System.Diagnostics.Process.Start( Bugger.LogPath );
 	}
 
 	public static void GoToLine(StackTrace stack)

@@ -106,6 +106,10 @@ xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Releas
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4\bin\Release\ProBuilderEditor-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
+:: Remove Unity 5 stuff & change materials to use diffuse shaders
+del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader
+%unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity47.unitypackage
+
 echo Override DLL GUIDs Unity 4
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
@@ -130,6 +134,12 @@ xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Re
 
 echo Override DLL GUIDs Unity 5
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
+
+:: copy standard shader back in
+xcopy /q /y %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader
+xcopy /q /y %CD%\probuilder2.0\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader.meta %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVertexColor.shader.meta
+
+pause
 
 echo Export Unity 5 DLL project
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.0-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity50
