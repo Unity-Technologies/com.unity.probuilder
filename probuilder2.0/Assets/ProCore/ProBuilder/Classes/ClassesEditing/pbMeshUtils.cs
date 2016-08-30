@@ -19,7 +19,7 @@ namespace ProBuilder2.MeshOperations
 
 	#region FACE
 		/**
-		 * Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that 
+		 * Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that
 		 * accepts a dictionary lookup to  save to the cost of generating it each call.
 		 */
 		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Face originFace, Dictionary<int, int> lookup = null, IEnumerable<pb_Face> mask = null)
@@ -39,7 +39,7 @@ namespace ProBuilder2.MeshOperations
 			pb_Edge edge_s = new pb_Edge(-1,-1);
 
 			for(int i = 0; i < pb.faces.Length; i++)
-			{		
+			{
 				foreach(pb_Edge edge in pb.faces[i].edges)
 				{
 					edge_s.x = lookup[edge.x];
@@ -84,7 +84,7 @@ namespace ProBuilder2.MeshOperations
 				for(int n = i+1; n < faceCount; n++)
 				{
 					bool overlaps = universal[i].Overlaps(universal[n]);
-					
+
 					if( overlaps )
 					{
 						faceLookup[faces[i]].Add(faces[n]);
@@ -166,7 +166,7 @@ namespace ProBuilder2.MeshOperations
 					e.x = edges[n].x;
 					e.y = edges[n].y;
 
-					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) || 
+					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) ||
 						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
 					{
 						faces.Add(new pb_Tuple<pb_Face, pb_Edge>(pb.faces[i], new pb_Edge(edges[n])));
@@ -206,7 +206,7 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
-				
+
 			pb_Edge[][] sharedEdges = new pb_Edge[len][];
 			for(int i = 0; i < len; i++)
 				sharedEdges[i] = pb_Edge.GetUniversalEdges(selEdges[i], sharedIndices).Distinct().ToArray();
@@ -214,7 +214,7 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < pb.faces.Length; i++)
 			{
 				pb_Edge[] faceEdges = pb_Edge.GetUniversalEdges(pb.faces[i].edges, sharedIndices).Distinct().ToArray();
-				
+
 				for(int j = 0; j < len; j++)
 				{
 					int ind = -1;
@@ -262,7 +262,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Face> neighboring = new List<pb_Face>();
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			
+
 			HashSet<int> shared = new HashSet<int>();
 
 			foreach(int tri in indices)
@@ -295,7 +295,7 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Edge> connectedEdges = new List<pb_Edge>();
 
 			HashSet<int> shared = new HashSet<int>();
-			for(int i = 0; i < indices.Length; i++)	
+			for(int i = 0; i < indices.Length; i++)
 				shared.Add(lookup[indices[i]]);
 
 			pb_Edge[] edges = pb_Edge.AllEdges(pb.faces);
@@ -356,7 +356,7 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 * Returns the indices of perimeter edges in a given element group.
-		 * todo - to speed this up, we could just use the distinct in GetUniversalEdges() - but that would 
+		 * todo - to speed this up, we could just use the distinct in GetUniversalEdges() - but that would
 		 * break this method's usefullness in other situations.
 		 */
 		public static int[] GetPerimeterEdges(pb_Object pb, pb_Edge[] edges)
@@ -384,9 +384,9 @@ namespace ProBuilder2.MeshOperations
 			int min = pb_Math.Min(connections);
 			List<int> perimeter = new List<int>();
 
-			for(int i = 0; i < connections.Length; i++)	
+			for(int i = 0; i < connections.Length; i++)
 			{
-				if(connections[i] <= min)	
+				if(connections[i] <= min)
 					perimeter.Add(i);
 			}
 
@@ -460,10 +460,10 @@ namespace ProBuilder2.MeshOperations
 #endregion
 
 #region Edge Ring / Loop
-	
+
 		private static pb_WingedEdge EdgeRingNext(pb_WingedEdge edge)
 		{
-			if(edge == null) 
+			if(edge == null)
 				return null;
 
 			pb_WingedEdge next = edge.next, prev = edge.previous;
@@ -477,7 +477,7 @@ namespace ProBuilder2.MeshOperations
 					return null;
 
 				prev = prev.previous;
-				
+
 				i++;
 			}
 
@@ -498,11 +498,11 @@ namespace ProBuilder2.MeshOperations
 
 			Dictionary<pb_Edge, pb_WingedEdge> wings_dic = new Dictionary<pb_Edge, pb_WingedEdge>();
 
-			for(int i = 0; i < wings.Count; i++) 
+			for(int i = 0; i < wings.Count; i++)
 				if(!wings_dic.ContainsKey(wings[i].edge.common))
-					wings_dic.Add(wings[i].edge.common, wings[i]); 
+					wings_dic.Add(wings[i].edge.common, wings[i]);
 
-			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();			
+			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
 
 			for(int i = 0; i < edge_lookup.Count; i++)
 			{
@@ -537,12 +537,12 @@ namespace ProBuilder2.MeshOperations
 
 		/**
 		 * Attempts to find edges along an Edge loop.
-		 * 
+		 *
 		 * http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
 		 * 	First check to see if the selected element connects to only 3 other edges.
 		 * 	If the edge in question has already been added to the list, the selection ends.
 		 * 	Of the 3 edges that connect to the current edge, the ones that share a face with the current edge are eliminated and the remaining edge is added to the list and is made the current edge.
-		 */	
+		 */
 		public static bool GetEdgeLoop(pb_Object pb, pb_Edge[] edges, out pb_Edge[] loop)
 		{
 			List<pb_Edge> valid_edges = pb_Edge.ValidateEdges(pb, edges);
@@ -555,7 +555,7 @@ namespace ProBuilder2.MeshOperations
 			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
 
 			for(int i = 0; i < edges.Length; i++)
-			{		
+			{
 				pb_WingedEdge we = null;
 
 				if(!wings_dic.TryGetValue(valid_edges[i], out we) || used.Contains(we.edge))
@@ -585,6 +585,68 @@ namespace ProBuilder2.MeshOperations
 
 			loop = used.Select(x => x.local).ToArray();
 			return true;
+		}
+
+		private static pb_WingedEdge NextSpoke(pb_WingedEdge wing, int pivot, bool opp)
+		{
+			if(opp)
+				return wing.opposite;
+			else
+			if(wing.next.edge.common.Contains(pivot))
+				return wing.next;
+			else
+			if(wing.previous.edge.common.Contains(pivot))
+				return wing.previous;
+			else
+				return null;
+		}
+
+		/**
+		 * Return all edges connected to @wing with @sharedIndex as the pivot point.  The first entry in the list is always
+		 * the queried wing.
+		 */
+		public static List<pb_WingedEdge> GetSpokes(pb_WingedEdge wing, int sharedIndex, bool allowHoles = false)
+		{
+			List<pb_WingedEdge> spokes = new List<pb_WingedEdge>();
+			pb_WingedEdge cur = wing;
+			bool opp = false;
+
+			do
+			{
+				spokes.Add(cur);
+				cur = NextSpoke(cur, sharedIndex, opp);
+				opp = !opp;
+
+				// we've looped around as far as it's gon' go
+				if( cur != null && cur.edge.common.Equals(wing.edge.common) )
+					return spokes;
+
+			} while(cur != null);
+
+			if(!allowHoles)
+				return null;
+
+			// if the first loop didn't come back, that means there was a hole in the geo
+			// do the loop again using the opposite wing
+			cur = wing.opposite;
+			opp = false;
+			List<pb_WingedEdge> fragment = new List<pb_WingedEdge>();
+
+			while(cur != null)
+			{
+				fragment.Add(cur);
+				cur = NextSpoke(cur, sharedIndex, opp);
+				opp = !opp;
+
+				// if geo is non-manifold this situation could arise
+				if(cur.edge.common.Equals(wing.edge.common))
+					break;
+			}
+
+			fragment.Reverse();
+			spokes.AddRange(fragment);
+
+			return spokes;
 		}
 
 		private static pb_WingedEdge EdgeLoopNext(pb_WingedEdge edge, bool forward)

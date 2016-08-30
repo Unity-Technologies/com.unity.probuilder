@@ -16,14 +16,28 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		// foreach(pb_Object pb in selection)
-		// {
-		// 	// pb_Menu_Commands.MenuGrowSelection(selection);
-			
-			// MenuGrowSelection(selection);
-		// }
+		foreach(pb_Object pb in selection)
+		{
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			pb_Edge edge = pb.SelectedEdges.FirstOrDefault();
+			if(edge == null) continue;
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			pb_Edge common = new pb_Edge(lookup[edge.x], lookup[edge.y]);
+			pb_WingedEdge wing = wings.FirstOrDefault(x => x.edge.common.Equals(common));
+			if(wing == null) continue;
+
+			List<pb_WingedEdge> spokes = pbMeshUtils.GetSpokes(wing, wing.edge.common.x, true);
+			if(spokes == null)
+			{
+				pb.SetSelectedEdges(new List<pb_Edge>());
+				continue;
+			}
+			IEnumerable<pb_EdgeLookup> el = spokes.Select(x => x.edge);
+			el = el.Distinct();
+			pb.SetSelectedEdges( el.Select(x => x.local) );
+		}
 
 		pb_Editor.Refresh();
 	}
