@@ -64,9 +64,6 @@ namespace ProBuilder2.EditorCommon
 				pb_MeshUtility.CollapseSharedVertices(mesh);
 			}
 
-			// UnityEngine.Mesh.Optimize
-			mesh.Optimize();
-
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
 				TryCacheMesh(InObject);
 
