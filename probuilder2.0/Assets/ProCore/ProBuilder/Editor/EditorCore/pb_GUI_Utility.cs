@@ -110,11 +110,11 @@ namespace ProBuilder2.Interface
 			DrawSeparator(lines);
 			UnityEngine.GUI.backgroundColor = old;
 		}
-		 
+
 		public static void DrawSeparator(int lines)
 		{
 			GUILayout.Box("", SplitStyle, GUILayout.MaxHeight(2));
-			
+
 			for(int i = 1; i < lines; i++)
 			{
 				GUILayout.Space(2);
@@ -158,7 +158,7 @@ namespace ProBuilder2.Interface
 		}
 
 		static GUIContent slider_guicontent = new GUIContent("", "");
-		
+
 		public static float FreeSlider(string content, float value, float min, float max)
 		{
 			slider_guicontent.text = content;
@@ -195,7 +195,7 @@ namespace ProBuilder2.Interface
 
 			EditorGUI.BeginChangeCheck();
 
-				int controlID = GUIUtility.GetControlID(FocusType.Native, sliderRect);
+				int controlID = GUIUtility.GetControlID(FocusType.Passive, sliderRect);
 				float tmp = value;
 				tmp = GUI.Slider(sliderRect, tmp, 0f, min, max, GUI.skin.horizontalSlider, (!EditorGUI.showMixedValue) ? GUI.skin.horizontalSliderThumb : "SliderMixed", true, controlID);
 
@@ -206,7 +206,7 @@ namespace ProBuilder2.Interface
 
 			return value;
 		}
-	
+
 		public static bool ToolSettingsGUI(	string text,
 											string description,
 											bool showSettings,

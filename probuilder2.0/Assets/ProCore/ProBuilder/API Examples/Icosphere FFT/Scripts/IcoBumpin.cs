@@ -59,7 +59,7 @@ namespace ProBuilder2.Examples
 		[Range(1f, 50f)]
 		public float extrusion = 30f;
 
-		// An FFT returns a spectrum including frequencies that are out of human hearing range - 
+		// An FFT returns a spectrum including frequencies that are out of human hearing range -
 		// this restricts the number of bins used from the spectrum to the lower @fftBounds.
 		[Range(8, 128)]
 		public int fftBounds = 32;
@@ -124,7 +124,7 @@ namespace ProBuilder2.Examples
 
 			// Shell is all the faces on the new icosphere.
 			pb_Face[] shell = ico.faces;
-				
+
 			// Materials are set per-face on pb_Object meshes.  pb_Objects will automatically
 			// condense the mesh to the smallest set of subMeshes possible based on materials.
 #if !PROTOTYPE
@@ -173,7 +173,11 @@ namespace ProBuilder2.Examples
 
 			// Build the waveform ring.
 			icoPosition = icoTransform.position;
+#if UNITY_4 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
 			waveform.SetVertexCount(WAVEFORM_SAMPLES);
+#else
+			waveform.numPositions = WAVEFORM_SAMPLES;
+#endif
 
 			if( bounceWaveform )
 				waveform.transform.parent = icoTransform;
@@ -195,8 +199,8 @@ namespace ProBuilder2.Examples
 			/**
 			 * For each face, translate the vertices some distance depending on the frequency range assigned.
 			 * Not using the TranslateVertices() pb_Object extension method because as a convenience, that method
-			 * gathers the sharedIndices per-face on every call, which while not tremondously expensive in most 
-			 * contexts, is far too slow for use when dealing with audio, and especially so when the mesh is 
+			 * gathers the sharedIndices per-face on every call, which while not tremondously expensive in most
+			 * contexts, is far too slow for use when dealing with audio, and especially so when the mesh is
 			 * somewhat large.
 			 */
 			for(int i = 0; i < outsides.Length; i++)

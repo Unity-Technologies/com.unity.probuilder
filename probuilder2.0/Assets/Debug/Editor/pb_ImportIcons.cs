@@ -19,13 +19,15 @@ namespace ProBuilder2.EditorCommon
 			if(ti == null)
 				return;
 
+#if !UNITY_5_5
 			ti.textureType = TextureImporterType.Advanced;
+			ti.textureFormat = TextureImporterFormat.RGBA16;
+#endif
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
 			ti.mipmapEnabled = false;
 			ti.maxTextureSize = 64;
-			ti.textureFormat = TextureImporterFormat.RGBA16;
 
 			ti.SaveAndReimport();
 		}

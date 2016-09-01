@@ -29,7 +29,7 @@ public class TempMenuItems : EditorWindow
 			if(wing == null) continue;
 
 			List<pb_WingedEdge> spokes = pbMeshUtils.GetSpokes(wing, wing.edge.common.x, true);
-			Debug.Log("spokes: " + spokes.Count);
+
 			if(spokes == null)
 			{
 				pb.SetSelectedEdges(new List<pb_Edge>());
