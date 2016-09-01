@@ -538,53 +538,55 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Attempts to find edges along an Edge loop.
 		 *
-		 * http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
+		 * 	http://wiki.blender.org/index.php/Doc:2.4/Manual/Modeling/Meshes/Selecting/Edges says:
 		 * 	First check to see if the selected element connects to only 3 other edges.
 		 * 	If the edge in question has already been added to the list, the selection ends.
 		 * 	Of the 3 edges that connect to the current edge, the ones that share a face with the current edge are eliminated and the remaining edge is added to the list and is made the current edge.
 		 */
 		public static bool GetEdgeLoop(pb_Object pb, pb_Edge[] edges, out pb_Edge[] loop)
 		{
-			List<pb_Edge> valid_edges = pb_Edge.ValidateEdges(pb, edges);
-
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			Dictionary<pb_Edge, pb_WingedEdge> wings_dic = new Dictionary<pb_Edge, pb_WingedEdge>();
-			for(int i = 0; i < wings.Count; i++)
-				wings_dic.Add(wings[i].edge.local, wings[i]);
-
+			IEnumerable<pb_EdgeLookup> m_edgeLookup = pb_EdgeLookup.GetEdgeLookup(edges, pb.sharedIndices.ToDictionary());
+			HashSet<pb_EdgeLookup> sources = new HashSet<pb_EdgeLookup>(m_edgeLookup);
 			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
 
-			for(int i = 0; i < edges.Length; i++)
+			for(int i = 0; i < wings.Count; i++)
 			{
-				pb_WingedEdge we = null;
-
-				if(!wings_dic.TryGetValue(valid_edges[i], out we) || used.Contains(we.edge))
+				if(used.Contains(wings[i].edge) || !sources.Contains(wings[i].edge))
 					continue;
 
-				pb_WingedEdge cur = we;
+				bool completeLoop = GetEdgeLoopInternal(wings[i], wings[i].edge.common.y, used);
 
-				int superBreak = 0;
-				const int LOOP_BREAKER_MAX = 65000;
-
-				while(cur != null && superBreak++ < LOOP_BREAKER_MAX)
-				{
-					if(!used.Add(cur.edge)) break;
-					cur = EdgeLoopNext(cur, true);
-				}
-
-				superBreak = 0;
-				cur = EdgeLoopNext(we, false);
-
-				// have to test in both directions
-				while(cur != null && superBreak++ < LOOP_BREAKER_MAX)
-				{
-					if(!used.Add(cur.edge)) break;
-					cur = EdgeLoopNext(cur, false);
-				}
+				// loop didn't close
+				if(!completeLoop)
+					GetEdgeLoopInternal(wings[i], wings[i].edge.common.x, used);
 			}
 
 			loop = used.Select(x => x.local).ToArray();
+
 			return true;
+		}
+
+		private static bool GetEdgeLoopInternal(pb_WingedEdge start, int startIndex, HashSet<pb_EdgeLookup> used)
+		{
+			int ind = startIndex;
+			pb_WingedEdge cur = start;
+
+			do
+			{
+				used.Add(cur.edge);
+
+				List<pb_WingedEdge> spokes = GetSpokes(cur, ind, true).DistinctBy(x => x.edge.common).ToList();
+				cur = null;
+
+				if(spokes != null && spokes.Count == 4)
+				{
+					cur = spokes[2];
+					ind = cur.edge.common.x == ind ? cur.edge.common.y : cur.edge.common.x;
+				}
+			} while(cur != null && !used.Contains(cur.edge));
+
+			return cur != null;
 		}
 
 		private static pb_WingedEdge NextSpoke(pb_WingedEdge wing, int pivot, bool opp)
@@ -632,15 +634,12 @@ namespace ProBuilder2.MeshOperations
 			opp = false;
 			List<pb_WingedEdge> fragment = new List<pb_WingedEdge>();
 
-			while(cur != null)
+			// if mesh is non-manifold this situation could arise
+			while(cur != null && !cur.edge.common.Equals(wing.edge.common))
 			{
 				fragment.Add(cur);
 				cur = NextSpoke(cur, sharedIndex, opp);
 				opp = !opp;
-
-				// if geo is non-manifold this situation could arise
-				if(cur.edge.common.Equals(wing.edge.common))
-					break;
 			}
 
 			fragment.Reverse();
@@ -649,33 +648,33 @@ namespace ProBuilder2.MeshOperations
 			return spokes;
 		}
 
-		private static pb_WingedEdge EdgeLoopNext(pb_WingedEdge edge, bool forward)
-		{
-			if(edge == null)
-				return null;
+		// private static pb_WingedEdge EdgeLoopNext(pb_WingedEdge edge, bool forward)
+		// {
+		// 	if(edge == null)
+		// 		return null;
 
-			pb_WingedEdge next = forward ? edge.next : edge.previous;
+		// 	pb_WingedEdge next = forward ? edge.next : edge.previous;
 
-			if(next == null)
-				return null;
+		// 	if(next == null)
+		// 		return null;
 
-			pb_WingedEdge opposite = next.opposite;
+		// 	pb_WingedEdge opposite = next.opposite;
 
-			if(opposite == null)
-				return null;
+		// 	if(opposite == null)
+		// 		return null;
 
-			pb_WingedEdge opposite_next = opposite.next;
+		// 	pb_WingedEdge opposite_next = opposite.next;
 
-			if(opposite_next != null && opposite_next.edge.common.Contains(edge.edge.common))
-				return opposite_next;
+		// 	if(opposite_next != null && opposite_next.edge.common.Contains(edge.edge.common))
+		// 		return opposite_next;
 
-			pb_WingedEdge opposite_previous = opposite.previous;
+		// 	pb_WingedEdge opposite_previous = opposite.previous;
 
-			if(opposite_previous != null && opposite_previous.edge.common.Contains(edge.edge.common))
-				return opposite_previous;
+		// 	if(opposite_previous != null && opposite_previous.edge.common.Contains(edge.edge.common))
+		// 		return opposite_previous;
 
-			return null;
-		}
+		// 	return null;
+		// }
 #endregion
 	}
 }

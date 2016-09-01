@@ -18,7 +18,7 @@ using Parabox.Debug;
  */
 namespace ProBuilder2.Common
 {
-	public static class pbUtil 
+	public static class pbUtil
 	{
 
 #region COMPONENT WRANGLING
@@ -33,13 +33,13 @@ namespace ProBuilder2.Common
 	 *	{
 	 *		// Create 10 new pb_Objects
 	 *		gos[i] = ProBuilder.CreatePrimitive(ProBuilder.Shape.Cube).gameObject;
-	 *		
+	 *
 	 *		// Line them up nicely
 	 *		gos[i].transform.position = new Vector3((i * 2) - (gos.Length/2), 0f, 0f);
 	 *	}
-	 *	
+	 *
 	 *	// Get all pb_Objects from GameObject array
-	 *	pb_Object[] pb = gos.GetComponents<pb_Object>();	
+	 *	pb_Object[] pb = gos.GetComponents<pb_Object>();
 	 *
 	 *	// Now do move their vertices up or down some random amount
 	 *	for(int i = 0; i < pb.Length; i++)
@@ -80,21 +80,21 @@ namespace ProBuilder2.Common
 	 *	{
 	 *		// Create 10 new pb_Objects
 	 *		t_arr[i] = ProBuilder.CreatePrimitive(ProBuilder.Shape.Cube).transform;
-	 *			
+	 *
 	 *
 	 *		// Line them up nicely
 	 *		t_arr[i].position = new Vector3((i * 2) - (gos.Length/2), 0f, 0f);
 	 *	}
-	 *	
+	 *
 	 *	// Get all pb_Objects from GameObject array
-	 *	pb_Object[] pb = t_arr.GetComponents<pb_Object>();	
+	 *	pb_Object[] pb = t_arr.GetComponents<pb_Object>();
 	 *
 	 *	// Now do move their vertices up or down some random amount
 	 *	for(int i = 0; i < pb.Length; i++)
 	 *	{
 	 *		pb.TranslateVertices(new Vector3(0f, Randome.Range(-3f, 3f), 0f));
 	 *	}
-	 *	
+	 *
 	 *	\endcode
 	 *	\returns Array of T.
 	 */
@@ -124,7 +124,7 @@ namespace ProBuilder2.Common
 #endregion
 
 #region ARRAY / LIST UTILITY
-	
+
 	public static T[] ValuesWithIndices<T>(this T[] arr, int[] indices)
 	{
 		T[] vals = new T[indices.Length];
@@ -139,7 +139,7 @@ namespace ProBuilder2.Common
 
 		foreach(int i in indices)
 			vals.Add(arr[i]);
-		
+
 		return vals;
 	}
 
@@ -175,7 +175,7 @@ namespace ProBuilder2.Common
 	}
 
 	public static T[] Add<T>(this T[] arr, T val)
-	{	
+	{
 		T[] v = new T[arr.Length+1];
 		System.Array.ConstrainedCopy(arr, 0, v, 0, arr.Length);
 		v[arr.Length] = val;
@@ -218,7 +218,7 @@ namespace ProBuilder2.Common
 		}
 		return newArray;
 	}
-	
+
 	/**
 	 * Remove elements at @indices from an array.
 	 */
@@ -246,7 +246,7 @@ namespace ProBuilder2.Common
 			if(n < indices_length && sorted_indices[n] == i)
 			{
 				// handle duplicate indices
-				while(n < indices_length && sorted_indices[n] == i)	
+				while(n < indices_length && sorted_indices[n] == i)
 					n++;
 
 				continue;
@@ -281,10 +281,10 @@ namespace ProBuilder2.Common
 	}
 
 	/**
-	 * Given a sorted list and value, returns the index of the greatest value in sorted_list that is 
-	 * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value 
+	 * Given a sorted list and value, returns the index of the greatest value in sorted_list that is
+	 * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value
 	 * 4.
-	 * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1 
+	 * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1
 	 * is returned.  If an exact match is found, the index prior to that match is returned.
 	 */
 	public static int NearestIndexPriorToValue<T>(IList<T> sorted_list, T value) where T : System.IComparable<T>
@@ -318,13 +318,13 @@ namespace ProBuilder2.Common
 				}
 			}
 		}
-	
+
 		return 0;
 	}
 
 	public static T[] Fill<T>(T val, int length)
 	{
-		return FilledArray<T>(val, length); 
+		return FilledArray<T>(val, length);
 	}
 
 	public static List<T> Fill<T>(System.Func<int, T> ctor, int length)
@@ -343,7 +343,7 @@ namespace ProBuilder2.Common
 		}
 		return arr;
 	}
-	
+
 	/**
 	 * True if any value is present in both arrays.
 	 */
@@ -437,6 +437,24 @@ namespace ProBuilder2.Common
 		else
 			dictionary.Add(key, value);
 	}
+
+	/**
+	 * http://stackoverflow.com/questions/1300088/distinct-with-lambda
+	 */
+	public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
+		this IEnumerable<TSource> source,
+		Func<TSource, TKey> keySelector)
+	{
+		HashSet<TKey> knownKeys = new HashSet<TKey>();
+
+		foreach (TSource element in source)
+		{
+			if (knownKeys.Add(keySelector(element)))
+			{
+				yield return element;
+			}
+		}
+	}
 #endregion
 
 #region SNAP
@@ -525,10 +543,10 @@ namespace ProBuilder2.Common
 			else
 				str.Append( ((t[i] == null) ? "null" : t[i].ToString()) + _delimiter);
 		}
-		
+
 		str.Append( (t[len-1] == null) ? "null" : t[len-1].ToString() );
 
-		return str.ToString();		
+		return str.ToString();
 	}
 
 	[Obsolete]
@@ -544,10 +562,10 @@ namespace ProBuilder2.Common
 		{
 			str.AppendLine( ((t[i] == null) ? "null" : t[i].ToString(_delimiter)) + "\n" );
 		}
-		
+
 		str.Append( (t[len-1] == null) ? "null" : t[len-1].ToString(_delimiter) );
 
-		return str.ToString();		
+		return str.ToString();
 	}
 
 	/**
@@ -607,7 +625,7 @@ namespace ProBuilder2.Common
 		string valid = "01234567890.,";
         value = new string(value.Where(c => valid.Contains(c)).ToArray());
         string[] rgba = value.Split(',');
-        
+
         if(rgba.Length < 4)
         {
         	col = Color.white;
@@ -620,7 +638,7 @@ namespace ProBuilder2.Common
 			float.Parse(rgba[1]),
 			float.Parse(rgba[2]),
 			float.Parse(rgba[3]));
-		
+
 		return true;
 	}
 
@@ -644,7 +662,7 @@ namespace ProBuilder2.Common
 				continue;
 
 			string[] values = vec.Split(',');
-			
+
 			if(values.Length < 3)
 				continue;
 
