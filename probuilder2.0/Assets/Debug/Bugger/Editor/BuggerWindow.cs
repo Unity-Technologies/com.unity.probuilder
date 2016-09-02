@@ -936,7 +936,7 @@ public class BuggerWindow : EditorWindow
 				messageRect.y = curHeight;
 				messageRect.height = contentHeight[j];
 
-				GUI.Label(messageRect, selectedLog.message, stackStyle);
+				GUI.Label(messageRect, ClipStr(selectedLog.message), stackStyle);
 				curHeight += contentHeight[j++];
 
 				messageRect.y = curHeight;

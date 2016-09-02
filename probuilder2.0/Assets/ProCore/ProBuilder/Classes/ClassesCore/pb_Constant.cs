@@ -167,6 +167,8 @@ public static class pb_Constant
 	public const int MENU_REPAIR 			= 600;
 	public const int MENU_MISC 				= 600;
 
+	public const int MENU_EXPORT			= 800;
+
 
 	public static Vector3[] VERTICES_CUBE = new Vector3[] {
 		// bottom 4 verts

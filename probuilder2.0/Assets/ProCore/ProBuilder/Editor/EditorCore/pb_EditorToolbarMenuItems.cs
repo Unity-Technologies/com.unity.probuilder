@@ -96,6 +96,51 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Obj ", true)]
+		static bool MenuVerifyExportObj()
+		{
+			ExportObj instance = pb_EditorToolbarLoader.GetInstance<ExportObj>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Obj ", false, pb_Constant.MENU_EXPORT + 0)]
+		static void MenuDoExportObj()
+		{
+			ExportObj instance = pb_EditorToolbarLoader.GetInstance<ExportObj>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Stl Ascii ", true)]
+		static bool MenuVerifyExportStlAscii()
+		{
+			ExportStlAscii instance = pb_EditorToolbarLoader.GetInstance<ExportStlAscii>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Stl Ascii ", false, pb_Constant.MENU_EXPORT + 0)]
+		static void MenuDoExportStlAscii()
+		{
+			ExportStlAscii instance = pb_EditorToolbarLoader.GetInstance<ExportStlAscii>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Stl Binary ", true)]
+		static bool MenuVerifyExportStlBinary()
+		{
+			ExportStlBinary instance = pb_EditorToolbarLoader.GetInstance<ExportStlBinary>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Stl Binary ", false, pb_Constant.MENU_EXPORT + 0)]
+		static void MenuDoExportStlBinary()
+		{
+			ExportStlBinary instance = pb_EditorToolbarLoader.GetInstance<ExportStlBinary>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(PB_MENU_PREFIX + "Geometry/Bevel Edges ", true)]
 		static bool MenuVerifyBevelEdges()
 		{

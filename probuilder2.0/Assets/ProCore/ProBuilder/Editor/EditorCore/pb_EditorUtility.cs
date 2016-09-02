@@ -109,27 +109,35 @@ namespace ProBuilder2.EditorCommon
 
 		public static string ExportOBJ(pb_Object[] pb)
 		{
-			if(pb.Length < 1) return "";
+			if(pb.Length < 1)
+				return "";
 
 			pb_Object combined;
+
 			if(pb.Length > 1)
 				pbMeshOps.CombineObjects(pb, out combined);
 			else
 				combined = pb[0];
 
-			string path = EditorUtility.SaveFilePanel("Save ProBuilder Object as Obj", "", "pb" + pb[0].id + ".obj", "");
+			string path = EditorUtility.SaveFilePanel("Save ProBuilder Object as Obj", "", "pb" + pb[0].id, "obj");
+
 			if(path == null || path == "")
 			{
-				if(pb.Length > 1) {
+				if(pb.Length > 1) 
+				{
 					GameObject.DestroyImmediate(combined.GetComponent<MeshFilter>().sharedMesh);
 					GameObject.DestroyImmediate(combined.gameObject);
 				}
+
 				return "";
 			}
+
 			EditorObjExporter.MeshToFile(combined.GetComponent<MeshFilter>(), path);
+
 			AssetDatabase.Refresh();
 
-			if(pb.Length > 1) {
+			if(pb.Length > 1)
+			{
 				GameObject.DestroyImmediate(combined.GetComponent<MeshFilter>().sharedMesh);
 				GameObject.DestroyImmediate(combined.gameObject);
 			}

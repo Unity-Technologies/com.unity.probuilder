@@ -73,9 +73,8 @@ public class EditorObjExporter : ScriptableObject
 		{
 			Vector3 wv = lv;
 
-			// this is not how to convert from left to right handed coordinates
-			//This is sort of ugly - inverting x-component since we're in
-			//a different coordinate system than "everyone" is "used to".
+			// This is sort of ugly - inverting x-component since we're in
+			// a different coordinate system than "everyone" is "used to".
 			sb.Append(string.Format("v {0} {1} {2}\n",-wv.x,wv.y,wv.z));
 		}
 
