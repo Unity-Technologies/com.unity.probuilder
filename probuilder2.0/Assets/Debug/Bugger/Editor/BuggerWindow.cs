@@ -24,6 +24,7 @@ public class BuggerWindow : EditorWindow
 {
 	const string SHOW_KEYED_LOGS = "Bugger_Show_Keyed_Logs";
 	const string SHOW_REGULAR_LOGS = "Bugger_Show_Regular_Logs";
+	const int MAX_STR_LENGTH = 4096;
 
 	Color PRO_PRIMARY_TEXT_COLOR = new Color(1f, 1f, 1f, .8f);
 	Color BASIC_PRIMARY_TEXT_COLOR = new Color(0f, 0f, 0f, .8f);
@@ -399,7 +400,7 @@ public class BuggerWindow : EditorWindow
 
 	private void CopySelectedToBuffer()
 	{
-		EditorGUIUtility.systemCopyBuffer = selectedValue.ToFormattedString("\n");
+		EditorGUIUtility.systemCopyBuffer = string.Join("\n\n", selectedValue.Select(x => x.message).ToArray());
 	}
 
 	private void SetBuggerEvent(Event e)
@@ -469,7 +470,7 @@ public class BuggerWindow : EditorWindow
 			case EventType.ExecuteCommand:
 				if(selectedValue != null)
 				{
-					EditorGUIUtility.systemCopyBuffer = selectedValue.ToString();
+					CopySelectedToBuffer();
 					e.Use();
 				}
 				break;
@@ -846,7 +847,8 @@ public class BuggerWindow : EditorWindow
 					GUI.DrawTexture(new Rect(0, row.yMin, icon_width, icon_width), icon, ScaleMode.ScaleToFit, true, 0f);
 
 				Rect rowMod = new Rect(row.xMin + 30, row.yMin, row.width, row.height);
-				GUI.Label(rowMod, logMessage, rowTextStyle);
+
+				GUI.Label(rowMod, ClipStr(logMessage), rowTextStyle);
 
 				/* */
 				PRO_SECONDARY_TEXT_COLOR = new Color(1f, 1f, 1f, .5f);
@@ -913,7 +915,7 @@ public class BuggerWindow : EditorWindow
 		int viewHeight = 0;
 		for(int i = 0; i < selectedValue.Count; i++)
 		{
-			contentHeight[i] = (int)Mathf.Ceil(stackStyle.CalcHeight(new GUIContent(selectedValue[i].message, ""), rect.width));
+			contentHeight[i] = (int)Mathf.Ceil(stackStyle.CalcHeight(new GUIContent(ClipStr(selectedValue[i].message), ""), rect.width));
 			viewHeight += contentHeight[i];
 			viewHeight += (int)Mathf.Ceil(selectedValue[i].stack.Count * lineHeight+1);
 		}
@@ -992,6 +994,11 @@ public class BuggerWindow : EditorWindow
 	bool infoLogs = true;
 	bool errorLogs = true;
 	bool warningLogs = false;
+
+	private string ClipStr(string str)
+	{
+		return str.Length > MAX_STR_LENGTH ? str.Substring(0, MAX_STR_LENGTH - 32) : str;	
+	}
 
 	private List<BugLog> LoadLogEntries()
 	{

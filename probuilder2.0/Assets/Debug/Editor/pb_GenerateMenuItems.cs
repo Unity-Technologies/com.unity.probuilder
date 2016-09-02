@@ -28,7 +28,8 @@ class pb_GenerateMenuItems : Editor
 		{ "Object", 		"pb_Constant.MENU_GEOMETRY + 2" },
 		{ "Geometry", 		"pb_Constant.MENU_GEOMETRY + 3" },
 		{ "Interaction", 	"pb_Constant.MENU_SELECTION + 1" },
-		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" }
+		{ "Selection", 		"pb_Constant.MENU_SELECTION + 0" },
+		{ "Export",			"pb_Constant.MENU_EXPORT + 0" }
 	};
 
 	[MenuItem("Tools/Debug/ProBuilder/Rebuild Menu Items", false, 800)]
@@ -95,8 +96,15 @@ namespace ProBuilder2.EditorCommon
 		string pretty_path = Regex.Replace(action, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $0");
 
 		StringBuilder sb = new StringBuilder();
+		object o = null;
 
-		object o = System.Activator.CreateInstance( System.Type.GetType("ProBuilder2.Actions." + class_name) );
+		try {
+			o = System.Activator.CreateInstance( System.Type.GetType("ProBuilder2.Actions." + class_name) );
+		} catch {
+			Debug.LogWarning("Failed generating menu item for class: \"" + class_name + "\".  File names must match class names.");
+			return "";
+		}
+
 		PropertyInfo hasMenuEntryProperty = typeof(pb_MenuAction).GetProperty("hasFileMenuEntry");
 
 		if( (bool)hasMenuEntryProperty.GetValue(o, null) == false )
