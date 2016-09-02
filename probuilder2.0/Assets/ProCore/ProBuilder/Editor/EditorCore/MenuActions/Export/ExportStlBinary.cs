@@ -17,9 +17,11 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Export Stl (Binary)",
+			"Export Stl",
 			@"Export an Stl model file."
 		);
+
+		public override bool IsHidden() { return true; }
 
 		public override bool IsEnabled()
 		{

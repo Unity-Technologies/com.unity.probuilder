@@ -21,6 +21,8 @@ namespace ProBuilder2.Actions
 			"Export a Wavefront OBJ file."
 		);
 
+		public override bool IsHidden() { return true; }
+
 		public override bool IsEnabled()
 		{
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;

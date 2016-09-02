@@ -33,12 +33,12 @@ namespace ProBuilder2.EditorCommon
 		private static readonly GUIContent AltButtonContent = new GUIContent("+", "");
 		public virtual bool isProOnly { get { return false; } }
 
-#if PROTOTYPE
+		#if PROTOTYPE
 		private static Color _proOnlyTintLight = new Color(0f, .5f, 1f, 1f);
   		private static Color _proOnlyTintDark = new Color(.25f, 1f, 1f, 1f);
   		private static Color ProOnlyTint { get { return EditorGUIUtility.isProSkin ? _proOnlyTintDark : _proOnlyTintLight; } }
 		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
-#endif
+		#endif
 
 		public pb_MenuAction()
 		{
@@ -91,9 +91,9 @@ namespace ProBuilder2.EditorCommon
 		public static GUIStyle rowStyleHorizontal 		{ get { return pb_MenuActionStyles.rowStyleHorizontal; } }
 		public static GUIStyle altButtonStyle 			{ get { return pb_MenuActionStyles.altButtonStyle; } }
 		public static GUIStyle proOnlyStyle 			{ get { return pb_MenuActionStyles.proOnlyStyle; } }
-#if PROTOTYPE
+		#if PROTOTYPE
 		public static GUIStyle advancedOnlyStyle 		{ get { return pb_MenuActionStyles.advancedOnlyStyle; } }
-#endif
+		#endif
 		public static Texture2D proOnlyIcon				{ get { return pb_MenuActionStyles.proOnlyIcon; } }
 
 		private Texture2D _desaturatedIcon = null;
@@ -108,7 +108,7 @@ namespace ProBuilder2.EditorCommon
 
 					_desaturatedIcon = pb_IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
 
-#if GENERATE_DESATURATED_ICONS
+					#if GENERATE_DESATURATED_ICONS
 					if(!_desaturatedIcon)
 					{
 						string path = AssetDatabase.GetAssetPath(icon);
@@ -146,7 +146,7 @@ namespace ProBuilder2.EditorCommon
 						byte[] bytes = _desaturatedIcon.EncodeToPNG();
 						System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
 					}
-#endif
+					#endif
 				}
 
 				return _desaturatedIcon;

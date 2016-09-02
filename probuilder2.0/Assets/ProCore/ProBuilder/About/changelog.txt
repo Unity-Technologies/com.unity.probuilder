@@ -1,3 +1,20 @@
+# ProBuilder 2.6.2f0
+
+## Features
+
+- Add STL file export support.
+- Standard Vertex Color shader now compatible with UNity 5.5 beta changes
+- Add API Example showing how to set custom default UV2 Unwrap Parameters.
+
+## Bug Fixes
+
+- Fix bug where exporting OBJ would sometimes insert "AllFiles" into the file path.
+- Fix drag selecting edges then bridging sometimes using the default material instead of a neighboring one.
+- Fix compile error when using Fog with Standard Vertex Color shader.
+- Fix console warnings in Unity 5.5.0b1
+- Fix bug where `Select Edge Loop` would select too many edges.
+- Don't show missing icon warnings unless in PB_DEBUG mode.
+
 # ProBuilder 2.6.1f0
 
 ## Features

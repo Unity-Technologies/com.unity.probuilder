@@ -96,6 +96,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Asset ", true)]
+		static bool MenuVerifyExportAsset()
+		{
+			ExportAsset instance = pb_EditorToolbarLoader.GetInstance<ExportAsset>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Asset ", false, pb_Constant.MENU_EXPORT + 0)]
+		static void MenuDoExportAsset()
+		{
+			ExportAsset instance = pb_EditorToolbarLoader.GetInstance<ExportAsset>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(PB_MENU_PREFIX + "Export/Export Obj ", true)]
 		static bool MenuVerifyExportObj()
 		{
