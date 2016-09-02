@@ -1021,10 +1021,10 @@ public class pb_Editor : EditorWindow
 
 			if(nearestEdge != null && nearestEdge.IsValid())
 			{
-				pb_Edge edge;
+				pb_Tuple<pb_Face, pb_Edge> edge;
 
 				if( pb_Edge.ValidateEdge(pb, nearestEdge, out edge) )
-					nearestEdge = edge;
+					nearestEdge = edge.Item2;
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 

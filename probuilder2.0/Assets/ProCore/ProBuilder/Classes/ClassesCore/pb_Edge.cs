@@ -150,7 +150,7 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 	 * Note that this will only return the first valid edge found - there will usually
 	 * be multiple matches (well, 2 if your geometry is sane).
 	 */
-	public static bool ValidateEdge(pb_Object pb, pb_Edge edge, out pb_Edge validEdge)
+	public static bool ValidateEdge(pb_Object pb, pb_Edge edge, out pb_Tuple<pb_Face, pb_Edge> validEdge)
 	{
 		pb_Face[] faces = pb.faces;
 		pb_IntArray[] sharedIndices = pb.sharedIndices;
@@ -166,12 +166,12 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 				int x = faces[i].distinctIndices[dist_x];
 				int y = faces[i].distinctIndices[dist_y];
 
-				validEdge = new pb_Edge(x, y);
+				validEdge = new pb_Tuple<pb_Face, pb_Edge>(faces[i], new pb_Edge(x, y));
 				return true;
 			}
 		}
 
-		validEdge = edge;
+		validEdge = null;
 		return false;
 	}
 

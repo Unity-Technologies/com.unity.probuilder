@@ -599,14 +599,15 @@ namespace ProBuilder2.MeshOperations
 			Material mat = pb_Constant.DefaultMaterial;
 
 			// Get material and UV stuff from the first edge face
-			foreach(pb_Face face in pb.faces)
+			pb_Tuple<pb_Face, pb_Edge> faceAndEdge = null;
+
+			if(!pb_Edge.ValidateEdge(pb, a, out faceAndEdge))
+				pb_Edge.ValidateEdge(pb, b, out faceAndEdge);
+
+			if(faceAndEdge != null)
 			{
-				if(face.edges.Contains(a))
-				{
-					uvs = new pb_UV(face.uv);
-					mat = face.material;
-					break;
-				}
+				uvs = new pb_UV(faceAndEdge.Item1.uv);
+				mat = faceAndEdge.Item1.material;
 			}
 
 			// Bridge will form a triangle
