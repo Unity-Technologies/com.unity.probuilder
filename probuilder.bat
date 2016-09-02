@@ -3,6 +3,8 @@
 set unity_path_4="D:\Applications\Unity 4.7.0f1\Editor\Unity.exe"
 set unity_path_5_0="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set unity_path_5_3="D:\Applications\Unity 5.3.0f4\Editor\Unity.exe"
+set unity_path_5_5="D:\Applications\Unity 5.5.0b1\Editor\Unity.exe"
+
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\debug"
 
@@ -20,6 +22,7 @@ set u5_3editor="%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Un
 echo UNITY 4 PATH IS %unity_path_4%
 echo UNITY 5.0 PATH IS %unity_path_5_0%
 echo UNITY 5.3 PATH IS %unity_path_5_3%
+echo UNITY 5.5 PATH IS %unity_path_5_5%
 
 :: Update SVN
 :: ====================
@@ -99,8 +102,12 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesCore
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesEditing
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 
-:: Copy Unity 4 build artifacts
+
+
+:: Export Unity 4
 :: ====================
+
+:: Copy Unity 4 build artifacts
 echo Copy Unity 4 Core and MeshOps to Staging
 xcopy "%CD%\visual studio\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
 xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity4\ProBuilderMeshOps-Unity4\bin\Release\ProBuilderMeshOps-Unity4.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\"
@@ -113,10 +120,11 @@ del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Shader\pb_StandardVerte
 echo Override DLL GUIDs Unity 4
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
-:: Export Unity 4
-:: ====================
 echo Export Unity 4 DLL project
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
+
+
+
 
 :: Export Unity 5
 :: ====================
@@ -140,6 +148,8 @@ echo Override DLL GUIDs Unity 5
 echo Export Unity 5 DLL project
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.0-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity50
 
+
+
 :: Export Unity 5.3
 :: ====================
 
@@ -162,9 +172,17 @@ echo Override DLL GUIDs Unity 5.3
 echo Export Unity 5.3 DLL project
 %unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.3-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity53
 
+
+
+:: Export Unity 5.5
+%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity55.unitypackage
+%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.5-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity55
+
+
 :: Export UpgradeKit
 xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProBuilderUpgradeKit %CD%\probuilder-staging\Assets\ProBuilderUpgradeKit
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\ProBuilderUpgradeKit-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProBuilderUpgradeKit outDir:%build_directory% outName:ProBuilderUpgradeKit
 
 echo DONE BUILDINGS
+
 pause

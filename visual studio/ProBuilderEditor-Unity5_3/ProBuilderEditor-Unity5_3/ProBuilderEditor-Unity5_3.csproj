@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="pb_Stl">
+      <HintPath>..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesLib\pb_Stl.dll</HintPath>
+    </Reference>
     <Reference Include="ProBuilderCore-Unity5">
       <HintPath>..\..\ProBuilderCore-Unity5\ProBuilderCore-Unity5\bin\Release\ProBuilderCore-Unity5.dll</HintPath>
     </Reference>

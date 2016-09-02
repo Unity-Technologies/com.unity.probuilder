@@ -36,6 +36,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="pb_Stl">
+      <HintPath>..\..\..\probuilder2.0\Assets\ProCore\ProBuilder\Classes\ClassesLib\pb_Stl.dll</HintPath>
+    </Reference>
     <Reference Include="ProBuilderCore-Unity4">
       <HintPath>..\..\ProBuilderCore-Unity4\ProBuilderCore-Unity4\bin\Release\ProBuilderCore-Unity4.dll</HintPath>
     </Reference>

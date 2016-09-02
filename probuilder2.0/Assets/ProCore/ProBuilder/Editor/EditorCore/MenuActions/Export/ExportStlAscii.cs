@@ -48,7 +48,7 @@ namespace ProBuilder2.Actions
 				if(full.Contains(Application.dataPath))
 				{
 					string relative = full.Replace(Application.dataPath, "Assets");
-					Object o = AssetDatabase.LoadAssetAtPath<Object>(relative);
+					Object o = AssetDatabase.LoadAssetAtPath(relative, typeof(Object));
 					if(o != null)
 						EditorGUIUtility.PingObject(o);
 					AssetDatabase.Refresh();
