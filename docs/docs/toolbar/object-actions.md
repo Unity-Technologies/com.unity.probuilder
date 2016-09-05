@@ -1,8 +1,3 @@
-<!-- #Video: Object Actions
-
-[![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo)
- -->
-
 <div style="text-align:center">
 <img src="../../images/Toolbar_ObjectActions.png">
 </div>
@@ -11,8 +6,8 @@
 
 ## ![Merge Objects Icon](../images/icons/Object_Merge.png "Merge Objects Icon") Merge Objects
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Merge Objects</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/luxCckVIu8k?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Merge Objects</a>
 </div>
 
 Merges the selected objects into a single object.
@@ -20,9 +15,9 @@ Merges the selected objects into a single object.
 ---
 
 ## ![Flip Object Normals Icon](../images/icons/Object_FlipNormals.png "Flip Object Normals Icon") Flip Object Normals
-<div class="video-link-missing">
+<div class="video-link">
 
-Section Video: <a href="@todo">Object Actions: Flip Object Normals</a>
+Section Video: <a href="https://youtu.be/Rwu4pr5EeIc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Flip Object Normals</a>
 </div>
 
 Flips the normals of **all** faces on the selected object(s).
@@ -35,8 +30,8 @@ Flips the normals of **all** faces on the selected object(s).
 
 ## ![Subdivide Objects Icon](../images/icons/Object_Subdivide.png "Subdivide Objects Icon") Subdivide Object
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Subdivide Object</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/pIEvtGyvbOs?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Subdivide Object</a>
 </div>
 
 Divides every face on selected objects, allowing for greater levels of detail when modeling.
@@ -47,8 +42,8 @@ Divides every face on selected objects, allowing for greater levels of detail wh
 
 ## ![Reset Transform Icon](../images/icons/Pivot_Reset.png "Reset Transform Icon") Reset / Freeze Transform
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Reset / Freeze Transform</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/IjXYkQ8PfAY?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Reset / Freeze Transform</a>
 </div>
 
 Sets the selected objects position, rotation, and scale to world-relative `{0,0,0}` without changing any vertex positions.
@@ -57,8 +52,8 @@ Sets the selected objects position, rotation, and scale to world-relative `{0,0,
 
 ## ![Center Pivot Icon](../images/icons/Pivot_CenterOnObject.png "Center Pivot Icon") Move Pivot to Center of Object
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Center Pivot</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/C5hCXTItzfE?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Center Pivot</a>
 </div>
 
 **Keyboard Shortcut** : `CTRL J`
@@ -71,8 +66,8 @@ Moves the mesh pivot to the center of the object’s bounds.
 
 ## ![Conform Normals Icon](../images/icons/Object_ConformNormals.png "Conform Normals Icon") Conform Normals
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Conform Normals</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/Dc6G1TDvBj4?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Conform Normals</a>
 </div>
 
 Sets all face normals on the selected object to the same relative direction.
@@ -81,8 +76,8 @@ Sets all face normals on the selected object to the same relative direction.
 
 ## ![Triangulate Icon](../images/icons/Object_Triangulate.png "Triangulate Icon") Triangulate
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Object Actions: Triangulate</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/OQvY8j20MpY?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Triangulate</a>
 </div>
 
 Reduces all polygons to their base triangles, creating a "[Polyworld-like](http://qt-ent.com/PolyWorld/)" effect.
@@ -94,8 +89,8 @@ Reduces all polygons to their base triangles, creating a "[Polyworld-like](http:
 <a id="mirror"></a>
 ##![Mirror Tool Icon](../images/icons/Object_Mirror.png "Mirror Tool Icon") Mirror Tool
 
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Mirror Tool</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/OvzNJ7z0OTs?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">ProBuilder Toolbar: Mirror Tool</a>
 </div>
 
 **Purpose** : Use the Mirror action to create mirrored copies of objects.

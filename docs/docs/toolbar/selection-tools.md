@@ -1,8 +1,3 @@
-<!-- #Video: Selection Tools
-
-[![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "Selection Tools Video")
-
- -->
 <div style="text-align:center">
 <img src="../../images/Toolbar_SelectionTools.png">
 </div>
@@ -11,8 +6,8 @@
 
 ##![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) Select Hidden
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Select Hidden</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/le7AchazndE?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Select Hidden</a>
 </div>
 
 Determines whether hidden elements are selected or ignored, when drag-selecting. This is a toggle button, click to change modes:
@@ -28,8 +23,8 @@ Toolbar Icon | Description
 
 ##![Handle Alignment Local](../images/icons/HandleAlign_Local.png) Handle Alignment
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Handle Alignment</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/C9sXO4sNhKM?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Handle Alignment</a>
 </div>
 
 **Keyboard Shortcut** : `P`
@@ -49,8 +44,8 @@ Toolbar Icon | Description
 <a id="grow"></a>
 ##![Grow Selection](../images/icons/Selection_Grow.png) Grow Selection
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Grow Selection</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/yX29De1bcUE?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Grow Selection</a>
 </div>
 
 **Keyboard Shortcut**: `ALT G`
@@ -71,8 +66,8 @@ Setting | Description
 
 ##![Shrink Selection](../images/icons/Selection_Shrink.png) Shrink Selection
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Shrink Selection</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/1z2sDcHF69o?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Shrink Selection</a>
 </div>
 
 **Keyboard Shortcut** : `ALT SHIFT G`
@@ -83,8 +78,8 @@ Does the opposite of Grow Selection: removes the elements on the perimiter of th
 
 ##![Invert Selection](../images/icons/Selection_Invert.png) Invert Selection
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Invert Selection</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/Dj9qHeCIZwY?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Invert Selection</a>
 </div>
 
 **Keyboard Shortcut** : `CTRL SHIFT I`
@@ -95,8 +90,8 @@ Selects the inverse of the current selection. All unselected elements will becom
 
 ##![Select Edge Loop Icon](../images/icons/Selection_Loop.png "Select Edge Loop Icon") Select Edge Loop
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Select Edge Loop</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/gh_cV_lkI6s?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Select Edge Loop</a>
 </div>
 
 **Keyboard Shortcut** : `ALT L`
@@ -109,8 +104,8 @@ Selects an edge loop from each selected edge.
 
 ##![Select Edge Ring Icon](../images/icons/Selection_Ring.png "Select Edge Ring Icon") Select Edge Ring
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Selection Tools: Select Edge Ring</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/sVZgWycaZ4M?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Select Edge Ring</a>
 </div>
 
 **Keyboard Shortcut** : `ALT R`

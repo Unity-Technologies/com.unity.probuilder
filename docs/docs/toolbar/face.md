@@ -1,7 +1,3 @@
-<!-- #Video: Face Actions
-
-[![Face Actions Video](../images/VideoLink_YouTube_768.png)](@todo) -->
-
 <div style="text-align:center">
 <img src="../../images/Toolbar_FaceActions.png">
 </div>
@@ -10,8 +6,8 @@
 
 ## ![Delete Face Icon](../images/icons/Face_Delete.png "Delete Faces Icon") Delete Face
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Delete Faces</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/Iy6RBaKB9jU?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Delete Faces</a>
 </div>
 
 **Keyboard Shortcut** : `BACKSPACE`
@@ -26,8 +22,8 @@ Deletes the selected face(s).
 
 ## ![Detach Face Icon](../images/icons/Face_Detach.png "Detach Faces Icon") Detach Face
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Detach Faces</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/rqD8tQ3GOpA?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Detach Faces</a>
 </div>
 
 Detach the selected face(s) to a new sub-mesh, or seperate object.
@@ -47,8 +43,8 @@ Setting | Description
 <a id="extrude">
 ## ![Extrude Face Icon](../images/icons/Face_Extrude.png "Detach Faces Icon") Extrude Face
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Extrude Faces</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/5IcZd8aIS68?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Extrude Faces</a>
 </div>
 
 **Keyboard Shortcut** : `SHIFT DRAG`
@@ -72,8 +68,8 @@ Setting | Description
 
 ## ![Flip Normals Icon](../images/icons/Face_FlipNormals.png "Flip Normals Icon") Flip Normals
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Flip Normals</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/RngRqt3L8H8?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Flip Normals</a>
 </div>
 
 Flips the normals on the selected face(s).
@@ -86,8 +82,8 @@ Flips the normals on the selected face(s).
 
 ## ![Flip Triangles Icon](../images/icons/Face_FlipTri.png "Flip Face Edge Icon") Flip Face Edge
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Flip Face Edge</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/ftIjv3tsTGc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Flip Face Edge</a>
 </div>
 
 Swap the triangle orientation on the selected face(s). This will only work on quads (faces with 4 sides).
@@ -100,8 +96,8 @@ Swap the triangle orientation on the selected face(s). This will only work on qu
 
 ## ![Conform Normals Icon](../images/icons/Face_ConformNormals.png "Conform Normals Icon") Conform Normals
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Conform Normals</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/a9T_xe4x2pU?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Conform Normals</a>
 </div>
 
 Sets all selected face normals to the same relative direction.
@@ -110,8 +106,8 @@ Sets all selected face normals to the same relative direction.
 
 ## ![Merge Faces Icon](../images/icons/Face_Merge.png "Merge Faces Icon") Merge Faces
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Merge Faces</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/fMUHuWUXnP8?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Merge Faces</a>
 </div>
 
 Merges selected faces into a single face, and removes any dividing edges.
@@ -124,8 +120,8 @@ Merges selected faces into a single face, and removes any dividing edges.
 
 ## ![Subdivide Face Icon](../images/icons/Face_Subdivide.png "Subdivide Face Icon") Subdivide Face
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Subdivide Face</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/jgH1MHB6p3w?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Subdivide Face</a>
 </div>
 
 Split each selected face by adding a vertex at the center of each edge and connecting them in the center.
@@ -138,8 +134,8 @@ Split each selected face by adding a vertex at the center of each edge and conne
 
 ## ![Bevel Icon](../images/icons/Edge_Bevel.png "Bevel Icon") Bevel
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Face Actions: Bevel Face</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/2UbvKLQyDDc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Bevel Face</a>
 </div>
 
 Performs the [Bevel Edge](edge/#bevel) action on all the edges of the selected face(s).

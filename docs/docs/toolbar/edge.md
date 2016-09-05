@@ -1,10 +1,3 @@
-<!--
-#Video: Edge Actions
-
-[![Edge Actions Video](../images/VideoLink_YouTube_768.png)](@todo)
-
- -->
-
 <div style="text-align:center">
 <img src="../../images/Toolbar_EdgeActions.png">
 </div>
@@ -13,8 +6,8 @@
 
 ## ![Bridge Edges Icon](../images/icons/Edge_Bridge.png "Bridge Edges Icon") Bridge Edges
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Vertex Actions: Bridge Edges</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/de927QxOW9E?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Bridge Edges</a>
 </div>
 
 **Keyboard Shortcut** : `ALT B`
@@ -30,8 +23,8 @@ Create a new face between two selected edges. Each edge must have a free side.
 <a id="bevel"></a>
 ## ![Bevel Edges Icon](../images/icons/Edge_Bevel.png "Bevel Edges Icon") Bevel
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Vertex Actions: Bevel Edges</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/gEc6wjEj960?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Bevel Edges</a>
 </div>
 
 <!-- **Keyboard Shortcut** : `ALT B` -->
@@ -52,8 +45,8 @@ Setting | Description
 
 ## ![Connect Edges Icon](../images/icons/Edge_Connect.png "Connect Edges Icon") Connect Edges
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Vertex Actions: Connect Edges</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/3wcSPqZy6Oc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Connect Edges</a>
 </div>
 
 **Keyboard Shortcut** : `ALT E`
@@ -68,8 +61,8 @@ Insert an edge connecting the centers of each selected edge.
 
 ## ![Extrude Edges Icon](../images/icons/Edge_Extrude.png "Extrude Edges Icon") Extrude Edges
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Vertex Actions: Extrude Edges</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/r7-3zkDfxGQ?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Extrude Edges</a>
 </div>
 
 **Keyboard Shortcut** : `SHIFT DRAG` / `CONTROL E` (PC) / `COMMAND E` (Mac)
@@ -95,7 +88,7 @@ Setting | Description
 ## ![Subdivide Edge Icon](../images/icons/Edge_Subdivide.png "Subdivide Edge Icon") Subdivide Edge
 
 <div class="video-link">
-Section Video: <a href="@todo">Vertex Actions: Subdivide Edge</a>
+Section Video: <a href="https://youtu.be/CC3J82ZY6-g?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Subdivide Edge</a>
 </div>
 
 **Keyboard Shortcut** : `ALT S`
@@ -114,21 +107,18 @@ Setting | Description
 
 ---
 
-## ![Fill Hole Icon](../images/icons/Edge_FillHole.png "Fill Hole Icon") Fill Hole
+## ![Insert Edge Loop Icon](../images/icons/Edge_InsertLoop.png "Insert Edge Loop Icon") Insert Edge Loop
 
 <div class="video-link">
-Section Video: <a href="@todo">Vertex Actions: Fill Hole</a>
+Section Video: <a href=https://youtu.be/Sy6K4SBDRGo?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Vertex Actions: Subdivide Edge</a>
 </div>
+
+**Keyboard Shortcut** : `ALT U`
+
+Adds a new edge loop from the selected edge(s).
 
 <div style="text-align:center">
-<img src="../../images/FillHole_Example.png">
+<img src="../../images/InsertEdgeLoop_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
-
-Setting | Description
---- | ---
-**Fill Entire Hole** | If **On**, the entire mesh opening will be filled. Otherwise, only the selected open edges will be capped.
-
 ---
-
