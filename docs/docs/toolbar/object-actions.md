@@ -93,19 +93,19 @@ Reduces all polygons to their base triangles, creating a "[Polyworld-like](http:
 Section Video: <a href="https://youtu.be/OvzNJ7z0OTs?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">ProBuilder Toolbar: Mirror Tool</a>
 </div>
 
-**Purpose** : Use the Mirror action to create mirrored copies of objects.
+Use the Mirror action to create mirrored copies of objects.
 
 Mirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together
 for a perfectly symmetrical result.
 
-![Mirror Tool Example](../images/Mirror-Panel_WithExample.png "Mirror Tool Example")
+![Mirror Tool Example](../images/Mirror_Example.png "Mirror Tool Example")
 
-**Usage** :
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
 
-1. Select the object to be mirrored
-1. Open the Mirror Tools
-1. Select which axis (or multiple axis) to mirror on
-1. Click "Mirror"- a mirrored duplicate will be created
+Setting | Description
+--- | ---
+**X, Y, Z** | Choose which axis (single or multiple) to mirror on
+**Duplicate** | When **On**, a duplicate object will be created and mirrored, leaving the original unchanged.
 
 ---
 
