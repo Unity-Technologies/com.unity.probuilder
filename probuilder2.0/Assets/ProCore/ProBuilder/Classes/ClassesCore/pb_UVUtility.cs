@@ -37,24 +37,18 @@ public class pb_UVUtility
 				break;
 		}
 
-		// if(uvSettings.justify != pb_UV.Justify.None)
-		// 	uvs = JustifyUVs(uvs, uvSettings.justify);
+		if(!uvSettings.useWorldSpace)
+			ApplyUVAnchor(uvs, uvSettings.anchor);
 
 		// Apply transform last, so that fill and justify don't override it.
+
 		pb_Bounds2D bounds = new pb_Bounds2D(uvs);
-
-		if(!uvSettings.useWorldSpace)
-			for(int i = 0; i < uvs.Length; i++)
-				uvs[i] -= (bounds.center - bounds.extents);
-
-		bounds = new pb_Bounds2D(uvs);
 
 		for(int i = 0; i < uvs.Length; i++)
 		{
 			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);
 			uvs[i] = uvs[i].RotateAroundPoint(bounds.center, uvSettings.rotation);
 		}
-
 
 		for(int i = 0; i < len; i++)
 		{
@@ -74,7 +68,7 @@ public class pb_UVUtility
 
 		bounds = new pb_Bounds2D(uvs);
 
-		uvSettings.localPivot = bounds.center;// uvSettings.useWorldSpace ? bounds.center : bounds.extents;
+		uvSettings.localPivot = bounds.center;
 		uvSettings.localSize = bounds.size;
 
 		for(int i = 0; i < uvs.Length; i++)
@@ -154,6 +148,33 @@ public class pb_UVUtility
 			uvs[i] -= amt;
 
 		return uvs;
+	}
+
+	private static void ApplyUVAnchor(Vector2[] uvs, pb_UV.Anchor anchor)
+	{
+		Vector2 scoot = Vector2.zero;
+
+		Vector2 min = pb_Math.SmallestVector2(uvs);
+		Vector2 max = pb_Math.LargestVector2(uvs);
+
+		if(	anchor == pb_UV.Anchor.UpperLeft || anchor == pb_UV.Anchor.MiddleLeft || anchor == pb_UV.Anchor.LowerLeft )
+			scoot.x = min.x;
+		else
+		if(	anchor == pb_UV.Anchor.UpperRight || anchor == pb_UV.Anchor.MiddleRight || anchor == pb_UV.Anchor.LowerRight )
+			scoot.x = max.x - 1f;
+		else
+			scoot.x = (min.x + ((max.x - min.x) * .5f)) - .5f;
+
+		if( anchor == pb_UV.Anchor.UpperLeft || anchor == pb_UV.Anchor.UpperCenter || anchor == pb_UV.Anchor.UpperRight)
+			scoot.y = max.y - 1f;
+		else
+		if( anchor == pb_UV.Anchor.MiddleLeft || anchor == pb_UV.Anchor.MiddleCenter || anchor == pb_UV.Anchor.MiddleRight)
+			scoot.y = (min.y + ((max.y - min.y) * .5f)) - .5f;
+		else
+			scoot.y = min.y;
+
+		for(int i = 0; i < uvs.Length; i++)
+			uvs[i] -= scoot;
 	}
 #endregion
 }

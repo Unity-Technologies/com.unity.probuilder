@@ -41,7 +41,7 @@ namespace ProBuilder2.EditorCommon
 			{"offsetx", false},
 			{"offsety", false},
 			{"rotation", false},
-			{"justify", false},
+			{"anchor", false},
 			{"manualUV", false},
 			{"textureGroup", false}
 		};
@@ -61,7 +61,7 @@ namespace ProBuilder2.EditorCommon
 		 * Returns true on GUI change detected.
 		 */
 		public static bool OnGUI(pb_Object[] selection, int maxWidth)
-		{	
+		{
 			int width = maxWidth - 36;	// scrollbar is 36px
 
 			UpdateDiffDictionary(selection);
@@ -78,16 +78,26 @@ namespace ProBuilder2.EditorCommon
 			/**
 			 * Set Tile mode
 			 */
-			GUILayout.Label("Tiling", EditorStyles.boldLabel);
+			GUILayout.Label("Tiling & Alignment", EditorStyles.boldLabel);
+
 			GUILayout.BeginHorizontal();
+				tempInt = (int)uv_gui.fill;
+				EditorGUI.showMixedValue = uv_diff["fill"];
+				GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
+				uv_gui.fill = (pb_UV.Fill)EditorGUILayout.EnumPopup(uv_gui.fill);
+				if(tempInt != (int)uv_gui.fill) SetFill(uv_gui.fill, selection);
+			GUILayout.EndHorizontal();
 
-					tempInt = (int)uv_gui.fill;
-					EditorGUI.showMixedValue = uv_diff["fill"];
-					GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
-					uv_gui.fill = (pb_UV.Fill)EditorGUILayout.EnumPopup(uv_gui.fill);
-					if(tempInt != (int)uv_gui.fill) SetFill(uv_gui.fill, selection);
-
-			GUILayout.EndHorizontal();	
+			GUILayout.BeginHorizontal();
+				bool enabled = GUI.enabled;
+				GUI.enabled = !uv_gui.useWorldSpace;
+				tempInt = (int) uv_gui.anchor;
+				EditorGUI.showMixedValue = uv_diff["anchor"];
+				GUILayout.Label("Anchor", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
+				uv_gui.anchor = (pb_UV.Anchor) EditorGUILayout.EnumPopup(uv_gui.anchor);
+				if(tempInt != (int)uv_gui.anchor) SetAnchor(uv_gui.anchor, selection);
+				GUI.enabled = enabled;
+			GUILayout.EndHorizontal();
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
 			pb_GUI_Utility.DrawSeparator(1);
@@ -114,16 +124,16 @@ namespace ProBuilder2.EditorCommon
 
 			UnityEngine.GUI.SetNextControlName(ROTATION_CONTROL_NAME);
 			uv_gui.rotation = EditorGUILayout.Slider(uv_gui.rotation, 0f, 360f, GUILayout.MaxWidth(width));
-			
+
 			/**
 			 * Scale
 			 */
 			EditorGUI.showMixedValue = uv_diff["scalex"] || uv_diff["scaley"];
 			tempVec2 = uv_gui.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
-			
+
 			uv_gui.scale = EditorGUILayout.Vector2Field("Tiling", uv_gui.scale, GUILayout.MaxWidth(width));
-			
+
 			// Draw tiling shortcuts
 			GUILayout.BeginHorizontal();
 
@@ -155,7 +165,7 @@ namespace ProBuilder2.EditorCommon
 			tempBool = uv_gui.useWorldSpace;
 			EditorGUI.showMixedValue = uv_diff["useWorldSpace"];
 			uv_gui.useWorldSpace = EditorGUILayout.Toggle("World Space", uv_gui.useWorldSpace);
-			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);  
+			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
 			pb_GUI_Utility.DrawSeparator(1);
@@ -166,18 +176,18 @@ namespace ProBuilder2.EditorCommon
 			tempBool = uv_gui.flipU;
 			EditorGUI.showMixedValue = uv_diff["flipU"];
 			uv_gui.flipU = EditorGUILayout.Toggle("Flip U", uv_gui.flipU);
-			if(tempBool != uv_gui.flipU) SetFlipU(uv_gui.flipU, selection); 
+			if(tempBool != uv_gui.flipU) SetFlipU(uv_gui.flipU, selection);
 
 			// Flip V
 			tempBool = uv_gui.flipV;
 			EditorGUI.showMixedValue = uv_diff["flipV"];
 			uv_gui.flipV = EditorGUILayout.Toggle("Flip V", uv_gui.flipV);
-			if(tempBool != uv_gui.flipV) SetFlipV(uv_gui.flipV, selection);  
-				
+			if(tempBool != uv_gui.flipV) SetFlipV(uv_gui.flipV, selection);
+
 			tempBool = uv_gui.swapUV;
 			EditorGUI.showMixedValue = uv_diff["swapUV"];
 			uv_gui.swapUV = EditorGUILayout.Toggle("Swap U/V", uv_gui.swapUV);
-			if(tempBool != uv_gui.swapUV) SetSwapUV(uv_gui.swapUV, selection);  
+			if(tempBool != uv_gui.swapUV) SetSwapUV(uv_gui.swapUV, selection);
 
 			/**
 			 * Texture Groups
@@ -193,10 +203,10 @@ namespace ProBuilder2.EditorCommon
 			if(tempInt != textureGroup)
 			{
 				SetTextureGroup(selection, textureGroup);
-				
+
 				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
 					selection[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
-				
+
 				SceneView.RepaintAll();
 
 				uv_diff["textureGroup"] = false;
@@ -213,14 +223,14 @@ namespace ProBuilder2.EditorCommon
 			if(GUILayout.Button(new GUIContent("Break Selected Groups", "This resets all the selected face Texture Groups."), GUILayout.MaxWidth(width)))
 			{
 				SetTextureGroup(selection, -1);
-				
+
 				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
 				{
 					selection[i].ToMesh();
 					selection[i].Refresh();
 					selection[i].Optimize();
 				}
-				
+
 				SceneView.RepaintAll();
 
 				uv_diff["textureGroup"] = false;
@@ -256,7 +266,7 @@ namespace ProBuilder2.EditorCommon
 		static void UpdateDiffDictionary(pb_Object[] selection)
 		{
 			uv_selection.Clear();
-			
+
 			if(selection == null || selection.Length < 1)
 				return;
 
@@ -267,7 +277,7 @@ namespace ProBuilder2.EditorCommon
 				uv_diff[key] = false;
 
 			if(uv_selection.Count < 1) return;
-			
+
 			uv_gui = new pb_UV(uv_selection[0]);
 
 			foreach(pb_UV u in uv_selection)
@@ -294,15 +304,15 @@ namespace ProBuilder2.EditorCommon
 					uv_diff["offsety"] = true;
 				if(u.rotation != uv_gui.rotation)
 					uv_diff["rotation"] = true;
-				if(u.justify != uv_gui.justify)
-					uv_diff["justify"] = true;
+				if(u.anchor != uv_gui.anchor)
+					uv_diff["anchor"] = true;
 			}
 
 			foreach(pb_Object pb in selection)
 			{
 				if(uv_diff["manualUV"] && uv_diff["textureGroup"])
 					break;
-					
+
 				pb_Face[] selFaces = pb.SelectedFaces;
 
 				if(!uv_diff["manualUV"])
@@ -371,14 +381,14 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private static void SetJustify(pb_UV.Justify justify, pb_Object[] sel)
+		private static void SetAnchor(pb_UV.Anchor anchor, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Justify UVs");
+			pbUndo.RecordObjects(sel, "Set UV Anchor");
+
 			for(int i = 0; i < sel.Length; i++)
 			{
-				foreach(pb_Face q in sel[i].SelectedFaces) {
-					q.uv.justify = justify;
-				}
+				foreach(pb_Face q in sel[i].SelectedFaces)
+					q.uv.anchor = anchor;
 			}
 		}
 
@@ -402,7 +412,7 @@ namespace ProBuilder2.EditorCommon
 							break;
 					}
 				}
-			}		
+			}
 		}
 
 		private static void SetRotation(float rot, pb_Object[] sel)
@@ -413,8 +423,8 @@ namespace ProBuilder2.EditorCommon
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.rotation = rot;
 				}
-			}		
-		}	
+			}
+		}
 
 		private static void SetScale(Vector2 scale, pb_Axis2d axis, pb_Object[] sel)
 		{
@@ -435,12 +445,12 @@ namespace ProBuilder2.EditorCommon
 							break;
 					}
 				}
-			}		
+			}
 		}
 	#endregion
 
 	#region TEXTURE GROUPS
-			
+
 		private static void SetTextureGroup(pb_Object[] selection, int tex)
 		{
 			pbUndo.RecordObjects(selection, "Set Texture Group " + textureGroup);

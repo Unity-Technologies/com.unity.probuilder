@@ -549,25 +549,6 @@ namespace ProBuilder2.Common
 		return str.ToString();
 	}
 
-	[Obsolete]
-	public static string ToFormattedString(this pb_UV[] t, string _delimiter)
-	{
-		int len = t.Length;
-		if(t == null || len < 1)
-			return "Empty Array.";
-
-		StringBuilder str = new StringBuilder();
-
-		for(int i = 0; i < len-1; i++)
-		{
-			str.AppendLine( ((t[i] == null) ? "null" : t[i].ToString(_delimiter)) + "\n" );
-		}
-
-		str.Append( (t[len-1] == null) ? "null" : t[len-1].ToString(_delimiter) );
-
-		return str.ToString();
-	}
-
 	/**
 	 *	\brief Returns a string formatted by the passed seperator parameter.
 	 *	\code{cs}

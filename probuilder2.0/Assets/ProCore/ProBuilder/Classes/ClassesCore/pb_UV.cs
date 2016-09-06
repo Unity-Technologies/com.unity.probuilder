@@ -63,11 +63,11 @@ public class pb_UV
 	public Justify 			justify;			///< Aligns UVs to the edges or center.
 	public Vector2			localPivot;			///< The center point of the mapped UVs prior to offset application.
 	public Vector2			localSize;			///< The size of the mapped UVs prior to modifications.
+	public Anchor 			anchor;				///< Where the UV coordinate origin is.
 
 	public pb_UV()
 	{
 		this.useWorldSpace = false;
-		this.justify = Justify.None;
 		this.flipU = false;
 		this.flipV = false;
 		this.swapUV = false;
@@ -75,6 +75,7 @@ public class pb_UV
 		this.scale = new Vector2(1f, 1f);
 		this.offset = new Vector2(0f, 0f);
 		this.rotation = 0f;
+		this.anchor = Anchor.LowerLeft;
 	}
 
 	public pb_UV(pb_UV uvs)
@@ -87,7 +88,7 @@ public class pb_UV
 		this.scale = uvs.scale;
 		this.offset = uvs.offset;
 		this.rotation = uvs.rotation;
-		this.justify = uvs.justify;
+		this.anchor = uvs.anchor;
 	}
 
 	[System.Obsolete("Please use constructor with pb_UV.Anchor parameter.")]
@@ -118,7 +119,6 @@ public class pb_UV
 	public void Reset()
 	{
 		this.useWorldSpace 		= false;
-		this.justify 			= Justify.None;
 		this.flipU 				= false;
 		this.flipV 				= false;
 		this.swapUV 			= false;
@@ -126,6 +126,7 @@ public class pb_UV
 		this.scale 				= new Vector2(1f, 1f);
 		this.offset 			= new Vector2(0f, 0f);
 		this.rotation 			= 0f;
+		this.anchor 			= Anchor.LowerLeft;
 	}
 
 	public override string ToString()
@@ -136,27 +137,11 @@ public class pb_UV
 			"Flip V: " + flipV + "\n" +
 			"Swap UV: " + swapUV + "\n" +
 			"Fill Mode: " + fill + "\n" +
-			"Justification: " + justify + "\n" +
+			"Anchor: " + anchor + "\n" +
 			"Scale: " + scale + "\n" +
 			"Offset: " + offset + "\n" +
 			"Rotation: " + rotation + "\n" +
 			"Pivot: " + localPivot + "\n";
-		return str;
-	}
-
-	public string ToString(string delim)
-	{
-		string str = delim.Replace("\n", "") +
-			"Use World Space: " + useWorldSpace + delim +
-			"Flip U: " + flipU + delim +
-			"Flip V: " + flipV + delim +
-			"Swap UV: " + swapUV + delim +
-			"Fill Mode: " + fill + delim +
-			"Justification: " + justify + delim +
-			"Scale: " + scale + delim +
-			"Offset: " + offset + delim +
-			"Rotation: " + rotation + delim +
-			"Pivot: " + localPivot;
 		return str;
 	}
 }
