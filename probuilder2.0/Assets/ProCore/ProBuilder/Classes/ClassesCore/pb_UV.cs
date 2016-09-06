@@ -1,3 +1,6 @@
+// Disable warnings for Justify enum
+#pragma warning disable 0618
+
 /*
  *	UV Settings for ProBuilder Objects
  */
@@ -8,13 +11,12 @@ using System.Runtime.Serialization;
  *	\brief Container for UV mapping parameters per face.
  */
 [System.Serializable]
-public class pb_UV : ISerializable {
-
-#region ENUM
-
+public class pb_UV
+{
 	/**
 	 * Defines the anchor point of UV calculations.
 	 */
+	[System.Obsolete("See pb_UV.Anchor")]
 	public enum Justify {
 		Right,
 		Left,
@@ -22,6 +24,22 @@ public class pb_UV : ISerializable {
 		Center,
 		Bottom,
 		None
+	}
+
+	/**
+	 * The origin point of UVs.
+	 */
+	public enum Anchor
+	{
+		UpperLeft,
+		UpperCenter,
+		UpperRight,
+		MiddleLeft,
+		MiddleCenter,
+		MiddleRight,
+		LowerLeft,
+		LowerCenter,
+		LowerRight
 	}
 
 	/**
@@ -33,56 +51,18 @@ public class pb_UV : ISerializable {
 		Stretch
 	}
 
-#endregion
-
-#region MEMBERS
-
 	public bool 			useWorldSpace;		///< If true, UV coordinates are calculated using world points instead of local.
 	public bool 			flipU;				///< If true, the U value will be inverted.
 	public bool 			flipV;				///< If true, the V value will be inverted.
 	public bool 			swapUV;				///< If true, U and V values will switched.
-	public Fill 			fill;				///< Which Fill mode to use. 
+	public Fill 			fill;				///< Which Fill mode to use.
 	public Vector2			scale;				///< The scale to be applied to U and V coordinates.
 	public Vector2			offset;				///< The offset to be applied to the UV coordinates.
 	public float 			rotation;			///< Rotates UV coordinates.
+	[System.Obsolete("Please use pb_UV.anchor.")]
 	public Justify 			justify;			///< Aligns UVs to the edges or center.
 	public Vector2			localPivot;			///< The center point of the mapped UVs prior to offset application.
 	public Vector2			localSize;			///< The size of the mapped UVs prior to modifications.
-
-	// OnSerialize
-	public void GetObjectData(SerializationInfo info, StreamingContext context)
-	{
-		info.AddValue("useWorldSpace", 		useWorldSpace,			typeof(bool));
-		info.AddValue("flipU", 				flipU,					typeof(bool));
-		info.AddValue("flipV", 				flipV,					typeof(bool));
-		info.AddValue("swapUV", 			swapUV,					typeof(bool));
-		info.AddValue("fill", 				fill,					typeof(Fill));
-		info.AddValue("scale", 				(Vector2)scale,			typeof(Vector2));
-		info.AddValue("offset", 			(Vector2)offset,		typeof(Vector2));
-		info.AddValue("rotation", 			rotation,				typeof(float));
-		info.AddValue("justify", 			justify,				typeof(Justify));
-		info.AddValue("localPivot", 		(Vector2)localPivot,	typeof(Vector2));
-		info.AddValue("localSize", 			(Vector2)localSize,		typeof(Vector2));
-	}
-
-	// The pb_SerializedMesh constructor is used to deserialize values. 
-	public pb_UV(SerializationInfo info, StreamingContext context)
-	{
-		this.useWorldSpace			= (bool)		info.GetValue("useWorldSpace", 	typeof(bool));
-		this.flipU					= (bool)		info.GetValue("flipU", 			typeof(bool));
-		this.flipV					= (bool)		info.GetValue("flipV", 			typeof(bool));
-		this.swapUV					= (bool)		info.GetValue("swapUV", 		typeof(bool));
-		this.fill					= (Fill)		info.GetValue("fill", 			typeof(Fill));
-		this.scale					= (Vector2) 	info.GetValue("scale", 			typeof(Vector2));
-		this.offset					= (Vector2) 	info.GetValue("offset", 		typeof(Vector2));
-		this.rotation				= (float)		info.GetValue("rotation", 		typeof(float));
-		this.justify				= (Justify)		info.GetValue("justify", 		typeof(Justify));
-		this.localPivot				= (Vector2)		info.GetValue("localPivot", 	typeof(Vector2));
-		this.localSize				= (Vector2)		info.GetValue("localSize", 		typeof(Vector2));
-	}
-#endregion
-
-#region INITIALIZATION
 
 	public pb_UV()
 	{
@@ -110,6 +90,7 @@ public class pb_UV : ISerializable {
 		this.justify = uvs.justify;
 	}
 
+	[System.Obsolete("Please use constructor with pb_UV.Anchor parameter.")]
 	public pb_UV(
 		// ProjectionAxis	 _projectionAxis,
 		bool 			_useWorldSpace,
@@ -147,28 +128,9 @@ public class pb_UV : ISerializable {
 		this.rotation 			= 0f;
 	}
 
-#endregion
-
-#region CONSTANT
-	
-	public static pb_UV LightmapUVSettings = new pb_UV(
-		true,						// useWorldSpace -- we want to retain relative scale
-		false,						// flipU			
-		false,						// flipV			
-		false,						// swapUV			
-		Fill.Fit,					// fill			
-		new Vector2(1f, 1f),		// scale			
-		new Vector2(0f, 0f),		// offset			
-		0f,							// rotation		
-		Justify.None);				// justify			
-
-#endregion
-
-#region DEBUG
-
 	public override string ToString()
 	{
-		string str = 
+		string str =
 			"Use World Space: " + useWorldSpace + "\n" +
 			"Flip U: " + flipU + "\n" +
 			"Flip V: " + flipV + "\n" +
@@ -184,7 +146,7 @@ public class pb_UV : ISerializable {
 
 	public string ToString(string delim)
 	{
-		string str = delim.Replace("\n", "") + 
+		string str = delim.Replace("\n", "") +
 			"Use World Space: " + useWorldSpace + delim +
 			"Flip U: " + flipU + delim +
 			"Flip V: " + flipV + delim +
@@ -197,7 +159,4 @@ public class pb_UV : ISerializable {
 			"Pivot: " + localPivot;
 		return str;
 	}
-
-#endregion
-
 }

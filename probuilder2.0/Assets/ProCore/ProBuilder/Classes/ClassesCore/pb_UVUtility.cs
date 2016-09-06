@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 /**
- *	\brief Responsible for mapping UV coordinates.  
- *	Generally should only be called by #pb_Object 
+ *	\brief Responsible for mapping UV coordinates.
+ *	Generally should only be called by #pb_Object
  *	after setting #pb_UV parameters.
  */
 namespace ProBuilder2.Common {
@@ -20,10 +20,9 @@ public class pb_UVUtility
 		uvs = ApplyUVSettings(uvs, uvSettings);
 		return uvs;
 	}
-	
+
 	private static Vector2[] ApplyUVSettings(Vector2[] uvs, pb_UV uvSettings)
 	{
-
 		int len = uvs.Length;
 
 		switch(uvSettings.fill)
@@ -52,7 +51,7 @@ public class pb_UVUtility
 
 		for(int i = 0; i < uvs.Length; i++)
 		{
-			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);			
+			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);
 			uvs[i] = uvs[i].RotateAroundPoint(bounds.center, uvSettings.rotation);
 		}
 
@@ -60,7 +59,7 @@ public class pb_UVUtility
 		for(int i = 0; i < len; i++)
 		{
 			float u = uvs[i].x, v = uvs[i].y;
-			
+
 			if(uvSettings.flipU)
 				u = -u;
 
@@ -72,7 +71,7 @@ public class pb_UVUtility
 			else
 				uvs[i] = new Vector2(v, u);
 		}
-		
+
 		bounds = new pb_Bounds2D(uvs);
 
 		uvSettings.localPivot = bounds.center;// uvSettings.useWorldSpace ? bounds.center : bounds.extents;
@@ -84,7 +83,7 @@ public class pb_UVUtility
 		return uvs;
 	}
 #endregion
-	
+
 #region UTILITY
 
 	private static Vector2[] StretchUVs(Vector2[] uvs)
@@ -127,9 +126,11 @@ public class pb_UVUtility
 		return uvs;
 	}
 
+	[System.Obsolete("See ApplyAnchor().")]
 	private static Vector2[] JustifyUVs(Vector2[] uvs, pb_UV.Justify j)
 	{
 		Vector2 amt = new Vector2(0f, 0f);
+
 		switch(j)
 		{
 			case pb_UV.Justify.Left:
@@ -151,7 +152,7 @@ public class pb_UVUtility
 
 		for(int i = 0; i < uvs.Length; i++)
 			uvs[i] -= amt;
-	
+
 		return uvs;
 	}
 #endregion

@@ -1,11 +1,9 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
 /**
  *  This shader was created with Shaderforge but contains multiple manual edits.
  *  If you modify this shader make sure to go through and pack uv1 and uv2 channels
  *  into a single float4 to save on registers (on penalty of compile error)
  */
-// Shader created with Shader Forge v1.27 
+// Shader created with Shader Forge v1.27
 // Shader Forge (c) Neat Corporation / Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
 
@@ -29,7 +27,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             Tags {
                 "LightMode"="ForwardBase"
             }
-            
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -46,7 +44,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2
             #pragma target 3.0
             uniform float4 _Color;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
@@ -91,9 +89,9 @@ Shader "ProBuilder/Standard Vertex Color" {
                     o.ambientOrLightmapUV.zw = v.texcoord2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
                 #endif
                 o.normalDir = UnityObjectToWorldNormal(v.normal);
-                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+                o.posWorld = mul(_Object2World, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
@@ -201,8 +199,8 @@ Shader "ProBuilder/Standard Vertex Color" {
                 "LightMode"="ForwardAdd"
             }
             Blend One One
-            
-            
+
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -219,7 +217,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2
             #pragma target 3.0
             uniform float4 _Color;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
@@ -253,9 +251,9 @@ Shader "ProBuilder/Standard Vertex Color" {
                 o.uv1 = float4(v.texcoord1.xy, v.texcoord2.xy);
                 o.vertexColor = v.vertexColor;
                 o.normalDir = UnityObjectToWorldNormal(v.normal);
-                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+                o.posWorld = mul(_Object2World, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
@@ -321,7 +319,7 @@ Shader "ProBuilder/Standard Vertex Color" {
                 "LightMode"="Meta"
             }
             Cull Off
-            
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -339,7 +337,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
             #pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
             #pragma multi_compile_fog
-            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma exclude_renderers gles3 metal d3d11_9x xbox360 xboxone ps3 ps4 psp2
             #pragma target 3.0
             uniform float4 _Color;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
@@ -364,7 +362,7 @@ Shader "ProBuilder/Standard Vertex Color" {
                 o.uv0 = v.texcoord0;
                 o.uv1 = float4(v.texcoord1.xy, v.texcoord2.xy);
                 o.vertexColor = v.vertexColor;
-                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+                o.posWorld = mul(_Object2World, v.vertex);
                 o.pos = UnityMetaVertexPosition(v.vertex, v.texcoord1.xy, v.texcoord2.xy, unity_LightmapST, unity_DynamicLightmapST );
                 return o;
             }
@@ -372,9 +370,9 @@ Shader "ProBuilder/Standard Vertex Color" {
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 UnityMetaInput o;
                 UNITY_INITIALIZE_OUTPUT( UnityMetaInput, o );
-                
+
                 o.Emission = 0;
-                
+
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 float3 diffColor = (_MainTex_var.rgb*_Color.rgb*i.vertexColor.rgb);
                 float specularMonochrome;
@@ -382,7 +380,7 @@ Shader "ProBuilder/Standard Vertex Color" {
                 diffColor = DiffuseAndSpecularFromMetallic( diffColor, _Metallic, specColor, specularMonochrome );
                 float roughness = _Gloss;
                 o.Albedo = diffColor + specColor * roughness * roughness * 0.5;
-                
+
                 return UnityMetaFragment( o );
             }
             ENDCG

@@ -219,7 +219,7 @@ namespace ProBuilder2.Common
 					if(!oneWingPerFace || n < 1)
 						winged.Add(w);
 				}
-				
+
 				index += edgeLength;
 			}
 

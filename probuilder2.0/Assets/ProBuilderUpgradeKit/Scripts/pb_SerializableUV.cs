@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#pragma warning disable 0618
+
+using UnityEngine;
 using System.Collections;
 using System.Runtime.Serialization;
 using ProBuilder2.Common;
@@ -15,7 +17,7 @@ namespace ProBuilder2.UpgradeKit
 		public bool 			flipU;				///< If true, the U value will be inverted.
 		public bool 			flipV;				///< If true, the V value will be inverted.
 		public bool 			swapUV;				///< If true, U and V values will switched.
-		public pb_UV.Fill		fill;				///< Which Fill mode to use. 
+		public pb_UV.Fill		fill;				///< Which Fill mode to use.
 		public Vector2			scale;				///< The scale to be applied to U and V coordinates.
 		public Vector2			offset;				///< The offset to be applied to the UV coordinates.
 		public float 			rotation;			///< Rotates UV coordinates.
@@ -50,7 +52,7 @@ namespace ProBuilder2.UpgradeKit
 			info.AddValue("justify", 			justify,				typeof(pb_UV.Justify));
 		}
 
-		// The pb_SerializedMesh constructor is used to deserialize values. 
+		// The pb_SerializedMesh constructor is used to deserialize values.
 		public pb_SerializableUV(SerializationInfo info, StreamingContext context)
 		{
 			this.useWorldSpace		= (bool)			info.GetValue("useWorldSpace", 	typeof(bool));
