@@ -6,7 +6,7 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_ImportIcons : AssetPostprocessor
 	{
-		public void OnPostprocessTexture(Texture2D tex)
+		public void OnPreprocessTexture()
 		{
 			if( assetPath.IndexOf("ProBuilder/Icons") < 0 )
 				return;
