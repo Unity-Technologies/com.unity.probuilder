@@ -60,7 +60,6 @@ namespace ProBuilder2.EditorCommon
 				new Actions.OpenUVEditor(),
 				new Actions.OpenVertexColorEditor(),
 				new Actions.OpenSmoothingEditor(),
-
 				new Actions.ToggleSelectBackFaces(),
 				new Actions.ToggleHandleAlignment(),
 
@@ -71,6 +70,8 @@ namespace ProBuilder2.EditorCommon
 				new Actions.SelectEdgeLoop(),
 				new Actions.SelectEdgeRing(),
 				new Actions.SelectHole(),
+				new Actions.SelectVertexColor(),
+				new Actions.SelectMaterial(),
 
 				// object
 				new Actions.MergeObjects(),

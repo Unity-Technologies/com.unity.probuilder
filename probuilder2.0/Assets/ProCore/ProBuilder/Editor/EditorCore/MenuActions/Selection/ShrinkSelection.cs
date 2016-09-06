@@ -24,6 +24,11 @@ namespace ProBuilder2.Actions
 			return 	pb_Editor.instance != null &&
 					pb_Menu_Commands.VerifyShrinkSelection(selection);
 		}
+		
+		public override bool IsHidden()
+		{
+			return 	editLevel != EditLevel.Geometry;
+		}
 
 		public override pb_ActionResult DoAction()
 		{

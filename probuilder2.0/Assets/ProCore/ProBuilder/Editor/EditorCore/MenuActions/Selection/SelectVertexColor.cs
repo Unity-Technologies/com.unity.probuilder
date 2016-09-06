@@ -9,9 +9,9 @@ using System.Linq;
 namespace ProBuilder2.Actions
 {
 	public class SelectVertexColor : pb_MenuAction
-	{
+	{		
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return null; } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
@@ -22,18 +22,14 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel != EditLevel.Top &&
-					selectionMode == SelectMode.Face &&
-					selection != null &&
-					selection.Length > 0;
+			return 	pb_Editor.instance != null && pb_Editor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
 		}
-
+		
 		public override bool IsHidden()
 		{
-			return true;
+			return 	editLevel != EditLevel.Geometry;
 		}
-
+		
 		public override pb_ActionResult DoAction()
 		{
 			pbUndo.RecordSelection(selection, "Select Faces with Vertex Colors");

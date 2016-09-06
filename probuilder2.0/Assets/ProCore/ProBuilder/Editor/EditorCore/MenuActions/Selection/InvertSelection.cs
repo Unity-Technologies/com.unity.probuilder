@@ -23,6 +23,11 @@ namespace ProBuilder2.Actions
 		{
 			return 	pb_Editor.instance != null && pb_Editor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
 		}
+		
+		public override bool IsHidden()
+		{
+			return 	editLevel != EditLevel.Geometry;
+		}
 
 		public override pb_ActionResult DoAction()
 		{
