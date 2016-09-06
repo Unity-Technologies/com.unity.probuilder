@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Select Faces with Material",
+			"Select w/ Material",
 			"Selects all faces matching the selected materials."
 		);
 
@@ -24,13 +24,13 @@ namespace ProBuilder2.Actions
 		{
 			return 	pb_Editor.instance != null && pb_Editor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
 		}
-		
-		
+
+
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry;
 		}
-		
+
 
 		public override pb_ActionResult DoAction()
 		{
@@ -51,7 +51,7 @@ namespace ProBuilder2.Actions
 			}
 
 			Selection.objects = newSelection.ToArray();
-			
+
 			pb_Editor.Refresh();
 
 			return new pb_ActionResult(Status.Success, "Select Faces with Material");
