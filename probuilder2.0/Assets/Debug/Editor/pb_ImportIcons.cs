@@ -4,32 +4,24 @@ using System.Collections;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_ImportIcons
+	public class pb_ImportIcons : AssetPostprocessor
 	{
-		public static void ApplyImportSettings(Texture2D icon)
+		public void OnPostprocessTexture(Texture2D tex)
 		{
-			string path = AssetDatabase.GetAssetPath(icon);
-			ApplyImportSettings(path);
-		}
-
-		public static void ApplyImportSettings(string path)
-		{
-			TextureImporter ti = AssetImporter.GetAtPath(path) as TextureImporter;
-
-			if(ti == null)
+			if( assetPath.IndexOf("ProBuilder/Icons") < 0 )
 				return;
+
+			TextureImporter ti = (TextureImporter) assetImporter;
 
 #if !UNITY_5_5
 			ti.textureType = TextureImporterType.Advanced;
-			ti.textureFormat = TextureImporterFormat.RGBA16;
+			ti.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 #endif
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
 			ti.mipmapEnabled = false;
 			ti.maxTextureSize = 64;
-
-			ti.SaveAndReimport();
 		}
 	}
 }
