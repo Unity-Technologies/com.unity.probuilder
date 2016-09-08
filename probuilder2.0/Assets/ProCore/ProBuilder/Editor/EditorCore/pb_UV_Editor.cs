@@ -978,7 +978,7 @@ public class pb_UV_Editor : EditorWindow
 						pbUndo.RecordSelection(selection, "Change Selection");
 
 						if(Event.current.modifiers == (EventModifiers)0 && editor)
-							editor.ClearFaceSelection();
+							editor.ClearElementSelection();
 
 						OnMouseClick(e.mousePosition);
 
@@ -1277,7 +1277,7 @@ public class pb_UV_Editor : EditorWindow
 		if(editor && !e.shift && !e.control && !e.command)
 		{
 			pbUndo.RecordSelection(selection, "Change Selection");
-			editor.ClearFaceSelection();
+			editor.ClearElementSelection();
 		}
 
 		RefreshUVCoordinates(dragRect, false);

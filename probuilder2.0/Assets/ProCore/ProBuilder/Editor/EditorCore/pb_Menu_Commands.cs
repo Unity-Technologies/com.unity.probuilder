@@ -668,10 +668,10 @@ namespace ProBuilder2.EditorCommon
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
 			int grown = 0;
-			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);			
+			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
 			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
 			float growSelectionAngle = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
-						
+
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
@@ -702,7 +702,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							sel = pb_GrowShrink.FloodSelection(pb, selectedFaces, angleGrow ? growSelectionAngle : -1f);
 						}
-						
+
 						pb.SetSelectedFaces( sel.ToArray() );
 
 						break;
@@ -984,7 +984,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 			{
-				editor.ClearFaceSelection();
+				editor.ClearElementSelection();
 				editor.UpdateSelection();
 			}
 

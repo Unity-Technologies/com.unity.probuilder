@@ -316,6 +316,22 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * Test if line segment (a-b) intersects any line segment on rect.
+		 */
+		public static bool RectIntersectsLineSegment(Rect rect, Vector2 a, Vector2 b)
+		{
+			Vector2 tl = new Vector2(rect.xMin, rect.yMax);
+			Vector2 tr = new Vector2(rect.xMax, rect.yMax);
+			Vector2 bl = new Vector2(rect.xMin, rect.yMin);
+			Vector2 br = new Vector2(rect.xMax, rect.yMin);
+
+			return 	pb_Math.GetLineSegmentIntersect(tr, tl, a, b) ||
+					pb_Math.GetLineSegmentIntersect(tl, bl, a, b) ||
+					pb_Math.GetLineSegmentIntersect(bl, br, a, b) ||
+					pb_Math.GetLineSegmentIntersect(br, tl, a, b);
+		}
+
+		/**
 		 * Returns true if a raycast intersects a triangle.
 		 * http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 		 * http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf

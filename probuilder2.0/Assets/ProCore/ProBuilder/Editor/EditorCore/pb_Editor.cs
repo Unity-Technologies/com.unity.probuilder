@@ -223,7 +223,7 @@ public class pb_Editor : EditorWindow
 		if(editorToolbar != null)
 			GameObject.DestroyImmediate(editorToolbar);
 
-		ClearFaceSelection();
+		ClearElementSelection();
 
 		UpdateSelection();
 
@@ -901,7 +901,7 @@ public class pb_Editor : EditorWindow
 	private bool VertexClickCheck(out pb_Object vpb)
 	{
 		if(!shiftKey && !ctrlKey)
-			ClearFaceSelection();
+			ClearElementSelection();
 
 		Camera cam = SceneView.lastActiveSceneView.camera;
 		Vector2 m = Event.current.mousePosition;
@@ -1009,7 +1009,7 @@ public class pb_Editor : EditorWindow
 	{
 		if(!shiftKey && !ctrlKey)
 		{
-			// don't call ClearFaceSelection b/c that also removes
+			// don't call ClearElementSelection b/c that also removes
 			// nearestEdge info
 			foreach(pb_Object p in selection)
 				p.ClearSelection();
@@ -1043,7 +1043,7 @@ public class pb_Editor : EditorWindow
 		else
 		{
 			if(!shiftKey && !ctrlKey)
-				ClearFaceSelection();
+				ClearElementSelection();
 
 			pb = null;
 
@@ -1062,7 +1062,7 @@ public class pb_Editor : EditorWindow
 		{
 			case SelectMode.Vertex:
 			{
-				if(!shiftKey && !ctrlKey) ClearFaceSelection();
+				if(!shiftKey && !ctrlKey) ClearElementSelection();
 
 				// profiler.BeginSample("Drag Select Vertices");
 				for(int i = 0; i < selection.Length; i++)
@@ -1133,7 +1133,7 @@ public class pb_Editor : EditorWindow
 			case SelectMode.Face:
 			{
 				if(!shiftKey && !ctrlKey)
-					ClearFaceSelection();
+					ClearElementSelection();
 
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 				bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
@@ -1217,7 +1217,6 @@ public class pb_Editor : EditorWindow
 									// if any polygon edge intersects rect
 									for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
 									{
-										// public static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
 										if( pb_Math.GetLineSegmentIntersect(tr, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
 											overlaps = true;
 										else
@@ -1259,38 +1258,42 @@ public class pb_Editor : EditorWindow
 
 			case SelectMode.Edge:
 			{
-				if(!shiftKey && !ctrlKey) ClearFaceSelection();
+				if(!shiftKey && !ctrlKey)
+					ClearElementSelection();
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					Vector3 v0 = Vector3.zero, v1 = Vector3.zero, cen = Vector3.zero;
 					pb_Object pb = selection[i];
+
 					Vector3[] vertices = m_verticesInWorldSpace[i];
+					Vector2[] gui = new Vector2[pb.vertexCount];
+
+					for(int nn = 0; nn < m_verticesInWorldSpace[i].Length; nn++)
+						gui[nn] = HandleUtility.WorldToGUIPoint(m_verticesInWorldSpace[i][nn]);
+
 					pb_IntArray[] sharedIndices = pb.sharedIndices;
 					HashSet<pb_Edge> inSelection = new HashSet<pb_Edge>();
 
 					for(int n = 0; n < m_universalEdges[i].Length; n++)
 					{
-						v0 = vertices[sharedIndices[m_universalEdges[i][n].x][0]];
-						v1 = vertices[sharedIndices[m_universalEdges[i][n].y][0]];
+						int x = sharedIndices[m_universalEdges[i][n].x][0],
+							y = sharedIndices[m_universalEdges[i][n].y][0];
 
-						cen = (v0+v1)*.5f;
+						Vector3 cen = (vertices[x] + vertices[y]) * .5f;
 
 						bool behindCam = cam.WorldToScreenPoint(cen).z < 0;
 
 						if( behindCam )
 							continue;
 
-						bool rectContains = selectionRect.Contains( HandleUtility.WorldToGUIPoint(cen) );
-
-						if( rectContains )
+						if( selectionRect.Contains(gui[x]) ||
+							selectionRect.Contains(gui[y]) ||
+							pb_Math.RectIntersectsLineSegment(selectionRect, gui[x], gui[y]) )
 						{
 							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
 
 							if(!occluded)
-							{
 								inSelection.Add( new pb_Edge(m_universalEdges[i][n]) );
-							}
 						}
 					}
 
@@ -2236,7 +2239,7 @@ public class pb_Editor : EditorWindow
 		switch(shortcut.action)
 		{
 			case "Escape":
-				ClearFaceSelection();
+				ClearElementSelection();
 				pb_EditorUtility.ShowNotification("Top Level");
 				UpdateSelection(false);
 				SetEditLevel(EditLevel.Top);
@@ -2412,7 +2415,7 @@ public class pb_Editor : EditorWindow
 		switch(el)
 		{
 			case EditLevel.Top:
-				ClearFaceSelection();
+				ClearElementSelection();
 				UpdateSelection(true);
 
 				SetSelection(Selection.gameObjects);
@@ -2735,7 +2738,7 @@ public class pb_Editor : EditorWindow
 	/**
 	 *	Clears all `selected` caches associated with each pb_Object in the current selection.  The means triangles, faces, and edges.
 	 */
-	public void ClearFaceSelection()
+	public void ClearElementSelection()
 	{
 		foreach(pb_Object pb in selection) {
 			pb.ClearSelection();
