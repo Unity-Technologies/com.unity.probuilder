@@ -1198,8 +1198,8 @@ public class pb_Editor : EditorWindow
 							if( poly.Intersects(selectionRect) )
 							{
 								// if selectionRect contains one point of polygon, it overlaps
-								for(int nn = 0; nn < face.indices.Length && !overlaps; nn++)
-									overlaps = selectionRect.Contains(guiPoints[nn]);
+								for(int nn = 0; nn < face.distinctIndices.Length && !overlaps; nn++)
+									overlaps = selectionRect.Contains(guiPoints[face.distinctIndices[nn]]);
 
 								// if polygon contains one point of selectionRect, it overlaps
 								if(!overlaps)
