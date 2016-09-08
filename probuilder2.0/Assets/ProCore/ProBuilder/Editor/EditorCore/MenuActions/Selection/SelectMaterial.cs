@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Select w/ Material",
+			"Select by Material",
 			"Selects all faces matching the selected materials."
 		);
 
