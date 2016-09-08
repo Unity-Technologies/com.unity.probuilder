@@ -37,7 +37,7 @@ namespace ProBuilder2.Common
 		// implementation snagged from: http://stackoverflow.com/questions/839899/how-do-i-calculate-a-point-on-a-circles-circumference
 		public static Vector2 PointInCircumference(float radius, float angleInDegrees, Vector2 origin)
 		{
-			// Convert from degrees to radians via multiplication by PI/180        
+			// Convert from degrees to radians via multiplication by PI/180
 			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * angleInDegrees)) + origin.x;
 			float y = (float)(radius * Mathf.Sin( Mathf.Deg2Rad * angleInDegrees)) + origin.y;
 
@@ -45,14 +45,14 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * Provided a radius, latitudinal and longitudinal angle, return a position. 
+		 * Provided a radius, latitudinal and longitudinal angle, return a position.
 		 */
 		public static Vector3 PointInSphere(float radius, float latitudeAngle, float longitudeAngle)
 		{
 			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
 			float y = (float)(radius * Mathf.Sin( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
 			float z = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * longitudeAngle));
-	
+
 			return new Vector3(x, y, z);
 		}
 
@@ -105,7 +105,7 @@ namespace ProBuilder2.Common
 			// translate point back:
 			px = xnew + cx;
 			py = ynew + cy;
-			
+
 			return new Vector2(px, py);
 		}
 
@@ -117,7 +117,7 @@ namespace ProBuilder2.Common
 			Vector2 tp = v-origin;
 			tp = Vector2.Scale(tp, scale);
 			tp += origin;
-			
+
 			return tp;
 		}
 
@@ -168,22 +168,22 @@ namespace ProBuilder2.Common
 		{
 			// Return minimum distance between line segment vw and point p
 			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y));  // i.e. |w-v|^2 -  avoid a sqrt
-			
+
 			if (l2 == 0.0f) return Vector2.Distance(p, v);   // v == w case
-			
+
 			// Consider the line extending the segment, parameterized as v + t (w - v).
-			// We find projection of point p onto the line. 
+			// We find projection of point p onto the line.
 			// It falls where t = [(p-v) . (w-v)] / |w-v|^2
 			float t = Vector2.Dot(p - v, w - v) / l2;
 
 			if (t < 0.0)
 				return Vector2.Distance(p, v);       		// Beyond the 'v' end of the segment
-			else if (t > 1.0) 
+			else if (t > 1.0)
 				return Vector2.Distance(p, w);  			// Beyond the 'w' end of the segment
-			
+
 			Vector2 projection = v + t * (w - v);  	// Projection falls on the segment
-			
-			return Vector2.Distance(p, projection);	
+
+			return Vector2.Distance(p, projection);
 		}
 
 		/**
@@ -197,26 +197,26 @@ namespace ProBuilder2.Common
 		{
 			// Return minimum distance between line segment vw and point p
 			float l2 = ((v.x - w.x)*(v.x - w.x)) + ((v.y - w.y)*(v.y - w.y)) + ((v.z - w.z)*(v.z - w.z));  // i.e. |w-v|^2 -  avoid a sqrt
-			
+
 			if (l2 == 0.0f) return Vector3.Distance(p, v);   // v == w case
-			
+
 			// Consider the line extending the segment, parameterized as v + t (w - v).
-			// We find projection of point p onto the line. 
+			// We find projection of point p onto the line.
 			// It falls where t = [(p-v) . (w-v)] / |w-v|^2
 			float t = Vector3.Dot(p - v, w - v) / l2;
 
 			if (t < 0.0)
 				return Vector3.Distance(p, v);       		// Beyond the 'v' end of the segment
-			else if (t > 1.0) 
+			else if (t > 1.0)
 				return Vector3.Distance(p, w);  			// Beyond the 'w' end of the segment
-			
+
 			Vector3 projection = v + t * (w - v);  	// Projection falls on the segment
-			
-			return Vector3.Distance(p, projection);		
+
+			return Vector3.Distance(p, projection);
 		}
 
 		// http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-		// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines 
+		// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines
 		// intersect the intersection point may be stored in the intersect var
 		public static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, ref Vector2 intersect)
 		{
@@ -238,7 +238,7 @@ namespace ProBuilder2.Common
 			}
 
 			return false;
-		}		
+		}
 
 		/**
 		 * True or false lines intersect.
@@ -258,7 +258,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 * Returns true if the polygon contains point.  False otherwise.
-		 * Casts a ray from outside the bounds to the polygon and checks how 
+		 * Casts a ray from outside the bounds to the polygon and checks how
 		 * many edges are hit.
 		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
 		 * This overload accepts an array of points and an array of indices that compose the polygon.
@@ -288,11 +288,31 @@ namespace ProBuilder2.Common
 					if( GetLineSegmentIntersect(rayStart, point, polygon[a], polygon[b]) )
 						collisions++;
 				}
-		
+
 				return collisions % 2 != 0;
 			}
 			else
 				return false;
+		}
+
+		/**
+		 * Assumes polygon has already been tested with AABB
+		 */
+		public static bool PointInPolygon(Vector2[] polygon, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		{
+			int len = edges.Length * 2;
+
+			Vector2 rayStart = polyBounds.center + Vector2.up * (polyBounds.size.y + 2f);
+
+			int collisions = 0;
+
+			for(int i = 0; i < len; i += 2)
+			{
+				if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
+					collisions++;
+			}
+
+			return collisions % 2 != 0;
 		}
 
 		/**
@@ -304,7 +324,7 @@ namespace ProBuilder2.Common
 		{
 			OutDistance = 0f;
 			OutPoint = Vector3.zero;
-			
+
 			Vector3 e1, e2;  //Edge1, Edge2
 			Vector3 P, Q, T;
 			float det, inv_det, u, v;
@@ -316,7 +336,7 @@ namespace ProBuilder2.Common
 
 			//Begin calculating determinant - also used to calculate `u` parameter
 			P = Vector3.Cross(InRay.direction, e2);
-			
+
 			//if determinant is near zero, ray lies in plane of triangle
 			det = Vector3.Dot(e1, P);
 
@@ -351,7 +371,7 @@ namespace ProBuilder2.Common
 			// }
 
 			if(t > Mathf.Epsilon)
-			{ 
+			{
 				//ray intersection
 				OutDistance = t;
 
@@ -419,7 +439,7 @@ namespace ProBuilder2.Common
 			Vector3 nrm = pb_Math.Normal(
 				_vertices[face.indices[0]],
 				_vertices[face.indices[1]],
-				_vertices[face.indices[2]] ); 
+				_vertices[face.indices[2]] );
 
 			if(face.indices.Length > 7)
 			{
@@ -450,7 +470,7 @@ namespace ProBuilder2.Common
 		{
 			if(p == null || p.Count < 3)
 				return Vector3.zero;
-			
+
 			int c = p.Count;
 
 			if(c % 3 == 0)
@@ -477,7 +497,7 @@ namespace ProBuilder2.Common
 		 * Does not rely on pb.msh for normal or uv information - uses pb.vertices & pb.uv.
 		 */
 		public static void NormalTangentBitangent(pb_Object pb, pb_Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
-		{			
+		{
 			if(face.indices.Length < 3)
 			{
 				Debug.LogWarning("Cannot find normal / tangent / bitangent for face with < 3 indices.");
@@ -575,7 +595,7 @@ namespace ProBuilder2.Common
 			if(v.y > v.x && v.y > v.z) return v.y;
 			return v.z;
 		}
-		
+
 		/**
 		 * Return the largest axis in a Vector2.
 		 */
@@ -644,7 +664,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	\brief Gets the center point of the supplied Vector3[] array.
 		 *	\returns Average Vector3 of passed vertex array.
-		 */	 
+		 */
 		public static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
 		{
 			Vector2 sum = Vector2.zero;
@@ -710,7 +730,7 @@ namespace ProBuilder2.Common
 		 */
 		public static bool Approx2(this Vector2 v, Vector2 b, float delta = FLT_COMPARE_EPSILON)
 		{
-			return 
+			return
 				Mathf.Abs(v.x - b.x) < delta &&
 				Mathf.Abs(v.y - b.y) < delta;
 		}
@@ -720,7 +740,7 @@ namespace ProBuilder2.Common
 		 */
 		public static bool Approx3(this Vector3 v, Vector3 b, float delta = FLT_COMPARE_EPSILON)
 		{
-			return 
+			return
 				Mathf.Abs(v.x - b.x) < delta &&
 				Mathf.Abs(v.y - b.y) < delta &&
 				Mathf.Abs(v.z - b.z) < delta;
@@ -731,7 +751,7 @@ namespace ProBuilder2.Common
 		 */
 		public static bool Approx4(this Vector4 v, Vector4 b, float delta = FLT_COMPARE_EPSILON)
 		{
-			return 
+			return
 				Mathf.Abs(v.x - b.x) < delta &&
 				Mathf.Abs(v.y - b.y) < delta &&
 				Mathf.Abs(v.z - b.z) < delta &&

@@ -40,7 +40,8 @@ public class pb_Preferences
 	static bool pbDrawAxisLines = true;
 	static bool pbMeshesAreAssets = false;
 	static bool pbElementSelectIsHamFisted = false;
-	
+	static bool pbDragSelectWholeElement = false;
+
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
 	static EntityType pbDefaultEntity = EntityType.Detail;
@@ -51,7 +52,7 @@ public class pb_Preferences
 	static pb_Shortcut[] defaultShortcuts;
 
 	[PreferenceItem (pb_Constant.PRODUCT_NAME)]
-	public static void PreferencesGUI () 
+	public static void PreferencesGUI ()
 	{
 		// Load the preferences
 		if (!prefsLoaded) {
@@ -59,7 +60,7 @@ public class pb_Preferences
 			prefsLoaded = true;
 			OnWindowResize();
 		}
-		
+
 		settingsScroll = EditorGUILayout.BeginScrollView(settingsScroll, GUILayout.MaxHeight(200));
 
 		EditorGUI.BeginChangeCheck();
@@ -85,7 +86,7 @@ public class pb_Preferences
 
 		pbUniqueModeShortcuts = EditorGUILayout.Toggle(new GUIContent("Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively."), pbUniqueModeShortcuts);
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);
-	
+
 
 		/**
 		 * DEFAULT SETTINGS
@@ -116,13 +117,14 @@ public class pb_Preferences
 		pbDrawAxisLines = EditorGUILayout.Toggle(new GUIContent("Dimension Overlay Lines", "When the Dimensions Overlay is on, this toggle shows or hides the axis lines."), pbDrawAxisLines);
 
 		GUILayout.Space(4);
-		
+
 		/**
 		 * GEOMETRY EDITING SETTINGS
 		 */
 		GUILayout.Label("Geometry Editing Settings", EditorStyles.boldLabel);
 
 		pbElementSelectIsHamFisted = !EditorGUILayout.Toggle(new GUIContent("Precise Element Selection", "When enabled you will be able to select object faces when in Vertex of Edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."), !pbElementSelectIsHamFisted);
+		pbDragSelectWholeElement = EditorGUILayout.Toggle("Precise Drag Select", pbDragSelectWholeElement);
 		pbDefaultFaceColor = EditorGUILayout.ColorField("Selected Face Color", pbDefaultFaceColor);
 		pbDefaultEdgeColor = EditorGUILayout.ColorField("Edge Wireframe Color", pbDefaultEdgeColor);
 		pbDefaultVertexColor = EditorGUILayout.ColorField("Vertex Color", pbDefaultVertexColor);
@@ -147,7 +149,7 @@ public class pb_Preferences
 		pbUVGridSnapValue = EditorGUILayout.FloatField("UV Snap Increment", pbUVGridSnapValue);
 		pbUVGridSnapValue = Mathf.Clamp(pbUVGridSnapValue, .015625f, 2f);
 		pbUVEditorFloating = EditorGUILayout.Toggle(new GUIContent("Editor window floating", "If true UV   Editor window will open as a floating window"), pbUVEditorFloating);
-		
+
 		EditorGUILayout.EndScrollView();
 
 		GUILayout.Space(4);
@@ -220,6 +222,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbCollapseVertexToFirst);
 			EditorPrefs.DeleteKey(pb_Constant.pbMeshesAreAssets);
 			EditorPrefs.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
+			EditorPrefs.DeleteKey(pb_Constant.pbDragSelectWholeElement);
 			EditorPrefs.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
 			EditorPrefs.DeleteKey(pb_Constant.pbDetachToNewObject);
 			EditorPrefs.DeleteKey(pb_Constant.pbPreserveFaces);
@@ -271,7 +274,7 @@ public class pb_Preferences
 
 		for(int n = 1; n < defaultShortcuts.Length; n++)
 		{
-			if(n == shortcutIndex) 
+			if(n == shortcutIndex)
 			{
 				GUI.backgroundColor = new Color(0.23f, .49f, .89f, 1f);
 					labelStyle.normal.background = EditorGUIUtility.whiteTexture;
@@ -338,7 +341,7 @@ public class pb_Preferences
 		pbForceVertexPivot 					= pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot);
 		pbPerimeterEdgeBridgeOnly 			= pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
 		pbPBOSelectionOnly 					= pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly);
-		pbCloseShapeWindow 					= pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow);		
+		pbCloseShapeWindow 					= pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow);
 		pbUVEditorFloating 					= pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating);
 		// pbShowSceneToolbar 					= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
 		pbShowEditorNotifications 			= pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications);
@@ -348,6 +351,7 @@ public class pb_Preferences
 		pbDrawAxisLines 					= pb_Preferences_Internal.GetBool(pb_Constant.pbDrawAxisLines);
 		pbMeshesAreAssets 					= pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
 		pbElementSelectIsHamFisted			= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
+		pbDragSelectWholeElement			= pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
@@ -385,8 +389,8 @@ public class pb_Preferences
 
 		string matPath = pbDefaultMaterial != null ? AssetDatabase.GetAssetPath(pbDefaultMaterial) : "";
 		EditorPrefs.SetString	(pb_Constant.pbDefaultMaterial, matPath);
-		
-		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int)defaultColliderType);	
+
+		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int)defaultColliderType);
 		EditorPrefs.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
 		EditorPrefs.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
 		EditorPrefs.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);
@@ -402,7 +406,8 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
 		EditorPrefs.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
 		EditorPrefs.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
-		
+		EditorPrefs.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement);
+
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
 

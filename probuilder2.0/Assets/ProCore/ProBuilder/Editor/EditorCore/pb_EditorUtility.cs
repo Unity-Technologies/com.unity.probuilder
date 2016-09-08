@@ -32,7 +32,7 @@ namespace ProBuilder2.EditorCommon
 
 		/**
 		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
-		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't 
+		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't
 		 * 	fire this callback.
 		 *
 		 *	\sa pb_EditorUtility.InitObjectFlags
@@ -67,7 +67,7 @@ namespace ProBuilder2.EditorCommon
 			SceneView scnview = SceneView.lastActiveSceneView;
 			if(scnview == null)
 				scnview = EditorWindow.GetWindow<SceneView>();
-			
+
 			ShowNotification(scnview, notif);
 		}
 
@@ -75,7 +75,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(EditorPrefs.HasKey(pb_Constant.pbShowEditorNotifications) && !EditorPrefs.GetBool(pb_Constant.pbShowEditorNotifications))
 				return;
-				
+
 			window.ShowNotification(new GUIContent(notif, ""));
 			window.Repaint();
 
@@ -86,9 +86,9 @@ namespace ProBuilder2.EditorCommon
 			notifWindow = window;
 			notifDisplayed = true;
 		}
-		
+
 		public static void RemoveNotification(EditorWindow window)
-		{		
+		{
 			EditorApplication.update -= NotifUpdate;
 
 			window.RemoveNotification();
@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(path == null || path == "")
 			{
-				if(pb.Length > 1) 
+				if(pb.Length > 1)
 				{
 					GameObject.DestroyImmediate(combined.GetComponent<MeshFilter>().sharedMesh);
 					GameObject.DestroyImmediate(combined.gameObject);
@@ -153,7 +153,7 @@ namespace ProBuilder2.EditorCommon
 		public static void SaveTexture(Texture2D texture)
 		{
 			string path = EditorUtility.SaveFilePanel("Save Image", Application.dataPath, "", "png");
-			SaveTexture(texture, path);		
+			SaveTexture(texture, path);
 		}
 
 		/**
@@ -193,14 +193,14 @@ namespace ProBuilder2.EditorCommon
 #region ENTITY
 
 		/**
-		 *	\brief Sets the EntityType for the passed gameObject. 
+		 *	\brief Sets the EntityType for the passed gameObject.
 		 *	@param newEntityType The type to set.
 		 *	@param target The gameObject to apply the EntityType to.  Must contains pb_Object and pb_Entity components.  Method does contain null checks.
 		 */
 		public static void SetEntityType(EntityType newEntityType, GameObject target)
 		{
 			pb_Entity ent = target.GetComponent<pb_Entity>();
-			
+
 			if(ent == null)
 				ent = target.AddComponent<pb_Entity>();
 
@@ -238,11 +238,11 @@ namespace ProBuilder2.EditorCommon
 		{
 			EntityType et = target.GetComponent<pb_Entity>().entityType;
 
-			if(	et == EntityType.Trigger || 
+			if(	et == EntityType.Trigger ||
 				et == EntityType.Collider )
 			{
 				pb_Object pb = target.GetComponent<pb_Object>();
-				
+
 				#if !PROTOTYPE
 				pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
 				#else
@@ -260,7 +260,7 @@ namespace ProBuilder2.EditorCommon
 
 			SetEditorFlags((StaticEditorFlags)0, target);
 
-			if(	et == EntityType.Trigger || 
+			if(	et == EntityType.Trigger ||
 				et == EntityType.Collider )
 			{
 				pb_Object pb = target.GetComponent<pb_Object>();
@@ -288,7 +288,7 @@ namespace ProBuilder2.EditorCommon
 
 			SetIsTrigger(true, target);
 			SetEditorFlags((StaticEditorFlags)0, target);
-			
+
 			pb.ToMesh();
 			pb.Refresh();
 		}
@@ -312,7 +312,7 @@ namespace ProBuilder2.EditorCommon
 		private static void SetEditorFlags(StaticEditorFlags editorFlags, GameObject target)
 		{
 			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
-		}	
+		}
 
 		private static void SetIsTrigger(bool val, GameObject target)
 		{
@@ -357,7 +357,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 * Ensure that this object has a valid mesh reference, and the geometry is 
+		 * Ensure that this object has a valid mesh reference, and the geometry is
 		 * current.
 		 */
 		public static MeshRebuildReason VerifyMesh(pb_Object pb)
@@ -369,7 +369,7 @@ namespace ProBuilder2.EditorCommon
 			if( reason != MeshRebuildReason.None )
 			{
 				/**
-				 * If the mesh ID doesn't match the gameObject Id, it could mean two things - 
+				 * If the mesh ID doesn't match the gameObject Id, it could mean two things -
 				 * 1. The object was just duplicated, and then made unique
 				 * 2. The scene was reloaded, and gameObject ids were recalculated.
 				 * If the latter, we need to clean up the old mesh.  If the former,
@@ -391,7 +391,7 @@ namespace ProBuilder2.EditorCommon
 					else
 					{
 						// Debug.Log("duplicate mesh");
-						
+
 						if(!meshesAreAssets || !(pb_EditorUtility.IsPrefabRoot(pb.gameObject) || IsPrefabInstance(pb.gameObject)))
 						{
 							// deep copy arrays & ToMesh/Refresh
@@ -426,8 +426,8 @@ namespace ProBuilder2.EditorCommon
 
 		/**
 		 * \brief ProBuilder objects created in Editor need to be initialized with a number of additional Editor-only settings.
-		 *	This method provides an easy method of doing so in a single call.  #InitObjectFlags will set the Entity Type, generate 
-		 *	a UV2 channel, set the unwrapping parameters, and center the object in the screen. 
+		 *	This method provides an easy method of doing so in a single call.  #InitObjectFlags will set the Entity Type, generate
+		 *	a UV2 channel, set the unwrapping parameters, and center the object in the screen.
 		 */
 		public static void InitObjectFlags(pb_Object pb)
 		{
@@ -464,7 +464,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(_gameObject == null)
 				return;
-				
+
 			// If in the unity editor, attempt to center the object the sceneview or main camera, in that order
 			_gameObject.transform.position = ScenePivot();
 

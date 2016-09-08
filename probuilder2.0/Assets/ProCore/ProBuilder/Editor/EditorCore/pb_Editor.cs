@@ -269,7 +269,7 @@ public class pb_Editor : EditorWindow
 
 	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
 
-	// Called immediately prior to beginning vertex modifications.  pb_Object will be 
+	// Called immediately prior to beginning vertex modifications.  pb_Object will be
 	// in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
 	public static event OnVertexMovementBeginEventHandler OnVertexMovementBegin;
 
@@ -900,7 +900,7 @@ public class pb_Editor : EditorWindow
 
 	private bool VertexClickCheck(out pb_Object vpb)
 	{
-		if(!shiftKey && !ctrlKey) 
+		if(!shiftKey && !ctrlKey)
 			ClearFaceSelection();
 
 		Camera cam = SceneView.lastActiveSceneView.camera;
@@ -919,7 +919,7 @@ public class pb_Editor : EditorWindow
 			{
 				pb_Object pb = selection[i];
 
-				if(!pb.isSelectable) 
+				if(!pb.isSelectable)
 					continue;
 
 				for(int n = 0; n < m_uniqueIndices[i].Length; n++)
@@ -971,7 +971,7 @@ public class pb_Editor : EditorWindow
 			{
 				pb_Object pb = selection[i];
 
-				if(!pb.isSelectable) 
+				if(!pb.isSelectable)
 					continue;
 
 				for(int n = 0; n < m_uniqueIndices[i].Length; n++)
@@ -997,7 +997,7 @@ public class pb_Editor : EditorWindow
 						vpb = pb;
 						return true;
 					}
-				}				
+				}
 			}
 		}
 
@@ -1132,21 +1132,27 @@ public class pb_Editor : EditorWindow
 
 			case SelectMode.Face:
 			{
-				if(!shiftKey && !ctrlKey) ClearFaceSelection();
+				if(!shiftKey && !ctrlKey)
+					ClearFaceSelection();
 
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
-
-				List<pb_Face> selectedFaces;
+				bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 
 				for(int i = 0; i < pool.Length; i++)
 				{
 					pb_Object pb = pool[i];
-					selectedFaces = new List<pb_Face>(pb.SelectedFaces);
 
 					if(!pb.isSelectable)
 						continue;
 
+					HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
+
 					Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
+					Vector2[] guiPoints = new Vector2[pb.vertexCount];
+
+					for(int nn = 0; nn < pb.vertexCount; nn++)
+						guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
+
 					bool addToSelection = false;
 
 					for(int n = 0; n < pb.faces.Length; n++)
@@ -1154,34 +1160,87 @@ public class pb_Editor : EditorWindow
 						pb_Face face = pb.faces[n];
 
 						/// face is behind the camera
-						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )//|| (!pref_backfaceSelect && Vector3.Dot(dir, nrm) > 0f))
+						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )
 							continue;
 
-						// only check the first index per quad, and if it checks out, then check every other point
-						if(selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.indices[0]])))
+						if(selectWholeElement)
 						{
-							bool nope = false;
-							for(int q = 1; q < face.distinctIndices.Length; q++)
+							// only check the first index per quad, and if it checks out, then check every other point
+							if(selectionRect.Contains(guiPoints[face.indices[0]]))
 							{
-								if(!selectionRect.Contains(HandleUtility.WorldToGUIPoint(verticesInWorldSpace[face.distinctIndices[q]])))
+								bool nope = false;
+								for(int q = 1; q < face.distinctIndices.Length; q++)
 								{
-									nope = true;
-									break;
+									if(!selectionRect.Contains(guiPoints[face.distinctIndices[q]]))
+									{
+										nope = true;
+										break;
+									}
+								}
+
+								if(!nope)
+								{
+									if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+									{
+										if(!selectedFaces.Add(face))
+											selectedFaces.Remove(face);
+										else
+											addToSelection = true;
+									}
+								}
+							}
+						}
+						else
+						{
+							pb_Bounds2D poly = new pb_Bounds2D(guiPoints, face.edges);
+							bool overlaps = false;
+
+							if( poly.Intersects(selectionRect) )
+							{
+								// if selectionRect contains one point of polygon, it overlaps
+								for(int nn = 0; nn < face.indices.Length && !overlaps; nn++)
+									overlaps = selectionRect.Contains(guiPoints[nn]);
+
+								// if polygon contains one point of selectionRect, it overlaps
+								if(!overlaps)
+								{
+									Vector2 tl = new Vector2(selectionRect.xMin, selectionRect.yMax);
+									Vector2 tr = new Vector2(selectionRect.xMax, selectionRect.yMax);
+									Vector2 bl = new Vector2(selectionRect.xMin, selectionRect.yMin);
+									Vector2 br = new Vector2(selectionRect.xMax, selectionRect.yMin);
+
+									overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tl);
+									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tr);
+									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, br);
+									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, bl);
+
+									// if any polygon edge intersects rect
+									for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
+									{
+										// public static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+										if( pb_Math.GetLineSegmentIntersect(tr, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+											overlaps = true;
+										else
+										if( pb_Math.GetLineSegmentIntersect(tl, bl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+											overlaps = true;
+										else
+										if( pb_Math.GetLineSegmentIntersect(bl, br, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+											overlaps = true;
+										else
+										if( pb_Math.GetLineSegmentIntersect(br, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+											overlaps = true;
+									}
 								}
 							}
 
-							if(!nope)
+							if(overlaps)
 							{
 								if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 								{
-									int indx =  selectedFaces.IndexOf(face);
-
-									if( indx > -1 ) {
-										selectedFaces.RemoveAt(indx);
-									} else {
-										addToSelection = true;
-										selectedFaces.Add(face);
-									}
+									if(!selectedFaces.Add(face))
+											selectedFaces.Remove(face);
+										else
+											addToSelection = true;
 								}
 							}
 						}

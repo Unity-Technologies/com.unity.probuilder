@@ -22,7 +22,7 @@ namespace ProBuilder2.Common
 		 *	2 -- > 3
 		 */
 		public Vector2[] corners {
-			get { 
+			get {
 				return new Vector2[] {
 					new Vector2(center.x - extents.x, center.y + extents.y),
 					new Vector2(center.x + extents.x, center.y + extents.y),
@@ -53,7 +53,7 @@ namespace ProBuilder2.Common
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
-		
+
 			if(points.Length > 0)
 			{
 				xMin = points[0].x;
@@ -84,7 +84,7 @@ namespace ProBuilder2.Common
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
-		
+
 			if(points.Length > 0 && indices.Length > 0)
 			{
 				xMin = points[indices[0]].x;
@@ -106,13 +106,48 @@ namespace ProBuilder2.Common
 			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 
+		/**
+		 * Create bounds from a set of 2d points.
+		 */
+		public pb_Bounds2D(Vector2[] points, pb_Edge[] edges)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+
+			if(points.Length > 0 && edges.Length > 0)
+			{
+				xMin = points[edges[0].x].x;
+				yMin = points[edges[0].x].y;
+				xMax = xMin;
+				yMax = yMin;
+
+				for(int i = 0; i < edges.Length; i++)
+				{
+					xMin = Mathf.Min(xMin, points[edges[i].x].x);
+					xMin = Mathf.Min(xMin, points[edges[i].y].x);
+					yMin = Mathf.Min(yMin, points[edges[i].x].y);
+					yMin = Mathf.Min(yMin, points[edges[i].y].y);
+
+					xMax = Mathf.Max(xMax, points[edges[i].x].x);
+					xMax = Mathf.Max(xMax, points[edges[i].y].x);
+					yMax = Mathf.Max(yMax, points[edges[i].x].y);
+					yMax = Mathf.Max(yMax, points[edges[i].y].y);
+				}
+			}
+
+			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
+		}
+
 		public pb_Bounds2D(Vector2[] points, int length)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
-		
+
 			if(points.Length > 0)
 			{
 				xMin = points[0].x;
@@ -175,7 +210,19 @@ namespace ProBuilder2.Common
 			Vector2 dist = this.center - bounds.center;
 			Vector2 size = this.size + bounds.size;
 
-			return  Mathf.Abs(dist.x) * 2f < size.x && 
+			return  Mathf.Abs(dist.x) * 2f < size.x &&
+					Mathf.Abs(dist.y) * 2f < size.y;
+		}
+
+		/**
+		 * Returns true if bounds overlaps rect.
+		 */
+		public bool Intersects(Rect rect)
+		{
+			Vector2 dist = this.center - rect.center;
+			Vector2 size = this.size + rect.size;
+
+			return  Mathf.Abs(dist.x) * 2f < size.x &&
 					Mathf.Abs(dist.y) * 2f < size.y;
 		}
 #endregion
@@ -183,7 +230,7 @@ namespace ProBuilder2.Common
 #region Static
 
 		/**
-		 * Returns the center of the bounding box of points.  Optional parameter @length limits the 
+		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
 		 * bounds calculations to only the points up to length in array.
 		 */
 		public static Vector2 Center(List<Vector2> points) { return Center(points.ToArray()); }
@@ -194,7 +241,7 @@ namespace ProBuilder2.Common
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
-		
+
 			if(points.Length > 0)
 			{
 				xMin = points[0].x;

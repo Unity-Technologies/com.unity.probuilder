@@ -118,6 +118,7 @@ public static class pb_Constant
 	public const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
 	public const string pbDetachToNewObject				= "pbDetachToNewObject";
 	public const string pbPreserveFaces					= "pbPreserveFaces";
+	public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
