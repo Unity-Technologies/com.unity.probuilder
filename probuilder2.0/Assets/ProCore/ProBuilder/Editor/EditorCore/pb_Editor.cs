@@ -1139,140 +1139,201 @@ public class pb_Editor : EditorWindow
 					ClearElementSelection();
 
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
+
 				bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 				profiler.End();
 
-				profiler.Begin("iterate pb_Object");
-				for(int i = 0; i < pool.Length; i++)
+				profiler.Begin("test selectiono");
+				Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map;
+				profiler.End();
+
+				profiler.Begin("RenderSelectionPickerTexture");
+				Texture2D tex = pb_HandleUtility.RenderSelectionPickerTexture(cam, pool, out map);
+				profiler.End();
+
+				profiler.Begin("GetPixels32");
+				Color32[] pix = tex.GetPixels32();
+				profiler.End();
+
+				profiler.Begin("ReadPixels");
+				int ox = Mathf.FloorToInt(selectionRect.x);
+				int oy = Mathf.FloorToInt((tex.height - selectionRect.y) - selectionRect.height);
+				int imageWidth = tex.width;
+				int width = Mathf.FloorToInt(selectionRect.width);
+				int height = Mathf.FloorToInt(selectionRect.height);
+			    
+				GameObject.DestroyImmediate(tex);
+				profiler.End();
+				
+				profiler.Begin("color in rect");
+				pb_Tuple<pb_Object, pb_Face> hit;
+				Dictionary<pb_Object, HashSet<pb_Face>> selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
+				HashSet<Color32> seen = new HashSet<Color32>();
+
+
+				for(int y = oy; y < oy + height; y++)
 				{
-					pb_Object pb = pool[i];
-
-					if(!pb.isSelectable)
-						continue;
-
-					profiler.Begin("vertices -> gui points");
-					HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
-
-					Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
-					Vector2[] guiPoints = new Vector2[pb.vertexCount];
-
-					for(int nn = 0; nn < pb.vertexCount; nn++)
-						guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
-
-					bool addToSelection = false;
-					profiler.End();
-
-					profiler.Begin("iterate faces");
-					for(int n = 0; n < pb.faces.Length; n++)
+					for(int x = ox; x < ox + width; x++)
 					{
-						pb_Face face = pb.faces[n];
+						Color32 color = pix[y * imageWidth + x];
 
-						/// face is behind the camera
-						profiler.Begin("cull camera");
-						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )
-						{
-							profiler.End();
+						if(!seen.Add(color))
 							continue;
-						}
-						profiler.End();
 
-						if(selectWholeElement)
+						if(map.TryGetValue(color, out hit))
 						{
-							// only check the first index per quad, and if it checks out, then check every other point
-							if(selectionRect.Contains(guiPoints[face.indices[0]]))
-							{
-								bool nope = false;
-								for(int q = 1; q < face.distinctIndices.Length; q++)
-								{
-									if(!selectionRect.Contains(guiPoints[face.distinctIndices[q]]))
-									{
-										nope = true;
-										break;
-									}
-								}
-
-								if(!nope)
-								{
-									if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
-									{
-										if(!selectedFaces.Add(face))
-											selectedFaces.Remove(face);
-										else
-											addToSelection = true;
-									}
-								}
-							}
-						}
-						else
-						{
-							pb_Bounds2D poly = new pb_Bounds2D(guiPoints, face.edges);
-							bool overlaps = false;
-
-							profiler.Begin("test intersects");
-
-							if( poly.Intersects(selectionRect) )
-							{
-								// if selectionRect contains one point of polygon, it overlaps
-								for(int nn = 0; nn < face.distinctIndices.Length && !overlaps; nn++)
-									overlaps = selectionRect.Contains(guiPoints[face.distinctIndices[nn]]);
-
-								// if polygon contains one point of selectionRect, it overlaps
-								if(!overlaps)
-								{
-									Vector2 tl = new Vector2(selectionRect.xMin, selectionRect.yMax);
-									Vector2 tr = new Vector2(selectionRect.xMax, selectionRect.yMax);
-									Vector2 bl = new Vector2(selectionRect.xMin, selectionRect.yMin);
-									Vector2 br = new Vector2(selectionRect.xMax, selectionRect.yMin);
-
-									overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tl);
-									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tr);
-									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, br);
-									if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, bl);
-
-									// if any polygon edge intersects rect
-									for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
-									{
-										if( pb_Math.GetLineSegmentIntersect(tr, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-											overlaps = true;
-										else
-										if( pb_Math.GetLineSegmentIntersect(tl, bl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-											overlaps = true;
-										else
-										if( pb_Math.GetLineSegmentIntersect(bl, br, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-											overlaps = true;
-										else
-										if( pb_Math.GetLineSegmentIntersect(br, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-											overlaps = true;
-									}
-								}
-							}
-							profiler.End();
-
-							profiler.Begin("test is occluded");
-							if(overlaps)
-							{
-								if( pref_backfaceSelect || 
-									!pb_HandleUtility.IsOccluded(cam, pool[i], face))
-								{
-									if(!selectedFaces.Add(face))
-											selectedFaces.Remove(face);
-										else
-											addToSelection = true;
-								}
-							}
-							profiler.End();
+							if(selected.ContainsKey(hit.Item1))
+								selected[hit.Item1].Add(hit.Item2);
+							else
+								selected.Add(hit.Item1, new HashSet<pb_Face>() { hit.Item2 });
 						}
 					}
-					profiler.End();
-
-					profiler.Begin("SetSelectedFaces");
-					pb.SetSelectedFaces(selectedFaces.ToArray());
-
-					if(addToSelection)
-						AddToSelection(pb.gameObject);
-					profiler.End();
 				}
 				profiler.End();
+
+				profiler.Begin("set selection");
+				foreach(var kvp in selected)
+					kvp.Key.SetSelectedFaces(kvp.Value);
+				profiler.End();
+
+				// Texture2D destTex = new Texture2D(width, height);
+				// destTex.SetPixels(pix);
+				// destTex.Apply();
+				// pb_EditorUtility.SaveTexture(destTex, "Assets/Test2.png");
+				// GameObject.DestroyImmediate(tex);
+
+
+				// profiler.Begin("iterate pb_Object");
+				// for(int i = 0; i < pool.Length; i++)
+				// {
+				// 	pb_Object pb = pool[i];
+
+				// 	if(!pb.isSelectable)
+				// 		continue;
+
+				// 	profiler.Begin("vertices -> gui points");
+				// 	HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
+
+				// 	Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
+				// 	Vector2[] guiPoints = new Vector2[pb.vertexCount];
+
+				// 	for(int nn = 0; nn < pb.vertexCount; nn++)
+				// 		guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
+
+				// 	bool addToSelection = false;
+				// 	profiler.End();
+
+				// 	profiler.Begin("iterate faces");
+				// 	for(int n = 0; n < pb.faces.Length; n++)
+				// 	{
+				// 		pb_Face face = pb.faces[n];
+
+				// 		/// face is behind the camera
+				// 		profiler.Begin("cull camera");
+				// 		if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )
+				// 		{
+				// 			profiler.End();
+				// 			continue;
+				// 		}
+				// 		profiler.End();
+
+				// 		if(selectWholeElement)
+				// 		{
+				// 			// only check the first index per quad, and if it checks out, then check every other point
+				// 			if(selectionRect.Contains(guiPoints[face.indices[0]]))
+				// 			{
+				// 				bool nope = false;
+				// 				for(int q = 1; q < face.distinctIndices.Length; q++)
+				// 				{
+				// 					if(!selectionRect.Contains(guiPoints[face.distinctIndices[q]]))
+				// 					{
+				// 						nope = true;
+				// 						break;
+				// 					}
+				// 				}
+
+				// 				if(!nope)
+				// 				{
+				// 					if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+				// 					{
+				// 						if(!selectedFaces.Add(face))
+				// 							selectedFaces.Remove(face);
+				// 						else
+				// 							addToSelection = true;
+				// 					}
+				// 				}
+				// 			}
+				// 		}
+				// 		else
+				// 		{
+				// 			pb_Bounds2D poly = new pb_Bounds2D(guiPoints, face.edges);
+				// 			bool overlaps = false;
+
+				// 			profiler.Begin("test intersects");
+
+				// 			if( poly.Intersects(selectionRect) )
+				// 			{
+				// 				// if selectionRect contains one point of polygon, it overlaps
+				// 				for(int nn = 0; nn < face.distinctIndices.Length && !overlaps; nn++)
+				// 					overlaps = selectionRect.Contains(guiPoints[face.distinctIndices[nn]]);
+
+				// 				// if polygon contains one point of selectionRect, it overlaps
+				// 				if(!overlaps)
+				// 				{
+				// 					Vector2 tl = new Vector2(selectionRect.xMin, selectionRect.yMax);
+				// 					Vector2 tr = new Vector2(selectionRect.xMax, selectionRect.yMax);
+				// 					Vector2 bl = new Vector2(selectionRect.xMin, selectionRect.yMin);
+				// 					Vector2 br = new Vector2(selectionRect.xMax, selectionRect.yMin);
+
+				// 					overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tl);
+				// 					if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tr);
+				// 					if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, br);
+				// 					if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, bl);
+
+				// 					// if any polygon edge intersects rect
+				// 					for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
+				// 					{
+				// 						if( pb_Math.GetLineSegmentIntersect(tr, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+				// 							overlaps = true;
+				// 						else
+				// 						if( pb_Math.GetLineSegmentIntersect(tl, bl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+				// 							overlaps = true;
+				// 						else
+				// 						if( pb_Math.GetLineSegmentIntersect(bl, br, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+				// 							overlaps = true;
+				// 						else
+				// 						if( pb_Math.GetLineSegmentIntersect(br, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
+				// 							overlaps = true;
+				// 					}
+				// 				}
+				// 			}
+				// 			profiler.End();
+
+				// 			profiler.Begin("test is occluded");
+				// 			if(overlaps)
+				// 			{
+				// 				if( pref_backfaceSelect || 
+				// 					!pb_HandleUtility.IsOccluded(cam, pool[i], face))
+				// 				{
+				// 					if(!selectedFaces.Add(face))
+				// 							selectedFaces.Remove(face);
+				// 						else
+				// 							addToSelection = true;
+				// 				}
+				// 			}
+				// 			profiler.End();
+				// 		}
+				// 	}
+				// 	profiler.End();
+
+				// 	profiler.Begin("SetSelectedFaces");
+				// 	pb.SetSelectedFaces(selectedFaces.ToArray());
+
+				// 	if(addToSelection)
+				// 		AddToSelection(pb.gameObject);
+				// 	profiler.End();
+				// }
+				// profiler.End();
 
 				profiler.Begin("drag object check");
 				DragObjectCheck(true);
