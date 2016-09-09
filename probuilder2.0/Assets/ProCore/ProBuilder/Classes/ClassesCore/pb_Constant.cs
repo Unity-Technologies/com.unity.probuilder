@@ -21,6 +21,28 @@ public static class pb_Constant
 		}
 	}
 
+	private static Material _facePickerMaterial;
+	public static Material FacePickerMaterial
+	{
+		get
+		{
+			if(_facePickerMaterial == null)
+				_facePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
+			return _facePickerMaterial;
+		}
+	}
+
+	private static Shader _selectionPickerShader = null;
+	public static Shader SelectionPickerShader
+	{
+		get
+		{
+			if(_selectionPickerShader == null)
+				_selectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/Selection Picker");
+			return _selectionPickerShader;
+		}
+	}
+
 	public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
 	public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
 	public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }

@@ -1,624 +1,597 @@
-// #undef PB_DEBUG
-
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 using System.Reflection;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
-/**
- * Utilities for creating and manipulating Handles and points in GUI space.  Also coordinate translations.
- */
-public class pb_Handle_Utility
-{	
-	const int LEFT_MOUSE_BUTTON = 0;
-	const int MIDDLE_MOUSE_BUTTON = 2;
-
-#region SceneView
-
-	public static bool SceneViewInUse(Event e)
-	{
-		return 	e.alt
-				|| Tools.current == Tool.View  
-				|| GUIUtility.hotControl > 0  
-				|| (e.isMouse ? e.button > 1 : false)
-				|| Tools.viewTool == ViewTool.FPS 
-				|| Tools.viewTool == ViewTool.Orbit;
-	}
-#endregion	
-
-#region Const
-
-	const int HANDLE_PADDING = 8;
-
-	private static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
-	private static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
-	private static Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
-
-	private static Color HANDLE_COLOR_UP = new Color(0f, .7f, 0f, .8f);
-	private static Color HANDLE_COLOR_RIGHT = new Color(0f, 0f, .7f, .8f);
-	private static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
-	private static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
-
-	static Material _handleMaterial = null;
-	public static Material handleMaterial
-	{
-		get 
-		{
-			if(_handleMaterial == null)
-				_handleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
-
-			return _handleMaterial;
-		}
-	}
-
-	static Material _edgeMaterial = null;
-	public static Material edgeMaterial
-	{
-		get 
-		{
-			if(_edgeMaterial == null)
-				_edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
-				// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
-
-			return _edgeMaterial;
-		}
-	}
-#endregion
-
-#region Internal Static
-
-	public static int CurrentID { get { return currentId; } }
-	private static int currentId = -1;
-
-	private static Vector2 handleOffset = Vector2.zero;
-	private static Vector2 initialMousePosition = Vector2.zero;
-
-	private static pb_HandleConstraint2D axisConstraint = new pb_HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
-	public static pb_HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
-
-	public static bool limitToLeftButton = true;
-#endregion
-
-#region Conversion
-
+namespace ProBuilder2.EditorCommon
+{
 	/**
-	 * Convert a UV point to a GUI point with relative size.
-	 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
+	 * Utilities for creating and manipulating Handles and points in GUI space.  Also coordinate translations.
 	 */
-	internal static Vector2 UVToGUIPoint(Vector2 uv, int pixelSize)
-	{
-		// flip y
-		Vector2 u = new Vector2(uv.x, -uv.y);
-		u *= pixelSize;
-		u = new Vector2(Mathf.Round(u.x), Mathf.Round(u.y));
-
-		return u;
-	}
-		
-	/**
-	 * Convert a GUI point back to a UV coordinate.
-	 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
-	 * @sa UVToGUIPoint
-	 */
-	internal static Vector2 GUIToUVPoint(Vector2 gui, int pixelSize)
-	{
-		gui /= (float)pixelSize;
-		Vector2 u = new Vector2(gui.x, -gui.y);
-		return u;
-	}
-#endregion
-
-#region Handles
-
-	/**
-	 * A 2D GUI view position handle.
-	 * @param id The Handle id.
-	 * @param position The position in GUI coordinates.
-	 * @param size How large in pixels to draw this handle.
-	 */
-	public static Vector2 PositionHandle2d(int id, Vector2 position, int size)
-	{
-		int width = size/4;
-
-		Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size+HANDLE_PADDING);
-		Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
-		
-		Handles.color = Color.yellow;
-		Handles.CircleCap(-1, position, Quaternion.identity, width/2);
-		Handles.color = HANDLE_COLOR_UP;
-
-		// Y Line
-		Handles.DrawLine(position, position - Vector2.up * size);
-
-		// Y Cone
-		if(position.y - size > 0f)
-			Handles.ConeCap(0, 
-				((Vector3)((position - Vector2.up*size))) - ConeDepth,
-				QuaternionUp,
-				width/2);
-
-		Handles.color = HANDLE_COLOR_RIGHT;
-
-		// X Line
-		Handles.DrawLine(position, position + Vector2.right * size);
-
-		// X Cap
-		if(position.y > 0f)
-			Handles.ConeCap(0, 
-				((Vector3)((position + Vector2.right*size))) - ConeDepth,
-				QuaternionRight,
-				width/2);
-
-		// If a Tool already is engaged and it's not this one, bail.
-		if(currentId >= 0 && currentId != id)
-			return position;
-
-		Event e = Event.current;
-		Vector2 mousePosition = e.mousePosition;
-		Vector2 newPosition = position;
-
-		if(currentId == id)
+	public class pb_Handle_Utility
+	{	
+		public static bool SceneViewInUse(Event e)
 		{
-			switch(e.type)
-			{
-				case EventType.MouseDrag:
-					newPosition = axisConstraint.Mask(mousePosition + handleOffset) + axisConstraint.InverseMask(position);
-					break;
-
-				case EventType.MouseUp:
-				case EventType.Ignore:
-					currentId = -1;
-					break;
-			}
-		}
-		else
-		{
-			if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
-			{
-				if(Vector2.Distance(mousePosition, position) < width/2)
-				{
-					currentId = id;
-					handleOffset = position - mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(1, 1);
-				}
-				else
-				if(handleRectRight.Contains(mousePosition))
-				{
-					currentId = id;	
-					handleOffset = position - mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(1, 0);
-				}
-				else if(handleRectUp.Contains(mousePosition))
-				{
-					currentId = id;	
-					handleOffset = position - mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(0, 1);
-				}
-
-			}		
+			return 	e.alt
+					|| Tools.current == Tool.View  
+					|| GUIUtility.hotControl > 0  
+					|| (e.isMouse ? e.button > 1 : false)
+					|| Tools.viewTool == ViewTool.FPS 
+					|| Tools.viewTool == ViewTool.Orbit;
 		}
 
-		return newPosition;
-	}
+		const int HANDLE_PADDING = 8;
+		const int LEFT_MOUSE_BUTTON = 0;
+		const int MIDDLE_MOUSE_BUTTON = 2;
 
-	static Vector2 initialDirection;
+		private static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
+		private static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
+		private static Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
 
-	/**
-	 * A 2D rotation handle.  Behaves like HandleUtility.RotationHandle
-	 */
-	public static float RotationHandle2d(int id, Vector2 position, float rotation, int radius)
-	{
-		Event e = Event.current;
-		Vector2 mousePosition = e.mousePosition;
-		float newRotation = rotation;
+		private static Color HANDLE_COLOR_UP = new Color(0f, .7f, 0f, .8f);
+		private static Color HANDLE_COLOR_RIGHT = new Color(0f, 0f, .7f, .8f);
+		private static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
+		private static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
 
-		Vector2 currentDirection = (mousePosition-position).normalized;
-
-		// Draw gizmos
-		Handles.color = HANDLE_COLOR_ROTATE;
-		Handles.CircleCap(-1, position, Quaternion.identity, radius);
-		
-		if(currentId == id)
+		static Material _handleMaterial = null;
+		public static Material handleMaterial
 		{
-			Handles.color = Color.gray;
-			Handles.DrawLine(position, position + (mousePosition-position).normalized * radius );
-			GUI.Label(new Rect(position.x, position.y, 90f, 30f), newRotation.ToString("F2") + pb_Constant.DEGREE_SYMBOL);
-		}
-
-		// If a Tool already is engaged and it's not this one, bail.
-		if(currentId >= 0 && currentId != id)
-			return rotation;
-
-		if(currentId == id)
-		{
-			switch(e.type)
+			get 
 			{
-				case EventType.MouseDrag:
+				if(_handleMaterial == null)
+					_handleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
 
-					newRotation = Vector2.Angle(initialDirection, currentDirection);					
-					
-					if(Vector2.Dot(new Vector2(-initialDirection.y, initialDirection.x), currentDirection) < 0)
-						newRotation = 360f-newRotation;
-					break;
-
-				case EventType.MouseUp:
-				case EventType.Ignore:
-					currentId = -1;
-					break;
-			}
-		}
-		else
-		{
-			if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
-			{
-				if( Mathf.Abs(Vector2.Distance(mousePosition, position)-radius) < 8)
-				{
-					currentId = id;
-					initialMousePosition = mousePosition;
-					initialDirection = (initialMousePosition-position).normalized;
-					handleOffset = position-mousePosition;
-				}
+				return _handleMaterial;
 			}
 		}
 
-		return newRotation;
-	}
-
-	/**
-	 * Draw a working scale handle in 2d space.
-	 */
-	public static Vector2 ScaleHandle2d(int id, Vector2 position, Vector2 scale, int size)
-	{
-		Event e = Event.current;
-		Vector2 mousePosition = e.mousePosition;
-		int width = size/4;
-
-		Handles.color = HANDLE_COLOR_UP;
-		Handles.DrawLine(position, position - Vector2.up * size * scale.y);
-
-		if(position.y - size > 0f)
-			Handles.CubeCap(0, 
-				((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16,
-				QuaternionUp,
-				width/3);
-
-		Handles.color = HANDLE_COLOR_RIGHT;
-		Handles.DrawLine(position, position + Vector2.right * size * scale.x);
-
-		if(position.y > 0f)
-			Handles.CubeCap(0, 
-				((Vector3)((position + Vector2.right*scale.x*size))) - Vector3.forward*16,
-				Quaternion.Euler(Vector3.up*90f),
-				width/3);
-
-		Handles.color = HANDLE_COLOR_SCALE;
-		Handles.CubeCap(0, 
-			((Vector3)position) - Vector3.forward*16,
-			QuaternionUp,
-			width/2);
-
-		// If a Tool already is engaged and it's not this one, bail.
-		if(currentId >= 0 && currentId != id)
-			return scale;
-
-		Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size + HANDLE_PADDING);
-		Rect handleRectRight = new Rect(position.x, position.y-width/2, size + 8, width);
-		Rect handleRectCenter = new Rect(position.x-width/2, position.y-width/2, width, width);
-
-		if(currentId == id)
+		static Material _edgeMaterial = null;
+		public static Material edgeMaterial
 		{
-			switch(e.type)
+			get 
 			{
-				case EventType.MouseDrag:
-					Vector2 diff = axisConstraint.Mask(mousePosition - initialMousePosition);
-					diff.x+=size;
-					diff.y = -diff.y;	// gui space Y is opposite-world
-					diff.y+=size;
-					scale = diff/size;
-					if(axisConstraint == pb_HandleConstraint2D.None)
+				if(_edgeMaterial == null)
+					_edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
+					// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
+
+				return _edgeMaterial;
+			}
+		}
+
+		public static int CurrentID { get { return currentId; } }
+		private static int currentId = -1;
+
+		private static Vector2 handleOffset = Vector2.zero;
+		private static Vector2 initialMousePosition = Vector2.zero;
+
+		private static pb_HandleConstraint2D axisConstraint = new pb_HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
+		public static pb_HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
+
+		public static bool limitToLeftButton = true;
+
+		/**
+		 * Convert a UV point to a GUI point with relative size.
+		 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
+		 */
+		internal static Vector2 UVToGUIPoint(Vector2 uv, int pixelSize)
+		{
+			// flip y
+			Vector2 u = new Vector2(uv.x, -uv.y);
+			u *= pixelSize;
+			u = new Vector2(Mathf.Round(u.x), Mathf.Round(u.y));
+
+			return u;
+		}
+
+		/**
+		 * Convert a GUI point back to a UV coordinate.
+		 * @param pixelSize How many pixels make up a 0,1 distance in UV space.
+		 * @sa UVToGUIPoint
+		 */
+		internal static Vector2 GUIToUVPoint(Vector2 gui, int pixelSize)
+		{
+			gui /= (float)pixelSize;
+			Vector2 u = new Vector2(gui.x, -gui.y);
+			return u;
+		}
+
+		/**
+		 * A 2D GUI view position handle.
+		 * @param id The Handle id.
+		 * @param position The position in GUI coordinates.
+		 * @param size How large in pixels to draw this handle.
+		 */
+		public static Vector2 PositionHandle2d(int id, Vector2 position, int size)
+		{
+			int width = size/4;
+
+			Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size+HANDLE_PADDING);
+			Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
+			
+			Handles.color = Color.yellow;
+			Handles.CircleCap(-1, position, Quaternion.identity, width/2);
+			Handles.color = HANDLE_COLOR_UP;
+
+			// Y Line
+			Handles.DrawLine(position, position - Vector2.up * size);
+
+			// Y Cone
+			if(position.y - size > 0f)
+				Handles.ConeCap(0, 
+					((Vector3)((position - Vector2.up*size))) - ConeDepth,
+					QuaternionUp,
+					width/2);
+
+			Handles.color = HANDLE_COLOR_RIGHT;
+
+			// X Line
+			Handles.DrawLine(position, position + Vector2.right * size);
+
+			// X Cap
+			if(position.y > 0f)
+				Handles.ConeCap(0, 
+					((Vector3)((position + Vector2.right*size))) - ConeDepth,
+					QuaternionRight,
+					width/2);
+
+			// If a Tool already is engaged and it's not this one, bail.
+			if(currentId >= 0 && currentId != id)
+				return position;
+
+			Event e = Event.current;
+			Vector2 mousePosition = e.mousePosition;
+			Vector2 newPosition = position;
+
+			if(currentId == id)
+			{
+				switch(e.type)
+				{
+					case EventType.MouseDrag:
+						newPosition = axisConstraint.Mask(mousePosition + handleOffset) + axisConstraint.InverseMask(position);
+						break;
+
+					case EventType.MouseUp:
+					case EventType.Ignore:
+						currentId = -1;
+						break;
+				}
+			}
+			else
+			{
+				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
+				{
+					if(Vector2.Distance(mousePosition, position) < width/2)
 					{
-						scale.x = Mathf.Min(scale.x, scale.y);
-						scale.y = Mathf.Min(scale.x, scale.y);
+						currentId = id;
+						handleOffset = position - mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(1, 1);
 					}
-					break;
+					else
+					if(handleRectRight.Contains(mousePosition))
+					{
+						currentId = id;	
+						handleOffset = position - mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(1, 0);
+					}
+					else if(handleRectUp.Contains(mousePosition))
+					{
+						currentId = id;	
+						handleOffset = position - mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(0, 1);
+					}
 
-				case EventType.MouseUp:
-				case EventType.Ignore:
-					currentId = -1;
-					break;
+				}		
 			}
-		}
-		else
-		{
-			if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
-			{
-				if(handleRectCenter.Contains(mousePosition))
-				{
-					currentId = id;
-					handleOffset = position - mousePosition;
-					initialMousePosition = mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(1, 1);
-				}
-				else
-				if(handleRectRight.Contains(mousePosition))
-				{
-					currentId = id;	
-					handleOffset = position - mousePosition;
-					initialMousePosition = mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(1, 0);
-				}
-				else if(handleRectUp.Contains(mousePosition))
-				{
-					currentId = id;	
-					handleOffset = position - mousePosition;
-					initialMousePosition = mousePosition;
-					axisConstraint = new pb_HandleConstraint2D(0, 1);
-				}
 
-			}		
+			return newPosition;
 		}
 
-		return scale;
-	}
-#endregion
-
-#region Raycast
-
-	public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit)
-	{
-		pb = null;
-		hit = null;
-
-		GameObject go = HandleUtility.PickGameObject(mousePosition, false);
-
-		if(go == null)
-			return false;
-
-		pb = go.GetComponent<pb_Object>();
-
-		if(pb == null)
-			return false;
-
-		Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-		return MeshRaycast(ray, pb, out hit);
-	}
-
-	/**
-	 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
-	 */
-	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
-	{
-		return MeshRaycast(InWorldRay, pb, out hit, Mathf.Infinity, Culling.Front);
-	}
-
-	/**
-	 * Find the nearest triangle intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
-	 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-	 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
-	 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
-	 */
-	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, float distance, Culling cullingMode)
-	{
-		/**
-		 * Transform ray into model space
-		 */
-
-		InWorldRay.origin 		-= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-		InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
-		InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
-
-		Vector3[] vertices = pb.vertices;
-
-		float dist = 0f;
-		Vector3 point = Vector3.zero;
-
-		float OutHitPoint = Mathf.Infinity;
-		float dot; // vars used in loop
-		Vector3 nrm;	// vars used in loop
-		int OutHitFace = -1;
-		Vector3 OutNrm = Vector3.zero;
+		static Vector2 initialDirection;
 
 		/**
-		 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+		 * A 2D rotation handle.  Behaves like HandleUtility.RotationHandle
 		 */
-		for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
+		public static float RotationHandle2d(int id, Vector2 position, float rotation, int radius)
 		{
-			int[] Indices = pb.faces[CurFace].indices;
+			Event e = Event.current;
+			Vector2 mousePosition = e.mousePosition;
+			float newRotation = rotation;
 
-			for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+			Vector2 currentDirection = (mousePosition-position).normalized;
+
+			// Draw gizmos
+			Handles.color = HANDLE_COLOR_ROTATE;
+			Handles.CircleCap(-1, position, Quaternion.identity, radius);
+			
+			if(currentId == id)
 			{
-				Vector3 a = vertices[Indices[CurTriangle+0]];
-				Vector3 b = vertices[Indices[CurTriangle+1]];
-				Vector3 c = vertices[Indices[CurTriangle+2]];
+				Handles.color = Color.gray;
+				Handles.DrawLine(position, position + (mousePosition-position).normalized * radius );
+				GUI.Label(new Rect(position.x, position.y, 90f, 30f), newRotation.ToString("F2") + pb_Constant.DEGREE_SYMBOL);
+			}
 
-				nrm = Vector3.Cross(b-a, c-a);
-				dot = Vector3.Dot(InWorldRay.direction, nrm);
+			// If a Tool already is engaged and it's not this one, bail.
+			if(currentId >= 0 && currentId != id)
+				return rotation;
 
-				bool ignore = false;
-
-				switch(cullingMode)
+			if(currentId == id)
+			{
+				switch(e.type)
 				{
-					case Culling.Front:
-						if(dot > 0f) ignore = true;
+					case EventType.MouseDrag:
+
+						newRotation = Vector2.Angle(initialDirection, currentDirection);					
+						
+						if(Vector2.Dot(new Vector2(-initialDirection.y, initialDirection.x), currentDirection) < 0)
+							newRotation = 360f-newRotation;
 						break;
 
-					case Culling.Back:
-						if(dot < 0f) ignore = true;
+					case EventType.MouseUp:
+					case EventType.Ignore:
+						currentId = -1;
 						break;
 				}
-
-				if(!ignore && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+			}
+			else
+			{
+				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
 				{
-					if(dist > OutHitPoint || dist > distance)
-						continue;
-
-					OutNrm = nrm;
-					OutHitFace = CurFace;
-					OutHitPoint = dist;
-
-					continue;
+					if( Mathf.Abs(Vector2.Distance(mousePosition, position)-radius) < 8)
+					{
+						currentId = id;
+						initialMousePosition = mousePosition;
+						initialDirection = (initialMousePosition-position).normalized;
+						handleOffset = position-mousePosition;
+					}
 				}
 			}
+
+			return newRotation;
 		}
 
-		hit = new pb_RaycastHit(OutHitPoint,
-								InWorldRay.GetPoint(OutHitPoint),
-								OutNrm,
-								OutHitFace);
-
-		return OutHitFace > -1;
-	}
-
-	/**
-	 * Find the all triangles intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
-	 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-	 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
-	 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
-	 */
-	public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out List<pb_RaycastHit> hits, float distance, Culling cullingMode)
-	{
 		/**
-		 * Transform ray into model space
+		 * Draw a working scale handle in 2d space.
 		 */
-		InWorldRay.origin -= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-		
-		InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
-		InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
-
-		Vector3[] vertices = pb.vertices;
-
-		float dist = 0f;
-		Vector3 point = Vector3.zero;
-
-		float dot; // vars used in loop
-		Vector3 nrm;	// vars used in loop
-		hits = new List<pb_RaycastHit>();
-
-		/**
-		 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
-		 */
-		for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
+		public static Vector2 ScaleHandle2d(int id, Vector2 position, Vector2 scale, int size)
 		{
-			int[] Indices = pb.faces[CurFace].indices;
+			Event e = Event.current;
+			Vector2 mousePosition = e.mousePosition;
+			int width = size/4;
 
-			for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+			Handles.color = HANDLE_COLOR_UP;
+			Handles.DrawLine(position, position - Vector2.up * size * scale.y);
+
+			if(position.y - size > 0f)
+				Handles.CubeCap(0, 
+					((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16,
+					QuaternionUp,
+					width/3);
+
+			Handles.color = HANDLE_COLOR_RIGHT;
+			Handles.DrawLine(position, position + Vector2.right * size * scale.x);
+
+			if(position.y > 0f)
+				Handles.CubeCap(0, 
+					((Vector3)((position + Vector2.right*scale.x*size))) - Vector3.forward*16,
+					Quaternion.Euler(Vector3.up*90f),
+					width/3);
+
+			Handles.color = HANDLE_COLOR_SCALE;
+			Handles.CubeCap(0, 
+				((Vector3)position) - Vector3.forward*16,
+				QuaternionUp,
+				width/2);
+
+			// If a Tool already is engaged and it's not this one, bail.
+			if(currentId >= 0 && currentId != id)
+				return scale;
+
+			Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size + HANDLE_PADDING);
+			Rect handleRectRight = new Rect(position.x, position.y-width/2, size + 8, width);
+			Rect handleRectCenter = new Rect(position.x-width/2, position.y-width/2, width, width);
+
+			if(currentId == id)
 			{
-				Vector3 a = vertices[Indices[CurTriangle+0]];
-				Vector3 b = vertices[Indices[CurTriangle+1]];
-				Vector3 c = vertices[Indices[CurTriangle+2]];
-
-				if(pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+				switch(e.type)
 				{
+					case EventType.MouseDrag:
+						Vector2 diff = axisConstraint.Mask(mousePosition - initialMousePosition);
+						diff.x+=size;
+						diff.y = -diff.y;	// gui space Y is opposite-world
+						diff.y+=size;
+						scale = diff/size;
+						if(axisConstraint == pb_HandleConstraint2D.None)
+						{
+							scale.x = Mathf.Min(scale.x, scale.y);
+							scale.y = Mathf.Min(scale.x, scale.y);
+						}
+						break;
+
+					case EventType.MouseUp:
+					case EventType.Ignore:
+						currentId = -1;
+						break;
+				}
+			}
+			else
+			{
+				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
+				{
+					if(handleRectCenter.Contains(mousePosition))
+					{
+						currentId = id;
+						handleOffset = position - mousePosition;
+						initialMousePosition = mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(1, 1);
+					}
+					else
+					if(handleRectRight.Contains(mousePosition))
+					{
+						currentId = id;	
+						handleOffset = position - mousePosition;
+						initialMousePosition = mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(1, 0);
+					}
+					else if(handleRectUp.Contains(mousePosition))
+					{
+						currentId = id;	
+						handleOffset = position - mousePosition;
+						initialMousePosition = mousePosition;
+						axisConstraint = new pb_HandleConstraint2D(0, 1);
+					}
+
+				}		
+			}
+
+			return scale;
+		}
+
+		public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit)
+		{
+			pb = null;
+			hit = null;
+
+			GameObject go = HandleUtility.PickGameObject(mousePosition, false);
+
+			if(go == null)
+				return false;
+
+			pb = go.GetComponent<pb_Object>();
+
+			if(pb == null)
+				return false;
+
+			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+
+			return MeshRaycast(ray, pb, out hit);
+		}
+
+		/**
+		 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
+		 */
+		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
+		{
+			return MeshRaycast(InWorldRay, pb, out hit, Mathf.Infinity, Culling.Front);
+		}
+
+		/**
+		 * Find the nearest triangle intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
+		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
+		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
+		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
+		 */
+		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, float distance, Culling cullingMode)
+		{
+			/**
+			 * Transform ray into model space
+			 */
+
+			InWorldRay.origin 		-= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
+			InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
+			InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
+
+			Vector3[] vertices = pb.vertices;
+
+			float dist = 0f;
+			Vector3 point = Vector3.zero;
+
+			float OutHitPoint = Mathf.Infinity;
+			float dot; // vars used in loop
+			Vector3 nrm;	// vars used in loop
+			int OutHitFace = -1;
+			Vector3 OutNrm = Vector3.zero;
+
+			/**
+			 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+			 */
+			for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
+			{
+				int[] Indices = pb.faces[CurFace].indices;
+
+				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+				{
+					Vector3 a = vertices[Indices[CurTriangle+0]];
+					Vector3 b = vertices[Indices[CurTriangle+1]];
+					Vector3 c = vertices[Indices[CurTriangle+2]];
+
 					nrm = Vector3.Cross(b-a, c-a);
+					dot = Vector3.Dot(InWorldRay.direction, nrm);
+
+					bool ignore = false;
 
 					switch(cullingMode)
 					{
 						case Culling.Front:
-							dot = Vector3.Dot(InWorldRay.direction, -nrm);
-
-							if(dot > 0f)
-								goto case Culling.FrontBack;
+							if(dot > 0f) ignore = true;
 							break;
 
 						case Culling.Back:
-							dot = Vector3.Dot(InWorldRay.direction, nrm);
-
-							if(dot > 0f)
-								goto case Culling.FrontBack;
-							break;
-
-						case Culling.FrontBack:
-							hits.Add( new pb_RaycastHit(dist,
-														InWorldRay.GetPoint(dist),
-														nrm,
-														CurFace));
+							if(dot < 0f) ignore = true;
 							break;
 					}
 
-					continue;
+					if(!ignore && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+					{
+						if(dist > OutHitPoint || dist > distance)
+							continue;
+
+						OutNrm = nrm;
+						OutHitFace = CurFace;
+						OutHitPoint = dist;
+
+						continue;
+					}
 				}
 			}
+
+			hit = new pb_RaycastHit(OutHitPoint,
+									InWorldRay.GetPoint(OutHitPoint),
+									OutNrm,
+									OutHitFace);
+
+			return OutHitFace > -1;
 		}
 
-		return hits.Count > 0;
-	}
-#endregion
-
-#region Point Methods
-
-	/**
-	 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset. 
-	 * @param points First Vector2[] array.
-	 * @param compare The Vector2[] array to compare @c points againts.
-	 * @mask If mask is not null, any index in mask will not be used in the compare array.
-	 * @param maxDelta The maximum distance for two points to be apart to be considered for nearness.
-	 * @notes This should probably use a divide and conquer algorithm instead of the O(n^2) approach (http://www.geeksforgeeks.org/closest-pair-of-points/)
-	 */
-	public static bool NearestPointDelta(Vector2[] points, Vector2[] compare, int[] mask, float maxDelta, out Vector2 offset)
-	{
-		float dist = 0f;
-		float minDist = maxDelta;
-		bool foundMatch = false;
-		offset = Vector2.zero;
-
-		for(int i = 0; i < points.Length; i++)
+		/**
+		 * Find the all triangles intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
+		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
+		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
+		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
+		 */
+		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out List<pb_RaycastHit> hits, float distance, Culling cullingMode)
 		{
-			for(int n = 0; n < compare.Length; n++)
-			{
-				if(points[i] == compare[n]) continue;
+			/**
+			 * Transform ray into model space
+			 */
+			InWorldRay.origin -= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
+			
+			InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
+			InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
 
-				dist = Vector2.Distance(points[i], compare[n]);
-				
+			Vector3[] vertices = pb.vertices;
+
+			float dist = 0f;
+			Vector3 point = Vector3.zero;
+
+			float dot; // vars used in loop
+			Vector3 nrm;	// vars used in loop
+			hits = new List<pb_RaycastHit>();
+
+			/**
+			 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+			 */
+			for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
+			{
+				int[] Indices = pb.faces[CurFace].indices;
+
+				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
+				{
+					Vector3 a = vertices[Indices[CurTriangle+0]];
+					Vector3 b = vertices[Indices[CurTriangle+1]];
+					Vector3 c = vertices[Indices[CurTriangle+2]];
+
+					if(pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+					{
+						nrm = Vector3.Cross(b-a, c-a);
+
+						switch(cullingMode)
+						{
+							case Culling.Front:
+								dot = Vector3.Dot(InWorldRay.direction, -nrm);
+
+								if(dot > 0f)
+									goto case Culling.FrontBack;
+								break;
+
+							case Culling.Back:
+								dot = Vector3.Dot(InWorldRay.direction, nrm);
+
+								if(dot > 0f)
+									goto case Culling.FrontBack;
+								break;
+
+							case Culling.FrontBack:
+								hits.Add( new pb_RaycastHit(dist,
+															InWorldRay.GetPoint(dist),
+															nrm,
+															CurFace));
+								break;
+						}
+
+						continue;
+					}
+				}
+			}
+
+			return hits.Count > 0;
+		}
+
+		/**
+		 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset. 
+		 * @param points First Vector2[] array.
+		 * @param compare The Vector2[] array to compare @c points againts.
+		 * @mask If mask is not null, any index in mask will not be used in the compare array.
+		 * @param maxDelta The maximum distance for two points to be apart to be considered for nearness.
+		 * @notes This should probably use a divide and conquer algorithm instead of the O(n^2) approach (http://www.geeksforgeeks.org/closest-pair-of-points/)
+		 */
+		public static bool NearestPointDelta(Vector2[] points, Vector2[] compare, int[] mask, float maxDelta, out Vector2 offset)
+		{
+			float dist = 0f;
+			float minDist = maxDelta;
+			bool foundMatch = false;
+			offset = Vector2.zero;
+
+			for(int i = 0; i < points.Length; i++)
+			{
+				for(int n = 0; n < compare.Length; n++)
+				{
+					if(points[i] == compare[n]) continue;
+
+					dist = Vector2.Distance(points[i], compare[n]);
+					
+					if(dist < minDist)
+					{
+						if( mask != null && System.Array.IndexOf(mask, n) > -1 )
+							continue;
+
+						minDist = dist;
+						offset = compare[n]-points[i];
+						foundMatch = true;
+					}
+				}
+			}
+
+			return foundMatch;
+		}
+
+		/**
+		 * Returns the index of the nearest point in the points array, or -1 if no point is within maxDelta range.
+		 */
+		public static int NearestPoint(Vector2 point, Vector2[] points, float maxDelta)
+		{
+			float dist = 0f;
+			float minDist = maxDelta;
+			int index = -1;
+
+			for(int i = 0; i < points.Length; i++)
+			{
+				if(point == points[i]) continue;
+
+				dist = Vector2.Distance(point, points[i]);
+
 				if(dist < minDist)
 				{
-					if( mask != null && System.Array.IndexOf(mask, n) > -1 )
-						continue;
-
 					minDist = dist;
-					offset = compare[n]-points[i];
-					foundMatch = true;
+					index = i;
 				}
-			}
+			}	
+
+			return index;
 		}
-
-		return foundMatch;
-	}
-
-	/**
-	 * Returns the index of the nearest point in the points array, or -1 if no point is within maxDelta range.
-	 */
-	public static int NearestPoint(Vector2 point, Vector2[] points, float maxDelta)
-	{
-		float dist = 0f;
-		float minDist = maxDelta;
-		int index = -1;
-
-		for(int i = 0; i < points.Length; i++)
-		{
-			if(point == points[i]) continue;
-
-			dist = Vector2.Distance(point, points[i]);
-
-			if(dist < minDist)
-			{
-				minDist = dist;
-				index = i;
-			}
-		}	
-
-		return index;
-	}
-#endregion
-
-#region Wireframe
 
 		/**
 		 * Generate a line segment bounds representation.
@@ -685,169 +658,143 @@ public class pb_Handle_Utility
 
 			return v;
 		}
-#endregion
-
-#region Fill
-
-	#if PB_DEBUG
-	public static bool GeneratePolygonCrosshatch(pb_Profiler profiler, Vector2[] polygon, float scale, Color color, int lineSpacing, ref Texture2D texture)
-	#else
-	public static bool GeneratePolygonCrosshatch(Vector2[] polygon, float scale, Color color, int lineSpacing, ref Texture2D texture)
-	#endif
-	{
-		#if PB_DEBUG
-		profiler.BeginSample("GeneratePolygonCrosshatch");
-		#endif
-
-		pb_Bounds2D bounds = new pb_Bounds2D(polygon);
-
-		Vector2 offset = bounds.center - bounds.extents;
-
-		/// shift polygon to origin 0,0
-		for(int i = 0; i < polygon.Length; i++)
-		{
-			polygon[i] -= offset;
-			polygon[i] *= scale;
-		}
-
-		bounds.center -= offset;
-		bounds.size *= scale;
-
-		int width = (int)(bounds.size.x);
-		int height = (int)(bounds.size.y);
-
-		if(width <= 0 || height <= 0)
-			return false;
-
-		#if PB_DEBUG
-		profiler.BeginSample("Allocate Texture");
-		#endif
-
-		if(texture == null)
-		{
-			texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-			texture.filterMode = FilterMode.Point;
-			texture.wrapMode = TextureWrapMode.Clamp;
-		}
-		else
-		{
-			if(texture.width != width || texture.height != height)
-				texture.Resize(width, height, TextureFormat.ARGB32, false);
-		}
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.BeginSample("Fill Clear");
-		#endif
-
-		Color[] colors = new Color[width*height];
-		List<int> intersects = new List<int>();
-
-		for(int i = 0; i < width*height; i++)
-			colors[i] = Color.clear;
-
-		#if PB_DEBUG
-		profiler.EndSample();
-		#endif
 
 		/**
-		 *	Horizontal lines
+		 *	Render the pb_Object selection with the special selection picker shader and return a texture and color -> {object, face} dictionary.
 		 */
-		for(int h = 0; h < height/lineSpacing; h++)
-		{	
-			int y = (h*lineSpacing);
-			intersects.Clear();
+		public static Texture2D RenderSelectionPickerTexture(Camera camera, pb_Object[] selection, out Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map)
+		{
+			List<GameObject> depthGameObjects = GenerateDepthTestMeshes(selection, out map);
 
-			#if PB_DEBUG
-			profiler.BeginSample("Find Intersections");
-			#endif
+			Shader shader = pb_Constant.SelectionPickerShader;
 
-			Vector2 start = new Vector2(bounds.center.x - bounds.size.x, y);
-			Vector2 end = new Vector2(bounds.center.x + bounds.size.x, y);
+			Texture2D tex = RenderWithReplacementShader(camera, shader, "ProBuilderPicker");
 
-			for(int i = 0; i < polygon.Length; i+=2)
+			foreach(GameObject go in depthGameObjects)
 			{
-				Vector2 intersect = Vector2.zero;
-
-				if( pb_Math.GetLineSegmentIntersect(polygon[i], polygon[i+1], start, end, ref intersect) )
-					intersects.Add((int)intersect.x);
+				GameObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
+				GameObject.DestroyImmediate(go);
 			}
 
-			intersects = intersects.Distinct().ToList();
-			intersects.Sort();
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			profiler.BeginSample("Fill Color");
-			#endif
-
-			for(int i = 0; i < intersects.Count-1; i++)
-			{
-				// can't just use Dot product because we the winding order isn't consistent
-				if( pb_Math.PointInPolygon(polygon, new Vector2(intersects[i]+2, y)) )
-				{
-					for(int n = intersects[i]; n < intersects[i+1]; n++)
-					{
-						colors[ ((height-1)-y) * width + n] = color;
-					}
-				}
-			}
-
-			#if PB_DEBUG
-			profiler.EndSample();
-			#endif
+			return tex;
 		}
 
 		/**
-		 *	Vertical lines
+		 *	Generate a set of meshes and gameObjects that can be rendered for depth testing faces.
 		 */
-		if(lineSpacing > 1)
+		private static List<GameObject> GenerateDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map)
 		{
-			for(int w = 0; w < width/lineSpacing; w++)
-			{	
-				int x = (w*lineSpacing);
+			List<GameObject> meshes = new List<GameObject>();
+			map = new Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>>();
 
-				intersects.Clear();
+			uint index = 0;
 
-				Vector2 start = new Vector2(x, bounds.center.y - bounds.size.y);
-				Vector2 end = new Vector2(x, bounds.center.y + bounds.size.y);
+			foreach(pb_Object pb in selection)
+			{
+				GameObject go = new GameObject();
+				go.transform.position = pb.transform.position;
+				go.transform.localRotation = pb.transform.localRotation;
+				go.transform.localScale = pb.transform.localScale;
 
-				for(int i = 0; i < polygon.Length; i+=2)
+				Mesh m = new Mesh();
+				m.vertices = pb.vertices;
+				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
+				Color32[] colors = new Color32[m.vertexCount];
+
+				foreach(pb_Face f in pb.faces)
 				{
-					Vector2 intersect = Vector2.zero;
-					if( pb_Math.GetLineSegmentIntersect(polygon[i], polygon[i+1], start, end, ref intersect) )
-						intersects.Add((int)intersect.y);
-				}
+					Color32 color = EncodeRGBA(index++);
+					map.Add(color, new pb_Tuple<pb_Object, pb_Face>(pb, f));
 
-				intersects = intersects.Distinct().ToList();
-				intersects.Sort();
-
-				for(int i = 0; i < intersects.Count-1; i++)
-				{
-					if(pb_Math.PointInPolygon(polygon, new Vector2(x, intersects[i]+2)))
-					{
-						for(int y = intersects[i]; y < intersects[i+1]; y++)
-						{	
-							colors[ ((height-1)-y) * width + x] = color;
-						}
-					}
+					for(int i = 0; i < f.distinctIndices.Length; i++)
+						colors[f.distinctIndices[i]] = color;
 				}
+				m.colors32 = colors;
+
+				go.AddComponent<MeshFilter>().sharedMesh = m;
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+
+				meshes.Add(go);
 			}
+
+			return meshes;
 		}
 
-		#if PB_DEBUG
-		profiler.BeginSample("SetPixels");
-		#endif
-	
-		texture.SetPixels(colors);
-		texture.Apply(false);
-		
-		#if PB_DEBUG
-		profiler.EndSample();
-		profiler.EndSample();
-		#endif
+		private static uint DecodeRGBA(Color32 color)
+		{
+			if(BitConverter.IsLittleEndian)
+				return BitConverter.ToUInt32( new byte[] {
+					color.r,
+					color.g,
+					color.b,
+					(byte) 0}, 
+					0);
+				else
+					return BitConverter.ToUInt32( new byte[] {
+						(byte) 0,
+						color.b,
+						color.g,
+						color.r },
+						0);
+		}
 
-		return true;
+		private static Color32 EncodeRGBA(uint hash)
+		{
+			byte[] bytes = BitConverter.GetBytes(hash);
+
+			// Debug.Log(string.Format("encode {0:X} to {1:X}, {2:X}, {3:X}, {4:X}  {5}", 
+			// 	hash,
+			// 	bytes[0],
+			// 	bytes[1],
+			// 	bytes[2],
+			// 	bytes[3],
+			// 	BitConverter.IsLittleEndian ? "little endian" : "big endian"));
+
+			// msdn - "The order of bytes in the array returned by the GetBytes method depends on whether the computer architecture is little-endian or big-endian."
+			// since we're restricted to 24bit depth, lop off the hi byte
+			if( BitConverter.IsLittleEndian)
+				return new Color32( bytes[0],			
+									bytes[1],			
+									bytes[2],			
+									(byte) 255);
+			else
+				return new Color32( bytes[3],			
+									bytes[2],			
+									bytes[1],			
+									(byte) 255);
+		}
+		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag)
+		{
+			int width = (int) camera.pixelRect.width;
+			int height = (int) camera.pixelRect.height;
+
+			GameObject go = new GameObject();
+			Camera renderCam = go.AddComponent<Camera>();
+			renderCam.CopyFrom(camera);
+			renderCam.enabled = false;
+			renderCam.clearFlags = CameraClearFlags.SolidColor;
+			renderCam.backgroundColor = Color.white;
+			renderCam.depthTextureMode = DepthTextureMode.Depth;
+
+			RenderTexture rt = RenderTexture.GetTemporary(width, height, 16);
+			Debug.Log("shader: " + shader.name);
+			renderCam.targetTexture = rt;
+			renderCam.RenderWithShader(shader, tag);
+
+			RenderTexture prev = RenderTexture.active;
+			RenderTexture.active = rt;
+
+			Texture2D img = new Texture2D(width, height);
+
+			img.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+			img.Apply();
+
+			RenderTexture.active = prev;
+			RenderTexture.ReleaseTemporary(rt);
+
+			GameObject.DestroyImmediate(go);
+
+			return img;
+		}
 	}
-#endregion	
 }

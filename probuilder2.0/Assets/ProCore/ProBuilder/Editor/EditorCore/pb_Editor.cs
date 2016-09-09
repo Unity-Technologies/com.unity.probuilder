@@ -654,7 +654,9 @@ public class pb_Editor : EditorWindow
 						pb_UV_Editor.instance.ResetUserPivot();
 #endif
 
+					profiler.Begin("DragCheck");
 					DragCheck();
+					profiler.End();
 				}
 			}
 		}
@@ -1132,12 +1134,15 @@ public class pb_Editor : EditorWindow
 
 			case SelectMode.Face:
 			{
+				profiler.Begin("clear & get selection");
 				if(!shiftKey && !ctrlKey)
 					ClearElementSelection();
 
 				pb_Object[] pool = limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object));
 				bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
+				profiler.End();
 
+				profiler.Begin("iterate pb_Object");
 				for(int i = 0; i < pool.Length; i++)
 				{
 					pb_Object pb = pool[i];
@@ -1145,6 +1150,7 @@ public class pb_Editor : EditorWindow
 					if(!pb.isSelectable)
 						continue;
 
+					profiler.Begin("vertices -> gui points");
 					HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
 
 					Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
@@ -1154,14 +1160,21 @@ public class pb_Editor : EditorWindow
 						guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
 
 					bool addToSelection = false;
+					profiler.End();
 
+					profiler.Begin("iterate faces");
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
 						pb_Face face = pb.faces[n];
 
 						/// face is behind the camera
+						profiler.Begin("cull camera");
 						if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )
+						{
+							profiler.End();
 							continue;
+						}
+						profiler.End();
 
 						if(selectWholeElement)
 						{
@@ -1194,6 +1207,8 @@ public class pb_Editor : EditorWindow
 						{
 							pb_Bounds2D poly = new pb_Bounds2D(guiPoints, face.edges);
 							bool overlaps = false;
+
+							profiler.Begin("test intersects");
 
 							if( poly.Intersects(selectionRect) )
 							{
@@ -1231,10 +1246,13 @@ public class pb_Editor : EditorWindow
 									}
 								}
 							}
+							profiler.End();
 
+							profiler.Begin("test is occluded");
 							if(overlaps)
 							{
-								if( pref_backfaceSelect || !pb_HandleUtility.PointIsOccluded(cam, pool[i], pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+								if( pref_backfaceSelect || 
+									!pb_HandleUtility.IsOccluded(cam, pool[i], face))
 								{
 									if(!selectedFaces.Add(face))
 											selectedFaces.Remove(face);
@@ -1242,17 +1260,27 @@ public class pb_Editor : EditorWindow
 											addToSelection = true;
 								}
 							}
+							profiler.End();
 						}
 					}
+					profiler.End();
 
+					profiler.Begin("SetSelectedFaces");
 					pb.SetSelectedFaces(selectedFaces.ToArray());
+
 					if(addToSelection)
 						AddToSelection(pb.gameObject);
+					profiler.End();
 				}
+				profiler.End();
 
+				profiler.Begin("drag object check");
 				DragObjectCheck(true);
+				profiler.End();
 
+				profiler.Begin("update selection");
 				UpdateSelection(false);
+				profiler.End();
 			}
 			break;
 

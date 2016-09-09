@@ -16,6 +16,7 @@ public class RenderTextureTest : EditorWindow
 	[MenuItem("Tools/Render Scene to Texture")]
 	static void MenuInit()
 	{
+		profiler.Begin("render scene texture");
 		SceneView scn = SceneView.lastActiveSceneView;
 		Camera sceneCamera = scn.camera;
 		int width = (int) scn.position.width;
@@ -28,11 +29,12 @@ public class RenderTextureTest : EditorWindow
 		renderCam.CopyFrom(sceneCamera);
 		renderCam.enabled = false;
 		renderCam.clearFlags = CameraClearFlags.SolidColor;
-		renderCam.backgroundColor = Color.black;
+		renderCam.backgroundColor = Color.white;
+		renderCam.depthTextureMode = DepthTextureMode.Depth;
 
 		RenderTexture rt = RenderTexture.GetTemporary(width, height, 16);
 		renderCam.targetTexture = rt;
-		renderCam.RenderWithShader(shader, string.Empty);
+		renderCam.RenderWithShader(shader, "ProBuilderPicker");
 
 		RenderTexture prev = RenderTexture.active;
 		RenderTexture.active = rt;
@@ -44,6 +46,7 @@ public class RenderTextureTest : EditorWindow
 
 		RenderTexture.active = prev;
 		RenderTexture.ReleaseTemporary(rt);
+		profiler.End();
 
 		pb_EditorUtility.SaveTexture(img, "Assets/test.png");
 

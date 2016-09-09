@@ -7,6 +7,7 @@ using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using System.Linq;
 using System.Text;
+using System;
 using System.Reflection;
 
 using Parabox.Debug;
@@ -16,30 +17,45 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
+		// EditorWindow.GetWindow<TempMenuItems>();
+
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		foreach(pb_Object pb in selection)
-		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
-			pb_Edge edge = pb.SelectedEdges.FirstOrDefault();
-			if(edge == null) continue;
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			pb_Edge common = new pb_Edge(lookup[edge.x], lookup[edge.y]);
-			pb_WingedEdge wing = wings.FirstOrDefault(x => x.edge.common.Equals(common));
-			if(wing == null) continue;
+		profiler.Begin("depth");
 
-			List<pb_WingedEdge> spokes = pbMeshUtils.GetSpokes(wing, wing.edge.common.x, true);
+		Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map;
+		Texture2D tex = pb_Handle_Utility.RenderSelectionPickerTexture(SceneView.lastActiveSceneView.camera, selection, out map);
+		
+		profiler.End();
 
-			if(spokes == null)
-			{
-				pb.SetSelectedEdges(new List<pb_Edge>());
-				continue;
-			}
-			IEnumerable<pb_EdgeLookup> el = spokes.Select(x => x.edge);
-			el = el.Distinct();
-			pb.SetSelectedEdges( el.Select(x => x.local) );
-		}
+		pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
 
-		pb_Editor.Refresh();
+		GameObject.DestroyImmediate(tex);
 	}
+
+	// Color32 color = new Color32(255, 0, 0, 1);
+	// GUIStyle labelStyle = null;
+
+	// void OnGUI()
+	// {
+	// 	if(labelStyle == null)
+	// 	{
+	// 		Font font = Resources.Load<Font>("monkey");
+	// 		labelStyle = new GUIStyle(EditorStyles.label);
+	// 		labelStyle.font = font;
+	// 	}
+
+	// 	color = EditorGUILayout.ColorField("color", color);
+
+	// 	GUILayout.Label( string.Format("rgba 32:  {0:x}, {1:x}, {2:x}, {3:x}", color.r, color.g, color.b, color.a), labelStyle);
+
+	// 	uint hash = DecodeRGBA(color);
+	// 	Color32 encoded = EncodeRGBA(hash);
+
+	// 	GUILayout.Label( string.Format("uint   :  {0:x}", hash), labelStyle);
+	// 	GUILayout.Label( string.Format("rgba 32:  {0:x}, {1:x}, {2:x}, {3:x}", encoded.r, encoded.g, encoded.b, encoded.a), labelStyle);
+	// 	uint hash2 = DecodeRGBA(encoded);
+	// 	GUILayout.Label( string.Format("back   :  {0:x}", hash2), labelStyle);
+	// }
+
 }

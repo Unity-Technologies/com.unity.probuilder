@@ -11,7 +11,6 @@ namespace ProBuilder2.Common
 	 */
 	public class pb_HandleUtility
 	{
-
 		/**
 		 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
 		 * Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore
@@ -263,91 +262,6 @@ namespace ProBuilder2.Common
 			return edge != null;
 		}
 
-		// public static bool VertexRaycast(Camera cam, Vector2 mousePosition, int rectSize, pb_Object mesh, Vector3[] verticesInWorldSpace, int[] indices, out int index)
-		// {
-		// 	float bestDistance = Mathf.Infinity;
-		// 	float distance = 0f;
-		// 	index = -1;
-
-		// 	GameObject go = pb_HandleUtility.ObjectRaycast(cam, mousePosition, (GameObject[])Resources.FindObjectsOfTypeAll(typeof(GameObject)) );// HandleUtility.PickGameObject(mousePosition, false);
-
-		// 	if( go == null || go != mesh.gameObject )
-		// 	{
-		// 		int width = Screen.width;
-		// 		int height = Screen.height;
-
-		// 		Rect mouseRect = new Rect(mousePosition.x - (rectSize/2f), mousePosition.y - (rectSize/2f), rectSize, rectSize);
-		// 		List<int> user = (List<int>) selection.mesh.GetUserIndices();
-
-		// 		for(int i = 0; i < user.Count; i++)
-		// 		{
-		// 			if( mouseRect.Contains( HandleUtility.WorldToGUIPoint(selection.verticesInWorldSpace[user[i]]) ) )
-		// 			{				
-		// 				Vector3 v = cam.WorldToScreenPoint(selection.verticesInWorldSpace[user[i]]);
-
-		// 				distance = Vector2.Distance(mousePosition, v);
-
-		// 				if( distance < bestDistance )
-		// 				{
-		// 					if( v.z <= 0 || v.x < 0 || v.y < 0 || v.x > width || v.y > height )
-		// 						continue;
-
-		// 					if( PointIsOccluded(mesh, selection.verticesInWorldSpace[user[i]]) )
-		// 						continue;
-
-		// 					index = user[i];
-		// 					bestDistance = Vector2.Distance(v, mousePosition);
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		// Test culling
-		// 		List<pb_RaycastHit> hits;
-		// 		Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-
-		// 		if( MeshRaycast(ray, mesh, out hits, Mathf.Infinity, Culling.FrontBack) )
-		// 		{
-		// 			// Sort from nearest hit to farthest
-		// 			hits.Sort( (x, y) => x.Distance.CompareTo(y.Distance) );
-					
-		// 			// Find the nearest edge in the hit faces
-		// 			Vector3[] v = mesh.vertices;
-
-		// 			for(int i = 0; i < hits.Count; i++)
-		// 			{
-		// 				if(  PointIsOccluded(mesh, mesh.transform.TransformPoint(hits[i].Point)) )
-		// 					continue;
-
-		// 				foreach(int tri in mesh.faces[hits[i].FaceIndex].indices)
-		// 				{
-		// 					float d = Vector3.Distance(hits[i].Point, v[tri]);
-
-		// 					if(d < bestDistance)
-		// 					{
-		// 						bestDistance = d;
-		// 						index = tri;
-		// 					}
-		// 				}
-
-		// 				if( Vector3.Dot(ray.direction, mesh.transform.TransformDirection(hits[i].Normal)) < 0f )
-		// 					break;
-		// 			}
-
-		// 			if(index > -1 && Vector2.Distance(mousePosition, HandleUtility.WorldToGUIPoint(selection.verticesInWorldSpace[index])) > rectSize * 1.3f)
-		// 			{
-		// 				index = -1;
-		// 			}
-		// 		}
-		// 	}
-
-		// 	if( index > -1 )
-		// 		index = mesh.ToUserIndex(index);
-
-		// 	return index > -1;
-		// }
-
 		/**
 		 * Returns the nearest gameobject to the @mousePosition.
 		 */
@@ -378,6 +292,22 @@ namespace ProBuilder2.Common
 			pb_RaycastHit hit;
 
 			return pb_HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), Culling.Back);
+		}
+
+		/**
+		 * Returns true if this point in world space is occluded by a triangle on this object.
+		 */
+		public static bool IsOccluded(Camera cam, pb_Object pb, pb_Face face)
+		{
+			Vector3 point = Vector3.zero;
+			int len = face.distinctIndices.Length;
+
+			for(int i = 0;i < len; i++)
+				point += pb.vertices[face.distinctIndices[i]];
+
+			point *= (1f/len);
+
+			return PointIsOccluded(cam, pb, pb.transform.TransformPoint(point));
 		}
 	}
 
