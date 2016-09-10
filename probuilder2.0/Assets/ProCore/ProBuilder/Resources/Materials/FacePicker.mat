@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FacePicker
-  m_Shader: {fileID: 4800000, guid: debd51d1e02def04eb008e0270cee4f2, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2e58e16192dbb47469ae041ba1331088, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000

@@ -1156,28 +1156,30 @@ public class pb_Editor : EditorWindow
 				profiler.End();
 
 				profiler.Begin("ReadPixels");
-				int ox = Mathf.FloorToInt(selectionRect.x);
-				int oy = Mathf.FloorToInt((tex.height - selectionRect.y) - selectionRect.height);
+				int ox = System.Math.Max(0, Mathf.FloorToInt(selectionRect.x));
+				int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - selectionRect.y) - selectionRect.height));
 				int imageWidth = tex.width;
+				int imageHeight = tex.height;
 				int width = Mathf.FloorToInt(selectionRect.width);
 				int height = Mathf.FloorToInt(selectionRect.height);
 			    
-				GameObject.DestroyImmediate(tex);
 				profiler.End();
 				
 				profiler.Begin("color in rect");
-				pb_Tuple<pb_Object, pb_Face> hit;
+
 				Dictionary<pb_Object, HashSet<pb_Face>> selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
-				HashSet<Color32> seen = new HashSet<Color32>();
+				pb_Tuple<pb_Object, pb_Face> hit;
+				HashSet<int> used = new HashSet<int>();
 
-
-				for(int y = oy; y < oy + height; y++)
+				for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 				{
-					for(int x = ox; x < ox + width; x++)
+					for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 					{
 						Color32 color = pix[y * imageWidth + x];
 
-						if(!seen.Add(color))
+						int v = color.r << 16 | color.g << 8 | color.b;
+
+						if(!used.Add(v))
 							continue;
 
 						if(map.TryGetValue(color, out hit))
@@ -1191,16 +1193,13 @@ public class pb_Editor : EditorWindow
 				}
 				profiler.End();
 
+				GameObject.DestroyImmediate(tex);
+
+
 				profiler.Begin("set selection");
 				foreach(var kvp in selected)
 					kvp.Key.SetSelectedFaces(kvp.Value);
 				profiler.End();
-
-				// Texture2D destTex = new Texture2D(width, height);
-				// destTex.SetPixels(pix);
-				// destTex.Apply();
-				// pb_EditorUtility.SaveTexture(destTex, "Assets/Test2.png");
-				// GameObject.DestroyImmediate(tex);
 
 
 				// profiler.Begin("iterate pb_Object");
