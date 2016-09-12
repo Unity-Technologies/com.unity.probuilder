@@ -17,45 +17,40 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		// EditorWindow.GetWindow<TempMenuItems>();
+		EditorWindow.GetWindow<TempMenuItems>();
 
-		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		profiler.Begin("depth");
+		// profiler.Begin("depth");
 
-		Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map;
-		Texture2D tex = pb_Handle_Utility.RenderSelectionPickerTexture(SceneView.lastActiveSceneView.camera, selection, out map);
+		// Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map;
+		// Texture2D tex = pb_HandleUtility.RenderSelectionPickerTexture(SceneView.lastActiveSceneView.camera, selection, out map);
 		
-		profiler.End();
+		// profiler.End();
 
-		pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
+		// pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
 
-		GameObject.DestroyImmediate(tex);
+		// GameObject.DestroyImmediate(tex);
 	}
 
-	// Color32 color = new Color32(255, 0, 0, 1);
-	// GUIStyle labelStyle = null;
+	Color32 color = new Color32(255, 0, 0, 255);
 
-	// void OnGUI()
-	// {
-	// 	if(labelStyle == null)
-	// 	{
-	// 		Font font = Resources.Load<Font>("monkey");
-	// 		labelStyle = new GUIStyle(EditorStyles.label);
-	// 		labelStyle.font = font;
-	// 	}
+	void OnGUI()
+	{
+		color = EditorGUILayout.ColorField("color", color);
 
-	// 	color = EditorGUILayout.ColorField("color", color);
+		int c = color.r << 16 | color.g << 8 | color.b;
 
-	// 	GUILayout.Label( string.Format("rgba 32:  {0:x}, {1:x}, {2:x}, {3:x}", color.r, color.g, color.b, color.a), labelStyle);
+		GUILayout.Label("color : " + color);
+		GUILayout.Label("packed: " + c);
 
-	// 	uint hash = DecodeRGBA(color);
-	// 	Color32 encoded = EncodeRGBA(hash);
-
-	// 	GUILayout.Label( string.Format("uint   :  {0:x}", hash), labelStyle);
-	// 	GUILayout.Label( string.Format("rgba 32:  {0:x}, {1:x}, {2:x}, {3:x}", encoded.r, encoded.g, encoded.b, encoded.a), labelStyle);
-	// 	uint hash2 = DecodeRGBA(encoded);
-	// 	GUILayout.Label( string.Format("back   :  {0:x}", hash2), labelStyle);
-	// }
+		Color32 u = new Color32(
+			(byte) ((c >> 16) & 0xFF),
+			(byte) ((c >>  8) & 0xFF),
+			(byte) ((c      ) & 0xFF),
+			(byte) (255)
+			);
+		GUILayout.Label("unpacked: " + u);
+	}
 
 }

@@ -309,6 +309,143 @@ namespace ProBuilder2.Common
 
 			return PointIsOccluded(cam, pb, pb.transform.TransformPoint(point));
 		}
+
+		/**
+		 *	Render the pb_Object selection with the special selection picker shader and return a texture and color -> {object, face} dictionary.
+		 */
+		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
+		{
+			List<GameObject> depthGameObjects = GenerateDepthTestMeshes(selection, out map);
+
+			Shader shader = pb_Constant.SelectionPickerShader;
+
+			Texture2D tex = RenderWithReplacementShader(camera, shader, "ProBuilderPicker");
+
+			foreach(GameObject go in depthGameObjects)
+			{
+				GameObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
+				GameObject.DestroyImmediate(go);
+			}
+
+			return tex;
+		}
+
+		/**
+		 *	Generate a set of meshes and gameObjects that can be rendered for depth testing faces.
+		 */
+		private static List<GameObject> GenerateDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
+		{
+			List<GameObject> meshes = new List<GameObject>();
+			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
+
+			uint index = 0;
+
+			foreach(pb_Object pb in selection)
+			{
+				GameObject go = new GameObject();
+				go.transform.position = pb.transform.position;
+				go.transform.localRotation = pb.transform.localRotation;
+				go.transform.localScale = pb.transform.localScale;
+
+				Mesh m = new Mesh();
+				m.vertices = pb.vertices;
+				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
+				Color32[] colors = new Color32[m.vertexCount];
+
+				foreach(pb_Face f in pb.faces)
+				{
+					Color32 color = EncodeRGBA(index++);
+					map.Add(DecodeRGBA(color), new pb_Tuple<pb_Object, pb_Face>(pb, f));
+
+					for(int i = 0; i < f.distinctIndices.Length; i++)
+						colors[f.distinctIndices[i]] = color;
+				}
+				m.colors32 = colors;
+
+				go.AddComponent<MeshFilter>().sharedMesh = m;
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+
+				meshes.Add(go);
+			}
+
+			return meshes;
+		}
+
+		/**
+		 *	Decode Color32.RGB values to a 32 bit unsigned int, using the RGB as the little 
+		 *	bits.
+		 */
+		public static uint DecodeRGBA(Color32 color)
+		{
+			uint r = (uint)color.r;
+			uint g = (uint)color.g;
+			uint b = (uint)color.b;
+
+			if(System.BitConverter.IsLittleEndian)
+				return r << 16 | g << 8 | b;
+			else
+				return r << 24 | g << 16 | b << 8;
+		}
+
+		/**
+		 *	Encode the low 24 bits of a UInt32 to RGB of Color32, using 255 for A.
+		 */
+		public static Color32 EncodeRGBA(uint hash)
+		{
+			// skip using BitConverter.GetBytes since this is super simple
+			// bit math, and allocating arrays for each conversion is expensive
+			if( System.BitConverter.IsLittleEndian)
+				return new Color32(
+					(byte) (hash >> 16 & 0xFF),
+					(byte) (hash >>  8 & 0xFF),
+					(byte) (hash       & 0xFF),
+					(byte) (			  255) );
+			else
+				return new Color32(
+					(byte) (hash >> 24 & 0xFF),
+					(byte) (hash >> 16 & 0xFF),
+					(byte) (hash >>  8 & 0xFF),
+					(byte) (			  255) );
+		}
+
+		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag)
+		{
+			int width = (int) camera.pixelRect.width;
+			int height = (int) camera.pixelRect.height;
+
+			GameObject go = new GameObject();
+			Camera renderCam = go.AddComponent<Camera>();
+			renderCam.CopyFrom(camera);
+			renderCam.enabled = false;
+			renderCam.clearFlags = CameraClearFlags.SolidColor;
+			renderCam.backgroundColor = Color.white;
+			
+			RenderTexture rt = RenderTexture.GetTemporary(
+				width,
+				height,
+				16,
+				RenderTextureFormat.Default,
+				RenderTextureReadWrite.Default,
+				1);
+
+			renderCam.targetTexture = rt;
+			renderCam.RenderWithShader(shader, tag);
+
+			RenderTexture prev = RenderTexture.active;
+			RenderTexture.active = rt;
+
+			Texture2D img = new Texture2D(width, height);
+
+			img.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+			img.Apply();
+
+			RenderTexture.active = prev;
+			RenderTexture.ReleaseTemporary(rt);
+
+			GameObject.DestroyImmediate(go);
+
+			return img;
+		}
 	}
 
 }
