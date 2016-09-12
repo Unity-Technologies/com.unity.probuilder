@@ -1276,10 +1276,13 @@ public class pb_Editor : EditorWindow
 								}
 
 								// don't test occlusion since that case is handled special
-								if(!selectedFaces.Add(face))
-									selectedFaces.Remove(face);
-								else
-									addToSelection = true;
+								if(overlaps)
+								{
+									if(!selectedFaces.Add(face))
+										selectedFaces.Remove(face);
+									else
+										addToSelection = true;
+								}
 							}
 						}
 
