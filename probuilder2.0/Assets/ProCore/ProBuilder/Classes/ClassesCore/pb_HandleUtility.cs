@@ -371,13 +371,13 @@ namespace ProBuilder2.Common
 			return meshes;
 		}
 
-		private static uint DecodeRGBA(Color32 color)
+		public static uint DecodeRGBA(Color32 color)
 		{
 			if(System.BitConverter.IsLittleEndian)
 				return System.BitConverter.ToUInt32( new byte[] {
-					color.r,
-					color.g,
 					color.b,
+					color.g,
+					color.r,
 					(byte) 0}, 
 					0);
 				else
@@ -389,11 +389,11 @@ namespace ProBuilder2.Common
 						0);
 		}
 
-		private static Color32 EncodeRGBA(uint hash)
+		public static Color32 EncodeRGBA(uint hash)
 		{
 			byte[] bytes = System.BitConverter.GetBytes(hash);
 
-			// Debug.Log(string.Format("encode {0:X} to {1:X}, {2:X}, {3:X}, {4:X}  {5}", 
+			// Debug.Log(string.Format("encode {0:X8} to {1:X}, {2:X}, {3:X}, {4:X}  {5}", 
 			// 	hash,
 			// 	bytes[0],
 			// 	bytes[1],
@@ -403,17 +403,18 @@ namespace ProBuilder2.Common
 
 			// msdn - "The order of bytes in the array returned by the GetBytes method depends on whether the computer architecture is little-endian or big-endian."
 			// since we're restricted to 24bit depth, lop off the hi byte
-			if( System.BitConverter.IsLittleEndian)
-				return new Color32( bytes[0],			
+			if( System.BitConverter.IsLittleEndian )
+				return new Color32( bytes[2],			
 									bytes[1],			
-									bytes[2],			
+									bytes[0],			
 									(byte) 255);
 			else
-				return new Color32( bytes[3],			
+				return new Color32( bytes[1],			
 									bytes[2],			
-									bytes[1],			
+									bytes[3],			
 									(byte) 255);
 		}
+
 		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag)
 		{
 			int width = (int) camera.pixelRect.width;

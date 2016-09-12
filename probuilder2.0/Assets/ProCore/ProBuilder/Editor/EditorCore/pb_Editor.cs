@@ -1169,7 +1169,7 @@ public class pb_Editor : EditorWindow
 
 				Dictionary<pb_Object, HashSet<pb_Face>> selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
 				pb_Tuple<pb_Object, pb_Face> hit;
-				HashSet<int> used = new HashSet<int>();
+				HashSet<uint> used = new HashSet<uint>();
 
 				for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 				{
@@ -1177,7 +1177,7 @@ public class pb_Editor : EditorWindow
 					{
 						Color32 color = pix[y * imageWidth + x];
 
-						int v = color.r << 16 | color.g << 8 | color.b;
+						uint v = ((uint)color.r) << 16 | ((uint)color.g) << 8 | ((uint)color.b);
 
 						if(!used.Add(v))
 							continue;
