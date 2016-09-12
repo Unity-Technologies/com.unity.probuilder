@@ -313,7 +313,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Render the pb_Object selection with the special selection picker shader and return a texture and color -> {object, face} dictionary.
 		 */
-		public static Texture2D RenderSelectionPickerTexture(Camera camera, pb_Object[] selection, out Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map)
+		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
 		{
 			List<GameObject> depthGameObjects = GenerateDepthTestMeshes(selection, out map);
 
@@ -333,10 +333,10 @@ namespace ProBuilder2.Common
 		/**
 		 *	Generate a set of meshes and gameObjects that can be rendered for depth testing faces.
 		 */
-		private static List<GameObject> GenerateDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map)
+		private static List<GameObject> GenerateDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
 		{
 			List<GameObject> meshes = new List<GameObject>();
-			map = new Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>>();
+			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
 
 			uint index = 0;
 
@@ -355,7 +355,7 @@ namespace ProBuilder2.Common
 				foreach(pb_Face f in pb.faces)
 				{
 					Color32 color = EncodeRGBA(index++);
-					map.Add(color, new pb_Tuple<pb_Object, pb_Face>(pb, f));
+					map.Add(DecodeRGBA(color), new pb_Tuple<pb_Object, pb_Face>(pb, f));
 
 					for(int i = 0; i < f.distinctIndices.Length; i++)
 						colors[f.distinctIndices[i]] = color;
@@ -371,48 +371,41 @@ namespace ProBuilder2.Common
 			return meshes;
 		}
 
+		/**
+		 *	Decode Color32.RGB values to a 32 bit unsigned int, using the RGB as the little 
+		 *	bits.
+		 */
 		public static uint DecodeRGBA(Color32 color)
 		{
+			uint r = (uint)color.r;
+			uint g = (uint)color.g;
+			uint b = (uint)color.b;
+
 			if(System.BitConverter.IsLittleEndian)
-				return System.BitConverter.ToUInt32( new byte[] {
-					color.b,
-					color.g,
-					color.r,
-					(byte) 0}, 
-					0);
-				else
-					return System.BitConverter.ToUInt32( new byte[] {
-						(byte) 0,
-						color.b,
-						color.g,
-						color.r },
-						0);
+				return r << 16 | g << 8 | b;
+			else
+				return r << 24 | g << 16 | b << 8;
 		}
 
+		/**
+		 *	Encode the low 24 bits of a UInt32 to RGB of Color32, using 255 for A.
+		 */
 		public static Color32 EncodeRGBA(uint hash)
 		{
-			byte[] bytes = System.BitConverter.GetBytes(hash);
-
-			// Debug.Log(string.Format("encode {0:X8} to {1:X}, {2:X}, {3:X}, {4:X}  {5}", 
-			// 	hash,
-			// 	bytes[0],
-			// 	bytes[1],
-			// 	bytes[2],
-			// 	bytes[3],
-			// 	System.BitConverter.IsLittleEndian ? "little endian" : "big endian"));
-
-			// msdn - "The order of bytes in the array returned by the GetBytes method depends on whether the computer architecture is little-endian or big-endian."
-			// since we're restricted to 24bit depth, lop off the hi byte
-			if( System.BitConverter.IsLittleEndian )
-				return new Color32( bytes[2],			
-									bytes[1],			
-									bytes[0],			
-									(byte) 255);
+			// skip using BitConverter.GetBytes since this is super simple
+			// bit math, and allocating arrays for each conversion is expensive
+			if( System.BitConverter.IsLittleEndian)
+				return new Color32(
+					(byte) (hash >> 16 & 0xFF),
+					(byte) (hash >>  8 & 0xFF),
+					(byte) (hash       & 0xFF),
+					(byte) (			  255) );
 			else
-				return new Color32( bytes[1],			
-									bytes[2],			
-									bytes[3],			
-									(byte) 255);
+				return new Color32(
+					(byte) (hash >> 24 & 0xFF),
+					(byte) (hash >> 16 & 0xFF),
+					(byte) (hash >>  8 & 0xFF),
+					(byte) (			  255) );
 		}
 
 		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag)
