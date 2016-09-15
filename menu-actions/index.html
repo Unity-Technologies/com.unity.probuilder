@@ -8,7 +8,7 @@
   
   
   
-  <title>Credits - ProBuilder Documentation</title>
+  <title>Menu Actions - ProBuilder Documentation</title>
   
 
   <link rel="shortcut icon" href="../img/favicon.ico">
@@ -28,9 +28,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Credits";
-    var mkdocs_page_input_path = "credits.md";
-    var mkdocs_page_url = "/credits/";
+    var mkdocs_page_name = "Menu Actions";
+    var mkdocs_page_input_path = "menu-actions.md";
+    var mkdocs_page_url = "/menu-actions/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -174,8 +174,59 @@
 <li>
           
             <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../menu-actions/">Menu Actions</a>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Menu Actions</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#general">General</a></li>
+                
+                    <li><a class="toctree-l4" href="#about">About</a></li>
+                
+                    <li><a class="toctree-l4" href="#documentation">Documentation</a></li>
+                
+                    <li><a class="toctree-l4" href="#dimensions-overlay">Dimensions Overlay</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#actions">Actions</a></li>
+                
+                    <li><a class="toctree-l4" href="#generate-uv2">Generate UV2</a></li>
+                
+                    <li><a class="toctree-l4" href="#strip-probuilder-scripts">Strip ProBuilder Scripts</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#repair">Repair</a></li>
+                
+                    <li><a class="toctree-l4" href="#force-refresh-scene">Force Refresh Scene</a></li>
+                
+                    <li><a class="toctree-l4" href="#clean-leaked-meshes">Clean Leaked Meshes</a></li>
+                
+                    <li><a class="toctree-l4" href="#repair-mesh-references">Repair Mesh References</a></li>
+                
+                    <li><a class="toctree-l4" href="#rebuild-vertex-colors">Rebuild Vertex Colors</a></li>
+                
+                    <li><a class="toctree-l4" href="#remove-degenerate-triangles">Remove Degenerate Triangles</a></li>
+                
+                    <li><a class="toctree-l4" href="#invert-uv-scale">Invert UV Scale</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#experimental">Experimental</a></li>
+                
+                    <li><a class="toctree-l4" href="#boolean-csg-tool">Boolean (CSG) Tool</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#export">Export</a></li>
+                
+                    <li><a class="toctree-l4" href="#export-asset">Export Asset</a></li>
+                
+                    <li><a class="toctree-l4" href="#export-obj">Export OBJ</a></li>
+                
+                    <li><a class="toctree-l4" href="#export-stl-ascii">Export Stl Ascii</a></li>
+                
+                    <li><a class="toctree-l4" href="#export-stl-binary">Export Stl Binary</a></li>
+                
+            
+            </ul>
         
     </li>
 <li>
@@ -246,27 +297,8 @@
 <li>
           
             <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Credits</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#trianglenet">Triangle.NET</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#csg">CSG</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#kd-sharp">kd-sharp</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#mkdocs">MkDocs</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#asset-submissions">Asset Submissions</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l1 ">
+        <a class="" href="../credits/">Credits</a>
         
     </li>
 <li>
@@ -300,7 +332,7 @@
     
       
     
-    <li>Credits</li>
+    <li>Menu Actions</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -310,31 +342,73 @@
           <div role="main">
             <div class="section">
               
-                <div class="manual"><hr /></div>
-
-<h3 id="trianglenet">Triangle.NET</h3>
+                <p>﻿</p>
+<h2 id="general">General</h2>
+<blockquote>
+<p><em>Tools &gt; ProBuilder</em></p>
+</blockquote>
+<h3 id="about">About</h3>
+<p>Provides info on the currently installed version of ProBuilder</p>
+<h3 id="documentation">Documentation</h3>
+<p>Opens the latest Documentation online</p>
+<h3 id="dimensions-overlay">Dimensions Overlay</h3>
+<p>Show or hide the Dimensions Overlay, which works on all mesh objects  (not just ProBuilder)</p>
+<hr />
+<h2 id="actions">Actions</h2>
+<blockquote>
+<p><em>Tools &gt; ProBuilder &gt; Actions</em></p>
+</blockquote>
+<h3 id="generate-uv2">Generate UV2</h3>
 <ul>
-<li>https://github.com/zon/triangle</li>
+<li><strong>Generate UV2 - Selection:</strong> If you have toggled off the automatic generation of UV2 channels in Preferences, you can use this item to build UV2 (lightmap) channels for the current selection.</li>
+<li><strong>Generate UV2 - Scene:</strong> This generates UV2 (lightmap) channels for all ProBuilder objects in the scene. This is only useful if you have toggled off automatic UV2 generation in the Preferences panel.</li>
 </ul>
-<h3 id="csg">CSG</h3>
+<h3 id="strip-probuilder-scripts">Strip ProBuilder Scripts</h3>
 <ul>
-<li>Original by Evan Wallace: https://github.com/evanw/csg.js</li>
-<li>C# port: https://github.com/karl-/pb_CSG</li>
+<li><strong>Strip all ProBuilder Objects in Scene:</strong> Remove all ProBuilder scripts from all objects in this scene, leaving just the models.</li>
+<li><strong>Strip all ProBuilder Objects in Selection:</strong> Remove all ProBuilder scripts from selected objects, leaving just the model.</li>
 </ul>
-<h3 id="kd-sharp">kd-sharp</h3>
+<hr />
+<h2 id="repair">Repair</h2>
+<blockquote>
+<p><em>Tools &gt; ProBuilder &gt; Repair</em></p>
+</blockquote>
+<h3 id="force-refresh-scene">Force Refresh Scene</h3>
+<p>Sometimes necessary after an upgrade. Will regenerate mesh geometry and refresh the scene view.</p>
+<h3 id="clean-leaked-meshes">Clean Leaked Meshes</h3>
+<p>If you see console logs saying anything about leaking meshes, run this command to clean up the leaks.</p>
+<h3 id="repair-mesh-references">Repair Mesh References</h3>
+<p>Looks through the scene for any GameObjects with missing components that were at one time <code>pb_Object</code> or <code>pb_Entity</code>.</p>
+<h3 id="rebuild-vertex-colors">Rebuild Vertex Colors</h3>
+<p>Reset all vertex colors on the selection to plain white.</p>
+<h3 id="remove-degenerate-triangles">Remove Degenerate Triangles</h3>
+<p>This deletes triangles on a mesh that are either taking up no space, or are duplicates.</p>
+<h3 id="invert-uv-scale">Invert UV Scale</h3>
 <ul>
-<li>https://code.google.com/p/kd-sharp/</li>
+<li><strong>Invert UV Scale (Selected Objects):</strong> UV scale is inverted for selected objects.</li>
+<li><strong>Invert UV Scale (Selected Faces):</strong> UV scale is inverted for selected faces.</li>
 </ul>
-<h3 id="mkdocs">MkDocs</h3>
-<ul>
-<li>http://www.mkdocs.org/</li>
-</ul>
-<h3 id="asset-submissions">Asset Submissions</h3>
-<ul>
-<li><code>Pivot Tool</code> : @Matt1988</li>
-<li><code>Diffuse Vertex Color Shaders</code> : @Snoopbaron (Fernando Zapata)</li>
-<li><code>Standard Vertex Color Shaders</code> : Unity Forums user <a href="http://forum.unity3d.com/threads/standard-shader-with-vertex-colors.316529/">@defaxer</a></li>
-</ul>
+<hr />
+<h2 id="experimental">Experimental</h2>
+<blockquote>
+<p><em>Tools &gt; ProBuilder &gt; Experimental</em></p>
+</blockquote>
+<p>These are tools or functions that aren’t quite ready for public use, but are included for users to try out early, and report issues/feedback. WARNING: Use with caution, unwanted results may occur!</p>
+<h3 id="boolean-csg-tool">Boolean (CSG) Tool</h3>
+<p>Union, Intersection, and Subtraction methods currently implemented.</p>
+<hr />
+<h2 id="export">Export</h2>
+<blockquote>
+<p><em>Tools &gt; ProBuilder &gt; Export</em></p>
+</blockquote>
+<h3 id="export-asset">Export Asset</h3>
+<p>Save the selection as Unity mesh <code>.asset</code> files.</p>
+<h3 id="export-obj">Export OBJ</h3>
+<p>Export the selected object(s) as OBJ</p>
+<h3 id="export-stl-ascii">Export Stl Ascii</h3>
+<p>Export the selected object(s) as STL in Ascii format</p>
+<h3 id="export-stl-binary">Export Stl Binary</h3>
+<p>Export the selected object(s) as STL in Binary format</p>
               
             </div>
           </div>
@@ -342,10 +416,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../changelog/" class="btn btn-neutral float-right" title="Changelog">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../preferences/preferences/" class="btn btn-neutral float-right" title="Preferences">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../upgrading/prototype/" class="btn btn-neutral" title="Prototype"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../texturing/manual-uvs-actions/" class="btn btn-neutral" title="Manual UVs Actions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -371,10 +445,10 @@
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../upgrading/prototype/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../texturing/manual-uvs-actions/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../changelog/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../preferences/preferences/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

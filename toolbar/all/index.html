@@ -29,7 +29,7 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Element Actions";
-    var mkdocs_page_input_path = "toolbar\all.md";
+    var mkdocs_page_input_path = "toolbar/all.md";
     var mkdocs_page_url = "/toolbar/all/";
   </script>
   
@@ -136,6 +136,9 @@
                 <li class="toctree-l3"><a href="#move-pivot-to-center-of-selected-elements">Move Pivot to Center of Selected Elements</a></li>
                 
             
+                <li class="toctree-l3"><a href="#fill-hole">Fill Hole</a></li>
+                
+            
             </ul>
         
     </li>
@@ -178,6 +181,13 @@
 
         
     </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../menu-actions/">Menu Actions</a>
+        
+    </li>
 <li>
           
             <li>
@@ -298,13 +308,39 @@
                 <div class="manual"><hr /></div>
 
 <h2 id="move-pivot-to-center-of-selected-elements"><img alt="Set Pivot Icon" src="../../images/icons/Pivot_CenterOnElements.png" title="Set Pivot Icon" /> Move Pivot to Center of Selected Elements</h2>
-<div class="video-link-missing">
-Section Video: <a href="@todo">Geometry Actions: Set Pivot</a>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/diA5TaIMNws?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Element Actions: Set Pivot</a>
 </div>
 
 <p><strong>Keyboard Shortcut</strong> : <code>ALT J</code></p>
 <p>Move the pivot point of this mesh to the average center of the selected elements.</p>
 <p>This action is available in all Element modes (Vertex, Edge, Face).</p>
+<h2 id="fill-hole"><img alt="Fill Hole Icon" src="../../images/icons/Edge_FillHole.png" title="Fill Hole Icon" /> Fill Hole</h2>
+<div class="video-link">
+Section Video: <a href="https://youtu.be/t3bo5U-LyjU?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Element Actions: Fill Hole</a>
+</div>
+
+<p>Creates a new face filling any holes that touch the selected edges/vertices.</p>
+<div style="text-align:center">
+<img src="../../images/FillHole_Example.png">
+</div>
+
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fill Entire Hole</strong></td>
+<td>If <strong>On</strong>, the entire mesh opening will be filled. Otherwise, only the selected open edges/vertices will be capped.</td>
+</tr>
+</tbody>
+</table>
+<hr />
               
             </div>
           </div>
