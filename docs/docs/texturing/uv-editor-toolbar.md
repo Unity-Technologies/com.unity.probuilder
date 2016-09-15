@@ -32,7 +32,7 @@ When **On**, you can use Unity's standard Move, Rotate, and Scale tools to direc
 Toolbar Icon | Description
 :---:|---
 ![In-Scene ON](../images/icons/ProBuilderGUI_UV_Manip_On.png) | **On** : Move, Rotate, and Scale tools will affect UVs, geometry will not be affected
-![In-Scene OFF](../images/icons/ProBuilderGUI_UV_Manip_OFF.png) |  **Off** : Move, Rotate, and Scale tools will return to normal geometry actions
+![In-Scene OFF](../images/icons/ProBuilderGUI_UV_Manip_On.png) |  **Off** : Move, Rotate, and Scale tools will return to normal geometry actions
 
 <div style="text-align:center">
 <img src="../../images/UV_InSceneControls.png">

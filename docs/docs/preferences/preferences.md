@@ -122,8 +122,7 @@ When enabled ProBuilder will not allow users to extrude edges from manifold edge
 ## Experimental
 
 <div class="alert-box warning">
-<div class="size2">Warning!</div class="size2">
-Enabling experimental features may break your project!  Please exercise caution.
+Warning! Enabling experimental features may break your project!  Please exercise caution.
 </div>
 
 ### Meshes Are Assets

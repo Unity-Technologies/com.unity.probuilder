@@ -49,13 +49,9 @@ Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Basic 
 
 ![Editing Modes Example](ExampleImage_ObjectAndElementEditingModes.png "Editing Modes Example")
 
-ProBuilder is always in one of 2 major modes: **Object** or **Element**.
+**Object Mode** is standard Unity mode, no surprises.
 
-* **Object Mode** is standard Unity mode, no surprises.
-* **Element Mode** activates ProBuilder's mesh editing features.
-* *Click in the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar) to change Mode, or use it's shortcut keys.*
-
-**Elements** are the individual parts that make up a mesh: **Vertices**, **Edges**, and **Faces**. If it helps, you can think of these like levels of detail on a map- for example, "city, state, country".
+**Elements** are the individual parts that make up a mesh: **Vertices**, **Edges**, and **Faces**. If it helps, you can think of these like levels of detail on a map- for example, "city, state, country". Click in the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar) to change Mode, or use it's shortcut keys.
 
 * **Vertex Editing**: Select and edit Vertices for detailed editing and functions like vertex splitting and connecting.
 * **Edge Editing**: Select and edit Edges for semi-complex geometry editing, and Edge Loop Modeling techniques.

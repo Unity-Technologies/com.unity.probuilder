@@ -50,7 +50,7 @@ Both [Auto-Texturing](auto-uvs-actions) and [Manual UV Editing](manual-uvs-actio
 To open this window, click it's button in the [Main Toolbar](@todo).
 
 * In Text Mode, this will be the button labeled **UV Editor**
-* In Icon Mode, use the button with this icon: ![UV Editor Icon](../images/icons/Panel_UVeditor.png "UV Editor Icon")
+* In Icon Mode, use the button with this icon: ![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon")
 
 <div style="text-align:center">
 <img src="../../images/UVPanel_FullWindow_Letters.png">

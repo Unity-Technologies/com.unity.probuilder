@@ -1,6 +1,6 @@
 <div class="alert-box warning">
 <h2>Important!</h2>
-As of Unity 5.3 this guide no longer applies.  Use the <a href="standard.html">Standard</a> upgrade procedure.
+As of Unity 5.3 this guide no longer applies.  Use the <a href="../standard">Standard</a> upgrade procedure.
 </div>
 
 
