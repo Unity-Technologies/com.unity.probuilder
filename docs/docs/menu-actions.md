@@ -38,17 +38,11 @@ Sometimes necessary after an upgrade. Will regenerate mesh geometry and refresh 
 ### Clean Leaked Meshes
 If you see console logs saying anything about leaking meshes, run this command to clean up the leaks.
 
-### Repair Entity Materials
-@todo
-
 ### Repair Mesh References
-@todo
+Looks through the scene for any GameObjects with missing components that were at one time `pb_Object` or `pb_Entity`.
 
 ### Rebuild Vertex Colors
-@todo
-
-### Rebuild Vertex Colors
-@todo
+Reset all vertex colors on the selection to plain white.
 
 ### Remove Degenerate Triangles
 This deletes triangles on a mesh that are either taking up no space, or are duplicates.
@@ -59,24 +53,6 @@ This deletes triangles on a mesh that are either taking up no space, or are dupl
 
 ---
 
-## Upgrade
-
-> *Tools > ProBuilder > Upgrade*
-
-### Prepare Scene for Upgrade
-@todo
-
-### Batch Prepare Scenes for Upgrade
-@todo
-
-### Re-attach ProBuilder Scripts
-@todo
-
-### Batch Re-attach ProBuilder Scripts
-@todo
-
----
-
 ## Experimental
 
 > *Tools > ProBuilder > Experimental*
@@ -84,6 +60,7 @@ This deletes triangles on a mesh that are either taking up no space, or are dupl
 These are tools or functions that aren’t quite ready for public use, but are included for users to try out early, and report issues/feedback. WARNING: Use with caution, unwanted results may occur!
 
 ### Boolean (CSG) Tool
+
 Union, Intersection, and Subtraction methods currently implemented.
 
 ---
@@ -93,7 +70,7 @@ Union, Intersection, and Subtraction methods currently implemented.
 > *Tools > ProBuilder > Export*
 
 ### Export Asset
-@todo
+Save the selection as Unity mesh `.asset` files.
 
 ### Export OBJ
 Export the selected object(s) as OBJ
