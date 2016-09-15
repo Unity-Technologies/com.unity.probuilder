@@ -27,6 +27,8 @@ pages:
     - UV Editor Toolbar: texturing/uv-editor-toolbar.md
     - Auto UVs Actions: texturing/auto-uvs-actions.md
     - Manual UVs Actions: texturing/manual-uvs-actions.md
+    
+- Menu Actions: menu-actions.md
 
 - Preferences: preferences/preferences.md
 
