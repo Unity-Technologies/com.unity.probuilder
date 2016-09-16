@@ -1422,6 +1422,9 @@ namespace ProBuilder2.EditorCommon
 				return new pb_ActionResult(Status.Failure, "Split Vertices\nInsuffient Vertices Selected");
 		}
 
+		/**
+		 *	Attempt to create polygons bridging any gaps in geometry.
+		 */
 		public static pb_ActionResult MenuFillHole(pb_Object[] selection)
 		{
 			if(editor == null)
@@ -1446,7 +1449,7 @@ namespace ProBuilder2.EditorCommon
 				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
 
 				HashSet<pb_Face> faces = new HashSet<pb_Face>();
-				List<pb_Face> adjacent = new List<pb_Face>();
+				HashSet<pb_Face> adjacent = new HashSet<pb_Face>();
 
 				foreach(List<pb_WingedEdge> hole in holes)
 				{
@@ -1465,7 +1468,7 @@ namespace ProBuilder2.EditorCommon
 
 						holeIndices = hole.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, false, out face);
-						adjacent.AddRange(hole.Select(x => x.face));
+						adjacent.UnionWith(hole.Select(x => x.face));
 					}
 					else
 					{
@@ -1474,7 +1477,7 @@ namespace ProBuilder2.EditorCommon
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 
 						if(res)
-							adjacent.AddRange(selected.Select(x => x.face));
+							adjacent.UnionWith(selected.Select(x => x.face));
 					}
 
 					if(res)
@@ -1488,7 +1491,7 @@ namespace ProBuilder2.EditorCommon
 				pb.SetSelectedFaces(faces);
 
 				wings = pb_WingedEdge.GetWingedEdges(pb, adjacent);
-
+				
 				// make sure the appended faces match the first adjacent face found
 				// both in winding and face properties
 				foreach(pb_WingedEdge wing in wings)

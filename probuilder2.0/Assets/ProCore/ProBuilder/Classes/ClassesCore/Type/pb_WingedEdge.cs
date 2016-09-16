@@ -64,12 +64,6 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			// return string.Format("Edge: {0}\nNext: {1}\nPrevious: {2}\nOpposite: {3}",
-			// 	edge.local.ToString(),
-			// 	next.edge.local.ToString(),
-			// 	previous.edge.local.ToString(),
-			// 	opposite.edge.local.ToString());
-
 			return string.Format("Common: {0}\nLocal: {1}\nOpposite: {2}\nFace: {3}",
 				edge.common.ToString(),
 				edge.local.ToString(),
@@ -164,7 +158,10 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Generate a Winged Edge data structure.  If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
+		 *	Generate a Winged Edge data structure.
+		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
+		 *	
+		 *	Faces must be distinct!  Duplicate faces will result in incorrect wings.
 		 */
 		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false)
 		{
