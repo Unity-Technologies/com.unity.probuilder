@@ -112,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 				Debug.Log("mat is null");
 			}
 
-			pb_EditorUtility.InitObjectFlags(pb);
+			pb_EditorUtility.InitObject(pb);
 			pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
 		}
 
@@ -237,7 +237,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -293,7 +293,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -337,7 +337,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 		
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -432,7 +432,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -498,7 +498,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, new int[1] {centerIndex});
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				
@@ -554,7 +554,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -619,7 +619,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 				
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -686,7 +686,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -745,7 +745,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -841,7 +841,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -893,7 +893,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 				
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 				
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -968,7 +968,7 @@ namespace ProBuilder2.EditorCommon
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 				
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 				
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();
@@ -1014,7 +1014,7 @@ namespace ProBuilder2.EditorCommon
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
 				pb_EditorUtility.SetPivotAndSnapWithPref(pb, null);
-				pb_EditorUtility.InitObjectFlags(pb);
+				pb_EditorUtility.InitObject(pb);
 
 				AlignWithPreviewObject(pb.gameObject);
 				DestroyPreviewObject();

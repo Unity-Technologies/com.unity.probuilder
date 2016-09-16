@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't
 		 * 	fire this callback.
 		 *
-		 *	\sa pb_EditorUtility.InitObjectFlags
+		 *	\sa pb_EditorUtility.InitObject
 		 */
 		public static OnObjectCreated onObjectCreated = null;
 
@@ -424,22 +424,34 @@ namespace ProBuilder2.EditorCommon
 			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
 		}
 
+		[System.Obsolete("Please us InitObject(pb_Object pb) instead.")]
+		public static void InitObjectFlags(pb_Object pb)
+		{
+			InitObject(pb);
+		}
+
+		[System.Obsolete("Please us InitObject instead.")]
+		public static void InitObjectFlags(pb_Object pb, ColliderType colliderType, EntityType entityType)
+		{
+			InitObject(pb, colliderType, entityType);
+		}
+
 		/**
 		 * \brief ProBuilder objects created in Editor need to be initialized with a number of additional Editor-only settings.
-		 *	This method provides an easy method of doing so in a single call.  #InitObjectFlags will set the Entity Type, generate
+		 *	This method provides an easy method of doing so in a single call.  #InitObject will set the Entity Type, generate
 		 *	a UV2 channel, set the unwrapping parameters, and center the object in the screen.
 		 */
-		public static void InitObjectFlags(pb_Object pb)
+		public static void InitObject(pb_Object pb)
 		{
 			ColliderType col = pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 			EntityType et = pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
-			InitObjectFlags(pb, col, et);
+			InitObject(pb, col, et);
 
 			if( onObjectCreated != null )
 				onObjectCreated(pb);
 		}
 
-		public static void InitObjectFlags(pb_Object pb, ColliderType colliderType, EntityType entityType)
+		public static void InitObject(pb_Object pb, ColliderType colliderType, EntityType entityType)
 		{
 			switch(colliderType)
 			{
@@ -452,6 +464,10 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
+#if !UNITY_4_7
+			pb.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
+#endif
+			
 			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
 			pb_EditorUtility.ScreenCenter( pb.gameObject );
 			pb.Optimize();

@@ -149,7 +149,7 @@ namespace ProBuilder2.Actions
 						colType = ColliderType.BoxCollider;
 				}
 
-				pb_EditorUtility.InitObjectFlags(p, colType, pb.GetComponent<pb_Entity>().entityType);
+				pb_EditorUtility.InitObject(p, colType, pb.GetComponent<pb_Entity>().entityType);
 				p.transform.position = pb.transform.position;
 
 				Undo.RegisterCreatedObjectUndo(p.gameObject, "Mirror Object");
