@@ -78,6 +78,9 @@ namespace ProBuilder2.MeshOperations
 			} while(next != edge);
 		}
 
+		/**
+		 *	Ensure the opposite face to source matches the winding order.
+		 */
 		public static pb_ActionResult ConformOppositeNormal(pb_WingedEdge source)
 		{			
 			if(source == null || source.opposite == null)
@@ -88,7 +91,7 @@ namespace ProBuilder2.MeshOperations
 
 			if( cea.x == ceb.x )
 			{
-				System.Array.Reverse(source.opposite.face.indices);
+				source.opposite.face.ReverseIndices();
 
 				return new pb_ActionResult(Status.Success, "Reversed target face winding order.");
 			}
