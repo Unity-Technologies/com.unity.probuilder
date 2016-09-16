@@ -1449,7 +1449,7 @@ namespace ProBuilder2.EditorCommon
 				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
 
 				HashSet<pb_Face> faces = new HashSet<pb_Face>();
-				HashSet<pb_Face> adjacent = new HashSet<pb_Face>();
+				List<pb_Face> adjacent = new List<pb_Face>();
 
 				foreach(List<pb_WingedEdge> hole in holes)
 				{
@@ -1468,7 +1468,7 @@ namespace ProBuilder2.EditorCommon
 
 						holeIndices = hole.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, false, out face);
-						adjacent.UnionWith(hole.Select(x => x.face));
+						adjacent.AddRange(hole.Select(x => x.face));
 					}
 					else
 					{
@@ -1477,7 +1477,7 @@ namespace ProBuilder2.EditorCommon
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 
 						if(res)
-							adjacent.UnionWith(selected.Select(x => x.face));
+							adjacent.AddRange(selected.Select(x => x.face));
 					}
 
 					if(res)

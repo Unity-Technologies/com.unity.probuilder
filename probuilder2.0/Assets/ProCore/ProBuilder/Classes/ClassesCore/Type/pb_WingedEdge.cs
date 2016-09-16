@@ -160,18 +160,17 @@ namespace ProBuilder2.Common
 		/**
 		 *	Generate a Winged Edge data structure.
 		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
-		 *	
-		 *	Faces must be distinct!  Duplicate faces will result in incorrect wings.
 		 */
 		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			IEnumerable<pb_Face> distinct = faces.Distinct();
 
 			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();
 			Dictionary<pb_Edge, pb_WingedEdge> opposites = new Dictionary<pb_Edge, pb_WingedEdge>();
 			int index = 0;
 
-			foreach(pb_Face f in faces)
+			foreach(pb_Face f in distinct)
 			{
 				List<pb_Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
