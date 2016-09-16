@@ -1143,7 +1143,7 @@ public class pb_Editor : EditorWindow
 				if( !selectHidden && !selectWholeElement )
 				{
 					Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
-					Texture2D tex = pb_HandleUtility.RenderSelectionPickerTexture(cam, pool, out map);
+					Texture2D tex = pb_SelectionPicker.RenderSelectionPickerTexture(cam, pool, out map);
 					Color32[] pix = tex.GetPixels32();
 
 					int ox = System.Math.Max(0, Mathf.FloorToInt(selectionRect.x));
@@ -1163,7 +1163,7 @@ public class pb_Editor : EditorWindow
 					{
 						for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 						{
-							uint v = pb_HandleUtility.DecodeRGBA( pix[y * imageWidth + x] );
+							uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
 							if( used.Add(v) && map.TryGetValue(v, out hit) )
 							{

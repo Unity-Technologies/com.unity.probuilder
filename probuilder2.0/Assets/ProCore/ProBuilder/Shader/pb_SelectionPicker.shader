@@ -1,10 +1,10 @@
-﻿Shader "Hidden/ProBuilder/Selection Picker" 
+﻿Shader "Hidden/ProBuilder/SelectionPicker" 
 {
 	Properties {}
 
 	SubShader
 	{
-		Tags { "ProBuilderPicker"="FirstPass" }
+		Tags { "ProBuilderPicker"="Base" }
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
@@ -13,6 +13,8 @@
 
 		Pass
 		{
+			Name "Base"
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

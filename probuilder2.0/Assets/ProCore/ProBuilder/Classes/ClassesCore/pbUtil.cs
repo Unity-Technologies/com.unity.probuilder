@@ -121,6 +121,15 @@ namespace ProBuilder2.Common
 			w[i] = t.TransformPoint(v[i]);
 		return w;
 	}
+
+	public static GameObject EmptyGameObjectWithTransform(Transform t)
+	{
+		GameObject go 					= new GameObject();
+		go.transform.position 			= t.position;
+		go.transform.localRotation 		= t.localRotation;
+		go.transform.localScale 		= t.localScale;
+		return go;
+	}
 #endregion
 
 #region ARRAY / LIST UTILITY

@@ -96,6 +96,21 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(PB_MENU_PREFIX + "Editors/Open Vertex Position Editor ", true)]
+		static bool MenuVerifyOpenVertexPositionEditor()
+		{
+			OpenVertexPositionEditor instance = pb_EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Editors/Open Vertex Position Editor ", false, pb_Constant.MENU_EDITOR + 1)]
+		static void MenuDoOpenVertexPositionEditor()
+		{
+			OpenVertexPositionEditor instance = pb_EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
 		[MenuItem(PB_MENU_PREFIX + "Export/Export Asset ", true)]
 		static bool MenuVerifyExportAsset()
 		{

@@ -17,20 +17,18 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		EditorWindow.GetWindow<TempMenuItems>();
+		// EditorWindow.GetWindow<TempMenuItems>();
 
-		// pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		Dictionary<uint, pb_Tuple<pb_Object, int>> map;
 
-		// profiler.Begin("depth");
+		Texture2D tex = pb_SelectionPicker.RenderSelectionPickerTexture(
+			SceneView.lastActiveSceneView.camera,
+			Selection.transforms.GetComponents<pb_Object>(),
+			out map);
 
-		// Dictionary<Color32, pb_Tuple<pb_Object, pb_Face>> map;
-		// Texture2D tex = pb_HandleUtility.RenderSelectionPickerTexture(SceneView.lastActiveSceneView.camera, selection, out map);
-		
-		// profiler.End();
+		pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
 
-		// pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
-
-		// GameObject.DestroyImmediate(tex);
+		GameObject.DestroyImmediate(tex);
 	}
 
 	Color32 color = new Color32(255, 0, 0, 255);

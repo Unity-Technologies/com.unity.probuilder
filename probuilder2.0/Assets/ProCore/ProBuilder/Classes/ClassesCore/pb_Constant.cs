@@ -32,14 +32,36 @@ public static class pb_Constant
 		}
 	}
 
+	private static Material _vertexPickerMaterial;
+	public static Material VertexPickerMaterial
+	{
+		get
+		{
+			if(_vertexPickerMaterial == null)
+				_vertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
+			return _vertexPickerMaterial;
+		}
+	}
+
 	private static Shader _selectionPickerShader = null;
 	public static Shader SelectionPickerShader
 	{
 		get
 		{
 			if(_selectionPickerShader == null)
-				_selectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/Selection Picker");
+				_selectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/SelectionPicker");
 			return _selectionPickerShader;
+		}
+	}
+
+	private static Shader _vertexSelectionPickerShader = null;
+	public static Shader VertexPickerShader
+	{
+		get
+		{
+			if(_vertexSelectionPickerShader == null)
+				_vertexSelectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/VertexPickerShader");
+			return _vertexSelectionPickerShader;
 		}
 	}
 
