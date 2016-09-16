@@ -15,9 +15,7 @@ namespace ProBuilder2.Common
 		{
 			List<GameObject> depthGameObjects = GenerateFaceDepthTestMeshes(selection, out map);
 
-			Shader shader = pb_Constant.SelectionPickerShader;
-
-			Texture2D tex = RenderWithReplacementShader(camera, shader, "ProBuilderPicker");
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker");
 
 			foreach(GameObject go in depthGameObjects)
 			{
@@ -35,15 +33,13 @@ namespace ProBuilder2.Common
 		{
 			List<GameObject> depthGameObjects = GenerateVertexDepthTestMeshes(selection, out map);
 
-			Shader shader = pb_Constant.VertexPickerShader;
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker");
 
-			Texture2D tex = RenderWithReplacementShader(camera, shader, "ProBuilderPicker");
-
-			// foreach(GameObject go in depthGameObjects)
-			// {
-			// 	GameObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
-			// 	GameObject.DestroyImmediate(go);
-			// }
+			foreach(GameObject go in depthGameObjects)
+			{
+				GameObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
+				GameObject.DestroyImmediate(go);
+			}
 
 			return tex;
 		}
@@ -56,7 +52,7 @@ namespace ProBuilder2.Common
 			List<GameObject> meshes = new List<GameObject>();
 			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
 
-			uint index = 0;
+			uint index = 2;
 
 			foreach(pb_Object pb in selection)
 			{

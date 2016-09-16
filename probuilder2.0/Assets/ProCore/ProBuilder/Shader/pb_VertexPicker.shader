@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ProBuilder/VertexPickerShader"
+﻿Shader "Hidden/ProBuilder/VertexPicker"
 {
 	Properties
 	{
@@ -17,7 +17,7 @@
 
 		Pass 
 		{
-			Name "VertexPicker"
+			Name "Vertices"
 			AlphaTest Greater .25
 
 			CGPROGRAM
@@ -81,17 +81,5 @@
 
 			ENDCG
 		}
-	}
-
-	SubShader
-	{
-		Tags { "ProBuilderPicker"="Base" }
-		Lighting Off
-		ZTest LEqual
-		ZWrite On
-		Cull Back
-		Blend Off
-
-		UsePass "Hidden/ProBuilder/SelectionPicker/BASE"
 	}
 }

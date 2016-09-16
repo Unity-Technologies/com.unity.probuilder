@@ -54,17 +54,6 @@ public static class pb_Constant
 		}
 	}
 
-	private static Shader _vertexSelectionPickerShader = null;
-	public static Shader VertexPickerShader
-	{
-		get
-		{
-			if(_vertexSelectionPickerShader == null)
-				_vertexSelectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/VertexPickerShader");
-			return _vertexSelectionPickerShader;
-		}
-	}
-
 	public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
 	public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
 	public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
