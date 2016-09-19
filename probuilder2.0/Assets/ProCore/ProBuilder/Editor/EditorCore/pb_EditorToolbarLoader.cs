@@ -60,8 +60,10 @@ namespace ProBuilder2.EditorCommon
 				new Actions.OpenUVEditor(),
 				new Actions.OpenVertexColorEditor(),
 				new Actions.OpenSmoothingEditor(),
+
 				new Actions.ToggleSelectBackFaces(),
 				new Actions.ToggleHandleAlignment(),
+				new Actions.ToggleDragSelectionMode(),
 
 				// selection
 				new Actions.GrowSelection(),

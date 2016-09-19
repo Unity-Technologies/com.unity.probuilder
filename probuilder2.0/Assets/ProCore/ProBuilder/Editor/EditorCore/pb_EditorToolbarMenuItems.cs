@@ -432,6 +432,7 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+
 		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Handle Alignment  [p]", true)]
 		static bool MenuVerifyToggleHandleAlignment()
 		{

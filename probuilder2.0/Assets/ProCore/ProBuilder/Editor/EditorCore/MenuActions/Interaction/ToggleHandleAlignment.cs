@@ -7,7 +7,6 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	[System.Serializable]
 	public class ToggleHandleAlignment : pb_MenuAction
 	{
 		[SerializeField] int count = 0;

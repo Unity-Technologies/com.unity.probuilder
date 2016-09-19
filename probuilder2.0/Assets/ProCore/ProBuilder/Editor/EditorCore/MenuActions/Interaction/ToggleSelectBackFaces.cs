@@ -7,7 +7,6 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	[System.Serializable]
 	public class ToggleSelectBackFaces : pb_MenuAction
 	{
 		bool isEnabled { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection); } }
