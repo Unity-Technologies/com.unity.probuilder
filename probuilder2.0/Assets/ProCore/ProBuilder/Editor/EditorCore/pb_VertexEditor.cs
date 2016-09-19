@@ -8,6 +8,9 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
+	/**
+	 *	A simple line-item editor for vertex positions.
+	 */
 	public class pb_VertexEditor : EditorWindow
 	{
 		const int MAX_SCENE_LABELS = 100;
