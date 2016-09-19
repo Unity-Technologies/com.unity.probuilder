@@ -350,7 +350,7 @@ namespace ProBuilder2.EditorCommon
 			return scale;
 		}
 
-		public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit)
+		public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<pb_Face>> ignore = null)
 		{
 			pb = null;
 			hit = null;
@@ -362,172 +362,12 @@ namespace ProBuilder2.EditorCommon
 
 			pb = go.GetComponent<pb_Object>();
 
-			if(pb == null)
+			if(pb == null || (ignore != null && ignore.ContainsKey(pb)))
 				return false;
 
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-			return MeshRaycast(ray, pb, out hit);
-		}
-
-		/**
-		 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
-		 */
-		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit)
-		{
-			return MeshRaycast(InWorldRay, pb, out hit, Mathf.Infinity, Culling.Front);
-		}
-
-		/**
-		 * Find the nearest triangle intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
-		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
-		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
-		 */
-		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out pb_RaycastHit hit, float distance, Culling cullingMode)
-		{
-			/**
-			 * Transform ray into model space
-			 */
-
-			InWorldRay.origin 		-= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-			InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
-			InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
-
-			Vector3[] vertices = pb.vertices;
-
-			float dist = 0f;
-			Vector3 point = Vector3.zero;
-
-			float OutHitPoint = Mathf.Infinity;
-			float dot; // vars used in loop
-			Vector3 nrm;	// vars used in loop
-			int OutHitFace = -1;
-			Vector3 OutNrm = Vector3.zero;
-
-			/**
-			 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
-			 */
-			for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
-			{
-				int[] Indices = pb.faces[CurFace].indices;
-
-				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
-				{
-					Vector3 a = vertices[Indices[CurTriangle+0]];
-					Vector3 b = vertices[Indices[CurTriangle+1]];
-					Vector3 c = vertices[Indices[CurTriangle+2]];
-
-					nrm = Vector3.Cross(b-a, c-a);
-					dot = Vector3.Dot(InWorldRay.direction, nrm);
-
-					bool ignore = false;
-
-					switch(cullingMode)
-					{
-						case Culling.Front:
-							if(dot > 0f) ignore = true;
-							break;
-
-						case Culling.Back:
-							if(dot < 0f) ignore = true;
-							break;
-					}
-
-					if(!ignore && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
-					{
-						if(dist > OutHitPoint || dist > distance)
-							continue;
-
-						OutNrm = nrm;
-						OutHitFace = CurFace;
-						OutHitPoint = dist;
-
-						continue;
-					}
-				}
-			}
-
-			hit = new pb_RaycastHit(OutHitPoint,
-									InWorldRay.GetPoint(OutHitPoint),
-									OutNrm,
-									OutHitFace);
-
-			return OutHitFace > -1;
-		}
-
-		/**
-		 * Find the all triangles intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
-		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
-		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
-		 */
-		public static bool MeshRaycast(Ray InWorldRay, pb_Object pb, out List<pb_RaycastHit> hits, float distance, Culling cullingMode)
-		{
-			/**
-			 * Transform ray into model space
-			 */
-			InWorldRay.origin -= pb.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-			
-			InWorldRay.origin 		= pb.transform.worldToLocalMatrix * InWorldRay.origin;
-			InWorldRay.direction 	= pb.transform.worldToLocalMatrix * InWorldRay.direction;
-
-			Vector3[] vertices = pb.vertices;
-
-			float dist = 0f;
-			Vector3 point = Vector3.zero;
-
-			float dot; // vars used in loop
-			Vector3 nrm;	// vars used in loop
-			hits = new List<pb_RaycastHit>();
-
-			/**
-			 * Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
-			 */
-			for(int CurFace = 0; CurFace < pb.faces.Length; ++CurFace)
-			{
-				int[] Indices = pb.faces[CurFace].indices;
-
-				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
-				{
-					Vector3 a = vertices[Indices[CurTriangle+0]];
-					Vector3 b = vertices[Indices[CurTriangle+1]];
-					Vector3 c = vertices[Indices[CurTriangle+2]];
-
-					if(pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
-					{
-						nrm = Vector3.Cross(b-a, c-a);
-
-						switch(cullingMode)
-						{
-							case Culling.Front:
-								dot = Vector3.Dot(InWorldRay.direction, -nrm);
-
-								if(dot > 0f)
-									goto case Culling.FrontBack;
-								break;
-
-							case Culling.Back:
-								dot = Vector3.Dot(InWorldRay.direction, nrm);
-
-								if(dot > 0f)
-									goto case Culling.FrontBack;
-								break;
-
-							case Culling.FrontBack:
-								hits.Add( new pb_RaycastHit(dist,
-															InWorldRay.GetPoint(dist),
-															nrm,
-															CurFace));
-								break;
-						}
-
-						continue;
-					}
-				}
-			}
-
-			return hits.Count > 0;
+			return pb_HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
 		}
 
 		/**

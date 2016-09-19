@@ -745,7 +745,7 @@ public class pb_Editor : EditorWindow
 			List<pb_RaycastHit> hits;
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-			if(pb_Handle_Utility.MeshRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
+			if(pb_HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
 			{
 				Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -856,7 +856,7 @@ public class pb_Editor : EditorWindow
 			pb_RaycastHit hit;
 
 
-			if( pb_Handle_Utility.MeshRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
+			if( pb_HandleUtility.FaceRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
 			{
 				selectedFace = pb.faces[hit.face];
 
@@ -1060,7 +1060,6 @@ public class pb_Editor : EditorWindow
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		bool selectHidden = pref_backfaceSelect;
-
 
 		switch(selectionMode)
 		{
@@ -1422,8 +1421,11 @@ public class pb_Editor : EditorWindow
 			{
 				pb_Object obj = null;
 				pb_RaycastHit hit;
+				Dictionary<pb_Object, HashSet<pb_Face>> ignore = new Dictionary<pb_Object, HashSet<pb_Face>>();
+				foreach(pb_Object pb in selection)
+					ignore.Add(pb, new HashSet<pb_Face>(pb.SelectedFaces));
 
-				if( pb_Handle_Utility.FaceRaycast(mousePosition, out obj, out hit) && !(selection.Contains(obj) && SelectedFacesInEditZone.Any(x => x.Contains(obj.faces[hit.face]))))
+				if( pb_Handle_Utility.FaceRaycast(mousePosition, out obj, out hit, ignore) )
 				{
 					if( mask.Sum() == 1 )
 					{
@@ -1475,9 +1477,8 @@ public class pb_Editor : EditorWindow
 			for(int i = 0; i < selection.Length; i++)
 			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
-				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
+				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
 				selection[i].RefreshNormals();
-				// selection[i].RefreshTangents();
 				selection[i].msh.RecalculateBounds();
 			}
 
@@ -1599,7 +1600,7 @@ public class pb_Editor : EditorWindow
 
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
-				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
+				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
 			}
@@ -1746,7 +1747,7 @@ public class pb_Editor : EditorWindow
 
 				// set vertex in local space on pb-Object
 
-				selection[i].RefreshUV( SelectedFacesInEditZone[i] );
+				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
 			}
@@ -2506,7 +2507,8 @@ public class pb_Editor : EditorWindow
 	public pb_Edge[][]  SelectedUniversalEdges { get { return m_universalEdges; } }
 
 	// faces that need to be refreshed when moving or modifying the actual selection
-	public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
+	// public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
+	public Dictionary<pb_Object, List<pb_Face>> SelectedFacesInEditZone { get; private set; }
 
 	// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
 	int per_object_vertexCount_distinct = 0;
@@ -2532,6 +2534,10 @@ public class pb_Editor : EditorWindow
 
 		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
+		if(SelectedFacesInEditZone != null)
+			SelectedFacesInEditZone.Clear();
+		else
+			SelectedFacesInEditZone = new Dictionary<pb_Object, List<pb_Face>>();
 
 		// If the top level selection has changed, update all the heavy cache things
 		// that don't change based on element selction
@@ -2562,8 +2568,6 @@ public class pb_Editor : EditorWindow
 			}
 			// profiler.EndSample();
 		}
-
-		SelectedFacesInEditZone = new pb_Face[selection.Length][];
 
 		m_handlePivotWorld = Vector3.zero;
 
@@ -2607,7 +2611,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
-			SelectedFacesInEditZone[i] = pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToArray();
+			SelectedFacesInEditZone.Add(pb, pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList() );
 
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
 			selectedFaceCount += selection[i].SelectedFaceCount;

@@ -453,7 +453,7 @@ public class pb_VertexColor_Editor : EditorWindow
 				Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
 				pb_RaycastHit hit;
 
-				if ( pb_Handle_Utility.MeshRaycast(ray, pb, out hit) )
+				if ( pb_HandleUtility.FaceRaycast(ray, pb, out hit) )
 				{
 					handlePosition = pb.transform.TransformPoint(hit.point);
 					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);					

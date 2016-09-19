@@ -10,12 +10,28 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_VertexEditor : EditorWindow
 	{
-		pb_Object[] selection;
-		Dictionary<int, int>[] sharedIndices;
-		Dictionary<pb_Object, bool> foldout = new Dictionary<pb_Object, bool>();
+		const int MAX_SCENE_LABELS = 100;
+
+		class VertexEditorSelection
+		{
+			public Dictionary<int, int> lookup;
+			public bool isVisible = false;
+			public IEnumerable<int> common;
+
+			public VertexEditorSelection(Dictionary<int, int> lookup, bool visible, int[] indices)
+			{
+				this.lookup = lookup;
+				this.isVisible = visible;
+				this.common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+			}
+		}
+
+		Dictionary<pb_Object, VertexEditorSelection> selection = new Dictionary<pb_Object, VertexEditorSelection>();
 
 		static Color EVEN = new Color(.18f, .18f, .18f, 1f);
 		static Color ODD  = new Color(.15f, .15f, .15f, 1f);
+		Vector2 scroll = Vector2.zero;
+		bool moving = false;
 
 		public static void MenuOpenVertexEditor()
 		{
@@ -25,6 +41,7 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+			SceneView.onSceneGUIDelegate += OnSceneGUI;
 
 			if(pb_Editor.instance != null)
 				OnSelectionUpdate(pb_Editor.instance.selection);
@@ -33,25 +50,64 @@ namespace ProBuilder2.EditorCommon
 		void OnDisable()
 		{
 			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
+			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 
-		void OnSelectionUpdate(pb_Object[] selection)
+		void OnSelectionUpdate(pb_Object[] newSelection)
 		{
-			this.selection = selection;
+			if(newSelection == null)
+			{
+				if(selection != null)
+					selection.Clear();
 
-			int l = selection == null ? 0 : selection.Length;
-			this.sharedIndices = new Dictionary<int, int>[l];
-			for(int i = 0; i < l; i++)
-				this.sharedIndices[i] = selection[i].sharedIndices.ToDictionary();
+				return;
+			}
+
+			Dictionary<pb_Object, VertexEditorSelection> res = new Dictionary<pb_Object, VertexEditorSelection>();
+
+			foreach(pb_Object pb in newSelection)
+			{
+				VertexEditorSelection sel;
+
+				if(selection.TryGetValue(pb, out sel))
+				{
+					sel.lookup = pb.sharedIndices.ToDictionary();
+					sel.common = pb_IntArrayUtility.GetCommonIndices(sel.lookup, pb.SelectedTriangles);
+					res.Add(pb, sel);
+				}
+				else
+				{
+					res.Add(pb, new VertexEditorSelection(pb.sharedIndices.ToDictionary(), true, pb.SelectedTriangles));
+				}
+			}
+
+			selection = res;
 
 			this.Repaint();
 		}
 
-		Vector2 scroll = Vector2.zero;
+		void OnVertexMovementBegin(pb_Object pb)
+		{
+			moving = true;
+			pb.ToMesh();
+			pb.Refresh();
+		}
+
+		void OnVertexMovementFinish()
+		{
+			moving = false;
+
+			foreach(var kvp in selection)
+			{
+				kvp.Key.ToMesh();
+				kvp.Key.Refresh();
+				kvp.Key.Optimize();
+			}
+		}
 
 		void OnGUI()
 		{
-			if(selection == null || selection.Length < 1)
+			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.SelectedTriangleCount > 0))
 			{
 				GUILayout.FlexibleSpace();
 				GUILayout.Label("Select a ProBuilder Mesh", EditorStyles.centeredGreyMiniLabel);
@@ -59,40 +115,67 @@ namespace ProBuilder2.EditorCommon
 				return;
 			}
 
+			Event e = Event.current;
+
+			if(moving)
+			{
+				if(	e.type == EventType.Ignore || 
+					e.type == EventType.MouseUp )
+					OnVertexMovementFinish();
+			}
+
 			scroll = EditorGUILayout.BeginScrollView(scroll);
 
-			for(int i = 0; i < selection.Length; i++)
+			foreach(var kvp in selection)
 			{
-				pb_Object pb = selection[i];
+				pb_Object pb = kvp.Key;
+				VertexEditorSelection sel = kvp.Value;
 
-				if(!foldout.ContainsKey(selection[i]))
-					foldout.Add(pb, true);
-
-				bool open = foldout[pb];
+				bool open = sel.isVisible;
 
 				EditorGUI.BeginChangeCheck();
 				open = EditorGUILayout.Foldout(open, pb.name);
 				if(EditorGUI.EndChangeCheck())
-					foldout[pb] = open;
+					sel.isVisible = open;
 
 				if(open)
 				{
-					HashSet<int> unique = new HashSet<int>(selection.SelectMany(x => x.SelectedTriangles).Select(x => sharedIndices[i][x]));
 					int index = 0;
 					
 					bool wasWideMode = EditorGUIUtility.wideMode;
 					EditorGUIUtility.wideMode = true;
 					Color background = GUI.backgroundColor;
 
-					foreach(int u in unique)
+					foreach(int u in sel.common)
 					{
 						GUI.backgroundColor = index % 2 == 0 ? EVEN : ODD;
 						GUILayout.BeginHorizontal(pb_GUI_Utility.solidBackgroundStyle);
 						GUI.backgroundColor = background;
 						
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
-							Vector3 v = selection[i].vertices[selection[i].sharedIndices[u][0]];
-							v = EditorGUILayout.Vector3Field("", v);
+							Vector3 v = pb.vertices[pb.sharedIndices[u][0]];
+
+							EditorGUI.BeginChangeCheck();
+
+								v = EditorGUILayout.Vector3Field("", v);
+
+							if(EditorGUI.EndChangeCheck())
+							{
+								if(!moving)
+									OnVertexMovementBegin(pb);
+
+								pbUndo.RecordObject(pb, "Set Vertex Postion");
+
+								pb.SetSharedVertexPosition(u, v);
+
+								if(pb_Editor.instance != null)
+								{
+									pb.RefreshUV( pb_Editor.instance.SelectedFacesInEditZone[pb] );
+									pb.RefreshNormals();
+									pb.msh.RecalculateBounds();
+									pb_Editor.instance.UpdateSelection();
+								}
+							}
 							index++;
 						GUILayout.EndHorizontal();
 					}
@@ -103,6 +186,42 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUILayout.EndScrollView();
+		}
+
+		void OnSceneGUI(SceneView sceneView)
+		{
+			if(selection == null)
+				return;
+
+			int labelCount = 0;
+
+			Handles.BeginGUI();
+
+			// Only show dropped down probuilder objects.
+			foreach(KeyValuePair<pb_Object, VertexEditorSelection> selected in selection)
+			{
+				pb_Object pb = selected.Key;
+				VertexEditorSelection sel = selected.Value;
+
+				if(!sel.isVisible)
+					continue;
+
+				Vector3[] vertices = pb.vertices;
+
+				foreach(int i in sel.common)
+				{
+					int[] indices = pb.sharedIndices[i];
+
+					Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
+
+					Vector2 cen = HandleUtility.WorldToGUIPoint(point);
+
+					pb_GUI_Utility.SceneLabel(i.ToString(), cen);
+
+					if(++labelCount > MAX_SCENE_LABELS) break;
+				}
+			}
+			Handles.EndGUI();
 		}
 	}
 }

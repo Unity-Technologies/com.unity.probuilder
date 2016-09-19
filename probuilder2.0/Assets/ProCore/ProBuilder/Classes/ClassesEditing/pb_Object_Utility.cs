@@ -117,7 +117,7 @@ public static class pb_Object_Utility
 	 *	\brief Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
 	 *	Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.
 	 */
-	[System.Obsolete("Use SetSharedVertexValues(pb_Object, index, pb_Vertex) instead.")]
+	// [System.Obsolete("Use SetSharedVertexValues(pb_Object, index, pb_Vertex) instead.")]
 	public static void SetSharedVertexPosition(this pb_Object pb, int sharedIndex, Vector3 position)
 	{
 		Vector3[] v = pb.vertices;

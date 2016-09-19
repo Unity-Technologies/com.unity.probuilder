@@ -204,8 +204,8 @@ namespace ProBuilder2.EditorCommon
 			{
 				SetTextureGroup(selection, textureGroup);
 
-				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
-					selection[i].RefreshUV(editor.SelectedFacesInEditZone[i]);
+				foreach(var kvp in editor.SelectedFacesInEditZone)
+					kvp.Key.RefreshUV(kvp.Value);
 
 				SceneView.RepaintAll();
 
@@ -224,11 +224,11 @@ namespace ProBuilder2.EditorCommon
 			{
 				SetTextureGroup(selection, -1);
 
-				for(int i = 0; i < editor.SelectedFacesInEditZone.Length; i++)
+				foreach(var kvp in editor.SelectedFacesInEditZone)
 				{
-					selection[i].ToMesh();
-					selection[i].Refresh();
-					selection[i].Optimize();
+					kvp.Key.ToMesh();
+					kvp.Key.Refresh();
+					kvp.Key.Optimize();
 				}
 
 				SceneView.RepaintAll();

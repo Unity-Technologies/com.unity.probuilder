@@ -844,9 +844,8 @@ public class pb_Object : MonoBehaviour
 	/**
 	 * Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
 	 */
-	public void RefreshUV(pb_Face[] faces)
+	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
-		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
 		Vector2[] newUVs;
 
 		// thanks to the upgrade path, this is necessary.  maybe someday remove it.
@@ -866,15 +865,16 @@ public class pb_Object : MonoBehaviour
 					f.manualUV = false;
 
 				// this necessitates rebuilding ALL the face uvs, so make sure we do that.
-				faces = this.faces;
+				facesToRefresh = this.faces;
 
 				newUVs = new Vector2[vertexCount];
 			}
 		}
 
 		int n = -2;
+		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
 
-		foreach(pb_Face f in faces)
+		foreach(pb_Face f in facesToRefresh)
 		{
 			if(f == null || f.manualUV)
 				continue;
@@ -886,11 +886,13 @@ public class pb_Object : MonoBehaviour
 		}
 
 		// Add any non-selected faces in texture groups to the update list
-		if(this.faces.Length != faces.Length)
+		if(this.faces.Length != facesToRefresh.Count())
 		{
 			foreach(pb_Face f in this.faces)
 			{
-				if(f.manualUV) continue;
+				if(f.manualUV)
+					continue;
+
 				if(tex_groups.ContainsKey(f.textureGroup) && !tex_groups[f.textureGroup].Contains(f))
 					tex_groups[f.textureGroup].Add(f);
 			}

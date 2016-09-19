@@ -16,9 +16,9 @@ namespace ProBuilder2.Common
 		 * Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore
 		 * backfaces.
 		 */
-		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit)
+		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, HashSet<pb_Face> ignore = null)
 		{
-			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, Culling.Front);
+			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, Culling.Front, ignore);
 		}
 
 		/**
@@ -27,12 +27,11 @@ namespace ProBuilder2.Common
 		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
 		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
 		 */
-		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, float distance, Culling cullingMode)
+		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, float distance, Culling cullingMode, HashSet<pb_Face> ignore = null)
 		{
 			/**
 			 * Transform ray into model space
 			 */
-
 			InWorldRay.origin 		-= mesh.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
@@ -53,6 +52,9 @@ namespace ProBuilder2.Common
 			 */
 			for(int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
 			{
+				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
+					continue;
+
 				int[] Indices = mesh.faces[CurFace].indices;
 
 				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)
@@ -64,20 +66,20 @@ namespace ProBuilder2.Common
 					nrm = Vector3.Cross(b-a, c-a);
 					dot = Vector3.Dot(InWorldRay.direction, nrm);
 
-					bool ignore = false;
+					bool skip = false;
 
 					switch(cullingMode)
 					{
 						case Culling.Front:
-							if(dot > 0f) ignore = true;
+							if(dot > 0f) skip = true;
 							break;
 
 						case Culling.Back:
-							if(dot < 0f) ignore = true;
+							if(dot < 0f) skip = true;
 							break;
 					}
 
-					if(!ignore && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
+					if(!skip && pb_Math.RayIntersectsTriangle(InWorldRay, a, b, c, out dist, out point))
 					{
 						if(dist > OutHitPoint || dist > distance)
 							continue;
@@ -105,7 +107,7 @@ namespace ProBuilder2.Common
 		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
 		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
 		 */
-		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out List<pb_RaycastHit> hits, float distance, Culling cullingMode)
+		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out List<pb_RaycastHit> hits, float distance, Culling cullingMode, HashSet<pb_Face> ignore = null)
 		{
 			/**
 			 * Transform ray into model space
@@ -129,6 +131,9 @@ namespace ProBuilder2.Common
 			 */
 			for(int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
 			{
+				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
+					continue;
+
 				int[] Indices = mesh.faces[CurFace].indices;
 
 				for(int CurTriangle = 0; CurTriangle < Indices.Length; CurTriangle += 3)

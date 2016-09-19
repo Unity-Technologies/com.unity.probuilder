@@ -23,20 +23,7 @@ namespace ProBuilder2.EditorCommon
 
 		const int MAX_SCENE_LABELS = 64;
 
-		static readonly Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 		static readonly Color SplitterColor = new Color(.3f, .3f, .3f, .75f);
-
-		static GUIStyle boldLabel {
-			get {
-				if(_boldLabel == null) {
-					_boldLabel = new GUIStyle(EditorStyles.boldLabel);
-					_boldLabel.normal.textColor = Color.white;
-				}
-				return _boldLabel;
-			}
-		}
-
-		static GUIStyle _boldLabel = null;
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -496,7 +483,7 @@ namespace ProBuilder2.EditorCommon
 					}
 				}
 
-				DrawSceneLabel(sb.ToString(), cen);
+				pb_GUI_Utility.SceneLabel(sb.ToString(), cen);
 
 				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
@@ -523,13 +510,13 @@ namespace ProBuilder2.EditorCommon
 				switch(edgeIndexFormat)
 				{
 					case IndexFormat.Common:
-						DrawSceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
+						pb_GUI_Utility.SceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
 						break;
 					case IndexFormat.Local:
-						DrawSceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
+						pb_GUI_Utility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
 						break;
 					case IndexFormat.Both:
-						DrawSceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
+						pb_GUI_Utility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
 						break;
 				}
 
@@ -623,28 +610,11 @@ namespace ProBuilder2.EditorCommon
 				cen.y -= 5f;
 
 				Handles.BeginGUI();
-				DrawSceneLabel(sb.ToString(), cen);
+				pb_GUI_Utility.SceneLabel(sb.ToString(), cen);
 				Handles.EndGUI();
 
 				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
-		}
-
-		static Rect sceneLabelRect = new Rect(0,0,0,0);
-
-		void DrawSceneLabel(string text, Vector2 position)
-		{
-			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
-
-			float width = EditorStyles.boldLabel.CalcSize(gc).x;
-			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
-			sceneLabelRect.x = position.x - width * .5f;
-			sceneLabelRect.y = position.y - height * .5f;
-			sceneLabelRect.width = width;
-			sceneLabelRect.height = height;
-
-			pb_GUI_Utility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
-			GUI.Label(sceneLabelRect, gc, boldLabel);
 		}
 
 		readonly Color[] ElementColors = new Color[] { Color.green, Color.blue, Color.red };
@@ -664,9 +634,9 @@ namespace ProBuilder2.EditorCommon
 
 			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
 
-			Vector3[] vertices = selectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
-			Vector3[] normals  = selectedOnly ?  pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
-			Vector4[] tangents = selectedOnly ?  pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
+			Vector3[] vertices = selectedOnly ? pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
+			Vector3[] normals  = selectedOnly ? pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
+			Vector4[] tangents = selectedOnly ? pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

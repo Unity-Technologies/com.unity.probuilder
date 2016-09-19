@@ -277,5 +277,40 @@ namespace ProBuilder2.Interface
 			else
 				return value;
 		}
+
+		private static Rect sceneLabelRect = new Rect(0f, 0f, 0f, 0f);
+		private static Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
+
+		static GUIStyle sceneBoldLabel {
+			get {
+				if(_sceneBoldLabel == null) {
+					_sceneBoldLabel = new GUIStyle(EditorStyles.boldLabel);
+					_sceneBoldLabel.normal.textColor = Color.white;
+				}
+				return _sceneBoldLabel;
+			}
+		}
+
+		static GUIStyle _sceneBoldLabel = null;
+
+		/**
+		 *	Draw a label in the scene view with a solid color background.
+		 */
+		public static void SceneLabel(string text, Vector2 position)
+		{
+			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
+
+			float width = EditorStyles.boldLabel.CalcSize(gc).x;
+			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
+
+			sceneLabelRect.x = position.x - width * .5f;
+			sceneLabelRect.y = position.y - height * .5f;
+			sceneLabelRect.width = width;
+			sceneLabelRect.height = height;
+
+			pb_GUI_Utility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
+
+			GUI.Label(sceneLabelRect, gc, sceneBoldLabel);
+		}
 	}
 }

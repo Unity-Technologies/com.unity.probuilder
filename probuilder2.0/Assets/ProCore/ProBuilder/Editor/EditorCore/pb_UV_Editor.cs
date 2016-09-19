@@ -2698,10 +2698,8 @@ public class pb_UV_Editor : EditorWindow
 				}
 			}
 
-			for(int i = 0; i < selection.Length; i++)
-			{
-				selection[i].RefreshUV(editor.SelectedFacesInEditZone[i] );
-			}
+			foreach(var kvp in editor.SelectedFacesInEditZone)
+				kvp.Key.RefreshUV(kvp.Value);
 
 			RefreshSelectedUVCoordinates();
 		}
