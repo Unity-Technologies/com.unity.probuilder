@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Select w/ Colors",
+			"Select by Colors",
 			"Selects all faces matching the selected vertex colors."
 		);
 
@@ -24,7 +24,9 @@ namespace ProBuilder2.Actions
 		{
 			return 	pb_Editor.instance != null &&
 					pb_Editor.instance.editLevel != EditLevel.Top &&
-					selection != null && selection.Length > 0;
+					selection != null &&
+					selection.Length > 0 &&
+					selection.Any(x => x.SelectedTriangleCount > 0);
 		}
 
 		public override bool IsHidden()

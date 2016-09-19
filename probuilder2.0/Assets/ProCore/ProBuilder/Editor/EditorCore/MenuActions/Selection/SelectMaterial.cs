@@ -22,7 +22,11 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && pb_Editor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
+			return 	pb_Editor.instance != null &&
+					pb_Editor.instance.editLevel != EditLevel.Top &&
+					selection != null &&
+					selection.Length > 0 &&
+					selection.Any(x => x.SelectedFaceCount > 0);
 		}
 
 
@@ -30,7 +34,6 @@ namespace ProBuilder2.Actions
 		{
 			return 	editLevel != EditLevel.Geometry;
 		}
-
 
 		public override pb_ActionResult DoAction()
 		{
