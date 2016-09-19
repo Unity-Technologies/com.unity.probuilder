@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: FacePicker
+  m_Name: VertexPicker
   m_Shader: {fileID: 4800000, guid: 2e58e16192dbb47469ae041ba1331088, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5

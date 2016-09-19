@@ -394,7 +394,7 @@ public class pb_Editor : EditorWindow
 	Vector2 mousePosition_initial;
 	Rect selectionRect;
 	Color dragRectColor = new Color(.313f, .8f, 1f, 1f);
-	private bool dragging = false;
+	private bool dragging = false, readyForMouseDrag = false;
 	private bool doubleClicked = false;	// prevents leftClickUp from stealing focus after double click
 
 	// vertex handles
@@ -588,12 +588,6 @@ public class pb_Editor : EditorWindow
 			return;
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * *
-		 *	 Vertex & Quad Wranglin' Ahead! 	 *
-		 * 	 Everything from this point below	 *
-		 *	 overrides something Unity related.  *
-		 * * * * * * * * * * * * * * * * * * * * */
-
 		// This prevents us from selecting other objects in the scene,
 		// and allows for the selection of faces / vertices.
 		int controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -603,7 +597,8 @@ public class pb_Editor : EditorWindow
 		if(selectedVertexCount > 0)
 			Tools.current = Tool.None;
 
-		if(leftClick) {
+		if(leftClick) 
+		{
 			// double clicking object
 			if(currentEvent.clickCount > 1)
 			{
@@ -611,15 +606,21 @@ public class pb_Editor : EditorWindow
 			}
 
 			mousePosition_initial = mousePosition;
+			// readyForMouseDrag prevents a bug wherein after ending a drag an errant
+			// MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
+			readyForMouseDrag = true;
 		}
 
-		if(mouseDrag)
+		if(mouseDrag && readyForMouseDrag)
+		{
 			dragging = true;
+		}
 
 		if(ignore)
 		{
 			if(dragging)
 			{
+				readyForMouseDrag = false;
 				dragging = false;
 				DragCheck();
 			}
@@ -648,7 +649,7 @@ public class pb_Editor : EditorWindow
 				else
 				{
 					dragging = false;
-
+					readyForMouseDrag = false;
 #if !PROTOTYPE
 					if(pb_UV_Editor.instance)
 						pb_UV_Editor.instance.ResetUserPivot();
@@ -1142,42 +1143,11 @@ public class pb_Editor : EditorWindow
 
 				if( !selectHidden && !selectWholeElement )
 				{
-					Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
-					Texture2D tex = pb_SelectionPicker.RenderSelectionPickerTexture(cam, pool, out map);
-					Color32[] pix = tex.GetPixels32();
-
-					int ox = System.Math.Max(0, Mathf.FloorToInt(selectionRect.x));
-					int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - selectionRect.y) - selectionRect.height));
-					int imageWidth = tex.width;
-					int imageHeight = tex.height;
-					int width = Mathf.FloorToInt(selectionRect.width);
-					int height = Mathf.FloorToInt(selectionRect.height);
-					GameObject.DestroyImmediate(tex);
-
-					Dictionary<pb_Object, HashSet<pb_Face>> selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
-					pb_Tuple<pb_Object, pb_Face> hit;
-					HashSet<pb_Face> faces = null;
-					HashSet<uint> used = new HashSet<uint>();
-
-					for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
-					{
-						for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
-						{
-							uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
-
-							if( used.Add(v) && map.TryGetValue(v, out hit) )
-							{
-								if(selected.TryGetValue(hit.Item1, out faces))
-									faces.Add(hit.Item2);
-								else
-									selected.Add(hit.Item1, new HashSet<pb_Face>() { hit.Item2 });
-							}
-						}
-					}
+					Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_SelectionPicker.PickFacesInRect(cam, selectionRect, pool);
 
 					foreach(var kvp in selected)
 					{
-						faces = kvp.Value;
+						HashSet<pb_Face> faces = kvp.Value;
 						faces.SymmetricExceptWith(kvp.Key.SelectedFaces);
 						kvp.Key.SetSelectedFaces(faces);
 					}
