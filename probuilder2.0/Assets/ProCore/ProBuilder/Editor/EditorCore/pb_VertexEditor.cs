@@ -113,7 +113,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.SelectedTriangleCount > 0))
 			{
 				GUILayout.FlexibleSpace();
-				GUILayout.Label("Select a ProBuilder Mesh", EditorStyles.centeredGreyMiniLabel);
+				GUILayout.Label("Select a ProBuilder Mesh", pb_GUI_Utility.CenteredGreyMiniLabel);
 				GUILayout.FlexibleSpace();
 				return;
 			}

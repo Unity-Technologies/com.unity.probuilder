@@ -30,6 +30,21 @@ namespace ProBuilder2.Interface
 			}
 		}
 
+		private static GUIStyle _centeredGreyMiniLabel;
+		public static GUIStyle CenteredGreyMiniLabel
+		{
+			get
+			{
+				if(_centeredGreyMiniLabel == null)
+				{
+					_centeredGreyMiniLabel = new GUIStyle(EditorStyles.label);
+					_centeredGreyMiniLabel.normal.textColor = Color.gray;
+					_centeredGreyMiniLabel.alignment = TextAnchor.MiddleCenter;
+				}
+				return _centeredGreyMiniLabel;
+			}
+		}
+
 		private static GUIStyle _solidBackgroundStyle;
 		public static GUIStyle solidBackgroundStyle
 		{
