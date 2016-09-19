@@ -9,7 +9,7 @@
 		ZTest LEqual
 		ZWrite On
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha		
+		Blend Off
 
 		UsePass "Hidden/ProBuilder/VertexPicker/VERTICES"
 	}

@@ -147,6 +147,12 @@ namespace ProBuilder2.Common
 				Mesh m = new Mesh();
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
+				#if UNITY_4_7
+				// avoid incorrect unity warning about missing uv channel on 4.7
+				m.uv = new Vector2[pb.vertexCount];
+				m.uv2 = new Vector2[pb.vertexCount];
+				#endif
+
 				Color32[] colors = new Color32[m.vertexCount];
 
 				foreach(pb_Face f in pb.faces)
@@ -193,6 +199,11 @@ namespace ProBuilder2.Common
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
 				m.colors32 = pbUtil.Fill<Color32>(BLACK, pb.vertexCount);
+				#if UNITY_4_7
+				// avoid incorrect unity warning about missing uv channel on 4.7
+				m.uv = new Vector2[pb.vertexCount];
+				m.uv2 = new Vector2[pb.vertexCount];
+				#endif
 				go.AddComponent<MeshFilter>().sharedMesh = m;
 				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
 				meshes.Add(go);
@@ -261,7 +272,6 @@ namespace ProBuilder2.Common
 				t+=4;
 				n+=6;				
 			}
-
 
 			Mesh mesh = new Mesh();
 			mesh.name = "Vertex Billboard";

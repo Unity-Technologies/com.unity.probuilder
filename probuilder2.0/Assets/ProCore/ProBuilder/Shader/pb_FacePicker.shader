@@ -20,8 +20,6 @@
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			float4 _Color;
-
 			struct appdata
 			{
 				float4 vertex : POSITION;
