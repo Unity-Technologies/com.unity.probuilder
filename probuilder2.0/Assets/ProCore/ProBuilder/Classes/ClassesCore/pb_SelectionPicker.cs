@@ -181,7 +181,7 @@ namespace ProBuilder2.Common
 
 			// don't start at 0 because that means one vertex would be black, matching
 			// the color used to cull hidden vertices.
-			uint index = 2;
+			uint index = 0x02;
 
 			foreach(pb_Object pb in selection)
 			{
@@ -226,8 +226,7 @@ namespace ProBuilder2.Common
 			
 			for(int i = 0; i < length; i++)
 			{
-				int sharedIndex = pb.sharedIndices[i][0];
-				Vector3 v = pb.vertices[sharedIndex];
+				Vector3 v = pb.vertices[pb.sharedIndices[i][0]];
 
 				t_billboards[t+0] = v;
 				t_billboards[t+1] = v;
@@ -252,7 +251,7 @@ namespace ProBuilder2.Common
 				t_tris[n+5] = t + 2;
 
 				Color32 color = EncodeRGBA(index);
-				map.Add(index++, new pb_Tuple<pb_Object, int>(pb, sharedIndex));
+				map.Add(index++, new pb_Tuple<pb_Object, int>(pb, i));
 
 				t_col[t+0] = color;
 				t_col[t+1] = color;

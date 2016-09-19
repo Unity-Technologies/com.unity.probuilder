@@ -197,10 +197,10 @@ namespace ProBuilder2.Common
 			
 			for(int i = 0; i < v.Length; i++)
 			{
-				t_billboards[t+0] = v[i];//-up-right;
-				t_billboards[t+1] = v[i];//-up+right;
-				t_billboards[t+2] = v[i];//+up-right;
-				t_billboards[t+3] = v[i];//+up+right;
+				t_billboards[t+0] = v[i];
+				t_billboards[t+1] = v[i];
+				t_billboards[t+2] = v[i];
+				t_billboards[t+3] = v[i];
 
 				t_uvs[t+0] = Vector3.zero;
 				t_uvs[t+1] = Vector3.right;

@@ -584,7 +584,6 @@ public class pb_Editor : EditorWindow
 		if( pb_Handle_Utility.SceneViewInUse(currentEvent) || currentEvent.isKey || selection == null || selection.Length < 1)
 		{
 			dragging = false;
-
 			return;
 		}
 
@@ -1055,9 +1054,13 @@ public class pb_Editor : EditorWindow
 	private void DragCheck()
 	{
 		Camera cam = SceneView.lastActiveSceneView.camera;
-		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
 		pbUndo.RecordSelection(selection, "Drag Select");
+		
+		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
+		bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
+		bool selectHidden = pref_backfaceSelect;
+
 
 		switch(selectionMode)
 		{
@@ -1065,64 +1068,78 @@ public class pb_Editor : EditorWindow
 			{
 				if(!shiftKey && !ctrlKey) ClearElementSelection();
 
-				// profiler.BeginSample("Drag Select Vertices");
-				for(int i = 0; i < selection.Length; i++)
+				if( !selectHidden )
 				{
-					pb_Object pb = selection[i];
-					if(!pb.isSelectable) continue;
+					Dictionary<pb_Object, HashSet<int>> selected = pb_SelectionPicker.PickVerticesInRect(cam, selectionRect, selection.Where(x => x.isSelectable));
 
-					HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
-
-					for(int n = 0; n < m_uniqueIndices[i].Length; n++)
+					foreach(var kvp in selected)
 					{
-						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
-
-						// profiler.BeginSample("Contains");
-						bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
-						// profiler.EndSample();
-
-						if(contains)
-						{
-							// if point is behind the camera, ignore it.
-							// profiler.BeginSample("WorldToScreenPoint");
-							if(cam.WorldToScreenPoint(v).z < 0)
-							{
-								// profiler.EndSample();
-								continue;
-							}
-							// profiler.EndSample();
-
-
-							// profiler.BeginSample("backface culling");
-							// Vector3 nrm = normals[m_uniqueIndices[i][n]];
-							// float dot = Vector3.Dot(camDirLocal, nrm);
-							// if(!pref_backfaceSelect && (dot < 0 || pb_HandleUtility.PointIsOccluded(cam, selection[i], v)))
-							if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )
-							{
-								// profiler.EndSample();
-								continue;
-							}
-							// profiler.EndSample();
-
-							// Check if index is already selected, and if not add it to the pot
-							// profiler.BeginSample("selected triangles contains");
-							contains = selectedTriangles.Contains(m_uniqueIndices[i][n]);
-							// profiler.EndSample();
-
-							// profiler.BeginSample("add / remove");
-							if( contains )
-								selectedTriangles.Remove(m_uniqueIndices[i][n]);
-							else
-								selectedTriangles.Add(m_uniqueIndices[i][n]);
-							// profiler.EndSample();
-						}
+						pb_IntArray[] sharedIndices = kvp.Key.sharedIndices;
+						HashSet<int> common = sharedIndices.GetCommonIndices(kvp.Key.SelectedTriangles);
+						common.SymmetricExceptWith(kvp.Value);
+						kvp.Key.SetSelectedTriangles( sharedIndices.GetIndicesWithCommon(common).ToArray() );
 					}
+				}
+				else
+				{
+					// profiler.BeginSample("Drag Select Vertices");
+					for(int i = 0; i < selection.Length; i++)
+					{
+						pb_Object pb = selection[i];
+						if(!pb.isSelectable) continue;
 
-					// profiler.BeginSample("SetSelectedTriangles");
-					pb.SetSelectedTriangles(selectedTriangles.ToArray());
+						HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
+
+						for(int n = 0; n < m_uniqueIndices[i].Length; n++)
+						{
+							Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+
+							// profiler.BeginSample("Contains");
+							bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
+							// profiler.EndSample();
+
+							if(contains)
+							{
+								// if point is behind the camera, ignore it.
+								// profiler.BeginSample("WorldToScreenPoint");
+								if(cam.WorldToScreenPoint(v).z < 0)
+								{
+									// profiler.EndSample();
+									continue;
+								}
+								// profiler.EndSample();
+
+								// profiler.BeginSample("backface culling");
+								// Vector3 nrm = normals[m_uniqueIndices[i][n]];
+								// float dot = Vector3.Dot(camDirLocal, nrm);
+								// if(!pref_backfaceSelect && (dot < 0 || pb_HandleUtility.PointIsOccluded(cam, selection[i], v)))
+								if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )
+								{
+									// profiler.EndSample();
+									continue;
+								}
+								// profiler.EndSample();
+
+								// Check if index is already selected, and if not add it to the pot
+								// profiler.BeginSample("selected triangles contains");
+								contains = selectedTriangles.Contains(m_uniqueIndices[i][n]);
+								// profiler.EndSample();
+
+								// profiler.BeginSample("add / remove");
+								if( contains )
+									selectedTriangles.Remove(m_uniqueIndices[i][n]);
+								else
+									selectedTriangles.Add(m_uniqueIndices[i][n]);
+								// profiler.EndSample();
+							}
+						}
+
+						// profiler.BeginSample("SetSelectedTriangles");
+						pb.SetSelectedTriangles(selectedTriangles.ToArray());
+						// profiler.EndSample();
+					}
 					// profiler.EndSample();
 				}
-				// profiler.EndSample();
 
 				if(!vertexSelectionMask)
 					DragObjectCheck(true);
@@ -1137,9 +1154,6 @@ public class pb_Editor : EditorWindow
 					ClearElementSelection();
 
 				IEnumerable<pb_Object> pool = (limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object))).Where(x => x.isSelectable);
-
-				bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
-				bool selectHidden = pref_backfaceSelect;
 
 				if( !selectHidden && !selectWholeElement )
 				{

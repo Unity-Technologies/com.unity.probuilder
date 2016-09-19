@@ -222,13 +222,22 @@ namespace ProBuilder2.Common
 		{
 			HashSet<int> common = new HashSet<int>();
 
-			foreach(int i in indices) {
-				if(!lookup.ContainsKey(i))
-					Debug.Log("want: " + i +"\nhave: " + lookup.Keys.ToString("\n"));
+			foreach(int i in indices) 
+			{
+				// if(!lookup.ContainsKey(i))
+				// 	Debug.Log("want: " + i +"\nhave: " + lookup.Keys.ToString("\n"));
 				common.Add( lookup[i] );
 			}
 
 			return common;
+		}
+
+		/**
+		 *	Convert a list of common indices (eg, indices of a group in the sharedIndices array) to actual triangle indices.
+		 */
+		public static IEnumerable<int> GetIndicesWithCommon(this pb_IntArray[] pbIntArr, IEnumerable<int> common)
+		{
+			return common.Select(x => pbIntArr[x][0]);
 		}
 
 		/**

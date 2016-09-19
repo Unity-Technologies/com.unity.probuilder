@@ -1,19 +1,16 @@
 ﻿Shader "Hidden/ProBuilder/VertexPicker"
 {
-	Properties
-	{
-		_MainTex("Texture", 2D) = "white" {}
-		_Scale("Scale", Range(1,7)) = 3.3
-	}
+	Properties {}
 
 	SubShader
 	{
-		Tags { "ProBuilderPicker"="VertexPass" "RenderType"="Transparent" }
+		Tags { "ProBuilderPicker"="VertexPass" "RenderType"="Opaque" "IgnoreProjector"="True" }
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha		
+		Blend Off
+		Offset 10, -1
 
 		Pass 
 		{
@@ -24,9 +21,6 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
-
-			sampler2D _MainTex;
-			float _Scale;
 
 			struct appdata
 			{
@@ -48,7 +42,6 @@
 			{
 				v2f o;
 
-				// o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
 				o.pos.xyz *= .99;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
@@ -60,8 +53,8 @@
 				clip.xy = clip.xy * .5 + .5;
 				clip.xy *= _ScreenParams.xy;
 
-				clip.xy += v.texcoord1.xy * _Scale;
-				clip.z -= (.0001 + v.normal.x) * (1 - UNITY_MATRIX_P[3][3]);
+				clip.xy += v.texcoord1.xy * 3.5;
+				clip.z -= .01 * (1 - UNITY_MATRIX_P[3][3]);
 
 				clip.xy /= _ScreenParams.xy;
 				clip.xy = (clip.xy - .5) / .5;
@@ -76,7 +69,7 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return tex2D(_MainTex, i.uv) * i.color;
+				return i.color;
 			}
 
 			ENDCG

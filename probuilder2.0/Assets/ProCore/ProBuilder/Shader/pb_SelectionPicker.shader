@@ -1,14 +1,10 @@
 ﻿Shader "Hidden/ProBuilder/SelectionPicker"
 {
-	Properties
-	{
-		_MainTex("Texture", 2D) = "white" {}
-		_Scale("Scale", Range(1,7)) = 3.3
-	}
+	Properties {}
 
 	SubShader
 	{
-		Tags { "ProBuilderPicker"="VertexPass" "RenderType"="Transparent" }
+		Tags { "ProBuilderPicker"="VertexPass" }
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
