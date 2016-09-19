@@ -23,8 +23,6 @@ namespace ProBuilder2.Actions
 
 		public override string menuTitle { get { return isComplete ? "Drag: Complete" : "Drag: Intersect"; } }
 
-		private Texture2D[] icons;
-
 		public override pb_ActionResult DoAction()
 		{
 			EditorPrefs.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
