@@ -35,6 +35,7 @@ namespace ProBuilder2.EditorCommon
 		static Color ODD  = new Color(.15f, .15f, .15f, 1f);
 		Vector2 scroll = Vector2.zero;
 		bool moving = false;
+		public bool worldSpace = true;
 
 		public static void MenuOpenVertexEditor()
 		{
@@ -110,6 +111,17 @@ namespace ProBuilder2.EditorCommon
 
 		void OnGUI()
 		{
+			GUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+				GUILayout.FlexibleSpace();
+
+				GUIStyle style = worldSpace ? EditorStyles.toolbarButton : pb_GUI_Utility.GetOnStyle(EditorStyles.toolbarButton);
+
+				if( GUILayout.Button(worldSpace ? "World Space" : "Model Space", style) )
+					worldSpace = !worldSpace;
+
+			GUILayout.EndHorizontal();
+
 			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.SelectedTriangleCount > 0))
 			{
 				GUILayout.FlexibleSpace();
@@ -148,6 +160,7 @@ namespace ProBuilder2.EditorCommon
 					bool wasWideMode = EditorGUIUtility.wideMode;
 					EditorGUIUtility.wideMode = true;
 					Color background = GUI.backgroundColor;
+					Transform transform = pb.transform;
 
 					foreach(int u in sel.common)
 					{
@@ -156,7 +169,10 @@ namespace ProBuilder2.EditorCommon
 						GUI.backgroundColor = background;
 						
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
+
 							Vector3 v = pb.vertices[pb.sharedIndices[u][0]];
+
+							if(worldSpace) v = transform.TransformPoint(v);
 
 							EditorGUI.BeginChangeCheck();
 
@@ -169,7 +185,7 @@ namespace ProBuilder2.EditorCommon
 
 								pbUndo.RecordObject(pb, "Set Vertex Postion");
 
-								pb.SetSharedVertexPosition(u, v);
+								pb.SetSharedVertexPosition(u, worldSpace ? transform.InverseTransformPoint(v) : v);
 
 								if(pb_Editor.instance != null)
 								{
