@@ -11,10 +11,15 @@ namespace ProBuilder2.Common
 		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
 		 *	by the rect.
 		 */
-		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(Camera camera, Rect pickerRect, IEnumerable<pb_Object> selection)
+		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
+			Camera camera,
+			Rect pickerRect,
+			IEnumerable<pb_Object> selection,
+			int renderTextureWidth = -1,
+			int renderTextureHeight = -1)
 		{
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
-			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map);
+			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
@@ -53,10 +58,15 @@ namespace ProBuilder2.Common
 		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of vertices touched
 		 *	by the rect.
 		 */
-		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(Camera camera, Rect pickerRect, IEnumerable<pb_Object> selection)
+		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
+			Camera camera,
+			Rect pickerRect,
+			IEnumerable<pb_Object> selection,
+			int renderTextureWidth = -1,
+			int renderTextureHeight = -1)
 		{
 			Dictionary<uint, pb_Tuple<pb_Object, int>> map;
-			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map);
+			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
@@ -94,11 +104,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Render the pb_Object selection with the special selection picker shader and return a texture and color -> {object, face} dictionary.
 		 */
-		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
+		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map, int width = -1, int height = -1)
 		{
 			List<GameObject> depthGameObjects = GenerateFaceDepthTestMeshes(selection, out map);
 
-			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker");
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
 
 			foreach(GameObject go in depthGameObjects)
 			{
@@ -112,11 +122,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Render the pb_Object selection with the special selection picker shader and return a texture and color -> {object, sharedIndex} dictionary.
 		 */
-		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, int>> map)
+		public static Texture2D RenderSelectionPickerTexture(Camera camera, IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, int>> map, int width = -1, int height = -1)
 		{
 			List<GameObject> depthGameObjects = GenerateVertexDepthTestMeshes(selection, out map);
 
-			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker");
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
 
 			foreach(GameObject go in depthGameObjects)
 			{
@@ -234,7 +244,7 @@ namespace ProBuilder2.Common
 
 			Vector3 up = Vector3.up;
 			Vector3 right = Vector3.right;
-			
+
 			for(int i = 0; i < length; i++)
 			{
 				Vector3 v = pb.vertices[pb.sharedIndices[i][0]];
@@ -270,7 +280,7 @@ namespace ProBuilder2.Common
 				t_col[t+3] = color;
 
 				t+=4;
-				n+=6;				
+				n+=6;
 			}
 
 			Mesh mesh = new Mesh();
@@ -285,7 +295,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Decode Color32.RGB values to a 32 bit unsigned int, using the RGB as the little 
+		 *	Decode Color32.RGB values to a 32 bit unsigned int, using the RGB as the little
 		 *	bytes.  Discards the hi byte (alpha)
 		 */
 		public static uint DecodeRGBA(Color32 color)
@@ -324,10 +334,12 @@ namespace ProBuilder2.Common
 		/**
 		 *	Render the camera with a replacement shader and return the resulting image.
 		 */
-		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag)
+		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
 		{
-			int width = (int) camera.pixelRect.width;
-			int height = (int) camera.pixelRect.height;
+			bool autoSize = width < 0 || height < 0;
+
+			int _width = autoSize ? (int) camera.pixelRect.width : width;
+			int _height = autoSize ? (int) camera.pixelRect.height : height;
 
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
@@ -335,10 +347,10 @@ namespace ProBuilder2.Common
 			renderCam.enabled = false;
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
-			
+
 			RenderTexture rt = RenderTexture.GetTemporary(
-				width,
-				height,
+				_width,
+				_height,
 				16,
 				RenderTextureFormat.Default,
 				RenderTextureReadWrite.Default,
@@ -350,9 +362,8 @@ namespace ProBuilder2.Common
 			RenderTexture prev = RenderTexture.active;
 			RenderTexture.active = rt;
 
-			Texture2D img = new Texture2D(width, height);
-
-			img.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+			Texture2D img = new Texture2D(_width, _height);
+			img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
 			img.Apply();
 
 			RenderTexture.active = prev;

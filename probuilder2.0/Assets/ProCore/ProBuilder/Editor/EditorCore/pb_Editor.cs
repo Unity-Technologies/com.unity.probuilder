@@ -596,7 +596,7 @@ public class pb_Editor : EditorWindow
 		if(selectedVertexCount > 0)
 			Tools.current = Tool.None;
 
-		if(leftClick) 
+		if(leftClick)
 		{
 			// double clicking object
 			if(currentEvent.clickCount > 1)
@@ -1053,10 +1053,11 @@ public class pb_Editor : EditorWindow
 
 	private void DragCheck()
 	{
-		Camera cam = SceneView.lastActiveSceneView.camera;
+		SceneView sceneView = SceneView.lastActiveSceneView;
+		Camera cam = sceneView.camera;
 
 		pbUndo.RecordSelection(selection, "Drag Select");
-		
+
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		bool selectHidden = pref_backfaceSelect;
@@ -1069,7 +1070,12 @@ public class pb_Editor : EditorWindow
 
 				if( !selectHidden )
 				{
-					Dictionary<pb_Object, HashSet<int>> selected = pb_SelectionPicker.PickVerticesInRect(cam, selectionRect, selection.Where(x => x.isSelectable));
+					Dictionary<pb_Object, HashSet<int>> selected = pb_SelectionPicker.PickVerticesInRect(
+						cam,
+						selectionRect,
+						selection.Where(x => x.isSelectable),
+						(int) sceneView.position.width,
+						(int) sceneView.position.height);
 
 					foreach(var kvp in selected)
 					{
@@ -1156,7 +1162,12 @@ public class pb_Editor : EditorWindow
 
 				if( !selectHidden && !selectWholeElement )
 				{
-					Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_SelectionPicker.PickFacesInRect(cam, selectionRect, pool);
+					Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_SelectionPicker.PickFacesInRect(
+						cam,
+						selectionRect,
+						pool,
+						(int) sceneView.position.width,
+						(int) sceneView.position.height);
 
 					foreach(var kvp in selected)
 					{
