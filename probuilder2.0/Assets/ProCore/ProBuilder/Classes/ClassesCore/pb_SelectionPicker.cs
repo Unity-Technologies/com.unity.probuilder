@@ -35,10 +35,18 @@ namespace ProBuilder2.Common
 			HashSet<pb_Face> faces = null;
 			HashSet<uint> used = new HashSet<uint>();
 
+			#if PB_DEBUG
+			List<Color> rectImg = new List<Color>();
+			#endif
+
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 			{
 				for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 				{
+					#if PB_DEBUG
+					rectImg.Add(pix[y * imageWidth + x]);
+					#endif
+
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
@@ -50,6 +58,20 @@ namespace ProBuilder2.Common
 					}
 				}
 			}
+
+			#if PB_DEBUG
+			if(width > 0 && height > 0)
+			{
+				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
+				Texture2D img = new Texture2D(width, height);
+				img.SetPixels(rectImg.ToArray());
+				img.Apply();
+				byte[] bytes = img.EncodeToPNG();
+				System.IO.File.WriteAllBytes("Assets/rect.png", bytes);
+				UnityEditor.AssetDatabase.Refresh();
+				GameObject.DestroyImmediate(img);
+			}
+			#endif
 
 			return selected;
 		}
@@ -173,6 +195,7 @@ namespace ProBuilder2.Common
 					for(int i = 0; i < f.distinctIndices.Length; i++)
 						colors[f.distinctIndices[i]] = color;
 				}
+
 				m.colors32 = colors;
 
 				go.AddComponent<MeshFilter>().sharedMesh = m;
@@ -333,6 +356,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 *	Render the camera with a replacement shader and return the resulting image.
+		 *	RenderTexture is always initialized with no gamma conversion (RenderTextureReadWrite.Linear)
 		 */
 		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
 		{
@@ -353,7 +377,7 @@ namespace ProBuilder2.Common
 				_height,
 				16,
 				RenderTextureFormat.Default,
-				RenderTextureReadWrite.Default,
+				RenderTextureReadWrite.Linear,
 				1);
 
 			renderCam.targetTexture = rt;
