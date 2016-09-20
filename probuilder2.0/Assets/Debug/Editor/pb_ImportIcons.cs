@@ -17,6 +17,7 @@ namespace ProBuilder2.EditorCommon
 			ti.textureType = TextureImporterType.Advanced;
 			ti.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 #endif
+			ti.linearTexture = true;
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
