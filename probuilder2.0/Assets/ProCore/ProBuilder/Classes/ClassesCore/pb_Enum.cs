@@ -17,7 +17,7 @@ namespace ProBuilder2.Common
 		Edge = 1,
 		Face = 2
 	}
-	
+
 	/**
 	 * The editor level - top (no pb action), geo, texture, plugin.
 	 */
@@ -33,6 +33,19 @@ namespace ProBuilder2.Common
 		World = 0,
 		Local = 1,
 		Plane = 2
+	}
+
+	/**
+	 * When drag selecting elements, does the shift key
+	 *	- Always add to the selection (Add)
+	 *	- Always subtract from the selection (Remove)
+	 *	- Invert the selected faces (Difference)
+	 */
+	public enum DragSelectMode
+	{
+		Add,
+		Subtract,
+		Difference
 	}
 
 	/**
@@ -58,9 +71,9 @@ namespace ProBuilder2.Common
 	public enum ProjectionAxis
 	{
 		X,			// projects on x axis
-		Y,			// projects on y axis 
+		Y,			// projects on y axis
 		Z,			// projects on z axis
-		X_Negative, 
+		X_Negative,
 		Y_Negative,
 		Z_Negative
 	}
@@ -151,7 +164,7 @@ namespace ProBuilder2.Common
 		Normal,
 		Tangent
 	};
-	
+
 	public enum IndexFormat
 	{
 		Local = 0x0,

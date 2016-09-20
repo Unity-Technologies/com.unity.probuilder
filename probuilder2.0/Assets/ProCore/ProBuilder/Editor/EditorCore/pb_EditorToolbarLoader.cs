@@ -64,6 +64,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.ToggleSelectBackFaces(),
 				new Actions.ToggleHandleAlignment(),
 				new Actions.ToggleDragSelectionMode(),
+				new Actions.ToggleDragRectMode(),
 
 				// selection
 				new Actions.GrowSelection(),

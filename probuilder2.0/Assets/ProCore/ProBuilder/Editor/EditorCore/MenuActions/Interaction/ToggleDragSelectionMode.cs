@@ -9,7 +9,11 @@ namespace ProBuilder2.Actions
 {
 	public class ToggleDragSelectionMode : pb_MenuAction
 	{
-		bool isComplete { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement); } }
+		DragSelectMode dragSelectMode
+		{
+			get { return pb_Preferences_Internal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode); }
+			set { EditorPrefs.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
+		}
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return null; } }
@@ -18,29 +22,40 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Set Drag Selection Mode", "Sets whether or not a mesh element (vertex, edge, or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
-		);
+			"Set Drag Selection Mode",
+@"When drag selecting elements, does the shift key
 
-		public override string menuTitle { get { return isComplete ? "Drag: Complete" : "Drag: Intersect"; } }
+- [Add] Always add to the selection
+- [Subtract] Always subtract from the selection
+- [Difference] Invert the selection by the selected faces (Default)
+");
+
+		public override string menuTitle
+		{
+			get
+			{
+				return string.Format("Shift: {0}", dragSelectMode);
+			}
+		}
 
 		public override pb_ActionResult DoAction()
 		{
-			EditorPrefs.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
-			return new pb_ActionResult(Status.Success, "Set Drag Select\n" + (isComplete ? "Complete" : "Intersect") );
+			int mode = (int) dragSelectMode;
+			dragSelectMode = (DragSelectMode) ((mode + 1) % 3);
+			pb_Editor.instance.LoadPrefs();
+			return new pb_ActionResult(Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
 		}
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && 
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Face;
+			return 	pb_Editor.instance != null &&
+					pb_Editor.instance.editLevel == EditLevel.Geometry;
 		}
 
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null || 
-					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Face;
+			return 	pb_Editor.instance == null ||
+					pb_Editor.instance.editLevel != EditLevel.Geometry;
 		}
 	}
 }

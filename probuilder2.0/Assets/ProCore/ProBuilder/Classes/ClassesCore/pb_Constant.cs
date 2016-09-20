@@ -29,7 +29,7 @@ public static class pb_Constant
 			if(_facePickerMaterial == null)
 			{
 				_facePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
-				
+
 				_facePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
 			}
 			return _facePickerMaterial;
@@ -159,6 +159,7 @@ public static class pb_Constant
 	public const string pbDetachToNewObject				= "pbDetachToNewObject";
 	public const string pbPreserveFaces					= "pbPreserveFaces";
 	public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
+	public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

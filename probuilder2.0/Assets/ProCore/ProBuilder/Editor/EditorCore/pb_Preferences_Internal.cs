@@ -185,6 +185,10 @@ public class pb_Preferences_Internal
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)EntityType.Detail;
 				return (T)System.Convert.ChangeType( (EntityType) key, typeof(T));
 
+			case pb_Constant.pbDragSelectMode:
+				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)DragSelectMode.Difference;
+				return (T)System.Convert.ChangeType( (DragSelectMode) key, typeof(T));
+
 			default:
 				return (T)System.Convert.ChangeType( 0, typeof(T));
 		}

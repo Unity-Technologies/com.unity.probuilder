@@ -66,6 +66,8 @@ public class pb_Editor : EditorWindow
 	public SelectMode selectionMode { get; private set; }
 	private SelectMode previousSelectMode;
 
+	public DragSelectMode dragSelectMode = DragSelectMode.Difference;
+
 	public HandleAlignment handleAlignment { get; private set; }
 
 	#if !PROTOTYPE
@@ -167,7 +169,7 @@ public class pb_Editor : EditorWindow
 		};
 	}
 
-	private void LoadPrefs()
+	public void LoadPrefs()
 	{
 		// this exists to force update preferences when updating packages
 		if(!EditorPrefs.HasKey(pb_Constant.pbEditorPrefVersion) || EditorPrefs.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
@@ -205,6 +207,7 @@ public class pb_Editor : EditorWindow
 		// pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
 		pref_sceneToolbarLocation = pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 		prefs_iconGui = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+		dragSelectMode = pb_Preferences_Internal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
 	}
 
 	private void OnDestroy()
@@ -315,20 +318,6 @@ public class pb_Editor : EditorWindow
 		}
 
 		editorToolbar.OnGUI();
-
-// #if PROTOTYPE
-// 		GUI.backgroundColor = UpgradeTint;
-// 		if(AutoContentButton("Upgrade", "Upgrade to ProBuilder Advanced for some seriously excellent additional features."))
-// 		{
-// 			// due to bug in asset store window, this only works if the window is already open
-// 			if(pb_EditorUtility.AssetStoreWindowIsOpen())
-// 				Application.OpenURL("com.unity3d.kharma:content/3558");
-// 			else
-// 				Application.OpenURL("http://bit.ly/1GJEuIG"); // "http://u3d.as/30b");
-// 		}
-// 		GUI.backgroundColor = Color.white;
-// #endif
-
 	}
 #endregion
 
@@ -1066,84 +1055,70 @@ public class pb_Editor : EditorWindow
 		{
 			case SelectMode.Vertex:
 			{
-				if(!shiftKey && !ctrlKey) ClearElementSelection();
+				if(!shiftKey && !ctrlKey)
+					ClearElementSelection();
+
+				Dictionary<pb_Object, HashSet<int>> selected;
 
 				if( !selectHidden )
 				{
-					Dictionary<pb_Object, HashSet<int>> selected = pb_SelectionPicker.PickVerticesInRect(
+					selected = pb_SelectionPicker.PickVerticesInRect(
 						cam,
 						selectionRect,
 						selection.Where(x => x.isSelectable),
 						(int) sceneView.position.width,
 						(int) sceneView.position.height);
-
-					foreach(var kvp in selected)
-					{
-						pb_IntArray[] sharedIndices = kvp.Key.sharedIndices;
-						HashSet<int> common = sharedIndices.GetCommonIndices(kvp.Key.SelectedTriangles);
-						common.SymmetricExceptWith(kvp.Value);
-						kvp.Key.SetSelectedTriangles( sharedIndices.GetIndicesWithCommon(common).ToArray() );
-					}
 				}
 				else
 				{
-					// profiler.BeginSample("Drag Select Vertices");
+					selected = new Dictionary<pb_Object, HashSet<int>>();
+
 					for(int i = 0; i < selection.Length; i++)
 					{
 						pb_Object pb = selection[i];
-						if(!pb.isSelectable) continue;
 
-						HashSet<int> selectedTriangles = new HashSet<int>(pb.SelectedTriangles);
+						if(!pb.isSelectable)
+							continue;
 
-						for(int n = 0; n < m_uniqueIndices[i].Length; n++)
+						pb_IntArray[] sharedIndices = pb.sharedIndices;
+						HashSet<int> inRect = new HashSet<int>();
+
+						for(int n = 0; n < sharedIndices.Length; n++)
 						{
-							Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+							Vector3 v = m_verticesInWorldSpace[i][sharedIndices[n][0]];
 
-							// profiler.BeginSample("Contains");
 							bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
-							// profiler.EndSample();
 
-							if(contains)
-							{
-								// if point is behind the camera, ignore it.
-								// profiler.BeginSample("WorldToScreenPoint");
-								if(cam.WorldToScreenPoint(v).z < 0)
-								{
-									// profiler.EndSample();
-									continue;
-								}
-								// profiler.EndSample();
-
-								// profiler.BeginSample("backface culling");
-								// Vector3 nrm = normals[m_uniqueIndices[i][n]];
-								// float dot = Vector3.Dot(camDirLocal, nrm);
-								// if(!pref_backfaceSelect && (dot < 0 || pb_HandleUtility.PointIsOccluded(cam, selection[i], v)))
-								if( !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, selection[i], v) )
-								{
-									// profiler.EndSample();
-									continue;
-								}
-								// profiler.EndSample();
-
-								// Check if index is already selected, and if not add it to the pot
-								// profiler.BeginSample("selected triangles contains");
-								contains = selectedTriangles.Contains(m_uniqueIndices[i][n]);
-								// profiler.EndSample();
-
-								// profiler.BeginSample("add / remove");
-								if( contains )
-									selectedTriangles.Remove(m_uniqueIndices[i][n]);
-								else
-									selectedTriangles.Add(m_uniqueIndices[i][n]);
-								// profiler.EndSample();
-							}
+							if(contains && cam.WorldToScreenPoint(v).z > 0)
+								inRect.Add(n);
 						}
 
-						// profiler.BeginSample("SetSelectedTriangles");
-						pb.SetSelectedTriangles(selectedTriangles.ToArray());
-						// profiler.EndSample();
+						selected.Add(pb, inRect);
 					}
-					// profiler.EndSample();
+				}
+
+				foreach(var kvp in selected)
+				{
+					pb_IntArray[] sharedIndices = kvp.Key.sharedIndices;
+					HashSet<int> common;
+
+					if(shiftKey || ctrlKey)
+					{
+						common = sharedIndices.GetCommonIndices(kvp.Key.SelectedTriangles);
+
+						if(dragSelectMode == DragSelectMode.Add)
+							common.UnionWith(kvp.Value);
+						else if(dragSelectMode == DragSelectMode.Subtract)
+							common.RemoveWhere(x => kvp.Value.Contains(x));
+						else if(dragSelectMode == DragSelectMode.Difference)
+							common.SymmetricExceptWith(kvp.Value);
+					}
+					else
+					{
+						common = kvp.Value;
+					}
+
+					kvp.Key.SetSelectedTriangles( sharedIndices.GetIndicesWithCommon(common).ToArray() );
 				}
 
 				if(!vertexSelectionMask)
