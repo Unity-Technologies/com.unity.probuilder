@@ -464,9 +464,9 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-#if !UNITY_4_7
-			pb.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
-#endif
+// #if !UNITY_4_7
+// 			pb.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
+// #endif
 			
 			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
 			pb_EditorUtility.ScreenCenter( pb.gameObject );
