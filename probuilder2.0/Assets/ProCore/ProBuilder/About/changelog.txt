@@ -7,6 +7,7 @@
 - When drag selecting faces add option to select by intersection.  Toggle with menu item `Drag: Complete/Intersect`.
 - New icons for `Select by {Material, Color}`.
 - Significantly improve editor performance when drag selecting faces and vertices with `Select Hidden: Off`.
+- New alternate drag selection modes: `Add`, `Subtract`, and `Difference` affects how the `Shift` key modifies selection when drag selecting elements.
 
 ## Bug Fixes
 
@@ -20,7 +21,6 @@
 
 ## Changes
 
-- Initialize objects with two-sided shadow-casting mode on by default.
 - Use Unity's default UV2 unwrapping parameters since they seem to produce generally better results than the padded params currently in use.
 
 # ProBuilder 2.6.2f0
