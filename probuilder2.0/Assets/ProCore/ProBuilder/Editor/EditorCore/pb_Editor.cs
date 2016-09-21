@@ -1316,17 +1316,32 @@ public class pb_Editor : EditorWindow
 						}
 					}
 
-					pb_Edge[] curSelection = pb_Edge.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]);
-					inSelection.SymmetricExceptWith(curSelection);
-					pb_Edge[] selected = inSelection.ToArray();
+					HashSet<pb_Edge> current;
 
-					for(int n = 0; n < selected.Length; n++)
+					if(shiftKey || ctrlKey)
 					{
-						selected[n].x = sharedIndices[selected[n].x][0];
-						selected[n].y = sharedIndices[selected[n].y][0];
+						current = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
+
+						if(dragSelectMode == DragSelectMode.Add)
+							current.UnionWith(inSelection);
+						else if(dragSelectMode == DragSelectMode.Subtract)
+							current.RemoveWhere(x => inSelection.Contains(x));
+						else if(dragSelectMode == DragSelectMode.Difference)
+							current.SymmetricExceptWith(inSelection);
+					}
+					else
+					{
+						current = inSelection;
 					}
 
-					pb.SetSelectedEdges( selected );
+
+					foreach(pb_Edge e in current)
+					{
+						e.x = sharedIndices[e.x][0];
+						e.y = sharedIndices[e.y][0];
+					}
+
+					pb.SetSelectedEdges( current.ToArray() );
 				}
 
 				if(!vertexSelectionMask)
