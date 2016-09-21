@@ -1133,38 +1133,31 @@ public class pb_Editor : EditorWindow
 				if(!shiftKey && !ctrlKey)
 					ClearElementSelection();
 
-				IEnumerable<pb_Object> pool = (limitFaceDragCheckToSelection ? selection : (pb_Object[])FindObjectsOfType(typeof(pb_Object))).Where(x => x.isSelectable);
+				Dictionary<pb_Object, HashSet<pb_Face>> selected;
 
 				if( !selectHidden && !selectWholeElement )
 				{
-					Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_SelectionPicker.PickFacesInRect(
+					selected = pb_SelectionPicker.PickFacesInRect(
 						cam,
 						selectionRect,
-						pool,
+						selection.Where(x => x.isSelectable),
 						(int) sceneView.position.width,
 						(int) sceneView.position.height);
-
-					foreach(var kvp in selected)
-					{
-						HashSet<pb_Face> faces = kvp.Value;
-						faces.SymmetricExceptWith(kvp.Key.SelectedFaces);
-						kvp.Key.SetSelectedFaces(faces);
-					}
 				}
 				else
 				{
-					int i = 0;
-					foreach(pb_Object pb in pool)
+					selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
+
+					for(int i = 0; i < selection.Length; i++)
 					{
+						pb_Object pb = selection[i];
 						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
 
-						Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i++];
-						Vector2[] guiPoints = new Vector2[pb.vertexCount];
+						Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
+						Vector2[] guiPoints = new Vector2[verticesInWorldSpace.Length];
 
 						for(int nn = 0; nn < pb.vertexCount; nn++)
 							guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
-
-						bool addToSelection = false;
 
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
@@ -1194,10 +1187,7 @@ public class pb_Editor : EditorWindow
 										if( pref_backfaceSelect ||
 											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 										{
-											if(!selectedFaces.Add(face))
-												selectedFaces.Remove(face);
-											else
-												addToSelection = true;
+											selectedFaces.Add(face);
 										}
 									}
 								}
@@ -1247,20 +1237,38 @@ public class pb_Editor : EditorWindow
 								// don't test occlusion since that case is handled special
 								if(overlaps)
 								{
-									if(!selectedFaces.Add(face))
-										selectedFaces.Remove(face);
-									else
-										addToSelection = true;
+									selectedFaces.Add(face);
 								}
 							}
 						}
 
-						pb.SetSelectedFaces(selectedFaces.ToArray());
-
-						if(addToSelection)
-							AddToSelection(pb.gameObject);
+						selected.Add(pb, selectedFaces);
 					}
 				}
+
+				foreach(var kvp in selected)
+				{
+					HashSet<pb_Face> current;
+
+					if(shiftKey || ctrlKey)
+					{
+						current = new HashSet<pb_Face>(kvp.Key.SelectedFaces);
+
+						if(dragSelectMode == DragSelectMode.Add)
+							current.UnionWith(kvp.Value);
+						else if(dragSelectMode == DragSelectMode.Subtract)
+							current.RemoveWhere(x => kvp.Value.Contains(x));
+						else if(dragSelectMode == DragSelectMode.Difference)
+							current.SymmetricExceptWith(kvp.Value);
+					}
+					else
+					{
+						current = kvp.Value;
+					}
+
+					kvp.Key.SetSelectedFaces( current.ToArray() );
+				}
+
 
 				DragObjectCheck(true);
 				UpdateSelection(false);
