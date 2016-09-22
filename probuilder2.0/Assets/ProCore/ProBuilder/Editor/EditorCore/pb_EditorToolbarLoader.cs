@@ -61,6 +61,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.OpenVertexColorEditor(),
 				new Actions.OpenSmoothingEditor(),
 
+				new Actions.ToggleSelectHidden(),
 				new Actions.ToggleSelectBackFaces(),
 				new Actions.ToggleHandleAlignment(),
 				new Actions.ToggleDragSelectionMode(),
