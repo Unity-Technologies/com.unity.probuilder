@@ -31,8 +31,9 @@ namespace ProBuilder2.EditorCommon
 
 		Dictionary<pb_Object, VertexEditorSelection> selection = new Dictionary<pb_Object, VertexEditorSelection>();
 
-		static Color EVEN = new Color(.18f, .18f, .18f, 1f);
-		static Color ODD  = new Color(.15f, .15f, .15f, 1f);
+		static Color EVEN;
+		static Color ODD;
+
 		Vector2 scroll = Vector2.zero;
 		bool moving = false;
 		public bool worldSpace = true;
@@ -44,6 +45,9 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
+			EVEN = EditorGUIUtility.isProSkin ? new Color(.18f, .18f, .18f, 1f) : new Color(.85f, .85f, .85f, 1f);
+			ODD = EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, 1f) : new Color(.80f, .80f, .80f, 1f);
+
 			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 
@@ -134,7 +138,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(moving)
 			{
-				if(	e.type == EventType.Ignore || 
+				if(	e.type == EventType.Ignore ||
 					e.type == EventType.MouseUp )
 					OnVertexMovementFinish();
 			}
@@ -156,7 +160,7 @@ namespace ProBuilder2.EditorCommon
 				if(open)
 				{
 					int index = 0;
-					
+
 					bool wasWideMode = EditorGUIUtility.wideMode;
 					EditorGUIUtility.wideMode = true;
 					Color background = GUI.backgroundColor;
@@ -167,7 +171,7 @@ namespace ProBuilder2.EditorCommon
 						GUI.backgroundColor = index % 2 == 0 ? EVEN : ODD;
 						GUILayout.BeginHorizontal(pb_GUI_Utility.solidBackgroundStyle);
 						GUI.backgroundColor = background;
-						
+
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
 							Vector3 v = pb.vertices[pb.sharedIndices[u][0]];
