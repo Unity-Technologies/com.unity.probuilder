@@ -110,6 +110,27 @@ Setting | Description
 ---
 
 <a id="generateuv2"></a>
-## Generate UV2
+##![Generate UV2 Icon](../images/icons/Object_GenerateUV2.png "Generate UV2 Icon") Generate UV2
 
-**Purpose**: Build the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.
+Builds the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Generate Scene UV2s** | If **On**, will generate UV2s for all meshes in the scene. Otherwise, only UV2s on the selected object(s) will be generated.
+**Enable Auto UV2** | If **On**, UV2s will be auto-generated as needed. 
+
+---
+
+##![ProBuilderize Icon](../images/icons/Object_ProBuilderize.png "ProBuilderize Icon") ProBuilderize Object
+
+Converts the selected object(s) into ProBuilder-editable objects.
+
+![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+
+Setting | Description
+--- | ---
+**Preserve Faces** | If **On**, ProBuilder will attempt to keep ngons. Otherwise, all the mesh will be converted to hard tris.
+
+---

@@ -114,3 +114,37 @@ Selects an edge ring from each selected edge.
 
 ![Handle Alignment Examples](../images/Selection_RingExample.png)
 
+---
+
+##![Select Hole Icon](../images/icons/Selection_SelectHole.png "Select Hole Icon") Select Hole
+
+With an open vertex or edge selected, click **Select Hole** to select all elements along opening.
+
+With no elements selected, clicking **Select Hole** will automatically select **all** holes in the selected object.
+
+<div style="text-align:center">
+<img src="../../images/Example_SelectHole.png">
+</div>
+
+---
+
+##![Select by Material Icon](../images/icons/Selection_SelectByMaterial.png "Select by Material Icon") Select by Material
+
+Click to select all faces on this object, which use the same material as the selected face.
+
+<div style="text-align:center">
+<img src="../../images/Example_SelectByMaterial.png">
+</div>
+
+---
+
+##![Select by Vertex Color Icon](../images/icons/Selection_SelectByVertexColor.png "Select by Vertex Color Icon") Select by Vertex Color
+
+Click to select all faces on this object, which have the same vertex color as the selected face.
+
+<div style="text-align:center">
+<img src="../../images/Example_SelectByVertexColor.png">
+</div>
+
+---
+
