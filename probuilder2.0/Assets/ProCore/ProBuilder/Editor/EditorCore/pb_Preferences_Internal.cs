@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEditor;
+#if !UNITY_4_7
+using UnityEngine.Rendering;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
@@ -188,6 +191,12 @@ public class pb_Preferences_Internal
 			case pb_Constant.pbDragSelectMode:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)DragSelectMode.Difference;
 				return (T)System.Convert.ChangeType( (DragSelectMode) key, typeof(T));
+
+#if !UNITY_4_7
+			case pb_Constant.pbShadowCastingMode:
+				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) ShadowCastingMode.TwoSided;
+				return (T)System.Convert.ChangeType( (ShadowCastingMode) key, typeof(T));
+#endif
 
 			default:
 				return (T)System.Convert.ChangeType( 0, typeof(T));

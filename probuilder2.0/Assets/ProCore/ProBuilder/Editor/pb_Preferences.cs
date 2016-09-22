@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEditor;
+#if !UNITY_4_7
+using UnityEngine.Rendering;
+#endif
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using System.Collections;
@@ -41,6 +44,9 @@ public class pb_Preferences
 	static bool pbMeshesAreAssets = false;
 	static bool pbElementSelectIsHamFisted = false;
 	static bool pbDragSelectWholeElement = false;
+	#if !UNITY_4_7
+	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
+	#endif
 
 	static ColliderType defaultColliderType = ColliderType.BoxCollider;
 	static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -87,17 +93,18 @@ public class pb_Preferences
 		pbUniqueModeShortcuts = EditorGUILayout.Toggle(new GUIContent("Unique Mode Shortcuts", "When off, the G key toggles between Object and Element modes and H enumerates the element modes.  If on, G, H, J, and K are shortcuts to Object, Vertex, Edge, and Face modes respectively."), pbUniqueModeShortcuts);
 		defaultOpenInDockableWindow = EditorGUILayout.Toggle("Open in Dockable Window", defaultOpenInDockableWindow);
 
-
 		/**
 		 * DEFAULT SETTINGS
 		 */
 		GUILayout.Label("Defaults", EditorStyles.boldLabel);
 
 		pbDefaultMaterial = (Material) EditorGUILayout.ObjectField("Default Material", pbDefaultMaterial, typeof(Material), false);
+
 		GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Entity");
 			pbDefaultEntity = ((EntityType)EditorGUILayout.EnumPopup( (EntityType)pbDefaultEntity ));
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Collider");
 			defaultColliderType = ((ColliderType)EditorGUILayout.EnumPopup( (ColliderType)defaultColliderType ));
@@ -105,6 +112,13 @@ public class pb_Preferences
 
 		if((ColliderType)defaultColliderType == ColliderType.MeshCollider)
 			pbForceConvex = EditorGUILayout.Toggle("Force Convex Mesh Collider", pbForceConvex);
+
+		#if !UNITY_4_7
+		GUILayout.BeginHorizontal();
+		EditorGUILayout.PrefixLabel("Shadow Casting Mode");
+		pbShadowCastingMode = (ShadowCastingMode) EditorGUILayout.EnumPopup(pbShadowCastingMode);
+		GUILayout.EndHorizontal();
+		#endif
 
 		/**
 		 * MISC. SETTINGS
@@ -205,7 +219,6 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbUVEditorFloating);
 			EditorPrefs.DeleteKey(pb_Constant.pbUVMaterialPreview);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneToolbar);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowUVEditorTooltip);
 			EditorPrefs.DeleteKey(pb_Constant.pbNormalizeUVsOnPlanarProjection);
 			EditorPrefs.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
 			EditorPrefs.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
@@ -244,6 +257,9 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbShowCollider);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowTrigger);
 			EditorPrefs.DeleteKey(pb_Constant.pbShowNoDraw);
+			#if !UNITY_4_7
+			EditorPrefs.DeleteKey(pb_Constant.pbShadowCastingMode);
+			#endif
 		}
 
 		LoadPrefs();
@@ -353,6 +369,7 @@ public class pb_Preferences
 		pbElementSelectIsHamFisted			= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 		pbDragSelectWholeElement			= pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 
+
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
 		pbDefaultSelectedVertexColor 		= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
@@ -364,6 +381,9 @@ public class pb_Preferences
 		defaultColliderType 				= pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 		pbToolbarLocation	 				= pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 		pbDefaultEntity	 					= pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
+		#if UNITY_4_7
+		pbShadowCastingMode					= pb_Preferences_Internal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+		#endif
 
 		pbDefaultMaterial 					= pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
@@ -390,7 +410,10 @@ public class pb_Preferences
 		string matPath = pbDefaultMaterial != null ? AssetDatabase.GetAssetPath(pbDefaultMaterial) : "";
 		EditorPrefs.SetString	(pb_Constant.pbDefaultMaterial, matPath);
 
-		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int)defaultColliderType);
+		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
+		#if !UNITY_4_7
+		EditorPrefs.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
+		#endif
 		EditorPrefs.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
 		EditorPrefs.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
 		EditorPrefs.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);

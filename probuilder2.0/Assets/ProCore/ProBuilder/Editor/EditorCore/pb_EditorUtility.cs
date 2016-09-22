@@ -8,6 +8,9 @@ using System.Reflection;
 using System.IO;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
+#if !UNITY_4_7
+using UnityEngine.Rendering;
+#endif
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -464,10 +467,11 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-// #if !UNITY_4_7
-// 			pb.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
-// #endif
-			
+#if !UNITY_4_7
+			ShadowCastingMode scm = pb_Preferences_Internal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
+#endif
+
 			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
 			pb_EditorUtility.ScreenCenter( pb.gameObject );
 			pb.Optimize();

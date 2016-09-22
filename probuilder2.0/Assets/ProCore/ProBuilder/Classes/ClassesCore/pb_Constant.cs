@@ -138,7 +138,6 @@ public static class pb_Constant
 	public const string pbUVEditorFloating 				= "pbUVEditorFloating";
 	public const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
 	public const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.
-	public const string pbShowUVEditorTooltip			= "pbShowUVEditorTooltip";			///< Turns on or off the SceneView toolbar.
 	public const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
 	public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
 	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
@@ -160,6 +159,7 @@ public static class pb_Constant
 	public const string pbPreserveFaces					= "pbPreserveFaces";
 	public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
 	public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
+	public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";
