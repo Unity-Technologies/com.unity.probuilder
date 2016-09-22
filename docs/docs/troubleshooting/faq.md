@@ -72,3 +72,11 @@ If that does not work,
 1. Delete this folder: `ProCore/ProBuilder/Resources/GUI`
 2. Re-import ProBuilder from Asset Store / ProCore Downloads
 
+## Spotty Textures on Lightmapped Objects
+
+![bad lightmap uvs](BadLightmapUVs.png)
+
+The object does not have a UV2 channel built.
+
+- Select the affected objects
+- Click `Generate UV2` in the ProBuilder Toolbar
