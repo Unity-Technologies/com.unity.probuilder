@@ -16,6 +16,7 @@ Or
 - Open `Command Prompt`
 - `cd probuilder2/docs`
 - `mkdocs serve`
+- Open web browser, enter address: `localhost:8000`
 
 Any changes made to the docs will now be instantly previewed in your web browser.
 
