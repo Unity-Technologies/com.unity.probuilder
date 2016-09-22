@@ -29,33 +29,6 @@
 			]
 		},
 		{
-			"path": "Assets/ProCore/ProGrids",
-			"file_exclude_patterns":
-			[
-				"*.unity",
-				"*.guiskin",
-				"*.dll",
-				"*.meta",
-				"*.prefab",
-				"*.anim",
-				"*.physicMaterial",
-				"*.flare",
-				"*.cubemap",
-				"*.font",
-				"*.fontsettings",
-				"*.renderTexture",
-				"defines.txt",
-				".boo*",
-				"*us.rsp"
-			],
-			"folder_exclude_patterns":
-			[
-				"*test*",
-				"Doxygen",
-				"UVee"
-			]
-		},
-		{
 			"path": "Assets/Debug",
 			"file_exclude_patterns":
 			[

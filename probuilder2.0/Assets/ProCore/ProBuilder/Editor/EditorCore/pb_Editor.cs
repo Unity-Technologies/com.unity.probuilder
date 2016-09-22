@@ -81,14 +81,13 @@ public class pb_Editor : EditorWindow
 	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
 	public float drawNormals = 0f;
 	private bool pref_showSceneInfo = false;
-	private bool pref_selectHidden = false;
+	private bool pref_backfaceSelect = false;
 	private bool pref_hamSelection = false;
 
 	private float pref_snapValue = .25f;
 	private bool pref_snapAxisConstraints = true;
 	private bool pref_snapEnabled = false;
 	private bool prefs_iconGui = false;
-	private Culling pref_selectBackfaces = Culling.Front;
 
 	private bool pref_showToolbar = true;
 	private SceneToolbarLocation pref_sceneToolbarLocation = SceneToolbarLocation.UpperCenter;
@@ -98,14 +97,8 @@ public class pb_Editor : EditorWindow
 
 	public void SetSelectHiddenEnabled(bool isEnabled)
 	{
-		pref_selectHidden = isEnabled;
-		EditorPrefs.SetBool(pb_Constant.pbSelectHidden, pref_selectHidden);
-	}
-
-	public void SetSelectBackfacesEnabled(bool isEnabled)
-	{
-		pref_selectBackfaces = isEnabled ? Culling.FrontBack : Culling.Front;
-		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, isEnabled);
+		pref_backfaceSelect = isEnabled;
+		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
 	}
 #endregion
 
@@ -201,9 +194,8 @@ public class pb_Editor : EditorWindow
 		selectionMode		= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
 		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
+		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 		pref_hamSelection	= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
-		pref_selectHidden 	= pb_Preferences_Internal.GetBool(pb_Constant.pbSelectHidden);
-		pref_selectBackfaces = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection) ? Culling.FrontBack : Culling.Front;
 
 		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
@@ -852,7 +844,8 @@ public class pb_Editor : EditorWindow
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 			pb_RaycastHit hit;
 
-			if( pb_HandleUtility.FaceRaycast(ray, pb, out hit, Mathf.Infinity, pref_selectBackfaces) )
+
+			if( pb_HandleUtility.FaceRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
 			{
 				selectedFace = pb.faces[hit.face];
 
@@ -1056,7 +1049,7 @@ public class pb_Editor : EditorWindow
 
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
-		bool selectHidden = pref_selectHidden;
+		bool selectHidden = pref_backfaceSelect;
 
 		switch(selectionMode)
 		{
@@ -1191,7 +1184,7 @@ public class pb_Editor : EditorWindow
 
 									if(!nope)
 									{
-										if( selectHidden ||
+										if( pref_backfaceSelect ||
 											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 										{
 											selectedFaces.Add(face);
@@ -1316,7 +1309,7 @@ public class pb_Editor : EditorWindow
 							selectionRect.Contains(gui[y]) ||
 							pb_Math.RectIntersectsLineSegment(selectionRect, gui[x], gui[y]) )
 						{
-							bool occluded = !pref_selectHidden && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
+							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
 
 							if(!occluded)
 								inSelection.Add( new pb_Edge(m_universalEdges[i][n]) );

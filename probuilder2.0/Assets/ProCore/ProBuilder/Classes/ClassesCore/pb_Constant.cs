@@ -113,7 +113,6 @@ public static class pb_Constant
 	public const string pbVertexColorTool 				= "pbVertexColorTool";
 	public const string pbToolbarLocation 				= "pbToolbarLocation";
 	public const string pbDefaultEntity 				= "pbDefaultEntity";
-	public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
 
 	// Color
 	public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
@@ -143,6 +142,7 @@ public static class pb_Constant
 	public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
 	public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
 	public const string pbShowSceneInfo 				= "pbShowSceneInfo";
+	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
 	public const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
 	public const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
 	public const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
@@ -159,8 +159,7 @@ public static class pb_Constant
 	public const string pbPreserveFaces					= "pbPreserveFaces";
 	public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
 	public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
-	public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";		///< Backface selection preference.
-	public const string pbSelectHidden					= "pbSelectHidden";
+	public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

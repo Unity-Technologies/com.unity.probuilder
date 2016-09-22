@@ -42,7 +42,6 @@ public class pb_Preferences_Internal
 			pref == pb_Constant.pbDisableAutoUV2Generation ||
 			pref == pb_Constant.pbShowSceneInfo ||
 			pref == pb_Constant.pbEnableBackfaceSelection ||
-			pref == pb_Constant.pbSelectHidden ||
 			pref == pb_Constant.pbVertexPaletteDockable ||
 			pref == pb_Constant.pbGrowSelectionAngleIterative ||
 			pref == pb_Constant.pbIconGUI ||
