@@ -1,4 +1,4 @@
-# ProBuilder 2.6.3f3
+# ProBuilder 2.6.3f4
 
 ## Features
 
@@ -22,6 +22,7 @@
 ## Changes
 
 - Use Unity's default UV2 unwrapping parameters since they seem to produce generally better results than the padded params currently in use.
+- New ProBuilder objects instantiate with `ShadowCastingMode.TwoSided` (configurable in Preferences/ProBuilder).
 
 # ProBuilder 2.6.2f0
 
