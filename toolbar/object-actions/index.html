@@ -132,6 +132,9 @@
                 <li class="toctree-l3"><a href="#generate-uv2">Generate UV2</a></li>
                 
             
+                <li class="toctree-l3"><a href="#probuilderize-object">ProBuilderize Object</a></li>
+                
+            
             </ul>
         
     </li>
@@ -398,7 +401,7 @@ Section Video: <a href="https://youtu.be/OvzNJ7z0OTs?list=PLrJfHfcFkLM-b6_N-musB
 <p>Mirror is especially useful when creating symmetrical items- build one half, mirror it, then weld the two together
 for a perfectly symmetrical result.</p>
 <p><img alt="Mirror Tool Example" src="../../images/Mirror_Example.png" title="Mirror Tool Example" /></p>
-<p><img alt="Options Icon" src="../../images/icons/Options.png" /> <strong>Custom Settings Available</strong> :</p>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
 <table>
 <thead>
 <tr>
@@ -419,8 +422,46 @@ for a perfectly symmetrical result.</p>
 </table>
 <hr />
 <p><a id="generateuv2"></a></p>
-<h2 id="generate-uv2">Generate UV2</h2>
-<p><strong>Purpose</strong>: Build the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.</p>
+<h2 id="generate-uv2"><img alt="Generate UV2 Icon" src="../../images/icons/Object_GenerateUV2.png" title="Generate UV2 Icon" /> Generate UV2</h2>
+<p>Builds the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.</p>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Generate Scene UV2s</strong></td>
+<td>If <strong>On</strong>, will generate UV2s for all meshes in the scene. Otherwise, only UV2s on the selected object(s) will be generated.</td>
+</tr>
+<tr>
+<td><strong>Enable Auto UV2</strong></td>
+<td>If <strong>On</strong>, UV2s will be auto-generated as needed.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="probuilderize-object"><img alt="ProBuilderize Icon" src="../../images/icons/Object_ProBuilderize.png" title="ProBuilderize Icon" /> ProBuilderize Object</h2>
+<p>Converts the selected object(s) into ProBuilder-editable objects.</p>
+<p><img alt="Options Icon" src="../../images/icons/options.png" /> <strong>Custom Settings Available</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preserve Faces</strong></td>
+<td>If <strong>On</strong>, ProBuilder will attempt to keep ngons. Otherwise, all the mesh will be converted to hard tris.</td>
+</tr>
+</tbody>
+</table>
+<hr />
               
             </div>
           </div>
