@@ -60,6 +60,17 @@ namespace ProBuilder2.Common
 	}
 
 	/**
+	 *	How should Unity represent selected objects?
+	 */
+	[System.Flags]
+	public enum SelectionGizmoType
+	{
+		None = 0x0,
+		Wireframe = 0x1,
+		Outline = 0x2
+	}
+
+	/**
 	 * Deprecated.
 	 */
 	public enum ColliderType {

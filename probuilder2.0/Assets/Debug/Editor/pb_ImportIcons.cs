@@ -16,8 +16,10 @@ namespace ProBuilder2.EditorCommon
 #if !UNITY_5_5
 			ti.textureType = TextureImporterType.Advanced;
 			ti.textureFormat = TextureImporterFormat.AutomaticTruecolor;
-#endif
 			ti.linearTexture = true;
+#elif UNITY_5_5
+			ti.sRGBTexture = true;
+#endif
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;

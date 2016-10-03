@@ -245,10 +245,7 @@ public class pb_Editor : EditorWindow
 
 		// re-enable unity wireframe
 		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-		{
-			Renderer ren = pb.gameObject.GetComponent<Renderer>();
-			EditorUtility.SetSelectedWireframeHidden(ren, false);
-		}
+			pb_EditorUtility.SetSelectedRenderState(pb.gameObject, SelectionGizmoType.Wireframe);
 
 		SceneView.RepaintAll();
 	}
@@ -2965,10 +2962,7 @@ public class pb_Editor : EditorWindow
 	private void HideSelectedWireframe()
 	{
 		foreach(pb_Object pb in selection)
-		{
-			Renderer ren = pb.gameObject.GetComponent<Renderer>();
-			EditorUtility.SetSelectedWireframeHidden(ren, true);
-		}
+			pb_EditorUtility.SetSelectedRenderState(pb.gameObject, SelectionGizmoType.None);
 
 		SceneView.RepaintAll();
 	}

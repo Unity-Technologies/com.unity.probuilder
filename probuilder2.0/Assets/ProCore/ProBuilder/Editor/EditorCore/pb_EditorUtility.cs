@@ -24,8 +24,6 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public static class pb_EditorUtility
 	{
-#region NOTIFICATION MANAGER
-
 		const float TIMER_DISPLAY_TIME = 1f;
 		private static float notifTimer = 0f;
 		private static EditorWindow notifWindow;
@@ -60,6 +58,18 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(onObjectCreated != null)
 				onObjectCreated -= onProBuilderObjectCreated;
+		}
+
+		public static void SetSelectedRenderState(GameObject go, SelectionGizmoType renderGizmo)
+		{
+			Renderer ren = go.GetComponent<Renderer>();
+
+			if(ren != null)
+			#if UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+				EditorUtility.SetSelectedWireframeHidden(ren, (renderGizmo & SelectionGizmoType.Wireframe) > 0);
+			#else
+				EditorUtility.SetSelectedRenderState(ren, (EditorSelectedRenderState) renderGizmo ); 
+			#endif
 		}
 
 		/**
@@ -106,9 +116,7 @@ namespace ProBuilder2.EditorCommon
 				RemoveNotification(notifWindow);
 			}
 		}
-#endregion
 
-#region OBJ EXPORT
 
 		public static string ExportOBJ(pb_Object[] pb)
 		{
@@ -146,9 +154,6 @@ namespace ProBuilder2.EditorCommon
 			}
 			return path;
 		}
-#endregion
-
-#region SCREENSHOTS
 
 		/**
 		 * Open a save file dialog, and save the image to that path.
@@ -172,9 +177,6 @@ namespace ProBuilder2.EditorCommon
 
 			AssetDatabase.Refresh();
 		}
-#endregion
-
-#region PREFAB
 
 		/**
 		 * Returns true if this object is a prefab instanced in the scene.
@@ -191,9 +193,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
 		}
-#endregion
-
-#region ENTITY
 
 		/**
 		 *	\brief Sets the EntityType for the passed gameObject.
@@ -328,7 +327,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-#if !UNITY_4_7
+		#if !UNITY_4_7
 		const StaticEditorFlags StaticEditorFlags_All =
 				StaticEditorFlags.LightmapStatic |
 				StaticEditorFlags.OccluderStatic |
@@ -337,7 +336,7 @@ namespace ProBuilder2.EditorCommon
 				StaticEditorFlags.NavigationStatic |
 				StaticEditorFlags.OffMeshLinkGeneration |
 				StaticEditorFlags.ReflectionProbeStatic;
-#else
+		#else
 		const StaticEditorFlags StaticEditorFlags_All =
 				StaticEditorFlags.LightmapStatic |
 				StaticEditorFlags.OccluderStatic |
@@ -345,11 +344,7 @@ namespace ProBuilder2.EditorCommon
 				StaticEditorFlags.OccludeeStatic |
 				StaticEditorFlags.NavigationStatic |
 				StaticEditorFlags.OffMeshLinkGeneration;
-#endif
-
-#endregion
-
-#region EDITOR
+		#endif
 
 		/**
 		 *	Returns true if Asset Store window is open, false otherwise.
@@ -467,10 +462,10 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 
-#if !UNITY_4_7
+			#if !UNITY_4_7
 			ShadowCastingMode scm = pb_Preferences_Internal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
-#endif
+			#endif
 
 			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
 			pb_EditorUtility.ScreenCenter( pb.gameObject );
@@ -543,7 +538,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref Editor previousEditor) where T : Editor
 		{
-#if UNITY_4_7
+			#if UNITY_4_7
 			if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects) )
 				return;
 
@@ -551,10 +546,9 @@ namespace ProBuilder2.EditorCommon
 				UnityEngine.Object.DestroyImmediate(previousEditor);
 
 			previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
-#else
+			#else
 			Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
-#endif
+			#endif
 		}
-#endregion
 	}
 }

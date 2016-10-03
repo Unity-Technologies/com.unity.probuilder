@@ -21,7 +21,7 @@ public class pb_Object_Editor : Editor
 	pb_Object pb;
 	pb_Editor editor { get { return pb_Editor.instance; } }
 
-	Renderer ren;
+	Renderer ren = null;
 	Vector3 offset = Vector3.zero;
 
 	public void OnEnable()
@@ -34,10 +34,8 @@ public class pb_Object_Editor : Editor
 		else
 			return;
 
-
 		ren = pb.gameObject.GetComponent<Renderer>();
-		EditorUtility.SetSelectedWireframeHidden(ren, editor != null);
-
+		pb_EditorUtility.SetSelectedRenderState(pb.gameObject, editor != null ? SelectionGizmoType.None : SelectionGizmoType.Wireframe);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 
