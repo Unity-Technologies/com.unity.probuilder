@@ -70,7 +70,7 @@ namespace ProBuilder2.Actions
 				Renderer ren = go.GetComponent<Renderer>();
 
 				if(ren != null)
-					pb_EditorUtility.SetSelectedRenderState(pb.gameObject, SelectionGizmoType.Wireframe);
+					pb_EditorUtility.SetSelectionRenderState(ren, pb_EditorUtility.GetSelectionRenderState());
 
 				if( PrefabUtility.GetPrefabType(go) == PrefabType.Prefab )
 					return;

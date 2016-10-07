@@ -20,8 +20,8 @@ namespace ProBuilder2.EditorCommon
 			win.onSettingsGUI = onSettingsGUI;
 			
 			// don't let window hang around after a script reload nukes the pb_MenuAction instances
-			object parent = pb_Reflection.GetValue(win, "m_Parent");
-			object window = pb_Reflection.GetValue(parent, "window");
+			object parent = pb_Reflection.GetValue(win, typeof(EditorWindow), "m_Parent");
+			object window = pb_Reflection.GetValue(parent, typeof(EditorWindow), "window");
 			pb_Reflection.SetValue(parent, "mouseRayInvisible", true);
 			pb_Reflection.SetValue(window, "m_DontSaveToLayout", true);
 

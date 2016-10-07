@@ -46,8 +46,8 @@ namespace ProBuilder2.EditorCommon
 				_instance.hideFlags = HideFlags.HideAndDontSave;
 				_instance.ShowPopup();
 
-				object parent = pb_Reflection.GetValue(_instance, "m_Parent");
-				object window = pb_Reflection.GetValue(parent, "window");
+				object parent = pb_Reflection.GetValue(_instance, _instance.GetType(), "m_Parent");
+				object window = pb_Reflection.GetValue(parent, parent.GetType(), "window");
 				pb_Reflection.SetValue(parent, "mouseRayInvisible", true);
 				pb_Reflection.SetValue(window, "m_DontSaveToLayout", true);
 			}

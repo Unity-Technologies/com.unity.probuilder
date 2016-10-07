@@ -3434,7 +3434,7 @@ public class pb_UV_Editor : EditorWindow
 				screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
 				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
-				if( (bool) pb_Reflection.GetValue(this, "docked") )
+				if( (bool) pb_Reflection.GetValue(this, this.GetType(), "docked") )
 					screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2) );
 				else
 					screenshotCanvasRect = new Rect(0, 0, (int)Mathf.Min(screenshot_size, ScreenRect.width), (int)Mathf.Min(screenshot_size, ScreenRect.height) );
