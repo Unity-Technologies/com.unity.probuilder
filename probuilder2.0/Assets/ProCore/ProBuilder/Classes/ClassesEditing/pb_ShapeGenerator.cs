@@ -562,6 +562,8 @@ public class pb_ShapeGenerator
 	 */
 	public static pb_Object PrismGenerator(Vector3 size)
 	{
+		size.y *= 2f;
+
 		Vector3[] template = new Vector3[6]
 		{
 			Vector3.Scale(new Vector3(-.5f, 0f, -.5f), 	size),
