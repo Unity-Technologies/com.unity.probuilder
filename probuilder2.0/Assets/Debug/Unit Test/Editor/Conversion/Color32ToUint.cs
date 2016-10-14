@@ -1,4 +1,4 @@
-﻿#if !UNITY_4_7
+﻿#if !UNITY_4_7 && !UNITY_5_0
 
 using UnityEngine;
 using UnityEditor;
