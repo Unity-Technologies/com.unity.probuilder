@@ -18,7 +18,7 @@ namespace ProBuilder2.EditorCommon
 			ti.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 			ti.linearTexture = true;
 #elif UNITY_5_5
-			ti.sRGBTexture = true;
+			ti.sRGBTexture = false;
 #endif
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;

@@ -3,7 +3,7 @@
 set unity_path_4="D:\Applications\Unity 4.7.0f1\Editor\Unity.exe"
 set unity_path_5_0="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set unity_path_5_3="D:\Applications\Unity 5.3.0f4\Editor\Unity.exe"
-set unity_path_5_5="D:\Applications\Unity 5.5.0b3\Editor\Unity.exe"
+set unity_path_5_5="D:\Applications\Unity 5.5.0b6\Editor\Unity.exe"
 
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\debug"
@@ -18,6 +18,7 @@ set u5mesh="%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5
 set u4editor="%CD%\visual studio\ProBuilderEditor-Unity4\ProBuilderEditor-Unity4.sln"
 set u5_0editor="%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5.sln"
 set u5_3editor="%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3.sln"
+set u5_5editor="%CD%\visual studio\ProBuilderEditor-Unity5_5\ProBuilderEditor-Unity5_5.sln"
 
 echo UNITY 4 PATH IS %unity_path_4%
 echo UNITY 5.0 PATH IS %unity_path_5_0%
@@ -95,6 +96,9 @@ echo Build Unity 5.0 Editor Core
 echo Build Unity 5.3 Editor Core
 %msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_3;";Configuration=Release /v:q /t:Clean,Build %u5_3editor%
 
+echo Build Unity 5.5 Editor Core
+%msbuild% /p:DefineConstants="RELEASE;UNITY_EDITOR;UNITY_5;UNITY_5_5;";Configuration=Release /v:q /t:Clean,Build %u5_5editor%
+
 :: Remove scripts from staging project
 :: ====================
 echo Remove Core, Mesh, and Editor scripts
@@ -123,7 +127,7 @@ echo Override DLL GUIDs Unity 4
 echo Export Unity 4 DLL project
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
 
-
+pause
 
 
 :: Export Unity 5
@@ -176,14 +180,22 @@ echo Export Unity 5.3 DLL project
 :: Export Unity 5.5
 echo Export Unity 5.5 DLL project
 
-%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity55.unitypackage
-%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.5-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity55
+echo Remove 5.3 Editor DLL
+del /Q "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\ProBuilderEditor-Unity5.dll"
 
+echo Copy 5.5 editor DLL
+xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_5\ProBuilderEditor-Unity5_5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+
+echo Import Unity 5.5 specific assets
+%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity55.unitypackage
+
+echo Export 5.5 package
+%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.5-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity55
 
 :: Export UpgradeKit
 xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProBuilderUpgradeKit %CD%\probuilder-staging\Assets\ProBuilderUpgradeKit
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\ProBuilderUpgradeKit-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProBuilderUpgradeKit outDir:%build_directory% outName:ProBuilderUpgradeKit
 
-echo DONE BUILDINGS
+echo DONE BUILDING
 
 pause

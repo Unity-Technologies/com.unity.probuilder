@@ -45,7 +45,7 @@ probuilder2.0/Assets/Temp*
 ExportedObj/
 *.csproj
 *.unityproj
-*.sln
+probuilder2.0/*.sln
 *.suo
 *.tmp
 *.user
