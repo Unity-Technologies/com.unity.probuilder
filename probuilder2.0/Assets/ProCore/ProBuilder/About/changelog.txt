@@ -1,6 +1,14 @@
 # ProBuilder 2.6.4f0
 
+## Bug Fixes
 
+- Add icons for `Drag Selection Mode`.
+- Add `Toggle Drag Rect Mode` icons.
+- Fix selected vertex billboards not rendering in 5.5 beta.
+- Fix crash when setting pivot with multiple objects selected.
+- Fix setting pivot of a parent object moving children.
+- Don't disable the object outline when Probuilder is open, but do disable wireframe.
+- Fix prism shape height resulting in half-sized shapes.
 
 # ProBuilder 2.6.3f4
 
