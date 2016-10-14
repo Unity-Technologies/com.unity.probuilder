@@ -32,7 +32,7 @@ Detach the selected face(s) to a new sub-mesh, or seperate object.
 <img src="../../images/DetachFace_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -57,7 +57,7 @@ You can also extrude by holding `SHIFT` while moving, rotating, or scaling the f
 <img src="../../images/ExtrudeFace_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -144,7 +144,7 @@ Performs the [Bevel Edge](edge/#bevel) action on all the edges of the selected f
 <img src="../../images/BevelFace_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---

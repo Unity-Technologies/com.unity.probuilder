@@ -100,7 +100,7 @@ for a perfectly symmetrical result.
 
 ![Mirror Tool Example](../images/Mirror_Example.png "Mirror Tool Example")
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -114,7 +114,7 @@ Setting | Description
 
 Builds the UV2 channel for each selected mesh, or all meshes in the scene if the "Generate Scene UVs" option is toggled.
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -127,7 +127,7 @@ Setting | Description
 
 Converts the selected object(s) into ProBuilder-editable objects.
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---

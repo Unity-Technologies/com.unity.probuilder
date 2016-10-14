@@ -24,7 +24,7 @@ Creates a new face filling any holes that touch the selected edges/vertices.
 <img src="../../images/FillHole_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---

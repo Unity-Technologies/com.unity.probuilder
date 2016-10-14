@@ -59,7 +59,7 @@ Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
 
 Some of the most-used actions ([Extrude](face/#extrude), [Collapse](vertex/#collapse), [Grow Selection](selection-tools/#grow), etc) also include Custom Settings, which can significantly modify the action.
 
-![Options Icon](../images/icons/options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
+![Options Icon](../images/icons/Options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
 
 When using the text toolbar the options menu for actions is shown as a `+` icon to the right.  Simply click the icon to open the options window.
 

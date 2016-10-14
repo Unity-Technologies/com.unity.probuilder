@@ -35,7 +35,7 @@ Splits the selected edge(s) into two edges, with a new face between.
 <img src="../../images/BevelEdges_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -77,7 +77,7 @@ You can also extrude edges by holding `SHIFT` while moving, rotating, or scaling
 
 > Note: By default, only open edges can be **Extruded**. You can change this in the [ProBuilder Preferences](@todo).
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -99,7 +99,7 @@ Divides the selected edge(s) into multiple edges.
 <img src="../../images/SubdivideEdge_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---

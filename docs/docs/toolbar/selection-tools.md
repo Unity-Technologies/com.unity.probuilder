@@ -52,7 +52,7 @@ Section Video: <a href="https://youtu.be/yX29De1bcUE?list=PLrJfHfcFkLM-b6_N-musB
 
 Expands the selection outward to adjacent faces, edges, or vertices.
 
-![Options Icon](../images/icons/options.png) **Options**:
+![Options Icon](../images/icons/Options.png) **Options**:
 
 Setting | Description
 --- | ---

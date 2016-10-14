@@ -19,7 +19,7 @@ Collapses all selected vertices to a single point, regardless of distance.
 <img src="../../images/CollapseVerts_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
@@ -41,7 +41,7 @@ Merge vertices within a set distance of one another.
 <img src="../../images/WeldVerts_Example.png">
 </div>
 
-![Options Icon](../images/icons/options.png) **Custom Settings Available** :
+![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 
 Setting | Description
 --- | ---
