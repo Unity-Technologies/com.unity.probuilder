@@ -20,7 +20,7 @@ This does mean you won't be able to access any of the ProBuilder API at runtime.
 
 	![dlls](dlls.png)
 
-1. With both `ProBuilderCore-Unity5` and `ProBuilderMeshOps-Unity5` selected, in the Inspector window uncheck "Any Platform."  Then toggle both "Editor" and "Standalone."
+1. With both `ProBuilderCore-Unity5` and `ProBuilderMeshOps-Unity5` selected, in the Inspector window un-check "Any Platform."  Then toggle both "Editor" and "Standalone."
 
 	![build target](build_target.png)
 

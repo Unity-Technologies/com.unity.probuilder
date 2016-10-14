@@ -79,7 +79,7 @@ Splits a vertex into it’s individual vertices so that they may be moved indepe
 <img src="../../images/SplitVerts_Example.png">
 </div>
 
->**Note** : When a vertex is **Split**, the newly seperated vertices will not actually move apart on their own. This was done for the image, to better illustrate the effect of this action.
+>**Note** : When a vertex is **Split**, the newly separated vertices will not actually move apart on their own. This was done for the image, to better illustrate the effect of this action.
 
 
 ---

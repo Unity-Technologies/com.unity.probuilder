@@ -3,7 +3,7 @@
 
 ProBuilder is controlled via the **Main Toolbar**, which contains all commonly used functions.
 
-A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.
+A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch between editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.
 
 ---
 
@@ -47,7 +47,7 @@ Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
 This is a "smart" toolbar, and dynamically changes to match your current editing method and selection.
 
 * Buttons are only shown on the Toolbar if they are applicable in your current editing mode
-* Buttons that cannot be used on the current selection are automatically greyed-out and disabled.
+* Buttons that cannot be used on the current selection are automatically grayed-out and disabled.
 
 ---
 

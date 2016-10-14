@@ -26,7 +26,7 @@ Deletes the selected face(s).
 Section Video: <a href="https://youtu.be/rqD8tQ3GOpA?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Detach Faces</a>
 </div>
 
-Detach the selected face(s) to a new sub-mesh, or seperate object.
+Detach the selected face(s) to a new sub-mesh, or separate object.
 
 <div style="text-align:center">
 <img src="../../images/DetachFace_Example.png">
@@ -36,7 +36,7 @@ Detach the selected face(s) to a new sub-mesh, or seperate object.
 
 Setting | Description
 --- | ---
-**Detach To New Object** | If **On**, the face(s) will be detached to a new, seperate object. Otherwise, they will be detached to a sub-mesh within the original object.
+**Detach To New Object** | If **On**, the face(s) will be detached to a new, separate object. Otherwise, they will be detached to a sub-mesh within the original object.
 
 ---
 
