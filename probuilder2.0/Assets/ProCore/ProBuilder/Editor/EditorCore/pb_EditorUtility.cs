@@ -66,7 +66,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
 		{
-			#if UNITY_5_3 || UNITY_5_4
+			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_3 || UNITY_5_4
 				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
 			#else
 				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state ); 
@@ -76,7 +76,7 @@ namespace ProBuilder2.EditorCommon
 		public static SelectionRenderState GetSelectionRenderState()
 		{
 
-			#if UNITY_5_3 || UNITY_5_4
+			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_3 || UNITY_5_4
 
 			return SelectionRenderState.Wireframe;
 
