@@ -7,10 +7,10 @@ A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betw
 
 ---
 
-### Tool Catagories
+### Tool Categories
 
 <div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: Catagories</a>
+Section Video: <a href="@todo">Toolbar Overview: Categories</a>
 </div>
 
 The Toolbar is color-coded to help you quickly choose tools by type:
