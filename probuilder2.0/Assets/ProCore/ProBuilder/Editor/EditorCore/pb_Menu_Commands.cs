@@ -118,15 +118,16 @@ namespace ProBuilder2.EditorCommon
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				selection[i].ToMesh();
+				pbTransformUtil.UnparentChildren(selection[i].transform);
 
 				if(triangles != null)
 					selection[i].CenterPivot(triangles[i]);
 				else
 					selection[i].CenterPivot(null);
 
-				selection[i].Refresh();
 				selection[i].Optimize();
+
+				pbTransformUtil.ReparentChildren(selection[i].transform);
 			}
 
 			SceneView.RepaintAll();
