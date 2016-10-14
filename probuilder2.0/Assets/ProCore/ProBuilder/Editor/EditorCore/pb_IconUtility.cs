@@ -1,3 +1,5 @@
+#define PB_DEBUG
+
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -48,7 +50,7 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified.");
+			Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified relative to ProBuilder root.");
 
 			return null;
 		}
@@ -108,7 +110,7 @@ namespace ProBuilder2.EditorCommon
 				if(icon == null)
 				{
 #if PB_DEBUG
-					Debug.LogWarning("failed to find icon: " + fullPath);
+					Debug.LogWarning("Failed to find icon: " + fullPath);
 #endif
 					m_icons.Add(nameWithoutExtension, null);
 					return null;
