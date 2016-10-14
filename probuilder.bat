@@ -107,7 +107,6 @@ rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Classes\ClassesEditin
 rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\EditorCore
 
 
-
 :: Export Unity 4
 :: ====================
 
@@ -126,9 +125,6 @@ echo Override DLL GUIDs Unity 4
 
 echo Export Unity 4 DLL project
 %unity_path_4% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder4.6-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity4
-
-pause
-
 
 :: Export Unity 5
 :: ====================
@@ -151,7 +147,6 @@ echo Override DLL GUIDs Unity 5
 
 echo Export Unity 5 DLL project
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.0-dll-log.txt -executeMethod pb_ExportPackage.ExportCommandLine sourceDir:ProCore outDir:%build_directory% outName:ProBuilder2 outSuffix:-unity50
-
 
 
 :: Export Unity 5.3
