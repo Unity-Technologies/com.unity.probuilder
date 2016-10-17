@@ -1148,7 +1148,7 @@ public class pb_Editor : EditorWindow
 					for(int i = 0; i < selection.Length; i++)
 					{
 						pb_Object pb = selection[i];
-						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(pb.SelectedFaces);
+						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>();
 
 						Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
 						Vector2[] guiPoints = new Vector2[verticesInWorldSpace.Length];
