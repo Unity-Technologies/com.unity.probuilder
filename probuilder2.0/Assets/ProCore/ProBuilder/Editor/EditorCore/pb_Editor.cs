@@ -245,7 +245,7 @@ public class pb_Editor : EditorWindow
 
 		// re-enable unity wireframe
 		foreach(pb_Object pb in FindObjectsOfType(typeof(pb_Object)))
-			pb_EditorUtility.SetSelectedRenderState(pb.gameObject, SelectionGizmoType.Wireframe);
+			pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(), pb_EditorUtility.GetSelectionRenderState());
 
 		SceneView.RepaintAll();
 	}
@@ -2962,7 +2962,7 @@ public class pb_Editor : EditorWindow
 	private void HideSelectedWireframe()
 	{
 		foreach(pb_Object pb in selection)
-			pb_EditorUtility.SetSelectedRenderState(pb.gameObject, SelectionGizmoType.None);
+			pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(), pb_EditorUtility.GetSelectionRenderState() & SelectionRenderState.Outline);
 
 		SceneView.RepaintAll();
 	}

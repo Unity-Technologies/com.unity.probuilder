@@ -14,7 +14,7 @@ Determines whether hidden elements are selected or ignored, when drag-selecting.
 
 Toolbar Icon | Description
 :---:|---
-![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | **On**: all [elements](../general/fundamentals/#editing-meshes) are selectable, regardlesss of their visibility
+![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) | **On**: all [elements](../general/fundamentals/#editing-meshes) are selectable, regardless of their visibility
 ![Select Hidden OFF](../images/icons/Selection_SelectHidden-OFF.png) |  **Off**: drag selection will ignore any [elements](../general/fundamentals/#editing-meshes) that cannot currently be seen
 
 ![Handle Alignment Examples](../images/SelectHidden_Example.png)
@@ -33,7 +33,7 @@ Choose how the scene handles will be oriented when selecting [elements](../gener
 
 Toolbar Icon | Description
 :---:|---
-![Handle Alignment Global](../images/icons/HandleAlign_World.png) | Global: Similar to a compass, the handle orientation is always the same, regardlesss of local rotation.
+![Handle Alignment Global](../images/icons/HandleAlign_World.png) | Global: Similar to a compass, the handle orientation is always the same, regardless of local rotation.
 ![Handle Alignment Local](../images/icons/HandleAlign_Local.png) | Local: Similar to "left vs right", handle orientation is relative the object's rotation.
 ![Handle Alignment Planar](../images/icons/HandleAlign_Plane.png) | Planar: This special mode aligns the handles to exact normal direction of the selected face.
 
@@ -52,7 +52,7 @@ Section Video: <a href="https://youtu.be/yX29De1bcUE?list=PLrJfHfcFkLM-b6_N-musB
 
 Expands the selection outward to adjacent faces, edges, or vertices.
 
-![Options Icon](../images/icons/options.png) **Options**:
+![Options Icon](../images/icons/Options.png) **Options**:
 
 Setting | Description
 --- | ---
@@ -72,7 +72,7 @@ Section Video: <a href="https://youtu.be/1z2sDcHF69o?list=PLrJfHfcFkLM-b6_N-musB
 
 **Keyboard Shortcut** : `ALT SHIFT G`
 
-Does the opposite of Grow Selection: removes the elements on the perimiter of the current selection.
+Does the opposite of Grow Selection: removes the elements on the perimeter of the current selection.
 
 ---
 

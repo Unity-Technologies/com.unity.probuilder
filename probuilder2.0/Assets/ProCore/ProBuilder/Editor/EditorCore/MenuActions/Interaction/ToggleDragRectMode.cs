@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 		bool isComplete { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement); } }
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return null; } }
+		public override Texture2D icon { get { return isComplete ? pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Complete") : pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override int toolbarPriority { get { return 3; } }
 

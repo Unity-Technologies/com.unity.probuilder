@@ -3,7 +3,7 @@
 
 ProBuilder is controlled via the **Main Toolbar**, which contains all commonly used functions.
 
-A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betweeen editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.
+A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch between editing modes. This toolbar can always be found floating at the top-middle of your currently active scene view.
 
 ---
 
@@ -47,7 +47,7 @@ Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
 This is a "smart" toolbar, and dynamically changes to match your current editing method and selection.
 
 * Buttons are only shown on the Toolbar if they are applicable in your current editing mode
-* Buttons that cannot be used on the current selection are automatically greyed-out and disabled.
+* Buttons that cannot be used on the current selection are automatically grayed-out and disabled.
 
 ---
 
@@ -59,7 +59,7 @@ Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
 
 Some of the most-used actions ([Extrude](face/#extrude), [Collapse](vertex/#collapse), [Grow Selection](selection-tools/#grow), etc) also include Custom Settings, which can significantly modify the action.
 
-![Options Icon](../images/icons/options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
+![Options Icon](../images/icons/Options.png) This symbol is shown next to a button if there are Custom Settings available. To edit these settings, `ALT CLICK` on the button.
 
 When using the text toolbar the options menu for actions is shown as a `+` icon to the right.  Simply click the icon to open the options window.
 

@@ -231,10 +231,10 @@ namespace ProBuilder2.Common
 					t_col[t+2] = vertSelectionColor;
 					t_col[t+3] = vertSelectionColor;
 
-					t_nrm[t].x = .1f;
-					t_nrm[t+1].x = .1f;
-					t_nrm[t+2].x = .1f;
-					t_nrm[t+3].x = .1f;
+					// t_nrm[t].x = .1f;
+					// t_nrm[t+1].x = .1f;
+					// t_nrm[t+2].x = .1f;
+					// t_nrm[t+3].x = .1f;
 				}
 				else
 				{

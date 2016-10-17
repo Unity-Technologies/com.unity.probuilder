@@ -8,6 +8,7 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.Test
 {
+	[TestFixture]
 	public class Subdivide
 	{
 		class VertexCountTestData
@@ -26,7 +27,6 @@ namespace ProBuilder2.Test
 			}
 		}
 
-		// [MenuItem("Tools/ProBuilder/Debug/Test/Subdivide/Vertex Count Test")]
 		[Test]
 		public static void VertexCountTest()
 		{
@@ -44,16 +44,6 @@ namespace ProBuilder2.Test
 				Assert.AreEqual(data.expectedVertexCount, data.pb.vertexCount);
 				GameObject.DestroyImmediate(data.pb.gameObject);
 			}
-		}
-
-		// [MenuItem("Tools/ProBuilder/Debug/Test/Subdivide/Empty Channel Test")]
-		[Test]
-		public static void EmptyChannelTest()
-		{
-			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.zero);
-			pb.Subdivide();
-
-			GameObject.DestroyImmediate(pb.gameObject);
 		}
 	}
 }

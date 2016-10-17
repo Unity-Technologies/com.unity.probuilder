@@ -76,7 +76,7 @@ Save the selection as Unity mesh `.asset` files.
 Export the selected object(s) as OBJ
 
 ### Export Stl Ascii
-Export the selected object(s) as STL in Ascii format
+Export the selected object(s) as STL in ASCII format
 
 ### Export Stl Binary
 Export the selected object(s) as STL in Binary format

@@ -36,7 +36,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuSetPivot(selection);
+			return pb_Menu_Commands.MenuSetPivot( selection );
 		}
 	}
 }

@@ -35,7 +35,8 @@ public class pb_Object_Editor : Editor
 			return;
 
 		ren = pb.gameObject.GetComponent<Renderer>();
-		pb_EditorUtility.SetSelectedRenderState(pb.gameObject, editor != null ? SelectionGizmoType.None : SelectionGizmoType.Wireframe);
+		SelectionRenderState s = pb_EditorUtility.GetSelectionRenderState();
+		pb_EditorUtility.SetSelectionRenderState(ren, editor != null ? s & SelectionRenderState.Outline : s);
 
 		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
 

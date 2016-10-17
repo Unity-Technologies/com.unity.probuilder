@@ -26,7 +26,7 @@ namespace ProBuilder2.MeshOperations
 	{
 		Vector3 center = Vector3.zero;
 
-		if(indices != null)
+		if(indices != null && indices.Length > 0)
 		{
 			Vector3[] verts = pb.VerticesInWorldSpace(indices);
 

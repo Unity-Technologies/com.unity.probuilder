@@ -60,15 +60,44 @@ namespace ProBuilder2.EditorCommon
 				onObjectCreated -= onProBuilderObjectCreated;
 		}
 
-		public static void SetSelectedRenderState(GameObject go, SelectionGizmoType renderGizmo)
+		/**
+		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe 
+		 *	on or off.
+		 */
+		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
 		{
-			Renderer ren = go.GetComponent<Renderer>();
-
-			if(ren != null)
-			#if UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
-				EditorUtility.SetSelectedWireframeHidden(ren, (renderGizmo & SelectionGizmoType.Wireframe) > 0);
+			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
+				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
 			#else
-				EditorUtility.SetSelectedRenderState(ren, (EditorSelectedRenderState) renderGizmo ); 
+				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state ); 
+			#endif
+		}
+
+		public static SelectionRenderState GetSelectionRenderState()
+		{
+
+			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
+
+			return SelectionRenderState.Wireframe;
+
+			#else
+
+			bool wireframe = false, outline = false;
+
+			try {			
+				wireframe = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
+				outline = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
+			} catch {
+				Debug.LogWarning("Looks like Unity changed the AnnotationUtility \"showSelectionOutline\"\nPlease email contact@procore3d.com and let Karl know!");
+			}
+
+			SelectionRenderState state = SelectionRenderState.None;
+
+			if(wireframe) state |= SelectionRenderState.Wireframe;
+			if(outline) state |= SelectionRenderState.Outline;
+
+			return state;
+
 			#endif
 		}
 

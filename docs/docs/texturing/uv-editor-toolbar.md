@@ -84,7 +84,7 @@ Opens the Render UVs tool panel, for rendering UV Templates to be used with text
 
 * **Background Color** : If you want a non-transparent background, set the color here
 
-* **Save UV Template** : Click to render the UV Template - a file dialogue will be opened to save the file.
+* **Save UV Template** : Click to render the UV Template - a file dialog will be opened to save the file.
 
 
 

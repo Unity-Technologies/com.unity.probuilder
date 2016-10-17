@@ -16,7 +16,16 @@ namespace ProBuilder2.Actions
 		}
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return null; } }
+		public override Texture2D icon {
+			get { 
+				if(dragSelectMode == DragSelectMode.Add)
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftAdd");
+				else if(dragSelectMode == DragSelectMode.Subtract)
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract");
+				else
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftDifference");
+			}
+		}
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override int toolbarPriority { get { return 2; } }
 
