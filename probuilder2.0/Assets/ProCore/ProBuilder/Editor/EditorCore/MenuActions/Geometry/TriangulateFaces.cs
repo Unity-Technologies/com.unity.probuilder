@@ -16,7 +16,7 @@ namespace ProBuilder2.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Triangulate",
+			"Triangulate Faces",
 			"Break all selected faces down to triangles."
 		);
 

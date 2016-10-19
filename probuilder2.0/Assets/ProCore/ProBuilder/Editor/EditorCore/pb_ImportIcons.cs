@@ -6,6 +6,10 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_ImportIcons : AssetPostprocessor
 	{
+		/**
+		 *	Automatically set the importer settings for ProBuilder
+		 *	icons.
+		 */
 		public void OnPreprocessTexture()
 		{
 			if( assetPath.IndexOf("ProBuilder/Icons") < 0 )
