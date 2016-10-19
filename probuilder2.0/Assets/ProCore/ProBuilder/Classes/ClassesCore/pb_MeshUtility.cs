@@ -93,7 +93,7 @@ namespace ProBuilder2.Common
 
 				for(int i = 0; i < tl; i++)
 				{
-					tv[triIndex++] = vertices[triangles[s][i]];
+					tv[triIndex++] = new pb_Vertex( vertices[triangles[s][i]] );
 					triangles[s][i] = triIndex - 1;
 				}
 			}
