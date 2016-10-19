@@ -84,8 +84,8 @@ namespace ProBuilder2.Actions
 
 			GUILayout.FlexibleSpace();
 			
-			if(GUILayout.Button("Rebuild All ProBuilder UV2s"))
-				pb_EditorUtility.ShowNotification(DoGenerateUV2( GameObject.FindObjectsOfType<pb_Object>() ).notification);
+			if(GUILayout.Button( generateUV2PerObject ? "Rebuild Selected UV2s" : "Rebuild Scene UV2s"))
+				pb_EditorUtility.ShowNotification( DoAction().notification);
 		}
 
 		public override pb_ActionResult DoAction()
