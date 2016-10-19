@@ -1,7 +1,8 @@
-# ProBuilder 2.6.4f0
+# ProBuilder 2.6.4f1
 
 ## Bug Fixes
 
+- Fix bug where generating UV2 would incorrectly merge incompatible vertices in the optimization function due to vertex references not being unique when returning from GeneratePerTriangleMesh.
 - Add icons for `Drag Selection Mode`.
 - Add `Toggle Drag Rect Mode` icons.
 - Fix selected vertex billboards not rendering in 5.5 beta.
@@ -9,6 +10,10 @@
 - Fix setting pivot of a parent object moving children.
 - Don't disable the object outline when Probuilder is open, but do disable wireframe.
 - Fix prism shape height resulting in half-sized shapes.
+- Add `Triangulate Faces` icon.
+- Ensure icons are always imported with the correct settings.
+- Fix "Generate Scene UVs" toggle not being respected in `Generate UV2` action
+- Fix bug where drag selecting with shift in subtraction mode with complete rect selection would always deselect the entire selection.
 
 # ProBuilder 2.6.3f4
 
