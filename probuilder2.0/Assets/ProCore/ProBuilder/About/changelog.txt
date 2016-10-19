@@ -1,5 +1,9 @@
 # ProBuilder 2.6.4f1
 
+## Features
+
+- Unity 5.5 Beta compatibility.
+
 ## Bug Fixes
 
 - Fix bug where generating UV2 would incorrectly merge incompatible vertices in the optimization function due to vertex references not being unique when returning from GeneratePerTriangleMesh.
