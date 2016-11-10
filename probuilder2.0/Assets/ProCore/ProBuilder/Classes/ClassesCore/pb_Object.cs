@@ -1110,10 +1110,13 @@ public class pb_Object : MonoBehaviour
 
 	public void OnDestroy()
 	{
-		if(onDestroyObject != null)
-			onDestroyObject(this);
-		else if(!dontDestroyMeshOnDelete)
-			GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+		if(!dontDestroyMeshOnDelete)
+		{
+			if(onDestroyObject != null)
+				onDestroyObject(this);
+			else
+				GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+		}
 	}
 #endregion
 

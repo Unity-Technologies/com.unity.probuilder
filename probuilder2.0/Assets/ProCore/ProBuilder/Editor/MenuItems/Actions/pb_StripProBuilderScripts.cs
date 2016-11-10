@@ -7,12 +7,12 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class pb_StripProBuilderScripts : Editor 
+	public class pb_StripProBuilderScripts : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()
 		{
-			
+
 			if(!EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
 				return;
 
@@ -77,7 +77,7 @@ namespace ProBuilder2.Actions
 
 				pb_EditorUtility.VerifyMesh(pb);
 
-				if(pb.msh == null)	
+				if(pb.msh == null)
 				{
 					DestroyImmediate(pb);
 
@@ -87,16 +87,31 @@ namespace ProBuilder2.Actions
 					return;
 				}
 
-				Mesh m = pb_MeshUtility.DeepCopy(pb.msh);
 
-				DestroyImmediate(pb);
-				
-				if(go.GetComponent<pb_Entity>())
-					DestroyImmediate(go.GetComponent<pb_Entity>());
+				string cachedMeshPath;
+				Mesh cachedMesh;
 
-				go.GetComponent<MeshFilter>().sharedMesh = m;
-				if(go.GetComponent<MeshCollider>())
-					go.GetComponent<MeshCollider>().sharedMesh = m;
+				// if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
+				if( pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets) && pb_EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh) )
+				{
+					pb.dontDestroyMeshOnDelete = true;
+					DestroyImmediate(pb);
+					if(go.GetComponent<pb_Entity>())
+						DestroyImmediate(go.GetComponent<pb_Entity>());
+				}
+				else
+				{
+					Mesh m = pb_MeshUtility.DeepCopy(pb.msh);
+
+					DestroyImmediate(pb);
+
+					if(go.GetComponent<pb_Entity>())
+						DestroyImmediate(go.GetComponent<pb_Entity>());
+
+					go.GetComponent<MeshFilter>().sharedMesh = m;
+					if(go.GetComponent<MeshCollider>())
+						go.GetComponent<MeshCollider>().sharedMesh = m;
+				}
 			}
 			catch {}
 		}
