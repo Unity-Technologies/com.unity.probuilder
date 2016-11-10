@@ -27,7 +27,7 @@ namespace ProBuilder2.EditorCommon
 			PrefabUtility.prefabInstanceUpdated -= PrefabInstanceUpdated;
 			PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
 		}
-		
+
 		~pb_Hierarchy_Listener()
 		{
 			PrefabUtility.prefabInstanceUpdated -= PrefabInstanceUpdated;
@@ -64,16 +64,8 @@ namespace ProBuilder2.EditorCommon
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 				{
-					if(meshesAreAssets)
-					{
-						pb.ToMesh();
-						pb.Refresh();
-						pb.Optimize();
-					}
-					else
-					{
+					if(!meshesAreAssets)
 						pb_EditorUtility.VerifyMesh(pb);
-					}
 				}
 
 				pb_Editor.Refresh();
