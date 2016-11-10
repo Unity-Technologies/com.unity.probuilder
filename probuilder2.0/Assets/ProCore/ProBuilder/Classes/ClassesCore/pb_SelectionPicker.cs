@@ -20,6 +20,11 @@ namespace ProBuilder2.Common
 		{
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
+
+			#if PB_DEBUG
+			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
+			#endif
+
 			Color32[] pix = tex.GetPixels32();
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
@@ -162,7 +167,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Generate a set of meshes and gameObjects that can be rendered for depth testing faces.
 		 */
-		private static List<GameObject> GenerateFaceDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
+		public static List<GameObject> GenerateFaceDepthTestMeshes(IEnumerable<pb_Object> selection, out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
 		{
 			List<GameObject> meshes = new List<GameObject>();
 			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
@@ -172,6 +177,7 @@ namespace ProBuilder2.Common
 			foreach(pb_Object pb in selection)
 			{
 				GameObject go = new GameObject();
+				go.name = pb.name + " (Face Depth Test)";
 				go.transform.position = pb.transform.position;
 				go.transform.localRotation = pb.transform.localRotation;
 				go.transform.localScale = pb.transform.localScale;
@@ -368,6 +374,8 @@ namespace ProBuilder2.Common
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
 			renderCam.CopyFrom(camera);
+			// Deferred path doesn't play nice with RenderWithShader
+			renderCam.renderingPath = RenderingPath.Forward;
 			renderCam.enabled = false;
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
