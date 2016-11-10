@@ -201,20 +201,20 @@ namespace ProBuilder2.Interface
 		 */
 		public static float FreeSlider(GUIContent content, float value, float min, float max)
 		{
-			const float PAD = 8f;
+			float PAD = 8f / EditorGUIUtility.pixelsPerPoint;
 			const float SLIDER_HEIGHT = 16f;
 			const float MIN_LABEL_WIDTH = 0f;
 			const float MAX_LABEL_WIDTH = 128f;
 			const float MIN_FIELD_WIDTH = 48f;
 
-			GUILayoutUtility.GetRect(Screen.width, 18);
+			GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth / EditorGUIUtility.pixelsPerPoint, 18);
 
 			Rect previousRect = GUILayoutUtility.GetLastRect();
 			float y = previousRect.y;
 
 			float labelWidth = content != null ? Mathf.Max(MIN_LABEL_WIDTH, Mathf.Min(GUI.skin.label.CalcSize(content).x + PAD, MAX_LABEL_WIDTH)) : 0f;
-			float remaining = (Screen.width - (PAD * 2f)) - labelWidth;
-			float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD);
+			float remaining = ((Screen.width / EditorGUIUtility.pixelsPerPoint) - (PAD * 2f)) - labelWidth;
+			float sliderWidth = remaining - (MIN_FIELD_WIDTH + PAD); // / EditorGUIUtility.pixelsPerPoint;
 			float floatWidth = MIN_FIELD_WIDTH;
 
 			Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
