@@ -1,6 +1,7 @@
 probuilder2.0/[Ll]ibrary/
 probuilder2.0/[Tt]emp/
 probuilder2.0/[Oo]bj/
+probuilder2.0/Assets/ConsolePro*
 
 # usually you don't want to ignore this, but probuilder should be settings agnostic
 # so it's easier to just not deal with it.
