@@ -40,9 +40,12 @@ namespace ProBuilder2.EditorCommon
 					// otherwise go ahead and destroy as usual
 					if( pb_EditorMeshUtility.GetCachedMesh(pb, out cache_path, out cache_mesh) )
 					{
-						// on entering play mode unity instances everything and destroys the scene,
+						// on entering / exiting play mode unity instances everything and destroys the scene,
 						// which nukes the mesh cache.  don't do this.
-						if( EditorApplication.isPlayingOrWillChangePlaymode )
+						bool isPlaying = EditorApplication.isPlaying;
+						bool orWillPlay = EditorApplication.isPlayingOrWillChangePlaymode;
+
+						if( isPlaying || orWillPlay )
 							return;
 
 						pb_SelectionUtility.Remove(pb);
