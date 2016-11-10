@@ -145,6 +145,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			string guid = pb.asset_guid;
 			path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
+			// Debug.Log("gameobject: " + pb.gameObject.GetInstanceID() + "\nsearching for: " + guid + "\nfound: " + path);
 			mesh = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
 			return mesh != null;
 		}
