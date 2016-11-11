@@ -1,3 +1,19 @@
+# ProBuilder 2.6.5f0
+
+## Features
+
+- Add procedural mesh extrusion example.
+
+## Bug Fixes
+
+- Fix bug where face/vertex picking with hidden selection off and intersect rect would not work in deferred rendering path.
+- Fix bug when "Meshes are Assets" is enabled where exiting play mode would clear the mesh cache.
+- Fix bug when "Meshes are Assets" is enabled where entering play mode would invalidate the mesh cache.
+- Fix bug when "Meshes are Assets" is enabled where deleting a selection of pb_Objects would leave orphaned cached meshes.
+- Fix bug where UV2 channel of selected objects would be lost on scene save with "Meshes are Assets" enabled.
+- Fix bug where stripping ProBuilder scripts with "Meshes are Assets" enabled would also delete the cached mesh asset.
+- Fix incorrectly scaling slider control on retina display.
+
 # ProBuilder 2.6.4f1
 
 ## Features
