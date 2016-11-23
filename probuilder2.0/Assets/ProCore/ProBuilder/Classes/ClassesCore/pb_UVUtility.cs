@@ -86,12 +86,12 @@ public class pb_UVUtility
 		}
 		profiler.EndSample();
 
-		// profiler.BeginSample("Set Bounds");
-		// bounds.SetWithPoints(uvs);
+		profiler.BeginSample("Set Bounds");
+		bounds.SetWithPoints(uvs);
 
-		// uvSettings.localPivot = bounds.center;
-		// uvSettings.localSize = bounds.size;
-		// profiler.EndSample();
+		uvSettings.localPivot = bounds.center;
+		uvSettings.localSize = bounds.size;
+		profiler.EndSample();
 
 		profiler.BeginSample("Translate");
 		for(int i = 0; i < uvs.Length; i++)

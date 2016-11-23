@@ -996,7 +996,9 @@ public class pb_Object : MonoBehaviour
 
 			profiler.BeginSample("something with pivot");
 
-			Vector2 pivot = kvp.Value[0].uv.localPivot, size = kvp.Value[0].uv.localSize;
+			Vector2 pivot = kvp.Value[0].uv.localPivot,
+					size = kvp.Value[0].uv.localSize;
+					
 			foreach(pb_Face f in kvp.Value)
 			{
 				f.uv.localPivot = pivot;
