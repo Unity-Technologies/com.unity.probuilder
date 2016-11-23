@@ -611,6 +611,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
+		profiler.BeginSample("ToMesh");
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
@@ -650,6 +651,7 @@ public class pb_Object : MonoBehaviour
 #if !PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
 #endif
+		profiler.EndSample();
 	}
 
 	/**
@@ -694,19 +696,39 @@ public class pb_Object : MonoBehaviour
 	{
 		// Mesh
 		if( (mask & RefreshMask.UV) > 0 )
+		{
+			profiler.BeginSample("RefreshUV");
 			RefreshUV();
+			profiler.EndSample();
+		}
 
 		if( (mask & RefreshMask.Colors) > 0 )
+		{
+			profiler.BeginSample("RefreshColors");
 			RefreshColors();
+			profiler.EndSample();
+		}
 
 		if( (mask & RefreshMask.Normals) > 0 )
+		{
+			profiler.BeginSample("RefreshNormals");
 			RefreshNormals();
+			profiler.EndSample();
+		}
 
 		if( (mask & RefreshMask.Tangents) > 0 )
+		{
+			profiler.BeginSample("RefreshTangents");
 			RefreshTangents();
+			profiler.EndSample();
+		}
 
 		if( (mask & RefreshMask.Collisions) > 0 )
+		{
+			profiler.BeginSample("RefreshCollisions");
 			RefreshCollisions();
+			profiler.EndSample();
+		}
 	}
 
 	public void RefreshCollisions()
@@ -857,6 +879,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
+		profiler.BeginSample("length check");
+		Vector2[] oldUvs = msh.uv;
 		Vector2[] newUVs;
 
 		// thanks to the upgrade path, this is necessary.  maybe someday remove it.
@@ -866,9 +890,9 @@ public class pb_Object : MonoBehaviour
 		}
 		else
 		{
-			if(msh.uv != null && msh.uv.Length == vertexCount)
+			if(oldUvs != null && oldUvs.Length == vertexCount)
 			{
-				newUVs = msh.uv;
+				newUVs = oldUvs;
 			}
 			else
 			{
@@ -881,7 +905,9 @@ public class pb_Object : MonoBehaviour
 				newUVs = new Vector2[vertexCount];
 			}
 		}
+		profiler.EndSample();
 
+		profiler.BeginSample("group faces");
 		int n = -2;
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
 
@@ -895,8 +921,10 @@ public class pb_Object : MonoBehaviour
 			else
 				tex_groups.Add( f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>(1) { f });
 		}
+		profiler.EndSample();
 
 		// Add any non-selected faces in texture groups to the update list
+		profiler.BeginSample("fetch adjacent");
 		if(this.faces.Length != facesToRefresh.Count())
 		{
 			foreach(pb_Face f in this.faces)
@@ -908,8 +936,10 @@ public class pb_Object : MonoBehaviour
 					tex_groups[f.textureGroup].Add(f);
 			}
 		}
+		profiler.EndSample();
 
 		n = 0;
+		profiler.BeginSample("project");
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
 		{
 			Vector2[] uvs;
@@ -917,7 +947,9 @@ public class pb_Object : MonoBehaviour
 
 			if(kvp.Value.Count > 1)
 			{
-				nrm = pb_Projection.FindBestPlane(_vertices, kvp.Value.SelectMany(x => x.distinctIndices).ToList()).normal;
+				profiler.BeginSample("Normal::FindBestPlane");
+				nrm = pb_Projection.FindBestPlane(_vertices, kvp.Value).normal;
+				profiler.EndSample();
 			}
 			else
 			{
@@ -927,11 +959,19 @@ public class pb_Object : MonoBehaviour
 				// otherwise it's not safe to assume that the face
 				// has even generally uniform normals
 				if(face.indices.Length < 7)
+				{
+					profiler.BeginSample("Normal::pb_Math.Normal");
 					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
 											_vertices[face.indices[1]],
 											_vertices[face.indices[2]] );
+					profiler.EndSample();
+				}
 				else
+				{
+					profiler.BeginSample("Normal::FindBestPlane");
 					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+					profiler.EndSample();
+				}
 			}
 
 			if(kvp.Value[0].uv.useWorldSpace)
@@ -944,13 +984,17 @@ public class pb_Object : MonoBehaviour
 			}
 			else
 			{
+				profiler.BeginSample("UVUtility::PlanarMap");
 				uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
+				profiler.EndSample();
 			}
 
 			/**
 			 * Apply UVs to array, and update the localPivot and localSize caches.
 			 */
 			int j = 0;
+
+			profiler.BeginSample("something with pivot");
 
 			Vector2 pivot = kvp.Value[0].uv.localPivot, size = kvp.Value[0].uv.localSize;
 			foreach(pb_Face f in kvp.Value)
@@ -961,8 +1005,11 @@ public class pb_Object : MonoBehaviour
 				foreach(int i in f.distinctIndices)
 					newUVs[i] = uvs[j++];
 			}
+			profiler.EndSample();
 		}
+		profiler.EndSample();
 
+		profiler.BeginSample("apply");
 		_uv = newUVs;
 		msh.uv = newUVs;
 
@@ -970,6 +1017,7 @@ public class pb_Object : MonoBehaviour
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
 #endif
+		profiler.EndSample();
 	}
 
 	/**

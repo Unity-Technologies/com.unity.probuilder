@@ -16,15 +16,22 @@ public class pb_UVUtility
 
 	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings, Vector3 normal)
 	{
+		profiler.BeginSample("Project");
 		Vector2[] uvs = pb_Projection.PlanarProject(verts, normal);
+		profiler.EndSample();
+		profiler.BeginSample("Apply Settings");
 		uvs = ApplyUVSettings(uvs, uvSettings);
+		profiler.EndSample();
 		return uvs;
 	}
+
+	private static pb_Bounds2D bounds = new pb_Bounds2D();
 
 	private static Vector2[] ApplyUVSettings(Vector2[] uvs, pb_UV uvSettings)
 	{
 		int len = uvs.Length;
 
+		profiler.BeginSample("FillMode");
 		switch(uvSettings.fill)
 		{
 			case pb_UV.Fill.Tile:
@@ -36,20 +43,32 @@ public class pb_UVUtility
 				uvs = StretchUVs(uvs);
 				break;
 		}
+		profiler.EndSample();
+
+		profiler.BeginSample("ApplyUVAnchor");
 
 		if(!uvSettings.useWorldSpace)
 			ApplyUVAnchor(uvs, uvSettings.anchor);
+		profiler.EndSample();
 
+		profiler.BeginSample("Scale/Rotate");
+		
 		// Apply transform last, so that fill and justify don't override it.
-
-		pb_Bounds2D bounds = new pb_Bounds2D(uvs);
-
-		for(int i = 0; i < uvs.Length; i++)
+		if( uvSettings.scale.x != 1f || 
+			uvSettings.scale.y != 1f ||
+			uvSettings.rotation != 0f)
 		{
-			uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);
-			uvs[i] = uvs[i].RotateAroundPoint(bounds.center, uvSettings.rotation);
-		}
+			bounds.SetWithPoints(uvs);
 
+			for(int i = 0; i < len; i++)
+			{
+				uvs[i] = uvs[i].ScaleAroundPoint(bounds.center, uvSettings.scale);
+				uvs[i] = uvs[i].RotateAroundPoint(bounds.center, uvSettings.rotation);
+			}
+		}
+		profiler.EndSample();
+
+		profiler.BeginSample("Flip");
 		for(int i = 0; i < len; i++)
 		{
 			float u = uvs[i].x, v = uvs[i].y;
@@ -65,14 +84,19 @@ public class pb_UVUtility
 			else
 				uvs[i] = new Vector2(v, u);
 		}
+		profiler.EndSample();
 
-		bounds = new pb_Bounds2D(uvs);
+		// profiler.BeginSample("Set Bounds");
+		// bounds.SetWithPoints(uvs);
 
-		uvSettings.localPivot = bounds.center;
-		uvSettings.localSize = bounds.size;
+		// uvSettings.localPivot = bounds.center;
+		// uvSettings.localSize = bounds.size;
+		// profiler.EndSample();
 
+		profiler.BeginSample("Translate");
 		for(int i = 0; i < uvs.Length; i++)
 			uvs[i] -= uvSettings.offset;
+		profiler.EndSample();
 
 		return uvs;
 	}
