@@ -47,7 +47,7 @@ namespace ProBuilder2.Actions
 				path = "Assets/ProBuilder Saved Assets";
 			}
 
-			if(!System.IO.Directory.Exists(path + "/ProBuilder Saved Assets"))
+			if(!System.IO.Directory.Exists(path))
 			{
 				AssetDatabase.CreateFolder("Assets", "ProBuilder Saved Assets");
 				AssetDatabase.Refresh();
