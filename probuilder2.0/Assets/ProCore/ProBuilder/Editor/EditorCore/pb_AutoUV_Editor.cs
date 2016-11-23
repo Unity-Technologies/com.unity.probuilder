@@ -482,7 +482,7 @@ namespace ProBuilder2.EditorCommon
 
 			int texGroup = pb.GetUnusedTextureGroup();
 
-			pbUndo.RecordObject(pb, "Create Texture Group" + textureGroup);
+			pbUndo.RecordSelection(pb, "Create Texture Group" + textureGroup);
 
 			foreach(pb_Face f in faces)
 			{

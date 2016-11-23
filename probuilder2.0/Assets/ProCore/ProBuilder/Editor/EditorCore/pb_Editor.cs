@@ -939,7 +939,7 @@ public class pb_Editor : EditorWindow
 
 				int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
 
-				pbUndo.RecordObject(pb, "Change Vertex Selection");
+				pbUndo.RecordSelection(pb, "Change Vertex Selection");
 
 				// If we get a match, check to see if it exists in our selection array already, then add / remove
 				if( indx > -1 )

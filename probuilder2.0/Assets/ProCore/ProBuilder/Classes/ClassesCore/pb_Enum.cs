@@ -182,4 +182,18 @@ namespace ProBuilder2.Common
 		Common = 0x1,
 		Both = 0x2
 	};
+
+	/**
+	 *	Selectively refresh things in pb_Object::Refresh.
+	 */
+	[System.Flags]
+	public enum RefreshMask : ushort
+	{
+		All 		= 0xFF,
+		UV 			= 0x1,
+		Colors		= 0x2,
+		Normals 	= 0x4,
+		Tangents 	= 0x8,
+		Collisions	= 0x10
+	};
 }

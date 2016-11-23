@@ -38,7 +38,7 @@ public class pb_Object_Editor : Editor
 		SelectionRenderState s = pb_EditorUtility.GetSelectionRenderState();
 		pb_EditorUtility.SetSelectionRenderState(ren, editor != null ? s & SelectionRenderState.Outline : s);
 
-		/* if Verify returns false, that means the mesh was rebuilt - so generate UV2 again */
+		// If Verify returns false, that means the mesh was rebuilt - so generate UV2 again
 
  		foreach(pb_Object selpb in Selection.transforms.GetComponents<pb_Object>())
 	 		pb_EditorUtility.VerifyMesh(selpb);
@@ -53,9 +53,16 @@ public class pb_Object_Editor : Editor
 
 		GUI.backgroundColor = Color.white;
 
-		if(!ren) return;
+		if(!ren) 
+			return;
+
 		Vector3 sz = ren.bounds.size;
+
 		EditorGUILayout.Vector3Field("Object Size (read only)", sz);
+
+#if PB_DEBUG
+		GUILayout.TextField( string.IsNullOrEmpty(pb.asset_guid) ? "null" : pb.asset_guid );
+#endif
 
 		if(pb == null) return;
 		
@@ -88,7 +95,6 @@ public class pb_Object_Editor : Editor
 			pb = (pb_Object)target;
 
 		return pb_Editor.instance != null && pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
-		// return pb_Editor.instance != null && pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.sharedIndices.UniqueIndicesWithValues(x.SelectedTriangles).Length) > 1;
 	}
 
 	Bounds OnGetFrameBounds()

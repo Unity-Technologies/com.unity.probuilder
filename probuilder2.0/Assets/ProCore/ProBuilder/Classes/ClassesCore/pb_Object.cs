@@ -229,7 +229,7 @@ public class pb_Object : MonoBehaviour
 	public pb_UnwrapParameters 			unwrapParameters = new pb_UnwrapParameters();
 
 	// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
-	public string						asset_guid;
+	public string 						asset_guid;
 
 	// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	public static event System.Action<pb_Object> onDestroyObject;
@@ -687,15 +687,26 @@ public class pb_Object : MonoBehaviour
 
 	/**
 	 *	\brief Recalculates standard mesh properties - normals, collisions, UVs, tangents, and colors.
+	 *	Optionally pass a mask to define what components are updated (UV and Collisions are expensive
+	 *	to rebuild, and can usually be deferred til completion of task).
 	 */
-	public void Refresh()
+	public void Refresh(RefreshMask mask = RefreshMask.All)
 	{
 		// Mesh
-		RefreshUV();
-		RefreshColors();
-		RefreshNormals();
-		RefreshTangents();
-		RefreshCollisions();
+		if( (mask & RefreshMask.UV) > 0 )
+			RefreshUV();
+
+		if( (mask & RefreshMask.Colors) > 0 )
+			RefreshColors();
+
+		if( (mask & RefreshMask.Normals) > 0 )
+			RefreshNormals();
+
+		if( (mask & RefreshMask.Tangents) > 0 )
+			RefreshTangents();
+
+		if( (mask & RefreshMask.Collisions) > 0 )
+			RefreshCollisions();
 	}
 
 	public void RefreshCollisions()

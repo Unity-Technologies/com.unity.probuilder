@@ -16,7 +16,10 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RecordSelection(pb_Object pb, string msg)
 		{
-			RecordSelection(new pb_Object[] { pb }, msg);
+			if( pb.vertexCount > 256 )
+				RegisterCompleteObjectUndo(pb, msg);
+			else
+				RecordObject(pb, msg);
 		}
 
 		/**
@@ -37,7 +40,10 @@ namespace ProBuilder2.EditorCommon
 		public static void RecordObject(Object obj, string msg)
 		{
 			#if PB_DEBUG
-			Debug.Log("RecordObject()  ->  " + msg);
+			if(obj is pb_Object && ((pb_Object)obj).vertexCount > 256)	
+				Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)obj).vertexCount);
+			else
+				Debug.Log("RecordObject()  ->  " + msg);
 			#endif
 			Undo.RecordObject(obj, msg);
 		}
@@ -49,6 +55,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(objs == null) return;		
 			Undo.RecordObjects(objs, msg);
+		}
+
+		/**
+		 * Undo.RegisterCompleteObjectUndo
+		 */
+		public static void RegisterCompleteObjectUndo(Object objs, string msg)
+		{
+			Undo.RegisterCompleteObjectUndo(objs, msg);
 		}
 
 		/**
