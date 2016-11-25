@@ -16,37 +16,19 @@ public class pb_UVUtility
 
 	private static Vector2 tvec2 = Vector2.zero;
 
-	[System.Obsolete("her")]
-	public static Vector2[] PlanarMap(Vector3[] verts, pb_UV uvSettings, Vector3 normal)
-	{
-		// profiler.BeginSample("Project");
-		// Vector2[] uvs = pb_Projection.PlanarProject(verts, normal);
-		// profiler.EndSample();
-		// profiler.BeginSample("Apply Settings");
-		// ApplyUVSettings(uvs, uvSettings);
-		// profiler.EndSample();
-		// return uvs;
-		return new Vector2[ verts.Length ];
-	}
-
 	public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indices, pb_UV uvSettings, Vector3 normal)
 	{
 		ProjectionAxis projectionAxis = pb_Projection.VectorToProjectionAxis(normal);
 
-		profiler.BeginSample("Project");
 		pb_Projection.PlanarProject(verts, uvs, indices, normal, projectionAxis);
-		profiler.EndSample();
 
-		profiler.BeginSample("Apply Settings");
 		ApplyUVSettings(uvs, indices, uvSettings);
-		profiler.EndSample();
 	}
 
 	private static void ApplyUVSettings(Vector2[] uvs, int[] indices, pb_UV uvSettings)
 	{
 		int len = indices.Length;
 
-		profiler.BeginSample("FillMode");
 		switch(uvSettings.fill)
 		{
 			case pb_UV.Fill.Tile:
@@ -58,15 +40,10 @@ public class pb_UVUtility
 				uvs = StretchUVs(uvs, indices);
 				break;
 		}
-		profiler.EndSample();
 
-		profiler.BeginSample("ApplyUVAnchor");
 		if(!uvSettings.useWorldSpace)
 			ApplyUVAnchor(uvs, indices, uvSettings.anchor);
-		profiler.EndSample();
 
-		profiler.BeginSample("Scale/Rotate");
-		
 		// Apply transform last, so that fill and justify don't override it.
 		if( uvSettings.scale.x != 1f || 
 			uvSettings.scale.y != 1f ||
@@ -80,9 +57,7 @@ public class pb_UVUtility
 				uvs[indices[i]] = uvs[indices[i]].RotateAroundPoint(center, uvSettings.rotation);
 			}
 		}
-		profiler.EndSample();
 
-		profiler.BeginSample("Flip");
 
 		if(uvSettings.flipU || uvSettings.flipV || uvSettings.swapUV)
 		{
@@ -110,19 +85,14 @@ public class pb_UVUtility
 			}
 		}
 
-		profiler.EndSample();
 
-		profiler.BeginSample("Set Bounds");
 		uvSettings.localPivot = pb_Bounds2D.Center(uvs, indices);
-		profiler.EndSample();
 
-		profiler.BeginSample("Translate");
 		for(int i = 0; i < indices.Length; i++)
 		{
 			uvs[indices[i]].x -= uvSettings.offset.x;
 			uvs[indices[i]].y -= uvSettings.offset.y;
 		}
-		profiler.EndSample();
 	}
 #endregion
 

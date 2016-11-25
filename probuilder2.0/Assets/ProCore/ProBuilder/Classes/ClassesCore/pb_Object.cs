@@ -611,7 +611,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void ToMesh()
 	{
-		profiler.BeginSample("ToMesh");
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
@@ -651,7 +650,6 @@ public class pb_Object : MonoBehaviour
 #if !PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = mats;
 #endif
-		profiler.EndSample();
 	}
 
 	/**
@@ -699,32 +697,16 @@ public class pb_Object : MonoBehaviour
 			RefreshUV();
 
 		if( (mask & RefreshMask.Colors) > 0 )
-		{
-			profiler.BeginSample("RefreshColors");
 			RefreshColors();
-			profiler.EndSample();
-		}
 
 		if( (mask & RefreshMask.Normals) > 0 )
-		{
-			profiler.BeginSample("RefreshNormals");
 			RefreshNormals();
-			profiler.EndSample();
-		}
 
 		if( (mask & RefreshMask.Tangents) > 0 )
-		{
-			profiler.BeginSample("RefreshTangents");
 			RefreshTangents();
-			profiler.EndSample();
-		}
 
 		if( (mask & RefreshMask.Collisions) > 0 )
-		{
-			profiler.BeginSample("RefreshCollisions");
 			RefreshCollisions();
-			profiler.EndSample();
-		}
 	}
 
 	public void RefreshCollisions()
@@ -875,9 +857,6 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
-		profiler.BeginSample("RefreshUV");
-
-		profiler.BeginSample("length check");
 		Vector2[] oldUvs = msh.uv;
 		Vector2[] newUVs;
 
@@ -903,9 +882,7 @@ public class pb_Object : MonoBehaviour
 				newUVs = new Vector2[vertexCount];
 			}
 		}
-		profiler.EndSample();
 
-		profiler.BeginSample("group faces");
 		int n = -2;
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
 		bool anyWorldSpace = false;
@@ -924,10 +901,8 @@ public class pb_Object : MonoBehaviour
 			else
 				tex_groups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>() { f });
 		}
-		profiler.EndSample();
 
 		// Add any non-selected faces in texture groups to the update list
-		profiler.BeginSample("fetch adjacent");
 		if(this.faces.Length != facesToRefresh.Count())
 		{
 			foreach(pb_Face f in this.faces)
@@ -939,10 +914,8 @@ public class pb_Object : MonoBehaviour
 					tex_groups[f.textureGroup].Add(f);
 			}
 		}
-		profiler.EndSample();
 
 		n = 0;
-		profiler.BeginSample("project");
 		
 		Vector3[] world = anyWorldSpace ? transform.ToWorldSpace(vertices) : null;
 
@@ -953,9 +926,7 @@ public class pb_Object : MonoBehaviour
 
 			if(kvp.Value.Count > 1)
 			{
-				profiler.BeginSample("Normal::FindBestPlane");
 				nrm = pb_Projection.FindBestPlane(_vertices, indices).normal;
-				profiler.EndSample();
 			}
 			else
 			{
@@ -966,40 +937,28 @@ public class pb_Object : MonoBehaviour
 				// has even generally uniform normals
 				if(face.indices.Length < 7)
 				{
-					profiler.BeginSample("Normal::pb_Math.Normal");
 					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
 											_vertices[face.indices[1]],
 											_vertices[face.indices[2]] );
-					profiler.EndSample();
 				}
 				else
 				{
-					profiler.BeginSample("Normal::FindBestPlane");
 					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
-					profiler.EndSample();
 				}
 			}
 
-			profiler.BeginSample("UVUtility::PlanarMap");
 			if(kvp.Value[0].uv.useWorldSpace)
 				pb_UVUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
 			else
 				pb_UVUtility.PlanarMap2(vertices, newUVs, indices, kvp.Value[0].uv, nrm);
-			profiler.EndSample();
 
 			// Apply UVs to array, and update the localPivot and localSize caches.
-			profiler.BeginSample("something with pivot");
-
 			Vector2 pivot = kvp.Value[0].uv.localPivot;	
 			
 			foreach(pb_Face f in kvp.Value)
 				f.uv.localPivot = pivot;
-
-			profiler.EndSample();
 		}
-		profiler.EndSample();
 
-		profiler.BeginSample("apply");
 		_uv = newUVs;
 		msh.uv = newUVs;
 
@@ -1007,8 +966,6 @@ public class pb_Object : MonoBehaviour
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
 #endif
-		profiler.EndSample();
-		profiler.EndSample();
 	}
 
 	/**
@@ -1080,21 +1037,14 @@ public class pb_Object : MonoBehaviour
 	public void RefreshNormals()
 	{
 		// All hard edges
-		profiler.BeginSample("RecalculateNormals");
 		msh.RecalculateNormals();
-		profiler.EndSample();
 
-		profiler.BeginSample("GetNormals");
 		// average the soft edge faces
 		int vertexCount = msh.vertexCount;
 		Vector3[] normals = msh.normals;
 
 		Vector3[] averages = new Vector3[MAX_SMOOTH_GROUPS];
 		float[] counts = new float[MAX_SMOOTH_GROUPS];
-
-		profiler.EndSample();
-
-		profiler.BeginSample("GetLookup");
 		int[] smoothGroup = new int[vertexCount];
 
 		// Create a lookup of each triangles smoothing group.
@@ -1103,9 +1053,6 @@ public class pb_Object : MonoBehaviour
 			foreach(int tri in face.distinctIndices)
 				smoothGroup[tri] = face.smoothingGroup;
 		}
-		profiler.EndSample();
-
-		profiler.BeginSample("SmoothSeams");
 
 		/**
 		 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
@@ -1146,11 +1093,8 @@ public class pb_Object : MonoBehaviour
 				normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
 			}
 		}
-		profiler.EndSample();
 
-		profiler.BeginSample("Assign");
 		GetComponent<MeshFilter>().sharedMesh.normals = normals;
-		profiler.EndSample();
 	}
 
 	public void RefreshTangents()
