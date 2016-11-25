@@ -76,7 +76,7 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	\brief Creates a new #pb_Object using passed vertices to construct geometry.
 	 *	Typically you would not call this directly, as the #ProBuilder class contains
-	 *	a wrapper for this purpose.  In fact, I'm not sure why this is public...
+	 *	a wrapper for this purpose.
 	 *	@param vertices A vertex array (Vector3[]) containing the points to be used in
 	 *	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
 	 *	order.  Triangles will be wound in vertex groups of 4, with the winding order
@@ -857,6 +857,7 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
+		Vector2[] oldUvs = msh.uv;
 		Vector2[] newUVs;
 
 		// thanks to the upgrade path, this is necessary.  maybe someday remove it.
@@ -866,9 +867,9 @@ public class pb_Object : MonoBehaviour
 		}
 		else
 		{
-			if(msh.uv != null && msh.uv.Length == vertexCount)
+			if(oldUvs != null && oldUvs.Length == vertexCount)
 			{
-				newUVs = msh.uv;
+				newUVs = oldUvs;
 			}
 			else
 			{
@@ -884,16 +885,21 @@ public class pb_Object : MonoBehaviour
 
 		int n = -2;
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
+		bool anyWorldSpace = false;
+		List<pb_Face> group;
 
 		foreach(pb_Face f in facesToRefresh)
 		{
+			if(f.uv.useWorldSpace)
+				anyWorldSpace = true;
+
 			if(f == null || f.manualUV)
 				continue;
 
-			if(f.textureGroup > 0 && tex_groups.ContainsKey(f.textureGroup))
-				tex_groups[f.textureGroup].Add(f);
+			if(f.textureGroup > 0 && tex_groups.TryGetValue(f.textureGroup, out group))
+				group.Add(f);
 			else
-				tex_groups.Add( f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>(1) { f });
+				tex_groups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>() { f });
 		}
 
 		// Add any non-selected faces in texture groups to the update list
@@ -910,14 +916,17 @@ public class pb_Object : MonoBehaviour
 		}
 
 		n = 0;
+		
+		Vector3[] world = anyWorldSpace ? transform.ToWorldSpace(vertices) : null;
+
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
 		{
-			Vector2[] uvs;
 			Vector3 nrm;
+			int[] indices = pb_Face.AllTrianglesDistinct(kvp.Value).ToArray();
 
 			if(kvp.Value.Count > 1)
 			{
-				nrm = pb_Projection.FindBestPlane(_vertices, kvp.Value.SelectMany(x => x.distinctIndices).ToList()).normal;
+				nrm = pb_Projection.FindBestPlane(_vertices, indices).normal;
 			}
 			else
 			{
@@ -927,40 +936,27 @@ public class pb_Object : MonoBehaviour
 				// otherwise it's not safe to assume that the face
 				// has even generally uniform normals
 				if(face.indices.Length < 7)
+				{
 					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
 											_vertices[face.indices[1]],
 											_vertices[face.indices[2]] );
+				}
 				else
+				{
 					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+				}
 			}
 
 			if(kvp.Value[0].uv.useWorldSpace)
-			{
-				nrm = transform.TransformDirection(nrm);
-				uvs = pb_UVUtility.PlanarMap(
-					transform.ToWorldSpace(vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())),
-					kvp.Value[0].uv,
-					nrm);
-			}
+				pb_UVUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
 			else
-			{
-				uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
-			}
+				pb_UVUtility.PlanarMap2(vertices, newUVs, indices, kvp.Value[0].uv, nrm);
 
-			/**
-			 * Apply UVs to array, and update the localPivot and localSize caches.
-			 */
-			int j = 0;
-
-			Vector2 pivot = kvp.Value[0].uv.localPivot, size = kvp.Value[0].uv.localSize;
+			// Apply UVs to array, and update the localPivot and localSize caches.
+			Vector2 pivot = kvp.Value[0].uv.localPivot;	
+			
 			foreach(pb_Face f in kvp.Value)
-			{
 				f.uv.localPivot = pivot;
-				f.uv.localSize = size;
-
-				foreach(int i in f.distinctIndices)
-					newUVs[i] = uvs[j++];
-			}
 		}
 
 		_uv = newUVs;
@@ -1019,9 +1015,7 @@ public class pb_Object : MonoBehaviour
 		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 
 		foreach(int i in face.distinctIndices)
-		{
 			_colors[i] = color;
-		}
 	}
 #endregion
 
@@ -1035,6 +1029,8 @@ public class pb_Object : MonoBehaviour
 		_tangents = tangents;
 	}
 
+	const int MAX_SMOOTH_GROUPS = 24;
+
 	/**
 	 * Refreshes the normals of this object taking into account the smoothing groups.
 	 */
@@ -1044,20 +1040,19 @@ public class pb_Object : MonoBehaviour
 		msh.RecalculateNormals();
 
 		// average the soft edge faces
+		int vertexCount = msh.vertexCount;
 		Vector3[] normals = msh.normals;
 
-		int[] smoothGroup = new int[normals.Length];
+		Vector3[] averages = new Vector3[MAX_SMOOTH_GROUPS];
+		float[] counts = new float[MAX_SMOOTH_GROUPS];
+		int[] smoothGroup = new int[vertexCount];
 
-		/**
-		 * Create a lookup of each triangles smoothing group.
-		 */
+		// Create a lookup of each triangles smoothing group.
 		foreach(pb_Face face in faces)
 		{
 			foreach(int tri in face.distinctIndices)
 				smoothGroup[tri] = face.smoothingGroup;
 		}
-
-		List<int> list;
 
 		/**
 		 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
@@ -1065,41 +1060,37 @@ public class pb_Object : MonoBehaviour
 		 */
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
-			Dictionary<int, List<int>> shareable = new Dictionary<int, List<int>>();
-
-			/**
-			 * Sort indices that share a smoothing group
-			 */
-			foreach(int tri in sharedIndices[i].array)
+			for(int n = 0; n < MAX_SMOOTH_GROUPS; n++)	
 			{
-				if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)
-					continue;
-
-				if( shareable.TryGetValue(smoothGroup[tri], out list) )
-					list.Add(tri);
-				else
-					shareable.Add(smoothGroup[tri], new List<int>() { tri });
+				averages[n].x = 0f;
+				averages[n].y = 0f;
+				averages[n].z = 0f;
+				counts[n] = 0f;
 			}
 
-			/**
-			 * Average the normals
-			 */
-			foreach(KeyValuePair<int, List<int>> skvp in shareable)
+			for(int n = 0; n < sharedIndices[i].array.Length; n++)
 			{
-				Vector3 avg = Vector3.zero;
+				int index = sharedIndices[i].array[n];
 
-				List<int> indices = skvp.Value;
+				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
+					continue;
 
-				for(int vertexNormalIndex = 0; vertexNormalIndex < indices.Count; vertexNormalIndex++)
-				{
-					avg += normals[indices[vertexNormalIndex]];
-				}
+				averages[smoothGroup[index]].x += normals[index].x;
+				averages[smoothGroup[index]].y += normals[index].y;
+				averages[smoothGroup[index]].z += normals[index].z;
+				counts[smoothGroup[index]] += 1f;
+			}
 
-				// apply normal average back to the mesh
-				avg = (avg / (float)skvp.Value.Count).normalized;
+			for(int n = 0; n < sharedIndices[i].array.Length; n++)
+			{
+				int index = sharedIndices[i].array[n];
 
-				foreach(int vertexNormalIndex in skvp.Value)
-					normals[vertexNormalIndex] = avg;
+				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
+					continue;
+
+				normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
+				normals[index].y = averages[smoothGroup[index]].y / counts[smoothGroup[index]];
+				normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
 			}
 		}
 

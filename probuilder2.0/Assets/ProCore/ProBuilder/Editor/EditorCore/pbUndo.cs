@@ -42,8 +42,6 @@ namespace ProBuilder2.EditorCommon
 			#if PB_DEBUG
 			if(obj is pb_Object && ((pb_Object)obj).vertexCount > 256)	
 				Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)obj).vertexCount);
-			else
-				Debug.Log("RecordObject()  ->  " + msg);
 			#endif
 			Undo.RecordObject(obj, msg);
 		}

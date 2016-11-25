@@ -346,7 +346,6 @@ public class pb_Face
 		List<int> all = new List<int>();
 		foreach(pb_Face quad in f)
 			all.AddRange(quad.distinctIndices);
-
 		return all;
 	}
 

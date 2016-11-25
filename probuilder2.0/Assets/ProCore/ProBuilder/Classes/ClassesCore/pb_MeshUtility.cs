@@ -163,11 +163,11 @@ namespace ProBuilder2.Common
 		{
 			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
 
-			//speed up math by copying the mesh arrays
-			int[] triangles = InMesh.triangles;
-			Vector3[] vertices = InMesh.vertices;
-			Vector2[] uv = InMesh.uv;
-			Vector3[] normals = InMesh.normals;
+			// speed up math by copying the mesh arrays
+			int[] triangles 	= InMesh.triangles;
+			Vector3[] vertices 	= InMesh.vertices;
+			Vector2[] uv 		= InMesh.uv;
+			Vector3[] normals 	= InMesh.normals;
 
 			//variable definitions
 			int triangleCount = triangles.Length;
