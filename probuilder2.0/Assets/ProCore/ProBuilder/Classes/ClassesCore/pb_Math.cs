@@ -625,15 +625,26 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector2 SmallestVector2(Vector2[] v)
 		{
-			Vector2 s = v[0];
-			for(int i = 1; i < v.Length; i++)
+			int len = v.Length;
+			Vector2 l = v[0];
+			for(int i = 0; i < len; i++)
 			{
-				if(v[i].x < s.x)
-					s.x = v[i].x;
-				if(v[i].y < s.y)
-					s.y = v[i].y;
+				if(v[i].x < l.x) l.x = v[i].x;
+				if(v[i].y < l.y) l.y = v[i].y;
 			}
-			return s;
+			return l;
+		}
+
+		public static Vector2 SmallestVector2(Vector2[] v, int[] indices)
+		{
+			int len = indices.Length;
+			Vector2 l = v[indices[0]];
+			for(int i = 0; i < len; i++)
+			{
+				if(v[indices[i]].x < l.x) l.x = v[indices[i]].x;
+				if(v[indices[i]].y < l.y) l.y = v[indices[i]].y;
+			}
+			return l;
 		}
 
 		/**
@@ -641,13 +652,24 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector2 LargestVector2(Vector2[] v)
 		{
+			int len = v.Length;
 			Vector2 l = v[0];
-			for(int i = 0; i < v.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
-				if(v[i].x > l.x)
-					l.x = v[i].x;
-				if(v[i].y > l.y)
-					l.y = v[i].y;
+				if(v[i].x > l.x) l.x = v[i].x;
+				if(v[i].y > l.y) l.y = v[i].y;
+			}
+			return l;
+		}
+
+		public static Vector2 LargestVector2(Vector2[] v, int[] indices)
+		{
+			int len = indices.Length;
+			Vector2 l = v[indices[0]];
+			for(int i = 0; i < len; i++)
+			{
+				if(v[indices[i]].x > l.x) l.x = v[indices[i]].x;
+				if(v[indices[i]].y > l.y) l.y = v[indices[i]].y;
 			}
 			return l;
 		}
@@ -841,6 +863,20 @@ namespace ProBuilder2.Common
 	public static int Sum(this Vector3 mask)
 	{
 		return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
+	}
+
+#endregion
+
+#region Non-allocating Vector Functions
+	/**
+	 *	Non-allocating cross product.
+	 *	`ref` does not box with primitive types (https://msdn.microsoft.com/en-us/library/14akc2c7.aspx)
+	 */
+	public static void Cross(Vector3 a, Vector3 b, ref float x, ref float y, ref float z)
+	{
+		x = a.y * b.z - a.z * b.y;
+		y = a.z * b.x - a.x * b.z;
+		z = a.x * b.y - a.y * b.x;
 	}
 #endregion
 	}

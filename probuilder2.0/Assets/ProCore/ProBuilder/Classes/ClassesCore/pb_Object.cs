@@ -76,7 +76,7 @@ public class pb_Object : MonoBehaviour
 	/**
 	 *	\brief Creates a new #pb_Object using passed vertices to construct geometry.
 	 *	Typically you would not call this directly, as the #ProBuilder class contains
-	 *	a wrapper for this purpose.  In fact, I'm not sure why this is public...
+	 *	a wrapper for this purpose.
 	 *	@param vertices A vertex array (Vector3[]) containing the points to be used in
 	 *	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
 	 *	order.  Triangles will be wound in vertex groups of 4, with the winding order
@@ -696,11 +696,7 @@ public class pb_Object : MonoBehaviour
 	{
 		// Mesh
 		if( (mask & RefreshMask.UV) > 0 )
-		{
-			profiler.BeginSample("RefreshUV");
 			RefreshUV();
-			profiler.EndSample();
-		}
 
 		if( (mask & RefreshMask.Colors) > 0 )
 		{
@@ -879,6 +875,8 @@ public class pb_Object : MonoBehaviour
 	 */
 	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
+		profiler.BeginSample("RefreshUV");
+
 		profiler.BeginSample("length check");
 		Vector2[] oldUvs = msh.uv;
 		Vector2[] newUVs;
@@ -985,7 +983,8 @@ public class pb_Object : MonoBehaviour
 			else
 			{
 				profiler.BeginSample("UVUtility::PlanarMap");
-				uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
+				// uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
+				pb_UVUtility.PlanarMap2(vertices, newUVs, pb_Face.AllTrianglesDistinct(kvp.Value).ToArray(), kvp.Value[0].uv, nrm);
 				profiler.EndSample();
 			}
 
@@ -996,16 +995,14 @@ public class pb_Object : MonoBehaviour
 
 			profiler.BeginSample("something with pivot");
 
-			Vector2 pivot = kvp.Value[0].uv.localPivot,
-					size = kvp.Value[0].uv.localSize;
-					
+			Vector2 pivot = kvp.Value[0].uv.localPivot;	
+			
 			foreach(pb_Face f in kvp.Value)
 			{
 				f.uv.localPivot = pivot;
-				f.uv.localSize = size;
 
-				foreach(int i in f.distinctIndices)
-					newUVs[i] = uvs[j++];
+				// foreach(int i in f.distinctIndices)
+				// 	newUVs[i] = uvs[j++];
 			}
 			profiler.EndSample();
 		}
@@ -1019,6 +1016,7 @@ public class pb_Object : MonoBehaviour
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
 #endif
+		profiler.EndSample();
 		profiler.EndSample();
 	}
 
@@ -1069,9 +1067,7 @@ public class pb_Object : MonoBehaviour
 		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 
 		foreach(int i in face.distinctIndices)
-		{
 			_colors[i] = color;
-		}
 	}
 #endregion
 
@@ -1091,13 +1087,18 @@ public class pb_Object : MonoBehaviour
 	public void RefreshNormals()
 	{
 		// All hard edges
+		profiler.BeginSample("RecalculateNormals");
 		msh.RecalculateNormals();
+		profiler.EndSample();
 
+		profiler.BeginSample("GetNormals");
 		// average the soft edge faces
 		Vector3[] normals = msh.normals;
+		profiler.EndSample();
 
+
+		profiler.BeginSample("GetLookup");
 		int[] smoothGroup = new int[normals.Length];
-
 		/**
 		 * Create a lookup of each triangles smoothing group.
 		 */
@@ -1106,7 +1107,9 @@ public class pb_Object : MonoBehaviour
 			foreach(int tri in face.distinctIndices)
 				smoothGroup[tri] = face.smoothingGroup;
 		}
+		profiler.EndSample();
 
+		profiler.BeginSample("SmoothSeams");
 		List<int> list;
 
 		/**
@@ -1152,8 +1155,11 @@ public class pb_Object : MonoBehaviour
 					normals[vertexNormalIndex] = avg;
 			}
 		}
+		profiler.EndSample();
 
+		profiler.BeginSample("Assign");
 		GetComponent<MeshFilter>().sharedMesh.normals = normals;
+		profiler.EndSample();
 	}
 
 	public void RefreshTangents()

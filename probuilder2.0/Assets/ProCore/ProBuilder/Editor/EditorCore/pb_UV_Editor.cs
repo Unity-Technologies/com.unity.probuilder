@@ -531,7 +531,7 @@ public class pb_UV_Editor : EditorWindow
 					foreach(pb_Face face in incomplete_group)
 						coords.Add(pb_Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
 
-					coords.Insert(0, pb_Bounds2D.Center(coords));
+					coords.Insert(0, pb_Bounds2D.Center(coords.ToArray()));
 
 					incompleteTextureGroupsInSelection_CoordCache.Add(coords);
 				}
@@ -643,42 +643,53 @@ public class pb_UV_Editor : EditorWindow
 						/**
 						 * Reproject because uv.localPivot needs to be accurate for this to work properly
 						 */
-						foreach(pb_Face face in kvp.Value)
-							face.uv.offset = Vector2.zero;
+						// foreach(pb_Face face in kvp.Value)
+						// 	face.uv.offset = Vector2.zero;
 
-						Vector3 nrm = Vector3.zero;
-						foreach(pb_Face face in kvp.Value)
-						{
-							nrm += pb_Math.Normal( 	pb.vertices[face.indices[0]],
-													pb.vertices[face.indices[1]],
-													pb.vertices[face.indices[2]] );
-						}
+						// Vector3 nrm = Vector3.zero;
+						// foreach(pb_Face face in kvp.Value)
+						// {
+						// 	nrm += pb_Math.Normal( 	pb.vertices[face.indices[0]],
+						// 							pb.vertices[face.indices[1]],
+						// 							pb.vertices[face.indices[2]] );
+						// }
 
-						nrm /= (float)kvp.Value.Count;
+						// nrm /= (float) kvp.Value.Count;
 
-						int[] tris = pb_Face.AllTriangles(kvp.Value).ToArray();
+						// int[] tris = pb_Face.AllTriangles(kvp.Value).ToArray();
 
-						if(kvp.Value[0].uv.useWorldSpace)
-						{
-							pb.transform.TransformDirection(nrm);
-							pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.vertices.ValuesWithIndices(tris)), kvp.Value[0].uv, nrm );
-						}
-						else
-						{
-							pb_UVUtility.PlanarMap( pb.vertices.ValuesWithIndices(tris), kvp.Value[0].uv, nrm );
-						}
+						// if(kvp.Value[0].uv.useWorldSpace)
+						// {
+						// 	pb.transform.TransformDirection(nrm);
+						// 	pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.vertices.ValuesWithIndices(tris)), kvp.Value[0].uv, nrm );
+						// }
+						// else
+						// {
+						// 	pb_UVUtility.PlanarMap( pb.vertices.ValuesWithIndices(tris), kvp.Value[0].uv, nrm );
+						// }
 
-						foreach(pb_Face face in kvp.Value)
-							face.uv.localPivot = kvp.Value[0].uv.localPivot;
+						// foreach(pb_Face face in kvp.Value)
+						// 	face.uv.localPivot = kvp.Value[0].uv.localPivot;
 
-						/**
-						 * Translation - applies for every tool
-						 */
-						Vector2 handle = handlePosition;
-						Vector2 cen = pb_Bounds2D.Center(pb.uv.ValuesWithIndices(tris));
+						// /**
+						//  * Translation - applies for every tool
+						//  */
+						// Vector2 handle = handlePosition;
+						// Vector2 cen = pb_Bounds2D.Center(pb.uv, tris);
 
-						foreach(pb_Face face in kvp.Value)
-							face.uv.offset = -((handle - face.uv.localPivot) - (handle-cen));
+						// Debug.Log("localPivot : " + kvp.Value[0].uv.localPivot + "\ncalculated pivot: " + cen );
+
+						// foreach(pb_Face face in kvp.Value)
+						// 	face.uv.offset = -((handle - face.uv.localPivot) - (handle-cen));
+
+						// TROUBLE !!!!
+						// assigning this way loses the scale/rotation transforms applied by auto settings 
+
+						Debug.Log("origin: " + handlePosition_origin + "\ncurrent: " + handlePosition );
+
+						if(tool != Tool.Rotate)
+							foreach(pb_Face face in kvp.Value)
+								face.uv.offset -= handlePosition - handlePosition_origin;
 
 					}
 				}
@@ -1293,6 +1304,7 @@ public class pb_UV_Editor : EditorWindow
 
 	Vector2[][] uv_origins = null;
 	Vector2 handlePosition = Vector2.zero,
+			handlePosition_origin = Vector2.zero,
 			handlePosition_offset = Vector2.zero;
 
 	/**
@@ -1374,6 +1386,7 @@ public class pb_UV_Editor : EditorWindow
 				if(mode != UVMode.Auto)
 					pbUndo.RegisterCompleteObjectUndo(selection, "Translate UVs");
 
+				handlePosition_origin = handlePosition;
 				OnBeginUVModification();
 			}
 

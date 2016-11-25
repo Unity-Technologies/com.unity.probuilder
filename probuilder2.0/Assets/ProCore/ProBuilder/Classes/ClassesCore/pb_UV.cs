@@ -62,6 +62,7 @@ public class pb_UV
 	[System.Obsolete("Please use pb_UV.anchor.")]
 	public Justify 			justify;			///< Aligns UVs to the edges or center.
 	public Vector2			localPivot;			///< The center point of the mapped UVs prior to offset application.
+	[System.Obsolete("localPivot and localSize are no longer stored.")]
 	public Vector2			localSize;			///< The size of the mapped UVs prior to modifications.
 	public Anchor 			anchor;				///< Where the UV coordinate origin is.
 

@@ -15,7 +15,7 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal)
 		{
-			return PlanarProject(verts, planeNormal, VectorToProjectionAxis(planeNormal));
+			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
 		}
 
 		public static Vector2[] PlanarProject(pb_Object pb, pb_Face face)
@@ -24,9 +24,24 @@ namespace ProBuilder2.Common
 			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
-		public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal, ProjectionAxis projectionAxis, IList<int> indices = null)
+		public static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
 		{
-			int len = indices == null || indices.Count < 1 ? verts.Count : indices.Count;
+			int len = indices.Count;
+
+			Vector3[] v = new Vector3[len];
+
+			for(int i = 0; i < len; i++)
+				v[i] = vertices[indices[i]].position;
+
+			Vector3 normal = pb_Math.Normal(vertices, indices);
+			ProjectionAxis axis = VectorToProjectionAxis(normal);
+
+			return PlanarProject(v, normal, axis, null);
+		}
+
+		public static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indices = null)
+		{
+			int len = indices == null || indices.Length < 1 ? verts.Length : indices.Length;
 			Vector2[] uvs = new Vector2[len];
 			Vector3 vec = Vector3.zero;
 
@@ -75,19 +90,51 @@ namespace ProBuilder2.Common
 			return uvs;
 		}
 
-		public static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
-		{
-			int len = indices.Count;
+		private static Vector3 t_uaxis = Vector3.zero, t_vaxis = Vector3.zero;
 
-			Vector3[] v = new Vector3[len];
+		public static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indices, Vector3 planeNormal, ProjectionAxis projectionAxis)
+		{
+			Vector3 vec;
+
+			switch(projectionAxis)
+			{
+				case ProjectionAxis.X:
+				case ProjectionAxis.X_Negative:
+					vec = Vector3.up;
+					break;
+
+				case ProjectionAxis.Y:
+				case ProjectionAxis.Y_Negative:
+					vec = Vector3.forward;
+					break;
+				
+				case ProjectionAxis.Z:
+				case ProjectionAxis.Z_Negative:
+					vec = Vector3.up;
+					break;
+
+				default:
+					vec = Vector3.up;
+					break;
+			}
+
+			// get U axis
+			pb_Math.Cross(planeNormal, vec, ref t_uaxis.x, ref t_uaxis.y, ref t_uaxis.z);
+			t_uaxis.Normalize();
+
+			// calculate V axis relative to U
+			pb_Math.Cross(t_uaxis, planeNormal, ref t_vaxis.x, ref t_vaxis.y, ref t_vaxis.z);
+			t_vaxis.Normalize();
+			
+			int len = indices.Length;
 
 			for(int i = 0; i < len; i++)
-				v[i] = vertices[indices[i]].position;
+			{
+				int x = indices[i];
 
-			Vector3 normal = pb_Math.Normal(vertices, indices);
-			ProjectionAxis axis = VectorToProjectionAxis(normal);
-
-			return PlanarProject(v, normal, axis, null);
+				uvs[x].x = Vector3.Dot(t_uaxis, verts[x]);
+				uvs[x].y = Vector3.Dot(t_vaxis, verts[x]);
+			}
 		}
 
 		public static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
@@ -229,15 +276,26 @@ namespace ProBuilder2.Common
 		 *	
 		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
 		 */
-		public static Plane FindBestPlane(IList<Vector3> points, IList<int> indices = null)
+		public static Plane FindBestPlane(Vector3[] points, int[] indices = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
 
-			bool ind = indices != null && indices.Count > 0;
-			int len = ind ? indices.Count : points.Count;
+			bool ind = indices != null && indices.Length > 0;
+			int len = ind ? indices.Length : points.Length;
 
-			Vector3 c = pb_Math.Average(points, indices);
+			Vector3 c = Vector3.zero, n = Vector3.zero;
+
+			for(int i = 0; i < len; i++)
+			{
+				c.x += points[ind ? indices[i] : i].x;
+				c.y += points[ind ? indices[i] : i].y;
+				c.z += points[ind ? indices[i] : i].z;
+			}
+
+			c.x /= (float) len;
+			c.y /= (float) len;
+			c.z /= (float) len;
 
 			for(int i = 0; i < len; i++)
 			{
@@ -255,14 +313,24 @@ namespace ProBuilder2.Common
 			float det_y = xx * zz - xz * xz;
 			float det_z = xx * yy - xy * xy;
 
-			Vector3 n;
-
 			if(det_x > det_y && det_x > det_z)
-				n = new Vector3(1f, (xz*yz - xy*zz) / det_x, (xy*yz - xz*yy) / det_x);
+			{
+				n.x = 1f;
+				n.y = (xz*yz - xy*zz) / det_x;
+				n.z = (xy*yz - xz*yy) / det_x;
+			}
 			else if(det_y > det_z)
-				n = new Vector3((yz*xz - xy*zz) / det_y, 1f, (xy*xz - yz*xx) / det_y);
+			{
+				n.x = (yz*xz - xy*zz) / det_y;
+				n.y = 1f;
+				n.z = (xy*xz - yz*xx) / det_y;
+			}
 			else
-				n = new Vector3((yz*xy - xz*yy) / det_z, (xz*xy - yz*xx) / det_z, 1f);
+			{
+				n.x = (yz*xy - xz*yy) / det_z;
+				n.y = (xz*xy - yz*xx) / det_z;
+				n.z = 1f;
+			}
 
 			n.Normalize();
 
@@ -274,7 +342,7 @@ namespace ProBuilder2.Common
 		 *	
 		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
 		 */
-		public static Plane FindBestPlane(IList<Vector3> points, IList<pb_Face> faces)
+		public static Plane FindBestPlane(Vector3[] points, List<pb_Face> faces)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;

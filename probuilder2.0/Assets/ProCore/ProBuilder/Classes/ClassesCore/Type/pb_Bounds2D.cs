@@ -289,33 +289,66 @@ namespace ProBuilder2.Common
 		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
 		 * bounds calculations to only the points up to length in array.
 		 */
-		public static Vector2 Center(List<Vector2> points) { return Center(points.ToArray()); }
-		public static Vector2 Center(Vector2[] points) { return Center(points, points.Length); }
-		public static Vector2 Center(Vector2[] points, int length)
+		public static Vector2 Center(Vector2[] points, int length = -1)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
 					yMin = 0f,
 					yMax = 0f;
 
-			if(points.Length > 0)
+			int size = length < 1 ? points.Length : length;
+
+			xMin = points[0].x;
+			yMin = points[0].y;
+			xMax = xMin;
+			yMax = yMin;
+
+			for(int i = 1; i < size; i++)
 			{
-				xMin = points[0].x;
-				yMin = points[0].y;
-				xMax = xMin;
-				yMax = yMin;
+				float x = points[i].x;
+				float y = points[i].y;
 
-				for(int i = 1; i < length; i++)
-				{
-					xMin = Mathf.Min(xMin, points[i].x);
-					yMin = Mathf.Min(yMin, points[i].y);
+				if(x < xMin) xMin = x;
+				if(x > xMax) xMax = x;
 
-					xMax = Mathf.Max(xMax, points[i].x);
-					yMax = Mathf.Max(yMax, points[i].y);
-				}
+				if(y < yMin) yMin = y;
+				if(y > yMax) yMax = y;
 			}
 
-			return new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			return new Vector2( (xMin + xMax) / 2f, (yMin + yMax) / 2f );
+		}
+
+		/**
+		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
+		 * bounds calculations to only the points up to length in array.
+		 */
+		public static Vector2 Center(Vector2[] points, int[] indices)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+
+			int size = indices.Length;
+
+			xMin = points[indices[0]].x;
+			yMin = points[indices[0]].y;
+			xMax = xMin;
+			yMax = yMin;
+
+			for(int i = 1; i < size; i++)
+			{
+				float x = points[indices[i]].x;
+				float y = points[indices[i]].y;
+
+				if(x < xMin) xMin = x;
+				if(x > xMax) xMax = x;
+
+				if(y < yMin) yMin = y;
+				if(y > yMax) yMax = y;
+			}
+
+			return new Vector2( (xMin + xMax) / 2f, (yMin + yMax) / 2f );
 		}
 #endregion
 
