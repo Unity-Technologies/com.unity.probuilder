@@ -908,10 +908,14 @@ public class pb_Object : MonoBehaviour
 		profiler.BeginSample("group faces");
 		int n = -2;
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
+		bool anyWorldSpace = false;
 		List<pb_Face> group;
 
 		foreach(pb_Face f in facesToRefresh)
 		{
+			if(f.uv.useWorldSpace)
+				anyWorldSpace = true;
+
 			if(f == null || f.manualUV)
 				continue;
 
@@ -939,15 +943,18 @@ public class pb_Object : MonoBehaviour
 
 		n = 0;
 		profiler.BeginSample("project");
+		
+		Vector3[] world = anyWorldSpace ? transform.ToWorldSpace(vertices) : null;
+
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
 		{
-			Vector2[] uvs;
 			Vector3 nrm;
+			int[] indices = pb_Face.AllTrianglesDistinct(kvp.Value).ToArray();
 
 			if(kvp.Value.Count > 1)
 			{
 				profiler.BeginSample("Normal::FindBestPlane");
-				nrm = pb_Projection.FindBestPlane(_vertices, kvp.Value).normal;
+				nrm = pb_Projection.FindBestPlane(_vertices, indices).normal;
 				profiler.EndSample();
 			}
 			else
@@ -973,38 +980,21 @@ public class pb_Object : MonoBehaviour
 				}
 			}
 
+			profiler.BeginSample("UVUtility::PlanarMap");
 			if(kvp.Value[0].uv.useWorldSpace)
-			{
-				nrm = transform.TransformDirection(nrm);
-				uvs = pb_UVUtility.PlanarMap(
-					transform.ToWorldSpace(vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray())),
-					kvp.Value[0].uv,
-					nrm);
-			}
+				pb_UVUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
 			else
-			{
-				profiler.BeginSample("UVUtility::PlanarMap");
-				// uvs = pb_UVUtility.PlanarMap( vertices.ValuesWithIndices(pb_Face.AllTrianglesDistinct(kvp.Value).ToArray()), kvp.Value[0].uv, nrm);
-				pb_UVUtility.PlanarMap2(vertices, newUVs, pb_Face.AllTrianglesDistinct(kvp.Value).ToArray(), kvp.Value[0].uv, nrm);
-				profiler.EndSample();
-			}
+				pb_UVUtility.PlanarMap2(vertices, newUVs, indices, kvp.Value[0].uv, nrm);
+			profiler.EndSample();
 
-			/**
-			 * Apply UVs to array, and update the localPivot and localSize caches.
-			 */
-			int j = 0;
-
+			// Apply UVs to array, and update the localPivot and localSize caches.
 			profiler.BeginSample("something with pivot");
 
 			Vector2 pivot = kvp.Value[0].uv.localPivot;	
 			
 			foreach(pb_Face f in kvp.Value)
-			{
 				f.uv.localPivot = pivot;
 
-				// foreach(int i in f.distinctIndices)
-				// 	newUVs[i] = uvs[j++];
-			}
 			profiler.EndSample();
 		}
 		profiler.EndSample();
@@ -1082,6 +1072,8 @@ public class pb_Object : MonoBehaviour
 		_tangents = tangents;
 	}
 
+	const int MAX_SMOOTH_GROUPS = 24;
+
 	/**
 	 * Refreshes the normals of this object taking into account the smoothing groups.
 	 */
@@ -1097,11 +1089,10 @@ public class pb_Object : MonoBehaviour
 		int vertexCount = msh.vertexCount;
 		Vector3[] normals = msh.normals;
 
-		Vector3[] averages = new Vector3[24];
-		float[] counts = new float[24];
+		Vector3[] averages = new Vector3[MAX_SMOOTH_GROUPS];
+		float[] counts = new float[MAX_SMOOTH_GROUPS];
 
 		profiler.EndSample();
-
 
 		profiler.BeginSample("GetLookup");
 		int[] smoothGroup = new int[vertexCount];
@@ -1122,7 +1113,7 @@ public class pb_Object : MonoBehaviour
 		 */
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
-			for(int n = 0; n < 24; n++)	
+			for(int n = 0; n < MAX_SMOOTH_GROUPS; n++)	
 			{
 				averages[n].x = 0f;
 				averages[n].y = 0f;
@@ -1134,7 +1125,7 @@ public class pb_Object : MonoBehaviour
 			{
 				int index = sharedIndices[i].array[n];
 
-				if(smoothGroup[index] < 1 || smoothGroup[index] > 24)
+				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
 					continue;
 
 				averages[smoothGroup[index]].x += normals[index].x;
@@ -1147,7 +1138,7 @@ public class pb_Object : MonoBehaviour
 			{
 				int index = sharedIndices[i].array[n];
 
-				if(smoothGroup[index] < 1 || smoothGroup[index] > 24)
+				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
 					continue;
 
 				normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
