@@ -630,139 +630,82 @@ public class pb_ShapeGenerator
 	  legWidth = xLegCoord - legWidth;
 	  ledgeHeight = totalHeight - ledgeHeight;
 
-		Vector3[] template = new Vector3[12]	  // front verts
+		// 8---9---10--11
+		// |           |
+		// 4   5---6   7
+		// |   |   |   |
+		// 0   1   2   3
+		Vector3[] template = new Vector3[12]
 		{
-		  
-			// _ _ _ _
 			new Vector3(-xLegCoord, 0f, depth),			  // 0
 			new Vector3(-legWidth, 0f, depth),			  // 1
 			new Vector3(legWidth, 0f, depth),			  // 2
 			new Vector3(xLegCoord, 0f, depth),			  // 3
-			// . . . .
-			// _ _ _ _ 
 			new Vector3(-xLegCoord, ledgeHeight, depth),  // 4
 			new Vector3(-legWidth, ledgeHeight, depth),	  // 5
 			new Vector3(legWidth, ledgeHeight, depth),	  // 6
 			new Vector3(xLegCoord, ledgeHeight, depth),	  // 7
-			// - - - - 
-			// . . . . 
-			// _ _ _ _
 			new Vector3(-xLegCoord, totalHeight, depth),  // 8
 			new Vector3(-legWidth, totalHeight, depth),	  // 9
 			new Vector3(legWidth, totalHeight, depth),	  // 10
 			new Vector3(xLegCoord, totalHeight, depth)	  // 11
-			
 		};
 
-		// front face
-		Vector3[] v = new Vector3[30]
-		{
-			template[0],	// left
-			template[1],	// left
-			template[4],	// left
-			template[1],	// left		
-			template[5],	// left		
-			template[4],	// left	
-			
-			template[4],	// top left
-			template[5],
-			template[8],
-			template[5],
-			template[9],	
-			template[8],
+		List<Vector3> points = new List<Vector3>();
 
-			template[5],	// mid center
-			template[6],	// mid center
-			template[9],	// mid center
-			template[6],	// mid center
-			template[10],	// mid center
-			template[9],	// mid center
-
-			template[6],	// right top
-			template[7],
-			template[10],
-			template[7],
-			template[11],
-			template[10],
-
-			template[2],	// right mid
-			template[3],
-			template[6],	
-			template[3],
-			template[7],
-			template[6],
-
-		};
-
-		System.Array.Resize(ref v, 88);
-
-		for (int i = 30; i < 60; i++) {
-		  v[i] = v[i - 30];
-		  v[i].z = -v[i].z;
-		}
-
-		// // build inside frame
-		// left inside
-		v[60+0] = template[1];
-		v[60+1] = new Vector3( template[1].x, template[1].y, -template[1].z);
-		v[60+2] = template[5];
-		v[60+3] = new Vector3( template[5].x, template[5].y, -template[5].z);
-
-		// top inside arch
-		v[60+4] = template[5];
-		v[60+5] = new Vector3( template[5].x, template[5].y, -template[5].z);
-		v[60+6] = template[6];
-		v[60+7] = new Vector3( template[6].x, template[6].y, -template[6].z);
+		points.Add( template[0] );
+		points.Add( template[1] );
+		points.Add( template[4] );
+		points.Add( template[5] );
 		
-		// right inside
-		v[60+8] = template[6];
-		v[60+9] = new Vector3( template[6].x, template[6].y, -template[6].z);
-		v[60+10] = template[2];
-		v[60+11] = new Vector3( template[2].x, template[2].y, -template[2].z);
+		points.Add( template[2] );
+		points.Add( template[3] );
+		points.Add( template[6] );
+		points.Add( template[7] );
 
-		int[] tris = new int[30]
-		{
-			0, 1, 2, 3, 4, 5,
-			6, 7, 8, 9, 10, 11,
-			12, 13, 14, 15, 16, 17,
-			18, 19, 20, 21, 22, 23,
-			24, 25, 26, 27, 28, 29
-		};
+		points.Add( template[4] );
+		points.Add( template[5] );
+		points.Add( template[8] );
+		points.Add( template[9] );
+
+		points.Add( template[6] );
+		points.Add( template[7] );
+		points.Add( template[10] );
+		points.Add( template[11] );
+
+		points.Add( template[5] );
+		points.Add( template[6] );
+		points.Add( template[9] );
+		points.Add( template[10] );
+
+		List<Vector3> reverse = new List<Vector3>();
 		
-		System.Array.Resize(ref tris, 78);
-
-		// copy and flip tris
-		for(int i = 30; i < 60; i+=3)
+		for(int i = 0; i < points.Count; i += 4)
 		{
-			tris[i+2] = tris[i-30] + 30;
-			tris[i+1] = tris[i-29] + 30;
-			tris[i+0] = tris[i-28] + 30;
+			reverse.Add( points[i + 1] - Vector3.forward * depth );
+			reverse.Add( points[i + 0] - Vector3.forward * depth );
+			reverse.Add( points[i + 3] - Vector3.forward * depth );
+			reverse.Add( points[i + 2] - Vector3.forward * depth );
 		}
 
-		int vInd = 60;
-		for(int i = 60; i < 78; i+=6)
-		{
-			tris[i+0] = vInd+0;
-			tris[i+1] = vInd+1;
-			tris[i+2] = vInd+2;
+		points.AddRange(reverse);
 
-			tris[i+3] = vInd+1;
-			tris[i+4] = vInd+3;
-			tris[i+5] = vInd+2;
+		points.Add( template[6] );
+		points.Add( template[5] );
+		points.Add( template[6] - Vector3.forward * depth );
+		points.Add( template[5] - Vector3.forward * depth );
 
-			vInd+=4;
-		}
+		points.Add( template[2] - Vector3.forward * depth );
+		points.Add( template[2] );
+		points.Add( template[6] - Vector3.forward * depth );
+		points.Add( template[6] );
 
-		pb_Face[] f = new pb_Face[13];
+		points.Add( template[1] );
+		points.Add( template[1] - Vector3.forward * depth );
+		points.Add( template[5] );
+		points.Add( template[5] - Vector3.forward * depth );
 
-		for(int i = 0; i < 13; i++)
-		{
-			int[] seg = new int[6];
-			System.Array.Copy(tris, i*6, seg, 0, 6);
-			f[i] = new pb_Face(seg);
-		}
-
-		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
+		pb_Object pb = pb_Object.CreateInstanceWithPoints(points.ToArray());
 		pb.gameObject.name = "Door";
 		return pb;
 	}
