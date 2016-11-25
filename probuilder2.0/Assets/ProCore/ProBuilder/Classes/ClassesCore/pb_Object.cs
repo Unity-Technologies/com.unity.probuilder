@@ -908,16 +908,17 @@ public class pb_Object : MonoBehaviour
 		profiler.BeginSample("group faces");
 		int n = -2;
 		Dictionary<int, List<pb_Face>> tex_groups = new Dictionary<int, List<pb_Face>>();
+		List<pb_Face> group;
 
 		foreach(pb_Face f in facesToRefresh)
 		{
 			if(f == null || f.manualUV)
 				continue;
 
-			if(f.textureGroup > 0 && tex_groups.ContainsKey(f.textureGroup))
-				tex_groups[f.textureGroup].Add(f);
+			if(f.textureGroup > 0 && tex_groups.TryGetValue(f.textureGroup, out group))
+				group.Add(f);
 			else
-				tex_groups.Add( f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>(1) { f });
+				tex_groups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<pb_Face>() { f });
 		}
 		profiler.EndSample();
 
@@ -1093,15 +1094,19 @@ public class pb_Object : MonoBehaviour
 
 		profiler.BeginSample("GetNormals");
 		// average the soft edge faces
+		int vertexCount = msh.vertexCount;
 		Vector3[] normals = msh.normals;
+
+		Vector3[] averages = new Vector3[24];
+		float[] counts = new float[24];
+
 		profiler.EndSample();
 
 
 		profiler.BeginSample("GetLookup");
-		int[] smoothGroup = new int[normals.Length];
-		/**
-		 * Create a lookup of each triangles smoothing group.
-		 */
+		int[] smoothGroup = new int[vertexCount];
+
+		// Create a lookup of each triangles smoothing group.
 		foreach(pb_Face face in faces)
 		{
 			foreach(int tri in face.distinctIndices)
@@ -1110,7 +1115,6 @@ public class pb_Object : MonoBehaviour
 		profiler.EndSample();
 
 		profiler.BeginSample("SmoothSeams");
-		List<int> list;
 
 		/**
 		 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
@@ -1118,41 +1122,37 @@ public class pb_Object : MonoBehaviour
 		 */
 		for(int i = 0; i < sharedIndices.Length; i++)
 		{
-			Dictionary<int, List<int>> shareable = new Dictionary<int, List<int>>();
-
-			/**
-			 * Sort indices that share a smoothing group
-			 */
-			foreach(int tri in sharedIndices[i].array)
+			for(int n = 0; n < 24; n++)	
 			{
-				if(smoothGroup[tri] < 1 || smoothGroup[tri] > 24)
-					continue;
-
-				if( shareable.TryGetValue(smoothGroup[tri], out list) )
-					list.Add(tri);
-				else
-					shareable.Add(smoothGroup[tri], new List<int>() { tri });
+				averages[n].x = 0f;
+				averages[n].y = 0f;
+				averages[n].z = 0f;
+				counts[n] = 0f;
 			}
 
-			/**
-			 * Average the normals
-			 */
-			foreach(KeyValuePair<int, List<int>> skvp in shareable)
+			for(int n = 0; n < sharedIndices[i].array.Length; n++)
 			{
-				Vector3 avg = Vector3.zero;
+				int index = sharedIndices[i].array[n];
 
-				List<int> indices = skvp.Value;
+				if(smoothGroup[index] < 1 || smoothGroup[index] > 24)
+					continue;
 
-				for(int vertexNormalIndex = 0; vertexNormalIndex < indices.Count; vertexNormalIndex++)
-				{
-					avg += normals[indices[vertexNormalIndex]];
-				}
+				averages[smoothGroup[index]].x += normals[index].x;
+				averages[smoothGroup[index]].y += normals[index].y;
+				averages[smoothGroup[index]].z += normals[index].z;
+				counts[smoothGroup[index]] += 1f;
+			}
 
-				// apply normal average back to the mesh
-				avg = (avg / (float)skvp.Value.Count).normalized;
+			for(int n = 0; n < sharedIndices[i].array.Length; n++)
+			{
+				int index = sharedIndices[i].array[n];
 
-				foreach(int vertexNormalIndex in skvp.Value)
-					normals[vertexNormalIndex] = avg;
+				if(smoothGroup[index] < 1 || smoothGroup[index] > 24)
+					continue;
+
+				normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
+				normals[index].y = averages[smoothGroup[index]].y / counts[smoothGroup[index]];
+				normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
 			}
 		}
 		profiler.EndSample();
