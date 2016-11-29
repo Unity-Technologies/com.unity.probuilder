@@ -23,8 +23,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					selection != null &&
+			return 	selection != null &&
 					selection.Length > 0;
 		}
 
@@ -42,7 +41,7 @@ namespace ProBuilder2.Actions
 			path = AssetDatabase.GetAssetPath(Selection.activeObject);
 			Mesh meshAsset = null;
 
-			if(path == "" || path == string.Empty) 
+			if(path == "" || path == string.Empty)
 			{
 				path = "Assets/ProBuilder Saved Assets";
 			}
@@ -62,7 +61,7 @@ namespace ProBuilder2.Actions
 				pb.Optimize();
 
 				AssetDatabase.CreateAsset(pb.msh, meshPath);
-				
+
 				pb.MakeUnique();
 
 				meshAsset = (Mesh) AssetDatabase.LoadAssetAtPath(meshPath, typeof(Mesh));
