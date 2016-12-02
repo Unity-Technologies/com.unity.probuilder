@@ -93,7 +93,7 @@ namespace ProBuilder2.EditorCommon
 			MenuOpenShapeCreator();
 		}
 
-		[MenuItem("GameObject/Create Other/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
+		[MenuItem("GameObject/3D Object/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
