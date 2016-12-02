@@ -150,10 +150,6 @@ namespace ProBuilder2.Common
 		 */
 		private pb_Renderable BuildFaceMesh(pb_Object pb)
 		{	
-			int[] selectedTriangles = pb_Face.AllTriangles(pb.SelectedFaces);
-
-			Vector3[] v = pbUtil.ValuesWithIndices(pb.vertices, selectedTriangles);
-
 			pb_Renderable ren = pool.Get();
 
 			ren.name = "Faces Renderable";
@@ -161,10 +157,16 @@ namespace ProBuilder2.Common
 			ren.materials = new Material[] { faceMaterial };
 
 			ren.mesh.Clear();
-			ren.mesh.vertices = v;
-			ren.mesh.normals = v;
-			ren.mesh.uv = new Vector2[v.Length];
-			ren.mesh.triangles = SequentialTriangles(v.Length);
+			ren.mesh.vertices = pb.vertices;
+
+#if UNITY_4_5 || UNITY_4_6 || UNITY_4_7
+			// Unity 5.0 and up is okay with null normals & uvs, but lower versions
+			// log a warning to the console even if the shader does not require them
+			ren.mesh.normals = pb.vertices;
+			ren.mesh.uv = new Vector2[pb.vertexCount];
+#endif
+
+			ren.mesh.triangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
 			return ren;
 		}
