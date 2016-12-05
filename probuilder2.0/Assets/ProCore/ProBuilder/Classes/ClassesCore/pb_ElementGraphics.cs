@@ -268,18 +268,16 @@ namespace ProBuilder2.Common
 
 		private pb_Renderable BuildEdgeMesh(pb_Object pb, pb_Edge[] universalEdgesDistinct)
 		{
-
-			Vector3[] pbverts = pb.vertices;
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
-
-			int vertexCount = System.Math.Min(universalEdgesDistinct.Count() * 2, pb_Constant.MAX_VERTEX_COUNT);
-			Vector3[] edge_verts = new Vector3[vertexCount];
+			int segmentCount = universalEdgesDistinct.Length;
+			int[] lineSegments = new int[segmentCount * 2];
 
 			int n = 0;
-			for(int i = 0; i < vertexCount / 2; i++) // (pb_Edge e in universalEdgesDistinct)
+
+			for(int i = 0; i < segmentCount; i++)
 			{
-				edge_verts[n++] = pbverts[sharedIndices[universalEdgesDistinct[i].x][0]];
-				edge_verts[n++] = pbverts[sharedIndices[universalEdgesDistinct[i].y][0]];
+				lineSegments[n++] = sharedIndices[universalEdgesDistinct[i].x][0];
+				lineSegments[n++] = sharedIndices[universalEdgesDistinct[i].y][0];
 			}
 
 			pb_Renderable ren = pool.Get();
@@ -289,24 +287,16 @@ namespace ProBuilder2.Common
 			ren.transform = pb.transform;
 			ren.mesh.name = "Wireframe Mesh";
 			ren.mesh.Clear();
-			ren.mesh.vertices = edge_verts;
+			ren.mesh.vertices = pb.vertices;
 #if !UNITY_5
-			ren.mesh.normals = edge_verts;	// appease unity 4
-			ren.mesh.uv = new Vector2[edge_verts.Length];
+			// appease unity 4
+			ren.mesh.normals = pb.vertices;
+			ren.mesh.uv = new Vector2[pb.vertexCount];
 #endif
 			ren.mesh.subMeshCount = 1;
-			ren.mesh.SetIndices(SequentialTriangles(edge_verts.Length), MeshTopology.Lines, 0);
+			ren.mesh.SetIndices(lineSegments, MeshTopology.Lines, 0);
 			
 			return ren;
-		}
-
-		static int[] SequentialTriangles(int len)
-		{
-			int[] tris = new int[len];
-			for(int i = 0; i < len; i++) {
-				tris[i] = i;
-			}
-			return tris;
 		}
 	}
 }
