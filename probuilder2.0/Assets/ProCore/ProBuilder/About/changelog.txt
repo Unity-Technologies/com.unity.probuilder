@@ -1,3 +1,26 @@
+# ProBuilder 2.6.6f0
+
+## Features
+
+- Unity 5.5 support.
+- Improve readability of Unity version -> ProBuilder package chart.
+- Improve performance of mesh rebuild functions.
+- Add API example showing how to highlight faces based on distance to a point.
+
+## Bug Fixes
+
+- Don't update mouse edge when not in geometry mode.
+- Fix face and edge previews only rendering a subset of elements on meshes with high vertex counts.
+- ProBuilder Editor doesn't need to be open to export meshes.
+- Fix weird triangulation on Door shape.
+  Fix some incorrect calls to pbUndo.RecordObjects that could cause Unity to lock up with large meshes.
+- Fix bug where "Export Mesh Asset" would always create an extra folder.
+
+## Changes
+
+- pb_Object.Refresh now accepts a bitmask to enable/disable different component refreshes.
+- Move Create ProBuilder Cube menu item to "GameObject/3D Object/ProBuilder Cube".
+
 # ProBuilder 2.6.5f0
 
 ## Features
