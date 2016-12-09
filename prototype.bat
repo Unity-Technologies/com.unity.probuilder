@@ -102,6 +102,9 @@ xcopy "%CD%\visual studio\ProBuilderMeshOps-Unity5\ProBuilderMeshOps-Unity5\bin\
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5\ProBuilderEditor-Unity5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
+echo ===: Import Unity 5.0 Specific Assets
+%unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity50.unitypackage
+
 echo ===: Override DLL GUIDs
 %unity_path_5_0% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
@@ -125,6 +128,9 @@ echo ===: Build Unity 5.3 DLL
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_3\ProBuilderEditor-Unity5_3\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
 
+echo ===: Import Unity 5.3 Specific Assets
+%unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity53.unitypackage
+
 echo ===: Override DLL GUIDs
 %unity_path_5_3% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.3-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
 
@@ -146,6 +152,9 @@ echo ===: Build Unity 5.5 DLL
 
 echo ===: Copy editor lib to staging
 xcopy "%CD%\visual studio\ProBuilderEditor-Unity5_5\ProBuilderEditor-Unity5_5\bin\Release\ProBuilderEditor-Unity5.dll" "%CD%\probuilder-staging\Assets\ProCore\ProBuilder\Editor\"
+
+echo ===: Import Unity 5.5 Specific Assets
+%unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -importPackage %CD%\probuilder2.0\UnityVersionSpecific\Unity55.unitypackage
 
 echo ===: Override DLL GUIDs
 %unity_path_5_5% -quit -batchMode -projectPath %CD%\probuilder-staging -logFile %CD%\bin\logs\probuilder5.5-guid_dll-log.txt -executeMethod pb_ExportPackage.OverrideDLLGUIDs
