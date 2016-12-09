@@ -25,6 +25,8 @@ public class HighlightNearestFace : MonoBehaviour
 		// Generate a 50x50 plane with 25 subdivisions, facing up, with no smoothing applied.
 		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, Axis.Up, false);
 
+		target.SetFaceMaterial(target.faces, pb_Constant.DefaultMaterial);
+
 		target.transform.position = new Vector3(travel * .5f, 0f, travel * .5f);
 
 		// Rebuild the mesh (apply pb_Object data to UnityEngine.Mesh)
