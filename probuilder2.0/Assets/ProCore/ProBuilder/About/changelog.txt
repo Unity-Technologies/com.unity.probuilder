@@ -89,7 +89,7 @@
 ## Features
 
 - Add STL file export support.
-- Standard Vertex Color shader now compatible with UNity 5.5 beta changes
+- Standard Vertex Color shader now compatible with Unity 5.5 beta changes.
 - Add API Example showing how to set custom default UV2 Unwrap Parameters.
 
 ## Bug Fixes
