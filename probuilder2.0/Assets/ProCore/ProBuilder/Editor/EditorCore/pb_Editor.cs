@@ -512,7 +512,7 @@ public class pb_Editor : EditorWindow
 #endif
 
 		// Check mouse position in scene and determine if we should highlight something
-		if(currentEvent.type == EventType.MouseMove)
+		if(currentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
 			UpdateMouse(currentEvent.mousePosition);
 
 		// Draw GUI Handles
