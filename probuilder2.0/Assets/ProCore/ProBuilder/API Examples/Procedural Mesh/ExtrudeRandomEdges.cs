@@ -20,6 +20,7 @@ public class ExtrudeRandomEdges : MonoBehaviour
 	void Start()
 	{
 		pb = pb_ShapeGenerator.PlaneGenerator(1, 1, 0, 0, Axis.Up, false);
+		pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial);
 		lastExtrudedFace = pb.faces[0];
 	}
 
