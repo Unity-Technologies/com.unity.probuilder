@@ -93,6 +93,11 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance, bool extrudeAsGroup, out pb_Face[] appendedFaces)
 	{
+		return Extrude(pb, faces, extrudeAsGroup ? ExtrudeMethod.VertexNormal : ExtrudeMethod.IndividualFaces, extrudeDistance, out appendedFaces);
+	}
+
+	public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float extrudeDistance, out pb_Face[] appendedFaces)
+	{
 		appendedFaces = null;
 
 		if(faces == null || faces.Length < 1)
@@ -103,6 +108,7 @@ namespace ProBuilder2.MeshOperations
 
 		int vertexCount = pb.vertexCount;
 		Vector3[] localVerts = pb.vertices;
+		bool extrudeAsGroup = method != ExtrudeMethod.IndividualFaces;
 
 		pb_Edge[][] perimeterEdges = extrudeAsGroup ? new pb_Edge[1][] { pbMeshUtils.GetPerimeterEdges(pb, lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
 
@@ -171,8 +177,8 @@ namespace ProBuilder2.MeshOperations
 				{
 					if( !extrudeAsGroup )
 					{
-						xnorm = nrm; // pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
-						ynorm = nrm; // xnorm;
+						xnorm = nrm;
+						ynorm = nrm;
 					}
 					else
 					{
@@ -188,7 +194,7 @@ namespace ProBuilder2.MeshOperations
 				// to be shortened or lengthened.
 				float compensatedDistanceX = extrudeDistance, compensatedDistanceY = extrudeDistance;
 
-				if(extrudeAsGroup)
+				if(method == ExtrudeMethod.FaceNormal)
 				{
 					compensatedDistanceX = pb_Math.Secant(Vector3.Angle(nrm, xnorm) * Mathf.Deg2Rad) * extrudeDistance;
 					compensatedDistanceY = pb_Math.Secant(Vector3.Angle(nrm, ynorm) * Mathf.Deg2Rad) * extrudeDistance;

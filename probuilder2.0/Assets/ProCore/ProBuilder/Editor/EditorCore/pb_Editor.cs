@@ -1809,7 +1809,7 @@ public class pb_Editor : EditorWindow
 					if(len > 0)
 					{
 						pb_Face[] append = null;
-						pb.Extrude(pb.SelectedFaces, 0.0001f, pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup), out append);
+						pb.Extrude(pb.SelectedFaces, pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod), 0.0001f, out append);
 						pb.SetSelectedFaces(pb.SelectedFaces);
 
 						ef += len;

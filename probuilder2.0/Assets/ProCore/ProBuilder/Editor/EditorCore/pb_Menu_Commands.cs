@@ -521,8 +521,8 @@ namespace ProBuilder2.EditorCommon
 
 					pb_Face[] result;
 					pb.Extrude(	pb.SelectedFaces,
+								pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
 								pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
-								pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
 								out result);
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
@@ -1492,7 +1492,7 @@ namespace ProBuilder2.EditorCommon
 				pb.SetSelectedFaces(faces);
 
 				wings = pb_WingedEdge.GetWingedEdges(pb, adjacent);
-				
+
 				// make sure the appended faces match the first adjacent face found
 				// both in winding and face properties
 				foreach(pb_WingedEdge wing in wings)

@@ -113,6 +113,7 @@ public static class pb_Constant
 	public const string pbVertexColorTool 				= "pbVertexColorTool";
 	public const string pbToolbarLocation 				= "pbToolbarLocation";
 	public const string pbDefaultEntity 				= "pbDefaultEntity";
+	public const string pbExtrudeMethod					= "pbExtrudeMethod";
 
 	// Color
 	public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";

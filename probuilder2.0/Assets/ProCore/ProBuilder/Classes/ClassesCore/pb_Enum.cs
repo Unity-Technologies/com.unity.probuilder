@@ -196,4 +196,17 @@ namespace ProBuilder2.Common
 		Tangents 	= 0x8,
 		Collisions	= 0x10
 	};
+
+	/**
+	 * Exrude the face selection by:
+	 * 	- Individual faces
+	 *  - Vertex normal (legacy "As Group")
+	 *	- Face normal (the extrude distance corresponds to distance from face centers)
+	 */
+	public enum ExtrudeMethod
+	{
+		IndividualFaces,
+		VertexNormal,
+		FaceNormal
+	}
 }

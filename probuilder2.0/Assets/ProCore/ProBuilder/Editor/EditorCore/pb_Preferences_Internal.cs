@@ -192,6 +192,10 @@ public class pb_Preferences_Internal
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)DragSelectMode.Difference;
 				return (T)System.Convert.ChangeType( (DragSelectMode) key, typeof(T));
 
+		case pb_Constant.pbExtrudeMethod:
+				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int)ExtrudeMethod.VertexNormal;
+				return (T)System.Convert.ChangeType( (ExtrudeMethod) key, typeof(T));
+
 #if !UNITY_4_7
 			case pb_Constant.pbShadowCastingMode:
 				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) ShadowCastingMode.TwoSided;
@@ -199,7 +203,7 @@ public class pb_Preferences_Internal
 #endif
 
 			default:
-				return (T)System.Convert.ChangeType( 0, typeof(T));
+				return default(T);
 		}
 	}
 
@@ -237,6 +241,7 @@ public class pb_Preferences_Internal
 		table.Add(pb_Constant.pbDefaultSelectionMode,			pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode));
 		table.Add(pb_Constant.pbDefaultCollider,			 	pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider));
 		table.Add(pb_Constant.pbToolbarLocation,			 	pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation));
+		table.Add(pb_Constant.pbExtrudeMethod,			 		pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod));
 
 		return table;
 	}
