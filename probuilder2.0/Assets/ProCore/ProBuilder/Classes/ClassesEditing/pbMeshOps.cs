@@ -101,6 +101,7 @@ namespace ProBuilder2.MeshOperations
 		pb_IntArray[] sharedIndices = pb.GetSharedIndices();
 		Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
+		int vertexCount = pb.vertexCount;
 		Vector3[] localVerts = pb.vertices;
 
 		pb_Edge[][] perimeterEdges = extrudeAsGroup ? new pb_Edge[1][] { pbMeshUtils.GetPerimeterEdges(pb, lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
@@ -140,6 +141,7 @@ namespace ProBuilder2.MeshOperations
 
 		List<pb_Edge>[] extrudedIndices = new List<pb_Edge>[perimeterEdges.Length];
 		Vector3[] normals = pb.msh.normals;
+		Vector3[] extrusionPerIndex = new Vector3[vertexCount];
 
 		List<Vector3[]> append_vertices = new List<Vector3[]>();
 		List<Color[]> append_color = new List<Color[]>();
@@ -159,6 +161,8 @@ namespace ProBuilder2.MeshOperations
 				pb_Face face = edgeFaces[i][n];
 
 				// Averages the normals using only vertices that are on the edge
+				Vector3 nrm = pb_Math.Normal(pb, face);
+
 				Vector3 xnorm = Vector3.zero;
 				Vector3 ynorm = Vector3.zero;
 
@@ -167,8 +171,8 @@ namespace ProBuilder2.MeshOperations
 				{
 					if( !extrudeAsGroup )
 					{
-						xnorm = pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
-						ynorm = xnorm;
+						xnorm = nrm; // pb_Math.Normal( localVerts[face.indices[0]], localVerts[face.indices[1]], localVerts[face.indices[2]] );
+						ynorm = nrm; // xnorm;
 					}
 					else
 					{
@@ -180,13 +184,25 @@ namespace ProBuilder2.MeshOperations
 				int x_sharedIndex = lookup[edge.x];
 				int y_sharedIndex = lookup[edge.y];
 
-				// this could be condensed to a single call with an array of new faces
+				// if the centers of extruded faces should uniformly be extruded some edges will need
+				// to be shortened or lengthened.
+				float compensatedDistanceX = extrudeDistance, compensatedDistanceY = extrudeDistance;
+
+				if(extrudeAsGroup)
+				{
+					compensatedDistanceX = pb_Math.Secant(Vector3.Angle(nrm, xnorm) * Mathf.Deg2Rad) * extrudeDistance;
+					compensatedDistanceY = pb_Math.Secant(Vector3.Angle(nrm, ynorm) * Mathf.Deg2Rad) * extrudeDistance;
+				}
+
+				extrusionPerIndex[edge.x] = xnorm.normalized * compensatedDistanceX;
+				extrusionPerIndex[edge.y] = ynorm.normalized * compensatedDistanceY;
+
 				append_vertices.Add( new Vector3[]
 					{
 						localVerts [ edge.x ],
 						localVerts [ edge.y ],
-						localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
-						localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
+						localVerts [ edge.x ] + extrusionPerIndex[edge.x],
+						localVerts [ edge.y ] + extrusionPerIndex[edge.y]
 					});
 
 				append_color.Add( new Color[]
@@ -293,8 +309,6 @@ namespace ProBuilder2.MeshOperations
 		 * If extruding as separate faces, weld each face to the tops of the bridging faces
 		 */
 		{
-			// Dictionary<int, int> hold = si.ToDictionary();
-
 			for(int i = 0; i < edgeFaces.Length; i++)
 			{
 				foreach(int n in pb_Face.AllTrianglesDistinct(edgeFaces[i]))
@@ -326,21 +340,11 @@ namespace ProBuilder2.MeshOperations
 		 * checking the normal averages
 		 *
 		 */
-		Vector3 norm = Vector3.zero;
-		int[] allIndices = pb_Face.AllTrianglesDistinct(faces);
 		foreach(pb_Face f in faces)
 		{
-			if(!extrudeAsGroup)
-			{
-				norm = pb_Math.Normal( localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
-			}
-
 			foreach(int ind in f.distinctIndices)
 			{
-				if(extrudeAsGroup)
-					norm = Norm( sharedIndices[lookup[ind]], allIndices, normals );
-
-				localVerts[ind] += norm.normalized * extrudeDistance;
+				localVerts[ind] += extrusionPerIndex[ind];
 			}
 		}
 

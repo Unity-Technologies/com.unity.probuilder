@@ -400,6 +400,14 @@ namespace ProBuilder2.Common
 
 			return false;
 		}
+
+		/**
+		 * Return the secant of radian `x` ( `1f / cos(x)` ).
+		 */
+		public static float Secant(float x)
+		{
+			return 1f / Mathf.Cos(x);
+		}
 #endregion
 
 #region Normal and Tangents
