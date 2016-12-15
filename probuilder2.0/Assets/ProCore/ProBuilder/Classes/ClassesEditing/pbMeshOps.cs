@@ -340,13 +340,8 @@ namespace ProBuilder2.MeshOperations
 		 * checking the normal averages
 		 *
 		 */
-		foreach(pb_Face f in faces)
-		{
-			foreach(int ind in f.distinctIndices)
-			{
-				localVerts[ind] += extrusionPerIndex[ind];
-			}
-		}
+		for(int i = 0; i < vertexCount; i++)
+			localVerts[i] += extrusionPerIndex[i];
 
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
