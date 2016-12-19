@@ -346,8 +346,29 @@ namespace ProBuilder2.MeshOperations
 		 * checking the normal averages
 		 *
 		 */
-		for(int i = 0; i < vertexCount; i++)
-			localVerts[i] += extrusionPerIndex[i];
+		int[] allIndices = pb_Face.AllTrianglesDistinct(faces);
+		float compensatedDistance = extrudeDistance;
+
+		foreach(pb_Face f in faces)
+		{
+			Vector3 faceNormal = pb_Math.Normal(localVerts[f.indices[0]], localVerts[f.indices[1]], localVerts[f.indices[2]]);
+			Vector3 norm = extrudeAsGroup ? Vector3.zero : faceNormal;
+
+			foreach(int ind in f.distinctIndices)
+			{
+				if(extrudeAsGroup)
+				{
+					norm = Norm(sharedIndices[lookup[ind]], allIndices, normals);
+
+					if(method == ExtrudeMethod.FaceNormal)
+					{
+						compensatedDistance = pb_Math.Secant(Vector3.Angle(faceNormal, norm) * Mathf.Deg2Rad) * extrudeDistance;
+					}
+				}
+
+				localVerts[ind] += norm.normalized * compensatedDistance;
+			}
+		}
 
 		pb.SetSharedIndices(si);
 		pb.SetVertices(localVerts);
