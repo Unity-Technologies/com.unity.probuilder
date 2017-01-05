@@ -96,6 +96,10 @@ namespace ProBuilder2.Common
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
+			#if PB_DEBUG
+			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
+			#endif
+
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
 			int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - pickerRect.y) - pickerRect.height));
 			int imageWidth = tex.width;
@@ -109,11 +113,19 @@ namespace ProBuilder2.Common
 			HashSet<int> indices = null;
 			HashSet<uint> used = new HashSet<uint>();
 
+			#if PB_DEBUG
+			List<Color> rectImg = new List<Color>();
+			#endif
+
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 			{
 				for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 				{
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
+
+					#if PB_DEBUG
+					rectImg.Add(pix[y * imageWidth + x]);
+					#endif
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
 					{
@@ -124,6 +136,20 @@ namespace ProBuilder2.Common
 					}
 				}
 			}
+
+			#if PB_DEBUG
+			if(width > 0 && height > 0)
+			{
+				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
+				Texture2D img = new Texture2D(width, height);
+				img.SetPixels(rectImg.ToArray());
+				img.Apply();
+				byte[] bytes = img.EncodeToPNG();
+				System.IO.File.WriteAllBytes("Assets/rect.png", bytes);
+				UnityEditor.AssetDatabase.Refresh();
+				GameObject.DestroyImmediate(img);
+			}
+			#endif
 
 			return selected;
 		}
@@ -226,7 +252,8 @@ namespace ProBuilder2.Common
 
 			// don't start at 0 because that means one vertex would be black, matching
 			// the color used to cull hidden vertices.
-			uint index = 0x02;
+			// uint index = 0x02;
+			uint index = 0xF2;
 
 			foreach(pb_Object pb in selection)
 			{

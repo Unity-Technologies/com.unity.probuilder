@@ -2,18 +2,24 @@
 {
 	Properties
 	{
-		_MainTex("Texture", 2D) = "white" {}
 		_Scale("Scale", Range(1,7)) = 3.3
 	}
 
 	SubShader
 	{
-		Tags { "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
+		Tags 
+		{
+			"IgnoreProjector"="True"
+			"RenderType"="Transparent"
+			"DisableBatching"="True"
+		}
+
 		Lighting Off
 		ZTest LEqual
 		ZWrite On
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend Off // SrcAlpha OneMinusSrcAlpha
+		Offset -1,-1
 
 		Pass 
 		{
@@ -24,7 +30,6 @@
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			sampler2D _MainTex;
 			float _Scale;
 
 			struct appdata
@@ -49,7 +54,7 @@
 
 				// o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.pos.xyz *= .99;
+				o.pos.xyz *= .95;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
 
 				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
@@ -75,7 +80,7 @@
 
 			half4 frag (v2f i) : COLOR
 			{
-				return tex2D(_MainTex, i.uv) * i.color;
+				return i.color;
 			}
 
 			ENDCG

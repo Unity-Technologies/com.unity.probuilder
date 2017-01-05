@@ -176,28 +176,33 @@ namespace ProBuilder2.Common
 		  */
 		private pb_Renderable BuildVertexMesh(pb_Object pb)
 		{
-			int vcount = 0;
+			ushort maxBillboardCount = ushort.MaxValue / 4;
+
+			int billboardCount = pb.sharedIndices.Length;
+
+			if(billboardCount > maxBillboardCount)
+				billboardCount = maxBillboardCount;
 
 			Vector3[] v = new Vector3[pb.sharedIndices.Length];
 			HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetCommonIndices(pb.SelectedTriangles));
 
-			for(int i = 0; i < v.Length; i++)	
+			for(int i = 0; i < billboardCount; i++)	
 				v[i] = pb.vertices[pb.sharedIndices[i][0]];
 
-			Vector3[] 	t_billboards 		= new Vector3[v.Length*4];
-			Vector3[] 	t_nrm 				= new Vector3[v.Length*4];
-			Vector2[] 	t_uvs 				= new Vector2[v.Length*4];
-			Vector2[] 	t_uv2 				= new Vector2[v.Length*4];
-			Color[]   	t_col 				= new Color[v.Length*4];
-			int[] 		t_tris 				= new int[v.Length*6];
+			Vector3[] 	t_billboards 		= new Vector3[billboardCount*4];
+			Vector3[] 	t_nrm 				= new Vector3[billboardCount*4];
+			Vector2[] 	t_uvs 				= new Vector2[billboardCount*4];
+			Vector2[] 	t_uv2 				= new Vector2[billboardCount*4];
+			Color[]   	t_col 				= new Color[billboardCount*4];
+			int[] 		t_tris 				= new int[billboardCount*6];
 
 			int n = 0;
 			int t = 0;
 
-			Vector3 up = Vector3.up;// * .1f;
-			Vector3 right = Vector3.right;// * .1f;
+			Vector3 up = Vector3.up;
+			Vector3 right = Vector3.right;
 			
-			for(int i = 0; i < v.Length; i++)
+			for(int i = 0; i < billboardCount; i++)
 			{
 				t_billboards[t+0] = v[i];
 				t_billboards[t+1] = v[i];
@@ -219,12 +224,12 @@ namespace ProBuilder2.Common
 				t_nrm[t+2] = Vector3.forward;
 				t_nrm[t+3] = Vector3.forward;
 
-				t_tris[n+0] = t+0+vcount;
-				t_tris[n+1] = t+1+vcount;
-				t_tris[n+2] = t+2+vcount;
-				t_tris[n+3] = t+1+vcount;
-				t_tris[n+4] = t+3+vcount;
-				t_tris[n+5] = t+2+vcount;
+				t_tris[n+0] = t + 0;
+				t_tris[n+1] = t + 1;
+				t_tris[n+2] = t + 2;
+				t_tris[n+3] = t + 1;
+				t_tris[n+4] = t + 3;
+				t_tris[n+5] = t + 2;
 
 				if( selected.Contains(i) )
 				{
