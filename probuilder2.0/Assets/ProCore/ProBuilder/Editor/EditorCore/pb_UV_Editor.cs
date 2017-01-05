@@ -134,6 +134,9 @@ public class pb_UV_Editor : EditorWindow
 	// true when uvs are being moved around
 	bool modifyingUVs = false;
 
+	// work around a bug in GUI where a named control can lose focus after "delete"
+	bool eatNextKeyUp = false;
+
 	// The first selected face's material.  Used to draw texture preview in 0,0 - 1,1 space.
 	Material preview_material;
 
@@ -1042,8 +1045,11 @@ public class pb_UV_Editor : EditorWindow
 
 	void HandleKeyInput(Event e)
 	{
-		if(e.type != EventType.KeyUp)
+		if(	e.type != EventType.KeyUp || eatNextKeyUp)
+		{
+			eatNextKeyUp = false;
 			return;
+		}
 
 		bool used = false;
 
@@ -1051,14 +1057,11 @@ public class pb_UV_Editor : EditorWindow
 		{
 			case KeyCode.Keypad0:
 			case KeyCode.Alpha0:
-				if(GUI.GetNameOfFocusedControl().Equals(""))
-				{
-					ResetCanvas();
-					uvGraphOffset = Vector2.zero;
-					e.Use();
-					needsRepaint = true;
-					used = true;
-				}
+				ResetCanvas();
+				uvGraphOffset = Vector2.zero;
+				e.Use();
+				needsRepaint = true;
+				used = true;
 				break;
 
 			case KeyCode.Q:
@@ -2698,8 +2701,10 @@ public class pb_UV_Editor : EditorWindow
 		if(GUILayout.Button("Convert to Manual", EditorStyles.miniButton))
 			Menu_SetManualUV();
 
+		bool isKeyDown = Event.current.type == EventType.KeyDown;
+
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
-		{
+		{		
 			if(!modifyingUVs_AutoPanel)
 			{
 				modifyingUVs_AutoPanel = true;
@@ -2717,8 +2722,10 @@ public class pb_UV_Editor : EditorWindow
 			RefreshSelectedUVCoordinates();
 		}
 
-		GUI.enabled = selectedFaceCount > 0;
+		if( isKeyDown && Event.current.type == EventType.used )
+			eatNextKeyUp = true;
 
+		GUI.enabled = selectedFaceCount > 0;
 	}
 
 	bool tool_weldButton = false;

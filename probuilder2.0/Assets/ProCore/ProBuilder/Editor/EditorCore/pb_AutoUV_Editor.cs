@@ -22,7 +22,6 @@ namespace ProBuilder2.EditorCommon
 
 	#region MEMBERS
 
-		public const string ROTATION_CONTROL_NAME = "rotation";
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
 		static pb_UV uv_gui = new pb_UV();		// store GUI changes here, so we may selectively apply them later
@@ -121,8 +120,7 @@ namespace ProBuilder2.EditorCommon
 			tempFloat = uv_gui.rotation;
 			EditorGUI.showMixedValue = uv_diff["rotation"];
 			GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width-64));
-
-			UnityEngine.GUI.SetNextControlName(ROTATION_CONTROL_NAME);
+			UnityEngine.GUI.SetNextControlName("rotation");
 			uv_gui.rotation = EditorGUILayout.Slider(uv_gui.rotation, 0f, 360f, GUILayout.MaxWidth(width));
 
 			/**
@@ -131,19 +129,16 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["scalex"] || uv_diff["scaley"];
 			tempVec2 = uv_gui.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
-
 			uv_gui.scale = EditorGUILayout.Vector2Field("Tiling", uv_gui.scale, GUILayout.MaxWidth(width));
 
 			// Draw tiling shortcuts
 			GUILayout.BeginHorizontal();
-
 			if( GUILayout.Button(".5", EditorStyles.miniButtonLeft) )	uv_gui.scale = Vector2.one * 2f;
 			if( GUILayout.Button("1", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one;
 			if( GUILayout.Button("2", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .5f;
 			if( GUILayout.Button("4", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .25f;
 			if( GUILayout.Button("8", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .125f;
 			if( GUILayout.Button("16", EditorStyles.miniButtonRight) ) 	uv_gui.scale = Vector2.one * .0625f;
-
 			GUILayout.EndHorizontal();
 
 			if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
