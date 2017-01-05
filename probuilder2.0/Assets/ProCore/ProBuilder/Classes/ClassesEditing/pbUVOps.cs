@@ -402,7 +402,7 @@ public static class pbUVOps
 		float error = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
 
 		// now check that the matched UVs are on top of one another if the error allowance is greater than some small value
-		if(error > .02)
+		if(error > .02f)
 		{
 			// first try rotating 180 degrees
 			foreach(int i in f2.distinctIndices)

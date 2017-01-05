@@ -623,77 +623,21 @@ public class pb_UV_Editor : EditorWindow
 
 					foreach(KeyValuePair<int, List<pb_Face>> kvp in textureGroups)
 					{
-						/**
-						 * Rotation - only applies to rotation tool
-						 */
-						if(tool == Tool.Rotate)
+						if(tool == Tool.Move)
+						{
+							foreach(pb_Face face in kvp.Value)
+								face.uv.offset -= handlePosition - handlePosition_origin;
+						} 
+						else if(tool == Tool.Rotate)
 						{
 							foreach(pb_Face face in kvp.Value)
 							{
-								if((face.uv.flipU ^ face.uv.flipV) ^ face.uv.swapUV)
-									uvRotation = -uvRotation;
-
-								face.uv.rotation += uvRotation;
-								if(face.uv.rotation > 360f) face.uv.rotation = face.uv.rotation % 360f;
-								if(face.uv.rotation < 0f) face.uv.rotation = 360f + (face.uv.rotation % 360f);
+								if(face.uv.rotation > 360f)
+									face.uv.rotation = face.uv.rotation % 360f;
+								else if(face.uv.rotation < 0f)
+									face.uv.rotation = 360f + (face.uv.rotation % 360f);
 							}
 						}
-
-						/**
-						 * Scale is applied in real-time
-						 */
-
-						/**
-						 * Reproject because uv.localPivot needs to be accurate for this to work properly
-						 */
-						// foreach(pb_Face face in kvp.Value)
-						// 	face.uv.offset = Vector2.zero;
-
-						// Vector3 nrm = Vector3.zero;
-						// foreach(pb_Face face in kvp.Value)
-						// {
-						// 	nrm += pb_Math.Normal( 	pb.vertices[face.indices[0]],
-						// 							pb.vertices[face.indices[1]],
-						// 							pb.vertices[face.indices[2]] );
-						// }
-
-						// nrm /= (float) kvp.Value.Count;
-
-						// int[] tris = pb_Face.AllTriangles(kvp.Value).ToArray();
-
-						// if(kvp.Value[0].uv.useWorldSpace)
-						// {
-						// 	pb.transform.TransformDirection(nrm);
-						// 	pb_UVUtility.PlanarMap( pb.transform.ToWorldSpace(pb.vertices.ValuesWithIndices(tris)), kvp.Value[0].uv, nrm );
-						// }
-						// else
-						// {
-						// 	pb_UVUtility.PlanarMap( pb.vertices.ValuesWithIndices(tris), kvp.Value[0].uv, nrm );
-						// }
-
-						// foreach(pb_Face face in kvp.Value)
-						// 	face.uv.localPivot = kvp.Value[0].uv.localPivot;
-
-						// /**
-						//  * Translation - applies for every tool
-						//  */
-						// Vector2 handle = handlePosition;
-						// Vector2 cen = pb_Bounds2D.Center(pb.uv, tris);
-
-						// Debug.Log("localPivot : " + kvp.Value[0].uv.localPivot + "\ncalculated pivot: " + cen );
-
-						// foreach(pb_Face face in kvp.Value)
-						// 	face.uv.offset = -((handle - face.uv.localPivot) - (handle-cen));
-
-						// TROUBLE !!!!
-						// assigning this way loses the scale/rotation transforms applied by auto settings 
-
-						Debug.Log("origin: " + handlePosition_origin + "\ncurrent: " + handlePosition );
-
-						if(tool != Tool.Rotate)
-							foreach(pb_Face face in kvp.Value)
-								face.uv.offset -= handlePosition - handlePosition_origin;
-
 					}
 				}
 				else
@@ -1528,25 +1472,43 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				if(mode != UVMode.Auto)
-					pbUndo.RegisterCompleteObjectUndo(selection, "Rotate UVs");
-
+				pbUndo.RecordObjects(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
 			if(ControlKey)
 				uvRotation = pbUtil.SnapValue(uvRotation, 15f);
 
-			for(int n = 0; n < selection.Length; n++)
+			// Do rotation around the handle pivot in manual mode
+			if(mode == UVMode.Mixed || mode == UVMode.Manual)
 			{
-				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
+				for(int n = 0; n < selection.Length; n++)
+				{
+					pb_Object pb = selection[n];
+					Vector2[] uvs = pb.uv;
 
-				foreach(int i in distinct_indices[n])
-					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
+					foreach(int i in distinct_indices[n])
+						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+					pb.SetUV(uvs);
+					pb.msh.uv = uvs;
+				}
+			}
+
+			// Then apply per-face rotation for auto mode
+			if(mode == UVMode.Mixed || mode == UVMode.Auto)
+			{
+				for(int n = 0; n < selection.Length; n++)
+				{
+					pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+
+					foreach(pb_Face face in autoFaces)
+						face.uv.rotation += uvRotation - t_uvRotation;
+
+					selection[n].RefreshUV(autoFaces);
+				}
+
+				RefreshSelectedUVCoordinates();
 			}
 
 			nearestElement.valid = false;
@@ -1604,9 +1566,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				if(mode != UVMode.Auto)
-					pbUndo.RegisterCompleteObjectUndo(selection, "Scale UVs");
-
+				pbUndo.RecordObjects(selection, "Scale UVs");
 				OnBeginUVModification();
 			}
 

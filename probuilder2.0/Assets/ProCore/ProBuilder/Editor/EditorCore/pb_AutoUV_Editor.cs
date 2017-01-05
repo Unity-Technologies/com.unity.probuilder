@@ -121,7 +121,10 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["rotation"];
 			GUILayout.Label(new GUIContent("Rotation", "Rotation around the center of face UV bounds."), GUILayout.MaxWidth(width-64));
 			UnityEngine.GUI.SetNextControlName("rotation");
-			uv_gui.rotation = EditorGUILayout.Slider(uv_gui.rotation, 0f, 360f, GUILayout.MaxWidth(width));
+			EditorGUI.BeginChangeCheck();
+			tempFloat = EditorGUILayout.Slider(tempFloat, 0f, 360f, GUILayout.MaxWidth(width));
+			if(EditorGUI.EndChangeCheck())
+				SetRotation(tempFloat, selection);
 
 			/**
 			 * Scale
@@ -129,6 +132,7 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["scalex"] || uv_diff["scaley"];
 			tempVec2 = uv_gui.scale;
 			UnityEngine.GUI.SetNextControlName("scale");
+			EditorGUI.BeginChangeCheck();
 			uv_gui.scale = EditorGUILayout.Vector2Field("Tiling", uv_gui.scale, GUILayout.MaxWidth(width));
 
 			// Draw tiling shortcuts
@@ -140,11 +144,12 @@ namespace ProBuilder2.EditorCommon
 			if( GUILayout.Button("8", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .125f;
 			if( GUILayout.Button("16", EditorStyles.miniButtonRight) ) 	uv_gui.scale = Vector2.one * .0625f;
 			GUILayout.EndHorizontal();
-
-			if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
-			if(tempVec2.y != uv_gui.scale.y) { SetScale(uv_gui.scale, pb_Axis2d.Y, selection); }
-
-			if(tempFloat != uv_gui.rotation) { SetRotation(uv_gui.rotation, selection); }
+			
+			if(EditorGUI.EndChangeCheck())
+			{		
+				if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
+				if(tempVec2.y != uv_gui.scale.y) { SetScale(uv_gui.scale, pb_Axis2d.Y, selection); }
+			}
 
 			GUILayout.Space(4);
 
@@ -412,7 +417,10 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetRotation(float rot, pb_Object[] sel)
 		{
+			Debug.Log("SetRotation");
+
 			pbUndo.RecordObjects(sel, "Rotate UVs");
+
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
