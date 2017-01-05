@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if PB_DEBUG
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,3 +55,4 @@ public class RenderTextureTest : EditorWindow
 		GameObject.DestroyImmediate(go);
 	}
 }
+#endif

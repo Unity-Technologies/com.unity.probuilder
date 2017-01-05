@@ -1,3 +1,5 @@
+#if PB_DEBUG
+
 using UnityEngine;
 using UnityEditor;
 using System.Text;
@@ -13,7 +15,6 @@ using Parabox.Debug;
  */
 public class UnitTests : Editor
 {
-#if PB_DEBUG2
 	static pb_Profiler profiler = new pb_Profiler("ProBuilder Performance Tests");
 
 	static System.Func<bool>[] tests = new System.Func<bool>[]
@@ -248,5 +249,5 @@ public class UnitTests : Editor
 
 		return true;
 	}
-#endif
 }
+#endif

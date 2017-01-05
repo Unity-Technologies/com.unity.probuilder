@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -495,24 +494,6 @@ namespace ProBuilder2.Common
 			( Mathf.Abs(snap.z) < 0.0001f ? _z : snap.z * Mathf.Round(_z / snap.z) )
 			);
 		return v;
-	}
-#endregion
-
-#region ENUM
-
-	// http://stackoverflow.com/questions/79126/create-generic-method-constraining-t-to-an-enum
-	public static T ParseEnum<T>(string value, T defaultValue) where T : struct, IConvertible
-	{
-		if (!typeof(T).IsEnum)
-			throw new ArgumentException("T must be an enumerated type");
-
-		if (string.IsNullOrEmpty(value))
-			return defaultValue;
-
-		foreach (T item in Enum.GetValues(typeof(T)))
-			if (item.ToString().ToLower().Equals(value.Trim().ToLower())) return item;
-
-		return defaultValue;
 	}
 #endregion
 

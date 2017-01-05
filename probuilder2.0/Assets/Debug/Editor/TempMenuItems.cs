@@ -10,8 +10,6 @@ using System.Text;
 using System;
 using System.Reflection;
 
-using Parabox.Debug;
-
 public class TempMenuItems : EditorWindow
 {
 	[MenuItem("Tools/Temp Menu Item &d")]
