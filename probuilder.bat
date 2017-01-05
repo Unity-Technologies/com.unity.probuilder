@@ -3,7 +3,7 @@
 set unity_path_4="D:\Applications\Unity 4.7.0f1\Editor\Unity.exe"
 set unity_path_5_0="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set unity_path_5_3="D:\Applications\Unity 5.3.0f4\Editor\Unity.exe"
-set unity_path_5_5="D:\Applications\Unity 5.5.0b6\Editor\Unity.exe"
+set unity_path_5_5="D:\Applications\Unity 5.5.0f3\Editor\Unity.exe"
 
 set msbuild="%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"
 set build_directory="%CD%\bin\debug"
