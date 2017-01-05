@@ -417,8 +417,6 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetRotation(float rot, pb_Object[] sel)
 		{
-			Debug.Log("SetRotation");
-
 			pbUndo.RecordObjects(sel, "Rotate UVs");
 
 			for(int i = 0; i < sel.Length; i++)
