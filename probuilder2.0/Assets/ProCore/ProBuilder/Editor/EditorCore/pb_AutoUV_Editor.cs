@@ -135,21 +135,21 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 			uv_gui.scale = EditorGUILayout.Vector2Field("Tiling", uv_gui.scale, GUILayout.MaxWidth(width));
 
-			// Draw tiling shortcuts
-			GUILayout.BeginHorizontal();
-			if( GUILayout.Button(".5", EditorStyles.miniButtonLeft) )	uv_gui.scale = Vector2.one * 2f;
-			if( GUILayout.Button("1", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one;
-			if( GUILayout.Button("2", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .5f;
-			if( GUILayout.Button("4", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .25f;
-			if( GUILayout.Button("8", EditorStyles.miniButtonMid) )		uv_gui.scale = Vector2.one * .125f;
-			if( GUILayout.Button("16", EditorStyles.miniButtonRight) ) 	uv_gui.scale = Vector2.one * .0625f;
-			GUILayout.EndHorizontal();
-			
 			if(EditorGUI.EndChangeCheck())
-			{		
+			{
 				if(tempVec2.x != uv_gui.scale.x) { SetScale(uv_gui.scale, pb_Axis2d.X, selection); }
 				if(tempVec2.y != uv_gui.scale.y) { SetScale(uv_gui.scale, pb_Axis2d.Y, selection); }
 			}
+
+			// Draw tiling shortcuts
+			GUILayout.BeginHorizontal();
+			if( GUILayout.Button(".5", EditorStyles.miniButtonLeft) )	SetScale(Vector2.one * 2f, pb_Axis2d.XY, selection);
+			if( GUILayout.Button("1", EditorStyles.miniButtonMid) )		SetScale(Vector2.one, pb_Axis2d.XY, selection);
+			if( GUILayout.Button("2", EditorStyles.miniButtonMid) )		SetScale(Vector2.one * .5f, pb_Axis2d.XY, selection);
+			if( GUILayout.Button("4", EditorStyles.miniButtonMid) )		SetScale(Vector2.one * .25f, pb_Axis2d.XY, selection);
+			if( GUILayout.Button("8", EditorStyles.miniButtonMid) )		SetScale(Vector2.one * .125f, pb_Axis2d.XY, selection);
+			if( GUILayout.Button("16", EditorStyles.miniButtonRight) ) 	SetScale(Vector2.one * .0625f, pb_Axis2d.XY, selection);
+			GUILayout.EndHorizontal();
 
 			GUILayout.Space(4);
 
