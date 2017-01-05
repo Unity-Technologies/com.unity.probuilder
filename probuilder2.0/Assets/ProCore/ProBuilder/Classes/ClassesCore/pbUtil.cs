@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using System.IO;
 
 #if PB_DEBUG
 using Parabox.Debug;
@@ -454,14 +453,7 @@ namespace ProBuilder2.Common
 		Func<TSource, TKey> keySelector)
 	{
 		HashSet<TKey> knownKeys = new HashSet<TKey>();
-
-		foreach (TSource element in source)
-		{
-			if (knownKeys.Add(keySelector(element)))
-			{
-				yield return element;
-			}
-		}
+		return source.Where(x => knownKeys.Add(keySelector(x)));
 	}
 #endregion
 

@@ -577,6 +577,7 @@ namespace ProBuilder2.MeshOperations
 				used.Add(cur.edge);
 
 				List<pb_WingedEdge> spokes = GetSpokes(cur, ind, true).DistinctBy(x => x.edge.common).ToList();
+				
 				cur = null;
 
 				if(spokes != null && spokes.Count == 4)
