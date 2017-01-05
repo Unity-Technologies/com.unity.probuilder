@@ -252,8 +252,7 @@ namespace ProBuilder2.Common
 
 			// don't start at 0 because that means one vertex would be black, matching
 			// the color used to cull hidden vertices.
-			// uint index = 0x02;
-			uint index = 0xF2;
+			uint index = 0x02;
 
 			foreach(pb_Object pb in selection)
 			{
