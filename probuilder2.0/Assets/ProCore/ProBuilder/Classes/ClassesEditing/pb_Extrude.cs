@@ -222,7 +222,6 @@ namespace ProBuilder2.MeshOperations
 				foreach(pb_Face face in group)
 				{
 					// @todo keep together if possible
-					face.smoothingGroup = -1;
 					face.textureGroup = -1;
 
 					Vector3 normal = pb_Math.Normal(pb, face);
