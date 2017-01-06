@@ -82,6 +82,7 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 * Extrudes the passed faces by extrudeDistance amount.  @faces will remain valid.
 	 */
+	[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance)
 	{
 		pb_Face[] appended;
@@ -91,11 +92,13 @@ namespace ProBuilder2.MeshOperations
 	/**
 	 * Extrudes passed faces on their normal axis using extrudeDistance.
 	 */
+	[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, float extrudeDistance, bool extrudeAsGroup, out pb_Face[] appendedFaces)
 	{
 		return Extrude(pb, faces, extrudeAsGroup ? ExtrudeMethod.VertexNormal : ExtrudeMethod.IndividualFaces, extrudeDistance, out appendedFaces);
 	}
 
+	[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
 	public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float extrudeDistance, out pb_Face[] appendedFaces)
 	{
 		appendedFaces = null;

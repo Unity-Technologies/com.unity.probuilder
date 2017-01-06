@@ -1,3 +1,5 @@
+#define PB_DEBUG
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -51,7 +53,19 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RecordObjects(Object[] objs, string msg)
 		{
-			if(objs == null) return;		
+			if(objs == null) return;	
+
+			#if PB_DEBUG
+			foreach(pb_Object pb in objs)
+			{
+				if(pb is pb_Object && ((pb_Object)pb).vertexCount > 256)	
+				{
+					Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)pb).vertexCount);
+					break;
+				}
+			}
+			#endif
+
 			Undo.RecordObjects(objs, msg);
 		}
 

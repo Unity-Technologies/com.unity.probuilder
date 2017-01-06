@@ -10,6 +10,9 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Extrude
 	{
+		/**
+		 * Extrude faces using method and distance.
+		 */
 		public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)

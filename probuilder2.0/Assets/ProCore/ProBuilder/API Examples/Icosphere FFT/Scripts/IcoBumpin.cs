@@ -134,12 +134,10 @@ namespace ProBuilder2.Examples
 			ico.gameObject.GetComponent<MeshRenderer>().sharedMaterial = material;
 #endif
 
-			pb_Face[] connectingFaces;
-
 			// Extrude all faces on the icosphere by a small amount.  The third boolean parameter
 			// specifies that extrusion should treat each face as an individual, not try to group
 			// all faces together.
-			ico.Extrude(shell, startingExtrusion, false, out connectingFaces);
+			ico.Extrude(shell, ExtrudeMethod.IndividualFaces, startingExtrusion);
 
 			// ToMesh builds the mesh positions, submesh, and triangle arrays.  Call after adding
 			// or deleting vertices, or changing face properties.
