@@ -15,38 +15,20 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		// EditorWindow.GetWindow<TempMenuItems>();
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
 
-		Dictionary<uint, pb_Tuple<pb_Object, int>> map;
+		pbUndo.RecordObjects(selection, "Extrude Faces (Experimental)");
 
-		Texture2D tex = pb_SelectionPicker.RenderSelectionPickerTexture(
-			SceneView.lastActiveSceneView.camera,
-			Selection.transforms.GetComponents<pb_Object>(),
-			out map);
+		foreach(pb_Object pb in selection)
+		{
+			pb.Extrude(pb.SelectedFaces);
 
-		pb_EditorUtility.SaveTexture(tex, "Assets/test.png");
+			pb.ToMesh();
+			pb.Refresh();
+			pb.Optimize();
+		}
 
-		GameObject.DestroyImmediate(tex);
-	}
-
-	Color32 color = new Color32(255, 0, 0, 255);
-
-	void OnGUI()
-	{
-		color = EditorGUILayout.ColorField("color", color);
-
-		int c = color.r << 16 | color.g << 8 | color.b;
-
-		GUILayout.Label("color : " + color);
-		GUILayout.Label("packed: " + c);
-
-		Color32 u = new Color32(
-			(byte) ((c >> 16) & 0xFF),
-			(byte) ((c >>  8) & 0xFF),
-			(byte) ((c      ) & 0xFF),
-			(byte) (255)
-			);
-		GUILayout.Label("unpacked: " + u);
+		pb_Editor.Refresh(true);
 	}
 
 }
