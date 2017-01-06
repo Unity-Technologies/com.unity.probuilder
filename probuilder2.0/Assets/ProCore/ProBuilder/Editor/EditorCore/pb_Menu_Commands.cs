@@ -673,6 +673,8 @@ namespace ProBuilder2.EditorCommon
 			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
 			float growSelectionAngle = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
 
+			if(!angleGrow && !iterative)
+				iterative = true;
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
