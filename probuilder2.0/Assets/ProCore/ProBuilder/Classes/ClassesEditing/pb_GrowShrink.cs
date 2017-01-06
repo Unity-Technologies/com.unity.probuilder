@@ -51,7 +51,14 @@ namespace ProBuilder2.MeshOperations
 			return neighboring;
 		}
 
-		private static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
+		private static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
+
+		public static void Flood(pb_WingedEdge wing, HashSet<pb_Face> selection)
+		{
+			Flood(null, wing, Vector3_Zero, -1f, selection);
+		}
+
+		public static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
 		{
 			pb_WingedEdge next = wing;
 
@@ -74,7 +81,7 @@ namespace ProBuilder2.MeshOperations
 					else
 					{
 						if( selection.Add(opp.face) )
-							Flood(pb, opp, Vector3.zero, maxAngle, selection);
+							Flood(pb, opp, wingNrm, maxAngle, selection);
 					}
 				}
 
@@ -96,7 +103,7 @@ namespace ProBuilder2.MeshOperations
 				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
 				{
 					flood.Add(wings[i].face);
-					Flood(pb, wings[i], maxAngleDiff > 0f ? pb_Math.Normal(pb, wings[i].face) : Vector3.zero, maxAngleDiff, flood);
+					Flood(pb, wings[i], maxAngleDiff > 0f ? pb_Math.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
 				}
 			}
 			return flood;

@@ -107,7 +107,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Face> perimeterFaces = new List<pb_Face>();
 
-			pb_Edge[] perimeterEdges = pbMeshUtils.GetPerimeterEdges(pb, sharedIndicesLookup, selFaces).ToArray();
+			pb_Edge[] perimeterEdges = pbMeshUtils.GetPerimeterEdges(sharedIndicesLookup, selFaces).ToArray();
 			pb_Edge[] universalEdges = new pb_Edge[perimeterEdges.Length];
 
 			for(int i = 0; i < perimeterEdges.Length; i++)
@@ -326,13 +326,13 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static IEnumerable<pb_Edge> GetPerimeterEdges(pb_Object pb, IEnumerable<pb_Face> faces)
 		{
-			return GetPerimeterEdges(pb, pb.sharedIndices.ToDictionary(), faces);
+			return GetPerimeterEdges(pb.sharedIndices.ToDictionary(), faces);
 		}
 
 		/**
 		 * Get all edges that are on the perimeter of this face group selection.
 		 */
-		public static IEnumerable<pb_Edge> GetPerimeterEdges(pb_Object pb, Dictionary<int, int> sharedIndicesLookup, IEnumerable<pb_Face> faces)
+		public static IEnumerable<pb_Edge> GetPerimeterEdges(Dictionary<int, int> sharedIndicesLookup, IEnumerable<pb_Face> faces)
 		{
 			List<pb_Edge> faceEdges = faces.SelectMany(x => x.edges).ToList();	// actual edges
 			int edgeCount = faceEdges.Count;

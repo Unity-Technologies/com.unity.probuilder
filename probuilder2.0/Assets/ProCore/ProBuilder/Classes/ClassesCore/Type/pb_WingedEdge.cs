@@ -81,6 +81,10 @@ namespace ProBuilder2.Common
 			return null;
 		}
 
+		/**
+		 *	Returns a new set of edges where each edge's y matches the next edge x.
+		 *	The first edge is used as a starting point.
+		 */
 		public static List<pb_Edge> SortEdgesByAdjacency(pb_Face face)
 		{
 			// grab perimeter edges
@@ -90,8 +94,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Returns a new set of edges where each edge's y matches the next edge x.
-		 *	The first edge is used as a starting point.
+		 * Sort edges list by adjacency.
 		 */
 		public static List<pb_Edge> SortEdgesByAdjacency(List<pb_Edge> edges)
 		{
@@ -161,9 +164,9 @@ namespace ProBuilder2.Common
 		 *	Generate a Winged Edge data structure.
 		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
 		 */
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false)
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> lookup = sharedIndexLookup == null ? pb.sharedIndices.ToDictionary() : sharedIndexLookup;
 			IEnumerable<pb_Face> distinct = faces.Distinct();
 
 			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();

@@ -110,7 +110,7 @@ namespace ProBuilder2.MeshOperations
 		Vector3[] localVerts = pb.vertices;
 		bool extrudeAsGroup = method != ExtrudeMethod.IndividualFaces;
 
-		pb_Edge[][] perimeterEdges = extrudeAsGroup ? new pb_Edge[1][] { pbMeshUtils.GetPerimeterEdges(pb, lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
+		pb_Edge[][] perimeterEdges = extrudeAsGroup ? new pb_Edge[1][] { pbMeshUtils.GetPerimeterEdges(lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
 
 		if(perimeterEdges == null || perimeterEdges.Length < 1 || (extrudeAsGroup && perimeterEdges[0].Length < 3))
 		{
