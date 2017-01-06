@@ -519,11 +519,9 @@ namespace ProBuilder2.EditorCommon
 				{
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
-					pb_Face[] result;
 					pb.Extrude(	pb.SelectedFaces,
 								pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
-								pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
-								out result);
+								pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance));
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
 
@@ -1190,15 +1188,17 @@ namespace ProBuilder2.EditorCommon
 
 			pbUndo.RecordSelection(selection, "Flip Face Edges");
 			int success = 0;
+			int attempts = 0;
 
 			foreach(pb_Object pb in selection)
 			{
-
 				foreach(pb_Face face in pb.SelectedFaces)
 				{
 					if( pb.FlipEdge(face) )
 						success++;
 				}
+
+				attempts++;
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -1211,7 +1211,7 @@ namespace ProBuilder2.EditorCommon
 			if(success > 0)
 				return new pb_ActionResult(Status.Success, "Flipped " + success + " Edges");
 			else
-				return new pb_ActionResult(Status.Failure, "Flip Edges\nNo Faces Selected");
+				return new pb_ActionResult(Status.Failure, string.Format("Flip Edges\n{0}", attempts > 0 ? "Faces Must Be Quads" : "No Faces Selected"));
 		}
 #endregion
 
