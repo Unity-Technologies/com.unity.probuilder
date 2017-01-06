@@ -21,7 +21,7 @@ public class TempMenuItems : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			pb.Extrude(pb.SelectedFaces);
+			pb.Extrude(pb.SelectedFaces, ExtrudeMethod.VertexNormal, .25f);
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();

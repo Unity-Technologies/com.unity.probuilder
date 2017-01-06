@@ -10,16 +10,22 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Extrude
 	{
-		public static bool Extrude(this pb_Object pb, pb_Face[] faces)
+		public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)
 		{
-			// return ExtrudePerFace(pb, faces);
-			return ExtrudeAsGroups(pb, faces);
+			switch(method)
+			{
+				case ExtrudeMethod.IndividualFaces:
+					return ExtrudePerFace(pb, faces, distance);
+
+				default:
+					return ExtrudeAsGroups(pb, faces, method == ExtrudeMethod.FaceNormal, distance);
+			}
 		}
 
 		/**
 		 * Extrude each face in faces individually along it's normal by distance.
 		 */
-		private static bool ExtrudePerFace(pb_Object pb, pb_Face[] faces, float distance = .25f)
+		private static bool ExtrudePerFace(pb_Object pb, pb_Face[] faces, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -111,7 +117,7 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Extrude faces as groups.
 		 */
-		private static bool ExtrudeAsGroups(pb_Object pb, pb_Face[] faces, float distance = .25f)
+		private static bool ExtrudeAsGroups(pb_Object pb, pb_Face[] faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -124,69 +130,69 @@ namespace ProBuilder2.MeshOperations
 
 			List<pb_Face> newFaces = new List<pb_Face>(pb.faces);
 			// old triangle index -> old shared index
-			Dictionary<int, int> used = new Dictionary<int, int>();
+			Dictionary<int, int> oldSharedMap = new Dictionary<int, int>();
 			// old shared index -> new shared index
-			Dictionary<int, int> sharedMap = new Dictionary<int, int>();
+			Dictionary<int, int> newSharedMap = new Dictionary<int, int>();
 			// bridge face extruded edges, maps vertex index to new extruded vertex position
 			Dictionary<int, int> delayPosition = new Dictionary<int, int>();
+			// used to average the direction of vertices shared by perimeter edges
+			// key[shared index], value[normal count, normal sum]
+			Dictionary<int, pb_Tuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, pb_Tuple<Vector3, Vector3,List<int>>>();
 
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true, lookup);
 			List<HashSet<pb_Face>> groups = GetFaceGroups(wings);
 
 			foreach(HashSet<pb_Face> group in groups)
 			{
-				foreach(pb_Face face in group)
+				Dictionary<pb_EdgeLookup, pb_Face> perimeter = GetPerimeterEdges(group, lookup);
+
+				newSharedMap.Clear();
+				oldSharedMap.Clear();
+
+				foreach(var edgeAndFace in perimeter)
 				{
-					face.smoothingGroup = -1;
-					face.textureGroup = -1;
-				}
-
-				Vector3 delta = pb_Math.Normal(pb, group.First()) * distance;
-
-				sharedMap.Clear();
-				used.Clear();
-
-				foreach(pb_Edge edge in pbMeshUtils.GetPerimeterEdges(lookup, group))
-				{
+					pb_EdgeLookup edge = edgeAndFace.Key;
+					pb_Face face = edgeAndFace.Value;
+					
 					int vc = vertices.Count;
-					int x = edge.x, y = edge.y;
+					int x = edge.local.x, y = edge.local.y;
 
-					if( !used.ContainsKey(x) )
+					if( !oldSharedMap.ContainsKey(x) )
 					{
-						used.Add(x, lookup[x]);
+						oldSharedMap.Add(x, lookup[x]);
 						int newSharedIndex = -1;
 
-						if(sharedMap.TryGetValue(lookup[x], out newSharedIndex))
+						if(newSharedMap.TryGetValue(lookup[x], out newSharedIndex))
 						{
 							lookup[x] = newSharedIndex;
 						}
 						else
 						{
 							newSharedIndex = sharedIndexMax + (sharedIndexOffset++);
-							sharedMap.Add(lookup[x], newSharedIndex);
+							newSharedMap.Add(lookup[x], newSharedIndex);
 							lookup[x] = newSharedIndex;
 						}
 					}
 
-					if( !used.ContainsKey(y) )
+					if( !oldSharedMap.ContainsKey(y) )
 					{
-						used.Add(y, lookup[y]);
+						oldSharedMap.Add(y, lookup[y]);
 						int newSharedIndex = -1;
 
-						if(sharedMap.TryGetValue(lookup[y], out newSharedIndex))
+						if(newSharedMap.TryGetValue(lookup[y], out newSharedIndex))
 						{
 							lookup[y] = newSharedIndex;
 						}
 						else
 						{
 							newSharedIndex = sharedIndexMax + (sharedIndexOffset++);
-							sharedMap.Add(lookup[y], newSharedIndex);
+							newSharedMap.Add(lookup[y], newSharedIndex);
 							lookup[y] = newSharedIndex;
 						}
 					}
 
-					lookup.Add(vc + 0, used[x]);
-					lookup.Add(vc + 1, used[y]);
+					lookup.Add(vc + 0, oldSharedMap[x]);
+					lookup.Add(vc + 1, oldSharedMap[y]);
 					lookup.Add(vc + 2, lookup[x]);
 					lookup.Add(vc + 3, lookup[y]);
 
@@ -201,10 +207,10 @@ namespace ProBuilder2.MeshOperations
 					vertices.Add( null );
 
 					pb_Face bridge = new pb_Face(
-						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2}, 	// indices
-						group.First().material,											// material
-						new pb_UV(group.First().uv),									// UV material
-						group.First().smoothingGroup,									// smoothing group
+						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, 	// indices
+						face.material,													// material
+						new pb_UV(face.uv),												// UV material
+						face.smoothingGroup,											// smoothing group
 						-1,																// texture group
 						-1,																// uv element group
 						false															// manualUV flag
@@ -215,23 +221,62 @@ namespace ProBuilder2.MeshOperations
 
 				foreach(pb_Face face in group)
 				{
+					// @todo keep together if possible
+					face.smoothingGroup = -1;
+					face.textureGroup = -1;
+
+					Vector3 normal = pb_Math.Normal(pb, face);
+
 					for(int i = 0; i < face.distinctIndices.Length; i++)
 					{
 						int idx = face.distinctIndices[i];
 
 						// If this vertex is on the perimeter but not part of a perimeter edge
 						// move the sharedIndex to match it's new value.
-						if(!used.ContainsKey(idx) && sharedMap.ContainsKey(lookup[idx]))
-							lookup[idx] = sharedMap[lookup[idx]];
+						if(!oldSharedMap.ContainsKey(idx) && newSharedMap.ContainsKey(lookup[idx]))
+							lookup[idx] = newSharedMap[lookup[idx]];
 
-						vertices[idx].position.x += delta.x;
-						vertices[idx].position.y += delta.y;
-						vertices[idx].position.z += delta.z;
+						int com = lookup[idx];
 
 						// Break any UV shared connections
 						if( lookupUV != null && lookupUV.ContainsKey(face.distinctIndices[i]) )
 							lookupUV.Remove(face.distinctIndices[i]);
+
+						// add the normal to the list of normals for this shared vertex
+						pb_Tuple<Vector3, Vector3, List<int>> dir = null;
+
+						if(extrudeMap.TryGetValue(com, out dir))
+						{
+							dir.Item1.x += normal.x;
+							dir.Item1.y += normal.y;
+							dir.Item1.z += normal.z;
+							dir.Item3.Add(idx);
+						}
+						else
+						{
+							extrudeMap.Add(com, new pb_Tuple<Vector3, Vector3,List<int>>(normal, normal, new List<int>() { idx }));
+						}
 					}
+				}
+			}
+
+			foreach(var kvp in extrudeMap)
+			{
+				Vector3 direction = (kvp.Value.Item1 / kvp.Value.Item3.Count);
+				direction.Normalize();
+
+				// If extruding by face normal extend vertices on seams by the hypotenuse
+				float modifier = compensateAngleVertexDistance ? pb_Math.Secant(Vector3.Angle(direction, kvp.Value.Item2) * Mathf.Deg2Rad) : 1f;
+
+				direction.x *= distance * modifier;
+				direction.y *= distance * modifier;
+				direction.z *= distance * modifier;
+
+				foreach(int i in kvp.Value.Item3)
+				{
+					vertices[i].position.x += direction.x;
+					vertices[i].position.y += direction.y;
+					vertices[i].position.z += direction.z;
 				}
 			}
 
@@ -267,6 +312,35 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			return groups;
+		}
+
+		/**
+		 * returns perimeter edges by key<edge>, value<face>
+		 */
+		private static Dictionary<pb_EdgeLookup, pb_Face> GetPerimeterEdges(HashSet<pb_Face> faces, Dictionary<int, int> lookup)
+		{
+			Dictionary<pb_EdgeLookup, pb_Face> perimeter = new Dictionary<pb_EdgeLookup, pb_Face>();
+			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
+
+			foreach(pb_Face face in faces)
+			{
+				foreach(pb_Edge edge in face.edges)
+				{
+					pb_EdgeLookup e = new pb_EdgeLookup(lookup[edge.x], lookup[edge.y], edge.x, edge.y);
+
+					if(!used.Add(e))
+					{
+						if(perimeter.ContainsKey(e))
+							perimeter.Remove(e);
+					}
+					else
+					{
+						perimeter.Add(e, face);
+					}
+				}			
+			}
+
+			return perimeter;
 		}
 	}
 }
