@@ -57,11 +57,13 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			angleVal = EditorGUILayout.FloatField("Max Angle", angleVal);
 
-			GUI.enabled = true;
+			GUI.enabled = angleGrow;
 
-			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-
+			bool iterative = angleGrow ? pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative) : true;
+			
 			iterative = EditorGUILayout.Toggle("Iterative", iterative);
+		
+			GUI.enabled = true;
 
 			if( EditorGUI.EndChangeCheck() )
 			{
@@ -72,6 +74,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			GUILayout.FlexibleSpace();
 			
+
 			if(GUILayout.Button("Grow Selection"))
 				pb_Menu_Commands.MenuGrowSelection(selection);
 		}
