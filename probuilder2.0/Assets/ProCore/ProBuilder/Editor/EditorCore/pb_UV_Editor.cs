@@ -1527,28 +1527,47 @@ public class pb_UV_Editor : EditorWindow
 			if(ControlKey)
 				rotation = pbUtil.SnapValue(rotation, 15f);
 
+			float delta = rotation - uvRotation;
 			uvRotation = rotation;
 
 			if(!modifyingUVs)
 			{
 				pbUndo.RecordSelection(selection, "Rotate UVs");
 				OnBeginUVModification();
+				delta = 0f;
 			}
 
-			for(int n = 0; n < selection.Length; n++)
+			// Do rotation around the handle pivot in manual mode
+			if(mode == UVMode.Mixed || mode == UVMode.Manual)
 			{
-				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.uv;
-
-				foreach(int i in distinct_indices[n])
+				for(int n = 0; n < selection.Length; n++)
 				{
-					uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, rotation );
+					pb_Object pb = selection[n];
+					Vector2[] uvs = pb.uv;
+
+					foreach(int i in distinct_indices[n])
+						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
+
+					pb.SetUV(uvs);
+					pb.msh.uv = uvs;
+				}
+			}
+
+			// Then apply per-face rotation for auto mode
+			if(mode == UVMode.Mixed || mode == UVMode.Auto)
+			{
+				for(int n = 0; n < selection.Length; n++)
+				{
+					pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+
+					foreach(pb_Face face in autoFaces)
+						face.uv.rotation += delta;
+
+					selection[n].RefreshUV(autoFaces);
 				}
 
-				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				RefreshSelectedUVCoordinates();
 			}
-
 			nearestElement.valid = false;
 		}
 	}
