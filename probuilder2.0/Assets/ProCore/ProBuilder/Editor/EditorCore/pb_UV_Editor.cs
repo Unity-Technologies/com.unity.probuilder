@@ -529,6 +529,9 @@ public class pb_UV_Editor : EditorWindow
 
 				foreach(pb_Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
 				{
+					if(incomplete_group == null || incomplete_group.Length < 1)
+						continue;
+						
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
