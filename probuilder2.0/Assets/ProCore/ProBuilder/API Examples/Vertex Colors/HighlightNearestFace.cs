@@ -4,7 +4,7 @@ using ProBuilder2.Common;
 
 /**
  *	Move a sphere around the surface of a ProBuilder mesh, changing the 
- *	vertex colord of the nearest face.
+ *	vertex color of the nearest face.
  *
  *	Scene setup:  Create a Unity Sphere primitive in a new scene, then attach
  *	this script to the sphere.  Press 'Play'
