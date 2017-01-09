@@ -6,7 +6,6 @@ namespace ProBuilder2.Common
 	/**
 	 *	A set of colors.
 	 */
-	[CreateAssetMenuAttribute(menuName = pb_Constant.PRODUCT_NAME + "/Color Palette", fileName = "Color Palette", order = 801)]
 	[System.Serializable]
 	public class pb_ColorPalette : ScriptableObject, pb_IHasDefault
 	{
