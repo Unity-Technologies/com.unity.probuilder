@@ -25,9 +25,8 @@ echo UNITY 5.0 PATH IS %unity_path_5_0%
 echo UNITY 5.3 PATH IS %unity_path_5_3%
 echo UNITY 5.5 PATH IS %unity_path_5_5%
 
-:: Update SVN
-:: ====================
-:: svn update
+echo Remove user-generated files
+git clean probuilder2.0/Assets/ProCore/ProBuilder -dfx
 
 :: clean out temp directory.
 :: ====================
