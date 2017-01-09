@@ -21,7 +21,7 @@ namespace ProBuilder2.EditorCommon
 			if( pb.vertexCount > 256 )
 				RegisterCompleteObjectUndo(pb, msg);
 			else
-				RecordObject(pb, msg);
+				Undo.RecordObject(pb, msg);
 		}
 
 		/**
@@ -33,7 +33,7 @@ namespace ProBuilder2.EditorCommon
 			if( pb.Any(x => { return x.vertexCount > 256; }) )
 				RegisterCompleteObjectUndo(pb, msg);
 			else
-				RecordObjects(pb, msg);
+				Undo.RecordObjects(pb, msg);
 		}
 
 		/**
