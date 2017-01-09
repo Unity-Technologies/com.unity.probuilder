@@ -1828,7 +1828,7 @@ public class pb_Editor : EditorWindow
 
 #if !PROTOTYPE
 	Vector3 textureHandle = Vector3.zero;
-	Vector3 handleOrigin = Vector3.zero;
+	Vector3 previousTextureHandle = Vector3.zero;
 	bool movingPictures = false;
 
 	private void TextureMoveTool()
@@ -1844,17 +1844,21 @@ public class pb_Editor : EditorWindow
 
 		if(textureHandle != cached)
 		{
-			if(!movingPictures)
-			{
-				handleOrigin = cached;
-				movingPictures = true;
-			}
-
 			cached = Quaternion.Inverse(handleRotation) * textureHandle;
 			cached.y = -cached.y;
 
 			Vector3 lossyScale = selection[0].transform.lossyScale;
-			uvEditor.SceneMoveTool( cached.DivideBy(lossyScale), handleOrigin.DivideBy(lossyScale) );
+			Vector3 position = cached.DivideBy(lossyScale);
+
+			if(!movingPictures)
+			{
+				previousTextureHandle = position;
+				movingPictures = true;
+			}
+
+			uvEditor.SceneMoveTool( position - previousTextureHandle );
+			previousTextureHandle = position;
+
 			uvEditor.Repaint();
 		}
 	}

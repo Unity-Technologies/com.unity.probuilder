@@ -1421,31 +1421,31 @@ public class pb_UV_Editor : EditorWindow
 		}
 	}
 
-	internal void SceneMoveTool(Vector2 t_handlePosition, Vector2 handlePosition)
-	{
-		t_handlePosition = UVToGUIPoint(t_handlePosition);
+	private static readonly Vector3 Vec3_Zero = Vector3.zero;
 
+	internal void SceneMoveTool(Vector2 delta)
+	{
 		/**
 		 *	Tool activated - moving some UVs around.
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx2(t_handlePosition, handlePosition, .0001f) )
+		if( !pb_Math.Approx2(delta, Vec3_Zero, .000001f) )
 		{
-			/**
-			 * Start of move UV operation
-			 */
+			// Start of move UV operation
 			if(!modifyingUVs)
 			{
 				pbUndo.RecordSelection(selection, "Move UVs");
 				OnBeginUVModification();
-				uvOrigin = GUIToUVPoint(t_handlePosition);	// have to set this one special
+				uvOrigin = handlePosition;	// have to set this one special
+				handlePosition_origin = handlePosition;
 			}
 
-			Vector2 newUVPosition = GUIToUVPoint(t_handlePosition);
+			handlePosition.x += delta.x;
+			handlePosition.y += delta.y;
 
 			if(ControlKey)
-				newUVPosition = pbUtil.SnapValue(newUVPosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				handlePosition = pbUtil.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1453,9 +1453,7 @@ public class pb_UV_Editor : EditorWindow
 				Vector2[] uvs = pb.uv;
 
 				foreach(int i in distinct_indices[n])
-				{
-					uvs[i] = newUVPosition - (uvOrigin-uv_origins[n][i]);
-				}
+					uvs[i] += delta;
 
 				pb.SetUV(uvs);
 				pb.msh.uv = uvs;
