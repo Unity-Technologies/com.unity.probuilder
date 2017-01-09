@@ -1,3 +1,27 @@
+# ProBuilder 2.6.7f0
+
+## Features
+
+- New face extrusion options to extrude along face normal, vertex normal, or per-face.
+
+## Bug Fixes
+
+- Fix potential drag selection inconsistencies when picking vertices in Unity 5.5.
+- Fix bug where Backspace key in UV Editor with a GUI control focused would incorrectly register as a shortcut.
+- Fix auto uvs rotating around handle pivot when using the rotate gizmo.
+- Add undo for auto uv changes made by gizmos.
+- Fix uv tiling toolbar not applying with mixed selection.
+- Move pb_Reflection to Editor so as not to be included in builds, fixing errors when targeting Windows Store.  Remove unused ParseEnum<T> function in pbUtil for same reason.
+- Retain smoothing group information when extruding.
+- When flipping a selection of face edges where faces are not quads be specific about the reason for failing.
+- Fix misc. potential hangs when registering ProBuilder objects for Undo.
+
+## Changes
+
+- Make default height segments for cylinder 0.
+- Move some common class files into the Core folder so they're included with the Core lib instead of MeshOps.
+- When grow selection by angle is off force iterative to on.
+
 # ProBuilder 2.6.6f0
 
 ## Features

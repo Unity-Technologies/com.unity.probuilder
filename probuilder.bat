@@ -57,10 +57,10 @@ echo Copy resources
 xcopy /E /Y /I /Q %CD%\probuilder2.0\Assets\ProCore\ProBuilder %CD%\probuilder-staging\Assets\ProCore\ProBuilder
 
 :: Delete user stored data
-rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data
-del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data.meta
-rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache
-del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache.meta
+:: rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data
+:: del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\Data.meta
+:: rd /s /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache
+:: del /q %CD%\probuilder-staging\Assets\ProCore\ProBuilder\ProBuilderMeshCache.meta
 
 :: Copy pb_ExportPackage into staging project
 :: ====================
