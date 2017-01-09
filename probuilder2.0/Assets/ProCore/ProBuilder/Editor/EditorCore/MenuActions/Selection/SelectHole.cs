@@ -55,7 +55,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordObjects(selection, "Select Hole");
+			pbUndo.RecordSelection(selection, "Select Hole");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 

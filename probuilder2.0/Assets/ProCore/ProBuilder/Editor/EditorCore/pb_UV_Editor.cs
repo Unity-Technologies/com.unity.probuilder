@@ -1434,7 +1434,7 @@ public class pb_UV_Editor : EditorWindow
 			 */
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Move UVs");
+				pbUndo.RecordSelection(selection, "Move UVs");
 				OnBeginUVModification();
 				uvOrigin = GUIToUVPoint(t_handlePosition);	// have to set this one special
 			}
@@ -1472,7 +1472,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Rotate UVs");
+				pbUndo.RecordSelection(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
@@ -1528,7 +1528,7 @@ public class pb_UV_Editor : EditorWindow
 
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Rotate UVs");
+				pbUndo.RecordSelection(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
@@ -1566,7 +1566,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				pbUndo.RecordObjects(selection, "Scale UVs");
+				pbUndo.RecordSelection(selection, "Scale UVs");
 				OnBeginUVModification();
 			}
 
@@ -1627,7 +1627,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(!modifyingUVs)
 		{
-			pbUndo.RecordObjects(selection, "Scale UVs");
+			pbUndo.RecordSelection(selection, "Scale UVs");
 			OnBeginUVModification();
 		}
 
@@ -2984,7 +2984,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	public void Menu_PlanarProject()
 	{
-		pbUndo.RecordObjects(selection, "Planar Project Faces");
+		pbUndo.RecordSelection(selection, "Planar Project Faces");
 		int projected = 0;
 
 		for(int i = 0; i < selection.Length; i++)
@@ -3141,7 +3141,7 @@ public class pb_UV_Editor : EditorWindow
 
 	public void Menu_SelectUVIsland()
 	{
-		pbUndo.RecordObjects(selection, "Select Island");
+		pbUndo.RecordSelection(selection, "Select Island");
 
 		SelectUVShell();
 		pb_EditorUtility.ShowNotification(this, "Select UV Island");
@@ -3149,7 +3149,7 @@ public class pb_UV_Editor : EditorWindow
 
 	public void Menu_SelectUVFace()
 	{
-		pbUndo.RecordObjects(selection, "Select Face");
+		pbUndo.RecordSelection(selection, "Select Face");
 
 		SelectUVFace();
 		pb_EditorUtility.ShowNotification(this, "Select UV Face");
@@ -3163,7 +3163,7 @@ public class pb_UV_Editor : EditorWindow
 			return;
 		}
 
-		pbUndo.RecordObjects(selection, "Collapse UVs");
+		pbUndo.RecordSelection(selection, "Collapse UVs");
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3190,7 +3190,7 @@ public class pb_UV_Editor : EditorWindow
 
 		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
 
-		pbUndo.RecordObjects(selection, "Sew UV Seams");
+		pbUndo.RecordSelection(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
 		{
 			selection[i].ToMesh();
@@ -3216,7 +3216,7 @@ public class pb_UV_Editor : EditorWindow
 			return;
 		}
 
-		pbUndo.RecordObjects(selection, "Split UV Seams");
+		pbUndo.RecordSelection(selection, "Split UV Seams");
 
 		foreach(pb_Object pb in selection)
 		{
@@ -3240,7 +3240,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	public void Menu_FlipUVs(Vector2 direction)
 	{
-		pbUndo.RecordObjects(selection, "Flip " + direction);
+		pbUndo.RecordSelection(selection, "Flip " + direction);
 
 		Vector2 center = handlePosition;
 
@@ -3285,7 +3285,7 @@ public class pb_UV_Editor : EditorWindow
 	 */
 	public void Menu_FitUVs()
 	{
-		pbUndo.RecordObjects(selection, "Fit UVs");
+		pbUndo.RecordSelection(selection, "Fit UVs");
 
 		for(int i = 0; i < selection.Length; i++)
 		{

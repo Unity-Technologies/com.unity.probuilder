@@ -331,7 +331,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetFlipU(bool flipU, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Flip U");
+			pbUndo.RecordSelection(sel, "Flip U");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -342,7 +342,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetFlipV(bool flipV, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Flip V");
+			pbUndo.RecordSelection(sel, "Flip V");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.flipV = flipV;
@@ -352,7 +352,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetSwapUV(bool swapUV, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Swap U, V");
+			pbUndo.RecordSelection(sel, "Swap U, V");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.swapUV = swapUV;
@@ -362,7 +362,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetUseWorldSpace(bool useWorldSpace, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Use World Space UVs");
+			pbUndo.RecordSelection(sel, "Use World Space UVs");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.useWorldSpace = useWorldSpace;
@@ -372,7 +372,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetFill(pb_UV.Fill fill, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Fill UVs");
+			pbUndo.RecordSelection(sel, "Fill UVs");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -383,7 +383,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetAnchor(pb_UV.Anchor anchor, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Set UV Anchor");
+			pbUndo.RecordSelection(sel, "Set UV Anchor");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -394,7 +394,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetOffset(Vector2 offset, pb_Axis2d axis, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Offset UVs");
+			pbUndo.RecordSelection(sel, "Offset UVs");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -417,7 +417,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetRotation(float rot, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Rotate UVs");
+			pbUndo.RecordSelection(sel, "Rotate UVs");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -429,7 +429,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetScale(Vector2 scale, pb_Axis2d axis, pb_Object[] sel)
 		{
-			pbUndo.RecordObjects(sel, "Scale UVs");
+			pbUndo.RecordSelection(sel, "Scale UVs");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -454,7 +454,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetTextureGroup(pb_Object[] selection, int tex)
 		{
-			pbUndo.RecordObjects(selection, "Set Texture Group " + textureGroup);
+			pbUndo.RecordSelection(selection, "Set Texture Group " + textureGroup);
 
 			foreach(pb_Object pb in selection)
 			{

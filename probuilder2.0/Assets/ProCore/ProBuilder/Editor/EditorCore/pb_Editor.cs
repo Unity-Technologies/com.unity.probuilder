@@ -462,7 +462,7 @@ public class pb_Editor : EditorWindow
 						{
 							if(editLevel == EditLevel.Geometry)
 							{
-								pbUndo.RecordObjects(selection, "Set Face Materials");
+								pbUndo.RecordSelection(selection, "Set Face Materials");
 
 								foreach(pb_Object pbs in selection)
 									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
@@ -1539,7 +1539,7 @@ public class pb_Editor : EditorWindow
 			bool gotoLocal = selectedFaceCount < 1;
 
 			// if(pref_snapEnabled)
-			// 	pbUndo.RecordObjects(selection as Object[], "Move Vertices");
+			// 	pbUndo.RecordSelection(selection as Object[], "Move Vertices");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -2321,7 +2321,7 @@ public class pb_Editor : EditorWindow
 				{
 					foreach (pb_Object pbo in selection)
 					{
-						pbUndo.RecordObjects(new Object[2] {pbo, pbo.transform}, "Set Pivot");
+						pbUndo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
 
 						if (pbo.SelectedTriangles.Length > 0)
 						{
@@ -2991,7 +2991,7 @@ public class pb_Editor : EditorWindow
 	 */
 	private void PushToGrid(float snapVal)
 	{
-		pbUndo.RecordObjects(selection, "Push elements to Grid");
+		pbUndo.RecordSelection(selection, "Push elements to Grid");
 
 		if( editLevel == EditLevel.Top )
 			return;

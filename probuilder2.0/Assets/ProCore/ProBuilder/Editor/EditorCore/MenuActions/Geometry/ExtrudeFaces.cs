@@ -13,6 +13,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Extrude"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool hasFileMenuEntry { get { return false; } }
+		[SerializeField] Texture2D[] icons = null;
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
@@ -20,6 +21,15 @@ namespace ProBuilder2.Actions
 			"Extrude selected faces, either as a group or individually.\n\nAlt + Click this button to show additional Extrude options.",
 			CMD_SUPER, 'E'
 		);
+
+		public ExtrudeFaces()
+		{
+			icons = new Texture2D[3];
+
+			icons[(int)ExtrudeMethod.IndividualFaces] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual");
+			icons[(int)ExtrudeMethod.VertexNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals");
+			icons[(int)ExtrudeMethod.FaceNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals");
+		}
 
 		public override bool IsEnabled()
 		{
@@ -48,6 +58,12 @@ namespace ProBuilder2.Actions
 
 			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 			ExtrudeMethod method = pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod);
+
+			GUILayout.BeginHorizontal();
+				GUILayout.FlexibleSpace();
+					GUILayout.Label(icons[(int) method]);
+				GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
 
 			EditorGUI.BeginChangeCheck();
 

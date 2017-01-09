@@ -198,7 +198,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 	{
 		pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
 
-		pbUndo.RecordObjects(selection, "Apply Vertex Colors");
+		pbUndo.RecordSelection(selection, "Apply Vertex Colors");
 
 		pb_Editor editor = pb_Editor.instance;
 

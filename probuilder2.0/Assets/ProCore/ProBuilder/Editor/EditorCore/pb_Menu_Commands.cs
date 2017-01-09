@@ -287,7 +287,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-			pbUndo.RecordObjects(sel, op_string);
+			pbUndo.RecordSelection(sel, op_string);
 
 			Mesh c;
 
@@ -425,7 +425,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+			pbUndo.RecordSelection(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
@@ -554,7 +554,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Bridge Edges");
+			pbUndo.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
 			bool limitToPerimeterEdges = pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
@@ -1356,7 +1356,7 @@ namespace ProBuilder2.EditorCommon
 				return pb_ActionResult.NoSelection;
 
 			int splitCount = 0;
-			pbUndo.RecordObjects(selection, "Split Vertices");
+			pbUndo.RecordSelection(selection, "Split Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1433,7 +1433,7 @@ namespace ProBuilder2.EditorCommon
 			if(editor == null)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Fill Hole");
+			pbUndo.RecordSelection(selection, "Fill Hole");
 
 			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
@@ -1534,7 +1534,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuCreatePolygon(pb_Object[] selection)
 		{
-			pbUndo.RecordObjects(selection, "Create Polygon");
+			pbUndo.RecordSelection(selection, "Create Polygon");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 

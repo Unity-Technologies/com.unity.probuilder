@@ -329,7 +329,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(mat == null) return;
 
-			pbUndo.RecordObjects(selection, "Set Face Materials");
+			pbUndo.RecordSelection(selection, "Set Face Materials");
 
 			foreach(pb_Object pb in selection)
 			{

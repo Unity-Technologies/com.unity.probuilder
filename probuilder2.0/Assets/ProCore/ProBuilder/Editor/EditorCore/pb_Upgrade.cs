@@ -42,7 +42,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void InvertUVScale(pb_Object[] selection, bool allFaces)
 		{
-			pbUndo.RecordObjects(selection, "Invert UV Scale");
+			pbUndo.RecordSelection(selection, "Invert UV Scale");
 			int fc = 0;
 
 			foreach(pb_Object pb in selection)

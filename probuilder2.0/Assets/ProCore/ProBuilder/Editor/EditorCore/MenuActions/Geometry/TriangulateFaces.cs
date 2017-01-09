@@ -39,7 +39,7 @@ namespace ProBuilder2.Actions
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Triangulate Faces");
+			pbUndo.RecordSelection(selection, "Triangulate Faces");
 
 			foreach(pb_Object pb in selection)
 			{
