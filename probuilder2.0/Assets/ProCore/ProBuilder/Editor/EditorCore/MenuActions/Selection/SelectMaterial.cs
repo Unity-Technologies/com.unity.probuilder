@@ -20,6 +20,8 @@ namespace ProBuilder2.Actions
 			"Selects all faces matching the selected materials."
 		);
 
+		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
+
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
@@ -35,14 +37,47 @@ namespace ProBuilder2.Actions
 			return 	editLevel != EditLevel.Geometry;
 		}
 
+		public override MenuActionState AltState()
+		{
+			if(	IsEnabled() &&
+				pb_Editor.instance.editLevel == EditLevel.Geometry &&
+				pb_Editor.instance.selectionMode == SelectMode.Face)
+				return MenuActionState.VisibleAndEnabled;
+
+			return MenuActionState.Visible;
+		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Select Material Options", EditorStyles.boldLabel);
+
+			EditorGUI.BeginChangeCheck();
+
+			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
+			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
+
+			if( EditorGUI.EndChangeCheck() )
+				EditorPrefs.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Select Faces with Material"))
+			{
+				DoAction();
+				SceneView.RepaintAll();
+			}
+		}
+
 		public override pb_ActionResult DoAction()
 		{
 			pbUndo.RecordSelection(selection, "Select Faces with Material");
 
+			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
+
 			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.material).Where( z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(pb_Object pb in Object.FindObjectsOfType<pb_Object>())
+			foreach(pb_Object pb in restrictToSelection ? selection : Object.FindObjectsOfType<pb_Object>())
 			{
 				IEnumerable<pb_Face> matches = pb.faces.Where(x => sel.Contains(x.material));
 
