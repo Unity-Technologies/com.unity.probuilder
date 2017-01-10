@@ -55,12 +55,15 @@ namespace ProBuilder2.MeshOperations
 
 			if(amount < .001f)
 				return new pb_ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
-			
+
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
 			foreach(pb_EdgeLookup lup in m_edges)
 			{
 				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
+
+				if(we == null || we.opposite == null)
+					continue;
 
 				beveled++;
 
@@ -168,7 +171,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(HashSet<int> h in holesCommonIndices)
 			{
-				// even if a set of hole indices made it past the initial culling, the distinct part 
+				// even if a set of hole indices made it past the initial culling, the distinct part
 				// may have reduced the index count
 				if(h.Count < 3)
 				{
@@ -224,7 +227,7 @@ namespace ProBuilder2.MeshOperations
 						}
 					}
 				}
-			}	
+			}
 
 			pb.ToMesh();
 
@@ -236,7 +239,7 @@ namespace ProBuilder2.MeshOperations
  		private static List<pb_FaceRebuildData> GetBridgeFaces(
  			IList<pb_Vertex> vertices,
  			pb_WingedEdge left,
- 			pb_WingedEdge right, 
+ 			pb_WingedEdge right,
  			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes)
  		{
  			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
@@ -275,7 +278,7 @@ namespace ProBuilder2.MeshOperations
 
  			holes.AddOrAppend(a.common.x, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
  			holes.AddOrAppend(a.common.y, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
- 			
+
  			return faces;
  		}
 
@@ -299,12 +302,6 @@ namespace ProBuilder2.MeshOperations
 			// need the pb_Vertex value to be modified, not reassigned in this array (which += does)
 			vertices[we.edge.local.x].Add(x * amount);
 			vertices[we.edge.local.y].Add(y * amount);
-
-
-		// 	// don't care about the face rebuild data since this face isn't getting rebuilt
-		// List<pb_Tuple<pb_Face, List<int>>> tup;
-		// 	holes.AddOrAppend(we.edge.common.x, new pb_Tuple<pb_FaceRebuildData, List<int>>(null, new List<int>() { we.edge.local.x }));
-		// 	holes.AddOrAppend(we.edge.common.y, new pb_Tuple<pb_FaceRebuildData, List<int>>(null, new List<int>() { we.edge.local.y }));
 		}
 
 		private static pb_Edge GetLeadingEdge(pb_WingedEdge wing, int common)

@@ -26,7 +26,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 #endregion
 
 #region INITIALIZATION
-	
+
 	/**
 	 * Initialize this window.
 	 */
@@ -55,7 +55,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 		menu.AddItem (new GUIContent("Open As Dockable Window", ""), false, Menu_OpenAsDockableWindow);
 
 		menu.ShowAsContext ();
-	}		
+	}
 
 	void Menu_OpenAsDockableWindow()
 	{
@@ -103,7 +103,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 		GUILayout.BeginHorizontal();
 
 		for(int i = 0; i < USER_COLORS.Length; i++)
-		{	
+		{
 			if( (i - (curRow * rowSize)) >= rowSize)
 			{
 				curRow++;
@@ -165,7 +165,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 
 	/**
 	 *	\brief Sets the color preference in vertex color window.
-	 *	
+	 *
 	 */
 	private void SetColorPreference(int index, Color col)
 	{
@@ -213,7 +213,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 						Color[] colors = pb.colors;
 
 						foreach(int i in pb.SelectedTriangles)
-							colors[i] = col;					
+							colors[i] = col;
 
 						pb.SetColors(colors);
 					}
@@ -224,7 +224,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 						Color[] colors = pb.colors;
 
 						foreach(int i in pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles))
-							colors[i] = col;					
+							colors[i] = col;
 
 						pb.SetColors(colors);
 					}
@@ -236,7 +236,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 			foreach(pb_Object pb in selection)
 			{
 				foreach(pb_Face face in pb.faces)
-					pb.SetFaceColor(face, col);	
+					pb.SetFaceColor(face, col);
 			}
 		}
 
