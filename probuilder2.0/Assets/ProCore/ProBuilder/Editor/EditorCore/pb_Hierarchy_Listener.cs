@@ -39,14 +39,12 @@ namespace ProBuilder2.EditorCommon
 			if(EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			// Debug.Log("PrefabInstanceUpdated");
-
-			// foreach(pb_Object pb in go.GetComponentsInChildren<pb_Object>())
-			// {
-			// 	pb.ToMesh();
-			// 	pb.Refresh();
-			// 	pb.Optimize();
-			// }
+			foreach(pb_Object pb in go.GetComponentsInChildren<pb_Object>())
+			{
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+			}
 		}
 
 		/**
