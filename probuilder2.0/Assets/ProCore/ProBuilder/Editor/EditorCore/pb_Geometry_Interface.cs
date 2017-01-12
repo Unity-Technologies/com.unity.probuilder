@@ -916,20 +916,43 @@ namespace ProBuilder2.EditorCommon
 		bool 	torus_smooth = true;
 		float 	torus_horizontalCircumference = 360f;
 		float 	torus_verticalCircumference = 360f;
+		Vector2 torus_innerOuter = new Vector2(1f, .7f);
+		bool 	torus_useInnerOuterMethod = false;
 
 		void TorusGUI()
 		{
+			torus_useInnerOuterMethod = EditorPrefs.GetBool("pb_TorusUsesInnerOuterMethod", true);
+
 			EditorGUI.BeginChangeCheck();
 
 			torus_rows = (int) EditorGUILayout.IntSlider(new GUIContent("Rows", "How many rows the torus will have.  More equates to smoother geometry."), torus_rows, 3, 32);
 			torus_colums = (int) EditorGUILayout.IntSlider(new GUIContent("Columns", "How many columns the torus will have.  More equates to smoother geometry."), torus_colums, 3, 64);
 
-			torus_radius = EditorGUILayout.FloatField("Radius", torus_radius);
+			EditorGUI.BeginChangeCheck();
+			torus_useInnerOuterMethod = EditorGUILayout.Toggle("Define Inner / Out Radius", torus_useInnerOuterMethod);
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetBool("pb_TorusUsesInnerOuterMethod", torus_useInnerOuterMethod);
 
-			if(torus_radius < .001f)
-				torus_radius = .001f;
+			if(!torus_useInnerOuterMethod)
+			{
+				torus_radius = EditorGUILayout.FloatField("Radius", torus_radius);
 
-			torus_tubeRadius = pb_GUI_Utility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
+				if(torus_radius < .001f)
+					torus_radius = .001f;
+
+				torus_tubeRadius = pb_GUI_Utility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
+			}
+			else
+			{
+				torus_innerOuter.x = torus_radius;
+				torus_innerOuter.y = torus_radius - (torus_tubeRadius * 2f);
+
+				torus_innerOuter.x = EditorGUILayout.FloatField("Outer Radius", torus_innerOuter.x);
+				torus_innerOuter.y = pb_GUI_Utility.Slider(new GUIContent("Inner Radius", "Distance from center to inside of donut ring."), torus_innerOuter.y, .001f, torus_innerOuter.x);
+
+				torus_radius = torus_innerOuter.x;
+				torus_tubeRadius = (torus_innerOuter.x - torus_innerOuter.y) * .5f;
+			}
 
 			torus_horizontalCircumference = EditorGUILayout.Slider("Horizontal Circumference", torus_horizontalCircumference, .01f, 360f);
 			torus_verticalCircumference = EditorGUILayout.Slider("Vertical Circumference", torus_verticalCircumference, .01f, 360f);
