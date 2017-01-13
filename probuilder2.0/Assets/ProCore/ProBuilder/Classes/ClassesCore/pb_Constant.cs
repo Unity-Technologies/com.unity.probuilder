@@ -30,7 +30,10 @@ public static class pb_Constant
 			{
 				_facePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
 
-				_facePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
+				if(_facePickerMaterial == null)
+					_facePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+				else
+					_facePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
 			}
 			return _facePickerMaterial;
 		}
@@ -44,7 +47,11 @@ public static class pb_Constant
 			if(_vertexPickerMaterial == null)
 			{
 				_vertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
-				_vertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
+				
+				if(_vertexPickerMaterial == null)
+					_vertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
+				else
+					_vertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
 			}
 			return _vertexPickerMaterial;
 		}

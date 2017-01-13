@@ -230,8 +230,16 @@ namespace ProBuilder2.Common
 
 				m.colors32 = colors;
 
-				go.AddComponent<MeshFilter>().sharedMesh = m;
-				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+				// FacePickerMaterial may fail, and in that case we still want to clean up our mess
+				try
+				{
+					go.AddComponent<MeshFilter>().sharedMesh = m;
+					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+				}
+				catch
+				{
+					Debug.LogWarning("Could not find shader `pb_FacePicker.shader`.  Please re-import ProBuilder to fix!");
+				}
 
 				meshes.Add(go);
 			}
