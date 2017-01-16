@@ -1,12 +1,13 @@
-# ProBuilder 2.6.8f0
+# ProBuilder 2.6.8f1
 
 ## Features
 
-- Add option to restrict Select by Material to the current selection.  closes #158
+- Add option to restrict Select by Material to the current selection.
 - Add alternate method of specifying torus radius dimensions.
 
 ## Bug Fixes
 
+- Fix regression that broke iOS and Android build targets.
 - Fix arch preview shape and built shape sides not matching.
 - Fix issue where UV Editor could be out of sync with scene UVs after planar or box projection.
 - Don't fail face or vertex picking when the required materials aren't found.
