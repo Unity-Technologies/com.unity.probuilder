@@ -1,10 +1,8 @@
 @echo off
 
-:: Builds for Unity 4.6 & 5.0.1
-
 set unity_path_5_0="D:\Applications\Unity 5.0.0f4\Editor\Unity.exe"
 set unity_path_5_3="D:\Applications\Unity 5.3.0f4\Editor\Unity.exe"
-set unity_path_5_5="D:\Applications\Unity 5.5.0b6\Editor\Unity.exe"
+set unity_path_5_5="D:\Applications\Unity 5.5.0f3\Editor\Unity.exe"
 
 :: Path to Unity 5 VS projects
 set u5_core="%CD%\visual studio\ProBuilderCore-Unity5\ProBuilderCore-Unity5.sln"
