@@ -3012,16 +3012,11 @@ public class pb_UV_Editor : EditorWindow
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
-
 				pbUVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
-
 				pbUVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
 
 				foreach(pb_Face f in selection[i].SelectedFaces)
 					f.manualUV = true;
-
-				selection[i].Refresh();	// refresh afer UVs are sorted, since tangents need them
-				selection[i].Optimize();
 
 				RefreshElementGroups(selection[i]);
 
@@ -3042,6 +3037,12 @@ public class pb_UV_Editor : EditorWindow
 			ResetUserPivot();
 		}
 
+		foreach(pb_Object pb in selection)
+		{
+			pb.Refresh();
+			pb.Optimize();
+		}
+
 		pb_EditorUtility.ShowNotification(this, projected > 0 ? "Planar Project" : "Nothing Selected");
 
 		// Special case
@@ -3059,15 +3060,12 @@ public class pb_UV_Editor : EditorWindow
 
 		for(int i = 0; i < selection.Length; i++)
 		{
+			selection[i].ToMesh();
+
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				pbUVOps.ProjectFacesBox(selection[i], selection[i].SelectedFaces);
-
 				p++;
-
-				selection[i].ToMesh();
-				selection[i].Refresh();
-				selection[i].Optimize();
 			}
 		}
 
@@ -3076,8 +3074,13 @@ public class pb_UV_Editor : EditorWindow
 		if(p > 0)
 		{
 			CenterUVsAtPoint( handlePosition );
-
 			ResetUserPivot();
+		}
+
+		foreach(pb_Object pb in selection)
+		{
+			pb.Refresh();
+			pb.Optimize();
 		}
 
 		pb_EditorUtility.ShowNotification(this, "Box Project UVs");
@@ -3097,15 +3100,12 @@ public class pb_UV_Editor : EditorWindow
 
 		for(int i = 0; i < selection.Length; i++)
 		{
+			selection[i].ToMesh();
+
 			if(selection[i].SelectedTriangleCount > 0)
 			{
 				pbUVOps.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles);
-
 				p++;
-
-				selection[i].ToMesh();
-				selection[i].Refresh();
-				selection[i].Optimize();
 			}
 		}
 
@@ -3115,6 +3115,12 @@ public class pb_UV_Editor : EditorWindow
 		{
 			CenterUVsAtPoint( handlePosition );
 			ResetUserPivot();
+		}
+
+		foreach(pb_Object pb in selection)
+		{
+			pb.Refresh();
+			pb.Optimize();
 		}
 
 		pb_EditorUtility.ShowNotification(this, "Spherical Project UVs");
