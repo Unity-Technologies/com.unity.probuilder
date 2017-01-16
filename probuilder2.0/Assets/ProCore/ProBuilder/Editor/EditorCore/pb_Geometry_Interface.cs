@@ -785,7 +785,7 @@ namespace ProBuilder2.EditorCommon
 			arch_depth = Mathf.Clamp(arch_depth, 0.1f, 500.0f);
 
 			arch_radialCuts = EditorGUILayout.IntField("Number of Sides", arch_radialCuts);
-			arch_radialCuts = Mathf.Clamp(arch_radialCuts, 1, 200);
+			arch_radialCuts = Mathf.Clamp(arch_radialCuts, 2, 200);
 
 			arch_angle = EditorGUILayout.FloatField("Arch Degrees", arch_angle);
 			arch_angle = Mathf.Clamp(arch_angle, 0.0f, 360.0f);
@@ -825,7 +825,7 @@ namespace ProBuilder2.EditorCommon
 					arch_radius,
 					Mathf.Clamp(arch_width, 0.01f, arch_radius),
 					arch_depth,
-					arch_radialCuts,
+					arch_radialCuts + 1,
 					arch_insideFaces,
 					arch_outsideFaces,
 					arch_frontFaces,
