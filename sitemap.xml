@@ -3,112 +3,16 @@
 
     
     <url>
-     <loc>None/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
     <url>
-     <loc>None/general/fundamentals/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    
-
-    
-        
-    <url>
-     <loc>None/toolbar/overview-toolbar/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/tool-panels/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/selection-tools/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/object-actions/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/vertex/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/edge/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/face/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/toolbar/all/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    
-
-    
-        
-    <url>
-     <loc>None/texturing/overview-texture-mapping/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/texturing/uv-editor-toolbar/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/texturing/auto-uvs-actions/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/texturing/manual-uvs-actions/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    
-
-    
-    <url>
-     <loc>None/menu-actions/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    
-
-    
-    <url>
-     <loc>None/preferences/preferences/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/general/fundamentals/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -116,8 +20,50 @@
     
         
     <url>
-     <loc>None/troubleshooting/faq/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/toolbar/overview-toolbar/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/tool-panels/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/selection-tools/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/object-actions/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/vertex/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/edge/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/face/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/toolbar/all/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -126,32 +72,26 @@
     
         
     <url>
-     <loc>None/upgrading/overview/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/texturing/overview-texture-mapping/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/upgrading/standard/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/texturing/uv-editor-toolbar/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/upgrading/dllrename/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/texturing/auto-uvs-actions/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/upgrading/upgrade-kit/</loc>
-     <lastmod>2016-09-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/upgrading/prototype/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/texturing/manual-uvs-actions/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -159,16 +99,76 @@
 
     
     <url>
-     <loc>None/credits/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/menu-actions/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
     <url>
-     <loc>None/changelog/</loc>
-     <lastmod>2016-09-24</lastmod>
+     <loc>/preferences/preferences/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+        
+    <url>
+     <loc>/troubleshooting/faq/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>/upgrading/overview/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/upgrading/standard/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/upgrading/dllrename/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/upgrading/upgrade-kit/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/upgrading/prototype/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+    <url>
+     <loc>/credits/</loc>
+     <lastmod>2017-01-17</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/changelog/</loc>
+     <lastmod>2017-01-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
