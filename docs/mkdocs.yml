@@ -1,4 +1,5 @@
 site_name: ProBuilder Documentation
+# theme_dir: 'themes/readthedocs'
 theme: readthedocs
 extra_css:
   - css/alerts.css
@@ -6,6 +7,8 @@ extra_css:
   - css/general.css
   - css_site/site.css
   - css_site/youtube.css
+extra_javascript:
+  - javascript/zendesk-chat.js
 
 pages:
 
@@ -27,7 +30,7 @@ pages:
     - UV Editor Toolbar: texturing/uv-editor-toolbar.md
     - Auto UVs Actions: texturing/auto-uvs-actions.md
     - Manual UVs Actions: texturing/manual-uvs-actions.md
-    
+
 - Menu Actions: menu-actions.md
 
 - Preferences: preferences/preferences.md
