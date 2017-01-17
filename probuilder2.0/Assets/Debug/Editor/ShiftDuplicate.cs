@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if SHIFT_DUP_ENABLED
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Common;
@@ -41,3 +43,5 @@ public class ShiftDuplicate : Editor
 			go = null;
 	}
 }
+
+#endif

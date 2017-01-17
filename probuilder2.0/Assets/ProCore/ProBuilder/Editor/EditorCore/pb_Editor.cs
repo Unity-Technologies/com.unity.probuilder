@@ -1978,8 +1978,8 @@ public class pb_Editor : EditorWindow
 
 		if(pref_showToolbar)
 		{
-			int screenWidth = (int)sceneView.position.width;
-			int screenHeight = (int)sceneView.position.height;
+			int screenWidth = (int) sceneView.position.width;
+			int screenHeight = (int) sceneView.position.height;
 
 			int t_selectionMode = editLevel != EditLevel.Top ? ((int)selectionMode) + 1 : 0;
 
