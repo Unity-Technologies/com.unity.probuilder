@@ -1,3 +1,12 @@
+# ProBuilder 2.6.9f0
+
+## Bug Fixes
+
+- Mark KDTree Triangle and pb_Stl as Any Platform in build targets.
+- Fix compile errors in standard vertex color shader on Unity 5.5 on iOS
+- Fix compile warnings in Unity 5.6.0b4
+- Use multi-Unity-version compatible shader in Vertex Colors API example.
+
 # ProBuilder 2.6.8f1
 
 ## Features
