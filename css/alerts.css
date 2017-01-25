@@ -1,0 +1,53 @@
+/**
+ *  Warning box CSS compliments of:
+ *  http://zurb.com/building-blocks/bordered-alerts
+ */
+
+.alert-box {
+	background: #f7f7f7;
+	color: #333;
+	border: none;
+	border-left: 6px solid #EF233C;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	padding-left: 1rem;
+	box-shadow: 0 5px 8px -6px rgba(0, 0, 0, 0.2);
+}
+
+.alert-box.small {
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+	font-size: 0.75rem;
+}
+.alert-box.small.close {
+	font-size: 1.5rem;
+}
+.alert-box.large {
+	padding-top: 1.5rem;
+	padding-bottom: 1.5rem;
+	font-size: 2rem;
+}
+.alert-box.large .close {
+	font-size: 3rem;
+}
+.alert-box .close {
+	font-size: 2rem;
+	line-height: 1.25rem;
+}
+
+.alert-box.success {
+	background: #f7f7f7;
+	color: #333;
+}
+.alert-box.alert {
+	background: #EF233C;
+	color: #333;
+}
+.alert-box.warning {
+	background: #f7f7f7;
+	color: #333;
+}
+.alert-box.info {
+	background: #f7f7f7;
+	color: #333;
+}

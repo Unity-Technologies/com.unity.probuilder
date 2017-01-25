@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Tool Panels - ProBuilder Documentation</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link href="../../css/alerts.css" rel="stylesheet">
+  <link href="../../css/extra.css" rel="stylesheet">
+  <link href="../../css/general.css" rel="stylesheet">
+  <link href="../../css_site/site.css" rel="stylesheet">
+  <link href="../../css_site/youtube.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Tool Panels";
+    var mkdocs_page_input_path = "toolbar/tool-panels.md";
+    var mkdocs_page_url = "/toolbar/tool-panels/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> ProBuilder Documentation</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../general/fundamentals/">Fundamentals</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Toolbar</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../overview-toolbar/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Tool Panels</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#shape-tool">Shape Tool</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#material-tools">Material Tools</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#texturing-and-uvs">Texturing and UVs</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#vertex-color-tools">Vertex Color Tools</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#smoothing-groups">Smoothing Groups</a></li>
+                
+            
+            </ul>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../selection-tools/">Selection Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../object-actions/">Object Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../vertex/">Vertex Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../edge/">Edge Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../face/">Face Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../all/">Element Actions</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Texture Mapping</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/overview-texture-mapping/">Overview</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/uv-editor-toolbar/">UV Editor Toolbar</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/auto-uvs-actions/">Auto UVs Actions</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../texturing/manual-uvs-actions/">Manual UVs Actions</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../menu-actions/">Menu Actions</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../preferences/preferences/">Preferences</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Troubleshooting</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../troubleshooting/faq/">Faq</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Upgrading</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/overview/">What Upgrade Procedure Should I Follow?</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/standard/">Standard</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/dllrename/">DLL Rename</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/upgrade-kit/">Upgrade Kit</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../../upgrading/prototype/">Prototype</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../credits/">Credits</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../../changelog/">Changelog</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">ProBuilder Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Toolbar &raquo;</li>
+        
+      
+    
+    <li>Tool Panels</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <!-- # Video: Tool Panels -->
+
+<!-- [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels") -->
+
+<p>These <strong>Tool Panels</strong> contain important tools for <a href="#shape-tool">Shape Creation</a>, <a href="#material-tools">Materials</a>, <a href="#texturing">Texturing and UVs</a>, <a href="#vertex-colors">Vertex Coloring</a>, and <a href="#smoothing-groups">Smoothing Groups</a>.</p>
+<p><strong>Note:</strong> Each panel can be docked, kept floating, or simply closed immediately after use.</p>
+<hr />
+<div style="text-align:center">
+<img src="../../images/Toolbar_ToolPanels.png">
+</div>
+
+<hr />
+<p><a id="shape-tool"></a></p>
+<h2 id="shape-tool"><img alt="Shape Tool Icon" src="../../images/icons/Panel_Shapes.png" title="Create New Shape Icon" /> Shape Tool</h2>
+<div class="video-link-missing">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
+</div>
+
+<p><strong>Keyboard Shortcut</strong> : <code>CTRL SHIFT K</code></p>
+<p><strong>Purpose</strong> : Create new editable shapes such as Cylinder, Arch, and Stairs.</p>
+<p>Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.</p>
+<p><img alt="Shape Tool Example" src="../../images/Example_ShapeToolsWithCurvedStair.png" /></p>
+<p><strong>Usage</strong> : To create a new shape, do the following:</p>
+<ol>
+<li>Open the New Shape Tool</li>
+<li>If "Shape Preview" is enabled, you will see a blue Preview Object in the scene</li>
+<li>Choose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)</li>
+<li>Set the options (ex, width, height, radius, number of stairs, etc)</li>
+<li>You may Move or Rotate the Preview Object within your scene</li>
+<li>Once ready, click "Build Shape" to create your final Shape</li>
+</ol>
+<hr />
+<p><a id="material-tools"></a></p>
+<h2 id="material-tools"><img alt="Material Tools Icon" src="../../images/icons/Panel_Materials.png" title="Material Tools Icon" /> Material Tools</h2>
+<div class="video-link-missing">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
+<br>
+Related Video: <a href="@todo link vid section">Texturing and UVs</a>
+</div>
+
+<p><strong>Purpose</strong> : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.</p>
+<p><img alt="Material Tools" src="../../images/MaterialTools_WithExample.png" title="Material Tools" /></p>
+<p><strong>Quick Material Usage</strong>:</p>
+<ul>
+<li><strong>(A)</strong> The current "Quick Material"</li>
+<li><strong>(B)</strong> Apply the Quick Material to the selected faces</li>
+<li><strong>(C)</strong> Pick your Quick Material from the selected face</li>
+<li><strong>(D)</strong> Preview of the current Quick Material</li>
+</ul>
+<p>Hold <code>CTRL SHIFT</code> while clicking on a face to apply the Quick Material.</p>
+<p><strong>Material Palette Usage</strong> :</p>
+<ul>
+<li><strong>(E)</strong> Drag-and-drop your often-used materials to these slots</li>
+<li><strong>(F)</strong> Create additional Material Palette slots</li>
+</ul>
+<p>You can also press <code>ALT (number key)</code> to apply materials from the Palette.</p>
+<hr />
+<p><a id="texturing"></a></p>
+<h2 id="texturing-and-uvs"><img alt="UV Editor Icon" src="../../images/icons/Panel_UVEditor.png" title="UV Editor Icon" /> Texturing and UVs</h2>
+<div class="video-link-missing">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
+</div>
+
+<p><strong>Purpose</strong> : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).</p>
+<p><img alt="Materials Example" src="../../images/Example_MaterialsOnLevel.png" title="Materials Example" /></p>
+<p>The UV Editor Panel includes both <a href="../../texturing/auto-uvs-actions">Auto UV</a> tools, and a complete <a href="../../texturing/manual-uvs-actions">Manual UV Editing and Unwrapping</a> system.</p>
+<p><em>More Info: <a href="../../texturing/overview-texture-mapping"><strong>Texturing and UVs</strong></a></em></p>
+<hr />
+<p><a id="vertex-colors"></a></p>
+<h2 id="vertex-color-tools"><img alt="Vertex Color Tools Icon" src="../../images/icons/Panel_VertColors.png" title="UV Editor Icon" /> Vertex Color Tools</h2>
+<div class="video-link-missing">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
+</div>
+
+<p><strong>Purpose</strong> : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.</p>
+<div class="alert-box warning">
+<strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.
+<!-- <br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information. -->
+</div>
+
+<p><img alt="Vertex Coloring" src="../../images/VertexColor_WithLevelExample.png" title="Vertex Coloring" /></p>
+<p>Applying Vertex Colors is a great way to colorize levels for prototyping, team layout, zones, etc.</p>
+<!-- *More Info: [**Vertex Coloring**](@todo)*  -->
+
+<hr />
+<p><a id="smoothing-groups"></a></p>
+<h2 id="smoothing-groups"><img alt="Smoothing Groups Icon" src="../../images/icons/Panel_Smoothing.png" title="Smoothing Groups Icon" /> Smoothing Groups</h2>
+<div class="video-link-missing">
+Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
+</div>
+
+<p><strong>Purpose</strong>: Create a smooth and rounded look, or sharp-edged and faceted.</p>
+<p><strong>Usage</strong>:</p>
+<p><img alt="Smoothing Groups Example" src="../../images/SmoothingGroups-Panel_WithLettersAndExample.png" title="Smoothing Groups Example" /></p>
+<ul>
+<li>Choose Face editing from the <a href="../../toolbar/overview-toolbar/#edit-mode-toolbar">Edit Mode Toolbar</a></li>
+<li>Select a group of faces that you want to be smooth<ul>
+<li><em>If no faces are selected, or you are in <a href="../@todo">Object Mode</a>, any Smoothing actions will be applied to the entire object</em></li>
+</ul>
+</li>
+<li><strong>(A)</strong> If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.</li>
+<li><strong>(B)</strong> To assign the selected faces to a new Smoothing Group, click any available group button</li>
+<li><strong>(C)</strong> You can also assign Hard groups</li>
+<li><strong>(D)</strong> Press the "Clear" button to clear all Smoothing from the selected faces</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../selection-tools/" class="btn btn-neutral float-right" title="Selection Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../overview-toolbar/" class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../overview-toolbar/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../selection-tools/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascript/zendesk-chat.js"></script>
+
+</body>
+</html>
