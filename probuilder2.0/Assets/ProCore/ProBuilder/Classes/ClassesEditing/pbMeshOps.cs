@@ -596,8 +596,11 @@ namespace ProBuilder2.MeshOperations
 
 #region Bridge
 #if !PROTOTYPE
-		public static bool Bridge(this pb_Object pb, pb_Edge a, pb_Edge b) { return pb.Bridge(a, b, true); }
-		public static bool Bridge(this pb_Object pb, pb_Edge a, pb_Edge b, bool enforcePerimiterEdgesOnly)
+
+		/**
+		 * Insert a face between two edges.
+		 */
+		public static bool Bridge(this pb_Object pb, pb_Edge a, pb_Edge b, bool enforcePerimiterEdgesOnly = false)
 		{
 			pb_IntArray[] sharedIndices = pb.GetSharedIndices();
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
