@@ -1,16 +1,21 @@
 <div class="manual"><hr /></div>
 
-## Error building Player
+## Error building Player (Windows Store, iOS, Android, WebGL)
 
 Usually seen with console errors:
 
 - `Error building Player: UnityException: Failed to run serialization weaver with command`
+- `Reference Rewriter found some errors with command`
 
-To get things compiling again, you need to mark the ProBuilder DLLs as Editor only.
+To get things compiling again, you need to mark the ProBuilder Mesh Operations DLLs as Editor only.
 
-This does mean you won't be able to access any of the ProBuilder API at runtime.  Fortunately if you're just using ProBuilder to build levels you don't need to worry about that.
+![DLL Target Settings](DLLTargets.png)
 
-<div class="sub-header">Steps to Fix</div>
+The caveat is that this means you won't be able to access any of the ProBuilder mesh operations API at runtime.
+
+If this step does not address the build issues, it may be necessary to strip ProBuilder scripts entirely before compile.  Fortunetely this is also trivial:
+
+<div class="sub-header">Steps to Strip ProBuilder Scripts at Build Time</div>
 
 1. First make sure that `Strip PB Scripts on Build` is checked in the Preferences/ProBuilder panel.
 
