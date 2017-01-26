@@ -11,16 +11,6 @@ PluginImporter:
   platformData:
     Any:
       enabled: 1
-      settings:
-        Exclude Editor: 1
-        Exclude Linux: 1
-        Exclude Linux64: 1
-        Exclude LinuxUniversal: 1
-        Exclude OSXIntel: 1
-        Exclude OSXIntel64: 1
-        Exclude OSXUniversal: 1
-        Exclude Win: 1
-        Exclude Win64: 1
     Editor:
       enabled: 0
       settings:
