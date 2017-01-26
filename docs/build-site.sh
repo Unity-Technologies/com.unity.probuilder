@@ -6,7 +6,7 @@ mkdocs build -c
 
 find site/ -name '*.psd' -exec rm {} \;
 
-SITE=../../site/probuilder
+SITE=../../site/probuilder2
 MKBUILD=$(pwd)
 
 cd $SITE
