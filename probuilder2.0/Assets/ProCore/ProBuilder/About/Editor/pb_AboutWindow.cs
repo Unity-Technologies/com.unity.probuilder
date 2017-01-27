@@ -16,8 +16,6 @@ using System.Text.RegularExpressions;
  */
 public class pb_AboutWindowSetup : AssetPostprocessor
 {
-#region Initialization
-
 	static void OnPostprocessAllAssets (
 		string[] importedAssets,
 		string[] deletedAssets,
@@ -31,84 +29,45 @@ public class pb_AboutWindowSetup : AssetPostprocessor
 			if( pb_AboutWindow.Init(str, false) )
 				break;
 	}
-#endregion
 }
 
+/**
+ * Changelog.txt file should follow this format:
+ *
+ *	| -- Product Name 2.1.0 -
+ *	|
+ *	| # Features
+ *	| 	- All kinds of awesome stuff
+ *	| 	- New flux capacitor design achieves time travel at lower velocities.
+ *	| 	- Dark matter reactor recalibrated.
+ *	| 
+ *	| # Bug Fixes
+ *	| 	- No longer explodes when spacebar is pressed.
+ *	| 	- Fix rolling issue in Rickmeter.
+ *	| 	
+ *	| # Changes
+ *	| 	- Changed Blue to Red.
+ *	| 	- Enter key now causes explosions.
+ *
+ * This path is relative to the PRODUCT_ROOT path.
+ *
+ * Note that your changelog may contain multiple entries.  Only the top-most
+ * entry will be displayed.
+ */
 public class pb_AboutWindow : EditorWindow
 {
-
-/**
- * Modify these constants to customize about screen.
- */
-#region User Settings
-
+	// Modify these constants to customize about screen.
  	const string PACKAGE_NAME = "ProBuilder";
 
-	 /* Path to the root folder */
+	// Path to the root folder
 	const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
 	
-	/**
-	 * Changelog.txt file should follow this format:
-	 *
-	 *	| -- Product Name 2.1.0 -
-	 *	|
-	 *	| # Features
-	 *	| 	- All kinds of awesome stuff
-	 *	| 	- New flux capacitor design achieves time travel at lower velocities.
-	 *	| 	- Dark matter reactor recalibrated.
-	 *	| 
-	 *	| # Bug Fixes
-	 *	| 	- No longer explodes when spacebar is pressed.
-	 *	| 	- Fix rolling issue in Rickmeter.
-	 *	| 	
-	 *	| # Changes
-	 *	| 	- Changed Blue to Red.
-	 *	| 	- Enter key now causes explosions.
-	 *
-	 * This path is relative to the PRODUCT_ROOT path.
-	 *
-	 * Note that your changelog may contain multiple entries.  Only the top-most
-	 * entry will be displayed.
-	 */
+#if SHOW_PRODUCT_THUMBS
 
 	/**
-	 * Advertisement thumb constructor is:
-	 * new AdvertisementThumb( PathToAdImage : string, URLToPurchase : string, ProductDescription : string )
-	 * Provide as many or few (or none) as desired.
-	 *
-	 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
+	 * Contains data for use in Advertisement shelf.
 	 */
-	[SerializeField]
-	public static AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
-		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
-	};
-#endregion	
-
-/* Recommend you do not modify these. */
-#region Private Fields (automatically populated)
-
-	private string AboutEntryPath = "";
-
-	private string ProductName = "";
-	// private string ProductIdentifer = "";
-	private string ProductVersion = "";
-	private string ChangelogPath = "";
-	private string BannerPath = ABOUT_ROOT + "/Images/Banner.png";
-
-	
-	const int AD_HEIGHT = 96;
-
-	/**
-	 * Struct containing data for use in Advertisement shelf.
-	 */
-	[System.Serializable]
-	public struct AdvertisementThumb
+	private class AdvertisementThumb
 	{
 		public Texture2D image;
 		public string url;
@@ -126,13 +85,84 @@ public class pb_AboutWindow : EditorWindow
 		}
 	}
 
-	Texture2D banner;
+	/**
+	 * Advertisement thumb constructor is:
+	 * new AdvertisementThumb( PathToAdImage : string, URLToPurchase : string, ProductDescription : string )
+	 * Provide as many or few (or none) as desired.
+	 *
+	 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
+	 */
+	private AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
+		new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
+	};
 
-	// populated by first entry in changelog
-	string changelog = "";
-#endregion
+	GUIStyle advertisementStyle;
+	const int AD_HEIGHT = 96;
+	Vector2 adScroll = Vector2.zero;
+#endif
 
-#region Init
+	GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Video Tutorials");
+	GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
+	GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
+
+	// Use less contast-y white and black font colors for better readabililty
+	private static readonly Color font_white = new Color(0.8235f, 0.8235f, 0.8235f, 1f);
+	private static readonly Color font_black = new Color(0.1765f, 0.1765f, 0.1765f, 1f);
+	private static readonly Color font_blue = new Color(0.03f, 0.62f, 0.93f, 1f);
+
+	private string AboutEntryPath = "";
+	private string ProductName = "";
+	private string ProductVersion = "";
+	private string ChangelogPath = "";
+	private string BannerPath = ABOUT_ROOT + "/Images/Banner.png";
+	private Texture2D banner;
+	private string changelog = "";
+	private string productName = pb_Constant.PRODUCT_NAME;
+
+	private GUIStyle bannerStyle = new GUIStyle()
+	{
+		// RectOffset(left, right, top, bottom)
+		margin = new RectOffset(12, 12, 14, 12)
+	};
+
+	private GUIStyle header1Style = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		alignment = TextAnchor.MiddleCenter,
+		fontSize = 24,
+		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+	};
+
+	private GUIStyle versionInfoStyle = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		alignment = TextAnchor.MiddleLeft,
+		fontSize = 14,
+		fontStyle = FontStyle.Bold,
+		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+	};
+
+	private GUIStyle linkStyle = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		alignment = TextAnchor.MiddleCenter,
+		fontSize = 14,
+		normal = new GUIStyleState() { textColor = font_blue }
+	};
+
+	private GUIStyle changelogStyle = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/ScrollBackground_Pro.png", ABOUT_ROOT)) }
+	};
+
+	Vector2 scroll = Vector2.zero;
 
 	/**
 	 * Return true if Init took place, false if not.
@@ -171,15 +201,11 @@ public class pb_AboutWindow : EditorWindow
 	{
 		banner = LoadAssetAtPath<Texture2D>(BannerPath);
 
-		// With Unity 4 (on PC) if you have different values for minSize and maxSize,
-		// they do not apply restrictions to window size.
-#if !UNITY_5
-		this.minSize = new Vector2(banner.width + 12, banner.height * 7);
-		this.maxSize = new Vector2(banner.width + 12, banner.height * 7);
-#else
-		this.minSize = new Vector2(banner.width + 12, banner.height * 6);
-		this.maxSize = new Vector2(banner.width + 12, 1440);
-#endif
+		this.minSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+		this.maxSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+
+		if(!productName.Contains("Basic"))
+			productName = "ProBuilder Advanced";
 	}
 
 	public void SetAboutEntryPath(string path)
@@ -192,125 +218,54 @@ public class pb_AboutWindow : EditorWindow
 	{
 		return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
 	}
-#endregion
 
-#region GUI
-
-	Color LinkColor = new Color(0f, .682f, .937f, 1f);
-
-	GUIStyle 	boldTextStyle,
-				headerTextStyle,
-				linkTextStyle;
-
-	GUIStyle advertisementStyle;
-	Vector2 scroll = Vector2.zero, adScroll = Vector2.zero;
-	// int mm = 32;
 	void OnGUI()
 	{
-		headerTextStyle = headerTextStyle ?? new GUIStyle( EditorStyles.boldLabel );//GUI.skin.label);
-		headerTextStyle.fontSize = 16;
-		
-		linkTextStyle = linkTextStyle ?? new GUIStyle( GUI.skin.label );//GUI.skin.label);
-		linkTextStyle.normal.textColor = LinkColor; 
-		linkTextStyle.alignment = TextAnchor.MiddleLeft;
+		if( GUILayout.Button(banner, bannerStyle) )
+			Debug.Log("@todo");
 
-		boldTextStyle = boldTextStyle ?? new GUIStyle( GUI.skin.label );//GUI.skin.label);
-		boldTextStyle.fontStyle = FontStyle.Bold;
-		boldTextStyle.alignment = TextAnchor.MiddleLeft;
+		GUILayout.Label(productName, header1Style);
 
-		// #if UNITY_4
-		// richTextLabel.richText = true;
-		// #endif
+		GUILayout.BeginHorizontal();
+		GUILayout.FlexibleSpace();
 
-		advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button);
-		advertisementStyle.normal.background = null;
-		
-		if(banner != null)
-			GUILayout.Label(banner);
+			if(GUILayout.Button(gc_Learn, linkStyle))
+				Debug.Log("@todo");
 
-		// mm = EditorGUI.IntField(new Rect(Screen.width - 200, 100, 200, 18), "W: ", mm);
+			if(GUILayout.Button(gc_Forum, linkStyle))
+				Debug.Log("@todo");
 
-		// grr stupid rich text faiiilluuure
-		{
-			GUILayout.Label("Thank you for purchasing " + ProductName + ". Your support allows us to keep developing this and future tools for everyone.", EditorStyles.wordWrappedLabel);
-			GUILayout.Space(2);
-			GUILayout.Label("Read these quick \"ProTips\" before starting:", headerTextStyle);
-			
-			GUILayout.BeginHorizontal();
-				GUILayout.Label("1) ", GUILayout.MinWidth(16), GUILayout.MaxWidth(16));	
-				GUILayout.Label("Register", boldTextStyle, GUILayout.MinWidth(58), GUILayout.MaxWidth(58));	
-				GUILayout.Label("for instant email updates, send your invoice # to", GUILayout.MinWidth(284), GUILayout.MaxWidth(284));	
-				if( GUILayout.Button("contact@procore3d.com", linkTextStyle, GUILayout.MinWidth(142), GUILayout.MaxWidth(142)) )
-					Application.OpenURL("mailto:contact@procore3d.com?subject=Sign me up for the Beta!");
-			GUILayout.EndHorizontal();
+			if(GUILayout.Button(gc_Contact, linkStyle))
+				Debug.Log("@todo");
 
-			GUILayout.BeginHorizontal();
-				GUILayout.Label("2) ", GUILayout.MinWidth(16), GUILayout.MaxWidth(16));	
-				GUILayout.Label("Report bugs", boldTextStyle, GUILayout.MinWidth(82), GUILayout.MaxWidth(82));	
-				GUILayout.Label("to the ProCore Forum at", GUILayout.MinWidth(144), GUILayout.MaxWidth(144));	
-				if( GUILayout.Button("www.procore3d.com/forum", linkTextStyle, GUILayout.MinWidth(162), GUILayout.MaxWidth(162)) )
-					Application.OpenURL("http://www.procore3d.com/forum");
-			GUILayout.EndHorizontal();
-
-			GUILayout.BeginHorizontal();
-				GUILayout.Label("3) ", GUILayout.MinWidth(16), GUILayout.MaxWidth(16));	
-				GUILayout.Label("Customize!", boldTextStyle, GUILayout.MinWidth(74), GUILayout.MaxWidth(74));	
-				GUILayout.Label("Click on \"Edit > Preferences\" then \"" + ProductName + "\"", GUILayout.MinWidth(276), GUILayout.MaxWidth(276));	
-			GUILayout.EndHorizontal();
-
-			GUILayout.BeginHorizontal();
-				GUILayout.Label("4) ", GUILayout.MinWidth(16), GUILayout.MaxWidth(16));	
-				GUILayout.Label("Documentation", boldTextStyle, GUILayout.MinWidth(102), GUILayout.MaxWidth(102));	
-				GUILayout.Label("Tutorials, & more info:", GUILayout.MinWidth(132), GUILayout.MaxWidth(132));	
-				if( GUILayout.Button("www.procore3d.com/" + ProductName.ToLower(), linkTextStyle, GUILayout.MinWidth(190), GUILayout.MaxWidth(190)) )
-					Application.OpenURL("http://www.procore3d.com/" + ProductName.ToLower());
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(4);
-
-			GUILayout.BeginHorizontal(GUILayout.MaxWidth(50));
-				
-				GUILayout.Label("Links:", boldTextStyle);
-
-				linkTextStyle.fontStyle = FontStyle.Italic;
-				linkTextStyle.alignment = TextAnchor.MiddleCenter;
-
-				if( GUILayout.Button("procore3d.com", linkTextStyle))
-					Application.OpenURL("http://www.procore3d.com");
-
-				if( GUILayout.Button("facebook", linkTextStyle))
-					Application.OpenURL("http://www.facebook.com/probuilder3d");
-
-				if( GUILayout.Button("twitter", linkTextStyle))
-					Application.OpenURL("http://www.twitter.com/probuilder3d");
-
-				linkTextStyle.fontStyle = FontStyle.Normal;
-			GUILayout.EndHorizontal();
-
-			GUILayout.Space(4);
-		}
-
-		HorizontalLine();
+		GUILayout.FlexibleSpace();
+		GUILayout.EndHorizontal();
 
 		// always bold the first line (cause it's the version info stuff)
-		scroll = EditorGUILayout.BeginScrollView(scroll);
-		GUILayout.Label(ProductName + "  |  version: " + ProductVersion, EditorStyles.boldLabel);
+		scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
+		GUILayout.Label(string.Format("Version: {0}", ProductVersion), versionInfoStyle);
 		GUILayout.Label("\n" + changelog);
 		EditorGUILayout.EndScrollView();
 		
-		HorizontalLine();
 		
+#if SHOW_PRODUCT_THUMBS
+
+		HorizontalLine();
+
 		GUILayout.Label("More ProCore Products", EditorStyles.boldLabel);
 
 		int pad = advertisements.Length * AD_HEIGHT > Screen.width ? 22 : 6;
 		adScroll = EditorGUILayout.BeginScrollView(adScroll, false, false, GUILayout.MinHeight(AD_HEIGHT + pad), GUILayout.MaxHeight(AD_HEIGHT + pad));
 		GUILayout.BeginHorizontal();
 
+    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button); 
+    	advertisementStyle.normal.background = null; 
+
 		foreach(AdvertisementThumb ad in advertisements)
 		{
 			if(ad.url.ToLower().Contains(ProductName.ToLower()))
 				continue;
-				
+
 			if(GUILayout.Button(ad.guiContent, advertisementStyle,
 				GUILayout.MinWidth(AD_HEIGHT), GUILayout.MaxWidth(AD_HEIGHT),
 				GUILayout.MinHeight(AD_HEIGHT), GUILayout.MaxHeight(AD_HEIGHT)))
@@ -320,7 +275,7 @@ public class pb_AboutWindow : EditorWindow
 		}
 		GUILayout.EndHorizontal();
 		EditorGUILayout.EndScrollView();
-		/* shill other products */
+#endif
 	}
 
 	/**
@@ -336,12 +291,6 @@ public class pb_AboutWindow : EditorWindow
 
 		GUILayout.Space(6);
 	}
-#endregion
-
-#region Data Parsing
-
-	/* rich text ain't wuurkin' in unity 3.5 */
-	const string RemoveBraketsRegex = "(\\<.*?\\>)";
 
 	/**
 	 * Open VersionInfo and Changelog and pull out text to populate vars for OnGUI to display.
@@ -352,7 +301,6 @@ public class pb_AboutWindow : EditorWindow
 		TextAsset versionInfo = LoadAssetAtPath<TextAsset>( entryPath );
 		
 		ProductName = "";
-		// ProductIdentifer = "";
 		ProductVersion = "";
 		ChangelogPath = "";
 
@@ -372,9 +320,7 @@ public class pb_AboutWindow : EditorWindow
 			}
 		}
 
-		// notes = notes.Trim();
-
-		/* Get first entry in changelog.txt */
+		// Get first entry in changelog.txt
 		TextAsset changelogText = LoadAssetAtPath<TextAsset>( ChangelogPath );
 
 		if(changelogText)
@@ -408,5 +354,4 @@ public class pb_AboutWindow : EditorWindow
 
 		return false;		
 	}
-#endregion
 }
