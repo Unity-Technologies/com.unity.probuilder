@@ -24,7 +24,7 @@ public class pb_AboutWindowSetup : AssetPostprocessor
 	{
 
 		string[] entries = System.Array.FindAll(importedAssets, name => name.Contains("pc_AboutEntry") && !name.EndsWith(".meta"));
-		
+
 		foreach(string str in entries)
 			if( pb_AboutWindow.Init(str, false) )
 				break;
@@ -40,11 +40,11 @@ public class pb_AboutWindowSetup : AssetPostprocessor
  *	| 	- All kinds of awesome stuff
  *	| 	- New flux capacitor design achieves time travel at lower velocities.
  *	| 	- Dark matter reactor recalibrated.
- *	| 
+ *	|
  *	| # Bug Fixes
  *	| 	- No longer explodes when spacebar is pressed.
  *	| 	- Fix rolling issue in Rickmeter.
- *	| 	
+ *	|
  *	| # Changes
  *	| 	- Changed Blue to Red.
  *	| 	- Enter key now causes explosions.
@@ -61,7 +61,7 @@ public class pb_AboutWindow : EditorWindow
 
 	// Path to the root folder
 	const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
-	
+
 #if SHOW_PRODUCT_THUMBS
 
 	/**
@@ -107,28 +107,48 @@ public class pb_AboutWindow : EditorWindow
 	Vector2 adScroll = Vector2.zero;
 #endif
 
-	GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Video Tutorials");
+	GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
 	GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
 	GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
+	GUIContent gc_Banner = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
+
+	private const string VIDEO_URL = @"http://bit.ly/pbstarter";
+	private const string LEARN_URL = @"http://procore3d.com/docs/probuilder";
+	private const string SUPPORT_URL = @"http://www.procore3d.com/forum/";
+	private const string CONTACT_EMAIL = @"mailto:contact@procore3d.com?subject=Hey%20ProBuilder%20People!";
+
+	private const string FONT_REGULAR = "Asap-Regular.otf";
+	private const string FONT_MEDIUM = "Asap-Medium.otf";
 
 	// Use less contast-y white and black font colors for better readabililty
-	private static readonly Color font_white = new Color(0.8235f, 0.8235f, 0.8235f, 1f);
-	private static readonly Color font_black = new Color(0.1765f, 0.1765f, 0.1765f, 1f);
-	private static readonly Color font_blue = new Color(0.03f, 0.62f, 0.93f, 1f);
+	private static readonly Color font_white = HexToColor(0xCECECE); // new Color(0.8235f, 0.8235f, 0.8235f, 1f);
+	private static readonly Color font_black = HexToColor(0x545454); // new Color(0.1765f, 0.1765f, 0.1765f, 1f);
+	private static readonly Color font_blue = HexToColor(0x00AAEF); // new Color(0.03f, 0.62f, 0.93f, 1f);
 
 	private string AboutEntryPath = "";
-	private string ProductName = "";
 	private string ProductVersion = "";
 	private string ChangelogPath = "";
-	private string BannerPath = ABOUT_ROOT + "/Images/Banner.png";
-	private Texture2D banner;
 	private string changelog = "";
 	private string productName = pb_Constant.PRODUCT_NAME;
+
+	private static Color HexToColor(uint x)
+	{
+		return new Color( 	((x >> 16) & 0xFF) / 255f,
+							((x >> 8) & 0xFF) / 255f,
+							(x & 0xFF) / 255f,
+							1f);
+	}
 
 	private GUIStyle bannerStyle = new GUIStyle()
 	{
 		// RectOffset(left, right, top, bottom)
-		margin = new RectOffset(12, 12, 14, 12)
+		margin = new RectOffset(12, 12, 12, 12),
+		normal = new GUIStyleState() {
+			background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", ABOUT_ROOT))
+		},
+		hover = new GUIStyleState() {
+			background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", ABOUT_ROOT))
+		},
 	};
 
 	private GUIStyle header1Style = new GUIStyle()
@@ -136,15 +156,16 @@ public class pb_AboutWindow : EditorWindow
 		margin = new RectOffset(10, 10, 10, 10),
 		alignment = TextAnchor.MiddleCenter,
 		fontSize = 24,
+		// fontStyle = FontStyle.Bold,
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_MEDIUM)),
 		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 	};
 
 	private GUIStyle versionInfoStyle = new GUIStyle()
 	{
 		margin = new RectOffset(10, 10, 10, 10),
-		alignment = TextAnchor.MiddleLeft,
 		fontSize = 14,
-		fontStyle = FontStyle.Bold,
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
 		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 	};
 
@@ -152,14 +173,39 @@ public class pb_AboutWindow : EditorWindow
 	{
 		margin = new RectOffset(10, 10, 10, 10),
 		alignment = TextAnchor.MiddleCenter,
-		fontSize = 14,
+		fontSize = 16,
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
 		normal = new GUIStyleState() { textColor = font_blue }
+	};
+
+	private GUIStyle separatorStyle = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		alignment = TextAnchor.MiddleCenter,
+		fontSize = 16,
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 	};
 
 	private GUIStyle changelogStyle = new GUIStyle()
 	{
 		margin = new RectOffset(10, 10, 10, 10),
-		normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/ScrollBackground_Pro.png", ABOUT_ROOT)) }
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+		normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
+			string.Format("{0}/Images/ScrollBackground_{1}.png",
+				ABOUT_ROOT,
+				EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+		}
+	};
+
+	private GUIStyle changelogTextStyle = new GUIStyle()
+	{
+		margin = new RectOffset(10, 10, 10, 10),
+		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+		fontSize = 14,
+		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
+		richText = true,
+		wordWrap = true
 	};
 
 	Vector2 scroll = Vector2.zero;
@@ -176,13 +222,13 @@ public class pb_AboutWindow : EditorWindow
 
 		if(fromMenu || EditorPrefs.GetString(identifier) != version)
 		{
-			string tname;	
+			string tname;
 			pb_AboutWindow win;
 
 			if(GetField(aboutEntryPath, "name: ", out tname))
 				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, tname, true);
 			else
-				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow));
+				win = (pb_AboutWindow)EditorWindow.GetWindow<pb_AboutWindow>(true, "About", true);
 
 			win.SetAboutEntryPath(aboutEntryPath);
 			win.ShowUtility();
@@ -199,7 +245,11 @@ public class pb_AboutWindow : EditorWindow
 
 	public void OnEnable()
 	{
-		banner = LoadAssetAtPath<Texture2D>(BannerPath);
+		Texture2D banner = bannerStyle.normal.background;
+		bannerStyle.fixedWidth = banner.width;
+		bannerStyle.fixedHeight = banner.height;
+
+		this.wantsMouseMove = true;
 
 		this.minSize = new Vector2(banner.width + 24, banner.height * 2.5f);
 		this.maxSize = new Vector2(banner.width + 24, banner.height * 2.5f);
@@ -221,8 +271,13 @@ public class pb_AboutWindow : EditorWindow
 
 	void OnGUI()
 	{
-		if( GUILayout.Button(banner, bannerStyle) )
-			Debug.Log("@todo");
+		if( GUILayout.Button(gc_Banner, bannerStyle) )
+			Application.OpenURL(VIDEO_URL);
+
+		if(GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+			Repaint();
+
+		GUILayout.BeginVertical(changelogStyle);
 
 		GUILayout.Label(productName, header1Style);
 
@@ -230,24 +285,29 @@ public class pb_AboutWindow : EditorWindow
 		GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button(gc_Learn, linkStyle))
-				Debug.Log("@todo");
+				Application.OpenURL(LEARN_URL);
+
+			GUILayout.Label("|", separatorStyle);
 
 			if(GUILayout.Button(gc_Forum, linkStyle))
-				Debug.Log("@todo");
+				Application.OpenURL(SUPPORT_URL);
+
+			GUILayout.Label("|", separatorStyle);
 
 			if(GUILayout.Button(gc_Contact, linkStyle))
-				Debug.Log("@todo");
+				Application.OpenURL(CONTACT_EMAIL);
 
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
 
+		GUILayout.EndVertical();
+
 		// always bold the first line (cause it's the version info stuff)
 		scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
 		GUILayout.Label(string.Format("Version: {0}", ProductVersion), versionInfoStyle);
-		GUILayout.Label("\n" + changelog);
+		GUILayout.Label("\n" + changelog, changelogTextStyle);
 		EditorGUILayout.EndScrollView();
-		
-		
+
 #if SHOW_PRODUCT_THUMBS
 
 		HorizontalLine();
@@ -258,8 +318,8 @@ public class pb_AboutWindow : EditorWindow
 		adScroll = EditorGUILayout.BeginScrollView(adScroll, false, false, GUILayout.MinHeight(AD_HEIGHT + pad), GUILayout.MaxHeight(AD_HEIGHT + pad));
 		GUILayout.BeginHorizontal();
 
-    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button); 
-    	advertisementStyle.normal.background = null; 
+    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button);
+    	advertisementStyle.normal.background = null;
 
 		foreach(AdvertisementThumb ad in advertisements)
 		{
@@ -299,8 +359,7 @@ public class pb_AboutWindow : EditorWindow
 	{
 		/* Get data from VersionInfo.txt */
 		TextAsset versionInfo = LoadAssetAtPath<TextAsset>( entryPath );
-		
-		ProductName = "";
+
 		ProductVersion = "";
 		ChangelogPath = "";
 
@@ -309,12 +368,9 @@ public class pb_AboutWindow : EditorWindow
 			string[] txt = versionInfo.text.Split('\n');
 			foreach(string cheese in txt)
 			{
-				if(cheese.StartsWith("name:")) 
-					ProductName = cheese.Replace("name: ", "").Trim();
-				else 
 				if(cheese.StartsWith("version:"))
 					ProductVersion = cheese.Replace("version: ", "").Trim();
-				else 
+				else
 				if(cheese.StartsWith("changelog:"))
 					ChangelogPath = cheese.Replace("changelog: ", "").Trim();
 			}
@@ -330,8 +386,12 @@ public class pb_AboutWindow : EditorWindow
 			string[] newLineSplit = split[1].Trim().Split('\n');
 			for(int i = 2; i < newLineSplit.Length; i++)
 				sb.AppendLine(newLineSplit[i]);
-			
+
 			changelog = sb.ToString();
+
+			changelog = Regex.Replace(changelog, "^-", "\u2022", RegexOptions.Multiline);
+			changelog = Regex.Replace(changelog, @"(?<=^##\ ).*", "<size=14>${0}</size>", RegexOptions.Multiline);
+			changelog = Regex.Replace(changelog, @"^##\ ", "");
 		}
 	}
 
@@ -352,6 +412,6 @@ public class pb_AboutWindow : EditorWindow
 			}
 		}
 
-		return false;		
+		return false;
 	}
 }
