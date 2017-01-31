@@ -1,27 +1,33 @@
-Polybrush GUI Color Scheme
+## Single GUI Color Scheme for all ProCore products
 
-ICONS : 898989
+**General Items**
+Item 						| Color/Value
+--- 						| ---
+Big Text Font				| Bebas Neue Regular
+Small Text Font				| ASAP Regular
+Small Text Font (Header)	| ASAP Bold
+Icon 						| 898989
+Rounding 					| 2px
+Accent ON Blue 				| 00aaef 
+Accent OFF Orange			| ff9c00
+Accent OFF (all) 			| 898989
 
-ROUNDING : 2px
+**Light Skin (Unity Personal)**
+Item 						| Color Value
+--- 						| ---
+Text 						| 545454
+Text Backing 				| d7d7d7
+Normal 						| e7e7e7
+Active 						| cccccc
+OnNormal 					| f9f9f9
+OnActive 					| cccccc
 
-ACCENTS
-- On : 00aaef
-- Off : 898989
-
-COLORS (LIGHT)
-
-- Text			545454
-- Text Backing	d7d7d7
-- Normal		e7e7e7
-- Active		cccccc
-- OnNormal		f9f9f9
-- OnActive		cccccc
-
-COLORS (DARK)
-
-- Text			cecece
-- Text Backing	2c2c2c
-- Normal		4e4e4e
-- Active		696969
-- OnNormal		616161
-- OnActive		696969
+**Dark Skin (Unity Pro, Unreal)**
+Item 						| Color Value
+--- 						| ---
+Text 						| cecece
+Text Backing 				| 2c2c2c
+Normal 						| 4e4e4e
+Active 						| 696969
+OnNormal					| 616161
+OnActive 					| 696969
