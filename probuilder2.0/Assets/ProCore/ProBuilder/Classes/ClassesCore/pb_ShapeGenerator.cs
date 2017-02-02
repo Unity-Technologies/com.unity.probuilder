@@ -13,7 +13,6 @@ namespace ProBuilder2.Common
  */
 public class pb_ShapeGenerator
 {
-
 	public static pb_Object StairGenerator(Vector3 size, int steps, bool buildSides)
 	{
 		/// 4 vertices per quad, 2 quads per step.
@@ -106,7 +105,7 @@ public class pb_ShapeGenerator
 						sides_v[sv+1] = new Vector3(x, y1, z0);
 						sides_v[sv+2] = new Vector3(x, y1, z1);
 
-						sides_f[st++] = new pb_Face( side % 2 == 0 ? 
+						sides_f[st++] = new pb_Face( side % 2 == 0 ?
 							new int[] { v+2, v+1, v+0 } :
 							new int[] { v+0, v+1, v+2 } );
 
@@ -135,9 +134,9 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
-		pb.gameObject.name = "Stairs"; 
+		pb.gameObject.name = "Stairs";
 
-		return pb;	
+		return pb;
 	}
 
 	public static pb_Object CurvedStairGenerator(float stairWidth, float height, float innerRadius, float circumference, int steps, bool buildSides)
@@ -167,7 +166,7 @@ public class pb_ShapeGenerator
 			Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) );
 
 			/**
-			 * 
+			 *
 			 *		/6-----/7
 			 *	   /	  /
 			 *	  /5_____/4
@@ -198,8 +197,8 @@ public class pb_ShapeGenerator
 				vertices[v+7] = v1 * innerRadius;
 				vertices[v+7].y = h1;
 			}
-			
-			faces[t+0] = new pb_Face( new int[] { 	
+
+			faces[t+0] = new pb_Face( new int[] {
 				v + 0,
 				v + 1,
 				v + 2,
@@ -258,7 +257,7 @@ public class pb_ShapeGenerator
 					float h1 = (((i+1) / (float) steps) * height);
 
 					Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0) ) * x;
-					Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) ) * x;	
+					Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1) ) * x;
 
 					sides_v[sv+0] = v0;
 					sides_v[sv+1] = v1;
@@ -290,7 +289,7 @@ public class pb_ShapeGenerator
 						sides_v[sv+1].y = h1;
 						sides_v[sv+2].y = h1;
 
-						sides_f[st++] = new pb_Face( side % 2 == 0 ? 
+						sides_f[st++] = new pb_Face( side % 2 == 0 ?
 							new int[] { v+2, v+1, v+0 } :
 							new int[] { v+0, v+1, v+2 } );
 
@@ -311,7 +310,7 @@ public class pb_ShapeGenerator
 			// // add that last back face
 			float cos = -Mathf.Cos(cir), sin = Mathf.Sin(cir);
 
-			vertices = vertices.Concat(new Vector3[] 
+			vertices = vertices.Concat(new Vector3[]
 			{
 				new Vector3(cos, 0f, sin) * innerRadius,
 				new Vector3(cos, 0f, sin) * outerRadius,
@@ -337,9 +336,9 @@ public class pb_ShapeGenerator
 
 		pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
 
-		pb.gameObject.name = "Stairs"; 
+		pb.gameObject.name = "Stairs";
 
-		return pb;	
+		return pb;
 	}
 
 	/**
@@ -356,7 +355,7 @@ public class pb_ShapeGenerator
 	public static pb_Object StairGenerator(int steps, float width, float height, float depth, bool sidesGoToFloor, bool generateBack, bool platformsOnly)
 	{
 		int i = 0;
-		
+
 		List<Vector3> verts = new List<Vector3>();
 		Vector3[] v = (platformsOnly) ? new Vector3[8] : new Vector3[16];
 
@@ -369,7 +368,7 @@ public class pb_ShapeGenerator
 		for(i = 0; i < steps; i++)
 		{
 			float x = stepWidth/2f, y = i*stepHeight, z = i*stepDepth;
-			
+
 			if(sidesGoToFloor)
 				y = 0;
 
@@ -413,7 +412,7 @@ public class pb_ShapeGenerator
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(verts.ToArray());
-		pb.gameObject.name = "Stairs"; 
+		pb.gameObject.name = "Stairs";
 		return pb;
 	}
 
@@ -444,7 +443,7 @@ public class pb_ShapeGenerator
 	{
 		if(axisDivisions % 2 != 0)
 			axisDivisions++;
-		
+
 		if(axisDivisions > 64)
 			axisDivisions = 64;
 
@@ -478,7 +477,7 @@ public class pb_ShapeGenerator
 
 			for(int n = 0; n < axisDivisions; n++)
 			{
-				verts[it+0] = new Vector3(circle[n+0].x, Y, circle[n+0].z);			
+				verts[it+0] = new Vector3(circle[n+0].x, Y, circle[n+0].z);
 				verts[it+1] = new Vector3(circle[n+0].x, Y2, circle[n+0].z);
 
 				if(n != axisDivisions-1) {
@@ -504,14 +503,14 @@ public class pb_ShapeGenerator
 				int one 	= index + 1;
 				int two 	= index + 2;
 				int three 	= index + 3;
-	
+
 				faces[f++] = new pb_Face(new int[6]{
 					zero,
 					one,
 					two,
-					one, 
+					one,
 					three,
-					two					
+					two
 					});
 			}
 		}
@@ -531,7 +530,7 @@ public class pb_ShapeGenerator
 				verts[ind+2] = new Vector3(circle[n+1].x, 0f, circle[n+1].z);
 			else
 				verts[ind+2] = new Vector3(circle[000].x, 0f, circle[000].z);
-			
+
 			faces[f_ind + n] = new pb_Face(new int[3] {ind+2, ind+1, ind+0});
 
 			ind += 3;
@@ -543,7 +542,7 @@ public class pb_ShapeGenerator
 				verts[ind+2] = new Vector3(circle[n+1].x, height, circle[n+1].z);
 			else
 				verts[ind+2] = new Vector3(circle[000].x, height, circle[000].z);
-			
+
 			faces[f_ind + (n+axisDivisions)] = new pb_Face(new int[3] {ind+0, ind+1, ind+2});
 
 			ind += 3;
@@ -589,16 +588,16 @@ public class pb_ShapeGenerator
 			template[5],	// 9
 
 			template[3],	// 10 	left side
-			template[0],	// 11 
-			template[5],	// 12 
-			template[2],	// 13 
+			template[0],	// 11
+			template[5],	// 12
+			template[2],	// 13
 
 			template[0],	// 14	// bottom
 			template[1],	// 15
 			template[3],	// 16
 			template[4]		// 17
 		};
-		
+
 		pb_Face[] f = new pb_Face[5]
 		{
 			new pb_Face(new int[3]{2, 1, 0}),			// x
@@ -656,7 +655,7 @@ public class pb_ShapeGenerator
 		points.Add( template[1] );
 		points.Add( template[4] );
 		points.Add( template[5] );
-		
+
 		points.Add( template[2] );
 		points.Add( template[3] );
 		points.Add( template[6] );
@@ -678,7 +677,7 @@ public class pb_ShapeGenerator
 		points.Add( template[10] );
 
 		List<Vector3> reverse = new List<Vector3>();
-		
+
 		for(int i = 0; i < points.Count; i += 4)
 		{
 			reverse.Add( points[i + 1] - Vector3.forward * depth );
@@ -780,7 +779,7 @@ public class pb_ShapeGenerator
 			case Axis.Down:
 				for(i = 0; i < v.Length; i++)
 					v[i] = new Vector3(p[i].x, 0f, p[i].y);
-				break;				
+				break;
 			case Axis.Forward:
 				for(i = 0; i < v.Length; i++)
 					v[i] = new Vector3(p[i].x, p[i].y, 0f);
@@ -788,19 +787,19 @@ public class pb_ShapeGenerator
 			case Axis.Backward:
 				for(i = 0; i < v.Length; i++)
 					v[i] = new Vector3(p[i].y, p[i].x, 0f);
-				break;				
+				break;
 		}
 		pb_Object pb;
 
 		pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
-		
+
 		pb.gameObject.name = "Plane";
 
 		Vector3 center = Vector3.zero;
 		Vector3[] verts = pb.VerticesInWorldSpace();
 		foreach (Vector3 vector in verts)
 			center += vector;
-	
+
 		center /= verts.Length;
 
 		Vector3 dir = (pb.transform.position - center);
@@ -822,7 +821,7 @@ public class pb_ShapeGenerator
 	 * \returns New #pb_Object.
 	 */
 	public static pb_Object PipeGenerator(
-		float radius, float height, float thickness, int subdivAxis, int subdivHeight) 
+		float radius, float height, float thickness, int subdivAxis, int subdivHeight)
 	{
 
 		// template is outer ring - radius refers to outer ring always
@@ -884,7 +883,7 @@ public class pb_ShapeGenerator
 			tmp2 = (i < subdivAxis-1) ? templateOut[i+1] : templateOut[0];
 			tmp3 = templateIn[i];
 			tmp4 = (i < subdivAxis-1) ? templateIn[i+1] : templateIn[0];
-			
+
 			// top
 			Vector3[] tpt = new Vector3[4]
 			{
@@ -903,8 +902,8 @@ public class pb_ShapeGenerator
 				new Vector3(tmp4.x, 0f, tmp4.y),
 			};
 
-			v.AddRange(tpb);		
-			v.AddRange(tpt);		
+			v.AddRange(tpb);
+			v.AddRange(tpt);
 		}
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(v.ToArray());
@@ -932,7 +931,7 @@ public class pb_ShapeGenerator
 			Vector2 ct = pb_Math.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
 			template[i] = new Vector3(ct.x, 0f, ct.y);
 		}
-			
+
 		List<Vector3> v = new List<Vector3>();
 		List<pb_Face> f = new List<pb_Face>();
 
@@ -1038,7 +1037,7 @@ public class pb_ShapeGenerator
 							new Vector3(templateIn[n].x, templateIn[n].y, y)
 						});
 				}
-				
+
 				// ride side bottom face
 				if(n == radialCuts-2)
 				{
@@ -1091,7 +1090,7 @@ public class pb_ShapeGenerator
 		pb.gameObject.name = "Arch";
 		return pb;
 	}
-	
+
 	static readonly Vector3[] ICOSAHEDRON_VERTICES = new Vector3[12]
 	{
 		new Vector3(-1f,  pb_Math.PHI,  0f),
@@ -1123,7 +1122,7 @@ public class pb_ShapeGenerator
 		11, 10, 2,
 		10, 7, 6,
 		7, 1, 8,
-		 
+
 		3, 9, 4,
 		3, 4, 2,
 		3, 2, 6,
@@ -1174,7 +1173,7 @@ public class pb_ShapeGenerator
 			f[i/3].manualUV = true;
 		}
 
-		GameObject _gameObject = new GameObject();	
+		GameObject _gameObject = new GameObject();
 		pb_Object pb = _gameObject.AddComponent<pb_Object>();
 
 		pb.SetVertices(v);
@@ -1319,7 +1318,7 @@ public class pb_ShapeGenerator
 				faces.Add( new pb_Face(new int[] { a, b, c, b, d, c } ) );
 				faces[fc].smoothingGroup = InSmooth ? 1 : -1;
 				faces[fc].manualUV = true;
-				
+
 				fc++;
 			}
 		}
