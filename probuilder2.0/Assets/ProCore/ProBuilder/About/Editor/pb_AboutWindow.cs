@@ -121,9 +121,10 @@ public class pb_AboutWindow : EditorWindow
 	private const string FONT_MEDIUM = "Asap-Medium.otf";
 
 	// Use less contast-y white and black font colors for better readabililty
-	private static readonly Color font_white = HexToColor(0xCECECE); // new Color(0.8235f, 0.8235f, 0.8235f, 1f);
-	private static readonly Color font_black = HexToColor(0x545454); // new Color(0.1765f, 0.1765f, 0.1765f, 1f);
-	private static readonly Color font_blue = HexToColor(0x00AAEF); // new Color(0.03f, 0.62f, 0.93f, 1f);
+	private static readonly Color font_white = HexToColor(0xCECECE);
+	private static readonly Color font_black = HexToColor(0x545454);
+	private static readonly Color font_blue_normal = HexToColor(0x00AAEF);
+	private static readonly Color font_blue_hover = HexToColor(0x008BEF);// HexToColor(0x008BEF);
 
 	private string AboutEntryPath = "";
 	private string ProductVersion = "";
@@ -175,7 +176,20 @@ public class pb_AboutWindow : EditorWindow
 		alignment = TextAnchor.MiddleCenter,
 		fontSize = 16,
 		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		normal = new GUIStyleState() { textColor = font_blue }
+		normal = new GUIStyleState() {
+			textColor = font_blue_normal,
+			background = LoadAssetAtPath<Texture2D>(
+				string.Format("{0}/Images/ScrollBackground_{1}.png",
+					ABOUT_ROOT,
+					EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+		},
+		hover = new GUIStyleState() {
+			textColor = font_blue_hover,
+			background = LoadAssetAtPath<Texture2D>(
+				string.Format("{0}/Images/ScrollBackground_{1}.png",
+					ABOUT_ROOT,
+					EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+		}
 	};
 
 	private GUIStyle separatorStyle = new GUIStyle()
@@ -271,10 +285,12 @@ public class pb_AboutWindow : EditorWindow
 
 	void OnGUI()
 	{
+		Vector2 mousePosition = Event.current.mousePosition;
+
 		if( GUILayout.Button(gc_Banner, bannerStyle) )
 			Application.OpenURL(VIDEO_URL);
 
-		if(GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+		if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
 			Repaint();
 
 		GUILayout.BeginVertical(changelogStyle);
@@ -299,6 +315,9 @@ public class pb_AboutWindow : EditorWindow
 
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
+
+		if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
+			Repaint();
 
 		GUILayout.EndVertical();
 
