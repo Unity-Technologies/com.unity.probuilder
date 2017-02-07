@@ -140,87 +140,13 @@ public class pb_AboutWindow : EditorWindow
 							1f);
 	}
 
-	private GUIStyle bannerStyle = new GUIStyle()
-	{
-		// RectOffset(left, right, top, bottom)
-		margin = new RectOffset(12, 12, 12, 12),
-		normal = new GUIStyleState() {
-			background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", ABOUT_ROOT))
-		},
-		hover = new GUIStyleState() {
-			background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", ABOUT_ROOT))
-		},
-	};
-
-	private GUIStyle header1Style = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		alignment = TextAnchor.MiddleCenter,
-		fontSize = 24,
-		// fontStyle = FontStyle.Bold,
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_MEDIUM)),
-		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
-	};
-
-	private GUIStyle versionInfoStyle = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		fontSize = 14,
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
-	};
-
-	private GUIStyle linkStyle = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		alignment = TextAnchor.MiddleCenter,
-		fontSize = 16,
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		normal = new GUIStyleState() {
-			textColor = font_blue_normal,
-			background = LoadAssetAtPath<Texture2D>(
-				string.Format("{0}/Images/ScrollBackground_{1}.png",
-					ABOUT_ROOT,
-					EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-		},
-		hover = new GUIStyleState() {
-			textColor = font_blue_hover,
-			background = LoadAssetAtPath<Texture2D>(
-				string.Format("{0}/Images/ScrollBackground_{1}.png",
-					ABOUT_ROOT,
-					EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-		}
-	};
-
-	private GUIStyle separatorStyle = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		alignment = TextAnchor.MiddleCenter,
-		fontSize = 16,
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
-	};
-
-	private GUIStyle changelogStyle = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
-			string.Format("{0}/Images/ScrollBackground_{1}.png",
-				ABOUT_ROOT,
-				EditorGUIUtility.isProSkin ? "Pro" : "Light"))
-		}
-	};
-
-	private GUIStyle changelogTextStyle = new GUIStyle()
-	{
-		margin = new RectOffset(10, 10, 10, 10),
-		font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
-		fontSize = 14,
-		normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
-		richText = true,
-		wordWrap = true
-	};
+	private static GUIStyle bannerStyle,
+							header1Style,
+							versionInfoStyle,
+							linkStyle,
+							separatorStyle,
+							changelogStyle,
+							changelogTextStyle;
 
 	Vector2 scroll = Vector2.zero;
 
@@ -257,8 +183,94 @@ public class pb_AboutWindow : EditorWindow
 		}
 	}
 
+	private static void InitGuiStyles()
+	{
+		bannerStyle = new GUIStyle()
+		{
+			// RectOffset(left, right, top, bottom)
+			margin = new RectOffset(12, 12, 12, 12),
+			normal = new GUIStyleState() {
+				background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", ABOUT_ROOT))
+			},
+			hover = new GUIStyleState() {
+				background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", ABOUT_ROOT))
+			},
+		};
+
+		header1Style = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			alignment = TextAnchor.MiddleCenter,
+			fontSize = 24,
+			// fontStyle = FontStyle.Bold,
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_MEDIUM)),
+			normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+		};
+
+		versionInfoStyle = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			fontSize = 14,
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+			normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+		};
+
+		linkStyle = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			alignment = TextAnchor.MiddleCenter,
+			fontSize = 16,
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+			normal = new GUIStyleState() {
+				textColor = font_blue_normal,
+				background = LoadAssetAtPath<Texture2D>(
+					string.Format("{0}/Images/ScrollBackground_{1}.png",
+						ABOUT_ROOT,
+						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+			},
+			hover = new GUIStyleState() {
+				textColor = font_blue_hover,
+				background = LoadAssetAtPath<Texture2D>(
+					string.Format("{0}/Images/ScrollBackground_{1}.png",
+						ABOUT_ROOT,
+						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+			}
+		};
+
+		separatorStyle = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			alignment = TextAnchor.MiddleCenter,
+			fontSize = 16,
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+			normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+		};
+
+		changelogStyle = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+			normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
+				string.Format("{0}/Images/ScrollBackground_{1}.png",
+					ABOUT_ROOT,
+					EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+			}
+		};
+
+		changelogTextStyle = new GUIStyle()
+		{
+			margin = new RectOffset(10, 10, 10, 10),
+			font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+			fontSize = 14,
+			normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
+			richText = true,
+			wordWrap = true
+		};
+	}
+
 	public void OnEnable()
 	{
+		InitGuiStyles();
 		Texture2D banner = bannerStyle.normal.background;
 		bannerStyle.fixedWidth = banner.width;
 		bannerStyle.fixedHeight = banner.height;
