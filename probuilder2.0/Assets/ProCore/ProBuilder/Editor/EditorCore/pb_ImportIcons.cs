@@ -7,12 +7,12 @@ namespace ProBuilder2.EditorCommon
 	public class pb_ImportIcons : AssetPostprocessor
 	{
 		/**
-		 *	Automatically set the importer settings for ProBuilder
-		 *	icons.
+		 *	Automatically set the importer settings for ProBuilder icons.
 		 */
 		public void OnPreprocessTexture()
 		{
-			if( assetPath.IndexOf("ProBuilder/Icons") < 0 )
+			if( assetPath.IndexOf("ProBuilder/Icons") < 0 &&
+				assetPath.IndexOf("ProBuilder/About/Images") < 0)
 				return;
 
 			TextureImporter ti = (TextureImporter) assetImporter;
@@ -28,7 +28,7 @@ namespace ProBuilder2.EditorCommon
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
 			ti.mipmapEnabled = false;
-			ti.maxTextureSize = 64;
+			ti.maxTextureSize = 2048;
 		}
 	}
 }
