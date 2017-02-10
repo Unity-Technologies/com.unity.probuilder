@@ -13,6 +13,7 @@ namespace ProBuilder2.Actions
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
@@ -34,6 +35,36 @@ namespace ProBuilder2.Actions
 			return 	editLevel != EditLevel.Geometry;
 		}
 
+		public override MenuActionState AltState()
+		{
+			if(	IsEnabled() && pb_Editor.instance.editLevel == EditLevel.Geometry )
+				return MenuActionState.VisibleAndEnabled;
+
+			return MenuActionState.Visible;
+		}
+
+		public override void OnSettingsGUI()
+		{
+			GUILayout.Label("Select by Vertex Color Options", EditorStyles.boldLabel);
+
+			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectColorToCurrentSelection");
+
+			EditorGUI.BeginChangeCheck();
+
+			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
+
+			if( EditorGUI.EndChangeCheck() )
+				EditorPrefs.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
+
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button("Select Vertex Color"))
+			{
+				DoAction();
+				SceneView.RepaintAll();
+			}
+		}
+
 		public override pb_ActionResult DoAction()
 		{
 			pbUndo.RecordSelection(selection, "Select Faces with Vertex Colors");
@@ -52,8 +83,10 @@ namespace ProBuilder2.Actions
 			}
 
 			List<GameObject> newSelection = new List<GameObject>();
+			bool selectionOnly = pb_Preferences_Internal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			pb_Object[] pool = selectionOnly ? selection : Object.FindObjectsOfType<pb_Object>();
 
-			foreach(pb_Object pb in Object.FindObjectsOfType<pb_Object>())
+			foreach(pb_Object pb in pool)
 			{
 				Color[] mesh_colors = pb.colors;
 
@@ -92,5 +125,4 @@ namespace ProBuilder2.Actions
 		}
 	}
 }
-
 

@@ -44,6 +44,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		Material userMaterial = null;
+
 		void OnEnable()
 		{
 			userMaterial = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);

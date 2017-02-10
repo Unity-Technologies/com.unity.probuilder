@@ -31,7 +31,6 @@ namespace ProBuilder2.Actions
 					selection.Any(x => x.SelectedFaceCount > 0);
 		}
 
-
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry;
