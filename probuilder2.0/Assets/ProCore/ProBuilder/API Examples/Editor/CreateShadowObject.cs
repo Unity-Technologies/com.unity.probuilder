@@ -8,7 +8,7 @@
  */
 
 // Uncomment this line to enable the menu action.
-// #define PROBUILDER_API_EXAMPLE
+#define PROBUILDER_API_EXAMPLE
 
 #if PROBUILDER_API_EXAMPLE
 
@@ -135,6 +135,12 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				EditorPrefs.SetInt("pb_CreateShadowObject_shadowMode", (int) shadowMode);
 
+			EditorGUI.BeginChangeCheck();
+			ExtrudeMethod extrudeMethod = (ExtrudeMethod) EditorPrefs.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
+			extrudeMethod = (ExtrudeMethod) EditorGUILayout.EnumPopup("Extrude Method", extrudeMethod);
+			if(EditorGUI.EndChangeCheck())
+				EditorPrefs.SetInt("pb_CreateShadowObject_extrudeMethod", (int) extrudeMethod);
+
 			if(EditorGUI.EndChangeCheck())
 				DoAction();
 
@@ -154,7 +160,7 @@ namespace ProBuilder2.Actions
 		{
 			ShadowCastingMode shadowMode = (ShadowCastingMode) EditorPrefs.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			float extrudeDistance = EditorPrefs.GetFloat("pb_CreateShadowObject_volumeSize", .08f);
-			ExtrudeMethod extrudeMethod = ExtrudeMethod.FaceNormal;
+			ExtrudeMethod extrudeMethod = (ExtrudeMethod) EditorPrefs.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -162,7 +168,6 @@ namespace ProBuilder2.Actions
 					continue;
 
 				pb_Object shadow = GetShadowObject(pb);
-				shadow.gameObject.hideFlags = HideFlags.NotEditable;
 				foreach(pb_Face f in shadow.faces) { f.ReverseIndices(); f.manualUV = true; }
 				shadow.Extrude(shadow.faces, extrudeMethod, extrudeDistance);
 				shadow.ToMesh();
