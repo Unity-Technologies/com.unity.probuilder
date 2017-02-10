@@ -474,7 +474,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Infers the correct context and extrudes the selected elements.
 		 */
-		public static pb_ActionResult MenuExtrude(pb_Object[] selection, bool forceMode = false)
+		public static pb_ActionResult MenuExtrude(pb_Object[] selection, bool enforceCurrentSelectionMode = false)
 		{
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
@@ -491,7 +491,7 @@ namespace ProBuilder2.EditorCommon
 
 				if(editor && editor.selectionMode == SelectMode.Edge)
 				{
-					if(pb.SelectedEdges.Length < 1 || (!forceMode && pb.SelectedFaces.Length > 0))
+					if(pb.SelectedEdges.Length < 1 || (!enforceCurrentSelectionMode && pb.SelectedFaces.Length > 0))
 					{
 						success = false;
 					}
@@ -515,7 +515,7 @@ namespace ProBuilder2.EditorCommon
 					pb.ToMesh();
 				}
 
-				if((editor.selectionMode == SelectMode.Face || (!forceMode && !success)) && pb.SelectedFaces.Length > 0)
+				if((editor.selectionMode == SelectMode.Face || (!enforceCurrentSelectionMode && !success)) && pb.SelectedFaces.Length > 0)
 				{
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
