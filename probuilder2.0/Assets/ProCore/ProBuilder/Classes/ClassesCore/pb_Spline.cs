@@ -6,7 +6,7 @@ namespace ProBuilder2.Common
 {
 	public static class pb_Spline
 	{
-		private static Quaternion GetRingRotation(IList<Vector3> points, int i, bool closeLoop)
+		private static Quaternion GetRingRotation(IList<pb_BezierPoint> points, int i, bool closeLoop, out float secant)
 		{
 			int cnt = points.Count;
 			Vector3 dir;
@@ -17,14 +17,21 @@ namespace ProBuilder2.Common
 				int b = i;
 				int c = (i+1) % cnt;
 
-				dir = ((points[b] - points[a]) + (points[c] - points[b])) * .5f;
+				Vector3 coming = (points[b].position - points[a].position).normalized;
+				Vector3 leaving = (points[c].position - points[b].position).normalized;
+
+				dir = (coming + leaving) * .5f;
+
+				secant = pb_Math.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
 			}
 			else
 			{
 				if(i < 1)
-					dir = points[i+1] - points[i];
+					dir = points[i+1].position - points[i].position;
 				else
-					dir = points[i] - points[i-1];
+					dir = points[i].position - points[i-1].position;
+
+				secant = 1f;
 			}
 
 			dir.Normalize();
@@ -32,7 +39,7 @@ namespace ProBuilder2.Common
 			return Quaternion.LookRotation(dir);
 		}
 
-		public static pb_Object Extrude(IList<Vector3> points, float radius = .5f, int segments = 16, bool closeLoop = false)
+		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int segments = 16, bool closeLoop = false)
 		{
 			List<Vector3> positions = new List<Vector3>();
 			List<pb_Face> faces = new List<pb_Face>();
@@ -46,11 +53,13 @@ namespace ProBuilder2.Common
 				if(i >= cnt - 1 && !closeLoop)
 					break;
 
- 				Quaternion rotation_a = GetRingRotation(points, i, closeLoop);
- 				Quaternion rotation_b = GetRingRotation(points, i+1 % cnt, closeLoop);
+				float secant_a, secant_b;
 
-				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, segments);
-				Vector3[] ringB = VertexRing(rotation_b, points[i+1%cnt], radius, segments);
+ 				Quaternion rotation_a = GetRingRotation(points, i, closeLoop, out secant_a);
+ 				Quaternion rotation_b = GetRingRotation(points, i+1 % cnt, closeLoop, out secant_b);
+
+				Vector3[] ringA = VertexRing(rotation_a, points[i].position, radius, segments);
+				Vector3[] ringB = VertexRing(rotation_b, points[i+1%cnt].position, radius, segments);
 
 				positions.AddRange(ringA);
 				positions.AddRange(ringB);
@@ -65,14 +74,6 @@ namespace ProBuilder2.Common
 				}
 
 				index += segments * 2;
-
-				// foreach(Vector3 p in VertexRing(orientation, .5f, 16))
-				// {
-				// 	GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-				// 	go.transform.position = points[i] + p;
-				// 	go.transform.localScale = Vector3.one * .2f;
-				// 	go.transform.SetParent(parent.transform, true);
-				// }
 			}
 
 			return pb_Object.CreateInstanceWithVerticesFaces(positions.ToArray(), faces.ToArray());
