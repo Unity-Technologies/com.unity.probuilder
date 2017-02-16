@@ -6,40 +6,35 @@ namespace ProBuilder2.Common
 {
 	public static class pb_Spline
 	{
-		private static Quaternion GetRingRotation(IList<pb_BezierPoint> points, int i, bool closeLoop, out float secant)
+		/**
+		 *	Extrude a bezier spline.
+		 */
+		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int segments = 16, bool closeLoop = false)
 		{
-			int cnt = points.Count;
-			Vector3 dir;
-
-			if((i > 0 && i < cnt-1) || closeLoop)
-			{
-				int a = i < 1 ? cnt-1 : i-1;
-				int b = i;
-				int c = (i+1) % cnt;
-
-				Vector3 coming = (points[b].position - points[a].position).normalized;
-				Vector3 leaving = (points[c].position - points[b].position).normalized;
-
-				dir = (coming + leaving) * .5f;
-
-				secant = pb_Math.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
-			}
-			else
-			{
-				if(i < 1)
-					dir = points[i+1].position - points[i].position;
-				else
-					dir = points[i].position - points[i-1].position;
-
-				secant = 1f;
-			}
-
-			dir.Normalize();
-
-			return Quaternion.LookRotation(dir);
+			pb_Object pb = null;
+			Extrude(points, radius, segments, closeLoop, ref pb);
+			return pb;
 		}
 
-		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int segments = 16, bool closeLoop = false)
+		public static void Extrude(IList<pb_BezierPoint> bezierPoints, float radius, int segments, bool closeLoop, ref pb_Object target)
+		{
+			List<Vector3> positions = new List<Vector3>(segments + 1);
+
+			int c = bezierPoints.Count;
+
+			for( int i = 0; i < (closeLoop ? c : c - 1); i++ )
+			{
+				for(int n = 0; n < segments; n++)
+				{
+					float s = (closeLoop && i >= c -1) ? segments - 1 : segments; // (!closeLoop && (i >= c - 2)) ? segments - 1 : segments;
+					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
+				}
+			}
+
+			Extrude(positions, radius, segments, ref target);
+		}
+
+		public static void Extrude(IList<Vector3> points, float radius, int segments, ref pb_Object target)
 		{
 			List<Vector3> positions = new List<Vector3>();
 			List<pb_Face> faces = new List<pb_Face>();
@@ -48,18 +43,15 @@ namespace ProBuilder2.Common
 			int index = 0;
 			int s2 = segments * 2;
 
-			for(int i = 0; i < cnt; i ++)
+			for(int i = 0; i < cnt - 1; i++)
 			{
-				if(i >= cnt - 1 && !closeLoop)
-					break;
-
 				float secant_a, secant_b;
 
- 				Quaternion rotation_a = GetRingRotation(points, i, closeLoop, out secant_a);
- 				Quaternion rotation_b = GetRingRotation(points, i+1 % cnt, closeLoop, out secant_b);
+ 				Quaternion rotation_a = GetRingRotation(points, i, out secant_a);
+ 				Quaternion rotation_b = GetRingRotation(points, i+1, out secant_b);
 
-				Vector3[] ringA = VertexRing(rotation_a, points[i].position, radius, segments);
-				Vector3[] ringB = VertexRing(rotation_b, points[i+1%cnt].position, radius, segments);
+				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, segments);
+				Vector3[] ringB = VertexRing(rotation_b, points[i+1%cnt], radius, segments);
 
 				positions.AddRange(ringA);
 				positions.AddRange(ringB);
@@ -76,7 +68,43 @@ namespace ProBuilder2.Common
 				index += segments * 2;
 			}
 
-			return pb_Object.CreateInstanceWithVerticesFaces(positions.ToArray(), faces.ToArray());
+			if(target != null)
+				target.GeometryWithVerticesFaces(positions.ToArray(), faces.ToArray());
+			else
+				target = pb_Object.CreateInstanceWithVerticesFaces(positions.ToArray(), faces.ToArray());
+		}
+
+		private static Quaternion GetRingRotation(IList<Vector3> points, int i, out float secant)
+		{
+			int cnt = points.Count;
+			Vector3 dir;
+
+			if(i > 0 && i < cnt-1)
+			{
+				int a = i < 1 ? cnt-1 : i-1;
+				int b = i;
+				int c = (i+1) % cnt;
+
+				Vector3 coming = (points[b] - points[a]).normalized;
+				Vector3 leaving = (points[c] - points[b]).normalized;
+
+				dir = (coming + leaving) * .5f;
+
+				secant = pb_Math.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
+			}
+			else
+			{
+				if(i < 1)
+					dir = points[i+1] - points[i];
+				else
+					dir = points[i] - points[i-1];
+
+				secant = 1f;
+			}
+
+			dir.Normalize();
+
+			return Quaternion.LookRotation(dir);
 		}
 
 		private static Vector3[] VertexRing(Quaternion orientation, Vector3 offset, float radius, int segments)

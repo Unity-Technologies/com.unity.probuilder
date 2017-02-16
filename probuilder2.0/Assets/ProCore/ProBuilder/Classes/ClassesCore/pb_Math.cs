@@ -833,6 +833,28 @@ namespace ProBuilder2.Common
 					return true;
 			return false;
 		}
+
+		/**
+		 *	Wrap value to range.
+		 *	http://stackoverflow.com/questions/707370/clean-efficient-algorithm-for-wrapping-integers-in-c
+		 */
+		public static int Wrap(int value, int lowerBound, int upperBound)
+		{
+			int range_size = upperBound - lowerBound + 1;
+
+			if (value < lowerBound)
+				value += range_size * ((lowerBound - value) / range_size + 1);
+
+			return lowerBound + (value - lowerBound) % range_size;
+		}
+
+		/**
+		 *	Clamp value to range.
+		 */
+		public static int Clamp(int value, int lowerBound, int upperBound)
+		{
+			return value < lowerBound ? lowerBound : value > upperBound ? upperBound : value;
+		}
 #endregion
 
 #region Vector
