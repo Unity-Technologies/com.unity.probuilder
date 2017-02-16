@@ -13,7 +13,7 @@ namespace ProBuilder2.Actions
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Smoothing"; } }
 		public override bool isProOnly { get { return true; } }
-		public override int toolbarPriority { get { return 1; } }
+		public override int toolbarPriority { get { return 2; } }
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Smoothing Groups Editor",

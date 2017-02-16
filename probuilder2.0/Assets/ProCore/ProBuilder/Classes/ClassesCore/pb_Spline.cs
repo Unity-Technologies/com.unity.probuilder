@@ -7,7 +7,7 @@ namespace ProBuilder2.Common
 	public static class pb_Spline
 	{
 		/**
-		 *	Extrude a bezier spline.
+		 *	Create a new pb_Object by extruding along a bezier spline.
 		 */
 		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int columns = 32, int rows = 16, bool closeLoop = false)
 		{
@@ -16,6 +16,9 @@ namespace ProBuilder2.Common
 			return pb;
 		}
 
+		/**
+		 *	Update a pb_Object with new geometry from a bezier spline.
+		 */
 		public static void Extrude(IList<pb_BezierPoint> bezierPoints, float radius, int columns, int rows, bool closeLoop, ref pb_Object target)
 		{
 			int c = bezierPoints.Count;
