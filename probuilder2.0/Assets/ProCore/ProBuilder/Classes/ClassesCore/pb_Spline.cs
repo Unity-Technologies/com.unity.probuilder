@@ -48,8 +48,8 @@ namespace ProBuilder2.Common
 			{
 				float secant_a, secant_b;
 
- 				Quaternion rotation_a = GetRingRotation(points, i, out secant_a);
- 				Quaternion rotation_b = GetRingRotation(points, (i+1)%cnt, out secant_b);
+ 				Quaternion rotation_a = GetRingRotation(points, i, closeLoop, out secant_a);
+ 				Quaternion rotation_b = GetRingRotation(points, (i+1)%cnt, closeLoop, out secant_b);
 
 				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, rowsPlus1);
 				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, rowsPlus1);
@@ -75,12 +75,12 @@ namespace ProBuilder2.Common
 				target = pb_Object.CreateInstanceWithVerticesFaces(positions.ToArray(), faces.ToArray());
 		}
 
-		private static Quaternion GetRingRotation(IList<Vector3> points, int i, out float secant)
+		private static Quaternion GetRingRotation(IList<Vector3> points, int i, bool closeLoop, out float secant)
 		{
 			int cnt = points.Count;
 			Vector3 dir;
 
-			if(i > 0 && i < cnt-1)
+			if(closeLoop || (i > 0 && i < cnt-1))
 			{
 				int a = i < 1 ? cnt-1 : i-1;
 				int b = i;
