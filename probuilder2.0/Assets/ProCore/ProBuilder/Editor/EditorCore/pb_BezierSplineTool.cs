@@ -110,7 +110,15 @@ namespace ProBuilder2.EditorCommon
 
 				if(m_currentIndex == index)
 				{
-					point.position = Handles.PositionHandle(point.position, Quaternion.identity);
+					Vector3 prev = point.position;
+					prev = Handles.PositionHandle(prev, Quaternion.identity);
+					if(!pb_Math.Approx3(prev, point.position))
+					{
+						Vector3 dir = prev - point.position;
+						point.position = prev;
+						point.tangentIn += dir;
+						point.tangentOut += dir;
+					}
 
 					Handles.color = bezierTangentHandleColor;
 
