@@ -2,6 +2,19 @@
 
 namespace ProBuilder2.Common
 {
+	public enum pb_BezierTangentMode
+	{
+		Free,
+		Aligned,
+		Mirrored
+	}
+
+	public enum pb_BezierTangentDirection
+	{
+		In,
+		Out
+	}
+
 	[System.Serializable]
 	public struct pb_BezierPoint
 	{
@@ -14,6 +27,24 @@ namespace ProBuilder2.Common
 			this.position = position;
 			this.tangentIn = tangentIn;
 			this.tangentOut = tangentOut;
+		}
+
+		public void EnforceTangentMode(pb_BezierTangentDirection master, pb_BezierTangentMode mode)
+		{
+			if(mode == pb_BezierTangentMode.Aligned)
+			{
+				if(master == pb_BezierTangentDirection.In)
+					tangentOut = position + (tangentOut - position).normalized * (tangentIn - position).magnitude;
+				else
+					tangentIn = position + (tangentIn - position).normalized * (tangentOut - position).magnitude;
+			}
+			else if(mode == pb_BezierTangentMode.Mirrored)
+			{
+				if(master == pb_BezierTangentDirection.In)
+					tangentOut = position - (tangentIn - position);
+				else
+					tangentIn = position - (tangentOut - position);
+			}
 		}
 
 		public static Vector3 QuadraticPosition(pb_BezierPoint a, pb_BezierPoint b, float t)

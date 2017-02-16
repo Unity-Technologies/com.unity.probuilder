@@ -14,9 +14,11 @@ namespace ProBuilder2.EditorCommon
 		List<pb_BezierPoint> m_Points = new List<pb_BezierPoint>();
 		bool m_CloseLoop = false;
 		float m_Radius = .5f;
-		int m_Segments = 32;
+		int m_Rows = 24;
+		int m_Columns = 32;
 
 		int m_currentIndex = -1;
+		pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
 		pb_Object m_CurrentObject = null;
 
 		public static void MenuOpenBezierSplineTool()
@@ -45,11 +47,6 @@ namespace ProBuilder2.EditorCommon
 					m_Points.Add(new pb_BezierPoint(m_Points[m_Points.Count - 1].position,
 						m_Points[m_Points.Count - 1].tangentIn,
 						m_Points[m_Points.Count - 1].tangentOut));
-
-					m_Points.Add(new pb_BezierPoint(
-						m_Points[m_Points.Count - 1].position + Vector3.right,
-						m_Points[m_Points.Count - 1].tangentIn, 
-						m_Points[m_Points.Count - 1].tangentOut));
 				}
 				else
 				{
@@ -62,9 +59,11 @@ namespace ProBuilder2.EditorCommon
 				SceneView.RepaintAll();
 			}
 
+			m_TangentMode = (pb_BezierTangentMode) EditorGUILayout.EnumPopup("Tangent Mode", m_TangentMode);
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
 			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
-			m_Segments = pb_Math.Clamp(EditorGUILayout.IntField("Segment", m_Segments), 1, 512);
+			m_Rows = pb_Math.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
+			m_Columns = pb_Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
 
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh();
@@ -73,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 
 		void UpdateMesh()
 		{
-			pb_Spline.Extrude(m_Points, m_Radius, m_Segments, m_CloseLoop, ref m_CurrentObject);
+			pb_Spline.Extrude(m_Points, m_Radius, m_Columns, m_Rows, m_CloseLoop, ref m_CurrentObject);
 			pb_Editor.Refresh();
 		}
 
@@ -110,14 +109,21 @@ namespace ProBuilder2.EditorCommon
 
 					if(m_CloseLoop || index > 0)
 					{
+						EditorGUI.BeginChangeCheck();
+
 						point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
+						if(EditorGUI.EndChangeCheck())
+							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 						Handles.color = Color.blue;
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 					}
 						
 					if(m_CloseLoop || index < c - 1)
 					{
+						EditorGUI.BeginChangeCheck();
 						point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
+						if(EditorGUI.EndChangeCheck())
+							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 						Handles.color = Color.red;
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
 					}

@@ -9,39 +9,40 @@ namespace ProBuilder2.Common
 		/**
 		 *	Extrude a bezier spline.
 		 */
-		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int segments = 16, bool closeLoop = false)
+		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int columns = 32, int rows = 16, bool closeLoop = false)
 		{
 			pb_Object pb = null;
-			Extrude(points, radius, segments, closeLoop, ref pb);
+			Extrude(points, radius, columns, rows, closeLoop, ref pb);
 			return pb;
 		}
 
-		public static void Extrude(IList<pb_BezierPoint> bezierPoints, float radius, int segments, bool closeLoop, ref pb_Object target)
+		public static void Extrude(IList<pb_BezierPoint> bezierPoints, float radius, int columns, int rows, bool closeLoop, ref pb_Object target)
 		{
-			List<Vector3> positions = new List<Vector3>(segments + 1);
-
 			int c = bezierPoints.Count;
+			int cols = columns;
+			List<Vector3> positions = new List<Vector3>(cols * c);
 
 			for( int i = 0; i < (closeLoop ? c : c - 1); i++ )
 			{
-				for(int n = 0; n < segments; n++)
+				for(int n = 0; n < cols; n++)
 				{
-					float s = (!closeLoop && i >= c - 1) ? segments - 1 : segments;
+					float s = (!closeLoop && i >= c - 1) ? cols - 1 : cols;
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
 				}
 			}
 
-			Extrude(positions, radius, segments, closeLoop, ref target);
+			Extrude(positions, radius, rows, closeLoop, ref target);
 		}
 
-		public static void Extrude(IList<Vector3> points, float radius, int segments, bool closeLoop, ref pb_Object target)
+		public static void Extrude(IList<Vector3> points, float radius, int rows, bool closeLoop, ref pb_Object target)
 		{
 			List<Vector3> positions = new List<Vector3>();
 			List<pb_Face> faces = new List<pb_Face>();
 
 			int cnt = points.Count;
 			int index = 0;
-			int s2 = segments * 2;
+			int rowsPlus1 = System.Math.Max(4, rows + 1);
+			int s2 = rowsPlus1 * 2;
 
 			for(int i = 0; i < (closeLoop ? cnt : cnt - 1); i++)
 			{
@@ -50,8 +51,8 @@ namespace ProBuilder2.Common
  				Quaternion rotation_a = GetRingRotation(points, i, out secant_a);
  				Quaternion rotation_b = GetRingRotation(points, (i+1)%cnt, out secant_b);
 
-				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, segments);
-				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, segments);
+				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, rowsPlus1);
+				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, rowsPlus1);
 
 				positions.AddRange(ringA);
 				positions.AddRange(ringB);
@@ -65,7 +66,7 @@ namespace ProBuilder2.Common
 					index += 2;
 				}
 
-				index += segments * 2;
+				index += s2;
 			}
 
 			if(target != null)
@@ -103,6 +104,9 @@ namespace ProBuilder2.Common
 			}
 
 			dir.Normalize();
+
+			if(pb_Math.Approx3(dir, Vector3.up) || pb_Math.Approx3(dir, Vector3.zero))
+				return Quaternion.identity;
 
 			return Quaternion.LookRotation(dir);
 		}
