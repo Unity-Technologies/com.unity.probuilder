@@ -92,7 +92,7 @@ namespace ProBuilder2.Actions
 			foreach(pb_Object pb in selection)
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
-			pb_Editor.instance.SetSelection(res.ToArray());
+			pb_Selection.SetSelection(res);
 
 			pb_Editor.Refresh();
 

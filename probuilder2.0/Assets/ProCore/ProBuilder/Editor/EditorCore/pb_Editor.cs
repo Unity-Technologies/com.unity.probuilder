@@ -797,7 +797,7 @@ public class pb_Editor : EditorWindow
 
 
 		if(!shiftKey && !ctrlKey)
-			SetSelection( (GameObject)null );
+			pb_Selection.SetSelection( (GameObject)null );
 
 		GameObject nearestGameObject = HandleUtility.PickGameObject(mousePosition, false);
 
@@ -809,7 +809,7 @@ public class pb_Editor : EditorWindow
 			if(pb != null)
 			{
 				if(pb.isSelectable)
-					AddToSelection(nearestGameObject);
+					pb_Selection.AddToSelection(nearestGameObject);
 				else
 					return null;
 			}
@@ -817,7 +817,7 @@ public class pb_Editor : EditorWindow
 			{
 				// If clicked off a pb_Object but onto another gameobject, set the selection
 				// and dip out.
-				SetSelection(nearestGameObject);
+				pb_Selection.SetSelection(nearestGameObject);
 				return null;
 			}
 			else
@@ -1365,7 +1365,7 @@ public class pb_Editor : EditorWindow
 		// and don't clear the selection if shift isn't held.
 		// if not, behave regularly (clear selection if shift isn't held)
 		if(!vertexMode) {
-			if(!shiftKey) ClearSelection();
+			if(!shiftKey) pb_Selection.ClearElementAndObjectSelection();
 		} else {
 			if(!shiftKey && selectedVertexCount > 0) return;
 		}
@@ -1376,7 +1376,7 @@ public class pb_Editor : EditorWindow
 		{
 			foreach(pb_Object g in HandleUtility.PickRectObjects(selectionRect).GetComponents<pb_Object>())
 				if(!Selection.Contains(g.gameObject))
-					AddToSelection(g.gameObject);
+					pb_Selection.AddToSelection(g.gameObject);
 		}
 	}
 #endregion
@@ -2453,7 +2453,7 @@ public class pb_Editor : EditorWindow
 				ClearElementSelection();
 				UpdateSelection(true);
 
-				SetSelection(Selection.gameObjects);
+				pb_Selection.SetSelection(Selection.gameObjects);
 				break;
 
 			case EditLevel.Geometry:
@@ -2716,83 +2716,13 @@ public class pb_Editor : EditorWindow
 		// profiler.EndSample();
 	}
 
-	public void AddToSelection(GameObject t)
-	{
-		if(t == null || Selection.objects.Contains(t))
-			return;
-
-		Object[] temp = new Object[Selection.objects.Length + 1];
-
-		temp[0] = t;
-
-		for(int i = 1; i < temp.Length; i++)
-			temp[i] = Selection.objects[i-1];
-
-		Selection.objects = temp;
-	}
-
-	public void RemoveFromSelection(GameObject t)
-	{
-		int ind = System.Array.IndexOf(Selection.objects, t);
-		if(ind < 0)
-			return;
-
-		Object[] temp = new Object[Selection.objects.Length - 1];
-
-		for(int i = 1; i < temp.Length; i++) {
-			if(i != ind)
-				temp[i] = Selection.objects[i];
-		}
-
-		Selection.objects = temp;
-	}
-
-	public void SetSelection(GameObject[] newSelection)
-	{
-		pbUndo.RecordSelection(selection, "Change Selection");
-
-		ClearSelection();
-
-		// if the previous tool was set to none, use Tool.Move
-		if(Tools.current == Tool.None)
-			Tools.current = Tool.Move;
-
-		if(newSelection != null && newSelection.Length > 0) {
-			Selection.activeTransform = newSelection[0].transform;
-			Selection.objects = newSelection;
-		}
-		else
-			Selection.activeTransform = null;
-	}
-
-	public void SetSelection(GameObject go)
-	{
-		pbUndo.RecordSelection(selection, "Change Selection");
-
-		ClearSelection();
-		AddToSelection(go);
-	}
-
-	/**
-	 *	Clears all `selected` caches associated with each pb_Object in the current selection.  The means triangles, faces, and edges.
-	 */
 	public void ClearElementSelection()
 	{
-		foreach(pb_Object pb in selection) {
+		foreach(pb_Object pb in selection)
 			pb.ClearSelection();
-		}
 
 		nearestEdge = null;
 		nearestEdgeObject = null;
-	}
-
-	public void ClearSelection()
-	{
-		foreach(pb_Object pb in selection) {
-			pb.ClearSelection();
-		}
-
-		Selection.objects = new Object[0];
 	}
 #endregion
 

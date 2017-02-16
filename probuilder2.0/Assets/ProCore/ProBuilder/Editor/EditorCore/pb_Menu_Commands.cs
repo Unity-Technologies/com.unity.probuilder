@@ -1124,7 +1124,7 @@ namespace ProBuilder2.EditorCommon
 
 			if(editor)
 			{
-				editor.SetSelection(detached.ToArray());
+				pb_Selection.SetSelection(detached.ToArray());
 				editor.UpdateSelection();
 			}
 
