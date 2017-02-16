@@ -40,6 +40,11 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
+			if(GUILayout.Button("Clear Points"))
+			{
+				m_Points.Clear();
+			}
+
 			if(GUILayout.Button("Add Point"))
 			{
 				if(m_Points.Count > 0)
@@ -50,8 +55,10 @@ namespace ProBuilder2.EditorCommon
 				}
 				else
 				{
-					m_Points.Add(new pb_BezierPoint(Vector3.zero, Vector3.right, -Vector3.right));
-					m_Points.Add(new pb_BezierPoint(Vector3.right, Vector3.right, -Vector3.right));
+					Vector3 tan = new Vector3(0f, 0f, 2f);
+					Vector3 p1 = new Vector3(3f, 0f, 0f);
+					m_Points.Add(new pb_BezierPoint(Vector3.zero, -tan, tan));
+					m_Points.Add(new pb_BezierPoint(p1, p1 + tan, p1 + -tan));
 				}
 
 				m_currentIndex = m_Points.Count - 1;

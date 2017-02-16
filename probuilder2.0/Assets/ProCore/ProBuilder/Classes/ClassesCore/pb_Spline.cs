@@ -24,9 +24,9 @@ namespace ProBuilder2.Common
 
 			for( int i = 0; i < (closeLoop ? c : c - 1); i++ )
 			{
-				for(int n = 0; n < cols; n++)
+				for(int n = 0; n < ((!closeLoop && i >= c - 2) ? cols + 1 : cols); n++)
 				{
-					float s = (!closeLoop && i >= c - 1) ? cols - 1 : cols;
+					float s = cols;
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
 				}
 			}
