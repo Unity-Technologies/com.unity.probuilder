@@ -26,15 +26,15 @@ namespace ProBuilder2.Common
 			{
 				for(int n = 0; n < segments; n++)
 				{
-					float s = (closeLoop && i >= c -1) ? segments - 1 : segments; // (!closeLoop && (i >= c - 2)) ? segments - 1 : segments;
+					float s = (!closeLoop && i >= c - 1) ? segments - 1 : segments;
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
 				}
 			}
 
-			Extrude(positions, radius, segments, ref target);
+			Extrude(positions, radius, segments, closeLoop, ref target);
 		}
 
-		public static void Extrude(IList<Vector3> points, float radius, int segments, ref pb_Object target)
+		public static void Extrude(IList<Vector3> points, float radius, int segments, bool closeLoop, ref pb_Object target)
 		{
 			List<Vector3> positions = new List<Vector3>();
 			List<pb_Face> faces = new List<pb_Face>();
@@ -43,15 +43,15 @@ namespace ProBuilder2.Common
 			int index = 0;
 			int s2 = segments * 2;
 
-			for(int i = 0; i < cnt - 1; i++)
+			for(int i = 0; i < (closeLoop ? cnt : cnt - 1); i++)
 			{
 				float secant_a, secant_b;
 
  				Quaternion rotation_a = GetRingRotation(points, i, out secant_a);
- 				Quaternion rotation_b = GetRingRotation(points, i+1, out secant_b);
+ 				Quaternion rotation_b = GetRingRotation(points, (i+1)%cnt, out secant_b);
 
 				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, segments);
-				Vector3[] ringB = VertexRing(rotation_b, points[i+1%cnt], radius, segments);
+				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, segments);
 
 				positions.AddRange(ringA);
 				positions.AddRange(ringB);
