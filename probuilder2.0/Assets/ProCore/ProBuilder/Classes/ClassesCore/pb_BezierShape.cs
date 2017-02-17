@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
+	[AddComponentMenu("")]
 	public class pb_BezierShape : MonoBehaviour
 	{
 		public List<pb_BezierPoint> m_Points = new List<pb_BezierPoint>();
