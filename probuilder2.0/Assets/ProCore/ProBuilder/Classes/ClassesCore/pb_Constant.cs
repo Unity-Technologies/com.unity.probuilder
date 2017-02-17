@@ -168,6 +168,7 @@ public static class pb_Constant
 	public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
 	public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
 	public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
+	public const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

@@ -33,7 +33,6 @@ public class pb_Preferences
 	static bool pbPBOSelectionOnly;
 	static bool pbCloseShapeWindow = false;
 	static bool pbUVEditorFloating = true;
-	// static bool pbShowSceneToolbar = true;
 	static bool pbStripProBuilderOnBuild = true;
 	static bool pbDisableAutoUV2Generation = false;
 	static bool pbShowSceneInfo = false;
@@ -44,6 +43,7 @@ public class pb_Preferences
 	static bool pbMeshesAreAssets = false;
 	static bool pbElementSelectIsHamFisted = false;
 	static bool pbDragSelectWholeElement = false;
+	static bool pbEnableExperimental = false;
 	#if !UNITY_4_7
 	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 	#endif
@@ -152,6 +152,7 @@ public class pb_Preferences
 
 		GUILayout.Label("Experimental", EditorStyles.boldLabel);
 
+		pbEnableExperimental = EditorGUILayout.Toggle(new GUIContent("Experimental Features", "Enables some experimental new features that we're trying out.  These may be incomplete or buggy, so please exercise caution when making use of this functionality!"), pbEnableExperimental);
 		pbMeshesAreAssets = EditorGUILayout.Toggle(new GUIContent("Meshes Are Assets", "Experimental!  Instead of storing mesh data in the scene, this toggle creates a Mesh cache in the Project that ProBuilder will use."), pbMeshesAreAssets);
 
 		GUILayout.Space(4);
@@ -236,6 +237,7 @@ public class pb_Preferences
 			EditorPrefs.DeleteKey(pb_Constant.pbMeshesAreAssets);
 			EditorPrefs.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
 			EditorPrefs.DeleteKey(pb_Constant.pbDragSelectWholeElement);
+			EditorPrefs.DeleteKey(pb_Constant.pbEnableExperimental);
 			EditorPrefs.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
 			EditorPrefs.DeleteKey(pb_Constant.pbDetachToNewObject);
 			EditorPrefs.DeleteKey(pb_Constant.pbPreserveFaces);
@@ -368,6 +370,7 @@ public class pb_Preferences
 		pbMeshesAreAssets 					= pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
 		pbElementSelectIsHamFisted			= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 		pbDragSelectWholeElement			= pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
+		pbEnableExperimental				= pb_Preferences_Internal.GetBool(pb_Constant.pbEnableExperimental);
 
 
 		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
@@ -430,6 +433,7 @@ public class pb_Preferences
 		EditorPrefs.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
 		EditorPrefs.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
 		EditorPrefs.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement);
+		EditorPrefs.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental);
 
 		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
 		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);

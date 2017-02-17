@@ -13,12 +13,23 @@ namespace ProBuilder2.Actions
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Bezier Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
+		private bool experimentalFeaturesEnabled = false;
+
+		public NewBezierShape()
+		{
+			experimentalFeaturesEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableExperimental);
+		}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"New Bezier Shape",
 			"Creates a new shape that is built by extruding along a bezier spline."
 		);
+
+		public override bool IsHidden()
+		{
+			return !experimentalFeaturesEnabled;
+		}
 
 		public override bool IsEnabled()
 		{
