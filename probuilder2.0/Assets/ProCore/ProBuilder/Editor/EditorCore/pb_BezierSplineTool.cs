@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 		Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-		int m_currentIndex = -1;
+		BezierHandle m_currentHandle = new BezierHandle(-1, false);
 		pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
 
 		pb_BezierShape m_Target = null;
@@ -36,6 +36,48 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				return m_Target.mesh;
+			}
+		}
+
+		struct BezierHandle
+		{
+			public int index;
+			public bool isTangent;
+			public pb_BezierTangentDirection tangent;
+
+			public BezierHandle(int index, bool isTangent, pb_BezierTangentDirection tangent = pb_BezierTangentDirection.In)
+			{
+				this.index = index;
+				this.isTangent = isTangent;
+				this.tangent = tangent;
+			}
+
+			public static implicit operator int(BezierHandle handle)
+			{
+				return handle.index;
+			}
+
+			public static explicit operator BezierHandle(int index)
+			{
+				return new BezierHandle(index, false);
+			}
+
+			public static implicit operator pb_BezierTangentDirection(BezierHandle handle)
+			{
+				return handle.tangent;
+			}
+			
+			public void SetIndex(int index)
+			{
+				this.index = index;
+				this.isTangent = false;
+			}
+
+			public void SetIndexAndTangent(int index, pb_BezierTangentDirection dir)
+			{
+				this.index = index;
+				this.isTangent = true;
+				this.tangent = dir;
 			}
 		}
 
@@ -62,13 +104,11 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			// SceneView.onSceneGUIDelegate += OnSceneGUI;
 			m_Target = target as pb_BezierShape;
 		}
 
 		void OnDisable()
 		{
-			// SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 
 		public override void OnInspectorGUI()
@@ -93,7 +133,7 @@ namespace ProBuilder2.EditorCommon
 					m_Target.Init();
 				}
 
-				m_currentIndex = m_Points.Count - 1;
+				m_currentHandle = (BezierHandle) (m_Points.Count - 1);
 
 				SceneView.RepaintAll();
 			}
@@ -143,57 +183,76 @@ namespace ProBuilder2.EditorCommon
 
 				pb_BezierPoint point = m_Points[index];
 
-				if(m_currentIndex == index)
+				if(m_currentHandle == index)
 				{
-					Vector3 prev = point.position;
-					prev = Handles.PositionHandle(prev, Quaternion.identity);
-					if(!pb_Math.Approx3(prev, point.position))
+					if(!m_currentHandle.isTangent)
 					{
-						Vector3 dir = prev - point.position;
-						point.position = prev;
-						point.tangentIn += dir;
-						point.tangentOut += dir;
+						Vector3 prev = point.position;
+						prev = Handles.PositionHandle(prev, Quaternion.identity);
+						if(!pb_Math.Approx3(prev, point.position))
+						{
+							Vector3 dir = prev - point.position;
+							point.position = prev;
+							point.tangentIn += dir;
+							point.tangentOut += dir;
+						}
 					}
-
-					Handles.color = bezierTangentHandleColor;
-
-					if(m_CloseLoop || index > 0)
+					else
 					{
-						EditorGUI.BeginChangeCheck();
+						Handles.color = bezierTangentHandleColor;
 
-						point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
-						if(EditorGUI.EndChangeCheck())
-							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
-						Handles.color = Color.blue;
-						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
-					}
-						
-					if(m_CloseLoop || index < c - 1)
-					{
-						EditorGUI.BeginChangeCheck();
-						point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
-						if(EditorGUI.EndChangeCheck())
-							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
-						Handles.color = Color.red;
-						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
+						if(m_currentHandle.tangent == pb_BezierTangentDirection.In && (m_CloseLoop || index > 0))
+						{
+							EditorGUI.BeginChangeCheck();
+
+							point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
+							if(EditorGUI.EndChangeCheck())
+								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
+							Handles.color = Color.blue;
+							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
+						}
+							
+						if(m_currentHandle.tangent == pb_BezierTangentDirection.Out && (m_CloseLoop || index < c - 1))
+						{
+							EditorGUI.BeginChangeCheck();
+							point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
+							if(EditorGUI.EndChangeCheck())
+								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
+							Handles.color = Color.red;
+							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
+						}
 					}
 
 					m_Points[index] = point;
 				}
-				else
+
+				// buttons
 				{
 					float size = HandleUtility.GetHandleSize(m_Points[index].position) * .05f;
 
 					Handles.color = bezierPositionHandleColor;
 
 					if (Handles.Button(m_Points[index].position, Quaternion.identity, size, size, Handles.DotCap))
-						m_currentIndex = index;
+						m_currentHandle = (BezierHandle) index;
 
 					Handles.color = bezierTangentHandleColor;
+
 					if(m_CloseLoop || index > 0)
+					{
+						size = HandleUtility.GetHandleSize(m_Points[index].tangentIn) * .05f;
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
+						if (Handles.Button(m_Points[index].tangentIn, Quaternion.identity, size, size, Handles.DotCap))
+							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
+					}
+
 					if(m_CloseLoop || index < c - 1)
+					{
+						size = HandleUtility.GetHandleSize(m_Points[index].tangentOut) * .05f;
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
+						if (Handles.Button(m_Points[index].tangentOut, Quaternion.identity, size, size, Handles.DotCap))
+							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
+					}
+
 					Handles.color = Color.white;
 				}
 			}
