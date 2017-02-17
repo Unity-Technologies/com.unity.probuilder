@@ -335,8 +335,18 @@ namespace ProBuilder2.EditorCommon
 						prev = Handles.PositionHandle(prev, Quaternion.identity);
 						if(!pb_Math.Approx3(prev, point.position))
 						{
+
 							if(!m_IsMoving)
+							{
+								if(e.shift)
+								{
+									pbUndo.RecordObject(m_Target, "Add Point");
+									pb_BezierPoint dup = point;
+									m_Points.Insert(m_currentHandle.index, dup);
+								}
+
 								OnBeginVertexModification();
+							}
 
 							Vector3 dir = prev - point.position;
 							point.position = prev;
@@ -435,6 +445,13 @@ namespace ProBuilder2.EditorCommon
 		void UndoRedoPerformed()
 		{
 			UpdateMesh(true);
+
+			if(m_CurrentObject)
+			{
+				m_CurrentObject.ToMesh();
+				m_CurrentObject.Refresh();
+				m_CurrentObject.Optimize();
+			}
 		}
 
 		void OnBeginVertexModification()
@@ -451,6 +468,7 @@ namespace ProBuilder2.EditorCommon
 			m_CurrentObject.ToMesh();
 			m_CurrentObject.Refresh();
 			m_CurrentObject.Optimize();
+			pb_Editor.Refresh();
 		}
 	}
 }
