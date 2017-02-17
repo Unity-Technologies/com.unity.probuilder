@@ -47,6 +47,29 @@ namespace ProBuilder2.Common
 			}
 		}
 
+		/**
+		 *	Set the position while also moving tangent points.
+		 */
+		public void SetPosition(Vector3 position)
+		{
+			Vector3 delta = position - this.position;
+			this.position = position;
+			this.tangentIn += delta;
+			this.tangentOut += delta;
+		}
+
+		public void SetTangentIn(Vector3 tangent, pb_BezierTangentMode mode)
+		{
+			this.tangentIn = tangent;
+			EnforceTangentMode(pb_BezierTangentDirection.In, mode);
+		}
+
+		public void SetTangentOut(Vector3 tangent, pb_BezierTangentMode mode)
+		{
+			this.tangentOut = tangent;
+			EnforceTangentMode(pb_BezierTangentDirection.Out, mode);
+		}
+
 		public static Vector3 QuadraticPosition(pb_BezierPoint a, pb_BezierPoint b, float t)
 		{
 			float x = (1f- t) * (1f - t) * a.position.x + 2f * (1f - t) * t * a.tangentOut.x + t * t * b.position.x;

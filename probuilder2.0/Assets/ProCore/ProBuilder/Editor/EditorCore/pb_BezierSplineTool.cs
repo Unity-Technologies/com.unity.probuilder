@@ -17,6 +17,9 @@ namespace ProBuilder2.EditorCommon
 		};
 
 		private static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
+		private static Vector3 Vector3_Forward = new Vector3(0f, 0f, 1f);
+		private static Vector3 Vector3_Backward = new Vector3(0f, 0f, -1f);
+
 		Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
@@ -112,6 +115,46 @@ namespace ProBuilder2.EditorCommon
 		{
 		}
 
+		pb_BezierPoint DoBezierPointGUI(pb_BezierPoint point)
+		{
+			Vector3 pos = point.position, tin = point.tangentIn, tout = point.tangentOut;
+
+			bool wasInWideMode = EditorGUIUtility.wideMode;
+			float labelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.wideMode = true;
+			EditorGUIUtility.labelWidth = Screen.width / 3f;
+
+			EditorGUI.BeginChangeCheck();
+			pos = EditorGUILayout.Vector3Field("Position", pos);
+			if( EditorGUI.EndChangeCheck() )
+				point.SetPosition(pos);
+
+			EditorGUI.BeginChangeCheck();
+			tin = EditorGUILayout.Vector3Field("Tan. In", tin);
+			if( EditorGUI.EndChangeCheck() )
+				point.SetTangentIn(tin, m_TangentMode);
+			Rect r = GUILayoutUtility.GetLastRect();
+			r.x += EditorGUIUtility.labelWidth - 12;
+			GUI.color = Color.blue;
+			GUI.Label(r, "\u2022");
+			GUI.color = Color.white;
+
+			EditorGUI.BeginChangeCheck();
+			tout = EditorGUILayout.Vector3Field("Tan. Out", tout);
+			if( EditorGUI.EndChangeCheck() )
+				point.SetTangentOut(tout, m_TangentMode);
+			r = GUILayoutUtility.GetLastRect();
+			r.x += EditorGUIUtility.labelWidth - 12;
+			GUI.color = Color.red;
+			GUI.Label(r, "\u2022");
+			GUI.color = Color.white;
+			
+			EditorGUIUtility.labelWidth = labelWidth;
+			EditorGUIUtility.wideMode = wasInWideMode;
+
+			return point;
+		}
+
 		public override void OnInspectorGUI()
 		{
 			EditorGUI.BeginChangeCheck();
@@ -120,14 +163,17 @@ namespace ProBuilder2.EditorCommon
 
 			pb_BezierPoint inspectorPoint = handleIsValid ? 
 				m_Points[m_currentHandle] :
-				new pb_BezierPoint(Vector3.zero, -Vector3.forward, Vector3.forward);
+				new pb_BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward);
 
-			inspectorPoint.position = EditorGUILayout.Vector3Field("Position", inspectorPoint.position);
-			inspectorPoint.tangentIn = EditorGUILayout.Vector3Field("Tangent In", inspectorPoint.tangentIn);
-			inspectorPoint.tangentOut = EditorGUILayout.Vector3Field("Tangent Out", inspectorPoint.tangentOut);
+			inspectorPoint = DoBezierPointGUI(inspectorPoint);
 
-			if(handleIsValid)
+			if(handleIsValid && EditorGUI.EndChangeCheck())
+			{
 				m_Points[m_currentHandle] = inspectorPoint;
+				UpdateMesh(false);
+			}
+
+			EditorGUI.BeginChangeCheck();
 
 			if(GUILayout.Button("Clear Points"))
 			{
@@ -152,11 +198,11 @@ namespace ProBuilder2.EditorCommon
 				SceneView.RepaintAll();
 			}
 
-			m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
-			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
-			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
-			m_Rows = pb_Math.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
-			m_Columns = pb_Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
+			m_TangentMode 	= (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+			m_CloseLoop		= EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
+			m_Radius 		= Mathf.Max(.001f, EditorGUILayout.DelayedFloatField("Radius", m_Radius));
+			m_Rows 			= pb_Math.Clamp(EditorGUILayout.DelayedIntField("Rows", m_Rows), 3, 512);
+			m_Columns 		= pb_Math.Clamp(EditorGUILayout.DelayedIntField("Columns", m_Columns), 3, 512);
 
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
