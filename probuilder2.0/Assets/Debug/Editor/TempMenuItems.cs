@@ -15,7 +15,6 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		pb_BezierSplineTool.MenuOpenBezierSplineTool();
 	}
 
 }

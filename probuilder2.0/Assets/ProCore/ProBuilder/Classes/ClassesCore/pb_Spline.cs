@@ -39,13 +39,16 @@ namespace ProBuilder2.Common
 
 		public static void Extrude(IList<Vector3> points, float radius, int rows, bool closeLoop, ref pb_Object target)
 		{
-			List<Vector3> positions = new List<Vector3>();
-			List<pb_Face> faces = new List<pb_Face>();
-
 			int cnt = points.Count;
-			int index = 0;
 			int rowsPlus1 = System.Math.Max(4, rows + 1);
-			int s2 = rowsPlus1 * 2;
+			int rowsPlus1Times2 = rowsPlus1 * 2;
+			int vertexCount = ((closeLoop ? cnt : cnt - 1) * 2) * rowsPlus1Times2;
+			bool vertexCountsMatch = vertexCount == (target == null ? 0 : target.vertexCount);
+
+			Vector3[] positions = new Vector3[vertexCount];
+			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rowsPlus1];
+
+			int triangleIndex = 0, faceIndex = 0, vertexIndex = 0;
 
 			for(int i = 0; i < (closeLoop ? cnt : cnt - 1); i++)
 			{
@@ -57,25 +60,43 @@ namespace ProBuilder2.Common
 				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, rowsPlus1);
 				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, rowsPlus1);
 
-				positions.AddRange(ringA);
-				positions.AddRange(ringB);
+				System.Array.Copy(ringA, 0, positions, vertexIndex, rowsPlus1Times2);
+				vertexIndex += rowsPlus1Times2;
+				System.Array.Copy(ringB, 0, positions, vertexIndex, rowsPlus1Times2);
+				vertexIndex += rowsPlus1Times2;
 
-				for(int n = 0; n < s2; n += 2)
+				if(!vertexCountsMatch)
 				{
-					faces.Add( new pb_Face(new int[6] {
-						index, index + 1, index + s2,
-						index + s2, index + 1, index + s2 + 1 } ));
+					for(int n = 0; n < rowsPlus1Times2; n += 2)
+					{
+						faces[faceIndex] = new pb_Face(new int[6] {
+							triangleIndex, triangleIndex + 1, triangleIndex + rowsPlus1Times2,
+							triangleIndex + rowsPlus1Times2, triangleIndex + 1, triangleIndex + rowsPlus1Times2 + 1 } );
 
-					index += 2;
+						faceIndex++;
+						triangleIndex += 2;
+					}
+
+					triangleIndex += rowsPlus1Times2;
 				}
-
-				index += s2;
 			}
 
 			if(target != null)
-				target.GeometryWithVerticesFaces(positions.ToArray(), faces.ToArray());
+			{
+				if(faces != null)
+				{
+					target.GeometryWithVerticesFaces(positions, faces);
+				}
+				else
+				{
+					target.SetVertices(positions);
+					target.msh.vertices = positions;
+				}
+			}
 			else
-				target = pb_Object.CreateInstanceWithVerticesFaces(positions.ToArray(), faces.ToArray());
+			{
+				target = pb_Object.CreateInstanceWithVerticesFaces(positions, faces);
+			}
 		}
 
 		private static Quaternion GetRingRotation(IList<Vector3> points, int i, bool closeLoop, out float secant)
