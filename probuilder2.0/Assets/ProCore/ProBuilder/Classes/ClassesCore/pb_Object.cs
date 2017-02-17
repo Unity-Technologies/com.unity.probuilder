@@ -272,9 +272,9 @@ public class pb_Object : MonoBehaviour
 	public List<Vector4> uv3 { get { return _uv3; } }
 	public List<Vector4> uv4 { get { return _uv4; } }
 
-	public int faceCount { get { return _faces.Length; } }
-	public int vertexCount { get { return _vertices.Length; } }
-	public int triangleCount { get { return _faces.Sum(x => x.indices.Length ); } }
+	public int faceCount { get { return _faces == null ? 0 : _faces.Length; } }
+	public int vertexCount { get { return _vertices == null ? 0 : _vertices.Length; } }
+	public int triangleCount { get { return _faces == null ? 0 : _faces.Sum(x => x.indices.Length ); } }
 
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.
