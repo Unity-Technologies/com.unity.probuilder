@@ -129,11 +129,13 @@ namespace ProBuilder2.Actions
 			if( EditorGUI.EndChangeCheck() )
 				EditorPrefs.SetFloat("pb_CreateShadowObject_volumeSize", volumeSize);
 
+			#if !UNITY_4_6 && !UNITY_4_7
 			EditorGUI.BeginChangeCheck();
 			ShadowCastingMode shadowMode = (ShadowCastingMode) EditorPrefs.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			shadowMode = (ShadowCastingMode) EditorGUILayout.EnumPopup("Shadow Casting Mode", shadowMode);
 			if(EditorGUI.EndChangeCheck())
 				EditorPrefs.SetInt("pb_CreateShadowObject_shadowMode", (int) shadowMode);
+			#endif
 
 			EditorGUI.BeginChangeCheck();
 			ExtrudeMethod extrudeMethod = (ExtrudeMethod) EditorPrefs.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
@@ -158,7 +160,9 @@ namespace ProBuilder2.Actions
 		 */
 		public override pb_ActionResult DoAction()
 		{
+			#if !UNITY_4_6 && !UNITY_4_7
 			ShadowCastingMode shadowMode = (ShadowCastingMode) EditorPrefs.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
+			#endif
 			float extrudeDistance = EditorPrefs.GetFloat("pb_CreateShadowObject_volumeSize", .08f);
 			ExtrudeMethod extrudeMethod = (ExtrudeMethod) EditorPrefs.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
 
@@ -174,10 +178,12 @@ namespace ProBuilder2.Actions
 				shadow.Refresh();
 				shadow.Optimize();
 
+				#if !UNITY_4_6 && !UNITY_4_7
 				MeshRenderer mr = shadow.gameObject.GetComponent<MeshRenderer>();
 				mr.shadowCastingMode = shadowMode;
 				if(shadowMode == ShadowCastingMode.ShadowsOnly)
 					mr.receiveShadows = false;
+				#endif
 
 				Collider collider = shadow.GetComponent<Collider>();
 				
