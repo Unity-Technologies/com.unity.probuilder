@@ -91,7 +91,7 @@ namespace ProBuilder2.Common
 				{
 					target.SetVertices(positions);
 					target.ToMesh();
-					target.Refresh(RefreshMask.UV | RefreshMask.Normals);
+					target.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 				}
 			}
 			else
