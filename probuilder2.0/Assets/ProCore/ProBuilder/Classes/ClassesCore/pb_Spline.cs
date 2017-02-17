@@ -39,6 +39,9 @@ namespace ProBuilder2.Common
 
 		public static void Extrude(IList<Vector3> points, float radius, int rows, bool closeLoop, ref pb_Object target)
 		{
+			if(points.Count < 2)
+				return;
+
 			int cnt = points.Count;
 			int rowsPlus1 = System.Math.Max(4, rows + 1);
 			int rowsPlus1Times2 = rowsPlus1 * 2;

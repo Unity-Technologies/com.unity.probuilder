@@ -34,6 +34,7 @@ namespace ProBuilder2.Actions
 			bezier.Refresh();
 			pb_EditorUtility.InitObject(pb);
 			pb_Selection.SetSelection(go);
+			pbUndo.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
 
 			return new pb_ActionResult(Status.Success, "Create Bezier Shape");
 		}

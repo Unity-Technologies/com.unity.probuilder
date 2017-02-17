@@ -23,8 +23,8 @@ namespace ProBuilder2.EditorCommon
 		private static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		private static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-		BezierHandle m_currentHandle = new BezierHandle(-1, false);
-		pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
+		[SerializeField] BezierHandle m_currentHandle = new BezierHandle(-1, false);
+		[SerializeField] pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
 		pb_BezierShape m_Target = null;
 		bool m_IsMoving = false;
 
@@ -244,6 +244,7 @@ namespace ProBuilder2.EditorCommon
 					m_Points.Add(new pb_BezierPoint(m_Points[m_Points.Count - 1].position,
 						m_Points[m_Points.Count - 1].tangentIn,
 						m_Points[m_Points.Count - 1].tangentOut));
+					UpdateMesh(true);
 				}
 				else
 				{
@@ -268,12 +269,15 @@ namespace ProBuilder2.EditorCommon
 
 		void UpdateMesh(bool vertexCountChanged)
 		{
-			m_Target.Refresh();
+			if(m_Target != null)
+			{
+				m_Target.Refresh();
 
-			if(!vertexCountChanged)
-				pb_Editor.instance.Internal_UpdateSelectionFast();
-			else
-				pb_Editor.Refresh();
+				if(!vertexCountChanged)
+					pb_Editor.instance.Internal_UpdateSelectionFast();
+				else
+					pb_Editor.Refresh();
+			}
 		}
 
 		void OnSceneGUI()
@@ -285,6 +289,16 @@ namespace ProBuilder2.EditorCommon
 				if(	e.type == EventType.Ignore ||
 					e.type == EventType.MouseUp )
 					OnFinishVertexModification();
+			}
+
+			if(e.type == EventType.KeyDown)
+			{
+				if(e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)
+				{
+					pbUndo.RecordObject(m_Target, "Delete Bezier Point");
+					m_Points.RemoveAt(m_currentHandle);
+					UpdateMesh(true);
+				}
 			}
 
 			int c = m_Points.Count;

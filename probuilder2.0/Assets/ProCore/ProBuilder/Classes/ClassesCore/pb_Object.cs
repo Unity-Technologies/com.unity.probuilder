@@ -14,6 +14,7 @@ using Parabox.Debug;
 #endif
 
 [AddComponentMenu("")]	// Don't let the user add this to any object.
+[DisallowMultipleComponent]
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(pb_Entity))]

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Linq;
 using ProBuilder2.Common;	// Can't assign components to namespaces 
 
+[DisallowMultipleComponent]
 [AddComponentMenu("")]	// Don't let the user add this to any object.
 /**
  *	\brief Determines how this #pb_Object should behave in game.
