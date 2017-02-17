@@ -2992,7 +2992,7 @@ public class pb_Editor : EditorWindow
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
-		// pb_Lightmapping.PushGIWorkflowMode();
+		pb_Lightmapping.PushGIWorkflowMode();
 
 		// profiler.BeginSample("ResetMesh");
 		foreach(pb_Object pb in selection)
@@ -3009,7 +3009,7 @@ public class pb_Editor : EditorWindow
 
 	private void OnFinishVertexModification()
 	{
-		// pb_Lightmapping.PopGIWorkflowMode();
+		pb_Lightmapping.PopGIWorkflowMode();
 
 		currentHandleScale = Vector3.one;
 		currentHandleRotation = handleRotation;
