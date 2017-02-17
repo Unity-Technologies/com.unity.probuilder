@@ -20,13 +20,13 @@ namespace ProBuilder2.EditorCommon
 		private static Vector3 Vector3_Forward = new Vector3(0f, 0f, 1f);
 		private static Vector3 Vector3_Backward = new Vector3(0f, 0f, -1f);
 
-		Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
-		Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
+		private static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
+		private static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
 		BezierHandle m_currentHandle = new BezierHandle(-1, false);
 		pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
-
 		pb_BezierShape m_Target = null;
+		bool m_IsMoving = false;
 
 		pb_Object m_CurrentObject
 		{
@@ -43,6 +43,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		[System.Serializable]
 		struct BezierHandle
 		{
 			public int index;
@@ -86,10 +87,50 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		List<pb_BezierPoint> m_Points { get { return m_Target.m_Points; } set { m_Target.m_Points = value; } }
-		bool m_CloseLoop { get { return m_Target.m_CloseLoop; } set { m_Target.m_CloseLoop = value; } }
-		float m_Radius { get { return m_Target.m_Radius; } set { m_Target.m_Radius = value; } }
-		int m_Rows { get { return m_Target.m_Rows; } set { m_Target.m_Rows = value; } }
-		int m_Columns { get { return m_Target.m_Columns; } set { m_Target.m_Columns = value; } }
+
+		bool m_CloseLoop
+		{
+			get { return m_Target.m_CloseLoop; }
+
+			set {
+				if(m_Target.m_CloseLoop != value)
+					pbUndo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
+				m_Target.m_CloseLoop = value;
+			}
+		}
+
+		float m_Radius
+		{
+			get { return m_Target.m_Radius; }
+
+			set {
+				if(m_Target.m_Radius != value)
+					pbUndo.RecordObject(m_Target, "Set Bezier Shape Radius");
+				m_Target.m_Radius = value;
+			}
+		}
+
+		int m_Rows
+		{
+			get { return m_Target.m_Rows; }
+
+			set {
+				if(m_Target.m_Rows != value)
+					pbUndo.RecordObject(m_Target, "Set Bezier Shape Rows");
+				m_Target.m_Rows = value;
+			}
+		}
+
+		int m_Columns
+		{
+			get { return m_Target.m_Columns; }
+
+			set {
+				if(m_Target.m_Columns != value)
+					pbUndo.RecordObject(m_Target, "Set Bezier Shape Columns");
+				m_Target.m_Columns = value;
+			}
+		}
 
 		private GUIStyle _commandStyle = null;
 		public GUIStyle commandStyle
@@ -109,6 +150,7 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			m_Target = target as pb_BezierShape;
+			Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		}
 
 		void OnDisable()
@@ -148,7 +190,7 @@ namespace ProBuilder2.EditorCommon
 			GUI.color = Color.red;
 			GUI.Label(r, "\u2022");
 			GUI.color = Color.white;
-			
+
 			EditorGUIUtility.labelWidth = labelWidth;
 			EditorGUIUtility.wideMode = wasInWideMode;
 
@@ -157,6 +199,15 @@ namespace ProBuilder2.EditorCommon
 
 		public override void OnInspectorGUI()
 		{
+			Event e = Event.current;
+
+			if(m_IsMoving)
+			{
+				if(	e.type == EventType.Ignore ||
+					e.type == EventType.MouseUp )
+					OnFinishVertexModification();
+			}
+
 			EditorGUI.BeginChangeCheck();
 
 			bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Points.Count);
@@ -169,6 +220,9 @@ namespace ProBuilder2.EditorCommon
 
 			if(handleIsValid && EditorGUI.EndChangeCheck())
 			{
+				if(!m_IsMoving)
+					OnBeginVertexModification();
+
 				m_Points[m_currentHandle] = inspectorPoint;
 				UpdateMesh(false);
 			}
@@ -177,11 +231,14 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Clear Points"))
 			{
+				pbUndo.RecordObject(m_Target, "Clear Bezier Spline Points");
 				m_Points.Clear();
 			}
 
 			if(GUILayout.Button("Add Point"))
 			{
+				pbUndo.RecordObject(m_Target, "Add Bezier Spline Point");
+
 				if(m_Points.Count > 0)
 				{
 					m_Points.Add(new pb_BezierPoint(m_Points[m_Points.Count - 1].position,
@@ -199,10 +256,11 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			m_TangentMode 	= (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
-			m_CloseLoop		= EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
-			m_Radius 		= Mathf.Max(.001f, EditorGUILayout.DelayedFloatField("Radius", m_Radius));
-			m_Rows 			= pb_Math.Clamp(EditorGUILayout.DelayedIntField("Rows", m_Rows), 3, 512);
-			m_Columns 		= pb_Math.Clamp(EditorGUILayout.DelayedIntField("Columns", m_Columns), 3, 512);
+
+			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
+			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
+			m_Rows = pb_Math.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
+			m_Columns = pb_Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
 
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
@@ -220,6 +278,15 @@ namespace ProBuilder2.EditorCommon
 
 		void OnSceneGUI()
 		{
+			Event e = Event.current;
+
+			if(m_IsMoving)
+			{
+				if(	e.type == EventType.Ignore ||
+					e.type == EventType.MouseUp )
+					OnFinishVertexModification();
+			}
+
 			int c = m_Points.Count;
 
 			Matrix4x4 handleMatrix = Handles.matrix;
@@ -254,6 +321,9 @@ namespace ProBuilder2.EditorCommon
 						prev = Handles.PositionHandle(prev, Quaternion.identity);
 						if(!pb_Math.Approx3(prev, point.position))
 						{
+							if(!m_IsMoving)
+								OnBeginVertexModification();
+
 							Vector3 dir = prev - point.position;
 							point.position = prev;
 							point.tangentIn += dir;
@@ -269,7 +339,12 @@ namespace ProBuilder2.EditorCommon
 							EditorGUI.BeginChangeCheck();
 							point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
 							if(EditorGUI.EndChangeCheck())
+							{
+								if(!m_IsMoving)
+									OnBeginVertexModification();
+
 								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
+							}
 							Handles.color = Color.blue;
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 						}
@@ -279,7 +354,12 @@ namespace ProBuilder2.EditorCommon
 							EditorGUI.BeginChangeCheck();
 							point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
 							if(EditorGUI.EndChangeCheck())
+							{
+								if(!m_IsMoving)
+									OnBeginVertexModification();
+
 								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
+							}
 							Handles.color = Color.red;
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
 						}
@@ -336,6 +416,27 @@ namespace ProBuilder2.EditorCommon
 
 			if( EditorGUI.EndChangeCheck() )
 				UpdateMesh(false);
+		}
+		
+		void UndoRedoPerformed()
+		{
+			UpdateMesh(true);
+		}
+
+		void OnBeginVertexModification()
+		{
+			m_IsMoving = true;
+			pbUndo.RecordObject(m_Target, "Modify Bezier Spline");
+			pb_Lightmapping.PushGIWorkflowMode();
+		}
+
+		void OnFinishVertexModification()
+		{
+			m_IsMoving = false;
+			pb_Lightmapping.PopGIWorkflowMode();
+			m_CurrentObject.ToMesh();
+			m_CurrentObject.Refresh();
+			m_CurrentObject.Optimize();
 		}
 	}
 }
