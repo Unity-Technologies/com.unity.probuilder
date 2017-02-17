@@ -2656,7 +2656,7 @@ public class pb_Editor : EditorWindow
 	}
 
 	// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
-	private void Internal_UpdateSelectionFast()
+	internal void Internal_UpdateSelectionFast()
 	{
 		// profiler.BeginSample("Internal_UpdateSelectionFast");
 		selectedVertexCount = 0;

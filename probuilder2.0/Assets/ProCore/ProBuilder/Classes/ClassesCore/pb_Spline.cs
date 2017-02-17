@@ -90,7 +90,8 @@ namespace ProBuilder2.Common
 				else
 				{
 					target.SetVertices(positions);
-					target.msh.vertices = positions;
+					target.ToMesh();
+					target.Refresh(RefreshMask.UV | RefreshMask.Normals);
 				}
 			}
 			else

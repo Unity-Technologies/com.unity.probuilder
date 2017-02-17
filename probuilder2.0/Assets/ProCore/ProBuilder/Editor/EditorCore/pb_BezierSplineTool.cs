@@ -16,6 +16,7 @@ namespace ProBuilder2.EditorCommon
 			new GUIContent("Mirrored")
 		};
 
+		private static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 		Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
@@ -115,6 +116,19 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
+			bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Points.Count);
+
+			pb_BezierPoint inspectorPoint = handleIsValid ? 
+				m_Points[m_currentHandle] :
+				new pb_BezierPoint(Vector3.zero, -Vector3.forward, Vector3.forward);
+
+			inspectorPoint.position = EditorGUILayout.Vector3Field("Position", inspectorPoint.position);
+			inspectorPoint.tangentIn = EditorGUILayout.Vector3Field("Tangent In", inspectorPoint.tangentIn);
+			inspectorPoint.tangentOut = EditorGUILayout.Vector3Field("Tangent Out", inspectorPoint.tangentOut);
+
+			if(handleIsValid)
+				m_Points[m_currentHandle] = inspectorPoint;
+
 			if(GUILayout.Button("Clear Points"))
 			{
 				m_Points.Clear();
@@ -138,7 +152,6 @@ namespace ProBuilder2.EditorCommon
 				SceneView.RepaintAll();
 			}
 
-
 			m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
 			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
@@ -146,13 +159,17 @@ namespace ProBuilder2.EditorCommon
 			m_Columns = pb_Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);
 
 			if(EditorGUI.EndChangeCheck())
-				UpdateMesh();
+				UpdateMesh(true);
 		}
 
-		void UpdateMesh()
+		void UpdateMesh(bool vertexCountChanged)
 		{
 			m_Target.Refresh();
-			pb_Editor.Refresh();
+
+			if(!vertexCountChanged)
+				pb_Editor.instance.Internal_UpdateSelectionFast();
+			else
+				pb_Editor.Refresh();
 		}
 
 		void OnSceneGUI()
@@ -204,7 +221,6 @@ namespace ProBuilder2.EditorCommon
 						if(m_currentHandle.tangent == pb_BezierTangentDirection.In && (m_CloseLoop || index > 0))
 						{
 							EditorGUI.BeginChangeCheck();
-
 							point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
 							if(EditorGUI.EndChangeCheck())
 								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
@@ -233,24 +249,37 @@ namespace ProBuilder2.EditorCommon
 					Handles.color = bezierPositionHandleColor;
 
 					if (Handles.Button(m_Points[index].position, Quaternion.identity, size, size, Handles.DotCap))
+					{
 						m_currentHandle = (BezierHandle) index;
+						Repaint();
+					}
 
 					Handles.color = bezierTangentHandleColor;
 
 					if(m_CloseLoop || index > 0)
 					{
 						size = HandleUtility.GetHandleSize(m_Points[index].tangentIn) * .05f;
+
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
+
 						if (Handles.Button(m_Points[index].tangentIn, Quaternion.identity, size, size, Handles.DotCap))
+						{
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
+							Repaint();
+						}
 					}
 
 					if(m_CloseLoop || index < c - 1)
 					{
 						size = HandleUtility.GetHandleSize(m_Points[index].tangentOut) * .05f;
+
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
+
 						if (Handles.Button(m_Points[index].tangentOut, Quaternion.identity, size, size, Handles.DotCap))
+						{
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
+							Repaint();
+						}
 					}
 
 					Handles.color = Color.white;
@@ -260,9 +289,7 @@ namespace ProBuilder2.EditorCommon
 			Handles.matrix = handleMatrix;
 
 			if( EditorGUI.EndChangeCheck() )
-			{
-				UpdateMesh();
-			}
+				UpdateMesh(false);
 		}
 	}
 }
