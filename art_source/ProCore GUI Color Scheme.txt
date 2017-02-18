@@ -6,11 +6,10 @@ Item 						| Color/Value
 Big Text Font				| Bebas Neue Regular
 Small Text Font				| ASAP Regular
 Small Text Font (Header)	| ASAP Bold
-Icon 						| 898989
-Rounding 					| 2px
-Accent ON Blue 				| 00aaef 
-Accent OFF Orange			| ff9c00
-Accent OFF (all) 			| 898989
+Icon: Default				| 898989
+Icon: Blue Accent			| 00aaef 
+Icon: Orange Accent			| ff9c00
+Rounding					| 2px
 
 **Light Skin (Unity Personal)**
 Item 						| Color Value
