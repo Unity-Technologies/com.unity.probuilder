@@ -30,8 +30,6 @@ namespace ProBuilder2.Actions
 		 */
 		private static void StripAndProBuilderize(pb_Object[] targets, bool interactive = true)
 		{
-			List<MeshFilter> rebuild = new List<MeshFilter>();
-
 			for(int i = 0; i < targets.Length; i++)
 			{
 				if(interactive)
@@ -48,10 +46,7 @@ namespace ProBuilder2.Actions
 				{
 					pb.ToMesh();
 					pb.Refresh();
-
-					int[] indices = new int[2] {0, 0};
-					for(int nn = 0; nn < 10; nn++)
-						indices[nn] += indices[nn+1];
+					pb.Optimize();
 			 	}
 			 	catch
 			 	{
@@ -59,8 +54,6 @@ namespace ProBuilder2.Actions
 			 			RebuildProBuilderMesh(pb);
 			 	}
 			}
-
-			ProBuilderize.DoProBuilderize(rebuild, true);
 
 			if(interactive)
 			{
