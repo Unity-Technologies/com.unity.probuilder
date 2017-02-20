@@ -139,7 +139,7 @@ namespace ProBuilder2.Actions
 					if( !pb.gameObject.GetComponent<pb_Entity>() )
 						Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
 					else
-						Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
+						pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
 				}
 				catch(System.Exception e)
 				{
