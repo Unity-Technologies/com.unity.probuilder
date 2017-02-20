@@ -115,7 +115,8 @@ public class pb_AboutWindow : EditorWindow
 	private const string VIDEO_URL = @"http://bit.ly/pbstarter";
 	private const string LEARN_URL = @"http://procore3d.com/docs/probuilder";
 	private const string SUPPORT_URL = @"http://www.procore3d.com/forum/";
-	private const string CONTACT_EMAIL = @"mailto:contact@procore3d.com?subject=Hey%20ProBuilder%20People!";
+	// private const string CONTACT_EMAIL = @"mailto:contact@procore3d.com?subject=Hey%20ProBuilder%20People!";
+	private const string CONTACT_EMAIL = @"http://www.procore3d.com/about/";
 
 	private const string FONT_REGULAR = "Asap-Regular.otf";
 	private const string FONT_MEDIUM = "Asap-Medium.otf";
