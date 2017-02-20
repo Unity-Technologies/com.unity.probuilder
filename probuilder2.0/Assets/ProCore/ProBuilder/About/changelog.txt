@@ -1,3 +1,20 @@
+# ProBuilder 2.7.0f0
+
+## Features
+
+- New redesigned "About" window.
+- Add a repair script to apply materials when upgrading from Basic to Advanced.
+- Include option to restrict "Select by Vertex Color" to current selection.
+- Add "Generate Shadow Volume" API example and action.
+- Add preference to enable experimental features (current feature: Bezier shape).
+- Add option to smooth round sides of cylinder in Shape Tool.
+- Add repair script to strip and rebuild pb_Object from Unity mesh.
+- Add repair script for rebuilding shared index caches (addressed IndexOutOfRange errors in RefreshNormals function).
+
+## Bug Fixes
+
+- Don't leave a progress bar behind if Probuilderize fails.
+
 # ProBuilder 2.6.9f3
 
 ## Bug Fixes
