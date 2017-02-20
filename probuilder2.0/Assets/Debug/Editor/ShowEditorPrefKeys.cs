@@ -61,10 +61,26 @@ public class ShowEditorPrefKeys : EditorWindow
 		pb_Constant.pbUVGridSnapValue
 	};
 
+	string[] strings = new string[]
+	{
+		"ProBuilder_AboutWindowIdentifier"
+	};
+
+	Vector2 scroll = Vector2.zero;
+
 	void OnGUI()
 	{
-		GUILayout.BeginHorizontal();
+		GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+		GUILayout.FlexibleSpace();
+
+		if(GUILayout.Button("Reset All", EditorStyles.toolbarButton))
+			ClearPrefs();
+
+		GUILayout.EndHorizontal();
+
+		scroll = GUILayout.BeginScrollView(scroll);
+		GUILayout.BeginHorizontal();
 		GUILayout.BeginVertical();
 			GUILayout.Label("Preference", EditorStyles.boldLabel);
 			GUI.backgroundColor = SEPARATOR_COLOR;
@@ -75,7 +91,6 @@ public class ShowEditorPrefKeys : EditorWindow
 				GUILayout.Label(e);
 				
 			pb_GUI_Utility.DrawSeparator(1);
-			
 			
 			foreach(string c in colors)
 				GUILayout.Label(c);
@@ -89,6 +104,11 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string f in floats)	
 				GUILayout.Label( f );
+			
+			pb_GUI_Utility.DrawSeparator(1);
+
+			foreach(string s in strings)	
+				GUILayout.Label( s );
 			
 			pb_GUI_Utility.DrawSeparator(1);
 
@@ -121,6 +141,11 @@ public class ShowEditorPrefKeys : EditorWindow
 			pb_GUI_Utility.DrawSeparator(1);
 
 			foreach(string f in floats)
+				GUILayout.Label( EditorPrefs.HasKey(f).ToString() );
+
+			pb_GUI_Utility.DrawSeparator(1);
+
+			foreach(string f in strings)
 				GUILayout.Label( EditorPrefs.HasKey(f).ToString() );
 
 			pb_GUI_Utility.DrawSeparator(1);
@@ -159,6 +184,11 @@ public class ShowEditorPrefKeys : EditorWindow
 			
 			pb_GUI_Utility.DrawSeparator(1);
 
+			foreach(string f in strings)
+				GUILayout.Label( EditorPrefs.GetString(f) );
+			
+			pb_GUI_Utility.DrawSeparator(1);
+
 			GUILayout.Label("");
 			GUILayout.Label( pb_Preferences_Internal.GetMaterial( pb_Constant.pbDefaultMaterial).name );
 
@@ -194,13 +224,36 @@ public class ShowEditorPrefKeys : EditorWindow
 			
 			pb_GUI_Utility.DrawSeparator(1);
 
+			for(int i = 0; i < strings.Length; i++)
+				GUILayout.Label(" - ");
+			
+			pb_GUI_Utility.DrawSeparator(1);
+
 			GUILayout.Label("");
 			GUILayout.Label( pb_Preferences_Internal.GetMaterial( pb_Constant.pbDefaultMaterial, true).name 	  	 		 );
 
 			GUI.backgroundColor = Color.white;
 		GUILayout.EndVertical();
-
 		GUILayout.EndHorizontal();
+		GUILayout.EndScrollView();
+	}
+
+	void ClearPrefs()
+	{
+		foreach(string str in enums)
+			EditorPrefs.DeleteKey(str);
+
+		foreach(string str in colors)
+			EditorPrefs.DeleteKey(str);
+
+		foreach(string str in booleans)
+			EditorPrefs.DeleteKey(str);
+
+		foreach(string str in floats)
+			EditorPrefs.DeleteKey(str);
+
+		foreach(string str in strings)
+			EditorPrefs.DeleteKey(str);
 	}
 }
 
