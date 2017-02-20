@@ -11,9 +11,9 @@ namespace ProBuilder2.EditorCommon
 	{
 		static GUIContent[] m_TangentModeIcons = new GUIContent[]
 		{
-			new GUIContent("Free"),
-			new GUIContent("Aligned"),
-			new GUIContent("Mirrored")
+			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free"),
+			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned"),
+			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored")
 		};
 
 		private static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
@@ -256,7 +256,9 @@ namespace ProBuilder2.EditorCommon
 				SceneView.RepaintAll();
 			}
 
-			m_TangentMode 	= (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+			GUILayout.BeginHorizontal();
+			m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+			GUILayout.EndHorizontal();
 
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
 			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
