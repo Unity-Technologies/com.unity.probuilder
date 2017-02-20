@@ -213,10 +213,22 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public virtual void DoAlt()
 		{
-			pb_MenuOption.Show(OnSettingsGUI);
+			pb_MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
 		}
 
 		public virtual void OnSettingsGUI() {}
+
+		/**
+		 *	Called when the settings window is opened.
+		 *	Only used when AltState is MenuActionState.VisibleAndEnabled.
+		 */
+		public virtual void OnSettingsEnable() {}
+
+		/**
+		 *	Called when the settings window is closed.
+		 *	Only used when AltState is MenuActionState.VisibleAndEnabled.
+		 */
+		public virtual void OnSettingsDisable() {}
 
 		protected bool isIconMode = true;
 

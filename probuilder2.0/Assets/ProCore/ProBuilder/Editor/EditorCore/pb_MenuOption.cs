@@ -12,11 +12,21 @@ namespace ProBuilder2.EditorCommon
 	public class pb_MenuOption : EditorWindow
 	{
 		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsGUI = null;
+		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsDisable = null;
 
-		public static pb_MenuOption Show(pb_MenuAction.SettingsDelegate onSettingsGUI)
+		public static pb_MenuOption Show(pb_MenuAction.SettingsDelegate onSettingsGUI, pb_MenuAction.SettingsDelegate onSettingsEnable, pb_MenuAction.SettingsDelegate onSettingsDisable)
 		{
 			pb_MenuOption win = EditorWindow.GetWindow<pb_MenuOption>(true, "Options", true);
 			win.hideFlags = HideFlags.HideAndDontSave;
+
+			if(win.onSettingsDisable != null)
+				win.onSettingsDisable();
+
+			if(onSettingsEnable != null)
+				onSettingsEnable();
+
+			win.onSettingsDisable = onSettingsDisable;
+
 			win.onSettingsGUI = onSettingsGUI;
 			
 			// don't let window hang around after a script reload nukes the pb_MenuAction instances
@@ -39,6 +49,12 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			this.autoRepaintOnSceneChange = true;
+		}
+
+		void OnDisable()
+		{
+			if(onSettingsDisable != null)
+				onSettingsDisable();
 		}
 
 		void OnSelectionChange()
