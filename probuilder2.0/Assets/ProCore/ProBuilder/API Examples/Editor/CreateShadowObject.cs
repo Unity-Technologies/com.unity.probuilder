@@ -90,7 +90,8 @@ namespace ProBuilder2.Actions
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
 			"Gen Shadow Obj",
-			"Creates a new ProBuilder mesh child with inverted normals that only exists to cast shadows.  Use to create lit interior scenes with shadows from directional lights.\n\nNote that this exists largely as a workaround for real-time shadow light leaks.  Baked shadows do not require this workaround."
+			"Creates a new ProBuilder mesh child with inverted normals that only exists to cast shadows.  Use to create lit interior scenes with shadows from directional lights.\n\nNote that this exists largely as a workaround for real-time shadow light leaks.  Baked shadows do not require this workaround.",
+			""	// Some combination of build settings can cause the compiler to not respection optional params in the pb_TooltipContent c'tor?
 		);
 
 		/**
