@@ -439,7 +439,7 @@ public class pb_ShapeGenerator
 	 *	@param heightCuts The amount of divisions to create on the horizontal axis.
 	 *	\returns The newly generated #pb_Object.
 	 */
-	public static pb_Object CylinderGenerator(int axisDivisions, float radius, float height, int heightCuts)
+	public static pb_Object CylinderGenerator(int axisDivisions, float radius, float height, int heightCuts, int smoothing = -1)
 	{
 		if(axisDivisions % 2 != 0)
 			axisDivisions++;
@@ -504,14 +504,14 @@ public class pb_ShapeGenerator
 				int two 	= index + 2;
 				int three 	= index + 3;
 
-				faces[f++] = new pb_Face(new int[6]{
-					zero,
-					one,
-					two,
-					one,
-					three,
-					two
-					});
+				faces[f++] = new pb_Face(
+					new int[6]{ zero, one, two, one, three, two },
+					pb_Constant.DefaultMaterial,
+					new pb_UV(),
+					smoothing, 
+					-1,
+					-1,
+					false);
 			}
 		}
 

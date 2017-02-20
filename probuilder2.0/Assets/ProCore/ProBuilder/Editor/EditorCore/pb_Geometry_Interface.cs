@@ -452,6 +452,7 @@ namespace ProBuilder2.EditorCommon
 		static float cyl_radius = .5f;
 		static float cyl_height = 1f;
 		static int cyl_heightCuts = 0;
+		static bool cyl_smoothing = true;
 		void CylinderGUI()
 		{
 			// Store old values
@@ -459,12 +460,14 @@ namespace ProBuilder2.EditorCommon
 			cyl_radius = Mathf.Clamp(cyl_radius, .01f, Mathf.Infinity);
 
 			cyl_axisCuts = EditorGUILayout.IntField("Number of Sides", cyl_axisCuts);
-			cyl_axisCuts = Clamp(cyl_axisCuts, 2, 48);
+			cyl_axisCuts = Clamp(cyl_axisCuts, 4, 48);
 
 			cyl_height = EditorGUILayout.FloatField("Height", cyl_height);
 
 			cyl_heightCuts = EditorGUILayout.IntField("Height Segments", cyl_heightCuts);
 			cyl_heightCuts = Clamp(cyl_heightCuts, 0, 48);
+
+			cyl_smoothing = EditorGUILayout.Toggle("Smooth", cyl_smoothing);
 
 			if(cyl_axisCuts % 2 != 0)
 				cyl_axisCuts++;
@@ -479,8 +482,9 @@ namespace ProBuilder2.EditorCommon
 					cyl_axisCuts,
 					cyl_radius,
 					cyl_height,
-					cyl_heightCuts),
-					new int[1] { (cyl_axisCuts*(cyl_heightCuts+1)*4)+1 } );
+					cyl_heightCuts,
+					cyl_smoothing ? 1 : -1),
+					new int[1] { (cyl_axisCuts*(cyl_heightCuts+1)*4)+1 });
 			}
 
 			Color oldColor = GUI.backgroundColor;
@@ -490,7 +494,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts);
+				pb_Object pb = pb_ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
