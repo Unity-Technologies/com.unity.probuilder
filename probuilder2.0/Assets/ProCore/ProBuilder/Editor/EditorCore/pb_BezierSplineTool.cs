@@ -155,6 +155,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnDisable()
 		{
+			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 		}
 
 		pb_BezierPoint DoBezierPointGUI(pb_BezierPoint point)
