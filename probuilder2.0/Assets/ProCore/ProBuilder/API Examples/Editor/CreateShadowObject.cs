@@ -83,6 +83,12 @@ namespace ProBuilder2.Actions
 
 		private GUIContent gc_volumeSize = new GUIContent("Volume Size", "How far the shadow volume extends from the base mesh.  To visualize, imagine the width of walls.\n\nYou can also select the child ShadowVolume object and turn the Shadow Casting Mode to \"One\" or \"Two\" sided to see the resulting mesh.");
 
+		private bool showPreview
+		{
+			get { return EditorPrefs.GetBool("pb_shadowVolumePreview", true); }
+			set { EditorPrefs.SetBool("pb_shadowVolumePreview", value); }
+		}
+
 		/**
 		 *	What to show in the hover tooltip window.  pb_TooltipContent is similar to GUIContent, with the exception that it also
 		 *	includes an optional params[] char list in the constructor to define shortcut keys (ex, CMD_CONTROL, K).
@@ -110,12 +116,18 @@ namespace ProBuilder2.Actions
 		 */
 		public override bool IsHidden()
 		{
-			return 	pb_Editor.instance == null;
+			return pb_Editor.instance == null;
 		}
 
 		public override MenuActionState AltState()
 		{
 			return MenuActionState.VisibleAndEnabled;
+		}
+
+		public override void OnSettingsEnable()
+		{
+			if( showPreview )
+				DoAction();
 		}
 
 		public override void OnSettingsGUI()
@@ -153,6 +165,7 @@ namespace ProBuilder2.Actions
 			{
 				DoAction();
 				SceneView.RepaintAll();
+				pb_MenuOption.CloseAll();
 			}
 		}
 
@@ -169,10 +182,11 @@ namespace ProBuilder2.Actions
 
 			foreach(pb_Object pb in selection)
 			{
-				if(pb.name.Contains("-ShadowVolume"))
+				pb_Object shadow = GetShadowObject(pb);
+
+				if(shadow == null)
 					continue;
 
-				pb_Object shadow = GetShadowObject(pb);
 				foreach(pb_Face f in shadow.faces) { f.ReverseIndices(); f.manualUV = true; }
 				shadow.Extrude(shadow.faces, extrudeMethod, extrudeDistance);
 				shadow.ToMesh();
@@ -204,6 +218,9 @@ namespace ProBuilder2.Actions
 
 		private pb_Object GetShadowObject(pb_Object pb)
 		{
+			if(pb == null || pb.name.Contains("-ShadowVolume"))
+				return null;
+
 			for(int i = 0; i < pb.transform.childCount; i++)
 			{
 				Transform t = pb.transform.GetChild(i);
