@@ -74,14 +74,17 @@ public class pb_Object_Editor : Editor
 			
 			if(GUILayout.Button("Apply Offset"))
 			{
-				pbUndo.RecordObject(pb, "Offset Vertices");
+				foreach(pb_Object ipb in Selection.transforms.GetComponents<pb_Object>())
+				{
+					pbUndo.RecordObject(ipb, "Offset Vertices");
 
-				pb.ToMesh();
+					ipb.ToMesh();
 
-				pb.TranslateVertices_World(pb.SelectedTriangles, offset);
+					ipb.TranslateVertices_World(ipb.SelectedTriangles, offset);
 
-				pb.Refresh();
-				pb.Optimize();
+					ipb.Refresh();
+					ipb.Optimize();
+				}
 
 				if(editor != null)
 					editor.UpdateSelection();
