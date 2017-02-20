@@ -9,12 +9,7 @@ namespace ProBuilder2.EditorCommon
 	[CustomEditor(typeof(pb_BezierShape))]
 	public class pb_BezierSplineTool : Editor
 	{
-		static GUIContent[] m_TangentModeIcons = new GUIContent[]
-		{
-			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free"),
-			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned"),
-			new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored")
-		};
+		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
 
 		private static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 		private static Vector3 Vector3_Forward = new Vector3(0f, 0f, 1f);
@@ -151,6 +146,10 @@ namespace ProBuilder2.EditorCommon
 		{
 			m_Target = target as pb_BezierShape;
 			Undo.undoRedoPerformed += this.UndoRedoPerformed;
+
+			m_TangentModeIcons[0] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free");
+			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned");
+			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored");
 		}
 
 		void OnDisable()
