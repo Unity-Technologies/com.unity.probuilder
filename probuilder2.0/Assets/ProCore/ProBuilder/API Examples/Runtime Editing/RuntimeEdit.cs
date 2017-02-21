@@ -12,13 +12,13 @@ namespace ProBuilder2.Examples
 	 *	More advanced usage of the ProBuilder API should make use of the pb_Object->SelectedFaces list to keep
 	 *	track of the selected faces.
 	 */
-	public class RuntimeEdit : MonoBehaviour 
+	public class RuntimeEdit : MonoBehaviour
 	{
 		class pb_Selection
 		{
-			public pb_Object pb;	///< This is the currently selected ProBuilder object.	
+			public pb_Object pb;	///< This is the currently selected ProBuilder object.
 			public pb_Face face;	///< Keep a reference to the currently selected face.
-			
+
 			public pb_Selection(pb_Object _pb, pb_Face _face)
 			{
 				pb = _pb;
@@ -89,10 +89,10 @@ namespace ProBuilder2.Examples
 		 */
 		void SpawnCube()
 		{
-			// This creates a basic cube with ProBuilder features enabled.  See the ProBuilder.Shape enum to 
+			// This creates a basic cube with ProBuilder features enabled.  See the ProBuilder.Shape enum to
 			// see all possible primitive types.
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
-			
+
 			// The runtime component requires that a concave mesh collider be present in order for face selection
 			// to work.
 			pb.gameObject.AddComponent<MeshCollider>().convex = false;
@@ -125,7 +125,7 @@ namespace ProBuilder2.Examples
 				Vector3 dir = new Vector3(delta.y, delta.x, 0f);
 
 				currentSelection.pb.gameObject.transform.RotateAround(Vector3.zero, dir, rotateSpeed * Time.deltaTime);
-					
+
 				// If there is a currently selected face, update the preview.
 				if(currentSelection.IsValid())
 					RefreshSelectedFacePreview();
@@ -138,13 +138,13 @@ namespace ProBuilder2.Examples
 		}
 
 		/**
-		 *	\brief The 'meat' of the operation.  This listens for a click event, then checks for a positive 
+		 *	\brief The 'meat' of the operation.  This listens for a click event, then checks for a positive
 		 *	face selection.  If the click has hit a pb_Object, select it.
 		 */
 		public void Update()
 		{
 			if(Input.GetMouseButtonUp(0) && !Input.GetKey(KeyCode.LeftAlt)) {
-				
+
 				if(FaceCheck(Input.mousePosition))
 				{
 					if(currentSelection.IsValid())
@@ -158,14 +158,15 @@ namespace ProBuilder2.Examples
 							return;
 						}
 
-						Vector3 localNormal = pb_Math.Normal( pbUtil.ValuesWithIndices(currentSelection.pb.vertices, currentSelection.face.distinctIndices) );// currentSelection.pb.GetVertices(currentSelection.face.distinctIndices));
-						
+						Vector3 localNormal = pb_Math.Normal( pbUtil.ValuesWithIndices(currentSelection.pb.vertices, currentSelection.face.distinctIndices) );
+
 						if(Input.GetKey(KeyCode.LeftShift))
 							currentSelection.pb.TranslateVertices( currentSelection.face.distinctIndices, localNormal.normalized * -.5f );
 						else
 							currentSelection.pb.TranslateVertices( currentSelection.face.distinctIndices, localNormal.normalized * .5f );
 
-						currentSelection.pb.Refresh();	// Refresh will update the Collision mesh volume, face UVs as applicatble, and normal information.
+						// Refresh will update the Collision mesh volume, face UVs as applicatble, and normal information.
+						currentSelection.pb.Refresh();
 
 						// this create the selected face preview
 						RefreshSelectedFacePreview();
@@ -192,9 +193,9 @@ namespace ProBuilder2.Examples
 				Mesh m = hitpb.msh;
 
 				int[] tri = new int[3] {
-					m.triangles[hit.triangleIndex * 3 + 0], 
-					m.triangles[hit.triangleIndex * 3 + 1], 
-					m.triangles[hit.triangleIndex * 3 + 2] 
+					m.triangles[hit.triangleIndex * 3 + 0],
+					m.triangles[hit.triangleIndex * 3 + 1],
+					m.triangles[hit.triangleIndex * 3 + 2]
 				};
 
 				currentSelection.pb = hitpb;
@@ -206,13 +207,15 @@ namespace ProBuilder2.Examples
 
 		void RefreshSelectedFacePreview()
 		{
-			pb_Face face = new pb_Face(currentSelection.face);	// Copy the currently selected face
-			face.ShiftIndicesToZero();							// Shift the selected face indices to zero
-
 			// Copy the currently selected vertices in world space.
 			// World space so that we don't have to apply transforms
 			// to match the current selection.
-			Vector3[] verts = currentSelection.pb.VerticesInWorldSpace(currentSelection.face.distinctIndices);
+			Vector3[] verts = currentSelection.pb.VerticesInWorldSpace(currentSelection.face.indices);
+
+			// face.indices == triangles, so wind the face to match
+			int[] indices = new int[verts.Length];
+			for(int i = 0; i < indices.Length; i++)
+				indices[i] = i;
 
 			// Now go through and move the verts we just grabbed out about .1m from the original face.
 			Vector3 normal = pb_Math.Normal(verts);
@@ -223,7 +226,7 @@ namespace ProBuilder2.Examples
 			if(preview)
 				Destroy(preview.gameObject);
 
-			preview = pb_Object.CreateInstanceWithVerticesFaces(verts, new pb_Face[1]{face});
+			preview = pb_Object.CreateInstanceWithVerticesFaces(verts, new pb_Face[] { new pb_Face(indices) });
 			preview.SetFaceMaterial(preview.faces, previewMaterial);
 			preview.ToMesh();
 			preview.Refresh();
