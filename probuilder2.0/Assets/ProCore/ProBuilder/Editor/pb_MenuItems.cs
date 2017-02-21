@@ -18,7 +18,7 @@ public class pb_MenuItems : EditorWindow
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/About", false, pb_Constant.MENU_ABOUT)]
 	public static void MenuInitAbout()
 	{
-		pb_AboutWindow.Init("Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt", true);
+		pb_AboutWindow.Init(true);
 	}
 
 	[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, pb_Constant.MENU_ABOUT)]

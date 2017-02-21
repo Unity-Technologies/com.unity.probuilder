@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,20 +15,12 @@ using System.Text.RegularExpressions;
 /**
  * Used to pop up the window on import.
  */
-public class pb_AboutWindowSetup : AssetPostprocessor
+[InitializeOnLoad]
+static class pb_AboutWindowSetup
 {
-	static void OnPostprocessAllAssets (
-		string[] importedAssets,
-		string[] deletedAssets,
-		string[] movedAssets,
-		string[] movedFromAssetPaths)
+	static pb_AboutWindowSetup()
 	{
-
-		string[] entries = System.Array.FindAll(importedAssets, name => name.Contains("pc_AboutEntry") && !name.EndsWith(".meta"));
-
-		foreach(string str in entries)
-			if( pb_AboutWindow.Init(str, false) )
-				break;
+		pb_AboutWindow.Init(false);
 	}
 }
 
@@ -154,12 +147,28 @@ public class pb_AboutWindow : EditorWindow
 	/**
 	 * Return true if Init took place, false if not.
 	 */
-	public static bool Init (string aboutEntryPath, bool fromMenu)
+	public static bool Init (bool fromMenu)
 	{
-		string identifier, version;
+		string identifier = "", version = "", aboutEntryPath = "";
+		bool gotVersion = false, gotIdentifier = false;
+		string[] matches = Directory.GetFiles("../", "pc_AboutEntry_ProBuilder.txt", SearchOption.AllDirectories);
 
-		if( !GetField(aboutEntryPath, "version: ", out version) || !GetField(aboutEntryPath, "identifier: ", out identifier))
+		for(int i = 0; i < matches.Length && !(gotVersion && gotIdentifier); i++)
+		{
+			if( GetField(matches[i], "version: ", out version) )
+				gotVersion = true;
+
+			if( GetField(matches[i], "identifier: ", out identifier) )
+				gotIdentifier = true;
+
+			aboutEntryPath = matches[i];
+		}
+
+		if(!gotIdentifier || !gotVersion)
+		{
+			Debug.LogWarning("Couldn't find pb_AboutEntry_ProBuilder.txt");
 			return false;
+		}
 
 		if(fromMenu || EditorPrefs.GetString(identifier) != version)
 		{
@@ -389,22 +398,25 @@ public class pb_AboutWindow : EditorWindow
 	 */
 	void PopulateDataFields(string entryPath)
 	{
-		/* Get data from VersionInfo.txt */
-		TextAsset versionInfo = LoadAssetAtPath<TextAsset>( entryPath );
+		if(!File.Exists(entryPath))
+			return;
+
+		string versionInfo = File.ReadAllText(entryPath);
 
 		ProductVersion = "";
 		ChangelogPath = "";
 
-		if(versionInfo != null)
+		if(!string.IsNullOrEmpty(versionInfo))
 		{
-			string[] txt = versionInfo.text.Split('\n');
-			foreach(string cheese in txt)
+			string[] txt = versionInfo.Split('\n');
+
+			foreach(string line in txt)
 			{
-				if(cheese.StartsWith("version:"))
-					ProductVersion = cheese.Replace("version: ", "").Trim();
+				if(line.StartsWith("version:"))
+					ProductVersion = line.Replace("version: ", "").Trim();
 				else
-				if(cheese.StartsWith("changelog:"))
-					ChangelogPath = cheese.Replace("changelog: ", "").Trim();
+				if(line.StartsWith("changelog:"))
+					ChangelogPath = line.Replace("changelog: ", "").Trim();
 			}
 		}
 
@@ -429,13 +441,12 @@ public class pb_AboutWindow : EditorWindow
 
 	private static bool GetField(string path, string field, out string value)
 	{
-		TextAsset entry = LoadAssetAtPath<TextAsset>(path);
-
 		value = "";
 
-		if(!entry) return false;
+        if (!File.Exists(path))
+        	return false;
 
-		foreach(string str in entry.text.Split('\n'))
+		foreach(string str in File.ReadAllLines(path))
 		{
 			if(str.Contains(field))
 			{
