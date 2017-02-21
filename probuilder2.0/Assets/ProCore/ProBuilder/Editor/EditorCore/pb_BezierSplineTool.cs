@@ -66,7 +66,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				return handle.tangent;
 			}
-			
+
 			public void SetIndex(int index)
 			{
 				this.index = index;
@@ -164,7 +164,7 @@ namespace ProBuilder2.EditorCommon
 			bool wasInWideMode = EditorGUIUtility.wideMode;
 			float labelWidth = EditorGUIUtility.labelWidth;
 			EditorGUIUtility.wideMode = true;
-			EditorGUIUtility.labelWidth = Screen.width / 3f;
+			EditorGUIUtility.labelWidth = EditorGUIUtility.currentViewWidth / 3f;
 
 			EditorGUI.BeginChangeCheck();
 			pos = EditorGUILayout.Vector3Field("Position", pos);
@@ -212,7 +212,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Points.Count);
 
-			pb_BezierPoint inspectorPoint = handleIsValid ? 
+			pb_BezierPoint inspectorPoint = handleIsValid ?
 				m_Points[m_currentHandle] :
 				new pb_BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward);
 
@@ -374,7 +374,7 @@ namespace ProBuilder2.EditorCommon
 							Handles.color = Color.blue;
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 						}
-							
+
 						if(m_currentHandle.tangent == pb_BezierTangentDirection.Out && (m_CloseLoop || index < c - 1))
 						{
 							EditorGUI.BeginChangeCheck();
@@ -443,7 +443,7 @@ namespace ProBuilder2.EditorCommon
 			if( EditorGUI.EndChangeCheck() )
 				UpdateMesh(false);
 		}
-		
+
 		void UndoRedoPerformed()
 		{
 			UpdateMesh(true);
