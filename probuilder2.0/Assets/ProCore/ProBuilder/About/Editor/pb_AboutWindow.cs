@@ -262,6 +262,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				richText = true,
 				normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
 					string.Format("{0}/Images/ScrollBackground_{1}.png",
 						ABOUT_ROOT,
@@ -462,8 +463,8 @@ namespace ProBuilder2.EditorCommon
 
 				formatted_changes = sb.ToString();
 				formatted_changes = Regex.Replace(formatted_changes, "^-", "\u2022", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"(?<=^##\ ).*", "<size=14>${0}</size>", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"^##\ ", "");
+				formatted_changes = Regex.Replace(formatted_changes, @"(?<=^##\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
+				formatted_changes = Regex.Replace(formatted_changes, @"^##\ ", "", RegexOptions.Multiline);
 			}
 			catch
 			{
