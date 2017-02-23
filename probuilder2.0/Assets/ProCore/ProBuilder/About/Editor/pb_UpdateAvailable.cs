@@ -16,20 +16,64 @@ namespace ProBuilder2.EditorCommon
 		[SerializeField] string m_NewChangelog;
 		Vector2 scroll = Vector2.zero;
 
+		private static GUIStyle downloadImageStyle = null,
+								updateHeader = null;
+
+		private bool checkForProBuilderUpdates
+		{
+			get { return EditorPrefs.GetBool(pb_Constant.pbCheckForProBuilderUpdates, true); }
+			set { EditorPrefs.SetBool(pb_Constant.pbCheckForProBuilderUpdates, value); }
+		}
+
 		void OnEnable()
 		{
 			pb_AboutWindow.InitGuiStyles();
+
+			downloadImageStyle = new GUIStyle()
+			{
+				margin = new RectOffset(10, 10, 10, 10),
+				fixedWidth = 154,
+				fixedHeight = 85,
+				normal = new GUIStyleState() {
+					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Normal.png", pb_AboutWindow.ABOUT_ROOT))
+				},
+				hover = new GUIStyleState() {
+					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Hover.png", pb_AboutWindow.ABOUT_ROOT))
+				},
+			};
+
+			updateHeader = new GUIStyle()
+			{
+				margin = new RectOffset(0, 0, 0, 0),
+				alignment = TextAnchor.MiddleCenter,
+				fixedHeight = 85,
+				fontSize = 24,
+				wordWrap = true,
+				font = pb_AboutWindow.LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", pb_AboutWindow.ABOUT_ROOT, pb_AboutWindow.FONT_MEDIUM)),
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? pb_AboutWindow.font_white : pb_AboutWindow.font_black }
+			};
 		}
 
 		void OnGUI()
 		{
-			GUILayout.Label("A new version of ProBuilder is available");
+			GUILayout.BeginHorizontal();
+				GUILayout.Label("", downloadImageStyle);
+				GUILayout.BeginVertical(pb_AboutWindow.changelogStyle);
+				GUILayout.Label("ProBuilder Update Available", updateHeader);
+				GUILayout.EndVertical();
+			GUILayout.EndHorizontal();
 
-			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, pb_AboutWindow.changelogStyle);
 			GUILayout.Label(string.Format("Version: {0}", m_NewVersion.text), pb_AboutWindow.versionInfoStyle);
 			GUILayout.Label("\n" + m_NewChangelog, pb_AboutWindow.changelogTextStyle);
 			EditorGUILayout.EndScrollView();
+
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			checkForProBuilderUpdates = EditorGUILayout.Toggle("Show Update Notifications", checkForProBuilderUpdates);
+			GUILayout.Space(4);
+			GUILayout.EndHorizontal();
+			GUILayout.Space(10);
 		}
 	}
 }

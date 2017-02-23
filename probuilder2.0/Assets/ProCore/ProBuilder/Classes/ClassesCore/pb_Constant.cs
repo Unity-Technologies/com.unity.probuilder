@@ -47,7 +47,7 @@ public static class pb_Constant
 			if(_vertexPickerMaterial == null)
 			{
 				_vertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
-				
+
 				if(_vertexPickerMaterial == null)
 					_vertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
 				else
@@ -169,6 +169,7 @@ public static class pb_Constant
 	public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
 	public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
 	public const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
+	public const string pbCheckForProBuilderUpdates		= "pbCheckForProBuilderUpdates";	///< Automatically check for updates?
 
 	// Float
 	public const string pbVertexHandleSize 				= "pbVertexHandleSize";

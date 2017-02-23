@@ -55,7 +55,7 @@ namespace ProBuilder2.EditorCommon
 	 	const string PACKAGE_NAME = "ProBuilder";
 
 		// Path to the root folder
-		const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
+		internal const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
 
 	#if SHOW_PRODUCT_THUMBS
 
@@ -113,8 +113,8 @@ namespace ProBuilder2.EditorCommon
 		// private const string CONTACT_EMAIL = @"mailto:contact@procore3d.com?subject=Hey%20ProBuilder%20People!";
 		private const string CONTACT_EMAIL = @"http://www.procore3d.com/about/";
 
-		private const string FONT_REGULAR = "Asap-Regular.otf";
-		private const string FONT_MEDIUM = "Asap-Medium.otf";
+		internal const string FONT_REGULAR = "Asap-Regular.otf";
+		internal const string FONT_MEDIUM = "Asap-Medium.otf";
 
 		// Use less contast-y white and black font colors for better readabililty
 		public static readonly Color font_white = HexToColor(0xCECECE);
@@ -303,7 +303,7 @@ namespace ProBuilder2.EditorCommon
 			PopulateDataFields(AboutEntryPath);
 		}
 
-		static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
+		internal static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
 		{
 			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
 		}

@@ -12,8 +12,17 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_UpdateCheck()
 		{
-			updateQuery = new WWW(PROBUILDER_VERSION_URL);
-			EditorApplication.update += Update;
+			if(pb_Preferences_Internal.GetBool(pb_Constant.pbCheckForProBuilderUpdates))
+				CheckForUpdate();
+		}
+
+		public static void CheckForUpdate()
+		{
+			if(updateQuery == null)
+			{
+				updateQuery = new WWW(PROBUILDER_VERSION_URL);
+				EditorApplication.update += Update;
+			}
 		}
 
 		static void Update()
@@ -29,10 +38,8 @@ namespace ProBuilder2.EditorCommon
 					string changelog;
 
 					pb_AboutWindow.FormatChangelog(updateQuery.text, out version, out changelog);
-
-					Debug.Log("Current Version: " + version.ToString());
-
 					pb_UpdateAvailable.Init(version, changelog);
+					updateQuery = null;
 				}
 			}
 
