@@ -122,7 +122,7 @@ namespace ProBuilder2.Test
 			Assert.AreNotEqual(a, b);
 			Assert.AreNotEqual(a, c);
 			Assert.AreEqual(a, d);
-			
+
 			d.normal *= 3f;
 			Assert.AreNotEqual(a, d);
 		}

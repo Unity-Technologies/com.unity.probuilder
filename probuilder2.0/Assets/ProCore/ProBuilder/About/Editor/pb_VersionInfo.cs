@@ -4,13 +4,13 @@ namespace ProBuilder2.EditorCommon
 {
 	public enum VersionType
 	{
-		Final,
-		Beta,
-		Patch
+		Final = 3,
+		Beta = 2,
+		Patch = 1
 	}
 
 	[System.Serializable]
-	public struct pb_VersionInfo
+	public struct pb_VersionInfo : System.IEquatable<pb_VersionInfo>, System.IComparable<pb_VersionInfo>
 	{
 		public int major;
 		public int minor;
@@ -19,6 +19,85 @@ namespace ProBuilder2.EditorCommon
 		public VersionType type;
 		public string text;
 		public bool valid;
+
+		public override bool Equals(object o)
+		{
+			return o is pb_VersionInfo && this.Equals((pb_VersionInfo) o);
+		}
+
+		public override int GetHashCode()
+		{
+			int hash = 13;
+
+			unchecked
+			{
+				if(valid)
+				{
+					hash = (hash * 7) + major.GetHashCode();
+					hash = (hash * 7) + minor.GetHashCode();
+					hash = (hash * 7) + patch.GetHashCode();
+					hash = (hash * 7) + build.GetHashCode();
+					hash = (hash * 7) + type.GetHashCode();
+				}
+				else
+				{
+					return text.GetHashCode();
+				}
+			}
+
+			return hash;
+		}
+
+		public bool Equals(pb_VersionInfo version)
+		{
+			if(valid != version.valid)
+				return false;
+
+			if(valid)
+			{
+				return 	major == version.major &&
+						minor == version.minor &&
+						patch == version.patch &&
+						type == version.type &&
+						build == version.build;
+			}
+			else
+			{
+				if( string.IsNullOrEmpty(text) || string.IsNullOrEmpty(version.text) )
+					return false;
+
+				return text.Equals(version.text);
+			}
+		}
+
+		public int CompareTo(pb_VersionInfo version)
+		{
+			const int GREATER = 1;
+			const int LESS = -1;
+
+			if(this.Equals(version))
+				return 0;
+			else if(major > version.major)
+				return GREATER;
+			else if(major < version.major)
+				return LESS;
+			else if(minor > version.minor)
+				return GREATER;
+			else if(minor < version.minor)
+				return LESS;
+			else if(patch > version.patch)
+				return GREATER;
+			else if(patch < version.patch)
+				return LESS;
+			else if((int)type > (int)version.type)
+				return GREATER;
+			else if((int)type < (int)version.type)
+				return LESS;
+			else if(build > version.build)
+				return GREATER;
+			else
+				return LESS;
+		}
 
 		public override string ToString()
 		{

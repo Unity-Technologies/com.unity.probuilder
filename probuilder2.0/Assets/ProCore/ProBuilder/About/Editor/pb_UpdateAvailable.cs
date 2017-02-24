@@ -15,6 +15,7 @@ namespace ProBuilder2.EditorCommon
 		[SerializeField] pb_VersionInfo m_NewVersion;
 		[SerializeField] string m_NewChangelog;
 		Vector2 scroll = Vector2.zero;
+		GUIContent gc_DownloadUpdate = new GUIContent("", "Open Asset Store Download Page");
 
 		private static GUIStyle downloadImageStyle = null,
 								updateHeader = null;
@@ -28,6 +29,8 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			pb_AboutWindow.InitGuiStyles();
+
+			wantsMouseMove = true;
 
 			downloadImageStyle = new GUIStyle()
 			{
@@ -57,10 +60,17 @@ namespace ProBuilder2.EditorCommon
 		void OnGUI()
 		{
 			GUILayout.BeginHorizontal();
-				GUILayout.Label("", downloadImageStyle);
+
+				if( GUILayout.Button(gc_DownloadUpdate, downloadImageStyle) )
+					Application.OpenURL("http://u3d.as/30b");
+
+				if(GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+					Repaint();
+
 				GUILayout.BeginVertical(pb_AboutWindow.changelogStyle);
-				GUILayout.Label("ProBuilder Update Available", updateHeader);
+				GUILayout.Label("ProBuilder Update\nAvailable", updateHeader);
 				GUILayout.EndVertical();
+
 			GUILayout.EndHorizontal();
 
 			scroll = EditorGUILayout.BeginScrollView(scroll, pb_AboutWindow.changelogStyle);
