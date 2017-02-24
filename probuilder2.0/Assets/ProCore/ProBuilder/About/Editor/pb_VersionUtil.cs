@@ -38,7 +38,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			about = null;
 
-			string[] matches = Directory.GetFiles("../", "pc_AboutEntry_ProBuilder.txt", SearchOption.AllDirectories);
+			string[] matches = Directory.GetFiles("./Assets", "pc_AboutEntry_ProBuilder.txt", SearchOption.AllDirectories);
 
 			if(matches == null || matches.Length < 1)
 				return false;
