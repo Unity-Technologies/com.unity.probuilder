@@ -63,7 +63,8 @@ public class ShowEditorPrefKeys : EditorWindow
 
 	string[] strings = new string[]
 	{
-		"ProBuilder_AboutWindowIdentifier"
+		"ProBuilder_AboutWindowIdentifier",
+		"pbLastWebVersionChecked"
 	};
 
 	Vector2 scroll = Vector2.zero;
