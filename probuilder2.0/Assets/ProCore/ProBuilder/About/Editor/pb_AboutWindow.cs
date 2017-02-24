@@ -22,7 +22,7 @@ namespace ProBuilder2.EditorCommon
 	{
 		static pb_AboutWindowSetup()
 		{
-			pb_AboutWindow.Init(false);
+			EditorApplication.delayCall += () => { pb_AboutWindow.Init(false); };
 		}
 	}
 
