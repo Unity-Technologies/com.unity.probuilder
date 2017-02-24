@@ -275,10 +275,13 @@ namespace ProBuilder2.EditorCommon
 			{
 				m_Target.Refresh();
 
-				if(!vertexCountChanged)
-					pb_Editor.instance.Internal_UpdateSelectionFast();
-				else
-					pb_Editor.Refresh();
+				if(pb_Editor.instance != null)
+				{
+					if(!vertexCountChanged)
+						pb_Editor.instance.Internal_UpdateSelectionFast();
+					else
+						pb_Editor.Refresh();
+				}
 			}
 		}
 
