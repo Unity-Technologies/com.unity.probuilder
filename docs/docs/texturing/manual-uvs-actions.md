@@ -159,3 +159,15 @@ Scale and move the selected UV element(s) to fit exactly within the UV space.
 <div style="text-align:center">
 <img src="../../images/UVExamples_FitUVs.png">
 </div>
+
+---
+
+## Continue UVs
+
+`Control + Click` to align an adjacent face UV coordinates to the current selection.
+
+To use:
+
+- Open the UV Editor
+- Select a face in the Scene View
+- `Control + Click` a face that shares an edge with the current selection
