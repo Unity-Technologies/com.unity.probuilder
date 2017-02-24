@@ -11,6 +11,7 @@ namespace ProBuilder2.EditorCommon
 	static class pb_UpdateCheck
 	{
 		const string PROBUILDER_VERSION_URL = "http://procore3d.github.io/probuilder2/current.txt";
+		const string pbLastWebVersionChecked = "pbLastWebVersionChecked";
 		static WWW updateQuery;
 		static bool calledFromMenu = false;
 
@@ -56,13 +57,25 @@ namespace ProBuilder2.EditorCommon
 						FailedConnection();
 					}
 					else
-					{			
+					{
 						pb_VersionInfo current;
 
+						// first test if the installed version is already up to date
 						if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
-							pb_UpdateAvailable.Init(webVersion, webChangelog);
+						{
+							// next, test if a notification for this version has already been shown
+							string lastNotification = EditorPrefs.GetString(pbLastWebVersionChecked, "");
+
+							if(calledFromMenu || !lastNotification.Equals(webVersion.text))
+							{
+								pb_UpdateAvailable.Init(webVersion, webChangelog);
+								EditorPrefs.SetString(pbLastWebVersionChecked, webVersion.text);
+							}
+						}
 						else
+						{
 							UpToDate(current.ToString());
+						}
 					}
 				}
 				else

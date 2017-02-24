@@ -47,7 +47,7 @@ namespace ProBuilder2.EditorCommon
 	 * This path is relative to the PRODUCT_ROOT path.
 	 *
 	 * Note that your changelog may contain multiple entries.  Only the top-most
-	 * entry will be displayed.
+	 * entry will be displayed. 
 	 */
 	public class pb_AboutWindow : EditorWindow
 	{
@@ -110,7 +110,6 @@ namespace ProBuilder2.EditorCommon
 		private const string VIDEO_URL = @"http://bit.ly/pbstarter";
 		private const string LEARN_URL = @"http://procore3d.com/docs/probuilder";
 		private const string SUPPORT_URL = @"http://www.procore3d.com/forum/";
-		// private const string CONTACT_EMAIL = @"mailto:contact@procore3d.com?subject=Hey%20ProBuilder%20People!";
 		private const string CONTACT_EMAIL = @"http://www.procore3d.com/about/";
 
 		internal const string FONT_REGULAR = "Asap-Regular.otf";

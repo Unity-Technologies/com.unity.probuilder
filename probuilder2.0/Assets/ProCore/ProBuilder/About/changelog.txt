@@ -1,8 +1,9 @@
-# ProBuilder 2.7.0f2
+# ProBuilder 2.7.0f3
 
 ## Features
 
 - New redesigned "About" window.
+- New "Check for Updates" window and menu item.
 - Add a repair script to apply materials when upgrading from Basic to Advanced.
 - Include option to restrict "Select by Vertex Color" to current selection.
 - Add "Generate Shadow Volume" API example and action.
@@ -13,6 +14,8 @@
 
 ## Bug Fixes
 
+- Fix inconsistent About Window behavior when importing updates.
+- Make face highlight code snippet more robust in Runtime Editing example. 
 - Don't leave a progress bar behind if Probuilderize fails.
 - Fix ProBuilder-ize adding pb_Entity multiple times.
 - Apply Quick Offset adjustments to all selected ProBuilder objects.
