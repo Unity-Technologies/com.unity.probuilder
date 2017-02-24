@@ -261,17 +261,27 @@ namespace ProBuilder2.EditorCommon
 		public void OnEnable()
 		{
 			InitGuiStyles();
+			
 			Texture2D banner = bannerStyle.normal.background;
-			bannerStyle.fixedWidth = banner.width;
-			bannerStyle.fixedHeight = banner.height;
 
-			this.wantsMouseMove = true;
+			if(banner == null)
+			{
+				Debug.LogWarning("Could not load About window resources");
+				this.Close();
+			}
+			else
+			{
+				bannerStyle.fixedWidth = banner.width;
+				bannerStyle.fixedHeight = banner.height;
 
-			this.minSize = new Vector2(banner.width + 24, banner.height * 2.5f);
-			this.maxSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+				this.wantsMouseMove = true;
 
-			if(!productName.Contains("Basic"))
-				productName = "ProBuilder Advanced";
+				this.minSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+				this.maxSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+
+				if(!productName.Contains("Basic"))
+					productName = "ProBuilder Advanced";
+			}
 		}
 
 		void SetAbout(pb_AboutEntry about)
