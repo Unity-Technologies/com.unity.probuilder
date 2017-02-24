@@ -35,8 +35,8 @@ namespace ProBuilder2.Test
 			major = 3,
 			minor = 2,
 			patch = 0,
-			type = VersionType.Final,
-			build = 4
+			type = VersionType.Beta,
+			build = 3
 		};
 
 		static pb_VersionInfo version_d = new pb_VersionInfo()
@@ -54,6 +54,7 @@ namespace ProBuilder2.Test
 			Assert.Less(version_a.CompareTo(version_b), 0);
 			Assert.Greater(version_b.CompareTo(version_a), 0);
 			Assert.Less(version_b.CompareTo(version_d), 0);
+			Assert.Less(version_c.CompareTo(version_b), 0);
 		}
 	}
 }

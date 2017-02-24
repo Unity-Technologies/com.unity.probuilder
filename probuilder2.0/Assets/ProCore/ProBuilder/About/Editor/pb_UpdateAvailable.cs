@@ -31,6 +31,7 @@ namespace ProBuilder2.EditorCommon
 			pb_AboutWindow.InitGuiStyles();
 
 			wantsMouseMove = true;
+			minSize = new Vector2(400f, 350f);
 
 			downloadImageStyle = new GUIStyle()
 			{

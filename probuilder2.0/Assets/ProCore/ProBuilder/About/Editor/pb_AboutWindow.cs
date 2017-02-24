@@ -57,50 +57,50 @@ namespace ProBuilder2.EditorCommon
 		// Path to the root folder
 		internal const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
 
-	#if SHOW_PRODUCT_THUMBS
+		#if SHOW_PRODUCT_THUMBS
 
-		/**
-		 * Contains data for use in Advertisement shelf.
-		 */
-		private class AdvertisementThumb
-		{
-			public Texture2D image;
-			public string url;
-			public string about;
-			public GUIContent guiContent;
-
-			public AdvertisementThumb(string imagePath, string url, string about)
+			/**
+			 * Contains data for use in Advertisement shelf.
+			 */
+			private class AdvertisementThumb
 			{
-				guiContent = new GUIContent("", about);
-				this.image = LoadAssetAtPath<Texture2D>(imagePath);
+				public Texture2D image;
+				public string url;
+				public string about;
+				public GUIContent guiContent;
 
-				guiContent.image = this.image;
-				this.url = url;
-				this.about = about;
+				public AdvertisementThumb(string imagePath, string url, string about)
+				{
+					guiContent = new GUIContent("", about);
+					this.image = LoadAssetAtPath<Texture2D>(imagePath);
+
+					guiContent.image = this.image;
+					this.url = url;
+					this.about = about;
+				}
 			}
-		}
 
-		/**
-		 * Advertisement thumb constructor is:
-		 * new AdvertisementThumb( PathToAdImage : string, URLToPurchase : string, ProductDescription : string )
-		 * Provide as many or few (or none) as desired.
-		 *
-		 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
-		 */
-		private AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
-			new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
-		};
+			/**
+			 * Advertisement thumb constructor is:
+			 * new AdvertisementThumb( PathToAdImage : string, URLToPurchase : string, ProductDescription : string )
+			 * Provide as many or few (or none) as desired.
+			 *
+			 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
+			 */
+			private AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
+				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
+			};
 
-		GUIStyle advertisementStyle;
-		const int AD_HEIGHT = 96;
-		Vector2 adScroll = Vector2.zero;
-	#endif
+			GUIStyle advertisementStyle;
+			const int AD_HEIGHT = 96;
+			Vector2 adScroll = Vector2.zero;
+		#endif
 
 		GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
 		GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
@@ -122,19 +122,10 @@ namespace ProBuilder2.EditorCommon
 		public static readonly Color font_blue_normal = HexToColor(0x00AAEF);
 		public static readonly Color font_blue_hover = HexToColor(0x008BEF);// HexToColor(0x008BEF);
 
-		private string AboutEntryPath = "";
-		private string ProductVersion = "";
-		private string ChangelogPath = "";
-		private string changelog = "";
-		private string productName = pb_Constant.PRODUCT_NAME;
 
-		private static Color HexToColor(uint x)
-		{
-			return new Color( 	((x >> 16) & 0xFF) / 255f,
-								((x >> 8) & 0xFF) / 255f,
-								(x & 0xFF) / 255f,
-								1f);
-		}
+		private string productName = pb_Constant.PRODUCT_NAME;
+		private pb_AboutEntry about = null;
+		private string changelogRichText = "";
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -151,48 +142,35 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static bool Init (bool fromMenu)
 		{
-			string identifier = "", version = "", aboutEntryPath = "";
-			bool gotVersion = false, gotIdentifier = false;
-			string[] matches = Directory.GetFiles("../", "pc_AboutEntry_ProBuilder.txt", SearchOption.AllDirectories);
+			pb_AboutEntry about;
 
-			for(int i = 0; i < matches.Length && !(gotVersion && gotIdentifier); i++)
-			{
-				if( GetField(matches[i], "version: ", out version) )
-					gotVersion = true;
-
-				if( GetField(matches[i], "identifier: ", out identifier) )
-					gotIdentifier = true;
-
-				aboutEntryPath = matches[i];
-			}
-
-			if(!gotIdentifier || !gotVersion)
+			if(!pb_VersionUtil.GetAboutEntry(out about))
 			{
 				Debug.LogWarning("Couldn't find pb_AboutEntry_ProBuilder.txt");
 				return false;
 			}
 
-			if(fromMenu || EditorPrefs.GetString(identifier) != version)
+			if(fromMenu || EditorPrefs.GetString(about.identifier) != about.version)
 			{
-				string tname;
 				pb_AboutWindow win;
-
-				if(GetField(aboutEntryPath, "name: ", out tname))
-					win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, tname, true);
-				else
-					win = (pb_AboutWindow)EditorWindow.GetWindow<pb_AboutWindow>(true, "About", true);
-
-				win.SetAboutEntryPath(aboutEntryPath);
+				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, about.name, true);
 				win.ShowUtility();
-
-				EditorPrefs.SetString(identifier, version);
-
+				win.SetAbout(about);
+				EditorPrefs.SetString(about.identifier, about.version);
 				return true;
 			}
 			else
 			{
 				return false;
 			}
+		}
+
+		private static Color HexToColor(uint x)
+		{
+			return new Color( 	((x >> 16) & 0xFF) / 255f,
+								((x >> 8) & 0xFF) / 255f,
+								(x & 0xFF) / 255f,
+								1f);
 		}
 
 		public static void InitGuiStyles()
@@ -297,10 +275,20 @@ namespace ProBuilder2.EditorCommon
 				productName = "ProBuilder Advanced";
 		}
 
-		public void SetAboutEntryPath(string path)
+		void SetAbout(pb_AboutEntry about)
 		{
-			AboutEntryPath = path;
-			PopulateDataFields(AboutEntryPath);
+			this.about = about;					
+
+			if(File.Exists(about.changelogPath))
+			{
+				string raw = File.ReadAllText(about.changelogPath);
+
+				if(!string.IsNullOrEmpty(raw))
+				{
+					pb_VersionInfo vi;
+					pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
+				}
+			}
 		}
 
 		internal static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
@@ -348,38 +336,38 @@ namespace ProBuilder2.EditorCommon
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", ProductVersion), versionInfoStyle);
-			GUILayout.Label("\n" + changelog, changelogTextStyle);
+			GUILayout.Label(string.Format("Version: {0}", about.version), versionInfoStyle);
+			GUILayout.Label("\n" + changelogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
-	#if SHOW_PRODUCT_THUMBS
+			#if SHOW_PRODUCT_THUMBS
 
-			HorizontalLine();
+				HorizontalLine();
 
-			GUILayout.Label("More ProCore Products", EditorStyles.boldLabel);
+				GUILayout.Label("More ProCore Products", EditorStyles.boldLabel);
 
-			int pad = advertisements.Length * AD_HEIGHT > Screen.width ? 22 : 6;
-			adScroll = EditorGUILayout.BeginScrollView(adScroll, false, false, GUILayout.MinHeight(AD_HEIGHT + pad), GUILayout.MaxHeight(AD_HEIGHT + pad));
-			GUILayout.BeginHorizontal();
+				int pad = advertisements.Length * AD_HEIGHT > Screen.width ? 22 : 6;
+				adScroll = EditorGUILayout.BeginScrollView(adScroll, false, false, GUILayout.MinHeight(AD_HEIGHT + pad), GUILayout.MaxHeight(AD_HEIGHT + pad));
+				GUILayout.BeginHorizontal();
 
-	    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button);
-	    	advertisementStyle.normal.background = null;
+		    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button);
+		    	advertisementStyle.normal.background = null;
 
-			foreach(AdvertisementThumb ad in advertisements)
-			{
-				if(ad.url.ToLower().Contains(ProductName.ToLower()))
-					continue;
-
-				if(GUILayout.Button(ad.guiContent, advertisementStyle,
-					GUILayout.MinWidth(AD_HEIGHT), GUILayout.MaxWidth(AD_HEIGHT),
-					GUILayout.MinHeight(AD_HEIGHT), GUILayout.MaxHeight(AD_HEIGHT)))
+				foreach(AdvertisementThumb ad in advertisements)
 				{
-					Application.OpenURL(ad.url);
+					if(ad.url.ToLower().Contains(ProductName.ToLower()))
+						continue;
+
+					if(GUILayout.Button(ad.guiContent, advertisementStyle,
+						GUILayout.MinWidth(AD_HEIGHT), GUILayout.MaxWidth(AD_HEIGHT),
+						GUILayout.MinHeight(AD_HEIGHT), GUILayout.MaxHeight(AD_HEIGHT)))
+					{
+						Application.OpenURL(ad.url);
+					}
 				}
-			}
-			GUILayout.EndHorizontal();
-			EditorGUILayout.EndScrollView();
-	#endif
+				GUILayout.EndHorizontal();
+				EditorGUILayout.EndScrollView();
+			#endif
 		}
 
 		/**
@@ -394,104 +382,6 @@ namespace ProBuilder2.EditorCommon
 			GUI.backgroundColor = og;
 
 			GUILayout.Space(6);
-		}
-
-		/**
-		 * Open VersionInfo and Changelog and pull out text to populate vars for OnGUI to display.
-		 */
-		void PopulateDataFields(string entryPath)
-		{
-			if(!File.Exists(entryPath))
-				return;
-
-			string versionInfo = File.ReadAllText(entryPath);
-
-			ProductVersion = "";
-			ChangelogPath = "";
-
-			if(!string.IsNullOrEmpty(versionInfo))
-			{
-				string[] txt = versionInfo.Split('\n');
-
-				foreach(string line in txt)
-				{
-					if(line.StartsWith("version:"))
-						ProductVersion = line.Replace("version: ", "").Trim();
-					else
-					if(line.StartsWith("changelog:"))
-						ChangelogPath = line.Replace("changelog: ", "").Trim();
-				}
-			}
-
-			// Get first entry in changelog.txt
-			TextAsset changelogText = LoadAssetAtPath<TextAsset>( ChangelogPath );
-
-			if(changelogText)
-			{
-				pb_VersionInfo vi;
-
-				if(FormatChangelog(changelogText.text, out vi, out changelog))
-					ProductVersion = vi.text;
-			}
-		}
-
-		public static bool FormatChangelog(string raw, out pb_VersionInfo version, out string formatted_changes)
-		{
-			bool success = true;
-
-			// get first version entry
-			string[] split = Regex.Split(raw, "(?mi)^#\\s", RegexOptions.Multiline);
-
-			// get the version info
-			try
-			{
-				Match versionMatch = Regex.Match(split[1], @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[a-z][0-9]*");
-				version = pb_VersionInfo.FromString(versionMatch.Success ? versionMatch.Value : split[1].Split('\n')[0]);
-			}
-			catch
-			{
-				version = pb_VersionInfo.FromString("not found");
-				success = false;
-			}
-
-			try
-			{
-				StringBuilder sb = new StringBuilder();
-				string[] newLineSplit = split[1].Trim().Split('\n');
-				for(int i = 2; i < newLineSplit.Length; i++)
-					sb.AppendLine(newLineSplit[i]);
-
-				formatted_changes = sb.ToString();
-				formatted_changes = Regex.Replace(formatted_changes, "^-", "\u2022", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"(?<=^##\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"^##\ ", "", RegexOptions.Multiline);
-			}
-			catch
-			{
-				formatted_changes = "";
-				success = false;
-			}
-
-			return success;
-		}
-
-		private static bool GetField(string path, string field, out string value)
-		{
-			value = "";
-
-	        if (!File.Exists(path))
-	        	return false;
-
-			foreach(string str in File.ReadAllLines(path))
-			{
-				if(str.Contains(field))
-				{
-					value = str.Replace(field, "").Trim();
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 }

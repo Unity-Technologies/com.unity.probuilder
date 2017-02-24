@@ -4,10 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace ProBuilder2.EditorCommon
 {
+	/**
+	 *	Check for updates to ProBuilder.
+	 */
 	[InitializeOnLoad]
 	static class pb_UpdateCheck
 	{
-		const string PROBUILDER_VERSION_URL = "http://parabox.co/probuilder/current_probuilder_version.txt";
+		const string PROBUILDER_VERSION_URL = "http://procore3d.github.io/probuilder2/current.txt";
 		static WWW updateQuery;
 		static bool calledFromMenu = false;
 
@@ -45,22 +48,45 @@ namespace ProBuilder2.EditorCommon
 
 				if (string.IsNullOrEmpty(updateQuery.error) || !Regex.IsMatch(updateQuery.text, "404 not found", RegexOptions.IgnoreCase) )
 				{
-					pb_VersionInfo version;
-					string changelog;
+					pb_VersionInfo webVersion;
+					string webChangelog;
 
-					pb_AboutWindow.FormatChangelog(updateQuery.text, out version, out changelog);
-					// pb_VersionInfo current = pb_AboutWindow.GetVersion();
+					if(!pb_VersionUtil.FormatChangelog(updateQuery.text, out webVersion, out webChangelog))
+					{
+						FailedConnection();
+					}
+					else
+					{			
+						pb_VersionInfo current;
 
-					pb_UpdateAvailable.Init(version, changelog);
-					updateQuery = null;
+						if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
+							pb_UpdateAvailable.Init(webVersion, webChangelog);
+						else
+							UpToDate(current.ToString());
+					}
 				}
-				else if(calledFromMenu)
+				else
 				{
-					Debug.LogWarning("Failed to connect");
+					FailedConnection();
 				}
+				
+				updateQuery = null;					
 			}
 
+			calledFromMenu = false;
 			EditorApplication.update -= Update;
+		}
+
+		static void UpToDate(string version)
+		{
+			if(calledFromMenu)
+				EditorUtility.DisplayDialog("ProBuilder Update Check", string.Format("You're up to date!\n\nInstalled Version: {0}\nLatest Version: {0}", version), "Okay");
+		}
+
+		static void FailedConnection()
+		{
+			if(calledFromMenu)
+				EditorUtility.DisplayDialog("ProBuilder Update Check", string.Format("Failed to connect to server!"), "Okay");
 		}
 	}
 }

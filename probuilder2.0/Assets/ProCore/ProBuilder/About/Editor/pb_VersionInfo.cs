@@ -101,7 +101,7 @@ namespace ProBuilder2.EditorCommon
 
 		public override string ToString()
 		{
-			return string.Format("{0}.{1}.{2} {3} {4}", major, minor, patch, type, build);
+			return string.Format("{0}.{1}.{2}{3}{4}", major, minor, patch, type.ToString().ToLower()[0], build);
 		}
 
 		public static pb_VersionInfo FromString(string str)
