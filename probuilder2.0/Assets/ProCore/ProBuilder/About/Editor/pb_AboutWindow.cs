@@ -47,7 +47,7 @@ namespace ProBuilder2.EditorCommon
 	 * This path is relative to the PRODUCT_ROOT path.
 	 *
 	 * Note that your changelog may contain multiple entries.  Only the top-most
-	 * entry will be displayed. 
+	 * entry will be displayed.
 	 */
 	public class pb_AboutWindow : EditorWindow
 	{
@@ -111,6 +111,8 @@ namespace ProBuilder2.EditorCommon
 		private const string LEARN_URL = @"http://procore3d.com/docs/probuilder";
 		private const string SUPPORT_URL = @"http://www.procore3d.com/forum/";
 		private const string CONTACT_EMAIL = @"http://www.procore3d.com/about/";
+		private const float BANNER_WIDTH = 480f;
+		private const float BANNER_HEIGHT = 270f;
 
 		internal const string FONT_REGULAR = "Asap-Regular.otf";
 		internal const string FONT_MEDIUM = "Asap-Medium.otf";
@@ -261,7 +263,7 @@ namespace ProBuilder2.EditorCommon
 		public void OnEnable()
 		{
 			InitGuiStyles();
-			
+
 			Texture2D banner = bannerStyle.normal.background;
 
 			if(banner == null)
@@ -271,13 +273,13 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				bannerStyle.fixedWidth = banner.width;
-				bannerStyle.fixedHeight = banner.height;
+				bannerStyle.fixedWidth = BANNER_WIDTH; // banner.width;
+				bannerStyle.fixedHeight = BANNER_HEIGHT; // banner.height;
 
 				this.wantsMouseMove = true;
 
-				this.minSize = new Vector2(banner.width + 24, banner.height * 2.5f);
-				this.maxSize = new Vector2(banner.width + 24, banner.height * 2.5f);
+				this.minSize = new Vector2(BANNER_WIDTH + 24, BANNER_HEIGHT * 2.5f);
+				this.maxSize = new Vector2(BANNER_WIDTH + 24, BANNER_HEIGHT * 2.5f);
 
 				if(!productName.Contains("Basic"))
 					productName = "ProBuilder Advanced";
@@ -286,7 +288,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetAbout(pb_AboutEntry about)
 		{
-			this.about = about;					
+			this.about = about;
 
 			if(File.Exists(about.changelogPath))
 			{
