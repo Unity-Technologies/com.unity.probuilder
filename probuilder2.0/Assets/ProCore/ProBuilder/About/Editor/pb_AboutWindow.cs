@@ -54,8 +54,26 @@ namespace ProBuilder2.EditorCommon
 		// Modify these constants to customize about screen.
 	 	const string PACKAGE_NAME = "ProBuilder";
 
+ 		private static string aboutRoot = "Assets/ProCore/" + PACKAGE_NAME + "/About";
+
 		// Path to the root folder
-		internal const string ABOUT_ROOT = "Assets/ProCore/" + PACKAGE_NAME + "/About";
+		internal static string AboutRoot
+		{
+			get
+			{
+				if( Directory.Exists(aboutRoot) )
+				{
+					return aboutRoot;
+				}
+				else
+				{
+					aboutRoot = pb_FileUtil.FindFolder("ProBuilder/About");
+					if(aboutRoot.EndsWith("/"))
+						aboutRoot = aboutRoot.Remove(aboutRoot.LastIndexOf("/"), 1);
+					return aboutRoot;
+				}
+			}
+		}
 
 		#if SHOW_PRODUCT_THUMBS
 
@@ -88,13 +106,13 @@ namespace ProBuilder2.EditorCommon
 			 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
 			 */
 			private AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
-				new AdvertisementThumb( ABOUT_ROOT + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
+				new AdvertisementThumb( AboutRoot + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
+				new AdvertisementThumb( AboutRoot + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
+				new AdvertisementThumb( AboutRoot + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
+				new AdvertisementThumb( AboutRoot + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
+				new AdvertisementThumb( AboutRoot + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
+				new AdvertisementThumb( AboutRoot + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
+				new AdvertisementThumb( AboutRoot + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
 			};
 
 			GUIStyle advertisementStyle;
@@ -181,10 +199,10 @@ namespace ProBuilder2.EditorCommon
 				// RectOffset(left, right, top, bottom)
 				margin = new RectOffset(12, 12, 12, 12),
 				normal = new GUIStyleState() {
-					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", ABOUT_ROOT))
+					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", AboutRoot))
 				},
 				hover = new GUIStyleState() {
-					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", ABOUT_ROOT))
+					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", AboutRoot))
 				},
 			};
 
@@ -194,7 +212,7 @@ namespace ProBuilder2.EditorCommon
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_MEDIUM)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_MEDIUM)),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -202,7 +220,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -211,19 +229,19 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
 				normal = new GUIStyleState() {
 					textColor = font_blue_normal,
 					background = LoadAssetAtPath<Texture2D>(
 						string.Format("{0}/Images/ScrollBackground_{1}.png",
-							ABOUT_ROOT,
+							AboutRoot,
 							EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
 					textColor = font_blue_hover,
 					background = LoadAssetAtPath<Texture2D>(
 						string.Format("{0}/Images/ScrollBackground_{1}.png",
-							ABOUT_ROOT,
+							AboutRoot,
 							EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -233,18 +251,18 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
 				richText = true,
 				normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
 					string.Format("{0}/Images/ScrollBackground_{1}.png",
-						ABOUT_ROOT,
+						AboutRoot,
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -252,7 +270,7 @@ namespace ProBuilder2.EditorCommon
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", ABOUT_ROOT, FONT_REGULAR)),
+				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
 				fontSize = 14,
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
 				richText = true,
@@ -289,6 +307,9 @@ namespace ProBuilder2.EditorCommon
 		void SetAbout(pb_AboutEntry about)
 		{
 			this.about = about;
+
+			if(!File.Exists(about.changelogPath))
+				about.changelogPath = pb_FileUtil.FindFile("ProBuilder/About/changelog.txt");
 
 			if(File.Exists(about.changelogPath))
 			{

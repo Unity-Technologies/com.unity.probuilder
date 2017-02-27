@@ -24,35 +24,13 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!Directory.Exists(iconFolderPath))
 			{
-				string folder = FindFolder(ICON_FOLDER_PATH);
+				string folder = pb_FileUtil.FindFolder(ICON_FOLDER_PATH);
 
-				if(Directory.Exists(folder))
+				if(string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+					Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified relative to ProBuilder root.");
+				else
 					iconFolderPath = folder;
 			}
-		}
-
-		private static string FindFolder(string folder)
-		{
-			string single = folder.Replace("\\", "/").Substring(folder.LastIndexOf('/') + 1);
-
-			string[] matches = Directory.GetDirectories("Assets/", single, SearchOption.AllDirectories);
-
-			foreach(string str in matches)
-			{
-				string path = str.Replace("\\", "/");
-
-				if(path.Contains(folder))
-				{
-					if(!path.EndsWith("/"))
-						path += "/";
-
-					return path;
-				}
-			}
-
-			Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified relative to ProBuilder root.");
-
-			return null;
 		}
 
 		private static Dictionary<string, Texture2D> m_icons = new Dictionary<string, Texture2D>();

@@ -39,10 +39,10 @@ namespace ProBuilder2.EditorCommon
 				fixedWidth = 154,
 				fixedHeight = 85,
 				normal = new GUIStyleState() {
-					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Normal.png", pb_AboutWindow.ABOUT_ROOT))
+					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Normal.png", pb_AboutWindow.AboutRoot))
 				},
 				hover = new GUIStyleState() {
-					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Hover.png", pb_AboutWindow.ABOUT_ROOT))
+					background = pb_AboutWindow.LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/DownloadPB_Hover.png", pb_AboutWindow.AboutRoot))
 				},
 			};
 
@@ -53,7 +53,7 @@ namespace ProBuilder2.EditorCommon
 				fixedHeight = 85,
 				fontSize = 24,
 				wordWrap = true,
-				font = pb_AboutWindow.LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", pb_AboutWindow.ABOUT_ROOT, pb_AboutWindow.FONT_MEDIUM)),
+				font = pb_AboutWindow.LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", pb_AboutWindow.AboutRoot, pb_AboutWindow.FONT_MEDIUM)),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? pb_AboutWindow.font_white : pb_AboutWindow.font_black }
 			};
 		}
