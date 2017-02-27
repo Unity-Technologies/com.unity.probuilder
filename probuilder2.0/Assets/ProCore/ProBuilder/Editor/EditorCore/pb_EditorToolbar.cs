@@ -226,7 +226,7 @@ namespace ProBuilder2.EditorCommon
 				isIconMode = false;
 				EditorPrefs.SetBool(pb_Constant.pbIconGUI, isIconMode);
 				CalculateMaxIconSize();
-				Debug.LogWarning("ProBuilder: Toolbar icons failed to load.  Please ensure that the ProBuilder folder content paths are unmodified.  Reverting to text mode.  If the menu is still not visible, try closing and re-opening Unity.");
+				Debug.LogWarning("ProBuilder: Toolbar icons failed to load, reverting to text mode.  Please ensure that the ProBuilder folder contents are unmodified.  If the menu is still not visible, try closing and re-opening the Editor Window.");
 				return;
 			}
 

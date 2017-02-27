@@ -159,13 +159,12 @@ public class pb_Editor : EditorWindow
 		Texture2D vertex_Graphic_off 	= pb_IconUtility.GetIcon("Modes/Mode_Vertex", IconSkin.Pro);
 		Texture2D edge_Graphic_off 		= pb_IconUtility.GetIcon("Modes/Mode_Edge", IconSkin.Pro);
 
-
 		EditModeIcons = new GUIContent[]
 		{
-			new GUIContent(object_Graphic_off, "Object Selection"),
-			new GUIContent(vertex_Graphic_off, "Vertex Selection"),
-			new GUIContent(edge_Graphic_off, "Edge Selection"),
-			new GUIContent(face_Graphic_off, "Face Selection")
+			object_Graphic_off != null ? new GUIContent(object_Graphic_off, "Object Selection") : new GUIContent("OBJ", "Object Selection"),
+			vertex_Graphic_off != null ? new GUIContent(vertex_Graphic_off, "Vertex Selection") : new GUIContent("VRT", "Vertex Selection"),
+			edge_Graphic_off != null ? new GUIContent(edge_Graphic_off, "Edge Selection") : new GUIContent("EDG", "Edge Selection"),
+			face_Graphic_off != null ? new GUIContent(face_Graphic_off, "Face Selection") : new GUIContent("FCE", "Face Selection"),
 		};
 	}
 
@@ -314,7 +313,21 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 
-		editorToolbar.OnGUI();
+		if(editorToolbar != null)
+		{
+			editorToolbar.OnGUI();
+		}
+		else
+		{
+			try
+			{
+				InitGUI();
+			}
+			catch(System.Exception exception)
+			{
+				Debug.LogWarning(string.Format("Failed initializing ProBuilder Toolbar:\n{0}", exception.ToString()));
+			}
+		}
 	}
 #endregion
 
@@ -2018,7 +2031,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			EditorGUI.BeginChangeCheck();
-
+			
 			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, commandStyle);
 
 			if(EditorGUI.EndChangeCheck())
