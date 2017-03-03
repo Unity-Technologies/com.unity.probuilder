@@ -70,8 +70,18 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
+			Vector3[] facePoints = new Vector3[vertices.Count];
+
+			for(int i = 0; i < vertices.Count; ++i)
+				facePoints[i] = vertices[i].position;
+
+			return TriangulateVertices(facePoints, out triangles, unordered, convex);
+		}
+
+		public static bool TriangulateVertices(Vector3[] vertices, out List<int> triangles, bool unordered = true, bool convex = false)
+		{
 			triangles = null;
-			int vertexCount = vertices.Count;
+			int vertexCount = vertices == null ? 0 : vertices.Length;
 
 			if(vertexCount < 3)
 				return false;
@@ -88,13 +98,8 @@ namespace ProBuilder2.MeshOperations
 			// 	return true;
 			// }
 
-			Vector3[] facePoints = new Vector3[vertices.Count];
-
-			for(int i = 0; i < vertices.Count; ++i)
-				facePoints[i] = vertices[i].position;
-
-			Vector3 normal = pb_Projection.FindBestPlane(facePoints).normal;
-			Vector2[] points2d = pb_Projection.PlanarProject(facePoints, normal);
+			Vector3 normal = pb_Projection.FindBestPlane(vertices).normal;
+			Vector2[] points2d = pb_Projection.PlanarProject(vertices, normal);
 
 			if(unordered)
 				return pb_Triangulation.SortAndTriangulate(points2d, out triangles, convex);

@@ -57,6 +57,7 @@ namespace ProBuilder2.EditorCommon
 				// tools
 				new Actions.OpenShapeEditor(),
 				new Actions.NewBezierShape(),
+				new Actions.NewPolyShape(),
 				new Actions.OpenMaterialEditor(),
 				new Actions.OpenUVEditor(),
 				new Actions.OpenVertexColorEditor(),
