@@ -4,7 +4,7 @@ using System.Collections;
 namespace ProBuilder2.Common
 {
 	/**
-	 * A mesh / material(s) structure.
+	 * A mesh / material(s) structure.  Mesh is destroyed with this object, materials are not.
 	 */
 	[System.Serializable]
 	public class pb_Renderable : ScriptableObject
@@ -13,19 +13,21 @@ namespace ProBuilder2.Common
 		public Material[] materials;
 		public Transform transform;
 
-		public static pb_Renderable CreateInstance(Mesh InMesh, Material[] InMaterials)
+		public static pb_Renderable CreateInstance(Mesh InMesh, Material[] InMaterials, Transform transform = null)
 		{
 			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
 			ren.mesh = InMesh;
-			ren.materials = InMaterials; 
+			ren.materials = InMaterials;
+			ren.transform = transform;
 			return ren;
 		}
 
-		public static pb_Renderable CreateInstance(Mesh InMesh, Material InMaterial)
+		public static pb_Renderable CreateInstance(Mesh InMesh, Material InMaterial, Transform transform = null)
 		{
 			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
 			ren.mesh = InMesh;
 			ren.materials = new Material[] { InMaterial };
+			ren.transform = transform;
 			return ren;
 		}
 

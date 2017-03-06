@@ -10,10 +10,9 @@ namespace ProBuilder2.Common
 	 */
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
-	public class pb_MeshRenderer : MonoBehaviour
+	public class pb_MeshRenderer : pb_MonoBehaviourSingleton<pb_MeshRenderer>
 	{
-		// [HideInInspector]
-		public List<pb_Renderable> renderables = new List<pb_Renderable>();
+		[SerializeField] private HashSet<pb_Renderable> m_Renderables = new HashSet<pb_Renderable>();
 
 		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints 
 		// and just cast to HideFlags.
@@ -21,6 +20,17 @@ namespace ProBuilder2.Common
 		readonly HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
 
 		int clamp(int val, int min, int max) { return val < min ? min : val > max ? max : val; }
+
+		public static void Add(pb_Renderable renderable)
+		{
+			instance.m_Renderables.Add(renderable);
+		}
+
+		public static void Remove(pb_Renderable renderable)
+		{
+			if(instance.m_Renderables.Contains(renderable))
+				instance.m_Renderables.Remove(renderable);
+		}
 
 		void OnRenderObject()
 		{
@@ -31,19 +41,20 @@ namespace ProBuilder2.Common
 				return;
 
 			int materialIndex = 0;
-			for(int i = 0; i < renderables.Count; i++)
+
+			foreach(pb_Renderable renderable in m_Renderables)
 			{
-				if(renderables[i].materials == null) Debug.Log("renderables[i].materials == null -> " + name);
+				if(renderable.materials == null) Debug.Log("renderable.materials == null -> " + name);
 
-				Material[] mats = renderables[i].materials;
+				Material[] mats = renderable.materials;
 
-				if( renderables[i].mesh == null )
+				if( renderable.mesh == null )
 				{
-					Debug.Log("renderables[i] mesh is null");
+					Debug.Log("renderable mesh is null");
 					continue;
 				}
 
-				for(int n = 0; n < renderables[i].mesh.subMeshCount; n++)
+				for(int n = 0; n < renderable.mesh.subMeshCount; n++)
 				{
 					materialIndex = clamp(n, 0, mats.Length-1);
 
@@ -53,14 +64,14 @@ namespace ProBuilder2.Common
 						continue;
 					}
 
-					Graphics.DrawMeshNow(renderables[i].mesh, renderables[i].transform != null ? renderables[i].transform.localToWorldMatrix : Matrix4x4.identity, n);
+					Graphics.DrawMeshNow(renderable.mesh, renderable.transform != null ? renderable.transform.localToWorldMatrix : Matrix4x4.identity, n);
 				}
 			}
 		}
 
 		void OnDestroy()
 		{
-			foreach(pb_Renderable ren in renderables)
+			foreach(pb_Renderable ren in m_Renderables)
 				GameObject.DestroyImmediate(ren); 
 		}
 	}

@@ -1994,7 +1994,7 @@ public class pb_Editor : EditorWindow
 			int screenWidth = (int) sceneView.position.width;
 			int screenHeight = (int) sceneView.position.height;
 
-			int t_selectionMode = editLevel != EditLevel.Top ? ((int)selectionMode) + 1 : 0;
+			int t_selectionMode = (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int)selectionMode) + 1 : 0;
 
 			switch(pref_sceneToolbarLocation)
 			{

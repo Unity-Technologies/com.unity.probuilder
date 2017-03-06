@@ -828,7 +828,7 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	Sets the UVs on channel.  Does not apply to mesh (use RefreshUV).
+	 *	Sets the UVs on channel.  Does not apply to mesh (use RefreshUV to reflect changes after application).
 	 */
 	public void SetUVs(int channel, List<Vector4> uvs)
 	{
