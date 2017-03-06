@@ -113,7 +113,7 @@ namespace ProBuilder2.EditorCommon
 			Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
 			
 			Handles.color = Color.yellow;
-			Handles.CircleCap(-1, position, Quaternion.identity, width/2);
+			pb_Handles.CircleCap(-1, position, Quaternion.identity, width / 2f);
 			Handles.color = HANDLE_COLOR_UP;
 
 			// Y Line
@@ -121,7 +121,7 @@ namespace ProBuilder2.EditorCommon
 
 			// Y Cone
 			if(position.y - size > 0f)
-				Handles.ConeCap(0, 
+				pb_Handles.ConeCap(0, 
 					((Vector3)((position - Vector2.up*size))) - ConeDepth,
 					QuaternionUp,
 					width/2);
@@ -133,7 +133,7 @@ namespace ProBuilder2.EditorCommon
 
 			// X Cap
 			if(position.y > 0f)
-				Handles.ConeCap(0, 
+				pb_Handles.ConeCap(0, 
 					((Vector3)((position + Vector2.right*size))) - ConeDepth,
 					QuaternionRight,
 					width/2);
@@ -205,7 +205,7 @@ namespace ProBuilder2.EditorCommon
 
 			// Draw gizmos
 			Handles.color = HANDLE_COLOR_ROTATE;
-			Handles.CircleCap(-1, position, Quaternion.identity, radius);
+			pb_Handles.CircleCap(-1, position, Quaternion.identity, radius);
 			
 			if(currentId == id)
 			{
@@ -266,7 +266,7 @@ namespace ProBuilder2.EditorCommon
 			Handles.DrawLine(position, position - Vector2.up * size * scale.y);
 
 			if(position.y - size > 0f)
-				Handles.CubeCap(0, 
+				pb_Handles.CubeCap(0, 
 					((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16,
 					QuaternionUp,
 					width/3);
@@ -275,13 +275,13 @@ namespace ProBuilder2.EditorCommon
 			Handles.DrawLine(position, position + Vector2.right * size * scale.x);
 
 			if(position.y > 0f)
-				Handles.CubeCap(0, 
+				pb_Handles.CubeCap(0, 
 					((Vector3)((position + Vector2.right*scale.x*size))) - Vector3.forward*16,
 					Quaternion.Euler(Vector3.up*90f),
 					width/3);
 
 			Handles.color = HANDLE_COLOR_SCALE;
-			Handles.CubeCap(0, 
+			pb_Handles.CubeCap(0, 
 				((Vector3)position) - Vector3.forward*16,
 				QuaternionUp,
 				width/2);

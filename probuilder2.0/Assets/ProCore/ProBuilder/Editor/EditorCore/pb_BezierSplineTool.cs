@@ -403,7 +403,7 @@ namespace ProBuilder2.EditorCommon
 
 					Handles.color = bezierPositionHandleColor;
 
-					if (Handles.Button(m_Points[index].position, Quaternion.identity, size, size, Handles.DotCap))
+					if (pb_Handles.ButtonDotCap(m_Points[index].position, Quaternion.identity, size, size * 2f))
 					{
 						m_currentHandle = (BezierHandle) index;
 						Repaint();
@@ -417,7 +417,7 @@ namespace ProBuilder2.EditorCommon
 
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 
-						if (Handles.Button(m_Points[index].tangentIn, Quaternion.identity, size, size, Handles.DotCap))
+						if (pb_Handles.ButtonDotCap(m_Points[index].tangentIn, Quaternion.identity, size, size * 2f))
 						{
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
 							Repaint();
@@ -430,7 +430,7 @@ namespace ProBuilder2.EditorCommon
 
 						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
 
-						if (Handles.Button(m_Points[index].tangentOut, Quaternion.identity, size, size, Handles.DotCap))
+						if (pb_Handles.ButtonDotCap(m_Points[index].tangentOut, Quaternion.identity, size, size * 2f))
 						{
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
 							Repaint();

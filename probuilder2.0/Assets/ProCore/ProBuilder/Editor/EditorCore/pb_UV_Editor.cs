@@ -1881,7 +1881,7 @@ public class pb_UV_Editor : EditorWindow
 
 		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 			for(int i = 1; i < lines.Count; i++)
-				Handles.CircleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f);
+				pb_Handles.CircleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f);
 
 		#if PB_DEBUG
 		if(debug_showCoordinates)

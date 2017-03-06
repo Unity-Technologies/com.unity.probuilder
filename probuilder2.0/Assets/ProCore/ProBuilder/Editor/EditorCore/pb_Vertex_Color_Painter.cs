@@ -518,11 +518,11 @@ public class pb_VertexColor_Editor : EditorWindow
 		*    Draw the handles
 		*/
  		Handles.color = InnerRingColor;
-			Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
+			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
  		Handles.color = MiddleRingColor;
-			Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .5f);
+			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .5f);
  		Handles.color = OuterRingColor;		
-			Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
+			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
  		Handles.color = Color.white;
  
 		// This prevents us from selecting other objects in the scene,
