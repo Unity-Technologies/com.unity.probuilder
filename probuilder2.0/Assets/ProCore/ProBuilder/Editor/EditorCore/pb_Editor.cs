@@ -1,4 +1,4 @@
-#pragma warning disable 0612
+// #pragma warning disable 0612
 
 using UnityEngine;
 using UnityEditor;
@@ -256,17 +256,13 @@ public class pb_Editor : EditorWindow
 	 * Delegate called on element or object selection change.
 	 */
 	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
-	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
-
+	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
 	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
 
-	[System.Obsolete]
-	public static event OnVertexMovementFinishedEventHandler OnVertexMovementFinished;
+	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
 
 	// Called when vertex modifications are complete.
 	public static event OnVertexMovementFinishedEventHandler OnVertexMovementFinish;
-
-	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
 
 	// Called immediately prior to beginning vertex modifications.  pb_Object will be
 	// in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
@@ -1628,10 +1624,12 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
-	Quaternion c_inversePlaneRotation = Quaternion.identity;
+	Quaternion m_InverseRotation = Quaternion.identity;
+
 	private void VertexRotateTool()
 	{
-		newPosition = m_handlePivotWorld;
+		if(!movingVertices)
+			newPosition = m_handlePivotWorld;
 
 		previousHandleRotation = currentHandleRotation;
 
@@ -1640,26 +1638,26 @@ public class pb_Editor : EditorWindow
 		else
 			currentHandleRotation = Handles.RotationHandle(currentHandleRotation, newPosition);
 
-		bool previouslyMoving = movingVertices;
-
 		if(currentHandleRotation != previousHandleRotation)
 		{
 			// profiler.BeginSample("Rotate");
-			movingVertices = true;
-			if(previouslyMoving == false)
+			if(!movingVertices)
 			{
+				movingVertices = true;
+
 				translateOrigin = cachedPosition;
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
-				pb_Object pb;
-				pb_Face face;
-				if(GetFirstSelectedFace(out pb, out face))
-				{
-					Vector3 nrm, bitan, tan;
-					pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
-					c_inversePlaneRotation = Quaternion.Inverse( Quaternion.LookRotation(nrm, bitan) );
-				}
+				// pb_Object pb;
+				// pb_Face face;
+				// if(GetFirstSelectedFace(out pb, out face))
+				// {
+				// 	Vector3 nrm, bitan, tan;
+				// 	pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
+				// 	c_inversePlaneRotation = Quaternion.Inverse( Quaternion.LookRotation(nrm, bitan) );
+				// }
+				m_InverseRotation = Quaternion.Inverse(previousHandleRotation);
 
 				OnBeginVertexMovement();
 
@@ -1672,41 +1670,22 @@ public class pb_Editor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					vertexOrigins[i] = selection[i].vertices.ValuesWithIndices(selection[i].SelectedTriangles).ToArray();
-					vertexOffset[i] = pb_Math.BoundsCenter(vertexOrigins[i]);
+					Vector3[] vertices = selection[i].vertices;
+					int[] triangles = selection[i].SelectedTriangles;
+					vertexOrigins[i] = new Vector3[triangles.Length];
+
+					for(int nn = 0; nn < triangles.Length; nn++)
+						vertexOrigins[i][nn] = selection[i].transform.TransformPoint(vertices[triangles[nn]]);
+
+					if(handleAlignment == HandleAlignment.World)
+						vertexOffset[i] = newPosition;
+					else
+						vertexOffset[i] = pb_Math.BoundsCenter(vertexOrigins[i]);
 				}
 			}
 
 			// profiler.BeginSample("Calc Matrix");
-			Quaternion transformedRotation;
-			switch(handleAlignment)
-			{
-				case HandleAlignment.Plane:
-
-					pb_Object pb;
-					pb_Face face;
-
-					if( !GetFirstSelectedFace(out pb, out face) )
-						goto case HandleAlignment.Local;	// can't do plane without a plane
-
-					Quaternion inverseLocalRotation = Quaternion.Inverse(pb.transform.localRotation);
-
-					transformedRotation =  inverseLocalRotation * currentHandleRotation * c_inversePlaneRotation;
-					break;
-
-				case HandleAlignment.Local:
-
-					if(selection.Length < 1)
-						goto default;
-
-					transformedRotation = Quaternion.Inverse(selection[0].transform.localRotation) * currentHandleRotation;
-					break;
-
-				default:
-					transformedRotation = currentHandleRotation;
-					break;
-			}
-			// profiler.EndSample();
+			Quaternion transformedRotation = m_InverseRotation * currentHandleRotation;
 
 			// profiler.BeginSample("matrix mult");
 			Vector3 ver;	// resulting vertex from modification
@@ -1715,57 +1694,34 @@ public class pb_Editor : EditorWindow
 				Vector3[] v = selection[i].vertices;
 				pb_IntArray[] sharedIndices = selection[i].sharedIndices;
 
-				if(selection.Length > 1)	// use world when selection is > 1 objects
+				Quaternion lr = selection[i].transform.localRotation;
+				Quaternion ilr = Quaternion.Inverse(selection[i].transform.localRotation);
+
+				for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
 				{
-					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
-					{
-						// vertex offset relative to object
+					// move vertex to relative origin from center of selection
+					if(handleAlignment == HandleAlignment.Local)
+						ver = ilr * (vertexOrigins[i][n] - vertexOffset[i]);
+					else
 						ver = vertexOrigins[i][n] - vertexOffset[i];
 
-						// move to world space
-						ver = selection[i].transform.localToWorldMatrix * ver;
+					// rotate
+					ver = transformedRotation * ver;
 
-						// apply handle rotation
-						ver = currentHandleRotation * ver;
+					// move vertex back to locally offset position
+					if(handleAlignment == HandleAlignment.Local)
+						ver = (lr * ver) + vertexOffset[i];
+					else
+						ver = ver + vertexOffset[i];
 
-						// move back to local space
-						ver = selection[i].transform.worldToLocalMatrix * ver;
+					int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
-						// and back to vertex position
-						ver += vertexOffset[i];
-
-						// now set in the msh.vertices array
-						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
-
-						for(int t = 0; t < array.Length; t++)
-							v[array[t]] = ver;
-					}
-				}
-				else
-				{
-					for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
-					{
-						// move vertex to relative origin from center of selection
-						ver = vertexOrigins[i][n] - vertexOffset[i];
-
-						ver = transformedRotation * ver;
-
-						// move vertex back to locally offset position
-						ver += vertexOffset[i];
-
-						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
-
-						for(int t = 0; t < array.Length; t++)
-							v[array[t]] = ver;
-					}
-
+					for(int t = 0; t < array.Length; t++)
+						v[array[t]] = selection[i].transform.InverseTransformPoint(ver);
 				}
 
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
-
-				// set vertex in local space on pb-Object
-
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
 				selection[i].RefreshNormals();
 				selection[i].msh.RecalculateBounds();
@@ -2031,7 +1987,7 @@ public class pb_Editor : EditorWindow
 			}
 
 			EditorGUI.BeginChangeCheck();
-			
+
 			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int)t_selectionMode, EditModeIcons, commandStyle);
 
 			if(EditorGUI.EndChangeCheck())
@@ -3054,10 +3010,6 @@ public class pb_Editor : EditorWindow
 
 		if(OnVertexMovementFinish != null)
 			OnVertexMovementFinish(selection);
-
-		// @todo obsolete
-		if(OnVertexMovementFinished != null)
-			OnVertexMovementFinished(selection);
 
 		DrawNormals(drawNormals);
 		scaling = false;
