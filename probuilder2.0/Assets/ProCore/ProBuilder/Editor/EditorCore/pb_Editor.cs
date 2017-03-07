@@ -1624,6 +1624,7 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
+	Quaternion m_HandleRotation = Quaternion.identity;
 	Quaternion m_InverseRotation = Quaternion.identity;
 
 	private void VertexRotateTool()
@@ -1649,14 +1650,7 @@ public class pb_Editor : EditorWindow
 				rotateOrigin = currentHandleRotation.eulerAngles;
 				scaleOrigin = currentHandleScale;
 
-				// pb_Object pb;
-				// pb_Face face;
-				// if(GetFirstSelectedFace(out pb, out face))
-				// {
-				// 	Vector3 nrm, bitan, tan;
-				// 	pb_Math.NormalTangentBitangent(pb, face, out nrm, out tan, out bitan);
-				// 	c_inversePlaneRotation = Quaternion.Inverse( Quaternion.LookRotation(nrm, bitan) );
-				// }
+				m_HandleRotation = previousHandleRotation;
 				m_InverseRotation = Quaternion.Inverse(previousHandleRotation);
 
 				OnBeginVertexMovement();
@@ -1694,25 +1688,19 @@ public class pb_Editor : EditorWindow
 				Vector3[] v = selection[i].vertices;
 				pb_IntArray[] sharedIndices = selection[i].sharedIndices;
 
-				Quaternion lr = selection[i].transform.localRotation;
-				Quaternion ilr = Quaternion.Inverse(selection[i].transform.localRotation);
+				Quaternion lr = m_HandleRotation;// selection[0].transform.localRotation;
+				Quaternion ilr = m_InverseRotation;// Quaternion.Inverse(lr);
 
 				for(int n = 0; n < selection[i].SelectedTriangles.Length; n++)
 				{
 					// move vertex to relative origin from center of selection
-					if(handleAlignment == HandleAlignment.Local)
-						ver = ilr * (vertexOrigins[i][n] - vertexOffset[i]);
-					else
-						ver = vertexOrigins[i][n] - vertexOffset[i];
+					ver = ilr * (vertexOrigins[i][n] - vertexOffset[i]);
 
 					// rotate
 					ver = transformedRotation * ver;
 
 					// move vertex back to locally offset position
-					if(handleAlignment == HandleAlignment.Local)
-						ver = (lr * ver) + vertexOffset[i];
-					else
-						ver = ver + vertexOffset[i];
+					ver = (lr * ver) + vertexOffset[i];
 
 					int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
 
