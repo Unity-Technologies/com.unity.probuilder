@@ -39,8 +39,20 @@ namespace ProBuilder2.EditorCommon
 
 		private static pb_Editor editor { get { return pb_Editor.instance; } }
 		public static pb_Material_Editor instance { get; private set; }
+ 		private static string m_UserMaterialsPath = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/Data/UserMaterials.asset";
 
-		const string USER_MATERIALS_PATH = "Assets/ProCore/" + pb_Constant.PRODUCT_NAME + "/Data/UserMaterials.asset";
+		private static string userMaterialsPath
+		{
+			get
+			{
+				if( pb_FileUtil.Exists(m_UserMaterialsPath) )
+					return m_UserMaterialsPath;
+
+				m_UserMaterialsPath = pb_FileUtil.FindFile("/Data/UserMaterials.asset");
+
+				return m_UserMaterialsPath;
+			}
+		}
 
 		public static void MenuOpenMaterialEditor()
 		{
@@ -131,7 +143,7 @@ namespace ProBuilder2.EditorCommon
 
 		static bool LoadMaterialPalette(out Material[] materials)
 		{
-			pb_ObjectArray poa = (pb_ObjectArray)AssetDatabase.LoadAssetAtPath(USER_MATERIALS_PATH, typeof(pb_ObjectArray));
+			pb_ObjectArray poa = (pb_ObjectArray) AssetDatabase.LoadAssetAtPath(userMaterialsPath, typeof(pb_ObjectArray));
 
 			if(poa != null)
 			{
@@ -140,7 +152,7 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				materials = new Material[10] 
+				materials = new Material[10]
 				{
 					pb_Constant.DefaultMaterial,
 					null,
@@ -177,18 +189,24 @@ namespace ProBuilder2.EditorCommon
 		void SaveUserMaterials()
 		{
 			pb_ObjectArray poa = (pb_ObjectArray)ScriptableObject.CreateInstance(typeof(pb_ObjectArray));
+
 			poa.array = materials;
 
-			if(!System.IO.Directory.Exists("Assets/ProCore"))
-				AssetDatabase.CreateFolder("Assets/", "ProCore");
-			
-			if(!System.IO.Directory.Exists("Assets/ProCore/ProBuilder"))
-				AssetDatabase.CreateFolder("Assets/ProCore/", "ProBuilder");
-			
-			if(!System.IO.Directory.Exists("Assets/ProCore/ProBuilder/Data"))
-				AssetDatabase.CreateFolder("Assets/ProCore/ProBuilder", "Data");
+			if(!pb_FileUtil.Exists(m_UserMaterialsPath))
+			{
+				string probuilder_path = pb_FileUtil.GetRootDir();
 
-			AssetDatabase.CreateAsset(poa, USER_MATERIALS_PATH);
+				if(string.IsNullOrEmpty(probuilder_path))
+				{
+					Debug.LogWarning("Could not find ProBuilder folder.  Make sure it has not been renamed.");
+					probuilder_path = "Assets/ProCore/ProBuilder/";
+				}
+
+				System.IO.Directory.CreateDirectory(string.Format("{0}Data", probuilder_path));
+				m_UserMaterialsPath = string.Format("{0}Data/UserMaterials.asset", probuilder_path);
+			}
+
+			AssetDatabase.CreateAsset(poa, m_UserMaterialsPath);
 			AssetDatabase.SaveAssets();
 		}
 
@@ -216,7 +234,7 @@ namespace ProBuilder2.EditorCommon
 
 					GUILayout.Space(2);
 
-					if(GUILayout.Button("Apply (Ctrl+Shift+Click)"))	
+					if(GUILayout.Button("Apply (Ctrl+Shift+Click)"))
 						ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), queuedMaterial);
 
 					GUI.enabled = editor != null && editor.selectedFaceCount > 0;
@@ -232,14 +250,14 @@ namespace ProBuilder2.EditorCommon
 				GUILayout.EndVertical();
 
 				GUI.Box( new Rect(left, r.y + r.height + 2, 64, 64), "" );
-				if(queuedMaterial != null && queuedMaterial.mainTexture != null)	
+				if(queuedMaterial != null && queuedMaterial.mainTexture != null)
 					EditorGUI.DrawPreviewTexture( new Rect(left+2, r.y + r.height + 4, 60, 60), queuedMaterial.mainTexture, queuedMaterial, ScaleMode.StretchToFill, 0);
 				else
 				{
 					GUI.Box( new Rect(left+2, r.y + r.height + 4, 60, 60), "" );
 					GUI.Label( new Rect(left +2, r.height + 28, 120, 32), "None\n(Texture)");
 				}
-			
+
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(4);
@@ -251,10 +269,10 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.Label("Material Palette", EditorStyles.boldLabel);
 
 			scroll = GUILayout.BeginScrollView(scroll);
-				
+
 				for(int i = 0; i < materials.Length; i++)
 				{
-					if(i == 10)	
+					if(i == 10)
 					{
 						GUILayout.Space(2);
 						GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
@@ -273,7 +291,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(GUILayout.Button("Apply", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(44)))
 								ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), materials[i]);
-							
+
 							GUI.backgroundColor = Color.red;
 							if(GUILayout.Button("", EditorStyles.miniButtonRight, GUILayout.MaxWidth(14)))
 							{
@@ -295,7 +313,7 @@ namespace ProBuilder2.EditorCommon
 				}
 
 
-				if(GUILayout.Button("Add"))	
+				if(GUILayout.Button("Add"))
 				{
 					Material[] temp = new Material[materials.Length+1];
 					System.Array.Copy(materials, 0, temp, 0, materials.Length);
@@ -348,9 +366,9 @@ namespace ProBuilder2.EditorCommon
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
-			
+
 			// StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags( pb.gameObject );
-			
+
 			// // if nodraw not found, and entity type should be batching static
 			// if(pb.GetComponent<pb_Entity>().entityType != EntityType.Mover)
 			// {
