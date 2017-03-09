@@ -59,7 +59,8 @@ namespace ProBuilder2.Common
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
 			{
 				m.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(triangles.ToArray() ) });
-				m.Extrude(m.faces, ExtrudeMethod.IndividualFaces, extrude);
+				m.DuplicateAndFlip(m.faces);
+				m.Extrude(new pb_Face[] { m.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
 			}
 			else
 			{

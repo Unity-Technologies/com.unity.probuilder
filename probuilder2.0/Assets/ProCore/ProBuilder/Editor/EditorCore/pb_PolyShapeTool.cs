@@ -117,10 +117,15 @@ namespace ProBuilder2.EditorCommon
 			Vector3 up = polygon.transform.up;
 			Vector3 right = polygon.transform.right;
 			Vector3 forward = polygon.transform.forward;
+			Vector3 center = Vector3.zero;
 
 			for(int ii = 0; ii < len; ii++)
 			{
 				Vector3 point = trs.TransformPoint(polygon.points[ii]);
+
+				center.x += point.x;
+				center.y += point.y;
+				center.z += point.z;
 
 				float size = HandleUtility.GetHandleSize(point) * .05f;
 
@@ -133,6 +138,27 @@ namespace ProBuilder2.EditorCommon
 					pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
 					polygon.points[ii] = trs.InverseTransformPoint(point);	
 					UpdateMesh(true);
+				}
+			}
+
+			if(polygon.points.Count > 2)
+			{
+				center.x /= (float) len;
+				center.y /= (float) len;
+				center.z /= (float) len;
+
+				Vector3 extrude = center + (up * polygon.extrude);
+
+				EditorGUI.BeginChangeCheck();
+
+				Handles.color = Color.green;
+				extrude = Handles.Slider(extrude, up);
+				Handles.color = Color.white;
+
+				if(EditorGUI.EndChangeCheck())
+				{
+					polygon.extrude = Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center));
+					UpdateMesh(false);
 				}
 			}
 		}
