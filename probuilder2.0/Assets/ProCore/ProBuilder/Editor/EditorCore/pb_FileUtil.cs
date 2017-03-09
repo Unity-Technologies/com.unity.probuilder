@@ -11,6 +11,9 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public static class pb_FileUtil
 	{
+		// ProBuilder folder path.
+		private static string m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder/";
+
 		/**
 		 *	Find a file in the Assets folder by searching for a partial path.
 		 */
@@ -22,11 +25,10 @@ namespace ProBuilder2.EditorCommon
 			return matches.FirstOrDefault(x => x.Replace("\\", "/").Contains(forward_file));
 		}
 
-
 		/**
 		 *	Find a directory in the Assets folder by searching for a partial path.
 		 */
-		public static string FindFolder(string folder)
+		public static string FindFolder(string folder, bool exactMatch = false)
 		{
 			string single = folder.Replace("\\", "/").Substring(folder.LastIndexOf('/') + 1);
 
@@ -36,8 +38,16 @@ namespace ProBuilder2.EditorCommon
 			{
 				string path = str.Replace("\\", "/");
 
-				if(path.Contains(folder))
+				if( path.Contains(folder) )
 				{
+					if(exactMatch)
+					{
+						string found = path.Substring(str.LastIndexOf('/') + 1);
+
+						if(!found.Equals(single))
+							continue;
+					}
+
 					if(!path.EndsWith("/"))
 						path += "/";
 
@@ -46,6 +56,22 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			return null;
+		}
+
+		/**
+		 *	Check if a file or folder exists at path.
+		 */
+		public static bool Exists(string path)
+		{
+			return Directory.Exists(path) || File.Exists(path);
+		}
+
+		public static string GetRootDir()
+		{
+			if( !Exists(m_ProBuilderFolderPath) )
+				m_ProBuilderFolderPath = FindFolder("ProBuilder", true);
+
+			return m_ProBuilderFolderPath;
 		}
 	}
 }
