@@ -9,8 +9,9 @@ namespace ProBuilder2.Common
 	[DisallowMultipleComponent]
 	public class pb_PolyShape : MonoBehaviour
 	{
-		public List<Vector3> m_Points = new List<Vector3>();
-		public float m_Extrude = 0.1f;
+		public List<Vector3> points = new List<Vector3>();
+		public float extrude = 0.1f;
+		public bool isEditing = false;
 
 		private pb_Object m_Mesh;
 
@@ -35,9 +36,6 @@ namespace ProBuilder2.Common
 		 */
 		public void Init()
 		{
-			m_Points.Add(new Vector3(0f, 0f, 0f));
-			m_Points.Add(new Vector3(1f, 0f, 0f));
-			m_Points.Add(new Vector3(1f, 0f, 1f));
 		}
 
 		/**
@@ -47,12 +45,25 @@ namespace ProBuilder2.Common
 		{
 			pb_Object m = mesh;
 
-			Vector3[] vertices = m_Points.ToArray();
+			if(points.Count < 3)
+			{
+				m.SetVertices(new Vector3[0]);
+				m.SetFaces(new pb_Face[0]);
+				m.SetSharedIndices(new pb_IntArray[0]);
+				return;
+			}
+
+			Vector3[] vertices = points.ToArray();
 			List<int> triangles;
 
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
 			{
 				m.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(triangles.ToArray() ) });
+				m.Extrude(m.faces, ExtrudeMethod.IndividualFaces, extrude);
+			}
+			else
+			{
+				points.RemoveAt(points.Count - 1);
 			}
 
 			m.ToMesh();

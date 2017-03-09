@@ -46,6 +46,7 @@ namespace ProBuilder2.Actions
 			pb_EditorUtility.InitObject(pb);
 			pb_Selection.SetSelection(go);
 			pbUndo.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+			poly.isEditing = true;
 
 			return new pb_ActionResult(Status.Success, "Create Poly Shape");
 		}

@@ -8,10 +8,9 @@ namespace ProBuilder2.EditorCommon
 	[CustomEditor(typeof(pb_PolyShape))]
 	public class pb_PolyShapeTool : Editor
 	{
-		[SerializeField] private bool m_isEditing = false;
-		[SerializeField] private Plane m_Plane = new Plane(Vector3.up, 0f);
 		[SerializeField] private Material m_LineMaterial;
 		[SerializeField] private pb_Renderable m_LineRenderable = null;
+		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -19,7 +18,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChange);
 			m_LineRenderable = pb_Renderable.CreateInstance(new Mesh(), m_LineMaterial, polygon.transform);
-			m_Plane = new Plane(Vector3.up, polygon.transform.position);
+			pb_MeshRenderer.Add(m_LineRenderable);
+			Undo.undoRedoPerformed += UndoRedoPerformed;
+			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
 		}
 
@@ -29,20 +30,21 @@ namespace ProBuilder2.EditorCommon
 			pb_MeshRenderer.Remove(m_LineRenderable);
 			GameObject.DestroyImmediate(m_LineRenderable);
 			EditorApplication.update -= Update;
+			Undo.undoRedoPerformed -= UndoRedoPerformed;
 		}
 
 		public override void OnInspectorGUI()
 		{
 			EditorGUI.BeginChangeCheck();
 
-			m_isEditing = EditorGUILayout.Toggle("Edit Mode", m_isEditing);
+			polygon.isEditing = EditorGUILayout.Toggle("Edit Mode", polygon.isEditing);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				if(pb_Editor.instance != null)
 					pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 
-				if(m_isEditing)
+				if(polygon.isEditing)
 				{
 					pb_MeshRenderer.Add(m_LineRenderable);
 					Tools.current = Tool.None;
@@ -59,13 +61,28 @@ namespace ProBuilder2.EditorCommon
 			m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
+		void UpdateMesh(bool vertexCountChanged = true)
+		{
+			polygon.Refresh();
+
+			DrawPolyLine(polygon.points);
+
+			if(pb_Editor.instance != null)
+			{
+				if(!vertexCountChanged)
+					pb_Editor.instance.Internal_UpdateSelectionFast();
+				else
+					pb_Editor.Refresh();
+			}
+		}
+
 		void OnSceneGUI()
 		{
-			if(polygon == null || !m_isEditing || Tools.current != Tool.None)
+			if(polygon == null || !polygon.isEditing || Tools.current != Tool.None)
 			{
-				if(m_isEditing)
+				if(polygon.isEditing)
 				{
-					m_isEditing = false;
+					polygon.isEditing = false;
 					pb_MeshRenderer.Remove(m_LineRenderable);
 				}
 
@@ -73,8 +90,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			DoExistingPointsGUI();
-
-			DrawPolyLine(polygon.m_Points);
 
 			Event evt = Event.current;
 
@@ -94,27 +109,39 @@ namespace ProBuilder2.EditorCommon
 		void DoPointPlacement(Ray ray)
 		{
 			float hitDistance = Mathf.Infinity;
+			m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
 
 			if( m_Plane.Raycast(ray, out hitDistance) )
 			{
-				polygon.m_Points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+				pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
+				polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+				UpdateMesh();
 			}
 		}
 
 		void DoExistingPointsGUI()
 		{
 			Transform trs = polygon.transform;
-			int len = polygon.m_Points.Count;
+			int len = polygon.points.Count;
+			Vector3 up = polygon.transform.up;
+			Vector3 right = polygon.transform.right;
+			Vector3 forward = polygon.transform.forward;
 
 			for(int ii = 0; ii < len; ii++)
 			{
-				Vector3 point = trs.TransformPoint(polygon.m_Points[ii]);
+				Vector3 point = trs.TransformPoint(polygon.points[ii]);
 
 				float size = HandleUtility.GetHandleSize(point) * .05f;
 
-				if (Handles.Button(point, Quaternion.identity, size, size, Handles.DotCap))
-				{
+				EditorGUI.BeginChangeCheck();
 
+				point = Handles.Slider2D(point, up, right, forward, size, Handles.DotCap, Vector2.zero, true);
+
+				if(EditorGUI.EndChangeCheck())
+				{
+					pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
+					polygon.points[ii] = trs.InverseTransformPoint(point);	
+					UpdateMesh(true);
 				}
 			}
 		}
@@ -122,6 +149,7 @@ namespace ProBuilder2.EditorCommon
 		void DrawPolyLine(List<Vector3> points)
 		{
 			int vc = points.Count;// + 1;
+
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
 			int[] indices = new int[vc];
@@ -134,7 +162,16 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			Mesh m = m_LineRenderable.mesh;
+
+			// Undo/redo destroys and re-inits pb_Renderable, which kills the mesh.
+			if(m == null)
+			{
+				m = new Mesh();
+				m_LineRenderable.mesh = m;
+			}
+
 			m.Clear();
+			m.name = "Poly Shape Guide";
 			m.vertices = ver;
 			m.uv = uvs;
 			m.SetIndices(indices, MeshTopology.LineStrip, 0);
@@ -142,8 +179,13 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEditLevelChange(int editLevel)
 		{
-			if(m_isEditing && ((EditLevel)editLevel) != EditLevel.Plugin)
-				m_isEditing = false;
+			if(polygon.isEditing && ((EditLevel)editLevel) != EditLevel.Plugin)
+				polygon.isEditing = false;
+		}
+
+		void UndoRedoPerformed()
+		{
+			UpdateMesh(true);
 		}
 	}
 }
