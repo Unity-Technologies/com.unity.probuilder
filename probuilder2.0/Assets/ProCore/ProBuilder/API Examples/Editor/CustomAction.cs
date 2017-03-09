@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.MeshOperations;
 using ProBuilder2.Interface;
 using System.Linq;
 using System.Collections.Generic;
@@ -117,39 +118,8 @@ namespace MySpecialNamespace.Actions
 
 			foreach(pb_Object pb in selection)
 			{
-				List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>();
-				List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+				pb_AppendDelete.DuplicateAndFlip(pb, pb.SelectedFaces);
 
-				foreach(pb_Face face in pb.SelectedFaces)
-				{
-					pb_FaceRebuildData data = new pb_FaceRebuildData();
-
-					data.vertices = new List<pb_Vertex>();
-					data.face = new pb_Face(face);
-					data.sharedIndices = new List<int>();
-
-					Dictionary<int, int> map = new Dictionary<int, int>();
-					int len = data.face.indices.Length;
-
-					for(int i = 0; i < len; i++)
-					{
-						if(map.ContainsKey(face.indices[i]))
-							continue;
-
-						map.Add(face.indices[i], map.Count);
-						data.vertices.Add(vertices[face.indices[i]]);
-						data.sharedIndices.Add(lookup[face.indices[i]]);
-					}
-
-					for(int i = 0; i < len; i++)
-						data.face.indices[i] = map[data.face.indices[i]];
-
-					data.face.ReverseIndices();
-					rebuild.Add(data);
-				}
-
-				pb_FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
