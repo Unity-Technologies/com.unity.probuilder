@@ -9,7 +9,7 @@ namespace ProBuilder2.EditorCommon
 	public class pb_PolyShapeTool : Editor
 	{
 		[SerializeField] private Material m_LineMaterial;
-		[SerializeField] private pb_Renderable m_LineRenderable = null;
+		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
@@ -17,8 +17,7 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChange);
-			m_LineRenderable = pb_Renderable.CreateInstance(new Mesh(), m_LineMaterial, polygon.transform);
-			pb_MeshRenderer.Add(m_LineRenderable);
+			m_LineMesh = new Mesh();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
@@ -27,8 +26,7 @@ namespace ProBuilder2.EditorCommon
 		void OnDisable()
 		{
 			pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChange);
-			pb_MeshRenderer.Remove(m_LineRenderable);
-			GameObject.DestroyImmediate(m_LineRenderable);
+			GameObject.DestroyImmediate(m_LineMesh);
 			EditorApplication.update -= Update;
 			Undo.undoRedoPerformed -= UndoRedoPerformed;
 		}
@@ -45,14 +43,7 @@ namespace ProBuilder2.EditorCommon
 					pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 
 				if(polygon.isEditing)
-				{
-					pb_MeshRenderer.Add(m_LineRenderable);
 					Tools.current = Tool.None;
-				}
-				else
-				{
-					pb_MeshRenderer.Remove(m_LineRenderable);
-				}
 			}
 		}
 
@@ -81,13 +72,13 @@ namespace ProBuilder2.EditorCommon
 			if(polygon == null || !polygon.isEditing || Tools.current != Tool.None)
 			{
 				if(polygon.isEditing)
-				{
 					polygon.isEditing = false;
-					pb_MeshRenderer.Remove(m_LineRenderable);
-				}
 
 				return;
 			}
+
+			m_LineMaterial.SetPass(0);
+			Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
 
 			DoExistingPointsGUI();
 
@@ -161,20 +152,11 @@ namespace ProBuilder2.EditorCommon
 				indices[i] = i;
 			}
 
-			Mesh m = m_LineRenderable.mesh;
-
-			// Undo/redo destroys and re-inits pb_Renderable, which kills the mesh.
-			if(m == null)
-			{
-				m = new Mesh();
-				m_LineRenderable.mesh = m;
-			}
-
-			m.Clear();
-			m.name = "Poly Shape Guide";
-			m.vertices = ver;
-			m.uv = uvs;
-			m.SetIndices(indices, MeshTopology.LineStrip, 0);
+			m_LineMesh.Clear();
+			m_LineMesh.name = "Poly Shape Guide";
+			m_LineMesh.vertices = ver;
+			m_LineMesh.uv = uvs;
+			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
 		}
 
 		void OnEditLevelChange(int editLevel)
