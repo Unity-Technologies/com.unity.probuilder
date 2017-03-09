@@ -9,6 +9,7 @@ namespace ProBuilder2.EditorCommon
 	public class pb_PolyShapeTool : Editor
 	{
 		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
+		private static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
 
 		[SerializeField] private Material m_LineMaterial;
 		private Mesh m_LineMesh = null;
@@ -191,14 +192,17 @@ namespace ProBuilder2.EditorCommon
 
 			bool used = evt.type == EventType.Used;
 
-			if(!used && (evt.type == EventType.MouseDown && evt.button == 0))
+			if(!used && 
+				(	evt.type == EventType.MouseDown &&
+					evt.button == 0 &&
+					!IsAppendModifier(evt.modifiers)
+				)
+			)
 			{
 				m_SelectedIndex = -1;
 				Repaint();
 			}
 			
-			Handles.color = HANDLE_COLOR;
-
 			for(int ii = 0; ii < len; ii++)
 			{
 				Vector3 point = trs.TransformPoint(polygon.points[ii]);
@@ -208,6 +212,8 @@ namespace ProBuilder2.EditorCommon
 				center.z += point.z;
 
 				float size = HandleUtility.GetHandleSize(point) * .05f;
+
+				Handles.color = ii == m_SelectedIndex ? SELECTED_COLOR : HANDLE_COLOR;
 
 				EditorGUI.BeginChangeCheck();
 
@@ -249,6 +255,14 @@ namespace ProBuilder2.EditorCommon
 					UpdateMesh(false);
 				}
 			}
+		}
+
+		bool IsAppendModifier(EventModifiers em)
+		{
+			return 	(em & EventModifiers.Shift) == EventModifiers.Shift ||
+					(em & EventModifiers.Control) == EventModifiers.Control ||
+					(em & EventModifiers.Alt) == EventModifiers.Alt ||
+					(em & EventModifiers.Command) == EventModifiers.Command;
 		}
 
 		void DrawPolyLine(List<Vector3> points)
