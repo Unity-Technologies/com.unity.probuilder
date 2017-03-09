@@ -132,7 +132,7 @@ namespace ProBuilder2.MeshOperations
 
 			if(tm.Vertices.Count != points.Count)
 			{
-				Debug.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
+				pb_Log.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
 				return false;
 			}
 

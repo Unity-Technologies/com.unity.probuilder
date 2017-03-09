@@ -41,7 +41,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	@todo
 		 */
-		public void Refresh()
+		public bool Refresh()
 		{
 			pb_Object m = mesh;
 
@@ -50,11 +50,13 @@ namespace ProBuilder2.Common
 				m.SetVertices(new Vector3[0]);
 				m.SetFaces(new pb_Face[0]);
 				m.SetSharedIndices(new pb_IntArray[0]);
-				return;
+				return true;
 			}
 
 			Vector3[] vertices = points.ToArray();
 			List<int> triangles;
+
+			pb_Log.PushLogLevel(pb_LogLevel.Error);
 
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
 			{
@@ -64,11 +66,16 @@ namespace ProBuilder2.Common
 			}
 			else
 			{
-				points.RemoveAt(points.Count - 1);
+				pb_Log.PopLogLevel();
+				return false;
 			}
+			
+			pb_Log.PopLogLevel();
 
 			m.ToMesh();
 			m.Refresh();
+
+			return true;
 		}
 	}
 }

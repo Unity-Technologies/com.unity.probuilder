@@ -8,6 +8,8 @@ namespace ProBuilder2.EditorCommon
 	[CustomEditor(typeof(pb_PolyShape))]
 	public class pb_PolyShapeTool : Editor
 	{
+		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
+
 		[SerializeField] private Material m_LineMaterial;
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
@@ -52,11 +54,24 @@ namespace ProBuilder2.EditorCommon
 			m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
-		void UpdateMesh(bool vertexCountChanged = true)
+		/**
+		 *	Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
+		 */
+		bool UpdateMesh(bool vertexCountChanged = true)
 		{
-			polygon.Refresh();
-
 			DrawPolyLine(polygon.points);
+
+			if(!polygon.Refresh())
+			{
+				polygon.mesh.SetVertices(new Vector3[0]);
+				polygon.mesh.SetFaces(new pb_Face[0]);
+				polygon.mesh.SetSharedIndices(new pb_IntArray[0]);
+				polygon.mesh.ToMesh();
+				polygon.mesh.Refresh();
+				pb_Editor.Refresh();
+
+				return false;
+			}
 
 			if(pb_Editor.instance != null)
 			{
@@ -65,6 +80,8 @@ namespace ProBuilder2.EditorCommon
 				else
 					pb_Editor.Refresh();
 			}
+
+			return true;
 		}
 
 		void OnSceneGUI()
@@ -72,7 +89,9 @@ namespace ProBuilder2.EditorCommon
 			if(polygon == null || !polygon.isEditing || Tools.current != Tool.None)
 			{
 				if(polygon.isEditing)
+				{
 					polygon.isEditing = false;
+				}
 
 				return;
 			}
@@ -88,6 +107,7 @@ namespace ProBuilder2.EditorCommon
 				return;
 
 			int controlID = GUIUtility.GetControlID(FocusType.Passive);
+
 			HandleUtility.AddDefaultControl(controlID);
 
 			if(evt.type == EventType.MouseDown)
@@ -118,6 +138,8 @@ namespace ProBuilder2.EditorCommon
 			Vector3 right = polygon.transform.right;
 			Vector3 forward = polygon.transform.forward;
 			Vector3 center = Vector3.zero;
+				
+			Handles.color = HANDLE_COLOR;
 
 			for(int ii = 0; ii < len; ii++)
 			{
@@ -140,6 +162,8 @@ namespace ProBuilder2.EditorCommon
 					UpdateMesh(true);
 				}
 			}
+
+			Handles.color = Color.white;
 
 			if(polygon.points.Count > 2)
 			{
