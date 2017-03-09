@@ -13,6 +13,7 @@ namespace ProBuilder2.EditorCommon
 		[SerializeField] private Material m_LineMaterial;
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
+		private bool m_PlacingPoint = false;
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -110,23 +111,49 @@ namespace ProBuilder2.EditorCommon
 
 			HandleUtility.AddDefaultControl(controlID);
 
-			if(evt.type == EventType.MouseDown)
-			{	
-				DoPointPlacement( HandleUtility.GUIPointToWorldRay(evt.mousePosition) );
-				SceneView.RepaintAll();
-			}
+			DoPointPlacement( HandleUtility.GUIPointToWorldRay(evt.mousePosition) );
 		}
 
 		void DoPointPlacement(Ray ray)
 		{
-			float hitDistance = Mathf.Infinity;
-			m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+			EventType eventType = Event.current.type;
 
-			if( m_Plane.Raycast(ray, out hitDistance) )
+			if( eventType == EventType.MouseDown )
 			{
-				pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
-				polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
-				UpdateMesh();
+				float hitDistance = Mathf.Infinity;
+				m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+
+				if( m_Plane.Raycast(ray, out hitDistance) )
+				{
+					m_PlacingPoint = true;
+					pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
+					polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+					UpdateMesh();
+					SceneView.RepaintAll();
+				}
+			}
+			else if(m_PlacingPoint)
+			{
+				if(	eventType == EventType.MouseDrag )
+				{
+					float hitDistance = Mathf.Infinity;
+					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+
+					if( m_Plane.Raycast(ray, out hitDistance) )
+					{
+						polygon.points[polygon.points.Count - 1] = polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance));
+						UpdateMesh();
+						SceneView.RepaintAll();
+					}
+				}
+
+				if( eventType == EventType.MouseUp ||
+					eventType == EventType.Ignore ||
+					eventType == EventType.KeyDown ||
+					eventType == EventType.KeyUp )
+				{
+					m_PlacingPoint = false;
+				}
 			}
 		}
 
@@ -189,7 +216,7 @@ namespace ProBuilder2.EditorCommon
 
 		void DrawPolyLine(List<Vector3> points)
 		{
-			int vc = points.Count;// + 1;
+			int vc = points.Count;
 
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
