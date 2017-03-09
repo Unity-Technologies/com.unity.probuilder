@@ -14,6 +14,7 @@ namespace ProBuilder2.EditorCommon
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 		private bool m_PlacingPoint = false;
+		private int m_SelectedIndex = -1;
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -48,6 +49,8 @@ namespace ProBuilder2.EditorCommon
 				if(polygon.isEditing)
 					Tools.current = Tool.None;
 			}
+
+			GUILayout.Label("selected : " + m_SelectedIndex);
 		}
 
 		void Update()
@@ -98,11 +101,29 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			m_LineMaterial.SetPass(0);
+
 			Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
+
+			Event evt = Event.current;
 
 			DoExistingPointsGUI();
 
-			Event evt = Event.current;
+			if(evt.type == EventType.KeyDown)
+			{
+				switch(evt.keyCode)
+				{
+					case KeyCode.Backspace:
+					{
+						if(m_SelectedIndex > -1)
+						{
+							pbUndo.RecordObject(polygon, "Delete Selected Points");
+							polygon.points.RemoveAt(m_SelectedIndex);
+							UpdateMesh();
+						}
+						break;
+					}
+				}
+			}
 
 			if( pb_Handle_Utility.SceneViewInUse(evt) )
 				return;
@@ -165,7 +186,17 @@ namespace ProBuilder2.EditorCommon
 			Vector3 right = polygon.transform.right;
 			Vector3 forward = polygon.transform.forward;
 			Vector3 center = Vector3.zero;
-				
+
+			Event evt = Event.current;
+
+			bool used = evt.type == EventType.Used;
+
+			if(!used && (evt.type == EventType.MouseDown && evt.button == 0))
+			{
+				m_SelectedIndex = -1;
+				Repaint();
+			}
+			
 			Handles.color = HANDLE_COLOR;
 
 			for(int ii = 0; ii < len; ii++)
@@ -187,6 +218,12 @@ namespace ProBuilder2.EditorCommon
 					pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
 					polygon.points[ii] = trs.InverseTransformPoint(point);	
 					UpdateMesh(true);
+				}
+
+				if( !used && evt.type == EventType.Used )
+				{
+					used = true;
+					m_SelectedIndex = ii;
 				}
 			}
 
@@ -244,6 +281,9 @@ namespace ProBuilder2.EditorCommon
 
 		void UndoRedoPerformed()
 		{
+			if(m_LineMesh != null)
+				GameObject.DestroyImmediate(m_LineMesh);
+			m_LineMesh = new Mesh();
 			UpdateMesh(true);
 		}
 	}
