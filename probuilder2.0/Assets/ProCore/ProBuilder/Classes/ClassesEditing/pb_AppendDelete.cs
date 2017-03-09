@@ -128,6 +128,46 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
+		 *	Duplicate and reverse the winding direction for each face.
+		 */
+		public static void DuplicateAndFlip(this pb_Object pb, pb_Face[] faces)
+		{
+			List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>();
+			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
+
+			foreach(pb_Face face in faces)
+			{
+				pb_FaceRebuildData data = new pb_FaceRebuildData();
+
+				data.vertices = new List<pb_Vertex>();
+				data.face = new pb_Face(face);
+				data.sharedIndices = new List<int>();
+
+				Dictionary<int, int> map = new Dictionary<int, int>();
+				int len = data.face.indices.Length;
+
+				for(int i = 0; i < len; i++)
+				{
+					if(map.ContainsKey(face.indices[i]))
+						continue;
+
+					map.Add(face.indices[i], map.Count);
+					data.vertices.Add(vertices[face.indices[i]]);
+					data.sharedIndices.Add(lookup[face.indices[i]]);
+				}
+
+				for(int i = 0; i < len; i++)
+					data.face.indices[i] = map[data.face.indices[i]];
+
+				data.face.ReverseIndices();
+				rebuild.Add(data);
+			}
+
+			pb_FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
+		}
+
+		/**
 		 *	Removes the passed face from this pb_Object.  Handles shifting vertices and triangles, as well as messing with the sharedIndices cache.
 		 */
 		public static int[] DeleteFace(this pb_Object pb, pb_Face face)
