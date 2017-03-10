@@ -9,8 +9,10 @@ namespace ProBuilder2.Common
 	/**
 	 * Static methods for working with pb_Objects in an editor.
 	 */
-	public class pb_HandleUtility
+	public static class pb_HandleUtility
 	{
+		const float MAX_EDGE_SELECT_DISTANCE = 20f;
+
 		/**
 		 * Find a triangle intersected by InRay on InMesh.  InRay is in world space.
 		 * Returns the index in mesh.faces of the hit face, or -1.  Optionally can ignore
@@ -178,7 +180,64 @@ namespace ProBuilder2.Common
 			return hits.Count > 0;
 		}
 
-		const float MAX_EDGE_SELECT_DISTANCE = 20f;
+		public static Ray InverseTransformRay(this Transform transform, Ray InWorldRay)
+		{
+			Vector3 o = InWorldRay.origin;
+			o -= transform.position;
+			o = transform.worldToLocalMatrix * o;
+			Vector3 d = transform.worldToLocalMatrix.MultiplyVector(InWorldRay.direction);
+			return new Ray(o, d);
+		}
+
+		/**
+		 * Find the nearest triangle intersected by InWorldRay on this mesh.  InWorldRay is in world space.
+		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
+		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front
+		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
+		 * Ray origin and position values are in local space.
+		 */
+		public static bool WorldRaycast(Ray InWorldRay, Transform transform, Vector3[] vertices, int[] triangles, out pb_RaycastHit hit, float distance = Mathf.Infinity, Culling cullingMode = Culling.Front)
+		{
+			Ray ray = transform.InverseTransformRay(InWorldRay);
+			return MeshRaycast(ray, vertices, triangles, out hit, distance, cullingMode);
+		}
+
+		/**
+		 *	Cast a ray (in model space) against a mesh.
+		 */
+		public static bool MeshRaycast(Ray InRay, Vector3[] vertices, int[] triangles, out pb_RaycastHit hit, float distance = Mathf.Infinity, Culling cullingMode = Culling.Front)
+		{
+			// float dot; 		// vars used in loop
+			float hitDistance = Mathf.Infinity;
+			Vector3 hitNormal = new Vector3(0f, 0f, 0f);	// vars used in loop
+			Vector3 a, b, c;
+			int hitFace = -1;
+			Vector3 o = InRay.origin, d = InRay.direction;
+
+			/**
+			 * Iterate faces, testing for nearest hit to ray origin.
+			 */
+			for(int CurTri = 0; CurTri < triangles.Length; CurTri += 3)
+			{
+				a = vertices[triangles[CurTri+0]];
+				b = vertices[triangles[CurTri+1]];
+				c = vertices[triangles[CurTri+2]];
+
+				if(pb_Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
+				{
+					hitFace = CurTri / 3;
+					hitDistance = distance;
+					break;
+				}
+			}
+
+			hit = new pb_RaycastHit( hitDistance,
+									InRay.GetPoint(hitDistance),
+									hitNormal,
+									hitFace);
+
+			return hitFace > -1;
+		}
 
 		/**
 		 * Checks if mouse is over an edge, and if so, returns true setting @edge.

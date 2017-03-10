@@ -2589,7 +2589,7 @@ public class pb_Editor : EditorWindow
 
 			faceCount += selection[i].faces.Length;
 			vertexCount += selection[i].sharedIndices.Length; // vertexCount;
-			triangleCount += selection[i].msh.triangles.Length / 3;
+			triangleCount += selection[i].msh != null ? selection[i].msh.triangles.Length / 3 : selection[i].faces.Length;
 		}
 
 		m_handlePivotWorld = (max+min)/2f;

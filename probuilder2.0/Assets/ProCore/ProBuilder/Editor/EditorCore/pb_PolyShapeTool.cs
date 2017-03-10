@@ -29,6 +29,9 @@ namespace ProBuilder2.EditorCommon
 			Undo.undoRedoPerformed += UndoRedoPerformed;
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
+
+			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+				pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 		}
 
 		void OnDisable()
@@ -42,8 +45,6 @@ namespace ProBuilder2.EditorCommon
 		public override void OnInspectorGUI()
 		{
 			EditorGUI.BeginChangeCheck();
-
-			// polygon.polyEditMode = (pb_PolyShape.PolyEditMode) EditorGUILayout.EnumPopup("Edit Mode", polygon.polyEditMode);
 
 			switch(polygon.polyEditMode)
 			{
@@ -102,6 +103,43 @@ namespace ProBuilder2.EditorCommon
 			else
 			{
 				polygon.polyEditMode = mode;
+			}
+		}
+
+		private List<GameObject> m_IgnorePick = new List<GameObject>();
+
+		void SetPlane(Vector2 mousePosition)
+		{
+			GameObject go = null;
+			m_IgnorePick.Clear();
+
+			do
+			{
+				if(go != null)
+					m_IgnorePick.Add(go);
+
+				go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
+			}
+			while(go != null && go.GetComponent<MeshFilter>() == null);
+
+			if(go != null)
+			{
+				Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
+
+				if(m != null)
+				{
+					pb_RaycastHit hit;
+
+					if(pb_HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
+						go.transform,
+						m.vertices,
+						m.triangles,
+						out hit))
+					{
+						polygon.transform.position = go.transform.TransformPoint(hit.point);
+						polygon.transform.rotation = Quaternion.AngleAxis(0f, go.transform.TransformDirection(hit.normal));
+					}
+				}
 			}
 		}
 
@@ -170,7 +208,8 @@ namespace ProBuilder2.EditorCommon
 
 		void DoPointPlacement(Ray ray)
 		{
-			EventType eventType = Event.current.type;
+			Event evt = Event.current;
+			EventType eventType = evt.type;
 
 			if(m_PlacingPoint)
 			{
@@ -182,6 +221,7 @@ namespace ProBuilder2.EditorCommon
 
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
+						evt.Use();
 						polygon.points[m_SelectedIndex] = polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance));
 						UpdateMesh();
 						SceneView.RepaintAll();
@@ -202,11 +242,16 @@ namespace ProBuilder2.EditorCommon
 			{
 				if( eventType == EventType.MouseDown )
 				{
+					if(polygon.points.Count < 1)
+						SetPlane(evt.mousePosition);
+
 					float hitDistance = Mathf.Infinity;
+
 					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
 
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
+						evt.Use();
 						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
 						polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
 						m_PlacingPoint = true;
@@ -217,8 +262,13 @@ namespace ProBuilder2.EditorCommon
 			}
 			else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
 			{
-				// point insertion
+				if(polygon.points.Count < 3)
+				{
+					SetPolyEditMode(pb_PolyShape.PolyEditMode.Path);
+					return;
+				}
 
+				// point insertion
 				int index;
 				float distanceToLine;
 
@@ -228,7 +278,7 @@ namespace ProBuilder2.EditorCommon
 				Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[index % polygon.points.Count]));
 				Vector2 gb = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[(index - 1)]));
 
-				Vector2 mouse = Event.current.mousePosition;
+				Vector2 mouse = evt.mousePosition;
 
 				float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
@@ -238,8 +288,10 @@ namespace ProBuilder2.EditorCommon
 
 					Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f);
 
-					if( Event.current.type == EventType.MouseDown )
+					if( evt.type == EventType.MouseDown )
 					{
+						evt.Use();
+
 						pbUndo.RecordObject(polygon, "Insert Point");
 						polygon.points.Insert(index, p);
 						m_SelectedIndex = index;
@@ -407,6 +459,9 @@ namespace ProBuilder2.EditorCommon
 
 		void DrawPolyLine(List<Vector3> points)
 		{
+			if(points.Count < 2)
+				return;
+
 			int vc = polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
 
 			Vector3[] ver = new Vector3[vc];

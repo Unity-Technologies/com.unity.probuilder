@@ -409,6 +409,48 @@ namespace ProBuilder2.Common
 			return false;
 		}
 
+		// Temporary vector3 values
+		static Vector3 tv1, tv2, tv3, tv4;
+
+		public static bool RayIntersectsTriangle2(	Vector3 origin,
+													Vector3 dir,
+													Vector3 vert0,
+													Vector3 vert1,
+													Vector3 vert2,
+		 											ref float distance,
+		 											ref Vector3 normal)
+		{
+			float det;
+
+			pb_Math.Subtract(vert0, vert1, ref tv1);
+			pb_Math.Subtract(vert0, vert2, ref tv2);
+
+			pb_Math.Cross(dir, tv2, ref tv4);
+			det = Vector3.Dot(tv1, tv4);
+
+			if(det < Mathf.Epsilon)
+				return false;
+
+			pb_Math.Subtract(vert0, origin, ref tv3);
+
+			float u = Vector3.Dot(tv3, tv4);
+
+			if(u < 0f || u > det)
+				return false;
+
+			pb_Math.Cross(tv3, tv1, ref tv4);
+
+			float v = Vector3.Dot(dir, tv4);
+
+			if(v < 0f || u + v > det)
+				return false;
+
+			distance = Vector3.Dot(tv2, tv4) * (1f / det);
+			pb_Math.Cross(tv1, tv2, ref normal);
+
+			return true;
+		}
+
 		/**
 		 * Return the secant of radian `x` ( `1f / cos(x)` ).
 		 */
@@ -932,6 +974,30 @@ namespace ProBuilder2.Common
 		x = a.y * b.z - a.z * b.y;
 		y = a.z * b.x - a.x * b.z;
 		z = a.x * b.y - a.y * b.x;
+	}
+
+	public static void Cross(Vector3 a, Vector3 b, ref Vector3 res)
+	{
+		res.x = a.y * b.z - a.z * b.y;
+		res.y = a.z * b.x - a.x * b.z;
+		res.z = a.x * b.y - a.y * b.x;
+	}
+
+	public static void Cross(float ax, float ay, float az, float bx, float by, float bz, ref float x, ref float y, ref float z)
+	{
+		x = ay * bz - az * by;
+		y = az * bx - ax * bz;
+		z = ax * by - ay * bx;
+	}
+
+	/**
+	 * res = b - a
+	 */
+	public static void Subtract(Vector3 a, Vector3 b, ref Vector3 res)
+	{
+		res.x = b.x - a.x;
+		res.y = b.y - a.y;
+		res.z = b.z - a.z;
 	}
 #endregion
 	}
