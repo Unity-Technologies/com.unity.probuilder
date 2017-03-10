@@ -8,14 +8,6 @@ using System.Linq;
 using Parabox.Debug;
 #endif
 
-namespace ProBuilder2.Math
-{
-	[System.Obsolete("pb_Math has moved to ProBuilder2.Common")]
-	public static class pb_Math
-	{
-	}
-}
-
 namespace ProBuilder2.Common
 {
 
@@ -213,6 +205,22 @@ namespace ProBuilder2.Common
 			Vector3 projection = v + t * (w - v);  	// Projection falls on the segment
 
 			return Vector3.Distance(p, projection);
+		}
+		/**
+		 * Calculate the nearest point on ray A to ray B.
+		 */
+		public static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
+		{
+			// ray-ray don't do parallel
+			if(ad == bd)	
+				return ao;
+
+			Vector3 c = bo - ao;
+
+			float n = -Vector3.Dot(ad, bd) * Vector3.Dot(bd, c) + Vector3.Dot(ad, c) * Vector3.Dot(bd, bd);
+			float d = Vector3.Dot(ad, ad) * Vector3.Dot(bd, bd) - Vector3.Dot(ad, bd) * Vector3.Dot(ad, bd);
+
+			return ao + ad * (n/d);
 		}
 
 		// http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
@@ -715,6 +723,7 @@ namespace ProBuilder2.Common
 		{
 			Vector2 sum = Vector2.zero;
 			float len = indices == null ? v.Count : indices.Count;
+			
 			if( indices == null )
 				for(int i = 0; i < len; i++) sum += v[i];
 			else
@@ -726,11 +735,27 @@ namespace ProBuilder2.Common
 		{
 			Vector3 sum = Vector3.zero;
 			float len = indices == null ? v.Count : indices.Count;
+
 			if( indices == null )
-				for(int i = 0; i < len; i++) sum += v[i];
+			{
+				for(int i = 0; i < len; i++)
+				{
+					sum.x += v[i].x;
+					sum.y += v[i].y;
+					sum.z += v[i].z;
+				}
+			}
 			else
-				for(int i = 0; i < len; i++) sum += v[indices[i]];
-			return sum/len;
+			{
+				for(int i = 0; i < len; i++)
+				{
+					sum.x += v[indices[i]].x;
+					sum.y += v[indices[i]].y;
+					sum.z += v[indices[i]].z;
+				}
+			}
+
+			return sum / len;
 		}
 
 		public static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)

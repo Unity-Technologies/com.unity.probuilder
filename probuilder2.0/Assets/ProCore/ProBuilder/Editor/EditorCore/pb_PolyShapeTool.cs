@@ -274,8 +274,35 @@ namespace ProBuilder2.EditorCommon
 				m_SelectedIndex = -1;
 				Repaint();
 			}
-			
-			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Height)
+
+			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
+			{
+				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
+					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+
+				if(!pb_Handle_Utility.SceneViewInUse(evt))
+				{
+					Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
+					Vector3 p = pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
+
+					Handles.color = HANDLE_COLOR;
+					Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f);
+					Handles.color = Color.green;
+					Handles.DrawLine(origin, p);
+					Handles.color = Color.green;
+					Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
+					Handles.color = Color.white;
+					
+					float extrude = polygon.extrude;
+
+					polygon.extrude = Vector3.Distance(origin, p) * Mathf.Sign( Vector3.Dot(p-origin, up) );
+
+					if(polygon.extrude != extrude)
+						UpdateMesh();
+				}
+			}
+			else
 			{
 				for(int ii = 0; ii < len; ii++)
 				{
@@ -306,29 +333,29 @@ namespace ProBuilder2.EditorCommon
 						m_SelectedIndex = ii;
 					}
 				}
-			}
 
-			Handles.color = Color.white;
-
-			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
-			{
-				center.x /= (float) len;
-				center.y /= (float) len;
-				center.z /= (float) len;
-
-				Vector3 extrude = center + (up * polygon.extrude);
-
-				EditorGUI.BeginChangeCheck();
-
-				Handles.color = Color.green;
-				extrude = Handles.Slider(extrude, up);
 				Handles.color = Color.white;
 
-				if(EditorGUI.EndChangeCheck())
+				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
 				{
-					pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
-					polygon.extrude = Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center));
-					UpdateMesh(false);
+					center.x /= (float) len;
+					center.y /= (float) len;
+					center.z /= (float) len;
+
+					Vector3 extrude = center + (up * polygon.extrude);
+
+					EditorGUI.BeginChangeCheck();
+
+					Handles.color = Color.green;
+					extrude = Handles.Slider(extrude, up);
+					Handles.color = Color.white;
+
+					if(EditorGUI.EndChangeCheck())
+					{
+						pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
+						polygon.extrude = Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center));
+						UpdateMesh(false);
+					}
 				}
 			}
 		}
