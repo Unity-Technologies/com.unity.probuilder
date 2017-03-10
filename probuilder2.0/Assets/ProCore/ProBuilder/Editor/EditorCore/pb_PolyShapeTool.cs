@@ -149,8 +149,32 @@ namespace ProBuilder2.EditorCommon
 					{
 						polygon.transform.position = go.transform.TransformPoint(hit.point);
 						polygon.transform.rotation = Quaternion.AngleAxis(0f, go.transform.TransformDirection(hit.normal));
+
+						return;
 					}
 				}
+			}
+
+			// No mesh in the way, set the plane based on camera
+			ProjectionAxis pa = pb_Projection.VectorToProjectionAxis(-SceneView.lastActiveSceneView.camera.transform.forward);
+			float s = (pa == ProjectionAxis.X_Negative || pa == ProjectionAxis.Y_Negative || pa == ProjectionAxis.Z_Negative) ? -1f : 1f;
+
+			switch(pa)
+			{
+				case ProjectionAxis.X:
+				case ProjectionAxis.X_Negative:
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, s * 90f));
+					break;
+
+				case ProjectionAxis.Y:
+				case ProjectionAxis.Y_Negative:
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+					break;
+
+				case ProjectionAxis.Z:
+				case ProjectionAxis.Z_Negative:
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, s * 90f, s * 90f));
+					break;
 			}
 		}
 
@@ -227,7 +251,6 @@ namespace ProBuilder2.EditorCommon
 				if(	eventType == EventType.MouseDrag )
 				{
 					float hitDistance = Mathf.Infinity;
-
 					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
 
 					if( m_Plane.Raycast(ray, out hitDistance) )
