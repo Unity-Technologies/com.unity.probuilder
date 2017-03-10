@@ -47,40 +47,47 @@ namespace ProBuilder2.EditorCommon
 				if (!updateQuery.isDone)
 					return;
 
-				if (string.IsNullOrEmpty(updateQuery.error) || !Regex.IsMatch(updateQuery.text, "404 not found", RegexOptions.IgnoreCase) )
+				try
 				{
-					pb_VersionInfo webVersion;
-					string webChangelog;
-
-					if(!pb_VersionUtil.FormatChangelog(updateQuery.text, out webVersion, out webChangelog))
+					if (string.IsNullOrEmpty(updateQuery.error) || !Regex.IsMatch(updateQuery.text, "404 not found", RegexOptions.IgnoreCase) )
 					{
-						FailedConnection();
-					}
-					else
-					{
-						pb_VersionInfo current;
+						pb_VersionInfo webVersion;
+						string webChangelog;
 
-						// first test if the installed version is already up to date
-						if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
+						if(!pb_VersionUtil.FormatChangelog(updateQuery.text, out webVersion, out webChangelog))
 						{
-							// next, test if a notification for this version has already been shown
-							string lastNotification = EditorPrefs.GetString(pbLastWebVersionChecked, "");
-
-							if(calledFromMenu || !lastNotification.Equals(webVersion.text))
-							{
-								pb_UpdateAvailable.Init(webVersion, webChangelog);
-								EditorPrefs.SetString(pbLastWebVersionChecked, webVersion.text);
-							}
+							FailedConnection();
 						}
 						else
 						{
-							UpToDate(current.ToString());
+							pb_VersionInfo current;
+
+							// first test if the installed version is already up to date
+							if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
+							{
+								// next, test if a notification for this version has already been shown
+								string lastNotification = EditorPrefs.GetString(pbLastWebVersionChecked, "");
+
+								if(calledFromMenu || !lastNotification.Equals(webVersion.text))
+								{
+									pb_UpdateAvailable.Init(webVersion, webChangelog);
+									EditorPrefs.SetString(pbLastWebVersionChecked, webVersion.text);
+								}
+							}
+							else
+							{
+								UpToDate(current.ToString());
+							}
 						}
 					}
+					else
+					{
+						FailedConnection();
+					}
 				}
-				else
+				catch(System.Exception e)
 				{
-					FailedConnection();
+					FailedConnection("Error: build target is Webplayer.");
 				}
 				
 				updateQuery = null;					
@@ -96,10 +103,13 @@ namespace ProBuilder2.EditorCommon
 				EditorUtility.DisplayDialog("ProBuilder Update Check", string.Format("You're up to date!\n\nInstalled Version: {0}\nLatest Version: {0}", version), "Okay");
 		}
 
-		static void FailedConnection()
+		static void FailedConnection(string error = null)
 		{
 			if(calledFromMenu)
-				EditorUtility.DisplayDialog("ProBuilder Update Check", string.Format("Failed to connect to server!"), "Okay");
+				EditorUtility.DisplayDialog(
+					"ProBuilder Update Check", 
+					error == null ? "Failed to connect to server!" : string.Format("Failed to connect to server!\n\n{0}", error.ToString()), 
+					"Okay");
 		}
 	}
 }
