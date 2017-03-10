@@ -412,11 +412,19 @@ namespace ProBuilder2.EditorCommon
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
 			int[] indices = new int[vc];
+			int cnt = points.Count;
+			float distance = 0f;
 
 			for(int i = 0; i < vc; i++)
 			{
-				ver[i] = points[i%(points.Count)];
-				uvs[i] = new Vector2( i / (float)(vc - 1f), 1f);
+				Vector3 a = points[i % cnt];
+				Vector3 b = points[i < 1 ? 0 : i - 1];
+
+				float d = Vector3.Distance(a, b);
+				distance += d;
+
+				ver[i] = points[i % cnt];
+				uvs[i] = new Vector2(distance, 1f);
 				indices[i] = i;
 			}
 
@@ -425,6 +433,7 @@ namespace ProBuilder2.EditorCommon
 			m_LineMesh.vertices = ver;
 			m_LineMesh.uv = uvs;
 			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
+			m_LineMaterial.SetFloat("_LineDistance", distance);
 		}
 
 		void OnEditLevelChange(int editLevel)
