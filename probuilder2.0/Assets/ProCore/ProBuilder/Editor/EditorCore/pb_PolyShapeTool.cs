@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
 using System.Collections.Generic;
+using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -41,8 +42,38 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
-			polygon.polyEditMode = (pb_PolyShape.PolyEditMode) EditorGUILayout.EnumPopup("Edit Mode", polygon.polyEditMode);
+			// polygon.polyEditMode = (pb_PolyShape.PolyEditMode) EditorGUILayout.EnumPopup("Edit Mode", polygon.polyEditMode);
 
+			switch(polygon.polyEditMode)
+			{
+				case pb_PolyShape.PolyEditMode.None:
+				{
+					if( GUILayout.Button("Edit Poly Shape") )
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+					break;
+				}
+
+				case pb_PolyShape.PolyEditMode.Path:
+				{
+					EditorGUILayout.HelpBox("\nClick To Add Points\n\nPress 'Enter' or 'Space' to Set Height\n", MessageType.Info);
+					break;
+				}
+
+				case pb_PolyShape.PolyEditMode.Height:
+				{
+					EditorGUILayout.HelpBox("\nMove Mouse to Set Height\n\nPress 'Enter' or 'Space' to Finalize\n", MessageType.Info);
+					break;
+				}
+
+				case pb_PolyShape.PolyEditMode.Edit:
+				{
+					if( GUILayout.Button("Editing Poly Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
+					break;
+				}
+
+			}
+			
 			if(EditorGUI.EndChangeCheck())
 			{
 				if(pb_Editor.instance != null)

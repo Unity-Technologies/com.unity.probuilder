@@ -153,6 +153,22 @@ namespace ProBuilder2.Interface
 			return on;
 		}
 
+		private static Dictionary<GUIStyle, GUIStyle> activeStyles = new Dictionary<GUIStyle, GUIStyle>();
+
+		public static GUIStyle GetActiveStyle(GUIStyle style)
+		{
+			GUIStyle activeStyle;
+
+			if( activeStyles.TryGetValue(style, out activeStyle) )
+				return activeStyle;
+
+			activeStyle = new GUIStyle(style);
+			activeStyle.normal.textColor = activeStyle.active.textColor;
+			activeStyle.normal.background = activeStyle.active.background;
+			activeStyles.Add(style, activeStyle);
+			return activeStyle;
+		}
+
 		/**
 		 * Draw a solid color block at rect.
 		 */
