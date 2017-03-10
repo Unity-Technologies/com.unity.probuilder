@@ -30,7 +30,7 @@ namespace ProBuilder2.EditorCommon
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
 
-			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+			if(pb_Editor.instance && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 		}
 
@@ -44,8 +44,6 @@ namespace ProBuilder2.EditorCommon
 
 		public override void OnInspectorGUI()
 		{
-			EditorGUI.BeginChangeCheck();
-
 			switch(polygon.polyEditMode)
 			{
 				case pb_PolyShape.PolyEditMode.None:
@@ -75,17 +73,18 @@ namespace ProBuilder2.EditorCommon
 				}
 
 			}
-			
+
+			EditorGUI.BeginChangeCheck();
+			float extrude = polygon.extrude;
+			extrude = EditorGUILayout.FloatField("Extrusion", extrude);
 			if(EditorGUI.EndChangeCheck())
 			{
-				if(pb_Editor.instance != null)
-					pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
-
-				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
-					Tools.current = Tool.None;
+				pbUndo.RecordObject(polygon, "Set Extrude Distance");
+				polygon.extrude = extrude;
+				UpdateMesh();
 			}
 
-			GUILayout.Label("selected : " + m_SelectedIndex);
+			// GUILayout.Label("selected : " + m_SelectedIndex);
 		}
 
 		void Update()
@@ -98,6 +97,18 @@ namespace ProBuilder2.EditorCommon
 			if(mode != polygon.polyEditMode)
 			{
 				polygon.polyEditMode = mode;
+
+				if(pb_Editor.instance != null)
+				{
+					if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+						pb_Editor.instance.PopEditLevel();
+					else
+						pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
+				}
+
+				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+					Tools.current = Tool.None;
+
 				UpdateMesh();
 			}
 			else
@@ -282,7 +293,7 @@ namespace ProBuilder2.EditorCommon
 
 				float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
-				if(distanceToVertex > 20f && distanceToLine < 40f)
+				if(distanceToVertex > 20f && distanceToLine < 20f)
 				{
 					Handles.color = Color.green;
 
@@ -439,6 +450,8 @@ namespace ProBuilder2.EditorCommon
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
 					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height )
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit )
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
 
 					break;
 				}
