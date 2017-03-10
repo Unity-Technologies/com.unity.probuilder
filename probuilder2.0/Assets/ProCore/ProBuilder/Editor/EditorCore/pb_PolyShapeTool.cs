@@ -10,6 +10,7 @@ namespace ProBuilder2.EditorCommon
 	public class pb_PolyShapeTool : Editor
 	{
 		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
+		private static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
 		private static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
 
 		[SerializeField] private Material m_LineMaterial;
@@ -279,21 +280,23 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+				
+				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
 
-				if(!pb_Handle_Utility.SceneViewInUse(evt))
+				Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
+				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+				Vector3 p = sceneInUse ? origin + (polygon.extrude * up) : pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
+
+				Handles.color = HANDLE_COLOR;
+				Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f);
+				Handles.color = HANDLE_GREEN;
+				Handles.DrawLine(origin, p);
+				Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
+				Handles.color = Color.white;
+				
+				
+				if( !sceneInUse )
 				{
-					Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
-					Vector3 p = pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
-
-					Handles.color = HANDLE_COLOR;
-					Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f);
-					Handles.color = Color.green;
-					Handles.DrawLine(origin, p);
-					Handles.color = Color.green;
-					Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
-					Handles.color = Color.white;
-					
 					float extrude = polygon.extrude;
 
 					polygon.extrude = Vector3.Distance(origin, p) * Mathf.Sign( Vector3.Dot(p-origin, up) );
@@ -304,6 +307,7 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
+				// vertex dots
 				for(int ii = 0; ii < len; ii++)
 				{
 					Vector3 point = trs.TransformPoint(polygon.points[ii]);
@@ -336,6 +340,7 @@ namespace ProBuilder2.EditorCommon
 
 				Handles.color = Color.white;
 
+				// height setting
 				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
 				{
 					center.x /= (float) len;
@@ -346,8 +351,11 @@ namespace ProBuilder2.EditorCommon
 
 					EditorGUI.BeginChangeCheck();
 
-					Handles.color = Color.green;
-					extrude = Handles.Slider(extrude, up);
+					Handles.color = HANDLE_COLOR;
+					Handles.DotCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f);
+					Handles.DrawLine(center, extrude);
+					Handles.color = HANDLE_GREEN;
+					extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, Handles.DotCap, 0f);
 					Handles.color = Color.white;
 
 					if(EditorGUI.EndChangeCheck())
