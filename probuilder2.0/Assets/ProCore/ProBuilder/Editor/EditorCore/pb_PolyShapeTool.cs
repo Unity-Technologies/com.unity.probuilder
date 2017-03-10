@@ -16,6 +16,7 @@ namespace ProBuilder2.EditorCommon
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 		private bool m_PlacingPoint = false;
 		private int m_SelectedIndex = -1;
+		// private HashSet<int> m_SelectedIndices = new HashSet<int>();
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -40,14 +41,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
-			polygon.isEditing = EditorGUILayout.Toggle("Edit Mode", polygon.isEditing);
+			polygon.polyEditMode = (pb_PolyShape.PolyEditMode) EditorGUILayout.EnumPopup("Edit Mode", polygon.polyEditMode);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				if(pb_Editor.instance != null)
 					pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 
-				if(polygon.isEditing)
+				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 					Tools.current = Tool.None;
 			}
 
@@ -59,6 +60,19 @@ namespace ProBuilder2.EditorCommon
 			m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
+		void SetPolyEditMode(pb_PolyShape.PolyEditMode mode)
+		{
+			if(mode != polygon.polyEditMode)
+			{
+				polygon.polyEditMode = mode;
+				UpdateMesh();
+			}
+			else
+			{
+				polygon.polyEditMode = mode;
+			}
+		}
+
 		/**
 		 *	Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
 		 */
@@ -66,7 +80,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			DrawPolyLine(polygon.points);
 
-			if(!polygon.Refresh())
+			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || !polygon.Refresh())
 			{
 				polygon.mesh.SetVertices(new Vector3[0]);
 				polygon.mesh.SetFaces(new pb_Face[0]);
@@ -91,11 +105,11 @@ namespace ProBuilder2.EditorCommon
 
 		void OnSceneGUI()
 		{
-			if(polygon == null || !polygon.isEditing || Tools.current != Tool.None)
+			if(polygon == null || (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None) || Tools.current != Tool.None)
 			{
-				if(polygon.isEditing)
+				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				{
-					polygon.isEditing = false;
+					polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 				}
 
 				return;
@@ -110,21 +124,7 @@ namespace ProBuilder2.EditorCommon
 			DoExistingPointsGUI();
 
 			if(evt.type == EventType.KeyDown)
-			{
-				switch(evt.keyCode)
-				{
-					case KeyCode.Backspace:
-					{
-						if(m_SelectedIndex > -1)
-						{
-							pbUndo.RecordObject(polygon, "Delete Selected Points");
-							polygon.points.RemoveAt(m_SelectedIndex);
-							UpdateMesh();
-						}
-						break;
-					}
-				}
-			}
+				HandleKeyEvent(evt.keyCode, evt.modifiers);
 
 			if( pb_Handle_Utility.SceneViewInUse(evt) )
 				return;
@@ -235,7 +235,7 @@ namespace ProBuilder2.EditorCommon
 
 			Handles.color = Color.white;
 
-			if(polygon.points.Count > 2)
+			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
 			{
 				center.x /= (float) len;
 				center.y /= (float) len;
@@ -251,6 +251,7 @@ namespace ProBuilder2.EditorCommon
 
 				if(EditorGUI.EndChangeCheck())
 				{
+					pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
 					polygon.extrude = Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center));
 					UpdateMesh(false);
 				}
@@ -263,6 +264,34 @@ namespace ProBuilder2.EditorCommon
 					(em & EventModifiers.Control) == EventModifiers.Control ||
 					(em & EventModifiers.Alt) == EventModifiers.Alt ||
 					(em & EventModifiers.Command) == EventModifiers.Command;
+		}
+
+		void HandleKeyEvent(KeyCode key, EventModifiers modifier)
+		{
+			switch(key)
+			{
+				case KeyCode.Space:
+				case KeyCode.Return:
+				{
+					if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path )
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height )
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+
+					break;
+				}
+
+				case KeyCode.Backspace:
+				{
+					if(m_SelectedIndex > -1)
+					{
+						pbUndo.RecordObject(polygon, "Delete Selected Points");
+						polygon.points.RemoveAt(m_SelectedIndex);
+						UpdateMesh();
+					}
+					break;
+				}
+			}
 		}
 
 		void DrawPolyLine(List<Vector3> points)
@@ -289,8 +318,8 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEditLevelChange(int editLevel)
 		{
-			if(polygon.isEditing && ((EditLevel)editLevel) != EditLevel.Plugin)
-				polygon.isEditing = false;
+			if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 		}
 
 		void UndoRedoPerformed()

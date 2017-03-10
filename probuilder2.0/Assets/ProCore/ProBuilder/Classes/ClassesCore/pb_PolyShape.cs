@@ -9,10 +9,20 @@ namespace ProBuilder2.Common
 	[DisallowMultipleComponent]
 	public class pb_PolyShape : MonoBehaviour
 	{
+		/**
+		 *	Describes the different input states this tool operates in.
+		 */
+		public enum PolyEditMode
+		{
+			None,
+			Path,
+			Height,
+			Edit
+		}
+
 		public List<Vector3> points = new List<Vector3>();
 		public float extrude = 0.1f;
-		public bool isEditing = false;
-
+		public PolyEditMode polyEditMode = PolyEditMode.None;
 		private pb_Object m_Mesh;
 
 		public pb_Object mesh
