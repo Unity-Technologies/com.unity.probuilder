@@ -434,6 +434,59 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
+		 *	Pick the closest point on a world space set of line segments.
+		 *
+		 *	Similar to UnityEditor.HandleUtility version except this also
+		 *	returns the index of the segment that best matched (source modified
+		 *	from UnityEngine.HandleUtility class).
+		 */
+		public static Vector3 ClosestPointToPolyLine(List<Vector3> vertices, out int index, out float distanceToLine, bool closeLoop = false, Transform trs = null)
+		{
+			distanceToLine = Mathf.Infinity;
+			float distance = 0f;
+
+			if(trs != null)
+				distanceToLine = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[0]), trs.TransformPoint(vertices[1]));
+			else
+				distanceToLine = HandleUtility.DistanceToLine(vertices[0], vertices[1]);
+
+			index = 0;
+			int count = vertices.Count;
+			
+			for (int i = 2; i < (closeLoop ? count + 1 : count); i++)
+			{
+				if(trs != null)
+					distance = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[i - 1]), trs.TransformPoint(vertices[i % count]));
+				else
+					distance = HandleUtility.DistanceToLine(vertices[i - 1], vertices[i % count]);
+
+				if (distance < distanceToLine)
+				{
+					distanceToLine = distance;
+					index = i - 1;
+				}
+			}
+
+			Vector3 point_a = trs != null ? trs.TransformPoint(vertices[index]) : vertices[index];
+			Vector3 point_b = trs != null ? trs.TransformPoint(vertices[(index + 1) % count]) : vertices[index + 1];
+			
+			index++;
+
+			Vector2 gui_a = Event.current.mousePosition - HandleUtility.WorldToGUIPoint(point_a);
+			Vector2 gui_b = HandleUtility.WorldToGUIPoint(point_b) - HandleUtility.WorldToGUIPoint(point_a);
+
+			float magnitude = gui_b.magnitude;
+			float travel = Vector3.Dot(gui_b, gui_a);
+
+			if (magnitude > 1E-06f)
+				travel /= magnitude * magnitude;
+
+			Vector3 p = Vector3.Lerp(point_a, point_b, Mathf.Clamp01(travel));
+
+			return trs != null ? trs.InverseTransformPoint(p) : p;
+		}
+
+		/**
 		 * Generate a line segment bounds representation.
 		 */
 		public static Mesh BoundsWireframe(Bounds bounds, Color color, ref Mesh m)

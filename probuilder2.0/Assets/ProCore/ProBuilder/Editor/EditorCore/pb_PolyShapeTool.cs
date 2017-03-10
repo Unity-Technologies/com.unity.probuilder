@@ -15,7 +15,7 @@ namespace ProBuilder2.EditorCommon
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 		private bool m_PlacingPoint = false;
-		private int m_SelectedIndex = -1;
+		[SerializeField] private int m_SelectedIndex = -2;
 		// private HashSet<int> m_SelectedIndices = new HashSet<int>();
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
@@ -140,30 +140,17 @@ namespace ProBuilder2.EditorCommon
 		{
 			EventType eventType = Event.current.type;
 
-			if( eventType == EventType.MouseDown )
-			{
-				float hitDistance = Mathf.Infinity;
-				m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
-
-				if( m_Plane.Raycast(ray, out hitDistance) )
-				{
-					m_PlacingPoint = true;
-					pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
-					polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
-					UpdateMesh();
-					SceneView.RepaintAll();
-				}
-			}
-			else if(m_PlacingPoint)
+			if(m_PlacingPoint)
 			{
 				if(	eventType == EventType.MouseDrag )
 				{
 					float hitDistance = Mathf.Infinity;
+
 					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
 
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
-						polygon.points[polygon.points.Count - 1] = polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance));
+						polygon.points[m_SelectedIndex] = polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance));
 						UpdateMesh();
 						SceneView.RepaintAll();
 					}
@@ -175,6 +162,60 @@ namespace ProBuilder2.EditorCommon
 					eventType == EventType.KeyUp )
 				{
 					m_PlacingPoint = false;
+					m_SelectedIndex = -1;
+					SceneView.RepaintAll();
+				}
+			}
+			else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
+			{
+				if( eventType == EventType.MouseDown )
+				{
+					float hitDistance = Mathf.Infinity;
+					m_Plane.SetNormalAndPosition(polygon.transform.up, polygon.transform.position);
+
+					if( m_Plane.Raycast(ray, out hitDistance) )
+					{
+						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
+						polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+						m_PlacingPoint = true;
+						m_SelectedIndex = polygon.points.Count - 1;
+						UpdateMesh();
+					}
+				}
+			}
+			else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
+			{
+				// point insertion
+
+				int index;
+				float distanceToLine;
+
+				Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(polygon.points, out index, out distanceToLine, true, polygon.transform);
+				Vector3 wp = polygon.transform.TransformPoint(p);
+
+				Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[index % polygon.points.Count]));
+				Vector2 gb = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[(index - 1)]));
+
+				Vector2 mouse = Event.current.mousePosition;
+
+				float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
+
+				if(distanceToVertex > 20f && distanceToLine < 40f)
+				{
+					Handles.color = Color.green;
+
+					Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f);
+
+					if( Event.current.type == EventType.MouseDown )
+					{
+						pbUndo.RecordObject(polygon, "Insert Point");
+						polygon.points.Insert(index, p);
+						m_SelectedIndex = index;
+						m_PlacingPoint = true;
+						UpdateMesh(true);
+					}
+
+					Handles.color = Color.white;
 				}
 			}
 		}
@@ -203,33 +244,36 @@ namespace ProBuilder2.EditorCommon
 				Repaint();
 			}
 			
-			for(int ii = 0; ii < len; ii++)
+			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Height)
 			{
-				Vector3 point = trs.TransformPoint(polygon.points[ii]);
-
-				center.x += point.x;
-				center.y += point.y;
-				center.z += point.z;
-
-				float size = HandleUtility.GetHandleSize(point) * .05f;
-
-				Handles.color = ii == m_SelectedIndex ? SELECTED_COLOR : HANDLE_COLOR;
-
-				EditorGUI.BeginChangeCheck();
-
-				point = Handles.Slider2D(point, up, right, forward, size, Handles.DotCap, Vector2.zero, true);
-
-				if(EditorGUI.EndChangeCheck())
+				for(int ii = 0; ii < len; ii++)
 				{
-					pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
-					polygon.points[ii] = trs.InverseTransformPoint(point);	
-					UpdateMesh(true);
-				}
+					Vector3 point = trs.TransformPoint(polygon.points[ii]);
 
-				if( !used && evt.type == EventType.Used )
-				{
-					used = true;
-					m_SelectedIndex = ii;
+					center.x += point.x;
+					center.y += point.y;
+					center.z += point.z;
+
+					float size = HandleUtility.GetHandleSize(point) * .05f;
+
+					Handles.color = ii == m_SelectedIndex ? SELECTED_COLOR : HANDLE_COLOR;
+
+					EditorGUI.BeginChangeCheck();
+
+					point = Handles.Slider2D(point, up, right, forward, size, Handles.DotCap, Vector2.zero, true);
+
+					if(EditorGUI.EndChangeCheck())
+					{
+						pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
+						polygon.points[ii] = trs.InverseTransformPoint(point);	
+						UpdateMesh(true);
+					}
+
+					if( !used && evt.type == EventType.Used )
+					{
+						used = true;
+						m_SelectedIndex = ii;
+					}
 				}
 			}
 
@@ -287,6 +331,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						pbUndo.RecordObject(polygon, "Delete Selected Points");
 						polygon.points.RemoveAt(m_SelectedIndex);
+						m_SelectedIndex = -1;
 						UpdateMesh();
 					}
 					break;
@@ -296,7 +341,7 @@ namespace ProBuilder2.EditorCommon
 
 		void DrawPolyLine(List<Vector3> points)
 		{
-			int vc = points.Count;
+			int vc = polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
 
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
