@@ -490,6 +490,20 @@ namespace ProBuilder2.EditorCommon
 					}
 					break;
 				}
+
+				case KeyCode.Escape:
+				{
+					if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
+					{
+						Undo.DestroyObjectImmediate(polygon.gameObject);						
+					}
+					else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
+					{
+						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
+					}
+
+					break;
+				}
 			}
 		}
 
