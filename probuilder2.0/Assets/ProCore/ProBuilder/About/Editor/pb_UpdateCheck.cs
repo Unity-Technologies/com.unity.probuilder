@@ -87,7 +87,7 @@ namespace ProBuilder2.EditorCommon
 				}
 				catch(System.Exception e)
 				{
-					FailedConnection("Error: build target is Webplayer.");
+					FailedConnection(string.Format("Error: Is build target is Webplayer?\n\n{0}", e.ToString()));
 				}
 				
 				updateQuery = null;					
