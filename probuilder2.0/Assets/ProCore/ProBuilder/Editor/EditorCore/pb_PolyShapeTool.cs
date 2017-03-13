@@ -563,8 +563,8 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEditLevelChange(int editLevel)
 		{
-			// if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
-			// 	polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+			if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 		}
 
 		void UndoRedoPerformed()
