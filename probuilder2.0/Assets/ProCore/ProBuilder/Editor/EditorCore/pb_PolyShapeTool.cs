@@ -84,7 +84,19 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
+				if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+				{
+					if(pb_Editor.instance != null)
+						pb_Editor.instance.ClearElementSelection();
+
+					pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
+					pbUndo.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+				}
+				else
+				{
+					pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
+				}
+
 				polygon.extrude = extrude;
 				polygon.flipNormals = flipNormals;
 				UpdateMesh();
@@ -592,14 +604,8 @@ namespace ProBuilder2.EditorCommon
 
 			m_LineMesh = new Mesh();
 
-			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
-			{
-
-			}
-			else
-			{
+			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				UpdateMesh(true);
-			}
 		}
 	}
 }
