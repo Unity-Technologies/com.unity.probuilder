@@ -17,7 +17,9 @@ namespace ProBuilder2.EditorCommon
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 		private bool m_PlacingPoint = false;
-		[SerializeField] private int m_SelectedIndex = -2;
+		private int m_SelectedIndex = -2;
+		private float m_DistanceFromHeightHandle;
+		private bool m_NextMouseUpAdvancesMode = false;
 		// private HashSet<int> m_SelectedIndices = new HashSet<int>();
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
@@ -114,6 +116,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(mode != polygon.polyEditMode)
 			{
+				// Clear the control always
+				GUIUtility.hotControl = 0;
+
 				// Entering edit mode after the shape has been finalized once before, which means
 				// possibly reverting manual changes.  Store undo state so that if this was
 				// not intentional user can revert.
@@ -265,6 +270,13 @@ namespace ProBuilder2.EditorCommon
 
 			Event evt = Event.current;
 
+			if(m_NextMouseUpAdvancesMode && evt.type == EventType.MouseUp)
+			{
+				evt.Use();
+				m_NextMouseUpAdvancesMode = false;
+				SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+			}
+
 			DoExistingPointsGUI();
 
 			if(evt.type == EventType.KeyDown)
@@ -341,38 +353,41 @@ namespace ProBuilder2.EditorCommon
 					return;
 				}
 
-				// point insertion
-				int index;
-				float distanceToLine;
-
-				Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(polygon.points, out index, out distanceToLine, true, polygon.transform);
-				Vector3 wp = polygon.transform.TransformPoint(p);
-
-				Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[index % polygon.points.Count]));
-				Vector2 gb = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[(index - 1)]));
-
-				Vector2 mouse = evt.mousePosition;
-
-				float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
-
-				if(distanceToVertex > 20f && distanceToLine < 20f)
+				if(m_DistanceFromHeightHandle > 20f)
 				{
-					Handles.color = Color.green;
+					// point insertion
+					int index;
+					float distanceToLine;
 
-					Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f);
+					Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(polygon.points, out index, out distanceToLine, true, polygon.transform);
+					Vector3 wp = polygon.transform.TransformPoint(p);
 
-					if( evt.type == EventType.MouseDown )
+					Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[index % polygon.points.Count]));
+					Vector2 gb = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[(index - 1)]));
+
+					Vector2 mouse = evt.mousePosition;
+
+					float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
+
+					if(distanceToVertex > 20f && distanceToLine < 20f)
 					{
-						evt.Use();
+						Handles.color = Color.green;
 
-						pbUndo.RecordObject(polygon, "Insert Point");
-						polygon.points.Insert(index, p);
-						m_SelectedIndex = index;
-						m_PlacingPoint = true;
-						UpdateMesh(true);
+						Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f);
+
+						if( evt.type == EventType.MouseDown )
+						{
+							evt.Use();
+
+							pbUndo.RecordObject(polygon, "Insert Point");
+							polygon.points.Insert(index, p);
+							m_SelectedIndex = index;
+							m_PlacingPoint = true;
+							UpdateMesh(true);
+						}
+
+						Handles.color = Color.white;
 					}
-
-					Handles.color = Color.white;
 				}
 			}
 		}
@@ -463,7 +478,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						if(ii == 0 && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
 						{
-							SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+							m_NextMouseUpAdvancesMode = true;
 							return;
 						}
 						else
@@ -484,6 +499,7 @@ namespace ProBuilder2.EditorCommon
 					center.z /= (float) len;
 
 					Vector3 extrude = center + (up * polygon.extrude);
+					m_DistanceFromHeightHandle = Vector2.Distance(HandleUtility.WorldToGUIPoint(extrude), evt.mousePosition);
 
 					EditorGUI.BeginChangeCheck();
 
