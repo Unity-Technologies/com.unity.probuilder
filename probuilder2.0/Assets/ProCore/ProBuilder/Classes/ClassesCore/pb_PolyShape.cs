@@ -25,6 +25,10 @@ namespace ProBuilder2.Common
 		public PolyEditMode polyEditMode = PolyEditMode.None;
 		private pb_Object m_Mesh;
 
+		void Reset()
+		{
+		}
+
 		public pb_Object mesh
 		{
 			get
@@ -78,8 +82,11 @@ namespace ProBuilder2.Common
 					m.faces[0].ReverseIndices();
 
 				m.DuplicateAndFlip(m.faces);
-
+				
 				m.Extrude(new pb_Face[] { m.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
+
+				if(extrude < 0f)
+					m.ReverseWindingOrder(m.faces);
 			}
 			else
 			{
