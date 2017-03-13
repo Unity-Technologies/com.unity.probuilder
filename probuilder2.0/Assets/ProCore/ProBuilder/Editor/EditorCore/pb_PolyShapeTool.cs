@@ -107,6 +107,9 @@ namespace ProBuilder2.EditorCommon
 				// not intentional user can revert.
 				if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None && polygon.points.Count > 2)
 				{
+					if(pb_Editor.instance != null)
+						pb_Editor.instance.ClearElementSelection();
+
 					pbUndo.RecordObject(polygon, "Edit Polygon Shape");
 					pbUndo.RecordObject(polygon.mesh, "Edit Polygon Shape");
 				}
@@ -586,9 +589,17 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_LineMesh != null)
 				GameObject.DestroyImmediate(m_LineMesh);
+
 			m_LineMesh = new Mesh();
 
-			UpdateMesh(true);
+			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+			{
+
+			}
+			else
+			{
+				UpdateMesh(true);
+			}
 		}
 	}
 }
