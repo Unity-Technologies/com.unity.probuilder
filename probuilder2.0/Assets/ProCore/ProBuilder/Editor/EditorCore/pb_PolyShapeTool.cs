@@ -185,8 +185,10 @@ namespace ProBuilder2.EditorCommon
 						m.triangles,
 						out hit))
 					{
+
 						polygon.transform.position = go.transform.TransformPoint(hit.point);
 						polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
+						polygon.isOnGrid = false;
 						return;
 					}
 				}

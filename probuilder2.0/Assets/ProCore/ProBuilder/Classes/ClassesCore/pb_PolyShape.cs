@@ -7,6 +7,7 @@ namespace ProBuilder2.Common
 {
 	[AddComponentMenu("")]
 	[DisallowMultipleComponent]
+	[ProGridsConditionalSnap]
 	public class pb_PolyShape : MonoBehaviour
 	{
 		/**
@@ -25,6 +26,7 @@ namespace ProBuilder2.Common
 		public PolyEditMode polyEditMode = PolyEditMode.None;
 		public bool flipNormals = false;
 		private pb_Object m_Mesh;
+		public bool isOnGrid = true;
 
 		void Reset()
 		{
@@ -101,6 +103,14 @@ namespace ProBuilder2.Common
 			m.Refresh();
 
 			return true;
+		}
+
+		/**
+		 *	ProGridsConditionalSnap tells pg_Editor to reflect this value.
+		 */
+		private bool IsSnapEnabled()
+		{
+			return isOnGrid;
 		}
 	}
 }
