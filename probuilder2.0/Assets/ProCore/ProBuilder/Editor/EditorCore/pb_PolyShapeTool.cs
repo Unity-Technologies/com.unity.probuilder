@@ -270,11 +270,16 @@ namespace ProBuilder2.EditorCommon
 
 			Event evt = Event.current;
 
+			// used when finishing a loop by clicking the first created point
 			if(m_NextMouseUpAdvancesMode && evt.type == EventType.MouseUp)
 			{
 				evt.Use();
 				m_NextMouseUpAdvancesMode = false;
-				SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+
+				if( SceneCameraIsAlignedWithPolyUp() )
+					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+				else
+					SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
 			}
 
 			DoExistingPointsGUI();
@@ -536,7 +541,12 @@ namespace ProBuilder2.EditorCommon
 				case KeyCode.Return:
 				{
 					if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path )
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+					{
+						if( SceneCameraIsAlignedWithPolyUp() )
+							SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+						else
+							SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+					}
 					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height )
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
 					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit )
@@ -605,6 +615,17 @@ namespace ProBuilder2.EditorCommon
 			m_LineMesh.uv = uvs;
 			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
 			m_LineMaterial.SetFloat("_LineDistance", distance);
+		}
+
+		/**
+		 *	Is the scene camera looking directly at the up vector of the current polygon?
+		 *	Prevents a situation where the height tool is rendered useless by coplanar
+		 *	ray tracking.
+		 */
+		bool SceneCameraIsAlignedWithPolyUp()
+		{
+			float dot = Vector3.Dot(SceneView.lastActiveSceneView.camera.transform.forward, polygon.transform.up);
+			return Mathf.Abs(Mathf.Abs(dot) - 1f) < .01f;
 		}
 
 		void OnEditLevelChange(int editLevel)
