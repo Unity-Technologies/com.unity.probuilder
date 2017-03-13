@@ -39,7 +39,8 @@ public class pb_UV
 		MiddleRight,
 		LowerLeft,
 		LowerCenter,
-		LowerRight
+		LowerRight,
+		None
 	}
 
 	/**
@@ -76,7 +77,7 @@ public class pb_UV
 		this.scale = new Vector2(1f, 1f);
 		this.offset = new Vector2(0f, 0f);
 		this.rotation = 0f;
-		this.anchor = Anchor.LowerLeft;
+		this.anchor = Anchor.None;
 	}
 
 	public pb_UV(pb_UV uvs)
@@ -92,30 +93,30 @@ public class pb_UV
 		this.anchor = uvs.anchor;
 	}
 
-	[System.Obsolete("Please use constructor with pb_UV.Anchor parameter.")]
-	public pb_UV(
-		// ProjectionAxis	 _projectionAxis,
-		bool 			_useWorldSpace,
-		bool 			_flipU,
-		bool 			_flipV,
-		bool 			_swapUV,
-		Fill 			_fill,
-		Vector2 		_scale,
-		Vector2 		_offset,
-		float 			_rotation,
-		Justify 		_justify
-		)
-	{
-		this.useWorldSpace		= _useWorldSpace;
-		this.flipU				= _flipU;
-		this.flipV				= _flipV;
-		this.swapUV				= _swapUV;
-		this.fill				= _fill;
-		this.scale				= _scale;
-		this.offset				= _offset;
-		this.rotation			= _rotation;
-		this.justify			= _justify;
-	}
+	// [System.Obsolete("Please use constructor with pb_UV.Anchor parameter.")]
+	// public pb_UV(
+	// 	// ProjectionAxis	 _projectionAxis,
+	// 	bool 			_useWorldSpace,
+	// 	bool 			_flipU,
+	// 	bool 			_flipV,
+	// 	bool 			_swapUV,
+	// 	Fill 			_fill,
+	// 	Vector2 		_scale,
+	// 	Vector2 		_offset,
+	// 	float 			_rotation,
+	// 	Justify 		_justify
+	// 	)
+	// {
+	// 	this.useWorldSpace		= _useWorldSpace;
+	// 	this.flipU				= _flipU;
+	// 	this.flipV				= _flipV;
+	// 	this.swapUV				= _swapUV;
+	// 	this.fill				= _fill;
+	// 	this.scale				= _scale;
+	// 	this.offset				= _offset;
+	// 	this.rotation			= _rotation;
+	// 	this.justify			= _justify;
+	// }
 
 	public void Reset()
 	{

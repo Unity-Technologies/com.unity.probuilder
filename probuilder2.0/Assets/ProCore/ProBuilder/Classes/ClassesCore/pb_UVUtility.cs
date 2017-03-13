@@ -41,7 +41,7 @@ public class pb_UVUtility
 				break;
 		}
 
-		if(!uvSettings.useWorldSpace)
+		if(!uvSettings.useWorldSpace && uvSettings.anchor != pb_UV.Anchor.None)
 			ApplyUVAnchor(uvs, indices, uvSettings.anchor);
 
 		// Apply transform last, so that fill and justify don't override it.
