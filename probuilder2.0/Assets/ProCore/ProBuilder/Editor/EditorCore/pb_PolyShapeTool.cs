@@ -148,32 +148,37 @@ namespace ProBuilder2.EditorCommon
 						out hit))
 					{
 						polygon.transform.position = go.transform.TransformPoint(hit.point);
-						polygon.transform.rotation = Quaternion.AngleAxis(0f, go.transform.TransformDirection(hit.normal));
-
+						polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
 						return;
 					}
 				}
 			}
 
 			// No mesh in the way, set the plane based on camera
-			ProjectionAxis pa = pb_Projection.VectorToProjectionAxis(-SceneView.lastActiveSceneView.camera.transform.forward);
-			float s = (pa == ProjectionAxis.X_Negative || pa == ProjectionAxis.Y_Negative || pa == ProjectionAxis.Z_Negative) ? -1f : 1f;
+			SceneView sceneView = SceneView.lastActiveSceneView;
+			float cam_x = Vector3.Dot(sceneView.camera.transform.forward, Vector3.right);
+			float cam_y = Vector3.Dot(sceneView.camera.transform.position - sceneView.pivot.normalized, Vector3.up);
+			float cam_z = Vector3.Dot(sceneView.camera.transform.forward, Vector3.forward);
 
-			switch(pa)
+			ProjectionAxis axis = ProjectionAxis.Y;
+
+			if( Mathf.Abs(cam_x) > .98f )
+				axis = ProjectionAxis.X;
+			else if ( Mathf.Abs(cam_z) > .98f )
+				axis = ProjectionAxis.Z;
+
+			switch(axis)
 			{
 				case ProjectionAxis.X:
-				case ProjectionAxis.X_Negative:
-					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, s * 90f));
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 90f * Mathf.Sign(cam_x)));
 					break;
 
 				case ProjectionAxis.Y:
-				case ProjectionAxis.Y_Negative:
-					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(cam_y < 0f ? 180f : 0f, 0f, 0f));
 					break;
 
 				case ProjectionAxis.Z:
-				case ProjectionAxis.Z_Negative:
-					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, s * 90f, s * 90f));
+					polygon.transform.rotation = Quaternion.Euler(new Vector3(-90f * Mathf.Sign(cam_z), 0f, 0f));
 					break;
 			}
 		}
@@ -183,6 +188,10 @@ namespace ProBuilder2.EditorCommon
 		 */
 		bool UpdateMesh(bool vertexCountChanged = true)
 		{
+			// If Undo is called immediately after creation this situation can occur
+			if(polygon == null)
+				return false;
+
 			DrawPolyLine(polygon.points);
 
 			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || !polygon.Refresh())
@@ -365,7 +374,9 @@ namespace ProBuilder2.EditorCommon
 			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
 			{
 				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
+				{
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+				}
 				
 				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
 
@@ -417,10 +428,19 @@ namespace ProBuilder2.EditorCommon
 						UpdateMesh(true);
 					}
 
+					// "clicked" a button
 					if( !used && evt.type == EventType.Used )
 					{
-						used = true;
-						m_SelectedIndex = ii;
+						if(ii == 0 && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
+						{
+							SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+							return;
+						}
+						else
+						{
+							used = true;
+							m_SelectedIndex = ii;
+						}
 					}
 				}
 
@@ -543,8 +563,8 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEditLevelChange(int editLevel)
 		{
-			if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
-				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+			// if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+			// 	polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 		}
 
 		void UndoRedoPerformed()
