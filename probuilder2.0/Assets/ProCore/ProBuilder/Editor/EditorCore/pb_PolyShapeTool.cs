@@ -20,6 +20,7 @@ namespace ProBuilder2.EditorCommon
 		private int m_SelectedIndex = -2;
 		private float m_DistanceFromHeightHandle;
 		private bool m_NextMouseUpAdvancesMode = false;
+		private List<GameObject> m_IgnorePick = new List<GameObject>();
 		// private HashSet<int> m_SelectedIndices = new HashSet<int>();
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
@@ -109,7 +110,8 @@ namespace ProBuilder2.EditorCommon
 
 		void Update()
 		{
-			m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
+			if(m_LineMaterial != null)
+				m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
 		void SetPolyEditMode(pb_PolyShape.PolyEditMode mode)
@@ -151,8 +153,6 @@ namespace ProBuilder2.EditorCommon
 				polygon.polyEditMode = mode;
 			}
 		}
-
-		private List<GameObject> m_IgnorePick = new List<GameObject>();
 
 		void SetPlane(Vector2 mousePosition)
 		{
@@ -201,6 +201,9 @@ namespace ProBuilder2.EditorCommon
 				axis = ProjectionAxis.X;
 			else if ( Mathf.Abs(cam_z) > .98f )
 				axis = ProjectionAxis.Z;
+				
+			if(pb_ProGrids_Interface.SnapEnabled())
+				polygon.transform.position = pbUtil.SnapValue(polygon.transform.position, pb_ProGrids_Interface.SnapValue());
 
 			switch(axis)
 			{
@@ -264,9 +267,11 @@ namespace ProBuilder2.EditorCommon
 				return;
 			}
 
-			m_LineMaterial.SetPass(0);
-
-			Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
+			if(m_LineMaterial != null)
+			{
+				m_LineMaterial.SetPass(0);
+				Graphics.DrawMeshNow(m_LineMesh, polygon.transform.localToWorldMatrix, 0);
+			}
 
 			Event evt = Event.current;
 
@@ -312,7 +317,7 @@ namespace ProBuilder2.EditorCommon
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
 						evt.Use();
-						polygon.points[m_SelectedIndex] = polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance));
+						polygon.points[m_SelectedIndex] = Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
 						UpdateMesh();
 						SceneView.RepaintAll();
 					}
@@ -343,7 +348,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						evt.Use();
 						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
-						polygon.points.Add(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+						polygon.points.Add(Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance))));
 						m_PlacingPoint = true;
 						m_SelectedIndex = polygon.points.Count - 1;
 						UpdateMesh();
@@ -429,27 +434,32 @@ namespace ProBuilder2.EditorCommon
 				}
 				
 				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
+				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
 				Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
-				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-				Vector3 p = sceneInUse ? origin + (polygon.extrude * up) : pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
+
+				float extrude = polygon.extrude;
+				
+				if(!sceneInUse)
+				{
+					Vector3 p = pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
+					extrude = Snap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+				}
+
+				Vector3 extrudePoint = origin + (extrude * up);
 
 				Handles.color = HANDLE_COLOR;
 				Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f);
 				Handles.color = HANDLE_GREEN;
-				Handles.DrawLine(origin, p);
-				Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
+				Handles.DrawLine(origin, extrudePoint);
+				Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f);
 				Handles.color = Color.white;
 				
 				
-				if( !sceneInUse )
+				if( !sceneInUse && polygon.extrude != extrude)
 				{
-					float extrude = polygon.extrude;
-
-					polygon.extrude = Vector3.Distance(origin, p) * Mathf.Sign( Vector3.Dot(p-origin, up) );
-
-					if(polygon.extrude != extrude)
-						UpdateMesh();
+					polygon.extrude = extrude;
+					UpdateMesh();
 				}
 			}
 			else
@@ -474,7 +484,7 @@ namespace ProBuilder2.EditorCommon
 					if(EditorGUI.EndChangeCheck())
 					{
 						pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
-						polygon.points[ii] = trs.InverseTransformPoint(point);	
+						polygon.points[ii] = Snap(trs.InverseTransformPoint(point));
 						UpdateMesh(true);
 					}
 
@@ -518,7 +528,7 @@ namespace ProBuilder2.EditorCommon
 					if(EditorGUI.EndChangeCheck())
 					{
 						pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
-						polygon.extrude = Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center));
+						polygon.extrude = Snap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
 						UpdateMesh(false);
 					}
 				}
@@ -615,6 +625,24 @@ namespace ProBuilder2.EditorCommon
 			m_LineMesh.uv = uvs;
 			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
 			m_LineMaterial.SetFloat("_LineDistance", distance);
+		}
+
+		Vector3 Snap(Vector3 point)
+		{
+			if(pb_ProGrids_Interface.SnapEnabled())
+			{
+				float snap = pb_ProGrids_Interface.SnapValue();
+				return pbUtil.SnapValue(point, new Vector3(snap, 0f, snap));
+			}
+
+			return point;
+		}
+
+		float Snap(float point)
+		{
+			if(pb_ProGrids_Interface.SnapEnabled())
+				return pbUtil.SnapValue(point, pb_ProGrids_Interface.SnapValue());
+			return point;
 		}
 
 		/**

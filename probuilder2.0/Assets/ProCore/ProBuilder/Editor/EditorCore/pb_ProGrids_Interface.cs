@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System;
+using System.Linq;
 using System.Reflection;
+using ProBuilder2.Common;
 
-namespace ProBuilder2.Common
+namespace ProBuilder2.EditorCommon
 {
 	/**
 	 * Acts as a bridge between ProGrids and ProBuilder.
@@ -22,6 +25,11 @@ namespace ProBuilder2.Common
 			Type type = editorAssembly.GetType("ProGrids.pg_Editor");
 			if( type == null ) type = editorAssembly.GetType("pg_Editor");
 			return type;
+		}
+
+		public static ScriptableObject GetProGridsInstance()
+		{
+			return Resources.FindObjectsOfTypeAll<ScriptableObject>().FirstOrDefault(x => x.GetType().ToString().Contains("pg_Editor"));
 		}
 
 		/**
@@ -71,6 +79,37 @@ namespace ProBuilder2.Common
 				return (float) type.GetMethod("SnapValue").Invoke(null, null);
 			else
 				return 0f;
+		}
+		
+		/**
+		 * Return the last known grid pivot point.
+		 */
+		public static bool GetPivot(out Vector3 pivot)
+		{
+			pivot = Vector3.zero;
+
+			if(!pb_ProGrids_Interface.SnapEnabled())
+				return false;
+
+			Type type = GetProGridsType();
+
+			if(type == null)
+				return false;
+
+			ScriptableObject pg = GetProGridsInstance();
+
+			if( pg != null )
+			{
+				object o = pb_Reflection.GetValue(pg, type, "pivot");
+
+				if(o != null)
+				{
+					pivot = (Vector3) o;
+					return true;
+				}
+			}
+
+			return false;
 		}
 		
 		/**

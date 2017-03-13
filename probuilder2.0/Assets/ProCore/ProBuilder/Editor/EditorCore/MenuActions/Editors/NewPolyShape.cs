@@ -48,6 +48,12 @@ namespace ProBuilder2.Actions
 			pbUndo.RegisterCreatedObjectUndo(go, "Create Poly Shape");
 			poly.polyEditMode = pb_PolyShape.PolyEditMode.Path;
 
+
+			Vector3 pivot;
+
+			if(pb_ProGrids_Interface.GetPivot(out pivot))
+				go.transform.position = pivot;
+			
 			return new pb_ActionResult(Status.Success, "Create Poly Shape");
 		}
 	}
