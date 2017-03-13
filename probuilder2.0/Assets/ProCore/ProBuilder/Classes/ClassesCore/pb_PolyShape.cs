@@ -23,6 +23,7 @@ namespace ProBuilder2.Common
 		public List<Vector3> points = new List<Vector3>();
 		public float extrude = 0.01f;
 		public PolyEditMode polyEditMode = PolyEditMode.None;
+		public bool flipNormals = false;
 		private pb_Object m_Mesh;
 
 		void Reset()
@@ -82,10 +83,10 @@ namespace ProBuilder2.Common
 					m.faces[0].ReverseIndices();
 
 				m.DuplicateAndFlip(m.faces);
-				
+
 				m.Extrude(new pb_Face[] { m.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
 
-				if(extrude < 0f)
+				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
 					m.ReverseWindingOrder(m.faces);
 			}
 			else

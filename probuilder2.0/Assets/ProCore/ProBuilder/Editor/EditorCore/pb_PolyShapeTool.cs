@@ -75,12 +75,18 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUI.BeginChangeCheck();
+			
 			float extrude = polygon.extrude;
 			extrude = EditorGUILayout.FloatField("Extrusion", extrude);
+
+			bool flipNormals = polygon.flipNormals;
+			flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
+
 			if(EditorGUI.EndChangeCheck())
 			{
-				pbUndo.RecordObject(polygon, "Set Extrude Distance");
+				pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
 				polygon.extrude = extrude;
+				polygon.flipNormals = flipNormals;
 				UpdateMesh();
 			}
 
@@ -96,6 +102,15 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(mode != polygon.polyEditMode)
 			{
+				// Entering edit mode after the shape has been finalized once before, which means
+				// possibly reverting manual changes.  Store undo state so that if this was
+				// not intentional user can revert.
+				if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None && polygon.points.Count > 2)
+				{
+					pbUndo.RecordObject(polygon, "Edit Polygon Shape");
+					pbUndo.RecordObject(polygon.mesh, "Edit Polygon Shape");
+				}
+
 				polygon.polyEditMode = mode;
 
 				if(pb_Editor.instance != null)
@@ -572,6 +587,7 @@ namespace ProBuilder2.EditorCommon
 			if(m_LineMesh != null)
 				GameObject.DestroyImmediate(m_LineMesh);
 			m_LineMesh = new Mesh();
+
 			UpdateMesh(true);
 		}
 	}
