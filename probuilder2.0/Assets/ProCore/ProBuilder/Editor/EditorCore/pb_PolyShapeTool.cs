@@ -53,6 +53,9 @@ namespace ProBuilder2.EditorCommon
 				{
 					if( GUILayout.Button("Edit Poly Shape") )
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+
+					EditorGUILayout.HelpBox("Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.", MessageType.Warning);
+
 					break;
 				}
 
