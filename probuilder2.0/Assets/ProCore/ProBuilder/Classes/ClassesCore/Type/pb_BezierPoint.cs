@@ -21,12 +21,14 @@ namespace ProBuilder2.Common
 		public Vector3 position;
 		public Vector3 tangentIn;
 		public Vector3 tangentOut;
+		public Quaternion rotation;
 
-		public pb_BezierPoint(Vector3 position, Vector3 tangentIn, Vector3 tangentOut)
+		public pb_BezierPoint(Vector3 position, Vector3 tangentIn, Vector3 tangentOut, Quaternion rotation = default(Quaternion))
 		{
 			this.position = position;
 			this.tangentIn = tangentIn;
 			this.tangentOut = tangentOut;
+			this.rotation = rotation;
 		}
 
 		public void EnforceTangentMode(pb_BezierTangentDirection master, pb_BezierTangentMode mode)

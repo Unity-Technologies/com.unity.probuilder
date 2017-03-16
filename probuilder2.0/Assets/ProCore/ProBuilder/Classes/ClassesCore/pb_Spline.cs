@@ -9,7 +9,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Create a new pb_Object by extruding along a bezier spline.
 		 */
-		public static pb_Object Extrude(IList<pb_BezierPoint> points, float radius = .5f, int columns = 32, int rows = 16, bool closeLoop = false)
+		public static pb_Object Extrude(IList<pb_BezierPoint> points,
+										float radius = .5f,
+										int columns = 32,
+										int rows = 16,
+										bool closeLoop = false)
 		{
 			pb_Object pb = null;
 			Extrude(points, radius, columns, rows, closeLoop, ref pb);
@@ -19,27 +23,46 @@ namespace ProBuilder2.Common
 		/**
 		 *	Update a pb_Object with new geometry from a bezier spline.
 		 */
-		public static void Extrude(IList<pb_BezierPoint> bezierPoints, float radius, int columns, int rows, bool closeLoop, ref pb_Object target)
+		public static void Extrude(	IList<pb_BezierPoint> bezierPoints,
+									float radius,
+									int columns,
+									int rows,
+									bool closeLoop,
+									ref pb_Object target)
 		{
 			int c = bezierPoints.Count;
 			int cols = columns;
 			List<Vector3> positions = new List<Vector3>(cols * c);
+			List<Quaternion> rotations = new List<Quaternion>(cols * c);
 
-			for( int i = 0; i < (closeLoop ? c : c - 1); i++ )
+			int keyframes = (closeLoop ? c : c - 1);
+
+			for( int i = 0; i < keyframes; i++)
 			{
-				for(int n = 0; n < ((!closeLoop && i >= c - 2) ? cols + 1 : cols); n++)
+				int segments_per_keyframe = ((!closeLoop && i >= c - 2) ? cols + 1 : cols);
+
+				for(int n = 0; n < segments_per_keyframe; n++)
 				{
 					float s = cols;
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
+					rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );
 				}
 			}
 
-			Extrude(positions, radius, rows, closeLoop, ref target);
+			Extrude(positions, radius, rows, closeLoop, ref target, rotations);
 		}
 
-		public static void Extrude(IList<Vector3> points, float radius, int rows, bool closeLoop, ref pb_Object target)
+		/**
+		 *	Set mesh geometry by extruding along a set of points.
+		 */
+		public static void Extrude(	IList<Vector3> points,
+									float radius,
+									int rows,
+									bool closeLoop,
+									ref pb_Object target,
+									IList<Quaternion> pointRotations = null)
 		{
-			if(points.Count < 2)
+			if(points == null || points.Count < 2)
 				return;
 
 			int cnt = points.Count;
@@ -47,18 +70,26 @@ namespace ProBuilder2.Common
 			int rowsPlus1Times2 = rowsPlus1 * 2;
 			int vertexCount = ((closeLoop ? cnt : cnt - 1) * 2) * rowsPlus1Times2;
 			bool vertexCountsMatch = vertexCount == (target == null ? 0 : target.vertexCount);
+			bool hasPointRotations = pointRotations != null && pointRotations.Count == points.Count;
 
 			Vector3[] positions = new Vector3[vertexCount];
 			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rowsPlus1];
 
 			int triangleIndex = 0, faceIndex = 0, vertexIndex = 0;
+			int segmentCount = (closeLoop ? cnt : cnt - 1);
 
-			for(int i = 0; i < (closeLoop ? cnt : cnt - 1); i++)
+			for(int i = 0; i < segmentCount; i++)
 			{
 				float secant_a, secant_b;
 
  				Quaternion rotation_a = GetRingRotation(points, i, closeLoop, out secant_a);
  				Quaternion rotation_b = GetRingRotation(points, (i+1)%cnt, closeLoop, out secant_b);
+
+ 				if(hasPointRotations)
+ 				{
+ 					rotation_a = rotation_a * pointRotations[i];
+ 					rotation_b = rotation_b * pointRotations[(i+1)%cnt];
+ 				}
 
 				Vector3[] ringA = VertexRing(rotation_a, points[i], radius, rowsPlus1);
 				Vector3[] ringB = VertexRing(rotation_b, points[(i+1)%cnt], radius, rowsPlus1);

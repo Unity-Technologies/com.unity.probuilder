@@ -11,8 +11,8 @@ namespace ProBuilder2.Common
 		public List<pb_BezierPoint> m_Points = new List<pb_BezierPoint>();
 		public bool m_CloseLoop = false;
 		public float m_Radius = .5f;
-		public int m_Rows = 24;
-		public int m_Columns = 32;
+		public int m_Rows = 8;
+		public int m_Columns = 16;
 
 		private pb_Object m_Mesh;
 

@@ -11,6 +11,8 @@ namespace ProBuilder2.EditorCommon
 	{
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
 
+		private const float HANDLE_SIZE = .05f;
+
 		private static Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 		private static Vector3 Vector3_Forward = new Vector3(0f, 0f, 1f);
 		private static Vector3 Vector3_Backward = new Vector3(0f, 0f, -1f);
@@ -31,7 +33,6 @@ namespace ProBuilder2.EditorCommon
 				{
 					m_Target.mesh = m_Target.gameObject.AddComponent<pb_Object>();
 					pb_EditorUtility.InitObject(m_Target.mesh);
-
 				}
 
 				return m_Target.mesh;
@@ -191,6 +192,10 @@ namespace ProBuilder2.EditorCommon
 			GUI.Label(r, "\u2022");
 			GUI.color = Color.white;
 
+			Vector3 euler = point.rotation.eulerAngles;
+			euler = EditorGUILayout.Vector3Field("Rotation", euler);
+			point.rotation = Quaternion.Euler(euler);
+
 			EditorGUIUtility.labelWidth = labelWidth;
 			EditorGUIUtility.wideMode = wasInWideMode;
 
@@ -288,12 +293,16 @@ namespace ProBuilder2.EditorCommon
 		void OnSceneGUI()
 		{
 			Event e = Event.current;
+			bool eventHasBeenUsed = false;
 
 			if(m_IsMoving)
 			{
 				if(	e.type == EventType.Ignore ||
 					e.type == EventType.MouseUp )
+				{
+					eventHasBeenUsed = true;
 					OnFinishVertexModification();
+				}
 			}
 
 			if(e.type == EventType.KeyDown)
@@ -306,41 +315,37 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			int c = m_Points.Count;
+			int count = m_Points.Count;
 
 			Matrix4x4 handleMatrix = Handles.matrix;
 			Handles.matrix = m_Target.transform.localToWorldMatrix;
 
 			EditorGUI.BeginChangeCheck();
 
-			for(int index = 0; index < c; index++)
+			for(int index = 0; index < count; index++)
 			{
-				if(index < c -1 || m_CloseLoop)
+				if(index < count -1 || m_CloseLoop)
 				{
 					Handles.DrawBezier(	m_Points[index].position,
-										m_Points[(index+1)%c].position,
+										m_Points[(index+1)%count].position,
 										m_Points[index].tangentOut,
-										m_Points[(index+1)%c].tangentIn,
+										m_Points[(index+1)%count].tangentIn,
 										Color.green,
 										EditorGUIUtility.whiteTexture,
 										1f);
 				}
 
-				// Handles.BeginGUI();
-				// Handles.Label(m_Points[index].position, ("index: " + index));
-				// Handles.EndGUI();
-
-				pb_BezierPoint point = m_Points[index];
-
+				// If the index is selected show the full transform gizmo, otherwise use free move handles
 				if(m_currentHandle == index)
 				{
+					pb_BezierPoint point = m_Points[index];
+
 					if(!m_currentHandle.isTangent)
 					{
 						Vector3 prev = point.position;
 						prev = Handles.PositionHandle(prev, Quaternion.identity);
 						if(!pb_Math.Approx3(prev, point.position))
 						{
-
 							if(!m_IsMoving)
 							{
 								if(e.shift)
@@ -358,6 +363,14 @@ namespace ProBuilder2.EditorCommon
 							point.tangentIn += dir;
 							point.tangentOut += dir;
 						}
+
+						// rotation
+						Vector3 rd = (m_Points[(index + 1) % count].position - m_Points[index].position).normalized;
+						Quaternion look = Quaternion.LookRotation(rd);
+						Matrix4x4 pm = Handles.matrix;
+						Handles.matrix = pm * Matrix4x4.TRS(point.position, look, Vector3.one);
+						point.rotation = Handles.Disc(point.rotation, Vector3.zero, Vector3.forward, HandleUtility.GetHandleSize(point.position), false, 0f);
+						Handles.matrix = pm;
 					}
 					else
 					{
@@ -378,7 +391,7 @@ namespace ProBuilder2.EditorCommon
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 						}
 
-						if(m_currentHandle.tangent == pb_BezierTangentDirection.Out && (m_CloseLoop || index < c - 1))
+						if(m_currentHandle.tangent == pb_BezierTangentDirection.Out && (m_CloseLoop || index < count - 1))
 						{
 							EditorGUI.BeginChangeCheck();
 							point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
@@ -396,49 +409,111 @@ namespace ProBuilder2.EditorCommon
 
 					m_Points[index] = point;
 				}
+			}
 
-				// buttons
+			EventType eventType = e.type;
+
+			if(!eventHasBeenUsed)
+				eventHasBeenUsed = eventType == EventType.Used;
+
+			for(int index = 0; index < count; index++)
+			{
+				Vector3 prev;
+				pb_BezierPoint point = m_Points[index];
+
+				// Position Handle
+				float size = HandleUtility.GetHandleSize(point.position) * HANDLE_SIZE;
+				Handles.color = bezierPositionHandleColor;
+
+				if(m_currentHandle == index && !m_currentHandle.isTangent)
 				{
-					float size = HandleUtility.GetHandleSize(m_Points[index].position) * .05f;
-
-					Handles.color = bezierPositionHandleColor;
-
-					if (pb_Handles.ButtonDotCap(m_Points[index].position, Quaternion.identity, size, size * 2f))
+					Handles.DotCap(0, point.position, Quaternion.identity, size);
+				}
+				else
+				{
+					prev = point.position;
+					prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+					if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 					{
+						eventHasBeenUsed = true;
 						m_currentHandle = (BezierHandle) index;
 						Repaint();
 					}
-
-					Handles.color = bezierTangentHandleColor;
-
-					if(m_CloseLoop || index > 0)
+					else if(!pb_Math.Approx3(prev, point.position))
 					{
-						size = HandleUtility.GetHandleSize(m_Points[index].tangentIn) * .05f;
+						if(!m_IsMoving)
+							OnBeginVertexModification();
 
-						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
+						point.SetPosition(prev);
+					}
+				}
 
-						if (pb_Handles.ButtonDotCap(m_Points[index].tangentIn, Quaternion.identity, size, size * 2f))
+				// Tangent handles
+				Handles.color = bezierTangentHandleColor;
+
+				// Tangent In Handle
+				if(m_CloseLoop || index > 0)
+				{
+					size = HandleUtility.GetHandleSize(point.tangentIn) * HANDLE_SIZE;
+					Handles.DrawLine(point.position, point.tangentIn);
+
+					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.In)
+					{
+						Handles.DotCap(0, point.tangentIn, Quaternion.identity, size);
+					}
+					else
+					{
+						prev = point.tangentIn;
+						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+
+						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
+							eventHasBeenUsed = true;
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
 							Repaint();
 						}
-					}
-
-					if(m_CloseLoop || index < c - 1)
-					{
-						size = HandleUtility.GetHandleSize(m_Points[index].tangentOut) * .05f;
-
-						Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
-
-						if (pb_Handles.ButtonDotCap(m_Points[index].tangentOut, Quaternion.identity, size, size * 2f))
+						else if(!pb_Math.Approx3(prev, point.tangentIn))
 						{
+							if(!m_IsMoving)
+								OnBeginVertexModification();
+							point.tangentIn = prev;
+							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
+						}
+					}
+				}
+
+				// Tangent Out
+				if(m_CloseLoop || index < count - 1)
+				{
+					size = HandleUtility.GetHandleSize(point.tangentOut) * HANDLE_SIZE;
+					Handles.DrawLine(point.position, point.tangentOut);
+
+					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.Out)
+					{
+						Handles.DotCap(0, point.tangentOut, Quaternion.identity, size);
+					}
+					else
+					{
+						prev = point.tangentOut;
+						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+
+						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
+						{
+							eventHasBeenUsed = true;
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
 							Repaint();
 						}
+						else if(!pb_Math.Approx3(prev, point.tangentOut))
+						{
+							if(!m_IsMoving)
+								OnBeginVertexModification();
+							point.tangentOut = prev;
+							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
+						}
 					}
-
-					Handles.color = Color.white;
 				}
+
+				m_Points[index] = point;
 			}
 
 			Handles.matrix = handleMatrix;
@@ -451,7 +526,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			UpdateMesh(true);
 
-			if(m_CurrentObject)
+			if(m_Target && m_CurrentObject)
 			{
 				m_CurrentObject.ToMesh();
 				m_CurrentObject.Refresh();
