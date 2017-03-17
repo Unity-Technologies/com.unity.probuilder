@@ -23,6 +23,9 @@ namespace ProBuilder2.EditorCommon
 			ti.linearTexture = true;
 #elif UNITY_5_5
 			ti.sRGBTexture = false;
+#else
+			ti.sRGBTexture = false;
+			ti.alphaSource = TextureImporterAlphaSource.FromInput;//.FromGrayScale;
 #endif
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
