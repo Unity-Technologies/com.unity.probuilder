@@ -345,6 +345,22 @@ namespace ProBuilder2.EditorCommon
 			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
 		}
 
+		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
+		{
+			pb_Entity ent = pb.GetComponent<pb_Entity>();
+
+			if(ent != null && ent.entityType == EntityType.Detail)
+			{
+				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
+				
+				if( isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0 )
+				{
+					flags ^= StaticEditorFlags.LightmapStatic;
+					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
+				}
+			}
+		}
+
 		private static void SetIsTrigger(bool val, GameObject target)
 		{
 			Collider[] colliders = pbUtil.GetComponents<Collider>(target);

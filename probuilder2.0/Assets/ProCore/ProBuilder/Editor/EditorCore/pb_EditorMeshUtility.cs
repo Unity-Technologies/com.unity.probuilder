@@ -26,6 +26,8 @@ namespace ProBuilder2.EditorCommon
 			if(mesh == null || mesh.vertexCount < 1)
 				return;
 
+			bool hasUv2 = false;
+
 			// if generating UV2, the process is to manually split the mesh into individual triangles,
 			// generate uv2, then re-assemble with vertex collapsing where possible.
 			// if not generating uv2, just collapse vertices.
@@ -51,6 +53,8 @@ namespace ProBuilder2.EditorCommon
 						vertices[i].uv2 = uv2[i];
 						vertices[i].hasUv2 = true;
 					}
+
+					hasUv2 = true;
 				}
 				else
 				{
@@ -63,6 +67,8 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_MeshUtility.CollapseSharedVertices(mesh);
 			}
+
+			pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
 				TryCacheMesh(InObject);
