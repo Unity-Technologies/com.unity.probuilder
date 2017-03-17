@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
@@ -90,6 +91,28 @@ namespace ProBuilder2.Common
 					3f * oneMinusT * oneMinusT * t * a.tangentOut +
 					3f * oneMinusT * t * t * b.tangentIn +
 					t * t * t * b.position;
+		}
+
+		public static Vector3 GetLookDirection(IList<pb_BezierPoint> points, int index, int previous, int next)
+		{
+			if(previous < 0)
+			{
+				return (points[index].position - QuadraticPosition(points[index], points[next], .1f)).normalized;
+			}
+			else if(next < 0)
+			{
+				return (points[index].position - QuadraticPosition(points[previous], points[index], .1f)).normalized;
+			}
+			else if(next > -1 && previous > -1)
+			{
+				Vector3 a = (points[index].position - QuadraticPosition(points[previous], points[index], .1f)).normalized;
+				Vector3 b = (QuadraticPosition(points[index], points[next], .1f) - points[index].position).normalized;
+				return ((a + b) * .5f).normalized;
+			}
+			else
+			{
+				return Vector3.forward;
+			}
 		}
 	}
 }

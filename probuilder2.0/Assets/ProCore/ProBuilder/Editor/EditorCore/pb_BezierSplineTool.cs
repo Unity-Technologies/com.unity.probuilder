@@ -365,11 +365,15 @@ namespace ProBuilder2.EditorCommon
 						}
 
 						// rotation
-						Vector3 rd = (m_Points[(index + 1) % count].position - m_Points[index].position).normalized;
+						int prev_index = index > 0 ? index - 1 : (m_CloseLoop ? count - 1 : -1);
+						int next_index = index < count - 1 ? index + 1: (m_CloseLoop ? 0 : -1);
+						Vector3 rd = pb_BezierPoint.GetLookDirection(m_Points, index, prev_index, next_index);
+
 						Quaternion look = Quaternion.LookRotation(rd);
+						float size = HandleUtility.GetHandleSize(point.position);
 						Matrix4x4 pm = Handles.matrix;
 						Handles.matrix = pm * Matrix4x4.TRS(point.position, look, Vector3.one);
-						point.rotation = Handles.Disc(point.rotation, Vector3.zero, Vector3.forward, HandleUtility.GetHandleSize(point.position), false, 0f);
+						point.rotation = Handles.Disc(point.rotation, Vector3.zero, Vector3.forward, size, false, 0f);
 						Handles.matrix = pm;
 					}
 					else
