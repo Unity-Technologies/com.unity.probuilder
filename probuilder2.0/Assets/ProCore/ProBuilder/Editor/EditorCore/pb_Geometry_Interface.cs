@@ -1173,6 +1173,7 @@ namespace ProBuilder2.EditorCommon
 			pb.FreezeScaleTransform();
 			pb.ToMesh();
 			pb.Refresh();
+			pb.Optimize();
 		}
 	#endregion
 	}
