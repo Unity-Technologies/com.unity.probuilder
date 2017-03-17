@@ -555,6 +555,8 @@ namespace ProBuilder2.EditorCommon
 			else
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);
+
+			pb.Optimize();
 		}
 
 		/**
