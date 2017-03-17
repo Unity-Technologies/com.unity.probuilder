@@ -101,11 +101,11 @@ namespace ProBuilder2.Common
 			}
 			else if(next < 0)
 			{
-				return (points[index].position - QuadraticPosition(points[previous], points[index], .1f)).normalized;
+				return (QuadraticPosition(points[index], points[previous], .1f) - points[index].position).normalized;
 			}
 			else if(next > -1 && previous > -1)
 			{
-				Vector3 a = (points[index].position - QuadraticPosition(points[previous], points[index], .1f)).normalized;
+				Vector3 a = (QuadraticPosition(points[index], points[previous], .1f) - points[index].position).normalized;
 				Vector3 b = (QuadraticPosition(points[index], points[next], .1f) - points[index].position).normalized;
 				return ((a + b) * .5f).normalized;
 			}
