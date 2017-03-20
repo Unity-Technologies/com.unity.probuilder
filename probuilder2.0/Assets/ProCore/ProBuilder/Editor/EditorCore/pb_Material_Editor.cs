@@ -65,61 +65,61 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial0() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[0]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[0]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial1() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[1]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[1]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial2() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[2]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[2]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 4 &4", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial3() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[3]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[3]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 5 &5", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial4() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[4]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[4]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 6 &6", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial5() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[5]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[5]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 7 &7", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial6() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[6]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[6]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 8 &8", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial7() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[7]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[7]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 9 &9", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial8() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[8]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[8]);
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 10 &0", false, pb_Constant.MENU_MATERIAL_COLORS)]
 		public static void ApplyMaterial9() {
 			Material[] mats;
-			if( LoadMaterialPalette(out mats) ) ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), mats[9]);
+			if( LoadMaterialPalette(out mats) ) ApplyMaterial(GetSelection(), mats[9]);
 		}
 
 		void OnEnable()
@@ -235,7 +235,7 @@ namespace ProBuilder2.EditorCommon
 					GUILayout.Space(2);
 
 					if(GUILayout.Button("Apply (Ctrl+Shift+Click)"))
-						ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), queuedMaterial);
+						ApplyMaterial(GetSelection(), queuedMaterial);
 
 					GUI.enabled = editor != null && editor.selectedFaceCount > 0;
 					if(GUILayout.Button("Match Selection"))
@@ -285,12 +285,12 @@ namespace ProBuilder2.EditorCommon
 						if(i < 10)
 						{
 							if(GUILayout.Button("Alt + " + (i == 9 ? 0 : (i+1)).ToString(), EditorStyles.miniButton, GUILayout.MaxWidth(58)))
-								ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), materials[i]);
+								ApplyMaterial(GetSelection(), materials[i]);
 						}
 						else
 						{
 							if(GUILayout.Button("Apply", EditorStyles.miniButtonLeft, GUILayout.MaxWidth(44)))
-								ApplyMaterial(pbUtil.GetComponents<pb_Object>(Selection.transforms), materials[i]);
+								ApplyMaterial(GetSelection(), materials[i]);
 
 							GUI.backgroundColor = Color.red;
 							if(GUILayout.Button("", EditorStyles.miniButtonRight, GUILayout.MaxWidth(14)))
@@ -323,8 +323,14 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.EndScrollView();
 		}
 
+		static pb_Object[] GetSelection()
+		{
+			return Selection.gameObjects.Select(x => x.GetComponent<pb_Object>()).Where(y => y != null).ToArray();
+		}
+
 		/**
 		 * Applies the currently queued material to the selected face and eats the event.
+
 		 */
 		public bool ClickShortcutCheck(EventModifiers em, pb_Object pb, pb_Face quad)
 		{
