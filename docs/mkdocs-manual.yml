@@ -28,6 +28,12 @@ pages:
   - Auto UV Actions: texturing/auto-uvs-actions.md
   - Manual UV Actions: texturing/manual-uvs-actions.md
 
+- Experimental: 
+  - Overview: experimental/experimental-overview.md
+  - Poly Shape: experimental/polyshape.md
+  - Bezier Shape: experimental/beziershape.md
+  - Boolean Ops: experimental/booleanops.md
+
 - Preferences: preferences/preferences.md
 - Troubleshooting: troubleshooting/faq.md
 - Credits: credits.md

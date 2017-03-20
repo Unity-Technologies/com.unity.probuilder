@@ -33,6 +33,12 @@ pages:
 
 - Menu Actions: menu-actions.md
 
+- Experimental: 
+  - Overview: experimental/experimental-overview.md
+  - Poly Shape: experimental/polyshape.md
+  - Bezier Shape: experimental/beziershape.md
+  - Boolean Ops: experimental/booleanops.md
+
 - Preferences: preferences/preferences.md
 
 - Troubleshooting:
