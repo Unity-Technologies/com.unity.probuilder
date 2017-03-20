@@ -33,13 +33,13 @@ namespace ProBuilder2.Common
 			List<Vector4> uv3 	= new List<Vector4>();
 			List<Vector4> uv4 	= new List<Vector4>();
 
-#if !UNITY_4_7 && !UNITY_5_0
+			#if !UNITY_4_7 && !UNITY_5_0
 			m.GetUVs(0, uv0);
 			m.GetUVs(2, uv3);
 			m.GetUVs(3, uv4);
-#else
+			#else
 			uv0 = m.uv.Cast<Vector4>().ToList();
-#endif
+			#endif
 
 			if( positions != null && positions.Count() != m.vertexCount)
 				positions = null;
@@ -286,6 +286,118 @@ namespace ProBuilder2.Common
 			destination.tangents = tan;
 			destination.normals = n;
 			destination.colors32 = c;
+		}
+
+		/**
+		 *	Calculate mesh normals.
+		 */
+		public static Vector3[] GenerateNormals(pb_Object pb)
+		{
+			int vertexCount = pb.vertexCount;
+			Vector3[] perTriangleNormal = new Vector3[vertexCount];
+			Vector3[] vertices = pb.vertices;
+			Vector3[] normals = new Vector3[vertexCount];
+			int[] perTriangleAvg = new int[vertexCount];
+			pb_Face[] faces = pb.faces;
+
+			for(int find = 0; find < faces.Length; find++)
+			{
+				int[] indices = faces[find].indices;
+
+				for(int tri = 0; tri < indices.Length; tri += 3)
+				{
+					int a = indices[tri], b = indices[tri + 1], c = indices[tri + 2];
+
+					Vector3 cross = pb_Math.Normal(vertices[a], vertices[b], vertices[c]);
+
+					perTriangleNormal[a].x += cross.x;
+					perTriangleNormal[b].x += cross.x;
+					perTriangleNormal[c].x += cross.x;
+
+					perTriangleNormal[a].y += cross.y;
+					perTriangleNormal[b].y += cross.y;
+					perTriangleNormal[c].y += cross.y;
+
+					perTriangleNormal[a].z += cross.z;
+					perTriangleNormal[b].z += cross.z;
+					perTriangleNormal[c].z += cross.z;
+
+					perTriangleAvg[a]++;
+					perTriangleAvg[b]++;
+					perTriangleAvg[c]++;
+				}
+			}
+
+			for(int i = 0; i < vertexCount; i++)
+			{
+				normals[i].x = perTriangleNormal[i].x * (float) perTriangleAvg[i];
+				normals[i].y = perTriangleNormal[i].y * (float) perTriangleAvg[i];
+				normals[i].z = perTriangleNormal[i].z * (float) perTriangleAvg[i];
+			}
+
+			return normals;
+		}
+
+		/**
+		 *	Apply smoothing groups to a set of per-face normals.
+		 */
+		public static void SmoothNormals(pb_Object pb, ref Vector3[] normals)
+		{
+			// average the soft edge faces
+			int vertexCount = pb.vertexCount;
+
+			Vector3[] averages = new Vector3[pb_Face.MAX_SMOOTH_GROUPS];
+			float[] counts = new float[pb_Face.MAX_SMOOTH_GROUPS];
+			int[] smoothGroup = new int[vertexCount];
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			pb_Face[] faces = pb.faces;
+
+			// Create a lookup of each triangles smoothing group.
+			foreach(pb_Face face in faces)
+			{
+				foreach(int tri in face.distinctIndices)
+					smoothGroup[tri] = face.smoothingGroup;
+			}
+
+			/**
+			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
+			 * group and average their normals.
+			 */
+			for(int i = 0; i < sharedIndices.Length; i++)
+			{
+				for(int n = 0; n < pb_Face.MAX_SMOOTH_GROUPS; n++)	
+				{
+					averages[n].x = 0f;
+					averages[n].y = 0f;
+					averages[n].z = 0f;
+					counts[n] = 0f;
+				}
+
+				for(int n = 0; n < sharedIndices[i].array.Length; n++)
+				{
+					int index = sharedIndices[i].array[n];
+
+					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+						continue;
+
+					averages[smoothGroup[index]].x += normals[index].x;
+					averages[smoothGroup[index]].y += normals[index].y;
+					averages[smoothGroup[index]].z += normals[index].z;
+					counts[smoothGroup[index]] += 1f;
+				}
+
+				for(int n = 0; n < sharedIndices[i].array.Length; n++)
+				{
+					int index = sharedIndices[i].array[n];
+
+					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+						continue;
+
+					normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
+					normals[index].y = averages[smoothGroup[index]].y / counts[smoothGroup[index]];
+					normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
+				}
+			}
 		}
 	}
 }

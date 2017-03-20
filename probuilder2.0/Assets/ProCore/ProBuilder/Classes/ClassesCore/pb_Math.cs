@@ -467,9 +467,26 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
-			Vector3 cross = Vector3.Cross(p1 - p0, p2 - p0);
-			cross.Normalize();
-			return cross;
+			float 	ax = p1.x - p0.x,
+					ay = p1.y - p0.y,
+					az = p1.z - p0.z,
+					bx = p2.x - p0.x,
+					by = p2.y - p0.y,
+					bz = p2.z - p0.z;
+
+			Vector3 cross = Vector3.zero;
+
+			Cross(ax, ay, az, bx, by, bz, ref cross.x, ref cross.y, ref cross.z);
+
+			if (cross.magnitude < Mathf.Epsilon)
+			{
+				return new Vector3(0f, 0f, 0f); // bad triangle
+			}
+			else
+			{
+				cross.Normalize();
+				return cross;
+			}
 		}
 
 		/**
