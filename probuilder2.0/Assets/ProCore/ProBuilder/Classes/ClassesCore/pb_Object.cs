@@ -32,7 +32,11 @@ public class pb_Object : MonoBehaviour
 			return;
 
 		// Absolutely no idea why normals sometimes go haywire
-		if(msh == null || msh.normals == null || msh.normals.Length != msh.vertexCount || msh.normals[0] == Vector3.zero)
+		Vector3[] normals = msh != null ? msh.normals : null;
+
+		if(	normals == null ||
+			normals.Length != msh.vertexCount||
+			(normals.Length > 0 && normals[0] == Vector3.zero))
 		{
 			// means this object is probably just now being instantiated
 			if(_vertices == null)
