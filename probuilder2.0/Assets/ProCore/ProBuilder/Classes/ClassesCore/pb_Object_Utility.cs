@@ -60,6 +60,15 @@ namespace ProBuilder2.Common
 			pb.TranslateVertices_World(selectedTriangles, offset, 0f, false, null);
 		}
 
+		/**
+		 *	Move vertices in world space.
+		 *	pb - The pb_Object target.
+		 *	selectedTriangles - A distinct list of vertex indices.
+		 *	offset - The direction and magnitude to translate selectedTriangles, in world space.
+		 *	snapValue - If > 0 snap each vertex to the nearest on-grid point in world space.
+		 *	snapAxisOnly - If true vertices will only be snapped along the active axis.
+		 *	lookup - A shared index lookup table.  Can pass NULL to have this automatically calculated.
+		 */	
 		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{	
 			int i = 0;

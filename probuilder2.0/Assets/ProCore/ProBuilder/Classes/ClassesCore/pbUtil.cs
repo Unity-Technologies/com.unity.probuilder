@@ -475,7 +475,7 @@ namespace ProBuilder2.Common
 
 	/**
 	 *	An override that accepts a vector3 to use as a mask for which values to snap.  Ex;
-	 *	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values.
+	 *	Snap((.3f, 3f, 41f), (0f, 1f, .4f)) only snaps Y and Z values (to 1 & .4 unit increments).
 	 */
 	public static Vector3 SnapValue(Vector3 vertex, Vector3 snap)
 	{
