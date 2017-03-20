@@ -128,6 +128,17 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		bool m_Smooth
+		{
+			get { return m_Target.m_Smooth; }
+
+			set {
+				if(m_Target.m_Smooth != value)
+					pbUndo.RecordObject(m_Target, "Set Bezier Shape Smooth");
+				m_Target.m_Smooth = value;
+			}
+		}
+
 		private GUIStyle _commandStyle = null;
 		public GUIStyle commandStyle
 		{
@@ -219,7 +230,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_BezierPoint inspectorPoint = handleIsValid ?
 				m_Points[m_currentHandle] :
-				new pb_BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward);
+				new pb_BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward, Quaternion.identity);
 
 			inspectorPoint = DoBezierPointGUI(inspectorPoint);
 
@@ -248,7 +259,8 @@ namespace ProBuilder2.EditorCommon
 				{
 					m_Points.Add(new pb_BezierPoint(m_Points[m_Points.Count - 1].position,
 						m_Points[m_Points.Count - 1].tangentIn,
-						m_Points[m_Points.Count - 1].tangentOut));
+						m_Points[m_Points.Count - 1].tangentOut,
+						Quaternion.identity));
 					UpdateMesh(true);
 				}
 				else
@@ -266,6 +278,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.EndHorizontal();
 
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
+			m_Smooth = EditorGUILayout.Toggle("Smooth", m_Smooth);
 			m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
 			m_Rows = pb_Math.Clamp(EditorGUILayout.IntField("Rows", m_Rows), 3, 512);
 			m_Columns = pb_Math.Clamp(EditorGUILayout.IntField("Columns", m_Columns), 3, 512);

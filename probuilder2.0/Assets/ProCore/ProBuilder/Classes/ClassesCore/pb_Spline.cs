@@ -13,10 +13,11 @@ namespace ProBuilder2.Common
 										float radius = .5f,
 										int columns = 32,
 										int rows = 16,
-										bool closeLoop = false)
+										bool closeLoop = false,
+										bool smooth = true)
 		{
 			pb_Object pb = null;
-			Extrude(points, radius, columns, rows, closeLoop, ref pb);
+			Extrude(points, radius, columns, rows, closeLoop, smooth, ref pb);
 			return pb;
 		}
 
@@ -28,6 +29,7 @@ namespace ProBuilder2.Common
 									int columns,
 									int rows,
 									bool closeLoop,
+									bool smooth,
 									ref pb_Object target)
 		{
 			int c = bezierPoints.Count;
@@ -49,7 +51,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			Extrude(positions, radius, rows, closeLoop, ref target, rotations);
+			Extrude(positions, radius, rows, closeLoop, smooth, ref target, rotations);
 		}
 
 		/**
@@ -57,8 +59,9 @@ namespace ProBuilder2.Common
 		 */
 		public static void Extrude(	IList<Vector3> points,
 									float radius,
-									int rows,
+									int radiusRows,
 									bool closeLoop,
+									bool smooth,
 									ref pb_Object target,
 									IList<Quaternion> pointRotations = null)
 		{
@@ -66,14 +69,15 @@ namespace ProBuilder2.Common
 				return;
 
 			int cnt = points.Count;
-			int rowsPlus1 = System.Math.Max(4, rows + 1);
-			int rowsPlus1Times2 = rowsPlus1 * 2;
+			int rows = System.Math.Max(3, radiusRows);
+			int rowsPlus1 = rows + 1;
+			int rowsPlus1Times2 = rows * 2;
 			int vertexCount = ((closeLoop ? cnt : cnt - 1) * 2) * rowsPlus1Times2;
-			bool vertexCountsMatch = vertexCount == (target == null ? 0 : target.vertexCount);
+			bool vertexCountsMatch = false; // vertexCount == (target == null ? 0 : target.vertexCount);
 			bool hasPointRotations = pointRotations != null && pointRotations.Count == points.Count;
 
 			Vector3[] positions = new Vector3[vertexCount];
-			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rowsPlus1];
+			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rows];
 
 			int triangleIndex = 0, faceIndex = 0, vertexIndex = 0;
 			int segmentCount = (closeLoop ? cnt : cnt - 1);
@@ -106,6 +110,9 @@ namespace ProBuilder2.Common
 						faces[faceIndex] = new pb_Face(new int[6] {
 							triangleIndex, triangleIndex + 1, triangleIndex + rowsPlus1Times2,
 							triangleIndex + rowsPlus1Times2, triangleIndex + 1, triangleIndex + rowsPlus1Times2 + 1 } );
+
+						if(smooth)
+							faces[faceIndex].smoothingGroup = 2;
 
 						faceIndex++;
 						triangleIndex += 2;
