@@ -32,10 +32,25 @@ namespace ProBuilder2.Common
 									bool smooth,
 									ref pb_Object target)
 		{
+			List<Quaternion> rotations = new List<Quaternion>();
+			List<Vector3> positions = GetControlPoints(bezierPoints, columns, closeLoop, rotations);
+			Extrude(positions, radius, rows, closeLoop, smooth, ref target, rotations);
+		}
+
+		/**
+		 *	Extrapolate a bezier curve to it's control points and segments between.
+		 */
+		public static List<Vector3> GetControlPoints(IList<pb_BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
+		{
+			int cols = subdivisionsPerSegment;
 			int c = bezierPoints.Count;
-			int cols = columns;
 			List<Vector3> positions = new List<Vector3>(cols * c);
-			List<Quaternion> rotations = new List<Quaternion>(cols * c);
+
+			if(rotations != null)
+			{
+				rotations.Clear();
+				rotations.Capacity = cols * c;
+			}
 
 			int keyframes = (closeLoop ? c : c - 1);
 
@@ -46,12 +61,15 @@ namespace ProBuilder2.Common
 				for(int n = 0; n < segments_per_keyframe; n++)
 				{
 					float s = cols;
+
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
-					rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );
+
+					if(rotations != null)
+						rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );
 				}
 			}
 
-			Extrude(positions, radius, rows, closeLoop, smooth, ref target, rotations);
+			return positions;
 		}
 
 		/**
