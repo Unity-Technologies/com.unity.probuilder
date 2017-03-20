@@ -73,6 +73,19 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * Returns the Area of a polygon.
+		 */
+		public static float PolygonArea(Vector3[] vertices, int[] indices)
+		{
+			float area = 0f;
+
+			for(int i = 0; i < indices.Length; i += 3)
+				area += TriangleArea(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]]);
+			
+			return area;
+		}
+
+		/**
 		 * Returns a new point by rotating the Vector2 around an origin point.
 		 * @param v this - Vector2 original point.
 		 * @param origin The origin point to use as a pivot point.
