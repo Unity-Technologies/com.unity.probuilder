@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
+using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -83,6 +84,8 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		List<pb_BezierPoint> m_Points { get { return m_Target.m_Points; } set { m_Target.m_Points = value; } }
+
+		bool m_IsEditing { get { return m_Target.m_IsEditing; } set { m_Target.m_IsEditing = value; } }
 
 		bool m_CloseLoop
 		{
@@ -213,8 +216,50 @@ namespace ProBuilder2.EditorCommon
 			return point;
 		}
 
+		void SetIsEditing(bool isEditing)
+		{
+			GUIUtility.hotControl = 0;
+
+			if(isEditing && !m_IsEditing)
+			{
+				if(pb_Editor.instance != null)
+					pb_Editor.instance.ClearElementSelection();
+
+				pbUndo.RecordObject(m_Target, "Edit Bezier Shape");
+				pbUndo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
+
+				UpdateMesh(true);
+			}
+
+			m_Target.m_IsEditing = isEditing;
+
+			if(pb_Editor.instance != null)
+			{
+				if(m_Target.m_IsEditing)
+					pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
+				else
+					pb_Editor.instance.PopEditLevel();
+			}
+
+			if(m_Target.m_IsEditing)
+				Tools.current = Tool.None;
+		}
+
 		public override void OnInspectorGUI()
 		{
+			if(!m_IsEditing)
+			{
+				if( GUILayout.Button("Edit Bezier Shape") )
+					SetIsEditing(true);
+
+				EditorGUILayout.HelpBox("Editing a Bezier Shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.", MessageType.Warning);
+			}
+			else
+			{
+				if( GUILayout.Button("Editing Bezier Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
+					SetIsEditing(false);
+			}
+
 			Event e = Event.current;
 
 			if(m_IsMoving)
@@ -306,6 +351,7 @@ namespace ProBuilder2.EditorCommon
 		void OnSceneGUI()
 		{
 			Event e = Event.current;
+
 			bool eventHasBeenUsed = false;
 
 			if(m_IsMoving)
@@ -316,6 +362,14 @@ namespace ProBuilder2.EditorCommon
 					eventHasBeenUsed = true;
 					OnFinishVertexModification();
 				}
+			}
+
+			bool sceneViewInUse = pb_Handle_Utility.SceneViewInUse(e);
+
+			if(!sceneViewInUse && m_IsEditing)
+			{
+				int controlID = GUIUtility.GetControlID(FocusType.Passive);
+				HandleUtility.AddDefaultControl(controlID);
 			}
 
 			if(e.type == EventType.KeyDown)
@@ -347,6 +401,9 @@ namespace ProBuilder2.EditorCommon
 										EditorGUIUtility.whiteTexture,
 										1f);
 				}
+
+				if(!m_IsEditing)
+					continue;
 
 				// If the index is selected show the full transform gizmo, otherwise use free move handles
 				if(m_currentHandle == index)
@@ -427,6 +484,9 @@ namespace ProBuilder2.EditorCommon
 					m_Points[index] = point;
 				}
 			}
+
+			if(!m_IsEditing)
+				return;
 
 			EventType eventType = e.type;
 
@@ -541,14 +601,8 @@ namespace ProBuilder2.EditorCommon
 
 		void UndoRedoPerformed()
 		{
-			UpdateMesh(true);
-
-			if(m_Target && m_CurrentObject)
-			{
-				m_CurrentObject.ToMesh();
-				m_CurrentObject.Refresh();
-				m_CurrentObject.Optimize();
-			}
+			if(m_Target && m_IsEditing)
+				UpdateMesh(true);
 		}
 
 		void OnBeginVertexModification()

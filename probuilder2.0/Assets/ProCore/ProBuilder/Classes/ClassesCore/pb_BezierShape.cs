@@ -14,6 +14,7 @@ namespace ProBuilder2.Common
 		public int m_Rows = 8;
 		public int m_Columns = 16;
 		public bool m_Smooth = true;
+		public bool m_IsEditing = false;
 
 		private pb_Object m_Mesh;
 
