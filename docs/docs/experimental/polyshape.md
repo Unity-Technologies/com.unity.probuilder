@@ -31,3 +31,9 @@ Select the **Edit Poly Shape** button in the **Unity Inspector**.  To disable Po
 <div style="text-align:center">
 <img src="../../images/Experimental_PolyShapeInspector.png">
 </div>
+
+- Move existing control points by clicking and dragging.
+- Add new points by clicking along the perimeter line.
+- Remove existing points by clicking to select, then press `Backspace` (`Delete` on Mac).
+- Set the height by clicking and dragging the handle in the center of the mesh.
+- Flip the normals by selecting **Flip Normals** in the Inspector.
