@@ -165,13 +165,14 @@ namespace ProBuilder2.EditorCommon
 		void OnEnable()
 		{
 			m_Target = target as pb_BezierShape;
+
 			Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
 			m_TangentModeIcons[0] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free");
 			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned");
 			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored");
 
-			UpdateControlPoints();
+			SetIsEditing(m_Target.m_IsEditing);
 		}
 
 		void OnDisable()
@@ -620,16 +621,20 @@ namespace ProBuilder2.EditorCommon
 
 				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL )
 				{
-					pb_Handles.CubeCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .2f);
-					SceneView.RepaintAll();
+					Handles.color = Color.green;
+					Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
+					Handles.color = Color.white;
 
 					if(!eventHasBeenUsed && eventType == EventType.MouseDown)
 					{
 						pbUndo.RecordObject(m_Target, "Add Point");
-						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, Vector3.right, -Vector3.right, Quaternion.identity));
+						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
+						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, p - dir, p + dir, Quaternion.identity));
 						UpdateMesh(true);
 						e.Use();
 					}
+
+					SceneView.RepaintAll();
 				}
 			}
 
