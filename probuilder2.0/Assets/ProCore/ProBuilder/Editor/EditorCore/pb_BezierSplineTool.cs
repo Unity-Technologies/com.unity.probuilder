@@ -172,7 +172,8 @@ namespace ProBuilder2.EditorCommon
 			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned");
 			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored");
 
-			SetIsEditing(m_Target.m_IsEditing);
+			if(m_Target != null)
+				SetIsEditing(m_Target.m_IsEditing);
 		}
 
 		void OnDisable()
