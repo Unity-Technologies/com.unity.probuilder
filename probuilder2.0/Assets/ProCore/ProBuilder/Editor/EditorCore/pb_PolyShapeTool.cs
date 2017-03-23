@@ -81,7 +81,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUI.BeginChangeCheck();
-			
+
 			float extrude = polygon.extrude;
 			extrude = EditorGUILayout.FloatField("Extrusion", extrude);
 
@@ -206,7 +206,7 @@ namespace ProBuilder2.EditorCommon
 				axis = ProjectionAxis.X;
 			else if ( Mathf.Abs(cam_z) > .98f )
 				axis = ProjectionAxis.Z;
-				
+
 			if(pb_ProGrids_Interface.SnapEnabled())
 				polygon.transform.position = pbUtil.SnapValue(polygon.transform.position, pb_ProGrids_Interface.SnapValue());
 
@@ -378,7 +378,7 @@ namespace ProBuilder2.EditorCommon
 					return;
 				}
 
-				if(m_DistanceFromHeightHandle > 20f)
+				if(m_DistanceFromHeightHandle > pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL)
 				{
 					// point insertion
 					int index;
@@ -394,7 +394,7 @@ namespace ProBuilder2.EditorCommon
 
 					float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
-					if(distanceToVertex > 20f && distanceToLine < 20f)
+					if(distanceToVertex > pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL)
 					{
 						Handles.color = Color.green;
 
@@ -430,7 +430,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool used = evt.type == EventType.Used;
 
-			if(!used && 
+			if(!used &&
 				(	evt.type == EventType.MouseDown &&
 					evt.button == 0 &&
 					!IsAppendModifier(evt.modifiers)
@@ -447,14 +447,14 @@ namespace ProBuilder2.EditorCommon
 				{
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
 				}
-				
+
 				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
 				Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
 
 				float extrude = polygon.extrude;
-				
+
 				if(!sceneInUse)
 				{
 					Vector3 p = pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
@@ -469,8 +469,8 @@ namespace ProBuilder2.EditorCommon
 				Handles.DrawLine(origin, extrudePoint);
 				Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f);
 				Handles.color = Color.white;
-				
-				
+
+
 				if( !sceneInUse && polygon.extrude != extrude)
 				{
 					polygon.extrude = extrude;
@@ -596,7 +596,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
 					{
-						Undo.DestroyObjectImmediate(polygon.gameObject);						
+						Undo.DestroyObjectImmediate(polygon.gameObject);
 					}
 					else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
 					{

@@ -3,6 +3,7 @@ using UnityEngine;
 public static class pb_Constant
 {
 	public static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+	public const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
 
 	private static Material _defaultMaterial = null;
 	public static Material DefaultMaterial

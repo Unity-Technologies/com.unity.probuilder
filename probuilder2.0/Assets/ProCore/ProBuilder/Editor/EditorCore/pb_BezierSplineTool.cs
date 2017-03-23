@@ -21,10 +21,15 @@ namespace ProBuilder2.EditorCommon
 		private static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		private static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-		[SerializeField] BezierHandle m_currentHandle = new BezierHandle(-1, false);
-		[SerializeField] pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
-		pb_BezierShape m_Target = null;
-		bool m_IsMoving = false;
+		[SerializeField]
+		private BezierHandle m_currentHandle = new BezierHandle(-1, false);
+
+		[SerializeField]
+		private pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
+
+		private pb_BezierShape m_Target = null;
+		private bool m_IsMoving = false;
+		private List<Vector3> m_ControlPoints;
 
 		pb_Object m_CurrentObject
 		{
@@ -165,6 +170,8 @@ namespace ProBuilder2.EditorCommon
 			m_TangentModeIcons[0] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free");
 			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned");
 			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored");
+
+			UpdateControlPoints();
 		}
 
 		void OnDisable()
@@ -242,7 +249,10 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(m_Target.m_IsEditing)
+			{
 				Tools.current = Tool.None;
+				UpdateControlPoints();
+			}
 		}
 
 		public override void OnInspectorGUI()
@@ -338,6 +348,8 @@ namespace ProBuilder2.EditorCommon
 			{
 				m_Target.Refresh();
 
+				UpdateControlPoints();
+
 				if(pb_Editor.instance != null)
 				{
 					if(!vertexCountChanged)
@@ -346,6 +358,11 @@ namespace ProBuilder2.EditorCommon
 						pb_Editor.Refresh();
 				}
 			}
+		}
+
+		void UpdateControlPoints()
+		{
+			m_ControlPoints = pb_Spline.GetControlPoints(m_Points, m_Columns, m_CloseLoop, null);
 		}
 
 		void OnSceneGUI()
@@ -593,7 +610,30 @@ namespace ProBuilder2.EditorCommon
 				m_Points[index] = point;
 			}
 
-			if(e.type == EventType.MouseUp)
+			// Do control point insertion
+			if(!eventHasBeenUsed && m_ControlPoints != null)
+			{
+				int index = -1;
+				float distanceToLine;
+
+				Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
+
+				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL )
+				{
+					pb_Handles.CubeCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .2f);
+					SceneView.RepaintAll();
+
+					if(!eventHasBeenUsed && eventType == EventType.MouseDown)
+					{
+						pbUndo.RecordObject(m_Target, "Add Point");
+						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, Vector3.right, -Vector3.right, Quaternion.identity));
+						UpdateMesh(true);
+						e.Use();
+					}
+				}
+			}
+
+			if(e.type == EventType.MouseUp && !sceneViewInUse)
 				m_currentHandle.SetIndex(-1);
 
 			Handles.matrix = handleMatrix;
@@ -602,10 +642,36 @@ namespace ProBuilder2.EditorCommon
 				UpdateMesh(false);
 		}
 
+		bool IsHoveringHandlePoint(Vector2 mpos)
+		{
+			if(m_Target == null)
+				return false;
+
+			int count = m_Points.Count;
+
+			for(int i = 0; i < count; i++)
+			{
+				pb_BezierPoint p = m_Points[i];
+
+				bool ti = m_CloseLoop || i > 0;
+				bool to = m_CloseLoop || i < (count - 1);
+
+				if(	Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.position)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL ||
+					(ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentIn)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL) ||
+					(to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentOut)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL))
+					return true;
+			}
+
+			return false;
+		}
+
 		void UndoRedoPerformed()
 		{
 			if(m_Target && m_IsEditing)
+			{
+				UpdateControlPoints();
 				UpdateMesh(true);
+			}
 		}
 
 		void OnBeginVertexModification()
