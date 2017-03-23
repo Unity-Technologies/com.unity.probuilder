@@ -331,7 +331,9 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			GUILayout.BeginHorizontal();
-			m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+				GUILayout.FlexibleSpace();
+					m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
 			m_CloseLoop = EditorGUILayout.Toggle("Close Loop", m_CloseLoop);
