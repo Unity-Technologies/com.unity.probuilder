@@ -13,6 +13,8 @@ namespace ProBuilder2.Common
 		public float m_Radius = .5f;
 		public int m_Rows = 8;
 		public int m_Columns = 16;
+		public bool m_Smooth = true;
+		public bool m_IsEditing = false;
 
 		private pb_Object m_Mesh;
 
@@ -39,8 +41,8 @@ namespace ProBuilder2.Common
 		{
 			Vector3 tan = new Vector3(0f, 0f, 2f);
 			Vector3 p1 = new Vector3(3f, 0f, 0f);
-			m_Points.Add(new pb_BezierPoint(Vector3.zero, -tan, tan));
-			m_Points.Add(new pb_BezierPoint(p1, p1 + tan, p1 + -tan));
+			m_Points.Add(new pb_BezierPoint(Vector3.zero, -tan, tan, Quaternion.identity));
+			m_Points.Add(new pb_BezierPoint(p1, p1 + tan, p1 + -tan, Quaternion.identity));
 		}
 
 		/**
@@ -49,7 +51,7 @@ namespace ProBuilder2.Common
 		public void Refresh()
 		{
 			pb_Object m = mesh;
-			pb_Spline.Extrude(m_Points, m_Radius, m_Columns, m_Rows, m_CloseLoop, ref m);
+			pb_Spline.Extrude(m_Points, m_Radius, m_Columns, m_Rows, m_CloseLoop, m_Smooth, ref m);
 		}
 	}
 }

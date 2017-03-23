@@ -353,7 +353,17 @@ namespace ProBuilder2.EditorCommon
 					{
 						evt.Use();
 						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
-						polygon.points.Add(Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance))));
+
+						Vector3 point = Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+
+						if(polygon.points.Count > 2 && pb_Math.Approx3(polygon.points[0], point))
+						{
+							m_NextMouseUpAdvancesMode = true;
+							return;
+						}
+
+						polygon.points.Add(point);
+
 						m_PlacingPoint = true;
 						m_SelectedIndex = polygon.points.Count - 1;
 						UpdateMesh();

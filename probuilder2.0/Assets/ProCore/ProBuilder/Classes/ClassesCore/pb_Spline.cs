@@ -13,10 +13,11 @@ namespace ProBuilder2.Common
 										float radius = .5f,
 										int columns = 32,
 										int rows = 16,
-										bool closeLoop = false)
+										bool closeLoop = false,
+										bool smooth = true)
 		{
 			pb_Object pb = null;
-			Extrude(points, radius, columns, rows, closeLoop, ref pb);
+			Extrude(points, radius, columns, rows, closeLoop, smooth, ref pb);
 			return pb;
 		}
 
@@ -28,12 +29,28 @@ namespace ProBuilder2.Common
 									int columns,
 									int rows,
 									bool closeLoop,
+									bool smooth,
 									ref pb_Object target)
 		{
+			List<Quaternion> rotations = new List<Quaternion>();
+			List<Vector3> positions = GetControlPoints(bezierPoints, columns, closeLoop, rotations);
+			Extrude(positions, radius, rows, closeLoop, smooth, ref target, rotations);
+		}
+
+		/**
+		 *	Extrapolate a bezier curve to it's control points and segments between.
+		 */
+		public static List<Vector3> GetControlPoints(IList<pb_BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
+		{
+			int cols = subdivisionsPerSegment;
 			int c = bezierPoints.Count;
-			int cols = columns;
 			List<Vector3> positions = new List<Vector3>(cols * c);
-			List<Quaternion> rotations = new List<Quaternion>(cols * c);
+
+			if(rotations != null)
+			{
+				rotations.Clear();
+				rotations.Capacity = cols * c;
+			}
 
 			int keyframes = (closeLoop ? c : c - 1);
 
@@ -44,12 +61,15 @@ namespace ProBuilder2.Common
 				for(int n = 0; n < segments_per_keyframe; n++)
 				{
 					float s = cols;
+
 					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
-					rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );
+
+					if(rotations != null)
+						rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );
 				}
 			}
 
-			Extrude(positions, radius, rows, closeLoop, ref target, rotations);
+			return positions;
 		}
 
 		/**
@@ -57,8 +77,9 @@ namespace ProBuilder2.Common
 		 */
 		public static void Extrude(	IList<Vector3> points,
 									float radius,
-									int rows,
+									int radiusRows,
 									bool closeLoop,
+									bool smooth,
 									ref pb_Object target,
 									IList<Quaternion> pointRotations = null)
 		{
@@ -66,14 +87,15 @@ namespace ProBuilder2.Common
 				return;
 
 			int cnt = points.Count;
-			int rowsPlus1 = System.Math.Max(4, rows + 1);
-			int rowsPlus1Times2 = rowsPlus1 * 2;
+			int rows = System.Math.Max(3, radiusRows);
+			int rowsPlus1 = rows + 1;
+			int rowsPlus1Times2 = rows * 2;
 			int vertexCount = ((closeLoop ? cnt : cnt - 1) * 2) * rowsPlus1Times2;
-			bool vertexCountsMatch = vertexCount == (target == null ? 0 : target.vertexCount);
+			bool vertexCountsMatch = false; // vertexCount == (target == null ? 0 : target.vertexCount);
 			bool hasPointRotations = pointRotations != null && pointRotations.Count == points.Count;
 
 			Vector3[] positions = new Vector3[vertexCount];
-			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rowsPlus1];
+			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rows];
 
 			int triangleIndex = 0, faceIndex = 0, vertexIndex = 0;
 			int segmentCount = (closeLoop ? cnt : cnt - 1);
@@ -106,6 +128,9 @@ namespace ProBuilder2.Common
 						faces[faceIndex] = new pb_Face(new int[6] {
 							triangleIndex, triangleIndex + 1, triangleIndex + rowsPlus1Times2,
 							triangleIndex + rowsPlus1Times2, triangleIndex + 1, triangleIndex + rowsPlus1Times2 + 1 } );
+
+						if(smooth)
+							faces[faceIndex].smoothingGroup = 2;
 
 						faceIndex++;
 						triangleIndex += 2;

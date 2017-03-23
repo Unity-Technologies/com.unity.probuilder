@@ -73,6 +73,19 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * Returns the Area of a polygon.
+		 */
+		public static float PolygonArea(Vector3[] vertices, int[] indices)
+		{
+			float area = 0f;
+
+			for(int i = 0; i < indices.Length; i += 3)
+				area += TriangleArea(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]]);
+			
+			return area;
+		}
+
+		/**
 		 * Returns a new point by rotating the Vector2 around an origin point.
 		 * @param v this - Vector2 original point.
 		 * @param origin The origin point to use as a pivot point.
@@ -467,9 +480,26 @@ namespace ProBuilder2.Common
 		 */
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
-			Vector3 cross = Vector3.Cross(p1 - p0, p2 - p0);
-			cross.Normalize();
-			return cross;
+			float 	ax = p1.x - p0.x,
+					ay = p1.y - p0.y,
+					az = p1.z - p0.z,
+					bx = p2.x - p0.x,
+					by = p2.y - p0.y,
+					bz = p2.z - p0.z;
+
+			Vector3 cross = Vector3.zero;
+
+			Cross(ax, ay, az, bx, by, bz, ref cross.x, ref cross.y, ref cross.z);
+
+			if (cross.magnitude < Mathf.Epsilon)
+			{
+				return new Vector3(0f, 0f, 0f); // bad triangle
+			}
+			else
+			{
+				cross.Normalize();
+				return cross;
+			}
 		}
 
 		/**

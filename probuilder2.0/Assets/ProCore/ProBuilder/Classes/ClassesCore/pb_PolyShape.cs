@@ -77,7 +77,18 @@ namespace ProBuilder2.Common
 
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
 			{
-				m.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(triangles.ToArray() ) });
+				int[] indices = triangles.ToArray();
+
+				if(pb_Math.PolygonArea(vertices, indices) < Mathf.Epsilon )
+				{
+					m.SetVertices(new Vector3[0]);
+					m.SetFaces(new pb_Face[0]);
+					m.SetSharedIndices(new pb_IntArray[0]);
+					pb_Log.PopLogLevel();
+					return false;
+				}
+
+				m.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(indices) });
 
 				Vector3 nrm = pb_Math.Normal(m, m.faces[0]);
 

@@ -32,7 +32,11 @@ public class pb_Object : MonoBehaviour
 			return;
 
 		// Absolutely no idea why normals sometimes go haywire
-		if(msh == null || msh.normals == null || msh.normals.Length != msh.vertexCount || msh.normals[0] == Vector3.zero)
+		Vector3[] normals = msh != null ? msh.normals : null;
+
+		if(	normals == null ||
+			normals.Length != msh.vertexCount||
+			(normals.Length > 0 && normals[0] == Vector3.zero))
 		{
 			// means this object is probably just now being instantiated
 			if(_vertices == null)
@@ -1030,71 +1034,14 @@ public class pb_Object : MonoBehaviour
 		_tangents = tangents;
 	}
 
-	const int MAX_SMOOTH_GROUPS = 24;
-
 	/**
 	 * Refreshes the normals of this object taking into account the smoothing groups.
 	 */
 	public void RefreshNormals()
 	{
-		// All hard edges
 		msh.RecalculateNormals();
-
-		// average the soft edge faces
-		int vertexCount = msh.vertexCount;
 		Vector3[] normals = msh.normals;
-
-		Vector3[] averages = new Vector3[MAX_SMOOTH_GROUPS];
-		float[] counts = new float[MAX_SMOOTH_GROUPS];
-		int[] smoothGroup = new int[vertexCount];
-
-		// Create a lookup of each triangles smoothing group.
-		foreach(pb_Face face in faces)
-		{
-			foreach(int tri in face.distinctIndices)
-				smoothGroup[tri] = face.smoothingGroup;
-		}
-
-		/**
-		 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
-		 * group and average their normals.
-		 */
-		for(int i = 0; i < sharedIndices.Length; i++)
-		{
-			for(int n = 0; n < MAX_SMOOTH_GROUPS; n++)	
-			{
-				averages[n].x = 0f;
-				averages[n].y = 0f;
-				averages[n].z = 0f;
-				counts[n] = 0f;
-			}
-
-			for(int n = 0; n < sharedIndices[i].array.Length; n++)
-			{
-				int index = sharedIndices[i].array[n];
-
-				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
-					continue;
-
-				averages[smoothGroup[index]].x += normals[index].x;
-				averages[smoothGroup[index]].y += normals[index].y;
-				averages[smoothGroup[index]].z += normals[index].z;
-				counts[smoothGroup[index]] += 1f;
-			}
-
-			for(int n = 0; n < sharedIndices[i].array.Length; n++)
-			{
-				int index = sharedIndices[i].array[n];
-
-				if(smoothGroup[index] < 1 || smoothGroup[index] > MAX_SMOOTH_GROUPS)
-					continue;
-
-				normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
-				normals[index].y = averages[smoothGroup[index]].y / counts[smoothGroup[index]];
-				normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
-			}
-		}
-
+		pb_MeshUtility.SmoothNormals(this, ref normals);
 		GetComponent<MeshFilter>().sharedMesh.normals = normals;
 	}
 

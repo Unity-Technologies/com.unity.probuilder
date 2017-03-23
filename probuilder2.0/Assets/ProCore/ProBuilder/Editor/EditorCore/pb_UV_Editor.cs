@@ -2474,11 +2474,13 @@ public class pb_UV_Editor : EditorWindow
 		{
 			case 0:
 				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				if(pb.msh != null)
+					pb.msh.uv = uvs;
 				break;
 
 			case 1:
-				pb.msh.uv2 = uvs;
+				if(pb.msh != null)
+					pb.msh.uv2 = uvs;
 				break;
 		}
 	}

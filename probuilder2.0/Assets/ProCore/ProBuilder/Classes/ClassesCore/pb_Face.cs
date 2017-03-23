@@ -78,6 +78,8 @@ public class pb_Face
 
 #region MEMBERS
 
+	public const int MAX_SMOOTH_GROUPS = 24;
+	
 	[SerializeField] int[] _indices;
 	[SerializeField] int[] _distinctIndices;
 
@@ -309,21 +311,21 @@ public class pb_Face
 	 */
 	public static int[] AllTriangles(pb_Face[] q)
 	{
-		List<int> all = new List<int>();
+		List<int> all = new List<int>(q.Length * 6);
+
 		foreach(pb_Face quad in q)
-		{
 			all.AddRange(quad.indices);
-		}
+
 		return all.ToArray();
 	}
 
 	public static int[] AllTriangles(List<pb_Face> q)
 	{
-		List<int> all = new List<int>();
+		List<int> all = new List<int>(q.Count * 6);
+
 		foreach(pb_Face quad in q)
-		{
 			all.AddRange(quad.indices);
-		}
+
 		return all.ToArray();
 	}
 
