@@ -253,12 +253,12 @@ namespace ProBuilder2.EditorCommon
 					SetIsEditing(true);
 
 				EditorGUILayout.HelpBox("Editing a Bezier Shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.", MessageType.Warning);
+
+				return;
 			}
-			else
-			{
-				if( GUILayout.Button("Editing Bezier Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
-					SetIsEditing(false);
-			}
+
+			if( GUILayout.Button("Editing Bezier Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
+				SetIsEditing(false);
 
 			Event e = Event.current;
 
@@ -592,6 +592,9 @@ namespace ProBuilder2.EditorCommon
 
 				m_Points[index] = point;
 			}
+
+			if(e.type == EventType.MouseUp)
+				m_currentHandle.SetIndex(-1);
 
 			Handles.matrix = handleMatrix;
 
