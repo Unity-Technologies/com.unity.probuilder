@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ProBuilderCore-Unity4")]
-[assembly: AssemblyDescription("ProBuilder Core Lib")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ProCore")]
-[assembly: AssemblyProduct("ProBuilderCore")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ProBuilderCore-Unity4")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d5ce6a97-8c9d-474b-809e-f097a4f2f2c3")]
+[assembly: Guid("1c6c7611-49f0-4f49-95fa-7743c345aeea")]
 
 // Version information for an assembly consists of the following four values:
 //

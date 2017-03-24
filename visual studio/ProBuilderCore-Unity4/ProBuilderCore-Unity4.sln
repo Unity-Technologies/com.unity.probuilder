@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProBuilderCore-Unity4", "ProBuilderCore-Unity4\ProBuilderCore-Unity4.csproj", "{4423533C-C8C0-47B3-A984-296F72301AB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProBuilderCore-Unity4", "ProBuilderCore-Unity4\ProBuilderCore-Unity4.csproj", "{1C6C7611-49F0-4F49-95FA-7743C345AEEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4423533C-C8C0-47B3-A984-296F72301AB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4423533C-C8C0-47B3-A984-296F72301AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4423533C-C8C0-47B3-A984-296F72301AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4423533C-C8C0-47B3-A984-296F72301AB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C6C7611-49F0-4F49-95FA-7743C345AEEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C6C7611-49F0-4F49-95FA-7743C345AEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C6C7611-49F0-4F49-95FA-7743C345AEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C6C7611-49F0-4F49-95FA-7743C345AEEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

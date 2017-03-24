@@ -179,7 +179,7 @@ namespace ProBuilder2.EditorCommon
 				if(go != null)
 					m_IgnorePick.Add(go);
 
-#if UNITY_4_7
+#if UNITY_4_7 || UNITY_5_0
 				go = HandleUtility.PickGameObject(mousePosition, false);
 #else
 				go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
