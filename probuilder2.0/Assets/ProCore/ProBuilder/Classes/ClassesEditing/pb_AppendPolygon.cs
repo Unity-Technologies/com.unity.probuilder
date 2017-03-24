@@ -48,6 +48,70 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
+		 *	Create a poly shape from a set of points on a plane.
+		 */
+		public static pb_ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
+		{
+			return poly.mesh.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
+		}
+
+		public static pb_ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
+		{
+			if(points.Count < 3)
+			{
+				pb.SetVertices(new Vector3[0]);
+				pb.SetFaces(new pb_Face[0]);
+				pb.SetSharedIndices(new pb_IntArray[0]);
+				return new pb_ActionResult(Status.NoChange, "Too Few Points");
+			}
+
+			Vector3[] vertices = points.ToArray();
+			List<int> triangles;
+
+			pb_Log.PushLogLevel(pb_LogLevel.Error);
+
+			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
+			{
+				int[] indices = triangles.ToArray();
+
+				if(pb_Math.PolygonArea(vertices, indices) < Mathf.Epsilon )
+				{
+					pb.SetVertices(new Vector3[0]);
+					pb.SetFaces(new pb_Face[0]);
+					pb.SetSharedIndices(new pb_IntArray[0]);
+					pb_Log.PopLogLevel();
+					return new pb_ActionResult(Status.Failure, "Polygon Area < Epsilon");
+				}
+
+				pb.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(indices) });
+
+				Vector3 nrm = pb_Math.Normal(pb, pb.faces[0]);
+
+				if(Vector3.Dot(Vector3.up, nrm) > 0f)
+					pb.faces[0].ReverseIndices();
+
+				pb.DuplicateAndFlip(pb.faces);
+
+				pb.Extrude(new pb_Face[] { pb.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
+
+				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
+					pb.ReverseWindingOrder(pb.faces);
+			}
+			else
+			{
+				pb_Log.PopLogLevel();
+				return new pb_ActionResult(Status.Failure, "Failed Triangulating Points");
+			}
+			
+			pb_Log.PopLogLevel();
+
+			pb.ToMesh();
+			pb.Refresh();
+
+			return new pb_ActionResult(Status.Success, "Create Polygon Shape");
+		}
+
+		/**
 		 *	Create a new face given a set of unordered vertices (or ordered, if unordered param is set to false).
 		 */
 		public static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)

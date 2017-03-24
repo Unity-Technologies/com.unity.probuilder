@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.MeshOperations;
 using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
@@ -40,9 +41,8 @@ namespace ProBuilder2.Actions
 		{
 			GameObject go = new GameObject();
 			pb_PolyShape poly = go.AddComponent<pb_PolyShape>();
-			poly.Init();
 			pb_Object pb = poly.gameObject.AddComponent<pb_Object>();
-			poly.Refresh();
+			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 			pb_EditorUtility.InitObject(pb);
 			pb_Selection.SetSelection(go);
 			pbUndo.RegisterCreatedObjectUndo(go, "Create Poly Shape");

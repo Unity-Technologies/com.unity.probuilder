@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
+using ProBuilder2.MeshOperations;
 using System.Collections.Generic;
 using ProBuilder2.Interface;
 
@@ -239,9 +240,10 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 		}
-
+		
 		/**
 		 *	Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
+
 		 */
 		bool UpdateMesh(bool vertexCountChanged = true)
 		{
@@ -251,7 +253,7 @@ namespace ProBuilder2.EditorCommon
 
 			DrawPolyLine(polygon.points);
 
-			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || !polygon.Refresh())
+			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
 			{
 				polygon.mesh.SetVertices(new Vector3[0]);
 				polygon.mesh.SetFaces(new pb_Face[0]);
