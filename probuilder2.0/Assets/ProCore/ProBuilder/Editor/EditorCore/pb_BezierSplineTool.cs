@@ -536,6 +536,7 @@ namespace ProBuilder2.EditorCommon
 						eventHasBeenUsed = true;
 						m_currentHandle = (BezierHandle) index;
 						Repaint();
+						SceneView.RepaintAll();
 					}
 					else if(!pb_Math.Approx3(prev, point.position))
 					{
@@ -569,6 +570,7 @@ namespace ProBuilder2.EditorCommon
 							eventHasBeenUsed = true;
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
 							Repaint();
+							SceneView.RepaintAll();
 						}
 						else if(!pb_Math.Approx3(prev, point.tangentIn))
 						{
@@ -600,6 +602,7 @@ namespace ProBuilder2.EditorCommon
 							eventHasBeenUsed = true;
 							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
 							Repaint();
+							SceneView.RepaintAll();
 						}
 						else if(!pb_Math.Approx3(prev, point.tangentOut))
 						{
@@ -628,7 +631,7 @@ namespace ProBuilder2.EditorCommon
 					Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
 					Handles.color = Color.white;
 
-					if(!eventHasBeenUsed && eventType == EventType.MouseDown)
+					if(!eventHasBeenUsed && eventType == EventType.MouseDown && e.button == 0)
 					{
 						pbUndo.RecordObject(m_Target, "Add Point");
 						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
