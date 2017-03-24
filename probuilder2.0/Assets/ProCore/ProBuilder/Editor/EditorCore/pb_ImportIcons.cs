@@ -31,7 +31,7 @@ namespace ProBuilder2.EditorCommon
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
 			ti.mipmapEnabled = false;
-			ti.maxTextureSize = 64;
+			// ti.maxTextureSize = 64;
 		}
 	}
 }
