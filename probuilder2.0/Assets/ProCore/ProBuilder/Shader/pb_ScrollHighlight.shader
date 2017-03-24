@@ -7,7 +7,7 @@ Shader "Hidden/ProBuilder/ScrollHighlight" {
     Properties {
         _Highlight ("Highlight", Color) = (0.07843138,0.3921569,0.7843137,1)
         _Base ("Base", Color) = (0.5,0.5,0.5,1)
-        _Speed ("Speed", Range(0, 1)) = 0.1
+        _Speed ("Speed", Range(0, 1)) = 0.5
         _EditorTime ("EditorTime", Float ) = 0
         _LineDistance ("LineDistance", Float ) = 18
     }
@@ -64,5 +64,4 @@ Shader "Hidden/ProBuilder/ScrollHighlight" {
         }
     }
     FallBack "Diffuse"
-    CustomEditor "ShaderForgeMaterialInspector"
 }

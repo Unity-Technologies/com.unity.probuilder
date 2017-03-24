@@ -16,7 +16,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static readonly Vector3 SNAP_MASK = new Vector3(1f, 0f, 1f);
 
-		[SerializeField] private Material m_LineMaterial;
+		private Material m_LineMaterial;
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 		private bool m_PlacingPoint = false;
@@ -28,10 +28,20 @@ namespace ProBuilder2.EditorCommon
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
+		Material CreateHighlightLineMaterial()
+		{
+			Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
+			mat.SetColor("_Highlight", new Color(0f, 200f/255f, 170f/200f, 1f));
+			mat.SetColor("_Base", new Color(0f, 136f/255f, 1f, 1f));
+			return mat;
+		}
+
 		void OnEnable()
 		{
 			pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChange);
 			m_LineMesh = new Mesh();
+			// m_LineMaterial = (Material) Resources.Load("Materials/HighlightScroller", typeof(Material));
+			m_LineMaterial = CreateHighlightLineMaterial();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
@@ -45,6 +55,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChange);
 			GameObject.DestroyImmediate(m_LineMesh);
+			GameObject.DestroyImmediate(m_LineMaterial);
 			EditorApplication.update -= Update;
 			Undo.undoRedoPerformed -= UndoRedoPerformed;
 		}
@@ -677,7 +688,11 @@ namespace ProBuilder2.EditorCommon
 			if(m_LineMesh != null)
 				GameObject.DestroyImmediate(m_LineMesh);
 
+			if(m_LineMaterial != null)
+				GameObject.DestroyImmediate(m_LineMaterial);
+
 			m_LineMesh = new Mesh();
+			m_LineMaterial = CreateHighlightLineMaterial();
 
 			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				UpdateMesh(true);
