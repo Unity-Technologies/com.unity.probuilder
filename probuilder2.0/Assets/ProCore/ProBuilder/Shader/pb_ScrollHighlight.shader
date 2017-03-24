@@ -30,7 +30,6 @@ Shader "Hidden/ProBuilder/ScrollHighlight" {
             #define UNITY_PASS_FORWARDBASE
             #include "UnityCG.cginc"
             #pragma multi_compile_fwdbase_fullshadows
-            #pragma only_renderers d3d9 d3d11 glcore gles gles3 
             #pragma target 3.0
             uniform float4 _Highlight;
             uniform float4 _Base;
