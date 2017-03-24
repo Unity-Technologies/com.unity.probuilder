@@ -90,7 +90,7 @@ namespace ProBuilder2.Common
 				for(i = 0; i < indices.Length; i++)
 				{
 					v = l2w.MultiplyPoint3x4(verts[indices[i]] + localOffset);
-					verts[indices[i]] = w2l.MultiplyPoint3x4( pbUtil.SnapValue(v, snapValue * mask) );
+					verts[indices[i]] = w2l.MultiplyPoint3x4( pb_Snap.SnapValue(v, snapValue * mask) );
 				}
 			}
 			else

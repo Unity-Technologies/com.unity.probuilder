@@ -434,20 +434,15 @@ namespace ProBuilder2.EditorCommon
 					if(!m_currentHandle.isTangent)
 					{
 						Vector3 prev = point.position;
+
 						prev = Handles.PositionHandle(prev, Quaternion.identity);
+
 						if(!pb_Math.Approx3(prev, point.position))
 						{
 							if(!m_IsMoving)
-							{
-								if(e.shift)
-								{
-									pbUndo.RecordObject(m_Target, "Add Point");
-									pb_BezierPoint dup = point;
-									m_Points.Insert(m_currentHandle.index, dup);
-								}
-
 								OnBeginVertexModification();
-							}
+
+							prev = pb_ProGrids_Interface.ProGridsSnap(prev);
 
 							Vector3 dir = prev - point.position;
 							point.position = prev;

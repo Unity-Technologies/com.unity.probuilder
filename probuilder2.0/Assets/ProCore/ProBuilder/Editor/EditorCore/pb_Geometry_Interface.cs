@@ -1114,10 +1114,10 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			if(pb_ProGrids_Interface.SnapEnabled())
-				pb.transform.position = pbUtil.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
+				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
 			else
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
-				pb.transform.position = pbUtil.SnapValue(pb.transform.position, 1f);
+				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object
 			Mesh m = pb_MeshUtility.DeepCopy( pb.msh );

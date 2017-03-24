@@ -14,17 +14,32 @@ namespace ProBuilder2.EditorCommon
 	 * allows access to snap enabled, axis preference,
 	 * and grid size values.
 	 */
+	[InitializeOnLoad]
 	public static class pb_ProGrids_Interface
 	{
+		private static Type m_ProGridsType = null;
+
+		static pb_ProGrids_Interface()
+		{
+			m_ProGridsType = GetProGridsType();
+		}
+
 		/**
 		 * Get a pg_Editor type.
 		 */
 		public static Type GetProGridsType()
 		{
-			Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
-			Type type = editorAssembly.GetType("ProGrids.pg_Editor");
-			if( type == null ) type = editorAssembly.GetType("pg_Editor");
-			return type;
+			if( m_ProGridsType == null )
+			{
+				Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
+
+				m_ProGridsType = editorAssembly.GetType("ProGrids.pg_Editor");
+
+				if( m_ProGridsType == null )
+					m_ProGridsType = editorAssembly.GetType("pg_Editor");
+			}
+
+			return m_ProGridsType;
 		}
 
 		public static ScriptableObject GetProGridsInstance()
@@ -38,7 +53,6 @@ namespace ProBuilder2.EditorCommon
 		public static bool ProGridsActive()
 		{
 			Type type = GetProGridsType();
-
 			return type != null && (bool) type.GetMethod("SceneToolbarActive").Invoke(null, null);
 		}
 
@@ -188,5 +202,43 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		/**
+		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
+		 */
+		public static float ProGridsSnap(float point)
+		{
+			if(pb_ProGrids_Interface.SnapEnabled())
+				return pb_Snap.SnapValue(point, pb_ProGrids_Interface.SnapValue());
+				
+			return point;
+		}
+
+		/**
+		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
+		 */
+		public static Vector3 ProGridsSnap(Vector3 point)
+		{
+			if(pb_ProGrids_Interface.SnapEnabled())
+			{
+				float snap = pb_ProGrids_Interface.SnapValue();
+				return pb_Snap.SnapValue(point, snap);
+			}
+
+			return point;
+		}
+
+		/**
+		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled, with mask.
+		 */
+		public static Vector3 ProGridsSnap(Vector3 point, Vector3 mask)
+		{
+			if(pb_ProGrids_Interface.SnapEnabled())
+			{
+				float snap = pb_ProGrids_Interface.SnapValue();
+				return pb_Snap.SnapValue(point, mask * snap);
+			}
+
+			return point;
+		}
 	}
 }

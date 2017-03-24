@@ -624,7 +624,7 @@ namespace ProBuilder2.MeshOperations
 		Vector3[] verts = pb.vertices;
 
 		for(int n = 0; n < indices.Count; n++)
-			verts[indices[n]] = pb.transform.InverseTransformPoint(pbUtil.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
+			verts[indices[n]] = pb.transform.InverseTransformPoint(pb_Snap.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
 
 	}
 #endregion

@@ -13,6 +13,8 @@ namespace ProBuilder2.EditorCommon
 		private static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
 		private static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
 
+		private static readonly Vector3 SNAP_MASK = new Vector3(1f, 0f, 1f);
+
 		[SerializeField] private Material m_LineMaterial;
 		private Mesh m_LineMesh = null;
 		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
@@ -121,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 		void SetPolyEditMode(pb_PolyShape.PolyEditMode mode)
 		{
 			pb_PolyShape.PolyEditMode old = polygon.polyEditMode;
-			
+
 			if(mode != old)
 			{
 				// Clear the control always
@@ -159,7 +161,7 @@ namespace ProBuilder2.EditorCommon
 					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
 					Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					m_HeightMouseOffset = polygon.extrude - Snap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					m_HeightMouseOffset = polygon.extrude - pb_ProGrids_Interface.ProGridsSnap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
 				}
 
 				UpdateMesh();
@@ -216,8 +218,7 @@ namespace ProBuilder2.EditorCommon
 			else if ( Mathf.Abs(cam_z) > .98f )
 				axis = ProjectionAxis.Z;
 
-			if(pb_ProGrids_Interface.SnapEnabled())
-				polygon.transform.position = pbUtil.SnapValue(polygon.transform.position, pb_ProGrids_Interface.SnapValue());
+			polygon.transform.position = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.position, SNAP_MASK);
 
 			switch(axis)
 			{
@@ -331,7 +332,7 @@ namespace ProBuilder2.EditorCommon
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
 						evt.Use();
-						polygon.points[m_SelectedIndex] = Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+						polygon.points[m_SelectedIndex] = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
 						UpdateMesh();
 						SceneView.RepaintAll();
 					}
@@ -363,7 +364,7 @@ namespace ProBuilder2.EditorCommon
 						evt.Use();
 						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
 
-						Vector3 point = Snap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)));
+						Vector3 point = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
 
 						if(polygon.points.Count > 2 && pb_Math.Approx3(polygon.points[0], point))
 						{
@@ -465,7 +466,7 @@ namespace ProBuilder2.EditorCommon
 				if(!sceneInUse)
 				{
 					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					extrude = Snap(m_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					extrude = pb_ProGrids_Interface.ProGridsSnap(m_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
 				}
 
 				Vector3 extrudePoint = origin + (extrude * up);
@@ -505,7 +506,7 @@ namespace ProBuilder2.EditorCommon
 					if(EditorGUI.EndChangeCheck())
 					{
 						pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
-						polygon.points[ii] = Snap(trs.InverseTransformPoint(point));
+						polygon.points[ii] = pb_ProGrids_Interface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
 						UpdateMesh(true);
 					}
 
@@ -549,7 +550,7 @@ namespace ProBuilder2.EditorCommon
 					if(EditorGUI.EndChangeCheck())
 					{
 						pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
-						polygon.extrude = Snap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
+						polygon.extrude = pb_ProGrids_Interface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
 						UpdateMesh(false);
 					}
 				}
@@ -646,24 +647,6 @@ namespace ProBuilder2.EditorCommon
 			m_LineMesh.uv = uvs;
 			m_LineMesh.SetIndices(indices, MeshTopology.LineStrip, 0);
 			m_LineMaterial.SetFloat("_LineDistance", distance);
-		}
-
-		Vector3 Snap(Vector3 point)
-		{
-			if(pb_ProGrids_Interface.SnapEnabled())
-			{
-				float snap = pb_ProGrids_Interface.SnapValue();
-				return pbUtil.SnapValue(point, new Vector3(snap, 0f, snap));
-			}
-
-			return point;
-		}
-
-		float Snap(float point)
-		{
-			if(pb_ProGrids_Interface.SnapEnabled())
-				return pbUtil.SnapValue(point, pb_ProGrids_Interface.SnapValue());
-			return point;
 		}
 
 		/**
