@@ -1,3 +1,28 @@
+# ProBuilder 2.8.0f0
+
+## Features
+
+- New "Poly Shape" interactive shape.
+- New "Bezier Shape" interactive shape.
+- Unity 5.6 beta compatibility.
+- Improve default UV layouts for new shapes.
+- Add a shader for reference billboard planes ("ProBuilder/Reference Unlit").
+
+## Bug Fixes
+
+- Fix material editor applying to child transforms of selection.
+- Fix instantiated objects not getting a UV2 channel when "Auto Generate UV2" is enabled.
+- Material Editor now works with a relative path.
+- Fix incorrect handle rotations in Element mode.
+- About Window now loads even when not in *Assets/ProCore/ProBuilder*.
+- Address a rare NullReferenceException when ProBuilder Editor is initialized.
+- Don't spam Console with errors if update check fails to connect (only affects WebPlayer target).
+- Add a more descriptive message to update check if connection fails.
+
+## Changes
+
+- Automatically toggle Detail Entity Type object's lightmapping static flag, preventing broken lightmap atlases.
+
 # ProBuilder 2.7.0f7
 
 ## Features
