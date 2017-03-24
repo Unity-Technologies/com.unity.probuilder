@@ -178,7 +178,11 @@ namespace ProBuilder2.EditorCommon
 				if(go != null)
 					m_IgnorePick.Add(go);
 
+#if UNITY_4_7
+				go = HandleUtility.PickGameObject(mousePosition, false);
+#else
 				go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
+#endif
 			}
 			while(go != null && go.GetComponent<MeshFilter>() == null);
 
