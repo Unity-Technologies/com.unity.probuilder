@@ -21,6 +21,8 @@ namespace ProBuilder2.EditorCommon
 		private static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
 		private static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
+		private static bool m_SnapTangents = true;
+
 		[SerializeField]
 		private BezierHandle m_currentHandle = new BezierHandle(-1, false);
 
@@ -344,6 +346,9 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
+
+			if( pb_ProGrids_Interface.GetProGridsType() != null )
+				m_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", m_SnapTangents);
 		}
 
 		void UpdateMesh(bool vertexCountChanged)
@@ -475,6 +480,9 @@ namespace ProBuilder2.EditorCommon
 								if(!m_IsMoving)
 									OnBeginVertexModification();
 
+								if(m_SnapTangents)
+									point.tangentIn = pb_ProGrids_Interface.ProGridsSnap(point.tangentIn);
+
 								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 							}
 							Handles.color = Color.blue;
@@ -489,6 +497,9 @@ namespace ProBuilder2.EditorCommon
 							{
 								if(!m_IsMoving)
 									OnBeginVertexModification();
+
+								if(m_SnapTangents)
+									point.tangentOut = pb_ProGrids_Interface.ProGridsSnap(point.tangentOut);
 
 								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 							}
@@ -538,7 +549,7 @@ namespace ProBuilder2.EditorCommon
 						if(!m_IsMoving)
 							OnBeginVertexModification();
 
-						point.SetPosition(prev);
+						point.SetPosition( pb_ProGrids_Interface.ProGridsSnap(prev) );
 					}
 				}
 
@@ -571,7 +582,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentIn = prev;
+							point.tangentIn = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 						}
 					}
@@ -603,7 +614,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentOut = prev;
+							point.tangentOut = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 						}
 					}
