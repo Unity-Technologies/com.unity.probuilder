@@ -19,9 +19,9 @@ namespace ProBuilder2.EditorCommon
 		private bool m_PlacingPoint = false;
 		private int m_SelectedIndex = -2;
 		private float m_DistanceFromHeightHandle;
+		private static float m_HeightMouseOffset;
 		private bool m_NextMouseUpAdvancesMode = false;
 		private List<GameObject> m_IgnorePick = new List<GameObject>();
-		// private HashSet<int> m_SelectedIndices = new HashSet<int>();
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -33,8 +33,9 @@ namespace ProBuilder2.EditorCommon
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
 
-			if(pb_Editor.instance && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
-				pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
+			pb_PolyShape.PolyEditMode mode = polygon.polyEditMode;
+			polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+			SetPolyEditMode(mode);
 		}
 
 		void OnDisable()
@@ -119,7 +120,9 @@ namespace ProBuilder2.EditorCommon
 
 		void SetPolyEditMode(pb_PolyShape.PolyEditMode mode)
 		{
-			if(mode != polygon.polyEditMode)
+			pb_PolyShape.PolyEditMode old = polygon.polyEditMode;
+			
+			if(mode != old)
 			{
 				// Clear the control always
 				GUIUtility.hotControl = 0;
@@ -149,11 +152,17 @@ namespace ProBuilder2.EditorCommon
 				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 					Tools.current = Tool.None;
 
+				// If coming from Path -> Height set the mouse / origin offset
+				if(old == pb_PolyShape.PolyEditMode.Path && mode == pb_PolyShape.PolyEditMode.Height && Event.current != null)
+				{
+					Vector3 up = polygon.transform.up;
+					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
+					Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+					m_HeightMouseOffset = polygon.extrude - Snap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+				}
+
 				UpdateMesh();
-			}
-			else
-			{
-				polygon.polyEditMode = mode;
 			}
 		}
 
@@ -444,9 +453,7 @@ namespace ProBuilder2.EditorCommon
 			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
 			{
 				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
-				{
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
-				}
 
 				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
@@ -457,8 +464,8 @@ namespace ProBuilder2.EditorCommon
 
 				if(!sceneInUse)
 				{
-					Vector3 p = pb_Math.GetNearestPointRayRay(origin, trs.up, r.origin, r.direction);
-					extrude = Snap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+					extrude = Snap(m_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
 				}
 
 				Vector3 extrudePoint = origin + (extrude * up);
@@ -469,7 +476,6 @@ namespace ProBuilder2.EditorCommon
 				Handles.DrawLine(origin, extrudePoint);
 				Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f);
 				Handles.color = Color.white;
-
 
 				if( !sceneInUse && polygon.extrude != extrude)
 				{
@@ -506,7 +512,7 @@ namespace ProBuilder2.EditorCommon
 					// "clicked" a button
 					if( !used && evt.type == EventType.Used )
 					{
-						if(ii == 0 && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
+						if(ii == 0 && polygon.points.Count > 2 && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
 						{
 							m_NextMouseUpAdvancesMode = true;
 							return;
