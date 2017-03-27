@@ -14,12 +14,9 @@ namespace ProBuilder2.Actions
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Poly Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
-		private bool experimentalFeaturesEnabled = false;
 
 		public NewPolyShape()
-		{
-			experimentalFeaturesEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableExperimental);
-		}
+		{}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
@@ -29,7 +26,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return !experimentalFeaturesEnabled;
+			return false;
 		}
 
 		public override bool IsEnabled()
@@ -47,7 +44,6 @@ namespace ProBuilder2.Actions
 			pb_Selection.SetSelection(go);
 			pbUndo.RegisterCreatedObjectUndo(go, "Create Poly Shape");
 			poly.polyEditMode = pb_PolyShape.PolyEditMode.Path;
-
 
 			Vector3 pivot;
 
