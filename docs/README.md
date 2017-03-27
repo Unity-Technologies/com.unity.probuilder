@@ -33,4 +33,7 @@ See http://www.mkdocs.org/#adding-pages
 - Check out ProCore3D fork of Cinder theme
 - Create a symlink to `cinder/cinder` folder in the `docs/` directory (or copy the folder if you don't plan on making changes)
 	- (`cd probuilder2/docs; ln -s ../../cinder/cinder ./cinder`)
+- Install [wk<html>topdf](https://wkhtmltopdf.org/downloads.html)
+- Make sure `wkhtmltopdf` is on your `$PATH`.  (Ex, `ln -s C:/Program\ Files/wkhtmltopdf/bin/wkhtmltopdf.exe /usr/local/bin/wkhtmltopdf.exe`).
+- Install `pdfkit` python module. (`pip install pdfkit`)
 - `sh build-manual.sh`
