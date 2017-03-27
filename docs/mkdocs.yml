@@ -18,6 +18,7 @@ pages:
 - Toolbar:
   - Overview: toolbar/overview-toolbar.md
   - Tool Panels: toolbar/tool-panels.md
+  - Poly Shape: toolbar/polyshape.md
   - Selection Actions: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
   - Vertex Actions: toolbar/vertex.md
@@ -35,7 +36,6 @@ pages:
 
 - Experimental: 
   - Overview: experimental/experimental-overview.md
-  - Poly Shape: experimental/polyshape.md
   - Bezier Shape: experimental/beziershape.md
   - Boolean Ops: experimental/booleanops.md
 

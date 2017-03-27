@@ -49,6 +49,6 @@ Modifying bezier control points or settings will clear any mesh edits.
 
 | Icon | Tangent Mode | Description |
 |-|-|-|
-|  | Free | Adjusting one tangent does not affect the other. |
-|  | Aligned | Adjusting a tangent will set the other tangent to match it's magnitude. |
-|  | Mirrored| Tangent handles are locked in a straight line. |
+| ![Free](../../images/Bezier_Free.png) | Free | Adjusting one tangent does not affect the other. |
+| ![Aligned](../../images/Bezier_Aligned.png) | Aligned | Adjusting a tangent will set the other tangent to match it's magnitude. |
+| ![Mirrored](../../images/Bezier_Mirrored.png) | Mirrored| Tangent handles are locked in a straight line. |
