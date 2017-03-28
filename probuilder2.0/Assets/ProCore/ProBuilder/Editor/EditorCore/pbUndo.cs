@@ -1,5 +1,3 @@
-#define PB_DEBUG
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -25,7 +23,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 *	Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object 
+		 *	Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object
 		 * 	instead of diffing the serialized object (which is very slow for large arrays).
 		 */
 		public static void RecordSelection(pb_Object[] pb, string msg)
@@ -41,7 +39,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RecordObject(Object obj, string msg)
 		{
-			if(obj is pb_Object && ((pb_Object)obj).vertexCount > 256)	
+			if(obj is pb_Object && ((pb_Object)obj).vertexCount > 256)
 			{
 #if PB_DEBUG
 				Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)obj).vertexCount);
@@ -59,8 +57,8 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void RecordObjects(Object[] objs, string msg)
 		{
-			if(objs == null) 
-				return;	
+			if(objs == null)
+				return;
 
 			Object[] obj = objs.Where(x => !(x is pb_Object)).ToArray();
 			pb_Object[] pb = objs.Where(x => x is pb_Object).Cast<pb_Object>().ToArray();
