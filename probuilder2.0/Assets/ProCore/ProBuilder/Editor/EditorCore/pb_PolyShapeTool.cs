@@ -234,7 +234,7 @@ namespace ProBuilder2.EditorCommon
 			else if ( Mathf.Abs(cam_z) > .98f )
 				axis = ProjectionAxis.Z;
 
-			polygon.transform.position = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.position, SNAP_MASK);
+			polygon.transform.position = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.position, Vector3.one);
 
 			switch(axis)
 			{
@@ -251,7 +251,7 @@ namespace ProBuilder2.EditorCommon
 					break;
 			}
 		}
-		
+
 		/**
 		 *	Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
 
