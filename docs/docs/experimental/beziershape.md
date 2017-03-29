@@ -1,7 +1,11 @@
+## ![Bezier Shape Icon](../images/icons/NewBezierSpline.png "Bezier Shape Icon") Bezier Shape
 
+<div class="video-link">
+Section Video: <a href="https://youtu.be/WIyPObt3lro">Creating and Editing Bezier Shapes</a>
+</div>
 
 <div style="text-align:center">
-<img src="../../images/Experimental_BezierShape.png">
+<img src="../../images/BezierShape_HeaderImage.png">
 </div>
 
 ## Quick Start
