@@ -104,6 +104,10 @@ namespace ProBuilder2.EditorCommon
 			return string.Format("{0}.{1}.{2}{3}{4}", major, minor, patch, type.ToString().ToLower()[0], build);
 		}
 
+		/**
+		 *	Create a pb_VersionInfo type from a string.
+		 *	Ex: "2.5.3b1"
+		 */
 		public static pb_VersionInfo FromString(string str)
 		{
 			pb_VersionInfo version = new pb_VersionInfo();
