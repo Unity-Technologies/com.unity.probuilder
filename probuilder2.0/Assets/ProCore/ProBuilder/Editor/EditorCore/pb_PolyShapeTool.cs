@@ -38,6 +38,12 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
+			if(polygon == null)
+			{
+				DestroyImmediate(this);
+				return;
+			}
+
 			pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChange);
 			m_LineMesh = new Mesh();
 			// m_LineMaterial = (Material) Resources.Load("Materials/HighlightScroller", typeof(Material));
@@ -212,10 +218,24 @@ namespace ProBuilder2.EditorCommon
 						m.triangles,
 						out hit))
 					{
-
-						polygon.transform.position = go.transform.TransformPoint(hit.point);
 						polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
-						polygon.isOnGrid = false;
+						Vector3 hitPointWorld = go.transform.TransformPoint(hit.point);
+
+						// if hit point on plane is cardinal axis and on grid, snap to grid.
+						if( !pb_Math.IsCardinalAxis(polygon.transform.up) )
+						{
+							polygon.isOnGrid = false;
+						}
+						else
+						{
+							const float epsilon = .00001f;
+							float snapVal = Mathf.Abs(pb_ProGrids_Interface.SnapValue());
+							float rem = Mathf.Abs(snapVal - (Vector3.Scale(polygon.transform.up, hitPointWorld).magnitude % snapVal));
+							polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
+						}
+
+						polygon.transform.position = polygon.isOnGrid ? pb_ProGrids_Interface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
+
 						return;
 					}
 				}
@@ -679,7 +699,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEditLevelChange(int editLevel)
 		{
-			if( polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+			if( polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
 				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 		}
 
@@ -692,9 +712,10 @@ namespace ProBuilder2.EditorCommon
 				GameObject.DestroyImmediate(m_LineMaterial);
 
 			m_LineMesh = new Mesh();
+
 			m_LineMaterial = CreateHighlightLineMaterial();
 
-			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+			if(polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				UpdateMesh(true);
 		}
 	}
