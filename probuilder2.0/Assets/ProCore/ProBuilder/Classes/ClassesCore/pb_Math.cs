@@ -661,11 +661,13 @@ namespace ProBuilder2.Common
 			bitangent = Vector3.Cross(normal, tangent);
 		}
 
-		public static bool IsCardinalAxis(Vector3 v, float epsilon = FLT_EPSILON)
+		public static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
 		{
-			return 	Mathf.Abs((Mathf.Abs(Vector3.Dot(Vector3.up, v)) - 1f)) < epsilon ||
-					Mathf.Abs((Mathf.Abs(Vector3.Dot(Vector3.forward, v)) - 1f)) < epsilon ||
-					Mathf.Abs((Mathf.Abs(Vector3.Dot(Vector3.right, v)) - 1f)) < epsilon;
+			v.Normalize();
+
+			return 	(1f - Mathf.Abs(Vector3.Dot(Vector3.up, v))) < epsilon ||
+					(1f - Mathf.Abs(Vector3.Dot(Vector3.forward, v))) < epsilon ||
+					(1f - Mathf.Abs(Vector3.Dot(Vector3.right, v))) < epsilon;
 		}
 #endregion
 

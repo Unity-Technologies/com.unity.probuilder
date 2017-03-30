@@ -254,7 +254,7 @@ namespace ProBuilder2.EditorCommon
 			else if ( Mathf.Abs(cam_z) > .98f )
 				axis = ProjectionAxis.Z;
 
-			polygon.transform.position = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.position, Vector3.one);
+			polygon.transform.position = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.position);
 
 			switch(axis)
 			{
@@ -401,7 +401,12 @@ namespace ProBuilder2.EditorCommon
 						evt.Use();
 						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
 
-						Vector3 point = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
+						Vector3 hit = ray.GetPoint(hitDistance);
+
+						if(polygon.points.Count < 1)
+							polygon.transform.position = polygon.isOnGrid ? pb_ProGrids_Interface.ProGridsSnap(hit) : hit;
+
+						Vector3 point = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), SNAP_MASK);
 
 						if(polygon.points.Count > 2 && pb_Math.Approx3(polygon.points[0], point))
 						{
