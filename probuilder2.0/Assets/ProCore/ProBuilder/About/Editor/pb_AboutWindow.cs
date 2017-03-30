@@ -29,20 +29,23 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Changelog.txt file should follow this format:
 	 *
-	 *	| -- Product Name 2.1.0 -
+	 *	| # Product Name 2.1.0
 	 *	|
-	 *	| # Features
-	 *	| 	- All kinds of awesome stuff
-	 *	| 	- New flux capacitor design achieves time travel at lower velocities.
-	 *	| 	- Dark matter reactor recalibrated.
+	 *	| ## Features
 	 *	|
-	 *	| # Bug Fixes
-	 *	| 	- No longer explodes when spacebar is pressed.
-	 *	| 	- Fix rolling issue in Rickmeter.
+	 *	| - All kinds of awesome stuff
+	 *	| - New flux capacitor design achieves time travel at lower velocities.
+	 *	| - Dark matter reactor recalibrated.
+	 *	|
+	 *	| ## Bug Fixes
+	 *	|
+	 *	| - No longer explodes when spacebar is pressed.
+	 *	| - Fix rolling issue in rickmeter.
 	 *	|
 	 *	| # Changes
-	 *	| 	- Changed Blue to Red.
-	 *	| 	- Enter key now causes explosions.
+	 *	|
+	 *	| - Changed Blue to Red.
+	 *	| - Enter key now causes explosions.
 	 *
 	 * This path is relative to the PRODUCT_ROOT path.
 	 *
@@ -75,51 +78,6 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		#if SHOW_PRODUCT_THUMBS
-
-			/**
-			 * Contains data for use in Advertisement shelf.
-			 */
-			private class AdvertisementThumb
-			{
-				public Texture2D image;
-				public string url;
-				public string about;
-				public GUIContent guiContent;
-
-				public AdvertisementThumb(string imagePath, string url, string about)
-				{
-					guiContent = new GUIContent("", about);
-					this.image = LoadAssetAtPath<Texture2D>(imagePath);
-
-					guiContent.image = this.image;
-					this.url = url;
-					this.about = about;
-				}
-			}
-
-			/**
-			 * Advertisement thumb constructor is:
-			 * new AdvertisementThumb( PathToAdImage : string, URLToPurchase : string, ProductDescription : string )
-			 * Provide as many or few (or none) as desired.
-			 *
-			 * Notes - The http:// part is required.  Partial URLs do not work on Mac.
-			 */
-			private AdvertisementThumb[] advertisements = new AdvertisementThumb[] {
-				new AdvertisementThumb( AboutRoot + "/Images/ProBuilder_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/probuilder/", "Build and Texture Geometry In-Editor"),
-				new AdvertisementThumb( AboutRoot + "/Images/ProGrids_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progrids/", "True Grids and Grid-Snapping"),
-				new AdvertisementThumb( AboutRoot + "/Images/ProGroups_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/progroups/", "Hide, Freeze, Group, & Organize"),
-				new AdvertisementThumb( AboutRoot + "/Images/Prototype_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/prototype/", "Design and Build With Zero Lag"),
-				new AdvertisementThumb( AboutRoot + "/Images/QuickBrush_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickbrush/", "Quickly Add Detail Geometry"),
-				new AdvertisementThumb( AboutRoot + "/Images/QuickDecals_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickdecals/", "Add Dirt, Splatters, Posters, etc"),
-				new AdvertisementThumb( AboutRoot + "/Images/QuickEdit_AssetStore_Icon_96px.png", "http://www.protoolsforunity3d.com/quickedit/", "Edit Imported Meshes!"),
-			};
-
-			GUIStyle advertisementStyle;
-			const int AD_HEIGHT = 96;
-			Vector2 adScroll = Vector2.zero;
-		#endif
-
 		GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
 		GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
 		GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
@@ -139,7 +97,7 @@ namespace ProBuilder2.EditorCommon
 		public static readonly Color font_white = HexToColor(0xCECECE);
 		public static readonly Color font_black = HexToColor(0x545454);
 		public static readonly Color font_blue_normal = HexToColor(0x00AAEF);
-		public static readonly Color font_blue_hover = HexToColor(0x008BEF);// HexToColor(0x008BEF);
+		public static readonly Color font_blue_hover = HexToColor(0x008BEF);
 
 
 		private string productName = pb_Constant.PRODUCT_NAME;
@@ -371,35 +329,6 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.Label(string.Format("Version: {0}", about.version), versionInfoStyle);
 			GUILayout.Label("\n" + changelogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
-
-			#if SHOW_PRODUCT_THUMBS
-
-				HorizontalLine();
-
-				GUILayout.Label("More ProCore Products", EditorStyles.boldLabel);
-
-				int pad = advertisements.Length * AD_HEIGHT > Screen.width ? 22 : 6;
-				adScroll = EditorGUILayout.BeginScrollView(adScroll, false, false, GUILayout.MinHeight(AD_HEIGHT + pad), GUILayout.MaxHeight(AD_HEIGHT + pad));
-				GUILayout.BeginHorizontal();
-
-		    	advertisementStyle = advertisementStyle ?? new GUIStyle(GUI.skin.button);
-		    	advertisementStyle.normal.background = null;
-
-				foreach(AdvertisementThumb ad in advertisements)
-				{
-					if(ad.url.ToLower().Contains(ProductName.ToLower()))
-						continue;
-
-					if(GUILayout.Button(ad.guiContent, advertisementStyle,
-						GUILayout.MinWidth(AD_HEIGHT), GUILayout.MaxWidth(AD_HEIGHT),
-						GUILayout.MinHeight(AD_HEIGHT), GUILayout.MaxHeight(AD_HEIGHT)))
-					{
-						Application.OpenURL(ad.url);
-					}
-				}
-				GUILayout.EndHorizontal();
-				EditorGUILayout.EndScrollView();
-			#endif
 		}
 
 		/**
