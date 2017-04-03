@@ -25,6 +25,7 @@ namespace ProBuilder2.EditorCommon
 		private static float m_HeightMouseOffset;
 		private bool m_NextMouseUpAdvancesMode = false;
 		private List<GameObject> m_IgnorePick = new List<GameObject>();
+		private bool m_IsModifyingVertices = false;
 
 		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
 
@@ -296,6 +297,9 @@ namespace ProBuilder2.EditorCommon
 				return false;
 			}
 
+			if(vertexCountChanged)
+				polygon.mesh.Optimize();
+
 			if(pb_Editor.instance != null)
 			{
 				if(!vertexCountChanged)
@@ -331,12 +335,22 @@ namespace ProBuilder2.EditorCommon
 			if(m_NextMouseUpAdvancesMode && evt.type == EventType.MouseUp)
 			{
 				evt.Use();
+
 				m_NextMouseUpAdvancesMode = false;
 
 				if( SceneCameraIsAlignedWithPolyUp() )
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
 				else
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+			}
+
+			if(	m_IsModifyingVertices && (
+				evt.type == EventType.MouseUp || 
+				evt.type == EventType.Ignore ||
+				evt.type == EventType.KeyDown ||
+				evt.type == EventType.KeyUp ))
+			{
+				OnFinishVertexMovement();
 			}
 
 			DoExistingPointsGUI();
@@ -370,7 +384,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						evt.Use();
 						polygon.points[m_SelectedIndex] = pb_ProGrids_Interface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
-						UpdateMesh();
+						UpdateMesh(false);
 						SceneView.RepaintAll();
 					}
 				}
@@ -461,6 +475,7 @@ namespace ProBuilder2.EditorCommon
 							m_SelectedIndex = index;
 							m_PlacingPoint = true;
 							UpdateMesh(true);
+							OnBeginVertexMovement();
 						}
 
 						Handles.color = Color.white;
@@ -522,8 +537,9 @@ namespace ProBuilder2.EditorCommon
 
 				if( !sceneInUse && polygon.extrude != extrude)
 				{
+					OnBeginVertexMovement();
 					polygon.extrude = extrude;
-					UpdateMesh();
+					UpdateMesh(false);
 				}
 			}
 			else
@@ -549,7 +565,8 @@ namespace ProBuilder2.EditorCommon
 					{
 						pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
 						polygon.points[ii] = pb_ProGrids_Interface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
-						UpdateMesh(true);
+						OnBeginVertexMovement();
+						UpdateMesh(false);
 					}
 
 					// "clicked" a button
@@ -593,6 +610,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
 						polygon.extrude = pb_ProGrids_Interface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
+						OnBeginVertexMovement();
 						UpdateMesh(false);
 					}
 				}
@@ -706,6 +724,18 @@ namespace ProBuilder2.EditorCommon
 		{
 			if( polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
 				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+		}
+
+		void OnBeginVertexMovement()
+		{
+			if(!m_IsModifyingVertices)
+				m_IsModifyingVertices = true;
+		}
+
+		void OnFinishVertexMovement()
+		{
+			m_IsModifyingVertices = false;
+			UpdateMesh();
 		}
 
 		void UndoRedoPerformed()
