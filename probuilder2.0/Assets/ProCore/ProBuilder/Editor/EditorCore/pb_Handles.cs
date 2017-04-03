@@ -26,6 +26,15 @@ namespace ProBuilder2.EditorCommon
 #endif
 		}
 
+		public static void DotCap(int id, Vector3 position, Quaternion rotation, float size, EventType type)
+		{
+#if UNITY_5_4_OR_LOWER
+			Handles.DotCap(id, position, rotation, size);
+#else
+			Handles.DotHandleCap(id, position, rotation, size, type);
+#endif
+		}
+
 		/**
 		 *	Draw a circle handle.
 		 */
@@ -61,5 +70,36 @@ namespace ProBuilder2.EditorCommon
 			Handles.CubeHandleCap(handleId, position, rotation, size, Event.current.type);
 #endif
 		}
+
+		/**
+		 *	A free move handle with a dot cap.
+		 */
+		public static Vector3 FreeMoveDotHandle(Vector3 position, Quaternion rotation, float size, Vector3 snap)
+		{
+#if UNITY_5_4_OR_LOWER
+			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotCap);
+#else
+			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotHandleCap);
+#endif
+		}
+
+		public static Vector3 DotSlider2D(Vector3 position, Vector3 up, Vector3 right, Vector3 forward, float size, Vector3 snap, bool drawHelper)
+		{
+#if UNITY_5_4_OR_LOWER
+			return Handles.Slider2D(position, up, right, forward, size, Handles.DotCap, snap, drawHelper);
+#else
+			return Handles.Slider2D(position, up, right, forward, size, Handles.DotHandleCap, snap, drawHelper);
+#endif
+		}
+
+		public static Vector3 DotSlider(Vector3 position, Vector3 up, float size, float snap)
+		{
+#if UNITY_5_4_OR_LOWER
+			return Handles.Slider(position, up, size, Handles.DotCap, snap);
+#else
+			return Handles.Slider(position, up, size, Handles.DotHandleCap, snap);
+#endif
+		}
+
 	}
 }

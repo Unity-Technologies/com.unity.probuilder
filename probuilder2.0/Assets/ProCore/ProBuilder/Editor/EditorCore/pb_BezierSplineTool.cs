@@ -531,12 +531,12 @@ namespace ProBuilder2.EditorCommon
 
 				if(m_currentHandle == index && !m_currentHandle.isTangent)
 				{
-					Handles.DotCap(0, point.position, Quaternion.identity, size);
+					pb_Handles.DotCap(0, point.position, Quaternion.identity, size, e.type);
 				}
 				else
 				{
 					prev = point.position;
-					prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+					prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
 					if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 					{
 						eventHasBeenUsed = true;
@@ -564,12 +564,12 @@ namespace ProBuilder2.EditorCommon
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.In)
 					{
-						Handles.DotCap(0, point.tangentIn, Quaternion.identity, size);
+						pb_Handles.DotCap(0, point.tangentIn, Quaternion.identity, size, e.type);
 					}
 					else
 					{
 						prev = point.tangentIn;
-						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+						prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
 
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
@@ -596,12 +596,12 @@ namespace ProBuilder2.EditorCommon
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.Out)
 					{
-						Handles.DotCap(0, point.tangentOut, Quaternion.identity, size);
+						pb_Handles.DotCap(0, point.tangentOut, Quaternion.identity, size, e.type);
 					}
 					else
 					{
 						prev = point.tangentOut;
-						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+						prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
 
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
@@ -634,7 +634,7 @@ namespace ProBuilder2.EditorCommon
 				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL )
 				{
 					Handles.color = Color.green;
-					Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f);
+					pb_Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
 					Handles.color = Color.white;
 
 					if(!eventHasBeenUsed && eventType == EventType.MouseDown && e.button == 0)

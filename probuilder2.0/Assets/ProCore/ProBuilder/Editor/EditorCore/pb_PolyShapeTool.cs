@@ -425,7 +425,7 @@ namespace ProBuilder2.EditorCommon
 					{
 						Handles.color = Color.green;
 
-						Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f);
+						pb_Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f, evt.type);
 
 						if( evt.type == EventType.MouseDown )
 						{
@@ -489,10 +489,10 @@ namespace ProBuilder2.EditorCommon
 				Vector3 extrudePoint = origin + (extrude * up);
 
 				Handles.color = HANDLE_COLOR;
-				Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f);
+				pb_Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f, evt.type);
 				Handles.color = HANDLE_GREEN;
 				Handles.DrawLine(origin, extrudePoint);
-				Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f);
+				pb_Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f, evt.type);
 				Handles.color = Color.white;
 
 				if( !sceneInUse && polygon.extrude != extrude)
@@ -518,7 +518,7 @@ namespace ProBuilder2.EditorCommon
 
 					EditorGUI.BeginChangeCheck();
 
-					point = Handles.Slider2D(point, up, right, forward, size, Handles.DotCap, Vector2.zero, true);
+					point = pb_Handles.DotSlider2D(point, up, right, forward, size, Vector2.zero, true);
 
 					if(EditorGUI.EndChangeCheck())
 					{
@@ -558,10 +558,10 @@ namespace ProBuilder2.EditorCommon
 					EditorGUI.BeginChangeCheck();
 
 					Handles.color = HANDLE_COLOR;
-					Handles.DotCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f);
+					pb_Handles.DotCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f, evt.type);
 					Handles.DrawLine(center, extrude);
 					Handles.color = HANDLE_GREEN;
-					extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, Handles.DotCap, 0f);
+					extrude = pb_Handles.DotSlider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, 0f);
 					Handles.color = Color.white;
 
 					if(EditorGUI.EndChangeCheck())
