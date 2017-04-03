@@ -173,9 +173,12 @@ namespace ProBuilder2.Examples
 			icoPosition = icoTransform.position;
 #if UNITY_4_5 || UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
 			waveform.SetVertexCount(WAVEFORM_SAMPLES);
-#else
+#elif UNITY_5_5
 			waveform.numPositions = WAVEFORM_SAMPLES;
+#else
+			waveform.positionCount = WAVEFORM_SAMPLES;
 #endif
+
 
 			if( bounceWaveform )
 				waveform.transform.parent = icoTransform;
