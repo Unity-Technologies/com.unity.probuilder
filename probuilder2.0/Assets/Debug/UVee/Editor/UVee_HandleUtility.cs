@@ -1,3 +1,5 @@
+#pragma warning disable 0618
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
