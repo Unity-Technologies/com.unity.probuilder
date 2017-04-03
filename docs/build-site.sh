@@ -16,7 +16,7 @@ echo $MKBUILD/site/
 cp -r $MKBUILD/site/* .
 git add -A
 
-git commit -m "Update documentation"
-git push origin gh-pages
+# git commit -m "Update documentation"
+# git push origin gh-pages
 
 echo did the thing

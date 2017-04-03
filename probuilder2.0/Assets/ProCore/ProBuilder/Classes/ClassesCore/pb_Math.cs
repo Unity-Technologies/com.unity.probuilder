@@ -16,13 +16,11 @@ namespace ProBuilder2.Common
 	 */
 	public static class pb_Math
 	{
-#region CONST
 		public const float PHI = 1.618033988749895f;
 		public const float FLT_EPSILON = float.Epsilon;
 		public const float FLT_COMPARE_EPSILON = .0001f;
 		// The minimum distance a handle must move on an axis before considering that axis as engaged.
 		public const float HANDLE_EPSILON = .0001f;
-#endregion
 
 #region Geometry
 
@@ -81,7 +79,7 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < indices.Length; i += 3)
 				area += TriangleArea(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]]);
-			
+
 			return area;
 		}
 
@@ -225,7 +223,7 @@ namespace ProBuilder2.Common
 		public static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
 		{
 			// ray-ray don't do parallel
-			if(ad == bd)	
+			if(ad == bd)
 				return ao;
 
 			Vector3 c = bo - ao;
@@ -662,6 +660,15 @@ namespace ProBuilder2.Common
 			tangent = ((Vector3)tan) * tan.w;
 			bitangent = Vector3.Cross(normal, tangent);
 		}
+
+		public static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
+		{
+			v.Normalize();
+
+			return 	(1f - Mathf.Abs(Vector3.Dot(Vector3.up, v))) < epsilon ||
+					(1f - Mathf.Abs(Vector3.Dot(Vector3.forward, v))) < epsilon ||
+					(1f - Mathf.Abs(Vector3.Dot(Vector3.right, v))) < epsilon;
+		}
 #endregion
 
 #region Compare (Max, Min, Average, etc)
@@ -795,7 +802,7 @@ namespace ProBuilder2.Common
 		{
 			Vector2 sum = Vector2.zero;
 			float len = indices == null ? v.Count : indices.Count;
-			
+
 			if( indices == null )
 				for(int i = 0; i < len; i++) sum += v[i];
 			else
@@ -987,7 +994,7 @@ namespace ProBuilder2.Common
 		return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
 	}
 
-	public static int Sum(this Vector3 mask)
+	public static int IntSum(this Vector3 mask)
 	{
 		return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
 	}

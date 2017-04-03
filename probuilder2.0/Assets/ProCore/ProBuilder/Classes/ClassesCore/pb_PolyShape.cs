@@ -21,7 +21,7 @@ namespace ProBuilder2.Common
 		}
 
 		public List<Vector3> points = new List<Vector3>();
-		public float extrude = .25f;
+		public float extrude = 0f;
 		public PolyEditMode polyEditMode = PolyEditMode.None;
 		public bool flipNormals = false;
 		private pb_Object m_Mesh;

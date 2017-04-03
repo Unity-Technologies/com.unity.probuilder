@@ -1,5 +1,11 @@
+## ![Poly Shape Icon](../images/icons/NewPolyShape.png "New Poly Shape Icon") Poly Shape
+
+<div class="video-link">
+Section Video: <a href="https://youtu.be/Xn8YPCnnoDc">Creating and Editing a Poly Shape</a>
+</div>
+
 <div style="text-align:center">
-<img src="../../images/Experimental_PolyShapeHeader.png">
+<img src="../../images/PolyShape_HeaderImage.png">
 </div>
 
 **Poly Shape** is unlike the usual ProBuilder shapes in that it is interactive and editable indefinitely.  Once a **Poly Shape** has been created you may continue to edit it's control points and other settings.

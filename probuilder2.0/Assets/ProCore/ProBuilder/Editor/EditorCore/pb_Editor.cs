@@ -1442,7 +1442,7 @@ public class pb_Editor : EditorWindow
 
 				if( pb_Handle_Utility.FaceRaycast(mousePosition, out obj, out hit, ignore) )
 				{
-					if( mask.Sum() == 1 )
+					if( mask.IntSum() == 1 )
 					{
 						Ray r = new Ray(cachedPosition, -mask);
 						Plane plane = new Plane(obj.transform.TransformDirection(hit.normal).normalized, obj.transform.TransformPoint(hit.point));
