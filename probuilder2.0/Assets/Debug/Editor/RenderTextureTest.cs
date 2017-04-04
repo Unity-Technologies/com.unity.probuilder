@@ -10,8 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-using Parabox.Debug;
-
 public class RenderTextureTest : EditorWindow
 {
 	[MenuItem("Tools/Render Scene to Texture")]

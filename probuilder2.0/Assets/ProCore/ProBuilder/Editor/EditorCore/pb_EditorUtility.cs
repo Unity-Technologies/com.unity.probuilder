@@ -12,10 +12,6 @@ using ProBuilder2.MeshOperations;
 using UnityEngine.Rendering;
 #endif
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.EditorCommon
 {
 	/**
@@ -61,7 +57,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe 
+		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe
 		 *	on or off.
 		 */
 		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
@@ -69,7 +65,7 @@ namespace ProBuilder2.EditorCommon
 			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
 				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
 			#else
-				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state ); 
+				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
 			#endif
 		}
 
@@ -84,7 +80,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool wireframe = false, outline = false;
 
-			try {			
+			try {
 				wireframe = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
 				outline = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
 			} catch {
@@ -352,7 +348,7 @@ namespace ProBuilder2.EditorCommon
 			if(ent != null && ent.entityType == EntityType.Detail)
 			{
 				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
-				
+
 				if( isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0 )
 				{
 					flags ^= StaticEditorFlags.LightmapStatic;

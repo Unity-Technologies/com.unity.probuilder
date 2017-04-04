@@ -4,10 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 /**
  *	Used to query pb_Objects for more detailed information than what would belong in the pbObejct class
  */
@@ -577,7 +573,7 @@ namespace ProBuilder2.MeshOperations
 				used.Add(cur.edge);
 
 				List<pb_WingedEdge> spokes = GetSpokes(cur, ind, true).DistinctBy(x => x.edge.common).ToList();
-				
+
 				cur = null;
 
 				if(spokes != null && spokes.Count == 4)

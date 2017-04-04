@@ -7,10 +7,6 @@ using KDTree;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.MeshOperations
 {
 	public static class pbVertexOps
@@ -598,7 +594,7 @@ namespace ProBuilder2.MeshOperations
 				triangles.Reverse();
 
 			data.face.SetIndices(triangles.ToArray());
-			
+
 			return data;
 		}
 

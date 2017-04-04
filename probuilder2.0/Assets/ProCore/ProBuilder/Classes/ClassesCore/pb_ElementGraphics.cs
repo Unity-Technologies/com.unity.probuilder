@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.Common
 {
 	[ExecuteInEditMode]
@@ -45,7 +41,7 @@ namespace ProBuilder2.Common
 			base.Awake();
 
 			gameObject.hideFlags = HideFlags.HideAndDontSave;
-			
+
 			if(pb_MeshRenderer.nullableInstance == null)
 				gameObject.AddComponent<pb_MeshRenderer>();
 
@@ -76,17 +72,17 @@ namespace ProBuilder2.Common
 
 		void OnDisable()
 		{
-			pool.Empty();	
+			pool.Empty();
 		}
 
 		Material CreateMaterial(Shader shader, string materialName)
 		{
 			Material mat = new Material(shader);
-			mat.name = materialName;		
+			mat.name = materialName;
 			mat.hideFlags = PB_EDITOR_GRAPHIC_HIDE_FLAGS;
 			return mat;
 		}
-		
+
 		/**
 		 * Reload colors for edge and face highlights from editor prefs.
 		 */
@@ -157,7 +153,7 @@ namespace ProBuilder2.Common
 		 * Populate a renderable's mesh with a face highlight mesh matching the selected triangles array.
 		 */
 		private pb_Renderable BuildFaceMesh(pb_Object pb)
-		{	
+		{
 			pb_Renderable ren = pool.Get();
 
 			ren.name = "Faces Renderable";
@@ -194,7 +190,7 @@ namespace ProBuilder2.Common
 			Vector3[] v = new Vector3[pb.sharedIndices.Length];
 			HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetCommonIndices(pb.SelectedTriangles));
 
-			for(int i = 0; i < billboardCount; i++)	
+			for(int i = 0; i < billboardCount; i++)
 				v[i] = pb.vertices[pb.sharedIndices[i][0]];
 
 			Vector3[] 	t_billboards 		= new Vector3[billboardCount*4];
@@ -209,7 +205,7 @@ namespace ProBuilder2.Common
 
 			Vector3 up = Vector3.up;
 			Vector3 right = Vector3.right;
-			
+
 			for(int i = 0; i < billboardCount; i++)
 			{
 				t_billboards[t+0] = v[i];
@@ -260,7 +256,7 @@ namespace ProBuilder2.Common
 				}
 
 				t+=4;
-				n+=6;				
+				n+=6;
 			}
 
 			pb_Renderable ren = pool.Get();
@@ -308,7 +304,7 @@ namespace ProBuilder2.Common
 #endif
 			ren.mesh.subMeshCount = 1;
 			ren.mesh.SetIndices(lineSegments, MeshTopology.Lines, 0);
-			
+
 			return ren;
 		}
 	}

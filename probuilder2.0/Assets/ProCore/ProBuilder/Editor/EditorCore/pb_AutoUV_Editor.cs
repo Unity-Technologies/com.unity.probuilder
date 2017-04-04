@@ -9,10 +9,6 @@ using ProBuilder2.Common;
 using ProBuilder2.Interface;
 using ProBuilder2.MeshOperations;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.EditorCommon
 {
 	public class pb_AutoUV_Editor

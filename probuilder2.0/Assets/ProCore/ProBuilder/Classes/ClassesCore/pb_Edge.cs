@@ -3,10 +3,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.Common {
 [System.Serializable]
 public class pb_Edge : System.IEquatable<pb_Edge>
@@ -185,7 +181,7 @@ public class pb_Edge : System.IEquatable<pb_Edge>
 		HashSet<pb_EdgeLookup> edge_lookup = new HashSet<pb_EdgeLookup>(pb_EdgeLookup.GetEdgeLookup(edges, lookup));
 		List<pb_Edge> valid = new List<pb_Edge>();
 		bool superBreak = false;
-		
+
 		for(int i = 0; i < faces.Length && !superBreak; i++)
 		{
 			pb_Edge[] ea = faces[i].edges;
@@ -307,7 +303,7 @@ public static class EdgeExtensions
 				return true;
 		}
 
-		return false;	
+		return false;
 	}
 
 	/**
@@ -321,7 +317,7 @@ public static class EdgeExtensions
 				return true;
 		}
 
-		return false;	
+		return false;
 	}
 
 	/**
@@ -342,7 +338,7 @@ public static class EdgeExtensions
 				return i;
 		}
 
-		return -1;	
+		return -1;
 	}
 
 	public static List<int> ToIntList(this List<pb_Edge> edges)

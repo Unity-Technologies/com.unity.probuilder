@@ -6,10 +6,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 /**
  *	\brief A series of handy extensions, ranging from Array utilities
  *	to 3d math.
