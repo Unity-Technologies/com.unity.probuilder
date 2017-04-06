@@ -38,7 +38,9 @@ namespace ProBuilder2.EditorCommon
 			GameObject go = new GameObject();
 
 			pb_Object pb = go.AddComponent<pb_Object>();
-			pb_Entity pe = go.AddComponent<pb_Entity>();
+			pb_Entity pe = go.GetComponent<pb_Entity>();
+			if(pe == null)
+				pe = go.AddComponent<pb_Entity>();
 			pb_DummyScript du = go.AddComponent<pb_DummyScript>();
 
 			_mono_pb = MonoScript.FromMonoBehaviour( pb );
@@ -53,7 +55,7 @@ namespace ProBuilder2.EditorCommon
 			get
 			{
 				if(_mono_pb == null) LoadMonoScript();
-				return _mono_pb; 
+				return _mono_pb;
 			}
 		}
 
@@ -62,7 +64,7 @@ namespace ProBuilder2.EditorCommon
 			get
 			{
 				if(_mono_pe == null) LoadMonoScript();
-				return _mono_pe; 
+				return _mono_pe;
 			}
 		}
 
@@ -71,7 +73,7 @@ namespace ProBuilder2.EditorCommon
 			get
 			{
 				if(_mono_dummy == null) LoadMonoScript();
-				return _mono_dummy; 
+				return _mono_dummy;
 			}
 		}
 	#endregion
@@ -153,18 +155,18 @@ namespace ProBuilder2.EditorCommon
 					}
 				}
 			}
-			
+
 			pb_Object[] pbs = (pb_Object[])Resources.FindObjectsOfTypeAll(typeof(pb_Object));
-		
+
 			for(int i = 0; i < pbs.Length; i++)
-			{	
+			{
 				EditorUtility.DisplayProgressBar("Checking ProBuilder Meshes", "Refresh " + (i+1) + " out of " + total + " objects in scene.", ((float)i/pbs.Length) );
-				
+
 				try
 				{
 					pbs[i].ToMesh();
-					pbs[i].Refresh();		
-					pbs[i].Optimize();		
+					pbs[i].Refresh();
+					pbs[i].Optimize();
 				} catch (System.Exception e)
 				{
 					Debug.LogWarning("Failed reconstituting " + pbs[i].name + ".  Proceeding with upgrade anyways.  Usually this means a prefab is already fixed, and just needs to be instantiated to take effect.\n" + e.ToString());
@@ -320,14 +322,14 @@ namespace ProBuilder2.EditorCommon
 				{
 					Undo.RegisterCompleteObjectUndo(target, "Fix missing reference.");
 				}
-			
+
 				// Debug.Log("Fix: " + (pbObjectMatches > 2 ? "pb_Object" : "pb_Entity") + "  " + ((Component)target).gameObject.name);
 
 				scriptProperty.objectReferenceValue = pbObjectMatches >= 3 ? pb_monoscript : pe_monoscript;
 				scriptProperty.serializedObject.ApplyModifiedProperties();
 				scriptProperty = this.serializedObject.FindProperty("m_Script");
 				scriptProperty.serializedObject.Update();
-		
+
 				if(doFix)
 					Next();
 
@@ -365,15 +367,15 @@ namespace ProBuilder2.EditorCommon
 								.Where(x => !x.Equals(null) &&
 								x is GameObject &&
 								((GameObject)x).GetComponents<pb_DummyScript>().Length == 2 &&
-								((GameObject)x).GetComponent<MeshRenderer>() != null && 
-								((GameObject)x).GetComponent<MeshFilter>() != null && 
+								((GameObject)x).GetComponent<MeshRenderer>() != null &&
+								((GameObject)x).GetComponent<MeshFilter>() != null &&
 								((GameObject)x).GetComponent<MeshFilter>().sharedMesh != null
 								).ToArray();
 
 							broken = broken.Distinct().ToArray();
 							ProBuilder2.Actions.ProBuilderize.DoProBuilderize(System.Array.ConvertAll(broken, x => (GameObject)x).Select(x => x.GetComponent<MeshFilter>()), true);
 						}
-						
+
 						// Always delete components
 						Undo.RecordObjects(dummies.Select(x=>x.gameObject).ToArray(), "Delete Broken Scripts");
 
@@ -382,7 +384,7 @@ namespace ProBuilder2.EditorCommon
 					}
 					break;
 				}
-				
+
 			}
 		}
 
@@ -391,7 +393,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		static string SerializedObjectToString(SerializedObject serializedObject)
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();			
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			if(serializedObject == null)
 			{
@@ -405,14 +407,14 @@ namespace ProBuilder2.EditorCommon
 
 
 			while( iterator.Next(true) )
-			{	
+			{
 				string tabs = "";
 				for(int i = 0; i < iterator.depth; i++) tabs += "\t";
 
 				sb.AppendLine(tabs + iterator.name + (iterator.propertyType == SerializedPropertyType.ObjectReference && iterator.type.Contains("Component") && iterator.objectReferenceValue == null ? " -> NULL" : "") );
-				
+
 				tabs += "  - ";
-				
+
 				sb.AppendLine(tabs + "Type: (" + iterator.type + " / " + iterator.propertyType + " / " + " / " + iterator.name + ")");
 				sb.AppendLine(tabs + iterator.propertyPath);
 				sb.AppendLine(tabs + "Value: " + SerializedPropertyValue(iterator));
