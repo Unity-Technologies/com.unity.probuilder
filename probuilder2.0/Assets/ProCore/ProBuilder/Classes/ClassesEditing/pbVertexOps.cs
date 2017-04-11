@@ -458,7 +458,7 @@ namespace ProBuilder2.MeshOperations
 	public static int[] RemoveUnusedVertices(this pb_Object pb)
 	{
 		List<int> del = new List<int>();
-		int[] tris = pb_Face.AllTriangles(pb.faces);
+		HashSet<int> tris = new HashSet<int>(pb_Face.AllTriangles(pb.faces));
 
 		for(int i = 0; i < pb.vertices.Length; i++)
 			if(!tris.Contains(i))
