@@ -70,6 +70,9 @@ namespace ProBuilder2.EditorCommon
 
 			pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
+			if(pb_EditorUtility.onMeshCompiled != null)
+				pb_EditorUtility.onMeshCompiled(InObject, mesh);
+
 			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
 				TryCacheMesh(InObject);
 

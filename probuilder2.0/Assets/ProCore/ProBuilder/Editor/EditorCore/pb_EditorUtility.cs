@@ -27,6 +27,8 @@ namespace ProBuilder2.EditorCommon
 
 		public delegate void OnObjectCreated(pb_Object pb);
 
+		public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+
 		/**
 		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
 		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't
@@ -35,6 +37,11 @@ namespace ProBuilder2.EditorCommon
 		 *	\sa pb_EditorUtility.InitObject
 		 */
 		public static OnObjectCreated onObjectCreated = null;
+
+		/**
+		 *	Callback raised when a pb_Object is built to Unity mesh.
+		 */
+		public static OnMeshCompiled onMeshCompiled = null;
 
 		/**
 		 *	Add a listener to the multicast onObjectCreated delegate.
@@ -54,6 +61,26 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(onObjectCreated != null)
 				onObjectCreated -= onProBuilderObjectCreated;
+		}
+
+		/**
+		 *	Add a listener to the multicast onMeshCompiled delegate.
+		 */
+		public static void AddOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
+		{
+			if(onMeshCompiled == null)
+				onMeshCompiled = onMeshCompiledListener;
+			else
+				onMeshCompiled += onMeshCompiledListener;
+		}
+
+		/**
+		 *	Remove a listener from the onMeshCompiled delegate.
+		 */
+		public static void RemoveOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
+		{
+			if(onMeshCompiled != null)
+				onMeshCompiled -= onMeshCompiledListener;
 		}
 
 		/**
