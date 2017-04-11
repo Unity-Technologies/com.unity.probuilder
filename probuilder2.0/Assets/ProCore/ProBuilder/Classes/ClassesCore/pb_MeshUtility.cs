@@ -15,14 +15,15 @@ namespace ProBuilder2.Common
 
 			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", m.vertexCount, m.triangles.Length, m.subMeshCount));
 
-			sb.AppendLine(string.Format("{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+			sb.AppendLine(string.Format("     {0,-28}{7,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
 				"Positions",
 				"Colors",
 				"Tangents",
 				"UV0",
 				"UV2",
 				"UV3",
-				"UV4"));
+				"UV4",
+				"Position Hash"));
 
 			Vector3[] positions = m.vertices;
 			Color[] colors 		= m.colors;
@@ -58,14 +59,16 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < m.vertexCount; i ++)
 			{
-				sb.AppendLine(string.Format("{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
-					positions == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}", positions[i].x, positions[i].y, positions[i].z),
+				sb.AppendLine(string.Format("{7,-5}{0,-28}{8,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+					positions == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
 					colors == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
 					tangents == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
 					uv0 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
 					uv2 == null 		? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
 					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
-					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w)));
+					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
+					i,
+					pb_Vector.GetHashCode(positions[i])));
 			}
 
 			for(int i = 0; i < m.triangles.Length; i+=3)
@@ -365,7 +368,7 @@ namespace ProBuilder2.Common
 			 */
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
-				for(int n = 0; n < pb_Face.MAX_SMOOTH_GROUPS; n++)	
+				for(int n = 0; n < pb_Face.MAX_SMOOTH_GROUPS; n++)
 				{
 					averages[n].x = 0f;
 					averages[n].y = 0f;
