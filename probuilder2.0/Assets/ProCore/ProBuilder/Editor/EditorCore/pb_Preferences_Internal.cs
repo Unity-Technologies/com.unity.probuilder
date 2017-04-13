@@ -115,8 +115,7 @@ public class pb_Preferences_Internal
 	public static IEnumerable<pb_Shortcut> GetShortcuts()
 	{
 		return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
-			pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts))
-			:
+			pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
 			pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
 	}
 

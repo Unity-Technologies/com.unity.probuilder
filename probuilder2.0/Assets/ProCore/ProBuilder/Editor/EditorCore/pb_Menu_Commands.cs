@@ -1145,7 +1145,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Merge Faces");
+			pbUndo.RecordObjects(selection, "Merge Faces");
 
 			int success = 0;
 
