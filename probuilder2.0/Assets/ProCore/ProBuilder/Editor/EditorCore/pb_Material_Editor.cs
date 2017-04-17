@@ -128,7 +128,6 @@ namespace ProBuilder2.EditorCommon
 			this.autoRepaintOnSceneChange = true;
 
 			this.minSize = new Vector2(236, 250);
-			this.maxSize = new Vector2(236, 10000);
 
 			rowBackgroundStyle = new GUIStyle();
 			rowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
