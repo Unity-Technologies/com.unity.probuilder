@@ -4,6 +4,12 @@
 #define UNITY_5_5_OR_HIGHER
 #endif
 
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5
+#define UNITY_5_5_OR_LOWER
+#else
+#define UNITY_5_6_OR_HIGHER
+#endif
+
 using UnityEngine;
 using UnityEditor;
 
@@ -76,11 +82,11 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static Vector3 FreeMoveDotHandle(Vector3 position, Quaternion rotation, float size, Vector3 snap)
 		{
-// #if UNITY_5_4_OR_LOWER
+#if UNITY_5_5_OR_LOWER
 			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotCap);
-// #else
-// 			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotHandleCap);
-// #endif
+#else
+			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotHandleCap);
+#endif
 		}
 
 		public static Vector3 DotSlider2D(Vector3 position, Vector3 up, Vector3 right, Vector3 forward, float size, Vector3 snap, bool drawHelper)
