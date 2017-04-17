@@ -8,10 +8,6 @@ using System.Reflection;
 using ProBuilder2.MeshOperations;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.EditorCommon
 {
 	/**

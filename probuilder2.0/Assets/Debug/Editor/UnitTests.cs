@@ -37,7 +37,7 @@ public class UnitTests : Editor
 	public static void MenuRunUnitTests()
 	{
 		profiler.Reset();
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		for(int i = 0; i < tests.Length; i++)
@@ -45,15 +45,15 @@ public class UnitTests : Editor
 			EditorUtility.DisplayProgressBar("Unit Tests", friendly_testNames[i].ToString(), (1f/tests.Length) );
 			sb.AppendLine(friendly_testNames[i].ToString() + (tests[i]() ? " Passed" : "  Failed"));
 		}
-		
+
 		EditorUtility.ClearProgressBar();
-		
+
 		Debug.Log( profiler.ToString() );
 
 		Debug.Log(sb.ToString());
 	}
 
-	[MenuItem("Tools/ProBuilder/Unit Tests/Find NearestIndexPriorToValue")]	
+	[MenuItem("Tools/ProBuilder/Unit Tests/Find NearestIndexPriorToValue")]
 	public static bool VerifyFindNearestIndex()
 	{
 		List<int> list = new List<int>() {
@@ -110,7 +110,7 @@ public class UnitTests : Editor
 			Debug.LogError("NearestIndexPriorToValue failed a test!");
 			return false;
 		}
-		
+
 		if( pbUtil.NearestIndexPriorToValue(list, 3) != 2 )
 		{
 			Debug.LogError("NearestIndexPriorToValue failed a test!");
@@ -140,7 +140,7 @@ public class UnitTests : Editor
 		};
 
 		Color[] colors = pbUtil.FilledArray(Color.white, 4);
-		
+
 		pb_Face result = pb.AppendFace(vertices, colors, new Vector2[vertices.Length], face);
 		if(result == null) return false;
 
@@ -158,12 +158,12 @@ public class UnitTests : Editor
 	{
 		#if PB_DEBUG && !PROTOTYPE
 			pb_Object pb = pb_ShapeGenerator.CylinderGenerator(12, 5f, 5f, 6);
-			
+
 			profiler.BeginSample("Subdivide Pipe");
 			bool success = pb.Subdivide();
 			profiler.EndSample();
-	
-			// @todo			
+
+			// @todo
 			float executionTime = .1f; //profiler.AverageTime("Subdivide Pipe");
 
 			GameObject.DestroyImmediate(pb.gameObject);
@@ -180,7 +180,7 @@ public class UnitTests : Editor
 	{
 		#if PB_DEBUG && !PROTOTYPE
 
-		// float radius, float height, float thickness, int subdivAxis, int subdivHeight) 
+		// float radius, float height, float thickness, int subdivAxis, int subdivHeight)
 		pb_Object pb = pb_ShapeGenerator.PipeGenerator(50f, 50f, 10f, 32, 32);
 
 		profiler.BeginSample("GetUniversalEdges");
@@ -217,28 +217,17 @@ public class UnitTests : Editor
 
 		pb_Face outFace = null;
 
-		try 
-		{
-			if( !pb.AppendVertexToFace(face, points[0], ref outFace) )
-				return false;
-		}
-		catch (System.Exception e) 
-		{
-			Debug.LogError("AppendVertexToFace: " + e.ToString());
-			GameObject.DestroyImmediate(pb.gameObject);
-			return false;
-		}
-		
 		face = pb.faces[1];
+
 		try
-		{	
+		{
 			if( !pb.AppendVerticesToFace(face, points, colors, out outFace) )
 			{
 				GameObject.DestroyImmediate(pb.gameObject);
 				return false;
 			}
 		}
-		catch (System.Exception e) 
+		catch (System.Exception e)
 		{
 			Debug.LogError("AppendVerticesToFace: " + e.ToString());
 			GameObject.DestroyImmediate(pb.gameObject);

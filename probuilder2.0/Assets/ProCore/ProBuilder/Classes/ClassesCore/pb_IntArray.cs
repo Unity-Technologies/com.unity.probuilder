@@ -1,5 +1,5 @@
 /*	This exists because Unity can't
- *	serialize jaggaed arrays.  Also, it 
+ *	serialize jaggaed arrays.  Also, it
  *	has a couple of handy methods that make
  *	dealing with shared vertex indices easier.
  */
@@ -10,15 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.Common
 {
 	/**
-	 *	\brief Used as a substitute for a jagged int array.  
-	 *	Also contains some ProBuilder specific extensions for 
+	 *	\brief Used as a substitute for a jagged int array.
+	 *	Also contains some ProBuilder specific extensions for
 	 *	dealing with jagged int arrays.  Note that this class
 	 *	exists because Unity does not serialize jagged arrays.
 	 */
@@ -44,7 +40,7 @@ namespace ProBuilder2.Common
 		}
 
 		public int this[int i]
-		{	
+		{
 			get { return array[i]; }
 			set { array[i] = value; }
 		}
@@ -75,7 +71,7 @@ namespace ProBuilder2.Common
 
 			return str;
 		}
-		
+
 		public bool IsEmpty()
 		{
 			return (array == null || array.Length < 1);
@@ -91,5 +87,5 @@ namespace ProBuilder2.Common
 			}
 			val = valid.ToArray();
 		}
-	}	
+	}
 }

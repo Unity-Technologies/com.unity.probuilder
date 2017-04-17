@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
 
-namespace ProBuilder2.Common 
+namespace ProBuilder2.Common
 {
 	public static class pb_Object_Utility
 	{
@@ -68,9 +65,9 @@ namespace ProBuilder2.Common
 		 *	snapValue - If > 0 snap each vertex to the nearest on-grid point in world space.
 		 *	snapAxisOnly - If true vertices will only be snapped along the active axis.
 		 *	lookup - A shared index lookup table.  Can pass NULL to have this automatically calculated.
-		 */	
+		 */
 		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
-		{	
+		{
 			int i = 0;
 			int[] indices = lookup != null ? pb.sharedIndices.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
 
@@ -94,9 +91,9 @@ namespace ProBuilder2.Common
 				}
 			}
 			else
-			{	
+			{
 				for(i = 0; i < indices.Length; i++)
-					verts[indices[i]] += localOffset;	
+					verts[indices[i]] += localOffset;
 			}
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
@@ -110,7 +107,7 @@ namespace ProBuilder2.Common
 		 *	@param offset Offset in meters to apply (Vector3 : direction * float : distance).
 		 */
 		public static void TranslateVertices(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
-		{	
+		{
 			int i = 0;
 			int[] indices = pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
 
@@ -133,7 +130,7 @@ namespace ProBuilder2.Common
 			Vector3[] v = pb.vertices;
 			int[] array = pb.sharedIndices[sharedIndex].array;
 
-			for(int i = 0; i < array.Length; i++)	
+			for(int i = 0; i < array.Length; i++)
 				v[array[i]] = position;
 
 			pb.SetVertices(v);
@@ -146,8 +143,8 @@ namespace ProBuilder2.Common
 
 			int[] array = pb.sharedIndices[sharedIndex].array;
 
-			for(int i = 0; i < array.Length; i++)	
-				vertices[array[i]] = vertex;	
+			for(int i = 0; i < array.Length; i++)
+				vertices[array[i]] = vertex;
 
 			pb.SetVertices(vertices);
 		}
@@ -156,7 +153,7 @@ namespace ProBuilder2.Common
 #region Seek
 
 		/**
-		 * \brief Returns a #pb_Face which contains the passed triangle. 
+		 * \brief Returns a #pb_Face which contains the passed triangle.
 		 * @param tri int[] composed of three indices.
 		 */
 		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out pb_Face face)
@@ -175,7 +172,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 * \brief Returns the index of the #pb_Face which contains the passed triangle. 
+		 * \brief Returns the index of the #pb_Face which contains the passed triangle.
 		 * @param tri int[] composed of three indices.
 		 */
 		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out int face)

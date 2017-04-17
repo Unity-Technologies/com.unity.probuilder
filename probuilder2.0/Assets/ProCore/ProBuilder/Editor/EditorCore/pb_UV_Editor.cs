@@ -1,3 +1,7 @@
+#if !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_1 && !UNITY_5_2 && !UNITY_5_3
+#define RETINA_ENABLED
+#endif
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -8,10 +12,6 @@ using ProBuilder2.EditorCommon;
 using ProBuilder2.MeshOperations;
 using System.Reflection;
 using ProBuilder2.Interface;
-
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
 
 namespace ProBuilder2.EditorCommon
 {
@@ -76,6 +76,10 @@ public class pb_UV_Editor : EditorWindow
 	public bool ShiftKey { get { return Event.current.modifiers == EventModifiers.Shift; } }
 
 	private bool pref_showMaterial = true;	///< Show a preview texture for the first selected face in UV space 0,1?
+
+	#if PB_DEBUG
+	List<Texture2D> m_DebugUVRenderScreens = new List<Texture2D>();
+	#endif
 
 	Color GridColorPrimary;
 	Color BasicBackgroundColor;
@@ -531,7 +535,7 @@ public class pb_UV_Editor : EditorWindow
 				{
 					if(incomplete_group == null || incomplete_group.Length < 1)
 						continue;
-						
+
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
@@ -630,7 +634,7 @@ public class pb_UV_Editor : EditorWindow
 						{
 							foreach(pb_Face face in kvp.Value)
 								face.uv.offset -= handlePosition - handlePosition_origin;
-						} 
+						}
 						else if(tool == Tool.Rotate)
 						{
 							foreach(pb_Face face in kvp.Value)
@@ -2686,7 +2690,7 @@ public class pb_UV_Editor : EditorWindow
 		bool isKeyDown = Event.current.type == EventType.KeyDown;
 
 		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
-		{		
+		{
 			if(!modifyingUVs_AutoPanel)
 			{
 				modifyingUVs_AutoPanel = true;
@@ -3434,14 +3438,18 @@ public class pb_UV_Editor : EditorWindow
 
 				uvGraphScale = screenshot_size / 256;
 
+				#if RETINA_ENABLED
+				uvGraphScale /= EditorGUIUtility.pixelsPerPoint;
+				#endif
+
 				// always begin texture grabs at bottom left
-				uvGraphOffset = new Vector2(-ScreenRect.width/2f, ScreenRect.height/2f - editorWindowTabOffset);
+				uvGraphOffset = new Vector2(-ScreenRect.width / 2f, ScreenRect.height / 2f - editorWindowTabOffset);
 
 				screenshot = new Texture2D(screenshot_size, screenshot_size);
 				screenshot.hideFlags = (HideFlags)( 1 | 2 | 4 );
 				screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
-				// set the current rect pixel boudns to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
+				// set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
 				if( (bool) pb_Reflection.GetValue(this, this.GetType(), "docked") )
 					screenshotCanvasRect = new Rect(4, 2, (int)Mathf.Min(screenshot_size, ScreenRect.width - 4), (int)Mathf.Min(screenshot_size, ScreenRect.height - 2) );
 				else
@@ -3461,12 +3469,33 @@ public class pb_UV_Editor : EditorWindow
 				if(screenshotTexturePosition.y < screenshot_size)
 				{
 					screenshot.ReadPixels(screenshotCanvasRect, (int)screenshotTexturePosition.x, (int)screenshotTexturePosition.y);
+
+					#if PB_DEBUG
+					Texture2D wholeScreenTexture = new Texture2D((int) ScreenRect.width, (int) ScreenRect.height);
+					Rect wholeScreenRect;
+
+					if( (bool) pb_Reflection.GetValue(this, this.GetType(), "docked") )
+						wholeScreenRect = new Rect(4, 2, (int) ScreenRect.width - 4, (int) ScreenRect.height - 2 );
+					else
+						wholeScreenRect = new Rect(0, 0, (int) ScreenRect.width, (int) ScreenRect.height);
+
+					wholeScreenTexture.ReadPixels(wholeScreenRect,
+						(int) (EditorGUIUtility.pixelsPerPoint / wholeScreenRect.width),
+						(int) (EditorGUIUtility.pixelsPerPoint / wholeScreenRect.height));
+
+					m_DebugUVRenderScreens.Add(wholeScreenTexture);
+					#endif
+
 					screenshotTexturePosition.y += screenshotCanvasRect.height;
 
 					if(screenshotTexturePosition.y < screenshot_size)
 					{
 						// reposition canvas
+						#if RETINA_ENABLED
+						uvGraphOffset.y += screenshotCanvasRect.height / EditorGUIUtility.pixelsPerPoint;
+						#else
 						uvGraphOffset.y += screenshotCanvasRect.height;
+						#endif
 						screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
 						screenshotStatus = ScreenshotStatus.PrepareCanvas;
 						Repaint();
@@ -3478,10 +3507,17 @@ public class pb_UV_Editor : EditorWindow
 
 						if(screenshotTexturePosition.x < screenshot_size)
 						{
-							uvGraphOffset.x -= screenshotCanvasRect.width;	// move canvas offset to right
-							uvGraphOffset.y = ScreenRect.height/2f - editorWindowTabOffset;	// reset canvas offset y value
-							screenshotCanvasRect.width = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
+							// Move right, reset Y
+							#if RETINA_ENABLED
+							uvGraphOffset.x -= screenshotCanvasRect.width / EditorGUIUtility.pixelsPerPoint;
+							uvGraphOffset.y = (ScreenRect.height / 2f - editorWindowTabOffset);
+							#else
+							uvGraphOffset.x -= screenshotCanvasRect.width;
+							uvGraphOffset.y = ScreenRect.height / 2f - editorWindowTabOffset;
+							#endif
+							screenshotCanvasRect.width = (int) Mathf.Min(screenshot_size - screenshotTexturePosition.x, ScreenRect.width);
 							screenshotTexturePosition.y = 0;
+							screenshotCanvasRect.height = (int)Mathf.Min(screenshot_size - screenshotTexturePosition.y, ScreenRect.height - 12);
 							screenshotStatus = ScreenshotStatus.PrepareCanvas;
 							Repaint();
 							return;
@@ -3529,6 +3565,15 @@ public class pb_UV_Editor : EditorWindow
 		{
 			pb_EditorUtility.SaveTexture(screenshot, screenshot_path);
 			DestroyImmediate(screenshot);
+
+			#if PB_DEBUG
+			for(int n = 0; n < m_DebugUVRenderScreens.Count; n++)
+			{
+				pb_EditorUtility.SaveTexture(m_DebugUVRenderScreens[n], "Assets/uv-render-" + n + ".png");
+				DestroyImmediate(m_DebugUVRenderScreens[n]);
+			}
+			m_DebugUVRenderScreens.Clear();
+			#endif
 		}
 	}
 #endregion

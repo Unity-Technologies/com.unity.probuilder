@@ -1,10 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.Common
 {
 
@@ -508,7 +504,7 @@ public class pb_ShapeGenerator
 					new int[6]{ zero, one, two, one, three, two },
 					pb_Constant.DefaultMaterial,
 					new pb_UV(),
-					smoothing, 
+					smoothing,
 					-1,
 					-1,
 					false);

@@ -8,10 +8,6 @@ using ProBuilder2.EditorCommon;
 using System.Collections;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 public class pb_Preferences
 {
 	private static bool prefsLoaded = false;

@@ -9,10 +9,6 @@ using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 [AddComponentMenu("")]	// Don't let the user add this to any object.
 [DisallowMultipleComponent]
 [RequireComponent(typeof(MeshFilter))]
@@ -921,7 +917,7 @@ public class pb_Object : MonoBehaviour
 		}
 
 		n = 0;
-		
+
 		Vector3[] world = anyWorldSpace ? transform.ToWorldSpace(vertices) : null;
 
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
@@ -958,8 +954,8 @@ public class pb_Object : MonoBehaviour
 				pb_UVUtility.PlanarMap2(vertices, newUVs, indices, kvp.Value[0].uv, nrm);
 
 			// Apply UVs to array, and update the localPivot and localSize caches.
-			Vector2 pivot = kvp.Value[0].uv.localPivot;	
-			
+			Vector2 pivot = kvp.Value[0].uv.localPivot;
+
 			foreach(pb_Face f in kvp.Value)
 				f.uv.localPivot = pivot;
 		}

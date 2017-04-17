@@ -7,10 +7,6 @@ using ProBuilder2.MeshOperations;
 using System.Collections.Generic;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 [CustomEditor(typeof(pb_Object))]
 [CanEditMultipleObjects]
 public class pb_Object_Editor : Editor
@@ -25,10 +21,10 @@ public class pb_Object_Editor : Editor
 	Vector3 offset = Vector3.zero;
 
 	public void OnEnable()
-	{	
+	{
 		if(EditorApplication.isPlayingOrWillChangePlaymode)
 			return;
-		
+
 		if(target is pb_Object)
 			pb = (pb_Object)target;
 		else
@@ -53,7 +49,7 @@ public class pb_Object_Editor : Editor
 
 		GUI.backgroundColor = Color.white;
 
-		if(!ren) 
+		if(!ren)
 			return;
 
 		Vector3 sz = ren.bounds.size;
@@ -65,13 +61,13 @@ public class pb_Object_Editor : Editor
 #endif
 
 		if(pb == null) return;
-		
+
 		if(pb.SelectedTriangles.Length > 0)
 		{
 			GUILayout.Space(5);
 
 			offset = EditorGUILayout.Vector3Field("Quick Offset", offset);
-			
+
 			if(GUILayout.Button("Apply Offset"))
 			{
 				foreach(pb_Object ipb in Selection.transforms.GetComponents<pb_Object>())
@@ -92,7 +88,7 @@ public class pb_Object_Editor : Editor
 		}
 	}
 
-	bool HasFrameBounds() 
+	bool HasFrameBounds()
 	{
 		if(pb == null)
 			pb = (pb_Object)target;
@@ -103,17 +99,17 @@ public class pb_Object_Editor : Editor
 	Bounds OnGetFrameBounds()
 	{
 		if(OnGetFrameBoundsEvent != null) OnGetFrameBoundsEvent();
-		
+
 		Vector3 min = Vector3.zero, max = Vector3.zero;
 		bool init = false;
 
 		foreach(pb_Object pbo in pbUtil.GetComponents<pb_Object>(Selection.transforms))
-		{		
+		{
 			if(pbo.SelectedTriangles.Length < 1) continue;
 
 			Vector3[] verts = pbo.VerticesInWorldSpace(pbo.SelectedTriangles);
 
-			if(!init) 
+			if(!init)
 			{
 				init = true;
 				min = verts[0];

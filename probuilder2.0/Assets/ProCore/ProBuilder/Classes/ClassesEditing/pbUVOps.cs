@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using System.Linq;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.MeshOperations {
 
 public static class pbUVOps
@@ -23,14 +19,14 @@ public static class pbUVOps
 	{
 		int[] si = new int[indices.Length];
 		Vector2[] uvs = pb.uv;
-		
+
 		if(uvs == null || uvs.Length != pb.vertexCount)
 			uvs = new Vector2[pb.vertexCount];
 
 		// set the shared indices cache to a unique non-used index
 		for(int i = 0; i < indices.Length; i++)
 			si[i] = -(i+1);
-		
+
 		pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
 
 		for(int i = 0; i < indices.Length-1; i++)
@@ -39,7 +35,7 @@ public static class pbUVOps
 			{
 				if(si[i] == si[n])
 					continue;	// they already share a vertex
-				
+
 				if(Vector2.Distance(uvs[indices[i]], uvs[indices[n]]) < delta)
 				{
 					Vector3 cen = (uvs[indices[i]] + uvs[indices[n]]) / 2f;
@@ -70,10 +66,10 @@ public static class pbUVOps
 
 		foreach(int i in indices)
 			uvs[i] = cen;
-			
+
 		pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
 		pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
-		
+
 		pb.SetUV(uvs);
 		pb.SetSharedIndicesUV(sharedIndices);
 	}
@@ -107,7 +103,7 @@ public static class pbUVOps
 		/**
 		 * and add 'em back in as loners
 		 */
-		foreach(int i in distInd)	
+		foreach(int i in distInd)
 			pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
 		pb.SetSharedIndicesUV(sharedIndices);
@@ -125,7 +121,7 @@ public static class pbUVOps
 	public static void ProjectFacesAuto(pb_Object pb, pb_Face[] faces)
 	{
 		int[] ind = pb_Face.AllTrianglesDistinct(faces);
-		
+
 		/* get average face normal */
 		Vector3 nrm = Vector3.zero;
 		foreach(pb_Face face in faces)
@@ -143,7 +139,7 @@ public static class pbUVOps
 		/* and set the msh uv array using the new coordintaes */
 		pb.SetUV(rebuiltUVs);
 		pb.msh.uv = rebuiltUVs;
-		
+
 		/* now go trhough and set all adjacent face groups to use matching element groups */
 		foreach(pb_Face f in faces)
 		{
@@ -162,7 +158,7 @@ public static class pbUVOps
 		// 		foreach(pb_Face f2 in faces)
 		// 		{
 		// 			if(f2 == f) continue;
-						
+
 		// 			int index = f2.edges.IndexOf(e, sharedIndices);
 
 		// 			// Found an aligned edge
@@ -232,7 +228,7 @@ public static class pbUVOps
 
 			for(int n = 0; n < distinct.Length; n++)
 				uv[distinct[n]] = uvs[n];
-				
+
 			SplitUVs(pb, distinct);
 		}
 
@@ -348,7 +344,7 @@ public static class pbUVOps
 		int[] matchY = new int[2] { edge1.y, -1 };
 
 		int siIndex = sharedIndices.IndexOf(edge1.x);
-		if(siIndex < 0) 
+		if(siIndex < 0)
 			return false;
 
 		if(sharedIndices[siIndex].array.Contains(edge2.x))
@@ -365,15 +361,15 @@ public static class pbUVOps
 		// scale face 2 to match the edge size of f1
 		float dist_e1 = Vector2.Distance(uvs[edge1.x], uvs[edge1.y]);
 		float dist_e2 = Vector2.Distance(uvs[edge2.x], uvs[edge2.y]);
-		
+
 		float scale = dist_e1/dist_e2;
-		
+
 		// doesn't matter what point we scale around because we'll move it in the next step anyways
 		foreach(int i in f2.distinctIndices)
 			uvs[i] = uvs[i].ScaleAroundPoint(Vector2.zero, Vector2.one * scale);
 
 		/**
-		 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin 
+		 * Figure out where the center of each edge is so that we can move the f2 edge to match f1's origin
 		 */
 		Vector2 f1_center = (uvs[edge1.x] + uvs[edge1.y]) / 2f;
 		Vector2 f2_center = (uvs[edge2.x] + uvs[edge2.y]) / 2f;
@@ -395,7 +391,7 @@ public static class pbUVOps
 		float angle = Vector2.Angle(angle1, angle2);
 		if(Vector3.Cross(angle1, angle2).z < 0)
 			angle = 360f - angle;
-	
+
 		foreach(int i in f2.distinctIndices)
 			uvs[i] = pb_Math.RotateAroundPoint(uvs[i], f1_center, angle);
 
@@ -508,7 +504,7 @@ public static class pbUVOps
 
 				faces[i].uv.offset = -transform.position;
 				faces[i].uv.rotation = transform.rotation;
-	
+
 				if( Mathf.Abs(transform.scale.sqrMagnitude - 2f) > .1f )
 					faces[i].uv.scale = transform.scale;
 			}

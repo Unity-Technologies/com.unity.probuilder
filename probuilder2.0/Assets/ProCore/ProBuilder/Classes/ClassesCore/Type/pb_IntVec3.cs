@@ -21,7 +21,7 @@ namespace ProBuilder2.Common
 		{
 			return string.Format("({0:F2}, {1:F2}, {2:F2})", x, y, z);
 		}
-		
+
 		public static bool operator ==(pb_IntVec3 a, pb_IntVec3 b)
 		{
 			return a.Equals(b);
@@ -59,7 +59,7 @@ namespace ProBuilder2.Common
 
 		private static int round(float v)
 		{
-			return (int) (v * RESOLUTION);
+			return System.Convert.ToInt32(v * RESOLUTION);
 		}
 
 		public static implicit operator Vector3(pb_IntVec3 p)

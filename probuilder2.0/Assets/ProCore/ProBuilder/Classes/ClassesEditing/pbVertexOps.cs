@@ -7,10 +7,6 @@ using KDTree;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.MeshOperations
 {
 	public static class pbVertexOps
@@ -462,7 +458,7 @@ namespace ProBuilder2.MeshOperations
 	public static int[] RemoveUnusedVertices(this pb_Object pb)
 	{
 		List<int> del = new List<int>();
-		int[] tris = pb_Face.AllTriangles(pb.faces);
+		HashSet<int> tris = new HashSet<int>(pb_Face.AllTriangles(pb.faces));
 
 		for(int i = 0; i < pb.vertices.Length; i++)
 			if(!tris.Contains(i))
@@ -598,7 +594,7 @@ namespace ProBuilder2.MeshOperations
 				triangles.Reverse();
 
 			data.face.SetIndices(triangles.ToArray());
-			
+
 			return data;
 		}
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ProBuilder2.Common
@@ -19,8 +20,8 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + (int)(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.y * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
 			}
 
 			return hash;
@@ -36,9 +37,9 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + (int)(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.y * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.z * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.z * FLT_COMPARE_RESOLUTION);
 			}
 
 			return hash;
@@ -54,10 +55,10 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + (int)(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.y * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.z * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + (int)(v.w * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.z * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + Convert.ToInt32(v.w * FLT_COMPARE_RESOLUTION);
 			}
 
 			return hash;

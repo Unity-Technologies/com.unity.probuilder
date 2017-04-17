@@ -8,10 +8,6 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 public class pb_Preferences_Internal
 {
 	public static Material DefaultDiffuse

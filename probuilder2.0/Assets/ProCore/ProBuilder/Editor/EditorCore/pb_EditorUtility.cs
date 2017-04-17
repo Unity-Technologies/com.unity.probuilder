@@ -12,10 +12,6 @@ using ProBuilder2.MeshOperations;
 using UnityEngine.Rendering;
 #endif
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.EditorCommon
 {
 	/**
@@ -31,6 +27,8 @@ namespace ProBuilder2.EditorCommon
 
 		public delegate void OnObjectCreated(pb_Object pb);
 
+		public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+
 		/**
 		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
 		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't
@@ -39,6 +37,11 @@ namespace ProBuilder2.EditorCommon
 		 *	\sa pb_EditorUtility.InitObject
 		 */
 		public static OnObjectCreated onObjectCreated = null;
+
+		/**
+		 *	Callback raised when a pb_Object is built to Unity mesh.
+		 */
+		public static OnMeshCompiled onMeshCompiled = null;
 
 		/**
 		 *	Add a listener to the multicast onObjectCreated delegate.
@@ -61,7 +64,27 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe 
+		 *	Add a listener to the multicast onMeshCompiled delegate.
+		 */
+		public static void AddOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
+		{
+			if(onMeshCompiled == null)
+				onMeshCompiled = onMeshCompiledListener;
+			else
+				onMeshCompiled += onMeshCompiledListener;
+		}
+
+		/**
+		 *	Remove a listener from the onMeshCompiled delegate.
+		 */
+		public static void RemoveOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
+		{
+			if(onMeshCompiled != null)
+				onMeshCompiled -= onMeshCompiledListener;
+		}
+
+		/**
+		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe
 		 *	on or off.
 		 */
 		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
@@ -69,7 +92,7 @@ namespace ProBuilder2.EditorCommon
 			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
 				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
 			#else
-				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state ); 
+				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
 			#endif
 		}
 
@@ -84,7 +107,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool wireframe = false, outline = false;
 
-			try {			
+			try {
 				wireframe = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
 				outline = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
 			} catch {
@@ -352,7 +375,7 @@ namespace ProBuilder2.EditorCommon
 			if(ent != null && ent.entityType == EntityType.Detail)
 			{
 				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
-				
+
 				if( isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0 )
 				{
 					flags ^= StaticEditorFlags.LightmapStatic;

@@ -5,10 +5,6 @@ using System.Linq;
 using ProBuilder2.Interface;
 using ProBuilder2.Common;
 
-#if PB_DEBUG
-using Parabox.Debug;
-#endif
-
 namespace ProBuilder2.EditorCommon
 {
 	/**
