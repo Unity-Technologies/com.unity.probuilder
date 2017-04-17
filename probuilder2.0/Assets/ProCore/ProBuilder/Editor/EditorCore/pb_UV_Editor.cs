@@ -2342,7 +2342,7 @@ public class pb_UV_Editor : EditorWindow
 				ApplyUVs(pb, mshUV, channel);
 			}
 
-			int len = mshUV.Length;
+			int len = mshUV != null ? mshUV.Length : 0;
 
 			// this should be separate from RefreshUVCoordinates
 			if(dragRect != null && channel == 0)
