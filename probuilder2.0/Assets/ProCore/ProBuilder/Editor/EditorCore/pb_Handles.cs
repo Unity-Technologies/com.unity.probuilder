@@ -76,11 +76,11 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static Vector3 FreeMoveDotHandle(Vector3 position, Quaternion rotation, float size, Vector3 snap)
 		{
-// #if UNITY_5_4_OR_LOWER
+#if UNITY_5_4_OR_LOWER
 			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotCap);
-// #else
-// 			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotHandleCap);
-// #endif
+#else
+			return Handles.FreeMoveHandle(position, rotation, size, snap, Handles.DotHandleCap);
+#endif
 		}
 
 		public static Vector3 DotSlider2D(Vector3 position, Vector3 up, Vector3 right, Vector3 forward, float size, Vector3 snap, bool drawHelper)

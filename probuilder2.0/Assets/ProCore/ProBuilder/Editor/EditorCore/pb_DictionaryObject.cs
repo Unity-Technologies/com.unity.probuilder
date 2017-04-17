@@ -8,6 +8,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 *	Serialized dictionary object.
 	 */
+	[System.Serializable]
 	public class pb_DictionaryObject<T, K> : ISerializationCallbackReceiver,
 		IEnumerable,
 		IEnumerable<KeyValuePair<T, K>>
@@ -19,6 +20,7 @@ namespace ProBuilder2.EditorCommon
 
 		public void OnBeforeSerialize()
 		{
+			Debug.Log("do serialize");
 			m_Keys = dictionary.Keys.ToArray();
 			m_Values = dictionary.Values.ToArray();
 		}
@@ -26,6 +28,9 @@ namespace ProBuilder2.EditorCommon
 		public void OnAfterDeserialize()
 		{
 			dictionary = new Dictionary<T, K>();
+
+			Debug.Log("de-serialize: " + (m_Keys != null ? m_Keys.Length.ToString() : "null"));
+			Debug.Log("de-serialize: " + (m_Values != null ? m_Values.Length.ToString() : "null"));
 
 			for(int i = 0; i < System.Math.Min(m_Keys.Length, m_Values.Length); i++)
 				dictionary.Add(m_Keys[i], m_Values[i]);
