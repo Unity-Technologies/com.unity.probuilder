@@ -1,3 +1,15 @@
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+#define UNITY_5_4_OR_LOWER
+#else
+#define UNITY_5_5_OR_HIGHER
+#endif
+
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5
+#define UNITY_5_5_OR_LOWER
+#else
+#define UNITY_5_6_OR_HIGHER
+#endif
+
 using UnityEngine;
 using UnityEditor;
 #if !UNITY_4_7
@@ -264,7 +276,13 @@ public class pb_Preferences
 	}
 
 	static int shortcutIndex = 0;
+
+#if UNITY_5_6_OR_HIGHER
+	static Rect selectBox = new Rect(0, 234, 183, 156);
+#else
 	static Rect selectBox = new Rect(130, 253, 183, 142);
+#endif
+
 
 	static Rect resetRect = new Rect(0,0,0,0);
 	static Vector2 shortcutScroll = Vector2.zero;
@@ -313,14 +331,21 @@ public class pb_Preferences
 
 	}
 
-	static Rect keyRect 		= new Rect(324, 248, 168, 18);
-	static Rect keyInputRect 	= new Rect(356, 248, 133, 18);
-
-	static Rect descriptionTitleRect = new Rect(324, 300, 168, 200);
-	static Rect descriptionRect = new Rect(324, 320, 168, 200);
-
-	static Rect modifiersRect = new Rect(324, 270, 168, 18);
-	static Rect modifiersInputRect = new Rect(383, 270, 107, 18);
+#if UNITY_5_6_OR_HIGHER
+	static Rect modifiersRect 			= new Rect(190, 270, 168, 18);
+	static Rect modifiersInputRect 		= new Rect(250, 270, 107, 18);
+	static Rect keyRect 				= new Rect(190, 248, 168, 18);
+	static Rect keyInputRect 			= new Rect(225, 248, 133, 18);
+	static Rect descriptionTitleRect 	= new Rect(190, 300, 168, 200);
+	static Rect descriptionRect 		= new Rect(190, 320, 168, 200);
+#else
+	static Rect modifiersRect 			= new Rect(324, 270, 168, 18);
+	static Rect modifiersInputRect 		= new Rect(383, 270, 107, 18);
+	static Rect keyRect 				= new Rect(324, 248, 168, 18);
+	static Rect keyInputRect 			= new Rect(356, 248, 133, 18);
+	static Rect descriptionTitleRect 	= new Rect(324, 300, 168, 200);
+	static Rect descriptionRect 		= new Rect(324, 320, 168, 200);
+#endif
 
 	static void ShortcutEditPanel()
 	{
