@@ -10,6 +10,7 @@ namespace ProBuilder2.EditorCommon
 	[CustomEditor(typeof(pb_BezierShape))]
 	public class pb_BezierSplineTool : Editor
 	{
+#if !PROTOTYPE
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
 
 		private const float HANDLE_SIZE = .05f;
@@ -707,5 +708,6 @@ namespace ProBuilder2.EditorCommon
 			m_CurrentObject.Optimize();
 			pb_Editor.Refresh();
 		}
+#endif
 	}
 }

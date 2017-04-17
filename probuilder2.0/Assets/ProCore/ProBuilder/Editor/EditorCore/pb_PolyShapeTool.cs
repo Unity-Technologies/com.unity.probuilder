@@ -10,6 +10,7 @@ namespace ProBuilder2.EditorCommon
 	[CustomEditor(typeof(pb_PolyShape))]
 	public class pb_PolyShapeTool : Editor
 	{
+#if !PROTOTYPE
 		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
 		private static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
 		private static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
@@ -753,5 +754,7 @@ namespace ProBuilder2.EditorCommon
 			if(polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 				UpdateMesh(true);
 		}
+#endif
 	}
 }
+

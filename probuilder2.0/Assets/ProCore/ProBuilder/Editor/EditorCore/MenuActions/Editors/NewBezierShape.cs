@@ -14,6 +14,7 @@ namespace ProBuilder2.Actions
 		public override string menuTitle { get { return "New Bezier Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
 		private bool experimentalFeaturesEnabled = false;
+		public override bool isProOnly { get { return true; } }
 
 		public NewBezierShape()
 		{
