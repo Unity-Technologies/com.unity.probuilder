@@ -8,7 +8,6 @@ using System.Collections.Generic;
 namespace ProBuilder2.Common {
 public class pb_Shortcut
 {
-
 	public pb_Shortcut(string a, string d, KeyCode k, EventModifiers e)
 	{
 		action = a;
@@ -112,7 +111,7 @@ public class pb_Shortcut
 		action = action.Replace("-", " ").Replace("*", "");
 		description = description.Replace("-", " ").Replace("*", "");
 		string val = action + "-" + description + "-" + (int)key + "-" + (int)eventModifiers;
-		return val; 
+		return val;
 	}
 
 	public static string ShortcutsToString(pb_Shortcut[] shortcuts)

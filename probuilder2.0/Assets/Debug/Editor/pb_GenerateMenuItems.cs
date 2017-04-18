@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection;
 using System.IO;
+using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
 /**

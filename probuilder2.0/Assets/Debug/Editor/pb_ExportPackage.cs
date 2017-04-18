@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ProBuilder2.Common;
 
 /**
  * Export Unity packages for release - usually called from command line.
@@ -60,7 +61,7 @@ public class pb_ExportPackage : Editor
 	 * Recursively export a package from SourcePath.  SourcePath is relative to Assets/ directory.
 	 */
 	private static void Export(string sourceDirectory, string outDirectory, string outName, string suffix)
-	{	
+	{
 		// Read version number and revision number from changelog.txt
 		string version = GetVersionNumber();
 
@@ -91,8 +92,8 @@ public class pb_ExportPackage : Editor
 	 */
 	private static void WriteAboutEntry(string changelog, string version, bool inEditor = false)
 	{
-		string versionInfoText = 
-			"name: " + pb_Constant.PRODUCT_NAME + "\n" + 
+		string versionInfoText =
+			"name: " + pb_Constant.PRODUCT_NAME + "\n" +
 			"identifier: " + pb_Constant.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
 			"version: " + version + "\n" +
 			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
@@ -102,13 +103,13 @@ public class pb_ExportPackage : Editor
 
 		if(File.Exists(version_entry_path))
 			File.Delete(version_entry_path);
-		
+
 		using (FileStream fs = File.Create(version_entry_path))
 		{
 			Byte[] contents = new UTF8Encoding(true).GetBytes(versionInfoText);
 			fs.Write(contents, 0, contents.Length);
 		}
-		
+
 		AssetDatabase.Refresh();
 
 #if !UNITY_4_7 && !UNITY_5_0
@@ -168,7 +169,7 @@ public class pb_ExportPackage : Editor
 
 		/// purposefully don't return from function if files aren't found - batch export should
 		/// fail if these aren't modified.
-		
+
 		if(core_dll == null || core_dll.Length < 1)
 			Debug.LogError("Could not find ProBuilderCore DLL");
 
@@ -212,12 +213,12 @@ public class pb_ExportPackage : Editor
 					sb.AppendLine(line);
 			}
 		}
-		
+
 		using (StreamWriter writer = new StreamWriter(meta_path, false, encoding))
 		{
 			writer.Write(sb.ToString());
 		}
-		
+
 		if(hiddenMetaFiles)
 			meta_file.Attributes |= FileAttributes.Hidden;
 	}

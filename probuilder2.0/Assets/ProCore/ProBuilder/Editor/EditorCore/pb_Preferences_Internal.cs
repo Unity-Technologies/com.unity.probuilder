@@ -10,6 +10,9 @@ using ProBuilder2.EditorCommon;
 
 public class pb_Preferences_Internal
 {
+	/**
+	 *	Default Unity diffuse material.
+	 */
 	public static Material DefaultDiffuse
 	{
 		get
@@ -52,8 +55,10 @@ public class pb_Preferences_Internal
 			return true;
 	}
 
-	public static float GetFloat(string pref) { return GetFloat(pref, false); }
-	public static float GetFloat(string pref, bool forceDefault)
+	/**
+	 *	Get float value that is stored in prefs, or it's default value.
+	 */
+	public static float GetFloat(string pref, bool forceDefault = false)
 	{
 		switch(pref)
 		{
@@ -83,8 +88,10 @@ public class pb_Preferences_Internal
 		}
 	}
 
-	public static Color GetColor(string pref) { return GetColor(pref, false); }
-	public static Color GetColor(string pref, bool forceDefault)
+	/**
+	 *	Get Color value stored in prefs.
+	 */
+	public static Color GetColor(string pref, bool forceDefault = false)
 	{
 		Color col = Color.white;
 
@@ -118,7 +125,6 @@ public class pb_Preferences_Internal
 			pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
 			pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
 	}
-
 
 	public static Material GetMaterial(string pref, bool forceDefault = false)
 	{

@@ -163,6 +163,27 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
+		public void Set<T>(string key, T value)
+		{
+			object o = (object) value;
+
+			if(value is int)
+				SetInt(key, (int) o);
+			else if(value is float)
+				SetFloat(key, (float) o);
+			else if(value is bool)
+				SetBool(key, (bool) o);
+			else if(value is string)
+				SetString(key, (string) o);
+			else if(value is Color)
+				SetColor(key, (Color) o);
+			else
+				Debug.LogWarning(string.Format("Set<{0}>({1}, {2}) not valid preference type.",
+					typeof(T).ToString(),
+					key,
+					value.ToString()));
+		}
+
 		/**
 		 * Set a value for key in the saved prefs.
 		 */

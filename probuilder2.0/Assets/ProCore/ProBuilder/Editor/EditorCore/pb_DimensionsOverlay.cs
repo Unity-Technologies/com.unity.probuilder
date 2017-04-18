@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
+using ProBuilder2.Common;
 
 public class pb_DimensionsOverlay : pb_ISceneEditor
 {
@@ -53,7 +54,7 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 	Mesh mesh;
 	Material material;
 	bool drawAxisLines = true;
-	
+
 	// readonly Color wirecolor = new Color(.9f, .9f, .9f, .6f);
 	readonly Color background = new Color(.3f, .3f, .3f, .6f);
 	readonly Color LightWhite = new Color(.6f, .6f, .6f, .5f);
@@ -68,11 +69,11 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 		DrawHeight(wb.center, wb.extents);
 		DrawWidth(wb.center, wb.extents);
 		DrawDepth(wb.center, wb.extents);
-		
+
 	}
 
 	const float DISTANCE_LINE_OFFSET = .2f;
-	
+
 	float LineDistance()
 	{
 		return HandleUtility.GetHandleSize(Selection.activeTransform.position) * DISTANCE_LINE_OFFSET;
@@ -206,7 +207,7 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 		Handles.EndGUI();
 	}
 
-	
+
 	void DrawWidth(Vector3 cen, Vector3 extents)
 	{
 		Vector3 ext = extents;// + extents.normalized * .2f;
@@ -221,7 +222,7 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 			// bottom back
 			new Vector3(cen.x - ext.x, cen.y - ext.y, cen.z + ext.z),
 			new Vector3(cen.x + ext.x, cen.y - ext.y, cen.z + ext.z),
-			
+
 			// top front
 			new Vector3(cen.x - ext.x, cen.y + ext.y, cen.z - ext.z),
 			new Vector3(cen.x + ext.x, cen.y + ext.y, cen.z - ext.z),

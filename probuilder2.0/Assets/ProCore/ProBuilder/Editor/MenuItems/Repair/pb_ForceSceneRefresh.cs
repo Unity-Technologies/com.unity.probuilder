@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {

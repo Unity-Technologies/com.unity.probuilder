@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Text.RegularExpressions;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -89,8 +90,8 @@ namespace ProBuilder2.EditorCommon
 				{
 					FailedConnection(string.Format("Error: Is build target is Webplayer?\n\n{0}", e.ToString()));
 				}
-				
-				updateQuery = null;					
+
+				updateQuery = null;
 			}
 
 			calledFromMenu = false;
@@ -107,8 +108,8 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(calledFromMenu)
 				EditorUtility.DisplayDialog(
-					"ProBuilder Update Check", 
-					error == null ? "Failed to connect to server!" : string.Format("Failed to connect to server!\n\n{0}", error.ToString()), 
+					"ProBuilder Update Check",
+					error == null ? "Failed to connect to server!" : string.Format("Failed to connect to server!\n\n{0}", error.ToString()),
 					"Okay");
 		}
 	}
