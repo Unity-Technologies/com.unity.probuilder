@@ -27,8 +27,23 @@ public class pb_Preferences_Internal
 	}
 
 	/**
-	 * Checks if pref key exists in library, and if so return the value.  If not, return the default value.
+	 *	Get a stored preference value from key.
+	 */
+	public static T Get<T>(string key, T fallback = default(T))
+	{
+		return m_Preferences.Get<T>(key, fallback);
+	}
 
+	/**
+	 *	Set a stored preference value with key.
+	 */
+	public static void Set<T>(string key, T value)
+	{
+		m_Preferences.Set<T>(key, value);
+	}
+
+	/**
+	 * Checks if pref key exists in library, and if so return the value.  If not, return the default value.
 	 */
 	public static bool GetBool(string pref, bool forceDefault = false)
 	{
