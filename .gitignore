@@ -66,3 +66,11 @@ probuilder2\.0/Assets/Debug/Material/
 probuilder2\.0/Assets/z_temp/
 
 probuilder2\.0/Assets/z_temp\.meta
+
+probuilder2\.0/Assets/ProCore/ProBuilder/Preferences/ProBuilderPrefs\.asset
+
+probuilder2\.0/Assets/ProCore/ProBuilder/Preferences/
+
+probuilder2\.0/Assets/ProCore/ProBuilder/Preferences\.meta
+
+probuilder2\.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_PreferencesObject\.cs\.meta

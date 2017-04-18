@@ -18,11 +18,11 @@ public class TempMenuItems : EditorWindow
 		EditorWindow.GetWindow<TempMenuItems>().Show();
 	}
 
-	pb_PreferencesObject m_Preferences;
+	pb_PreferenceDictionary m_Preferences;
 
 	void OnEnable()
 	{
-		m_Preferences = pb_FileUtil.LoadRelative<pb_PreferencesObject>("Preferences/ProBuilderPrefs.asset");
+		m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Preferences/ProBuilderPrefs.asset");
 	}
 
 	void OnDisable()
@@ -30,22 +30,17 @@ public class TempMenuItems : EditorWindow
 		EditorUtility.SetDirty(m_Preferences);
 	}
 
-	string m_FloatKey, m_IntKey;
+	string m_FloatKey, m_IntKey, m_ColorKey;
+	Color m_ColorValue;
 	float m_FloatValue;
 	int m_IntValue;
 
 	void OnGUI()
 	{
-
-		foreach(var kvp in m_Preferences)
+		foreach(var typeDic in m_Preferences)
 		{
-			GUILayout.Label(kvp.Key.ToString(), EditorStyles.boldLabel);
-
-			foreach(var entry in kvp.Value)
-			{
-				GUILayout.Label("Key: " + entry.Key);
-				GUILayout.Label("Value: " + entry.Value);
-			}
+			foreach(var kvp in typeDic)
+				GUILayout.Label(kvp.ToString());
 		}
 
 		GUILayout.BeginHorizontal();
@@ -56,18 +51,25 @@ public class TempMenuItems : EditorWindow
 
 			if(GUILayout.Button("Add"))
 			{
-				m_Preferences.Set(m_FloatKey, m_FloatValue);
+				m_Preferences.SetFloat(m_FloatKey, m_FloatValue);
 				EditorUtility.SetDirty(m_Preferences);
 			}
 		GUILayout.EndHorizontal();
 
-		// GUILayout.Label("Stored Ints", EditorStyles.boldLabel);
+		GUILayout.BeginHorizontal();
 
-		// foreach(var kvp in m_Preferences.intValues)
-		// 	GUILayout.Label(kvp.Key + " : " + kvp.Value);
+			m_ColorKey = EditorGUILayout.TextField("key", m_ColorKey);
+			m_ColorValue = EditorGUILayout.ColorField("", m_ColorValue);
+
+			if(GUILayout.Button("Add"))
+			{
+				m_Preferences.SetColor(m_ColorKey, m_ColorValue);
+				EditorUtility.SetDirty(m_Preferences);
+			}
+		GUILayout.EndHorizontal();
 
 		if(GUILayout.Button("to json"))
 			Debug.Log(JsonUtility.ToJson(m_Preferences));
-
 	}
+
 }

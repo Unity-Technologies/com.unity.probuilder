@@ -81,7 +81,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	Load a scriptable object from a path relative to ProBuilder root.
 		 */
-		public static T LoadRelative<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		public static T LoadRequiredRelative<T>(string path) where T : ScriptableObject, pb_IHasDefault
 		{
 			string full = string.Format("{0}{1}", GetRootDir(), path);
 			return LoadRequired<T>(full);
