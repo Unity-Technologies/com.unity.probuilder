@@ -22,12 +22,13 @@ public class TempMenuItems : EditorWindow
 
 	void OnEnable()
 	{
-		m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Preferences/ProBuilderPrefs.asset");
+		m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Data/ProBuilderPrefs.asset");
 	}
 
 	void OnDisable()
 	{
-		EditorUtility.SetDirty(m_Preferences);
+		if(m_Preferences != null)
+			EditorUtility.SetDirty(m_Preferences);
 	}
 
 	string m_FloatKey, m_IntKey, m_ColorKey;

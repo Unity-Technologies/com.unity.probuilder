@@ -221,7 +221,6 @@ namespace ProBuilder2.Common
 		/**
 		 *	Get the internal <key, bool> dictionary.
 		 */
-
 		public Dictionary<string, bool> GetBoolDictionary() { return m_bool; }
 
 		/**
@@ -243,7 +242,6 @@ namespace ProBuilder2.Common
 		 *	Get the internal <key, Color> dictionary.
 		 */
 		public Dictionary<string, Color> GetColorDictionary() { return m_Color; }
-
 
 		/**
 		 *	Clear all stored preference key value pairs.
