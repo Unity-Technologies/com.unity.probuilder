@@ -86,14 +86,17 @@ namespace ProBuilder2.Common
 		/**
 		 * Reload colors for edge and face highlights from editor prefs.
 		 */
-		public void LoadPrefs(Hashtable prefs)
+		public void LoadPrefs(	Color in_faceSelectionColor,
+								Color in_edgeSelectionColor,
+								Color in_vertSelectionColor,
+								Color in_vertexDotColor,
+								float in_vertexHandleSize)
 		{
-			faceSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultFaceColor];
-			edgeSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultEdgeColor];
-			vertSelectionColor 	= (Color) prefs[pb_Constant.pbDefaultSelectedVertexColor];
-			vertexDotColor 		= (Color) prefs[pb_Constant.pbDefaultVertexColor];
-
-			vertexHandleSize 	= (float) prefs[pb_Constant.pbVertexHandleSize];
+			this.faceSelectionColor = in_faceSelectionColor;
+			this.edgeSelectionColor = in_edgeSelectionColor;
+			this.vertSelectionColor = in_vertSelectionColor;
+			this.vertexDotColor 	= in_vertexDotColor;
+			vertexHandleSize 		= in_vertexHandleSize;
 
 			wireframeMaterial.SetColor("_Color", wireframeColor);// (_selectMode == SelectMode.Edge && _editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 			faceMaterial.SetColor("_Color", faceSelectionColor);

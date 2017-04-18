@@ -115,7 +115,11 @@ public class pb_Editor : EditorWindow
 	{
 		_instance = this;
 
-		graphics.LoadPrefs( pb_Preferences_Internal.ToHashtable() );
+		graphics.LoadPrefs( (Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor),
+							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor),
+							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor),
+							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor),
+							(float) pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize) );
 
 		HookDelegates();
 

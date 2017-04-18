@@ -54,7 +54,7 @@ public class ShowEditorPrefKeys : EditorWindow
 		pb_Constant.pbNormalizeUVsOnPlanarProjection
 	};
 
-	string[] floats = new string[] 
+	string[] floats = new string[]
 	{
 		pb_Constant.pbVertexHandleSize,
 		pb_Constant.pbExtrudeDistance,
@@ -90,9 +90,9 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string e in enums)
 				GUILayout.Label(e);
-				
+
 			pb_GUI_Utility.DrawSeparator(1);
-			
+
 			foreach(string c in colors)
 				GUILayout.Label(c);
 
@@ -103,14 +103,14 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			pb_GUI_Utility.DrawSeparator(1);
 
-			foreach(string f in floats)	
+			foreach(string f in floats)
 				GUILayout.Label( f );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
-			foreach(string s in strings)	
+			foreach(string s in strings)
 				GUILayout.Label( s );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			GUILayout.Label("pbDefaultShortcuts");
@@ -118,7 +118,7 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			GUI.backgroundColor = Color.white;
 		GUILayout.EndVertical();
-	
+
 		GUILayout.BeginVertical();
 
 			GUILayout.Label("User Set?", EditorStyles.boldLabel);
@@ -138,7 +138,7 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string b in booleans)
 				GUILayout.Label( EditorPrefs.HasKey(b).ToString() );
-	
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			foreach(string f in floats)
@@ -167,12 +167,12 @@ public class ShowEditorPrefKeys : EditorWindow
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<EditLevel>( pb_Constant.pbDefaultEditLevel).ToString() );
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<SelectMode>( pb_Constant.pbDefaultSelectionMode).ToString()		 );
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<HandleAlignment>( pb_Constant.pbHandleAlignment).ToString() );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
-				
+
 			foreach(string c in colors)
 				GUILayout.Label( pb_Preferences_Internal.GetColor(c).ToString() );
-	
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			foreach(string b in booleans)
@@ -182,12 +182,12 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string f in floats)
 				GUILayout.Label( pb_Preferences_Internal.GetFloat(f).ToString() );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			foreach(string f in strings)
 				GUILayout.Label( EditorPrefs.GetString(f) );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			GUILayout.Label("");
@@ -207,9 +207,9 @@ public class ShowEditorPrefKeys : EditorWindow
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<EditLevel>( pb_Constant.pbDefaultEditLevel, true).ToString() 		);
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<SelectMode>( pb_Constant.pbDefaultSelectionMode, true).ToString()	);
 			GUILayout.Label( pb_Preferences_Internal.GetEnum<HandleAlignment>( pb_Constant.pbHandleAlignment, true).ToString() 	);
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
-			
+
 			foreach(string c in colors)
 				GUILayout.Label( pb_Preferences_Internal.GetColor(c, true).ToString()						 );
 
@@ -217,17 +217,17 @@ public class ShowEditorPrefKeys : EditorWindow
 
 			foreach(string b in booleans)
 				GUILayout.Label( pb_Preferences_Internal.GetBool(b, true).ToString() );
-	
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			foreach(string f in floats)
 				GUILayout.Label( pb_Preferences_Internal.GetFloat(f, true).ToString()						 );
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			for(int i = 0; i < strings.Length; i++)
 				GUILayout.Label(" - ");
-			
+
 			pb_GUI_Utility.DrawSeparator(1);
 
 			GUILayout.Label("");

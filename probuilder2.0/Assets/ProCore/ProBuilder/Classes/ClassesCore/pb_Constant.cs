@@ -11,16 +11,26 @@ namespace ProBuilder2.Common
 #endif
 
 		public static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+
 		public const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
 
 		private static Material _defaultMaterial = null;
+		private static Material _facePickerMaterial;
+		private static Material _vertexPickerMaterial;
+		private static Shader _selectionPickerShader = null;
+		private static Material _UnityDefaultDiffuse = null;
+		private static Material _UnlitVertexColorMaterial;
+
+		/**
+		 *	Default ProBuilder material.
+		 */
 		public static Material DefaultMaterial
 		{
 			get
 			{
 				if(_defaultMaterial == null)
 				{
-					_defaultMaterial = (Material)Resources.Load("Materials/Default_Prototype", typeof(Material));
+					_defaultMaterial = (Material) Resources.Load("Materials/Default_Prototype", typeof(Material));
 
 					if(_defaultMaterial == null)
 						_defaultMaterial = UnityDefaultDiffuse;
@@ -30,7 +40,9 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		private static Material _facePickerMaterial;
+		/**
+		 *	Material used for face picking functions.
+		 */
 		public static Material FacePickerMaterial
 		{
 			get
@@ -48,7 +60,9 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		private static Material _vertexPickerMaterial;
+		/**
+		 *	Material used for vertex picking functions.
+		 */
 		public static Material VertexPickerMaterial
 		{
 			get
@@ -66,7 +80,9 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		private static Shader _selectionPickerShader = null;
+		/**
+		 *	Shader used in selection picking functions.
+		 */
 		public static Shader SelectionPickerShader
 		{
 			get
@@ -77,11 +93,13 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		public static Material TriggerMaterial { get{ return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
-		public static Material ColliderMaterial { get{ return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
+		public static Material TriggerMaterial { get { return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
+		public static Material ColliderMaterial { get { return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
 		public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
 
-		private static Material _UnityDefaultDiffuse = null;
+		/**
+		 *	Default Unity diffuse material.
+		 */
 		public static Material UnityDefaultDiffuse
 		{
 			get
@@ -97,7 +115,6 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		private static Material _UnlitVertexColorMaterial;
 		public static Material UnlitVertexColor
 		{
 			get

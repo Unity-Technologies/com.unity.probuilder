@@ -51,6 +51,8 @@ namespace ProBuilder2.Common
 					return m_Preferences.GetStringDictionary();
 				else if(m_Position == 4)
 					return m_Preferences.GetColorDictionary();
+				else if(m_Position == 5)
+					return m_Preferences.GetMaterialDictionary();
 				else
 					throw new System.InvalidOperationException();
 			}

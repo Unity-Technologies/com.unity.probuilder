@@ -19,18 +19,21 @@ namespace ProBuilder2.Common
 		private Dictionary<string, float> 		m_float 	= new Dictionary<string, float>();
 		private Dictionary<string, string> 		m_string 	= new Dictionary<string, string>();
 		private Dictionary<string, Color> 		m_Color 	= new Dictionary<string, Color>();
+		private Dictionary<string, Material> 	m_Material 	= new Dictionary<string, Material>();
 
 		[SerializeField] List<string> 	m_bool_keys;
 		[SerializeField] List<string>	m_int_keys;
 		[SerializeField] List<string>	m_float_keys;
 		[SerializeField] List<string>	m_string_keys;
 		[SerializeField] List<string>	m_Color_keys;
+		[SerializeField] List<string>	m_Material_keys;
 
 		[SerializeField] List<bool> 	m_bool_values;
 		[SerializeField] List<int> 		m_int_values;
 		[SerializeField] List<float> 	m_float_values;
 		[SerializeField] List<string> 	m_string_values;
 		[SerializeField] List<Color> 	m_Color_values;
+		[SerializeField] List<Material> m_Material_values;
 
 		/**
 		 *	Perform the ritual "Please Serialize My Dictionary" dance.
@@ -71,7 +74,7 @@ namespace ProBuilder2.Common
 				m_Color.Add(m_Color_keys[i], m_Color_values[i]);
 		}
 
-		public int Length { get { return 5; } }
+		public int Length { get { return 6; } }
 
 		// Implementation for the GetEnumerator method.
 		IEnumerator IEnumerable.GetEnumerator()
@@ -163,6 +166,26 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
+		/**
+		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		 */
+		public Material GetMaterial(string key, Material fallback = default(Material))
+		{
+			Material value;
+			if(m_Material.TryGetValue(key, out value))
+				return value;
+			return fallback;
+		}
+
+		/**
+		 *	Generic set value.  Only accepts:
+		 *	int,
+		 *	float,
+		 *	bool,
+		 *	string,
+		 *	Color,
+		 *	Material
+		 */
 		public void Set<T>(string key, T value)
 		{
 			object o = (object) value;
@@ -177,6 +200,8 @@ namespace ProBuilder2.Common
 				SetString(key, (string) o);
 			else if(value is Color)
 				SetColor(key, (Color) o);
+			else if(value is Material)
+				SetMaterial(key, (Material) o);
 			else
 				Debug.LogWarning(string.Format("Set<{0}>({1}, {2}) not valid preference type.",
 					typeof(T).ToString(),
@@ -240,6 +265,17 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * Set a value for key in the saved prefs.
+		 */
+		public void SetMaterial(string key, Material value)
+		{
+			if(m_Material.ContainsKey(key))
+				m_Material[key] = value;
+			else
+				m_Material.Add(key, value);
+		}
+
+		/**
 		 *	Get the internal <key, bool> dictionary.
 		 */
 		public Dictionary<string, bool> GetBoolDictionary() { return m_bool; }
@@ -263,6 +299,11 @@ namespace ProBuilder2.Common
 		 *	Get the internal <key, Color> dictionary.
 		 */
 		public Dictionary<string, Color> GetColorDictionary() { return m_Color; }
+
+		/**
+		 *	Get the internal <key, Material> dictionary.
+		 */
+		public Dictionary<string, Material> GetMaterialDictionary() { return m_Material; }
 
 		/**
 		 *	Clear all stored preference key value pairs.
