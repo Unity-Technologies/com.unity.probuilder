@@ -1,3 +1,30 @@
+# ProBuilder 2.8.1f0
+
+## Features
+
+- Improve grid snapping when placing Poly Shapes.
+- Add a callback when a mesh is rebuilt (pb_EditorUtility.AddOnMeshCompiledListener).
+- Remove max width limitation on Material Editor window.
+
+## Bug Fixes
+
+- Fix incorrect UV render scaling on retina and other scaled screens.
+- Fix deprecated warnings on Handles calls in Unity 5.6.
+- Fix Icosphere API example deprecated function calls in Unity 5.6.
+- Fix UnityObjectToViewPos warnings Unity 5.6.
+- Fix Poly Shape not generating UV2 for mesh.
+- Catch an occasional Null Reference when viewing UV2 channel.
+- Fix Null Reference in Poly Tool undo callbacks.
+- Fix errors in adding pb_Entity script during repair mesh references action.
+- Improve consistency of Vector2/3/4 hashing functions.
+- Fix particularly slow function in MergeFaces action.
+- Fix preferences GUI layout.
+
+## Changes
+
+- Start Poly Shape height at 0.
+- First Poly Shape click always sets pivot.
+
 # ProBuilder 2.8.0f1
 
 ## Features

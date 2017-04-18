@@ -16,17 +16,17 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
 [InitializeOnLoad]
-public class RenameNewObjects : Editor
+public class ClearUnusedAttributes : Editor
 {
 	/**
 	 *	Static constructor is called and subscribes to the OnMeshCompiled delegate.
 	 */
-	static RenameNewObjects()
+	static ClearUnusedAttributes()
 	{
 		pb_EditorUtility.AddOnMeshCompiledListener(OnMeshCompiled);
 	}
 
-	~RenameNewObjects()
+	~ClearUnusedAttributes()
 	{
 		pb_EditorUtility.RemoveOnMeshCompiledListener(OnMeshCompiled);
 	}
