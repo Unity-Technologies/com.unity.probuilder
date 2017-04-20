@@ -42,7 +42,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 		USER_COLORS = new Color[10];
 		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
-			if( !pbUtil.ColorWithString( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), out USER_COLORS[i] ) )
+			if( !pbUtil.TryParseColor( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), ref USER_COLORS[i] ) )
 				USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}

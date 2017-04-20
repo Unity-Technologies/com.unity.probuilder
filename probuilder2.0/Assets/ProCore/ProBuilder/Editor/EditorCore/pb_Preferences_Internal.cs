@@ -8,243 +8,233 @@ using System.Collections.Generic;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 
-public class pb_Preferences_Internal
+namespace ProBuilder2.EditorCommon
 {
-	private static pb_PreferenceDictionary m_Preferences = null;
-
 	/**
-	 *	Access the project local preferences asset.
+	 *	Manage ProBuilder preferences.
 	 */
-	public static pb_PreferenceDictionary preferences
+	public class pb_Preferences_Internal
 	{
-		get
+		private static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
 		{
-			if(m_Preferences == null)
-				m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
+			{ pb_Constant.pbForceConvex, false },
+			{ pb_Constant.pbManifoldEdgeExtrusion, false },
+			{ pb_Constant.pbPBOSelectionOnly, false },
+			{ pb_Constant.pbCloseShapeWindow, false },
+			{ pb_Constant.pbGrowSelectionUsingAngle, false },
+			{ pb_Constant.pbNormalizeUVsOnPlanarProjection, false },
+			{ pb_Constant.pbDisableAutoUV2Generation, false },
+			{ pb_Constant.pbShowSceneInfo, false },
+			{ pb_Constant.pbEnableBackfaceSelection, false },
+			{ pb_Constant.pbVertexPaletteDockable, false },
+			{ pb_Constant.pbGrowSelectionAngleIterative, false },
+			{ pb_Constant.pbIconGUI, false },
+			{ pb_Constant.pbUniqueModeShortcuts, false },
+			{ pb_Constant.pbShiftOnlyTooltips, false },
+			{ pb_Constant.pbCollapseVertexToFirst, false },
+			{ pb_Constant.pbDragSelectWholeElement, false },
+			{ pb_Constant.pbEnableExperimental, false },
+			{ pb_Constant.pbMeshesAreAssets, false }
+		};
 
-			return m_Preferences;
-		}
-	}
-
-	/**
-	 *	Get a stored preference value from key.
-	 */
-	public static T Get<T>(string key, T fallback = default(T))
-	{
-		return m_Preferences.Get<T>(key, fallback);
-	}
-
-	/**
-	 *	Set a stored preference value with key.
-	 */
-	public static void Set<T>(string key, T value)
-	{
-		m_Preferences.Set<T>(key, value);
-	}
-
-	/**
-	 * Checks if pref key exists in library, and if so return the value.  If not, return the default value.
-	 */
-	public static bool GetBool(string pref, bool forceDefault = false)
-	{
-		if(!forceDefault && EditorPrefs.HasKey(pref))
-			return EditorPrefs.GetBool(pref);
-
-		if(	pref == pb_Constant.pbForceConvex ||
-			pref == pb_Constant.pbManifoldEdgeExtrusion ||
-			pref == pb_Constant.pbPBOSelectionOnly ||
-			pref == pb_Constant.pbCloseShapeWindow ||
-			pref == pb_Constant.pbGrowSelectionUsingAngle ||
-			pref == pb_Constant.pbNormalizeUVsOnPlanarProjection ||
-			pref == pb_Constant.pbDisableAutoUV2Generation ||
-			pref == pb_Constant.pbShowSceneInfo ||
-			pref == pb_Constant.pbEnableBackfaceSelection ||
-			pref == pb_Constant.pbVertexPaletteDockable ||
-			pref == pb_Constant.pbGrowSelectionAngleIterative ||
-			pref == pb_Constant.pbIconGUI ||
-			pref == pb_Constant.pbUniqueModeShortcuts ||
-			pref == pb_Constant.pbShiftOnlyTooltips ||
-			pref == pb_Constant.pbCollapseVertexToFirst ||
-			pref == pb_Constant.pbDragSelectWholeElement ||
-			pref == pb_Constant.pbEnableExperimental ||
-			pref == pb_Constant.pbMeshesAreAssets)
-			return false;
-		else
-			return true;
-	}
-
-	/**
-	 *	Get float value that is stored in preferences, or it's default value.
-	 */
-	public static float GetFloat(string pref, bool forceDefault = false)
-	{
-		switch(pref)
+		private static Dictionary<string, float> m_FloatDefaults = new Dictionary<string, float>()
 		{
-			case pb_Constant.pbVertexHandleSize:
-				return EditorPrefs.HasKey(pref) && !forceDefault ?  EditorPrefs.GetFloat(pref) : .5f;
+			{ pb_Constant.pbVertexHandleSize, .5f },
+			{ pb_Constant.pbGrowSelectionAngle, 42f },
+			{ pb_Constant.pbExtrudeDistance, .5f },
+			{ pb_Constant.pbWeldDistance, Mathf.Epsilon },
+			{ pb_Constant.pbUVGridSnapValue, .125f },
+			{ pb_Constant.pbUVWeldDistance, .01f },
+			{ pb_Constant.pbBevelAmount, .05f }
+		};
 
-			case pb_Constant.pbGrowSelectionAngle:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : 42f;
-
-			case pb_Constant.pbExtrudeDistance:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : .5f;
-
-			case pb_Constant.pbWeldDistance:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? EditorPrefs.GetFloat(pref) : Mathf.Epsilon;
-
-			case pb_Constant.pbUVGridSnapValue:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), .015625f, 2f) : .125f;
-
-			case pb_Constant.pbUVWeldDistance:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), Mathf.Epsilon, 10f) : .01f;
-
-			case pb_Constant.pbBevelAmount:
-				return EditorPrefs.HasKey(pref) && !forceDefault ? Mathf.Clamp(EditorPrefs.GetFloat(pref), Mathf.Epsilon, 1000f) : .05f;
-
-			default:
-				return 1f;
-		}
-	}
-
-	/**
-	 * Get int value if it exists, default value otherwise.
-	 */
-	public static int GetInt(string pref, bool forceDefault = false)
-	{
-		int key = 0;
-
-		switch(pref)
+		private static Dictionary<string, int> m_IntDefaults = new Dictionary<string, int>()
 		{
-			case pb_Constant.pbDefaultEditLevel:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : 0;
-				return key;
+			{ pb_Constant.pbDefaultEditLevel, 0 },
+			{ pb_Constant.pbDefaultSelectionMode, 0 },
+			{ pb_Constant.pbHandleAlignment, 0 },
+			{ pb_Constant.pbDefaultCollider, (int) ColliderType.MeshCollider },
+			{ pb_Constant.pbVertexColorTool, (int) VertexColorTool.Painter },
+			{ pb_Constant.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
+			{ pb_Constant.pbDefaultEntity, (int) EntityType.Detail },
+			{ pb_Constant.pbDragSelectMode, (int) DragSelectMode.Difference },
+			{ pb_Constant.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
+#if !UNITY_4_7
+			{ pb_Constant.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
+#endif
+		};
 
-			case pb_Constant.pbDefaultSelectionMode:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : 0;
-				return key;
-
-			case pb_Constant.pbHandleAlignment:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : 0;
-				return key;
-
-			case pb_Constant.pbDefaultCollider:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) ColliderType.MeshCollider;
-				return key;
-
-			case pb_Constant.pbVertexColorTool:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) VertexColorTool.Painter;
-				return key;
-
-			case pb_Constant.pbToolbarLocation:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) SceneToolbarLocation.UpperCenter;
-				return key;
-
-			case pb_Constant.pbDefaultEntity:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) EntityType.Detail;
-				return key;
-
-			case pb_Constant.pbDragSelectMode:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) DragSelectMode.Difference;
-				return key;
-
-			case pb_Constant.pbExtrudeMethod:
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) ExtrudeMethod.VertexNormal;
-				return key;
-
-			case pb_Constant.pbShadowCastingMode:
-				#if !UNITY_4_7
-				key = !forceDefault && EditorPrefs.HasKey(pref) ? EditorPrefs.GetInt(pref) : (int) ShadowCastingMode.TwoSided;
-				#endif
-				return key;
-
-			default:
-				return key;
-		}
-	}
-
-	/**
-	 *	Get an enum value from the stored preferences (or it's default value).
-	 */
-	public static T GetEnum<T>(string key, bool forceDefault = false) where T : struct, System.IConvertible
-	{
-		return (T) (object) GetInt(key, forceDefault);
-	}
-
-	/**
-	 *	Get Color value stored in preferences.
-	 */
-	public static Color GetColor(string pref, bool forceDefault = false)
-	{
-		Color col = Color.white;
-
-		if( !forceDefault && !pbUtil.ColorWithString( EditorPrefs.GetString(pref), out col) )
-
-		switch(pref)
+		private static Dictionary<string, Color> m_ColorDefaults = new Dictionary<string, Color>()
 		{
-			case pb_Constant.pbDefaultFaceColor:
-					col = new Color(0f, .86f, 1f, .275f);
-				break;
+			{ pb_Constant.pbDefaultFaceColor, new Color(0f, .86f, 1f, .275f) },
+			{ pb_Constant.pbDefaultEdgeColor, new Color(0f, .25f, 1f, 1f) },
+			{ pb_Constant.pbDefaultVertexColor, new Color(.8f, .8f, .8f, 1f) },
+			{ pb_Constant.pbDefaultSelectedVertexColor, Color.green },
+		};
 
-			case pb_Constant.pbDefaultEdgeColor:
-					col = new Color(0f, .25f, 1f, 1f);
-				break;
+		private static Dictionary<string, string> m_StringDefaults = new Dictionary<string, string>()
+		{
+		};
 
-			case pb_Constant.pbDefaultVertexColor:
-					col = new Color(.8f, .8f, .8f, 1f);
-				break;
+		private static pb_PreferenceDictionary m_Preferences = null;
 
-			case pb_Constant.pbDefaultSelectedVertexColor:
-					col = Color.green;
-				break;
+		/**
+		 *	Access the project local preferences asset.
+		 */
+		public static pb_PreferenceDictionary preferences
+		{
+			get
+			{
+				if(m_Preferences == null)
+					m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
+
+				return m_Preferences;
+			}
 		}
 
-		return col;
-	}
-
-	/**
-	 *	Get a material from preferences.
-	 */
-	public static Material GetMaterial(string pref, bool forceDefault = false)
-	{
-		Material mat = null;
-
-		switch(pref)
+		/**
+		 * Checks if pref key exists in library, and if so return the value.  If not, return the default value (true).
+		 */
+		public static bool GetBool(string pref)
 		{
-			case pb_Constant.pbDefaultMaterial:
-				if(!forceDefault && EditorPrefs.HasKey(pref))
-				{
-					if(EditorPrefs.GetString(pref) == "Default-Diffuse")
-						return pb_Constant.UnityDefaultDiffuse;
+			// Backwards compatibility reasons dictate that default bool value is true.
+			if(m_BoolDefaults.ContainsKey(pref))
+				return GetBool(pref, m_BoolDefaults[pref]);
 
-					mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(pref), typeof(Material));
-				}
-				break;
-
-			default:
-				return pb_Constant.DefaultMaterial;
+			return GetBool(pref, true);
 		}
 
-		if(!mat)
-			mat = pb_Constant.DefaultMaterial;
+		/**
+		 *	Get a preference bool value. Local preference has priority over EditorPref.
+		 */
+		public static bool GetBool(string key, bool fallback)
+		{
+			if(preferences.HasKey<bool>(key))
+				return preferences.GetBool(key, fallback);
+			else if(EditorPrefs.HasKey(key))
+				return EditorPrefs.GetBool(key);
 
-		return mat;
-	}
+			return fallback;
+		}
 
-	/**
-	 *	Get the string value associated with this key.
-	 */
-	public static string GetString(string pref, bool forceDefault = false)
-	{
-		return preferences.GetString(pref);
-	}
+		/**
+		 *	Get float value that is stored in preferences, or it's default value.
+		 */
+		public static float GetFloat(string key)
+		{
+			if(m_FloatDefaults.ContainsKey(key))
+				return GetFloat(key, m_FloatDefaults[key]);
+			return GetFloat(key, 1f);
+		}
 
-	/**
-	 *	Retrieve stored shortcuts from preferences in an IEnumerable format.
-	 */
-	public static IEnumerable<pb_Shortcut> GetShortcuts()
-	{
-		return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
-			pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
-			pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
+		public static float GetFloat(string key, float fallback)
+		{
+			if(preferences.HasKey<float>(key))
+				return preferences.GetFloat(key, fallback);
+			return EditorPrefs.GetFloat(key, fallback);
+		}
+
+		/**
+		 *	Get int value that is stored in preferences, or it's default value.
+		 */
+		public static int GetInt(string key)
+		{
+			if(m_IntDefaults.ContainsKey(key))
+				return GetInt(key, m_IntDefaults[key]);
+			return GetInt(key, 0);
+		}
+
+		public static int GetInt(string key, int fallback)
+		{
+			if(preferences.HasKey<int>(key))
+				return preferences.GetInt(key, fallback);
+			return EditorPrefs.GetInt(key, fallback);
+		}
+
+		/**
+		 *	Get an enum value from the stored preferences (or it's default value).
+		 */
+		public static T GetEnum<T>(string key) where T : struct, System.IConvertible
+		{
+			// @todo
+			return (T) (object) GetInt(key);
+		}
+
+		/**
+		 *	Get Color value stored in preferences.
+		 */
+		public static Color GetColor(string key)
+		{
+			if(m_ColorDefaults.ContainsKey(key))
+				return GetColor(key, m_ColorDefaults[key]);
+			return GetColor(key, Color.white);
+		}
+
+		public static Color GetColor(string key, Color fallback)
+		{
+			if(preferences.HasKey<Color>(key))
+				return preferences.GetColor(key, fallback);
+			pbUtil.TryParseColor(EditorPrefs.GetString(key), ref fallback);
+			return fallback;
+		}
+
+		/**
+		 *	Get the string value associated with this key.
+		 */
+		public static string GetString(string key)
+		{
+			if(m_StringDefaults.ContainsKey(key))
+				return GetString(key, m_StringDefaults[key]);
+			return GetString(key, "");
+		}
+
+		public static string GetString(string key, string fallback)
+		{
+			if(preferences.HasKey<string>(key))
+				return preferences.GetString(key, fallback);
+			return EditorPrefs.GetString(key, fallback);
+		}
+
+		/**
+		 *	Get a material from preferences.
+		 */
+		public static Material GetMaterial(string key)
+		{
+			if(preferences.HasKey<Material>(key))
+				return preferences.GetMaterial(key);
+
+			Material mat = null;
+
+			switch(key)
+			{
+				case pb_Constant.pbDefaultMaterial:
+					if(EditorPrefs.HasKey(key))
+					{
+						if(EditorPrefs.GetString(key) == "Default-Diffuse")
+							return pb_Constant.UnityDefaultDiffuse;
+
+						mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(key), typeof(Material));
+					}
+					break;
+
+				default:
+					return pb_Constant.DefaultMaterial;
+			}
+
+			if(!mat)
+				mat = pb_Constant.DefaultMaterial;
+
+			return mat;
+		}
+
+		/**
+		 *	Retrieve stored shortcuts from preferences in an IEnumerable format.
+		 */
+		public static IEnumerable<pb_Shortcut> GetShortcuts()
+		{
+			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
+				pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
+				pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
+		}
 	}
 }

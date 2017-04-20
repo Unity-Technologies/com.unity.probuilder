@@ -52,6 +52,7 @@ public class pb_Preferences
 	static bool pbElementSelectIsHamFisted = false;
 	static bool pbDragSelectWholeElement = false;
 	static bool pbEnableExperimental = false;
+
 	#if !UNITY_4_7
 	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 	#endif

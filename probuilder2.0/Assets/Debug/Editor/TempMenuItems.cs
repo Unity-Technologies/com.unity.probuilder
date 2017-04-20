@@ -70,7 +70,10 @@ public class TempMenuItems : EditorWindow
 		GUILayout.EndHorizontal();
 
 		if(GUILayout.Button("to json"))
+		{
 			Debug.Log(JsonUtility.ToJson(m_Preferences));
+			Debug.Log("Some Text");
+		}
 	}
 
 }

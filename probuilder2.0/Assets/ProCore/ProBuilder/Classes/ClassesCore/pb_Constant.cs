@@ -190,6 +190,7 @@ namespace ProBuilder2.Common
 		public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
 		public const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
 		public const string pbCheckForProBuilderUpdates		= "pbCheckForProBuilderUpdates";	///< Automatically check for updates?
+		public const string pbManageLightmappingStaticFlag	= "pbManageLightmappingStaticFlag";	///< Enable ProBuilder to manage the lightmapping static flags.
 
 		// Float
 		public const string pbVertexHandleSize 				= "pbVertexHandleSize";

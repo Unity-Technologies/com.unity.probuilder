@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using ProBuilder2.Interface;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 
 public class pb_DimensionsOverlay : pb_ISceneEditor
 {

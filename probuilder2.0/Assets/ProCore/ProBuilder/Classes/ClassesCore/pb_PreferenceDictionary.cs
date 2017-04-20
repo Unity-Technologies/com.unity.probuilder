@@ -114,6 +114,35 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Test if specific type dictionary contains a key.
+		 */
+		public bool HasKey<T>(string key)
+		{
+			System.Type type = typeof(T);
+
+			if(type == typeof(int))
+				return m_Int.ContainsKey(key);
+			else if(type == typeof(float))
+				return m_Float.ContainsKey(key);
+			else if(type == typeof(bool))
+				return m_Bool.ContainsKey(key);
+			else if(type == typeof(string))
+				return m_String.ContainsKey(key);
+			else if(type == typeof(Color))
+				return m_Color.ContainsKey(key);
+			else if(type == typeof(Material))
+				return m_Material.ContainsKey(key);
+			else
+			{
+				Debug.LogWarning(string.Format("HasKey<{0}>({1}) not valid preference type.",
+					typeof(T).ToString(),
+					key));
+			}
+
+			return false;
+		}
+
+		/**
 		 *	Generic Get preference for key function.
 		 */
 		public T Get<T>(string key, T fallback = default(T))
@@ -158,6 +187,38 @@ namespace ProBuilder2.Common
 			}
 
 			return fallback;
+		}
+
+		/**
+		 *	Generic set value.  Only accepts:
+		 *	int,
+		 *	float,
+		 *	bool,
+		 *	string,
+		 *	Color,
+		 *	Material
+		 */
+		public void Set<T>(string key, T value)
+		{
+			object o = (object) value;
+
+			if(value is int)
+				SetInt(key, (int) o);
+			else if(value is float)
+				SetFloat(key, (float) o);
+			else if(value is bool)
+				SetBool(key, (bool) o);
+			else if(value is string)
+				SetString(key, (string) o);
+			else if(value is Color)
+				SetColor(key, (Color) o);
+			else if(value is Material)
+				SetMaterial(key, (Material) o);
+			else
+				Debug.LogWarning(string.Format("Set<{0}>({1}, {2}) not valid preference type.",
+					typeof(T).ToString(),
+					key,
+					value.ToString()));
 		}
 
 		/**
@@ -224,38 +285,6 @@ namespace ProBuilder2.Common
 			if(m_Material.TryGetValue(key, out value))
 				return value;
 			return fallback;
-		}
-
-		/**
-		 *	Generic set value.  Only accepts:
-		 *	int,
-		 *	float,
-		 *	bool,
-		 *	string,
-		 *	Color,
-		 *	Material
-		 */
-		public void Set<T>(string key, T value)
-		{
-			object o = (object) value;
-
-			if(value is int)
-				SetInt(key, (int) o);
-			else if(value is float)
-				SetFloat(key, (float) o);
-			else if(value is bool)
-				SetBool(key, (bool) o);
-			else if(value is string)
-				SetString(key, (string) o);
-			else if(value is Color)
-				SetColor(key, (Color) o);
-			else if(value is Material)
-				SetMaterial(key, (Material) o);
-			else
-				Debug.LogWarning(string.Format("Set<{0}>({1}, {2}) not valid preference type.",
-					typeof(T).ToString(),
-					key,
-					value.ToString()));
 		}
 
 		/**
