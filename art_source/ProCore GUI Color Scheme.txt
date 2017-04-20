@@ -3,13 +3,16 @@
 **General Items**
 Item 						| Color/Value
 --- 						| ---
+Button Size (px)			| 36x22
 Big Text Font				| Bebas Neue Regular
 Small Text Font				| ASAP Regular
 Small Text Font (Header)	| ASAP Bold
-Icon: Default				| 898989
+Icon: Default Shade			| f6f6f6
+Icon: Darker Shade			| e0e0e0
+Icon: Darkest Shade			| c8c8c8
 Icon: Blue Accent			| 00aaef 
 Icon: Orange Accent			| ff9c00
-Rounding					| 2px
+Button Corner Rounding		| 2px
 
 **Light Skin (Unity Personal)**
 Item 						| Color Value
@@ -21,7 +24,7 @@ Active 						| cccccc
 OnNormal 					| f9f9f9
 OnActive 					| cccccc
 
-**Dark Skin (Unity Pro, Unreal)**
+**Dark Skin (Unity Pro)**
 Item 						| Color Value
 --- 						| ---
 Text 						| cecece
