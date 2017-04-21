@@ -48,7 +48,7 @@ namespace ProBuilder2.Actions
 			preserveFaces = EditorGUILayout.Toggle("Preserve Faces", preserveFaces);
 
 			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
 
 			GUILayout.FlexibleSpace();
 
@@ -82,7 +82,7 @@ namespace ProBuilder2.Actions
 					return pb_ActionResult.UserCanceled;
 			}
 			else
-			{	
+			{
 				return DoProBuilderize(all, preserveFaces);
 			}
 		}

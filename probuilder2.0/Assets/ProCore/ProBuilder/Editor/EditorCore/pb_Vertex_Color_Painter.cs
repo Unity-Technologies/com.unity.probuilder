@@ -43,7 +43,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		UserColors = new Color[10];
 		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
-			if( !pbUtil.ColorWithString( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), out UserColors[i] ) )
+			if( !pbUtil.TryParseColor( pb_Preferences_Internal.GetString(pb_Constant.pbVertexColorPrefs+i), ref UserColors[i] ) )
 				UserColors[i] = DEFAULT_COLORS[i];
 		}
 	}
@@ -102,10 +102,10 @@ public class pb_VertexColor_Editor : EditorWindow
 
 	Event currentEvent;													///< Cache the current event at start of OnSceneGUI.
 	Camera sceneCamera;													///< Cache the sceneview camera at start of OnSceneGUI.
- 
+
 	///< Used to store changes to mesh color array for live preview.
 	Dictionary<pb_Object, Color[]> hovering = new Dictionary<pb_Object, Color[]>();
- 
+
 	Vector2 mpos = Vector2.zero;
 	pb_Object pb;										// The object currently gettin' paintered
 	bool mouseMoveEvent = false;
@@ -144,7 +144,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	GUIContent gc_BrushOpacity = new GUIContent("Opacity", "The opacity that this brush will paint.  Large value means fully opaque, low values are more transparent.");
 	GUIContent gc_BrushStrength = new GUIContent("Strength", "How fast your brush affects the mesh colors.  High values mean changes happen quickly, low values mean colors have to be applied for longer to show.");
 #endregion
- 
+
 #region OnGUI
 
 	Vector3 nonzero(Vector3 vec)
@@ -155,7 +155,7 @@ public class pb_VertexColor_Editor : EditorWindow
 	}
 
 	void OnGUI()
-	{		
+	{
 		GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			if(mode == VertexPainterMode.Color)	GUI.backgroundColor = Color.gray;
@@ -171,16 +171,16 @@ public class pb_VertexColor_Editor : EditorWindow
 			{
 				switch(GetIndex(color))
 				{
-					case 0:	
+					case 0:
 						color = Color.red;
 						break;
-					case 1:	
+					case 1:
 						color = Color.green;
 						break;
-					case 2:	
+					case 2:
 						color = Color.blue;
 						break;
-					case 3:	
+					case 3:
 						color = Color.black;
 						break;
 				}
@@ -200,9 +200,9 @@ public class pb_VertexColor_Editor : EditorWindow
 		 */
 
 		enabled = EditorGUILayout.Toggle("Enabled", enabled);
-	
+
 		EditorGUI.BeginChangeCheck();
-			
+
 			brushSize = EditorGUILayout.Slider(gc_BrushSize, brushSize, .01f, BRUSH_SIZE_MAX);
 			brushOpacity = EditorGUILayout.Slider(gc_BrushOpacity, brushOpacity, .01f, 1f);
 			brushStrength = EditorGUILayout.Slider(gc_BrushStrength, brushStrength, .01f, 1f);
@@ -324,7 +324,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		int curRow = 0, rowSize = Screen.width / (ButtonWidth+5);
 
 		for(int i = 0; i < UserColors.Length; i++)
-		{	
+		{
 			if( (i - (curRow * rowSize)) >= rowSize)
 			{
 				curRow++;
@@ -358,8 +358,8 @@ public class pb_VertexColor_Editor : EditorWindow
 			GUI.changed = false;
 				UserColors[i] = EditorGUILayout.ColorField(UserColors[i], GUILayout.Width(ButtonWidth));
 
-			if(GUI.changed) 
-				EditorPrefs.SetString(pb_Constant.pbVertexColorPrefs+i, UserColors[i].ToString());
+			if(GUI.changed)
+				pb_Preferences_Internal.SetString(pb_Constant.pbVertexColorPrefs+i, UserColors[i].ToString());
 
 			GUILayout.EndVertical();
 
@@ -385,7 +385,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		if(editor && editor.editLevel != EditLevel.Plugin)
 			editor.SetEditLevel(EditLevel.Plugin);
- 
+
 // #if UNITY_5
 // 		if( Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative )
 // 		{
@@ -402,7 +402,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		screenCenter.y = Screen.height/2f;
 
 		mouseMoveEvent = currentEvent.type == EventType.MouseMove;
-		
+
 		/**
 		 * Check if a new object is under the mouse.
 		 */
@@ -420,7 +420,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					Repaint();
 
 					modified.Add(pb);
-					
+
 					pb.ToMesh();
 					pb.Refresh();
 				}
@@ -449,22 +449,22 @@ public class pb_VertexColor_Editor : EditorWindow
 
 					pb.msh.colors = hovering[pb];
 				}
- 
+
 				Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
 				pb_RaycastHit hit;
 
 				if ( pb_HandleUtility.FaceRaycast(ray, pb, out hit) )
 				{
 					handlePosition = pb.transform.TransformPoint(hit.point);
-					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);					
+					handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);
 					handleRotation = Quaternion.LookRotation(nonzero(pb.transform.TransformDirection(hit.normal)), Vector3.up);
- 
+
 					Color[] colors = pb.msh.colors;
 
 					int[][] sharedIndices = pb.sharedIndices.ToArray();
 
 					// wrapped in try/catch because a script reload can cause the mesh
-					// to re-unwrap itself in some crazy configuration, throwing off the 
+					// to re-unwrap itself in some crazy configuration, throwing off the
 					// vertex count sync.
 					try
 					{
@@ -490,7 +490,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					// Clear
 					foreach(KeyValuePair<pb_Object, Color[]> kvp in hovering)
 						kvp.Key.msh.colors = kvp.Value;
- 
+
 					hovering.Clear();
 
 					ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
@@ -506,9 +506,9 @@ public class pb_VertexColor_Editor : EditorWindow
 			{
 				kvp.Key.msh.colors = kvp.Value;
 			}
- 
+
 			hovering.Clear();
- 	
+
 			Ray ray = HandleUtility.GUIPointToWorldRay(lockhandleToCenter ? screenCenter : currentEvent.mousePosition);
 			handleRotation = Quaternion.LookRotation(sceneCamera.transform.forward, Vector3.up);
 			handlePosition = ray.origin + ray.direction * handleDistance;
@@ -521,15 +521,15 @@ public class pb_VertexColor_Editor : EditorWindow
 			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
  		Handles.color = MiddleRingColor;
 			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .5f);
- 		Handles.color = OuterRingColor;		
+ 		Handles.color = OuterRingColor;
 			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
  		Handles.color = Color.white;
- 
+
 		// This prevents us from selecting other objects in the scene,
 		// and allows for the selection of faces / vertices.
 		int controlID = GUIUtility.GetControlID(FocusType.Passive);
 		HandleUtility.AddDefaultControl(controlID);
- 
+
 		/**
 		 * Apply colors to mesh
 		 */
@@ -541,7 +541,7 @@ public class pb_VertexColor_Editor : EditorWindow
 			lastBrushApplication = CurTime;
 
 			Dictionary<pb_Object, Color[]> sticky = new Dictionary<pb_Object, Color[]>();
- 	
+
 			if(!isPainting)
 			{
 				Undo.RegisterCompleteObjectUndo(hovering.Keys.ToArray(), "Apply Vertex Colors");
@@ -558,7 +558,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 				kvp.Key.SetColors(colors);
 			}
- 
+
 			hovering = sticky;
 		}
 
@@ -573,7 +573,7 @@ public class pb_VertexColor_Editor : EditorWindow
 
 		if(currentEvent.type == EventType.MouseUp)
 			isPainting = false;
- 
+
 		if(mpos != currentEvent.mousePosition && currentEvent.type == EventType.Repaint)
 		{
 			mpos = currentEvent.mousePosition;
@@ -617,7 +617,7 @@ public class pb_VertexColor_Editor : EditorWindow
 			if( ShaderUtil.GetPropertyType(mat.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv )
 			{
 				Texture t = mat.GetTexture( ShaderUtil.GetPropertyName(mat.shader, i));
-				
+
 				if(t != null)
 					textures.Add(t);
 			}

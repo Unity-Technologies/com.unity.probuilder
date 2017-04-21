@@ -56,7 +56,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far a face will be moved along it's normal when extruding.  This value can be negative.\n\nExtrude as Group determines whether or not adjacent faces stay attached to one another when extruding.", MessageType.Info);
 
-			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			float extrudeAmount = pb_Preferences_Internal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 			ExtrudeMethod method = pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod);
 
 			GUILayout.BeginHorizontal();
@@ -72,8 +72,8 @@ namespace ProBuilder2.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				EditorPrefs.SetInt(pb_Constant.pbExtrudeMethod, (int) method);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+				pb_Preferences_Internal.SetInt(pb_Constant.pbExtrudeMethod, (int) method);
 			}
 
 			GUILayout.FlexibleSpace();

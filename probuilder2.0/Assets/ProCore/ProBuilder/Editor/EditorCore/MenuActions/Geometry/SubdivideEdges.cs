@@ -31,7 +31,7 @@ namespace ProBuilder2.Actions
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedEdgeCount > 0);
 		}
-		
+
 		public override MenuActionState AltState()
 		{
 			return MenuActionState.VisibleAndEnabled;
@@ -40,8 +40,8 @@ namespace ProBuilder2.Actions
 		public override void OnSettingsGUI()
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
-			
-			int subdivisions = EditorPrefs.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+
+			int subdivisions = pb_Preferences_Internal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -50,7 +50,7 @@ namespace ProBuilder2.Actions
 			subdivisions = (int) pb_GUI_Utility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
 			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+				pb_Preferences_Internal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
 
 			GUILayout.FlexibleSpace();
 
@@ -63,7 +63,7 @@ namespace ProBuilder2.Actions
 			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode != SelectMode.Edge;
-					
+
 		}
 
 		public override pb_ActionResult DoAction()

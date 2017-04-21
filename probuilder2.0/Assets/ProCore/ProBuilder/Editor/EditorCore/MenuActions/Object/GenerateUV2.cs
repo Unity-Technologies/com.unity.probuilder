@@ -20,23 +20,23 @@ namespace ProBuilder2.Actions
 		{
 			get
 			{
-				return EditorPrefs.GetBool("pbGenerateUV2PerObject", false);
+				return pb_Preferences_Internal.GetBool("pbGenerateUV2PerObject", false);
 			}
 			set
 			{
-				EditorPrefs.SetBool("pbGenerateUV2PerObject", value);
+				pb_Preferences_Internal.SetBool("pbGenerateUV2PerObject", value);
 			}
 		}
 
 		private static bool disableAutoUV2Generation
 		{
-			get 
+			get
 			{
 				return pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 			}
 			set
 			{
-				EditorPrefs.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace ProBuilder2.Actions
 			}
 
 			GUILayout.FlexibleSpace();
-			
+
 			if(GUILayout.Button( generateUV2PerObject ? "Rebuild Selected UV2s" : "Rebuild Scene UV2s"))
 				pb_EditorUtility.ShowNotification( DoAction().notification);
 		}

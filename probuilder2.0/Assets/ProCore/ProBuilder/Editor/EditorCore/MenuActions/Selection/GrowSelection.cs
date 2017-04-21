@@ -26,7 +26,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			return 	pb_Editor.instance != null &&
 					pb_Menu_Commands.VerifyGrowSelection(selection);
 		}
-		
+
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry;
@@ -60,20 +60,20 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 			GUI.enabled = angleGrow;
 
 			bool iterative = angleGrow ? pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative) : true;
-			
+
 			iterative = EditorGUILayout.Toggle("Iterative", iterative);
-		
+
 			GUI.enabled = true;
 
 			if( EditorGUI.EndChangeCheck() )
 			{
-				EditorPrefs.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
-				EditorPrefs.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
-				EditorPrefs.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
 			}
 
 			GUILayout.FlexibleSpace();
-			
+
 
 			if(GUILayout.Button("Grow Selection"))
 				pb_Menu_Commands.MenuGrowSelection(selection);

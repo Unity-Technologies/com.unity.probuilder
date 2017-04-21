@@ -12,12 +12,12 @@ namespace ProBuilder2.Actions
 		DragSelectMode dragSelectMode
 		{
 			get { return pb_Preferences_Internal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode); }
-			set { EditorPrefs.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
+			set { pb_Preferences_Internal.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
 		}
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon {
-			get { 
+			get {
 				if(dragSelectMode == DragSelectMode.Add)
 					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftAdd");
 				else if(dragSelectMode == DragSelectMode.Subtract)

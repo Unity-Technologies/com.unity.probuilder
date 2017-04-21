@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Actions;
 using System.Collections.Generic;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {

@@ -30,13 +30,13 @@ namespace ProBuilder2.Actions
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedTriangleCount > 1);
 		}
-		
+
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode != SelectMode.Vertex;
-					
+
 		}
 
 		public override MenuActionState AltState()
@@ -64,7 +64,7 @@ namespace ProBuilder2.Actions
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				EditorPrefs.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
 			}
 
 			GUILayout.FlexibleSpace();

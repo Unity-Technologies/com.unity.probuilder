@@ -547,24 +547,41 @@ namespace ProBuilder2.Common
 			return character.ToString();
 	}
 
+	[System.Obsolete("ColorWithString is deprecated. Use TryParseColor.")]
 	public static bool ColorWithString(string value, out Color col)
+	{
+		col = Color.white;
+		return TryParseColor(value, ref col);
+	}
+
+	/**
+	 *	Attempt to parse a color from string input.
+	 */
+	public static bool TryParseColor(string value, ref Color col)
 	{
 		string valid = "01234567890.,";
         value = new string(value.Where(c => valid.Contains(c)).ToArray());
         string[] rgba = value.Split(',');
 
         if(rgba.Length < 4)
-        {
-        	col = Color.white;
         	return false;
-        }
-        	// return new Color(0f, .86f, 1f, .275f);
 
-		col = new Color(
-			float.Parse(rgba[0]),
-			float.Parse(rgba[1]),
-			float.Parse(rgba[2]),
-			float.Parse(rgba[3]));
+        try
+        {
+			float r = float.Parse(rgba[0]);
+			float g = float.Parse(rgba[1]);
+			float b = float.Parse(rgba[2]);
+			float a = float.Parse(rgba[3]);
+
+			col.r = r;
+			col.g = g;
+			col.b = b;
+			col.a = a;
+		}
+		catch
+		{
+			return false;
+		}
 
 		return true;
 	}

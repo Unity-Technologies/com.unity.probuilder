@@ -39,7 +39,7 @@ namespace ProBuilder2.EditorCommon
 
 		// toogle for closing the window after shape creation from the prefrences window
 		private bool prefClose { get {
-			  	return EditorPrefs.HasKey(pb_Constant.pbCloseShapeWindow) ? EditorPrefs.GetBool(pb_Constant.pbCloseShapeWindow) : false;
+			  	return pb_Preferences_Internal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetFloating(bool floating)
 		{
-			EditorPrefs.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			pb_Preferences_Internal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
 			this.Close();
 			MenuOpenShapeEditor();
 		}

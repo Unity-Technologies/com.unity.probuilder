@@ -138,7 +138,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void ShowNotification(EditorWindow window, string notif)
 		{
-			if(EditorPrefs.HasKey(pb_Constant.pbShowEditorNotifications) && !EditorPrefs.GetBool(pb_Constant.pbShowEditorNotifications))
+			if(pb_Preferences_Internal.HasKey(pb_Constant.pbShowEditorNotifications) && !pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications))
 				return;
 
 			window.ShowNotification(new GUIContent(notif, ""));
@@ -526,7 +526,7 @@ namespace ProBuilder2.EditorCommon
 				break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = EditorPrefs.HasKey(pb_Constant.pbForceConvex) ? EditorPrefs.GetBool(pb_Constant.pbForceConvex) : false;
+					pb.gameObject.AddComponent<MeshCollider>().convex = pb_Preferences_Internal.HasKey(pb_Constant.pbForceConvex) ? pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex) : false;
 					break;
 			}
 
@@ -563,7 +563,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 * If EditorPrefs say to set pivot to corner and ProGrids or PB pref says snap to grid, do it.
+		 * If pb_Preferences_Internal.say to set pivot to corner and ProGrids or PB pref says snap to grid, do it.
 		 * @param indicesToCenterPivot If any values are passed here, the pivot is set to an average of all vertices at indices.  If null, the first vertex is used as the pivot.
 		 */
 		public static void SetPivotAndSnapWithPref(pb_Object pb, int[] indicesToCenterPivot)

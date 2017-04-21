@@ -45,7 +45,7 @@ namespace ProBuilder2.Actions
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("Editor", tool);
 
 			if(prev != tool)
-				EditorPrefs.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				pb_Preferences_Internal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
 
 			GUILayout.FlexibleSpace();
 

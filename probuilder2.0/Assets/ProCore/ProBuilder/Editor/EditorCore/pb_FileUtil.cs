@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.IO;
 using System.Linq;
@@ -66,12 +67,50 @@ namespace ProBuilder2.EditorCommon
 			return Directory.Exists(path) || File.Exists(path);
 		}
 
+		/**
+		 *	Find root ProBuilder folder.
+		 */
 		public static string GetRootDir()
 		{
 			if( !Exists(m_ProBuilderFolderPath) )
 				m_ProBuilderFolderPath = FindFolder("ProBuilder", true);
 
 			return m_ProBuilderFolderPath;
+		}
+
+		/**
+		 *	Load a scriptable object from a path relative to ProBuilder root.
+		 */
+		public static T LoadRequiredRelative<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		{
+			string full = string.Format("{0}{1}", GetRootDir(), path);
+			return LoadRequired<T>(full);
+		}
+
+		/**
+		 *	Fetch a default asset from path.  If not found, a new one is created.
+		 */
+		public static T LoadRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		{
+			T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+
+			if(asset == null)
+			{
+				asset = ScriptableObject.CreateInstance<T>();
+
+				asset.SetDefaultValues();
+
+				EditorUtility.SetDirty(asset);
+
+				string folder = Path.GetDirectoryName(path);
+
+				if(!Directory.Exists(folder))
+					Directory.CreateDirectory(folder);
+
+				AssetDatabase.CreateAsset(asset, path);
+			}
+
+			return asset;
 		}
 	}
 }

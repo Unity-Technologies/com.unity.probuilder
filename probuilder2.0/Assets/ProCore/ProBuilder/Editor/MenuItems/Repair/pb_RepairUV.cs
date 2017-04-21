@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
@@ -20,7 +21,7 @@ namespace ProBuilder2.Actions
 		{
 			pb_Upgrade.InvertUVScale_Selection();
 		}
-		
+
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Invert UV Scale (Selected Faces)", false, pb_Constant.MENU_REPAIR + 30)]
 		public static void MenuInvertSelectedFacesUVScale()
 		{

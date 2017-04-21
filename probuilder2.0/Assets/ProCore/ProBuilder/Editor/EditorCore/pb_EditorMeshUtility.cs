@@ -68,7 +68,8 @@ namespace ProBuilder2.EditorCommon
 				pb_MeshUtility.CollapseSharedVertices(mesh);
 			}
 
-			pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
+			if(pb_Preferences_Internal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))
+				pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(pb_EditorUtility.onMeshCompiled != null)
 				pb_EditorUtility.onMeshCompiled(InObject, mesh);

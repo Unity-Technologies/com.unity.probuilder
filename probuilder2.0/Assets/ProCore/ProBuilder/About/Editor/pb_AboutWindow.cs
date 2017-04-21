@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -127,13 +128,13 @@ namespace ProBuilder2.EditorCommon
 				return false;
 			}
 
-			if(fromMenu || EditorPrefs.GetString(about.identifier) != about.version)
+			if(fromMenu || pb_Preferences_Internal.GetString(about.identifier) != about.version)
 			{
 				pb_AboutWindow win;
 				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, about.name, true);
 				win.ShowUtility();
 				win.SetAbout(about);
-				EditorPrefs.SetString(about.identifier, about.version);
+				pb_Preferences_Internal.SetString(about.identifier, about.version);
 				return true;
 			}
 			else

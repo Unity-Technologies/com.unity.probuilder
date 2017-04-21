@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using ProBuilder2.EditorCommon;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
@@ -14,7 +15,7 @@ namespace ProBuilder2.Actions
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Repair Mesh References", false, pb_Constant.MENU_REPAIR)]
 		public static void MenuRefreshMeshReferences()
-		{	
+		{
 			RefreshMeshReferences(true);
 		}
 
@@ -31,7 +32,7 @@ namespace ProBuilder2.Actions
 					"Refreshing ProBuilder Objects",
 					"Reshaping pb_Object " + all[i].id + ".",
 					((float)i / all.Length));
-		 		
+
 				pb_Object pb = all[i];
 
 				pb_EditorUtility.VerifyMesh(pb);
