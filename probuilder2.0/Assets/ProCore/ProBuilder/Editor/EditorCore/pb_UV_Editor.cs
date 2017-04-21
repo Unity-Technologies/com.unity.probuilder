@@ -238,7 +238,7 @@ public class pb_UV_Editor : EditorWindow
 
 	static void ContextMenu_OpenFloatingWindow()
 	{
-		EditorPrefs.SetBool(pb_Constant.pbUVEditorFloating, true);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbUVEditorFloating, true);
 
 		EditorWindow.GetWindow<pb_UV_Editor>().Close();
 		EditorWindow.GetWindow<pb_UV_Editor>(true, "UV Editor", true);
@@ -246,7 +246,7 @@ public class pb_UV_Editor : EditorWindow
 
 	static void ContextMenu_OpenDockableWindow()
 	{
-		EditorPrefs.SetBool(pb_Constant.pbUVEditorFloating, false);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbUVEditorFloating, false);
 
 		EditorWindow.GetWindow<pb_UV_Editor>().Close();
 		EditorWindow.GetWindow<pb_UV_Editor>(false, "UV Editor", true);
@@ -2591,7 +2591,7 @@ public class pb_UV_Editor : EditorWindow
 		if(GUI.Button(editor_toggles_rect, gc_ShowPreviewTexture))
 		{
 			pref_showMaterial = !pref_showMaterial;
-			EditorPrefs.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
+			pb_Preferences_Internal.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
 		}
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
@@ -2825,7 +2825,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(weldDistance < MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
-			EditorPrefs.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
+			pb_Preferences_Internal.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
 		}
 	}
 #endregion

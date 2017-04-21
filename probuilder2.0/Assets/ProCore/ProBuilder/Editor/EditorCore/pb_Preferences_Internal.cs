@@ -11,6 +11,15 @@ using ProBuilder2.EditorCommon;
 namespace ProBuilder2.EditorCommon
 {
 	/**
+	 *	Where a preference is stored.
+	 */
+	public enum pb_PreferenceLocation
+	{
+		Project,	// Stored per-project.
+		Global 		// Shared between all projects.
+	};
+
+	/**
 	 *	Manage ProBuilder preferences.
 	 */
 	public class pb_Preferences_Internal
@@ -93,6 +102,23 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
+		 *	Check if project or global preferences contains a key.
+		 */
+		public static bool HasKey(string key)
+		{
+			return preferences.HasKey(key) || EditorPrefs.HasKey(key);
+		}
+
+		/**
+		 *	Delete a key from both project and global preferences.
+		 */
+		public static void DeleteKey(string key)
+		{
+			preferences.DeleteKey(key);
+			EditorPrefs.DeleteKey(key);
+		}
+
+		/**
 		 * Checks if pref key exists in library, and if so return the value.  If not, return the default value (true).
 		 */
 		public static bool GetBool(string pref)
@@ -100,7 +126,6 @@ namespace ProBuilder2.EditorCommon
 			// Backwards compatibility reasons dictate that default bool value is true.
 			if(m_BoolDefaults.ContainsKey(pref))
 				return GetBool(pref, m_BoolDefaults[pref]);
-
 			return GetBool(pref, true);
 		}
 
@@ -111,10 +136,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(preferences.HasKey<bool>(key))
 				return preferences.GetBool(key, fallback);
-			else if(EditorPrefs.HasKey(key))
-				return EditorPrefs.GetBool(key);
-
-			return fallback;
+			return EditorPrefs.GetBool(key, fallback);
 		}
 
 		/**
@@ -156,7 +178,6 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static T GetEnum<T>(string key) where T : struct, System.IConvertible
 		{
-			// @todo
 			return (T) (object) GetInt(key);
 		}
 
@@ -235,6 +256,78 @@ namespace ProBuilder2.EditorCommon
 			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
 				pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
 				pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
+		}
+
+		/**
+		 *	Associate key with int value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetInt(string key, int value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetInt(key, value);
+			else
+				EditorPrefs.SetInt(key, value);
+		}
+
+		/**
+		 *	Associate key with float value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetFloat(string key, float value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetFloat(key, value);
+			else
+				EditorPrefs.SetFloat(key, value);
+		}
+
+		/**
+		 *	Associate key with bool value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetBool(string key, bool value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetBool(key, value);
+			else
+				EditorPrefs.SetBool(key, value);
+		}
+
+		/**
+		 *	Associate key with string value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetString(string key, string value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetString(key, value);
+			else
+				EditorPrefs.SetString(key, value);
+		}
+
+		/**
+		 *	Associate key with color value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetColor(string key, Color value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetColor(key, value);
+			else
+				EditorPrefs.SetString(key, value.ToString());
+		}
+
+		/**
+		 *	Associate key with material value.
+		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
+		 */
+		public static void SetMaterial(string key, Material value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
+		{
+			if(location == pb_PreferenceLocation.Project)
+				preferences.SetMaterial(key, value);
+			else
+				EditorPrefs.SetString(key, value != null ? AssetDatabase.GetAssetPath(value) : "");
 		}
 	}
 }

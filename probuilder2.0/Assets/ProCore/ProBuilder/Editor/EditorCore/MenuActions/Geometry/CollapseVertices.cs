@@ -36,7 +36,7 @@ namespace ProBuilder2.Actions
 			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode != SelectMode.Vertex;
-					
+
 		}
 
 		public override MenuActionState AltState()
@@ -49,7 +49,7 @@ namespace ProBuilder2.Actions
 			GUILayout.Label("Collapse Vertices Settings", EditorStyles.boldLabel);
 
 			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertices.", MessageType.Info);
-			
+
 			bool collapseToFirst = pb_Preferences_Internal.GetBool(pb_Constant.pbCollapseVertexToFirst);
 
 			EditorGUI.BeginChangeCheck();
@@ -57,7 +57,7 @@ namespace ProBuilder2.Actions
 			collapseToFirst = EditorGUILayout.Toggle("Collapse To First", collapseToFirst);
 
 			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
 
 			GUILayout.FlexibleSpace();
 

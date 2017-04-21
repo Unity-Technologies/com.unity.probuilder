@@ -35,10 +35,10 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			elementLength = EditorPrefs.GetFloat("pb_Debug_elementLength", .1f);
-			elementOffset = EditorPrefs.GetFloat("pb_Debug_elementOffset", .01f);
-			faceInfoOffset = EditorPrefs.GetFloat("pb_Debug_faceInfoOffset", .05f);
-			testOcclusion = EditorPrefs.GetBool("pb_Debug_testOcclusion", false);
+			elementLength = pb_Preferences_Internal.GetFloat("pb_Debug_elementLength", .1f);
+			elementOffset = pb_Preferences_Internal.GetFloat("pb_Debug_elementOffset", .01f);
+			faceInfoOffset = pb_Preferences_Internal.GetFloat("pb_Debug_faceInfoOffset", .05f);
+			testOcclusion = pb_Preferences_Internal.GetBool("pb_Debug_testOcclusion", false);
 
 			HookSceneViewDelegate();
 		}
@@ -182,9 +182,9 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				EditorPrefs.SetFloat("pb_Debug_elementLength", elementLength);
-				EditorPrefs.SetFloat("pb_Debug_elementOffset", elementOffset);
-				EditorPrefs.SetBool("pb_Debug_testOcclusion", testOcclusion);
+				pb_Preferences_Internal.SetFloat("pb_Debug_elementLength", elementLength);
+				pb_Preferences_Internal.SetFloat("pb_Debug_elementOffset", elementOffset);
+				pb_Preferences_Internal.SetBool("pb_Debug_testOcclusion", testOcclusion);
 
 				foreach(pb_Object pb in selection)
 					DrawElements(pb);

@@ -25,8 +25,8 @@ namespace ProBuilder2.Actions
 
 		MirrorSettings storedScale
 		{
-			get { return (MirrorSettings) EditorPrefs.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { EditorPrefs.SetInt("pbMirrorObjectScale", (int) value); }
+			get { return (MirrorSettings) pb_Preferences_Internal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
+			set { pb_Preferences_Internal.SetInt("pbMirrorObjectScale", (int) value); }
 		}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
@@ -73,7 +73,7 @@ namespace ProBuilder2.Actions
 				(d ? MirrorSettings.Duplicate : 0);
 
 			GUILayout.FlexibleSpace();
-			
+
 			if(GUILayout.Button("Mirror"))
 				pb_EditorUtility.ShowNotification( DoAction().notification );
 		}
@@ -96,8 +96,8 @@ namespace ProBuilder2.Actions
 
 			pb_Editor.Refresh();
 
-			return res.Count > 0 ? 
-				new pb_ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) : 
+			return res.Count > 0 ?
+				new pb_ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
 				new pb_ActionResult(Status.NoChange, "No Objects Selected");
 		}
 
@@ -135,7 +135,7 @@ namespace ProBuilder2.Actions
 			p.FreezeScaleTransform();
 
 			p.transform.localScale = lScale;
-				
+
 			if(duplicate)
 			{
 				Collider col = pb.GetComponent<Collider>();
@@ -154,7 +154,7 @@ namespace ProBuilder2.Actions
 
 				Undo.RegisterCreatedObjectUndo(p.gameObject, "Mirror Object");
 			}
-			
+
 			p.ToMesh();
 			p.Refresh();
 			p.Optimize();

@@ -194,82 +194,91 @@ public class pb_Preferences
 	public static void OnWindowResize()
 	{
 		int pad = 10, buttonWidth = 100, buttonHeight = 20;
-		resetRect = new Rect(Screen.width-pad-buttonWidth, Screen.height-pad-buttonHeight, buttonWidth, buttonHeight);
+#if UNITY_5_6_OR_HIGHER
+		resetRect = new Rect(
+			200,
+			400,
+			buttonWidth,
+			buttonHeight);
+		Debug.Log("Screen.width: " + Screen.width);
+#else
+		resetRect = new Rect(Screen.width - pad - buttonWidth, Screen.height - pad - buttonHeight, buttonWidth, buttonHeight);
+#endif
 	}
 
 	public static void ResetToDefaults()
 	{
 		if(EditorUtility.DisplayDialog("Delete ProBuilder editor preferences?", "Are you sure you want to delete these?, this action cannot be undone.", "Yes", "No"))
 		{
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEditLevel);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectionMode);
-			EditorPrefs.DeleteKey(pb_Constant.pbHandleAlignment);
-			EditorPrefs.DeleteKey(pb_Constant.pbVertexColorTool);
-			EditorPrefs.DeleteKey(pb_Constant.pbToolbarLocation);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEntity);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
-			EditorPrefs.DeleteKey(pb_Constant.pbEditorPrefVersion);
-			EditorPrefs.DeleteKey(pb_Constant.pbEditorShortcutsVersion);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultCollider);
-			EditorPrefs.DeleteKey(pb_Constant.pbForceConvex);
-			EditorPrefs.DeleteKey(pb_Constant.pbVertexColorPrefs);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowEditorNotifications);
-			EditorPrefs.DeleteKey(pb_Constant.pbDragCheckLimit);
-			EditorPrefs.DeleteKey(pb_Constant.pbForceVertexPivot);
-			EditorPrefs.DeleteKey(pb_Constant.pbForceGridPivot);
-			EditorPrefs.DeleteKey(pb_Constant.pbManifoldEdgeExtrusion);
-			EditorPrefs.DeleteKey(pb_Constant.pbPerimeterEdgeBridgeOnly);
-			EditorPrefs.DeleteKey(pb_Constant.pbPBOSelectionOnly);
-			EditorPrefs.DeleteKey(pb_Constant.pbCloseShapeWindow);
-			EditorPrefs.DeleteKey(pb_Constant.pbUVEditorFloating);
-			EditorPrefs.DeleteKey(pb_Constant.pbUVMaterialPreview);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneToolbar);
-			EditorPrefs.DeleteKey(pb_Constant.pbNormalizeUVsOnPlanarProjection);
-			EditorPrefs.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
-			EditorPrefs.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowSceneInfo);
-			EditorPrefs.DeleteKey(pb_Constant.pbEnableBackfaceSelection);
-			EditorPrefs.DeleteKey(pb_Constant.pbVertexPaletteDockable);
-			EditorPrefs.DeleteKey(pb_Constant.pbExtrudeAsGroup);
-			EditorPrefs.DeleteKey(pb_Constant.pbUniqueModeShortcuts);
-			EditorPrefs.DeleteKey(pb_Constant.pbMaterialEditorFloating);
-			EditorPrefs.DeleteKey(pb_Constant.pbShapeWindowFloating);
-			EditorPrefs.DeleteKey(pb_Constant.pbIconGUI);
-			EditorPrefs.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
-			EditorPrefs.DeleteKey(pb_Constant.pbDrawAxisLines);
-			EditorPrefs.DeleteKey(pb_Constant.pbCollapseVertexToFirst);
-			EditorPrefs.DeleteKey(pb_Constant.pbMeshesAreAssets);
-			EditorPrefs.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
-			EditorPrefs.DeleteKey(pb_Constant.pbDragSelectWholeElement);
-			EditorPrefs.DeleteKey(pb_Constant.pbEnableExperimental);
-			EditorPrefs.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
-			EditorPrefs.DeleteKey(pb_Constant.pbDetachToNewObject);
-			EditorPrefs.DeleteKey(pb_Constant.pbPreserveFaces);
-			EditorPrefs.DeleteKey(pb_Constant.pbVertexHandleSize);
-			EditorPrefs.DeleteKey(pb_Constant.pbUVGridSnapValue);
-			EditorPrefs.DeleteKey(pb_Constant.pbUVWeldDistance);
-			EditorPrefs.DeleteKey(pb_Constant.pbWeldDistance);
-			EditorPrefs.DeleteKey(pb_Constant.pbExtrudeDistance);
-			EditorPrefs.DeleteKey(pb_Constant.pbBevelAmount);
-			EditorPrefs.DeleteKey(pb_Constant.pbEdgeSubdivisions);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultMaterial);
-			EditorPrefs.DeleteKey(pb_Constant.pbGrowSelectionUsingAngle);
-			EditorPrefs.DeleteKey(pb_Constant.pbGrowSelectionAngle);
-			EditorPrefs.DeleteKey(pb_Constant.pbGrowSelectionAngleIterative);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowDetail);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowOccluder);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowMover);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowCollider);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowTrigger);
-			EditorPrefs.DeleteKey(pb_Constant.pbShowNoDraw);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEditLevel);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultSelectionMode);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbHandleAlignment);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexColorTool);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbToolbarLocation);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEntity);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultVertexColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbEditorPrefVersion);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbEditorShortcutsVersion);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultCollider);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbForceConvex);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexColorPrefs);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowEditorNotifications);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDragCheckLimit);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbForceVertexPivot);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbForceGridPivot);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbManifoldEdgeExtrusion);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbPerimeterEdgeBridgeOnly);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbPBOSelectionOnly);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbCloseShapeWindow);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbUVEditorFloating);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbUVMaterialPreview);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowSceneToolbar);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbNormalizeUVsOnPlanarProjection);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowSceneInfo);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbEnableBackfaceSelection);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexPaletteDockable);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbExtrudeAsGroup);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbUniqueModeShortcuts);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbMaterialEditorFloating);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShapeWindowFloating);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbIconGUI);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDrawAxisLines);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbCollapseVertexToFirst);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbMeshesAreAssets);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDragSelectWholeElement);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbEnableExperimental);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDetachToNewObject);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbPreserveFaces);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexHandleSize);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbUVGridSnapValue);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbUVWeldDistance);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbWeldDistance);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbExtrudeDistance);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbBevelAmount);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbEdgeSubdivisions);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultMaterial);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbGrowSelectionUsingAngle);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbGrowSelectionAngle);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbGrowSelectionAngleIterative);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowDetail);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowOccluder);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowMover);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowCollider);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowTrigger);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowNoDraw);
 			#if !UNITY_4_7
-			EditorPrefs.DeleteKey(pb_Constant.pbShadowCastingMode);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShadowCastingMode);
 			#endif
 		}
 
@@ -418,47 +427,47 @@ public class pb_Preferences
 
 	public static void SetPrefs()
 	{
-		EditorPrefs.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
-		EditorPrefs.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
-		EditorPrefs.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
 
-		EditorPrefs.SetInt		(pb_Constant.pbToolbarLocation, (int)pbToolbarLocation);
-		EditorPrefs.SetInt		(pb_Constant.pbDefaultEntity, (int)pbDefaultEntity);
+		pb_Preferences_Internal.SetInt		(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetInt		(pb_Constant.pbDefaultEntity, (int)pbDefaultEntity);
 
-		EditorPrefs.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString());
-		EditorPrefs.SetString	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor.ToString());
-		EditorPrefs.SetString	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor.ToString());
-		EditorPrefs.SetString	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor.ToString());
-		EditorPrefs.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
-		EditorPrefs.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts));
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString(), pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor.ToString());
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor.ToString());
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor.ToString());
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts));
 
 		string matPath = pbDefaultMaterial != null ? AssetDatabase.GetAssetPath(pbDefaultMaterial) : "";
-		EditorPrefs.SetString	(pb_Constant.pbDefaultMaterial, matPath);
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultMaterial, matPath);
 
-		EditorPrefs.SetInt 		(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
+		pb_Preferences_Internal.SetInt 		(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
 		#if !UNITY_4_7
-		EditorPrefs.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
+		pb_Preferences_Internal.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
 		#endif
-		EditorPrefs.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
-		EditorPrefs.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
-		EditorPrefs.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);
-		EditorPrefs.SetBool  	(pb_Constant.pbForceVertexPivot, pbForceVertexPivot);
-		EditorPrefs.SetBool  	(pb_Constant.pbForceGridPivot, pbForceGridPivot);
-		EditorPrefs.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly);
-		EditorPrefs.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly);
-		EditorPrefs.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow);
-		EditorPrefs.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating);
-		EditorPrefs.SetBool		(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts);
-		EditorPrefs.SetBool		(pb_Constant.pbIconGUI, pbIconGUI);
-		EditorPrefs.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
-		EditorPrefs.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
-		EditorPrefs.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
-		EditorPrefs.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
-		EditorPrefs.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement);
-		EditorPrefs.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceVertexPivot, pbForceVertexPivot);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceGridPivot, pbForceGridPivot);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbIconGUI, pbIconGUI);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental);
 
-		EditorPrefs.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
-		EditorPrefs.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
+		pb_Preferences_Internal.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
+		pb_Preferences_Internal.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
 
 		if(pb_Editor.instance != null)
 			pb_Editor.instance.OnEnable();

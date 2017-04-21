@@ -18,7 +18,7 @@ public class pb_Editor : EditorWindow
 
 #region LOCAL MEMBERS && EDITOR PREFS
 
-	// because editor prefs can change, or shortcuts may be added, certain EditorPrefs need to be force reloaded.
+	// because editor prefs can change, or shortcuts may be added, certain pb_Preferences_Internal.need to be force reloaded.
 	// adding to this const will force update on updating packages.
 	const int EDITOR_PREF_VERSION = 2080;
 	const int EDITOR_SHORTCUTS_VERSION = 250;
@@ -94,7 +94,7 @@ public class pb_Editor : EditorWindow
 	public void SetSelectHiddenEnabled(bool isEnabled)
 	{
 		pref_backfaceSelect = isEnabled;
-		EditorPrefs.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
 	}
 #endregion
 
@@ -171,21 +171,21 @@ public class pb_Editor : EditorWindow
 	public void LoadPrefs()
 	{
 		// this exists to force update preferences when updating packages
-		if(!EditorPrefs.HasKey(pb_Constant.pbEditorPrefVersion) || EditorPrefs.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
+		if(!pb_Preferences_Internal.HasKey(pb_Constant.pbEditorPrefVersion) || pb_Preferences_Internal.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
 		{
-			EditorPrefs.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION);
-			EditorPrefs.DeleteKey(pb_Constant.pbVertexHandleSize);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultFaceColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultEdgeColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultVertexColor);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexHandleSize);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultVertexColor);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 		}
 
-		if( EditorPrefs.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
+		if( pb_Preferences_Internal.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
 		{
-			EditorPrefs.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION);
-			EditorPrefs.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION);
+			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			Debug.LogWarning("ProBuilder had to reset it's shortcuts back to defaults due to internal changes in this update.");
 		}
 
@@ -200,7 +200,7 @@ public class pb_Editor : EditorWindow
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 
-		shortcuts 			= pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
+		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_Preferences_Internal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
 
 		// pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
@@ -237,7 +237,7 @@ public class pb_Editor : EditorWindow
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 
-		EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
+		pb_Preferences_Internal.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
 		if(pb_LineRenderer.Valid())
 			pb_LineRenderer.instance.Clear();
@@ -333,8 +333,8 @@ public class pb_Editor : EditorWindow
 	{
 		GenericMenu menu = new GenericMenu();
 
-		menu.AddItem (new GUIContent("Open As Floating Window", ""), !EditorPrefs.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
-		menu.AddItem (new GUIContent("Open As Dockable Window", ""), EditorPrefs.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
+		menu.AddItem (new GUIContent("Open As Floating Window", ""), !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
+		menu.AddItem (new GUIContent("Open As Dockable Window", ""), pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
 
 		menu.AddSeparator("");
 
@@ -347,7 +347,7 @@ public class pb_Editor : EditorWindow
 	void Menu_ToggleIconMode()
 	{
 		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
-		EditorPrefs.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
 		if(editorToolbar != null)
 			GameObject.DestroyImmediate(editorToolbar);
 		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
@@ -357,14 +357,14 @@ public class pb_Editor : EditorWindow
 
 	void Menu_OpenAsDockableWindow()
 	{
-		EditorPrefs.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
 
 	void Menu_OpenAsFloatingWindow()
 	{
-		EditorPrefs.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
+		pb_Preferences_Internal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
@@ -2331,7 +2331,7 @@ public class pb_Editor : EditorWindow
 		if(editLevel == EditLevel.Texture)
 			ha = HandleAlignment.Plane;
 		else
-			EditorPrefs.SetInt(pb_Constant.pbHandleAlignment, (int)ha);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbHandleAlignment, (int)ha);
 
 		handleAlignment = ha;
 
@@ -2383,7 +2383,7 @@ public class pb_Editor : EditorWindow
 
 		Internal_UpdateSelectionFast();
 
-		EditorPrefs.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
+		pb_Preferences_Internal.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
 
 		SceneView.RepaintAll();
 	}
@@ -2447,7 +2447,7 @@ public class pb_Editor : EditorWindow
 #endif
 
 		if(editLevel != EditLevel.Texture)
-			EditorPrefs.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
 
 		if( onEditLevelChanged != null )
 			onEditLevelChanged( (int) editLevel );

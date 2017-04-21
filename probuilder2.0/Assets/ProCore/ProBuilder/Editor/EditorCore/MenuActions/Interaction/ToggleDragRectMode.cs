@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			EditorPrefs.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
+			pb_Preferences_Internal.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
 			return new pb_ActionResult(Status.Success, "Set Drag Select\n" + (isComplete ? "Complete" : "Intersect") );
 		}
 

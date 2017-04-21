@@ -67,12 +67,12 @@ namespace ProBuilder2.EditorCommon
 							if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
 							{
 								// next, test if a notification for this version has already been shown
-								string lastNotification = EditorPrefs.GetString(pbLastWebVersionChecked, "");
+								string lastNotification = pb_Preferences_Internal.GetString(pbLastWebVersionChecked, "");
 
 								if(calledFromMenu || !lastNotification.Equals(webVersion.text))
 								{
 									pb_UpdateAvailable.Init(webVersion, webChangelog);
-									EditorPrefs.SetString(pbLastWebVersionChecked, webVersion.text);
+									pb_Preferences_Internal.SetString(pbLastWebVersionChecked, webVersion.text);
 								}
 							}
 							else

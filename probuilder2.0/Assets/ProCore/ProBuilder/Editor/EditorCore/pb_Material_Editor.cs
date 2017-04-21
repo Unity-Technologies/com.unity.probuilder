@@ -176,7 +176,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetFloating(bool floating)
 		{
-			EditorPrefs.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
+			pb_Preferences_Internal.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
 			this.Close();
 			MenuOpenMaterialEditor();
 		}

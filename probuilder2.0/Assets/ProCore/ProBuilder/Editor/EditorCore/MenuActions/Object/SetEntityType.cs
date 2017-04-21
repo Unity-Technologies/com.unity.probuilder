@@ -42,8 +42,8 @@ namespace ProBuilder2.Actions
 		{
 			visible = pb_Preferences_Internal.GetBool(entityPref);
 
-			if(!isVisibleIcon) 
-				isVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_On"); 
+			if(!isVisibleIcon)
+				isVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_On");
 
 			if(!isNotVisibleIcon)
 				isNotVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_Off");
@@ -72,7 +72,7 @@ namespace ProBuilder2.Actions
 		public override void DoAlt()
 		{
 			visible = !visible;
-			EditorPrefs.SetBool(entityPref, visible);
+			pb_Preferences_Internal.SetBool(entityPref, visible);
 			pb_EntityVisibility.SetEntityVisibility(entityType, visible);
 		}
 	}

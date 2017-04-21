@@ -23,7 +23,7 @@ namespace ProBuilder2.EditorCommon
 		bool showTooltipTimer = false;
 		// how long a tooltip will wait before showing
 		float tooltipTimerRefresh = 1f;
-		
+
 		Texture2D 	scrollIconUp = null,
 					scrollIconDown = null,
 					scrollIconRight = null,
@@ -47,7 +47,7 @@ namespace ProBuilder2.EditorCommon
 
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
-			
+
 			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 
 			tooltipTimer.Item1 = "";
@@ -62,8 +62,8 @@ namespace ProBuilder2.EditorCommon
 			this.window = pb_Editor.instance;
 			CalculateMaxIconSize();
 
-			scroll.x = EditorPrefs.GetFloat("pbEditorScroll.x", 0f);
-			scroll.y = EditorPrefs.GetFloat("pbEditorScroll.y", 0f);
+			scroll.x = pb_Preferences_Internal.GetFloat("pbEditorScroll.x", 0f);
+			scroll.y = pb_Preferences_Internal.GetFloat("pbEditorScroll.y", 0f);
 		}
 
 		void OnDisable()
@@ -72,8 +72,8 @@ namespace ProBuilder2.EditorCommon
 			// is called.  no clue why.
 			// EditorApplication.update -= Update;
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
-			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
-			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
+			pb_Preferences_Internal.SetFloat("pbEditorScroll.x", scroll.x);
+			pb_Preferences_Internal.SetFloat("pbEditorScroll.y", scroll.y);
 		}
 
 		void OnDestroy()
@@ -81,8 +81,8 @@ namespace ProBuilder2.EditorCommon
 			// store the scroll in both disable & destroy because there are
 			// situations where one gets updated over the other and it's all
 			// screwy.  script reloads in particular?
-			EditorPrefs.SetFloat("pbEditorScroll.x", scroll.x);
-			EditorPrefs.SetFloat("pbEditorScroll.y", scroll.y);
+			pb_Preferences_Internal.SetFloat("pbEditorScroll.x", scroll.x);
+			pb_Preferences_Internal.SetFloat("pbEditorScroll.y", scroll.y);
 			pb_MenuActionStyles.ResetStyles();
 		}
 
@@ -107,7 +107,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			Rect buttonRect = new Rect(
 				(window.position.x + rect.x) - scrollOffset.x,
-				(window.position.y + rect.y) - scrollOffset.y, 
+				(window.position.y + rect.y) - scrollOffset.y,
 				rect.width,
 				rect.height);
 
@@ -161,10 +161,10 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!window) return;
 
-			isHorizontalMenu = window.position.width > window.position.height;			
+			isHorizontalMenu = window.position.width > window.position.height;
 
 			Vector2 iconSize = actions[0].GetSize(isHorizontalMenu);
-			
+
 			iconWidth = (int)iconSize.x + 4;
 			iconHeight = (int)iconSize.y + 4;
 
@@ -224,7 +224,7 @@ namespace ProBuilder2.EditorCommon
 			if(isIconMode && available.Count() < 1)
 			{
 				isIconMode = false;
-				EditorPrefs.SetBool(pb_Constant.pbIconGUI, isIconMode);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbIconGUI, isIconMode);
 				CalculateMaxIconSize();
 				Debug.LogWarning("ProBuilder: Toolbar icons failed to load, reverting to text mode.  Please ensure that the ProBuilder folder contents are unmodified.  If the menu is still not visible, try closing and re-opening the Editor Window.");
 				return;
@@ -251,7 +251,7 @@ namespace ProBuilder2.EditorCommon
 				columns = System.Math.Max((windowWidth - 4) / iconWidth, 1);
 				rows = (iconCount / columns) + (iconCount % columns != 0 ? 1 : 0);
 			}
-			
+
 			int contentWidth = (iconCount / rows) * iconWidth + 4;
 			int contentHeight = rows * iconHeight + 4;
 
@@ -268,8 +268,8 @@ namespace ProBuilder2.EditorCommon
 				scroll.x += e.delta.y * 10f;
 				forceRepaint = true;
 			}
-	
-			// the math for matching layout group width for icons is easy enough, but text 
+
+			// the math for matching layout group width for icons is easy enough, but text
 			// is a lot more complex.  so for horizontal text toolbars always show the horizontal
 			// scroll buttons.
 			int maxHorizontalScroll = !isIconMode ? 10000 : contentWidth - availableWidth;
@@ -309,7 +309,7 @@ namespace ProBuilder2.EditorCommon
 					hovering = false;
 
 			Rect optionRect = new Rect(0f, 0f, 0f, 0f);
-			
+
 			GUILayout.BeginHorizontal();
 
 			// e.mousePosition != mpos at this point - @todo figure out why
@@ -334,13 +334,13 @@ namespace ProBuilder2.EditorCommon
 							hoveringTooltipName = action.tooltip.title + "_alt";
 							tooltipTimerRefresh = .5f;
 							hovering = true;
-							
+
 							if( showTooltipTimer )
 							{
 								tooltipShown = true;
 								ShowTooltip(optionRect, "Alt + Click for Options", scroll);
 							}
-						}	
+						}
 					}
 				}
 				else
@@ -402,7 +402,7 @@ namespace ProBuilder2.EditorCommon
 					if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
 						StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxVerticalScroll) );
 					GUI.enabled = true;
-				}				
+				}
 			}
 
 			if((e.type == EventType.Repaint || e.type == EventType.MouseMove) && !tooltipShown)

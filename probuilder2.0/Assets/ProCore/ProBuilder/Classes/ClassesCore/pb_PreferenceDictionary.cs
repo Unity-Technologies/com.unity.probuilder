@@ -142,6 +142,22 @@ namespace ProBuilder2.Common
 			return false;
 		}
 
+		public void DeleteKey(string key)
+		{
+			if(m_Bool.ContainsKey(key))
+				m_Bool.Remove(key);
+			if(m_Int.ContainsKey(key))
+				m_Int.Remove(key);
+			if(m_Float.ContainsKey(key))
+				m_Float.Remove(key);
+			if(m_String.ContainsKey(key))
+				m_String.Remove(key);
+			if(m_Color.ContainsKey(key))
+				m_Color.Remove(key);
+			if(m_Material.ContainsKey(key))
+				m_Material.Remove(key);
+		}
+
 		/**
 		 *	Generic Get preference for key function.
 		 */

@@ -23,8 +23,8 @@ namespace ProBuilder2.EditorCommon
 
 		private bool checkForProBuilderUpdates
 		{
-			get { return EditorPrefs.GetBool(pb_Constant.pbCheckForProBuilderUpdates, true); }
-			set { EditorPrefs.SetBool(pb_Constant.pbCheckForProBuilderUpdates, value); }
+			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbCheckForProBuilderUpdates, true); }
+			set { pb_Preferences_Internal.SetBool(pb_Constant.pbCheckForProBuilderUpdates, value); }
 		}
 
 		void OnEnable()

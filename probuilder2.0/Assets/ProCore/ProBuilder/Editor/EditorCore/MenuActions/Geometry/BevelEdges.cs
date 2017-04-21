@@ -55,7 +55,7 @@ namespace ProBuilder2.Actions
 			if(bevelAmount < .001f) bevelAmount = .001f;
 
 			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetFloat(pb_Constant.pbBevelAmount, bevelAmount);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbBevelAmount, bevelAmount);
 
 			GUILayout.FlexibleSpace();
 

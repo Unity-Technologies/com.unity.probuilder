@@ -33,22 +33,22 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			if( EditorPrefs.HasKey(PREF_IMAGESIZE) )
-				imageSize = (ImageSize)EditorPrefs.GetInt(PREF_IMAGESIZE);
+			if( pb_Preferences_Internal.HasKey(PREF_IMAGESIZE) )
+				imageSize = (ImageSize)pb_Preferences_Internal.GetInt(PREF_IMAGESIZE);
 
-			if( EditorPrefs.HasKey(PREF_LINECOLOR) )
+			if( pb_Preferences_Internal.HasKey(PREF_LINECOLOR) )
 				lineColor = pb_Preferences_Internal.GetColor(PREF_LINECOLOR);
 
-			if( EditorPrefs.HasKey(PREF_BACKGROUNDCOLOR) )
+			if( pb_Preferences_Internal.HasKey(PREF_BACKGROUNDCOLOR) )
 				backgroundColor = pb_Preferences_Internal.GetColor(PREF_BACKGROUNDCOLOR);
 
-			if( EditorPrefs.HasKey(PREF_TRANSPARENTBACKGROUND) )
-				transparentBackground = EditorPrefs.GetBool(PREF_TRANSPARENTBACKGROUND);
+			if( pb_Preferences_Internal.HasKey(PREF_TRANSPARENTBACKGROUND) )
+				transparentBackground = pb_Preferences_Internal.GetBool(PREF_TRANSPARENTBACKGROUND);
 
-			if( EditorPrefs.HasKey(PREF_HIDEGRID) )
-				hideGrid = EditorPrefs.GetBool(PREF_HIDEGRID);
+			if( pb_Preferences_Internal.HasKey(PREF_HIDEGRID) )
+				hideGrid = pb_Preferences_Internal.GetBool(PREF_HIDEGRID);
 		}
-		
+
 		public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor);
 		public ScreenshotFunc screenFunc;
 
@@ -73,13 +73,13 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Save UV Template"))
 			{
-				EditorPrefs.SetInt(PREF_IMAGESIZE, (int)imageSize);
-				EditorPrefs.SetString(PREF_LINECOLOR, lineColor.ToString());
-				EditorPrefs.SetString(PREF_BACKGROUNDCOLOR, backgroundColor.ToString());
-				EditorPrefs.SetBool(PREF_TRANSPARENTBACKGROUND, transparentBackground);
-				EditorPrefs.SetBool(PREF_HIDEGRID, hideGrid);
+				pb_Preferences_Internal.SetInt(PREF_IMAGESIZE, (int)imageSize);
+				pb_Preferences_Internal.SetString(PREF_LINECOLOR, lineColor.ToString());
+				pb_Preferences_Internal.SetString(PREF_BACKGROUNDCOLOR, backgroundColor.ToString());
+				pb_Preferences_Internal.SetBool(PREF_TRANSPARENTBACKGROUND, transparentBackground);
+				pb_Preferences_Internal.SetBool(PREF_HIDEGRID, hideGrid);
 
-				if(pb_Editor.instance == null || pb_Editor.instance.selection.Length < 1)	
+				if(pb_Editor.instance == null || pb_Editor.instance.selection.Length < 1)
 				{
 					Debug.LogWarning("Abandoning UV render because no ProBuilder objects are selected.");
 					this.Close();

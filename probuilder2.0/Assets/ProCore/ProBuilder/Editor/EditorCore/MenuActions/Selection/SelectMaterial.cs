@@ -56,7 +56,7 @@ namespace ProBuilder2.Actions
 			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
 
 			if( EditorGUI.EndChangeCheck() )
-				EditorPrefs.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
+				pb_Preferences_Internal.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
 
 			GUILayout.FlexibleSpace();
 

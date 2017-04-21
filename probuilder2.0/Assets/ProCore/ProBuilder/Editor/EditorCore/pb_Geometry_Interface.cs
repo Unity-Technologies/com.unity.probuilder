@@ -49,7 +49,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			get
 			{
-			  	return EditorPrefs.HasKey(pb_Constant.pbCloseShapeWindow) ? EditorPrefs.GetBool(pb_Constant.pbCloseShapeWindow) : false;
+			  	return pb_Preferences_Internal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetFloating(bool floating)
 		{
-			EditorPrefs.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			pb_Preferences_Internal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
 			this.Close();
 			MenuOpenShapeCreator();
 		}
@@ -921,7 +921,7 @@ namespace ProBuilder2.EditorCommon
 
 		void TorusGUI()
 		{
-			torus_useInnerOuterMethod = EditorPrefs.GetBool("pb_TorusUsesInnerOuterMethod", true);
+			torus_useInnerOuterMethod = pb_Preferences_Internal.GetBool("pb_TorusUsesInnerOuterMethod", true);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -931,7 +931,7 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 			torus_useInnerOuterMethod = EditorGUILayout.Toggle("Define Inner / Out Radius", torus_useInnerOuterMethod);
 			if(EditorGUI.EndChangeCheck())
-				EditorPrefs.SetBool("pb_TorusUsesInnerOuterMethod", torus_useInnerOuterMethod);
+				pb_Preferences_Internal.SetBool("pb_TorusUsesInnerOuterMethod", torus_useInnerOuterMethod);
 
 			if(!torus_useInnerOuterMethod)
 			{

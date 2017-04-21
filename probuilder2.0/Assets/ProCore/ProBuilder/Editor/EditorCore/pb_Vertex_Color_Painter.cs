@@ -43,7 +43,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		UserColors = new Color[10];
 		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
-			if( !pbUtil.TryParseColor( EditorPrefs.GetString(pb_Constant.pbVertexColorPrefs+i), ref UserColors[i] ) )
+			if( !pbUtil.TryParseColor( pb_Preferences_Internal.GetString(pb_Constant.pbVertexColorPrefs+i), ref UserColors[i] ) )
 				UserColors[i] = DEFAULT_COLORS[i];
 		}
 	}
@@ -359,7 +359,7 @@ public class pb_VertexColor_Editor : EditorWindow
 				UserColors[i] = EditorGUILayout.ColorField(UserColors[i], GUILayout.Width(ButtonWidth));
 
 			if(GUI.changed)
-				EditorPrefs.SetString(pb_Constant.pbVertexColorPrefs+i, UserColors[i].ToString());
+				pb_Preferences_Internal.SetString(pb_Constant.pbVertexColorPrefs+i, UserColors[i].ToString());
 
 			GUILayout.EndVertical();
 

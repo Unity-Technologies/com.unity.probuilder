@@ -242,7 +242,7 @@ namespace ProBuilder2.EditorCommon
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-14));
 
 			if(prev != tool)
-				EditorPrefs.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				pb_Preferences_Internal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
 		}
 #if !PROTOTYPE
 
@@ -449,7 +449,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void ExtrudeButtonGUI(int width)
 		{
-			float extrudeAmount = EditorPrefs.HasKey(pb_Constant.pbExtrudeDistance) ? EditorPrefs.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			float extrudeAmount = pb_Preferences_Internal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
 			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
 
 			EditorGUI.BeginChangeCheck();
@@ -462,8 +462,8 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				EditorPrefs.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				EditorPrefs.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+				pb_Preferences_Internal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
 			}
 		}
 
@@ -1338,7 +1338,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				EditorPrefs.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				pb_Preferences_Internal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
 			}
 		}
 
@@ -1607,7 +1607,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			int subdivisions = EditorPrefs.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = pb_Preferences_Internal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 

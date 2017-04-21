@@ -47,7 +47,7 @@ public static class pb_Lightmapping
 	internal static void PushGIWorkflowMode()
 	{
 #if UNITY_5
-		EditorPrefs.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
+		pb_Preferences_Internal.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
 
 		if(Lightmapping.giWorkflowMode != Lightmapping.GIWorkflowMode.Legacy)
 			Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
@@ -62,10 +62,10 @@ public static class pb_Lightmapping
 	{
 #if UNITY_5
 		// if no key found (?), don't do anything.
-		if(!EditorPrefs.HasKey("pb_GIWorkflowMode"))
+		if(!pb_Preferences_Internal.HasKey("pb_GIWorkflowMode"))
 			return;
 
-		 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)EditorPrefs.GetInt("pb_GIWorkflowMode");
+		 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)pb_Preferences_Internal.GetInt("pb_GIWorkflowMode");
 #endif
 	}
 }

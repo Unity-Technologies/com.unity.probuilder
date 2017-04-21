@@ -12,22 +12,22 @@ namespace ProBuilder2.EditorCommon
 	{
 		private static bool show_Detail {
 			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail); }
-			set { EditorPrefs.SetBool(pb_Constant.pbShowDetail, value); }
+			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowDetail, value); }
 		}
 
 		private static bool show_Mover {
 			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover); }
-			set { EditorPrefs.SetBool(pb_Constant.pbShowMover, value); }
+			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowMover, value); }
 		}
 
 		private static bool show_Collider {
 			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowCollider); }
-			set { EditorPrefs.SetBool(pb_Constant.pbShowCollider, value); }
+			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowCollider, value); }
 		}
 
 		private static bool show_Trigger {
 			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowTrigger); }
-			set { EditorPrefs.SetBool(pb_Constant.pbShowTrigger, value); }
+			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowTrigger, value); }
 		}
 
 		static pb_EntityVisibility()
