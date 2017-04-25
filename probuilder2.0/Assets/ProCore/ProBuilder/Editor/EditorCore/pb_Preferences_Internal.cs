@@ -265,9 +265,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetInt(string key, int value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetInt(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetInt(key, value);
+			}
 		}
 
 		/**
@@ -277,9 +283,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetFloat(string key, float value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetFloat(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetFloat(key, value);
+			}
 		}
 
 		/**
@@ -289,9 +301,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetBool(string key, bool value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetBool(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetBool(key, value);
+			}
 		}
 
 		/**
@@ -301,9 +319,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetString(string key, string value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetString(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetString(key, value);
+			}
 		}
 
 		/**
@@ -313,9 +337,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetColor(string key, Color value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetColor(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetString(key, value.ToString());
+			}
 		}
 
 		/**
@@ -325,9 +355,15 @@ namespace ProBuilder2.EditorCommon
 		public static void SetMaterial(string key, Material value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)
+			{
 				preferences.SetMaterial(key, value);
+				EditorUtility.SetDirty(preferences);
+				AssetDatabase.SaveAssets();
+			}
 			else
+			{
 				EditorPrefs.SetString(key, value != null ? AssetDatabase.GetAssetPath(value) : "");
+			}
 		}
 	}
 }

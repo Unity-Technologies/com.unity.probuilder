@@ -159,7 +159,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Generic Get preference for key function.
+		 *	"Generic" Get preference for key function.
 		 */
 		public T Get<T>(string key, T fallback = default(T))
 		{
@@ -206,7 +206,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Generic set value.  Only accepts:
+		 *	"Generic" set value.  Only accepts:
 		 *	int,
 		 *	float,
 		 *	bool,

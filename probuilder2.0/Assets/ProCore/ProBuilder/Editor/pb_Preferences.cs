@@ -193,15 +193,15 @@ public class pb_Preferences
 
 	public static void OnWindowResize()
 	{
-		int pad = 10, buttonWidth = 100, buttonHeight = 20;
+		int buttonWidth = 100, buttonHeight = 20;
 #if UNITY_5_6_OR_HIGHER
 		resetRect = new Rect(
 			200,
-			400,
+			320,
 			buttonWidth,
 			buttonHeight);
-		Debug.Log("Screen.width: " + Screen.width);
 #else
+		int pad = 10;
 		resetRect = new Rect(Screen.width - pad - buttonWidth, Screen.height - pad - buttonHeight, buttonWidth, buttonHeight);
 #endif
 	}
