@@ -184,7 +184,7 @@ public class pb_Editor : EditorWindow
 
 		if( pb_Preferences_Internal.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
 		{
-			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION, pb_PreferenceLocation.Global);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			Debug.LogWarning("ProBuilder had to reset it's shortcuts back to defaults due to internal changes in this update.");
 		}
