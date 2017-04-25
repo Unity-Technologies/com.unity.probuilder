@@ -268,7 +268,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetInt(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{
@@ -286,7 +285,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetFloat(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{
@@ -304,7 +302,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetBool(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{
@@ -322,7 +319,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetString(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{
@@ -340,7 +336,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetColor(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{
@@ -358,7 +353,6 @@ namespace ProBuilder2.EditorCommon
 			{
 				preferences.SetMaterial(key, value);
 				EditorUtility.SetDirty(preferences);
-				AssetDatabase.SaveAssets();
 			}
 			else
 			{

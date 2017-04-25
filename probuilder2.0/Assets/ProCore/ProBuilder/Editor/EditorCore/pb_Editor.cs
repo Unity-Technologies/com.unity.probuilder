@@ -173,7 +173,7 @@ public class pb_Editor : EditorWindow
 		// this exists to force update preferences when updating packages
 		if(!pb_Preferences_Internal.HasKey(pb_Constant.pbEditorPrefVersion) || pb_Preferences_Internal.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
 		{
-			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION);
+			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION, pb_PreferenceLocation.Global);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexHandleSize);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
