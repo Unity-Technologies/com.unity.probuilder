@@ -73,12 +73,14 @@ public class pb_Preferences
 		if (!prefsLoaded) {
 			LoadPrefs();
 			prefsLoaded = true;
-			OnWindowResize();
 		}
 
-		settingsScroll = EditorGUILayout.BeginScrollView(settingsScroll, GUILayout.MaxHeight(200));
+		settingsScroll = EditorGUILayout.BeginScrollView(settingsScroll, GUILayout.MinHeight(180), GUILayout.MaxHeight(180));
 
 		EditorGUI.BeginChangeCheck();
+
+		if(GUILayout.Button("Reset All Preferences"))
+			ResetToDefaults();
 
 		/**
 		 * GENERAL SETTINGS
@@ -180,9 +182,6 @@ public class pb_Preferences
 
 		GUILayout.Label("Shortcut Settings", EditorStyles.boldLabel);
 
-		if(GUI.Button(resetRect, "Use defaults"))
-			ResetToDefaults();
-
 		ShortcutSelectPanel();
 		ShortcutEditPanel();
 
@@ -191,24 +190,9 @@ public class pb_Preferences
 			SetPrefs();
 	}
 
-	public static void OnWindowResize()
-	{
-		int buttonWidth = 100, buttonHeight = 20;
-#if UNITY_5_6_OR_HIGHER
-		resetRect = new Rect(
-			200,
-			320,
-			buttonWidth,
-			buttonHeight);
-#else
-		int pad = 10;
-		resetRect = new Rect(Screen.width - pad - buttonWidth, Screen.height - pad - buttonHeight, buttonWidth, buttonHeight);
-#endif
-	}
-
 	public static void ResetToDefaults()
 	{
-		if(EditorUtility.DisplayDialog("Delete ProBuilder editor preferences?", "Are you sure you want to delete these?, this action cannot be undone.", "Yes", "No"))
+		if(EditorUtility.DisplayDialog("Delete ProBuilder editor preferences?", "Are you sure you want to delete all existing ProBuilder preferences?\n\nThis action cannot be undone.", "Yes", "No"))
 		{
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEditLevel);
@@ -288,13 +272,13 @@ public class pb_Preferences
 	static int shortcutIndex = 0;
 
 #if UNITY_5_6_OR_HIGHER
-	static Rect selectBox = new Rect(0, 234, 183, 156);
+	static Rect selectBox = new Rect(0, 214, 183, 156);
+	static Rect shortcutEditRect = new Rect(190, 191, 178, 300);
 #else
 	static Rect selectBox = new Rect(130, 253, 183, 142);
+	static Rect shortcutEditRect = new Rect(320, 228, 178, 300);
 #endif
 
-
-	static Rect resetRect = new Rect(0,0,0,0);
 	static Vector2 shortcutScroll = Vector2.zero;
 	static int CELL_HEIGHT = 20;
 
@@ -341,41 +325,27 @@ public class pb_Preferences
 
 	}
 
-#if UNITY_5_6_OR_HIGHER
-	static Rect modifiersRect 			= new Rect(190, 270, 168, 18);
-	static Rect modifiersInputRect 		= new Rect(250, 270, 107, 18);
-	static Rect keyRect 				= new Rect(190, 248, 168, 18);
-	static Rect keyInputRect 			= new Rect(225, 248, 133, 18);
-	static Rect descriptionTitleRect 	= new Rect(190, 300, 168, 200);
-	static Rect descriptionRect 		= new Rect(190, 320, 168, 200);
-#else
-	static Rect modifiersRect 			= new Rect(324, 270, 168, 18);
-	static Rect modifiersInputRect 		= new Rect(383, 270, 107, 18);
-	static Rect keyRect 				= new Rect(324, 248, 168, 18);
-	static Rect keyInputRect 			= new Rect(356, 248, 133, 18);
-	static Rect descriptionTitleRect 	= new Rect(324, 300, 168, 200);
-	static Rect descriptionRect 		= new Rect(324, 320, 168, 200);
-#endif
-
 	static void ShortcutEditPanel()
 	{
-		// descriptionTitleRect = EditorGUI.RectField(new Rect(240,150,200,50), descriptionTitleRect);
-		GUI.Label(keyRect, "Key");
-		KeyCode key = defaultShortcuts[shortcutIndex].key;
-		key = (KeyCode) EditorGUI.EnumPopup(keyInputRect, key);
-		defaultShortcuts[shortcutIndex].key = key;
+		GUILayout.BeginArea(shortcutEditRect);
 
-		GUI.Label(modifiersRect, "Modifiers");
+			// descriptionTitleRect = EditorGUI.RectField(new Rect(240,150,200,50), descriptionTitleRect);
+			GUILayout.Label("Key", EditorStyles.boldLabel);
+			KeyCode key = defaultShortcuts[shortcutIndex].key;
+			key = (KeyCode) EditorGUILayout.EnumPopup(key);
+			defaultShortcuts[shortcutIndex].key = key;
 
-		// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
-		// so this isn't technically correct.
-		EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
-		em = (EventModifiers)EditorGUI.EnumMaskField(modifiersInputRect, em);
-		defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
+			GUILayout.Label("Modifiers", EditorStyles.boldLabel);
+			// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
+			// so this isn't technically correct.
+			EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
+			em = (EventModifiers)EditorGUILayout.EnumMaskField(em);
+			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
+			GUILayout.Label("Description", EditorStyles.boldLabel);
 
-		GUI.Label(descriptionTitleRect, "Description", EditorStyles.boldLabel);
+			GUILayout.Label(defaultShortcuts[shortcutIndex].description, EditorStyles.wordWrappedLabel);
 
-		GUI.Label(descriptionRect, defaultShortcuts[shortcutIndex].description, EditorStyles.wordWrappedLabel);
+		GUILayout.EndArea();
 	}
 
 	static void LoadPrefs()
