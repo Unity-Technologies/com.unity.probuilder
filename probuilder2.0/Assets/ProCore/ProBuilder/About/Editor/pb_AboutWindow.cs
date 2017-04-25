@@ -134,7 +134,7 @@ namespace ProBuilder2.EditorCommon
 				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, about.name, true);
 				win.ShowUtility();
 				win.SetAbout(about);
-				pb_Preferences_Internal.SetString(about.identifier, about.version);
+				pb_Preferences_Internal.SetString(about.identifier, about.version, pb_PreferenceLocation.Global);
 				return true;
 			}
 			else
