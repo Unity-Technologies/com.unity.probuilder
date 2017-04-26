@@ -55,6 +55,7 @@ class pb_GenerateMenuItems : Editor
 
 using UnityEngine;
 using UnityEditor;
+using ProBuilder2.Common;
 using ProBuilder2.Actions;
 using System.Collections.Generic;
 
@@ -64,9 +65,9 @@ namespace ProBuilder2.EditorCommon
 	{
 
 #if PROTOTYPE
-	const string PB_MENU_PREFIX = ""Tools/ProBuilder Basic/"";
+		const string PB_MENU_PREFIX = ""Tools/ProBuilder Basic/"";
 #else
-	const string PB_MENU_PREFIX = ""Tools/ProBuilder/"";
+		const string PB_MENU_PREFIX = ""Tools/ProBuilder/"";
 #endif
 ");
 		foreach(string action in actions)

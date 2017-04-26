@@ -7,9 +7,9 @@
 
 using UnityEngine;
 using UnityEditor;
+using ProBuilder2.Common;
 using ProBuilder2.Actions;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -17,10 +17,40 @@ namespace ProBuilder2.EditorCommon
 	{
 
 #if PROTOTYPE
-	const string PB_MENU_PREFIX = "Tools/ProBuilder Basic/";
+		const string PB_MENU_PREFIX = "Tools/ProBuilder Basic/";
 #else
-	const string PB_MENU_PREFIX = "Tools/ProBuilder/";
+		const string PB_MENU_PREFIX = "Tools/ProBuilder/";
 #endif
+
+		[MenuItem(PB_MENU_PREFIX + "Editors/New Bezier Shape ", true)]
+		static bool MenuVerifyNewBezierShape()
+		{
+			NewBezierShape instance = pb_EditorToolbarLoader.GetInstance<NewBezierShape>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Editors/New Bezier Shape ", false, pb_Constant.MENU_EDITOR + 1)]
+		static void MenuDoNewBezierShape()
+		{
+			NewBezierShape instance = pb_EditorToolbarLoader.GetInstance<NewBezierShape>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Editors/New Poly Shape ", true)]
+		static bool MenuVerifyNewPolyShape()
+		{
+			NewPolyShape instance = pb_EditorToolbarLoader.GetInstance<NewPolyShape>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Editors/New Poly Shape ", false, pb_Constant.MENU_EDITOR + 1)]
+		static void MenuDoNewPolyShape()
+		{
+			NewPolyShape instance = pb_EditorToolbarLoader.GetInstance<NewPolyShape>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
 
 		[MenuItem(PB_MENU_PREFIX + "Editors/Open Material Editor ", true)]
 		static bool MenuVerifyOpenMaterialEditor()
@@ -433,6 +463,35 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Drag Rect Mode ", true)]
+		static bool MenuVerifyToggleDragRectMode()
+		{
+			ToggleDragRectMode instance = pb_EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Drag Rect Mode ", false, pb_Constant.MENU_SELECTION + 1)]
+		static void MenuDoToggleDragRectMode()
+		{
+			ToggleDragRectMode instance = pb_EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Drag Selection Mode ", true)]
+		static bool MenuVerifyToggleDragSelectionMode()
+		{
+			ToggleDragSelectionMode instance = pb_EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Drag Selection Mode ", false, pb_Constant.MENU_SELECTION + 1)]
+		static void MenuDoToggleDragSelectionMode()
+		{
+			ToggleDragSelectionMode instance = pb_EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
 
 		[MenuItem(PB_MENU_PREFIX + "Interaction/Toggle Handle Alignment  [p]", true)]
 		static bool MenuVerifyToggleHandleAlignment()
