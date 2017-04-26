@@ -53,6 +53,10 @@
 			"file_exclude_patterns": [ "*.meta" ]
 		},
 		{
+			"path": "../build",
+			"file_exclude_patterns": ["*.exe"]
+		},
+		{
 			"path": "../",
 			"folder_exclude_patterns": [ "*" ]
 		},
