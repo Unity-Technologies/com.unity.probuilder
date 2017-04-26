@@ -39,7 +39,11 @@ namespace ProBuilder.BuildSystem
 			{
 				foreach(AssemblyTarget at in target.Assemblies)
 				{
-					Compiler.CompileDLL(at, m_IsDebug);
+					if(!Compiler.CompileDLL(at, m_IsDebug))
+					{
+						Console.WriteLine(string.Format("Assembly {0} failed compilation. Stopping build.", at.OutputAssembly));
+						// return 1;
+					}
 				}
 			}
 
