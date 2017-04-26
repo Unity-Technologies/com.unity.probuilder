@@ -7,6 +7,6 @@ fi
 
 mkdir bin 
 
-mcs src/*.cs -out:bin/pb-build.exe
+mcs src/*.cs -out:bin/pb-build.exe -debug
 
 cp bin/pb-build.exe ../pb-build.exe

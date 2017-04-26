@@ -16,5 +16,8 @@ namespace ProBuilder.BuildSystem
 
 		// Assemblies to be built as part of this target.
 		public List<AssemblyTarget> Assemblies;
+
+		// Copy commands to execute following a build.
+		public List<CopyTarget> CopyTargets;
 	}
 }

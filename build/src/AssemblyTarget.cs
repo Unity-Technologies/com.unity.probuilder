@@ -23,6 +23,9 @@ namespace ProBuilder.BuildSystem
 			"System.Core.dll"
 		};
 
+		// Additional scripting defines.
+		public List<string> Defines;
+
 		/**
 		 *	Get the source files for this build target.
 		 */

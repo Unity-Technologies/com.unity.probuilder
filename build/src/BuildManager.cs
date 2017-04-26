@@ -26,12 +26,11 @@ namespace ProBuilder.BuildSystem
 					try
 					{
 						BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(arg));
-						Console.WriteLine("added target: " + t.Name);
 						m_Targets.Add(t);
 					}
 					catch
 					{
-						Console.WriteLine("Failed parsing: " + arg);
+						Console.WriteLine("Failed adding built target: " + arg);
 					}
 				}
 			}
