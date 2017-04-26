@@ -13,25 +13,23 @@ namespace ProBuilder.BuildSystem
 		 */
 		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
 		{
-			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>()
-				{
+			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>() {
 					{ "CompilerVersion", "v3.5" }
 				});
-
-			// List<string> m_SystemAssemblies = new List<string>()
-			// {
-			// 	Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET/Framework/v2.0.50727/mscorlib.dll"),
-			// 	Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET/Framework/v2.0.50727/System.dll"),
-			// 	Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET/Framework/v2.0.50727/System.Core.dll")
-			// };
 
 			CompilerParameters parameters = new CompilerParameters();
 			parameters.GenerateExecutable = false;
 			parameters.OutputAssembly = target.OutputAssembly;
 			parameters.GenerateInMemory = false;
 			parameters.IncludeDebugInformation = isDebug;
-			// We're targeting .NET 3.5 framework
-		    parameters.CompilerOptions = "/nostdlib";              
+			// We're targeting .NET 3.5 framework - the mscorlib, system, and system.core libs
+			// should be included in the referenced assemblies list.
+			if(target.Defines != null && target.Defines.Count > 0)
+				parameters.CompilerOptions = string.Format("/nostdlib /define:{0}", string.Join(";", target.Defines.ToArray()));
+			else
+				parameters.CompilerOptions = "/nostdlib";
+
+		    Console.WriteLine("CompilerOptions: " + parameters.CompilerOptions);
 
 			foreach(string assembly in target.ReferencedAssemblies)
 				parameters.ReferencedAssemblies.Add(assembly);

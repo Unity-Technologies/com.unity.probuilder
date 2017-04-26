@@ -18,11 +18,8 @@ namespace ProBuilder.BuildSystem
 		public string OutputAssembly;
 
 		// Additional assemblies to reference.
-		public List<string> ReferencedAssemblies = new List<string>() {
-			"System.dll",
-			"System.Core.dll"
-		};
-
+		public List<string> ReferencedAssemblies;
+		
 		// Additional scripting defines.
 		public List<string> Defines;
 
