@@ -92,7 +92,11 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static T LoadRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
 		{
+#if UNITY_4_7 || UNITY_5_0
+			T asset = (T) AssetDatabase.LoadAssetAtPath(path, typeof(T));
+#else
 			T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+#endif
 
 			if(asset == null)
 			{
