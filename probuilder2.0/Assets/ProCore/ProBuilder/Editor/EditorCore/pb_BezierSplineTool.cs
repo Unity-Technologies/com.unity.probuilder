@@ -407,6 +407,10 @@ namespace ProBuilder2.EditorCommon
 					m_Points.RemoveAt(m_currentHandle);
 					UpdateMesh(true);
 				}
+				else if(e.keyCode == KeyCode.Escape)
+				{
+					SetIsEditing(false);
+				}
 			}
 
 			int count = m_Points.Count;
