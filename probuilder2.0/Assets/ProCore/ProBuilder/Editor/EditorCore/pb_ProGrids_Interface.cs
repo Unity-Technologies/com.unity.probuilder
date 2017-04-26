@@ -31,12 +31,17 @@ namespace ProBuilder2.EditorCommon
 		{
 			if( m_ProGridsType == null )
 			{
-				Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
+				try
+				{
+					Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
 
-				m_ProGridsType = editorAssembly.GetType("ProGrids.pg_Editor");
+					m_ProGridsType = editorAssembly.GetType("ProGrids.pg_Editor");
 
-				if( m_ProGridsType == null )
-					m_ProGridsType = editorAssembly.GetType("pg_Editor");
+					if( m_ProGridsType == null )
+						m_ProGridsType = editorAssembly.GetType("pg_Editor");
+				}
+				catch
+				{}
 			}
 
 			return m_ProGridsType;
