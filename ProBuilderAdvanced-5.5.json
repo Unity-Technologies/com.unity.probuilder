@@ -1,5 +1,7 @@
 {
 	"Name":"ProBuilder Unity 5.5",
+	"UnityContentsPath":"/Applications/Unity 5.5.0f3/Unity.app/Contents",
+	"UnityDataPath":"D:/Applications/Unity 5.5.0f3/Editor/Data",
 	"Assemblies":
 	[
 		{
@@ -9,26 +11,29 @@
 				"UNITY_5_5"
 			],
 			"ReferencedAssemblies": [
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/mscorlib.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/System.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/System.Core.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Managed/UnityEngine.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Managed/UnityEditor.dll"
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$UNITY/Managed/UnityEditor.dll"
 			]
 		},
 		{
 			"SourceDirectory": "probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing",
 			"OutputAssembly": "ProBuilderMeshOps.dll",
+			"Defines" : [
+				"UNITY_5_5"
+			],
 			"ReferencedAssemblies": [
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/mscorlib.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/System.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$UNITY/Managed/UnityEditor.dll",
 				"ProBuilderCore.dll",
 				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/pb_Stl.dll",
 				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/Triangle.dll",
-				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/KDTree.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Managed/UnityEngine.dll",
-				"D:/Applications/Unity 5.5.0f3/Editor/Data/Managed/UnityEditor.dll"
+				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/KDTree.dll"
 			]
 		}
 	]

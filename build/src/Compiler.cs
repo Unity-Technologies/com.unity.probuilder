@@ -11,7 +11,7 @@ namespace ProBuilder.BuildSystem
 		/**
 		 *	Build a DLL with BuildAssemblyTarget.
 		 */
-		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
+		public static bool CompileDLL(AssemblyTarget target, Dictionary<string, string> referenceMacros = null, bool isDebug = false)
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>() {
 					{ "CompilerVersion", "v3.5" }
@@ -32,7 +32,17 @@ namespace ProBuilder.BuildSystem
 		    Console.WriteLine("CompilerOptions: " + parameters.CompilerOptions);
 
 			foreach(string assembly in target.ReferencedAssemblies)
-				parameters.ReferencedAssemblies.Add(assembly);
+			{
+				string path = assembly;
+
+				if(referenceMacros != null)
+				{
+					foreach(var kvp in referenceMacros)
+						path = path.Replace(kvp.Key, kvp.Value);
+				}
+
+				parameters.ReferencedAssemblies.Add(path);
+			}
 
 			CompilerResults res = provider.CompileAssemblyFromFile(parameters, target.GetSourceFiles());
 
@@ -40,7 +50,7 @@ namespace ProBuilder.BuildSystem
 
 			if(res.Errors.Count > 0)
 			{
-				Console.WriteLine("Errors:");
+				Console.WriteLine("  Errors:");
 
 				foreach(CompilerError ce in res.Errors)
 					Console.WriteLine(string.Format("\t{0}", ce.ToString()));

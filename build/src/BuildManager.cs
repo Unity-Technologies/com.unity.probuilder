@@ -37,9 +37,24 @@ namespace ProBuilder.BuildSystem
 
 			foreach(BuildTarget target in m_Targets)
 			{
+			    string m_UnityPath = target.GetUnityPath();
+			    Dictionary<string, string> m_ReferenceMacros = new Dictionary<string, string>();
+
+			    if(string.IsNullOrEmpty(m_UnityPath))
+			    {
+			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. Skipping.\nMac: {1}\nWindows: {2}",
+			    		target.Name,
+			    		target.UnityContentsPath,
+			    		target.UnityDataPath ));
+
+			    	continue;
+			    }
+
+			    m_ReferenceMacros.Add("$UNITY", m_UnityPath);
+
 				foreach(AssemblyTarget at in target.Assemblies)
 				{
-					if(!Compiler.CompileDLL(at, m_IsDebug))
+					if(!Compiler.CompileDLL(at, m_ReferenceMacros, m_IsDebug))
 					{
 						Console.WriteLine(string.Format("Assembly {0} failed compilation. Stopping build.", at.OutputAssembly));
 						// return 1;
