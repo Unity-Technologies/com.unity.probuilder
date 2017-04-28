@@ -45,12 +45,14 @@ namespace ProBuilder2.Common
 			m_Float_keys 		= m_Float.Keys.ToList();
 			m_String_keys 		= m_String.Keys.ToList();
 			m_Color_keys 		= m_Color.Keys.ToList();
+			m_Material_keys 	= m_Material.Keys.ToList();
 
 			m_Bool_values 		= m_Bool.Values.ToList();
 			m_Int_values 		= m_Int.Values.ToList();
 			m_Float_values 		= m_Float.Values.ToList();
 			m_String_values 	= m_String.Values.ToList();
 			m_Color_values 		= m_Color.Values.ToList();
+			m_Material_values 	= m_Material.Values.ToList();
 		}
 
 		/**
@@ -72,6 +74,9 @@ namespace ProBuilder2.Common
 
 			for(int i = 0; i < m_Color_keys.Count; i++)
 				m_Color.Add(m_Color_keys[i], m_Color_values[i]);
+
+			for(int i = 0; i < m_Material_keys.Count; i++)
+				m_Material.Add(m_Material_keys[i], m_Material_values[i]);
 		}
 
 		public int Length { get { return 6; } }
