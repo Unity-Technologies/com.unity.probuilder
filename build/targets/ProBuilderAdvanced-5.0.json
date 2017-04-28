@@ -1,0 +1,40 @@
+{
+	"Name":"ProBuilder Unity 5.0",
+	"UnityContentsPath":"/Applications/Unity 5.0.0f4/Unity.app/Contents",
+	"UnityDataPath":"D:/Applications/Unity 5.0.0f4/Editor/Data",
+	"Assemblies":
+	[
+		{
+			"SourceDirectory": "probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesCore",
+			"OutputAssembly": "ProBuilderCore.dll",
+			"Defines": [
+				"UNITY_5_0"
+			],
+			"ReferencedAssemblies": [
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$UNITY/Managed/UnityEditor.dll"
+			]
+		},
+		{
+			"SourceDirectory": "probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesEditing",
+			"OutputAssembly": "ProBuilderMeshOps.dll",
+			"Defines" : [
+				"UNITY_5_0"
+			],
+			"ReferencedAssemblies": [
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$UNITY/Managed/UnityEditor.dll",
+				"ProBuilderCore.dll",
+				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/pb_Stl.dll",
+				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/Triangle.dll",
+				"probuilder2.0/Assets/ProCore/ProBuilder/Classes/ClassesLib/KDTree.dll"
+			]
+		}
+	]
+}

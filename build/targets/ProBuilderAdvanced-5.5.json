@@ -2,6 +2,9 @@
 	"Name":"ProBuilder Unity 5.5",
 	"UnityContentsPath":"/Applications/Unity 5.5.0f3/Unity.app/Contents",
 	"UnityDataPath":"D:/Applications/Unity 5.5.0f3/Editor/Data",
+	"OnPreBuild":[
+		{ "Command":"mkdir", "Arguments": [ "bin/temp" ] }
+	],
 	"Assemblies":
 	[
 		{
