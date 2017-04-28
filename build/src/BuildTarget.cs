@@ -25,8 +25,11 @@ namespace ProBuilder.BuildSystem
 		// Assemblies to be built as part of this target.
 		public List<AssemblyTarget> Assemblies;
 
-		// Copy commands to execute following a build.
-		public List<CopyTarget> CopyTargets;
+		// Commands to be executed prior to compiling DLLs.
+		public List<BuildCommand> OnPreBuild;
+
+		// Commands to be executed after DLLs are built.
+		public List<BuildCommand> OnPostBuild;
 
 		/**
 		 *	Get the path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).

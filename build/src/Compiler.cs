@@ -22,7 +22,8 @@ namespace ProBuilder.BuildSystem
 			parameters.OutputAssembly = target.OutputAssembly;
 			parameters.GenerateInMemory = false;
 			parameters.IncludeDebugInformation = isDebug;
-			// We're targeting .NET 3.5 framework - the mscorlib, system, and system.core libs
+			parameters.TreatWarningsAsErrors = isDebug;
+			// We're targeting .NET 3.5 framework - the mscorlib, System, and System.Core libs
 			// should be included in the referenced assemblies list.
 			if(target.Defines != null && target.Defines.Count > 0)
 				parameters.CompilerOptions = string.Format("/nostdlib /define:{0}", string.Join(";", target.Defines.ToArray()));
