@@ -34,5 +34,13 @@ namespace ProBuilder.BuildSystem
 
 		// Any arguments needed by the executing command. Ex, `cp` takes source and destination.
 		public List<string> Arguments;
+
+		public void Replace(string key, string replace)
+		{
+			for(int i = 0; i < (Arguments != null ? Arguments.Count : 0); i++)
+			{
+				Arguments[i] = Arguments[i].Replace(key, replace);
+			}
+		}
 	}
 }

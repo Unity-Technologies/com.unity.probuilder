@@ -22,6 +22,12 @@ namespace ProBuilder.BuildSystem
 				Delete(command.Arguments);
 		}
 
+		private static bool IsDirectory(string path)
+		{
+			FileAttributes attr = File.GetAttributes(path);
+			return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+		}
+
 		private static void CreateDirectory(List<string> arguments)
 		{
 			if( arguments == null || arguments.Count < 1 )
@@ -56,7 +62,21 @@ namespace ProBuilder.BuildSystem
 
 			try
 			{
-				File.Copy(source, destination, true);
+				if(IsDirectory(source))
+				{
+					// http://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
+					foreach (string dirPath in Directory.GetDirectories(source, "*",
+					    SearchOption.AllDirectories))
+					    Directory.CreateDirectory(dirPath.Replace(source, destination));
+
+					foreach (string newPath in Directory.GetFiles(source, "*.*",
+					    SearchOption.AllDirectories))
+					    File.Copy(newPath, newPath.Replace(source, destination), true);
+				}
+				else
+				{
+					File.Copy(source, destination, true);
+				}
 			}
 			catch(System.Exception e)
 			{
@@ -68,19 +88,22 @@ namespace ProBuilder.BuildSystem
 		{
 			if( arguments == null || arguments.Count < 1)
 			{
-				Console.WriteLine(string.Format("Delete command requires at least one argument."));
+				Console.WriteLine("Delete command requires at least one argument.");
 				return;
 			}
 
 			foreach(string arg in arguments)
 			{
-				try 
+				try
 				{
-					File.Delete(arg);
+					if(IsDirectory(arg))
+						Directory.Delete(arg, true);
+					else
+						File.Delete(arg);
 				}
 				catch(System.Exception e)
 				{
-					Console.WriteLine(string.Format("rm {0} failed.\n{2}", arg, e.ToString()));
+					Console.WriteLine(string.Format("rm {0} failed.\n{1}", arg, e.ToString()));
 				}
 			}
 		}

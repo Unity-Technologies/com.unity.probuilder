@@ -13,7 +13,6 @@ namespace ProBuilder.BuildSystem
 			List<BuildTarget> m_Targets = new List<BuildTarget>();
 
 			bool m_IsDebug = false;
-			string m_TempFolder = "bin/temp";
 
 			foreach(string arg in args)
 			{
@@ -40,8 +39,6 @@ namespace ProBuilder.BuildSystem
 			{
 			    string m_UnityPath = target.GetUnityPath();
 
-			    Dictionary<string, string> m_ReferenceMacros = new Dictionary<string, string>();
-
 			    if(string.IsNullOrEmpty(m_UnityPath))
 			    {
 			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. Skipping.\nMac: {1}\nWindows: {2}",
@@ -52,7 +49,12 @@ namespace ProBuilder.BuildSystem
 			    	continue;
 			    }
 
-			    m_ReferenceMacros.Add("$UNITY", m_UnityPath);
+			    if(target.Macros == null)
+			    	target.Macros = new Dictionary<string, string>();
+
+				target.Macros.Add("$UNITY", m_UnityPath);
+
+			    target.ExpandMacros();
 
 			    if(target.OnPreBuild != null)
 			    {
@@ -62,7 +64,7 @@ namespace ProBuilder.BuildSystem
 
 				foreach(AssemblyTarget at in target.Assemblies)
 				{
-					if(!Compiler.CompileDLL(at, m_ReferenceMacros, m_IsDebug))
+					if(!Compiler.CompileDLL(at, m_IsDebug))
 					{
 						// If `Release` build do not continue when compiler throws any wornings or errors.
 						if(!m_IsDebug)

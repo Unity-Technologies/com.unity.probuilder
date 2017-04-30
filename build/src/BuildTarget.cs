@@ -22,6 +22,9 @@ namespace ProBuilder.BuildSystem
 		// See also: UnityContentsPath
 		public string UnityDataPath;
 
+		// @todo
+		public Dictionary<string, string> Macros;
+
 		// Assemblies to be built as part of this target.
 		public List<AssemblyTarget> Assemblies;
 
@@ -41,6 +44,34 @@ namespace ProBuilder.BuildSystem
 			else if(Directory.Exists(UnityDataPath))
 				return UnityDataPath;
 			return null;
+		}
+
+		public void ExpandMacros()
+		{
+			foreach(var macro in Macros)
+			{
+				UnityContentsPath = UnityContentsPath.Replace(macro.Key, macro.Value);
+
+				UnityDataPath = UnityDataPath.Replace(macro.Key, macro.Value);
+
+				if(Assemblies != null)
+				{
+					foreach(AssemblyTarget target in Assemblies)
+						target.Replace(macro.Key, macro.Value);
+				}
+
+				if(OnPreBuild != null)
+				{
+					foreach(BuildCommand bc in OnPreBuild)
+						bc.Replace(macro.Key, macro.Value);
+				}
+
+				if(OnPostBuild != null)
+				{
+					foreach(BuildCommand bc in OnPostBuild)
+						bc.Replace(macro.Key, macro.Value);
+				}
+			}
 		}
 	}
 }

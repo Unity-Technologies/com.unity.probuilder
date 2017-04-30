@@ -11,7 +11,7 @@ namespace ProBuilder.BuildSystem
 		/**
 		 *	Build a DLL with BuildAssemblyTarget.
 		 */
-		public static bool CompileDLL(AssemblyTarget target, Dictionary<string, string> referenceMacros = null, bool isDebug = false)
+		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>() {
 					{ "CompilerVersion", "v3.5" }
@@ -30,34 +30,25 @@ namespace ProBuilder.BuildSystem
 			else
 				parameters.CompilerOptions = "/nostdlib";
 
-		    Console.WriteLine("CompilerOptions: " + parameters.CompilerOptions);
+		    // Console.WriteLine("CompilerOptions: " + parameters.CompilerOptions);
 
 			foreach(string assembly in target.ReferencedAssemblies)
-			{
-				string path = assembly;
-
-				if(referenceMacros != null)
-				{
-					foreach(var kvp in referenceMacros)
-						path = path.Replace(kvp.Key, kvp.Value);
-				}
-
-				parameters.ReferencedAssemblies.Add(path);
-			}
+				parameters.ReferencedAssemblies.Add(assembly);
 
 			CompilerResults res = provider.CompileAssemblyFromFile(parameters, target.GetSourceFiles());
 
-			Console.WriteLine(string.Format("{0} results:", target.OutputAssembly));
+			// Console.WriteLine(string.Format("{0} results:", target.OutputAssembly));
 
 			if(res.Errors.Count > 0)
 			{
+
 				Console.WriteLine("  Errors:");
 
 				foreach(CompilerError ce in res.Errors)
 					Console.WriteLine(string.Format("\t{0}", ce.ToString()));
 			}
 
-			Console.WriteLine("Path: " + res.PathToAssembly);
+			// Console.WriteLine("Path: " + res.PathToAssembly);
 
 			return res.Errors.Count < 1;
 		}

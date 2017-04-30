@@ -19,7 +19,7 @@ namespace ProBuilder.BuildSystem
 
 		// Additional assemblies to reference.
 		public List<string> ReferencedAssemblies;
-		
+
 		// Additional scripting defines.
 		public List<string> Defines;
 
@@ -29,6 +29,14 @@ namespace ProBuilder.BuildSystem
 		public string[] GetSourceFiles()
 		{
 			return Directory.GetFiles(SourceDirectory, "*.cs", SearchOption.AllDirectories);
+		}
+
+		public void Replace(string key, string value)
+		{
+			SourceDirectory = SourceDirectory.Replace(key, value);
+			OutputAssembly = OutputAssembly.Replace(key, value);
+			for(int i = 0; i < (ReferencedAssemblies != null ? ReferencedAssemblies.Count : 0); i++)
+				ReferencedAssemblies[i] = ReferencedAssemblies[i].Replace(key, value);
 		}
 	}
 }
