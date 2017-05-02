@@ -13,10 +13,8 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_AutoUV_Editor
 	{
-
-	#if !PROTOTYPE
-
-	#region MEMBERS
+#if !PROTOTYPE
+#region MEMBERS
 
 		static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -46,9 +44,9 @@ namespace ProBuilder2.EditorCommon
 			X,
 			Y
 		}
-	#endregion
+#endregion
 
-	#region ONGUI
+#region ONGUI
 
 		static Vector2 scrollPos;
 
@@ -243,6 +241,22 @@ namespace ProBuilder2.EditorCommon
 				pb_Editor.instance.UpdateSelection();
 			}
 
+			if(GUILayout.Button(new GUIContent("Reset UVs", "Reset UV projection parameters."), GUILayout.MaxWidth(width)))
+			{
+				pbUndo.RecordSelection(selection, "Reset UVs");
+
+				for(int i = 0; i < selection.Length; i++)
+				{
+					foreach(pb_Face face in selection[i].SelectedFaces)
+					{
+						face.uv = new pb_UV();
+					}
+				}
+
+				pb_Editor.instance.UpdateSelection();
+			}
+
+
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
 			pb_GUI_Utility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
@@ -321,9 +335,9 @@ namespace ProBuilder2.EditorCommon
 					uv_diff["textureGroup"] = texGroups.Count() > 1;
 			}
 		}
-	#endregion
+#endregion
 
-	#region MODIFY SINGLE PROPERTIES
+#region MODIFY SINGLE PROPERTIES
 
 		private static void SetFlipU(bool flipU, pb_Object[] sel)
 		{
@@ -444,9 +458,9 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 		}
-	#endregion
+#endregion
 
-	#region TEXTURE GROUPS
+#region TEXTURE GROUPS
 
 		private static void SetTextureGroup(pb_Object[] selection, int tex)
 		{
@@ -487,7 +501,7 @@ namespace ProBuilder2.EditorCommon
 				f.textureGroup = texGroup;
 			}
 		}
-	#endregion
-	#endif
+#endregion
+#endif
 	}
 }
