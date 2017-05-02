@@ -22,7 +22,7 @@ namespace ProBuilder.BuildSystem
 		// See also: UnityContentsPath
 		public string UnityDataPath;
 
-		// @todo
+		// Replace key w/ value for all strings.
 		public Dictionary<string, string> Macros;
 
 		// Assemblies to be built as part of this target.

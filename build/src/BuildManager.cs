@@ -4,8 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using SimpleJson;
 
+/**
+ *	Core build system.
+ */
 namespace ProBuilder.BuildSystem
 {
+	/**
+	 *	Build system for ProBuilder, capable of creating Unity projects & UnityPackage files.
+	 */
 	public static class BuildManager
 	{
 		static int Main(string[] args)
