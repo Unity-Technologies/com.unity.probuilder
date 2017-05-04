@@ -3,7 +3,7 @@ using System.Collections;
 using ProBuilder2.Common;
 
 /**
- *	Move a sphere around the surface of a ProBuilder mesh, changing the 
+ *	Move a sphere around the surface of a ProBuilder mesh, changing the
  *	vertex color of the nearest face.
  *
  *	Scene setup:  Create a Unity Sphere primitive in a new scene, then attach
@@ -23,7 +23,7 @@ public class HighlightNearestFace : MonoBehaviour
 	void Start()
 	{
 		// Generate a 50x50 plane with 25 subdivisions, facing up, with no smoothing applied.
-		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, Axis.Up, false);
+		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder2.Common.Axis.Up, false);
 
 		target.SetFaceMaterial(target.faces, pb_Constant.DefaultMaterial);
 
@@ -93,7 +93,7 @@ public class HighlightNearestFace : MonoBehaviour
 	}
 
 	/**
-	 *	Returns the average of each vertex position in a face.  
+	 *	Returns the average of each vertex position in a face.
 	 *	In local space.
 	 */
 	private Vector3 FaceCenter(pb_Object pb, pb_Face face)
@@ -102,8 +102,8 @@ public class HighlightNearestFace : MonoBehaviour
 
 		Vector3 average = Vector3.zero;
 
-		// face holds triangle data.  distinctIndices is a 
-		// cached collection of the distinct indices that 
+		// face holds triangle data.  distinctIndices is a
+		// cached collection of the distinct indices that
 		// make up the triangles. Ex:
 		// tris = {0, 1, 2, 2, 3, 0}
 		// distinct indices = {0, 1, 2, 3}
