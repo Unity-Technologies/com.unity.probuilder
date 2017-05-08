@@ -28,7 +28,7 @@ namespace ProBuilder.BuildSystem
 				{
 					m_IsDebug = true;
 				}
-				else if(arg.StartsWith("--unity="))
+				else if(arg.StartsWith("-unity="))
 				{
 					m_UnityPath = arg.Replace("-unity=", "").Trim();
 				}
