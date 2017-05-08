@@ -399,17 +399,17 @@ public class pb_Preferences
 	{
 		pb_Preferences_Internal.SetBool  	(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
 		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, pb_PreferenceLocation.Global);
 
 		pb_Preferences_Internal.SetInt		(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, pb_PreferenceLocation.Global);
-		pb_Preferences_Internal.SetInt		(pb_Constant.pbDefaultEntity, (int)pbDefaultEntity);
+		pb_Preferences_Internal.SetInt		(pb_Constant.pbDefaultEntity, (int) pbDefaultEntity);
 
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor.ToString(), pb_PreferenceLocation.Global);
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor.ToString());
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor.ToString());
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor.ToString());
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts));
+		pb_Preferences_Internal.SetColor	(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetColor	(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetColor	(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetColor	(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor, pb_PreferenceLocation.Global);
+
+		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), pb_PreferenceLocation.Global);
 
 		pb_Preferences_Internal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
 	
@@ -417,26 +417,28 @@ public class pb_Preferences
 		#if !UNITY_4_7
 		pb_Preferences_Internal.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
 		#endif
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications);
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit);
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceVertexPivot, pbForceVertexPivot);
-		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceGridPivot, pbForceGridPivot);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbIconGUI, pbIconGUI);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement);
-		pb_Preferences_Internal.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental);
 
-		pb_Preferences_Internal.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize);
-		pb_Preferences_Internal.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceConvex, pbForceConvex);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDragCheckLimit, pbDragCheckLimit, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceVertexPivot, pbForceVertexPivot, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool  	(pb_Constant.pbForceGridPivot, pbForceGridPivot, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbUVEditorFloating, pbUVEditorFloating, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbIconGUI, pbIconGUI, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbDrawAxisLines, pbDrawAxisLines, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental, pb_PreferenceLocation.Global);
+
+		pb_Preferences_Internal.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue, pb_PreferenceLocation.Global);
 
 		if(pb_Editor.instance != null)
 			pb_Editor.instance.OnEnable();
