@@ -411,9 +411,8 @@ public class pb_Preferences
 		pb_Preferences_Internal.SetBool  	(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow);
 		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts));
 
-		string matPath = pbDefaultMaterial != null ? AssetDatabase.GetAssetPath(pbDefaultMaterial) : "";
-		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultMaterial, matPath);
-
+		pb_Preferences_Internal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
+	
 		pb_Preferences_Internal.SetInt 		(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
 		#if !UNITY_4_7
 		pb_Preferences_Internal.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
