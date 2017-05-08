@@ -18,19 +18,18 @@
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore.meta" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/Default_Prototype.mat", "$DST_PB_ROOT/Resources/Materials/Default_Prototype.mat" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/Default_Prototype.mat.meta", "$DST_PB_ROOT/Resources/Materials/Default_Prototype.mat.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/GridBox_Default.png", "$DST_PB_ROOT/Resources/Textures/GridBox_Default.png" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/GridBox_Default.png.meta", "$DST_PB_ROOT/Resources/Textures/GridBox_Default.png.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/pb_StandardVertexColor.shader", "$DST_PB_ROOT/Shader/pb_StandardVertexColor.shader" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/pb_StandardVertexColor.shader.meta", "$DST_PB_ROOT/Shader/pb_StandardVertexColor.shader.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/pb_StandardVertexColor_55.shader", "$DST_PB_ROOT/Shader/pb_StandardVertexColor.shader" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.5/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll.meta" ] },
 	],
 	"Assemblies":
 	[
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
-			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 			"Defines": [
+				"UNITY_5",
 				"UNITY_5_5"
 			],
 			"ReferencedAssemblies": [
@@ -42,8 +41,9 @@
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
-			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
 			"Defines" : [
+				"UNITY_5",
 				"UNITY_5_5"
 			],
 			"ReferencedAssemblies": [
@@ -51,7 +51,7 @@
 				"$UNITY/Mono/lib/mono/2.0/System.dll",
 				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
 				"$UNITY/Managed/UnityEngine.dll",
-				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
@@ -59,8 +59,9 @@
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
-			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll",
 			"Defines": [
+				"UNITY_5",
 				"UNITY_5_5",
 				"UNITY_EDITOR"
 			],
@@ -70,8 +71,8 @@
 				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
 				"$UNITY/Managed/UnityEngine.dll",
 				"$UNITY/Managed/UnityEditor.dll",
-				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
-				"$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
