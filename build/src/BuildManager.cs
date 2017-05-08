@@ -19,6 +19,7 @@ namespace ProBuilder.BuildSystem
 			List<BuildTarget> m_Targets = new List<BuildTarget>();
 
 			bool m_IsDebug = false;
+			string m_UnityPath = null;
 
 			// Read in build targets
 			foreach(string arg in args)
@@ -26,6 +27,10 @@ namespace ProBuilder.BuildSystem
 				if(arg.StartsWith("-debug"))
 				{
 					m_IsDebug = true;
+				}
+				else if(arg.StartsWith("--unity="))
+				{
+					m_UnityPath = arg.Replace("-unity=", "").Trim();
 				}
 				// No valid argument prefix, treat this input as a build target
 				else
@@ -51,9 +56,10 @@ namespace ProBuilder.BuildSystem
 			// Execute build targets
 			foreach(BuildTarget target in m_Targets)
 			{
-			    string m_UnityPath = target.GetUnityPath();
+				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
+				    m_UnityPath = target.GetUnityPath();
 
-			    if(string.IsNullOrEmpty(m_UnityPath))
+			    if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
 			    {
 			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. Skipping.\nMac: {1}\nWindows: {2}",
 			    		target.Name,
