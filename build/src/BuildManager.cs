@@ -30,7 +30,17 @@ namespace ProBuilder.BuildSystem
 				}
 				else if(arg.StartsWith("-unity="))
 				{
-					m_UnityPath = arg.Replace("-unity=", "").Trim();
+					m_UnityPath = arg.Replace("-unity=", "").Trim().Replace("\\", "/");
+
+					if(m_UnityPath.EndsWith("/"))
+						m_UnityPath = m_UnityPath.Substring(m_UnityPath.Length - 1);
+
+					// windows path
+					if( Directory.Exists(string.Format("{0}/Editor/Data", m_UnityPath)) )
+						m_UnityPath = string.Format("{0}/Editor/Data", m_UnityPath);
+					// mac path
+					else if( Directory.Exists(string.Format("{0}/Unity.app/Contents", m_UnityPath)) )
+						m_UnityPath = string.Format("{0}//Unity.app/Contents", m_UnityPath);
 				}
 				// No valid argument prefix, treat this input as a build target
 				else
