@@ -124,7 +124,8 @@ namespace ProBuilder.BuildSystem
 
 		private static void CommandFailed(string command, string warning)
 		{
-			Console.WriteLine(string.Format("Build Command Failed:\n  {0}\n{{\n{1}\n}}", command, warning));
+			Log.Info("Failed: " + command);
+			Log.Warning(warning);
 		}
 	}
 }

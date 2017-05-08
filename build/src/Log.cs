@@ -13,7 +13,25 @@ namespace ProBuilder.BuildSystem
 
 	public static class Log
 	{
-		public static LogLevel Level = LogLevel.All;
+		public static LogLevel Level = LogLevel.Critical | LogLevel.Error | LogLevel.Warning;
+
+		public static void Critical(string contents)
+		{
+			if((Level & LogLevel.Critical) > 0)
+				Console.WriteLine(contents);
+		}
+
+		public static void Error(string contents)
+		{
+			if((Level & LogLevel.Error) > 0)
+				Console.WriteLine(contents);
+		}
+
+		public static void Warning(string contents)
+		{
+			if((Level & LogLevel.Warning) > 0)
+				Console.WriteLine(contents);
+		}
 
 		public static void Info(string contents)
 		{
