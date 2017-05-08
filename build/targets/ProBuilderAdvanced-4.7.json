@@ -1,0 +1,78 @@
+{
+	"Name":"ProBuilder Unity 4.7",
+	"UnityContentsPath":"/Applications/Unity 4.7.0f1/Unity.app/Contents",
+	"UnityDataPath":"D:/Applications/Unity 4.7.0f1/Editor/Data",
+	"Macros": {
+		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
+		"$DST_PB_ROOT": "bin/temp/ProBuilder-Unity47/Assets/ProCore/ProBuilder",
+	},
+	"OnPreBuild":[
+		{ "Command":"rm", "Arguments": [ "bin/temp/ProBuilder-Unity47" ] },
+		{ "Command":"mkdir", "Arguments": [ "bin/temp/ProBuilder-Unity47/Assets" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$DST_PB_ROOT" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$DST_PB_ROOT/Shader/DiffuseVertexColor.shader", "$DST_PB_ROOT/Shader/pb_StandardVertexColor.shader" ] },
+	],
+	"Assemblies":
+	[
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
+			"Defines": [
+				"UNITY_4",
+				"UNITY_4_7"
+			],
+			"ReferencedAssemblies": [
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll"
+			]
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity4.dll",
+			"Defines" : [
+				"UNITY_5_5"
+			],
+			"ReferencedAssemblies": [
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
+			]
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
+			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity4.dll",
+			"Defines": [
+				"UNITY_4",
+				"UNITY_4_7"
+				"UNITY_EDITOR"
+			],
+			"ReferencedAssemblies": [
+				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.dll",
+				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
+				"$UNITY/Managed/UnityEngine.dll",
+				"$UNITY/Managed/UnityEditor.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity4.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
+			]
+		}
+	]
+}

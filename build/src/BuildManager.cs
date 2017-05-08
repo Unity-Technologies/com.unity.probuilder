@@ -66,8 +66,10 @@ namespace ProBuilder.BuildSystem
 			    // Define Unity contents path macro based on GetUnityPath (can be different on Mac/Windows)
 				target.Macros.Add("$UNITY", m_UnityPath);
 
+				Log.Info("Macros:");
+
 				foreach(var kvp in target.Macros)
-					Console.WriteLine(kvp.Key + " : " + kvp.Value);
+					Log.Info(string.Format("  {0} = {1}", kvp.Key, kvp.Value));
 
 				// Find/Replace macros in build target strings
 			    target.ExpandMacros();
