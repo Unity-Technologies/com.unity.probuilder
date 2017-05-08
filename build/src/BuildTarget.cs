@@ -23,6 +23,9 @@ namespace ProBuilder.BuildSystem
 		public string UnityDataPath;
 
 		// Replace key w/ value for all strings.
+		// Some pre-defined macros are provided for you:
+		// 	- $UNITY = Path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).
+		//	- $TARGET_DIR = Directory that this build target json file resides in.
 		public Dictionary<string, string> Macros;
 
 		// Assemblies to be built as part of this target.

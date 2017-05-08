@@ -20,6 +20,7 @@ namespace ProBuilder.BuildSystem
 
 			bool m_IsDebug = false;
 
+			// Read in build targets
 			foreach(string arg in args)
 			{
 				if(arg.StartsWith("-debug"))
@@ -32,15 +33,22 @@ namespace ProBuilder.BuildSystem
 					try
 					{
 						BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(arg));
+							
+						if(t.Macros == null)
+							t.Macros = new Dictionary<string, string>();
+
+						t.Macros.Add("$TARGET_DIR", new FileInfo(arg).Directory.FullName.Replace("\\", "/"));
+
 						m_Targets.Add(t);
 					}
-					catch
+					catch (System.Exception e)
 					{
-						Console.WriteLine("Failed adding built target: " + arg);
+						Console.WriteLine(string.Format("Failed adding built target: {0}\n{1}", arg, e.ToString()));
 					}
 				}
 			}
 
+			// Execute build targets
 			foreach(BuildTarget target in m_Targets)
 			{
 			    string m_UnityPath = target.GetUnityPath();
@@ -55,11 +63,13 @@ namespace ProBuilder.BuildSystem
 			    	continue;
 			    }
 
-			    if(target.Macros == null)
-			    	target.Macros = new Dictionary<string, string>();
-
+			    // Define Unity contents path macro based on GetUnityPath (can be different on Mac/Windows)
 				target.Macros.Add("$UNITY", m_UnityPath);
 
+				foreach(var kvp in target.Macros)
+					Console.WriteLine(kvp.Key + " : " + kvp.Value);
+
+				// Find/Replace macros in build target strings
 			    target.ExpandMacros();
 
 			    if(target.OnPreBuild != null)
@@ -87,9 +97,9 @@ namespace ProBuilder.BuildSystem
 
 				if(target.OnPostBuild != null)
 				{
-				    foreach(BuildCommand command in target.OnPostBuild)
-				    	BuildCommandEvaluator.Execute(command);
-				   }
+					foreach(BuildCommand command in target.OnPostBuild)
+						BuildCommandEvaluator.Execute(command);
+				}
 			}
 
 			return 0;
