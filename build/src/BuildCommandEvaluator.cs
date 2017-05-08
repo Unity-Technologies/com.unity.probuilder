@@ -14,12 +14,17 @@ namespace ProBuilder.BuildSystem
 		 */
 		public static void Execute(BuildCommand command)
 		{
+			string res = null;
+
 			if(command.Command.Equals(BuildCommand.COPY))
-				Copy(command.Arguments);
+				res = Copy(command.Arguments);
 			else if(command.Command.Equals(BuildCommand.MKDIR))
-				CreateDirectory(command.Arguments);
+				res = CreateDirectory(command.Arguments);
 			else if(command.Command.Equals(BuildCommand.DELETE))
-				Delete(command.Arguments);
+				res = Delete(command.Arguments);
+
+			if(!string.IsNullOrEmpty(res))
+				CommandFailed(command.ToString(), res);
 		}
 
 		private static bool IsDirectory(string path)
@@ -28,13 +33,12 @@ namespace ProBuilder.BuildSystem
 			return (attr & FileAttributes.Directory) == FileAttributes.Directory;
 		}
 
-		private static void CreateDirectory(List<string> arguments)
+		private static string CreateDirectory(List<string> arguments)
 		{
 			if( arguments == null || arguments.Count < 1 )
-			{
-				Console.WriteLine(string.Format("CreateDirectory command requires at least 1 argument."));
-				return;
-			}
+				return "CreateDirectory command requires at least 1 argument.";
+		
+			string error = null;
 
 			foreach(string path in arguments)
 			{
@@ -44,33 +48,34 @@ namespace ProBuilder.BuildSystem
 				}
 				catch(System.Exception e)
 				{
-					Console.WriteLine(string.Format("mkdir {0} failed.\n{2}", path, e.ToString()));
+					if(error != null)
+						error = string.Format("{0}\n{1}", error, e.ToString());
+					else
+						error = e.ToString();
 				}
 			}
+
+			return error;
 		}
 
-		private static void Copy(List<string> arguments)
+		private static string Copy(List<string> arguments)
 		{
 			if( arguments == null || arguments.Count != 2 )
-			{
-				Console.WriteLine(string.Format("Copy command requires 2 arguments: Copy(string source, string destination)"));
-				return;
-			}
+				return "Copy command requires 2 arguments: Copy(string source, string destination";
 
 			string source = arguments[0];
 			string destination = arguments[1];
+			string error = null;
 
 			try
 			{
 				if(IsDirectory(source))
 				{
 					// http://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
-					foreach (string dirPath in Directory.GetDirectories(source, "*",
-					    SearchOption.AllDirectories))
+					foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
 					    Directory.CreateDirectory(dirPath.Replace(source, destination));
 
-					foreach (string newPath in Directory.GetFiles(source, "*.*",
-					    SearchOption.AllDirectories))
+					foreach (string newPath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
 					    File.Copy(newPath, newPath.Replace(source, destination), true);
 				}
 				else
@@ -80,17 +85,21 @@ namespace ProBuilder.BuildSystem
 			}
 			catch(System.Exception e)
 			{
-				Console.WriteLine(string.Format("cp {0} {1} failed.\n{2}", source, destination, e.ToString()));
+				if(error != null)
+					error = string.Format("{0}\n{1}", error, e.ToString());
+				else
+					error = e.ToString();
 			}
+
+			return error;
 		}
 
-		private static void Delete(List<string> arguments)
+		private static string Delete(List<string> arguments)
 		{
 			if( arguments == null || arguments.Count < 1)
-			{
-				Console.WriteLine("Delete command requires at least one argument.");
-				return;
-			}
+				return "Delete command requires at least one argument.";
+
+			string error = null;
 
 			foreach(string arg in arguments)
 			{
@@ -98,14 +107,24 @@ namespace ProBuilder.BuildSystem
 				{
 					if(IsDirectory(arg))
 						Directory.Delete(arg, true);
-					else
+					else if(File.Exists(arg))
 						File.Delete(arg);
 				}
 				catch(System.Exception e)
 				{
-					Console.WriteLine(string.Format("rm {0} failed.\n{1}", arg, e.ToString()));
+					if(error != null)
+						error = string.Format("{0}\n{1}", error, e.ToString());
+					else
+						error = e.ToString();
 				}
 			}
+
+			return null;
+		}
+
+		private static void CommandFailed(string command, string warning)
+		{
+			Console.WriteLine(string.Format("Build Command Failed:\n  {0}\n{{\n{1}\n}}", command, warning));
 		}
 	}
 }

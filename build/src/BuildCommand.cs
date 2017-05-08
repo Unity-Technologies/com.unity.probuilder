@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ProBuilder.BuildSystem
@@ -41,6 +42,11 @@ namespace ProBuilder.BuildSystem
 			{
 				Arguments[i] = Arguments[i].Replace(key, replace);
 			}
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0} {1}", Command, string.Join(",", Arguments.ToArray()));
 		}
 	}
 }
