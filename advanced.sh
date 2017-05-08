@@ -2,6 +2,7 @@
 
 if [[ -z $(git status -s) ]]
 then
+	mono pb-build.exe build/targets/ProBuilderAdvanced-4.7.json -debug
 	mono pb-build.exe build/targets/ProBuilderAdvanced-5.5.json -debug
 else
 	echo "Uncommitted changes in git, bailing out."
