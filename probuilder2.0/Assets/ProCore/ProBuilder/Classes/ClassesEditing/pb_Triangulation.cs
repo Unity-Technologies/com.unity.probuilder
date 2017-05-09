@@ -18,32 +18,6 @@ namespace ProBuilder2.MeshOperations
 	 */
 	public static class pb_Triangulation
 	{
-		// private static TMesh _tmesh;
-
-		// /**
-		//  *	Initializing a Triangle.Mesh is a non-trivial performance hit.  Cache the instance
-		//  *	since it already clears the triangulation data on Mesh.Triangulate calls.
-		//  */
-		// private static TMesh GetTMesh(bool convex)
-		// {
-		// 	if(_tmesh == null)
-		// 	{
-		// 		Behavior b = new Behavior();
-		// 		b.Convex = convex;
-		// 		b.ConformingDelaunay = false;
-		// 		b.NoBisect = 2;			// prevent all splitting
-		// 		b.NoHoles = true;
-		// 		b.Jettison = false;		// don't jettison unused vertices
-		// 		_tmesh = new TMesh(b);
-		// 	}
-		// 	else if(_tmesh.Behavior.Convex != convex)
-		// 	{
-		// 		_tmesh.Behavior.Convex = convex;
-		// 	}
-
-		// 	return _tmesh;
-		// }
-
 		/**
 		 *	Given a set of points this method will format the points into a boundary contour and triangulate,
 		 *	returning a set of indices that corresponds to the original ordering.
@@ -93,12 +67,6 @@ namespace ProBuilder2.MeshOperations
 				triangles = new List<int>() { 0, 1, 2 };
 				return true;
 			}
-			// doesn't work if the first 3 vertices are in a row
-			// else if(!unordered && vertexCount == 4)
-			// {
-			// 	triangles = new List<int>() { 0, 1, 2, 2, 3, 0 };
-			// 	return true;
-			// }
 
 			Vector3 normal = pb_Projection.FindBestPlane(vertices).normal;
 			Vector2[] points2d = pb_Projection.PlanarProject(vertices, normal);
@@ -130,6 +98,9 @@ namespace ProBuilder2.MeshOperations
 				sb.AppendLine(string.Format("{2}  -  {0}, {1}", d.Points[1].X, d.Points[1].Y, d.Points[1].Index));
 				sb.AppendLine(string.Format("{2}  -  {0}, {1}", d.Points[2].X, d.Points[2].Y, d.Points[2].Index));
 
+				if(d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
+					return false;
+
 				indices.Add( d.Points[0].Index );
 				indices.Add( d.Points[1].Index );
 				indices.Add( d.Points[2].Index );
@@ -149,51 +120,6 @@ namespace ProBuilder2.MeshOperations
 				indices.Reverse();
 
 			return true;
-
-			// int vertexCount = points.Count;
-
-			// indices = new List<int>();
-			// InputGeometry input = new InputGeometry(vertexCount);
-
-			// WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
-
-			// for(int i = 0; i < vertexCount; i++)
-			// {
-			// 	input.AddPoint(points[i].x, points[i].y, 2);
-			// 	input.AddSegment(i, (i + 1) % vertexCount, 2);
-			// }
-
-			// TMesh tm = GetTMesh(convex);
-
-			// tm.Triangulate(input);
-
-			// if(tm.Vertices.Count != points.Count)
-			// {
-			// 	pb_Log.LogWarning("Triangulation has inserted additional vertices.\nUsually this happens if the order in which points are selected is not in a clockwise or counter-clockwise order around the perimeter of the polygon.");
-			// 	return false;
-			// }
-
-			// // Ensures vertex indices are kept linear so that triangles match the points array.
-			// tm.Renumber(NodeNumbering.Linear);
-
-			// foreach(Triangle t in tm.Triangles)
-			// {
-			// 	// Triangle.NET assumes right-handed coordinates; flip tris
-			// 	indices.Add( t.P2 );
-			// 	indices.Add( t.P1 );
-			// 	indices.Add( t.P0 );
-			// }
-
-			// // // if the re-triangulated first tri doesn't match the winding order of the original
-			// // // vertices, flip 'em
-			// if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
-			// 	points[indices[0]],
-			// 	points[indices[1]],
-			// 	points[indices[2]],
-			// 	}) != originalWinding)
-			// 	indices.Reverse();
-
-			// return true;
 		}
 	}
 }
