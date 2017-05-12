@@ -229,7 +229,6 @@ namespace ProBuilder2.Common
 	{
 		List<int> indices_sorted = new List<int>(indices);
 		indices_sorted.Sort();
-
 		return SortedRemoveAt(list, indices_sorted);
 	}
 
@@ -285,8 +284,7 @@ namespace ProBuilder2.Common
 
 	/**
 	 * Given a sorted list and value, returns the index of the greatest value in sorted_list that is
-	 * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value
-	 * 4.
+	 * less than value.  Ex: List( { 0, 1, 4, 6, 7 } ) Value(5) returns 2, which is the index of value 4.
 	 * If value is less than sorted[0], -1 is returned.  If value is greater than sorted[end], sorted.Count-1
 	 * is returned.  If an exact match is found, the index prior to that match is returned.
 	 */
