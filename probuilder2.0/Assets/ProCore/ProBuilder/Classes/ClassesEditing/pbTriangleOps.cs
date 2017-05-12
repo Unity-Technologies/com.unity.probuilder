@@ -125,10 +125,9 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool RemoveDegenerateTriangles(this pb_Object pb, out int[] removed)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Vector3[] v = pb.vertices;
 			List<pb_Face> del = new List<pb_Face>();
-
 			List<pb_Face> f = new List<pb_Face>();
 
 			foreach(pb_Face face in pb.faces)
@@ -136,27 +135,23 @@ namespace ProBuilder2.MeshOperations
 				List<int> tris = new List<int>();
 
 				int[] ind = face.indices;
+
 				for(int i = 0; i < ind.Length; i+=3)
 				{
-					int[] s = new int[3]
-					{
-						sharedIndices.IndexOf(ind[i+0]),
-						sharedIndices.IndexOf(ind[i+1]),
-						sharedIndices.IndexOf(ind[i+2])
-					};
-
 					float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
 
-					if( (s[0] == s[1] || s[0] == s[2] || s[1] == s[2]) || area <= 0 )
+					if(area > Mathf.Epsilon)
 					{
-						// don't include this face in the reconstruct
-						;
-					}
-					else
-					{
-						tris.Add(ind[i+0]);
-						tris.Add(ind[i+1]);
-						tris.Add(ind[i+2]);
+						int a = lookup[ind[i+0]],
+							b = lookup[ind[i+1]],
+							c = lookup[ind[i+2]];
+
+						if( !(a == b || a == c || b == c) )
+						{
+							tris.Add(ind[i+0]);
+							tris.Add(ind[i+1]);
+							tris.Add(ind[i+2]);
+						}
 					}
 				}
 
@@ -164,7 +159,6 @@ namespace ProBuilder2.MeshOperations
 				{
 					face.SetIndices(tris.ToArray());
 					face.RebuildCaches();
-
 					f.Add(face);
 				}
 				else
@@ -175,7 +169,6 @@ namespace ProBuilder2.MeshOperations
 
 			pb.SetFaces(f.ToArray());
 			removed = pb.RemoveUnusedVertices();
-
 			return removed.Length > 0;
 		}
 
