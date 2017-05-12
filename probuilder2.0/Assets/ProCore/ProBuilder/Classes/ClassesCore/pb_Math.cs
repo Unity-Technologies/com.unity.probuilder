@@ -53,17 +53,25 @@ namespace ProBuilder2.Common
 			return t;
 		}
 
-		/**
-		 * Returns the Area of a triangle.
-		 */
-		public static float TriangleArea(Vector3 a, Vector3 b, Vector3 c)
+		private static float SqrDistance(Vector3 a, Vector3 b)
 		{
-			float da = Vector3.Distance(a, b);
-			float db = Vector3.Distance(b, c);
-			float dc = Vector3.Distance(c, a);
-			float p = (da + db + dc) / 2f;
+			float dx = b.x - a.x,
+				  dy = b.y - a.y,
+				  dz = b.z - a.z;
+			return dx * dx + dy * dy + dz * dz;
+		}
 
-			return Mathf.Sqrt( p*(p-da)*(p-db)*(p-dc) );
+		/**
+		 *	Get the area of a triangle.
+		 *	http://www.iquilezles.org/blog/?p=1579
+		 */
+		public static float TriangleArea(Vector3 x, Vector3 y, Vector3 z)
+		{
+			float 	a = SqrDistance(x, y),
+					b = SqrDistance(y, z),
+					c = SqrDistance(z, x);
+
+			return Mathf.Sqrt((2f*a*b + 2f*b*c + 2f*c*a - a*a - b*b - c*c) / 16f);
 		}
 
 		/**
@@ -918,7 +926,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	\brief Compares float values, allowing for a margin of error.
 		 */
-		public static bool Approx(this float a, float b, float delta)
+		public static bool Approx(this float a, float b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return Mathf.Abs(b - a) < Mathf.Abs(delta);
 		}
