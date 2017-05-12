@@ -62,14 +62,7 @@ namespace ProBuilder2.Common
 
 		public override string ToString()
 		{
-			string str = "";
-			for(int i = 0; i < array.Length - 1; i++)
-				str += array[i] + ", ";
-
-			if(array.Length > 0)
-				str += array[array.Length-1];
-
-			return str;
+			return array.ToString(",");
 		}
 
 		public bool IsEmpty()
