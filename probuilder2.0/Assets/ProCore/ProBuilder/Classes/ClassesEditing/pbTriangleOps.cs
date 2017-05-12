@@ -125,10 +125,12 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static bool RemoveDegenerateTriangles(this pb_Object pb, out int[] removed)
 		{
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			Vector3[] v = pb.vertices;
-			List<pb_Face> del = new List<pb_Face>();
-			List<pb_Face> f = new List<pb_Face>();
+			Dictionary<int, int> m_Lookup = pb.sharedIndices.ToDictionary();
+			Dictionary<int, int> m_LookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : new Dictionary<int, int>();
+			Vector3[] m_Vertices = pb.vertices;
+			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
+			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
+			List<pb_Face> m_RebuiltFaces = new List<pb_Face>();
 
 			foreach(pb_Face face in pb.faces)
 			{
@@ -138,19 +140,33 @@ namespace ProBuilder2.MeshOperations
 
 				for(int i = 0; i < ind.Length; i+=3)
 				{
-					float area = pb_Math.TriangleArea(v[ind[i+0]], v[ind[i+1]], v[ind[i+2]]);
+					float area = pb_Math.TriangleArea(m_Vertices[ind[i+0]], m_Vertices[ind[i+1]], m_Vertices[ind[i+2]]);
 
 					if(area > Mathf.Epsilon)
 					{
-						int a = lookup[ind[i+0]],
-							b = lookup[ind[i+1]],
-							c = lookup[ind[i+2]];
+						int a = m_Lookup[ind[i  ]],
+							b = m_Lookup[ind[i+1]],
+							c = m_Lookup[ind[i+2]];
 
 						if( !(a == b || a == c || b == c) )
 						{
 							tris.Add(ind[i+0]);
 							tris.Add(ind[i+1]);
 							tris.Add(ind[i+2]);
+
+							if(!m_RebuiltLookup.ContainsKey(ind[i  ]))
+								m_RebuiltLookup.Add(ind[i  ], a);
+							if(!m_RebuiltLookup.ContainsKey(ind[i+1]))
+								m_RebuiltLookup.Add(ind[i+1], b);
+							if(!m_RebuiltLookup.ContainsKey(ind[i+2]))
+								m_RebuiltLookup.Add(ind[i+2], c);
+
+							if(m_LookupUV.ContainsKey(ind[i]) && !m_RebuiltLookupUV.ContainsKey(ind[i]))
+								m_RebuiltLookupUV.Add(ind[i], m_LookupUV[ind[i]]);
+							if(m_LookupUV.ContainsKey(ind[i+1]) && !m_RebuiltLookupUV.ContainsKey(ind[i+1]))
+								m_RebuiltLookupUV.Add(ind[i+1], m_LookupUV[ind[i+1]]);
+							if(m_LookupUV.ContainsKey(ind[i+2]) && !m_RebuiltLookupUV.ContainsKey(ind[i+2]))
+								m_RebuiltLookupUV.Add(ind[i+2], m_LookupUV[ind[i+2]]);
 						}
 					}
 				}
@@ -159,15 +175,13 @@ namespace ProBuilder2.MeshOperations
 				{
 					face.SetIndices(tris.ToArray());
 					face.RebuildCaches();
-					f.Add(face);
-				}
-				else
-				{
-					del.Add(face);
+					m_RebuiltFaces.Add(face);
 				}
 			}
 
-			pb.SetFaces(f.ToArray());
+			pb.SetFaces(m_RebuiltFaces.ToArray());
+			pb.SetSharedIndices(m_RebuiltLookup);
+			pb.SetSharedIndicesUV(m_RebuiltLookupUV);
 			removed = pb.RemoveUnusedVertices();
 			return removed.Length > 0;
 		}

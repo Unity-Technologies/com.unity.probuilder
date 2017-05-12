@@ -19,16 +19,12 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static pb_ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
 		{
-			profiler.Begin("GetVertices");
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
-			profiler.End();
 
-			profiler.Begin("ToDictionary");
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 			int vertexCount = common.Count;
-			profiler.End();
 
 			// Make assumption that there will rarely be a time when a single weld encompasses more than 32 vertices.
 			// If a radial search returns neighbors matching the max count, the search is re-done and maxNearestNeighbors
@@ -37,18 +33,14 @@ namespace ProBuilder2.MeshOperations
 			int maxNearestNeighbors = System.Math.Min(32, common.Count());
 
 			// 3 dimensions, duplicate entries allowed
-			KdTree<float, int> tree = new KdTree<float, int>(3, new FloatMath(), AddDuplicateBehavior.Skip);
+			KdTree<float, int> tree = new KdTree<float, int>(3, new FloatMath(), AddDuplicateBehavior.Update);
 
-			profiler.Begin("tree add");
 			foreach(int i in common)
 			{
 				Vector3 v = vertices[sharedIndices[i][0]].position;
 				tree.Add( new float[] { v.x, v.y, v.z }, i );
 			}
-			profiler.End();
-			Debug.Log("pool: " + vertexCount);
 
-			profiler.Begin("Radial Search");
 			float[] point = new float[3] { 0, 0, 0 };
 			Dictionary<int, int> remapped = new Dictionary<int, int>();
 			Dictionary<int, Vector3> averages = new Dictionary<int, Vector3>();
@@ -73,10 +65,8 @@ namespace ProBuilder2.MeshOperations
 				// the result hopefully preventing double-searches in the next iterations.
 				if(maxNearestNeighbors < vertexCount && neighbors.Length >= maxNearestNeighbors)
 				{
-					int old = maxNearestNeighbors;
 					neighbors = tree.RadialSearch(point, neighborRadius, vertexCount);
 					maxNearestNeighbors = System.Math.Min(vertexCount, neighbors.Length + neighbors.Length / 2);
-					Debug.Log("RESET MAX NEAREST NEIGHBORS: " + old + " > " + maxNearestNeighbors);
 				}
 
 				Vector3 avg = Vector3.zero;
@@ -108,9 +98,7 @@ namespace ProBuilder2.MeshOperations
 
 				index++;
 			}
-			profiler.End();
 
-			profiler.Begin("Remap");
 			
 			welds = new int[remapped.Count];
 			int n = 0;
@@ -127,13 +115,10 @@ namespace ProBuilder2.MeshOperations
 					vertices[tris[i]].position = averages[kvp.Value];
 				}
 			}
-			profiler.End();
-
-			profiler.Begin("Rebuild");
+			
 			pb.SetSharedIndices(lookup);
 			pb.SetVertices(vertices);
 			pb.ToMesh();
-			profiler.End();
 
 			return new pb_ActionResult(Status.Success, "Weld Vertices");
 		}

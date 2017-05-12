@@ -433,6 +433,8 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		pb.SetVertices(vertices);
+		pb.SetSharedIndices( pb_IntArrayUtility.ExtractSharedIndices(pb.vertices) );
+		pb.SetSharedIndicesUV( (pb_IntArray[]) null );
 		pb.ToMesh();
 	}
 
