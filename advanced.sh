@@ -18,6 +18,6 @@ else
 	exit 1
 fi
 
-echo Finished building ProBuilder
+echo finished $(date)
 
 exit 0
