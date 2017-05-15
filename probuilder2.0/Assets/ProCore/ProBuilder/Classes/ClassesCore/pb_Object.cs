@@ -492,7 +492,7 @@ public class pb_Object : MonoBehaviour
 		_sharedIndices = si;
 	}
 
-	public void SetSharedIndices(Dictionary<int, int> si)
+	public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> si)
 	{
 		_sharedIndices = pb_IntArrayUtility.ToSharedIndices(si);
 	}
@@ -502,7 +502,7 @@ public class pb_Object : MonoBehaviour
 		_sharedIndicesUV = si;
 	}
 
-	public void SetSharedIndicesUV(Dictionary<int, int> si)
+	public void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> si)
 	{
 		_sharedIndicesUV = pb_IntArrayUtility.ToSharedIndices(si);
 	}

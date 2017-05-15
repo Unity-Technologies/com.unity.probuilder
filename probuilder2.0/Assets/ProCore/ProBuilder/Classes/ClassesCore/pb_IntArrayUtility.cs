@@ -413,7 +413,7 @@ namespace ProBuilder2.Common
 				{
 					int index = pbUtil.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
 					// add 1 because index is zero based
-					sharedIndices[i][n] -= index+1;
+					sharedIndices[i][n] -= index + 1;
 				}
 			}
 
