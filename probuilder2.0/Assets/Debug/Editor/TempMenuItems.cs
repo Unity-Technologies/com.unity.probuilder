@@ -2,78 +2,127 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
 using System.Linq;
 using System.Text;
 using System;
 using System.Reflection;
+using KdTree;
+using KdTree.Math;
+using ProBuilder2.Common;
+using ProBuilder2.MeshOperations;
+using ProBuilder2.EditorCommon;
 
+/**
+ *	KdTree DLL compiled from https://github.com/procore3d/KdTree
+ */
 public class TempMenuItems : EditorWindow
 {
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		EditorWindow.GetWindow<TempMenuItems>().Show();
+		EditorWindow.GetWindow<TempMenuItems>(false, "KD Tree", true).Show();
 	}
 
-	pb_PreferenceDictionary m_Preferences;
+	static float rand { get { return UnityEngine.Random.Range(-m_PointRange, m_PointRange); } }
+
+	KdTree<float, int> tree;
+	float[][] points;
+	static int m_PointRange = 256;
+	Texture2D dot;
+	int m_SampleCount = 24700;
+	float neighborRadius = 32f;
+	Vector2 center = Vector2.zero;
 
 	void OnEnable()
 	{
-		m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Data/ProBuilderPrefs.asset");
+		dot = EditorGUIUtility.whiteTexture;
+		Rebuild();
+		center = position.size * .5f;
 	}
 
-	void OnDisable()
+	void Rebuild()
 	{
-		if(m_Preferences != null)
-			EditorUtility.SetDirty(m_Preferences);
+		tree = new KdTree<float, int>(2, new FloatMath(), AddDuplicateBehavior.Update);
+		points = new float[m_SampleCount][];
+		
+		for(int i = 0; i < m_SampleCount; i++)
+		{
+			points[i] = new float[2] { rand, rand };
+			tree.Add(points[i], i);
+		}
 	}
-
-	string m_FloatKey, m_IntKey, m_ColorKey;
-	Color m_ColorValue;
-	float m_FloatValue;
-	int m_IntValue;
 
 	void OnGUI()
 	{
-		foreach(var typeDic in m_Preferences)
+		if(GUILayout.Button("Rebuild"))
+			Rebuild();
+
+		m_SampleCount = EditorGUILayout.IntField("Sample Count", m_SampleCount);
+		m_PointRange = EditorGUILayout.IntField("Point Range", m_PointRange);
+		neighborRadius = EditorGUILayout.Slider("Nearest Neighbor Radius", neighborRadius, .01f, 256f);
+
+		if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag)
 		{
-			foreach(var kvp in typeDic)
-				GUILayout.Label(kvp.ToString());
+			center = Event.current.mousePosition;
+			Repaint();
 		}
 
-		GUILayout.BeginHorizontal();
+		Rect r = new Rect(0,0,3,3);
+		Vector2 extents = position.size * .5f;
+		extents.y += GUILayoutUtility.GetLastRect().y - 16;
 
-			m_FloatKey = EditorGUILayout.TextField("key", m_FloatKey);
+		Vector2 size = new Vector2(m_PointRange, m_PointRange);
+		Vector2 topLeft = extents - size;
+		Vector2 topRight = new Vector2(extents.x + size.x, extents.y - size.y);
+		Vector2 bottomLeft = new Vector2(extents.x - size.x, extents.y + size.y);
+		Vector2 bottomRight = new Vector2(extents.x + size.x, extents.y + size.y);
 
-			m_FloatValue = EditorGUILayout.FloatField("", m_FloatValue);
+		Vector2 topCenter = new Vector2(extents.x, extents.y - size.y);
+		Vector2 bottomCenter = new Vector2(extents.x, extents.y + size.y);
+		Vector2 leftCenter = new Vector2(extents.x - size.x, extents.y);
+		Vector2 rightCenter = new Vector2(extents.x + size.x, extents.y);
 
-			if(GUILayout.Button("Add"))
-			{
-				m_Preferences.SetFloat(m_FloatKey, m_FloatValue);
-				EditorUtility.SetDirty(m_Preferences);
-			}
-		GUILayout.EndHorizontal();
+		Handles.color = new Color(.8f, .8f, .8f, 1f);
+		Handles.DrawLine(topLeft, topRight);
+		Handles.DrawLine(topLeft, bottomLeft);
+		Handles.DrawLine(bottomLeft, bottomRight);
+		Handles.DrawLine(bottomRight, topRight);
+		Handles.color = new Color(.3f, .3f, .3f, 1f);
+		Handles.DrawLine(topCenter, bottomCenter);
+		Handles.DrawLine(leftCenter, rightCenter);
+		Handles.color = Color.gray;
 
-		GUILayout.BeginHorizontal();
-
-			m_ColorKey = EditorGUILayout.TextField("key", m_ColorKey);
-			m_ColorValue = EditorGUILayout.ColorField("", m_ColorValue);
-
-			if(GUILayout.Button("Add"))
-			{
-				m_Preferences.SetColor(m_ColorKey, m_ColorValue);
-				EditorUtility.SetDirty(m_Preferences);
-			}
-		GUILayout.EndHorizontal();
-
-		if(GUILayout.Button("to json"))
+		for(int i = 0; i < points.Length; i++)
 		{
-			Debug.Log(JsonUtility.ToJson(m_Preferences));
-			Debug.Log("Some Text");
+			r.x = points[i][0] + extents.x;
+			r.y = points[i][1] + extents.y;
+
+			GUI.color = Color.gray;
+			GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
+			GUI.color = Color.white;
 		}
+
+		KdTreeNode<float, int>[] neighbors = tree.RadialSearch(new float[2] { center.x - extents.x, center.y - extents.y }, neighborRadius, m_SampleCount);
+
+		GUILayout.Label("neighbors: " + neighbors.Length);
+
+		for(int i = 0; i < neighbors.Length; i++)
+		{
+			r.x = neighbors[i].Point[0] + extents.x;
+			r.y = neighbors[i].Point[1] + extents.y;
+
+			GUI.color = Color.green;
+			GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
+			GUI.color = Color.white;
+		}
+
+		Handles.color = new Color(0f, .8f, 1f, 1f);
+		const float targetSize = 16f;
+		Handles.DrawLine(center - Vector2.right * targetSize, center + Vector2.right * targetSize);
+		Handles.DrawLine(center - Vector2.up * targetSize, center + Vector2.up * targetSize);
+		Handles.color = Color.gray;
+		// just a wrapper around Handles.CircleCap that works across multiple Unity versions
+		pb_Handles.CircleCap(-1, center, Quaternion.identity, neighborRadius);
+		Handles.color = Color.white;
 	}
-
 }

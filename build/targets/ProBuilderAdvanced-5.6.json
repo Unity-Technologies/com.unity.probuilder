@@ -56,8 +56,8 @@
 				"$UNITY/Managed/UnityEngine.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
-				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
-				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
 			]
 		},
 		{
@@ -77,8 +77,8 @@
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
-				"$SRC_PB_ROOT/Classes/ClassesLib/Triangle.dll",
-				"$SRC_PB_ROOT/Classes/ClassesLib/KDTree.dll"
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
 			]
 		}
 	]

@@ -71,17 +71,22 @@ one doesn't use `pb_ShapeGenerator`):
 
 Modifying a ProBuilder mesh is a bit different from a Unity mesh. Instead of 
 working with the `MeshFilter.sharedMesh` you'll instead be operating on the 
-ProBuilder representation of the mesh: `pb_Oject`. The basics are the same 
-however. Set vertex positions, modify triangles (faces in ProBuilder), rebuild
-the mesh. Say for example you'd like to move the vertices up on that quad from
-the previous example:
+ProBuilder representation of the mesh: `pb_Oject`.
+
+The basics are the same however. Set vertex positions, modify triangles (faces 
+in ProBuilder), then rebuild the mesh. Say for example you'd like to move the 
+vertices up on that quad from the previous example:
 	
 	// Move vertex positions up
 	for(int i = 0; i < quad.vertexCount; i++)
 		quad.vertices[i] += Vector3.one;
 
-	// Assign positions and triangles to the `MeshRenderer.sharedMesh`
+	// Assign positions and triangles to the `MeshFilter.sharedMesh`
 	quad.ToMesh();
 
 	// Recalculate UVs, Normals, Tangents, Collisions
 	quad.Refresh();
+
+Note that you should not ever directly modify the `MeshFilter.sharedMesh`.
+ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and 
+`pb_Object::Refresh` functions.
