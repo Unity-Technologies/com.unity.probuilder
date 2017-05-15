@@ -22,6 +22,7 @@
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.0/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.0/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/5.0/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/AssetStoreTools", "bin/temp/ProBuilder-Unity50/Assets/AssetStoreTools" ] },
 	],
 	"Assemblies":
 	[
