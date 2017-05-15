@@ -9,6 +9,7 @@ probuilder2.0/*.sln
 probuilder2.0/ProjectSettings*
 
 bin/debug
+bin/packages
 bin/logs
 bin/temp
 
