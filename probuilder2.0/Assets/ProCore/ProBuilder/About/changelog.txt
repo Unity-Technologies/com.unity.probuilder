@@ -1,3 +1,23 @@
+# ProBuilder 2.9.0f0
+
+## Features
+
+- ProBuilder now able to store preferences per-project as well as globally.
+- Significantly improve performance of Weld Vertices function.
+
+## Bug Fixes
+
+- Preferences Window now renders correctly in Unity 5.6 and up.
+- Exit Bezier Shape editing when Esc is pressed.
+- Quell unnecessary errors when ProGrids interface fails to load UnityEditor assembly.
+- Fix potentially ambiguous reference to Axis enum in API examples.
+
+## Changes
+
+- Move pb_Constant into ProBuilder2.Common namespace.
+- Move pb_Lightmapping class in EditorCommon namespace.
+- Improve wording of warning when shortcut preferences are reset.
+
 # ProBuilder 2.8.1f0
 
 ## Features
