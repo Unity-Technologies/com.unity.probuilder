@@ -8,20 +8,6 @@
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
 		"$DST_PB_ROOT": "bin/temp/ProBuilder-Unity56/Assets/ProCore/ProBuilder",
 	},
-	"ReferenceSearchPaths":[
-		"$UNITY/Editor/Data/Mono/lib/mono/2.0",
-		"$UNITY/Editor/Data/Managed",
-		"$UNITY/Contents/Mono/lib/mono/2.0",
-		"$UNITY/Contents/Managed",
-		"$UNITY/Contents/Frameworks/Mono/lib/mono/2.0",
-		"$UNITY/Contents/Frameworks/Managed"
-	],
-	"ReferencedAssemblies": [
-		"mscorlib.dll",
-		"System.dll",
-		"System.Core.dll",
-		"UnityEngine.dll"
-	],
 	"Defines": [
 		"UNITY_5",
 		"UNITY_5_6"

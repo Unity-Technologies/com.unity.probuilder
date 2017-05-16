@@ -23,10 +23,11 @@ namespace ProBuilder.BuildSystem
 		//	- $TARGET_DIR = Directory that this build target json file resides in.
 		public Dictionary<string, string> Macros;
 
-		// Directories in which to search for referenced assemblies.
+		// Directories in which to search for referenced assemblies. Unity & mono paths are included by default.
 		public List<string> ReferenceSearchPaths;
 
 		// Referenced assemblies to be applied to each AssemblyTarget in this build.
+		// Unity & mono paths are included by default.
 		public List<string> ReferencedAssemblies;
 
 		// Symbols to define for each assembly target.

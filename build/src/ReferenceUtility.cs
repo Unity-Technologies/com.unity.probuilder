@@ -7,6 +7,26 @@ namespace ProBuilder.BuildSystem
 {
 	public static class ReferenceUtility
 	{
+		// Unity & mono directories are included by default.
+		public static readonly List<string> DefaultReferenceSearchPaths = new List<string>()
+		{
+			"$UNITY/Editor/Data/Mono/lib/mono/2.0",
+			"$UNITY/Editor/Data/Managed",
+			"$UNITY/Contents/Mono/lib/mono/2.0",
+			"$UNITY/Contents/Managed",
+			"$UNITY/Contents/Frameworks/Mono/lib/mono/2.0",
+			"$UNITY/Contents/Frameworks/Managed"
+		};
+
+		// UnityEngine & mono assemblies are included by default.
+		public static readonly List<string> DefaultReferencedAssemblies = new List<string>()
+		{
+			"mscorlib.dll",
+			"System.dll",
+			"System.Core.dll",
+			"UnityEngine.dll"
+		};
+
 		/**
 		 *	Scan searchDirectories for fileName.
 		 */

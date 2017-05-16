@@ -63,6 +63,16 @@ namespace ProBuilder.BuildSystem
 
 						t.Macros.Add("$TARGET_DIR", new FileInfo(arg).Directory.FullName.Replace("\\", "/"));
 
+						if(t.ReferenceSearchPaths == null)
+							t.ReferenceSearchPaths = new List<string>(ReferenceUtility.DefaultReferenceSearchPaths);
+						else
+							t.ReferenceSearchPaths.AddRange(ReferenceUtility.DefaultReferenceSearchPaths);
+
+						if(t.ReferencedAssemblies == null)
+							t.ReferencedAssemblies = new List<string>(ReferenceUtility.DefaultReferencedAssemblies);
+						else
+							t.ReferencedAssemblies.AddRange(ReferenceUtility.DefaultReferencedAssemblies);
+
 						m_Targets.Add(t);
 					}
 					catch (System.Exception e)
