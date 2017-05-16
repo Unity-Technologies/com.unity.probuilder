@@ -1,15 +1,25 @@
 #!/bin/bash
-# Exports unity packages
+# Exports Unity packages.
 
+if [ "$(uname)" == "Darwin" ]; then
+WORKING_DIR=$(pwd)
+echo drawkin!
+UNITY_47=/Applications/Unity\ 4.6.1f1/Unity.app/Contents/MacOS/Unity
+UNITY_50=/Applications/Unity\ 5.0.0f4/Unity.app/Contents/MacOS/Unity
+UNITY_53=/Applications/Unity\ 5.3.0f3/Unity.app/Contents/MacOS/Unity
+UNITY_55=/Applications/Unity\ 5.5.0f3/Unity.app/Contents/MacOS/Unity
+UNITY_56=/Applications/Unity\ 5.6.0f3/Unity.app/Contents/MacOS/Unity
+else
 # cygwin paths don't cut it in -projectPath
 WORKING_DIR=$(cygpath -aw $(pwd))
-PROBUILDER_VERSION=2.9.0b0
-
 UNITY_47=/d/Applications/Unity\ 4.7.0f1/Editor/Unity.exe
 UNITY_50=/d/Applications/Unity\ 5.0.0f4/Editor/Unity.exe
 UNITY_53=/d/Applications/Unity\ 5.3.0f4/Editor/Unity.exe
 UNITY_55=/d/Applications/Unity\ 5.5.0f3/Editor/Unity.exe
 UNITY_56=/d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe
+fi
+
+PROBUILDER_VERSION=2.9.0b0
 
 rm -rf bin/packages
 mkdir bin/packages
