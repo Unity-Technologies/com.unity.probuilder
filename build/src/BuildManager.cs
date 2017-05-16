@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using SimpleJson;
 
 /**
@@ -21,13 +22,27 @@ namespace ProBuilder.BuildSystem
 			bool m_IsDebug = false;
 			string m_UnityPath = null;
 
+			if(args.Any(x => x.Contains("--help") || x.Contains("-help")))
+			{
+				Console.WriteLine(HelpText.Contents);
+				return 0;
+			}
+
 			// Read in build targets
 			foreach(string arg in args)
 			{
 				if(arg.StartsWith("-debug"))
 				{
 					m_IsDebug = true;
-					Log.Level = Log.Level | LogLevel.Info;
+				}
+				else if(arg.StartsWith("-silent"))
+				{
+					Log.Level = LogLevel.None;
+				}
+				else if(arg.StartsWith("-verbose"))
+				{
+					Log.Level = LogLevel.All;
+
 				}
 				else if(arg.StartsWith("-unity="))
 				{
@@ -57,19 +72,22 @@ namespace ProBuilder.BuildSystem
 				}
 			}
 
+			int success = 0;
+
 			// Execute build targets
 			foreach(BuildTarget target in m_Targets)
 			{
-				Log.Info("Build: " + target.Name);
+				Log.Status("Build: " + target.Name);
 
 				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
 					m_UnityPath = ReferenceUtility.ResolveDirectory(target.UnityPath);
 
 			    if(string.IsNullOrEmpty(m_UnityPath))
 			    {
-			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. ({1})\n",
+			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path: ({1})\n  {2}",
 			    		target.Name,
-			    		m_UnityPath ?? "null"));
+			    		m_UnityPath ?? "null",
+			    		target.UnityPath != null ? string.Join("\n  ", target.UnityPath) : "  null"));
 			    	continue;
 			    }
 
@@ -100,6 +118,8 @@ namespace ProBuilder.BuildSystem
 			    	Log.Info("  (no commands)");
 			    }
 
+				bool targetBreak = false;
+
 				foreach(AssemblyTarget at in target.Assemblies)
 				{
 					if(at.ReferenceSearchPaths == null)
@@ -119,18 +139,14 @@ namespace ProBuilder.BuildSystem
 
 					if(!Compiler.CompileDLL(at, m_IsDebug))
 					{
-						// If `Release` build do not continue when compiler throws any wornings or errors.
-						if(!m_IsDebug)
-						{
-							Console.WriteLine(string.Format("Assembly {0} failed compilation. Stopping build.", at.OutputAssembly));
-							return 1;
-						}
-						else
-						{
-							Console.WriteLine(string.Format("Assembly {0} failed compilation.", at.OutputAssembly));
-						}
+						Log.Critical(string.Format("  Assembly {0} failed compilation.", at.OutputAssembly));
+						targetBreak = true;
+						break;
 					}
 				}
+
+				if(targetBreak)
+					break;
 
 			    Log.Info("OnPostBuild");
 
@@ -146,9 +162,18 @@ namespace ProBuilder.BuildSystem
 				{
 			    	Log.Info("  (no commands)");
 				}
+
+				success++;
 			}
 
-			return 0;
+			int targetCount = m_Targets == null ? 0 : m_Targets.Count;
+
+			Log.Status(string.Format("\n{2}\nBuild Complete: {0} / {1} targets built successfully.\n{2}",
+				success,
+				targetCount,
+				"========================================================"));
+
+			return success - targetCount;
 		}
 	}
 }

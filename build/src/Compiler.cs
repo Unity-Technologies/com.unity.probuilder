@@ -13,7 +13,9 @@ namespace ProBuilder.BuildSystem
 		 */
 		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
 		{
-			Log.Info(string.Format("Compiling {0} to {1}", target.SourceDirectory, target.OutputAssembly));
+			Log.Status(string.Format("Compiling {0} to {1}", target.SourceDirectory, target.OutputAssembly));
+			Log.Info(string.Format("  Reference search paths:\n\t{0}", string.Join("\n\t", target.ReferenceSearchPaths)));
+			Log.Info(string.Format("  Reference assemblies:\n\t{0}", string.Join("\n\t", target.ReferencedAssemblies)));
 
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>() {
 					{ "CompilerVersion", "v3.5" }
@@ -40,7 +42,7 @@ namespace ProBuilder.BuildSystem
 
 				if(string.IsNullOrEmpty(assemblyPath))
 				{
-					Log.Critical(string.Format("Could not find referenced assembly: {0}", assembly));
+					Log.Critical(string.Format("  Could not find referenced assembly: {0}", assembly));
 					return false;
 				}
 
