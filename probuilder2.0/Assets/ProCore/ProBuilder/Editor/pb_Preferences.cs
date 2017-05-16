@@ -12,7 +12,7 @@
 
 using UnityEngine;
 using UnityEditor;
-#if !UNITY_4_7
+#if !UNITY_4_6 && !UNITY_4_7
 using UnityEngine.Rendering;
 #endif
 using ProBuilder2.Common;
@@ -53,7 +53,7 @@ public class pb_Preferences
 	static bool pbDragSelectWholeElement = false;
 	static bool pbEnableExperimental = false;
 
-	#if !UNITY_4_7
+	#if !UNITY_4_6 && !UNITY_4_7
 	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 	#endif
 
@@ -124,7 +124,7 @@ public class pb_Preferences
 		if((ColliderType)defaultColliderType == ColliderType.MeshCollider)
 			pbForceConvex = EditorGUILayout.Toggle("Force Convex Mesh Collider", pbForceConvex);
 
-		#if !UNITY_4_7
+		#if !UNITY_4_6 && !UNITY_4_7
 		GUILayout.BeginHorizontal();
 		EditorGUILayout.PrefixLabel("Shadow Casting Mode");
 		pbShadowCastingMode = (ShadowCastingMode) EditorGUILayout.EnumPopup(pbShadowCastingMode);
@@ -261,7 +261,7 @@ public class pb_Preferences
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowCollider);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowTrigger);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowNoDraw);
-			#if !UNITY_4_7
+			#if !UNITY_4_6 && !UNITY_4_7
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShadowCastingMode);
 			#endif
 		}
@@ -385,7 +385,7 @@ public class pb_Preferences
 		defaultColliderType 				= pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 		pbToolbarLocation	 				= pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 		pbDefaultEntity	 					= pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
-		#if !UNITY_4_7
+		#if !UNITY_4_6 && !UNITY_4_7
 		pbShadowCastingMode					= pb_Preferences_Internal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
 		#endif
 
@@ -412,9 +412,9 @@ public class pb_Preferences
 		pb_Preferences_Internal.SetString	(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), pb_PreferenceLocation.Global);
 
 		pb_Preferences_Internal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
-	
+
 		pb_Preferences_Internal.SetInt 		(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
-		#if !UNITY_4_7
+		#if !UNITY_4_6 && !UNITY_4_7
 		pb_Preferences_Internal.SetInt 		(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
 		#endif
 
