@@ -7,7 +7,7 @@ namespace ProBuilder.BuildSystem
 	/**
 	 *	Describes a set of commands to be executed during a build.
 	 */
-	public class BuildCommand
+	public class BuildCommand : IExpandMacros
 	{
 		/**
 		 *	Copy command.

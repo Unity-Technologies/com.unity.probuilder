@@ -9,18 +9,13 @@ namespace ProBuilder.BuildSystem
 	/**
 	 *	Describes a ProBuilder version build target.
 	 */
-	public class BuildTarget
+	public class BuildTarget : IExpandMacros
 	{
 		// Name of this build target (ex, ProBuilder Unity 5.5).
 		public string Name;
 
-		// Path to Unity directory that contains Mono and Managed folders. Mac path.
-		// See also: UnityDataPath
-		public string UnityContentsPath;
-
-		// Path to Unity directory that contains Mono and Managed folders. Windows path.
-		// See also: UnityContentsPath
-		public string UnityDataPath;
+		// Possible paths to Unity directory (`%USER%\Program Files\Unity` or `/Applications/Unity.app`).
+		public List<string> UnityPath;
 
 		// Replace key w/ value for all strings.
 		// Some pre-defined macros are provided for you:
@@ -28,8 +23,14 @@ namespace ProBuilder.BuildSystem
 		//	- $TARGET_DIR = Directory that this build target json file resides in.
 		public Dictionary<string, string> Macros;
 
-		// Assemblies to be built as part of this target.
-		public List<AssemblyTarget> Assemblies;
+		// Directories in which to search for referenced assemblies.
+		public List<string> ReferenceSearchPaths;
+
+		// Referenced assemblies to be applied to each AssemblyTarget in this build.
+		public List<string> ReferencedAssemblies;
+
+		// Symbols to define for each assembly target.
+		public List<string> Defines;
 
 		// Commands to be executed prior to compiling DLLs.
 		public List<BuildCommand> OnPreBuild;
@@ -37,43 +38,33 @@ namespace ProBuilder.BuildSystem
 		// Commands to be executed after DLLs are built.
 		public List<BuildCommand> OnPostBuild;
 
-		/**
-		 *	Get the path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).
-		 */
-		public string GetUnityPath()
-		{
-			if(Directory.Exists(UnityContentsPath))
-				return UnityContentsPath;
-			else if(Directory.Exists(UnityDataPath))
-				return UnityDataPath;
-			return null;
-		}
+		// Assemblies to be built as part of this target.
+		public List<AssemblyTarget> Assemblies;
 
-		public void ExpandMacros()
+		public void Replace(string key, string value)
 		{
-			foreach(var macro in Macros)
+			for(int i = 0; i < (ReferenceSearchPaths != null ? ReferenceSearchPaths.Count : 0); i++)
+				ReferenceSearchPaths[i] = ReferenceSearchPaths[i].Replace(key, value);
+
+			for(int i = 0; i < (ReferencedAssemblies != null ? ReferencedAssemblies.Count : 0); i++)
+				ReferencedAssemblies[i] = ReferencedAssemblies[i].Replace(key, value);
+
+			if(Assemblies != null)
 			{
-				UnityContentsPath = UnityContentsPath.Replace(macro.Key, macro.Value);
+				foreach(AssemblyTarget target in Assemblies)
+					target.Replace(key, value);
+			}
 
-				UnityDataPath = UnityDataPath.Replace(macro.Key, macro.Value);
+			if(OnPreBuild != null)
+			{
+				foreach(BuildCommand bc in OnPreBuild)
+					bc.Replace(key, value);
+			}
 
-				if(Assemblies != null)
-				{
-					foreach(AssemblyTarget target in Assemblies)
-						target.Replace(macro.Key, macro.Value);
-				}
-
-				if(OnPreBuild != null)
-				{
-					foreach(BuildCommand bc in OnPreBuild)
-						bc.Replace(macro.Key, macro.Value);
-				}
-
-				if(OnPostBuild != null)
-				{
-					foreach(BuildCommand bc in OnPostBuild)
-						bc.Replace(macro.Key, macro.Value);
-				}
+			if(OnPostBuild != null)
+			{
+				foreach(BuildCommand bc in OnPostBuild)
+					bc.Replace(key, value);
 			}
 		}
 	}

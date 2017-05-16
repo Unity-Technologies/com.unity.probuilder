@@ -27,6 +27,7 @@ namespace ProBuilder.BuildSystem
 				if(arg.StartsWith("-debug"))
 				{
 					m_IsDebug = true;
+					Log.Level = Log.Level | LogLevel.Info;
 				}
 				else if(arg.StartsWith("-unity="))
 				{
@@ -34,13 +35,6 @@ namespace ProBuilder.BuildSystem
 
 					if(m_UnityPath.EndsWith("/"))
 						m_UnityPath = m_UnityPath.Substring(m_UnityPath.Length - 1);
-
-					// windows path
-					if( Directory.Exists(string.Format("{0}/Editor/Data", m_UnityPath)) )
-						m_UnityPath = string.Format("{0}/Editor/Data", m_UnityPath);
-					// mac path
-					else if( Directory.Exists(string.Format("{0}/Unity.app/Contents", m_UnityPath)) )
-						m_UnityPath = string.Format("{0}//Unity.app/Contents", m_UnityPath);
 				}
 				// No valid argument prefix, treat this input as a build target
 				else
@@ -48,7 +42,7 @@ namespace ProBuilder.BuildSystem
 					try
 					{
 						BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(arg));
-							
+
 						if(t.Macros == null)
 							t.Macros = new Dictionary<string, string>();
 
@@ -66,16 +60,16 @@ namespace ProBuilder.BuildSystem
 			// Execute build targets
 			foreach(BuildTarget target in m_Targets)
 			{
+				Log.Info("Build: " + target.Name);
+
 				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
-				    m_UnityPath = target.GetUnityPath();
+					m_UnityPath = ReferenceUtility.ResolveDirectory(target.UnityPath);
 
-			    if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
+			    if(string.IsNullOrEmpty(m_UnityPath))
 			    {
-			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. Skipping.\nMac: {1}\nWindows: {2}",
+			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path. ({1})\n",
 			    		target.Name,
-			    		target.UnityContentsPath,
-			    		target.UnityDataPath ));
-
+			    		m_UnityPath ?? "null"));
 			    	continue;
 			    }
 
@@ -84,20 +78,45 @@ namespace ProBuilder.BuildSystem
 
 				Log.Info("Macros:");
 
-				foreach(var kvp in target.Macros)
-					Log.Info(string.Format("  {0} = {1}", kvp.Key, kvp.Value));
-
 				// Find/Replace macros in build target strings
-			    target.ExpandMacros();
+				foreach(var kvp in target.Macros)
+				{
+					Log.Info(string.Format("  {0} = {1}", kvp.Key, kvp.Value));
+			    	target.Replace(kvp.Key, kvp.Value);
+			    }
 
-			    if(target.OnPreBuild != null)
+			    Log.Info("OnPreBuild");
+
+			    if(target.OnPreBuild != null && target.OnPreBuild.Count > 0)
 			    {
 				    foreach(BuildCommand command in target.OnPreBuild)
+				    {
+			    		Log.Info("  " + command.ToString());
 				    	BuildCommandEvaluator.Execute(command);
+				    }
+			    }
+			    else
+			    {
+			    	Log.Info("  (no commands)");
 			    }
 
 				foreach(AssemblyTarget at in target.Assemblies)
 				{
+					if(at.ReferenceSearchPaths == null)
+						at.ReferenceSearchPaths = new List<string>(target.ReferenceSearchPaths);
+					else
+						at.ReferenceSearchPaths.AddRange(target.ReferenceSearchPaths);
+
+					if(at.ReferencedAssemblies == null)
+						at.ReferencedAssemblies = new List<string>(target.ReferencedAssemblies);
+					else
+						at.ReferencedAssemblies.AddRange(target.ReferencedAssemblies);
+
+					if(at.Defines == null)
+						at.Defines = new List<string>(target.Defines);
+					else
+						at.Defines.AddRange(target.Defines);
+
 					if(!Compiler.CompileDLL(at, m_IsDebug))
 					{
 						// If `Release` build do not continue when compiler throws any wornings or errors.
@@ -113,10 +132,19 @@ namespace ProBuilder.BuildSystem
 					}
 				}
 
-				if(target.OnPostBuild != null)
+			    Log.Info("OnPostBuild");
+
+				if(target.OnPostBuild != null && target.OnPostBuild.Count > 0)
 				{
 					foreach(BuildCommand command in target.OnPostBuild)
+					{
+			    		Log.Info("  " + command.ToString());
 						BuildCommandEvaluator.Execute(command);
+					}
+				}
+				else
+				{
+			    	Log.Info("  (no commands)");
 				}
 			}
 

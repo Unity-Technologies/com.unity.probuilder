@@ -9,13 +9,16 @@ namespace ProBuilder.BuildSystem
 	/**
 	 *	Describes a build target for an assembly.
 	 */
-	public class AssemblyTarget
+	public class AssemblyTarget : IExpandMacros
 	{
 		// Path to source code root directory. Files will be added recursively.
 		public string SourceDirectory;
 
 		// Path to build assembly to.
 		public string OutputAssembly;
+
+		// Additional directories in which to search for referenced assemblies.
+		public List<string> ReferenceSearchPaths;
 
 		// Additional assemblies to reference.
 		public List<string> ReferencedAssemblies;

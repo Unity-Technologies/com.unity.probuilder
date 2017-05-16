@@ -1,7 +1,7 @@
 {
 	"Name":"ProBuilder Unity 4.7",
-	"UnityContentsPath":"/Applications/Unity 4.6.1f1/Unity.app/Contents",
-	"UnityDataPath":"D:/Applications/Unity 4.7.0f1/Editor/Data",
+	"UnityContentsPath":"/Applications/Unity 4.6.1f1",
+	"UnityDataPath":"D:/Applications/Unity 4.7.0f1",
 	"Macros": {
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
 		"$DST_PB_ROOT": "bin/temp/ProBuilder-Unity47/Assets/ProCore/ProBuilder",

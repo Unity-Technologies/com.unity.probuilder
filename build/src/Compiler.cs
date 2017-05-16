@@ -13,6 +13,8 @@ namespace ProBuilder.BuildSystem
 		 */
 		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
 		{
+			Log.Info(string.Format("Compiling {0} to {1}", target.SourceDirectory, target.OutputAssembly));
+
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string ,string>() {
 					{ "CompilerVersion", "v3.5" }
 				});
@@ -33,22 +35,32 @@ namespace ProBuilder.BuildSystem
 		    // Console.WriteLine("CompilerOptions: " + parameters.CompilerOptions);
 
 			foreach(string assembly in target.ReferencedAssemblies)
-				parameters.ReferencedAssemblies.Add(assembly);
+			{
+				string assemblyPath = ReferenceUtility.ResolveFile(assembly, target.ReferenceSearchPaths);
+
+				if(string.IsNullOrEmpty(assemblyPath))
+				{
+					Log.Critical(string.Format("Could not find referenced assembly: {0}", assembly));
+					return false;
+				}
+
+				Log.Info("  Adding reference: " + assemblyPath);
+				parameters.ReferencedAssemblies.Add(assemblyPath);
+			}
 
 			CompilerResults res = provider.CompileAssemblyFromFile(parameters, target.GetSourceFiles());
 
-			// Console.WriteLine(string.Format("{0} results:", target.OutputAssembly));
-
 			if(res.Errors.Count > 0)
 			{
-
-				Console.WriteLine("  Errors:");
+				Log.Info("  Errors:");
 
 				foreach(CompilerError ce in res.Errors)
-					Console.WriteLine(string.Format("\t{0}", ce.ToString()));
+					Log.Info(string.Format("\t{0}", ce.ToString()));
 			}
-
-			// Console.WriteLine("Path: " + res.PathToAssembly);
+			else
+			{
+				Log.Info(string.Format("Success: {0}", target.OutputAssembly));
+			}
 
 			return res.Errors.Count < 1;
 		}
