@@ -1,11 +1,17 @@
 {
 	"Name":"ProBuilder Unity 5.5",
-	"UnityContentsPath":"/Applications/Unity 5.5.0f3/Unity.app/Contents",
-	"UnityDataPath":"D:/Applications/Unity 5.5.0f3/Editor/Data",
+	"UnityPath":[
+		"/Applications/Unity 5.5.0f3/Unity.app",
+		"D:/Applications/Unity 5.5.0f3"
+	],
 	"Macros": {
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
 		"$DST_PB_ROOT": "bin/temp/ProBuilder-Unity55/Assets/ProCore/ProBuilder",
 	},
+	"Defines": [
+		"UNITY_5",
+		"UNITY_5_5"
+	],
 	"OnPreBuild":[
 		{ "Command":"rm", "Arguments": [ "bin/temp/ProBuilder-Unity55" ] },
 		{ "Command":"mkdir", "Arguments": [ "bin/temp/ProBuilder-Unity55/Assets" ] },
@@ -28,30 +34,12 @@
 	[
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
-			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
-			"Defines": [
-				"UNITY_5",
-				"UNITY_5_5"
-			],
-			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll"
-			]
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll"
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
 			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
-			"Defines" : [
-				"UNITY_5",
-				"UNITY_5_5"
-			],
 			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
@@ -62,16 +50,10 @@
 			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
 			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll",
 			"Defines": [
-				"UNITY_5",
-				"UNITY_5_5",
 				"UNITY_EDITOR"
 			],
 			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll",
-				"$UNITY/Managed/UnityEditor.dll",
+				"UnityEditor.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",

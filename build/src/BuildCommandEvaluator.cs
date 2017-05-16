@@ -27,17 +27,11 @@ namespace ProBuilder.BuildSystem
 				CommandFailed(command.ToString(), res);
 		}
 
-		private static bool IsDirectory(string path)
-		{
-			FileAttributes attr = File.GetAttributes(path);
-			return (attr & FileAttributes.Directory) == FileAttributes.Directory;
-		}
-
 		private static string CreateDirectory(List<string> arguments)
 		{
 			if( arguments == null || arguments.Count < 1 )
 				return "CreateDirectory command requires at least 1 argument.";
-		
+
 			string error = null;
 
 			foreach(string path in arguments)
@@ -69,7 +63,7 @@ namespace ProBuilder.BuildSystem
 
 			try
 			{
-				if(IsDirectory(source))
+				if(ReferenceUtility.IsDirectory(source))
 				{
 					// http://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
 					foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
@@ -105,7 +99,7 @@ namespace ProBuilder.BuildSystem
 			{
 				try
 				{
-					if(IsDirectory(arg))
+					if(ReferenceUtility.IsDirectory(arg))
 						Directory.Delete(arg, true);
 					else if(File.Exists(arg))
 						File.Delete(arg);

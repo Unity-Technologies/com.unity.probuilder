@@ -14,7 +14,7 @@ namespace ProBuilder.BuildSystem
 		 */
 		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
 		{
-			Log.Status(string.Format("Compiling {0} to {1}", target.SourceDirectory, target.OutputAssembly));
+			Log.Status(string.Format(" Compiling {0} to {1}", target.SourceDirectory, target.OutputAssembly));
 			Log.Info(string.Format("  Reference search paths:\n\t{0}", string.Join("\n\t", target.ReferenceSearchPaths)));
 			Log.Info(string.Format("  Reference assemblies:\n\t{0}", string.Join("\n\t", target.ReferencedAssemblies)));
 

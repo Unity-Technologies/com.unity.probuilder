@@ -28,6 +28,16 @@ namespace ProBuilder.BuildSystem
 		};
 
 		/**
+		 *	Is the path a directory?
+		 */
+		public static bool IsDirectory(string path)
+		{
+			FileAttributes attr = File.GetAttributes(path);
+			return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+		}
+
+
+		/**
 		 *	Scan searchDirectories for fileName.
 		 */
 		public static string ResolveFile(string fileName, List<string> searchDirectories)

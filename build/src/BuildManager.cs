@@ -20,7 +20,7 @@ namespace ProBuilder.BuildSystem
 			List<BuildTarget> m_Targets = new List<BuildTarget>();
 
 			bool m_IsDebug = false;
-			string m_UnityPath = null;
+			string m_UnityPathOverride = null;
 
 			if(args.Any(x => x.Contains("--help") || x.Contains("-help")))
 			{
@@ -46,38 +46,32 @@ namespace ProBuilder.BuildSystem
 				}
 				else if(arg.StartsWith("-unity="))
 				{
-					m_UnityPath = arg.Replace("-unity=", "").Trim().Replace("\\", "/");
+					m_UnityPathOverride = arg.Replace("-unity=", "").Trim().Replace("\\", "/");
 
-					if(m_UnityPath.EndsWith("/"))
-						m_UnityPath = m_UnityPath.Substring(m_UnityPath.Length - 1);
+					if(m_UnityPathOverride.StartsWith("\"") && m_UnityPathOverride.EndsWith("\""))
+						m_UnityPathOverride = m_UnityPathOverride.Substring(1, m_UnityPathOverride.Length - 2);
+
+					if(m_UnityPathOverride.EndsWith("/"))
+						m_UnityPathOverride = m_UnityPathOverride.Substring(m_UnityPathOverride.Length - 1);
 				}
 				// No valid argument prefix, treat this input as a build target
 				else
 				{
-					try
+					if( ReferenceUtility.IsDirectory(arg) && Directory.Exists(arg) )
 					{
-						BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(arg));
-
-						if(t.Macros == null)
-							t.Macros = new Dictionary<string, string>();
-
-						t.Macros.Add("$TARGET_DIR", new FileInfo(arg).Directory.FullName.Replace("\\", "/"));
-
-						if(t.ReferenceSearchPaths == null)
-							t.ReferenceSearchPaths = new List<string>(ReferenceUtility.DefaultReferenceSearchPaths);
-						else
-							t.ReferenceSearchPaths.AddRange(ReferenceUtility.DefaultReferenceSearchPaths);
-
-						if(t.ReferencedAssemblies == null)
-							t.ReferencedAssemblies = new List<string>(ReferenceUtility.DefaultReferencedAssemblies);
-						else
-							t.ReferencedAssemblies.AddRange(ReferenceUtility.DefaultReferencedAssemblies);
-
-						m_Targets.Add(t);
+						foreach(string t in Directory.GetFiles(arg, "*.json", SearchOption.TopDirectoryOnly))
+						{
+							BuildTarget result = TryReadBuildTarget(t);
+							if(result != null)
+								m_Targets.Add(result);
+						}
 					}
-					catch (System.Exception e)
+					else
 					{
-						Console.WriteLine(string.Format("Failed adding built target: {0}\n{1}", arg, e.ToString()));
+						BuildTarget result = TryReadBuildTarget(arg);
+						if(result != null)
+							m_Targets.Add(result);
+
 					}
 				}
 			}
@@ -89,17 +83,21 @@ namespace ProBuilder.BuildSystem
 			{
 				Log.Status("Build: " + target.Name);
 
+				string m_UnityPath = m_UnityPathOverride;
+
 				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
+				{
 					m_UnityPath = ReferenceUtility.ResolveDirectory(target.UnityPath);
 
-			    if(string.IsNullOrEmpty(m_UnityPath))
-			    {
-			    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path: ({1})\n  {2}",
-			    		target.Name,
-			    		m_UnityPath ?? "null",
-			    		target.UnityPath != null ? string.Join("\n  ", target.UnityPath) : "  null"));
-			    	continue;
-			    }
+				    if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
+				    {
+				    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path: ({1})\n  {2}",
+				    		target.Name,
+				    		m_UnityPath ?? "null",
+				    		target.UnityPath != null ? string.Join("\n  ", target.UnityPath) : "  null"));
+				    	continue;
+				    }
+				}
 
 			    // Define Unity contents path macro based on GetUnityPath (can be different on Mac/Windows)
 				target.Macros.Add("$UNITY", m_UnityPath);
@@ -173,6 +171,8 @@ namespace ProBuilder.BuildSystem
 			    	Log.Info("  (no commands)");
 				}
 
+				Log.Info("");
+
 				success++;
 			}
 
@@ -184,6 +184,37 @@ namespace ProBuilder.BuildSystem
 				"========================================================"));
 
 			return success - targetCount;
+		}
+
+		private static BuildTarget TryReadBuildTarget(string path)
+		{
+			try
+			{
+				BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(path));
+
+				if(t.Macros == null)
+					t.Macros = new Dictionary<string, string>();
+
+				t.Macros.Add("$TARGET_DIR", new FileInfo(path).Directory.FullName.Replace("\\", "/"));
+
+				if(t.ReferenceSearchPaths == null)
+					t.ReferenceSearchPaths = new List<string>(ReferenceUtility.DefaultReferenceSearchPaths);
+				else
+					t.ReferenceSearchPaths.AddRange(ReferenceUtility.DefaultReferenceSearchPaths);
+
+				if(t.ReferencedAssemblies == null)
+					t.ReferencedAssemblies = new List<string>(ReferenceUtility.DefaultReferencedAssemblies);
+				else
+					t.ReferencedAssemblies.AddRange(ReferenceUtility.DefaultReferencedAssemblies);
+
+				return t;
+			}
+			catch(System.Exception e)
+			{
+				Log.Critical(string.Format("Failed adding built target: {0}\n{1}", path, e.ToString()));
+			}
+
+			return null;
 		}
 	}
 }
