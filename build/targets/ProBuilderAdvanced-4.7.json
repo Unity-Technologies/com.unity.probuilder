@@ -1,11 +1,31 @@
 {
 	"Name":"ProBuilder Unity 4.7",
-	"UnityContentsPath":"/Applications/Unity 4.6.1f1",
-	"UnityDataPath":"D:/Applications/Unity 4.7.0f1",
+	"UnityPath":[
+		"/Applications/Unity 4.6.1f1/Unity.app",
+		"D:/Applications/Unity 4.7.0f1"
+	],
 	"Macros": {
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
 		"$DST_PB_ROOT": "bin/temp/ProBuilder-Unity47/Assets/ProCore/ProBuilder",
 	},
+	"ReferenceSearchPaths":[
+		"$UNITY/Editor/Data/Mono/lib/mono/2.0",
+		"$UNITY/Editor/Data/Managed",
+		"$UNITY/Contents/Mono/lib/mono/2.0",
+		"$UNITY/Contents/Managed",
+		"$UNITY/Contents/Frameworks/Mono/lib/mono/2.0",
+		"$UNITY/Contents/Frameworks/Managed"
+	],
+	"ReferencedAssemblies": [
+		"mscorlib.dll",
+		"System.dll",
+		"System.Core.dll",
+		"UnityEngine.dll"
+	],
+	"Defines": [
+		"UNITY_4",
+		"UNITY_4_7"
+	],
 	"OnPreBuild":[
 		{ "Command":"rm", "Arguments": [ "bin/temp/ProBuilder-Unity47" ] },
 		{ "Command":"mkdir", "Arguments": [ "bin/temp/ProBuilder-Unity47/Assets" ] },
@@ -29,28 +49,11 @@
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
 			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
-			"Defines": [
-				"UNITY_4",
-				"UNITY_4_7"
-			],
-			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll"
-			]
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
 			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity4.dll",
-			"Defines" : [
-				"UNITY_5_5"
-			],
 			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
@@ -61,16 +64,10 @@
 			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
 			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity4.dll",
 			"Defines": [
-				"UNITY_4",
-				"UNITY_4_7"
 				"UNITY_EDITOR"
 			],
 			"ReferencedAssemblies": [
-				"$UNITY/Mono/lib/mono/2.0/mscorlib.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.dll",
-				"$UNITY/Mono/lib/mono/2.0/System.Core.dll",
-				"$UNITY/Managed/UnityEngine.dll",
-				"$UNITY/Managed/UnityEditor.dll",
+				"UnityEditor.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity4.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity4.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",

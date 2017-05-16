@@ -69,8 +69,6 @@
 			"Defines": [
 				"UNITY_EDITOR"
 			],
-			"ReferenceSearchPaths": [
-			],
 			"ReferencedAssemblies": [
 				"UnityEditor.dll",
 				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
