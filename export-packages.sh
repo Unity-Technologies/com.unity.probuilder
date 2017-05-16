@@ -3,10 +3,10 @@
 
 if [ "$(uname)" == "Darwin" ]; then
 WORKING_DIR=$(pwd)
-echo drawkin!
+
 UNITY_47=/Applications/Unity\ 4.6.1f1/Unity.app/Contents/MacOS/Unity
 UNITY_50=/Applications/Unity\ 5.0.0f4/Unity.app/Contents/MacOS/Unity
-UNITY_53=/Applications/Unity\ 5.3.0f3/Unity.app/Contents/MacOS/Unity
+UNITY_53=/Applications/Unity\ 5.3.0f4/Unity.app/Contents/MacOS/Unity
 UNITY_55=/Applications/Unity\ 5.5.0f3/Unity.app/Contents/MacOS/Unity
 UNITY_56=/Applications/Unity\ 5.6.0f3/Unity.app/Contents/MacOS/Unity
 else
