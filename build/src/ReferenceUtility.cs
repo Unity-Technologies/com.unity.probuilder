@@ -51,6 +51,9 @@ namespace ProBuilder.BuildSystem
 
 		public static string ResolveDirectory(List<string> possiblePaths)
 		{
+			if(possiblePaths == null)
+				return null;
+
 			foreach(string path in possiblePaths)
 				if( Directory.Exists(path) )
 					return path;
