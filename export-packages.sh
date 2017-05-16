@@ -3,7 +3,6 @@
 
 if [ "$(uname)" == "Darwin" ]; then
 WORKING_DIR=$(pwd)
-
 UNITY_47=/Applications/Unity\ 4.6.1f1/Unity.app/Contents/MacOS/Unity
 UNITY_50=/Applications/Unity\ 5.0.0f4/Unity.app/Contents/MacOS/Unity
 UNITY_53=/Applications/Unity\ 5.3.0f4/Unity.app/Contents/MacOS/Unity
@@ -23,6 +22,9 @@ PROBUILDER_VERSION=2.9.0b0
 
 rm -rf bin/packages
 mkdir bin/packages
+
+rm -rf bin/logs
+mkdir bin/logs
 
 # /d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
