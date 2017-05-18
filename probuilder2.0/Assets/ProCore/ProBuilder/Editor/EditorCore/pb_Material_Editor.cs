@@ -399,7 +399,7 @@ namespace ProBuilder2.EditorCommon
 		private void RefreshAvailablePalettes()
 		{
 			pb_MaterialPalette cur = CurrentPalette;
-			m_AvailablePalettes = AssetDatabase.FindAssets("t:pb_MaterialPalette").Select(x => AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(x))).ToArray();
+			m_AvailablePalettes = AssetDatabase.FindAssets("t:pb_MaterialPalette").Select(x => pb_FileUtil.Load<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(x))).ToArray();
 			// m_AvailablePalettes = Resources.FindObjectsOfTypeAll<pb_MaterialPalette>().Where(x => EditorUtility.IsPersistent(x)).ToArray();
 			m_AvailablePalettes_Str = m_AvailablePalettes.Select(x => x.name).ToArray();
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
