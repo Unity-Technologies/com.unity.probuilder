@@ -206,7 +206,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_StringDefaults.ContainsKey(key))
 				return GetString(key, m_StringDefaults[key]);
-			return GetString(key, "");
+			return GetString(key, string.Empty);
 		}
 
 		public static string GetString(string key, string fallback)

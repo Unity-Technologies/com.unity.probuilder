@@ -5,7 +5,7 @@ using ProBuilder2.Common;
 namespace ProBuilder2.EditorCommon
 {
 	/**
-	 *	Used to store arrays of materials.
+	 *	Used to store arrays of materials. Made obsolete by pb_MaterialArray.
 	 *
 	 *	Notes:
  	 *	- In the Editor folder because WebGL doesn't like ProceduralMaterial types.
@@ -15,6 +15,7 @@ namespace ProBuilder2.EditorCommon
  	 *	  to something more suitable would mean breaking existing material palettes for
  	 *	  lots of people.
 	 */
+ 	[System.Obsolete("pb_ObjectArray is deprecated. ProBuilder Material Editor now saves material palettes as pb_MaterialArray. You may safely delete this asset.")]
 	[System.Serializable]
 	public class pb_ObjectArray : ScriptableObject, pb_IHasDefault
 	{
@@ -49,7 +50,18 @@ namespace ProBuilder2.EditorCommon
 
 		public void SetDefaultValues()
 		{
-			array = new Object[0];
+			array = new Material[10] {
+				pb_Constant.DefaultMaterial,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null
+			 };
 		}
 	}
 }

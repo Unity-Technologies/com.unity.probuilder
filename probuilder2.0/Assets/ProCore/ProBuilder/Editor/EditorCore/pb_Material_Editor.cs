@@ -1,3 +1,5 @@
+#pragma warning disable 0618
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -84,34 +86,69 @@ namespace ProBuilder2.EditorCommon
 		public static pb_Material_Editor instance { get; private set; }
 		// Path to the required default material palette. If not valid material palettes are 
 		// found a new one will be created with this path (relative to ProBuilder folder).
-		private const string m_DefaultMaterialPalettePath = "Data/UserMaterials.asset";
+		private const string m_DefaultMaterialPalettePath = "Data/Default Material Palette.asset";
 		// The currently loaded material palette asset.
-		private static pb_ObjectArray m_CurrentPalette = null;
-		// The currently loaded material palette material array.
-		private static Material[] m_CurrentMaterials = null;
+		private static pb_MaterialPalette m_CurrentPalette = null;
 		// The user set "quick material"
 		private static Material m_QueuedMaterial;
 		// Custom style for material row background
 		private GUIStyle m_RowBackgroundStyle;
 		// The view scroll position.
 		private Vector2 m_ViewScroll = Vector2.zero;
+		// All available material palettes
+		private pb_MaterialPalette[] m_AvailablePalettes = null;
+		// List of string names for all available palettes (plus one entry for 'Add New')
+		private string[] m_AvailablePalettes_Str = null;
+		// The index of the currently loaded material palette in m_AvailablePalettes
+		private int m_CurrentPaletteIndex = 0;
 
 		/**
-		 *	Array of the currently loaded materials.
+		 *	The currently loaded material palette, or a default.
 		 */
-		public static Material[] CurrentPalette
+		public static pb_MaterialPalette CurrentPalette
 		{
 			get
-			{
-				if(m_CurrentMaterials != null)
-					return m_CurrentMaterials;
-				
+			{		
 				if(m_CurrentPalette == null)
-					m_CurrentPalette = LoadMaterialPalette();
+				{
+					// Attempt to load the last user-set material palette
+					m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(pb_Preferences_Internal.GetString(pb_Constant.pbCurrentMaterialPalette));
 
-				m_CurrentMaterials = m_CurrentPalette.GetArray<Material>();
+					// If not set (or deleted), fall back on default
+					if(m_CurrentPalette != null)
+						return m_CurrentPalette;
 
-				return m_CurrentMaterials;
+					// No dice - iterate any other pb_MaterialPalette objects in the project (favoring first found)
+					string[] m_MaterialPalettesInProject = AssetDatabase.FindAssets("t:pb_MaterialPalette");
+
+					for(int i = 0; m_MaterialPalettesInProject != null && i < m_MaterialPalettesInProject.Length; i++)
+					{
+						m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(m_MaterialPalettesInProject[i]));
+
+						if(m_CurrentPalette != null)
+							return m_CurrentPalette;
+					}
+
+					// If no existing pb_MaterialPalette objects in project:
+					// - create a new one
+					// - check for the older pb_ObjectArray and copy data to new default
+					m_CurrentPalette = pb_FileUtil.LoadRequiredRelative<pb_MaterialPalette>(m_DefaultMaterialPalettePath);
+
+					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
+
+					for(int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
+					{
+						pb_ObjectArray poa = pb_FileUtil.Load<pb_ObjectArray>( AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]) );
+
+						// Make sure there's actually something worth copying
+						if(poa != null && poa.array != null && poa.array.Any(x => x != null && x is Material))
+						{
+							m_CurrentPalette.array = poa.GetArray<Material>();
+							break;
+						}
+					}
+				}
+				return m_CurrentPalette;
 			}
 		}
 
@@ -137,26 +174,13 @@ namespace ProBuilder2.EditorCommon
 			this.minSize = new Vector2(236, 250);
 			m_RowBackgroundStyle = new GUIStyle();
 			m_RowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
+			m_CurrentPalette = null;
+			RefreshAvailablePalettes();
 		}
 
 		private void OnDisable()
 		{
 			instance = null;
-		}
-
-		private static pb_ObjectArray LoadMaterialPalette()
-		{
-			string m_LastMaterialPalette = pb_Preferences_Internal.GetString(pb_Constant.pbCurrentMaterialPalette, pb_FileUtil.PathFromRelative(m_DefaultMaterialPalettePath));
-			
-			pb_ObjectArray poa = pb_FileUtil.Load<pb_ObjectArray>(m_LastMaterialPalette);
-
-			if(poa == null)
-			{
-				poa = pb_FileUtil.LoadRequiredRelative<pb_ObjectArray>(m_DefaultMaterialPalettePath);
-				poa.array = new Material[1] { pb_Constant.DefaultMaterial };
-			}
-
-			return poa;
 		}
 
 		private void OpenContextMenu()
@@ -225,6 +249,36 @@ namespace ProBuilder2.EditorCommon
 			GUI.backgroundColor = Color.white;
 
 			GUILayout.Label("Material Palette", EditorStyles.boldLabel);
+
+			EditorGUI.BeginChangeCheck();
+
+			m_CurrentPaletteIndex = EditorGUILayout.Popup("", m_CurrentPaletteIndex, m_AvailablePalettes_Str);
+
+			if(EditorGUI.EndChangeCheck())
+			{
+				pb_MaterialPalette newPalette = null;
+
+				// Add a new material palette
+				if(m_CurrentPaletteIndex >= m_AvailablePalettes.Length)
+				{
+					string path = AssetDatabase.GenerateUniqueAssetPath(pb_FileUtil.PathFromRelative("Data/Material Palette.asset"));
+					newPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(path);
+					EditorGUIUtility.PingObject(newPalette);
+				}
+				else
+				{
+					newPalette = m_AvailablePalettes[m_CurrentPaletteIndex];
+				}
+
+				SetMaterialPalette(newPalette);
+			}
+
+			EditorGUI.BeginChangeCheck();
+			m_CurrentPalette = (pb_MaterialPalette) EditorGUILayout.ObjectField(m_CurrentPalette, typeof(pb_MaterialPalette), false);
+			if(EditorGUI.EndChangeCheck())
+				SetMaterialPalette(m_CurrentPalette);
+
+			GUILayout.Space(4);
 
 			Material[] materials = CurrentPalette;
 
@@ -325,6 +379,7 @@ namespace ProBuilder2.EditorCommon
 		private static void SaveUserMaterials(Material[] materials)
 		{
 			m_CurrentPalette.array = materials;
+			EditorUtility.SetDirty(m_CurrentPalette);
 			AssetDatabase.SaveAssets();
 		}
 
@@ -333,6 +388,24 @@ namespace ProBuilder2.EditorCommon
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
+		}
+
+		private void SetMaterialPalette(pb_MaterialPalette palette)
+		{
+			m_CurrentPalette = palette;
+			RefreshAvailablePalettes();
+		}
+
+		private void RefreshAvailablePalettes()
+		{
+			pb_MaterialPalette cur = CurrentPalette;
+			m_AvailablePalettes = AssetDatabase.FindAssets("t:pb_MaterialPalette").Select(x => AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(x))).ToArray();
+			// m_AvailablePalettes = Resources.FindObjectsOfTypeAll<pb_MaterialPalette>().Where(x => EditorUtility.IsPersistent(x)).ToArray();
+			m_AvailablePalettes_Str = m_AvailablePalettes.Select(x => x.name).ToArray();
+			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
+			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");
+			m_CurrentPaletteIndex = System.Array.IndexOf(m_AvailablePalettes, cur);
+			pb_Preferences_Internal.SetString(pb_Constant.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
 		}
 #endif
 	}
