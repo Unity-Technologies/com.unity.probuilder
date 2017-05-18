@@ -134,7 +134,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static bool GetBool(string key, bool fallback)
 		{
-			if(preferences.HasKey<bool>(key))
+			if(m_Preferences != null && preferences.HasKey<bool>(key))
 				return preferences.GetBool(key, fallback);
 			return EditorPrefs.GetBool(key, fallback);
 		}
@@ -151,7 +151,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static float GetFloat(string key, float fallback)
 		{
-			if(preferences.HasKey<float>(key))
+			if(m_Preferences != null && preferences.HasKey<float>(key))
 				return preferences.GetFloat(key, fallback);
 			return EditorPrefs.GetFloat(key, fallback);
 		}
@@ -168,7 +168,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static int GetInt(string key, int fallback)
 		{
-			if(preferences.HasKey<int>(key))
+			if(m_Preferences != null && preferences.HasKey<int>(key))
 				return preferences.GetInt(key, fallback);
 			return EditorPrefs.GetInt(key, fallback);
 		}
@@ -193,7 +193,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static Color GetColor(string key, Color fallback)
 		{
-			if(preferences.HasKey<Color>(key))
+			if(m_Preferences != null && preferences.HasKey<Color>(key))
 				return preferences.GetColor(key, fallback);
 			pbUtil.TryParseColor(EditorPrefs.GetString(key), ref fallback);
 			return fallback;
@@ -211,7 +211,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static string GetString(string key, string fallback)
 		{
-			if(preferences.HasKey<string>(key))
+			if(m_Preferences != null && preferences.HasKey<string>(key))
 				return preferences.GetString(key, fallback);
 			return EditorPrefs.GetString(key, fallback);
 		}
@@ -221,7 +221,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static Material GetMaterial(string key)
 		{
-			if(preferences.HasKey<Material>(key))
+			if(m_Preferences != null && preferences.HasKey<Material>(key))
 				return preferences.GetMaterial(key);
 
 			Material mat = null;
