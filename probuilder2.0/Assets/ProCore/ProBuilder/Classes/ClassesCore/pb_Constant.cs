@@ -206,6 +206,7 @@ namespace ProBuilder2.Common
 		// Misc
 		public const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
 		public const string pbDefaultMaterial 				= "pbDefaultMaterial";
+		public const string pbCurrentMaterialPalette		= "pbCurrentMaterialPalette";
 
 		// usablility settings (not preferences, just things that need to be saved)
 		public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?

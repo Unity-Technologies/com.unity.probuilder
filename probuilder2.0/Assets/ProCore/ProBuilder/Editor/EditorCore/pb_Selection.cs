@@ -14,6 +14,22 @@ namespace ProBuilder2.EditorCommon
 	{
 		private static pb_Object[] selection { get { return pb_Editor.instance != null ? pb_Editor.instance.selection : pbUtil.GetComponents<pb_Object>(Selection.transforms); } }
 
+		/**
+		 *	Get just the top level selected pb_Object components.
+		 */
+		public static IEnumerable<pb_Object> Top()
+		{
+			return Selection.transforms.Select(x => x.GetComponent<pb_Object>());
+		}
+
+		/**
+		 *	Get all selected pb_Object components, including those in children of selected objects.
+		 */
+		public static IEnumerable<pb_Object> All()
+		{
+			return Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>());
+		}
+
 		public static void AddToSelection(GameObject t)
 		{
 			if(t == null || Selection.objects.Contains(t))
