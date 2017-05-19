@@ -2,6 +2,7 @@
 
 ## Features
 
+- Support for saving and loading custom Material Palettes.
 - ProBuilder now able to store preferences per-project as well as globally.
 - Significantly improve performance of Weld Vertices function.
 

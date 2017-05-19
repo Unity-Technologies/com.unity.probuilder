@@ -106,7 +106,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static bool HasKey(string key)
 		{
-			return preferences.HasKey(key) || EditorPrefs.HasKey(key);
+			return (m_Preferences != null && m_Preferences.HasKey(key)) || EditorPrefs.HasKey(key);
 		}
 
 		/**
