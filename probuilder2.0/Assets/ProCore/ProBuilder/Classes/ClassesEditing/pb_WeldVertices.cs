@@ -20,8 +20,8 @@ namespace ProBuilder2.MeshOperations
 		public static pb_ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
-
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
+
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
 			int vertexCount = common.Count;
@@ -33,7 +33,7 @@ namespace ProBuilder2.MeshOperations
 			int maxNearestNeighbors = System.Math.Min(32, common.Count());
 
 			// 3 dimensions, duplicate entries allowed
-			KdTree<float, int> tree = new KdTree<float, int>(3, new FloatMath(), AddDuplicateBehavior.Update);
+			KdTree<float, int> tree = new KdTree<float, int>(3, new FloatMath(), AddDuplicateBehavior.Collect);
 
 			foreach(int i in common)
 			{
@@ -45,6 +45,8 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, int> remapped = new Dictionary<int, int>();
 			Dictionary<int, Vector3> averages = new Dictionary<int, Vector3>();
 			int index = sharedIndices.Length;
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			foreach(int commonIndex in common)
 			{
@@ -88,6 +90,12 @@ namespace ProBuilder2.MeshOperations
 					remapped.Add(c, index);
 
 					count++;
+
+					if(neighbors[neighborIndex].Duplicates != null)
+					{
+						for(int duplicateIndex = 0; duplicateIndex < neighbors[neighborIndex].Duplicates.Count; duplicateIndex++)
+							remapped.Add(neighbors[neighborIndex].Duplicates[duplicateIndex], index);
+					}
 				}
 
 				avg.x /= count;
@@ -99,7 +107,6 @@ namespace ProBuilder2.MeshOperations
 				index++;
 			}
 
-			
 			welds = new int[remapped.Count];
 			int n = 0;
 
