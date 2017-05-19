@@ -46,8 +46,6 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, Vector3> averages = new Dictionary<int, Vector3>();
 			int index = sharedIndices.Length;
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
 			foreach(int commonIndex in common)
 			{
 				// already merged with another
