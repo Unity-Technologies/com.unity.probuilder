@@ -18,7 +18,9 @@ UNITY_55=/d/Applications/Unity\ 5.5.0f3/Editor/Unity.exe
 UNITY_56=/d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe
 fi
 
-PROBUILDER_VERSION=2.9.0b0
+
+VERSION_LINE=$(grep version: $WORKING_DIR/bin/projects/ProBuilder-Unity56/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
+PROBUILDER_VERSION=${VERSION_LINE/"version: "/""}
 
 rm -rf bin/packages
 mkdir bin/packages
@@ -26,31 +28,31 @@ mkdir bin/packages
 rm -rf bin/logs
 mkdir bin/logs
 
-# /d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+# /d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 UNITY_VERSION=47
 echo Export Unity $UNITY_VERSION
 
-"$UNITY_47" -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+"$UNITY_47" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 UNITY_VERSION=50
 echo Export Unity $UNITY_VERSION
 
-"$UNITY_50" -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+"$UNITY_50" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 UNITY_VERSION=53
 echo Export Unity $UNITY_VERSION
 
-"$UNITY_53" -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+"$UNITY_53" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 UNITY_VERSION=55
 echo Export Unity $UNITY_VERSION
 
-"$UNITY_55" -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+"$UNITY_55" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 UNITY_VERSION=56
 echo Export Unity $UNITY_VERSION
 
-"$UNITY_56" -projectPath $WORKING_DIR/bin/temp/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+"$UNITY_56" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
 echo Finished
