@@ -1,4 +1,4 @@
-# ProBuilder 2.9.0f1
+# ProBuilder 2.9.0f2
 
 ## Features
 
@@ -12,6 +12,7 @@
 - Exit Bezier Shape editing when Esc is pressed.
 - Quell unnecessary errors when ProGrids interface fails to load UnityEditor assembly.
 - Fix potentially ambiguous reference to Axis enum in API examples.
+- Fix mesh leak when exporting STL files.
 
 ## Changes
 
