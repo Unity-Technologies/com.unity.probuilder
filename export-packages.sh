@@ -21,6 +21,7 @@ fi
 
 VERSION_LINE=$(grep version: $WORKING_DIR/bin/projects/ProBuilder-Unity56/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
 PROBUILDER_VERSION=${VERSION_LINE/"version: "/""}
+echo Version: $PROBUILDER_VERSION
 
 rm -rf bin/packages
 mkdir bin/packages
