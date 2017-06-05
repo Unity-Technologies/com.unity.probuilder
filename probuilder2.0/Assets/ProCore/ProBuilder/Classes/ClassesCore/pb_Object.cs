@@ -926,27 +926,9 @@ public class pb_Object : MonoBehaviour
 			int[] indices = pb_Face.AllTrianglesDistinct(kvp.Value).ToArray();
 
 			if(kvp.Value.Count > 1)
-			{
 				nrm = pb_Projection.FindBestPlane(_vertices, indices).normal;
-			}
 			else
-			{
-				pb_Face face = kvp.Value[0];
-
-				// if the face is just a quad, use the normal
-				// otherwise it's not safe to assume that the face
-				// has even generally uniform normals
-				if(face.indices.Length < 7)
-				{
-					nrm = pb_Math.Normal(	_vertices[face.indices[0]],
-											_vertices[face.indices[1]],
-											_vertices[face.indices[2]] );
-				}
-				else
-				{
-					nrm = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
-				}
-			}
+				nrm = pb_Math.Normal(this, kvp.Value[0]);
 
 			if(kvp.Value[0].uv.useWorldSpace)
 				pb_UVUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));

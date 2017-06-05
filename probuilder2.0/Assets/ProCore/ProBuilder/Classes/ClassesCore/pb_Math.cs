@@ -665,6 +665,9 @@ namespace ProBuilder2.Common
 			bitangent = Vector3.Cross(normal, tangent);
 		}
 
+		/**
+		 *	Is the direction within epsilon of Up, Down, Left, Right, Forward, or Backwards?
+		 */
 		public static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
 		{
 			v.Normalize();
