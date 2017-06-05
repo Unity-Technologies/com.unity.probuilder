@@ -2,6 +2,8 @@
 
 if [[ -z $(git status -s) ]]
 then
+echo Build Source
+	mono pb-build.exe build/targets/ProBuilderAdvanced-Src.json
 echo Build 4.7
 	mono pb-build.exe build/targets/ProBuilderAdvanced-4.7.json
 echo Build 5.0
