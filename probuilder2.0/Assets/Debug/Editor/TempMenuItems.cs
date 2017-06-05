@@ -20,7 +20,27 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		EditorWindow.GetWindow<TempMenuItems>(false, "KD Tree", true).Show();
+		IEnumerable<pb_Model> models = pb_Selection.Top().Select(x => new pb_Model(x.msh, x.GetComponent<MeshRenderer>().sharedMaterial));
+
+		foreach(pb_Object pb in pb_Selection.Top())
+		{
+			string obj, mat;
+			pb_Obj.Export(models, out obj, out mat);
+			pb_FileUtil.WriteFile("Assets/test.obj", obj);
+		}
+
+		AssetDatabase.Refresh();
+
+		// foreach(pb_Object pb in pb_Selection.Top())
+		// {
+		// 	pb.ToMesh();
+		// 	pb.RefreshUV(pb.SelectedFaces);
+		// 	pb_Log.PushLogLevel(pb_LogLevel.None);
+		// 	pb.Refresh();
+		// 	pb_Log.PopLogLevel();
+		// }
+
+		// EditorWindow.GetWindow<TempMenuItems>(false, "KD Tree", true).Show();
 	}
 
 	static float rand { get { return UnityEngine.Random.Range(-m_PointRange, m_PointRange); } }

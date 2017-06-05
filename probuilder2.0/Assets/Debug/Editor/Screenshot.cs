@@ -7,12 +7,12 @@ public class TakeScreenshotInEditor : ScriptableObject
 	[MenuItem ("Tools/Debug/Screenshot/Take Screenshot of Game View %^s")]
 	static void TakeScreenshot()
 	{
-		string path = EditorUtility.SaveFilePanel("Save GameView Screenshot",
-			"",
-			"Screenshot",
-			"png");
+		// string path = EditorUtility.SaveFilePanel("Save GameView Screenshot",
+		// 	"",
+		// 	"Screenshot",
+		// 	"png");
 
-		Application.CaptureScreenshot(path);
+		// Application.CaptureScreenshot(path);
 	}
 
 

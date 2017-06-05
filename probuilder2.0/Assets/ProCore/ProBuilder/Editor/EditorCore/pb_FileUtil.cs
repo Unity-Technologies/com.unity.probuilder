@@ -143,5 +143,13 @@ namespace ProBuilder2.EditorCommon
 			return AssetDatabase.LoadAssetAtPath<T>(path);
 #endif
 		}
+
+		/**
+		 *	Write contents to a file path.
+		 */
+		public static void WriteFile(string path, string contents)
+		{
+			File.WriteAllText(path, contents);
+		}
 	}
 }
