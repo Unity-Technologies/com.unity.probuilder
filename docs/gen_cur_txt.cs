@@ -20,14 +20,14 @@ public static class GenerateCurrentTxt
 
 		// The text to regex on
 		string m_Text = null;
-		
+
 		for(int i = 0; i < args.Length; i++)
 		{
 			if( args[i].Equals("-f") )
 			{
 				try {
 					m_Text = File.ReadAllText(args[(++i)]);
-					
+
 				} catch {
 					Console.WriteLine("Could not open file: " + args[(++i)]);
 				}
@@ -42,7 +42,7 @@ public static class GenerateCurrentTxt
 
 		string[] split = Regex.Split(m_Text, "(?mi)^#\\s", RegexOptions.Multiline);
 
-		Console.WriteLine(split[1]);
+		Console.WriteLine(string.Format("# {0}", split[1]));
 
 		return 0;
 	}

@@ -17,19 +17,19 @@ Button Corner Rounding		| 2px
 **Light Skin (Unity Personal)**
 Item 						| Color Value
 --- 						| ---
-Text 						| 545454
-Text Backing 				| d7d7d7
-Normal 						| e7e7e7
-Active 						| cccccc
-OnNormal 					| f9f9f9
-OnActive 					| cccccc
+Text 						| 
+Text Backing 				| 
+Normal 						| E5E5E5
+Active 						| 
+OnNormal 					| FFFFFF
+OnActive 					| 
 
 **Dark Skin (Unity Pro)**
 Item 						| Color Value
 --- 						| ---
-Text 						| cecece
-Text Backing 				| 2c2c2c
-Normal 						| 4e4e4e
-Active 						| 696969
-OnNormal					| 616161
-OnActive 					| 696969
+Text 						| 
+Text Backing 				| 
+Normal 						| 565656
+Active 						| 
+OnNormal					| 7A7A7A
+OnActive 					| 
