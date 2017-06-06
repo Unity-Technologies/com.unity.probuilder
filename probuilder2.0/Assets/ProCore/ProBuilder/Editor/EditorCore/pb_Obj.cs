@@ -53,9 +53,9 @@ namespace ProBuilder2.EditorCommon
 		// Convert from left to right handed coordinates on export?
 		public Handedness handedness = Handedness.Right;
 
-		// If absoluteTexturePath is false then the material textures will be copied to the export path.
-		// If true the material library will point to the existing texture path in the Unity project.
-		public bool absoluteTexturePath = true;
+		// If copyTextures is true then the material textures will be copied to the export path.
+		// If false the material library will point to the existing texture path in the Unity project.
+		public bool copyTextures = true;
 	}
 
 	/**
@@ -209,7 +209,7 @@ namespace ProBuilder2.EditorCommon
 				string path = AssetDatabase.GetAssetPath(group.Key.mainTexture);
 				// remove "Assets/" from start of path
 				path = path.Substring(7, path.Length - 7);
-				string textureName = options.absoluteTexturePath ? string.Format("{0}/{1}", Application.dataPath, path) : Path.GetFileName(path);
+				string textureName = options.copyTextures ? Path.GetFileName(path) : string.Format("{0}/{1}", Application.dataPath, path);
 
 				sb.AppendLine(string.Format("newmtl {0}", group.Value));
 				sb.AppendLine(string.Format("map_Kd {0}", textureName));

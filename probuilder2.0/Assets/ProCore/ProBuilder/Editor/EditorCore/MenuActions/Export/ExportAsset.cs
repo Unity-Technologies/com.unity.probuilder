@@ -4,6 +4,7 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Interface;
 using System.Linq;
+using System.Collections.Generic;
 using Parabox.STL;
 
 namespace ProBuilder2.Actions
@@ -31,11 +32,11 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			MakeAsset();
+			MakeAsset( pb_Selection.Top() );
 			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
 		}
 
-		public static string MakeAsset()
+		public static string MakeAsset(IEnumerable<pb_Object> meshes)
 		{
 			string path = "Assets";
 			path = AssetDatabase.GetAssetPath(Selection.activeObject);
@@ -54,7 +55,7 @@ namespace ProBuilder2.Actions
 
 			string prefabPath = null;
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in meshes)
 			{
 				string meshPath = AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".asset");
 
