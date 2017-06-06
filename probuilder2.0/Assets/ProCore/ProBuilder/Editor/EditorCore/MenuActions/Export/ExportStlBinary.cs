@@ -30,7 +30,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			if( ExportStlAscii.ExportWithFileDialog(Selection.gameObjects, FileType.Binary) )
+			if(!string.IsNullOrEmpty(ExportStlAscii.ExportWithFileDialog(Selection.gameObjects, FileType.Binary)))
 				return new pb_ActionResult(Status.Success, "Export STL");
 			else
 				return new pb_ActionResult(Status.Canceled, "User Canceled");

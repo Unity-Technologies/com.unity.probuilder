@@ -65,7 +65,7 @@ namespace ProBuilder2.EditorCommon
 	public static class pb_Obj
 	{
 		/**
-		 * Write the Obj and Mtl file contents to string.
+		 * Write the contents of a single obj & mtl from a set of models.
 		 */
 		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, pb_ObjOptions options = null)
 		{

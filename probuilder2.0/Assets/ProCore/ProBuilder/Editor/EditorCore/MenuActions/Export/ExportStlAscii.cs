@@ -30,13 +30,13 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			if( ExportWithFileDialog(Selection.gameObjects, FileType.Ascii) )
+			if(!string.IsNullOrEmpty(ExportWithFileDialog(Selection.gameObjects, FileType.Ascii)))
 				return new pb_ActionResult(Status.Success, "Export STL");
 			else
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
 		}
 
-		internal static bool ExportWithFileDialog(GameObject[] gameObjects, FileType type)
+		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)
 		{
 			string path = EditorUtility.SaveFilePanel("Save Mesh to STL", "", "Mesh", "stl");
 
@@ -54,10 +54,10 @@ namespace ProBuilder2.Actions
 					AssetDatabase.Refresh();
 
 				}
-				return true;
+				return path;
 			}
 
-			return false;
+			return null;
 		}
 	}
 }

@@ -89,6 +89,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.TriangulateObject(),
 				new Actions.GenerateUV2(),
 				new Actions.ProBuilderize(),
+				new Actions.Export(),
 
 				// All
 				new Actions.SetPivotToSelection(),

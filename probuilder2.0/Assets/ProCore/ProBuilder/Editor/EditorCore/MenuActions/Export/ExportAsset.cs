@@ -35,7 +35,7 @@ namespace ProBuilder2.Actions
 			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
 		}
 
-		public static void MakeAsset()
+		public static string MakeAsset()
 		{
 			string path = "Assets";
 			path = AssetDatabase.GetAssetPath(Selection.activeObject);
@@ -51,6 +51,8 @@ namespace ProBuilder2.Actions
 				AssetDatabase.CreateFolder("Assets", "ProBuilder Saved Assets");
 				AssetDatabase.Refresh();
 			}
+
+			string prefabPath = null;
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
@@ -69,14 +71,16 @@ namespace ProBuilder2.Actions
 				GameObject go = new GameObject();
 				go.AddComponent<MeshFilter>().sharedMesh = meshAsset;
 				go.AddComponent<MeshRenderer>().sharedMaterials = pb.gameObject.GetComponent<MeshRenderer>().sharedMaterials;
-
-				PrefabUtility.CreatePrefab(AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".prefab"), go, ReplacePrefabOptions.Default);
+				prefabPath = AssetDatabase.GenerateUniqueAssetPath(path + "/" + pb.name + ".prefab");
+				PrefabUtility.CreatePrefab(prefabPath, go, ReplacePrefabOptions.Default);
 				GameObject.DestroyImmediate(go);
 			}
 
 			AssetDatabase.Refresh();
 
 			Selection.activeObject = meshAsset;
+
+			return prefabPath;
 		}
 	}
 }
