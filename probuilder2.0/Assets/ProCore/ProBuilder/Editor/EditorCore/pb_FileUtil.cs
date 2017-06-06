@@ -75,6 +75,12 @@ namespace ProBuilder2.EditorCommon
 			if( !Exists(m_ProBuilderFolderPath) )
 				m_ProBuilderFolderPath = FindFolder("ProBuilder", true);
 
+			if(!Exists(m_ProBuilderFolderPath))
+			{
+				m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder";
+				Directory.CreateDirectory(m_ProBuilderFolderPath);
+				Debug.LogWarning("Creating a new ProBuilder directory. This probably means the ProBuilder folder was renamed. Icons & preferences may not work in this state.");
+			}
 			return m_ProBuilderFolderPath;
 		}
 
