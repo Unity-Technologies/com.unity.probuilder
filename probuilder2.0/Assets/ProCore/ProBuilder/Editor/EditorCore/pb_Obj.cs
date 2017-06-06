@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEditor;
 using ProBuilder2.Common;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -10,20 +13,26 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_Model
 	{
+		// The name of this model.
+		public string name;
+		// The geometry.
 		public Mesh mesh;
-		public Material material;
+		// Any materials referenced by the mesh. Should be equal in length to the submesh count.
+		public Material[] materials;
+		// Optional matrix to be applied to the mesh geometry before writing to Obj.
 		public Matrix4x4 matrix;
 
 		public pb_Model()
 		{}
 
-		public pb_Model(Mesh mesh, Material material) : this(mesh, material, Matrix4x4.identity)
+		public pb_Model(string name, Mesh mesh, Material material) : this(name, mesh, new Material[] { material }, Matrix4x4.identity)
 		{}
 
-		public pb_Model(Mesh mesh, Material material, Matrix4x4 matrix)
+		public pb_Model(string name, Mesh mesh, Material[] materials, Matrix4x4 matrix)
 		{
+			this.name = name;
 			this.mesh = mesh;
-			this.material = material;
+			this.materials = materials;
 			this.matrix = matrix;
 		}
 	}
@@ -33,7 +42,6 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_ObjOptions
 	{
-
 	}
 
 	/**
@@ -47,13 +55,15 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static bool Export(IEnumerable<pb_Model> models, out string objContents, out string mtlContents, pb_ObjOptions options = null)
 		{
-			objContents = WriteObjContents(models, options);
-			mtlContents = null;
+			Dictionary<Material, string> materialMap = null;
+
+			mtlContents = WriteMtlContents(models, out materialMap);
+			objContents = WriteObjContents("test", models, options);
 
 			return true;
 		}
 
-		public static string WriteObjContents(IEnumerable<pb_Model> models, pb_ObjOptions options)
+		public static string WriteObjContents(string name, IEnumerable<pb_Model> models, pb_ObjOptions options)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -61,10 +71,14 @@ namespace ProBuilder2.EditorCommon
 
 			sb.AppendLine();
 
+			sb.AppendLine(string.Format("mtllib ./{0}.mtl", name));
+
+			sb.AppendLine();
+
 			foreach(pb_Model model in models)
 			{
 				Mesh mesh = model.mesh;
-				Material material = model.material;
+				Material[] materials = model.materials;
 				Matrix4x4 matrix = model.matrix;
 
 				int vertexCount = mesh.vertexCount;
@@ -72,9 +86,9 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] positions = mesh.vertices;
 				Vector3[] normals = mesh.normals;
 				Vector2[] textures0 = mesh.uv;
-				int[] triangles = mesh.triangles;
+				int materialCount = materials != null ? materials.Length : 0;
 
-				sb.AppendLine(string.Format("g {0}", mesh.name));
+				sb.AppendLine(string.Format("o {0}", model.name));
 
 				for(int i = 0; i < vertexCount; i++)
 					sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
@@ -92,13 +106,64 @@ namespace ProBuilder2.EditorCommon
 				sb.AppendLine();
 
 				// Material assignment
-				sb.AppendLine(string.Format("g {0}", mesh.name));
-				sb.AppendLine(string.Format("usemtl {0}", material.name));
-
-				for(int i = 0; i < triangles.Length; i += 3)
+				for(int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
 				{
-					sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}", triangles[i+0] + 1, triangles[i+1] + 1, triangles[i+2] + 1));
+					sb.AppendLine(string.Format("g {0} {1}", mesh.name, submeshIndex));
+
+					if(submeshIndex < materialCount)
+						sb.AppendLine(string.Format("usemtl {0}", materials[submeshIndex].name));
+
+					int[] triangles = mesh.GetTriangles(submeshIndex);
+
+					for(int i = 0; i < triangles.Length; i += 3)
+					{
+						sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}", triangles[i+0] + 1, triangles[i+1] + 1, triangles[i+2] + 1));
+					}
+
+					sb.AppendLine();
 				}
+			}
+
+			return sb.ToString();
+		}
+
+		/**
+		 * Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring
+		 * unique names for each group. Material to named mtl group are stored in materialMap.
+		 */
+		public static string WriteMtlContents(IEnumerable<pb_Model> models, out Dictionary<Material, string> materialMap)
+		{
+			materialMap = new Dictionary<Material, string>();
+
+			foreach(pb_Model model in models)
+			{
+				foreach(Material material in model.materials)
+				{
+					if(!materialMap.ContainsKey(material))
+					{
+						string name = material.name;
+						int nameIncrement = 1;
+
+						while(materialMap.Any(x => x.Value.Equals(name)))
+						{
+							name = string.Format("{0} {1}", material.name, nameIncrement++);
+						}
+
+						materialMap.Add(material, name);
+					}
+				}
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			foreach(KeyValuePair<Material, string> group in materialMap)
+			{
+				string path = AssetDatabase.GetAssetPath(group.Key.mainTexture);
+				string textureName = Path.GetFileName(path);
+
+				sb.AppendLine(string.Format("newmtl {0}", group.Value));
+				sb.AppendLine(string.Format("map_Kd {0}", textureName));
+				sb.AppendLine();
 			}
 
 			return sb.ToString();

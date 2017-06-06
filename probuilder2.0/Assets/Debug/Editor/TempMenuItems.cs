@@ -20,13 +20,14 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		IEnumerable<pb_Model> models = pb_Selection.Top().Select(x => new pb_Model(x.msh, x.GetComponent<MeshRenderer>().sharedMaterial));
+		IEnumerable<pb_Model> models = pb_Selection.Top().Select(x => new pb_Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, Matrix4x4.identity));
 
 		foreach(pb_Object pb in pb_Selection.Top())
 		{
 			string obj, mat;
 			pb_Obj.Export(models, out obj, out mat);
-			pb_FileUtil.WriteFile("Assets/test.obj", obj);
+			pb_FileUtil.WriteFile("Assets/dump/test.obj", obj);
+			pb_FileUtil.WriteFile("Assets/dump/test.mtl", mat);
 		}
 
 		AssetDatabase.Refresh();
@@ -64,7 +65,7 @@ public class TempMenuItems : EditorWindow
 	{
 		tree = new KdTree<float, int>(2, new FloatMath(), AddDuplicateBehavior.Update);
 		points = new float[m_SampleCount][];
-		
+
 		for(int i = 0; i < m_SampleCount; i++)
 		{
 			points[i] = new float[2] { rand, rand };
