@@ -42,6 +42,20 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_ObjOptions
 	{
+		// Coordinate system to use when exporting. Unity is left handed where most other
+		// applications are right handed.
+		public enum Handedness
+		{
+			Left,
+			Right
+		};
+
+		// Convert from left to right handed coordinates on export?
+		public Handedness handedness = Handedness.Right;
+
+		// If absoluteTexturePath is false then the material textures will be copied to the export path.
+		// If true the material library will point to the existing texture path in the Unity project.
+		public bool absoluteTexturePath = true;
 	}
 
 	/**
@@ -53,27 +67,32 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Write the Obj and Mtl file contents to string.
 		 */
-		public static bool Export(IEnumerable<pb_Model> models, out string objContents, out string mtlContents, pb_ObjOptions options = null)
+		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, pb_ObjOptions options = null)
 		{
 			Dictionary<Material, string> materialMap = null;
 
-			mtlContents = WriteMtlContents(models, out materialMap);
-			objContents = WriteObjContents("test", models, options);
+			if(options == null)
+				options = new pb_ObjOptions();
+
+			mtlContents = WriteMtlContents(models, options, out materialMap);
+			objContents = WriteObjContents(name, models, materialMap, options);
 
 			return true;
 		}
 
-		public static string WriteObjContents(string name, IEnumerable<pb_Model> models, pb_ObjOptions options)
+		private static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
 		{
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("# Exported from ProBuilder");
-
-			sb.AppendLine();
-
 			sb.AppendLine(string.Format("mtllib ./{0}.mtl", name));
-
+			sb.AppendLine(string.Format("o {0}", name));
 			sb.AppendLine();
+
+			int triangleOffset = 1;
+
+			bool reverseWinding = options.handedness == pb_ObjOptions.Handedness.Right;
+			float handedness = options.handedness == pb_ObjOptions.Handedness.Left ? 1f : -1f;
 
 			foreach(pb_Model model in models)
 			{
@@ -86,9 +105,25 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] positions = mesh.vertices;
 				Vector3[] normals = mesh.normals;
 				Vector2[] textures0 = mesh.uv;
+
+				for(int i = 0; i < vertexCount; i++)
+				{
+					if(positions != null)
+					{
+						positions[i] = matrix.MultiplyPoint3x4(positions[i]);
+						positions[i].x *= handedness;
+					}
+
+					if(normals != null)
+					{
+						normals[i] = matrix.MultiplyVector(normals[i]);
+						normals[i].x *= handedness;
+					}
+				}
+
 				int materialCount = materials != null ? materials.Length : 0;
 
-				sb.AppendLine(string.Format("o {0}", model.name));
+				sb.AppendLine(string.Format("g {0}", model.name));
 
 				for(int i = 0; i < vertexCount; i++)
 					sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
@@ -108,20 +143,35 @@ namespace ProBuilder2.EditorCommon
 				// Material assignment
 				for(int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
 				{
-					sb.AppendLine(string.Format("g {0} {1}", mesh.name, submeshIndex));
+					sb.AppendLine(string.Format("g {0}_{1}", mesh.name, submeshIndex));
 
 					if(submeshIndex < materialCount)
-						sb.AppendLine(string.Format("usemtl {0}", materials[submeshIndex].name));
+						sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[submeshIndex]]));
 
 					int[] triangles = mesh.GetTriangles(submeshIndex);
 
 					for(int i = 0; i < triangles.Length; i += 3)
 					{
-						sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}", triangles[i+0] + 1, triangles[i+1] + 1, triangles[i+2] + 1));
+						if(reverseWinding)
+						{
+							sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+								triangles[i+2] + triangleOffset,
+								triangles[i+1] + triangleOffset,
+								triangles[i+0] + triangleOffset));
+						}
+						else
+						{
+							sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+								triangles[i+0] + triangleOffset,
+								triangles[i+1] + triangleOffset,
+								triangles[i+2] + triangleOffset));
+						}
 					}
 
 					sb.AppendLine();
 				}
+
+				triangleOffset += vertexCount;
 			}
 
 			return sb.ToString();
@@ -131,7 +181,7 @@ namespace ProBuilder2.EditorCommon
 		 * Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring
 		 * unique names for each group. Material to named mtl group are stored in materialMap.
 		 */
-		public static string WriteMtlContents(IEnumerable<pb_Model> models, out Dictionary<Material, string> materialMap)
+		private static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap)
 		{
 			materialMap = new Dictionary<Material, string>();
 
@@ -145,9 +195,7 @@ namespace ProBuilder2.EditorCommon
 						int nameIncrement = 1;
 
 						while(materialMap.Any(x => x.Value.Equals(name)))
-						{
-							name = string.Format("{0} {1}", material.name, nameIncrement++);
-						}
+							name = string.Format("{0}_{1}", material.name, nameIncrement++);
 
 						materialMap.Add(material, name);
 					}
@@ -159,7 +207,9 @@ namespace ProBuilder2.EditorCommon
 			foreach(KeyValuePair<Material, string> group in materialMap)
 			{
 				string path = AssetDatabase.GetAssetPath(group.Key.mainTexture);
-				string textureName = Path.GetFileName(path);
+				// remove "Assets/" from start of path
+				path = path.Substring(7, path.Length - 7);
+				string textureName = options.absoluteTexturePath ? string.Format("{0}/{1}", Application.dataPath, path) : Path.GetFileName(path);
 
 				sb.AppendLine(string.Format("newmtl {0}", group.Value));
 				sb.AppendLine(string.Format("map_Kd {0}", textureName));
