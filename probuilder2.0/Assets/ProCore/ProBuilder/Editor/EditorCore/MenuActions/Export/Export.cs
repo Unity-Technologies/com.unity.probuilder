@@ -16,6 +16,13 @@ namespace ProBuilder2.Actions
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 
+		GUIContent gc_ExportFormat = new GUIContent("Export Format", "The type of file to export the current selection as.");
+		GUIContent gc_ExportRecursive = new GUIContent("Include Children", "Should the exporter include children of the current selection when searching for meshes to export?");
+		GUIContent gc_ObjExportRightHanded = new GUIContent("Right Handed", "Unity coordinate space is left handed, where most other major 3D modeling softwares are right handed. Usually this option should be left enabled.");
+		GUIContent gc_ObjExportAsGroup = new GUIContent("Export As Group", "If enabled all selected meshes will be combined to a single model. If not, each mesh will be exported individually.");
+		GUIContent gc_ObjApplyTransform = new GUIContent("Apply Transforms", "If enabled each mesh will have it's Transform applied prior to export. This is useful when you want to retain the correct placement of objects when re-importing to Unity (just set the imported mesh to { 0, 0, 0 }). If not enabled meshes are exported in local space.");
+		GUIContent gc_ObjExportCopyTextures = new GUIContent("Copy Textures", "With Copy Textures enabled the exporter will copy material textures to the destination directory. If false the material library will point to the texture path within the Unity project. If you're exporting models with the intention of editing in an external 3D modeler then re-importing, disable this option to avoid duplicate textures in your project.");
+
 		// Options for each export format
 		private bool m_ExportRecursive;
 		// obj specific
@@ -71,11 +78,11 @@ namespace ProBuilder2.Actions
 			GUILayout.Label("Export Settings", EditorStyles.boldLabel);
 
 			EditorGUI.BeginChangeCheck();
-			m_ExportFormat = (ExportFormat) EditorGUILayout.EnumPopup("Format", m_ExportFormat);
+			m_ExportFormat = (ExportFormat) EditorGUILayout.EnumPopup(gc_ExportFormat, m_ExportFormat);
 			if(EditorGUI.EndChangeCheck())
 				pb_Preferences_Internal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			m_ExportRecursive = EditorGUILayout.Toggle("Recursive", m_ExportRecursive);
+			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
 			if(m_ExportFormat == ExportFormat.Obj)
 				ObjExportOptions();
@@ -90,15 +97,15 @@ namespace ProBuilder2.Actions
 		{
 			EditorGUI.BeginChangeCheck();
 
-			m_ObjExportRightHanded = EditorGUILayout.Toggle("Right Handed", m_ObjExportRightHanded);
-			m_ObjExportAsGroup = EditorGUILayout.Toggle("Export As Group", m_ObjExportAsGroup);
+			m_ObjExportRightHanded = EditorGUILayout.Toggle(gc_ObjExportRightHanded, m_ObjExportRightHanded);
+			m_ObjExportAsGroup = EditorGUILayout.Toggle(gc_ObjExportAsGroup, m_ObjExportAsGroup);
 			EditorGUI.BeginDisabledGroup(m_ObjExportAsGroup);
 			if(m_ObjExportAsGroup)
 				EditorGUILayout.Toggle("Apply Transforms", true);
 			else
-				m_ObjApplyTransform = EditorGUILayout.Toggle("Apply Transforms", m_ObjApplyTransform);
+				m_ObjApplyTransform = EditorGUILayout.Toggle(gc_ObjApplyTransform, m_ObjApplyTransform);
 			EditorGUI.EndDisabledGroup();
-			m_ObjExportCopyTextures = EditorGUILayout.Toggle("Copy Textures", m_ObjExportCopyTextures);
+			m_ObjExportCopyTextures = EditorGUILayout.Toggle(gc_ObjExportCopyTextures, m_ObjExportCopyTextures);
 
 			if(EditorGUI.EndChangeCheck())
 			{
