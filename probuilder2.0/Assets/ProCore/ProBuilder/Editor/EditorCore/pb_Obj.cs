@@ -68,6 +68,34 @@ namespace ProBuilder2.EditorCommon
 	public static class pb_Obj
 	{
 		/**
+	     * Standard shader defines:
+		 * Albedo       | map_Kd           | _MainTex
+		 * Metallic     | Pm/map_Pm*       | _MetallicGlossMap
+		 * Normal       | map_bump / bump  | _BumpMap
+		 * Height       | disp             | _ParallaxMap
+		 * Occlusion    |                  | _OcclusionMap
+		 * Emission     | Ke/map_Ke*       | _EmissionMap
+		 * DetailMask   | map_d            | _DetailMask
+		 * DetailAlbedo |                  | _DetailAlbedoMap
+		 * DetailNormal |                  | _DetailNormalMap
+		 *
+		 * *http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr
+		 */
+		static Dictionary<string, string> m_TextureMapKeys = new Dictionary<string, string>
+		{
+			{ "_MainTex", "map_Kd" },
+			{ "_MetallicGlossMap", "map_Pm" },
+			// { "_MetallicGlossMap", "Pm" },
+			{ "_BumpMap", "bump" },
+			// { "_BumpMap", "map_bump" },
+			// { "_BumpMap", "norm" },
+			{ "_ParallaxMap", "disp" },
+			{ "_EmissionMap", "map_Ke" },
+			// { "_EmissionMap", "Ke" },
+			{ "_DetailMask", "map_d" },
+		};
+
+		/**
 		 * Write the contents of a single obj & mtl from a set of models.
 		 */
 		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, out List<string> textures, pb_ObjOptions options = null)
@@ -164,7 +192,10 @@ namespace ProBuilder2.EditorCommon
 					sb.AppendLine(string.Format("g {0}_{1}", mesh.name, submeshIndex));
 
 					if(submeshIndex < materialCount)
-						sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[submeshIndex]]));
+					{
+						if(materials[submeshIndex] != null)
+							sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[submeshIndex]]));
+					}
 
 					int[] triangles = mesh.GetTriangles(submeshIndex);
 
@@ -207,6 +238,9 @@ namespace ProBuilder2.EditorCommon
 			{
 				foreach(Material material in model.materials)
 				{
+					if(material == null)
+						continue;
+
 					if(!materialMap.ContainsKey(material))
 					{
 						string escapedName = material.name.Replace(" ", "_");
@@ -226,21 +260,70 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(KeyValuePair<Material, string> group in materialMap)
 			{
-				string path = AssetDatabase.GetAssetPath(group.Key.mainTexture);
-
-				if(options.copyTextures)
-					textures.Add(path);
-
-				// remove "Assets/" from start of path
-				path = path.Substring(7, path.Length - 7);
-				string textureName = options.copyTextures ? Path.GetFileName(path) : string.Format("{0}/{1}", Application.dataPath, path);
+				Material mat = group.Key;
 
 				sb.AppendLine(string.Format("newmtl {0}", group.Value));
-				sb.AppendLine(string.Format("map_Kd {0}", textureName));
+
+				// Texture maps
+				if(mat.shader != null)
+				{
+					for(int i = 0; i < ShaderUtil.GetPropertyCount(mat.shader); i++)
+					{
+						if( ShaderUtil.GetPropertyType(mat.shader, i) != ShaderUtil.ShaderPropertyType.TexEnv ||
+							ShaderUtil.GetTexDim(mat.shader, i) != UnityEngine.Rendering.TextureDimension.Tex2D )
+							continue;
+
+						string texPropertyName = ShaderUtil.GetPropertyName(mat.shader, i);
+
+						Texture texture = mat.GetTexture(texPropertyName);
+
+						string path = texture != null ? AssetDatabase.GetAssetPath(texture) : null;
+
+						if(!string.IsNullOrEmpty(path))
+						{
+							if(options.copyTextures)
+								textures.Add(path);
+
+							// remove "Assets/" from start of path
+							path = path.Substring(7, path.Length - 7);
+						
+							string textureName = options.copyTextures ? Path.GetFileName(path) : string.Format("{0}/{1}", Application.dataPath, path);
+
+							string mtlKey = null;
+
+							if(m_TextureMapKeys.TryGetValue(texPropertyName, out mtlKey))
+							{
+								Vector2 offset = mat.GetTextureOffset(texPropertyName);
+								Vector2 scale  = mat.GetTextureScale(texPropertyName);
+
+								sb.AppendLine(string.Format("{0} -o {1} {2} -s {3} {4} {5}", mtlKey, offset.x, offset.y, scale.x, scale.y, textureName));
+							}
+						}
+					}
+				}
+
+				if(mat.HasProperty("_Color"))
+				{
+					// Diffuse
+					sb.AppendLine(string.Format("Kd {0}", FormatColor(mat.color)));
+					// Transparency
+					sb.AppendLine(string.Format("d {0}", mat.color.a));
+				}
+				else
+				{
+					sb.AppendLine("Kd 1.0 1.0 1.0");
+					sb.AppendLine("d 1.0");
+				}
+
 				sb.AppendLine();
 			}
 
 			return sb.ToString();
+		}
+
+		private static string FormatColor(Color color)
+		{
+			return string.Format("{0} {1} {2}", color.r, color.g, color.b);
 		}
 	}
 }
