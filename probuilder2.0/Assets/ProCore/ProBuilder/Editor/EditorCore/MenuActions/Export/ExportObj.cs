@@ -66,6 +66,8 @@ namespace ProBuilder2.Actions
 				if(string.IsNullOrEmpty(path))
 					return null;
 
+				name = Path.GetFileNameWithoutExtension(path);
+
 				string obj, mat;
 
 				if( pb_Obj.Export(name, models, out obj, out mat, out textures, options) )
