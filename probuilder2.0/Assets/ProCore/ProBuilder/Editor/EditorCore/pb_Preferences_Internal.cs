@@ -142,7 +142,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_Preferences != null && preferences.HasKey<bool>(key))
 				return preferences.GetBool(key, fallback);
-				
 			return EditorPrefs.GetBool(key, fallback);
 		}
 

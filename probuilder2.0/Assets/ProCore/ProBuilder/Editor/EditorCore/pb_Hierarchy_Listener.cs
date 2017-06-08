@@ -13,7 +13,7 @@ namespace ProBuilder2.EditorCommon
 	 * Static delegates listen for hierarchy changes (duplication, delete, copy/paste) and rebuild the mesh components
 	 * of pb_Objects if necessary.
 	 */
-	public class pb_Hierarchy_Listener : Editor
+	public static class pb_Hierarchy_Listener
 	{
 		static pb_Hierarchy_Listener()
 		{
@@ -26,12 +26,6 @@ namespace ProBuilder2.EditorCommon
 			// or when creating a prefab or reverting.  OnHierarchyChange captures those.
 			PrefabUtility.prefabInstanceUpdated -= PrefabInstanceUpdated;
 			PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
-		}
-
-		~pb_Hierarchy_Listener()
-		{
-			PrefabUtility.prefabInstanceUpdated -= PrefabInstanceUpdated;
-			EditorApplication.hierarchyWindowChanged -= HierarchyWindowChanged;
 		}
 
 		static void PrefabInstanceUpdated(GameObject go)
