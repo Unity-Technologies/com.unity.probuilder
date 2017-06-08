@@ -189,7 +189,10 @@ namespace ProBuilder2.EditorCommon
 				// Material assignment
 				for(int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
 				{
-					sb.AppendLine(string.Format("g {0}_{1}", mesh.name, submeshIndex));
+					if(mesh.subMeshCount > 1)
+						sb.AppendLine(string.Format("g {0}_{1}", mesh.name, submeshIndex));
+					else
+						sb.AppendLine(string.Format("g {0}", mesh.name));
 
 					if(submeshIndex < materialCount)
 					{
