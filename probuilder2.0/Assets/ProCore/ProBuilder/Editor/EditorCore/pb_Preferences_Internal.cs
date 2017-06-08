@@ -22,7 +22,8 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 *	Manage ProBuilder preferences.
 	 */
-	public class pb_Preferences_Internal
+	[InitializeOnLoad]
+	public static class pb_Preferences_Internal
 	{
 		private static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
 		{
@@ -68,9 +69,9 @@ namespace ProBuilder2.EditorCommon
 			{ pb_Constant.pbDefaultEntity, (int) EntityType.Detail },
 			{ pb_Constant.pbDragSelectMode, (int) DragSelectMode.Difference },
 			{ pb_Constant.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
-#if !UNITY_4_7
+			#if !UNITY_4_7
 			{ pb_Constant.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
-#endif
+			#endif
 		};
 
 		private static Dictionary<string, Color> m_ColorDefaults = new Dictionary<string, Color>()
@@ -84,6 +85,11 @@ namespace ProBuilder2.EditorCommon
 		private static Dictionary<string, string> m_StringDefaults = new Dictionary<string, string>()
 		{
 		};
+
+		static pb_Preferences_Internal()
+		{
+			m_Preferences = pb_FileUtil.LoadRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
+		}
 
 		private static pb_PreferenceDictionary m_Preferences = null;
 
@@ -136,6 +142,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_Preferences != null && preferences.HasKey<bool>(key))
 				return preferences.GetBool(key, fallback);
+				
 			return EditorPrefs.GetBool(key, fallback);
 		}
 
