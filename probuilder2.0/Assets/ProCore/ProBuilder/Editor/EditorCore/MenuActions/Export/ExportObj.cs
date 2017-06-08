@@ -54,8 +54,7 @@ namespace ProBuilder2.Actions
 					x.GetComponent<MeshRenderer>().sharedMaterials,
 					x.transform.localToWorldMatrix));
 
-			string path = null;
-			List<string> textures = null;
+			string path = null, res = null;
 
 			if(asGroup || models.Count() < 2)
 			{
@@ -66,28 +65,7 @@ namespace ProBuilder2.Actions
 				if(string.IsNullOrEmpty(path))
 					return null;
 
-				name = Path.GetFileNameWithoutExtension(path);
-
-				string obj, mat;
-
-				if( pb_Obj.Export(name, models, out obj, out mat, out textures, options) )
-				{
-					try
-					{
-						path = Path.GetDirectoryName(path);
-						CopyTextures(textures, path);
-						pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", path, name), obj);
-						pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", path, name.Replace(" ", "_")), mat);
-					}
-					catch(System.Exception e)
-					{
-						Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
-					}
-				}
-				else
-				{
-					Debug.LogWarning("No meshes selected.");
-				}
+				res = DoExport(path, models, options);
 			}
 			else
 			{
@@ -97,24 +75,38 @@ namespace ProBuilder2.Actions
 					return null;
 
 				foreach(pb_Model model in models)
+					res = DoExport(string.Format("{0}/{1}.obj", path, model.name), new List<pb_Model>() { model }, options);
+			}
+
+			return res;
+		}
+
+		private static string DoExport(string path, IEnumerable<pb_Model> models, pb_ObjOptions options)
+		{
+			string name = Path.GetFileNameWithoutExtension(path);
+			string directory = Path.GetDirectoryName(path);
+			
+			List<string> textures = null;
+			string obj, mat;
+
+			if( pb_Obj.Export(name, models, out obj, out mat, out textures, options) )
+			{
+				try
 				{
-					string name = model.name;
-					string obj, mat;
-
-					if(!pb_Obj.Export(name, new List<pb_Model>() { model }, out obj, out mat, out textures, options))
-						continue;
-
-					try
-					{
-						CopyTextures(textures, path);
-						pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", path, name), obj);
-						pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", path, name.Replace(" ", "_")), mat);
-					}
-					catch(System.Exception e)
-					{
-						Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
-					}
+					CopyTextures(textures, directory);
+					pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", directory, name), obj);
+					pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
 				}
+				catch(System.Exception e)
+				{
+					Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
+					return null;
+				}
+			}
+			else
+			{
+				Debug.LogWarning("No meshes selected.");
+				return null;
 			}
 
 			return path;
@@ -127,7 +119,10 @@ namespace ProBuilder2.Actions
 		{
 			foreach(string path in textures)
 			{
-				File.Copy(path, string.Format("{0}/{1}", destination, Path.GetFileName(path)));
+				string dest = string.Format("{0}/{1}", destination, Path.GetFileName(path));
+
+				if(!File.Exists(dest))
+					File.Copy(path, dest);
 			}
 		}
 	}
