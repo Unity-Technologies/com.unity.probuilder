@@ -30,12 +30,13 @@ namespace ProBuilder2.Actions
 		private bool m_ObjExportAsGroup;
 		private bool m_ObjExportCopyTextures;
 		private bool m_ObjApplyTransform;
+		// stl specific
+		private Parabox.STL.FileType m_StlExportFormat = Parabox.STL.FileType.Ascii;
 
 		public enum ExportFormat
 		{
-			StlAscii,
-			StlBinary,
 			Obj,
+			Stl,
 			Asset
 		}
 
@@ -59,6 +60,10 @@ namespace ProBuilder2.Actions
 			m_ObjExportAsGroup = pb_Preferences_Internal.GetBool("pbObjExportAsGroup", true);
 			m_ObjApplyTransform = pb_Preferences_Internal.GetBool("pbObjApplyTransform", true);
 			m_ObjExportCopyTextures = pb_Preferences_Internal.GetBool("pbObjExportCopyTextures", true);
+
+			// stl options
+			m_StlExportFormat = (Parabox.STL.FileType) pb_Preferences_Internal.GetInt("pbStlFormat", (int) Parabox.STL.FileType.Ascii);
+
 		}
 
 		public override bool IsHidden() { return false; }
@@ -86,6 +91,8 @@ namespace ProBuilder2.Actions
 
 			if(m_ExportFormat == ExportFormat.Obj)
 				ObjExportOptions();
+			else if(m_ExportFormat == ExportFormat.Stl)
+				StlExportOptions();
 
 			GUILayout.FlexibleSpace();
 
@@ -111,9 +118,19 @@ namespace ProBuilder2.Actions
 			{
 				pb_Preferences_Internal.SetBool("pbObjExportRightHanded", m_ObjExportRightHanded);
 				pb_Preferences_Internal.SetBool("pbObjExportAsGroup", m_ObjExportAsGroup);
-				pb_Preferences_Internal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
 				pb_Preferences_Internal.SetBool("pbObjApplyTransform", m_ObjApplyTransform);
+				pb_Preferences_Internal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
 			}
+		}
+
+		private void StlExportOptions()
+		{
+			EditorGUI.BeginChangeCheck();
+
+			m_StlExportFormat = (Parabox.STL.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
+
+			if(EditorGUI.EndChangeCheck())
+				pb_Preferences_Internal.SetInt("pbStlFormat", (int) m_StlExportFormat);
 		}
 
 		public override pb_ActionResult DoAction()
@@ -132,12 +149,14 @@ namespace ProBuilder2.Actions
 				};
 				res = ExportObj.ExportWithFileDialog(meshes, m_ObjExportAsGroup, options);
 			}
-			else if(m_ExportFormat == ExportFormat.StlAscii)
-				res = ExportStlAscii.ExportWithFileDialog(meshes.Select(x => x.gameObject).ToArray(), FileType.Ascii);
-			else if(m_ExportFormat == ExportFormat.StlBinary)
-				res = ExportStlAscii.ExportWithFileDialog(meshes.Select(x => x.gameObject).ToArray(), FileType.Binary);
+			else if(m_ExportFormat == ExportFormat.Stl)
+			{
+				res = ExportStlAscii.ExportWithFileDialog(meshes.Select(x => x.gameObject).ToArray(), m_StlExportFormat);
+			}
 			else if(m_ExportFormat == ExportFormat.Asset)
-				res = ExportAsset.MakeAsset(meshes);
+			{
+				res = ExportAsset.ExportWithFileDialog(meshes);
+			}
 
 			if( string.IsNullOrEmpty(res) )
 			{
