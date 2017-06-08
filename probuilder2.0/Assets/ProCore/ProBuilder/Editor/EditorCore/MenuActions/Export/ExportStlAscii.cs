@@ -38,7 +38,9 @@ namespace ProBuilder2.Actions
 
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)
 		{
-			string path = EditorUtility.SaveFilePanel("Save Mesh to STL", "", "Mesh", "stl");
+			GameObject first = gameObjects.FirstOrDefault(x => x.GetComponent<pb_Object>() != null);
+			string name = first != null ? first.name : "Mesh";
+			string path = EditorUtility.SaveFilePanel("Save Mesh to STL", "", name, "stl");
 
 			if( pb_Stl_Exporter.Export(path, gameObjects, type) )
 			{
