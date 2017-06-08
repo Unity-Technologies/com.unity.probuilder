@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -85,14 +84,16 @@ namespace ProBuilder2.EditorCommon
 		{
 			{ "_MainTex", "map_Kd" },
 			{ "_MetallicGlossMap", "map_Pm" },
-			// { "_MetallicGlossMap", "Pm" },
 			{ "_BumpMap", "bump" },
-			// { "_BumpMap", "map_bump" },
-			// { "_BumpMap", "norm" },
 			{ "_ParallaxMap", "disp" },
 			{ "_EmissionMap", "map_Ke" },
-			// { "_EmissionMap", "Ke" },
 			{ "_DetailMask", "map_d" },
+			// Alternative naming conventions - possibly useful if someone 
+			// runs into an issue with another 3d modeling app.
+			// { "_MetallicGlossMap", "Pm" },
+			// { "_BumpMap", "map_bump" },
+			// { "_BumpMap", "norm" },
+			// { "_EmissionMap", "Ke" },
 		};
 
 		/**
@@ -307,10 +308,12 @@ namespace ProBuilder2.EditorCommon
 
 				if(mat.HasProperty("_Color"))
 				{
+					Color color = mat.color;
+
 					// Diffuse
-					sb.AppendLine(string.Format("Kd {0}", FormatColor(mat.color)));
+					sb.AppendLine(string.Format("Kd {0}", string.Format("{0} {1} {2}", color.r, color.g, color.b)));
 					// Transparency
-					sb.AppendLine(string.Format("d {0}", mat.color.a));
+					sb.AppendLine(string.Format("d {0}", color.a));
 				}
 				else
 				{
@@ -322,11 +325,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			return sb.ToString();
-		}
-
-		private static string FormatColor(Color color)
-		{
-			return string.Format("{0} {1} {2}", color.r, color.g, color.b);
 		}
 	}
 }
