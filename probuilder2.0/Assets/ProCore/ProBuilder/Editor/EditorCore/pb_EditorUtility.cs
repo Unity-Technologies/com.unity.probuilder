@@ -11,6 +11,7 @@ using ProBuilder2.MeshOperations;
 #if !UNITY_4_7
 using UnityEngine.Rendering;
 #endif
+using ProBuilder2.Actions;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -169,42 +170,10 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-
+		[System.Obsolete("Please use pb_Obj.Export")]
 		public static string ExportOBJ(pb_Object[] pb)
 		{
-			if(pb.Length < 1)
-				return "";
-
-			pb_Object combined;
-
-			if(pb.Length > 1)
-				pbMeshOps.CombineObjects(pb, out combined);
-			else
-				combined = pb[0];
-
-			string path = EditorUtility.SaveFilePanel("Save ProBuilder Object as Obj", "", "pb" + pb[0].id, "obj");
-
-			if(path == null || path == "")
-			{
-				if(pb.Length > 1)
-				{
-					GameObject.DestroyImmediate(combined.GetComponent<MeshFilter>().sharedMesh);
-					GameObject.DestroyImmediate(combined.gameObject);
-				}
-
-				return "";
-			}
-
-			EditorObjExporter.MeshToFile(combined.GetComponent<MeshFilter>(), path);
-
-			AssetDatabase.Refresh();
-
-			if(pb.Length > 1)
-			{
-				GameObject.DestroyImmediate(combined.GetComponent<MeshFilter>().sharedMesh);
-				GameObject.DestroyImmediate(combined.gameObject);
-			}
-			return path;
+			return ExportObj.ExportWithFileDialog(pb);
 		}
 
 		/**

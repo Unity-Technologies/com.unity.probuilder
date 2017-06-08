@@ -22,6 +22,7 @@ namespace ProBuilder2.Actions
 		private bool m_ObjExportRightHanded;
 		private bool m_ObjExportAsGroup;
 		private bool m_ObjExportCopyTextures;
+		private bool m_ObjApplyTransform;
 
 		public enum ExportFormat
 		{
@@ -43,12 +44,13 @@ namespace ProBuilder2.Actions
 		{
 			m_ExportFormat = (ExportFormat) pb_Preferences_Internal.GetInt("pbDefaultExportFormat", (int) ExportFormat.Obj);
 
-			// Recursively select meshes in selection.
+			// Recursively select meshes in selection (ie, use GetComponentsInChildren).
 			m_ExportRecursive = pb_Preferences_Internal.GetBool("pbExportRecursive", false);
 
 			// obj options
 			m_ObjExportRightHanded = pb_Preferences_Internal.GetBool("pbObjExportRightHanded", true);
 			m_ObjExportAsGroup = pb_Preferences_Internal.GetBool("pbObjExportAsGroup", true);
+			m_ObjApplyTransform = pb_Preferences_Internal.GetBool("pbObjApplyTransform", true);
 			m_ObjExportCopyTextures = pb_Preferences_Internal.GetBool("pbObjExportCopyTextures", true);
 		}
 
@@ -90,6 +92,12 @@ namespace ProBuilder2.Actions
 
 			m_ObjExportRightHanded = EditorGUILayout.Toggle("Right Handed", m_ObjExportRightHanded);
 			m_ObjExportAsGroup = EditorGUILayout.Toggle("Export As Group", m_ObjExportAsGroup);
+			EditorGUI.BeginDisabledGroup(m_ObjExportAsGroup);
+			if(m_ObjExportAsGroup)
+				EditorGUILayout.Toggle("Apply Transforms", true);
+			else
+				m_ObjApplyTransform = EditorGUILayout.Toggle("Apply Transforms", m_ObjApplyTransform);
+			EditorGUI.EndDisabledGroup();
 			m_ObjExportCopyTextures = EditorGUILayout.Toggle("Copy Textures", m_ObjExportCopyTextures);
 
 			if(EditorGUI.EndChangeCheck())
@@ -97,6 +105,7 @@ namespace ProBuilder2.Actions
 				pb_Preferences_Internal.SetBool("pbObjExportRightHanded", m_ObjExportRightHanded);
 				pb_Preferences_Internal.SetBool("pbObjExportAsGroup", m_ObjExportAsGroup);
 				pb_Preferences_Internal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
+				pb_Preferences_Internal.SetBool("pbObjApplyTransform", m_ObjApplyTransform);
 			}
 		}
 
@@ -107,7 +116,15 @@ namespace ProBuilder2.Actions
 			IEnumerable<pb_Object> meshes = m_ExportRecursive ? pb_Selection.All() : pb_Selection.Top();
 
 			if(m_ExportFormat == ExportFormat.Obj)
-				res = ExportObj.ExportWithFileDialog(meshes);
+			{
+				pb_ObjOptions options = new pb_ObjOptions()
+				{
+					handedness = m_ObjExportRightHanded ? pb_ObjOptions.Handedness.Right : pb_ObjOptions.Handedness.Left,
+					copyTextures = m_ObjExportCopyTextures,
+					applyTransforms = m_ObjExportAsGroup || m_ObjApplyTransform
+				};
+				res = ExportObj.ExportWithFileDialog(meshes, m_ObjExportAsGroup, options);
+			}
 			else if(m_ExportFormat == ExportFormat.StlAscii)
 				res = ExportStlAscii.ExportWithFileDialog(meshes.Select(x => x.gameObject).ToArray(), FileType.Ascii);
 			else if(m_ExportFormat == ExportFormat.StlBinary)

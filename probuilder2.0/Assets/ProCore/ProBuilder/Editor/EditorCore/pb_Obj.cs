@@ -56,6 +56,9 @@ namespace ProBuilder2.EditorCommon
 		// If copyTextures is true then the material textures will be copied to the export path.
 		// If false the material library will point to the existing texture path in the Unity project.
 		public bool copyTextures = true;
+
+		// Should meshes be exported in local (false) or world (true) space.
+		public bool applyTransforms = true;
 	}
 
 	/**
@@ -85,7 +88,9 @@ namespace ProBuilder2.EditorCommon
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("# Exported from ProBuilder");
-			sb.AppendLine(string.Format("mtllib ./{0}.mtl", name));
+			sb.AppendLine(string.Format("# {0}", System.DateTime.Now));
+			sb.AppendLine();
+			sb.AppendLine(string.Format("mtllib ./{0}.mtl", name.Replace(" ", "_")));
 			sb.AppendLine(string.Format("o {0}", name));
 			sb.AppendLine();
 
@@ -98,7 +103,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				Mesh mesh = model.mesh;
 				Material[] materials = model.materials;
-				Matrix4x4 matrix = model.matrix;
+				Matrix4x4 matrix = options.applyTransforms ? model.matrix : Matrix4x4.identity;
 
 				int vertexCount = mesh.vertexCount;
 
@@ -106,18 +111,22 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] normals = mesh.normals;
 				Vector2[] textures0 = mesh.uv;
 
-				for(int i = 0; i < vertexCount; i++)
+				// Can skip this entirely if handedness matches Unity & not applying transforms.
+				if(options.handedness != pb_ObjOptions.Handedness.Left || options.applyTransforms)
 				{
-					if(positions != null)
+					for(int i = 0; i < vertexCount; i++)
 					{
-						positions[i] = matrix.MultiplyPoint3x4(positions[i]);
-						positions[i].x *= handedness;
-					}
+						if(positions != null)
+						{
+							positions[i] = matrix.MultiplyPoint3x4(positions[i]);
+							positions[i].x *= handedness;
+						}
 
-					if(normals != null)
-					{
-						normals[i] = matrix.MultiplyVector(normals[i]);
-						normals[i].x *= handedness;
+						if(normals != null)
+						{
+							normals[i] = matrix.MultiplyVector(normals[i]);
+							normals[i].x *= handedness;
+						}
 					}
 				}
 
