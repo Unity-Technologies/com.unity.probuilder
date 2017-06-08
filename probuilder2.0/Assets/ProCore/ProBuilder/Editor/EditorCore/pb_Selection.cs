@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static IEnumerable<pb_Object> Top()
 		{
-			return Selection.transforms.Select(x => x.GetComponent<pb_Object>());
+			return Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null);
 		}
 
 		/**

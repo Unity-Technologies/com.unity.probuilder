@@ -144,7 +144,11 @@ namespace ProBuilder2.Actions
 
 			IEnumerable<pb_Object> meshes = m_ExportRecursive ? pb_Selection.All() : pb_Selection.Top();
 
-			if(m_ExportFormat == ExportFormat.Obj)
+			if(meshes == null || meshes.Count() < 1)
+			{
+				return new pb_ActionResult(Status.Canceled, "No Meshes Selected");
+			}
+			else if(m_ExportFormat == ExportFormat.Obj)
 			{
 				pb_ObjOptions options = new pb_ObjOptions()
 				{
