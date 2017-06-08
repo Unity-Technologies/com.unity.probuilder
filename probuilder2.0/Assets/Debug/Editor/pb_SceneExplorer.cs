@@ -1,4 +1,4 @@
-#if UNITY_5_0_0
+#if !UNITY_4_6 && !UNITY_4_7
 #define UNITY_5
 #endif
 

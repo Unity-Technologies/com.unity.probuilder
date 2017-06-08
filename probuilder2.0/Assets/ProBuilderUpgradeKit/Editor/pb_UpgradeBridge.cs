@@ -1,4 +1,6 @@
-﻿#if !UNITY_4_3
+﻿#if !UNITY_4_6 && !UNITY_4_7
+#define UNITY_5
+#endif
 
 using UnityEngine;
 using UnityEditor;
@@ -355,4 +357,3 @@ namespace ProBuilder2.UpgradeKit
 		}
 	}
 }
-#endif
