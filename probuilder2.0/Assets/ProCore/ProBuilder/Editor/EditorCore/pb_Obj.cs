@@ -58,6 +58,10 @@ namespace ProBuilder2.EditorCommon
 
 		// Should meshes be exported in local (false) or world (true) space.
 		public bool applyTransforms = true;
+
+		// Some modeling programs support reading vertex colors as an additional {r, g, b} following 
+		// the vertex position {x, y, z}
+		public bool writeVertexColors = false;
 	}
 
 	/**
@@ -148,6 +152,7 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] positions = mesh.vertices;
 				Vector3[] normals = mesh.normals;
 				Vector2[] textures0 = mesh.uv;
+				Color[] colors = options.writeVertexColors ? mesh.colors : null;
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
 				if(options.handedness != pb_ObjOptions.Handedness.Left || options.applyTransforms)
@@ -172,8 +177,18 @@ namespace ProBuilder2.EditorCommon
 
 				sb.AppendLine(string.Format("g {0}", model.name));
 
-				for(int i = 0; i < vertexCount; i++)
-					sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
+				if(options.writeVertexColors && colors != null && colors.Length == vertexCount)
+				{
+					for(int i = 0; i < vertexCount; i++)
+						sb.AppendLine(string.Format("v {0} {1} {2} {3} {4} {5}",
+							positions[i].x, positions[i].y, positions[i].z,
+							colors[i].r, colors[i].g, colors[i].b ));
+				}
+				else
+				{		
+					for(int i = 0; i < vertexCount; i++)
+						sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
+				}
 
 				sb.AppendLine();
 
