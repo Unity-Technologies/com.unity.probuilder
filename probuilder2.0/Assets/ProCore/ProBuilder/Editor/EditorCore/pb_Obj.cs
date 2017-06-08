@@ -70,14 +70,22 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Write the contents of a single obj & mtl from a set of models.
 		 */
-		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, pb_ObjOptions options = null)
+		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, out List<string> textures, pb_ObjOptions options = null)
 		{
+			if(models == null || models.Count() < 1)
+			{
+				objContents = null;
+				mtlContents = null;
+				textures = null;
+				return false;
+			}
+
 			Dictionary<Material, string> materialMap = null;
 
 			if(options == null)
 				options = new pb_ObjOptions();
 
-			mtlContents = WriteMtlContents(models, options, out materialMap);
+			mtlContents = WriteMtlContents(models, options, out materialMap, out textures);
 			objContents = WriteObjContents(name, models, materialMap, options);
 
 			return true;
@@ -88,6 +96,7 @@ namespace ProBuilder2.EditorCommon
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("# Exported from ProBuilder");
+			sb.AppendLine("# http://www.procore3d.com/probuilder");
 			sb.AppendLine(string.Format("# {0}", System.DateTime.Now));
 			sb.AppendLine();
 			sb.AppendLine(string.Format("mtllib ./{0}.mtl", name.Replace(" ", "_")));
@@ -190,7 +199,7 @@ namespace ProBuilder2.EditorCommon
 		 * Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring
 		 * unique names for each group. Material to named mtl group are stored in materialMap.
 		 */
-		private static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap)
+		private static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap, out List<string> textures)
 		{
 			materialMap = new Dictionary<Material, string>();
 
@@ -200,11 +209,12 @@ namespace ProBuilder2.EditorCommon
 				{
 					if(!materialMap.ContainsKey(material))
 					{
-						string name = material.name;
+						string escapedName = material.name.Replace(" ", "_");
+						string name = escapedName;
 						int nameIncrement = 1;
 
 						while(materialMap.Any(x => x.Value.Equals(name)))
-							name = string.Format("{0}_{1}", material.name, nameIncrement++);
+							name = string.Format("{0}_{1}", escapedName, nameIncrement++);
 
 						materialMap.Add(material, name);
 					}
@@ -212,10 +222,15 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			StringBuilder sb = new StringBuilder();
+			textures = new List<string>();
 
 			foreach(KeyValuePair<Material, string> group in materialMap)
 			{
 				string path = AssetDatabase.GetAssetPath(group.Key.mainTexture);
+
+				if(options.copyTextures)
+					textures.Add(path);
+
 				// remove "Assets/" from start of path
 				path = path.Substring(7, path.Length - 7);
 				string textureName = options.copyTextures ? Path.GetFileName(path) : string.Format("{0}/{1}", Application.dataPath, path);

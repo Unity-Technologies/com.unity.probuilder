@@ -55,6 +55,7 @@ namespace ProBuilder2.Actions
 					x.transform.localToWorldMatrix));
 
 			string path = null;
+			List<string> textures = null;
 
 			if(asGroup || models.Count() < 2)
 			{
@@ -67,18 +68,23 @@ namespace ProBuilder2.Actions
 
 				string obj, mat;
 
-				pb_Obj.Export(name, models, out obj, out mat, options);
-
-				try
+				if( pb_Obj.Export(name, models, out obj, out mat, out textures, options) )
 				{
-					path = Path.GetDirectoryName(path);
-					pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", path, name), obj);
-					// Spaces are not allowed in mtlib name
-					pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", path, name.Replace(" ", "_")), mat);
+					try
+					{
+						path = Path.GetDirectoryName(path);
+						CopyTextures(textures, path);
+						pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", path, name), obj);
+						pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", path, name.Replace(" ", "_")), mat);
+					}
+					catch(System.Exception e)
+					{
+						Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
+					}
 				}
-				catch(System.Exception e)
+				else
 				{
-					Debug.LogWarning(string.Format("Failed writing obj to path: {0}\n{1}", string.Format("{0}/{1}.obj", path, name), e.ToString()));
+					Debug.LogWarning("No meshes selected.");
 				}
 			}
 			else
@@ -93,10 +99,12 @@ namespace ProBuilder2.Actions
 					string name = model.name;
 					string obj, mat;
 
-					pb_Obj.Export(name, new List<pb_Model>() { model }, out obj, out mat, options);
+					if(!pb_Obj.Export(name, new List<pb_Model>() { model }, out obj, out mat, out textures, options))
+						continue;
 
 					try
 					{
+						CopyTextures(textures, path);
 						pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", path, name), obj);
 						pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", path, name.Replace(" ", "_")), mat);
 					}
@@ -108,6 +116,17 @@ namespace ProBuilder2.Actions
 			}
 
 			return path;
+		}
+
+		/**
+		 *	Copy files from their path to a destination directory.
+		 */
+		private static void CopyTextures(List<string> textures, string destination)
+		{
+			foreach(string path in textures)
+			{
+				File.Copy(path, string.Format("{0}/{1}", destination, Path.GetFileName(path)));
+			}
 		}
 	}
 }
