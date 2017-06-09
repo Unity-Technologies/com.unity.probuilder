@@ -99,10 +99,9 @@ namespace ProBuilder2.Common
 		///< What texture group this face belongs to.
 		public int textureGroup = -1;
 
-
 		public int[] indices { get { return _indices; } }
 		public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : _distinctIndices; } }
-		public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }	// todo -- remove this after a while
+		public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }
 		public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
 		public Material material { get { return _mat; } set { _mat = value; } }
 		public pb_UV uv { get { return _uv; } set { _uv = value; } }
@@ -147,6 +146,9 @@ namespace ProBuilder2.Common
 				return new int[3]{indices[index*3+0],indices[index*3+1],indices[index*3+2]};
 		}
 
+		/**
+		 *	Return all edges, including non-perimeter ones.
+		 */
 		public pb_Edge[] GetAllEdges()
 		{
 			pb_Edge[] edges = new pb_Edge[indices.Length];
@@ -237,8 +239,6 @@ namespace ProBuilder2.Common
 		{
 			if(_indices == null)
 				return null;
-
-			// _edges = pb_Edge.GetPerimeterEdges( GetAllEdges() );
 
 			HashSet<pb_Edge> dist = new HashSet<pb_Edge>();
 			List<pb_Edge> dup = new List<pb_Edge>();
@@ -332,6 +332,33 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
+		 */
+		public int[] ToQuad()
+		{
+			if(indices.Length != 6)
+				return null;
+
+			int[] quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
+
+			if(edges[1].x == quad[1])
+				quad[2] = edges[1].y;
+			else if(edges[2].x == quad[1])
+				quad[2] = edges[2].y;
+			else if(edges[3].x == quad[1])
+				quad[2] = edges[3].y;
+
+			if(edges[1].x == quad[2])
+				quad[3] = edges[1].y;
+			else if(edges[2].x == quad[2])
+				quad[3] = edges[2].y;
+			else if(edges[3].x == quad[2])
+				quad[3] = edges[3].y;
+
+			return quad;
+		}
+
+		/**
 		 * Sorts faces by material and returns a jagged array of their combined triangles.
 		 */
 		public static int MeshTriangles(pb_Face[] faces, out int[][] submeshes, out Material[] materials)
@@ -341,9 +368,9 @@ namespace ProBuilder2.Common
 
 			int i = 0;
 
-	#if PROTOTYPE
+			#if PROTOTYPE
 				matDic.Add(pb_Constant.DefaultMaterial, new List<pb_Face>(faces));
-	#else
+			#else
 				for(i = 0; i < faces.Length; i++)
 				{
 					if(faces[i] == null)
@@ -363,7 +390,7 @@ namespace ProBuilder2.Common
 						matDic.Add(face_mat, new List<pb_Face>(1) { faces[i] } );
 					}
 				}
-	#endif
+			#endif
 
 			materials = new Material[matDic.Count];
 			submeshes = new int[materials.Length][];
