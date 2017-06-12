@@ -142,6 +142,7 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
+
 		[MenuItem(PB_MENU_PREFIX + "Export/Export Asset ", true)]
 		static bool MenuVerifyExportAsset()
 		{
@@ -168,6 +169,21 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoExportObj()
 		{
 			ExportObj instance = pb_EditorToolbarLoader.GetInstance<ExportObj>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Ply ", true)]
+		static bool MenuVerifyExportPly()
+		{
+			ExportPly instance = pb_EditorToolbarLoader.GetInstance<ExportPly>();
+			return instance != null && instance.IsEnabled();
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Export/Export Ply ", false, pb_Constant.MENU_EXPORT + 0)]
+		static void MenuDoExportPly()
+		{
+			ExportPly instance = pb_EditorToolbarLoader.GetInstance<ExportPly>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

@@ -18,6 +18,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return null; } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
 		GUIContent gc_ExportFormat = new GUIContent("Export Format", "The type of file to export the current selection as.");
 		GUIContent gc_ExportRecursive = new GUIContent("Include Children", "Should the exporter include children of the current selection when searching for meshes to export?");
@@ -109,7 +110,7 @@ namespace ProBuilder2.Actions
 
 			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
-			if(m_ExportFormat != ExportFormat.Asset)
+			if(m_ExportFormat != ExportFormat.Asset && m_ExportFormat != ExportFormat.Stl)
 			{
 				EditorGUI.BeginChangeCheck();
 				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
@@ -178,7 +179,13 @@ namespace ProBuilder2.Actions
 
 			m_PlyExportIsRightHanded = EditorGUILayout.Toggle("Right Handed", m_PlyExportIsRightHanded);
 			m_PlyQuads = EditorGUILayout.Toggle("Quads", m_PlyQuads);
-			m_PlyNGons = EditorGUILayout.Toggle("N-Gons", m_PlyNGons);
+
+			// @todo ProBuilder N-Gon importer
+			// m_PlyNGons = EditorGUILayout.Toggle("N-Gons", m_PlyNGons);
+			// if(m_PlyNGons)
+			// {
+			// 	EditorGUILayout.HelpBox("Most 3D modeling programs will not import NGons correctly.", MessageType.Warning);
+			// }
 
 			if(EditorGUI.EndChangeCheck())
 			{
