@@ -1,3 +1,23 @@
+# ProBuilder 2.9.1f0
+
+## Features
+
+- New PLY model exporter.
+- OBJ export rewritten, now supports:
+	- Multiple texture maps
+	- Vertex colors (MeshLab format)
+	- Texture map offset / scale
+	- Local or world space mesh coordinates
+	- PBR maps (http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr)
+- Improve Mesh Asset export dialog and options.
+
+## Bug Fixes
+
+- Fix ProBuilder preferences sometimes not loading.
+- Fix deprecated method warnings in 2017.1 beta.
+- Fix occasionally flipped UV axis on merged faces.
+- Don't crash if ProBuilder folder has been renamed.
+
 # ProBuilder 2.9.0f3
 
 ## Features
