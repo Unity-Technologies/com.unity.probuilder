@@ -644,34 +644,6 @@ namespace ProBuilder2.MeshOperations
 
 			return spokes;
 		}
-
-		// private static pb_WingedEdge EdgeLoopNext(pb_WingedEdge edge, bool forward)
-		// {
-		// 	if(edge == null)
-		// 		return null;
-
-		// 	pb_WingedEdge next = forward ? edge.next : edge.previous;
-
-		// 	if(next == null)
-		// 		return null;
-
-		// 	pb_WingedEdge opposite = next.opposite;
-
-		// 	if(opposite == null)
-		// 		return null;
-
-		// 	pb_WingedEdge opposite_next = opposite.next;
-
-		// 	if(opposite_next != null && opposite_next.edge.common.Contains(edge.edge.common))
-		// 		return opposite_next;
-
-		// 	pb_WingedEdge opposite_previous = opposite.previous;
-
-		// 	if(opposite_previous != null && opposite_previous.edge.common.Contains(edge.edge.common))
-		// 		return opposite_previous;
-
-		// 	return null;
-		// }
 #endregion
 	}
 }

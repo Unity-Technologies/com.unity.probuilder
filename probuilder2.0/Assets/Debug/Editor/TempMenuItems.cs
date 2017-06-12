@@ -20,15 +20,9 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		IEnumerable<pb_Model> models = pb_Selection.Top().Select(x => new pb_Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, Matrix4x4.identity));
-
-		foreach(pb_Object pb in pb_Selection.Top())
-		{
-			string obj, mat;
-			pb_Obj.Export(models, out obj, out mat);
-			pb_FileUtil.WriteFile("Assets/dump/test.obj", obj);
-			pb_FileUtil.WriteFile("Assets/dump/test.mtl", mat);
-		}
+		string contents;
+		if( pb_Ply.Export(pb_Selection.Top(), out contents) )
+			pb_FileUtil.WriteFile("Assets/dump/probuilder.ply", contents);
 
 		AssetDatabase.Refresh();
 
