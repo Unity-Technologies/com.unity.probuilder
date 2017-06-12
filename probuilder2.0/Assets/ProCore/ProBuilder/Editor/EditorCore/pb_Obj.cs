@@ -61,7 +61,10 @@ namespace ProBuilder2.EditorCommon
 
 		// Some modeling programs support reading vertex colors as an additional {r, g, b} following 
 		// the vertex position {x, y, z}
-		public bool writeVertexColors = false;
+		public bool vertexColors = false;
+
+		// Write the texture map offset and scale. Not supported by all importers.
+		public bool textureOffsetScale = false;
 	}
 
 	/**
@@ -152,7 +155,7 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] positions = mesh.vertices;
 				Vector3[] normals = mesh.normals;
 				Vector2[] textures0 = mesh.uv;
-				Color[] colors = options.writeVertexColors ? mesh.colors : null;
+				Color[] colors = options.vertexColors ? mesh.colors : null;
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
 				if(options.handedness != pb_ObjOptions.Handedness.Left || options.applyTransforms)
@@ -177,7 +180,7 @@ namespace ProBuilder2.EditorCommon
 
 				sb.AppendLine(string.Format("g {0}", model.name));
 
-				if(options.writeVertexColors && colors != null && colors.Length == vertexCount)
+				if(options.vertexColors && colors != null && colors.Length == vertexCount)
 				{
 					for(int i = 0; i < vertexCount; i++)
 						sb.AppendLine(string.Format("v {0} {1} {2} {3} {4} {5}",
@@ -315,7 +318,10 @@ namespace ProBuilder2.EditorCommon
 								Vector2 offset = mat.GetTextureOffset(texPropertyName);
 								Vector2 scale  = mat.GetTextureScale(texPropertyName);
 
-								sb.AppendLine(string.Format("{0} -o {1} {2} -s {3} {4} {5}", mtlKey, offset.x, offset.y, scale.x, scale.y, textureName));
+								if(options.textureOffsetScale)
+									sb.AppendLine(string.Format("{0} -o {1} {2} -s {3} {4} {5}", mtlKey, offset.x, offset.y, scale.x, scale.y, textureName));
+								else
+									sb.AppendLine(string.Format("{0} {1}", mtlKey, textureName));
 							}
 						}
 					}
