@@ -291,8 +291,12 @@ namespace ProBuilder2.EditorCommon
 				{
 					for(int i = 0; i < ShaderUtil.GetPropertyCount(mat.shader); i++)
 					{
+#if !(UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_3)
 						if( ShaderUtil.GetPropertyType(mat.shader, i) != ShaderUtil.ShaderPropertyType.TexEnv ||
 							ShaderUtil.GetTexDim(mat.shader, i) != UnityEngine.Rendering.TextureDimension.Tex2D )
+#else
+						if( ShaderUtil.GetPropertyType(mat.shader, i) != ShaderUtil.ShaderPropertyType.TexEnv )
+#endif
 							continue;
 
 						string texPropertyName = ShaderUtil.GetPropertyName(mat.shader, i);
