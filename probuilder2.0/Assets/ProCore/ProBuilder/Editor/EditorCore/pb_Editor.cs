@@ -60,7 +60,9 @@ public class pb_Editor : EditorWindow
 	private EditLevel previousEditLevel;
 
 	public SelectMode selectionMode { get; private set; }
+#if !PROTOTYPE
 	private SelectMode previousSelectMode;
+#endif
 
 	public DragSelectMode dragSelectMode = DragSelectMode.Difference;
 
