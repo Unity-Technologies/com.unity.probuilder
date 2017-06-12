@@ -11,8 +11,8 @@ X = Submitted
 |                     | 4.7 | 5.0 | 5.3 | 5.5 | 5.6 | Github | Dropbox |
 |---------------------|-----|-----|-----|-----|-----|--------|---------|
 | ProBuilder Advanced |     |     |     |     |     |        |         |
-| ProCore Bundle      |     |     |     |     |     |        |   N/A   |
-| ProBuilder Basic    | N/A | N/A |     |     |     |        |   N/A   |
+| ProCore Bundle      |     |     |     |     |     |  N/A   |   N/A   |
+| ProBuilder Basic    | N/A | N/A |     |     |     |  N/A   |   N/A   |
 
 ### Project Checklist
 

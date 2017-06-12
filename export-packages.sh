@@ -37,8 +37,6 @@ echo Export $UNITY_VERSION
 
 "$UNITY_47" -projectPath $WORKING_DIR/bin/projects/ProBuilder-$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
 
-pause
-
 UNITY_VERSION=47
 echo Export Unity $UNITY_VERSION
 
