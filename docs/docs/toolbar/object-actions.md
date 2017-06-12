@@ -123,6 +123,33 @@ Setting | Description
 
 ---
 
+## Export
+
+Export the selected ProBuilder objects to a 3D model.
+
+Format | Description
+--- | ---
+OBJ | Wavefront OBJ. Widely supported model format supports multiple textures and mesh groups.
+STL | A widely supported format generally used in CAD software or 3D printing. Only supports triangle geometry.
+PLY | Stanform PLY. Widely supported and very extensible. Supports quads and vertex colors, but not multiple materials.
+Asset | Unity's asset format, only readable in Unity.
+
+Export options:
+
+| Option | Formats | Description |
+|--|--|--|
+| Include Children | All | If enabled ProBuilder will include not only selected meshes, but also the children of selected objects in the exported model. |
+| Export as Group | OBJ, PLY | If enabled all selected objects will be combined and exported as a single model file. Otherwise each mesh will be exported separately. |
+| Apply Transforms | OBJ, PLY | Should the GameObject transform be applied to the mesh attributes before export? With this option and **Export as Group** enabled you can export your whole scene, edit, then re-import with everything exactly where you left it. |
+| Right Handed | OBJ, PLY | Unity's coordinate system is "Left Handed", where most other major 3D modeling packages operate in "Right Handed" coordinates. |
+| Copy Textures | OBJ | If enabled the exporter will copy texture maps to the OBJ file destination and reference them from local paths in the material library. If unchecked the material library will reference an absolute path to the textures and not copy them. If you're exporting an OBJ to use in Unity leave this unchecked and set the Mesh Importer "Material Naming" to "From Model's Material" and "Material Search" to "Project-Wide." |
+| Vertex Colors | OBJ | Some 3D modeling applications can import vertex colors from an unofficial extension to the OBJ format. Toggling this will write vertex colors using the MeshLab format. This can break import in some applications, please use with caution! |
+| Texture Scale, Offset | OBJ | Some 3D modeling applications import texture scale and offset paramters (Blender, for example). Toggling this will write these values to the exported mtlib file. This can break import in some applications, please use with caution! |
+| STL Format | STL | The STL file specification supports both ASCII and Binary representations. This toggles between the two types. |
+| Quads | PLY | Where possible, ProBuilder will preserve quads when exporting to PLY. |
+
+---
+
 ##![ProBuilderize Icon](../images/icons/Object_ProBuilderize.png "ProBuilderize Icon") ProBuilderize Object
 
 Converts the selected object(s) into ProBuilder-editable objects.
