@@ -135,7 +135,12 @@ namespace ProBuilder2.EditorCommon
 		sb.Append(" instance = pb_EditorToolbarLoader.GetInstance<");
 		sb.Append(class_name);
 		sb.AppendLine(">();");
-		sb.AppendLine("\t\t\treturn instance != null && instance.IsEnabled();");
+		sb.AppendLine(@"#if PROTOTYPE
+			return instance != null && !instance.isProOnly && instance.IsEnabled();
+#else
+			return instance != null && instance.IsEnabled();
+#endif
+");
 		sb.AppendLine("\t\t}");
 
 		sb.AppendLine("");
