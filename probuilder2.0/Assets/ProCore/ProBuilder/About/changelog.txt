@@ -1,8 +1,8 @@
-# ProBuilder 2.9.2f0
+# ProBuilder 2.9.2f1
 
 ## Bug Fixes
 
-- Add file stubs for deprecated repair actions to prevent compiliation errors when updating.
+- Add file stubs for deprecated repair actions to prevent compilation errors when updating.
 
 # ProBuilder 2.9.1f0
 
