@@ -31,7 +31,6 @@ namespace ProBuilder2.EditorCommon
 		const int PREVIEW_INSET = 2;
 
 		GameObject lhs, rhs;
-		Texture2D lhsPreview, rhsPreview;
 		int previewHeight = 0, previewWidth = 0;
 
 		Rect lhsRect = new Rect(PAD, PAD, 0f, 0f);
