@@ -97,7 +97,7 @@ namespace ProBuilder2.MeshOperations
 			{
 				if(d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
 				{
-					pb_Log.LogWarning("Triangulation failed - additional vertices were inserted.");
+					pb_Log.Warning("Triangulation failed - additional vertices were inserted.");
 					return false;
 				}
 
