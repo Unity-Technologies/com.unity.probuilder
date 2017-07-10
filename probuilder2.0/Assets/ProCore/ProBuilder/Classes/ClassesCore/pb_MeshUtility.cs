@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace ProBuilder2.Common
 {
@@ -401,6 +402,39 @@ namespace ProBuilder2.Common
 					normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
 				}
 			}
+		}
+
+		/**
+		 *	Get a mesh attribute from either the MeshFilter.sharedMesh or the
+		 *	MeshRenderer.additionalVertexStreams mesh. If returned array does not 
+		 *	match the vertex count NULL is returned.
+		 */
+		public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList
+		{
+			MeshFilter mf = go.GetComponent<MeshFilter>();
+			Mesh mesh = mf != null ? mf.sharedMesh : null;
+			T res = default(T);
+
+			if(mesh == null)
+				return res;
+
+			int vertexCount = mesh.vertexCount;
+
+#if !UNITY_4_6 && !UNITY_4_7
+			MeshRenderer renderer = go.GetComponent<MeshRenderer>();
+			Mesh vertexStream = renderer != null ? renderer.additionalVertexStreams : null;
+
+			if(vertexStream != null)
+			{
+				res = attributeGetter(vertexStream);
+
+				if(res != null && res.Count == vertexCount)
+					return res;
+			}
+#endif
+			res = attributeGetter(mesh);
+
+			return res != null && res.Count == vertexCount ? res : default(T);
 		}
 	}
 }

@@ -874,9 +874,9 @@ namespace ProBuilder2.MeshOperations
 	{
 		Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
-		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors ?? new Color[m_vertices.Length];
-		Vector2[] m_uvs = m.uv;
+		Vector3[] m_vertices 	= pb_MeshUtility.GetMeshAttribute<Vector3[]>(t.gameObject, x => x.vertices);
+		Color[] m_colors 		= pb_MeshUtility.GetMeshAttribute<Color[]>(t.gameObject, x => x.colors);
+		Vector2[] m_uvs 		= pb_MeshUtility.GetMeshAttribute<Vector2[]>(t.gameObject, x => x.uv);
 
 		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
 		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
@@ -981,7 +981,7 @@ namespace ProBuilder2.MeshOperations
 	/**
 	* ProBuilderize in-place function.  You must call ToMesh() and Refresh() after
 	* returning from this function, as this only creates the pb_Object and sets its
-	* fields.  This allows you to record the mesh and gameObject for Undo operations.
+	* fields. This allows you to record the mesh and gameObject for Undo operations.
 	*/
 	public static bool ResetPbObjectWithMeshFilter(pb_Object pb, bool preserveFaces)
 	{
@@ -989,21 +989,21 @@ namespace ProBuilder2.MeshOperations
 
 		if(mf == null || mf.sharedMesh == null)
 		{
-			Debug.Log(pb.name + " does not have a mesh or Mesh Filter component.");
+			pb_Log.Error(pb.name + " does not have a mesh or Mesh Filter component.");
 			return false;
 		}
 
 		Mesh m = mf.sharedMesh;
 
-		int vertexCount = m.vertexCount;
-		Vector3[] m_vertices = m.vertices;
-		Color[] m_colors = m.colors != null && m.colors.Length == vertexCount ? m.colors : new Color[vertexCount];
-		Vector2[] m_uvs = m.uv == null || m.uv.Length != vertexCount ? new Vector2[vertexCount] : m.uv;
+		int vertexCount 		= m.vertexCount;
+		Vector3[] m_vertices 	= pb_MeshUtility.GetMeshAttribute<Vector3[]>(pb.gameObject, x => x.vertices);
+		Color[] m_colors 		= pb_MeshUtility.GetMeshAttribute<Color[]>(pb.gameObject, x => x.colors);
+		Vector2[] m_uvs 		= pb_MeshUtility.GetMeshAttribute<Vector2[]>(pb.gameObject, x => x.uv);
 
-		List<Vector3> verts = preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
-		List<Color> cols = preserveFaces ? new List<Color>(m.colors) : new List<Color>();
-		List<Vector2> uvs = preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
-		List<pb_Face> faces = new List<pb_Face>();
+		List<Vector3> verts 	= preserveFaces ? new List<Vector3>(m.vertices) : new List<Vector3>();
+		List<Color> cols 		= preserveFaces ? new List<Color>(m.colors) : new List<Color>();
+		List<Vector2> uvs 		= preserveFaces ? new List<Vector2>(m.uv) : new List<Vector2>();
+		List<pb_Face> faces 	= new List<pb_Face>();
 
 		MeshRenderer mr = pb.gameObject.GetComponent<MeshRenderer>();
 		if(mr == null) mr = pb.gameObject.AddComponent<MeshRenderer>();
