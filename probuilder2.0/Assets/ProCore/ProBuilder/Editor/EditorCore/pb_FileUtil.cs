@@ -43,7 +43,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if(exactMatch)
 					{
-						string found = path.Substring(str.LastIndexOf('/') + 1);
+						string found = path.Substring(path.LastIndexOf('/') + 1);
 
 						if(!found.Equals(single))
 							continue;
