@@ -1,3 +1,15 @@
+# ProBuilder 2.9.3f0
+
+## Features
+
+- Support exporting quads in OBJ format.
+- Add a context menu item to quickly create material palettes from the current Asset window selection.
+
+## Bug Fixes
+
+- Use `additionalVertexStreams` mesh attributes where possible when ProBuilderizing.
+- Fix for Windows version sometimes endlessly creating folders when root folder moved from Assets/ProCore.
+
 # ProBuilder 2.9.2f1
 
 ## Bug Fixes
