@@ -28,6 +28,7 @@ namespace ProBuilder2.Actions
 		GUIContent gc_ObjExportCopyTextures = new GUIContent("Copy Textures", "With Copy Textures enabled the exporter will copy material textures to the destination directory. If false the material library will point to the texture path within the Unity project. If you're exporting models with the intention of editing in an external 3D modeler then re-importing, disable this option to avoid duplicate textures in your project.");
 		GUIContent gc_ObjExportVertexColors = new GUIContent("Vertex Colors", "Some 3D modeling applications will read and write vertex colors as an unofficial extension to the OBJ format.\n\nWarning! Enabling this can break compatibility with some other 3D modeling applications.");
 		GUIContent gc_ObjTextureOffsetScale = new GUIContent("Texture Offset, Scale", "Write texture map offset and scale to the material library. Not all 3D modeling applications support this specificiation, and some will fail to load materials that define these values.");
+		GUIContent gc_ObjQuads = new GUIContent("Export Quads", "Where possible, faces will be exported as quads instead of triangles. Note that this can result in a larger exported mesh (ProBuilder will not merge shared vertices with this option enabled).");
 
 		// Options for each export format
 		private bool m_ExportRecursive;
@@ -39,6 +40,7 @@ namespace ProBuilder2.Actions
 		private bool m_ObjApplyTransform;
 		private bool m_ObjExportVertexColors;
 		private bool m_ObjTextureOffsetScale;
+		private bool m_ObjQuads;
 
 		// stl specific
 		private Parabox.STL.FileType m_StlExportFormat = Parabox.STL.FileType.Ascii;
@@ -74,11 +76,12 @@ namespace ProBuilder2.Actions
 			m_ExportAsGroup = pb_Preferences_Internal.GetBool("pbExportAsGroup", true);
 
 			// obj options
-			m_ObjExportRightHanded = pb_Preferences_Internal.GetBool("pbObjExportRightHanded", true);
-			m_ObjApplyTransform = pb_Preferences_Internal.GetBool("pbObjApplyTransform", true);
+			m_ObjExportRightHanded 	= pb_Preferences_Internal.GetBool("pbObjExportRightHanded", true);
+			m_ObjApplyTransform 	= pb_Preferences_Internal.GetBool("pbObjApplyTransform", true);
 			m_ObjExportCopyTextures = pb_Preferences_Internal.GetBool("pbObjExportCopyTextures", true);
 			m_ObjExportVertexColors = pb_Preferences_Internal.GetBool("pbObjExportVertexColors", false);
 			m_ObjTextureOffsetScale = pb_Preferences_Internal.GetBool("pbObjTextureOffsetScale", false);
+			m_ObjQuads 				= pb_Preferences_Internal.GetBool("pbObjQuads", true);
 
 			// stl options
 			m_StlExportFormat = (Parabox.STL.FileType) pb_Preferences_Internal.GetInt("pbStlFormat", (int) Parabox.STL.FileType.Ascii);
@@ -150,6 +153,7 @@ namespace ProBuilder2.Actions
 			m_ObjExportCopyTextures = EditorGUILayout.Toggle(gc_ObjExportCopyTextures, m_ObjExportCopyTextures);
 			m_ObjExportVertexColors = EditorGUILayout.Toggle(gc_ObjExportVertexColors, m_ObjExportVertexColors);
 			m_ObjTextureOffsetScale = EditorGUILayout.Toggle(gc_ObjTextureOffsetScale, m_ObjTextureOffsetScale);
+			m_ObjQuads = EditorGUILayout.Toggle(gc_ObjQuads, m_ObjQuads);
 
 			if(EditorGUI.EndChangeCheck())
 			{
@@ -158,6 +162,7 @@ namespace ProBuilder2.Actions
 				pb_Preferences_Internal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
 				pb_Preferences_Internal.SetBool("pbObjExportVertexColors", m_ObjExportVertexColors);
 				pb_Preferences_Internal.SetBool("pbObjTextureOffsetScale", m_ObjTextureOffsetScale);
+				pb_Preferences_Internal.SetBool("pbObjQuads", m_ObjQuads);
 			}
 		}
 
@@ -213,12 +218,15 @@ namespace ProBuilder2.Actions
 			}
 			else if(m_ExportFormat == ExportFormat.Obj)
 			{
-				res = ExportObj.ExportWithFileDialog(meshes, m_ExportAsGroup, new pb_ObjOptions() {
-					handedness = m_ObjExportRightHanded ? pb_ObjOptions.Handedness.Right : pb_ObjOptions.Handedness.Left,
-					copyTextures = m_ObjExportCopyTextures,
-					applyTransforms = m_ExportAsGroup || m_ObjApplyTransform,
-					vertexColors = m_ObjExportVertexColors,
-					textureOffsetScale = m_ObjTextureOffsetScale
+				res = ExportObj.ExportWithFileDialog(meshes,
+					m_ExportAsGroup,
+					m_ObjQuads,
+					new pb_ObjOptions() {
+						handedness = m_ObjExportRightHanded ? pb_ObjOptions.Handedness.Right : pb_ObjOptions.Handedness.Left,
+						copyTextures = m_ObjExportCopyTextures,
+						applyTransforms = m_ExportAsGroup || m_ObjApplyTransform,
+						vertexColors = m_ObjExportVertexColors,
+						textureOffsetScale = m_ObjTextureOffsetScale
 					});
 			}
 			else if(m_ExportFormat == ExportFormat.Stl)

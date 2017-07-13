@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -14,8 +15,16 @@ namespace ProBuilder2.EditorCommon
 	{
 		// The name of this model.
 		public string name;
-		// The geometry.
-		public Mesh mesh;
+		// Vertex positions.
+		public Vector3[] positions;
+		// Vertex normals. May be null, or if not must match positions length.
+		public Vector3[] normals;
+		// Vertex textures (UV0). May be null, or if not must match positions length.
+		public Vector2[] textures;
+		// Vertex colors. May be null, or if not must match positions length.
+		public Color[] colors;
+		// Triangle data (submesh[face[indices[]]]).
+		public int[][][] indices;
 		// Any materials referenced by the mesh. Should be equal in length to the submesh count.
 		public Material[] materials;
 		// Optional matrix to be applied to the mesh geometry before writing to Obj.
@@ -30,9 +39,77 @@ namespace ProBuilder2.EditorCommon
 		public pb_Model(string name, Mesh mesh, Material[] materials, Matrix4x4 matrix)
 		{
 			this.name = name;
-			this.mesh = mesh;
+			this.positions = mesh.vertices;
+			this.normals = mesh.normals;
+			this.textures = mesh.uv;
+			this.colors = mesh.colors;
 			this.materials = materials;
+			this.indices = new int[materials.Length][][];
 			this.matrix = matrix;
+
+			for(int subMeshIndex = 0; subMeshIndex < materials.Length; subMeshIndex++)
+			{
+				this.indices[subMeshIndex] = new int[1][];
+				this.indices[subMeshIndex][0] = mesh.GetTriangles(subMeshIndex);
+			}
+		}
+
+		public pb_Model(string name, pb_Object mesh)
+		{
+			mesh.ToMesh();			
+			mesh.Refresh();			
+
+			MeshRenderer mr = mesh.gameObject.GetComponent<MeshRenderer>();
+			Material[] sharedMaterials = mr != null ? mr.sharedMaterials : new Material[0] {};
+			int subMeshCount = sharedMaterials.Length;
+
+			this.name = name;
+			this.positions = mesh.vertices.Select(x => x).ToArray();
+			this.normals = mesh.msh.normals;
+			this.textures = mesh.uv == null ? null : mesh.uv.Select(x => x).ToArray();
+			this.colors = mesh.colors == null ? null : mesh.colors.Select(x => x).ToArray();
+			this.matrix = mesh.transform.localToWorldMatrix;	
+			this.materials = sharedMaterials;
+			this.indices = new int[subMeshCount][][];
+
+			for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
+			{
+				pb_Face[] faces = mesh.faces.Where(x => x.material == sharedMaterials[subMeshIndex]).ToArray();
+
+				int[][] indices = new int[faces.Length][];
+				for(int ff = 0; ff < faces.Length; ff++)
+					faces[ff].ToQuadOrTriangles(out indices[ff]);
+
+				this.indices[subMeshIndex] = indices;
+			}
+
+			// catch null-material faces
+			pb_Face[] facesWithNoMaterial = mesh.faces.Where(x => x.material == null).ToArray();
+
+			if(facesWithNoMaterial != null && facesWithNoMaterial.Length > 0)
+			{
+				pbUtil.Add<Material>(this.materials, pb_Constant.DefaultMaterial);
+
+				int[][] indices = new int[facesWithNoMaterial.Length][];
+
+				for(int ff = 0; ff < facesWithNoMaterial.Length; ff++)
+					facesWithNoMaterial[ff].ToQuadOrTriangles(out indices[ff]);
+
+				pbUtil.Add<int[][]>(this.indices, indices);
+			}
+
+			mesh.Optimize();
+		}
+
+		/**
+		 *	Vertex count for the mesh (corresponds to positions length).
+		 */
+		public int vertexCount
+		{
+			get
+			{
+				return positions == null ? 0 : positions.Length;
+			}
 		}
 	}
 
@@ -146,16 +223,16 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Model model in models)
 			{
-				Mesh mesh = model.mesh;
 				Material[] materials = model.materials;
+				int subMeshCount = materials == null ? 1 : materials.Length;
 				Matrix4x4 matrix = options.applyTransforms ? model.matrix : Matrix4x4.identity;
 
-				int vertexCount = mesh.vertexCount;
+				int vertexCount = model.vertexCount;
 
-				Vector3[] positions = mesh.vertices;
-				Vector3[] normals = mesh.normals;
-				Vector2[] textures0 = mesh.uv;
-				Color[] colors = options.vertexColors ? mesh.colors : null;
+				Vector3[] positions = model.positions;
+				Vector3[] normals = model.normals;
+				Vector2[] textures0 = model.textures;
+				Color[] colors = options.vertexColors ? model.colors : null;
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
 				if(options.handedness != pb_ObjOptions.Handedness.Left || options.applyTransforms)
@@ -206,36 +283,63 @@ namespace ProBuilder2.EditorCommon
 				sb.AppendLine();
 
 				// Material assignment
-				for(int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
+				for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
 				{
-					if(mesh.subMeshCount > 1)
-						sb.AppendLine(string.Format("g {0}_{1}", mesh.name, submeshIndex));
+					if(subMeshCount > 1)
+						sb.AppendLine(string.Format("g {0}_{1}", model.name, subMeshIndex));
 					else
-						sb.AppendLine(string.Format("g {0}", mesh.name));
+						sb.AppendLine(string.Format("g {0}", model.name));
 
-					if(submeshIndex < materialCount)
+					if(subMeshIndex < materialCount)
 					{
-						if(materials[submeshIndex] != null)
-							sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[submeshIndex]]));
+						if(materials[subMeshIndex] != null)
+							sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[subMeshIndex]]));
 					}
 
-					int[] triangles = mesh.GetTriangles(submeshIndex);
+					int[][] faces = model.indices[subMeshIndex];
 
-					for(int i = 0; i < triangles.Length; i += 3)
+					for(int ff = 0; ff < faces.Length; ff++)
 					{
-						if(reverseWinding)
+						int[] triangles = faces[ff];
+
+						if(triangles.Length == 4)
 						{
-							sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-								triangles[i+2] + triangleOffset,
-								triangles[i+1] + triangleOffset,
-								triangles[i+0] + triangleOffset));
+							if(reverseWinding)
+							{
+								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
+									triangles[3] + triangleOffset,
+									triangles[2] + triangleOffset,
+									triangles[1] + triangleOffset,
+									triangles[0] + triangleOffset));
+							}
+							else
+							{
+								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
+									triangles[0] + triangleOffset,
+									triangles[1] + triangleOffset,
+									triangles[2] + triangleOffset,
+									triangles[3] + triangleOffset));
+							}
 						}
 						else
 						{
-							sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-								triangles[i+0] + triangleOffset,
-								triangles[i+1] + triangleOffset,
-								triangles[i+2] + triangleOffset));
+							for(int i = 0; i < triangles.Length; i += 3)
+							{
+								if(reverseWinding)
+								{
+									sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+										triangles[i+2] + triangleOffset,
+										triangles[i+1] + triangleOffset,
+										triangles[i+0] + triangleOffset));
+								}
+								else
+								{
+									sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+										triangles[i+0] + triangleOffset,
+										triangles[i+1] + triangleOffset,
+										triangles[i+2] + triangleOffset));
+								}
+							}
 						}
 					}
 

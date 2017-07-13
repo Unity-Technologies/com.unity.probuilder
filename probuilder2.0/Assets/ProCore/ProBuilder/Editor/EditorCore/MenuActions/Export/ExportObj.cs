@@ -43,16 +43,14 @@ namespace ProBuilder2.Actions
 		/**
 		 *	Prompt user for a save file location and export meshes as Obj.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, pb_ObjOptions options = null)
+		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, bool allowQuads = true, pb_ObjOptions options = null)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return null;
 
-			IEnumerable<pb_Model> models = meshes.Select(x =>
-				new pb_Model(x.gameObject.name,
-					x.msh,
-					x.GetComponent<MeshRenderer>().sharedMaterials,
-					x.transform.localToWorldMatrix));
+			IEnumerable<pb_Model> models = allowQuads
+				? meshes.Select(x => new pb_Model(x.gameObject.name, x))
+				: meshes.Select(x => new pb_Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
 
 			string path = null, res = null;
 

@@ -1,9 +1,3 @@
-/*
- *	Storage class for associating triangles to faces.
- *	Basically behaves like a dictionary entry, but with
- *	some added functionality.
- */
-
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -332,14 +326,40 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 *	Attempts to create quad, or on failing just return the triangle indices.
+		 */
+		public void ToQuadOrTriangles(out int[] quadOrTris)
+		{
+			if(ToQuad(out quadOrTris))
+				return;
+
+			int len = indices == null ? 0 : System.Math.Max(0, indices.Length);
+			quadOrTris = new int[len];
+			System.Array.Copy(indices, quadOrTris, len);
+		}
+
+		/**
 		 *	Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
 		 */
 		public int[] ToQuad()
 		{
-			if(indices.Length != 6)
-				return null;
+			int[] quad;
+			ToQuad(out quad);
+			return quad;
+		}
 
-			int[] quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
+		/**
+		 *	Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
+		 */
+		public bool ToQuad(out int[] quad)
+		{
+			if(indices == null || indices.Length != 6)
+			{
+				quad = null;
+				return false;
+			}
+
+			quad = new int[4] { edges[0].x, edges[0].y, -1, -1 };
 
 			if(edges[1].x == quad[1])
 				quad[2] = edges[1].y;
@@ -355,7 +375,7 @@ namespace ProBuilder2.Common
 			else if(edges[3].x == quad[2])
 				quad[3] = edges[3].y;
 
-			return quad;
+			return true;
 		}
 
 		/**
