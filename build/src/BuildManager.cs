@@ -22,7 +22,7 @@ namespace ProBuilder.BuildSystem
 			bool m_IsDebug = false;
 			string m_UnityPathOverride = null;
 
-			if(args.Any(x => x.Contains("--help") || x.Contains("-help")))
+			if(args == null || args.Length < 1 || args.Any(x => x.Contains("--help") || x.Contains("-help")))
 			{
 				Console.WriteLine(HelpText.Contents);
 				return 0;
