@@ -90,3 +90,21 @@ vertices up on that quad from the previous example:
 Note that you should not ever directly modify the `MeshFilter.sharedMesh`.
 ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and 
 `pb_Object::Refresh` functions.
+
+## Building Asset Store Projects & Packages
+
+To facilitate building the projects and packages for the various Unity versions a custom built build system is employed. The lifting is done by a mono app called `pb-build` and driven by a set of `json` files. The `json` files describe the build process for a single version of ProBuilder. They are located in `build/targets` and named to match their intended destination (ex, "ProBuilderAdvanced-5.6" builds ProBuilder Advanced for Unity 5.6).
+
+You can either run builds individually using `pb-build` directly:
+
+```
+mono pb-build.exe build/targets/ProBuilderAdvanced-5.6.json
+```
+
+Or run a batch build with the `advanced.sh` or `basic.sh` scripts.
+
+`pb-build` provides some switches for debugging (see `mono pb-build.exe --help`).
+
+The result of `pb-build` is a Unity project in `bin/projects` that is ready to be uploaded to the Asset Store.
+
+To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`. Currently there aren't any switches in this script to limit which package gets built, it's all or nothing.
