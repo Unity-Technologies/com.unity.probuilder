@@ -32,8 +32,11 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_EntityVisibility()
 		{
-			EditorApplication.playmodeStateChanged -= OnPlayModeStateChanged;
+#if UNITY_2017_2_OR_NEWER
+			EditorApplication.playModeStateChanged += (x) => { OnPlayModeStateChanged(); };
+#else
 			EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
+#endif
 		}
 
 		/**
