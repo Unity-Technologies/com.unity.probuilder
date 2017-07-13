@@ -1,3 +1,9 @@
+# ProBuilder 2.9.3p1
+
+## Bug Fixes
+
+- Don't delete UnityEngine meshes when unloading a scene in play mode.
+
 # ProBuilder 2.9.3f0
 
 ## Features

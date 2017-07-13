@@ -1046,8 +1046,7 @@ public class pb_Object : MonoBehaviour
 		if(!dontDestroyMeshOnDelete &&
 			Application.isEditor &&
 			!Application.isPlaying &&
-			Time.frameCount > 0 &&
-			!m_ApplicationIsQuitting)
+			Time.frameCount > 0 )
 		{
 			if(onDestroyObject != null)
 				onDestroyObject(this);
