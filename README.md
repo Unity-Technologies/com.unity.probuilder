@@ -113,10 +113,10 @@ To selectively build a package pass the project suffix to `export-packages.sh`. 
 
 Valid arguments:
 
-	- `SRC`
-	- `47`
-	- `50`
-	- `53`
-	- `55`
-	- `56`
-	- `2017.2`
+- `SRC`
+- `47`
+- `50`
+- `53`
+- `55`
+- `56`
+- `2017.2`
