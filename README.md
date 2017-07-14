@@ -107,4 +107,16 @@ Or run a batch build with the `advanced.sh` or `basic.sh` scripts.
 
 The result of `pb-build` is a Unity project in `bin/projects` that is ready to be uploaded to the Asset Store.
 
-To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`. Currently there aren't any switches in this script to limit which package gets built, it's all or nothing.
+To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`.
+
+To selectively build a package pass the project suffix to `export-packages.sh`. Ex, `sh export-packages.sh 56 SRC` will build the Unity 5.6 and Source code packages.
+
+Valid arguments:
+
+	- `SRC`
+	- `47`
+	- `50`
+	- `53`
+	- `55`
+	- `56`
+	- `2017.2`
