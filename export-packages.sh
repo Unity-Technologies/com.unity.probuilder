@@ -1,5 +1,18 @@
 #!/bin/bash
 # Exports Unity packages.
+# Must be run from probuilder2/ root directory.
+# If no arguments are passed all targets are built.
+# Valid arguments:
+# 	SRC = Build source code package
+# 	47 = Build Unity 4.7 package
+# 	50 = Build Unity 5.0 package
+# 	53 = Build Unity 5.3 package
+# 	55 = Build Unity 5.5 package
+# 	56 = Build Unity 5.6 package
+# 	2017.2 = Build Unity 2017.2 package
+
+ARGS=("$@")
+ARGC=${#ARGS[@]}
 
 if [ "$(uname)" == "Darwin" ]; then
 WORKING_DIR=$(pwd)
@@ -8,6 +21,7 @@ UNITY_50=/Applications/Unity\ 5.0.0f4/Unity.app/Contents/MacOS/Unity
 UNITY_53=/Applications/Unity\ 5.3.0f4/Unity.app/Contents/MacOS/Unity
 UNITY_55=/Applications/Unity\ 5.5.0f3/Unity.app/Contents/MacOS/Unity
 UNITY_56=/Applications/Unity\ 5.6.0f3/Unity.app/Contents/MacOS/Unity
+UNITY_2017_2=/Applications/Unity\ 2017.2.0b2/Unity.app/Contents/MacOS/Unity
 else
 # cygwin paths don't cut it in -projectPath
 WORKING_DIR=$(cygpath -aw $(pwd))
@@ -16,12 +30,16 @@ UNITY_50=/d/Applications/Unity\ 5.0.0f4/Editor/Unity.exe
 UNITY_53=/d/Applications/Unity\ 5.3.0f4/Editor/Unity.exe
 UNITY_55=/d/Applications/Unity\ 5.5.0f3/Editor/Unity.exe
 UNITY_56=/d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe
+UNITY_2017_2=/d/Applications/Unity\ 2017.2.0b2/Editor/Unity.exe
 fi
 
+UNITY_TARGET_MACRO=(UNITY_47 UNITY_47 UNITY_50 UNITY_53 UNITY_55 UNITY_56 UNITY_2017_2)
+UNITY_TARGET_SUFFIX=(SRC 47 50 53 55 56 2017.2)
+UNITY_TARGETS_COUNT=${#UNITY_TARGET_MACRO[@]}
 
-VERSION_LINE=$(grep version: $WORKING_DIR/bin/projects/ProBuilder-Unity56/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
+VERSION_LINE=$(grep version: $WORKING_DIR/probuilder2.0/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
 PROBUILDER_VERSION=${VERSION_LINE/"version: "/""}
-echo Version: $PROBUILDER_VERSION
+echo "Exporting package version: " $PROBUILDER_VERSION
 
 rm -rf bin/packages
 mkdir bin/packages
@@ -29,37 +47,41 @@ mkdir bin/packages
 rm -rf bin/logs
 mkdir bin/logs
 
-# /d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+# If arguments were passed only build the requested versions
+if [ $ARGC -ne 0 ]; then
+	for((i = 0; i < $ARGC; i++)); do
+		# Suffix argument must match a folder in the bin/projects directory
+		ARG=${ARGS[${i}]}
+		for((i=0; i<$UNITY_TARGETS_COUNT;i++)); do
+			SUFFIX=${UNITY_TARGET_SUFFIX[${i}]}
+			if [ "$ARG" == "$SUFFIX" ]; then
+				PROJECT_PATH=$WORKING_DIR/bin/projects/ProBuilder-Unity$SUFFIX
+				if [ -d $PROJECT_PATH ]; then
+					echo "Building package: ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}
+					TARGET=${UNITY_TARGET_MACRO[${i}]}
+					"${!TARGET}" -projectPath $PROJECT_PATH -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$SUFFIX.unitypackage -logFile bin/logs/log_$SUFFIX.txt -disable-assembly-updater
+				else
+					echo "Cannot build package ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}" because project does not exist. Run pb-build to generate this folder."
+				fi
+			fi
+		done
 
-# Unity Source
-UNITY_VERSION=Source
-echo Export $UNITY_VERSION
-
-"$UNITY_47" -projectPath $WORKING_DIR/bin/projects/ProBuilder-$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
-
-UNITY_VERSION=47
-echo Export Unity $UNITY_VERSION
-
-"$UNITY_47" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
-
-UNITY_VERSION=50
-echo Export Unity $UNITY_VERSION
-
-"$UNITY_50" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
-
-UNITY_VERSION=53
-echo Export Unity $UNITY_VERSION
-
-"$UNITY_53" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
-
-UNITY_VERSION=55
-echo Export Unity $UNITY_VERSION
-
-"$UNITY_55" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
-
-UNITY_VERSION=56
-echo Export Unity $UNITY_VERSION
-
-"$UNITY_56" -projectPath $WORKING_DIR/bin/projects/ProBuilder-Unity$UNITY_VERSION -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$UNITY_VERSION.unitypackage -logFile bin/logs/log_$UNITY_VERSION.txt -disable-assembly-updater
+	done
+else
+	# Otherwise build everything
+	for((i=0; i<$UNITY_TARGETS_COUNT;i++)); do
+		SUFFIX=${UNITY_TARGET_SUFFIX[${i}]}
+		PROJECT_PATH=$WORKING_DIR/bin/projects/ProBuilder-Unity$SUFFIX
+		if [ -d $PROJECT_PATH ]; then
+			echo "Building package: ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}
+			TARGET=${UNITY_TARGET_MACRO[${i}]}
+			"${!TARGET}" -projectPath $PROJECT_PATH -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$SUFFIX.unitypackage -logFile bin/logs/log_$SUFFIX.txt -disable-assembly-updater
+		else
+			echo "Cannot build package ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}" because project does not exist. Run pb-build to generate this folder."
+		fi
+	done
+fi
 
 echo Finished
+
+exit 0
