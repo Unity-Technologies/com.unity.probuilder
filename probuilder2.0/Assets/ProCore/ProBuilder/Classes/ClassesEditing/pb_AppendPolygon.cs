@@ -173,6 +173,9 @@ namespace ProBuilder2.MeshOperations
 			return holes;
 		}
 
+		// @todo #343
+		const int MAX_HOLE_ITERATIONS = 2048;
+
 		/**
 		 *	Find any holes touching one of the passed common indices.
 		 */
@@ -194,7 +197,9 @@ namespace ProBuilder2.MeshOperations
 				pb_WingedEdge it = c;
 				int ind = it.edge.common.x;
 
-				while(it != null)
+				int counter = 0;
+
+				while(it != null && counter++ < MAX_HOLE_ITERATIONS)
 				{
 					used.Add(it);
 					hole.Add(it);
@@ -278,8 +283,8 @@ namespace ProBuilder2.MeshOperations
 		private static pb_WingedEdge FindNextEdgeInHole(pb_WingedEdge wing, int common)
 		{
 			pb_WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
-
-			while(next != null && next != wing)
+			int counter = 0;
+			while(next != null && next != wing && counter++ < MAX_HOLE_ITERATIONS)
 			{
 				if(next.opposite == null)
 					return next;
