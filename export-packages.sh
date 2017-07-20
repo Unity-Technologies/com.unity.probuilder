@@ -52,20 +52,19 @@ if [ $ARGC -ne 0 ]; then
 	for((i = 0; i < $ARGC; i++)); do
 		# Suffix argument must match a folder in the bin/projects directory
 		ARG=${ARGS[${i}]}
-		for((i=0; i<$UNITY_TARGETS_COUNT;i++)); do
-			SUFFIX=${UNITY_TARGET_SUFFIX[${i}]}
+		for((n=0; n<$UNITY_TARGETS_COUNT; n++)); do
+			SUFFIX=${UNITY_TARGET_SUFFIX[${n}]}
 			if [ "$ARG" == "$SUFFIX" ]; then
 				PROJECT_PATH=$WORKING_DIR/bin/projects/ProBuilder-Unity$SUFFIX
 				if [ -d $PROJECT_PATH ]; then
 					echo "Building package: ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}
-					TARGET=${UNITY_TARGET_MACRO[${i}]}
+					TARGET=${UNITY_TARGET_MACRO[${n}]}
 					"${!TARGET}" -projectPath $PROJECT_PATH -batchmode -quit -nographics -exportPackage Assets/ProCore ../../packages/ProBuilder2-v$PROBUILDER_VERSION-unity$SUFFIX.unitypackage -logFile bin/logs/log_$SUFFIX.txt -disable-assembly-updater
 				else
 					echo "Cannot build package ProBuilder2-v"$PROBUILDER_VERSION"-unity"${SUFFIX}" because project does not exist. Run pb-build to generate this folder."
 				fi
 			fi
 		done
-
 	done
 else
 	# Otherwise build everything
