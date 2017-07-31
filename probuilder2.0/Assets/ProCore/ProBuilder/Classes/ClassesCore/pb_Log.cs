@@ -106,6 +106,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Output an informational message.
 		 */
+		public static void Info(string format, params object[] values)
+		{
+			Info(string.Format(format, values));
+		}
+
 		public static void Info(string message)
 		{
 			if( (m_LogLevel & pb_LogLevel.Info) > 0 )
@@ -115,6 +120,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Output a warning message.
 		 */
+		public static void Warning(string format, params object[] values)
+		{
+			Warning(string.Format(format, values));
+		}
+
 		public static void Warning(string message)
 		{
 			if( (m_LogLevel & pb_LogLevel.Warning) > 0 )
@@ -124,6 +134,11 @@ namespace ProBuilder2.Common
 		/**
 		 *	Output an error message.
 		 */
+		public static void Error(string format, params object[] values)
+		{
+			Error(string.Format(format, values));
+		}
+
 		public static void Error(string message)
 		{
 			if( (m_LogLevel & pb_LogLevel.Error) > 0 )

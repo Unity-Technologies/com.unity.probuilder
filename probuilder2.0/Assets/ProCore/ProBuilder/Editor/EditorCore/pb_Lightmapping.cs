@@ -1,13 +1,19 @@
+#if !(UNITY_4_6 || UNITY_4_7) && !UNITY_5_OR_NEWER
+#define UNITY_5_OR_NEWER
+#endif
+
 using UnityEditor;
 using UnityEngine;
 using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
 	/**
 	 * Methods used in manipulating or creating Lightmaps.
 	 */
+	[InitializeOnLoad]
 	public static class pb_Lightmapping
 	{
 		/**
@@ -20,6 +26,24 @@ namespace ProBuilder2.EditorCommon
 		public static void GenerateUV2(this pb_Object pb, bool forceUpdate)
 		{
 			pb.Optimize(forceUpdate);
+		}
+
+		static pb_Lightmapping()
+		{
+#if UNITY_5_OR_NEWER
+			Lightmapping.completed += OnLightmappingCompleted;
+#endif
+		}
+
+		private static void OnLightmappingCompleted()
+		{
+			if (!pb_Preferences_Internal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", true))
+				return;
+			 
+			IEnumerable<pb_Entity> missingUv2 = GameObject.FindObjectsOfType<pb_Entity>().Where(x => x.entityType == EntityType.Detail && !x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+			int count = missingUv2.Count();
+			if (count > 0)
+				pb_Log.Warning("{0} ProBuilder {1} not included in lightmap bake due to missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}
 
 		/**
@@ -45,10 +69,10 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Store the previous GIWorkflowMode and set the current value to OnDemand (or leave it Legacy).
 		 */
-		[System.Diagnostics.Conditional("UNITY_5")]
+		[System.Diagnostics.Conditional("UNITY_5_OR_NEWER")]
 		internal static void PushGIWorkflowMode()
 		{
-#if UNITY_5
+#if UNITY_5_OR_NEWER
 			pb_Preferences_Internal.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
 
 			if(Lightmapping.giWorkflowMode != Lightmapping.GIWorkflowMode.Legacy)
@@ -59,10 +83,10 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Return GIWorkflowMode to it's prior state.
 		 */
-		[System.Diagnostics.Conditional("UNITY_5")]
+		[System.Diagnostics.Conditional("UNITY_5_OR_NEWER")]
 		internal static void PopGIWorkflowMode()
 		{
-#if UNITY_5
+#if UNITY_5_OR_NEWER
 			// if no key found (?), don't do anything.
 			if(!pb_Preferences_Internal.HasKey("pb_GIWorkflowMode"))
 				return;

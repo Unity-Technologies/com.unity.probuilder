@@ -53,6 +53,8 @@ public class pb_Preferences
 	static bool pbDragSelectWholeElement = false;
 	static bool pbEnableExperimental = false;
 
+	static bool showMissingLightmapUvWarning = true;
+
 	#if !UNITY_4_6 && !UNITY_4_7
 	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 	#endif
@@ -140,6 +142,7 @@ public class pb_Preferences
 		pbPBOSelectionOnly = EditorGUILayout.Toggle(new GUIContent("Only PBO are Selectable", "If true, you will not be able to select non probuilder objects in Geometry and Texture mode"), pbPBOSelectionOnly);
 		pbCloseShapeWindow = EditorGUILayout.Toggle(new GUIContent("Close shape window after building", "If true the shape window will close after hitting the build button"), pbCloseShapeWindow);
 		pbDrawAxisLines = EditorGUILayout.Toggle(new GUIContent("Dimension Overlay Lines", "When the Dimensions Overlay is on, this toggle shows or hides the axis lines."), pbDrawAxisLines);
+		showMissingLightmapUvWarning = EditorGUILayout.Toggle("Show Missing Lightmap UVs Warning", showMissingLightmapUvWarning);
 
 		GUILayout.Space(4);
 
@@ -261,6 +264,7 @@ public class pb_Preferences
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowCollider);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowTrigger);
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShowNoDraw);
+			pb_Preferences_Internal.DeleteKey("pb_Lightmapping::showMissingLightmapUvWarning");
 			#if !UNITY_4_6 && !UNITY_4_7
 			pb_Preferences_Internal.DeleteKey(pb_Constant.pbShadowCastingMode);
 			#endif
@@ -372,9 +376,10 @@ public class pb_Preferences
 		pbElementSelectIsHamFisted			= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 		pbDragSelectWholeElement			= pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		pbEnableExperimental				= pb_Preferences_Internal.GetBool(pb_Constant.pbEnableExperimental);
+		showMissingLightmapUvWarning		= pb_Preferences_Internal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", true);
 
 
-		pbDefaultFaceColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
+		pbDefaultFaceColor = pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultFaceColor );
 		pbDefaultEdgeColor 					= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultEdgeColor );
 		pbDefaultSelectedVertexColor 		= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultSelectedVertexColor );
 		pbDefaultVertexColor 				= pb_Preferences_Internal.GetColor( pb_Constant.pbDefaultVertexColor );
@@ -392,7 +397,6 @@ public class pb_Preferences
 		pbDefaultMaterial 					= pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 		defaultShortcuts 					= pb_Preferences_Internal.GetShortcuts().ToArray();
-
 	}
 
 	public static void SetPrefs()
@@ -436,6 +440,7 @@ public class pb_Preferences
 		pb_Preferences_Internal.SetBool		(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, pb_PreferenceLocation.Global);
 		pb_Preferences_Internal.SetBool		(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement, pb_PreferenceLocation.Global);
 		pb_Preferences_Internal.SetBool		(pb_Constant.pbEnableExperimental, pbEnableExperimental, pb_PreferenceLocation.Global);
+		pb_Preferences_Internal.SetBool		("pb_Lightmapping::showMissingLightmapUvWarning", showMissingLightmapUvWarning, pb_PreferenceLocation.Global);
 
 		pb_Preferences_Internal.SetFloat	(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, pb_PreferenceLocation.Global);
 		pb_Preferences_Internal.SetFloat 	(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue, pb_PreferenceLocation.Global);

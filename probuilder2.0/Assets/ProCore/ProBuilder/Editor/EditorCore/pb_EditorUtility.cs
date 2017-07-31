@@ -337,6 +337,9 @@ namespace ProBuilder2.EditorCommon
 			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
 		}
 
+		/**
+		 *	Toggles the LightmapStatic bit of an objects Static flags.
+		 */
 		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
 		{
 			pb_Entity ent = pb.GetComponent<pb_Entity>();
@@ -351,6 +354,14 @@ namespace ProBuilder2.EditorCommon
 					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
 				}
 			}
+		}
+
+		/**
+		 * Returns true if GameObject contains flags.
+		 */
+		public static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
+		{
+			return (GameObjectUtility.GetStaticEditorFlags(go) & flags) == flags;
 		}
 
 		private static void SetIsTrigger(bool val, GameObject target)
