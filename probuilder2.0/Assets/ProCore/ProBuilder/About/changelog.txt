@@ -1,8 +1,15 @@
-# ProBuilder 2.9.3p1
+# ProBuilder 2.10.0f0
+
+## Features
+
+- When a lightmapping finishes baking show a warning if any ProBuilder objects marked as Detail were left out due to missing UV2s.
 
 ## Bug Fixes
 
+- Fix single key shortcuts emitting system beep on Mac.
+- Fix vertex movement not respecting snap settings when ProGrids is placed in Plugins folder.
 - Don't delete UnityEngine meshes when unloading a scene in play mode.
+- Fix occasional crashes when using Select Hole and Fill Hole actions.
 
 # ProBuilder 2.9.3f0
 
