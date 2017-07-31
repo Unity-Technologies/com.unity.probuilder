@@ -309,6 +309,11 @@ public class pb_Editor : EditorWindow
 			case EventType.ContextClick:
 				OpenContextMenu();
 				break;
+
+			case EventType.MouseDown:
+				if (shortcuts.Any(x => x.Matches(e.keyCode, e.modifiers)))
+					e.Use();
+				break;
 		}
 
 		if(editorToolbar != null)
