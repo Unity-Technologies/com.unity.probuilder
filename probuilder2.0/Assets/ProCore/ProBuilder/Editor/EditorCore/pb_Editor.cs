@@ -310,9 +310,13 @@ public class pb_Editor : EditorWindow
 				OpenContextMenu();
 				break;
 
-			case EventType.MouseDown:
+			case EventType.KeyDown:
 				if (shortcuts.Any(x => x.Matches(e.keyCode, e.modifiers)))
 					e.Use();
+				break;
+
+			case EventType.KeyUp:
+				ShortcutCheck(e);
 				break;
 		}
 
@@ -510,6 +514,12 @@ public class pb_Editor : EditorWindow
 				currentEvent.Use();
 				return;
 			}
+		}
+
+		if(currentEvent.type == EventType.KeyDown)
+		{
+			if (shortcuts.Any(x => x.Matches(currentEvent.keyCode, currentEvent.modifiers)))
+				currentEvent.Use();
 		}
 
 		// Finished moving vertices, scaling, or adjusting uvs
