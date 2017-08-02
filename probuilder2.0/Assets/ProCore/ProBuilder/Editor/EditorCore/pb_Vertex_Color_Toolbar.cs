@@ -207,7 +207,6 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 			switch(editor.selectionMode)
 			{
 				case SelectMode.Face:
-				case SelectMode.Vertex:
 					foreach(pb_Object pb in selection)
 					{
 						Color[] colors = pb.colors;
@@ -219,6 +218,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 					}
 					break;
 				case SelectMode.Edge:
+				case SelectMode.Vertex:
 					foreach(pb_Object pb in selection)
 					{
 						Color[] colors = pb.colors;
