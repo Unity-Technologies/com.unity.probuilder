@@ -14,7 +14,9 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Assets/Create/Material Palette", true)]
 		static bool VerifyCreateMaterialPalette()
 		{
-			return Selection.GetFiltered(typeof(Material), SelectionMode.DeepAssets).Length > 0;
+			// This hangs on large projects
+			// Selection.GetFiltered(typeof(Material), SelectionMode.DeepAssets).Length > 0;
+			return true;
 		}
 
 		[MenuItem("Assets/Create/Material Palette")]
