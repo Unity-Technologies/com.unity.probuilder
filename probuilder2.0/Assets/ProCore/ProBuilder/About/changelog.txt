@@ -1,4 +1,4 @@
-# ProBuilder 2.10.0f0
+# ProBuilder 2.10.0f1
 
 ## Features
 
@@ -10,6 +10,8 @@
 - Fix vertex movement not respecting snap settings when ProGrids is placed in Plugins folder.
 - Don't delete UnityEngine meshes when unloading a scene in play mode.
 - Fix occasional crashes when using Select Hole and Fill Hole actions.
+- Fix hang on opening context menu with very large projects.
+- Fix Vertex Color Palette not applying colors correctly in vertex mode.
 
 # ProBuilder 2.9.3f0
 
