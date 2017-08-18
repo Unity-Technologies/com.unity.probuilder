@@ -350,7 +350,10 @@ namespace ProBuilder2.EditorCommon
 			return scale;
 		}
 
-		public static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<pb_Face>> ignore = null)
+		/**
+		 * Pick the GameObject nearest mousePosition (filtering out @ignore) and raycast for a face it.
+		 */
+		internal static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<pb_Face>> ignore = null)
 		{
 			pb = null;
 			hit = null;
@@ -371,12 +374,36 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
+		 * Return all GameObjects under the mousePosition.
+		 */
+		internal static List<GameObject> GetAllOverlapping(Vector2 mousePosition)
+		{
+			List<GameObject> intersecting = new List<GameObject>();
+
+			GameObject nearestGameObject = null;
+
+			do
+			{
+				nearestGameObject = HandleUtility.PickGameObject(mousePosition, false, intersecting.ToArray());
+
+				if(nearestGameObject != null)
+					intersecting.Add(nearestGameObject);
+				else
+					break;
+			}
+			while( nearestGameObject != null );
+
+			return intersecting;
+		}
+
+		/**
 		 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset. 
 		 * @param points First Vector2[] array.
 		 * @param compare The Vector2[] array to compare @c points againts.
 		 * @mask If mask is not null, any index in mask will not be used in the compare array.
 		 * @param maxDelta The maximum distance for two points to be apart to be considered for nearness.
 		 * @notes This should probably use a divide and conquer algorithm instead of the O(n^2) approach (http://www.geeksforgeeks.org/closest-pair-of-points/)
+
 		 */
 		public static bool NearestPointDelta(Vector2[] points, Vector2[] compare, int[] mask, float maxDelta, out Vector2 offset)
 		{

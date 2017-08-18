@@ -1,6 +1,10 @@
 
 namespace ProBuilder2.Common
 {
+	/**
+	 * A bare-bones Tuple class. Holds 2 items, does not implement equality, comparison, or anything else.
+	 * Unlike C# Tuple pb_Tuple is a class.
+	 */
 	public class pb_Tuple<T1, T2>
 	{
 		public T1 Item1;

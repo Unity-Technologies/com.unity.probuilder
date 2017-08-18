@@ -803,16 +803,16 @@ public class pb_Editor : EditorWindow
 		}
 	}
 
+	private static int m_DeepSelectionPrevious = 0x0;
+
 	// Returns the pb_Object modified by this action.  If no action taken, or action is eaten by texture window, return null.
 	// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
 	private pb_Object RaycastCheck(Vector3 mousePosition)
 	{
 		pb_Object pb = null;
 
-		/**
-		 * Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
-		 * first. If no hits, move on to face selection or object change.
-		 */
+		// Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
+		// first. If no hits, move on to face selection or object change.
 		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) ||
 			(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
 		{
@@ -820,29 +820,108 @@ public class pb_Editor : EditorWindow
 			SceneView.RepaintAll();
 			return pb;
 		}
-
+		
 		if(!shiftKey && !ctrlKey)
 			pb_Selection.SetSelection( (GameObject)null );
 
-		GameObject nearestGameObject = HandleUtility.PickGameObject(mousePosition, false);
+		pb_Log.Debug("event: " + Event.current.type + " " + Event.current.clickCount);
 
-		if(nearestGameObject)
-			pb = nearestGameObject.GetComponent<pb_Object>();
+		GameObject[] ignore = new GameObject[0];
+		GameObject pickedGo = null;
+		pb_Object pickedPb = null;
+		pb_Face pickedFace = null;
+		int newHash = 0;
 
-		if(nearestGameObject)
+		List<GameObject> picked = pb_Handle_Utility.GetAllOverlapping(mousePosition);
+		int pickedCount = picked.Count;
+
+		for(int i = 0, next = 0; i < pickedCount; i++)
 		{
+			GameObject go = picked[i];
+			pb = go.GetComponent<pb_Object>();
+			pb_Face face = null;
+
 			if(pb != null)
 			{
-				if(pb.isSelectable)
-					pb_Selection.AddToSelection(nearestGameObject);
+				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+				pb_RaycastHit hit;
+
+				if( pb_HandleUtility.FaceRaycast(ray,
+					pb,
+					out hit,
+					Mathf.Infinity,
+					pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
+				{
+					face = pb.faces[hit.face];
+				}
+			}
+			
+			// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
+			int hash = face == null ? go.GetHashCode() : face.GetHashCode();
+
+			if(m_DeepSelectionPrevious == hash)
+				next = (i + 1) % pickedCount;
+
+			if(next == i)
+			{
+				pickedGo = go;
+				pickedPb = pb;
+				pickedFace = face;
+
+				newHash = hash;
+
+				// a prior hash was matched, this is the next. if 
+				// it's just the first iteration don't break (but do
+				// set the default).
+				if(next != 0)
+					break;
+			}
+		}
+
+		m_DeepSelectionPrevious = newHash;
+
+		if( pickedGo != null )
+		{
+			Event.current.Use();
+
+			if( pickedPb != null)
+			{
+				if(pickedPb.isSelectable)
+				{
+					pb_Selection.AddToSelection(pickedGo);
+
+#if !PROTOTYPE
+					// Check for other editor mouse shortcuts first
+					pb_Material_Editor matEditor = pb_Material_Editor.instance;
+					if( matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pickedPb, pickedFace) )
+						return pickedPb;
+
+					pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+					if(uvEditor != null && uvEditor.ClickShortcutCheck(pickedPb, pickedFace))
+						return pickedPb;
+#endif
+
+					// Check to see if we've already selected this quad.  If so, remove it from selection cache.
+					pbUndo.RecordSelection(pickedPb, "Change Face Selection");
+
+					int indx = System.Array.IndexOf(pickedPb.SelectedFaces, pickedFace);
+
+					if( indx > -1 ) {
+						pickedPb.RemoveFromFaceSelectionAtIndex(indx);
+					} else {
+						pickedPb.AddToFaceSelection(pickedFace);
+					}
+				}
 				else
+				{
 					return null;
+				}
 			}
 			else if( !pb_PreferencesInternal.GetBool(pb_Constant.pbPBOSelectionOnly) )
 			{
 				// If clicked off a pb_Object but onto another gameobject, set the selection
 				// and dip out.
-				pb_Selection.SetSelection(nearestGameObject);
+				pb_Selection.SetSelection(pickedGo);
 				return null;
 			}
 			else
@@ -857,56 +936,12 @@ public class pb_Editor : EditorWindow
 			return null;
 		}
 
-		// Face click check
-		{
-			// Check for face hit
-			pb_Face selectedFace;
-
-			//  MeshRaycast(Ray InWorldRay, pb_Object pb, out int OutHitFace, out float OutHitPoint)
-			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-			pb_RaycastHit hit;
-
-
-			if( pb_HandleUtility.FaceRaycast(ray, pb, out hit, Mathf.Infinity, pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
-			{
-				selectedFace = pb.faces[hit.face];
-
-				/**
-				 * Check for other editor mouse shortcuts first - todo: better way to do this.
-				 */
-
-#if !PROTOTYPE
-				pb_Material_Editor matEditor = pb_Material_Editor.instance;
-				if( matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pb, selectedFace) )
-					return pb;
-
-				pb_UV_Editor uvEditor = pb_UV_Editor.instance;
-				if(uvEditor != null && uvEditor.ClickShortcutCheck(pb, selectedFace))
-					return pb;
-#endif
-
-
-				// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-				pbUndo.RecordSelection(pb, "Change Face Selection");
-
-				int indx = System.Array.IndexOf(pb.SelectedFaces, selectedFace);
-
-				if( indx > -1 ) {
-					pb.RemoveFromFaceSelectionAtIndex(indx);
-				} else {
-					pb.AddToFaceSelection(selectedFace);
-				}
-			}
-		}
-
-		Event.current.Use();
-
 		// OnSelectionChange will also call UpdateSelection, but this needs to remain
 		// because it catches element selection changes.
 		UpdateSelection(false);
 		SceneView.RepaintAll();
 
-		return pb;
+		return pickedPb;
 	}
 
 	private bool VertexClickCheck(out pb_Object vpb)
