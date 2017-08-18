@@ -833,7 +833,11 @@ public class pb_Editor : EditorWindow
 		int newHash = 0;
 
 		List<GameObject> picked = pb_Handle_Utility.GetAllOverlapping(mousePosition);
-		int pickedCount = picked.Count;
+
+		EventModifiers em = Event.current.modifiers;
+
+		// If any event modifiers are engaged don't cycle the deep click
+		int pickedCount = em != EventModifiers.None ? 1 : picked.Count;
 
 		for(int i = 0, next = 0; i < pickedCount; i++)
 		{
