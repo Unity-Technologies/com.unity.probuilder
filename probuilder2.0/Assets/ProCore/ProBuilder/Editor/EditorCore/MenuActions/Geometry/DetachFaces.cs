@@ -31,7 +31,7 @@ namespace ProBuilder2.Actions
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry ||
-					(pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+					(pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
 		public override MenuActionState AltState()
@@ -51,7 +51,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Detach Faces can separate the selection into either a new GameObject or a submesh.", MessageType.Info);
 
-			bool detachToNewObject = pb_Preferences_Internal.GetBool(pb_Constant.pbDetachToNewObject);
+			bool detachToNewObject = pb_PreferencesInternal.GetBool(pb_Constant.pbDetachToNewObject);
 			DetachSetting setting = detachToNewObject ? DetachSetting.GameObject : DetachSetting.Submesh;
 
 			EditorGUI.BeginChangeCheck();
@@ -59,7 +59,7 @@ namespace ProBuilder2.Actions
 			setting = (DetachSetting) EditorGUILayout.EnumPopup("Detach To", setting);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetBool(pb_Constant.pbDetachToNewObject, setting == DetachSetting.GameObject);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbDetachToNewObject, setting == DetachSetting.GameObject);
 
 			GUILayout.FlexibleSpace();
 

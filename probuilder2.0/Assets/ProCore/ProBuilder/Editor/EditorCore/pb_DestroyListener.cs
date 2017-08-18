@@ -21,7 +21,7 @@ namespace ProBuilder2.EditorCommon
 
 		static void OnDestroyObject(pb_Object pb)
 		{
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
 			{
 				PrefabType type = PrefabUtility.GetPrefabType(pb.gameObject);
 

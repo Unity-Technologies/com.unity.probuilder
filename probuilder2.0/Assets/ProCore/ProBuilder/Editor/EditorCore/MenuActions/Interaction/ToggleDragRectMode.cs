@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 {
 	public class ToggleDragRectMode : pb_MenuAction
 	{
-		bool isComplete { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement); } }
+		bool isComplete { get { return pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement); } }
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isComplete ? pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Complete") : pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect"); } }
@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pb_Preferences_Internal.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbDragSelectWholeElement, !isComplete);
 			return new pb_ActionResult(Status.Success, "Set Drag Select\n" + (isComplete ? "Complete" : "Intersect") );
 		}
 

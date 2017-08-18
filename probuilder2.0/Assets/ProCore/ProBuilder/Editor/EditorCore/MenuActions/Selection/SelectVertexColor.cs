@@ -47,14 +47,14 @@ namespace ProBuilder2.Actions
 		{
 			GUILayout.Label("Select by Vertex Color Options", EditorStyles.boldLabel);
 
-			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
 
 			EditorGUI.BeginChangeCheck();
 
 			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
 
 			if( EditorGUI.EndChangeCheck() )
-				pb_Preferences_Internal.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
+				pb_PreferencesInternal.SetBool("pb_restrictSelectColorToCurrentSelection", restrictToSelection);
 
 			GUILayout.FlexibleSpace();
 
@@ -83,7 +83,7 @@ namespace ProBuilder2.Actions
 			}
 
 			List<GameObject> newSelection = new List<GameObject>();
-			bool selectionOnly = pb_Preferences_Internal.GetBool("pb_restrictSelectColorToCurrentSelection");
+			bool selectionOnly = pb_PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
 			pb_Object[] pool = selectionOnly ? selection : Object.FindObjectsOfType<pb_Object>();
 
 			foreach(pb_Object pb in pool)

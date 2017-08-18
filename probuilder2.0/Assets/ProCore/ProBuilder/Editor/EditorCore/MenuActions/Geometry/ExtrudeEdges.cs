@@ -50,9 +50,9 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far an edge will be moved along it's normal when extruding.  This value can be negative.\n\nExtrude as Group determines whether or not adjacent faces stay attached to one another when extruding.", MessageType.Info);
 
-			float extrudeAmount = pb_Preferences_Internal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
-			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
-			bool manifoldEdgeExtrusion = pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
+			float extrudeAmount = pb_PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			bool extrudeAsGroup = pb_PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup);
+			bool manifoldEdgeExtrusion = pb_PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -63,9 +63,9 @@ namespace ProBuilder2.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				pb_Preferences_Internal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
-				pb_Preferences_Internal.SetBool(pb_Constant.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbManifoldEdgeExtrusion, manifoldEdgeExtrusion);
 			}
 
 			GUILayout.FlexibleSpace();

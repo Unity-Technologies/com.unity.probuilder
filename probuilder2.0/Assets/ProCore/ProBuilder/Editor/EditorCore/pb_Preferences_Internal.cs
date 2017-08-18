@@ -23,7 +23,7 @@ namespace ProBuilder2.EditorCommon
 	 *	Manage ProBuilder preferences.
 	 */
 	[InitializeOnLoad]
-	public static class pb_Preferences_Internal
+	public static class pb_PreferencesInternal
 	{
 		private static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
 		{
@@ -86,7 +86,7 @@ namespace ProBuilder2.EditorCommon
 		{
 		};
 
-		static pb_Preferences_Internal()
+		static pb_PreferencesInternal()
 		{
 			m_Preferences = pb_FileUtil.LoadRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
 		}

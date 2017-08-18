@@ -48,7 +48,7 @@ namespace ProBuilder2.EditorCommon
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
 
-			shiftOnlyTooltips = pb_Preferences_Internal.GetBool(pb_Constant.pbShiftOnlyTooltips);
+			shiftOnlyTooltips = pb_PreferencesInternal.GetBool(pb_Constant.pbShiftOnlyTooltips);
 
 			tooltipTimer.Item1 = "";
 			tooltipTimer.Item2 = 0.0;
@@ -58,12 +58,12 @@ namespace ProBuilder2.EditorCommon
 			scrollIconRight = pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Right");
 			scrollIconLeft 	= pb_IconUtility.GetIcon("Toolbar/ShowNextPage_Left");
 
-			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+			isIconMode = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 			this.window = pb_Editor.instance;
 			CalculateMaxIconSize();
 
-			scroll.x = pb_Preferences_Internal.GetFloat("pbEditorScroll.x", 0f);
-			scroll.y = pb_Preferences_Internal.GetFloat("pbEditorScroll.y", 0f);
+			scroll.x = pb_PreferencesInternal.GetFloat("pbEditorScroll.x", 0f);
+			scroll.y = pb_PreferencesInternal.GetFloat("pbEditorScroll.y", 0f);
 		}
 
 		void OnDisable()
@@ -72,8 +72,8 @@ namespace ProBuilder2.EditorCommon
 			// is called.  no clue why.
 			// EditorApplication.update -= Update;
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
-			pb_Preferences_Internal.SetFloat("pbEditorScroll.x", scroll.x);
-			pb_Preferences_Internal.SetFloat("pbEditorScroll.y", scroll.y);
+			pb_PreferencesInternal.SetFloat("pbEditorScroll.x", scroll.x);
+			pb_PreferencesInternal.SetFloat("pbEditorScroll.y", scroll.y);
 		}
 
 		void OnDestroy()
@@ -81,8 +81,8 @@ namespace ProBuilder2.EditorCommon
 			// store the scroll in both disable & destroy because there are
 			// situations where one gets updated over the other and it's all
 			// screwy.  script reloads in particular?
-			pb_Preferences_Internal.SetFloat("pbEditorScroll.x", scroll.x);
-			pb_Preferences_Internal.SetFloat("pbEditorScroll.y", scroll.y);
+			pb_PreferencesInternal.SetFloat("pbEditorScroll.x", scroll.x);
+			pb_PreferencesInternal.SetFloat("pbEditorScroll.y", scroll.y);
 			pb_MenuActionStyles.ResetStyles();
 		}
 
@@ -224,7 +224,7 @@ namespace ProBuilder2.EditorCommon
 			if(isIconMode && available.Count() < 1)
 			{
 				isIconMode = false;
-				pb_Preferences_Internal.SetBool(pb_Constant.pbIconGUI, isIconMode);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, isIconMode);
 				CalculateMaxIconSize();
 				Debug.LogWarning("ProBuilder: Toolbar icons failed to load, reverting to text mode.  Please ensure that the ProBuilder folder contents are unmodified.  If the menu is still not visible, try closing and re-opening the Editor Window.");
 				return;

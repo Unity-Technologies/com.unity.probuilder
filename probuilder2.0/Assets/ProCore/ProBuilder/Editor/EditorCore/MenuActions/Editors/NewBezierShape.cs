@@ -18,7 +18,7 @@ namespace ProBuilder2.Actions
 
 		public NewBezierShape()
 		{
-			experimentalFeaturesEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableExperimental);
+			experimentalFeaturesEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
 		}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent

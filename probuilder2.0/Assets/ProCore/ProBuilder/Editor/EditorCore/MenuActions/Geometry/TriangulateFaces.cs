@@ -32,7 +32,7 @@ namespace ProBuilder2.Actions
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry ||
-					(pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+					(pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
 		public override pb_ActionResult DoAction()

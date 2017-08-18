@@ -39,13 +39,13 @@ namespace ProBuilder2.Actions
 		{
 			GUILayout.Label("Vertex Color Editor", EditorStyles.boldLabel);
 
-			VertexColorTool tool = pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
+			VertexColorTool tool = pb_PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
 			VertexColorTool prev = tool;
 
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("Editor", tool);
 
 			if(prev != tool)
-				pb_Preferences_Internal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				pb_PreferencesInternal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
 
 			GUILayout.FlexibleSpace();
 

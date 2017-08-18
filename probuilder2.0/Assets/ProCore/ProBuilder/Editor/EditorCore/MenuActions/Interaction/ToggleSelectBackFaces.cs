@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 {
 	public class ToggleSelectBackFaces : pb_MenuAction
 	{
-		bool isEnabled { get { return pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection); } }
+		bool isEnabled { get { return pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection); } }
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isEnabled ? icons[1] : icons[0]; } }
@@ -39,7 +39,7 @@ The default value is <b>On</b>.
 
 		public override pb_ActionResult DoAction()
 		{
-			bool isEnabled = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+			bool isEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 			pb_Editor.instance.SetSelectHiddenEnabled( !isEnabled );
 
 			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (isEnabled ? "Off" : "On") );

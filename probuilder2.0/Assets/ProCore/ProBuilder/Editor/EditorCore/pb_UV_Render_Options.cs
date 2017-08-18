@@ -33,20 +33,20 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			if( pb_Preferences_Internal.HasKey(PREF_IMAGESIZE) )
-				imageSize = (ImageSize)pb_Preferences_Internal.GetInt(PREF_IMAGESIZE);
+			if( pb_PreferencesInternal.HasKey(PREF_IMAGESIZE) )
+				imageSize = (ImageSize)pb_PreferencesInternal.GetInt(PREF_IMAGESIZE);
 
-			if( pb_Preferences_Internal.HasKey(PREF_LINECOLOR) )
-				lineColor = pb_Preferences_Internal.GetColor(PREF_LINECOLOR);
+			if( pb_PreferencesInternal.HasKey(PREF_LINECOLOR) )
+				lineColor = pb_PreferencesInternal.GetColor(PREF_LINECOLOR);
 
-			if( pb_Preferences_Internal.HasKey(PREF_BACKGROUNDCOLOR) )
-				backgroundColor = pb_Preferences_Internal.GetColor(PREF_BACKGROUNDCOLOR);
+			if( pb_PreferencesInternal.HasKey(PREF_BACKGROUNDCOLOR) )
+				backgroundColor = pb_PreferencesInternal.GetColor(PREF_BACKGROUNDCOLOR);
 
-			if( pb_Preferences_Internal.HasKey(PREF_TRANSPARENTBACKGROUND) )
-				transparentBackground = pb_Preferences_Internal.GetBool(PREF_TRANSPARENTBACKGROUND);
+			if( pb_PreferencesInternal.HasKey(PREF_TRANSPARENTBACKGROUND) )
+				transparentBackground = pb_PreferencesInternal.GetBool(PREF_TRANSPARENTBACKGROUND);
 
-			if( pb_Preferences_Internal.HasKey(PREF_HIDEGRID) )
-				hideGrid = pb_Preferences_Internal.GetBool(PREF_HIDEGRID);
+			if( pb_PreferencesInternal.HasKey(PREF_HIDEGRID) )
+				hideGrid = pb_PreferencesInternal.GetBool(PREF_HIDEGRID);
 		}
 
 		public delegate void ScreenshotFunc(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor);
@@ -73,11 +73,11 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Save UV Template"))
 			{
-				pb_Preferences_Internal.SetInt(PREF_IMAGESIZE, (int)imageSize);
-				pb_Preferences_Internal.SetString(PREF_LINECOLOR, lineColor.ToString());
-				pb_Preferences_Internal.SetString(PREF_BACKGROUNDCOLOR, backgroundColor.ToString());
-				pb_Preferences_Internal.SetBool(PREF_TRANSPARENTBACKGROUND, transparentBackground);
-				pb_Preferences_Internal.SetBool(PREF_HIDEGRID, hideGrid);
+				pb_PreferencesInternal.SetInt(PREF_IMAGESIZE, (int)imageSize);
+				pb_PreferencesInternal.SetString(PREF_LINECOLOR, lineColor.ToString());
+				pb_PreferencesInternal.SetString(PREF_BACKGROUNDCOLOR, backgroundColor.ToString());
+				pb_PreferencesInternal.SetBool(PREF_TRANSPARENTBACKGROUND, transparentBackground);
+				pb_PreferencesInternal.SetBool(PREF_HIDEGRID, hideGrid);
 
 				if(pb_Editor.instance == null || pb_Editor.instance.selection.Length < 1)
 				{

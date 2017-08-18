@@ -31,7 +31,7 @@ namespace ProBuilder2.EditorCommon
 			// if generating UV2, the process is to manually split the mesh into individual triangles,
 			// generate uv2, then re-assemble with vertex collapsing where possible.
 			// if not generating uv2, just collapse vertices.
-			if(!pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
+			if(!pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
 			{
 				pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
 
@@ -68,13 +68,13 @@ namespace ProBuilder2.EditorCommon
 				pb_MeshUtility.CollapseSharedVertices(mesh);
 			}
 
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))
 				pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(pb_EditorUtility.onMeshCompiled != null)
 				pb_EditorUtility.onMeshCompiled(InObject, mesh);
 
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
 				TryCacheMesh(InObject);
 
 			EditorUtility.SetDirty(InObject);

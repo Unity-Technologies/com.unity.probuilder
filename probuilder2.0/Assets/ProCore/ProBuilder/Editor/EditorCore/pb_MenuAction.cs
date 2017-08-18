@@ -42,7 +42,7 @@ namespace ProBuilder2.EditorCommon
 
 		public pb_MenuAction()
 		{
-			isIconMode = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
+			isIconMode = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 		}
 
 		public static int CompareActionsByGroupAndPriority(pb_MenuAction left, pb_MenuAction right)
@@ -155,7 +155,7 @@ namespace ProBuilder2.EditorCommon
 
 		// What category this action belongs in.  See pb_ToolbarGroup.
 		public abstract pb_ToolbarGroup group { get; }
-		// Optional value influences where in the toolbar this menu item will be placed.  
+		// Optional value influences where in the toolbar this menu item will be placed.
 		// 0 is first, 1 is second, -1 is no preference.
 		public virtual int toolbarPriority { get { return -1; } }
 		public abstract Texture2D icon { get; }

@@ -53,7 +53,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
+			float weldDistance = pb_PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
 
 			if(weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
@@ -64,7 +64,7 @@ namespace ProBuilder2.Actions
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
 			}
 
 			GUILayout.FlexibleSpace();

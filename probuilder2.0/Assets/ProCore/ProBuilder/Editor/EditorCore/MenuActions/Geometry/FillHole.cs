@@ -48,14 +48,14 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.\n\nIf no elements are selected, the entire object will be scanned for holes.", MessageType.Info);
 
-			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
+			bool wholePath = pb_PreferencesInternal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
 
 			EditorGUI.BeginChangeCheck();
 
 			wholePath = EditorGUILayout.Toggle("Fill Entire Hole", wholePath);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetBool(pb_Constant.pbFillHoleSelectsEntirePath, wholePath);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbFillHoleSelectsEntirePath, wholePath);
 
 			GUILayout.FlexibleSpace();
 

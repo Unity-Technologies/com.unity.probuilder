@@ -37,9 +37,9 @@ namespace ProBuilder2.EditorCommon
 
 		private static void OnLightmappingCompleted()
 		{
-			if (!pb_Preferences_Internal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", true))
+			if (!pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", true))
 				return;
-			 
+
 			IEnumerable<pb_Entity> missingUv2 = GameObject.FindObjectsOfType<pb_Entity>().Where(x => x.entityType == EntityType.Detail && !x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 			int count = missingUv2.Count();
 			if (count > 0)
@@ -73,7 +73,7 @@ namespace ProBuilder2.EditorCommon
 		internal static void PushGIWorkflowMode()
 		{
 #if UNITY_5_OR_NEWER
-			pb_Preferences_Internal.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
+			pb_PreferencesInternal.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
 
 			if(Lightmapping.giWorkflowMode != Lightmapping.GIWorkflowMode.Legacy)
 				Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
@@ -88,10 +88,10 @@ namespace ProBuilder2.EditorCommon
 		{
 #if UNITY_5_OR_NEWER
 			// if no key found (?), don't do anything.
-			if(!pb_Preferences_Internal.HasKey("pb_GIWorkflowMode"))
+			if(!pb_PreferencesInternal.HasKey("pb_GIWorkflowMode"))
 				return;
 
-			 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)pb_Preferences_Internal.GetInt("pb_GIWorkflowMode");
+			 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)pb_PreferencesInternal.GetInt("pb_GIWorkflowMode");
 #endif
 		}
 	}

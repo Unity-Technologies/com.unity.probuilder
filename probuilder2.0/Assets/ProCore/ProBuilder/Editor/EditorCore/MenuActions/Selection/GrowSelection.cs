@@ -46,12 +46,12 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		{
 			GUILayout.Label("Grow Selection Options", EditorStyles.boldLabel);
 
-			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
+			bool angleGrow = pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
 
 			EditorGUI.BeginChangeCheck();
 
 			angleGrow = EditorGUILayout.Toggle("Restrict to Angle", angleGrow);
-			float angleVal = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
+			float angleVal = pb_PreferencesInternal.GetFloat(pb_Constant.pbGrowSelectionAngle);
 
 			GUI.enabled = angleGrow;
 
@@ -59,7 +59,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			GUI.enabled = angleGrow;
 
-			bool iterative = angleGrow ? pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative) : true;
+			bool iterative = angleGrow ? pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionAngleIterative) : true;
 
 			iterative = EditorGUILayout.Toggle("Iterative", iterative);
 
@@ -67,9 +67,9 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 			if( EditorGUI.EndChangeCheck() )
 			{
-				pb_Preferences_Internal.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
-				pb_Preferences_Internal.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbGrowSelectionUsingAngle, angleGrow);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbGrowSelectionAngleIterative, iterative);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbGrowSelectionAngle, angleVal);
 			}
 
 			GUILayout.FlexibleSpace();

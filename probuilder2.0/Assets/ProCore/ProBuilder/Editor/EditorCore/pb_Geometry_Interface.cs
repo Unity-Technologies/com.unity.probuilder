@@ -17,7 +17,7 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuOpenShapeCreator()
 		{
 			EditorWindow.GetWindow<pb_Geometry_Interface>(
-				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				"Shape Tool",
 				true).Show();
 		}
@@ -49,14 +49,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			get
 			{
-			  	return pb_Preferences_Internal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
+			  	return pb_PreferencesInternal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_PreferencesInternal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
 			}
 		}
 
 		Material userMaterial = null;
 		void OnEnable()
 		{
-			userMaterial = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			userMaterial = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 			initPreview = true;
 		}
@@ -72,11 +72,11 @@ namespace ProBuilder2.EditorCommon
 
 			menu.AddItem (
 				new GUIContent("Window/Open as Floating Window", ""),
-				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				() => { SetFloating(true); } );
 			menu.AddItem (
 				new GUIContent("Window/Open as Dockable Window", ""),
-				!pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				!pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				() => { SetFloating(false); } );
 
 			menu.ShowAsContext ();
@@ -84,7 +84,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetFloating(bool floating)
 		{
-			pb_Preferences_Internal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
 			this.Close();
 			MenuOpenShapeCreator();
 		}
@@ -95,7 +95,7 @@ namespace ProBuilder2.EditorCommon
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-			Material mat = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			Material mat = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 			if(mat != null)
 			{
@@ -921,7 +921,7 @@ namespace ProBuilder2.EditorCommon
 
 		void TorusGUI()
 		{
-			torus_useInnerOuterMethod = pb_Preferences_Internal.GetBool("pb_TorusUsesInnerOuterMethod", true);
+			torus_useInnerOuterMethod = pb_PreferencesInternal.GetBool("pb_TorusUsesInnerOuterMethod", true);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -931,7 +931,7 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.BeginChangeCheck();
 			torus_useInnerOuterMethod = EditorGUILayout.Toggle("Define Inner / Out Radius", torus_useInnerOuterMethod);
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetBool("pb_TorusUsesInnerOuterMethod", torus_useInnerOuterMethod);
+				pb_PreferencesInternal.SetBool("pb_TorusUsesInnerOuterMethod", torus_useInnerOuterMethod);
 
 			if(!torus_useInnerOuterMethod)
 			{
@@ -1095,7 +1095,7 @@ namespace ProBuilder2.EditorCommon
 
 			previewObject = pb.gameObject;
 
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceGridPivot))
 				pb.CenterPivot(indicesToCenterPivotOn == null ? new int[1]{0} : indicesToCenterPivotOn);
 
 			if(prevTransform)
@@ -1112,7 +1112,7 @@ namespace ProBuilder2.EditorCommon
 			if(pb_ProGrids_Interface.SnapEnabled())
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
 			else
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object

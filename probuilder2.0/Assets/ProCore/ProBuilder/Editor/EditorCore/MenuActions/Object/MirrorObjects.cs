@@ -25,8 +25,8 @@ namespace ProBuilder2.Actions
 
 		MirrorSettings storedScale
 		{
-			get { return (MirrorSettings) pb_Preferences_Internal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { pb_Preferences_Internal.SetInt("pbMirrorObjectScale", (int) value); }
+			get { return (MirrorSettings) pb_PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
+			set { pb_PreferencesInternal.SetInt("pbMirrorObjectScale", (int) value); }
 		}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent

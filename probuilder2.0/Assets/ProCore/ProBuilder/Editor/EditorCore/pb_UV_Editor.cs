@@ -197,7 +197,7 @@ public class pb_UV_Editor : EditorWindow
 		if(pb_Editor.instance != null && pb_Editor.instance.editLevel == EditLevel.Top)
 			pb_Editor.instance.SetEditLevel(EditLevel.Geometry);
 
-		EditorWindow.GetWindow<pb_UV_Editor>(pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating), "UV Editor", true);
+		EditorWindow.GetWindow<pb_UV_Editor>(pb_PreferencesInternal.GetBool(pb_Constant.pbUVEditorFloating), "UV Editor", true);
 	}
 
 	void OpenContextMenu()
@@ -238,7 +238,7 @@ public class pb_UV_Editor : EditorWindow
 
 	static void ContextMenu_OpenFloatingWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbUVEditorFloating, true);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, true);
 
 		EditorWindow.GetWindow<pb_UV_Editor>().Close();
 		EditorWindow.GetWindow<pb_UV_Editor>(true, "UV Editor", true);
@@ -246,7 +246,7 @@ public class pb_UV_Editor : EditorWindow
 
 	static void ContextMenu_OpenDockableWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbUVEditorFloating, false);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, false);
 
 		EditorWindow.GetWindow<pb_UV_Editor>().Close();
 		EditorWindow.GetWindow<pb_UV_Editor>(false, "UV Editor", true);
@@ -274,8 +274,8 @@ public class pb_UV_Editor : EditorWindow
 		nearestElement.Clear();
 
 		// Find preferences
-		pref_showMaterial = pb_Preferences_Internal.GetBool(pb_Constant.pbUVMaterialPreview);
-		pref_gridSnapValue = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVGridSnapValue);
+		pref_showMaterial = pb_PreferencesInternal.GetBool(pb_Constant.pbUVMaterialPreview);
+		pref_gridSnapValue = pb_PreferencesInternal.GetFloat(pb_Constant.pbUVGridSnapValue);
 	}
 
 	void OnDisable()
@@ -2591,7 +2591,7 @@ public class pb_UV_Editor : EditorWindow
 		if(GUI.Button(editor_toggles_rect, gc_ShowPreviewTexture))
 		{
 			pref_showMaterial = !pref_showMaterial;
-			pb_Preferences_Internal.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
 		}
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
@@ -2813,7 +2813,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		EditorGUI.BeginChangeCheck();
 
-		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
+		float weldDistance = pb_PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
 
 		if(weldDistance <= MIN_WELD_DISTANCE)
 			weldDistance = MIN_WELD_DISTANCE;
@@ -2825,7 +2825,7 @@ public class pb_UV_Editor : EditorWindow
 		{
 			if(weldDistance < MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
-			pb_Preferences_Internal.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
+			pb_PreferencesInternal.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
 		}
 	}
 #endregion
@@ -3035,7 +3035,7 @@ public class pb_UV_Editor : EditorWindow
 
 		if(projected > 0)
 		{
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
 				Menu_FitUVs();
 			else
 				CenterUVsAtPoint( handlePosition );
@@ -3220,7 +3220,7 @@ public class pb_UV_Editor : EditorWindow
 			return new pb_ActionResult(Status.Canceled, "Invalid UV2 Operation");
 		}
 
-		float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbUVWeldDistance);
+		float weldDistance = pb_PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
 
 		pbUndo.RecordSelection(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
@@ -3416,7 +3416,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		get
 		{
-			if( pb_Preferences_Internal.GetBool(pb_Constant.pbUVEditorFloating) )
+			if( pb_PreferencesInternal.GetBool(pb_Constant.pbUVEditorFloating) )
 				return 0;
 			else
 #if UNITY_4_6

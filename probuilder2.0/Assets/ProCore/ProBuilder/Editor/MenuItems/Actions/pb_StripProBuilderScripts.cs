@@ -92,7 +92,7 @@ namespace ProBuilder2.Actions
 				Mesh cachedMesh;
 
 				// if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
-				if( pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets) && pb_EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh) )
+				if( pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets) && pb_EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh) )
 				{
 					pb.dontDestroyMeshOnDelete = true;
 					DestroyImmediate(pb);

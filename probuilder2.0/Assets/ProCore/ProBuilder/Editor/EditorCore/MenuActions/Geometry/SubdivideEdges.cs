@@ -41,7 +41,7 @@ namespace ProBuilder2.Actions
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
 
-			int subdivisions = pb_Preferences_Internal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = pb_PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -50,7 +50,7 @@ namespace ProBuilder2.Actions
 			subdivisions = (int) pb_GUI_Utility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+				pb_PreferencesInternal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
 
 			GUILayout.FlexibleSpace();
 

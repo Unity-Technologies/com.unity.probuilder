@@ -69,28 +69,28 @@ namespace ProBuilder2.Actions
 
 		public Export()
 		{
-			m_ExportFormat = (ExportFormat) pb_Preferences_Internal.GetInt("pbDefaultExportFormat", (int) ExportFormat.Obj);
+			m_ExportFormat = (ExportFormat) pb_PreferencesInternal.GetInt("pbDefaultExportFormat", (int) ExportFormat.Obj);
 
 			// Recursively select meshes in selection (ie, use GetComponentsInChildren).
-			m_ExportRecursive = pb_Preferences_Internal.GetBool("pbExportRecursive", false);
-			m_ExportAsGroup = pb_Preferences_Internal.GetBool("pbExportAsGroup", true);
+			m_ExportRecursive = pb_PreferencesInternal.GetBool("pbExportRecursive", false);
+			m_ExportAsGroup = pb_PreferencesInternal.GetBool("pbExportAsGroup", true);
 
 			// obj options
-			m_ObjExportRightHanded 	= pb_Preferences_Internal.GetBool("pbObjExportRightHanded", true);
-			m_ObjApplyTransform 	= pb_Preferences_Internal.GetBool("pbObjApplyTransform", true);
-			m_ObjExportCopyTextures = pb_Preferences_Internal.GetBool("pbObjExportCopyTextures", true);
-			m_ObjExportVertexColors = pb_Preferences_Internal.GetBool("pbObjExportVertexColors", false);
-			m_ObjTextureOffsetScale = pb_Preferences_Internal.GetBool("pbObjTextureOffsetScale", false);
-			m_ObjQuads 				= pb_Preferences_Internal.GetBool("pbObjQuads", true);
+			m_ObjExportRightHanded 	= pb_PreferencesInternal.GetBool("pbObjExportRightHanded", true);
+			m_ObjApplyTransform 	= pb_PreferencesInternal.GetBool("pbObjApplyTransform", true);
+			m_ObjExportCopyTextures = pb_PreferencesInternal.GetBool("pbObjExportCopyTextures", true);
+			m_ObjExportVertexColors = pb_PreferencesInternal.GetBool("pbObjExportVertexColors", false);
+			m_ObjTextureOffsetScale = pb_PreferencesInternal.GetBool("pbObjTextureOffsetScale", false);
+			m_ObjQuads 				= pb_PreferencesInternal.GetBool("pbObjQuads", true);
 
 			// stl options
-			m_StlExportFormat = (Parabox.STL.FileType) pb_Preferences_Internal.GetInt("pbStlFormat", (int) Parabox.STL.FileType.Ascii);
+			m_StlExportFormat = (Parabox.STL.FileType) pb_PreferencesInternal.GetInt("pbStlFormat", (int) Parabox.STL.FileType.Ascii);
 
 			// PLY options
-			m_PlyExportIsRightHanded = pb_Preferences_Internal.GetBool("pbPlyExportIsRightHanded", true);
-			m_PlyApplyTransform = pb_Preferences_Internal.GetBool("pbPlyApplyTransform", true);
-			m_PlyQuads = pb_Preferences_Internal.GetBool("pbPlyQuads", true);
-			m_PlyNGons = pb_Preferences_Internal.GetBool("pbPlyNGons", false);
+			m_PlyExportIsRightHanded = pb_PreferencesInternal.GetBool("pbPlyExportIsRightHanded", true);
+			m_PlyApplyTransform = pb_PreferencesInternal.GetBool("pbPlyApplyTransform", true);
+			m_PlyQuads = pb_PreferencesInternal.GetBool("pbPlyQuads", true);
+			m_PlyNGons = pb_PreferencesInternal.GetBool("pbPlyNGons", false);
 		}
 
 		public override bool IsHidden() { return false; }
@@ -112,7 +112,7 @@ namespace ProBuilder2.Actions
 			EditorGUI.BeginChangeCheck();
 			m_ExportFormat = (ExportFormat) EditorGUILayout.EnumPopup(gc_ExportFormat, m_ExportFormat);
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
+				pb_PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
 			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
@@ -121,7 +121,7 @@ namespace ProBuilder2.Actions
 				EditorGUI.BeginChangeCheck();
 				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
 				if(EditorGUI.EndChangeCheck())
-					pb_Preferences_Internal.SetBool("pbExportAsGroup", m_ExportAsGroup);
+					pb_PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
 			}
 
 			if(m_ExportFormat == ExportFormat.Obj)
@@ -157,12 +157,12 @@ namespace ProBuilder2.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pb_Preferences_Internal.SetBool("pbObjExportRightHanded", m_ObjExportRightHanded);
-				pb_Preferences_Internal.SetBool("pbObjApplyTransform", m_ObjApplyTransform);
-				pb_Preferences_Internal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
-				pb_Preferences_Internal.SetBool("pbObjExportVertexColors", m_ObjExportVertexColors);
-				pb_Preferences_Internal.SetBool("pbObjTextureOffsetScale", m_ObjTextureOffsetScale);
-				pb_Preferences_Internal.SetBool("pbObjQuads", m_ObjQuads);
+				pb_PreferencesInternal.SetBool("pbObjExportRightHanded", m_ObjExportRightHanded);
+				pb_PreferencesInternal.SetBool("pbObjApplyTransform", m_ObjApplyTransform);
+				pb_PreferencesInternal.SetBool("pbObjExportCopyTextures", m_ObjExportCopyTextures);
+				pb_PreferencesInternal.SetBool("pbObjExportVertexColors", m_ObjExportVertexColors);
+				pb_PreferencesInternal.SetBool("pbObjTextureOffsetScale", m_ObjTextureOffsetScale);
+				pb_PreferencesInternal.SetBool("pbObjQuads", m_ObjQuads);
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace ProBuilder2.Actions
 			m_StlExportFormat = (Parabox.STL.FileType) EditorGUILayout.EnumPopup("Stl Format", m_StlExportFormat);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetInt("pbStlFormat", (int) m_StlExportFormat);
+				pb_PreferencesInternal.SetInt("pbStlFormat", (int) m_StlExportFormat);
 		}
 
 		private void PlyExportOptions()
@@ -199,10 +199,10 @@ namespace ProBuilder2.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pb_Preferences_Internal.SetBool("pbPlyExportIsRightHanded", m_PlyExportIsRightHanded);
-				pb_Preferences_Internal.SetBool("pbPlyApplyTransform", m_PlyApplyTransform);
-				pb_Preferences_Internal.SetBool("pbPlyQuads", m_PlyQuads);
-				pb_Preferences_Internal.SetBool("pbPlyNGons", m_PlyNGons);
+				pb_PreferencesInternal.SetBool("pbPlyExportIsRightHanded", m_PlyExportIsRightHanded);
+				pb_PreferencesInternal.SetBool("pbPlyApplyTransform", m_PlyApplyTransform);
+				pb_PreferencesInternal.SetBool("pbPlyQuads", m_PlyQuads);
+				pb_PreferencesInternal.SetBool("pbPlyNGons", m_PlyNGons);
 			}
 		}
 
@@ -235,7 +235,7 @@ namespace ProBuilder2.Actions
 			}
 			else if(m_ExportFormat == ExportFormat.Ply)
 			{
-				res = ExportPly.ExportWithFileDialog(meshes, m_ExportAsGroup, new pb_PlyOptions() { 
+				res = ExportPly.ExportWithFileDialog(meshes, m_ExportAsGroup, new pb_PlyOptions() {
 					isRightHanded = m_PlyExportIsRightHanded,
 					applyTransforms = m_PlyApplyTransform,
 					quads = m_PlyQuads,

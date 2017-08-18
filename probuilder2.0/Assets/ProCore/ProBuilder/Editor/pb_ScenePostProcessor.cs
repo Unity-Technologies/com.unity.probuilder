@@ -15,7 +15,7 @@ namespace ProBuilder2.EditorCommon
 	{
 		[PostProcessScene]
 		public static void OnPostprocessScene()
-		{ 
+		{
 			Material invisibleFaceMaterial = (Material)Resources.Load("Materials/InvisibleFace");
 
 			/**
@@ -32,7 +32,7 @@ namespace ProBuilder2.EditorCommon
 
 					for(int i = 0; i < mats.Length; i++)
 					{
-						if(mats[i].name.Contains("NoDraw"))	
+						if(mats[i].name.Contains("NoDraw"))
 							mats[i] = invisibleFaceMaterial;
 					}
 
@@ -52,18 +52,18 @@ namespace ProBuilder2.EditorCommon
 				if( entity == null )
 					continue;
 
-				if(entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)	
+				if(entity.entityType == EntityType.Collider || entity.entityType == EntityType.Trigger)
 					go.GetComponent<MeshRenderer>().enabled = false;
 
 				// clear hideflags on prefab meshes
 				if(pb.msh != null)
 					pb.msh.hideFlags = HideFlags.None;
 
-				if(!pb_Preferences_Internal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
+				if(!pb_PreferencesInternal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
 				   return;
 
 				pb.dontDestroyMeshOnDelete = true;
-				
+
 				GameObject.DestroyImmediate( pb );
 				GameObject.DestroyImmediate( go.GetComponent<pb_Entity>() );
 

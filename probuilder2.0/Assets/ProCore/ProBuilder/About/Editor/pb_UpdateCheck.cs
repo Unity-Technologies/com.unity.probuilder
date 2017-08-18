@@ -18,7 +18,7 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_UpdateCheck()
 		{
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbCheckForProBuilderUpdates))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbCheckForProBuilderUpdates))
 			{
 				calledFromMenu = false;
 				CheckForUpdate();
@@ -67,12 +67,12 @@ namespace ProBuilder2.EditorCommon
 							if( !pb_VersionUtil.GetCurrent(out current) || webVersion.CompareTo(current) > 0 )
 							{
 								// next, test if a notification for this version has already been shown
-								string lastNotification = pb_Preferences_Internal.GetString(pbLastWebVersionChecked, "");
+								string lastNotification = pb_PreferencesInternal.GetString(pbLastWebVersionChecked, "");
 
 								if(calledFromMenu || !lastNotification.Equals(webVersion.text))
 								{
 									pb_UpdateAvailable.Init(webVersion, webChangelog);
-									pb_Preferences_Internal.SetString(pbLastWebVersionChecked, webVersion.text);
+									pb_PreferencesInternal.SetString(pbLastWebVersionChecked, webVersion.text);
 								}
 							}
 							else

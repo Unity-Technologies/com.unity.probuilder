@@ -11,23 +11,23 @@ namespace ProBuilder2.EditorCommon
 	public static class pb_EntityVisibility
 	{
 		private static bool show_Detail {
-			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowDetail); }
-			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowDetail, value); }
+			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbShowDetail); }
+			set { pb_PreferencesInternal.SetBool(pb_Constant.pbShowDetail, value); }
 		}
 
 		private static bool show_Mover {
-			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowMover); }
-			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowMover, value); }
+			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbShowMover); }
+			set { pb_PreferencesInternal.SetBool(pb_Constant.pbShowMover, value); }
 		}
 
 		private static bool show_Collider {
-			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowCollider); }
-			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowCollider, value); }
+			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbShowCollider); }
+			set { pb_PreferencesInternal.SetBool(pb_Constant.pbShowCollider, value); }
 		}
 
 		private static bool show_Trigger {
-			get { return pb_Preferences_Internal.GetBool(pb_Constant.pbShowTrigger); }
-			set { pb_Preferences_Internal.SetBool(pb_Constant.pbShowTrigger, value); }
+			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbShowTrigger); }
+			set { pb_PreferencesInternal.SetBool(pb_Constant.pbShowTrigger, value); }
 		}
 
 		static pb_EntityVisibility()

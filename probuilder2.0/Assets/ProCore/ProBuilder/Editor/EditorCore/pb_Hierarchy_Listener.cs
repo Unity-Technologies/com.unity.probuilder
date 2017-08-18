@@ -51,7 +51,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!EditorApplication.isPlaying)
 			{
-				bool meshesAreAssets = pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
+				bool meshesAreAssets = pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets);
 
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())

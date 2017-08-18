@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 			ApplyMaterial(pb_Selection.Top(), CurrentPalette[9]);
 		}
 
-		// Path to the required default material palette. If not valid material palettes are 
+		// Path to the required default material palette. If not valid material palettes are
 		// found a new one will be created with this path (relative to ProBuilder folder).
 		private const string m_DefaultMaterialPalettePath = "Data/Default Material Palette.asset";
 		// The currently loaded material palette asset.
@@ -147,11 +147,11 @@ namespace ProBuilder2.EditorCommon
 		public static pb_MaterialPalette CurrentPalette
 		{
 			get
-			{		
+			{
 				if(m_CurrentPalette == null)
 				{
 					// Attempt to load the last user-set material palette
-					m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(pb_Preferences_Internal.GetString(pb_Constant.pbCurrentMaterialPalette));
+					m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(pb_PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
 
 					// If not set (or deleted), fall back on default
 					if(m_CurrentPalette != null)
@@ -194,11 +194,11 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuOpenMaterialEditor()
 		{
 			EditorWindow.GetWindow<pb_Material_Editor>(
-				pb_Preferences_Internal.GetBool(pb_Constant.pbMaterialEditorFloating),
+				pb_PreferencesInternal.GetBool(pb_Constant.pbMaterialEditorFloating),
 				"Material Editor",
 				true).Show();
 		}
-		
+
 		private void OnEnable()
 		{
 			instance = this;
@@ -227,7 +227,7 @@ namespace ProBuilder2.EditorCommon
 
 		private void SetFloating(bool floating)
 		{
-			pb_Preferences_Internal.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
 			this.Close();
 			MenuOpenMaterialEditor();
 		}
@@ -437,7 +437,7 @@ namespace ProBuilder2.EditorCommon
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");
 			m_CurrentPaletteIndex = System.Array.IndexOf(m_AvailablePalettes, cur);
-			pb_Preferences_Internal.SetString(pb_Constant.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
+			pb_PreferencesInternal.SetString(pb_Constant.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
 		}
 #endif
 	}

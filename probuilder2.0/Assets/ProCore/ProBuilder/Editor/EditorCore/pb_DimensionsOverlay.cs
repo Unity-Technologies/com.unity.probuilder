@@ -37,7 +37,7 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 		material = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 		mesh.hideFlags = HideFlags.DontSave;
 		material.hideFlags = HideFlags.DontSave;
-		drawAxisLines = pb_Preferences_Internal.GetBool(pb_Constant.pbDrawAxisLines);
+		drawAxisLines = pb_PreferencesInternal.GetBool(pb_Constant.pbDrawAxisLines);
 	}
 
 	public override void OnDestroy()

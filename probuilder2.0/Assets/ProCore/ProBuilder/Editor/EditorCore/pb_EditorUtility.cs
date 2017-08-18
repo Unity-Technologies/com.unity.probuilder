@@ -139,7 +139,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void ShowNotification(EditorWindow window, string notif)
 		{
-			if(pb_Preferences_Internal.HasKey(pb_Constant.pbShowEditorNotifications) && !pb_Preferences_Internal.GetBool(pb_Constant.pbShowEditorNotifications))
+			if(pb_PreferencesInternal.HasKey(pb_Constant.pbShowEditorNotifications) && !pb_PreferencesInternal.GetBool(pb_Constant.pbShowEditorNotifications))
 				return;
 
 			window.ShowNotification(new GUIContent(notif, ""));
@@ -410,7 +410,7 @@ namespace ProBuilder2.EditorCommon
 		{
 		 	Mesh oldMesh = pb.msh;
 	 		MeshRebuildReason reason = pb.Verify();
-			bool meshesAreAssets = pb_Preferences_Internal.GetBool(pb_Constant.pbMeshesAreAssets);
+			bool meshesAreAssets = pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets);
 
 			if( reason != MeshRebuildReason.None )
 			{
@@ -489,8 +489,8 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void InitObject(pb_Object pb)
 		{
-			ColliderType col = pb_Preferences_Internal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
-			EntityType et = pb_Preferences_Internal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
+			ColliderType col = pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
+			EntityType et = pb_PreferencesInternal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
 			InitObject(pb, col, et);
 
 			if( onObjectCreated != null )
@@ -506,12 +506,12 @@ namespace ProBuilder2.EditorCommon
 				break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = pb_Preferences_Internal.HasKey(pb_Constant.pbForceConvex) ? pb_Preferences_Internal.GetBool(pb_Constant.pbForceConvex) : false;
+					pb.gameObject.AddComponent<MeshCollider>().convex = pb_PreferencesInternal.HasKey(pb_Constant.pbForceConvex) ? pb_PreferencesInternal.GetBool(pb_Constant.pbForceConvex) : false;
 					break;
 			}
 
 			#if !UNITY_4_7
-			ShadowCastingMode scm = pb_Preferences_Internal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			ShadowCastingMode scm = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
 			#endif
 
@@ -548,7 +548,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void SetPivotAndSnapWithPref(pb_Object pb, int[] indicesToCenterPivot)
 		{
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceGridPivot))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceGridPivot))
 				pb.CenterPivot( indicesToCenterPivot == null ? new int[1]{0} : indicesToCenterPivot );
 			else
 				pb.CenterPivot(indicesToCenterPivot);
@@ -556,7 +556,7 @@ namespace ProBuilder2.EditorCommon
 			if(pb_ProGrids_Interface.SnapEnabled())
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
 			else
-			if(pb_Preferences_Internal.GetBool(pb_Constant.pbForceVertexPivot))
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			pb.Optimize();

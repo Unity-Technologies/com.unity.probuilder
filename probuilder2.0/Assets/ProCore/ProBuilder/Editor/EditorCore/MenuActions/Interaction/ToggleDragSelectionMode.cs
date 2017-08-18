@@ -11,8 +11,8 @@ namespace ProBuilder2.Actions
 	{
 		DragSelectMode dragSelectMode
 		{
-			get { return pb_Preferences_Internal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode); }
-			set { pb_Preferences_Internal.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
+			get { return pb_PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode); }
+			set { pb_PreferencesInternal.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
 		}
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }

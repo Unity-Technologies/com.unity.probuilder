@@ -16,7 +16,7 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuOpenShapeEditor()
 		{
 			EditorWindow.GetWindow<pb_ShapeEditor>(
-				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				"Shape Editor",
 				true).Show();
 		}
@@ -39,7 +39,7 @@ namespace ProBuilder2.EditorCommon
 
 		// toogle for closing the window after shape creation from the prefrences window
 		private bool prefClose { get {
-			  	return pb_Preferences_Internal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_Preferences_Internal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
+			  	return pb_PreferencesInternal.HasKey(pb_Constant.pbCloseShapeWindow) ? pb_PreferencesInternal.GetBool(pb_Constant.pbCloseShapeWindow) : false;
 			}
 		}
 
@@ -60,11 +60,11 @@ namespace ProBuilder2.EditorCommon
 
 			menu.AddItem (
 				new GUIContent("Window/Open as Floating Window", ""),
-				pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				() => { SetFloating(true); } );
 			menu.AddItem (
 				new GUIContent("Window/Open as Dockable Window", ""),
-				!pb_Preferences_Internal.GetBool(pb_Constant.pbShapeWindowFloating),
+				!pb_PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
 				() => { SetFloating(false); } );
 
 			menu.ShowAsContext ();
@@ -72,7 +72,7 @@ namespace ProBuilder2.EditorCommon
 
 		void SetFloating(bool floating)
 		{
-			pb_Preferences_Internal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
 			this.Close();
 			MenuOpenShapeEditor();
 		}
@@ -83,7 +83,7 @@ namespace ProBuilder2.EditorCommon
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-			Material mat = pb_Preferences_Internal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			Material mat = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
 			if(mat != null)
 			{

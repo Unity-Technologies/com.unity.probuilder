@@ -32,7 +32,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 	 */
 	public static void MenuOpenWindow()
 	{
-		bool dockable = pb_Preferences_Internal.GetBool(pb_Constant.pbVertexPaletteDockable);
+		bool dockable = pb_PreferencesInternal.GetBool(pb_Constant.pbVertexPaletteDockable);
 		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>(!dockable, "Vertex Colors", true);
 	}
 
@@ -42,7 +42,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 		USER_COLORS = new Color[10];
 		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
-			if( !pbUtil.TryParseColor( pb_Preferences_Internal.GetString(pb_Constant.pbVertexColorPrefs+i), ref USER_COLORS[i] ) )
+			if( !pbUtil.TryParseColor( pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs+i), ref USER_COLORS[i] ) )
 				USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}
@@ -59,7 +59,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 
 	void Menu_OpenAsDockableWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbVertexPaletteDockable, true);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, true);
 
 		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>().Close();
 		pb_Vertex_Color_Toolbar.MenuOpenWindow();
@@ -67,7 +67,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 
 	void Menu_OpenAsFloatingWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbVertexPaletteDockable, false);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, false);
 
 		EditorWindow.GetWindow<pb_Vertex_Color_Toolbar>().Close();
 		pb_Vertex_Color_Toolbar.MenuOpenWindow();
@@ -169,7 +169,7 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 	 */
 	private void SetColorPreference(int index, Color col)
 	{
-		pb_Preferences_Internal.SetString(pb_Constant.pbVertexColorPrefs+index, col.ToString());
+		pb_PreferencesInternal.SetString(pb_Constant.pbVertexColorPrefs+index, col.ToString());
 	}
 
 	private void ResetColors()
@@ -177,8 +177,8 @@ public class pb_Vertex_Color_Toolbar : EditorWindow
 		USER_COLORS = new Color[10];
 		for(int i = 0; i < DEFAULT_COLORS.Length; i++)
 		{
-			if(pb_Preferences_Internal.HasKey(pb_Constant.pbVertexColorPrefs+i))
-				pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexColorPrefs+i);
+			if(pb_PreferencesInternal.HasKey(pb_Constant.pbVertexColorPrefs+i))
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexColorPrefs+i);
 			USER_COLORS[i] = DEFAULT_COLORS[i];
 		}
 	}

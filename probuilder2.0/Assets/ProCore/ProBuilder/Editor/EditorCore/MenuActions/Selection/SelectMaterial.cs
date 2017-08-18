@@ -52,11 +52,11 @@ namespace ProBuilder2.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
+			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
 
 			if( EditorGUI.EndChangeCheck() )
-				pb_Preferences_Internal.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
+				pb_PreferencesInternal.SetBool("pb_restrictSelectMaterialToCurrentSelection", restrictToSelection);
 
 			GUILayout.FlexibleSpace();
 
@@ -71,7 +71,7 @@ namespace ProBuilder2.Actions
 		{
 			pbUndo.RecordSelection(selection, "Select Faces with Material");
 
-			bool restrictToSelection = pb_Preferences_Internal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
+			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 
 			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.material).Where( z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();

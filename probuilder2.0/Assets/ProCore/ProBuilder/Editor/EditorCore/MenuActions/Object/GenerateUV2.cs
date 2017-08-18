@@ -20,11 +20,11 @@ namespace ProBuilder2.Actions
 		{
 			get
 			{
-				return pb_Preferences_Internal.GetBool("pbGenerateUV2PerObject", false);
+				return pb_PreferencesInternal.GetBool("pbGenerateUV2PerObject", false);
 			}
 			set
 			{
-				pb_Preferences_Internal.SetBool("pbGenerateUV2PerObject", value);
+				pb_PreferencesInternal.SetBool("pbGenerateUV2PerObject", value);
 			}
 		}
 
@@ -32,11 +32,11 @@ namespace ProBuilder2.Actions
 		{
 			get
 			{
-				return pb_Preferences_Internal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+				return pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 			}
 			set
 			{
-				pb_Preferences_Internal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
 			}
 		}
 

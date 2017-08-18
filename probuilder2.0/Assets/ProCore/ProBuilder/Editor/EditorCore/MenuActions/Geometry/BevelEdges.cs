@@ -47,7 +47,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Amount determines how much space the bevel takes up.  Bigger value means more bevel action.", MessageType.Info);
 
-			float bevelAmount = pb_Preferences_Internal.GetFloat(pb_Constant.pbBevelAmount);
+			float bevelAmount = pb_PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -55,7 +55,7 @@ namespace ProBuilder2.Actions
 			if(bevelAmount < .001f) bevelAmount = .001f;
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbBevelAmount, bevelAmount);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbBevelAmount, bevelAmount);
 
 			GUILayout.FlexibleSpace();
 

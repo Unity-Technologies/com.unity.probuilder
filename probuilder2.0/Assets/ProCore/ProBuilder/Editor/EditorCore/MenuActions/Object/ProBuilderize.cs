@@ -41,14 +41,14 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", MessageType.Info);
 
-			bool preserveFaces = pb_Preferences_Internal.GetBool(pb_Constant.pbPreserveFaces);
+			bool preserveFaces = pb_PreferencesInternal.GetBool(pb_Constant.pbPreserveFaces);
 
 			EditorGUI.BeginChangeCheck();
 
 			preserveFaces = EditorGUILayout.Toggle("Preserve Faces", preserveFaces);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
 
 			GUILayout.FlexibleSpace();
 
@@ -64,7 +64,7 @@ namespace ProBuilder2.Actions
 		{
 			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
 			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
-			bool preserveFaces = pb_Preferences_Internal.GetBool(pb_Constant.pbPreserveFaces);
+			bool preserveFaces = pb_PreferencesInternal.GetBool(pb_Constant.pbPreserveFaces);
 
 			if(top.Count() != all.Count())
 			{

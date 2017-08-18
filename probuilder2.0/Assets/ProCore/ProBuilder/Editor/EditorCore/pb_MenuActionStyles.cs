@@ -53,7 +53,7 @@ namespace ProBuilder2.EditorCommon
 					_buttonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
 					_buttonStyleVertical.active.background = pb_IconUtility.GetIcon("Toolbar/Button_Pressed", IconSkin.Pro);
 					_buttonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					_buttonStyleVertical.alignment = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					_buttonStyleVertical.alignment = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					_buttonStyleVertical.border = new RectOffset(4,0,0,0);
 					_buttonStyleVertical.stretchWidth = true;
 					_buttonStyleVertical.stretchHeight = false;

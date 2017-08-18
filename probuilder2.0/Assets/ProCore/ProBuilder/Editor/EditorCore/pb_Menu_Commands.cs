@@ -201,7 +201,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static void MenuOpenVertexColorsEditor()
 		{
-			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+			switch( pb_PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
 					pb_Vertex_Color_Toolbar.MenuOpenWindow();
@@ -218,7 +218,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static pb_ActionResult MenuOpenVertexColorsEditor2(pb_Object[] selection)
 		{
-			switch( pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+			switch( pb_PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
 					pb_Vertex_Color_Toolbar.MenuOpenWindow();
@@ -234,7 +234,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void VertexColorsGUI(int width)
 		{
-			VertexColorTool tool = pb_Preferences_Internal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
+			VertexColorTool tool = pb_PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
 			VertexColorTool prev = tool;
 
 			GUILayout.Label("Color Editor");
@@ -242,7 +242,7 @@ namespace ProBuilder2.EditorCommon
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-14));
 
 			if(prev != tool)
-				pb_Preferences_Internal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				pb_PreferencesInternal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
 		}
 #if !PROTOTYPE
 
@@ -449,8 +449,8 @@ namespace ProBuilder2.EditorCommon
 
 		public static void ExtrudeButtonGUI(int width)
 		{
-			float extrudeAmount = pb_Preferences_Internal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
-			bool extrudeAsGroup = pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup);
+			float extrudeAmount = pb_PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			bool extrudeAsGroup = pb_PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -462,8 +462,8 @@ namespace ProBuilder2.EditorCommon
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				pb_Preferences_Internal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
 			}
 		}
 
@@ -497,9 +497,9 @@ namespace ProBuilder2.EditorCommon
 						pb_Edge[] newEdges;
 
 						success = pb.Extrude(	pb.SelectedEdges,
-												pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance),
-												pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
-												pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+												pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance),
+												pb_PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup),
+												pb_PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
 												out newEdges);
 
 						if(success)
@@ -516,8 +516,8 @@ namespace ProBuilder2.EditorCommon
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
 					pb.Extrude(	pb.SelectedFaces,
-								pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
-								pb_Preferences_Internal.GetFloat(pb_Constant.pbExtrudeDistance));
+								pb_PreferencesInternal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
+								pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance));
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
 
@@ -553,7 +553,7 @@ namespace ProBuilder2.EditorCommon
 			pbUndo.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
-			bool limitToPerimeterEdges = pb_Preferences_Internal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
+			bool limitToPerimeterEdges = pb_PreferencesInternal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -591,7 +591,7 @@ namespace ProBuilder2.EditorCommon
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 			pbUndo.RecordSelection(selection, "Bevel Edges");
 
-			float amount = pb_Preferences_Internal.GetFloat(pb_Constant.pbBevelAmount);
+			float amount = pb_PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -663,9 +663,9 @@ namespace ProBuilder2.EditorCommon
 			pbUndo.RecordSelection(selection, "Grow Selection");
 
 			int grown = 0;
-			bool angleGrow = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
-			bool iterative = pb_Preferences_Internal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-			float growSelectionAngle = pb_Preferences_Internal.GetFloat(pb_Constant.pbGrowSelectionAngle);
+			bool angleGrow = pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
+			bool iterative = pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
+			float growSelectionAngle = pb_PreferencesInternal.GetFloat(pb_Constant.pbGrowSelectionAngle);
 
 			if(!angleGrow && !iterative)
 				iterative = true;
@@ -1000,7 +1000,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			bool detachToNewObject = pb_Preferences_Internal.GetBool(pb_Constant.pbDetachToNewObject);
+			bool detachToNewObject = pb_PreferencesInternal.GetBool(pb_Constant.pbDetachToNewObject);
 
 			if(detachToNewObject)
 				return MenuDetachFacesToObject(selection);
@@ -1226,7 +1226,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool success = false;
 
-			bool collapseToFirst = pb_Preferences_Internal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+			bool collapseToFirst = pb_PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
@@ -1274,7 +1274,7 @@ namespace ProBuilder2.EditorCommon
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
-			float weld = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
+			float weld = pb_PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
 			int weldCount = 0;
 
 			foreach(pb_Object pb in selection)
@@ -1326,7 +1326,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = pb_Preferences_Internal.GetFloat(pb_Constant.pbWeldDistance);
+			float weldDistance = pb_PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
 
 			if(weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
@@ -1338,7 +1338,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				pb_Preferences_Internal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				pb_PreferencesInternal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
 			}
 		}
 
@@ -1433,7 +1433,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
-			bool wholePath = pb_Preferences_Internal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
+			bool wholePath = pb_PreferencesInternal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1607,7 +1607,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			int subdivisions = pb_Preferences_Internal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = pb_PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
 			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 

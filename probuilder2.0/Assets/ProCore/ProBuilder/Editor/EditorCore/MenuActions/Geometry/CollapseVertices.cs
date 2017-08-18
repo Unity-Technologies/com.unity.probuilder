@@ -50,14 +50,14 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertices.", MessageType.Info);
 
-			bool collapseToFirst = pb_Preferences_Internal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+			bool collapseToFirst = pb_PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
 
 			EditorGUI.BeginChangeCheck();
 
 			collapseToFirst = EditorGUILayout.Toggle("Collapse To First", collapseToFirst);
 
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
+				pb_PreferencesInternal.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
 
 			GUILayout.FlexibleSpace();
 

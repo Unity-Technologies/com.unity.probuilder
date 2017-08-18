@@ -96,7 +96,7 @@ public class pb_Editor : EditorWindow
 	public void SetSelectHiddenEnabled(bool isEnabled)
 	{
 		pref_backfaceSelect = isEnabled;
-		pb_Preferences_Internal.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
 	}
 #endregion
 
@@ -107,9 +107,9 @@ public class pb_Editor : EditorWindow
 	 */
 	public static pb_Editor MenuOpenWindow()
 	{
-		pb_Editor editor = (pb_Editor)EditorWindow.GetWindow(typeof(pb_Editor), !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow), pb_Constant.PRODUCT_NAME, true);			// open as floating window
+		pb_Editor editor = (pb_Editor)EditorWindow.GetWindow(typeof(pb_Editor), !pb_PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow), pb_Constant.PRODUCT_NAME, true);			// open as floating window
 		// would be nice if editorwindow's showMode was exposed
-		editor.isFloatingWindow = !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
+		editor.isFloatingWindow = !pb_PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
 		return editor;
 	}
 
@@ -117,11 +117,11 @@ public class pb_Editor : EditorWindow
 	{
 		_instance = this;
 
-		graphics.LoadPrefs( (Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultFaceColor),
-							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultEdgeColor),
-							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultSelectedVertexColor),
-							(Color) pb_Preferences_Internal.GetColor(pb_Constant.pbDefaultVertexColor),
-							(float) pb_Preferences_Internal.GetFloat(pb_Constant.pbVertexHandleSize) );
+		graphics.LoadPrefs( (Color) pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultFaceColor),
+							(Color) pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultEdgeColor),
+							(Color) pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultSelectedVertexColor),
+							(Color) pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultVertexColor),
+							(float) pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize) );
 
 		HookDelegates();
 
@@ -173,42 +173,42 @@ public class pb_Editor : EditorWindow
 	public void LoadPrefs()
 	{
 		// this exists to force update preferences when updating packages
-		if(!pb_Preferences_Internal.HasKey(pb_Constant.pbEditorPrefVersion) || pb_Preferences_Internal.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
+		if(!pb_PreferencesInternal.HasKey(pb_Constant.pbEditorPrefVersion) || pb_PreferencesInternal.GetInt(pb_Constant.pbEditorPrefVersion) != EDITOR_PREF_VERSION )
 		{
-			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION, pb_PreferenceLocation.Global);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbVertexHandleSize);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultFaceColor);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultVertexColor);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			pb_PreferencesInternal.SetInt(pb_Constant.pbEditorPrefVersion, EDITOR_PREF_VERSION, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultFaceColor);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultVertexColor);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 		}
 
-		if( pb_Preferences_Internal.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
+		if( pb_PreferencesInternal.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != EDITOR_SHORTCUTS_VERSION )
 		{
-			pb_Preferences_Internal.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION, pb_PreferenceLocation.Global);
-			pb_Preferences_Internal.DeleteKey(pb_Constant.pbDefaultShortcuts);
+			pb_PreferencesInternal.SetInt(pb_Constant.pbEditorShortcutsVersion, EDITOR_SHORTCUTS_VERSION, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			Debug.LogWarning("ProBuilder shortcuts reset. This is either due to a version update that breaks existing shortcuts, or the preferences have been manually reset.");
 		}
 
-		editLevel 			= pb_Preferences_Internal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
-		selectionMode		= pb_Preferences_Internal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
-		handleAlignment		= pb_Preferences_Internal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
-		pref_showSceneInfo 	= pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneInfo);
-		pref_backfaceSelect = pb_Preferences_Internal.GetBool(pb_Constant.pbEnableBackfaceSelection);
-		pref_hamSelection	= pb_Preferences_Internal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
+		editLevel 			= pb_PreferencesInternal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
+		selectionMode		= pb_PreferencesInternal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
+		handleAlignment		= pb_PreferencesInternal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
+		pref_showSceneInfo 	= pb_PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
+		pref_backfaceSelect = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+		pref_hamSelection	= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
 		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
 		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
 		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
 
-		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_Preferences_Internal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
-		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
+		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_PreferencesInternal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
+		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
 
 		// pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
-		pref_sceneToolbarLocation = pb_Preferences_Internal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
-		prefs_iconGui = pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
-		dragSelectMode = pb_Preferences_Internal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
+		pref_sceneToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
+		prefs_iconGui = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
+		dragSelectMode = pb_PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
 	}
 
 	private void OnDestroy()
@@ -239,7 +239,7 @@ public class pb_Editor : EditorWindow
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 
-		pb_Preferences_Internal.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
+		pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
 		if(pb_LineRenderer.Valid())
 			pb_LineRenderer.instance.Clear();
@@ -344,21 +344,21 @@ public class pb_Editor : EditorWindow
 	{
 		GenericMenu menu = new GenericMenu();
 
-		menu.AddItem (new GUIContent("Open As Floating Window", ""), !pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
-		menu.AddItem (new GUIContent("Open As Dockable Window", ""), pb_Preferences_Internal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
+		menu.AddItem (new GUIContent("Open As Floating Window", ""), !pb_PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
+		menu.AddItem (new GUIContent("Open As Dockable Window", ""), pb_PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
 
 		menu.AddSeparator("");
 
-		menu.AddItem (new GUIContent("Use Icon Mode", ""), pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
-		menu.AddItem (new GUIContent("Use Text Mode", ""), !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
+		menu.AddItem (new GUIContent("Use Icon Mode", ""), pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
+		menu.AddItem (new GUIContent("Use Text Mode", ""), !pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI), Menu_ToggleIconMode);
 
 		menu.ShowAsContext ();
 	}
 
 	void Menu_ToggleIconMode()
 	{
-		prefs_iconGui = !pb_Preferences_Internal.GetBool(pb_Constant.pbIconGUI);
-		pb_Preferences_Internal.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
+		prefs_iconGui = !pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
 		if(editorToolbar != null)
 			GameObject.DestroyImmediate(editorToolbar);
 		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
@@ -368,14 +368,14 @@ public class pb_Editor : EditorWindow
 
 	void Menu_OpenAsDockableWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
 
 	void Menu_OpenAsFloatingWindow()
 	{
-		pb_Preferences_Internal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
 		EditorWindow.GetWindow<pb_Editor>().Close();
 		pb_Editor.MenuOpenWindow();
 	}
@@ -811,7 +811,7 @@ public class pb_Editor : EditorWindow
 
 		/**
 		 * Since Edge or Vertex selection may be valid even if clicking off a gameObject, check them
-		 * first.  If no hits, move on to face selection or object change.
+		 * first. If no hits, move on to face selection or object change.
 		 */
 		if( (selectionMode == SelectMode.Edge && EdgeClickCheck(out pb)) ||
 			(selectionMode == SelectMode.Vertex && VertexClickCheck(out pb)))
@@ -820,7 +820,6 @@ public class pb_Editor : EditorWindow
 			SceneView.RepaintAll();
 			return pb;
 		}
-
 
 		if(!shiftKey && !ctrlKey)
 			pb_Selection.SetSelection( (GameObject)null );
@@ -839,7 +838,7 @@ public class pb_Editor : EditorWindow
 				else
 					return null;
 			}
-			else if( !pb_Preferences_Internal.GetBool(pb_Constant.pbPBOSelectionOnly) )
+			else if( !pb_PreferencesInternal.GetBool(pb_Constant.pbPBOSelectionOnly) )
 			{
 				// If clicked off a pb_Object but onto another gameobject, set the selection
 				// and dip out.
@@ -1070,8 +1069,8 @@ public class pb_Editor : EditorWindow
 
 		pbUndo.RecordSelection(selection, "Drag Select");
 
-		limitFaceDragCheckToSelection = pb_Preferences_Internal.GetBool(pb_Constant.pbDragCheckLimit);
-		bool selectWholeElement = pb_Preferences_Internal.GetBool(pb_Constant.pbDragSelectWholeElement);
+		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
+		bool selectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		bool selectHidden = pref_backfaceSelect;
 
 		switch(selectionMode)
@@ -1765,8 +1764,8 @@ public class pb_Editor : EditorWindow
 					pb_Edge[] newEdges;
 					bool success = pb.Extrude(	pb.SelectedEdges,
 												0.0001f,
-												pb_Preferences_Internal.GetBool(pb_Constant.pbExtrudeAsGroup),
-												pb_Preferences_Internal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+												pb_PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup),
+												pb_PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
 												out newEdges);
 
 					if(success)
@@ -1782,7 +1781,7 @@ public class pb_Editor : EditorWindow
 
 					if(len > 0)
 					{
-						pb.Extrude(pb.SelectedFaces, pb_Preferences_Internal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod), 0.0001f);
+						pb.Extrude(pb.SelectedFaces, pb_PreferencesInternal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod), 0.0001f);
 						pb.SetSelectedFaces(pb.SelectedFaces);
 						ef += len;
 					}
@@ -2150,7 +2149,7 @@ public class pb_Editor : EditorWindow
 
 	private bool AllLevelShortcuts(pb_Shortcut shortcut)
 	{
-		bool uniqueModeShortcuts = pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts);
+		bool uniqueModeShortcuts = pb_PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts);
 
 		switch(shortcut.action)
 		{
@@ -2257,7 +2256,7 @@ public class pb_Editor : EditorWindow
 			// TODO Remove once a workaround for non-upper-case shortcut chars is found
 			case "Toggle Selection Mode":
 
-				if( pb_Preferences_Internal.GetBool(pb_Constant.pbUniqueModeShortcuts) )
+				if( pb_PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts) )
 					return false;
 
 				ToggleSelectionMode();
@@ -2348,7 +2347,7 @@ public class pb_Editor : EditorWindow
 		if(editLevel == EditLevel.Texture)
 			ha = HandleAlignment.Plane;
 		else
-			pb_Preferences_Internal.SetInt(pb_Constant.pbHandleAlignment, (int)ha);
+			pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int)ha);
 
 		handleAlignment = ha;
 
@@ -2400,7 +2399,7 @@ public class pb_Editor : EditorWindow
 
 		Internal_UpdateSelectionFast();
 
-		pb_Preferences_Internal.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
+		pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultSelectionMode, (int)selectionMode);
 
 		SceneView.RepaintAll();
 	}
@@ -2464,7 +2463,7 @@ public class pb_Editor : EditorWindow
 #endif
 
 		if(editLevel != EditLevel.Texture)
-			pb_Preferences_Internal.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
+			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultEditLevel, (int)editLevel);
 
 		if( onEditLevelChanged != null )
 			onEditLevelChanged( (int) editLevel );
