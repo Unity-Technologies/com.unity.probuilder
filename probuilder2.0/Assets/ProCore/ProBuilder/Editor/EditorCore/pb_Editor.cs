@@ -674,7 +674,8 @@ public class pb_Editor : EditorWindow
 
 	void DoubleClick(Event e)
 	{
-		pb_Object pb = RaycastCheck(e.mousePosition);
+		pb_Object pb = RaycastCheck(e.mousePosition, -1);
+
 		if(pb != null)
 		{
 			if(selectionMode == SelectMode.Edge)
@@ -807,7 +808,8 @@ public class pb_Editor : EditorWindow
 
 	// Returns the pb_Object modified by this action.  If no action taken, or action is eaten by texture window, return null.
 	// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
-	private pb_Object RaycastCheck(Vector3 mousePosition)
+	// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
+	private pb_Object RaycastCheck(Vector3 mousePosition, int deepClickOffset = 0)
 	{
 		pb_Object pb = null;
 
@@ -823,8 +825,6 @@ public class pb_Editor : EditorWindow
 		
 		if(!shiftKey && !ctrlKey)
 			pb_Selection.SetSelection( (GameObject)null );
-
-		pb_Log.Debug("event: " + Event.current.type + " " + Event.current.clickCount);
 
 		GameObject[] ignore = new GameObject[0];
 		GameObject pickedGo = null;
@@ -860,7 +860,7 @@ public class pb_Editor : EditorWindow
 			int hash = face == null ? go.GetHashCode() : face.GetHashCode();
 
 			if(m_DeepSelectionPrevious == hash)
-				next = (i + 1) % pickedCount;
+				next = (i + (1 + deepClickOffset)) % pickedCount;
 
 			if(next == i)
 			{
