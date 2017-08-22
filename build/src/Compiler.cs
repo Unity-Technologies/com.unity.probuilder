@@ -44,6 +44,7 @@ namespace ProBuilder.BuildSystem
 				if(string.IsNullOrEmpty(assemblyPath))
 				{
 					Log.Critical(string.Format("  Could not find referenced assembly: {0}", assembly));
+					Log.Info("    Referenced paths:\n" + string.Join("    ◦", target.ReferencedAssemblies));
 					return false;
 				}
 

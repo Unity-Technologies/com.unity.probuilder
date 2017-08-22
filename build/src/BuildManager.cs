@@ -52,7 +52,7 @@ namespace ProBuilder.BuildSystem
 						m_UnityPathOverride = m_UnityPathOverride.Substring(1, m_UnityPathOverride.Length - 2);
 
 					if(m_UnityPathOverride.EndsWith("/"))
-						m_UnityPathOverride = m_UnityPathOverride.Substring(m_UnityPathOverride.Length - 1);
+						m_UnityPathOverride = m_UnityPathOverride.Substring(0, m_UnityPathOverride.Length - 1);
 				}
 				// No valid argument prefix, treat this input as a build target
 				else
