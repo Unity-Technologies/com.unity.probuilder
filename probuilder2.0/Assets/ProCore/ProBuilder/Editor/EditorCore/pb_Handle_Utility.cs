@@ -13,14 +13,14 @@ namespace ProBuilder2.EditorCommon
 	 * Utilities for creating and manipulating Handles and points in GUI space.  Also coordinate translations.
 	 */
 	public class pb_Handle_Utility
-	{	
+	{
 		public static bool SceneViewInUse(Event e)
 		{
 			return 	e.alt
-					|| Tools.current == Tool.View  
-					|| GUIUtility.hotControl > 0  
+					|| Tools.current == Tool.View
+					|| GUIUtility.hotControl > 0
 					|| (e.isMouse ? e.button > 1 : false)
-					|| Tools.viewTool == ViewTool.FPS 
+					|| Tools.viewTool == ViewTool.FPS
 					|| Tools.viewTool == ViewTool.Orbit;
 		}
 
@@ -40,7 +40,7 @@ namespace ProBuilder2.EditorCommon
 		static Material _handleMaterial = null;
 		public static Material handleMaterial
 		{
-			get 
+			get
 			{
 				if(_handleMaterial == null)
 					_handleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
@@ -52,7 +52,7 @@ namespace ProBuilder2.EditorCommon
 		static Material _edgeMaterial = null;
 		public static Material edgeMaterial
 		{
-			get 
+			get
 			{
 				if(_edgeMaterial == null)
 					_edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
@@ -111,7 +111,7 @@ namespace ProBuilder2.EditorCommon
 
 			Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size+HANDLE_PADDING);
 			Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
-			
+
 			Handles.color = Color.yellow;
 			pb_Handles.CircleCap(-1, position, Quaternion.identity, width / 2f);
 			Handles.color = HANDLE_COLOR_UP;
@@ -121,7 +121,7 @@ namespace ProBuilder2.EditorCommon
 
 			// Y Cone
 			if(position.y - size > 0f)
-				pb_Handles.ConeCap(0, 
+				pb_Handles.ConeCap(0,
 					((Vector3)((position - Vector2.up*size))) - ConeDepth,
 					QuaternionUp,
 					width/2);
@@ -133,7 +133,7 @@ namespace ProBuilder2.EditorCommon
 
 			// X Cap
 			if(position.y > 0f)
-				pb_Handles.ConeCap(0, 
+				pb_Handles.ConeCap(0,
 					((Vector3)((position + Vector2.right*size))) - ConeDepth,
 					QuaternionRight,
 					width/2);
@@ -173,18 +173,18 @@ namespace ProBuilder2.EditorCommon
 					else
 					if(handleRectRight.Contains(mousePosition))
 					{
-						currentId = id;	
+						currentId = id;
 						handleOffset = position - mousePosition;
 						axisConstraint = new pb_HandleConstraint2D(1, 0);
 					}
 					else if(handleRectUp.Contains(mousePosition))
 					{
-						currentId = id;	
+						currentId = id;
 						handleOffset = position - mousePosition;
 						axisConstraint = new pb_HandleConstraint2D(0, 1);
 					}
 
-				}		
+				}
 			}
 
 			return newPosition;
@@ -206,7 +206,7 @@ namespace ProBuilder2.EditorCommon
 			// Draw gizmos
 			Handles.color = HANDLE_COLOR_ROTATE;
 			pb_Handles.CircleCap(-1, position, Quaternion.identity, radius);
-			
+
 			if(currentId == id)
 			{
 				Handles.color = Color.gray;
@@ -224,8 +224,8 @@ namespace ProBuilder2.EditorCommon
 				{
 					case EventType.MouseDrag:
 
-						newRotation = Vector2.Angle(initialDirection, currentDirection);					
-						
+						newRotation = Vector2.Angle(initialDirection, currentDirection);
+
 						if(Vector2.Dot(new Vector2(-initialDirection.y, initialDirection.x), currentDirection) < 0)
 							newRotation = 360f-newRotation;
 						break;
@@ -266,7 +266,7 @@ namespace ProBuilder2.EditorCommon
 			Handles.DrawLine(position, position - Vector2.up * size * scale.y);
 
 			if(position.y - size > 0f)
-				pb_Handles.CubeCap(0, 
+				pb_Handles.CubeCap(0,
 					((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16,
 					QuaternionUp,
 					width/3);
@@ -275,13 +275,13 @@ namespace ProBuilder2.EditorCommon
 			Handles.DrawLine(position, position + Vector2.right * size * scale.x);
 
 			if(position.y > 0f)
-				pb_Handles.CubeCap(0, 
+				pb_Handles.CubeCap(0,
 					((Vector3)((position + Vector2.right*scale.x*size))) - Vector3.forward*16,
 					Quaternion.Euler(Vector3.up*90f),
 					width/3);
 
 			Handles.color = HANDLE_COLOR_SCALE;
-			pb_Handles.CubeCap(0, 
+			pb_Handles.CubeCap(0,
 				((Vector3)position) - Vector3.forward*16,
 				QuaternionUp,
 				width/2);
@@ -331,20 +331,20 @@ namespace ProBuilder2.EditorCommon
 					else
 					if(handleRectRight.Contains(mousePosition))
 					{
-						currentId = id;	
+						currentId = id;
 						handleOffset = position - mousePosition;
 						initialMousePosition = mousePosition;
 						axisConstraint = new pb_HandleConstraint2D(1, 0);
 					}
 					else if(handleRectUp.Contains(mousePosition))
 					{
-						currentId = id;	
+						currentId = id;
 						handleOffset = position - mousePosition;
 						initialMousePosition = mousePosition;
 						axisConstraint = new pb_HandleConstraint2D(0, 1);
 					}
 
-				}		
+				}
 			}
 
 			return scale;
@@ -375,9 +375,13 @@ namespace ProBuilder2.EditorCommon
 
 		/**
 		 * Return all GameObjects under the mousePosition.
+		 * Note - only available from Unity 5.3+. Prior versions return first GameObject always.
 		 */
 		internal static List<GameObject> GetAllOverlapping(Vector2 mousePosition)
 		{
+#if UNITY_4 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+			return new List<GameObject>() { HandleUtility.PickGameObject(mousePosition, false) };
+#else
 			List<GameObject> intersecting = new List<GameObject>();
 
 			GameObject nearestGameObject = null;
@@ -394,10 +398,11 @@ namespace ProBuilder2.EditorCommon
 			while( nearestGameObject != null );
 
 			return intersecting;
+#endif
 		}
 
 		/**
-		 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset. 
+		 * Given two Vector2[] arrays, find the nearest two points within maxDelta and return the difference in offset.
 		 * @param points First Vector2[] array.
 		 * @param compare The Vector2[] array to compare @c points againts.
 		 * @mask If mask is not null, any index in mask will not be used in the compare array.
@@ -419,7 +424,7 @@ namespace ProBuilder2.EditorCommon
 					if(points[i] == compare[n]) continue;
 
 					dist = Vector2.Distance(points[i], compare[n]);
-					
+
 					if(dist < minDist)
 					{
 						if( mask != null && System.Array.IndexOf(mask, n) > -1 )
@@ -455,7 +460,7 @@ namespace ProBuilder2.EditorCommon
 					minDist = dist;
 					index = i;
 				}
-			}	
+			}
 
 			return index;
 		}
@@ -479,7 +484,7 @@ namespace ProBuilder2.EditorCommon
 
 			index = 0;
 			int count = vertices.Count;
-			
+
 			for (int i = 2; i < (closeLoop ? count + 1 : count); i++)
 			{
 				if(trs != null)
@@ -496,7 +501,7 @@ namespace ProBuilder2.EditorCommon
 
 			Vector3 point_a = trs != null ? trs.TransformPoint(vertices[index]) : vertices[index];
 			Vector3 point_b = trs != null ? trs.TransformPoint(vertices[(index + 1) % count]) : vertices[index + 1];
-			
+
 			index++;
 
 			Vector2 gui_a = Event.current.mousePosition - HandleUtility.WorldToGUIPoint(point_a);
@@ -553,7 +558,7 @@ namespace ProBuilder2.EditorCommon
 
 			m.uv = u;
 			m.normals = v.ToArray();
-			m.colors = c; 
+			m.colors = c;
 
 			return m;
 		}
