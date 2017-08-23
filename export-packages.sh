@@ -16,12 +16,12 @@ ARGC=${#ARGS[@]}
 
 if [ "$(uname)" == "Darwin" ]; then
 WORKING_DIR=$(pwd)
-UNITY_47=/Applications/Unity\ 4.6.1f1/Unity.app/Contents/MacOS/Unity
-UNITY_50=/Applications/Unity\ 5.0.0f4/Unity.app/Contents/MacOS/Unity
-UNITY_53=/Applications/Unity\ 5.3.0f4/Unity.app/Contents/MacOS/Unity
-UNITY_55=/Applications/Unity\ 5.5.0f3/Unity.app/Contents/MacOS/Unity
-UNITY_56=/Applications/Unity\ 5.6.0f3/Unity.app/Contents/MacOS/Unity
-UNITY_2017_2=/Applications/Unity\ 2017.2.0b2/Unity.app/Contents/MacOS/Unity
+UNITY_47=/Applications/Unity\ 4.7/Unity.app/Contents/MacOS/Unity
+UNITY_50=/Applications/Unity\ 5.0/Unity.app/Contents/MacOS/Unity
+UNITY_53=/Applications/Unity\ 5.3/Unity.app/Contents/MacOS/Unity
+UNITY_55=/Applications/Unity\ 5.5/Unity.app/Contents/MacOS/Unity
+UNITY_56=/Applications/Unity\ 5.6/Unity.app/Contents/MacOS/Unity
+UNITY_2017_2=/Applications/Unity\ 2017.2/Unity.app/Contents/MacOS/Unity
 else
 # cygwin paths don't cut it in -projectPath
 WORKING_DIR=$(cygpath -aw $(pwd))

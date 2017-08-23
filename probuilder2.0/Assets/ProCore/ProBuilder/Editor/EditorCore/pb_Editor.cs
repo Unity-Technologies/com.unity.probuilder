@@ -822,11 +822,10 @@ public class pb_Editor : EditorWindow
 			SceneView.RepaintAll();
 			return pb;
 		}
-		
+
 		if(!shiftKey && !ctrlKey)
 			pb_Selection.SetSelection( (GameObject)null );
 
-		GameObject[] ignore = new GameObject[0];
 		GameObject pickedGo = null;
 		pb_Object pickedPb = null;
 		pb_Face pickedFace = null;
@@ -859,7 +858,7 @@ public class pb_Editor : EditorWindow
 					face = pb.faces[hit.face];
 				}
 			}
-			
+
 			// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
 			int hash = face == null ? go.GetHashCode() : face.GetHashCode();
 
@@ -874,7 +873,7 @@ public class pb_Editor : EditorWindow
 
 				newHash = hash;
 
-				// a prior hash was matched, this is the next. if 
+				// a prior hash was matched, this is the next. if
 				// it's just the first iteration don't break (but do
 				// set the default).
 				if(next != 0)

@@ -1,3 +1,9 @@
+# ProBuilder 2.9.5f0
+
+## Features
+
+- Deep selection support when clicking faces.
+
 # ProBuilder 2.9.4f1
 
 ## Features
