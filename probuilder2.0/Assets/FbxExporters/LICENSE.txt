@@ -1,0 +1,1 @@
+DO NOT DISTRIBUTE this package outside of Unity Technologies under any circumstances.
