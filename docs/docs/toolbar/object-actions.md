@@ -187,7 +187,7 @@ In ProBuilder, "Entity Types" can be very helpful in projects that make heavy us
 
 **Using the Entity Type Controls:** To set an object's type, select it (or multiple) and click the "Set (type name)" button at the bottom of the ProBuilder GUI. Click the "eye" icon to instantly toggle the visibility of each Entity Type (for example, to quickly hide all Mover objects)
 
->Tip: You can choose the default Entity Type in the ProBuilder Preferences
+>Tip: You can choose the default Entity Type in the [ProBuilder Preferences](../preferences/preferences/#default-entity)
 
 
 ---

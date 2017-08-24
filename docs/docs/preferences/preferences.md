@@ -56,7 +56,7 @@ What material new shapes will be instantiated with.
 
 ### Default Entity
 
-What entity type new shapes will be instantiated as.
+What [Entity Type](../toolbar/object-actions/#entity-type-tools) new shapes will be instantiated as.
 
 ### Default Collider
 
