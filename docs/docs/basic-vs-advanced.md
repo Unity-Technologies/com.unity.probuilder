@@ -26,87 +26,87 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 
 ### Tool Panels
 
-| Name & Link        	| Basic | Advanced  |
-| -------------     	|:-----:|:---------:|
-| Shape Panel       	| ✓    	| ✓   		|
-| Poly Shape    	    |      	| ✓			|
-| Smoothing             |       | ✓     	|
-| Vertex Colors         | ✓     | ✓      	|
-| Material Editor       |       | ✓      	|
-| UV Editor             |       | ✓      	|
+| Name & Link           | Basic | Advanced  |
+| -------------         |:-----:|:---------:|
+| Shape Panel           | ✓     | ✓         |
+| Poly Shape            |       | ✓         |
+| Smoothing             |       | ✓         |
+| Vertex Colors         | ✓     | ✓         |
+| Material Editor       |       | ✓         |
+| UV Editor             |       | ✓         |
 
 ### Object Actions
 
-| Name & Link        	| Basic | Advanced  |
-| -------------     	|:-----:|:---------:|
-| Triangulate          	|     	| ✓   		|
-| Conform Normals	    |      	| ✓			|
-| Generate UV2          |       | ✓     	|
-| Export		        |		| ✓      	|
-| ProBuilderize		    |       | ✓      	|
-| Center Pivbot         |       | ✓      	|
-| Mirror Objects		|		| ✓			|
-| Merge Objects			|		| ✓			|
-| Flip Normals			|		| ✓			|
-| Freeze Transform		|		| ✓			|
-| Subdivide Object		|		| ✓			|
-| Entity Types			|		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| -------------         |:-----:|:---------:|
+| Triangulate           |       | ✓         |
+| Conform Normals       |       | ✓         |
+| Generate UV2          |       | ✓         |
+| Export                |       | ✓         |
+| ProBuilderize         |       | ✓         |
+| Center Pivot          |       | ✓         |
+| Mirror Objects        |       | ✓         |
+| Merge Objects         |       | ✓         |
+| Flip Normals          |       | ✓         |
+| Freeze Transform      |       | ✓         |
+| Subdivide Object      |       | ✓         |
+| Entity Types          |       | ✓         |
 
 ### Selection Actions
 
-| Name & Link        	| Basic | Advanced  |
-| -------------     	|:-----:|:---------:|
-| Handle Orientation   	|     	| ✓   		|
-| Select Hidden Toggle  |      	| ✓			|
-| Shift Modifier        |       | ✓     	|
-| Select Holes	        |		| ✓      	|
-| Select By Material    |       | ✓      	|
-| Select by Color		|       | ✓      	|
-| Shrink Selection		|		| ✓			|
-| Grow Selection		|		| ✓			|
-| Invert Selection		|		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| -------------         |:-----:|:---------:|
+| Handle Orientation    |       | ✓         |
+| Select Hidden Toggle  |       | ✓         |
+| Shift Modifier        |       | ✓         |
+| Select Holes          |       | ✓         |
+| Select By Material    |       | ✓         |
+| Select by Color       |       | ✓         |
+| Shrink Selection      |       | ✓         |
+| Grow Selection        |       | ✓         |
+| Invert Selection      |       | ✓         |
 
 ### Geometry Actions (Shared)
 
-| Name & Link			| Basic | Advanced	|
-| ---					|:-----:|:---------:|
-| Fill Hole				|		| ✓			|
-| Set Pivot				|		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| ---                   |:-----:|:---------:|
+| Fill Hole             |       | ✓         |
+| Set Pivot             |       | ✓         |
 
 ### Geometry Actions (Vertex)
 
-| Name & Link			| Basic | Advanced	|
-| ---					|:-----:|:---------:|
-| Split Vertices		|		| ✓			|
-| Connect Vertices		|		| ✓			|
-| Collapse Vertices		|		| ✓			|
-| Weld Vertices			|		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| ---                   |:-----:|:---------:|
+| Split Vertices        |       | ✓         |
+| Connect Vertices      |       | ✓         |
+| Collapse Vertices     |       | ✓         |
+| Weld Vertices         |       | ✓         |
 
 ### Geometry Actions (Edge)
 
-| Name & Link			| Basic | Advanced	|
-| ---					|:-----:|:---------:|
-| Insert Edge Loop		|		| ✓			|
-| Subdivide Edges		|		| ✓			|
-| Extrude Edges			|		| ✓			|
-| Bevel Edges			|		| ✓			|
-| Connect Edges			|		| ✓			|
-| Bridge Edges			|		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| ---                   |:-----:|:---------:|
+| Insert Edge Loop      |       | ✓         |
+| Subdivide Edges       |       | ✓         |
+| Extrude Edges         |       | ✓         |
+| Bevel Edges           |       | ✓         |
+| Connect Edges         |       | ✓         |
+| Bridge Edges          |       | ✓         |
 
 ### Geometry Actions (Edge)
 
-| Name & Link			| Basic | Advanced	|
-| ---					|:-----:|:---------:|
-| Bevel Faces			|		| ✓			|
-| Extrude Faces			| ✓		| ✓			|
-| Conform Normals		| 		| ✓			|
-| Detach Faces			| 		| ✓			|
-| Delete Faces			| 		| ✓			|
-| Subdivide Faces		| 		| ✓			|
-| Triangulate Faces		| 		| ✓			|
-| Merge Faces			| 		| ✓			|
-| Flip Faces Edge		| 		| ✓			|
-| Flip Faces Normals	| 		| ✓			|
+| Name & Link           | Basic | Advanced  |
+| ---                   |:-----:|:---------:|
+| Bevel Faces           |       | ✓         |
+| Extrude Faces         | ✓     | ✓         |
+| Conform Normals       |       | ✓         |
+| Detach Faces          |       | ✓         |
+| Delete Faces          |       | ✓         |
+| Subdivide Faces       |       | ✓         |
+| Triangulate Faces     |       | ✓         |
+| Merge Faces           |       | ✓         |
+| Flip Faces Edge       |       | ✓         |
+| Flip Faces Normals    |       | ✓         |
 
 
 
