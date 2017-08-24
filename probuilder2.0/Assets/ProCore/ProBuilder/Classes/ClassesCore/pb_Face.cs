@@ -100,6 +100,8 @@ namespace ProBuilder2.Common
 		public Material material { get { return _mat; } set { _mat = value; } }
 		public pb_UV uv { get { return _uv; } set { _uv = value; } }
 
+		public int this[int i] { get { return indices[i]; } }
+
 		[System.Obsolete("Use face.material property.")]
 		public void SetMaterial(Material material) { _mat = material; }
 

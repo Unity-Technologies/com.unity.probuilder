@@ -63,6 +63,20 @@ namespace FbxExporters
             /// </summary>
             public static event System.Action<GameObject> onDidConvertGameObjectToNode;
 
+            public delegate bool OnGetMeshInfoDelegate(GameObject go,
+                out Vector3[] positions,
+                out Vector3[] normals,
+                out Color32[] colors,
+                out Vector2[] uvs,
+                out Vector4[] tangents,
+                out int[][][] submeshPolygons);
+
+            /// <summary>
+            /// Provides an opportunity for an external class to define the geometry that an FbxMesh contains (as opposed to letting
+            /// the exporter generate the representation based on the MeshFilter or SkinnedMeshRenderer).
+            /// </summary>
+            public static event OnGetMeshInfoDelegate onGetMeshInfo;
+
             /// <summary>
             /// Create instance of example
             /// </summary>
@@ -244,9 +258,9 @@ namespace FbxExporters
             {
                 Vector2[][] uvs = new Vector2[][] {
                     mesh.UV,
-                    mesh.mesh.uv2,
-                    mesh.mesh.uv3,
-                    mesh.mesh.uv4
+                    mesh.mesh != null ? mesh.mesh.uv2 : null,
+                    mesh.mesh != null ? mesh.mesh.uv3 : null,
+                    mesh.mesh != null ? mesh.mesh.uv4 : null
                 };
 
                 int k = 0;
@@ -1184,7 +1198,7 @@ namespace FbxExporters
                 /// Number of submeshes that this mesh contains.
                 /// </summary>
                 public int SubmeshCount { get {
-                        return mesh != null ? mesh.subMeshCount : Faces.Length;
+                        return mesh != null ? mesh.subMeshCount : SubmeshPolygons.Length;
                     } }
 
                 /// <summary>
@@ -1205,9 +1219,9 @@ namespace FbxExporters
                                 m_triangles = mesh.triangles;
                             } else {
                                 List<int> tris = new List<int>();
-                                for(int i = 0; i < Faces.Length; i++)
-                                    for(int n = 0; n < Faces[i].Length; n++)
-                                        tris.AddRange(Faces[i][n]);
+                                for(int i = 0; i < SubmeshPolygons.Length; i++)
+                                    for(int n = 0; n < SubmeshPolygons[i].Length; n++)
+                                        tris.AddRange(SubmeshPolygons[i][n]);
                                 m_triangles = tris.ToArray();
                             }
                         }
@@ -1215,10 +1229,10 @@ namespace FbxExporters
                     } }
 
                 /// <summary>
-                /// Get the polygon faces for this mesh. Organized as: submesh[face[indices[]]].
+                /// Get the polygons for this mesh. Organized as: submesh[face[indices[]]].
                 /// </summary>
-                private int[][][] m_faces;
-                public int[][][] Faces { get { return m_faces; } }
+                private int[][][] m_submeshPolygons;
+                public int[][][] SubmeshPolygons { get { return m_submeshPolygons; } }
 
                 /// <summary>
                 /// Gets a set of polygon indices for a submesh.
@@ -1240,8 +1254,8 @@ namespace FbxExporters
                             polyIndex++;
                         }
                         return polygons;
-                    } else if(Faces != null) {
-                        return Faces[subMeshIndex];
+                    } else if(SubmeshPolygons != null) {
+                        return SubmeshPolygons[subMeshIndex];
                     }
                     return null;
 
@@ -1415,7 +1429,7 @@ namespace FbxExporters
                     Color32[] colors,
                     Vector2[] uvs,
                     Vector4[] tangents,
-                    int[][][] faces)
+                    int[][][] submeshPolygons)
                 {
                     this.mesh = null;
                     this.xform = gameObject.transform.localToWorldMatrix;
@@ -1437,20 +1451,20 @@ namespace FbxExporters
                     System.Array.Copy(uvs, m_UVs, m_vertexCount);
                     System.Array.Copy(colors, m_vertexColors, m_vertexCount);
 
-                    int smc = faces.Length;
-                    this.m_faces = new int[smc][][];
+                    int smc = submeshPolygons.Length;
+                    this.m_submeshPolygons = new int[smc][][];
 
                     for(int i = 0; i < smc; i++)
                     {
-                        int fc = faces[i].Length;
+                        int fc = submeshPolygons[i].Length;
 
-                        m_faces[i] = new int[fc][];
+                        m_submeshPolygons[i] = new int[fc][];
 
                         for(int n = 0; n < fc; n++)
                         {
-                            int ic = m_faces[i][n].Length;
-                            faces[i][n] = new int[ic];
-                            System.Array.Copy(faces[i][n], m_faces[i][n], ic);
+                            int ic = submeshPolygons[i][n].Length;
+                            m_submeshPolygons[i][n] = new int[ic];
+                            System.Array.Copy(submeshPolygons[i][n], m_submeshPolygons[i][n], ic);
                         }
                     }
                 }
@@ -1480,6 +1494,20 @@ namespace FbxExporters
             private MeshInfo GetMeshInfo (GameObject gameObject, bool requireRenderer = true)
             {
                 // Two possibilities: it's a skinned mesh, or we have a mesh filter.
+
+                if( onGetMeshInfo != null )
+                {
+                    Vector3[] positions = null;
+                    Vector3[] normals = null;
+                    Color32[] colors = null;
+                    Vector2[] uvs = null;
+                    Vector4[] tangents = null;
+                    int[][][] submeshPolygons = null;
+
+                    if( onGetMeshInfo(gameObject, out positions, out normals, out colors, out uvs, out tangents, out submeshPolygons) )
+                        return new MeshInfo(gameObject, positions, normals, colors, uvs, tangents, submeshPolygons);
+                }
+
                 Mesh mesh;
                 var meshFilter = gameObject.GetComponent<MeshFilter> ();
                 if (meshFilter) {
