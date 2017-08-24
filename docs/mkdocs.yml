@@ -14,6 +14,7 @@ pages:
 
 - Home: index.md
 - Fundamentals: general/fundamentals.md
+- ProBuilder Basic vs Advanced: basic-vs-advanced.md
 
 - Toolbar:
   - Overview: toolbar/overview-toolbar.md
@@ -50,8 +51,6 @@ pages:
   - DLL Rename: upgrading/dllrename.md
   - Upgrade Kit: upgrading/upgrade-kit.md
   - Prototype: upgrading/prototype.md
-  
-- ProBuilder Basic vs Advanced: basic-vs-advanced.md
 
 - Third-Party Licenses: credits.md
 
