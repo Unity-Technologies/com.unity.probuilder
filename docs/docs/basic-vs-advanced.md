@@ -3,6 +3,7 @@
 Not sure which version of ProBuilder you need? Here you can find both a general comparison of Basic vs Advanced, and a complete table of features.
 
 ---
+
 # Comparison Overview
 
 ## Shared Features
