@@ -31,7 +31,7 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 | Name & Link        	| Basic | Advanced  |
 | -------------     	|:-----:|:---------:|
 | ![Shape Tools Icon](../images/icons/Panel_Shapes.png "Shape Panel Icon") [Shape Tools](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#shape-tools) | | ✓ |
-| ![Poly Shape Icon](../images/icons/PolyShape.png "Shape Panel Icon") [Poly Shape](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#poly-shape) | | ✓ |
+| ![Poly Shape Icon](../images/icons/NewPolyShape.png "Shape Panel Icon") [Poly Shape](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#poly-shape) | | ✓ |
 | ![Smoothing Icon](../images/icons/Panel_Smoothing.png "Smoothing Icon") [Smoothing](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#smoothing) | | ✓ |
 | ![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "Vertex Color Tools Icon") [Vertex Colors](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#vertex-color-tools) | | ✓ |
 | ![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") [Material Tools](https://procore3d.github.io/probuilder2/toolbar/tool-panels/#material-tools) | | ✓ |
@@ -52,7 +52,7 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 | ![Flip Object Normals Icon](../images/icons/Object_FlipNormals.png "Flip Object Normals Icon") [Flip Object Normals](https://procore3d.github.io/probuilder2/toolbar/object-actions/#flip-object-normals) | | ✓ |
 | ![Freeze Transform Icon](../images/icons/Pivot_Reset.png "Freeze Transform Icon") [Freeze Transform](https://procore3d.github.io/probuilder2/toolbar/object-actions/#reset-freeze-transform) | | ✓ |
 | ![Subdivide Object Icon](../images/icons/Object_Subdivide.png "Subdivide Object Icon") [Subdivide Object](https://procore3d.github.io/probuilder2/toolbar/object-actions/#subdivide) | | ✓ |
-| ![Entity Tools Icon](../images/icons/@todo.png "Entity Tools Icon") [Entity Tools](https://procore3d.github.io/probuilder2/toolbar/object-actions/#entity-tools) | | ✓ |
+| ![Entity Tools Icon](../images/icons/Eye_On.png "Entity Tools Icon") [Entity Tools](https://procore3d.github.io/probuilder2/toolbar/object-actions/#entity-tools) | | ✓ |
 
 ### Selection Actions
 
@@ -60,7 +60,7 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 | -------------     	|:-----:|:---------:|
 | ![Handle Orientation Icon](../images/icons/HandleAlign_Local.png "Handle Orientation Icon") [Handle Orientation](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#handle-orientation) | | ✓ |
 | ![Select Hidden Icon](../images/icons/Selection_SelectHidden-ON.png "Select Hidden Icon") [Select Hidden Toggle](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-hidden) | | ✓ |
-| ![Shift Modifier Icon](../images/icons/Shift_Add.png "Shift Modifier Icon") [Shift Modifier](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#shift-modifier) | | ✓ |
+| ![Shift Modifier Icon](../images/icons/Selection_ShiftDifference.png "Shift Modifier Icon") [Shift Modifier](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#shift-modifier) | | ✓ |
 | ![Select Holes Icon](../images/icons/Selection_SelectHole.png "Select Holes Icon") [Select Holes](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-holes) | | ✓ |
 | ![Select by Material Icon](../images/icons/Selection_SelectByMaterial.png "Select by Material Icon") [Select by Material](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-by-material) | | ✓ |
 | ![Select by Color Icon](../images/icons/Selection_SelectByVertexColor.png "Select by Color Icon") [Select by Color](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-by-color) | | ✓ |

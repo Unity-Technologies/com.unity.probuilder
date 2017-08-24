@@ -128,7 +128,7 @@ With no elements selected, clicking **Select Hole** will automatically select **
 
 ---
 
-##![Select by Material Icon](../images/icons/Selection_SelectByMaterial.png "Select by Material Icon") Select by Material
+## ![Select by Material Icon](../images/icons/Selection_SelectByMaterial.png "Select by Material Icon") Select by Material
 
 Click to select all faces on this object, which use the same material as the selected face.
 
@@ -138,7 +138,7 @@ Click to select all faces on this object, which use the same material as the sel
 
 ---
 
-##![Select by Vertex Color Icon](../images/icons/Selection_SelectByVertexColor.png "Select by Vertex Color Icon") Select by Vertex Color
+## ![Select by Vertex Color Icon](../images/icons/Selection_SelectByVertexColor.png "Select by Vertex Color Icon") Select by Vertex Color
 
 Click to select all faces on this object, which have the same vertex color as the selected face.
 
@@ -148,3 +148,18 @@ Click to select all faces on this object, which have the same vertex color as th
 
 ---
 
+## ![Shift Modifier Icon](../images/icons/Selection_ShiftDifference.png "Shift Modifier Icon") Shift Modifier
+
+Choose how holding the SHIFT key will affect selection, when clicking or drag-selecting:
+
+Toolbar Icon | Description
+:---:|---
+![SHIFT Modifier Add](../images/icons/Selection_ShiftAdd.png) | Add: always add to the selection
+![SHIFT Modifier Subtract](../images/icons/Selection_ShiftSubtract.png) | Subtract: always subtract from the selection 
+![SHIFT Modifier Difference](../images/icons/Selection_ShiftDifference.png) | Difference: unselected elements are added, selected elements are subtracted 
+
+<div style="text-align:center">
+<img src="../../images/@todo">
+</div>
+
+---
