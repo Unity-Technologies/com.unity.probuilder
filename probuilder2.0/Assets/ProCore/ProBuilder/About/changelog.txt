@@ -3,6 +3,7 @@
 ## Features
 
 - Deep selection support when clicking faces.
+- Support for exporting quads and polygons with Fbx format.
 
 # ProBuilder 2.9.4f1
 
