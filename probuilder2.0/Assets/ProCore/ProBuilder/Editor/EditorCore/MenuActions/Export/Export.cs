@@ -98,6 +98,9 @@ namespace ProBuilder2.Actions
 			m_PlyApplyTransform = pb_PreferencesInternal.GetBool("pbPlyApplyTransform", true);
 			m_PlyQuads = pb_PreferencesInternal.GetBool("pbPlyQuads", true);
 			m_PlyNGons = pb_PreferencesInternal.GetBool("pbPlyNGons", false);
+
+			m_FbxQuads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
+			m_FbxNgons = pb_PreferencesInternal.GetBool("Export::m_FbxNgons", true);
 		}
 
 		public override bool IsHidden() { return false; }

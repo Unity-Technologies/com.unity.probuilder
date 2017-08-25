@@ -70,7 +70,7 @@ namespace ProBuilder2.Actions
 					return null;
 
 				foreach(GameObject model in meshes)
-					res = DoExport(string.Format("{0}/{1}.ply", path, model.name), new List<GameObject>() { model }, options);
+					res = DoExport(string.Format("{0}/{1}.fbx", path, model.name), new List<GameObject>() { model }, options);
 			}
 
 			return res;
