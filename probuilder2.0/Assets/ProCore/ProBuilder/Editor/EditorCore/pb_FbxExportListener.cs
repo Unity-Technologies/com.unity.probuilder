@@ -20,6 +20,10 @@ namespace ProBuilder2.Common
 			ModelExporter.onGetMeshInfo += OnGetMeshInfo;
 		}
 
+		/*
+		 * When FbxExporter wants a MeshInfo object from a GameObject this function tries to
+		 * override that with the pb_Object data. If it's not a pb_Object this returns false.
+		 */
 		private static bool OnGetMeshInfo(
 			GameObject go,
 			out Vector3[] positions,
@@ -76,7 +80,7 @@ namespace ProBuilder2.Common
 					else
 					{
 						// @todo instead of just splitting the face into triangles we could instead get
-						// a polygon edge ring and export an ngon. Might make a good option?
+						// a polygon edge ring and export an ngon. Might make a good option.
 						for(int ii = 0; ii < faces[ff].indices.Length; ii += 3)
 							addl.Add(new int[3] { faces[ff][ii], faces[ff][ii+1], faces[ff][ii+2] });
 					}
@@ -86,6 +90,7 @@ namespace ProBuilder2.Common
 			}
 
 			// catch null-material faces
+			// @todo what does FbxExporter do for submeshes > sharedMaterial count?
 			pb_Face[] facesWithNoMaterial = mesh.faces.Where(x => x.material == null).ToArray();
 
 			if(facesWithNoMaterial != null && facesWithNoMaterial.Length > 0)
@@ -98,32 +103,10 @@ namespace ProBuilder2.Common
 				pbUtil.Add<int[][]>(indices, addl);
 			}
 
+			// reset the mesh back to optimized state
 			mesh.Optimize();
 
 			return true;
-		}
-
-		private static void OnWillConvertGameObjectToNode(GameObject go)
-		{
-			pb_Log.Debug("OnWillConvertGameObjectToNode: " + go.name);
-
-			pb_Object pb = go != null ? go.GetComponent<pb_Object>() : null;
-
-			if(pb != null)
-			{
-				pb.ToMesh();
-				pb.Refresh();
-			}
-		}
-
-		private static void OnDidConvertGameObjectToNode(GameObject go)
-		{
-			pb_Log.Debug("OnDidConvertGameObjectToNode: " + go.name);
-
-			pb_Object pb = go != null ? go.GetComponent<pb_Object>() : null;
-
-			if(pb != null)
-				pb.Optimize();
 		}
 	}
 }
