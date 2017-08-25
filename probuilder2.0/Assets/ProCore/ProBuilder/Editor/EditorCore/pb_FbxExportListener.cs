@@ -37,6 +37,14 @@ namespace ProBuilder2.Common
 
 		static pb_FbxExportListener()
 		{
+			TryLoadFbxExporter();
+		}
+
+		static void TryLoadFbxExporter()
+		{
+			if(m_FbxExportDelegateIsLoaded)
+				return;
+
 			Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
 			EventInfo onGetMeshInfoEvent = modelExporterType != null ? modelExporterType.GetEvent("onGetMeshInfo") : null;
 			m_FbxExportDelegateIsLoaded = false;
