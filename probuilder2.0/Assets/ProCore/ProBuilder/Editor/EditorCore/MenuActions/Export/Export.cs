@@ -57,14 +57,14 @@ namespace ProBuilder2.Actions
 
 		public enum ExportFormat
 		{
-			Fbx,
 			Obj,
+			Fbx,
 			Stl,
 			Ply,
 			Asset
 		}
 
-		const ExportFormat DefaultFormat = ExportFormat.Fbx;
+		const ExportFormat DefaultFormat = ExportFormat.Obj;
 
 		private ExportFormat m_ExportFormat = DefaultFormat;
 
@@ -124,28 +124,35 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				pb_PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			if(m_ExportFormat != ExportFormat.Fbx)
+			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxExportListener.FbxExportEnabled )
 			{
-				m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
+				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package. Import the FbxExporter package to your project to use this functionality.", MessageType.Warning);
 			}
-
-			if( m_ExportFormat != ExportFormat.Asset &&
-				m_ExportFormat != ExportFormat.Stl )
+			else
 			{
-				EditorGUI.BeginChangeCheck();
-				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
-				if(EditorGUI.EndChangeCheck())
-					pb_PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
-			}
+				if(m_ExportFormat != ExportFormat.Fbx)
+				{
+					m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
+				}
 
-			if(m_ExportFormat == ExportFormat.Fbx)
-				FbxExportOptions();
-			else if(m_ExportFormat == ExportFormat.Obj)
-				ObjExportOptions();
-			else if(m_ExportFormat == ExportFormat.Stl)
-				StlExportOptions();
-			else if(m_ExportFormat == ExportFormat.Ply)
-				PlyExportOptions();
+				if( m_ExportFormat != ExportFormat.Asset &&
+					m_ExportFormat != ExportFormat.Stl )
+				{
+					EditorGUI.BeginChangeCheck();
+					m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
+					if(EditorGUI.EndChangeCheck())
+						pb_PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
+				}
+
+				if(m_ExportFormat == ExportFormat.Fbx)
+					FbxExportOptions();
+				else if(m_ExportFormat == ExportFormat.Obj)
+					ObjExportOptions();
+				else if(m_ExportFormat == ExportFormat.Stl)
+					StlExportOptions();
+				else if(m_ExportFormat == ExportFormat.Ply)
+					PlyExportOptions();
+			}
 
 			GUILayout.FlexibleSpace();
 

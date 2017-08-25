@@ -3,10 +3,12 @@ using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Interface;
-using System.Linq;
+using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
+using System.Reflection;
 
 namespace ProBuilder2.Actions
 {
@@ -27,7 +29,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+			return pb_FbxExportListener.FbxExportEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
 		public override pb_ActionResult DoAction()
@@ -78,8 +80,22 @@ namespace ProBuilder2.Actions
 
 		private static string DoExport(string path, IEnumerable<GameObject> models, pb_FbxOptions options)
 		{
-            return FbxExporters.Editor.ModelExporter.ExportObjects(path, models.ToArray());
+			Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
 
+			if(modelExporterType != null)
+			{
+				MethodInfo exportObjectsMethod = modelExporterType.GetMethod("ExportObjects");
+
+            	// return FbxExporters.Editor.ModelExporter.ExportObjects(path, models.ToArray());
+            	if(exportObjectsMethod != null)
+            	{
+            		object res = exportObjectsMethod.Invoke(null, new object[] { path, models.ToArray() });
+            		return res as string;
+            	}
+			}
+
+			pb_Log.Error("FbxExporter is not loaded in this project! Please import the FbxExporter package to use this feature.");
+			return null;
 		}
 	}
 }

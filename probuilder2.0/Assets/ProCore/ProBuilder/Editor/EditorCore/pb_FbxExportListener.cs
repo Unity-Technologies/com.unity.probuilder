@@ -2,9 +2,10 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
-using FbxExporters.Editor; // @todo reflect this to avoid dependency
 using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Reflection;
 
 namespace ProBuilder2.Common
 {
@@ -30,11 +31,34 @@ namespace ProBuilder2.Common
 			ngons = false
 		};
 
+		private static bool m_FbxExportDelegateIsLoaded = false;
+
+		public static bool FbxExportEnabled { get { return m_FbxExportDelegateIsLoaded; } }
+
 		static pb_FbxExportListener()
 		{
-			ModelExporter.onGetMeshInfo += OnGetMeshInfo;
+			Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
+			EventInfo onGetMeshInfoEvent = modelExporterType != null ? modelExporterType.GetEvent("onGetMeshInfo") : null;
+			m_FbxExportDelegateIsLoaded = false;
 
-			ReloadOptions();
+			if(onGetMeshInfoEvent != null)
+			{
+				try
+				{
+					Type delegateType = onGetMeshInfoEvent.EventHandlerType;
+					MethodInfo add = onGetMeshInfoEvent.GetAddMethod();
+					MethodInfo ogmiMethod = typeof(pb_FbxExportListener).GetMethod("OnGetMeshInfo", BindingFlags.Static | BindingFlags.NonPublic);
+					Delegate d = Delegate.CreateDelegate(delegateType, ogmiMethod);
+					add.Invoke(null, new object[] { d });
+					m_FbxExportDelegateIsLoaded = true;
+				}
+				catch
+				{
+					pb_Log.Warning("Failed loading FbxExporter delegates. Fbx export will still work correctly, but ProBuilder will not be able export quads or ngons.");
+				}
+
+				ReloadOptions();
+			}
 		}
 
 		public static void ReloadOptions()
