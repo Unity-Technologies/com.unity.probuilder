@@ -16,6 +16,16 @@ Show or hide the Dimensions Overlay, which works on all mesh objects  (not just 
 
 ---
 
+## Editors
+
+> *Tools > ProBuilder > Editors*
+
+### Vertex Positions Editor
+
+Opens a special panel for manually positioning vertex positions in world space.
+
+![Vertex Positions Editor Example](../images/VertexPositionsEditor_Example.png)
+
 ## Actions
 
 > *Tools > ProBuilder > Actions*
