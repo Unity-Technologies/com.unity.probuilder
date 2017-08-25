@@ -123,7 +123,7 @@ Setting | Description
 
 ---
 
-## Export
+## ![Export Icon](../images/icons/Object_Export.png "Export Icon") Export
 
 Export the selected ProBuilder objects to a 3D model.
 
