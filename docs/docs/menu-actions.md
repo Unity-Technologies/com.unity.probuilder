@@ -12,6 +12,8 @@ Opens the latest Documentation online
 ### Dimensions Overlay
 Show or hide the Dimensions Overlay, which works on all mesh objects  (not just ProBuilder)
 
+![Dimensions Overlay Example](../images/DimensionsOverlay_Example.png)
+
 ---
 
 ## Actions
@@ -32,24 +34,32 @@ Show or hide the Dimensions Overlay, which works on all mesh objects  (not just 
 
 > *Tools > ProBuilder > Repair*
 
-### Force Refresh Scene
-Sometimes necessary after an upgrade. Will regenerate mesh geometry and refresh the scene view.
-
 ### Clean Leaked Meshes
 If you see console logs saying anything about leaking meshes, run this command to clean up the leaks.
 
-### Repair Mesh References
-Looks through the scene for any GameObjects with missing components that were at one time `pb_Object` or `pb_Entity`.
+### Force Refresh Scene
+Sometimes necessary after an upgrade. Will regenerate mesh geometry and refresh the scene view.
 
-### Rebuild Vertex Colors
-Reset all vertex colors on the selection to plain white.
+### Rebuild ProBuilder Objects
+@todo
+
+### Rebuild Shared Indices
+@todo
 
 ### Remove Degenerate Triangles
 This deletes triangles on a mesh that are either taking up no space, or are duplicates.
 
-### Invert UV Scale
-- **Invert UV Scale (Selected Objects):** UV scale is inverted for selected objects.
-- **Invert UV Scale (Selected Faces):** UV scale is inverted for selected faces.
+### Rebuild Vertex Colors
+Reset all vertex colors on the selection to plain white.
+
+### Upgrade Scene to Advanced
+@todo
+
+### Upgrade Selection to Advanced
+@todo
+
+### Repair Missing Script References
+Looks through the scene for any GameObjects with missing components that were at one time `pb_Object` or `pb_Entity`.
 
 ---
 
@@ -62,6 +72,16 @@ These are tools or functions that aren’t quite ready for public use, but are i
 ### Boolean (CSG) Tool
 
 Union, Intersection, and Subtraction methods currently implemented.
+
+---
+
+## Debug
+
+> *Tools > ProBuilder > Debug*
+
+Displays detailed information on the currently selected mesh.
+
+![Debug Window Example](../images/DebugWindow_Example.png)
 
 ---
 

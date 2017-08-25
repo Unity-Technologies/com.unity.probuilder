@@ -74,6 +74,8 @@ Section Video: <a href="https://youtu.be/1z2sDcHF69o?list=PLrJfHfcFkLM-b6_N-musB
 
 Does the opposite of Grow Selection: removes the elements on the perimeter of the current selection.
 
+![Shrink Selection Example](../images/ShrinkSelection_Example.png)
+
 ---
 
 ##![Invert Selection](../images/icons/Selection_Invert.png) Invert Selection
@@ -85,6 +87,8 @@ Section Video: <a href="https://youtu.be/Dj9qHeCIZwY?list=PLrJfHfcFkLM-b6_N-musB
 **Keyboard Shortcut** : `CTRL SHIFT I`
 
 Selects the inverse of the current selection. All unselected elements will become selected, the current selection will be unselected.
+
+![Invert Selection Example](../images/InvertSelection_Example.png)
 
 ---
 
@@ -160,6 +164,21 @@ Toolbar Icon | Description
 
 <div style="text-align:center">
 <img src="../../images/ShiftModifier_Example.png">
+</div>
+
+---
+
+## ![Selection Rect Icon](../images/icons/Selection_Rect_Intersect.png "Selection Rect Icon") Selection Rect Mode
+
+Choose whether drag selection should only select elements inside the drag-rect (Complete), or also elements intersected by the drag-rect.
+
+Toolbar Icon | Description
+:---:|---
+![Complete](../images/icons/Selection_Rect_Complete.png) | Complete: Only select elements entirely within the drag-rect
+![Intersect](../images/icons/Selection_Rect_Intersect.png) | Intersect: Select both occluded and intersected elements 
+
+<div style="text-align:center">
+<img src="../../images/DragRect_Example.png">
 </div>
 
 ---

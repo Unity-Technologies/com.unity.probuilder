@@ -69,7 +69,7 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 | ![Invert Selection Icon](../images/icons/Selection_Invert.png "Invert Selection Icon") [Invert Selection](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#invert-selection) | | ✓ |
 | ![Select Ring Icon](../images/icons/Selection_Ring.png "Select Ring Icon") [Select Ring](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-edge-ring) | | ✓ |
 | ![Select Loop Icon](../images/icons/Selection_Loop.png "Select Loop Icon") [Select Loop](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-edge-loop) | | ✓ |
-| ![Select Rect Mode Icon](../images/icons/Selection_RectIntersect.png "Select Rect Mode Icon") [Select Rect Mode](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-rect-mode) | | ✓ |
+| ![Select Rect Mode Icon](../images/icons/Selection_Rect_Intersect.png "Select Rect Mode Icon") [Select Rect Mode](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-rect-mode) | | ✓ |
 
 ### Multi-Element Geometry Actions
 
