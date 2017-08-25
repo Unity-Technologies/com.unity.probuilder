@@ -162,7 +162,7 @@ Setting | Description
 
 ---
 
-##![Entity Icon](../images/icons/Eye_On.png "Entity Icon") Entity Type Tools
+##![Entity Icon](../images/icons/Entity_Trigger.png "Entity Icon") Entity Type Tools
 
 In ProBuilder, "Entity Types" can be very helpful in projects that make heavy use of Trigger Volumes and custom Collision Volumes. There are 4 Entity Types:
 

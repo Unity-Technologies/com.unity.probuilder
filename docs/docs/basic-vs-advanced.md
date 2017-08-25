@@ -52,7 +52,7 @@ Not sure which version of ProBuilder you need? Here you can find both a general 
 | ![Flip Object Normals Icon](../images/icons/Object_FlipNormals.png "Flip Object Normals Icon") [Flip Object Normals](https://procore3d.github.io/probuilder2/toolbar/object-actions/#flip-object-normals) | | ✓ |
 | ![Freeze Transform Icon](../images/icons/Pivot_Reset.png "Freeze Transform Icon") [Freeze Transform](https://procore3d.github.io/probuilder2/toolbar/object-actions/#reset-freeze-transform) | | ✓ |
 | ![Subdivide Object Icon](../images/icons/Object_Subdivide.png "Subdivide Object Icon") [Subdivide Object](https://procore3d.github.io/probuilder2/toolbar/object-actions/#subdivide) | | ✓ |
-| ![Entity Tools Icon](../images/icons/Eye_On.png "Entity Tools Icon") [Entity Tools](https://procore3d.github.io/probuilder2/toolbar/object-actions/#entity-tools) | | ✓ |
+| ![Entity Tools Icon](../images/icons/Entity_Trigger.png "Entity Tools Icon") [Entity Tools](https://procore3d.github.io/probuilder2/toolbar/object-actions/#entity-tools) | | ✓ |
 
 ### Selection Actions
 
