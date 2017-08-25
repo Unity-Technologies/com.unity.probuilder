@@ -89,7 +89,7 @@ namespace ProBuilder2.Actions
 			"Set Entity Type: Detail",
 			@"Set the selected objects to Detail entity types.
 
-A Detail type is marked with all static flags except Occluding and Reflection Probes."
+A Detail type is marked with ALL static flags, and should not move during play mode."
 		);
 	}
 
@@ -102,7 +102,7 @@ A Detail type is marked with all static flags except Occluding and Reflection Pr
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent(
 			"Set Entity Type: Mover",
-			"Sets all objects in selection to the entity type Mover.\n\nMover types have no static flags, so they may be moved during play mode.");
+			"Sets all objects in selection to the entity type Mover.\n\nMover types have NO static flags, so they may be moved during play mode.");
 	}
 
 	public class SetEntityType_Collider : SetEntityType
