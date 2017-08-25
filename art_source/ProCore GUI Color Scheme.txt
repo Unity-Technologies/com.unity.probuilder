@@ -1,35 +1,48 @@
 ## Single GUI Color Scheme for all ProCore products
 
+**Pixel Sizing**
+Item						| Pixel Size
+---							| ---
+Icon Size (Normal)			| 36x22 px
+Icon Size (Half)			| 18x22 px
+Button Corner Rounding		| 3px radius
+In-Scene Border				| 4px radius (1px border width)
+Padding						| 3px
+
 **General Items**
 Item 						| Color/Value
 --- 						| ---
-Button Size (px)			| 36x22
 Big Text Font				| Bebas Neue Regular
 Small Text Font				| ASAP Regular
 Small Text Font (Header)	| ASAP Bold
 Icon: Default Shade			| f6f6f6
 Icon: Darker Shade			| e0e0e0
 Icon: Darkest Shade			| c8c8c8
+Icon: Border				| 373737
 Icon: Blue Accent			| 00aaef 
 Icon: Orange Accent			| ff9c00
-Button Corner Rounding		| 2px
+Green (Y)					| 39b54a
+Blue (Z)					| 00aaef
+Red (X)						| d93238
 
-**Light Skin (Unity Personal)**
+**Buttons (Light Skin)**
 Item 						| Color Value
 --- 						| ---
-Text 						| 
-Text Backing 				| 
-Normal 						| E5E5E5
-Active 						| 
+In-Scene Border				| 636363
+Text 						| 373737
+Normal 						| DEDEDE
+Active 						| E5E5E5
 OnNormal 					| FFFFFF
-OnActive 					| 
+OnActive 					| E5E5E5
+Disabled					| 0% Opacity, Lighten Icon Image 50%
 
-**Dark Skin (Unity Pro)**
+**Buttons (Dark Skin)**
 Item 						| Color Value
 --- 						| ---
-Text 						| 
-Text Backing 				| 
+In-Scene Border				| 373737
+Text 						| f6f6f6
 Normal 						| 565656
-Active 						| 
-OnNormal					| 7A7A7A
-OnActive 					| 
+Active 						| 696969
+OnNormal					| 797979
+OnActive 					| 696969
+Disabled					| 0% Opacity, Darken Icon Image 50%
