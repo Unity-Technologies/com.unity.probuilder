@@ -159,7 +159,7 @@ Toolbar Icon | Description
 ![SHIFT Modifier Difference](../images/icons/Selection_ShiftDifference.png) | Difference: unselected elements are added, selected elements are subtracted 
 
 <div style="text-align:center">
-<img src="../../images/@todo">
+<img src="../../images/ShiftModifier_Example.png">
 </div>
 
 ---
