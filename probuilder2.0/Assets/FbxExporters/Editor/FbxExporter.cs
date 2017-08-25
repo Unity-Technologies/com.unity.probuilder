@@ -51,18 +51,6 @@ namespace FbxExporters
 
             const int UnitScaleFactor = 100;
 
-            /// <summary>
-            /// Event raised prior to a GameObject's components being converted to an FbxNode.
-            /// </summary>
-            public static event System.Action<GameObject> onWillConvertGameObjectToNode;
-
-            /// <summary>
-            /// Event raised after a GameObject has been converted to an FbxNode. Use this to clean
-            /// up any changes made in @onWillConvertGameObjectToNode.
-            /// Note that this function is called regardless of whether or not conversion succeeds.
-            /// </summary>
-            public static event System.Action<GameObject> onDidConvertGameObjectToNode;
-
             public delegate bool OnGetMeshInfoDelegate(GameObject go,
                 out Vector3[] positions,
                 out Vector3[] normals,
@@ -730,9 +718,6 @@ namespace FbxExporters
                 int exportProgress, int objectCount, Vector3 newCenter,
                 TransformExportType exportType = TransformExportType.Local)
             {
-                if( onWillConvertGameObjectToNode != null)
-                    onWillConvertGameObjectToNode(unityGo);
-
                 int numObjectsExported = exportProgress;
 
                 if (FbxExporters.EditorTools.ExportSettings.instance.mayaCompatibleNames) {
@@ -748,8 +733,6 @@ namespace FbxExporters
                         ProgressBarTitle,
                         string.Format ("Creating FbxNode {0}/{1}", numObjectsExported, objectCount),
                         (numObjectsExported / (float)objectCount) * 0.5f)) {
-                    if( onDidConvertGameObjectToNode != null )
-                        onDidConvertGameObjectToNode(unityGo);
                     // cancel silently
                     return -1;
                 }
@@ -766,10 +749,6 @@ namespace FbxExporters
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
 
                 fbxNodeParent.AddChild (fbxNode);
-
-                // Alllow listeners to reset the GameObject before recursing further
-                if( onDidConvertGameObjectToNode != null )
-                    onDidConvertGameObjectToNode(unityGo);
 
                 // now  unityGo  through our children and recurse
                 foreach (Transform childT in  unityGo.transform) {

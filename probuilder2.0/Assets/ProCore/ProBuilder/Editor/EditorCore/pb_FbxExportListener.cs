@@ -17,8 +17,6 @@ namespace ProBuilder2.Common
 	{
 		static pb_FbxExportListener()
 		{
-			ModelExporter.onWillConvertGameObjectToNode += OnWillConvertGameObjectToNode;
-			ModelExporter.onDidConvertGameObjectToNode += OnDidConvertGameObjectToNode;
 			ModelExporter.onGetMeshInfo += OnGetMeshInfo;
 		}
 
