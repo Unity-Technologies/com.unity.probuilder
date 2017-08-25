@@ -161,6 +161,7 @@ namespace ProBuilder2.Actions
 			{
 				pb_PreferencesInternal.SetBool("Export::m_FbxQuads", m_FbxQuads);
 				pb_PreferencesInternal.SetBool("Export::m_FbxNgons", m_FbxNgons);
+				pb_FbxExportListener.ReloadOptions();
 			}
 		}
 

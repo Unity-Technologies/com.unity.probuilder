@@ -10,12 +10,6 @@ using Parabox.STL;
 
 namespace ProBuilder2.Actions
 {
-	public class pb_FbxOptions
-	{
-		public bool quads;
-		public bool ngons;
-	}
-
 	public class ExportFbx : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }

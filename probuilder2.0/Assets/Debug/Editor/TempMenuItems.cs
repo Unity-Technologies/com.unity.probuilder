@@ -20,11 +20,16 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		string contents;
-		if( pb_Ply.Export(pb_Selection.Top(), out contents) )
-			pb_FileUtil.WriteFile("Assets/dump/probuilder.ply", contents);
+		foreach(UnityEngine.Object o in Selection.objects)
+			pb_Log.Info( o.GetType() + ", " + AssetDatabase.GetAssetPath(o) );
 
-		AssetDatabase.Refresh();
+
+
+		// string contents;
+		// if( pb_Ply.Export(pb_Selection.Top(), out contents) )
+		// 	pb_FileUtil.WriteFile("Assets/dump/probuilder.ply", contents);
+
+		// AssetDatabase.Refresh();
 
 		// foreach(pb_Object pb in pb_Selection.Top())
 		// {

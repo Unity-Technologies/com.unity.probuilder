@@ -9,15 +9,38 @@ using System.Linq;
 namespace ProBuilder2.Common
 {
 	/*
+	 * Options when exporting FBX files.
+	 */
+	public class pb_FbxOptions
+	{
+		public bool quads;
+		public bool ngons;
+	}
+
+	/*
 	 * Register a delegate with the ModelExporter class so that ProBuilder can modify the mesh
 	 * prior to conversion to an FBX node.
 	 */
 	[InitializeOnLoad]
 	static class pb_FbxExportListener
 	{
+		private static pb_FbxOptions m_Options = new pb_FbxOptions()
+		{
+			quads = true,
+			ngons = false
+		};
+
 		static pb_FbxExportListener()
 		{
 			ModelExporter.onGetMeshInfo += OnGetMeshInfo;
+
+			ReloadOptions();
+		}
+
+		public static void ReloadOptions()
+		{
+			m_Options.quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
+			m_Options.ngons = pb_PreferencesInternal.GetBool("Export::m_FbxNgons", false);
 		}
 
 		/*
@@ -71,7 +94,8 @@ namespace ProBuilder2.Common
 
 				for(int ff = 0; ff < faces.Length; ff++)
 				{
-					int[] quad = faces[ff].ToQuad();
+					// If quad export is enabled attempt to write polygon as quad
+					int[] quad = m_Options.quads ? faces[ff].ToQuad() : null;
 
 					if(quad != null)
 					{
@@ -79,10 +103,19 @@ namespace ProBuilder2.Common
 					}
 					else
 					{
-						// @todo instead of just splitting the face into triangles we could instead get
-						// a polygon edge ring and export an ngon. Might make a good option.
-						for(int ii = 0; ii < faces[ff].indices.Length; ii += 3)
-							addl.Add(new int[3] { faces[ff][ii], faces[ff][ii+1], faces[ff][ii+2] });
+						if(m_Options.ngons)
+						{
+							List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(faces[ff]);
+							int[] ring = new int[perimeter.Count];
+							for(int ii = 0; ii < perimeter.Count; ii++)
+								ring[ii] = perimeter[ii].x;
+							addl.Add(ring);
+						}
+						else
+						{
+							for(int ii = 0; ii < faces[ff].indices.Length; ii += 3)
+								addl.Add(new int[3] { faces[ff][ii], faces[ff][ii+1], faces[ff][ii+2] });
+						}
 					}
 				}
 
