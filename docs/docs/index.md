@@ -16,7 +16,7 @@
 
 <div class="alert-box warning">
 <div class="size2">Important!</div>
-This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full <a href="@todo">Advanced vs Basic Comparision</a>.
+This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full <a href="https://www.procore3d.com/docs/probuilder/basic-vs-advanced/">Advanced vs Basic Comparision</a>.
 </div>
 
 ## Optional: Register for access to Source Files and Online Downloads
