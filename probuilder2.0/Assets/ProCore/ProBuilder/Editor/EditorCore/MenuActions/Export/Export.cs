@@ -126,7 +126,7 @@ namespace ProBuilder2.Actions
 
 			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxExportListener.FbxExportEnabled )
 			{
-				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package. Import the FbxExporter package to your project to use this functionality.", MessageType.Warning);
+				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package.\n\nImport the FbxExporter package to your project to use this functionality.", MessageType.Warning);
 			}
 			else
 			{
