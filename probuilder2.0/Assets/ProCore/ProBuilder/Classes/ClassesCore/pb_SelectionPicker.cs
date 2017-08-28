@@ -416,7 +416,9 @@ namespace ProBuilder2.Common
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
 			renderCam.CopyFrom(camera);
+#if UNITY_5_6_OR_NEWER
 			renderCam.allowMSAA = false;
+#endif
 			// Deferred path doesn't play nice with RenderWithShader
 			renderCam.renderingPath = RenderingPath.Forward;
 			renderCam.enabled = false;

@@ -10,7 +10,8 @@
 	},
 	"Defines": [
 		"UNITY_5",
-		"UNITY_5_6"
+		"UNITY_5_6",
+		"UNITY_5_6_OR_NEWER"
 	],
 	"OnPreBuild":[
 		{ "Command":"rm", "Arguments": [ "bin/projects/ProBuilder-Unity56" ] },
