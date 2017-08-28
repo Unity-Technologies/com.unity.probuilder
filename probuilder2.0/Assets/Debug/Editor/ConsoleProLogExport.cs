@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if CONSOLE_PRO_ENABLED
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using FlyingWormConsole3;
@@ -17,7 +19,7 @@ public static class ConsoleProCallbacks
 	private static List<ConsoleProEntry> m_SelectedEntries;
 
 	/**
-	 *	ConsolePro invokes this function with a reference to the contextMenu object. Here we can 
+	 *	ConsolePro invokes this function with a reference to the contextMenu object. Here we can
 	 *	add custom entries.
 	 */
 	[ConsoleProContextMenuAttribute]
@@ -33,10 +35,10 @@ public static class ConsoleProCallbacks
 
 		// Open each selected entry in it's own text file.
 		if(m_SelectedEntries != null && m_SelectedEntries.Count > 1)
-			contextMenu.AddItem(gc_OpenEachInTextEditor, false, () => 
+			contextMenu.AddItem(gc_OpenEachInTextEditor, false, () =>
 				{
-					foreach(var x in m_SelectedEntries) { 
-						System.Diagnostics.Process.Start(WriteTempFile(x.logText)); 
+					foreach(var x in m_SelectedEntries) {
+						System.Diagnostics.Process.Start(WriteTempFile(x.logText));
 					}
 			});
 		else
@@ -98,3 +100,4 @@ public static class ConsoleProCallbacks
 		return m_TempFilePath;
 	}
 }
+#endif
