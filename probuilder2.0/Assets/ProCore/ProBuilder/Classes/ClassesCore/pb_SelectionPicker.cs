@@ -1,3 +1,5 @@
+// #define PB_DEBUG
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -115,6 +117,7 @@ namespace ProBuilder2.Common
 
 			#if PB_DEBUG
 			List<Color> rectImg = new List<Color>();
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			#endif
 
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
@@ -129,6 +132,10 @@ namespace ProBuilder2.Common
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
 					{
+						#if PB_DEBUG
+						sb.AppendLine(string.Format("{0:X6}", v));
+						#endif
+
 						if(selected.TryGetValue(hit.Item1, out indices))
 							indices.Add(hit.Item2);
 						else
@@ -138,9 +145,10 @@ namespace ProBuilder2.Common
 			}
 
 			#if PB_DEBUG
+			Debug.Log(sb.ToString());
 			if(width > 0 && height > 0)
 			{
-				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
+				Debug.Log("in rect: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
 				Texture2D img = new Texture2D(width, height);
 				img.SetPixels(rectImg.ToArray());
 				img.Apply();
@@ -408,19 +416,39 @@ namespace ProBuilder2.Common
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
 			renderCam.CopyFrom(camera);
+			renderCam.allowMSAA = false;
 			// Deferred path doesn't play nice with RenderWithShader
 			renderCam.renderingPath = RenderingPath.Forward;
 			renderCam.enabled = false;
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
 
+#if UNITY_2017_1_OR_NEWER
+			RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
+				width = _width,
+				height = _height,
+				colorFormat = RenderTextureFormat.ARGBFloat,
+				autoGenerateMips = false,
+				depthBufferBits = 16,
+				dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+				enableRandomWrite = false,
+				memoryless = RenderTextureMemoryless.None,
+				sRGB = false,
+				useMipMap = false,
+				volumeDepth = 1,
+				msaaSamples = 8
+			};
+			RenderTexture rt = RenderTexture.GetTemporary(descriptor);
+#else
 			RenderTexture rt = RenderTexture.GetTemporary(
 				_width,
 				_height,
 				16,
-				RenderTextureFormat.Default,
+				RenderTextureFormat.ARGBFloat,
 				RenderTextureReadWrite.Linear,
 				1);
+#endif
+			rt.antiAliasing = 1;
 
 			renderCam.targetTexture = rt;
 			renderCam.RenderWithShader(shader, tag);
