@@ -4,6 +4,14 @@
 
 - Deep selection support when clicking faces.
 
+## Bug Fixes
+
+- Drag select with "Select Hidden: Off" now works in 2017.1 and up.
+
+## Changes
+
+- Unity 4.7 and 5.0 are no longer supported.
+
 # ProBuilder 2.9.4f1
 
 ## Features
