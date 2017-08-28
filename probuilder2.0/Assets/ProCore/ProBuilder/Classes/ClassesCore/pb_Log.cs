@@ -37,7 +37,7 @@ namespace ProBuilder2.Common
 	{
 		// Retain a stack of previous log levels.
 		private static Stack<pb_LogLevel> m_logStack = new Stack<pb_LogLevel>();
-		
+
 		// Current log level.
 		private static pb_LogLevel m_LogLevel = pb_LogLevel.All;
 
@@ -155,7 +155,7 @@ namespace ProBuilder2.Common
 
 		private static void DoPrint(string message, LogType type)
 		{
-			if((m_Output & pb_LogOutput.Console) > 0)			
+			if((m_Output & pb_LogOutput.Console) > 0)
 				PrintToConsole(message, type);
 
 			if((m_Output & pb_LogOutput.File) > 0)
@@ -166,7 +166,8 @@ namespace ProBuilder2.Common
 		 *	Print a message to a file.
 		 */
 		public static void PrintToFile(string message, string path)
-		{	
+		{
+#if UNITY_5_5_OR_NEWER
 			if(string.IsNullOrEmpty(path))
 				return;
 
@@ -185,7 +186,7 @@ namespace ProBuilder2.Common
 				if(string.IsNullOrEmpty(directory))
 				{
 					pb_Log.PrintToConsole("m_LogFilePath bad: " + full_path);
-					return;	
+					return;
 				}
 
 				Directory.CreateDirectory(directory);
@@ -203,6 +204,7 @@ namespace ProBuilder2.Common
 					sw.WriteLine(message);
 				}
 			}
+#endif
 		}
 
 		/**

@@ -11,6 +11,7 @@
 	"Defines": [
 		"UNITY_5",
 		"UNITY_5_5",
+		"UNITY_5_5_OR_NEWER",
 		"PROTOTYPE"
 	],
 	"OnPreBuild":[
