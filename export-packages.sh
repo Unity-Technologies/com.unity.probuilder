@@ -21,6 +21,7 @@ UNITY_50=/Applications/Unity\ 5.0/Unity.app/Contents/MacOS/Unity
 UNITY_53=/Applications/Unity\ 5.3/Unity.app/Contents/MacOS/Unity
 UNITY_55=/Applications/Unity\ 5.5/Unity.app/Contents/MacOS/Unity
 UNITY_56=/Applications/Unity\ 5.6/Unity.app/Contents/MacOS/Unity
+UNITY_2017_1=/Applications/Unity\ 2017.1/Unity.app/Contents/MacOS/Unity
 UNITY_2017_2=/Applications/Unity\ 2017.2/Unity.app/Contents/MacOS/Unity
 else
 # cygwin paths don't cut it in -projectPath
@@ -30,11 +31,12 @@ UNITY_50=/d/Applications/Unity\ 5.0.0f4/Editor/Unity.exe
 UNITY_53=/d/Applications/Unity\ 5.3.0f4/Editor/Unity.exe
 UNITY_55=/d/Applications/Unity\ 5.5.0f3/Editor/Unity.exe
 UNITY_56=/d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe
-UNITY_2017_2=/d/Applications/Unity\ 2017.2.0b2/Editor/Unity.exe
+UNITY_2017_1=/d/Applications/Unity\ 2017.1/Editor/Unity.exe
+UNITY_2017_2=/d/Applications/Unity\ 2017.2/Editor/Unity.exe
 fi
 
-UNITY_TARGET_MACRO=(UNITY_53 UNITY_53 UNITY_55 UNITY_56 UNITY_2017_2)
-UNITY_TARGET_SUFFIX=(SRC 53 55 56 2017.2)
+UNITY_TARGET_MACRO=(UNITY_53 UNITY_53 UNITY_55 UNITY_56 UNITY_2017_1 UNITY_2017_2)
+UNITY_TARGET_SUFFIX=(SRC 53 55 56 2017.1 2017.2)
 UNITY_TARGETS_COUNT=${#UNITY_TARGET_MACRO[@]}
 
 VERSION_LINE=$(grep version: $WORKING_DIR/probuilder2.0/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)

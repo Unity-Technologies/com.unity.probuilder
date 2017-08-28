@@ -10,6 +10,7 @@
 		"$UNITY_VERSION": "2017.2"
 	},
 	"Defines": [
+		"UNITY_5_3_OR_NEWER",
 		"UNITY_5_5_OR_NEWER",
 		"UNITY_5_6_OR_NEWER",
 		"UNITY_2017_1_OR_NEWER",
