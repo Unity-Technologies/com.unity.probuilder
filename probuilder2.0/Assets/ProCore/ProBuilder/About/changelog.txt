@@ -10,7 +10,7 @@
 
 ## Changes
 
-- Unity 4.7 and 5.0 are no longer supported.
+- Unity 4.7 and 5.0 are no longer supported (2.9.4 will continue to be available for these version of Unity).
 
 # ProBuilder 2.9.4f1
 
