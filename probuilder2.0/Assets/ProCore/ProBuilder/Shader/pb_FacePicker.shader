@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ProBuilder/FacePicker" 
+﻿Shader "Hidden/ProBuilder/FacePicker"
 {
 	Properties {}
 
@@ -41,7 +41,7 @@
 				return o;
 			}
 
-			half4 frag (v2f i) : COLOR
+			float4 frag (v2f i) : COLOR
 			{
 				return i.color;
 			}
