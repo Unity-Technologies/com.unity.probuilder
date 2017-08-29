@@ -39,8 +39,13 @@ namespace ProBuilder2.Common
 
 		private static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
 		{
+#if UNITY_5_6
 			RenderTextureFormat.ARGBFloat,
 			RenderTextureFormat.ARGB32,
+#else
+			RenderTextureFormat.ARGB32,
+			RenderTextureFormat.ARGBFloat,
+#endif
 		};
 
 		/**
@@ -469,6 +474,7 @@ namespace ProBuilder2.Common
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
 #if UNITY_5_6_OR_NEWER
+	Debug.Log("ye");
 			renderCam.allowHDR = false;
 			renderCam.allowMSAA = false;
 			renderCam.forceIntoRenderTexture = true;
@@ -505,7 +511,7 @@ namespace ProBuilder2.Common
 			RenderTexture.active = rt;
 
 #if PB_DEBUG
-			Debug.Log(string.Format("antiAliasing {0}\nautoGenerateMips {1}\ncolorBuffer {2}\ndepth {3}\ndepthBuffer {4}\ndimension {5}\nenableRandomWrite {6}\nformat {7}\nheight {8}\nmemorylessMode {9}\nsRGB {10}\nuseMipMap {11}\nvolumeDepth {12}\nwidth {13}",
+			/* Debug.Log(string.Format("antiAliasing {0}\nautoGenerateMips {1}\ncolorBuffer {2}\ndepth {3}\ndepthBuffer {4}\ndimension {5}\nenableRandomWrite {6}\nformat {7}\nheight {8}\nmemorylessMode {9}\nsRGB {10}\nuseMipMap {11}\nvolumeDepth {12}\nwidth {13}",
 				RenderTexture.active.antiAliasing,
 				RenderTexture.active.autoGenerateMips,
 				RenderTexture.active.colorBuffer,
@@ -520,6 +526,7 @@ namespace ProBuilder2.Common
 				RenderTexture.active.useMipMap,
 				RenderTexture.active.volumeDepth,
 				RenderTexture.active.width));
+				*/
 #endif
 
 			renderCam.RenderWithShader(shader, tag);
