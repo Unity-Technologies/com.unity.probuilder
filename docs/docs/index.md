@@ -1,23 +1,21 @@
-﻿<h1>What is ProBuilder?</h1>
+﻿
+# What is ProBuilder?
 
 **ProBuilder** is a tool for building and editing 3D objects, directly in Unity. You can use it for visual things like buildings or custom vehicles and weapons, or to make custom collision geometry, trigger zones, nav meshes, etc. The choice is yours!
 
 <iframe class="youtube-preview" src="https://www.youtube.com/embed/Kjqx6cKUepc" allowfullscreen></iframe>
 
-## ProBuilder Advanced vs. ProBuilder Basic
+---
 
-**ProBuilder Basic** is entirely free, and includes the core ProBuilder features for building and editing basic geometry.
+## ProBuilder Basic vs Advanced
 
-[Download ProBuilder Basic](http://u3d.as/62y)
+**ProBuilder Basic** is entirely free, and includes the core ProBuilder features for building and editing basic geometry : [**Download ProBuilder Basic**](http://u3d.as/62y)
 
-**ProBuilder Advanced** is a paid extension that adds advanced features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization.
+**ProBuilder Advanced** is a paid extension that adds advanced features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization : [**Purchase ProBuilder Advanced**](http://u3d.as/30b)
 
-[Purchase ProBuilder Advanced](http://u3d.as/30b)
+> **IMPORTANT:** This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full [**Basic vs Advanced Comparison**](../basic-vs-advanced)
 
-<div class="alert-box warning">
-<div class="size2">Important!</div>
-This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full <a href="https://www.procore3d.com/docs/probuilder/basic-vs-advanced/">Advanced vs Basic Comparision</a>.
-</div>
+---
 
 ## Optional: Register for access to Source Files and Online Downloads
 
@@ -26,6 +24,8 @@ This documentation encompasses <i>all</i> features, actions, and tools available
 3. Once we have verified the invoice, the latest downloads will always be available via your [User Toolbox](http://www.procore3d.com/usertoolbox) account
 
 *Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!*
+
+---
 
 ## Helpful Links and Info
 
