@@ -23,30 +23,29 @@ namespace ProBuilder2.Common
 				for(int i = 0; i < m_PreferredFormats.Length; i++)
 				{
 					if(SystemInfo.SupportsRenderTextureFormat(m_PreferredFormats[i]))
+					{
 						m_RenderTextureFormat = m_PreferredFormats[i];
+						break;
+					}
 				}
 
 				return m_RenderTextureFormat;
 			}
 		}
 
+		private static TextureFormat textureFormat { get { return TextureFormat.ARGB32; } }
+
 		private static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
 
 		private static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
 		{
-#if UNITY_5_6
-			// Unity 5.6 Windows doesn't like ARGBFloat for whatever reason (and ARGB32 works on macOS too)
-			RenderTextureFormat.ARGB32,
-			RenderTextureFormat.ARGBFloat,
-#else
 			RenderTextureFormat.ARGBFloat,
 			RenderTextureFormat.ARGB32,
-#endif
 		};
 
 		/**
-		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
-		 *	by the rect.
+		 * Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
+		 * by the rect.
 		 */
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera camera,
@@ -134,6 +133,9 @@ namespace ProBuilder2.Common
 
 #if PB_DEBUG
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			sb.AppendLine("default: " + renderTextureFormat);
+			sb.AppendLine("event: " + Event.current.type);
 
 			foreach(RenderTextureFormat tf in m_PreferredFormats)
 			{
@@ -461,14 +463,16 @@ namespace ProBuilder2.Common
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
 			renderCam.CopyFrom(camera);
-#if UNITY_5_6_OR_NEWER
-			renderCam.allowMSAA = false;
-#endif
-			// Deferred path doesn't play nice with RenderWithShader
+
 			renderCam.renderingPath = RenderingPath.Forward;
 			renderCam.enabled = false;
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
+#if UNITY_5_6_OR_NEWER
+			renderCam.allowHDR = false;
+			renderCam.allowMSAA = false;
+			renderCam.forceIntoRenderTexture = true;
+#endif
 
 #if UNITY_2017_1_OR_NEWER
 			RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
@@ -483,7 +487,7 @@ namespace ProBuilder2.Common
 				sRGB = false,
 				useMipMap = false,
 				volumeDepth = 1,
-				msaaSamples = 8
+				msaaSamples = 1
 			};
 			RenderTexture rt = RenderTexture.GetTemporary(descriptor);
 #else
@@ -491,19 +495,36 @@ namespace ProBuilder2.Common
 				_width,
 				_height,
 				16,
-				m_RenderTextureFormat,
+				renderTextureFormat,
 				RenderTextureReadWrite.Linear,
 				1);
 #endif
-			rt.antiAliasing = 1;
-
-			renderCam.targetTexture = rt;
-			renderCam.RenderWithShader(shader, tag);
 
 			RenderTexture prev = RenderTexture.active;
+			renderCam.targetTexture = rt;
 			RenderTexture.active = rt;
 
-			Texture2D img = new Texture2D(_width, _height);
+#if PB_DEBUG
+			Debug.Log(string.Format("antiAliasing {0}\nautoGenerateMips {1}\ncolorBuffer {2}\ndepth {3}\ndepthBuffer {4}\ndimension {5}\nenableRandomWrite {6}\nformat {7}\nheight {8}\nmemorylessMode {9}\nsRGB {10}\nuseMipMap {11}\nvolumeDepth {12}\nwidth {13}",
+				RenderTexture.active.antiAliasing,
+				RenderTexture.active.autoGenerateMips,
+				RenderTexture.active.colorBuffer,
+				RenderTexture.active.depth,
+				RenderTexture.active.depthBuffer,
+				RenderTexture.active.dimension,
+				RenderTexture.active.enableRandomWrite,
+				RenderTexture.active.format,
+				RenderTexture.active.height,
+				RenderTexture.active.memorylessMode,
+				RenderTexture.active.sRGB,
+				RenderTexture.active.useMipMap,
+				RenderTexture.active.volumeDepth,
+				RenderTexture.active.width));
+#endif
+
+			renderCam.RenderWithShader(shader, tag);
+
+			Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
 			img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
 			img.Apply();
 
