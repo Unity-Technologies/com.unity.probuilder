@@ -9,45 +9,44 @@ namespace ProBuilder2.Common
 {
 	public static class pb_SelectionPicker
 	{
-		// RenderTextureFormat.Default
-		private static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.ARGBFloat;
+		private static bool m_Initialized = false;
 
-		// Render formats that will work for selection picking.
-		private static RenderTextureFormat[] m_AvailableFormats = new RenderTextureFormat[]
+		private static RenderTextureFormat renderTextureFormat
 		{
+			get
+			{
+				if(m_Initialized)
+					return m_RenderTextureFormat;
+
+				m_Initialized = true;
+
+				for(int i = 0; i < m_PreferredFormats.Length; i++)
+				{
+					if(SystemInfo.SupportsRenderTextureFormat(m_PreferredFormats[i]))
+						m_RenderTextureFormat = m_PreferredFormats[i];
+				}
+
+				return m_RenderTextureFormat;
+			}
+		}
+
+		private static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
+
+		private static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
+		{
+#if UNITY_5_6
+			// Unity 5.6 Windows doesn't like ARGBFloat for whatever reason (and ARGB32 works on macOS too)
 			RenderTextureFormat.ARGB32,
-			// RenderTextureFormat.Depth,
-			RenderTextureFormat.ARGBHalf,
-			// RenderTextureFormat.Shadowmap,
-			// RenderTextureFormat.RGB565,
-			// RenderTextureFormat.ARGB4444,
-			// RenderTextureFormat.ARGB1555,
-			RenderTextureFormat.Default,
-			RenderTextureFormat.ARGB2101010,
-			// RenderTextureFormat.DefaultHDR,
-			RenderTextureFormat.ARGB64,
 			RenderTextureFormat.ARGBFloat,
-			// RenderTextureFormat.RGFloat,
-			// RenderTextureFormat.RGHalf,
-			// RenderTextureFormat.RFloat,
-			// RenderTextureFormat.RHalf,
-			// RenderTextureFormat.R8,
-			// RenderTextureFormat.ARGBInt,
-			// RenderTextureFormat.RGInt,
-			// RenderTextureFormat.RInt,
-			// RenderTextureFormat.BGRA32,
-			RenderTextureFormat.RGB111110Float,
-			// RenderTextureFormat.RG32,
-#if UNITY_2017_1_OR_NEWER
-			// RenderTextureFormat.RGBAUShort,
-			// RenderTextureFormat.RG16
+#else
+			RenderTextureFormat.ARGBFloat,
+			RenderTextureFormat.ARGB32,
 #endif
 		};
 
 		/**
 		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
 		 *	by the rect.
-
 		 */
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera camera,
@@ -59,9 +58,9 @@ namespace ProBuilder2.Common
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-			#endif
+#endif
 
 			Color32[] pix = tex.GetPixels32();
 
@@ -78,17 +77,17 @@ namespace ProBuilder2.Common
 			HashSet<pb_Face> faces = null;
 			HashSet<uint> used = new HashSet<uint>();
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			List<Color> rectImg = new List<Color>();
-			#endif
+#endif
 
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 			{
 				for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 				{
-					#if PB_DEBUG
+#if PB_DEBUG
 					rectImg.Add(pix[y * imageWidth + x]);
-					#endif
+#endif
 
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
@@ -102,7 +101,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			if(width > 0 && height > 0)
 			{
 				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
@@ -114,7 +113,7 @@ namespace ProBuilder2.Common
 				UnityEditor.AssetDatabase.Refresh();
 				GameObject.DestroyImmediate(img);
 			}
-			#endif
+#endif
 
 			return selected;
 		}
@@ -136,10 +135,13 @@ namespace ProBuilder2.Common
 #if PB_DEBUG
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			foreach(RenderTextureFormat tf in m_AvailableFormats)
+			foreach(RenderTextureFormat tf in m_PreferredFormats)
 			{
 				if( !SystemInfo.SupportsRenderTextureFormat(tf) )
+				{
+					sb.AppendLine(tf.ToString() + " not supported");
 					continue;
+				}
 
 				sb.AppendLine(tf.ToString());
 				m_RenderTextureFormat = tf;
@@ -150,9 +152,9 @@ namespace ProBuilder2.Common
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			// System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-			#endif
+#endif
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
 			int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - pickerRect.y) - pickerRect.height));
@@ -172,9 +174,9 @@ namespace ProBuilder2.Common
 				{
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
-					#if PB_DEBUG
+#if PB_DEBUG
 					rectImg.Add(pix[y * imageWidth + x]);
-					#endif
+#endif
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
 					{
@@ -186,7 +188,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			#if PB_DEBUG
+#if PB_DEBUG
 				if(width > 0 && height > 0)
 				{
 					sb.AppendLine("  in rect: \n" + used.Select(x => string.Format("   {0:X6} ({1})", x, EncodeRGBA(x))).ToString("\n"));
@@ -200,7 +202,7 @@ namespace ProBuilder2.Common
 			}
 			Debug.Log(sb.ToString());
 
-			#endif
+#endif
 
 			return selected;
 		}
@@ -262,11 +264,11 @@ namespace ProBuilder2.Common
 				Mesh m = new Mesh();
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
-				#if UNITY_4_7
+#if UNITY_4_7
 				// avoid incorrect unity warning about missing uv channel on 4.7
 				m.uv = new Vector2[pb.vertexCount];
 				m.uv2 = new Vector2[pb.vertexCount];
-				#endif
+#endif
 
 				Color32[] colors = new Color32[m.vertexCount];
 
@@ -323,11 +325,11 @@ namespace ProBuilder2.Common
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
 				m.colors32 = pbUtil.Fill<Color32>(BLACK, pb.vertexCount);
-				#if UNITY_4_7
+#if UNITY_4_7
 				// avoid incorrect unity warning about missing uv channel on 4.7
 				m.uv = new Vector2[pb.vertexCount];
 				m.uv2 = new Vector2[pb.vertexCount];
-				#endif
+#endif
 				go.AddComponent<MeshFilter>().sharedMesh = m;
 				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
 				meshes.Add(go);
@@ -449,7 +451,7 @@ namespace ProBuilder2.Common
 		 *	Render the camera with a replacement shader and return the resulting image.
 		 *	RenderTexture is always initialized with no gamma conversion (RenderTextureReadWrite.Linear)
 		 */
-		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
+		private static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
 		{
 			bool autoSize = width < 0 || height < 0;
 
@@ -472,7 +474,7 @@ namespace ProBuilder2.Common
 			RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
 				width = _width,
 				height = _height,
-				colorFormat = m_RenderTextureFormat,
+				colorFormat = renderTextureFormat,
 				autoGenerateMips = false,
 				depthBufferBits = 16,
 				dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
