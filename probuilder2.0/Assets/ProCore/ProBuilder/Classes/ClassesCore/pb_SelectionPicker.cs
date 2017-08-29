@@ -474,7 +474,6 @@ namespace ProBuilder2.Common
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
 #if UNITY_5_6_OR_NEWER
-	Debug.Log("ye");
 			renderCam.allowHDR = false;
 			renderCam.allowMSAA = false;
 			renderCam.forceIntoRenderTexture = true;
