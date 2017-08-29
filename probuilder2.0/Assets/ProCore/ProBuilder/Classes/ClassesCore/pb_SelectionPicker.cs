@@ -23,7 +23,10 @@ namespace ProBuilder2.Common
 				for(int i = 0; i < m_PreferredFormats.Length; i++)
 				{
 					if(SystemInfo.SupportsRenderTextureFormat(m_PreferredFormats[i]))
+					{
 						m_RenderTextureFormat = m_PreferredFormats[i];
+						break;
+					}
 				}
 
 				return m_RenderTextureFormat;
