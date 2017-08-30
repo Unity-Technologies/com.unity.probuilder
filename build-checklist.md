@@ -1,18 +1,17 @@
 ### ProBuilder Build Checklist
 
-Version: ~___________________~
+Version: ___________________
 
 ### Submission Table
 
 \ = Uploaded
 X = Submitted
 
-
-|                     | 4.7 | 5.0 | 5.3 | 5.5 | 5.6 | Github | Dropbox |
-|---------------------|-----|-----|-----|-----|-----|--------|---------|
-| ProBuilder Advanced |     |     |     |     |     |        |         |
-| ProCore Bundle      |     |     |     |     |     |  N/A   |   N/A   |
-| ProBuilder Basic    | N/A | N/A |     |     |     |  N/A   |   N/A   |
+|                     | 5.3 | 5.5 | 5.6 | 17.1 | 17.2 | Github | Dropbox |
+|---------------------|-----|-----|-----|------|------|--------|---------|
+| ProBuilder Advanced |     |     |     |      |      |        |         |
+| ProBuilder Basic    |     |     |     |      |      |  N/A   |   N/A   |
+| ProCore Bundle      |     |     |     |      |      |  N/A   |   N/A   |
 
 ### Project Checklist
 
@@ -37,16 +36,16 @@ Checklist before submitting each project version (test at least on latest Unity 
 
 Checklist per build (test on latest Unity version):
 
-|✓| Task |
-|-|------|
-| | Test building to standalone |
-| | Test building to WebGL |
-| | Test importing over previous version |
+| ✓ | Task                                  |
+|---|---------------------------------------|
+|   | Test building to standalone           |
+|   | Test building to WebGL                |
+|   | Test importing over previous version  |
 
 ## Post Submission Checklist
 
-|✓| Task |
-|-|------|
+| ✓ | Task |
+|---|------|
 | | Update Documentation |
 | | Update gh-pages/current.txt |
 | | ProBuilder Advanced metadata |
