@@ -3,7 +3,7 @@
 First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,
 applying materials, and UV editing.
 
-[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+<iframe class="youtube-preview" src="https://www.youtube.com/embed/Ta3HkV_qHTc" allowfullscreen></iframe>
 
 ---
 

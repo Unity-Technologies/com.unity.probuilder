@@ -14,7 +14,6 @@ pages:
 
 - Home: index.md
 - Fundamentals: general/fundamentals.md
-- ProBuilder Basic vs Advanced: basic-vs-advanced.md
 
 - Toolbar:
   - Overview: toolbar/overview-toolbar.md
@@ -41,7 +40,7 @@ pages:
   - Boolean Ops: experimental/booleanops.md
 
 - Preferences: preferences/preferences.md
-
+- ProBuilder Basic vs Advanced: basic-vs-advanced.md
 - Troubleshooting:
   - troubleshooting/faq.md
 

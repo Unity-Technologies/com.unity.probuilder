@@ -16,7 +16,9 @@
 
 **ProBuilder Advanced** is a paid extension that adds advanced features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization : [**Purchase ProBuilder Advanced**](http://u3d.as/30b)
 
-> **IMPORTANT:** This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please view the full [**Basic vs Advanced Comparison**](../basic-vs-advanced)
+<div class="alert-box warning">
+This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please check the full <a href="https://www.procore3d.com/docs/probuilder/basic-vs-advanced"><strong>Basic vs Advanced Comparison</strong></a>
+</div>
 
 ---
 
