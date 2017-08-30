@@ -1,4 +1,4 @@
-# ProBuilder 2.9.5f1
+# ProBuilder 2.9.5f2
 
 ## Features
 
@@ -6,7 +6,7 @@
 
 ## Bug Fixes
 
-- Drag select with "Select Hidden: Off" now works in 2017.1 and up.
+- Drag select with "Select Hidden: Off" now works consistently in Unity 5.6 and up.
 
 ## Changes
 
