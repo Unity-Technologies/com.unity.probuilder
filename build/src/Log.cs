@@ -17,6 +17,11 @@ namespace ProBuilder.BuildSystem
 	{
 		public static LogLevel Level = LogLevel.Critical | LogLevel.Error | LogLevel.Warning | LogLevel.Status;
 
+		public static void Print(string contents)
+		{
+			Console.WriteLine(contents);
+		}
+
 		public static void Critical(string contents)
 		{
 			if((Level & LogLevel.Critical) > 0)

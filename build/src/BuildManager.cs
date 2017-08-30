@@ -15,6 +15,8 @@ namespace ProBuilder.BuildSystem
 	 */
 	public static class BuildManager
 	{
+		const string m_VersionInfo = "1.1.0f0";
+
 		static int Main(string[] args)
 		{
 			List<BuildTarget> m_Targets = new List<BuildTarget>();
@@ -28,12 +30,17 @@ namespace ProBuilder.BuildSystem
 				return 0;
 			}
 
-			// Read in build targets
+			// Iterate through args once looking for swithes
 			foreach(string arg in args)
 			{
 				if(arg.StartsWith("-debug"))
 				{
 					m_IsDebug = true;
+				}
+				else if(arg.StartsWith("-version"))
+				{
+					Log.Print(m_VersionInfo);
+					return 1;
 				}
 				else if(arg.StartsWith("-silent"))
 				{
@@ -54,7 +61,16 @@ namespace ProBuilder.BuildSystem
 					if(m_UnityPathOverride.EndsWith("/"))
 						m_UnityPathOverride = m_UnityPathOverride.Substring(0, m_UnityPathOverride.Length - 1);
 				}
-				// No valid argument prefix, treat this input as a build target
+			}
+
+			// Then read in build targets
+			foreach(string arg in args)
+			{
+				// If no valid argument prefix, treat this input as a build target
+				if(arg.StartsWith("-debug") || arg.StartsWith("-version") || arg.StartsWith("-silent") || arg.StartsWith("-verbose") || arg.StartsWith("-unity="))
+				{
+					continue;
+				}
 				else
 				{
 					if( ReferenceUtility.IsDirectory(arg) && Directory.Exists(arg) )
@@ -62,6 +78,7 @@ namespace ProBuilder.BuildSystem
 						foreach(string t in Directory.GetFiles(arg, "*.json", SearchOption.TopDirectoryOnly))
 						{
 							BuildTarget result = TryReadBuildTarget(t);
+
 							if(result != null)
 								m_Targets.Add(result);
 						}
@@ -69,6 +86,7 @@ namespace ProBuilder.BuildSystem
 					else
 					{
 						BuildTarget result = TryReadBuildTarget(arg);
+
 						if(result != null)
 							m_Targets.Add(result);
 
@@ -110,6 +128,11 @@ namespace ProBuilder.BuildSystem
 					Log.Info(string.Format("  {0} = {1}", kvp.Key, kvp.Value));
 			    	target.Replace(kvp.Key, kvp.Value);
 			    }
+
+			    Log.Info("Defines:");
+
+			    foreach(var d in target.Defines)
+			    	Log.Info(string.Format("  {0}", d));
 
 			    Log.Info("OnPreBuild");
 
@@ -186,7 +209,7 @@ namespace ProBuilder.BuildSystem
 			return success - targetCount;
 		}
 
-		private static BuildTarget TryReadBuildTarget(string path)
+		private static BuildTarget TryReadBuildTarget(string path, bool allowRecurse = true)
 		{
 			try
 			{
@@ -206,6 +229,37 @@ namespace ProBuilder.BuildSystem
 					t.ReferencedAssemblies = new List<string>(ReferenceUtility.DefaultReferencedAssemblies);
 				else
 					t.ReferencedAssemblies.AddRange(ReferenceUtility.DefaultReferencedAssemblies);
+
+				if(!string.IsNullOrEmpty(t.Base))
+				{
+					if(!allowRecurse)
+					{
+						Log.Critical("Base build target depth > 1. Currently this is not allowed.");
+						return null;
+					}
+
+					FileInfo fi = new FileInfo(path);
+					BuildTarget b = null;
+
+					if(fi != null)
+					{
+						string base_path = Path.Combine(fi.Directory.FullName, t.Base);
+						b = TryReadBuildTarget(base_path, false);
+						Log.Info(string.Format("{0} setting base target to {1}", Path.GetFileNameWithoutExtension(path), base_path));
+					}
+					else
+					{
+						b = TryReadBuildTarget(t.Base, false);
+						Log.Info(string.Format("{0} setting base target to {1}", Path.GetFileNameWithoutExtension(path), t.Base));
+					}
+
+					if(b != null)
+					{
+						b.OverwriteWith(t);
+						t = b;
+					}
+				}
+
 
 				return t;
 			}
