@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 Follow these steps if you are upgrading a ProBuilder project from a version less than 2.4 (Tools / ProBuilder / About to check your current version).  If you are switching from the Source version of ProBuilder to the DLL version this guide also applies.
 
 [Youtube Tutorial](https://www.youtube.com/watch?v=O-Dz0Q3KgCs)

@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_FaceActions.png">
 </div>
@@ -153,10 +157,6 @@ Setting | Description
 ---
 
 ## ![Triangulate Faces Icon](../images/icons/Face_Triangulate.png "Triangulate Faces Icon") Triangulate Faces
-
-<div class="video-link">
-Section Video: <a href="@todo">Face Actions: Triangulate</a>
-</div>
 
 Reduces selected faces to their base triangles, creating a faceted, non-smooth appearance. 
 

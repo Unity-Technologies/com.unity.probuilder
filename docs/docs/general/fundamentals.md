@@ -1,17 +1,13 @@
-<!-- # Video: ProBuilder Fundamentals -->
+# Getting Started with ProBuilder
 
 First time using ProBuilder? Start here for an overview of creating your first mesh, editing geometry,
 applying materials, and UV editing.
 
-<!-- [![ProBuilder Fundamentals Video](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Fundamentals Video") -->
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
 
 ---
 
 ## The ProBuilder Toolbar
-
-<div class="video-link-missing">
-Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Toolbar</a>
-</div>
 
 All of ProBuilder's specialized editing functions are available via the [ProBuilder Toolbar](../toolbar/overview-toolbar), which dynamically adapts to your Edit Mode and selection.
 
@@ -25,10 +21,6 @@ Each Toolbar button will display detailed information about it's use, options, a
 
 ## Creating a New Mesh
 
-<div class="video-link-missing">
-Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Shape Tool</a>
-</div>
-
 <img src="../../images/Cube_120x120.png" align="right"> Press `CTRL K` on your keyboard to spawn in a new ProBuilder-editable cube.
 
 To start with a more complex shape, ProBuilder also includes a library of shapes (cylinder, torus, stairs, etc), to begin modeling with. Which each of these shapes, you can customize both starting dimensions and unique parameters.
@@ -39,13 +31,8 @@ To start with a more complex shape, ProBuilder also includes a library of shapes
 
 ---
 
-## Editing Meshes
-<div class="video-link-missing">
-Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Basic Mesh Editing</a>
-</div>
-
 <a id="modes"></a>
-### Object vs Element
+## Object vs Element
 
 ![Editing Modes Example](ExampleImage_ObjectAndElementEditingModes.png "Editing Modes Example")
 
@@ -69,23 +56,9 @@ ProBuilder follows many of the same conventions as other 3D modeling application
 
 If you are new to 3D modeling, ProBuilder is a great way to get your feet wet.  Now would be a good time to check out the tutorial videos on the ProCore [Youtube playlist](https://www.youtube.com/playlist?list=PLrJfHfcFkLM8PDioWg_5nmUqQycnVmi58).
 
-<!-- @todo -->
-<!-- For those seeking greater knowledge we highly recommend viewing the [3D Modeling](@todo) section. There, you can find:
-
-* Step-by-step tutorials and videos
-* Workflow suggestions
-* Links to other useful sites, videos, etc
-
-*More Info: [**3D Modeling**](@todo)*
- -->
-
 ---
 
 ## Texturing and UVs
-
-<div class="video-link-missing">
-Quick Video: <a href="@todo link vid section">Fundamentals of ProBuilder: Texturing and UVs</a>
-</div>
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 

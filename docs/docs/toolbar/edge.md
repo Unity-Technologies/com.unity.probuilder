@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_EdgeActions.png">
 </div>
@@ -13,6 +17,8 @@ Section Video: <a href="https://youtu.be/de927QxOW9E?list=PLrJfHfcFkLM-b6_N-musB
 **Keyboard Shortcut** : `ALT B`
 
 Create a new face between two selected edges. Each edge must have a free side.
+
+> Note: By default, only open edges can be **Bridged**. You can change this in the [ProBuilder Preferences](../preferences/preferences/#bridge-perimeter-edges-only).
 
 <div style="text-align:center">
 <img src="../../images/BridgeEdges_Example.png">
@@ -74,8 +80,6 @@ You can also extrude edges by holding `SHIFT` while moving, rotating, or scaling
 <div style="text-align:center">
 <img src="../../images/ExtrudeEdges_Example.png">
 </div>
-
-> Note: By default, only open edges can be **Extruded**. You can change this in the [ProBuilder Preferences](@todo).
 
 ![Options Icon](../images/icons/Options.png) **Custom Settings Available** :
 

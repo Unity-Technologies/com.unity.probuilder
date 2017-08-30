@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 ProBuilder contains many settings that can be customized to suit your needs.
 
 ![Preferences Window](images/preferences.png)
@@ -117,7 +121,7 @@ When instantiating a new object ProBuilder will snap the object to the nearest g
 <a id="bridge-perimeter-edges"></a>
 ### Bridge Perimeter Edges Only
 
-When enabled ProBuilder will not allow users to extrude edges from manifold edges.  Disable to remove this restriction.
+When enabled ProBuilder will not allow users to bridge closed edges.  Disable to remove this restriction.
 
 ## Experimental
 

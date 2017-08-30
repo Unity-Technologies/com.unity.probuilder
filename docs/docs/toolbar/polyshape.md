@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 ## ![Poly Shape Icon](../images/icons/NewPolyShape.png "New Poly Shape Icon") Poly Shape
 
 <div class="video-link">

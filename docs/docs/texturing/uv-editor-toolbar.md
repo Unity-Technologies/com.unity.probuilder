@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <!-- # Video: UV Editor Toolbar
 
 [![UV Editor Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)
@@ -11,13 +15,23 @@
 
 ## Select, Move, Rotate, Scale
 
+<div class="video-link-missing">
+Section Video: <a href="@todo">UV Editor Toolbar: Manipulators</a>
+</div>
+
 This first group of buttons contains shortcuts to the standard Unity manipulation modes. Clicking these will have the exact same effect as clicking on the main Unity toolbar buttons.
 
 ---
 
 ## Vertex, Edge Face
 
-The second button group contains shortcuts to ProBuilder's [Element Editing Modes](../general/fundamentals/#modes). When using [Manual UV Editing](manual-uvs-actions), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  When using [Auto UVs](auto-uvs-actions) you may only edit UVs per-face.
+<div class="video-link-missing">
+Section Video: <a href="@todo">UV Editor Toolbar: Element Selection</a>
+</div>
+
+The second button group contains shortcuts to ProBuilder's [Element Editing Modes](../general/fundamentals/#modes). When using [Manual UV Editing](manual-uvs-actions), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
+
+**Note:** When using [Auto UVs](auto-uvs-actions) you may only edit UVs by face. Editing an Edge or Vertex will convert the selected UVs to [Manual UVs](manual-uvs-actions).
 
 ---
 
@@ -37,7 +51,6 @@ Toolbar Icon | Description
 <div style="text-align:center">
 <img src="../../images/UV_InSceneControls.png">
 </div>
-
 
 Snap to increments by holding `CTRL` . You can customize these increment values via the [ProBuilder Preferences](../preferences/preferences)
 

@@ -1,13 +1,13 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <!-- # Video: Texture Mapping Overview
 
 [![ProBuilder Texture Mapping Overview Video](../images/VideoLink_YouTube_768.png)](@todo)-->
 ---
 
 ## Texture Mapping 101
-
-<div class="video-link-missing">
-Section Video: <a href="@todo">Texture Mapping: Texture Mapping 101</a>
-</div>
 
 **Texture Mapping** is the process of applying materials ("textures") to an object, and adjusting the Offset, Rotation, and Tiling of the object's UVs.
 
@@ -25,10 +25,6 @@ Section Video: <a href="@todo">Texture Mapping: Texture Mapping 101</a>
 
 ## Auto vs Manual UVs
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Texture Mapping: Auto vs Manual UVs</a>
-</div>
-
 ProBuilder provides both "Automatic" and "Manual" Texturing methods:
 
 * [Auto UVs](auto-uvs-actions) : Use this for simple Texturing work, especially architectural or hard-surface items. Tiling, Offset, Rotation, and other controls are available, while ProBuilder automatically handles projection and updates as you work.
@@ -41,16 +37,9 @@ You can use a mix of Auto and Manual UVs, even on the same object. This is espec
 
 ## The UV Editor Window
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Texture Mapping: The UV Editor Window</a>
-</div>
-
 Both [Auto-Texturing](auto-uvs-actions) and [Manual UV Editing](manual-uvs-actions) controls are located in UV Editor Window.
 
-To open this window, click it's button in the [Main Toolbar](@todo).
-
-* In Text Mode, this will be the button labeled **UV Editor**
-* In Icon Mode, use the button with this icon: ![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon")
+To open this window, click it's button ( ![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon") or "UV Editor") in the [Main Toolbar](../toolbar/overview-toolbar/).
 
 <div style="text-align:center">
 <img src="../../images/UVPanel_FullWindow_Letters.png">

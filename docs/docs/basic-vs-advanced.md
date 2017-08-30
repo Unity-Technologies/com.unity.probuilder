@@ -1,4 +1,7 @@
-﻿
+﻿[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 # Comparison Overview
 
 ## Shared Features

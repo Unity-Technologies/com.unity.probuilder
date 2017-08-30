@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 ProBuilder has some additional features that are considered "experimental."  
 
 These are features that are either close to being complete, or complete with some caveats.

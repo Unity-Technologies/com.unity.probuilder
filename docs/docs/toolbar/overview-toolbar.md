@@ -1,5 +1,6 @@
-<!-- # Video: Toolbar Overview -->
-<!-- [![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo) -->
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
 
 ProBuilder is controlled via the **Main Toolbar**, which contains all commonly used functions.
 
@@ -8,10 +9,6 @@ A second toolbar, the **Edit Mode Toolbar**, is available to quickly switch betw
 ---
 
 ### Tool Categories
-
-<div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: Categories</a>
-</div>
 
 The Toolbar is color-coded to help you quickly choose tools by type:
 
@@ -26,10 +23,6 @@ The Toolbar is color-coded to help you quickly choose tools by type:
 
 ### Resizing and Text vs Icon Mode
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: Text vs Icon Mode</a>
-</div>
-
 You can resize the Toolbar however you like; ProBuilder will re-order the icon or text contents to best fit the window size.
 
 Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space and choose "Use Text Mode".  In this menu you can also change how this window is displayed (docking or floating).
@@ -40,10 +33,6 @@ Prefer the good ol' Text Buttons? Right click on the toolbar in the empty space 
 
 ### Dynamic Layout
 
-<div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: Dynamic Layout</a>
-</div>
-
 This is a "smart" toolbar, and dynamically changes to match your current editing method and selection.
 
 * Buttons are only shown on the Toolbar if they are applicable in your current editing mode
@@ -52,10 +41,6 @@ This is a "smart" toolbar, and dynamically changes to match your current editing
 ---
 
 ### Custom Settings for Actions
-
-<div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: Custom Settings for Actions</a>
-</div>
 
 Some of the most-used actions ([Extrude](face/#extrude), [Collapse](vertex/#collapse), [Grow Selection](selection-tools/#grow), etc) also include Custom Settings, which can significantly modify the action.
 
@@ -67,10 +52,6 @@ When using the text toolbar the options menu for actions is shown as a `+` icon 
 
 <a id="edit-mode-toolbar"></a>
 ### Edit Mode Toolbar
-
-<div class="video-link-missing">
-Section Video: <a href="@todo">Toolbar Overview: The Edit Mode Toolbar</a>
-</div>
 
 This toolbar switches ProBuilder between the available edit modes.
 

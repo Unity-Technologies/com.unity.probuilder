@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <div class="manual"><hr /></div>
 
 ## ![Set Pivot Icon](../images/icons/Pivot_CenterOnElements.png "Set Pivot Icon") Move Pivot to Center of Selected Elements

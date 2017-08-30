@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 ## ![Bezier Shape Icon](../images/icons/NewBezierSpline.png "Bezier Shape Icon") Bezier Shape
 
 <div class="video-link">

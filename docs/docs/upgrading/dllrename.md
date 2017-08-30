@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <div class="alert-box warning">
 <h2>Important!</h2>
 As of Unity 5.3 this guide no longer applies.  Use the <a href="../standard">Standard</a> upgrade procedure.

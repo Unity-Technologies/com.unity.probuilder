@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <!-- # Video: Manual UVs Actions
 
 [![ProBuilder Toolbar Video](../images/VideoLink_YouTube_768.png)](@todo)

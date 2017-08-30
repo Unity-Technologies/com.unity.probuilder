@@ -1,5 +1,6 @@
-<!-- # Video: Tool Panels -->
-<!-- [![ProBuilder Toolbar: Tool Panels](../images/VideoLink_YouTube_768.png)](@todo "ProBuilder Toolbar: Tool Panels") -->
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
 
 These **Tool Panels** contain important tools for [Shape Creation](#shape-tool), [Materials](#material-tools), [Texturing and UVs](#texturing), [Vertex Coloring](#vertex-colors), and [Smoothing Groups](#smoothing-groups).
 
@@ -15,10 +16,6 @@ These **Tool Panels** contain important tools for [Shape Creation](#shape-tool),
 
 <a id="shape-tool"></a>
 ##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
-
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Shape Tool</a>
-</div>
 
 **Keyboard Shortcut** : `CTRL SHIFT K`
 
@@ -41,12 +38,6 @@ Each shape has specific properties which can be customized before creation- for 
 
 <a id="material-tools"></a>
 ##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
-
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Material Tools</a>
-<br>
-Related Video: <a href="@todo link vid section">Texturing and UVs</a>
-</div>
 
 **Purpose** : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
 
@@ -73,10 +64,6 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 <a id="texturing"></a>
 ##![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon") Texturing and UVs
 
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Texturing and UVs</a>
-</div>
-
 **Purpose** : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
@@ -90,15 +77,10 @@ The UV Editor Panel includes both [Auto UV](../texturing/auto-uvs-actions) tools
 <a id="vertex-colors"></a>
 ##![Vertex Color Tools Icon](../images/icons/Panel_VertColors.png "UV Editor Icon") Vertex Color Tools
 
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Vertex Color Tools</a>
-</div>
-
 **Purpose** : Opens the Vertex Coloring controls, for applying or painting vertex colors onto meshes.
 
 <div class="alert-box warning">
 <strong>Warning!</strong>  Not all shaders will show vertex colors on a mesh.
-<!-- <br/><br/>See <a href="@todo">Vertex Colors FAQ</a> for more information. -->
 </div>
 
 ![Vertex Coloring](../images/VertexColor_WithLevelExample.png "Vertex Coloring")
@@ -124,8 +106,10 @@ Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Gr
 
 - Choose Face editing from the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar)
 - Select a group of faces that you want to be smooth
-	- *If no faces are selected, or you are in [Object Mode](@todo), any Smoothing actions will be applied to the entire object*
-- **(A)** If any selected faces already have Smoothing Groups assigned, they will be highlighted. Clicking on a highlighted group will un-assign it.
+
+> *If no faces are selected, or you are in [Object Mode](../general/fundamentals/#object-vs-element), any Smoothing actions will be applied to the entire object*
+
+- **(A)** If any selected faces already have Smoothing Groups assigned, their group number will be highlighted. Clicking on a highlighted group will un-assign it.
 - **(B)** To assign the selected faces to a new Smoothing Group, click any available group button
 - **(C)** You can also assign Hard groups
 - **(D)** Press the "Clear" button to clear all Smoothing from the selected faces

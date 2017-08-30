@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <!-- # Video: Auto UVs Actions
 
 [![ Auto UVs Actions Video](../images/VideoLink_YouTube_768.png)](@todo)

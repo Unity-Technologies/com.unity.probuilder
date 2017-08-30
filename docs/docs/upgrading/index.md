@@ -1,3 +1,7 @@
+[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+
+---
+
 <div class="alert-box warning">
 <h2>Important!</h2>
 The upgrade process is <b>not</b> reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.
