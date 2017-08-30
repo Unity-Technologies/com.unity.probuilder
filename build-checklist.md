@@ -17,20 +17,20 @@ X = Submitted
 
 Checklist before submitting each project version (test at least on latest Unity version):
 
-| 4.7 | 5.0 | 5.3 | 5.5 | 5.6 |  Task                                        |
-|-----|-----|-----|-----|-----|----------------------------------------------|
-|     |     |     |     |     | `ProBuilder/Data` does not exist             |
-|     |     |     |     |     | No errors or warnings in Console             |
-|     |     |     |     |     | Preferences window looks correct             |
-|     |     |     |     |     | Open shape window                            |
-|     |     |     |     |     | Open version info                            |
-|     |     |     |     |     | Cmd+K creates cube                           |
-|     |     |     |     |     | Subdivide cube                               |
-|     |     |     |     |     | Split all cube vertices, then weld           |
-|     |     |     |     |     | Drag select w/ hidden select faces           |
-|     |     |     |     |     | Drag select w/ hidden select vertices        |
-|     |     |     |     |     | Drag select w/ out hidden select faces       |
-|     |     |     |     |     | Drag select w/ out hidden select vertices    |
+| 5.3 | 5.5 | 5.6 | 17.1 | 17.2 |  Task                                        |
+|-----|-----|-----|------|------|----------------------------------------------|
+|     |     |     |      |      | `ProBuilder/Data` does not exist             |
+|     |     |     |      |      | No errors or warnings in Console             |
+|     |     |     |      |      | Preferences window looks correct             |
+|     |     |     |      |      | Open shape window                            |
+|     |     |     |      |      | Open version info                            |
+|     |     |     |      |      | Cmd+K creates cube                           |
+|     |     |     |      |      | Subdivide cube                               |
+|     |     |     |      |      | Split all cube vertices, then weld           |
+|     |     |     |      |      | Drag select w/ hidden select faces           |
+|     |     |     |      |      | Drag select w/ hidden select vertices        |
+|     |     |     |      |      | Drag select w/ out hidden select faces       |
+|     |     |     |      |      | Drag select w/ out hidden select vertices    |
 
 ### Build Checklist
 
