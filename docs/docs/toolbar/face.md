@@ -158,6 +158,10 @@ Setting | Description
 
 ## ![Triangulate Faces Icon](../images/icons/Face_Triangulate.png "Triangulate Faces Icon") Triangulate Faces
 
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=tkbMt-XDj1I&index=3&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Face Actions: Triangulate Faces</a>
+</div>
+
 Reduces selected faces to their base triangles, creating a faceted, non-smooth appearance. 
 
 ![Triangulate Object Example](../images/TriangulateObject_Example.png "Triangulate Object Example")

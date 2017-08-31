@@ -126,6 +126,10 @@ Selects an edge ring from each selected edge.
 
 ##![Select Hole Icon](../images/icons/Selection_SelectHole.png "Select Hole Icon") Select Hole
 
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=kqfcaxmRT-8&index=6&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Selection Tools: Select Hole</a>
+</div>
+
 With an open vertex or edge selected, click **Select Hole** to select all elements along opening.
 
 With no elements selected, clicking **Select Hole** will automatically select **all** holes in the selected object.
@@ -138,6 +142,10 @@ With no elements selected, clicking **Select Hole** will automatically select **
 
 ## ![Select by Material Icon](../images/icons/Selection_SelectByMaterial.png "Select by Material Icon") Select by Material
 
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=OAyQ-hf45NA&index=2&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Selection Tools: Select byMaterial</a>
+</div>
+
 Click to select all faces on this object, which use the same material as the selected face.
 
 <div style="text-align:center">
@@ -148,6 +156,10 @@ Click to select all faces on this object, which use the same material as the sel
 
 ## ![Select by Vertex Color Icon](../images/icons/Selection_SelectByVertexColor.png "Select by Vertex Color Icon") Select by Vertex Color
 
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=_LxVLz8AbMg&index=1&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Selection Tools: Select by Vertex Color</a>
+</div>
+
 Click to select all faces on this object, which have the same vertex color as the selected face.
 
 <div style="text-align:center">
@@ -157,6 +169,10 @@ Click to select all faces on this object, which have the same vertex color as th
 ---
 
 ## ![Shift Modifier Icon](../images/icons/Selection_ShiftDifference.png "Shift Modifier Icon") Shift Modifier
+
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=2bOdeAZ3EJU&index=5&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Selection Tools: Shift Modifier</a>
+</div>
 
 Choose how holding the SHIFT key will affect selection, when clicking or drag-selecting:
 

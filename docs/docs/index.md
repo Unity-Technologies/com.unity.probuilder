@@ -22,13 +22,15 @@ This documentation encompasses <i>all</i> features, actions, and tools available
 
 ---
 
-## Optional: Register for access to Source Files and Online Downloads
+## Source Files and Online Downloads
+
+If you like, you may register for access to our online download site, the "User Toolbox". Downloading ProBuilder from this site will give you a single ZIP file with **all** the latest builds (ie, ProBuilder for Unity 5.3, 5.6, 2017.2, etc), and source files.
 
 1. Forward your Unity Asset Store invoice to [register@procore3d.com](mailto:register@procore3d.com)
 2. Create an account on the [User Toolbox](http://www.procore3d.com/usertoolbox) (if you don't already have one)
 3. Once we have verified the invoice, the latest downloads will always be available via your [User Toolbox](http://www.procore3d.com/usertoolbox) account
 
-*Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools!*
+*Thanks for purchasing ProBuilder, your support allows us to continue updating and developing all the ProCore tools! Also, we love to see and share what everyone creates with the tools, get in touch!*
 
 ---
 
@@ -41,6 +43,3 @@ This documentation encompasses <i>all</i> features, actions, and tools available
 - [Online Documentation](http://www.procore3d.com/docs/probuilder)
 - [Tutorial Videos](http://www.procore3d.com/videos)
 - [Support and Troubleshooting](http://www.procore3d.com/forum)
-
-
-**[Video Tutorials](http://www.procore3d.com/probuilder):** Take a short break to watch the video tutorials before using ProBuilder.  You’ll be an expert in no time!

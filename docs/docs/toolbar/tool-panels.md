@@ -94,8 +94,8 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 <a id="smoothing-groups"></a>
 ##![Smoothing Groups Icon](../images/icons/Panel_Smoothing.png "Smoothing Groups Icon") Smoothing Groups
 
-<div class="video-link-missing">
-Section Video: <a href="@todo link vid section">ProBuilder Toolbar: Smoothing Groups</a>
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=6bwZ9vN7uN0&index=4&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
 **Purpose**: Create a smooth and rounded look, or sharp-edged and faceted.
