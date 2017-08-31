@@ -49,6 +49,12 @@
 			],
 		},
 		{
+			"path":"Assets/FbxExporters",
+			"file_exclude_patterns":[
+				"*.meta"
+			]
+		},
+		{
 			"path": "Assets/ProBuilderUpgradeKit",
 			"file_exclude_patterns": [ "*.meta" ]
 		},
