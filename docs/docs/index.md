@@ -1,4 +1,4 @@
-﻿[![PB Getting Started Vid Link](../images/VidLink_GettingStarted_Slim.png)](https://youtu.be/Ta3HkV_qHTc)
+﻿<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../images/VidLink_GettingStarted_Slim.png"></a></div>
 
 ---
 
@@ -17,7 +17,7 @@
 **ProBuilder Advanced** is a paid extension that adds advanced features such as Edge Loop Modeling, UV Unwrapping, and specialized optimization : [**Purchase ProBuilder Advanced**](http://u3d.as/30b)
 
 <div class="alert-box warning">
-This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please check the full <a href="https://www.procore3d.com/docs/probuilder/basic-vs-advanced"><strong>Basic vs Advanced Comparison</strong></a>
+This documentation encompasses <i>all</i> features, actions, and tools available in both ProBuilder Basic and Advanced. If you are using ProBuilder Basic, please check the full <a href="basic-vs-advanced/"><strong>Basic vs Advanced Comparison</strong></a>
 </div>
 
 ---
