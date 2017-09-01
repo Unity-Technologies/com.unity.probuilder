@@ -1,5 +1,13 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 <div class="alert-box warning">
 The upgrade process is <b>not</b> reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.
+</div>
+
+<div class="alert-box warning">
+<strong>Unity Compatibility:</strong> As of ProBuilder v2.9.5f3, Unity 4.7 and 5.0 are no longer supported!
 </div>
 
 ## Standard Upgrade Process

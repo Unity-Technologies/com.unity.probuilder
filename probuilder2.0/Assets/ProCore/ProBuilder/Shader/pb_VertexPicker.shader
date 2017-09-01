@@ -19,7 +19,7 @@
 		Blend Off
 		Offset -1, -1
 
-		Pass 
+		Pass
 		{
 			Name "Vertices"
 			AlphaTest Greater .25
@@ -78,7 +78,7 @@
 				return o;
 			}
 
-			half4 frag (v2f i) : COLOR
+			float4 frag (v2f i) : COLOR
 			{
 				return i.color;
 			}

@@ -1,3 +1,7 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_ObjectActions.png">
 </div>
@@ -80,7 +84,7 @@ Sets all face normals on the selected object to the same relative direction.
 Section Video: <a href="https://youtu.be/OQvY8j20MpY?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Object Actions: Triangulate</a>
 </div>
 
-Reduces all polygons to their base triangles, creating a "[Polyworld-like](http://qt-ent.com/PolyWorld/)" effect.
+Reduces all polygons to their base triangles, creating a sharp, faceted appearance.
 
 ![Triangulate Object Example](../images/TriangulateObject_Example.png "Triangulate Object Example")
 
@@ -123,7 +127,7 @@ Setting | Description
 
 ---
 
-## Export
+## ![Export Icon](../images/icons/Object_Export.png "Export Icon") Export
 
 Export the selected ProBuilder objects to a 3D model.
 
@@ -159,5 +163,35 @@ Converts the selected object(s) into ProBuilder-editable objects.
 Setting | Description
 --- | ---
 **Preserve Faces** | If **On**, ProBuilder will attempt to keep ngons. Otherwise, all the mesh will be converted to hard tris.
+
+---
+
+##![Entity Icon](../images/icons/Entity_Trigger.png "Entity Icon") Entity Type Tools
+
+In ProBuilder, "Entity Types" can be very helpful in projects that make heavy use of Trigger Volumes and custom Collision Volumes. There are 4 Entity Types:
+
+### Trigger
+ - Configures a mesh for use as a Trigger Volume 
+ - This object will only be visible in the editor, never in game 
+ - On the object's Collider component, "Force Convex" and "Is Trigger are enabled
+ - Static Flags: none
+
+### Collider 
+ - Configures the mesh for use as a Collision Volume
+ - This object will only be visible in the editor, never in-game
+ - Static Flags: Navigation Static and Off-Link Mesh Navigation
+
+### Mover
+ - For meshes that will need to move and change in-game
+ - Static Flags: NONE
+
+### Detail
+ - For objects that will NOT move or change in-game
+ - Static Flags: ALL
+
+**Using the Entity Type Controls:** To set an object's type, select it (or multiple) and click the "Set (type name)" button at the bottom of the ProBuilder GUI. Click the "eye" icon to instantly toggle the visibility of each Entity Type (for example, to quickly hide all Mover objects)
+
+>Tip: You can choose the default Entity Type in the [ProBuilder Preferences](../preferences/preferences/#default-entity)
+
 
 ---

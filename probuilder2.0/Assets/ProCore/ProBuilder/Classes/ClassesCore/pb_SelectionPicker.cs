@@ -1,3 +1,5 @@
+// #define PB_DEBUG
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +9,48 @@ namespace ProBuilder2.Common
 {
 	public static class pb_SelectionPicker
 	{
+		private static bool m_Initialized = false;
+
+		private static RenderTextureFormat renderTextureFormat
+		{
+			get
+			{
+				if(m_Initialized)
+					return m_RenderTextureFormat;
+
+				m_Initialized = true;
+
+				for(int i = 0; i < m_PreferredFormats.Length; i++)
+				{
+					if(SystemInfo.SupportsRenderTextureFormat(m_PreferredFormats[i]))
+					{
+						m_RenderTextureFormat = m_PreferredFormats[i];
+						break;
+					}
+				}
+
+				return m_RenderTextureFormat;
+			}
+		}
+
+		private static TextureFormat textureFormat { get { return TextureFormat.ARGB32; } }
+
+		private static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
+
+		private static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
+		{
+#if UNITY_5_6
+			RenderTextureFormat.ARGBFloat,
+			RenderTextureFormat.ARGB32,
+#else
+			RenderTextureFormat.ARGB32,
+			RenderTextureFormat.ARGBFloat,
+#endif
+		};
+
 		/**
-		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
-		 *	by the rect.
+		 * Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
+		 * by the rect.
 		 */
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera camera,
@@ -21,9 +62,9 @@ namespace ProBuilder2.Common
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-			#endif
+#endif
 
 			Color32[] pix = tex.GetPixels32();
 
@@ -40,17 +81,17 @@ namespace ProBuilder2.Common
 			HashSet<pb_Face> faces = null;
 			HashSet<uint> used = new HashSet<uint>();
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			List<Color> rectImg = new List<Color>();
-			#endif
+#endif
 
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 			{
 				for(int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
 				{
-					#if PB_DEBUG
+#if PB_DEBUG
 					rectImg.Add(pix[y * imageWidth + x]);
-					#endif
+#endif
 
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
@@ -64,7 +105,7 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			#if PB_DEBUG
+#if PB_DEBUG
 			if(width > 0 && height > 0)
 			{
 				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
@@ -76,7 +117,7 @@ namespace ProBuilder2.Common
 				UnityEditor.AssetDatabase.Refresh();
 				GameObject.DestroyImmediate(img);
 			}
-			#endif
+#endif
 
 			return selected;
 		}
@@ -93,12 +134,34 @@ namespace ProBuilder2.Common
 			int renderTextureHeight = -1)
 		{
 			Dictionary<uint, pb_Tuple<pb_Object, int>> map;
+			Dictionary<pb_Object, HashSet<int>> selected = new Dictionary<pb_Object, HashSet<int>>();
+
+#if PB_DEBUG
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			sb.AppendLine("default: " + renderTextureFormat);
+			sb.AppendLine("event: " + Event.current.type);
+
+			foreach(RenderTextureFormat tf in m_PreferredFormats)
+			{
+				if( !SystemInfo.SupportsRenderTextureFormat(tf) )
+				{
+					sb.AppendLine(tf.ToString() + " not supported");
+					continue;
+				}
+
+				sb.AppendLine(tf.ToString());
+				m_RenderTextureFormat = tf;
+				List<Color> rectImg = new List<Color>();
+				selected.Clear();
+#endif
+
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
-			#if PB_DEBUG
-			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-			#endif
+#if PB_DEBUG
+			// System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
+#endif
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
 			int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - pickerRect.y) - pickerRect.height));
@@ -108,14 +171,9 @@ namespace ProBuilder2.Common
 			int height = Mathf.FloorToInt(pickerRect.height);
 			GameObject.DestroyImmediate(tex);
 
-			Dictionary<pb_Object, HashSet<int>> selected = new Dictionary<pb_Object, HashSet<int>>();
 			pb_Tuple<pb_Object, int> hit;
 			HashSet<int> indices = null;
 			HashSet<uint> used = new HashSet<uint>();
-
-			#if PB_DEBUG
-			List<Color> rectImg = new List<Color>();
-			#endif
 
 			for(int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
 			{
@@ -123,9 +181,9 @@ namespace ProBuilder2.Common
 				{
 					uint v = pb_SelectionPicker.DecodeRGBA( pix[y * imageWidth + x] );
 
-					#if PB_DEBUG
+#if PB_DEBUG
 					rectImg.Add(pix[y * imageWidth + x]);
-					#endif
+#endif
 
 					if( used.Add(v) && map.TryGetValue(v, out hit) )
 					{
@@ -137,19 +195,21 @@ namespace ProBuilder2.Common
 				}
 			}
 
-			#if PB_DEBUG
-			if(width > 0 && height > 0)
-			{
-				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
-				Texture2D img = new Texture2D(width, height);
-				img.SetPixels(rectImg.ToArray());
-				img.Apply();
-				byte[] bytes = img.EncodeToPNG();
-				System.IO.File.WriteAllBytes("Assets/rect.png", bytes);
-				UnityEditor.AssetDatabase.Refresh();
-				GameObject.DestroyImmediate(img);
+#if PB_DEBUG
+				if(width > 0 && height > 0)
+				{
+					sb.AppendLine("  in rect: \n" + used.Select(x => string.Format("   {0:X6} ({1})", x, EncodeRGBA(x))).ToString("\n"));
+					Texture2D img = new Texture2D(width, height);
+					img.SetPixels(rectImg.ToArray());
+					img.Apply();
+					System.IO.File.WriteAllBytes("Assets/rect_" + tf.ToString() + ".png", img.EncodeToPNG());
+					UnityEditor.AssetDatabase.Refresh();
+					GameObject.DestroyImmediate(img);
+				}
 			}
-			#endif
+			Debug.Log(sb.ToString());
+
+#endif
 
 			return selected;
 		}
@@ -211,11 +271,11 @@ namespace ProBuilder2.Common
 				Mesh m = new Mesh();
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
-				#if UNITY_4_7
+#if UNITY_4_7
 				// avoid incorrect unity warning about missing uv channel on 4.7
 				m.uv = new Vector2[pb.vertexCount];
 				m.uv2 = new Vector2[pb.vertexCount];
-				#endif
+#endif
 
 				Color32[] colors = new Color32[m.vertexCount];
 
@@ -272,11 +332,11 @@ namespace ProBuilder2.Common
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
 				m.colors32 = pbUtil.Fill<Color32>(BLACK, pb.vertexCount);
-				#if UNITY_4_7
+#if UNITY_4_7
 				// avoid incorrect unity warning about missing uv channel on 4.7
 				m.uv = new Vector2[pb.vertexCount];
 				m.uv2 = new Vector2[pb.vertexCount];
-				#endif
+#endif
 				go.AddComponent<MeshFilter>().sharedMesh = m;
 				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
 				meshes.Add(go);
@@ -398,7 +458,7 @@ namespace ProBuilder2.Common
 		 *	Render the camera with a replacement shader and return the resulting image.
 		 *	RenderTexture is always initialized with no gamma conversion (RenderTextureReadWrite.Linear)
 		 */
-		public static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
+		private static Texture2D RenderWithReplacementShader(Camera camera, Shader shader, string tag, int width = -1, int height = -1)
 		{
 			bool autoSize = width < 0 || height < 0;
 
@@ -408,27 +468,69 @@ namespace ProBuilder2.Common
 			GameObject go = new GameObject();
 			Camera renderCam = go.AddComponent<Camera>();
 			renderCam.CopyFrom(camera);
-			// Deferred path doesn't play nice with RenderWithShader
+
 			renderCam.renderingPath = RenderingPath.Forward;
 			renderCam.enabled = false;
 			renderCam.clearFlags = CameraClearFlags.SolidColor;
 			renderCam.backgroundColor = Color.white;
+#if UNITY_5_6_OR_NEWER
+			renderCam.allowHDR = false;
+			renderCam.allowMSAA = false;
+			renderCam.forceIntoRenderTexture = true;
+#endif
 
+#if UNITY_2017_1_OR_NEWER
+			RenderTextureDescriptor descriptor = new RenderTextureDescriptor() {
+				width = _width,
+				height = _height,
+				colorFormat = renderTextureFormat,
+				autoGenerateMips = false,
+				depthBufferBits = 16,
+				dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+				enableRandomWrite = false,
+				memoryless = RenderTextureMemoryless.None,
+				sRGB = false,
+				useMipMap = false,
+				volumeDepth = 1,
+				msaaSamples = 1
+			};
+			RenderTexture rt = RenderTexture.GetTemporary(descriptor);
+#else
 			RenderTexture rt = RenderTexture.GetTemporary(
 				_width,
 				_height,
 				16,
-				RenderTextureFormat.Default,
+				renderTextureFormat,
 				RenderTextureReadWrite.Linear,
 				1);
-
-			renderCam.targetTexture = rt;
-			renderCam.RenderWithShader(shader, tag);
+#endif
 
 			RenderTexture prev = RenderTexture.active;
+			renderCam.targetTexture = rt;
 			RenderTexture.active = rt;
 
-			Texture2D img = new Texture2D(_width, _height);
+#if PB_DEBUG
+			/* Debug.Log(string.Format("antiAliasing {0}\nautoGenerateMips {1}\ncolorBuffer {2}\ndepth {3}\ndepthBuffer {4}\ndimension {5}\nenableRandomWrite {6}\nformat {7}\nheight {8}\nmemorylessMode {9}\nsRGB {10}\nuseMipMap {11}\nvolumeDepth {12}\nwidth {13}",
+				RenderTexture.active.antiAliasing,
+				RenderTexture.active.autoGenerateMips,
+				RenderTexture.active.colorBuffer,
+				RenderTexture.active.depth,
+				RenderTexture.active.depthBuffer,
+				RenderTexture.active.dimension,
+				RenderTexture.active.enableRandomWrite,
+				RenderTexture.active.format,
+				RenderTexture.active.height,
+				RenderTexture.active.memorylessMode,
+				RenderTexture.active.sRGB,
+				RenderTexture.active.useMipMap,
+				RenderTexture.active.volumeDepth,
+				RenderTexture.active.width));
+				*/
+#endif
+
+			renderCam.RenderWithShader(shader, tag);
+
+			Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
 			img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
 			img.Apply();
 

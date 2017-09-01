@@ -1,3 +1,7 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 ## ![Poly Shape Icon](../images/icons/NewPolyShape.png "New Poly Shape Icon") Poly Shape
 
 <div class="video-link">

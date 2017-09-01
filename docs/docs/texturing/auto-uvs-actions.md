@@ -1,3 +1,7 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 <!-- # Video: Auto UVs Actions
 
 [![ Auto UVs Actions Video](../images/VideoLink_YouTube_768.png)](@todo)

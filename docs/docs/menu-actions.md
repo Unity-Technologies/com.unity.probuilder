@@ -1,4 +1,7 @@
-﻿
+﻿<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 ## General
 
 > *Tools > ProBuilder*
@@ -12,7 +15,19 @@ Opens the latest Documentation online
 ### Dimensions Overlay
 Show or hide the Dimensions Overlay, which works on all mesh objects  (not just ProBuilder)
 
+![Dimensions Overlay Example](../images/DimensionsOverlay_Example.png)
+
 ---
+
+## Editors
+
+> *Tools > ProBuilder > Editors*
+
+### Vertex Positions Editor
+
+Opens a special panel for manually positioning vertex positions in world space.
+
+![Vertex Positions Editor Example](../images/VertexPositionsEditor_Example.png)
 
 ## Actions
 
@@ -32,24 +47,32 @@ Show or hide the Dimensions Overlay, which works on all mesh objects  (not just 
 
 > *Tools > ProBuilder > Repair*
 
-### Force Refresh Scene
-Sometimes necessary after an upgrade. Will regenerate mesh geometry and refresh the scene view.
-
 ### Clean Leaked Meshes
 If you see console logs saying anything about leaking meshes, run this command to clean up the leaks.
 
-### Repair Mesh References
-Looks through the scene for any GameObjects with missing components that were at one time `pb_Object` or `pb_Entity`.
+### Force Refresh Scene
+Sometimes necessary after an upgrade. Will check all ProBuilder objects and rebuild their meshes if necessary.
 
-### Rebuild Vertex Colors
-Reset all vertex colors on the selection to plain white.
+### Rebuild ProBuilder Objects
+Similar to **Force Refresh Scene**, except that this will always rebuild all ProBuilder meshes objects in the scene. Note that this may take a while to perform.
+
+### Rebuild Shared Indices
+Reset what vertices ProBuilder thinks are shared between one another. If moving a face also moves other un-connected vertices, try this menu item.
 
 ### Remove Degenerate Triangles
 This deletes triangles on a mesh that are either taking up no space, or are duplicates.
 
-### Invert UV Scale
-- **Invert UV Scale (Selected Objects):** UV scale is inverted for selected objects.
-- **Invert UV Scale (Selected Faces):** UV scale is inverted for selected faces.
+### Rebuild Vertex Colors
+Reset all vertex colors on the selection to plain white.
+
+### Upgrade Scene to Advanced
+After upgrading from **ProBuilder Basic** to **ProBuilder Advanced** you will need to run this action in order to preserve the materials applied to objects. This is only necessary once per scene.
+
+### Upgrade Selection to Advanced
+Does exactly as `Upgrade Scene to Advanced**, except that only the current object selection is affected (as opposed to the entire scene).
+
+### Repair Missing Script References
+Looks through the scene for any GameObjects with missing components that were at one time `pb_Object` or `pb_Entity`.
 
 ---
 
@@ -62,6 +85,16 @@ These are tools or functions that aren’t quite ready for public use, but are i
 ### Boolean (CSG) Tool
 
 Union, Intersection, and Subtraction methods currently implemented.
+
+---
+
+## Debug
+
+> *Tools > ProBuilder > Debug*
+
+Displays detailed information on the currently selected mesh.
+
+![Debug Window Example](../images/DebugWindow_Example.png)
 
 ---
 

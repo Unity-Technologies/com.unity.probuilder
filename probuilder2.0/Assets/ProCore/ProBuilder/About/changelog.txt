@@ -1,9 +1,18 @@
-# ProBuilder 2.9.5f0
+# ProBuilder 2.9.5f3
 
 ## Features
 
 - Deep selection support when clicking faces.
 - Support for exporting quads and polygons with Fbx format.
+
+## Bug Fixes
+
+- Drag select with "Select Hidden: Off" now works consistently in Unity 5.6 and up.
+- Fix automatic lightmapping attempting to update while ProBuilder is modifying geometry.
+
+## Changes
+
+- Unity 4.7 and 5.0 are no longer supported (2.9.4 will continue to be available for these version of Unity).
 
 # ProBuilder 2.9.4f1
 

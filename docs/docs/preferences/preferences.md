@@ -1,3 +1,7 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 ProBuilder contains many settings that can be customized to suit your needs.
 
 ![Preferences Window](images/preferences.png)
@@ -56,7 +60,7 @@ What material new shapes will be instantiated with.
 
 ### Default Entity
 
-What entity type new shapes will be instantiated as.
+What [Entity Type](../toolbar/object-actions/#entity-type-tools) new shapes will be instantiated as.
 
 ### Default Collider
 
@@ -117,7 +121,7 @@ When instantiating a new object ProBuilder will snap the object to the nearest g
 <a id="bridge-perimeter-edges"></a>
 ### Bridge Perimeter Edges Only
 
-When enabled ProBuilder will not allow users to extrude edges from manifold edges.  Disable to remove this restriction.
+When enabled ProBuilder will not allow users to bridge closed edges.  Disable to remove this restriction.
 
 ## Experimental
 

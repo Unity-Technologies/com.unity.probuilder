@@ -1,3 +1,7 @@
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+
+---
+
 <div style="text-align:center">
 <img src="../../images/Toolbar_FaceActions.png">
 </div>
@@ -118,7 +122,7 @@ Merges selected faces into a single face, and removes any dividing edges.
 
 ---
 
-## ![Subdivide Face Icon](../images/icons/Face_Subdivide.png "Subdivide Face Icon") Subdivide Face
+## ![Subdivide Face Icon](../images/icons/Face_Subdivide.png "Subdivide Face Icon") Subdivide Faces
 
 <div class="video-link">
 Section Video: <a href="https://youtu.be/jgH1MHB6p3w?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Subdivide Face</a>
@@ -132,7 +136,7 @@ Split each selected face by adding a vertex at the center of each edge and conne
 
 ---
 
-## ![Bevel Icon](../images/icons/Edge_Bevel.png "Bevel Icon") Bevel
+## ![Bevel Icon](../images/icons/Edge_Bevel.png "Bevel Icon") Bevel Faces
 
 <div class="video-link">
 Section Video: <a href="https://youtu.be/2UbvKLQyDDc?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Face Actions: Bevel Face</a>
@@ -149,6 +153,18 @@ Performs the [Bevel Edge](edge/#bevel) action on all the edges of the selected f
 Setting | Description
 --- | ---
 **Distance** | Sets the distance each new edge is moved, from the position of the original.
+
+---
+
+## ![Triangulate Faces Icon](../images/icons/Face_Triangulate.png "Triangulate Faces Icon") Triangulate Faces
+
+<div class="video-link">
+Section Video: <a href="https://www.youtube.com/watch?v=tkbMt-XDj1I&index=3&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">Face Actions: Triangulate Faces</a>
+</div>
+
+Reduces selected faces to their base triangles, creating a faceted, non-smooth appearance. 
+
+![Triangulate Object Example](../images/TriangulateObject_Example.png "Triangulate Object Example")
 
 ---
 

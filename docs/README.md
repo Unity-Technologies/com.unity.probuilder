@@ -37,3 +37,22 @@ See http://www.mkdocs.org/#adding-pages
 - Make sure `wkhtmltopdf` is on your `$PATH`.  (Ex, `ln -s C:/Program\ Files/wkhtmltopdf/bin/wkhtmltopdf.exe /usr/local/bin/wkhtmltopdf.exe`).
 - Install `pdfkit` python module. (`pip install pdfkit`)
 - `sh build-manual.sh`
+
+---
+
+# Artist-Friendly Instructions
+> just for GW...
+
+## Just the Basics (Previewing and Editing with MKDocs)
+
+1. Install [Python](https://www.python.org/)
+	> make SURE "Add Python 3.6 to PATH" is enabled when installing!
+2. Open Command Prompt, run "pip install --upgrade pip"
+3. Still in Command Prompt, run "pip install mkdocs"
+
+## Publishing Changes
+> danger zone!
+
+1. stuff
+
+
