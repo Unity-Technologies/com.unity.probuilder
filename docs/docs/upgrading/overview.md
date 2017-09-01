@@ -6,6 +6,10 @@
 The upgrade process is <b>not</b> reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.
 </div>
 
+<div class="alert-box warning">
+<strong>Unity Compatibility:</strong> As of ProBuilder v2.9.5f3, Unity 4.7 and 5.0 are no longer supported!
+</div>
+
 ## Standard Upgrade Process
 
 If you are using **ProBuilder 2.4.7** or later, simply import the latest version. No special steps are required.
