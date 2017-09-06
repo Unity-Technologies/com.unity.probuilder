@@ -328,16 +328,17 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Attempts to create quad, or on failing just return the triangle indices.
+		 * Attempts to create quad, or on failing just return the triangle indices.
 		 */
-		public void ToQuadOrTriangles(out int[] quadOrTris)
+		public MeshTopology ToQuadOrTriangles(out int[] quadOrTris)
 		{
 			if(ToQuad(out quadOrTris))
-				return;
+				return MeshTopology.Quads;
 
 			int len = indices == null ? 0 : System.Math.Max(0, indices.Length);
 			quadOrTris = new int[len];
 			System.Array.Copy(indices, quadOrTris, len);
+			return MeshTopology.Triangles;
 		}
 
 		/**
@@ -426,6 +427,64 @@ namespace ProBuilder2.Common
 			}
 
 			return submeshes.Length;
+		}
+
+		/**
+		 * Create submeshes from a set of faces. Where possible quads will be used, otherwise triangles.
+		 */
+		public static int MeshQuads(pb_Face[] faces, out pb_Submesh[] submeshes)
+		{
+			Dictionary<Material, List<int[]>> quads = new Dictionary<Material, List<int[]>>();
+			Dictionary<Material, List<int[]>> tris = new Dictionary<Material, List<int[]>>();
+
+			int count = faces == null ? 0 : faces.Length;
+
+			for(int i = 0; i < count; i++)
+			{
+				pb_Face face = faces[i];
+
+				if(face.indices == null || face.indices.Length < 1)
+					continue;
+
+#if PROTOTYPE
+				Material material = pb_Constant.DefaultMaterial;
+#else
+				Material material = face.material ? pb_Constant.DefaultMaterial : face.material;
+#endif
+
+				int[] res;
+
+				MeshTopology t = face.ToQuadOrTriangles(out res);
+
+				List<int[]> polys = null;
+
+				if(t == MeshTopology.Quads)
+				{
+					if(quads.TryGetValue(material, out polys))
+						polys.Add(res);
+					else
+						quads.Add(material, new List<int[]>() { res });
+				}
+				else
+				{
+					if(tris.TryGetValue(material, out polys))
+						polys.Add(res);
+					else
+						tris.Add(material, new List<int[]>() { res });
+				}
+			}
+
+			int submeshCount = quads.Count + tris.Count;
+			submeshes = new pb_Submesh[submeshCount];
+			int ii = 0;
+
+			foreach(var kvp in quads)
+				submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
+
+			foreach(var kvp in tris)
+				submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
+
+			return submeshCount;
 		}
 
 		public override string ToString()
