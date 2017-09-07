@@ -67,7 +67,8 @@ namespace ProBuilder2.Common
 		// 	OnFbxUpdate(null, Selection.gameObjects);
 		// }
 
-		static void OnFbxUpdate(FbxExporters.FbxPrefab updatedInstance, IEnumerable<GameObject> updatedObjects)
+		// FbxExporters.FbxPrefab
+		static void OnFbxUpdate(object updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
 			foreach(GameObject go in updatedObjects)
 			{

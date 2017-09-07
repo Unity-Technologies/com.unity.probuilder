@@ -34,7 +34,10 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			string res = ExportWithFileDialog( Selection.GetFiltered<GameObject> (SelectionMode.Editable | SelectionMode.TopLevel) );
+			bool asGroup = pb_PreferencesInternal.GetBool("pbExportAsGroup", true);
+			pb_FbxOptions options = new pb_FbxOptions() { quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true) };		
+
+			string res = ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel) as GameObject[], asGroup, options);
 
 			if( string.IsNullOrEmpty(res) )
 				return new pb_ActionResult(Status.Canceled, "User Canceled");

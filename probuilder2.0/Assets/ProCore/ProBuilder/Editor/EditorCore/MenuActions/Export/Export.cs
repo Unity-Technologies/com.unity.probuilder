@@ -255,7 +255,7 @@ namespace ProBuilder2.Actions
 			}
 			else if(m_ExportFormat == ExportFormat.Fbx)
 			{
-				res = ExportFbx.ExportWithFileDialog(Selection.GetFiltered<GameObject> (SelectionMode.Editable | SelectionMode.TopLevel), m_ExportAsGroup, new pb_FbxOptions() {
+				res = ExportFbx.ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel) as GameObject[], m_ExportAsGroup, new pb_FbxOptions() {
 					quads = m_FbxQuads,
 					ngons = m_FbxNgons
 					});
