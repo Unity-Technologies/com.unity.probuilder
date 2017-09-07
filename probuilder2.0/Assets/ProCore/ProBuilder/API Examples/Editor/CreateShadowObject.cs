@@ -85,8 +85,8 @@ namespace ProBuilder2.Actions
 
 		private bool showPreview
 		{
-			get { return pb_Preferences_Internal.GetBool("pb_shadowVolumePreview", true); }
-			set { pb_Preferences_Internal.SetBool("pb_shadowVolumePreview", value); }
+			get { return pb_PreferencesInternal.GetBool("pb_shadowVolumePreview", true); }
+			set { pb_PreferencesInternal.SetBool("pb_shadowVolumePreview", value); }
 		}
 
 		/**
@@ -137,24 +137,24 @@ namespace ProBuilder2.Actions
 			EditorGUI.BeginChangeCheck();
 
 			EditorGUI.BeginChangeCheck();
-			float volumeSize = pb_Preferences_Internal.GetFloat("pb_CreateShadowObject_volumeSize", .07f);
+			float volumeSize = pb_PreferencesInternal.GetFloat("pb_CreateShadowObject_volumeSize", .07f);
 			volumeSize = EditorGUILayout.Slider(gc_volumeSize, volumeSize, 0.001f, 1f);
 			if( EditorGUI.EndChangeCheck() )
-				pb_Preferences_Internal.SetFloat("pb_CreateShadowObject_volumeSize", volumeSize);
+				pb_PreferencesInternal.SetFloat("pb_CreateShadowObject_volumeSize", volumeSize);
 
 			#if !UNITY_4_6 && !UNITY_4_7
 			EditorGUI.BeginChangeCheck();
-			ShadowCastingMode shadowMode = (ShadowCastingMode) pb_Preferences_Internal.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
+			ShadowCastingMode shadowMode = (ShadowCastingMode) pb_PreferencesInternal.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			shadowMode = (ShadowCastingMode) EditorGUILayout.EnumPopup("Shadow Casting Mode", shadowMode);
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetInt("pb_CreateShadowObject_shadowMode", (int) shadowMode);
+				pb_PreferencesInternal.SetInt("pb_CreateShadowObject_shadowMode", (int) shadowMode);
 			#endif
 
 			EditorGUI.BeginChangeCheck();
-			ExtrudeMethod extrudeMethod = (ExtrudeMethod) pb_Preferences_Internal.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
+			ExtrudeMethod extrudeMethod = (ExtrudeMethod) pb_PreferencesInternal.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
 			extrudeMethod = (ExtrudeMethod) EditorGUILayout.EnumPopup("Extrude Method", extrudeMethod);
 			if(EditorGUI.EndChangeCheck())
-				pb_Preferences_Internal.SetInt("pb_CreateShadowObject_extrudeMethod", (int) extrudeMethod);
+				pb_PreferencesInternal.SetInt("pb_CreateShadowObject_extrudeMethod", (int) extrudeMethod);
 
 			if(EditorGUI.EndChangeCheck())
 				DoAction();
@@ -175,10 +175,10 @@ namespace ProBuilder2.Actions
 		public override pb_ActionResult DoAction()
 		{
 			#if !UNITY_4_6 && !UNITY_4_7
-			ShadowCastingMode shadowMode = (ShadowCastingMode) pb_Preferences_Internal.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
+			ShadowCastingMode shadowMode = (ShadowCastingMode) pb_PreferencesInternal.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			#endif
-			float extrudeDistance = pb_Preferences_Internal.GetFloat("pb_CreateShadowObject_volumeSize", .08f);
-			ExtrudeMethod extrudeMethod = (ExtrudeMethod) pb_Preferences_Internal.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
+			float extrudeDistance = pb_PreferencesInternal.GetFloat("pb_CreateShadowObject_volumeSize", .08f);
+			ExtrudeMethod extrudeMethod = (ExtrudeMethod) pb_PreferencesInternal.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
 
 			foreach(pb_Object pb in selection)
 			{
