@@ -17,7 +17,8 @@ namespace ProBuilder2.EditorCommon
 
 		/**
 		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
-		 * Also sets the pb_Object to 'Dirty' so that changes are stored.
+		 * Also sets the pb_Object to 'Dirty' so that changes are stored. 
+		 * Note that this is only applicable to Triangle meshes - that is, Quad meshes are not affected by this function.
 		 */
 		public static void Optimize(this pb_Object InObject, bool forceRebuildUV2 = false)
 		{
@@ -26,46 +27,56 @@ namespace ProBuilder2.EditorCommon
 			if(mesh == null || mesh.vertexCount < 1)
 				return;
 
+			// @todo Support mesh compression for topologies other than Triangles.
+			bool skipMeshProcessing = false;
+
+			for(int i = 0; !skipMeshProcessing && i < mesh.subMeshCount; i++)
+				if(mesh.GetTopology(i) != MeshTopology.Triangles)
+					skipMeshProcessing = true;
+
 			bool hasUv2 = false;
 
-			// if generating UV2, the process is to manually split the mesh into individual triangles,
-			// generate uv2, then re-assemble with vertex collapsing where possible.
-			// if not generating uv2, just collapse vertices.
-			if(!pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
+			if(!skipMeshProcessing)
 			{
-				pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
-
-				float time = Time.realtimeSinceStartup;
-
-				UnwrapParam unwrap = pb_Lightmapping.GetUnwrapParam(InObject.unwrapParameters);
-
-				Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh, unwrap);
-
-				// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
-				// to disable auto-uv2 generation.
-				if( (Time.realtimeSinceStartup - time) > 3f )
-					Debug.LogWarning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", InObject.name, (Time.realtimeSinceStartup - time).ToString("F2")));
-
-				if(uv2.Length == vertices.Length)
+				// if generating UV2, the process is to manually split the mesh into individual triangles,
+				// generate uv2, then re-assemble with vertex collapsing where possible.
+				// if not generating uv2, just collapse vertices.
+				if(!pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
-					for(int i = 0; i < uv2.Length; i++)
+					pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
+
+					float time = Time.realtimeSinceStartup;
+
+					UnwrapParam unwrap = pb_Lightmapping.GetUnwrapParam(InObject.unwrapParameters);
+
+					Vector2[] uv2 = Unwrapping.GeneratePerTriangleUV(mesh, unwrap);
+
+					// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
+					// to disable auto-uv2 generation.
+					if( (Time.realtimeSinceStartup - time) > 3f )
+						pb_Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", InObject.name, (Time.realtimeSinceStartup - time).ToString("F2")));
+
+					if(uv2.Length == vertices.Length)
 					{
-						vertices[i].uv2 = uv2[i];
-						vertices[i].hasUv2 = true;
+						for(int i = 0; i < uv2.Length; i++)
+						{
+							vertices[i].uv2 = uv2[i];
+							vertices[i].hasUv2 = true;
+						}
+
+						hasUv2 = true;
+					}
+					else
+					{
+						pb_Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					hasUv2 = true;
+					pb_MeshUtility.CollapseSharedVertices(mesh, vertices);
 				}
 				else
 				{
-					Debug.LogWarning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
+					pb_MeshUtility.CollapseSharedVertices(mesh);
 				}
-
-				pb_MeshUtility.CollapseSharedVertices(mesh, vertices);
-			}
-			else
-			{
-				pb_MeshUtility.CollapseSharedVertices(mesh);
 			}
 
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))

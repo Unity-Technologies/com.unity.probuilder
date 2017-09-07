@@ -604,48 +604,42 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	\brief Force regenerate geometry.  Also responsible for sorting faces with shared materials into the same submeshes.
+	 * Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept,
+	 * otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 	 */
 	public void ToMesh()
+	{
+		ToMesh(MeshTopology.Triangles);
+	}
+
+	public void ToMesh(MeshTopology preferredTopology)
 	{
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
 		if(m != null && m.vertexCount == _vertices.Length)
-		{
 			m = msh;
-
-			m.vertices = _vertices;
-
-			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
-			if(_uv != null)
-				m.uv = _uv;
-		}
+		else if(m == null)
+			m = new Mesh();
 		else
-		{
-			if(m == null)
-				m = new Mesh();
-			else
-				m.Clear();
+			m.Clear();
 
-			m.vertices = _vertices;
-		}
-
+		m.vertices = _vertices;
+		if(_uv != null) m.uv = _uv;
 		m.uv2 = null;
 
-		int[][] tris;
-		Material[] mats;
+		pb_Submesh[] submeshes;
 
-		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
+		m.subMeshCount = pb_Face.GetMeshIndices(faces, out submeshes, preferredTopology);
 
-		for(int i = 0; i < tris.Length; i++)
-			m.SetTriangles(tris[i], i);
+		for(int i = 0; i < m.subMeshCount; i++)
+			m.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
 
-		m.name = "pb_Mesh" + id;
+		m.name = string.Format("pb_Mesh{0}", id);
 
 		GetComponent<MeshFilter>().sharedMesh = m;
 #if !PROTOTYPE
-		GetComponent<MeshRenderer>().sharedMaterials = mats;
+		GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.material).ToArray();
 #endif
 	}
 

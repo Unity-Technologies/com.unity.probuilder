@@ -979,7 +979,7 @@ namespace ProBuilder2.MeshOperations
 	}
 
 	/**
-	* ProBuilderize in-place function.  You must call ToMesh() and Refresh() after
+	* ProBuilderize in-place function. You must call ToMesh() and Refresh() after
 	* returning from this function, as this only creates the pb_Object and sets its
 	* fields. This allows you to record the mesh and gameObject for Undo operations.
 	*/
