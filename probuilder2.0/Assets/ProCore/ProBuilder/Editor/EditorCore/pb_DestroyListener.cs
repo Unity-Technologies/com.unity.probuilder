@@ -7,8 +7,8 @@ using ProBuilder2.Common;
 namespace ProBuilder2.EditorCommon
 {
 	/**
-	 *	Static singleton listens for pb_Object::OnDestroy events and deletes or ignores meshes
-	 *	depending on whether or not the mesh is an asset.
+	 * Static singleton listens for pb_Object::OnDestroy events and deletes or ignores meshes
+	 * depending on whether or not the mesh is an asset.
 	 */
 	[InitializeOnLoad]
 	static class pb_DestroyListener
@@ -59,7 +59,11 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
-				GameObject.DestroyImmediate(pb.msh);
+				string path = AssetDatabase.GetAssetPath(pb.msh);
+
+				// If the pb_Object is backed by a Mesh asset don't destroy it.
+				if(string.IsNullOrEmpty(path))
+					GameObject.DestroyImmediate(pb.msh);
 			}
 		}
 	}

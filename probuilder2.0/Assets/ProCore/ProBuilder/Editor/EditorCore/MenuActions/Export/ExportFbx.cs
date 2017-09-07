@@ -29,7 +29,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return pb_FbxExportListener.FbxExportEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+			return pb_FbxListener.FbxExportEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
 		public override pb_ActionResult DoAction()
@@ -89,12 +89,30 @@ namespace ProBuilder2.Actions
             	// return FbxExporters.Editor.ModelExporter.ExportObjects(path, models.ToArray());
             	if(exportObjectsMethod != null)
             	{
+            		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(models);
+
+					foreach(pb_Object pb in pbos)
+					{
+						pb.ToMesh(options.quads ? MeshTopology.Quads : MeshTopology.Triangles);
+						// don't refresh collisions because it throws errors when quads are enabled
+						pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
+					}
+
             		object res = exportObjectsMethod.Invoke(null, new object[] { path, models.ToArray() });
+
+					foreach(pb_Object pb in pbos)
+					{
+						pb.ToMesh(MeshTopology.Triangles);
+						pb.Refresh();
+						pb.Optimize();
+					}
+
             		return res as string;
             	}
 			}
 
 			pb_Log.Error("FbxExporter is not loaded in this project! Please import the FbxExporter package to use this feature.");
+
 			return null;
 		}
 	}

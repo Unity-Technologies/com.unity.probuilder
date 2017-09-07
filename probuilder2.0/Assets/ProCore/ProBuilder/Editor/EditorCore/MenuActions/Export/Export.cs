@@ -124,7 +124,7 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				pb_PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxExportListener.FbxExportEnabled )
+			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxListener.FbxExportEnabled )
 			{
 				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package.\n\nImport the FbxExporter package to your project to use this functionality.", MessageType.Warning);
 			}
@@ -165,13 +165,12 @@ namespace ProBuilder2.Actions
 			EditorGUI.BeginChangeCheck();
 
 			m_FbxQuads = EditorGUILayout.Toggle("Export Quads", m_FbxQuads);
-			m_FbxNgons = EditorGUILayout.Toggle("Export NGons", m_FbxNgons);
+			// m_FbxNgons = EditorGUILayout.Toggle("Export NGons", m_FbxNgons);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				pb_PreferencesInternal.SetBool("Export::m_FbxQuads", m_FbxQuads);
-				pb_PreferencesInternal.SetBool("Export::m_FbxNgons", m_FbxNgons);
-				pb_FbxExportListener.ReloadOptions();
+				// pb_PreferencesInternal.SetBool("Export::m_FbxNgons", m_FbxNgons);
 			}
 		}
 
