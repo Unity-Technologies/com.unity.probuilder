@@ -20,8 +20,20 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		foreach(UnityEngine.Object o in Selection.objects)
-			pb_Log.Info( o.GetType() + ", " + AssetDatabase.GetAssetPath(o) );
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		foreach(MeshFilter mf in Selection.transforms.GetComponents<MeshFilter>())
+		{
+			sb.AppendLine(mf.gameObject.name);
+
+			for(int i = 0; i < mf.sharedMesh.subMeshCount; i++)
+				sb.AppendLine(string.Format(" 0: {0}", mf.sharedMesh.GetTopology(i)));
+		}
+
+		pb_Log.Info(sb.ToString());
+
+		// foreach(UnityEngine.Object o in Selection.objects)
+		// 	pb_Log.Info( o.GetType() + ", " + AssetDatabase.GetAssetPath(o) );
 
 
 

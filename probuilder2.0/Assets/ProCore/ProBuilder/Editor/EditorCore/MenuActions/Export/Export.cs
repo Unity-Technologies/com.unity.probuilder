@@ -124,7 +124,7 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				pb_PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxListener.FbxExportEnabled )
+			if( m_ExportFormat == ExportFormat.Fbx && !pb_FbxListener.FbxEnabled )
 			{
 				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package.\n\nImport the FbxExporter package to your project to use this functionality.", MessageType.Warning);
 			}

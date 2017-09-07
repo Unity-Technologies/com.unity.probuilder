@@ -25,7 +25,8 @@ namespace ProBuilder2.Actions
 		 */
 		static RegisterCreatePrefabAction()
 		{
-			pb_EditorToolbarLoader.RegisterMenuItem(InitCustomAction);
+			if(pb_FbxListener.FbxEnabled)
+				pb_EditorToolbarLoader.RegisterMenuItem(InitCustomAction);
 		}
 
 		/**
@@ -150,53 +151,56 @@ namespace ProBuilder2.Actions
 
 			if(unityGameObjectsToConvert.Length < 1)
 				return pb_ActionResult.NoSelection;
-		
-			Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ConvertToModel");
-
-			UnityEngine.Object[] res = null;
-
-			if(modelExporterType != null)
+			
+			// Delay call because otherwise OnGUI gets confused and throws a Stack.Pop exception
+			EditorApplication.delayCall += () =>
 			{
-				MethodInfo createPrefabMethod = modelExporterType.GetMethod("CreateInstantiatedModelPrefab");
-				
-				if(createPrefabMethod != null)
+				Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ConvertToModel");
+
+				UnityEngine.GameObject[] res = null;
+
+				if(modelExporterType != null)
 				{
-					pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(unityGameObjectsToConvert);
-
-					foreach(pb_Object pb in pbos)
+					MethodInfo createPrefabMethod = modelExporterType.GetMethod("CreateInstantiatedModelPrefab");
+					
+					if(createPrefabMethod != null)
 					{
-						pb.ToMesh(m_FbxQuads ? MeshTopology.Quads : MeshTopology.Triangles);
-						// don't refresh collisions because it throws errors when quads are enabled
-						pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
+						foreach(pb_Object pb in Selection.GetFiltered<pb_Object>(SelectionMode.Editable | SelectionMode.Deep))
+						{
+							pb.ToMesh(m_FbxQuads ? MeshTopology.Quads : MeshTopology.Triangles);
+							// don't refresh collisions because it throws errors when quads are enabled
+							pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);						
+							// ...and also clear existing collisions (to be set again after export)
+							MeshCollider mc = pb.transform.GetComponent<MeshCollider>();
+							if(mc != null) mc.sharedMesh = null;
+						}
+
+						// would be nice to pass Type.Missing for the default parameters, but that throws an error for unknown reasons
+						res = createPrefabMethod.Invoke(null, new object[] { unityGameObjectsToConvert, null, m_KeepOriginal }) as UnityEngine.GameObject[];
+
+						if(res != null)
+							Selection.objects = res;
+
+						foreach(pb_Object pb in Selection.GetFiltered<pb_Object>(SelectionMode.Editable | SelectionMode.Deep))
+						{
+							pb.ToMesh(MeshTopology.Triangles);
+							pb.Refresh();
+							pb.Optimize();
+						}
 					}
-
-          			// would be nice to pass Type.Missing for the default parameters, but that throws an error for unknown reasons
-					res = createPrefabMethod.Invoke(null, new object[] { unityGameObjectsToConvert, null, m_KeepOriginal }) as UnityEngine.Object[];
-
-					foreach(pb_Object pb in pbos)
+					else
 					{
-						pb.ToMesh(MeshTopology.Triangles);
-						pb.Refresh();
-						pb.Optimize();
-					}
-
-					if(res != null)
-					{
-						Selection.objects = res;
-						return new pb_ActionResult(Status.Success, "Create FBX Prefab");
+						pb_Log.Warning("FbxExporters.Editor.ConvertToModel.CreateInstantiatedModelPrefab method not found.");
 					}
 				}
 				else
 				{
-					pb_Log.Warning("FbxExporters.Editor.ConvertToModel.CreateInstantiatedModelPrefab method not found.");
+					pb_Log.Warning("FbxExporters.Editor.ConvertToModel class not found.");
 				}
-			}
-			else
-			{
-				pb_Log.Warning("FbxExporters.Editor.ConvertToModel class not found.");
-			}
+			};
 
-			return new pb_ActionResult(Status.Failure, "Create FBX Prefab");
+			return new pb_ActionResult(Status.Success, "Create FBX Prefab");
+			// return new pb_ActionResult(Status.Failure, "Create FBX Prefab");
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return pb_FbxListener.FbxExportEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+			return pb_FbxListener.FbxEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
 		public override pb_ActionResult DoAction()

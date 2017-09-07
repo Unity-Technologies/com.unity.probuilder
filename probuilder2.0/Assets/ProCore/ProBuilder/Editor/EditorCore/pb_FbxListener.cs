@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-
 namespace ProBuilder2.Common
 {
 	/*
@@ -25,12 +24,11 @@ namespace ProBuilder2.Common
 	{
 		private static bool m_FbxIsLoaded = false; 
 
-		public static bool FbxExportEnabled { get { return m_FbxIsLoaded; } } 
+		public static bool FbxEnabled { get { return m_FbxIsLoaded; } } 
 
 		static pb_FbxListener() 
 		{
 			TryLoadFbxSupport(); 
-			// FbxExporters.FbxPrefab.OnUpdate += OnFbxUpdate;
 		}
 	 
 		static void TryLoadFbxSupport() 
@@ -38,37 +36,36 @@ namespace ProBuilder2.Common
 			if(m_FbxIsLoaded) 
 				return; 
 
-			Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter"); 
+			Type fbxPrefabComponentType = pb_Reflection.GetType("FbxExporters.FbxPrefab"); 
 
-			m_FbxIsLoaded = modelExporterType != null;
+			if(fbxPrefabComponentType != null)
+			{
+				EventInfo onFbxUpdateEvent = fbxPrefabComponentType.GetEvent("OnUpdate");
 
-		 //  EventInfo onGetMeshInfoEvent = modelExporterType != null ? modelExporterType.GetEvent("onGetMeshInfo") : null; 
-		 //  m_FbxIsLoaded = false; 
-		 //  if(onGetMeshInfoEvent != null) 
-		 //  { 
-			// try 
-			// { 
-			//   Type delegateType = onGetMeshInfoEvent.EventHandlerType; 
-			//   MethodInfo add = onGetMeshInfoEvent.GetAddMethod(); 
-			//   MethodInfo ogmiMethod = typeof(pb_FbxExportListener).GetMethod("OnGetMeshInfo", BindingFlags.Static | BindingFlags.NonPublic); 
-			//   Delegate d = Delegate.CreateDelegate(delegateType, ogmiMethod); 
-			//   add.Invoke(null, new object[] { d }); 
-			//   m_FbxIsLoaded = true; 
-			// } 
-			// catch 
-			// { 
-			//   pb_Log.Warning("Failed loading FbxExporter delegates. Fbx export will still work correctly, but ProBuilder will not be able export quads or ngons."); 
-			// } 
-	 
-			// ReloadOptions(); 
-		 //  } 
+				if(onFbxUpdateEvent != null)
+				{
+					try
+					{
+						Type delegateType = onFbxUpdateEvent.EventHandlerType;
+						MethodInfo addMethod = onFbxUpdateEvent.GetAddMethod();
+						MethodInfo updateHandler = typeof(pb_FbxListener).GetMethod("OnFbxUpdate", BindingFlags.Static | BindingFlags.NonPublic);
+						Delegate del = Delegate.CreateDelegate(delegateType, updateHandler);
+						addMethod.Invoke(null, new object[] { del });
+						m_FbxIsLoaded = true;
+					}
+					catch
+					{
+						pb_Log.Warning("Failed loading ProBuilder FBX Listener delegates. FBX export and import still work correctly, but ProBuilder will not be able export quads or see changes made to the FBX file."); 
+					}
+				}
+			}
 		} 
 
-		[MenuItem("Tools/Debug/ProBuilder/Reset with MeshFilter")]
-		static void ResetSelection()
-		{
-			OnFbxUpdate(null, Selection.gameObjects);
-		}
+		// [MenuItem("Tools/Debug/ProBuilder/Reset with MeshFilter")]
+		// static void ResetSelection()
+		// {
+		// 	OnFbxUpdate(null, Selection.gameObjects);
+		// }
 
 		static void OnFbxUpdate(FbxExporters.FbxPrefab updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
