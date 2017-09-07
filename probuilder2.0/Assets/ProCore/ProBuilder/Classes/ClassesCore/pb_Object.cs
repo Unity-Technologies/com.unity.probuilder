@@ -633,7 +633,11 @@ public class pb_Object : MonoBehaviour
 		m.subMeshCount = pb_Face.GetMeshIndices(faces, out submeshes, preferredTopology);
 
 		for(int i = 0; i < m.subMeshCount; i++)
+#if UNITY_5_5_OR_NEWER
 			m.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
+#else
+			m.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
+#endif
 
 		m.name = string.Format("pb_Mesh{0}", id);
 
