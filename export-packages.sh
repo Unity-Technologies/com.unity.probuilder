@@ -26,11 +26,11 @@ UNITY_2017_2=/Applications/Unity\ 2017.2/Unity.app/Contents/MacOS/Unity
 else
 # cygwin paths don't cut it in -projectPath
 WORKING_DIR=$(cygpath -aw $(pwd))
-UNITY_47=/d/Applications/Unity\ 4.7.0f1/Editor/Unity.exe
-UNITY_50=/d/Applications/Unity\ 5.0.0f4/Editor/Unity.exe
-UNITY_53=/d/Applications/Unity\ 5.3.0f4/Editor/Unity.exe
-UNITY_55=/d/Applications/Unity\ 5.5.0f3/Editor/Unity.exe
-UNITY_56=/d/Applications/Unity\ 5.6.0f3/Editor/Unity.exe
+UNITY_47=/d/Applications/Unity\ 4.7/Editor/Unity.exe
+UNITY_50=/d/Applications/Unity\ 5.0/Editor/Unity.exe
+UNITY_53=/d/Applications/Unity\ 5.3/Editor/Unity.exe
+UNITY_55=/d/Applications/Unity\ 5.5/Editor/Unity.exe
+UNITY_56=/d/Applications/Unity\ 5.6/Editor/Unity.exe
 UNITY_2017_1=/d/Applications/Unity\ 2017.1/Editor/Unity.exe
 UNITY_2017_2=/d/Applications/Unity\ 2017.2/Editor/Unity.exe
 fi
