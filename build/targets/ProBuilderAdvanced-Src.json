@@ -2,7 +2,7 @@
 	"Name":"ProBuilder Source",
 	"UnityPath":[
 		"/Applications/Unity 5.3/Unity.app",
-		"D:/Applications/Unity 5.3.6f1"
+		"D:/Applications/Unity 5.3"
 	],
 	"Macros": {
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
