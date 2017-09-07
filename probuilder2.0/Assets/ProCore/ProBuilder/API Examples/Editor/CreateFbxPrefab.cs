@@ -9,6 +9,7 @@ using ProBuilder2.MeshOperations;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Interface;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -147,7 +148,7 @@ namespace ProBuilder2.Actions
 		 */
 		public override pb_ActionResult DoAction()
 		{
-			GameObject[] unityGameObjectsToConvert = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel) as GameObject[];
+			GameObject[] unityGameObjectsToConvert = Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel).Cast<GameObject>().ToArray();
 
 			if(unityGameObjectsToConvert.Length < 1)
 				return pb_ActionResult.NoSelection;
@@ -165,7 +166,7 @@ namespace ProBuilder2.Actions
 					
 					if(createPrefabMethod != null)
 					{
-						foreach(pb_Object pb in Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.Deep) as pb_Object[])
+						foreach(pb_Object pb in Selection.GetFiltered(typeof(pb_Object), SelectionMode.Editable | SelectionMode.Deep))
 						{
 							pb.ToMesh(m_FbxQuads ? MeshTopology.Quads : MeshTopology.Triangles);
 							// don't refresh collisions because it throws errors when quads are enabled
@@ -181,7 +182,7 @@ namespace ProBuilder2.Actions
 						if(res != null)
 							Selection.objects = res;
 
-						foreach(pb_Object pb in Selection.GetFiltered(typeof(pb_Object), SelectionMode.Editable | SelectionMode.Deep) as pb_Object[])
+						foreach(pb_Object pb in Selection.GetFiltered(typeof(pb_Object), SelectionMode.Editable | SelectionMode.Deep))
 						{
 							pb.ToMesh(MeshTopology.Triangles);
 							pb.Refresh();

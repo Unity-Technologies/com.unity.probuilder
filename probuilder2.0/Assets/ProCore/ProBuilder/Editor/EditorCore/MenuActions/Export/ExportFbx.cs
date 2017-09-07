@@ -37,7 +37,7 @@ namespace ProBuilder2.Actions
 			bool asGroup = pb_PreferencesInternal.GetBool("pbExportAsGroup", true);
 			pb_FbxOptions options = new pb_FbxOptions() { quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true) };		
 
-			string res = ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel) as GameObject[], asGroup, options);
+			string res = ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel).Cast<GameObject>(), asGroup, options);
 
 			if( string.IsNullOrEmpty(res) )
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
