@@ -61,13 +61,6 @@ namespace ProBuilder2.Common
 			}
 		} 
 
-		// [MenuItem("Tools/Debug/ProBuilder/Reset with MeshFilter")]
-		// static void ResetSelection()
-		// {
-		// 	OnFbxUpdate(null, Selection.gameObjects);
-		// }
-
-		// FbxExporters.FbxPrefab
 		static void OnFbxUpdate(object updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
 			foreach(GameObject go in updatedObjects)
@@ -83,8 +76,6 @@ namespace ProBuilder2.Common
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
-
-				pb_Log.Info("reset: " + go.name + " with MeshFilter");
 			}
 		}
 	}
