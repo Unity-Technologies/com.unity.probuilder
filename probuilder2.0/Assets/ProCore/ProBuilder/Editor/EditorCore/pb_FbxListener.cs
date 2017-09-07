@@ -20,7 +20,7 @@ namespace ProBuilder2.Common
 	}
 
 	[InitializeOnLoad]
-	static class pb_FbxListener
+	public static class pb_FbxListener
 	{
 		private static bool m_FbxIsLoaded = false; 
 
