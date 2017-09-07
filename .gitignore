@@ -77,3 +77,5 @@ probuilder2\.0/Assets/ProCore/ProBuilder/Preferences\.meta
 probuilder2\.0/Assets/ProCore/ProBuilder/Editor/EditorCore/pb_PreferencesObject\.cs\.meta
 build/bin/
 bin/projects/
+
+probuilder2\.0/Assets/FbxExporters/
