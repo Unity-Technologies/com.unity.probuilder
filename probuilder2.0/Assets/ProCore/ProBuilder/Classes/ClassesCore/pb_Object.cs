@@ -273,6 +273,20 @@ public class pb_Object : MonoBehaviour
 	public int vertexCount { get { return _vertices == null ? 0 : _vertices.Length; } }
 	public int triangleCount { get { return _faces == null ? 0 : _faces.Sum(x => x.indices.Length ); } }
 
+	public void Clear()
+	{
+		_quads = null;
+		_vertices = null;
+		_uv = null;
+		_uv3 = null;
+		_uv4 = null;
+		_tangents = null;
+		_sharedIndices = new pb_IntArray[0];
+		_sharedIndicesUV = null;
+		_colors = null;
+		SetSelectedTriangles(null);
+	}
+
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.
 	 */
@@ -473,11 +487,12 @@ public class pb_Object : MonoBehaviour
 	 *	\brief Set the internal face array with the passed pb_Face array.
 	 *	@param faces New pb_Face[] containing face data.  Mesh triangle data is extracted from the internal #pb_Face array, so be sure to account for all triangles.
 	 */
-	public void SetFaces(pb_Face[] _qds)
+	public void SetFaces(IEnumerable<pb_Face> faces)
 	{
-		_quads = _qds.Where(x => x != null).ToArray();
-		if(_quads.Length != _qds.Length)
-			Debug.LogWarning("SetFaces() pruned " + (_qds.Length - _quads.Length) + " null faces from this object.");
+		_quads = faces.Where(x => x != null).ToArray();
+
+		if(_quads.Length != faces.Count())
+			Debug.LogWarning("SetFaces() pruned " + (faces.Count() - _quads.Length) + " null faces from this object.");
 	}
 
 	/**

@@ -50,6 +50,8 @@ namespace ProBuilder2.Common
 						MethodInfo addMethod = onFbxUpdateEvent.GetAddMethod();
 						MethodInfo updateHandler = typeof(pb_FbxListener).GetMethod("OnFbxUpdate", BindingFlags.Static | BindingFlags.NonPublic);
 						Delegate del = Delegate.CreateDelegate(delegateType, updateHandler);
+						if(del == null)
+							pb_Log.Warning("oh shit");
 						addMethod.Invoke(null, new object[] { del });
 						m_FbxIsLoaded = true;
 					}
@@ -58,11 +60,17 @@ namespace ProBuilder2.Common
 						pb_Log.Warning("Failed loading ProBuilder FBX Listener delegates. FBX export and import still work correctly, but ProBuilder will not be able export quads or see changes made to the FBX file."); 
 					}
 				}
+				else
+				{
+					pb_Log.Warning("Failed to find FbxPrefab::OnUpdate event.");
+				}
 			}
 		} 
 
 		static void OnFbxUpdate(object updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
+			pb_Log.Info("OnFbxUpdate");
+
 			foreach(GameObject go in updatedObjects)
 			{
 				pb_Object pb = go.GetComponent<pb_Object>();
@@ -70,13 +78,15 @@ namespace ProBuilder2.Common
 				if(pb == null)
 					continue;
 
-				pbMeshOps.ResetPbObjectWithMeshFilter(pb, true);
+				pbMeshOps.ResetPbObjectWithMeshFilter(pb, false);
 
 				// @todo Rebuild()
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
+
+			pb_Editor.Refresh();
 		}
 	}
 }

@@ -109,7 +109,9 @@ namespace ProBuilder2.Actions
 				try
 				{
 					pb_Object pb = Undo.AddComponent<pb_Object>(go);
-					pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
+
+					pb_MeshImporter.Import(mf, pb);
+					// pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
 
 					EntityType entityType = EntityType.Detail;
 
