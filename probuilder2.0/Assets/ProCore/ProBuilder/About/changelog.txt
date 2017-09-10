@@ -1,9 +1,21 @@
+# ProBuilder 2.9.6f0
+
+## Features
+
+- Adds `Convert to Prefab` action.
+- Adds `Export FBX` action.
+- Support exporting quads to FBX format.
+- Automatically rebuild scene mesh when `FbxPrefab` script updates a prefab.
+
+## Known Issues
+
+- Modifying a ProBuilder mesh that has been converted to a prefab affects the mesh asset.
+
 # ProBuilder 2.9.5f3
 
 ## Features
 
 - Deep selection support when clicking faces.
-- Support for exporting quads and polygons with Fbx format.
 
 ## Bug Fixes
 
