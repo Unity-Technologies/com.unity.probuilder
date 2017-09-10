@@ -77,6 +77,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.SelectHole(),
 				new Actions.SelectVertexColor(),
 				new Actions.SelectMaterial(),
+				new Actions.SelectSmoothingGroup(),
 
 				// object
 				new Actions.MergeObjects(),
