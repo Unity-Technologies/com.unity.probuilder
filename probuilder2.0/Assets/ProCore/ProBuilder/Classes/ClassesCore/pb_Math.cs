@@ -53,7 +53,10 @@ namespace ProBuilder2.Common
 			return t;
 		}
 
-		private static float SqrDistance(Vector3 a, Vector3 b)
+		/**
+		 * Squared distance between two points. (b - a).sqrMagnitude.
+		 */
+		public static float SqrDistance(Vector3 a, Vector3 b)
 		{
 			float dx = b.x - a.x,
 				  dy = b.y - a.y,
