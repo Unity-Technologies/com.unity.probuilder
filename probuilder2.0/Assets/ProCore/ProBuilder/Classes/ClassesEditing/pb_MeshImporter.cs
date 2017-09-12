@@ -7,6 +7,16 @@ namespace ProBuilder2.MeshOperations
 {
 	public class pb_MeshImporter
 	{
+		public class Settings
+		{
+			public bool quads = true;
+		}
+
+		private static readonly Settings DEFAULT_IMPORT_SETTINGS = new Settings()
+		{
+			quads = true
+		};
+
 		private pb_Object m_Mesh;
 		private pb_Vertex[] m_Vertices;
 
@@ -18,8 +28,11 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Import a mesh onto an empty pb_Object.
 		 */
-		public bool Import(MeshFilter meshFilter)
+		public bool Import(MeshFilter meshFilter, Settings importSettings = null)
 		{
+			if(importSettings == null)
+				importSettings = DEFAULT_IMPORT_SETTINGS;
+
 			Mesh originalMesh = meshFilter.sharedMesh;
 
 			// When importing the mesh is always split into triangles with no vertices shared
@@ -88,59 +101,63 @@ namespace ProBuilder2.MeshOperations
 			m_Mesh.SetSharedIndicesUV(new pb_IntArray[0]);
 
 			HashSet<pb_Face> processed = new HashSet<pb_Face>();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+			List<pb_WingedEdge> wings;
 
-			// build a lookup of the strength of edge connections between triangle faces
-			Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
-
-			for(int i = 0; i < wings.Count; i++)
+			if(importSettings.quads)
 			{
-				foreach(pb_WingedEdge border in wings[i])
+				wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+
+				// build a lookup of the strength of edge connections between triangle faces
+				Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
+
+				for(int i = 0; i < wings.Count; i++)
 				{
-					if(border.opposite != null && !connections.ContainsKey(border.edge))
+					foreach(pb_WingedEdge border in wings[i])
 					{
-						float score = GetQuadScore(border, border.opposite);
-						connections.Add(border.edge, score);
-					}
-				}
-			}
-
-			List<pb_Tuple<pb_Face, pb_Face>> quads = new List<pb_Tuple<pb_Face, pb_Face>>();
-
-			processed.Clear();
-
-			// move through each face and find it's best quad neighbor
-			foreach(pb_WingedEdge face in wings)
-			{
-				if(!processed.Add(face.face))
-					continue;
-
-				float bestScore = 0f;
-				pb_Face buddy = null;
-
-				foreach(pb_WingedEdge border in face)
-				{
-					float borderScore = connections[border.edge];
-
-					// only add it if the opposite face's best score is also this face
-					if(borderScore > bestScore && face.face == GetBestQuadConnection(border.opposite, connections))
-					{
-						bestScore = borderScore;
-						buddy = border.opposite.face;
+						if(border.opposite != null && !connections.ContainsKey(border.edge))
+						{
+							float score = GetQuadScore(border, border.opposite);
+							connections.Add(border.edge, score);
+						}
 					}
 				}
 
-				if(buddy != null)
-				{
-					processed.Add(buddy);
-					quads.Add(new pb_Tuple<pb_Face, pb_Face>(face.face, buddy));
-				}
-			}
+				List<pb_Tuple<pb_Face, pb_Face>> quads = new List<pb_Tuple<pb_Face, pb_Face>>();
 
-			pb_MergeFaces.MergePairs(m_Mesh, quads);
+				// move through each face and find it's best quad neighbor
+				foreach(pb_WingedEdge face in wings)
+				{
+					if(!processed.Add(face.face))
+						continue;
+
+					float bestScore = 0f;
+					pb_Face buddy = null;
+
+					foreach(pb_WingedEdge border in face)
+					{
+						float borderScore = connections[border.edge];
+
+						// only add it if the opposite face's best score is also this face
+						if(borderScore > bestScore && face.face == GetBestQuadConnection(border.opposite, connections))
+						{
+							bestScore = borderScore;
+							buddy = border.opposite.face;
+						}
+					}
+
+					if(buddy != null)
+					{
+						processed.Add(buddy);
+						quads.Add(new pb_Tuple<pb_Face, pb_Face>(face.face, buddy));
+					}
+				}
+
+				pb_MergeFaces.MergePairs(m_Mesh, quads);
+			}
 
 			// Get smoothing groups
-			wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces);
+			wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+			processed.Clear();
 
 			int smoothingGroup = 1;
 
@@ -192,17 +209,30 @@ namespace ProBuilder2.MeshOperations
 			if(score < normalThreshold)
 				return 0f;
 
-			Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position).normalized;
-			Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position).normalized;
-			Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position).normalized;
-			Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position).normalized;
+			// next is right-angle-ness check
+			Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position);
+			Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position);
+			Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position);
+			Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position);
 
-			score += 1f - ((Mathf.Abs(Vector3.Dot(a, b)) +
-				Mathf.Abs(Vector3.Dot(b, c)) +
-				Mathf.Abs(Vector3.Dot(c, d)) +
-				Mathf.Abs(Vector3.Dot(d, a))) * .25f);
+			a.Normalize();
+			b.Normalize();
+			c.Normalize();
+			d.Normalize();
 
-			return score * .5f;
+			float da = Mathf.Abs(Vector3.Dot(a, b));
+			float db = Mathf.Abs(Vector3.Dot(b, c));
+			float dc = Mathf.Abs(Vector3.Dot(c, d));
+			float dd = Mathf.Abs(Vector3.Dot(d, a));
+
+			score += 1f - ((da + db + dc + dd) * .25f);
+
+			// and how close to parallel the opposite sides area
+			score += Mathf.Abs(Vector3.Dot(a, c)) * .5f;
+			score += Mathf.Abs(Vector3.Dot(b, d)) * .5f;
+
+			// the three tests each contribute 1
+			return score * .33f;
 		}
 
 		private void FindSoftEdgesRecursive(pb_WingedEdge wing, HashSet<pb_Face> processed)

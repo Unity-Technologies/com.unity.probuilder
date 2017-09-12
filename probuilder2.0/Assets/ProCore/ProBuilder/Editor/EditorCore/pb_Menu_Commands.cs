@@ -257,7 +257,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_Face[] splits = null;
 				selection[i].ToMesh();
-				selection[i].Facetize(selection[i].faces, out splits);
+				selection[i].ToTriangles(selection[i].faces, out splits);
 				selection[i].Refresh();
 				selection[i].Optimize();
 			}

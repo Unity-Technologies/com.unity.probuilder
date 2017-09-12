@@ -57,17 +57,30 @@ public class TempMenuItems : EditorWindow
 		if(score < normalThreshold)
 			return 0f;
 
-		Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position).normalized;
-		Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position).normalized;
-		Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position).normalized;
-		Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position).normalized;
+		// next is right-angle-ness check
+		Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position);
+		Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position);
+		Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position);
+		Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position);
 
-		score += 1f - ((Mathf.Abs(Vector3.Dot(a, b)) +
-			Mathf.Abs(Vector3.Dot(b, c)) +
-			Mathf.Abs(Vector3.Dot(c, d)) +
-			Mathf.Abs(Vector3.Dot(d, a))) * .25f);
+		a.Normalize();
+		b.Normalize();
+		c.Normalize();
+		d.Normalize();
 
-		return score * .5f;
+		float da = Mathf.Abs(Vector3.Dot(a, b));
+		float db = Mathf.Abs(Vector3.Dot(b, c));
+		float dc = Mathf.Abs(Vector3.Dot(c, d));
+		float dd = Mathf.Abs(Vector3.Dot(d, a));
+
+		score += 1f - ((da + db + dc + dd) * .25f);
+
+		// and how close to parallel the opposite sides area
+		score += Mathf.Abs(Vector3.Dot(a, c)) * .5f;
+		score += Mathf.Abs(Vector3.Dot(b, d)) * .5f;
+
+		return score * .33f;
 	}
 
 }
+
