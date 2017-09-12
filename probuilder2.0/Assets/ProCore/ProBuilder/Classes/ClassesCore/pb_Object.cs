@@ -93,7 +93,7 @@ public class pb_Object : MonoBehaviour
 	public static pb_Object CreateInstanceWithPoints(Vector3[] vertices)
 	{
 		if(vertices.Length % 4 != 0) {
-			Debug.LogWarning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
+			pb_Log.Warning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
 			return null;
 		}
 
@@ -251,7 +251,7 @@ public class pb_Object : MonoBehaviour
 	}
 
 	public pb_Face[] faces { get { return _quads; } }// == null ? Extractfaces(msh) : _faces; } }
-	public pb_Face[] quads {get { Debug.LogWarning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
+	public pb_Face[] quads {get { pb_Log.Warning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
 
 	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }	// returns a reference
 	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } }
@@ -492,7 +492,7 @@ public class pb_Object : MonoBehaviour
 		_quads = faces.Where(x => x != null).ToArray();
 
 		if(_quads.Length != faces.Count())
-			Debug.LogWarning("SetFaces() pruned " + (faces.Count() - _quads.Length) + " null faces from this object.");
+			pb_Log.Warning("SetFaces() pruned " + (faces.Count() - _quads.Length) + " null faces from this object.");
 	}
 
 	/**
@@ -603,7 +603,7 @@ public class pb_Object : MonoBehaviour
 			}
 			catch(System.Exception e)
 			{
-				Debug.LogError("Failed rebuilding null pb_Object.  Cached mesh attributes are invalid or missing.\n" + e.ToString());
+				pb_Log.Error("Failed rebuilding null pb_Object. Cached mesh attributes are invalid or missing.\n" + e.ToString());
 			}
 
 			return MeshRebuildReason.Null;
