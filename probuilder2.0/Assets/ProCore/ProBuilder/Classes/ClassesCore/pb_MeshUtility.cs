@@ -350,11 +350,11 @@ namespace ProBuilder2.Common
 			// average the soft edge faces
 			int vertexCount = pb.vertexCount;
 
-			Vector3[] averages = new Vector3[pb_Face.MAX_SMOOTH_GROUPS];
-			float[] counts = new float[pb_Face.MAX_SMOOTH_GROUPS];
-			int[] smoothGroup = new int[vertexCount];
+			Vector3[] averages 	= new Vector3[vertexCount];
+			float[] counts 		= new float[vertexCount];
+			int[] smoothGroup 	= new int[vertexCount];
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			pb_Face[] faces = pb.faces;
+			pb_Face[] faces 	= pb.faces;
 
 			// Create a lookup of each triangles smoothing group.
 			foreach(pb_Face face in faces)
@@ -363,20 +363,20 @@ namespace ProBuilder2.Common
 					smoothGroup[tri] = face.smoothingGroup;
 			}
 
+			for(int n = 0; n < vertexCount; n++)
+			{
+				averages[n].x = 0f;
+				averages[n].y = 0f;
+				averages[n].z = 0f;
+				counts[n] = 0f;
+			}
+
 			/**
 			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
 			 * group and average their normals.
 			 */
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
-				for(int n = 0; n < pb_Face.MAX_SMOOTH_GROUPS; n++)
-				{
-					averages[n].x = 0f;
-					averages[n].y = 0f;
-					averages[n].z = 0f;
-					counts[n] = 0f;
-				}
-
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
@@ -406,7 +406,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 *	Get a mesh attribute from either the MeshFilter.sharedMesh or the
-		 *	MeshRenderer.additionalVertexStreams mesh. If returned array does not 
+		 *	MeshRenderer.additionalVertexStreams mesh. If returned array does not
 		 *	match the vertex count NULL is returned.
 		 */
 		public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList

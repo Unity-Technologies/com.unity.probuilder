@@ -14,6 +14,10 @@ namespace ProBuilder2.Common
 
 		public const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
 
+		// Faces with smoothingGroup = 0 are hard edges. Historically however negative values
+		// were sometimes also written as hard edges.
+		public const int SMOOTHING_GROUP_NONE = 0;
+
 		private static Material _defaultMaterial = null;
 		private static Material _facePickerMaterial;
 		private static Material _vertexPickerMaterial;

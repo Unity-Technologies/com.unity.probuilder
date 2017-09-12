@@ -26,5 +26,10 @@ namespace ProBuilder2.Common
 			this.topology = topology;
 			this.material = material;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}, {1}, {2}", material != null ? material.name : "null", topology.ToString(), indices != null ? indices.Length.ToString() : "0");
+		}
 	}
 }

@@ -21,6 +21,7 @@ namespace ProBuilder2.MeshOperations
 		public bool Import(MeshFilter meshFilter)
 		{
 			Mesh originalMesh = meshFilter.sharedMesh;
+
 			// When importing the mesh is always split into triangles with no vertices shared
 			// between faces. In a later step co-incident vertices are collapsed (eg, before
 			// leaving the Import function).
@@ -86,17 +87,8 @@ namespace ProBuilder2.MeshOperations
 			m_Mesh.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(m_Mesh.vertices));
 			m_Mesh.SetSharedIndicesUV(new pb_IntArray[0]);
 
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 			HashSet<pb_Face> processed = new HashSet<pb_Face>();
-			int smoothingGroup = 1;
-
-			for(int i = 0; i < wings.Count; i++)
-			{
-				if(processed.Contains(wings[i].face))
-					continue;
-				wings[i].face.smoothingGroup = smoothingGroup++;
-				FindSoftEdgesRecursive(wings[i], processed);
-			}
+			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 
 			// build a lookup of the strength of edge connections between triangle faces
 			Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
@@ -114,6 +106,7 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			List<pb_Tuple<pb_Face, pb_Face>> quads = new List<pb_Tuple<pb_Face, pb_Face>>();
+
 			processed.Clear();
 
 			// move through each face and find it's best quad neighbor
@@ -145,6 +138,19 @@ namespace ProBuilder2.MeshOperations
 			}
 
 			pb_MergeFaces.MergePairs(m_Mesh, quads);
+
+			// Get smoothing groups
+			wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces);
+
+			int smoothingGroup = 1;
+
+			for(int i = 0; i < wings.Count; i++)
+			{
+				if(processed.Contains(wings[i].face))
+					continue;
+				wings[i].face.smoothingGroup = smoothingGroup++;
+				FindSoftEdgesRecursive(wings[i], processed);
+			}
 
 			return false;
 		}
@@ -201,12 +207,15 @@ namespace ProBuilder2.MeshOperations
 
 		private void FindSoftEdgesRecursive(pb_WingedEdge wing, HashSet<pb_Face> processed)
 		{
+			if(!processed.Add(wing.face))
+				return;
+
 			foreach(pb_WingedEdge border in wing)
 			{
 				if(border.opposite == null)
 					continue;
 
-				if( !processed.Contains(border.opposite.face) && IsSoftEdge(border.edge, border.opposite.edge) )
+				if( border.opposite.face.smoothingGroup == pb_Constant.SMOOTHING_GROUP_NONE && IsSoftEdge(border.edge, border.opposite.edge) )
 				{
 					border.opposite.face.smoothingGroup = wing.face.smoothingGroup;
 					processed.Add(border.opposite.face);
