@@ -21,7 +21,7 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 *	Attempt to figure out the winding order the passed face.  
+		 *	Attempt to figure out the winding order the passed face.
 		 *
 		 *	Note that this may return WindingOrder.Unknown.
 		 */
@@ -58,7 +58,7 @@ namespace ProBuilder2.MeshOperations
 
 			return sum == 0f ? WindingOrder.Unknown : (sum > 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);
 		}
-		
+
 		/**
 		 * Reverses the orientation of the middle edge in a quad.
 		 */
@@ -187,8 +187,9 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 * Merge all faces into a sigle face.
+		 * Merge all faces into a single face.
 		 */
+		[System.Obsolete("Please use pb_MergeFaces.Merge(pb_Object target, IEnumerable<pb_Face> faces)")]
 		public static pb_Face MergeFaces(this pb_Object pb, pb_Face[] faces)
 		{
 			List<int> collectedIndices = new List<int>(faces[0].indices);

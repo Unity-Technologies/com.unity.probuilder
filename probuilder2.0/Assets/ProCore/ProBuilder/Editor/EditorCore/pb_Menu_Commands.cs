@@ -1155,7 +1155,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					success += pb.SelectedFaceCount;
 
-					pb_Face face = pb.MergeFaces(pb.SelectedFaces);
+					pb_Face face = pb_MergeFaces.Merge(pb, pb.SelectedFaces);
 
 					pb.ToMesh();
 					pb.Refresh();
@@ -1293,7 +1293,10 @@ namespace ProBuilder2.EditorCommon
 						int[] removed;
 
 						if( pb.RemoveDegenerateTriangles(out removed) )
+						{
+							pb.ToMesh();
 							welds = new int[0];	// @todo
+						}
 
 						pb.SetSelectedTriangles(welds ?? new int[0] {});
 					}

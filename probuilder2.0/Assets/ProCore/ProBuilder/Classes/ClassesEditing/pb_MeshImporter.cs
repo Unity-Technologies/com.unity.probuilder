@@ -20,34 +20,57 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public bool Import(MeshFilter meshFilter)
 		{
-			Mesh mesh = meshFilter.sharedMesh;
-			m_Vertices = pb_Vertex.GetVertices(mesh);
+			Mesh originalMesh = meshFilter.sharedMesh;
+			// When importing the mesh is always split into triangles with no vertices shared
+			// between faces. In a later step co-incident vertices are collapsed (eg, before
+			// leaving the Import function).
+			pb_Vertex[] sourceVertices = pb_Vertex.GetVertices(originalMesh);
+			List<pb_Vertex> splitVertices = new List<pb_Vertex>();
 			List<pb_Face> faces = new List<pb_Face>();
 
 			// Fill in Faces array with just the position indices. In the next step we'll
 			// figure out smoothing groups & merging
-			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
+			int vertexIndex = 0;
+
+			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
 			{
-				switch(mesh.GetTopology(subMeshIndex))
+				switch(originalMesh.GetTopology(subMeshIndex))
 				{
 					case MeshTopology.Triangles:
 					{
-						int[] indices = mesh.GetIndices(subMeshIndex);
+						int[] indices = originalMesh.GetIndices(subMeshIndex);
 
 						for(int tri = 0; tri < indices.Length; tri += 3)
-							faces.Add(new pb_Face(new int[] { indices[tri], indices[tri+1], indices[tri+2] } ));
+						{
+							faces.Add(new pb_Face(new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 } ));
+							splitVertices.Add(sourceVertices[indices[tri  ]]);
+							splitVertices.Add(sourceVertices[indices[tri+1]]);
+							splitVertices.Add(sourceVertices[indices[tri+2]]);
+
+							vertexIndex += 3;
+						}
 					}
 					break;
 
 					case MeshTopology.Quads:
 					{
-						int[] indices = mesh.GetIndices(subMeshIndex);
+						int[] indices = originalMesh.GetIndices(subMeshIndex);
 
 						for(int quad = 0; quad < indices.Length; quad += 4)
+						{
 							faces.Add(new pb_Face(new int[] {
-								indices[quad  ], indices[quad+1], indices[quad+2],
-								indices[quad+1], indices[quad+2], indices[quad+3] } ));
-					}
+								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
+								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3
+							}));
+
+							splitVertices.Add(sourceVertices[indices[quad  ]]);
+							splitVertices.Add(sourceVertices[indices[quad+1]]);
+							splitVertices.Add(sourceVertices[indices[quad+2]]);
+							splitVertices.Add(sourceVertices[indices[quad+3]]);
+
+							vertexIndex += 4;
+						}
+				}
 					break;
 
 					default:
@@ -55,10 +78,13 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
+			m_Vertices = splitVertices.ToArray();
+
 			m_Mesh.Clear();
 			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.SetFaces(faces);
 			m_Mesh.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(m_Mesh.vertices));
+			m_Mesh.SetSharedIndicesUV(new pb_IntArray[0]);
 
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 			HashSet<pb_Face> processed = new HashSet<pb_Face>();
@@ -72,6 +98,7 @@ namespace ProBuilder2.MeshOperations
 				FindSoftEdgesRecursive(wings[i], processed);
 			}
 
+			// build a lookup of the strength of edge connections between triangle faces
 			Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
 
 			for(int i = 0; i < wings.Count; i++)
@@ -86,12 +113,57 @@ namespace ProBuilder2.MeshOperations
 				}
 			}
 
-			Debug.Log("connections: " + connections.Count);
+			List<pb_Tuple<pb_Face, pb_Face>> quads = new List<pb_Tuple<pb_Face, pb_Face>>();
+			processed.Clear();
 
-			foreach(var kvp in connections)
-				Debug.Log(kvp.Key + "  " + kvp.Value);
+			// move through each face and find it's best quad neighbor
+			foreach(pb_WingedEdge face in wings)
+			{
+				if(!processed.Add(face.face))
+					continue;
+
+				float bestScore = 0f;
+				pb_Face buddy = null;
+
+				foreach(pb_WingedEdge border in face)
+				{
+					float borderScore = connections[border.edge];
+
+					// only add it if the opposite face's best score is also this face
+					if(borderScore > bestScore && face.face == GetBestQuadConnection(border.opposite, connections))
+					{
+						bestScore = borderScore;
+						buddy = border.opposite.face;
+					}
+				}
+
+				if(buddy != null)
+				{
+					processed.Add(buddy);
+					quads.Add(new pb_Tuple<pb_Face, pb_Face>(face.face, buddy));
+				}
+			}
+
+			pb_MergeFaces.MergePairs(m_Mesh, quads);
 
 			return false;
+		}
+
+		private pb_Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<pb_EdgeLookup, float> connections)
+		{
+			float score = 0f;
+			pb_Face face = null;
+
+			foreach(pb_WingedEdge border in wing)
+			{
+				if( connections[border.edge] > score )
+				{
+					score = connections[border.edge];
+					face = border.opposite.face;
+				}
+			}
+
+			return face;
 		}
 
 		/**

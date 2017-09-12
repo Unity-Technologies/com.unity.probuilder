@@ -105,15 +105,15 @@ namespace ProBuilder2.Actions
 
 				GameObject go = mf.gameObject;
 				MeshRenderer mr = go.GetComponent<MeshRenderer>();
+				Mesh originalMesh = mf.sharedMesh;
 
 				// try
 				// {
 					pb_Object pb = Undo.AddComponent<pb_Object>(go);
 
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
-					meshImporter.Import(mf);
 
-					// pbMeshOps.ResetPbObjectWithMeshFilter(pb, preserveFaces);
+					meshImporter.Import(mf);
 
 					EntityType entityType = EntityType.Detail;
 
@@ -126,8 +126,8 @@ namespace ProBuilder2.Actions
 					// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
 					// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
 					// renderer so that we don't modify the asset.
-					if(AssetDatabase.GetAssetPath(mf.sharedMesh) == "" )
-						Undo.DestroyObjectImmediate(mf.sharedMesh);
+					if(AssetDatabase.GetAssetPath(originalMesh) == "" )
+						Undo.DestroyObjectImmediate(originalMesh);
 					else if(mf != null)
 						go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
