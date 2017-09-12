@@ -135,6 +135,9 @@ namespace ProBuilder2.MeshOperations
 
 					foreach(pb_WingedEdge border in face)
 					{
+						if(processed.Contains(border.opposite.face))
+							continue;
+
 						float borderScore = connections[border.edge];
 
 						// only add it if the opposite face's best score is also this face
