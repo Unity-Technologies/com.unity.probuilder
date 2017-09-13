@@ -44,7 +44,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_Face face in faces)
 			{
-				face.smoothingGroup = pb_Constant.SMOOTHING_GROUP_NONE;
+				face.smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
 				face.textureGroup = -1;
 
 				Vector3 delta = pb_Math.Normal(pb, face) * distance;

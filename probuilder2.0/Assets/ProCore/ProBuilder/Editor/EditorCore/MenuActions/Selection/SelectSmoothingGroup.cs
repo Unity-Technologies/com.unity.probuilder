@@ -61,7 +61,8 @@ namespace ProBuilder2.Actions
 
 		private void OnElementSelectionChanged(pb_Object[] selection)
 		{
-			m_SelectedGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup))).ToString(",");
+			if(selection != null)
+				m_SelectedGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup))).ToString(",");
 		}
 
 		public override void OnSettingsGUI()

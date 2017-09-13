@@ -19,7 +19,7 @@ namespace ProBuilder2.Common
 			SetIndices(i);
 			_uv = new pb_UV();
 			_mat = pb_Constant.DefaultMaterial;
-			_smoothingGroup = pb_Constant.SMOOTHING_GROUP_NONE;
+			_smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
 			textureGroup = -1;
 			elementGroup = 0;
 		}

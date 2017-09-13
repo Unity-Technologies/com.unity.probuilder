@@ -20,23 +20,36 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		// O = acos(dot(a, b))
+		// cos(o)
 
-		foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		pbUndo.RecordObjects(selection, "sdlafk");
+		foreach(pb_Object pb in selection)
 		{
-			List<pb_WingedEdge> faces = pb_WingedEdge.GetWingedEdges(pb, pb.SelectedFaces, true);
-			m_Vertices = pb_Vertex.GetVertices(pb);
-
-			foreach(pb_WingedEdge edge in faces[0])
-			{
-				if(edge.opposite != null)
-				{
-					sb.AppendLine("quad score: " + GetQuadScore(edge, edge.opposite));
-				}
-			}
+			pb.ToMesh();
+			pb_Smoothing.ApplySmoothingGroups(pb, pb.SelectedFaces, 5f);
+			pb.Refresh();
+			pb.Optimize();
 		}
 
-		pb_Log.Info(sb.ToString());
+		// System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		// foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+		// {
+		// 	List<pb_WingedEdge> faces = pb_WingedEdge.GetWingedEdges(pb, pb.SelectedFaces, true);
+		// 	m_Vertices = pb_Vertex.GetVertices(pb);
+
+		// 	foreach(pb_WingedEdge edge in faces[0])
+		// 	{
+		// 		if(edge.opposite != null)
+		// 		{
+		// 			sb.AppendLine("quad score: " + GetQuadScore(edge, edge.opposite));
+		// 		}
+		// 	}
+		// }
+
+		// pb_Log.Info(sb.ToString());
 	}
 
 	private static pb_Vertex[] m_Vertices = null;

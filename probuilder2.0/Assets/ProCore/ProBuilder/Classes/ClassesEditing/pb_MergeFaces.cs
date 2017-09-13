@@ -13,8 +13,9 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Merge each pair of faces to a single face. Indices are combined, but otherwise the properties of the first
 		 * face in the pair take precedence.
+		 * Returns a list of the new faces created.
 		 */
-		public static List<pb_Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<pb_Face, pb_Face>> pairs)
+		public static List<pb_Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<pb_Face, pb_Face>> pairs, bool collapseCoincidentVertices = true)
 		{
 			HashSet<pb_Face> remove = new HashSet<pb_Face>();
 			List<pb_Face> add = new List<pb_Face>();
@@ -36,7 +37,9 @@ namespace ProBuilder2.MeshOperations
 			List<pb_Face> faces = target.faces.Where(x => !remove.Contains(x)).ToList();
 			faces.AddRange(add);
 			target.SetFaces(faces.ToArray());
-			CollapseCoincidentVertices(target, add);
+
+			if(collapseCoincidentVertices)
+				CollapseCoincidentVertices(target, add);
 
 			return add;
 		}
@@ -90,7 +93,7 @@ namespace ProBuilder2.MeshOperations
 		 * Condense co-incident vertex positions per-face. Vertices must already be marked as shared in the sharedIndices
 		 * array to be considered. This method is really only useful after merging faces.
 		 */
-		private static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<pb_Face> faces)
+		internal static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<pb_Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();

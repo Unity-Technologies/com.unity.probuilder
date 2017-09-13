@@ -2,6 +2,7 @@ using UnityEngine;
 using ProBuilder2.Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
@@ -10,11 +11,17 @@ namespace ProBuilder2.MeshOperations
 		public class Settings
 		{
 			public bool quads = true;
+			// Generate smoothing groups based on mesh normals.
+			public bool smoothing = true;
+			// Degree of difference between face normals to allow when determining smoothing groups.
+			public float smoothingThreshold = 1f;
 		}
 
 		private static readonly Settings DEFAULT_IMPORT_SETTINGS = new Settings()
 		{
-			quads = true
+			quads = true,
+			smoothing = true,
+			smoothingThreshold = 1f
 		};
 
 		private pb_Object m_Mesh;
@@ -101,11 +108,10 @@ namespace ProBuilder2.MeshOperations
 			m_Mesh.SetSharedIndicesUV(new pb_IntArray[0]);
 
 			HashSet<pb_Face> processed = new HashSet<pb_Face>();
-			List<pb_WingedEdge> wings;
 
 			if(importSettings.quads)
 			{
-				wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 
 				// build a lookup of the strength of edge connections between triangle faces
 				Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
@@ -155,21 +161,15 @@ namespace ProBuilder2.MeshOperations
 					}
 				}
 
-				pb_MergeFaces.MergePairs(m_Mesh, quads);
+				// don't collapse coincident vertices if smoothing is enabled, we need the original
+				// normals intact
+				pb_MergeFaces.MergePairs(m_Mesh, quads, !importSettings.smoothing);
 			}
 
-			// Get smoothing groups
-			wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
-			processed.Clear();
-
-			int smoothingGroup = 1;
-
-			for(int i = 0; i < wings.Count; i++)
+			if(importSettings.smoothing)
 			{
-				if(processed.Contains(wings[i].face))
-					continue;
-				wings[i].face.smoothingGroup = smoothingGroup++;
-				FindSoftEdgesRecursive(wings[i], processed);
+				pb_Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.faces, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
+				pb_MergeFaces.CollapseCoincidentVertices(m_Mesh, m_Mesh.faces);
 			}
 
 			return false;
@@ -236,38 +236,6 @@ namespace ProBuilder2.MeshOperations
 
 			// the three tests each contribute 1
 			return score * .33f;
-		}
-
-		private void FindSoftEdgesRecursive(pb_WingedEdge wing, HashSet<pb_Face> processed)
-		{
-			if(!processed.Add(wing.face))
-				return;
-
-			foreach(pb_WingedEdge border in wing)
-			{
-				if(border.opposite == null)
-					continue;
-
-				if( border.opposite.face.smoothingGroup == pb_Constant.SMOOTHING_GROUP_NONE && IsSoftEdge(border.edge, border.opposite.edge) )
-				{
-					border.opposite.face.smoothingGroup = wing.face.smoothingGroup;
-					processed.Add(border.opposite.face);
-					FindSoftEdgesRecursive(border.opposite, processed);
-				}
-			}
-		}
-
-		private bool IsSoftEdge(pb_EdgeLookup left, pb_EdgeLookup right)
-		{
-			pb_Vertex lx = m_Vertices[left.local.x];
-			pb_Vertex ly = m_Vertices[left.local.y];
-			pb_Vertex rx = m_Vertices[right.common.x == left.common.x ? right.local.x : right.local.y];
-			pb_Vertex ry = m_Vertices[right.common.y == left.common.y ? right.local.y : right.local.x];
-
-			if( lx.hasNormal && ly.hasNormal && rx.hasNormal && ry.hasNormal )
-				return pb_Math.Approx3(lx.normal, rx.normal) && pb_Math.Approx3(ly.normal, ry.normal);
-
-			return false;
 		}
 	}
 }

@@ -288,6 +288,30 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
+	 * pb_Object doesn't store normals, so this function either:
+	 *	1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
+	 *	2. Calculates a new set of normals and returns.
+	 */
+	public Vector3[] GetNormals()
+	{
+		Vector3[] res = null;
+
+		// If mesh isn't optimized try to return a copy from the compiled mesh
+		if(msh.vertexCount == vertexCount)
+			res = msh.normals;
+
+		if(res == null || res.Length != vertexCount)
+		{
+			// @todo Write pb_MeshUtility.GenerateNormals that handles smoothing groups
+			// to avoid 2 separate calls.
+			res = pb_MeshUtility.GenerateNormals(this);
+			pb_MeshUtility.SmoothNormals(this, ref res);
+		}
+
+		return res;
+	}
+
+	/**
 	 *	\brief Returns a copy of the sharedIndices array.
 	 */
 	public pb_IntArray[] GetSharedIndices()
