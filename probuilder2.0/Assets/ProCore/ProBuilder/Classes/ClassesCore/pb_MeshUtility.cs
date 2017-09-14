@@ -349,27 +349,25 @@ namespace ProBuilder2.Common
 		{
 			// average the soft edge faces
 			int vertexCount = pb.vertexCount;
-
-			Vector3[] averages 	= new Vector3[vertexCount];
-			float[] counts 		= new float[vertexCount];
-			int[] smoothGroup 	= new int[vertexCount];
+			int[] smoothGroup = new int[vertexCount];
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			pb_Face[] faces 	= pb.faces;
+			pb_Face[] faces = pb.faces;
+			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.
 			foreach(pb_Face face in faces)
 			{
 				foreach(int tri in face.distinctIndices)
+				{
 					smoothGroup[tri] = face.smoothingGroup;
+
+					if(face.smoothingGroup >= smoothGroupMax)
+						smoothGroupMax = face.smoothingGroup + 1;
+				}
 			}
 
-			for(int n = 0; n < vertexCount; n++)
-			{
-				averages[n].x = 0f;
-				averages[n].y = 0f;
-				averages[n].z = 0f;
-				counts[n] = 0f;
-			}
+			Vector3[] averages 	= new Vector3[smoothGroupMax];
+			float[] counts 		= new float[smoothGroupMax];
 
 			/**
 			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
@@ -377,11 +375,20 @@ namespace ProBuilder2.Common
 			 */
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
+				for(int n = 0; n < smoothGroupMax; n++)
+				{
+					averages[n].x = 0f;
+					averages[n].y = 0f;
+					averages[n].z = 0f;
+					counts[n] = 0f;
+				}
+
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
+					int group = smoothGroup[index];
 
-					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
 					averages[smoothGroup[index]].x += normals[index].x;
@@ -393,8 +400,9 @@ namespace ProBuilder2.Common
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
+					int group = smoothGroup[index];
 
-					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
 					normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];

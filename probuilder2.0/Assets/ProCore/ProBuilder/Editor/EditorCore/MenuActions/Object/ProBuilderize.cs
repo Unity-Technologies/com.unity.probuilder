@@ -107,12 +107,11 @@ namespace ProBuilder2.Actions
 				MeshRenderer mr = go.GetComponent<MeshRenderer>();
 				Mesh originalMesh = mf.sharedMesh;
 
-				// try
-				// {
+				try
+				{
 					pb_Object pb = Undo.AddComponent<pb_Object>(go);
 
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
-
 					meshImporter.Import(mf);
 
 					EntityType entityType = EntityType.Detail;
@@ -144,11 +143,11 @@ namespace ProBuilder2.Actions
 						Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
 					else
 						pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
-				// }
-				// catch(System.Exception e)
-				// {
-				// 	Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
-				// }
+				}
+				catch(System.Exception e)
+				{
+					Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
+				}
 
 				EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i/count);
 			}

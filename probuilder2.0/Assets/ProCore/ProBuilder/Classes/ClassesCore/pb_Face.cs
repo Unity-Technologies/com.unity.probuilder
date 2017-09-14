@@ -68,8 +68,6 @@ namespace ProBuilder2.Common
 			RebuildCaches();
 		}
 
-		public const int MAX_SMOOTH_GROUPS = 24;
-
 		[SerializeField] int[] _indices;
 		[SerializeField] int[] _distinctIndices;
 
