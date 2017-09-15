@@ -109,29 +109,40 @@ namespace ProBuilder2.Common
 		{
 			pb_Log.Info("OnFbxUpdate");
 
-			foreach(GameObject go in updatedObjects)
-			{
-				pb_Object pb = go.GetComponent<pb_Object>();
+			// foreach(GameObject go in updatedObjects)
+			// {
+			// 	pb_Object pb = go.GetComponent<pb_Object>();
 
-				if(pb == null)
-					continue;
+			// 	if(pb == null)
+			// 		continue;
 
-				pbMeshOps.ResetPbObjectWithMeshFilter(pb, false);
+			// 	pbMeshOps.ResetPbObjectWithMeshFilter(pb, false);
 
-				// @todo Rebuild()
-				pb.ToMesh();
-				pb.Refresh();
-				pb.Optimize();
-			}
+			// 	// @todo Rebuild()
+			// 	pb.ToMesh();
+			// 	pb.Refresh();
+			// 	pb.Optimize();
+			// }
 
-			pb_Editor.Refresh();
+			// pb_Editor.Refresh();
 		}
 
 		private static bool OnGetMeshForComponent(MonoBehaviour component, out Mesh mesh)
 		{
-			pb_Log.Info("export ->" + component.gameObject.name);
+			pb_Object pb = component as pb_Object;
 			mesh = null;
-			return true;
+
+			if(!component)
+			{
+				return true;
+			}
+
+			pb.dontDestroyMeshOnDelete = true;
+			pb_Entity entity = pb.gameObject.GetComponent<pb_Entity>();
+			GameObject.DestroyImmediate(pb);
+			GameObject.DestroyImmediate(entity);
+			mesh = null;
+			return false;
 		}
 	}
 }
