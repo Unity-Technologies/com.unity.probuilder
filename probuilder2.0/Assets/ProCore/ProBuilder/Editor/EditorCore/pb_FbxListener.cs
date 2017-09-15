@@ -22,21 +22,23 @@ namespace ProBuilder2.Common
 	[InitializeOnLoad]
 	public static class pb_FbxListener
 	{
-		private static bool m_FbxIsLoaded = false; 
+		private static bool m_FbxIsLoaded = false;
 
-		public static bool FbxEnabled { get { return m_FbxIsLoaded; } } 
+		public static bool FbxEnabled { get { return m_FbxIsLoaded; } }
 
-		static pb_FbxListener() 
+		static pb_FbxListener()
 		{
-			TryLoadFbxSupport(); 
+			TryLoadFbxSupport();
 		}
-	 
-		static void TryLoadFbxSupport() 
-		{ 
-			if(m_FbxIsLoaded) 
-				return; 
 
-			Type fbxPrefabComponentType = pb_Reflection.GetType("FbxExporters.FbxPrefab"); 
+		static void TryLoadFbxSupport()
+		{
+			if(m_FbxIsLoaded)
+				return;
+
+			bool onUpdateHook = false, onExportHook = false;
+
+			Type fbxPrefabComponentType = pb_Reflection.GetType("FbxExporters.FbxPrefab");
 
 			if(fbxPrefabComponentType != null)
 			{
@@ -50,14 +52,12 @@ namespace ProBuilder2.Common
 						MethodInfo addMethod = onFbxUpdateEvent.GetAddMethod();
 						MethodInfo updateHandler = typeof(pb_FbxListener).GetMethod("OnFbxUpdate", BindingFlags.Static | BindingFlags.NonPublic);
 						Delegate del = Delegate.CreateDelegate(delegateType, updateHandler);
-						if(del == null)
-							pb_Log.Warning("oh shit");
 						addMethod.Invoke(null, new object[] { del });
-						m_FbxIsLoaded = true;
+						onUpdateHook = true;
 					}
 					catch
 					{
-						pb_Log.Warning("Failed loading ProBuilder FBX Listener delegates. FBX export and import still work correctly, but ProBuilder will not be able export quads or see changes made to the FBX file."); 
+						pb_Log.Warning("Failed loading ProBuilder FBX Listener delegates. FBX export and import still work correctly, but ProBuilder will not be able export quads or see changes made to the FBX file.");
 					}
 				}
 				else
@@ -65,9 +65,47 @@ namespace ProBuilder2.Common
 					pb_Log.Warning("Failed to find FbxPrefab::OnUpdate event.");
 				}
 			}
-		} 
 
-		static void OnFbxUpdate(object updatedInstance, IEnumerable<GameObject> updatedObjects)
+			try
+			{
+				Type modelExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
+
+				if(modelExporterType != null)
+				{
+					// There are two overloads to this function, one generic and one not. Reflection with a type list isn't
+					// easy because of the GetMeshForComponent type not being available (also difficult to reflect that out).
+					MethodInfo registerCallbackMethod = modelExporterType.GetMethods(BindingFlags.Static | BindingFlags.Public)
+						.Where(x => !x.IsGenericMethod && x.Name.Equals("RegisterMeshCallback"))
+							.FirstOrDefault();
+
+					ParameterInfo delegateType = registerCallbackMethod.GetParameters().FirstOrDefault(x => x.ParameterType.Name.Equals("GetMeshForComponent"));
+
+					if(registerCallbackMethod != null && delegateType != null)
+					{
+						MethodInfo onGetMeshForComponent = typeof(pb_FbxListener).GetMethod("OnGetMeshForComponent", BindingFlags.Static | BindingFlags.NonPublic);
+						Delegate getMeshDelegate = Delegate.CreateDelegate(delegateType.ParameterType, onGetMeshForComponent);
+						registerCallbackMethod.Invoke(null, new object[] { typeof(pb_Object), getMeshDelegate, true });
+						onExportHook = true;
+					}
+					else
+					{
+						pb_Log.Warning("Failed to find ModelExporter::RegisterMeshCallback function! ProBuilder may not work correctly with FBX export.");
+					}
+				}
+				else
+				{
+					pb_Log.Warning("Failed to find FbxExporters::Editor::ModelExporter! ProBuilder may not work correctly with FBX export.");
+				}
+			}
+			catch
+			{
+				pb_Log.Warning("Failed loading FBX export delegate. ProBuilder may not work correctly with FBX exporter.");
+			}
+
+			m_FbxIsLoaded = onUpdateHook && onExportHook;
+		}
+
+		private static void OnFbxUpdate(object updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
 			pb_Log.Info("OnFbxUpdate");
 
@@ -87,6 +125,13 @@ namespace ProBuilder2.Common
 			}
 
 			pb_Editor.Refresh();
+		}
+
+		private static bool OnGetMeshForComponent(MonoBehaviour component, out Mesh mesh)
+		{
+			pb_Log.Info("export ->" + component.gameObject.name);
+			mesh = null;
+			return true;
 		}
 	}
 }
