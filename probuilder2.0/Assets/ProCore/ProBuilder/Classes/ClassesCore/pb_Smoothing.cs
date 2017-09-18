@@ -9,13 +9,11 @@ namespace ProBuilder2.Common
 	 */
 	public static class pb_Smoothing
 	{
-		// Faces with smoothingGroup = 0 are hard edges. Historically however negative values
+		// Faces with smoothingGroup = 0 are hard edges. Historically negative values
 		// were sometimes also written as hard edges.
 		public const int SMOOTHING_GROUP_NONE = 0;
-
 		public const int SMOOTH_RANGE_MIN = 1;
 		public const int SMOOTH_RANGE_MAX = 24;
-		// It was a bone-headed decision to even include "hard" groups, but alas here we are
 		public const int HARD_RANGE_MIN = 25;
 		public const int HARD_RANGE_MAX = 42;
 

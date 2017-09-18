@@ -112,7 +112,7 @@ namespace ProBuilder2.Actions
 					pb_Object pb = Undo.AddComponent<pb_Object>(go);
 
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
-					meshImporter.Import(mf);
+					meshImporter.Import(go);
 
 					EntityType entityType = EntityType.Detail;
 

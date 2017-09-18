@@ -33,14 +33,26 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
+		 * Import a pb_Object from MeshFilter and MeshRenderer.
+		 */
+		public bool Import(GameObject go, Settings importSettings = null)
+		{
+			MeshFilter mf = go.GetComponent<MeshFilter>();
+			MeshRenderer mr = go.GetComponent<MeshRenderer>();
+
+			if(mf == null)
+				return false;
+
+			return Import(mf.sharedMesh, mr ? mr.sharedMaterials : null);
+		}
+
+		/**
 		 * Import a mesh onto an empty pb_Object.
 		 */
-		public bool Import(MeshFilter meshFilter, Settings importSettings = null)
+		public bool Import(Mesh originalMesh, Material[] materials, Settings importSettings = null)
 		{
 			if(importSettings == null)
 				importSettings = DEFAULT_IMPORT_SETTINGS;
-
-			Mesh originalMesh = meshFilter.sharedMesh;
 
 			// When importing the mesh is always split into triangles with no vertices shared
 			// between faces. In a later step co-incident vertices are collapsed (eg, before
@@ -52,9 +64,12 @@ namespace ProBuilder2.MeshOperations
 			// Fill in Faces array with just the position indices. In the next step we'll
 			// figure out smoothing groups & merging
 			int vertexIndex = 0;
+			int materialCount = materials != null ? materials.Length : 0;
 
 			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
 			{
+				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : pb_Constant.DefaultMaterial;
+
 				switch(originalMesh.GetTopology(subMeshIndex))
 				{
 					case MeshTopology.Triangles:
@@ -63,7 +78,15 @@ namespace ProBuilder2.MeshOperations
 
 						for(int tri = 0; tri < indices.Length; tri += 3)
 						{
-							faces.Add(new pb_Face(new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 } ));
+							faces.Add(new pb_Face(
+								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
+								material,
+								new pb_UV(),
+								pb_Smoothing.SMOOTHING_GROUP_NONE,
+								-1,
+								-1,
+								true));
+
 							splitVertices.Add(sourceVertices[indices[tri  ]]);
 							splitVertices.Add(sourceVertices[indices[tri+1]]);
 							splitVertices.Add(sourceVertices[indices[tri+2]]);
@@ -81,8 +104,13 @@ namespace ProBuilder2.MeshOperations
 						{
 							faces.Add(new pb_Face(new int[] {
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
-								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3
-							}));
+								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
+								material,
+								new pb_UV(),
+								pb_Smoothing.SMOOTHING_GROUP_NONE,
+								-1,
+								-1,
+								true));
 
 							splitVertices.Add(sourceVertices[indices[quad  ]]);
 							splitVertices.Add(sourceVertices[indices[quad+1]]);
@@ -91,7 +119,7 @@ namespace ProBuilder2.MeshOperations
 
 							vertexIndex += 4;
 						}
-				}
+					}
 					break;
 
 					default:
