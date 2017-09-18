@@ -29,13 +29,13 @@ namespace ProBuilder2.Actions
 
 		public override bool IsEnabled()
 		{
-			return pb_FbxListener.FbxEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
+			return pb_Fbx.FbxEnabled && Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
 		public override pb_ActionResult DoAction()
 		{
 			bool asGroup = pb_PreferencesInternal.GetBool("pbExportAsGroup", true);
-			pb_FbxOptions options = new pb_FbxOptions() { quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true) };		
+			pb_FbxOptions options = new pb_FbxOptions() { quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true) };
 
 			string res = ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel).Cast<GameObject>(), asGroup, options);
 

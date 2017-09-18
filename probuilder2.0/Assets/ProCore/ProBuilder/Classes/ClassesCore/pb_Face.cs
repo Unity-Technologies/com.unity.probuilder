@@ -431,6 +431,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 * Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
+		 * Returns the number of submeshes created.
 		 */
 		public static int GetMeshIndices(pb_Face[] faces, out pb_Submesh[] submeshes, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{

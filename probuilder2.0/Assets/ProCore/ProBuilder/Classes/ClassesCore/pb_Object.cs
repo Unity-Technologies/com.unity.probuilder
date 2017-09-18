@@ -978,7 +978,7 @@ public class pb_Object : MonoBehaviour
 		_uv = newUVs;
 		msh.uv = newUVs;
 
-#if UNITY_5_3
+#if UNITY_5_3_OR_NEWER
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
 #endif

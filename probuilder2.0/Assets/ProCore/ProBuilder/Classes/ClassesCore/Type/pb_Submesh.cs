@@ -8,7 +8,7 @@ namespace ProBuilder2.Common
 	[System.Serializable]
 	public class pb_Submesh
 	{
-		// Indices making up this submesh. Can be points, line segments, line strip, quads, or triangles.
+		// Indices making up this submesh. Can be triangles or quads.
 		public int[] indices;
 
 		// What topology is this submesh?
@@ -24,6 +24,13 @@ namespace ProBuilder2.Common
 		{
 			this.indices = indices;
 			this.topology = topology;
+			this.material = material;
+		}
+
+		public pb_Submesh(Mesh mesh, int subMeshIndex, Material material)
+		{
+			this.indices = mesh.GetIndices(subMeshIndex);
+			this.topology = mesh.GetTopology(subMeshIndex);
 			this.material = material;
 		}
 

@@ -26,7 +26,7 @@ namespace ProBuilder2.Actions
 		 */
 		static RegisterCreatePrefabAction()
 		{
-			if(pb_FbxListener.FbxEnabled)
+			if(pb_Fbx.FbxEnabled)
 				pb_EditorToolbarLoader.RegisterMenuItem(InitCustomAction);
 		}
 
@@ -152,7 +152,7 @@ namespace ProBuilder2.Actions
 
 			if(unityGameObjectsToConvert.Length < 1)
 				return pb_ActionResult.NoSelection;
-			
+
 			// Delay call because otherwise OnGUI gets confused and throws a Stack.Pop exception
 			EditorApplication.delayCall += () =>
 			{
@@ -163,14 +163,14 @@ namespace ProBuilder2.Actions
 				if(modelExporterType != null)
 				{
 					MethodInfo createPrefabMethod = modelExporterType.GetMethod("CreateInstantiatedModelPrefab");
-					
+
 					if(createPrefabMethod != null)
 					{
 						foreach(pb_Object pb in Selection.GetFiltered(typeof(pb_Object), SelectionMode.Editable | SelectionMode.Deep))
 						{
 							pb.ToMesh(m_FbxQuads ? MeshTopology.Quads : MeshTopology.Triangles);
 							// don't refresh collisions because it throws errors when quads are enabled
-							pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);						
+							pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 							// ...and also clear existing collisions (to be set again after export)
 							MeshCollider mc = pb.transform.GetComponent<MeshCollider>();
 							if(mc != null) mc.sharedMesh = null;

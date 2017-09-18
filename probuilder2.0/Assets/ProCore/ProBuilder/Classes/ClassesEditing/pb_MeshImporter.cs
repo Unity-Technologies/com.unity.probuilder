@@ -6,11 +6,18 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
+	/**
+	 * Import UnityEngine.Mesh and other sources (someday) to pb_Object.
+	 */
 	public class pb_MeshImporter
 	{
 		public class Settings
 		{
+			// Try to quadrangilize triangle meshes.
 			public bool quads = true;
+			// Allow ngons when importing meshes.
+			// @todo
+			// public bool ngons = false;
 			// Generate smoothing groups based on mesh normals.
 			public bool smoothing = true;
 			// Degree of difference between face normals to allow when determining smoothing groups.
@@ -189,14 +196,14 @@ namespace ProBuilder2.MeshOperations
 					}
 				}
 
-				// don't collapse coincident vertices if smoothing is enabled, we need the original
-				// normals intact
+				// don't collapse coincident vertices if smoothing is enabled, we need the original normals intact
 				pb_MergeFaces.MergePairs(m_Mesh, quads, !importSettings.smoothing);
 			}
 
 			if(importSettings.smoothing)
 			{
 				pb_Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.faces, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
+				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
 				pb_MergeFaces.CollapseCoincidentVertices(m_Mesh, m_Mesh.faces);
 			}
 
@@ -223,6 +230,7 @@ namespace ProBuilder2.MeshOperations
 		/**
 		 * Get a weighted value for the quality of a quad composed of two triangles. 0 is terrible, 1 is perfect.
 		 * normalThreshold will discard any quads where the dot product of their normals is less than the threshold.
+		 * @todo Abstract the quad detection to a separate class so it can be applied to pb_Objects.
 		 */
 		private float GetQuadScore(pb_WingedEdge left, pb_WingedEdge right, float normalThreshold = .9f)
 		{

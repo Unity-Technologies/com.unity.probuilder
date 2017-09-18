@@ -9,111 +9,6 @@ using ProBuilder2.Common;
 namespace ProBuilder2.EditorCommon
 {
 	/**
-	 *	A mesh, material and optional transform matrix combination.
-	 */
-	public class pb_Model
-	{
-		// The name of this model.
-		public string name;
-		// Vertex positions.
-		public Vector3[] positions;
-		// Vertex normals. May be null, or if not must match positions length.
-		public Vector3[] normals;
-		// Vertex textures (UV0). May be null, or if not must match positions length.
-		public Vector2[] textures;
-		// Vertex colors. May be null, or if not must match positions length.
-		public Color[] colors;
-		// Triangle data (submesh[face[indices[]]]).
-		public int[][][] indices;
-		// Any materials referenced by the mesh. Should be equal in length to the submesh count.
-		public Material[] materials;
-		// Optional matrix to be applied to the mesh geometry before writing to Obj.
-		public Matrix4x4 matrix;
-
-		public pb_Model()
-		{}
-
-		public pb_Model(string name, Mesh mesh, Material material) : this(name, mesh, new Material[] { material }, Matrix4x4.identity)
-		{}
-
-		public pb_Model(string name, Mesh mesh, Material[] materials, Matrix4x4 matrix)
-		{
-			this.name = name;
-			this.positions = mesh.vertices;
-			this.normals = mesh.normals;
-			this.textures = mesh.uv;
-			this.colors = mesh.colors;
-			this.materials = materials;
-			this.indices = new int[materials.Length][][];
-			this.matrix = matrix;
-
-			for(int subMeshIndex = 0; subMeshIndex < materials.Length; subMeshIndex++)
-			{
-				this.indices[subMeshIndex] = new int[1][];
-				this.indices[subMeshIndex][0] = mesh.GetTriangles(subMeshIndex);
-			}
-		}
-
-		public pb_Model(string name, pb_Object mesh)
-		{
-			mesh.ToMesh();			
-			mesh.Refresh();			
-
-			MeshRenderer mr = mesh.gameObject.GetComponent<MeshRenderer>();
-			Material[] sharedMaterials = mr != null ? mr.sharedMaterials : new Material[0] {};
-			int subMeshCount = sharedMaterials.Length;
-
-			this.name = name;
-			this.positions = mesh.vertices.Select(x => x).ToArray();
-			this.normals = mesh.msh.normals;
-			this.textures = mesh.uv == null ? null : mesh.uv.Select(x => x).ToArray();
-			this.colors = mesh.colors == null ? null : mesh.colors.Select(x => x).ToArray();
-			this.matrix = mesh.transform.localToWorldMatrix;	
-			this.materials = sharedMaterials;
-			this.indices = new int[subMeshCount][][];
-
-			for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
-			{
-				pb_Face[] faces = mesh.faces.Where(x => x.material == sharedMaterials[subMeshIndex]).ToArray();
-
-				int[][] indices = new int[faces.Length][];
-				for(int ff = 0; ff < faces.Length; ff++)
-					faces[ff].ToQuadOrTriangles(out indices[ff]);
-
-				this.indices[subMeshIndex] = indices;
-			}
-
-			// catch null-material faces
-			pb_Face[] facesWithNoMaterial = mesh.faces.Where(x => x.material == null).ToArray();
-
-			if(facesWithNoMaterial != null && facesWithNoMaterial.Length > 0)
-			{
-				pbUtil.Add<Material>(this.materials, pb_Constant.DefaultMaterial);
-
-				int[][] indices = new int[facesWithNoMaterial.Length][];
-
-				for(int ff = 0; ff < facesWithNoMaterial.Length; ff++)
-					facesWithNoMaterial[ff].ToQuadOrTriangles(out indices[ff]);
-
-				pbUtil.Add<int[][]>(this.indices, indices);
-			}
-
-			mesh.Optimize();
-		}
-
-		/**
-		 *	Vertex count for the mesh (corresponds to positions length).
-		 */
-		public int vertexCount
-		{
-			get
-			{
-				return positions == null ? 0 : positions.Length;
-			}
-		}
-	}
-
-	/**
 	 *	A set of options used when exporting OBJ models.
 	 */
 	public class pb_ObjOptions
@@ -136,7 +31,7 @@ namespace ProBuilder2.EditorCommon
 		// Should meshes be exported in local (false) or world (true) space.
 		public bool applyTransforms = true;
 
-		// Some modeling programs support reading vertex colors as an additional {r, g, b} following 
+		// Some modeling programs support reading vertex colors as an additional {r, g, b} following
 		// the vertex position {x, y, z}
 		public bool vertexColors = false;
 
@@ -172,7 +67,7 @@ namespace ProBuilder2.EditorCommon
 			{ "_ParallaxMap", "disp" },
 			{ "_EmissionMap", "map_Ke" },
 			{ "_DetailMask", "map_d" },
-			// Alternative naming conventions - possibly useful if someone 
+			// Alternative naming conventions - possibly useful if someone
 			// runs into an issue with another 3d modeling app.
 			// { "_MetallicGlossMap", "Pm" },
 			// { "_BumpMap", "map_bump" },
@@ -206,6 +101,10 @@ namespace ProBuilder2.EditorCommon
 
 		private static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
 		{
+			// Empty names in OBJ groups can crash some 3d programs (meshlab)
+			if(string.IsNullOrEmpty(name))
+				name = "ProBuilderModel";
+
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("# Exported from ProBuilder");
@@ -223,18 +122,26 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Model model in models)
 			{
-				Material[] materials = model.materials;
-				int subMeshCount = materials == null ? 1 : materials.Length;
+				int subMeshCount = model.subMeshCount;
 				Matrix4x4 matrix = options.applyTransforms ? model.matrix : Matrix4x4.identity;
 
 				int vertexCount = model.vertexCount;
 
-				Vector3[] positions = model.positions;
-				Vector3[] normals = model.normals;
-				Vector2[] textures0 = model.textures;
-				Color[] colors = options.vertexColors ? model.colors : null;
+				Vector3[] positions;
+				Color[] colors;
+				Vector2[] textures0;
+				Vector3[] normals;
+				Vector4[] tangent;
+				Vector2[] uv2;
+				List<Vector4> uv3;
+				List<Vector4> uv4;
+
+				AttributeType attribs = AttributeType.Position | AttributeType.Normal | AttributeType.UV0;
+				if(options.vertexColors) attribs = attribs | AttributeType.Color;
+				pb_Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
+				// matrix is set to identity if not applying transforms.
 				if(options.handedness != pb_ObjOptions.Handedness.Left || options.applyTransforms)
 				{
 					for(int i = 0; i < vertexCount; i++)
@@ -253,8 +160,6 @@ namespace ProBuilder2.EditorCommon
 					}
 				}
 
-				int materialCount = materials != null ? materials.Length : 0;
-
 				sb.AppendLine(string.Format("g {0}", model.name));
 
 				if(options.vertexColors && colors != null && colors.Length == vertexCount)
@@ -265,7 +170,7 @@ namespace ProBuilder2.EditorCommon
 							colors[i].r, colors[i].g, colors[i].b ));
 				}
 				else
-				{		
+				{
 					for(int i = 0; i < vertexCount; i++)
 						sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
 				}
@@ -285,60 +190,54 @@ namespace ProBuilder2.EditorCommon
 				// Material assignment
 				for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
 				{
+					pb_Submesh submesh = model.submeshes[subMeshIndex];
+
 					if(subMeshCount > 1)
 						sb.AppendLine(string.Format("g {0}_{1}", model.name, subMeshIndex));
 					else
 						sb.AppendLine(string.Format("g {0}", model.name));
 
-					if(subMeshIndex < materialCount)
+					sb.AppendLine(string.Format("usemtl {0}", materialMap[submesh.material]));
+
+					int[] indices = submesh.indices;
+					int inc = submesh.topology == MeshTopology.Quads ? 4 : 3;
+
+					for(int ff = 0; ff < indices.Length; ff += inc)
 					{
-						if(materials[subMeshIndex] != null)
-							sb.AppendLine(string.Format("usemtl {0}", materialMap[materials[subMeshIndex]]));
-					}
-
-					int[][] faces = model.indices[subMeshIndex];
-
-					for(int ff = 0; ff < faces.Length; ff++)
-					{
-						int[] triangles = faces[ff];
-
-						if(triangles.Length == 4)
+						if(inc == 4)
 						{
 							if(reverseWinding)
 							{
 								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-									triangles[3] + triangleOffset,
-									triangles[2] + triangleOffset,
-									triangles[1] + triangleOffset,
-									triangles[0] + triangleOffset));
+									indices[ff + 3] + triangleOffset,
+									indices[ff + 2] + triangleOffset,
+									indices[ff + 1] + triangleOffset,
+									indices[ff + 0] + triangleOffset));
 							}
 							else
 							{
 								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
-									triangles[0] + triangleOffset,
-									triangles[1] + triangleOffset,
-									triangles[2] + triangleOffset,
-									triangles[3] + triangleOffset));
+									indices[ff + 0] + triangleOffset,
+									indices[ff + 1] + triangleOffset,
+									indices[ff + 2] + triangleOffset,
+									indices[ff + 3] + triangleOffset));
 							}
 						}
 						else
 						{
-							for(int i = 0; i < triangles.Length; i += 3)
+							if(reverseWinding)
 							{
-								if(reverseWinding)
-								{
-									sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-										triangles[i+2] + triangleOffset,
-										triangles[i+1] + triangleOffset,
-										triangles[i+0] + triangleOffset));
-								}
-								else
-								{
-									sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
-										triangles[i+0] + triangleOffset,
-										triangles[i+1] + triangleOffset,
-										triangles[i+2] + triangleOffset));
-								}
+								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+									indices[ff + 2] + triangleOffset,
+									indices[ff + 1] + triangleOffset,
+									indices[ff + 0] + triangleOffset));
+							}
+							else
+							{
+								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+									indices[ff + 0] + triangleOffset,
+									indices[ff + 1] + triangleOffset,
+									indices[ff + 2] + triangleOffset));
 							}
 						}
 					}
@@ -362,8 +261,10 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Model model in models)
 			{
-				foreach(Material material in model.materials)
+				foreach(pb_Submesh submesh in model.submeshes)
 				{
+					Material material = submesh.material;
+
 					if(material == null)
 						continue;
 
@@ -416,7 +317,7 @@ namespace ProBuilder2.EditorCommon
 
 							// remove "Assets/" from start of path
 							path = path.Substring(7, path.Length - 7);
-						
+
 							string textureName = options.copyTextures ? Path.GetFileName(path) : string.Format("{0}/{1}", Application.dataPath, path);
 
 							string mtlKey = null;
