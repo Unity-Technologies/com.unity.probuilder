@@ -600,5 +600,47 @@ namespace ProBuilder2.EditorCommon
 			Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 			#endif
 		}
+
+		/**
+		 * Add a define to the scripting define symbols for every build target.
+		 */
+		public static void AddScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( !defineSymbols.Contains(define) )
+				{
+					if(defineSymbols.Length < 1)
+						defineSymbols = define;
+					else if(defineSymbols.EndsWith(";"))
+						defineSymbols = string.Format("{0}{1}", defineSymbols, define);
+					else
+						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
+		}
+
+		/**
+		 * Remove a define from the scripting define symbols for every build target.
+		 */
+		public static void RemoveScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( defineSymbols.Contains(define) )
+				{
+					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
+					defineSymbols = defineSymbols.Replace(define, "");
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
+		}
 	}
 }

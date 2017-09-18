@@ -53,7 +53,7 @@ namespace ProBuilder2.Actions
 
 		// fbx specific
 		private bool m_FbxQuads;
-		private bool m_FbxNgons;
+		// private bool m_FbxNgons;
 
 		public enum ExportFormat
 		{
@@ -100,7 +100,7 @@ namespace ProBuilder2.Actions
 			m_PlyNGons = pb_PreferencesInternal.GetBool("pbPlyNGons", false);
 
 			m_FbxQuads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
-			m_FbxNgons = pb_PreferencesInternal.GetBool("Export::m_FbxNgons", true);
+			// m_FbxNgons = pb_PreferencesInternal.GetBool("Export::m_FbxNgons", true);
 		}
 
 		public override bool IsHidden() { return false; }
@@ -257,7 +257,7 @@ namespace ProBuilder2.Actions
 			{
 				res = ExportFbx.ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel).Cast<GameObject>().ToArray(), m_ExportAsGroup, new pb_FbxOptions() {
 					quads = m_FbxQuads,
-					ngons = m_FbxNgons
+					// ngons = m_FbxNgons
 					});
 			}
 			else if(m_ExportFormat == ExportFormat.Obj)

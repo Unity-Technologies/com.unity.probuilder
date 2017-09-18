@@ -89,27 +89,9 @@ namespace ProBuilder2.Actions
 			{
 				MethodInfo exportObjectsMethod = modelExporterType.GetMethod("ExportObjects");
 
-            	// return FbxExporters.Editor.ModelExporter.ExportObjects(path, models.ToArray());
             	if(exportObjectsMethod != null)
             	{
-            		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(models);
-
-					foreach(pb_Object pb in pbos)
-					{
-						pb.ToMesh(options.quads ? MeshTopology.Quads : MeshTopology.Triangles);
-						// don't refresh collisions because it throws errors when quads are enabled
-						pb.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
-					}
-
             		object res = exportObjectsMethod.Invoke(null, new object[] { path, models.ToArray() });
-
-					foreach(pb_Object pb in pbos)
-					{
-						pb.ToMesh(MeshTopology.Triangles);
-						pb.Refresh();
-						pb.Optimize();
-					}
-
             		return res as string;
             	}
 			}
