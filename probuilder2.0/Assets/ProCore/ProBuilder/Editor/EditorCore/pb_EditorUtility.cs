@@ -615,7 +615,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
 			{
-				if( IsObsolete(targetGroup) )
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
 					continue;
 
 				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
@@ -629,6 +629,8 @@ namespace ProBuilder2.EditorCommon
 					else
 						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
 
+					pb_Log.Debug("target: " + targetGroup.ToString());
+
 					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
 				}
 			}
@@ -641,7 +643,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
 			{
-				if( IsObsolete(targetGroup) )
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
 					continue;
 
 				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
@@ -650,6 +652,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
 					defineSymbols = defineSymbols.Replace(define, "");
+					pb_Log.Debug("target: " + targetGroup.ToString());
 
 					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
 				}
