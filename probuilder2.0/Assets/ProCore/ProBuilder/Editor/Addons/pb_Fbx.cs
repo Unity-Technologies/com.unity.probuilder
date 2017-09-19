@@ -43,35 +43,45 @@ namespace ProBuilder2.Common
 		static pb_Fbx()
 		{
 			TryLoadFbxSupport();
+
+			if(m_FbxIsLoaded)
+				PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
 		}
 
 		static void TryLoadFbxSupport()
 		{
-			pb_Log.Debug("Attempt load FBX hooks");
 			if(m_FbxIsLoaded)
 				return;
 			FbxPrefab.OnUpdate += OnFbxUpdate;
 			ModelExporter.RegisterMeshCallback<pb_Object>(GetMeshForComponent, true);
 			m_FbxOptions.quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
 			m_FbxIsLoaded = true;
-			pb_Log.Debug("FBX support successfully loaded");
 		}
-
 
 		private static void OnFbxUpdate(FbxPrefab updatedInstance, IEnumerable<GameObject> updatedObjects)
 		{
-			pb_Log.Debug("OnFbxUpdate");
+			// System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			// sb.AppendLine("OnFbxUpdate:");
+			// sb.AppendLine("instance: " + updatedInstance.name + " is asset: " + !string.IsNullOrEmpty(AssetDatabase.GetAssetPath(updatedInstance)));
+			// sb.AppendLine("objects:");
+			// foreach(GameObject go in updatedObjects)
+			// 	sb.AppendLine("\t" + go.name);
+			// pb_Log.Debug(sb.ToString());
 		}
 
 		private static bool GetMeshForComponent(ModelExporter exporter, pb_Object component, FbxNode fbxNode)
 		{
-			pb_Log.Debug("GetMeshForComponent: " + component.name);
 			Mesh mesh = new Mesh();
 			Material[] materials = null;
 			pb_MeshCompiler.Compile(component, ref mesh, out materials, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			exporter.ExportMesh(mesh, fbxNode, materials);
 			UnityEngine.Object.DestroyImmediate(mesh);
 			return true;
+		}
+
+		private static void PrefabInstanceUpdated(GameObject go)
+		{
+			// pb_Log.Debug("instance updated: " + go.name);
 		}
 #endif
 	}

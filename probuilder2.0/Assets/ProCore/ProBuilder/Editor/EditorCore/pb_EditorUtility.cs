@@ -629,8 +629,6 @@ namespace ProBuilder2.EditorCommon
 					else
 						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
 
-					pb_Log.Debug("target: " + targetGroup.ToString());
-
 					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
 				}
 			}
@@ -652,7 +650,6 @@ namespace ProBuilder2.EditorCommon
 				{
 					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
 					defineSymbols = defineSymbols.Replace(define, "");
-					pb_Log.Debug("target: " + targetGroup.ToString());
 
 					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
 				}

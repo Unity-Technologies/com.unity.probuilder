@@ -167,7 +167,6 @@ namespace ProBuilder2.Common
 		 */
 		public static void PrintToFile(string message, string path)
 		{
-#if UNITY_5_5_OR_NEWER
 			if(string.IsNullOrEmpty(path))
 				return;
 
@@ -204,7 +203,6 @@ namespace ProBuilder2.Common
 					sw.WriteLine(message);
 				}
 			}
-#endif
 		}
 
 		/**
@@ -219,7 +217,7 @@ namespace ProBuilder2.Common
 			else if(type == LogType.Error)
 				UnityEngine.Debug.LogError(message);
 			else if(type == LogType.Assert)
-#if !UNITY_4_6 && !UNITY_4_7 && !UNITY_5_0
+#if UNITY_5_3_OR_NEWER
 				UnityEngine.Debug.LogAssertion(message);
 #else
 				UnityEngine.Debug.LogError(message);
