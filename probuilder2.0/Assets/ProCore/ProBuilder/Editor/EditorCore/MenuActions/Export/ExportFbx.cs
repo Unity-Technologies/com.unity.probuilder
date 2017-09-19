@@ -10,6 +10,17 @@ using System.Collections.Generic;
 using Parabox.STL;
 using System.Reflection;
 
+namespace ProBuilder2.Common
+{
+	/*
+	 * Options when exporting FBX files.
+	 */
+	public class pb_FbxOptions
+	{
+		public bool quads;
+	}
+}
+
 namespace ProBuilder2.Actions
 {
 	public class ExportFbx : pb_MenuAction

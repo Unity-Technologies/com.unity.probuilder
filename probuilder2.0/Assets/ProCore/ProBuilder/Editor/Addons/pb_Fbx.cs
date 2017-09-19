@@ -20,14 +20,6 @@ using FbxExporters.Editor;
 
 namespace ProBuilder2.Common
 {
-	/*
-	 * Options when exporting FBX files.
-	 */
-	public class pb_FbxOptions
-	{
-		public bool quads;
-	}
-
 	[InitializeOnLoad]
 	public static class pb_Fbx
 	{
