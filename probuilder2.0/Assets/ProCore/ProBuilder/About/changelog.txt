@@ -1,4 +1,4 @@
-# ProBuilder 2.9.7f0
+# ProBuilder 2.9.7f1
 
 ## Features
 
@@ -6,9 +6,9 @@
 - Improved quad detection in ProBuilderize function.
 - ProBuilderize now imports smoothing groups.
 
-## Known Issues
+## Changes
 
-- Modifying a ProBuilder mesh that has been converted to a prefab affects the mesh asset.
+- On FBX export ProBuilder scripts are automically removed.
 
 # ProBuilder 2.9.5f3
 
