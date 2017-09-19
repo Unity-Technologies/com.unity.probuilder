@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Linq;
+using System;
 using System.Reflection;
 using System.IO;
 using ProBuilder2.Common;
@@ -426,7 +427,7 @@ namespace ProBuilder2.EditorCommon
 					int meshNo = -1;
 					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-					Object dup = EditorUtility.InstanceIDToObject(meshNo);
+					UnityEngine.Object dup = EditorUtility.InstanceIDToObject(meshNo);
 					GameObject go = dup as GameObject;
 
 					if(go == null)
@@ -601,6 +602,12 @@ namespace ProBuilder2.EditorCommon
 			#endif
 		}
 
+		private static bool IsObsolete(BuildTargetGroup group)
+		{
+			var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
+			return attrs != null && attrs.Length > 0;
+		}
+
 		/**
 		 * Add a define to the scripting define symbols for every build target.
 		 */
@@ -608,6 +615,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
 			{
+				if( IsObsolete(targetGroup) )
+					continue;
+
 				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 
 				if( !defineSymbols.Contains(define) )
@@ -631,6 +641,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
 			{
+				if( IsObsolete(targetGroup) )
+					continue;
+
 				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 
 				if( defineSymbols.Contains(define) )

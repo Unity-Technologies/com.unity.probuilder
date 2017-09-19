@@ -1,3 +1,7 @@
+/**
+ * Provides some additional functionality when the FbxSdk and FbxExporter packages
+ * are available in the project.
+ */
 using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
@@ -28,10 +32,14 @@ namespace ProBuilder2.Common
 	public static class pb_Fbx
 	{
 		private static bool m_FbxIsLoaded = false;
+
 		public static bool FbxEnabled { get { return m_FbxIsLoaded; } }
+
+#if PROBUILDER_FBX_ENABLED
 		private static pb_FbxOptions m_FbxOptions = new pb_FbxOptions() {
 			quads = true
 		};
+#endif
 
 		static pb_Fbx()
 		{
@@ -41,23 +49,34 @@ namespace ProBuilder2.Common
 		static void TryLoadFbxSupport()
 		{
 #if PROBUILDER_FBX_ENABLED
+			pb_Log.Debug("Attempt load FBX hooks");
 			if(m_FbxIsLoaded)
 				return;
 			FbxPrefab.OnUpdate += OnFbxUpdate;
 			ModelExporter.RegisterMeshCallback<pb_Object>(GetMeshForComponent, true);
-			m_FbxIsLoaded = true;
 			m_FbxOptions.quads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
+			m_FbxIsLoaded = true;
+			pb_Log.Debug("FBX support successfully loaded");
 #else
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			Type fbxExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
-
-			if(fbxExporterType != null && assemblies.Any(x => x.FullName.Contains("FbxSdk")))
+			if( FbxTypesExist() )
+			{
+				pb_Log.Debug("Loading FBX support");
 				pb_EditorUtility.AddScriptingDefine("PROBUILDER_FBX_ENABLED");
+			}
 			else
+			{
+				pb_Log.Debug("Unloading FBX support");
 				pb_EditorUtility.RemoveScriptingDefine("PROBUILDER_FBX_ENABLED");
-
+			}
 			m_FbxIsLoaded = false;
 #endif
+		}
+
+		private static bool FbxTypesExist()
+		{
+			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			Type fbxExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
+			return fbxExporterType != null && assemblies.Any(x => x.FullName.Contains("FbxSdk"));
 		}
 
 #if PROBUILDER_FBX_ENABLED
