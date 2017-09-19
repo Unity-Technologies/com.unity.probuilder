@@ -203,26 +203,6 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "Export/Export Fbx ", true)]
-		static bool MenuVerifyExportFbx()
-		{
-			ExportFbx instance = pb_EditorToolbarLoader.GetInstance<ExportFbx>();
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
-			return instance != null && instance.IsEnabled();
-#endif
-
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Export/Export Fbx ", false, pb_Constant.MENU_EXPORT + 0)]
-		static void MenuDoExportFbx()
-		{
-			ExportFbx instance = pb_EditorToolbarLoader.GetInstance<ExportFbx>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
 		[MenuItem(PB_MENU_PREFIX + "Export/Export Obj ", true)]
 		static bool MenuVerifyExportObj()
 		{
@@ -385,7 +365,7 @@ namespace ProBuilder2.EditorCommon
 
 
 
-		[MenuItem(PB_MENU_PREFIX + "Geometry/Delete Faces  [delete]", true)]
+		[MenuItem(PB_MENU_PREFIX + "Geometry/Delete Faces  [⌫]", true)]
 		static bool MenuVerifyDeleteFaces()
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -397,7 +377,7 @@ namespace ProBuilder2.EditorCommon
 
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "Geometry/Delete Faces  [delete]", false, pb_Constant.MENU_GEOMETRY + 3)]
+		[MenuItem(PB_MENU_PREFIX + "Geometry/Delete Faces  [⌫]", false, pb_Constant.MENU_GEOMETRY + 3)]
 		static void MenuDoDeleteFaces()
 		{
 			DeleteFaces instance = pb_EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -1026,6 +1006,26 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoSelectMaterial()
 		{
 			SelectMaterial instance = pb_EditorToolbarLoader.GetInstance<SelectMaterial>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Smoothing Group ", true)]
+		static bool MenuVerifySelectSmoothingGroup()
+		{
+			SelectSmoothingGroup instance = pb_EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
+#if PROTOTYPE
+			return instance != null && !instance.isProOnly && instance.IsEnabled();
+#else
+			return instance != null && instance.IsEnabled();
+#endif
+
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Smoothing Group ", false, pb_Constant.MENU_SELECTION + 0)]
+		static void MenuDoSelectSmoothingGroup()
+		{
+			SelectSmoothingGroup instance = pb_EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

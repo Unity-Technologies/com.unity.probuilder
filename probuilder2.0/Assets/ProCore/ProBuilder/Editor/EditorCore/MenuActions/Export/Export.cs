@@ -51,14 +51,9 @@ namespace ProBuilder2.Actions
 		private bool m_PlyQuads;
 		private bool m_PlyNGons;
 
-		// fbx specific
-		private bool m_FbxQuads;
-		// private bool m_FbxNgons;
-
 		public enum ExportFormat
 		{
 			Obj,
-			Fbx,
 			Stl,
 			Ply,
 			Asset
@@ -98,9 +93,6 @@ namespace ProBuilder2.Actions
 			m_PlyApplyTransform = pb_PreferencesInternal.GetBool("pbPlyApplyTransform", true);
 			m_PlyQuads = pb_PreferencesInternal.GetBool("pbPlyQuads", true);
 			m_PlyNGons = pb_PreferencesInternal.GetBool("pbPlyNGons", false);
-
-			m_FbxQuads = pb_PreferencesInternal.GetBool("Export::m_FbxQuads", true);
-			// m_FbxNgons = pb_PreferencesInternal.GetBool("Export::m_FbxNgons", true);
 		}
 
 		public override bool IsHidden() { return false; }
@@ -124,54 +116,28 @@ namespace ProBuilder2.Actions
 			if(EditorGUI.EndChangeCheck())
 				pb_PreferencesInternal.SetInt("pbDefaultExportFormat", (int) m_ExportFormat);
 
-			if( m_ExportFormat == ExportFormat.Fbx && !pb_Fbx.FbxEnabled )
-			{
-				EditorGUILayout.HelpBox("Fbx export is available through the FbxExporter package.\n\nImport the FbxExporter package to your project to use this functionality.", MessageType.Warning);
-			}
-			else
-			{
-				if(m_ExportFormat != ExportFormat.Fbx)
-				{
-					m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
-				}
+			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
-				if( m_ExportFormat != ExportFormat.Asset &&
-					m_ExportFormat != ExportFormat.Stl )
-				{
-					EditorGUI.BeginChangeCheck();
-					m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
-					if(EditorGUI.EndChangeCheck())
-						pb_PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
-				}
-
-				if(m_ExportFormat == ExportFormat.Fbx)
-					FbxExportOptions();
-				else if(m_ExportFormat == ExportFormat.Obj)
-					ObjExportOptions();
-				else if(m_ExportFormat == ExportFormat.Stl)
-					StlExportOptions();
-				else if(m_ExportFormat == ExportFormat.Ply)
-					PlyExportOptions();
+			if( m_ExportFormat != ExportFormat.Asset &&
+				m_ExportFormat != ExportFormat.Stl )
+			{
+				EditorGUI.BeginChangeCheck();
+				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
+				if(EditorGUI.EndChangeCheck())
+					pb_PreferencesInternal.SetBool("pbExportAsGroup", m_ExportAsGroup);
 			}
+
+			if(m_ExportFormat == ExportFormat.Obj)
+				ObjExportOptions();
+			else if(m_ExportFormat == ExportFormat.Stl)
+				StlExportOptions();
+			else if(m_ExportFormat == ExportFormat.Ply)
+				PlyExportOptions();
 
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Export"))
 				DoAction();
-		}
-
-		private void FbxExportOptions()
-		{
-			EditorGUI.BeginChangeCheck();
-
-			m_FbxQuads = EditorGUILayout.Toggle("Export Quads", m_FbxQuads);
-			// m_FbxNgons = EditorGUILayout.Toggle("Export NGons", m_FbxNgons);
-
-			if(EditorGUI.EndChangeCheck())
-			{
-				pb_PreferencesInternal.SetBool("Export::m_FbxQuads", m_FbxQuads);
-				// pb_PreferencesInternal.SetBool("Export::m_FbxNgons", m_FbxNgons);
-			}
 		}
 
 		private void ObjExportOptions()
@@ -252,13 +218,6 @@ namespace ProBuilder2.Actions
 			if(meshes == null || meshes.Count() < 1)
 			{
 				return new pb_ActionResult(Status.Canceled, "No Meshes Selected");
-			}
-			else if(m_ExportFormat == ExportFormat.Fbx)
-			{
-				res = ExportFbx.ExportWithFileDialog(Selection.GetFiltered(typeof(GameObject), SelectionMode.Editable | SelectionMode.TopLevel).Cast<GameObject>().ToArray(), m_ExportAsGroup, new pb_FbxOptions() {
-					quads = m_FbxQuads,
-					// ngons = m_FbxNgons
-					});
 			}
 			else if(m_ExportFormat == ExportFormat.Obj)
 			{

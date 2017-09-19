@@ -91,7 +91,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.GenerateUV2(),
 				new Actions.ProBuilderize(),
 				new Actions.Export(),
-				new Actions.ExportFbx(),
+				// new Actions.ExportFbx(),
 				new Actions.ExportObj(),
 				new Actions.ExportAsset(),
 				new Actions.ExportPly(),
