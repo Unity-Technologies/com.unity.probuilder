@@ -35,11 +35,12 @@ namespace ProBuilder2.Common
 
 		public static bool FbxEnabled { get { return m_FbxIsLoaded; } }
 
+#if PROBUILDER_FBX_ENABLED
+
 		private static pb_FbxOptions m_FbxOptions = new pb_FbxOptions() {
 			quads = true
 		};
 
-#if PROBUILDER_FBX_ENABLED
 		static pb_Fbx()
 		{
 			TryLoadFbxSupport();
@@ -76,6 +77,15 @@ namespace ProBuilder2.Common
 			pb_MeshCompiler.Compile(component, ref mesh, out materials, m_FbxOptions.quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			exporter.ExportMesh(mesh, fbxNode, materials);
 			UnityEngine.Object.DestroyImmediate(mesh);
+
+			// since probuilder can't handle mesh assets that may be externally reloaded, just strip pb
+			// stuff for now.
+			pb_Entity entity = component.GetComponent<pb_Entity>();
+			component.dontDestroyMeshOnDelete = true;
+			UnityEngine.Object.DestroyImmediate(component);
+			if(entity != null)
+			UnityEngine.Object.DestroyImmediate(entity);
+
 			return true;
 		}
 
