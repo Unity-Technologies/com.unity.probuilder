@@ -836,7 +836,7 @@ public class pb_Editor : EditorWindow
 		EventModifiers em = Event.current.modifiers;
 
 		// If any event modifiers are engaged don't cycle the deep click
-		int pickedCount = em != EventModifiers.None ? 1 : picked.Count;
+		int pickedCount = em != EventModifiers.None ? System.Math.Min(1, picked.Count) : picked.Count;
 
 		for(int i = 0, next = 0; i < pickedCount; i++)
 		{

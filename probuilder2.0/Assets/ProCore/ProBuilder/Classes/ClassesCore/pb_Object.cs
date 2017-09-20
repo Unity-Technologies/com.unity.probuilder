@@ -1071,13 +1071,6 @@ public class pb_Object : MonoBehaviour
 
 	public void OnDestroy()
 	{
-		// pb_Log.Debug(
-		// 	string.Format("dontDestroyMeshOnDelete: " + dontDestroyMeshOnDelete +
-		// 	"\nm_ApplicationIsQuitting: " + m_ApplicationIsQuitting +
-		// 	"\nApplication.isEditor: " + Application.isEditor +
-		// 	"\nApplication.isPlaying: " + Application.isPlaying +
-		// 	"\nTime.frameCount: " + Time.frameCount));
-
 		// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
 		// differentiate between OnDestroy invoked from user delete & editor scene loading.
 		if(!dontDestroyMeshOnDelete &&
