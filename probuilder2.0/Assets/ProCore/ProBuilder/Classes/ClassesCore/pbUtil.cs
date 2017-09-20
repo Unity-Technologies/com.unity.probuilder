@@ -44,13 +44,11 @@ namespace ProBuilder2.Common
 	 *	\sa GetComponents<Transform[]>()
 	 *	\returns Array of T.
 	 */
-	public static T[] GetComponents<T>(this GameObject[] _gameObjects) where T : Component
+	public static T[] GetComponents<T>(this IEnumerable<GameObject> gameObjects) where T : Component
 	{
 		List<T> c = new List<T>();
-		for(int i = 0; i < _gameObjects.Length; i++)
-		{
-			c.AddRange(_gameObjects[i].transform.GetComponentsInChildren<T>());
-		}
+		foreach(GameObject go in gameObjects)
+			c.AddRange(go.transform.GetComponentsInChildren<T>());
 		return c.ToArray();
 	}
 
@@ -61,7 +59,7 @@ namespace ProBuilder2.Common
 	 */
 	public static T[] GetComponents<T>(GameObject go) where T : Component
 	{
-		return GetComponents<T>(new Transform[]{go.transform});
+		return go.transform.GetComponentsInChildren<T>();
 	}
 
 	/**
@@ -92,13 +90,11 @@ namespace ProBuilder2.Common
 	 *	\endcode
 	 *	\returns Array of T.
 	 */
-	public static T[] GetComponents<T>(this Transform[] _transforms) where T : Component
+	public static T[] GetComponents<T>(this IEnumerable<Transform> transforms) where T : Component
 	{
 		List<T> c = new List<T>();
-		foreach(Transform t in _transforms)
-		{
+		foreach(Transform t in transforms)
 			c.AddRange(t.GetComponentsInChildren<T>());
-		}
 		return c.ToArray() as T[];
 	}
 #endregion

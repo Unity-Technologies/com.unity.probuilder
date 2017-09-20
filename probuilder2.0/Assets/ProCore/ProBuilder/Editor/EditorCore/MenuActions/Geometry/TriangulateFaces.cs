@@ -45,7 +45,7 @@ namespace ProBuilder2.Actions
 			{
 				pb_Face[] triangulatedFaces = null;
 				pb.ToMesh();
-				res = pb.Facetize(pb.SelectedFaces, out triangulatedFaces);
+				res = pb.ToTriangles(pb.SelectedFaces, out triangulatedFaces);
 				pb.Refresh();
 				pb.Optimize();
 				pb.SetSelectedFaces(triangulatedFaces);

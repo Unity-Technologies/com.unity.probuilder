@@ -93,7 +93,7 @@ public class pb_Object : MonoBehaviour
 	public static pb_Object CreateInstanceWithPoints(Vector3[] vertices)
 	{
 		if(vertices.Length % 4 != 0) {
-			Debug.LogWarning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
+			pb_Log.Warning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
 			return null;
 		}
 
@@ -251,7 +251,7 @@ public class pb_Object : MonoBehaviour
 	}
 
 	public pb_Face[] faces { get { return _quads; } }// == null ? Extractfaces(msh) : _faces; } }
-	public pb_Face[] quads {get { Debug.LogWarning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
+	public pb_Face[] quads {get { pb_Log.Warning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
 
 	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }	// returns a reference
 	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } }
@@ -272,6 +272,44 @@ public class pb_Object : MonoBehaviour
 	public int faceCount { get { return _faces == null ? 0 : _faces.Length; } }
 	public int vertexCount { get { return _vertices == null ? 0 : _vertices.Length; } }
 	public int triangleCount { get { return _faces == null ? 0 : _faces.Sum(x => x.indices.Length ); } }
+
+	public void Clear()
+	{
+		_quads = null;
+		_vertices = null;
+		_uv = null;
+		_uv3 = null;
+		_uv4 = null;
+		_tangents = null;
+		_sharedIndices = new pb_IntArray[0];
+		_sharedIndicesUV = null;
+		_colors = null;
+		SetSelectedTriangles(null);
+	}
+
+	/**
+	 * pb_Object doesn't store normals, so this function either:
+	 *	1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
+	 *	2. Calculates a new set of normals and returns.
+	 */
+	public Vector3[] GetNormals()
+	{
+		Vector3[] res = null;
+
+		// If mesh isn't optimized try to return a copy from the compiled mesh
+		if(msh.vertexCount == vertexCount)
+			res = msh.normals;
+
+		if(res == null || res.Length != vertexCount)
+		{
+			// @todo Write pb_MeshUtility.GenerateNormals that handles smoothing groups
+			// to avoid 2 separate calls.
+			res = pb_MeshUtility.GenerateNormals(this);
+			pb_MeshUtility.SmoothNormals(this, ref res);
+		}
+
+		return res;
+	}
 
 	/**
 	 *	\brief Returns a copy of the sharedIndices array.
@@ -473,11 +511,12 @@ public class pb_Object : MonoBehaviour
 	 *	\brief Set the internal face array with the passed pb_Face array.
 	 *	@param faces New pb_Face[] containing face data.  Mesh triangle data is extracted from the internal #pb_Face array, so be sure to account for all triangles.
 	 */
-	public void SetFaces(pb_Face[] _qds)
+	public void SetFaces(IEnumerable<pb_Face> faces)
 	{
-		_quads = _qds.Where(x => x != null).ToArray();
-		if(_quads.Length != _qds.Length)
-			Debug.LogWarning("SetFaces() pruned " + (_qds.Length - _quads.Length) + " null faces from this object.");
+		_quads = faces.Where(x => x != null).ToArray();
+
+		if(_quads.Length != faces.Count())
+			pb_Log.Warning("SetFaces() pruned " + (faces.Count() - _quads.Length) + " null faces from this object.");
 	}
 
 	/**
@@ -588,7 +627,7 @@ public class pb_Object : MonoBehaviour
 			}
 			catch(System.Exception e)
 			{
-				Debug.LogError("Failed rebuilding null pb_Object.  Cached mesh attributes are invalid or missing.\n" + e.ToString());
+				pb_Log.Error("Failed rebuilding null pb_Object. Cached mesh attributes are invalid or missing.\n" + e.ToString());
 			}
 
 			return MeshRebuildReason.Null;
@@ -604,48 +643,46 @@ public class pb_Object : MonoBehaviour
 	}
 
 	/**
-	 *	\brief Force regenerate geometry.  Also responsible for sorting faces with shared materials into the same submeshes.
+	 * Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept,
+	 * otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
 	 */
 	public void ToMesh()
+	{
+		ToMesh(MeshTopology.Triangles);
+	}
+
+	public void ToMesh(MeshTopology preferredTopology)
 	{
 		Mesh m = msh;
 
 		// if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
 		if(m != null && m.vertexCount == _vertices.Length)
-		{
 			m = msh;
-
-			m.vertices = _vertices;
-
-			// we're upgrading from a release that didn't cache UVs probably (anything 2.2.5 or lower)
-			if(_uv != null)
-				m.uv = _uv;
-		}
+		else if(m == null)
+			m = new Mesh();
 		else
-		{
-			if(m == null)
-				m = new Mesh();
-			else
-				m.Clear();
+			m.Clear();
 
-			m.vertices = _vertices;
-		}
-
+		m.vertices = _vertices;
+		if(_uv != null) m.uv = _uv;
 		m.uv2 = null;
 
-		int[][] tris;
-		Material[] mats;
+		pb_Submesh[] submeshes;
 
-		m.subMeshCount = pb_Face.MeshTriangles(faces, out tris, out mats);
+		m.subMeshCount = pb_Face.GetMeshIndices(faces, out submeshes, preferredTopology);
 
-		for(int i = 0; i < tris.Length; i++)
-			m.SetTriangles(tris[i], i);
+		for(int i = 0; i < m.subMeshCount; i++)
+#if UNITY_5_5_OR_NEWER
+			m.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
+#else
+			m.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
+#endif
 
-		m.name = "pb_Mesh" + id;
+		m.name = string.Format("pb_Mesh{0}", id);
 
 		GetComponent<MeshFilter>().sharedMesh = m;
 #if !PROTOTYPE
-		GetComponent<MeshRenderer>().sharedMaterials = mats;
+		GetComponent<MeshRenderer>().sharedMaterials = submeshes.Select(x => x.material).ToArray();
 #endif
 	}
 
@@ -941,7 +978,7 @@ public class pb_Object : MonoBehaviour
 		_uv = newUVs;
 		msh.uv = newUVs;
 
-#if UNITY_5_3
+#if UNITY_5_3_OR_NEWER
 		if(hasUv3) msh.SetUVs(2, uv3);
 		if(hasUv4) msh.SetUVs(3, uv4);
 #endif
@@ -1036,12 +1073,12 @@ public class pb_Object : MonoBehaviour
 	{
 		// pb_Log.Debug(
 		// 	string.Format("dontDestroyMeshOnDelete: " + dontDestroyMeshOnDelete +
-		// 	"\nm_ApplicationIsQuitting: " + m_ApplicationIsQuitting + 
+		// 	"\nm_ApplicationIsQuitting: " + m_ApplicationIsQuitting +
 		// 	"\nApplication.isEditor: " + Application.isEditor +
 		// 	"\nApplication.isPlaying: " + Application.isPlaying +
 		// 	"\nTime.frameCount: " + Time.frameCount));
 
-		// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to 
+		// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
 		// differentiate between OnDestroy invoked from user delete & editor scene loading.
 		if(!dontDestroyMeshOnDelete &&
 			Application.isEditor &&

@@ -29,44 +29,10 @@ namespace ProBuilder2.MeshOperations
 		}
 
 		/**
-		 *	Deletes the vertices from the passed index array.  Handles rebuilding the sharedIndices array.  Does not retriangulate face.
+		 * Deletes the vertices from the passed index array.  Handles rebuilding the sharedIndices array.  Does not retriangulate face.
 		 */
 		public static void DeleteVerticesWithIndices(this pb_Object pb, IEnumerable<int> distInd)
 		{
-			// pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
-			// vertices = vertices.RemoveAt(distInd);
-			// pb_Face[] nFaces = pb.faces;
-
-			// // shift all other face indices down to account for moved vertex positions
-			// for(int i = 0; i < nFaces.Length; i++)
-			// {
-			// 	int[] tris = nFaces[i].indices;
-
-			// 	for(int n = 0; n < tris.Length; n++)
-			// 	{
-			// 		int sub = 0;
-			// 		foreach(int d in distInd)
-			// 		{
-			// 			if(tris[n] > d)
-			// 				sub++;
-			// 		}
-			// 		tris[n] -= sub;
-			// 	}
-
-			// 	nFaces[i].SetIndices(tris);
-			// }
-
-			// // shift all other face indices in the shared index array down to account for moved vertex positions
-			// pb_IntArray[] si = pb.sharedIndices;
-			// pb_IntArray[] su = pb.sharedIndicesUV;
-			// pb_IntArrayUtility.RemoveValuesAndShift(ref si, distInd);
-			// pb_IntArrayUtility.RemoveValuesAndShift(ref su, distInd);
-			// pb.SetSharedIndices(si);
-			// pb.SetSharedIndicesUV(su);
-			// pb.SetVertices(vertices);
-			// pb.SetFaces(nFaces);
-			// pb.ToMesh();
-
 			if(distInd == null || distInd.Count() < 1)
 				return;
 
@@ -101,7 +67,6 @@ namespace ProBuilder2.MeshOperations
 			pb.SetVertices(vertices);
 			pb.SetSharedIndices(common);
 			pb.SetSharedIndicesUV(commonUV);
-			pb.ToMesh();
 		}
 	}
 }

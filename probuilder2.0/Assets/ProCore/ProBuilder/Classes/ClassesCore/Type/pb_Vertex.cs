@@ -328,7 +328,7 @@ namespace ProBuilder2.Common
 
 		/**
 		 *	Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
-		 *	or not real data populates the values (eg, hasPosition, hasNormal, etc).  If you are using
+		 *	or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
 		 *	this function to rebuild a mesh use SetMesh instead, as that method handles setting null
 		 *	arrays where appropriate for you.
 		 */
@@ -342,27 +342,50 @@ namespace ProBuilder2.Common
 										out List<Vector4> uv3,
 										out List<Vector4> uv4)
 		{
+			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, AttributeType.All);
+		}
+
+		public static void GetArrays(	IList<pb_Vertex> vertices,
+										out Vector3[] position,
+										out Color[] color,
+										out Vector2[] uv0,
+										out Vector3[] normal,
+										out Vector4[] tangent,
+										out Vector2[] uv2,
+										out List<Vector4> uv3,
+										out List<Vector4> uv4,
+										AttributeType attributes)
+		{
 			int vc = vertices.Count;
 
-			position 	= new Vector3[vc];
-			color 		= new Color[vc];
-			uv0 		= new Vector2[vc];
-			normal 		= new Vector3[vc];
-			tangent 	= new Vector4[vc];
-			uv2 		= new Vector2[vc];
-			uv3 		= new List<Vector4>(vc);
-			uv4 		= new List<Vector4>(vc);
+			bool hasPosition = ((attributes & AttributeType.Position) == AttributeType.Position);
+			bool hasColor = ((attributes & AttributeType.Color) == AttributeType.Color);
+			bool hasUv0 = ((attributes & AttributeType.UV0) == AttributeType.UV0);
+			bool hasNormal = ((attributes & AttributeType.Normal) == AttributeType.Normal);
+			bool hasTangent = ((attributes & AttributeType.Tangent) == AttributeType.Tangent);
+			bool hasUv2 = ((attributes & AttributeType.UV1) == AttributeType.UV1);
+			bool hasUv3 = ((attributes & AttributeType.UV2) == AttributeType.UV2);
+			bool hasUv4 = ((attributes & AttributeType.UV3) == AttributeType.UV3);
+
+			position 	= hasPosition ? new Vector3[vc] : null;
+			color 		= hasColor ? new Color[vc] : null;
+			uv0 		= hasUv0 ? new Vector2[vc] : null;
+			normal 		= hasNormal ? new Vector3[vc] : null;
+			tangent 	= hasTangent ? new Vector4[vc] : null;
+			uv2 		= hasUv2 ? new Vector2[vc] : null;
+			uv3 		= hasUv3 ? new List<Vector4>(vc) : null;
+			uv4 		= hasUv4 ? new List<Vector4>(vc) : null;
 
 			for(int i = 0; i < vc; i++)
 			{
-				position[i] = vertices[i].position;
-				color[i] 	= vertices[i].color;
-				uv0[i] 		= vertices[i].uv0;
-				normal[i] 	= vertices[i].normal;
-				tangent[i] 	= vertices[i].tangent;
-				uv2[i] 		= vertices[i].uv2;
-				uv3.Add(vertices[i].uv3);
-				uv4.Add(vertices[i].uv4);
+				if(hasPosition) 	position[i] = vertices[i].position;
+				if(hasColor) 		color[i] 	= vertices[i].color;
+				if(hasUv0) 			uv0[i] 		= vertices[i].uv0;
+				if(hasNormal) 		normal[i] 	= vertices[i].normal;
+				if(hasTangent) 		tangent[i] 	= vertices[i].tangent;
+				if(hasUv2) 			uv2[i] 		= vertices[i].uv2;
+				if(hasUv3) 			uv3.Add(vertices[i].uv3);
+				if(hasUv4) 			uv4.Add(vertices[i].uv4);
 			}
 		}
 

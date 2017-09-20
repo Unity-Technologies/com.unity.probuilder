@@ -62,6 +62,23 @@ namespace ProBuilder2.Common
 		    return new pb_WingedEdgeEnumerator(this);
 		}
 
+		/**
+		 * How many edges are in this sequence.
+		 */
+		public int Count()
+		{
+			pb_WingedEdge current = this;
+			int count = 0;
+
+			do
+			{
+				count++;
+				current = current.next;
+			} while(current != null && current != this);
+
+			return count;
+		}
+
 		public override string ToString()
 		{
 			return string.Format("Common: {0}\nLocal: {1}\nOpposite: {2}\nFace: {3}",
@@ -69,6 +86,84 @@ namespace ProBuilder2.Common
 				edge.local.ToString(),
 				opposite == null ? "null" : opposite.edge.ToString(),
 				face.ToString());
+		}
+
+		/**
+		 * Given two adjacent triangle wings create a single quad (int[4]).
+		 */
+		public static int[] MakeQuad(pb_WingedEdge left, pb_WingedEdge right)
+		{
+			// Both faces must be triangles in order to be considered a quad when combined
+			if(left.Count() != 3 || right.Count() != 3)
+				return null;
+
+			pb_EdgeLookup[] all = new pb_EdgeLookup[6]
+			{
+				left.edge,
+				left.next.edge,
+				left.next.next.edge,
+				right.edge,
+				right.next.edge,
+				right.next.next.edge
+			};
+
+			int[] dup = new int[6];
+			int matches = 0;
+
+			for(int i = 0; i < 3; i++)
+			{
+				for(int n = 3; n < 6; n++)
+				{
+					if(all[i] == all[n])
+					{
+						matches++;
+						dup[i] = 1;
+						dup[n] = 1;
+						break;
+					}
+				}
+			}
+
+			// Edges are either not adjacent, or share more than one edge
+			if(matches != 1)
+				return null;
+
+			int qi = 0;
+
+			pb_EdgeLookup[] edges = new pb_EdgeLookup[4];
+
+			for(int i = 0; i < 6; i++)
+				if(dup[i] < 1)
+					edges[qi++] = all[i];
+
+			int[] quad = new int[4] { edges[0].local.x, edges[0].local.y, -1, -1 };
+
+			int c1 = edges[0].common.y, c2 = -1;
+
+			if(edges[1].common.x == c1)
+			{
+				quad[2] = edges[1].local.y;
+				c2 = edges[1].common.y;
+			}
+			else if(edges[2].common.x == c1)
+			{
+				quad[2] = edges[2].local.y;
+				c2 = edges[2].common.y;
+			}
+			else if(edges[3].common.x == c1)
+			{
+				quad[2] = edges[3].local.y;
+				c2 = edges[3].common.y;
+			}
+
+			if(edges[1].common.x == c2)
+				quad[3] = edges[1].local.y;
+			else if(edges[2].common.x == c2)
+				quad[3] = edges[2].local.y;
+			else if(edges[3].common.x == c2)
+				quad[3] = edges[3].local.y;
+
+			return quad;
 		}
 
 		public pb_WingedEdge GetAdjacentEdgeWithCommonIndex(int common)

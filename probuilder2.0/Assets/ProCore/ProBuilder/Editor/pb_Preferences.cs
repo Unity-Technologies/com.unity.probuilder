@@ -53,7 +53,7 @@ public class pb_Preferences
 	static bool pbDragSelectWholeElement = false;
 	static bool pbEnableExperimental = false;
 
-	static bool showMissingLightmapUvWarning = true;
+	static bool showMissingLightmapUvWarning = false;
 
 	#if !UNITY_4_6 && !UNITY_4_7
 	static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
@@ -376,7 +376,7 @@ public class pb_Preferences
 		pbElementSelectIsHamFisted			= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 		pbDragSelectWholeElement			= pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		pbEnableExperimental				= pb_PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
-		showMissingLightmapUvWarning		= pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", true);
+		showMissingLightmapUvWarning		= pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", false);
 
 
 		pbDefaultFaceColor = pb_PreferencesInternal.GetColor( pb_Constant.pbDefaultFaceColor );

@@ -10,77 +10,9 @@ namespace ProBuilder2.Common
 	 */
 	public class pb_MeshUtility
 	{
-		public static string Print(Mesh m)
-		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", m.vertexCount, m.triangles.Length, m.subMeshCount));
-
-			sb.AppendLine(string.Format("     {0,-28}{7,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
-				"Positions",
-				"Colors",
-				"Tangents",
-				"UV0",
-				"UV2",
-				"UV3",
-				"UV4",
-				"Position Hash"));
-
-			Vector3[] positions = m.vertices;
-			Color[] colors 		= m.colors;
-			Vector4[] tangents 	= m.tangents;
-
-			List<Vector4> uv0 	= new List<Vector4>();
-			Vector2[] uv2 		= m.uv2;
-			List<Vector4> uv3 	= new List<Vector4>();
-			List<Vector4> uv4 	= new List<Vector4>();
-
-			#if !UNITY_4_7 && !UNITY_5_0
-			m.GetUVs(0, uv0);
-			m.GetUVs(2, uv3);
-			m.GetUVs(3, uv4);
-			#else
-			uv0 = m.uv.Cast<Vector4>().ToList();
-			#endif
-
-			if( positions != null && positions.Count() != m.vertexCount)
-				positions = null;
-			if( colors != null && colors.Count() != m.vertexCount)
-				colors = null;
-			if( tangents != null && tangents.Count() != m.vertexCount)
-				tangents = null;
-			if( uv0 != null && uv0.Count() != m.vertexCount)
-				uv0 = null;
-			if( uv2 != null && uv2.Count() != m.vertexCount)
-				uv2 = null;
-			if( uv3 != null && uv3.Count() != m.vertexCount)
-				uv3 = null;
-			if( uv4 != null && uv4.Count() != m.vertexCount)
-				uv4 = null;
-
-			for(int i = 0; i < m.vertexCount; i ++)
-			{
-				sb.AppendLine(string.Format("{7,-5}{0,-28}{8,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
-					positions == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
-					colors == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
-					tangents == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
-					uv0 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
-					uv2 == null 		? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
-					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
-					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
-					i,
-					pb_Vector.GetHashCode(positions[i])));
-			}
-
-			for(int i = 0; i < m.triangles.Length; i+=3)
-				sb.AppendLine(string.Format("{0}, {1}, {2}", m.triangles[i], m.triangles[i+1], m.triangles[i+2]));
-
-			return sb.ToString();
-		}
-
 		/**
-		 *	Set a mesh to use individual triangle topology.  Returns a pb_Vertex array
-		 *	of the per-triangle vertices.
+		 * Set a mesh to use individual triangle topology.  Returns a pb_Vertex array
+		 * of the per-triangle vertices.
 		 */
 		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
 		{
@@ -113,7 +45,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Collapse vertices where possible and apply to mesh m.
+		 * Collapse vertices where possible and apply to mesh m.
 		 */
 		public static void CollapseSharedVertices(Mesh m, pb_Vertex[] vertices = null)
 		{
@@ -240,9 +172,9 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	\brief Performs a deep copy of a mesh and returns a new mesh object.
-		 *	@param _mesh The mesh to copy.
-		 *	\returns Copied mesh object.
+		 * \brief Performs a deep copy of a mesh and returns a new mesh object.
+		 * @param _mesh The mesh to copy.
+		 * \returns Copied mesh object.
 		 */
 		public static Mesh DeepCopy(Mesh mesh)
 		{
@@ -252,7 +184,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Copy source mesh values to destination mesh.
+		 * Copy source mesh values to destination mesh.
 		 */
 		public static void CopyTo(Mesh source, Mesh destination)
 		{
@@ -293,7 +225,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Calculate mesh normals.
+		 * Calculate mesh normals.
 		 */
 		public static Vector3[] GenerateNormals(pb_Object pb)
 		{
@@ -343,25 +275,31 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Apply smoothing groups to a set of per-face normals.
+		 * Apply smoothing groups to a set of per-face normals.
 		 */
 		public static void SmoothNormals(pb_Object pb, ref Vector3[] normals)
 		{
 			// average the soft edge faces
 			int vertexCount = pb.vertexCount;
-
-			Vector3[] averages = new Vector3[pb_Face.MAX_SMOOTH_GROUPS];
-			float[] counts = new float[pb_Face.MAX_SMOOTH_GROUPS];
 			int[] smoothGroup = new int[vertexCount];
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			pb_Face[] faces = pb.faces;
+			int smoothGroupMax = 24;
 
 			// Create a lookup of each triangles smoothing group.
 			foreach(pb_Face face in faces)
 			{
 				foreach(int tri in face.distinctIndices)
+				{
 					smoothGroup[tri] = face.smoothingGroup;
+
+					if(face.smoothingGroup >= smoothGroupMax)
+						smoothGroupMax = face.smoothingGroup + 1;
+				}
 			}
+
+			Vector3[] averages 	= new Vector3[smoothGroupMax];
+			float[] counts 		= new float[smoothGroupMax];
 
 			/**
 			 * For each sharedIndices group (individual vertex), find vertices that are in the same smoothing
@@ -369,7 +307,7 @@ namespace ProBuilder2.Common
 			 */
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
-				for(int n = 0; n < pb_Face.MAX_SMOOTH_GROUPS; n++)
+				for(int n = 0; n < smoothGroupMax; n++)
 				{
 					averages[n].x = 0f;
 					averages[n].y = 0f;
@@ -380,8 +318,9 @@ namespace ProBuilder2.Common
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
+					int group = smoothGroup[index];
 
-					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
 					averages[smoothGroup[index]].x += normals[index].x;
@@ -393,8 +332,9 @@ namespace ProBuilder2.Common
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
 				{
 					int index = sharedIndices[i].array[n];
+					int group = smoothGroup[index];
 
-					if(smoothGroup[index] < 1 || smoothGroup[index] > pb_Face.MAX_SMOOTH_GROUPS)
+					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
 					normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
@@ -405,9 +345,9 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Get a mesh attribute from either the MeshFilter.sharedMesh or the
-		 *	MeshRenderer.additionalVertexStreams mesh. If returned array does not 
-		 *	match the vertex count NULL is returned.
+		 * Get a mesh attribute from either the MeshFilter.sharedMesh or the
+		 * MeshRenderer.additionalVertexStreams mesh. If returned array does not
+		 * match the vertex count NULL is returned.
 		 */
 		public static T GetMeshAttribute<T>(GameObject go, System.Func<Mesh, T> attributeGetter) where T : IList
 		{
@@ -435,6 +375,77 @@ namespace ProBuilder2.Common
 			res = attributeGetter(mesh);
 
 			return res != null && res.Count == vertexCount ? res : default(T);
+		}
+
+		/**
+		 * Return a detailed account of the mesh.
+		 */
+		public static string Print(Mesh m)
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", m.vertexCount, m.triangles.Length, m.subMeshCount));
+
+			sb.AppendLine(string.Format("     {0,-28}{7,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+				"Positions",
+				"Colors",
+				"Tangents",
+				"UV0",
+				"UV2",
+				"UV3",
+				"UV4",
+				"Position Hash"));
+
+			Vector3[] positions = m.vertices;
+			Color[] colors 		= m.colors;
+			Vector4[] tangents 	= m.tangents;
+
+			List<Vector4> uv0 	= new List<Vector4>();
+			Vector2[] uv2 		= m.uv2;
+			List<Vector4> uv3 	= new List<Vector4>();
+			List<Vector4> uv4 	= new List<Vector4>();
+
+			#if !UNITY_4_7 && !UNITY_5_0
+			m.GetUVs(0, uv0);
+			m.GetUVs(2, uv3);
+			m.GetUVs(3, uv4);
+			#else
+			uv0 = m.uv.Cast<Vector4>().ToList();
+			#endif
+
+			if( positions != null && positions.Count() != m.vertexCount)
+				positions = null;
+			if( colors != null && colors.Count() != m.vertexCount)
+				colors = null;
+			if( tangents != null && tangents.Count() != m.vertexCount)
+				tangents = null;
+			if( uv0 != null && uv0.Count() != m.vertexCount)
+				uv0 = null;
+			if( uv2 != null && uv2.Count() != m.vertexCount)
+				uv2 = null;
+			if( uv3 != null && uv3.Count() != m.vertexCount)
+				uv3 = null;
+			if( uv4 != null && uv4.Count() != m.vertexCount)
+				uv4 = null;
+
+			for(int i = 0; i < m.vertexCount; i ++)
+			{
+				sb.AppendLine(string.Format("{7,-5}{0,-28}{8,-16}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}",
+					positions == null 	? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
+					colors == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
+					tangents == null 	? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
+					uv0 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
+					uv2 == null 		? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
+					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
+					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
+					i,
+					pb_Vector.GetHashCode(positions[i])));
+			}
+
+			for(int i = 0; i < m.triangles.Length; i+=3)
+				sb.AppendLine(string.Format("{0}, {1}, {2}", m.triangles[i], m.triangles[i+1], m.triangles[i+2]));
+
+			return sb.ToString();
 		}
 	}
 }

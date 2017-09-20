@@ -164,16 +164,21 @@ namespace ProBuilder2.Common
 		None
 	}
 
-	public enum AttibuteType
+	/**
+	 * Mesh attributes bit-mask.
+	 */
+	[System.Flags]
+	public enum AttributeType : ushort
 	{
-		Position,
-		UV0,
-		UV1,
-		UV2,
-		UV3,
-		Color,
-		Normal,
-		Tangent
+		Position 	= 0x1,
+		UV0			= 0x2,
+		UV1			= 0x4,
+		UV2			= 0x8,
+		UV3			= 0x10,
+		Color		= 0x20,
+		Normal		= 0x40,
+		Tangent		= 0x80,
+		All 		= 0xFF
 	};
 
 	public enum IndexFormat

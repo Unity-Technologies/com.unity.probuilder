@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Linq;
+using System;
 using System.Reflection;
 using System.IO;
 using ProBuilder2.Common;
@@ -426,7 +427,7 @@ namespace ProBuilder2.EditorCommon
 					int meshNo = -1;
 					int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
 
-					Object dup = EditorUtility.InstanceIDToObject(meshNo);
+					UnityEngine.Object dup = EditorUtility.InstanceIDToObject(meshNo);
 					GameObject go = dup as GameObject;
 
 					if(go == null)
@@ -599,6 +600,60 @@ namespace ProBuilder2.EditorCommon
 			#else
 			Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 			#endif
+		}
+
+		private static bool IsObsolete(BuildTargetGroup group)
+		{
+			var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
+			return attrs != null && attrs.Length > 0;
+		}
+
+		/**
+		 * Add a define to the scripting define symbols for every build target.
+		 */
+		public static void AddScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
+					continue;
+
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( !defineSymbols.Contains(define) )
+				{
+					if(defineSymbols.Length < 1)
+						defineSymbols = define;
+					else if(defineSymbols.EndsWith(";"))
+						defineSymbols = string.Format("{0}{1}", defineSymbols, define);
+					else
+						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
+		}
+
+		/**
+		 * Remove a define from the scripting define symbols for every build target.
+		 */
+		public static void RemoveScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
+					continue;
+
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( defineSymbols.Contains(define) )
+				{
+					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
+					defineSymbols = defineSymbols.Replace(define, "");
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
 		}
 	}
 }

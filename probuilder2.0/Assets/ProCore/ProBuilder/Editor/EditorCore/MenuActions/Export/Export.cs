@@ -59,7 +59,9 @@ namespace ProBuilder2.Actions
 			Asset
 		}
 
-		private ExportFormat m_ExportFormat = ExportFormat.Obj;
+		const ExportFormat DefaultFormat = ExportFormat.Obj;
+
+		private ExportFormat m_ExportFormat = DefaultFormat;
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
@@ -69,7 +71,7 @@ namespace ProBuilder2.Actions
 
 		public Export()
 		{
-			m_ExportFormat = (ExportFormat) pb_PreferencesInternal.GetInt("pbDefaultExportFormat", (int) ExportFormat.Obj);
+			m_ExportFormat = (ExportFormat) pb_PreferencesInternal.GetInt("pbDefaultExportFormat", (int) DefaultFormat);
 
 			// Recursively select meshes in selection (ie, use GetComponentsInChildren).
 			m_ExportRecursive = pb_PreferencesInternal.GetBool("pbExportRecursive", false);
@@ -116,7 +118,8 @@ namespace ProBuilder2.Actions
 
 			m_ExportRecursive = EditorGUILayout.Toggle(gc_ExportRecursive, m_ExportRecursive);
 
-			if(m_ExportFormat != ExportFormat.Asset && m_ExportFormat != ExportFormat.Stl)
+			if( m_ExportFormat != ExportFormat.Asset &&
+				m_ExportFormat != ExportFormat.Stl )
 			{
 				EditorGUI.BeginChangeCheck();
 				m_ExportAsGroup = EditorGUILayout.Toggle(gc_ExportAsGroup, m_ExportAsGroup);
@@ -254,7 +257,13 @@ namespace ProBuilder2.Actions
 			else
 			{
 				if(res.Contains(Application.dataPath))
+				{
 					AssetDatabase.Refresh();
+					string projectPath = string.Format("Assets{0}", res.Replace(Application.dataPath, ""));
+					Object o = AssetDatabase.LoadAssetAtPath<GameObject>(projectPath);
+					if(o != null)
+						EditorGUIUtility.PingObject(o);
+				}
 
 				return new pb_ActionResult(Status.Success, "Export " + m_ExportFormat);
 			}

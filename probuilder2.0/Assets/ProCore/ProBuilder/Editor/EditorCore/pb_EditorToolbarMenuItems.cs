@@ -15,6 +15,7 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_EditorToolbarMenuItems : Editor
 	{
+
 #if PROTOTYPE
 		const string PB_MENU_PREFIX = "Tools/ProBuilder Basic/";
 #else
@@ -1005,6 +1006,26 @@ namespace ProBuilder2.EditorCommon
 		static void MenuDoSelectMaterial()
 		{
 			SelectMaterial instance = pb_EditorToolbarLoader.GetInstance<SelectMaterial>();
+			if(instance != null)
+				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Smoothing Group ", true)]
+		static bool MenuVerifySelectSmoothingGroup()
+		{
+			SelectSmoothingGroup instance = pb_EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
+#if PROTOTYPE
+			return instance != null && !instance.isProOnly && instance.IsEnabled();
+#else
+			return instance != null && instance.IsEnabled();
+#endif
+
+		}
+
+		[MenuItem(PB_MENU_PREFIX + "Selection/Select Smoothing Group ", false, pb_Constant.MENU_SELECTION + 0)]
+		static void MenuDoSelectSmoothingGroup()
+		{
+			SelectSmoothingGroup instance = pb_EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 			if(instance != null)
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}

@@ -44,7 +44,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_Face face in faces)
 			{
-				face.smoothingGroup = -1;
+				face.smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
 				face.textureGroup = -1;
 
 				Vector3 delta = pb_Math.Normal(pb, face) * distance;
@@ -156,7 +156,7 @@ namespace ProBuilder2.MeshOperations
 				{
 					pb_EdgeLookup edge = edgeAndFace.Key;
 					pb_Face face = edgeAndFace.Value;
-					
+
 					int vc = vertices.Count;
 					int x = edge.local.x, y = edge.local.y;
 
@@ -339,7 +339,7 @@ namespace ProBuilder2.MeshOperations
 					{
 						perimeter.Add(e, face);
 					}
-				}			
+				}
 			}
 
 			return perimeter;

@@ -77,6 +77,7 @@ namespace ProBuilder2.EditorCommon
 				new Actions.SelectHole(),
 				new Actions.SelectVertexColor(),
 				new Actions.SelectMaterial(),
+				new Actions.SelectSmoothingGroup(),
 
 				// object
 				new Actions.MergeObjects(),
@@ -90,6 +91,12 @@ namespace ProBuilder2.EditorCommon
 				new Actions.GenerateUV2(),
 				new Actions.ProBuilderize(),
 				new Actions.Export(),
+				// new Actions.ExportFbx(),
+				new Actions.ExportObj(),
+				new Actions.ExportAsset(),
+				new Actions.ExportPly(),
+				new Actions.ExportStlAscii(),
+				new Actions.ExportStlBinary(),
 
 				// All
 				new Actions.SetPivotToSelection(),

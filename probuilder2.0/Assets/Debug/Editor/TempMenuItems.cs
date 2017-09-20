@@ -20,124 +20,80 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		string contents;
-		if( pb_Ply.Export(pb_Selection.Top(), out contents) )
-			pb_FileUtil.WriteFile("Assets/dump/probuilder.ply", contents);
+		// O = acos(dot(a, b))
+		// cos(o)
 
-		AssetDatabase.Refresh();
+		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
+		pbUndo.RecordObjects(selection, "sdlafk");
+		foreach(pb_Object pb in selection)
+		{
+			pb.ToMesh();
+			pb_Smoothing.ApplySmoothingGroups(pb, pb.SelectedFaces, 5f);
+			pb.Refresh();
+			pb.Optimize();
+		}
 
-		// foreach(pb_Object pb in pb_Selection.Top())
+		// System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+		// foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
 		// {
-		// 	pb.ToMesh();
-		// 	pb.RefreshUV(pb.SelectedFaces);
-		// 	pb_Log.PushLogLevel(pb_LogLevel.None);
-		// 	pb.Refresh();
-		// 	pb_Log.PopLogLevel();
+		// 	List<pb_WingedEdge> faces = pb_WingedEdge.GetWingedEdges(pb, pb.SelectedFaces, true);
+		// 	m_Vertices = pb_Vertex.GetVertices(pb);
+
+		// 	foreach(pb_WingedEdge edge in faces[0])
+		// 	{
+		// 		if(edge.opposite != null)
+		// 		{
+		// 			sb.AppendLine("quad score: " + GetQuadScore(edge, edge.opposite));
+		// 		}
+		// 	}
 		// }
 
-		// EditorWindow.GetWindow<TempMenuItems>(false, "KD Tree", true).Show();
+		// pb_Log.Info(sb.ToString());
 	}
 
-	static float rand { get { return UnityEngine.Random.Range(-m_PointRange, m_PointRange); } }
+	private static pb_Vertex[] m_Vertices = null;
 
-	KdTree<float, int> tree;
-	float[][] points;
-	static int m_PointRange = 256;
-	Texture2D dot;
-	int m_SampleCount = 24700;
-	float neighborRadius = 32f;
-	Vector2 center = Vector2.zero;
-
-	void OnEnable()
+	private static float GetQuadScore(pb_WingedEdge left, pb_WingedEdge right, float normalThreshold = .9f)
 	{
-		dot = EditorGUIUtility.whiteTexture;
-		Rebuild();
-		center = position.size * .5f;
+		int[] quad = pb_WingedEdge.MakeQuad(left, right);
+
+		if(quad == null)
+			return 0f;
+
+		// first check normals
+		Vector3 leftNormal = pb_Math.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
+		Vector3 rightNormal = pb_Math.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
+
+		float score = Vector3.Dot(leftNormal, rightNormal);
+
+		if(score < normalThreshold)
+			return 0f;
+
+		// next is right-angle-ness check
+		Vector3 a = (m_Vertices[quad[1]].position - m_Vertices[quad[0]].position);
+		Vector3 b = (m_Vertices[quad[2]].position - m_Vertices[quad[1]].position);
+		Vector3 c = (m_Vertices[quad[3]].position - m_Vertices[quad[2]].position);
+		Vector3 d = (m_Vertices[quad[0]].position - m_Vertices[quad[3]].position);
+
+		a.Normalize();
+		b.Normalize();
+		c.Normalize();
+		d.Normalize();
+
+		float da = Mathf.Abs(Vector3.Dot(a, b));
+		float db = Mathf.Abs(Vector3.Dot(b, c));
+		float dc = Mathf.Abs(Vector3.Dot(c, d));
+		float dd = Mathf.Abs(Vector3.Dot(d, a));
+
+		score += 1f - ((da + db + dc + dd) * .25f);
+
+		// and how close to parallel the opposite sides area
+		score += Mathf.Abs(Vector3.Dot(a, c)) * .5f;
+		score += Mathf.Abs(Vector3.Dot(b, d)) * .5f;
+
+		return score * .33f;
 	}
 
-	void Rebuild()
-	{
-		tree = new KdTree<float, int>(2, new FloatMath(), AddDuplicateBehavior.Update);
-		points = new float[m_SampleCount][];
-
-		for(int i = 0; i < m_SampleCount; i++)
-		{
-			points[i] = new float[2] { rand, rand };
-			tree.Add(points[i], i);
-		}
-	}
-
-	void OnGUI()
-	{
-		if(GUILayout.Button("Rebuild"))
-			Rebuild();
-
-		m_SampleCount = EditorGUILayout.IntField("Sample Count", m_SampleCount);
-		m_PointRange = EditorGUILayout.IntField("Point Range", m_PointRange);
-		neighborRadius = EditorGUILayout.Slider("Nearest Neighbor Radius", neighborRadius, .01f, 256f);
-
-		if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag)
-		{
-			center = Event.current.mousePosition;
-			Repaint();
-		}
-
-		Rect r = new Rect(0,0,3,3);
-		Vector2 extents = position.size * .5f;
-		extents.y += GUILayoutUtility.GetLastRect().y - 16;
-
-		Vector2 size = new Vector2(m_PointRange, m_PointRange);
-		Vector2 topLeft = extents - size;
-		Vector2 topRight = new Vector2(extents.x + size.x, extents.y - size.y);
-		Vector2 bottomLeft = new Vector2(extents.x - size.x, extents.y + size.y);
-		Vector2 bottomRight = new Vector2(extents.x + size.x, extents.y + size.y);
-
-		Vector2 topCenter = new Vector2(extents.x, extents.y - size.y);
-		Vector2 bottomCenter = new Vector2(extents.x, extents.y + size.y);
-		Vector2 leftCenter = new Vector2(extents.x - size.x, extents.y);
-		Vector2 rightCenter = new Vector2(extents.x + size.x, extents.y);
-
-		Handles.color = new Color(.8f, .8f, .8f, 1f);
-		Handles.DrawLine(topLeft, topRight);
-		Handles.DrawLine(topLeft, bottomLeft);
-		Handles.DrawLine(bottomLeft, bottomRight);
-		Handles.DrawLine(bottomRight, topRight);
-		Handles.color = new Color(.3f, .3f, .3f, 1f);
-		Handles.DrawLine(topCenter, bottomCenter);
-		Handles.DrawLine(leftCenter, rightCenter);
-		Handles.color = Color.gray;
-
-		for(int i = 0; i < points.Length; i++)
-		{
-			r.x = points[i][0] + extents.x;
-			r.y = points[i][1] + extents.y;
-
-			GUI.color = Color.gray;
-			GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
-			GUI.color = Color.white;
-		}
-
-		KdTreeNode<float, int>[] neighbors = tree.RadialSearch(new float[2] { center.x - extents.x, center.y - extents.y }, neighborRadius, m_SampleCount);
-
-		GUILayout.Label("neighbors: " + neighbors.Length);
-
-		for(int i = 0; i < neighbors.Length; i++)
-		{
-			r.x = neighbors[i].Point[0] + extents.x;
-			r.y = neighbors[i].Point[1] + extents.y;
-
-			GUI.color = Color.green;
-			GUI.DrawTexture(r, dot, ScaleMode.ScaleToFit);
-			GUI.color = Color.white;
-		}
-
-		Handles.color = new Color(0f, .8f, 1f, 1f);
-		const float targetSize = 16f;
-		Handles.DrawLine(center - Vector2.right * targetSize, center + Vector2.right * targetSize);
-		Handles.DrawLine(center - Vector2.up * targetSize, center + Vector2.up * targetSize);
-		Handles.color = Color.gray;
-		// just a wrapper around Handles.CircleCap that works across multiple Unity versions
-		pb_Handles.CircleCap(-1, center, Quaternion.identity, neighborRadius);
-		Handles.color = Color.white;
-	}
 }
+
