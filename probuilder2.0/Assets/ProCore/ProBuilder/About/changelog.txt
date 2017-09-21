@@ -2,13 +2,19 @@
 
 ## Features
 
-- Support exporting quads to FBX format.
-- Improved quad detection in ProBuilderize function.
+- Support exporting quads to FBX format (when FbxExporters is available in project).
+- Significantly improved quad detection in ProBuilderize function.
 - ProBuilderize now imports smoothing groups.
+- New `Select by Smoothing Group` action.
+
+## Bug Fixes
+
+- Fix possible null reference when picking ProBuilder objects.
 
 ## Changes
 
-- On FBX export ProBuilder scripts are automically removed.
+- Don't show `pb_Lightmapping` warnings by default.
+- Smoothing groups may now extend beyond the 42 provided in the editor. Any smoothing group between 1 and 24, or greater than 42 is treated as a smooth face (currently only accessible in code).
 
 # ProBuilder 2.9.5f3
 
