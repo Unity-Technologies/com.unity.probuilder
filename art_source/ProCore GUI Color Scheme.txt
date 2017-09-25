@@ -25,6 +25,14 @@ Green (Y)					| 39b54a
 Blue (Z)					| 00aaef
 Red (X)						| d93238
 
+**Toolbar Accents**
+Item 						| Color/Value
+--- 						| ---
+Tool Panels					| aa6633
+Object Tools				| 669922
+Selection Tools				| 247ea3
+Geo Tools					| bb2233
+
 **Buttons (Light Skin)**
 Item 						| Color Value
 --- 						| ---
