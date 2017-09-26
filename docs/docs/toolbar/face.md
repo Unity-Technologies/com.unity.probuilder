@@ -65,7 +65,9 @@ You can also extrude by holding `SHIFT` while moving, rotating, or scaling the f
 
 Setting | Description
 --- | ---
-**As Group** | If **On**, adjacent faces in the selection will be extruded together, along an averaged normal direction. Otherwise, all faces will be extruded individually, along their own normal direction.
+![FaceNormalsIcon](../images/icons/ExtrudeFace_FaceNormals.png) **Face Normals** | Extrudes each selected Face according to it's own surface direction, and adjacent faces remain connected.
+![FaceNormalsIcon](../images/icons/ExtrudeFace_VertexNormals.png) **Vertex Normals** | Extrudes selected Faces by Vertex normals. Adjacent Faces remain connected.
+![FaceNormalsIcon](../images/icons/ExtrudeFace_Individual.png) **Individual Faces** | Extrudes each selected Face according to it's own surface direction, however adjacent faces do **not** remain connected.
 **Distance** | Distance to extrude the selected faces(s).
 
 ---
