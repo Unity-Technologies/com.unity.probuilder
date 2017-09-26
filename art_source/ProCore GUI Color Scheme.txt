@@ -38,10 +38,9 @@ Item 						| Color Value
 --- 						| ---
 In-Scene Border				| 636363
 Text 						| 373737
-Normal 						| DEDEDE
-Active 						| E5E5E5
-OnNormal 					| FFFFFF
-OnActive 					| E5E5E5
+Normal 						| F2F2F2
+Hover						| FFFFFF
+Pressed 					| E1E1E1
 Disabled					| 0% Opacity, Lighten Icon Image 50%
 
 **Buttons (Dark Skin)**
@@ -50,7 +49,6 @@ Item 						| Color Value
 In-Scene Border				| 373737
 Text 						| f6f6f6
 Normal 						| 565656
-Active 						| 696969
-OnNormal					| 797979
-OnActive 					| 696969
+Hover						| 6D6D6D
+Pressed 					| 4F4F4FFF
 Disabled					| 0% Opacity, Darken Icon Image 50%
