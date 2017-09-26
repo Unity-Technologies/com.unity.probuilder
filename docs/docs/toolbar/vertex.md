@@ -2,12 +2,6 @@
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_VertexActions.png">
-</div>
-
----
-
 <a id="collapse"></a>
 ## ![Collapse Vertices Icon](../images/icons/Vert_Collapse.png "Collapse Vertices Icon") Collapse Vertices
 

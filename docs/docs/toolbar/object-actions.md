@@ -2,12 +2,6 @@
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_ObjectActions.png">
-</div>
-
----
-
 ## ![Merge Objects Icon](../images/icons/Object_Merge.png "Merge Objects Icon") Merge Objects
 
 <div class="video-link">

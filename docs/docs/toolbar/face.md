@@ -2,12 +2,6 @@
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_FaceActions.png">
-</div>
-
----
-
 ## ![Delete Face Icon](../images/icons/Face_Delete.png "Delete Faces Icon") Delete Face
 
 <div class="video-link">

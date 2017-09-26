@@ -2,12 +2,6 @@
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_EdgeActions.png">
-</div>
-
----
-
 ## ![Bridge Edges Icon](../images/icons/Edge_Bridge.png "Bridge Edges Icon") Bridge Edges
 
 <div class="video-link">

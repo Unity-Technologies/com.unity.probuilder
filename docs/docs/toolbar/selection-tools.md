@@ -2,12 +2,6 @@
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_SelectionTools.png">
-</div>
-
----
-
 ##![Select Hidden ON](../images/icons/Selection_SelectHidden-ON.png) Select Hidden
 
 <div class="video-link">

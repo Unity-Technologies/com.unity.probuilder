@@ -8,12 +8,6 @@ These **Tool Panels** contain important tools for [Shape Creation](#shape-tool),
 
 ---
 
-<div style="text-align:center">
-<img src="../../images/Toolbar_ToolPanels.png">
-</div>
-
----
-
 <a id="shape-tool"></a>
 ##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
