@@ -40,7 +40,7 @@ namespace ProBuilder2.EditorCommon
 		private static readonly GUIContent ProOnlyContent = new GUIContent("A", "");
 		#endif
 
-		public pb_MenuAction()
+		protected pb_MenuAction()
 		{
 			isIconMode = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 		}
@@ -96,60 +96,32 @@ namespace ProBuilder2.EditorCommon
 		#endif
 		public static Texture2D proOnlyIcon				{ get { return pb_MenuActionStyles.proOnlyIcon; } }
 
-		private Texture2D _desaturatedIcon = null;
-		public Texture2D desaturatedIcon
+		private Texture2D m_DesaturatedIcon = null;
+
+		/**
+		 * By default this function will look for an image named `${icon}_disabled`. If your disabled icon is somewhere
+		 * else override this function.
+		 *
+		 * Note that unlike `pb_MenuAction.icon` this function caches the result.
+		 */
+		public virtual Texture2D desaturatedIcon
 		{
 			get
 			{
-				if(_desaturatedIcon == null)
+				if(m_DesaturatedIcon == null)
 				{
 					if(icon == null)
 						return null;
 
-					_desaturatedIcon = pb_IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
+					m_DesaturatedIcon = pb_IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
 
-					#if GENERATE_DESATURATED_ICONS
-					if(!_desaturatedIcon)
-					{
-						string path = AssetDatabase.GetAssetPath(icon);
-						TextureImporter imp = (TextureImporter) AssetImporter.GetAtPath( path );
-
-						if(!imp)
-						{
-							Debug.Log("Couldn't find importer : " + icon);
-							return null;
-						}
-
-						imp.isReadable = true;
-						imp.SaveAndReimport();
-
-						Color32[] px = icon.GetPixels32();
-
-						imp.isReadable = false;
-						imp.SaveAndReimport();
-
-						int gray = 0;
-
-						for(int i = 0; i < px.Length; i++)
-						{
-							gray = (System.Math.Min(px[i].r, System.Math.Min(px[i].g, px[i].b)) + System.Math.Max(px[i].r, System.Math.Max(px[i].g, px[i].b))) / 2;
-							px[i].r = (byte) gray;
-							px[i].g = (byte) gray;
-							px[i].b = (byte) gray;
-						}
-
-						_desaturatedIcon = new Texture2D(icon.width, icon.height);
-						_desaturatedIcon.hideFlags = HideFlags.HideAndDontSave;
-						_desaturatedIcon.SetPixels32(px);
-						_desaturatedIcon.Apply();
-
-						byte[] bytes = _desaturatedIcon.EncodeToPNG();
-						System.IO.File.WriteAllBytes(path.Replace(".png", "_disabled.png"), bytes);
-					}
-					#endif
+#if GENERATE_DESATURATED_ICONS
+					if(!m_DesaturatedIcon)
+						m_DesaturatedIcon = ProBuilder2.EditorCommon.DebugUtilities.pb_GenerateDesaturatedImage.CreateDesaturedImage(icon);
+#endif
 				}
 
-				return _desaturatedIcon;
+				return m_DesaturatedIcon;
 			}
 		}
 

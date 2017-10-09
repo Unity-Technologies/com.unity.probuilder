@@ -9,8 +9,22 @@ namespace ProBuilder2.Actions
 {
 	public class ExtrudeFaces : pb_MenuAction
 	{
+		private ExtrudeMethod m_ExtrudeMethod;
+
+		private static string GetExtrudeIconString(ExtrudeMethod m)
+		{
+			return m == ExtrudeMethod.VertexNormal ? "Toolbar/ExtrudeFace_VertexNormals"
+				: m == ExtrudeMethod.FaceNormal ? "Toolbar/ExtrudeFace_FaceNormals"
+				: "Toolbar/ExtrudeFace_Individual";
+		}
+
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Extrude"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod)); } }
+		public override Texture2D desaturatedIcon
+		{
+			get { return pb_IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(m_ExtrudeMethod))); }
+		}
+
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 		[SerializeField] Texture2D[] icons = null;
@@ -24,8 +38,9 @@ namespace ProBuilder2.Actions
 
 		public ExtrudeFaces()
 		{
-			icons = new Texture2D[3];
+			m_ExtrudeMethod = (ExtrudeMethod) pb_PreferencesInternal.GetInt(pb_Constant.pbExtrudeMethod);
 
+			icons = new Texture2D[3];
 			icons[(int)ExtrudeMethod.IndividualFaces] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual");
 			icons[(int)ExtrudeMethod.VertexNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals");
 			icons[(int)ExtrudeMethod.FaceNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals");
@@ -57,23 +72,22 @@ namespace ProBuilder2.Actions
 			EditorGUILayout.HelpBox("Extrude Amount determines how far a face will be moved along it's normal when extruding.  This value can be negative.\n\nYou may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.", MessageType.Info);
 
 			float extrudeAmount = pb_PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? pb_PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
-			ExtrudeMethod method = pb_PreferencesInternal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod);
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
-					GUILayout.Label(icons[(int) method]);
+					GUILayout.Label(icons[(int) m_ExtrudeMethod]);
 				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
 			EditorGUI.BeginChangeCheck();
 
-			method = (ExtrudeMethod) EditorGUILayout.EnumPopup("Extrude By", method);
+			m_ExtrudeMethod = (ExtrudeMethod) EditorGUILayout.EnumPopup("Extrude By", m_ExtrudeMethod);
 			extrudeAmount = EditorGUILayout.FloatField("Distance", extrudeAmount);
 
 			if(EditorGUI.EndChangeCheck())
 			{
 				pb_PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				pb_PreferencesInternal.SetInt(pb_Constant.pbExtrudeMethod, (int) method);
+				pb_PreferencesInternal.SetInt(pb_Constant.pbExtrudeMethod, (int) m_ExtrudeMethod);
 			}
 
 			GUILayout.FlexibleSpace();
