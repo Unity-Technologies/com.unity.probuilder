@@ -184,6 +184,7 @@ namespace ProBuilder2.Common
 		public const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
 		public const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
 		public const string pbDetachToNewObject				= "pbDetachToNewObject";
+		[System.Obsolete("Use pb_MeshImporter::quads")]
 		public const string pbPreserveFaces					= "pbPreserveFaces";
 		public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
 		public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?

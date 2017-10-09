@@ -13,15 +13,42 @@ namespace ProBuilder2.MeshOperations
 	{
 		public class Settings
 		{
+
 			// Try to quadrangilize triangle meshes.
 			public bool quads = true;
-			// Allow ngons when importing meshes.
-			// @todo
+
+			// Allow ngons when importing meshes. @todo
 			// public bool ngons = false;
+
 			// Generate smoothing groups based on mesh normals.
 			public bool smoothing = true;
+
 			// Degree of difference between face normals to allow when determining smoothing groups.
 			public float smoothingThreshold = 1f;
+
+			/**
+			 * Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
+			 */
+			public static Settings Default
+			{
+				get
+				{
+					return new Settings()
+					{
+						quads = true,
+						smoothing = true,
+						smoothingThreshold = 1f
+					};
+				}
+			}
+
+			public override string ToString()
+			{
+				return string.Format("quads: {0}\nsmoothing: {1}\nthreshold: {2}",
+					quads,
+					smoothing,
+					smoothingThreshold);
+			}
 		}
 
 		private static readonly Settings DEFAULT_IMPORT_SETTINGS = new Settings()
@@ -50,7 +77,7 @@ namespace ProBuilder2.MeshOperations
 			if(mf == null)
 				return false;
 
-			return Import(mf.sharedMesh, mr ? mr.sharedMaterials : null);
+			return Import(mf.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
 		}
 
 		/**

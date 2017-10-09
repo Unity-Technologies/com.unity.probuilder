@@ -13,10 +13,18 @@ namespace ProBuilder2.Actions
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_ProBuilderize"); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		private GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
+			"possible instead of triangles.");
+		private GUIContent m_SmoothingTooltip = new GUIContent("Import Smoothing", "Import smoothing groups by " +
+			"testing adjacent faces against an angle thresold.");
+		private GUIContent m_SmoothingThresholdTooltip = new GUIContent("Smoothing Threshold", "When importing " +
+			"smoothing groups any adjacent faces with an adjoining angle difference of less than this value will be " +
+			"grouped together in a smoothing group.");
+
+		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"ProBuilderize",
 			@"Creates ProBuilder-modifiable objects from meshes."
@@ -41,14 +49,25 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", MessageType.Info);
 
-			bool preserveFaces = pb_PreferencesInternal.GetBool(pb_Constant.pbPreserveFaces);
+			bool quads = pb_PreferencesInternal.GetBool("pb_MeshImporter::quads", true);
+			bool smoothing = pb_PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true);
+			float smoothingThreshold = pb_PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f);
 
 			EditorGUI.BeginChangeCheck();
 
-			preserveFaces = EditorGUILayout.Toggle("Preserve Faces", preserveFaces);
+			quads = EditorGUILayout.Toggle(m_QuadsTooltip, quads);
+			smoothing = EditorGUILayout.Toggle(m_SmoothingTooltip, smoothing);
+			GUI.enabled = smoothing;
+			EditorGUILayout.PrefixLabel(m_SmoothingThresholdTooltip);
+			smoothingThreshold = EditorGUILayout.Slider(smoothingThreshold, 0.0001f, 45f);
+			GUI.enabled = true;
 
-			if(EditorGUI.EndChangeCheck())
-				pb_PreferencesInternal.SetBool(pb_Constant.pbPreserveFaces, preserveFaces);
+			if (EditorGUI.EndChangeCheck())
+			{
+				pb_PreferencesInternal.SetBool("pb_MeshImporter::quads", quads);
+				pb_PreferencesInternal.SetBool("pb_MeshImporter::smoothing", smoothing);
+				pb_PreferencesInternal.SetFloat("pb_MeshImporter::smoothingThreshold", smoothingThreshold);
+			}
 
 			GUILayout.FlexibleSpace();
 
@@ -64,7 +83,15 @@ namespace ProBuilder2.Actions
 		{
 			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
 			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
-			bool preserveFaces = pb_PreferencesInternal.GetBool(pb_Constant.pbPreserveFaces);
+
+			pb_MeshImporter.Settings settings = new pb_MeshImporter.Settings()
+			{
+				quads = pb_PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
+				smoothing = pb_PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
+				smoothingThreshold = pb_PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
+			};
+
+			pb_Log.Debug(settings.ToString());
 
 			if(top.Count() != all.Count())
 			{
@@ -75,22 +102,37 @@ namespace ProBuilder2.Actions
 					"Cancel");
 
 				if(result == 0)
-					return DoProBuilderize(all, preserveFaces);
+					return DoProBuilderize(all, settings);
 				else if(result == 1)
-					return DoProBuilderize(top, preserveFaces);
+					return DoProBuilderize(top, settings);
 				else
 					return pb_ActionResult.UserCanceled;
 			}
 			else
 			{
-				return DoProBuilderize(all, preserveFaces);
+				return DoProBuilderize(all, settings);
 			}
+		}
+
+		[System.Obsolete("Please use DoProBuilderize(IEnumerable<MeshFilter>, pb_MeshImporter.Settings")]
+		public static pb_ActionResult DoProBuilderize(
+			IEnumerable<MeshFilter> selected,
+			bool preserveFaces)
+		{
+			return DoProBuilderize(selected, new pb_MeshImporter.Settings()
+			{
+				quads = preserveFaces,
+				smoothing = false,
+				smoothingThreshold = 1f
+			});
 		}
 
 		/**
 		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
 		 */
-		public static pb_ActionResult DoProBuilderize(IEnumerable<MeshFilter> selected, bool preserveFaces)
+		public static pb_ActionResult DoProBuilderize(
+			IEnumerable<MeshFilter> selected,
+			pb_MeshImporter.Settings settings)
 		{
 			if(selected.Count() < 1)
 				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
@@ -112,7 +154,7 @@ namespace ProBuilder2.Actions
 					pb_Object pb = Undo.AddComponent<pb_Object>(go);
 
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
-					meshImporter.Import(go);
+					meshImporter.Import(go, settings);
 
 					EntityType entityType = EntityType.Detail;
 
