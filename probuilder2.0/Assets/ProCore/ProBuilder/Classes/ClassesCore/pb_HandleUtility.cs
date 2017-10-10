@@ -26,7 +26,7 @@ namespace ProBuilder2.Common
 		/**
 		 * Find the nearest triangle intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
 		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
+		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front
 		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
 		 */
 		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, float distance, Culling cullingMode, HashSet<pb_Face> ignore = null)
@@ -106,7 +106,7 @@ namespace ProBuilder2.Common
 		/**
 		 * Find the all triangles intersected by InWorldRay on this pb_Object.  InWorldRay is in world space.
 		 * @hit contains information about the hit point.  @distance limits how far from @InWorldRay.origin the hit
-		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front 
+		 * point may be.  @cullingMode determines what face orientations are tested (Culling.Front only tests front
 		 * faces, Culling.Back only tests back faces, and Culling.FrontBack tests both).
 		 */
 		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out List<pb_RaycastHit> hits, float distance, Culling cullingMode, HashSet<pb_Face> ignore = null)
@@ -115,7 +115,7 @@ namespace ProBuilder2.Common
 			 * Transform ray into model space
 			 */
 			InWorldRay.origin -= mesh.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
-			
+
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
@@ -247,7 +247,7 @@ namespace ProBuilder2.Common
 			Vector3 v0, v1;
 			float bestDistance = Mathf.Infinity;
 			float distance = 0f;
-			edge = null;
+			edge = pb_Edge.Empty;
 
 			GameObject go = ObjectRaycast(cam, mousePosition, (GameObject[]) Resources.FindObjectsOfTypeAll(typeof(GameObject)));
 
@@ -260,13 +260,13 @@ namespace ProBuilder2.Common
 				{
 					v0 = verticesInWorldSpace[edges[i].x];
 					v1 = verticesInWorldSpace[edges[i].y];
-					
+
 					distance = pb_HandleUtility.DistancePoint2DToLine(cam, mousePosition, v0, v1);
 
 					if ( distance < bestDistance && distance < MAX_EDGE_SELECT_DISTANCE )// && !PointIsOccluded(mesh, (v0+v1)*.5f) )
 					{
 						Vector3 vs0 = cam.WorldToScreenPoint(v0);
-						
+
 						// really simple frustum check (will fail on edges that have vertices outside the frustum but is visible)
 						if( vs0.z <= 0 || vs0.x < 0 || vs0.y < 0 || vs0.x > width || vs0.y > height )
 							continue;
@@ -292,7 +292,7 @@ namespace ProBuilder2.Common
 				{
 					// Sort from nearest hit to farthest
 					hits.Sort( (x, y) => x.distance.CompareTo(y.distance) );
-					
+
 					// Find the nearest edge in the hit faces
 					Vector3[] v = mesh.vertices;
 
@@ -316,14 +316,14 @@ namespace ProBuilder2.Common
 							break;
 					}
 
-					if(edge != null && pb_HandleUtility.DistancePoint2DToLine(cam, mousePosition, mesh.transform.TransformPoint(v[edge.x]), mesh.transform.TransformPoint(v[edge.y])) > MAX_EDGE_SELECT_DISTANCE)
+					if(edge.IsValid() && pb_HandleUtility.DistancePoint2DToLine(cam, mousePosition, mesh.transform.TransformPoint(v[edge.x]), mesh.transform.TransformPoint(v[edge.y])) > MAX_EDGE_SELECT_DISTANCE)
 					{
-						edge = null;
+						edge = pb_Edge.Empty;
 					}
 				}
 			}
 
-			return edge != null;
+			return edge.IsValid();
 		}
 
 		/**
@@ -352,7 +352,7 @@ namespace ProBuilder2.Common
 
 			// move the point slightly towards the camera to avoid colliding with its own triangle
 			Ray ray = new Ray(worldPoint + dir * .0001f, dir);
-			
+
 			pb_RaycastHit hit;
 
 			return pb_HandleUtility.FaceRaycast(ray, pb, out hit, Vector3.Distance(cam.transform.position, worldPoint), Culling.Back);

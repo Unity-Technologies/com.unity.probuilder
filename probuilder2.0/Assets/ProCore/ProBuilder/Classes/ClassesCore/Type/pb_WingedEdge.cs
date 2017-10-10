@@ -39,9 +39,7 @@ namespace ProBuilder2.Common
 			if(be != null && this.Equals(be))
 				return true;
 
-			pb_Edge e = b as pb_Edge;
-
-			if(e != null && this.Equals(e))
+			if(b is pb_Edge && this.edge.local.Equals((pb_Edge) b))
 				return true;
 
 			return true;

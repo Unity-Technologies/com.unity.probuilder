@@ -250,8 +250,8 @@ namespace ProBuilder2.MeshOperations
 		{
 			for(int n = 0; n < extrudedIndices[i].Count; n+=2)
 			{
-				extrudedIndices[i][n+0].y = appendedFaces[f].indices[2];
-				extrudedIndices[i][n+1].y = appendedFaces[f++].indices[4];
+				extrudedIndices[i][n+0] = new pb_Edge(extrudedIndices[i][n+0].x, appendedFaces[f].indices[2]);
+				extrudedIndices[i][n+1] = new pb_Edge(extrudedIndices[i][n+1].x, appendedFaces[f++].indices[4]);
 			}
 		}
 

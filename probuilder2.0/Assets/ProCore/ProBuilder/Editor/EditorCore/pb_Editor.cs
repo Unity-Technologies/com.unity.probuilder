@@ -713,7 +713,7 @@ public class pb_Editor : EditorWindow
 
 		GameObject go = HandleUtility.PickGameObject(mousePosition, false);
 
-		pb_Edge bestEdge = null;
+		pb_Edge bestEdge = pb_Edge.Empty;
 		pb_Object bestObj = go == null ? null : go.GetComponent<pb_Object>();
 
 		if(bestObj != null && !selection.Contains(bestObj))
@@ -790,8 +790,8 @@ public class pb_Editor : EditorWindow
 						break;
 				}
 
-				if(	bestEdge != null && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > (pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
-					bestEdge = null;
+				if(	bestEdge.IsValid() && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > (pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
+					bestEdge = pb_Edge.Empty;
 			}
 		}
 
@@ -1068,7 +1068,7 @@ public class pb_Editor : EditorWindow
 		{
 			pb = nearestEdgeObject;
 
-			if(nearestEdge != null && nearestEdge.IsValid())
+			if(nearestEdge.IsValid())
 			{
 				pb_Tuple<pb_Face, pb_Edge> edge;
 
@@ -1394,14 +1394,12 @@ public class pb_Editor : EditorWindow
 						current = inSelection;
 					}
 
+					pb_Edge[] arr = current.ToArray();
 
-					foreach(pb_Edge e in current)
-					{
-						e.x = sharedIndices[e.x][0];
-						e.y = sharedIndices[e.y][0];
-					}
+					for(int n = 0; n < current.Count; n++)
+						arr[n] = new pb_Edge(sharedIndices[arr[n].x][0], sharedIndices[arr[n].y][0]);
 
-					pb.SetSelectedEdges( current.ToArray() );
+					pb.SetSelectedEdges(arr);
 				}
 
 				if(!vertexSelectionMask)
@@ -2732,7 +2730,7 @@ public class pb_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 			pb.ClearSelection();
 
-		nearestEdge = null;
+		nearestEdge = pb_Edge.Empty;
 		nearestEdgeObject = null;
 	}
 #endregion
@@ -2891,7 +2889,7 @@ public class pb_Editor : EditorWindow
 
 	private void OnSelectionChange()
 	{
-		nearestEdge = null;
+		nearestEdge = pb_Edge.Empty;
 		nearestEdgeObject = null;
 
 		UpdateSelection(false);

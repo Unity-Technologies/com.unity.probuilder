@@ -290,7 +290,7 @@ namespace ProBuilder2.MeshOperations
 			pb_Edge slide_x = GetLeadingEdge(we, we.edge.common.x);
 			pb_Edge slide_y = GetLeadingEdge(we, we.edge.common.y);
 
-			if(slide_x == null || slide_y == null)
+			if(!slide_x.IsValid() || !slide_y.IsValid())
 				return;
 
 			pb_Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
@@ -314,7 +314,8 @@ namespace ProBuilder2.MeshOperations
 				return new pb_Edge(wing.next.edge.local.y, wing.next.edge.local.x);
 			else if(wing.next.edge.common.y == common)
 				return new pb_Edge(wing.next.edge.local.x, wing.next.edge.local.y);
-			return null;
+
+			return pb_Edge.Empty;
 		}
 	}
 }

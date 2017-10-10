@@ -11,7 +11,7 @@ namespace ProBuilder2.MeshOperations
 	public static class pb_ConformNormals
 	{
 		/**
-		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but 
+		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but
 		 *	it may not unify each island the same way.
 		 */
 		public static pb_ActionResult ConformNormals(this pb_Object pb, IList<pb_Face> faces)
@@ -31,7 +31,7 @@ namespace ProBuilder2.MeshOperations
 				GetWindingFlags(wings[i], true, flags);
 
 				int flip = 0;
-					
+
 				foreach(var kvp in flags)
 					flip += kvp.Value ? 1 : -1;
 
@@ -72,7 +72,7 @@ namespace ProBuilder2.MeshOperations
 
 					GetWindingFlags(opp, cea.x == ceb.x ? !flag : flag, flags);
 				}
-				
+
 				next = next.next;
 
 			} while(next != edge);
@@ -82,7 +82,7 @@ namespace ProBuilder2.MeshOperations
 		 *	Ensure the opposite face to source matches the winding order.
 		 */
 		public static pb_ActionResult ConformOppositeNormal(pb_WingedEdge source)
-		{			
+		{
 			if(source == null || source.opposite == null)
 				return new pb_ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
 
@@ -125,7 +125,8 @@ namespace ProBuilder2.MeshOperations
 				else if(e.x == a && e.y == c)
 					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
 			}
-			return null;
+
+			return pb_Edge.Empty;
 		}
 
 		public static void MatchNormal(pb_Face source, pb_Face target, Dictionary<int, int> lookup)
