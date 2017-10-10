@@ -29,7 +29,8 @@ namespace ProBuilder2.EditorCommon
 					scrollIconRight = null,
 					scrollIconLeft = null;
 
-		[SerializeField] internal List<pb_MenuAction> actions;
+		[SerializeField] private List<pb_MenuAction> m_Actions;
+		[SerializeField] private int m_ActionsLength = 0;
 
 		public void InitWindowProperties(EditorWindow win)
 		{
@@ -40,7 +41,8 @@ namespace ProBuilder2.EditorCommon
 
 		void OnEnable()
 		{
-			actions = pb_EditorToolbarLoader.GetActions(true);
+			m_Actions = pb_EditorToolbarLoader.GetActions(true);
+			m_ActionsLength = m_Actions.Count();
 
 			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
 			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
@@ -161,28 +163,28 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(!window) return;
 
-			isHorizontalMenu = window.position.width > window.position.height;
+			m_IsHorizontalMenu = window.position.width > window.position.height;
 
-			Vector2 iconSize = actions[0].GetSize(isHorizontalMenu);
+			Vector2 iconSize = m_Actions[0].GetSize(m_IsHorizontalMenu);
 
-			iconWidth = (int)iconSize.x + 4;
-			iconHeight = (int)iconSize.y + 4;
+			m_IconWidth = (int)iconSize.x + 4;
+			m_IconHeight = (int)iconSize.y + 4;
 
 			// if not in icon mode, we have to iterate all buttons to figure out what the maximum size is
 			if(!isIconMode)
 			{
-				for(int i = 1; i < actions.Count; i++)
+				for(int i = 1; i < m_Actions.Count; i++)
 				{
-					iconSize = actions[i].GetSize(isHorizontalMenu);
-					iconWidth = System.Math.Max(iconWidth, (int)iconSize.x);
-					iconHeight = System.Math.Max(iconHeight, (int)iconSize.y);
+					iconSize = m_Actions[i].GetSize(m_IsHorizontalMenu);
+					m_IconWidth = System.Math.Max(m_IconWidth, (int)iconSize.x);
+					m_IconHeight = System.Math.Max(m_IconHeight, (int)iconSize.y);
 				}
 
-				iconWidth += 4;
-				iconHeight += 4;
+				m_IconWidth += 4;
+				m_IconHeight += 4;
 			}
 
-			window.minSize = new Vector2(iconWidth + 6, iconHeight + 12);
+			window.minSize = new Vector2(m_IconWidth + 6, m_IconHeight + 12);
 			window.Repaint();
 		}
 
@@ -204,13 +206,18 @@ namespace ProBuilder2.EditorCommon
 			doAnimateScroll = true;
 		}
 
-		int SCROLL_BTN_SIZE { get { return isFloating ? 12 : 11; } }
-		int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
-		int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
+		private int SCROLL_BTN_SIZE { get { return isFloating ? 12 : 11; } }
+		private int windowWidth { get { return (int) Mathf.Ceil(window.position.width); } }
+		private int windowHeight { get { return (int) Mathf.Ceil(window.position.height); } }
 
-		bool m_showScrollButtons = false;
-		bool isHorizontalMenu = false;
-		int iconWidth = 1, iconHeight = 1;
+		private bool m_ShowScrollButtons = false;
+		private bool m_IsHorizontalMenu = false;
+		private int m_IconWidth = 1, m_IconHeight = 1;
+
+		private bool IsActionValid(pb_MenuAction action)
+		{
+			return !action.IsHidden() && (!isIconMode || action.icon != null);
+		}
 
 		public void OnGUI()
 		{
@@ -218,10 +225,14 @@ namespace ProBuilder2.EditorCommon
 			Vector2 mpos = e.mousePosition;
 			bool forceRepaint = false;
 
-			IEnumerable<pb_MenuAction> available = actions.Where(x => !x.IsHidden() && (!isIconMode || x.icon != null) );
-
 			// if icon mode and no actions are found, that probably means icons failed to load.  revert to text mode.
-			if(isIconMode && available.Count() < 1)
+			int menuActionsCount = 0;
+
+			for(int i = 0; i < m_Actions.Count; i++)
+				if (IsActionValid(m_Actions[i]))
+					menuActionsCount++;
+
+			if(isIconMode && menuActionsCount < 1)
 			{
 				isIconMode = false;
 				pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, isIconMode);
@@ -232,10 +243,9 @@ namespace ProBuilder2.EditorCommon
 
 			int availableWidth = windowWidth;
 			int availableHeight = windowHeight;
-			int iconCount = available.Count();
 			bool isHorizontal = windowWidth > windowHeight * 2;
 
-			if(isHorizontalMenu != isHorizontal)
+			if(m_IsHorizontalMenu != isHorizontal)
 				CalculateMaxIconSize();
 
 			int columns;
@@ -243,17 +253,17 @@ namespace ProBuilder2.EditorCommon
 
 			if(isHorizontal)
 			{
-				rows = ((windowHeight-4) / iconHeight);
-				columns = System.Math.Max(windowWidth / iconWidth, (iconCount / rows) + (iconCount % rows != 0 ? 1 : 0));
+				rows = ((windowHeight-4) / m_IconHeight);
+				columns = System.Math.Max(windowWidth / m_IconWidth, (menuActionsCount / rows) + (menuActionsCount % rows != 0 ? 1 : 0));
 			}
 			else
 			{
-				columns = System.Math.Max((windowWidth - 4) / iconWidth, 1);
-				rows = (iconCount / columns) + (iconCount % columns != 0 ? 1 : 0);
+				columns = System.Math.Max((windowWidth - 4) / m_IconWidth, 1);
+				rows = (menuActionsCount / columns) + (menuActionsCount % columns != 0 ? 1 : 0);
 			}
 
-			int contentWidth = (iconCount / rows) * iconWidth + 4;
-			int contentHeight = rows * iconHeight + 4;
+			int contentWidth = (menuActionsCount / rows) * m_IconWidth + 4;
+			int contentHeight = rows * m_IconHeight + 4;
 
 			bool showScrollButtons = isHorizontal ? contentWidth > availableWidth : contentHeight > availableHeight;
 
@@ -276,10 +286,10 @@ namespace ProBuilder2.EditorCommon
 			int maxVerticalScroll = contentHeight - availableHeight;
 
 			// only change before a layout event
-			if(m_showScrollButtons != showScrollButtons && e.type == EventType.Layout)
-				m_showScrollButtons = showScrollButtons;
+			if(m_ShowScrollButtons != showScrollButtons && e.type == EventType.Layout)
+				m_ShowScrollButtons = showScrollButtons;
 
-			if(m_showScrollButtons)
+			if(m_ShowScrollButtons)
 			{
 				if(isHorizontal)
 				{
@@ -317,11 +327,17 @@ namespace ProBuilder2.EditorCommon
 										mpos.y > 0 && mpos.y < window.position.height;
 
 			int columnCount = 0;
-			foreach(pb_MenuAction action in available)
+
+			for(int actionIndex = 0; actionIndex < m_ActionsLength; actionIndex++)
 			{
+				pb_MenuAction action = m_Actions[actionIndex];
+
+				if (!IsActionValid(action))
+					continue;
+
 				if(isIconMode)
 				{
-					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(iconHeight + 12)) && !e.shift )
+					if( action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MaxHeight(m_IconHeight + 12)) && !e.shift )
 					{
 						// test for alt click / hover
 						optionRect.x -= scroll.x;
@@ -348,7 +364,7 @@ namespace ProBuilder2.EditorCommon
 					if(columns < 2)
 						action.DoButton(isHorizontal, e.alt, ref optionRect);
 					else
-						action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(iconWidth));
+						action.DoButton(isHorizontal, e.alt, ref optionRect, GUILayout.MinWidth(m_IconWidth));
 				}
 
 				Rect buttonRect = GUILayoutUtility.GetLastRect();
@@ -385,7 +401,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.EndScrollView();
 
-			if( m_showScrollButtons )
+			if( m_ShowScrollButtons )
 			{
 				if(isHorizontal)
 				{

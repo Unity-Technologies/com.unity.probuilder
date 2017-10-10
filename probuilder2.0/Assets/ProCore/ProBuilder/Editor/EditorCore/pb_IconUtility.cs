@@ -48,6 +48,8 @@ namespace ProBuilder2.EditorCommon
 				switch(skin)
 				{
 					case IconSkin.Default:
+						// If asking for light skin and the name doesn't specify _Light try to load the _Light suffixed
+						// version first, and on failure try to return the default icon.
 						if( !EditorGUIUtility.isProSkin && !nameWithoutExtension.EndsWith("_Light") )
 						{
 							icon = GetIcon(string.Format("{0}_Light", nameWithoutExtension));
@@ -67,9 +69,6 @@ namespace ProBuilder2.EditorCommon
 							nameWithoutExtension = string.Format("{0}_Light", nameWithoutExtension);
 						break;
 				}
-
-				if(icon != null)
-					return icon;
 			}
 			// _Light_disabled is an invalid suffix, but we'll be forgiving and correct the user.
 			else if(nameWithoutExtension.EndsWith("_Light_disabled"))

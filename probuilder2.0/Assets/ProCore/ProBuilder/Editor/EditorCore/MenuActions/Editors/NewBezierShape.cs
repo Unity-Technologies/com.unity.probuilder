@@ -13,12 +13,12 @@ namespace ProBuilder2.Actions
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Bezier Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
-		private bool experimentalFeaturesEnabled = false;
+		private bool m_ExperimentalFeaturesEnabled = false;
 		public override bool isProOnly { get { return true; } }
 
 		public NewBezierShape()
 		{
-			experimentalFeaturesEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
+			m_ExperimentalFeaturesEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
 		}
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
@@ -29,7 +29,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return !experimentalFeaturesEnabled;
+			return !m_ExperimentalFeaturesEnabled;
 		}
 
 		public override bool IsEnabled()
