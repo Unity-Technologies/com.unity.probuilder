@@ -1,4 +1,5 @@
 ## Single GUI Color Scheme for all ProCore products
+---
 
 **Pixel Sizing**
 Item						| Pixel Size
