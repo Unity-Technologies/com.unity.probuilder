@@ -19,7 +19,7 @@ Icon: Default Shade			| f6f6f6
 Icon: Darker Shade			| e0e0e0
 Icon: Darkest Shade			| c8c8c8
 Icon: Border				| 373737
-Icon: Blue Accent			| 00aaef 
+Icon: Blue Accent			| 00aaef
 Icon: Orange Accent			| ff9c00
 Green (Y)					| 39b54a
 Blue (Z)					| 00aaef
@@ -53,3 +53,28 @@ Normal 						| 565656
 Hover						| 6D6D6D
 Pressed 					| 4F4F4FFF
 Disabled					| 0% Opacity, Darken Icon Image 50%
+
+## Exported Image Naming
+
+ProBuilder requires icons be named in a specific format in order to automate the process of building the toolbar.
+
+Where icons have separate versions for dark and light mode:
+
+| Dark         | Light              |
++--------------+--------------------+
+| IconName.png | IconName_Light.png |
+
+Where icons have specific states:
+
+| Dark                 | Light                      |
++----------------------+----------------------------+
+| IconName_Normal.png  | IconName_Normal_Light.png  |
+| IconName_Pressed.png | IconName_Pressed_Light.png |
+| IconName_Hovered.png | IconName_Hovered_Light.png |
+
+Any additional data should follow the same format, always following `IconName_` but preceeding `_Light`.
+
+| Dark                            | Light                                |
++---------------------------------+--------------------------------------+
+| IconName_Normal_Vertical.png    | IconName_Normal_Vertical_Light.png   |
+| IconName_Normal_Horizontal.png  | IconName_Normal_Horizontal_Light.png |
