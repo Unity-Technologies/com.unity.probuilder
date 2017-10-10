@@ -10,24 +10,40 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 *	Helper functions for working with Unity object selection & ProBuilder element selection.
 	 */
+	[InitializeOnLoad]
 	public static class pb_Selection
 	{
 		private static pb_Object[] selection { get { return pb_Editor.instance != null ? pb_Editor.instance.selection : pbUtil.GetComponents<pb_Object>(Selection.transforms); } }
 
+		static pb_Selection()
+		{
+			Selection.selectionChanged += OnSelectionChanged;
+			OnSelectionChanged();
+		}
+
+		private static pb_Object[] m_TopSelection = new pb_Object[0];
+		private static pb_Object[] m_DeepSelection = new pb_Object[0];
+
+		private static void OnSelectionChanged()
+		{
+			m_TopSelection = Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
+			m_DeepSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
+		}
+
 		/**
 		 *	Get just the top level selected pb_Object components.
 		 */
-		public static IEnumerable<pb_Object> Top()
+		public static pb_Object[] Top()
 		{
-			return Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null);
+			return m_TopSelection;
 		}
 
 		/**
 		 *	Get all selected pb_Object components, including those in children of selected objects.
 		 */
-		public static IEnumerable<pb_Object> All()
+		public static pb_Object[] All()
 		{
-			return Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>());
+			return m_DeepSelection;
 		}
 
 		public static void AddToSelection(GameObject t)

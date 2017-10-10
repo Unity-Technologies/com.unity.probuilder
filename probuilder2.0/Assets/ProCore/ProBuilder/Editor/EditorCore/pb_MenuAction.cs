@@ -81,7 +81,8 @@ namespace ProBuilder2.EditorCommon
 
 		public delegate void SettingsDelegate();
 
-		public static pb_Object[] selection { get { return pbUtil.GetComponents<pb_Object>(Selection.transforms); }	}
+		public static pb_Object[] selection { get { return pb_Selection.All(); } }
+
 		protected EditLevel editLevel { get { return pb_Editor.instance.editLevel; } }
 		protected SelectMode selectionMode { get { return pb_Editor.instance.selectionMode; } }
 

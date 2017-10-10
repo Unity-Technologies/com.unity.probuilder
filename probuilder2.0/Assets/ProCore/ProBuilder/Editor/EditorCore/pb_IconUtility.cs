@@ -5,6 +5,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -36,69 +37,41 @@ namespace ProBuilder2.EditorCommon
 		private static Dictionary<string, Texture2D> m_Icons = new Dictionary<string, Texture2D>();
 		private static string m_IconFolderPath = "Assets/ProCore/ProBuilder/GUI/Icons/";
 
+		/**
+		 * Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode
+		 * suffix.
+		 */
 		public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
 		{
-			int ext = iconName.LastIndexOf('.');
-			string nameWithoutExtension = ext < 0 ? iconName : iconName.Substring(0, ext);
+#if PB_DEBUG
+			if (iconName.EndsWith(".png"))
+				pb_Log.Error("GetIcon(string) called with .png suffix!");
+
+			if (iconName.EndsWith("_Light"))
+				pb_Log.Error("GetIcon(string) called with _Light suffix!");
+#endif
+
+			bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
+			string name = isDarkSkin ? iconName : iconName + "_Light";
 			Texture2D icon = null;
 
-			// If icon is disabled there are no hover/normal/pressed states associated.
-			if( !nameWithoutExtension.EndsWith("_disabled") )
+			if (!m_Icons.TryGetValue(name, out icon))
 			{
-				switch(skin)
+				int i = 0;
+
+				do
 				{
-					case IconSkin.Default:
-						// If asking for light skin and the name doesn't specify _Light try to load the _Light suffixed
-						// version first, and on failure try to return the default icon.
-						if( !EditorGUIUtility.isProSkin && !nameWithoutExtension.EndsWith("_Light") )
-						{
-							icon = GetIcon(string.Format("{0}_Light", nameWithoutExtension));
+					// if in light mode:
+					// - do one lap searching for light
+					// - if nothing found, next searching for default
+					string fullPath = string.Format("{0}{1}.png", m_IconFolderPath, i == 0 ? name : iconName);
+					icon = (Texture2D) AssetDatabase.LoadAssetAtPath(fullPath, typeof(Texture2D));
+				} while (!isDarkSkin && ++i < 2 && icon == null);
 
-							if(icon != null)
-								return icon;
-						}
-						break;
-
-					case IconSkin.Pro:
-						if(nameWithoutExtension.EndsWith("_Light"))
-							nameWithoutExtension = nameWithoutExtension.Replace("_Light", "");
-						break;
-
-					case IconSkin.Light:
-						if(!nameWithoutExtension.EndsWith("_Light"))
-							nameWithoutExtension = string.Format("{0}_Light", nameWithoutExtension);
-						break;
-				}
-			}
-			// _Light_disabled is an invalid suffix, but we'll be forgiving and correct the user.
-			else if(nameWithoutExtension.EndsWith("_Light_disabled"))
-			{
-				nameWithoutExtension = nameWithoutExtension.Replace("_Light_disabled", "_disabled");
-			}
-
-			if(!m_Icons.TryGetValue(nameWithoutExtension, out icon))
-			{
-				string fullPath = m_IconFolderPath + nameWithoutExtension;
-
-				if(!fullPath.EndsWith(".png"))
-					fullPath += ".png";
-
-				icon = (Texture2D) AssetDatabase.LoadAssetAtPath(fullPath, typeof(Texture2D));
-
-				if(icon == null)
-				{
-#if PB_DEBUG
-					Debug.LogWarning("Failed to find icon: " + fullPath);
-#endif
-					m_Icons.Add(nameWithoutExtension, null);
-					return null;
-				}
-
-				m_Icons.Add(nameWithoutExtension, icon);
+				m_Icons.Add(name, icon);
 			}
 
 			return icon;
 		}
-
 	}
 }
