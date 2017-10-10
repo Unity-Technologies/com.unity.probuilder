@@ -1,4 +1,4 @@
-#if !UNITY_4_7 && !UNITY_5_0 && !UNITY_5_1 && !UNITY_5_2 && !UNITY_5_3
+#if UNITY_5_5_OR_NEWER
 #define RETINA_ENABLED
 #endif
 
@@ -17,7 +17,6 @@ namespace ProBuilder2.EditorCommon
 {
 public class pb_UV_Editor : EditorWindow
 {
-
 #if PROTOTYPE
 	public static void MenuOpenUVEditor()
 	{
@@ -2708,7 +2707,11 @@ public class pb_UV_Editor : EditorWindow
 			RefreshSelectedUVCoordinates();
 		}
 
+#if UNITY_2017_3_OR_NEWER
+		if( isKeyDown && Event.current.type == EventType.Used )
+#else
 		if( isKeyDown && Event.current.type == EventType.used )
+#endif
 			eatNextKeyUp = true;
 
 		GUI.enabled = selectedFaceCount > 0;
