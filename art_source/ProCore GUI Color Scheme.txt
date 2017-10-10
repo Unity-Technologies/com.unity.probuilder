@@ -38,8 +38,8 @@ Item 						| Color/Value
 --- 						| ---
 In-Scene Border				| 636363
 Text 						| 373737
-Normal 						| F2F2F2
-Hover						| FFFFFF
+Normal 						| EAEAEA
+Hover						| F2F2F2
 Pressed 					| E1E1E1
 Disabled					| 0% Opacity, Lighten Icon Image 50%
 
