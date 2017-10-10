@@ -18,23 +18,23 @@ namespace ProBuilder2.EditorCommon
 	[InitializeOnLoad]
 	public static class pb_IconUtility
 	{
-		const string ICON_FOLDER_PATH = "ProBuilder/Icons";
+		private const string ICON_FOLDER_PATH = "ProBuilder/Icons";
 
 		static pb_IconUtility()
 		{
-			if(!Directory.Exists(iconFolderPath))
+			if(!Directory.Exists(m_IconFolderPath))
 			{
 				string folder = pb_FileUtil.FindFolder(ICON_FOLDER_PATH);
 
 				if(string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
 					Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified relative to ProBuilder root.");
 				else
-					iconFolderPath = folder;
+					m_IconFolderPath = folder;
 			}
 		}
 
-		private static Dictionary<string, Texture2D> m_icons = new Dictionary<string, Texture2D>();
-		private static string iconFolderPath = "Assets/ProCore/ProBuilder/GUI/Icons/";
+		private static Dictionary<string, Texture2D> m_Icons = new Dictionary<string, Texture2D>();
+		private static string m_IconFolderPath = "Assets/ProCore/ProBuilder/GUI/Icons/";
 
 		public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
 		{
@@ -42,12 +42,12 @@ namespace ProBuilder2.EditorCommon
 			string nameWithoutExtension = ext < 0 ? iconName : iconName.Substring(0, ext);
 			Texture2D icon = null;
 
+			// If icon is disabled there are no hover/normal/pressed states associated.
 			if( !nameWithoutExtension.EndsWith("_disabled") )
 			{
 				switch(skin)
 				{
 					case IconSkin.Default:
-
 						if( !EditorGUIUtility.isProSkin && !nameWithoutExtension.EndsWith("_Light") )
 						{
 							icon = GetIcon(string.Format("{0}_Light", nameWithoutExtension));
@@ -71,30 +71,31 @@ namespace ProBuilder2.EditorCommon
 				if(icon != null)
 					return icon;
 			}
+			// _Light_disabled is an invalid suffix, but we'll be forgiving and correct the user.
 			else if(nameWithoutExtension.EndsWith("_Light_disabled"))
 			{
 				nameWithoutExtension = nameWithoutExtension.Replace("_Light_disabled", "_disabled");
 			}
 
-			if(!m_icons.TryGetValue(nameWithoutExtension, out icon))
+			if(!m_Icons.TryGetValue(nameWithoutExtension, out icon))
 			{
-				string fullPath = iconFolderPath + nameWithoutExtension;
+				string fullPath = m_IconFolderPath + nameWithoutExtension;
 
 				if(!fullPath.EndsWith(".png"))
 					fullPath += ".png";
 
 				icon = (Texture2D) AssetDatabase.LoadAssetAtPath(fullPath, typeof(Texture2D));
-				
+
 				if(icon == null)
 				{
 #if PB_DEBUG
 					Debug.LogWarning("Failed to find icon: " + fullPath);
 #endif
-					m_icons.Add(nameWithoutExtension, null);
+					m_Icons.Add(nameWithoutExtension, null);
 					return null;
 				}
 
-				m_icons.Add(nameWithoutExtension, icon);
+				m_Icons.Add(nameWithoutExtension, icon);
 			}
 
 			return icon;

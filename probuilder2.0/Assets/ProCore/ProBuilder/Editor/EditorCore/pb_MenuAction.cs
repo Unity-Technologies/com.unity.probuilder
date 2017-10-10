@@ -85,8 +85,9 @@ namespace ProBuilder2.EditorCommon
 		protected EditLevel editLevel { get { return pb_Editor.instance.editLevel; } }
 		protected SelectMode selectionMode { get { return pb_Editor.instance.selectionMode; } }
 
-		public static GUIStyle buttonStyleVertical 		{ get { return pb_MenuActionStyles.buttonStyleVertical; } }
+		public static GUIStyle textButtonStyleVertical 		{ get { return pb_MenuActionStyles.buttonStyleVertical; } }
 		public static GUIStyle buttonStyleHorizontal 	{ get { return pb_MenuActionStyles.buttonStyleHorizontal; } }
+
 		public static GUIStyle rowStyleVertical 		{ get { return pb_MenuActionStyles.rowStyleVertical; } }
 		public static GUIStyle rowStyleHorizontal 		{ get { return pb_MenuActionStyles.rowStyleHorizontal; } }
 		public static GUIStyle altButtonStyle 			{ get { return pb_MenuActionStyles.altButtonStyle; } }
@@ -202,7 +203,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public virtual void OnSettingsDisable() {}
 
-		protected bool isIconMode = true;
+		protected bool isIconMode;
 
 		/**
 		 *	Draw a menu button.  Returns true if the button is active and settings are enabled, false if settings are
@@ -219,11 +220,11 @@ namespace ProBuilder2.EditorCommon
 
 			GUI.enabled = buttonEnabled;
 
-			GUI.backgroundColor = pb_ToolbarGroupUtility.GetColor(group);
+			GUI.backgroundColor = Color.white;
 
 			if(isIconMode)
 			{
-				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical, layoutOptions) )
+				if( GUILayout.Button(buttonEnabled || !desaturatedIcon ? icon : desaturatedIcon, pb_ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions) )
 				{
 					if(showOptions && (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
 					{
@@ -235,8 +236,6 @@ namespace ProBuilder2.EditorCommon
 						pb_EditorUtility.ShowNotification(result.notification);
 					}
 				}
-
-				GUI.backgroundColor = Color.white;
 
 #if PROTOTYPE
 				if(isProOnly || (AltState() & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
@@ -279,10 +278,12 @@ namespace ProBuilder2.EditorCommon
 			}
 			else
 			{
+				GUI.backgroundColor = pb_ToolbarGroupUtility.GetColor(group);
+
 				// in text mode always use the vertical layout.
 				isHorizontal = false;
-				GUILayout.BeginHorizontal(isHorizontal ? rowStyleHorizontal : rowStyleVertical, layoutOptions);
-					if(GUILayout.Button(menuTitle, isHorizontal ? buttonStyleHorizontal : buttonStyleVertical))
+				GUILayout.BeginHorizontal(rowStyleVertical, layoutOptions);
+					if(GUILayout.Button(menuTitle, textButtonStyleVertical))
 					{
 						pb_ActionResult res = DoAction();
 						pb_EditorUtility.ShowNotification(res.notification);
@@ -309,6 +310,8 @@ namespace ProBuilder2.EditorCommon
 
 				GUILayout.EndHorizontal();
 
+				GUI.backgroundColor = Color.white;
+
 				GUI.enabled = wasEnabled;
 
 				return false;
@@ -322,7 +325,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static readonly Vector2 AltButtonSize = new Vector2(21, 0);
 
-		private Vector2 lastCalculatedSize = Vector2.zero;
+		private Vector2 m_LastCalculatedSize = Vector2.zero;
 
 		/**
 		 *	Get the rendered width of this GUI item.
@@ -331,15 +334,15 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(isIconMode)
 			{
-				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
+				m_LastCalculatedSize = pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Object, isHorizontal).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
 			}
 			else
 			{
 				// in text mode always use the vertical layout.
 				isHorizontal = false;
-				lastCalculatedSize = (isHorizontal ? buttonStyleHorizontal : buttonStyleVertical).CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
+				m_LastCalculatedSize = textButtonStyleVertical.CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
 			}
-			return lastCalculatedSize;
+			return m_LastCalculatedSize;
 		}
 	}
 }
