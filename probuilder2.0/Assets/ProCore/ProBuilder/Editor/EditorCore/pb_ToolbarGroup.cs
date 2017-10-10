@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ProBuilder2.Common;
 using UnityEngine;
 using UnityEditor;
 
@@ -46,6 +48,67 @@ namespace ProBuilder2.EditorCommon
 				return GeometryColor;
 
 			return Color.white;
+		}
+
+		private static GUIStyle CreateBackgroundStyleTemplate()
+		{
+			GUIStyle style = new GUIStyle();
+			style.normal.textColor = EditorGUIUtility.isProSkin ? pb_MenuActionStyles.TEXT_COLOR_WHITE_NORMAL : Color.black;
+			style.hover.textColor = EditorGUIUtility.isProSkin ? pb_MenuActionStyles.TEXT_COLOR_WHITE_HOVER : Color.black;
+			style.active.textColor = EditorGUIUtility.isProSkin ? pb_MenuActionStyles.TEXT_COLOR_WHITE_ACTIVE : Color.black;
+			style.alignment = TextAnchor.MiddleCenter;
+			style.border = new RectOffset(3, 3, 3, 3);
+			style.stretchWidth = true;
+			style.stretchHeight = false;
+			style.margin = new RectOffset(4, 5, 4, 4);
+			style.padding = new RectOffset(6, 3, 3, 3);
+			return style;
+		}
+
+		private static Dictionary<string, GUIStyle> m_IconBackgroundStyles = new Dictionary<string, GUIStyle>();
+
+		/**
+		 * Where @group corresponds to:
+		 * - Geo
+		 * - Object
+		 * - Selection
+		 * - Tool
+		 */
+		private static GUIStyle GetBackgroundStyle(string group, bool isHorizontal)
+		{
+			GUIStyle style;
+
+			if(m_IconBackgroundStyles.TryGetValue(group, out style))
+				return style;
+
+			style = CreateBackgroundStyleTemplate();
+
+			style.normal.background = pb_IconUtility.GetIcon(
+				string.Format("Toolbar/Background/{0}_Normal_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
+			style.hover.background = pb_IconUtility.GetIcon(
+				string.Format("Toolbar/Background/{0}_Hover_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
+			style.active.background = pb_IconUtility.GetIcon(
+				string.Format("Toolbar/Background/{0}_Pressed_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
+
+			m_IconBackgroundStyles.Add(group, style);
+
+			return style;
+		}
+
+		/**
+		 * Get the background button style for a toolbar group.
+		 */
+		public static GUIStyle GetStyle(pb_ToolbarGroup group, bool isHorizontal)
+		{
+			if( group == pb_ToolbarGroup.Tool )
+				return GetBackgroundStyle("Tool", isHorizontal);
+			else if( group == pb_ToolbarGroup.Selection )
+				return GetBackgroundStyle("Selection", isHorizontal);
+			else if( group == pb_ToolbarGroup.Object || group == pb_ToolbarGroup.Entity )
+				return GetBackgroundStyle("Object", isHorizontal);
+			else // if( group == pb_ToolbarGroup.Geometry )
+				return GetBackgroundStyle("Geo", isHorizontal);
+
 		}
 	}
 }

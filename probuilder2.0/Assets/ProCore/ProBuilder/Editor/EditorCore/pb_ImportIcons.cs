@@ -22,11 +22,14 @@ namespace ProBuilder2.EditorCommon
 			ti.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 			ti.linearTexture = true;
 #elif UNITY_5_5
+			ti.textureType = TextureImporterType.Default;
 			ti.sRGBTexture = false;
 #else
+			ti.textureType = TextureImporterType.Default;
 			ti.sRGBTexture = false;
 			ti.alphaSource = TextureImporterAlphaSource.FromInput;//.FromGrayScale;
 #endif
+			ti.textureType = TextureImporterType.Default;
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;

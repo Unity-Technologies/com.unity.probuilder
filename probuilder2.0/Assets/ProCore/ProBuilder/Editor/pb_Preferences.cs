@@ -245,7 +245,9 @@ public class pb_Preferences
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbEnableExperimental);
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbDetachToNewObject);
+			#pragma warning disable 0618
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbPreserveFaces);
+			#pragma warning restore 0618
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbUVGridSnapValue);
 			pb_PreferencesInternal.DeleteKey(pb_Constant.pbUVWeldDistance);

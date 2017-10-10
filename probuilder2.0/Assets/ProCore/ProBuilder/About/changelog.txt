@@ -1,15 +1,18 @@
-# ProBuilder 2.9.7f1
+# ProBuilder 2.9.7f2
 
 ## Features
 
-- Support exporting quads to FBX format (when FbxExporters is available in project).
 - Significantly improved quad detection in ProBuilderize function.
-- ProBuilderize now imports smoothing groups.
+- ProBuilderize now able to import smoothing groups.
+- Support exporting quads to FBX format (requires Unity FbxExporter in project).
 - New `Select by Smoothing Group` action.
+- New toolbar icons (Right/Context + Click in Toolbar -> Use Icon Mode).
 
 ## Bug Fixes
 
 - Fix possible null reference when picking ProBuilder objects.
+- Fix "Select Hole" disappearing instead of showing as disabled.
+- Fix "Extrude Face" disabled icon not matching current mode.
 
 ## Changes
 

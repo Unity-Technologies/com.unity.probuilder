@@ -13,10 +13,10 @@ namespace ProBuilder2.Actions
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectHole"); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"Select Holes",
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
@@ -29,7 +29,7 @@ namespace ProBuilder2.Actions
 
 			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
 				return false;
-			
+
 			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
 				return false;
 
@@ -44,9 +44,6 @@ namespace ProBuilder2.Actions
 			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
 				return true;
 
-			if(selection == null || selection.Length < 1)
-				return true;
-			
 			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
 				return true;
 
