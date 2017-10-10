@@ -34,7 +34,7 @@ Selection Tools				| 247ea3
 Geo Tools					| bb2233
 
 **Buttons (Light Skin)**
-Item 						| Color Value
+Item 						| Color/Value
 --- 						| ---
 In-Scene Border				| 636363
 Text 						| 373737
@@ -44,10 +44,11 @@ Pressed 					| E1E1E1
 Disabled					| 0% Opacity, Lighten Icon Image 50%
 
 **Buttons (Dark Skin)**
-Item 						| Color Value
+Item 						| Color/Value
 --- 						| ---
 In-Scene Border				| 373737
-Text 						| f6f6f6
+Text - Heading				| c8c8c8, 16pt
+Text - Normal				| bcbcbc, 14pt
 Normal 						| 565656
 Hover						| 6D6D6D
 Pressed 					| 4F4F4FFF
