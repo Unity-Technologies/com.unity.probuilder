@@ -320,13 +320,16 @@ namespace ProBuilder2.Common
 					int index = sharedIndices[i].array[n];
 					int group = smoothGroup[index];
 
-					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
+					// Ideally this should only continue on group == NONE, but historically negative values have also
+					// been treated as no smoothing.
+					if(	group <= pb_Smoothing.SMOOTHING_GROUP_NONE ||
+						(group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
-					averages[smoothGroup[index]].x += normals[index].x;
-					averages[smoothGroup[index]].y += normals[index].y;
-					averages[smoothGroup[index]].z += normals[index].z;
-					counts[smoothGroup[index]] += 1f;
+					averages[group].x += normals[index].x;
+					averages[group].y += normals[index].y;
+					averages[group].z += normals[index].z;
+					counts[group] += 1f;
 				}
 
 				for(int n = 0; n < sharedIndices[i].array.Length; n++)
@@ -334,12 +337,13 @@ namespace ProBuilder2.Common
 					int index = sharedIndices[i].array[n];
 					int group = smoothGroup[index];
 
-					if(group == pb_Smoothing.SMOOTHING_GROUP_NONE || (group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
+					if( group <= pb_Smoothing.SMOOTHING_GROUP_NONE ||
+						(group > pb_Smoothing.SMOOTH_RANGE_MAX && group < pb_Smoothing.HARD_RANGE_MAX))
 						continue;
 
-					normals[index].x = averages[smoothGroup[index]].x / counts[smoothGroup[index]];
-					normals[index].y = averages[smoothGroup[index]].y / counts[smoothGroup[index]];
-					normals[index].z = averages[smoothGroup[index]].z / counts[smoothGroup[index]];
+					normals[index].x = averages[group].x / counts[group];
+					normals[index].y = averages[group].y / counts[group];
+					normals[index].z = averages[group].z / counts[group];
 				}
 			}
 		}
