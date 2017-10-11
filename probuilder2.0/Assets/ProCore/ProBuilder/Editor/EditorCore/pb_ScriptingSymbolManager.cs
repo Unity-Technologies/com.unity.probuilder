@@ -1,3 +1,7 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using ProBuilder2.Common;
 using UnityEditor;
 
 namespace ProBuilder2.EditorCommon
