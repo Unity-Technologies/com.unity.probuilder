@@ -30,23 +30,10 @@ namespace ProBuilder2.Common
 			return common.Equals(b == null ? pb_Edge.Empty : b.common);
 		}
 
-		public override bool Equals(System.Object b)
+		public override bool Equals(object b)
 		{
 			pb_EdgeLookup be = b as pb_EdgeLookup;
 			return be != null && common.Equals(be.common);
-		}
-
-		public static bool operator ==(pb_EdgeLookup a, pb_EdgeLookup b)
-		{
-			if (a == null || b == null)
-				return false;
-
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(pb_EdgeLookup a, pb_EdgeLookup b)
-		{
-			return !(a == b);
 		}
 
 		public override int GetHashCode()
