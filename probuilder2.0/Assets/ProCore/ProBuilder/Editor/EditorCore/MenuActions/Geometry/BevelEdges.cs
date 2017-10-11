@@ -51,7 +51,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			bevelAmount = pb_GUI_Utility.FreeSlider("Distance", bevelAmount, .001f, .99f);
+			bevelAmount = pb_EditorGUIUtility.FreeSlider("Distance", bevelAmount, .001f, .99f);
 			if(bevelAmount < .001f) bevelAmount = .001f;
 
 			if(EditorGUI.EndChangeCheck())

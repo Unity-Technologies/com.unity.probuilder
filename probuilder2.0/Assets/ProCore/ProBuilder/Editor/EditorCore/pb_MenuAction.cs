@@ -335,13 +335,13 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(isIconMode)
 			{
-				m_LastCalculatedSize = pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Object, isHorizontal).CalcSize(pb_GUI_Utility.TempGUIContent(null, null, icon));
+				m_LastCalculatedSize = pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Object, isHorizontal).CalcSize(pb_EditorGUIUtility.TempGUIContent(null, null, icon));
 			}
 			else
 			{
 				// in text mode always use the vertical layout.
 				isHorizontal = false;
-				m_LastCalculatedSize = textButtonStyleVertical.CalcSize(pb_GUI_Utility.TempGUIContent(menuTitle)) + AltButtonSize;
+				m_LastCalculatedSize = textButtonStyleVertical.CalcSize(pb_EditorGUIUtility.TempGUIContent(menuTitle)) + AltButtonSize;
 			}
 			return m_LastCalculatedSize;
 		}

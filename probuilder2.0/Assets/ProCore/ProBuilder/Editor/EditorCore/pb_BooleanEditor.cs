@@ -154,7 +154,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.Space(4);
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-			pb_GUI_Utility.DrawSeparator(2);
+			pb_EditorGUIUtility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 
 			operation = (BooleanOp) EditorGUILayout.EnumPopup("Operation", operation);

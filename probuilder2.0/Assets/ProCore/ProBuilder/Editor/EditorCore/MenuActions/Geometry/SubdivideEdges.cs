@@ -47,7 +47,7 @@ namespace ProBuilder2.Actions
 
 			EditorGUILayout.HelpBox("How many vertices to insert on each selected edge.\n\nVertices will be equally spaced between one another and the boundaries of the edge.", MessageType.Info);
 
-			subdivisions = (int) pb_GUI_Utility.FreeSlider("Subdivisions", subdivisions, 1, 32);
+			subdivisions = (int) pb_EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
 			if(EditorGUI.EndChangeCheck())
 				pb_PreferencesInternal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);

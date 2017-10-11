@@ -11,9 +11,11 @@ using ProBuilder2.Common;
  */
 namespace ProBuilder2.Interface
 {
-	public class pb_GUI_Utility
+	public class pb_EditorGUIUtility
 	{
-		static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin ? Color.green : new Color(.2f, .2f, .2f, .2f);
+		private static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin
+			? Color.green
+			: new Color(.2f, .2f, .2f, .2f);
 
 		private static GUIStyle _splitStyle;
 		private static GUIStyle SplitStyle
@@ -351,7 +353,7 @@ namespace ProBuilder2.Interface
 		 */
 		public static void SceneLabel(string text, Vector2 position)
 		{
-			GUIContent gc = pb_GUI_Utility.TempGUIContent(text);
+			GUIContent gc = pb_EditorGUIUtility.TempGUIContent(text);
 
 			float width = EditorStyles.boldLabel.CalcSize(gc).x;
 			float height = EditorStyles.label.CalcHeight(gc, width) + 4;
@@ -361,7 +363,7 @@ namespace ProBuilder2.Interface
 			sceneLabelRect.width = width;
 			sceneLabelRect.height = height;
 
-			pb_GUI_Utility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
+			pb_EditorGUIUtility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
 
 			GUI.Label(sceneLabelRect, gc, sceneBoldLabel);
 		}

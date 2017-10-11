@@ -158,7 +158,7 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.Space(4);
 
-			pb_GUI_Utility.DrawSeparator(1, SplitterColor);
+			pb_EditorGUIUtility.DrawSeparator(1, SplitterColor);
 
 			GUILayout.BeginHorizontal();
 				Color pop = GUI.color;
@@ -193,7 +193,7 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			GUILayout.Space(8);
-			pb_GUI_Utility.DrawSeparator(1, SplitterColor);
+			pb_EditorGUIUtility.DrawSeparator(1, SplitterColor);
 
 			GUILayout.Label("Active Selection", EditorStyles.boldLabel);
 
@@ -483,7 +483,7 @@ namespace ProBuilder2.EditorCommon
 					}
 				}
 
-				pb_GUI_Utility.SceneLabel(sb.ToString(), cen);
+				pb_EditorGUIUtility.SceneLabel(sb.ToString(), cen);
 
 				if(++labelCount > MAX_SCENE_LABELS) break;
 			}
@@ -510,13 +510,13 @@ namespace ProBuilder2.EditorCommon
 				switch(edgeIndexFormat)
 				{
 					case IndexFormat.Common:
-						pb_GUI_Utility.SceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
+						pb_EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.common.x, edge.common.y), cen);
 						break;
 					case IndexFormat.Local:
-						pb_GUI_Utility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
+						pb_EditorGUIUtility.SceneLabel(string.Format("[{0}, {1}]", edge.local.x, edge.local.y), cen);
 						break;
 					case IndexFormat.Both:
-						pb_GUI_Utility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
+						pb_EditorGUIUtility.SceneLabel(string.Format("local: [{0}, {1}]\ncommon: [{0}, {1}]", edge.local.x, edge.local.y, edge.common.x, edge.common.y), cen);
 						break;
 				}
 
@@ -610,7 +610,7 @@ namespace ProBuilder2.EditorCommon
 				cen.y -= 5f;
 
 				Handles.BeginGUI();
-				pb_GUI_Utility.SceneLabel(sb.ToString(), cen);
+				pb_EditorGUIUtility.SceneLabel(sb.ToString(), cen);
 				Handles.EndGUI();
 
 				if(++labelCount > MAX_SCENE_LABELS) break;

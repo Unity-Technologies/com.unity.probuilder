@@ -93,7 +93,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.EndHorizontal();
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			pb_GUI_Utility.DrawSeparator(1);
+			pb_EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
 			GUILayout.Label("Transform", EditorStyles.boldLabel);
@@ -148,7 +148,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.Space(4);
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			pb_GUI_Utility.DrawSeparator(1);
+			pb_EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
 			/**
@@ -162,7 +162,7 @@ namespace ProBuilder2.EditorCommon
 			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			pb_GUI_Utility.DrawSeparator(1);
+			pb_EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
 
@@ -192,7 +192,7 @@ namespace ProBuilder2.EditorCommon
 			EditorGUI.showMixedValue = uv_diff["textureGroup"];
 
 			UnityEngine.GUI.SetNextControlName("textureGroup");
-			textureGroup = pb_GUI_Utility.IntFieldConstrained( new GUIContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action"), textureGroup, width);
+			textureGroup = pb_EditorGUIUtility.IntFieldConstrained( new GUIContent("Texture Group", "Faces in a texture group will be UV mapped as a group, just as though you had selected these faces and used the \"Planar Project\" action"), textureGroup, width);
 
 			if(tempInt != textureGroup)
 			{
@@ -258,7 +258,7 @@ namespace ProBuilder2.EditorCommon
 
 
 			UnityEngine.GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-			pb_GUI_Utility.DrawSeparator(1);
+			pb_EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
 			/**

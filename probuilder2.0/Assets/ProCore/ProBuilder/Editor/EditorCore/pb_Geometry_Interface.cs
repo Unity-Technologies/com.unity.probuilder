@@ -359,7 +359,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			EditorGUI.BeginChangeCheck();
 
-			stair_steps = (int) Mathf.Max(pb_GUI_Utility.FreeSlider("Steps", stair_steps, 2, 64), 2);
+			stair_steps = (int) Mathf.Max(pb_EditorGUIUtility.FreeSlider("Steps", stair_steps, 2, 64), 2);
 
 			stair_sides = EditorGUILayout.Toggle("Build Sides", stair_sides);
 
@@ -369,17 +369,17 @@ namespace ProBuilder2.EditorCommon
 			{
 				stair_mirror = EditorGUILayout.Toggle("Mirror", stair_mirror);
 
-				stair_size.x = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Width", "The width of an individual stair step."), stair_size.x, .01f, 10f), .01f);
-				stair_size.y = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Stair Height", "The total height of this staircase.  You may enter any value in the float field."), stair_size.y, .01f, 10f), .01f);
-				stair_size.z = Mathf.Max(pb_GUI_Utility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, 0f, 10f), 0f);
+				stair_size.x = Mathf.Max(pb_EditorGUIUtility.FreeSlider(new GUIContent("Stair Width", "The width of an individual stair step."), stair_size.x, .01f, 10f), .01f);
+				stair_size.y = Mathf.Max(pb_EditorGUIUtility.FreeSlider(new GUIContent("Stair Height", "The total height of this staircase.  You may enter any value in the float field."), stair_size.y, .01f, 10f), .01f);
+				stair_size.z = Mathf.Max(pb_EditorGUIUtility.FreeSlider(new GUIContent("Inner Radius", "The distance from the center that stairs begin."), stair_size.z, 0f, 10f), 0f);
 			}
 			else
 			{
 				stair_size = EditorGUILayout.Vector3Field("Width, Height, Depth", stair_size);
 
-				stair_size.x = pb_GUI_Utility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
-				stair_size.y = pb_GUI_Utility.FreeSlider("Height", stair_size.y, 0.01f, 10f);
-				stair_size.z = pb_GUI_Utility.FreeSlider("Depth", stair_size.z, 0.01f, 10f);
+				stair_size.x = pb_EditorGUIUtility.FreeSlider("Width", stair_size.x, 0.01f, 10f);
+				stair_size.y = pb_EditorGUIUtility.FreeSlider("Height", stair_size.y, 0.01f, 10f);
+				stair_size.z = pb_EditorGUIUtility.FreeSlider("Depth", stair_size.z, 0.01f, 10f);
 			}
 
 			if( showPreview && (EditorGUI.EndChangeCheck() || initPreview) )
@@ -940,7 +940,7 @@ namespace ProBuilder2.EditorCommon
 				if(torus_radius < .001f)
 					torus_radius = .001f;
 
-				torus_tubeRadius = pb_GUI_Utility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
+				torus_tubeRadius = pb_EditorGUIUtility.Slider(new GUIContent("Tube Radius", "How thick the donut will be."), torus_tubeRadius, .01f, torus_radius);
 			}
 			else
 			{
@@ -948,7 +948,7 @@ namespace ProBuilder2.EditorCommon
 				torus_innerOuter.y = torus_radius - (torus_tubeRadius * 2f);
 
 				torus_innerOuter.x = EditorGUILayout.FloatField("Outer Radius", torus_innerOuter.x);
-				torus_innerOuter.y = pb_GUI_Utility.Slider(new GUIContent("Inner Radius", "Distance from center to inside of donut ring."), torus_innerOuter.y, .001f, torus_innerOuter.x);
+				torus_innerOuter.y = pb_EditorGUIUtility.Slider(new GUIContent("Inner Radius", "Distance from center to inside of donut ring."), torus_innerOuter.y, .001f, torus_innerOuter.x);
 
 				torus_radius = torus_innerOuter.x;
 				torus_tubeRadius = (torus_innerOuter.x - torus_innerOuter.y) * .5f;

@@ -2083,7 +2083,7 @@ public class pb_Editor : EditorWindow
 				sceneInfoRect.width = size.x + 8;
 				sceneInfoRect.height = size.y - 4;
 
-				pb_GUI_Utility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, sceneInfoRect.width, sceneInfoRect.height), new Color(.1f,.1f,.1f,.55f));
+				pb_EditorGUIUtility.DrawSolidColor( new Rect(sceneInfoRect.x-4, sceneInfoRect.y-4, sceneInfoRect.width, sceneInfoRect.height), new Color(.1f,.1f,.1f,.55f));
 
 				GUI.Label(sceneInfoRect, gc);
 			} catch {}

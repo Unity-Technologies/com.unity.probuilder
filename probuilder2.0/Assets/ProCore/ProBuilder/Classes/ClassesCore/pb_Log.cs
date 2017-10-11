@@ -6,8 +6,9 @@ using System.Collections.Generic;
 namespace ProBuilder2.Common
 {
 	/**
-	 *	Describes the various states of chatty-ness.
+	 * Describes the various states of chatty-ness.
 	 */
+	[Flags]
 	public enum pb_LogLevel
 	{
 		None 		= 0x0,
@@ -18,11 +19,11 @@ namespace ProBuilder2.Common
 	}
 
 	/**
-	 *	Where the pb_Log writes to (default is Unity Console).
-	 *	If logging to a File, the pb_Log.outputFile must be set.
-	 *	You may log to one or multiple output sources.
+	 * Where the pb_Log writes to (default is Unity Console).
+	 * If logging to a File, the pb_Log.outputFile must be set.
+	 * You may log to one or multiple output sources.
 	 */
-	[System.Flags]
+	[Flags]
 	public enum pb_LogOutput
 	{
 		None = 0x0,
@@ -31,10 +32,14 @@ namespace ProBuilder2.Common
 	}
 
 	/**
-	 *	Debug log replacement.
+	 * Debug log replacement.
+	 *
+	 * IMPORTANT - pb_LogEditor initializes this class from the Editor side (so preferences can be accessed)!
 	 */
 	public static class pb_Log
 	{
+		public const string DEFAULT_LOG_PATH = "ProBuilderLog.txt";
+
 		// Retain a stack of previous log levels.
 		private static Stack<pb_LogLevel> m_logStack = new Stack<pb_LogLevel>();
 
@@ -45,10 +50,10 @@ namespace ProBuilder2.Common
 		private static pb_LogOutput m_Output = pb_LogOutput.Console;
 
 		// Path to the log file.
-		private static string m_LogFilePath = "ProBuilderLog.txt";
+		private static string m_LogFilePath = DEFAULT_LOG_PATH;
 
 		/**
-		 *	Push the current log level in the stack. See also PopLogLevel.
+		 * Push the current log level in the stack. See also PopLogLevel.
 		 */
 		public static void PushLogLevel(pb_LogLevel level)
 		{
@@ -57,7 +62,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Pop the current log level in the stack. See also PushLogLevel.
+		 * Pop the current log level in the stack. See also PushLogLevel.
 		 */
 		public static void PopLogLevel()
 		{
@@ -65,9 +70,17 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Set the output destination for logs. If output is file, make sure to
-		 *	also set the log file path (otherwise it defaults to ProBuilderLog.txt
-		 *	in project directory).
+		 * Set the log level without modifying the stack.
+		 */
+		public static void SetLogLevel(pb_LogLevel level)
+		{
+			m_LogLevel = level;
+		}
+
+		/**
+		 * Set the output destination for logs. If output is file, make sure to
+		 * also set the log file path (otherwise it defaults to ProBuilderLog.txt
+		 * in project directory).
 		 */
 		public static void SetOutput(pb_LogOutput output)
 		{
@@ -75,7 +88,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Set the path of the log file that pb_Log writes messages to.
+		 * Set the path of the log file that pb_Log writes messages to.
 		 */
 		public static void SetLogFile(string path)
 		{
@@ -83,7 +96,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Output a debug message. These should not be committed to trunk.
+		 * Output a debug message. These should not be committed to trunk.
 		 */
 		public static void Debug<T>(T value)
 		{
@@ -91,7 +104,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Output a debug message. These should not be committed to trunk.
+		 * Output a debug message. These should not be committed to trunk.
 		 */
 		public static void Debug(string message)
 		{
@@ -104,7 +117,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Output an informational message.
+		 * Output an informational message.
 		 */
 		public static void Info(string format, params object[] values)
 		{
@@ -118,7 +131,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Output a warning message.
+		 * Output a warning message.
 		 */
 		public static void Warning(string format, params object[] values)
 		{
@@ -132,7 +145,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Output an error message.
+		 * Output an error message.
 		 */
 		public static void Error(string format, params object[] values)
 		{
@@ -146,7 +159,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	ConsolePro3 specific functionality - update a single log continuously.
+		 * ConsolePro3 specific functionality - update a single log continuously.
 		 */
 		public static void Watch<T, K>(T key, K value)
 		{
@@ -163,7 +176,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Print a message to a file.
+		 * Print a message to a file.
 		 */
 		public static void PrintToFile(string message, string path)
 		{
@@ -206,7 +219,7 @@ namespace ProBuilder2.Common
 		}
 
 		/**
-		 *	Print a message to the Unity console.
+		 * Print a message to the Unity console.
 		 */
 		public static void PrintToConsole(string message, LogType type = LogType.Log)
 		{

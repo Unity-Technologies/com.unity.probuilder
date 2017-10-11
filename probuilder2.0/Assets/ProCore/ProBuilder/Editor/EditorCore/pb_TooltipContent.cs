@@ -88,11 +88,11 @@ namespace ProBuilder2.EditorCommon
 
 			if(hastitle)
 			{
-				Vector2 ns = TitleStyle.CalcSize(pb_GUI_Utility.TempGUIContent(title));
+				Vector2 ns = TitleStyle.CalcSize(pb_EditorGUIUtility.TempGUIContent(title));
 
 				if(hasShortcut)
 				{
-					ns.x += EditorStyles.boldLabel.CalcSize(pb_GUI_Utility.TempGUIContent(shortcut)).x + pad;
+					ns.x += EditorStyles.boldLabel.CalcSize(pb_EditorGUIUtility.TempGUIContent(shortcut)).x + pad;
 				}
 
 				total.x += Mathf.Max(ns.x, 256);
@@ -103,11 +103,11 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(!hastitle)
 				{
-					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(pb_GUI_Utility.TempGUIContent(summary));
+					Vector2 sumSize = EditorStyles.wordWrappedLabel.CalcSize(pb_EditorGUIUtility.TempGUIContent(summary));
 					total.x = Mathf.Min(sumSize.x, MAX_WIDTH);
 				}
 
-				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(pb_GUI_Utility.TempGUIContent(summary), total.x);
+				float summaryHeight = EditorStyles.wordWrappedLabel.CalcHeight(pb_EditorGUIUtility.TempGUIContent(summary), total.x);
 				total.y += summaryHeight;
 			}
 
@@ -137,7 +137,7 @@ namespace ProBuilder2.EditorCommon
 					GUILayout.Label(title, TitleStyle);
 				}
 
-				pb_GUI_Utility.DrawSeparator(1, separatorColor);
+				pb_EditorGUIUtility.DrawSeparator(1, separatorColor);
 				GUILayout.Space(2);
 			}
 

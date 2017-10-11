@@ -96,7 +96,7 @@ namespace ProBuilder2.EditorCommon
 
 				case pb_PolyShape.PolyEditMode.Edit:
 				{
-					if( GUILayout.Button("Editing Poly Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
+					if( GUILayout.Button("Editing Poly Shape", pb_EditorGUIUtility.GetActiveStyle("Button")) )
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
 					break;
 				}

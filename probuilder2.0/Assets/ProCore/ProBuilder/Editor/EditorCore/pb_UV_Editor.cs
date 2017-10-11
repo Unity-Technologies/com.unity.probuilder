@@ -377,7 +377,7 @@ public class pb_UV_Editor : EditorWindow
 			this.minSize = new Vector2(ScreenRect.width, ScreenRect.height);
 			this.maxSize = new Vector2(ScreenRect.width, ScreenRect.height);
 
-			pb_GUI_Utility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
+			pb_EditorGUIUtility.DrawSolidColor(new Rect(-1, -1, ScreenRect.width + 10, ScreenRect.height + 10), screenshot_backgroundColor);
 
 			DrawUVGraph(graphRect);
 
@@ -2774,7 +2774,7 @@ public class pb_UV_Editor : EditorWindow
 
 		GUI.enabled = selectedUVCount > 1;
 
-		tool_weldButton = pb_GUI_Utility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
+		tool_weldButton = pb_EditorGUIUtility.ToolSettingsGUI("Weld", "Merge selected vertices that are within a specified distance of one another.",
 			tool_weldButton,
 			Menu_SewUVs,
 			WeldButtonGUI,

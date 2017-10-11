@@ -297,7 +297,7 @@ namespace ProBuilder2.EditorCommon
 
 					GUI.enabled = scroll.x > 0;
 
-					if(GUILayout.Button(scrollIconLeft, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
+					if(GUILayout.Button(scrollIconLeft, pb_EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
 						StartScrollAnimation(Mathf.Max(scroll.x - availableWidth, 0f), 0f);
 
 					GUI.enabled = true;
@@ -306,7 +306,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					GUI.enabled = scroll.y > 0;
 
-					if(GUILayout.Button(scrollIconUp, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+					if(GUILayout.Button(scrollIconUp, pb_EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
 						StartScrollAnimation( 0f, Mathf.Max(scroll.y - availableHeight, 0f) );
 
 					GUI.enabled = true;
@@ -406,7 +406,7 @@ namespace ProBuilder2.EditorCommon
 				if(isHorizontal)
 				{
 					GUI.enabled = scroll.x < maxHorizontalScroll - 2;
-					if(GUILayout.Button(scrollIconRight, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
+					if(GUILayout.Button(scrollIconRight, pb_EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle, GUILayout.ExpandHeight(true)))
 						StartScrollAnimation( Mathf.Min(scroll.x + availableWidth + 2, maxHorizontalScroll), 0f );
 					GUI.enabled = true;
 
@@ -415,7 +415,7 @@ namespace ProBuilder2.EditorCommon
 				else
 				{
 					GUI.enabled = scroll.y < maxVerticalScroll - 2;
-					if(GUILayout.Button(scrollIconDown, pb_GUI_Utility.ButtonNoBackgroundSmallMarginStyle))
+					if(GUILayout.Button(scrollIconDown, pb_EditorGUIUtility.ButtonNoBackgroundSmallMarginStyle))
 						StartScrollAnimation( 0f, Mathf.Min(scroll.y + availableHeight + 2, maxVerticalScroll) );
 					GUI.enabled = true;
 				}

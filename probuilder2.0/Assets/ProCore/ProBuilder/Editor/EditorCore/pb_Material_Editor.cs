@@ -277,7 +277,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.Space(4);
 
 			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
-			pb_GUI_Utility.DrawSeparator(2);
+			pb_EditorGUIUtility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 
 			GUILayout.Label("Material Palette", EditorStyles.boldLabel);
@@ -322,7 +322,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					GUILayout.Space(2);
 					GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
-					pb_GUI_Utility.DrawSeparator(1);
+					pb_EditorGUIUtility.DrawSeparator(1);
 					GUI.backgroundColor = Color.white;
 					GUILayout.Space(2);
 				}

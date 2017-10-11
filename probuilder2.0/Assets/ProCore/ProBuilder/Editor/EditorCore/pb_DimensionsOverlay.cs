@@ -290,7 +290,7 @@ public class pb_DimensionsOverlay : pb_ISceneEditor
 		float width = EditorStyles.label.CalcSize(content).x;
 		float height = EditorStyles.label.CalcHeight(content, width) + 4;
 
-		pb_GUI_Utility.DrawSolidColor( new Rect(position.x-1, position.y, width+2, height-2), background);
+		pb_EditorGUIUtility.DrawSolidColor( new Rect(position.x-1, position.y, width+2, height-2), background);
 
 		Color old = EditorStyles.label.normal.textColor;
 		EditorStyles.label.normal.textColor = Color.white;

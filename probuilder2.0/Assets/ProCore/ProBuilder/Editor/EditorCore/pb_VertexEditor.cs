@@ -119,7 +119,7 @@ namespace ProBuilder2.EditorCommon
 
 				GUILayout.FlexibleSpace();
 
-				GUIStyle style = worldSpace ? EditorStyles.toolbarButton : pb_GUI_Utility.GetOnStyle(EditorStyles.toolbarButton);
+				GUIStyle style = worldSpace ? EditorStyles.toolbarButton : pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
 
 				if( GUILayout.Button(worldSpace ? "World Space" : "Model Space", style) )
 					worldSpace = !worldSpace;
@@ -129,7 +129,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Count < 1 || !selection.Any(x => x.Key.SelectedTriangleCount > 0))
 			{
 				GUILayout.FlexibleSpace();
-				GUILayout.Label("Select a ProBuilder Mesh", pb_GUI_Utility.CenteredGreyMiniLabel);
+				GUILayout.Label("Select a ProBuilder Mesh", pb_EditorGUIUtility.CenteredGreyMiniLabel);
 				GUILayout.FlexibleSpace();
 				return;
 			}
@@ -169,7 +169,7 @@ namespace ProBuilder2.EditorCommon
 					foreach(int u in sel.common)
 					{
 						GUI.backgroundColor = index % 2 == 0 ? EVEN : ODD;
-						GUILayout.BeginHorizontal(pb_GUI_Utility.solidBackgroundStyle);
+						GUILayout.BeginHorizontal(pb_EditorGUIUtility.solidBackgroundStyle);
 						GUI.backgroundColor = background;
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
@@ -239,7 +239,7 @@ namespace ProBuilder2.EditorCommon
 
 					Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
-					pb_GUI_Utility.SceneLabel(i.ToString(), cen);
+					pb_EditorGUIUtility.SceneLabel(i.ToString(), cen);
 
 					if(++labelCount > MAX_SCENE_LABELS) break;
 				}

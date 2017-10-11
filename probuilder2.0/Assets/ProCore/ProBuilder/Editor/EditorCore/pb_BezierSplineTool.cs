@@ -272,7 +272,7 @@ namespace ProBuilder2.EditorCommon
 				return;
 			}
 
-			if( GUILayout.Button("Editing Bezier Shape", pb_GUI_Utility.GetActiveStyle("Button")) )
+			if( GUILayout.Button("Editing Bezier Shape", pb_EditorGUIUtility.GetActiveStyle("Button")) )
 				SetIsEditing(false);
 
 			Event e = Event.current;

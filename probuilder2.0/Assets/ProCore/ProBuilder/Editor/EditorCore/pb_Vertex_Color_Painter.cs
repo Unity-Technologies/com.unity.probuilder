@@ -221,7 +221,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		GUILayout.EndHorizontal();
 
 		GUILayout.Space(6);
-		pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
+		pb_EditorGUIUtility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
 		GUILayout.Space(6);
 
 		/**
@@ -257,7 +257,7 @@ public class pb_VertexColor_Editor : EditorWindow
 					r.x += 2f;
 					r.height = 6f;
 
-					pb_GUI_Utility.DrawSolidColor(r, Color.green);
+					pb_EditorGUIUtility.DrawSolidColor(r, Color.green);
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -310,7 +310,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		r.width = Screen.width - 12;
 		r.height = 26;
 
-		pb_GUI_Utility.DrawSolidColor(r, color);
+		pb_EditorGUIUtility.DrawSolidColor(r, color);
 
 		GUILayout.Label("  Brush Color: " + colorName, EditorStyles.boldLabel);
 

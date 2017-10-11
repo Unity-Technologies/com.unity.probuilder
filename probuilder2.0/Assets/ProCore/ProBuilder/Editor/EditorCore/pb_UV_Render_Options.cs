@@ -56,7 +56,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			GUILayout.Label("Render UVs", EditorStyles.boldLabel);
 
-			pb_GUI_Utility.DrawSeparator(2, pb_Constant.ProBuilderDarkGray);
+			pb_EditorGUIUtility.DrawSeparator(2, pb_Constant.ProBuilderDarkGray);
 			GUILayout.Space(2);
 
 			imageSize = (ImageSize)EditorGUILayout.EnumPopup(new GUIContent("Image Size", "The pixel size of the image to be rendered."), imageSize);
