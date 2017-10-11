@@ -91,8 +91,6 @@ namespace ProBuilder2.Actions
 				smoothingThreshold = pb_PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
 			};
 
-			pb_Log.Debug(settings.ToString());
-
 			if(top.Count() != all.Count())
 			{
 				int result = EditorUtility.DisplayDialogComplex("ProBuilderize Selection",

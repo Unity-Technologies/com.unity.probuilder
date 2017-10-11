@@ -203,13 +203,15 @@ namespace ProBuilder2.MeshOperations
 
 					foreach(pb_WingedEdge border in face)
 					{
-						if(processed.Contains(border.opposite.face))
+						if(border.opposite != null && processed.Contains(border.opposite.face))
 							continue;
 
-						float borderScore = connections[border.edge];
+						float borderScore;
 
 						// only add it if the opposite face's best score is also this face
-						if(borderScore > bestScore && face.face == GetBestQuadConnection(border.opposite, connections))
+						if( connections.TryGetValue(border.edge, out borderScore) &&
+							borderScore > bestScore &&
+							face.face == GetBestQuadConnection(border.opposite, connections))
 						{
 							bestScore = borderScore;
 							buddy = border.opposite.face;
@@ -244,7 +246,9 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_WingedEdge border in wing)
 			{
-				if( connections[border.edge] > score )
+				float s = 0f;
+
+				if(connections.TryGetValue(border.edge, out s) && s > score)
 				{
 					score = connections[border.edge];
 					face = border.opposite.face;
