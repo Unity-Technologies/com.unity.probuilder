@@ -89,3 +89,14 @@ The object does not have a UV2 channel built.
 
 - Select the affected objects
 - Click `Generate UV2` in the ProBuilder Toolbar
+
+## `FbxPrefab` could not be found. Are you missing an assembly reference?
+
+```
+Assets/ProCore/ProBuilder/Editor/Addons/pb_Fbx.cs(62,35): error CS0246: The type or namespace name `FbxPrefab' could not be found. Are you missing an assembly reference?
+```
+
+This error may occur if you have imported the **FbxExporters** Unity package, then later removed it. To fix this error, you can either:
+
+- Re-import the **FbxExporter** package
+- Open `Edit > Project Settings > Player` and in the **Scripting Define Symbols** field delete `PROBUILDER_FBX_ENABLED`.
