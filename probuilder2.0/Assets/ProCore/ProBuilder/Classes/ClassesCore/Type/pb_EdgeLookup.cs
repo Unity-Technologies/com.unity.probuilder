@@ -27,7 +27,7 @@ namespace ProBuilder2.Common
 
 		public bool Equals(pb_EdgeLookup b)
 		{
-			return common.Equals(b == null ? pb_Edge.Empty : b.common);
+			return common.Equals(ReferenceEquals(b, null) ? pb_Edge.Empty : b.common);
 		}
 
 		public override bool Equals(object b)

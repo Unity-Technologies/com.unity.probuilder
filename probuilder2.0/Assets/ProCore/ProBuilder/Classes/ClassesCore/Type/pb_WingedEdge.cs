@@ -112,7 +112,7 @@ namespace ProBuilder2.Common
 			{
 				for(int n = 3; n < 6; n++)
 				{
-					if(all[i] == all[n])
+					if(all[i].Equals(all[n]))
 					{
 						matches++;
 						dup[i] = 1;
