@@ -212,10 +212,19 @@ namespace ProBuilder2.Common
 			{
 				using(StreamWriter sw = File.AppendText(full_path))
 				{
-					sw.WriteLine();
+//					sw.WriteLine();
 					sw.WriteLine(message);
 				}
 			}
+		}
+
+		/**
+		 * Delete the log file if it exists.
+		 */
+		public static void ClearLogFile()
+		{
+			if (File.Exists(m_LogFilePath))
+				File.Delete(m_LogFilePath);
 		}
 
 		/**

@@ -85,7 +85,7 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Log Path");
 			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("..."))
+			if (GUILayout.Button("...", EditorStyles.miniButton))
 			{
 				string dir = EditorUtility.OpenFolderPanel("ProBuilder Log Directory", "", "");
 
@@ -108,9 +108,14 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 			GUILayout.EndHorizontal();
+			GUILayout.BeginHorizontal();
 			GUI.enabled = false;
 			EditorGUILayout.LabelField(m_LogFilePath);
 			GUI.enabled = true;
+			GUILayout.FlexibleSpace();
+			if(GUILayout.Button("open", EditorStyles.miniButton))
+				EditorUtility.OpenWithDefaultApp(m_LogFilePath);
+			GUILayout.EndHorizontal();
 
 			GUILayout.Label("Chatty-ness", EditorStyles.boldLabel);
 
@@ -121,6 +126,13 @@ namespace ProBuilder2.EditorCommon
 				pb_PreferencesInternal.SetInt("pb_Log::m_LogLevel", (int) m_LogLevel);
 				pb_Log.SetLogLevel(m_LogLevel);
 			}
+
+			GUILayout.FlexibleSpace();
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			if(GUILayout.Button("Clear Log File", EditorStyles.miniButton))
+				pb_Log.ClearLogFile();
+			GUILayout.EndHorizontal();
 		}
 	}
 }
