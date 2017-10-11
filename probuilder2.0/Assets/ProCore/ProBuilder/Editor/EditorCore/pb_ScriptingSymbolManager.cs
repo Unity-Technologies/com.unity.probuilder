@@ -1,10 +1,4 @@
-using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -27,9 +21,13 @@ namespace ProBuilder2.EditorCommon
 
 		private static bool FbxTypesExist()
 		{
+#if UNITY_2017_1_OR_NEWER
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			Type fbxExporterType = pb_Reflection.GetType("FbxExporters.Editor.ModelExporter");
 			return fbxExporterType != null && assemblies.Any(x => x.FullName.Contains("FbxSdk"));
+#else
+			return false;
+#endif
 		}
 	}
 }

@@ -24,19 +24,19 @@ namespace ProBuilder2.EditorCommon
 #elif UNITY_5_5
 			ti.textureType = TextureImporterType.Default;
 			ti.sRGBTexture = false;
+			ti.textureCompression = TextureImporterCompression.Uncompressed;
 #else
 			ti.textureType = TextureImporterType.Default;
 			ti.sRGBTexture = false;
+			ti.textureCompression = TextureImporterCompression.Uncompressed;
 			ti.alphaSource = TextureImporterAlphaSource.FromInput;//.FromGrayScale;
 			ti.crunchedCompression = false;
 #endif
-			ti.textureType = TextureImporterType.Default;
 			ti.npotScale = TextureImporterNPOTScale.None;
 			ti.filterMode = FilterMode.Point;
 			ti.wrapMode = TextureWrapMode.Clamp;
 			ti.mipmapEnabled = false;
-			ti.textureCompression = TextureImporterCompression.Uncompressed;
-			
+
 			// ti.maxTextureSize = 64;
 		}
 	}
