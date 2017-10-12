@@ -184,7 +184,7 @@ namespace ProBuilder2.EditorCommon
 				m_IconHeight += 4;
 			}
 
-			window.minSize = new Vector2(m_IconWidth + 6, m_IconHeight + 6);
+			window.minSize = new Vector2(m_IconWidth + 6, m_IconHeight + 4);
 			window.Repaint();
 		}
 

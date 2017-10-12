@@ -91,7 +91,7 @@ namespace ProBuilder2.EditorCommon
 				string.Format("Toolbar/Background/{0}_Pressed_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
 
 			m_IconBackgroundStyles.Add(groupKey, style);
-			style.margin = isHorizontal ? new RectOffset(4, 4, 4, 5) : new RectOffset(4, 5, 4, 4);
+			style.margin = isHorizontal ? new RectOffset(4, 4, 4, 5) : new RectOffset(4, 3, 4, 4);
 			style.padding = isHorizontal ? new RectOffset(3, 3, 6, 3) : new RectOffset(6, 3, 3, 3);
 
 			return style;
