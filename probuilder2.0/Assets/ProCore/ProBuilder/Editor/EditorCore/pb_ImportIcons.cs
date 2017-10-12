@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
@@ -11,8 +12,8 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public void OnPreprocessTexture()
 		{
-			if( assetPath.IndexOf("ProBuilder/Icons") < 0 &&
-				assetPath.IndexOf("ProBuilder/About/Images") < 0)
+			if( assetPath.IndexOf("ProBuilder/Icons", StringComparison.Ordinal) < 0 &&
+				assetPath.IndexOf("ProBuilder/About/Images", StringComparison.Ordinal) < 0)
 				return;
 
 			TextureImporter ti = (TextureImporter) assetImporter;

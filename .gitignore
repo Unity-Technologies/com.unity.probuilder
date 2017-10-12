@@ -24,6 +24,8 @@ docs/site/
 docs/manual.pdf
 docs/docs/changelog.md
 probuilder2.0/Assets/test*
+probuilder2.0/Assets/ProCore/ProBuilder/Icons/**/*.meta
+probuilder2.0/Assets/ProCore/ProBuilder/About/Images/**/*.meta
 doxygen/
 
 # symlink
