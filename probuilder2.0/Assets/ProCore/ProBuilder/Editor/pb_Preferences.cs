@@ -12,15 +12,12 @@
 
 using UnityEngine;
 using UnityEditor;
-#if !UNITY_4_6 && !UNITY_4_7
 using UnityEngine.Rendering;
-#endif
 using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
-using System.Collections;
 using System.Linq;
 
-public class pb_Preferences
+public class pb_Preferences : Editor
 {
 	private static bool prefsLoaded = false;
 
@@ -68,8 +65,8 @@ public class pb_Preferences
 
 	static pb_Shortcut[] defaultShortcuts;
 
-	[PreferenceItem (pb_Constant.PRODUCT_NAME)]
-	public static void PreferencesGUI ()
+	[PreferenceItem(pb_Constant.PRODUCT_NAME)]
+	private static void PreferencesGUI ()
 	{
 		// Load the preferences
 		if (!prefsLoaded) {
