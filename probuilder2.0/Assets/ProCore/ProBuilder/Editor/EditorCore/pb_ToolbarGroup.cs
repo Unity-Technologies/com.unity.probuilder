@@ -78,7 +78,9 @@ namespace ProBuilder2.EditorCommon
 		{
 			GUIStyle style;
 
-			if(m_IconBackgroundStyles.TryGetValue(group, out style))
+			string groupKey = string.Format("{0}_{1}", group, isHorizontal ? "_horizontal" : "_vertical");
+
+			if(m_IconBackgroundStyles.TryGetValue(groupKey, out style))
 				return style;
 
 			style = CreateBackgroundStyleTemplate();
@@ -90,7 +92,7 @@ namespace ProBuilder2.EditorCommon
 			style.active.background = pb_IconUtility.GetIcon(
 				string.Format("Toolbar/Background/{0}_Pressed_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
 
-			m_IconBackgroundStyles.Add(group, style);
+			m_IconBackgroundStyles.Add(groupKey, style);
 
 			return style;
 		}
