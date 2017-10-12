@@ -171,7 +171,7 @@ Section Video: <a href="@todo">Selection Tools: Select by Smoothing Group</a>
 Click to select all faces on this object, which have the same Smoothing Group as the selected face.
 
 <div style="text-align:center">
-<img src="../../images/@todo">
+<img src="../../images/SelectBySmoothingGroup_Example.jpg">
 </div>
 
 ---

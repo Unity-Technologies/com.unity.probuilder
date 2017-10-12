@@ -1,4 +1,4 @@
-﻿<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../images/VidLink_GettingStarted_Slim.png"></a></div>
+<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../images/VidLink_GettingStarted_Slim.png"></a></div>
 
 ---
 
@@ -64,6 +64,7 @@
 | ![Select Holes Icon](images/icons/Selection_SelectHole.png "Select Holes Icon") [Select Holes](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-holes) | | ✓ |
 | ![Select by Material Icon](images/icons/Selection_SelectByMaterial.png "Select by Material Icon") [Select by Material](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-by-material) | | ✓ |
 | ![Select by Color Icon](images/icons/Selection_SelectByVertexColor.png "Select by Color Icon") [Select by Color](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-by-color) | ✓ | ✓ |
+| ![Select by Smoothing Group](images/icons/Selection_SelectBySmoothingGroup.png "Select by Smoothing Group Icon") [Select by Smoothing Group](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#select-by-smoothing-group) | | ✓ |
 | ![Shrink Selection Icon](images/icons/Selection_Shrink.png "Shrink Selection Icon") [Shrink Selection](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#shrink-selection) | ✓ | ✓ |
 | ![Grow Selection Icon](images/icons/Selection_Grow.png "Grow Selection Icon") [Grow Selection](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#grow-selection) | ✓ | ✓ |
 | ![Invert Selection Icon](images/icons/Selection_Invert.png "Invert Selection Icon") [Invert Selection](https://procore3d.github.io/probuilder2/toolbar/selection-tools/#invert-selection) | ✓ | ✓ |
