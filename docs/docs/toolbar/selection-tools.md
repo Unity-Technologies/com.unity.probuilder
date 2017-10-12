@@ -162,6 +162,20 @@ Click to select all faces on this object, which have the same vertex color as th
 
 ---
 
+## ![Select by Smoothing Group Icon](../images/icons/Selection_SelectBySmoothingGroup.png "Select by Smoothing Group Icon") Select by Smoothing Group
+
+<div class="video-link">
+Section Video: <a href="@todo">Selection Tools: Select by Smoothing Group</a>
+</div>
+
+Click to select all faces on this object, which have the same Smoothing Group as the selected face.
+
+<div style="text-align:center">
+<img src="../../images/@todo">
+</div>
+
+---
+
 ## ![Shift Modifier Icon](../images/icons/Selection_ShiftDifference.png "Shift Modifier Icon") Shift Modifier
 
 <div class="video-link">
