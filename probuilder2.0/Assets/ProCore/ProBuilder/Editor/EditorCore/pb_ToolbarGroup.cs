@@ -8,12 +8,12 @@ namespace ProBuilder2.EditorCommon
 	[System.Obsolete("Use pb_ToolbarGroup instead")]
 	public enum pb_IconGroup
 	{
-		Tool		= 0,
-		Selection	= 1,
-		Object		= 2,
-		Geometry	= 3,
-		Entity		= 4,
-		Export 		= 5
+		Tool = 0,
+		Selection = 1,
+		Object = 2,
+		Geometry = 3,
+		Entity = 4,
+		Export = 5
 	}
 
 	/**
@@ -21,30 +21,30 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public enum pb_ToolbarGroup
 	{
-		Tool		= 0,
-		Selection	= 1,
-		Object		= 2,
-		Geometry	= 3,
-		Entity		= 4,
-		Export 		= 5
+		Tool = 0,
+		Selection = 1,
+		Object = 2,
+		Geometry = 3,
+		Entity = 4,
+		Export = 5
 	}
 
 	public static class pb_ToolbarGroupUtility
 	{
-		static readonly Color ToolColor 		= new Color(0.6666f, 0.4f, 0.2f, 1f);
-		static readonly Color SelectionColor 	= new Color(0.1411f, 0.4941f, 0.6392f, 1f);
-		static readonly Color ObjectColor 		= new Color(0.4f, 0.6f, 0.1333f, 1f);
-		static readonly Color GeometryColor		= new Color(0.7333f, 0.1333f, 0.2f, 1f);
+		static readonly Color ToolColor = new Color(0.6666f, 0.4f, 0.2f, 1f);
+		static readonly Color SelectionColor = new Color(0.1411f, 0.4941f, 0.6392f, 1f);
+		static readonly Color ObjectColor = new Color(0.4f, 0.6f, 0.1333f, 1f);
+		static readonly Color GeometryColor = new Color(0.7333f, 0.1333f, 0.2f, 1f);
 
 		public static Color GetColor(pb_ToolbarGroup group)
 		{
-			if( group == pb_ToolbarGroup.Tool )
+			if (group == pb_ToolbarGroup.Tool)
 				return ToolColor;
-			else if( group == pb_ToolbarGroup.Selection )
+			else if (group == pb_ToolbarGroup.Selection)
 				return SelectionColor;
-			else if( group == pb_ToolbarGroup.Object || group == pb_ToolbarGroup.Entity )
+			else if (group == pb_ToolbarGroup.Object || group == pb_ToolbarGroup.Entity)
 				return ObjectColor;
-			else if( group == pb_ToolbarGroup.Geometry )
+			else if (group == pb_ToolbarGroup.Geometry)
 				return GeometryColor;
 
 			return Color.white;
@@ -60,8 +60,6 @@ namespace ProBuilder2.EditorCommon
 			style.border = new RectOffset(3, 3, 3, 3);
 			style.stretchWidth = true;
 			style.stretchHeight = false;
-			style.margin = new RectOffset(4, 5, 4, 4);
-			style.padding = new RectOffset(6, 3, 3, 3);
 			return style;
 		}
 
@@ -93,6 +91,8 @@ namespace ProBuilder2.EditorCommon
 				string.Format("Toolbar/Background/{0}_Pressed_{1}", group, isHorizontal ? "Horizontal" : "Vertical"));
 
 			m_IconBackgroundStyles.Add(groupKey, style);
+			style.margin = isHorizontal ? new RectOffset(4, 4, 4, 5) : new RectOffset(4, 5, 4, 4);
+			style.padding = isHorizontal ? new RectOffset(3, 3, 6, 3) : new RectOffset(6, 3, 3, 3);
 
 			return style;
 		}
@@ -102,15 +102,14 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static GUIStyle GetStyle(pb_ToolbarGroup group, bool isHorizontal)
 		{
-			if( group == pb_ToolbarGroup.Tool )
+			if (group == pb_ToolbarGroup.Tool)
 				return GetBackgroundStyle("Tool", isHorizontal);
-			else if( group == pb_ToolbarGroup.Selection )
+			else if (group == pb_ToolbarGroup.Selection)
 				return GetBackgroundStyle("Selection", isHorizontal);
-			else if( group == pb_ToolbarGroup.Object || group == pb_ToolbarGroup.Entity )
+			else if (group == pb_ToolbarGroup.Object || group == pb_ToolbarGroup.Entity)
 				return GetBackgroundStyle("Object", isHorizontal);
 			else // if( group == pb_ToolbarGroup.Geometry )
 				return GetBackgroundStyle("Geo", isHorizontal);
-
 		}
 	}
 }
