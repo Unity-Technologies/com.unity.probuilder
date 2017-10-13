@@ -151,6 +151,7 @@ namespace ProBuilder2.EditorCommon
 		private GUIContent m_HelpIcon = null;
 		private Dictionary<pb_Object, SmoothGroupData> m_SmoothGroups = new Dictionary<pb_Object, SmoothGroupData>();
 		private static bool m_ShowPreview = true;
+		private static bool m_IsMovingVertices = false;
 		private static readonly Color SelectStateMixed = Color.yellow;
 		private static readonly Color SelectStateNormal = Color.green;
 		private static readonly Color SelectStateInUse = new Color(.2f, .8f, .2f, .5f);
@@ -165,7 +166,10 @@ namespace ProBuilder2.EditorCommon
 		{
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged += OnSelectionChanged;
+			Undo.undoRedoPerformed += OnSelectionChanged;
 			pb_Object.onElementSelectionChanged += OnElementSelectionChanged;
+			pb_Editor.OnVertexMovementBegin += OnBeginVertexMovement;
+			pb_Editor.OnVertexMovementFinish += OnFinishVertexMovement;
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
@@ -176,6 +180,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= OnSelectionChanged;
+			Undo.undoRedoPerformed -= OnSelectionChanged;
 			pb_Object.onElementSelectionChanged -= OnElementSelectionChanged;
 			m_SmoothGroups.Clear();
 		}
@@ -183,6 +188,17 @@ namespace ProBuilder2.EditorCommon
 		private void OnDestroy()
 		{
 			m_SmoothGroups.Clear();
+		}
+
+		private void OnBeginVertexMovement(pb_Object[] selection)
+		{
+			m_IsMovingVertices = true;
+		}
+
+		private void OnFinishVertexMovement(pb_Object[] selection)
+		{
+			m_IsMovingVertices = false;
+			OnSelectionChanged();
 		}
 
 		private void OnSelectionChanged()
@@ -269,7 +285,9 @@ namespace ProBuilder2.EditorCommon
 
 						if (GUILayout.Button(i.ToString(), groupButtonStyle))
 						{
-							if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt)
+							// if right click or alt click select the faces instead of setting a group
+							if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt ||
+								Event.current.button != 0)
 								SelectGroups(pb, new HashSet<int>() { i });
 							else
 								SetGroup(pb, i);
@@ -322,7 +340,7 @@ namespace ProBuilder2.EditorCommon
 
 			Event evt = Event.current;
 
-			if (m_ShowPreview && evt.type == EventType.Repaint)
+			if (m_ShowPreview && !m_IsMovingVertices && evt.type == EventType.Repaint)
 			{
 				int index = 0;
 
@@ -341,7 +359,12 @@ namespace ProBuilder2.EditorCommon
 		private void SelectGroups(pb_Object pb, HashSet<int> groups)
 		{
 			pbUndo.RecordSelection(pb, "Select with Smoothing Group");
-			pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup)));
+
+			if( (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift ||
+				(Event.current.modifiers & EventModifiers.Control) == EventModifiers.Control )
+				pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup) || pb.SelectedFaces.Contains(x)));
+			else
+				pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup)));
 			pb_Editor.Refresh();
 		}
 
