@@ -11,9 +11,92 @@ namespace ProBuilder2.EditorCommon
 {
 	public class pb_SmoothGroupEditor : EditorWindow
 	{
-		private static bool m_ShowPreview = true;
-#if PB_ENABLE_SMOOTH_GROUP_PREVIEW
-		private Dictionary<pb_Object, Mesh> m_PreviewMeshes = new Dictionary<pb_Object, Mesh>();
+		private class SmoothGroupData
+		{
+			public bool isVisible;
+			public Dictionary<int, List<pb_Face>> groups;
+			public Dictionary<int, Color> groupColors;
+			public HashSet<int> selected;
+			public Mesh previewMesh;
+
+			public SmoothGroupData(pb_Object pb)
+			{
+				groups = new Dictionary<int, List<pb_Face>>();
+				selected = new HashSet<int>();
+				groupColors = new Dictionary<int, Color>();
+				isVisible = true;
+
+				previewMesh = new Mesh()
+				{
+					hideFlags = HideFlags.HideAndDontSave,
+					name = pb.name + "_SmoothingPreview"
+				};
+
+				Rebuild(pb);
+			}
+
+			~SmoothGroupData()
+			{
+				EditorApplication.delayCall += () => { Object.DestroyImmediate(previewMesh); };
+			}
+
+			public void Rebuild(pb_Object pb)
+			{
+				CacheGroups(pb);
+				CacheSelected(pb);
+				RebuildPreviewMesh(pb);
+			}
+
+			public void CacheGroups(pb_Object pb)
+			{
+				groups.Clear();
+
+				foreach (pb_Face face in pb.faces)
+				{
+					List<pb_Face> affected;
+
+					if (!groups.TryGetValue(face.smoothingGroup, out affected))
+						groups.Add(face.smoothingGroup, new List<pb_Face>() {face});
+					else
+						affected.Add(face);
+				}
+			}
+
+			public void CacheSelected(pb_Object pb)
+			{
+				selected.Clear();
+
+				foreach(pb_Face face in pb.SelectedFaces)
+					selected.Add(face.smoothingGroup);
+			}
+
+			private void RebuildPreviewMesh(pb_Object pb)
+			{
+				List<int> indices = new List<int>();
+				Color32[] colors = new Color32[pb.vertexCount];
+				int colorIndex = 0;
+				groupColors.Clear();
+
+				foreach (KeyValuePair<int, List<pb_Face>> smoothGroup in groups)
+				{
+					if (smoothGroup.Key > pb_Smoothing.SMOOTHING_GROUP_NONE)
+					{
+						Color32 color = GetDistinctColor(colorIndex++);
+						groupColors.Add(smoothGroup.Key, color);
+						var groupIndices = smoothGroup.Value.SelectMany(y => y.indices);
+						indices.AddRange(groupIndices);
+						foreach (int i in groupIndices)
+							colors[i] = color;
+					}
+				}
+
+				previewMesh.Clear();
+				previewMesh.vertices = pb.vertices;
+				previewMesh.colors32 = colors;
+				previewMesh.triangles = indices.ToArray();
+			}
+		}
+
 		private static Material m_FaceMaterial = null;
 		private static Material faceMaterial
 		{
@@ -28,11 +111,7 @@ namespace ProBuilder2.EditorCommon
 				return m_FaceMaterial;
 			}
 		}
-#endif
-		private static Dictionary<pb_Object, Dictionary<int, List<pb_Face>>> m_SmoothGroups =
-			new Dictionary<pb_Object, Dictionary<int, List<pb_Face>>>();
-		private static Dictionary<pb_Object, HashSet<int>> m_SelectedGroups = new Dictionary<pb_Object, HashSet<int>>();
-		private static Dictionary<pb_Object, bool> m_IsVisible = new Dictionary<pb_Object, bool>();
+
 		private static GUIStyle m_GroupButtonStyle = null;
 		private static GUIStyle groupButtonStyle
 		{
@@ -41,16 +120,37 @@ namespace ProBuilder2.EditorCommon
 				if (m_GroupButtonStyle == null)
 				{
 					m_GroupButtonStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
-					m_GroupButtonStyle.fixedWidth = 24;
-					m_GroupButtonStyle.fixedHeight = 24;
+					m_GroupButtonStyle.fixedWidth = IconWidth;
+					m_GroupButtonStyle.fixedHeight = IconHeight;
 				}
 				return m_GroupButtonStyle;
 			}
 		}
+
+		private static GUIStyle m_ColorKeyStyle = null;
+		private static GUIStyle colorKeyStyle
+		{
+			get
+			{
+				if (m_ColorKeyStyle == null)
+				{
+					m_ColorKeyStyle = new GUIStyle(groupButtonStyle);
+					m_ColorKeyStyle.fixedWidth = IconWidth;
+					m_ColorKeyStyle.fixedHeight = 3;
+					m_ColorKeyStyle.padding = new RectOffset(4, 4, 0, 4);
+					m_ColorKeyStyle.normal.background = EditorGUIUtility.whiteTexture;
+				}
+				return m_ColorKeyStyle;
+			}
+		}
+
+		private const int IconWidth = 24;
+		private const int IconHeight = 24;
 		private GUIContent m_groupKeyContent = new GUIContent("21", "Smoothing Group");
 		private Vector2 m_Scroll = Vector2.zero;
 		private GUIContent m_HelpIcon = null;
-
+		private Dictionary<pb_Object, SmoothGroupData> m_SmoothGroups = new Dictionary<pb_Object, SmoothGroupData>();
+		private static bool m_ShowPreview = true;
 		private static readonly Color SelectStateMixed = Color.yellow;
 		private static readonly Color SelectStateNormal = Color.green;
 		private static readonly Color SelectStateInUse = new Color(.2f, .8f, .2f, .5f);
@@ -67,10 +167,7 @@ namespace ProBuilder2.EditorCommon
 			Selection.selectionChanged += OnSelectionChanged;
 			pb_Object.onElementSelectionChanged += OnElementSelectionChanged;
 			this.autoRepaintOnSceneChange = true;
-
-			// can't load icons from constructor
 			m_HelpIcon = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
-			// load prefs
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
 			OnSelectionChanged();
 		}
@@ -80,122 +177,33 @@ namespace ProBuilder2.EditorCommon
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			Selection.selectionChanged -= OnSelectionChanged;
 			pb_Object.onElementSelectionChanged -= OnElementSelectionChanged;
+			m_SmoothGroups.Clear();
+		}
 
-#if PB_ENABLE_SMOOTH_GROUP_PREVIEW
-			ClearPreviewMeshes();
-#endif
+		private void OnDestroy()
+		{
+			m_SmoothGroups.Clear();
 		}
 
 		private void OnSelectionChanged()
 		{
 			m_SmoothGroups.Clear();
-			m_SelectedGroups.Clear();
 
 			foreach (pb_Object pb in pb_Selection.Top())
-			{
-				OnElementSelectionChanged(pb);
-				CollectSmoothingGroups(pb);
-			}
-
-#if PB_ENABLE_SMOOTH_GROUP_PREVIEW
-			RebuildPreviewMeshes();
-#endif
+				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
 
 			this.Repaint();
 		}
 
 		private void OnElementSelectionChanged(pb_Object pb)
 		{
-			HashSet<int> selected;
+			SmoothGroupData data;
 
-			if(!m_SelectedGroups.TryGetValue(pb, out selected))
-				m_SelectedGroups.Add(pb, selected = new HashSet<int>());
+			if(!m_SmoothGroups.TryGetValue(pb, out data))
+				m_SmoothGroups.Add(pb, data = new SmoothGroupData(pb));
 			else
-				selected.Clear();
-
-			foreach(pb_Face face in pb.SelectedFaces)
-				selected.Add(face.smoothingGroup);
+				data.CacheSelected(pb);
 		}
-
-		private void CollectSmoothingGroups(pb_Object pb)
-		{
-			Dictionary<int, List<pb_Face>> smoothDictionary;
-
-			if(!m_SmoothGroups.TryGetValue(pb, out smoothDictionary))
-				m_SmoothGroups.Add(pb, smoothDictionary = new Dictionary<int, List<pb_Face>>());
-			else
-				smoothDictionary.Clear();
-
-			foreach (pb_Face face in pb.faces)
-			{
-				List<pb_Face> affected;
-
-				if (!smoothDictionary.TryGetValue(face.smoothingGroup, out affected))
-					smoothDictionary.Add(face.smoothingGroup, new List<pb_Face>() {face});
-				else
-					affected.Add(face);
-			}
-		}
-
-#if PB_ENABLE_SMOOTH_GROUP_PREVIEW
-		private void ClearPreviewMeshes()
-		{
-			foreach (var kvp in m_PreviewMeshes)
-				Object.DestroyImmediate(kvp.Value);
-
-			m_PreviewMeshes.Clear();
-		}
-
-		private void RebuildPreviewMeshes()
-		{
-			ClearPreviewMeshes();
-
-			foreach (var kvp in m_SmoothGroups)
-			{
-				Mesh m = new Mesh()
-				{
-					hideFlags = HideFlags.HideAndDontSave,
-					name = kvp.Key.name + "_SmoothingPreview"
-				};
-				m_PreviewMeshes.Add(kvp.Key, m);
-
-				RebuildPreviewMesh(kvp.Key);
-			}
-			SceneView.RepaintAll();
-		}
-
-		private void RebuildPreviewMesh(pb_Object pb)
-		{
-			List<int> indices = new List<int>();
-			Color32[] colors = new Color32[pb.vertexCount];
-			int colorIndex = 0;
-
-			Dictionary<int, List<pb_Face>> groups;
-
-			// how?
-			if(!m_SmoothGroups.TryGetValue(pb, out groups))
-				return;
-
-			foreach (KeyValuePair<int, List<pb_Face>> smoothGroup in groups)
-			{
-				if (smoothGroup.Key > pb_Smoothing.SMOOTHING_GROUP_NONE)
-				{
-					Color32 color = GetDistinctColor(colorIndex++);
-					var groupIndices = smoothGroup.Value.SelectMany(y => y.indices);
-					indices.AddRange(groupIndices);
-					foreach (int i in groupIndices)
-						colors[i] = color;
-				}
-			}
-
-			Mesh m;
-			if(!m_PreviewMeshes.TryGetValue(pb, out m))
-				return;
-			m.vertices = pb.vertices;
-			m.colors32 = colors;
-			m.triangles = indices.ToArray();
-		}
-#endif
 
 		private void OnGUI()
 		{
@@ -233,20 +241,16 @@ namespace ProBuilder2.EditorCommon
 			foreach (var mesh in m_SmoothGroups)
 			{
 				pb_Object pb = mesh.Key;
-
-				bool isVisible;
-
-				if(!m_IsVisible.TryGetValue(pb, out isVisible))
-					m_IsVisible.Add(pb, isVisible = true);
+				SmoothGroupData data = mesh.Value;
 
 				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
 
 				if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
-					m_IsVisible[pb] = (isVisible = !isVisible);
+					data.isVisible = !data.isVisible;
 
-				Color stateColor = m_SelectedGroups[pb].Contains(0) ? SelectStateMixed : SelectStateNormal;
+				Color stateColor = data.selected.Contains(0) ? SelectStateMixed : SelectStateNormal;
 
-				if (isVisible)
+				if (data.isVisible)
 				{
 					int column = 0;
 
@@ -254,14 +258,29 @@ namespace ProBuilder2.EditorCommon
 
 					for (int i = 1; i < pb_Smoothing.SMOOTH_RANGE_MAX; i++)
 					{
-						if(m_SelectedGroups[pb].Contains(i))
+						if(data.selected.Contains(i))
 							GUI.backgroundColor = stateColor;
 						// if this group is used (but is not currently selected) show it as a muted green
-						else if(m_SmoothGroups[pb].ContainsKey(i))
+						else if(data.groups.ContainsKey(i))
 							GUI.backgroundColor = SelectStateInUse;
 
+						if (m_ShowPreview)
+							GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
+
 						if (GUILayout.Button(i.ToString(), groupButtonStyle))
-							SetGroup(pb, i);
+						{
+							if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt)
+								SelectGroups(pb, new HashSet<int>() { i });
+							else
+								SetGroup(pb, i);
+						}
+
+						if (m_ShowPreview)
+						{
+							GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
+							GUILayout.Label("", colorKeyStyle);
+							GUILayout.EndVertical();
+						}
 						GUI.backgroundColor = Color.white;
 
 						if (++column > columns)
@@ -281,12 +300,8 @@ namespace ProBuilder2.EditorCommon
 
 				GUILayout.FlexibleSpace();
 				if (GUILayout.Button("Expand Selection"))
-				{
-					pbUndo.RecordSelection(pb, "Select with Smoothing Group");
-					var all = mesh.Value.Where(x => m_SelectedGroups[pb].Contains(x.Key)).SelectMany(y => y.Value);
-					pb.SetSelectedFaces(all);
-					pb_Editor.Refresh();
-				}
+					SelectGroups(pb, data.selected);
+
 				GUILayout.EndHorizontal();
 
 				GUILayout.EndVertical();
@@ -305,22 +320,29 @@ namespace ProBuilder2.EditorCommon
 				Handles.EndGUI();
 			}
 
-#if PB_ENABLE_SMOOTH_GROUP_PREVIEW
-
 			Event evt = Event.current;
 
 			if (m_ShowPreview && evt.type == EventType.Repaint)
 			{
 				int index = 0;
 
-				foreach (var kvp in m_PreviewMeshes)
+				foreach (var kvp in m_SmoothGroups)
 				{
+					Mesh m = kvp.Value.previewMesh;
+					if(m == null)
+						continue;
 					faceMaterial.SetColor("_Color", GetDistinctColor(index++));
 					faceMaterial.SetPass(0);
-					Graphics.DrawMeshNow(kvp.Value, kvp.Key.transform.localToWorldMatrix);
+					Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
 				}
 			}
-#endif
+		}
+
+		private void SelectGroups(pb_Object pb, HashSet<int> groups)
+		{
+			pbUndo.RecordSelection(pb, "Select with Smoothing Group");
+			pb.SetSelectedFaces(pb.faces.Where(x => groups.Contains(x.smoothingGroup)));
+			pb_Editor.Refresh();
 		}
 
 		private void SetGroup(pb_Object pb, int index)
@@ -328,14 +350,18 @@ namespace ProBuilder2.EditorCommon
 			foreach (pb_Face face in pb.SelectedFaces)
 				face.smoothingGroup = index;
 
-			CollectSmoothingGroups(pb);
-			OnElementSelectionChanged(pb);
-			RebuildPreviewMesh(pb);
+			SmoothGroupData data;
+			if(!m_SmoothGroups.TryGetValue(pb, out data))
+				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
+			else
+				data.Rebuild(pb);
 
 			// todo pb.Rebuild
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
+
+			pb_Editor.Refresh();
 		}
 
 		private static Color32 GetDistinctColor(int index)
