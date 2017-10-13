@@ -39,6 +39,15 @@ namespace ProBuilder2.Common
 		}
 
 		/**
+		 * Is the smooth group index considered smooth?
+		 * Hard range is 25 -> 42.
+		 */
+		public static bool IsSmooth(int index)
+		{
+			return (index > SMOOTHING_GROUP_NONE && (index < HARD_RANGE_MIN || index > HARD_RANGE_MAX));
+		}
+
+		/**
 		 * Group together adjacent faces with normal differences less than angleThreshold (in degrees).
 		 */
 		public static void ApplySmoothingGroups(pb_Object pb, IEnumerable<pb_Face> faces, float angleThreshold, Vector3[] normals = null)

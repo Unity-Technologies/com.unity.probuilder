@@ -5,6 +5,12 @@ using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
 
+#if PROBUILDER_DLL
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ProBuilderEditor-Unity5")]
+#else
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Assembly-CSharp-Editor")]
+#endif
+
 [AddComponentMenu("")]	// Don't let the user add this to any object.
 [DisallowMultipleComponent]
 [RequireComponent(typeof(MeshFilter))]
@@ -231,6 +237,8 @@ public class pb_Object : MonoBehaviour
 	// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
 	public static event System.Action<pb_Object> onDestroyObject;
 
+	internal static event System.Action<pb_Object> onElementSelectionChanged;
+
 	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there
 	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
 	public bool dontDestroyMeshOnDelete = false;
@@ -394,6 +402,9 @@ public class pb_Object : MonoBehaviour
 		this.m_SelectedEdges = new pb_Edge[len];
 		for(int i = 0; i < len; i++)
 			this.m_SelectedEdges[i] = new pb_Edge(edges[i]);
+
+		if(onElementSelectionChanged != null)
+			onElementSelectionChanged(this);
 	}
 
 	public void SetSelectedEdges(IEnumerable<pb_Edge> edges)
@@ -401,6 +412,9 @@ public class pb_Object : MonoBehaviour
 		this.m_selectedFaces = new int[0];
 		this.m_SelectedEdges = edges.Select(x => new pb_Edge(x)).ToArray();
 		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();
+
+		if(onElementSelectionChanged != null)
+			onElementSelectionChanged(this);
 	}
 
 	/**
@@ -411,6 +425,9 @@ public class pb_Object : MonoBehaviour
 		m_selectedFaces = new int[0];
 		m_SelectedEdges = new pb_Edge[0];
 		m_selectedTriangles = tris ?? new int[0] {};
+
+		if(onElementSelectionChanged != null)
+			onElementSelectionChanged(this);
 	}
 
 	/**

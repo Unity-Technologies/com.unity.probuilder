@@ -77,6 +77,49 @@ namespace ProBuilder2.Interface
 			}
 		}
 
+		private static GUIStyle m_ToolbarHelpIcon = null;
+
+		public static GUIStyle toolbarHelpIcon
+		{
+			get
+			{
+				if (m_ToolbarHelpIcon == null)
+				{
+					m_ToolbarHelpIcon = new GUIStyle();
+					m_ToolbarHelpIcon.margin = new RectOffset(0,0,0,0);
+					m_ToolbarHelpIcon.padding = new RectOffset(0,0,0,0);
+					m_ToolbarHelpIcon.alignment = TextAnchor.MiddleCenter;
+					m_ToolbarHelpIcon.fixedWidth = 18;
+					m_ToolbarHelpIcon.fixedHeight = 18;
+				}
+				return m_ToolbarHelpIcon;
+			}
+		}
+
+		private static GUIStyle m_SettingsGroupStyle = null;
+
+		public static GUIStyle SettingsGroupStyle
+		{
+			get
+			{
+				if (m_SettingsGroupStyle == null)
+				{
+					m_SettingsGroupStyle = new GUIStyle();
+
+					m_SettingsGroupStyle.normal.background 	= pb_IconUtility.GetIcon("Toolbar/RoundedBorder");
+					m_SettingsGroupStyle.hover.background 	= pb_IconUtility.GetIcon("Toolbar/RoundedBorder");
+					m_SettingsGroupStyle.active.background 	= pb_IconUtility.GetIcon("Toolbar/RoundedBorder");
+					m_SettingsGroupStyle.border 			= new RectOffset(3,3,3,3);
+					m_SettingsGroupStyle.stretchWidth 		= true;
+					m_SettingsGroupStyle.stretchHeight 		= false;
+					m_SettingsGroupStyle.margin 			= new RectOffset(4,4,4,4);
+					m_SettingsGroupStyle.padding 			= new RectOffset(4,4,4,6);
+				}
+
+				return m_SettingsGroupStyle;
+			}
+		}
+
 		static GUIContent _guiContent = null;
 
 		public static GUIContent TempGUIContent(string label, string tooltip = null, Texture2D icon = null)
