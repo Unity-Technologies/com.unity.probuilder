@@ -238,8 +238,11 @@ namespace ProBuilder2.EditorCommon
 
 		private void OnEnable()
 		{
-			if(pb_Editor.instance)
+			if (pb_Editor.instance)
+			{
+				pb_Editor.instance.SetEditLevel(EditLevel.Geometry);
 				pb_Editor.instance.SetSelectionMode(SelectMode.Face);
+			}
 
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged += OnSelectionChanged;
