@@ -145,7 +145,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		private static Material m_FaceMaterial = null;
-		private static Material faceMaterial
+		private static Material smoothPreviewMaterial
 		{
 			get
 			{
@@ -228,6 +228,9 @@ namespace ProBuilder2.EditorCommon
 		private static readonly Color SelectStateNormal = Color.green;
 		private static readonly Color SelectStateInUse = new Color(.2f, .8f, .2f, .5f);
 		private static float m_NormalsSize = 0.1f;
+		private static float m_PreviewOpacity = .5f;
+		private static bool m_PreviewDither = false;
+		private static bool m_ShowSettings = false;
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Editors/Smoothing Groups")]
 		public static void MenuOpenSmoothGroupEditor()
@@ -255,6 +258,8 @@ namespace ProBuilder2.EditorCommon
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
 			m_ShowNormals = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_DrawNormals", false);
 			m_NormalsSize = pb_PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_NormalsSize", .1f);
+			m_PreviewOpacity = pb_PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
+			m_PreviewDither = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
 			m_BreakSmoothingContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
 				"Clear the selected faces of their smoothing groups");
 			OnSelectionChanged();
@@ -342,21 +347,8 @@ namespace ProBuilder2.EditorCommon
 				pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", m_ShowNormals);
 			}
 
-			if (m_ShowNormals)
-			{
-				GUILayout.Label("Size", EditorStyles.miniLabel);
-				EditorGUI.BeginChangeCheck();
-				m_NormalsSize = EditorGUILayout.Slider(m_NormalsSize, .001f, 1f, GUILayout.MaxWidth(200));
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
-					foreach (var kvp in m_SmoothGroups)
-						kvp.Value.RebuildNormalsMesh(kvp.Key);
-					SceneView.RepaintAll();
-				}
-			}
-
 			GUILayout.FlexibleSpace();
+
 			if(GUILayout.Button(m_HelpIcon, pb_EditorGUIUtility.toolbarHelpIcon))
 				m_ShowHelp = !m_ShowHelp;
 			GUILayout.EndHorizontal();
@@ -419,87 +411,117 @@ namespace ProBuilder2.EditorCommon
 				GUILayout.Label("Select a ProBuilder Mesh", pb_EditorGUIUtility.CenteredGreyMiniLabel);
 				GUILayout.FlexibleSpace();
 				GUILayout.EndVertical();
-
-				// End inspector scroll if exiting early
-				EditorGUILayout.EndScrollView();
-
-				return;
 			}
-
-			foreach (var mesh in m_SmoothGroups)
+			else
 			{
-				pb_Object pb = mesh.Key;
-				SmoothGroupData data = mesh.Value;
-
-				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
-
-				if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
-					data.isVisible = !data.isVisible;
-
-				Color stateColor = data.selected.Contains(0) ? SelectStateMixed : SelectStateNormal;
-
-				if (data.isVisible)
+				foreach (var mesh in m_SmoothGroups)
 				{
-					int column = 0;
+					pb_Object pb = mesh.Key;
+					SmoothGroupData data = mesh.Value;
 
-					GUILayout.BeginHorizontal();
+					GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
 
-					for (int i = 1; i < pb_Smoothing.SMOOTH_RANGE_MAX; i++)
+					if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
+						data.isVisible = !data.isVisible;
+
+					Color stateColor = data.selected.Contains(0) ? SelectStateMixed : SelectStateNormal;
+
+					if (data.isVisible)
 					{
-						if(data.selected.Contains(i))
-							GUI.backgroundColor = stateColor;
-						// if this group is used (but is not currently selected) show it as a muted green
-						else if(data.groups.ContainsKey(i))
-							GUI.backgroundColor = SelectStateInUse;
+						int column = 0;
 
-						if (m_ShowPreview)
-							GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
+						GUILayout.BeginHorizontal();
 
-						if (GUILayout.Button(i.ToString(), groupButtonStyle))
+						for (int i = 1; i < pb_Smoothing.SMOOTH_RANGE_MAX; i++)
 						{
-							// if right click or alt click select the faces instead of setting a group
-							if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt ||
-								Event.current.button != 0)
-								SelectGroups(pb, new HashSet<int>() { i });
-							else
-								SetGroup(pb, i);
+							if(data.selected.Contains(i))
+								GUI.backgroundColor = stateColor;
+							// if this group is used (but is not currently selected) show it as a muted green
+							else if(data.groups.ContainsKey(i))
+								GUI.backgroundColor = SelectStateInUse;
+
+							if (m_ShowPreview)
+								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
+
+							if (GUILayout.Button(i.ToString(), groupButtonStyle))
+							{
+								// if right click or alt click select the faces instead of setting a group
+								if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt ||
+								   Event.current.button != 0)
+									SelectGroups(pb, new HashSet<int>() { i });
+								else
+									SetGroup(pb, i);
+							}
+
+							if (m_ShowPreview)
+							{
+								GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
+								GUILayout.Label("", colorKeyStyle);
+								GUILayout.EndVertical();
+							}
+							GUI.backgroundColor = Color.white;
+
+							if (++column > columns)
+							{
+								column = 0;
+								GUILayout.EndHorizontal();
+								GUILayout.BeginHorizontal();
+							}
 						}
 
-						if (m_ShowPreview)
-						{
-							GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
-							GUILayout.Label("", colorKeyStyle);
-							GUILayout.EndVertical();
-						}
-						GUI.backgroundColor = Color.white;
+						GUILayout.EndHorizontal();
 
-						if (++column > columns)
-						{
-							column = 0;
-							GUILayout.EndHorizontal();
-							GUILayout.BeginHorizontal();
-						}
+						GUILayout.BeginHorizontal();
+
+						GUILayout.FlexibleSpace();
+
+						if (GUILayout.Button(m_BreakSmoothingContent,
+							pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Geometry, true)))
+							SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
+
+						GUILayout.EndHorizontal();
 					}
 
-					GUILayout.EndHorizontal();
+					GUILayout.EndVertical();
 				}
-
-				GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-
-//				if (GUILayout.Button("Expand Selection"))
-//					SelectGroups(pb, data.selected);
-
-				if (GUILayout.Button(m_BreakSmoothingContent,
-					pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Geometry, true)))
-					SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
-
-				GUILayout.EndHorizontal();
-
-				GUILayout.EndVertical();
 			}
 
 			EditorGUILayout.EndScrollView();
+
+			m_ShowSettings = EditorGUILayout.Foldout(m_ShowSettings, "Settings");
+
+			if (m_ShowSettings)
+			{
+				EditorGUIUtility.labelWidth = 100;
+
+				EditorGUI.BeginChangeCheck();
+
+				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					foreach (var kvp in m_SmoothGroups)
+						kvp.Value.RebuildNormalsMesh(kvp.Key);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUI.BeginChangeCheck();
+
+				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
+				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
+					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
+					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
+					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUIUtility.labelWidth = 0;
+			}
 
 			// This isn't great, but we need hover previews to work
 			if(mouseOverWindow == this)
@@ -529,7 +551,7 @@ namespace ProBuilder2.EditorCommon
 
 						if (m != null)
 						{
-							faceMaterial.SetPass(0);
+							smoothPreviewMaterial.SetPass(0);
 							Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
 						}
 					}
@@ -549,7 +571,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private void SelectGroups(pb_Object pb, HashSet<int> groups)
+		private static void SelectGroups(pb_Object pb, HashSet<int> groups)
 		{
 			pbUndo.RecordSelection(pb, "Select with Smoothing Group");
 
@@ -591,30 +613,56 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * https://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
 		 */
+//		private static readonly Color32[] m_KellysMaxContrastSet = new Color32[]
+//		{
+//			UIntToColor(0xFFFFB300), //Vivid Yellow
+//			UIntToColor(0xFF803E75), //Strong Purple
+//			UIntToColor(0xFFFF6800), //Vivid Orange
+////			UIntToColor(0xFFA6BDD7), //Very Light Blue
+//			UIntToColor(0xFFC10020), //Vivid Red
+//			UIntToColor(0xFFCEA262), //Grayish Yellow
+//			UIntToColor(0xFF817066), //Medium Gray
+//
+//			//The following will not be good for people with defective color vision
+//			UIntToColor(0xFF007D34), //Vivid Green
+//			UIntToColor(0xFFF6768E), //Strong Purplish Pink
+//			UIntToColor(0xFF00538A), //Strong Blue
+//			UIntToColor(0xFFFF7A5C), //Strong Yellowish Pink
+//			UIntToColor(0xFF53377A), //Strong Violet
+//			UIntToColor(0xFFFF8E00), //Vivid Orange Yellow
+//			UIntToColor(0xFFB32851), //Strong Purplish Red
+//			UIntToColor(0xFFF4C800), //Vivid Greenish Yellow
+//			UIntToColor(0xFF7F180D), //Strong Reddish Brown
+//			UIntToColor(0xFF93AA00), //Vivid Yellowish Green
+//			UIntToColor(0xFF593315), //Deep Yellowish Brown
+//			UIntToColor(0xFFF13A13), //Vivid Reddish Orange
+//			UIntToColor(0xFF232C16), //Dark Olive Green
+//		};
+
 		private static readonly Color32[] m_KellysMaxContrastSet = new Color32[]
 		{
-			UIntToColor(0xFFFFB300), //Vivid Yellow
-			UIntToColor(0xFF803E75), //Strong Purple
-			UIntToColor(0xFFFF6800), //Vivid Orange
-//			UIntToColor(0xFFA6BDD7), //Very Light Blue
-			UIntToColor(0xFFC10020), //Vivid Red
-			UIntToColor(0xFFCEA262), //Grayish Yellow
-			UIntToColor(0xFF817066), //Medium Gray
-
-			//The following will not be good for people with defective color vision
-			UIntToColor(0xFF007D34), //Vivid Green
-			UIntToColor(0xFFF6768E), //Strong Purplish Pink
-			UIntToColor(0xFF00538A), //Strong Blue
-			UIntToColor(0xFFFF7A5C), //Strong Yellowish Pink
-			UIntToColor(0xFF53377A), //Strong Violet
-			UIntToColor(0xFFFF8E00), //Vivid Orange Yellow
-			UIntToColor(0xFFB32851), //Strong Purplish Red
-			UIntToColor(0xFFF4C800), //Vivid Greenish Yellow
-			UIntToColor(0xFF7F180D), //Strong Reddish Brown
-			UIntToColor(0xFF93AA00), //Vivid Yellowish Green
-			UIntToColor(0xFF593315), //Deep Yellowish Brown
-			UIntToColor(0xFFF13A13), //Vivid Reddish Orange
-			UIntToColor(0xFF232C16), //Dark Olive Green
+			new Color32(230, 25, 75, 255), 		// Red
+			new Color32(60, 180, 75, 255), 		// Green
+			new Color32(255, 225, 25, 255), 	// Yellow
+			new Color32(0, 130, 200, 255), 		// Blue
+			new Color32(245, 130, 48, 255), 	// Orange
+			new Color32(145, 30, 180, 255), 	// Purple
+			new Color32(70, 240, 240, 255), 	// Cyan
+			new Color32(240, 50, 230, 255), 	// Magenta
+			new Color32(210, 245, 60, 255), 	// Lime
+			new Color32(250, 190, 190, 255), 	// Pink
+			new Color32(0, 128, 128, 255), 		// Teal
+			new Color32(230, 190, 255, 255), 	// Lavender
+			new Color32(170, 110, 40, 255), 	// Brown
+			new Color32(255, 250, 200, 255), 	// Beige
+			new Color32(128, 0, 0, 255), 		// Maroon
+			new Color32(170, 255, 195, 255), 	// Mint
+			new Color32(128, 128, 0, 255), 		// Olive
+			new Color32(255, 215, 180, 255), 	// Coral
+			new Color32(0, 0, 128, 255), 		// Navy
+			new Color32(128, 128, 128, 255), 	// Grey
+			new Color32(255, 255, 255, 255), 	// White
+			new Color32(0, 0, 0, 255), 			// Black
 		};
 
 		private static Color32 UIntToColor(uint color)

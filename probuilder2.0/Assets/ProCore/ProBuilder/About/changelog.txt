@@ -1,12 +1,15 @@
-# ProBuilder 2.9.7f3
+# ProBuilder 2.9.7f4
 
 ## Features
 
+- Unity 2017.3 beta support.
+- New toolbar icons (Right/Context + Click in Toolbar -> Use Icon Mode).
 - Significantly improved quad detection in ProBuilderize function.
 - ProBuilderize now able to import smoothing groups.
 - Support exporting quads to FBX format (requires Unity FbxExporter in project).
 - New `Select by Smoothing Group` action.
-- New toolbar icons (Right/Context + Click in Toolbar -> Use Icon Mode).
+- Newly redesigned `Smooth Groups Editor`.
+- New `Select Face Loop` and `Select Face Ring` actions (shortcuts: Shift + Double Click and Ctrl + Double Click).
 
 ## Bug Fixes
 
