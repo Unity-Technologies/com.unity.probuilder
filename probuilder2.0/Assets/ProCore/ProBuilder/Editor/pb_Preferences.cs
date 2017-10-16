@@ -341,14 +341,14 @@ public class pb_Preferences : Editor
 			GUILayout.Label("Modifiers", EditorStyles.boldLabel);
 			// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
 			// so this isn't technically correct.
-	#if UNITY_2017_3_OR_NEWER
+#if UNITY_2017_3_OR_NEWER
+			EventModifiers em = (EventModifiers) defaultShortcuts[shortcutIndex].eventModifiers;
+			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
+#else
 			EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
 			em = (EventModifiers)EditorGUILayout.EnumMaskField(em);
 			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
-	#else
-			EventModifiers em = (EventModifiers) defaultShortcuts[shortcutIndex].eventModifiers;
-			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
-	#endif
+#endif
 			GUILayout.Label("Description", EditorStyles.boldLabel);
 
 			GUILayout.Label(defaultShortcuts[shortcutIndex].description, EditorStyles.wordWrappedLabel);
