@@ -8,6 +8,25 @@ namespace ProBuilder2.Interface
 	 */
 	public static class pb_EditorGUILayout
 	{
+		private static bool m_RowToggle = true;
+		private static readonly Color RowOddColor = new Color(.45f, .45f, .45f, .2f);
+		private static readonly Color RowEvenColor = new Color(.30f, .30f, .30f, .2f);
+
+		public static void BeginRow(int index = -1)
+		{
+			if(index > -1)
+				m_RowToggle = index % 2 == 0;
+
+			pb_EditorGUIUtility.PushBackgroundColor(m_RowToggle ? RowEvenColor : RowOddColor);
+			GUILayout.BeginHorizontal(pb_EditorGUIUtility.rowStyle);
+			m_RowToggle = !m_RowToggle;
+		}
+
+		public static void EndRow()
+		{
+			GUILayout.EndHorizontal();
+		}
+
 		/**
 		 *	An automatically laid out toolbar that returns the index of the selected button. Optionally allows no selection.
 		 */

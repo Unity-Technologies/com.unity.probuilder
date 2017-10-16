@@ -120,6 +120,12 @@ namespace ProBuilder2.EditorCommon
 				if (m_GroupButtonStyle == null)
 				{
 					m_GroupButtonStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
+					m_GroupButtonStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
+					m_GroupButtonStyle.hover.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
+					m_GroupButtonStyle.active.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
+					m_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
+					m_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
+					m_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
 					m_GroupButtonStyle.fixedWidth = IconWidth;
 					m_GroupButtonStyle.fixedHeight = IconHeight;
 				}
@@ -144,14 +150,32 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		private static GUIStyle m_WordWrappedRichText = null;
+
+		private static GUIStyle wordWrappedRichText
+		{
+			get
+			{
+				if (m_WordWrappedRichText == null)
+				{
+					m_WordWrappedRichText = new GUIStyle(EditorStyles.wordWrappedLabel);
+					m_WordWrappedRichText.richText = true;
+					m_WordWrappedRichText.alignment = TextAnchor.LowerLeft;
+				}
+				return m_WordWrappedRichText;
+			}
+		}
+
 		private const int IconWidth = 24;
 		private const int IconHeight = 24;
 		private GUIContent m_groupKeyContent = new GUIContent("21", "Smoothing Group");
 		private Vector2 m_Scroll = Vector2.zero;
 		private GUIContent m_HelpIcon = null;
+		private GUIContent m_BreakSmoothingContent = null;
 		private Dictionary<pb_Object, SmoothGroupData> m_SmoothGroups = new Dictionary<pb_Object, SmoothGroupData>();
 		private static bool m_ShowPreview = true;
 		private static bool m_IsMovingVertices = false;
+		private static bool m_ShowHelp = false;
 		private static readonly Color SelectStateMixed = Color.yellow;
 		private static readonly Color SelectStateNormal = Color.green;
 		private static readonly Color SelectStateInUse = new Color(.2f, .8f, .2f, .5f);
@@ -164,6 +188,9 @@ namespace ProBuilder2.EditorCommon
 
 		private void OnEnable()
 		{
+			if(pb_Editor.instance)
+				pb_Editor.instance.SetSelectionMode(SelectMode.Face);
+
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
@@ -173,6 +200,8 @@ namespace ProBuilder2.EditorCommon
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
+			m_BreakSmoothingContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
+				"Clear the selected faces of their smoothing groups");
 			OnSelectionChanged();
 		}
 
@@ -234,8 +263,54 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.FlexibleSpace();
 			if(GUILayout.Button(m_HelpIcon, pb_EditorGUIUtility.toolbarHelpIcon))
-				Application.OpenURL("http://procore3d.github.io/probuilder2/toolbar/tool-panels/#smoothing-groups");
+				m_ShowHelp = !m_ShowHelp;
 			GUILayout.EndHorizontal();
+
+			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+
+			if (m_ShowHelp)
+			{
+				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+
+				GUILayout.Label("Create and Clear Smoothing Groups", EditorStyles.boldLabel);
+
+				GUILayout.Label("Adjacent faces with the same smoothing group will appear to have a soft adjoining edge.", wordWrappedRichText);
+				GUILayout.Space(2);
+				GUILayout.Label("<b>To smooth</b> a selected group of faces, click one of the Smooth Group buttons.", wordWrappedRichText);
+				GUILayout.Label("<b>To clear</b> selected faces of their smooth group, click the [Break] icon.", wordWrappedRichText);
+				GUILayout.Label("<b>To select</b> all faces in a group, Right+Click or Alt+Click a smooth group button.", wordWrappedRichText);
+				GUILayout.Space(2);
+
+				pb_EditorGUILayout.BeginRow();
+				GUI.backgroundColor = Color.white;
+				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Label("An unused smooth group", wordWrappedRichText);
+				pb_EditorGUILayout.EndRow();
+
+				pb_EditorGUILayout.BeginRow();
+				GUI.backgroundColor = SelectStateInUse;
+				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Label("A smooth group that is in use, but not in the current selection", wordWrappedRichText);
+				pb_EditorGUILayout.EndRow();
+
+				pb_EditorGUILayout.BeginRow();
+				GUI.backgroundColor = SelectStateNormal;
+				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Label("A smooth group that is currently selected", wordWrappedRichText);
+				pb_EditorGUILayout.EndRow();
+
+				pb_EditorGUILayout.BeginRow();
+				GUI.backgroundColor = SelectStateMixed;
+				GUILayout.Button("1", groupButtonStyle);
+				GUI.backgroundColor = Color.white;
+				GUILayout.Label("A smooth group is selected, but the selection also contains non-grouped faces", wordWrappedRichText);
+				pb_EditorGUILayout.EndRow();
+
+				if(GUILayout.Button("Open Documentation"))
+					Application.OpenURL("http://procore3d.github.io/probuilder2/toolbar/tool-panels/#smoothing-groups");
+
+				GUILayout.EndVertical();
+			}
 
 			// border style is 4 margin, 4 pad, 1px content. inner is accounted for by btn size + btn margin.
 			float area = (position.width - 10);
@@ -249,10 +324,14 @@ namespace ProBuilder2.EditorCommon
 				GUILayout.Label("Select a ProBuilder Mesh", pb_EditorGUIUtility.CenteredGreyMiniLabel);
 				GUILayout.FlexibleSpace();
 				GUILayout.EndVertical();
+
+				// End inspector scroll if exiting early
+				EditorGUILayout.EndScrollView();
+
 				return;
 			}
 
-			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+			Event evt = Event.current;
 
 			foreach (var mesh in m_SmoothGroups)
 			{
@@ -313,12 +392,14 @@ namespace ProBuilder2.EditorCommon
 				}
 
 				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Break Smoothing"))
-					SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
-
 				GUILayout.FlexibleSpace();
-				if (GUILayout.Button("Expand Selection"))
-					SelectGroups(pb, data.selected);
+
+//				if (GUILayout.Button("Expand Selection"))
+//					SelectGroups(pb, data.selected);
+
+				if (GUILayout.Button(m_BreakSmoothingContent,
+					pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Geometry, true)))
+					SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
 
 				GUILayout.EndHorizontal();
 
@@ -326,6 +407,10 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUILayout.EndScrollView();
+
+			// This isn't great, but we need hover previews to work
+			if(mouseOverWindow == this)
+				Repaint();
 		}
 
 		private void OnSceneGUI(SceneView view)

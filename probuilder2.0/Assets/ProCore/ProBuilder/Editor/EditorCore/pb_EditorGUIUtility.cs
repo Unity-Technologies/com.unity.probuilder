@@ -120,6 +120,25 @@ namespace ProBuilder2.Interface
 			}
 		}
 
+		private static GUIStyle m_RowStyle = null;
+
+		public static GUIStyle rowStyle
+		{
+			get
+			{
+				if (m_RowStyle == null)
+				{
+					m_RowStyle = new GUIStyle();
+					m_RowStyle.normal.background = EditorGUIUtility.whiteTexture;
+					m_RowStyle.stretchWidth = true;
+					m_RowStyle.stretchHeight = false;
+					m_RowStyle.margin = new RectOffset(4,4,4,4);
+					m_RowStyle.padding = new RectOffset(4,4,4,4);
+				}
+				return m_RowStyle;
+			}
+		}
+
 		static GUIContent _guiContent = null;
 
 		public static GUIContent TempGUIContent(string label, string tooltip = null, Texture2D icon = null)
@@ -134,29 +153,41 @@ namespace ProBuilder2.Interface
 			return _guiContent;
 		}
 
-		private static System.Collections.Generic.Stack<bool> guiEnabled = new System.Collections.Generic.Stack<bool>();
-		private static System.Collections.Generic.Stack<Color> guiColor = new System.Collections.Generic.Stack<Color>();
+		private static Stack<bool> m_GuiEnabled = new Stack<bool>();
+		private static Stack<Color> m_ContentColor = new Stack<Color>();
+		private static Stack<Color> m_BackgroundColor = new Stack<Color>();
 
 		public static void PushGUIEnabled(bool enabled)
 		{
-			guiEnabled.Push(GUI.enabled);
+			m_GuiEnabled.Push(GUI.enabled);
 			GUI.enabled = enabled;
 		}
 
 		public static void PopGUIEnabled()
 		{
-			GUI.enabled = guiEnabled.Pop();
+			GUI.enabled = m_GuiEnabled.Pop();
 		}
 
 		public static void PushGUIContentColor(Color color)
 		{
-			guiColor.Push(GUI.color);
+			m_ContentColor.Push(GUI.color);
 			GUI.contentColor = color;
 		}
 
 		public static void PopGUIContentColor()
 		{
-			GUI.contentColor = guiColor.Pop();
+			GUI.contentColor = m_ContentColor.Pop();
+		}
+
+		public static void PushBackgroundColor(Color color)
+		{
+			m_BackgroundColor.Push(GUI.backgroundColor);
+			GUI.backgroundColor = color;
+		}
+
+		public static void PopBackgroundColor()
+		{
+			GUI.backgroundColor = m_BackgroundColor.Pop();
 		}
 
 		/**
