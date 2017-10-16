@@ -1,6 +1,9 @@
 Shader "Hidden/ProBuilder/SmoothingPreview"
 {
-	Properties { }
+	Properties {
+        _Opacity ("Opacity", Float) = .5
+
+	}
 
 	SubShader
 	{
@@ -20,7 +23,7 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			float4 _Color;
+			float _Opacity;
 
 			struct appdata
 			{
@@ -44,7 +47,7 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 				#else
 				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
 				#endif
-				o.pos.xyz *= .99;
+				o.pos.xyz *= .998;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
                 o.color = v.color;
 
@@ -57,7 +60,8 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 //                float checker = -frac(i.pos.x + i.pos.y);
 //                clip(checker);
 
-				return i.color;
+                half4 c = half4(i.color.rgb, i.color.a * _Opacity);
+				return c;
 			}
 
 			ENDCG
