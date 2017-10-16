@@ -53,9 +53,9 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 
 			half4 frag (v2f i) : COLOR
 			{
-                i.pos.xy = floor(i.pos.xy * 1) * .5;
-                float checker = -frac(i.pos.x + i.pos.y);
-                clip(checker);
+//                i.pos.xy = floor(i.pos.xy * 1) * .5;
+//                float checker = -frac(i.pos.x + i.pos.y);
+//                clip(checker);
 
 				return i.color;
 			}

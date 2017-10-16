@@ -622,6 +622,7 @@ namespace ProBuilder2.EditorCommon
 			byte r = (byte) (color >> 16);
 			byte g = (byte) (color >> 8);
 			byte b = (byte) (color >> 0);
+			// Set preview color opacity here, 0->255
 			return new Color32(r, g, b, 255);
 		}
 	}
