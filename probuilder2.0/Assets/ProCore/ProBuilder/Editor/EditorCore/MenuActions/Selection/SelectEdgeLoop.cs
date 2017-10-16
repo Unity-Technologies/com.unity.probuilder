@@ -24,6 +24,8 @@ namespace ProBuilder2.Actions
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
+					pb_Editor.instance.editLevel == EditLevel.Geometry &&
+					pb_Editor.instance.selectionMode == SelectMode.Edge &&
 					selection != null &&
 					selection.Length > 0 &&
 					selection.Sum(x => x.SelectedEdgeCount) > 0;
