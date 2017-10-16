@@ -198,7 +198,6 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		private static GUIStyle m_WordWrappedRichText = null;
-
 		private static GUIStyle wordWrappedRichText
 		{
 			get
@@ -345,6 +344,26 @@ namespace ProBuilder2.EditorCommon
 			{
 				m_ShowNormals = !m_ShowNormals;
 				pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", m_ShowNormals);
+			}
+
+			if (m_ShowNormals)
+			{
+				EditorGUI.BeginChangeCheck();
+
+				m_NormalsSize = GUILayout.HorizontalSlider(
+					m_NormalsSize,
+					.001f,
+					1f,
+					GUILayout.MinWidth(30f),
+					GUILayout.MaxWidth(100f));
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					foreach (var kvp in m_SmoothGroups)
+						kvp.Value.RebuildNormalsMesh(kvp.Key);
+					SceneView.RepaintAll();
+				}
 			}
 
 			GUILayout.FlexibleSpace();
