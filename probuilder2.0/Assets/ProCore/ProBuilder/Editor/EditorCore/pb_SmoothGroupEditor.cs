@@ -183,7 +183,8 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Editors/Smoothing Groups")]
 		public static void MenuOpenSmoothGroupEditor()
 		{
-			GetWindow<pb_SmoothGroupEditor>(true, "Smooth Group Editor", true);
+			bool isUtility = pb_PreferencesInternal.GetBool("pb_SmoothGroupEditor::m_IsWindowUtility", true);
+			GetWindow<pb_SmoothGroupEditor>(isUtility, "Smooth Group Editor", true);
 		}
 
 		private void OnEnable()
@@ -250,8 +251,27 @@ namespace ProBuilder2.EditorCommon
 				data.CacheSelected(pb);
 		}
 
+		private static void SetWindowIsUtility(bool isUtility)
+		{
+			pb_PreferencesInternal.SetBool("pb_SmoothGroupEditor::m_IsWindowUtility", isUtility);
+			GetWindow<pb_SmoothGroupEditor>().Close();
+			MenuOpenSmoothGroupEditor();
+		}
+
 		private void OnGUI()
 		{
+			Event evt = Event.current;
+
+			if (evt.type == EventType.ContextClick)
+			{
+				bool isUtility = pb_PreferencesInternal.GetBool("pb_SmoothGroupEditor::m_IsWindowUtility", true);
+
+				GenericMenu menu = new GenericMenu();
+				menu.AddItem (new GUIContent("Open As Floating Window", ""), isUtility, () => SetWindowIsUtility(true));
+				menu.AddItem (new GUIContent("Open As Dockable Window", ""), !isUtility, () => SetWindowIsUtility(false));
+				menu.ShowAsContext ();
+			}
+
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			if (GUILayout.Button("Scene Preview",
@@ -330,8 +350,6 @@ namespace ProBuilder2.EditorCommon
 
 				return;
 			}
-
-			Event evt = Event.current;
 
 			foreach (var mesh in m_SmoothGroups)
 			{
