@@ -78,6 +78,9 @@ namespace ProBuilder.BuildSystem
 		 */
 		public void OverwriteWith(BuildTarget target)
 		{
+			if(!string.IsNullOrEmpty(target.Name))
+				this.Name = target.Name;
+
 			if( target.UnityPath != null && target.UnityPath.Count > 0 )
 				this.UnityPath = target.UnityPath;
 
