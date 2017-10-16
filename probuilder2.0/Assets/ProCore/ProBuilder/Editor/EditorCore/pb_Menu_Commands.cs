@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using System.Reflection;
 using ProBuilder2.MeshOperations;
 using System.Linq;
 
@@ -945,6 +942,51 @@ namespace ProBuilder2.EditorCommon
 				return new pb_ActionResult(Status.Success, "Select Edge Loop");
 			else
 				return new pb_ActionResult(Status.Failure, "Nothing to Loop");
+		}
+
+		public static pb_ActionResult MenuLoopFaces(pb_Object[] selection)
+		{
+			pbUndo.RecordSelection(selection, "Select Face Loop");
+
+			foreach (pb_Object pb in selection)
+			{
+				HashSet<pb_Face> loop = pb_FaceLoop.GetFaceLoop(pb, pb.SelectedFaces);
+				pb.SetSelectedFaces(loop);
+			}
+
+			pb_Editor.Refresh();
+
+			return new pb_ActionResult(Status.Success, "Select Face Loop");
+		}
+
+		public static pb_ActionResult MenuRingFaces(pb_Object[] selection)
+		{
+			pbUndo.RecordSelection(selection, "Select Face Ring");
+
+			foreach (pb_Object pb in selection)
+			{
+				HashSet<pb_Face> loop = pb_FaceLoop.GetFaceLoop(pb, pb.SelectedFaces, true);
+				pb.SetSelectedFaces(loop);
+			}
+
+			pb_Editor.Refresh();
+
+			return new pb_ActionResult(Status.Success, "Select Face Ring");
+		}
+
+		public static pb_ActionResult MenuRingAndLoopFaces(pb_Object[] selection)
+		{
+			pbUndo.RecordSelection(selection, "Select Face Ring and Loop");
+
+			foreach (pb_Object pb in selection)
+			{
+				HashSet<pb_Face> loop = pb_FaceLoop.GetFaceRingAndLoop(pb, pb.SelectedFaces);
+				pb.SetSelectedFaces(loop);
+			}
+
+			pb_Editor.Refresh();
+
+			return new pb_ActionResult(Status.Success, "Select Face Ring and Loop");
 		}
 #endregion
 

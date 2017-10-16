@@ -1,9 +1,6 @@
-// #pragma warning disable 0612
-
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
 using ProBuilder2.Common;
@@ -678,15 +675,28 @@ public class pb_Editor : EditorWindow
 
 		if(pb != null)
 		{
-			if(selectionMode == SelectMode.Edge)
+			if (selectionMode == SelectMode.Edge)
 			{
-				if(e.shift)
+				if (e.shift)
 					pb_Menu_Commands.MenuRingSelection(selection);
 				else
 					pb_Menu_Commands.MenuLoopSelection(selection);
 			}
+			else if(selectionMode == SelectMode.Face)
+			{
+				if((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) == (EventModifiers.Control | EventModifiers.Shift))
+					pb_Menu_Commands.MenuRingAndLoopFaces(selection);
+				else if(e.control)
+					pb_Menu_Commands.MenuRingFaces(selection);
+				else if(e.shift)
+					pb_Menu_Commands.MenuLoopFaces(selection);
+				else
+					pb.SetSelectedFaces(pb.faces);
+			}
 			else
+			{
 				pb.SetSelectedFaces(pb.faces);
+			}
 
 			UpdateSelection(false);
 			SceneView.RepaintAll();
