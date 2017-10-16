@@ -12,15 +12,13 @@ namespace ProBuilder2.Actions
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"Select by Smooth",
 			"Selects all faces matching the selected smoothing groups."
 		);
-
-		GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
 
 		public override bool IsEnabled()
 		{
@@ -33,7 +31,7 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			return 	editLevel != EditLevel.Geometry;
+			return true;
 		}
 
 		public override MenuActionState AltState()
@@ -46,61 +44,15 @@ namespace ProBuilder2.Actions
 			return MenuActionState.Visible;
 		}
 
-		public override void OnSettingsEnable()
-		{
-			pb_Editor.OnSelectionUpdate += OnElementSelectionChanged;
-			OnElementSelectionChanged(selection);
-		}
-
-		public override void OnSettingsDisable()
-		{
-			pb_Editor.OnSelectionUpdate -= OnElementSelectionChanged;
-		}
-
-		private string m_SelectedGroups = "";
-
-		private void OnElementSelectionChanged(pb_Object[] selection)
-		{
-			if(selection != null)
-				m_SelectedGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup))).ToString(",");
-		}
-
-		public override void OnSettingsGUI()
-		{
-			GUILayout.Label("Select by Smoothing Group Options", EditorStyles.boldLabel);
-
-			EditorGUI.BeginChangeCheck();
-
-			bool restrictToSelection = pb_PreferencesInternal.GetBool("SelectSmoothingGroup::m_RestrictToSelection");
-			restrictToSelection = EditorGUILayout.Toggle(gc_restrictToSelection, restrictToSelection);
-
-			if( EditorGUI.EndChangeCheck() )
-				pb_PreferencesInternal.SetBool("SelectSmoothingGroup::m_RestrictToSelection", restrictToSelection);
-
-			GUILayout.Label("Currently Selected:", EditorStyles.boldLabel);
-
-			GUILayout.Label(m_SelectedGroups);
-
-			GUILayout.FlexibleSpace();
-
-			if(GUILayout.Button("Select Faces with Smoothing Groups"))
-			{
-				DoAction();
-				SceneView.RepaintAll();
-			}
-		}
-
 		public override pb_ActionResult DoAction()
 		{
 			pbUndo.RecordSelection(selection, "Select Faces with Smoothing Group");
-
-			bool restrictToSelection = pb_PreferencesInternal.GetBool("SelectSmoothingGroup::m_RestrictToSelection");
 
 			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup)));
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(pb_Object pb in restrictToSelection ? selection : Object.FindObjectsOfType<pb_Object>())
+			foreach(pb_Object pb in selection)
 			{
 				IEnumerable<pb_Face> matches = pb.faces.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 
