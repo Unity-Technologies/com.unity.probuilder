@@ -593,7 +593,7 @@ public class pb_Editor : EditorWindow
 
 		// altClick || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
 		// Tools.viewTool == ViewTool.FPS || Tools.viewTool == ViewTool.Orbit
-		if( pb_Handle_Utility.SceneViewInUse(currentEvent) || currentEvent.isKey || selection == null || selection.Length < 1)
+		if( pb_EditorHandleUtility.SceneViewInUse(currentEvent) || currentEvent.isKey || selection == null || selection.Length < 1)
 		{
 			dragging = false;
 			return;
@@ -831,7 +831,7 @@ public class pb_Editor : EditorWindow
 		pb_Face pickedFace = null;
 		int newHash = 0;
 
-		List<GameObject> picked = pb_Handle_Utility.GetAllOverlapping(mousePosition);
+		List<GameObject> picked = pb_EditorHandleUtility.GetAllOverlapping(mousePosition);
 
 		EventModifiers em = Event.current.modifiers;
 
@@ -1492,7 +1492,7 @@ public class pb_Editor : EditorWindow
 				foreach(pb_Object pb in selection)
 					ignore.Add(pb, new HashSet<pb_Face>(pb.SelectedFaces));
 
-				if( pb_Handle_Utility.FaceRaycast(mousePosition, out obj, out hit, ignore) )
+				if( pb_EditorHandleUtility.FaceRaycast(mousePosition, out obj, out hit, ignore) )
 				{
 					if( mask.IntSum() == 1 )
 					{
@@ -2650,8 +2650,6 @@ public class pb_Editor : EditorWindow
 
 		UpdateHandleRotation();
 
-		DrawNormals(drawNormals);
-
 #if !PROTOTYPE
 		UpdateTextureHandles();
 #endif
@@ -2709,8 +2707,6 @@ public class pb_Editor : EditorWindow
 		UpdateGraphics();
 		UpdateHandleRotation();
 		currentHandleRotation = handleRotation;
-
-		DrawNormals(drawNormals);
 
 		if(OnSelectionUpdate != null)
 			OnSelectionUpdate(selection);
@@ -3051,76 +3047,8 @@ public class pb_Editor : EditorWindow
 		if(OnVertexMovementFinish != null)
 			OnVertexMovementFinish(selection);
 
-		DrawNormals(drawNormals);
 		scaling = false;
 	}
-#endregion
-
-#region DEBUG
-
-	static readonly Color[] ElementColors = new Color[] {
-		new Color(.1f, .9f, .1f, .8f),	// Green (normal)
-		// new Color(.1f, .1f, .9f, .3f),	// Blue (bitangent)
-		// new Color(.9f, .1f, .1f, .3f),	// Red (tangent)
-	};
-	float elementLength = 0f;
-
-	/**
-	 * Draw vertex normals, tangents, and bitangents.
-	 */
-	void DrawNormals(float dist)
-	{
-		if(dist <= Mathf.Epsilon || movingVertices)
-		{
-			if(elementLength > 0f)
-			{
-				elementLength = 0f;
-				pb_LineRenderer.instance.Clear();
-				SceneView.RepaintAll();
-			}
-
-			return;
-		}
-
-		float elementOffset = .01f;
-		elementLength = dist;
-
-		pb_LineRenderer.instance.Clear();
-
-		foreach(pb_Object pb in selection)
-		{
-			Mesh m = pb.msh;
-			int vertexCount = m.vertexCount;
-
-			Vector3[] vertices = m.vertices;
-			Vector3[] normals  = m.normals;
-			// Vector4[] tangents = m.tangents;
-
-			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
-
-			// Vector3[] segments = new Vector3[vertexCount * 3 * 2];
-			Vector3[] segments = new Vector3[vertexCount * 2];
-
-			int n = 0;
-			Vector3 pivot = Vector3.zero;
-
-			for(int i = 0; i < vertexCount; i++)
-			{
-				pivot = vertices[i] + normals[i] * elementOffset;
-
-				segments[n++] = matrix.MultiplyPoint3x4( pivot );
-				segments[n++] = matrix.MultiplyPoint3x4( (pivot + normals[i] * elementLength) );
-
-				// segments[n++] = segments[n];
-				// segments[n++] = matrix.MultiplyPoint3x4( (pivot + (Vector3)tangents[i] * elementLength) );
-				// segments[n++] = segments[n];
-				// segments[n++] = matrix.MultiplyPoint3x4( (pivot + (Vector3.Cross(normals[i], (Vector3)tangents[i]) * tangents[i].w) * elementLength) );
-			}
-
-			pb_LineRenderer.instance.AddLineSegments(segments, ElementColors);
-		}
-	}
-
 #endregion
 
 #region CONVENIENCE CALLS

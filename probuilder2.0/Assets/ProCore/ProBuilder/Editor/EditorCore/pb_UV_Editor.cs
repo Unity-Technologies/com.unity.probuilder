@@ -470,7 +470,7 @@ public class pb_UV_Editor : EditorWindow
 		if(channel == 0 && UpdateNearestElement(Event.current.mousePosition))
 			Repaint();
 
-		if(m_mouseDragging && pb_Handle_Utility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
+		if(m_mouseDragging && pb_EditorHandleUtility.CurrentID < 0 && !m_draggingCanvas && !m_rightMouseDrag)
 		{
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = DRAG_BOX_COLOR;
@@ -893,7 +893,7 @@ public class pb_UV_Editor : EditorWindow
 				needsRepaint = true;
 
 				/* If no handle is selected, do other stuff */
-				if(pb_Handle_Utility.CurrentID < 0)
+				if(pb_EditorHandleUtility.CurrentID < 0)
 				{
 					if( (e.alt && e.button == LEFT_MOUSE_BUTTON) || e.button == MIDDLE_MOUSE_BUTTON || Tools.current == Tool.View)
 					{
@@ -1269,10 +1269,10 @@ public class pb_UV_Editor : EditorWindow
 
 		Vector2 t_handlePosition = UVToGUIPoint(handlePosition);
 
-		pb_Handle_Utility.limitToLeftButton = false; // enable right click drag
-		t_handlePosition = pb_Handle_Utility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
+		pb_EditorHandleUtility.limitToLeftButton = false; // enable right click drag
+		t_handlePosition = pb_EditorHandleUtility.PositionHandle2d(1, t_handlePosition, HANDLE_SIZE);
 		t_handlePosition = GUIToUVPoint(t_handlePosition);
-		pb_Handle_Utility.limitToLeftButton = true;
+		pb_EditorHandleUtility.limitToLeftButton = true;
 
 		if (!e.isMouse) return;
 
@@ -1301,7 +1301,7 @@ public class pb_UV_Editor : EditorWindow
 					for(int i = 0; i < selection.Length; i++)
 					{
 						/// todo reset MAX_PROXIMITY_SNAP_DIST
-						int index = pb_Handle_Utility.NearestPoint(handlePosition, selection[i].uv, MAX_PROXIMITY_SNAP_DIST_CANVAS);
+						int index = pb_EditorHandleUtility.NearestPoint(handlePosition, selection[i].uv, MAX_PROXIMITY_SNAP_DIST_CANVAS);
 
 						if(index < 0) continue;
 
@@ -1384,9 +1384,9 @@ public class pb_UV_Editor : EditorWindow
 					for(int n = 0; n < selection.Length; n++)
 					{
 						Vector2 offset;
-						if( pb_Handle_Utility.NearestPointDelta(sel, GetUVs(selection[n], channel), i == n ? distinct_indices[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset) )
+						if( pb_EditorHandleUtility.NearestPointDelta(sel, GetUVs(selection[n], channel), i == n ? distinct_indices[i] : null, MAX_PROXIMITY_SNAP_DIST_UV, out offset) )
 						{
-							if( pb_Handle_Utility.CurrentAxisConstraint.Mask(offset).sqrMagnitude < nearestDelta.sqrMagnitude)
+							if( pb_EditorHandleUtility.CurrentAxisConstraint.Mask(offset).sqrMagnitude < nearestDelta.sqrMagnitude)
 								nearestDelta = offset;
 						}
 					}
@@ -1394,7 +1394,7 @@ public class pb_UV_Editor : EditorWindow
 
 				if(nearestDelta.sqrMagnitude < .003f )
 				{
-					nearestDelta = pb_Handle_Utility.CurrentAxisConstraint.Mask(nearestDelta);
+					nearestDelta = pb_EditorHandleUtility.CurrentAxisConstraint.Mask(nearestDelta);
 
 					for(int i = 0; i < selection.Length; i++)
 					{
@@ -1470,7 +1470,7 @@ public class pb_UV_Editor : EditorWindow
 	{
 		float t_uvRotation = uvRotation;
 
-		uvRotation = pb_Handle_Utility.RotationHandle2d(0, UVToGUIPoint(handlePosition), uvRotation, 128);
+		uvRotation = pb_EditorHandleUtility.RotationHandle2d(0, UVToGUIPoint(handlePosition), uvRotation, 128);
 
 		if(uvRotation != t_uvRotation)
 		{
@@ -1577,7 +1577,7 @@ public class pb_UV_Editor : EditorWindow
 	void ScaleTool()
 	{
 		Vector2 t_uvScale = uvScale;
-		uvScale = pb_Handle_Utility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
+		uvScale = pb_EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 		if(ControlKey)
 			uvScale = pb_Snap.SnapValue(uvScale, pref_gridSnapValue);
@@ -1723,7 +1723,7 @@ public class pb_UV_Editor : EditorWindow
 		if(Event.current.type == EventType.Repaint)
 		{
 			GL.PushMatrix();
-			pb_Handle_Utility.handleMaterial.SetPass(0);
+			pb_EditorHandleUtility.handleMaterial.SetPass(0);
 			GL.MultMatrix(Handles.matrix);
 
 			GL.Begin( GL.LINES );
@@ -1912,7 +1912,7 @@ public class pb_UV_Editor : EditorWindow
 		if( Event.current.type == EventType.Repaint )
 		{
 			GL.PushMatrix();
-			pb_Handle_Utility.handleMaterial.SetPass(0);
+			pb_EditorHandleUtility.handleMaterial.SetPass(0);
 			GL.MultMatrix(Handles.matrix);
 
 			/**

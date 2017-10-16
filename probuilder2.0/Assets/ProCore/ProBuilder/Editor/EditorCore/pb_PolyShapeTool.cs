@@ -359,7 +359,7 @@ namespace ProBuilder2.EditorCommon
 			if(evt.type == EventType.KeyDown)
 				HandleKeyEvent(evt.keyCode, evt.modifiers);
 
-			if( pb_Handle_Utility.SceneViewInUse(evt) )
+			if( pb_EditorHandleUtility.SceneViewInUse(evt) )
 				return;
 
 			int controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -451,7 +451,7 @@ namespace ProBuilder2.EditorCommon
 					int index;
 					float distanceToLine;
 
-					Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(polygon.points, out index, out distanceToLine, true, polygon.transform);
+					Vector3 p = pb_EditorHandleUtility.ClosestPointToPolyLine(polygon.points, out index, out distanceToLine, true, polygon.transform);
 					Vector3 wp = polygon.transform.TransformPoint(p);
 
 					Vector2 ga = HandleUtility.WorldToGUIPoint(polygon.transform.TransformPoint(polygon.points[index % polygon.points.Count]));
@@ -514,7 +514,7 @@ namespace ProBuilder2.EditorCommon
 				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
 					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
 
-				bool sceneInUse = pb_Handle_Utility.SceneViewInUse(evt);
+				bool sceneInUse = pb_EditorHandleUtility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
 				Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));

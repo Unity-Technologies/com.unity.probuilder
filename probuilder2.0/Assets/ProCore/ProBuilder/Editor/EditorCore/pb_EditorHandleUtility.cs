@@ -12,7 +12,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * Utilities for creating and manipulating Handles and points in GUI space.  Also coordinate translations.
 	 */
-	public class pb_Handle_Utility
+	public static class pb_EditorHandleUtility
 	{
 		public static bool SceneViewInUse(Event e)
 		{
@@ -24,9 +24,9 @@ namespace ProBuilder2.EditorCommon
 					|| Tools.viewTool == ViewTool.Orbit;
 		}
 
-		const int HANDLE_PADDING = 8;
-		const int LEFT_MOUSE_BUTTON = 0;
-		const int MIDDLE_MOUSE_BUTTON = 2;
+		private const int HANDLE_PADDING = 8;
+		private const int LEFT_MOUSE_BUTTON = 0;
+		private const int MIDDLE_MOUSE_BUTTON = 2;
 
 		private static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
 		private static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
@@ -37,28 +37,56 @@ namespace ProBuilder2.EditorCommon
 		private static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
 		private static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
 
-		static Material _handleMaterial = null;
+		private static Material m_HandleMaterial = null;
+
 		public static Material handleMaterial
 		{
 			get
 			{
-				if(_handleMaterial == null)
-					_handleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
+				if(m_HandleMaterial == null)
+					m_HandleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
 
-				return _handleMaterial;
+				return m_HandleMaterial;
 			}
 		}
 
-		static Material _edgeMaterial = null;
+		private static Material m_UnlitVertexColorMaterial = null;
+
+		public static Material unlitVertexColorMaterial
+		{
+			get
+			{
+				if (m_UnlitVertexColorMaterial == null)
+				{
+					Shader unlitVertexColorShader = Shader.Find("ProBuilder/UnlitVertexColor");
+
+					if (unlitVertexColorShader == null)
+					{
+						m_UnlitVertexColorMaterial = handleMaterial;
+					}
+					else
+					{
+						m_UnlitVertexColorMaterial = new Material(unlitVertexColorShader);
+						m_UnlitVertexColorMaterial.hideFlags = HideFlags.HideAndDontSave;
+					}
+				}
+
+				return m_UnlitVertexColorMaterial;
+			}
+		}
+
+
+		private static Material m_EdgeMaterial = null;
+
 		public static Material edgeMaterial
 		{
 			get
 			{
-				if(_edgeMaterial == null)
-					_edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
+				if(m_EdgeMaterial == null)
+					m_EdgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
 					// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
 
-				return _edgeMaterial;
+				return m_EdgeMaterial;
 			}
 		}
 

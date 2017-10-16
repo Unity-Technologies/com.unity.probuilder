@@ -430,7 +430,7 @@ public class pb_VertexColor_Editor : EditorWindow
 		/**
 		 * Hit test scene
 		 */
-		if(!lockhandleToCenter && !pb_Handle_Utility.SceneViewInUse(currentEvent))
+		if(!lockhandleToCenter && !pb_EditorHandleUtility.SceneViewInUse(currentEvent))
 		{
 			if(pb != null)
 			{

@@ -391,7 +391,7 @@ namespace ProBuilder2.EditorCommon
 				}
 			}
 
-			bool sceneViewInUse = pb_Handle_Utility.SceneViewInUse(e);
+			bool sceneViewInUse = pb_EditorHandleUtility.SceneViewInUse(e);
 
 			if(!sceneViewInUse && m_IsEditing)
 			{
@@ -634,7 +634,7 @@ namespace ProBuilder2.EditorCommon
 				int index = -1;
 				float distanceToLine;
 
-				Vector3 p = pb_Handle_Utility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
+				Vector3 p = pb_EditorHandleUtility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
 
 				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL )
 				{

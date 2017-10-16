@@ -1,11 +1,13 @@
 ﻿#define PB_ENABLE_SMOOTH_GROUP_PREVIEW
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using ProBuilder2.Common;
 using ProBuilder2.Interface;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -18,6 +20,7 @@ namespace ProBuilder2.EditorCommon
 			public Dictionary<int, Color> groupColors;
 			public HashSet<int> selected;
 			public Mesh previewMesh;
+			public Mesh normalsMesh;
 
 			public SmoothGroupData(pb_Object pb)
 			{
@@ -32,12 +35,22 @@ namespace ProBuilder2.EditorCommon
 					name = pb.name + "_SmoothingPreview"
 				};
 
+				normalsMesh = new Mesh()
+				{
+					hideFlags = HideFlags.HideAndDontSave,
+					name = pb.name + "_SmoothingNormals"
+				};
+
 				Rebuild(pb);
 			}
 
 			~SmoothGroupData()
 			{
-				EditorApplication.delayCall += () => { Object.DestroyImmediate(previewMesh); };
+				EditorApplication.delayCall += () =>
+				{
+					Object.DestroyImmediate(previewMesh);
+					Object.DestroyImmediate(normalsMesh);
+				};
 			}
 
 			public void Rebuild(pb_Object pb)
@@ -45,6 +58,7 @@ namespace ProBuilder2.EditorCommon
 				CacheGroups(pb);
 				CacheSelected(pb);
 				RebuildPreviewMesh(pb);
+				RebuildNormalsMesh(pb);
 			}
 
 			public void CacheGroups(pb_Object pb)
@@ -70,7 +84,7 @@ namespace ProBuilder2.EditorCommon
 					selected.Add(face.smoothingGroup);
 			}
 
-			private void RebuildPreviewMesh(pb_Object pb)
+			public void RebuildPreviewMesh(pb_Object pb)
 			{
 				List<int> indices = new List<int>();
 				Color32[] colors = new Color32[pb.vertexCount];
@@ -94,6 +108,39 @@ namespace ProBuilder2.EditorCommon
 				previewMesh.vertices = pb.vertices;
 				previewMesh.colors32 = colors;
 				previewMesh.triangles = indices.ToArray();
+			}
+
+			public void RebuildNormalsMesh(pb_Object pb)
+			{
+				normalsMesh.Clear();
+				Vector3[] srcPositions = pb.msh.vertices;
+				Vector3[] srcNormals = pb.msh.normals;
+				int vertexCount = System.Math.Min(ushort.MaxValue / 2, pb.msh.vertexCount);
+				Vector3[] positions = new Vector3[vertexCount * 2];
+				Color32[] colors = new Color32[vertexCount * 2];
+				int[] indices = new int[vertexCount * 2];
+				for (int i = 0; i < vertexCount; i++)
+				{
+					int a = i*2, b = i*2+1;
+
+					positions[a] = srcPositions[i];
+					positions[b] = srcPositions[i] + srcNormals[i] * m_NormalsSize;
+
+					colors[a] = new Color32(
+						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].x) * 255), 0, 255),
+						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].y) * 255), 0, 255),
+						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].z) * 255), 0, 255),
+						255);
+
+					colors[b] = colors[a];
+
+					indices[a] = a;
+					indices[b] = b;
+				}
+				normalsMesh.vertices = positions;
+				normalsMesh.colors32 = colors;
+				normalsMesh.subMeshCount = 1;
+				normalsMesh.SetIndices(indices, MeshTopology.Lines, 0);
 			}
 		}
 
@@ -173,12 +220,14 @@ namespace ProBuilder2.EditorCommon
 		private GUIContent m_HelpIcon = null;
 		private GUIContent m_BreakSmoothingContent = null;
 		private Dictionary<pb_Object, SmoothGroupData> m_SmoothGroups = new Dictionary<pb_Object, SmoothGroupData>();
-		private static bool m_ShowPreview = true;
+		private static bool m_ShowPreview = false;
+		private static bool m_ShowNormals = false;
 		private static bool m_IsMovingVertices = false;
 		private static bool m_ShowHelp = false;
 		private static readonly Color SelectStateMixed = Color.yellow;
 		private static readonly Color SelectStateNormal = Color.green;
 		private static readonly Color SelectStateInUse = new Color(.2f, .8f, .2f, .5f);
+		private static float m_NormalsSize = 0.1f;
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Editors/Smoothing Groups")]
 		public static void MenuOpenSmoothGroupEditor()
@@ -201,6 +250,8 @@ namespace ProBuilder2.EditorCommon
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);
+			m_ShowNormals = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_DrawNormals", false);
+			m_NormalsSize = pb_PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_NormalsSize", .1f);
 			m_BreakSmoothingContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
 				"Clear the selected faces of their smoothing groups");
 			OnSelectionChanged();
@@ -274,11 +325,32 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
-			if (GUILayout.Button("Scene Preview",
+			if (GUILayout.Button("Preview",
 				m_ShowPreview ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
 			{
 				m_ShowPreview = !m_ShowPreview;
 				pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_ShowPreview", m_ShowPreview);
+			}
+
+			if (GUILayout.Button("Normals",
+				m_ShowNormals ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+			{
+				m_ShowNormals = !m_ShowNormals;
+				pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_DrawNormals", m_ShowNormals);
+			}
+
+			if (m_ShowNormals)
+			{
+				GUILayout.Label("Size", EditorStyles.miniLabel);
+				EditorGUI.BeginChangeCheck();
+				m_NormalsSize = EditorGUILayout.Slider(m_NormalsSize, .001f, 1f, GUILayout.MaxWidth(200));
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					foreach (var kvp in m_SmoothGroups)
+						kvp.Value.RebuildNormalsMesh(kvp.Key);
+					SceneView.RepaintAll();
+				}
 			}
 
 			GUILayout.FlexibleSpace();
@@ -443,18 +515,33 @@ namespace ProBuilder2.EditorCommon
 
 			Event evt = Event.current;
 
-			if (m_ShowPreview && !m_IsMovingVertices && evt.type == EventType.Repaint)
+			if (!m_IsMovingVertices && evt.type == EventType.Repaint)
 			{
-				int index = 0;
 
 				foreach (var kvp in m_SmoothGroups)
 				{
-					Mesh m = kvp.Value.previewMesh;
-					if(m == null)
-						continue;
-					faceMaterial.SetColor("_Color", GetDistinctColor(index++));
-					faceMaterial.SetPass(0);
-					Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
+					if (m_ShowPreview)
+					{
+						Mesh m = kvp.Value.previewMesh;
+
+						if (m != null)
+						{
+							faceMaterial.SetPass(0);
+							Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
+						}
+					}
+
+					if (m_ShowNormals)
+					{
+						Mesh m = kvp.Value.normalsMesh;
+
+						if (m != null)
+						{
+							pb_EditorHandleUtility.unlitVertexColorMaterial.SetPass(0);
+							Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
+						}
+					}
+
 				}
 			}
 		}

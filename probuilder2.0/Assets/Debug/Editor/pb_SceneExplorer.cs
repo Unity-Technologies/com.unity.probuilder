@@ -52,6 +52,12 @@ public class pb_SceneExplorer : EditorWindow
 			#endif
 		}
 
+		if(GUILayout.Button("Rescan"))
+		{
+			OnHierarchyChange();
+		}
+
+
 		// if(GUILayout.Button("Disable Editor Graphics"))
 		// 	pb_Editor_Graphics.OnDisable();
 
