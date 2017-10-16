@@ -563,6 +563,8 @@ namespace ProBuilder2.EditorCommon
 
 		private void SetGroup(pb_Object pb, int index)
 		{
+			pbUndo.RecordObject(pb, "Set Smoothing Group");
+			
 			foreach (pb_Face face in pb.SelectedFaces)
 				face.smoothingGroup = index;
 
