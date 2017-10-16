@@ -564,20 +564,21 @@ namespace ProBuilder2.EditorCommon
 		private void SetGroup(pb_Object pb, int index)
 		{
 			pbUndo.RecordObject(pb, "Set Smoothing Group");
-			
+
 			foreach (pb_Face face in pb.SelectedFaces)
 				face.smoothingGroup = index;
-
-			SmoothGroupData data;
-			if(!m_SmoothGroups.TryGetValue(pb, out data))
-				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
-			else
-				data.Rebuild(pb);
 
 			// todo pb.Rebuild
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();
+
+			SmoothGroupData data;
+
+			if(!m_SmoothGroups.TryGetValue(pb, out data))
+				m_SmoothGroups.Add(pb, new SmoothGroupData(pb));
+			else
+				data.Rebuild(pb);
 
 			pb_Editor.Refresh();
 		}
