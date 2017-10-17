@@ -83,7 +83,7 @@ namespace ProBuilder2.EditorCommon
 			get
 			{
 				if(m_EdgeMaterial == null)
-					m_EdgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
+					m_EdgeMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/HandleLines.mat");
 					// _edgeMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/VertexSelectionMaterial.mat");
 
 				return m_EdgeMaterial;

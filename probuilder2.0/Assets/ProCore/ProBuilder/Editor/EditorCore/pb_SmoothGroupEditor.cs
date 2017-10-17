@@ -1,7 +1,4 @@
-﻿#define PB_ENABLE_SMOOTH_GROUP_PREVIEW
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -214,7 +211,7 @@ namespace ProBuilder2.EditorCommon
 
 		private const int IconWidth = 24;
 		private const int IconHeight = 24;
-		private GUIContent m_groupKeyContent = new GUIContent("21", "Smoothing Group");
+		private GUIContent m_GroupKeyContent = new GUIContent("21", "Smoothing Group");
 		private Vector2 m_Scroll = Vector2.zero;
 		private GUIContent m_HelpIcon = null;
 		private GUIContent m_BreakSmoothingContent = null;
@@ -231,7 +228,6 @@ namespace ProBuilder2.EditorCommon
 		private static bool m_PreviewDither = false;
 		private static bool m_ShowSettings = false;
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Editors/Smoothing Groups")]
 		public static void MenuOpenSmoothGroupEditor()
 		{
 			bool isUtility = pb_PreferencesInternal.GetBool("pb_SmoothGroupEditor::m_IsWindowUtility", true);
@@ -421,7 +417,7 @@ namespace ProBuilder2.EditorCommon
 			// border style is 4 margin, 4 pad, 1px content. inner is accounted for by btn size + btn margin.
 			float area = (position.width - 10);
 			float margin = Mathf.Max(groupButtonStyle.margin.left, groupButtonStyle.margin.right);
-			int columns = (int)(area / (groupButtonStyle.CalcSize(m_groupKeyContent).x + margin)) - 1;
+			int columns = (int)(area / (groupButtonStyle.CalcSize(m_GroupKeyContent).x + margin)) - 1;
 
 			if (m_SmoothGroups.Count < 1)
 			{
