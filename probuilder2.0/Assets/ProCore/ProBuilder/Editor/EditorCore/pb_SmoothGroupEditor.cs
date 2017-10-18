@@ -157,6 +157,12 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		private static GUIStyle m_GroupButtonStyle = null;
+		private static GUIStyle m_GroupButtonSelectedStyle = null;
+		private static GUIStyle m_GroupButtonInUseStyle = null;
+		private static GUIStyle m_GroupButtonMixedSelectionStyle = null;
+		private static GUIStyle m_ColorKeyStyle = null;
+		private static GUIStyle m_WordWrappedRichText = null;
+
 		private static GUIStyle groupButtonStyle
 		{
 			get
@@ -177,7 +183,63 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private static GUIStyle m_ColorKeyStyle = null;
+		private static GUIStyle groupButtonSelectedStyle
+		{
+			get
+			{
+				if (m_GroupButtonSelectedStyle == null)
+				{
+					m_GroupButtonSelectedStyle = new GUIStyle(groupButtonStyle);
+					m_GroupButtonSelectedStyle.normal.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_Blue");
+					m_GroupButtonSelectedStyle.hover.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_Blue");
+					m_GroupButtonSelectedStyle.active.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_Blue");
+				}
+
+				return m_GroupButtonSelectedStyle;
+			}
+		}
+
+		private static GUIStyle groupButtonInUseStyle
+		{
+			get
+			{
+				if (m_GroupButtonInUseStyle == null)
+				{
+					m_GroupButtonInUseStyle = new GUIStyle(groupButtonStyle);
+					m_GroupButtonInUseStyle.normal.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_BlueSteel");
+					m_GroupButtonInUseStyle.hover.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_BlueSteel");
+					m_GroupButtonInUseStyle.active.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_BlueSteel");
+				}
+
+				return m_GroupButtonInUseStyle;
+			}
+		}
+
+		private static GUIStyle groupButtonMixedSelectionStyle
+		{
+			get
+			{
+				if (m_GroupButtonMixedSelectionStyle == null)
+				{
+					m_GroupButtonMixedSelectionStyle = new GUIStyle(groupButtonStyle);
+					m_GroupButtonMixedSelectionStyle.normal.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal_Orange");
+					m_GroupButtonMixedSelectionStyle.hover.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover_Orange");
+					m_GroupButtonMixedSelectionStyle.active.background =
+						pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed_Orange");
+				}
+
+				return m_GroupButtonMixedSelectionStyle;
+			}
+		}
+
 		private static GUIStyle colorKeyStyle
 		{
 			get
@@ -194,7 +256,6 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		private static GUIStyle m_WordWrappedRichText = null;
 		private static GUIStyle wordWrappedRichText
 		{
 			get
@@ -386,26 +447,22 @@ namespace ProBuilder2.EditorCommon
 				GUILayout.Space(2);
 
 				pb_EditorGUILayout.BeginRow();
-				GUI.backgroundColor = Color.white;
 				GUILayout.Button("1", groupButtonStyle);
 				GUILayout.Label("An unused smooth group", wordWrappedRichText);
 				pb_EditorGUILayout.EndRow();
 
 				pb_EditorGUILayout.BeginRow();
-				GUI.backgroundColor = SelectStateInUse;
-				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Button("1", groupButtonInUseStyle);
 				GUILayout.Label("A smooth group that is in use, but not in the current selection", wordWrappedRichText);
 				pb_EditorGUILayout.EndRow();
 
 				pb_EditorGUILayout.BeginRow();
-				GUI.backgroundColor = SelectStateNormal;
-				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Button("1", groupButtonSelectedStyle);
 				GUILayout.Label("A smooth group that is currently selected", wordWrappedRichText);
 				pb_EditorGUILayout.EndRow();
 
 				pb_EditorGUILayout.BeginRow();
-				GUI.backgroundColor = SelectStateMixed;
-				GUILayout.Button("1", groupButtonStyle);
+				GUILayout.Button("1", groupButtonMixedSelectionStyle);
 				GUI.backgroundColor = Color.white;
 				GUILayout.Label("A smooth group is selected, but the selection also contains non-grouped faces", wordWrappedRichText);
 				pb_EditorGUILayout.EndRow();
@@ -441,7 +498,7 @@ namespace ProBuilder2.EditorCommon
 					if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
 						data.isVisible = !data.isVisible;
 
-					Color stateColor = data.selected.Contains(0) ? SelectStateMixed : SelectStateNormal;
+					bool isMixedSelection = data.selected.Contains(pb_Smoothing.SMOOTHING_GROUP_NONE);
 
 					if (data.isVisible)
 					{
@@ -451,18 +508,19 @@ namespace ProBuilder2.EditorCommon
 
 						for (int i = 1; i < pb_Smoothing.SMOOTH_RANGE_MAX; i++)
 						{
-							if(data.selected.Contains(i))
-								GUI.backgroundColor = stateColor;
-							// if this group is used (but is not currently selected) show it as a muted green
-							else if(data.groups.ContainsKey(i))
-								GUI.backgroundColor = SelectStateInUse;
+							bool isSelected = data.selected.Contains(i);
+
+							GUIStyle stateStyle = isSelected ?
+								(isMixedSelection ? groupButtonMixedSelectionStyle : groupButtonSelectedStyle) :
+								data.groups.ContainsKey(i) ? groupButtonInUseStyle : groupButtonStyle;
+
 
 							if (m_ShowPreview)
 								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
 
 							m_GroupKeyContent.text = i.ToString();
 
-							if (GUILayout.Button(m_GroupKeyContent, groupButtonStyle))
+							if (GUILayout.Button(m_GroupKeyContent, stateStyle))
 							{
 								// if right click or alt click select the faces instead of setting a group
 								if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt ||
@@ -477,8 +535,8 @@ namespace ProBuilder2.EditorCommon
 								GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
 								GUILayout.Label("", colorKeyStyle);
 								GUILayout.EndVertical();
+								GUI.backgroundColor = Color.white;
 							}
-							GUI.backgroundColor = Color.white;
 
 							if (++column > columns)
 							{
