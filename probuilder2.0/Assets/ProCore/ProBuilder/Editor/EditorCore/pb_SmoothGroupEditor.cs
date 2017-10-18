@@ -211,7 +211,9 @@ namespace ProBuilder2.EditorCommon
 
 		private const int IconWidth = 24;
 		private const int IconHeight = 24;
-		private GUIContent m_GroupKeyContent = new GUIContent("21", "Smoothing Group");
+
+		private GUIContent m_GroupKeyContent =
+			new GUIContent("21", "Smoothing Group.\n\nRight Click to Select all faces matching this group.");
 		private Vector2 m_Scroll = Vector2.zero;
 		private GUIContent m_HelpIcon = null;
 		private GUIContent m_BreakSmoothingContent = null;
@@ -458,7 +460,9 @@ namespace ProBuilder2.EditorCommon
 							if (m_ShowPreview)
 								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
 
-							if (GUILayout.Button(i.ToString(), groupButtonStyle))
+							m_GroupKeyContent.text = i.ToString();
+
+							if (GUILayout.Button(m_GroupKeyContent, groupButtonStyle))
 							{
 								// if right click or alt click select the faces instead of setting a group
 								if((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt ||
