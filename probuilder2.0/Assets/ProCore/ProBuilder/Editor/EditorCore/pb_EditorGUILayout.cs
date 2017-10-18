@@ -4,7 +4,7 @@ using UnityEditor;
 namespace ProBuilder2.Interface
 {
 	/**
-	 *	Additional GUI functions for Editor use.
+	 * Additional GUI functions for Editor use.
 	 */
 	public static class pb_EditorGUILayout
 	{
@@ -20,6 +20,7 @@ namespace ProBuilder2.Interface
 			pb_EditorGUIUtility.PushBackgroundColor(m_RowToggle ? RowEvenColor : RowOddColor);
 			GUILayout.BeginHorizontal(pb_EditorGUIUtility.rowStyle);
 			m_RowToggle = !m_RowToggle;
+			pb_EditorGUIUtility.PopBackgroundColor();
 		}
 
 		public static void EndRow()
