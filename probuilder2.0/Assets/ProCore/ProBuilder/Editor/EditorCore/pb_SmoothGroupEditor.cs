@@ -178,6 +178,14 @@ namespace ProBuilder2.EditorCommon
 					m_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
 					m_GroupButtonStyle.fixedWidth = IconWidth;
 					m_GroupButtonStyle.fixedHeight = IconHeight;
+
+					//special colors for number text inside the smoothing group buttons
+					//...naturally, this should become a PB-wide thing in the future, with further tweaking
+					m_GroupButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+					m_GroupButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+					m_GroupButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
+
+
 				}
 				return m_GroupButtonStyle;
 			}
