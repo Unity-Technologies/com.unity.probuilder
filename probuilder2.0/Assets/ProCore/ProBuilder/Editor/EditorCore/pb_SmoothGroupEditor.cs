@@ -291,9 +291,6 @@ namespace ProBuilder2.EditorCommon
 		private static bool m_ShowNormals = false;
 		private static bool m_IsMovingVertices = false;
 		private static bool m_ShowHelp = false;
-		private static readonly Color SelectStateMixed = new Color(1f, .6f, 0f, 1f);
-		private static readonly Color SelectStateNormal = new Color (0f, .67f, .9f, 1f);
-		private static readonly Color SelectStateInUse = new Color (.21f, .77f, 1f, 1f);
 		private static float m_NormalsSize = 0.1f;
 		private static float m_PreviewOpacity = .5f;
 		private static bool m_PreviewDither = false;
