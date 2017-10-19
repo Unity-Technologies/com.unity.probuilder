@@ -394,6 +394,9 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
+			if (GUILayout.Button("Settings", m_ShowSettings
+				? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+				m_ShowSettings = !m_ShowSettings;
 
 			if (GUILayout.Button("Preview",
 				m_ShowPreview ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
@@ -436,6 +439,43 @@ namespace ProBuilder2.EditorCommon
 			GUILayout.EndHorizontal();
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+
+			if (m_ShowSettings)
+			{
+				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+
+				EditorGUIUtility.labelWidth = 100;
+
+				EditorGUI.BeginChangeCheck();
+
+				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					foreach (var kvp in m_SmoothGroups)
+						kvp.Value.RebuildNormalsMesh(kvp.Key);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUI.BeginChangeCheck();
+
+				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
+				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
+					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
+					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
+					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUIUtility.labelWidth = 0;
+
+				GUILayout.EndVertical();
+			}
 
 			if (m_ShowHelp)
 			{
@@ -568,41 +608,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUILayout.EndScrollView();
-
-			m_ShowSettings = EditorGUILayout.Foldout(m_ShowSettings, "Settings");
-
-			if (m_ShowSettings)
-			{
-				EditorGUIUtility.labelWidth = 100;
-
-				EditorGUI.BeginChangeCheck();
-
-				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
-					foreach (var kvp in m_SmoothGroups)
-						kvp.Value.RebuildNormalsMesh(kvp.Key);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUI.BeginChangeCheck();
-
-				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
-				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
-					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
-					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
-					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUIUtility.labelWidth = 0;
-			}
 
 			// This isn't great, but we need hover previews to work
 			if(mouseOverWindow == this)
