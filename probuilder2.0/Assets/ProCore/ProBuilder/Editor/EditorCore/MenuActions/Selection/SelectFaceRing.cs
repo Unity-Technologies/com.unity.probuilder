@@ -10,9 +10,10 @@ namespace ProBuilder2.Actions
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Ring_Face"); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
-		public override int toolbarPriority { get { return 0; } }
+		public override int toolbarPriority { get { return 2; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"Select Face Ring",
 			"Selects a ring of connected faces.\n\n<b>Shortcut</b>: Control + Double Click on Face."

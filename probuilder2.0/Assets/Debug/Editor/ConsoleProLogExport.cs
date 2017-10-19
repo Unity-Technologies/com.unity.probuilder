@@ -22,7 +22,7 @@ public static class ConsoleProCallbacks
 	 *	ConsolePro invokes this function with a reference to the contextMenu object. Here we can
 	 *	add custom entries.
 	 */
-#if UNITY_2017_3_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
 	[ConsoleProLogContextMenuAttribute]
 #else
 	[ConsoleProContextMenuAttribute]

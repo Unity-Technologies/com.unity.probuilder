@@ -909,7 +909,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/**
-		 * Selects an Edge loop. Todo - support for face loops.
+		 * Selects an edge loop.
 		 */
 		public static pb_ActionResult MenuLoopSelection(pb_Object[] selection)
 		{

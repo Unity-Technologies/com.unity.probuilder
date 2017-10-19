@@ -27,7 +27,7 @@ namespace ProBuilder2.Actions
 			}
 		}
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override int toolbarPriority { get { return 2; } }
+		public override int toolbarPriority { get { return 0; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
