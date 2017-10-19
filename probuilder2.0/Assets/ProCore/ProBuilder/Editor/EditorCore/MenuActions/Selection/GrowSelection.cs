@@ -10,9 +10,9 @@ namespace ProBuilder2.Actions
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Grow"); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"Grow Selection",
 			@"Adds adjacent elements to the current selection, optionally testing to see if they are within a specified angle.

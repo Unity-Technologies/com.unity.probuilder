@@ -14,7 +14,7 @@ namespace ProBuilder2.Actions
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isComplete ? pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Complete") : pb_IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect"); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
-		public override int toolbarPriority { get { return 3; } }
+		public override int toolbarPriority { get { return 0; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(

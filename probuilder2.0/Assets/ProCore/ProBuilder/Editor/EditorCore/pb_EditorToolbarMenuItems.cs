@@ -930,85 +930,9 @@ namespace ProBuilder2.EditorCommon
 				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
 		}
 
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Edge Loop &l", true)]
-		static bool MenuVerifySelectEdgeLoop()
-		{
-			SelectEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeLoop>();
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
-			return instance != null && instance.IsEnabled();
-#endif
 
-		}
 
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Edge Loop &l", false, pb_Constant.MENU_SELECTION + 0)]
-		static void MenuDoSelectEdgeLoop()
-		{
-			SelectEdgeLoop instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeLoop>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
 
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Edge Ring &r", true)]
-		static bool MenuVerifySelectEdgeRing()
-		{
-			SelectEdgeRing instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeRing>();
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
-			return instance != null && instance.IsEnabled();
-#endif
-
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Edge Ring &r", false, pb_Constant.MENU_SELECTION + 0)]
-		static void MenuDoSelectEdgeRing()
-		{
-			SelectEdgeRing instance = pb_EditorToolbarLoader.GetInstance<SelectEdgeRing>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Face Loop ", true)]
-		static bool MenuVerifySelectFaceLoop()
-		{
-			SelectFaceLoop instance = pb_EditorToolbarLoader.GetInstance<SelectFaceLoop>();
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
-			return instance != null && instance.IsEnabled();
-#endif
-
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Face Loop ", false, pb_Constant.MENU_SELECTION + 0)]
-		static void MenuDoSelectFaceLoop()
-		{
-			SelectFaceLoop instance = pb_EditorToolbarLoader.GetInstance<SelectFaceLoop>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Face Ring ", true)]
-		static bool MenuVerifySelectFaceRing()
-		{
-			SelectFaceRing instance = pb_EditorToolbarLoader.GetInstance<SelectFaceRing>();
-#if PROTOTYPE
-			return instance != null && !instance.isProOnly && instance.IsEnabled();
-#else
-			return instance != null && instance.IsEnabled();
-#endif
-
-		}
-
-		[MenuItem(PB_MENU_PREFIX + "Selection/Select Face Ring ", false, pb_Constant.MENU_SELECTION + 0)]
-		static void MenuDoSelectFaceRing()
-		{
-			SelectFaceRing instance = pb_EditorToolbarLoader.GetInstance<SelectFaceRing>();
-			if(instance != null)
-				pb_EditorUtility.ShowNotification(instance.DoAction().notification);
-		}
 
 		[MenuItem(PB_MENU_PREFIX + "Selection/Select Hole ", true)]
 		static bool MenuVerifySelectHole()

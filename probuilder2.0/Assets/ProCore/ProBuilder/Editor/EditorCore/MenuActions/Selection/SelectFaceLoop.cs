@@ -10,9 +10,10 @@ namespace ProBuilder2.Actions
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Loop_Face"); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
-		public override int toolbarPriority { get { return 0; } }
+		public override int toolbarPriority { get { return 1; } }
+		public override bool hasFileMenuEntry { get { return false; } }
 
-		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
 		(
 			"Select Face Loop",
 			"Selects a loop of connected faces.\n\n<b>Shortcut</b>: Shift + Double Click on Face."
