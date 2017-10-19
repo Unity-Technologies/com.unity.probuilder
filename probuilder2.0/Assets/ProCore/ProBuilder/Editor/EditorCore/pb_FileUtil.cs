@@ -106,7 +106,7 @@ namespace ProBuilder2.EditorCommon
 		 *	Load a scriptable object from a path relative to ProBuilder root. Can return null if asset
 		 *	is not found.
 		 */
-		public static T LoadRelative<T>(string path) where T : ScriptableObject
+		public static T LoadRelative<T>(string path) where T : Object
 		{
 			string full = string.Format("{0}{1}", GetRootDir(), path);
 			return Load<T>(full);
@@ -141,7 +141,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	Load an asset from path. Can return null if not found.
 		 */
-		public static T Load<T>(string path) where T : ScriptableObject
+		public static T Load<T>(string path) where T : Object
 		{
 #if UNITY_4_7 || UNITY_5_0
 			return (T) AssetDatabase.LoadAssetAtPath(path, typeof(T));

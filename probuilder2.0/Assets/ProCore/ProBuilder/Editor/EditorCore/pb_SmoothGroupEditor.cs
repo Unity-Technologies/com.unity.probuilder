@@ -113,28 +113,21 @@ namespace ProBuilder2.EditorCommon
 				Vector3[] srcNormals = pb.msh.normals;
 				int vertexCount = System.Math.Min(ushort.MaxValue / 2, pb.msh.vertexCount);
 				Vector3[] positions = new Vector3[vertexCount * 2];
-				Color32[] colors = new Color32[vertexCount * 2];
+				Vector4[] tangents = new Vector4[vertexCount * 2];
 				int[] indices = new int[vertexCount * 2];
 				for (int i = 0; i < vertexCount; i++)
 				{
 					int a = i*2, b = i*2+1;
 
 					positions[a] = srcPositions[i];
-					positions[b] = srcPositions[i] + srcNormals[i] * m_NormalsSize;
-
-					colors[a] = new Color32(
-						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].x) * 255), 0, 255),
-						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].y) * 255), 0, 255),
-						(byte) pb_Math.Clamp((int)(Mathf.Abs(srcNormals[i].z) * 255), 0, 255),
-						255);
-
-					colors[b] = colors[a];
-
+					positions[b] = srcPositions[i];
+					tangents[a] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 0f);
+					tangents[b] = new Vector4(srcNormals[i].x, srcNormals[i].y, srcNormals[i].z, 1f);
 					indices[a] = a;
 					indices[b] = b;
 				}
 				normalsMesh.vertices = positions;
-				normalsMesh.colors32 = colors;
+				normalsMesh.tangents = tangents;
 				normalsMesh.subMeshCount = 1;
 				normalsMesh.SetIndices(indices, MeshTopology.Lines, 0);
 			}
@@ -155,6 +148,17 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
+		private static Material m_NormalPreviewMaterial = null;
+		private static Material normalPreviewMaterial
+		{
+			get
+			{
+				if (m_NormalPreviewMaterial == null)
+					m_NormalPreviewMaterial = new Material(Shader.Find("Hidden/ProBuilder/NormalPreview"));
+				return m_NormalPreviewMaterial;
+			}
+		}
+
 		private static GUIStyle m_GroupButtonStyle = null;
 		private static GUIStyle m_GroupButtonSelectedStyle = null;
 		private static GUIStyle m_GroupButtonInUseStyle = null;
@@ -172,6 +176,13 @@ namespace ProBuilder2.EditorCommon
 					m_GroupButtonStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
 					m_GroupButtonStyle.hover.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
 					m_GroupButtonStyle.active.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
+					Font asap = pb_FileUtil.LoadRelative<Font>("About/Font/Asap-Regular.otf");
+					if (asap != null)
+					{
+						m_GroupButtonStyle.font = asap;
+						m_GroupButtonStyle.fontSize = 12;
+						m_GroupButtonStyle.padding = new RectOffset(2, 2, 2, 2);
+					}
 					m_GroupButtonStyle.border = new RectOffset(3, 3, 3, 3);
 					m_GroupButtonStyle.margin = new RectOffset(4, 4, 4, 6);
 					m_GroupButtonStyle.alignment = TextAnchor.MiddleCenter;
@@ -436,13 +447,13 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button(m_HelpIcon, pb_EditorGUIUtility.toolbarHelpIcon))
+			if(GUILayout.Button(m_HelpIcon, pb_EditorStyles.toolbarHelpIcon))
 				m_ShowHelp = !m_ShowHelp;
 			GUILayout.EndHorizontal();
 
 			if (m_ShowSettings)
 			{
-				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+				GUILayout.BeginVertical(pb_EditorStyles.settingsGroup);
 
 				EditorGUIUtility.labelWidth = 100;
 
@@ -481,7 +492,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (m_ShowSettings)
 			{
-				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+				GUILayout.BeginVertical(pb_EditorStyles.settingsGroup);
 
 				EditorGUIUtility.labelWidth = 100;
 
@@ -518,7 +529,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (m_ShowHelp)
 			{
-				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+				GUILayout.BeginVertical(pb_EditorStyles.settingsGroup);
 
 				GUILayout.Label("Create and Clear Smoothing Groups", EditorStyles.boldLabel);
 
@@ -576,17 +587,17 @@ namespace ProBuilder2.EditorCommon
 					pb_Object pb = mesh.Key;
 					SmoothGroupData data = mesh.Value;
 
-					GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+					GUILayout.BeginVertical(pb_EditorStyles.settingsGroup);
 
 					GUILayout.BeginHorizontal();
 
-					if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
+					if(GUILayout.Button(pb.name, pb_EditorStyles.headerLabel))
 						data.isVisible = !data.isVisible;
 
 					GUILayout.FlexibleSpace();
 
 					if (GUILayout.Button(m_BreakSmoothingContent,
-						groupButtonStyle))
+						pb_EditorStyles.buttonStyle))
 						SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
 
 					GUILayout.EndHorizontal();
@@ -687,8 +698,10 @@ namespace ProBuilder2.EditorCommon
 
 						if (m != null)
 						{
-							pb_EditorHandleUtility.unlitVertexColorMaterial.SetPass(0);
-							Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
+							Transform trs = kvp.Key.transform;
+							normalPreviewMaterial.SetFloat("_Scale", m_NormalsSize * HandleUtility.GetHandleSize(trs.position));
+							normalPreviewMaterial.SetPass(0);
+							Graphics.DrawMeshNow(m, trs.localToWorldMatrix);
 						}
 					}
 				}

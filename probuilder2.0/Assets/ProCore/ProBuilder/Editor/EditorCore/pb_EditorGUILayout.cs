@@ -18,7 +18,7 @@ namespace ProBuilder2.Interface
 				m_RowToggle = index % 2 == 0;
 
 			pb_EditorGUIUtility.PushBackgroundColor(m_RowToggle ? RowEvenColor : RowOddColor);
-			GUILayout.BeginHorizontal(pb_EditorGUIUtility.rowStyle);
+			GUILayout.BeginHorizontal(pb_EditorStyles.rowStyle);
 			m_RowToggle = !m_RowToggle;
 			pb_EditorGUIUtility.PopBackgroundColor();
 		}

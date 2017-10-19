@@ -1,10 +1,10 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "ProBuilder/UnlitVertexColor"
+Shader "Hidden/ProBuilder/NormalPreview"
 {
 	SubShader
 	{
-		Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Geometry" }
 		Lighting Off
 		ZTest LEqual
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -20,10 +20,13 @@ Shader "ProBuilder/UnlitVertexColor"
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
+			float _Scale;
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float4 color : COLOR;
+				// secretely this is the normal
+				float4 tangent : TANGENT;
 			};
 
 			struct v2f
@@ -36,8 +39,11 @@ Shader "ProBuilder/UnlitVertexColor"
 			{
 				v2f o;
 
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.color = v.color;
+				float4 world = mul(UNITY_MATRIX_M, v.vertex);
+				float3 nrm = UnityObjectToWorldNormal(v.tangent.xyz);
+				float4 extruded = world + float4((nrm * v.tangent.w * _Scale), 0);
+				o.pos = mul(UNITY_MATRIX_VP, extruded);
+				o.color = float4(abs(v.tangent.xyz), 1);
 
 				return o;
 			}
