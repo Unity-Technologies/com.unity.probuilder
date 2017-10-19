@@ -8,7 +8,7 @@ namespace ProBuilder2.Actions
 	public class SelectFaceRing : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return null; } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Ring_Face"); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 		public override int toolbarPriority { get { return 0; } }
 
@@ -30,8 +30,9 @@ namespace ProBuilder2.Actions
 
 		public override bool IsHidden()
 		{
-			// not in toolbar
-			return true;
+			return 	pb_Editor.instance == null ||
+					pb_Editor.instance.editLevel != EditLevel.Geometry ||
+					pb_Editor.instance.selectionMode != SelectMode.Face;
 		}
 
 		public override pb_ActionResult DoAction()

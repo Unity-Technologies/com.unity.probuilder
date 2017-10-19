@@ -74,6 +74,8 @@ namespace ProBuilder2.EditorCommon
 				new Actions.InvertSelection(),
 				new Actions.SelectEdgeLoop(),
 				new Actions.SelectEdgeRing(),
+				new Actions.SelectFaceLoop(),
+				new Actions.SelectFaceRing(),
 				new Actions.SelectHole(),
 				new Actions.SelectVertexColor(),
 				new Actions.SelectMaterial(),
