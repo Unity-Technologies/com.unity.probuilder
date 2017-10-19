@@ -184,8 +184,6 @@ namespace ProBuilder2.EditorCommon
 					m_GroupButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
 					m_GroupButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
 					m_GroupButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
-
-
 				}
 				return m_GroupButtonStyle;
 			}
@@ -396,6 +394,10 @@ namespace ProBuilder2.EditorCommon
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+			if (GUILayout.Button("Settings",
+				m_ShowSettings ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
+				m_ShowSettings = !m_ShowSettings;
+
 			if (GUILayout.Button("Preview",
 				m_ShowPreview ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
 			{
@@ -435,6 +437,43 @@ namespace ProBuilder2.EditorCommon
 			if(GUILayout.Button(m_HelpIcon, pb_EditorGUIUtility.toolbarHelpIcon))
 				m_ShowHelp = !m_ShowHelp;
 			GUILayout.EndHorizontal();
+
+			if (m_ShowSettings)
+			{
+				GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
+
+				EditorGUIUtility.labelWidth = 100;
+
+				EditorGUI.BeginChangeCheck();
+
+				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
+					foreach (var kvp in m_SmoothGroups)
+						kvp.Value.RebuildNormalsMesh(kvp.Key);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUI.BeginChangeCheck();
+
+				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
+				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
+					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
+					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
+					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
+					SceneView.RepaintAll();
+				}
+
+				EditorGUIUtility.labelWidth = 0;
+
+				GUILayout.EndVertical();
+			}
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
 
@@ -500,13 +539,24 @@ namespace ProBuilder2.EditorCommon
 
 					GUILayout.BeginVertical(pb_EditorGUIUtility.SettingsGroupStyle);
 
+					GUILayout.BeginHorizontal();
+
 					if(GUILayout.Button(pb.name, EditorStyles.boldLabel))
 						data.isVisible = !data.isVisible;
+
+					GUILayout.FlexibleSpace();
+
+					if (GUILayout.Button(m_BreakSmoothingContent,
+						groupButtonStyle))
+						SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
+
+					GUILayout.EndHorizontal();
 
 					bool isMixedSelection = data.selected.Contains(pb_Smoothing.SMOOTHING_GROUP_NONE);
 
 					if (data.isVisible)
 					{
+						bool objectContainsSmoothGroups = data.groups.Any(x => x.Key > 0);
 						int column = 0;
 
 						GUILayout.BeginHorizontal();
@@ -519,8 +569,7 @@ namespace ProBuilder2.EditorCommon
 								(isMixedSelection ? groupButtonMixedSelectionStyle : groupButtonSelectedStyle) :
 								data.groups.ContainsKey(i) ? groupButtonInUseStyle : groupButtonStyle;
 
-
-							if (m_ShowPreview)
+							if (m_ShowPreview && objectContainsSmoothGroups)
 								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
 
 							m_GroupKeyContent.text = i.ToString();
@@ -535,7 +584,7 @@ namespace ProBuilder2.EditorCommon
 									SetGroup(pb, i);
 							}
 
-							if (m_ShowPreview)
+							if (m_ShowPreview && objectContainsSmoothGroups)
 							{
 								GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
 								GUILayout.Label("", colorKeyStyle);
@@ -552,16 +601,6 @@ namespace ProBuilder2.EditorCommon
 						}
 
 						GUILayout.EndHorizontal();
-
-						GUILayout.BeginHorizontal();
-
-						GUILayout.FlexibleSpace();
-
-						if (GUILayout.Button(m_BreakSmoothingContent,
-							pb_ToolbarGroupUtility.GetStyle(pb_ToolbarGroup.Geometry, true)))
-							SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
-
-						GUILayout.EndHorizontal();
 					}
 
 					GUILayout.EndVertical();
@@ -569,41 +608,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			EditorGUILayout.EndScrollView();
-
-			m_ShowSettings = EditorGUILayout.Foldout(m_ShowSettings, "Settings");
-
-			if (m_ShowSettings)
-			{
-				EditorGUIUtility.labelWidth = 100;
-
-				EditorGUI.BeginChangeCheck();
-
-				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
-					foreach (var kvp in m_SmoothGroups)
-						kvp.Value.RebuildNormalsMesh(kvp.Key);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUI.BeginChangeCheck();
-
-				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
-				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
-					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
-					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
-					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUIUtility.labelWidth = 0;
-			}
 
 			// This isn't great, but we need hover previews to work
 			if(mouseOverWindow == this)
@@ -648,7 +652,6 @@ namespace ProBuilder2.EditorCommon
 							Graphics.DrawMeshNow(m, kvp.Key.transform.localToWorldMatrix);
 						}
 					}
-
 				}
 			}
 		}
@@ -669,7 +672,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pbUndo.RecordObject(pb, "Set Smoothing Group");
 
-			foreach (pb_Face face in pb.SelectedFaces)
+			foreach (pb_Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
 				face.smoothingGroup = index;
 
 			// todo pb.Rebuild
@@ -691,35 +694,6 @@ namespace ProBuilder2.EditorCommon
 		{
 			return m_KellysMaxContrastSet[index % m_KellysMaxContrastSet.Length];
 		}
-
-		/**
-		 * https://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
-		 */
-//		private static readonly Color32[] m_KellysMaxContrastSet = new Color32[]
-//		{
-//			UIntToColor(0xFFFFB300), //Vivid Yellow
-//			UIntToColor(0xFF803E75), //Strong Purple
-//			UIntToColor(0xFFFF6800), //Vivid Orange
-////			UIntToColor(0xFFA6BDD7), //Very Light Blue
-//			UIntToColor(0xFFC10020), //Vivid Red
-//			UIntToColor(0xFFCEA262), //Grayish Yellow
-//			UIntToColor(0xFF817066), //Medium Gray
-//
-//			//The following will not be good for people with defective color vision
-//			UIntToColor(0xFF007D34), //Vivid Green
-//			UIntToColor(0xFFF6768E), //Strong Purplish Pink
-//			UIntToColor(0xFF00538A), //Strong Blue
-//			UIntToColor(0xFFFF7A5C), //Strong Yellowish Pink
-//			UIntToColor(0xFF53377A), //Strong Violet
-//			UIntToColor(0xFFFF8E00), //Vivid Orange Yellow
-//			UIntToColor(0xFFB32851), //Strong Purplish Red
-//			UIntToColor(0xFFF4C800), //Vivid Greenish Yellow
-//			UIntToColor(0xFF7F180D), //Strong Reddish Brown
-//			UIntToColor(0xFF93AA00), //Vivid Yellowish Green
-//			UIntToColor(0xFF593315), //Deep Yellowish Brown
-//			UIntToColor(0xFFF13A13), //Vivid Reddish Orange
-//			UIntToColor(0xFF232C16), //Dark Olive Green
-//		};
 
 		private static readonly Color32[] m_KellysMaxContrastSet = new Color32[]
 		{
@@ -746,14 +720,5 @@ namespace ProBuilder2.EditorCommon
 			new Color32(255, 255, 255, 255), 	// White
 			new Color32(0, 0, 0, 255), 			// Black
 		};
-
-		private static Color32 UIntToColor(uint color)
-		{
-			byte r = (byte) (color >> 16);
-			byte g = (byte) (color >> 8);
-			byte b = (byte) (color >> 0);
-			// Set preview color opacity here, 0->255
-			return new Color32(r, g, b, 255);
-		}
 	}
 }
