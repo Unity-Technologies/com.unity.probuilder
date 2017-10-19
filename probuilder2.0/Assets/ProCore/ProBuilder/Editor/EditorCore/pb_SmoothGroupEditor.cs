@@ -294,6 +294,7 @@ namespace ProBuilder2.EditorCommon
 		private Vector2 m_Scroll = Vector2.zero;
 		private GUIContent m_HelpIcon = null;
 		private GUIContent m_BreakSmoothingContent = null;
+		private GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
 		private Dictionary<pb_Object, SmoothGroupData> m_SmoothGroups = new Dictionary<pb_Object, SmoothGroupData>();
 		private static bool m_ShowPreview = false;
 		private static bool m_ShowNormals = false;
@@ -332,6 +333,8 @@ namespace ProBuilder2.EditorCommon
 			m_PreviewOpacity = pb_PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
 			m_PreviewDither = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
 			m_BreakSmoothingContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
+				"Expand the face selection by selecting all faces matching the currently selected face groups.");
+			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
 				"Clear the selected faces of their smoothing groups");
 			OnSelectionChanged();
 		}
@@ -403,9 +406,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
-			if (GUILayout.Button("Settings", m_ShowSettings
-				? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
-				m_ShowSettings = !m_ShowSettings;
 
 			if (GUILayout.Button("Settings",
 				m_ShowSettings ? pb_EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton) : EditorStyles.toolbarButton))
@@ -459,18 +459,6 @@ namespace ProBuilder2.EditorCommon
 
 				EditorGUI.BeginChangeCheck();
 
-				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
-					foreach (var kvp in m_SmoothGroups)
-						kvp.Value.RebuildNormalsMesh(kvp.Key);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUI.BeginChangeCheck();
-
 				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
 				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
 
@@ -489,43 +477,6 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
-
-			if (m_ShowSettings)
-			{
-				GUILayout.BeginVertical(pb_EditorStyles.settingsGroup);
-
-				EditorGUIUtility.labelWidth = 100;
-
-				EditorGUI.BeginChangeCheck();
-
-				m_NormalsSize = EditorGUILayout.Slider("Normals", m_NormalsSize, .001f, 1f);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_NormalsSize", m_NormalsSize);
-					foreach (var kvp in m_SmoothGroups)
-						kvp.Value.RebuildNormalsMesh(kvp.Key);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUI.BeginChangeCheck();
-
-				m_PreviewOpacity = EditorGUILayout.Slider("Preview Opacity", m_PreviewOpacity, .001f, 1f);
-				m_PreviewDither = EditorGUILayout.Toggle("Preview Dither", m_PreviewDither);
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					pb_PreferencesInternal.SetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", m_PreviewOpacity);
-					pb_PreferencesInternal.SetBool("pb_SmoothingGroupEditor::m_PreviewDither", m_PreviewDither);
-					smoothPreviewMaterial.SetFloat("_Opacity", m_PreviewOpacity);
-					smoothPreviewMaterial.SetFloat("_Dither", m_PreviewDither ? 1f : 0f);
-					SceneView.RepaintAll();
-				}
-
-				EditorGUIUtility.labelWidth = 0;
-
-				GUILayout.EndVertical();
-			}
 
 			if (m_ShowHelp)
 			{
@@ -595,6 +546,10 @@ namespace ProBuilder2.EditorCommon
 						data.isVisible = !data.isVisible;
 
 					GUILayout.FlexibleSpace();
+
+					if (GUILayout.Button(m_SelectFacesWithSmoothGroupSelectionContent,
+						pb_EditorStyles.buttonStyle))
+						SelectGroups(pb, new HashSet<int>(pb.SelectedFaces.Select(x => x.smoothingGroup)));
 
 					if (GUILayout.Button(m_BreakSmoothingContent,
 						pb_EditorStyles.buttonStyle))
