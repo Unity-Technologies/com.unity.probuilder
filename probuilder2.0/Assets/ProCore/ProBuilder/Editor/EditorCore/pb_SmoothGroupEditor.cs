@@ -547,6 +547,7 @@ namespace ProBuilder2.EditorCommon
 					if (data.isVisible)
 					{
 						int column = 0;
+						bool anySmoothGroups = data.groups.Any(x => x.Key > pb_Smoothing.SMOOTHING_GROUP_NONE);
 
 						GUILayout.BeginHorizontal();
 
@@ -558,8 +559,7 @@ namespace ProBuilder2.EditorCommon
 								(isMixedSelection ? groupButtonMixedSelectionStyle : groupButtonSelectedStyle) :
 								data.groups.ContainsKey(i) ? groupButtonInUseStyle : groupButtonStyle;
 
-
-							if (m_ShowPreview)
+							if (m_ShowPreview && anySmoothGroups)
 								GUILayout.BeginVertical(GUILayout.MaxWidth(IconWidth));
 
 							m_GroupKeyContent.text = i.ToString();
@@ -574,7 +574,7 @@ namespace ProBuilder2.EditorCommon
 									SetGroup(pb, i);
 							}
 
-							if (m_ShowPreview)
+							if (m_ShowPreview && anySmoothGroups)
 							{
 								GUI.backgroundColor = data.groupColors.ContainsKey(i) ? data.groupColors[i] : Color.clear;
 								GUILayout.Label("", colorKeyStyle);
