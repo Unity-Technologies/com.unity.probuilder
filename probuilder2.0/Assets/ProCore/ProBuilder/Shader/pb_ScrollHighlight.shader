@@ -1,5 +1,3 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 // Shader created with Shader Forge v1.32
 // Shader Forge (c) Neat Corporation / Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
@@ -49,7 +47,7 @@ Shader "Hidden/ProBuilder/ScrollHighlight" {
             VertexOutput vert (VertexInput v) {
                 VertexOutput o = (VertexOutput)0;
                 o.uv0 = v.texcoord0;
-                o.pos = UnityObjectToClipPos(v.vertex );
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 return o;
             }
             float4 frag(VertexOutput i, float facing : VFACE) : COLOR {

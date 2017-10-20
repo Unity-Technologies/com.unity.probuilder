@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Hidden/ProBuilder/pb_TransparentOverlay"
+﻿Shader "Hidden/ProBuilder/pb_TransparentOverlay"
 {
 	Properties
 	{
@@ -45,7 +43,7 @@ Shader "Hidden/ProBuilder/pb_TransparentOverlay"
 			{
 				v2f o;
 
-				o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				o.uv = v.texcoord0.xy;
 

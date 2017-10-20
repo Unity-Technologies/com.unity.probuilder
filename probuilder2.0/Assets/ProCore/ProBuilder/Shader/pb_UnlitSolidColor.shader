@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "ProBuilder/Unlit Solid Color"
+﻿Shader "ProBuilder/Unlit Solid Color"
 {
 	Properties
 	{
@@ -41,7 +39,7 @@ Shader "ProBuilder/Unlit Solid Color"
 			{
 				v2f o;
 
-				o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				return o;
 			}

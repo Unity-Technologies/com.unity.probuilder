@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Hidden/ProBuilder/FacePicker"
+﻿Shader "Hidden/ProBuilder/FacePicker"
 {
 	Properties {}
 
@@ -38,7 +36,7 @@ Shader "Hidden/ProBuilder/FacePicker"
 			{
 				v2f o;
 
-				o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.color = v.color;
 				return o;
 			}
