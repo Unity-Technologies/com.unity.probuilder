@@ -654,7 +654,7 @@ namespace ProBuilder2.EditorCommon
 						if (m != null)
 						{
 							Transform trs = kvp.Key.transform;
-							normalPreviewMaterial.SetFloat("_Scale", m_NormalsSize * HandleUtility.GetHandleSize(trs.position));
+							normalPreviewMaterial.SetFloat("_Scale", m_NormalsSize * HandleUtility.GetHandleSize(trs.GetComponent<MeshRenderer>().bounds.center));
 							normalPreviewMaterial.SetPass(0);
 							Graphics.DrawMeshNow(m, trs.localToWorldMatrix);
 						}
