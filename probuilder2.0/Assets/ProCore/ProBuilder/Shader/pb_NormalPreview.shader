@@ -39,7 +39,7 @@ Shader "Hidden/ProBuilder/NormalPreview"
 			{
 				v2f o;
 
-				float4 world = mul(UNITY_MATRIX_M, v.vertex);
+				float4 world = mul(_Object2World, v.vertex);
 				float3 nrm = UnityObjectToWorldNormal(v.tangent.xyz);
 				float4 extruded = world + float4((nrm * v.tangent.w * _Scale), 0);
 				o.pos = mul(UNITY_MATRIX_VP, extruded);

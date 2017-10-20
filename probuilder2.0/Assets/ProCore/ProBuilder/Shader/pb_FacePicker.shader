@@ -36,7 +36,7 @@
 			{
 				v2f o;
 
-				o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.color = v.color;
 				return o;
 			}

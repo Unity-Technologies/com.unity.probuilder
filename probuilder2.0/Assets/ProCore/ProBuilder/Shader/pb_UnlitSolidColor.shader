@@ -1,19 +1,18 @@
-﻿Shader "ProBuilder/Reference Unlit"
+﻿Shader "ProBuilder/Unlit Solid Color"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		_Color ("Color Tint", Color) = (1,1,1,1)
 	}
 
 	SubShader
 	{
-		Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "IgnoreProjector"="True" "RenderType"="Geometry" }
 		Lighting Off
 		ZTest LEqual
-		Blend SrcAlpha OneMinusSrcAlpha
 		ZWrite On
-		Cull Off
-		Offset 1,1
+		Cull Back
+		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass
 		{
@@ -24,18 +23,16 @@
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			sampler2D _MainTex;
+			float4 _Color;
 
 			struct appdata
 			{
 				float4 vertex : POSITION;
-        		float4 texcoord0 : TEXCOORD0;
 			};
 
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
-				float2 uv : TEXCOORD0;
 			};
 
 			v2f vert (appdata v)
@@ -43,14 +40,13 @@
 				v2f o;
 
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = v.texcoord0.xy;
 
 				return o;
 			}
 
 			half4 frag (v2f i) : COLOR
 			{
-				return tex2D(_MainTex, i.uv);
+				return _Color;
 			}
 
 			ENDCG
