@@ -6,6 +6,7 @@
  *  If you modify this shader make sure to go through and pack uv1 and uv2 channels
  *  into a single float4 to save on registers (on penalty of compile error)
  */
+
 // Shader created with Shader Forge v1.27
 // Shader Forge (c) Neat Corporation / Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
@@ -389,5 +390,5 @@ Shader "ProBuilder/Standard Vertex Color" {
             ENDCG
         }
     }
-    FallBack "Diffuse"
+    FallBack "Standard"
 }
