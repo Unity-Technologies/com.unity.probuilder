@@ -7,7 +7,7 @@
 
 	SubShader
 	{
-		Tags 
+		Tags
 		{
 			"IgnoreProjector"="True"
 			"RenderType"="Transparent"
@@ -21,7 +21,7 @@
 		Blend Off
 		Offset -1,-1
 
-		Pass 
+		Pass
 		{
 			AlphaTest Greater .25
 
@@ -53,11 +53,7 @@
 				float ortho = (1 - UNITY_MATRIX_P[3][3]);
 				v2f o;
 
-				#if UNITY_VERSION > 550
 				o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-				#else
-				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				#endif
 				o.pos.xyz *= lerp(.99, .95, ortho);
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
 

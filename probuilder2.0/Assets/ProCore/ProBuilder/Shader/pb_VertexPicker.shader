@@ -49,11 +49,7 @@
 			{
 				v2f o;
 
-				#if UNITY_VERSION > 550
 				o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-				#else
-				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				#endif
 				o.pos.xyz *= .95;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
 

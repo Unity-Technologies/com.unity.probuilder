@@ -1,4 +1,6 @@
-﻿Shader "ProBuilder/Reference Unlit"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "ProBuilder/Reference Unlit"
 {
 	Properties
 	{
@@ -42,7 +44,7 @@
 			{
 				v2f o;
 
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord0.xy;
 
 				return o;

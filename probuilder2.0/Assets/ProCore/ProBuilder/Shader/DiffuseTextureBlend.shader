@@ -1,6 +1,6 @@
 Shader "ProBuilder/Diffuse Texture Blend"
 {
-	Properties 
+	Properties
 	{
 		_FirstTex ("Texture", 2D) = "white" {}
 		_SecondTex ("Texture", 2D) = "white" {}

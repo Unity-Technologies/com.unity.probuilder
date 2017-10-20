@@ -1,4 +1,4 @@
-Shader "Hidden/ProBuilder/HideVertices" 
+Shader "Hidden/ProBuilder/HideVertices"
 {
 	SubShader
 	{
@@ -14,7 +14,7 @@ Shader "Hidden/ProBuilder/HideVertices"
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
-	
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
