@@ -105,6 +105,10 @@ namespace ProBuilder.BuildSystem
 
 				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
 				{
+					foreach(var kvp in target.Macros)
+						for(int i = 0; i < target.UnityPath.Count; i++)
+							target.UnityPath[i] = target.UnityPath[i].Replace(kvp.Key, kvp.Value);
+
 					m_UnityPath = ReferenceUtility.ResolveDirectory(target.UnityPath);
 
 				    if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))

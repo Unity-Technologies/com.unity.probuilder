@@ -1,0 +1,64 @@
+{
+	"Name":"ProBuilder Unity Base Template",
+	"UnityPath":[
+		"/Applications/Unity $UNITY_VERSION/Unity.app",
+		"D:/Applications/Unity $UNITY_VERSION",
+		"C:/Users/karlh/unity-installs/Unity $UNITY_VERSION"
+	],
+	"Macros": {
+	},
+	"Defines": [
+	],
+	"OnPreBuild":[
+		{ "Command":"rm", "Arguments": [ "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION" ] },
+		{ "Command":"mkdir", "Arguments": [ "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION/Assets" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$DST_PB_ROOT" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Shader"] },
+		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/Shader" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/Shader", "$DST_PB_ROOT/Shader" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/AssetStoreTools", "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION/Assets/AssetStoreTools" ] },
+	],
+	"Assemblies":
+	[
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
+			"ReferencedAssemblies": [
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
+			]
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
+			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll",
+			"Defines": [
+				"UNITY_EDITOR"
+			],
+			"ReferencedAssemblies": [
+				"UnityEditor.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
+			]
+		}
+	]
+}
