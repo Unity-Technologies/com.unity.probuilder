@@ -92,18 +92,15 @@ Applying Vertex Colors is a great way to colorize levels for prototyping, team l
 Section Video: <a href="https://www.youtube.com/watch?v=6bwZ9vN7uN0&index=4&list=PL1GU9r7hfosDHqJBqsBzkrLRDOH2EXCMa">ProBuilder Toolbar: Smoothing Groups</a>
 </div>
 
-**Purpose**: Create a smooth and rounded look, or sharp-edged and faceted.
+**Purpose**: Create a smooth and rounded look, or sharp and hard cornered.
 
 **Usage**:
 
-![Smoothing Groups Example](../images/SmoothingGroups-Panel_WithLettersAndExample.png "Smoothing Groups Example")
+![Smoothing Groups Example](../images/Smoothing_Editor.png "Smoothing Groups Example")
 
 - Choose Face editing from the [Edit Mode Toolbar](../toolbar/overview-toolbar/#edit-mode-toolbar)
-- Select a group of faces that you want to be smooth
-
-> *If no faces are selected, or you are in [Object Mode](../general/fundamentals/#object-vs-element), any Smoothing actions will be applied to the entire object*
-
-- **(A)** If any selected faces already have Smoothing Groups assigned, their group number will be highlighted. Clicking on a highlighted group will un-assign it.
-- **(B)** To assign the selected faces to a new Smoothing Group, click any available group button
-- **(C)** You can also assign Hard groups
-- **(D)** Press the "Clear" button to clear all Smoothing from the selected faces
+- Select a group of faces that you want to have smooth adjoining edges
+- Click an unused smooth group number in the Smooth Group Editor
+	- *Note* Smooth groups already in use are shown with a light blue highlight
+- To clear selected face smoothing groups, select the faces and click the ![break smooth groups](../images/icons/Face_BreakSmoothing.png) icon
+- To select all faces matching with the current smooth group index, use the ![select by smooth group](../images/icons/Selection_SelectBySmoothingGroup.png) icon
