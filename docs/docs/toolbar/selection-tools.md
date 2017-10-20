@@ -112,9 +112,37 @@ Section Video: <a href="https://youtu.be/sVZgWycaZ4M?list=PLrJfHfcFkLM-b6_N-musB
 
 **Keyboard Shortcut** : `ALT R`
 
-Selects an edge ring from each selected edge.
+Selects a ring from each selected edge.
 
 ![Handle Alignment Examples](../images/Selection_RingExample.png)
+
+---
+
+##![Select Face Loop Icon](../images/icons/Selection_Loop_Face.png "Select Face Loop Icon") Select Face Loop
+
+<!-- <div class="video-link">
+Section Video: <a href="https://youtu.be/gh_cV_lkI6s?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Select Face Loop</a>
+</div>
+ -->
+**Keyboard Shortcut** : `ALT L` `Shift + Double Click`
+
+Selects a face loop from each selected face. Faces are only considered to be part of a loop if they contain exactly 4 sides.
+
+![Select Face Loop Example](../images/Selection_FaceLoop.png)
+
+---
+
+##![Select Face Ring Icon](../images/icons/Selection_Ring_Face.png "Select Face Ring Icon") Select Face Ring
+
+<!-- <div class="video-link">
+Section Video: <a href="https://youtu.be/sVZgWycaZ4M?list=PLrJfHfcFkLM-b6_N-musBp4MFaEnxpF6y">Selection Tools: Select Face Ring</a>
+</div> -->
+
+**Keyboard Shortcut** : `ALT R` `Control + Double Click`
+
+Selects a face ring from each selected face. Faces are only considered to be part of a ring if they contain exactly 4 sides.
+
+![Select Face Ring Examples](../images/Selection_FaceRing.png)
 
 ---
 
@@ -173,8 +201,8 @@ Choose how holding the SHIFT key will affect selection, when clicking or drag-se
 Toolbar Icon | Description
 :---:|---
 ![SHIFT Modifier Add](../images/icons/Selection_ShiftAdd.png) | Add: always add to the selection
-![SHIFT Modifier Subtract](../images/icons/Selection_ShiftSubtract.png) | Subtract: always subtract from the selection 
-![SHIFT Modifier Difference](../images/icons/Selection_ShiftDifference.png) | Difference: unselected elements are added, selected elements are subtracted 
+![SHIFT Modifier Subtract](../images/icons/Selection_ShiftSubtract.png) | Subtract: always subtract from the selection
+![SHIFT Modifier Difference](../images/icons/Selection_ShiftDifference.png) | Difference: unselected elements are added, selected elements are subtracted
 
 <div style="text-align:center">
 <img src="../../images/ShiftModifier_Example.png">
@@ -189,7 +217,7 @@ Choose whether drag selection should only select elements inside the drag-rect (
 Toolbar Icon | Description
 :---:|---
 ![Complete](../images/icons/Selection_Rect_Complete.png) | Complete: Only select elements entirely within the drag-rect
-![Intersect](../images/icons/Selection_Rect_Intersect.png) | Intersect: Select both occluded and intersected elements 
+![Intersect](../images/icons/Selection_Rect_Intersect.png) | Intersect: Select both occluded and intersected elements
 
 <div style="text-align:center">
 <img src="../../images/DragRect_Example.png">
