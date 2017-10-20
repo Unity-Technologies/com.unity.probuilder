@@ -110,7 +110,8 @@ namespace ProBuilder2.Common
 				if(border.opposite == null)
 					continue;
 
-				if( border.opposite.face.smoothingGroup == pb_Smoothing.SMOOTHING_GROUP_NONE && IsSoftEdge(normals, border.edge, border.opposite.edge, angleThreshold) )
+				if( border.opposite.face.smoothingGroup == pb_Smoothing.SMOOTHING_GROUP_NONE
+				    && IsSoftEdge(normals, border.edge, border.opposite.edge, angleThreshold) )
 				{
 					if(processed.Add(border.opposite.face))
 					{
@@ -130,7 +131,10 @@ namespace ProBuilder2.Common
 			Vector3 ly = normals[left.local.y];
 			Vector3 rx = normals[right.common.x == left.common.x ? right.local.x : right.local.y];
 			Vector3 ry = normals[right.common.y == left.common.y ? right.local.y : right.local.x];
-
+			lx.Normalize();
+			ly.Normalize();
+			rx.Normalize();
+			ry.Normalize();
 			return Mathf.Abs(Vector3.Dot(lx, rx)) > threshold && Mathf.Abs(Vector3.Dot(ly, ry)) > threshold;
 		}
 	}

@@ -283,9 +283,11 @@ public class pb_Object : MonoBehaviour
 
 	public void Clear()
 	{
-		_quads = null;
-		_vertices = null;
-		_uv = null;
+		// various editor tools expect faces & vertices to always be valid.
+		// ideally we'd null everything here, but that would break a lot of existing code.
+		_quads = new pb_Face[0];
+		_vertices = new Vector3[0];
+		_uv = new Vector2[0];
 		_uv3 = null;
 		_uv4 = null;
 		_tangents = null;
