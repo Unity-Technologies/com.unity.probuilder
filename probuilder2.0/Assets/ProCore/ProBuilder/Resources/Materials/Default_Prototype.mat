@@ -101,14 +101,14 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Occlusion
+          name: _MetallicGlossMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _MetallicGlossMap
+          name: _Occlusion
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -139,12 +139,12 @@ Material:
         second: 0.5
       data:
         first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
           name: _Gloss
         second: 0.5
+      data:
+        first:
+          name: _Metallic
+        second: 0
       data:
         first:
           name: _Parallax
@@ -179,12 +179,12 @@ Material:
         second: 0
       data:
         first:
-          name: _Lightmapping
-        second: 1
-      data:
-        first:
           name: _EmissionScaleUI
         second: 0
+      data:
+        first:
+          name: _Lightmapping
+        second: 1
       data:
         first:
           name: _Size
