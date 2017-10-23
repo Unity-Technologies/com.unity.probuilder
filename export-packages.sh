@@ -9,16 +9,18 @@
 # 	53 = Build Unity 5.3 package
 # 	55 = Build Unity 5.5 package
 # 	56 = Build Unity 5.6 package
+# 	2017.1 = Build Unity 2017.1 package
 # 	2017.2 = Build Unity 2017.2 package
 # 	2017.3 = Build Unity 2017.3 package
 
 ARGS=("$@")
 ARGC=${#ARGS[@]}
 
+# @todo accept launch arg to set this
+UNITY_INSTALL_DIR="C:/Users/karlh/unity-installs"
+
 if [ "$(uname)" == "Darwin" ]; then
 WORKING_DIR=$(pwd)
-UNITY_47=/Applications/Unity\ 4.7/Unity.app/Contents/MacOS/Unity
-UNITY_50=/Applications/Unity\ 5.0/Unity.app/Contents/MacOS/Unity
 UNITY_53=/Applications/Unity\ 5.3/Unity.app/Contents/MacOS/Unity
 UNITY_55=/Applications/Unity\ 5.5/Unity.app/Contents/MacOS/Unity
 UNITY_56=/Applications/Unity\ 5.6/Unity.app/Contents/MacOS/Unity
@@ -28,14 +30,12 @@ UNITY_2017_3=/Applications/Unity\ 2017.3/Unity.app/Contents/MacOS/Unity
 else
 # cygwin paths don't cut it in -projectPath
 WORKING_DIR=$(cygpath -aw $(pwd))
-UNITY_47=/d/Applications/Unity\ 4.7/Editor/Unity.exe
-UNITY_50=/d/Applications/Unity\ 5.0/Editor/Unity.exe
-UNITY_53=/d/Applications/Unity\ 5.3/Editor/Unity.exe
-UNITY_55=/d/Applications/Unity\ 5.5/Editor/Unity.exe
-UNITY_56=/d/Applications/Unity\ 5.6/Editor/Unity.exe
-UNITY_2017_1=/d/Applications/Unity\ 2017.1/Editor/Unity.exe
-UNITY_2017_2=/d/Applications/Unity\ 2017.2/Editor/Unity.exe
-UNITY_2017_3=/d/Applications/Unity\ 2017.3/Editor/Unity.exe
+UNITY_53=$UNITY_INSTALL_DIR/Unity\ 5.3/Editor/Unity.exe
+UNITY_55=$UNITY_INSTALL_DIR/Unity\ 5.5/Editor/Unity.exe
+UNITY_56=$UNITY_INSTALL_DIR/Unity\ 5.6/Editor/Unity.exe
+UNITY_2017_1=$UNITY_INSTALL_DIR/Unity\ 2017.1/Editor/Unity.exe
+UNITY_2017_2=$UNITY_INSTALL_DIR/Unity\ 2017.2/Editor/Unity.exe
+UNITY_2017_3=$UNITY_INSTALL_DIR/Unity\ 2017.3/Editor/Unity.exe
 fi
 
 UNITY_TARGET_MACRO=(UNITY_53 UNITY_53 UNITY_55 UNITY_56 UNITY_2017_1 UNITY_2017_2 UNITY_2017_3)
