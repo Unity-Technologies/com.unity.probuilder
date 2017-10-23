@@ -1,5 +1,5 @@
 site_name: ProBuilder Documentation
-theme_dir: 'cinder'
+theme_dir: cinder
 extra_css:
   - css/alerts.css
   - css/extra.css
@@ -29,7 +29,7 @@ pages:
   - Auto UV Actions: texturing/auto-uvs-actions.md
   - Manual UV Actions: texturing/manual-uvs-actions.md
 
-- Experimental: 
+- Experimental:
   - Overview: experimental/experimental-overview.md
   - Bezier Shape: experimental/beziershape.md
   - Boolean Ops: experimental/booleanops.md

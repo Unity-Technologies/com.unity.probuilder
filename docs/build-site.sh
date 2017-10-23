@@ -28,4 +28,5 @@ git add -A
 # git commit -m "Update documentation"
 # git push origin gh-pages
 
-echo did the thing
+echo Site built: $MKBUILD
+echo "To push changes to website, run git commit & git push origin gh-pages"
