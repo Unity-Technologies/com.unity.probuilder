@@ -1,4 +1,4 @@
-# ProBuilder 2.9.7f4
+# ProBuilder 2.9.7f5
 
 ## Features
 
@@ -7,20 +7,21 @@
 - Significantly improved quad detection in ProBuilderize function.
 - ProBuilderize now able to import smoothing groups.
 - Support exporting quads to FBX format (requires Unity FbxExporter in project).
-- New `Select by Smoothing Group` action.
 - Newly redesigned `Smooth Groups Editor`.
-- New `Select Face Loop` and `Select Face Ring` actions (shortcuts: Shift + Double Click and Ctrl + Double Click).
+- New `Select Face Loop` and `Select Face Ring` actions.
 
 ## Bug Fixes
 
 - Fix possible null reference when picking ProBuilder objects.
 - Fix "Select Hole" disappearing instead of showing as disabled.
 - Fix "Extrude Face" disabled icon not matching current mode.
+- Fix Standard Vertex Color shader preventing builds on some platforms when fog is enabled.
 
 ## Changes
 
 - Don't show `pb_Lightmapping` warnings by default.
 - Smoothing groups may now extend beyond the 42 provided in the editor. Any smoothing group between 1 and 24, or greater than 42 is treated as a smooth face (currently only accessible in code).
+- Set ProBuilder Standard Vertex Color shader fallback to "Standard."
 
 # ProBuilder 2.9.5f3
 
