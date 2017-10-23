@@ -36,7 +36,7 @@ namespace ProBuilder2.EditorCommon
 	 */
 	public class pb_LogEditor : EditorWindow
 	{
-		[MenuItem("Tools/ProBuilder/Debug/Log Preferences")]
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Log Preferences")]
 		private static void MenuInit()
 		{
 			EditorWindow.GetWindow<pb_LogEditor>(true, "Log Preferences", true);
