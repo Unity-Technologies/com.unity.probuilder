@@ -35,7 +35,7 @@ namespace ProBuilder2.EditorCommon
 			m_AltButtonStyle = null;
 			m_ProOnlyStyle = null;
 #if PROTOTYPE
-			_advancedOnlyStyle = null;
+			m_AdvancedOnlyStyle = null;
 #endif
 		}
 
