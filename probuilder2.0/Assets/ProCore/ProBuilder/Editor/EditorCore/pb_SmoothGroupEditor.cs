@@ -336,6 +336,7 @@ namespace ProBuilder2.EditorCommon
 				"Expand the face selection by selecting all faces matching the currently selected face groups.");
 			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
 				"Clear the selected faces of their smoothing groups");
+			pb_Selection.OnSelectionChanged();
 			OnSelectionChanged();
 		}
 

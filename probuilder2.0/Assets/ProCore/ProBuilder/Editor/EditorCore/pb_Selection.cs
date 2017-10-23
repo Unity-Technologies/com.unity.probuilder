@@ -13,7 +13,15 @@ namespace ProBuilder2.EditorCommon
 	[InitializeOnLoad]
 	public static class pb_Selection
 	{
-		private static pb_Object[] selection { get { return pb_Editor.instance != null ? pb_Editor.instance.selection : pbUtil.GetComponents<pb_Object>(Selection.transforms); } }
+		private static pb_Object[] selection
+		{
+			get
+			{
+				return pb_Editor.instance != null
+					? pb_Editor.instance.selection
+					: pbUtil.GetComponents<pb_Object>(Selection.transforms);
+			}
+		}
 
 		static pb_Selection()
 		{
@@ -24,7 +32,8 @@ namespace ProBuilder2.EditorCommon
 		private static pb_Object[] m_TopSelection = new pb_Object[0];
 		private static pb_Object[] m_DeepSelection = new pb_Object[0];
 
-		private static void OnSelectionChanged()
+		// Allow other scripts to forcibly reload the cached selection.
+		public static void OnSelectionChanged()
 		{
 			m_TopSelection = Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
 			m_DeepSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
