@@ -128,7 +128,9 @@ Section Video: <a href="https://youtu.be/gh_cV_lkI6s?list=PLrJfHfcFkLM-b6_N-musB
 
 Selects a face loop from each selected face. Faces are only considered to be part of a loop if they contain exactly 4 sides.
 
-![Select Face Loop Example](../images/Selection_FaceLoop.png)
+<div style="text-align:center">
+<img src="../../images/SelectFaceLoop_Example.png">
+</div>
 
 ---
 
@@ -142,7 +144,9 @@ Section Video: <a href="https://youtu.be/sVZgWycaZ4M?list=PLrJfHfcFkLM-b6_N-musB
 
 Selects a face ring from each selected face. Faces are only considered to be part of a ring if they contain exactly 4 sides.
 
-![Select Face Ring Examples](../images/Selection_FaceRing.png)
+<div style="text-align:center">
+<img src="../../images/SelectFaceRing_Example.png">
+</div>
 
 ---
 
