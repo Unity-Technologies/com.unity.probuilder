@@ -161,6 +161,9 @@ namespace ProBuilder2.Common
 			else if(edges[3].common.x == c2)
 				quad[3] = edges[3].local.y;
 
+			if (quad[2] == -1 || quad[3] == -1)
+				return null;
+
 			return quad;
 		}
 
