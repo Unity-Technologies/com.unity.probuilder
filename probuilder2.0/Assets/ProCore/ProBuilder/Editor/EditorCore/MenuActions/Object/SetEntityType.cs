@@ -43,10 +43,10 @@ namespace ProBuilder2.Actions
 			visible = pb_PreferencesInternal.GetBool(entityPref);
 
 			if(!isVisibleIcon)
-				isVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_On");
+				isVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_On", IconSkin.Pro);
 
 			if(!isNotVisibleIcon)
-				isNotVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_Off");
+				isNotVisibleIcon = pb_IconUtility.GetIcon("Toolbar/Eye_Off", IconSkin.Pro);
 		}
 
 		public override bool IsEnabled()

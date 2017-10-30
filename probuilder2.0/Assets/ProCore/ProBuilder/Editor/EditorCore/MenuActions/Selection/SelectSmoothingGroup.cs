@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 	public class SelectSmoothingGroup : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 
 		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent

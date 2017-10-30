@@ -11,7 +11,7 @@ namespace ProBuilder2.Actions
 	public class SelectMaterial : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent

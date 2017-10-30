@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class NewPolyShape : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/NewPolyShape"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "New Poly Shape"; } }
 		public override int toolbarPriority { get { return 1; } }
@@ -50,7 +50,7 @@ namespace ProBuilder2.Actions
 
 			if(pb_ProGrids_Interface.GetPivot(out pivot))
 				go.transform.position = pivot;
-			
+
 			return new pb_ActionResult(Status.Success, "Create Poly Shape");
 		}
 	}

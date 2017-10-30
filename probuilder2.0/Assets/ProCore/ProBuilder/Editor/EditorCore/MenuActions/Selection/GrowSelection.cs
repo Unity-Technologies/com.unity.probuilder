@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 	public class GrowSelection : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Grow"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 
 		static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent

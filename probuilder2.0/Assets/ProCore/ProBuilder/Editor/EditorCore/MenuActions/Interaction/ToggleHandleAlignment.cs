@@ -50,9 +50,9 @@ namespace ProBuilder2.Actions
 		{
 			icons = new Texture2D[]
 			{
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_World"),
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Local"),
-				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Plane"),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
+				pb_IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
 			};
 
 			this.count = icons.Length;

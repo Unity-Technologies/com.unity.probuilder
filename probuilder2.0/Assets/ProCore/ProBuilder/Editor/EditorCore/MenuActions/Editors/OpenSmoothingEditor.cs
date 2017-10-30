@@ -7,7 +7,7 @@ namespace ProBuilder2.Actions
 	public class OpenSmoothingEditor : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Smoothing"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 		public override string menuTitle { get { return "Smoothing"; } }
 		public override bool isProOnly { get { return true; } }

@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class InsertEdgeLoop : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_InsertLoop"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_InsertLoop", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
@@ -36,7 +36,7 @@ namespace ProBuilder2.Actions
 			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
 					pb_Editor.instance.selectionMode != SelectMode.Edge;
-					
+
 		}
 
 		public override pb_ActionResult DoAction()

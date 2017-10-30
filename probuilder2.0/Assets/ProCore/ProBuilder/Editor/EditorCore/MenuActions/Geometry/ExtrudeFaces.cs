@@ -22,7 +22,7 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod)); } }
 		public override Texture2D desaturatedIcon
 		{
-			get { return pb_IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(m_ExtrudeMethod))); }
+			get { return pb_IconUtility.GetIcon(string.Format("{0}_disabled", IconSkin.Pro, GetExtrudeIconString(m_ExtrudeMethod))); }
 		}
 
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
@@ -41,9 +41,9 @@ namespace ProBuilder2.Actions
 			m_ExtrudeMethod = (ExtrudeMethod) pb_PreferencesInternal.GetInt(pb_Constant.pbExtrudeMethod);
 
 			icons = new Texture2D[3];
-			icons[(int)ExtrudeMethod.IndividualFaces] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual");
-			icons[(int)ExtrudeMethod.VertexNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals");
-			icons[(int)ExtrudeMethod.FaceNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals");
+			icons[(int)ExtrudeMethod.IndividualFaces] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual", IconSkin.Pro);
+			icons[(int)ExtrudeMethod.VertexNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_VertexNormals", IconSkin.Pro);
+			icons[(int)ExtrudeMethod.FaceNormal] = pb_IconUtility.GetIcon("Toolbar/ExtrudeFace_FaceNormals", IconSkin.Pro);
 		}
 
 		public override bool IsEnabled()

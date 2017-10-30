@@ -8,7 +8,7 @@ namespace ProBuilder2.Actions
 	public class SelectFaceRing : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Ring_Face"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Ring_Face", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
 		public override int toolbarPriority { get { return 2; } }
 		public override bool hasFileMenuEntry { get { return false; } }
