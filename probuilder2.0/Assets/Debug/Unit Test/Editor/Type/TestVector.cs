@@ -9,9 +9,28 @@ using System;
 
 namespace ProBuilder2.Test
 {
-	public class TestTypes
+	public static class TestHashUtility
 	{
-		const int LEN = 512;
+		public static int GetCollisionsCount<T>(IEnumerable<T> list)
+		{
+			IEnumerable<IGrouping<int, T>> hashes = list.GroupBy(x => x.GetHashCode(), x => x);
+			int collisions = 0;
+
+			foreach (var group in hashes)
+			{
+				IEnumerable<T> dist = group.Distinct();
+
+				if (dist.Count() > 1)
+					collisions += dist.Count() - 1;
+			}
+
+			return collisions;
+		}
+	}
+
+	public class TestVector
+	{
+		const int TestIterationCount = 512;
 
 		static Vector3 RandVec3()
 		{
@@ -40,25 +59,26 @@ namespace ProBuilder2.Test
 			return v;
 		}
 
-		static System.Random _random = new System.Random();
-
-		static pb_Edge RandEdge()
-		{
-			return new pb_Edge(_random.Next(0, 1024), _random.Next(0, 1024));
-		}
-
 		[Test]
 		public static void TestHashCollisions_IVEC3()
 		{
-			pb_IntVec3[] ivec3 = pbUtil.Fill<pb_IntVec3>(LEN, (i) => { return (pb_IntVec3) RandVec3(); });
-			Assert.IsTrue( GetCollisionsCount(ivec3) < LEN * .05f );
+			pb_IntVec3[] ivec3 = pbUtil.Fill<pb_IntVec3>(TestIterationCount, (i) => { return (pb_IntVec3) RandVec3(); });
+			Assert.IsTrue( TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f );
 		}
 
 		[Test]
-		public static void TestHashCollisions_EDGE()
+		public static void TestVectorHashOverflow()
 		{
-			pb_Edge[] edge = pbUtil.Fill<pb_Edge>(LEN, (i) => { return RandEdge(); });
-			Assert.IsTrue( GetCollisionsCount(edge) < LEN * .05f );
+			Vector3 over = new Vector3(((float) int.MaxValue) + 10f, 0f, 0f);
+			Vector3 under = new Vector3(((float) -int.MaxValue) - 10f, 0f, 0f);
+			Vector3 inf = new Vector3(Mathf.Infinity, 0f, 0f);
+			Vector3 nan = new Vector3(float.NaN, 0f, 0f);
+
+			// mostly checking that GetHashCode doesn't throw an error when converting bad float values
+			Assert.AreEqual(pb_Vector.GetHashCode(over), 1499503);
+			Assert.AreEqual(pb_Vector.GetHashCode(under), 2147303674);
+			Assert.AreEqual(pb_Vector.GetHashCode(inf), 660185);
+			Assert.AreEqual(pb_Vector.GetHashCode(nan), 660185);
 		}
 
 		[Test]
@@ -77,26 +97,6 @@ namespace ProBuilder2.Test
 			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
 			Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
 			Assert.IsTrue(a.GetHashCode() == d.GetHashCode());
-			Assert.AreEqual(13, arr.Distinct().Count());
-		}
-
-		[Test]
-		public static void TestComparison_EDGE()
-		{
-			pb_Edge a = (pb_Edge) RandEdge();
-			pb_Edge b = (pb_Edge) (a + 20);
-			pb_Edge c = (pb_Edge) new pb_Edge(a.x + 10, a.x);
-			pb_Edge d = (pb_Edge) new pb_Edge(a.x, a.y);
-
-			pb_Edge[] arr = pbUtil.Fill<pb_Edge>(24, (i) => { return i % 2 == 0 ? a : (pb_Edge) RandEdge(); });
-
-			Assert.IsFalse(a == b);
-			Assert.IsFalse(a == c);
-			Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
-			Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
-			Assert.IsTrue(a.GetHashCode() == d.GetHashCode());
-			Assert.AreEqual(a, d);
-			Assert.IsTrue(a != d);
 			Assert.AreEqual(13, arr.Distinct().Count());
 		}
 
@@ -125,22 +125,6 @@ namespace ProBuilder2.Test
 
 			d.normal *= 3f;
 			Assert.AreNotEqual(a, d);
-		}
-
-		static int GetCollisionsCount<T>(IEnumerable<T> list)
-		{
-			IEnumerable<IGrouping<int, T>> hashes = list.GroupBy(x => x.GetHashCode(), x => x);
-			int collisions = 0;
-
-			foreach(var group in hashes)
-			{
-				IEnumerable<T> dist = group.Distinct();
-
-				if(dist.Count() > 1)
-					collisions += dist.Count() - 1;
-			}
-
-			return collisions;
 		}
 	}
 }
