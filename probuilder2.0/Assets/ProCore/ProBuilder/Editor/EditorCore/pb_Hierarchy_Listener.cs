@@ -19,12 +19,12 @@ namespace ProBuilder2.EditorCommon
 		{
 			// When a prefab is updated, this is raised.  For some reason it's
 			// called twice?
-#if UNITY_2018_1_OR_NEWER
-			EditorApplication.hierarchyChanged += HierarchyWindowChanged;
-#else
+// #if UNITY_2018_1_OR_NEWER
+			// EditorApplication.hierarchyChanged += HierarchyWindowChanged;
+// #else
 			EditorApplication.hierarchyWindowChanged -= HierarchyWindowChanged;
 			EditorApplication.hierarchyWindowChanged += HierarchyWindowChanged;
-#endif
+// #endif
 
 			// prefabInstanceUpdated is not called when dragging out of Project view,
 			// or when creating a prefab or reverting.  OnHierarchyChange captures those.

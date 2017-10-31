@@ -23,6 +23,8 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_IconUtility()
 		{
+			Debug.Log(System.IO.Directory.GetCurrentDirectory());
+
 			if(!Directory.Exists(m_IconFolderPath))
 			{
 				string folder = pb_FileUtil.FindFolder(ICON_FOLDER_PATH);

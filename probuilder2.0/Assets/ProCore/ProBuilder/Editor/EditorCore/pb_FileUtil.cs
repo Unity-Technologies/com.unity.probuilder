@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ProBuilder2.Common;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -15,57 +18,12 @@ namespace ProBuilder2.EditorCommon
 		// ProBuilder folder path.
 		private static string m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder/";
 
-		/**
-		 *	Find a file in the Assets folder by searching for a partial path.
-		 */
-		public static string FindFile(string file)
+		private static string[] k_PossiblePluginDirectories = new string[]
 		{
-			string name = Path.GetFileName(file);
-			string[] matches = Directory.GetFiles("Assets/", name, SearchOption.AllDirectories);
-			string forward_file = file.Replace("\\", "/");
-			return matches.FirstOrDefault(x => x.Replace("\\", "/").Contains(forward_file));
-		}
-
-		/**
-		 *	Find a directory in the Assets folder by searching for a partial path.
-		 */
-		public static string FindFolder(string folder, bool exactMatch = false)
-		{
-			string single = folder.Replace("\\", "/").Substring(folder.LastIndexOf('/') + 1);
-
-			string[] matches = Directory.GetDirectories("Assets/", single, SearchOption.AllDirectories);
-
-			foreach(string str in matches)
-			{
-				string path = str.Replace("\\", "/");
-
-				if( path.Contains(folder) )
-				{
-					if(exactMatch)
-					{
-						string found = path.Substring(path.LastIndexOf('/') + 1);
-
-						if(!found.Equals(single))
-							continue;
-					}
-
-					if(!path.EndsWith("/"))
-						path += "/";
-
-					return path;
-				}
-			}
-
-			return null;
-		}
-
-		/**
-		 *	Check if a file or folder exists at path.
-		 */
-		public static bool Exists(string path)
-		{
-			return Directory.Exists(path) || File.Exists(path);
-		}
+			"Assets/",
+			"Packages/",
+			"UnityPackageManager/",
+		};
 
 		/**
 		 *	Find root ProBuilder folder.
@@ -81,7 +39,116 @@ namespace ProBuilder2.EditorCommon
 				Directory.CreateDirectory(m_ProBuilderFolderPath);
 				Debug.LogWarning("Creating a new ProBuilder directory. This probably means the ProBuilder folder was renamed. Icons & preferences may not work in this state.");
 			}
+
+			Debug.Log("Set path -> " + m_ProBuilderFolderPath);
+
 			return m_ProBuilderFolderPath;
+		}
+
+		/// <summary>
+		/// Get a file or folder path relative to the project directory.
+		/// </summary>
+		/// <param name="path">File or directory path, either relative or absolute.</param>
+		/// <returns>A new path relative to the current project root.</returns>
+		public static string GetRelativePath(string path)
+		{
+			string full = Path.GetFullPath(path).Replace("\\", "/");
+			string cur = Directory.GetCurrentDirectory().Replace("\\", "/");
+			return full.Replace(cur, "");
+		}
+
+		private static float OverlapCoefficient(string left, string right)
+		{
+			HashSet<char> a = new HashSet<char>(left.Select(x=>x));
+			HashSet<char> b = new HashSet<char>(right.Select(x=>x));
+			a.IntersectWith(b);
+			return (float) a.Count / Mathf.Min(left.Length, right.Length);
+		}
+
+		/**
+		 *	Find a file in the Assets folder by searching for a partial path.
+		 */
+		public static string FindFile(string file)
+		{
+			if (string.IsNullOrEmpty(file))
+				return null;
+			string nameWithExtension = Path.GetFileName(file);
+			string forwardFile = file.Replace("\\", "/");
+			var bestMatch = new pb_Tuple<float, string>(0f, null);
+
+			foreach (var dir in k_PossiblePluginDirectories)
+			{
+				if (!Directory.Exists(dir))
+					continue;
+
+				string[] matches = Directory.GetFiles(dir, nameWithExtension, SearchOption.AllDirectories);
+
+				foreach (var str in matches)
+				{
+					if (!str.Contains(forwardFile))
+						continue;
+
+					float oc = OverlapCoefficient(forwardFile, GetRelativePath(str));
+
+					if (oc > bestMatch.Item1)
+					{
+						bestMatch.Item1 = oc;
+						bestMatch.Item2 = str;
+					}
+				}
+			}
+
+			return bestMatch.Item2;
+		}
+
+		/**
+		 *	Find a directory in the Assets folder by searching for a partial path.
+		 */
+		public static string FindFolder(string folder, bool exactMatch = false)
+		{
+			string single = folder.Replace("\\", "/").Substring(folder.LastIndexOf('/') + 1);
+
+			foreach(var dir in k_PossiblePluginDirectories)
+			{
+				if (!Directory.Exists(dir))
+					continue;
+
+				string[] matches = Directory.GetDirectories(dir, single, SearchOption.AllDirectories);
+				Debug.Log("scanning: (" + folder + ") " + Directory.GetCurrentDirectory() + "/" + dir);
+
+				foreach (string str in matches)
+				{
+					string path = str.Replace("\\", "/");
+
+					if (path.Contains(folder))
+					{
+						if (exactMatch)
+						{
+							string found = path.Substring(path.LastIndexOf('/') + 1);
+
+							if (!found.Equals(single))
+								continue;
+						}
+
+						if (!path.EndsWith("/"))
+							path += "/";
+
+						Debug.Log("found: " + path);
+
+						return path;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		/**
+		 *	Check if a file or folder exists at path.
+		 */
+		public static bool Exists(string path)
+		{
+			return Directory.Exists(path) || File.Exists(path);
 		}
 
 		/**
@@ -143,11 +210,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static T Load<T>(string path) where T : Object
 		{
-#if UNITY_4_7 || UNITY_5_0
-			return (T) AssetDatabase.LoadAssetAtPath(path, typeof(T));
-#else
 			return AssetDatabase.LoadAssetAtPath<T>(path);
-#endif
 		}
 
 		/**

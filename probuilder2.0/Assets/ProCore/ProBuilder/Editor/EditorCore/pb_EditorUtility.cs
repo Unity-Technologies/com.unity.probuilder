@@ -9,9 +9,7 @@ using System.Reflection;
 using System.IO;
 using ProBuilder2.Common;
 using ProBuilder2.MeshOperations;
-#if !UNITY_4_7
 using UnityEngine.Rendering;
-#endif
 using ProBuilder2.Actions;
 
 namespace ProBuilder2.EditorCommon
@@ -376,7 +374,6 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		#if !UNITY_4_7
 		const StaticEditorFlags StaticEditorFlags_All =
 				StaticEditorFlags.LightmapStatic |
 				StaticEditorFlags.OccluderStatic |
@@ -385,15 +382,6 @@ namespace ProBuilder2.EditorCommon
 				StaticEditorFlags.NavigationStatic |
 				StaticEditorFlags.OffMeshLinkGeneration |
 				StaticEditorFlags.ReflectionProbeStatic;
-		#else
-		const StaticEditorFlags StaticEditorFlags_All =
-				StaticEditorFlags.LightmapStatic |
-				StaticEditorFlags.OccluderStatic |
-				StaticEditorFlags.BatchingStatic |
-				StaticEditorFlags.OccludeeStatic |
-				StaticEditorFlags.NavigationStatic |
-				StaticEditorFlags.OffMeshLinkGeneration;
-		#endif
 
 		/**
 		 *	Returns true if Asset Store window is open, false otherwise.

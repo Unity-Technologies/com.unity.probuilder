@@ -1,7 +1,3 @@
-#if !(UNITY_4_6 || UNITY_4_7) && !UNITY_5_OR_NEWER
-#define UNITY_5_OR_NEWER
-#endif
-
 using UnityEditor;
 using UnityEngine;
 using ProBuilder2.Common;
@@ -30,9 +26,7 @@ namespace ProBuilder2.EditorCommon
 
 		static pb_Lightmapping()
 		{
-#if UNITY_5_OR_NEWER
 			Lightmapping.completed += OnLightmappingCompleted;
-#endif
 		}
 
 		private static void OnLightmappingCompleted()
@@ -69,15 +63,12 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 * Store the previous GIWorkflowMode and set the current value to OnDemand (or leave it Legacy).
 		 */
-		[System.Diagnostics.Conditional("UNITY_5_OR_NEWER")]
 		internal static void PushGIWorkflowMode()
 		{
-#if UNITY_5_OR_NEWER
 			pb_PreferencesInternal.SetInt("pb_GIWorkflowMode", (int)Lightmapping.giWorkflowMode);
 
 			if(Lightmapping.giWorkflowMode != Lightmapping.GIWorkflowMode.Legacy)
 				Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
-#endif
 		}
 
 		/**
@@ -86,13 +77,11 @@ namespace ProBuilder2.EditorCommon
 		[System.Diagnostics.Conditional("UNITY_5_OR_NEWER")]
 		internal static void PopGIWorkflowMode()
 		{
-#if UNITY_5_OR_NEWER
 			// if no key found (?), don't do anything.
 			if(!pb_PreferencesInternal.HasKey("pb_GIWorkflowMode"))
 				return;
 
 			 Lightmapping.giWorkflowMode = (Lightmapping.GIWorkflowMode)pb_PreferencesInternal.GetInt("pb_GIWorkflowMode");
-#endif
 		}
 	}
 }

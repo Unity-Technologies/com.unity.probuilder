@@ -38,13 +38,12 @@ namespace ProBuilder2.EditorCommon
 		{
 			about = null;
 
-			string[] matches = Directory.GetFiles("./Assets", "pc_AboutEntry_ProBuilder.txt", SearchOption.AllDirectories);
+			string path = pb_FileUtil.FindFile("pc_AboutEntry_ProBuilder.txt");
 
-			if(matches == null || matches.Length < 1)
+			if (string.IsNullOrEmpty(path))
 				return false;
 
-			for(int i = 0; i < matches.Length && about == null; i++)
-				about = ParseAboutEntry(matches[i]);
+			about = ParseAboutEntry(path);
 
 			return about != null;
 		}

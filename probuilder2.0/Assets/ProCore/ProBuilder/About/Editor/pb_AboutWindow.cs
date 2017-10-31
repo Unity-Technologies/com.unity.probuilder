@@ -282,9 +282,15 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		internal static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
+		internal static T LoadAssetAtPath<T>(string path) where T : UnityEngine.Object
 		{
-			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
+			T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+
+			if(asset == null)
+				Debug.Log("failed loading asset at path " + path);
+			else
+				Debug.Log("succeeded loading asset at path " + path);
+			return asset;
 		}
 
 		void OnGUI()
