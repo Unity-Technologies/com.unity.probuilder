@@ -19,7 +19,7 @@ namespace ProBuilder2.Actions
 		}
 
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod)); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon(GetExtrudeIconString(m_ExtrudeMethod), IconSkin.Pro); } }
 		public override Texture2D desaturatedIcon
 		{
 			get { return pb_IconUtility.GetIcon(string.Format("{0}_disabled", IconSkin.Pro, GetExtrudeIconString(m_ExtrudeMethod))); }
