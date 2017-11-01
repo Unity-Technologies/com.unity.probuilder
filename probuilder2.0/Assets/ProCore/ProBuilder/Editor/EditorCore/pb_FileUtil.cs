@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ProBuilder2.Common;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -13,50 +16,125 @@ namespace ProBuilder2.EditorCommon
 	public static class pb_FileUtil
 	{
 		// ProBuilder folder path.
-		private static string m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder/";
+		private static string m_ProBuilderFolderPath = "unitypackagemanager/com.unity.probuilder/ProCore/ProBuilder/";
 
-		/**
-		 *	Find a file in the Assets folder by searching for a partial path.
-		 */
-		public static string FindFile(string file)
+		// The order is important - always search for the package manager installed version first
+		private static string[] k_PossibleInstallDirectories = new string[]
 		{
-			string name = Path.GetFileName(file);
-			string[] matches = Directory.GetFiles("Assets/", name, SearchOption.AllDirectories);
-			string forward_file = file.Replace("\\", "/");
-			return matches.FirstOrDefault(x => x.Replace("\\", "/").Contains(forward_file));
+			// 2018.1 package manager
+			"packages/",
+			// todo remove
+			"unitypackagemanager/",
+			// installed from asset store or source
+			"Assets/",
+		};
+
+		/// <summary>
+		/// Check that the directory contains a valid ProBuilder install.
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <returns></returns>
+		private static bool ValidateProBuilderRoot(string dir)
+		{
+			return Directory.Exists(dir + "Classes") &&
+				Directory.Exists(dir + "Icons") &&
+				Directory.Exists(dir + "Editor") &&
+				Directory.Exists(dir + "Shader");
+		}
+
+		/// <summary>
+		/// Return a relative path to the ProCore/ProBuilder directory.
+		/// </summary>
+		/// <returns></returns>
+		public static string GetRootDir()
+		{
+			if (Directory.Exists(m_ProBuilderFolderPath))
+				return m_ProBuilderFolderPath;
+
+			foreach (var install in k_PossibleInstallDirectories)
+			{
+				m_ProBuilderFolderPath = string.Format("{0}{1}", install, "ProCore/ProBuilder");
+
+				if (ValidateProBuilderRoot(m_ProBuilderFolderPath))
+					return m_ProBuilderFolderPath;
+			}
+
+			// It's not in any of the usual haunts, start digging through Assets until we find it
+			string[] matches = Directory.GetDirectories("Assets", "ProBuilder", SearchOption.AllDirectories);
+
+			foreach (var match in matches)
+			{
+				m_ProBuilderFolderPath = match.Replace("\\", "/");
+
+				if (m_ProBuilderFolderPath.Contains("ProBuilder") && ValidateProBuilderRoot(m_ProBuilderFolderPath))
+					return m_ProBuilderFolderPath;
+			}
+
+			// Things are dire. ProBuilder was nowhere to be found in the Assets directory, which means either the user
+			// has renamed the folder, or something very spooky is going on.
+			// Either way, just create a new ProCore/ProBuilder folder in Assets and return that so at the very least
+			// local preferences and the material/color palettes will still work.
+			Debug.LogWarning("Creating a new ProBuilder directory. This probably means the ProBuilder folder was renamed. Icons & preferences may not work in this state.");
+			m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder";
+			Directory.CreateDirectory(m_ProBuilderFolderPath);
+
+			return m_ProBuilderFolderPath;
+		}
+
+		/// <summary>
+		/// Get a file or folder path relative to the project directory.
+		/// </summary>
+		/// <param name="path">File or directory path, either relative or absolute.</param>
+		/// <returns>A new path relative to the current project root.</returns>
+		public static string GetRelativePath(string path)
+		{
+			string full = Path.GetFullPath(path).Replace("\\", "/");
+			string cur = Directory.GetCurrentDirectory().Replace("\\", "/");
+			return full.Replace(cur, "");
+		}
+
+		private static float OverlapCoefficient(string left, string right)
+		{
+			HashSet<char> a = new HashSet<char>(left.Select(x=>x));
+			HashSet<char> b = new HashSet<char>(right.Select(x=>x));
+			a.IntersectWith(b);
+			return (float) a.Count / Mathf.Min(left.Length, right.Length);
 		}
 
 		/**
-		 *	Find a directory in the Assets folder by searching for a partial path.
+		 * Find a file in the Assets folder by searching for a partial path.
 		 */
-		public static string FindFolder(string folder, bool exactMatch = false)
+		public static string FindFile(string file)
 		{
-			string single = folder.Replace("\\", "/").Substring(folder.LastIndexOf('/') + 1);
+			if (string.IsNullOrEmpty(file))
+				return null;
+			string nameWithExtension = Path.GetFileName(file);
+			string forwardFile = file.Replace("\\", "/");
+			var bestMatch = new pb_Tuple<float, string>(0f, null);
 
-			string[] matches = Directory.GetDirectories("Assets/", single, SearchOption.AllDirectories);
-
-			foreach(string str in matches)
+			foreach (var dir in k_PossibleInstallDirectories)
 			{
-				string path = str.Replace("\\", "/");
+				if (!Directory.Exists(dir))
+					continue;
 
-				if( path.Contains(folder) )
+				string[] matches = Directory.GetFiles(dir, nameWithExtension, SearchOption.AllDirectories);
+
+				foreach (var str in matches)
 				{
-					if(exactMatch)
+					if (!str.Contains(forwardFile))
+						continue;
+
+					float oc = OverlapCoefficient(forwardFile, GetRelativePath(str));
+
+					if (oc > bestMatch.Item1)
 					{
-						string found = path.Substring(path.LastIndexOf('/') + 1);
-
-						if(!found.Equals(single))
-							continue;
+						bestMatch.Item1 = oc;
+						bestMatch.Item2 = str;
 					}
-
-					if(!path.EndsWith("/"))
-						path += "/";
-
-					return path;
 				}
 			}
 
-			return null;
+			return bestMatch.Item2;
 		}
 
 		/**
@@ -65,23 +143,6 @@ namespace ProBuilder2.EditorCommon
 		public static bool Exists(string path)
 		{
 			return Directory.Exists(path) || File.Exists(path);
-		}
-
-		/**
-		 *	Find root ProBuilder folder.
-		 */
-		public static string GetRootDir()
-		{
-			if( !Exists(m_ProBuilderFolderPath) )
-				m_ProBuilderFolderPath = FindFolder("ProBuilder", true);
-
-			if(!Exists(m_ProBuilderFolderPath))
-			{
-				m_ProBuilderFolderPath = "Assets/ProCore/ProBuilder";
-				Directory.CreateDirectory(m_ProBuilderFolderPath);
-				Debug.LogWarning("Creating a new ProBuilder directory. This probably means the ProBuilder folder was renamed. Icons & preferences may not work in this state.");
-			}
-			return m_ProBuilderFolderPath;
 		}
 
 		/**
@@ -143,11 +204,7 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static T Load<T>(string path) where T : Object
 		{
-#if UNITY_4_7 || UNITY_5_0
-			return (T) AssetDatabase.LoadAssetAtPath(path, typeof(T));
-#else
 			return AssetDatabase.LoadAssetAtPath<T>(path);
-#endif
 		}
 
 		/**

@@ -58,27 +58,6 @@ namespace ProBuilder2.EditorCommon
 		// Modify these constants to customize about screen.
 	 	const string PACKAGE_NAME = "ProBuilder";
 
- 		private static string aboutRoot = "Assets/ProCore/" + PACKAGE_NAME + "/About";
-
-		// Path to the root folder
-		internal static string AboutRoot
-		{
-			get
-			{
-				if( Directory.Exists(aboutRoot) )
-				{
-					return aboutRoot;
-				}
-				else
-				{
-					aboutRoot = pb_FileUtil.FindFolder("ProBuilder/About");
-					if(aboutRoot.EndsWith("/"))
-						aboutRoot = aboutRoot.Remove(aboutRoot.LastIndexOf("/"), 1);
-					return aboutRoot;
-				}
-			}
-		}
-
 		GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
 		GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
 		GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
@@ -158,10 +137,10 @@ namespace ProBuilder2.EditorCommon
 				// RectOffset(left, right, top, bottom)
 				margin = new RectOffset(12, 12, 12, 12),
 				normal = new GUIStyleState() {
-					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Normal.png", AboutRoot))
+					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/Banner_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = LoadAssetAtPath<Texture2D>(string.Format("{0}/Images/Banner_Hover.png", AboutRoot))
+					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/Banner_Hover.png")
 				},
 			};
 
@@ -171,7 +150,7 @@ namespace ProBuilder2.EditorCommon
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_MEDIUM)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_MEDIUM),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -179,7 +158,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -188,20 +167,16 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() {
 					textColor = font_blue_normal,
-					background = LoadAssetAtPath<Texture2D>(
-						string.Format("{0}/Images/ScrollBackground_{1}.png",
-							AboutRoot,
-							EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+					background = pb_FileUtil.LoadRelative<Texture2D>(
+						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
 					textColor = font_blue_hover,
-					background = LoadAssetAtPath<Texture2D>(
-						string.Format("{0}/Images/ScrollBackground_{1}.png",
-							AboutRoot,
-							EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+					background = pb_FileUtil.LoadRelative<Texture2D>(
+						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
 
@@ -210,18 +185,17 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				richText = true,
-				normal = new GUIStyleState() { background = LoadAssetAtPath<Texture2D>(
-					string.Format("{0}/Images/ScrollBackground_{1}.png",
-						AboutRoot,
+				normal = new GUIStyleState() { background = pb_FileUtil.LoadRelative<Texture2D>(
+					string.Format("About/Images/ScrollBackground_{0}.png",
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -229,7 +203,7 @@ namespace ProBuilder2.EditorCommon
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = LoadAssetAtPath<Font>(string.Format("{0}/Font/{1}", AboutRoot, FONT_REGULAR)),
+				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				fontSize = 14,
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
 				richText = true,
@@ -267,24 +241,15 @@ namespace ProBuilder2.EditorCommon
 		{
 			this.about = about;
 
-			if(!File.Exists(about.changelogPath))
-				about.changelogPath = pb_FileUtil.FindFile("ProBuilder/About/changelog.txt");
+			TextAsset changeText = pb_FileUtil.LoadRelative<TextAsset>("About/changelog.txt");
 
-			if(File.Exists(about.changelogPath))
+			string raw = changeText != null ? changeText.text : "";
+
+			if(!string.IsNullOrEmpty(raw))
 			{
-				string raw = File.ReadAllText(about.changelogPath);
-
-				if(!string.IsNullOrEmpty(raw))
-				{
-					pb_VersionInfo vi;
-					pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
-				}
+				pb_VersionInfo vi;
+				pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
 			}
-		}
-
-		internal static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
-		{
-			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
 		}
 
 		void OnGUI()

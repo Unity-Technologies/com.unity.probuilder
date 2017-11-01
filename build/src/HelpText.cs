@@ -27,6 +27,12 @@ Switches:
  -unity=path/to/unity
    Overrides the ""UnityPath"" property on build target. Path should point to the Unity directory
    Ex, on Windows: C:\Program Files\Unity or Mac: /Applications/Unity/Unity.app
+
+Build Targets:
+
+  Build targets are json files. Some pre-defined macros are provided:
+	- $UNITY - Path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).
+	- $TARGET_DIR - Directory that this build target json file resides in.
    ";
 	}
 }
