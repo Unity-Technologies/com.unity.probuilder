@@ -31,7 +31,7 @@ namespace ProBuilder2.EditorCommon
 		public static string GetRootDir()
 		{
 			if( !Exists(m_ProBuilderFolderPath) )
-				m_ProBuilderFolderPath = FindFolder("ProBuilder", true);
+				m_ProBuilderFolderPath = FindFolder("ProCore/ProBuilder", true);
 
 			if(!Exists(m_ProBuilderFolderPath))
 			{
