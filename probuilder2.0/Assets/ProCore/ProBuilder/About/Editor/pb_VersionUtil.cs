@@ -38,12 +38,12 @@ namespace ProBuilder2.EditorCommon
 		{
 			about = null;
 
-			string path = pb_FileUtil.FindFile("pc_AboutEntry_ProBuilder.txt");
+			TextAsset aboutText = pb_FileUtil.LoadRelative<TextAsset>("About/pc_AboutEntry_ProBuilder.txt");
 
-			if (string.IsNullOrEmpty(path))
+			if(aboutText == null)
 				return false;
 
-			about = ParseAboutEntry(path);
+			about = ParseAboutEntry(aboutText);
 
 			return about != null;
 		}
@@ -105,14 +105,14 @@ namespace ProBuilder2.EditorCommon
 			return success;
 		}
 
-		private static pb_AboutEntry ParseAboutEntry(string path)
+		private static pb_AboutEntry ParseAboutEntry(TextAsset aboutTextAsset)
 		{
-			if (!File.Exists(path))
+			if(aboutTextAsset == null)
 				return null;
 
 			pb_AboutEntry about = new pb_AboutEntry();
 
-			foreach(string str in File.ReadAllLines(path))
+			foreach(string str in aboutTextAsset.text.Replace("\r\n", "\n").Split('\n'))
 			{
 				if(str.StartsWith(pb_AboutEntry.KEY_NAME))
 					about.name = str.Replace(pb_AboutEntry.KEY_NAME, "").Trim();

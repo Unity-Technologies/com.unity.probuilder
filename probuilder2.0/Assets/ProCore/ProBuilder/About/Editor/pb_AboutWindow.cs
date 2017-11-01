@@ -58,27 +58,6 @@ namespace ProBuilder2.EditorCommon
 		// Modify these constants to customize about screen.
 	 	const string PACKAGE_NAME = "ProBuilder";
 
- 		private static string aboutRoot = "Assets/ProCore/" + PACKAGE_NAME + "/About";
-
-		// Path to the root folder
-		internal static string AboutRoot
-		{
-			get
-			{
-				if( Directory.Exists(aboutRoot) )
-				{
-					return aboutRoot;
-				}
-				else
-				{
-					aboutRoot = pb_FileUtil.FindFolder("ProBuilder/About");
-					if(aboutRoot.EndsWith("/"))
-						aboutRoot = aboutRoot.Remove(aboutRoot.LastIndexOf("/"), 1);
-					return aboutRoot;
-				}
-			}
-		}
-
 		GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
 		GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
 		GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
@@ -216,8 +195,7 @@ namespace ProBuilder2.EditorCommon
 				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
 				richText = true,
 				normal = new GUIStyleState() { background = pb_FileUtil.LoadRelative<Texture2D>(
-					string.Format("{0}/Images/ScrollBackground_{1}.png",
-						AboutRoot,
+					string.Format("About/Images/ScrollBackground_{0}.png",
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -263,18 +241,14 @@ namespace ProBuilder2.EditorCommon
 		{
 			this.about = about;
 
-			if(!File.Exists(about.changelogPath))
-				about.changelogPath = pb_FileUtil.FindFile("ProBuilder/About/changelog.txt");
+			TextAsset changeText = pb_FileUtil.LoadRelative<TextAsset>("About/changelog.txt");
 
-			if(File.Exists(about.changelogPath))
+			string raw = changeText != null ? changeText.text : "";
+
+			if(!string.IsNullOrEmpty(raw))
 			{
-				string raw = File.ReadAllText(about.changelogPath);
-
-				if(!string.IsNullOrEmpty(raw))
-				{
-					pb_VersionInfo vi;
-					pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
-				}
+				pb_VersionInfo vi;
+				pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
 			}
 		}
 

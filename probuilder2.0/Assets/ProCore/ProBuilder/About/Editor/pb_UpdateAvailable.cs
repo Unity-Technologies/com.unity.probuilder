@@ -40,10 +40,10 @@ namespace ProBuilder2.EditorCommon
 				fixedWidth = 154,
 				fixedHeight = 85,
 				normal = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Normal.png" + pb_AboutWindow.AboutRoot)
+					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Hover.png" + pb_AboutWindow.AboutRoot)
+					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Hover.png")
 				},
 			};
 

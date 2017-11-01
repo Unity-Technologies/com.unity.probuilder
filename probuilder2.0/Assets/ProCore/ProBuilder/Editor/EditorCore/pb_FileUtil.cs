@@ -30,6 +30,10 @@ namespace ProBuilder2.EditorCommon
 		 */
 		public static string GetRootDir()
 		{
+			m_ProBuilderFolderPath = "unitypackagemanager/com.unity.probuilder/ProCore/ProBuilder/";
+
+			return m_ProBuilderFolderPath;
+
 			if( !Exists(m_ProBuilderFolderPath) )
 				m_ProBuilderFolderPath = FindFolder("ProCore/ProBuilder", true);
 
