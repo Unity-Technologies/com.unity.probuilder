@@ -3,7 +3,8 @@
 	"UnityPath":[
 		"/Applications/Unity $UNITY_VERSION/Unity.app",
 		"D:/Applications/Unity $UNITY_VERSION",
-		"C:/Users/karlh/unity-installs/Unity $UNITY_VERSION"
+		"C:/Users/karlh/unity-installs/Unity $UNITY_VERSION",
+		"C:/Program Files/Unity $UNITY_VERSION"
 	],
 	"Macros": {
 	},
