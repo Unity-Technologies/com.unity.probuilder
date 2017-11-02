@@ -1,14 +1,7 @@
-using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-
-namespace ProBuilder2.Actions
-{
-	/**
-	 * Deprecated - see MenuActions/Export/ExportObj.cs
-	 */
-	public class pb_ExportObj : Editor
-	{}
-}
+/**
+ * This class has been moved to EditorCore.
+ *
+ * This file is left behind to overwrite older install files.
+ *
+ * You may safely delete this file.
+ */

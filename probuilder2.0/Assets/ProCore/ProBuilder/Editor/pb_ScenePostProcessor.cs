@@ -11,7 +11,7 @@ namespace ProBuilder2.EditorCommon
 	/**
 	 * When building the project, remove all references to pb_Objects.
 	 */
-	public class pb_ScenePostProcessor
+	public static class pb_ScenePostProcessor
 	{
 		[PostProcessScene]
 		public static void OnPostprocessScene()

@@ -1,9 +1,7 @@
-namespace ProBuilder2.Actions
-{
-	/**
-	 *	File stub retained for backwards compatibility.
-	 *	You may safely delete this file.
-	 */
-	[System.Obsolete]
-	static class pb_RepairMeshReferences {}
-}
+/**
+ * This class has been moved to EditorCore.
+ *
+ * This file is left behind to overwrite older install files.
+ *
+ * You may safely delete this file.
+ */
