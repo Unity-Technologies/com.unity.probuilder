@@ -32,14 +32,14 @@ namespace ProBuilder2.EditorCommon
 		/// <summary>
 		/// Check that the directory contains a valid ProBuilder install.
 		/// </summary>
-		/// <param name="dir"></param>
+		/// <param name="dir">Directory to check</param>
 		/// <returns></returns>
 		private static bool ValidateProBuilderRoot(string dir)
 		{
-			return Directory.Exists(dir + "Classes") &&
-				Directory.Exists(dir + "Icons") &&
-				Directory.Exists(dir + "Editor") &&
-				Directory.Exists(dir + "Shader");
+			return Directory.Exists(dir + "/Classes") &&
+				Directory.Exists(dir + "/Icons") &&
+				Directory.Exists(dir + "/Editor") &&
+				Directory.Exists(dir + "/Shader");
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach (var install in k_PossibleInstallDirectories)
 			{
-				m_ProBuilderFolderPath = string.Format("{0}{1}", install, "ProCore/ProBuilder");
+				m_ProBuilderFolderPath = string.Format("{0}{1}", install, "ProCore/ProBuilder/");
 
 				if (ValidateProBuilderRoot(m_ProBuilderFolderPath))
 					return m_ProBuilderFolderPath;
@@ -64,7 +64,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach (var match in matches)
 			{
-				m_ProBuilderFolderPath = match.Replace("\\", "/");
+				m_ProBuilderFolderPath = match.Replace("\\", "/") +  "/";
 
 				if (m_ProBuilderFolderPath.Contains("ProBuilder") && ValidateProBuilderRoot(m_ProBuilderFolderPath))
 					return m_ProBuilderFolderPath;

@@ -10,9 +10,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Assign materials to faces and objects.
-	 */
+	/// <summary>
+	/// Assign materials to faces and objects.
+	/// </summary>
 	public class pb_Material_Editor : EditorWindow
 	{
 		// Reference to pb_Editor instance.
@@ -293,7 +293,7 @@ namespace ProBuilder2.EditorCommon
 				// Add a new material palette
 				if(m_CurrentPaletteIndex >= m_AvailablePalettes.Length)
 				{
-					string path = AssetDatabase.GenerateUniqueAssetPath(pb_FileUtil.PathFromRelative("Data/Material Palette.asset"));
+					string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Material Palette.asset");
 					newPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(path);
 					EditorGUIUtility.PingObject(newPalette);
 				}
