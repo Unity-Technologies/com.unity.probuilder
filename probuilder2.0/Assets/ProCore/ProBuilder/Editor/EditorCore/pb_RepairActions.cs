@@ -20,7 +20,6 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild All ProBuilder Objects", false, pb_Constant.MENU_REPAIR)]
 		public static void MenuForceSceneRefresh()
 		{
-			const bool showProgress = true;
 			StringBuilder sb = new StringBuilder();
 			pb_Object[] all = Object.FindObjectsOfType<pb_Object>();
 
