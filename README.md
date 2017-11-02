@@ -180,8 +180,12 @@ Follow the instructions in the [upm-package-template](https://github.com/UnityTe
 At time of writing, Unity does not pick up packages placed in **UnityPackageManager**. To register a package in Unity, I find it's easiest to create a symlink or junction in the package cache directory. Ex:
 
 ```
+# cmd prompt
 cd C:\Users\karlh\AppData\LocalLow\Unity\cache\packages\staging-packages.unity.com
-mklink /J com.unity.probuilder@2.9.8 C:/Users/karl/upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder
+mklink /J com.unity.probuilder@2.9.8 C:\Users\karl\upm-package-probuilder-project\UnityPackageManager\com.unity.probuilder
+
+# bash
+
 ```
 
 Don't forget to add the package to the manifest of whatever project you're wanting to test in:

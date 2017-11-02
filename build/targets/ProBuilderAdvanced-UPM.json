@@ -7,7 +7,7 @@
 		"$DST_PB_ROOT": "bin/projects/ProBuilderUPM-Unity2017.3/Assets/ProCore/ProBuilder",
 		"$DST_PB_NAME": "ProBuilderUPM",
 		"$UNITY_VERSION": "2017.3",
-		"$UPM_PACKAGE_DIR": "../upm-package-probuilder-project/Packages/com.unity.probuilder"
+		"$UPM_PACKAGE_DIR": "../upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder"
 	},
 	"Defines": [
 		"PROBUILDER_DLL",
