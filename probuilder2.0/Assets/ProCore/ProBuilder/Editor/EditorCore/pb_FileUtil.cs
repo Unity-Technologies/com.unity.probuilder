@@ -87,7 +87,7 @@ namespace ProBuilder2.EditorCommon
 		/// Get the path to the local ProBuilder/Data folder
 		/// </summary>
 		/// <returns></returns>
-		internal static string GetLocalDataDirectory()
+		internal static string GetLocalDataDirectory(bool initializeIfMissing = false)
 		{
 			if (Directory.Exists(m_ProBuilderDataPath))
 				return m_ProBuilderDataPath;
@@ -107,7 +107,7 @@ namespace ProBuilder2.EditorCommon
 				m_ProBuilderDataPath = matches.Length > 0 ? matches[0] : "Assets/ProBuilder Data/";
 			}
 
-			if (!Directory.Exists(m_ProBuilderDataPath))
+			if (!Directory.Exists(m_ProBuilderDataPath) && initializeIfMissing)
 				Directory.CreateDirectory(m_ProBuilderDataPath);
 
 			return m_ProBuilderDataPath;

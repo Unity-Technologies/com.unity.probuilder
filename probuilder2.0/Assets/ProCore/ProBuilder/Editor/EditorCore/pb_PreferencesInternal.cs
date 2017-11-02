@@ -23,7 +23,7 @@ namespace ProBuilder2.EditorCommon
 	 *	Manage ProBuilder preferences.
 	 */
 	[InitializeOnLoad]
-	internal static class pb_PreferencesInternal
+	public static class pb_PreferencesInternal
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 

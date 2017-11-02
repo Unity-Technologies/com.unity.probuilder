@@ -148,25 +148,22 @@ namespace ProBuilder2.EditorCommon
 		{
 			get
 			{
-				if(m_CurrentPalette == null)
+				if (m_CurrentPalette == null)
 				{
 					// Attempt to load the last user-set material palette
-					m_CurrentPalette = AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(pb_PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
+					m_CurrentPalette =
+						AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(
+							pb_PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
 
 					// If not set (or deleted), fall back on default
-					if(m_CurrentPalette != null)
+					if (m_CurrentPalette != null)
 						return m_CurrentPalette;
 
 					// No dice - iterate any other pb_MaterialPalette objects in the project (favoring first found)
-					string[] m_MaterialPalettesInProject = AssetDatabase.FindAssets("t:pb_MaterialPalette");
+					m_CurrentPalette = pb_FileUtil.FindAssetOfType<pb_MaterialPalette>();
 
-					for(int i = 0; m_MaterialPalettesInProject != null && i < m_MaterialPalettesInProject.Length; i++)
-					{
-						m_CurrentPalette = AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(m_MaterialPalettesInProject[i]));
-
-						if(m_CurrentPalette != null)
-							return m_CurrentPalette;
-					}
+					if (m_CurrentPalette != null)
+						return m_CurrentPalette;
 
 					// If no existing pb_MaterialPalette objects in project:
 					// - create a new one
@@ -175,12 +172,12 @@ namespace ProBuilder2.EditorCommon
 
 					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
-					for(int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
+					for (int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
 					{
-						pb_ObjectArray poa = AssetDatabase.LoadAssetAtPath<pb_ObjectArray>( AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]) );
+						pb_ObjectArray poa = AssetDatabase.LoadAssetAtPath<pb_ObjectArray>(AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]));
 
 						// Make sure there's actually something worth copying
-						if(poa != null && poa.array != null && poa.array.Any(x => x != null && x is Material))
+						if (poa != null && poa.array != null && poa.array.Any(x => x != null && x is Material))
 						{
 							m_CurrentPalette.array = poa.GetArray<Material>();
 							break;
