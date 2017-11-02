@@ -125,7 +125,7 @@ namespace ProBuilder2.EditorCommon
 
 		// Path to the required default material palette. If not valid material palettes are
 		// found a new one will be created with this path (relative to ProBuilder folder).
-		private const string m_DefaultMaterialPalettePath = "Data/Default Material Palette.asset";
+		private static string m_DefaultMaterialPalettePath;
 		// The currently loaded material palette asset.
 		private static pb_MaterialPalette m_CurrentPalette = null;
 		// The user set "quick material"
@@ -151,7 +151,7 @@ namespace ProBuilder2.EditorCommon
 				if(m_CurrentPalette == null)
 				{
 					// Attempt to load the last user-set material palette
-					m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(pb_PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
+					m_CurrentPalette = AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(pb_PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
 
 					// If not set (or deleted), fall back on default
 					if(m_CurrentPalette != null)
@@ -162,7 +162,7 @@ namespace ProBuilder2.EditorCommon
 
 					for(int i = 0; m_MaterialPalettesInProject != null && i < m_MaterialPalettesInProject.Length; i++)
 					{
-						m_CurrentPalette = pb_FileUtil.Load<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(m_MaterialPalettesInProject[i]));
+						m_CurrentPalette = AssetDatabase.LoadAssetAtPath<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(m_MaterialPalettesInProject[i]));
 
 						if(m_CurrentPalette != null)
 							return m_CurrentPalette;
@@ -171,13 +171,13 @@ namespace ProBuilder2.EditorCommon
 					// If no existing pb_MaterialPalette objects in project:
 					// - create a new one
 					// - check for the older pb_ObjectArray and copy data to new default
-					m_CurrentPalette = pb_FileUtil.LoadRequiredRelative<pb_MaterialPalette>(m_DefaultMaterialPalettePath);
+					m_CurrentPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(m_DefaultMaterialPalettePath);
 
 					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
 					for(int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
 					{
-						pb_ObjectArray poa = pb_FileUtil.Load<pb_ObjectArray>( AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]) );
+						pb_ObjectArray poa = AssetDatabase.LoadAssetAtPath<pb_ObjectArray>( AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]) );
 
 						// Make sure there's actually something worth copying
 						if(poa != null && poa.array != null && poa.array.Any(x => x != null && x is Material))
@@ -207,6 +207,7 @@ namespace ProBuilder2.EditorCommon
 			m_RowBackgroundStyle = new GUIStyle();
 			m_RowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
 			m_CurrentPalette = null;
+			m_DefaultMaterialPalettePath = pb_FileUtil.GetLocalDataDirectory() + "/Default Material Palette.asset";
 			RefreshAvailablePalettes();
 		}
 
@@ -431,8 +432,7 @@ namespace ProBuilder2.EditorCommon
 		private void RefreshAvailablePalettes()
 		{
 			pb_MaterialPalette cur = CurrentPalette;
-			m_AvailablePalettes = AssetDatabase.FindAssets("t:pb_MaterialPalette").Select(x => pb_FileUtil.Load<pb_MaterialPalette>(AssetDatabase.GUIDToAssetPath(x))).ToArray();
-			// m_AvailablePalettes = Resources.FindObjectsOfTypeAll<pb_MaterialPalette>().Where(x => EditorUtility.IsPersistent(x)).ToArray();
+			m_AvailablePalettes = pb_FileUtil.FindAndLoadAssets<pb_MaterialPalette>();
 			m_AvailablePalettes_Str = m_AvailablePalettes.Select(x => x.name).ToArray();
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");

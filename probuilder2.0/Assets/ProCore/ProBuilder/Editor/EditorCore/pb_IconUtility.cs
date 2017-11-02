@@ -49,7 +49,7 @@ namespace ProBuilder2.EditorCommon
 					// - do one lap searching for light
 					// - if nothing found, next searching for default
 					string fullPath = string.Format("{0}{1}.png", m_IconFolderPath, i == 0 ? name : iconName);
-					icon = pb_FileUtil.LoadRelative<Texture2D>(fullPath);
+					icon = pb_FileUtil.LoadInternalAsset<Texture2D>(fullPath);
 				} while (!isDarkSkin && ++i < 2 && icon == null);
 
 				m_Icons.Add(name, icon);

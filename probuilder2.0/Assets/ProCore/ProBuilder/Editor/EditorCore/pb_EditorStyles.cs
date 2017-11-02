@@ -110,7 +110,7 @@ namespace ProBuilder2.Interface
 				if (m_HeaderLabel == null)
 				{
 					m_HeaderLabel = new GUIStyle(EditorStyles.boldLabel);
-					Font asap = pb_FileUtil.LoadRelative<Font>("About/Font/Asap-Regular.otf");
+					Font asap = pb_FileUtil.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
 					if(asap != null)
 						m_HeaderLabel.font = asap;
 					m_HeaderLabel.alignment = TextAnchor.LowerLeft;

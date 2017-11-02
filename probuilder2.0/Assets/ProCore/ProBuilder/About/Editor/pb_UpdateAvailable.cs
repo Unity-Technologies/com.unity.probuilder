@@ -40,10 +40,10 @@ namespace ProBuilder2.EditorCommon
 				fixedWidth = 154,
 				fixedHeight = 85,
 				normal = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Normal.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/DownloadPB_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/DownloadPB_Hover.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/DownloadPB_Hover.png")
 				},
 			};
 
@@ -54,7 +54,7 @@ namespace ProBuilder2.EditorCommon
 				fixedHeight = 85,
 				fontSize = 24,
 				wordWrap = true,
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + pb_AboutWindow.FONT_MEDIUM),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + pb_AboutWindow.FONT_MEDIUM),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? pb_AboutWindow.font_white : pb_AboutWindow.font_black }
 			};
 		}

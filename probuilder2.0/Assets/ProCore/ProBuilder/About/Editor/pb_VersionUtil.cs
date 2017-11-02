@@ -38,7 +38,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			about = null;
 
-			TextAsset aboutText = pb_FileUtil.LoadRelative<TextAsset>("About/pc_AboutEntry_ProBuilder.txt");
+			TextAsset aboutText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/pc_AboutEntry_ProBuilder.txt");
 
 			if(aboutText == null)
 				return false;

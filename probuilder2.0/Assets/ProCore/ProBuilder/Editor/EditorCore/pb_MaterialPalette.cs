@@ -22,11 +22,13 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Assets/Create/Material Palette")]
 		static void CreateMaterialPalette()
 		{
-			string path = pb_FileUtil.PathFromRelative("Data/Material Palette.asset");
+			string path = pb_FileUtil.GetSelectedDirectory() + "/Material Palette.asset";
+
 			// Only generate unique path if it already exists - otherwise GenerateAssetUniquePath can return empty string
 			// in event of path existing in a directory that is not yet created.
 			if(pb_FileUtil.Exists(path))
 				path = AssetDatabase.GenerateUniqueAssetPath(path);
+
 			pb_MaterialPalette newPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(path);
 			newPalette.array = Selection.GetFiltered(typeof(Material), SelectionMode.DeepAssets).Cast<Material>().ToArray();
 			EditorUtility.SetDirty(newPalette);

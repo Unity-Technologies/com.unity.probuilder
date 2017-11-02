@@ -18,6 +18,8 @@ namespace ProBuilder2.EditorCommon
 		// ProBuilder folder path.
 		private static string m_ProBuilderFolderPath = "unitypackagemanager/com.unity.probuilder/ProCore/ProBuilder/";
 
+		private static string m_ProBuilderDataPath = "Assets/ProBuilder Data/";
+
 		// The order is important - always search for the package manager installed version first
 		private static string[] k_PossibleInstallDirectories = new string[]
 		{
@@ -46,7 +48,7 @@ namespace ProBuilder2.EditorCommon
 		/// Return a relative path to the ProCore/ProBuilder directory.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetRootDir()
+		private static string GetRootDir()
 		{
 			if (Directory.Exists(m_ProBuilderFolderPath))
 				return m_ProBuilderFolderPath;
@@ -82,6 +84,81 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		/// <summary>
+		/// Get the path to the local ProBuilder/Data folder
+		/// </summary>
+		/// <returns></returns>
+		internal static string GetLocalDataDirectory()
+		{
+			if (Directory.Exists(m_ProBuilderDataPath))
+				return m_ProBuilderDataPath;
+
+			string root = GetRootDir();
+
+			if (root.StartsWith("Assets"))
+			{
+				// Installed from Asset Store or manual package import
+				m_ProBuilderDataPath = root + "Data/";
+			}
+			else
+			{
+				// Scan project for ProBuilder Data folder
+				// none found? create one at root
+				string[] matches = Directory.GetDirectories("Assets", "ProBuilder Data", SearchOption.AllDirectories);
+				m_ProBuilderDataPath = matches.Length > 0 ? matches[0] : "Assets/ProBuilder Data/";
+			}
+
+			if (!Directory.Exists(m_ProBuilderDataPath))
+				Directory.CreateDirectory(m_ProBuilderDataPath);
+
+			return m_ProBuilderDataPath;
+		}
+
+		internal static string[] FindAssets<T>(string pattern) where T : UnityEngine.Object
+		{
+			return AssetDatabase.FindAssets("t:" + typeof(T).ToString());
+		}
+
+		internal static T[] FindAndLoadAssets<T>() where T : UnityEngine.Object
+		{
+			return AssetDatabase.FindAssets("t:" + typeof(T).ToString())
+				.Select(x => AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(x))).ToArray();
+		}
+
+		internal static T FindAssetOfType<T>() where T : UnityEngine.Object
+		{
+			foreach (var i in AssetDatabase.FindAssets("t:" + typeof(T).ToString()))
+			{
+				T o = AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(i));
+				if (o != null)
+					return o;
+			}
+
+			return null;
+		}
+
+		internal static string GetSelectedDirectory()
+		{
+			Object o = Selection.activeObject;
+
+			if (o != null)
+			{
+				string path = AssetDatabase.GetAssetPath(o.GetInstanceID());
+
+				if (!string.IsNullOrEmpty(path))
+				{
+					if (Directory.Exists(path))
+						return Path.GetFullPath(path);
+
+					string res = Path.GetDirectoryName(path);
+
+					if (!string.IsNullOrEmpty(res) && System.IO.Directory.Exists(res))
+						return Path.GetFullPath(res);
+				}
+			}
+
+			return Path.GetFullPath("Assets");
+		}
+		/// <summary>
 		/// Get a file or folder path relative to the project directory.
 		/// </summary>
 		/// <param name="path">File or directory path, either relative or absolute.</param>
@@ -101,9 +178,11 @@ namespace ProBuilder2.EditorCommon
 			return (float) a.Count / Mathf.Min(left.Length, right.Length);
 		}
 
-		/**
-		 * Find a file in the Assets folder by searching for a partial path.
-		 */
+		/// <summary>
+		/// Find a file in the Assets folder by searching for a partial path.
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns></returns>
 		public static string FindFile(string file)
 		{
 			if (string.IsNullOrEmpty(file))
@@ -137,46 +216,47 @@ namespace ProBuilder2.EditorCommon
 			return bestMatch.Item2;
 		}
 
-		/**
-		 *	Check if a file or folder exists at path.
-		 */
+		/// <summary>
+		/// Check if a file or folder exists at path.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		public static bool Exists(string path)
 		{
 			return Directory.Exists(path) || File.Exists(path);
 		}
 
-		/**
-		 *	Returns a new complete path from one relative to the ProBuilder root.
-		 */
-		public static string PathFromRelative(string relativePath)
-		{
-			return string.Format("{0}{1}", GetRootDir(), relativePath);
-		}
-
-		/**
-		 *	Load a scriptable object from a path relative to ProBuilder root. If object is not found
-		 *	a new one is created.
-		 */
-		public static T LoadRequiredRelative<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		/// <summary>
+		/// Load an internal asset from the ProBuilder directory.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static T LoadInternalAssetRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
 		{
 			string full = string.Format("{0}{1}", GetRootDir(), path);
 			return LoadRequired<T>(full);
 		}
 
-		/**
-		 *	Load a scriptable object from a path relative to ProBuilder root. Can return null if asset
-		 *	is not found.
-		 */
-		public static T LoadRelative<T>(string path) where T : Object
+		/// <summary>
+		/// Load an internal asset relative to the ProBuilder directory.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static T LoadInternalAsset<T>(string path) where T : Object
 		{
 			string full = string.Format("{0}{1}", GetRootDir(), path);
 			return Load<T>(full);
 		}
 
-		/**
-		 *	Fetch a default asset from path.  If not found, a new one is created.
-		 */
-		public static T LoadRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		/// <summary>
+		/// Fetch a default asset from path.  If not found, a new one is created.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static T LoadRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
 		{
 			T asset = Load<T>(path);
 
@@ -199,17 +279,16 @@ namespace ProBuilder2.EditorCommon
 			return asset;
 		}
 
-		/**
-		 *	Load an asset from path. Can return null if not found.
-		 */
-		public static T Load<T>(string path) where T : Object
+		private static T Load<T>(string path) where T : Object
 		{
 			return AssetDatabase.LoadAssetAtPath<T>(path);
 		}
 
-		/**
-		 *	Write contents to a file path.
-		 */
+		/// <summary>
+		/// Write contents to a file path.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="contents"></param>
 		public static void WriteFile(string path, string contents)
 		{
 			File.WriteAllText(path, contents);

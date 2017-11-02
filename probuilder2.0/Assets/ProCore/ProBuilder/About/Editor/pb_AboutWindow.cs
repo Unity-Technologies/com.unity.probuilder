@@ -137,10 +137,10 @@ namespace ProBuilder2.EditorCommon
 				// RectOffset(left, right, top, bottom)
 				margin = new RectOffset(12, 12, 12, 12),
 				normal = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/Banner_Normal.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/Banner_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = pb_FileUtil.LoadRelative<Texture2D>("About/Images/Banner_Hover.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/Banner_Hover.png")
 				},
 			};
 
@@ -150,7 +150,7 @@ namespace ProBuilder2.EditorCommon
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_MEDIUM),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_MEDIUM),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -158,7 +158,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
@@ -167,15 +167,15 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() {
 					textColor = font_blue_normal,
-					background = pb_FileUtil.LoadRelative<Texture2D>(
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
 					textColor = font_blue_hover,
-					background = pb_FileUtil.LoadRelative<Texture2D>(
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -185,16 +185,16 @@ namespace ProBuilder2.EditorCommon
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
 				richText = true,
-				normal = new GUIStyleState() { background = pb_FileUtil.LoadRelative<Texture2D>(
+				normal = new GUIStyleState() { background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 					string.Format("About/Images/ScrollBackground_{0}.png",
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
@@ -203,7 +203,7 @@ namespace ProBuilder2.EditorCommon
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadRelative<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
 				fontSize = 14,
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
 				richText = true,
@@ -241,7 +241,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			this.about = about;
 
-			TextAsset changeText = pb_FileUtil.LoadRelative<TextAsset>("About/changelog.txt");
+			TextAsset changeText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
 
 			string raw = changeText != null ? changeText.text : "";
 
