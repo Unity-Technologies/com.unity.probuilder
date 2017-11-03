@@ -4,11 +4,11 @@
 # If no arguments are passed all targets are built.
 # Valid arguments:
 # 	SRC = Build source code package
-# 	47 = Build Unity 4.7 package (deprecated)
-# 	50 = Build Unity 5.0 package (deprecated)
-# 	53 = Build Unity 5.3 package
-# 	55 = Build Unity 5.5 package
-# 	56 = Build Unity 5.6 package
+# 	4.7 = Build Unity 4.7 package (deprecated)
+# 	5.0 = Build Unity 5.0 package (deprecated)
+# 	5.3 = Build Unity 5.3 package
+# 	5.5 = Build Unity 5.5 package
+# 	5.6 = Build Unity 5.6 package
 # 	2017.1 = Build Unity 2017.1 package
 # 	2017.2 = Build Unity 2017.2 package
 # 	2017.3 = Build Unity 2017.3 package

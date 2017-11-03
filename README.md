@@ -113,16 +113,26 @@ Or run a batch build with the `advanced.sh` or `basic.sh` scripts.
 
 The result of `pb-build` is a Unity project in `bin/projects` that is ready to be uploaded to the Asset Store.
 
+### Pushing an Update to the Asset Store
+
+1. Create a new package version in the [Asset Publisher Portal](https://publisher.assetstore.unity3d.com)
+2. For each Unity version in `bin/projects` open Unity and upload the ProCore folder.
+3. Update the changelog and version in the Publisher Portal and subim
+
+### Building ProBuilder to a UnityPackage
+
 To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`.
+
+Packages are used for distribution via the [ProCore User Toolbox](http://www.procore3d.com/usertoolbox) (deprecated) and Github releases (internal).
 
 To selectively build a package pass the project suffix to `export-packages.sh`. Ex, `sh export-packages.sh 56 SRC` will build the Unity 5.6 and Source code packages.
 
 Valid arguments:
 
 - `SRC`
-- `53`
-- `55`
-- `56`
+- `5.3`
+- `5.5`
+- `5.6`
 - `2017.1`
 - `2017.2`
 - `2017.3`
@@ -159,7 +169,9 @@ C:/Users/karl/dev
     |_ manifest.json
 ```
 
-### Build it
+### Building for Unity Package Manager
+
+Packages built for UPM are always compiled against the 
 
 Run the **ProBuilderAdvanced-UPM.json** build target.
 
