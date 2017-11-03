@@ -117,7 +117,7 @@ The result of `pb-build` is a Unity project in `bin/projects` that is ready to b
 
 1. Create a new package version in the [Asset Publisher Portal](https://publisher.assetstore.unity3d.com)
 2. For each Unity version in `bin/projects` open Unity and upload the ProCore folder.
-3. Update the changelog and version in the Publisher Portal and subim
+3. Update the changelog and version in the Publisher Portal and submit.
 
 ### Building ProBuilder to a UnityPackage
 
@@ -170,8 +170,6 @@ C:/Users/karl/dev
 ```
 
 ### Building for Unity Package Manager
-
-Packages built for UPM are always compiled against the 
 
 Run the **ProBuilderAdvanced-UPM.json** build target.
 
