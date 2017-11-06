@@ -1,30 +1,33 @@
 ## Single GUI Color Scheme for all ProCore products
 ---
 
-**Pixel Sizing**
-Item						| Pixel Size
+**Icon Sizing/Pixel Notes(Photoshop)**
+Item						| Note
 ---							| ---
 Icon Size (Normal)			| 36x22 px
 Icon Size (Half)			| 18x22 px
-Button Corner Rounding		| 3px radius
-In-Scene Border				| 4px radius (1px border width)
-Padding						| 3px
+Icon "Full"					| Icon extends to edge of canvas, no padding
+Icon "Slim"					| Leave 3px empty space on all edges
+Icon "Slim-Toggle"			| Leave 6px bottom border, 3px elsewhere
 
-**General Items**
+**Icon Colors**
 Item 						| Color/Value
 --- 						| ---
-Big Text Font				| Bebas Neue Regular
-Small Text Font				| ASAP Regular
-Small Text Font (Header)	| ASAP Bold
-Icon: Default Shade			| f6f6f6
-Icon: Darker Shade			| e0e0e0
-Icon: Darkest Shade			| c8c8c8
-Icon: Border				| 373737
-Icon: Blue Accent			| 00aaef 
-Icon: Orange Accent			| ff9c00
+Surface Default Shade		| f6f6f6
+Surface Darker Shade		| e0e0e0
+Surface Darkest Shade		| c8c8c8
+Surface Border				| 373737
+Blue Accent	(Primary)		| 00aaef 
+Orange Accent (Secondary)	| ff9c00
 Green (Y)					| 39b54a
 Blue (Z)					| 00aaef
 Red (X)						| d93238
+
+**Fonts**
+Item 						| Color/Value
+--- 						| ---
+Standard text				| ASAP Regular, 12pt
+Header text					| ASAP Medium, 14pt
 
 **Toolbar Accents**
 Item 						| Color/Value
@@ -34,6 +37,11 @@ Object Tools				| 669922
 Selection Tools				| 247ea3
 Geo Tools					| bb2233
 
+**Button General Notes**
+Item						| Note
+---							| ---
+Button Corner Rounding		| 3px radius
+
 **Buttons (Light Skin)**
 Item 						| Color/Value
 --- 						| ---
@@ -42,15 +50,15 @@ Text 						| 373737
 Normal 						| EAEAEA
 Hover						| F2F2F2
 Pressed 					| E1E1E1
-Disabled					| 0% Opacity, Lighten Icon Image 50%
+Disabled					| ?
 
 **Buttons (Dark Skin)**
 Item 						| Color/Value
 --- 						| ---
 In-Scene Border				| 373737
-Text - Heading				| c8c8c8, 16pt
-Text - Normal				| bcbcbc, 14pt
+Text - Heading				| c8c8c8
+Text - Normal				| bcbcbc
 Normal 						| 565656
 Hover						| 6D6D6D
 Pressed 					| 4F4F4FFF
-Disabled					| 0% Opacity, Darken Icon Image 50%
+Disabled					| ?
