@@ -1,5 +1,4 @@
-﻿#if !UNITY_4_7 && !UNITY_5_0 && !PROTOTYPE
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -42,10 +41,8 @@ namespace ProBuilder2.Test
 					data.pb.Subdivide();
 
 				Assert.AreEqual(data.expectedVertexCount, data.pb.vertexCount);
-				GameObject.DestroyImmediate(data.pb.gameObject);
+				Object.DestroyImmediate(data.pb.gameObject);
 			}
 		}
 	}
 }
-
-#endif

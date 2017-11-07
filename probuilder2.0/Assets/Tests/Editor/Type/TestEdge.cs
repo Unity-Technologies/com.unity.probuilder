@@ -8,7 +8,7 @@ using System;
 
 namespace ProBuilder2.Test
 {
-	public class TestEdge
+	public static class TestEdge
 	{
 		const int TestIterationCount = 512;
 

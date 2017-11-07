@@ -75,10 +75,10 @@ namespace ProBuilder2.Test
 			Vector3 nan = new Vector3(float.NaN, 0f, 0f);
 
 			// mostly checking that GetHashCode doesn't throw an error when converting bad float values
-			Assert.AreEqual(pb_Vector.GetHashCode(over), 1499503);
-			Assert.AreEqual(pb_Vector.GetHashCode(under), 2147303674);
-			Assert.AreEqual(pb_Vector.GetHashCode(inf), 660185);
-			Assert.AreEqual(pb_Vector.GetHashCode(nan), 660185);
+			Assert.AreEqual(pb_Vector.GetHashCode(over), 1499503, "Over");
+			Assert.AreEqual(pb_Vector.GetHashCode(under), 2147303674, "Under");
+			Assert.AreNotEqual(pb_Vector.GetHashCode(inf), 0, "Inf");
+			Assert.AreNotEqual(pb_Vector.GetHashCode(nan), 0, "NaN");
 		}
 
 		[Test]

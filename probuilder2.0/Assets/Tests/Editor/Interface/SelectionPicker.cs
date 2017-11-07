@@ -7,7 +7,7 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Test
 {
-	public class Color32ToUint
+	public class SelectionPicker
 	{
 		static public Color32 WHITE_COLOR = new Color32(255, 255, 255, 255);
 		const uint WHITE_UINT = 0x00FFFFFF;
@@ -30,16 +30,12 @@ namespace ProBuilder2.Test
 		static public Color32 GRAY_COLOR = new Color32(1, 1, 1, 255);
 		const uint GRAY_UINT = 0x00010101;
 
-		/**
-		 *	Decode RGBA to UInt
-		 */
-
 		[Test]
 		public static void TestDecode_WHITE()
 		{
 			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(WHITE_COLOR), WHITE_UINT );
 		}
-		
+
 		[Test]
 		public static void TestDecode_BLACK()
 		{
@@ -57,7 +53,7 @@ namespace ProBuilder2.Test
 		{
 			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(RED_COLOR), RED_UINT );
 		}
-		
+
 		[Test]
 		public static void TestDecode_PINK()
 		{
@@ -76,16 +72,12 @@ namespace ProBuilder2.Test
 			Assert.AreEqual( pb_SelectionPicker.DecodeRGBA(GRAY_COLOR), GRAY_UINT );
 		}
 
-		/**
-		 *	Encode to RGBA
-		 */
-
 		[Test]
 		public static void TestEncode_WHITE()
 		{
 			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(WHITE_UINT), WHITE_COLOR );
 		}
-		
+
 		[Test]
 		public static void TestEncode_BLACK()
 		{
@@ -103,7 +95,7 @@ namespace ProBuilder2.Test
 		{
 			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(RED_UINT), RED_COLOR );
 		}
-		
+
 		[Test]
 		public static void TestEncode_PINK()
 		{
@@ -122,10 +114,6 @@ namespace ProBuilder2.Test
 			Assert.AreEqual( pb_SelectionPicker.EncodeRGBA(GRAY_UINT), GRAY_COLOR );
 		}
 
-		/**
-		 *	Test off-by-one
-		 */
-
 		[Test]
 		public static void TestOffByOne_WHITE()
 		{
@@ -134,7 +122,7 @@ namespace ProBuilder2.Test
 				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(WHITE_COLOR), WHITE_UINT - 1 );
 			}
 		}
-		
+
 		[Test]
 		public static void TestOffByOne_BLACK()
 		{
@@ -161,7 +149,7 @@ namespace ProBuilder2.Test
 				Assert.AreNotEqual( pb_SelectionPicker.DecodeRGBA(RED_COLOR), RED_UINT - 1 );
 			}
 		}
-		
+
 		[Test]
 		public static void TestOffByOne_PINK()
 		{

@@ -23,7 +23,6 @@ visual studio/*/*/obj/
 docs/site/
 docs/manual.pdf
 docs/docs/changelog.md
-probuilder2.0/Assets/test*
 doxygen/
 
 # symlink
