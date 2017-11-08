@@ -654,8 +654,8 @@ namespace ProBuilder2.MeshOperations
 				// Get material and UV stuff from the first edge face
 				pb_Tuple<pb_Face, pb_Edge> faceAndEdge = null;
 
-				if(!pb_Edge.ValidateEdge(pb, a, out faceAndEdge))
-					pb_Edge.ValidateEdge(pb, b, out faceAndEdge);
+				if(!pb_EdgeExtension.ValidateEdge(pb, a, out faceAndEdge))
+					pb_EdgeExtension.ValidateEdge(pb, b, out faceAndEdge);
 
 				if(faceAndEdge != null)
 				{

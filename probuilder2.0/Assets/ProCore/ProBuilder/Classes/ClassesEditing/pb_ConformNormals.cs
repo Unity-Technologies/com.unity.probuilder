@@ -113,15 +113,15 @@ namespace ProBuilder2.MeshOperations
 				int a = indices[i], b = indices[i+1], c = indices[i+2];
 
 				if(e.x == a && e.y == b)
-					return new pb_Edge(wing.edge.common);
+					return wing.edge.common;
 				else if(e.x == b && e.y == a)
 					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
 				else if(e.x == b && e.y == c)
-					return new pb_Edge(wing.edge.common);
+					return wing.edge.common;
 				else if(e.x == c && e.y == b)
 					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
 				else if(e.x == c && e.y == a)
-					return new pb_Edge(wing.edge.common);
+					return wing.edge.common;
 				else if(e.x == a && e.y == c)
 					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
 			}

@@ -9,7 +9,7 @@ namespace ProBuilder2.Common
 	/**
 	 * Static methods for working with pb_Objects in an editor.
 	 */
-	public static class pb_HandleUtility
+	static class pb_HandleUtility
 	{
 		const float MAX_EDGE_SELECT_DISTANCE = 20f;
 

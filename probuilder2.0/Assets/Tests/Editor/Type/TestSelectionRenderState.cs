@@ -6,13 +6,13 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using ProBuilder2.Common;
+using ProBuilder2.EditorCommon;
 using System;
 
 namespace ProBuilder2.Test
 {
 	public class TestSelectionRenderState
 	{
-#if !UNITY_5_1 && !UNITY_5_2 && !UNITY_5_3 && !UNITY_5_4
 		[Test]
 		public static void TestSelectionRenderStateMatchesUnity()
 		{
@@ -20,8 +20,6 @@ namespace ProBuilder2.Test
 			Assert.AreEqual( (int) SelectionRenderState.Wireframe, (int) EditorSelectedRenderState.Wireframe );
 			Assert.AreEqual( (int) SelectionRenderState.Outline, (int) EditorSelectedRenderState.Highlight );
 		}
-#endif
-
 	}
 }
 #endif

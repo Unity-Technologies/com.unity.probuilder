@@ -4,22 +4,25 @@ using UnityEngine;
 using System.Collections;
 using System.Reflection;
 using System.Linq;
-using ProBuilder2.Common;	// Can't assign components to namespaces 
+using ProBuilder2.Common;
 
+/// <summary>
+/// Provides some additional functionality to GameObjects, like managing visiblity and colliders.
+/// </summary>
+/// <remarks>For backwards compatibility reasons this class remains outside of the ProBuilder2.Common namespace.</remarks>
 [DisallowMultipleComponent]
-[AddComponentMenu("")]	// Don't let the user add this to any object.
-/**
- *	\brief Determines how this #pb_Object should behave in game.
- */
+[AddComponentMenu("")]
 public class pb_Entity : MonoBehaviour
 {
 	public EntityType entityType { get { return _entityType; } }
 
-	[SerializeField] [HideInInspector] private EntityType _entityType;
+	[SerializeField]
+	[HideInInspector]
+	EntityType _entityType;
 
-	/**
-	 *	\brief Performs Entity specific initialization tasks (turn off renderer for nodraw faces, hide colliders, etc)
-	 */
+	/// <summary>
+	/// Performs Entity specific initialization tasks (turn off renderer for nodraw faces, hide colliders, etc)
+	/// </summary>
 	public void Awake()
 	{
 		MeshRenderer mr = GetComponent<MeshRenderer>();
@@ -44,6 +47,10 @@ public class pb_Entity : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Set the entity type.
+	/// </summary>
+	/// <param name="t"></param>
 	public void SetEntity(EntityType t)
 	{
 		_entityType = t;

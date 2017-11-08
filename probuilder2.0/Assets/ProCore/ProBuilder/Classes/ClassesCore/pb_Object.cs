@@ -5,21 +5,15 @@ using System.Linq;
 using System.Reflection;
 using ProBuilder2.Common;
 
-#if PROBUILDER_DLL
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ProBuilderEditor-Unity5")]
-#else
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Assembly-CSharp-Editor")]
-#endif
-
-[AddComponentMenu("")]	// Don't let the user add this to any object.
+/// <summary>
+/// ProBuilder mesh class. Stores all the information necessary to create a UnityEngine.Mesh.
+/// </summary>
+[AddComponentMenu("")]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(pb_Entity))]
 [ExecuteInEditMode]
-/**
- *	\brief Object class for all ProBuilder geometry.
- */
 public class pb_Object : MonoBehaviour
 {
 #region MONOBEHAVIOUR
@@ -399,11 +393,12 @@ public class pb_Object : MonoBehaviour
 		this.m_selectedTriangles = pb_Face.AllTriangles( SelectedFaces );
 
 		// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
-		pb_Edge[] edges = pb_Edge.AllEdges(SelectedFaces);
+		// @todo test this now that pb_Edge is a struct
+		pb_Edge[] edges = pb_EdgeExtension.AllEdges(SelectedFaces);
 		int len = edges.Length;
 		this.m_SelectedEdges = new pb_Edge[len];
 		for(int i = 0; i < len; i++)
-			this.m_SelectedEdges[i] = new pb_Edge(edges[i]);
+			this.m_SelectedEdges[i] = edges[i];
 
 		if(onElementSelectionChanged != null)
 			onElementSelectionChanged(this);
@@ -412,7 +407,7 @@ public class pb_Object : MonoBehaviour
 	public void SetSelectedEdges(IEnumerable<pb_Edge> edges)
 	{
 		this.m_selectedFaces = new int[0];
-		this.m_SelectedEdges = edges.Select(x => new pb_Edge(x)).ToArray();
+		this.m_SelectedEdges = edges.ToArray();
 		this.m_selectedTriangles = m_SelectedEdges.AllTriangles();
 
 		if(onElementSelectionChanged != null)

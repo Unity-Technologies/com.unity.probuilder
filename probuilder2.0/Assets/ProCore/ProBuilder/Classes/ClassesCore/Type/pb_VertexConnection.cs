@@ -1,12 +1,12 @@
-﻿/**
- *	Used to describe split face actions.
- */
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	public class pb_VertexConnection : System.IEquatable<pb_VertexConnection>
+	/// <summary>
+	/// Used to describe split face actions.
+	/// </summary>
+	class pb_VertexConnection : System.IEquatable<pb_VertexConnection>
 	{
 		public pb_VertexConnection(pb_Face face, List<int> indices)
 		{

@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	Extension methods for Vector classes.
-	 */
-	public static class pb_Vector
+	/// <summary>
+	/// Extension methods for Vector classes.
+	/// </summary>
+	static class pb_Vector
 	{
 		public const float FLT_COMPARE_RESOLUTION = 1000f;
 

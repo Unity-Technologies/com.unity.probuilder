@@ -1,15 +1,26 @@
 using UnityEngine;
 
 namespace ProBuilder2.Common
-{	
-	/**
-	 * A Transform class limited to 2D
-	 */
-	public class pb_Transform2D
+{
+	/// <summary>
+	/// A Transform class limited to 2D
+	/// </summary>
+	class pb_Transform2D
 	{
-		public Vector2 	position;	///< Position in 2D space.
-		public float 	rotation;	///< Rotation in degrees.
-		public Vector2 	scale;		///< Scale in 2D space.
+		/// <summary>
+		/// Position in 2D space.
+		/// </summary>
+		public Vector2 	position;
+
+		/// <summary>
+		/// Rotation in degrees.
+		/// </summary>
+		public float rotation;
+
+		/// <summary>
+		/// Scale in 2D space.
+		/// </summary>
+		public Vector2 	scale;
 
 		public pb_Transform2D(Vector2 position, float rotation, Vector2 scale)
 		{

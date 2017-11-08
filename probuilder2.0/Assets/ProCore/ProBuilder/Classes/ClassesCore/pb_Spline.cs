@@ -6,10 +6,17 @@ namespace ProBuilder2.Common
 {
 	public static class pb_Spline
 	{
-		/**
-		 *	Create a new pb_Object by extruding along a bezier spline.
-		 */
-		public static pb_Object Extrude(IList<pb_BezierPoint> points,
+		/// <summary>
+		/// Create a new pb_Object by extruding along a bezier spline.
+		/// </summary>
+		/// <param name="points">The points making up the bezier spline.</param>
+		/// <param name="radius">The radius of the extruded mesh tube.</param>
+		/// <param name="columns">How many columns per segment to create when extruding the mesh.</param>
+		/// <param name="rows">How many rows the extruded mesh will be composed of.</param>
+		/// <param name="closeLoop">Should the mesh join at the ends or remain unconnected.</param>
+		/// <param name="smooth">Are the mesh edges smoothed or hard.</param>
+		/// <returns>The resulting pb_Object.</returns>
+		internal static pb_Object Extrude(IList<pb_BezierPoint> points,
 										float radius = .5f,
 										int columns = 32,
 										int rows = 16,
@@ -24,7 +31,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Update a pb_Object with new geometry from a bezier spline.
 		 */
-		public static void Extrude(	IList<pb_BezierPoint> bezierPoints,
+		internal static void Extrude(	IList<pb_BezierPoint> bezierPoints,
 									float radius,
 									int columns,
 									int rows,
@@ -40,7 +47,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Extrapolate a bezier curve to it's control points and segments between.
 		 */
-		public static List<Vector3> GetControlPoints(IList<pb_BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
+		internal static List<Vector3> GetControlPoints(IList<pb_BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
 		{
 			int cols = subdivisionsPerSegment;
 			int c = bezierPoints.Count;
@@ -75,7 +82,7 @@ namespace ProBuilder2.Common
 		/**
 		 *	Set mesh geometry by extruding along a set of points.
 		 */
-		public static void Extrude(	IList<Vector3> points,
+		internal static void Extrude(	IList<Vector3> points,
 									float radius,
 									int radiusRows,
 									bool closeLoop,

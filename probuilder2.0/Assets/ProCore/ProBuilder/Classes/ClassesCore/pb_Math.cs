@@ -10,7 +10,7 @@ namespace ProBuilder2.Common
 	/**
 	 * Geometry math and Array extensions.
 	 */
-	public static class pb_Math
+	static class pb_Math
 	{
 		public const float PHI = 1.618033988749895f;
 		public const float FLT_EPSILON = float.Epsilon;

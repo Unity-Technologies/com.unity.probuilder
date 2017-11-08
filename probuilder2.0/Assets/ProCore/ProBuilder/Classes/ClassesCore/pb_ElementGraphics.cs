@@ -8,7 +8,7 @@ namespace ProBuilder2.Common
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
 	[System.Serializable]
-	public class pb_ElementGraphics : pb_MonoBehaviourSingleton<pb_ElementGraphics>
+	class pb_ElementGraphics : pb_MonoBehaviourSingleton<pb_ElementGraphics>
 	{
 		const string FACE_SHADER = "Hidden/ProBuilder/FaceHighlight";
 		const string EDGE_SHADER = "Hidden/ProBuilder/FaceHighlight";

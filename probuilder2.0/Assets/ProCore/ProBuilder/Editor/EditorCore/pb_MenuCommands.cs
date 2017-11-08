@@ -839,7 +839,7 @@ namespace ProBuilder2.EditorCommon
 
 					for(int i = 0; i < selection.Length; i++)
 					{
-						pb_Edge[] universal_selected_edges = pb_Edge.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndices).Distinct().ToArray();
+						pb_Edge[] universal_selected_edges = pb_EdgeExtension.GetUniversalEdges(selection[i].SelectedEdges, selection[i].sharedIndices).Distinct().ToArray();
 						pb_Edge[] inverse_universal = System.Array.FindAll(editor.SelectedUniversalEdges[i], x => !universal_selected_edges.Contains(x));
 						pb_Edge[] inverse = new pb_Edge[inverse_universal.Length];
 

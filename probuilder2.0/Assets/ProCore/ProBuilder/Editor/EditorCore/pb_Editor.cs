@@ -1082,7 +1082,7 @@ class pb_Editor : EditorWindow
 			{
 				pb_Tuple<pb_Face, pb_Edge> edge;
 
-				if( pb_Edge.ValidateEdge(pb, nearestEdge, out edge) )
+				if( pb_EdgeExtension.ValidateEdge(pb, nearestEdge, out edge) )
 					nearestEdge = edge.Item2;
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
@@ -1382,7 +1382,7 @@ class pb_Editor : EditorWindow
 							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
 
 							if(!occluded)
-								inSelection.Add( new pb_Edge(m_universalEdges[i][n]) );
+								inSelection.Add(m_universalEdges[i][n]);
 						}
 					}
 
@@ -1390,7 +1390,7 @@ class pb_Editor : EditorWindow
 
 					if(shiftKey || ctrlKey)
 					{
-						current = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
+						current = new HashSet<pb_Edge>(pb_EdgeExtension.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
 
 						if(dragSelectMode == DragSelectMode.Add)
 							current.UnionWith(inSelection);
@@ -2590,7 +2590,7 @@ class pb_Editor : EditorWindow
 				// profiler.EndSample();
 
 				// profiler.BeginSample("GetUniversalEdges (dictionary)");
-				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
+				m_universalEdges[i] = pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
 				// profiler.EndSample();
 			}
 			// profiler.EndSample();

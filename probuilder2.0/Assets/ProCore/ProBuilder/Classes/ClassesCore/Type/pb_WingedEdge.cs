@@ -6,20 +6,20 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	A Winged-Edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
-	 *
-	 *        /   (face)    /
-	 *  prev /             / next
-	 *      /    edge     /
-	 *     /_ _ _ _ _ _ _/
-	 *     |- - - - - - -|
-	 *     |  opposite   |
-	 *     |             |
-	 *     |             |
-	 *     |             |
-	 */
-	public class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
+	/// <summary>
+	/// A Winged-Edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
+	///
+	///        /   (face)    /
+	///  prev /             / next
+	///      /    edge     /
+	///     /_ _ _ _ _ _ _/
+	///     |- - - - - - -|
+	///     |  opposite   |
+	///     |             |
+	///     |             |
+	///     |             |
+	/// </summary>
+	class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
 	{
 		public pb_EdgeLookup edge;
 		public pb_Face face;

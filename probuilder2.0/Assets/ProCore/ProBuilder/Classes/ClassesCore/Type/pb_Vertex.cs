@@ -5,9 +5,10 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	Holds information about a single vertex, and provides methods for averaging between many.
-	 */
+	/// <summary>
+	/// Holds information about a single vertex, and provides methods for averaging between many.
+	/// <remarks>A vertex is only required to contain position, all other values are optional.</remarks>
+	/// </summary>
 	public class pb_Vertex : System.IEquatable<pb_Vertex>
 	{
 		public Vector3 position;
@@ -60,9 +61,7 @@ namespace ProBuilder2.Common
 					pb_Math.Approx4(uv4, other.uv4);
 		}
 
-		/**
-		 *	GetHashCode creates a new hashcode from position, uv0, and normal since those are the values most likely to be different.
-		 */
+		// GetHashCode creates a new hashcode from position, uv0, and normal since those are the values most likely to be different.
 		public override int GetHashCode()
 		{
 			// 783 is 27 * 29
@@ -75,9 +74,10 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	Copy constructor.
-		 */
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="v"></param>
 		public pb_Vertex(pb_Vertex v)
 		{
 			this.position 	= v.position;
@@ -98,9 +98,12 @@ namespace ProBuilder2.Common
 			this.hasUv4 	= v.hasUv4;
 		}
 
-		/**
-		 *	Addition operator overload passes on to each vector.
-		 */
+		/// <summary>
+		/// Addition operator overload passes on to each vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static pb_Vertex operator +(pb_Vertex a, pb_Vertex b)
 		{
 			pb_Vertex v = new pb_Vertex(a);
@@ -108,9 +111,10 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	In-place addition.
-		 */
+		/// <summary>
+		/// In-place addition.
+		/// </summary>
+		/// <param name="b"></param>
 		public void Add(pb_Vertex b)
 		{
 			this.position	+= b.position;
@@ -123,9 +127,12 @@ namespace ProBuilder2.Common
 			this.uv4		+= b.uv4;
 		}
 
-		/**
-		 *	Subtraction operator overload passes on to each vector.
-		 */
+		/// <summary>
+		/// Subtraction operator overload passes on to each vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static pb_Vertex operator -(pb_Vertex a, pb_Vertex b)
 		{
 			pb_Vertex v = new pb_Vertex(a);
@@ -133,9 +140,10 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	In-place subtraction.
-		 */
+		/// <summary>
+		/// In-place subtraction.
+		/// </summary>
+		/// <param name="b"></param>
 		public void Subtract(pb_Vertex b)
 		{
 			this.position	-= b.position;
@@ -148,9 +156,12 @@ namespace ProBuilder2.Common
 			this.uv4		-= b.uv4;
 		}
 
-		/**
-		 *	Multiplication operator overload passes * float to each vector.
-		 */
+		/// <summary>
+		/// Multiplication operator overload passes * float to each vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public static pb_Vertex operator *(pb_Vertex a, float value)
 		{
 			pb_Vertex v = new pb_Vertex(a);
@@ -158,9 +169,10 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	In place multiplation.
-		 */
+		/// <summary>
+		/// In place multiplication.
+		/// </summary>
+		/// <param name="value"></param>
 		public void Multiply(float value)
 		{
 			this.position	*= value;
@@ -173,9 +185,12 @@ namespace ProBuilder2.Common
 			this.uv4		*= value;
 		}
 
-		/**
-		 *	Division operator overload passes on to each vector.
-		 */
+		/// <summary>
+		/// Division operator overload passes on to each vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public static pb_Vertex operator /(pb_Vertex a, float value)
 		{
 			pb_Vertex v = new pb_Vertex(a);
@@ -183,9 +198,10 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	In place division.
-		 */
+		/// <summary>
+		/// In place division.
+		/// </summary>
+		/// <param name="value"></param>
 		public void Divide(float value)
 		{
 			this.position	/= value;
@@ -198,10 +214,9 @@ namespace ProBuilder2.Common
 			this.uv4		/= value;
 		}
 
-
-		/**
-		 *	Normalize vector values in place.
-		 */
+		/// <summary>
+		/// Normalize vector values in place.
+		/// </summary>
 		public void Normalize()
 		{
 			position.Normalize();
@@ -224,9 +239,12 @@ namespace ProBuilder2.Common
 			return this.position.ToString();
 		}
 
-		/**
-		 *	Creates a new array of pb_Vertex with the provide pb_Object data.
-		 */
+		/// <summary>
+		/// Creates a new array of pb_Vertex with the provide pb_Object data.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
 		public static pb_Vertex[] GetVertices(pb_Object pb, IList<int> indices = null)
 		{
 			int meshVertexCount = pb.vertexCount;
@@ -275,6 +293,11 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
+		/// <summary>
+		/// Creates a new array of pb_Vertex with the provide pb_Object data.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <returns></returns>
 		public static pb_Vertex[] GetVertices(Mesh m)
 		{
 			if(m == null)
@@ -326,12 +349,21 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
-		 *	or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
-		 *	this function to rebuild a mesh use SetMesh instead, as that method handles setting null
-		 *	arrays where appropriate for you.
-		 */
+		/// <summary>
+		/// Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
+		/// or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
+		/// this function to rebuild a mesh use SetMesh instead, as that method handles setting null
+		/// arrays where appropriate for you.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="position"></param>
+		/// <param name="color"></param>
+		/// <param name="uv0"></param>
+		/// <param name="normal"></param>
+		/// <param name="tangent"></param>
+		/// <param name="uv2"></param>
+		/// <param name="uv3"></param>
+		/// <param name="uv4"></param>
 		public static void GetArrays(	IList<pb_Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
@@ -345,6 +377,22 @@ namespace ProBuilder2.Common
 			GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4, AttributeType.All);
 		}
 
+		/// <summary>
+		/// Allocate and fill all mesh arrays.  This method will fill all arrays, regardless of whether
+		/// or not real data populates the values (check with hasPosition, hasNormal, etc). If you are using
+		/// this function to rebuild a mesh use SetMesh instead, as that method handles setting null
+		/// arrays where appropriate for you.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="position"></param>
+		/// <param name="color"></param>
+		/// <param name="uv0"></param>
+		/// <param name="normal"></param>
+		/// <param name="tangent"></param>
+		/// <param name="uv2"></param>
+		/// <param name="uv3"></param>
+		/// <param name="uv4"></param>
+		/// <param name="attributes"></param>
 		public static void GetArrays(	IList<pb_Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
@@ -389,10 +437,11 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	Replace mesh values with vertex array.  Mesh is cleared during this function,
-		 *	so be sure to set the triangles after calling.
-		 */
+		/// <summary>
+		/// Replace mesh values with vertex array. Mesh is cleared during this function, so be sure to set the triangles after calling.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <param name="vertices"></param>
 		public static void SetMesh(Mesh m, IList<pb_Vertex> vertices)
 		{
 			Vector3[] positions	= null;
@@ -429,9 +478,12 @@ namespace ProBuilder2.Common
 #endif
 		}
 
-		/**
-		 *	Average all vertices to a single vertex.
-		 */
+		/// <summary>
+		/// Average all vertices to a single vertex.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
 		public static pb_Vertex Average(IList<pb_Vertex> vertices, IList<int> indices = null)
 		{
 			pb_Vertex v = new pb_Vertex();
@@ -491,9 +543,13 @@ namespace ProBuilder2.Common
 			return v;
 		}
 
-		/**
-		 *	Returns a new vertex mixed between x and y.  1 is fully y, 0 is fully x.
-		 */
+		/// <summary>
+		/// Returns a new vertex mixed between x and y.  1 is fully y, 0 is fully x.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="a"></param>
+		/// <returns></returns>
 		public static pb_Vertex Mix(pb_Vertex x, pb_Vertex y, float a)
 		{
 			float i = 1f - a;

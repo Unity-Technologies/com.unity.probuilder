@@ -2,7 +2,10 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	public struct pb_IntVec3 : System.IEquatable<pb_IntVec3>
+	/// <summary>
+	/// Vertex positions are sorted as integers to avoid floating point precision errors.
+	/// </summary>
+	struct pb_IntVec3 : System.IEquatable<pb_IntVec3>
 	{
 		public Vector3 vec;
 

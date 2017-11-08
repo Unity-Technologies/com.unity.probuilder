@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	\brief Contains mesh and material information.  Used in the creation of pb_Objects.
-	 */
+	/// <summary>
+	/// Contains mesh and material information. Used in the creation of pb_Objects.
+	/// </summary>
 	[System.Serializable]
 	public class pb_Face
 	{

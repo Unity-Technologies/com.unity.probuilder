@@ -7,9 +7,10 @@ using System.Collections;
  */
 namespace ProBuilder2.Common
 {
-	/**
-	 * Element selection mode.
-	 */
+	/// <summary>
+	/// Element selection mode.
+	/// </summary>
+	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
 	[System.Flags]
 	public enum SelectMode
 	{
@@ -18,39 +19,33 @@ namespace ProBuilder2.Common
 		Face = 2
 	}
 
-	/**
-	 * The editor level - top (no pb action), geo, texture, plugin.
-	 */
+	/// <summary>
+	/// The ProBuilder edit level.
+	/// </summary>'
+	/// <remarks>Editor only, but necessary for pb_ElementGraphics.</remarks>
 	[System.Flags]
 	public enum EditLevel {
+		/// <summary>
+		/// Unity tools are in control.
+		/// </summary>
 		Top = 0,
+		/// <summary>
+		/// Geometry editing (faces, edges, vertices)
+		/// </summary>
 		Geometry = 1,
+		/// <summary>
+		/// UV editing.
+		/// </summary>
 		Texture = 2,
+		/// <summary>
+		/// Some other ProBuilder tool has control (vertex painter)
+		/// </summary>
 		Plugin = 4
 	}
 
-	public enum HandleAlignment {
-		World = 0,
-		Local = 1,
-		Plane = 2
-	}
-
-	/**
-	 * When drag selecting elements, does the shift key
-	 *	- Always add to the selection (Add)
-	 *	- Always subtract from the selection (Remove)
-	 *	- Invert the selected faces (Difference)
-	 */
-	public enum DragSelectMode
-	{
-		Add,
-		Subtract,
-		Difference
-	}
-
-	/**
-	 * Determines what GameObject flags this object will have.
-	 */
+	/// <summary>
+	/// Determines what GameObject flags this object will have.
+	/// </summary>
 	public enum EntityType {
 		Detail,
 		Occluder,
@@ -59,40 +54,47 @@ namespace ProBuilder2.Common
 		Mover
 	}
 
-	/**
-	 *	How should Unity represent selected objects?
-	 */
-	[System.Flags]
-	public enum SelectionRenderState
-	{
-		None = 0x0,
-		Wireframe = 0x1,
-		Outline = 0x2
-	}
-
-	/**
-	 * Deprecated.
-	 */
-	public enum ColliderType {
+	enum ColliderType {
 		None,
 		BoxCollider,
 		MeshCollider
 	}
 
+	/// <summary>
+	/// Axis used in projecting UVs.
+	/// </summary>
 	public enum ProjectionAxis
 	{
-		X,			// projects on x axis
-		Y,			// projects on y axis
-		Z,			// projects on z axis
+		/// <summary>
+		/// Projects on x axis.
+		/// </summary>
+		X,
+		/// <summary>
+		/// Projects on y axis.
+		/// </summary>
+		Y,
+		/// <summary>
+		/// Projects on z axis.
+		/// </summary>
+		Z,
+		/// <summary>
+		/// Projects on -x axis.
+		/// </summary>
 		X_Negative,
+		/// <summary>
+		/// Projects on -y axis.
+		/// </summary>
 		Y_Negative,
+		/// <summary>
+		/// Projects on -z axis.
+		/// </summary>
 		Z_Negative
 	}
 
-	/**
-	 * Used to generate geo.
-	 */
-	public enum Shape {
+	/// <summary>
+	/// pb_ShapeEditor enum.
+	/// </summary>
+	enum Shape {
 		Cube,
 		Stair,
 		Prism,
@@ -108,89 +110,164 @@ namespace ProBuilder2.Common
 		Custom
 	}
 
-	// !-- Todo: Replace the various other Axis enums with this
+	/// <summary>
+	/// Human readable axis enum.
+	/// </summary>
 	public enum Axis {
+		/// <summary>
+		/// X axis.
+		/// </summary>
 		Right,
+		/// <summary>
+		/// -X axis.
+		/// </summary>
 		Left,
+		/// <summary>
+		/// Y axis.
+		/// </summary>
 		Up,
+		/// <summary>
+		/// -Y axis.
+		/// </summary>
 		Down,
+		/// <summary>
+		/// Z axis.
+		/// </summary>
 		Forward,
+		/// <summary>
+		/// -Z axis.
+		/// </summary>
 		Backward
 	}
 
-	/**
-	 * Unused.
-	 */
-	public enum UV2Method {
-		Unity,
-		BinPack
-	}
-
-	/**
-	 * Describes the winding order of mesh triangles.
-	 */
+	/// <summary>
+	/// Describes the winding order of mesh triangles.
+	/// </summary>
 	public enum WindingOrder {
+		/// <summary>
+		/// Winding order could not be determined.
+		/// </summary>
 		Unknown,
+		/// <summary>
+		/// Winding is clockwise (right handed).
+		/// </summary>
 		Clockwise,
+		/// <summary>
+		/// Winding is counter-clockwise (left handed).
+		/// </summary>
 		CounterClockwise
 	}
 
-	/**
-	 *	Describes methods of sorting 2d vertices.
-	 */
+	/// <summary>
+	/// Describes methods of sorting 2d vertices.
+	/// </summary>
 	public enum SortMethod {
+		/// <summary>
+		/// Order the vertices clockwise.
+		/// </summary>
 		Clockwise,
+		/// <summary>
+		/// Order the vertices counter-clockwise.
+		/// </summary>
 		CounterClockwise
 	};
 
-	/**
-	 * Describes different culling options.
-	 */
+	/// <summary>
+	/// Describes different culling options.
+	/// </summary>
 	public enum Culling
 	{
+		/// <summary>
+		/// Back faces are culled.
+		/// </summary>
 		Back = 0x0,
+		/// <summary>
+		/// Front faces are culled.
+		/// </summary>
 		Front = 0x1,
+		/// <summary>
+		/// Both faces are culled.
+		/// </summary>
 		FrontBack = 0x2
 	}
 
-	/**
-	 * If Verify() rebuilds the pb_Object mesh, this describes the reasoning.
-	 */
+	/// <summary>
+	/// If pb_Object.Verify() rebuilds the mesh this describes the reasoning.
+	/// </summary>
 	public enum MeshRebuildReason
 	{
+		/// <summary>
+		/// The UnityEngine mesh was null.
+		/// </summary>
 		Null,
+		/// <summary>
+		/// The UnityEngine mesh id did not match the stored pb_Object id.
+		/// </summary>
 		InstanceIDMismatch,
+		/// <summary>
+		/// The mesh was not rebuilt, but is missing the UV2 channel.
+		/// </summary>
 		Lightmap,
+		/// <summary>
+		/// The mesh was not rebuilt.
+		/// </summary>
 		None
 	}
 
-	/**
-	 * Mesh attributes bit-mask.
-	 */
+	/// <summary>
+	/// Mesh attributes bitmask.
+	/// </summary>
 	[System.Flags]
 	public enum AttributeType : ushort
 	{
+		/// <summary>
+		/// Vertex positions.
+		/// </summary>
 		Position 	= 0x1,
+		/// <summary>
+		/// Vertex UV.
+		/// </summary>
 		UV0			= 0x2,
+		/// <summary>
+		/// Vertex UV2.
+		/// </summary>
 		UV1			= 0x4,
+		/// <summary>
+		/// Vertex UV3.
+		/// </summary>
 		UV2			= 0x8,
+		/// <summary>
+		/// Vertex UV4.
+		/// </summary>
 		UV3			= 0x10,
+		/// <summary>
+		/// Vertex colors.
+		/// </summary>
 		Color		= 0x20,
+		/// <summary>
+		/// Vertex normals.
+		/// </summary>
 		Normal		= 0x40,
+		/// <summary>
+		/// Vertex tangents.
+		/// </summary>
 		Tangent		= 0x80,
+		/// <summary>
+		/// All ProBuilder stored mesh attributes.
+		/// </summary>
 		All 		= 0xFF
 	};
 
-	public enum IndexFormat
+	enum IndexFormat
 	{
 		Local = 0x0,
 		Common = 0x1,
 		Both = 0x2
 	};
 
-	/**
-	 *	Selectively refresh things in pb_Object::Refresh.
-	 */
+	/// <summary>
+	/// Selectively refresh mesh attributes in pb_Object::Refresh.
+	/// </summary>
 	[System.Flags]
 	public enum RefreshMask : ushort
 	{
@@ -203,15 +280,27 @@ namespace ProBuilder2.Common
 	};
 
 	/**
-	 * Exrude the face selection by:
-	 * 	- Individual faces
+	 *
+	 * 	-
 	 *  - Vertex normal (legacy "As Group")
 	 *	- Face normal (the extrude distance corresponds to distance from face centers)
 	 */
+	/// <summary>
+	/// Different methods of face extrusion.
+	/// </summary>
 	public enum ExtrudeMethod
 	{
+		/// <summary>
+		/// Each face is extruded separately.
+		/// </summary>
 		IndividualFaces	= 0,
+		/// <summary>
+		/// Adjacent faces are merged as a group along the averaged normals.
+		/// </summary>
 		VertexNormal	= 1,
+		/// <summary>
+		/// Adjacent faces are merged as a group, but faces are extruded from each face normal.
+		/// </summary>
 		FaceNormal		= 2
 	}
 }

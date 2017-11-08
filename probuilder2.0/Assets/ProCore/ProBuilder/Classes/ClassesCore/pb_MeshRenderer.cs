@@ -10,11 +10,11 @@ namespace ProBuilder2.Common
 	 */
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
-	public class pb_MeshRenderer : pb_MonoBehaviourSingleton<pb_MeshRenderer>
+	class pb_MeshRenderer : pb_MonoBehaviourSingleton<pb_MeshRenderer>
 	{
 		[SerializeField] private HashSet<pb_Renderable> m_Renderables = new HashSet<pb_Renderable>();
 
-		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints 
+		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints
 		// and just cast to HideFlags.
 		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
 		readonly HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
@@ -35,7 +35,7 @@ namespace ProBuilder2.Common
 		void OnRenderObject()
 		{
 			// instead of relying on 'SceneCamera' string comparison, check if the hideflags match.
-			// this could probably even just check for one bit match, since chances are that any 
+			// this could probably even just check for one bit match, since chances are that any
 			// game view camera isn't going to have hideflags set.
 			if( (Camera.current.gameObject.hideFlags & SceneCameraHideFlags) != SceneCameraHideFlags || Camera.current.name != "SceneCamera" )
 				return;
@@ -72,7 +72,7 @@ namespace ProBuilder2.Common
 		void OnDestroy()
 		{
 			foreach(pb_Renderable ren in m_Renderables)
-				GameObject.DestroyImmediate(ren); 
+				GameObject.DestroyImmediate(ren);
 		}
 	}
 }

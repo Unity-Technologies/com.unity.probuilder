@@ -2,7 +2,10 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	public class pb_RaycastHit
+	/// <summary>
+	/// The results of a raycast against a pb_Object.
+	/// </summary>
+	class pb_RaycastHit
 	{
 		public float distance;
 		public Vector3 point;

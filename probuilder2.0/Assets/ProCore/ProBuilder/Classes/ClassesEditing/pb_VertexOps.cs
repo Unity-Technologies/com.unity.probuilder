@@ -277,7 +277,7 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
 			List<int> indicesToDelete		= new List<int>();
-			pb_Edge[] commonEdges	 		= pb_Edge.GetUniversalEdges(edges.ToArray(), lookup);
+			pb_Edge[] commonEdges	 		= pb_EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
 			List<pb_Edge> distinctEdges 	= commonEdges.Distinct().ToList();
 
 			Dictionary<pb_Face, pb_FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, pb_FaceRebuildData>();
@@ -287,7 +287,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(pb_Edge edge in distinctEdges)
 			{
-				pb_Edge localEdge = pb_Edge.GetLocalEdgeFast(edge, pb.sharedIndices);
+				pb_Edge localEdge = pb_EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndices);
 
 				// Generate the new vertices that will be inserted on this edge
 				List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);

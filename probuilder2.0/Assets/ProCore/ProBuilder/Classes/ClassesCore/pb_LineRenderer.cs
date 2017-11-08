@@ -10,10 +10,10 @@ namespace ProBuilder2.Common
 	 */
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
-	public class pb_LineRenderer : pb_MonoBehaviourSingleton<pb_LineRenderer>
+	class pb_LineRenderer : pb_MonoBehaviourSingleton<pb_LineRenderer>
 	{
-		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints 
-		// and just cast to HideFlags. 
+		// HideFlags.DontSaveInEditor isn't exposed for whatever reason, so do the bit math on ints
+		// and just cast to HideFlags.
 		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
 		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
 
@@ -47,7 +47,7 @@ namespace ProBuilder2.Common
 		public override void Awake()
 		{
 			base.Awake();
-			
+
 			gameObject.hideFlags = HideFlags.HideAndDontSave;
 
 			mat = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
@@ -113,14 +113,14 @@ namespace ProBuilder2.Common
 		{
 			for(int i = 0; i < gizmos.Count; i++)
 				pool.Put(gizmos[i]);
-				
+
 			gizmos.Clear();
 		}
 
 		void OnRenderObject()
 		{
 			// instead of relying on 'SceneCamera' string comparison, check if the hideflags match.
-			// this could probably even just check for one bit match, since chances are that any 
+			// this could probably even just check for one bit match, since chances are that any
 			// game view camera isn't going to have hideflags set.
 			if( mat == null || (Camera.current.gameObject.hideFlags & SceneCameraHideFlags) != SceneCameraHideFlags || Camera.current.name != "SceneCamera" )
 				return;
@@ -130,6 +130,6 @@ namespace ProBuilder2.Common
 			for(int i = 0; i < gizmos.Count && gizmos[i] != null; i++) {
 				Graphics.DrawMeshNow(gizmos[i], Vector3.zero, Quaternion.identity, 0);
 			}
-		} 
+		}
 	}
 }

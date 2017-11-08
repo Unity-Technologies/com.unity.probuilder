@@ -1,21 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace ProBuilder2.Common {
-
-	/**
-	 * A class for storing and applying Vector2 masks.
-	 */
-	public class pb_HandleConstraint2D
+namespace ProBuilder2.Common
+{
+	/// <summary>
+	/// A class for storing and applying Vector2 masks.
+	/// </summary>
+	class pb_HandleConstraint2D
 	{
 		public int x, y;
-		
+
 		public pb_HandleConstraint2D(int x, int y)
 		{
 			this.x = x;
 			this.y = y;
 		}
-		
+
 		public pb_HandleConstraint2D Inverse()
 		{
 			return new pb_HandleConstraint2D(x == 1 ? 0 : 1, y == 1 ? 0 : 1);

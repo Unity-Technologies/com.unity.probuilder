@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	A set of colors.
-	 */
+	/// <summary>
+	/// A set of colors for use in the color palette editor.
+	/// </summary>
 	[System.Serializable]
-	public class pb_ColorPalette : ScriptableObject, pb_IHasDefault
+	class pb_ColorPalette : ScriptableObject, pb_IHasDefault
 	{
 		// The currently selected color.
 		public Color current = Color.white;

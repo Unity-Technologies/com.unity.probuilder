@@ -12,10 +12,14 @@ namespace ProBuilder2.MeshOperations
 	/// </summary>
 	static class pb_MeshUtils
 	{
-		/**
-		 * Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that
-		 * accepts a dictionary lookup to  save to the cost of generating it each call.
-		 */
+		/// <summary>
+		/// Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that accepts a dictionary lookup to  save to the cost of generating it each call.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="originFace"></param>
+		/// <param name="lookup"></param>
+		/// <param name="mask"></param>
+		/// <returns></returns>
 		public static List<pb_Face> GetNeighborFaces(pb_Object pb, pb_Face originFace, Dictionary<int, int> lookup = null, IEnumerable<pb_Face> mask = null)
 		{
 			if(lookup == null)
@@ -68,7 +72,7 @@ namespace ProBuilder2.MeshOperations
 			HashSet<pb_Edge>[] universal = new HashSet<pb_Edge>[faceCount];
 
 			for(int i = 0; i < faceCount; i++)
-				universal[i] = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(faces[i].edges, sharedLookup));
+				universal[i] = new HashSet<pb_Edge>(pb_EdgeExtension.GetUniversalEdges(faces[i].edges, sharedLookup));
 
 			for(int i = 0; i < faceCount-1; i++)
 			{
@@ -160,7 +164,7 @@ namespace ProBuilder2.MeshOperations
 					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) ||
 						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
 					{
-						faces.Add(new pb_Tuple<pb_Face, pb_Edge>(pb.faces[i], new pb_Edge(edges[n])));
+						faces.Add(new pb_Tuple<pb_Face, pb_Edge>(pb.faces[i], edges[n]));
 						break;
 					}
 				}
@@ -199,11 +203,11 @@ namespace ProBuilder2.MeshOperations
 
 			pb_Edge[][] sharedEdges = new pb_Edge[len][];
 			for(int i = 0; i < len; i++)
-				sharedEdges[i] = pb_Edge.GetUniversalEdges(selEdges[i], sharedIndices).Distinct().ToArray();
+				sharedEdges[i] = pb_EdgeExtension.GetUniversalEdges(selEdges[i], sharedIndices).Distinct().ToArray();
 
 			for(int i = 0; i < pb.faces.Length; i++)
 			{
-				pb_Edge[] faceEdges = pb_Edge.GetUniversalEdges(pb.faces[i].edges, sharedIndices).Distinct().ToArray();
+				pb_Edge[] faceEdges = pb_EdgeExtension.GetUniversalEdges(pb.faces[i].edges, sharedIndices).Distinct().ToArray();
 
 				for(int j = 0; j < len; j++)
 				{
@@ -285,7 +289,7 @@ namespace ProBuilder2.MeshOperations
 			for(int i = 0; i < indices.Length; i++)
 				shared.Add(lookup[indices[i]]);
 
-			pb_Edge[] edges = pb_Edge.AllEdges(pb.faces);
+			pb_Edge[] edges = pb_EdgeExtension.AllEdges(pb.faces);
 			HashSet<pb_Edge> used = new HashSet<pb_Edge>();
 
 			pb_Edge uni = new pb_Edge(0,0);
@@ -344,11 +348,11 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static int[] GetPerimeterEdges(pb_Object pb, pb_Edge[] edges)
 		{
-			if(edges.Length == pb_Edge.AllEdges(pb.faces).Length || edges.Length < 3)
+			if(edges.Length == pb_EdgeExtension.AllEdges(pb.faces).Length || edges.Length < 3)
 				return new int[] {};
 
 			// Figure out how many connections each edge has to other edges in the selection
-			pb_Edge[] universal = pb_Edge.GetUniversalEdges(edges, pb.sharedIndices.ToDictionary());
+			pb_Edge[] universal = pb_EdgeExtension.GetUniversalEdges(edges, pb.sharedIndices.ToDictionary());
 			int[] connections = new int[universal.Length];
 
 			for(int i = 0; i < universal.Length - 1; i++)
