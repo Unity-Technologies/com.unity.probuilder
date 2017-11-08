@@ -7,7 +7,7 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class ToggleHandleAlignment : pb_MenuAction
+	class ToggleHandleAlignment : pb_MenuAction
 	{
 		[SerializeField] int count = 0;
 		[SerializeField] Texture2D[] icons = null;

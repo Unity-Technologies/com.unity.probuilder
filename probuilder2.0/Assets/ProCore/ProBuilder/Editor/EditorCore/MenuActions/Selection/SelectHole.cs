@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Actions
 {
-	public class SelectHole : pb_MenuAction
+	class SelectHole : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }

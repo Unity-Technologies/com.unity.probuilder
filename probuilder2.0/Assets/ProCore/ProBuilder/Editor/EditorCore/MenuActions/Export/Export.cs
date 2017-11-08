@@ -12,7 +12,7 @@ namespace ProBuilder2.Actions
 	/**
 	 *	Menu item and options for exporting meshes.
 	 */
-	public class Export : pb_MenuAction
+	class Export : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_Export", IconSkin.Pro); } }

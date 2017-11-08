@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class OpenVertexColorEditor : pb_MenuAction
+	class OpenVertexColorEditor : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_VertColors", IconSkin.Pro); } }

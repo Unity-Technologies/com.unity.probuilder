@@ -10,7 +10,7 @@ using System.IO;
 
 namespace ProBuilder2.Actions
 {
-	public class ExportAsset : pb_MenuAction
+	class ExportAsset : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
@@ -95,7 +95,7 @@ namespace ProBuilder2.Actions
 			string directory = Path.GetDirectoryName(path);
 			string name = Path.GetFileNameWithoutExtension(path);
 			string relativeDirectory = string.Format("Assets{0}", directory.Replace(Application.dataPath, ""));
-			
+
 			pb.ToMesh();
 			pb.Refresh();
 			pb.Optimize();

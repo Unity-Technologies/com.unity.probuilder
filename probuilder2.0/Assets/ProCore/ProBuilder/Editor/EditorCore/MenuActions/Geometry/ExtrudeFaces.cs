@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class ExtrudeFaces : pb_MenuAction
+	class ExtrudeFaces : pb_MenuAction
 	{
 		private ExtrudeMethod m_ExtrudeMethod;
 

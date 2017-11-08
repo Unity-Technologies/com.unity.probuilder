@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class CenterPivot : pb_MenuAction
+	class CenterPivot : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_CenterOnObject", IconSkin.Pro); } }

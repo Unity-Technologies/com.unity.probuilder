@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class ConnectVertices : pb_MenuAction
+	class ConnectVertices : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Vert_Connect", IconSkin.Pro); } }

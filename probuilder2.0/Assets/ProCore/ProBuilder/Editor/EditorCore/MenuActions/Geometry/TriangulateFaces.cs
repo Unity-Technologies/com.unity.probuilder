@@ -8,7 +8,7 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.Actions
 {
-	public class TriangulateFaces : pb_MenuAction
+	class TriangulateFaces : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Triangulate", IconSkin.Pro); } }

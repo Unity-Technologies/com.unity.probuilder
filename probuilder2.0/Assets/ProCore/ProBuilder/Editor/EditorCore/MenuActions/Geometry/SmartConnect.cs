@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SmartConnect : pb_MenuAction
+	class SmartConnect : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return null; } }
