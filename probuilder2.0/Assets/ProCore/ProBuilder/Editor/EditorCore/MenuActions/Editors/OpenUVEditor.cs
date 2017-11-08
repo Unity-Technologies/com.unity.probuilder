@@ -26,7 +26,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pb_UV_Editor.MenuOpenUVEditor();
+			pb_UVEditor.MenuOpenUVEditor();
 			return new pb_ActionResult(Status.Success, "Open UV Window");
 		}
 	}

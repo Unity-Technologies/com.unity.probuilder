@@ -22,7 +22,7 @@ namespace ProBuilder2.Actions
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
-					pb_Menu_Commands.VerifyShrinkSelection(selection);
+					pb_MenuCommands.VerifyShrinkSelection(selection);
 		}
 
 		public override bool IsHidden()
@@ -32,7 +32,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuShrinkSelection(selection);
+			return pb_MenuCommands.MenuShrinkSelection(selection);
 		}
 	}
 }

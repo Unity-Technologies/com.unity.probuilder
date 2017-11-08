@@ -7,19 +7,21 @@ using System.Collections;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Helper functions that are only available in the Editor.
-	 */
+	/// <summary>
+	/// Mesh editing helper functions that are only available in the Editor.
+	/// </summary>
 	public static class pb_EditorMeshUtility
 	{
 		// @todo make customizable
 		const string PB_MESH_CACHE = "Assets/ProCore/ProBuilder/ProBuilderMeshCache";
 
-		/**
-		 * Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).
-		 * Also sets the pb_Object to 'Dirty' so that changes are stored. 
-		 * Note that this is only applicable to Triangle meshes - that is, Quad meshes are not affected by this function.
-		 */
+		/// <summary>
+		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).\
+		/// This also sets the pb_Object to 'Dirty' so that changes are stored.
+		/// </summary>
+		/// <remarks>This is only applicable to Triangle meshes. Ie, Quad meshes are not affected by this function.</remarks>
+		/// <param name="InObject">The pb_Object component to be compiled.</param>
+		/// <param name="forceRebuildUV2">If Auto UV2 is off this parameter can be used to force UV2s to be built.</param>
 		public static void Optimize(this pb_Object InObject, bool forceRebuildUV2 = false)
 		{
 			Mesh mesh = InObject.msh;
@@ -91,7 +93,7 @@ namespace ProBuilder2.EditorCommon
 			EditorUtility.SetDirty(InObject);
 		}
 
-		public static void TryCacheMesh(pb_Object pb)
+		internal static void TryCacheMesh(pb_Object pb)
 		{
 			Mesh mesh = pb.msh;
 
@@ -162,7 +164,7 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		public static bool GetCachedMesh(pb_Object pb, out string path, out Mesh mesh)
+		internal static bool GetCachedMesh(pb_Object pb, out string path, out Mesh mesh)
 		{
 			string guid = pb.asset_guid;
 			path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);

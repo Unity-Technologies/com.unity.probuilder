@@ -41,7 +41,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuSplitVertices(selection);
+			return pb_MenuCommands.MenuSplitVertices(selection);
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuConnectEdges(selection);
+			return pb_MenuCommands.MenuConnectEdges(selection);
 		}
 	}
 }

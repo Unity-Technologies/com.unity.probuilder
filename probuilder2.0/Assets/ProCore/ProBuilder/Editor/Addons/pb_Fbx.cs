@@ -1,8 +1,3 @@
-/**
- * Provides some additional functionality when the FbxSdk and FbxExporter packages
- * are available in the project.
- */
-
 using UnityEngine;
 using UnityEditor;
 using ProBuilder2.Common;
@@ -18,18 +13,21 @@ using FbxExporters;
 using FbxExporters.Editor;
 #endif
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Addons.FBX
 {
-	/*
-	* Options when exporting FBX files.
-	*/
+	/// <summary>
+	/// ProBuilder-specific Options when exporting FBX files.
+	/// </summary>
 	public class pb_FbxOptions
 	{
 		public bool quads;
 	}
 
+	/// <summary>
+	/// Provides some additional functionality when the FbxSdk and FbxExporter packages are available in the project.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_Fbx
+	static class pb_Fbx
 	{
 		private static bool m_FbxIsLoaded = false;
 

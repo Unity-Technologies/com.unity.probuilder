@@ -4,6 +4,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
+	/// <summary>
+	/// Update available editor window implementation.
+	/// </summary>
 	class pb_UpdateAvailable : EditorWindow
 	{
 		public static void Init(pb_VersionInfo newVersion, string changelog)

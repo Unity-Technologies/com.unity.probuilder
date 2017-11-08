@@ -7,11 +7,11 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Helper functions for working with Unity object selection & ProBuilder element selection.
-	 */
+	/// <summary>
+	/// Helper functions for working with Unity object selection & ProBuilder element selection.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_Selection
+	static class pb_Selection
 	{
 		private static pb_Object[] selection
 		{

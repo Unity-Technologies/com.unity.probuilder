@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using ProBuilder2.EditorCommon;
 using ProBuilder2.Common;
 
-/**
- * Generic GUI utility methods used in ProBuilder windows.
- */
 namespace ProBuilder2.Interface
 {
-	public class pb_EditorGUIUtility
+	/// <summary>
+	/// Generic GUI utility methods used in ProBuilder windows.
+	/// </summary>
+	class pb_EditorGUIUtility
 	{
 		private static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin
 			? Color.green

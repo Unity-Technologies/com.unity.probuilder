@@ -9,10 +9,10 @@ using System.Reflection;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Utilities for creating and manipulating Handles and points in GUI space.  Also coordinate translations.
-	 */
-	public static class pb_EditorHandleUtility
+	/// <summary>
+	/// Utilities for creating and manipulating Handles and points in GUI space.
+	/// </summary>
+	static class pb_EditorHandleUtility
 	{
 		public static bool SceneViewInUse(Event e)
 		{

@@ -8,10 +8,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	A set of options used when exporting OBJ models.
-	 */
-	public class pb_ObjOptions
+	/// <summary>
+	/// A set of options used when exporting OBJ models.
+	/// </summary>
+	class pb_ObjOptions
 	{
 		// Coordinate system to use when exporting. Unity is left handed where most other
 		// applications are right handed.
@@ -39,11 +39,10 @@ namespace ProBuilder2.EditorCommon
 		public bool textureOffsetScale = false;
 	}
 
-	/**
-	 *	Utilities for writing mesh data to the Wavefront OBJ format.
-	 *
-	 */
-	public static class pb_Obj
+	/// <summary>
+	/// Utilities for writing mesh data to the Wavefront OBJ format.
+	/// </summary>
+	static class pb_Obj
 	{
 		/**
 	     * Standard shader defines:

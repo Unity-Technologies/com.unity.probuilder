@@ -68,7 +68,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuSubdivideEdge(selection);
+			return pb_MenuCommands.MenuSubdivideEdge(selection);
 		}
 	}
 }

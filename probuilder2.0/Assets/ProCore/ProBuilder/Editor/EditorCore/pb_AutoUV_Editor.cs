@@ -11,7 +11,10 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_AutoUV_Editor
+	/// <summary>
+	/// Custom editor for pb_UV type.
+	/// </summary>
+	class pb_AutoUV_Editor
 	{
 #if !PROTOTYPE
 #region MEMBERS

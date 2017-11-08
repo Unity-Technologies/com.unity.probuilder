@@ -5,10 +5,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Interface
 {
-	/**
-	 * Collection of commonly used styles in the editor.
-	 */
-	public static class pb_EditorStyles
+	/// <summary>
+	/// Collection of commonly used styles in the editor.
+	/// </summary>
+	static class pb_EditorStyles
 	{
 		private static readonly Color TEXT_COLOR_WHITE_NORMAL = new Color(0.82f, 0.82f, 0.82f, 1f);
 		private static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);

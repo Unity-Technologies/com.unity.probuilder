@@ -24,7 +24,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 		public override bool IsEnabled()
 		{
 			return 	pb_Editor.instance != null &&
-					pb_Menu_Commands.VerifyGrowSelection(selection);
+					pb_MenuCommands.VerifyGrowSelection(selection);
 		}
 
 		public override bool IsHidden()
@@ -76,12 +76,12 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 
 
 			if(GUILayout.Button("Grow Selection"))
-				pb_Menu_Commands.MenuGrowSelection(selection);
+				pb_MenuCommands.MenuGrowSelection(selection);
 		}
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuGrowSelection(selection);
+			return pb_MenuCommands.MenuGrowSelection(selection);
 		}
 	}
 }

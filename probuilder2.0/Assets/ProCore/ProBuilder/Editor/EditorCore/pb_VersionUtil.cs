@@ -7,11 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Contains information that the pb_AboutEntry.txt file holds.
-	 */
+	/// <summary>
+	/// Contains information that the pb_AboutEntry.txt file holds.
+	/// </summary>
 	[System.Serializable]
-	internal class pb_AboutEntry
+	class pb_AboutEntry
 	{
 		public string name;
 		public string identifier;
@@ -26,10 +26,10 @@ namespace ProBuilder2.EditorCommon
 		public const string KEY_CHANGELOG = "changelog: ";
 	}
 
-	/**
-	 *	Utility methods for finding and extracting version & changelog information.
-	 */
-	internal static class pb_VersionUtil
+	/// <summary>
+	/// Utility methods for finding and extracting version & changelog information.
+	/// </summary>
+	static class pb_VersionUtil
 	{
 		/**
 		 *	Get information from the currently installed ProBuilder version.

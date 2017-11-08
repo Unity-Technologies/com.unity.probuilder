@@ -56,7 +56,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuSetEntityType(selection, entityType);
+			return pb_MenuCommands.MenuSetEntityType(selection, entityType);
 		}
 
 		protected override bool DoAltButton(params GUILayoutOption[] options)

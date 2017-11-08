@@ -5,9 +5,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Check for updates to ProBuilder.
-	 */
+	/// <summary>
+	/// Check for updates to ProBuilder.
+	/// </summary>
 	[InitializeOnLoad]
 	static class pb_UpdateCheck
 	{

@@ -9,7 +9,7 @@ using System.Linq;
 namespace ProBuilder2.EditorCommon
 {
 	[System.Serializable]
-	public class pb_EditorToolbar : ScriptableObject
+	class pb_EditorToolbar : ScriptableObject
 	{
 		public EditorWindow window;
 

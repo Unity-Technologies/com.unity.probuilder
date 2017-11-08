@@ -76,7 +76,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuExtrude(selection, true);
+			return pb_MenuCommands.MenuExtrude(selection, true);
 		}
 	}
 }

@@ -1,5 +1,3 @@
-// #define PB_DEBUG
-
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -9,6 +7,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
+	/// <summary>
+	/// Describes icon styles for pro and basic skin, or default (whatever the editor is currently using).
+	/// </summary>
 	public enum IconSkin
 	{
 		Default,
@@ -16,7 +17,7 @@ namespace ProBuilder2.EditorCommon
 		Pro
 	};
 
-	public static class pb_IconUtility
+	static class pb_IconUtility
 	{
 		private static Dictionary<string, Texture2D> m_Icons = new Dictionary<string, Texture2D>();
 		private static string m_IconFolderPath = "Icons/";

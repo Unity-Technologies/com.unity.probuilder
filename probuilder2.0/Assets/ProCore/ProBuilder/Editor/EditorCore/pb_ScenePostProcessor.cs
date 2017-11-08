@@ -7,11 +7,10 @@ using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
-
-	/**
-	 * When building the project, remove all references to pb_Objects.
-	 */
-	public static class pb_ScenePostProcessor
+	/// <summary>
+	/// When building the project, remove all references to pb_Objects.
+	/// </summary>
+	static class pb_ScenePostProcessor
 	{
 		[PostProcessScene]
 		public static void OnPostprocessScene()

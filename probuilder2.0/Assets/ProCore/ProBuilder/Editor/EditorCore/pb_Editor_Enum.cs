@@ -1,19 +1,19 @@
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * The default tool to use when opening the vertex color editor from the pb_Editor window.
-	 */	
-	public enum VertexColorTool
+	/// <summary>
+	/// The default tool to use when opening the vertex color editor from the pb_Editor window.
+	/// </summary>
+	enum VertexColorTool
 	{
 		Palette,
 		Painter
 	}
 
-	/**
-	 * Where the sceneview toolbar sits in relation the scene view rect.
-	 */
-	public enum SceneToolbarLocation
+	/// <summary>
+	/// Where the sceneview toolbar sits in relation the scene view rect.
+	/// </summary>
+	enum SceneToolbarLocation
 	{
 		UpperCenter,
 		UpperLeft,

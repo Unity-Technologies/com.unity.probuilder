@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Utility methods for working with UnityEngine.Selection.
-	 */
-	public static class pb_SelectionUtility
+	/// <summary>
+	/// Utility methods for working with UnityEngine.Selection.
+	/// </summary>
+	static class pb_SelectionUtility
 	{
 		/**
 		 * Remove a pb_Object (or it's GameObject) from the current Selection.

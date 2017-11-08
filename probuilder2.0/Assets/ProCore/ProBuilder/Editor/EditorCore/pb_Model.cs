@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * A mesh, material and optional transform matrix combination.
-	 */
-	public class pb_Model
+	/// <summary>
+	/// A mesh, material and optional transform matrix combination.
+	/// </summary>
+	class pb_Model
 	{
 		// The name of this model.
 		public string name;

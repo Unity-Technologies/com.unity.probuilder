@@ -7,11 +7,11 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.Actions
 {
-	public class pb_UpgradeBasicToAdvanced : Editor
+	/// <summary>
+	/// Menu interface for applying materials to pb_Object after upgrading from Basic to Advanced.
+	/// </summary>
+	class pb_UpgradeBasicToAdvanced : Editor
 	{
-		/// <summary>
-		/// Menu interface for applying materials to pb_Object after upgrading from Basic to Advanced.
-		/// </summary>
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Upgrade Scene to Advanced", false, pb_Constant.MENU_REPAIR + 10)]
 		public static void MenuUpgradeSceneAdvanced()
 		{

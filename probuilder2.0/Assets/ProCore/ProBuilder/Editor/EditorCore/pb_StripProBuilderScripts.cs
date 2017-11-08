@@ -7,7 +7,10 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class pb_StripProBuilderScripts : Editor
+	/// <summary>
+	/// Menu items for stripping ProBuilder scripts from GameObjects.
+	/// </summary>
+	class pb_StripProBuilderScripts : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()

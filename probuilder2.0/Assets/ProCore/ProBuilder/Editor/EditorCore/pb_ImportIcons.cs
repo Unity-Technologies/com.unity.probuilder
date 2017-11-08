@@ -5,7 +5,10 @@ using System.Collections;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_ImportIcons : AssetPostprocessor
+	/// <summary>
+	/// Asset post processor for ProBuilder icons.
+	/// </summary>
+	class pb_ImportIcons : AssetPostprocessor
 	{
 		/**
 		 *	Automatically set the importer settings for ProBuilder icons.

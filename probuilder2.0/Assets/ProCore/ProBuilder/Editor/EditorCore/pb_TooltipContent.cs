@@ -7,9 +7,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Describes a menu action.
-	 */
+	/// <summary>
+	/// An extended tooltip for use in pb_MenuAction.
+	/// </summary>
 	[System.Serializable]
 	public class pb_TooltipContent : System.IEquatable<pb_TooltipContent>
 	{
@@ -43,12 +43,27 @@ namespace ProBuilder2.EditorCommon
 
 		static readonly Color separatorColor = new Color(.65f, .65f, .65f, .5f);
 
+		/// <summary>
+		/// The title to show in the tooltip window.
+		/// </summary>
 		public string title;
+		/// <summary>
+		/// A brief summary of what this menu action does.
+		/// </summary>
 		public string summary;
+		/// <summary>
+		/// The shortcut assigned to this menu item.
+		/// </summary>
 		public string shortcut;
 
-		public static pb_TooltipContent TempContent = new pb_TooltipContent("", "");
+		internal static pb_TooltipContent TempContent = new pb_TooltipContent("", "");
 
+		/// <summary>
+		/// Create a new tooltip.
+		/// </summary>
+		/// <param name="title"></param>
+		/// <param name="summary"></param>
+		/// <param name="shortcut"></param>
 		public pb_TooltipContent(string title, string summary, params char[] shortcut) : this(title, summary, "")
 		{
 			if(shortcut != null && shortcut.Length > 0)
@@ -58,18 +73,18 @@ namespace ProBuilder2.EditorCommon
 				for(int i = 0; i < shortcut.Length - 1; i++)
 				{
 					if( !pb_EditorUtility.IsUnix() )
-						this.shortcut += pbUtil.ControlKeyString(shortcut[i]) + " + ";		
+						this.shortcut += pbUtil.ControlKeyString(shortcut[i]) + " + ";
 					else
 						this.shortcut += shortcut[i] + " + ";
 				}
 
 				if( !pb_EditorUtility.IsUnix() )
-					this.shortcut += pbUtil.ControlKeyString(shortcut[shortcut.Length - 1]);		
+					this.shortcut += pbUtil.ControlKeyString(shortcut[shortcut.Length - 1]);
 				else
 					this.shortcut += shortcut[shortcut.Length - 1];
 			}
 		}
-		
+
 		public pb_TooltipContent(string title, string summary, string shortcut = "")
 		{
 			this.title = title;
@@ -77,7 +92,11 @@ namespace ProBuilder2.EditorCommon
 			this.shortcut = shortcut;
 		}
 
-		public Vector2 CalcSize()
+		/// <summary>
+		/// Get the size required in GUI space to render this tooltip.
+		/// </summary>
+		/// <returns></returns>
+		internal Vector2 CalcSize()
 		{
 			const float pad = 8;
 			Vector2 total = new Vector2(MIN_WIDTH, MIN_HEIGHT);
@@ -120,7 +139,7 @@ namespace ProBuilder2.EditorCommon
 			return total;
 		}
 
-		public void Draw(bool hideShortcutText = false)
+		internal void Draw(bool hideShortcutText = false)
 		{
 			if(!string.IsNullOrEmpty(title))
 			{

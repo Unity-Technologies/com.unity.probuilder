@@ -8,7 +8,10 @@ using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_SmoothGroupEditor : EditorWindow
+	/// <summary>
+	/// Smoothing groups editor window.
+	/// </summary>
+	class pb_SmoothGroupEditor : EditorWindow
 	{
 		private class SmoothGroupData
 		{

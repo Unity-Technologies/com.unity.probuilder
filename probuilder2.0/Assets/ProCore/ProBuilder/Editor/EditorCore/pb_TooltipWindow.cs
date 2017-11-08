@@ -6,7 +6,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_TooltipWindow : EditorWindow
+	/// <summary>
+	/// Tooltip window implementation.
+	/// </summary>
+	class pb_TooltipWindow : EditorWindow
 	{
 		static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
 		const int POSITION_PADDING = 4;
@@ -23,7 +26,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					_proOnlyStyle = new GUIStyle(EditorStyles.largeLabel);
 					Color c = _proOnlyStyle.normal.textColor;
-					c.a = .20f; 
+					c.a = .20f;
 					_proOnlyStyle.normal.textColor = c;
 					_proOnlyStyle.fontStyle = FontStyle.Bold;
 					_proOnlyStyle.alignment = TextAnchor.UpperRight;

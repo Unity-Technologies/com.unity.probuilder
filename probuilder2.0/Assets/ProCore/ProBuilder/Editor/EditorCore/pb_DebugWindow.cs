@@ -12,10 +12,10 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Debugging menu items for ProBuilder.
-	 */
-	public class pb_DebugWindow : EditorWindow
+	/// <summary>
+	/// Debugging menu items for ProBuilder.
+	/// </summary>
+	class pb_DebugWindow : EditorWindow
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;

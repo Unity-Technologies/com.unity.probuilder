@@ -12,7 +12,7 @@ namespace ProBuilder2.EditorCommon
 	/// <summary>
 	/// Common troubleshooting actions for repairing ProBuilder meshes.
 	/// </summary>
-	public static class pb_RepairActions
+	static class pb_RepairActions
 	{
 		/// <summary>
 		/// Menu interface for manually re-generating all ProBuilder geometry in scene.

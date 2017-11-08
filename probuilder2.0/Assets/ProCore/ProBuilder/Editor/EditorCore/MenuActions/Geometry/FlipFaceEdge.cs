@@ -37,7 +37,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuFlipEdges(selection);
+			return pb_MenuCommands.MenuFlipEdges(selection);
 		}
 	}
 }

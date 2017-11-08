@@ -28,7 +28,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pb_Geometry_Interface.MenuOpenShapeCreator();
+			pb_ShapeEditor.MenuOpenShapeCreator();
 			return new pb_ActionResult(Status.Success, "Open Shape Tool");
 		}
 	}

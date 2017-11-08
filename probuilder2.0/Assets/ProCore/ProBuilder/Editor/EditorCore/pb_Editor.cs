@@ -9,7 +9,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
-public class pb_Editor : EditorWindow
+class pb_Editor : EditorWindow
 {
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
@@ -195,9 +195,9 @@ public class pb_Editor : EditorWindow
 		pref_backfaceSelect = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 		pref_hamSelection	= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
-		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
-		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
+		pref_snapEnabled 	= pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue		= pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 
 		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_PreferencesInternal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -231,7 +231,7 @@ public class pb_Editor : EditorWindow
 		if( OnSelectionUpdate != null )
 			OnSelectionUpdate(null);
 
-		pb_ProGrids_Interface.UnsubscribePushToGridEvent(PushToGrid);
+		pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
@@ -278,8 +278,8 @@ public class pb_Editor : EditorWindow
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		// Undo.postprocessModifications += PostprocessModifications;
 
-		pb_ProGrids_Interface.SubscribePushToGridEvent(PushToGrid);
-		pb_ProGrids_Interface.SubscribeToolbarEvent(ProGridsToolbarOpen);
+		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
+		pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 	}
 #endregion
 
@@ -648,8 +648,8 @@ public class pb_Editor : EditorWindow
 				if(!dragging)
 				{
 #if !PROTOTYPE
-					if(pb_UV_Editor.instance)
-						pb_UV_Editor.instance.ResetUserPivot();
+					if(pb_UVEditor.instance)
+						pb_UVEditor.instance.ResetUserPivot();
 #endif
 
 					RaycastCheck(currentEvent.mousePosition);
@@ -659,8 +659,8 @@ public class pb_Editor : EditorWindow
 					dragging = false;
 					readyForMouseDrag = false;
 #if !PROTOTYPE
-					if(pb_UV_Editor.instance)
-						pb_UV_Editor.instance.ResetUserPivot();
+					if(pb_UVEditor.instance)
+						pb_UVEditor.instance.ResetUserPivot();
 #endif
 
 					DragCheck();
@@ -678,18 +678,18 @@ public class pb_Editor : EditorWindow
 			if (selectionMode == SelectMode.Edge)
 			{
 				if (e.shift)
-					pb_Menu_Commands.MenuRingSelection(selection);
+					pb_MenuCommands.MenuRingSelection(selection);
 				else
-					pb_Menu_Commands.MenuLoopSelection(selection);
+					pb_MenuCommands.MenuLoopSelection(selection);
 			}
 			else if(selectionMode == SelectMode.Face)
 			{
 				if((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) == (EventModifiers.Control | EventModifiers.Shift))
-					pb_Menu_Commands.MenuRingAndLoopFaces(selection);
+					pb_MenuCommands.MenuRingAndLoopFaces(selection);
 				else if(e.control)
-					pb_Menu_Commands.MenuRingFaces(selection);
+					pb_MenuCommands.MenuRingFaces(selection);
 				else if(e.shift)
-					pb_Menu_Commands.MenuLoopFaces(selection);
+					pb_MenuCommands.MenuLoopFaces(selection);
 				else
 					pb.SetSelectedFaces(pb.faces);
 			}
@@ -905,11 +905,11 @@ public class pb_Editor : EditorWindow
 
 #if !PROTOTYPE
 					// Check for other editor mouse shortcuts first
-					pb_Material_Editor matEditor = pb_Material_Editor.instance;
+					pb_MaterialEditor matEditor = pb_MaterialEditor.instance;
 					if( matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pickedPb, pickedFace) )
 						return pickedPb;
 
-					pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+					pb_UVEditor uvEditor = pb_UVEditor.instance;
 					if(uvEditor != null && uvEditor.ClickShortcutCheck(pickedPb, pickedFace))
 						return pickedPb;
 #endif
@@ -1548,7 +1548,7 @@ public class pb_Editor : EditorWindow
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
-				pb_ProGrids_Interface.OnHandleMove(mask);
+				pb_ProGridsInterface.OnHandleMove(mask);
 			}
 
 			for(int i = 0; i < selection.Length; i++)
@@ -1852,7 +1852,7 @@ public class pb_Editor : EditorWindow
 
 	private void TextureMoveTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		Vector3 cached = textureHandle;
@@ -1885,7 +1885,7 @@ public class pb_Editor : EditorWindow
 	Quaternion textureRotation = Quaternion.identity;
 	private void TextureRotateTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
@@ -1914,7 +1914,7 @@ public class pb_Editor : EditorWindow
 
 	private void TextureScaleTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
@@ -2264,23 +2264,23 @@ public class pb_Editor : EditorWindow
 		{
 			/* ENTITY TYPES */
 			case "Set Trigger":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Trigger);
 				return true;
 
 			case "Set Occluder":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Occluder);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Occluder);
 				return true;
 
 			case "Set Collider":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Collider);
 				return true;
 
 			case "Set Mover":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Mover);
 				return true;
 
 			case "Set Detail":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Detail);
 				return true;
 
 			default:
@@ -2323,7 +2323,7 @@ public class pb_Editor : EditorWindow
 				return true;
 
 			case "Delete Face":
-				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuDeleteFace(selection).notification);
+				pb_EditorUtility.ShowNotification(pb_MenuCommands.MenuDeleteFace(selection).notification);
 				return true;
 
 			/* handle alignment */
@@ -2383,8 +2383,8 @@ public class pb_Editor : EditorWindow
 		SetTool(newTool);
 
 #if !PROTOTYPE
-		if(pb_UV_Editor.instance != null)
-			pb_UV_Editor.instance.SetTool(newTool);
+		if(pb_UVEditor.instance != null)
+			pb_UVEditor.instance.SetTool(newTool);
 #endif
 	}
 
@@ -2951,7 +2951,7 @@ public class pb_Editor : EditorWindow
 
 			int[] indices = pb.SelectedTriangleCount > 0 ? pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray() : pb.msh.triangles;
 
-			pbVertexOps.Quantize(pb, indices, Vector3.one * snapVal);
+			pb_VertexOps.Quantize(pb, indices, Vector3.one * snapVal);
 
 			pb.ToMesh();
 			pb.Refresh();
@@ -2963,7 +2963,7 @@ public class pb_Editor : EditorWindow
 
 	private void ProGridsToolbarOpen(bool menuOpen)
 	{
-		bool active = pb_ProGrids_Interface.ProGridsActive();
+		bool active = pb_ProGridsInterface.ProGridsActive();
 		sceneInfoRect.y = active && !menuOpen ? 28 : 10;
 		sceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
 	}
@@ -3002,9 +3002,9 @@ public class pb_Editor : EditorWindow
 				break;
 		}
 
-		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
-		pref_snapValue = pb_ProGrids_Interface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
+		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue = pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();
@@ -3032,8 +3032,8 @@ public class pb_Editor : EditorWindow
 #if !PROTOTYPE
 		if(movingPictures)
 		{
-			if(pb_UV_Editor.instance != null)
-				pb_UV_Editor.instance.OnFinishUVModification();
+			if(pb_UVEditor.instance != null)
+				pb_UVEditor.instance.OnFinishUVModification();
 
 			UpdateTextureHandles();
 

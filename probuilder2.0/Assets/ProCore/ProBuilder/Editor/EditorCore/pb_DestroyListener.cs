@@ -6,10 +6,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Static singleton listens for pb_Object::OnDestroy events and deletes or ignores meshes
-	 * depending on whether or not the mesh is an asset.
-	 */
+	/// <summary>
+	/// Listens for pb_Object::OnDestroy events and deletes or ignores meshes depending on whether or not the mesh is an asset.
+	/// </summary>
 	[InitializeOnLoad]
 	static class pb_DestroyListener
 	{

@@ -41,11 +41,11 @@ namespace ProBuilder2.Actions
 			switch(pb_Editor.instance.selectionMode)
 			{
 				case SelectMode.Vertex:
-					return pb_Menu_Commands.MenuConnectVertices(selection);
+					return pb_MenuCommands.MenuConnectVertices(selection);
 
 				case SelectMode.Edge:
 				default:
-					return pb_Menu_Commands.MenuConnectEdges(selection);
+					return pb_MenuCommands.MenuConnectEdges(selection);
 
 				// default:
 				// 	return pb_Menu_Commands.MenuSubdivideFace(selection);

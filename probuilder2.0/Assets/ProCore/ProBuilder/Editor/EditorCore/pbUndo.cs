@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * A wrapper around Unity Undo calls.  Used for debugging and (previously) version compatibility.
-	 */
-	public class pbUndo
+	/// <summary>
+	/// A wrapper around Unity Undo calls.  Used for debugging and (previously) version compatibility.
+	/// </summary>
+	static class pbUndo
 	{
 		/**
 		 * Since Undo calls can potentially hang the main thread, store states when the diff

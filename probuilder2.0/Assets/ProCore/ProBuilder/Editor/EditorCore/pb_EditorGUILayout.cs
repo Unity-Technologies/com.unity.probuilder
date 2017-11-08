@@ -3,10 +3,10 @@ using UnityEditor;
 
 namespace ProBuilder2.Interface
 {
-	/**
-	 * Additional GUI functions for Editor use.
-	 */
-	public static class pb_EditorGUILayout
+	/// <summary>
+	/// Additional GUI functions for Editor use.
+	/// </summary>
+	static class pb_EditorGUILayout
 	{
 		private static bool m_RowToggle = true;
 		private static readonly Color RowOddColor = new Color(.45f, .45f, .45f, .2f);

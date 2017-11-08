@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_EditorToolbarMenuItems : Editor
+	static class pb_EditorToolbarMenuItems
 	{
 
 #if PROTOTYPE

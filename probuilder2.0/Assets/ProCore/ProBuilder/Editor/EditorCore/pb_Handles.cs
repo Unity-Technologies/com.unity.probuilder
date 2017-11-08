@@ -15,10 +15,10 @@ using UnityEditor;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Wrap UnityEngine.Handles class functions for backwards compatibility.
-	 */
-	public static class pb_Handles
+	/// <summary>
+	/// Wrap UnityEngine.Handles class functions for backwards compatibility.
+	/// </summary>
+	static class pb_Handles
 	{
 		/**
 		 *	Draw a button rendered with Dot Cap.

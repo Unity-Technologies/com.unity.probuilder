@@ -26,7 +26,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuSubdivide(selection);
+			return pb_MenuCommands.MenuSubdivide(selection);
 		}
 	}
 }

@@ -8,7 +8,7 @@ using ProBuilder2.Interface;
 namespace ProBuilder2.EditorCommon
 {
 	[CustomEditor(typeof(pb_BezierShape))]
-	public class pb_BezierSplineTool : Editor
+	class pb_BezierSplineTool : Editor
 	{
 #if !PROTOTYPE
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
@@ -348,7 +348,7 @@ namespace ProBuilder2.EditorCommon
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
 
-			if( pb_ProGrids_Interface.GetProGridsType() != null )
+			if( pb_ProGridsInterface.GetProGridsType() != null )
 				m_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", m_SnapTangents);
 		}
 
@@ -452,7 +452,7 @@ namespace ProBuilder2.EditorCommon
 							if(!m_IsMoving)
 								OnBeginVertexModification();
 
-							prev = pb_ProGrids_Interface.ProGridsSnap(prev);
+							prev = pb_ProGridsInterface.ProGridsSnap(prev);
 
 							Vector3 dir = prev - point.position;
 							point.position = prev;
@@ -486,7 +486,7 @@ namespace ProBuilder2.EditorCommon
 									OnBeginVertexModification();
 
 								if(m_SnapTangents)
-									point.tangentIn = pb_ProGrids_Interface.ProGridsSnap(point.tangentIn);
+									point.tangentIn = pb_ProGridsInterface.ProGridsSnap(point.tangentIn);
 
 								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 							}
@@ -504,7 +504,7 @@ namespace ProBuilder2.EditorCommon
 									OnBeginVertexModification();
 
 								if(m_SnapTangents)
-									point.tangentOut = pb_ProGrids_Interface.ProGridsSnap(point.tangentOut);
+									point.tangentOut = pb_ProGridsInterface.ProGridsSnap(point.tangentOut);
 
 								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 							}
@@ -554,7 +554,7 @@ namespace ProBuilder2.EditorCommon
 						if(!m_IsMoving)
 							OnBeginVertexModification();
 
-						point.SetPosition( pb_ProGrids_Interface.ProGridsSnap(prev) );
+						point.SetPosition( pb_ProGridsInterface.ProGridsSnap(prev) );
 					}
 				}
 
@@ -587,7 +587,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentIn = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
+							point.tangentIn = m_SnapTangents ? pb_ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 						}
 					}
@@ -619,7 +619,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentOut = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
+							point.tangentOut = m_SnapTangents ? pb_ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 						}
 					}

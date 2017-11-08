@@ -7,7 +7,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class NewPolyShape : pb_MenuAction
+	class NewPolyShape : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
@@ -48,7 +48,7 @@ namespace ProBuilder2.Actions
 
 			Vector3 pivot;
 
-			if(pb_ProGrids_Interface.GetPivot(out pivot))
+			if(pb_ProGridsInterface.GetPivot(out pivot))
 				go.transform.position = pivot;
 
 			return new pb_ActionResult(Status.Success, "Create Poly Shape");

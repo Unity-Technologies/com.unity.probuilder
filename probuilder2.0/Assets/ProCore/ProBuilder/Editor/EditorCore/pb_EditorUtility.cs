@@ -14,11 +14,10 @@ using ProBuilder2.Actions;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Utilities for working in Unity editor.  Showing notifications in windows, getting the sceneview,
-	 * setting EntityTypes, OBJ export, etc.
-	 */
-	public static class pb_EditorUtility
+	/// <summary>
+	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
+	/// </summary>
+	static class pb_EditorUtility
 	{
 		const float TIMER_DISPLAY_TIME = 1f;
 		private static float notifTimer = 0f;
@@ -542,8 +541,8 @@ namespace ProBuilder2.EditorCommon
 			else
 				pb.CenterPivot(indicesToCenterPivot);
 
-			if(pb_ProGrids_Interface.SnapEnabled())
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
+			if(pb_ProGridsInterface.SnapEnabled())
+				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGridsInterface.SnapValue());
 			else
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);

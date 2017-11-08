@@ -2,55 +2,78 @@
 using UnityEditor;
 using System.Collections;
 
-public class pb_ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
+namespace ProBuilder2.EditorCommon
 {
-	protected static pb_ISceneEditor instance;
-
-	public static pb_ISceneEditor Create<T>() where T : pb_ISceneEditor
+	class pb_ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
 	{
-		if( instance != null )
+		protected static pb_ISceneEditor instance;
+
+		public static pb_ISceneEditor Create<T>() where T : pb_ISceneEditor
+		{
+			if (instance != null)
+				return instance;
+
+			instance = ScriptableObject.CreateInstance<T>();
+			instance.hideFlags = HideFlags.DontSave;
+
+			SceneView.onSceneGUIDelegate += instance.OnSceneGUI;
+			Undo.undoRedoPerformed += instance.UndoRedoPerformed;
+
+			EditorApplication.delayCall += instance.OnInitialize;
+
+			SceneView.RepaintAll();
+
 			return instance;
+		}
 
-		instance = ScriptableObject.CreateInstance<T>();
-		instance.hideFlags = HideFlags.DontSave;
+		public void Close()
+		{
+			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			Undo.undoRedoPerformed -= UndoRedoPerformed;
 
-		SceneView.onSceneGUIDelegate += instance.OnSceneGUI;
-		Undo.undoRedoPerformed += instance.UndoRedoPerformed;
+			instance.OnDestroy();
 
-		EditorApplication.delayCall += instance.OnInitialize;
+			instance = null;
+			GameObject.DestroyImmediate(this);
+			SceneView.RepaintAll();
+		}
 
-		SceneView.RepaintAll();
-		
-		return instance;
-	}	
+		public void OnBeforeSerialize()
+		{
+			OnSerialize();
+		}
 
-	public void Close()
-	{
-		SceneView.onSceneGUIDelegate -= OnSceneGUI;
-		Undo.undoRedoPerformed -= UndoRedoPerformed;
-		
-		instance.OnDestroy();
+		public void OnAfterDeserialize()
+		{
+			instance = this;
+			SceneView.onSceneGUIDelegate += OnSceneGUI;
+			Undo.undoRedoPerformed += UndoRedoPerformed;
+			OnDeserialize();
+			SceneView.RepaintAll();
+		}
 
-		instance = null;
-		GameObject.DestroyImmediate(this);	
-		SceneView.RepaintAll();
+		public virtual void OnInitialize()
+		{
+		}
+
+		public virtual void OnDestroy()
+		{
+		}
+
+		public virtual void OnSerialize()
+		{
+		}
+
+		public virtual void OnDeserialize()
+		{
+		}
+
+		public virtual void OnSceneGUI(SceneView scnview)
+		{
+		}
+
+		public virtual void UndoRedoPerformed()
+		{
+		}
 	}
-
-	public void OnBeforeSerialize() { OnSerialize(); }
-	
-	public void OnAfterDeserialize() 
-	{
-		instance = this;
-		SceneView.onSceneGUIDelegate += OnSceneGUI;
-		Undo.undoRedoPerformed += UndoRedoPerformed;
-		OnDeserialize();
-		SceneView.RepaintAll();
-	}
-
-	public virtual void OnInitialize() {}
-	public virtual void OnDestroy() {}
-	public virtual void OnSerialize() {}
-	public virtual void OnDeserialize() {}
-	public virtual void OnSceneGUI(SceneView scnview) {}
-	public virtual void UndoRedoPerformed() {}
 }

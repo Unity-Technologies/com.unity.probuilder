@@ -31,7 +31,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pb_Menu_Commands.MenuOpenVertexColorsEditor();
+			pb_MenuCommands.MenuOpenVertexColorsEditor();
 			return new pb_ActionResult(Status.Success, "Open Vertex Color Window");
 		}
 
@@ -50,7 +50,7 @@ namespace ProBuilder2.Actions
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Open Vertex Editor"))
-				pb_Menu_Commands.MenuOpenVertexColorsEditor();
+				pb_MenuCommands.MenuOpenVertexColorsEditor();
 		}
 	}
 }
