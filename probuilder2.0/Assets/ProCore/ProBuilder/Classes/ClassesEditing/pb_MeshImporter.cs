@@ -6,14 +6,13 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 * Import UnityEngine.Mesh and other sources (someday) to pb_Object.
-	 */
-	public class pb_MeshImporter
+	/// <summary>
+	/// Import UnityEngine.Mesh and other sources (someday) to pb_Object.
+	/// </summary>
+	class pb_MeshImporter
 	{
 		public class Settings
 		{
-
 			// Try to quadrangilize triangle meshes.
 			public bool quads = true;
 

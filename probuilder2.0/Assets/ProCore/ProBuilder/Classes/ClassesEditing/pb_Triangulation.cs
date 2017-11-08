@@ -3,20 +3,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-
-// using TMesh = TriangleNet.Mesh;
-// using TriangleNet;
-// using TriangleNet.Data;
-// using TriangleNet.Geometry;
 using Poly2Tri;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Wrapper around Triangle.NET triangulation methods.
-	 *	https://github.com/zon/triangle
-	 */
-	public static class pb_Triangulation
+	/// <summary>
+	/// Wrapper around Triangle.NET triangulation methods. https://github.com/zon/triangle
+	/// </summary>
+	static class pb_Triangulation
 	{
 		/**
 		 *	Given a set of points this method will format the points into a boundary contour and triangulate,
@@ -106,11 +100,11 @@ namespace ProBuilder2.MeshOperations
 				indices.Add( d.Points[2].Index );
 			}
 
-			WindingOrder originalWinding = pbTriangleOps.GetWindingOrder(points);
+			WindingOrder originalWinding = pb_TriangleOps.GetWindingOrder(points);
 
 			// // if the re-triangulated first tri doesn't match the winding order of the original
 			// // vertices, flip 'em
-			if( pbTriangleOps.GetWindingOrder(new Vector2[3]{
+			if( pb_TriangleOps.GetWindingOrder(new Vector2[3]{
 				points[indices[0]],
 				points[indices[1]],
 				points[indices[2]],

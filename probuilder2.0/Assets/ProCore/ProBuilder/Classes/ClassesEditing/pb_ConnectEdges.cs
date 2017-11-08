@@ -6,10 +6,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-
-	/**
-	 * Store face rebuild data with indices to mark which vertices are new.
-	 */
+	/// <summary>
+	/// Store face rebuild data with indices to mark which vertices are new.
+	/// </summary>
 	class ConnectFaceRebuildData
 	{
 		public pb_FaceRebuildData faceRebuildData;
@@ -22,14 +21,18 @@ namespace ProBuilder2.MeshOperations
 		}
 	};
 
-	/**
-	 *	Utility class for connecting edges.
-	 */
+	/// <summary>
+	/// Utility class for connecting edges.
+	/// </summary>
 	public static class pb_ConnectEdges
 	{
-		/**
-		 *	Subdivide faces.
-		 */
+		/// <summary>
+		/// Subdivide faces.
+		/// </summary>
+		/// <param name="pb">pb_Object target.</param>
+		/// <param name="faces">The faces to subdivide (more accurately, poke).</param>
+		/// <param name="subdividedFaces">The resulting faces.</param>
+		/// <returns>An action result indicating the status of the operation.</returns>
 		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Face> faces, out pb_Face[] subdividedFaces)
 		{
 			IEnumerable<pb_Edge> edges = faces.SelectMany(x => x.edges);
@@ -50,10 +53,18 @@ namespace ProBuilder2.MeshOperations
 			return Connect(pb, edges, out empty, out connections, false, true);
 		}
 
-		/**
-		 *	Inserts new edges connecting the passed edges, optionally restricting new edge insertion to faces in faceMask.
-		 */
-		private static pb_ActionResult Connect(
+		/// <summary>
+		/// Inserts new edges connecting the passed edges, optionally restricting new edge insertion to faces in faceMask.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edges"></param>
+		/// <param name="addedFaces"></param>
+		/// <param name="connections"></param>
+		/// <param name="returnFaces"></param>
+		/// <param name="returnEdges"></param>
+		/// <param name="faceMask"></param>
+		/// <returns></returns>
+		static pb_ActionResult Connect(
 			this pb_Object pb,
 			IEnumerable<pb_Edge> edges,
 			out pb_Face[] addedFaces,
@@ -151,7 +162,7 @@ namespace ProBuilder2.MeshOperations
 					foreach(ConnectFaceRebuildData c in res)
 					{
 						connectedFaces.Add(c.faceRebuildData.face);
-	
+
 						Vector3 fn = pb_Math.Normal(c.faceRebuildData.vertices, c.faceRebuildData.face.indices);
 
 						if(Vector3.Dot(nrm, fn) < 0)
@@ -204,10 +215,15 @@ namespace ProBuilder2.MeshOperations
 			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count));
 		}
 
-		/**
-		 *	Accepts a face and set of edges to split on.
-		 */
-		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
+		/// <summary>
+		/// Accepts a face and set of edges to split on.
+		/// </summary>
+		/// <param name="face"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="vertices"></param>
+		/// <returns></returns>
+		static List<ConnectFaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,
 			pb_WingedEdge a,
 			pb_WingedEdge b,
@@ -255,10 +271,14 @@ namespace ProBuilder2.MeshOperations
 			return faces;
 		}
 
-		/**
-		 * Insert a new vertex at the center of a face and connect the center of all edges to it.
-		 */
-		private static List<ConnectFaceRebuildData> ConnectEdgesInFace(
+		/// <summary>
+		/// Insert a new vertex at the center of a face and connect the center of all edges to it.
+		/// </summary>
+		/// <param name="face"></param>
+		/// <param name="edges"></param>
+		/// <param name="vertices"></param>
+		/// <returns></returns>
+		static List<ConnectFaceRebuildData> ConnectEdgesInFace(
 			pb_Face face,
 			List<pb_WingedEdge> edges,
 			List<pb_Vertex> vertices)
@@ -312,7 +332,7 @@ namespace ProBuilder2.MeshOperations
 			return faces;
 		}
 
-		private static ConnectFaceRebuildData InsertVertices(pb_Face face, List<pb_WingedEdge> edges, List<pb_Vertex> vertices)
+		static ConnectFaceRebuildData InsertVertices(pb_Face face, List<pb_WingedEdge> edges, List<pb_Vertex> vertices)
 		{
 			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 			List<pb_Vertex> n_vertices = new List<pb_Vertex>();

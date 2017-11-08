@@ -4,16 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
 
-/**
- *	Used to query pb_Objects for more detailed information than what would belong in the pbObejct class
- */
 namespace ProBuilder2.MeshOperations
 {
-	public class pbMeshUtils
+	/// <summary>
+	/// Used to query pb_Objects for more detailed information than what would belong in the pbObejct class
+	/// <remarks>These functions are generally superceded by other more specific classes (ex, pb_FaceLoop), or very slow and in need of a refactor. Prefer not to use this class where possible.</remarks>
+	/// </summary>
+	static class pb_MeshUtils
 	{
-#region Get Connected Elements
-
-	#region FACE
 		/**
 		 * Returns all faces that share an edge with originFace.  If calling multiple times, use the variation that
 		 * accepts a dictionary lookup to  save to the cost of generating it each call.
@@ -103,7 +101,7 @@ namespace ProBuilder2.MeshOperations
 		{
 			List<pb_Face> perimeterFaces = new List<pb_Face>();
 
-			pb_Edge[] perimeterEdges = pbMeshUtils.GetPerimeterEdges(sharedIndicesLookup, selFaces).ToArray();
+			pb_Edge[] perimeterEdges = pb_MeshUtils.GetPerimeterEdges(sharedIndicesLookup, selFaces).ToArray();
 			pb_Edge[] universalEdges = new pb_Edge[perimeterEdges.Length];
 
 			for(int i = 0; i < perimeterEdges.Length; i++)
@@ -137,9 +135,6 @@ namespace ProBuilder2.MeshOperations
 
 			return perimeterFaces.ToArray();
 		}
-	#endregion
-
-	#region EDGE
 
 		/**
 		 *	Returns a list of pb_Tuple<pb_Face, pb_Edge> where each face is connected to the passed edge.
@@ -188,8 +183,7 @@ namespace ProBuilder2.MeshOperations
 			return faces.Distinct().ToArray();
 		}
 
-
-		internal static List<pb_Face>[][] GetNeighborFacesJagged(pb_Object pb, pb_Edge[][] selEdges)
+		static List<pb_Face>[][] GetNeighborFacesJagged(pb_Object pb, pb_Edge[][] selEdges)
 		{
 			int len = selEdges.Length;
 
@@ -230,9 +224,6 @@ namespace ProBuilder2.MeshOperations
 
 			return faces;
 		}
-	#endregion
-
-	#region VERTICES
 
 		/**
 		 *	Returns all faces connected to the passed vertex index.
@@ -312,10 +303,6 @@ namespace ProBuilder2.MeshOperations
 
 			return connectedEdges.ToArray();
 		}
-	#endregion
-#endregion
-
-#region Perimeter
 
 		/**
 		 * Get all edges that are on the perimeter of this face group selection.
@@ -453,9 +440,6 @@ namespace ProBuilder2.MeshOperations
 
 			return perimeter.Count < len ? perimeter.ToArray() : new int[] {};
 		}
-#endregion
-
-#region Edge Ring / Loop
 
 		private static pb_WingedEdge EdgeRingNext(pb_WingedEdge edge)
 		{
@@ -644,6 +628,5 @@ namespace ProBuilder2.MeshOperations
 
 			return spokes;
 		}
-#endregion
 	}
 }

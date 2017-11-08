@@ -2638,7 +2638,7 @@ class pb_Editor : EditorWindow
 				}
 			}
 
-			SelectedFacesInEditZone.Add(pb, pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList() );
+			SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList() );
 
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
 			selectedFaceCount += selection[i].SelectedFaceCount;

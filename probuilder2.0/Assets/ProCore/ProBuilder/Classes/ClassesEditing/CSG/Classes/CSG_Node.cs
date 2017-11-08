@@ -6,7 +6,7 @@ using ProBuilder2.Common;
 
 namespace Parabox.CSG
 {
-	internal class CSG_Node
+	class CSG_Node
 	{
 		public List<CSG_Polygon> polygons;
 
@@ -63,7 +63,7 @@ namespace Parabox.CSG
 
 		// Convert solid space to empty space and empty space to solid space.
 		public void Invert()
-		{	
+		{
 			for (int i = 0; i < this.polygons.Count; i++)
 				this.polygons[i].Flip();
 
@@ -107,12 +107,12 @@ namespace Parabox.CSG
 			List<CSG_Polygon> list_front = new List<CSG_Polygon>();
 			List<CSG_Polygon> list_back = new List<CSG_Polygon>();
 
-			for (int i = 0; i < list.Count; i++) 
+			for (int i = 0; i < list.Count; i++)
 			{
 				this.plane.SplitPolygon(list[i], this.polygons, this.polygons, list_front, list_back);
 			}
 
-			if (list_front.Count > 0) 
+			if (list_front.Count > 0)
 			{
 				if (this.front == null)
 					this.front = new CSG_Node();
@@ -120,7 +120,7 @@ namespace Parabox.CSG
 				this.front.Build(list_front);
 			}
 
-			if (list_back.Count > 0) 
+			if (list_back.Count > 0)
 			{
 				if (this.back == null)
 					this.back = new CSG_Node();
@@ -139,7 +139,7 @@ namespace Parabox.CSG
 			}
 
 			List<CSG_Polygon> list_front = new List<CSG_Polygon>();
-			List<CSG_Polygon> list_back = new List<CSG_Polygon>();	
+			List<CSG_Polygon> list_back = new List<CSG_Polygon>();
 
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -159,7 +159,7 @@ namespace Parabox.CSG
 			{
 				list_back.Clear();
 			}
-			
+
 			// Position [First, Last]
 			// list_front.insert(list_front.end(), list_back.begin(), list_back.end());
 			list_front.AddRange(list_back);

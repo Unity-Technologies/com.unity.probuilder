@@ -67,7 +67,7 @@ namespace ProBuilder2.EditorCommon
 				// is not)
 
 				pb = Undo.AddComponent<pb_Object>(go);
-				pbMeshOps.ResetPbObjectWithMeshFilter(pb, true);
+				pb_MeshOps.ResetPbObjectWithMeshFilter(pb, true);
 
 				pb.ToMesh();
 				pb.Refresh();

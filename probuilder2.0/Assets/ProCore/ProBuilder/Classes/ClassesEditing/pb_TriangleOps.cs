@@ -6,41 +6,47 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	public static class pbTriangleOps
+	/// <summary>
+	/// Functions for working with triangle data.
+	/// </summary>
+	public static class pb_TriangleOps
 	{
-		/**
-		 *	\brief Reverse the winding order for each passed #pb_Face.
-		 *	@param faces The faces to apply normal flippin' to.
-		 *	\returns Nothing.  No soup for you.
-		 *	\sa SelectedFaces pb_Face
-		 */
+		/// <summary>
+		/// Reverse the winding order for each passed pb_Face.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
 		public static void ReverseWindingOrder(this pb_Object pb, pb_Face[] faces)
 		{
 			for(int i = 0; i < faces.Length; i++)
 				faces[i].ReverseIndices();
 		}
 
-		/**
-		 *	Attempt to figure out the winding order the passed face.
-		 *
-		 *	Note that this may return WindingOrder.Unknown.
-		 */
+		/// <summary>
+		/// Attempt to figure out the winding order the passed face.
+		/// </summary>
+		/// <remarks>May return WindingOrder.Unknown.</remarks>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
 		{
 			Vector2[] p = pb_Projection.PlanarProject(pb, face);
 			return GetWindingOrder(p);
 		}
 
-		public static WindingOrder GetWindingOrder(IList<pb_Vertex> vertices, IList<int> indices)
+		static WindingOrder GetWindingOrder(IList<pb_Vertex> vertices, IList<int> indices)
 		{
 			Vector2[] p = pb_Projection.PlanarProject(vertices, indices);
 			return GetWindingOrder(p);
 		}
 
-		/**
-		 *	Return the winding order of a set of ordered points.
-		 *	http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
-		 */
+		/// <summary>
+		/// Return the winding order of a set of ordered points.
+		/// </summary>
+		/// <remarks>http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order</remarks>
+		/// <param name="points">A set of unordered indices.</param>
+		/// <returns>The winding order if found, WindingOrder.Unknown if not.</returns>
 		public static WindingOrder GetWindingOrder(IList<Vector2> points)
 		{
 			float sum = 0f;
@@ -59,9 +65,12 @@ namespace ProBuilder2.MeshOperations
 			return sum == 0f ? WindingOrder.Unknown : (sum > 0f ? WindingOrder.Clockwise : WindingOrder.CounterClockwise);
 		}
 
-		/**
-		 * Reverses the orientation of the middle edge in a quad.
-		 */
+		/// <summary>
+		/// Reverses the orientation of the middle edge in a quad.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static bool FlipEdge(this pb_Object pb, pb_Face face)
 		{
 			int[] indices = face.indices;
@@ -118,11 +127,12 @@ namespace ProBuilder2.MeshOperations
 			return true;
 		}
 
-		/**
-		 *	Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and
-		 *	tris with indices that point to the same vertex.
-		 * \returns True if Degenerate tris were found, false if no changes.
-		 */
+		/// <summary>
+		/// Iterates through all triangles in a pb_Object and removes triangles with area <= 0 and tris with indices that point to the same vertex.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="removed"></param>
+		/// <returns>True if Degenerate tris were found, false if no changes.</returns>
 		public static bool RemoveDegenerateTriangles(this pb_Object pb, out int[] removed)
 		{
 			Dictionary<int, int> m_Lookup = pb.sharedIndices.ToDictionary();
@@ -186,9 +196,12 @@ namespace ProBuilder2.MeshOperations
 			return removed.Length > 0;
 		}
 
-		/**
-		 * Merge all faces into a single face.
-		 */
+		/// <summary>
+		/// Merge all faces into a single face.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		[System.Obsolete("Please use pb_MergeFaces.Merge(pb_Object target, IEnumerable<pb_Face> faces)")]
 		public static pb_Face MergeFaces(this pb_Object pb, pb_Face[] faces)
 		{

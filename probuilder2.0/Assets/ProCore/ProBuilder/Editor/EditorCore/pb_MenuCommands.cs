@@ -46,7 +46,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object pb = null;
 
-			if( pbMeshOps.CombineObjects(selected, out pb) )
+			if( pb_MeshOps.CombineObjects(selected, out pb) )
 			{
 				pb_EditorUtility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
 
@@ -299,7 +299,7 @@ namespace ProBuilder2.EditorCommon
 			go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
-			pb_Object pb = pbMeshOps.CreatePbObjectWithTransform(go.transform, false);
+			pb_Object pb = pb_MeshOps.CreatePbObjectWithTransform(go.transform, false);
 			DestroyImmediate(go);
 
 			Selection.objects = new Object[] { pb.gameObject };
@@ -669,11 +669,11 @@ namespace ProBuilder2.EditorCommon
 				switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 				{
 					case SelectMode.Vertex:
-						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
+						pb.SetSelectedEdges(pb_MeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
 						break;
 
 					case SelectMode.Edge:
-						pb.SetSelectedEdges(pbMeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
+						pb.SetSelectedEdges(pb_MeshUtils.GetConnectedEdges(pb, pb.SelectedTriangles));
 						break;
 
 					case SelectMode.Face:
@@ -746,7 +746,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					case SelectMode.Edge:
 					{
-						int[] perimeter = pbMeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);
+						int[] perimeter = pb_MeshUtils.GetPerimeterEdges(pb, pb.SelectedEdges);
 						pb.SetSelectedEdges( pb.SelectedEdges.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
@@ -754,7 +754,7 @@ namespace ProBuilder2.EditorCommon
 
 					case SelectMode.Face:
 					{
-						pb_Face[] perimeter = pbMeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
+						pb_Face[] perimeter = pb_MeshUtils.GetPerimeterFaces(pb, pb.SelectedFaces).ToArray();
 						pb.SetSelectedFaces( pb.SelectedFaces.Except(perimeter).ToArray() );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
@@ -762,7 +762,7 @@ namespace ProBuilder2.EditorCommon
 
 					case SelectMode.Vertex:
 					{
-						int[] perimeter = pbMeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.SelectedUniversalEdges[i]);
+						int[] perimeter = pb_MeshUtils.GetPerimeterVertices(pb, pb.SelectedTriangles, editor.SelectedUniversalEdges[i]);
 						pb.SetSelectedTriangles( pb.SelectedTriangles.RemoveAt(perimeter) );
 						rc += perimeter != null ? perimeter.Length : 0;
 						break;
@@ -884,7 +884,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
 			{
-				pb_Edge[] edges = pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
+				pb_Edge[] edges = pb_MeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
 
 				if(edges.Length > pb.SelectedEdges.Length)
 					success = true;
@@ -918,7 +918,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb_Edge[] loop;
-				bool success = pbMeshUtils.GetEdgeLoop(pb, pb.SelectedEdges, out loop);
+				bool success = pb_MeshUtils.GetEdgeLoop(pb, pb.SelectedEdges, out loop);
 				if(success)
 				{
 					if(loop.Length > pb.SelectedEdges.Length)
@@ -1786,7 +1786,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_Edge[] edges;
 
-				if( pb.Connect(pbMeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
+				if( pb.Connect(pb_MeshUtils.GetEdgeRing(pb, pb.SelectedEdges), out edges) )
 				{
 					pb.SetSelectedEdges(edges);
 					pb.ToMesh();

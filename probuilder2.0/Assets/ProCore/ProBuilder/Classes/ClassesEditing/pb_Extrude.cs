@@ -5,14 +5,19 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 * pb_Object extension methods for face and edge extrusion.
-	 */
+	/// <summary>
+	/// pb_Object extension methods for face and edge extrusion.
+	/// </summary>
 	public static class pb_Extrude
 	{
-		/**
-		 * Extrude faces using method and distance.
-		 */
+		/// <summary>
+		/// Extrude faces using method and distance.
+		/// </summary>
+		/// <param name="pb">Target pb_Object.</param>
+		/// <param name="faces">The faces to extrude.</param>
+		/// <param name="method">How faces are extruded.</param>
+		/// <param name="distance">The distance in Unity units to extrude faces.</param>
+		/// <returns>True on success, false if the action failed.</returns>
 		public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
@@ -25,10 +30,14 @@ namespace ProBuilder2.MeshOperations
 			}
 		}
 
-		/**
-		 * Extrude each face in faces individually along it's normal by distance.
-		 */
-		private static bool ExtrudePerFace(pb_Object pb, pb_Face[] faces, float distance)
+		/// <summary>
+		/// Extrude each face in faces individually along it's normal by distance.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="distance"></param>
+		/// <returns></returns>
+		static bool ExtrudePerFace(pb_Object pb, pb_Face[] faces, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -117,10 +126,15 @@ namespace ProBuilder2.MeshOperations
 			return true;
 		}
 
-		/**
-		 * Extrude faces as groups.
-		 */
-		private static bool ExtrudeAsGroups(pb_Object pb, pb_Face[] faces, bool compensateAngleVertexDistance, float distance)
+		/// <summary>
+		/// Extrude faces as groups.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="compensateAngleVertexDistance"></param>
+		/// <param name="distance"></param>
+		/// <returns></returns>
+		static bool ExtrudeAsGroups(pb_Object pb, pb_Face[] faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -293,7 +307,7 @@ namespace ProBuilder2.MeshOperations
 			return true;
 		}
 
-		private static List<HashSet<pb_Face>> GetFaceGroups(List<pb_WingedEdge> wings)
+		static List<HashSet<pb_Face>> GetFaceGroups(List<pb_WingedEdge> wings)
 		{
 			HashSet<pb_Face> used = new HashSet<pb_Face>();
 			List<HashSet<pb_Face>> groups = new List<HashSet<pb_Face>>();
@@ -316,10 +330,10 @@ namespace ProBuilder2.MeshOperations
 			return groups;
 		}
 
-		/**
-		 * returns perimeter edges by key<edge>, value<face>
-		 */
-		private static Dictionary<pb_EdgeLookup, pb_Face> GetPerimeterEdges(HashSet<pb_Face> faces, Dictionary<int, int> lookup)
+		/// <summary>
+		/// returns perimeter edges by key<edge>, value<face>
+		/// </summary>
+		static Dictionary<pb_EdgeLookup, pb_Face> GetPerimeterEdges(HashSet<pb_Face> faces, Dictionary<int, int> lookup)
 		{
 			Dictionary<pb_EdgeLookup, pb_Face> perimeter = new Dictionary<pb_EdgeLookup, pb_Face>();
 			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();

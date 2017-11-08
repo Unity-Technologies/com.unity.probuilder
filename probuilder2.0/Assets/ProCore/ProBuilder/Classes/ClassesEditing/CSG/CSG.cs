@@ -1,11 +1,11 @@
 ﻿// Original CSG.JS library by Evan Wallace (http://madebyevan.com), under the MIT license.
 // GitHub: https://github.com/evanw/csg.js/
-// 
+//
 // C++ port by Tomasz Dabrowski (http://28byteslater.com), under the MIT license.
 // GitHub: https://github.com/dabroz/csgjs-cpp/
 //
 // C# port by Karl Henkel (parabox.co), under MIT license.
-//  
+//
 // Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
 // operations like union and intersection to combine 3D solids. This library
 // implements CSG operations on meshes elegantly and concisely using BSP trees,
@@ -16,21 +16,17 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 using ProBuilder2.Common;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations.
-	 * The GameObjects passed to these functions will not be modified.
-	 */
-	public class CSG
+	/// <summary>
+	/// Base class for CSG operations.  Contains GameObject level methods for Subtraction, Intersection, and Union operations. The GameObjects passed to these functions will not be modified.
+	/// </summary>
+	class CSG
 	{
-#region Const
-
-		public const float EPSILON = 0.00001f; ///< Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-#endregion
+		// Tolerance used by `splitPolygon()` to decide if a point is on the plane.
+		public const float EPSILON = 0.00001f;
 
 		/**
 		 * Returns a new mesh by merging @lhs with @rhs.

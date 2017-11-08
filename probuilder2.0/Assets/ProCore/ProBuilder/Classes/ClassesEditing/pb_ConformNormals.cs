@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Methods for making sure adjacent face normals are consistent.
-	 */
-	public static class pb_ConformNormals
+	/// <summary>
+	/// Methods for making sure adjacent face normals are consistent.
+	/// </summary>
+	static class pb_ConformNormals
 	{
 		/**
 		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but
