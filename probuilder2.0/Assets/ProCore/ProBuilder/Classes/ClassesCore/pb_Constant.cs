@@ -307,31 +307,5 @@ namespace ProBuilder2.Common
 		/// Starting range for export menu items.
 		/// </summary>
 		public const int MENU_EXPORT			= 800;
-
-		/// <summary>
-		/// A set of 8 vertices forming the template for a cube mesh.
-		/// </summary>
-		[System.Obsolete]
-		public static Vector3[] VERTICES_CUBE = new Vector3[] {
-			// bottom 4 verts
-			new Vector3(-.5f, -.5f, .5f),		// 0
-			new Vector3(.5f, -.5f, .5f),		// 1
-			new Vector3(.5f, -.5f, -.5f),		// 2
-			new Vector3(-.5f, -.5f, -.5f),		// 3
-
-			// top 4 verts
-			new Vector3(-.5f, .5f, .5f),		// 4
-			new Vector3(.5f, .5f, .5f),			// 5
-			new Vector3(.5f, .5f, -.5f),		// 6
-			new Vector3(-.5f, .5f, -.5f)		// 7
-		};
-
-		/// <summary>
-		/// A set of triangles forming a cube with reference to the VERTICES_CUBE array.
-		/// </summary>
-		[System.Obsolete]
-		public static int[] TRIANGLES_CUBE = new int[] {
-			0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
-		};
 	}
 }

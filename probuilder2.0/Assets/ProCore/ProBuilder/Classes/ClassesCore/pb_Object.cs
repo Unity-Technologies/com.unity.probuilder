@@ -970,7 +970,7 @@ public class pb_Object : MonoBehaviour
 		foreach(KeyValuePair<int, List<pb_Face>> kvp in tex_groups)
 		{
 			Vector3 nrm;
-			int[] indices = pb_Face.AllTrianglesDistinct(kvp.Value).ToArray();
+			int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 			if(kvp.Value.Count > 1)
 				nrm = pb_Projection.FindBestPlane(_vertices, indices).normal;

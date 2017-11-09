@@ -315,38 +315,38 @@ namespace ProBuilder2.Common
 			return all.ToArray();
 		}
 
-		/// <summary>
-		/// Returns all indices in a list of faces.
-		/// </summary>
-		/// <param name="q"></param>
-		/// <returns></returns>
-		internal static int[] AllTriangles(List<pb_Face> q)
-		{
-			List<int> all = new List<int>(q.Count * 6);
-
-			foreach(pb_Face quad in q)
-				all.AddRange(quad.indices);
-
-			return all.ToArray();
-		}
-
-		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
-		internal static int[] AllTrianglesDistinct(pb_Face[] f)
-		{
-			List<int> all = new List<int>();
-			foreach(pb_Face quad in f)
-				all.AddRange(quad.distinctIndices);
-			return all.ToArray();
-		}
-
-		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
-		internal static List<int> AllTrianglesDistinct(List<pb_Face> f)
-		{
-			List<int> all = new List<int>();
-			foreach(pb_Face quad in f)
-				all.AddRange(quad.distinctIndices);
-			return all;
-		}
+//		/// <summary>
+//		/// Returns all indices in a list of faces.
+//		/// </summary>
+//		/// <param name="q"></param>
+//		/// <returns></returns>
+//		internal static int[] AllTriangles(List<pb_Face> q)
+//		{
+//			List<int> all = new List<int>(q.Count * 6);
+//
+//			foreach(pb_Face quad in q)
+//				all.AddRange(quad.indices);
+//
+//			return all.ToArray();
+//		}
+//
+//		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
+//		internal static int[] AllTrianglesDistinct(pb_Face[] f)
+//		{
+//			List<int> all = new List<int>();
+//			foreach(pb_Face quad in f)
+//				all.AddRange(quad.distinctIndices);
+//			return all.ToArray();
+//		}
+//
+//		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
+//		internal static List<int> AllTrianglesDistinct(List<pb_Face> f)
+//		{
+//			List<int> all = new List<int>();
+//			foreach(pb_Face quad in f)
+//				all.AddRange(quad.distinctIndices);
+//			return all;
+//		}
 
 		/// <summary>
 		/// Attempts to create quad, or on failing just return the triangle indices.

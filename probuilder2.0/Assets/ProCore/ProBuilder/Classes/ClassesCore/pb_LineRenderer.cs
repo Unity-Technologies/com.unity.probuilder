@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Renders lines to the scene view.  Handles material and mesh generation and management.
-	 * For general purpose rendering to the sceneview, use pb_MeshRenderer.
-	 */
+	/// <summary>
+	/// Renders lines to the scene view.  Handles material and mesh generation and management.
+	/// </summary>
+	/// <remarks>For general purpose rendering to the sceneview, use pb_MeshRenderer.</remarks>
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
 	class pb_LineRenderer : pb_MonoBehaviourSingleton<pb_LineRenderer>

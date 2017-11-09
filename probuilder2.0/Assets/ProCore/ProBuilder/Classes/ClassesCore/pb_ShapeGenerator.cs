@@ -9,6 +9,30 @@ namespace ProBuilder2.Common
  */
 public class pb_ShapeGenerator
 {
+	/// <summary>
+	/// A set of 8 vertices forming the template for a cube mesh.
+	/// </summary>
+	static readonly Vector3[] VERTICES_CUBE = new Vector3[] {
+		// bottom 4 verts
+		new Vector3(-.5f, -.5f, .5f),		// 0
+		new Vector3(.5f, -.5f, .5f),		// 1
+		new Vector3(.5f, -.5f, -.5f),		// 2
+		new Vector3(-.5f, -.5f, -.5f),		// 3
+
+		// top 4 verts
+		new Vector3(-.5f, .5f, .5f),		// 4
+		new Vector3(.5f, .5f, .5f),			// 5
+		new Vector3(.5f, .5f, -.5f),		// 6
+		new Vector3(-.5f, .5f, -.5f)		// 7
+	};
+
+	/// <summary>
+	/// A set of triangles forming a cube with reference to the VERTICES_CUBE array.
+	/// </summary>
+	static readonly int[] TRIANGLES_CUBE = new int[] {
+		0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
+	};
+
 	public static pb_Object StairGenerator(Vector3 size, int steps, bool buildSides)
 	{
 		/// 4 vertices per quad, 2 quads per step.
@@ -417,9 +441,9 @@ public class pb_ShapeGenerator
 	 */
 	public static pb_Object CubeGenerator(Vector3 size)
 	{
-		Vector3[] points = new Vector3[pb_Constant.TRIANGLES_CUBE.Length];
-		for(int i = 0; i < pb_Constant.TRIANGLES_CUBE.Length; i++)
-			points[i] = Vector3.Scale(pb_Constant.VERTICES_CUBE[pb_Constant.TRIANGLES_CUBE[i]], size);
+		Vector3[] points = new Vector3[TRIANGLES_CUBE.Length];
+		for(int i = 0; i < TRIANGLES_CUBE.Length; i++)
+			points[i] = Vector3.Scale(VERTICES_CUBE[TRIANGLES_CUBE[i]], size);
 
 		pb_Object pb = pb_Object.CreateInstanceWithPoints(points);
 

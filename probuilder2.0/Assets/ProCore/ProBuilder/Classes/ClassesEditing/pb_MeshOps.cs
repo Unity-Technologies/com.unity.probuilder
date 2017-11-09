@@ -327,7 +327,7 @@ namespace ProBuilder2.MeshOperations
 			{
 				for(int i = 0; i < edgeFaces.Length; i++)
 				{
-					foreach(int n in pb_Face.AllTrianglesDistinct(edgeFaces[i]))
+					foreach(int n in edgeFaces[i].SelectMany(x => x.distinctIndices))
 					{
 						int old_si_index = lookup[n];
 						int match = extrudedIndices[i].FindIndex(x => x.x == old_si_index);
@@ -356,7 +356,7 @@ namespace ProBuilder2.MeshOperations
 			 * checking the normal averages
 			 *
 			 */
-			int[] allIndices = pb_Face.AllTrianglesDistinct(faces);
+			int[] allIndices = faces.SelectMany(x => x.distinctIndices).ToArray();
 			float compensatedDistance = extrudeDistance;
 
 			foreach(pb_Face f in faces)

@@ -5,14 +5,18 @@ using System.Collections;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Utilities for working with UnityEngine.Mesh.
-	 */
+	/// <summary>
+	/// Utilities for working converting from a pb_Object to a UnityEngine.Mesh.
+	/// </summary>
 	public static class pb_MeshCompiler
 	{
-		/**
-		 * Compile a UnityEngine::Mesh from a pb_Object.
-		 */
+		/// <summary>
+		/// Compile a UnityEngine::Mesh from a pb_Object.
+		/// </summary>
+		/// <param name="pb">The mesh source.</param>
+		/// <param name="target">Destination UnityEngine.Mesh.</param>
+		/// <param name="materials">The resulting material array from the compiled faces array.</param>
+		/// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
 		public static void Compile(pb_Object pb, ref Mesh target, out Material[] materials, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			target.Clear();
@@ -46,9 +50,11 @@ namespace ProBuilder2.Common
 			materials = submeshes.Select(x => x.material).ToArray();
 		}
 
-		/**
-		 * Create UV0 channel and return it.
-		 */
+		/// <summary>
+		/// Create UV0 channel and return it.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <returns></returns>
 		internal static Vector2[] GetUVs(pb_Object pb)
 		{
 			int n = -2;
@@ -78,7 +84,7 @@ namespace ProBuilder2.Common
 			foreach(KeyValuePair<int, List<pb_Face>> kvp in textureGroups)
 			{
 				Vector3 nrm;
-				int[] indices = pb_Face.AllTrianglesDistinct(kvp.Value).ToArray();
+				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				if(kvp.Value.Count > 1)
 					nrm = pb_Projection.FindBestPlane(pb.vertices, indices).normal;

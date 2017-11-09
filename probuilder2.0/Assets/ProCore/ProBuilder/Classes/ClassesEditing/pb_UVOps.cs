@@ -117,7 +117,7 @@ namespace ProBuilder2.MeshOperations
 		 */
 		public static void ProjectFacesAuto(pb_Object pb, pb_Face[] faces)
 		{
-			int[] ind = pb_Face.AllTrianglesDistinct(faces);
+			int[] ind = faces.SelectMany(x => x.distinctIndices).ToArray();
 
 			/* get average face normal */
 			Vector3 nrm = Vector3.zero;
@@ -146,7 +146,7 @@ namespace ProBuilder2.MeshOperations
 
 			// pb_IntArray[] sharedIndices = pb.sharedIndices;
 
-			pb.SewUVs(pb_Face.AllTrianglesDistinct(faces), .001f);
+			pb.SewUVs(faces.SelectMany(x => x.distinctIndices).ToArray(), .001f);
 
 			// foreach(pb_Face f in faces)
 			// {
@@ -219,7 +219,7 @@ namespace ProBuilder2.MeshOperations
 
 			foreach(KeyValuePair<ProjectionAxis, List<pb_Face>> kvp in sorted)
 			{
-				int[] distinct = pb_Face.AllTrianglesDistinct(kvp.Value.ToArray());
+				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				Vector2[] uvs = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(distinct), pb_Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
 

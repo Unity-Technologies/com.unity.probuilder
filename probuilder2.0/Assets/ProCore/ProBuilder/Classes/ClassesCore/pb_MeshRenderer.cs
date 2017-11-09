@@ -4,10 +4,12 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Renders a list a mesh and material objects to the scene view.
-	 * Caller is responsible for mesh and material memory.
-	 */
+	/// <summary>
+	/// Renders a list a mesh and material objects to the scene view.
+	/// </summary>
+	/// <remarks>
+	/// Caller is responsible for mesh and material memory.
+	/// </remarks>
 	[ExecuteInEditMode]
 	[AddComponentMenu("")]
 	class pb_MeshRenderer : pb_MonoBehaviourSingleton<pb_MeshRenderer>
