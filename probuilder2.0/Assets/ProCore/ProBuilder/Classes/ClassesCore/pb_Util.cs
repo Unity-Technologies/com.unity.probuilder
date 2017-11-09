@@ -124,7 +124,7 @@ namespace ProBuilder2.Common
 			return vals;
 		}
 
-		public static List<T> ValuesWithIndices<T>(this List<T> arr, List<int> indices)
+		public static List<T> ValuesWithIndices<T>(this List<T> arr, IList<int> indices)
 		{
 			List<T> vals = new List<T>();
 
