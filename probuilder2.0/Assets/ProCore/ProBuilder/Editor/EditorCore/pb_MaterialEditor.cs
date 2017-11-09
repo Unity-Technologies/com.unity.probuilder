@@ -377,7 +377,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(em == (EventModifiers.Control | EventModifiers.Shift))
 				{
-					pbUndo.RecordObject(pb, "Quick Apply");
+					pb_Undo.RecordObject(pb, "Quick Apply");
 					pb.SetFaceMaterial( new pb_Face[1] { quad }, m_QueuedMaterial);
 					OnFaceChanged(pb);
 					pb_EditorUtility.ShowNotification("Quick Apply Material");
@@ -392,7 +392,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(mat == null) return;
 
-			pbUndo.RecordSelection(selection.ToArray(), "Set Face Materials");
+			pb_Undo.RecordSelection(selection.ToArray(), "Set Face Materials");
 
 			foreach(pb_Object pb in selection)
 			{

@@ -24,7 +24,7 @@ public class TempMenuItems : EditorWindow
 		// cos(o)
 
 		pb_Object[] selection = Selection.transforms.GetComponents<pb_Object>();
-		pbUndo.RecordObjects(selection, "sdlafk");
+		pb_Undo.RecordObjects(selection, "sdlafk");
 		foreach(pb_Object pb in selection)
 		{
 			pb.ToMesh();

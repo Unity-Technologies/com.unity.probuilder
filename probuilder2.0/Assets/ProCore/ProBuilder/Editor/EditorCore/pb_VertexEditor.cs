@@ -187,7 +187,7 @@ namespace ProBuilder2.EditorCommon
 								if(!moving)
 									OnVertexMovementBegin(pb);
 
-								pbUndo.RecordObject(pb, "Set Vertex Postion");
+								pb_Undo.RecordObject(pb, "Set Vertex Postion");
 
 								pb.SetSharedVertexPosition(u, worldSpace ? transform.InverseTransformPoint(v) : v);
 

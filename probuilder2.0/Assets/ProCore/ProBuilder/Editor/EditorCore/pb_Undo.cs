@@ -8,7 +8,7 @@ namespace ProBuilder2.EditorCommon
 	/// <summary>
 	/// A wrapper around Unity Undo calls.  Used for debugging and (previously) version compatibility.
 	/// </summary>
-	static class pbUndo
+	static class pb_Undo
 	{
 		/**
 		 * Since Undo calls can potentially hang the main thread, store states when the diff
@@ -64,7 +64,7 @@ namespace ProBuilder2.EditorCommon
 			pb_Object[] pb = objs.Where(x => x is pb_Object).Cast<pb_Object>().ToArray();
 
 			Undo.RecordObjects(obj, msg);
-			pbUndo.RecordSelection(pb, msg);
+			pb_Undo.RecordSelection(pb, msg);
 		}
 
 		/**

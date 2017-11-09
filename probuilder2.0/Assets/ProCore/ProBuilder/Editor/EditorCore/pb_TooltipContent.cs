@@ -73,13 +73,13 @@ namespace ProBuilder2.EditorCommon
 				for(int i = 0; i < shortcut.Length - 1; i++)
 				{
 					if( !pb_EditorUtility.IsUnix() )
-						this.shortcut += pbUtil.ControlKeyString(shortcut[i]) + " + ";
+						this.shortcut += pb_Util.ControlKeyString(shortcut[i]) + " + ";
 					else
 						this.shortcut += shortcut[i] + " + ";
 				}
 
 				if( !pb_EditorUtility.IsUnix() )
-					this.shortcut += pbUtil.ControlKeyString(shortcut[shortcut.Length - 1]);
+					this.shortcut += pb_Util.ControlKeyString(shortcut[shortcut.Length - 1]);
 				else
 					this.shortcut += shortcut[shortcut.Length - 1];
 			}

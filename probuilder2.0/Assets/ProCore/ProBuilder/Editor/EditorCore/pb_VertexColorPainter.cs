@@ -40,7 +40,7 @@ namespace ProBuilder2.EditorCommon
 			UserColors = new Color[10];
 			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
 			{
-				if (!pbUtil.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref UserColors[i]))
+				if (!pb_Util.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref UserColors[i]))
 					UserColors[i] = DEFAULT_COLORS[i];
 			}
 		}

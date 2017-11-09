@@ -58,10 +58,10 @@ namespace ProBuilder2.EditorCommon
 				for(int i = 0; i < selected.Length; i++)
 				{
 					if(selected[i] != null)
-						pbUndo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
+						pb_Undo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
 				}
 
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
 
 				Selection.activeTransform = pb.transform;
 			}
@@ -102,7 +102,7 @@ namespace ProBuilder2.EditorCommon
 			for(int i = selection.Length; i < objects.Length; i++)
 				objects[i] = selection[i-selection.Length].transform;
 
-			pbUndo.RegisterCompleteObjectUndo(objects, "Set Pivot");
+			pb_Undo.RegisterCompleteObjectUndo(objects, "Set Pivot");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -133,7 +133,7 @@ namespace ProBuilder2.EditorCommon
 
 			List<Object> undoables = new List<Object>( selection.Select(x => (Object) x.transform) );
 			undoables.AddRange(selection);
-			pbUndo.RecordObjects(undoables.ToArray(), "Freeze Transforms");
+			pb_Undo.RecordObjects(undoables.ToArray(), "Freeze Transforms");
 
 			Vector3[][] vertices = new Vector3[selection.Length][];
 
@@ -175,7 +175,7 @@ namespace ProBuilder2.EditorCommon
 
 			Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
 
-			pbUndo.RecordObjects(undoObjects, "Set Entity Type");
+			pb_Undo.RecordObjects(undoObjects, "Set Entity Type");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -243,7 +243,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -275,7 +275,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-			pbUndo.RecordSelection(sel, op_string);
+			pb_Undo.RecordSelection(sel, op_string);
 
 			Mesh c;
 
@@ -344,7 +344,7 @@ namespace ProBuilder2.EditorCommon
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
+			pb_Undo.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
 
 			foreach(pb_Object pb in selected)
 			{
@@ -365,12 +365,12 @@ namespace ProBuilder2.EditorCommon
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(pbUtil.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+			pb_Undo.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
 
 			int c = 0;
 			int faceCount = pb_Editor.instance.selectedFaceCount;
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				if( pb.SelectedFaceCount < 1 && faceCount < 1 )
 				{
@@ -413,7 +413,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+			pb_Undo.RecordSelection(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
@@ -467,7 +467,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Extrude");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Extrude");
 
 			int extrudedFaceCount = 0;
 			bool success = false;
@@ -542,7 +542,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Bridge Edges");
+			pb_Undo.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
 			bool limitToPerimeterEdges = pb_PreferencesInternal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
@@ -581,7 +581,7 @@ namespace ProBuilder2.EditorCommon
 		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection)
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
-			pbUndo.RecordSelection(selection, "Bevel Edges");
+			pb_Undo.RecordSelection(selection, "Bevel Edges");
 
 			float amount = pb_PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
 
@@ -652,7 +652,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Grow Selection");
+			pb_Undo.RecordSelection(selection, "Grow Selection");
 
 			int grown = 0;
 			bool angleGrow = pb_PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
@@ -662,7 +662,7 @@ namespace ProBuilder2.EditorCommon
 			if(!angleGrow && !iterative)
 				iterative = true;
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				int previousTriCount = pb.SelectedTriangleCount;
 
@@ -734,7 +734,7 @@ namespace ProBuilder2.EditorCommon
 			else if (selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Shrink Selection");
+			pb_Undo.RecordSelection(selection, "Shrink Selection");
 
 			// find perimeter edges
 			int rc = 0;
@@ -800,7 +800,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Invert Selection");
+			pb_Undo.RecordSelection(selection, "Invert Selection");
 
 			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 			{
@@ -878,11 +878,11 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Select Edge Ring");
+			pb_Undo.RecordSelection(selection, "Select Edge Ring");
 
 			bool success = false;
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				pb_Edge[] edges = pb_MeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
 
@@ -911,7 +911,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Select Edge Loop");
+			pb_Undo.RecordSelection(selection, "Select Edge Loop");
 
 			bool foundLoop = false;
 
@@ -941,7 +941,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuLoopFaces(pb_Object[] selection)
 		{
-			pbUndo.RecordSelection(selection, "Select Face Loop");
+			pb_Undo.RecordSelection(selection, "Select Face Loop");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -956,7 +956,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuRingFaces(pb_Object[] selection)
 		{
-			pbUndo.RecordSelection(selection, "Select Face Ring");
+			pb_Undo.RecordSelection(selection, "Select Face Ring");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -971,7 +971,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuRingAndLoopFaces(pb_Object[] selection)
 		{
-			pbUndo.RecordSelection(selection, "Select Face Ring and Loop");
+			pb_Undo.RecordSelection(selection, "Select Face Ring and Loop");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -996,7 +996,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Delete Face");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Delete Face");
 
 			int count = 0;
 
@@ -1054,7 +1054,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
 
 			int count = 0;
 
@@ -1090,7 +1090,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
 
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
@@ -1182,7 +1182,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordObjects(selection, "Merge Faces");
+			pb_Undo.RecordObjects(selection, "Merge Faces");
 
 			int success = 0;
 
@@ -1219,7 +1219,7 @@ namespace ProBuilder2.EditorCommon
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Flip Face Edges");
+			pb_Undo.RecordSelection(selection, "Flip Face Edges");
 			int success = 0;
 			int attempts = 0;
 
@@ -1265,7 +1265,7 @@ namespace ProBuilder2.EditorCommon
 
 			bool collapseToFirst = pb_PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1310,7 +1310,7 @@ namespace ProBuilder2.EditorCommon
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
 			float weld = pb_PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
 			int weldCount = 0;
 
@@ -1392,7 +1392,7 @@ namespace ProBuilder2.EditorCommon
 				return pb_ActionResult.NoSelection;
 
 			int splitCount = 0;
-			pbUndo.RecordSelection(selection, "Split Vertices");
+			pb_Undo.RecordSelection(selection, "Split Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1469,7 +1469,7 @@ namespace ProBuilder2.EditorCommon
 			if(editor == null)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RecordSelection(selection, "Fill Hole");
+			pb_Undo.RecordSelection(selection, "Fill Hole");
 
 			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
@@ -1570,7 +1570,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static pb_ActionResult MenuCreatePolygon(pb_Object[] selection)
 		{
-			pbUndo.RecordSelection(selection, "Create Polygon");
+			pb_Undo.RecordSelection(selection, "Create Polygon");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
@@ -1615,7 +1615,7 @@ namespace ProBuilder2.EditorCommon
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
 
 			int success = 0;
 
@@ -1649,7 +1649,7 @@ namespace ProBuilder2.EditorCommon
 
 			int subdivisions = pb_PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 
 			pb_ActionResult result = pb_ActionResult.NoSelection;
 
@@ -1685,7 +1685,7 @@ namespace ProBuilder2.EditorCommon
 
 			foreach(pb_Object pb in selection)
 			{
-				pbUndo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
 				pb_Face[] faces;
 
@@ -1725,7 +1725,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Edges");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1748,7 +1748,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pbUndo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1780,7 +1780,7 @@ namespace ProBuilder2.EditorCommon
 				return pb_ActionResult.NoSelection;
 
 			int success = 0;
-			pbUndo.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
+			pb_Undo.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
 
 			foreach(pb_Object pb in selection)
 			{

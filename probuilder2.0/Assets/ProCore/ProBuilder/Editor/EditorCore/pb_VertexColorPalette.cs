@@ -38,7 +38,7 @@ namespace ProBuilder2.EditorCommon
 			USER_COLORS = new Color[10];
 			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
 			{
-				if (!pbUtil.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref USER_COLORS[i]))
+				if (!pb_Util.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref USER_COLORS[i]))
 					USER_COLORS[i] = DEFAULT_COLORS[i];
 			}
 		}
@@ -184,9 +184,9 @@ namespace ProBuilder2.EditorCommon
 
 		public static void SetFaceColors(Color col)
 		{
-			pb_Object[] selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+			pb_Object[] selection = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
-			pbUndo.RecordSelection(selection, "Apply Vertex Colors");
+			pb_Undo.RecordSelection(selection, "Apply Vertex Colors");
 
 			pb_Editor editor = pb_Editor.instance;
 

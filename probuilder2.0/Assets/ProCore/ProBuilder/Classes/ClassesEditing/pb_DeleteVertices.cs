@@ -54,7 +54,7 @@ namespace ProBuilder2.MeshOperations
 
 			// Add 1 because NearestIndexPriorToValue is 0 indexed.
 			for(int i = 0; i < originalVertexCount; i++)
-				offset[i] = pbUtil.NearestIndexPriorToValue(sorted, i) + 1;
+				offset[i] = pb_Util.NearestIndexPriorToValue(sorted, i) + 1;
 
 			foreach(pb_Face face in pb.faces)
 			{

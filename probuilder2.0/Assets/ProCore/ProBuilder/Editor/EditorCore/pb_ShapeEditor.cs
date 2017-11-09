@@ -93,7 +93,7 @@ namespace ProBuilder2.EditorCommon
 		public static void MenuCreateCube()
 		{
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
-			pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+			pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			Material mat = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
@@ -228,7 +228,7 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = pb_ShapeGenerator.CubeGenerator(cubeSize);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -282,7 +282,7 @@ namespace ProBuilder2.EditorCommon
 					 	0,
 					 	plane_axis);
 
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -326,7 +326,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				pb_Object pb = pb_ShapeGenerator.PrismGenerator(prismSize);
 
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -421,7 +421,7 @@ namespace ProBuilder2.EditorCommon
 						stair_steps,
 						stair_sides);
 
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -489,7 +489,7 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = pb_ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
 
@@ -547,7 +547,7 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = pb_ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -610,7 +610,7 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = pb_ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -677,7 +677,7 @@ namespace ProBuilder2.EditorCommon
 						pipe_subdivAxis,
 						pipe_subdivHeight
 					 	);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -736,7 +736,7 @@ namespace ProBuilder2.EditorCommon
 						cone_height,
 						cone_subdivAxis
 					 	);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 
@@ -832,7 +832,7 @@ namespace ProBuilder2.EditorCommon
 
 				pb.RemoveDegenerateTriangles(out removed);
 
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if (userMaterial) pb.SetFaceMaterial(pb.faces,userMaterial);
 
@@ -875,7 +875,7 @@ namespace ProBuilder2.EditorCommon
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
 				pb_Object pb = pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				// To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator
 				int[] welds;
@@ -980,7 +980,7 @@ namespace ProBuilder2.EditorCommon
 					torus_smooth,
 					torus_horizontalCircumference,
 					torus_verticalCircumference);
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				pb_UVOps.ProjectFacesBox(pb, pb.faces);
 
@@ -1015,7 +1015,7 @@ namespace ProBuilder2.EditorCommon
 
 			if( showPreview && (GUI.changed || initPreview) )
 			{
-				Vector3[] v = pbUtil.StringToVector3Array(verts);
+				Vector3[] v = pb_Util.StringToVector3Array(verts);
 				if(v.Length % 4 == 0)
 					SetPreviewObject(pb_Object.CreateInstanceWithPoints(v));
 			}
@@ -1027,8 +1027,8 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_Object.CreateInstanceWithPoints(pbUtil.StringToVector3Array(verts));
-				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
+				pb_Object pb = pb_Object.CreateInstanceWithPoints(pb_Util.StringToVector3Array(verts));
+				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );
 

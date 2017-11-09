@@ -441,7 +441,7 @@ public class pb_Object : MonoBehaviour
 
 	internal pb_Face[] SelectedFaces
 	{
-		get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); }
+		get { return pb_Util.ValuesWithIndices(this.faces, m_selectedFaces); }
 	}
 
 	internal int SelectedFaceCount
@@ -692,7 +692,7 @@ public class pb_Object : MonoBehaviour
 
 		SetVertices(v);
 		SetUV(new Vector2[v.Length]);
-		SetColors( pbUtil.FilledArray<Color>(Color.white, v.Length) );
+		SetColors( pb_Util.FilledArray<Color>(Color.white, v.Length) );
 
 		SetFaces(f);
 	 	SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(v));
@@ -1140,7 +1140,7 @@ public class pb_Object : MonoBehaviour
 		Mesh m = GetComponent<MeshFilter>().sharedMesh;
 
 		if(_colors == null || _colors.Length != vertexCount)
-			_colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
+			_colors = pb_Util.FilledArray<Color>(Color.white, vertexCount);
 
 		m.colors = _colors;
 	}
@@ -1151,12 +1151,12 @@ public class pb_Object : MonoBehaviour
 	/// <param name="InColors"></param>
 	public void SetColors(Color[] InColors)
 	{
-		_colors = InColors.Length == vertexCount ? InColors : pbUtil.FilledArray<Color>(Color.white, vertexCount);
+		_colors = InColors.Length == vertexCount ? InColors : pb_Util.FilledArray<Color>(Color.white, vertexCount);
 	}
 
 	internal void SetFaceColor(pb_Face face, Color color)
 	{
-		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
+		if(_colors == null) _colors = pb_Util.FilledArray<Color>(Color.white, vertexCount);
 
 		foreach(int i in face.distinctIndices)
 			_colors[i] = color;

@@ -364,7 +364,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetIsTrigger(bool val, GameObject target)
 		{
-			Collider[] colliders = pbUtil.GetComponents<Collider>(target);
+			Collider[] colliders = pb_Util.GetComponents<Collider>(target);
 			foreach(Collider col in colliders)
 			{
 				if(val && col is MeshCollider)

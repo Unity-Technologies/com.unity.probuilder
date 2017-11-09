@@ -225,7 +225,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_Preferences != null && preferences.HasKey<Color>(key))
 				return preferences.GetColor(key, fallback);
-			pbUtil.TryParseColor(EditorPrefs.GetString(key), ref fallback);
+			pb_Util.TryParseColor(EditorPrefs.GetString(key), ref fallback);
 			return fallback;
 		}
 

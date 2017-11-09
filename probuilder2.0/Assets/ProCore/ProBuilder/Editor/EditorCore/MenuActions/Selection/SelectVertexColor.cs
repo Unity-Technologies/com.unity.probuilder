@@ -67,7 +67,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordSelection(selection, "Select Faces with Vertex Colors");
+			pb_Undo.RecordSelection(selection, "Select Faces with Vertex Colors");
 
 			HashSet<Color32> colors = new HashSet<Color32>();
 

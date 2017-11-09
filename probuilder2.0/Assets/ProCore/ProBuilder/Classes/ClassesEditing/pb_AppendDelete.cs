@@ -214,7 +214,7 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
 			for(int i = 0;  i < vertexCount; i++)
-				shiftmap.Add(i, pbUtil.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
+				shiftmap.Add(i, pb_Util.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
 
 			// shift all other face indices down to account for moved vertex positions
 			for(int i = 0; i < nFaces.Length; i++)

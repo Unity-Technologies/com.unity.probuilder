@@ -78,7 +78,7 @@ namespace ProBuilder2.MeshOperations
 			if(indices.Length != 6)
 				return false;
 
-			int[] mode = pbUtil.FilledArray<int>(1, indices.Length);
+			int[] mode = pb_Util.FilledArray<int>(1, indices.Length);
 
 			for(int x = 0; x < indices.Length - 1; x++)
 			{

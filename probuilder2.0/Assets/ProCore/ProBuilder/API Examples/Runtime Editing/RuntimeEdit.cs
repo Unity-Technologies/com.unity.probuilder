@@ -158,7 +158,7 @@ namespace ProBuilder2.Examples
 							return;
 						}
 
-						Vector3 localNormal = pb_Math.Normal( pbUtil.ValuesWithIndices(currentSelection.pb.vertices, currentSelection.face.distinctIndices) );
+						Vector3 localNormal = pb_Math.Normal( pb_Util.ValuesWithIndices(currentSelection.pb.vertices, currentSelection.face.distinctIndices) );
 
 						if(Input.GetKey(KeyCode.LeftShift))
 							currentSelection.pb.TranslateVertices( currentSelection.face.distinctIndices, localNormal.normalized * -.5f );

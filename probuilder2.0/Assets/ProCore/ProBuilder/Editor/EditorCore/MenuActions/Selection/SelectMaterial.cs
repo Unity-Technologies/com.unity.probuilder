@@ -69,7 +69,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordSelection(selection, "Select Faces with Material");
+			pb_Undo.RecordSelection(selection, "Select Faces with Material");
 
 			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 

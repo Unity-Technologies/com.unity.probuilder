@@ -118,12 +118,12 @@ namespace ProBuilder2.EditorCommon
 					if(pb_Editor.instance != null)
 						pb_Editor.instance.ClearElementSelection();
 
-					pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
-					pbUndo.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+					pb_Undo.RecordObject(polygon, "Change Polygon Shape Settings");
+					pb_Undo.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
 				}
 				else
 				{
-					pbUndo.RecordObject(polygon, "Change Polygon Shape Settings");
+					pb_Undo.RecordObject(polygon, "Change Polygon Shape Settings");
 				}
 
 				polygon.extrude = extrude;
@@ -157,8 +157,8 @@ namespace ProBuilder2.EditorCommon
 					if(pb_Editor.instance != null)
 						pb_Editor.instance.ClearElementSelection();
 
-					pbUndo.RecordObject(polygon, "Edit Polygon Shape");
-					pbUndo.RecordObject(polygon.mesh, "Edit Polygon Shape");
+					pb_Undo.RecordObject(polygon, "Edit Polygon Shape");
+					pb_Undo.RecordObject(polygon.mesh, "Edit Polygon Shape");
 				}
 
 				polygon.polyEditMode = mode;
@@ -414,7 +414,7 @@ namespace ProBuilder2.EditorCommon
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
 						evt.Use();
-						pbUndo.RecordObject(polygon, "Add Polygon Shape Point");
+						pb_Undo.RecordObject(polygon, "Add Polygon Shape Point");
 
 						Vector3 hit = ray.GetPoint(hitDistance);
 
@@ -471,7 +471,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							evt.Use();
 
-							pbUndo.RecordObject(polygon, "Insert Point");
+							pb_Undo.RecordObject(polygon, "Insert Point");
 							polygon.points.Insert(index, p);
 							m_SelectedIndex = index;
 							m_PlacingPoint = true;
@@ -564,7 +564,7 @@ namespace ProBuilder2.EditorCommon
 
 					if(EditorGUI.EndChangeCheck())
 					{
-						pbUndo.RecordObject(polygon, "Move Polygon Shape Point");
+						pb_Undo.RecordObject(polygon, "Move Polygon Shape Point");
 						polygon.points[ii] = pb_ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
 						OnBeginVertexMovement();
 						UpdateMesh(false);
@@ -609,7 +609,7 @@ namespace ProBuilder2.EditorCommon
 
 					if(EditorGUI.EndChangeCheck())
 					{
-						pbUndo.RecordObject(polygon, "Set Polygon Shape Height");
+						pb_Undo.RecordObject(polygon, "Set Polygon Shape Height");
 						polygon.extrude = pb_ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
 						OnBeginVertexMovement();
 						UpdateMesh(false);
@@ -652,7 +652,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					if(m_SelectedIndex > -1)
 					{
-						pbUndo.RecordObject(polygon, "Delete Selected Points");
+						pb_Undo.RecordObject(polygon, "Delete Selected Points");
 						polygon.points.RemoveAt(m_SelectedIndex);
 						m_SelectedIndex = -1;
 						UpdateMesh();

@@ -43,7 +43,7 @@ namespace ProBuilder2.Actions
 			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 			pb_EditorUtility.InitObject(pb);
 			pb_Selection.SetSelection(go);
-			pbUndo.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+			pb_Undo.RegisterCreatedObjectUndo(go, "Create Poly Shape");
 			poly.polyEditMode = pb_PolyShape.PolyEditMode.Path;
 
 			Vector3 pivot;

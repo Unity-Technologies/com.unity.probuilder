@@ -46,7 +46,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordSelection(selection, "Select Faces with Smoothing Group");
+			pb_Undo.RecordSelection(selection, "Select Faces with Smoothing Group");
 
 			HashSet<int> selectedSmoothGroups = new HashSet<int>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.smoothingGroup)));
 

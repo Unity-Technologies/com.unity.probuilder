@@ -40,7 +40,7 @@ namespace ProBuilder2.EditorCommon
 			et = (EntityType)EditorGUILayout.EnumPopup("Entity Type", et);
 			if(et != ent.entityType)
 			{
-				pbUndo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
+				pb_Undo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
 
 				pb_EditorUtility.SetEntityType(et, ent.gameObject);
 				pb.ToMesh();

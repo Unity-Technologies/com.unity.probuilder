@@ -82,7 +82,7 @@ namespace ProBuilder2.EditorCommon
 				{
 					foreach (pb_Object ipb in Selection.transforms.GetComponents<pb_Object>())
 					{
-						pbUndo.RecordObject(ipb, "Offset Vertices");
+						pb_Undo.RecordObject(ipb, "Offset Vertices");
 
 						ipb.ToMesh();
 
@@ -104,7 +104,7 @@ namespace ProBuilder2.EditorCommon
 				pb = (pb_Object) target;
 
 			return pb_Editor.instance != null &&
-			       pbUtil.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
+			       pb_Util.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -114,7 +114,7 @@ namespace ProBuilder2.EditorCommon
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool init = false;
 
-			foreach (pb_Object pbo in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach (pb_Object pbo in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				if (pbo.SelectedTriangles.Length < 1) continue;
 

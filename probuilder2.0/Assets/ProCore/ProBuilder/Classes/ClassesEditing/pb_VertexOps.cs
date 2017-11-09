@@ -308,7 +308,7 @@ namespace ProBuilder2.MeshOperations
 					{
 						data = new pb_FaceRebuildData();
 						data.face = new pb_Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertices = new List<pb_Vertex>(pbUtil.ValuesWithIndices(vertices, face.distinctIndices));
+						data.vertices = new List<pb_Vertex>(pb_Util.ValuesWithIndices(vertices, face.distinctIndices));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
 

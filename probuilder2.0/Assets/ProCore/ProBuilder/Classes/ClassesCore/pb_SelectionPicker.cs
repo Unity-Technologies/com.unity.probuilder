@@ -328,13 +328,13 @@ namespace ProBuilder2.Common
 			foreach(pb_Object pb in selection)
 			{
 				// copy the select gameobject just for z-write
-				GameObject go = pbUtil.EmptyGameObjectWithTransform(pb.transform);
+				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + "  (Depth Mask)";
 
 				Mesh m = new Mesh();
 				m.vertices = pb.vertices;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
-				m.colors32 = pbUtil.Fill<Color32>(BLACK, pb.vertexCount);
+				m.colors32 = pb_Util.Fill<Color32>(BLACK, pb.vertexCount);
 #if UNITY_4_7
 				// avoid incorrect unity warning about missing uv channel on 4.7
 				m.uv = new Vector2[pb.vertexCount];
@@ -345,7 +345,7 @@ namespace ProBuilder2.Common
 				meshes.Add(go);
 
 				// build vertex billboards
-				GameObject go2 = pbUtil.EmptyGameObjectWithTransform(pb.transform);
+				GameObject go2 = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 				go2.name = pb.name + "  (Vertex Billboards)";
 				go2.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
 				go2.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.VertexPickerMaterial;

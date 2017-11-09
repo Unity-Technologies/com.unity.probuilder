@@ -289,8 +289,8 @@ namespace ProBuilder2.MeshOperations
 
 			pb_Vertex centroid = pb_Vertex.Average(vertices, face.distinctIndices);
 
-			List<List<pb_Vertex>> n_vertices = pbUtil.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
-			List<List<int>> n_indices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<pb_Vertex>> n_vertices = pb_Util.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
+			List<List<int>> n_indices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			HashSet<pb_Edge> edgesToSplit = new HashSet<pb_Edge>(edges.Select(x => x.edge.local));
 

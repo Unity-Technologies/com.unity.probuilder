@@ -479,7 +479,7 @@ class pb_Editor : EditorWindow
 						{
 							if(editLevel == EditLevel.Geometry)
 							{
-								pbUndo.RecordSelection(selection, "Set Face Materials");
+								pb_Undo.RecordSelection(selection, "Set Face Materials");
 
 								foreach(pb_Object pbs in selection)
 									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
@@ -487,7 +487,7 @@ class pb_Editor : EditorWindow
 							}
 							else
 							{
-								pbUndo.RecordObject(pb, "Set Object Material");
+								pb_Undo.RecordObject(pb, "Set Object Material");
 								pb.SetFaceMaterial(pb.faces, mat);
 							}
 
@@ -915,7 +915,7 @@ class pb_Editor : EditorWindow
 #endif
 
 					// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-					pbUndo.RecordSelection(pickedPb, "Change Face Selection");
+					pb_Undo.RecordSelection(pickedPb, "Change Face Selection");
 
 					int indx = System.Array.IndexOf(pickedPb.SelectedFaces, pickedFace);
 
@@ -1012,7 +1012,7 @@ class pb_Editor : EditorWindow
 
 				int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
 
-				pbUndo.RecordSelection(pb, "Change Vertex Selection");
+				pb_Undo.RecordSelection(pb, "Change Vertex Selection");
 
 				// If we get a match, check to see if it exists in our selection array already, then add / remove
 				if( indx > -1 )
@@ -1045,7 +1045,7 @@ class pb_Editor : EditorWindow
 						// Check if index is already selected, and if not add it to the pot
 						int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
 
-						pbUndo.RecordObject(pb, "Change Vertex Selection");
+						pb_Undo.RecordObject(pb, "Change Vertex Selection");
 
 						// If we get a match, check to see if it exists in our selection array already, then add / remove
 						if( indx > -1 )
@@ -1087,7 +1087,7 @@ class pb_Editor : EditorWindow
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 
-				pbUndo.RecordSelection(pb, "Change Edge Selection");
+				pb_Undo.RecordSelection(pb, "Change Edge Selection");
 
 				if( ind > -1 )
 					pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
@@ -1115,7 +1115,7 @@ class pb_Editor : EditorWindow
 		SceneView sceneView = SceneView.lastActiveSceneView;
 		Camera cam = sceneView.camera;
 
-		pbUndo.RecordSelection(selection, "Drag Select");
+		pb_Undo.RecordSelection(selection, "Drag Select");
 
 		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
@@ -1255,7 +1255,7 @@ class pb_Editor : EditorWindow
 									if(!nope)
 									{
 										if( pref_backfaceSelect ||
-											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pb_Util.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 										{
 											selectedFaces.Add(face);
 										}
@@ -2344,7 +2344,7 @@ class pb_Editor : EditorWindow
 				{
 					foreach (pb_Object pbo in selection)
 					{
-						pbUndo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
+						pb_Undo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
 
 						if (pbo.SelectedTriangles.Length > 0)
 						{
@@ -2559,7 +2559,7 @@ class pb_Editor : EditorWindow
 
 		pb_Object[] t_selection = selection;
 
-		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		selection = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
 		if(SelectedFacesInEditZone != null)
 			SelectedFacesInEditZone.Clear();
@@ -2622,7 +2622,7 @@ class pb_Editor : EditorWindow
 			{
 				if(forceUpdate)
 				{
-					foreach(Vector3 v in pbUtil.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
+					foreach(Vector3 v in pb_Util.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
 					{
 						min = Vector3.Min(min, v);
 						max = Vector3.Max(max, v);
@@ -2825,7 +2825,7 @@ class pb_Editor : EditorWindow
 	 */
 	private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
 	{
-		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
+		List<Transform> t = new List<Transform>((Transform[])pb_Util.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
 
 		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
 
@@ -2916,7 +2916,7 @@ class pb_Editor : EditorWindow
 
 	void UndoRedoPerformed()
 	{
-		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		pb_Object[] pbos = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
 		foreach(pb_Object pb in pbos)
 		{
@@ -2928,7 +2928,7 @@ class pb_Editor : EditorWindow
 			pb.Optimize();
 
 			if( pb.SelectedFaces.Length > 0 )
-				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
+				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
 		}
 
 		UpdateSelection(true);
@@ -2940,7 +2940,7 @@ class pb_Editor : EditorWindow
 	 */
 	private void PushToGrid(float snapVal)
 	{
-		pbUndo.RecordSelection(selection, "Push elements to Grid");
+		pb_Undo.RecordSelection(selection, "Push elements to Grid");
 
 		if( editLevel == EditLevel.Top )
 			return;
@@ -2986,19 +2986,19 @@ class pb_Editor : EditorWindow
 		switch(currentHandle)
 		{
 			case Tool.Move:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
 				break;
 
 			case Tool.Rotate:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
 				break;
 
 			case Tool.Scale:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
 				break;
 
 			default:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
 				break;
 		}
 

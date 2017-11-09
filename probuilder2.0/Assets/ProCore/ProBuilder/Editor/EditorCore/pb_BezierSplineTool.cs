@@ -101,7 +101,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_CloseLoop != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
 				m_Target.m_CloseLoop = value;
 			}
 		}
@@ -112,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Radius != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Radius");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Radius");
 				m_Target.m_Radius = value;
 			}
 		}
@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Rows != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Rows");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Rows");
 				m_Target.m_Rows = value;
 			}
 		}
@@ -134,7 +134,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Columns != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Columns");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Columns");
 				m_Target.m_Columns = value;
 			}
 		}
@@ -145,7 +145,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Smooth != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Smooth");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Smooth");
 				m_Target.m_Smooth = value;
 			}
 		}
@@ -237,8 +237,8 @@ namespace ProBuilder2.EditorCommon
 				if(pb_Editor.instance != null)
 					pb_Editor.instance.ClearElementSelection();
 
-				pbUndo.RecordObject(m_Target, "Edit Bezier Shape");
-				pbUndo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
+				pb_Undo.RecordObject(m_Target, "Edit Bezier Shape");
+				pb_Undo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
 
 				UpdateMesh(true);
 			}
@@ -307,13 +307,13 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Clear Points"))
 			{
-				pbUndo.RecordObject(m_Target, "Clear Bezier Spline Points");
+				pb_Undo.RecordObject(m_Target, "Clear Bezier Spline Points");
 				m_Points.Clear();
 			}
 
 			if(GUILayout.Button("Add Point"))
 			{
-				pbUndo.RecordObject(m_Target, "Add Bezier Spline Point");
+				pb_Undo.RecordObject(m_Target, "Add Bezier Spline Point");
 
 				if(m_Points.Count > 0)
 				{
@@ -403,7 +403,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)
 				{
-					pbUndo.RecordObject(m_Target, "Delete Bezier Point");
+					pb_Undo.RecordObject(m_Target, "Delete Bezier Point");
 					m_Points.RemoveAt(m_currentHandle);
 					UpdateMesh(true);
 				}
@@ -644,7 +644,7 @@ namespace ProBuilder2.EditorCommon
 
 					if(!eventHasBeenUsed && eventType == EventType.MouseDown && e.button == 0)
 					{
-						pbUndo.RecordObject(m_Target, "Add Point");
+						pb_Undo.RecordObject(m_Target, "Add Point");
 						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
 						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, p - dir, p + dir, Quaternion.identity));
 						UpdateMesh(true);
@@ -699,7 +699,7 @@ namespace ProBuilder2.EditorCommon
 		void OnBeginVertexModification()
 		{
 			m_IsMoving = true;
-			pbUndo.RecordObject(m_Target, "Modify Bezier Spline");
+			pb_Undo.RecordObject(m_Target, "Modify Bezier Spline");
 			pb_Lightmapping.PushGIWorkflowMode();
 		}
 
