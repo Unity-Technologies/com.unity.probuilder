@@ -20,7 +20,7 @@ Surface Border				| 373737
 Blue Accent	(Primary)		| 00aaef 
 Orange Accent (Secondary)	| ff9c00
 Green (Y)					| 39b54a
-Blue (Z)					| 00aaef
+Blue (Z)					| 0096EF
 Red (X)						| d93238
 
 **Fonts**
@@ -37,14 +37,17 @@ Object Tools				| 669922
 Selection Tools				| 247ea3
 Geo Tools					| bb2233
 
-**Button General Notes**
+**UI Element General Notes**
 Item						| Note
 ---							| ---
 Button Corner Rounding		| 3px radius
+Accent - OFF				| A3A3A3
+Accent - ON					| 00aaef
 
 **Buttons (Light Skin)**
 Item 						| Color/Value
 --- 						| ---
+Panel Element				| DADADA
 In-Scene Border				| 636363
 Text 						| 373737
 Normal 						| EAEAEA
@@ -52,9 +55,10 @@ Hover						| F2F2F2
 Pressed 					| E1E1E1
 Disabled					| ?
 
-**Buttons (Dark Skin)**
+**UI Elements (Dark Skin)**
 Item 						| Color/Value
 --- 						| ---
+Panel Element				| 6F6F6F
 In-Scene Border				| 373737
 Text - Heading				| c8c8c8
 Text - Normal				| bcbcbc
