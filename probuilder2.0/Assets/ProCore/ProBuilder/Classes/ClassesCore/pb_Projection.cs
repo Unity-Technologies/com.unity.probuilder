@@ -4,27 +4,29 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
+	/// <summary>
+	/// Functions for projecting 3d points to 2d space.
+	/// </summary>
 	public static class pb_Projection
 	{
-		/**
-		 * Maps an array of 3d points to 2d space given the vertices' normal.
-		 * Optionally provides an override to set ProjectionAxis.
-		 * u = Vector3.Dot( Vector3.Cross(planeNormal, tangentApproximation), verts[i] );
-		 * v = Vector3.Dot( Vector3.Cross(uDirection, planeNormal), verts[i] );
-		 * \sa GetProjectionAxis()
-		 */
-		public static Vector2[] PlanarProject(IList<Vector3> verts, Vector3 planeNormal)
+		/// <summary>
+		/// Maps an array of 3d points to 2d space given the vertices' normal.
+		/// </summary>
+		/// <param name="verts"></param>
+		/// <param name="planeNormal"></param>
+		/// <returns></returns>
+		public static Vector2[] PlanarProject(IEnumerable<Vector3> verts, Vector3 planeNormal)
 		{
 			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
 		}
 
-		public static Vector2[] PlanarProject(pb_Object pb, pb_Face face)
+		internal static Vector2[] PlanarProject(pb_Object pb, pb_Face face)
 		{
 			Vector3 normal = pb_Math.Normal(pb, face);
 			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
-		public static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
+		internal static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
 		{
 			int len = indices.Count;
 
@@ -39,7 +41,7 @@ namespace ProBuilder2.Common
 			return PlanarProject(v, normal, axis, null);
 		}
 
-		public static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indices = null)
+		internal static Vector2[] PlanarProject(Vector3[] verts, Vector3 planeNormal, ProjectionAxis projectionAxis, int[] indices = null)
 		{
 			int len = indices == null || indices.Length < 1 ? verts.Length : indices.Length;
 			Vector2[] uvs = new Vector2[len];
@@ -56,18 +58,18 @@ namespace ProBuilder2.Common
 				case ProjectionAxis.Y_Negative:
 					vec = Vector3.forward;
 					break;
-				
+
 				case ProjectionAxis.Z:
 				case ProjectionAxis.Z_Negative:
 					vec = Vector3.up;
 					break;
 			}
-			
+
 			/**
 			 *	Assign vertices to UV coordinates
 			 */
 			Vector3 uAxis, vAxis;
-			
+
 			// get U axis
 			uAxis = Vector3.Cross(planeNormal, vec);
 			uAxis.Normalize();
@@ -75,7 +77,7 @@ namespace ProBuilder2.Common
 			// calculate V axis relative to U
 			vAxis = Vector3.Cross(uAxis, planeNormal);
 			vAxis.Normalize();
-			
+
 			for(int i = 0; i < len; i++)
 			{
 				int x = indices != null ? indices[i] : i;
@@ -92,7 +94,7 @@ namespace ProBuilder2.Common
 
 		private static Vector3 t_uaxis = Vector3.zero, t_vaxis = Vector3.zero;
 
-		public static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indices, Vector3 planeNormal, ProjectionAxis projectionAxis)
+		internal static void PlanarProject(Vector3[] verts, Vector2[] uvs, int[] indices, Vector3 planeNormal, ProjectionAxis projectionAxis)
 		{
 			Vector3 vec;
 
@@ -107,7 +109,7 @@ namespace ProBuilder2.Common
 				case ProjectionAxis.Y_Negative:
 					vec = Vector3.forward;
 					break;
-				
+
 				case ProjectionAxis.Z:
 				case ProjectionAxis.Z_Negative:
 					vec = Vector3.up;
@@ -125,7 +127,7 @@ namespace ProBuilder2.Common
 			// calculate V axis relative to U
 			pb_Math.Cross(t_uaxis, planeNormal, ref t_vaxis.x, ref t_vaxis.y, ref t_vaxis.z);
 			t_vaxis.Normalize();
-			
+
 			int len = indices.Length;
 
 			for(int i = 0; i < len; i++)
@@ -137,7 +139,7 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		public static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
+		internal static Vector2[] SphericalProject(IList<Vector3> vertices, IList<int> indices = null)
 		{
 			int len = indices == null ? vertices.Count : indices.Count;
 			Vector2[] uv = new Vector2[len];
@@ -155,10 +157,13 @@ namespace ProBuilder2.Common
 			return uv;
 		}
 
-		/**
-		 *	Returns a new set of points wound as a contour counter-clockwise.
-		 */
-		public static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
+		/// <summary>
+		/// Returns a new set of points wound as a contour counter-clockwise.
+		/// </summary>
+		/// <param name="verts"></param>
+		/// <param name="method"></param>
+		/// <returns></returns>
+		internal static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
 		{
 			Vector2 cen = pb_Math.Average(verts);
 			Vector2 up = Vector2.up;
@@ -170,19 +175,21 @@ namespace ProBuilder2.Common
 				angles.Add(new pb_Tuple<float, Vector2>(pb_Math.SignedAngle(up, verts[i] - cen), verts[i]));
 
 			angles.Sort((a, b) => { return a.Item1 < b.Item1 ? -1 : 1; });
-			
+
 			IList<Vector2> values = angles.Select(x => x.Item2).ToList();
 
 			if(method == SortMethod.Clockwise)
-				values.Reverse();
+				values = values.Reverse().ToList();
 
 			return values;
 		}
 
-		/**
-		 * Given a ProjectionAxis, return  the appropriate Vector3 conversion.
-		 */
-		public static Vector3 ProjectionAxisToVector(ProjectionAxis axis)
+		/// <summary>
+		/// Given a ProjectionAxis, return  the appropriate Vector3 conversion.
+		/// </summary>
+		/// <param name="axis"></param>
+		/// <returns></returns>
+		internal static Vector3 ProjectionAxisToVector(ProjectionAxis axis)
 		{
 			switch(axis)
 			{
@@ -209,17 +216,19 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/*
-		 *	Returns a projection axis based on which axis is the largest
-		 */
-		public static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
+		/// <summary>
+		/// Returns a projection axis based on which axis is the largest
+		/// </summary>
+		/// <param name="plane"></param>
+		/// <returns></returns>
+		internal static ProjectionAxis VectorToProjectionAxis(Vector3 plane)
 		{
 			if(Mathf.Abs(plane.x) > Mathf.Abs(plane.y) && Mathf.Abs(plane.x) > Mathf.Abs(plane.z))
 			{
 				return plane.x > 0 ? ProjectionAxis.X : ProjectionAxis.X_Negative;
 			}
 			else
-			{ 
+			{
 				if(Mathf.Abs(plane.y) > Mathf.Abs(plane.z))
 					return plane.y > 0 ? ProjectionAxis.Y : ProjectionAxis.Y_Negative;
 				else
@@ -227,12 +236,16 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	Find a plane that best fits a set of 3d points.
-		 *	
-		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
-		 */
-		public static Plane FindBestPlane<T>(IList<T> points, System.Func<T, Vector3> selector, IList<int> indices = null)
+		/// <summary>
+		/// Find a plane that best fits a set of 3d points.
+		/// </summary>
+		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
+		/// <param name="points"></param>
+		/// <param name="selector"></param>
+		/// <param name="indices"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static Plane FindBestPlane<T>(IList<T> points, System.Func<T, Vector3> selector, IList<int> indices = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;
@@ -271,12 +284,14 @@ namespace ProBuilder2.Common
 			return new Plane(n, c);
 		}
 
-		/**
-		 *	Find a plane that best fits a set of 3d points.
-		 *	
-		 *	http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points
-		 */
-		public static Plane FindBestPlane(Vector3[] points, int[] indices = null)
+		/// <summary>
+		/// Find a plane that best fits a set of 3d points.
+		/// </summary>
+		/// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
+		/// <param name="points"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static Plane FindBestPlane(Vector3[] points, int[] indices = null)
 		{
 			float 	xx = 0f, xy = 0f, xz = 0f,
 					yy = 0f, yz = 0f, zz = 0f;

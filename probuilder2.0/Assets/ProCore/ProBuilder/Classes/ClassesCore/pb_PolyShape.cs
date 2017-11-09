@@ -9,9 +9,9 @@ namespace ProBuilder2.Common
 	[ProGridsConditionalSnap]
 	public class pb_PolyShape : MonoBehaviour
 	{
-		/**
-		 *	Describes the different input states this tool operates in.
-		 */
+		/// <summary>
+		/// Describes the different input states this tool operates in.
+		/// </summary>
 		public enum PolyEditMode
 		{
 			None,
@@ -43,10 +43,11 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	ProGridsConditionalSnap tells pg_Editor to reflect this value.
-		 */
-		private bool IsSnapEnabled()
+		/// <summary>
+		/// ProGridsConditionalSnap tells pg_Editor to reflect this value.
+		/// </summary>
+		/// <returns></returns>
+		bool IsSnapEnabled()
 		{
 			return isOnGrid;
 		}

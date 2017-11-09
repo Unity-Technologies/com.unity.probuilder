@@ -7,7 +7,10 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	public static class pb_SelectionPicker
+	/// <summary>
+	/// Functions for picking elements in a view.
+	/// </summary>
+	static class pb_SelectionPicker
 	{
 		private static bool m_Initialized = false;
 

@@ -194,7 +194,7 @@ namespace ProBuilder2.EditorCommon
 								if(pb_Editor.instance != null)
 								{
 									pb.RefreshUV( pb_Editor.instance.SelectedFacesInEditZone[pb] );
-									pb.RefreshNormals();
+									pb.Refresh(RefreshMask.Normals);
 									pb.msh.RecalculateBounds();
 									pb_Editor.instance.UpdateSelection();
 								}

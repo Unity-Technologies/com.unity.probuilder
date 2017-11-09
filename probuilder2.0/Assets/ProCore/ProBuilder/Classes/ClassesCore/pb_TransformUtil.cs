@@ -3,16 +3,17 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	Helper functions for working with transforms.
-	 */
-	public static class pbTransformUtil
+	/// <summary>
+	/// Helper functions for working with transforms.
+	/// </summary>
+	static class pb_TransformUtil
 	{
-		private static Dictionary<Transform, Transform[]> _childrenStack = new Dictionary<Transform, Transform[]>(); 
+		private static Dictionary<Transform, Transform[]> _childrenStack = new Dictionary<Transform, Transform[]>();
 
-		/**
-		 *	Unparent all children from a transform, saving them for later re-parenting (see ReparentChildren).
-		 */
+		/// <summary>
+		/// Unparent all children from a transform, saving them for later re-parenting (see ReparentChildren).
+		/// </summary>
+		/// <param name="t"></param>
 		public static void UnparentChildren(Transform t)
 		{
 			Transform[] children = new Transform[t.childCount];
@@ -27,9 +28,10 @@ namespace ProBuilder2.Common
 			_childrenStack.Add(t, children);
 		}
 
-		/**
-		 *	Re-parent all children to a transform.  Must have called UnparentChildren prior.
-		 */
+		/// <summary>
+		/// Re-parent all children to a transform.  Must have called UnparentChildren prior.
+		/// </summary>
+		/// <param name="t"></param>
 		public static void ReparentChildren(Transform t)
 		{
 			Transform[] children;

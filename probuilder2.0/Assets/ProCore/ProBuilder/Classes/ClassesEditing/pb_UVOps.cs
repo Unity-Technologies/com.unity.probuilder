@@ -484,7 +484,7 @@ namespace ProBuilder2.MeshOperations
 					faces[f].elementGroup = -1;
 				}
 
-				pb.RefreshUV(faces);
+				pb.Refresh(RefreshMask.UV);
 
 				for(int i = 0; i < faces.Length; i++)
 				{

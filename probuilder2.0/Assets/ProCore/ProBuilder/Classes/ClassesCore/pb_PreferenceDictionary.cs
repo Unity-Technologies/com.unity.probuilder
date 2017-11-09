@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Store settings in a project-local manner.
-	 */
-	public class pb_PreferenceDictionary :
+	/// <summary>
+	/// Store settings in a project-local manner.
+	/// </summary>
+	class pb_PreferenceDictionary :
 		ScriptableObject,
 		IEnumerable,
 		ISerializationCallbackReceiver,
@@ -35,9 +35,9 @@ namespace ProBuilder2.Common
 		[SerializeField] List<Color> 	m_Color_values;
 		[SerializeField] List<Material> m_Material_values;
 
-		/**
-		 *	Perform the ritual "Please Serialize My Dictionary" dance.
-		 */
+		/// <summary>
+		/// Perform the ritual "Please Serialize My Dictionary" dance.
+		/// </summary>
 		public void OnBeforeSerialize()
 		{
 			m_Bool_keys 		= m_Bool.Keys.ToList();
@@ -55,9 +55,9 @@ namespace ProBuilder2.Common
 			m_Material_values 	= m_Material.Values.ToList();
 		}
 
-		/**
-		 *	Reconstruct preference dictionaries from serialized lists.
-		 */
+		/// <summary>
+		/// Reconstruct preference dictionaries from serialized lists.
+		/// </summary>
 		public void OnAfterDeserialize()
 		{
 			for(int i = 0; i < m_Bool_keys.Count; i++)
@@ -92,9 +92,9 @@ namespace ProBuilder2.Common
 			return new pb_PreferenceDictionaryEnumerator(this);
 		}
 
-		/**
-		 *	Clear dictionary values.
-		 */
+		/// <summary>
+		/// Clear dictionary values.
+		/// </summary>
 		public void SetDefaultValues()
 		{
 			m_Bool.Clear();
@@ -105,9 +105,11 @@ namespace ProBuilder2.Common
 			m_Material.Clear();
 		}
 
-		/**
-		 *	Check if a key is contained within any type dictionary.
-		 */
+		/// <summary>
+		/// Check if a key is contained within any type dictionary.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public bool HasKey(string key)
 		{
 			return 	m_Bool.ContainsKey(key) ||
@@ -118,9 +120,12 @@ namespace ProBuilder2.Common
 					m_Material.ContainsKey(key);
 		}
 
-		/**
-		 *	Test if specific type dictionary contains a key.
-		 */
+		/// <summary>
+		/// Test if specific type dictionary contains a key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public bool HasKey<T>(string key)
 		{
 			System.Type type = typeof(T);
@@ -163,9 +168,13 @@ namespace ProBuilder2.Common
 				m_Material.Remove(key);
 		}
 
-		/**
-		 *	"Generic" Get preference for key function.
-		 */
+		/// <summary>
+		/// "Generic" Get preference for key function.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="fallback"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public T Get<T>(string key, T fallback = default(T))
 		{
 			System.Type type = typeof(T);
@@ -210,15 +219,18 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 *	"Generic" set value.  Only accepts:
-		 *	int,
-		 *	float,
-		 *	bool,
-		 *	string,
-		 *	Color,
-		 *	Material
-		 */
+		/// <summary>
+		///	"Generic" set value.  Only accepts:
+		///	 - int,
+		///	 - float,
+		///	 - bool,
+		///	 - string,
+		///	 - Color,
+		///	 - Material
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <typeparam name="T"></typeparam>
 		public void Set<T>(string key, T value)
 		{
 			object o = (object) value;
@@ -242,9 +254,9 @@ namespace ProBuilder2.Common
 					value.ToString()));
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public bool GetBool(string key, bool fallback = default(bool))
 		{
 			bool value;
@@ -253,9 +265,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public int GetInt(string key, int fallback = default(int))
 		{
 			int value;
@@ -264,9 +276,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public float GetFloat(string key, float fallback = default(float))
 		{
 			float value;
@@ -275,9 +287,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public string GetString(string key, string fallback = default(string))
 		{
 			string value;
@@ -286,9 +298,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public Color GetColor(string key, Color fallback = default(Color))
 		{
 			Color value;
@@ -297,9 +309,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Fetch a value from the stored preferences.  If key is not found, a default value is returned.
-		 */
+		/// <summary>
+		/// Fetch a value from the stored preferences.  If key is not found, a default value is returned.
+		/// </summary>
 		public Material GetMaterial(string key, Material fallback = default(Material))
 		{
 			Material value;
@@ -308,9 +320,9 @@ namespace ProBuilder2.Common
 			return fallback;
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetBool(string key, bool value)
 		{
 			if(m_Bool.ContainsKey(key))
@@ -319,9 +331,9 @@ namespace ProBuilder2.Common
 				m_Bool.Add(key, value);
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetInt(string key, int value)
 		{
 			if(m_Int.ContainsKey(key))
@@ -330,9 +342,9 @@ namespace ProBuilder2.Common
 				m_Int.Add(key, value);
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetFloat(string key, float value)
 		{
 			if(m_Float.ContainsKey(key))
@@ -341,9 +353,9 @@ namespace ProBuilder2.Common
 				m_Float.Add(key, value);
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetString(string key, string value)
 		{
 			if(m_String.ContainsKey(key))
@@ -352,9 +364,9 @@ namespace ProBuilder2.Common
 				m_String.Add(key, value);
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetColor(string key, Color value)
 		{
 			if(m_Color.ContainsKey(key))
@@ -363,9 +375,9 @@ namespace ProBuilder2.Common
 				m_Color.Add(key, value);
 		}
 
-		/**
-		 * Set a value for key in the saved prefs.
-		 */
+		/// <summary>
+		/// Set a value for key in the saved prefs.
+		/// </summary>
 		public void SetMaterial(string key, Material value)
 		{
 			if(m_Material.ContainsKey(key))
@@ -374,39 +386,39 @@ namespace ProBuilder2.Common
 				m_Material.Add(key, value);
 		}
 
-		/**
-		 *	Get the internal <key, bool> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, bool> dictionary.
+		/// </summary>
 		public Dictionary<string, bool> GetBoolDictionary() { return m_Bool; }
 
-		/**
-		 *	Get the internal <key, int> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, int> dictionary.
+		/// </summary>
 		public Dictionary<string, int> GetIntDictionary() { return m_Int; }
 
-		/**
-		 *	Get the internal <key, float> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, float> dictionary.
+		/// </summary>
 		public Dictionary<string, float> GetFloatDictionary() { return m_Float; }
 
-		/**
-		 *	Get the internal <key, string> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, string> dictionary.
+		/// </summary>
 		public Dictionary<string, string> GetStringDictionary() { return m_String; }
 
-		/**
-		 *	Get the internal <key, Color> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, Color> dictionary.
+		/// </summary>
 		public Dictionary<string, Color> GetColorDictionary() { return m_Color; }
 
-		/**
-		 *	Get the internal <key, Material> dictionary.
-		 */
+		/// <summary>
+		/// Get the internal <key, Material> dictionary.
+		/// </summary>
 		public Dictionary<string, Material> GetMaterialDictionary() { return m_Material; }
 
-		/**
-		 *	Clear all stored preference key value pairs.
-		 */
+		/// <summary>
+		/// Clear all stored preference key value pairs.
+		/// </summary>
 		public void Clear()
 		{
 			m_Bool.Clear();

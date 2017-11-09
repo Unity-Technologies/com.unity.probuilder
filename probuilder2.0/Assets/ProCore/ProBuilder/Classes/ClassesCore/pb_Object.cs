@@ -16,184 +16,8 @@ using ProBuilder2.Common;
 [ExecuteInEditMode]
 public class pb_Object : MonoBehaviour
 {
-#region MONOBEHAVIOUR
-
-	void Awake()
-	{
-		if(GetComponent<MeshRenderer>().isPartOfStaticBatch)
-			return;
-
-		// Absolutely no idea why normals sometimes go haywire
-		Vector3[] normals = msh != null ? msh.normals : null;
-
-		if(	normals == null ||
-			normals.Length != msh.vertexCount||
-			(normals.Length > 0 && normals[0] == Vector3.zero))
-		{
-			// means this object is probably just now being instantiated
-			if(_vertices == null)
-				return;
-
-			ToMesh();
-			Refresh();
-		}
-	}
-#endregion
-
-#region INITIALIZATION
-
-	/**
-	 *	\brief Duplicates and returns the passed pb_Object.
-	 *	@param pb The pb_Object to duplicate.
-	 *	\returns A unique copy of the passed pb_Object.
-	 */
-	public static pb_Object InitWithObject(pb_Object pb)
-	{
-		Vector3[] v = new Vector3[pb.vertexCount];
-		System.Array.Copy(pb.vertices, v, pb.vertexCount);
-
-		Vector2[] u = new Vector2[pb.vertexCount];
-		System.Array.Copy(pb.uv, u, pb.vertexCount);
-
-		Color[] c = new Color[pb.vertexCount];
-		System.Array.Copy(pb.colors, c, pb.vertexCount);
-
-		pb_Face[] f = new pb_Face[pb.faces.Length];
-
-		for(int i = 0; i < f.Length; i++)
-			f[i] = new pb_Face(pb.faces[i]);
-
-		pb_Object p = CreateInstanceWithElements(v, u, c, f, pb.GetSharedIndices(), pb.GetSharedIndicesUV());
-
-		p.gameObject.name = pb.gameObject.name + "-clone";
-
-		return p;
-	}
-
-	/**
-	 *	\brief Creates a new #pb_Object using passed vertices to construct geometry.
-	 *	Typically you would not call this directly, as the #ProBuilder class contains
-	 *	a wrapper for this purpose.
-	 *	@param vertices A vertex array (Vector3[]) containing the points to be used in
-	 *	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
-	 *	order.  Triangles will be wound in vertex groups of 4, with the winding order
-	 *	0,1,2 1,3,2.  Ex:
-	 *	\code{.cs}
-	 *	// Creates a pb_Object plane
-	 *	pb_Object.CreateInstanceWithPoints(new Vector3[4]{
-	 *		new Vector3(-.5f, -.5f, 0f),
-	 *		new Vector3(.5f, -.5f, 0f),
-	 *		new Vector3(-.5f, .5f, 0f),
-	 *		new Vector3(.5f, .5f, 0f)
-	 *		});
-	 *
-	 *	\endcode
-	 *	\returns The resulting #pb_Object.
-	 */
-	public static pb_Object CreateInstanceWithPoints(Vector3[] vertices)
-	{
-		if(vertices.Length % 4 != 0) {
-			pb_Log.Warning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
-			return null;
-		}
-
-		GameObject _gameObject = new GameObject();
-		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
-		_gameObject.name = "ProBuilder Mesh";
-
-		pb_obj.GeometryWithPoints(vertices);
-
-		pb_obj.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
-
-		return pb_obj;
-	}
-
-	/**
-	 *	\brief Creates a new pb_Object with passed vertex array and pb_Face array.  Allows for a great deal of control when constructing geometry.
-	 *	@param _vertices The vertex array to use in construction of mesh.
-	 *	@param _faces A pb_Face array containing triangle, material per face, and pb_UV parameters for each face.
-	 *	\sa pb_Face pb_UV
-	 *	\returns The newly created pb_Object.
-	 */
-	public static pb_Object CreateInstanceWithVerticesFaces(Vector3[] v, pb_Face[] f)
-	{
-		GameObject _gameObject = new GameObject();
-		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
-		_gameObject.name = "ProBuilder Mesh";
-		pb_obj.GeometryWithVerticesFaces(v, f);
-		return pb_obj;
-	}
-
-	/**
-	 * Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
-	 */
-	public static pb_Object CreateInstanceWithElements(Vector3[] v, Vector2[] u, Color[] c, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
-	{
-		GameObject _gameObject = new GameObject();
-		pb_Object pb = _gameObject.AddComponent<pb_Object>();
-
-		pb.SetVertices(v);
-		pb.SetUV(u);
-		pb.SetColors(c);
-
-		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(v) );
-
-		pb.SetSharedIndicesUV( si_uv ?? new pb_IntArray[0] {});
-
-		pb.SetFaces(f);
-
-		pb.ToMesh();
-		pb.Refresh();
-
-		pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
-
-		return pb;
-	}
-
-	/**
-	 * Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
-	 */
-	public static pb_Object CreateInstanceWithElements(pb_Vertex[] vertices, pb_Face[] faces, pb_IntArray[] si, pb_IntArray[] si_uv)
-	{
-		GameObject _gameObject = new GameObject();
-		pb_Object pb = _gameObject.AddComponent<pb_Object>();
-
-		Vector3[] 	position;
-		Color[] 	color;
-		Vector2[] 	uv0;
-		Vector3[] 	normal;
-		Vector4[] 	tangent;
-		Vector2[] 	uv2;
-		List<Vector4> uv3;
-		List<Vector4> uv4;
-
-		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
-
-		pb.SetVertices(position);
-		pb.SetColors(color);
-		pb.SetUV(uv0);
-		if(uv3 != null) pb._uv3 = uv3;
-		if(uv4 != null) pb._uv4 = uv4;
-
-		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(position) );
-		pb.SetSharedIndicesUV( si_uv ?? new pb_IntArray[0] {});
-
-		pb.SetFaces(faces);
-
-		pb.ToMesh();
-		pb.Refresh();
-
-		pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
-
-		return pb;
-	}
-#endregion
-
-#region INTERNAL MEMBERS
-
 	[SerializeField]
 	private pb_Face[]		 			_quads;
-	private pb_Face[]					_faces { get { return _quads; } }
 
 	[SerializeField]
 	private pb_IntArray[] 				_sharedIndices;
@@ -219,28 +43,43 @@ public class pb_Object : MonoBehaviour
 	[SerializeField]
 	private Color[] 					_colors;
 
-	public bool 						userCollisions = false;	// If false, ProBuilder will automatically create and scale colliders.
-	public bool 						isSelectable = true;	// Optional flag - if true editor should ignore clicks on this object.
+	/// <summary>
+	/// If false, ProBuilder will automatically create and scale colliders.
+	/// </summary>
+	public bool 						userCollisions = false;
 
-	// UV2 generation parameters.
+	/// <summary>
+	/// Optional flag - if false the editor will ignore clicks on this object.
+	/// </summary>
+	public bool 						isSelectable = true;
+
+	/// <summary>
+	/// UV2 generation parameters.
+	/// </summary>
 	public pb_UnwrapParameters 			unwrapParameters = new pb_UnwrapParameters();
 
-	// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
-	public string 						asset_guid;
+	/// <summary>
+	/// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
+	/// </summary>
+	internal string 					asset_guid;
 
-	// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
+	/// <summary>
+	/// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
+	/// </summary>
 	public static event System.Action<pb_Object> onDestroyObject;
 
 	internal static event System.Action<pb_Object> onElementSelectionChanged;
 
-	// usually when you delete a pb_Object you want to also clean up the mesh asset.  However, there
-	// are situations you'd want to keep the mesh around - like when stripping probuilder scripts.
+	/// <summary>
+	/// Usually when you delete a pb_Object you want to also clean up the mesh asset.
+	/// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
+	/// </summary>
 	public bool dontDestroyMeshOnDelete = false;
-#endregion
 
-#region ACCESS
-
-	public Mesh msh
+	/// <summary>
+	/// Convenience property for getting the mesh from the MeshFilter component.
+	/// </summary>
+	internal Mesh msh
 	{
 		get
 		{
@@ -252,29 +91,84 @@ public class pb_Object : MonoBehaviour
 		}
 	}
 
-	public pb_Face[] faces { get { return _quads; } }// == null ? Extractfaces(msh) : _faces; } }
-	public pb_Face[] quads {get { pb_Log.Warning("pb_Quad is deprecated.  Please use pb_Face instead."); return _quads; } }
+	/// <summary>
+	/// Get a reference to the faces array on this mesh.
+	/// </summary>
+	public pb_Face[] faces { get { return _quads; } }
 
-	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }	// returns a reference
+	/// <summary>
+	/// Get a reference to the shared indices array.
+	/// Also called common vertices.
+	/// </summary>
+	public pb_IntArray[] sharedIndices { get { return _sharedIndices; } }
+
+	/// <summary>
+	/// Get a reference to the shared uv indices array.
+	/// </summary>
 	public pb_IntArray[] sharedIndicesUV { get { return _sharedIndicesUV; } }
 
+	/// <summary>
+	/// Get a unique id for this pb_Object. Not guaranteed to be persistent.
+	/// </summary>
 	public int id { get { return gameObject.GetInstanceID(); } }
 
+	/// <summary>
+	/// Get a reference to the positions array.
+	/// </summary>
+	/// <remarks>
+	/// The stored vertex positions array is not guaranteed to match the Unity mesh vertices array.
+	/// </remarks>
 	public Vector3[] vertices { get { return _vertices; } }
+
+	/// <summary>
+	/// Get a reference to the colors array.
+	/// </summary>
 	public Color[] colors { get { return _colors; } }
 
+	/// <summary>
+	/// Get a reference to the last generated UVs for this object.
+	/// </summary>
 	public Vector2[] uv { get { return _uv; } }
 
+	/// <summary>
+	/// True if this mesh has a valid UV3 channel.
+	/// </summary>
 	public bool hasUv3 { get { return _uv3 != null && _uv3.Count == vertexCount; } }
+
+	/// <summary>
+	/// True if this mesh has a valid UV4 channel.
+	/// </summary>
 	public bool hasUv4 { get { return _uv4 != null && _uv4.Count == vertexCount; } }
 
+	/// <summary>
+	/// Get the UV3 list for this mesh.
+	/// </summary>
 	public List<Vector4> uv3 { get { return _uv3; } }
+
+	/// <summary>
+	/// Get the UV4 list for this mesh.
+	/// </summary>
 	public List<Vector4> uv4 { get { return _uv4; } }
 
-	public int faceCount { get { return _faces == null ? 0 : _faces.Length; } }
-	public int vertexCount { get { return _vertices == null ? 0 : _vertices.Length; } }
-	public int triangleCount { get { return _faces == null ? 0 : _faces.Sum(x => x.indices.Length ); } }
+	/// <summary>
+	/// How many faces does this mesh have?
+	/// </summary>
+	public int faceCount { get { return _quads == null ? 0 : _quads.Length; } }
 
+	/// <summary>
+	/// How many vertices are in the positions array.
+	/// </summary>
+	public int vertexCount { get { return _vertices == null ? 0 : _vertices.Length; } }
+
+	/// <summary>
+	/// How many triangle indices make up this mesh.
+	/// </summary>
+	/// <remarks>This calls Linq Sum on the faces array. Cache this value if you're accessing it frequently.</remarks>
+	public int triangleCount { get { return _quads == null ? 0 : _quads.Sum(x => x.indices.Length ); } }
+
+	/// <summary>
+	/// Reset all the attribute arrays on this object.
+	/// </summary>
 	public void Clear()
 	{
 		// various editor tools expect faces & vertices to always be valid.
@@ -291,11 +185,12 @@ public class pb_Object : MonoBehaviour
 		SetSelectedTriangles(null);
 	}
 
-	/**
-	 * pb_Object doesn't store normals, so this function either:
-	 *	1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
-	 *	2. Calculates a new set of normals and returns.
-	 */
+	/// <summary>
+	/// pb_Object doesn't store normals, so this function either:
+	///		1. Copies them from the MeshFilter.sharedMesh (if vertex count matches the pb_Object::vertexCount)
+	///		2. Calculates a new set of normals and returns.
+	/// </summary>
+	/// <returns></returns>
 	public Vector3[] GetNormals()
 	{
 		Vector3[] res = null;
@@ -306,8 +201,7 @@ public class pb_Object : MonoBehaviour
 
 		if(res == null || res.Length != vertexCount)
 		{
-			// @todo Write pb_MeshUtility.GenerateNormals that handles smoothing groups
-			// to avoid 2 separate calls.
+			// todo Write pb_MeshUtility.GenerateNormals that handles smoothing groups to avoid 2 separate calls.
 			res = pb_MeshUtility.GenerateNormals(this);
 			pb_MeshUtility.SmoothNormals(this, ref res);
 		}
@@ -315,9 +209,10 @@ public class pb_Object : MonoBehaviour
 		return res;
 	}
 
-	/**
-	 *	\brief Returns a copy of the sharedIndices array.
-	 */
+	/// <summary>
+	/// Returns a copy of the sharedIndices array.
+	/// </summary>
+	/// <returns></returns>
 	public pb_IntArray[] GetSharedIndices()
 	{
 		int sil = _sharedIndices.Length;
@@ -332,9 +227,10 @@ public class pb_Object : MonoBehaviour
 		return sharedIndicesCopy;
 	}
 
-	/**
-	 *	\brief Returns a copy of the sharedIndicesUV array.
-	 */
+	/// <summary>
+	/// Returns a copy of the sharedIndicesUV array.
+	/// </summary>
+	/// <returns></returns>
 	public pb_IntArray[] GetSharedIndicesUV()
 	{
 		int sil = _sharedIndicesUV.Length;
@@ -348,26 +244,240 @@ public class pb_Object : MonoBehaviour
 
 		return sharedIndicesCopy;
 	}
-#endregion
 
-#region SELECTION
+	void Awake()
+	{
+		if(GetComponent<MeshRenderer>().isPartOfStaticBatch)
+			return;
 
-	public pb_Face[]					SelectedFaces { get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); } }
-	public int 							SelectedFaceCount { get { return m_selectedFaces.Length; } }
-	public int[]						SelectedTriangles { get { return m_selectedTriangles; } }
-	public int 							SelectedTriangleCount { get { return m_selectedTriangles.Length; } }
-	public pb_Edge[]					SelectedEdges { get { return m_SelectedEdges; } }
-	public int							SelectedEdgeCount { get { return m_SelectedEdges.Length; } }
+		// Absolutely no idea why normals sometimes go haywire
+		Vector3[] normals = msh != null ? msh.normals : null;
 
-	// Store faces as int so Unity's undo doesn't frick up the selection.
+		if(	normals == null ||
+			normals.Length != msh.vertexCount||
+			(normals.Length > 0 && normals[0] == Vector3.zero))
+		{
+			// means this object is probably just now being instantiated
+			if(_vertices == null)
+				return;
+
+			ToMesh();
+			Refresh();
+		}
+	}
+
+	void OnDestroy()
+	{
+		// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
+		// differentiate between OnDestroy invoked from user delete & editor scene loading.
+		if(!dontDestroyMeshOnDelete &&
+		   Application.isEditor &&
+		   !Application.isPlaying &&
+		   Time.frameCount > 0 )
+		{
+			if(onDestroyObject != null)
+				onDestroyObject(this);
+			else
+				GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+		}
+	}
+
+	/// <summary>
+	/// Duplicates and returns the passed pb_Object.
+	/// </summary>
+	/// <param name="pb"></param>
+	/// <returns></returns>
+	public static pb_Object InitWithObject(pb_Object pb)
+	{
+		Vector3[] v = new Vector3[pb.vertexCount];
+		System.Array.Copy(pb.vertices, v, pb.vertexCount);
+
+		Vector2[] u = new Vector2[pb.vertexCount];
+		System.Array.Copy(pb.uv, u, pb.vertexCount);
+
+		Color[] c = new Color[pb.vertexCount];
+		System.Array.Copy(pb.colors, c, pb.vertexCount);
+
+		pb_Face[] f = new pb_Face[pb.faces.Length];
+
+		for(int i = 0; i < f.Length; i++)
+			f[i] = new pb_Face(pb.faces[i]);
+
+		pb_Object p = CreateInstanceWithElements(v, u, c, f, pb.GetSharedIndices(), pb.GetSharedIndicesUV());
+
+		p.gameObject.name = pb.gameObject.name + "-clone";
+
+		return p;
+	}
+
+	/// <summary>
+	///	Creates a new #pb_Object using passed vertices to construct geometry.
+	///	Typically you would not call this directly, as the #ProBuilder class contains
+	///	a wrapper for this purpose.
+	///	@param vertices A vertex array (Vector3[]) containing the points to be used in
+	///	the construction of the #pb_Object.  Vertices must be wound in counter-clockise
+	///	order.  Triangles will be wound in vertex groups of 4, with the winding order
+	///	0,1,2 1,3,2.  Ex:
+	///	\code{.cs}
+	///	// Creates a pb_Object plane
+	///	pb_Object.CreateInstanceWithPoints(new Vector3[4]{
+	///		new Vector3(-.5f, -.5f, 0f),
+	///		new Vector3(.5f, -.5f, 0f),
+	///		new Vector3(-.5f, .5f, 0f),
+	///		new Vector3(.5f, .5f, 0f)
+	///		});
+	///
+	///	\endcode
+	/// </summary>
+	/// <param name="vertices"></param>
+	/// <returns>The resulting #pb_Object.</returns>
+	internal static pb_Object CreateInstanceWithPoints(Vector3[] vertices)
+	{
+		if(vertices.Length % 4 != 0) {
+			pb_Log.Warning("Invalid Geometry.  Make sure vertices in are pairs of 4 (faces).");
+			return null;
+		}
+
+		GameObject _gameObject = new GameObject();
+		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
+		_gameObject.name = "ProBuilder Mesh";
+
+		pb_obj.GeometryWithPoints(vertices);
+
+		pb_obj.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+
+		return pb_obj;
+	}
+
+	/// <summary>
+	/// Creates a new pb_Object with passed vertex positions array and pb_Face array. Allows for a great deal of control when constructing geometry.
+	/// </summary>
+	/// <param name="v">Vertex positions array.</param>
+	/// <param name="f">Faces array.</param>
+	/// <returns></returns>
+	public static pb_Object CreateInstanceWithVerticesFaces(Vector3[] v, pb_Face[] f)
+	{
+		GameObject _gameObject = new GameObject();
+		pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
+		_gameObject.name = "ProBuilder Mesh";
+		pb_obj.GeometryWithVerticesFaces(v, f);
+		return pb_obj;
+	}
+
+	/// <summary>
+	/// Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
+	/// </summary>
+	/// <param name="v"></param>
+	/// <param name="u"></param>
+	/// <param name="c"></param>
+	/// <param name="f"></param>
+	/// <param name="si"></param>
+	/// <param name="si_uv"></param>
+	/// <returns></returns>
+	internal static pb_Object CreateInstanceWithElements(Vector3[] v, Vector2[] u, Color[] c, pb_Face[] f, pb_IntArray[] si, pb_IntArray[] si_uv)
+	{
+		GameObject _gameObject = new GameObject();
+		pb_Object pb = _gameObject.AddComponent<pb_Object>();
+
+		pb.SetVertices(v);
+		pb.SetUV(u);
+		pb.SetColors(c);
+
+		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(v) );
+
+		pb.SetSharedIndicesUV( si_uv ?? new pb_IntArray[0] {});
+
+		pb.SetFaces(f);
+
+		pb.ToMesh();
+		pb.Refresh();
+
+		pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+
+		return pb;
+	}
+
+	/// <summary>
+	/// Creates a new pb_Object instance with the provided vertices, faces, and sharedIndex information.
+	/// </summary>
+	/// <param name="vertices"></param>
+	/// <param name="faces"></param>
+	/// <param name="si">Optional sharedIndices array. If null this value will be generated.</param>
+	/// <returns></returns>
+	public static pb_Object CreateInstanceWithElements(pb_Vertex[] vertices, pb_Face[] faces, pb_IntArray[] si = null)
+	{
+		GameObject _gameObject = new GameObject();
+		pb_Object pb = _gameObject.AddComponent<pb_Object>();
+
+		Vector3[] 	position;
+		Color[] 	color;
+		Vector2[] 	uv0;
+		Vector3[] 	normal;
+		Vector4[] 	tangent;
+		Vector2[] 	uv2;
+		List<Vector4> uv3;
+		List<Vector4> uv4;
+
+		pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+
+		pb.SetVertices(position);
+		pb.SetColors(color);
+		pb.SetUV(uv0);
+		if(uv3 != null) pb._uv3 = uv3;
+		if(uv4 != null) pb._uv4 = uv4;
+
+		pb.SetSharedIndices( si ?? pb_IntArrayUtility.ExtractSharedIndices(position) );
+		pb.SetSharedIndicesUV(new pb_IntArray[0] {});
+
+		pb.SetFaces(faces);
+
+		pb.ToMesh();
+		pb.Refresh();
+
+		pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
+
+		return pb;
+	}
+
+	internal pb_Face[] SelectedFaces
+	{
+		get { return pbUtil.ValuesWithIndices(this.faces, m_selectedFaces); }
+	}
+
+	internal int SelectedFaceCount
+	{
+		get { return m_selectedFaces.Length; }
+	}
+
+	internal int[] SelectedTriangles
+	{
+		get { return m_selectedTriangles; }
+	}
+
+	internal int SelectedTriangleCount
+	{
+		get { return m_selectedTriangles.Length; }
+	}
+
+	internal pb_Edge[] SelectedEdges
+	{
+		get { return m_SelectedEdges; }
+	}
+
+	internal int SelectedEdgeCount
+	{
+		get { return m_SelectedEdges.Length; }
+	}
+
 	[SerializeField] private int[]		m_selectedFaces 		= new int[]{};
 	[SerializeField] private pb_Edge[]	m_SelectedEdges 		= new pb_Edge[]{};
 	[SerializeField] private int[]		m_selectedTriangles 	= new int[]{};
 
-	/**
-	 *	Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
-	 */
-	public void AddToFaceSelection(pb_Face face)
+	/// <summary>
+	/// Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
+	/// </summary>
+	/// <param name="face"></param>
+	internal void AddToFaceSelection(pb_Face face)
 	{
 		int index = System.Array.IndexOf(this.faces, face);
 
@@ -375,7 +485,7 @@ public class pb_Object : MonoBehaviour
 			SetSelectedFaces( m_selectedFaces.Add(index) );
 	}
 
-	public void SetSelectedFaces(IEnumerable<pb_Face> selected)
+	internal void SetSelectedFaces(IEnumerable<pb_Face> selected)
 	{
 		List<int> indices = new List<int>();
 		foreach(pb_Face f in selected)
@@ -387,7 +497,7 @@ public class pb_Object : MonoBehaviour
 		SetSelectedFaces(indices);
 	}
 
-	public void SetSelectedFaces(IEnumerable<int> selected)
+	internal void SetSelectedFaces(IEnumerable<int> selected)
 	{
 		this.m_selectedFaces = selected.ToArray();
 		this.m_selectedTriangles = pb_Face.AllTriangles( SelectedFaces );
@@ -404,7 +514,7 @@ public class pb_Object : MonoBehaviour
 			onElementSelectionChanged(this);
 	}
 
-	public void SetSelectedEdges(IEnumerable<pb_Edge> edges)
+	internal void SetSelectedEdges(IEnumerable<pb_Edge> edges)
 	{
 		this.m_selectedFaces = new int[0];
 		this.m_SelectedEdges = edges.ToArray();
@@ -414,10 +524,11 @@ public class pb_Object : MonoBehaviour
 			onElementSelectionChanged(this);
 	}
 
-	/**
-	 *	Sets this pb_Object's SelectedTriangles array.  Clears SelectedFaces and SelectedEdges arrays.
-	 */
-	public void SetSelectedTriangles(int[] tris)
+	/// <summary>
+	/// Sets this pb_Object's SelectedTriangles array.  Clears SelectedFaces and SelectedEdges arrays.
+	/// </summary>
+	/// <param name="tris"></param>
+	internal void SetSelectedTriangles(int[] tris)
 	{
 		m_selectedFaces = new int[0];
 		m_SelectedEdges = new pb_Edge[0];
@@ -427,18 +538,20 @@ public class pb_Object : MonoBehaviour
 			onElementSelectionChanged(this);
 	}
 
-	/**
-	 *	Removes face at index in SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
-	 */
-	public void RemoveFromFaceSelectionAtIndex(int index)
+	/// <summary>
+	/// Removes face at index in SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
+	/// </summary>
+	/// <param name="index"></param>
+	internal void RemoveFromFaceSelectionAtIndex(int index)
 	{
 		SetSelectedFaces(m_selectedFaces.RemoveAt(index));
 	}
 
-	/**
-	 *	Removes face from SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
-	 */
-	public void RemoveFromFaceSelection(pb_Face face)
+	/// <summary>
+	/// Removes face from SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
+	/// </summary>
+	/// <param name="face"></param>
+	internal void RemoveFromFaceSelection(pb_Face face)
 	{
 		int indx = System.Array.IndexOf(this.faces, face);
 
@@ -446,35 +559,30 @@ public class pb_Object : MonoBehaviour
 			SetSelectedFaces(m_selectedFaces.Remove(indx));
 	}
 
-	/**
-	 *	Clears SelectedFaces, SelectedEdges, and SelectedTriangle arrays.  You do not need to call this when setting an individual array, as the setter methods will handle updating the associated caches.
-	 */
-	public void ClearSelection()
+	/// <summary>
+	/// Clears SelectedFaces, SelectedEdges, and SelectedTriangle arrays.  You do not need to call this when setting an individual array, as the setter methods will handle updating the associated caches.
+	/// </summary>
+	internal void ClearSelection()
 	{
 		m_selectedFaces = new int[0];
 		m_SelectedEdges = new pb_Edge[0];
 		m_selectedTriangles = new int[0];
 	}
-#endregion
 
-#region SET
-
-	/**
-	 * Sets the internal vertex cache, but does NOT rebuild the mesh.vertices array.
-	 * Usually you'll want to call ToMesh() immediately following this.
-	 */
+	/// <summary>
+	/// Sets the internal vertex cache, but does NOT rebuild the mesh.vertices array. Usually you'll want to call ToMesh() immediately following this.
+	/// </summary>
+	/// <param name="v"></param>
 	public void SetVertices(Vector3[] v)
 	{
 		_vertices = v;
 	}
 
-	/**
-	 *	Set the vertex element arrays on this pb_Object.  By default this function does
-	 *	not apply these values to the mesh.  An optional parameter `applyMesh` will apply
-	 *	elements to the mesh - note that this should only be used when the mesh is in
-	 *	its original state, not optimized (meaning it won't affect triangles which can be
-	 *	modified by Optimize).
-	 */
+	/// <summary>
+	/// Set the vertex element arrays on this pb_Object. By default this function does not apply these values to the mesh.  An optional parameter `applyMesh` will apply elements to the mesh - note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).
+	/// </summary>
+	/// <param name="vertices"></param>
+	/// <param name="applyMesh"></param>
 	public void SetVertices(IList<pb_Vertex> vertices, bool applyMesh = false)
 	{
 		Vector3[] position;
@@ -513,53 +621,56 @@ public class pb_Object : MonoBehaviour
 		}
 	}
 
-	/**
-	 * Must match size of vertex array.
-	 */
+	/// <summary>
+	/// Set the UV0 array. Must match vertexCount.
+	/// </summary>
+	/// <param name="uvs"></param>
 	public void SetUV(Vector2[] uvs)
 	{
 		_uv = uvs;
 	}
 
-	/**
-	 *	\brief Set the internal face array with the passed pb_Face array.
-	 *	@param faces New pb_Face[] containing face data.  Mesh triangle data is extracted from the internal #pb_Face array, so be sure to account for all triangles.
-	 */
-	public void SetFaces(IEnumerable<pb_Face> faces)
+	/// <summary>
+	/// Set the internal face array with the passed pb_Face array.
+	/// </summary>
+	/// <param name="newFaces"></param>
+	public void SetFaces(IEnumerable<pb_Face> newFaces)
 	{
-		_quads = faces.Where(x => x != null).ToArray();
+		_quads = newFaces.Where(x => x != null).ToArray();
 
 		if(_quads.Length != faces.Count())
 			pb_Log.Warning("SetFaces() pruned " + (faces.Count() - _quads.Length) + " null faces from this object.");
 	}
 
-	/**
-	 * Sets the internal sharedIndices cache.
-	 */
+	/// <summary>
+	/// Sets the internal sharedIndices array reference.
+	/// </summary>
+	/// <param name="si"></param>
 	public void SetSharedIndices(pb_IntArray[] si)
 	{
 		_sharedIndices = si;
 	}
 
+	/// <summary>
+	/// Set the sharedIndices array with a dictionary.
+	/// </summary>
+	/// <param name="si"></param>
 	public void SetSharedIndices(IEnumerable<KeyValuePair<int, int>> si)
 	{
 		_sharedIndices = pb_IntArrayUtility.ToSharedIndices(si);
 	}
 
-	public void SetSharedIndicesUV(pb_IntArray[] si)
+	internal void SetSharedIndicesUV(pb_IntArray[] si)
 	{
 		_sharedIndicesUV = si;
 	}
 
-	public void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> si)
+	internal void SetSharedIndicesUV(IEnumerable<KeyValuePair<int, int>> si)
 	{
 		_sharedIndicesUV = pb_IntArrayUtility.ToSharedIndices(si);
 	}
-#endregion
 
-#region MESH INITIALIZATION
-
-	private void GeometryWithPoints(Vector3[] v)
+	void GeometryWithPoints(Vector3[] v)
 	{
 		// Wrap in faces
 		pb_Face[] f = new pb_Face[v.Length/4];
@@ -590,10 +701,12 @@ public class pb_Object : MonoBehaviour
 		Refresh();
 	}
 
-	/**
-	 *	\brief Rebuilds the sharedIndex array and uniqueIndex array each time
-	 *	called.
-	 */
+	/// <summary>
+	/// Initialize the mesh with vertex positions and faces.
+	/// </summary>
+	/// <remarks>Rebuilds the sharedIndex array and uniqueIndex array each time called.</remarks>
+	/// <param name="v">Vertex positions array.</param>
+	/// <param name="f">Faces array.</param>
 	public void GeometryWithVerticesFaces(Vector3[] v, pb_Face[] f)
 	{
 		SetVertices(v);
@@ -606,29 +719,10 @@ public class pb_Object : MonoBehaviour
 		Refresh();
 	}
 
-	private void GeometryWithVerticesFacesIndices(Vector3[] v, pb_Face[] f, pb_IntArray[] s)
-	{
-		SetFaces(f);
-		SetVertices(v);
-		SetUV(new Vector2[v.Length]);
-
-		SetSharedIndices(s);
-
-		if(msh != null) DestroyImmediate(msh);
-
-		// ToMesh builds the actual Mesh object
-		ToMesh();
-		// Refresh builds out the UV, Normal, Tangents, etc.
-		Refresh();
-	}
-#endregion
-
-#region MESH CONSTRUCTION
-
-	/**
-	 * Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild.
-	 * returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
-	 */
+	/// <summary>
+	/// Checks if the mesh component is lost or does not match _vertices, and if so attempt to rebuild. returns True if object is okay, false if a rebuild was necessary and you now need to regenerate UV2.
+	/// </summary>
+	/// <returns></returns>
 	public MeshRebuildReason Verify()
 	{
 		if(msh == null)
@@ -656,15 +750,18 @@ public class pb_Object : MonoBehaviour
 		return msh.uv2 == null ? MeshRebuildReason.Lightmap : MeshRebuildReason.None;
 	}
 
-	/**
-	 * Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept,
-	 * otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
-	 */
+	/// <summary>
+	/// Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
+	/// </summary>
 	public void ToMesh()
 	{
 		ToMesh(MeshTopology.Triangles);
 	}
 
+	/// <summary>
+	/// Rebuild the mesh positions, uvs, and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
+	/// </summary>
+	/// <param name="preferredTopology">Triangles and Quads are supported.</param>
 	public void ToMesh(MeshTopology preferredTopology)
 	{
 		Mesh m = msh;
@@ -700,15 +797,15 @@ public class pb_Object : MonoBehaviour
 #endif
 	}
 
-	/**
-	 *	\brief Call this to ensure that the mesh is unique.  Basically performs a DeepCopy and assigns back to self.
-	 */
-	public void MakeUnique()
+	/// <summary>
+	/// Deep copy the mesh attribute arrays back to itself. Useful when copy/paste creates duplicate references.
+	/// </summary>
+	internal void MakeUnique()
 	{
-		pb_Face[] q = new pb_Face[_faces.Length];
+		pb_Face[] q = new pb_Face[_quads.Length];
 
 		for(int i = 0; i < q.Length; i++)
-			q[i] = new pb_Face(_faces[i]);
+			q[i] = new pb_Face(_quads[i]);
 
 		pb_IntArray[] sv = new pb_IntArray[_sharedIndices.Length];
 		System.Array.Copy(_sharedIndices, sv, sv.Length);
@@ -733,11 +830,12 @@ public class pb_Object : MonoBehaviour
 		Refresh();
 	}
 
-	/**
-	 *	\brief Recalculates standard mesh properties - normals, collisions, UVs, tangents, and colors.
-	 *	Optionally pass a mask to define what components are updated (UV and Collisions are expensive
-	 *	to rebuild, and can usually be deferred til completion of task).
-	 */
+	/// <summary>
+	/// Recalculates mesh attributes: normals, collisions, UVs, tangents, and colors.
+	/// </summary>
+	/// <param name="mask">
+	/// Optionally pass a mask to define what components are updated (UV and Collisions are expensive to rebuild, and can usually be deferred til completion of task).
+	/// </param>
 	public void Refresh(RefreshMask mask = RefreshMask.All)
 	{
 		// Mesh
@@ -757,7 +855,10 @@ public class pb_Object : MonoBehaviour
 			RefreshCollisions();
 	}
 
-	public void RefreshCollisions()
+	/// <summary>
+	/// Rebuild the collider for this mesh.
+	/// </summary>
+	void RefreshCollisions()
 	{
 		Mesh m = msh;
 
@@ -799,14 +900,14 @@ public class pb_Object : MonoBehaviour
 			}
 		}
 	}
-#endregion
 
-#region UV
-
-	/**
-	 *	Returns a new unused texture group id.
-	 */
-	public int GetUnusedTextureGroup(int i = 1)
+	/// <summary>
+	/// Returns a new unused texture group id.
+	/// Will be greater than or equal to i.
+	/// </summary>
+	/// <param name="i"></param>
+	/// <returns></returns>
+	internal int GetUnusedTextureGroup(int i = 1)
 	{
 		while( System.Array.Exists(faces, element => element.textureGroup == i) )
 			i++;
@@ -814,10 +915,13 @@ public class pb_Object : MonoBehaviour
 		return i;
 	}
 
-	/**
-	 * Returns a new unused element group.   Will be greater than or equal to i.
-	 */
-	public int UnusedElementGroup(int i = 1)
+	/// <summary>
+	/// Returns a new unused element group.
+	/// Will be greater than or equal to i.
+	/// </summary>
+	/// <param name="i"></param>
+	/// <returns></returns>
+	internal int UnusedElementGroup(int i = 1)
 	{
 		while( System.Array.Exists(faces, element => element.elementGroup == i) )
 			i++;
@@ -825,22 +929,16 @@ public class pb_Object : MonoBehaviour
 		return i;
 	}
 
-	/**
-	 * Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
-	 */
-	public void RefreshUV()
-	{
-		RefreshUV(faces);
-	}
-
-	/**
-	 *	Copy values in UV channel to uvs.
-	 *	channel is zero indexed.
-	 *		mesh.uv0/1 = 0
-	 *		mesh.uv2 = 1
-	 *		mesh.uv3 = 2
-	 *		mesh.uv4 = 3
-	 */
+	/// <summary>
+	///	Copy values in UV channel to uvs.
+	///	channel is zero indexed.
+	///		mesh.uv0/1 = 0
+	///		mesh.uv2 = 1
+	///		mesh.uv3 = 2
+	///		mesh.uv4 = 3
+	/// </summary>
+	/// <param name="channel"></param>
+	/// <param name="uvs"></param>
 	public void GetUVs(int channel, List<Vector4> uvs)
 	{
 		uvs.Clear();
@@ -874,9 +972,12 @@ public class pb_Object : MonoBehaviour
 		}
 	}
 
-	/**
-	 *	Sets the UVs on channel.  Does not apply to mesh (use RefreshUV to reflect changes after application).
-	 */
+	/// <summary>
+	/// Sets the UVs on channel.
+	/// </summary>
+	/// <remarks>Does not apply to mesh (use Refresh to reflect changes after application).</remarks>
+	/// <param name="channel"></param>
+	/// <param name="uvs"></param>
 	public void SetUVs(int channel, List<Vector4> uvs)
 	{
 		switch(channel)
@@ -900,10 +1001,19 @@ public class pb_Object : MonoBehaviour
 		}
 	}
 
-	/**
-	 * Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
-	 */
-	public void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
+	/// <summary>
+	/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
+	/// </summary>
+	void RefreshUV()
+	{
+		RefreshUV(faces);
+	}
+
+	/// <summary>
+	/// Re-project AutoUV faces and re-assign ManualUV to mesh.uv channel.
+	/// </summary>
+	/// <param name="facesToRefresh"></param>
+	internal void RefreshUV(IEnumerable<pb_Face> facesToRefresh)
 	{
 		Vector2[] oldUvs = msh.uv;
 		Vector2[] newUVs;
@@ -998,31 +1108,34 @@ public class pb_Object : MonoBehaviour
 #endif
 	}
 
-	/**
-	 *	Set the material on all faces.  Call ToMesh() and Refresh() after to force these changes to take effect.
-	 */
-	public void SetFaceMaterial(pb_Face[] quad, Material mat)
+	/// <summary>
+	/// Set the material on all faces. Call ToMesh() and Refresh() after to force these changes to take effect.
+	/// </summary>
+	/// <param name="facesToApply"></param>
+	/// <param name="mat"></param>
+	internal void SetFaceMaterial(pb_Face[] facesToApply, Material mat)
 	{
 #if PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = new Material[1] { mat };
 #else
-		for(int i = 0; i < quad.Length; i++)
-			quad[i].material = mat;
+		for(int i = 0; i < facesToApply.Length; i++)
+			facesToApply[i].material = mat;
 #endif
 	}
 
-	/**
-	 * Set mesh UV2.
-	 */
+	/// <summary>
+	/// Set mesh UV2.
+	/// </summary>
+	/// <remarks>
+	/// Applies directly to UnityEngine mesh.
+	/// </remarks>
+	/// <param name="v"></param>
 	public void SetUV2(Vector2[] v)
 	{
 		GetComponent<MeshFilter>().sharedMesh.uv2 = v;
 	}
-#endregion
 
-#region COLORS
-
-	public void RefreshColors()
+	void RefreshColors()
 	{
 		Mesh m = GetComponent<MeshFilter>().sharedMesh;
 
@@ -1032,37 +1145,33 @@ public class pb_Object : MonoBehaviour
 		m.colors = _colors;
 	}
 
-	/**
-	 * Set the internal color array.
-	 */
+	/// <summary>
+	/// Set the internal color array.
+	/// </summary>
+	/// <param name="InColors"></param>
 	public void SetColors(Color[] InColors)
 	{
 		_colors = InColors.Length == vertexCount ? InColors : pbUtil.FilledArray<Color>(Color.white, vertexCount);
 	}
 
-	public void SetFaceColor(pb_Face face, Color color)
+	internal void SetFaceColor(pb_Face face, Color color)
 	{
 		if(_colors == null) _colors = pbUtil.FilledArray<Color>(Color.white, vertexCount);
 
 		foreach(int i in face.distinctIndices)
 			_colors[i] = color;
 	}
-#endregion
 
-#region NORMALS AND TANGENTS
-
-	/**
-	 *	Set the tangent array on this mesh.
-	 */
+	/// <summary>
+	/// Set the tangent array on this mesh.
+	/// </summary>
+	/// <param name="tangents"></param>
 	public void SetTangents(Vector4[] tangents)
 	{
 		_tangents = tangents;
 	}
 
-	/**
-	 * Refreshes the normals of this object taking into account the smoothing groups.
-	 */
-	public void RefreshNormals()
+	void RefreshNormals()
 	{
 		msh.RecalculateNormals();
 		Vector3[] normals = msh.normals;
@@ -1070,7 +1179,7 @@ public class pb_Object : MonoBehaviour
 		GetComponent<MeshFilter>().sharedMesh.normals = normals;
 	}
 
-	public void RefreshTangents()
+	void RefreshTangents()
 	{
 		Mesh m = GetComponent<MeshFilter>().sharedMesh;
 
@@ -1079,25 +1188,4 @@ public class pb_Object : MonoBehaviour
 		else
 			pb_MeshUtility.GenerateTangent(ref m);
 	}
-#endregion
-
-#region CLEANUP
-
-	public void OnDestroy()
-	{
-		// Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
-		// differentiate between OnDestroy invoked from user delete & editor scene loading.
-		if(!dontDestroyMeshOnDelete &&
-			Application.isEditor &&
-			!Application.isPlaying &&
-			Time.frameCount > 0 )
-		{
-			if(onDestroyObject != null)
-				onDestroyObject(this);
-			else
-				GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
-		}
-	}
-#endregion
-
 }

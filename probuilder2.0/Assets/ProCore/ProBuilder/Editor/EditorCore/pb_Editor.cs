@@ -1555,7 +1555,7 @@ class pb_Editor : EditorWindow
 			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 
@@ -1678,7 +1678,7 @@ class pb_Editor : EditorWindow
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 
@@ -1773,7 +1773,7 @@ class pb_Editor : EditorWindow
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 			// profiler.EndSample();

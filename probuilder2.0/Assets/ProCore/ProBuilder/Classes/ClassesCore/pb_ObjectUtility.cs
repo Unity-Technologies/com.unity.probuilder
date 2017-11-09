@@ -6,15 +6,13 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	public static class pb_Object_Utility
+	static class pb_ObjectUtility
 	{
-
-#region Coordinate Translation
-
-		/**
-		 *	\brief Gets vertices in world space
-		 *	\returns A Vector3[] arry containing all vertex points in world space.
-		 */
+		/// <summary>
+		/// Gets vertices in world space.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <returns>A Vector3[] containing all vertex points in world space.</returns>
 		public static Vector3[] VerticesInWorldSpace(this pb_Object pb)
 		{
 			Vector3[] worldPoints = new Vector3[pb.vertices.Length];
@@ -27,14 +25,14 @@ namespace ProBuilder2.Common
 			return worldPoints;
 		}
 
-		/**
-		 * Returns requested vertices in world space coordinates.
-		 */
+		/// <summary>
+		/// Returns requested vertices in world space coordinates.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
 		public static Vector3[] VerticesInWorldSpace(this pb_Object pb, int[] indices)
 		{
-			if(indices == null)
-				Debug.LogWarning("indices == null -> VerticesInWorldSpace");
-
 			Vector3[] worldPoints = pb.vertices.ValuesWithIndices(indices);
 
 			for(int i = 0; i < worldPoints.Length; i++)
@@ -42,30 +40,27 @@ namespace ProBuilder2.Common
 
 			return worldPoints;
 		}
-#endregion
 
-#region Mesh Modify
-
-		/**
-		 *	\brief Use this for moving vertices.  Arguments are selected indices (distinct), and the offset to apply.
-		 *	@param selectedTriangles Triangles to apply the offset to.
-		 *	@param offset Offset in meters to apply.  Note that offset is in world space coordinates for this overload.
-		 *	\notes This method also applies a snap value if one is set.  Snaps vertices in world space, not locally.
-		 */
+		/// <summary>
+		/// Use this for moving vertices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="selectedTriangles">A distinct set of indices to apply an offset to.</param>
+		/// <param name="offset">The offset to apply in world coordinates.</param>
 		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
 		{
 			pb.TranslateVertices_World(selectedTriangles, offset, 0f, false, null);
 		}
 
-		/**
-		 *	Move vertices in world space.
-		 *	pb - The pb_Object target.
-		 *	selectedTriangles - A distinct list of vertex indices.
-		 *	offset - The direction and magnitude to translate selectedTriangles, in world space.
-		 *	snapValue - If > 0 snap each vertex to the nearest on-grid point in world space.
-		 *	snapAxisOnly - If true vertices will only be snapped along the active axis.
-		 *	lookup - A shared index lookup table.  Can pass NULL to have this automatically calculated.
-		 */
+		/// <summary>
+		/// Move vertices in world space.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="selectedTriangles">A distinct list of vertex indices.</param>
+		/// <param name="offset">The direction and magnitude to translate selectedTriangles, in world space.</param>
+		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
+		/// <param name="snapAxisOnly">If true vertices will only be snapped along the active axis.</param>
+		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
 		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
 			int i = 0;
@@ -101,11 +96,12 @@ namespace ProBuilder2.Common
 			pb.msh.vertices = verts;
 		}
 
-		/**
-		 *	\brief Use this for moving vertices.  Arguments are selected indices (distinct), and the offset to apply (in local space).
-		 *	@param selectedTriangles Triangles to apply the offset to.
-		 *	@param offset Offset in meters to apply (Vector3 : direction * float : distance).
-		 */
+		/// <summary>
+		/// Move vertices in local space.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="selectedTriangles"></param>
+		/// <param name="offset"></param>
 		public static void TranslateVertices(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
 		{
 			int i = 0;
@@ -120,11 +116,13 @@ namespace ProBuilder2.Common
 			pb.msh.vertices = verts;
 		}
 
-		/**
-		 *	\brief Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
-		 *	Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.
-		 */
-		// [System.Obsolete("Use SetSharedVertexValues(pb_Object, index, pb_Vertex) instead.")]
+		/// <summary>
+		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
+		/// </summary>
+		/// <remarks>Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.</remarks>
+		/// <param name="pb"></param>
+		/// <param name="sharedIndex"></param>
+		/// <param name="position"></param>
 		public static void SetSharedVertexPosition(this pb_Object pb, int sharedIndex, Vector3 position)
 		{
 			Vector3[] v = pb.vertices;
@@ -137,6 +135,13 @@ namespace ProBuilder2.Common
 			pb.msh.vertices = v;
 		}
 
+		/// <summary>
+		/// Given a shared vertex index (index of the triangle in the sharedIndices array), move all vertices to new position.
+		/// </summary>
+		/// <remarks>Use pb.sharedIndices.IndexOf(triangle) to get sharedIndex.</remarks>
+		/// <param name="pb"></param>
+		/// <param name="sharedIndex"></param>
+		/// <param name="vertex"></param>
 		public static void SetSharedVertexValues(this pb_Object pb, int sharedIndex, pb_Vertex vertex)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
@@ -148,14 +153,14 @@ namespace ProBuilder2.Common
 
 			pb.SetVertices(vertices);
 		}
-#endregion
 
-#region Seek
-
-		/**
-		 * \brief Returns a #pb_Face which contains the passed triangle.
-		 * @param tri int[] composed of three indices.
-		 */
+		/// <summary>
+		/// Returns a #pb_Face which contains the passed triangle.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="tri">int[] composed of three indices.</param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out pb_Face face)
 		{
 			for(int i = 0; i < pb.faces.Length; i++)
@@ -171,10 +176,13 @@ namespace ProBuilder2.Common
 			return false;
 		}
 
-		/**
-		 * \brief Returns the index of the #pb_Face which contains the passed triangle.
-		 * @param tri int[] composed of three indices.
-		 */
+		/// <summary>
+		/// Returns the index of the #pb_Face which contains the passed triangle.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="tri">int[] composed of three indices.</param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out int face)
 		{
 			for(int i = 0; i < pb.faces.Length; i++)
@@ -189,6 +197,5 @@ namespace ProBuilder2.Common
 			face = -1;
 			return false;
 		}
-#endregion
 	}
 }

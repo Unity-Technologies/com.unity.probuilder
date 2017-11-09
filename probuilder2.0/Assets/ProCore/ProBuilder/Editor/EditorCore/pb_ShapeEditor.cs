@@ -266,8 +266,7 @@ namespace ProBuilder2.EditorCommon
 					 	1,
 					 	0,
 					 	0,
-					 	plane_axis,
-					 	false));
+					 	plane_axis));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -281,8 +280,7 @@ namespace ProBuilder2.EditorCommon
 					 	1,
 					 	0,
 					 	0,
-					 	plane_axis,
-					 	false);
+					 	plane_axis);
 
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
@@ -572,7 +570,6 @@ namespace ProBuilder2.EditorCommon
 		static float plane_height = 10, plane_width = 10;
 		static int plane_height_cuts = 3, plane_width_cuts = 3;
 		static Axis plane_axis = Axis.Up;
-		static bool plane_smooth = false;
 		void PlaneGUI()
 		{
 			plane_axis = (Axis)EditorGUILayout.EnumPopup("Initial Orientation", plane_axis);
@@ -603,8 +600,7 @@ namespace ProBuilder2.EditorCommon
 					 	plane_width,
 					 	plane_height_cuts,
 					 	plane_width_cuts,
-					 	plane_axis,
-					 	plane_smooth));
+					 	plane_axis));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -613,7 +609,7 @@ namespace ProBuilder2.EditorCommon
 
 			if (GUILayout.Button("Build " + shape, GUILayout.MinHeight(28)))
 			{
-				pb_Object pb = pb_ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis, plane_smooth);
+				pb_Object pb = pb_ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis);
 				pbUndo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( userMaterial ) pb.SetFaceMaterial(pb.faces, userMaterial );

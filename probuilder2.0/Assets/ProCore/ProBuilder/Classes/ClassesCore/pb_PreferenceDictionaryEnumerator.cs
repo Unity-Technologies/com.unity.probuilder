@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	public class pb_PreferenceDictionaryEnumerator : IEnumerator
+	class pb_PreferenceDictionaryEnumerator : IEnumerator
 	{
 		// Enumerators are positioned before the first element
 		// until the first MoveNext() call.

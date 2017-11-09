@@ -106,7 +106,7 @@ namespace ProBuilder2.EditorCommon
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pbTransformUtil.UnparentChildren(selection[i].transform);
+				pb_TransformUtil.UnparentChildren(selection[i].transform);
 
 				if(triangles != null)
 					selection[i].CenterPivot(triangles[i]);
@@ -115,7 +115,7 @@ namespace ProBuilder2.EditorCommon
 
 				selection[i].Optimize();
 
-				pbTransformUtil.ReparentChildren(selection[i].transform);
+				pb_TransformUtil.ReparentChildren(selection[i].transform);
 			}
 
 			SceneView.RepaintAll();
@@ -475,7 +475,7 @@ namespace ProBuilder2.EditorCommon
 			foreach(pb_Object pb in selection)
 			{
 				pb.ToMesh();
-				pb.RefreshNormals();
+				pb.Refresh(RefreshMask.Normals);
 
 				if(editor && editor.selectionMode == SelectMode.Edge)
 				{
