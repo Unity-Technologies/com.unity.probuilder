@@ -176,7 +176,7 @@ namespace ProBuilder2.EditorCommon
 					m_GroupButtonStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
 					m_GroupButtonStyle.hover.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
 					m_GroupButtonStyle.active.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-					Font asap = pb_FileUtil.LoadRelative<Font>("About/Font/Asap-Regular.otf");
+					Font asap = pb_FileUtil.LoadInternalAsset<Font>("About/Font/Asap-Regular.otf");
 					if (asap != null)
 					{
 						m_GroupButtonStyle.font = asap;
@@ -189,8 +189,7 @@ namespace ProBuilder2.EditorCommon
 					m_GroupButtonStyle.fixedWidth = IconWidth;
 					m_GroupButtonStyle.fixedHeight = IconHeight;
 
-					//special colors for number text inside the smoothing group buttons
-					//...naturally, this should become a PB-wide thing in the future, with further tweaking
+					// todo Move text & background colors to a global settings file
 					m_GroupButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
 					m_GroupButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);
 					m_GroupButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? new Color(.9f, .9f, .9f) : new Color(.3f, .3f, .3f);

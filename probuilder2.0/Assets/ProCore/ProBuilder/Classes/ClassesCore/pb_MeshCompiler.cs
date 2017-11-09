@@ -8,7 +8,7 @@ namespace ProBuilder2.Common
 	/**
 	 * Utilities for working with UnityEngine.Mesh.
 	 */
-	public class pb_MeshCompiler
+	public static class pb_MeshCompiler
 	{
 		/**
 		 * Compile a UnityEngine::Mesh from a pb_Object.
@@ -20,8 +20,8 @@ namespace ProBuilder2.Common
 			target.vertices = pb.vertices;
 			target.uv = GetUVs(pb);
 #if UNITY_5_3_OR_NEWER
-		if(pb.hasUv3) target.SetUVs(2, pb.uv3);
-		if(pb.hasUv4) target.SetUVs(3, pb.uv4);
+			if(pb.hasUv3) target.SetUVs(2, pb.uv3);
+			if(pb.hasUv4) target.SetUVs(3, pb.uv4);
 #endif
 			Vector3[] normals = pb_MeshUtility.GenerateNormals(pb);
 			pb_MeshUtility.SmoothNormals(pb, ref normals);
@@ -73,7 +73,7 @@ namespace ProBuilder2.Common
 			n = 0;
 
 			Vector3[] world = anyWorldSpace ? pb.transform.ToWorldSpace(pb.vertices) : null;
-			Vector2[] uvs = new Vector2[pb.vertexCount];
+			Vector2[] uvs = pb.uv != null && pb.uv.Length == pb.vertexCount ? pb.uv : new Vector2[pb.vertexCount];
 
 			foreach(KeyValuePair<int, List<pb_Face>> kvp in textureGroups)
 			{

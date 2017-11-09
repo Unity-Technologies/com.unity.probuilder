@@ -25,6 +25,8 @@ namespace ProBuilder2.EditorCommon
 	[InitializeOnLoad]
 	public static class pb_PreferencesInternal
 	{
+		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
+
 		private static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
 		{
 			{ pb_Constant.pbForceConvex, false },
@@ -86,13 +88,28 @@ namespace ProBuilder2.EditorCommon
 		{
 		};
 
-		static pb_PreferencesInternal()
-		{
-			m_Preferences = pb_FileUtil.LoadRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
-		}
-
 		private static pb_PreferenceDictionary m_Preferences = null;
 
+		private static void LoadPreferencesObject()
+		{
+			string preferencesPath = pb_FileUtil.GetLocalDataDirectory() + k_PrefsAssetName;
+
+			// First try loading at the local files directory
+			m_Preferences = AssetDatabase.LoadAssetAtPath<pb_PreferenceDictionary>(preferencesPath);
+
+			// If that fails, search the project for a compatible preference object
+			if (m_Preferences == null)
+				m_Preferences = pb_FileUtil.FindAssetOfType<pb_PreferenceDictionary>();
+
+			// If that fails, create a new preferences object at the local data directory
+			if (m_Preferences == null)
+				m_Preferences = pb_FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
+		}
+
+		static pb_PreferencesInternal()
+		{
+			LoadPreferencesObject();
+		}
 		/**
 		 *	Access the project local preferences asset.
 		 */
@@ -100,8 +117,8 @@ namespace ProBuilder2.EditorCommon
 		{
 			get
 			{
-				if(m_Preferences == null)
-					m_Preferences = pb_FileUtil.LoadRequiredRelative<pb_PreferenceDictionary>("Data/ProBuilderPreferences.asset");
+				if (m_Preferences == null)
+					LoadPreferencesObject();
 
 				return m_Preferences;
 			}

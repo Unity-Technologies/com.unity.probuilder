@@ -1,3 +1,13 @@
+# ProBuilder 2.9.8f2
+
+## Bug Fixes
+
+- Fix shader compile errors when targeting mobile platforms.
+- Fix possible overflow in vector hashing functions.
+- Fix ProBuilderize failing to import quads in some cases.
+- Fix FBX export not including manually unwrapped UVs.
+- Fix toolbar using old icons with basic skin.
+
 # ProBuilder 2.9.7f5
 
 ## Features

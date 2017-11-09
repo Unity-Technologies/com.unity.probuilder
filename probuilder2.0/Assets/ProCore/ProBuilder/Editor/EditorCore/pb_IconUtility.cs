@@ -16,26 +16,10 @@ namespace ProBuilder2.EditorCommon
 		Pro
 	};
 
-	[InitializeOnLoad]
 	public static class pb_IconUtility
 	{
-		private const string ICON_FOLDER_PATH = "ProBuilder/Icons";
-
-		static pb_IconUtility()
-		{
-			if(!Directory.Exists(m_IconFolderPath))
-			{
-				string folder = pb_FileUtil.FindFolder(ICON_FOLDER_PATH);
-
-				if(string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
-					Debug.LogError("Could not locate ProBuilder/Icons folder.  The ProBuilder folder may be moved, but the contents of this folder must remain unmodified relative to ProBuilder root.");
-				else
-					m_IconFolderPath = folder;
-			}
-		}
-
 		private static Dictionary<string, Texture2D> m_Icons = new Dictionary<string, Texture2D>();
-		private static string m_IconFolderPath = "Assets/ProCore/ProBuilder/GUI/Icons/";
+		private static string m_IconFolderPath = "Icons/";
 
 		/**
 		 * Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode
@@ -65,7 +49,7 @@ namespace ProBuilder2.EditorCommon
 					// - do one lap searching for light
 					// - if nothing found, next searching for default
 					string fullPath = string.Format("{0}{1}.png", m_IconFolderPath, i == 0 ? name : iconName);
-					icon = (Texture2D) AssetDatabase.LoadAssetAtPath(fullPath, typeof(Texture2D));
+					icon = pb_FileUtil.LoadInternalAsset<Texture2D>(fullPath);
 				} while (!isDarkSkin && ++i < 2 && icon == null);
 
 				m_Icons.Add(name, icon);

@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 	public class FreezeTransform : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_Reset"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_Reset", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent

@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class MergeFaces : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Merge"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Merge", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 

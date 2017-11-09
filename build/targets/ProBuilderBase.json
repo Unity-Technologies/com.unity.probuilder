@@ -3,15 +3,16 @@
 	"UnityPath":[
 		"/Applications/Unity $UNITY_VERSION/Unity.app",
 		"D:/Applications/Unity $UNITY_VERSION",
-		"C:/Users/karlh/unity-installs/Unity $UNITY_VERSION"
+		"C:/Users/karlh/unity-installs/Unity $UNITY_VERSION",
+		"C:/Program Files/Unity $UNITY_VERSION"
 	],
 	"Macros": {
 	},
 	"Defines": [
 	],
 	"OnPreBuild":[
-		{ "Command":"rm", "Arguments": [ "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION" ] },
-		{ "Command":"mkdir", "Arguments": [ "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION/Assets" ] },
+		{ "Command":"rm", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION" ] },
+		{ "Command":"mkdir", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION/Assets" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$DST_PB_ROOT" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing" ] },
@@ -27,7 +28,7 @@
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/AssetStoreTools", "bin/projects/$DST_PB_NAME-Unity$UNITY_VERSION/Assets/AssetStoreTools" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/AssetStoreTools", "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION/Assets/AssetStoreTools" ] },
 	],
 	"Assemblies":
 	[

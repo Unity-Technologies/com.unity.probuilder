@@ -171,9 +171,9 @@ namespace ProBuilder2.EditorCommon
 
 			Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
-			m_TangentModeIcons[0] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free.png"), "Tangent Mode: Free");
-			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned.png"), "Tangent Mode: Aligned");
-			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored.png"), "Tangent Mode: Mirrored");
+			m_TangentModeIcons[0] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Free"), "Tangent Mode: Free");
+			m_TangentModeIcons[1] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
+			m_TangentModeIcons[2] = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
 
 			if(m_Target != null)
 				SetIsEditing(m_Target.m_IsEditing);

@@ -9,7 +9,7 @@ namespace ProBuilder2.Actions
 	public class FlipObjectNormals : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_FlipNormals"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_FlipNormals", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Flip Normals"; } }
 

@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class SetPivotToSelection : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override string menuTitle { get { return "Set Pivot"; } }
 

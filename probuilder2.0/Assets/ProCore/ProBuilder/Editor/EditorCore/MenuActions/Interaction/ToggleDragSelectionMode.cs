@@ -19,11 +19,11 @@ namespace ProBuilder2.Actions
 		public override Texture2D icon {
 			get {
 				if(dragSelectMode == DragSelectMode.Add)
-					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftAdd");
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftAdd", IconSkin.Pro);
 				else if(dragSelectMode == DragSelectMode.Subtract)
-					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract");
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract", IconSkin.Pro);
 				else
-					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftDifference");
+					return pb_IconUtility.GetIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
 			}
 		}
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }

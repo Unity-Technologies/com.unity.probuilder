@@ -10,7 +10,7 @@ namespace ProBuilder2.Actions
 	public class SubdivideFaces : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Subdivide"); } }
+		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_Subdivide", IconSkin.Pro); } }
 		public override pb_TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 		public override bool hasFileMenuEntry { get { return false; } }

@@ -10,6 +10,12 @@ namespace ProBuilder2.Common
 	{
 		public const float FLT_COMPARE_RESOLUTION = 1000f;
 
+		private static int HashFloat(float f)
+		{
+			ulong u = (ulong) (f * FLT_COMPARE_RESOLUTION);
+			return (int) (u % int.MaxValue);
+		}
+
 		/**
 		 *	Return the rounded hashcode for a vector2
 		 */
@@ -20,8 +26,8 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + HashFloat(v.x);
+				hash = hash * 29 + HashFloat(v.y);
 			}
 
 			return hash;
@@ -37,9 +43,9 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.z * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + HashFloat(v.x);
+				hash = hash * 29 + HashFloat(v.y);
+				hash = hash * 29 + HashFloat(v.z);
 			}
 
 			return hash;
@@ -55,10 +61,10 @@ namespace ProBuilder2.Common
 
 			unchecked
 			{
-				hash = hash * 29 + Convert.ToInt32(v.x * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.y * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.z * FLT_COMPARE_RESOLUTION);
-				hash = hash * 29 + Convert.ToInt32(v.w * FLT_COMPARE_RESOLUTION);
+				hash = hash * 29 + HashFloat(v.x);
+				hash = hash * 29 + HashFloat(v.y);
+				hash = hash * 29 + HashFloat(v.z);
+				hash = hash * 29 + HashFloat(v.w);
 			}
 
 			return hash;
