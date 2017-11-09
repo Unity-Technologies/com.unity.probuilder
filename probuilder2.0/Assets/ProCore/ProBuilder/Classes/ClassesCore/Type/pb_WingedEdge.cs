@@ -19,7 +19,7 @@ namespace ProBuilder2.Common
 	///     |             |
 	///     |             |
 	/// </summary>
-	class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
+	public class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
 	{
 		public pb_EdgeLookup edge;
 		public pb_Face face;

@@ -136,7 +136,7 @@ namespace ProBuilder2.Common
 		/// <param name="pbIntArr"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
+		public static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
 			int[] universal = pbIntArr.GetCommonIndices(indices).ToArray();
 
@@ -150,7 +150,7 @@ namespace ProBuilder2.Common
 			return shared;
 		}
 
-		internal static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
+		public static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
 		{
 			int[] universal = GetCommonIndices(lookup, indices).ToArray();
 

@@ -1154,7 +1154,12 @@ public class pb_Object : MonoBehaviour
 		_colors = InColors.Length == vertexCount ? InColors : pb_Util.FilledArray<Color>(Color.white, vertexCount);
 	}
 
-	internal void SetFaceColor(pb_Face face, Color color)
+	/// <summary>
+	/// Set a faces vertices to a color.
+	/// </summary>
+	/// <param name="face"></param>
+	/// <param name="color"></param>
+	public void SetFaceColor(pb_Face face, Color color)
 	{
 		if(_colors == null) _colors = pb_Util.FilledArray<Color>(Color.white, vertexCount);
 
