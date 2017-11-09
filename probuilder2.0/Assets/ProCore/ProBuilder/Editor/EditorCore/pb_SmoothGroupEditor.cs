@@ -332,9 +332,9 @@ namespace ProBuilder2.EditorCommon
 			m_PreviewOpacity = pb_PreferencesInternal.GetFloat("pb_SmoothingGroupEditor::m_PreviewOpacity", .5f);
 			m_PreviewDither = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_PreviewDither", false);
 			m_BreakSmoothingContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
-				"Expand the face selection by selecting all faces matching the currently selected face groups.");
-			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
 				"Clear the selected faces of their smoothing groups");
+			m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
+				"Expand the face selection by selecting all faces matching the currently selected face groups");
 			pb_Selection.OnSelectionChanged();
 			OnSelectionChanged();
 		}
