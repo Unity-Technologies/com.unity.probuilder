@@ -462,23 +462,6 @@ namespace ProBuilder2.EditorCommon
 			return reason;
 		}
 
-		public static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
-		{
-			return (T) AssetDatabase.LoadAssetAtPath(InPath, typeof(T));
-		}
-
-		[System.Obsolete("Please us InitObject(pb_Object pb) instead.")]
-		public static void InitObjectFlags(pb_Object pb)
-		{
-			InitObject(pb);
-		}
-
-		[System.Obsolete("Please us InitObject instead.")]
-		public static void InitObjectFlags(pb_Object pb, ColliderType colliderType, EntityType entityType)
-		{
-			InitObject(pb, colliderType, entityType);
-		}
-
 		/**
 		 * \brief ProBuilder objects created in Editor need to be initialized with a number of additional Editor-only settings.
 		 *	This method provides an easy method of doing so in a single call.  #InitObject will set the Entity Type, generate

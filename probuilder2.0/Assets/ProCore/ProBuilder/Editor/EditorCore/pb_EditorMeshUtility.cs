@@ -4,6 +4,7 @@ using ProBuilder2.Common;
 using System;
 using System.IO;
 using System.Collections;
+using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -12,8 +13,8 @@ namespace ProBuilder2.EditorCommon
 	/// </summary>
 	public static class pb_EditorMeshUtility
 	{
-		// @todo make customizable
-		const string PB_MESH_CACHE = "Assets/ProCore/ProBuilder/ProBuilderMeshCache";
+		const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
+		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
 
 		/// <summary>
 		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).\
@@ -99,11 +100,11 @@ namespace ProBuilder2.EditorCommon
 
 			// check for an existing mesh in the mesh cache and update or create a new one so
 			// as not to clutter the scene yaml.
-			string mesh_path = AssetDatabase.GetAssetPath(mesh);
+			string meshAssetPath = AssetDatabase.GetAssetPath(mesh);
 
 			// if mesh is already an asset any changes will already have been applied since
 			// pb_Object is directly modifying the mesh asset
-			if(string.IsNullOrEmpty(mesh_path))
+			if(string.IsNullOrEmpty(meshAssetPath))
 			{
 				// at the moment the asset_guid is only used to name the mesh something unique
 				string guid = pb.asset_guid;
@@ -114,12 +115,11 @@ namespace ProBuilder2.EditorCommon
 					pb.asset_guid = guid;
 				}
 
-				string path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
+				string meshCacheDirectory = GetMeshCacheDirectory(true);
 
-				if(!Directory.Exists(PB_MESH_CACHE))
-					Directory.CreateDirectory(PB_MESH_CACHE);
+				string path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
 
-				Mesh m = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
+				Mesh m = AssetDatabase.LoadAssetAtPath<Mesh>(path);
 
 				// a mesh already exists in the cache for this pb_Object
 				if(m != null)
@@ -134,7 +134,7 @@ namespace ProBuilder2.EditorCommon
 							// use the most recent mesh iteration (when undoing for example)
 							pb_MeshUtility.CopyTo(mesh, m);
 
-							GameObject.DestroyImmediate(mesh);
+							UnityEngine.Object.DestroyImmediate(mesh);
 							pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;
 
 							// also set the MeshCollider if it exists
@@ -147,7 +147,7 @@ namespace ProBuilder2.EditorCommon
 							// duplicate mesh
 							// Debug.Log("create new mesh in cache from disconnect");
 							pb.asset_guid = Guid.NewGuid().ToString("N");
-							path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, pb.asset_guid);
+							path = string.Format("{0}/{1}.asset", meshCacheDirectory, pb.asset_guid);
 						}
 					}
 					else
@@ -155,10 +155,6 @@ namespace ProBuilder2.EditorCommon
 						Debug.LogWarning("Mesh found in cache and scene mesh references match, but pb.asset_guid doesn't point to asset.  Please report the circumstances leading to this event to Karl.");
 					}
 				}
-				// else
-				// {
-				// 	Debug.Log("no cache found, creating new");
-				// }
 
 				AssetDatabase.CreateAsset(mesh, path);
 			}
@@ -166,11 +162,53 @@ namespace ProBuilder2.EditorCommon
 
 		internal static bool GetCachedMesh(pb_Object pb, out string path, out Mesh mesh)
 		{
+			if (pb.msh != null)
+			{
+				string meshPath = AssetDatabase.GetAssetPath(pb.msh);
+
+				if (!string.IsNullOrEmpty(meshPath))
+				{
+					path = meshPath;
+					mesh = pb.msh;
+
+					return true;
+				}
+			}
+
+			string meshCacheDirectory = GetMeshCacheDirectory(false);
 			string guid = pb.asset_guid;
-			path = string.Format("{0}/{1}.asset", PB_MESH_CACHE, guid);
-			// Debug.Log("gameobject: " + pb.gameObject.GetInstanceID() + "\nsearching for: " + guid + "\nfound: " + path);
-			mesh = pb_EditorUtility.LoadAssetAtPath<Mesh>(path);
+
+			path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
+			mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+
 			return mesh != null;
+		}
+
+		static string GetMeshCacheDirectory(bool initializeIfMissing = false)
+		{
+			if (Directory.Exists(k_MeshCacheDirectory))
+				return k_MeshCacheDirectory;
+
+			string[] results = Directory.GetDirectories("Assets", k_MeshCacheDirectoryName, SearchOption.AllDirectories);
+
+			if (results.Length < 1)
+			{
+				if (initializeIfMissing)
+				{
+					k_MeshCacheDirectory = pb_FileUtil.GetLocalDataDirectory() + "/" + k_MeshCacheDirectoryName;
+					Directory.CreateDirectory(k_MeshCacheDirectory);
+				}
+				else
+				{
+					k_MeshCacheDirectory = null;
+				}
+			}
+			else
+			{
+				k_MeshCacheDirectory = results.First();
+			}
+
+			return k_MeshCacheDirectory;
 		}
 	}
 }

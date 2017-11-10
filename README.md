@@ -203,8 +203,17 @@ Don't forget to add the package to the manifest of whatever project you're wanti
 ```
 {
 	"dependencies": {
-		"com.unity.probuilder" : "2.10.0",
+		"com.unity.probuilder" : "2.10.0"
 	},
 	"registry":"http://staging-packages.unity.com"
 }
 ```
+
+### Upgrading from Asset Store to Packman
+
+1. Move user data out of the ProCore/ProBuilder folder (put it in `Assets` or where-ever else you want)
+	- Move `Assets/ProCore/ProBuilder/Data` to `Assets/ProBuilder Data`
+	- Move `Assets/ProCore/ProBuilder/ProBuilderMeshCache` to `Assets/ProBuilder Data/ProBuilderMeshCache`
+1. Delete the ProCore/ProBuilder folder
+	- **If meshes in your scene disappear when you delete this folder:** Don't panic. That just means **Meshes Are Assets** is enabled you and didn't move the Mesh Cache. Perform the next step (import Packman ProBuilder) then run `Tools/ProBuilder/Repair/Rebuild All ProBuilder Objects`.
+1. Import Packman ProBuilder package
