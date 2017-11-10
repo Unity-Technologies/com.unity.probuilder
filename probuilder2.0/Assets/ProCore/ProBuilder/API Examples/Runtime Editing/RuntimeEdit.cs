@@ -190,7 +190,7 @@ namespace ProBuilder2.Examples
 				if(hitpb == null)
 					return false;
 
-				Mesh m = hitpb.msh;
+				Mesh m = hitpb.GetComponent<MeshFilter>().sharedMesh;
 
 				int[] tri = new int[3] {
 					m.triangles[hit.triangleIndex * 3 + 0],

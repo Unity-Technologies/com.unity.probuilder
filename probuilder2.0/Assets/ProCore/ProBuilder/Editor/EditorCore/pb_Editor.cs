@@ -9,6 +9,10 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
+	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
+	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
+	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
+
 class pb_Editor : EditorWindow
 {
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
@@ -250,13 +254,6 @@ class pb_Editor : EditorWindow
 #endregion
 
 #region EVENT HANDLERS
-
-	/**
-	 * Delegate called on element or object selection change.
-	 */
-	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
-	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
-	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
 
 	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
 

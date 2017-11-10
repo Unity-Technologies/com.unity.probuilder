@@ -14,7 +14,7 @@ namespace ProBuilder2.EditorCommon
 	/// <summary>
 	/// Custom editor for pb_UV type.
 	/// </summary>
-	class pb_AutoUV_Editor
+	class pb_AutoUvEditor
 	{
 #if !PROTOTYPE
 #region MEMBERS

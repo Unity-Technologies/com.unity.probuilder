@@ -2688,7 +2688,7 @@ class pb_UVEditor : EditorWindow
 
 		bool isKeyDown = Event.current.type == EventType.KeyDown;
 
-		if( pb_AutoUV_Editor.OnGUI(selection, (int)actionWindowRect.width) )
+		if( pb_AutoUvEditor.OnGUI(selection, (int)actionWindowRect.width) )
 		{
 			if(!modifyingUVs_AutoPanel)
 			{

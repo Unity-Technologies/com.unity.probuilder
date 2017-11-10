@@ -936,12 +936,12 @@ namespace ProBuilder2.Common
 		}
 
 		/// <summary>
-		/// Gets the center point of the supplied Vector3[] array.
+		/// Gets the average of a vector array.
 		/// </summary>
-		/// <param name="v"></param>
-		/// <param name="indices"></param>
+		/// <param name="v">The array</param>
+		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
 		/// <returns>Average Vector3 of passed vertex array.</returns>
-		internal static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
+		public static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
 		{
 			Vector2 sum = Vector2.zero;
 			float len = indices == null ? v.Count : indices.Count;
@@ -953,7 +953,13 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
-		internal static Vector3 Average(IList<Vector3> v, IList<int> indices = null)
+		/// <summary>
+		/// Gets the average of a vector array.
+		/// </summary>
+		/// <param name="v">The array</param>
+		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <returns>Average Vector3 of passed vertex array.</returns>
+		public static Vector3 Average(IList<Vector3> v, IList<int> indices = null)
 		{
 			Vector3 sum = Vector3.zero;
 			float len = indices == null ? v.Count : indices.Count;
@@ -980,7 +986,15 @@ namespace ProBuilder2.Common
 			return sum / len;
 		}
 
-		internal static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)
+		/// <summary>
+		/// Average a set of vertices.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="selector"></param>
+		/// <param name="indices"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)
 		{
 			Vector3 sum = Vector3.zero;
 			float len = indices == null ? v.Count : indices.Count;

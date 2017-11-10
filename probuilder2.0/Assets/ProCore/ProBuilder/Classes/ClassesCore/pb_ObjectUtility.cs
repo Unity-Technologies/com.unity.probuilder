@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace ProBuilder2.Common
 {
-	static class pb_ObjectUtility
+	/// <summary>
+	/// General functions for modifying pb_Object.
+	/// </summary>
+	public static class pb_ObjectUtility
 	{
 		/// <summary>
 		/// Gets vertices in world space.

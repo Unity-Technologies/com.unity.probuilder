@@ -1113,7 +1113,7 @@ public class pb_Object : MonoBehaviour
 	/// </summary>
 	/// <param name="facesToApply"></param>
 	/// <param name="mat"></param>
-	internal void SetFaceMaterial(pb_Face[] facesToApply, Material mat)
+	public void SetFaceMaterial(pb_Face[] facesToApply, Material mat)
 	{
 #if PROTOTYPE
 		GetComponent<MeshRenderer>().sharedMaterials = new Material[1] { mat };

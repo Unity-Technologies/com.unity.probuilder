@@ -15,6 +15,19 @@ using ProBuilder2.Actions;
 namespace ProBuilder2.EditorCommon
 {
 	/// <summary>
+	/// Delegate to be raised when a ProBuilder object is created.
+	/// </summary>
+	/// <param name="pb"></param>
+	public delegate void OnObjectCreated(pb_Object pb);
+
+	/// <summary>
+	/// Delegate to be raised when a ProBuilder component is compiled to a UnityEngine mesh.
+	/// </summary>
+	/// <param name="pb"></param>
+	/// <param name="mesh"></param>
+	public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+
+	/// <summary>
 	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
 	/// </summary>
 	static class pb_EditorUtility
@@ -23,10 +36,6 @@ namespace ProBuilder2.EditorCommon
 		private static float notifTimer = 0f;
 		private static EditorWindow notifWindow;
 		private static bool notifDisplayed = false;
-
-		public delegate void OnObjectCreated(pb_Object pb);
-
-		public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
 
 		/**
 		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.

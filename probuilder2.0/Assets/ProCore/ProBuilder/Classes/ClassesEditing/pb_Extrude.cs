@@ -358,5 +358,139 @@ namespace ProBuilder2.MeshOperations
 
 			return perimeter;
 		}
+
+		/// <summary>
+		/// Edge extrusion override
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="edges"></param>
+		/// <param name="extrudeDistance"></param>
+		/// <param name="extrudeAsGroup"></param>
+		/// <param name="enableManifoldExtrude"></param>
+		/// <param name="extrudedEdges"></param>
+		/// <returns></returns>
+		public static bool Extrude(this pb_Object pb, pb_Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out pb_Edge[] extrudedEdges)
+		{
+			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
+
+			List<pb_Edge> validEdges = new List<pb_Edge>();
+			List<pb_Face> edgeFaces = new List<pb_Face>();
+
+			foreach(pb_Edge e in edges)
+			{
+				int faceCount = 0;
+				pb_Face fa = null;
+
+				foreach(pb_Face f in pb.faces)
+				{
+					if(f.edges.IndexOf(e, lookup) > -1)
+					{
+						fa = f;
+
+						if(++faceCount > 1)
+							break;
+					}
+
+				}
+
+				if(enableManifoldExtrude || faceCount < 2)
+				{
+					validEdges.Add(e);
+					edgeFaces.Add(fa);
+				}
+			}
+
+			if(validEdges.Count < 1)
+			{
+				extrudedEdges = null;
+				return false;
+			}
+
+			Vector3[] localVerts = pb.vertices;
+			Vector3[] oNormals = pb.msh.normals;
+
+			int[] allEdgeIndices = new int[validEdges.Count * 2];
+			int c = 0;
+			for(int i = 0; i < validEdges.Count; i++)
+			{
+				allEdgeIndices[c++] = validEdges[i].x;
+				allEdgeIndices[c++] = validEdges[i].y;
+			}
+
+			List<pb_Edge> extrudedIndices = new List<pb_Edge>();
+			// used to set the editor selection to the newly created edges
+			List<pb_Edge> newEdges = new List<pb_Edge>();
+
+			// build out new faces around validEdges
+
+			for(int i = 0; i < validEdges.Count; i++)
+			{
+				pb_Edge edge = validEdges[i];
+				pb_Face face = edgeFaces[i];
+
+				// Averages the normals using only vertices that are on the edge
+				Vector3 xnorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
+				Vector3 ynorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
+
+				int x_sharedIndex = lookup[edge.x];
+				int y_sharedIndex = lookup[edge.y];
+
+				pb_Face newFace = pb.AppendFace(
+					new Vector3[4]
+					{
+						localVerts [ edge.x ],
+						localVerts [ edge.y ],
+						localVerts [ edge.x ] + xnorm.normalized * extrudeDistance,
+						localVerts [ edge.y ] + ynorm.normalized * extrudeDistance
+					},
+					new Color[4]
+					{
+						pb.colors[ edge.x ],
+						pb.colors[ edge.y ],
+						pb.colors[ edge.x ],
+						pb.colors[ edge.y ]
+					},
+					new Vector2[4],
+					new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
+					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
+
+				newEdges.Add(new pb_Edge(newFace.indices[3], newFace.indices[4]));
+
+				extrudedIndices.Add(new pb_Edge(x_sharedIndex, newFace.indices[3]));
+				extrudedIndices.Add(new pb_Edge(y_sharedIndex, newFace.indices[4]));
+			}
+
+			sharedIndices = pb.sharedIndices;
+
+			// merge extruded vertex indices with each other
+			if(extrudeAsGroup)
+			{
+				for(int i = 0; i < extrudedIndices.Count; i++)
+				{
+					int val = extrudedIndices[i].x;
+					for(int n = 0; n < extrudedIndices.Count; n++)
+					{
+						if(n == i)
+							continue;
+
+						if(extrudedIndices[n].x == val)
+						{
+							pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
+							break;
+						}
+					}
+				}
+			}
+
+			pb.SetSharedIndices(sharedIndices);
+
+			foreach(pb_Face f in pb.faces)
+				f.RebuildCaches();
+
+			extrudedEdges = newEdges.ToArray();
+			return true;
+		}
+
 	}
 }

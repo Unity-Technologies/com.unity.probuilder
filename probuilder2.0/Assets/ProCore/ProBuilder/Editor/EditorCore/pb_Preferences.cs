@@ -17,7 +17,7 @@ using ProBuilder2.Common;
 using ProBuilder2.EditorCommon;
 using System.Linq;
 
-namespace ProBuilde2.EditorCommon
+namespace ProBuilder2.EditorCommon
 {
 	static class pb_Preferences
 	{

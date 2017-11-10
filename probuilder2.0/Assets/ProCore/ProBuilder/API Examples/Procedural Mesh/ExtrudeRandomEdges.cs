@@ -4,7 +4,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;	// Extrude lives here
+// Extrude lives here
+using ProBuilder2.MeshOperations;
 using System.Linq;
 
 /**
@@ -58,11 +59,8 @@ public class ExtrudeRandomEdges : MonoBehaviour
 		// get the last extruded face
 		lastExtrudedFace = pb.faces.Last();
 
-		// not strictly necessary, but makes it easier to handle element selection
-		pb.SetSelectedEdges( extrudedEdges );
-
-		// translate the vertices
-		pb.TranslateVertices(pb.SelectedTriangles, dir * distance);
+		// translate the vertices-
+		pb.TranslateVertices(extrudedEdges[0].ToArray(), dir * distance);
 
 		// rebuild mesh with new geometry added by extrude
 		pb.ToMesh();
