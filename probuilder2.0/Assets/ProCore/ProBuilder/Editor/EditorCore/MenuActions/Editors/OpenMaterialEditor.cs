@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class OpenMaterialEditor : pb_MenuAction
+	class OpenMaterialEditor : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Panel_Materials", IconSkin.Pro); } }
@@ -26,7 +26,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pb_Material_Editor.MenuOpenMaterialEditor();
+			pb_MaterialEditor.MenuOpenMaterialEditor();
 			return new pb_ActionResult(Status.Success, "Open Materials Window");
 		}
 	}

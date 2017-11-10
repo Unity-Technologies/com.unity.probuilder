@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class FlipFaceNormals : pb_MenuAction
+	class FlipFaceNormals : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Face_FlipNormals", IconSkin.Pro); } }
@@ -37,7 +37,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuFlipNormals(selection);
+			return pb_MenuCommands.MenuFlipNormals(selection);
 		}
 	}
 }

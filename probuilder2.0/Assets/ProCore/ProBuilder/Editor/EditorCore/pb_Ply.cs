@@ -6,10 +6,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Export options for Ply format.
-	 */
-	public class pb_PlyOptions
+	/// <summary>
+	/// Export options for Ply format.
+	/// </summary>
+	class pb_PlyOptions
 	{
 		// Should the mesh be exported with a right handed coordinate system?
 		public bool isRightHanded = true;
@@ -24,10 +24,10 @@ namespace ProBuilder2.EditorCommon
 		public bool applyTransforms = true;
 	}
 
-	/**
-	 *	Import and export of Ply files in Unity.
-	 */
-	public static class pb_Ply
+	/// <summary>
+	/// Import and export of Ply files in Unity.
+	/// </summary>
+	static class pb_Ply
 	{
 		public static bool Export(IEnumerable<pb_Object> models, out string contents, pb_PlyOptions options = null)
 		{
@@ -67,13 +67,13 @@ namespace ProBuilder2.EditorCommon
 						{
 							int[] quad = face.ToQuad();
 
-							if(quad != null)	
+							if(quad != null)
 							{
 								indices.Add(quad);
 								continue;
 							}
 						}
-						
+
 						for(int i = 0; i < face.indices.Length; i += 3)
 							indices.Add(new int[] {
 								face.indices[i+0],

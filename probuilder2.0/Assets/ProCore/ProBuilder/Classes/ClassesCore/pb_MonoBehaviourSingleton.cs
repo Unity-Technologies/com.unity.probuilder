@@ -2,17 +2,18 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * A generic singleton implementation for MonoBehaviours.
-	 */
-	public class pb_MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
+	/// <summary>
+	/// A generic singleton implementation for MonoBehaviours.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	class pb_MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
 	{
-		/// Store a static reference to the instance of this object.
-		private static MonoBehaviour _instance;
+		// Store a static reference to the instance of this object.
+		static MonoBehaviour m_Instance;
 
-		/**
-		 * Returns an instance of T.  If no instance is available, a new one will be instantiated.
-		 */
+		/// <summary>
+		/// Returns an instance of T.  If no instance is available, a new one will be instantiated.
+		/// </summary>
 		public static T instance
 		{
 			get
@@ -21,62 +22,63 @@ namespace ProBuilder2.Common
 				{
 					GameObject go = new GameObject();
 					go.name = typeof(T).ToString();
-					_instance = go.AddComponent<T>();
+					m_Instance = go.AddComponent<T>();
 				}
 
-				return (T) _instance;
+				return (T) m_Instance;
 			}
 		}
 
-		/**
-		 * Unlike `instance`, this returns null if no instance is found.
-		 */
+		/// <summary>
+		/// Unlike `instance`, this returns null if no instance is found.
+		/// </summary>
 		public static T nullableInstance
 		{
 			get
 			{
-				if(_instance == null)
+				if(m_Instance == null)
 				{
 					T[] danglers = Resources.FindObjectsOfTypeAll<T>();
 
 					if(danglers != null && danglers.Length > 0)
 					{
 						// shouldn't ever have dangling instances, but just in case...
-						_instance = danglers[0];
+						m_Instance = danglers[0];
 						for(int i = 1; i < danglers.Length; i++)
 							GameObject.DestroyImmediate(danglers[i]);
 					}
 				}
 
-				return (T) _instance;
+				return (T) m_Instance;
 			}
 		}
 
-		/**
-		 * Return true if an instance exists, false otherwise.
-		 */
+		/// <summary>
+		/// Return true if an instance exists, false otherwise.
+		/// </summary>
+		/// <returns></returns>
 		public static bool Valid()
 		{
 			return nullableInstance != null;
 		}
 
-		/**
-		 * Classes overriding Awake() should be sure to call base.Awake().
-		 */
+		/// <summary>
+		/// Classes overriding Awake() should be sure to call base.Awake().
+		/// </summary>
 		public virtual void Awake()
 		{
-			if(_instance == null)
-				_instance = this;
+			if(m_Instance == null)
+				m_Instance = this;
 			else
 				GameObject.Destroy(this);
 		}
 
-		/**
-		 * Classes overriding OnEnable() should be sure to call base.OnEnable().
-		 */
+		/// <summary>
+		/// Classes overriding OnEnable() should be sure to call base.OnEnable().
+		/// </summary>
 		public virtual void OnEnable()
 		{
-			_instance = this;
+			m_Instance = this;
 		}
 	}
 }

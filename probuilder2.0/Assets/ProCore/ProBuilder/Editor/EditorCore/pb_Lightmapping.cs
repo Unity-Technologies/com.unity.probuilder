@@ -6,15 +6,16 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Methods used in manipulating or creating Lightmaps.
-	 */
+	/// <summary>
+	/// Methods used in manipulating or creating Lightmaps.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_Lightmapping
+	static class pb_Lightmapping
 	{
-		/**
-		 * Editor-only extension to pb_Object generates lightmap UVs.
-		 */
+		/// <summary>
+		/// Editor-only extension to pb_Object generates lightmap UVs.
+		/// </summary>
+		/// <param name="pb"></param>
 		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
 		public static void GenerateUV2(this pb_Object pb) { pb.GenerateUV2(false); }
 

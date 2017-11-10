@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SmartSubdivide : pb_MenuAction
+	class SmartSubdivide : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return null; } }
@@ -41,10 +41,10 @@ namespace ProBuilder2.Actions
 			switch(pb_Editor.instance.selectionMode)
 			{
 				case SelectMode.Edge:
-					return pb_Menu_Commands.MenuSubdivideEdge(selection);
+					return pb_MenuCommands.MenuSubdivideEdge(selection);
 
 				default:
-					return pb_Menu_Commands.MenuSubdivideFace(selection);
+					return pb_MenuCommands.MenuSubdivideFace(selection);
 			}
 		}
 	}

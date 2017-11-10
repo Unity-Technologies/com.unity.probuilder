@@ -37,34 +37,34 @@ class EditorCallbackViewer : EditorWindow
 	void OnEnable()
 	{
 		// Delegate for Top/Geometry/Texture mode changes.
-		pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChanged);
+		pb_EditorApi.AddOnEditLevelChangedListener(OnEditLevelChanged);
 
 		// Called when a new ProBuilder object is created.
 		// note - this was added in ProBuilder 2.5.1
-		pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
+		pb_EditorApi.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
 
 		// Called when the ProBuilder selection changes (can be object or element change).
 		// Also called when the geometry is modified by ProBuilder.
-		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+		pb_EditorApi.AddOnSelectionUpdateListener(OnSelectionUpdate);
 
 		// Called when vertices are about to be modified.
-		pb_Editor.OnVertexMovementBegin += OnVertexMovementBegin;
+		pb_EditorApi.AddOnVertexMovementBeginListener(OnVertexMovementBegin);
 
 		// Called when vertices have been moved by ProBuilder.
-		pb_Editor.OnVertexMovementFinish += OnVertexMovementFinish;
+		pb_EditorApi.AddOnVertexMovementFinishListener(OnVertexMovementFinish);
 
 		// Called when the Unity mesh is rebuilt from ProBuilder mesh data.
-		pb_EditorUtility.AddOnMeshCompiledListener(OnMeshCompiled);		
+		pb_EditorApi.AddOnMeshCompiledListener(OnMeshCompiled);
 	}
 
 	void OnDisable()
 	{
-		pb_Editor.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
-		pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
-		pb_EditorUtility.RemoveOnMeshCompiledListener(OnMeshCompiled);
-		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-		pb_Editor.OnVertexMovementBegin -= OnVertexMovementBegin;
-		pb_Editor.OnVertexMovementFinish -= OnVertexMovementFinish;
+		pb_EditorApi.RemoveOnEditLevelChangedListener(OnEditLevelChanged);
+		pb_EditorApi.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
+		pb_EditorApi.RemoveOnSelectionUpdateListener(OnSelectionUpdate);
+		pb_EditorApi.RemoveOnVertexMovementBeginListener(OnVertexMovementBegin);
+		pb_EditorApi.RemoveOnVertexMovementFinishListener(OnVertexMovementFinish);
+		pb_EditorApi.RemoveOnMeshCompiledListener(OnMeshCompiled);
 	}
 
 	void OnProBuilderObjectCreated(pb_Object pb)
@@ -79,9 +79,7 @@ class EditorCallbackViewer : EditorWindow
 
 	void OnSelectionUpdate(pb_Object[] selection)
 	{
-		AddLog("Selection Updated: " + string.Format("{0} objects and {1} vertices selected.",
-			selection != null ? selection.Length : 0,
-			selection != null ? selection.Sum(x => x.SelectedTriangleCount) : 0));
+		AddLog("Selection Updated: " + string.Format("{0} objects selected.", selection != null ? selection.Length : 0));
 	}
 
 	void OnVertexMovementBegin(pb_Object[] selection)
@@ -93,7 +91,7 @@ class EditorCallbackViewer : EditorWindow
 	{
 		AddLog("Finished Moving Vertices");
 	}
-	
+
 	void OnMeshCompiled(pb_Object pb, Mesh mesh)
 	{
 		AddLog(string.Format("Mesh {0} rebuilt", pb.name));
@@ -133,7 +131,7 @@ class EditorCallbackViewer : EditorWindow
 
 		GUILayout.Space(4);
 
-		pb_EditorGUIUtility.DrawSolidColor(r, logBackgroundColor);
+//		pb_EditorGUIUtility.DrawSolidColor(r, logBackgroundColor);
 
 		scroll = GUILayout.BeginScrollView(scroll);
 

@@ -4,28 +4,53 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Utilities for working with smoothing groups and hard / soft edges.
-	 */
+	/// <summary>
+	/// Utilities for working with smoothing groups and hard / soft edges.
+	/// </summary>
 	public static class pb_Smoothing
 	{
-		// Faces with smoothingGroup = 0 are hard edges. Historically negative values
-		// were sometimes also written as hard edges.
+		/// <summary>
+		/// Faces with smoothingGroup = 0 are hard edges. Historically negative values were sometimes also written as hard edges.
+		/// </summary>
 		public const int SMOOTHING_GROUP_NONE = 0;
+
+		/// <summary>
+		/// Smoothing groups 1-24 are smooth.
+		/// </summary>
 		public const int SMOOTH_RANGE_MIN = 1;
+
+		/// <summary>
+		/// Smoothing groups 1-24 are smooth.
+		/// </summary>
 		public const int SMOOTH_RANGE_MAX = 24;
+
+		/// <summary>
+		/// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked SMOOTHING_GROUP_NONE.
+		/// </summary>
 		public const int HARD_RANGE_MIN = 25;
+
+		/// <summary>
+		/// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked SMOOTHING_GROUP_NONE.
+		/// </summary>
 		public const int HARD_RANGE_MAX = 42;
 
-		/**
-		 * Get the first available unused smoothing group.
-		 */
+		/// <summary>
+		/// Get the first available unused smoothing group.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <returns></returns>
 		public static int GetUnusedSmoothingGroup(pb_Object pb)
 		{
 			return GetNextUnusedSmoothingGroup(SMOOTH_RANGE_MIN, new HashSet<int>(pb.faces.Select(x => x.smoothingGroup)));
 		}
 
-		private static int GetNextUnusedSmoothingGroup(int start, HashSet<int> used)
+		/// <summary>
+		/// Get the first available smooth group after start.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="used"></param>
+		/// <returns></returns>
+		static int GetNextUnusedSmoothingGroup(int start, HashSet<int> used)
 		{
 			while(used.Contains(start) && start < int.MaxValue - 1)
 			{
@@ -38,18 +63,23 @@ namespace ProBuilder2.Common
 			return start;
 		}
 
-		/**
-		 * Is the smooth group index considered smooth?
-		 * Hard range is 25 -> 42.
-		 */
+		/// <summary>
+		/// Is the smooth group index considered smooth?
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public static bool IsSmooth(int index)
 		{
 			return (index > SMOOTHING_GROUP_NONE && (index < HARD_RANGE_MIN || index > HARD_RANGE_MAX));
 		}
 
-		/**
-		 * Group together adjacent faces with normal differences less than angleThreshold (in degrees).
-		 */
+		/// <summary>
+		/// Group together adjacent faces with normal differences less than angleThreshold (in degrees).
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="angleThreshold"></param>
+		/// <param name="normals"></param>
 		public static void ApplySmoothingGroups(pb_Object pb, IEnumerable<pb_Face> faces, float angleThreshold, Vector3[] normals = null)
 		{
 			// Reset the selected faces to no smoothing group
@@ -98,10 +128,8 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 * Walk the perimiter of a wing looking for compatibly smooth connections. Returns true if any match was found, false if not.
-		 */
-		private static bool FindSoftEdgesRecursive(Vector3[] normals, pb_WingedEdge wing, float angleThreshold, HashSet<pb_Face> processed)
+		// Walk the perimiter of a wing looking for compatibly smooth connections. Returns true if any match was found, false if not.
+		static bool FindSoftEdgesRecursive(Vector3[] normals, pb_WingedEdge wing, float angleThreshold, HashSet<pb_Face> processed)
 		{
 			bool foundSmoothEdge = false;
 
@@ -125,7 +153,7 @@ namespace ProBuilder2.Common
 			return foundSmoothEdge;
 		}
 
-		private static bool IsSoftEdge(Vector3[] normals, pb_EdgeLookup left, pb_EdgeLookup right, float threshold)
+		static bool IsSoftEdge(Vector3[] normals, pb_EdgeLookup left, pb_EdgeLookup right, float threshold)
 		{
 			Vector3 lx = normals[left.local.x];
 			Vector3 ly = normals[left.local.y];

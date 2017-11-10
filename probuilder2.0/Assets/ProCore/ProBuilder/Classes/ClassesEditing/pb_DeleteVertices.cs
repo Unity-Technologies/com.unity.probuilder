@@ -6,14 +6,16 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Functions for removing vertices and triangles from a mesh.
-	 */
+	/// <summary>
+	/// Functions for removing vertices and triangles from a mesh.
+	/// </summary>
 	public static class pb_DeleteVertices
 	{
-		/**
-		 * Removes vertices that no face references.
-		 */
+		/// <summary>
+		/// Removes vertices that no face references.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <returns>A list of deleted vertex indices.</returns>
 		public static int[] RemoveUnusedVertices(this pb_Object pb)
 		{
 			List<int> del = new List<int>();
@@ -28,9 +30,13 @@ namespace ProBuilder2.MeshOperations
 			return del.ToArray();
 		}
 
-		/**
-		 * Deletes the vertices from the passed index array.  Handles rebuilding the sharedIndices array.  Does not retriangulate face.
-		 */
+		/// <summary>
+		/// Deletes the vertices from the passed index array, and handles rebuilding the sharedIndices array.
+		/// </summary>
+		/// <remarks>This function does not retriangulate the mesh. Ie, you are responsible for ensuring that indices
+		/// deleted by this function are not referenced by any triangles.</remarks>
+		/// <param name="pb"></param>
+		/// <param name="distInd"></param>
 		public static void DeleteVerticesWithIndices(this pb_Object pb, IEnumerable<int> distInd)
 		{
 			if(distInd == null || distInd.Count() < 1)
@@ -48,7 +54,7 @@ namespace ProBuilder2.MeshOperations
 
 			// Add 1 because NearestIndexPriorToValue is 0 indexed.
 			for(int i = 0; i < originalVertexCount; i++)
-				offset[i] = pbUtil.NearestIndexPriorToValue(sorted, i) + 1;
+				offset[i] = pb_Util.NearestIndexPriorToValue(sorted, i) + 1;
 
 			foreach(pb_Face face in pb.faces)
 			{

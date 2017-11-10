@@ -23,9 +23,10 @@ public class HighlightNearestFace : MonoBehaviour
 	void Start()
 	{
 		// Generate a 50x50 plane with 25 subdivisions, facing up, with no smoothing applied.
-		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder2.Common.Axis.Up, false);
+		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder2.Common.Axis.Up);
 
-		target.SetFaceMaterial(target.faces, pb_Constant.DefaultMaterial);
+		foreach (pb_Face face in target.faces)
+			face.material = pb_Constant.DefaultMaterial;
 
 		target.transform.position = new Vector3(travel * .5f, 0f, travel * .5f);
 
@@ -89,7 +90,7 @@ public class HighlightNearestFace : MonoBehaviour
 		target.SetFaceColor(nearest, Color.blue);
 
 		// Apply the stored vertex color array to the Unity mesh.
-		target.RefreshColors();
+		target.Refresh(RefreshMask.Colors);
 	}
 
 	/**

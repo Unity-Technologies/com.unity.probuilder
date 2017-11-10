@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class ExtrudeFaces : pb_MenuAction
+	class ExtrudeFaces : pb_MenuAction
 	{
 		private ExtrudeMethod m_ExtrudeMethod;
 
@@ -98,7 +98,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuExtrude(selection, false);
+			return pb_MenuCommands.MenuExtrude(selection, false);
 		}
 	}
 }

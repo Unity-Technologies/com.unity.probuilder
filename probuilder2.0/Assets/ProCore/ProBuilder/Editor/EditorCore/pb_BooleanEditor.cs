@@ -9,10 +9,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Editor window for accessing boolean functionality.
-	 */
-	public class pb_BooleanInterface : EditorWindow
+	/// <summary>
+	/// Editor window for accessing boolean functionality.
+	/// </summary>
+	class pb_BooleanInterface : EditorWindow
 	{
 		enum BooleanOp
 		{
@@ -65,13 +65,13 @@ namespace ProBuilder2.EditorCommon
 			}
 
 			previewBackground = new GUIStyle();
-			
+
 			backgroundTexture = new Texture2D(2,2);
 
 			backgroundTexture.SetPixels(new Color[] {
 				backgroundColor,
-				backgroundColor, 
-				backgroundColor, 
+				backgroundColor,
+				backgroundColor,
 				backgroundColor });
 
 			backgroundTexture.Apply();
@@ -93,7 +93,7 @@ namespace ProBuilder2.EditorCommon
 		}
 
 		void OnGUI()
-		{	
+		{
 			Event e = Event.current;
 
 			// Since image wells eat mouse clicks, listen for a mouse up when hovering over 'reverse operation order' button
@@ -164,15 +164,15 @@ namespace ProBuilder2.EditorCommon
 				switch(operation)
 				{
 					case BooleanOp.Union:
-						pb_Menu_Commands.MenuUnion(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuUnion(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
 						break;
 
 					case BooleanOp.Intersection:
-						pb_Menu_Commands.MenuIntersect(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuIntersect(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
 						break;
 
 					case BooleanOp.Subtraction:
-						pb_Menu_Commands.MenuSubtract(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuSubtract(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
 						break;
 				}
 			}
@@ -191,11 +191,11 @@ namespace ProBuilder2.EditorCommon
 		 * Draw the mesh previews
 		 */
 		void DrawPreviewWells()
-		{		
+		{
 			// RECT CALCULTAIONS
 			previewWidth = (int)Screen.width/2-PAD-2;
 			previewHeight = (int)Mathf.Min(Screen.height - lowerControlsHeight, Screen.width/2-(PAD*2));
-		
+
 			lhsRect.width = previewWidth;
 			lhsRect.height = previewHeight;
 
@@ -265,7 +265,7 @@ namespace ProBuilder2.EditorCommon
 			}
 			// END PREVIEW WELLS
 		}
-	 
+
 	 	/**
 		 *	Accept drags into window.
 	 	 *	MUST BE CALLED AFTER PREVIEW WELL RECTS ARE CALCULATED
@@ -282,11 +282,11 @@ namespace ProBuilder2.EditorCommon
 			if( (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform) && DragAndDrop.objectReferences.Length > 0)
 			{
 				DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-				
+
 				if(Event.current.type == EventType.DragPerform)
 				{
 					DragAndDrop.AcceptDrag();
-				
+
 					foreach(Object pb in DragAndDrop.objectReferences)
 					{
 						if( (pb is GameObject && ((GameObject)pb).GetComponent<pb_Object>()) || pb is pb_Object)
@@ -302,7 +302,7 @@ namespace ProBuilder2.EditorCommon
 						}
 					}
 				}
-				
+
 				Repaint();
 			}
 			return false;

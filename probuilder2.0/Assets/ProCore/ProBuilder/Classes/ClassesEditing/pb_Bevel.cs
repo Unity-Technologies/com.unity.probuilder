@@ -6,10 +6,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Functions for beveling edges.
-	 */
-	public static class pb_Bevel
+	/// <summary>
+	/// Functions for beveling edges.
+	/// </summary>
+	static class pb_Bevel
 	{
 		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
@@ -117,7 +117,7 @@ namespace ProBuilder2.MeshOperations
 				// common index & list of vertices it was split into
 				Dictionary<int, List<int>> appendedVertices;
 
-				pb_FaceRebuildData f = pbVertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
+				pb_FaceRebuildData f = pb_VertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
 
 				if(f == null)
 					continue;

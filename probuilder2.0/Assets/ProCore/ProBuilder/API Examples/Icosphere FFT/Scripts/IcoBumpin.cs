@@ -164,7 +164,7 @@ namespace ProBuilder2.Examples
 			// displaced_vertices should mirror icosphere mesh vertices.
 			displaced_vertices = ico.vertices;
 
-			icoMesh = ico.msh;
+			icoMesh = ico.GetComponent<MeshFilter>().sharedMesh;
 			icoTransform = ico.transform;
 
 			faces_length = (float)outsides.Length;

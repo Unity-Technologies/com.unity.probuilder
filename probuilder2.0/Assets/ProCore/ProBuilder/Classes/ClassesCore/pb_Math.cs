@@ -6,21 +6,38 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-
-	/**
-	 * Geometry math and Array extensions.
-	 */
+	/// <summary>
+	/// Additional commonly used math when working with 3d geometry.
+	/// </summary>
 	public static class pb_Math
 	{
+		/// <summary>
+		/// Pi / 2.
+		/// </summary>
 		public const float PHI = 1.618033988749895f;
+
+		/// <summary>
+		/// ProBuilder epsilon constant.
+		/// </summary>
 		public const float FLT_EPSILON = float.Epsilon;
+
+		/// <summary>
+		/// Epsilon to use when comparing vertex positions for equality.
+		/// </summary>
 		public const float FLT_COMPARE_EPSILON = .0001f;
-		// The minimum distance a handle must move on an axis before considering that axis as engaged.
+
+		/// <summary>
+		/// The minimum distance a handle must move on an axis before considering that axis as engaged.
+		/// </summary>
 		public const float HANDLE_EPSILON = .0001f;
 
-#region Geometry
-
-		// implementation snagged from: http://stackoverflow.com/questions/839899/how-do-i-calculate-a-point-on-a-circles-circumference
+		/// <summary>
+		/// Get a point on the circumference of a circle.
+		/// </summary>
+		/// <param name="radius"></param>
+		/// <param name="angleInDegrees"></param>
+		/// <param name="origin"></param>
+		/// <returns></returns>
 		public static Vector2 PointInCircumference(float radius, float angleInDegrees, Vector2 origin)
 		{
 			// Convert from degrees to radians via multiplication by PI/180
@@ -30,10 +47,14 @@ namespace ProBuilder2.Common
 			return new Vector2(x, y);
 		}
 
-		/**
-		 * Provided a radius, latitudinal and longitudinal angle, return a position.
-		 */
-		public static Vector3 PointInSphere(float radius, float latitudeAngle, float longitudeAngle)
+		/// <summary>
+		/// Provided a radius, latitudinal and longitudinal angle, return a position.
+		/// </summary>
+		/// <param name="radius"></param>
+		/// <param name="latitudeAngle"></param>
+		/// <param name="longitudeAngle"></param>
+		/// <returns></returns>
+		internal static Vector3 PointInSphere(float radius, float latitudeAngle, float longitudeAngle)
 		{
 			float x = (float)(radius * Mathf.Cos( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
 			float y = (float)(radius * Mathf.Sin( Mathf.Deg2Rad * latitudeAngle) * Mathf.Sin( Mathf.Deg2Rad * longitudeAngle));
@@ -42,9 +63,12 @@ namespace ProBuilder2.Common
 			return new Vector3(x, y, z);
 		}
 
-		/**
-		 *	Returns the signed angle from a to b.
-		 */
+		/// <summary>
+		/// Returns the signed angle from a to b.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static float SignedAngle(Vector2 a, Vector2 b)
 		{
 			float t = Vector2.Angle(a, b);
@@ -53,9 +77,12 @@ namespace ProBuilder2.Common
 			return t;
 		}
 
-		/**
-		 * Squared distance between two points. (b - a).sqrMagnitude.
-		 */
+		/// <summary>
+		/// Squared distance between two points. (b - a).sqrMagnitude.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static float SqrDistance(Vector3 a, Vector3 b)
 		{
 			float dx = b.x - a.x,
@@ -64,10 +91,14 @@ namespace ProBuilder2.Common
 			return dx * dx + dy * dy + dz * dz;
 		}
 
-		/**
-		 *	Get the area of a triangle.
-		 *	http://www.iquilezles.org/blog/?p=1579
-		 */
+		/// <summary>
+		/// Get the area of a triangle.
+		/// </summary>
+		/// <remarks>http://www.iquilezles.org/blog/?p=1579</remarks>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public static float TriangleArea(Vector3 x, Vector3 y, Vector3 z)
 		{
 			float 	a = SqrDistance(x, y),
@@ -77,10 +108,13 @@ namespace ProBuilder2.Common
 			return Mathf.Sqrt((2f*a*b + 2f*b*c + 2f*c*a - a*a - b*b - c*c) / 16f);
 		}
 
-		/**
-		 * Returns the Area of a polygon.
-		 */
-		public static float PolygonArea(Vector3[] vertices, int[] indices)
+		/// <summary>
+		/// Returns the Area of a polygon.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static float PolygonArea(Vector3[] vertices, int[] indices)
 		{
 			float area = 0f;
 
@@ -90,13 +124,14 @@ namespace ProBuilder2.Common
 			return area;
 		}
 
-		/**
-		 * Returns a new point by rotating the Vector2 around an origin point.
-		 * @param v this - Vector2 original point.
-		 * @param origin The origin point to use as a pivot point.
-		 * @param theta Angle to rotate in Degrees.
-		 */
-		public static Vector2 RotateAroundPoint(this Vector2 v, Vector2 origin, float theta)
+		/// <summary>
+		/// Returns a new point by rotating the Vector2 around an origin point.
+		/// </summary>
+		/// <param name="v">Vector2 original point.</param>
+		/// <param name="origin">The pivot to rotate around.</param>
+		/// <param name="theta">How far to rotate in degrees.</param>
+		/// <returns></returns>
+		internal static Vector2 RotateAroundPoint(this Vector2 v, Vector2 origin, float theta)
 		{
 			float cx = origin.x, cy = origin.y;	// origin
 			float px = v.x, py = v.y;			// point
@@ -119,9 +154,13 @@ namespace ProBuilder2.Common
 			return new Vector2(px, py);
 		}
 
-		/**
-		 * Scales a Vector2 using origin as the pivot point.
-		 */
+		/// <summary>
+		/// Scales a Vector2 using origin as the pivot point.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="origin"></param>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public static Vector2 ScaleAroundPoint(this Vector2 v, Vector2 origin, Vector2 scale)
 		{
 			Vector2 tp = v-origin;
@@ -131,10 +170,13 @@ namespace ProBuilder2.Common
 			return tp;
 		}
 
-		/**
-		 *	Return the perpindicular direction to a 2d line `Perpendicular(b - y)`
-		 */
-		public static Vector2 Perpendicular(Vector2 a, Vector2 b)
+		/// <summary>
+		/// Return the perpindicular direction to a 2d line `Perpendicular(b - y)`
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns>A normalized perpindicular direction.</returns>
+		internal static Vector2 Perpendicular(Vector2 a, Vector2 b)
 		{
 			float x = a.x;
 			float y = a.y;
@@ -145,17 +187,23 @@ namespace ProBuilder2.Common
 			return new Vector2( -(y2-y), x2-x ).normalized;
 		}
 
-		/**
-		 *	Return the perpindicular direction to a unit vector
-		 */
+		/// <summary>
+		/// Return the perpindicular direction to a unit vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <returns>Normalized perpindular direction.</returns>
 		public static Vector2 Perpendicular(Vector2 a)
 		{
 			return new Vector2(-a.y, a.x).normalized;
 		}
 
-		/**
-		 * Reflects a point @point across line @a @b
-		 */
+		/// <summary>
+		/// Reflects a point @point across line @a -> @b
+		/// </summary>
+		/// <param name="point"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static Vector2 ReflectPoint(Vector2 point, Vector2 a, Vector2 b)
 		{
 			Vector2 line = b-a;
@@ -166,14 +214,14 @@ namespace ProBuilder2.Common
 			return point + perp * (dist * 2f) * (Vector2.Dot(point-a, perp) > 0 ? -1f : 1f);
 		}
 
-		/**
-		 *	Get the distance between a point and a finite line segment.
-		 *	http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-		 *
-		 *	v = lineStart
-		 *	w = lineEnd
-		 *	p = point
-		 */
+		/// <summary>
+		/// Get the distance between a point and a finite line segment.
+		/// </summary>
+		/// <remarks>http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</remarks>
+		/// <param name="p">The point.</param>
+		/// <param name="v">Line start.</param>
+		/// <param name="w">Line end.</param>
+		/// <returns></returns>
 		public static float DistancePointLineSegment(Vector2 p, Vector2 v, Vector2 w)
 		{
 			// Return minimum distance between line segment vw and point p
@@ -196,13 +244,13 @@ namespace ProBuilder2.Common
 			return Vector2.Distance(p, projection);
 		}
 
-		/**
-		 * 	Get the distance between a point and a finite line segment.
-		 *
-		 *	v = lineStart
-		 *	w = lineEnd
-		 *	p = point
-		 */
+		/// <summary>
+		/// Get the distance between a point and a finite line segment.
+		/// </summary>
+		/// <param name="p">Point.</param>
+		/// <param name="v">Line start.</param>
+		/// <param name="w">Line end.</param>
+		/// <returns></returns>
 		public static float DistancePointLineSegment(Vector3 p, Vector3 v, Vector3 w)
 		{
 			// Return minimum distance between line segment vw and point p
@@ -224,12 +272,18 @@ namespace ProBuilder2.Common
 
 			return Vector3.Distance(p, projection);
 		}
-		/**
-		 * Calculate the nearest point on ray A to ray B.
-		 */
+
+		/// <summary>
+		/// Calculate the nearest point on ray A to ray B.
+		/// </summary>
+		/// <param name="ao">First ray origin.</param>
+		/// <param name="ad">First ray direction.</param>
+		/// <param name="bo">Second ray origin.</param>
+		/// <param name="bd">Second ray direction.</param>
+		/// <returns></returns>
 		public static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
 		{
-			// ray-ray don't do parallel
+			// ray doesn't do parallel
 			if(ad == bd)
 				return ao;
 
@@ -244,7 +298,7 @@ namespace ProBuilder2.Common
 		// http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines
 		// intersect the intersection point may be stored in the intersect var
-		public static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, ref Vector2 intersect)
+		internal static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, ref Vector2 intersect)
 		{
 			intersect = Vector2.zero;
 			Vector2 s1, s2;
@@ -266,10 +320,15 @@ namespace ProBuilder2.Common
 			return false;
 		}
 
-		/**
-		 * True or false lines intersect.
-		 */
-		public static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+		/// <summary>
+		/// True or false lines, do lines intersect.
+		/// </summary>
+		/// <param name="p0"></param>
+		/// <param name="p1"></param>
+		/// <param name="p2"></param>
+		/// <param name="p3"></param>
+		/// <returns></returns>
+		internal static bool GetLineSegmentIntersect(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
 		{
 			Vector2 s1, s2;
 			s1.x = p1.x - p0.x;     s1.y = p1.y - p0.y;
@@ -282,14 +341,14 @@ namespace ProBuilder2.Common
 			return (s >= 0 && s <= 1 && t >= 0 && t <= 1);
 		}
 
-		/**
-		 * Returns true if the polygon contains point.  False otherwise.
-		 * Casts a ray from outside the bounds to the polygon and checks how
-		 * many edges are hit.
-		 * @param polygon A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.
-		 * This overload accepts an array of points and an array of indices that compose the polygon.
-		 */
-		public static bool PointInPolygon(Vector2[] polygon, Vector2 point, int[] indices = null)
+		/// <summary>
+		/// Casts a ray from outside the bounds to the polygon and checks how many edges are hit.
+		/// </summary>
+		/// <param name="polygon">A series of individual edges composing a polygon.  polygon length *must* be divisible by 2.</param>
+		/// <param name="point"></param>
+		/// <param name="indices">If present these indices make up the border of polygon. If not, polygon is assumed to be in correct order.</param>
+		/// <returns>True if the polygon contains point. False otherwise.</returns>
+		internal static bool PointInPolygon(Vector2[] polygon, Vector2 point, int[] indices = null)
 		{
 			int len = indices != null ? indices.Length : polygon.Length;
 
@@ -321,10 +380,18 @@ namespace ProBuilder2.Common
 				return false;
 		}
 
-		/**
-		 * Assumes polygon has already been tested with AABB
-		 */
-		public static bool PointInPolygon(Vector2[] polygon, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>
+		/// Assumes polygon has already been tested with AABB
+		/// </remarks>
+		/// <param name="polygon"></param>
+		/// <param name="polyBounds"></param>
+		/// <param name="edges"></param>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		internal static bool PointInPolygon(Vector2[] polygon, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
 		{
 			int len = edges.Length * 2;
 
@@ -341,10 +408,14 @@ namespace ProBuilder2.Common
 			return collisions % 2 != 0;
 		}
 
-		/**
-		 * Test if line segment (a-b) intersects any line segment on rect.
-		 */
-		public static bool RectIntersectsLineSegment(Rect rect, Vector2 a, Vector2 b)
+		/// <summary>
+		/// Test if line segment (a-b) intersects any line segment on rect.
+		/// </summary>
+		/// <param name="rect"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		internal static bool RectIntersectsLineSegment(Rect rect, Vector2 a, Vector2 b)
 		{
 			Vector2 tl = new Vector2(rect.xMin, rect.yMax);
 			Vector2 tr = new Vector2(rect.xMax, rect.yMax);
@@ -357,59 +428,64 @@ namespace ProBuilder2.Common
 					pb_Math.GetLineSegmentIntersect(br, tl, a, b);
 		}
 
-		/**
-		 * Returns true if a raycast intersects a triangle.
-		 * http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-		 * http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
-		 */
-		public static bool RayIntersectsTriangle(Ray InRay, Vector3 InTriangleA,  Vector3 InTriangleB,  Vector3 InTriangleC, out float OutDistance, out Vector3 OutPoint)
+		/// <summary>
+		/// Test if a raycast intersects a triangle.
+		/// </summary>
+		/// <remarks>
+		/// http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+		/// http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+		/// </remarks>
+		/// <param name="InRay"></param>
+		/// <param name="InTriangleA">First vertex position in the triangle.</param>
+		/// <param name="InTriangleB">Second vertex position in the triangle.</param>
+		/// <param name="InTriangleC">Third vertex position in the triangle.</param>
+		/// <param name="OutDistance">If triangle is intersected, this is the distance of intersection point from ray origin. Zero if not intersected.</param>
+		/// <param name="OutPoint">If triangle is intersected, this is the point of collision. Zero if not intersected.</param>
+		/// <returns>True if ray intersects, false if not.</returns>
+		public static bool RayIntersectsTriangle(Ray InRay, Vector3 InTriangleA, Vector3 InTriangleB, Vector3 InTriangleC,
+			out float OutDistance, out Vector3 OutPoint)
 		{
 			OutDistance = 0f;
 			OutPoint = Vector3.zero;
 
-			Vector3 e1, e2;  //Edge1, Edge2
-			Vector3 P, Q, T;
-			float det, inv_det, u, v;
-			float t;
-
 			//Find vectors for two edges sharing V1
-			e1 = InTriangleB - InTriangleA;
-			e2 = InTriangleC - InTriangleA;
+			Vector3 e1 = InTriangleB - InTriangleA;
+			Vector3 e2 = InTriangleC - InTriangleA;
 
 			//Begin calculating determinant - also used to calculate `u` parameter
-			P = Vector3.Cross(InRay.direction, e2);
+			Vector3 P = Vector3.Cross(InRay.direction, e2);
 
 			//if determinant is near zero, ray lies in plane of triangle
-			det = Vector3.Dot(e1, P);
+			float det = Vector3.Dot(e1, P);
 
 			// Non-culling branch
 			// {
 				if(det > -Mathf.Epsilon && det < Mathf.Epsilon)
 					return false;
 
-				inv_det = 1f / det;
+				float inv_det = 1f / det;
 
 				//calculate distance from V1 to ray origin
-				T = InRay.origin - InTriangleA;
+				Vector3 T = InRay.origin - InTriangleA;
 
 				// Calculate u parameter and test bound
-				u = Vector3.Dot(T, P) * inv_det;
+				float u = Vector3.Dot(T, P) * inv_det;
 
 				//The intersection lies outside of the triangle
 				if(u < 0f || u > 1f)
 					return false;
 
 				//Prepare to test v parameter
-				Q = Vector3.Cross(T, e1);
+				Vector3 Q = Vector3.Cross(T, e1);
 
 				//Calculate V parameter and test bound
-				v = Vector3.Dot(InRay.direction, Q) * inv_det;
+				float v = Vector3.Dot(InRay.direction, Q) * inv_det;
 
 				//The intersection lies outside of the triangle
 				if(v < 0f || u + v  > 1f)
 					return false;
 
-				t = Vector3.Dot(e2, Q) * inv_det;
+				float t = Vector3.Dot(e2, Q) * inv_det;
 			// }
 
 			if(t > Mathf.Epsilon)
@@ -430,7 +506,18 @@ namespace ProBuilder2.Common
 		// Temporary vector3 values
 		static Vector3 tv1, tv2, tv3, tv4;
 
-		public static bool RayIntersectsTriangle2(	Vector3 origin,
+		/// <summary>
+		/// Non-allocating version of Ray / Triangle intersection.
+		/// </summary>
+		/// <param name="origin"></param>
+		/// <param name="dir"></param>
+		/// <param name="vert0"></param>
+		/// <param name="vert1"></param>
+		/// <param name="vert2"></param>
+		/// <param name="distance"></param>
+		/// <param name="normal"></param>
+		/// <returns></returns>
+		internal static bool RayIntersectsTriangle2(	Vector3 origin,
 													Vector3 dir,
 													Vector3 vert0,
 													Vector3 vert1,
@@ -438,13 +525,11 @@ namespace ProBuilder2.Common
 		 											ref float distance,
 		 											ref Vector3 normal)
 		{
-			float det;
-
 			pb_Math.Subtract(vert0, vert1, ref tv1);
 			pb_Math.Subtract(vert0, vert2, ref tv2);
 
 			pb_Math.Cross(dir, tv2, ref tv4);
-			det = Vector3.Dot(tv1, tv4);
+			float det = Vector3.Dot(tv1, tv4);
 
 			if(det < Mathf.Epsilon)
 				return false;
@@ -469,20 +554,23 @@ namespace ProBuilder2.Common
 			return true;
 		}
 
-		/**
-		 * Return the secant of radian `x` ( `1f / cos(x)` ).
-		 */
+		/// <summary>
+		/// Return the secant of radian `x` ( `1f / cos(x)` ).
+		/// </summary>
+		/// <param name="x"></param>
+		/// <returns></returns>
 		public static float Secant(float x)
 		{
 			return 1f / Mathf.Cos(x);
 		}
-#endregion
 
-#region Normal and Tangents
-
-		/**
-		 * Calculate the unit vector normal of 3 points:  B-A x C-A
-		 */
+		/// <summary>
+		/// Calculate the unit vector normal of 3 points:  B-A x C-A
+		/// </summary>
+		/// <param name="p0"></param>
+		/// <param name="p1"></param>
+		/// <param name="p2"></param>
+		/// <returns></returns>
 		public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
 		{
 			float 	ax = p1.x - p0.x,
@@ -507,11 +595,13 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	Calculate the normal of a set of vertices.  If indices is null or not divisible by 3, the first 3 positions
-		 *	are used.  If indices is valid, an average of each set of 3 is taken.
-		 */
-		public static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices = null)
+		/// <summary>
+		/// Calculate the normal of a set of vertices. If indices is null or not divisible by 3, the first 3 positions are used.  If indices is valid, an average of each set of 3 is taken.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices = null)
 		{
 			if(indices == null || indices.Count % 3 != 0)
 			{
@@ -534,9 +624,12 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 * Finds the normal of each triangle in a face and returns the average.
-		 */
+		/// <summary>
+		/// Finds the "best" normal of a face.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static Vector3 Normal(pb_Object pb, pb_Face face)
 		{
 			Vector3[] _vertices = pb.vertices;
@@ -571,10 +664,12 @@ namespace ProBuilder2.Common
 			return nrm;
 		}
 
-		/**
-		 * If p.Length % 3 == 0, finds the normal of each triangle in a face and returns the average.
-		 * Otherwise return the normal of the first three points.
-		 */
+		/// <summary>
+		/// Get the average normal of a set of individual triangles.
+		/// If p.Length % 3 == 0, finds the normal of each triangle in a face and returns the average. Otherwise return the normal of the first three points.
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
 		public static Vector3 Normal(IList<Vector3> p)
 		{
 			if(p == null || p.Count < 3)
@@ -601,10 +696,17 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 * Returns the first normal, tangent, and bitangent for this face, using the first triangle available for tangent and bitangent.
-		 * Does not rely on pb.msh for normal or uv information - uses pb.vertices & pb.uv.
-		 */
+		/// <summary>
+		/// Returns the first normal, tangent, and bitangent for this face using the first triangle available for tangent and bitangent.
+		/// </summary>
+		/// <remarks>
+		/// Does not rely on pb.msh for normal or uv information - uses pb.vertices & pb.uv.
+		/// </remarks>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <param name="normal"></param>
+		/// <param name="tangent"></param>
+		/// <param name="bitangent"></param>
 		public static void NormalTangentBitangent(pb_Object pb, pb_Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
 		{
 			if(face.indices.Length < 3)
@@ -668,10 +770,13 @@ namespace ProBuilder2.Common
 			bitangent = Vector3.Cross(normal, tangent);
 		}
 
-		/**
-		 *	Is the direction within epsilon of Up, Down, Left, Right, Forward, or Backwards?
-		 */
-		public static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
+		/// <summary>
+		/// Is the direction within epsilon of Up, Down, Left, Right, Forward, or Backwards?
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="epsilon"></param>
+		/// <returns></returns>
+		internal static bool IsCardinalAxis(Vector3 v, float epsilon = .00001f)
 		{
 			v.Normalize();
 
@@ -679,11 +784,15 @@ namespace ProBuilder2.Common
 					(1f - Mathf.Abs(Vector3.Dot(Vector3.forward, v))) < epsilon ||
 					(1f - Mathf.Abs(Vector3.Dot(Vector3.right, v))) < epsilon;
 		}
-#endregion
 
-#region Compare (Max, Min, Average, etc)
 
-		public static T Max<T>(T[] array) where T : System.IComparable<T>
+		/// <summary>
+		/// Find the largest value in an array.
+		/// </summary>
+		/// <param name="array"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static T Max<T>(T[] array) where T : System.IComparable<T>
 		{
 			if(array == null || array.Length < 1)
 				return default(T);
@@ -695,7 +804,13 @@ namespace ProBuilder2.Common
 			return max;
 		}
 
-		public static T Min<T>(T[] array) where T : System.IComparable<T>
+		/// <summary>
+		/// Find the smallest value in an array.
+		/// </summary>
+		/// <param name="array"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		internal static T Min<T>(T[] array) where T : System.IComparable<T>
 		{
 			if(array == null || array.Length < 1)
 				return default(T);
@@ -707,28 +822,34 @@ namespace ProBuilder2.Common
 			return min;
 		}
 
-		/**
-		 * Return the largest axis in a Vector3.
-		 */
-		public static float LargestValue(Vector3 v)
+		/// <summary>
+		/// Return the largest axis in a Vector3.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		internal static float LargestValue(Vector3 v)
 		{
 			if(v.x > v.y && v.x > v.z) return v.x;
 			if(v.y > v.x && v.y > v.z) return v.y;
 			return v.z;
 		}
 
-		/**
-		 * Return the largest axis in a Vector2.
-		 */
-		public static float LargestValue(Vector2 v)
+		/// <summary>
+		/// Return the largest axis in a Vector2.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		internal static float LargestValue(Vector2 v)
 		{
 			return (v.x > v.y) ? v.x :v.y;
 		}
 
-		/**
-		 * The smallest X and Y value found in an array of Vector2.  May or may not belong to the same Vector2.
-		 */
-		public static Vector2 SmallestVector2(Vector2[] v)
+		/// <summary>
+		/// The smallest X and Y value found in an array of Vector2. May or may not belong to the same Vector2.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		internal static Vector2 SmallestVector2(Vector2[] v)
 		{
 			int len = v.Length;
 			Vector2 l = v[0];
@@ -740,7 +861,13 @@ namespace ProBuilder2.Common
 			return l;
 		}
 
-		public static Vector2 SmallestVector2(Vector2[] v, int[] indices)
+		/// <summary>
+		/// The smallest X and Y value found in an array of Vector2.  May or may not belong to the same Vector2.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="indices">Indices of v array to test.</param>
+		/// <returns></returns>
+		internal static Vector2 SmallestVector2(Vector2[] v, int[] indices)
 		{
 			int len = indices.Length;
 			Vector2 l = v[indices[0]];
@@ -752,10 +879,12 @@ namespace ProBuilder2.Common
 			return l;
 		}
 
-		/**
-		 * The largest X and Y value in an array.  May or may not belong to the same Vector2.
-		 */
-		public static Vector2 LargestVector2(Vector2[] v)
+		/// <summary>
+		/// The largest X and Y value in an array.  May or may not belong to the same Vector2.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		internal static Vector2 LargestVector2(Vector2[] v)
 		{
 			int len = v.Length;
 			Vector2 l = v[0];
@@ -767,7 +896,7 @@ namespace ProBuilder2.Common
 			return l;
 		}
 
-		public static Vector2 LargestVector2(Vector2[] v, int[] indices)
+		internal static Vector2 LargestVector2(Vector2[] v, int[] indices)
 		{
 			int len = indices.Length;
 			Vector2 l = v[indices[0]];
@@ -779,10 +908,12 @@ namespace ProBuilder2.Common
 			return l;
 		}
 
-		/**
-		 * Creates an AABB with vertices and returns the Center point.
-		 */
-		public static Vector3 BoundsCenter(Vector3[] verts)
+		/// <summary>
+		/// Creates an AABB with vertices and returns the Center point.
+		/// </summary>
+		/// <param name="verts"></param>
+		/// <returns></returns>
+		internal static Vector3 BoundsCenter(Vector3[] verts)
 		{
 			if( verts.Length < 1 ) return Vector3.zero;
 
@@ -804,10 +935,12 @@ namespace ProBuilder2.Common
 			return (min+max) * .5f;
 		}
 
-		/**
-		 *	\brief Gets the center point of the supplied Vector3[] array.
-		 *	\returns Average Vector3 of passed vertex array.
-		 */
+		/// <summary>
+		/// Gets the average of a vector array.
+		/// </summary>
+		/// <param name="v">The array</param>
+		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <returns>Average Vector3 of passed vertex array.</returns>
 		public static Vector2 Average(IList<Vector2> v, IList<int> indices = null)
 		{
 			Vector2 sum = Vector2.zero;
@@ -820,6 +953,12 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
+		/// <summary>
+		/// Gets the average of a vector array.
+		/// </summary>
+		/// <param name="v">The array</param>
+		/// <param name="indices">If provided the average is the sum of all points contained in the indices array. If not, the entire v array is used.</param>
+		/// <returns>Average Vector3 of passed vertex array.</returns>
 		public static Vector3 Average(IList<Vector3> v, IList<int> indices = null)
 		{
 			Vector3 sum = Vector3.zero;
@@ -847,6 +986,14 @@ namespace ProBuilder2.Common
 			return sum / len;
 		}
 
+		/// <summary>
+		/// Average a set of vertices.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="selector"></param>
+		/// <param name="indices"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public static Vector3 Average<T>(this IList<T> v, System.Func<T, Vector3> selector, IList<int> indices = null)
 		{
 			Vector3 sum = Vector3.zero;
@@ -858,7 +1005,7 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
-		public static Vector4 Average(IList<Vector4> v, IList<int> indices = null)
+		internal static Vector4 Average(IList<Vector4> v, IList<int> indices = null)
 		{
 			Vector4 sum = Vector4.zero;
 			float len = indices == null ? v.Count : indices.Count;
@@ -869,7 +1016,7 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
-		public static Color Average(IList<Color> c, IList<int> indices = null)
+		internal static Color Average(IList<Color> c, IList<int> indices = null)
 		{
 			Color sum = c[0];
 			float len = indices == null ? c.Count : indices.Count;
@@ -880,14 +1027,13 @@ namespace ProBuilder2.Common
 			return sum/len;
 		}
 
-		/**
-		 *	Approx functions are suffixed with 2/3/4/c to make implicit casting vectors
-		 *	less likely.
-		 */
-
-		/**
-		 *	\brief Compares 2 vector2 objects, allowing for a margin of error.
-		 */
+		/// <summary>
+		/// Compares 2 vector2 objects, allowing for a margin of error.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="b"></param>
+		/// <param name="delta"></param>
+		/// <returns></returns>
 		public static bool Approx2(this Vector2 v, Vector2 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return
@@ -895,9 +1041,13 @@ namespace ProBuilder2.Common
 				Mathf.Abs(v.y - b.y) < delta;
 		}
 
-		/**
-		 *	\brief Compares 2 vector3 objects, allowing for a margin of error.
-		 */
+		/// <summary>
+		/// Compares 2 vector3 objects, allowing for a margin of error.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="b"></param>
+		/// <param name="delta"></param>
+		/// <returns></returns>
 		public static bool Approx3(this Vector3 v, Vector3 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return
@@ -906,9 +1056,13 @@ namespace ProBuilder2.Common
 				Mathf.Abs(v.z - b.z) < delta;
 		}
 
-		/**
-		 *	\brief Compares 2 vector4 objects, allowing for a margin of error.
-		 */
+		/// <summary>
+		/// Compares 2 vector4 objects, allowing for a margin of error.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="b"></param>
+		/// <param name="delta"></param>
+		/// <returns></returns>
 		public static bool Approx4(this Vector4 v, Vector4 b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return
@@ -918,10 +1072,14 @@ namespace ProBuilder2.Common
 				Mathf.Abs(v.w - b.w) < delta;
 		}
 
-		/**
-		 *	\brief Compares 2 color objects, allowing for a margin of error.
-		 */
-		public static bool ApproxC(this Color a, Color b, float delta = FLT_COMPARE_EPSILON)
+		/// <summary>
+		/// Compares 2 color objects, allowing for a margin of error.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="delta"></param>
+		/// <returns></returns>
+		internal static bool ApproxC(this Color a, Color b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return 	Mathf.Abs(a.r - b.r) < delta &&
 					Mathf.Abs(a.g - b.g) < delta &&
@@ -929,30 +1087,29 @@ namespace ProBuilder2.Common
 					Mathf.Abs(a.a - b.a) < delta;
 		}
 
-		/**
-		 *	\brief Compares float values, allowing for a margin of error.
-		 */
-		public static bool Approx(this float a, float b, float delta = FLT_COMPARE_EPSILON)
+		/// <summary>
+		/// Compares float values, allowing for a margin of error.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="delta"></param>
+		/// <returns></returns>
+		internal static bool Approx(this float a, float b, float delta = FLT_COMPARE_EPSILON)
 		{
 			return Mathf.Abs(b - a) < Mathf.Abs(delta);
 		}
 
-		/**
-		 * Search a vector3 array for a matching point within range.
-		 */
-		public static bool ContainsApprox(Vector3[] v, Vector3 p, float eps)
-		{
-			for(int i = 0; i < v.Length; i++)
-				if(pb_Math.Approx3(v[i], p, eps))
-					return true;
-			return false;
-		}
-
-		/**
-		 *	Wrap value to range.
-		 *	http://stackoverflow.com/questions/707370/clean-efficient-algorithm-for-wrapping-integers-in-c
-		 */
-		public static int Wrap(int value, int lowerBound, int upperBound)
+		/// <summary>
+		/// Wrap value to range.
+		/// </summary>
+		/// <remarks>
+		/// http://stackoverflow.com/questions/707370/clean-efficient-algorithm-for-wrapping-integers-in-c
+		/// </remarks>
+		/// <param name="value"></param>
+		/// <param name="lowerBound"></param>
+		/// <param name="upperBound"></param>
+		/// <returns></returns>
+		internal static int Wrap(int value, int lowerBound, int upperBound)
 		{
 			int range_size = upperBound - lowerBound + 1;
 
@@ -962,90 +1119,115 @@ namespace ProBuilder2.Common
 			return lowerBound + (value - lowerBound) % range_size;
 		}
 
-		/**
-		 *	Clamp value to range.
-		 */
+		/// <summary>
+		/// Clamp int to range.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="lowerBound"></param>
+		/// <param name="upperBound"></param>
+		/// <returns></returns>
 		public static int Clamp(int value, int lowerBound, int upperBound)
 		{
 			return value < lowerBound ? lowerBound : value > upperBound ? upperBound : value;
 		}
-#endregion
 
-#region Vector
+		internal static Vector2 ToMask(this Vector2 vec, float delta = FLT_EPSILON)
+		{
+			return new Vector2(
+				Mathf.Abs(vec.x) > delta ? 1f : 0f,
+				Mathf.Abs(vec.y) > delta ? 1f : 0f
+				);
+		}
 
-	public static Vector2 ToMask(this Vector2 vec, float delta = FLT_EPSILON)
-	{
-		return new Vector2(
-			Mathf.Abs(vec.x) > delta ? 1f : 0f,
-			Mathf.Abs(vec.y) > delta ? 1f : 0f
-			);
-	}
+		internal static Vector3 ToMask(this Vector3 vec, float delta = FLT_EPSILON)
+		{
+			return new Vector3(
+				Mathf.Abs(vec.x) > delta ? 1f : 0f,
+				Mathf.Abs(vec.y) > delta ? 1f : 0f,
+				Mathf.Abs(vec.z) > delta ? 1f : 0f
+				);
+		}
 
-	public static Vector3 ToMask(this Vector3 vec, float delta = FLT_EPSILON)
-	{
-		return new Vector3(
-			Mathf.Abs(vec.x) > delta ? 1f : 0f,
-			Mathf.Abs(vec.y) > delta ? 1f : 0f,
-			Mathf.Abs(vec.z) > delta ? 1f : 0f
-			);
-	}
+		internal static Vector3 ToSignedMask(this Vector3 vec, float delta = FLT_EPSILON)
+		{
+			return new Vector3(
+				Mathf.Abs(vec.x) > delta ? vec.x/Mathf.Abs(vec.x) : 0f,
+				Mathf.Abs(vec.y) > delta ? vec.y/Mathf.Abs(vec.y) : 0f,
+				Mathf.Abs(vec.z) > delta ? vec.z/Mathf.Abs(vec.z) : 0f
+				);
+		}
 
-	public static Vector3 ToSignedMask(this Vector3 vec, float delta = FLT_EPSILON)
-	{
-		return new Vector3(
-			Mathf.Abs(vec.x) > delta ? vec.x/Mathf.Abs(vec.x) : 0f,
-			Mathf.Abs(vec.y) > delta ? vec.y/Mathf.Abs(vec.y) : 0f,
-			Mathf.Abs(vec.z) > delta ? vec.z/Mathf.Abs(vec.z) : 0f
-			);
-	}
+		internal static Vector3 Abs(this Vector3 v)
+		{
+			return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
+		}
 
-	public static Vector3 Abs(this Vector3 v)
-	{
-		return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
-	}
+		internal static int IntSum(this Vector3 mask)
+		{
+			return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
+		}
 
-	public static int IntSum(this Vector3 mask)
-	{
-		return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
-	}
+		/// <summary>
+		/// Non-allocating cross product.
+		/// </summary>
+		/// <remarks>
+		/// `ref` does not box with primitive types (https://msdn.microsoft.com/en-us/library/14akc2c7.aspx)
+		/// </remarks>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		internal static void Cross(Vector3 a, Vector3 b, ref float x, ref float y, ref float z)
+		{
+			x = a.y * b.z - a.z * b.y;
+			y = a.z * b.x - a.x * b.z;
+			z = a.x * b.y - a.y * b.x;
+		}
 
-#endregion
+		/// <summary>
+		/// Non-allocating cross product.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="res"></param>
+		internal static void Cross(Vector3 a, Vector3 b, ref Vector3 res)
+		{
+			res.x = a.y * b.z - a.z * b.y;
+			res.y = a.z * b.x - a.x * b.z;
+			res.z = a.x * b.y - a.y * b.x;
+		}
 
-#region Non-allocating Vector Functions
-	/**
-	 *	Non-allocating cross product.
-	 *	`ref` does not box with primitive types (https://msdn.microsoft.com/en-us/library/14akc2c7.aspx)
-	 */
-	public static void Cross(Vector3 a, Vector3 b, ref float x, ref float y, ref float z)
-	{
-		x = a.y * b.z - a.z * b.y;
-		y = a.z * b.x - a.x * b.z;
-		z = a.x * b.y - a.y * b.x;
-	}
+		/// <summary>
+		/// Non-allocating cross product.
+		/// </summary>
+		/// <param name="ax"></param>
+		/// <param name="ay"></param>
+		/// <param name="az"></param>
+		/// <param name="bx"></param>
+		/// <param name="by"></param>
+		/// <param name="bz"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		internal static void Cross(float ax, float ay, float az, float bx, float by, float bz, ref float x, ref float y, ref float z)
+		{
+			x = ay * bz - az * by;
+			y = az * bx - ax * bz;
+			z = ax * by - ay * bx;
+		}
 
-	public static void Cross(Vector3 a, Vector3 b, ref Vector3 res)
-	{
-		res.x = a.y * b.z - a.z * b.y;
-		res.y = a.z * b.x - a.x * b.z;
-		res.z = a.x * b.y - a.y * b.x;
-	}
-
-	public static void Cross(float ax, float ay, float az, float bx, float by, float bz, ref float x, ref float y, ref float z)
-	{
-		x = ay * bz - az * by;
-		y = az * bx - ax * bz;
-		z = ax * by - ay * bx;
-	}
-
-	/**
-	 * res = b - a
-	 */
-	public static void Subtract(Vector3 a, Vector3 b, ref Vector3 res)
-	{
-		res.x = b.x - a.x;
-		res.y = b.y - a.y;
-		res.z = b.z - a.z;
-	}
-#endregion
+		/// <summary>
+		/// Vector subtraction without allocating a new vector.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="res"></param>
+		internal static void Subtract(Vector3 a, Vector3 b, ref Vector3 res)
+		{
+			res.x = b.x - a.x;
+			res.y = b.y - a.y;
+			res.z = b.z - a.z;
+		}
 	}
 }

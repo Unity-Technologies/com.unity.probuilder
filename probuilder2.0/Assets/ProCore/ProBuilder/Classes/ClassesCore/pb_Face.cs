@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	\brief Contains mesh and material information.  Used in the creation of pb_Objects.
-	 */
+	/// <summary>
+	/// A face is composed of a set of triangles, and a material.
+	/// </summary>
 	[System.Serializable]
 	public class pb_Face
 	{
@@ -35,9 +35,10 @@ namespace ProBuilder2.Common
 			this.manualUV = manualUV;
 		}
 
-		/**
-		 * Deep copy constructor.
-		 */
+		/// <summary>
+		/// Deep copy constructor.
+		/// </summary>
+		/// <param name="face"></param>
 		public pb_Face(pb_Face face)
 		{
 			_indices = new int[face.indices.Length];
@@ -52,9 +53,10 @@ namespace ProBuilder2.Common
 			RebuildCaches();
 		}
 
-		/**
-		 *	Copies values from other to this face.
-		 */
+		/// <summary>
+		/// Copies values from other to this face.
+		/// </summary>
+		/// <param name="other"></param>
 		public void CopyFrom(pb_Face other)
 		{
 			int len = other.indices == null ? 0 : other.indices.Length;
@@ -71,79 +73,90 @@ namespace ProBuilder2.Common
 		[SerializeField] int[] _indices;
 		[SerializeField] int[] _distinctIndices;
 
-		///< A cache of the calculated #pb_Edge edges for this face.  Call pb_Face::RebuildCaches to update.
+		/// <summary>
+		/// A cache of the calculated #pb_Edge edges for this face. Call RebuildCaches to update.
+		/// </summary>
 		[SerializeField] pb_Edge[] _edges;
 
-		///< Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
+		/// <summary>
+		/// Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
+		/// </summary>
 		[SerializeField] int _smoothingGroup;
 
-		///< If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
+		/// <summary>
+		/// If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
+		/// </summary>
 		[SerializeField] pb_UV _uv;
 
-		///< What material does this face use.
+		/// <summary>
+		/// What material does this face use.
+		/// </summary>
 		[SerializeField] Material _mat;
 
-		///< If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
+		/// <summary>
+		/// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
+		/// </summary>
 		public bool manualUV;
 
-		///< UV Element group.
-		public int elementGroup;
+		/// <summary>
+		/// UV element group. Used by the UV editor to group faces.
+		/// </summary>
+		internal int elementGroup;
 
-		///< What texture group this face belongs to.
+		/// <summary>
+		/// What texture group this face belongs to. Used when projecting auto UVs.
+		/// </summary>
 		public int textureGroup = -1;
 
+		/// <summary>
+		/// Return a reference to the triangle indices that make up this face.
+		/// </summary>
 		public int[] indices { get { return _indices; } }
+
+		/// <summary>
+		/// Returns a reference to the cached distinct indices (each vertex index is only referenced once in distinctIndices).
+		/// </summary>
 		public int[] distinctIndices { get { return _distinctIndices == null ? CacheDistinctIndices() : _distinctIndices; } }
+
+		/// <summary>
+		/// A reference to the border edges that make up this face.
+		/// </summary>
 		public pb_Edge[] edges { get { return _edges == null ? CacheEdges() : _edges; } }
+
+		/// <summary>
+		/// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
+		/// </summary>
 		public int smoothingGroup { get { return _smoothingGroup; } set { _smoothingGroup = value; } }
+
+		/// <summary>
+		/// Get the material that face uses.
+		/// </summary>
 		public Material material { get { return _mat; } set { _mat = value; } }
+
+		/// <summary>
+		/// A reference to the Auto UV mapping parameters.
+		/// </summary>
 		public pb_UV uv { get { return _uv; } set { _uv = value; } }
 
+		/// <summary>
+		/// Accesses the indices array.
+		/// </summary>
+		/// <param name="i"></param>
 		public int this[int i] { get { return indices[i]; } }
 
-		[System.Obsolete("Use face.material property.")]
-		public void SetMaterial(Material material) { _mat = material; }
-
-		[System.Obsolete("Use face.uv property.")]
-		public void SetUV(pb_UV uvs) { _uv = uvs; }
-
-		[System.Obsolete("Use face.smoothingGroup property.")]
-		public void SetSmoothingGroup(int smoothing) { _smoothingGroup = smoothing; }
-
+		/// <summary>
+		/// Check if this face has more than 2 indices.
+		/// </summary>
+		/// <returns></returns>
 		public bool IsValid()
 		{
 			return indices.Length > 2;
 		}
 
-		public Vector3[] GetDistinctVertices(Vector3[] verts)
-		{
-			int[] di = distinctIndices;
-			Vector3[] v = new Vector3[di.Length];
-
-			for(int i = 0; i < di.Length; i++) {
-				v[i] = verts[di[i]];
-			}
-			return v;
-		}
-
-		/**
-		 * Returns the triangle at index in the indices array.
-		 * {
-		 *	 0, 1, 2,	// tri at index 0
-		 *	 2, 3, 1,	// tri at index 1, etc
-		 * }
-		 */
-		public int[] GetTriangle(int index)
-		{
-			if(index*3+3 > indices.Length)
-				return null;
-			else
-				return new int[3]{indices[index*3+0],indices[index*3+1],indices[index*3+2]};
-		}
-
-		/**
-		 *	Return all edges, including non-perimeter ones.
-		 */
+		/// <summary>
+		/// Return all edges, including non-perimeter ones.
+		/// </summary>
+		/// <returns></returns>
 		public pb_Edge[] GetAllEdges()
 		{
 			pb_Edge[] edges = new pb_Edge[indices.Length];
@@ -157,27 +170,30 @@ namespace ProBuilder2.Common
 			return edges;
 		}
 
-		/**
-		 * Sets this face's indices to a new value.
-		 */
+		/// <summary>
+		/// Sets this face's indices to a new value.
+		/// </summary>
+		/// <param name="i"></param>
 		public void SetIndices(int[] i)
 		{
 			_indices = i;
 			RebuildCaches();
 		}
 
-		/**
-		 * Add offset to each value in the indices array.
-		 */
+		/// <summary>
+		/// Add offset to each value in the indices array.
+		/// </summary>
+		/// <param name="offset"></param>
 		public void ShiftIndices(int offset)
 		{
 			for(int i = 0; i <_indices.Length; i++)
 				_indices[i] += offset;
 		}
 
-		/**
-		 * Returns the smallest value in the indices array.
-		 */
+		/// <summary>
+		/// Returns the smallest value in the indices array.
+		/// </summary>
+		/// <returns></returns>
 		public int SmallestIndexValue()
 		{
 			int smallest = _indices[0];
@@ -189,12 +205,12 @@ namespace ProBuilder2.Common
 			return smallest;
 		}
 
-		/**
-		 *	\brief Shifts all triangles to be zero indexed.
-		 *	\ex
-		 *	new pb_Face(3,4,5).ShiftIndicesToZero();
-		 *	Sets the pb_Face index array to 0,1,2
-		 */
+		/// <summary>
+		/// Shifts all triangles to be zero indexed.
+		/// Ex:
+		/// new pb_Face(3,4,5).ShiftIndicesToZero();
+		/// Sets the pb_Face index array to 0,1,2
+		/// </summary>
 		public void ShiftIndicesToZero()
 		{
 			int offset = SmallestIndexValue();
@@ -212,25 +228,25 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 * Reverse the winding order of this face.
-		 */
+		/// <summary>
+		/// Reverse the winding order of this face.
+		/// </summary>
 		public void ReverseIndices()
 		{
 			System.Array.Reverse(_indices);
 			RebuildCaches();
 		}
 
-		/**
-		 *	\brief Rebuilds all property caches on pb_Face.
-		 */
+		/// <summary>
+		/// Rebuilds all property caches on pb_Face.
+		/// </summary>
 		public void RebuildCaches()
 		{
 			CacheDistinctIndices();
 			CacheEdges();
 		}
 
-		private pb_Edge[] CacheEdges()
+		pb_Edge[] CacheEdges()
 		{
 			if(_indices == null)
 				return null;
@@ -256,7 +272,7 @@ namespace ProBuilder2.Common
 			return _edges;
 		}
 
-		private int[] CacheDistinctIndices()
+		int[] CacheDistinctIndices()
 		{
 			if(_indices == null)
 				return null;
@@ -266,6 +282,11 @@ namespace ProBuilder2.Common
 			return distinctIndices;
 		}
 
+		/// <summary>
+		/// Test if the face contains a triangle.
+		/// </summary>
+		/// <param name="triangle"></param>
+		/// <returns></returns>
 		public bool Contains(int[] triangle)
 		{
 			for(int i = 0; i < indices.Length; i+=3)
@@ -279,12 +300,12 @@ namespace ProBuilder2.Common
 			return false;
 		}
 
-		/**
-		 *	\brief Returns all triangles contained within the #pb_Face array.
-		 *	@param faces #pb_Face array to extract triangle data from.
-		 *	\returns int[] containing all triangles.  Triangles may point to duplicate vertices that share a world point (not 'distinct' by ProBuilder terminology).
-		 */
-		public static int[] AllTriangles(pb_Face[] q)
+		/// <summary>
+		/// Returns all triangles contained within the #pb_Face array.
+		/// </summary>
+		/// <param name="q"></param>
+		/// <returns></returns>
+		internal static int[] AllTriangles(pb_Face[] q)
 		{
 			List<int> all = new List<int>(q.Length * 6);
 
@@ -294,41 +315,44 @@ namespace ProBuilder2.Common
 			return all.ToArray();
 		}
 
-		public static int[] AllTriangles(List<pb_Face> q)
-		{
-			List<int> all = new List<int>(q.Count * 6);
+//		/// <summary>
+//		/// Returns all indices in a list of faces.
+//		/// </summary>
+//		/// <param name="q"></param>
+//		/// <returns></returns>
+//		internal static int[] AllTriangles(List<pb_Face> q)
+//		{
+//			List<int> all = new List<int>(q.Count * 6);
+//
+//			foreach(pb_Face quad in q)
+//				all.AddRange(quad.indices);
+//
+//			return all.ToArray();
+//		}
+//
+//		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
+//		internal static int[] AllTrianglesDistinct(pb_Face[] f)
+//		{
+//			List<int> all = new List<int>();
+//			foreach(pb_Face quad in f)
+//				all.AddRange(quad.distinctIndices);
+//			return all.ToArray();
+//		}
+//
+//		[System.Obsolete("Use faces.SelectMany(x => x.distinctIndices")]
+//		internal static List<int> AllTrianglesDistinct(List<pb_Face> f)
+//		{
+//			List<int> all = new List<int>();
+//			foreach(pb_Face quad in f)
+//				all.AddRange(quad.distinctIndices);
+//			return all;
+//		}
 
-			foreach(pb_Face quad in q)
-				all.AddRange(quad.indices);
-
-			return all.ToArray();
-		}
-
-		/**
-		 *	\brief Returns all distinct triangles contained within the #pb_Face array.
-		 *	@param faces #pb_Face array to extract triangle data from.
-		 *	\returns int[] containing all triangles.  Triangles may point to duplicate vertices that share a world point (not 'distinct' by ProBuilder terminology).
-		 */
-		public static int[] AllTrianglesDistinct(pb_Face[] q)
-		{
-			List<int> all = new List<int>();
-			foreach(pb_Face quad in q)
-				all.AddRange(quad.distinctIndices);
-
-			return all.ToArray();
-		}
-
-		public static List<int> AllTrianglesDistinct(List<pb_Face> f)
-		{
-			List<int> all = new List<int>();
-			foreach(pb_Face quad in f)
-				all.AddRange(quad.distinctIndices);
-			return all;
-		}
-
-		/**
-		 * Attempts to create quad, or on failing just return the triangle indices.
-		 */
+		/// <summary>
+		/// Attempts to create quad, or on failing just return the triangle indices.
+		/// </summary>
+		/// <param name="quadOrTris"></param>
+		/// <returns></returns>
 		public MeshTopology ToQuadOrTriangles(out int[] quadOrTris)
 		{
 			if(ToQuad(out quadOrTris))
@@ -340,9 +364,10 @@ namespace ProBuilder2.Common
 			return MeshTopology.Triangles;
 		}
 
-		/**
-		 *	Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
-		 */
+		/// <summary>
+		/// Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
+		/// </summary>
+		/// <returns></returns>
 		public int[] ToQuad()
 		{
 			int[] quad;
@@ -350,9 +375,11 @@ namespace ProBuilder2.Common
 			return quad;
 		}
 
-		/**
-		 * Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
-		 */
+		/// <summary>
+		/// Convert a 2 triangle face to a quad representation. If face does not contain exactly 6 indices this function returns null.
+		/// </summary>
+		/// <param name="quad"></param>
+		/// <returns></returns>
 		public bool ToQuad(out int[] quad)
 		{
 			if(indices == null || indices.Length != 6)
@@ -380,59 +407,14 @@ namespace ProBuilder2.Common
 			return true;
 		}
 
-		/**
-		 * Sorts faces by material and returns a jagged array of their combined triangles.
-		 */
-		[System.Obsolete("Please use GetMeshIndices")]
-		public static int MeshTriangles(pb_Face[] faces, out int[][] submeshes, out Material[] materials)
-		{
-			// Sort the faces into groups of like materials
-			Dictionary<Material, List<pb_Face>> matDic = new Dictionary<Material, List<pb_Face>>();
-
-			int i = 0;
-
-			#if PROTOTYPE
-				matDic.Add(pb_Constant.DefaultMaterial, new List<pb_Face>(faces));
-			#else
-				for(i = 0; i < faces.Length; i++)
-				{
-					if(faces[i] == null)
-					{
-						Debug.LogWarning("Null face found!  Skipping these triangles.");
-						continue;
-					}
-
-					Material face_mat = faces[i].material ?? pb_Constant.UnityDefaultDiffuse;
-
-					if(matDic.ContainsKey(face_mat))
-					{
-						matDic[face_mat].Add(faces[i]);
-					}
-					else
-					{
-						matDic.Add(face_mat, new List<pb_Face>(1) { faces[i] } );
-					}
-				}
-			#endif
-
-			materials = new Material[matDic.Count];
-			submeshes = new int[materials.Length][];
-
-			i = 0;
-			foreach( KeyValuePair<Material, List<pb_Face>> kvp in matDic )
-			{
-				submeshes[i] = pb_Face.AllTriangles(kvp.Value);
-				materials[i] = kvp.Key;
-				i++;
-			}
-
-			return submeshes.Length;
-		}
-
-		/**
-		 * Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
-		 * Returns the number of submeshes created.
-		 */
+		/// <summary>
+		/// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
+		/// </summary>
+		/// <param name="faces"></param>
+		/// <param name="submeshes"></param>
+		/// <param name="preferredTopology"></param>
+		/// <returns>The number of submeshes created.</returns>
+		/// <exception cref="NotImplementedException"></exception>
 		public static int GetMeshIndices(pb_Face[] faces, out pb_Submesh[] submeshes, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
@@ -488,11 +470,8 @@ namespace ProBuilder2.Common
 					submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
 			}
 
-			if(tris != null)
-			{
-				foreach(var kvp in tris)
-					submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
-			}
+			foreach(var kvp in tris)
+				submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
 
 			return submeshCount;
 		}
@@ -520,24 +499,6 @@ namespace ProBuilder2.Common
 			}
 
 			return sb.ToString();
-		}
-
-		public string ToStringDetailed()
-		{
-			string str =
-				"index count: " + _indices.Length + "\n" +
-				"mat name : " + material.name + "\n" +
-				"isManual : " + manualUV + "\n" +
-				"smoothing group: " + smoothingGroup + "\n";
-
-			for(int i = 0; i < indices.Length; i+=3)
-				str += "Tri " + i + ": " + _indices[i+0] + ", " +  _indices[i+1] + ", " +  _indices[i+2] + "\n";
-
-			str += "Distinct Indices:\n";
-			for(int i = 0; i < distinctIndices.Length; i++)
-				str += distinctIndices[i] + ", ";
-
-			return str;
 		}
 	}
 }

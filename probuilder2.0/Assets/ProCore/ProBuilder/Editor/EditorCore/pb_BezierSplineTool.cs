@@ -8,7 +8,7 @@ using ProBuilder2.Interface;
 namespace ProBuilder2.EditorCommon
 {
 	[CustomEditor(typeof(pb_BezierShape))]
-	public class pb_BezierSplineTool : Editor
+	class pb_BezierSplineTool : Editor
 	{
 #if !PROTOTYPE
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
@@ -101,7 +101,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_CloseLoop != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
 				m_Target.m_CloseLoop = value;
 			}
 		}
@@ -112,7 +112,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Radius != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Radius");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Radius");
 				m_Target.m_Radius = value;
 			}
 		}
@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Rows != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Rows");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Rows");
 				m_Target.m_Rows = value;
 			}
 		}
@@ -134,7 +134,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Columns != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Columns");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Columns");
 				m_Target.m_Columns = value;
 			}
 		}
@@ -145,7 +145,7 @@ namespace ProBuilder2.EditorCommon
 
 			set {
 				if(m_Target.m_Smooth != value)
-					pbUndo.RecordObject(m_Target, "Set Bezier Shape Smooth");
+					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Smooth");
 				m_Target.m_Smooth = value;
 			}
 		}
@@ -237,8 +237,8 @@ namespace ProBuilder2.EditorCommon
 				if(pb_Editor.instance != null)
 					pb_Editor.instance.ClearElementSelection();
 
-				pbUndo.RecordObject(m_Target, "Edit Bezier Shape");
-				pbUndo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
+				pb_Undo.RecordObject(m_Target, "Edit Bezier Shape");
+				pb_Undo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
 
 				UpdateMesh(true);
 			}
@@ -307,13 +307,13 @@ namespace ProBuilder2.EditorCommon
 
 			if(GUILayout.Button("Clear Points"))
 			{
-				pbUndo.RecordObject(m_Target, "Clear Bezier Spline Points");
+				pb_Undo.RecordObject(m_Target, "Clear Bezier Spline Points");
 				m_Points.Clear();
 			}
 
 			if(GUILayout.Button("Add Point"))
 			{
-				pbUndo.RecordObject(m_Target, "Add Bezier Spline Point");
+				pb_Undo.RecordObject(m_Target, "Add Bezier Spline Point");
 
 				if(m_Points.Count > 0)
 				{
@@ -348,7 +348,7 @@ namespace ProBuilder2.EditorCommon
 			if(EditorGUI.EndChangeCheck())
 				UpdateMesh(true);
 
-			if( pb_ProGrids_Interface.GetProGridsType() != null )
+			if( pb_ProGridsInterface.GetProGridsType() != null )
 				m_SnapTangents = EditorGUILayout.Toggle("Snap Tangents", m_SnapTangents);
 		}
 
@@ -403,7 +403,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)
 				{
-					pbUndo.RecordObject(m_Target, "Delete Bezier Point");
+					pb_Undo.RecordObject(m_Target, "Delete Bezier Point");
 					m_Points.RemoveAt(m_currentHandle);
 					UpdateMesh(true);
 				}
@@ -452,7 +452,7 @@ namespace ProBuilder2.EditorCommon
 							if(!m_IsMoving)
 								OnBeginVertexModification();
 
-							prev = pb_ProGrids_Interface.ProGridsSnap(prev);
+							prev = pb_ProGridsInterface.ProGridsSnap(prev);
 
 							Vector3 dir = prev - point.position;
 							point.position = prev;
@@ -486,7 +486,7 @@ namespace ProBuilder2.EditorCommon
 									OnBeginVertexModification();
 
 								if(m_SnapTangents)
-									point.tangentIn = pb_ProGrids_Interface.ProGridsSnap(point.tangentIn);
+									point.tangentIn = pb_ProGridsInterface.ProGridsSnap(point.tangentIn);
 
 								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 							}
@@ -504,7 +504,7 @@ namespace ProBuilder2.EditorCommon
 									OnBeginVertexModification();
 
 								if(m_SnapTangents)
-									point.tangentOut = pb_ProGrids_Interface.ProGridsSnap(point.tangentOut);
+									point.tangentOut = pb_ProGridsInterface.ProGridsSnap(point.tangentOut);
 
 								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 							}
@@ -554,7 +554,7 @@ namespace ProBuilder2.EditorCommon
 						if(!m_IsMoving)
 							OnBeginVertexModification();
 
-						point.SetPosition( pb_ProGrids_Interface.ProGridsSnap(prev) );
+						point.SetPosition( pb_ProGridsInterface.ProGridsSnap(prev) );
 					}
 				}
 
@@ -587,7 +587,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentIn = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
+							point.tangentIn = m_SnapTangents ? pb_ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
 						}
 					}
@@ -619,7 +619,7 @@ namespace ProBuilder2.EditorCommon
 						{
 							if(!m_IsMoving)
 								OnBeginVertexModification();
-							point.tangentOut = m_SnapTangents ? pb_ProGrids_Interface.ProGridsSnap(prev) : prev;
+							point.tangentOut = m_SnapTangents ? pb_ProGridsInterface.ProGridsSnap(prev) : prev;
 							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
 						}
 					}
@@ -644,7 +644,7 @@ namespace ProBuilder2.EditorCommon
 
 					if(!eventHasBeenUsed && eventType == EventType.MouseDown && e.button == 0)
 					{
-						pbUndo.RecordObject(m_Target, "Add Point");
+						pb_Undo.RecordObject(m_Target, "Add Point");
 						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
 						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, p - dir, p + dir, Quaternion.identity));
 						UpdateMesh(true);
@@ -699,7 +699,7 @@ namespace ProBuilder2.EditorCommon
 		void OnBeginVertexModification()
 		{
 			m_IsMoving = true;
-			pbUndo.RecordObject(m_Target, "Modify Bezier Spline");
+			pb_Undo.RecordObject(m_Target, "Modify Bezier Spline");
 			pb_Lightmapping.PushGIWorkflowMode();
 		}
 

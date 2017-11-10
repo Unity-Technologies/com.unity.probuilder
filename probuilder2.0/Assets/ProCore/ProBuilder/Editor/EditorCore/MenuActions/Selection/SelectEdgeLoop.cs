@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SelectEdgeLoop : pb_MenuAction
+	class SelectEdgeLoop : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Loop", IconSkin.Pro); } }
@@ -41,7 +41,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuLoopSelection(selection);
+			return pb_MenuCommands.MenuLoopSelection(selection);
 		}
 	}
 }

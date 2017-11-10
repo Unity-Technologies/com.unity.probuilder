@@ -4,11 +4,11 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Static class responsible for managing the visibility of entity types in the scene.
-	 */
+	/// <summary>
+	/// Responsible for managing the visibility of entity types in the scene.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_EntityVisibility
+	static class pb_EntityVisibility
 	{
 		private static bool show_Detail {
 			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbShowDetail); }
@@ -39,9 +39,11 @@ namespace ProBuilder2.EditorCommon
 #endif
 		}
 
-		/**
-		 *	Set the visibility of an entity type in the sceneview.
-		 */
+		/// <summary>
+		/// Set the visibility of an entity type in the sceneview.
+		/// </summary>
+		/// <param name="entityType"></param>
+		/// <param name="isVisible"></param>
 		public static void SetEntityVisibility(EntityType entityType, bool isVisible)
 		{
 			switch(entityType)
@@ -70,9 +72,9 @@ namespace ProBuilder2.EditorCommon
 			}
 		}
 
-		/**
-		 * Registered to EditorApplication.onPlaymodeStateChanged
-		 */
+		/// <summary>
+		/// Registered to EditorApplication.onPlaymodeStateChanged
+		/// </summary>
 		private static void OnPlayModeStateChanged()
 		{
 			bool isPlaying = EditorApplication.isPlaying;

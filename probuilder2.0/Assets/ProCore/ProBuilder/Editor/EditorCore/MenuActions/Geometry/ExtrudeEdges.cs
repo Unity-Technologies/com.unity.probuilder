@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class ExtrudeEdges : pb_MenuAction
+	class ExtrudeEdges : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Extrude", IconSkin.Pro); } }
@@ -76,7 +76,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuExtrude(selection, true);
+			return pb_MenuCommands.MenuExtrude(selection, true);
 		}
 	}
 }

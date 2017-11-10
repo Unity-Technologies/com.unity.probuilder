@@ -8,10 +8,10 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	A simple line-item editor for vertex positions.
-	 */
-	public class pb_VertexEditor : EditorWindow
+	/// <summary>
+	/// A simple line-item editor for vertex positions.
+	/// </summary>
+	class pb_VertexEditor : EditorWindow
 	{
 		const int MAX_SCENE_LABELS = 100;
 
@@ -187,14 +187,14 @@ namespace ProBuilder2.EditorCommon
 								if(!moving)
 									OnVertexMovementBegin(pb);
 
-								pbUndo.RecordObject(pb, "Set Vertex Postion");
+								pb_Undo.RecordObject(pb, "Set Vertex Postion");
 
 								pb.SetSharedVertexPosition(u, worldSpace ? transform.InverseTransformPoint(v) : v);
 
 								if(pb_Editor.instance != null)
 								{
 									pb.RefreshUV( pb_Editor.instance.SelectedFacesInEditZone[pb] );
-									pb.RefreshNormals();
+									pb.Refresh(RefreshMask.Normals);
 									pb.msh.RecalculateBounds();
 									pb_Editor.instance.UpdateSelection();
 								}

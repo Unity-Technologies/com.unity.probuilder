@@ -5,8 +5,11 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
+	/// <summary>
+	/// A set of common and local index edges.
+	/// </summary>
 	[System.Obsolete("Use pb_ConnectEdges class directly.")]
-	public class pb_EdgeConnection : System.IEquatable<pb_EdgeConnection>
+	class pb_EdgeConnection : System.IEquatable<pb_EdgeConnection>
 	{
 		public pb_EdgeConnection(pb_Face face, List<pb_Edge> edges)
 		{
@@ -15,7 +18,9 @@ namespace ProBuilder2.Common
 		}
 
 		public pb_Face face;
-		public List<pb_Edge> edges;	// IMPORTANT - these edges may not be local to the specified face - always use face.edges.IndexOf(edge, sharedIndices) to get the actual edges
+
+		// IMPORTANT - these edges may not be local to the specified face - always use face.edges.IndexOf(edge, sharedIndices) to get the actual edges
+		public List<pb_Edge> edges;
 
 		public bool isValid {
 			get { return edges != null && edges.Count > 1; }
@@ -49,7 +54,7 @@ namespace ProBuilder2.Common
 		public static List<int> AllTriangles(List<pb_EdgeConnection> ec)
 		{
 			List<pb_Edge> edges = new List<pb_Edge>();
-			foreach(pb_EdgeConnection e in ec)	
+			foreach(pb_EdgeConnection e in ec)
 				edges.AddRange(e.edges);
 			return edges.AllTriangles();
 		}

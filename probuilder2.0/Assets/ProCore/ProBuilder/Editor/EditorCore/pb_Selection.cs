@@ -7,11 +7,11 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Helper functions for working with Unity object selection & ProBuilder element selection.
-	 */
+	/// <summary>
+	/// Helper functions for working with Unity object selection & ProBuilder element selection.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_Selection
+	static class pb_Selection
 	{
 		private static pb_Object[] selection
 		{
@@ -19,7 +19,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				return pb_Editor.instance != null
 					? pb_Editor.instance.selection
-					: pbUtil.GetComponents<pb_Object>(Selection.transforms);
+					: pb_Util.GetComponents<pb_Object>(Selection.transforms);
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void SetSelection(IList<GameObject> newSelection)
 		{
-			pbUndo.RecordSelection(selection, "Change Selection");
+			pb_Undo.RecordSelection(selection, "Change Selection");
 
 			ClearElementAndObjectSelection();
 
@@ -108,7 +108,7 @@ namespace ProBuilder2.EditorCommon
 
 		public static void SetSelection(GameObject go)
 		{
-			pbUndo.RecordSelection(selection, "Change Selection");
+			pb_Undo.RecordSelection(selection, "Change Selection");
 			ClearElementAndObjectSelection();
 			AddToSelection(go);
 		}

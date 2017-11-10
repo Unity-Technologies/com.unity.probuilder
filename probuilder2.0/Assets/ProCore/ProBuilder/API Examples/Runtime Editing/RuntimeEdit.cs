@@ -158,7 +158,7 @@ namespace ProBuilder2.Examples
 							return;
 						}
 
-						Vector3 localNormal = pb_Math.Normal( pbUtil.ValuesWithIndices(currentSelection.pb.vertices, currentSelection.face.distinctIndices) );
+						Vector3 localNormal = pb_Math.Normal(currentSelection.pb, currentSelection.face);
 
 						if(Input.GetKey(KeyCode.LeftShift))
 							currentSelection.pb.TranslateVertices( currentSelection.face.distinctIndices, localNormal.normalized * -.5f );
@@ -190,7 +190,7 @@ namespace ProBuilder2.Examples
 				if(hitpb == null)
 					return false;
 
-				Mesh m = hitpb.msh;
+				Mesh m = hitpb.GetComponent<MeshFilter>().sharedMesh;
 
 				int[] tri = new int[3] {
 					m.triangles[hit.triangleIndex * 3 + 0],

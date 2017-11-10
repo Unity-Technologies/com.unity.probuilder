@@ -16,20 +16,38 @@ namespace ProBuilder2.EditorCommon
 		Export = 5
 	}
 
-	/**
-	 *	Defines what area of the ProBuilder toolbar a pb_MenuAction should be grouped into.
-	 */
+	/// <summary>
+	/// Defines what area of the ProBuilder toolbar a pb_MenuAction should be grouped into.
+	/// </summary>
 	public enum pb_ToolbarGroup
 	{
+		/// <summary>
+		/// This is an editor window.
+		/// </summary>
 		Tool = 0,
+		/// <summary>
+		/// This is an interface toggle or an element selection action.
+		/// </summary>
 		Selection = 1,
+		/// <summary>
+		/// This action affects objects (as opposed to elements).
+		/// </summary>
 		Object = 2,
+		/// <summary>
+		/// This action affects geometry elements (vertices, edges, faces).
+		/// </summary>
 		Geometry = 3,
+		/// <summary>
+		/// This is an entity toggle.
+		/// </summary>
 		Entity = 4,
+		/// <summary>
+		/// This action exports meshes.
+		/// </summary>
 		Export = 5
 	}
 
-	public static class pb_ToolbarGroupUtility
+	static class pb_ToolbarGroupUtility
 	{
 		static readonly Color ToolColor = new Color(0.6666f, 0.4f, 0.2f, 1f);
 		static readonly Color SelectionColor = new Color(0.1411f, 0.4941f, 0.6392f, 1f);

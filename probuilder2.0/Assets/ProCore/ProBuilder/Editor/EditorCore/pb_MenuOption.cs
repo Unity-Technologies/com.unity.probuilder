@@ -6,10 +6,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Options menu window container. 
-	 */
-	public class pb_MenuOption : EditorWindow
+	/// <summary>
+	/// Options menu window container.
+	/// </summary>
+	class pb_MenuOption : EditorWindow
 	{
 		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsGUI = null;
 		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsDisable = null;
@@ -28,7 +28,7 @@ namespace ProBuilder2.EditorCommon
 			win.onSettingsDisable = onSettingsDisable;
 
 			win.onSettingsGUI = onSettingsGUI;
-			
+
 			// don't let window hang around after a script reload nukes the pb_MenuAction instances
 			object parent = pb_Reflection.GetValue(win, typeof(EditorWindow), "m_Parent");
 			object window = pb_Reflection.GetValue(parent, typeof(EditorWindow), "window");

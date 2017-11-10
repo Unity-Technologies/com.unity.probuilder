@@ -3,21 +3,27 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	public enum pb_BezierTangentMode
+	/// <summary>
+	/// How bezier handles behave when being manipulated in the scene view.
+	/// </summary>
+	enum pb_BezierTangentMode
 	{
 		Free,
 		Aligned,
 		Mirrored
 	}
 
-	public enum pb_BezierTangentDirection
+	enum pb_BezierTangentDirection
 	{
 		In,
 		Out
 	}
 
+	/// <summary>
+	/// A bezier knot.
+	/// </summary>
 	[System.Serializable]
-	public struct pb_BezierPoint
+	struct pb_BezierPoint
 	{
 		public Vector3 position;
 		public Vector3 tangentIn;
@@ -50,9 +56,10 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 *	Set the position while also moving tangent points.
-		 */
+		/// <summary>
+		/// Set the position while also moving tangent points.
+		/// </summary>
+		/// <param name="position"></param>
 		public void SetPosition(Vector3 position)
 		{
 			Vector3 delta = position - this.position;

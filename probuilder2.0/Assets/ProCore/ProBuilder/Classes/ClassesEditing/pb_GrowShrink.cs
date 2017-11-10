@@ -4,14 +4,18 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Methods for growing and shrinking element selections.
-	 */
+	/// <summary>
+	/// Methods for growing and shrinking element selections.
+	/// </summary>
 	public static class pb_GrowShrink
 	{
-		/**
-		 *	Grow `faces` to include any face touching the perimeter.
-		 */
+		/// <summary>
+		/// Grow `faces` to include any face touching the perimeter.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="maxAngleDiff"></param>
+		/// <returns></returns>
 		public static HashSet<pb_Face> GrowSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff = -1f)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
@@ -51,14 +55,14 @@ namespace ProBuilder2.MeshOperations
 			return neighboring;
 		}
 
-		private static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
+		static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 
-		public static void Flood(pb_WingedEdge wing, HashSet<pb_Face> selection)
+		internal static void Flood(pb_WingedEdge wing, HashSet<pb_Face> selection)
 		{
 			Flood(null, wing, Vector3_Zero, -1f, selection);
 		}
 
-		public static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
+		internal static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
 		{
 			pb_WingedEdge next = wing;
 
@@ -89,9 +93,13 @@ namespace ProBuilder2.MeshOperations
 			} while(next != wing);
 		}
 
-		/**
-		 *	Returns all adjacent faces as far as can be bridged within an angle.
-		 */
+		/// <summary>
+		/// Returns all adjacent faces as far as can be bridged within an angle.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <param name="maxAngleDiff"></param>
+		/// <returns></returns>
 		public static HashSet<pb_Face> FloodSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);

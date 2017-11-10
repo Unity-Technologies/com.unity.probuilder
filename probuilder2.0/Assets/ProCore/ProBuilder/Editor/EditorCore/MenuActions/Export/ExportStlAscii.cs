@@ -8,7 +8,7 @@ using Parabox.STL;
 
 namespace ProBuilder2.Actions
 {
-	public class ExportStlAscii : pb_MenuAction
+	class ExportStlAscii : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }

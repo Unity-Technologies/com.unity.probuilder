@@ -5,7 +5,7 @@ using ProBuilder2.Common;
 namespace ProBuilder2.EditorCommon
 {
 	[CustomEditor(typeof(pb_PreferenceDictionary))]
-	public class pb_PreferenceDictionaryInspector : Editor
+	class pb_PreferenceDictionaryInspector : Editor
 	{
 		private pb_PreferenceDictionary m_Preferences = null;
 		private Vector2 m_Scroll = Vector2.zero;

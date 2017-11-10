@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	Helper functions for working with Reflection.
-	 */
-	public static class pb_Reflection
+	/// <summary>
+	/// Helper functions for working with Reflection.
+	/// </summary>
+	static class pb_Reflection
 	{
 		public static bool enableWarnings = true;
 		const BindingFlags ALL_FLAGS = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;

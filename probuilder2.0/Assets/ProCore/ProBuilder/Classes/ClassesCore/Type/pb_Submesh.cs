@@ -2,24 +2,33 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * A set of indices and material.
-	 */
+	/// <summary>
+	/// A set of indices and material.
+	/// </summary>
 	[System.Serializable]
 	public class pb_Submesh
 	{
-		// Indices making up this submesh. Can be triangles or quads.
+		/// <summary>
+		/// Indices making up this submesh. Can be triangles or quads.
+		/// </summary>
 		public int[] indices;
 
-		// What topology is this submesh?
+		/// <summary>
+		/// What topology is this submesh?
+		/// </summary>
 		public MeshTopology topology;
 
-		// What material does this submesh use?
+		/// <summary>
+		/// What material does this submesh use?
+		/// </summary>
 		public Material material;
 
-		/**
-		 * Create new pb_Submesh. Constructor does not copy indices.
-		 */
+		/// <summary>
+		/// Create new pb_Submesh. Constructor does not copy indices.
+		/// </summary>
+		/// <param name="material"></param>
+		/// <param name="topology"></param>
+		/// <param name="indices"></param>
 		public pb_Submesh(Material material, MeshTopology topology, int[] indices)
 		{
 			this.indices = indices;
@@ -27,6 +36,12 @@ namespace ProBuilder2.Common
 			this.material = material;
 		}
 
+		/// <summary>
+		/// Create new pb_Submesh from a mesh, submesh index and material.
+		/// </summary>
+		/// <param name="mesh"></param>
+		/// <param name="subMeshIndex"></param>
+		/// <param name="material"></param>
 		public pb_Submesh(Mesh mesh, int subMeshIndex, Material material)
 		{
 			this.indices = mesh.GetIndices(subMeshIndex);

@@ -14,20 +14,28 @@ using ProBuilder2.Actions;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Utilities for working in Unity editor.  Showing notifications in windows, getting the sceneview,
-	 * setting EntityTypes, OBJ export, etc.
-	 */
-	public static class pb_EditorUtility
+	/// <summary>
+	/// Delegate to be raised when a ProBuilder object is created.
+	/// </summary>
+	/// <param name="pb"></param>
+	public delegate void OnObjectCreated(pb_Object pb);
+
+	/// <summary>
+	/// Delegate to be raised when a ProBuilder component is compiled to a UnityEngine mesh.
+	/// </summary>
+	/// <param name="pb"></param>
+	/// <param name="mesh"></param>
+	public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+
+	/// <summary>
+	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
+	/// </summary>
+	static class pb_EditorUtility
 	{
 		const float TIMER_DISPLAY_TIME = 1f;
 		private static float notifTimer = 0f;
 		private static EditorWindow notifWindow;
 		private static bool notifDisplayed = false;
-
-		public delegate void OnObjectCreated(pb_Object pb);
-
-		public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
 
 		/**
 		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
@@ -365,7 +373,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SetIsTrigger(bool val, GameObject target)
 		{
-			Collider[] colliders = pbUtil.GetComponents<Collider>(target);
+			Collider[] colliders = pb_Util.GetComponents<Collider>(target);
 			foreach(Collider col in colliders)
 			{
 				if(val && col is MeshCollider)
@@ -542,8 +550,8 @@ namespace ProBuilder2.EditorCommon
 			else
 				pb.CenterPivot(indicesToCenterPivot);
 
-			if(pb_ProGrids_Interface.SnapEnabled())
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGrids_Interface.SnapValue());
+			if(pb_ProGridsInterface.SnapEnabled())
+				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, pb_ProGridsInterface.SnapValue());
 			else
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);

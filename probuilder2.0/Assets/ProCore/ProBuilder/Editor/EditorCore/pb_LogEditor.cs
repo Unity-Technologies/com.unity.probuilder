@@ -9,11 +9,11 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Initialize pb_Log preferences here because pb_Log does not have access to pb_PreferencesInternal.
-	 */
+	/// <summary>
+	/// Initialize pb_Log preferences here because pb_Log does not have access to pb_PreferencesInternal.
+	/// </summary>
 	[InitializeOnLoad]
-	internal static class pb_LogPreferences
+	static class pb_LogPreferences
 	{
 		static pb_LogPreferences()
 		{
@@ -31,10 +31,10 @@ namespace ProBuilder2.EditorCommon
 		}
 	}
 
-	/**
-	 * Manage settings for pb_Log.
-	 */
-	public class pb_LogEditor : EditorWindow
+	/// <summary>
+	/// Manage settings for pb_Log.
+	/// </summary>
+	class pb_LogEditor : EditorWindow
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Log Preferences")]
 		private static void MenuInit()

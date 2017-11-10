@@ -5,11 +5,16 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	public static class pb_AppendPolygon
+	static class pb_AppendPolygon
 	{
-		 /**
-		  *	Create a new face connecting the vertices selected by indices.
-		  */
+		/// <summary>
+		/// Create a new face connecting the vertices selected by indices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <param name="unordered"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static pb_ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
@@ -102,7 +107,7 @@ namespace ProBuilder2.MeshOperations
 				pb_Log.PopLogLevel();
 				return new pb_ActionResult(Status.Failure, "Failed Triangulating Points");
 			}
-			
+
 			pb_Log.PopLogLevel();
 
 			pb.ToMesh();

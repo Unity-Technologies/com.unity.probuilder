@@ -3,8 +3,12 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	public class pb_FaceRebuildData
+	/// <summary>
+	/// Information required to append a face to a pb_Object.
+	/// </summary>
+	class pb_FaceRebuildData
 	{
+#pragma warning disable 0649
 		// new pb_Face
 		public pb_Face face;
 		// new vertices (all vertices required to rebuild, not just new)
@@ -15,6 +19,7 @@ namespace ProBuilder2.Common
 		public List<int> sharedIndicesUV;
 		// The offset applied to this face via Apply() call.
 		private int _appliedOffset = 0;
+#pragma warning restore 0649
 
 		/**
 		 * If this face has been applied to a pb_Object via Apply() this returns the index offset applied.

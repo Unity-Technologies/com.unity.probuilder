@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace ProBuilder2.EditorCommon
 {
-	public enum VersionType
+	enum VersionType
 	{
 		Final = 3,
 		Beta = 2,
@@ -10,7 +10,7 @@ namespace ProBuilder2.EditorCommon
 	}
 
 	[System.Serializable]
-	public struct pb_VersionInfo : System.IEquatable<pb_VersionInfo>, System.IComparable<pb_VersionInfo>
+	struct pb_VersionInfo : System.IEquatable<pb_VersionInfo>, System.IComparable<pb_VersionInfo>
 	{
 		public int major;
 		public int minor;

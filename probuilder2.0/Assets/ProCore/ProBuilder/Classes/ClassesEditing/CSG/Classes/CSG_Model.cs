@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.
-	 */
+	/// <summary>
+	/// Representation of a mesh in CSG terms.  Contains methods for translating to and from UnityEngine.Mesh.
+	/// </summary>
 	class CSG_Model
 	{
 		public List<CSG_Vertex> vertices;
@@ -50,13 +50,13 @@ namespace Parabox.CSG
 
 				for (int j = 2; j < poly.vertices.Count; j++)
 				{
-					this.vertices.Add(poly.vertices[0]);		
+					this.vertices.Add(poly.vertices[0]);
 					this.indices.Add(p++);
 
-					this.vertices.Add(poly.vertices[j - 1]);	
+					this.vertices.Add(poly.vertices[j - 1]);
 					this.indices.Add(p++);
 
-					this.vertices.Add(poly.vertices[j]);		
+					this.vertices.Add(poly.vertices[j]);
 					this.indices.Add(p++);
 				}
 			}

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SelectFaceRing : pb_MenuAction
+	class SelectFaceRing : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Ring_Face", IconSkin.Pro); } }
@@ -38,7 +38,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuRingFaces(selection);
+			return pb_MenuCommands.MenuRingFaces(selection);
 		}
 	}
 }

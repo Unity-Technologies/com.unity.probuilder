@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	public class pb_Bounds2D
+	/// <summary>
+	/// Internal bounds class.
+	/// </summary>
+	class pb_Bounds2D
 	{
-
-#region Members
-
 		public Vector2 center = Vector2.zero;
 		[SerializeField] private Vector2 _size = Vector2.zero;
 		[SerializeField] private Vector2 _extents = Vector2.zero;
@@ -24,8 +24,8 @@ namespace ProBuilder2.Common
 			{
 				_size = value;
 
-				_extents.x = _size.x * .5f; 
-				_extents.y = _size.y * .5f; 
+				_extents.x = _size.x * .5f;
+				_extents.y = _size.y * .5f;
 			}
 		}
 
@@ -48,9 +48,6 @@ namespace ProBuilder2.Common
 				};
 			}
 		}
-#endregion
-
-#region Constructor
 
 		/**
 		 * Basic constructor.
@@ -142,9 +139,6 @@ namespace ProBuilder2.Common
 			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
 			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
-#endregion
-
-#region Public Methods
 
 		/**
 		 * Returns true if the point is contained within the bounds.  False otherwise.
@@ -281,9 +275,6 @@ namespace ProBuilder2.Common
 			_extents.x = _size.x * .5f;
 			_extents.y = _size.y * .5f;
 		}
-#endregion
-
-#region Static
 
 		/**
 		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
@@ -350,14 +341,10 @@ namespace ProBuilder2.Common
 
 			return new Vector2( (xMin + xMax) / 2f, (yMin + yMax) / 2f );
 		}
-#endregion
-
-#region Override
 
 		public override string ToString()
 		{
 			return "[cen: " + center + " size: " + size + "]";
 		}
-#endregion
 	}
 }

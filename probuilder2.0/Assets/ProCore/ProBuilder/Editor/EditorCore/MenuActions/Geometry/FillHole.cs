@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class FillHole : pb_MenuAction
+	class FillHole : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); } }
@@ -65,7 +65,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuFillHole(selection);
+			return pb_MenuCommands.MenuFillHole(selection);
 		}
 	}
 }

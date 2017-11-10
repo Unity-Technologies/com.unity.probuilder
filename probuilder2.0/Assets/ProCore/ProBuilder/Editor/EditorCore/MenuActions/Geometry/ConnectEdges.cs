@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class ConnectEdges : pb_MenuAction
+	class ConnectEdges : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Edge_Connect", IconSkin.Pro); } }
@@ -42,7 +42,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuConnectEdges(selection);
+			return pb_MenuCommands.MenuConnectEdges(selection);
 		}
 	}
 }

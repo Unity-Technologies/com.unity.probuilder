@@ -7,7 +7,7 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class ToggleDragRectMode : pb_MenuAction
+	class ToggleDragRectMode : pb_MenuAction
 	{
 		bool isComplete { get { return pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement); } }
 

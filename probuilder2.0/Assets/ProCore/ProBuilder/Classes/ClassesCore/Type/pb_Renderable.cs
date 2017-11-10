@@ -3,11 +3,12 @@ using System.Collections;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * A mesh / material(s) structure.  Mesh is destroyed with this object, materials are not.
-	 */
+	/// <summary>
+	/// A mesh / material(s) structure. Mesh is destroyed with this object, materials are not.
+	/// <remarks>This is soon to be obsolete - see UnityEditor.Manipulators.MeshHandles</remarks>
+	/// </summary>
 	[System.Serializable]
-	public class pb_Renderable : ScriptableObject
+	class pb_Renderable : ScriptableObject
 	{
 		public Mesh mesh;
 		public Material[] materials;

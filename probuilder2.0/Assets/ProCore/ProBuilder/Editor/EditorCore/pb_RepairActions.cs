@@ -12,7 +12,7 @@ namespace ProBuilder2.EditorCommon
 	/// <summary>
 	/// Common troubleshooting actions for repairing ProBuilder meshes.
 	/// </summary>
-	public static class pb_RepairActions
+	static class pb_RepairActions
 	{
 		/// <summary>
 		/// Menu interface for manually re-generating all ProBuilder geometry in scene.
@@ -67,7 +67,7 @@ namespace ProBuilder2.EditorCommon
 				// is not)
 
 				pb = Undo.AddComponent<pb_Object>(go);
-				pbMeshOps.ResetPbObjectWithMeshFilter(pb, true);
+				pb_MeshOps.ResetPbObjectWithMeshFilter(pb, true);
 
 				pb.ToMesh();
 				pb.Refresh();
@@ -84,13 +84,13 @@ namespace ProBuilder2.EditorCommon
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild Shared Indices Cache", true, pb_Constant.MENU_REPAIR)]
 		private static bool VertifyRebuildMeshes()
 		{
-			return pbUtil.GetComponents<pb_Object>(Selection.transforms).Length > 0;
+			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild Shared Indices Cache", false, pb_Constant.MENU_REPAIR)]
 		public static void DoRebuildMeshes()
 		{
-			RebuildSharedIndices( pbUtil.GetComponents<pb_Object>(Selection.transforms) );
+			RebuildSharedIndices( pb_Util.GetComponents<pb_Object>(Selection.transforms) );
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			int count = 0;
 
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				pb.ToMesh();
 

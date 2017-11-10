@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a single mesh vertex.  Contains fields for position, color, normal, and textures.
-	 */
+	/// <summary>
+	/// Represents a single mesh vertex.
+	/// Contains fields for position, color, normal, and textures.
+	/// </summary>
 	struct CSG_Vertex
 	{
 		public Vector3 position;

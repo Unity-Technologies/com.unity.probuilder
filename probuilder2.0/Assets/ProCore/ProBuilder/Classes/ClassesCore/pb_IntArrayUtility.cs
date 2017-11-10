@@ -5,9 +5,16 @@ using System.Linq;
 
 namespace ProBuilder2.Common
 {
+	/// <summary>
+	/// Utilities and extension methods for pb_IntArray.
+	/// </summary>
 	public static class pb_IntArrayUtility
 	{
-		// Returns a jagged int array
+		/// <summary>
+		/// Convert a pb_IntArray[] to a jagged int array.
+		/// </summary>
+		/// <param name="val"></param>
+		/// <returns>Returns a jagged int array.</returns>
 		public static int[][] ToArray(this pb_IntArray[] val)
 		{
 			int[][] arr = new int[val.Length][];
@@ -16,15 +23,17 @@ namespace ProBuilder2.Common
 			return arr;
 		}
 
-		/**
-		 * Returns a dictionary where Key is equal to triangle index, and Value
-		 * is equal to the sharedIndices index.  In this way you can quickly check
-		 * which indices are sharing a vertex.  Ex:
-		 * if(dictionary[triangles[0]] == dictionary[triangles[4]])
-		 *		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] share a vertex");
-		 *	else
-		 *		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] do not share a vertex");
-		 */
+		/// <summary>
+		/// Returns a dictionary where Key is equal to triangle index, and Value
+		/// is equal to the sharedIndices index.  In this way you can quickly check
+		/// which indices are sharing a vertex.  Ex:
+		/// if(dictionary[triangles[0]] == dictionary[triangles[4]])
+		///		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] share a vertex");
+		///	else
+		///		Debug.Log("Triangles at mesh.triangles[0] and mesh.triangles[4] do not share a vertex");
+		/// </summary>
+		/// <param name="array"></param>
+		/// <returns></returns>
 		public static Dictionary<int, int> ToDictionary(this pb_IntArray[] array)
 		{
 			Dictionary<int, int> dic = new Dictionary<int, int>();
@@ -39,9 +48,11 @@ namespace ProBuilder2.Common
 			return dic;
 		}
 
-		/**
-		 *	Convert a dictionary back to pb_IntArray[]
-		 */
+		/// <summary>
+		/// Convert a dictionary back to pb_IntArray[]
+		/// </summary>
+		/// <param name="lookup"></param>
+		/// <returns></returns>
 		public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
 		{
 			Dictionary<int, int> map = new Dictionary<int, int>();
@@ -71,10 +82,12 @@ namespace ProBuilder2.Common
 
 			return shared.ToPbIntArray();
 		}
-		
-		/**
-		 * Convert a jagged int array to a pb_IntArray.
-		 */
+
+		/// <summary>
+		/// Convert a jagged int array to a pb_IntArray.
+		/// </summary>
+		/// <param name="val"></param>
+		/// <returns></returns>
 		public static pb_IntArray[] ToPbIntArray(this int[][] val)
 		{
 			pb_IntArray[] arr = new pb_IntArray[val.Length];
@@ -83,6 +96,11 @@ namespace ProBuilder2.Common
 			return arr;
 		}
 
+		/// <summary>
+		/// Convert a jagged int array to a pb_IntArray.
+		/// </summary>
+		/// <param name="val"></param>
+		/// <returns></returns>
 		public static pb_IntArray[] ToPbIntArray(this List<List<int>> val)
 		{
 			pb_IntArray[] arr = new pb_IntArray[val.Count];
@@ -91,68 +109,20 @@ namespace ProBuilder2.Common
 			return arr;
 		}
 
-		public static List<List<int>> ToList(this pb_IntArray[] val)
-		{
-			List<List<int>> l = new List<List<int>>();
-			for(int i = 0; i < val.Length; i++)
-				l.Add( val[i].ToList() );
-			return l;
-		}
-
-		public static string ToFormattedString(this pb_IntArray[] arr)
-		{
-			StringBuilder sb = new StringBuilder();
-			for(int i = 0; i < arr.Length; i++)
-				sb.Append( "[" + arr[i].array.ToString(", ") + "] " );
-			
-			return sb.ToString();
-		}
-
-		/**
-		 * Checks if an array contains a value and also compares shared indices using sharedIndices.
-		 */
-		public static int IndexOf(this int[] array, int val, pb_IntArray[] sharedIndices)
-		{
-			int indInShared = sharedIndices.IndexOf(val);
-			if(indInShared < 0) return -1;
-
-			int[] allValues = sharedIndices[indInShared];
-
-			for(int i = 0; i < array.Length; i++)
-				if(System.Array.IndexOf(allValues, array[i]) > -1)
-					return i;
-
-			return -1;
-		}
-
-		/**
-		 *	Return the index of a triangle in indices, using a shared indices lookup.
-		 */
-		public static int IndexOf(this IList<int> indices, int triangle, ref Dictionary<int, int> lookup)
-		{
-			int universal = lookup[triangle];
-			
-			if(universal < 0)
-				return -1;
-
-			int count = indices.Count();
-			
-			for(int i = 0; i < count; i++)
-				if( lookup[indices[i]] == universal )
-					return i;
-
-			return -1;
-		}
-
-		// Scans an array of pb_IntArray and returns the index of that int[] that holds the index.
-		// Aids in removing duplicate vertex indices.
+		/// <summary>
+		/// Scans an array of pb_IntArray and returns the index of that int[] that holds the index
+		/// </summary>
+		/// <remarks>Aids in removing duplicate vertex indices.</remarks>
+		/// <param name="intArray"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public static int IndexOf(this pb_IntArray[] intArray, int index)
 		{
 			if(intArray == null) return -1;
 
 			for(int i = 0; i < intArray.Length; i++)
 			{
-				// for some reason, this is about 2x faster than System.Array.IndexOf
+				// for some reason this is about 2x faster than System.Array.IndexOf
 				for(int n = 0; n < intArray[i].Length; n++)
 					if(intArray[i][n] == index)
 						return i;
@@ -160,11 +130,13 @@ namespace ProBuilder2.Common
 			return -1;
 		}
 
-		/**
-		 * Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and 
-		 * distinct.
-		 */
-		public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
+		/// <summary>
+		/// Returns all indices given a spattering of triangles.  Guaranteed to be all inclusive and distinct.
+		/// </summary>
+		/// <param name="pbIntArr"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		public static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
 			int[] universal = pbIntArr.GetCommonIndices(indices).ToArray();
 
@@ -178,7 +150,7 @@ namespace ProBuilder2.Common
 			return shared;
 		}
 
-		public static IList<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
+		public static List<int> AllIndicesWithValues(this pb_IntArray[] pbIntArr, Dictionary<int, int> lookup, IList<int> indices)
 		{
 			int[] universal = GetCommonIndices(lookup, indices).ToArray();
 
@@ -190,10 +162,13 @@ namespace ProBuilder2.Common
 			return shared;
 		}
 
-		/**
-		 *	Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
-		 */
-		public static IList<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
+		/// <summary>
+		/// Given triangles, this returns a distinct array containing the first value of each sharedIndex array entry.
+		/// </summary>
+		/// <param name="pbIntArr"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static List<int> UniqueIndicesWithValues(this pb_IntArray[] pbIntArr, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pbIntArr.ToDictionary();
 
@@ -210,44 +185,43 @@ namespace ProBuilder2.Common
 			return unique;
 		}
 
-		/**
-		 * Given triangles, return a distinct list of the indices in the sharedIndices[] array (common index).
-		 */
-		public static HashSet<int> GetCommonIndices(this pb_IntArray[] pbIntArr, IList<int> indices)
+		/// <summary>
+		/// Given triangles, return a distinct list of the indices in the sharedIndices[] array (common index).
+		/// </summary>
+		/// <param name="pbIntArr"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static HashSet<int> GetCommonIndices(this pb_IntArray[] pbIntArr, IEnumerable<int> indices)
 		{
 			return GetCommonIndices(pbIntArr.ToDictionary(), indices);
 		}
 
-		public static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IList<int> indices)
+		internal static HashSet<int> GetCommonIndices(Dictionary<int, int> lookup, IEnumerable<int> indices)
 		{
 			HashSet<int> common = new HashSet<int>();
 
-			foreach(int i in indices) 
-			{
-				// if(!lookup.ContainsKey(i))
-				// 	Debug.Log("want: " + i +"\nhave: " + lookup.Keys.ToString("\n"));
+			foreach(int i in indices)
 				common.Add( lookup[i] );
-			}
 
 			return common;
 		}
 
-		/**
-		 *	Convert a list of common indices (eg, indices of a group in the sharedIndices array) to actual triangle indices.
-		 */
-		public static IEnumerable<int> GetIndicesWithCommon(this pb_IntArray[] pbIntArr, IEnumerable<int> common)
+		/// <summary>
+		/// Convert a list of common indices (eg, indices of a group in the sharedIndices array) to actual triangle indices.
+		/// </summary>
+		/// <param name="pbIntArr"></param>
+		/// <param name="common"></param>
+		/// <returns></returns>
+		internal static IEnumerable<int> GetIndicesWithCommon(this pb_IntArray[] pbIntArr, IEnumerable<int> common)
 		{
 			return common.Select(x => pbIntArr[x][0]);
 		}
 
-		/**
-		 *	\brief Cycles through a mesh and returns a pb_IntArray[] of 
-		 *	triangles that point to the same point in world space.
-		 *	@param _mesh The mesh to examine.
-		 *	\sa pb_IntArray
-		 *	\notes pbIntArray exists because Unity cannot serialize jagged arrays.
-		 *	\returns A pb_IntArray[] (basically just an int[][] with some added functionality).
-		 */
+		/// <summary>
+		/// Cycles through a mesh and returns a pb_IntArray[] of vertex indices that point to the same point in world space.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <returns></returns>
 		public static pb_IntArray[] ExtractSharedIndices(Vector3[] v)
 		{
 			Dictionary<pb_IntVec3, List<int>> sorted = new Dictionary<pb_IntVec3, List<int>>();
@@ -265,18 +239,20 @@ namespace ProBuilder2.Common
 			pb_IntArray[] share = new pb_IntArray[sorted.Count];
 
 			int t = 0;
-			foreach(KeyValuePair<pb_IntVec3, List<int>> kvp in sorted)	
+			foreach(KeyValuePair<pb_IntVec3, List<int>> kvp in sorted)
 				share[t++] = new pb_IntArray( kvp.Value.ToArray() );
 
 			return share;
 		}
 
-		/**
-		 *	Associates all passed indices with a single shared index.  Does not perfrom any additional operations 
-		 *	to repair triangle structure or vertex placement.
-		 */
-		public static int MergeSharedIndices(ref pb_IntArray[] sharedIndices, int[] indices)
-		{	
+		/// <summary>
+		/// Associates all passed indices with a single shared index. Does not perfrom any additional operations to repair triangle structure or vertex placement.
+		/// </summary>
+		/// <param name="sharedIndices"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static int MergeSharedIndices(ref pb_IntArray[] sharedIndices, int[] indices)
+		{
 			if(indices.Length < 2) return -1;
 			if(sharedIndices == null)
 			{
@@ -302,14 +278,14 @@ namespace ProBuilder2.Common
 					{
 						newSharedIndex.Add( indices[i] );
 					}
-					
+
 				}
 			}
 
 			// Now remove the old entries
 			int rebuiltSharedIndexLength = sharedIndices.Length - used.Count;
 			pb_IntArray[] rebuild = new pb_IntArray[rebuiltSharedIndexLength];
-			
+
 			int n = 0;
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
@@ -323,54 +299,67 @@ namespace ProBuilder2.Common
 			return sharedIndices.Length-1;
 		}
 
-		/**
-		 *	Associates indices with a single shared index.  Does not perfrom any additional operations 
-		 *	to repair triangle structure or vertex placement.
-		 */
-		public static void MergeSharedIndices(ref pb_IntArray[] sharedIndices, int a, int b)
+		/// <summary>
+		/// Associates indices with a single shared index.  Does not perfrom any additional operations to repair triangle structure or vertex placement.
+		/// </summary>
+		/// <param name="sharedIndices"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		internal static void MergeSharedIndices(ref pb_IntArray[] sharedIndices, int a, int b)
 		{
 			int aIndex = sharedIndices.IndexOf(a);
 			int oldBIndex = sharedIndices.IndexOf(b);
-		
+
 			pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, aIndex, b);
 
 			int[] arr = sharedIndices[oldBIndex].array;
 			sharedIndices[oldBIndex].array = arr.RemoveAt(System.Array.IndexOf(arr, b));
 			pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
-		}	
+		}
 
-		/**
-		 * Add a value to the array at index.
-		 */
-		public static int AddValueAtIndex(ref pb_IntArray[] sharedIndices, int sharedIndex, int value)
+		/// <summary>
+		/// Add a value to the array at index.
+		/// </summary>
+		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndex"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		internal static int AddValueAtIndex(ref pb_IntArray[] sharedIndices, int sharedIndex, int value)
 		{
 			if(sharedIndex > -1)
 				sharedIndices[sharedIndex].array = sharedIndices[sharedIndex].array.Add(value);
 			else
 				sharedIndices = (pb_IntArray[])sharedIndices.Add( new pb_IntArray(new int[]{value}) );
-			
+
 			return sharedIndex > -1 ? sharedIndex : sharedIndices.Length-1;
 		}
 
-		/**
-		 * Adds a range of values to the array at index.
-		 */
-		public static int AddRangeAtIndex(ref pb_IntArray[] sharedIndices, int sharedIndex, int[] indices)
+		/// <summary>
+		/// Adds a range of values to the array at index.
+		/// </summary>
+		/// <param name="sharedIndices"></param>
+		/// <param name="sharedIndex"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static int AddRangeAtIndex(ref pb_IntArray[] sharedIndices, int sharedIndex, int[] indices)
 		{
 			if(sharedIndex > -1)
 				sharedIndices[sharedIndex].array = sharedIndices[sharedIndex].array.AddRange(indices);
 			else
 				sharedIndices = (pb_IntArray[])sharedIndices.Add( new pb_IntArray(indices) );
-			
+
 			return sharedIndex > -1 ? sharedIndex : sharedIndices.Length-1;
 		}
 
-		/**
-		 * Removes all passed values from the sharedIndices jagged array. Does NOT perform any
-		 * index shifting to account for removed vertices.  Use RemoveValuesAndShift
-		 * for that purpose.
-		 */
-		public static void RemoveValues(ref pb_IntArray[] sharedIndices, int[] remove)
+		/// <summary>
+		/// Removes all passed values from the sharedIndices jagged array
+		/// </summary>
+		/// <remarks>
+		/// Does NOT perform any index shifting to account for removed vertices. Use RemoveValuesAndShift for that purpose.
+		/// </remarks>
+		/// <param name="sharedIndices"></param>
+		/// <param name="remove"></param>
+		internal static void RemoveValues(ref pb_IntArray[] sharedIndices, int[] remove)
 		{
 			// remove face indices from all shared indices caches
 			for(int i = 0; i < sharedIndices.Length; i++)
@@ -388,13 +377,13 @@ namespace ProBuilder2.Common
 			pb_IntArray.RemoveEmptyOrNull(ref sharedIndices);
 		}
 
-		/**
-		 *	\brief Removes the specified indices from the array, and shifts all values 
-		 *	down to account for removal in the vertex array.  Only use when deleting
-		 *	faces or vertices.  For general moving around and modification of shared 
-		 *	index array, use #RemoveValuesAtIndex.
-		 */
-		public static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, IEnumerable<int> remove)
+		/// <summary>
+		/// Removes the specified indices from the array, and shifts all values down to account for removal in the vertex array.  Only use when deleting faces or vertices.
+		/// </summary>
+		/// <remarks>For general moving around and modification of shared index array, use #RemoveValuesAtIndex.</remarks>
+		/// <param name="sharedIndices"></param>
+		/// <param name="remove"></param>
+		internal static void RemoveValuesAndShift(ref pb_IntArray[] sharedIndices, IEnumerable<int> remove)
 		{
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
@@ -406,12 +395,12 @@ namespace ProBuilder2.Common
 			List<int> removed_values = new List<int>(remove);
 
 			removed_values.Sort();
-		
+
 			for(int i = 0; i < sharedIndices.Length; i++)
 			{
 				for(int n = 0; n < sharedIndices[i].Length; n++)
 				{
-					int index = pbUtil.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
+					int index = pb_Util.NearestIndexPriorToValue(removed_values, sharedIndices[i][n]);
 					// add 1 because index is zero based
 					sharedIndices[i][n] -= index + 1;
 				}

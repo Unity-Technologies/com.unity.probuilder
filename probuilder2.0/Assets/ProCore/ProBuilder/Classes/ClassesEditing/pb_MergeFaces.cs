@@ -5,16 +5,18 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 * Merging faces together.
-	 */
-	public static class pb_MergeFaces
+	/// <summary>
+	/// Merging faces together.
+	/// </summary>
+	static class pb_MergeFaces
 	{
-		/**
-		 * Merge each pair of faces to a single face. Indices are combined, but otherwise the properties of the first
-		 * face in the pair take precedence.
-		 * Returns a list of the new faces created.
-		 */
+		/// <summary>
+		/// Merge each pair of faces to a single face. Indices are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="pairs"></param>
+		/// <param name="collapseCoincidentVertices"></param>
+		/// <returns></returns>
 		public static List<pb_Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<pb_Face, pb_Face>> pairs, bool collapseCoincidentVertices = true)
 		{
 			HashSet<pb_Face> remove = new HashSet<pb_Face>();
@@ -44,13 +46,16 @@ namespace ProBuilder2.MeshOperations
 			return add;
 		}
 
-		/**
-		 * Merge a collection of faces to a single face. This function does not
-		 * perform any sanity checks, it just merges faces. It's the caller's
-		 * responsibility to make sure that the input is valid.
-		 * In addition to merging faces this method also removes duplicate vertices
-		 * created as a result of merging previously common vertices.
-		 */
+		/// <summary>
+		/// Merge a collection of faces to a single face. This function does not
+		///	perform any sanity checks, it just merges faces. It's the caller's
+		///	responsibility to make sure that the input is valid.
+		///	In addition to merging faces this method also removes duplicate vertices
+		///	created as a result of merging previously common vertices.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		public static pb_Face Merge(pb_Object target, IEnumerable<pb_Face> faces)
 		{
 			int mergedCount = faces != null ? faces.Count() : 0;
@@ -89,10 +94,12 @@ namespace ProBuilder2.MeshOperations
 			return mergedFace;
 		}
 
-		/**
-		 * Condense co-incident vertex positions per-face. Vertices must already be marked as shared in the sharedIndices
-		 * array to be considered. This method is really only useful after merging faces.
-		 */
+		/// <summary>
+		/// Condense co-incident vertex positions per-face. Vertices must already be marked as shared in the sharedIndices
+		/// array to be considered. This method is really only useful after merging faces.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
 		internal static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<pb_Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a polygon face with an arbitrary number of vertices.
-	 */
+	/// <summary>
+	/// Represents a polygon face with an arbitrary number of vertices.
+	/// </summary>
 	class CSG_Polygon
 	{
 		public List<CSG_Vertex> vertices;
@@ -29,14 +29,14 @@ namespace Parabox.CSG
 
 		public override string ToString()
 		{
-			// return System.String.Format("V: {0}, {1}, {2}\nN: ({3}, {4}, {5})", 
+			// return System.String.Format("V: {0}, {1}, {2}\nN: ({3}, {4}, {5})",
 			// 	new object[] {
 			// 		vertices[0].position.ToString(),
 			// 		vertices[1].position.ToString(),
 			// 		vertices[2].position.ToString(),
 			// 		plane.normal.x,
 			// 		plane.normal.y,
-			// 		plane.normal.z 
+			// 		plane.normal.z
 			// 	});
 			return "N: " + plane.normal;
 		}

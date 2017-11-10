@@ -5,9 +5,10 @@ using ProBuilder2.Common;
 
 namespace Parabox.CSG
 {
-	/**
-	 * Represents a plane in 3d space.  Does not include position.
-	 */
+	/// <summary>
+	/// Represents a plane in 3d space.
+	/// <remarks>Does not include position.</remarks>
+	/// </summary>
 	class CSG_Plane
 	{
 		public Vector3 normal;
@@ -57,7 +58,7 @@ namespace Parabox.CSG
 			EPolygonType polygonType = 0;
 			List<EPolygonType> types = new List<EPolygonType>();
 
-			for (int i = 0; i < polygon.vertices.Count; i++) 
+			for (int i = 0; i < polygon.vertices.Count; i++)
 			{
 				float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
 				EPolygonType type = (t < -CSG.EPSILON) ? EPolygonType.Back : ((t > CSG.EPSILON) ? EPolygonType.Front : EPolygonType.Coplanar);
@@ -66,13 +67,13 @@ namespace Parabox.CSG
 			}
 
 			// Put the polygon in the correct list, splitting it when necessary.
-			switch (polygonType) 
+			switch (polygonType)
 			{
 				case EPolygonType.Coplanar:
 				{
 					if ( Vector3.Dot(this.normal, polygon.plane.normal) > 0)
 						coplanarFront.Add(polygon);
-					else 
+					else
 						coplanarBack.Add(polygon);
 				}
 				break;
@@ -82,19 +83,19 @@ namespace Parabox.CSG
 					front.Add(polygon);
 				}
 				break;
-			
+
 				case EPolygonType.Back:
 				{
 					back.Add(polygon);
 				}
 				break;
-			
+
 				case EPolygonType.Spanning:
 				{
 					List<CSG_Vertex> f = new List<CSG_Vertex>();
 					List<CSG_Vertex> b = new List<CSG_Vertex>();
 
-					for (int i = 0; i < polygon.vertices.Count; i++) 
+					for (int i = 0; i < polygon.vertices.Count; i++)
 					{
 						int j = (i + 1) % polygon.vertices.Count;
 
@@ -106,16 +107,16 @@ namespace Parabox.CSG
 						{
 							f.Add(vi);
 						}
-						
+
 						if (ti != EPolygonType.Front)
 						{
 							b.Add(vi);
 						}
 
-						if ((ti | tj) == EPolygonType.Spanning) 
+						if ((ti | tj) == EPolygonType.Spanning)
 						{
 							float t = (this.w - Vector3.Dot(this.normal, vi.position)) / Vector3.Dot(this.normal, vj.position - vi.position);
-							
+
 							CSG_Vertex v = CSG_Vertex.Interpolate(vi, vj, t);
 
 							f.Add(v);

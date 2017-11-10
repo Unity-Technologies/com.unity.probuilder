@@ -4,11 +4,18 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 * Utility for selecting a face loop.
-	 */
+	/// <summary>
+	/// Utility for selecting a face loop.
+	/// </summary>
 	public static class pb_FaceLoop
 	{
+		/// <summary>
+		/// Fetch a face loop.
+		/// </summary>
+		/// <param name="pb">Target pb_Object.</param>
+		/// <param name="faces">The faces to scan for face loops.</param>
+		/// <param name="ring">Toggles between loop and face. Ring and loop are arbritary with faces, so this parameter just toggles between which gets scanned first.</param>
+		/// <returns></returns>
 		public static HashSet<pb_Face> GetFaceLoop(pb_Object pb, pb_Face[] faces, bool ring = false)
 		{
 			HashSet<pb_Face> loops = new HashSet<pb_Face>();
@@ -20,6 +27,12 @@ namespace ProBuilder2.MeshOperations
 			return loops;
 		}
 
+		/// <summary>
+		/// Get both a face ring and loop from the selected faces.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		public static HashSet<pb_Face> GetFaceRingAndLoop(pb_Object pb, pb_Face[] faces)
 		{
 			HashSet<pb_Face> loops = new HashSet<pb_Face>();
@@ -34,7 +47,14 @@ namespace ProBuilder2.MeshOperations
 			return loops;
 		}
 
-		public static HashSet<pb_Face> GetFaceLoop(List<pb_WingedEdge> wings, pb_Face face, bool ring)
+		/// <summary>
+		/// Get a face loop or ring from a set of winged edges.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <param name="face"></param>
+		/// <param name="ring"></param>
+		/// <returns></returns>
+		static HashSet<pb_Face> GetFaceLoop(List<pb_WingedEdge> wings, pb_Face face, bool ring)
 		{
 			HashSet<pb_Face> loop = new HashSet<pb_Face>();
 

@@ -2,267 +2,310 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
+	/// <summary>
+	/// A collection of constant values the ProBuilder uses regularly.
+	/// </summary>
 	public static class pb_Constant
 	{
 #if PROTOTYPE
+		/// <summary>
+		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).
+		/// </summary>
 		public const string PRODUCT_NAME = "ProBuilder Basic";
 #else
+		/// <summary>
+		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).
+		/// </summary>
 		public const string PRODUCT_NAME = "ProBuilder";
 #endif
 
-		public static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+		internal static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
+		internal const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
 
-		public const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
+		static Material m_DefaultMaterial = null;
+		static Material m_FacePickerMaterial;
+		static Material m_VertexPickerMaterial;
+		static Shader m_SelectionPickerShader = null;
+		static Material m_UnityDefaultDiffuse = null;
+		static Material m_UnlitVertexColorMaterial;
 
-		private static Material _defaultMaterial = null;
-		private static Material _facePickerMaterial;
-		private static Material _vertexPickerMaterial;
-		private static Shader _selectionPickerShader = null;
-		private static Material _UnityDefaultDiffuse = null;
-		private static Material _UnlitVertexColorMaterial;
-
-		/**
-		 *	Default ProBuilder material.
-		 */
+		/// <summary>
+		/// Default ProBuilder material.
+		/// </summary>
 		public static Material DefaultMaterial
 		{
 			get
 			{
-				if(_defaultMaterial == null)
+				if(m_DefaultMaterial == null)
 				{
-					_defaultMaterial = (Material) Resources.Load("Materials/Default_Prototype", typeof(Material));
+					m_DefaultMaterial = (Material) Resources.Load("Materials/Default_Prototype", typeof(Material));
 
-					if(_defaultMaterial == null)
-						_defaultMaterial = UnityDefaultDiffuse;
+					if(m_DefaultMaterial == null)
+						m_DefaultMaterial = UnityDefaultDiffuse;
 				}
 
-				return _defaultMaterial;
+				return m_DefaultMaterial;
 			}
 		}
 
-		/**
-		 *	Material used for face picking functions.
-		 */
-		public static Material FacePickerMaterial
+		/// <summary>
+		/// Material used for face picking functions.
+		/// </summary>
+		internal static Material FacePickerMaterial
 		{
 			get
 			{
-				if(_facePickerMaterial == null)
+				if(m_FacePickerMaterial == null)
 				{
-					_facePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
+					m_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
 
-					if(_facePickerMaterial == null)
-						_facePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+					if(m_FacePickerMaterial == null)
+						m_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
 					else
-						_facePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
+						m_FacePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
 				}
-				return _facePickerMaterial;
+				return m_FacePickerMaterial;
 			}
 		}
 
-		/**
-		 *	Material used for vertex picking functions.
-		 */
-		public static Material VertexPickerMaterial
+		/// <summary>
+		/// Material used for vertex picking functions.
+		/// </summary>
+		internal static Material VertexPickerMaterial
 		{
 			get
 			{
-				if(_vertexPickerMaterial == null)
+				if(m_VertexPickerMaterial == null)
 				{
-					_vertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
+					m_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
 
-					if(_vertexPickerMaterial == null)
-						_vertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
+					if(m_VertexPickerMaterial == null)
+						m_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
 					else
-						_vertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
+						m_VertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
 				}
-				return _vertexPickerMaterial;
+				return m_VertexPickerMaterial;
 			}
 		}
 
-		/**
-		 *	Shader used in selection picking functions.
-		 */
-		public static Shader SelectionPickerShader
+		/// <summary>
+		/// Shader used in selection picking functions.
+		/// </summary>
+		internal static Shader SelectionPickerShader
 		{
 			get
 			{
-				if(_selectionPickerShader == null)
-					_selectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/SelectionPicker");
-				return _selectionPickerShader;
+				if(m_SelectionPickerShader == null)
+					m_SelectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/SelectionPicker");
+				return m_SelectionPickerShader;
 			}
 		}
 
-		public static Material TriggerMaterial { get { return (Material)Resources.Load("Materials/Trigger", typeof(Material)); } }
-		public static Material ColliderMaterial { get { return (Material)Resources.Load("Materials/Collider", typeof(Material)); } }
-		public static Material NoDrawMaterial { get { return (Material)Resources.Load("Materials/NoDraw", typeof(Material)); } }
+		/// <summary>
+		/// The ProBuilder "Trigger" entity type material.
+		/// </summary>
+		internal static Material TriggerMaterial
+		{
+			get { return (Material) Resources.Load("Materials/Trigger", typeof(Material)); }
+		}
 
-		/**
-		 *	Default Unity diffuse material.
-		 */
-		public static Material UnityDefaultDiffuse
+		/// <summary>
+		/// The ProBuilder "Collider" entity type material.
+		/// </summary>
+		internal static Material ColliderMaterial
+		{
+			get { return (Material) Resources.Load("Materials/Collider", typeof(Material)); }
+		}
+
+		/// <summary>
+		/// The ProBuilder "NoDraw" material. Faces with this material are hidden when the game is played.
+		/// </summary>
+		internal static Material NoDrawMaterial
+		{
+			get { return (Material) Resources.Load("Materials/NoDraw", typeof(Material)); }
+		}
+
+		/// <summary>
+		/// Default Unity diffuse material.
+		/// </summary>
+		internal static Material UnityDefaultDiffuse
 		{
 			get
 			{
-				if( _UnityDefaultDiffuse == null )
+				if( m_UnityDefaultDiffuse == null )
 				{
 					GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-					_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
+					m_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
 					GameObject.DestroyImmediate(go);
 				}
 
-				return _UnityDefaultDiffuse;
+				return m_UnityDefaultDiffuse;
 			}
 		}
 
-		public static Material UnlitVertexColor
+		/// <summary>
+		/// An unlit vertex color material.
+		/// </summary>
+		internal static Material UnlitVertexColor
 		{
 			get
 			{
-				if(_UnlitVertexColorMaterial == null)
-					_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
+				if(m_UnlitVertexColorMaterial == null)
+					m_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
 
-				return _UnlitVertexColorMaterial;
+				return m_UnlitVertexColorMaterial;
 			}
 		}
 
-		public const char DEGREE_SYMBOL = (char)176;	///< Degree symbol char.
-		public const char CMD_SUPER  	= '\u2318';
-		public const char CMD_SHIFT  	= '\u21E7';
-		public const char CMD_OPTION  	= '\u2325';
-		public const char CMD_ALT  		= '\u2387';
-		public const char CMD_DELETE  	= '\u232B';
+		internal const char DEGREE_SYMBOL 	= (char)176;
+		internal const char CMD_SUPER  		= '\u2318';
+		internal const char CMD_SHIFT  		= '\u21E7';
+		internal const char CMD_OPTION  	= '\u2325';
+		internal const char CMD_ALT  		= '\u2387';
+		internal const char CMD_DELETE  	= '\u232B';
 
 		// Enum
-		public const string pbDefaultEditLevel 				= "pbDefaultEditLevel";
-		public const string pbDefaultSelectionMode 			= "pbDefaultSelectionMode";
-		public const string pbHandleAlignment 				= "pbHandleAlignment";
-		public const string pbVertexColorTool 				= "pbVertexColorTool";
-		public const string pbToolbarLocation 				= "pbToolbarLocation";
-		public const string pbDefaultEntity 				= "pbDefaultEntity";
-		public const string pbExtrudeMethod					= "pbExtrudeMethod";
+		internal const string pbDefaultEditLevel 				= "pbDefaultEditLevel";
+		internal const string pbDefaultSelectionMode 			= "pbDefaultSelectionMode";
+		internal const string pbHandleAlignment 				= "pbHandleAlignment";
+		internal const string pbVertexColorTool 				= "pbVertexColorTool";
+		internal const string pbToolbarLocation 				= "pbToolbarLocation";
+		internal const string pbDefaultEntity 				= "pbDefaultEntity";
+		internal const string pbExtrudeMethod					= "pbExtrudeMethod";
 
 		// Color
-		public const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
-		public const string pbDefaultEdgeColor 				= "pbDefaultEdgeColor";
-		public const string pbDefaultSelectedVertexColor	= "pbDefaultSelectedVertexColor";
-		public const string pbDefaultVertexColor 			= "pbDefaultVertexColor";
+		internal const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
+		internal const string pbDefaultEdgeColor 				= "pbDefaultEdgeColor";
+		internal const string pbDefaultSelectedVertexColor	= "pbDefaultSelectedVertexColor";
+		internal const string pbDefaultVertexColor 			= "pbDefaultVertexColor";
 
 		// Bool
-		public const string pbDefaultOpenInDockableWindow	= "pbDefaultOpenInDockableWindow";
-		public const string pbEditorPrefVersion 			= "pbEditorPrefVersion";
-		public const string pbEditorShortcutsVersion		= "pbEditorShortcutsVersion";
-		public const string pbDefaultCollider 				= "pbDefaultCollider";
-		public const string pbForceConvex 					= "pbForceConvex";
-		public const string pbVertexColorPrefs 				= "pbVertexColorPrefs";
-		public const string pbShowEditorNotifications 		= "pbShowEditorNotifications";
-		public const string pbDragCheckLimit 				= "pbDragCheckLimit";
-		public const string pbForceVertexPivot 				= "pbForceVertexPivot";
-		public const string pbForceGridPivot 				= "pbForceGridPivot";
-		public const string pbManifoldEdgeExtrusion 		= "pbManifoldEdgeExtrusion";
-		public const string pbPerimeterEdgeBridgeOnly 		= "pbPerimeterEdgeBridgeOnly";
-		public const string pbPBOSelectionOnly 				= "pbPBOSelectionOnly";
-		public const string pbCloseShapeWindow 				= "pbCloseShapeWindow";
-		public const string pbUVEditorFloating 				= "pbUVEditorFloating";
-		public const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
-		public const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.
-		public const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
-		public const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
-		public const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
-		public const string pbShowSceneInfo 				= "pbShowSceneInfo";
-		public const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
-		public const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
-		public const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
-		public const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
-		public const string pbMaterialEditorFloating 		= "pbMaterialEditorFloating";
-		public const string pbShapeWindowFloating	 		= "pbShapeWindowFloating";
-		public const string pbIconGUI	 					= "pbIconGUI";
-		public const string pbShiftOnlyTooltips	 			= "pbShiftOnlyTooltips";
-		public const string pbDrawAxisLines					= "pbDrawAxisLines";
-		public const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
-		public const string pbMeshesAreAssets				= "pbMeshesAreAssets";
-		public const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
-		public const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
-		public const string pbDetachToNewObject				= "pbDetachToNewObject";
+		internal const string pbDefaultOpenInDockableWindow	= "pbDefaultOpenInDockableWindow";
+		internal const string pbEditorPrefVersion 			= "pbEditorPrefVersion";
+		internal const string pbEditorShortcutsVersion		= "pbEditorShortcutsVersion";
+		internal const string pbDefaultCollider 				= "pbDefaultCollider";
+		internal const string pbForceConvex 					= "pbForceConvex";
+		internal const string pbVertexColorPrefs 				= "pbVertexColorPrefs";
+		internal const string pbShowEditorNotifications 		= "pbShowEditorNotifications";
+		internal const string pbDragCheckLimit 				= "pbDragCheckLimit";
+		internal const string pbForceVertexPivot 				= "pbForceVertexPivot";
+		internal const string pbForceGridPivot 				= "pbForceGridPivot";
+		internal const string pbManifoldEdgeExtrusion 		= "pbManifoldEdgeExtrusion";
+		internal const string pbPerimeterEdgeBridgeOnly 		= "pbPerimeterEdgeBridgeOnly";
+		internal const string pbPBOSelectionOnly 				= "pbPBOSelectionOnly";
+		internal const string pbCloseShapeWindow 				= "pbCloseShapeWindow";
+		internal const string pbUVEditorFloating 				= "pbUVEditorFloating";
+		internal const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
+		internal const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.
+		internal const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
+		internal const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
+		internal const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
+		internal const string pbShowSceneInfo 				= "pbShowSceneInfo";
+		internal const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
+		internal const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
+		internal const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
+		internal const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
+		internal const string pbMaterialEditorFloating 		= "pbMaterialEditorFloating";
+		internal const string pbShapeWindowFloating	 		= "pbShapeWindowFloating";
+		internal const string pbIconGUI	 					= "pbIconGUI";
+		internal const string pbShiftOnlyTooltips	 			= "pbShiftOnlyTooltips";
+		internal const string pbDrawAxisLines					= "pbDrawAxisLines";
+		internal const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
+		internal const string pbMeshesAreAssets				= "pbMeshesAreAssets";
+		internal const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
+		internal const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
+		internal const string pbDetachToNewObject				= "pbDetachToNewObject";
 		[System.Obsolete("Use pb_MeshImporter::quads")]
-		public const string pbPreserveFaces					= "pbPreserveFaces";
-		public const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
-		public const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
-		public const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
-		public const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
-		public const string pbCheckForProBuilderUpdates		= "pbCheckForProBuilderUpdates";	///< Automatically check for updates?
-		public const string pbManageLightmappingStaticFlag	= "pbManageLightmappingStaticFlag";	///< Enable ProBuilder to manage the lightmapping static flags.
+		internal const string pbPreserveFaces					= "pbPreserveFaces";
+		internal const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
+		internal const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
+		internal const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
+		internal const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
+		internal const string pbCheckForProBuilderUpdates		= "pbCheckForProBuilderUpdates";	///< Automatically check for updates?
+		internal const string pbManageLightmappingStaticFlag	= "pbManageLightmappingStaticFlag";	///< Enable ProBuilder to manage the lightmapping static flags.
 
 		// Float
-		public const string pbVertexHandleSize 				= "pbVertexHandleSize";
-		public const string pbUVGridSnapValue				= "pbUVGridSnapValue";
-		public const string pbUVWeldDistance				= "pbUVWeldDistance";
-		public const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
-		public const string pbExtrudeDistance 				= "pbExtrudeDistance";
-		public const string pbBevelAmount 					= "pbBevelAmount";
+		internal const string pbVertexHandleSize 				= "pbVertexHandleSize";
+		internal const string pbUVGridSnapValue				= "pbUVGridSnapValue";
+		internal const string pbUVWeldDistance				= "pbUVWeldDistance";
+		internal const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
+		internal const string pbExtrudeDistance 				= "pbExtrudeDistance";
+		internal const string pbBevelAmount 					= "pbBevelAmount";
 
 		// Int
-		public const string pbEdgeSubdivisions				= "pbEdgeSubdivisions";
+		internal const string pbEdgeSubdivisions				= "pbEdgeSubdivisions";
 
 		// Misc
-		public const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
-		public const string pbDefaultMaterial 				= "pbDefaultMaterial";
-		public const string pbCurrentMaterialPalette		= "pbCurrentMaterialPalette";
+		internal const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
+		internal const string pbDefaultMaterial 				= "pbDefaultMaterial";
+		internal const string pbCurrentMaterialPalette		= "pbCurrentMaterialPalette";
 
 		// usablility settings (not preferences, just things that need to be saved)
-		public const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?
-		public const string pbGrowSelectionAngle 	 		= "pbGrowSelectionAngle";			///< The angle value
-		public const string pbGrowSelectionAngleIterative	= "pbGrowSelectionAngleIterative";	///< If true, only one step of outer edges will be added.
+		internal const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?
+		internal const string pbGrowSelectionAngle 	 		= "pbGrowSelectionAngle";			///< The angle value
+		internal const string pbGrowSelectionAngleIterative	= "pbGrowSelectionAngleIterative";	///< If true, only one step of outer edges will be added.
 
-		public const string pbShowDetail					= "pbShowDetail";
-		public const string pbShowOccluder					= "pbShowOccluder";
-		public const string pbShowMover						= "pbShowMover";
-		public const string pbShowCollider					= "pbShowCollider";
-		public const string pbShowTrigger					= "pbShowTrigger";
-		public const string pbShowNoDraw					= "pbShowNoDraw";
+		internal const string pbShowDetail					= "pbShowDetail";
+		internal const string pbShowOccluder					= "pbShowOccluder";
+		internal const string pbShowMover						= "pbShowMover";
+		internal const string pbShowCollider					= "pbShowCollider";
+		internal const string pbShowTrigger					= "pbShowTrigger";
+		internal const string pbShowNoDraw					= "pbShowNoDraw";
 
-		public readonly static Rect RectZero = new Rect(0,0,0,0);
+		internal static readonly Rect RectZero = new Rect(0,0,0,0);
 
-	 	public static Color ProBuilderBlue = new Color(0f, .682f, .937f, 1f);
-	 	public static Color ProBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
-	 	public static Color ProBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
+	 	internal static Color ProBuilderBlue = new Color(0f, .682f, .937f, 1f);
+	 	internal static Color ProBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
+	 	internal static Color ProBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
 
-		// First Tier
+		/// <summary>
+		/// The starting range for about menu items.
+		/// </summary>
 		public const int MENU_ABOUT = 0;
+
+		/// <summary>
+		/// The starting range for editor menu items.
+		/// </summary>
 		public const int MENU_EDITOR = 100;
 
+		/// <summary>
+		/// The starting range for selection menu items.
+		/// </summary>
 		public const int MENU_SELECTION 		= 200;
+
+		/// <summary>
+		/// Starting range for geometry menu actions.
+		/// </summary>
 		public const int MENU_GEOMETRY 			= 200;
 
+		/// <summary>
+		/// Starting range for action menu actions.
+		/// </summary>
 		public const int MENU_ACTIONS 			= 300;
 
+		/// <summary>
+		/// Starting range for material color menu items.
+		/// </summary>
 		public const int MENU_MATERIAL_COLORS 	= 400;
+
+		/// <summary>
+		/// Starting range for vertex color menu items.
+		/// </summary>
 		public const int MENU_VERTEX_COLORS	 	= 400;
 
+		/// <summary>
+		/// Starting range for repair menu items.
+		/// </summary>
 		public const int MENU_REPAIR 			= 600;
+
+		/// <summary>
+		/// Starting range for other misc. menu items that belong in the ProBuilder menu subtree.
+		/// </summary>
 		public const int MENU_MISC 				= 600;
 
+		/// <summary>
+		/// Starting range for export menu items.
+		/// </summary>
 		public const int MENU_EXPORT			= 800;
-
-
-		public static Vector3[] VERTICES_CUBE = new Vector3[] {
-			// bottom 4 verts
-			new Vector3(-.5f, -.5f, .5f),		// 0
-			new Vector3(.5f, -.5f, .5f),		// 1
-			new Vector3(.5f, -.5f, -.5f),		// 2
-			new Vector3(-.5f, -.5f, -.5f),		// 3
-
-			// top 4 verts
-			new Vector3(-.5f, .5f, .5f),		// 4
-			new Vector3(.5f, .5f, .5f),			// 5
-			new Vector3(.5f, .5f, -.5f),		// 6
-			new Vector3(-.5f, .5f, -.5f)		// 7
-		};
-
-		public static int[] TRIANGLES_CUBE = new int[] {
-			0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
-		};
-
-		public const int MAX_VERTEX_COUNT = 65000;
 	}
 }

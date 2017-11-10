@@ -6,17 +6,26 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	public static class pb_AppendDelete
+	/// <summary>
+	/// Functions for appending or deleting faces from pb_Object meshes.
+	/// </summary>
+	static class pb_AppendDelete
 	{
-		/**
-		 * Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
-		 */
-		public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face)
+		/// <summary>
+		/// Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
+		/// </summary>
+		/// <param name="pb">The pb_Object mesh target.</param>
+		/// <param name="positions">The new vertex positions to add.</param>
+		/// <param name="colors">The new colors to add (must match positions length).</param>
+		/// <param name="uvs">The new uvs to add (must match positions length).</param>
+		/// <param name="face">A </param>
+		/// <returns></returns>
+		public static pb_Face AppendFace(this pb_Object pb, Vector3[] positions, Color[] colors, Vector2[] uvs, pb_Face face)
 		{
-			int[] shared = new int[v.Length];
-			for(int i = 0; i < v.Length; i++)
+			int[] shared = new int[positions.Length];
+			for(int i = 0; i < positions.Length; i++)
 				shared[i] = -1;
-			return pb.AppendFace(v, c, u, face, shared);
+			return pb.AppendFace(positions, colors, uvs, face, shared);
 		}
 
 		/**
@@ -205,7 +214,7 @@ namespace ProBuilder2.MeshOperations
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
 			for(int i = 0;  i < vertexCount; i++)
-				shiftmap.Add(i, pbUtil.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
+				shiftmap.Add(i, pb_Util.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
 
 			// shift all other face indices down to account for moved vertex positions
 			for(int i = 0; i < nFaces.Length; i++)

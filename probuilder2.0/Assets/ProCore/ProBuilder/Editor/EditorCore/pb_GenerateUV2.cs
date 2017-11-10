@@ -6,12 +6,15 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class pb_GenerateUV2 : Editor
+	/// <summary>
+	/// Menu items for generating UV2s for selected or scene pb_Object meshes.
+	/// </summary>
+	class pb_GenerateUV2 : Editor
 	{
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Selection", true, pb_Constant.MENU_ACTIONS + 20)]
 		public static bool VerifyGenerateUV2Selection()
 		{
-			return pbUtil.GetComponents<pb_Object>(Selection.transforms).Length > 0;
+			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Selection", false, pb_Constant.MENU_ACTIONS + 20)]

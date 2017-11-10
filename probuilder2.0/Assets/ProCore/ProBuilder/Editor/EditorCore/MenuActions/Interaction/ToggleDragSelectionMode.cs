@@ -7,7 +7,7 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.Actions
 {
-	public class ToggleDragSelectionMode : pb_MenuAction
+	class ToggleDragSelectionMode : pb_MenuAction
 	{
 		DragSelectMode dragSelectMode
 		{

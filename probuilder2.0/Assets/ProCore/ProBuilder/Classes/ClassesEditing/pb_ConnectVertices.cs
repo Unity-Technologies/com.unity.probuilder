@@ -5,11 +5,18 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.MeshOperations
 {
-	/**
-	 *	Utility class for connecting vertices.
-	 */
+	/// <summary>
+	/// Utility class for connecting vertices.
+	/// </summary>
 	public static class pb_ConnectVertices
 	{
+		/// <summary>
+		/// Connect vertices inserts an edge between a list of indices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
+		/// <param name="newVertices">A list of newly created vertex indices.</param>
+		/// <returns>An action result indicating the status of the operation.</returns>
 		public static pb_ActionResult Connect(this pb_Object pb, IList<int> indices, out int[] newVertices)
 		{
 			int sharedIndexOffset = pb.sharedIndices.Length;
@@ -44,7 +51,7 @@ namespace ProBuilder2.MeshOperations
 			{
 				pb_Face face = split.Key;
 
-				List<ConnectFaceRebuildData> res = split.Value.Count == 2 ? 
+				List<ConnectFaceRebuildData> res = split.Value.Count == 2 ?
 					ConnectIndicesInFace(face, split.Value[0], split.Value[1], vertices, lookup) :
 					ConnectIndicesInFace(face, split.Value, vertices, lookup, sharedIndexOffset++);
 
@@ -92,7 +99,7 @@ namespace ProBuilder2.MeshOperations
 			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Vertices", distinct.Count));
 		}
 
-		private static List<ConnectFaceRebuildData> ConnectIndicesInFace(
+		static List<ConnectFaceRebuildData> ConnectIndicesInFace(
 			pb_Face face,
 			int a,
 			int b,
@@ -158,7 +165,7 @@ namespace ProBuilder2.MeshOperations
 			return faces;
 		}
 
-		private static List<ConnectFaceRebuildData> ConnectIndicesInFace(
+		static List<ConnectFaceRebuildData> ConnectIndicesInFace(
 			pb_Face face,
 			List<int> indices,
 			List<pb_Vertex> vertices,
@@ -172,9 +179,9 @@ namespace ProBuilder2.MeshOperations
 
 			int splitCount = indices.Count;
 
-			List<List<pb_Vertex>> n_vertices = pbUtil.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
-			List<List<int>> n_sharedIndices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
-			List<List<int>> n_indices = pbUtil.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<pb_Vertex>> n_vertices = pb_Util.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
+			List<List<int>> n_sharedIndices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<int>> n_indices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			pb_Vertex center = pb_Vertex.Average(vertices, indices);
 			Vector3 nrm = pb_Math.Normal(vertices, face.indices);

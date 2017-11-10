@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class CollapseVertices : pb_MenuAction
+	class CollapseVertices : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); } }
@@ -67,7 +67,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuCollapseVertices(selection);
+			return pb_MenuCommands.MenuCollapseVertices(selection);
 		}
 	}
 }

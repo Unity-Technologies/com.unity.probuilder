@@ -10,20 +10,27 @@ using ProBuilder2.EditorCommon;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Where a preference is stored.
-	 */
+	/// <summary>
+	/// Where a preference is stored. Can be per-project or global.
+	/// </summary>
 	public enum pb_PreferenceLocation
 	{
-		Project,	// Stored per-project.
-		Global 		// Shared between all projects.
+		/// <summary>
+		/// Stored per-project.
+		/// </summary>
+		Project,
+
+		/// <summary>
+		/// Shared between all projects.
+		/// </summary>
+		Global
 	};
 
-	/**
-	 *	Manage ProBuilder preferences.
-	 */
+	/// <summary>
+	/// Manage ProBuilder preferences.
+	/// </summary>
 	[InitializeOnLoad]
-	public static class pb_PreferencesInternal
+	static class pb_PreferencesInternal
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 
@@ -218,7 +225,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if(m_Preferences != null && preferences.HasKey<Color>(key))
 				return preferences.GetColor(key, fallback);
-			pbUtil.TryParseColor(EditorPrefs.GetString(key), ref fallback);
+			pb_Util.TryParseColor(EditorPrefs.GetString(key), ref fallback);
 			return fallback;
 		}
 

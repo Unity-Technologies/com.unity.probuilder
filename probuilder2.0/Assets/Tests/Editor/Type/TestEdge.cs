@@ -22,7 +22,7 @@ namespace ProBuilder2.Test
 		[Test]
 		public static void TestHashCollisions_EDGE()
 		{
-			pb_Edge[] edge = pbUtil.Fill<pb_Edge>(TestIterationCount, (i) => { return RandEdge(); });
+			pb_Edge[] edge = pb_Util.Fill<pb_Edge>(TestIterationCount, (i) => { return RandEdge(); });
 			Assert.IsTrue(TestHashUtility.GetCollisionsCount(edge) < TestIterationCount * .05f);
 		}
 
@@ -34,7 +34,7 @@ namespace ProBuilder2.Test
 			pb_Edge c = (pb_Edge) new pb_Edge(a.x + 10, a.x);
 			pb_Edge d = (pb_Edge) new pb_Edge(a.x, a.y);
 
-			pb_Edge[] arr = pbUtil.Fill<pb_Edge>(24, (i) => { return i % 2 == 0 ? a : (pb_Edge) RandEdge(); });
+			pb_Edge[] arr = pb_Util.Fill<pb_Edge>(24, (i) => { return i % 2 == 0 ? a : (pb_Edge) RandEdge(); });
 
 			Assert.IsFalse(a == b, "a == b");
 			Assert.IsFalse(a == c, "a == c");

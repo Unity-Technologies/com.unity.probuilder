@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Simple object pool implementation.
-	 */
-	public class pb_ObjectPool<T> where T : UnityEngine.Object, new()
+	/// <summary>
+	/// Simple object pool implementation.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	class pb_ObjectPool<T> where T : UnityEngine.Object, new()
 	{
 		public int desiredSize;
 
@@ -25,7 +26,7 @@ namespace ProBuilder2.Common
 			for(int i = 0; i < initialSize && i < desiredSize; i++)
 				this.pool.Enqueue( constructor != null ? constructor() : new T() );
 		}
- 
+
 		public T Get()
 		{
 			T obj = pool.Count > 0 ? (T)pool.Dequeue() : null;

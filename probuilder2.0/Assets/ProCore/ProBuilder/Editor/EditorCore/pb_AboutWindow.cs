@@ -8,16 +8,9 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * INSTRUCTIONS
-	 *
-	 *  - Only modify properties in the USER SETTINGS region.
-	 *	- All content is loaded from external files (pc_AboutEntry_YourProduct.  Use the templates!
-	 */
-
-	/**
-	 * Used to pop up the window on import.
-	 */
+	/// <summary>
+	/// Used to pop up the window on import.
+	/// </summary>
 	[InitializeOnLoad]
 	static class pb_AboutWindowSetup
 	{
@@ -27,33 +20,30 @@ namespace ProBuilder2.EditorCommon
 		}
 	}
 
-	/**
-	 * Changelog.txt file should follow this format:
-	 *
-	 *	| # Product Name 2.1.0
-	 *	|
-	 *	| ## Features
-	 *	|
-	 *	| - All kinds of awesome stuff
-	 *	| - New flux capacitor design achieves time travel at lower velocities.
-	 *	| - Dark matter reactor recalibrated.
-	 *	|
-	 *	| ## Bug Fixes
-	 *	|
-	 *	| - No longer explodes when spacebar is pressed.
-	 *	| - Fix rolling issue in rickmeter.
-	 *	|
-	 *	| # Changes
-	 *	|
-	 *	| - Changed Blue to Red.
-	 *	| - Enter key now causes explosions.
-	 *
-	 * This path is relative to the PRODUCT_ROOT path.
-	 *
-	 * Note that your changelog may contain multiple entries.  Only the top-most
-	 * entry will be displayed.
-	 */
-	public class pb_AboutWindow : EditorWindow
+	/// <summary>
+	///	Changelog.txt file should follow this format:
+	///		| # Product Name 2.1.0
+	///		|
+	///		| ## Features
+	///		|
+	///		| - All kinds of awesome stuff
+	///		| - New flux capacitor design achieves time travel at lower velocities.
+	///		| - Dark matter reactor recalibrated.
+	///		|
+	///		| ## Bug Fixes
+	///		|
+	///		| - No longer explodes when spacebar is pressed.
+	///		| - Fix rolling issue in rickmeter.
+	///		|
+	///		| # Changes
+	///		|
+	///		| - Changed Blue to Red.
+	///		| - Enter key now causes explosions.
+	///	This path is relative to the PRODUCT_ROOT path.
+	///	Note that your changelog may contain multiple entries.  Only the top-most
+	///	entry will be displayed.
+	/// </summary>
+	class pb_AboutWindow : EditorWindow
 	{
 		// Modify these constants to customize about screen.
 	 	const string PACKAGE_NAME = "ProBuilder";

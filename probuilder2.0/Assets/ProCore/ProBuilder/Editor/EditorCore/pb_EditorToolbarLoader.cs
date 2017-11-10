@@ -6,7 +6,10 @@ using System.Linq;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_EditorToolbarLoader
+	/// <summary>
+	/// Responsible for loading menu actions in to the pb_Toolbar.
+	/// </summary>
+	static class pb_EditorToolbarLoader
 	{
 		public delegate pb_MenuAction OnLoadActionsDelegate();
 		public static OnLoadActionsDelegate onLoadMenu;

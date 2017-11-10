@@ -9,7 +9,11 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.EditorCommon
 {
-public class pb_Editor : EditorWindow
+	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
+	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
+	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
+
+class pb_Editor : EditorWindow
 {
 	pb_ElementGraphics graphics { get { return pb_ElementGraphics.instance; } }
 
@@ -195,9 +199,9 @@ public class pb_Editor : EditorWindow
 		pref_backfaceSelect = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 		pref_hamSelection	= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
-		pref_snapEnabled 	= pb_ProGrids_Interface.SnapEnabled();
-		pref_snapValue		= pb_ProGrids_Interface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
+		pref_snapEnabled 	= pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue		= pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 
 		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_PreferencesInternal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
 		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
@@ -231,7 +235,7 @@ public class pb_Editor : EditorWindow
 		if( OnSelectionUpdate != null )
 			OnSelectionUpdate(null);
 
-		pb_ProGrids_Interface.UnsubscribePushToGridEvent(PushToGrid);
+		pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
@@ -250,13 +254,6 @@ public class pb_Editor : EditorWindow
 #endregion
 
 #region EVENT HANDLERS
-
-	/**
-	 * Delegate called on element or object selection change.
-	 */
-	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
-	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
-	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
 
 	public static event OnSelectionUpdateEventHandler OnSelectionUpdate;
 
@@ -278,8 +275,8 @@ public class pb_Editor : EditorWindow
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		// Undo.postprocessModifications += PostprocessModifications;
 
-		pb_ProGrids_Interface.SubscribePushToGridEvent(PushToGrid);
-		pb_ProGrids_Interface.SubscribeToolbarEvent(ProGridsToolbarOpen);
+		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
+		pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 	}
 #endregion
 
@@ -479,7 +476,7 @@ public class pb_Editor : EditorWindow
 						{
 							if(editLevel == EditLevel.Geometry)
 							{
-								pbUndo.RecordSelection(selection, "Set Face Materials");
+								pb_Undo.RecordSelection(selection, "Set Face Materials");
 
 								foreach(pb_Object pbs in selection)
 									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
@@ -487,7 +484,7 @@ public class pb_Editor : EditorWindow
 							}
 							else
 							{
-								pbUndo.RecordObject(pb, "Set Object Material");
+								pb_Undo.RecordObject(pb, "Set Object Material");
 								pb.SetFaceMaterial(pb.faces, mat);
 							}
 
@@ -648,8 +645,8 @@ public class pb_Editor : EditorWindow
 				if(!dragging)
 				{
 #if !PROTOTYPE
-					if(pb_UV_Editor.instance)
-						pb_UV_Editor.instance.ResetUserPivot();
+					if(pb_UVEditor.instance)
+						pb_UVEditor.instance.ResetUserPivot();
 #endif
 
 					RaycastCheck(currentEvent.mousePosition);
@@ -659,8 +656,8 @@ public class pb_Editor : EditorWindow
 					dragging = false;
 					readyForMouseDrag = false;
 #if !PROTOTYPE
-					if(pb_UV_Editor.instance)
-						pb_UV_Editor.instance.ResetUserPivot();
+					if(pb_UVEditor.instance)
+						pb_UVEditor.instance.ResetUserPivot();
 #endif
 
 					DragCheck();
@@ -678,18 +675,18 @@ public class pb_Editor : EditorWindow
 			if (selectionMode == SelectMode.Edge)
 			{
 				if (e.shift)
-					pb_Menu_Commands.MenuRingSelection(selection);
+					pb_MenuCommands.MenuRingSelection(selection);
 				else
-					pb_Menu_Commands.MenuLoopSelection(selection);
+					pb_MenuCommands.MenuLoopSelection(selection);
 			}
 			else if(selectionMode == SelectMode.Face)
 			{
 				if((e.modifiers & (EventModifiers.Control | EventModifiers.Shift)) == (EventModifiers.Control | EventModifiers.Shift))
-					pb_Menu_Commands.MenuRingAndLoopFaces(selection);
+					pb_MenuCommands.MenuRingAndLoopFaces(selection);
 				else if(e.control)
-					pb_Menu_Commands.MenuRingFaces(selection);
+					pb_MenuCommands.MenuRingFaces(selection);
 				else if(e.shift)
-					pb_Menu_Commands.MenuLoopFaces(selection);
+					pb_MenuCommands.MenuLoopFaces(selection);
 				else
 					pb.SetSelectedFaces(pb.faces);
 			}
@@ -905,17 +902,17 @@ public class pb_Editor : EditorWindow
 
 #if !PROTOTYPE
 					// Check for other editor mouse shortcuts first
-					pb_Material_Editor matEditor = pb_Material_Editor.instance;
+					pb_MaterialEditor matEditor = pb_MaterialEditor.instance;
 					if( matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, pickedPb, pickedFace) )
 						return pickedPb;
 
-					pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+					pb_UVEditor uvEditor = pb_UVEditor.instance;
 					if(uvEditor != null && uvEditor.ClickShortcutCheck(pickedPb, pickedFace))
 						return pickedPb;
 #endif
 
 					// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-					pbUndo.RecordSelection(pickedPb, "Change Face Selection");
+					pb_Undo.RecordSelection(pickedPb, "Change Face Selection");
 
 					int indx = System.Array.IndexOf(pickedPb.SelectedFaces, pickedFace);
 
@@ -1012,7 +1009,7 @@ public class pb_Editor : EditorWindow
 
 				int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
 
-				pbUndo.RecordSelection(pb, "Change Vertex Selection");
+				pb_Undo.RecordSelection(pb, "Change Vertex Selection");
 
 				// If we get a match, check to see if it exists in our selection array already, then add / remove
 				if( indx > -1 )
@@ -1045,7 +1042,7 @@ public class pb_Editor : EditorWindow
 						// Check if index is already selected, and if not add it to the pot
 						int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
 
-						pbUndo.RecordObject(pb, "Change Vertex Selection");
+						pb_Undo.RecordObject(pb, "Change Vertex Selection");
 
 						// If we get a match, check to see if it exists in our selection array already, then add / remove
 						if( indx > -1 )
@@ -1082,12 +1079,12 @@ public class pb_Editor : EditorWindow
 			{
 				pb_Tuple<pb_Face, pb_Edge> edge;
 
-				if( pb_Edge.ValidateEdge(pb, nearestEdge, out edge) )
+				if( pb_EdgeExtension.ValidateEdge(pb, nearestEdge, out edge) )
 					nearestEdge = edge.Item2;
 
 				int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 
-				pbUndo.RecordSelection(pb, "Change Edge Selection");
+				pb_Undo.RecordSelection(pb, "Change Edge Selection");
 
 				if( ind > -1 )
 					pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
@@ -1115,7 +1112,7 @@ public class pb_Editor : EditorWindow
 		SceneView sceneView = SceneView.lastActiveSceneView;
 		Camera cam = sceneView.camera;
 
-		pbUndo.RecordSelection(selection, "Drag Select");
+		pb_Undo.RecordSelection(selection, "Drag Select");
 
 		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
@@ -1255,7 +1252,7 @@ public class pb_Editor : EditorWindow
 									if(!nope)
 									{
 										if( pref_backfaceSelect ||
-											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pbUtil.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
+											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pb_Util.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
 										{
 											selectedFaces.Add(face);
 										}
@@ -1382,7 +1379,7 @@ public class pb_Editor : EditorWindow
 							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
 
 							if(!occluded)
-								inSelection.Add( new pb_Edge(m_universalEdges[i][n]) );
+								inSelection.Add(m_universalEdges[i][n]);
 						}
 					}
 
@@ -1390,7 +1387,7 @@ public class pb_Editor : EditorWindow
 
 					if(shiftKey || ctrlKey)
 					{
-						current = new HashSet<pb_Edge>(pb_Edge.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
+						current = new HashSet<pb_Edge>(pb_EdgeExtension.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
 
 						if(dragSelectMode == DragSelectMode.Add)
 							current.UnionWith(inSelection);
@@ -1548,14 +1545,14 @@ public class pb_Editor : EditorWindow
 				if(Event.current.modifiers == EventModifiers.Shift)
 					ShiftExtrude();
 
-				pb_ProGrids_Interface.OnHandleMove(mask);
+				pb_ProGridsInterface.OnHandleMove(mask);
 			}
 
 			for(int i = 0; i < selection.Length; i++)
 			{
 				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 
@@ -1678,7 +1675,7 @@ public class pb_Editor : EditorWindow
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 
@@ -1773,7 +1770,7 @@ public class pb_Editor : EditorWindow
 				selection[i].SetVertices(v);
 				selection[i].msh.vertices = v;
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
-				selection[i].RefreshNormals();
+				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
 			}
 			// profiler.EndSample();
@@ -1852,7 +1849,7 @@ public class pb_Editor : EditorWindow
 
 	private void TextureMoveTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		Vector3 cached = textureHandle;
@@ -1885,7 +1882,7 @@ public class pb_Editor : EditorWindow
 	Quaternion textureRotation = Quaternion.identity;
 	private void TextureRotateTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
@@ -1914,7 +1911,7 @@ public class pb_Editor : EditorWindow
 
 	private void TextureScaleTool()
 	{
-		pb_UV_Editor uvEditor = pb_UV_Editor.instance;
+		pb_UVEditor uvEditor = pb_UVEditor.instance;
 		if(!uvEditor) return;
 
 		float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
@@ -2264,23 +2261,23 @@ public class pb_Editor : EditorWindow
 		{
 			/* ENTITY TYPES */
 			case "Set Trigger":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Trigger);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Trigger);
 				return true;
 
 			case "Set Occluder":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Occluder);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Occluder);
 				return true;
 
 			case "Set Collider":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Collider);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Collider);
 				return true;
 
 			case "Set Mover":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Mover);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Mover);
 				return true;
 
 			case "Set Detail":
-					pb_Menu_Commands.MenuSetEntityType(selection, EntityType.Detail);
+					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Detail);
 				return true;
 
 			default:
@@ -2323,7 +2320,7 @@ public class pb_Editor : EditorWindow
 				return true;
 
 			case "Delete Face":
-				pb_EditorUtility.ShowNotification(pb_Menu_Commands.MenuDeleteFace(selection).notification);
+				pb_EditorUtility.ShowNotification(pb_MenuCommands.MenuDeleteFace(selection).notification);
 				return true;
 
 			/* handle alignment */
@@ -2344,7 +2341,7 @@ public class pb_Editor : EditorWindow
 				{
 					foreach (pb_Object pbo in selection)
 					{
-						pbUndo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
+						pb_Undo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
 
 						if (pbo.SelectedTriangles.Length > 0)
 						{
@@ -2383,8 +2380,8 @@ public class pb_Editor : EditorWindow
 		SetTool(newTool);
 
 #if !PROTOTYPE
-		if(pb_UV_Editor.instance != null)
-			pb_UV_Editor.instance.SetTool(newTool);
+		if(pb_UVEditor.instance != null)
+			pb_UVEditor.instance.SetTool(newTool);
 #endif
 	}
 
@@ -2559,7 +2556,7 @@ public class pb_Editor : EditorWindow
 
 		pb_Object[] t_selection = selection;
 
-		selection = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		selection = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
 		if(SelectedFacesInEditZone != null)
 			SelectedFacesInEditZone.Clear();
@@ -2590,7 +2587,7 @@ public class pb_Editor : EditorWindow
 				// profiler.EndSample();
 
 				// profiler.BeginSample("GetUniversalEdges (dictionary)");
-				m_universalEdges[i] = pb_Edge.GetUniversalEdges(pb_Edge.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
+				m_universalEdges[i] = pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
 				// profiler.EndSample();
 			}
 			// profiler.EndSample();
@@ -2622,7 +2619,7 @@ public class pb_Editor : EditorWindow
 			{
 				if(forceUpdate)
 				{
-					foreach(Vector3 v in pbUtil.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
+					foreach(Vector3 v in pb_Util.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
 					{
 						min = Vector3.Min(min, v);
 						max = Vector3.Max(max, v);
@@ -2638,7 +2635,7 @@ public class pb_Editor : EditorWindow
 				}
 			}
 
-			SelectedFacesInEditZone.Add(pb, pbMeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList() );
+			SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList() );
 
 			selectedVertexCount += selection[i].SelectedTriangles.Length;
 			selectedFaceCount += selection[i].SelectedFaceCount;
@@ -2825,7 +2822,7 @@ public class pb_Editor : EditorWindow
 	 */
 	private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
 	{
-		List<Transform> t = new List<Transform>((Transform[])pbUtil.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
+		List<Transform> t = new List<Transform>((Transform[])pb_Util.GetComponents<Transform>(HandleUtility.PickRectObjects(new Rect(0,0,Screen.width,Screen.height))));
 
 		GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);
 
@@ -2916,7 +2913,7 @@ public class pb_Editor : EditorWindow
 
 	void UndoRedoPerformed()
 	{
-		pb_Object[] pbos = pbUtil.GetComponents<pb_Object>(Selection.transforms);
+		pb_Object[] pbos = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
 		foreach(pb_Object pb in pbos)
 		{
@@ -2928,7 +2925,7 @@ public class pb_Editor : EditorWindow
 			pb.Optimize();
 
 			if( pb.SelectedFaces.Length > 0 )
-				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pbUtil.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
+				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
 		}
 
 		UpdateSelection(true);
@@ -2940,7 +2937,7 @@ public class pb_Editor : EditorWindow
 	 */
 	private void PushToGrid(float snapVal)
 	{
-		pbUndo.RecordSelection(selection, "Push elements to Grid");
+		pb_Undo.RecordSelection(selection, "Push elements to Grid");
 
 		if( editLevel == EditLevel.Top )
 			return;
@@ -2951,7 +2948,7 @@ public class pb_Editor : EditorWindow
 
 			int[] indices = pb.SelectedTriangleCount > 0 ? pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray() : pb.msh.triangles;
 
-			pbVertexOps.Quantize(pb, indices, Vector3.one * snapVal);
+			pb_VertexOps.Quantize(pb, indices, Vector3.one * snapVal);
 
 			pb.ToMesh();
 			pb.Refresh();
@@ -2963,7 +2960,7 @@ public class pb_Editor : EditorWindow
 
 	private void ProGridsToolbarOpen(bool menuOpen)
 	{
-		bool active = pb_ProGrids_Interface.ProGridsActive();
+		bool active = pb_ProGridsInterface.ProGridsActive();
 		sceneInfoRect.y = active && !menuOpen ? 28 : 10;
 		sceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
 	}
@@ -2986,25 +2983,25 @@ public class pb_Editor : EditorWindow
 		switch(currentHandle)
 		{
 			case Tool.Move:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
 				break;
 
 			case Tool.Rotate:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
 				break;
 
 			case Tool.Scale:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
 				break;
 
 			default:
-				pbUndo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
+				pb_Undo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
 				break;
 		}
 
-		pref_snapEnabled = pb_ProGrids_Interface.SnapEnabled();
-		pref_snapValue = pb_ProGrids_Interface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGrids_Interface.UseAxisConstraints();
+		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
+		pref_snapValue = pb_ProGridsInterface.SnapValue();
+		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();
@@ -3032,8 +3029,8 @@ public class pb_Editor : EditorWindow
 #if !PROTOTYPE
 		if(movingPictures)
 		{
-			if(pb_UV_Editor.instance != null)
-				pb_UV_Editor.instance.OnFinishUVModification();
+			if(pb_UVEditor.instance != null)
+				pb_UVEditor.instance.OnFinishUVModification();
 
 			UpdateTextureHandles();
 

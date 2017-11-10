@@ -62,7 +62,7 @@ namespace ProBuilder2.Test
 		[Test]
 		public static void TestHashCollisions_IVEC3()
 		{
-			pb_IntVec3[] ivec3 = pbUtil.Fill<pb_IntVec3>(TestIterationCount, (i) => { return (pb_IntVec3) RandVec3(); });
+			pb_IntVec3[] ivec3 = pb_Util.Fill<pb_IntVec3>(TestIterationCount, (i) => { return (pb_IntVec3) RandVec3(); });
 			Assert.IsTrue( TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f );
 		}
 
@@ -89,7 +89,7 @@ namespace ProBuilder2.Test
 			pb_IntVec3 c = (pb_IntVec3) new Vector3(a.x, a.y + .001f, a.z);
 			pb_IntVec3 d = (pb_IntVec3) new Vector3(a.x, a.y, a.z);
 
-			pb_IntVec3[] arr = pbUtil.Fill<pb_IntVec3>(24, (i) => { return i % 2 == 0 ? a : (pb_IntVec3) RandVec3(); });
+			pb_IntVec3[] arr = pb_Util.Fill<pb_IntVec3>(24, (i) => { return i % 2 == 0 ? a : (pb_IntVec3) RandVec3(); });
 
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);

@@ -1,3 +1,9 @@
+# ProBuilder 2.10.0f0
+
+## Features
+
+- Packman support.
+
 # ProBuilder 2.9.8f2
 
 ## Bug Fixes

@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class InvertSelection : pb_MenuAction
+	class InvertSelection : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Invert", IconSkin.Pro); } }
@@ -31,7 +31,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuInvertSelection(selection);
+			return pb_MenuCommands.MenuInvertSelection(selection);
 		}
 	}
 }

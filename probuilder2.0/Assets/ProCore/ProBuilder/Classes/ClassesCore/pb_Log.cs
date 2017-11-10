@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Describes the various states of chatty-ness.
-	 */
+	/// <summary>
+	/// Describes the various states of chatty-ness.
+	/// </summary>
 	[Flags]
 	public enum pb_LogLevel
 	{
@@ -18,11 +18,13 @@ namespace ProBuilder2.Common
 		All			= 0xFF
 	}
 
-	/**
-	 * Where the pb_Log writes to (default is Unity Console).
-	 * If logging to a File, the pb_Log.outputFile must be set.
-	 * You may log to one or multiple output sources.
-	 */
+	/// <summary>
+	/// Where the pb_Log writes to (default is Unity Console).
+	/// </summary>
+	/// <remarks>
+	/// If logging to a File, the pb_Log.outputFile must be set.
+	/// You may log to one or multiple output sources.
+	/// </remarks>
 	[Flags]
 	public enum pb_LogOutput
 	{
@@ -31,81 +33,88 @@ namespace ProBuilder2.Common
 		File = 0x2,
 	}
 
-	/**
-	 * Debug log replacement.
-	 *
-	 * IMPORTANT - pb_LogEditor initializes this class from the Editor side (so preferences can be accessed)!
-	 */
-	public static class pb_Log
+	/// <summary>
+	/// Debug log replacement.
+	/// </summary>
+	/// <remarks>
+	/// IMPORTANT - pb_LogEditor initializes this class from the Editor side (so preferences can be accessed)!
+	/// </remarks>
+	static class pb_Log
 	{
 		public const string DEFAULT_LOG_PATH = "ProBuilderLog.txt";
 
 		// Retain a stack of previous log levels.
-		private static Stack<pb_LogLevel> m_logStack = new Stack<pb_LogLevel>();
+		static Stack<pb_LogLevel> m_logStack = new Stack<pb_LogLevel>();
 
 		// Current log level.
-		private static pb_LogLevel m_LogLevel = pb_LogLevel.All;
+		static pb_LogLevel m_LogLevel = pb_LogLevel.All;
 
 		// Where to write log strings.
-		private static pb_LogOutput m_Output = pb_LogOutput.Console;
+		static pb_LogOutput m_Output = pb_LogOutput.Console;
 
 		// Path to the log file.
-		private static string m_LogFilePath = DEFAULT_LOG_PATH;
+		static string m_LogFilePath = DEFAULT_LOG_PATH;
 
-		/**
-		 * Push the current log level in the stack. See also PopLogLevel.
-		 */
+		/// <summary>
+		/// Push the current log level in the stack. See also PopLogLevel.
+		/// </summary>
+		/// <param name="level"></param>
 		public static void PushLogLevel(pb_LogLevel level)
 		{
 			m_logStack.Push(m_LogLevel);
 			m_LogLevel = level;
 		}
 
-		/**
-		 * Pop the current log level in the stack. See also PushLogLevel.
-		 */
+		/// <summary>
+		/// Pop the current log level in the stack. See also PushLogLevel.
+		/// </summary>
 		public static void PopLogLevel()
 		{
 			m_LogLevel = m_logStack.Pop();
 		}
 
-		/**
-		 * Set the log level without modifying the stack.
-		 */
+		/// <summary>
+		/// Set the log level without modifying the stack.
+		/// </summary>
+		/// <param name="level"></param>
 		public static void SetLogLevel(pb_LogLevel level)
 		{
 			m_LogLevel = level;
 		}
 
-		/**
-		 * Set the output destination for logs. If output is file, make sure to
-		 * also set the log file path (otherwise it defaults to ProBuilderLog.txt
-		 * in project directory).
-		 */
+		/// <summary>
+		/// Set the output destination for logs.
+		/// If output is file, make sure to also set the log file path (otherwise it defaults to ProBuilderLog.txt in project directory).
+		/// </summary>
+		/// <param name="output"></param>
 		public static void SetOutput(pb_LogOutput output)
 		{
 			m_Output = output;
 		}
 
-		/**
-		 * Set the path of the log file that pb_Log writes messages to.
-		 */
+		/// <summary>
+		/// Set the path of the log file that pb_Log writes messages to.
+		/// </summary>
+		/// <param name="path"></param>
 		public static void SetLogFile(string path)
 		{
 			m_LogFilePath = path;
 		}
 
-		/**
-		 * Output a debug message. These should not be committed to trunk.
-		 */
+		/// <summary>
+		/// Output a debug message. These should not be committed to trunk.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <typeparam name="T"></typeparam>
 		public static void Debug<T>(T value)
 		{
 			Debug(value.ToString());
 		}
 
-		/**
-		 * Output a debug message. These should not be committed to trunk.
-		 */
+		/// <summary>
+		/// Output a debug message. These should not be committed to trunk.
+		/// </summary>
+		/// <param name="message"></param>
 		public static void Debug(string message)
 		{
 			DoPrint(message, LogType.Log);
@@ -116,9 +125,11 @@ namespace ProBuilder2.Common
 			Debug(string.Format(format, values));
 		}
 
-		/**
-		 * Output an informational message.
-		 */
+		/// <summary>
+		/// Output an informational message.
+		/// </summary>
+		/// <param name="format"></param>
+		/// <param name="values"></param>
 		public static void Info(string format, params object[] values)
 		{
 			Info(string.Format(format, values));
@@ -130,9 +141,11 @@ namespace ProBuilder2.Common
 				DoPrint(message, LogType.Log);
 		}
 
-		/**
-		 * Output a warning message.
-		 */
+		/// <summary>
+		/// Output a warning message.
+		/// </summary>
+		/// <param name="format"></param>
+		/// <param name="values"></param>
 		public static void Warning(string format, params object[] values)
 		{
 			Warning(string.Format(format, values));
@@ -144,9 +157,11 @@ namespace ProBuilder2.Common
 				DoPrint(message, LogType.Warning);
 		}
 
-		/**
-		 * Output an error message.
-		 */
+		/// <summary>
+		/// Output an error message.
+		/// </summary>
+		/// <param name="format"></param>
+		/// <param name="values"></param>
 		public static void Error(string format, params object[] values)
 		{
 			Error(string.Format(format, values));
@@ -158,15 +173,19 @@ namespace ProBuilder2.Common
 				DoPrint(message, LogType.Error);
 		}
 
-		/**
-		 * ConsolePro3 specific functionality - update a single log continuously.
-		 */
-		public static void Watch<T, K>(T key, K value)
+		/// <summary>
+		/// ConsolePro3 specific functionality - update a single log continuously.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="K"></typeparam>
+		internal static void Watch<T, K>(T key, K value)
 		{
 			UnityEngine.Debug.Log(string.Format("{0} : {1}\nCPAPI:{{\"cmd\":\"Watch\" \"name\":\"{0}\"}}", key.ToString(), value.ToString()));
 		}
 
-		private static void DoPrint(string message, LogType type)
+		static void DoPrint(string message, LogType type)
 		{
 			if((m_Output & pb_LogOutput.Console) > 0)
 				PrintToConsole(message, type);
@@ -175,10 +194,12 @@ namespace ProBuilder2.Common
 				PrintToFile(message, m_LogFilePath);
 		}
 
-		/**
-		 * Print a message to a file.
-		 */
-		public static void PrintToFile(string message, string path)
+		/// <summary>
+		/// Print a message to a file.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="path"></param>
+		static void PrintToFile(string message, string path)
 		{
 			if(string.IsNullOrEmpty(path))
 				return;
@@ -218,19 +239,21 @@ namespace ProBuilder2.Common
 			}
 		}
 
-		/**
-		 * Delete the log file if it exists.
-		 */
+		/// <summary>
+		/// Delete the log file if it exists.
+		/// </summary>
 		public static void ClearLogFile()
 		{
 			if (File.Exists(m_LogFilePath))
 				File.Delete(m_LogFilePath);
 		}
 
-		/**
-		 * Print a message to the Unity console.
-		 */
-		public static void PrintToConsole(string message, LogType type = LogType.Log)
+		/// <summary>
+		/// Print a message to the Unity console.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="type"></param>
+		static void PrintToConsole(string message, LogType type = LogType.Log)
 		{
 			if(type == LogType.Log)
 				UnityEngine.Debug.Log(message);

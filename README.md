@@ -185,17 +185,17 @@ Follow the instructions in the [upm-package-template](https://github.com/UnityTe
 1. Make 100% sure that this release is ready to go. Unpublishing is generally frowned upon.
 1. `npm publish`
 
-### Helpful stuff when working with package manager
+### Testing locally
+
+Follow the **Setup** instructions, skipping the **Building for Unity Package Manager** steps. Just checking out the [upm-package-project](https://github.com/procore3d/upm-package-probuilder.git) is enough.
 
 At time of writing, Unity does not pick up packages placed in **UnityPackageManager**. To register a package in Unity, I find it's easiest to create a symlink or junction in the package cache directory. Ex:
 
 ```
-# cmd prompt
-cd C:\Users\karlh\AppData\LocalLow\Unity\cache\packages\staging-packages.unity.com
-mklink /J com.unity.probuilder@2.9.8 C:\Users\karl\upm-package-probuilder-project\UnityPackageManager\com.unity.probuilder
+# in cmd prompt
 
-# bash
-
+cd C:\Users\%USERNAME%\AppData\LocalLow\Unity\cache\packages\staging-packages.unity.com
+mklink /J com.unity.probuilder@2.10.0 C:\Users\%USERNAME%\upm-package-probuilder-project\UnityPackageManager\com.unity.probuilder
 ```
 
 Don't forget to add the package to the manifest of whatever project you're wanting to test in:
@@ -203,7 +203,7 @@ Don't forget to add the package to the manifest of whatever project you're wanti
 ```
 {
 	"dependencies": {
-		"com.unity.probuilder" : "2.9.8",
+		"com.unity.probuilder" : "2.10.0",
 	},
 	"registry":"http://staging-packages.unity.com"
 }

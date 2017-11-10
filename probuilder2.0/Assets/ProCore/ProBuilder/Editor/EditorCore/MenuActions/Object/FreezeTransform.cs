@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class FreezeTransform : pb_MenuAction
+	class FreezeTransform : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Pivot_Reset", IconSkin.Pro); } }
@@ -25,7 +25,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_Menu_Commands.MenuFreezeTransforms(selection);
+			return pb_MenuCommands.MenuFreezeTransforms(selection);
 		}
 	}
 }

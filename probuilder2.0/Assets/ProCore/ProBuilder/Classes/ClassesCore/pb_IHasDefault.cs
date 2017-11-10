@@ -2,14 +2,15 @@ using UnityEngine;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 *	Interface for objects that contain a set of default values.
-	 */
-	public interface pb_IHasDefault
+	/// <summary>
+	/// Interface for objects that contain a set of default values.
+	/// Used by generated scriptable objects.
+	/// </summary>
+	interface pb_IHasDefault
 	{
-		/**
-		 *	Set this object to use default values.
-		 */
+		/// <summary>
+		/// Set this object to use default values.
+		/// </summary>
 		void SetDefaultValues();
 	}
 }

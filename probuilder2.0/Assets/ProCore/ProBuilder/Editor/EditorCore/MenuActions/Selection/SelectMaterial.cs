@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace ProBuilder2.Actions
 {
-	public class SelectMaterial : pb_MenuAction
+	class SelectMaterial : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial", IconSkin.Pro); } }
@@ -69,7 +69,7 @@ namespace ProBuilder2.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordSelection(selection, "Select Faces with Material");
+			pb_Undo.RecordSelection(selection, "Select Faces with Material");
 
 			bool restrictToSelection = pb_PreferencesInternal.GetBool("pb_restrictSelectMaterialToCurrentSelection");
 

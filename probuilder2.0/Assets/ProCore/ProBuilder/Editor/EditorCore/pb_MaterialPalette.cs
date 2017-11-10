@@ -6,10 +6,10 @@ using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	A serializable object that stores an array of materials. Used by pb_MaterialEditor.
-	 */
-	public class pb_MaterialPalette : ScriptableObject, pb_IHasDefault
+	/// <summary>
+	/// A serializable object that stores an array of materials. Used by pb_MaterialEditor.
+	/// </summary>
+	class pb_MaterialPalette : ScriptableObject, pb_IHasDefault
 	{
 		[MenuItem("Assets/Create/Material Palette", true)]
 		static bool VerifyCreateMaterialPalette()

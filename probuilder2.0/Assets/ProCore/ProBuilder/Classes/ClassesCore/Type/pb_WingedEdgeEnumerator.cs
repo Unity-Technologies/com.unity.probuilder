@@ -4,6 +4,9 @@ using System.Collections;
 
 namespace ProBuilder2.Common
 {
+	/// <summary>
+	/// Enumerator for pb_WingedEdge.
+	/// </summary>
 	public class pb_WingedEdgeEnumerator : IEnumerator
 	{
 		private pb_WingedEdge _start = null;

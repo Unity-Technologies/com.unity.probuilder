@@ -8,7 +8,10 @@ using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
-	public class pb_SmoothGroupEditor : EditorWindow
+	/// <summary>
+	/// Smoothing groups editor window.
+	/// </summary>
+	class pb_SmoothGroupEditor : EditorWindow
 	{
 		private class SmoothGroupData
 		{
@@ -665,7 +668,7 @@ namespace ProBuilder2.EditorCommon
 
 		private static void SelectGroups(pb_Object pb, HashSet<int> groups)
 		{
-			pbUndo.RecordSelection(pb, "Select with Smoothing Group");
+			pb_Undo.RecordSelection(pb, "Select with Smoothing Group");
 
 			if( (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift ||
 				(Event.current.modifiers & EventModifiers.Control) == EventModifiers.Control )
@@ -677,7 +680,7 @@ namespace ProBuilder2.EditorCommon
 
 		private void SetGroup(pb_Object pb, int index)
 		{
-			pbUndo.RecordObject(pb, "Set Smoothing Group");
+			pb_Undo.RecordObject(pb, "Set Smoothing Group");
 
 			foreach (pb_Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
 				face.smoothingGroup = index;

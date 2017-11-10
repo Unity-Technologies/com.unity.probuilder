@@ -6,11 +6,17 @@ using System.Linq;
 
 namespace ProBuilder2.MeshOperations
 {
-	public static class pb_MeshTopology
+	/// <summary>
+	/// Utilities for converting between triangle and quad topologies.
+	/// </summary>
+	static class pb_MeshTopology
 	{
-		/**
-		 * Convert as many faces as possible to quads.
-		 */
+		/// <summary>
+		/// Convert as many faces as possible to quads.
+		/// </summary>
+		/// <remarks>Not implemented.</remarks>
+		/// <param name="target"></param>
+		/// <returns></returns>
 		public static bool ToQuads(pb_Object target)
 		{
 			return false;

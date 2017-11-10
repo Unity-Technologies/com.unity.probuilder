@@ -12,10 +12,10 @@ using ProBuilder2.MeshOperations;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 * Debugging menu items for ProBuilder.
-	 */
-	public class pb_DebugWindow : EditorWindow
+	/// <summary>
+	/// Debugging menu items for ProBuilder.
+	/// </summary>
+	class pb_DebugWindow : EditorWindow
 	{
 		float elementLength = .15f;
 		float elementOffset = .01f;
@@ -406,7 +406,7 @@ namespace ProBuilder2.EditorCommon
 
 		void OnSceneGUI(SceneView scn)
 		{
-			foreach(pb_Object pb in pbUtil.GetComponents<pb_Object>(Selection.transforms))
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				DrawStats(pb);
 			}
@@ -634,9 +634,9 @@ namespace ProBuilder2.EditorCommon
 
 			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
 
-			Vector3[] vertices = selectedOnly ? pbUtil.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
-			Vector3[] normals  = selectedOnly ? pbUtil.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
-			Vector4[] tangents = selectedOnly ? pbUtil.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
+			Vector3[] vertices = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
+			Vector3[] normals  = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
+			Vector4[] tangents = selectedOnly ? pb_Util.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

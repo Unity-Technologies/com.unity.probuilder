@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Hue (0,360), Saturation (0,1), Value (0,1)
-	 */
-	public class pb_HsvColor
+	/// <summary>
+	/// Hue (0,360), Saturation (0,1), Value (0,1)
+	/// </summary>
+	class pb_HsvColor
 	{
 		public float h, s, v;
 
@@ -44,11 +44,11 @@ namespace ProBuilder2.Common
 		}
 	}
 
-	/**
-	 * XYZ color
-	 */
-	// http://www.easyrgb.com/index.php?X=MATH&H=07#text7
-	public class pb_XYZ_Color
+	/// <summary>
+	/// XYZ color
+	/// <remarks>http://www.easyrgb.com/index.php?X=MATH&H=07#text7</remarks>
+	/// </summary>
+	class pb_XYZ_Color
 	{
 		public float x, y, z;
 
@@ -75,11 +75,10 @@ namespace ProBuilder2.Common
 		}
 	}
 
-
-	/**
-	 * CIE_Lab* color
-	 */
-	public class pb_CIE_Lab_Color
+	/// <summary>
+	/// CIE_Lab* color
+	/// </summary>
+	class pb_CIE_Lab_Color
 	{
 		public float L, a, b;
 
@@ -108,35 +107,40 @@ namespace ProBuilder2.Common
 		}
 	}
 
-	/**
-	 * Conversion methods for RGB, HSV, XYZ, CIE-Lab
-	 */
-	public static class pb_ColorUtil
+	/// <summary>
+	/// Conversion methods for RGB, HSV, XYZ, CIE-Lab
+	/// </summary>
+	static class pb_ColorUtil
 	{
-		/**
-		 * Compare float values within Epsilon distance.
-		 */
-		private static bool approx(float lhs, float rhs)
+		/// <summary>
+		/// Compare float values within Epsilon distance.
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns></returns>
+		static bool approx(float lhs, float rhs)
 		{
 			return Mathf.Abs(lhs-rhs) < Mathf.Epsilon;
 		}
 
-		/**
-		 * Convert RGBA color to XYZ
-		 */
+		/// <summary>
+		/// Convert RGBA color to XYZ
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
 		public static pb_XYZ_Color RGBToXYZ(Color col)
 		{
 			return RGBToXYZ(col.r, col.g, col.b);
 		}
 
 		public static pb_XYZ_Color RGBToXYZ(float r, float g, float b)
-		{		
+		{
 			if ( r > 0.04045f )
 				r = Mathf.Pow( ( ( r + 0.055f ) / 1.055f ), 2.4f);
-			else                   
+			else
 				r = r / 12.92f;
 
-			if ( g > 0.04045f ) 
+			if ( g > 0.04045f )
 				g = Mathf.Pow( ( ( g + 0.055f ) / 1.055f ), 2.4f);
 			else
 				g = g / 12.92f;
@@ -158,9 +162,11 @@ namespace ProBuilder2.Common
 			return new pb_XYZ_Color(x, y, z);
 		}
 
-		/**
-		 * Convert XYZ color to CIE_Lab
-		 */
+		/// <summary>
+		/// Convert XYZ color to CIE_Lab
+		/// </summary>
+		/// <param name="xyz"></param>
+		/// <returns></returns>
 		public static pb_CIE_Lab_Color XYZToCIE_Lab(pb_XYZ_Color xyz)
 		{
 			float var_X = xyz.x / 95.047f;           // ref_X =  95.047   Observer= 2°, Illuminant= D65
@@ -174,7 +180,7 @@ namespace ProBuilder2.Common
 
 			if ( var_Y > 0.008856f )
 				var_Y = Mathf.Pow(var_Y, ( 1/3f ));
-			else                    
+			else
 				var_Y = ( 7.787f * var_Y ) + ( 16f / 116f );
 
 			if ( var_Z > 0.008856f )
@@ -189,10 +195,13 @@ namespace ProBuilder2.Common
 			return new pb_CIE_Lab_Color(L, a, b);
 		}
 
-		/**
-		 * Calculate the euclidean distance between two Cie-Lab colors (DeltaE).
- 		 * http://www.easyrgb.com/index.php?X=DELT&H=03#text3
-		 */
+		/// <summary>
+		/// Calculate the euclidean distance between two Cie-Lab colors (DeltaE).
+		/// http://www.easyrgb.com/index.php?X=DELT&H=03#text3
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns></returns>
 		public static float DeltaE(pb_CIE_Lab_Color lhs, pb_CIE_Lab_Color rhs)
 		{
 			return Mathf.Sqrt(
@@ -201,21 +210,27 @@ namespace ProBuilder2.Common
 				Mathf.Pow( (lhs.b - rhs.b), 2 ) );
 		}
 
-		/**
-		 * Convert HSV to RGB.
-		 *  http://www.cs.rit.edu/~ncs/color/t_convert.html
-		 *	r,g,b values are from 0 to 1
-		 *	h = [0,360], s = [0,1], v = [0,1]
-		 *	if s == 0, then h = -1 (undefined)
-		 */
+		/// <summary>
+		/// Convert HSV to RGB.
+		///  http://www.cs.rit.edu/~ncs/color/t_convert.html
+		///	r,g,b values are from 0 to 1
+		///	h = [0,360], s = [0,1], v = [0,1]
+		///	if s == 0, then h = -1 (undefined)
+		/// </summary>
+		/// <param name="hsv"></param>
+		/// <returns></returns>
 		public static Color HSVtoRGB(pb_HsvColor hsv)
 		{
 			return HSVtoRGB(hsv.h, hsv.s, hsv.v);
 		}
 
-		/**
-		 * Convert HSV color to RGB.
-		 */
+		/// <summary>
+		/// Convert HSV color to RGB.
+		/// </summary>
+		/// <param name="h"></param>
+		/// <param name="s"></param>
+		/// <param name="v"></param>
+		/// <returns></returns>
 		public static Color HSVtoRGB(float h, float s, float v )
 		{
 			float r, g, b;
@@ -265,16 +280,18 @@ namespace ProBuilder2.Common
 					b = q;
 					break;
 			}
-			
+
 			return new Color(r, g, b, 1f);
 		}
 
-		/**
-		 * http://www.cs.rit.edu/~ncs/color/t_convert.html
-		 * r,g,b values are from 0 to 1
-		 * h = [0,360], s = [0,1], v = [0,1]
-		 * 	if s == 0, then h = -1 (undefined)
-		 */
+		/// <summary>
+		/// http://www.cs.rit.edu/~ncs/color/t_convert.html
+		/// r,g,b values are from 0 to 1
+		/// h = [0,360], s = [0,1], v = [0,1]
+		/// 	if s == 0, then h = -1 (undefined)
+		/// </summary>
+		/// <param name="color"></param>
+		/// <returns></returns>
 		public static pb_HsvColor RGBtoHSV(Color color)
 		{
 			float h, s, v;
@@ -287,7 +304,7 @@ namespace ProBuilder2.Common
 			v = max;				// v
 
 			delta = max - min;
-			
+
 			if( max != 0f )
 			{
 				s = delta / max;		// s
@@ -311,21 +328,23 @@ namespace ProBuilder2.Common
 				h = 2f + ( b - r ) / delta;	// between cyan & yellow
 			}
 			else
-			{	
+			{
 				h = 4f + ( r - g ) / delta;	// between magenta & cyan
 			}
 
 			h *= 60f;					// degrees
-			
+
 			if( h < 0 )
 				h += 360;
 
 			return new pb_HsvColor(h, s, v);
 		}
 
-		/**
-		 * Get human readable name from a Color.
-		 */
+		/// <summary>
+		/// Get human readable name from a Color.
+		/// </summary>
+		/// <param name="InColor"></param>
+		/// <returns></returns>
 		public static string GetColorName(Color InColor)
 		{
 			pb_CIE_Lab_Color lab = pb_CIE_Lab_Color.FromRGB(InColor);
@@ -337,7 +356,7 @@ namespace ProBuilder2.Common
 			{
 				float dist = Mathf.Abs( DeltaE(lab, kvp.Value) );
 
-				if( dist < diff) 
+				if( dist < diff)
 				{
 					diff = dist;
 					name = kvp.Key;
@@ -355,445 +374,445 @@ namespace ProBuilder2.Common
 			return pb_CIE_Lab_Color.FromXYZ(xyz);
 		}
 
-		/**
-		 * http://en.wikipedia.org/wiki/List_of_colors:_A%E2%80%93F
-		 */
+		/// <summary>
+		/// http://en.wikipedia.org/wiki/List_of_colors:_A%E2%80%93F
+		/// </summary>
 		static readonly Dictionary<string, pb_CIE_Lab_Color> ColorNameLookup = new Dictionary<string, pb_CIE_Lab_Color>()
 		{
-			{ "Acid Green",									CIELabFromRGB(69f, 75f, 10f, 100f)		},							
-			{ "Aero",										CIELabFromRGB(49f, 73f, 91f, 100f)		},							
-			{ "Aero Blue",									CIELabFromRGB(79f, 100f, 90f, 100f)		},							
-			{ "African Violet",								CIELabFromRGB(70f, 52f, 75f, 100f)		},							
-			{ "Air Force Blue (RAF)",						CIELabFromRGB(36f, 54f, 66f, 100f)		},							
-			{ "Air Force Blue (USAF)",						CIELabFromRGB(0f, 19f, 56f, 100f)		},							
-			{ "Air Superiority Blue",						CIELabFromRGB(45f, 63f, 76f, 100f)		},							
-			{ "Alabama Crimson",							CIELabFromRGB(69f, 0f, 16f, 100f)		},							
-			{ "Alice Blue",									CIELabFromRGB(94f, 97f, 100f, 100f)		},							
-			{ "Alizarin Crimson",							CIELabFromRGB(89f, 15f, 21f, 100f)		},							
-			{ "Alloy Orange",								CIELabFromRGB(77f, 38f, 6f, 100f)		},							
-			{ "Almond",										CIELabFromRGB(94f, 87f, 80f, 100f)		},							
-			{ "Amaranth",									CIELabFromRGB(90f, 17f, 31f, 100f)		},							
-			{ "Amaranth Deep Purple",						CIELabFromRGB(67f, 15f, 31f, 100f)		},							
-			{ "Amaranth Pink",								CIELabFromRGB(95f, 61f, 73f, 100f)		},							
-			{ "Amaranth Purple",							CIELabFromRGB(67f, 15f, 31f, 100f)		},							
-			{ "Amaranth Red",								CIELabFromRGB(83f, 13f, 18f, 100f)		},							
-			{ "Amazon",										CIELabFromRGB(23f, 48f, 34f, 100f)		},							
-			{ "Amber",										CIELabFromRGB(100f, 75f, 0f, 100f)		},							
-			{ "Amber (SAE/ECE)",							CIELabFromRGB(100f, 49f, 0f, 100f)		},							
-			{ "American Rose",								CIELabFromRGB(100f, 1f, 24f, 100f)		},							
-			{ "Amethyst",									CIELabFromRGB(60f, 40f, 80f, 100f)		},							
-			{ "Android Green",								CIELabFromRGB(64f, 78f, 22f, 100f)		},							
-			{ "Anti-Flash White",							CIELabFromRGB(95f, 95f, 96f, 100f)		},							
-			{ "Antique Brass",								CIELabFromRGB(80f, 58f, 46f, 100f)		},							
-			{ "Antique Bronze",								CIELabFromRGB(40f, 36f, 12f, 100f)		},							
-			{ "Antique Fuchsia",							CIELabFromRGB(57f, 36f, 51f, 100f)		},							
-			{ "Antique Ruby",								CIELabFromRGB(52f, 11f, 18f, 100f)		},							
-			{ "Antique White",								CIELabFromRGB(98f, 92f, 84f, 100f)		},							
-			{ "Ao (English)",								CIELabFromRGB(0f, 50f, 0f, 100f)		},							
-			{ "Apple Green",								CIELabFromRGB(55f, 71f, 0f, 100f)		},							
-			{ "Apricot",									CIELabFromRGB(98f, 81f, 69f, 100f)		},							
-			{ "Aqua",										CIELabFromRGB(0f, 100f, 100f, 100f)		},							
-			{ "Aquamarine",									CIELabFromRGB(50f, 100f, 83f, 100f)		},							
-			{ "Army Green",									CIELabFromRGB(29f, 33f, 13f, 100f)		},							
-			{ "Arsenic",									CIELabFromRGB(23f, 27f, 29f, 100f)		},							
-			{ "Artichoke",									CIELabFromRGB(56f, 59f, 47f, 100f)		},							
-			{ "Arylide Yellow",								CIELabFromRGB(91f, 84f, 42f, 100f)		},							
-			{ "Ash Grey",									CIELabFromRGB(70f, 75f, 71f, 100f)		},							
-			{ "Asparagus",									CIELabFromRGB(53f, 66f, 42f, 100f)		},							
-			{ "Atomic Tangerine",							CIELabFromRGB(100f, 60f, 40f, 100f)		},							
-			{ "Auburn",										CIELabFromRGB(65f, 16f, 16f, 100f)		},							
-			{ "Aureolin",									CIELabFromRGB(99f, 93f, 0f, 100f)		},							
-			{ "AuroMetalSaurus",							CIELabFromRGB(43f, 50f, 50f, 100f)		},							
-			{ "Avocado",									CIELabFromRGB(34f, 51f, 1f, 100f)		},							
-			{ "Azure",										CIELabFromRGB(0f, 50f, 100f, 100f)		},							
-			{ "Azure (Web Color)",							CIELabFromRGB(94f, 100f, 100f, 100f)	},							
-			{ "Azure Mist",									CIELabFromRGB(94f, 100f, 100f, 100f)	},							
-			{ "Azureish White",								CIELabFromRGB(86f, 91f, 96f, 100f)		},							
-			{ "Baby Blue",									CIELabFromRGB(54f, 81f, 94f, 100f)		},							
-			{ "Baby Blue Eyes",								CIELabFromRGB(63f, 79f, 95f, 100f)		},							
-			{ "Baby Pink",									CIELabFromRGB(96f, 76f, 76f, 100f)		},							
-			{ "Baby Powder",								CIELabFromRGB(100f, 100f, 98f, 100f)	},							
-			{ "Baker-Miller Pink",							CIELabFromRGB(100f, 57f, 69f, 100f)		},							
-			{ "Ball Blue",									CIELabFromRGB(13f, 67f, 80f, 100f)		},							
-			{ "Banana Mania",								CIELabFromRGB(98f, 91f, 71f, 100f)		},							
-			{ "Banana Yellow",								CIELabFromRGB(100f, 88f, 21f, 100f)		},							
-			{ "Bangladesh Green",							CIELabFromRGB(0f, 42f, 31f, 100f)		},							
-			{ "Barbie Pink",								CIELabFromRGB(88f, 13f, 54f, 100f)		},							
-			{ "Barn Red",									CIELabFromRGB(49f, 4f, 1f, 100f)		},							
-			{ "Battleship Grey",							CIELabFromRGB(52f, 52f, 51f, 100f)		},							
-			{ "Bazaar",										CIELabFromRGB(60f, 47f, 48f, 100f)		},							
-			{ "Beau Blue",									CIELabFromRGB(74f, 83f, 90f, 100f)		},							
-			{ "Beaver",										CIELabFromRGB(62f, 51f, 44f, 100f)		},							
-			{ "Beige",										CIELabFromRGB(96f, 96f, 86f, 100f)		},							
-			{ "B'dazzled Blue",								CIELabFromRGB(18f, 35f, 58f, 100f)		},							
-			{ "Big Dip O’ruby",								CIELabFromRGB(61f, 15f, 26f, 100f)		},							
-			{ "Bisque",										CIELabFromRGB(100f, 89f, 77f, 100f)		},							
-			{ "Bistre",										CIELabFromRGB(24f, 17f, 12f, 100f)		},							
-			{ "Bistre Brown",								CIELabFromRGB(59f, 44f, 9f, 100f)		},							
-			{ "Bitter Lemon",								CIELabFromRGB(79f, 88f, 5f, 100f)		},							
-			{ "Bitter Lime",								CIELabFromRGB(75f, 100f, 0f, 100f)		},							
-			{ "Bittersweet",								CIELabFromRGB(100f, 44f, 37f, 100f)		},							
-			{ "Bittersweet Shimmer",						CIELabFromRGB(75f, 31f, 32f, 100f)		},							
-			{ "Black",										CIELabFromRGB(0f, 0f, 0f, 100f)			},							
-			{ "Black Bean",									CIELabFromRGB(24f, 5f, 1f, 100f)		},							
-			{ "Black Leather Jacket",						CIELabFromRGB(15f, 21f, 16f, 100f)		},							
-			{ "Black Olive",								CIELabFromRGB(23f, 24f, 21f, 100f)		},							
-			{ "Blanched Almond",							CIELabFromRGB(100f, 92f, 80f, 100f)		},							
-			{ "Blast-Off Bronze",							CIELabFromRGB(65f, 44f, 39f, 100f)		},							
-			{ "Bleu De France",								CIELabFromRGB(19f, 55f, 91f, 100f)		},							
-			{ "Blizzard Blue",								CIELabFromRGB(67f, 90f, 93f, 100f)		},							
-			{ "Blond",										CIELabFromRGB(98f, 94f, 75f, 100f)		},							
-			{ "Blue",										CIELabFromRGB(0f, 0f, 100f, 100f)		},							
-			{ "Blue (Crayola)",								CIELabFromRGB(12f, 46f, 100f, 100f)		},							
-			{ "Blue (Munsell)",								CIELabFromRGB(0f, 58f, 69f, 100f)		},							
-			{ "Blue (NCS)",									CIELabFromRGB(0f, 53f, 74f, 100f)		},							
-			{ "Blue (Pantone)",								CIELabFromRGB(0f, 9f, 66f, 100f)		},							
-			{ "Blue (Pigment)",								CIELabFromRGB(20f, 20f, 60f, 100f)		},							
-			{ "Blue (RYB)",									CIELabFromRGB(1f, 28f, 100f, 100f)		},							
-			{ "Blue Bell",									CIELabFromRGB(64f, 64f, 82f, 100f)		},							
-			{ "Blue-Gray",									CIELabFromRGB(40f, 60f, 80f, 100f)		},							
-			{ "Blue-Green",									CIELabFromRGB(5f, 60f, 73f, 100f)		},							
-			{ "Blue Lagoon",								CIELabFromRGB(37f, 58f, 63f, 100f)		},							
-			{ "Blue-Magenta Violet",						CIELabFromRGB(33f, 21f, 57f, 100f)		},							
-			{ "Blue Sapphire",								CIELabFromRGB(7f, 38f, 50f, 100f)		},							
-			{ "Blue-Violet",								CIELabFromRGB(54f, 17f, 89f, 100f)		},							
-			{ "Blue Yonder",								CIELabFromRGB(31f, 45f, 65f, 100f)		},							
-			{ "Blueberry",									CIELabFromRGB(31f, 53f, 97f, 100f)		},							
-			{ "Bluebonnet",									CIELabFromRGB(11f, 11f, 94f, 100f)		},							
-			{ "Blush",										CIELabFromRGB(87f, 36f, 51f, 100f)		},							
-			{ "Bole",										CIELabFromRGB(47f, 27f, 23f, 100f)		},							
-			{ "Bondi Blue",									CIELabFromRGB(0f, 58f, 71f, 100f)		},							
-			{ "Bone",										CIELabFromRGB(89f, 85f, 79f, 100f)		},							
-			{ "Boston University Red",						CIELabFromRGB(80f, 0f, 0f, 100f)		},							
-			{ "Bottle Green",								CIELabFromRGB(0f, 42f, 31f, 100f)		},							
-			{ "Boysenberry",								CIELabFromRGB(53f, 20f, 38f, 100f)		},							
-			{ "Brandeis Blue",								CIELabFromRGB(0f, 44f, 100f, 100f)		},							
-			{ "Brass",										CIELabFromRGB(71f, 65f, 26f, 100f)		},							
-			{ "Brick Red",									CIELabFromRGB(80f, 25f, 33f, 100f)		},							
-			{ "Bright Cerulean",							CIELabFromRGB(11f, 67f, 84f, 100f)		},							
-			{ "Bright Green",								CIELabFromRGB(40f, 100f, 0f, 100f)		},							
-			{ "Bright Lavender",							CIELabFromRGB(75f, 58f, 89f, 100f)		},							
-			{ "Bright Lilac",								CIELabFromRGB(85f, 57f, 94f, 100f)		},							
-			{ "Bright Maroon",								CIELabFromRGB(76f, 13f, 28f, 100f)		},							
-			{ "Bright Navy Blue",							CIELabFromRGB(10f, 45f, 82f, 100f)		},							
-			{ "Bright Pink",								CIELabFromRGB(100f, 0f, 50f, 100f)		},							
-			{ "Bright Turquoise",							CIELabFromRGB(3f, 91f, 87f, 100f)		},							
-			{ "Bright Ube",									CIELabFromRGB(82f, 62f, 91f, 100f)		},							
-			{ "Brilliant Azure",							CIELabFromRGB(20f, 60f, 100f, 100f)		},							
-			{ "Brilliant Lavender",							CIELabFromRGB(96f, 73f, 100f, 100f)		},							
-			{ "Brilliant Rose",								CIELabFromRGB(100f, 33f, 64f, 100f)		},							
-			{ "Brink Pink",									CIELabFromRGB(98f, 38f, 50f, 100f)		},							
-			{ "British Racing Green",						CIELabFromRGB(0f, 26f, 15f, 100f)		},							
-			{ "Bronze",										CIELabFromRGB(80f, 50f, 20f, 100f)		},							
-			{ "Bronze Yellow",								CIELabFromRGB(45f, 44f, 0f, 100f)		},							
-			{ "Brown (Traditional)",						CIELabFromRGB(59f, 29f, 0f, 100f)		},							
-			{ "Brown (Web)",								CIELabFromRGB(65f, 16f, 16f, 100f)		},							
-			{ "Brown-Nose",									CIELabFromRGB(42f, 27f, 14f, 100f)		},							
-			{ "Brown Yellow",								CIELabFromRGB(80f, 60f, 40f, 100f)		},							
-			{ "Brunswick Green",							CIELabFromRGB(11f, 30f, 24f, 100f)		},							
-			{ "Bubble Gum",									CIELabFromRGB(100f, 76f, 80f, 100f)		},							
-			{ "Bubbles",									CIELabFromRGB(91f, 100f, 100f, 100f)	},							
-			{ "Buff",										CIELabFromRGB(94f, 86f, 51f, 100f)		},							
-			{ "Bud Green",									CIELabFromRGB(48f, 71f, 38f, 100f)		},							
-			{ "Bulgarian Rose",								CIELabFromRGB(28f, 2f, 3f, 100f)		},							
-			{ "Burgundy",									CIELabFromRGB(50f, 0f, 13f, 100f)		},							
-			{ "Burlywood",									CIELabFromRGB(87f, 72f, 53f, 100f)		},							
-			{ "Burnt Orange",								CIELabFromRGB(80f, 33f, 0f, 100f)		},							
-			{ "Burnt Sienna",								CIELabFromRGB(91f, 45f, 32f, 100f)		},							
-			{ "Burnt Umber",								CIELabFromRGB(54f, 20f, 14f, 100f)		},							
-			{ "Byzantine",									CIELabFromRGB(74f, 20f, 64f, 100f)		},							
-			{ "Byzantium",									CIELabFromRGB(44f, 16f, 39f, 100f)		},							
-			{ "Cadet",										CIELabFromRGB(33f, 41f, 45f, 100f)		},							
-			{ "Cadet Blue",									CIELabFromRGB(37f, 62f, 63f, 100f)		},							
-			{ "Cadet Grey",									CIELabFromRGB(57f, 64f, 69f, 100f)		},							
-			{ "Cadmium Green",								CIELabFromRGB(0f, 42f, 24f, 100f)		},							
-			{ "Cadmium Orange",								CIELabFromRGB(93f, 53f, 18f, 100f)		},							
-			{ "Cadmium Red",								CIELabFromRGB(89f, 0f, 13f, 100f)		},							
-			{ "Cadmium Yellow",								CIELabFromRGB(100f, 96f, 0f, 100f)		},							
-			{ "Cafe Au Lait",								CIELabFromRGB(65f, 48f, 36f, 100f)		},							
-			{ "Cafe Noir",									CIELabFromRGB(29f, 21f, 13f, 100f)		},							
-			{ "Cal Poly Green",								CIELabFromRGB(12f, 30f, 17f, 100f)		},							
-			{ "Cambridge Blue",								CIELabFromRGB(64f, 76f, 68f, 100f)		},							
-			{ "Camel",										CIELabFromRGB(76f, 60f, 42f, 100f)		},							
-			{ "Cameo Pink",									CIELabFromRGB(94f, 73f, 80f, 100f)		},							
-			{ "Camouflage Green",							CIELabFromRGB(47f, 53f, 42f, 100f)		},							
-			{ "Canary Yellow",								CIELabFromRGB(100f, 94f, 0f, 100f)		},							
-			{ "Candy Apple Red",							CIELabFromRGB(100f, 3f, 0f, 100f)		},							
-			{ "Candy Pink",									CIELabFromRGB(89f, 44f, 48f, 100f)		},							
-			{ "Capri",										CIELabFromRGB(0f, 75f, 100f, 100f)		},							
-			{ "Caput Mortuum",								CIELabFromRGB(35f, 15f, 13f, 100f)		},							
-			{ "Cardinal",									CIELabFromRGB(77f, 12f, 23f, 100f)		},							
-			{ "Caribbean Green",							CIELabFromRGB(0f, 80f, 60f, 100f)		},							
-			{ "Carmine",									CIELabFromRGB(59f, 0f, 9f, 100f)		},							
-			{ "Carmine (M&P)",								CIELabFromRGB(84f, 0f, 25f, 100f)		},							
-			{ "Carmine Pink",								CIELabFromRGB(92f, 30f, 26f, 100f)		},							
-			{ "Carmine Red",								CIELabFromRGB(100f, 0f, 22f, 100f)		},							
-			{ "Carnation Pink",								CIELabFromRGB(100f, 65f, 79f, 100f)		},							
-			{ "Carnelian",									CIELabFromRGB(70f, 11f, 11f, 100f)		},							
-			{ "Carolina Blue",								CIELabFromRGB(34f, 63f, 83f, 100f)		},							
-			{ "Carrot Orange",								CIELabFromRGB(93f, 57f, 13f, 100f)		},							
-			{ "Castleton Green",							CIELabFromRGB(0f, 34f, 25f, 100f)		},							
-			{ "Catalina Blue",								CIELabFromRGB(2f, 16f, 47f, 100f)		},							
-			{ "Catawba",									CIELabFromRGB(44f, 21f, 26f, 100f)		},							
-			{ "Cedar Chest",								CIELabFromRGB(79f, 35f, 29f, 100f)		},							
-			{ "Ceil",										CIELabFromRGB(57f, 63f, 81f, 100f)		},							
-			{ "Celadon",									CIELabFromRGB(67f, 88f, 69f, 100f)		},							
-			{ "Celadon Blue",								CIELabFromRGB(0f, 48f, 65f, 100f)		},							
-			{ "Celadon Green",								CIELabFromRGB(18f, 52f, 49f, 100f)		},							
-			{ "Celeste",									CIELabFromRGB(70f, 100f, 100f, 100f)	},							
-			{ "Celestial Blue",								CIELabFromRGB(29f, 59f, 82f, 100f)		},							
-			{ "Cerise",										CIELabFromRGB(87f, 19f, 39f, 100f)		},							
-			{ "Cerise Pink",								CIELabFromRGB(93f, 23f, 51f, 100f)		},							
-			{ "Cerulean",									CIELabFromRGB(0f, 48f, 65f, 100f)		},							
-			{ "Cerulean Blue",								CIELabFromRGB(16f, 32f, 75f, 100f)		},							
-			{ "Cerulean Frost",								CIELabFromRGB(43f, 61f, 76f, 100f)		},							
-			{ "CG Blue",									CIELabFromRGB(0f, 48f, 65f, 100f)		},							
-			{ "CG Red",										CIELabFromRGB(88f, 24f, 19f, 100f)		},							
-			{ "Chamoisee",									CIELabFromRGB(63f, 47f, 35f, 100f)		},							
-			{ "Champagne",									CIELabFromRGB(97f, 91f, 81f, 100f)		},							
-			{ "Charcoal",									CIELabFromRGB(21f, 27f, 31f, 100f)		},							
-			{ "Charleston Green",							CIELabFromRGB(14f, 17f, 17f, 100f)		},							
-			{ "Charm Pink",									CIELabFromRGB(90f, 56f, 67f, 100f)		},							
-			{ "Chartreuse (Traditional)",					CIELabFromRGB(87f, 100f, 0f, 100f)		},							
-			{ "Chartreuse (Web)",							CIELabFromRGB(50f, 100f, 0f, 100f)		},							
-			{ "Cherry",										CIELabFromRGB(87f, 19f, 39f, 100f)		},							
-			{ "Cherry Blossom Pink",						CIELabFromRGB(100f, 72f, 77f, 100f)		},							
-			{ "Chestnut",									CIELabFromRGB(58f, 27f, 21f, 100f)		},							
-			{ "China Pink",									CIELabFromRGB(87f, 44f, 63f, 100f)		},							
-			{ "China Rose",									CIELabFromRGB(66f, 32f, 43f, 100f)		},							
-			{ "Chinese Red",								CIELabFromRGB(67f, 22f, 12f, 100f)		},							
-			{ "Chinese Violet",								CIELabFromRGB(52f, 38f, 53f, 100f)		},							
-			{ "Chocolate (Traditional)",					CIELabFromRGB(48f, 25f, 0f, 100f)		},							
-			{ "Chocolate (Web)",							CIELabFromRGB(82f, 41f, 12f, 100f)		},							
-			{ "Chrome Yellow",								CIELabFromRGB(100f, 65f, 0f, 100f)		},							
-			{ "Cinereous",									CIELabFromRGB(60f, 51f, 48f, 100f)		},							
-			{ "Cinnabar",									CIELabFromRGB(89f, 26f, 20f, 100f)		},							
-			{ "Cinnamon",									CIELabFromRGB(82f, 41f, 12f, 100f)		},							
-			{ "Citrine",									CIELabFromRGB(89f, 82f, 4f, 100f)		},							
-			{ "Citron",										CIELabFromRGB(62f, 66f, 12f, 100f)		},							
-			{ "Claret",										CIELabFromRGB(50f, 9f, 20f, 100f)		},							
-			{ "Classic Rose",								CIELabFromRGB(98f, 80f, 91f, 100f)		},							
-			{ "Cobalt Blue",								CIELabFromRGB(0f, 28f, 67f, 100f)		},							
-			{ "Cocoa Brown",								CIELabFromRGB(82f, 41f, 12f, 100f)		},							
-			{ "Coconut",									CIELabFromRGB(59f, 35f, 24f, 100f)		},							
-			{ "Coffee",										CIELabFromRGB(44f, 31f, 22f, 100f)		},							
-			{ "Columbia Blue",								CIELabFromRGB(77f, 85f, 89f, 100f)		},							
-			{ "Congo Pink",									CIELabFromRGB(97f, 51f, 47f, 100f)		},							
-			{ "Cool Black",									CIELabFromRGB(0f, 18f, 39f, 100f)		},							
-			{ "Cool Grey",									CIELabFromRGB(55f, 57f, 67f, 100f)		},							
-			{ "Copper",										CIELabFromRGB(72f, 45f, 20f, 100f)		},							
-			{ "Copper (Crayola)",							CIELabFromRGB(85f, 54f, 40f, 100f)		},							
-			{ "Copper Penny",								CIELabFromRGB(68f, 44f, 41f, 100f)		},							
-			{ "Copper Red",									CIELabFromRGB(80f, 43f, 32f, 100f)		},							
-			{ "Copper Rose",								CIELabFromRGB(60f, 40f, 40f, 100f)		},							
-			{ "Coquelicot",									CIELabFromRGB(100f, 22f, 0f, 100f)		},							
-			{ "Coral",										CIELabFromRGB(100f, 50f, 31f, 100f)		},							
-			{ "Coral Pink",									CIELabFromRGB(97f, 51f, 47f, 100f)		},							
-			{ "Coral Red",									CIELabFromRGB(100f, 25f, 25f, 100f)		},							
-			{ "Cordovan",									CIELabFromRGB(54f, 25f, 27f, 100f)		},							
-			{ "Corn",										CIELabFromRGB(98f, 93f, 36f, 100f)		},							
-			{ "Cornell Red",								CIELabFromRGB(70f, 11f, 11f, 100f)		},							
-			{ "Cornflower Blue",							CIELabFromRGB(39f, 58f, 93f, 100f)		},							
-			{ "Cornsilk",									CIELabFromRGB(100f, 97f, 86f, 100f)		},							
-			{ "Cosmic Latte",								CIELabFromRGB(100f, 97f, 91f, 100f)		},							
-			{ "Coyote Brown",								CIELabFromRGB(51f, 38f, 24f, 100f)		},							
-			{ "Cotton Candy",								CIELabFromRGB(100f, 74f, 85f, 100f)		},							
-			{ "Cream",										CIELabFromRGB(100f, 99f, 82f, 100f)		},							
-			{ "Crimson",									CIELabFromRGB(86f, 8f, 24f, 100f)		},							
-			{ "Crimson Glory",								CIELabFromRGB(75f, 0f, 20f, 100f)		},							
-			{ "Crimson Red",								CIELabFromRGB(60f, 0f, 0f, 100f)		},							
-			{ "Cyan",										CIELabFromRGB(0f, 100f, 100f, 100f)		},							
-			{ "Cyan Azure",									CIELabFromRGB(31f, 51f, 71f, 100f)		},							
-			{ "Cyan-Blue Azure",							CIELabFromRGB(27f, 51f, 75f, 100f)		},							
-			{ "Cyan Cobalt Blue",							CIELabFromRGB(16f, 35f, 61f, 100f)		},							
-			{ "Cyan Cornflower Blue",						CIELabFromRGB(9f, 55f, 76f, 100f)		},							
-			{ "Cyan (Process)",								CIELabFromRGB(0f, 72f, 92f, 100f)		},							
-			{ "Cyber Grape",								CIELabFromRGB(35f, 26f, 49f, 100f)		},							
-			{ "Cyber Yellow",								CIELabFromRGB(100f, 83f, 0f, 100f)		},							
-			{ "Daffodil",									CIELabFromRGB(100f, 100f, 19f, 100f)	},							
-			{ "Dandelion",									CIELabFromRGB(94f, 88f, 19f, 100f)		},							
-			{ "Dark Blue",									CIELabFromRGB(0f, 0f, 55f, 100f)		},							
-			{ "Dark Blue-Gray",								CIELabFromRGB(40f, 40f, 60f, 100f)		},							
-			{ "Dark Brown",									CIELabFromRGB(40f, 26f, 13f, 100f)		},							
-			{ "Dark Brown-Tangelo",							CIELabFromRGB(53f, 40f, 31f, 100f)		},							
-			{ "Dark Byzantium",								CIELabFromRGB(36f, 22f, 33f, 100f)		},							
-			{ "Dark Candy Apple Red",						CIELabFromRGB(64f, 0f, 0f, 100f)		},							
-			{ "Dark Cerulean",								CIELabFromRGB(3f, 27f, 49f, 100f)		},							
-			{ "Dark Chestnut",								CIELabFromRGB(60f, 41f, 38f, 100f)		},							
-			{ "Dark Coral",									CIELabFromRGB(80f, 36f, 27f, 100f)		},							
-			{ "Dark Cyan",									CIELabFromRGB(0f, 55f, 55f, 100f)		},							
-			{ "Dark Electric Blue",							CIELabFromRGB(33f, 41f, 47f, 100f)		},							
-			{ "Dark Goldenrod",								CIELabFromRGB(72f, 53f, 4f, 100f)		},							
-			{ "Dark Gray (X11)",							CIELabFromRGB(66f, 66f, 66f, 100f)		},							
-			{ "Dark Green",									CIELabFromRGB(0f, 20f, 13f, 100f)		},							
-			{ "Dark Green (X11)",							CIELabFromRGB(0f, 39f, 0f, 100f)		},							
-			{ "Dark Imperial Blue",							CIELabFromRGB(0f, 25f, 42f, 100f)		},							
-			{ "Dark Imperial-er Blue",						CIELabFromRGB(0f, 8f, 49f, 100f)		},							
-			{ "Dark Jungle Green",							CIELabFromRGB(10f, 14f, 13f, 100f)		},							
-			{ "Dark Khaki",									CIELabFromRGB(74f, 72f, 42f, 100f)		},							
-			{ "Dark Lava",									CIELabFromRGB(28f, 24f, 20f, 100f)		},							
-			{ "Dark Lavender",								CIELabFromRGB(45f, 31f, 59f, 100f)		},							
-			{ "Dark Liver",									CIELabFromRGB(33f, 29f, 31f, 100f)		},							
-			{ "Dark Liver (Horses)",						CIELabFromRGB(33f, 24f, 22f, 100f)		},							
-			{ "Dark Magenta",								CIELabFromRGB(55f, 0f, 55f, 100f)		},							
-			{ "Dark Medium Gray",							CIELabFromRGB(66f, 66f, 66f, 100f)		},							
-			{ "Dark Midnight Blue",							CIELabFromRGB(0f, 20f, 40f, 100f)		},							
-			{ "Dark Moss Green",							CIELabFromRGB(29f, 36f, 14f, 100f)		},							
-			{ "Dark Olive Green",							CIELabFromRGB(33f, 42f, 18f, 100f)		},							
-			{ "Dark Orange",								CIELabFromRGB(100f, 55f, 0f, 100f)		},							
-			{ "Dark Orchid",								CIELabFromRGB(60f, 20f, 80f, 100f)		},							
-			{ "Dark Pastel Blue",							CIELabFromRGB(47f, 62f, 80f, 100f)		},							
-			{ "Dark Pastel Green",							CIELabFromRGB(1f, 75f, 24f, 100f)		},							
-			{ "Dark Pastel Purple",							CIELabFromRGB(59f, 44f, 84f, 100f)		},							
-			{ "Dark Pastel Red",							CIELabFromRGB(76f, 23f, 13f, 100f)		},							
-			{ "Dark Pink",									CIELabFromRGB(91f, 33f, 50f, 100f)		},							
-			{ "Dark Powder Blue",							CIELabFromRGB(0f, 20f, 60f, 100f)		},							
-			{ "Dark Puce",									CIELabFromRGB(31f, 23f, 24f, 100f)		},							
-			{ "Dark Purple",								CIELabFromRGB(19f, 10f, 20f, 100f)		},							
-			{ "Dark Raspberry",								CIELabFromRGB(53f, 15f, 34f, 100f)		},							
-			{ "Dark Red",									CIELabFromRGB(55f, 0f, 0f, 100f)		},							
-			{ "Dark Salmon",								CIELabFromRGB(91f, 59f, 48f, 100f)		},							
-			{ "Dark Scarlet",								CIELabFromRGB(34f, 1f, 10f, 100f)		},							
-			{ "Dark Sea Green",								CIELabFromRGB(56f, 74f, 56f, 100f)		},							
-			{ "Dark Sienna",								CIELabFromRGB(24f, 8f, 8f, 100f)		},							
-			{ "Dark Sky Blue",								CIELabFromRGB(55f, 75f, 84f, 100f)		},							
-			{ "Dark Slate Blue",							CIELabFromRGB(28f, 24f, 55f, 100f)		},							
-			{ "Dark Slate Gray",							CIELabFromRGB(18f, 31f, 31f, 100f)		},							
-			{ "Dark Spring Green",							CIELabFromRGB(9f, 45f, 27f, 100f)		},							
-			{ "Dark Tan",									CIELabFromRGB(57f, 51f, 32f, 100f)		},							
-			{ "Dark Tangerine",								CIELabFromRGB(100f, 66f, 7f, 100f)		},							
-			{ "Dark Taupe",									CIELabFromRGB(28f, 24f, 20f, 100f)		},							
-			{ "Dark Terra Cotta",							CIELabFromRGB(80f, 31f, 36f, 100f)		},							
-			{ "Dark Turquoise",								CIELabFromRGB(0f, 81f, 82f, 100f)		},							
-			{ "Dark Vanilla",								CIELabFromRGB(82f, 75f, 66f, 100f)		},							
-			{ "Dark Violet",								CIELabFromRGB(58f, 0f, 83f, 100f)		},							
-			{ "Dark Yellow",								CIELabFromRGB(61f, 53f, 5f, 100f)		},							
-			{ "Dartmouth Green",							CIELabFromRGB(0f, 44f, 24f, 100f)		},							
-			{ "Davy's Grey",								CIELabFromRGB(33f, 33f, 33f, 100f)		},							
-			{ "Debian Red",									CIELabFromRGB(84f, 4f, 33f, 100f)		},							
-			{ "Deep Aquamarine",							CIELabFromRGB(25f, 51f, 43f, 100f)		},							
-			{ "Deep Carmine",								CIELabFromRGB(66f, 13f, 24f, 100f)		},							
-			{ "Deep Carmine Pink",							CIELabFromRGB(94f, 19f, 22f, 100f)		},							
-			{ "Deep Carrot Orange",							CIELabFromRGB(91f, 41f, 17f, 100f)		},							
-			{ "Deep Cerise",								CIELabFromRGB(85f, 20f, 53f, 100f)		},							
-			{ "Deep Champagne",								CIELabFromRGB(98f, 84f, 65f, 100f)		},							
-			{ "Deep Chestnut",								CIELabFromRGB(73f, 31f, 28f, 100f)		},							
-			{ "Deep Coffee",								CIELabFromRGB(44f, 26f, 25f, 100f)		},							
-			{ "Deep Fuchsia",								CIELabFromRGB(76f, 33f, 76f, 100f)		},							
-			{ "Deep Green",									CIELabFromRGB(2f, 40f, 3f, 100f)		},							
-			{ "Deep Green-Cyan Turquoise",					CIELabFromRGB(5f, 49f, 38f, 100f)		},							
-			{ "Deep Jungle Green",							CIELabFromRGB(0f, 29f, 29f, 100f)		},							
-			{ "Deep Koamaru",								CIELabFromRGB(20f, 20f, 40f, 100f)		},							
-			{ "Deep Lemon",									CIELabFromRGB(96f, 78f, 10f, 100f)		},							
-			{ "Deep Lilac",									CIELabFromRGB(60f, 33f, 73f, 100f)		},							
-			{ "Deep Magenta",								CIELabFromRGB(80f, 0f, 80f, 100f)		},							
-			{ "Deep Maroon",								CIELabFromRGB(51f, 0f, 0f, 100f)		},							
-			{ "Deep Mauve",									CIELabFromRGB(83f, 45f, 83f, 100f)		},							
-			{ "Deep Moss Green",							CIELabFromRGB(21f, 37f, 23f, 100f)		},							
-			{ "Deep Peach",									CIELabFromRGB(100f, 80f, 64f, 100f)		},							
-			{ "Deep Pink",									CIELabFromRGB(100f, 8f, 58f, 100f)		},							
-			{ "Deep Puce",									CIELabFromRGB(66f, 36f, 41f, 100f)		},							
-			{ "Deep Red",									CIELabFromRGB(52f, 0f, 0f, 100f)		},							
-			{ "Deep Ruby",									CIELabFromRGB(52f, 25f, 36f, 100f)		},							
-			{ "Deep Saffron",								CIELabFromRGB(100f, 60f, 20f, 100f)		},							
-			{ "Deep Sky Blue",								CIELabFromRGB(0f, 75f, 100f, 100f)		},							
-			{ "Deep Space Sparkle",							CIELabFromRGB(29f, 39f, 42f, 100f)		},							
-			{ "Deep Spring Bud",							CIELabFromRGB(33f, 42f, 18f, 100f)		},							
-			{ "Deep Taupe",									CIELabFromRGB(49f, 37f, 38f, 100f)		},							
-			{ "Deep Tuscan Red",							CIELabFromRGB(40f, 26f, 30f, 100f)		},							
-			{ "Deep Violet",								CIELabFromRGB(20f, 0f, 40f, 100f)		},							
-			{ "Deer",										CIELabFromRGB(73f, 53f, 35f, 100f)		},							
-			{ "Denim",										CIELabFromRGB(8f, 38f, 74f, 100f)		},							
-			{ "Desaturated Cyan",							CIELabFromRGB(40f, 60f, 60f, 100f)		},							
-			{ "Desert",										CIELabFromRGB(76f, 60f, 42f, 100f)		},							
-			{ "Desert Sand",								CIELabFromRGB(93f, 79f, 69f, 100f)		},							
-			{ "Desire",										CIELabFromRGB(92f, 24f, 33f, 100f)		},							
-			{ "Diamond",									CIELabFromRGB(73f, 95f, 100f, 100f)		},							
-			{ "Dim Gray",									CIELabFromRGB(41f, 41f, 41f, 100f)		},							
-			{ "Dirt",										CIELabFromRGB(61f, 46f, 33f, 100f)		},							
-			{ "Dodger Blue",								CIELabFromRGB(12f, 56f, 100f, 100f)		},							
-			{ "Dogwood Rose",								CIELabFromRGB(84f, 9f, 41f, 100f)		},							
-			{ "Dollar Bill",								CIELabFromRGB(52f, 73f, 40f, 100f)		},							
-			{ "Donkey Brown",								CIELabFromRGB(40f, 30f, 16f, 100f)		},							
-			{ "Drab",										CIELabFromRGB(59f, 44f, 9f, 100f)		},							
-			{ "Duke Blue",									CIELabFromRGB(0f, 0f, 61f, 100f)		},							
-			{ "Dust Storm",									CIELabFromRGB(90f, 80f, 79f, 100f)		},							
-			{ "Dutch White",								CIELabFromRGB(94f, 87f, 73f, 100f)		},							
-			{ "Earth Yellow",								CIELabFromRGB(88f, 66f, 37f, 100f)		},							
-			{ "Ebony",										CIELabFromRGB(33f, 36f, 31f, 100f)		},							
-			{ "Ecru",										CIELabFromRGB(76f, 70f, 50f, 100f)		},							
-			{ "Eerie Black",								CIELabFromRGB(11f, 11f, 11f, 100f)		},							
-			{ "Eggplant",									CIELabFromRGB(38f, 25f, 32f, 100f)		},							
-			{ "Eggshell",									CIELabFromRGB(94f, 92f, 84f, 100f)		},							
-			{ "Egyptian Blue",								CIELabFromRGB(6f, 20f, 65f, 100f)		},							
-			{ "Electric Blue",								CIELabFromRGB(49f, 98f, 100f, 100f)		},							
-			{ "Electric Crimson",							CIELabFromRGB(100f, 0f, 25f, 100f)		},							
-			{ "Electric Cyan",								CIELabFromRGB(0f, 100f, 100f, 100f)		},							
-			{ "Electric Green",								CIELabFromRGB(0f, 100f, 0f, 100f)		},							
-			{ "Electric Indigo",							CIELabFromRGB(44f, 0f, 100f, 100f)		},							
-			{ "Electric Lavender",							CIELabFromRGB(96f, 73f, 100f, 100f)		},							
-			{ "Electric Lime",								CIELabFromRGB(80f, 100f, 0f, 100f)		},							
-			{ "Electric Purple",							CIELabFromRGB(75f, 0f, 100f, 100f)		},							
-			{ "Electric Ultramarine",						CIELabFromRGB(25f, 0f, 100f, 100f)		},							
-			{ "Electric Violet",							CIELabFromRGB(56f, 0f, 100f, 100f)		},							
-			{ "Electric Yellow",							CIELabFromRGB(100f, 100f, 20f, 100f)	},							
-			{ "Emerald",									CIELabFromRGB(31f, 78f, 47f, 100f)		},							
-			{ "Eminence",									CIELabFromRGB(42f, 19f, 51f, 100f)		},							
-			{ "English Green",								CIELabFromRGB(11f, 30f, 24f, 100f)		},							
-			{ "English Lavender",							CIELabFromRGB(71f, 51f, 58f, 100f)		},							
-			{ "English Red",								CIELabFromRGB(67f, 29f, 32f, 100f)		},							
-			{ "English Violet",								CIELabFromRGB(34f, 24f, 36f, 100f)		},							
-			{ "Eton Blue",									CIELabFromRGB(59f, 78f, 64f, 100f)		},							
-			{ "Eucalyptus",									CIELabFromRGB(27f, 84f, 66f, 100f)		},							
-			{ "Fallow",										CIELabFromRGB(76f, 60f, 42f, 100f)		},							
-			{ "Falu Red",									CIELabFromRGB(50f, 9f, 9f, 100f)		},							
-			{ "Fandango",									CIELabFromRGB(71f, 20f, 54f, 100f)		},							
-			{ "Fandango Pink",								CIELabFromRGB(87f, 32f, 52f, 100f)		},							
-			{ "Fashion Fuchsia",							CIELabFromRGB(96f, 0f, 63f, 100f)		},							
-			{ "Fawn",										CIELabFromRGB(90f, 67f, 44f, 100f)		},							
-			{ "Feldgrau",									CIELabFromRGB(30f, 36f, 33f, 100f)		},							
-			{ "Feldspar",									CIELabFromRGB(99f, 84f, 69f, 100f)		},							
-			{ "Fern Green",									CIELabFromRGB(31f, 47f, 26f, 100f)		},							
-			{ "Ferrari Red",								CIELabFromRGB(100f, 16f, 0f, 100f)		},							
-			{ "Field Drab",									CIELabFromRGB(42f, 33f, 12f, 100f)		},							
-			{ "Firebrick",									CIELabFromRGB(70f, 13f, 13f, 100f)		},							
-			{ "Fire Engine Red",							CIELabFromRGB(81f, 13f, 16f, 100f)		},							
-			{ "Flame",										CIELabFromRGB(89f, 35f, 13f, 100f)		},							
-			{ "Flamingo Pink",								CIELabFromRGB(99f, 56f, 67f, 100f)		},							
-			{ "Flattery",									CIELabFromRGB(42f, 27f, 14f, 100f)		},							
-			{ "Flavescent",									CIELabFromRGB(97f, 91f, 56f, 100f)		},							
-			{ "Flax",										CIELabFromRGB(93f, 86f, 51f, 100f)		},							
-			{ "Flirt",										CIELabFromRGB(64f, 0f, 43f, 100f)		},							
-			{ "Floral White",								CIELabFromRGB(100f, 98f, 94f, 100f)		},							
-			{ "Fluorescent Orange",							CIELabFromRGB(100f, 75f, 0f, 100f)		},							
-			{ "Fluorescent Pink",							CIELabFromRGB(100f, 8f, 58f, 100f)		},							
-			{ "Fluorescent Yellow",							CIELabFromRGB(80f, 100f, 0f, 100f)		},							
-			{ "Folly",										CIELabFromRGB(100f, 0f, 31f, 100f)		},							
-			{ "Forest Green (Traditional)",					CIELabFromRGB(0f, 27f, 13f, 100f)		},							
-			{ "Forest Green (Web)",							CIELabFromRGB(13f, 55f, 13f, 100f)		},							
-			{ "French Beige",								CIELabFromRGB(65f, 48f, 36f, 100f)		},							
-			{ "French Bistre",								CIELabFromRGB(52f, 43f, 30f, 100f)		},							
-			{ "French Blue",								CIELabFromRGB(0f, 45f, 73f, 100f)		},							
-			{ "French Fuchsia",								CIELabFromRGB(99f, 25f, 57f, 100f)		},							
-			{ "French Lilac",								CIELabFromRGB(53f, 38f, 56f, 100f)		},							
-			{ "French Lime",								CIELabFromRGB(62f, 99f, 22f, 100f)		},							
-			{ "French Mauve",								CIELabFromRGB(83f, 45f, 83f, 100f)		},							
-			{ "French Pink",								CIELabFromRGB(99f, 42f, 62f, 100f)		},							
-			{ "French Plum",								CIELabFromRGB(51f, 8f, 33f, 100f)		},							
-			{ "French Puce",								CIELabFromRGB(31f, 9f, 4f, 100f)		},							
-			{ "French Raspberry",							CIELabFromRGB(78f, 17f, 28f, 100f)		},							
-			{ "French Rose",								CIELabFromRGB(96f, 29f, 54f, 100f)		},							
-			{ "French Sky Blue",							CIELabFromRGB(47f, 71f, 100f, 100f)		},							
-			{ "French Violet",								CIELabFromRGB(53f, 2f, 81f, 100f)		},							
-			{ "French Wine",								CIELabFromRGB(67f, 12f, 27f, 100f)		},							
-			{ "Fresh Air",									CIELabFromRGB(65f, 91f, 100f, 100f)		},							
-			{ "Fuchsia",									CIELabFromRGB(100f, 0f, 100f, 100f)		},							
-			{ "Fuchsia (Crayola)",							CIELabFromRGB(76f, 33f, 76f, 100f)		},							
-			{ "Fuchsia Pink",								CIELabFromRGB(100f, 47f, 100f, 100f)	},							
-			{ "Fuchsia Purple",								CIELabFromRGB(80f, 22f, 48f, 100f)		},							
-			{ "Fuchsia Rose",								CIELabFromRGB(78f, 26f, 46f, 100f)		},							
-			{ "Fulvous",									CIELabFromRGB(89f, 52f, 0f, 100f)		},							
-			{ "Fuzzy Wuzzy",								CIELabFromRGB(80f, 40f, 40f, 100f)		},	
+			{ "Acid Green",									CIELabFromRGB(69f, 75f, 10f, 100f)		},
+			{ "Aero",										CIELabFromRGB(49f, 73f, 91f, 100f)		},
+			{ "Aero Blue",									CIELabFromRGB(79f, 100f, 90f, 100f)		},
+			{ "African Violet",								CIELabFromRGB(70f, 52f, 75f, 100f)		},
+			{ "Air Force Blue (RAF)",						CIELabFromRGB(36f, 54f, 66f, 100f)		},
+			{ "Air Force Blue (USAF)",						CIELabFromRGB(0f, 19f, 56f, 100f)		},
+			{ "Air Superiority Blue",						CIELabFromRGB(45f, 63f, 76f, 100f)		},
+			{ "Alabama Crimson",							CIELabFromRGB(69f, 0f, 16f, 100f)		},
+			{ "Alice Blue",									CIELabFromRGB(94f, 97f, 100f, 100f)		},
+			{ "Alizarin Crimson",							CIELabFromRGB(89f, 15f, 21f, 100f)		},
+			{ "Alloy Orange",								CIELabFromRGB(77f, 38f, 6f, 100f)		},
+			{ "Almond",										CIELabFromRGB(94f, 87f, 80f, 100f)		},
+			{ "Amaranth",									CIELabFromRGB(90f, 17f, 31f, 100f)		},
+			{ "Amaranth Deep Purple",						CIELabFromRGB(67f, 15f, 31f, 100f)		},
+			{ "Amaranth Pink",								CIELabFromRGB(95f, 61f, 73f, 100f)		},
+			{ "Amaranth Purple",							CIELabFromRGB(67f, 15f, 31f, 100f)		},
+			{ "Amaranth Red",								CIELabFromRGB(83f, 13f, 18f, 100f)		},
+			{ "Amazon",										CIELabFromRGB(23f, 48f, 34f, 100f)		},
+			{ "Amber",										CIELabFromRGB(100f, 75f, 0f, 100f)		},
+			{ "Amber (SAE/ECE)",							CIELabFromRGB(100f, 49f, 0f, 100f)		},
+			{ "American Rose",								CIELabFromRGB(100f, 1f, 24f, 100f)		},
+			{ "Amethyst",									CIELabFromRGB(60f, 40f, 80f, 100f)		},
+			{ "Android Green",								CIELabFromRGB(64f, 78f, 22f, 100f)		},
+			{ "Anti-Flash White",							CIELabFromRGB(95f, 95f, 96f, 100f)		},
+			{ "Antique Brass",								CIELabFromRGB(80f, 58f, 46f, 100f)		},
+			{ "Antique Bronze",								CIELabFromRGB(40f, 36f, 12f, 100f)		},
+			{ "Antique Fuchsia",							CIELabFromRGB(57f, 36f, 51f, 100f)		},
+			{ "Antique Ruby",								CIELabFromRGB(52f, 11f, 18f, 100f)		},
+			{ "Antique White",								CIELabFromRGB(98f, 92f, 84f, 100f)		},
+			{ "Ao (English)",								CIELabFromRGB(0f, 50f, 0f, 100f)		},
+			{ "Apple Green",								CIELabFromRGB(55f, 71f, 0f, 100f)		},
+			{ "Apricot",									CIELabFromRGB(98f, 81f, 69f, 100f)		},
+			{ "Aqua",										CIELabFromRGB(0f, 100f, 100f, 100f)		},
+			{ "Aquamarine",									CIELabFromRGB(50f, 100f, 83f, 100f)		},
+			{ "Army Green",									CIELabFromRGB(29f, 33f, 13f, 100f)		},
+			{ "Arsenic",									CIELabFromRGB(23f, 27f, 29f, 100f)		},
+			{ "Artichoke",									CIELabFromRGB(56f, 59f, 47f, 100f)		},
+			{ "Arylide Yellow",								CIELabFromRGB(91f, 84f, 42f, 100f)		},
+			{ "Ash Grey",									CIELabFromRGB(70f, 75f, 71f, 100f)		},
+			{ "Asparagus",									CIELabFromRGB(53f, 66f, 42f, 100f)		},
+			{ "Atomic Tangerine",							CIELabFromRGB(100f, 60f, 40f, 100f)		},
+			{ "Auburn",										CIELabFromRGB(65f, 16f, 16f, 100f)		},
+			{ "Aureolin",									CIELabFromRGB(99f, 93f, 0f, 100f)		},
+			{ "AuroMetalSaurus",							CIELabFromRGB(43f, 50f, 50f, 100f)		},
+			{ "Avocado",									CIELabFromRGB(34f, 51f, 1f, 100f)		},
+			{ "Azure",										CIELabFromRGB(0f, 50f, 100f, 100f)		},
+			{ "Azure (Web Color)",							CIELabFromRGB(94f, 100f, 100f, 100f)	},
+			{ "Azure Mist",									CIELabFromRGB(94f, 100f, 100f, 100f)	},
+			{ "Azureish White",								CIELabFromRGB(86f, 91f, 96f, 100f)		},
+			{ "Baby Blue",									CIELabFromRGB(54f, 81f, 94f, 100f)		},
+			{ "Baby Blue Eyes",								CIELabFromRGB(63f, 79f, 95f, 100f)		},
+			{ "Baby Pink",									CIELabFromRGB(96f, 76f, 76f, 100f)		},
+			{ "Baby Powder",								CIELabFromRGB(100f, 100f, 98f, 100f)	},
+			{ "Baker-Miller Pink",							CIELabFromRGB(100f, 57f, 69f, 100f)		},
+			{ "Ball Blue",									CIELabFromRGB(13f, 67f, 80f, 100f)		},
+			{ "Banana Mania",								CIELabFromRGB(98f, 91f, 71f, 100f)		},
+			{ "Banana Yellow",								CIELabFromRGB(100f, 88f, 21f, 100f)		},
+			{ "Bangladesh Green",							CIELabFromRGB(0f, 42f, 31f, 100f)		},
+			{ "Barbie Pink",								CIELabFromRGB(88f, 13f, 54f, 100f)		},
+			{ "Barn Red",									CIELabFromRGB(49f, 4f, 1f, 100f)		},
+			{ "Battleship Grey",							CIELabFromRGB(52f, 52f, 51f, 100f)		},
+			{ "Bazaar",										CIELabFromRGB(60f, 47f, 48f, 100f)		},
+			{ "Beau Blue",									CIELabFromRGB(74f, 83f, 90f, 100f)		},
+			{ "Beaver",										CIELabFromRGB(62f, 51f, 44f, 100f)		},
+			{ "Beige",										CIELabFromRGB(96f, 96f, 86f, 100f)		},
+			{ "B'dazzled Blue",								CIELabFromRGB(18f, 35f, 58f, 100f)		},
+			{ "Big Dip O’ruby",								CIELabFromRGB(61f, 15f, 26f, 100f)		},
+			{ "Bisque",										CIELabFromRGB(100f, 89f, 77f, 100f)		},
+			{ "Bistre",										CIELabFromRGB(24f, 17f, 12f, 100f)		},
+			{ "Bistre Brown",								CIELabFromRGB(59f, 44f, 9f, 100f)		},
+			{ "Bitter Lemon",								CIELabFromRGB(79f, 88f, 5f, 100f)		},
+			{ "Bitter Lime",								CIELabFromRGB(75f, 100f, 0f, 100f)		},
+			{ "Bittersweet",								CIELabFromRGB(100f, 44f, 37f, 100f)		},
+			{ "Bittersweet Shimmer",						CIELabFromRGB(75f, 31f, 32f, 100f)		},
+			{ "Black",										CIELabFromRGB(0f, 0f, 0f, 100f)			},
+			{ "Black Bean",									CIELabFromRGB(24f, 5f, 1f, 100f)		},
+			{ "Black Leather Jacket",						CIELabFromRGB(15f, 21f, 16f, 100f)		},
+			{ "Black Olive",								CIELabFromRGB(23f, 24f, 21f, 100f)		},
+			{ "Blanched Almond",							CIELabFromRGB(100f, 92f, 80f, 100f)		},
+			{ "Blast-Off Bronze",							CIELabFromRGB(65f, 44f, 39f, 100f)		},
+			{ "Bleu De France",								CIELabFromRGB(19f, 55f, 91f, 100f)		},
+			{ "Blizzard Blue",								CIELabFromRGB(67f, 90f, 93f, 100f)		},
+			{ "Blond",										CIELabFromRGB(98f, 94f, 75f, 100f)		},
+			{ "Blue",										CIELabFromRGB(0f, 0f, 100f, 100f)		},
+			{ "Blue (Crayola)",								CIELabFromRGB(12f, 46f, 100f, 100f)		},
+			{ "Blue (Munsell)",								CIELabFromRGB(0f, 58f, 69f, 100f)		},
+			{ "Blue (NCS)",									CIELabFromRGB(0f, 53f, 74f, 100f)		},
+			{ "Blue (Pantone)",								CIELabFromRGB(0f, 9f, 66f, 100f)		},
+			{ "Blue (Pigment)",								CIELabFromRGB(20f, 20f, 60f, 100f)		},
+			{ "Blue (RYB)",									CIELabFromRGB(1f, 28f, 100f, 100f)		},
+			{ "Blue Bell",									CIELabFromRGB(64f, 64f, 82f, 100f)		},
+			{ "Blue-Gray",									CIELabFromRGB(40f, 60f, 80f, 100f)		},
+			{ "Blue-Green",									CIELabFromRGB(5f, 60f, 73f, 100f)		},
+			{ "Blue Lagoon",								CIELabFromRGB(37f, 58f, 63f, 100f)		},
+			{ "Blue-Magenta Violet",						CIELabFromRGB(33f, 21f, 57f, 100f)		},
+			{ "Blue Sapphire",								CIELabFromRGB(7f, 38f, 50f, 100f)		},
+			{ "Blue-Violet",								CIELabFromRGB(54f, 17f, 89f, 100f)		},
+			{ "Blue Yonder",								CIELabFromRGB(31f, 45f, 65f, 100f)		},
+			{ "Blueberry",									CIELabFromRGB(31f, 53f, 97f, 100f)		},
+			{ "Bluebonnet",									CIELabFromRGB(11f, 11f, 94f, 100f)		},
+			{ "Blush",										CIELabFromRGB(87f, 36f, 51f, 100f)		},
+			{ "Bole",										CIELabFromRGB(47f, 27f, 23f, 100f)		},
+			{ "Bondi Blue",									CIELabFromRGB(0f, 58f, 71f, 100f)		},
+			{ "Bone",										CIELabFromRGB(89f, 85f, 79f, 100f)		},
+			{ "Boston University Red",						CIELabFromRGB(80f, 0f, 0f, 100f)		},
+			{ "Bottle Green",								CIELabFromRGB(0f, 42f, 31f, 100f)		},
+			{ "Boysenberry",								CIELabFromRGB(53f, 20f, 38f, 100f)		},
+			{ "Brandeis Blue",								CIELabFromRGB(0f, 44f, 100f, 100f)		},
+			{ "Brass",										CIELabFromRGB(71f, 65f, 26f, 100f)		},
+			{ "Brick Red",									CIELabFromRGB(80f, 25f, 33f, 100f)		},
+			{ "Bright Cerulean",							CIELabFromRGB(11f, 67f, 84f, 100f)		},
+			{ "Bright Green",								CIELabFromRGB(40f, 100f, 0f, 100f)		},
+			{ "Bright Lavender",							CIELabFromRGB(75f, 58f, 89f, 100f)		},
+			{ "Bright Lilac",								CIELabFromRGB(85f, 57f, 94f, 100f)		},
+			{ "Bright Maroon",								CIELabFromRGB(76f, 13f, 28f, 100f)		},
+			{ "Bright Navy Blue",							CIELabFromRGB(10f, 45f, 82f, 100f)		},
+			{ "Bright Pink",								CIELabFromRGB(100f, 0f, 50f, 100f)		},
+			{ "Bright Turquoise",							CIELabFromRGB(3f, 91f, 87f, 100f)		},
+			{ "Bright Ube",									CIELabFromRGB(82f, 62f, 91f, 100f)		},
+			{ "Brilliant Azure",							CIELabFromRGB(20f, 60f, 100f, 100f)		},
+			{ "Brilliant Lavender",							CIELabFromRGB(96f, 73f, 100f, 100f)		},
+			{ "Brilliant Rose",								CIELabFromRGB(100f, 33f, 64f, 100f)		},
+			{ "Brink Pink",									CIELabFromRGB(98f, 38f, 50f, 100f)		},
+			{ "British Racing Green",						CIELabFromRGB(0f, 26f, 15f, 100f)		},
+			{ "Bronze",										CIELabFromRGB(80f, 50f, 20f, 100f)		},
+			{ "Bronze Yellow",								CIELabFromRGB(45f, 44f, 0f, 100f)		},
+			{ "Brown (Traditional)",						CIELabFromRGB(59f, 29f, 0f, 100f)		},
+			{ "Brown (Web)",								CIELabFromRGB(65f, 16f, 16f, 100f)		},
+			{ "Brown-Nose",									CIELabFromRGB(42f, 27f, 14f, 100f)		},
+			{ "Brown Yellow",								CIELabFromRGB(80f, 60f, 40f, 100f)		},
+			{ "Brunswick Green",							CIELabFromRGB(11f, 30f, 24f, 100f)		},
+			{ "Bubble Gum",									CIELabFromRGB(100f, 76f, 80f, 100f)		},
+			{ "Bubbles",									CIELabFromRGB(91f, 100f, 100f, 100f)	},
+			{ "Buff",										CIELabFromRGB(94f, 86f, 51f, 100f)		},
+			{ "Bud Green",									CIELabFromRGB(48f, 71f, 38f, 100f)		},
+			{ "Bulgarian Rose",								CIELabFromRGB(28f, 2f, 3f, 100f)		},
+			{ "Burgundy",									CIELabFromRGB(50f, 0f, 13f, 100f)		},
+			{ "Burlywood",									CIELabFromRGB(87f, 72f, 53f, 100f)		},
+			{ "Burnt Orange",								CIELabFromRGB(80f, 33f, 0f, 100f)		},
+			{ "Burnt Sienna",								CIELabFromRGB(91f, 45f, 32f, 100f)		},
+			{ "Burnt Umber",								CIELabFromRGB(54f, 20f, 14f, 100f)		},
+			{ "Byzantine",									CIELabFromRGB(74f, 20f, 64f, 100f)		},
+			{ "Byzantium",									CIELabFromRGB(44f, 16f, 39f, 100f)		},
+			{ "Cadet",										CIELabFromRGB(33f, 41f, 45f, 100f)		},
+			{ "Cadet Blue",									CIELabFromRGB(37f, 62f, 63f, 100f)		},
+			{ "Cadet Grey",									CIELabFromRGB(57f, 64f, 69f, 100f)		},
+			{ "Cadmium Green",								CIELabFromRGB(0f, 42f, 24f, 100f)		},
+			{ "Cadmium Orange",								CIELabFromRGB(93f, 53f, 18f, 100f)		},
+			{ "Cadmium Red",								CIELabFromRGB(89f, 0f, 13f, 100f)		},
+			{ "Cadmium Yellow",								CIELabFromRGB(100f, 96f, 0f, 100f)		},
+			{ "Cafe Au Lait",								CIELabFromRGB(65f, 48f, 36f, 100f)		},
+			{ "Cafe Noir",									CIELabFromRGB(29f, 21f, 13f, 100f)		},
+			{ "Cal Poly Green",								CIELabFromRGB(12f, 30f, 17f, 100f)		},
+			{ "Cambridge Blue",								CIELabFromRGB(64f, 76f, 68f, 100f)		},
+			{ "Camel",										CIELabFromRGB(76f, 60f, 42f, 100f)		},
+			{ "Cameo Pink",									CIELabFromRGB(94f, 73f, 80f, 100f)		},
+			{ "Camouflage Green",							CIELabFromRGB(47f, 53f, 42f, 100f)		},
+			{ "Canary Yellow",								CIELabFromRGB(100f, 94f, 0f, 100f)		},
+			{ "Candy Apple Red",							CIELabFromRGB(100f, 3f, 0f, 100f)		},
+			{ "Candy Pink",									CIELabFromRGB(89f, 44f, 48f, 100f)		},
+			{ "Capri",										CIELabFromRGB(0f, 75f, 100f, 100f)		},
+			{ "Caput Mortuum",								CIELabFromRGB(35f, 15f, 13f, 100f)		},
+			{ "Cardinal",									CIELabFromRGB(77f, 12f, 23f, 100f)		},
+			{ "Caribbean Green",							CIELabFromRGB(0f, 80f, 60f, 100f)		},
+			{ "Carmine",									CIELabFromRGB(59f, 0f, 9f, 100f)		},
+			{ "Carmine (M&P)",								CIELabFromRGB(84f, 0f, 25f, 100f)		},
+			{ "Carmine Pink",								CIELabFromRGB(92f, 30f, 26f, 100f)		},
+			{ "Carmine Red",								CIELabFromRGB(100f, 0f, 22f, 100f)		},
+			{ "Carnation Pink",								CIELabFromRGB(100f, 65f, 79f, 100f)		},
+			{ "Carnelian",									CIELabFromRGB(70f, 11f, 11f, 100f)		},
+			{ "Carolina Blue",								CIELabFromRGB(34f, 63f, 83f, 100f)		},
+			{ "Carrot Orange",								CIELabFromRGB(93f, 57f, 13f, 100f)		},
+			{ "Castleton Green",							CIELabFromRGB(0f, 34f, 25f, 100f)		},
+			{ "Catalina Blue",								CIELabFromRGB(2f, 16f, 47f, 100f)		},
+			{ "Catawba",									CIELabFromRGB(44f, 21f, 26f, 100f)		},
+			{ "Cedar Chest",								CIELabFromRGB(79f, 35f, 29f, 100f)		},
+			{ "Ceil",										CIELabFromRGB(57f, 63f, 81f, 100f)		},
+			{ "Celadon",									CIELabFromRGB(67f, 88f, 69f, 100f)		},
+			{ "Celadon Blue",								CIELabFromRGB(0f, 48f, 65f, 100f)		},
+			{ "Celadon Green",								CIELabFromRGB(18f, 52f, 49f, 100f)		},
+			{ "Celeste",									CIELabFromRGB(70f, 100f, 100f, 100f)	},
+			{ "Celestial Blue",								CIELabFromRGB(29f, 59f, 82f, 100f)		},
+			{ "Cerise",										CIELabFromRGB(87f, 19f, 39f, 100f)		},
+			{ "Cerise Pink",								CIELabFromRGB(93f, 23f, 51f, 100f)		},
+			{ "Cerulean",									CIELabFromRGB(0f, 48f, 65f, 100f)		},
+			{ "Cerulean Blue",								CIELabFromRGB(16f, 32f, 75f, 100f)		},
+			{ "Cerulean Frost",								CIELabFromRGB(43f, 61f, 76f, 100f)		},
+			{ "CG Blue",									CIELabFromRGB(0f, 48f, 65f, 100f)		},
+			{ "CG Red",										CIELabFromRGB(88f, 24f, 19f, 100f)		},
+			{ "Chamoisee",									CIELabFromRGB(63f, 47f, 35f, 100f)		},
+			{ "Champagne",									CIELabFromRGB(97f, 91f, 81f, 100f)		},
+			{ "Charcoal",									CIELabFromRGB(21f, 27f, 31f, 100f)		},
+			{ "Charleston Green",							CIELabFromRGB(14f, 17f, 17f, 100f)		},
+			{ "Charm Pink",									CIELabFromRGB(90f, 56f, 67f, 100f)		},
+			{ "Chartreuse (Traditional)",					CIELabFromRGB(87f, 100f, 0f, 100f)		},
+			{ "Chartreuse (Web)",							CIELabFromRGB(50f, 100f, 0f, 100f)		},
+			{ "Cherry",										CIELabFromRGB(87f, 19f, 39f, 100f)		},
+			{ "Cherry Blossom Pink",						CIELabFromRGB(100f, 72f, 77f, 100f)		},
+			{ "Chestnut",									CIELabFromRGB(58f, 27f, 21f, 100f)		},
+			{ "China Pink",									CIELabFromRGB(87f, 44f, 63f, 100f)		},
+			{ "China Rose",									CIELabFromRGB(66f, 32f, 43f, 100f)		},
+			{ "Chinese Red",								CIELabFromRGB(67f, 22f, 12f, 100f)		},
+			{ "Chinese Violet",								CIELabFromRGB(52f, 38f, 53f, 100f)		},
+			{ "Chocolate (Traditional)",					CIELabFromRGB(48f, 25f, 0f, 100f)		},
+			{ "Chocolate (Web)",							CIELabFromRGB(82f, 41f, 12f, 100f)		},
+			{ "Chrome Yellow",								CIELabFromRGB(100f, 65f, 0f, 100f)		},
+			{ "Cinereous",									CIELabFromRGB(60f, 51f, 48f, 100f)		},
+			{ "Cinnabar",									CIELabFromRGB(89f, 26f, 20f, 100f)		},
+			{ "Cinnamon",									CIELabFromRGB(82f, 41f, 12f, 100f)		},
+			{ "Citrine",									CIELabFromRGB(89f, 82f, 4f, 100f)		},
+			{ "Citron",										CIELabFromRGB(62f, 66f, 12f, 100f)		},
+			{ "Claret",										CIELabFromRGB(50f, 9f, 20f, 100f)		},
+			{ "Classic Rose",								CIELabFromRGB(98f, 80f, 91f, 100f)		},
+			{ "Cobalt Blue",								CIELabFromRGB(0f, 28f, 67f, 100f)		},
+			{ "Cocoa Brown",								CIELabFromRGB(82f, 41f, 12f, 100f)		},
+			{ "Coconut",									CIELabFromRGB(59f, 35f, 24f, 100f)		},
+			{ "Coffee",										CIELabFromRGB(44f, 31f, 22f, 100f)		},
+			{ "Columbia Blue",								CIELabFromRGB(77f, 85f, 89f, 100f)		},
+			{ "Congo Pink",									CIELabFromRGB(97f, 51f, 47f, 100f)		},
+			{ "Cool Black",									CIELabFromRGB(0f, 18f, 39f, 100f)		},
+			{ "Cool Grey",									CIELabFromRGB(55f, 57f, 67f, 100f)		},
+			{ "Copper",										CIELabFromRGB(72f, 45f, 20f, 100f)		},
+			{ "Copper (Crayola)",							CIELabFromRGB(85f, 54f, 40f, 100f)		},
+			{ "Copper Penny",								CIELabFromRGB(68f, 44f, 41f, 100f)		},
+			{ "Copper Red",									CIELabFromRGB(80f, 43f, 32f, 100f)		},
+			{ "Copper Rose",								CIELabFromRGB(60f, 40f, 40f, 100f)		},
+			{ "Coquelicot",									CIELabFromRGB(100f, 22f, 0f, 100f)		},
+			{ "Coral",										CIELabFromRGB(100f, 50f, 31f, 100f)		},
+			{ "Coral Pink",									CIELabFromRGB(97f, 51f, 47f, 100f)		},
+			{ "Coral Red",									CIELabFromRGB(100f, 25f, 25f, 100f)		},
+			{ "Cordovan",									CIELabFromRGB(54f, 25f, 27f, 100f)		},
+			{ "Corn",										CIELabFromRGB(98f, 93f, 36f, 100f)		},
+			{ "Cornell Red",								CIELabFromRGB(70f, 11f, 11f, 100f)		},
+			{ "Cornflower Blue",							CIELabFromRGB(39f, 58f, 93f, 100f)		},
+			{ "Cornsilk",									CIELabFromRGB(100f, 97f, 86f, 100f)		},
+			{ "Cosmic Latte",								CIELabFromRGB(100f, 97f, 91f, 100f)		},
+			{ "Coyote Brown",								CIELabFromRGB(51f, 38f, 24f, 100f)		},
+			{ "Cotton Candy",								CIELabFromRGB(100f, 74f, 85f, 100f)		},
+			{ "Cream",										CIELabFromRGB(100f, 99f, 82f, 100f)		},
+			{ "Crimson",									CIELabFromRGB(86f, 8f, 24f, 100f)		},
+			{ "Crimson Glory",								CIELabFromRGB(75f, 0f, 20f, 100f)		},
+			{ "Crimson Red",								CIELabFromRGB(60f, 0f, 0f, 100f)		},
+			{ "Cyan",										CIELabFromRGB(0f, 100f, 100f, 100f)		},
+			{ "Cyan Azure",									CIELabFromRGB(31f, 51f, 71f, 100f)		},
+			{ "Cyan-Blue Azure",							CIELabFromRGB(27f, 51f, 75f, 100f)		},
+			{ "Cyan Cobalt Blue",							CIELabFromRGB(16f, 35f, 61f, 100f)		},
+			{ "Cyan Cornflower Blue",						CIELabFromRGB(9f, 55f, 76f, 100f)		},
+			{ "Cyan (Process)",								CIELabFromRGB(0f, 72f, 92f, 100f)		},
+			{ "Cyber Grape",								CIELabFromRGB(35f, 26f, 49f, 100f)		},
+			{ "Cyber Yellow",								CIELabFromRGB(100f, 83f, 0f, 100f)		},
+			{ "Daffodil",									CIELabFromRGB(100f, 100f, 19f, 100f)	},
+			{ "Dandelion",									CIELabFromRGB(94f, 88f, 19f, 100f)		},
+			{ "Dark Blue",									CIELabFromRGB(0f, 0f, 55f, 100f)		},
+			{ "Dark Blue-Gray",								CIELabFromRGB(40f, 40f, 60f, 100f)		},
+			{ "Dark Brown",									CIELabFromRGB(40f, 26f, 13f, 100f)		},
+			{ "Dark Brown-Tangelo",							CIELabFromRGB(53f, 40f, 31f, 100f)		},
+			{ "Dark Byzantium",								CIELabFromRGB(36f, 22f, 33f, 100f)		},
+			{ "Dark Candy Apple Red",						CIELabFromRGB(64f, 0f, 0f, 100f)		},
+			{ "Dark Cerulean",								CIELabFromRGB(3f, 27f, 49f, 100f)		},
+			{ "Dark Chestnut",								CIELabFromRGB(60f, 41f, 38f, 100f)		},
+			{ "Dark Coral",									CIELabFromRGB(80f, 36f, 27f, 100f)		},
+			{ "Dark Cyan",									CIELabFromRGB(0f, 55f, 55f, 100f)		},
+			{ "Dark Electric Blue",							CIELabFromRGB(33f, 41f, 47f, 100f)		},
+			{ "Dark Goldenrod",								CIELabFromRGB(72f, 53f, 4f, 100f)		},
+			{ "Dark Gray (X11)",							CIELabFromRGB(66f, 66f, 66f, 100f)		},
+			{ "Dark Green",									CIELabFromRGB(0f, 20f, 13f, 100f)		},
+			{ "Dark Green (X11)",							CIELabFromRGB(0f, 39f, 0f, 100f)		},
+			{ "Dark Imperial Blue",							CIELabFromRGB(0f, 25f, 42f, 100f)		},
+			{ "Dark Imperial-er Blue",						CIELabFromRGB(0f, 8f, 49f, 100f)		},
+			{ "Dark Jungle Green",							CIELabFromRGB(10f, 14f, 13f, 100f)		},
+			{ "Dark Khaki",									CIELabFromRGB(74f, 72f, 42f, 100f)		},
+			{ "Dark Lava",									CIELabFromRGB(28f, 24f, 20f, 100f)		},
+			{ "Dark Lavender",								CIELabFromRGB(45f, 31f, 59f, 100f)		},
+			{ "Dark Liver",									CIELabFromRGB(33f, 29f, 31f, 100f)		},
+			{ "Dark Liver (Horses)",						CIELabFromRGB(33f, 24f, 22f, 100f)		},
+			{ "Dark Magenta",								CIELabFromRGB(55f, 0f, 55f, 100f)		},
+			{ "Dark Medium Gray",							CIELabFromRGB(66f, 66f, 66f, 100f)		},
+			{ "Dark Midnight Blue",							CIELabFromRGB(0f, 20f, 40f, 100f)		},
+			{ "Dark Moss Green",							CIELabFromRGB(29f, 36f, 14f, 100f)		},
+			{ "Dark Olive Green",							CIELabFromRGB(33f, 42f, 18f, 100f)		},
+			{ "Dark Orange",								CIELabFromRGB(100f, 55f, 0f, 100f)		},
+			{ "Dark Orchid",								CIELabFromRGB(60f, 20f, 80f, 100f)		},
+			{ "Dark Pastel Blue",							CIELabFromRGB(47f, 62f, 80f, 100f)		},
+			{ "Dark Pastel Green",							CIELabFromRGB(1f, 75f, 24f, 100f)		},
+			{ "Dark Pastel Purple",							CIELabFromRGB(59f, 44f, 84f, 100f)		},
+			{ "Dark Pastel Red",							CIELabFromRGB(76f, 23f, 13f, 100f)		},
+			{ "Dark Pink",									CIELabFromRGB(91f, 33f, 50f, 100f)		},
+			{ "Dark Powder Blue",							CIELabFromRGB(0f, 20f, 60f, 100f)		},
+			{ "Dark Puce",									CIELabFromRGB(31f, 23f, 24f, 100f)		},
+			{ "Dark Purple",								CIELabFromRGB(19f, 10f, 20f, 100f)		},
+			{ "Dark Raspberry",								CIELabFromRGB(53f, 15f, 34f, 100f)		},
+			{ "Dark Red",									CIELabFromRGB(55f, 0f, 0f, 100f)		},
+			{ "Dark Salmon",								CIELabFromRGB(91f, 59f, 48f, 100f)		},
+			{ "Dark Scarlet",								CIELabFromRGB(34f, 1f, 10f, 100f)		},
+			{ "Dark Sea Green",								CIELabFromRGB(56f, 74f, 56f, 100f)		},
+			{ "Dark Sienna",								CIELabFromRGB(24f, 8f, 8f, 100f)		},
+			{ "Dark Sky Blue",								CIELabFromRGB(55f, 75f, 84f, 100f)		},
+			{ "Dark Slate Blue",							CIELabFromRGB(28f, 24f, 55f, 100f)		},
+			{ "Dark Slate Gray",							CIELabFromRGB(18f, 31f, 31f, 100f)		},
+			{ "Dark Spring Green",							CIELabFromRGB(9f, 45f, 27f, 100f)		},
+			{ "Dark Tan",									CIELabFromRGB(57f, 51f, 32f, 100f)		},
+			{ "Dark Tangerine",								CIELabFromRGB(100f, 66f, 7f, 100f)		},
+			{ "Dark Taupe",									CIELabFromRGB(28f, 24f, 20f, 100f)		},
+			{ "Dark Terra Cotta",							CIELabFromRGB(80f, 31f, 36f, 100f)		},
+			{ "Dark Turquoise",								CIELabFromRGB(0f, 81f, 82f, 100f)		},
+			{ "Dark Vanilla",								CIELabFromRGB(82f, 75f, 66f, 100f)		},
+			{ "Dark Violet",								CIELabFromRGB(58f, 0f, 83f, 100f)		},
+			{ "Dark Yellow",								CIELabFromRGB(61f, 53f, 5f, 100f)		},
+			{ "Dartmouth Green",							CIELabFromRGB(0f, 44f, 24f, 100f)		},
+			{ "Davy's Grey",								CIELabFromRGB(33f, 33f, 33f, 100f)		},
+			{ "Debian Red",									CIELabFromRGB(84f, 4f, 33f, 100f)		},
+			{ "Deep Aquamarine",							CIELabFromRGB(25f, 51f, 43f, 100f)		},
+			{ "Deep Carmine",								CIELabFromRGB(66f, 13f, 24f, 100f)		},
+			{ "Deep Carmine Pink",							CIELabFromRGB(94f, 19f, 22f, 100f)		},
+			{ "Deep Carrot Orange",							CIELabFromRGB(91f, 41f, 17f, 100f)		},
+			{ "Deep Cerise",								CIELabFromRGB(85f, 20f, 53f, 100f)		},
+			{ "Deep Champagne",								CIELabFromRGB(98f, 84f, 65f, 100f)		},
+			{ "Deep Chestnut",								CIELabFromRGB(73f, 31f, 28f, 100f)		},
+			{ "Deep Coffee",								CIELabFromRGB(44f, 26f, 25f, 100f)		},
+			{ "Deep Fuchsia",								CIELabFromRGB(76f, 33f, 76f, 100f)		},
+			{ "Deep Green",									CIELabFromRGB(2f, 40f, 3f, 100f)		},
+			{ "Deep Green-Cyan Turquoise",					CIELabFromRGB(5f, 49f, 38f, 100f)		},
+			{ "Deep Jungle Green",							CIELabFromRGB(0f, 29f, 29f, 100f)		},
+			{ "Deep Koamaru",								CIELabFromRGB(20f, 20f, 40f, 100f)		},
+			{ "Deep Lemon",									CIELabFromRGB(96f, 78f, 10f, 100f)		},
+			{ "Deep Lilac",									CIELabFromRGB(60f, 33f, 73f, 100f)		},
+			{ "Deep Magenta",								CIELabFromRGB(80f, 0f, 80f, 100f)		},
+			{ "Deep Maroon",								CIELabFromRGB(51f, 0f, 0f, 100f)		},
+			{ "Deep Mauve",									CIELabFromRGB(83f, 45f, 83f, 100f)		},
+			{ "Deep Moss Green",							CIELabFromRGB(21f, 37f, 23f, 100f)		},
+			{ "Deep Peach",									CIELabFromRGB(100f, 80f, 64f, 100f)		},
+			{ "Deep Pink",									CIELabFromRGB(100f, 8f, 58f, 100f)		},
+			{ "Deep Puce",									CIELabFromRGB(66f, 36f, 41f, 100f)		},
+			{ "Deep Red",									CIELabFromRGB(52f, 0f, 0f, 100f)		},
+			{ "Deep Ruby",									CIELabFromRGB(52f, 25f, 36f, 100f)		},
+			{ "Deep Saffron",								CIELabFromRGB(100f, 60f, 20f, 100f)		},
+			{ "Deep Sky Blue",								CIELabFromRGB(0f, 75f, 100f, 100f)		},
+			{ "Deep Space Sparkle",							CIELabFromRGB(29f, 39f, 42f, 100f)		},
+			{ "Deep Spring Bud",							CIELabFromRGB(33f, 42f, 18f, 100f)		},
+			{ "Deep Taupe",									CIELabFromRGB(49f, 37f, 38f, 100f)		},
+			{ "Deep Tuscan Red",							CIELabFromRGB(40f, 26f, 30f, 100f)		},
+			{ "Deep Violet",								CIELabFromRGB(20f, 0f, 40f, 100f)		},
+			{ "Deer",										CIELabFromRGB(73f, 53f, 35f, 100f)		},
+			{ "Denim",										CIELabFromRGB(8f, 38f, 74f, 100f)		},
+			{ "Desaturated Cyan",							CIELabFromRGB(40f, 60f, 60f, 100f)		},
+			{ "Desert",										CIELabFromRGB(76f, 60f, 42f, 100f)		},
+			{ "Desert Sand",								CIELabFromRGB(93f, 79f, 69f, 100f)		},
+			{ "Desire",										CIELabFromRGB(92f, 24f, 33f, 100f)		},
+			{ "Diamond",									CIELabFromRGB(73f, 95f, 100f, 100f)		},
+			{ "Dim Gray",									CIELabFromRGB(41f, 41f, 41f, 100f)		},
+			{ "Dirt",										CIELabFromRGB(61f, 46f, 33f, 100f)		},
+			{ "Dodger Blue",								CIELabFromRGB(12f, 56f, 100f, 100f)		},
+			{ "Dogwood Rose",								CIELabFromRGB(84f, 9f, 41f, 100f)		},
+			{ "Dollar Bill",								CIELabFromRGB(52f, 73f, 40f, 100f)		},
+			{ "Donkey Brown",								CIELabFromRGB(40f, 30f, 16f, 100f)		},
+			{ "Drab",										CIELabFromRGB(59f, 44f, 9f, 100f)		},
+			{ "Duke Blue",									CIELabFromRGB(0f, 0f, 61f, 100f)		},
+			{ "Dust Storm",									CIELabFromRGB(90f, 80f, 79f, 100f)		},
+			{ "Dutch White",								CIELabFromRGB(94f, 87f, 73f, 100f)		},
+			{ "Earth Yellow",								CIELabFromRGB(88f, 66f, 37f, 100f)		},
+			{ "Ebony",										CIELabFromRGB(33f, 36f, 31f, 100f)		},
+			{ "Ecru",										CIELabFromRGB(76f, 70f, 50f, 100f)		},
+			{ "Eerie Black",								CIELabFromRGB(11f, 11f, 11f, 100f)		},
+			{ "Eggplant",									CIELabFromRGB(38f, 25f, 32f, 100f)		},
+			{ "Eggshell",									CIELabFromRGB(94f, 92f, 84f, 100f)		},
+			{ "Egyptian Blue",								CIELabFromRGB(6f, 20f, 65f, 100f)		},
+			{ "Electric Blue",								CIELabFromRGB(49f, 98f, 100f, 100f)		},
+			{ "Electric Crimson",							CIELabFromRGB(100f, 0f, 25f, 100f)		},
+			{ "Electric Cyan",								CIELabFromRGB(0f, 100f, 100f, 100f)		},
+			{ "Electric Green",								CIELabFromRGB(0f, 100f, 0f, 100f)		},
+			{ "Electric Indigo",							CIELabFromRGB(44f, 0f, 100f, 100f)		},
+			{ "Electric Lavender",							CIELabFromRGB(96f, 73f, 100f, 100f)		},
+			{ "Electric Lime",								CIELabFromRGB(80f, 100f, 0f, 100f)		},
+			{ "Electric Purple",							CIELabFromRGB(75f, 0f, 100f, 100f)		},
+			{ "Electric Ultramarine",						CIELabFromRGB(25f, 0f, 100f, 100f)		},
+			{ "Electric Violet",							CIELabFromRGB(56f, 0f, 100f, 100f)		},
+			{ "Electric Yellow",							CIELabFromRGB(100f, 100f, 20f, 100f)	},
+			{ "Emerald",									CIELabFromRGB(31f, 78f, 47f, 100f)		},
+			{ "Eminence",									CIELabFromRGB(42f, 19f, 51f, 100f)		},
+			{ "English Green",								CIELabFromRGB(11f, 30f, 24f, 100f)		},
+			{ "English Lavender",							CIELabFromRGB(71f, 51f, 58f, 100f)		},
+			{ "English Red",								CIELabFromRGB(67f, 29f, 32f, 100f)		},
+			{ "English Violet",								CIELabFromRGB(34f, 24f, 36f, 100f)		},
+			{ "Eton Blue",									CIELabFromRGB(59f, 78f, 64f, 100f)		},
+			{ "Eucalyptus",									CIELabFromRGB(27f, 84f, 66f, 100f)		},
+			{ "Fallow",										CIELabFromRGB(76f, 60f, 42f, 100f)		},
+			{ "Falu Red",									CIELabFromRGB(50f, 9f, 9f, 100f)		},
+			{ "Fandango",									CIELabFromRGB(71f, 20f, 54f, 100f)		},
+			{ "Fandango Pink",								CIELabFromRGB(87f, 32f, 52f, 100f)		},
+			{ "Fashion Fuchsia",							CIELabFromRGB(96f, 0f, 63f, 100f)		},
+			{ "Fawn",										CIELabFromRGB(90f, 67f, 44f, 100f)		},
+			{ "Feldgrau",									CIELabFromRGB(30f, 36f, 33f, 100f)		},
+			{ "Feldspar",									CIELabFromRGB(99f, 84f, 69f, 100f)		},
+			{ "Fern Green",									CIELabFromRGB(31f, 47f, 26f, 100f)		},
+			{ "Ferrari Red",								CIELabFromRGB(100f, 16f, 0f, 100f)		},
+			{ "Field Drab",									CIELabFromRGB(42f, 33f, 12f, 100f)		},
+			{ "Firebrick",									CIELabFromRGB(70f, 13f, 13f, 100f)		},
+			{ "Fire Engine Red",							CIELabFromRGB(81f, 13f, 16f, 100f)		},
+			{ "Flame",										CIELabFromRGB(89f, 35f, 13f, 100f)		},
+			{ "Flamingo Pink",								CIELabFromRGB(99f, 56f, 67f, 100f)		},
+			{ "Flattery",									CIELabFromRGB(42f, 27f, 14f, 100f)		},
+			{ "Flavescent",									CIELabFromRGB(97f, 91f, 56f, 100f)		},
+			{ "Flax",										CIELabFromRGB(93f, 86f, 51f, 100f)		},
+			{ "Flirt",										CIELabFromRGB(64f, 0f, 43f, 100f)		},
+			{ "Floral White",								CIELabFromRGB(100f, 98f, 94f, 100f)		},
+			{ "Fluorescent Orange",							CIELabFromRGB(100f, 75f, 0f, 100f)		},
+			{ "Fluorescent Pink",							CIELabFromRGB(100f, 8f, 58f, 100f)		},
+			{ "Fluorescent Yellow",							CIELabFromRGB(80f, 100f, 0f, 100f)		},
+			{ "Folly",										CIELabFromRGB(100f, 0f, 31f, 100f)		},
+			{ "Forest Green (Traditional)",					CIELabFromRGB(0f, 27f, 13f, 100f)		},
+			{ "Forest Green (Web)",							CIELabFromRGB(13f, 55f, 13f, 100f)		},
+			{ "French Beige",								CIELabFromRGB(65f, 48f, 36f, 100f)		},
+			{ "French Bistre",								CIELabFromRGB(52f, 43f, 30f, 100f)		},
+			{ "French Blue",								CIELabFromRGB(0f, 45f, 73f, 100f)		},
+			{ "French Fuchsia",								CIELabFromRGB(99f, 25f, 57f, 100f)		},
+			{ "French Lilac",								CIELabFromRGB(53f, 38f, 56f, 100f)		},
+			{ "French Lime",								CIELabFromRGB(62f, 99f, 22f, 100f)		},
+			{ "French Mauve",								CIELabFromRGB(83f, 45f, 83f, 100f)		},
+			{ "French Pink",								CIELabFromRGB(99f, 42f, 62f, 100f)		},
+			{ "French Plum",								CIELabFromRGB(51f, 8f, 33f, 100f)		},
+			{ "French Puce",								CIELabFromRGB(31f, 9f, 4f, 100f)		},
+			{ "French Raspberry",							CIELabFromRGB(78f, 17f, 28f, 100f)		},
+			{ "French Rose",								CIELabFromRGB(96f, 29f, 54f, 100f)		},
+			{ "French Sky Blue",							CIELabFromRGB(47f, 71f, 100f, 100f)		},
+			{ "French Violet",								CIELabFromRGB(53f, 2f, 81f, 100f)		},
+			{ "French Wine",								CIELabFromRGB(67f, 12f, 27f, 100f)		},
+			{ "Fresh Air",									CIELabFromRGB(65f, 91f, 100f, 100f)		},
+			{ "Fuchsia",									CIELabFromRGB(100f, 0f, 100f, 100f)		},
+			{ "Fuchsia (Crayola)",							CIELabFromRGB(76f, 33f, 76f, 100f)		},
+			{ "Fuchsia Pink",								CIELabFromRGB(100f, 47f, 100f, 100f)	},
+			{ "Fuchsia Purple",								CIELabFromRGB(80f, 22f, 48f, 100f)		},
+			{ "Fuchsia Rose",								CIELabFromRGB(78f, 26f, 46f, 100f)		},
+			{ "Fulvous",									CIELabFromRGB(89f, 52f, 0f, 100f)		},
+			{ "Fuzzy Wuzzy",								CIELabFromRGB(80f, 40f, 40f, 100f)		},
 			{ "Gainsboro",									CIELabFromRGB(86f, 86f, 86f, 100f) },
 			{ "Gamboge",									CIELabFromRGB(89f, 61f, 6f, 100f) },
 			{ "Gamboge Orange (Brown)",						CIELabFromRGB(60f, 40f, 0f, 100f) },
@@ -1525,7 +1544,7 @@ namespace ProBuilder2.Common
 			{ "Yellow Rose",								CIELabFromRGB(100f, 94f, 0f, 100f) },
 			{ "Zaffre",										CIELabFromRGB(0f, 8f, 66f, 100f) },
 			{ "Zinnwaldite Brown",							CIELabFromRGB(17f, 9f, 3f, 100f) },
-			{ "Zomp",										CIELabFromRGB(22f, 65f, 56f, 100f) }					
+			{ "Zomp",										CIELabFromRGB(22f, 65f, 56f, 100f) }
 		};
 	}
 }

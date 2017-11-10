@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class NewBezierShape : pb_MenuAction
+	class NewBezierShape : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/NewBezierSpline", IconSkin.Pro); } }
@@ -46,7 +46,7 @@ namespace ProBuilder2.Actions
 			bezier.Refresh();
 			pb_EditorUtility.InitObject(pb);
 			pb_Selection.SetSelection(go);
-			pbUndo.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
+			pb_Undo.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
 			bezier.m_IsEditing = true;
 
 			return new pb_ActionResult(Status.Success, "Create Bezier Shape");

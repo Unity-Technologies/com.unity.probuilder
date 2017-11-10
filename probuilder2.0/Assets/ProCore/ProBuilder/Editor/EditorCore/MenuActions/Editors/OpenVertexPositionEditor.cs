@@ -6,7 +6,7 @@ using ProBuilder2.Interface;
 
 namespace ProBuilder2.Actions
 {
-	public class OpenVertexPositionEditor : pb_MenuAction
+	class OpenVertexPositionEditor : pb_MenuAction
 	{
 		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Tool; } }
 		public override Texture2D icon { get { return null; } }
@@ -24,7 +24,7 @@ namespace ProBuilder2.Actions
 			return pb_Editor.instance != null;
 		}
 
-		public override bool IsHidden() 
+		public override bool IsHidden()
 		{
 			return true;
 		}

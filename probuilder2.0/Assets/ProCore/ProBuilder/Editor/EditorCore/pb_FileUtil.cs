@@ -10,10 +10,10 @@ using Object = UnityEngine.Object;
 
 namespace ProBuilder2.EditorCommon
 {
-	/**
-	 *	Helper functions for working with files and directories.
-	 */
-	public static class pb_FileUtil
+	/// <summary>
+	/// Helper functions for working with files and directories.
+	/// </summary>
+	static class pb_FileUtil
 	{
 		// ProBuilder folder path.
 		private static string m_ProBuilderFolderPath = "unitypackagemanager/com.unity.probuilder/ProCore/ProBuilder/";
