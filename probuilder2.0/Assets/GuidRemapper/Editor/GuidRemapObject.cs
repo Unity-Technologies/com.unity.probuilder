@@ -118,7 +118,7 @@ namespace UnityEditor.GuidRemap
 			{
 				foreach (string str in pattern)
 				{
-					string relative = str.Replace(Application.dataPath, "Assets");
+					string relative = str.Replace("\\", "/").Replace(Application.dataPath, "Assets");
 
 					if (!relative.EndsWith(".meta"))
 					{
