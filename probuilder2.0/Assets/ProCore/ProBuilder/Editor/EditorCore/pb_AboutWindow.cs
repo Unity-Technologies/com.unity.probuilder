@@ -91,9 +91,11 @@ namespace ProBuilder2.EditorCommon
 		{
 			pb_AboutEntry about;
 
-			if(!pb_VersionUtil.GetAboutEntry(out about))
+			if (!pb_VersionUtil.GetAboutEntry(out about))
 			{
-				Debug.LogWarning("Couldn't find pb_AboutEntry_ProBuilder.txt");
+				if(fromMenu)
+					pb_Log.Warning("Could not find about text file for ProBuilder.");
+				
 				return false;
 			}
 
