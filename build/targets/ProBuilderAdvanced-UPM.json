@@ -26,6 +26,7 @@
 		{ "Command":"mkdir", "Arguments": [ "$UPM_PACKAGE_DIR/ProCore" ] },
 		{ "Command":"cp", "Arguments": [ "$DST_PB_ROOT", "$UPM_PACKAGE_DIR/ProCore/ProBuilder" ] },
 		{ "Command":"cp", "Arguments": [ "$DST_PB_ROOT/About/changelog.txt", "$UPM_PACKAGE_DIR/CHANGELOG.md" ] },
+		{ "Command": "rm", "Arguments": [ "$UPM_PACKAGE_DIR/ProCore/ProBuilder/API Examples"]}
 		{ "Command":"cp", "Arguments": [ "README.md", "$UPM_PACKAGE_DIR/README.md" ] },
 		{ "Command":"rm", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION" ] },
 	]

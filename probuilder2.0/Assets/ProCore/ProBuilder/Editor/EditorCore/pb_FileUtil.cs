@@ -24,7 +24,8 @@ namespace ProBuilder2.EditorCommon
 		private static string[] k_PossibleInstallDirectories = new string[]
 		{
 			// 2018.1 package manager
-			"packages/",
+			"Packages/",
+			"Packages/com.unity.probuilder/",
 			// todo remove
 			"unitypackagemanager/",
 			// installed from asset store or source
