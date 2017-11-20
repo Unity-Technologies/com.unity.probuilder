@@ -18,6 +18,10 @@ namespace ProBuilder.BuildSystem
 		// Any defined properties in this target will override base.
 		public string Base;
 
+		// If `Base` is defined any properties listed in the `AppendToBase` will be appended to the base value instead
+		// of overwritten (exempting Name, which is always overwritten).
+		public List<string> AppendToBase;
+
 		// Possible paths to Unity directory (`%USER%\Program Files\Unity` or `/Applications/Unity.app`).
 		public List<string> UnityPath;
 
@@ -82,28 +86,58 @@ namespace ProBuilder.BuildSystem
 				this.Name = target.Name;
 
 			if( target.UnityPath != null && target.UnityPath.Count > 0 )
-				this.UnityPath = target.UnityPath;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("UnityPath"))
+					this.UnityPath.AddRange(target.UnityPath);
+				else
+					this.UnityPath = target.UnityPath;
 
 			if( target.Macros != null && target.Macros.Count > 0 )
+			{
+				if(target.AppendToBase != null && target.AppendToBase.Contains("Macros"))
+				{
+					foreach(var kvp in this.Macros)
+						if(!target.Macros.ContainsKey(kvp.Key))
+							target.Macros.Add(kvp.Key, kvp.Value);
+				}
+
 				this.Macros = target.Macros;
+			}
 
 			if( target.ReferenceSearchPaths != null && target.ReferenceSearchPaths.Count > 0 )
-				this.ReferenceSearchPaths = target.ReferenceSearchPaths;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("ReferenceSearchPaths"))
+					this.ReferenceSearchPaths.AddRange(target.ReferenceSearchPaths);
+				else
+					this.ReferenceSearchPaths = target.ReferenceSearchPaths;
 
 			if( target.ReferencedAssemblies != null && target.ReferencedAssemblies.Count > 0 )
-				this.ReferencedAssemblies = target.ReferencedAssemblies;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("ReferencedAssemblies"))
+					this.ReferencedAssemblies.AddRange(target.ReferencedAssemblies);
+				else
+					this.ReferencedAssemblies = target.ReferencedAssemblies;
 
 			if( target.Defines != null && target.Defines.Count > 0 )
-				this.Defines = target.Defines;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("Defines"))
+					this.Defines.AddRange(target.Defines);
+				else
+					this.Defines = target.Defines;
 
 			if( target.OnPreBuild != null && target.OnPreBuild.Count > 0 )
-				this.OnPreBuild = target.OnPreBuild;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("OnPreBuild"))
+					this.OnPreBuild.AddRange(target.OnPreBuild);
+				else
+					this.OnPreBuild = target.OnPreBuild;
 
 			if( target.OnPostBuild != null && target.OnPostBuild.Count > 0 )
-				this.OnPostBuild = target.OnPostBuild;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("OnPostBuild"))
+					this.OnPostBuild.AddRange(target.OnPostBuild);
+				else
+					this.OnPostBuild = target.OnPostBuild;
 
 			if( target.Assemblies != null && target.Assemblies.Count > 0 )
-				this.Assemblies = target.Assemblies;
+				if(target.AppendToBase != null && target.AppendToBase.Contains("Assemblies"))
+					this.Assemblies.AddRange(target.Assemblies);
+				else
+					this.Assemblies = target.Assemblies;
 		}
 	}
 }

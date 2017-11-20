@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Linq;
 using SimpleJson;
 
@@ -11,7 +12,7 @@ using SimpleJson;
 namespace ProBuilder.BuildSystem
 {
 	/**
-	 *	Build system for ProBuilder, capable of creating Unity projects & UnityPackage files.
+	 * Build system for ProBuilder, capable of creating Unity projects & UnityPackage files.
 	 */
 	public static class BuildManager
 	{
@@ -217,7 +218,17 @@ namespace ProBuilder.BuildSystem
 		{
 			try
 			{
-				BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(File.ReadAllText(path));
+				StringBuilder sb = new StringBuilder();
+
+				foreach(string line in File.ReadAllLines(path))
+				{
+					string trim = line.Trim();
+
+					if( !trim.StartsWith("//") && !trim.StartsWith("#") )
+						sb.AppendLine(line);
+				}
+
+				BuildTarget t = SimpleJson.SimpleJson.DeserializeObject<BuildTarget>(sb.ToString());
 
 				if(t.Macros == null)
 					t.Macros = new Dictionary<string, string>();
@@ -238,7 +249,7 @@ namespace ProBuilder.BuildSystem
 				{
 					if(!allowRecurse)
 					{
-						Log.Critical("Base build target depth > 1. Currently this is not allowed.");
+						Log.Critical("Base build target base recursion > 2. Currently this is not allowed.");
 						return null;
 					}
 
