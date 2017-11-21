@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "Hidden/ProBuilder/NormalPreview"
 {
@@ -39,7 +41,7 @@ Shader "Hidden/ProBuilder/NormalPreview"
 			{
 				v2f o;
 
-				float4 world = mul(_Object2World, v.vertex);
+				float4 world = mul(unity_ObjectToWorld, v.vertex);
 				float3 nrm = UnityObjectToWorldNormal(v.tangent.xyz);
 				float4 extruded = world + float4((nrm * v.tangent.w * _Scale), 0);
 				o.pos = mul(UNITY_MATRIX_VP, extruded);

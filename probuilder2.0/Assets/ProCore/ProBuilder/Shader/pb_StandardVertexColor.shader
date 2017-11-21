@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 /**
  *  This shader was created with Shaderforge but contains multiple manual edits.
  *  If you modify this shader make sure to go through and pack uv1 and uv2 channels
@@ -31,7 +33,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma vertex vert
             #pragma fragment frag
             #define unity_ObjectToWorld UNITY_MATRIX_MVP
-            #define UnityObjectToClipPos(x) mul(UNITY_MATRIX_MVP, x)
+            #define UnityObjectToClipPos(x) UnityObjectToClipPos(x)
             #define UNITY_PASS_FORWARDBASE
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
@@ -222,7 +224,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma vertex vert
             #pragma fragment frag
             #define unity_ObjectToWorld UNITY_MATRIX_MVP
-            #define UnityObjectToClipPos(x) mul(UNITY_MATRIX_MVP, x)
+            #define UnityObjectToClipPos(x) UnityObjectToClipPos(x)
             #define UNITY_PASS_FORWARDADD
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
@@ -349,7 +351,7 @@ Shader "ProBuilder/Standard Vertex Color" {
             #pragma vertex vert
             #pragma fragment frag
             #define unity_ObjectToWorld UNITY_MATRIX_MVP
-            #define UnityObjectToClipPos(x) mul(UNITY_MATRIX_MVP, x)
+            #define UnityObjectToClipPos(x) UnityObjectToClipPos(x)
             #define UNITY_PASS_META 1
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
