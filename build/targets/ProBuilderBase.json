@@ -25,22 +25,22 @@
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Shader"] },
 		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/Shader" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/Shader", "$DST_PB_ROOT/Shader" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll.meta" ] },
-		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderCore-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderMeshOps-Unity5.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/$UNITY_VERSION/ProBuilderEditor-Unity5.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "$TARGET_DIR/resources/AssetStoreTools", "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION/Assets/AssetStoreTools" ] },
 	],
 	"Assemblies":
 	[
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
-			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore.dll",
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
-			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
 			"ReferencedAssemblies": [
-				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
@@ -48,14 +48,14 @@
 		},
 		{
 			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
-			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor-Unity5.dll",
+			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor.dll",
 			"Defines": [
 				"UNITY_EDITOR"
 			],
 			"ReferencedAssemblies": [
 				"UnityEditor.dll",
-				"$DST_PB_ROOT/Classes/ProBuilderCore-Unity5.dll",
-				"$DST_PB_ROOT/Classes/ProBuilderMeshOps-Unity5.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"

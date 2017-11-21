@@ -5,9 +5,9 @@ using System.Collections;
 
 namespace ProBuilder2.Common
 {
-	/**
-	 * Utilities for working with UnityEngine.Mesh.
-	 */
+	/// <summary>
+	/// Utilities for working with UnityEngine.Mesh.
+	/// </summary>
 	public class pb_MeshUtility
 	{
 		/**
@@ -44,9 +44,15 @@ namespace ProBuilder2.Common
 			return tv;
 		}
 
-		/**
-		 * Collapse vertices where possible and apply to mesh m.
-		 */
+		/// <summary>
+		/// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
+		/// </summary>
+		/// <param name="m">The mesh to optimize.</param>
+		/// <param name="vertices">
+		/// If provided these values are used in place of extracting attributes from the Mesh.
+		/// This is a performance optimization for when this array already exists. If not provided this array will be
+		/// automatically generated for you.
+		/// </param>
 		public static void CollapseSharedVertices(Mesh m, pb_Vertex[] vertices = null)
 		{
 			if(vertices == null)

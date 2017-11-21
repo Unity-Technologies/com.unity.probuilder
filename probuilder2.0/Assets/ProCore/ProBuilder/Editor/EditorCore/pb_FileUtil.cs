@@ -23,12 +23,8 @@ namespace ProBuilder2.EditorCommon
 		// The order is important - always search for the package manager installed version first
 		private static string[] k_PossibleInstallDirectories = new string[]
 		{
-			// 2018.1 package manager
-			"Packages/",
 			"Packages/com.unity.probuilder/",
-			// todo remove
-			"unitypackagemanager/",
-			// installed from asset store or source
+			"Packages/",
 			"Assets/",
 		};
 
