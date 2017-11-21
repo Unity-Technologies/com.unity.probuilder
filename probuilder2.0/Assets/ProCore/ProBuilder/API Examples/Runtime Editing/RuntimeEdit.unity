@@ -123,10 +123,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 549287195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e239496fc63271243ab37cc30b42a0e8, type: 3}
+  m_Script: {fileID: 11500000, guid: e1f51e11ca314414aab9a7d12c4403fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewMaterial: {fileID: 2100000, guid: c2ebcf09fae3a364b9b97caadd6b0017, type: 2}
+  previewMaterial: {fileID: 2100000, guid: 1a545e5486b4459393bb3abe5371805a, type: 2}
   rotateSpeed: 100
 --- !u!1 &646566838
 GameObject:
@@ -168,7 +168,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: 247a692b4ab40424eb62d238e05454d9, type: 2}
+  - {fileID: 2100000, guid: 175b8abfc9cf4503805d209baa7cc7b1, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -429,7 +429,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: a9b45cd97b8d5c64da839b63544e443d, type: 2}
+  - {fileID: 2100000, guid: 2b3fb47edde6489090bb347f6ebc6935, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0

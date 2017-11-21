@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: InvisibleFace
-  m_Shader: {fileID: 4800000, guid: 99ab5b57a637bdb4192babafc1298bee, type: 3}
+  m_Shader: {fileID: 4800000, guid: f3af4aa88c834fbbb65dab59c08f4ad8, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1

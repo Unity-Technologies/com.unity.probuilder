@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VertexPicker
-  m_Shader: {fileID: 4800000, guid: c59eb027aca1897448cd55f6fcb6e88f, type: 3}
+  m_Shader: {fileID: 4800000, guid: c10a6c3b9765499f9fa96e5c32686cf9, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0

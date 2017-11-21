@@ -19,7 +19,7 @@ RenderSettings:
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: de1a4762e946d7a439d86780c041e661, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: aa276ed2be5343ab89b6523279f9747e, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -262,7 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Texture: {fileID: 2800000, guid: d0260234d1358f84e89b381f81fe4228, type: 3}
+  m_Texture: {fileID: 2800000, guid: 5e65e46b4d9d4ed590fcc39d49f18f65, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -426,13 +426,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1253112521}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 846bc9a21176f194688069652bb1299b, type: 3}
+  m_Script: {fileID: 11500000, guid: fb8f43bff1e74ba9a71fbceaae84f50a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   icoRadius: 4.5
   icoSubdivisions: 2
   startingExtrusion: .300000012
-  material: {fileID: 2100000, guid: 6acb458e3627cfb47b3a6cc6e8cbde22, type: 2}
+  material: {fileID: 2100000, guid: 0eae63e05a9a4ad78ac0b76b03cf9566, type: 2}
   extrusion: 30
   fftBounds: 96
   verticalBounce: 1
@@ -944,7 +944,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1994557895}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32fdb03cf8ee6094c841dd6f93b3e66a, type: 3}
+  m_Script: {fileID: 11500000, guid: 912bb9b70e8a4e3489626fe00e75bf04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   orbitSpeed: 6
@@ -1001,7 +1001,7 @@ LineRenderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 6db7bfac3a973f84bbccc95d60c5dc34, type: 2}
+  - {fileID: 2100000, guid: 48536c6f025340eaa2b6ba340f0e1655, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1

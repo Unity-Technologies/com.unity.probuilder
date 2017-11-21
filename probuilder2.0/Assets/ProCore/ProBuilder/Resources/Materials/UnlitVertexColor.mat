@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: UnlitVertexColor
-  m_Shader: {fileID: 4800000, guid: 84f04ba86cd824249bb1c2029be83101, type: 3}
+  m_Shader: {fileID: 4800000, guid: b55e75ccb8834190b85c8c56cf377a18, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
