@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Information required to append a face to a pb_Object.

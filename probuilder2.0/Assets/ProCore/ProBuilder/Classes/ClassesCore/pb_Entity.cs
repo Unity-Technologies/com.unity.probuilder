@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Provides some additional functionality to GameObjects, like managing visiblity and colliders.

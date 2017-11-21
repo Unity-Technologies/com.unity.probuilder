@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu items for generating UV2s for selected or scene pb_Object meshes.

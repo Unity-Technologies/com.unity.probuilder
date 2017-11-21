@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A collection of constant values the ProBuilder uses regularly.

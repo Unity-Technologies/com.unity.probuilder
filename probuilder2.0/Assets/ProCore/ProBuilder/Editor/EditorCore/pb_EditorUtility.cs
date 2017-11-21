@@ -7,12 +7,12 @@ using System.Linq;
 using System;
 using System.Reflection;
 using System.IO;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Actions;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
-using ProBuilder2.Actions;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Delegate to be raised when a ProBuilder object is created.
@@ -566,7 +566,7 @@ namespace ProBuilder2.EditorCommon
 		/**
 		 *	CreateCachedEditor didn't exist until 5.0, so recreate it's contents if necessary or pass it on.
 		 */
-		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref Editor previousEditor) where T : Editor
+		public static void CreateCachedEditor<T>(UnityEngine.Object[] targetObjects, ref UnityEditor.Editor previousEditor) where T : UnityEditor.Editor
 		{
 			#if UNITY_4_7
 			if (previousEditor != null && pbUtil.IsEqual(previousEditor.targets, targetObjects) )
@@ -577,7 +577,7 @@ namespace ProBuilder2.EditorCommon
 
 			previousEditor = Editor.CreateEditor(targetObjects, typeof(T));
 			#else
-			Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
+			UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 			#endif
 		}
 

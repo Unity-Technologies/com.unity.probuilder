@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.EditorCommon;
+using ProBuilder.EditorCore;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Static delegates listen for hierarchy changes (duplication, delete, copy/paste) and rebuild the mesh components of pb_Objects if necessary.

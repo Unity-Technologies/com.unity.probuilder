@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace ProBuilder2.EditorCommon.DebugUtilities
+namespace ProBuilder.EditorCore.DebugUtilities
 {
 	/**
 	 * Create desaturated images from an image.

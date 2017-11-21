@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A mesh / material(s) structure. Mesh is destroyed with this object, materials are not.

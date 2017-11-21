@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Interface;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	class pb_DimensionsOverlay : pb_ISceneEditor
 	{

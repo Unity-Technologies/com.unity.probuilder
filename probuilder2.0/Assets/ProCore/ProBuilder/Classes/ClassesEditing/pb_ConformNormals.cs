@@ -1,9 +1,9 @@
 using UnityEngine;
-using ProBuilder2.Common;
 using System.Collections.Generic;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Methods for making sure adjacent face normals are consistent.

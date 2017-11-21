@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Hue (0,360), Saturation (0,1), Value (0,1)

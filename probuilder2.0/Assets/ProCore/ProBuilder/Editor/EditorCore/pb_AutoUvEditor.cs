@@ -5,11 +5,11 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.Interface;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Custom editor for pb_UV type.

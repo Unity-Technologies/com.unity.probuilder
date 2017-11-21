@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Utilities for working with pb_Object meshes.  The operations here only operate on the

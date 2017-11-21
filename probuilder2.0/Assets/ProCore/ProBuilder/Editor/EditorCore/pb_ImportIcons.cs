@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Asset post processor for ProBuilder icons.

@@ -13,11 +13,11 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.EditorCore;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	static class pb_Preferences
 	{

@@ -3,7 +3,7 @@
  */
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A set of common and local index edges.

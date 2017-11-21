@@ -2,9 +2,9 @@
 
 using UnityEngine;
 using System.Collections;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.Examples
+namespace ProBuilder.Examples
 {
 
 	/**

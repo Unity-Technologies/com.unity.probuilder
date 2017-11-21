@@ -1,5 +1,5 @@
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A bare-bones Tuple class. Holds 2 items, does not implement equality, comparison, or anything else.

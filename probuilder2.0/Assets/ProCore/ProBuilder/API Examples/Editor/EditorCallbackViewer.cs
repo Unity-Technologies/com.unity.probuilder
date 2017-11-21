@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder2.EditorCommon;	// pb_Editor and pb_EditorUtility
-using ProBuilder2.Interface;	// pb_GUI_Utility
-using ProBuilder2.Common;		// EditLevel
+using ProBuilder.EditorCore;	// pb_Editor and pb_EditorUtility
+using ProBuilder.Interface;	// pb_GUI_Utility
+using ProBuilder.Core;		// EditLevel
 using System.Linq;				// Sum()
 
 class EditorCallbackViewer : EditorWindow

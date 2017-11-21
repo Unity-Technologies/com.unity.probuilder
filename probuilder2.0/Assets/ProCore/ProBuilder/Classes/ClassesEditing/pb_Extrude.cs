@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Linq;
-using ProBuilder2.Common;
 using System.Collections.Generic;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// pb_Object extension methods for face and edge extrusion.

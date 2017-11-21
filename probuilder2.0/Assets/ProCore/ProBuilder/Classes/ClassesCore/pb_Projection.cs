@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Linq;	// List.Reverse
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Functions for projecting 3d points to 2d space.

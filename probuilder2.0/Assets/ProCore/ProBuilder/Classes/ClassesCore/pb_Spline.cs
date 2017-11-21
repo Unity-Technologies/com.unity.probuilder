@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	static class pb_Spline
 	{

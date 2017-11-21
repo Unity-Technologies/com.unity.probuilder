@@ -5,10 +5,10 @@ using UnityEngine.Rendering;
 #endif
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Where a preference is stored. Can be per-project or global.

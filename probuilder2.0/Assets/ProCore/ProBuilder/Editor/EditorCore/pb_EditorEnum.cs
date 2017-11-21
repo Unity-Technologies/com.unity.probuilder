@@ -1,5 +1,5 @@
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// The default tool to use when opening the vertex color editor from the pb_Editor window.

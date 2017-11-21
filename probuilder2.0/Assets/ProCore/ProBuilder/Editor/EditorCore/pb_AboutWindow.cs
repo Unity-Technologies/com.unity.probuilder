@@ -4,9 +4,9 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Used to pop up the window on import.
@@ -95,7 +95,7 @@ namespace ProBuilder2.EditorCommon
 			{
 				if(fromMenu)
 					pb_Log.Warning("Could not find about text file for ProBuilder.");
-				
+
 				return false;
 			}
 

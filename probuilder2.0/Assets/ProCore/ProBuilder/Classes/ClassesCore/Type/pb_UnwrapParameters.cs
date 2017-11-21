@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Store UV2 unwrapping parameters.

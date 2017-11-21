@@ -2,10 +2,10 @@
 using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.Test
+namespace ProBuilder.Test
 {
 	[TestFixture]
 	public class Subdivide

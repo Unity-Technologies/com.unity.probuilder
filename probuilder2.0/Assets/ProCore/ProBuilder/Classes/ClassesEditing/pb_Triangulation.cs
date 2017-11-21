@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 using Poly2Tri;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Wrapper around Triangle.NET triangulation methods. https://github.com/zon/triangle

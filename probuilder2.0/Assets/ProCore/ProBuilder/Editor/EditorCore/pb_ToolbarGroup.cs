@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	[System.Obsolete("Use pb_ToolbarGroup instead")]
 	public enum pb_IconGroup

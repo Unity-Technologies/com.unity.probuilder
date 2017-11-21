@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Describes the results of a pb_Action.

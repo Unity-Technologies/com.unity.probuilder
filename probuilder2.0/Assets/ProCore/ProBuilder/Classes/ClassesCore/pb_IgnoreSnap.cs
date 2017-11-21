@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// ProGridsNoSnapAttribute tells ProGrids to skip snapping on this object.

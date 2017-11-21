@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
 using UnityEditor;
 using UnityEngine;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Common troubleshooting actions for repairing ProBuilder meshes.

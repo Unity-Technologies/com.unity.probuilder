@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections;
 using System.Text.RegularExpressions;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Contains information that the pb_AboutEntry.txt file holds.

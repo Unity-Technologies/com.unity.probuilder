@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 using UnityEditor;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Addons that rely on scripting define symbols can be enabled / disabled here. This class is separated from the add-on scripts themselves and bundled in the DLL so that restarting Unity will unload scripting defines that are no longer available.

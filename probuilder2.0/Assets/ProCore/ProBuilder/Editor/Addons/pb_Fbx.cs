@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using System;
 using System.Linq;

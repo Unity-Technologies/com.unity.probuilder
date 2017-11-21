@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Utility for selecting a face loop.

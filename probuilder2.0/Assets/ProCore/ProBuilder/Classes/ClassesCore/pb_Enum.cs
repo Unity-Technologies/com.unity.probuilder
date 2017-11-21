@@ -5,7 +5,7 @@ using System.Collections;
 /**
  * Contains runtime enumerators.
  */
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Element selection mode.

@@ -1,8 +1,8 @@
+using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Responsible for managing the visibility of entity types in the scene.

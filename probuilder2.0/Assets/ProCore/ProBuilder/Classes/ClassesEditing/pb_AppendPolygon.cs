@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	static class pb_AppendPolygon
 	{

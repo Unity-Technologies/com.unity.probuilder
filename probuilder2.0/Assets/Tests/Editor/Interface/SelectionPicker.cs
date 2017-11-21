@@ -3,9 +3,9 @@
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.Test
+namespace ProBuilder.Test
 {
 	public class SelectionPicker
 	{

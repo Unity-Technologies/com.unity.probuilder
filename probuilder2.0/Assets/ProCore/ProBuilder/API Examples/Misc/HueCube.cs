@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR || UNITY_STANDALONE
 using UnityEngine;
 using System.Collections;
-using ProBuilder2.Common;
 using System.Collections.Generic;
+using ProBuilder.Core;
 
-namespace ProBuilder2.Examples
+namespace ProBuilder.Examples
 {
 	/**
 	 * Creates a cube on start and colors it's vertices programmitically.

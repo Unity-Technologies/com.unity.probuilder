@@ -1,10 +1,10 @@
 using UnityEditor;
 using UnityEngine;
-using ProBuilder2.Common;
 using System.Linq;
 using System.Collections.Generic;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Methods used in manipulating or creating Lightmaps.

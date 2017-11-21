@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.EditorCommon;
+using ProBuilder.EditorCore;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu interface for applying materials to pb_Object after upgrading from Basic to Advanced.

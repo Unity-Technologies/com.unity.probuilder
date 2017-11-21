@@ -4,9 +4,9 @@ using System.Collections;
 using System;
 using System.Linq;
 using System.Reflection;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Acts as a bridge between ProGrids and ProBuilder. Provides a delegate for push to grid events, and allows access to snap enabled, axis preference, and grid size values.

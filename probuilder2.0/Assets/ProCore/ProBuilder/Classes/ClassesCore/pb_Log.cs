@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Describes the various states of chatty-ness.

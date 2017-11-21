@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Options menu window container.

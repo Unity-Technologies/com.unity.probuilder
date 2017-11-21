@@ -1,10 +1,10 @@
 using UnityEngine;
-using ProBuilder2.Common;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Utilities for converting between triangle and quad topologies.

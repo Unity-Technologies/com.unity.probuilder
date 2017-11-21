@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Utilities for working with smoothing groups and hard / soft edges.

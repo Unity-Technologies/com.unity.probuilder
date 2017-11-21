@@ -3,9 +3,9 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Describes icon styles for pro and basic skin, or default (whatever the editor is currently using).

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Container for UV mapping parameters per face.

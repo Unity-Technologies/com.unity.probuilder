@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace ProBuilder2.Interface
+namespace ProBuilder.Interface
 {
 	/// <summary>
 	/// Additional GUI functions for Editor use.

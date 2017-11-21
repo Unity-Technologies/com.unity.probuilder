@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Enumerator for pb_WingedEdge.

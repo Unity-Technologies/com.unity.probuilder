@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.Collections;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	class pb_ISceneEditor : ScriptableObject, ISerializationCallbackReceiver
 	{

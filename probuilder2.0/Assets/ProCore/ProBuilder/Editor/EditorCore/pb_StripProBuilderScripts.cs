@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu items for stripping ProBuilder scripts from GameObjects.

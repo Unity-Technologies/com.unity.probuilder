@@ -4,7 +4,7 @@
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 using System.Collections;
 
 public class pb_SceneExplorer : EditorWindow

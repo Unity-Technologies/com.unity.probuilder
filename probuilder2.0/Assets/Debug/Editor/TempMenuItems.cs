@@ -8,9 +8,9 @@ using System;
 using System.Reflection;
 using KdTree;
 using KdTree.Math;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
+using ProBuilder.EditorCore;
 
 /**
  *	KdTree DLL compiled from https://github.com/procore3d/KdTree

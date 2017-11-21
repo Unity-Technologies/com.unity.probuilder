@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
 /**
  *	Move a sphere around the surface of a ProBuilder mesh, changing the
@@ -23,7 +23,7 @@ public class HighlightNearestFace : MonoBehaviour
 	void Start()
 	{
 		// Generate a 50x50 plane with 25 subdivisions, facing up, with no smoothing applied.
-		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder2.Common.Axis.Up);
+		target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder.Core.Axis.Up);
 
 		foreach (pb_Face face in target.faces)
 			face.material = pb_Constant.DefaultMaterial;

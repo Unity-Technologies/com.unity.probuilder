@@ -1,16 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
 using System.Linq;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
+using Object = UnityEngine.Object;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Contains Menu commands for most ProBuilder operations. Will also attempt to Update the pb_Editor.
 	/// </summary>
-	class pb_MenuCommands : Editor
+	class pb_MenuCommands : UnityEditor.Editor
 	{
 		private static pb_Editor editor { get { return pb_Editor.instance; } }
 
@@ -1101,7 +1103,7 @@ namespace ProBuilder2.EditorCommon
 					continue;
 
 				// work with face indices here 'cause copying breaks the face ref
-				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf(pb.faces, x)).ToArray();
+				int[] primary = pb.SelectedFaces.Select(x => System.Array.IndexOf((Array) pb.faces, x)).ToArray();
 
 				detachedFaceCount += primary.Length;
 

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Interface;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// An extended tooltip for use in pb_MenuAction.

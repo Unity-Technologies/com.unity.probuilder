@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace ProBuilder2.Examples
+namespace ProBuilder.Examples
 {
 	public class CameraControls : MonoBehaviour
 	{

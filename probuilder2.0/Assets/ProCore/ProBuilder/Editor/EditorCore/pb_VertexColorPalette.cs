@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	class pb_VertexColorPalette : EditorWindow
 	{

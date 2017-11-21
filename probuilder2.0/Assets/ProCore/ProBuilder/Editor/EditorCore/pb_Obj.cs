@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// A set of options used when exporting OBJ models.

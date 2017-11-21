@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Helper functions for working with Reflection.

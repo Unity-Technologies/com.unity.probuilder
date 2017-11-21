@@ -7,7 +7,7 @@ using System.IO;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
 /**
  * Export Unity packages for release - usually called from command line.

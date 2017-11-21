@@ -1,20 +1,20 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Custom editor for pb_Object type.
 	/// </summary>
 	[CustomEditor(typeof(pb_Object))]
 	[CanEditMultipleObjects]
-	class pb_ObjectEditor : Editor
+	class pb_ObjectEditor : UnityEditor.Editor
 	{
 		public delegate void OnGetFrameBoundsDelegate();
 

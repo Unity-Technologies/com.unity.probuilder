@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	enum VersionType
 	{

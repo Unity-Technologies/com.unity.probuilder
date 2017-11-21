@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Tooltip window implementation.

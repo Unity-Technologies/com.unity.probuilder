@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.MeshOperations;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// When building the project, remove all references to pb_Objects.

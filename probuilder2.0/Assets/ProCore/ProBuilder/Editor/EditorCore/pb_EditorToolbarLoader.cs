@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using Actions = ProBuilder2.Actions;
+using ProBuilder.Core;
+using Actions = ProBuilder.Actions;
 using System.Linq;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Responsible for loading menu actions in to the pb_Toolbar.

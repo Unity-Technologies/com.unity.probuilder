@@ -4,10 +4,10 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
 using System;
+using ProBuilder.Core;
 
-namespace ProBuilder2.Test
+namespace ProBuilder.Test
 {
 	public static class TestHashUtility
 	{

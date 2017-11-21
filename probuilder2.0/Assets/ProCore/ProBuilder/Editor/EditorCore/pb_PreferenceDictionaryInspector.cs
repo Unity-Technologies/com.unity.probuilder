@@ -1,11 +1,11 @@
+using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	[CustomEditor(typeof(pb_PreferenceDictionary))]
-	class pb_PreferenceDictionaryInspector : Editor
+	class pb_PreferenceDictionaryInspector : UnityEditor.Editor
 	{
 		private pb_PreferenceDictionary m_Preferences = null;
 		private Vector2 m_Scroll = Vector2.zero;

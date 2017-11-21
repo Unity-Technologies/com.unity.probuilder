@@ -1,8 +1,8 @@
 using UnityEngine;
-using ProBuilder2.Common;
 using System.Collections.Generic;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Methods for growing and shrinking element selections.

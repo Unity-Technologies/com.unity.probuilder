@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Inspector for working with pb_Object lightmap UV generation params.
 	/// </summary>
 	[CanEditMultipleObjects]
-	class pb_UnwrapParametersEditor : Editor
+	class pb_UnwrapParametersEditor : UnityEditor.Editor
 	{
 		SerializedProperty p;
 		GUIContent gc_unwrapParameters = new GUIContent("UV2 Generation Params", "Settings for how Unity unwraps the UV2 (lightmap) UVs");

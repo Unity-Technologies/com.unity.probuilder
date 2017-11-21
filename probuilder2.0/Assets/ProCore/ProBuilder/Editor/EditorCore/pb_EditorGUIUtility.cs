@@ -3,10 +3,10 @@ using UnityEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Common;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.Interface
+namespace ProBuilder.Interface
 {
 	/// <summary>
 	/// Generic GUI utility methods used in ProBuilder windows.

@@ -1,10 +1,10 @@
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class FlipObjectNormals : pb_MenuAction
 	{

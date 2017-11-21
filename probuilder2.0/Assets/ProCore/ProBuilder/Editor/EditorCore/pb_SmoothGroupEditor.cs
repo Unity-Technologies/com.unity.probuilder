@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 using UnityEditor;
 using UnityEngine;
-using ProBuilder2.Common;
-using ProBuilder2.Interface;
 using Object = UnityEngine.Object;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Smoothing groups editor window.

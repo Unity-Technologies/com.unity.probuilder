@@ -3,9 +3,9 @@ using UnityEditor;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Helper functions for working with Unity object selection & ProBuilder element selection.

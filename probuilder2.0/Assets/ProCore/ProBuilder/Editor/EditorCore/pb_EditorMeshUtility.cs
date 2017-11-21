@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
 using System;
 using System.IO;
 using System.Collections;
 using System.Linq;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Mesh editing helper functions that are only available in the Editor.

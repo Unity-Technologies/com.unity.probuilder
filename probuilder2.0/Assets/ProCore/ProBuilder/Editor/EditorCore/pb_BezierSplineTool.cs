@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	[CustomEditor(typeof(pb_BezierShape))]
-	class pb_BezierSplineTool : Editor
+	class pb_BezierSplineTool : UnityEditor.Editor
 	{
 #if !PROTOTYPE
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];

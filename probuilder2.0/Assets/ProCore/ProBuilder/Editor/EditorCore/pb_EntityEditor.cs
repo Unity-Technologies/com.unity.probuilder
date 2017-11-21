@@ -2,16 +2,16 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// CustomEditor implementation for @pb_Entity.
 	/// </summary>
 	[CustomEditor(typeof(pb_Entity))]
 	[CanEditMultipleObjects]
-	class pb_EntityEditor : Editor
+	class pb_EntityEditor : UnityEditor.Editor
 	{
 		pb_Entity ent;
 		pb_Object pb;

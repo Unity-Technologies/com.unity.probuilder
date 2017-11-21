@@ -4,10 +4,10 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 using System.Reflection;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Utilities for creating and manipulating Handles and points in GUI space.

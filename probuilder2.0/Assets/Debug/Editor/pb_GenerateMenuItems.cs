@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection;
 using System.IO;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
 /**
  *	Editor utility to generate the pb_EditorToolbarMenuItems class from

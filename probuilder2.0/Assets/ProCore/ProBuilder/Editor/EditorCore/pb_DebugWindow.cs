@@ -6,11 +6,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.Interface;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Debugging menu items for ProBuilder.

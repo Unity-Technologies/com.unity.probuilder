@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// An edge connecting two vertices. May point to an index in the vertices or the sharedIndices array (local / common in ProBuilder terminology).

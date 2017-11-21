@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.MeshOperations;
 using System.Collections.Generic;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	[CustomEditor(typeof(pb_PolyShape))]
-	class pb_PolyShapeEditor : Editor
+	class pb_PolyShapeEditor : UnityEditor.Editor
 	{
 #if !PROTOTYPE
 		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);

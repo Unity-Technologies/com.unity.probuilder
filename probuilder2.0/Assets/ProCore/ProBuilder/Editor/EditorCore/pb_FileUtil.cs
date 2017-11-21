@@ -5,10 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 using Object = UnityEngine.Object;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Helper functions for working with files and directories.

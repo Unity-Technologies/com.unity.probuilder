@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
 using System.Linq;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class BevelEdges : pb_MenuAction
 	{

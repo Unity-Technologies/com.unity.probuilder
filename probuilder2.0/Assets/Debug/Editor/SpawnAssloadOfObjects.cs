@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	public class SpawnAssloadOfObjects : Editor
 	{

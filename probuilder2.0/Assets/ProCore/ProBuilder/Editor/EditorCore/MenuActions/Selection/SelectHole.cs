@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
+using ProBuilder.Interface;
 using System.Linq;
 using System.Collections.Generic;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class SelectHole : pb_MenuAction
 	{

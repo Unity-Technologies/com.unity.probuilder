@@ -3,11 +3,11 @@ using UnityEditor;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
 	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);

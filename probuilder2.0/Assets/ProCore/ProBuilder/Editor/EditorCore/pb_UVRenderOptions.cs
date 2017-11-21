@@ -1,9 +1,9 @@
+using ProBuilder.Core;
+using ProBuilder.Interface;
 using UnityEditor;
 using UnityEngine;
-using ProBuilder2.Interface;
-using ProBuilder2.Common;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Popup window in UV editor with the "Render UV Template" options.

@@ -2,11 +2,11 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
 using System.Linq;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// A simple line-item editor for vertex positions.

@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// A serializable object that stores an array of materials. Used by pb_MaterialEditor.

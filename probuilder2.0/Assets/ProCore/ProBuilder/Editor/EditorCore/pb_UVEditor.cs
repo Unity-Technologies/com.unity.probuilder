@@ -7,13 +7,13 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
+using ProBuilder.EditorCore;
 using System.Reflection;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 class pb_UVEditor : EditorWindow
 {
@@ -2624,7 +2624,7 @@ class pb_UVEditor : EditorWindow
 	}
 
 	static Rect ActionWindowDragRect = new Rect(0,0,10000,20);
-	static Editor uv2Editor = null;
+	static UnityEditor.Editor uv2Editor = null;
 
 	void DrawActionWindow(int windowIndex)
 	{

@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class MirrorObjects : pb_MenuAction
 	{

@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Utility methods for working with UnityEngine.Selection.

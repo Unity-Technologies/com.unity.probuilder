@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.Examples
+namespace ProBuilder.Examples
 {
 
 	[RequireComponent(typeof(AudioSource))]

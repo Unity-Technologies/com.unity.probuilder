@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections;
-using ProBuilder2.Interface;
-using ProBuilder2.Common;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Editor window for accessing boolean functionality.
@@ -47,7 +47,7 @@ namespace ProBuilder2.EditorCommon
 		Color previewBorderColor = new Color(.3f, .3f, .3f, 1f);
 		Color backgroundColor = new Color(.15625f, .15625f, .15625f, 1f);
 		Texture2D backgroundTexture;
-		Editor lhsEditor, rhsEditor;
+		UnityEditor.Editor lhsEditor, rhsEditor;
 
 		BooleanOp operation = BooleanOp.Intersection;
 		bool mouseClickedSwapRect = false;
@@ -221,7 +221,7 @@ namespace ProBuilder2.EditorCommon
 			if (lhs != null)
 			{
 				if(lhsEditor == null)
-					lhsEditor = Editor.CreateEditor(lhs);
+					lhsEditor = UnityEditor.Editor.CreateEditor(lhs);
 				lhsEditor.OnPreviewGUI(lhsPreviewRect, previewBackground);
 			}
 			else
@@ -234,7 +234,7 @@ namespace ProBuilder2.EditorCommon
 			if (rhs != null)
 			{
 				if(rhsEditor == null)
-					rhsEditor = Editor.CreateEditor(rhs);
+					rhsEditor = UnityEditor.Editor.CreateEditor(rhs);
 
 				rhsEditor.OnPreviewGUI(rhsPreviewRect, previewBackground);
 			}

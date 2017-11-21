@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Utilities for working with pb_Edge.

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	static class pb_MenuItems
 	{

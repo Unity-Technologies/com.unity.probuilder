@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Initialize pb_Log preferences here because pb_Log does not have access to pb_PreferencesInternal.

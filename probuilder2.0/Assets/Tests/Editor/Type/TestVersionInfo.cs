@@ -4,11 +4,11 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
 using System;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.Test
+namespace ProBuilder.Test
 {
 	public class TestVersionInfo
 	{

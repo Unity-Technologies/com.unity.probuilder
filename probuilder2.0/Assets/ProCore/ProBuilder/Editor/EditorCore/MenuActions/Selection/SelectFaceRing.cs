@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
 using System.Linq;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class SelectFaceRing : pb_MenuAction
 	{

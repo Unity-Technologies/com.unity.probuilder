@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// An edge composed of both the vertex index and common index. Comparisons between pb_EdgeLookup objects are passed to the common edge.

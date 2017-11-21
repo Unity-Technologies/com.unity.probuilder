@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A series of handy extensions.

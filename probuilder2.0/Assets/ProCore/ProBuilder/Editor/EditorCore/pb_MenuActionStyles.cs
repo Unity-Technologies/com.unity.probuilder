@@ -1,10 +1,10 @@
 ﻿// #define GENERATE_DESATURATED_ICONS
 
+using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/**
 	 *	Styles used in pb_MenuAction.

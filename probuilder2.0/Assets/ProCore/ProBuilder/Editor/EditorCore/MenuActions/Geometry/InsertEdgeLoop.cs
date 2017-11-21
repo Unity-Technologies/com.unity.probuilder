@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
+using ProBuilder.Interface;
 using System.Linq;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class InsertEdgeLoop : pb_MenuAction
 	{

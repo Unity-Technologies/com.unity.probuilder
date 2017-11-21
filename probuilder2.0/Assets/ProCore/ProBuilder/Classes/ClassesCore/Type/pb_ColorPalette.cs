@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A set of colors for use in the color palette editor.

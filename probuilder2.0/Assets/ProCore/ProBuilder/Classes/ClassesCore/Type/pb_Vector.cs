@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Extension methods for Vector classes.

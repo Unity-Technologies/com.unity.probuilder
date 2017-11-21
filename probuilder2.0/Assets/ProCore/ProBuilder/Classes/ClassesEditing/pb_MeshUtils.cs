@@ -2,9 +2,12 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
+using pb_Edge = ProBuilder.Core.pb_Edge;
+using pb_Face = ProBuilder.Core.pb_Face;
+using pb_Object = ProBuilder.Core.pb_Object;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Used to query pb_Objects for more detailed information than what would belong in the pbObejct class
@@ -129,7 +132,7 @@ namespace ProBuilder2.MeshOperations
 					edge_u.x = sharedIndicesLookup[edge.x];
 					edge_u.y = sharedIndicesLookup[edge.y];
 
-					if(universalEdges.Contains(edge_u))
+					if(Enumerable.Contains(universalEdges, edge_u))
 					{
 						perimeterFaces.Add(face);
 						break;
@@ -214,7 +217,7 @@ namespace ProBuilder2.MeshOperations
 					int ind = -1;
 					for(int t = 0; t < sharedEdges[j].Length; t++)
 					{
-						if(faceEdges.Contains(sharedEdges[j][t]))
+						if(Enumerable.Contains(faceEdges, sharedEdges[j][t]))
 						{
 							ind = t;
 							break;

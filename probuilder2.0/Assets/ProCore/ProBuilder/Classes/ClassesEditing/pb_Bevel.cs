@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.MeshOperations
+namespace ProBuilder.MeshOperations
 {
 	/// <summary>
 	/// Functions for beveling edges.

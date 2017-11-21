@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Linq;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// A wrapper around Unity Undo calls.  Used for debugging and (previously) version compatibility.

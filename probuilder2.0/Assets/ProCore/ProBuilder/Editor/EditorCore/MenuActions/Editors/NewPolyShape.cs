@@ -1,11 +1,11 @@
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.Interface;
+using ProBuilder.MeshOperations;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.Actions
+namespace ProBuilder.Actions
 {
 	class NewPolyShape : pb_MenuAction
 	{

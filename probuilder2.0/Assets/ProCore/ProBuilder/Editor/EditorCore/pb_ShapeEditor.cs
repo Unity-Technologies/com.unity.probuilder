@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.Interface;
+using ProBuilder.MeshOperations;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/// <summary>
 	/// Shape creation panel implementation.

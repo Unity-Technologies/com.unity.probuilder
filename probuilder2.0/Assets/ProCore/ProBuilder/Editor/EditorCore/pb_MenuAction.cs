@@ -3,10 +3,10 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Interface;
-using ProBuilder2.Common;
+using ProBuilder.Core;
+using ProBuilder.Interface;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	/**
 	 *	Connects a GUI button to an action.

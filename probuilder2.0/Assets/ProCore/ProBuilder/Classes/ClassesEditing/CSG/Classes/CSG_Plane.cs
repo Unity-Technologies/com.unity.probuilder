@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using ProBuilder2.Common;
+using ProBuilder.Core;
 
 namespace Parabox.CSG
 {

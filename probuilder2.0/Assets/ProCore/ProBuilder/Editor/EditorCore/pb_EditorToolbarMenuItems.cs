@@ -7,11 +7,11 @@
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.Actions;
 using System.Collections.Generic;
+using ProBuilder.Actions;
+using ProBuilder.Core;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	static class pb_EditorToolbarMenuItems
 	{

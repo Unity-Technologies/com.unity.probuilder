@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
+using ProBuilder.Core;
 using System.Linq;
 
-namespace ProBuilder2.Common
+namespace ProBuilder.Core
 {
 	/// <summary>
 	/// Additional commonly used math when working with 3d geometry.
