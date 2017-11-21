@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
+using ProBuilder2.Common;
 
 namespace ProBuilder2.EditorCommon
 {
@@ -25,10 +26,7 @@ namespace ProBuilder2.EditorCommon
 		{
 			if( o is GameObject )
 			{
-				GameObject g = o as GameObject;
-
-				if(g == null)
-					return false;
+				GameObject g = (GameObject) o;
 
 				return g.GetComponent(c.GetType()) == c;
 			}
