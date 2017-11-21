@@ -2,7 +2,7 @@
 	"folders":
 	[
 		{
-			"path": "Assets/ProCore/ProBuilder",
+			"path": "probuilder2.0/Assets/ProCore/ProBuilder",
 			"file_exclude_patterns":
 			[
 				"*.unity",
@@ -28,8 +28,8 @@
 			]
 		},
 		{
-			"path": "Assets/",
-			"file_exclude_patterns": [ 
+			"path": "probuilder2.0/Assets/",
+			"file_exclude_patterns": [
 				"*.meta",
 				"*.fbx",
 				"*.guiskin",
@@ -49,20 +49,28 @@
 			"folder_exclude_patterns" : [ "ProCore" ]
 		},
 		{
-			"path": "../build",
+			"path": "build",
 			"file_exclude_patterns": ["*.exe"]
 		},
 		{
-			"path": "../",
-			"folder_exclude_patterns": [ "*" ]
-		},
-		{
-			"path": "../docs",
+			"path": "docs",
 			"folder_exclude_patterns":
 			[
 				"docs/site",
 				"pdfs"
 			]
-		}
+		},
+		{
+			"path": "docfx_project",
+			"folder_exclude_patterns":
+			[
+				"docs/site",
+				"pdfs"
+			]
+		},
+		{
+			"path": ".",
+			"folder_exclude_patterns": [ "*" ]
+		},
 	]
 }

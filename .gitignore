@@ -28,7 +28,7 @@ doxygen/
 # symlink
 docs/cinder
 
-probuilder2.0/*sublime-workspace
+*.sublime-workspace
 
 # ignore any loose files that aren't in ProCore/ or Debug/
 probuilder2.0/Assets/*.*
