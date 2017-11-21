@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 4df21bd079886d84699ca7be1316c7a7
+guid: e98d45d69e2c4936a7382af00fd45e58
 timeCreated: 1494265284
 licenseType: Pro
 PluginImporter:
@@ -20,6 +20,6 @@ PluginImporter:
       enabled: 0
       settings:
         CPU: AnyCPU
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  userData:
+  assetBundleName:
+  assetBundleVariant:
