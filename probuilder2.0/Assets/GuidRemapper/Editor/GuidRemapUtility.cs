@@ -133,9 +133,7 @@ namespace UnityEditor.GuidRemap
 
             foreach (var remap in m_GuidMap.map)
             {
-                m_Files.Add(remap.file);
-                m_From.Add(remap.from.ToList());
-                m_To.Add(remap.to);
+
             }
         }
     }
