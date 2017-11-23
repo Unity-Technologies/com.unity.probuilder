@@ -1,17 +1,112 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 using ProBuilder.Core;
 using UnityEditor;
 using UnityEngine;
 
-// todo
-using UnityEditor.GuidRemap;
-
 namespace ProBuilder.EditorCore
 {
+	[Serializable]
+	class AssetIdentifier : IEquatable<AssetIdentifier>
+	{
+		/// <summary>
+		/// A path relative to the root asset directory (ex, ProBuilder/About/Hello.cs).
+		/// Stored per-asset because the path may change between upgrades. A single file name is stored at the tuple
+		/// level.
+		/// </summary>
+		public string localPath;
+
+		/// <summary>
+		/// The asset fileId.
+		/// </summary>
+		public string fileId;
+
+		/// <summary>
+		/// Asset GUID.
+		/// </summary>
+		public string guid {
+			get { return m_Guid; }
+		}
+
+		[SerializeField]
+		string m_Guid;
+
+		public AssetIdentifier(string guid)
+		{
+			Assert.IsFalse(string.IsNullOrEmpty(guid), "Cannot initialize an AssetIdentifier without a GUID");
+			m_Guid = guid;
+		}
+
+		/// <summary>
+		/// Populate any vacant fields on this object with other.
+		/// </summary>
+		/// <param name="other"></param>
+		public void UnionWith(AssetIdentifier other)
+		{
+			if (string.IsNullOrEmpty(localPath))
+				localPath = other.localPath;
+
+			if (string.IsNullOrEmpty(fileId))
+				fileId = other.fileId;
+
+			// JsonUtility doesn't serialize null values, it serializes an empty AssetIdentifier
+			if (string.IsNullOrEmpty(m_Guid))
+				m_Guid = other.guid;
+		}
+
+		public bool Equals(AssetIdentifier other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(m_Guid, other.m_Guid);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((AssetIdentifier) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return (guid != null ? guid.GetHashCode() : 0);
+		}
+	}
+
+	[Serializable]
+	class AssetIdentifierTuple
+	{
+		public AssetIdentifier source;
+		public AssetIdentifier destination;
+
+		public AssetIdentifierTuple()
+		{
+			source = null;
+			destination = null;
+		}
+
+		public AssetIdentifierTuple(AssetIdentifier src, AssetIdentifier dest)
+		{
+			source = src;
+			destination = dest;
+		}
+	}
+
+	[Serializable]
+	class GuidRemapObject
+	{
+		public string directory;
+		public List<AssetIdentifierTuple> map = new List<AssetIdentifierTuple>();
+	}
+
+
 	class pb_RemapGuids : EditorWindow
 	{
 		TextAsset m_RemapFile = null;
