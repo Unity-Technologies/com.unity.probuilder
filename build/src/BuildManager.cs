@@ -134,6 +134,10 @@ namespace ProBuilder.BuildSystem
 			    	target.Replace(kvp.Key, kvp.Value);
 			    }
 
+			    // if debugging manually add the DEBUG define
+			    if(m_IsDebug && !target.Defines.Contains("DEBUG"))
+			    	target.Defines.Add("DEBUG");
+
 			    Log.Info("Defines:");
 
 			    foreach(var d in target.Defines)
