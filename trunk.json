@@ -21,7 +21,6 @@
 	},
 	"Defines": [
 		"PROBUILDER_DLL",
-		"PROBUILDER_UPM",
 		"UNITY_5_OR_NEWER",
 		"UNITY_5_3_OR_NEWER"
 		"UNITY_5_5_OR_NEWER",
@@ -32,7 +31,7 @@
 		"UNITY_2018_1_OR_NEWER",
 		"UNITY_2018_1",
 	],
-		"OnPreBuild":[
+	"OnPreBuild":[
 		{ "Command":"rm", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-$UNITY_VERSION" ] },
 		{ "Command":"mkdir", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-$UNITY_VERSION/Assets" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$DST_PB_ROOT" ] },

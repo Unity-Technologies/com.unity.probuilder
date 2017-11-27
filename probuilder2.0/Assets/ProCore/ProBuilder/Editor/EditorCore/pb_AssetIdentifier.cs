@@ -73,7 +73,7 @@ namespace ProBuilder.EditorCore
 	{
 		public List<string> sourceDirectory = new List<string>();
 		public string destinationDirectory = null;
-		public pb_NamespaceRemapObject namespaceMap;
+		public pb_NamespaceRemapObject namespaceMap = null;
 		public List<pb_AssetIdentifierTuple> map = new List<pb_AssetIdentifierTuple>();
 	}
 

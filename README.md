@@ -141,7 +141,9 @@ Valid arguments:
 
 ### Setup
 
-First create a new Unity project in a directory adjacent the **probuilder2** directory and name it **upm-package-probuilder-project**.
+First create a new Unity project in a directory adjacent the **probuilder2** directory and name it **upm-package-probuilder-project**.\*
+
+\*See below for an example folder structure.
 
 Next, create the folder `UnityPackageManager` (if it doesn't already exist) and clone the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository to a folder named `com.unity.probuilder`.
 
@@ -152,11 +154,10 @@ cd UnityPackageManager
 git clone https://github.com/procore3d/upm-package-probuilder.git com.unity.probuilder
 ```
 
-At this point your directory structure should look like so:
+At this point your directory structure should something like this:
 
 ```
 C:/Users/karl/dev
-|_ unity
 |_ probuilder2
   |_ art_source
   |_ build
@@ -175,31 +176,35 @@ Run the **ProBuilderAdvanced-UPM.json** build target.
 
 `mono pb-build.exe build/targets/ProBuilderAdvanced-UPM.json`
 
+Alternatively, you can build using the latest version of Unity trunk using the `upm-trunk.json` build target. This is currently only tested on @karl-'s machine but should work on any setup with minimal modifications (ask on #devs-probuilder if you're having trouble).
+
+`mono pb-build.exe build/targets/upm-trunk.json`
+
 The build target takes care of copying all the necessary files and changelogs to the package manager staging project.
+
+At this point the `upm-package-probuilder-project` is ready for testing and uploading.
 
 ### Push Package Manager to Staging
 
 Follow the instructions in the [upm-package-template](https://github.com/UnityTech/upm-package-template) to set up **npm** credentials. **Do not commit `.npmrc` files to the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
 
-1. Verify that **packages.json** is up to date and contains the correct information
-1. Make 100% sure that this release is ready to go. Unpublishing is generally frowned upon.
+1. Verify that **packages.json** is up to date and contains the correct information.
+1. Follow QA release steps.
+1. Make 100% sure that this release is ready to go. Unpublishing is not possible.
 1. `npm publish`
 
-### Testing locally
+### Testing UPM Builds
 
-Follow the **Setup** instructions, skipping the **Building for Unity Package Manager** steps. Just checking out the [upm-package-project](https://github.com/procore3d/upm-package-probuilder.git) is enough.
+There are two ways to install ProBuilder with Packman.
 
-At time of writing, Unity does not pick up packages placed in **UnityPackageManager**. To register a package in Unity, I find it's easiest to create a symlink or junction in the package cache directory. Ex:
+1. Edit the registry (pull the latest from [staging](https://bintray.com/unity/unity-staging))
+1. Build locally (see above)
 
-```
-# in cmd prompt
+#### Installing the latest staging
 
-cd C:\Users\%USERNAME%\AppData\LocalLow\Unity\cache\packages\staging-packages.unity.com
-mklink /J com.unity.probuilder@2.10.0 C:\Users\%USERNAME%\upm-package-probuilder-project\UnityPackageManager\com.unity.probuilder
-```
-
-Don't forget to add the package to the manifest of whatever project you're wanting to test in:
-
+1. Open a new Unity project
+1. Open the `manifest.json` file in `My Unity Project/UnityPackageManager`
+1. Add the package, version, and staging URL to your registry
 ```
 {
 	"dependencies": {
