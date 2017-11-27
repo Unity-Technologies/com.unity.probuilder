@@ -92,8 +92,8 @@ namespace ProBuilder.Actions
 				try
 				{
 					CopyTextures(textures, directory);
-					pb_FileUtil.WriteFile(string.Format("{0}/{1}.obj", directory, name), obj);
-					pb_FileUtil.WriteFile(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
+					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
+					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
 				}
 				catch(System.Exception e)
 				{

@@ -44,10 +44,11 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
-		/// Return a relative path to the ProBuilder directory.
+		/// Return a relative path to the ProBuilder directory. Can be in the packages cache or Assets folder.
+		/// If the project is in the packman cache it is immutable.
 		/// </summary>
 		/// <returns></returns>
-		static string GetRootDir()
+		internal static string GetProBuilderInstallDirectory()
 		{
 			if (Directory.Exists(m_ProBuilderFolderPath))
 				return m_ProBuilderFolderPath;
@@ -106,7 +107,7 @@ namespace ProBuilder.EditorCore
 			if (Directory.Exists(m_ProBuilderDataPath))
 				return m_ProBuilderDataPath;
 
-			string root = GetRootDir();
+			string root = GetProBuilderInstallDirectory();
 
 			if (root.StartsWith("Assets"))
 			{
@@ -174,7 +175,7 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
-		/// Get a file or folder path relative to the project directory.
+		/// Get a file or folder path relative to the Unity project directory.
 		/// </summary>
 		/// <param name="path">File or directory path, either relative or absolute.</param>
 		/// <returns>A new path relative to the current project root.</returns>
@@ -195,8 +196,11 @@ namespace ProBuilder.EditorCore
 			if (string.IsNullOrEmpty(file))
 				return null;
 
+			if (File.Exists(file))
+				return file;
+
 			string nameWithExtension = Path.GetFileName(file);
-			string forwardFile = file.Replace("\\", "/");
+			string unixPath = file.Replace("\\", "/");
 
 			foreach (var dir in k_PossibleInstallDirectories)
 			{
@@ -207,7 +211,7 @@ namespace ProBuilder.EditorCore
 
 				foreach (var str in matches)
 				{
-					if (str.Contains(forwardFile))
+					if (str.Replace("\\", "/").Contains(unixPath))
 						return str;
 				}
 			}
@@ -233,7 +237,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		internal static T LoadInternalAssetRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
 		{
-			string full = string.Format("{0}{1}", GetRootDir(), path);
+			string full = string.Format("{0}{1}", GetProBuilderInstallDirectory(), path);
 			return LoadRequired<T>(full);
 		}
 
@@ -245,7 +249,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		internal static T LoadInternalAsset<T>(string path) where T : Object
 		{
-			string full = string.Format("{0}{1}", GetRootDir(), path);
+			string full = string.Format("{0}{1}", GetProBuilderInstallDirectory(), path);
 			return Load<T>(full);
 		}
 
@@ -288,8 +292,30 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="contents"></param>
+		[System.Obsolete("Use WriteAllText")]
 		public static void WriteFile(string path, string contents)
 		{
+			WriteAllText(path, contents);
+		}
+
+		/// <summary>
+		/// Write contents to a file path, creating a new directory if necessary.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="contents"></param>
+		public static void WriteAllText(string path, string contents)
+		{
+			string dir = Path.GetDirectoryName(path);
+
+			if (string.IsNullOrEmpty(dir))
+			{
+				pb_Log.Error("Cannot write file to \"{0}\", invalid path.", path);
+				return;
+			}
+
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(dir);
+
 			File.WriteAllText(path, contents);
 		}
 	}

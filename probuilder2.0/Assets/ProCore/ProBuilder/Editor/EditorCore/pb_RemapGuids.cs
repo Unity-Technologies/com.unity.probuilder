@@ -12,135 +12,6 @@ using UObject = UnityEngine.Object;
 
 namespace ProBuilder.EditorCore
 {
-	[Serializable]
-	class AssetIdentifier : IEquatable<AssetIdentifier>
-	{
-		/// <summary>
-		/// A path relative to the root asset directory (ex, ProBuilder/About/Hello.cs).
-		/// Stored per-asset because the path may change between upgrades. A single file name is stored at the tuple
-		/// level.
-		/// </summary>
-		public string localPath { get { return m_LocalPath; } }
-
-		public string name { get { return m_Name; } }
-
-		public string type { get { return m_Type; } }
-
-		/// <summary>
-		/// File Ids associated with this asset.
-		/// </summary>
-		public string fileId { get { return m_FileId;  } }
-
-		/// <summary>
-		/// Asset GUID.
-		/// </summary>
-		public string guid {
-			get { return m_Guid; }
-		}
-
-		[SerializeField]
-		string m_Guid;
-
-		[SerializeField]
-		string m_FileId;
-
-		[SerializeField]
-		string m_LocalPath;
-
-		[SerializeField]
-		string m_Name;
-
-		[SerializeField]
-		string m_Type;
-
-		public AssetIdentifier(UObject obj, string file, string guid, string localPath = null)
-		{
-			if(obj == null)
-				throw new SystemException("Cannot initialize an AssetIdentifier with a null object");
-
-			if(string.IsNullOrEmpty(guid))
-				throw new SystemException("Cannot initialize an AssetIdentifier without a GUID");
-
-			if(string.IsNullOrEmpty(file))
-				throw new SystemException("Cannot initialize an AssetIdentifier without a FileId");
-
-			m_FileId = file;
-			m_Guid = guid;
-			m_Name = obj.name;
-			m_LocalPath = localPath;
-			m_Type = obj.GetType().ToString();
-		}
-
-		public bool Equals(AssetIdentifier other)
-		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
-
-			return string.Equals(m_Guid, other.m_Guid) &&
-			       string.Equals(m_FileId, other.m_FileId) &&
-			       string.Equals(m_LocalPath, other.m_LocalPath);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((AssetIdentifier) obj);
-		}
-
-		public override int GetHashCode()
-		{
-			int hash = 0;
-
-			unchecked
-			{
-				hash = (hash * 7) + (string.IsNullOrEmpty(m_Guid) ? 0 : m_Guid.GetHashCode());
-				hash = (hash * 7) + (string.IsNullOrEmpty(m_FileId) ? 0 : m_FileId.GetHashCode());
-				hash = (hash * 7) + (string.IsNullOrEmpty(m_LocalPath) ? 0 : m_LocalPath.GetHashCode());
-			}
-
-			return hash;
-		}
-
-		public void SetPathRelativeTo(string dir)
-		{
-			m_LocalPath = m_LocalPath.Replace(dir, "");
-		}
-
-		public static bool IsValid(AssetIdentifier id)
-		{
-			return !string.IsNullOrEmpty(id == null ? null : id.m_Guid);
-		}
-	}
-
-	[Serializable]
-	class AssetIdentifierTuple
-	{
-		public AssetIdentifier source;
-		public AssetIdentifier destination;
-
-		public AssetIdentifierTuple()
-		{
-			source = null;
-			destination = null;
-		}
-
-		public AssetIdentifierTuple(AssetIdentifier src, AssetIdentifier dest)
-		{
-			source = src;
-			destination = dest;
-		}
-	}
-
-	[Serializable]
-	class GuidRemapObject
-	{
-		public List<string> sourceDirectory = new List<string>();
-		public string destinationDirectory = null;
-		public List<AssetIdentifierTuple> map = new List<AssetIdentifierTuple>();
-	}
-
 	class pb_RemapGuids : EditorWindow
 	{
 		TextAsset m_RemapFile = null;
@@ -205,7 +76,7 @@ namespace ProBuilder.EditorCore
 
 		void DoIt()
 		{
-			GuidRemapObject remapObject = new GuidRemapObject();
+			pb_GuidRemapObject remapObject = new pb_GuidRemapObject();
 			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
 
 			string[] extensionsToScanForGuidRemap = new string[]
@@ -232,7 +103,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		static void DoAssetIdentifierRemap(string path, IEnumerable<AssetIdentifierTuple> map)
+		static void DoAssetIdentifierRemap(string path, IEnumerable<pb_AssetIdentifierTuple> map)
 		{
 			var sr = new StreamReader(path);
 			var sw = new StreamWriter(path + ".remap", false);
@@ -240,7 +111,7 @@ namespace ProBuilder.EditorCore
 			System.Collections.Generic.List<pb_Tuple<string, string>> replace = new System.Collections.Generic.List<pb_Tuple<string, string>>();
 
 			// order is important - {fileId, guid} in asset files needs to be applied first
-			IEnumerable<AssetIdentifierTuple> assetIdentifierTuples = map as AssetIdentifierTuple[] ?? map.ToArray();
+			IEnumerable<pb_AssetIdentifierTuple> assetIdentifierTuples = map as pb_AssetIdentifierTuple[] ?? map.ToArray();
 
 			foreach (var kvp in assetIdentifierTuples)
 			{

@@ -15,7 +15,18 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	class pb_RemapGuidsEditor : Editor
 	{
-		const string k_RemapFilePath = "Assets/remap.json";
+		const string k_RemapFilePath = "Upgrade/AssetIdRemap.json";
+		const string k_NamespaceRemapFilePath = "Upgrade/NamespaceRemap.json";
+
+		static string remapFilePath
+		{
+			get { return pb_FileUtil.GetProBuilderInstallDirectory() + k_RemapFilePath; }
+		}
+
+		static string namespaceRemapFilePath
+		{
+			get { return pb_FileUtil.GetProBuilderInstallDirectory() + k_NamespaceRemapFilePath; }
+		}
 
 		static string[] k_DirectoryExcludeFilter = new string[]
 		{
@@ -29,10 +40,10 @@ namespace ProBuilder.EditorCore
 		[MenuItem("Assets/GUID Remap Utility/Collect Old GUIDs")]
 		static void GetRemapSource()
 		{
-			GuidRemapObject remapObject = GetGuidRemapObject(k_RemapFilePath);
+			pb_GuidRemapObject remapObject = GetGuidRemapObject();
 			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 			remapObject.sourceDirectory.Add(localDirectory);
-			List<AssetIdentifierTuple> map = remapObject.map;
+			List<pb_AssetIdentifierTuple> map = remapObject.map;
 
 			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
 			{
@@ -43,35 +54,35 @@ namespace ProBuilder.EditorCore
 
 				// the only time where a destination can exist with a null source is when a single destination is in the
 				// map, so it's okay to grab the first and not bother searching for more dangling destination entries
-				AssetIdentifierTuple matchingDestination =
+				pb_AssetIdentifierTuple matchingDestination =
 					map.FirstOrDefault(x =>
 					{
 						return x.destination != null &&
-						       x.destination.localPath.Equals(id.localPath);
+						       x.destination.AssetEquals(id, remapObject.namespaceMap);
 					});
 
 				if (matchingDestination != null)
 				{
 					if (matchingDestination.source != null)
-						map.Add(new AssetIdentifierTuple(id, matchingDestination.destination));
+						map.Add(new pb_AssetIdentifierTuple(id, matchingDestination.destination));
 					else
 						matchingDestination.source = id;
 				}
 				else
 				{
-					map.Add(new AssetIdentifierTuple(id, null));
+					map.Add(new pb_AssetIdentifierTuple(id, null));
 				}
 			}
 
-			File.WriteAllText(k_RemapFilePath, JsonUtility.ToJson(remapObject, true));
-			AssetDatabase.ImportAsset(k_RemapFilePath);
-			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFilePath));
+			pb_FileUtil.WriteAllText(remapFilePath, JsonUtility.ToJson(remapObject, true));
+			AssetDatabase.ImportAsset(remapFilePath);
+			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath));
 		}
 
 		[MenuItem("Assets/GUID Remap Utility/Collect New GUIDs")]
 		static void GetRemapDestination()
 		{
-			GuidRemapObject remapObject = GetGuidRemapObject(k_RemapFilePath);
+			pb_GuidRemapObject remapObject = GetGuidRemapObject();
 
 			if (!string.IsNullOrEmpty(remapObject.destinationDirectory))
 			{
@@ -83,7 +94,7 @@ namespace ProBuilder.EditorCore
 
 			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 			remapObject.destinationDirectory = localDirectory;
-			List<AssetIdentifierTuple> map = remapObject.map;
+			List<pb_AssetIdentifierTuple> map = remapObject.map;
 
 			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
 			{
@@ -92,8 +103,8 @@ namespace ProBuilder.EditorCore
 
 				id.SetPathRelativeTo(localDirectory);
 
-				IEnumerable<AssetIdentifierTuple> matchingSources =
-					map.Where(x => x.source != null && x.source.localPath.Equals(id.localPath));
+				IEnumerable<pb_AssetIdentifierTuple> matchingSources =
+					map.Where(x => x.source != null && x.source.AssetEquals(id, remapObject.namespaceMap));
 
 				if (matchingSources.Any())
 				{
@@ -102,22 +113,22 @@ namespace ProBuilder.EditorCore
 				}
 				else
 				{
-					map.Add(new AssetIdentifierTuple(null, id));
+					map.Add(new pb_AssetIdentifierTuple(null, id));
 				}
 			}
 
-			File.WriteAllText(k_RemapFilePath, JsonUtility.ToJson(remapObject, true));
-			AssetDatabase.ImportAsset(k_RemapFilePath);
-			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFilePath));
+			pb_FileUtil.WriteAllText(remapFilePath, JsonUtility.ToJson(remapObject, true));
+			AssetDatabase.ImportAsset(remapFilePath);
+			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath));
 		}
 
 		/// <summary>
 		/// Collect asset identifier information from all files in a directory.
 		/// </summary>
 		/// <param name="directory"></param>
-		static List<AssetIdentifier> GetAssetIdentifiersInDirectory(string directory, string[] directoryIgnoreFilter = null)
+		static List<pb_AssetIdentifier> GetAssetIdentifiersInDirectory(string directory, string[] directoryIgnoreFilter = null)
 		{
-			List<AssetIdentifier> ids = new List<AssetIdentifier>();
+			List<pb_AssetIdentifier> ids = new List<pb_AssetIdentifier>();
 
 			string unixPath = directory.Replace("\\", "/");
 
@@ -139,9 +150,9 @@ namespace ProBuilder.EditorCore
 			return ids;
 		}
 
-		static List<AssetIdentifier> GetAssetIdentifiers(string assetPath)
+		static List<pb_AssetIdentifier> GetAssetIdentifiers(string assetPath)
 		{
-			List<AssetIdentifier> ids = new List<AssetIdentifier>();
+			List<pb_AssetIdentifier> ids = new List<pb_AssetIdentifier>();
 
 			if (assetPath.EndsWith(".unity"))
 				return ids;
@@ -152,7 +163,7 @@ namespace ProBuilder.EditorCore
 				long file;
 
 				if (AssetDatabase.GetGUIDAndLocalIdentifierInFile(o.GetInstanceID(), out g, out file))
-					ids.Add(new AssetIdentifier(o, file.ToString(), g.ToString(), assetPath));
+					ids.Add(new pb_AssetIdentifier(o, file.ToString(), g.ToString(), assetPath));
 			}
 
 			return ids;
@@ -161,19 +172,26 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Load a remap json file from a relative path (Assets/MyRemapFile.json).
 		/// </summary>
-		/// <param name="path">Path relative to the project.</param>
 		/// <returns>A GuidRemapObject from the path, or if not found, a new GuidRemapObject</returns>
-		static GuidRemapObject GetGuidRemapObject(string path)
+		static pb_GuidRemapObject GetGuidRemapObject()
 		{
-			GuidRemapObject remap = new GuidRemapObject();
+			pb_GuidRemapObject remap = new pb_GuidRemapObject();
 
-			try
+			TextAsset o = AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath);
+
+			if (o != null)
 			{
-				TextAsset o = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
 				JsonUtility.FromJsonOverwrite(o.text, remap);
 			}
-			catch
-			{}
+			else
+			{
+				TextAsset namespaceRemapJson = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
+
+				if (namespaceRemapJson != null)
+				{
+					remap.namespaceMap = JsonUtility.FromJson<pb_NamespaceRemapObject>(namespaceRemapJson.text);
+				}
+			}
 
 			return remap;
 		}

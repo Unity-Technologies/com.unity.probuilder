@@ -6,7 +6,7 @@ public class OpenConsoleHere : Editor
 {
 	private const string CONSOLE_PATH = "C:\\Program Files\\ConEmu\\ConEmu64.exe";
 
-	[MenuItem("Assets/Open Cygwin Here")]
+	[MenuItem("Assets/Open Cygwin Here", false, 400)]
 	private static void MenuOpenConsole()
 	{
 		string dir = GetDirectory();

@@ -1,0 +1,13 @@
+{
+  "m_Map":
+  [
+    {
+      "key": "ProBuilder2.Common",
+      "value": "ProBuilder.Core"
+    },
+    {
+      "key": "ProBuilder2.EditorCommon",
+      "value": "ProBuilder.EditorCore"
+    }
+  ]
+}

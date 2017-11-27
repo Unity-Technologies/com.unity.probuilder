@@ -86,7 +86,7 @@ namespace ProBuilder.Actions
 			{
 				try
 				{
-					pb_FileUtil.WriteFile(string.Format("{0}/{1}.ply", directory, name), ply);
+					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.ply", directory, name), ply);
 				}
 				catch(System.Exception e)
 				{
