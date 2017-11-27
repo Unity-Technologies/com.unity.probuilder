@@ -113,10 +113,6 @@ namespace ProBuilder.EditorCore
 				m_Preferences = pb_FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
 		}
 
-		static pb_PreferencesInternal()
-		{
-			LoadPreferencesObject();
-		}
 		/**
 		 *	Access the project local preferences asset.
 		 */

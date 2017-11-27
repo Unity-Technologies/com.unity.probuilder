@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder.Core;
 using System.Text;
+using System.Linq;
 using System.IO;
 
 public class MeshInfo : Editor
@@ -9,15 +10,15 @@ public class MeshInfo : Editor
 	[MenuItem("Tools/Debug/ProBuilder/Print Mesh Info")]
 	static void PrintMeshInfo()
 	{
-		foreach(MeshFilter mf in Selection.transforms.GetComponents<MeshFilter>())
-			if(mf.sharedMesh != null)	
+		foreach(MeshFilter mf in Selection.transforms.Select(x => x.GetComponent<MeshFilter>()))
+			if(mf.sharedMesh != null)
 				Debug.Log(pb_MeshUtility.Print(mf.sharedMesh));
 	}
 
 	[MenuItem("Tools/Debug/ProBuilder/Open Mesh Info")]
 	static void PrintMeshInfo2()
 	{
-		foreach(MeshFilter mf in Selection.transforms.GetComponents<MeshFilter>())
+		foreach(MeshFilter mf in Selection.transforms.Select(x => x.GetComponent<MeshFilter>()))
 		{
 			if(mf.sharedMesh != null)
 				System.Diagnostics.Process.Start(WriteTempFile(pb_MeshUtility.Print(mf.sharedMesh)));

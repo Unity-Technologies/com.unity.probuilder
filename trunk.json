@@ -1,9 +1,18 @@
+// build target for compiling against unity trunk
+//
+// this includes debugging utilities and some third party code that should not be
+// distributed. do not ship builds from trunk!
 {
 	"Name":"ProBuilder Unity Trunk",
 	"UnityPath":[
+		// @todo add some common paths here
+		// note - if you add a unity path that is unix or mac you may need to
+		// also update the ReferenceSearchPaths arg.
 		"C:/Users/karlh/unity/unity/build/WindowsEditor"
 	],
 	"Macros": {
+		"$SRC_PROJECT_ROOT": "probuilder2.0/Assets",
+		"$DST_PROJECT_ROOT": "bin/projects/ProBuilder-trunk/Assets",
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
 		"$BUILD_DIR": "bin/projects",
 		"$DST_PB_ROOT": "bin/projects/ProBuilder-trunk/Assets/ProBuilder",
@@ -41,6 +50,8 @@
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PROJECT_ROOT/Debug", "$DST_PROJECT_ROOT/Debug" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PROJECT_ROOT/ConsolePro", "$DST_PROJECT_ROOT/ConsolePro" ] },
 	],
 	"ReferenceSearchPaths":[
 		"$UNITY/Data/Mono/lib/mono/2.0",
