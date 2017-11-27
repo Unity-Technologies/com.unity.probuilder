@@ -34,13 +34,39 @@ namespace ProBuilder.EditorCore
 			"ProBuilder/API Examples",
 			"ProBuilder/Data",
 			"ProBuilder/Icons",
-			"ProBuilder/Material"
+			"ProBuilder/Material",
+			"ProBuilder/Upgrade",
 		};
+
+		static TextAsset m_RemapObject = null;
+		static TextAsset m_NamespaceRemap = null;
+
+		[MenuItem("Tools/ProBuilder/Debug/GUID Remap Editor")]
+		static void MenuOpenGuidEditor()
+		{
+			m_RemapObject = EditorGUILayout.ObjectField("Remap", m_RemapObject, typeof(TextAsset), false);
+			m_NamespaceRemap = EditorGUILayout.ObjectField("Namespace", m_NamespaceRemap, typeof(TextAsset), false);
+
+			
+		}
+
 
 		[MenuItem("Assets/GUID Remap Utility/Collect Old GUIDs")]
 		static void GetRemapSource()
 		{
 			pb_GuidRemapObject remapObject = GetGuidRemapObject();
+			GetRemapSource(remapObject);
+		}
+
+		[MenuItem("Assets/GUID Remap Utility/Collect New GUIDs")]
+		static void MenuGetRemapDestination()
+		{
+			pb_GuidRemapObject remapObject = GetGuidRemapObject();
+			GetRemapDestination(remapObject);
+		}
+
+		static void GetRemapSource(pb_GuidRemapObject remapObject)
+		{
 			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 			remapObject.sourceDirectory.Add(localDirectory);
 			List<pb_AssetIdentifierTuple> map = remapObject.map;
@@ -79,11 +105,8 @@ namespace ProBuilder.EditorCore
 			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath));
 		}
 
-		[MenuItem("Assets/GUID Remap Utility/Collect New GUIDs")]
-		static void GetRemapDestination()
+		static void GetRemapDestination(pb_GuidRemapObject remapObject)
 		{
-			pb_GuidRemapObject remapObject = GetGuidRemapObject();
-
 			if (!string.IsNullOrEmpty(remapObject.destinationDirectory))
 			{
 				if (!EditorUtility.DisplayDialog("Destination Directory Already Mapped",
