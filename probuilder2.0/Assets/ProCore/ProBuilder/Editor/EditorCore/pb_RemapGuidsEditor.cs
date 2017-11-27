@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 
@@ -18,31 +16,50 @@ namespace ProBuilder.EditorCore
 	class pb_RemapGuidsEditor : Editor
 	{
 		const string k_RemapFilePath = "Assets/remap.json";
-		const bool k_CollectFolderIds = false;
+
+		static string[] k_DirectoryExcludeFilter = new string[]
+		{
+			"ProBuilder/About",
+			"ProBuilder/API Examples",
+			"ProBuilder/Data",
+			"ProBuilder/Icons",
+			"ProBuilder/Material"
+		};
 
 		[MenuItem("Assets/GUID Remap Utility/Collect Old GUIDs")]
 		static void GetRemapSource()
 		{
 			GuidRemapObject remapObject = GetGuidRemapObject(k_RemapFilePath);
-			remapObject.directory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets");
+			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
+			remapObject.sourceDirectory.Add(localDirectory);
 			List<AssetIdentifierTuple> map = remapObject.map;
 
-			foreach (var id in GetAssetIdentifiers(GetSelectedDirectory()))
+			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
 			{
-				AssetIdentifierTuple existing = map.FirstOrDefault(x =>
-					(x.source != null && x.source.Equals(id)) ||
-					(x.destination != null && x.destination.localPath.Equals(id.localPath)));
+				if (map.Any(x => x.source.Equals(id)))
+					continue;
 
-				if (existing == null)
+				id.SetPathRelativeTo(localDirectory);
+
+				// the only time where a destination can exist with a null source is when a single destination is in the
+				// map, so it's okay to grab the first and not bother searching for more dangling destination entries
+				AssetIdentifierTuple matchingDestination =
+					map.FirstOrDefault(x =>
+					{
+						return x.destination != null &&
+						       x.destination.localPath.Equals(id.localPath);
+					});
+
+				if (matchingDestination != null)
 				{
-					map.Add(new AssetIdentifierTuple(id, null));
+					if (matchingDestination.source != null)
+						map.Add(new AssetIdentifierTuple(id, matchingDestination.destination));
+					else
+						matchingDestination.source = id;
 				}
 				else
 				{
-					if (existing.source == null)
-						existing.source = id;
-					else
-						existing.source.UnionWith(id);
+					map.Add(new AssetIdentifierTuple(id, null));
 				}
 			}
 
@@ -55,25 +72,37 @@ namespace ProBuilder.EditorCore
 		static void GetRemapDestination()
 		{
 			GuidRemapObject remapObject = GetGuidRemapObject(k_RemapFilePath);
-			remapObject.directory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets");
+
+			if (!string.IsNullOrEmpty(remapObject.destinationDirectory))
+			{
+				if (!EditorUtility.DisplayDialog("Destination Directory Already Mapped",
+					"The destination directory has already been mapped. Continuing will overwrite the existing data. Are you sure you wish to continue?",
+					"Continue", "Cancel"))
+					return;
+			}
+
+			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
+			remapObject.destinationDirectory = localDirectory;
 			List<AssetIdentifierTuple> map = remapObject.map;
 
-			foreach (var id in GetAssetIdentifiers(GetSelectedDirectory()))
+			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
 			{
-				AssetIdentifierTuple existing = map.FirstOrDefault(x =>
-					(x.destination != null && x.destination.Equals(id)) ||
-					(x.source != null && x.source.localPath.Equals(id.localPath)));
+				if (map.Any(x => x.destination.Equals(id)))
+					continue;
 
-				if (existing == null)
+				id.SetPathRelativeTo(localDirectory);
+
+				IEnumerable<AssetIdentifierTuple> matchingSources =
+					map.Where(x => x.source != null && x.source.localPath.Equals(id.localPath));
+
+				if (matchingSources.Any())
 				{
-					map.Add(new AssetIdentifierTuple(null, id));
+					foreach (var tup in matchingSources)
+						tup.destination = id;
 				}
 				else
 				{
-					if (existing.destination == null)
-						existing.destination = id;
-					else
-						existing.destination.UnionWith(id);
+					map.Add(new AssetIdentifierTuple(null, id));
 				}
 			}
 
@@ -86,109 +115,47 @@ namespace ProBuilder.EditorCore
 		/// Collect asset identifier information from all files in a directory.
 		/// </summary>
 		/// <param name="directory"></param>
-		static IEnumerable<AssetIdentifier> GetAssetIdentifiers(string directory)
+		static List<AssetIdentifier> GetAssetIdentifiersInDirectory(string directory, string[] directoryIgnoreFilter = null)
 		{
-			string[] extensionsToScanForGuidRemap = new string[]
+			List<AssetIdentifier> ids = new List<AssetIdentifier>();
+
+			string unixPath = directory.Replace("\\", "/");
+
+			if (directoryIgnoreFilter != null && directoryIgnoreFilter.Any(x => unixPath.Contains(x)))
+				return ids;
+
+			foreach (string file in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
 			{
-				"*.meta",
-				"*.asset",
-				"*.mat",
-				"*.unity",
-			};
+				if (file.EndsWith(".meta"))
+					continue;
 
-			string[] directoryExcludeFilter = new string[]
-			{
-				"ProBuilder/About",
-				"ProBuilder/Icons"
-			};
-
-			string fullRootDirectory = Path.GetFullPath(directory).Replace("\\", "/") + "/";
-
-			Dictionary<string, AssetIdentifier> identifiers = new Dictionary<string, AssetIdentifier>();
-
-			foreach (string extension in extensionsToScanForGuidRemap)
-			{
-				foreach (string filePath in Directory.GetFiles(directory, extension, SearchOption.AllDirectories))
-				{
-					if (directoryExcludeFilter.Any(x => filePath.Contains(x)))
-						continue;
-
-					if (filePath.EndsWith(".meta"))
-					{
-						if (!k_CollectFolderIds && Directory.Exists(filePath.Replace(".meta", "")))
-							continue;
-
-						AssetIdentifier id = GetAssetIdentifierFromMetaFile(fullRootDirectory, filePath);
-						AssetIdentifier existing;
-
-						if (identifiers.TryGetValue(id.guid, out existing))
-							existing.UnionWith(id);
-						else
-							identifiers.Add(id.guid, id);
-					}
-					else
-					{
-						GetFileIdsFromAsset(filePath, identifiers);
-					}
-				}
+				string localPath = file.Replace("\\", "/").Replace(Application.dataPath, "Assets");
+				ids.AddRange(GetAssetIdentifiers(localPath));
 			}
 
-			return identifiers.Values;
+			foreach (string dir in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
+				ids.AddRange(GetAssetIdentifiersInDirectory(dir, directoryIgnoreFilter));
+
+			return ids;
 		}
 
-		static AssetIdentifier GetAssetIdentifierFromMetaFile(string rootDirectory, string filePath)
+		static List<AssetIdentifier> GetAssetIdentifiers(string assetPath)
 		{
-			using (var sr = new StreamReader(filePath))
+			List<AssetIdentifier> ids = new List<AssetIdentifier>();
+
+			if (assetPath.EndsWith(".unity"))
+				return ids;
+
+			foreach (UnityEngine.Object o in AssetDatabase.LoadAllAssetsAtPath(assetPath))
 			{
-				while (sr.Peek() > -1)
-				{
-					string line = sr.ReadLine();
+				GUID g;
+				long file;
 
-					if (line.StartsWith("guid:"))
-					{
-						AssetIdentifier id = new AssetIdentifier(line.Replace("guid:", "").Trim())
-						{
-							localPath = filePath.Replace("\\", "/").Replace(rootDirectory, "").Replace(".meta", "")
-						};
-
-						return id;
-					}
-				}
+				if (AssetDatabase.GetGUIDAndLocalIdentifierInFile(o.GetInstanceID(), out g, out file))
+					ids.Add(new AssetIdentifier(o, file.ToString(), g.ToString(), assetPath));
 			}
 
-			return null;
-		}
-
-		static Regex m_FileAndGuidYamlExpr = new Regex("{fileID: [0-9]*, guid: [a-zA-Z0-9]*, type: [0-9]*}", RegexOptions.Compiled | RegexOptions.Multiline);
-		static Regex m_FileIdRegex = new Regex("(?<=fileID: )[0-9]*", RegexOptions.Compiled);
-		static Regex m_GuidRegex = new Regex("(?<=fileID: [0-9]*, guid: )[0-9a-zA-Z]*", RegexOptions.Compiled);
-
-		static void GetFileIdsFromAsset(string assetPath, Dictionary<string, AssetIdentifier> files)
-		{
-			try
-			{
-				string contents = File.ReadAllText(assetPath);
-
-				foreach (Match match in m_FileAndGuidYamlExpr.Matches(contents))
-				{
-					Match file = m_FileIdRegex.Match(match.Value);
-					Match guid = m_GuidRegex.Match(match.Value);
-
-					if (file.Success && guid.Success)
-					{
-						AssetIdentifier id;
-
-						if (files.TryGetValue(guid.Value, out id))
-							id.fileId = file.Value;
-						else
-							files.Add(guid.Value, new AssetIdentifier(guid.Value) { fileId = file.Value });
-					}
-				}
-			}
-			catch (SystemException exception)
-			{
-				Debug.LogError("Failed parsing asset: " + assetPath);
-			}
+			return ids;
 		}
 
 		/// <summary>
