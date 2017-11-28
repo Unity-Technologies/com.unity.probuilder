@@ -102,6 +102,8 @@ namespace ProBuilder.BuildSystem
 			{
 				Log.Status("Build: " + target.Name);
 
+				target.Macros.Add("$USER", Environment.UserName);
+
 				string m_UnityPath = m_UnityPathOverride;
 
 				if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))

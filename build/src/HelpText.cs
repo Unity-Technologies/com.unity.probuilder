@@ -33,6 +33,7 @@ Build Targets:
   Build targets are json files. Some pre-defined macros are provided:
 	- $UNITY - Path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).
 	- $TARGET_DIR - Directory that this build target json file resides in.
+  - $USER - The user name of the account currently logged in to this computer.
    ";
 	}
 }

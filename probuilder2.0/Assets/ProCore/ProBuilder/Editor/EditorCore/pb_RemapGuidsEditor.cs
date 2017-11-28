@@ -44,10 +44,10 @@ namespace ProBuilder.EditorCore
 		[MenuItem("Tools/ProBuilder/Debug/GUID Remap Editor")]
 		static void MenuOpenGuidEditor()
 		{
-			m_RemapObject = EditorGUILayout.ObjectField("Remap", m_RemapObject, typeof(TextAsset), false);
-			m_NamespaceRemap = EditorGUILayout.ObjectField("Namespace", m_NamespaceRemap, typeof(TextAsset), false);
+			m_RemapObject = (TextAsset) EditorGUILayout.ObjectField("Remap", m_RemapObject, typeof(TextAsset), false);
+			m_NamespaceRemap = (TextAsset) EditorGUILayout.ObjectField("Namespace", m_NamespaceRemap, typeof(TextAsset), false);
 
-			
+
 		}
 
 

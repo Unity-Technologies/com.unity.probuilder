@@ -8,7 +8,8 @@
 		// @todo add some common paths here
 		// note - if you add a unity path that is unix or mac you may need to
 		// also update the ReferenceSearchPaths arg.
-		"C:/Users/karlh/unity/unity/build/WindowsEditor"
+		"C:/Users/$USER/unity/unity/build/WindowsEditor",
+		"/Users/$USER/unity/unity/build/MacEditor/Unity.app"
 	],
 	"Macros": {
 		"$SRC_PROJECT_ROOT": "probuilder2.0/Assets",

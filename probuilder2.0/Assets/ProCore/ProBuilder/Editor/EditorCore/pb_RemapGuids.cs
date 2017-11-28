@@ -35,11 +35,6 @@ namespace ProBuilder.EditorCore
 
 			if (GUILayout.Button("Show me guids and fileids"))
 			{
-				GUID guid = new GUID(AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(Selection.activeObject)));
-
-				ObjectIdentifier[] ids =
-					BundleBuildInterface.GetPlayerObjectIdentifiersInAsset(guid, EditorUserBuildSettings.activeBuildTarget);
-
 				StringBuilder sb = new StringBuilder();
 
 				sb.AppendLine(Selection.activeObject.name);
@@ -56,18 +51,18 @@ namespace ProBuilder.EditorCore
 						sb.AppendLine("  " + o.name + "\n    " + o.GetInstanceID() + "\n    " + g + "\n    " + file);
 				}
 
-				sb.AppendLine("----");
-				sb.AppendLine("LookupInstanceIDFromPathAndFileID");
-
-				foreach (var id in ids)
-				{
-					int inst = AssetDatabase.LookupInstanceIDFromPathAndFileID(AssetDatabase.GetAssetPath(Selection.activeObject),
-						(int) id.localIdentifierInFile);
-
-					UnityEngine.Object o = EditorUtility.InstanceIDToObject(inst);
-
-					sb.AppendLine("  " + (o != null ? o.name : "null") + "\n    " + inst + "\n    " + id.guid + "\n    " + id.localIdentifierInFile);
-				}
+				// sb.AppendLine("----");
+				// sb.AppendLine("LookupInstanceIDFromPathAndFileID");
+				// GUID guid = new GUID(AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(Selection.activeObject)));
+				// ObjectIdentifier[] ids =
+				// BundleBuildInterface.GetPlayerObjectIdentifiersInAsset(guid, EditorUserBuildSettings.activeBuildTarget);
+				// foreach (var id in ids)
+				// {
+				// 	int inst = AssetDatabase.LookupInstanceIDFromPathAndFileID(AssetDatabase.GetAssetPath(Selection.activeObject),
+				// 		(int) id.localIdentifierInFile);
+				// 	UnityEngine.Object o = EditorUtility.InstanceIDToObject(inst);
+				// 	sb.AppendLine("  " + (o != null ? o.name : "null") + "\n    " + inst + "\n    " + id.guid + "\n    " + id.localIdentifierInFile);
+				// }
 				Debug.Log(sb.ToString());
 			}
 
