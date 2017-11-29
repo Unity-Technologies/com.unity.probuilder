@@ -4,22 +4,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ProBuilder.Core;
 using UnityEditor;
 using UnityEditor.Experimental.Build.AssetBundle;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.EditorCore
+namespace ProBuilder.AssetUtility
 {
-	class pb_RemapGuids : EditorWindow
+	class AssetIdRemapUtility : EditorWindow
 	{
 		TextAsset m_RemapFile = null;
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Convert to Package Manager")]
+		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
 		static void MenuInitRemapGuidEditor()
 		{
-			GetWindow<pb_RemapGuids>(true, "Package Manager Conversion Utility", true);
+			GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
 		}
 
 		void OnGUI()
@@ -33,45 +32,12 @@ namespace ProBuilder.EditorCore
 			if (GUILayout.Button("Convert to Package Manager"))
 				DoIt();
 
-			if (GUILayout.Button("Show me guids and fileids"))
-			{
-				StringBuilder sb = new StringBuilder();
-
-				sb.AppendLine(Selection.activeObject.name);
-				sb.AppendLine(Selection.activeObject.GetInstanceID().ToString());
-				sb.AppendLine(AssetDatabase.GetAssetPath(Selection.activeObject));
-				sb.AppendLine(AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(Selection.activeObject)));
-				sb.AppendLine("----");
-				sb.AppendLine("GetGUIDAndLocalIdentifierInFile");
-				foreach (UnityEngine.Object o in AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(Selection.activeObject)))
-				{
-					GUID g;
-					long file;
-					if (AssetDatabase.GetGUIDAndLocalIdentifierInFile(o.GetInstanceID(), out g, out file))
-						sb.AppendLine("  " + o.name + "\n    " + o.GetInstanceID() + "\n    " + g + "\n    " + file);
-				}
-
-				// sb.AppendLine("----");
-				// sb.AppendLine("LookupInstanceIDFromPathAndFileID");
-				// GUID guid = new GUID(AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(Selection.activeObject)));
-				// ObjectIdentifier[] ids =
-				// BundleBuildInterface.GetPlayerObjectIdentifiersInAsset(guid, EditorUserBuildSettings.activeBuildTarget);
-				// foreach (var id in ids)
-				// {
-				// 	int inst = AssetDatabase.LookupInstanceIDFromPathAndFileID(AssetDatabase.GetAssetPath(Selection.activeObject),
-				// 		(int) id.localIdentifierInFile);
-				// 	UnityEngine.Object o = EditorUtility.InstanceIDToObject(inst);
-				// 	sb.AppendLine("  " + (o != null ? o.name : "null") + "\n    " + inst + "\n    " + id.guid + "\n    " + id.localIdentifierInFile);
-				// }
-				Debug.Log(sb.ToString());
-			}
-
 			GUI.enabled = true;
 		}
 
 		void DoIt()
 		{
-			pb_GuidRemapObject remapObject = new pb_GuidRemapObject();
+			AssetIdRemapObject remapObject = new AssetIdRemapObject();
 			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
 
 			string[] extensionsToScanForGuidRemap = new string[]
@@ -82,7 +48,7 @@ namespace ProBuilder.EditorCore
 				"*.unity",
 			};
 
-			string assetStoreProBuilderDirectory = pb_FileUtil.FindAssetStoreProBuilderInstall();
+			string assetStoreProBuilderDirectory = FindAssetStoreProBuilderInstall();
 
 			if (string.IsNullOrEmpty(assetStoreProBuilderDirectory))
 			{
@@ -98,19 +64,19 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		static void DoAssetIdentifierRemap(string path, IEnumerable<pb_AssetIdentifierTuple> map)
+		static void DoAssetIdentifierRemap(string path, IEnumerable<AssetIdentifierTuple> map)
 		{
 			var sr = new StreamReader(path);
 			var sw = new StreamWriter(path + ".remap", false);
 
-			System.Collections.Generic.List<pb_Tuple<string, string>> replace = new System.Collections.Generic.List<pb_Tuple<string, string>>();
+			List<StringTuple> replace = new List<StringTuple>();
 
 			// order is important - {fileId, guid} in asset files needs to be applied first
-			IEnumerable<pb_AssetIdentifierTuple> assetIdentifierTuples = map as pb_AssetIdentifierTuple[] ?? map.ToArray();
+			IEnumerable<AssetIdentifierTuple> assetIdentifierTuples = map as AssetIdentifierTuple[] ?? map.ToArray();
 
 			foreach (var kvp in assetIdentifierTuples)
 			{
-				replace.Add(new pb_Tuple<string, string>(
+				replace.Add(new StringTuple(
 					string.Format("{{fileId: {0}, guid: {1}, type:", kvp.source.fileId, kvp.source.guid),
 					string.Format("{{fileId: {0}, guid: {1}, type:", kvp.destination.fileId, kvp.destination.guid)));
 			}
@@ -122,7 +88,7 @@ namespace ProBuilder.EditorCore
 				// AssetIdentifier list will contain duplicate guids (assets can contain sub-assets, separated by fileId)
 				// when swapping meta file guids we don't need multiple entries
 				if(used.Add(kvp.source.guid))
-					replace.Add(new pb_Tuple<string, string>(
+					replace.Add(new StringTuple(
 						string.Format("guid: {0}", kvp.source.guid),
 						string.Format("guid: {0}", kvp.destination.guid)));
 			}
@@ -135,10 +101,10 @@ namespace ProBuilder.EditorCore
 
 				foreach (var kvp in replace)
 				{
-					if (line.Contains(kvp.Item1))
+					if (line.Contains(kvp.key))
 					{
 						modified++;
-						line = line.Replace(kvp.Item1, kvp.Item2);
+						line = line.Replace(kvp.key, kvp.value);
 						break;
 					}
 				}
@@ -154,6 +120,31 @@ namespace ProBuilder.EditorCore
 				File.Delete(path);
 				File.Move(path + ".remap", path);
 			}
+		}
+
+		static string FindAssetStoreProBuilderInstall()
+		{
+			string dir = null;
+
+			string[] matches = Directory.GetDirectories("Assets", "ProBuilder", SearchOption.AllDirectories);
+
+			foreach (var match in matches)
+			{
+				dir = match.Replace("\\", "/") +  "/";
+				if (dir.Contains("ProBuilder") && ValidateProBuilderRoot(dir))
+					break;
+			}
+
+			return dir;
+		}
+
+		static bool ValidateProBuilderRoot(string dir)
+		{
+			return !string.IsNullOrEmpty(dir) &&
+			       Directory.Exists(dir + "/Classes") &&
+			       Directory.Exists(dir + "/Icons") &&
+			       Directory.Exists(dir + "/Editor") &&
+			       Directory.Exists(dir + "/Shader");
 		}
 	}
 }

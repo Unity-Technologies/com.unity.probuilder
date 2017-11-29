@@ -218,7 +218,7 @@ class pb_UVEditor : EditorWindow
 	{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
-		pb_UV_Render_Options renderOptions = EditorWindow.GetWindow<pb_UV_Render_Options>(true, "Save UV Image", true);
+		pb_UVRenderOptions renderOptions = EditorWindow.GetWindow<pb_UVRenderOptions>(true, "Save UV Image", true);
 		renderOptions.position = new Rect(	this.position.x + (this.position.width/2f - 128),
 											this.position.y + (this.position.height/2f - 76),
 											256f,

@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ProBuilder.Core
 {
@@ -102,24 +103,31 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		/// Output a debug message. These should not be committed to trunk.
+		/// Output a debug message.
 		/// </summary>
+		/// <remarks>These should not be committed to trunk.</remarks>
 		/// <param name="value"></param>
 		/// <typeparam name="T"></typeparam>
+		[Conditional("DEBUG")]
 		public static void Debug<T>(T value)
 		{
 			Debug(value.ToString());
 		}
 
 		/// <summary>
-		/// Output a debug message. These should not be committed to trunk.
+		/// Output a debug message.
 		/// </summary>
+		/// <remarks>
+		/// These should not be committed to trunk.
+		/// </remarks>
 		/// <param name="message"></param>
+		[Conditional("DEBUG")]
 		public static void Debug(string message)
 		{
 			DoPrint(message, LogType.Log);
 		}
 
+		[Conditional("DEBUG")]
 		public static void Debug(string format, params object[] values)
 		{
 			Debug(string.Format(format, values));
@@ -180,6 +188,7 @@ namespace ProBuilder.Core
 		/// <param name="value"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <typeparam name="K"></typeparam>
+		[Conditional("DEBUG")]
 		internal static void Watch<T, K>(T key, K value)
 		{
 			UnityEngine.Debug.Log(string.Format("{0} : {1}\nCPAPI:{{\"cmd\":\"Watch\" \"name\":\"{0}\"}}", key.ToString(), value.ToString()));

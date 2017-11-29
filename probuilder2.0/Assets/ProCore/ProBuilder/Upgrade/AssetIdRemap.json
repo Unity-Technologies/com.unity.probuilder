@@ -34,6 +34,70 @@
         },
         {
             "source": {
+                "m_Guid": "4ce1c67454d65d14eb3eae2f44b0ffa7",
+                "m_FileId": "11500000",
+                "m_LocalPath": "AssetIdRemapUtility/Editor/AssetId.cs",
+                "m_Name": "AssetId",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.AssetUtility.AssetId"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "72a7371fd97b648dc88a13d4c6840343",
+                "m_FileId": "11500000",
+                "m_LocalPath": "AssetIdRemapUtility/Editor/AssetIdRemapFileEditor.cs",
+                "m_Name": "AssetIdRemapFileEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.AssetUtility.AssetIdRemapFileEditor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "f5b2400bc853496a918144991012b01a",
+                "m_FileId": "11500000",
+                "m_LocalPath": "AssetIdRemapUtility/Editor/AssetIdRemapTreeView.cs",
+                "m_Name": "AssetIdRemapTreeView",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.AssetUtility.AssetIdRemapTreeView"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "d84aa6a6677b86d47923eca2c45af46f",
+                "m_FileId": "11500000",
+                "m_LocalPath": "AssetIdRemapUtility/Editor/AssetIdRemapUtility.cs",
+                "m_Name": "AssetIdRemapUtility",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.AssetUtility.AssetIdRemapUtility"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
                 "m_Guid": "c39b4e9ca8bb4bd69331fb3a2cabcb09",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Classes/ClassesCore/pb_ActionResult.cs",
@@ -226,11 +290,11 @@
         },
         {
             "source": {
-                "m_Guid": "9313c39403734db7bce3749532ebbd94",
+                "m_Guid": "b5d22fc95f624e9795e589e7847ee62f",
                 "m_FileId": "11500000",
-                "m_LocalPath": "Classes/ClassesCore/pb_IgnoreSnap.cs",
-                "m_Name": "pb_IgnoreSnap",
-                "m_Type": "UnityEditor.MonoScript::"
+                "m_LocalPath": "Classes/ClassesCore/pb_IHasDefault.cs",
+                "m_Name": "pb_IHasDefault",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_IHasDefault"
             },
             "destination": {
                 "m_Guid": "",
@@ -242,11 +306,11 @@
         },
         {
             "source": {
-                "m_Guid": "b5d22fc95f624e9795e589e7847ee62f",
+                "m_Guid": "9313c39403734db7bce3749532ebbd94",
                 "m_FileId": "11500000",
-                "m_LocalPath": "Classes/ClassesCore/pb_IHasDefault.cs",
-                "m_Name": "pb_IHasDefault",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_IHasDefault"
+                "m_LocalPath": "Classes/ClassesCore/pb_IgnoreSnap.cs",
+                "m_Name": "pb_IgnoreSnap",
+                "m_Type": "UnityEditor.MonoScript::"
             },
             "destination": {
                 "m_Guid": "",
@@ -626,22 +690,6 @@
         },
         {
             "source": {
-                "m_Guid": "2437a231461f4ff5ab16b6a12c9f94e5",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Classes/ClassesCore/pb_Util.cs",
-                "m_Name": "pb_Util",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_Util"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
                 "m_Guid": "e97c00475ae84d91be3f0df8e5e9d696",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Classes/ClassesCore/pb_UV.cs",
@@ -663,6 +711,22 @@
                 "m_LocalPath": "Classes/ClassesCore/pb_UVUtility.cs",
                 "m_Name": "pb_UVUtility",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_UVUtility"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "2437a231461f4ff5ab16b6a12c9f94e5",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Classes/ClassesCore/pb_Util.cs",
+                "m_Name": "pb_Util",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_Util"
             },
             "destination": {
                 "m_Guid": "",
@@ -1458,22 +1522,6 @@
         },
         {
             "source": {
-                "m_Guid": "4ce1c67454d65d14eb3eae2f44b0ffa7",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_AssetIdentifier.cs",
-                "m_Name": "pb_AssetIdentifier",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_AssetIdentifier"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
                 "m_Guid": "98a363ee7b184fbda1f60c456085da7c",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Editor/EditorCore/pb_AutoUvEditor.cs",
@@ -1874,6 +1922,22 @@
         },
         {
             "source": {
+                "m_Guid": "864f5dcee27e40d9ba4fde982aafb128",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/EditorCore/pb_ISceneEditor.cs",
+                "m_Name": "pb_ISceneEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ISceneEditor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
                 "m_Guid": "6164dcb098414de4b8f93eb9d5867b45",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Editor/EditorCore/pb_IconUtility.cs",
@@ -1895,22 +1959,6 @@
                 "m_LocalPath": "Editor/EditorCore/pb_ImportIcons.cs",
                 "m_Name": "pb_ImportIcons",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ImportIcons"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "864f5dcee27e40d9ba4fde982aafb128",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_ISceneEditor.cs",
-                "m_Name": "pb_ISceneEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ISceneEditor"
             },
             "destination": {
                 "m_Guid": "",
@@ -2242,38 +2290,6 @@
         },
         {
             "source": {
-                "m_Guid": "d84aa6a6677b86d47923eca2c45af46f",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_RemapGuids.cs",
-                "m_Name": "pb_RemapGuids",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_RemapGuids"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "72a7371fd97b648dc88a13d4c6840343",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_RemapGuidsEditor.cs",
-                "m_Name": "pb_RemapGuidsEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_RemapGuidsEditor"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
                 "m_Guid": "1c4aacd3200f483abe42d19001c0b3f9",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Editor/EditorCore/pb_RepairActions.cs",
@@ -2450,6 +2466,38 @@
         },
         {
             "source": {
+                "m_Guid": "14a5a90bd1584d3ca85e6df51d7eaa78",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/EditorCore/pb_UVEditor.cs",
+                "m_Name": "pb_UVEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVEditor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "ab9de64d250c4df7aeb96841afa68e4a",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/EditorCore/pb_UVRenderOptions.cs",
+                "m_Name": "pb_UVRenderOptions",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVRenderOptions"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
                 "m_Guid": "567546b5b270421786e8644fd6a2a0c4",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Editor/EditorCore/pb_Undo.cs",
@@ -2519,38 +2567,6 @@
                 "m_LocalPath": "Editor/EditorCore/pb_UpgradeBasicToAdvanced.cs",
                 "m_Name": "pb_UpgradeBasicToAdvanced",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.Actions.pb_UpgradeBasicToAdvanced"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "14a5a90bd1584d3ca85e6df51d7eaa78",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_UVEditor.cs",
-                "m_Name": "pb_UVEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVEditor"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "ab9de64d250c4df7aeb96841afa68e4a",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/EditorCore/pb_UVRenderOptions.cs",
-                "m_Name": "pb_UVRenderOptions",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVRenderOptions"
             },
             "destination": {
                 "m_Guid": "",
@@ -4039,22 +4055,6 @@
                 "m_LocalPath": "Shader/pb_VertexShader.shader",
                 "m_Name": "Hidden/ProBuilder/pb_VertexShader",
                 "m_Type": "UnityEngine.Shader"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "c5cb25a83c1545a44b5b6d9a89f5dc20",
-                "m_FileId": "4900000",
-                "m_LocalPath": "Upgrade/NamespaceRemap.json",
-                "m_Name": "NamespaceRemap",
-                "m_Type": "UnityEngine.TextAsset"
             },
             "destination": {
                 "m_Guid": "",

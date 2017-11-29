@@ -2,26 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.EditorCore
+namespace ProBuilder.AssetUtility
 {
 	[Serializable]
-	class pb_AssetIdentifierTuple
+	class AssetIdentifierTuple
 	{
-		public pb_AssetIdentifier source;
-		public pb_AssetIdentifier destination;
+		public AssetId source;
+		public AssetId destination;
 
-		public pb_AssetIdentifierTuple()
+		public AssetIdentifierTuple()
 		{
 			source = null;
 			destination = null;
 		}
 
-		public pb_AssetIdentifierTuple(pb_AssetIdentifier src, pb_AssetIdentifier dest)
+		public AssetIdentifierTuple(AssetId src, AssetId dest)
 		{
 			source = src;
 			destination = dest;
@@ -29,7 +28,20 @@ namespace ProBuilder.EditorCore
 	}
 
 	[Serializable]
-	class pb_NamespaceRemapObject : ISerializationCallbackReceiver
+	class StringTuple
+	{
+		public string key;
+		public string value;
+
+		public StringTuple(string k, string v)
+		{
+			key = k;
+			value = v;
+		}
+	}
+
+	[Serializable]
+	class NamespaceRemapObject : ISerializationCallbackReceiver
 	{
 		[NonSerialized]
 		public Dictionary<string, string> map = new Dictionary<string, string>();
@@ -39,26 +51,13 @@ namespace ProBuilder.EditorCore
 			return map.TryGetValue(key, out value);
 		}
 
-		[Serializable]
-		class Tuple
-		{
-			public string key;
-			public string value;
-
-			public Tuple(string k, string v)
-			{
-				key = k;
-				value = v;
-			}
-		}
-
 		// serialize as key value pair to make json easier to read
 		[SerializeField]
-		Tuple[] m_Map;
+		StringTuple[] m_Map;
 
 		public void OnBeforeSerialize()
 		{
-			m_Map = map.Select(x => new Tuple(x.Key, x.Value)).ToArray();
+			m_Map = map.Select(x => new StringTuple(x.Key, x.Value)).ToArray();
 		}
 
 		public void OnAfterDeserialize()
@@ -69,16 +68,22 @@ namespace ProBuilder.EditorCore
 	}
 
 	[Serializable]
-	class pb_GuidRemapObject
+	class AssetIdRemapObject
 	{
 		public List<string> sourceDirectory = new List<string>();
 		public string destinationDirectory = null;
-		public pb_NamespaceRemapObject namespaceMap = null;
-		public List<pb_AssetIdentifierTuple> map = new List<pb_AssetIdentifierTuple>();
+		public NamespaceRemapObject namespaceMap = null;
+		public List<AssetIdentifierTuple> map = new List<AssetIdentifierTuple>();
+
+		public AssetIdentifierTuple this[int i]
+		{
+			get { return map[i]; }
+			set { map[i] = value; }
+		}
 	}
 
 	[Serializable]
-	class pb_AssetIdentifier : IEquatable<pb_AssetIdentifier>
+	class AssetId : IEquatable<AssetId>
 	{
 		const string k_MonoScriptTypeString = "UnityEditor.MonoScript";
 
@@ -157,7 +162,11 @@ namespace ProBuilder.EditorCore
 		string m_MonoScriptClass = null;
 		bool m_IsEditorScript = false;
 
-		public pb_AssetIdentifier(UObject obj, string file, string guid, string localPath = null)
+		public AssetId()
+		{
+		}
+
+		public AssetId(UObject obj, string file, string guid, string localPath = null)
 		{
 			if (obj == null)
 				throw new SystemException("Cannot initialize an AssetIdentifier with a null object");
@@ -179,7 +188,7 @@ namespace ProBuilder.EditorCore
 				m_Type = obj.GetType().ToString();
 		}
 
-		public bool Equals(pb_AssetIdentifier other)
+		public bool Equals(AssetId other)
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
@@ -194,7 +203,7 @@ namespace ProBuilder.EditorCore
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			if (obj.GetType() != this.GetType()) return false;
-			return Equals((pb_AssetIdentifier) obj);
+			return Equals((AssetId) obj);
 		}
 
 		public override int GetHashCode()
@@ -216,7 +225,7 @@ namespace ProBuilder.EditorCore
 			m_LocalPath = m_LocalPath.Replace(dir, "");
 		}
 
-		public static bool IsValid(pb_AssetIdentifier id)
+		public static bool IsValid(AssetId id)
 		{
 			return !string.IsNullOrEmpty(id == null ? null : id.m_Guid);
 		}
@@ -237,7 +246,7 @@ namespace ProBuilder.EditorCore
 					catch
 					{
 						m_MonoScriptClass = "null";
-						pb_Log.Warning("Failed parsing type from monoscript \"" + m_Name + "\" (" + m_Type + ")");
+//						pb_Log.Debug("Failed parsing type from monoscript \"" + m_Name + "\" (" + m_Type + ")");
 					}
 				}
 				else
@@ -271,7 +280,7 @@ namespace ProBuilder.EditorCore
 			return true;
 		}
 
-		public bool AssetEquals(pb_AssetIdentifier other, pb_NamespaceRemapObject namespaceRemap = null)
+		public bool AssetEquals(AssetId other, NamespaceRemapObject namespaceRemap = null)
 		{
 			if (!assetType.Equals(other.assetType))
 				return false;
