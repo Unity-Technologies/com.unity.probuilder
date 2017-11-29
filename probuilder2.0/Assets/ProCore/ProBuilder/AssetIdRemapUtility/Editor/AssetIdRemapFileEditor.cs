@@ -48,12 +48,11 @@ namespace ProBuilder.AssetUtility
 		static GUIContent m_SourceGuiContent = new GUIContent("Source", "The old GUID and FileId.");
 		static GUIContent m_DestinationGuiContent = new GUIContent("Destination", "The new GUID and FileId.");
 
-		Vector2 m_Scroll;
-
 		[SerializeField] TreeViewState m_TreeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
 		MultiColumnHeader m_MultiColumnHeader;
 		AssetIdRemapTreeView m_TreeView;
+		SearchField m_SearchField;
 
 		[MenuItem("Tools/GUID Remap Editor")]
 		static void MenuOpenGuidEditor()
@@ -88,6 +87,8 @@ namespace ProBuilder.AssetUtility
 				m_RemapObject == null ? remapFilePath : AssetDatabase.GetAssetPath(m_RemapObject),
 				m_NamespaceRemap == null ? namespaceRemapFilePath : AssetDatabase.GetAssetPath(m_NamespaceRemap));
 			m_TreeView.Reload();
+
+			m_SearchField = new SearchField();
 		}
 
 		void OnGUI()
@@ -123,8 +124,14 @@ namespace ProBuilder.AssetUtility
 			}
 
 			Rect last = GUILayoutUtility.GetLastRect();
-			Vector2 treeStart = new Vector2(last.x, last.y + last.height + 4);
 
+			m_TreeView.searchString = m_SearchField.OnGUI(new Rect(last.x, last.y + last.height + 4, position.width - last.x * 2f, 20f),
+				m_TreeView.searchString);
+
+			Vector2 treeStart = new Vector2(last.x, last.y + last.height + 4 + 20f + 4f);
+
+			m_TreeView.SetRowHeight();
+			
 			m_TreeView.OnGUI(new Rect(treeStart.x, treeStart.y, position.width - treeStart.x * 2, position.height - treeStart.y));
 		}
 
