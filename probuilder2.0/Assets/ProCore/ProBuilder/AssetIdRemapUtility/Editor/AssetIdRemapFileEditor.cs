@@ -29,9 +29,10 @@ namespace ProBuilder.AssetUtility
 			get { return "Assets/ProCore/ProBuilder/" + k_NamespaceRemapFilePath; }
 		}
 
-		static string[] k_DirectoryExcludeFilter = new string[]
+		static readonly string[] k_DirectoryExcludeFilter = new string[]
 		{
 			"ProBuilder/About",
+			"ProBuilder/AssetIdRemapUtility",
 			"ProBuilder/API Examples",
 			"ProBuilder/Data",
 			"ProBuilder/Icons",
@@ -131,7 +132,7 @@ namespace ProBuilder.AssetUtility
 			Vector2 treeStart = new Vector2(last.x, last.y + last.height + 4 + 20f + 4f);
 
 			m_TreeView.SetRowHeight();
-			
+
 			m_TreeView.OnGUI(new Rect(treeStart.x, treeStart.y, position.width - treeStart.x * 2, position.height - treeStart.y));
 		}
 
