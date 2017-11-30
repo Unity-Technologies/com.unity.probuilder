@@ -264,10 +264,10 @@ namespace ProBuilder.AssetUtility
 
 			foreach (var id in GetAssetIdentifiersInDirectory(localDirectory, k_DirectoryExcludeFilter))
 			{
-				if (map.Any(x => x.source.Equals(id)))
-					continue;
-
 				id.SetPathRelativeTo(localDirectory);
+
+				if (map.Any(x => x.source != null && x.source.AssetEquals(id)))
+					continue;
 
 				// the only time where a destination can exist with a null source is when a single destination is in the
 				// map, so it's okay to grab the first and not bother searching for more dangling destination entries
