@@ -16,17 +16,17 @@ namespace ProBuilder.AssetUtility
 	/// </summary>
 	class AssetIdRemapFileEditor : EditorWindow
 	{
-		const string k_RemapFilePath = "Upgrade/AssetIdRemap.json";
-		const string k_NamespaceRemapFilePath = "Upgrade/NamespaceRemap.json";
+		const string k_RemapFilePath = "AssetIdRemap.json";
+		const string k_NamespaceRemapFilePath = "NamespaceRemap.json";
 
 		static string remapFilePath
 		{
-			get { return "Assets/ProCore/ProBuilder/" + k_RemapFilePath; }
+			get { return "Assets/" + k_RemapFilePath; }
 		}
 
 		static string namespaceRemapFilePath
 		{
-			get { return "Assets/ProCore/ProBuilder/" + k_NamespaceRemapFilePath; }
+			get { return "Assets/" + k_NamespaceRemapFilePath; }
 		}
 
 		static readonly string[] k_DirectoryExcludeFilter = new string[]
@@ -46,7 +46,7 @@ namespace ProBuilder.AssetUtility
 		static GUIContent m_DestinationGuiContent = new GUIContent("Destination", "The new GUID and FileId.");
 
 		[SerializeField] TextAsset m_RemapTextAsset = null;
-		[SerializeField] TextAsset m_NamespaceRemap = null;
+		[SerializeField] TextAsset m_NamespaceRemapTextAsset = null;
 		[SerializeField] string m_SourceDirectory;
 		[SerializeField] string m_DestinationDirectory;
 		[SerializeField] bool m_DoClean = false;
@@ -149,11 +149,12 @@ namespace ProBuilder.AssetUtility
 			EditorGUI.BeginChangeCheck();
 
 			m_RemapTextAsset = (TextAsset) EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
-			m_NamespaceRemap = (TextAsset) EditorGUILayout.ObjectField("Namespace", m_NamespaceRemap, typeof(TextAsset), false);
+			m_NamespaceRemapTextAsset = (TextAsset) EditorGUILayout.ObjectField("Namespace", m_NamespaceRemapTextAsset, typeof(TextAsset), false);
 			m_DoClean = EditorGUILayout.Toggle(m_DoCleanGuiContent, m_DoClean);
 
 			if (EditorGUI.EndChangeCheck())
 			{
+				m_TreeView.remapObject = null;
 				m_TreeView.remapObject = GetGuidRemapObject();
 				m_TreeView.Reload();
 				Repaint();
@@ -384,7 +385,7 @@ namespace ProBuilder.AssetUtility
 				string g;
 				int file;
 
-				if (AssetDatabase.GetGUIDAndLocalFileIdentifier(o.GetInstanceID(), out g, out file))
+				if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(o, out g, out file))
 					ids.Add(new AssetId(o, file.ToString(), g.ToString(), assetPath));
 			}
 
@@ -405,15 +406,15 @@ namespace ProBuilder.AssetUtility
 			if(m_RemapTextAsset == null)
 				m_RemapTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath);
 
+			if(m_NamespaceRemapTextAsset == null)
+				m_NamespaceRemapTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
+
 			remapObject = new AssetIdRemapObject();
 
 			if (clean || m_RemapTextAsset == null)
 			{
-				if(m_NamespaceRemap == null)
-					m_NamespaceRemap = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
-
-				if (m_NamespaceRemap != null)
-					remapObject.namespaceMap = JsonUtility.FromJson<NamespaceRemapObject>(m_NamespaceRemap.text);
+				if (m_NamespaceRemapTextAsset != null)
+					remapObject.namespaceMap = JsonUtility.FromJson<NamespaceRemapObject>(m_NamespaceRemapTextAsset.text);
 			}
 			else
 			{

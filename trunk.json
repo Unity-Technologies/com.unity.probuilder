@@ -32,8 +32,10 @@
 		"UNITY_2018_1_OR_NEWER",
 		"UNITY_2018_1",
 	],
-	"OnPreBuild":[
+	"Clean":[
 		{ "Command":"rm", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-$UNITY_VERSION" ] },
+	],
+	"OnPreBuild":[
 		{ "Command":"mkdir", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-$UNITY_VERSION/Assets" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$DST_PB_ROOT" ] },
 		// rm doesn't accept wildcards at the moment, so delete the folder and recreate it since
