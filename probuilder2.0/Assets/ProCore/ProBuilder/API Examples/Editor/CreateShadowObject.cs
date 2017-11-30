@@ -14,10 +14,10 @@
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.MeshOperations;
+using ProBuilder.EditorCore;
+using ProBuilder.Interface;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
@@ -25,18 +25,18 @@ using UnityEngine.Rendering;
 /**
  *	When creating your own actions please use your own namespace.
  */
-namespace ProBuilder2.Actions
+namespace ProBuilder.ExampleActions
 {
 	/**
 	 *	This class is responsible for loading the pb_MenuAction into the toolbar and menu.
 	 */
 	[InitializeOnLoad]
-	static class RegisterCustomAction
+	static class RegisterShadowObjectAction
 	{
 		/**
 		 *	Static initializer is called when Unity loads the assembly.
 		 */
-		static RegisterCustomAction()
+		static RegisterShadowObjectAction()
 		{
 			// This registers a new CreateShadowObject menu action with the toolbar.
 			pb_EditorToolbarLoader.RegisterMenuItem(InitCustomAction);
@@ -231,7 +231,7 @@ namespace ProBuilder2.Actions
 
 					if(shadow != null)
 					{
-						pbUndo.RecordObject(shadow, "Update Shadow Object");
+						Undo.RecordObject(shadow, "Update Shadow Object");
 
 						pb_Face[] faces = new pb_Face[pb.faces.Length];
 

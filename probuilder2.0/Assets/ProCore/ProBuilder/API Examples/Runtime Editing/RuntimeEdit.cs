@@ -6,12 +6,9 @@ using ProBuilder.Core;
 
 namespace ProBuilder.Examples
 {
-
-	/**
-	 *	\brief This class allows the user to select a single face at a time and move it forwards or backwards.
-	 *	More advanced usage of the ProBuilder API should make use of the pb_Object->SelectedFaces list to keep
-	 *	track of the selected faces.
-	 */
+	/// <summary>
+	/// This class allows the user to select a single face at a time and move it forwards or backwards.
+	/// </summary>
 	public class RuntimeEdit : MonoBehaviour
 	{
 		class pb_Selection

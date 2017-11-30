@@ -10,32 +10,35 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-[InitializeOnLoad]
-public class RenameNewObjects : Editor
+namespace ProBuilder.EditorExamples
 {
-	/**
-	 *	Static constructor is called and subscribes to the OnProBuilderObjectCreated delegate. 
-	 */
-	static RenameNewObjects()
+	[InitializeOnLoad]
+	public class RenameNewObjects : Editor
 	{
-		pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
-	}
+		/**
+		 *	Static constructor is called and subscribes to the OnProBuilderObjectCreated delegate.
+		 */
+		static RenameNewObjects()
+		{
+			pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
+		}
 
-	~RenameNewObjects()
-	{
-		pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
-	}
+		~RenameNewObjects()
+		{
+			pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
+		}
 
-	/**
-	 *	When a new object is created this function is called with a reference to the pb_Object
-	 *	last built.
-	 */
-	static void OnProBuilderObjectCreated(pb_Object pb)
-	{
-		pb.gameObject.name = string.Format("pb_{0}{1}", pb.gameObject.name, pb.GetInstanceID());
+		/**
+		 *	When a new object is created this function is called with a reference to the pb_Object
+		 *	last built.
+		 */
+		static void OnProBuilderObjectCreated(pb_Object pb)
+		{
+			pb.gameObject.name = string.Format("pb_{0}{1}", pb.gameObject.name, pb.GetInstanceID());
+		}
 	}
 }
 

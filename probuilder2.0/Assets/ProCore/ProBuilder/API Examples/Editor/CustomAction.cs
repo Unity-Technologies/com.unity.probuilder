@@ -1,9 +1,9 @@
 ﻿/**
- *	This script demonstrates how to create a new action that can be accessed from the 
+ *	This script demonstrates how to create a new action that can be accessed from the
  *	ProBuilder toolbar.
  *
  *	A new menu item is registered under "Geometry" actions called "Make Double-Sided".
- *	
+ *
  *	To enable, remove the #if PROBUILDER_API_EXAMPLE and #endif directives.
  */
 
@@ -14,14 +14,13 @@
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
-using ProBuilder2.Interface;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MySpecialNamespace.Actions
+namespace ProBuilder.ExampleActions
 {
 	/**
 	 *	This class is responsible for loading the pb_MenuAction into the toolbar and menu.
@@ -114,7 +113,7 @@ namespace MySpecialNamespace.Actions
 		 */
 		public override pb_ActionResult DoAction()
 		{
-			pbUndo.RecordObjects(selection, "Make Double-Sided Faces");
+			Undo.RecordObjects(selection, "Make Double-Sided Faces");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -128,7 +127,7 @@ namespace MySpecialNamespace.Actions
 			// This is necessary!  Otherwise the pb_Editor will be working with caches from
 			// outdated meshes and throw errors.
 			pb_Editor.Refresh();
-			
+
 			return new pb_ActionResult(Status.Success, "Make Faces Double-Sided");
 		}
 	}

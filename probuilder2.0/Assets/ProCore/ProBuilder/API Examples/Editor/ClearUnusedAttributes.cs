@@ -12,37 +12,39 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-[InitializeOnLoad]
-public class ClearUnusedAttributes : Editor
+namespace ProBuilder.EditorExamples
 {
-	/**
-	 *	Static constructor is called and subscribes to the OnMeshCompiled delegate.
-	 */
-	static ClearUnusedAttributes()
+	[InitializeOnLoad]
+	public class ClearUnusedAttributes : Editor
 	{
-		pb_EditorUtility.AddOnMeshCompiledListener(OnMeshCompiled);
-	}
+		/**
+		 *	Static constructor is called and subscribes to the OnMeshCompiled delegate.
+		 */
+		static ClearUnusedAttributes()
+		{
+			pb_EditorUtility.AddOnMeshCompiledListener(OnMeshCompiled);
+		}
 
-	~ClearUnusedAttributes()
-	{
-		pb_EditorUtility.RemoveOnMeshCompiledListener(OnMeshCompiled);
-	}
+		~ClearUnusedAttributes()
+		{
+			pb_EditorUtility.RemoveOnMeshCompiledListener(OnMeshCompiled);
+		}
 
-	/**
-	 *	When a ProBuilder object is compiled to UnityEngine.Mesh this is called.
-	 */
-	static void OnMeshCompiled(pb_Object pb, Mesh mesh)
-	{
-		mesh.uv = null;
-		mesh.colors32 = null;
-		mesh.tangents = null;
+		/**
+		 *	When a ProBuilder object is compiled to UnityEngine.Mesh this is called.
+		 */
+		static void OnMeshCompiled(pb_Object pb, Mesh mesh)
+		{
+			mesh.uv = null;
+			mesh.colors32 = null;
+			mesh.tangents = null;
 
-		// Print out the mesh attributes in a neatly formatted string.
-		// Debug.Log( pb_MeshUtility.Print(mesh) );
+			// Print out the mesh attributes in a neatly formatted string.
+			// Debug.Log( pb_MeshUtility.Print(mesh) );
+		}
 	}
 }
-
 #endif

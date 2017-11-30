@@ -6,40 +6,43 @@
 // #define PROBUILDER_API_EXAMPLE
 
 #if PROBUILDER_API_EXAMPLE
- 
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
-[InitializeOnLoad]
-public class SetUnwrapParams : Editor
+namespace ProBuilder.EditorExamples
 {
-	/**
-	 *	Static constructor is called and subscribes to the OnProBuilderObjectCreated delegate. 
-	 */
-	static SetUnwrapParams()
+	[InitializeOnLoad]
+	public class SetUnwrapParams : Editor
 	{
-		pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
-	}
+		/// <summary>
+		/// Static constructor is called and subscribes to the OnProBuilderObjectCreated delegate.
+		/// </summary>
+		static SetUnwrapParams()
+		{
+			pb_EditorUtility.AddOnObjectCreatedListener(OnProBuilderObjectCreated);
+		}
 
-	~SetUnwrapParams()
-	{
-		pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
-	}
+		~SetUnwrapParams()
+		{
+			pb_EditorUtility.RemoveOnObjectCreatedListener(OnProBuilderObjectCreated);
+		}
 
-	/**
-	 *	When a new object is created this function is called with a reference to the pb_Object
-	 *	last built.
-	 */
-	static void OnProBuilderObjectCreated(pb_Object pb)
-	{
-		pb_UnwrapParameters up = pb.unwrapParameters;
-		up.hardAngle = 88f;			// range: 1f, 180f
-		up.packMargin = 15f;		// range: 1f, 64f
-		up.angleError = 30f;		// range: 1f, 75f
-		up.areaError = 15f;			// range: 1f, 75f
+		/// <summary>
+		/// When a new object is created this function is called with a reference to the pb_Object last built.
+		/// </summary>
+		/// <param name="pb"></param>
+		static void OnProBuilderObjectCreated(pb_Object pb)
+		{
+			pb_UnwrapParameters up = pb.unwrapParameters;
+			up.hardAngle = 88f; // range: 1f, 180f
+			up.packMargin = 15f; // range: 1f, 64f
+			up.angleError = 30f; // range: 1f, 75f
+			up.areaError = 15f; // range: 1f, 75f
+		}
 	}
 }
 
