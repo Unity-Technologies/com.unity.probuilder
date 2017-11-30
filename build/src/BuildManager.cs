@@ -23,6 +23,7 @@ namespace ProBuilder.BuildSystem
 			List<BuildTarget> m_Targets = new List<BuildTarget>();
 
 			bool m_IsDebug = false;
+			bool m_DoClean = false;
 			string m_UnityPathOverride = null;
 
 			if(args == null || args.Length < 1 || args.Any(x => x.Contains("--help") || x.Contains("-help")))
@@ -31,28 +32,33 @@ namespace ProBuilder.BuildSystem
 				return 0;
 			}
 
-			// Iterate through args once looking for swithes
+			// Iterate through args once looking for switches
 			foreach(string arg in args)
 			{
-				if(arg.StartsWith("-debug"))
+				bool multiSwitch = !arg.StartsWith("--");
+
+				if(arg.Equals("--debug") || (multiSwitch && arg.Contains("d")))
 				{
 					m_IsDebug = true;
 				}
-				else if(arg.StartsWith("-version"))
+
+				if(!multiSwitch && arg.Equals("--version"))
 				{
 					Log.Print(m_VersionInfo);
 					return 1;
 				}
-				else if(arg.StartsWith("-silent"))
+
+				if(multiSwitch ? arg.Contains("q") : arg.Equals("--silent"))
 				{
 					Log.Level = LogLevel.None;
 				}
-				else if(arg.StartsWith("-verbose"))
+
+				if(multiSwitch ? arg.Contains("v") : arg.Equals("verbose"))
 				{
 					Log.Level = LogLevel.All;
-
 				}
-				else if(arg.StartsWith("-unity="))
+
+				if(!multiSwitch && arg.StartsWith("--unity="))
 				{
 					m_UnityPathOverride = arg.Replace("-unity=", "").Trim().Replace("\\", "/");
 
@@ -62,36 +68,36 @@ namespace ProBuilder.BuildSystem
 					if(m_UnityPathOverride.EndsWith("/"))
 						m_UnityPathOverride = m_UnityPathOverride.Substring(0, m_UnityPathOverride.Length - 1);
 				}
+
+				if(multiSwitch ? arg.Contains("c") : arg.Equals("--clean"))
+				{
+					m_DoClean = true;
+				}
 			}
 
 			// Then read in build targets
 			foreach(string arg in args)
 			{
 				// If no valid argument prefix, treat this input as a build target
-				if(arg.StartsWith("-debug") || arg.StartsWith("-version") || arg.StartsWith("-silent") || arg.StartsWith("-verbose") || arg.StartsWith("-unity="))
-				{
+				if(arg.StartsWith("-"))
 					continue;
-				}
-				else
-				{
-					if( ReferenceUtility.IsDirectory(arg) && Directory.Exists(arg) )
-					{
-						foreach(string t in Directory.GetFiles(arg, "*.json", SearchOption.TopDirectoryOnly))
-						{
-							BuildTarget result = TryReadBuildTarget(t);
 
-							if(result != null)
-								m_Targets.Add(result);
-						}
-					}
-					else
+				if( ReferenceUtility.IsDirectory(arg) && Directory.Exists(arg) )
+				{
+					foreach(string t in Directory.GetFiles(arg, "*.json", SearchOption.TopDirectoryOnly))
 					{
-						BuildTarget result = TryReadBuildTarget(arg);
+						BuildTarget result = TryReadBuildTarget(t);
 
 						if(result != null)
 							m_Targets.Add(result);
-
 					}
+				}
+				else
+				{
+					BuildTarget result = TryReadBuildTarget(arg);
+
+					if(result != null)
+						m_Targets.Add(result);
 				}
 			}
 
@@ -114,17 +120,17 @@ namespace ProBuilder.BuildSystem
 
 					m_UnityPath = ReferenceUtility.ResolveDirectory(target.UnityPath);
 
-				    if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
-				    {
-				    	Console.WriteLine(string.Format("Build target {0} has invalid Unity path: ({1})\n  {2}",
-				    		target.Name,
-				    		m_UnityPath ?? "null",
-				    		target.UnityPath != null ? string.Join("\n  ", target.UnityPath) : "  null"));
-				    	continue;
-				    }
+					if(string.IsNullOrEmpty(m_UnityPath) || !Directory.Exists(m_UnityPath))
+					{
+						Console.WriteLine(string.Format("Build target {0} has invalid Unity path: ({1})\n  {2}",
+							target.Name,
+							m_UnityPath ?? "null",
+							target.UnityPath != null ? string.Join("\n  ", target.UnityPath) : "  null"));
+						continue;
+					}
 				}
 
-			    // Define Unity contents path macro based on GetUnityPath (can be different on Mac/Windows)
+				// Define Unity contents path macro based on GetUnityPath (can be different on Mac/Windows)
 				target.Macros.Add("$UNITY", m_UnityPath);
 
 				Log.Info("Macros:");
@@ -133,32 +139,54 @@ namespace ProBuilder.BuildSystem
 				foreach(var kvp in target.Macros)
 				{
 					Log.Info(string.Format("  {0} = {1}", kvp.Key, kvp.Value));
-			    	target.Replace(kvp.Key, kvp.Value);
-			    }
+					target.Replace(kvp.Key, kvp.Value);
+				}
 
-			    // if debugging manually add the DEBUG define
-			    if(m_IsDebug && !target.Defines.Contains("DEBUG"))
-			    	target.Defines.Add("DEBUG");
+				// if debugging manually add the DEBUG define
+				if(m_IsDebug && !target.Defines.Contains("DEBUG"))
+					target.Defines.Add("DEBUG");
 
-			    Log.Info("Defines:");
+				Log.Info("Defines:");
 
-			    foreach(var d in target.Defines)
-			    	Log.Info(string.Format("  {0}", d));
+				foreach(var d in target.Defines)
+					Log.Info(string.Format("  {0}", d));
 
-			    Log.Info("OnPreBuild");
+				Log.Info("Clean");
 
-			    if(target.OnPreBuild != null && target.OnPreBuild.Count > 0)
-			    {
-				    foreach(BuildCommand command in target.OnPreBuild)
-				    {
-			    		Log.Info("  " + command.ToString());
-				    	BuildCommandEvaluator.Execute(command);
-				    }
-			    }
-			    else
-			    {
-			    	Log.Info("  (no commands)");
-			    }
+				if(m_DoClean)
+				{
+					if(target.Clean != null && target.Clean.Count > 0)
+					{
+						foreach(BuildCommand command in target.Clean)
+						{
+							Log.Info("  " + command.ToString());
+							BuildCommandEvaluator.Execute(command);
+						}
+					}
+					else
+					{
+						Log.Info("  (no clean commands)");
+					}
+				}
+				else
+				{
+					Log.Info("  (skipping)");
+				}
+
+				Log.Info("OnPreBuild");
+
+				if(target.OnPreBuild != null && target.OnPreBuild.Count > 0)
+				{
+					foreach(BuildCommand command in target.OnPreBuild)
+					{
+						Log.Info("  " + command.ToString());
+						BuildCommandEvaluator.Execute(command);
+					}
+				}
+				else
+				{
+					Log.Info("  (no commands)");
+				}
 
 				bool targetBreak = false;
 
@@ -190,19 +218,19 @@ namespace ProBuilder.BuildSystem
 				if(targetBreak)
 					break;
 
-			    Log.Info("OnPostBuild");
+				Log.Info("OnPostBuild");
 
 				if(target.OnPostBuild != null && target.OnPostBuild.Count > 0)
 				{
 					foreach(BuildCommand command in target.OnPostBuild)
 					{
-			    		Log.Info("  " + command.ToString());
+						Log.Info("  " + command.ToString());
 						BuildCommandEvaluator.Execute(command);
 					}
 				}
 				else
 				{
-			    	Log.Info("  (no commands)");
+					Log.Info("  (no commands)");
 				}
 
 				Log.Info("");

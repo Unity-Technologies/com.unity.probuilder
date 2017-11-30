@@ -41,6 +41,9 @@ namespace ProBuilder.BuildSystem
 		// Symbols to define for each assembly target.
 		public List<string> Defines;
 
+		// Commands to be executed prior to compile and pre-build.
+		public List<BuildCommand> Clean;
+
 		// Commands to be executed prior to compiling DLLs.
 		public List<BuildCommand> OnPreBuild;
 
@@ -62,6 +65,12 @@ namespace ProBuilder.BuildSystem
 			{
 				foreach(AssemblyTarget target in Assemblies)
 					target.Replace(key, value);
+			}
+
+			if(Clean != null)
+			{
+				foreach(BuildCommand bc in Clean)
+					bc.Replace(key, value);
 			}
 
 			if(OnPreBuild != null)
@@ -120,6 +129,12 @@ namespace ProBuilder.BuildSystem
 					this.Defines.AddRange(target.Defines);
 				else
 					this.Defines = target.Defines;
+
+			if( target.Clean != null && target.Clean.Count > 0 )
+				if(target.AppendToBase != null && target.AppendToBase.Contains("Clean"))
+					this.Clean.AddRange(target.Clean);
+				else
+					this.Clean = target.Clean;
 
 			if( target.OnPreBuild != null && target.OnPreBuild.Count > 0 )
 				if(target.AppendToBase != null && target.AppendToBase.Contains("OnPreBuild"))
