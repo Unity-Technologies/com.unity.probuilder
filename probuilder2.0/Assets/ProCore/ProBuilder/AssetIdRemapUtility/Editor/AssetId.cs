@@ -104,7 +104,7 @@ namespace ProBuilder.AssetUtility
 					break;
 			}
 
-			map = map.Where(x => AssetId.IsValid(x.source) && AssetId.IsValid(x.destination)).ToList();
+			map = map.Where(x => AssetId.IsValid(x.source) || AssetId.IsValid(x.destination)).ToList();
 		}
 	}
 
