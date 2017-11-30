@@ -22,8 +22,8 @@ namespace ProBuilder.AssetUtility
 
 		public AssetIdentifierTuple(AssetId src, AssetId dest)
 		{
-			source = src;
-			destination = dest;
+			source = src ?? new AssetId();
+			destination = dest ?? new AssetId();
 		}
 	}
 
@@ -67,6 +67,12 @@ namespace ProBuilder.AssetUtility
 		}
 	}
 
+	enum Origin
+	{
+		Source,
+		Destination
+	}
+
 	[Serializable]
 	class AssetIdRemapObject
 	{
@@ -79,6 +85,26 @@ namespace ProBuilder.AssetUtility
 		{
 			get { return map[i]; }
 			set { map[i] = value; }
+		}
+
+		public void Clear(Origin origin)
+		{
+			switch (origin)
+			{
+				case Origin.Source:
+					sourceDirectory.Clear();
+					for (int i = 0, c = map.Count; i < c; i++)
+						map[i].source.Clear();
+					break;
+
+				case Origin.Destination:
+					destinationDirectory = "";
+					for (int i = 0, c = map.Count; i < c; i++)
+						map[i].destination.Clear();
+					break;
+			}
+
+			map = map.Where(x => AssetId.IsValid(x.source) && AssetId.IsValid(x.destination)).ToList();
 		}
 	}
 
@@ -164,6 +190,7 @@ namespace ProBuilder.AssetUtility
 
 		public AssetId()
 		{
+			Clear();
 		}
 
 		public AssetId(UObject obj, string file, string guid, string localPath = null)
@@ -218,6 +245,18 @@ namespace ProBuilder.AssetUtility
 			}
 
 			return hash;
+		}
+
+		public void Clear()
+		{
+			m_Guid = "";
+			m_FileId = "";
+			m_LocalPath = "";
+			m_Name = "";
+			m_Type = "";
+			m_InternalType = AssetType.Unknown;
+			m_MonoScriptClass = null;
+			m_IsEditorScript = false;
 		}
 
 		public void SetPathRelativeTo(string dir)

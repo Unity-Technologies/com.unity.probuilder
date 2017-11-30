@@ -40,17 +40,21 @@ namespace ProBuilder.AssetUtility
 			"ProBuilder/Upgrade",
 		};
 
-		static TextAsset m_RemapObject = null;
-		static TextAsset m_NamespaceRemap = null;
-		static bool m_DoClean = false;
 		static GUIContent m_DoCleanGuiContent = new GUIContent("Clean", "If enabled both Source and Destination actions" +
 		                                                                " will clear the remap file and start from scratch.");
-
 		static GUIContent m_SourceGuiContent = new GUIContent("Source", "The old GUID and FileId.");
 		static GUIContent m_DestinationGuiContent = new GUIContent("Destination", "The new GUID and FileId.");
 
+		[SerializeField] TextAsset m_RemapTextAsset = null;
+		[SerializeField] TextAsset m_NamespaceRemap = null;
+		[SerializeField] string m_SourceDirectory;
+		[SerializeField] string m_DestinationDirectory;
+		[SerializeField] bool m_DoClean = false;
+		[SerializeField] bool m_IsDirty = false;
+
 		[SerializeField] TreeViewState m_TreeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
+
 		MultiColumnHeader m_MultiColumnHeader;
 		AssetIdRemapTreeView m_TreeView;
 		SearchField m_SearchField;
@@ -59,6 +63,24 @@ namespace ProBuilder.AssetUtility
 		static void MenuOpenGuidEditor()
 		{
 			GetWindow<AssetIdRemapFileEditor>(true, "GUID Remap Editor", true);
+		}
+
+		static class Styles
+		{
+			static GUIStyle m_Container = null;
+
+			public static GUIStyle container
+			{
+				get
+				{
+					if (m_Container == null)
+					{
+						m_Container = new GUIStyle(EditorStyles.helpBox);
+						m_Container.padding = new RectOffset(4, 4, 4, 4);
+					}
+					return m_Container;
+				}
+			}
 		}
 
 		void OnEnable()
@@ -84,45 +106,104 @@ namespace ProBuilder.AssetUtility
 			m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState);
 			m_MultiColumnHeader.ResizeToFit();
 			m_TreeView = new AssetIdRemapTreeView(m_TreeViewState, m_MultiColumnHeader);
-			m_TreeView.remapObject = GetGuidRemapObject(
-				m_RemapObject == null ? remapFilePath : AssetDatabase.GetAssetPath(m_RemapObject),
-				m_NamespaceRemap == null ? namespaceRemapFilePath : AssetDatabase.GetAssetPath(m_NamespaceRemap));
+			m_TreeView.remapObject = GetGuidRemapObject();
 			m_TreeView.Reload();
 
 			m_SearchField = new SearchField();
 		}
 
+		string GetRemapFilePath()
+		{
+			if (m_RemapTextAsset != null)
+				return AssetDatabase.GetAssetPath(m_RemapTextAsset);
+			return remapFilePath;
+		}
+
 		void OnGUI()
 		{
+			GUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+			GUILayout.FlexibleSpace();
+
+			GUI.enabled = m_IsDirty;
+
+			if(GUILayout.Button("Revert", EditorStyles.toolbarButton))
+			{
+				m_TreeView.remapObject = null;
+				m_TreeView.remapObject = GetGuidRemapObject();
+				m_TreeView.Reload();
+				m_IsDirty = false;
+			}
+
+			if(GUILayout.Button("Save", EditorStyles.toolbarButton))
+			{
+				File.WriteAllText(GetRemapFilePath(), JsonUtility.ToJson(m_TreeView.remapObject, true));
+				AssetDatabase.ImportAsset(GetRemapFilePath());
+				EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(GetRemapFilePath()));
+				m_IsDirty = false;
+			}
+			GUI.enabled = true;
+
+			GUILayout.EndHorizontal();
+
 			EditorGUI.BeginChangeCheck();
-			m_RemapObject = (TextAsset) EditorGUILayout.ObjectField("Remap", m_RemapObject, typeof(TextAsset), false);
+
+			m_RemapTextAsset = (TextAsset) EditorGUILayout.ObjectField("Remap", m_RemapTextAsset, typeof(TextAsset), false);
 			m_NamespaceRemap = (TextAsset) EditorGUILayout.ObjectField("Namespace", m_NamespaceRemap, typeof(TextAsset), false);
 			m_DoClean = EditorGUILayout.Toggle(m_DoCleanGuiContent, m_DoClean);
 
-			if (GUILayout.Button("Collect Source (Old) Asset Identifiers"))
-			{
-				GetRemapSource(
-					m_RemapObject == null ? remapFilePath : AssetDatabase.GetAssetPath(m_RemapObject),
-					m_NamespaceRemap == null ? namespaceRemapFilePath : AssetDatabase.GetAssetPath(m_NamespaceRemap),
-					m_DoClean);
-			}
-
-			if (GUILayout.Button("Collect Destination (New) Asset Identifiers"))
-			{
-				GetRemapDestination(
-					m_RemapObject == null ? remapFilePath : AssetDatabase.GetAssetPath(m_RemapObject),
-					m_NamespaceRemap == null ? namespaceRemapFilePath : AssetDatabase.GetAssetPath(m_NamespaceRemap),
-					m_DoClean);
-			}
-
 			if (EditorGUI.EndChangeCheck())
 			{
-				m_TreeView.remapObject = GetGuidRemapObject(
-					m_RemapObject == null ? remapFilePath : AssetDatabase.GetAssetPath(m_RemapObject),
-					m_NamespaceRemap == null ? namespaceRemapFilePath : AssetDatabase.GetAssetPath(m_NamespaceRemap));
+				m_TreeView.remapObject = GetGuidRemapObject();
 				m_TreeView.Reload();
 				Repaint();
 			}
+
+			EditorGUILayout.BeginVertical(Styles.container);
+			GUILayout.Label("Package Directories", EditorStyles.boldLabel);
+			EditorGUILayout.BeginVertical(Styles.container);
+			m_SourceDirectory = DoDirectoryField("Source", m_SourceDirectory);
+
+			EditorGUI.BeginChangeCheck();
+			if (GUILayout.Button("Collect Source (Old) Asset Identifiers"))
+				GetRemapSource(m_SourceDirectory, m_DoClean);
+
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.BeginVertical(Styles.container);
+			m_DestinationDirectory = DoDirectoryField("Destination", m_DestinationDirectory);
+
+			if (GUILayout.Button("Collect Destination (New) Asset Identifiers"))
+				GetRemapDestination(m_DestinationDirectory, m_DoClean);
+			if(EditorGUI.EndChangeCheck())
+				m_TreeView.Reload();
+
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndVertical();
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Asset Id Mapping", EditorStyles.boldLabel);
+			GUILayout.FlexibleSpace();
+			if (GUILayout.Button("..."))
+			{
+				var menu = new GenericMenu();
+
+				menu.AddItem(new GUIContent("Clear Source", ""), false, () =>
+				{
+					GetGuidRemapObject().Clear(Origin.Source);
+					m_TreeView.Reload();
+					m_IsDirty = true;
+				});
+
+				menu.AddItem(new GUIContent("Clear Destination", ""), false, () =>
+				{
+					GetGuidRemapObject().Clear(Origin.Destination);
+					m_TreeView.Reload();
+					m_IsDirty = true;
+				});
+
+				menu.ShowAsContext();
+			}
+			GUILayout.EndHorizontal();
 
 			Rect last = GUILayoutUtility.GetLastRect();
 
@@ -136,34 +217,51 @@ namespace ProBuilder.AssetUtility
 			m_TreeView.OnGUI(new Rect(treeStart.x, treeStart.y, position.width - treeStart.x * 2, position.height - treeStart.y));
 		}
 
-		[MenuItem("Assets/GUID Remap Utility/Collect Old GUIDs")]
-		static void GetRemapSource()
+		static string DoDirectoryField(string title, string value)
 		{
-			GetRemapSource(null, null);
+			GUILayout.BeginHorizontal();
+			EditorGUI.BeginChangeCheck();
+
+			value = EditorGUILayout.TextField(title, value);
+
+			if (GUILayout.Button("Select", GUILayout.MaxWidth(60)))
+				value = GetSelectedDirectory();
+
+			bool didChange = EditorGUI.EndChangeCheck();
+			bool doOpenFolderPanel = GUILayout.Button("...", GUILayout.MaxWidth(32));
+
+			GUILayout.EndHorizontal();
+
+			if(doOpenFolderPanel)
+			{
+				value = EditorUtility.OpenFolderPanel(title, value, "");
+				didChange = true;
+			}
+
+			if(didChange)
+				GUI.FocusControl(null);
+
+			return didChange ? value = value.Replace("\\", "/").Replace(Application.dataPath, "Assets") : value;
 		}
 
-		[MenuItem("Assets/GUID Remap Utility/Collect New GUIDs")]
-		static void MenuGetRemapDestination()
+		void GetRemapSource(string directory, bool clean = false)
 		{
-			GetRemapSource(null, null);
-		}
+			if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+			{
+				Debug.LogWarning("No source directory selected.");
+				return;
+			}
 
-		static void GetRemapSource(string guidMapPath, string namespaceMapPath = null, bool clean = false)
-		{
-			if (string.IsNullOrEmpty(guidMapPath))
-				guidMapPath = remapFilePath;
+			var remapObject = GetGuidRemapObject(clean);
 
-			if (string.IsNullOrEmpty(namespaceMapPath))
-				namespaceMapPath = namespaceRemapFilePath;
+			string localDirectory = directory.Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 
-			var remapObject = GetGuidRemapObject(guidMapPath, namespaceMapPath, clean);
-
-			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 			if(!remapObject.sourceDirectory.Contains(localDirectory))
 				remapObject.sourceDirectory.Add(localDirectory);
+
 			List<AssetIdentifierTuple> map = remapObject.map;
 
-			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
+			foreach (var id in GetAssetIdentifiersInDirectory(localDirectory, k_DirectoryExcludeFilter))
 			{
 				if (map.Any(x => x.source.Equals(id)))
 					continue;
@@ -192,20 +290,18 @@ namespace ProBuilder.AssetUtility
 				}
 			}
 
-			File.WriteAllText(guidMapPath, JsonUtility.ToJson(remapObject, true));
-			AssetDatabase.ImportAsset(guidMapPath);
-			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(guidMapPath));
+			m_IsDirty = true;
 		}
 
-		static void GetRemapDestination(string guidMapPath, string namespaceMapPath = null, bool clean = false)
+		void GetRemapDestination(string directory, bool clean = false)
 		{
-			if (string.IsNullOrEmpty(guidMapPath))
-				guidMapPath = remapFilePath;
+			if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+			{
+				Debug.LogWarning("No destination directory selected.");
+				return;
+			}
 
-			if (string.IsNullOrEmpty(namespaceMapPath))
-				namespaceMapPath = namespaceRemapFilePath;
-
-			AssetIdRemapObject remapObject = GetGuidRemapObject(guidMapPath, namespaceMapPath, clean);
+			var remapObject = GetGuidRemapObject(clean);
 
 			if (!string.IsNullOrEmpty(remapObject.destinationDirectory))
 			{
@@ -215,11 +311,11 @@ namespace ProBuilder.AssetUtility
 					return;
 			}
 
-			string localDirectory = GetSelectedDirectory().Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
+			string localDirectory = directory.Replace("\\", "/").Replace(Application.dataPath, "Assets") + "/";
 			remapObject.destinationDirectory = localDirectory;
 			List<AssetIdentifierTuple> map = remapObject.map;
 
-			foreach (var id in GetAssetIdentifiersInDirectory(GetSelectedDirectory(), k_DirectoryExcludeFilter))
+			foreach (var id in GetAssetIdentifiersInDirectory(localDirectory, k_DirectoryExcludeFilter))
 			{
 				if (map.Any(x => x.destination.Equals(id)))
 					continue;
@@ -240,9 +336,7 @@ namespace ProBuilder.AssetUtility
 				}
 			}
 
-			File.WriteAllText(guidMapPath, JsonUtility.ToJson(remapObject, true));
-			AssetDatabase.ImportAsset(guidMapPath);
-			EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(guidMapPath));
+			m_IsDirty = true;
 		}
 
 		/// <summary>
@@ -258,7 +352,7 @@ namespace ProBuilder.AssetUtility
 			if (directoryIgnoreFilter != null && directoryIgnoreFilter.Any(x => unixPath.Contains(x)))
 				return ids;
 
-			foreach (string file in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
+			foreach (string file in Directory.GetFiles(Path.GetFullPath(directory), "*", SearchOption.TopDirectoryOnly))
 			{
 				if (file.EndsWith(".meta") || Path.GetFileName(file).StartsWith("."))
 					continue;
@@ -301,25 +395,32 @@ namespace ProBuilder.AssetUtility
 		/// Load a remap json file from a relative path (Assets/MyRemapFile.json).
 		/// </summary>
 		/// <returns>A GuidRemapObject from the path, or if not found, a new GuidRemapObject</returns>
-		static AssetIdRemapObject GetGuidRemapObject(string path, string namespacePath = null, bool clean = false)
+		AssetIdRemapObject GetGuidRemapObject(bool clean = false)
 		{
-			AssetIdRemapObject remap = new AssetIdRemapObject();
+			var remapObject = m_TreeView.remapObject;
 
-			TextAsset o = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+			if (remapObject != null)
+				return remapObject;
 
-			if (clean || o == null)
+			if(m_RemapTextAsset == null)
+				m_RemapTextAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(remapFilePath);
+
+			remapObject = new AssetIdRemapObject();
+
+			if (clean || m_RemapTextAsset == null)
 			{
-				TextAsset namespaceRemapJson = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
+				if(m_NamespaceRemap == null)
+					m_NamespaceRemap = AssetDatabase.LoadAssetAtPath<TextAsset>(namespaceRemapFilePath);
 
-				if (namespaceRemapJson != null)
-					remap.namespaceMap = JsonUtility.FromJson<NamespaceRemapObject>(namespaceRemapJson.text);
+				if (m_NamespaceRemap != null)
+					remapObject.namespaceMap = JsonUtility.FromJson<NamespaceRemapObject>(m_NamespaceRemap.text);
 			}
 			else
 			{
-				JsonUtility.FromJsonOverwrite(o.text, remap);
+				JsonUtility.FromJsonOverwrite(m_RemapTextAsset.text, remapObject);
 			}
 
-			return remap;
+			return remapObject;
 		}
 
 		static string GetSelectedDirectory()
