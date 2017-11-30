@@ -280,7 +280,7 @@ namespace ProBuilder.AssetUtility
 
 				if (matchingDestination != null)
 				{
-					if (matchingDestination.source != null)
+					if (AssetId.IsValid(matchingDestination.source))
 						map.Add(new AssetIdentifierTuple(id, matchingDestination.destination));
 					else
 						matchingDestination.source = id;
