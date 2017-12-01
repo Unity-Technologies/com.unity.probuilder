@@ -50,6 +50,8 @@
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore.meta" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/API Examples" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/API Examples.meta" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Shader"] },
 		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/Shader" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/Shader", "$DST_PB_ROOT/Shader" ] },

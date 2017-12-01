@@ -25,6 +25,14 @@ namespace ProBuilder.AssetUtility
 			source = src ?? new AssetId();
 			destination = dest ?? new AssetId();
 		}
+
+		public bool AssetEquals(AssetIdentifierTuple other)
+		{
+			return AssetId.IsValid(source) == AssetId.IsValid(other.source) &&
+			       source.AssetEquals(other.source) &&
+			       AssetId.IsValid(destination) == AssetId.IsValid(other.destination) &&
+			       destination.AssetEquals(other.destination);
+		}
 	}
 
 	[Serializable]
@@ -105,6 +113,40 @@ namespace ProBuilder.AssetUtility
 			}
 
 			map = map.Where(x => AssetId.IsValid(x.source) || AssetId.IsValid(x.destination)).ToList();
+		}
+
+		public void Combine(AssetIdentifierTuple left, AssetIdentifierTuple right)
+		{
+			AssetIdentifierTuple res = new AssetIdentifierTuple();
+
+			if (AssetId.IsValid(left.source) && AssetId.IsValid(right.destination))
+			{
+				res.source = new AssetId(left.source);
+				res.destination = new AssetId(right.destination);
+			}
+			else if (AssetId.IsValid(left.destination) && AssetId.IsValid(right.source))
+			{
+				res.source = new AssetId(right.source);
+				res.destination = new AssetId(left.destination);
+			}
+			else
+			{
+				return;
+			}
+
+			// duplicate, don't add
+			if (res.AssetEquals(left) || res.AssetEquals(right))
+				return;
+
+			// if combine was successful, remove partial entries
+			if (AssetId.IsValid(left.source) != AssetId.IsValid(left.destination))
+				map.Remove(left);
+
+			if (AssetId.IsValid(right.source) != AssetId.IsValid(right.destination))
+				map.Remove(right);
+
+			// add the new
+			map.Add(res);
 		}
 	}
 
@@ -191,6 +233,15 @@ namespace ProBuilder.AssetUtility
 		public AssetId()
 		{
 			Clear();
+		}
+
+		public AssetId(AssetId other)
+		{
+			m_Guid = other.m_Guid;
+			m_FileId = other.m_FileId;
+			m_LocalPath = other.m_LocalPath;
+			m_Name = other.m_Name;
+			m_Type = other.m_Type;
 		}
 
 		public AssetId(UObject obj, string file, string guid, string localPath = null)

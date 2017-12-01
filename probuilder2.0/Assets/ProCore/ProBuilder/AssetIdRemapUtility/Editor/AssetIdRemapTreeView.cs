@@ -106,12 +106,22 @@ namespace ProBuilder.AssetUtility
 			if (tup == null || tup.depth > 0)
 				return false;
 
-			return tup.item1.Contains(search) || tup.item2.Contains(search);
+			var o = m_RemapObject[tup.index];
+
+			return o.source.localPath.Contains(search) ||
+			       o.source.guid.Contains(search) ||
+			       o.source.fileId.Contains(search) ||
+			       o.source.type.Contains(search) ||
+			       o.destination.localPath.Contains(search) ||
+			       o.destination.guid.Contains(search) ||
+			       o.destination.fileId.Contains(search) ||
+			       o.destination.type.Contains(search);
 		}
 
 		protected override void ContextClicked()
 		{
 			GenericMenu menu = new GenericMenu();
+
 			menu.AddItem(new GUIContent("Compare", ""), false, () =>
 			{
 				IList<int> selected = GetSelection();
@@ -131,6 +141,30 @@ namespace ProBuilder.AssetUtility
 
 				Debug.Log("Compare requires exactly two items be selected.");
 			});
+
+			menu.AddSeparator("");
+
+			menu.AddItem(new GUIContent("Combine", ""), false, () =>
+			{
+				IList<int> selected = GetSelection();
+				if (selected.Count == 2)
+				{
+					StringTupleTreeElement a = FindItem(selected[0], rootItem) as StringTupleTreeElement;
+					StringTupleTreeElement b = FindItem(selected[1], rootItem) as StringTupleTreeElement;
+
+					if (a != null && b != null)
+					{
+						var left = m_RemapObject[a.index];
+						var right = m_RemapObject[b.index];
+						m_RemapObject.Combine(left, right);
+						Reload();
+						return;
+					}
+				}
+
+				Debug.Log("Combine requires exactly two items be selected.");
+			});
+
 			menu.ShowAsContext();
 		}
 	}
