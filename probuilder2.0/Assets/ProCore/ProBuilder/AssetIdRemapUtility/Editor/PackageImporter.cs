@@ -52,6 +52,17 @@ namespace ProBuilder.AssetUtility
 					importer.SetCompatibleWithAnyPlatform(false);
 					importer.SetCompatibleWithEditor(!assetStoreInstall);
 					AssetDatabase.ImportAsset(editorCoreDllPath);
+
+
+					if (isEnabled)
+					{
+						if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Assets",
+							"The Asset Store and Source versions of ProBuilder are incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?",
+							"Yes", "No"))
+							AssetIdRemapUtility.OpenConversionEditor();
+						else
+							Debug.Log("ProBuilder Package Manager conversion process cancelled. You may initiate this conversion at a later time via Tools/ProBuilder/Repair/Convert to Package Manager.");
+					}
 				}
 			}
 		}
@@ -67,6 +78,15 @@ namespace ProBuilder.AssetUtility
 				importer.SetCompatibleWithAnyPlatform(false);
 				importer.SetCompatibleWithEditor(isEnabled);
 			}
+		}
+
+		internal static bool IsEditorPlugin(string guid)
+		{
+			string path = AssetDatabase.GUIDToAssetPath(guid);
+			var importer = AssetImporter.GetAtPath(path) as PluginImporter;
+			if (!importer)
+				return false;
+			return importer.GetCompatibleWithEditor() && !importer.GetCompatibleWithAnyPlatform();
 		}
 
 		internal static void Reimport(string guid)

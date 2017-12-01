@@ -16,14 +16,9 @@ namespace ProBuilder.AssetUtility
 		TextAsset m_RemapFile = null;
 
 		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
-		static void MenuInitRemapGuidEditor()
+		internal static void OpenConversionEditor()
 		{
-			TextAsset json = AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFileDefaultPath);
-
-			if (IsProjectTextSerialized() && json != null)
-				DoIt(json);
-			else
-				GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
+			GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
 		}
 
 		static bool IsProjectTextSerialized()
@@ -82,24 +77,20 @@ namespace ProBuilder.AssetUtility
 			var log = new StringBuilder();
 			int remappedReferences = 0;
 			int modifiedFiles = 0;
+			string[] assets = extensionsToScanForGuidRemap.SelectMany(x => Directory.GetFiles("Assets", x, SearchOption.AllDirectories)).ToArray();
 
-			foreach (string extension in extensionsToScanForGuidRemap)
+			for (int i = 0, c = assets.Length; i < c; i++)
 			{
-				string[] assets = Directory.GetFiles("Assets", extension, SearchOption.AllDirectories);
+				EditorUtility.DisplayProgressBar("Asset Id Remap", assets[i], i / (float) c);
 
-				for (int i = 0, c = assets.Length; i < c; i++)
-				{
-					EditorUtility.DisplayProgressBar("Asset Id Remap", "Scanning for old ProBuilder references...", i / (float) c);
+				int modified;
 
-					int modified;
+				if(!DoAssetIdentifierRemap(assets[i], remapObject.map, out modified))
+					log.AppendLine("Failed scanning asset: " + assets[i]);
 
-					if(!DoAssetIdentifierRemap(assets[i], remapObject.map, out modified))
-						log.AppendLine("Failed scanning asset: " + assets[i]);
-
-					remappedReferences += modified;
-					if (modified > 0)
-						modifiedFiles++;
-				}
+				remappedReferences += modified;
+				if (modified > 0)
+					modifiedFiles++;
 			}
 
 			EditorUtility.ClearProgressBar();
@@ -126,6 +117,9 @@ namespace ProBuilder.AssetUtility
 
 				foreach (var kvp in assetIdentifierTuples)
 				{
+					if (kvp.source.fileId.Equals(kvp.destination.fileId) && kvp.source.guid.Equals(kvp.destination.guid))
+						continue;
+
 					replace.Add(new StringTuple(
 						string.Format("{{fileID: {0}, guid: {1}, type:", kvp.source.fileId, kvp.source.guid),
 						string.Format("{{fileID: {0}, guid: {1}, type:", kvp.destination.fileId, kvp.destination.guid)));
