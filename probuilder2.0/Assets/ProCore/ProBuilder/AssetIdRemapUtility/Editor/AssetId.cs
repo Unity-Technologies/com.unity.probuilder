@@ -331,7 +331,10 @@ namespace ProBuilder.AssetUtility
 					try
 					{
 						m_MonoScriptClass = m_Type.Split(k_MonoScriptTypeSplit, StringSplitOptions.RemoveEmptyEntries)[1];
-						m_IsEditorScript = m_LocalPath.StartsWith("Editor/") || m_LocalPath.Contains("/Editor/");
+						if (m_LocalPath.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+							m_IsEditorScript = PackageImporter.IsEditorPlugin(guid);
+						else
+							m_IsEditorScript = m_LocalPath.StartsWith("Editor/") || m_LocalPath.Contains("/Editor/");
 					}
 					catch
 					{
@@ -482,7 +485,7 @@ namespace ProBuilder.AssetUtility
 			}
 			else
 			{
-				Debug.Log("localPath compare");
+				Debug.Log("localPath compare (" + localPath + " == " + other.localPath + ")");
 				return localPath.Equals(other.localPath);
 			}
 

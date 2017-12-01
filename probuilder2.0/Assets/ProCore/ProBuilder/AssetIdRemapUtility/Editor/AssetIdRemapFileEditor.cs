@@ -385,7 +385,7 @@ namespace ProBuilder.AssetUtility
 				string g;
 				int file;
 
-				if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(o, out g, out file))
+				if (o != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(o, out g, out file))
 					ids.Add(new AssetId(o, file.ToString(), g.ToString(), assetPath));
 			}
 
