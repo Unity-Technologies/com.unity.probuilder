@@ -1,9 +1,11 @@
 ﻿using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 namespace ProBuilder.AssetUtility
 {
@@ -11,7 +13,6 @@ namespace ProBuilder.AssetUtility
 	{
 		string m_RelativePath;
 		string m_FullPath;
-		string m_Name;
 		bool m_IsEnabled;
 		bool m_IsDirectory;
 
@@ -20,7 +21,6 @@ namespace ProBuilder.AssetUtility
 			m_IsDirectory = Directory.Exists(fullPath);
 			m_FullPath = fullPath;
 			m_RelativePath = relativePath;
-			m_Name = m_IsDirectory ? new DirectoryInfo(fullPath).Name : Path.GetFileNameWithoutExtension(fullPath);
 			m_IsEnabled = true;
 			displayName = m_FullPath.Replace("\\", "/").Replace(Application.dataPath, "Assets/");
 		}
@@ -68,10 +68,23 @@ namespace ProBuilder.AssetUtility
 	{
 		string m_RootDirectory = null;
 
-		public string directory
+		public string directoryRoot
 		{
 			get { return m_RootDirectory; }
 			set { m_RootDirectory = value; }
+		}
+
+		IEnumerable<Regex> m_DirectoryIgnorePatterns;
+		IEnumerable<Regex> m_FileIgnorePatterns;
+
+		public void SetDirectoryIgnorePatterns(string[] regexStrings)
+		{
+			m_DirectoryIgnorePatterns = regexStrings.Select(x => new Regex(x));
+		}
+
+		public void SetFileIgnorePatterns(string[] regexStrings)
+		{
+			m_FileIgnorePatterns = regexStrings.Select(x => new Regex(x));
 		}
 
 		public AssetTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
@@ -100,17 +113,24 @@ namespace ProBuilder.AssetUtility
 				unixDirectory,
 				unixDirectory.Replace(parent.fullPath, "").Trim('/'));
 
+			bool directoryEnabled = !m_DirectoryIgnorePatterns.Any(x => x.IsMatch(unixDirectory));
+			leaf.enabled = directoryEnabled;
+
 			parent.AddChild(leaf);
 
 			foreach (string path in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
 			{
-				if (!path.EndsWith(".meta"))
-				{
-					leaf.AddChild(new AssetTreeItem(
-						nodeIdIndex++,
-						path,
-						path.Replace("\\", "/").Replace(unixDirectory, "").Trim('/')));
-				}
+				if (path.EndsWith(".meta"))
+					continue;
+
+				string unixPath = path.Replace("\\", "/");
+
+				bool fileEnabled = directoryEnabled && !m_FileIgnorePatterns.Any(x => x.IsMatch(unixPath));
+
+				leaf.AddChild(new AssetTreeItem(
+					nodeIdIndex++,
+					unixPath,
+					unixPath.Replace(unixDirectory, "").Trim('/')) { enabled = fileEnabled });
 			}
 
 			foreach(string dir in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
@@ -135,15 +155,24 @@ namespace ProBuilder.AssetUtility
 			args.rowRect.xMin += m_ToggleRect.width;
 
 			EditorGUI.BeginChangeCheck();
+
 			item.enabled = EditorGUI.Toggle(m_ToggleRect, "", item.enabled);
+
 			if (EditorGUI.EndChangeCheck())
 			{
-				foreach (int id in GetSelection())
+				if (GetSelection().Any(x => FindItem(x, rootItem) == item))
 				{
-					var sel = FindItem(id, rootItem) as AssetTreeItem;
+					foreach (int id in GetSelection())
+					{
+						var sel = FindItem(id, rootItem) as AssetTreeItem;
 
-					if(sel != null)
-						sel.SetEnabled(item.enabled);
+						if (sel != null)
+							sel.SetEnabled(item.enabled);
+					}
+				}
+				else
+				{
+					item.SetEnabled(item.enabled);
 				}
 			}
 
@@ -151,6 +180,26 @@ namespace ProBuilder.AssetUtility
 			GUI.enabled = item.enabled;
 			GUI.Label(args.rowRect, m_TempContent);
 			GUI.enabled = guiEnabled;
+		}
+
+		public List<AssetTreeItem> GetAssetList()
+		{
+			List<AssetTreeItem> assets = new List<AssetTreeItem>();
+			GatherTreeItems(rootItem as AssetTreeItem, assets);
+			return assets;
+		}
+
+		void GatherTreeItems(AssetTreeItem node, List<AssetTreeItem> list)
+		{
+			if (node == null)
+				return;
+
+			list.Add(node);
+
+			if(node.children != null)
+				foreach(var child in node.children)
+					if(child is AssetTreeItem)
+						GatherTreeItems(child as AssetTreeItem, list);
 		}
 	}
 }

@@ -559,22 +559,6 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-1209551219",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Object_Editor",
-                "m_Type": "UnityEditor.MonoScript::pb_Object_Editor"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
                 "m_FileId": "-1112534863",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
                 "m_Name": "pb_PolyShapeTool",
@@ -739,22 +723,6 @@
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
                 "m_Name": "pb_Vertex_Color_Toolbar",
                 "m_Type": "UnityEditor.MonoScript::pb_Vertex_Color_Toolbar"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "3fce8ab926626f84a988bc7e668a97ba",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/Addons/pb_Fbx.cs",
-                "m_Name": "pb_Fbx",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.Common.pb_Fbx"
             },
             "destination": {
                 "m_Guid": "",
@@ -1798,22 +1766,6 @@
             },
             "destination": {
                 "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-558150151",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_ObjectEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ObjectEditor"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
                 "m_FileId": "1692371",
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
                 "m_Name": "pb_PolyShapeEditor",
@@ -1902,11 +1854,11 @@
         },
         {
             "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
+                "m_Guid": "3fce8ab926626f84a988bc7e668a97ba",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/Addons/pb_Fbx.cs",
+                "m_Name": "pb_Fbx",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.Common.pb_Fbx"
             },
             "destination": {
                 "m_Guid": "f103aa761f6b44fdb682a9d08a86abd5",
@@ -1914,6 +1866,22 @@
                 "m_LocalPath": "Editor/Addons/pb_Fbx.cs",
                 "m_Name": "pb_Fbx",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.Addons.FBX.pb_Fbx"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "-1209551219",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_Object_Editor",
+                "m_Type": "UnityEditor.MonoScript::pb_Object_Editor"
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "-558150151",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_ObjectEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ObjectEditor"
             }
         }
     ]

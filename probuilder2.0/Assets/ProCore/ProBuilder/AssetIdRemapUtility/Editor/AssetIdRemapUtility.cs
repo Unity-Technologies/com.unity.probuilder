@@ -15,6 +15,19 @@ namespace ProBuilder.AssetUtility
 	{
 		const string k_RemapFileDefaultPath = "Assets/ProBuilder/Upgrade/AssetIdRemap.json";
 
+		static readonly string[] k_AssetStoreDirectoryDeleteIgnoreFilter = new string[]
+		{
+			"(^|(?<=/))Data(/|)$",
+			"(^|(?<=/))ProBuilderMeshCache(/|)$",
+			".meta$"
+		};
+
+		static readonly string[] k_AssetStoreFileDeleteIgnoreFilter = new string[]
+		{
+			".meta$",
+			".asset$"
+		};
+
 		TextAsset m_RemapFile = null;
 		AssetTreeView m_AssetsToDeleteTreeView;
 		[SerializeField] TreeViewState m_TreeViewState = null;
@@ -53,9 +66,12 @@ namespace ProBuilder.AssetUtility
 			};
 
 			m_AssetsToDeleteTreeView = new AssetTreeView(m_TreeViewState, m_MultiColumnHeader);
-			m_AssetsToDeleteTreeView.directory = FindAssetStoreProBuilderInstall();
+			m_AssetsToDeleteTreeView.directoryRoot = FindAssetStoreProBuilderInstall();
+			m_AssetsToDeleteTreeView.SetDirectoryIgnorePatterns(k_AssetStoreDirectoryDeleteIgnoreFilter);
+			m_AssetsToDeleteTreeView.SetFileIgnorePatterns(k_AssetStoreFileDeleteIgnoreFilter);
 			m_AssetsToDeleteTreeView.Reload();
 			m_AssetsToDeleteTreeView.ExpandAll();
+			m_MultiColumnHeader.ResizeToFit();
 		}
 
 		void OnGUI()
@@ -78,9 +94,13 @@ namespace ProBuilder.AssetUtility
 			{
 				if (!IsProjectTextSerialized())
 					Debug.LogError("Cannot update project with binary serialization!");
+				else if(!ValidateAssetStoreRemoval())
+					Debug.LogError("Cannot update project without removing ProBuilder/Classes and ProBuilder/Editor directories.");
 				else
 					DoIt(m_RemapFile);
 			}
+
+			GUILayout.Label("Asset Store Files to Delete", EditorStyles.boldLabel);
 
 			Rect lastRect = GUILayoutUtility.GetLastRect();
 
@@ -245,6 +265,31 @@ namespace ProBuilder.AssetUtility
 			       Directory.Exists(dir + "/Icons") &&
 			       Directory.Exists(dir + "/Editor") &&
 			       Directory.Exists(dir + "/Shader");
+		}
+
+		static readonly string[] k_AssetStoreMustDelete = new string[]
+		{
+			"pb_Object.cs",
+			"pb_Entity.cs",
+			"ProBuilder/Classes",
+			"ProBuilder/Editor",
+			"ProBuilderCore-Unity5.dll",
+			"ProBuilderMeshOps-Unity5.dll",
+			"ProBuilderEditor-Unity5.dll"
+		};
+
+		// @todo show a warning when any code is not getting deleted
+//		static readonly string[] k_AssetStoreShouldDelete = new string[]
+//		{
+//			"ProBuilder/API Examples",
+//			"ProBuilder/About",
+//			"ProBuilder/Shader",
+//		};
+
+		bool ValidateAssetStoreRemoval()
+		{
+			List<AssetTreeItem> assets = m_AssetsToDeleteTreeView.GetAssetList();
+			return !assets.Any(x => !x.enabled && k_AssetStoreMustDelete.Any(y => x.fullPath.Contains(y)));
 		}
 
 		static bool IsProjectTextSerialized()
