@@ -12,6 +12,8 @@ namespace ProBuilder.AssetUtility
 		const float k_RowHeight = 20f;
 		const float k_RowHeightSearching = 76f;
 
+		public bool isDirty = false;
+
 		public AssetIdRemapObject remapObject
 		{
 			get { return m_RemapObject; }
@@ -157,7 +159,9 @@ namespace ProBuilder.AssetUtility
 						var left = m_RemapObject[a.index];
 						var right = m_RemapObject[b.index];
 						m_RemapObject.Combine(left, right);
+
 						Reload();
+						isDirty = true;
 						return;
 					}
 				}

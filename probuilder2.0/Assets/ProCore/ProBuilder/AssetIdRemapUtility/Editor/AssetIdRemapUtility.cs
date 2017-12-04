@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
@@ -13,7 +14,11 @@ namespace ProBuilder.AssetUtility
 	class AssetIdRemapUtility : EditorWindow
 	{
 		const string k_RemapFileDefaultPath = "Assets/ProBuilder/Upgrade/AssetIdRemap.json";
+
 		TextAsset m_RemapFile = null;
+		AssetTreeView m_AssetsToDeleteTreeView;
+		[SerializeField] TreeViewState m_TreeViewState = null;
+		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState = null;
 
 		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
 		internal static void OpenConversionEditor()
@@ -21,15 +26,36 @@ namespace ProBuilder.AssetUtility
 			GetWindow<AssetIdRemapUtility>(true, "Package Manager Conversion Utility", true);
 		}
 
-		static bool IsProjectTextSerialized()
-		{
-			return EditorSettings.serializationMode == SerializationMode.ForceText;
-		}
-
 		void OnEnable()
 		{
 			if (m_RemapFile == null)
 				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFileDefaultPath);
+#if DEBUG
+			if (m_RemapFile == null)
+				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ProCore/ProBuilder/Upgrade/AssetIdRemap");
+#endif
+
+			if(m_TreeViewState == null)
+				m_TreeViewState = new TreeViewState();
+
+			if(m_MultiColumnHeaderState == null)
+				m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
+				{
+					new MultiColumnHeaderState.Column()
+					{
+						headerContent = new GUIContent("Asset Store Files to Delete")
+					}
+				});
+
+			MultiColumnHeader m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState)
+			{
+				height = 0
+			};
+
+			m_AssetsToDeleteTreeView = new AssetTreeView(m_TreeViewState, m_MultiColumnHeader);
+			m_AssetsToDeleteTreeView.directory = FindAssetStoreProBuilderInstall();
+			m_AssetsToDeleteTreeView.Reload();
+			m_AssetsToDeleteTreeView.ExpandAll();
 		}
 
 		void OnGUI()
@@ -37,7 +63,16 @@ namespace ProBuilder.AssetUtility
 			m_RemapFile = (TextAsset) EditorGUILayout.ObjectField("Remap File", m_RemapFile, typeof(TextAsset), false);
 
 			SerializationMode serializationMode = EditorSettings.serializationMode;
-			GUI.enabled = serializationMode == SerializationMode.ForceText;
+
+			if (serializationMode != SerializationMode.ForceText)
+			{
+				EditorGUILayout.HelpBox("Cannot Convert Binary Serialized Project\n\nPlease enable ForceText serialization to proceed with the conversion process.\n\nYou may re-enable Binary or Mixed serialization after the conversion is complete.", MessageType.Warning);
+
+				EditorGUI.BeginChangeCheck();
+				serializationMode = (SerializationMode) EditorGUILayout.EnumPopup("Serialization Mode", serializationMode);
+				if (EditorGUI.EndChangeCheck())
+					EditorSettings.serializationMode = serializationMode;
+			}
 
 			if (GUILayout.Button("Convert to Package Manager"))
 			{
@@ -46,6 +81,14 @@ namespace ProBuilder.AssetUtility
 				else
 					DoIt(m_RemapFile);
 			}
+
+			Rect lastRect = GUILayoutUtility.GetLastRect();
+
+			m_AssetsToDeleteTreeView.OnGUI(new Rect(
+				lastRect.x,
+				lastRect.yMax + 4,
+				position.width - lastRect.x * 2f,
+				position.height - lastRect.yMax - 8));
 
 			GUI.enabled = true;
 		}
@@ -202,6 +245,11 @@ namespace ProBuilder.AssetUtility
 			       Directory.Exists(dir + "/Icons") &&
 			       Directory.Exists(dir + "/Editor") &&
 			       Directory.Exists(dir + "/Shader");
+		}
+
+		static bool IsProjectTextSerialized()
+		{
+			return EditorSettings.serializationMode == SerializationMode.ForceText;
 		}
 	}
 }

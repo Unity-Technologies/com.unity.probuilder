@@ -50,7 +50,6 @@ namespace ProBuilder.AssetUtility
 		[SerializeField] string m_SourceDirectory;
 		[SerializeField] string m_DestinationDirectory;
 		[SerializeField] bool m_DoClean = false;
-		[SerializeField] bool m_IsDirty = false;
 
 		[SerializeField] TreeViewState m_TreeViewState;
 		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
@@ -125,14 +124,14 @@ namespace ProBuilder.AssetUtility
 
 			GUILayout.FlexibleSpace();
 
-			GUI.enabled = m_IsDirty;
+			GUI.enabled = m_TreeView.isDirty;
 
 			if(GUILayout.Button("Revert", EditorStyles.toolbarButton))
 			{
 				m_TreeView.remapObject = null;
 				m_TreeView.remapObject = GetGuidRemapObject();
 				m_TreeView.Reload();
-				m_IsDirty = false;
+				m_TreeView.isDirty = false;
 			}
 
 			if(GUILayout.Button("Save", EditorStyles.toolbarButton))
@@ -140,7 +139,7 @@ namespace ProBuilder.AssetUtility
 				File.WriteAllText(GetRemapFilePath(), JsonUtility.ToJson(m_TreeView.remapObject, true));
 				AssetDatabase.ImportAsset(GetRemapFilePath());
 				EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(GetRemapFilePath()));
-				m_IsDirty = false;
+				m_TreeView.isDirty = false;
 			}
 			GUI.enabled = true;
 
@@ -192,14 +191,14 @@ namespace ProBuilder.AssetUtility
 				{
 					GetGuidRemapObject().Clear(Origin.Source);
 					m_TreeView.Reload();
-					m_IsDirty = true;
+					m_TreeView.isDirty = true;
 				});
 
 				menu.AddItem(new GUIContent("Clear Destination", ""), false, () =>
 				{
 					GetGuidRemapObject().Clear(Origin.Destination);
 					m_TreeView.Reload();
-					m_IsDirty = true;
+					m_TreeView.isDirty = true;
 				});
 
 				menu.ShowAsContext();
@@ -291,7 +290,7 @@ namespace ProBuilder.AssetUtility
 				}
 			}
 
-			m_IsDirty = true;
+			m_TreeView.isDirty = true;
 		}
 
 		void GetRemapDestination(string directory, bool clean = false)
@@ -337,7 +336,7 @@ namespace ProBuilder.AssetUtility
 				}
 			}
 
-			m_IsDirty = true;
+			m_TreeView.isDirty = true;
 		}
 
 		/// <summary>
