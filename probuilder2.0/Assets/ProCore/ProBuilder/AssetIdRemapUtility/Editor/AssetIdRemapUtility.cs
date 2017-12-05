@@ -233,6 +233,7 @@ namespace ProBuilder.AssetUtility
 			m_AssetsToDeleteTreeView.Reload();
 			m_AssetsToDeleteTreeView.ExpandAll();
 			m_MultiColumnHeader.ResizeToFit();
+			m_ConversionReadyState = ValidateSettings();
 		}
 
 		bool RemoveAssetStoreFiles(TreeViewItem root)
