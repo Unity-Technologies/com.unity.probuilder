@@ -15,23 +15,87 @@ namespace ProBuilder.AssetUtility
 	{
 		const string k_RemapFileDefaultPath = "Assets/ProBuilder/Upgrade/AssetIdRemap.json";
 
-		static readonly string[] k_AssetStoreDirectoryDeleteIgnoreFilter = new string[]
+		static readonly string[] k_AssetStoreDirectorySuggestedDeleteIgnoreFilter = new string[]
 		{
 			"(^|(?<=/))Data(/|)$",
 			"(^|(?<=/))ProBuilderMeshCache(/|)$",
 			".meta$"
 		};
 
-		static readonly string[] k_AssetStoreFileDeleteIgnoreFilter = new string[]
+		static readonly string[] k_AssetStoreSuggestedFileDeleteIgnoreFilter = new string[]
 		{
 			".meta$",
 			".asset$"
 		};
 
+		static readonly string[] k_AssetStoreMustDelete = new string[]
+		{
+			"pb_Object.cs",
+			"pb_Entity.cs",
+			"ProBuilder/Classes",
+			"ProBuilder/Editor",
+			"ProBuilderCore-Unity5.dll",
+			"ProBuilderMeshOps-Unity5.dll",
+			"ProBuilderEditor-Unity5.dll"
+		};
+
+		// @todo show a warning when any code is not getting deleted
+		static readonly string[] k_AssetStoreShouldDelete = new string[]
+		{
+			"ProBuilder/API Examples",
+			"API Examples/Editor",
+			"ProBuilder/About",
+			"ProBuilder/Shader",
+		};
+
+		[Flags]
+		enum ConversionReadyState
+		{
+			Ready = 0,
+			SerializationError = 1 << 1,
+			AssetStoreDeleteError = 1 << 2,
+			AssetStoreDeleteWarning = 1 << 3,
+			FileLocked = 1 << 4,
+		};
+
 		TextAsset m_RemapFile = null;
 		AssetTreeView m_AssetsToDeleteTreeView;
-		[SerializeField] TreeViewState m_TreeViewState = null;
-		[SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState = null;
+		MultiColumnHeader m_MultiColumnHeader;
+		Rect m_AssetTreeRect = new Rect(0, 0, 0, 0);
+
+		[SerializeField]
+		TreeViewState m_TreeViewState = null;
+
+		[SerializeField]
+		MultiColumnHeaderState m_MultiColumnHeaderState = null;
+
+		GUIContent m_AssetTreeSettingsContent = null;
+
+		static class Styles
+		{
+			public static GUIStyle settingsIcon { get { return m_SettingsIcon; } }
+			public static GUIStyle convertButton { get { return m_ConvertButton; } }
+
+			static bool m_Init = false;
+
+			static GUIStyle m_SettingsIcon;
+			static GUIStyle m_ConvertButton;
+
+			public static void Init()
+			{
+				if (!m_Init)
+					m_Init = true;
+				else
+					return;
+
+				m_SettingsIcon = GUI.skin.GetStyle("IconButton");
+				m_ConvertButton = new GUIStyle(GUI.skin.button);
+				m_ConvertButton.margin.bottom += 4;
+				m_ConvertButton.margin.top += 4;
+			}
+		}
+
+		ConversionReadyState m_ConversionReadyState = ConversionReadyState.Ready;
 
 		[MenuItem("Tools/ProBuilder/Repair/Convert to Package Manager")]
 		internal static void OpenConversionEditor()
@@ -41,17 +105,19 @@ namespace ProBuilder.AssetUtility
 
 		void OnEnable()
 		{
+			m_AssetTreeSettingsContent = EditorGUIUtility.IconContent("_Popup");
+
 			if (m_RemapFile == null)
 				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>(k_RemapFileDefaultPath);
 #if DEBUG
 			if (m_RemapFile == null)
-				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ProCore/ProBuilder/Upgrade/AssetIdRemap");
+				m_RemapFile = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ProCore/ProBuilder/Upgrade/AssetIdRemap.json");
 #endif
 
-			if(m_TreeViewState == null)
+			if (m_TreeViewState == null)
 				m_TreeViewState = new TreeViewState();
 
-			if(m_MultiColumnHeaderState == null)
+			if (m_MultiColumnHeaderState == null)
 				m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
 				{
 					new MultiColumnHeaderState.Column()
@@ -60,60 +126,138 @@ namespace ProBuilder.AssetUtility
 					}
 				});
 
-			MultiColumnHeader m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState)
+			m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState)
 			{
 				height = 0
 			};
 
 			m_AssetsToDeleteTreeView = new AssetTreeView(m_TreeViewState, m_MultiColumnHeader);
+			ResetAssetsToDelete();
+			m_ConversionReadyState = ValidateSettings();
+		}
+
+		void OnGUI()
+		{
+			Styles.Init();
+
+//			m_RemapFile = (TextAsset) EditorGUILayout.ObjectField("Remap File", m_RemapFile, typeof(TextAsset), false);
+
+			GUILayout.Label("Asset Store Files to Delete", EditorStyles.boldLabel);
+
+			m_AssetTreeRect = GUILayoutUtility.GetRect(position.width, 128, GUILayout.ExpandHeight(true));
+
+			EditorGUI.BeginChangeCheck();
+
+			DrawTreeSettings();
+
+			m_AssetsToDeleteTreeView.OnGUI(m_AssetTreeRect);
+
+			if (EditorGUI.EndChangeCheck())
+				m_ConversionReadyState = ValidateSettings();
+
+			if ((m_ConversionReadyState & ConversionReadyState.SerializationError) > 0)
+			{
+				EditorGUILayout.HelpBox(
+					"Cannot update project with binary or mixed serialization.\n\nPlease swith to ForceText serialization to proceed (you may switch back to ForceBinary or Mixed after the conversion process).",
+					MessageType.Error);
+
+				SerializationMode serializationMode = EditorSettings.serializationMode;
+
+				EditorGUI.BeginChangeCheck();
+
+				serializationMode = (SerializationMode) EditorGUILayout.EnumPopup("Serialization Mode", serializationMode);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					EditorSettings.serializationMode = serializationMode;
+					m_ConversionReadyState = ValidateSettings();
+				}
+			}
+
+			if ((m_ConversionReadyState & ConversionReadyState.AssetStoreDeleteError) > 0)
+				EditorGUILayout.HelpBox(
+					"Cannot update project without removing ProBuilder/Classes and ProBuilder/Editor directories.", MessageType.Error);
+
+			if ((m_ConversionReadyState & ConversionReadyState.AssetStoreDeleteWarning) > 0)
+				EditorGUILayout.HelpBox(
+					"Some old ProBuilder files are not marked for deletion. This may cause errors after the conversion process is complete.\n\nTo clear this error use the settings icon to reset the Assets To Delete tree.",
+					MessageType.Warning);
+
+
+			GUI.enabled =
+				(m_ConversionReadyState & (ConversionReadyState.AssetStoreDeleteError | ConversionReadyState.SerializationError)) ==
+				ConversionReadyState.Ready;
+
+			if (GUILayout.Button("Convert to Package Manager", Styles.convertButton))
+			{
+				EditorApplication.LockReloadAssemblies();
+
+				Debug.Log(RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()));
+//				if(RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()))
+//					RemapAssetIds(m_RemapFile);
+
+				EditorApplication.UnlockReloadAssemblies();
+			}
+
+			GUI.enabled = true;
+		}
+
+		void DrawTreeSettings()
+		{
+			Vector2 iconSize = Styles.settingsIcon.CalcSize(m_AssetTreeSettingsContent);
+
+			Rect settingsRect = new Rect(
+				position.width - iconSize.x - 4,
+				4,
+				iconSize.x,
+				iconSize.y);
+
+			if (EditorGUI.DropdownButton(settingsRect, m_AssetTreeSettingsContent, FocusType.Passive, Styles.settingsIcon))
+			{
+				var menu = new GenericMenu();
+				menu.AddItem(new GUIContent("Reset"), false, ResetAssetsToDelete);
+				menu.ShowAsContext();
+			}
+		}
+
+		ConversionReadyState ValidateSettings()
+		{
+			return ValidateProjectTextSerialized() | ValidateAssetStoreRemoval();
+		}
+
+		void ResetAssetsToDelete()
+		{
 			m_AssetsToDeleteTreeView.directoryRoot = FindAssetStoreProBuilderInstall();
-			m_AssetsToDeleteTreeView.SetDirectoryIgnorePatterns(k_AssetStoreDirectoryDeleteIgnoreFilter);
-			m_AssetsToDeleteTreeView.SetFileIgnorePatterns(k_AssetStoreFileDeleteIgnoreFilter);
+			m_AssetsToDeleteTreeView.SetDirectoryIgnorePatterns(k_AssetStoreDirectorySuggestedDeleteIgnoreFilter);
+			m_AssetsToDeleteTreeView.SetFileIgnorePatterns(k_AssetStoreSuggestedFileDeleteIgnoreFilter);
 			m_AssetsToDeleteTreeView.Reload();
 			m_AssetsToDeleteTreeView.ExpandAll();
 			m_MultiColumnHeader.ResizeToFit();
 		}
 
-		void OnGUI()
+		bool RemoveAssetStoreFiles(TreeViewItem root)
 		{
-			m_RemapFile = (TextAsset) EditorGUILayout.ObjectField("Remap File", m_RemapFile, typeof(TextAsset), false);
+			AssetTreeItem node = root as AssetTreeItem;
 
-			SerializationMode serializationMode = EditorSettings.serializationMode;
-
-			if (serializationMode != SerializationMode.ForceText)
+			if (node != null && node.enabled)
 			{
-				EditorGUILayout.HelpBox("Cannot Convert Binary Serialized Project\n\nPlease enable ForceText serialization to proceed with the conversion process.\n\nYou may re-enable Binary or Mixed serialization after the conversion is complete.", MessageType.Warning);
+				return AssetDatabase.MoveAssetToTrash(node.fullPath);
+			}
+			else if(node.children != null)
+			{
+				bool success = true;
 
-				EditorGUI.BeginChangeCheck();
-				serializationMode = (SerializationMode) EditorGUILayout.EnumPopup("Serialization Mode", serializationMode);
-				if (EditorGUI.EndChangeCheck())
-					EditorSettings.serializationMode = serializationMode;
+				foreach (var branch in node.children)
+					if (!RemoveAssetStoreFiles(branch))
+						success = false;
+
+				return success;
 			}
 
-			if (GUILayout.Button("Convert to Package Manager"))
-			{
-				if (!IsProjectTextSerialized())
-					Debug.LogError("Cannot update project with binary serialization!");
-				else if(!ValidateAssetStoreRemoval())
-					Debug.LogError("Cannot update project without removing ProBuilder/Classes and ProBuilder/Editor directories.");
-				else
-					DoIt(m_RemapFile);
-			}
-
-			GUILayout.Label("Asset Store Files to Delete", EditorStyles.boldLabel);
-
-			Rect lastRect = GUILayoutUtility.GetLastRect();
-
-			m_AssetsToDeleteTreeView.OnGUI(new Rect(
-				lastRect.x,
-				lastRect.yMax + 4,
-				position.width - lastRect.x * 2f,
-				position.height - lastRect.yMax - 8));
-
-			GUI.enabled = true;
+			return false;
 		}
 
-		static void DoIt(TextAsset jsonAsset)
+		void RemapAssetIds(TextAsset jsonAsset)
 		{
 			AssetIdRemapObject remapObject = new AssetIdRemapObject();
 			JsonUtility.FromJsonOverwrite(jsonAsset.text, remapObject);
@@ -134,8 +278,6 @@ namespace ProBuilder.AssetUtility
 				Debug.LogWarning("Couldn't find an Asset Store install of ProBuilder. Aborting conversion process.");
 				return;
 			}
-
-			EditorApplication.LockReloadAssemblies();
 
 			var log = new StringBuilder();
 			int remappedReferences = 0;
@@ -159,8 +301,6 @@ namespace ProBuilder.AssetUtility
 			EditorUtility.ClearProgressBar();
 
 			Debug.Log(string.Format("Remapped {0} references in {1} files.\n\n{2}", remappedReferences, modifiedFiles, log.ToString()));
-
-			EditorApplication.UnlockReloadAssemblies();
 
 			PackageImporter.Reimport(PackageImporter.EditorCorePackageManager);
 		}
@@ -267,34 +407,28 @@ namespace ProBuilder.AssetUtility
 			       Directory.Exists(dir + "/Shader");
 		}
 
-		static readonly string[] k_AssetStoreMustDelete = new string[]
+		ConversionReadyState ValidateAssetStoreRemoval()
 		{
-			"pb_Object.cs",
-			"pb_Entity.cs",
-			"ProBuilder/Classes",
-			"ProBuilder/Editor",
-			"ProBuilderCore-Unity5.dll",
-			"ProBuilderMeshOps-Unity5.dll",
-			"ProBuilderEditor-Unity5.dll"
-		};
+			ConversionReadyState state = (ConversionReadyState) 0;
 
-		// @todo show a warning when any code is not getting deleted
-//		static readonly string[] k_AssetStoreShouldDelete = new string[]
-//		{
-//			"ProBuilder/API Examples",
-//			"ProBuilder/About",
-//			"ProBuilder/Shader",
-//		};
-
-		bool ValidateAssetStoreRemoval()
-		{
 			List<AssetTreeItem> assets = m_AssetsToDeleteTreeView.GetAssetList();
-			return !assets.Any(x => !x.enabled && k_AssetStoreMustDelete.Any(y => x.fullPath.Contains(y)));
+
+			if (assets.Any(x => !x.enabled && k_AssetStoreMustDelete.Any(y => x.fullPath.Contains(y))))
+				state |= ConversionReadyState.AssetStoreDeleteError;
+			else
+				state |= ConversionReadyState.Ready;
+
+			if (assets.Any(x => !x.enabled && k_AssetStoreShouldDelete.Any(y => x.fullPath.Contains(y))))
+				state |= ConversionReadyState.AssetStoreDeleteWarning;
+
+			return state;
 		}
 
-		static bool IsProjectTextSerialized()
+		static ConversionReadyState ValidateProjectTextSerialized()
 		{
-			return EditorSettings.serializationMode == SerializationMode.ForceText;
+			return EditorSettings.serializationMode == SerializationMode.ForceText
+				? ConversionReadyState.Ready
+				: ConversionReadyState.SerializationError;
 		}
 	}
 }

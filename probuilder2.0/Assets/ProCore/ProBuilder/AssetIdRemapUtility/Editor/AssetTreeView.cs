@@ -15,6 +15,7 @@ namespace ProBuilder.AssetUtility
 		string m_FullPath;
 		bool m_IsEnabled;
 		bool m_IsDirectory;
+		bool m_IsMixedState;
 
 		public AssetTreeItem(int id, string fullPath, string relativePath) : base(id, 0)
 		{
@@ -47,6 +48,8 @@ namespace ProBuilder.AssetUtility
 			get { return m_RelativePath; }
 		}
 
+		public bool isMixedState { get { return m_IsMixedState; } }
+
 		public void SetEnabled(bool isEnabled)
 		{
 			enabled = isEnabled;
@@ -61,6 +64,36 @@ namespace ProBuilder.AssetUtility
 						asset.SetEnabled(isEnabled);
 				}
 			}
+
+			var upstream = parent;
+
+			while (upstream != null)
+			{
+				var up = upstream as AssetTreeItem;
+
+				if (up != null && up.children != null)
+				{
+					AssetTreeItem firstChild = up.children.FirstOrDefault() as AssetTreeItem;
+
+					if (firstChild != null)
+					{
+						up.m_IsMixedState = up.children.Any(x =>
+						{
+							var y = x as AssetTreeItem;
+							return y.enabled != firstChild.enabled;
+						});
+
+						if (!up.m_IsMixedState)
+							up.enabled = firstChild.enabled;
+					}
+					else
+					{
+						up.m_IsMixedState = false;
+					}
+				}
+
+				upstream = upstream.parent;
+			}
 		}
 	}
 
@@ -72,6 +105,11 @@ namespace ProBuilder.AssetUtility
 		{
 			get { return m_RootDirectory; }
 			set { m_RootDirectory = value; }
+		}
+
+		public AssetTreeItem GetRoot()
+		{
+			return rootItem.children.First() as AssetTreeItem;
 		}
 
 		IEnumerable<Regex> m_DirectoryIgnorePatterns;
@@ -97,10 +135,26 @@ namespace ProBuilder.AssetUtility
 
 		protected override TreeViewItem BuildRoot()
 		{
-			AssetTreeItem root = new AssetTreeItem(0, Application.dataPath, "") { depth = -1 };
-			int nodeIndex = 0;
-			PopulateAssetTree(m_RootDirectory, root, ref nodeIndex);
-			SetupDepthsFromParentsAndChildren(root);
+			AssetTreeItem root = new AssetTreeItem(0, Application.dataPath, "")
+			{
+				depth = -1,
+				enabled = false
+			};
+
+			if (string.IsNullOrEmpty(m_RootDirectory) || !Directory.Exists(m_RootDirectory))
+			{
+				// if root has no children and you SetupDepthsFromParentsAndChildren nullrefs are thrown
+				var list = new List<TreeViewItem>() { };
+				SetupParentsAndChildrenFromDepths(root, list);
+			}
+			else
+			{
+				int nodeIndex = 0;
+				PopulateAssetTree(m_RootDirectory, root, ref nodeIndex);
+				SetupDepthsFromParentsAndChildren(root);
+				ApplyEnabledFilters(root);
+			}
+
 			return root;
 		}
 
@@ -111,10 +165,10 @@ namespace ProBuilder.AssetUtility
 			AssetTreeItem leaf = new AssetTreeItem(
 				nodeIdIndex++,
 				unixDirectory,
-				unixDirectory.Replace(parent.fullPath, "").Trim('/'));
-
-			bool directoryEnabled = !m_DirectoryIgnorePatterns.Any(x => x.IsMatch(unixDirectory));
-			leaf.enabled = directoryEnabled;
+				unixDirectory.Replace(parent.fullPath, "").Trim('/'))
+			{
+				enabled = true
+			};
 
 			parent.AddChild(leaf);
 
@@ -125,16 +179,36 @@ namespace ProBuilder.AssetUtility
 
 				string unixPath = path.Replace("\\", "/");
 
-				bool fileEnabled = directoryEnabled && !m_FileIgnorePatterns.Any(x => x.IsMatch(unixPath));
-
 				leaf.AddChild(new AssetTreeItem(
 					nodeIdIndex++,
 					unixPath,
-					unixPath.Replace(unixDirectory, "").Trim('/')) { enabled = fileEnabled });
+					unixPath.Replace(unixDirectory, "").Trim('/')) { enabled = true });
 			}
 
 			foreach(string dir in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
 				PopulateAssetTree(dir, leaf, ref nodeIdIndex);
+		}
+
+		public void ApplyEnabledFilters(TreeViewItem root)
+		{
+			AssetTreeItem node = root as AssetTreeItem;
+			AssetTreeItem parent = root.parent as AssetTreeItem;
+
+			if (node != null)
+			{
+				if (node.isDirectory)
+					node.SetEnabled(
+						(parent == null || parent.enabled) &&
+						(m_DirectoryIgnorePatterns == null || !m_DirectoryIgnorePatterns.Any(x => x.IsMatch(node.fullPath))));
+				else
+					node.SetEnabled(
+						(parent == null || parent.enabled) &&
+						(m_FileIgnorePatterns == null || !m_FileIgnorePatterns.Any(x => x.IsMatch(node.fullPath))));
+			}
+
+			if(root.children != null)
+				foreach(var child in root.children)
+					ApplyEnabledFilters(child);
 		}
 
 		GUIContent m_TempContent = new GUIContent();
@@ -155,8 +229,9 @@ namespace ProBuilder.AssetUtility
 			args.rowRect.xMin += m_ToggleRect.width;
 
 			EditorGUI.BeginChangeCheck();
-
+			EditorGUI.showMixedValue = item.isMixedState;
 			item.enabled = EditorGUI.Toggle(m_ToggleRect, "", item.enabled);
+			EditorGUI.showMixedValue = false;
 
 			if (EditorGUI.EndChangeCheck())
 			{
