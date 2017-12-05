@@ -10,19 +10,19 @@ namespace ProBuilder.Interface
 	/// </summary>
 	static class pb_EditorStyles
 	{
-		private static readonly Color TEXT_COLOR_WHITE_NORMAL = new Color(0.82f, 0.82f, 0.82f, 1f);
-		private static readonly Color TEXT_COLOR_WHITE_HOVER = new Color(0.7f, 0.7f, 0.7f, 1f);
-		private static readonly Color TEXT_COLOR_WHITE_ACTIVE = new Color(0.5f, 0.5f, 0.5f, 1f);
+		static readonly Color k_TextColorWhiteNormal = new Color(0.82f, 0.82f, 0.82f, 1f);
+		static readonly Color k_TextColorWhiteHover = new Color(0.7f, 0.7f, 0.7f, 1f);
+		static readonly Color k_TextColorWhiteActive = new Color(0.5f, 0.5f, 0.5f, 1f);
 
-		private static GUIStyle m_ButtonStyle = null;
-		private static GUIStyle m_ToolbarHelpIcon = null;
-		private static GUIStyle m_SettingsGroupStyle = null;
-		private static GUIStyle m_RowStyle = null;
-		private static GUIStyle m_HeaderLabel = null;
+		static GUIStyle m_ButtonStyle = null;
+		static GUIStyle m_ToolbarHelpIcon = null;
+		static GUIStyle m_SettingsGroupStyle = null;
+		static GUIStyle m_RowStyle = null;
+		static GUIStyle m_HeaderLabel = null;
 
-		/**
-		 * A generic menu button with no accent bar.
-		 */
+		/// <summary>
+		/// A generic menu button with no accent bar.
+		/// </summary>
 		public static GUIStyle buttonStyle
 		{
 			get
@@ -31,11 +31,11 @@ namespace ProBuilder.Interface
 				{
 					m_ButtonStyle = new GUIStyle();
 					m_ButtonStyle.normal.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Normal");
-					m_ButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_NORMAL : Color.black;
+					m_ButtonStyle.normal.textColor = EditorGUIUtility.isProSkin ? k_TextColorWhiteNormal : Color.black;
 					m_ButtonStyle.hover.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Hover");
-					m_ButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
+					m_ButtonStyle.hover.textColor = EditorGUIUtility.isProSkin ? k_TextColorWhiteHover : Color.black;
 					m_ButtonStyle.active.background = pb_IconUtility.GetIcon("Toolbar/Background/RoundedRect_Pressed");
-					m_ButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
+					m_ButtonStyle.active.textColor = EditorGUIUtility.isProSkin ? k_TextColorWhiteActive : Color.black;
 					m_ButtonStyle.alignment = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					m_ButtonStyle.border = new RectOffset(3, 3, 3, 3);
 					m_ButtonStyle.stretchWidth = true;
@@ -64,6 +64,9 @@ namespace ProBuilder.Interface
 			}
 		}
 
+		/// <summary>
+		/// Box outline for a settings group.
+		/// </summary>
 		public static GUIStyle settingsGroup
 		{
 			get

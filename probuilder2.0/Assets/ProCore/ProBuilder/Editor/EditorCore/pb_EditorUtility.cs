@@ -21,13 +21,6 @@ namespace ProBuilder.EditorCore
 	public delegate void OnObjectCreated(pb_Object pb);
 
 	/// <summary>
-	/// Delegate to be raised when a ProBuilder component is compiled to a UnityEngine mesh.
-	/// </summary>
-	/// <param name="pb"></param>
-	/// <param name="mesh"></param>
-	public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
-
-	/// <summary>
 	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
 	/// </summary>
 	static class pb_EditorUtility
@@ -44,12 +37,7 @@ namespace ProBuilder.EditorCore
 		 *
 		 *	\sa pb_EditorUtility.InitObject
 		 */
-		public static OnObjectCreated onObjectCreated = null;
-
-		/**
-		 *	Callback raised when a pb_Object is built to Unity mesh.
-		 */
-		public static OnMeshCompiled onMeshCompiled = null;
+		public static event OnObjectCreated onObjectCreated = null;
 
 		/**
 		 *	Add a listener to the multicast onObjectCreated delegate.
@@ -69,26 +57,6 @@ namespace ProBuilder.EditorCore
 		{
 			if(onObjectCreated != null)
 				onObjectCreated -= onProBuilderObjectCreated;
-		}
-
-		/**
-		 *	Add a listener to the multicast onMeshCompiled delegate.
-		 */
-		public static void AddOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
-		{
-			if(onMeshCompiled == null)
-				onMeshCompiled = onMeshCompiledListener;
-			else
-				onMeshCompiled += onMeshCompiledListener;
-		}
-
-		/**
-		 *	Remove a listener from the onMeshCompiled delegate.
-		 */
-		public static void RemoveOnMeshCompiledListener(OnMeshCompiled onMeshCompiledListener)
-		{
-			if(onMeshCompiled != null)
-				onMeshCompiled -= onMeshCompiledListener;
 		}
 
 		/**

@@ -59,7 +59,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnMeshCompiledListener(OnMeshCompiled func)
 		{
-			pb_EditorUtility.AddOnMeshCompiledListener(func);
+			pb_EditorMeshUtility.onMeshCompiled += func;
 		}
 
 		public static void RemoveOnEditLevelChangedListener(Action<int> func)
@@ -89,7 +89,7 @@ namespace ProBuilder.EditorCore
 
 		public static void RemoveOnMeshCompiledListener(OnMeshCompiled func)
 		{
-			pb_EditorUtility.RemoveOnMeshCompiledListener(func);
+			pb_EditorMeshUtility.onMeshCompiled -= func;
 		}
 	}
 }

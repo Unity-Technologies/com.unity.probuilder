@@ -9,12 +9,35 @@ using ProBuilder.Core;
 namespace ProBuilder.EditorCore
 {
 	/// <summary>
+	/// Delegate to be raised when a ProBuilder component is compiled to a UnityEngine mesh.
+	/// </summary>
+	/// <param name="pb"></param>
+	/// <param name="mesh"></param>
+	public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+
+	/// <summary>
+	/// Delegate raised when a pb_Object is to be optimized (collapses coincident vertices). Return true to override the optimization step, false if ProBuilder should optimize the mesh internally.
+	/// </summary>
+	/// <param name="pb"></param>
+	public delegate bool SkipMeshOptimization(pb_Object pb);
+
+	/// <summary>
 	/// Mesh editing helper functions that are only available in the Editor.
 	/// </summary>
 	public static class pb_EditorMeshUtility
 	{
 		const string k_MeshCacheDirectoryName = "ProBuilderMeshCache";
 		static string k_MeshCacheDirectory = "Assets/ProBuilder Data/ProBuilderMeshCache";
+
+		/// <summary>
+		/// Subscribe to this event to be notified when ProBuilder is going to optimize a mesh (collapsing coincident vertices to a single vertex). Return true to override this process, false to let ProBuilder optimize the mesh.
+		/// </summary>
+		public static event SkipMeshOptimization onCheckSkipMeshOptimization = null;
+
+		/// <summary>
+		/// Callback raised when a pb_Object is built to Unity mesh.
+		/// </summary>
+		public static event OnMeshCompiled onMeshCompiled = null;
 
 		/// <summary>
 		/// Optmizes the mesh geometry, and generates a UV2 channel (if automatic lightmap generation is enabled).\
@@ -30,9 +53,12 @@ namespace ProBuilder.EditorCore
 			if(mesh == null || mesh.vertexCount < 1)
 				return;
 
-			// @todo Support mesh compression for topologies other than Triangles.
 			bool skipMeshProcessing = false;
 
+			if (onCheckSkipMeshOptimization != null)
+				skipMeshProcessing = onCheckSkipMeshOptimization(InObject);
+
+			// @todo Support mesh compression for topologies other than Triangles.
 			for(int i = 0; !skipMeshProcessing && i < mesh.subMeshCount; i++)
 				if(mesh.GetTopology(i) != MeshTopology.Triangles)
 					skipMeshProcessing = true;
@@ -85,8 +111,8 @@ namespace ProBuilder.EditorCore
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))
 				pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
-			if(pb_EditorUtility.onMeshCompiled != null)
-				pb_EditorUtility.onMeshCompiled(InObject, mesh);
+			if(onMeshCompiled != null)
+				onMeshCompiled(InObject, mesh);
 
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
 				TryCacheMesh(InObject);

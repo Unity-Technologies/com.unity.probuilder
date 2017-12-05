@@ -10,21 +10,22 @@ namespace ProBuilder.Core
 	/// </summary>
 	public class pb_MeshUtility
 	{
-		/**
-		 * Set a mesh to use individual triangle topology.  Returns a pb_Vertex array
-		 * of the per-triangle vertices.
-		 */
-		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh m)
+		/// <summary>
+		/// Set a mesh to use individual triangle topology.
+		/// </summary>
+		/// <param name="mesh">The mesh to extract vertices from.</param>
+		/// <returns>A pb_Vertex array of the per-triangle vertices.</returns>
+		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
-			pb_Vertex[] vertices 	= pb_Vertex.GetVertices(m);
-			int smc 				= m.subMeshCount;
-			pb_Vertex[] tv 			= new pb_Vertex[m.triangles.Length];
+			pb_Vertex[] vertices 	= pb_Vertex.GetVertices(mesh);
+			int smc 				= mesh.subMeshCount;
+			pb_Vertex[] tv 			= new pb_Vertex[mesh.triangles.Length];
 			int[][] triangles 		= new int[smc][];
 			int triIndex 			= 0;
 
 			for(int s = 0; s < smc; s++)
 			{
-				triangles[s] = m.GetTriangles(s);
+				triangles[s] = mesh.GetTriangles(s);
 				int tl = triangles[s].Length;
 
 				for(int i = 0; i < tl; i++)
@@ -34,12 +35,12 @@ namespace ProBuilder.Core
 				}
 			}
 
-			pb_Vertex.SetMesh(m, tv);
+			pb_Vertex.SetMesh(mesh, tv);
 
-			m.subMeshCount = smc;
+			mesh.subMeshCount = smc;
 
 			for(int s = 0; s < smc; s++)
-				m.SetTriangles(triangles[s], s);
+				mesh.SetTriangles(triangles[s], s);
 
 			return tv;
 		}
@@ -98,9 +99,10 @@ namespace ProBuilder.Core
 				m.SetTriangles(tris[i], i);
 		}
 
-		/**
-		 * Generate tangents for the mesh.
-		 */
+		/// <summary>
+		/// Generate tangents for the mesh.
+		/// </summary>
+		/// <param name="InMesh"></param>
 		public static void GenerateTangent(ref Mesh InMesh)
 		{
 			// http://answers.unity3d.com/questions/7789/calculating-tangents-vector4.html
