@@ -15,9 +15,9 @@ namespace ProBuilder.EditorCore
 		static pb_ScriptingSymbolManager()
 		{
 			if( FbxTypesExist() )
-				pb_EditorUtility.AddScriptingDefine("PROBUILDER_FBX_ENABLED");
+				pb_EditorUtility.AddScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
 			else
-				pb_EditorUtility.RemoveScriptingDefine("PROBUILDER_FBX_ENABLED");
+				pb_EditorUtility.RemoveScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
 		}
 
 		private static bool FbxTypesExist()

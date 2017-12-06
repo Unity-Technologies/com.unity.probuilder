@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
-#if PROBUILDER_FBX_ENABLED
+#if PROBUILDER_FBX_PLUGIN_ENABLED
 using Unity.FbxSdk;
 using FbxExporters;
 using FbxExporters.Editor;
@@ -33,7 +33,7 @@ namespace ProBuilder.Addons.FBX
 
 		public static bool FbxEnabled { get { return m_FbxIsLoaded; } }
 
-#if PROBUILDER_FBX_ENABLED
+#if PROBUILDER_FBX_PLUGIN_ENABLED
 
 		private static pb_FbxOptions m_FbxOptions = new pb_FbxOptions() {
 			quads = true
