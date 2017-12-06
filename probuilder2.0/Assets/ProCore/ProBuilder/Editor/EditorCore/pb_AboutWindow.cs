@@ -45,34 +45,31 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	class pb_AboutWindow : EditorWindow
 	{
-		// Modify these constants to customize about screen.
-	 	const string PACKAGE_NAME = "ProBuilder";
+		GUIContent m_LearnContent = new GUIContent("Learn ProBuilder", "Documentation");
+		GUIContent m_ForumLinkContent = new GUIContent("Support Forum", "ProCore Support Forum");
+		GUIContent m_ContactContent = new GUIContent("Contact Us", "Send us an email!");
+		GUIContent m_BannerContent = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
 
-		GUIContent gc_Learn = new GUIContent("Learn ProBuilder", "Documentation");
-		GUIContent gc_Forum = new GUIContent("Support Forum", "ProCore Support Forum");
-		GUIContent gc_Contact = new GUIContent("Contact Us", "Send us an email!");
-		GUIContent gc_Banner = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
+		const string k_VideoUrl = @"http://bit.ly/pbstarter";
+		const string k_LearnUrl = @"http://procore3d.com/docs/probuilder";
+		const string k_SupportUrl = @"http://www.procore3d.com/forum/";
+		const string k_ContactEmailUrl = @"http://www.procore3d.com/about/";
+		const float k_BannerWidth = 480f;
+		const float k_BannerHeight = 270f;
 
-		private const string VIDEO_URL = @"http://bit.ly/pbstarter";
-		private const string LEARN_URL = @"http://procore3d.com/docs/probuilder";
-		private const string SUPPORT_URL = @"http://www.procore3d.com/forum/";
-		private const string CONTACT_EMAIL = @"http://www.procore3d.com/about/";
-		private const float BANNER_WIDTH = 480f;
-		private const float BANNER_HEIGHT = 270f;
-
-		internal const string FONT_REGULAR = "Asap-Regular.otf";
-		internal const string FONT_MEDIUM = "Asap-Medium.otf";
+		internal const string k_FontRegular = "Asap-Regular.otf";
+		internal const string k_FontMedium = "Asap-Medium.otf";
 
 		// Use less contast-y white and black font colors for better readabililty
-		public static readonly Color font_white = HexToColor(0xCECECE);
-		public static readonly Color font_black = HexToColor(0x545454);
-		public static readonly Color font_blue_normal = HexToColor(0x00AAEF);
-		public static readonly Color font_blue_hover = HexToColor(0x008BEF);
+		public static readonly Color k_FontWhite = HexToColor(0xCECECE);
+		public static readonly Color k_FontBlack = HexToColor(0x545454);
+		public static readonly Color k_FontBlueNormal = HexToColor(0x00AAEF);
+		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
-
-		private string productName = pb_Constant.PRODUCT_NAME;
-		private pb_AboutEntry about = null;
-		private string changelogRichText = "";
+		string m_ProductName = pb_Constant.PRODUCT_NAME;
+		pb_AboutEntry m_AboutEntry = null;
+		string m_ChangeLogRichText = "";
+		static bool m_CancelImportPopup = false;
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -84,11 +81,28 @@ namespace ProBuilder.EditorCore
 
 		Vector2 scroll = Vector2.zero;
 
-		/**
-		 * Return true if Init took place, false if not.
-		 */
+		public static void CancelImportPopup()
+		{
+			Debug.Log("CancelImportPopup");
+			m_CancelImportPopup = true;
+		}
+
+		/// <summary>
+		/// Return true if Init took place, false if not.
+		/// </summary>
+		/// <param name="fromMenu"></param>
+		/// <returns></returns>
 		public static bool Init (bool fromMenu)
 		{
+			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
+			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
+			// doesn't set the version to the newly imported editorcore).
+			if (m_CancelImportPopup)
+			{
+				m_CancelImportPopup = false;
+				return false;
+			}
+
 			pb_AboutEntry about;
 
 			if (!pb_VersionUtil.GetAboutEntry(out about))
@@ -142,16 +156,16 @@ namespace ProBuilder.EditorCore
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_MEDIUM),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontMedium),
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
 			versionInfoStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
 			linkStyle = new GUIStyle()
@@ -159,14 +173,14 @@ namespace ProBuilder.EditorCore
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
 				normal = new GUIStyleState() {
-					textColor = font_blue_normal,
+					textColor = k_FontBlueNormal,
 					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
-					textColor = font_blue_hover,
+					textColor = k_FontBlueHover,
 					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
@@ -177,14 +191,14 @@ namespace ProBuilder.EditorCore
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black }
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
 				richText = true,
 				normal = new GUIStyleState() { background = pb_FileUtil.LoadInternalAsset<Texture2D>(
 					string.Format("About/Images/ScrollBackground_{0}.png",
@@ -195,9 +209,9 @@ namespace ProBuilder.EditorCore
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + FONT_REGULAR),
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
 				fontSize = 14,
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? font_white : font_black },
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack },
 				richText = true,
 				wordWrap = true
 			};
@@ -216,22 +230,22 @@ namespace ProBuilder.EditorCore
 			}
 			else
 			{
-				bannerStyle.fixedWidth = BANNER_WIDTH; // banner.width;
-				bannerStyle.fixedHeight = BANNER_HEIGHT; // banner.height;
+				bannerStyle.fixedWidth = k_BannerWidth; // banner.width;
+				bannerStyle.fixedHeight = k_BannerHeight; // banner.height;
 
 				this.wantsMouseMove = true;
 
-				this.minSize = new Vector2(BANNER_WIDTH + 24, BANNER_HEIGHT * 2.5f);
-				this.maxSize = new Vector2(BANNER_WIDTH + 24, BANNER_HEIGHT * 2.5f);
+				this.minSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
+				this.maxSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
 
-				if(!productName.Contains("Basic"))
-					productName = "ProBuilder Advanced";
+				if(!m_ProductName.Contains("Basic"))
+					m_ProductName = "ProBuilder Advanced";
 			}
 		}
 
 		void SetAbout(pb_AboutEntry about)
 		{
-			this.about = about;
+			this.m_AboutEntry = about;
 
 			TextAsset changeText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
 
@@ -240,7 +254,7 @@ namespace ProBuilder.EditorCore
 			if(!string.IsNullOrEmpty(raw))
 			{
 				pb_VersionInfo vi;
-				pb_VersionUtil.FormatChangelog(raw, out vi, out changelogRichText);
+				pb_VersionUtil.FormatChangelog(raw, out vi, out m_ChangeLogRichText);
 			}
 		}
 
@@ -248,31 +262,31 @@ namespace ProBuilder.EditorCore
 		{
 			Vector2 mousePosition = Event.current.mousePosition;
 
-			if( GUILayout.Button(gc_Banner, bannerStyle) )
-				Application.OpenURL(VIDEO_URL);
+			if( GUILayout.Button(m_BannerContent, bannerStyle) )
+				Application.OpenURL(k_VideoUrl);
 
 			if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
 				Repaint();
 
 			GUILayout.BeginVertical(changelogStyle);
 
-			GUILayout.Label(productName, header1Style);
+			GUILayout.Label(m_ProductName, header1Style);
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 
-				if(GUILayout.Button(gc_Learn, linkStyle))
-					Application.OpenURL(LEARN_URL);
+				if(GUILayout.Button(m_LearnContent, linkStyle))
+					Application.OpenURL(k_LearnUrl);
 
 				GUILayout.Label("|", separatorStyle);
 
-				if(GUILayout.Button(gc_Forum, linkStyle))
-					Application.OpenURL(SUPPORT_URL);
+				if(GUILayout.Button(m_ForumLinkContent, linkStyle))
+					Application.OpenURL(k_SupportUrl);
 
 				GUILayout.Label("|", separatorStyle);
 
-				if(GUILayout.Button(gc_Contact, linkStyle))
-					Application.OpenURL(CONTACT_EMAIL);
+				if(GUILayout.Button(m_ContactContent, linkStyle))
+					Application.OpenURL(k_ContactEmailUrl);
 
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -284,8 +298,8 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", about.version), versionInfoStyle);
-			GUILayout.Label("\n" + changelogRichText, changelogTextStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_AboutEntry.version), versionInfoStyle);
+			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 		}
 

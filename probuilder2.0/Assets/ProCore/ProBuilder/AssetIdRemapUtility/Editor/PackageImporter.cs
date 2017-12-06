@@ -1,4 +1,9 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEditor;
 using UnityEngine;
 
 namespace ProBuilder.AssetUtility
@@ -43,7 +48,7 @@ namespace ProBuilder.AssetUtility
 
 			if (importer != null)
 			{
-				bool assetStoreInstall = AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids);
+				bool assetStoreInstall = IsPreUpmProBuilderInProject();
 				bool isEnabled = importer.GetCompatibleWithEditor();
 
 				if (isEnabled == assetStoreInstall)
@@ -53,11 +58,12 @@ namespace ProBuilder.AssetUtility
 					importer.SetCompatibleWithEditor(!assetStoreInstall);
 					AssetDatabase.ImportAsset(editorCoreDllPath);
 
-
 					if (isEnabled)
 					{
-						if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Assets",
-							"The Asset Store and Source versions of ProBuilder are incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?",
+						CancelProBuilderImportPopup();
+
+						if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
+							"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" the Package Manager ProBuilder package will be disabled.",
 							"Yes", "No"))
 							AssetIdRemapUtility.OpenConversionEditor();
 						else
@@ -106,6 +112,61 @@ namespace ProBuilder.AssetUtility
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Check if any pre-3.0 ProBuilder package is present in the project
+		/// </summary>
+		/// <returns></returns>
+		internal static bool IsPreUpmProBuilderInProject()
+		{
+			// easiest check, are any of the dlls from asset store present
+			if (AreAnyAssetsAreLoaded(k_AssetStoreInstallGuids))
+				return true;
+
+			// next check if the source version is in the project
+			string[] pbObjectMonoScripts = Directory.GetFiles("Assets", "pb_Object.cs", SearchOption.AllDirectories);
+
+			foreach (var pbScriptPath in pbObjectMonoScripts)
+			{
+				if (pbScriptPath.EndsWith(".cs"))
+				{
+					MonoScript ms = AssetDatabase.LoadAssetAtPath<MonoScript>(pbScriptPath);
+
+					if (ms != null)
+					{
+						Type type = ms.GetClass();
+						// pre-3.0 didn't have ProBuilder.Core namespace
+						return type.ToString().Equals("pb_Object");
+					}
+				}
+			}
+
+			return false;
+		}
+
+		static void CancelProBuilderImportPopup()
+		{
+			Type aboutWindowType = Type.GetType("ProBuilder.EditorCore.pb_AboutWindow");
+
+			if (aboutWindowType == null)
+			{
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					aboutWindowType = assembly.GetType("ProBuilder.EditorCore.pb_AboutWindow");
+					if (aboutWindowType != null)
+						break;
+				}
+			}
+
+			if (aboutWindowType != null)
+			{
+				MethodInfo cancelPopupMethod =
+					aboutWindowType.GetMethod("CancelImportPopup", BindingFlags.Public | BindingFlags.Static);
+
+				if(cancelPopupMethod != null)
+					cancelPopupMethod.Invoke(null, null);
+			}
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace ProBuilder.AssetUtility
 		public AssetIdRemapTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
 		{
 			rowHeight = 20f;
-			showAlternatingRowBackgrounds = true;
+//			showAlternatingRowBackgrounds = true;
 			showBorder = true;
 			extraSpaceBeforeIconAndLabel = 18f;
 		}

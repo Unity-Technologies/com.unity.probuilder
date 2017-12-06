@@ -57,8 +57,8 @@ namespace ProBuilder.EditorCore
 				fixedHeight = 85,
 				fontSize = 24,
 				wordWrap = true,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + pb_AboutWindow.FONT_MEDIUM),
-				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? pb_AboutWindow.font_white : pb_AboutWindow.font_black }
+				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + pb_AboutWindow.k_FontMedium),
+				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? pb_AboutWindow.k_FontWhite : pb_AboutWindow.k_FontBlack }
 			};
 		}
 

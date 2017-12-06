@@ -7,6 +7,7 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using UnityEngine.Tizen;
 using UObject = UnityEngine.Object;
 
 namespace ProBuilder.AssetUtility
@@ -55,10 +56,13 @@ namespace ProBuilder.AssetUtility
 			SerializationError = 1 << 1,
 			AssetStoreDeleteError = 1 << 2,
 			AssetStoreDeleteWarning = 1 << 3,
+			AssetStoreInstallNotFound = 1 << 4,
 			FileLocked = 1 << 4,
 		};
 
 		TextAsset m_RemapFile = null;
+		[SerializeField] string m_DeprecatedProBuilderDirectory;
+		[SerializeField] bool m_DeprecatedProBuilderFound;
 		AssetTreeView m_AssetsToDeleteTreeView;
 		MultiColumnHeader m_MultiColumnHeader;
 		Rect m_AssetTreeRect = new Rect(0, 0, 0, 0);
@@ -225,9 +229,67 @@ namespace ProBuilder.AssetUtility
 			return ValidateProjectTextSerialized() | ValidateAssetStoreRemoval();
 		}
 
+		const int k_DialogOkay = 0;
+		const int k_DialogAlt = 1;
+		const int k_DialogCancel = 2;
+
 		void ResetAssetsToDelete()
 		{
-			m_AssetsToDeleteTreeView.directoryRoot = FindAssetStoreProBuilderInstall();
+			m_DeprecatedProBuilderFound = PackageImporter.IsPreUpmProBuilderInProject();
+			if (m_DeprecatedProBuilderFound &&
+				!ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) &&
+			    !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			{
+				int res = EditorUtility.DisplayDialogComplex(
+					"Could Not Find Existing ProBuilder Directory",
+					"Would you like to manually select the Asset Store installed ProBuilder folder and continue with the conversion process, or continue without removing old ProBuilder files (not recommended)?",
+					"Select Folder",
+					"Continue",
+					"Cancel");
+
+				if (res == k_DialogOkay)
+				{
+					// if they don't get it right after 3 attempts it's probably not going to happen and they'll be annoyed at
+					// an inescapable dialog loop
+					int userDirectoryPickAttempts = 0;
+
+					while (userDirectoryPickAttempts++ < 3)
+					{
+						m_DeprecatedProBuilderDirectory = EditorUtility.OpenFolderPanel("Select ProBuilder Directory", "Assets", "");
+
+						if (string.IsNullOrEmpty(m_DeprecatedProBuilderDirectory))
+						{
+							Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+							EditorApplication.delayCall += Close;
+							break;
+						}
+
+						if (ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) ||
+						    ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+						{
+							// got a good directory, continue with process
+							break;
+						}
+						else
+						{
+							if (!EditorUtility.DisplayDialog("Selected Folder is not a ProBuilder Install",
+								"The folder selected not an old version of ProBuilder. Would you like to select a different directory?", "Yes",
+								"Cancel"))
+							{
+								EditorApplication.delayCall += Close;
+								break;
+							}
+						}
+					}
+				}
+				else if (res == k_DialogCancel)
+				{
+					Debug.LogWarning("Canceling ProBuilder Asset Store to Package Manager conversion. You may start this process again at any time by accessing the Tools>ProBuilder>Repair>Convert to Package Manager menu item.");
+					EditorApplication.delayCall += Close;
+				}
+			}
+
+			m_AssetsToDeleteTreeView.directoryRoot = m_DeprecatedProBuilderDirectory;
 			m_AssetsToDeleteTreeView.SetDirectoryIgnorePatterns(k_AssetStoreDirectorySuggestedDeleteIgnoreFilter);
 			m_AssetsToDeleteTreeView.SetFileIgnorePatterns(k_AssetStoreSuggestedFileDeleteIgnoreFilter);
 			m_AssetsToDeleteTreeView.Reload();
@@ -385,27 +447,60 @@ namespace ProBuilder.AssetUtility
 
 		static string FindAssetStoreProBuilderInstall()
 		{
-			string dir = null;
-
 			string[] matches = Directory.GetDirectories("Assets", "ProBuilder", SearchOption.AllDirectories);
+			string bestMatch = null;
 
 			foreach (var match in matches)
 			{
-				dir = match.Replace("\\", "/") +  "/";
-				if (dir.Contains("ProBuilder") && ValidateProBuilderRoot(dir))
-					break;
+				string dir = match.Replace("\\", "/") +  "/";
+
+				if (ValidateAssetStoreProBuilderRoot(dir))
+					return dir;
+
+				if (ValidatePreUpmProBuilderRoot(dir))
+					bestMatch = dir;
 			}
 
-			return dir;
+			return bestMatch;
 		}
 
-		static bool ValidateProBuilderRoot(string dir)
+		/// <summary>
+		/// Is the ProBuilder folder an Asset Store installed version?
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <returns></returns>
+		static bool ValidateAssetStoreProBuilderRoot(string dir)
 		{
 			return !string.IsNullOrEmpty(dir) &&
+			       File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll") &&
+			       File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll");
+		}
+
+		/// <summary>
+		/// Is the selected folder a ProBuilder version of any install source prior to packman update?
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <returns></returns>
+		static bool ValidatePreUpmProBuilderRoot(string dir)
+		{
+			bool isProBuilderRoot = !string.IsNullOrEmpty(dir) &&
 			       Directory.Exists(dir + "/Classes") &&
-			       Directory.Exists(dir + "/Icons") &&
+			       (File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll")
+			        || File.Exists(dir + "/Classes/ClassesCore/pb_Object.cs")
+			        || File.Exists(dir + "/Classes/ProBuilderCore.dll")) &&
 			       Directory.Exists(dir + "/Editor") &&
-			       Directory.Exists(dir + "/Shader");
+			       (File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll")
+			        || File.Exists(dir + "/Editor/ProBuilderEditor.dll")
+			        || File.Exists(dir + "/Editor/EditorCore/pb_Editor.cs"));
+
+			if (!isProBuilderRoot)
+				return false;
+
+			string[] assetIdRemapSource = Directory.GetFiles(dir, "AssetId.cs", SearchOption.AllDirectories);
+			string[] assetIdRemapDll = Directory.GetFiles(dir, "AssetIdRemapUtility.dll", SearchOption.AllDirectories);
+
+			// don't let user mark the newly imported upm install for deletion
+			return assetIdRemapSource.Length <= 0 && assetIdRemapDll.Length <= 0;
 		}
 
 		ConversionReadyState ValidateAssetStoreRemoval()

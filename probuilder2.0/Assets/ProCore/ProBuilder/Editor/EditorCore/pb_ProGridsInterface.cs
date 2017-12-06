@@ -21,9 +21,10 @@ namespace ProBuilder.EditorCore
 			m_ProGridsType = GetProGridsType();
 		}
 
-		/**
-		 * Get a pg_Editor type.
-		 */
+		/// <summary>
+		/// Get a pg_Editor type.
+		/// </summary>
+		/// <returns></returns>
 		public static Type GetProGridsType()
 		{
 			if( m_ProGridsType == null )
