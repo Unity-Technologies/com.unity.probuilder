@@ -196,7 +196,8 @@ namespace ProBuilder.AssetUtility
 			{
 				EditorApplication.LockReloadAssemblies();
 
-				Debug.Log(RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()));
+				Debug.Log("Remove existing asset store install: " + RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()).ToString());
+
 //				if(RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()))
 //					RemapAssetIds(m_RemapFile);
 
@@ -236,6 +237,12 @@ namespace ProBuilder.AssetUtility
 		void ResetAssetsToDelete()
 		{
 			m_DeprecatedProBuilderFound = PackageImporter.IsPreUpmProBuilderInProject();
+
+			// todo condense the validate calls to a single one
+			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) &&
+			    !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+				m_DeprecatedProBuilderDirectory = FindAssetStoreProBuilderInstall();
+
 			if (m_DeprecatedProBuilderFound &&
 				!ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) &&
 			    !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
@@ -301,6 +308,10 @@ namespace ProBuilder.AssetUtility
 		bool RemoveAssetStoreFiles(TreeViewItem root)
 		{
 			AssetTreeItem node = root as AssetTreeItem;
+
+			// todo only need to call delete on top level node
+			// todo need to filter out hidden files (.DS_Store)
+			Debug.Log("Removing directory: " + node.fullPath);
 
 			if (node != null && node.enabled)
 			{
