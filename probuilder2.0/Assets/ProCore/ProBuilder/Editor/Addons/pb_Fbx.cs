@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Core;
-using ProBuilder.EditorCore;
-using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -11,6 +8,9 @@ using System.Reflection;
 using Unity.FbxSdk;
 using FbxExporters;
 using FbxExporters.Editor;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
+using ProBuilder.MeshOperations;
 #endif
 
 namespace ProBuilder.Addons.FBX

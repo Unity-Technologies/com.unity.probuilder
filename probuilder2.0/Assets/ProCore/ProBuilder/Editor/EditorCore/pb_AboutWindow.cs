@@ -301,6 +301,11 @@ namespace ProBuilder.EditorCore
 			GUILayout.Label(string.Format("Version: {0}", m_AboutEntry.version), versionInfoStyle);
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
+
+#if DEBUG
+			// todo automatically populate this const in a build step and expose outside of dev builds
+			GUILayout.Label(pb_Constant.VersionInfo);
+#endif
 		}
 
 		/**
