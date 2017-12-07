@@ -1,8 +1,20 @@
-# ProBuilder 2.10.0f0
+# ProBuilder 2.10.1f0
 
 ## Features
 
-- Packman support.
+- ProBuilder now runs as package manager module.
+
+## Bug Fixes
+
+- Fix entity vis toggles using pro tint in basic skin.
+- Fix standard shader errors in 2017.3.
+- Corrected tool-tips for "Clear Smoothing" and "Break Smoothing" buttons.
+
+## Changes
+
+- Move Dimensions Overlay into ProBuilder menu.
+- Move pb_Object/Entity to ProBuilder.Core namespace.
+- Move `ProBuilder2.{Common, EditorCommon}` to `ProBuilder.Core` and `ProBuilder.EditorCore`.
 
 # ProBuilder 2.9.8f2
 
