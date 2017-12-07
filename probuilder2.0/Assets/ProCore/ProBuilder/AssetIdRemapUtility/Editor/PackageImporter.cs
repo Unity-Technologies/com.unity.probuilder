@@ -85,7 +85,7 @@ namespace ProBuilder.AssetUtility
 			}
 		}
 
-		internal static bool IsEditorPlugin(string guid)
+		internal static bool IsEditorPluginEnabled(string guid)
 		{
 			string path = AssetDatabase.GUIDToAssetPath(guid);
 			var importer = AssetImporter.GetAtPath(path) as PluginImporter;
@@ -144,7 +144,15 @@ namespace ProBuilder.AssetUtility
 			return false;
 		}
 
-		static void CancelProBuilderImportPopup()
+		internal static bool IsUpmProBuilderLoaded()
+		{
+			if (!IsEditorPluginEnabled(k_PackageManagerEditorCore))
+				return false;
+
+			return false;
+		}
+
+		internal static void CancelProBuilderImportPopup()
 		{
 			Type aboutWindowType = Type.GetType("ProBuilder.EditorCore.pb_AboutWindow");
 

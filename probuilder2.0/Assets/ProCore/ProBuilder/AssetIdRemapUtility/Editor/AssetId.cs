@@ -332,7 +332,7 @@ namespace ProBuilder.AssetUtility
 					{
 						m_MonoScriptClass = m_Type.Split(k_MonoScriptTypeSplit, StringSplitOptions.RemoveEmptyEntries)[1];
 						if (m_LocalPath.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
-							m_IsEditorScript = PackageImporter.IsEditorPlugin(guid);
+							m_IsEditorScript = m_LocalPath.StartsWith("Editor/") || m_LocalPath.Contains("/Editor/") || PackageImporter.IsEditorPluginEnabled(guid);
 						else
 							m_IsEditorScript = m_LocalPath.StartsWith("Editor/") || m_LocalPath.Contains("/Editor/");
 					}
