@@ -144,27 +144,48 @@ namespace ProBuilder.AssetUtility
 			return false;
 		}
 
+		static Type FindType(string typeName)
+		{
+			// First try the current assembly
+			Type found = Type.GetType(typeName);
+
+			// Then scan the loaded assemblies
+			if (found == null)
+			{
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					found = assembly.GetType(typeName);
+
+					if (found != null)
+						break;
+				}
+			}
+
+			return found;
+		}
+
 		internal static bool IsUpmProBuilderLoaded()
 		{
-			if (!IsEditorPluginEnabled(k_PackageManagerEditorCore))
+			if (IsEditorPluginEnabled(k_PackageManagerEditorCore))
+				return true;
+
+			Type versionUtilType = FindType("ProBuilder.EditorCore.pb_VersionUtil");
+
+			if (versionUtilType == null)
 				return false;
+
+			MethodInfo isVersionGreaterThanOrEqualTo = versionUtilType.GetMethod("IsGreaterThanOrEqualTo",
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+			if (isVersionGreaterThanOrEqualTo != null)
+				return (bool) isVersionGreaterThanOrEqualTo.Invoke(null, new object[] {2, 10, 0});
 
 			return false;
 		}
 
 		internal static void CancelProBuilderImportPopup()
 		{
-			Type aboutWindowType = Type.GetType("ProBuilder.EditorCore.pb_AboutWindow");
-
-			if (aboutWindowType == null)
-			{
-				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					aboutWindowType = assembly.GetType("ProBuilder.EditorCore.pb_AboutWindow");
-					if (aboutWindowType != null)
-						break;
-				}
-			}
+			Type aboutWindowType = FindType("ProBuilder.EditorCore.pb_AboutWindow");
 
 			if (aboutWindowType != null)
 			{

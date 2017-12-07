@@ -12,41 +12,13 @@ namespace ProBuilder.Test
 {
 	public class TestVersionInfo
 	{
-		static pb_VersionInfo version_a = new pb_VersionInfo()
-		{
-			major = 2,
-			minor = 0,
-			patch = 0,
-			type = VersionType.Final,
-			build = 3
-		};
+		static pb_VersionInfo version_a = new pb_VersionInfo(2, 0, 0, 3, VersionType.Final);
 
-		static pb_VersionInfo version_b = new pb_VersionInfo()
-		{
-			major = 3,
-			minor = 2,
-			patch = 0,
-			type = VersionType.Final,
-			build = 3
-		};
+		static pb_VersionInfo version_b = new pb_VersionInfo(3, 2, 0, 3, VersionType.Final);
 
-		static pb_VersionInfo version_c = new pb_VersionInfo()
-		{
-			major = 3,
-			minor = 2,
-			patch = 0,
-			type = VersionType.Beta,
-			build = 3
-		};
+		static pb_VersionInfo version_c = new pb_VersionInfo(3, 2, 0, 3, VersionType.Beta);
 
-		static pb_VersionInfo version_d = new pb_VersionInfo()
-		{
-			major = 3,
-			minor = 2,
-			patch = 2,
-			type = VersionType.Final,
-			build = 3
-		};
+		static pb_VersionInfo version_d = new pb_VersionInfo(3, 2, 2, 3, VersionType.Final);
 
 		[Test]
 		public static void TestComparison()

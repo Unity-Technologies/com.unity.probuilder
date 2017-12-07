@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEditor;
 using System.IO;
 using System.Text;
-using System.Collections;
 using System.Text.RegularExpressions;
+using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
 {
@@ -31,9 +30,11 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_VersionUtil
 	{
-		/**
-		 *	Get information from the currently installed ProBuilder version.
-		 */
+		/// <summary>
+		/// Get information from the currently installed ProBuilder version.
+		/// </summary>
+		/// <param name="about"></param>
+		/// <returns></returns>
 		public static bool GetAboutEntry(out pb_AboutEntry about)
 		{
 			about = null;
@@ -48,6 +49,34 @@ namespace ProBuilder.EditorCore
 			return about != null;
 		}
 
+		/// <summary>
+		/// Is the current version of ProBuilder greater than or equal to the passed version?
+		/// </summary>
+		/// <param name="major"></param>
+		/// <param name="minor"></param>
+		/// <param name="patch"></param>
+		/// <returns></returns>
+		public static bool IsGreaterThanOrEqualTo(int major, int minor, int patch)
+		{
+			pb_VersionInfo version = pb_Version.VersionInfo;
+
+			if(version.major > major)
+				return true;
+			else if(version.major < major)
+				return false;
+			else if(version.minor > minor)
+				return true;
+			else if(version.minor < minor)
+				return false;
+			else if(version.patch > patch)
+				return true;
+			else if(version.patch < patch)
+				return false;
+
+			// are equal
+			return true;
+		}
+
 		public static bool GetCurrent(out pb_VersionInfo version)
 		{
 			pb_AboutEntry about;
@@ -58,8 +87,7 @@ namespace ProBuilder.EditorCore
 				return false;
 			}
 
-			version = pb_VersionInfo.FromString(about.version);
-			return true;
+			return pb_VersionInfo.TryGetVersionInfo(about.version, out version);
 		}
 
 		/**
@@ -76,11 +104,11 @@ namespace ProBuilder.EditorCore
 			try
 			{
 				Match versionMatch = Regex.Match(split[1], @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[a-z][0-9]*");
-				version = pb_VersionInfo.FromString(versionMatch.Success ? versionMatch.Value : split[1].Split('\n')[0]);
+				success = pb_VersionInfo.TryGetVersionInfo(versionMatch.Success ? versionMatch.Value : split[1].Split('\n')[0], out version);
 			}
 			catch
 			{
-				version = pb_VersionInfo.FromString("not found");
+				version = new pb_VersionInfo();
 				success = false;
 			}
 
@@ -105,7 +133,7 @@ namespace ProBuilder.EditorCore
 			return success;
 		}
 
-		private static pb_AboutEntry ParseAboutEntry(TextAsset aboutTextAsset)
+		static pb_AboutEntry ParseAboutEntry(TextAsset aboutTextAsset)
 		{
 			if(aboutTextAsset == null)
 				return null;

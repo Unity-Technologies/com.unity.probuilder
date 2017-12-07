@@ -226,7 +226,7 @@ namespace ProBuilder.AssetUtility
 
 		void NoConversionRequiredGui()
 		{
-			GUI.Label(new Rect(0,0,position.width,position.height), "ProBuilder Already Updated", EditorStyles.centeredGreyMiniLabel);
+			GUI.Label(new Rect(0,0,position.width,position.height), "ProBuilder is up to date!", EditorStyles.centeredGreyMiniLabel);
 		}
 
 		void DrawTreeSettings()
@@ -250,7 +250,7 @@ namespace ProBuilder.AssetUtility
 		ConversionReadyState ValidateSettings()
 		{
 			if (!PackageImporter.IsPreUpmProBuilderInProject() &&
-			    PackageImporter.IsEditorPluginEnabled(PackageImporter.EditorCorePackageManager))
+			    PackageImporter.IsUpmProBuilderLoaded())
 				return ConversionReadyState.NoActionRequired;
 
 			return ValidateProjectTextSerialized() | ValidateAssetStoreRemoval();

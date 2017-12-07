@@ -16,6 +16,7 @@ namespace ProBuilder.Core
 		Error 		= 0x1,
 		Warning 	= 0x2,
 		Info		= 0x4,
+		Default     = Error | Warning,
 		All			= 0xFF
 	}
 

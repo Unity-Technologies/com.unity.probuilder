@@ -24,7 +24,7 @@ namespace ProBuilder.EditorCore
 		{
 			EditorApplication.delayCall += () =>
 			{
-				pb_Log.SetLogLevel( (pb_LogLevel) pb_PreferencesInternal.GetInt("pb_Log::m_LogLevel", (int) pb_LogLevel.All) );
+				pb_Log.SetLogLevel( (pb_LogLevel) pb_PreferencesInternal.GetInt("pb_Log::m_LogLevel", (int) pb_LogLevel.Default) );
 				pb_Log.SetOutput( (pb_LogOutput) pb_PreferencesInternal.GetInt("pb_Log::m_Output", (int) pb_LogOutput.Console) );
 				pb_Log.SetLogFile( pb_PreferencesInternal.GetString("pb_Log::m_LogFilePath", pb_Log.DEFAULT_LOG_PATH) );
 			};

@@ -57,6 +57,9 @@ namespace ProBuilder.EditorCore
 		const float k_BannerWidth = 480f;
 		const float k_BannerHeight = 270f;
 
+		const string k_AboutWindowVersionPref = "ProBuilder_AboutWindowIdentifier";
+		const string k_AboutPrefFormat = "M.m.ptb";
+
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
 
@@ -67,7 +70,7 @@ namespace ProBuilder.EditorCore
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
 		string m_ProductName = pb_Constant.PRODUCT_NAME;
-		pb_AboutEntry m_AboutEntry = null;
+		pb_VersionInfo m_changeLogVersionInfo;
 		string m_ChangeLogRichText = "";
 		static bool m_CancelImportPopup = false;
 
@@ -81,9 +84,12 @@ namespace ProBuilder.EditorCore
 
 		Vector2 scroll = Vector2.zero;
 
+		/// <summary>
+		/// Cancel the About window popup on asset import. Used by PackageImporter through reflection to prevent window
+		/// from popping up when the EditorCore DLL is about to be disabled.
+		/// </summary>
 		public static void CancelImportPopup()
 		{
-			Debug.Log("CancelImportPopup");
 			m_CancelImportPopup = true;
 		}
 
@@ -103,23 +109,10 @@ namespace ProBuilder.EditorCore
 				return false;
 			}
 
-			pb_AboutEntry about;
-
-			if (!pb_VersionUtil.GetAboutEntry(out about))
+			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.VersionInfo.ToString(k_AboutPrefFormat))
 			{
-				if(fromMenu)
-					pb_Log.Warning("Could not find about text file for ProBuilder.");
-
-				return false;
-			}
-
-			if(fromMenu || pb_PreferencesInternal.GetString(about.identifier) != about.version)
-			{
-				pb_AboutWindow win;
-				win = (pb_AboutWindow)EditorWindow.GetWindow(typeof(pb_AboutWindow), true, about.name, true);
-				win.ShowUtility();
-				win.SetAbout(about);
-				pb_PreferencesInternal.SetString(about.identifier, about.version, pb_PreferenceLocation.Global);
+				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.VersionInfo.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
+				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
 				return true;
 			}
 			else
@@ -128,7 +121,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		private static Color HexToColor(uint x)
+		static Color HexToColor(uint x)
 		{
 			return new Color( 	((x >> 16) & 0xFF) / 255f,
 								((x >> 8) & 0xFF) / 255f,
@@ -225,7 +218,7 @@ namespace ProBuilder.EditorCore
 
 			if(banner == null)
 			{
-				Debug.LogWarning("Could not load About window resources");
+				pb_Log.Warning("Could not load About window resources");
 				this.Close();
 			}
 			else
@@ -241,20 +234,18 @@ namespace ProBuilder.EditorCore
 				if(!m_ProductName.Contains("Basic"))
 					m_ProductName = "ProBuilder Advanced";
 			}
-		}
-
-		void SetAbout(pb_AboutEntry about)
-		{
-			this.m_AboutEntry = about;
 
 			TextAsset changeText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
 
 			string raw = changeText != null ? changeText.text : "";
 
-			if(!string.IsNullOrEmpty(raw))
+			if (!string.IsNullOrEmpty(raw))
 			{
-				pb_VersionInfo vi;
-				pb_VersionUtil.FormatChangelog(raw, out vi, out m_ChangeLogRichText);
+				pb_VersionUtil.FormatChangelog(raw, out m_changeLogVersionInfo, out m_ChangeLogRichText);
+				if(!pb_Version.VersionInfo.Equals(m_changeLogVersionInfo))
+					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
+						m_changeLogVersionInfo.ToString(k_AboutPrefFormat),
+						pb_Version.VersionInfo.ToString(k_AboutPrefFormat));
 			}
 		}
 
@@ -298,19 +289,16 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_AboutEntry.version), versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_changeLogVersionInfo.ToString("M.m.p")), versionInfoStyle);
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
-#if DEBUG
-			// todo automatically populate this const in a build step and expose outside of dev builds
-			GUILayout.Label(pb_Constant.VersionInfo);
-#endif
+			GUILayout.Label(pb_Version.VersionInfo.ToString());
 		}
 
-		/**
-		 * Draw a horizontal line across the screen and update the guilayout.
-		 */
+		/// <summary>
+		/// Draw a horizontal line across the screen and update the guilayout.
+		/// </summary>
 		void HorizontalLine()
 		{
 			Rect r = GUILayoutUtility.GetLastRect();
