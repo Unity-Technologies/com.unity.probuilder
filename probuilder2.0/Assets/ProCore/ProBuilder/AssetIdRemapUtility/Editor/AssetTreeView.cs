@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -100,6 +101,8 @@ namespace ProBuilder.AssetUtility
 	public class AssetTreeView : TreeView
 	{
 		string m_RootDirectory = null;
+		GUIContent m_TempContent = new GUIContent();
+		Rect m_ToggleRect = new Rect(0,0,0,0);
 
 		public string directoryRoot
 		{
@@ -127,7 +130,6 @@ namespace ProBuilder.AssetUtility
 
 		public AssetTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
 		{
-			showAlternatingRowBackgrounds = true;
 			showBorder = true;
 			columnIndexForTreeFoldouts = 0;
 			rowHeight = 18f;
@@ -174,7 +176,7 @@ namespace ProBuilder.AssetUtility
 
 			foreach (string path in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
 			{
-				if (path.EndsWith(".meta"))
+				if (path.StartsWith(".") || path.EndsWith(".meta"))
 					continue;
 
 				string unixPath = path.Replace("\\", "/");
@@ -185,7 +187,7 @@ namespace ProBuilder.AssetUtility
 					unixPath.Replace(unixDirectory, "").Trim('/')) { enabled = true });
 			}
 
-			foreach(string dir in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
+			foreach (string dir in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
 				PopulateAssetTree(dir, leaf, ref nodeIdIndex);
 		}
 
@@ -211,8 +213,19 @@ namespace ProBuilder.AssetUtility
 					ApplyEnabledFilters(child);
 		}
 
-		GUIContent m_TempContent = new GUIContent();
-		Rect m_ToggleRect = new Rect(0,0,0,0);
+		protected override void AfterRowsGUI()
+		{
+			if (rootItem.hasChildren)
+				return;
+
+			if (Event.current.type == EventType.Repaint)
+			{
+				Rect r = new Rect(treeViewRect);
+				// not sure why there is a two row pad to the treeViewRect
+				r.y -= rowHeight * 2;
+				GUI.Label(r, "No Existing ProBuilder Install Found", EditorStyles.centeredGreyMiniLabel);
+			}
+		}
 
 		protected override void RowGUI (RowGUIArgs args)
 		{

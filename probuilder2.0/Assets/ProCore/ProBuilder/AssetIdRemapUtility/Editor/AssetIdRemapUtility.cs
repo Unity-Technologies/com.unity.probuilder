@@ -7,7 +7,6 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using UnityEngine.Tizen;
 using UObject = UnityEngine.Object;
 
 namespace ProBuilder.AssetUtility
@@ -20,13 +19,15 @@ namespace ProBuilder.AssetUtility
 		{
 			"(^|(?<=/))Data(/|)$",
 			"(^|(?<=/))ProBuilderMeshCache(/|)$",
-			".meta$"
+			".meta$",
+			"^\\."
 		};
 
 		static readonly string[] k_AssetStoreSuggestedFileDeleteIgnoreFilter = new string[]
 		{
 			".meta$",
-			".asset$"
+			".asset$",
+			"^\\."
 		};
 
 		static readonly string[] k_AssetStoreMustDelete = new string[]
@@ -130,10 +131,7 @@ namespace ProBuilder.AssetUtility
 					}
 				});
 
-			m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState)
-			{
-				height = 0
-			};
+			m_MultiColumnHeader = new MultiColumnHeader(m_MultiColumnHeaderState) { height = 0 };
 
 			m_AssetsToDeleteTreeView = new AssetTreeView(m_TreeViewState, m_MultiColumnHeader);
 			ResetAssetsToDelete();
@@ -196,10 +194,15 @@ namespace ProBuilder.AssetUtility
 			{
 				EditorApplication.LockReloadAssemblies();
 
-				Debug.Log("Remove existing asset store install: " + RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()).ToString());
-
-//				if(RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()))
-//					RemapAssetIds(m_RemapFile);
+				if (RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot()))
+				{
+					Debug.Log("Successfully removed old install");
+					RemapAssetIds(m_RemapFile);
+				}
+				else
+				{
+					Debug.Log("Failed removing old install");
+				}
 
 				EditorApplication.UnlockReloadAssemblies();
 			}
@@ -238,14 +241,11 @@ namespace ProBuilder.AssetUtility
 		{
 			m_DeprecatedProBuilderFound = PackageImporter.IsPreUpmProBuilderInProject();
 
-			// todo condense the validate calls to a single one
-			if (m_DeprecatedProBuilderFound && !ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) &&
-			    !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
 				m_DeprecatedProBuilderDirectory = FindAssetStoreProBuilderInstall();
 
-			if (m_DeprecatedProBuilderFound &&
-				!ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) &&
-			    !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+			// If still no old folder found (and PackageImporter tells us one exists), ask the user to point it out
+			if (m_DeprecatedProBuilderFound && !ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
 			{
 				int res = EditorUtility.DisplayDialogComplex(
 					"Could Not Find Existing ProBuilder Directory",
@@ -271,8 +271,7 @@ namespace ProBuilder.AssetUtility
 							break;
 						}
 
-						if (ValidateAssetStoreProBuilderRoot(m_DeprecatedProBuilderDirectory) ||
-						    ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
+						if (ValidatePreUpmProBuilderRoot(m_DeprecatedProBuilderDirectory))
 						{
 							// got a good directory, continue with process
 							break;
@@ -309,15 +308,14 @@ namespace ProBuilder.AssetUtility
 		{
 			AssetTreeItem node = root as AssetTreeItem;
 
-			// todo only need to call delete on top level node
-			// todo need to filter out hidden files (.DS_Store)
-			Debug.Log("Removing directory: " + node.fullPath);
+			Debug.Log("removing node: " + node.fullPath);
 
-			if (node != null && node.enabled)
+			if (node != null && (node.enabled && !node.isMixedState))
 			{
 				return AssetDatabase.MoveAssetToTrash(node.fullPath);
 			}
-			else if(node.children != null)
+
+			if(node.children != null)
 			{
 				bool success = true;
 
@@ -497,12 +495,10 @@ namespace ProBuilder.AssetUtility
 			bool isProBuilderRoot = !string.IsNullOrEmpty(dir) &&
 			       Directory.Exists(dir + "/Classes") &&
 			       (File.Exists(dir + "/Classes/ProBuilderCore-Unity5.dll")
-			        || File.Exists(dir + "/Classes/ClassesCore/pb_Object.cs")
-			        || File.Exists(dir + "/Classes/ProBuilderCore.dll")) &&
+			        || File.Exists(dir + "/Classes/ClassesCore/pb_Object.cs")) &&
 			       Directory.Exists(dir + "/Editor") &&
 			       (File.Exists(dir + "/Editor/ProBuilderEditor-Unity5.dll")
-			        || File.Exists(dir + "/Editor/ProBuilderEditor.dll")
-			        || File.Exists(dir + "/Editor/EditorCore/pb_Editor.cs"));
+			        || File.Exists(dir + "/Editor/ProBuilderEditor.dll"));
 
 			if (!isProBuilderRoot)
 				return false;
