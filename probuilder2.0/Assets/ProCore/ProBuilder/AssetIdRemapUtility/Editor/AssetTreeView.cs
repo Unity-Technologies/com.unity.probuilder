@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UObject = UnityEngine.Object;
 
 namespace ProBuilder.AssetUtility
 {
@@ -268,6 +269,20 @@ namespace ProBuilder.AssetUtility
 			GUI.enabled = item.enabled;
 			GUI.Label(args.rowRect, m_TempContent);
 			GUI.enabled = guiEnabled;
+		}
+
+		protected override void ContextClickedItem(int id)
+		{
+			var clicked = FindItem(id, rootItem) as AssetTreeItem;
+			if (clicked != null)
+			{
+				var menu = new GenericMenu();
+				menu.AddItem(new GUIContent("Show Asset"), false, () =>
+				{
+					EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UObject>(clicked.fullPath));
+				});
+				menu.ShowAsContext();
+			}
 		}
 
 		public List<AssetTreeItem> GetAssetList()
