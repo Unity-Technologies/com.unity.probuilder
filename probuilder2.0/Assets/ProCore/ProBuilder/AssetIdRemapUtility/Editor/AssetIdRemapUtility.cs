@@ -331,29 +331,25 @@ namespace ProBuilder.AssetUtility
 		{
 			AssetTreeItem node = root as AssetTreeItem;
 
-			Debug.Log("removing node: " + node.fullPath);
-
 			if (node != null && (node.enabled && !node.isMixedState))
 			{
 				if (!AssetDatabase.MoveAssetToTrash(node.fullPath))
 				{
-					Debug.Log("  move to trash failed, trying DeleteAsset");
-
 					if (!AssetDatabase.DeleteAsset(node.fullPath))
 					{
-						Debug.Log("  delete asset failed, trying File.Delete");
-
 						if(Directory.Exists(node.fullPath))
 						{
 							Directory.Delete(node.fullPath, true);
 
 							if (Directory.Exists(node.fullPath))
 							{
-								Debug.Log("  Directory.Delete failed, giving up");
+								Debug.LogError("Directory.Delete failed, giving up. (" + node.fullPath + ")");
 								return false;
 							}
 							else
+							{
 								File.Delete(node.fullPath.Trim('/') + ".meta");
+							}
 						}
 						else if(File.Exists(node.fullPath))
 						{
@@ -361,11 +357,13 @@ namespace ProBuilder.AssetUtility
 
 							if (File.Exists(node.fullPath))
 							{
-								Debug.Log("  File.Delete failed, giving up");
+								Debug.LogError("File.Delete failed, giving up (" + node.fullPath + ")");
 								return true;
 							}
 							else
+							{
 								File.Delete(node.fullPath + ".meta");
+							}
 						}
 					}
 				}
@@ -397,6 +395,7 @@ namespace ProBuilder.AssetUtility
 				"*.meta",
 				"*.asset",
 				"*.mat",
+				"*.prefab",
 				"*.unity",
 			};
 
