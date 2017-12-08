@@ -113,7 +113,9 @@ namespace ProBuilder.AssetUtility
 
 		public AssetTreeItem GetRoot()
 		{
-			return rootItem.children.First() as AssetTreeItem;
+			return rootItem.hasChildren
+				? rootItem.children.First() as AssetTreeItem
+				: null;
 		}
 
 		IEnumerable<Regex> m_DirectoryIgnorePatterns;

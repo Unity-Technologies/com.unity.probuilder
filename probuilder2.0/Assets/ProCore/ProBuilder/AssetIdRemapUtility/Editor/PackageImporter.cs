@@ -64,7 +64,7 @@ namespace ProBuilder.AssetUtility
 						if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
 							"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" the Package Manager ProBuilder package will be disabled.",
 							"Yes", "No"))
-							AssetIdRemapUtility.OpenConversionEditor();
+							EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
 						else
 							Debug.Log("ProBuilder Package Manager conversion process cancelled. You may initiate this conversion at a later time via Tools/ProBuilder/Repair/Convert to Package Manager.");
 					}

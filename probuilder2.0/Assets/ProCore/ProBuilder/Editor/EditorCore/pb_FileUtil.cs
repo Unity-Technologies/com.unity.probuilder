@@ -24,6 +24,7 @@ namespace ProBuilder.EditorCore
 		// The order is important - always search for the package manager installed version first
 		private static string[] k_PossibleInstallDirectories = new string[]
 		{
+			"unitypackagemanager/com.unity.probuilder/",
 			"Packages/com.unity.probuilder/",
 			"Packages/",
 			"Assets/",

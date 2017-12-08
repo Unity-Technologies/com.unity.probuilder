@@ -259,11 +259,17 @@ namespace ProBuilder.AssetUtility
 			m_Guid = guid;
 			m_Name = obj.name;
 			m_LocalPath = localPath;
+			m_Type = GetUObjectTypeString(obj);
+		}
+
+		static string GetUObjectTypeString(UObject obj)
+		{
 			MonoScript ms = obj as MonoScript;
+
 			if (ms != null)
-				m_Type = string.Format("{0}{1}{2}", obj.GetType().ToString(), k_MonoScriptTypeSplit[0], ms.GetClass());
-			else
-				m_Type = obj.GetType().ToString();
+				return string.Format("{0}{1}{2}", obj.GetType().ToString(), k_MonoScriptTypeSplit[0], ms.GetClass());
+
+			return obj.GetType().ToString();
 		}
 
 		public bool Equals(AssetId other)
@@ -280,8 +286,9 @@ namespace ProBuilder.AssetUtility
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((AssetId) obj);
+			var id = obj as AssetId;
+			if (id != null) return Equals(id);
+			return false;
 		}
 
 		public override int GetHashCode()
@@ -423,6 +430,42 @@ namespace ProBuilder.AssetUtility
 			}
 
 			return false;
+		}
+
+		public bool AssetEquals(UObject obj)
+		{
+			string path = AssetDatabase.GetAssetPath(obj);
+
+			if (string.IsNullOrEmpty(path))
+				return false;
+
+			string assetGuid = AssetDatabase.AssetPathToGUID(path);
+
+			return m_Guid.Equals(assetGuid) &&
+			       GetUObjectTypeString(obj).Equals(m_Type);
+		}
+
+		public bool AssetEquals(string assetPath)
+		{
+			string otherGuid = AssetDatabase.AssetPathToGUID(assetPath);
+
+			return m_Guid.Equals(otherGuid) &&
+				GetUObjectTypeString(AssetDatabase.LoadAssetAtPath<UObject>(assetPath)).Equals(m_Type);
+		}
+
+		/// <summary>
+		/// Does the object this id reference exist in the project?
+		/// </summary>
+		/// <returns></returns>
+		public bool ExistsInProject()
+		{
+			string assetPath = AssetDatabase.GUIDToAssetPath(m_Guid);
+			if (string.IsNullOrEmpty(assetPath))
+				return false;
+			var assetObj = AssetDatabase.LoadAssetAtPath<UObject>(assetPath);
+			if (assetObj == null)
+				return false;
+			return m_Type.Equals(GetUObjectTypeString(assetObj));
 		}
 
 		internal bool AssetEquals2(AssetId other, NamespaceRemapObject namespaceRemap = null)
