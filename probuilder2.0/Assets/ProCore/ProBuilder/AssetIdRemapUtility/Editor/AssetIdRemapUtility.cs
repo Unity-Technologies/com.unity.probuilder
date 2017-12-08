@@ -15,6 +15,50 @@ namespace ProBuilder.AssetUtility
 	{
 		const string k_RemapFileDefaultPath = "Assets/ProBuilder/Upgrade/AssetIdRemap.json";
 
+		string[] k_AssetExtensionsToRemap = new string[]
+		{
+			"*.meta",
+			"*.unity",
+			"*.asset",
+			"*.anim",
+			"*.animset",
+			"*.blendtree",
+			"*.buildreport",
+			"*.colors",
+			"*.controller",
+			"*.cubemap",
+			"*.curves",
+			"*.curvesNormalized",
+			"*.flare",
+			"*.fontsettings",
+			"*.giparams",
+			"*.gradients",
+			"*.guiskin",
+			"*.ht",
+			"*.mask",
+			"*.mat",
+			"*.mesh",
+			"*.mixer",
+			"*.overrideController",
+			"*.particleCurves",
+			"*.particleCurvesSigned",
+			"*.particleDoubleCurves",
+			"*.particleDoubleCurvesSigned",
+			"*.physicMaterial",
+			"*.physicsMaterial2D",
+			"*.playable",
+			"*.prefab",
+			"*.preset",
+			"*.renderTexture",
+			"*.shadervariants",
+			"*.spriteatlas",
+			"*.state",
+			"*.statemachine",
+			"*.texture2D",
+			"*.transition",
+			"*.webCamTexture",
+		};
+
 		static readonly string[] k_AssetStoreDirectorySuggestedDeleteIgnoreFilter = new string[]
 		{
 			"(^|(?<=/))Data(/|)$",
@@ -390,19 +434,10 @@ namespace ProBuilder.AssetUtility
 			AssetIdRemapObject remapObject = new AssetIdRemapObject();
 			JsonUtility.FromJsonOverwrite(m_RemapFile.text, remapObject);
 
-			string[] extensionsToScanForGuidRemap = new string[]
-			{
-				"*.meta",
-				"*.asset",
-				"*.mat",
-				"*.prefab",
-				"*.unity",
-			};
-
 			var log = new StringBuilder();
 			int remappedReferences = 0;
 			int modifiedFiles = 0;
-			string[] assets = extensionsToScanForGuidRemap.SelectMany(x => Directory.GetFiles("Assets", x, SearchOption.AllDirectories)).ToArray();
+			string[] assets = k_AssetExtensionsToRemap.SelectMany(x => Directory.GetFiles("Assets", x, SearchOption.AllDirectories)).ToArray();
 
 			for (int i = 0, c = assets.Length; i < c; i++)
 			{
