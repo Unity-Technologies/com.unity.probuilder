@@ -41,18 +41,26 @@ Geo Tools					| bb2233
 Item						| Note
 ---							| ---
 Button Corner Rounding		| 3px radius
-Accent - OFF				| A3A3A3
+Accent - OFF				| 808080
 Accent - ON					| 00aaef
 
 **Buttons (Light Skin)**
 Item 						| Color/Value
 --- 						| ---
-Panel Element				| DADADA
-In-Scene Border				| 636363
-Text 						| 373737
+MiniLabel					| DADADA
+Text Field Inner Fill		| EAEAEA
+Text Field Inner Outline	| D6D6D6
+Outline						| 9f9f9f
+Generic Button Icon Color	| 7C7C7C
+In-Scene Border				| A3A3A3
+Text - Header				| 4F4F4F
+Text - Normal				| 545454
+Text - OnNormal				| DFDFDF
 Normal 						| EAEAEA
 Hover						| F2F2F2
 Pressed 					| E1E1E1
+OnNormal					| FBFBFB
+
 Disabled					| ?
 
 **UI Elements (Dark Skin)**
@@ -61,8 +69,36 @@ Item 						| Color/Value
 Panel Element				| 6F6F6F
 In-Scene Border				| 373737
 Text - Heading				| c8c8c8
-Text - Normal				| bcbcbc
-Normal 						| 565656
+Text - Normal				| C1C1C1FF
+Normal 						| 636363
 Hover						| 6D6D6D
 Pressed 					| 4F4F4FFF
 Disabled					| ?
+
+heading 1c - 45 - 73 (outer, fill, divider)
+
+outline ON C9C9C9
+ON ce
+header text D2D2D2FF
+button generic AEAEAEFF
+
+OnNormal Backing A5A5A5
+Normal Outline 1c1c1c
+Normal Divider 464646
+
+Input Field
+	1c1c1c
+		3c3c3c
+			4c4c4c
+
+text - ON - eeeeee
+
+Blue Tint C1DFEC
+
+cdcdcd - 9f9f9f
+454545 - 2e2e2e
+
+text - on blue button - C3C3C3FF
+text - on off button - 2E2E2EFF
+text - on regular button - C1C1C1FF
+
