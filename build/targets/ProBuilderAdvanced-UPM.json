@@ -1,13 +1,19 @@
 {
 	"Name":"ProBuilder Unity Package Manager",
-	"Base":"ProBuilderBase.json",
+	"UnityPath":[
+		"C:/Users/$USER/unity/unity/build/WindowsEditor",
+		"/Users/$USER/unity/unity/build/MacEditor/Unity.app",
+		"C:/Users/$USER/unity/build/WindowsEditor",
+		"/Users/$USER/unity/build/MacEditor/Unity.app",
+	],
 	"Macros": {
+		"$DST_PROJECT_ROOT": "bin/projects/ProBuilder-trunk/Assets",
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
-		"$BUILD_DIR": "bin/projects",
-		"$DST_PB_ROOT": "bin/projects/ProBuilderUPM-Unity2017.3/Assets/ProCore/ProBuilder",
-		"$DST_PB_NAME": "ProBuilderUPM",
-		"$UNITY_VERSION": "2017.3",
-		"$UPM_PACKAGE_DIR": "../upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder"
+		"$DST_PB_ROOT": "../upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder/ProBuilder",
+		"$DST_PB_NAME": "ProBuilder",
+		"$UNITY_VERSION": "trunk",
+		"$UPM_PACKAGE_DIR": "../upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder",
+		"$BUILD_DIR": "../upm-package-probuilder-project/UnityPackageManager/com.unity.probuilder",
 	},
 	"Defines": [
 		"PROBUILDER_DLL",
@@ -19,15 +25,86 @@
 		"UNITY_2017_1_OR_NEWER",
 		"UNITY_2017_2_OR_NEWER",
 		"UNITY_2017_3_OR_NEWER",
-		"UNITY_2017_3",
+		"UNITY_2018_1_OR_NEWER",
+		"UNITY_2018_1",
+	],
+	"Clean":[
+		{ "Command":"rm", "Arguments": [
+			"$UPM_PACKAGE_DIR/ProBuilder",
+			"$UPM_PACKAGE_DIR/CHANGELOG.md"
+		]}
+	],
+	"OnPreBuild":[
+		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=# ProBuilder )[0-9a-zA-Z.]*" ] },
+		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=new pb_VersionInfo\\(\")[0-9]*.[0-9]*.[0-9]*[dpbfDPBF][0-9]", "GetFindVar(0)" ] },
+		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US: [0-1]?[0-9]/[1-3]?[0-9]/[0-9]{4}(?=\"\\);)", "$DATE" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$BUILD_DIR/$DST_PB_NAME" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },
+		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesEditing.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Editor/EditorCore.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Data.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/API Examples" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/API Examples.meta" ] },
+		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Shader"] },
+		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/Shader" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/Shader", "$DST_PB_ROOT/Shader" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.meta" ] },
+	],
+	"ReferenceSearchPaths":[
+		"$UNITY/Data/Mono/lib/mono/2.0",
+		"$UNITY/Data/Managed"
+	],
+	"Assemblies":
+	[
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesCore",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Classes/ClassesEditing",
+			"OutputAssembly": "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
+			"ReferencedAssemblies": [
+				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
+			]
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
+			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor.dll",
+			"Defines": [
+				"UNITY_EDITOR"
+			],
+			"ReferencedAssemblies": [
+				"UnityEditor.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderCore.dll",
+				"$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
+			]
+		},
+		{
+			"SourceDirectory": "$SRC_PB_ROOT/AssetIdRemapUtility/Editor",
+			"OutputAssembly": "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll",
+			"Defines": [
+				"UNITY_EDITOR"
+			],
+			"ReferencedAssemblies": [
+				"UnityEditor.dll"
+			]
+		}
 	],
 	"OnPostBuild": [
-		{ "Command":"rm", "Arguments": [ "$UPM_PACKAGE_DIR/ProCore" ] },
-		{ "Command":"mkdir", "Arguments": [ "$UPM_PACKAGE_DIR/ProCore" ] },
-		{ "Command":"cp", "Arguments": [ "$DST_PB_ROOT", "$UPM_PACKAGE_DIR/ProCore/ProBuilder" ] },
-		{ "Command":"cp", "Arguments": [ "$DST_PB_ROOT/About/changelog.txt", "$UPM_PACKAGE_DIR/CHANGELOG.md" ] },
-		{ "Command": "rm", "Arguments": [ "$UPM_PACKAGE_DIR/ProCore/ProBuilder/API Examples"]}
-		{ "Command":"cp", "Arguments": [ "README.md", "$UPM_PACKAGE_DIR/README.md" ] },
-		{ "Command":"rm", "Arguments": [ "$BUILD_DIR/$DST_PB_NAME-Unity$UNITY_VERSION" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "$BUILD_DIR/CHANGELOG.md" ] },
 	]
 }

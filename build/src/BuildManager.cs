@@ -16,7 +16,7 @@ namespace ProBuilder.BuildSystem
 	 */
 	public static class BuildManager
 	{
-		const string m_VersionInfo = "1.1.0f0";
+		const string m_VersionInfo = "2.0.0f0";
 
 		static int Main(string[] args)
 		{
@@ -35,7 +35,7 @@ namespace ProBuilder.BuildSystem
 			// Iterate through args once looking for switches
 			foreach(string arg in args)
 			{
-				bool multiSwitch = !arg.StartsWith("--");
+				bool multiSwitch = arg.StartsWith("-") && !arg.StartsWith("--");
 
 				if(arg.Equals("--debug") || (multiSwitch && arg.Contains("d")))
 				{
@@ -109,6 +109,7 @@ namespace ProBuilder.BuildSystem
 				Log.Status("Build: " + target.Name);
 
 				target.Macros.Add("$USER", Environment.UserName);
+				target.Macros.Add("$DATE", System.DateTime.Now.ToString("en-US: MM/dd/yyyy"));
 
 				string m_UnityPath = m_UnityPathOverride;
 

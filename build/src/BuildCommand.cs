@@ -30,6 +30,12 @@ namespace ProBuilder.BuildSystem
 		 */
 		public const string MKDIR = "mkdir";
 
+		// Find the first occurence of a regex pattern in a file.
+		public const string FIND = "find";
+
+		// Replace all matched strings with contents.
+		public const string REPLACE = "replace";
+
 		// The command to execute.
 		public string Command;
 

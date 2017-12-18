@@ -58,7 +58,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static bool IsGreaterThanOrEqualTo(int major, int minor, int patch)
 		{
-			pb_VersionInfo version = pb_Version.VersionInfo;
+			pb_VersionInfo version = pb_Version.Current;
 
 			if(version.major > major)
 				return true;

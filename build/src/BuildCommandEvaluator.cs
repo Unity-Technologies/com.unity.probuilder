@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
 namespace ProBuilder.BuildSystem
@@ -9,6 +10,9 @@ namespace ProBuilder.BuildSystem
 	 */
 	public static class BuildCommandEvaluator
 	{
+		private static Dictionary<string, string> m_NamedRegexMatches = new Dictionary<string, string>();
+		private static List<string> m_RegexMatches = new List<string>();
+
 		/**
 		 *	Execute a BuildCommand.
 		 */
@@ -16,12 +20,27 @@ namespace ProBuilder.BuildSystem
 		{
 			string res = null;
 
+			List<string> args = new List<string>(command.Arguments);
+
+			for(int i = 0; i < args.Count; i++)
+			{
+				foreach(var kvp in m_NamedRegexMatches)
+					args[i] = args[i].Replace("GetFindVar(" + kvp.Key + ")", kvp.Value);
+
+				for(int n = 0; n < m_RegexMatches.Count; n++)
+					args[i] = args[i].Replace("GetFindVar(" + n + ")", m_RegexMatches[n]);
+			}
+
 			if(command.Command.Equals(BuildCommand.COPY))
-				res = Copy(command.Arguments);
+				res = Copy(args);
 			else if(command.Command.Equals(BuildCommand.MKDIR))
-				res = CreateDirectory(command.Arguments);
+				res = CreateDirectory(args);
 			else if(command.Command.Equals(BuildCommand.DELETE))
-				res = Delete(command.Arguments);
+				res = Delete(args);
+			else if(command.Command.Equals(BuildCommand.FIND))
+				res = Find(args);
+			else if(command.Command.Equals(BuildCommand.REPLACE))
+				res = Replace(args);
 
 			if(!string.IsNullOrEmpty(res))
 				CommandFailed(command.ToString(), res);
@@ -111,6 +130,60 @@ namespace ProBuilder.BuildSystem
 					else
 						error = e.ToString();
 				}
+			}
+
+			return null;
+		}
+
+		private static string Find(List<string> arguments)
+		{
+			if(arguments == null || arguments.Count < 2)
+				return "Insufficient arguments for find. `find` expects at least two arguments: file path, regex pattern. An optional third argument names the resulting variable.";
+
+
+			if(!File.Exists(arguments[0]))
+				return "File does not exist at path: " + arguments[0];
+
+			string pattern = arguments[1];
+			string contents = File.ReadAllText(arguments[0]);
+			Match match = Regex.Match(contents, pattern, RegexOptions.Multiline);
+
+			if(!match.Success)
+				return "No match for regex `" + arguments[1] + "` found in file `" + arguments[0] + "`.";
+
+			m_RegexMatches.Add(match.Value);
+
+			if(arguments.Count > 2)
+			{
+				if(m_NamedRegexMatches.ContainsKey(arguments[2]))
+					Log.Warning("Warning, attempted overwrite of named regex variable: " + arguments[2]);
+				else
+					m_NamedRegexMatches.Add(arguments[2], match.Value);
+			}
+
+			Log.Info("Found match: " + match.Value);
+
+			return null;
+		}
+
+		private static string Replace(List<string> arguments)
+		{
+			if(arguments == null || arguments.Count != 3)
+				return "Replace accepts 3 arguments: File path, Regex pattern, Replace text";
+
+			try
+			{
+				string path = arguments[0];
+				string contents = File.ReadAllText(path);
+				string pattern = arguments[1];
+				string replace = arguments[2];
+				string replaced = Regex.Replace(contents, pattern, replace);
+				Log.Info("=> " + pattern + " (" + replace + ")");
+				File.WriteAllText(path, replaced);
+			}
+			catch(System.Exception e)
+			{
+				return e.ToString();
 			}
 
 			return null;

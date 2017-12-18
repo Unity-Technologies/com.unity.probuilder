@@ -38,6 +38,23 @@ namespace ProBuilder.Core
 		{
 		}
 
+		public pb_VersionInfo(string formatted, string date)
+		{
+			pb_VersionInfo parsed;
+
+			m_Text = formatted;
+			m_Date = date;
+
+			if (TryGetVersionInfo(formatted, out parsed))
+			{
+				m_Major = parsed.m_Major;
+				m_Minor = parsed.m_Minor;
+				m_Patch = parsed.m_Patch;
+				m_Build = parsed.m_Build;
+				m_Type = parsed.m_Type;
+			}
+		}
+
 		public pb_VersionInfo(int major, int minor, int patch, int build = 0, VersionType type = VersionType.Development, string date = "")
 		{
 			m_Major = major;
