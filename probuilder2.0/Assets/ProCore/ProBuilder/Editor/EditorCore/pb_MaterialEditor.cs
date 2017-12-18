@@ -141,9 +141,9 @@ namespace ProBuilder.EditorCore
 		// The index of the currently loaded material palette in m_AvailablePalettes
 		private int m_CurrentPaletteIndex = 0;
 
-		/**
-		 *	The currently loaded material palette, or a default.
-		 */
+		/// <summary>
+		/// The currently loaded material palette, or a default.
+		/// </summary>
 		public static pb_MaterialPalette CurrentPalette
 		{
 			get
@@ -242,7 +242,7 @@ namespace ProBuilder.EditorCore
 			GUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width-74));
 				GUILayout.BeginVertical();
 
-					m_QueuedMaterial = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial, typeof(Material), false);
+					m_QueuedMaterial = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial, typeof(Material), true);
 
 					GUILayout.Space(2);
 

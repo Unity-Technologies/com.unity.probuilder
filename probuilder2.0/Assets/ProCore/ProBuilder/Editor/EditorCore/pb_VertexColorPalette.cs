@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using ProBuilder.Core;
 using ProBuilder.EditorCore;
 
@@ -8,73 +9,104 @@ namespace ProBuilder.EditorCore
 {
 	class pb_VertexColorPalette : EditorWindow
 	{
-		public static Color[] DEFAULT_COLORS = new Color[10]
+		// Older versions of probuilder stored a fixed size array of colors in EditorPrefs.
+		const int k_EditorPrefsColorPaletteCount = 10;
+
+		static pb_VertexColorPalette m_Instance = null;
+
+		[SerializeField]
+		pb_ColorPalette m_ColorPalette = null;
+
+		pb_ColorPalette colorPalette
 		{
-			Color.white,
-			Color.red,
-			Color.blue,
-			Color.yellow,
-			Color.green,
-			Color.cyan,
-			Color.black,
-			Color.magenta,
-			Color.gray,
-			new Color(.4f, 0f, 1f, 1f)
-		};
+			get { return m_ColorPalette; }
+		}
 
-		public static Color[] USER_COLORS;
+		static string lastAssignedColorPalette
+		{
+			get { return pb_PreferencesInternal.GetString("pb_VertexColorPalette::lastAssignedColorPalette", ""); }
+			set { pb_PreferencesInternal.SetString("pb_VertexColorPalette::lastAssignedColorPalette", value); }
+		}
 
-		/**
-		 * Initialize this window.
-		 */
+		/// <summary>
+		/// Older versions of probuilder stored a fixed size array of colors in EditorPrefs. Use this function to get a
+		/// pb_ColorPalette from the older version.
+		/// </summary>
+		/// <returns></returns>
+		static void CopyColorsFromEditorPrefs(pb_ColorPalette target)
+		{
+			List<Color> colors = target.colors = new List<Color>();
+
+			for (int i = 0; i < k_EditorPrefsColorPaletteCount; i++)
+			{
+				Color color = Color.white;
+				if (pb_Util.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref color))
+					colors.Add(color);
+			}
+		}
+
+		/// <summary>
+		/// Initialize this window.
+		/// </summary>
 		public static void MenuOpenWindow()
 		{
 			bool dockable = pb_PreferencesInternal.GetBool(pb_Constant.pbVertexPaletteDockable);
-			EditorWindow.GetWindow<pb_VertexColorPalette>(!dockable, "Vertex Colors", true);
+			GetWindow<pb_VertexColorPalette>(!dockable, "Vertex Colors", true);
+		}
+
+		static pb_ColorPalette GetLastUsedColorPalette()
+		{
+			pb_ColorPalette palette = m_Instance != null ? m_Instance.m_ColorPalette : null;
+
+			if (palette == null)
+			{
+				var path = lastAssignedColorPalette;
+
+				if (string.IsNullOrEmpty(path))
+				{
+					lastAssignedColorPalette = pb_FileUtil.GetLocalDataDirectory() + "Default Color Palette.asset";
+					palette = pb_FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
+					CopyColorsFromEditorPrefs(palette);
+				}
+				else
+				{
+					palette = pb_FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
+				}
+			}
+
+			return palette;
 		}
 
 		void OnEnable()
 		{
-			USER_COLORS = new Color[10];
-			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
-			{
-				if (!pb_Util.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref USER_COLORS[i]))
-					USER_COLORS[i] = DEFAULT_COLORS[i];
-			}
+			m_Instance = this;
+			m_ColorPalette = GetLastUsedColorPalette();
 		}
 
 		void OpenContextMenu()
 		{
 			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("Open As Floating Window", ""), false, Menu_OpenAsFloatingWindow);
-			menu.AddItem(new GUIContent("Open As Dockable Window", ""), false, Menu_OpenAsDockableWindow);
-
+			menu.AddItem(new GUIContent("Open As Floating Window", ""), false, () => { OpenWindowAsDockable(false); });
+			menu.AddItem(new GUIContent("Open As Dockable Window", ""), false, () => { OpenWindowAsDockable(true); });
 			menu.ShowAsContext();
 		}
 
-		void Menu_OpenAsDockableWindow()
+		void OpenWindowAsDockable(bool isDockable)
 		{
-			pb_PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, true);
-
-			EditorWindow.GetWindow<pb_VertexColorPalette>().Close();
+			pb_PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, isDockable);
+			GetWindow<pb_VertexColorPalette>().Close();
 			pb_VertexColorPalette.MenuOpenWindow();
 		}
 
-		void Menu_OpenAsFloatingWindow()
+		Vector2 m_Scroll = Vector2.zero;
+		const int k_Padding = 4;
+		const int k_ButtonWidth = 58;
+		GUIContent m_ColorPaletteGuiContent = new GUIContent("Color Palette");
+
+		void OnGUI()
 		{
-			pb_PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, false);
+			var palette = GetLastUsedColorPalette();
 
-			EditorWindow.GetWindow<pb_VertexColorPalette>().Close();
-			pb_VertexColorPalette.MenuOpenWindow();
-		}
-
-		int pad = 4;
-		Vector2 scroll = Vector2.zero;
-		int ButtonWidth = 58;
-
-		private void OnGUI()
-		{
 			Event e = Event.current;
 
 			switch (e.type)
@@ -84,67 +116,6 @@ namespace ProBuilder.EditorCore
 					break;
 			}
 
-			// this.minSize = new Vector2(404, 68 + 24);
-			// this.maxSize = new Vector2(404, 68 + 24);
-			int width = Screen.width;
-
-			int rowSize = width / (ButtonWidth + 5);
-			int curRow = 0;
-
-			scroll = EditorGUILayout.BeginScrollView(scroll);
-
-			GUILayout.BeginVertical();
-			GUILayout.BeginHorizontal();
-
-			for (int i = 0; i < USER_COLORS.Length; i++)
-			{
-				if ((i - (curRow * rowSize)) >= rowSize)
-				{
-					curRow++;
-					GUILayout.FlexibleSpace();
-
-					GUILayout.EndHorizontal();
-
-					GUILayout.Space(6);
-
-					GUILayout.BeginHorizontal();
-				}
-
-				GUILayout.BeginVertical();
-
-				GUI.color = Color.white;
-
-				if (GUILayout.Button(EditorGUIUtility.whiteTexture, GUILayout.Width(ButtonWidth), GUILayout.Height(42)))
-					SetFaceColors(USER_COLORS[i]);
-
-				GUI.color = USER_COLORS[i];
-				Rect layoutRect = GUILayoutUtility.GetLastRect();
-				layoutRect.x += pad;
-				layoutRect.y += pad;
-				layoutRect.width -= pad * 2;
-				layoutRect.height -= pad * 2;
-				EditorGUI.DrawPreviewTexture(layoutRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill, 0);
-
-				GUI.changed = false;
-				USER_COLORS[i] = EditorGUILayout.ColorField(USER_COLORS[i], GUILayout.Width(ButtonWidth));
-				if (GUI.changed) SetColorPreference(i, USER_COLORS[i]);
-
-				GUILayout.EndVertical();
-
-				if (i == USER_COLORS.Length - 1)
-					GUILayout.FlexibleSpace();
-			}
-
-			GUI.color = Color.white;
-
-			GUILayout.EndHorizontal();
-			GUILayout.EndVertical();
-
-			EditorGUILayout.EndScrollView();
-
-			// Vertical spacing
-			GUILayout.FlexibleSpace();
-
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
 			GUILayout.FlexibleSpace();
@@ -152,34 +123,46 @@ namespace ProBuilder.EditorCore
 				ResetColors();
 
 			GUILayout.EndHorizontal();
-		}
 
-		/**
-		 *	\brief Sets the color preference in vertex color window.
-		 *
-		 */
-		private void SetColorPreference(int index, Color col)
-		{
-			pb_PreferencesInternal.SetString(pb_Constant.pbVertexColorPrefs + index, col.ToString());
-		}
+			m_ColorPalette = (pb_ColorPalette) EditorGUILayout.ObjectField(m_ColorPaletteGuiContent, m_ColorPalette, typeof(pb_ColorPalette), false);
 
-		private void ResetColors()
-		{
-			USER_COLORS = new Color[10];
-			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
+			if (m_ColorPalette == null)
 			{
-				if (pb_PreferencesInternal.HasKey(pb_Constant.pbVertexColorPrefs + i))
-					pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexColorPrefs + i);
-				USER_COLORS[i] = DEFAULT_COLORS[i];
+				GUILayout.Label("Please Select a Color Palatte", EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+				return;
 			}
+
+			m_Scroll = EditorGUILayout.BeginScrollView(m_Scroll);
+
+			for (int i = 0; i < palette.Count; i++)
+			{
+				GUILayout.Space(4);
+
+				GUILayout.BeginHorizontal();
+
+				if(GUILayout.Button("Apply", GUILayout.ExpandWidth(false), GUILayout.MinWidth(60)))
+					SetFaceColors(palette[i]);
+
+				palette[i] = EditorGUILayout.ColorField(palette[i]);
+
+				GUILayout.EndHorizontal();
+			}
+
+			EditorGUILayout.EndScrollView();
 		}
 
-		public static void SetFaceColors(int userPrefColorIndex)
+		void ResetColors()
 		{
-			if (USER_COLORS != null)
-				pb_VertexColorPalette.SetFaceColors(pb_VertexColorPalette.USER_COLORS[userPrefColorIndex]);
-			else
-				pb_VertexColorPalette.SetFaceColors(pb_VertexColorPalette.DEFAULT_COLORS[userPrefColorIndex]);
+			if (m_ColorPalette == null)
+				m_ColorPalette = GetLastUsedColorPalette();
+
+			m_ColorPalette.SetDefaultValues();
+		}
+
+		public static void SetFaceColors(int index)
+		{
+			var palette = GetLastUsedColorPalette();
+			SetFaceColors(palette[index]);
 		}
 
 		public static void SetFaceColors(Color col)

@@ -7,12 +7,16 @@ namespace ProBuilder.Core
 	/// A set of colors for use in the color palette editor.
 	/// </summary>
 	[System.Serializable]
-	class pb_ColorPalette : ScriptableObject, pb_IHasDefault
+	public class pb_ColorPalette : ScriptableObject, pb_IHasDefault
 	{
-		// The currently selected color.
+		/// <summary>
+		/// The currently selected color.
+		/// </summary>
 		public Color current = Color.white;
 
-		// All colors in this palette.
+		/// <summary>
+		/// All colors in this palette.
+		/// </summary>
 		public List<Color> colors;
 
 		public void SetDefaultValues()
@@ -38,9 +42,29 @@ namespace ProBuilder.Core
 			};
 		}
 
+		/// <summary>
+		/// Copy this color palettes values to a new color palette.
+		/// </summary>
+		/// <param name="target"></param>
 		public void CopyTo(pb_ColorPalette target)
 		{
 			target.colors = new List<Color>(colors);
+		}
+
+		public static implicit operator List<Color>(pb_ColorPalette palette)
+		{
+			return palette.colors;
+		}
+
+		public Color this[int i]
+		{
+			get { return colors[i]; }
+			set { colors[i] = value; }
+		}
+
+		public int Count
+		{
+			get { return colors.Count; }
 		}
 	}
 }

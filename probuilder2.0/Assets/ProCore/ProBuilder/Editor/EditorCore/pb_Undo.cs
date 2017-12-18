@@ -29,6 +29,9 @@ namespace ProBuilder.EditorCore
 		 */
 		public static void RecordSelection(pb_Object[] pb, string msg)
 		{
+			if (pb == null || pb.Length < 1)
+				return;
+
 			if( pb.Any(x => { return x.vertexCount > 256; }) )
 				RegisterCompleteObjectUndo(pb, msg);
 			else
