@@ -109,9 +109,9 @@ namespace ProBuilder.EditorCore
 				return false;
 			}
 
-			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.VersionInfo.ToString(k_AboutPrefFormat))
+			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.Current.ToString(k_AboutPrefFormat))
 			{
-				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.VersionInfo.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
+				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.Current.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
 				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
 				return true;
 			}
@@ -219,7 +219,7 @@ namespace ProBuilder.EditorCore
 			if(banner == null)
 			{
 				pb_Log.Warning("Could not load About window resources");
-				this.Close();
+				EditorApplication.delayCall += Close;
 			}
 			else
 			{
@@ -242,15 +242,21 @@ namespace ProBuilder.EditorCore
 			if (!string.IsNullOrEmpty(raw))
 			{
 				pb_VersionUtil.FormatChangelog(raw, out m_changeLogVersionInfo, out m_ChangeLogRichText);
-				if(!pb_Version.VersionInfo.Equals(m_changeLogVersionInfo))
+				if(!pb_Version.Current.Equals(m_changeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
 						m_changeLogVersionInfo.ToString(k_AboutPrefFormat),
-						pb_Version.VersionInfo.ToString(k_AboutPrefFormat));
+						pb_Version.Current.ToString(k_AboutPrefFormat));
 			}
 		}
 
 		void OnGUI()
 		{
+			if (bannerStyle.normal.background == null)
+			{
+				GUILayout.Label("Could Not Load About Window", EditorStyles.centeredGreyMiniLabel, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+				return;
+			}
+
 			Vector2 mousePosition = Event.current.mousePosition;
 
 			if( GUILayout.Button(m_BannerContent, bannerStyle) )
@@ -293,7 +299,7 @@ namespace ProBuilder.EditorCore
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
-			GUILayout.Label(pb_Version.VersionInfo.ToString());
+			GUILayout.Label(pb_Version.Current.ToString());
 		}
 
 		/// <summary>

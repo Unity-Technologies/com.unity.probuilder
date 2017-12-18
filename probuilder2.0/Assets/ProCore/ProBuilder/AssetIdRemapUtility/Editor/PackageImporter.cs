@@ -33,6 +33,12 @@ namespace ProBuilder.AssetUtility
 
 		static PackageImporter()
 		{
+			AssetDatabase.importPackageCompleted += OnImportPackageCompleted;
+		}
+
+		static void OnImportPackageCompleted(string name)
+		{
+			Debug.Log("OnImportPackageCompleted: " + name);
 		}
 
 		static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)

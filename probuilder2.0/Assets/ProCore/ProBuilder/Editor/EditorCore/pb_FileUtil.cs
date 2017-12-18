@@ -17,16 +17,15 @@ namespace ProBuilder.EditorCore
 	static class pb_FileUtil
 	{
 		// ProBuilder folder path.
-		private static string m_ProBuilderFolderPath = "unitypackagemanager/com.unity.probuilder/ProBuilder/";
+		private static string m_ProBuilderFolderPath = "Packages/com.unity.probuilder/ProBuilder/";
 
 		private static string m_ProBuilderDataPath = "Assets/ProBuilder Data/";
 
 		// The order is important - always search for the package manager installed version first
 		private static string[] k_PossibleInstallDirectories = new string[]
 		{
-			"unitypackagemanager/com.unity.probuilder/",
 			"Packages/com.unity.probuilder/",
-			"Packages/",
+			"UnityPackageManager/com.unity.probuilder/",
 			"Assets/",
 		};
 
@@ -51,7 +50,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		internal static string GetProBuilderInstallDirectory()
 		{
-			if (Directory.Exists(m_ProBuilderFolderPath))
+			if (ValidateProBuilderRoot(m_ProBuilderFolderPath))
 				return m_ProBuilderFolderPath;
 
 			foreach (var install in k_PossibleInstallDirectories)
@@ -72,7 +71,7 @@ namespace ProBuilder.EditorCore
 			// has renamed the folder, or something very spooky is going on.
 			// Either way, just create a new ProBuilder folder in Assets and return that so at the very least
 			// local preferences and the material/color palettes will still work.
-			Debug.LogWarning("Creating a new ProBuilder directory... was the ProBuilder folder renamed?\nIcons & preferences may not work in this state.");
+			pb_Log.Warning("Creating a new ProBuilder directory... was the ProBuilder folder renamed?\nIcons & preferences may not work in this state.");
 			m_ProBuilderFolderPath = "Assets/ProBuilder";
 			Directory.CreateDirectory(m_ProBuilderFolderPath);
 
@@ -283,7 +282,7 @@ namespace ProBuilder.EditorCore
 			return asset;
 		}
 
-		private static T Load<T>(string path) where T : Object
+		static T Load<T>(string path) where T : Object
 		{
 			return AssetDatabase.LoadAssetAtPath<T>(path);
 		}
