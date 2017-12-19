@@ -13,6 +13,8 @@ namespace ProBuilder.AssetUtility
 {
 	class AssetIdRemapUtility : EditorWindow
 	{
+		const string k_ConversionLogPath = "Temp/ProBuilderConversionLog.txt";
+
 		static readonly string[] k_RemapFilePaths = new string[]
 		{
 			"unitypackagemanager/com.unity.probuilder/ProBuilder/Upgrade/AssetIdRemap.json",
@@ -121,9 +123,9 @@ namespace ProBuilder.AssetUtility
 		[SerializeField]
 		bool m_DeprecatedProBuilderFound;
 		[SerializeField]
-		string m_ConversionLog;
-		[SerializeField]
 		ConversionReadyState m_ConversionReadyState = ConversionReadyState.Ready;
+
+		string m_ConversionLog;
 
 		AssetTreeView m_AssetsToDeleteTreeView;
 		MultiColumnHeader m_MultiColumnHeader;
@@ -133,6 +135,7 @@ namespace ProBuilder.AssetUtility
 		[SerializeField]
 		MultiColumnHeaderState m_MultiColumnHeaderState = null;
 		GUIContent m_AssetTreeSettingsContent = null;
+		Vector2 m_ConversionLogScroll = Vector2.zero;
 
 		static class Styles
 		{
@@ -154,7 +157,6 @@ namespace ProBuilder.AssetUtility
 				m_SettingsIcon = GUI.skin.GetStyle("IconButton");
 				m_ConvertButton = new GUIStyle(GUI.skin.GetStyle("AC Button"));
 				m_ConvertButton.margin.bottom += 4;
-				m_ConvertButton.margin.top += 4;
 			}
 		}
 
@@ -187,29 +189,50 @@ namespace ProBuilder.AssetUtility
 			m_AssetsToDeleteTreeView = new AssetTreeView(m_TreeViewState, m_MultiColumnHeader);
 
 			ResetAssetsToDelete();
+
+			try
+			{
+				if (File.Exists(k_ConversionLogPath))
+					m_ConversionLog = File.ReadAllText(k_ConversionLogPath);
+				else
+					m_ConversionLog = null;
+			}
+			catch
+			{
+				m_ConversionLog = null;
+			}
 		}
 
 		void OnGUI()
 		{
 			Styles.Init();
 
-			if (m_ConversionReadyState == ConversionReadyState.NoActionRequired)
+			if (m_ConversionReadyState == ConversionReadyState.NoActionRequired ||
+				m_ConversionReadyState == ConversionReadyState.ConversionRan)
 			{
-				GUI.Label(new Rect(0, 0, position.width, position.height), "ProBuilder is up to date!",
-					EditorStyles.centeredGreyMiniLabel);
-
-				if (Event.current.type == EventType.ContextClick)
+				if (!string.IsNullOrEmpty(m_ConversionLog))
 				{
-					var menu = new GenericMenu();
-					menu.AddItem(new GUIContent("Find and replace deprecated Asset IDs"), false, () =>
-					{
-						var log = new StringBuilder();
-						RemapAssetIds(log);
-						Debug.Log(log);
-					});
-					menu.ShowAsContext();
+					m_ConversionLogScroll = EditorGUILayout.BeginScrollView(m_ConversionLogScroll);
+					GUILayout.Label(m_ConversionLog);
+					EditorGUILayout.EndScrollView();
 				}
+				else
+				{
+					GUI.Label(new Rect(0, 0, position.width, position.height), "ProBuilder is up to date!",
+						EditorStyles.centeredGreyMiniLabel);
 
+					if (Event.current.type == EventType.ContextClick)
+					{
+						var menu = new GenericMenu();
+						menu.AddItem(new GUIContent("Find and replace deprecated Asset IDs"), false, () =>
+						{
+							var log = new StringBuilder();
+							RemapAssetIds(log);
+							Debug.Log(log);
+						});
+						menu.ShowAsContext();
+					}
+				}
 				return;
 			}
 			else if ((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) > 0)
@@ -232,11 +255,6 @@ namespace ProBuilder.AssetUtility
 				var deprecatedIdsRect = GUILayoutUtility.GetRect(position.width, 32, GUILayout.ExpandHeight(true));
 				GUI.Label(deprecatedIdsRect, "References to old ProBuilder install found.\n\nProject is ready for conversion.",
 					EditorStyles.centeredGreyMiniLabel);
-			}
-			else if (m_ConversionReadyState == ConversionReadyState.ConversionRan)
-			{
-				GUILayout.Label(m_ConversionLog);
-				return;
 			}
 
 			if ((m_ConversionReadyState & ConversionReadyState.SerializationError) > 0)
@@ -304,9 +322,17 @@ namespace ProBuilder.AssetUtility
 				finally
 				{
 					m_ConversionLog = log.ToString();
-#if DEBUG
-					File.WriteAllText("Assets/ProBuilderConversionLog.txt", m_ConversionLog);
-#endif
+
+					try
+					{
+						Directory.CreateDirectory("Temp");
+						File.WriteAllText(k_ConversionLogPath, m_ConversionLog);
+					}
+					catch
+					{
+						Debug.Log(m_ConversionLog);
+					}
+
 					EditorApplication.UnlockReloadAssemblies();
 					m_ConversionReadyState = ConversionReadyState.ConversionRan;
 					GUIUtility.ExitGUI();
