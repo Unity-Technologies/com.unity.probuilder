@@ -463,7 +463,7 @@ namespace ProBuilder.AssetUtility
 					}
 				}
 
-				log.Append("  \\U2022 " + node.fullPath);
+				log.AppendLine("  \\u2022 " + node.fullPath);
 
 				return true;
 			}
@@ -526,6 +526,9 @@ namespace ProBuilder.AssetUtility
 				log.AppendLine(string.Format("Failed remapping {0} files:", failCount.ToString()));
 				log.Append(failures);
 			}
+
+			log.AppendLine("\nSuccessfully remapped files:");
+			log.Append(successes);
 
 			PackageImporter.Reimport(PackageImporter.EditorCorePackageManager);
 		}
