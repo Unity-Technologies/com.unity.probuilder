@@ -208,7 +208,7 @@ namespace ProBuilder.Core
 		public static bool TryGetVersionInfo(string str, out pb_VersionInfo version)
 		{
 			version = new pb_VersionInfo();
-			version.m_Text = str;
+			version.m_Text = string.IsNullOrEmpty(str) ? "null" : str;
 
 			try
 			{

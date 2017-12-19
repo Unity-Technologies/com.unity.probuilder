@@ -61,11 +61,11 @@ namespace ProBuilder.EditorCore
 						}
 						else
 						{
-							pb_VersionInfo current;
+							pb_VersionInfo current = pb_VersionUtil.GetVersionFromChangelog();
 
 							// first test if the installed version is already up to date. if no current version is found
 							// it probably means the user deleted that file. in that case, don't show anything.
-							if( pb_VersionUtil.GetCurrent(out current) && webVersion.CompareTo(current) > 0 )
+							if(current.IsValid() && webVersion.CompareTo(current) > 0)
 							{
 								// next, test if a notification for this version has already been shown
 								string lastNotification = pb_PreferencesInternal.GetString(pbLastWebVersionChecked, "");

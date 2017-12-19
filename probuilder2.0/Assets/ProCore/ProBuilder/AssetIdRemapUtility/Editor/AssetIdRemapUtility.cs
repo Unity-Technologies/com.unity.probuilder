@@ -281,7 +281,7 @@ namespace ProBuilder.AssetUtility
 				{
 					EditorApplication.LockReloadAssemblies();
 
-					if(((int) (m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) < 1))
+					if((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) == ConversionReadyState.AssetStoreInstallFound)
 					{
 						log.AppendLine("Removing existing ProBuilder files");
 
@@ -491,6 +491,7 @@ namespace ProBuilder.AssetUtility
 			int modifiedFiles = 0;
 			string[] assets = k_AssetExtensionsToRemap.SelectMany(x => Directory.GetFiles("Assets", x, SearchOption.AllDirectories)).ToArray();
 			var failures = new StringBuilder();
+			var successes = new StringBuilder();
 			int failCount = 0;
 
 			for (int i = 0, c = assets.Length; i < c; i++)
@@ -501,23 +502,28 @@ namespace ProBuilder.AssetUtility
 
 				if (!DoAssetIdentifierRemap(assets[i], remapObject.map, out modified))
 				{
-					failures.AppendLine("  \\U2022 " + assets[i]);
+					failures.AppendLine("  \\u2022 " + assets[i]);
 					failCount++;
+				}
+				else
+				{
+					if (modified > 0)
+					{
+						successes.AppendLine(string.Format("  \\u2022 ({0}) references in {1}", modified.ToString(), assets[i]));
+						modifiedFiles++;
+					}
 				}
 
 				remappedReferences += modified;
-
-				if (modified > 0)
-					modifiedFiles++;
 			}
 
 			EditorUtility.ClearProgressBar();
 
-			log.AppendLine(string.Format("Remapped {0} references in {1} files.", remappedReferences, modifiedFiles));
+			log.AppendLine(string.Format("Remapped {0} references in {1} files.", remappedReferences.ToString(), modifiedFiles.ToString()));
 
 			if (failCount > 0)
 			{
-				log.AppendLine(string.Format("Failed remapping {0} files:", failCount));
+				log.AppendLine(string.Format("Failed remapping {0} files:", failCount.ToString()));
 				log.Append(failures);
 			}
 

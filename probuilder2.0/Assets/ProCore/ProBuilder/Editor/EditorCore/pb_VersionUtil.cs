@@ -31,25 +31,6 @@ namespace ProBuilder.EditorCore
 	static class pb_VersionUtil
 	{
 		/// <summary>
-		/// Get information from the currently installed ProBuilder version.
-		/// </summary>
-		/// <param name="about"></param>
-		/// <returns></returns>
-		public static bool GetAboutEntry(out pb_AboutEntry about)
-		{
-			about = null;
-
-			TextAsset aboutText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/pc_AboutEntry_ProBuilder.txt");
-
-			if(aboutText == null)
-				return false;
-
-			about = ParseAboutEntry(aboutText);
-
-			return about != null;
-		}
-
-		/// <summary>
 		/// Is the current version of ProBuilder greater than or equal to the passed version?
 		/// </summary>
 		/// <param name="major"></param>
@@ -77,22 +58,27 @@ namespace ProBuilder.EditorCore
 			return true;
 		}
 
-		public static bool GetCurrent(out pb_VersionInfo version)
+		public static pb_VersionInfo GetVersionFromChangelog()
 		{
-			pb_AboutEntry about;
+			var changelogAsset = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
 
-			if(!GetAboutEntry(out about))
-			{
-				version = new pb_VersionInfo();
-				return false;
-			}
+			if (changelogAsset == null)
+				return new pb_VersionInfo("changelog not found", "");
 
-			return pb_VersionInfo.TryGetVersionInfo(about.version, out version);
+			Match m = Regex.Match(changelogAsset.text, "(?<=# ProBuilder )[0-9a-zA-Z.]*", RegexOptions.Multiline);
+
+			pb_VersionInfo version;
+			pb_VersionInfo.TryGetVersionInfo(m.Value, out version);
+			return version;
 		}
 
-		/**
-		 *	Extracts and formats the latest changelog entry into rich text.  Also grabs the version.
-		 */
+		/// <summary>
+		/// Extracts and formats the latest changelog entry into rich text.  Also grabs the version.
+		/// </summary>
+		/// <param name="raw"></param>
+		/// <param name="version"></param>
+		/// <param name="formatted_changes"></param>
+		/// <returns></returns>
 		public static bool FormatChangelog(string raw, out pb_VersionInfo version, out string formatted_changes)
 		{
 			bool success = true;
