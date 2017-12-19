@@ -121,7 +121,7 @@ namespace ProBuilder.AssetUtility
 		[SerializeField]
 		bool m_DeprecatedProBuilderFound;
 		[SerializeField]
-		string m_ConversionLog = null;
+		string m_ConversionLog;
 		[SerializeField]
 		ConversionReadyState m_ConversionReadyState = ConversionReadyState.Ready;
 
@@ -281,19 +281,22 @@ namespace ProBuilder.AssetUtility
 				{
 					EditorApplication.LockReloadAssemblies();
 
+					log.AppendLine("ProBuilder Asset Store to Unity Package Manager Conversion Log");
+					log.AppendLine("");
+
 					if((m_ConversionReadyState & ConversionReadyState.AssetStoreInstallFound) == ConversionReadyState.AssetStoreInstallFound)
 					{
-						log.AppendLine("Removing existing ProBuilder files");
+						log.AppendLine("Removing existing ProBuilder files...");
 
 						if (RemoveAssetStoreFiles(m_AssetsToDeleteTreeView.GetRoot(), log))
 						{
-							log.AppendLine("Remapping Asset Ids");
+							log.AppendLine("\nRemapping Asset Ids...");
 							RemapAssetIds(log);
 						}
 					}
 					else
 					{
-						log.AppendLine("Remapping Asset Ids");
+						log.AppendLine("Remapping Asset Ids...");
 						RemapAssetIds(log);
 					}
 
@@ -306,6 +309,7 @@ namespace ProBuilder.AssetUtility
 #endif
 					EditorApplication.UnlockReloadAssemblies();
 					m_ConversionReadyState = ConversionReadyState.ConversionRan;
+					GUIUtility.ExitGUI();
 				}
 			}
 			GUILayout.FlexibleSpace();
@@ -463,7 +467,7 @@ namespace ProBuilder.AssetUtility
 					}
 				}
 
-				log.AppendLine("  \\u2022 " + node.fullPath);
+				log.AppendLine("  - " + node.fullPath);
 
 				return true;
 			}
@@ -502,14 +506,14 @@ namespace ProBuilder.AssetUtility
 
 				if (!DoAssetIdentifierRemap(assets[i], remapObject.map, out modified))
 				{
-					failures.AppendLine("  \\u2022 " + assets[i]);
+					failures.AppendLine("  - " + assets[i]);
 					failCount++;
 				}
 				else
 				{
 					if (modified > 0)
 					{
-						successes.AppendLine(string.Format("  \\u2022 ({0}) references in {1}", modified.ToString(), assets[i]));
+						successes.AppendLine(string.Format("  - ({0}) references in {1}", modified.ToString(), assets[i]));
 						modifiedFiles++;
 					}
 				}
@@ -521,13 +525,12 @@ namespace ProBuilder.AssetUtility
 
 			log.AppendLine(string.Format("Remapped {0} references in {1} files.", remappedReferences.ToString(), modifiedFiles.ToString()));
 
-			if (failCount > 0)
-			{
-				log.AppendLine(string.Format("Failed remapping {0} files:", failCount.ToString()));
-				log.Append(failures);
-			}
+			log.AppendLine(string.Format("\nFailed remapping {0} files:", failCount.ToString()));
+
+			log.AppendLine(failCount > 0 ? failures.ToString() : "  - (none)");
 
 			log.AppendLine("\nSuccessfully remapped files:");
+
 			log.Append(successes);
 
 			PackageImporter.Reimport(PackageImporter.EditorCorePackageManager);
