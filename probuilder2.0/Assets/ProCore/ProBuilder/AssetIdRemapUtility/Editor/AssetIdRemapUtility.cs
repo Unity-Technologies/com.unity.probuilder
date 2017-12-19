@@ -236,6 +236,7 @@ namespace ProBuilder.AssetUtility
 			else if (m_ConversionReadyState == ConversionReadyState.ConversionRan)
 			{
 				GUILayout.Label(m_ConversionLog);
+				return;
 			}
 
 			if ((m_ConversionReadyState & ConversionReadyState.SerializationError) > 0)
@@ -300,6 +301,9 @@ namespace ProBuilder.AssetUtility
 				finally
 				{
 					m_ConversionLog = log.ToString();
+#if DEBUG
+					File.WriteAllText("Assets/ProBuilderConversionLog.txt", m_ConversionLog);
+#endif
 					EditorApplication.UnlockReloadAssemblies();
 					m_ConversionReadyState = ConversionReadyState.ConversionRan;
 				}
