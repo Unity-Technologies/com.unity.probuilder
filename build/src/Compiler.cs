@@ -12,7 +12,7 @@ namespace ProBuilder.BuildSystem
 		/**
 		 *	Build a DLL with BuildAssemblyTarget. Returns true if compilation succeeded, false if not.
 		 */
-		public static bool CompileDLL(AssemblyTarget target, bool isDebug = false)
+		public static bool CompileDLL(AssemblyTarget target, bool includeDebugSymbols, bool warningAsError)
 		{
 			Log.Status(string.Format(" Compiling {0}", Path.GetFileName(target.OutputAssembly)));
 			Log.Info(string.Format("  Reference search paths:\n\t{0}", string.Join("\n\t", target.ReferenceSearchPaths)));
@@ -26,8 +26,9 @@ namespace ProBuilder.BuildSystem
 			parameters.GenerateExecutable = false;
 			parameters.OutputAssembly = target.OutputAssembly;
 			parameters.GenerateInMemory = false;
-			parameters.IncludeDebugInformation = isDebug;
-			parameters.TreatWarningsAsErrors = !isDebug;
+			parameters.IncludeDebugInformation = includeDebugSymbols;
+			parameters.TreatWarningsAsErrors = warningAsError;
+
 			// We're targeting .NET 3.5 framework - the mscorlib, System, and System.Core libs
 			// should be included in the referenced assemblies list.
 			if(target.Defines != null && target.Defines.Count > 0)

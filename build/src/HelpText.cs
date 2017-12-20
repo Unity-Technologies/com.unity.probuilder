@@ -16,7 +16,10 @@ Usage:
 Switches:
 
  --debug or -d
-   Compile assemblies with debug symbols.
+   Compile assemblies with DEBUG defined, and disables compiler ""warning as error"" setting.
+
+ --no-debug-symbols
+   Disable debugging symbols in build. Symbols are included by default.
 
  --silent or -q
    pb-build will not emit any console messages.
@@ -39,6 +42,7 @@ Build Targets:
     - $UNITY - Path to Unity contents folder (resolves UnityContentsPath or UnityDataPath).
     - $TARGET_DIR - Directory that this build target json file resides in.
     - $USER - The user name of the account currently logged in to this computer.
+    - $DATE - The current date, formatted ""en-US: MM/DD/YYYY"".
    ";
     }
 }

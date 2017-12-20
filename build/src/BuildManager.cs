@@ -16,7 +16,7 @@ namespace ProBuilder.BuildSystem
 	 */
 	public static class BuildManager
 	{
-		const string m_VersionInfo = "2.0.0f0";
+		const string m_VersionInfo = "2.0.1f0";
 
 		static int Main(string[] args)
 		{
@@ -24,6 +24,7 @@ namespace ProBuilder.BuildSystem
 
 			bool m_IsDebug = false;
 			bool m_DoClean = false;
+			bool m_IncludeSymbols = true;
 			string m_UnityPathOverride = null;
 
 			if(args == null || args.Length < 1 || args.Any(x => x.Contains("--help") || x.Contains("-help")))
@@ -73,6 +74,9 @@ namespace ProBuilder.BuildSystem
 				{
 					m_DoClean = true;
 				}
+
+				if(arg.Equals("--no-debug-symbols"))
+					m_IncludeSymbols = false;
 			}
 
 			// Then read in build targets
@@ -208,7 +212,7 @@ namespace ProBuilder.BuildSystem
 					else
 						at.Defines.AddRange(target.Defines);
 
-					if(!Compiler.CompileDLL(at, m_IsDebug))
+					if(!Compiler.CompileDLL(at, m_IncludeSymbols, !m_IsDebug))
 					{
 						Log.Critical(string.Format("  Assembly {0} failed compilation.", at.OutputAssembly));
 						targetBreak = true;
