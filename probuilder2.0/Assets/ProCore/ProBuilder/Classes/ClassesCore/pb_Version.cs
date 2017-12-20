@@ -47,7 +47,7 @@ namespace ProBuilder.Core
 			}
 		}
 #else
-		public static readonly pb_VersionInfo Current = new pb_VersionInfo("2.10.1f0", "en-US: 1-1-2017");
+		public static readonly pb_VersionInfo Current = new pb_VersionInfo("2.10.0f0", "en-US: 1-1-2017");
 #endif
 	}
 }

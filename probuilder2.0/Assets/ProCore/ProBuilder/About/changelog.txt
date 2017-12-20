@@ -19,6 +19,14 @@
 - Move pb_Object/Entity to ProBuilder.Core namespace.
 - Move `ProBuilder2.{Common, EditorCommon}` to `ProBuilder.Core` and `ProBuilder.EditorCore`.
 
+## Known Issues
+
+- Standard Vertex Color shadder throws warning about semicolon.
+- "Library already loaded" logs when importing Package Manager over Asset Store install.
+- "Cannot create menu item" warnings when importing Package Manager over Asset Store install.
+- Deleting an Asset Store package before importing a Package Manager version does not automatically pop up the Convert To Package Manager editor window.
+- API Examples are not accessible from Package Manager.
+
 # ProBuilder 2.9.8f2
 
 ## Bug Fixes
