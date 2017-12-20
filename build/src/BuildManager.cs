@@ -25,6 +25,7 @@ namespace ProBuilder.BuildSystem
 			bool m_IsDebug = false;
 			bool m_DoClean = false;
 			bool m_IncludeSymbols = true;
+			List<string> m_AdditionalDefines = new List<string>();
 			string m_UnityPathOverride = null;
 
 			if(args == null || args.Length < 1 || args.Any(x => x.Contains("--help") || x.Contains("-help")))
@@ -68,6 +69,16 @@ namespace ProBuilder.BuildSystem
 
 					if(m_UnityPathOverride.EndsWith("/"))
 						m_UnityPathOverride = m_UnityPathOverride.Substring(0, m_UnityPathOverride.Length - 1);
+				}
+
+				if(!multiSwitch && arg.StartsWith("--define="))
+				{
+					foreach(var str in arg.Replace("--define=", "").Split(';'))
+					{
+						var trimmed = str.Trim();
+						if(!string.IsNullOrEmpty(trimmed))
+							m_AdditionalDefines.Add(trimmed);
+					}
 				}
 
 				if(multiSwitch ? arg.Contains("c") : arg.Equals("--clean"))
@@ -150,6 +161,10 @@ namespace ProBuilder.BuildSystem
 				// if debugging manually add the DEBUG define
 				if(m_IsDebug && !target.Defines.Contains("DEBUG"))
 					target.Defines.Add("DEBUG");
+
+				foreach(var def in m_AdditionalDefines)
+					if(!target.Defines.Contains(def))
+						target.Defines.Add(def);
 
 				Log.Info("Defines:");
 

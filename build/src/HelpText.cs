@@ -34,6 +34,10 @@ Switches:
    Overrides the ""UnityPath"" property on build target. Path should point to the Unity directory
    Ex, on Windows: C:\Program Files\Unity or Mac: /Applications/Unity/Unity.app
 
+ --define=
+   Pass additional scripting define symbols to be applied to all assembly targets. Multiple defines
+   may be chained with an ';' character. Ex: --define=DEBUG;DEVELOPMENT;SECRET_FEATURE
+
 Single char switches may be combined in a single argument (ex, `mono pb-build.exe target.json -dqc`)
 
 Build Targets:

@@ -37,7 +37,7 @@
 	"OnPreBuild":[
 		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=# ProBuilder )[0-9a-zA-Z.]*" ] },
 		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=new pb_VersionInfo\\(\")[0-9]*.[0-9]*.[0-9]*[dpbfDPBF][0-9]", "GetFindVar(0)" ] },
-		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US: [0-1]?[0-9]/[1-3]?[0-9]/[0-9]{4}(?=\"\\);)", "$DATE" ] },
+		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US: [1-9]{1,2}/[1-9]{1,2}/[0-9]{4}(?=\"\\);)", "$DATE" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$BUILD_DIR/$DST_PB_NAME" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },
 		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },

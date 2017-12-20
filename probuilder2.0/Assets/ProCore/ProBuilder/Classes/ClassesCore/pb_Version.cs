@@ -1,6 +1,6 @@
 // GENERATED FILE
 // See build target ProBuilderAdvanced-UPM.json
-#if DEBUG
+#if DEBUG || DEVELOPMENT
 using System;
 using System.Reflection;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace ProBuilder.Core
 {
 	public static class pb_Version
 	{
-#if DEBUG
+#if DEBUG || DEVELOPMENT
 		public static pb_VersionInfo Current
 		{
 			get
@@ -47,7 +47,7 @@ namespace ProBuilder.Core
 			}
 		}
 #else
-		public static readonly pb_VersionInfo Current = new pb_VersionInfo("2.10.0f0", "en-US: 1-1-2017");
+		public static readonly pb_VersionInfo Current = new pb_VersionInfo("2.10.0f0", "en-US: 1/1/2017");
 #endif
 	}
 }
