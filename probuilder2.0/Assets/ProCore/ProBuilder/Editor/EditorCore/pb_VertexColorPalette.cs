@@ -143,7 +143,10 @@ namespace ProBuilder.EditorCore
 				if(GUILayout.Button("Apply", GUILayout.ExpandWidth(false), GUILayout.MinWidth(60)))
 					SetFaceColors(palette[i]);
 
+				EditorGUI.BeginChangeCheck();
 				palette[i] = EditorGUILayout.ColorField(palette[i]);
+				if(EditorGUI.EndChangeCheck());
+					EditorUtility.SetDirty(palette);
 
 				GUILayout.EndHorizontal();
 			}
@@ -157,6 +160,7 @@ namespace ProBuilder.EditorCore
 				m_ColorPalette = GetLastUsedColorPalette();
 
 			m_ColorPalette.SetDefaultValues();
+			EditorUtility.SetDirty(m_ColorPalette);
 		}
 
 		public static void SetFaceColors(int index)
