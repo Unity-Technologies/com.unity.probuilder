@@ -301,7 +301,7 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(pb_Version.Current.ToString());
-			if (GUILayout.Button("code licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
+			if (GUILayout.Button("licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
 				GetWindow<pb_LicenseWindow>(true, "ProBuilder 3rd Party Licenses", true);
 			GUILayout.EndHorizontal();
 		}

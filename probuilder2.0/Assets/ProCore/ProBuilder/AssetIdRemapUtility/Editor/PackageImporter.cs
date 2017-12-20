@@ -31,6 +31,7 @@ namespace ProBuilder.AssetUtility
 		internal static string EditorCorePackageManager { get { return k_PackageManagerEditorCore; } }
 		internal static string EditorCoreAssetStore { get { return k_AssetStoreEditorCore; } }
 
+#if DEBUG
 		static PackageImporter()
 		{
 			AssetDatabase.importPackageCompleted += OnImportPackageCompleted;
@@ -40,6 +41,7 @@ namespace ProBuilder.AssetUtility
 		{
 			Debug.Log("OnImportPackageCompleted: " + name);
 		}
+#endif
 
 		static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
 		{
@@ -58,7 +60,7 @@ namespace ProBuilder.AssetUtility
 
 				if (isEnabled == assetStoreInstall)
 				{
-					Debug.Log("AssetStore/UPM Change Detected: " + (isEnabled ? "  disabling UPM" : "  enabling UPM"));
+					Debug.Log(isEnabled ? "Disabling ProBuilder Package Manager version" : " Enabling ProBuilder Package Manager version");
 					importer.SetCompatibleWithAnyPlatform(false);
 					importer.SetCompatibleWithEditor(!assetStoreInstall);
 					AssetDatabase.ImportAsset(editorCoreDllPath);

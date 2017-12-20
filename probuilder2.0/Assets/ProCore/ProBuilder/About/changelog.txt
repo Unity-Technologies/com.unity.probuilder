@@ -1,8 +1,11 @@
-# ProBuilder 2.10.1f0
+# ProBuilder 2.10.0f0
 
 ## Features
 
 - ProBuilder now runs as package manager module.
+- Add button to view third party licenses in About window.
+- Debug symbols now distributed libraries.
+- Enable custom color palettes in the Vertex Color Palette window.
 
 ## Bug Fixes
 
