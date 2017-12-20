@@ -35,13 +35,20 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		static void CopyColorsFromEditorPrefs(pb_ColorPalette target)
 		{
-			List<Color> colors = target.colors = new List<Color>();
+			List<Color> colors = new List<Color>();
 
 			for (int i = 0; i < k_EditorPrefsColorPaletteCount; i++)
 			{
 				Color color = Color.white;
+
 				if (pb_Util.TryParseColor(pb_PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref color))
 					colors.Add(color);
+			}
+
+			if (colors.Count > 0)
+			{
+				target.colors = colors;
+				EditorUtility.SetDirty(target);
 			}
 		}
 
@@ -56,23 +63,31 @@ namespace ProBuilder.EditorCore
 
 		static pb_ColorPalette GetLastUsedColorPalette()
 		{
+			// serialized copy?
 			pb_ColorPalette palette = m_Instance != null ? m_Instance.m_ColorPalette : null;
 
-			if (palette == null)
-			{
-				var path = lastAssignedColorPalette;
+			if (palette != null)
+				return palette;
 
-				if (string.IsNullOrEmpty(path))
-				{
-					lastAssignedColorPalette = pb_FileUtil.GetLocalDataDirectory() + "Default Color Palette.asset";
-					palette = pb_FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
-					CopyColorsFromEditorPrefs(palette);
-				}
-				else
-				{
-					palette = pb_FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
-				}
+			// last set asset path?
+			palette = AssetDatabase.LoadAssetAtPath<pb_ColorPalette>(lastAssignedColorPalette);
+
+			if (palette != null)
+				return palette;
+
+			// any existing palette in project?
+			palette = pb_FileUtil.FindAssetOfType<pb_ColorPalette>();
+
+			if(palette != null)
+			{
+				lastAssignedColorPalette = AssetDatabase.GetAssetPath(palette);
+				return palette;
 			}
+
+			// create new default
+			lastAssignedColorPalette = pb_FileUtil.GetLocalDataDirectory() + "Default Color Palette.asset";
+			palette = pb_FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
+			CopyColorsFromEditorPrefs(palette);
 
 			return palette;
 		}
