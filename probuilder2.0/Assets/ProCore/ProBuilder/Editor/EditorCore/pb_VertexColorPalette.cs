@@ -145,7 +145,7 @@ namespace ProBuilder.EditorCore
 
 				EditorGUI.BeginChangeCheck();
 				palette[i] = EditorGUILayout.ColorField(palette[i]);
-				if(EditorGUI.EndChangeCheck());
+				if(EditorGUI.EndChangeCheck())
 					EditorUtility.SetDirty(palette);
 
 				GUILayout.EndHorizontal();
