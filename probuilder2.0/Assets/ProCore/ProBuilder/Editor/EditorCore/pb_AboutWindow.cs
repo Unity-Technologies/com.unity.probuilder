@@ -129,7 +129,7 @@ namespace ProBuilder.EditorCore
 								1f);
 		}
 
-		public static void InitGuiStyles()
+		internal static void InitGuiStyles()
 		{
 			bannerStyle = new GUIStyle()
 			{
@@ -210,7 +210,7 @@ namespace ProBuilder.EditorCore
 			};
 		}
 
-		public void OnEnable()
+		void OnEnable()
 		{
 			InitGuiStyles();
 
@@ -299,7 +299,11 @@ namespace ProBuilder.EditorCore
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
+			GUILayout.BeginHorizontal();
 			GUILayout.Label(pb_Version.Current.ToString());
+			if (GUILayout.Button("code licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
+				GetWindow<pb_LicenseWindow>(true, "ProBuilder 3rd Party Licenses", true);
+			GUILayout.EndHorizontal();
 		}
 
 		/// <summary>
