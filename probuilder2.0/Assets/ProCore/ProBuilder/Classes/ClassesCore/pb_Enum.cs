@@ -94,6 +94,7 @@ namespace ProBuilder.Core
 	/// <summary>
 	/// pb_ShapeEditor enum.
 	/// </summary>
+	[System.Obsolete("See pb_ShapeType")]
 	enum Shape {
 		Cube,
 		Stair,

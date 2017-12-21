@@ -1,13 +1,75 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ProBuilder.Core
 {
+	/// <summary>
+	/// Describes each primitive ProBuilder can create by default. Pass to pb_ShapeGenerator.CreateShape to get a
+	/// primitive with default parameters.
+	/// </summary>
+	public enum pb_ShapeType {
+		Cube,
+		Stair,
+		CurvedStair,
+		Prism,
+		Cylinder,
+		Plane,
+		Door,
+		Pipe,
+		Cone,
+		Sprite,
+		Arch,
+		Icosahedron,
+		Torus
+	}
+
 	/// <summary>
 	/// Static utility class for generating pb_Object geometry.
 	/// </summary>
 	public static class pb_ShapeGenerator
 	{
+		/// <summary>
+		/// Create a shape with default parameters.
+		/// </summary>
+		/// <param name="shape"></param>
+		/// <returns></returns>
+		public static pb_Object CreateShape(pb_ShapeType shape)
+		{
+			if(shape == pb_ShapeType.Cube)
+				return CubeGenerator(Vector3.one);
+			if (shape == pb_ShapeType.Stair)
+				return StairGenerator(new Vector3(2f, 2.5f, 4f), 6, true);
+			if (shape == pb_ShapeType.CurvedStair)
+				return CurvedStairGenerator(2f, 2.5f, 2f, 180f, 8, true);
+			if (shape == pb_ShapeType.Prism)
+				return PrismGenerator(Vector3.one);
+			if(shape == pb_ShapeType.Cylinder)
+				return CylinderGenerator(8, 1f, 2f, 2);
+			if (shape == pb_ShapeType.Plane)
+				return PlaneGenerator(5f, 5f, 5, 5, Axis.Up);
+			if (shape == pb_ShapeType.Door)
+				return DoorGenerator(3f, 2.5f, .5f, .75f, 1f);
+			if(shape == pb_ShapeType.Pipe)
+				return PipeGenerator(1f, 2f, .25f, 8, 2);
+			if (shape == pb_ShapeType.Cone)
+				return ConeGenerator(.5f, 1f, 8);
+			if (shape == pb_ShapeType.Sprite)
+				return PlaneGenerator(1f, 1f, 0, 0, Axis.Up);
+			if (shape == pb_ShapeType.Arch)
+				return ArchGenerator(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
+			if (shape == pb_ShapeType.Icosahedron)
+				return IcosahedronGenerator(.5f, 2, true, false);
+			if (shape == pb_ShapeType.Torus)
+				return TorusGenerator(12, 16, 1f, .5f, true, 360f, 360f);
+
+			#if DEBUG
+			pb_Log.Error("Shape type has no default!");
+			#endif
+
+			return CubeGenerator(Vector3.one);
+		}
+
 		/// <summary>
 		/// A set of 8 vertices forming the template for a cube mesh.
 		/// </summary>
@@ -760,7 +822,7 @@ namespace ProBuilder.Core
 		/// <param name="_height">Plane height.</param>
 		/// <param name="widthCuts">Divisions on the X axis.</param>
 		/// <param name="heightCuts">Divisions on the Y axis.</param>
-		/// <param name="axis">The axis to build the plane on.  Ex: ProBuilder.Axis.Up is a plane with a normal of Vector3.up.</param>
+		/// <param name="axis">The axis to build the plane on. Ex: ProBuilder.Axis.Up is a plane with a normal of Vector3.up.</param>
 		/// <returns></returns>
 		public static pb_Object PlaneGenerator(float _width, float _height, int widthCuts, int heightCuts, Axis axis)
 		{
@@ -780,11 +842,11 @@ namespace ProBuilder.Core
 				{
 					for(int x = 0; x < w; x++)
 					{
-						float x0 = x*(width/w) - (width/2f) - ((width/w)/w);
-						float x1 = (x+1)*(width/w) - (width/2f) - ((width/w)/w);
+						float x0 = x * (width / w) - (width / 2f);
+						float x1 = (x + 1) * (width / w) - (width / 2f);
 
-						float y0 = y*(height/h)  - (height/2f) - ((height/h)/h);
-						float y1 = (y+1)*(height/h)  - (height/2f) - ((height/h)/h);
+						float y0 = y * (height / h) - (height / 2f);
+						float y1 = (y + 1) * (height / h) - (height / 2f);
 
 						p[i+0] = new Vector2(x0, 	y0);
 						p[i+1] = new Vector2(x1, 	y0);
@@ -833,25 +895,9 @@ namespace ProBuilder.Core
 						v[i] = new Vector3(p[i].y, p[i].x, 0f);
 					break;
 			}
-			pb_Object pb;
 
-			pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
-
+			pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
 			pb.gameObject.name = "Plane";
-
-			Vector3 center = Vector3.zero;
-			Vector3[] verts = pb.VerticesInWorldSpace();
-			foreach (Vector3 vector in verts)
-				center += vector;
-
-			center /= verts.Length;
-
-			Vector3 dir = (pb.transform.position - center);
-
-			pb.transform.position = center;
-
-			pb.TranslateVertices_World(pb.msh.triangles, dir);
-
 			return pb;
 		}
 
@@ -864,8 +910,7 @@ namespace ProBuilder.Core
 		/// <param name="subdivAxis">How many subdivisions on the axis.</param>
 		/// <param name="subdivHeight">How many subdivisions on the Y axis.</param>
 		/// <returns></returns>
-		public static pb_Object PipeGenerator(
-			float radius, float height, float thickness, int subdivAxis, int subdivHeight)
+		public static pb_Object PipeGenerator(float radius, float height, float thickness, int subdivAxis, int subdivHeight)
 		{
 
 			// template is outer ring - radius refers to outer ring always
@@ -964,8 +1009,7 @@ namespace ProBuilder.Core
 		/// <param name="height">How tall the cone will be.</param>
 		/// <param name="subdivAxis">How many subdivisions on the axis.</param>
 		/// <returns></returns>
-		public static pb_Object ConeGenerator(
-			float radius, float height, int subdivAxis)
+		public static pb_Object ConeGenerator(float radius, float height, int subdivAxis)
 		{
 			// template is outer ring - radius refers to outer ring always
 			Vector3[] template = new Vector3[subdivAxis];
@@ -1018,8 +1062,7 @@ namespace ProBuilder.Core
 		/// <param name="backFaces">Render back faces toggle</param>
 		/// <param name="endCaps"></param>
 		/// <returns></returns>
-		public static pb_Object ArchGenerator(
-			float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
+		public static pb_Object ArchGenerator(float angle, float radius, float width, float depth, int radialCuts, bool insideFaces, bool outsideFaces, bool frontFaces, bool backFaces, bool endCaps)
 		{
 			Vector2[] templateOut = new Vector2[radialCuts];
 			Vector2[] templateIn = new Vector2[radialCuts];
@@ -1184,13 +1227,15 @@ namespace ProBuilder.Core
 		/// <summary>
 		/// Create a new icosphere shape.
 		/// <remarks>
-		/// This method does not extract shared indices, so after generating
+		/// This method does not build UVs, so after generating BoxProject for UVs.
 		/// </remarks>
 		/// </summary>
 		/// <param name="radius"></param>
 		/// <param name="subdivisions"></param>
+		/// <param name="weldVertices"></param>
+		/// <param name="manualUvs"></param>
 		/// <returns></returns>
-		public static pb_Object IcosahedronGenerator(float radius, int subdivisions)
+		public static pb_Object IcosahedronGenerator(float radius, int subdivisions, bool weldVertices = true, bool manualUvs = true)
 		{
 			// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
@@ -1219,7 +1264,13 @@ namespace ProBuilder.Core
 			pb_Face[] f = new pb_Face[v.Length/3];
 			for(int i = 0; i < v.Length; i+=3) {
 				f[i/3] = new pb_Face( new int[3] { i, i+1, i+2 } );
-				f[i/3].manualUV = true;
+				f[i/3].manualUV = manualUvs;
+			}
+
+			if (!manualUvs)
+			{
+				for(int i = 0; i < f.Length; i++)
+					f[i].uv.fill = pb_UV.Fill.Fit;
 			}
 
 			GameObject _gameObject = new GameObject();
@@ -1229,11 +1280,18 @@ namespace ProBuilder.Core
 			pb.SetUV(new Vector2[v.Length]);
 			pb.SetFaces(f);
 
-			pb_IntArray[] si = new pb_IntArray[v.Length];
-			for(int i = 0; i < si.Length; i++)
-				si[i] = new pb_IntArray(new int[] { i });
+			if (!weldVertices)
+			{
+				pb_IntArray[] si = new pb_IntArray[v.Length];
+				for (int i = 0; i < si.Length; i++)
+					si[i] = new pb_IntArray(new int[] {i});
 
-			pb.SetSharedIndices(si);
+				pb.SetSharedIndices(si);
+			}
+			else
+			{
+				pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(v));
+			}
 
 			pb.ToMesh();
 			pb.Refresh();
@@ -1331,7 +1389,7 @@ namespace ProBuilder.Core
 		/// <param name="InHorizontalCircumference"></param>
 		/// <param name="InVerticalCircumference"></param>
 		/// <returns></returns>
-		public static pb_Object TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference)
+		public static pb_Object TorusGenerator(int InRows, int InColumns, float InRadius, float InTubeRadius, bool InSmooth, float InHorizontalCircumference, float InVerticalCircumference, bool manualUvs = false)
 		{
 			int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
 			int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );
@@ -1372,7 +1430,7 @@ namespace ProBuilder.Core
 
 					faces.Add( new pb_Face(new int[] { a, b, c, b, d, c } ) );
 					faces[fc].smoothingGroup = InSmooth ? 1 : -1;
-					faces[fc].manualUV = true;
+					faces[fc].manualUV = manualUvs;
 
 					fc++;
 				}

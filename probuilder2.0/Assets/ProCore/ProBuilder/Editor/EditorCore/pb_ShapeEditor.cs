@@ -13,6 +13,22 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	class pb_ShapeEditor : EditorWindow
 	{
+		enum ShapeType
+		{
+			Cube,
+			Stair,
+			Prism,
+			Cylinder,
+			Plane,
+			Door,
+			Pipe,
+			Cone,
+			Sprite,
+			Arch,
+			Icosahedron,
+			Torus,
+			Custom
+		}
 
 		public static void MenuOpenShapeCreator()
 		{
@@ -24,7 +40,7 @@ namespace ProBuilder.EditorCore
 
 		static Color COLOR_GREEN = new Color(0f, .8f, 0f, .8f);
 		static Color PREVIEW_COLOR = new Color(.5f, .9f, 1f, .56f);
-		public Shape shape = Shape.Cube;
+		[SerializeField] ShapeType shape = ShapeType.Cube;
 
 		private GameObject previewObject;
 		private bool showPreview = true;
@@ -148,51 +164,52 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.Label("Shape Selector", EditorStyles.boldLabel);
 
-			Shape oldShape = shape;
-			shape = (Shape)EditorGUILayout.EnumPopup(shape);
+			ShapeType oldShape = shape;
+			shape = (ShapeType) EditorGUILayout.EnumPopup(shape);
 
 			if(shape != oldShape) initPreview = true;
 
 			scroll = EditorGUILayout.BeginScrollView(scroll);
+
 			switch(shape)
 			{
-				case Shape.Cube:
+				case ShapeType.Cube:
 					CubeGUI();
 					break;
-				case Shape.Prism:
+				case ShapeType.Prism:
 					PrismGUI();
 					break;
-				case Shape.Stair:
+				case ShapeType.Stair:
 					StairGUI();
 					break;
-				case Shape.Cylinder:
+				case ShapeType.Cylinder:
 					CylinderGUI();
 					break;
-				case Shape.Plane:
+				case ShapeType.Plane:
 					PlaneGUI();
 					break;
-				case Shape.Door:
+				case ShapeType.Door:
 					DoorGUI();
 					break;
-				case Shape.Pipe:
+				case ShapeType.Pipe:
 					PipeGUI();
 					break;
-				case Shape.Cone:
+				case ShapeType.Cone:
 					ConeGUI();
 					break;
-				case Shape.Sprite:
+				case ShapeType.Sprite:
 					SpriteGUI();
 					break;
-				case Shape.Arch:
+				case ShapeType.Arch:
 					ArchGUI();
 					break;
-				case Shape.Icosahedron:
+				case ShapeType.Icosahedron:
 					IcosahedronGUI();
 					break;
-				case Shape.Torus:
+				case ShapeType.Torus:
 					TorusGUI();
 					break;
-				case Shape.Custom:
+				case ShapeType.Custom:
 					CustomGUI();
 					break;
 
@@ -865,7 +882,7 @@ namespace ProBuilder.EditorCore
 			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 4);
 
 			if (showPreview && ((t_ico_subdivisions != ico_subdivisions || t_ico_radius != ico_radius) || initPreview))
-				SetPreviewObject(pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions));
+				SetPreviewObject(pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions, false));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -877,9 +894,9 @@ namespace ProBuilder.EditorCore
 				pb_Object pb = pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				// To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator
-				int[] welds;
-				pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
+				// // To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator
+				// int[] welds;
+				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
 
 				pb_UVOps.ProjectFacesBox(pb, pb.faces);
 
@@ -963,7 +980,8 @@ namespace ProBuilder.EditorCore
 					torus_tubeRadius,
 					torus_smooth,
 					torus_horizontalCircumference,
-					torus_verticalCircumference));
+					torus_verticalCircumference,
+					true));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = COLOR_GREEN;
@@ -979,7 +997,8 @@ namespace ProBuilder.EditorCore
 					torus_tubeRadius,
 					torus_smooth,
 					torus_horizontalCircumference,
-					torus_verticalCircumference);
+					torus_verticalCircumference,
+					true);
 				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				pb_UVOps.ProjectFacesBox(pb, pb.faces);
