@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 
 namespace ProBuilder.Core
 {
@@ -29,6 +28,76 @@ namespace ProBuilder.Core
 	/// </summary>
 	public static class pb_ShapeGenerator
 	{
+
+		static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
+		{
+			new Vector3(-1f,  pb_Math.PHI,  0f),
+			new Vector3( 1f,  pb_Math.PHI,  0f),
+			new Vector3(-1f, -pb_Math.PHI,  0f),
+			new Vector3( 1f, -pb_Math.PHI,  0f),
+
+			new Vector3( 0f, -1f,  pb_Math.PHI),
+			new Vector3( 0f,  1f,  pb_Math.PHI),
+			new Vector3( 0f, -1f, -pb_Math.PHI),
+			new Vector3( 0f,  1f, -pb_Math.PHI),
+
+			new Vector3(  pb_Math.PHI, 0f, -1f),
+			new Vector3(  pb_Math.PHI, 0f,  1f),
+			new Vector3( -pb_Math.PHI, 0f, -1f),
+			new Vector3( -pb_Math.PHI, 0f,  1f)
+		};
+
+		static readonly int[] k_IcosphereTriangles = new int[60]
+		{
+			0, 11, 5,
+			0, 5, 1,
+			0, 1, 7,
+			0, 7, 10,
+			0, 10, 11,
+
+			1, 5, 9,
+			5, 11, 4,
+			11, 10, 2,
+			10, 7, 6,
+			7, 1, 8,
+
+			3, 9, 4,
+			3, 4, 2,
+			3, 2, 6,
+			3, 6, 8,
+			3, 8, 9,
+
+			4, 9, 5,
+			2, 4, 11,
+			6, 2, 10,
+			8, 6, 7,
+			9, 8, 1
+		};
+
+		/// <summary>
+		/// A set of 8 vertices forming the template for a cube mesh.
+		/// </summary>
+		static readonly Vector3[] k_CubeVertices = new Vector3[] {
+			// bottom 4 verts
+			new Vector3(-.5f, -.5f, .5f),		// 0
+			new Vector3(.5f, -.5f, .5f),		// 1
+			new Vector3(.5f, -.5f, -.5f),		// 2
+			new Vector3(-.5f, -.5f, -.5f),		// 3
+
+			// top 4 verts
+			new Vector3(-.5f, .5f, .5f),		// 4
+			new Vector3(.5f, .5f, .5f),			// 5
+			new Vector3(.5f, .5f, -.5f),		// 6
+			new Vector3(-.5f, .5f, -.5f)		// 7
+		};
+
+		/// <summary>
+		/// A set of triangles forming a cube with reference to the VERTICES_CUBE array.
+		/// </summary>
+		static readonly int[] k_CubeTriangles = new int[] {
+			0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
+		};
+
 		/// <summary>
 		/// Create a shape with default parameters.
 		/// </summary>
@@ -61,7 +130,7 @@ namespace ProBuilder.Core
 			if (shape == pb_ShapeType.Icosahedron)
 				return IcosahedronGenerator(.5f, 2, true, false);
 			if (shape == pb_ShapeType.Torus)
-				return TorusGenerator(12, 16, 1f, .5f, true, 360f, 360f);
+				return TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
 
 			#if DEBUG
 			pb_Log.Error("Shape type has no default!");
@@ -69,30 +138,6 @@ namespace ProBuilder.Core
 
 			return CubeGenerator(Vector3.one);
 		}
-
-		/// <summary>
-		/// A set of 8 vertices forming the template for a cube mesh.
-		/// </summary>
-		static readonly Vector3[] VERTICES_CUBE = new Vector3[] {
-			// bottom 4 verts
-			new Vector3(-.5f, -.5f, .5f),		// 0
-			new Vector3(.5f, -.5f, .5f),		// 1
-			new Vector3(.5f, -.5f, -.5f),		// 2
-			new Vector3(-.5f, -.5f, -.5f),		// 3
-
-			// top 4 verts
-			new Vector3(-.5f, .5f, .5f),		// 4
-			new Vector3(.5f, .5f, .5f),			// 5
-			new Vector3(.5f, .5f, -.5f),		// 6
-			new Vector3(-.5f, .5f, -.5f)		// 7
-		};
-
-		/// <summary>
-		/// A set of triangles forming a cube with reference to the VERTICES_CUBE array.
-		/// </summary>
-		static readonly int[] TRIANGLES_CUBE = new int[] {
-			0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
-		};
 
 		/// <summary>
 		/// Create a set of stairs.
@@ -241,12 +286,12 @@ namespace ProBuilder.Core
 		{
 			bool noInnerSide = innerRadius < Mathf.Epsilon;
 
-			/// 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
-			/// if the inner radius is 0 or not.
+			// 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
+			// if the inner radius is 0 or not.
 			Vector3[] vertices = new Vector3[(4 * steps) + ((noInnerSide ? 3 : 4) * steps)];
 			pb_Face[] faces = new pb_Face[steps * 2];
 
-			/// vertex index, face index
+			// vertex index, face index
 			int v = 0, t = 0;
 
 			float cir = Mathf.Abs(circumference) * Mathf.Deg2Rad;
@@ -332,7 +377,7 @@ namespace ProBuilder.Core
 				t += 2;
 			}
 
-			/// sides
+			// sides
 			if(buildSides)
 			{
 				/// first step is special case - only needs a quad, but all other steps need
@@ -521,9 +566,9 @@ namespace ProBuilder.Core
 		/// <returns></returns>
 		public static pb_Object CubeGenerator(Vector3 size)
 		{
-			Vector3[] points = new Vector3[TRIANGLES_CUBE.Length];
-			for(int i = 0; i < TRIANGLES_CUBE.Length; i++)
-				points[i] = Vector3.Scale(VERTICES_CUBE[TRIANGLES_CUBE[i]], size);
+			Vector3[] points = new Vector3[k_CubeTriangles.Length];
+			for(int i = 0; i < k_CubeTriangles.Length; i++)
+				points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
 			pb_Object pb = pb_Object.CreateInstanceWithPoints(points);
 
@@ -1179,51 +1224,6 @@ namespace ProBuilder.Core
 			return pb;
 		}
 
-		static readonly Vector3[] ICOSAHEDRON_VERTICES = new Vector3[12]
-		{
-			new Vector3(-1f,  pb_Math.PHI,  0f),
-			new Vector3( 1f,  pb_Math.PHI,  0f),
-			new Vector3(-1f, -pb_Math.PHI,  0f),
-			new Vector3( 1f, -pb_Math.PHI,  0f),
-
-			new Vector3( 0f, -1f,  pb_Math.PHI),
-			new Vector3( 0f,  1f,  pb_Math.PHI),
-			new Vector3( 0f, -1f, -pb_Math.PHI),
-			new Vector3( 0f,  1f, -pb_Math.PHI),
-
-			new Vector3(  pb_Math.PHI, 0f, -1f),
-			new Vector3(  pb_Math.PHI, 0f,  1f),
-			new Vector3( -pb_Math.PHI, 0f, -1f),
-			new Vector3( -pb_Math.PHI, 0f,  1f)
-		};
-
-		static readonly int[] ICOSAHEDRON_TRIANGLES = new int[60]
-		{
-			0, 11, 5,
-			0, 5, 1,
-			0, 1, 7,
-			0, 7, 10,
-			0, 10, 11,
-
-			1, 5, 9,
-			5, 11, 4,
-			11, 10, 2,
-			10, 7, 6,
-			7, 1, 8,
-
-			3, 9, 4,
-			3, 4, 2,
-			3, 2, 6,
-			3, 6, 8,
-			3, 8, 9,
-
-			4, 9, 5,
-			2, 4, 11,
-			6, 2, 10,
-			8, 6, 7,
-			9, 8, 1
-		};
-
 		/// <summary>
 		/// Create a new icosphere shape.
 		/// <remarks>
@@ -1239,16 +1239,16 @@ namespace ProBuilder.Core
 		{
 			// http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
-			Vector3[] v = new Vector3[ICOSAHEDRON_TRIANGLES.Length];
+			Vector3[] v = new Vector3[k_IcosphereTriangles.Length];
 
 			/**
 			 * Regular Icosahedron - 12 vertices, 20 faces.
 			 */
-			for(int i = 0; i < ICOSAHEDRON_TRIANGLES.Length; i+=3)
+			for(int i = 0; i < k_IcosphereTriangles.Length; i+=3)
 			{
-				v[i+0] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+0] ].normalized * radius;
-				v[i+1] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+1] ].normalized * radius;
-				v[i+2] = ICOSAHEDRON_VERTICES[ ICOSAHEDRON_TRIANGLES[i+2] ].normalized * radius;
+				v[i+0] = k_IcosphereVertices[ k_IcosphereTriangles[i+0] ].normalized * radius;
+				v[i+1] = k_IcosphereVertices[ k_IcosphereTriangles[i+1] ].normalized * radius;
+				v[i+2] = k_IcosphereVertices[ k_IcosphereTriangles[i+2] ].normalized * radius;
 			}
 
 			/**
@@ -1394,7 +1394,7 @@ namespace ProBuilder.Core
 			int rows 	= (int) Mathf.Clamp( InRows + 1, 4, 128 );
 			int columns = (int) Mathf.Clamp( InColumns + 1, 4, 128 );
 			float radius = Mathf.Clamp(InRadius, .01f, 2048f);
-			float tubeRadius = Mathf.Clamp(InTubeRadius, .01f, radius);
+			float tubeRadius = Mathf.Clamp(InTubeRadius, .01f, radius - .001f);
 			radius -= tubeRadius;
 			float horizontalCircumference = Mathf.Clamp(InHorizontalCircumference, .01f, 360f);
 			float verticalCircumference = Mathf.Clamp(InVerticalCircumference, .01f, 360f);
