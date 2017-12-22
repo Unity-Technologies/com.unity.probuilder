@@ -52,7 +52,7 @@ namespace ProBuilder.EditorCore
 					}
 					else
 					{
-						GameObject.DestroyImmediate(pb.msh);
+						Object.DestroyImmediate(pb.msh);
 					}
 				}
 			}
@@ -62,7 +62,7 @@ namespace ProBuilder.EditorCore
 
 				// If the pb_Object is backed by a Mesh asset don't destroy it.
 				if(string.IsNullOrEmpty(path))
-					GameObject.DestroyImmediate(pb.msh);
+					Object.DestroyImmediate(pb.msh);
 			}
 		}
 	}

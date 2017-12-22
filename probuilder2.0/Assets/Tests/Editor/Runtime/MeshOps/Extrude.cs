@@ -26,8 +26,8 @@ namespace ProBuilder.Test
 					pb.ToMesh();
 					pb.Refresh();
 					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
-					pb_TestUtility.SaveAssetTemplate(pb.msh);
-					// AssetDatabase.CreateAsset(pb.msh, pb_TestUtility.MeshTemplateDirectory + "/MeshOps/Extrude/AllFaces/FaceNormal_" + pb.name + ".asset");
+					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
+					pb_TestUtility.AssertAreEqual(pb.msh, template);
 				}
 			}
 		}
@@ -45,8 +45,8 @@ namespace ProBuilder.Test
 					pb.ToMesh();
 					pb.Refresh();
 					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
-					pb_TestUtility.SaveAssetTemplate(pb.msh);
-					// AssetDatabase.CreateAsset(pb.msh, pb_TestUtility.MeshTemplateDirectory + "/MeshOps/Extrude/AllFaces/IndividualFaces_" + pb.name + ".asset");
+					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
+					pb_TestUtility.AssertAreEqual(pb.msh, template);
 				}
 			}
 		}
@@ -64,8 +64,8 @@ namespace ProBuilder.Test
 					pb.ToMesh();
 					pb.Refresh();
 					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
-					pb_TestUtility.SaveAssetTemplate(pb.msh);
-					// AssetDatabase.CreateAsset(pb.msh, pb_TestUtility.MeshTemplateDirectory + "/MeshOps/Extrude/AllFaces/VertexNormal_" + pb.name + ".asset");
+					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
+					pb_TestUtility.AssertAreEqual(pb.msh, template);
 				}
 			}
 		}

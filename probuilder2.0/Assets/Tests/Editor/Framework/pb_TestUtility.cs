@@ -29,20 +29,6 @@ namespace ProBuilder.Test
 			get { return k_TestsDirectory; }
 		}
 
-		public static T GetAssetTemplate<T>(string name) where T : UObject
-		{
-			T asset = AssetDatabase.LoadAssetAtPath<T>(GetTemplatePath<T>(name));
-			Assert.IsFalse(asset == null, "Failed loading asset template: " + name);
-			return asset;
-		}
-
-		public static T GetAssetTemplateWithPath<T>(string pathRelativeToTemplatesDirectory) where T : UObject
-		{
-			T asset = AssetDatabase.LoadAssetAtPath<T>(pathRelativeToTemplatesDirectory);
-			Assert.IsFalse(asset == null, "Failed loading asset template: " + pathRelativeToTemplatesDirectory);
-			return asset;
-		}
-
 		public class BasicShapes : IDisposable, IEnumerable<pb_Object>
 		{
 			pb_Object[] m_Shapes;
@@ -74,7 +60,7 @@ namespace ProBuilder.Test
 
 			public void Dispose()
 			{
-				for(int i = 0, c = m_Shapes.Length; i < c; i++)
+				for (int i = 0, c = m_Shapes.Length; i < c; i++)
 					UObject.DestroyImmediate(m_Shapes[i].gameObject);
 			}
 
@@ -217,14 +203,6 @@ namespace ProBuilder.Test
 			return true;
 		}
 
-		public static void SaveAssetTemplate<T>(T asset, int methodOffset = 0) where T : UObject
-		{
-			string templatePath = GetTemplatePath<T>(asset.name, methodOffset + 1);
-
-//			UnityEngine.Debug.Log(relativeTemplateDir + "   " + Path.GetFileNameWithoutExtension(filePath) + "   " + methodName);
-			SaveAssetTemplate(asset, templatePath);
-		}
-
 		public static string GetTemplatePath<T>(string assetName, int methodOffset = 0)
 		{
 			StackTrace trace = new StackTrace(1 + methodOffset, true);
@@ -254,19 +232,82 @@ namespace ProBuilder.Test
 		}
 
 		/// <summary>
+		/// Get a mesh saved from the same path with name. Use SaveAssetTemplate to automatically generate this path.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static T GetAssetTemplate<T>(string name) where T : UObject
+		{
+			string assetPath = TemplatesDirectory + GetTemplatePath<T>(name, 1);
+			T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+			Assert.IsFalse(asset == null, "Failed loading asset template: " + name);
+			return asset;
+		}
+
+		public static T GetAssetTemplateWithPath<T>(string pathRelativeToTemplatesDirectory) where T : UObject
+		{
+			T asset = AssetDatabase.LoadAssetAtPath<T>(pathRelativeToTemplatesDirectory);
+			Assert.IsFalse(asset == null, "Failed loading asset template: " + pathRelativeToTemplatesDirectory);
+			return asset;
+		}
+
+		/// <summary>
+		/// Utility for saving test asset templates with an automatically generated path from the calling file name and
+		/// method. See also GetAssetTemplate.
+		/// </summary>
+		/// <remarks>
+		/// See CreateBasicShapes for a simple example of use.
+		/// </remarks>
+		/// <param name="asset"></param>
+		/// <param name="name"></param>
+		/// <param name="methodOffset"></param>
+		/// <typeparam name="T"></typeparam>
+		public static void SaveAssetTemplate<T>(T asset, string name = null, int methodOffset = 0) where T : UObject
+		{
+			string templatePath = GetTemplatePath<T>(string.IsNullOrEmpty(name) ? asset.name : name, methodOffset + 1);
+			SaveAssetTemplateAtPath(asset, templatePath);
+		}
+
+		/// <summary>
 		/// Path is relative to the "Tests/Templates/" directory. Optional flag disables overwriting.
 		/// </summary>
 		/// <param name="asset"></param>
 		/// <param name="path"></param>
-		public static void SaveAssetTemplate(UObject asset, string path, bool overwrite = true)
+		public static void SaveAssetTemplateAtPath<T>(T asset, string path, bool overwrite = true) where T : UObject
 		{
 
 			if (!path.EndsWith(".asset"))
 				path += ".asset";
 
 			string assetPath = string.Format("{0}{1}", TemplatesDirectory, path);
+			string fullDirectoryPath = Path.GetDirectoryName(assetPath);
 
-			UnityEngine.Debug.Log(assetPath);
+			if (string.IsNullOrEmpty(fullDirectoryPath))
+			{
+				UnityEngine.Debug.LogError("Could not save asset at path: " + assetPath);
+				return;
+			}
+
+			if(!Directory.Exists(fullDirectoryPath))
+				Directory.CreateDirectory(fullDirectoryPath);
+
+			if (AssetDatabase.LoadAssetAtPath<UObject>(assetPath) != null)
+			{
+				if (!overwrite)
+				{
+					UnityEngine.Debug.LogError("Will not overwrite existing asset at path: " + assetPath);
+					return;
+				}
+
+				if (!AssetDatabase.DeleteAsset(assetPath))
+				{
+					UnityEngine.Debug.LogError("Failed to delete existing asset at path: " + assetPath);
+					return;
+				}
+			}
+
+			AssetDatabase.CreateAsset(asset, assetPath);
 		}
 	}
 }

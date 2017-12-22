@@ -105,38 +105,45 @@ namespace ProBuilder.Core
 		/// <returns></returns>
 		public static pb_Object CreateShape(pb_ShapeType shape)
 		{
+			pb_Object pb = null;
+
 			if(shape == pb_ShapeType.Cube)
-				return CubeGenerator(Vector3.one);
+				pb = CubeGenerator(Vector3.one);
 			if (shape == pb_ShapeType.Stair)
-				return StairGenerator(new Vector3(2f, 2.5f, 4f), 6, true);
+				pb = StairGenerator(new Vector3(2f, 2.5f, 4f), 6, true);
 			if (shape == pb_ShapeType.CurvedStair)
-				return CurvedStairGenerator(2f, 2.5f, 2f, 180f, 8, true);
+				pb = CurvedStairGenerator(2f, 2.5f, 2f, 180f, 8, true);
 			if (shape == pb_ShapeType.Prism)
-				return PrismGenerator(Vector3.one);
+				pb = PrismGenerator(Vector3.one);
 			if(shape == pb_ShapeType.Cylinder)
-				return CylinderGenerator(8, 1f, 2f, 2);
+				pb = CylinderGenerator(8, 1f, 2f, 2);
 			if (shape == pb_ShapeType.Plane)
-				return PlaneGenerator(5f, 5f, 5, 5, Axis.Up);
+				pb = PlaneGenerator(5f, 5f, 5, 5, Axis.Up);
 			if (shape == pb_ShapeType.Door)
-				return DoorGenerator(3f, 2.5f, .5f, .75f, 1f);
+				pb = DoorGenerator(3f, 2.5f, .5f, .75f, 1f);
 			if(shape == pb_ShapeType.Pipe)
-				return PipeGenerator(1f, 2f, .25f, 8, 2);
+				pb = PipeGenerator(1f, 2f, .25f, 8, 2);
 			if (shape == pb_ShapeType.Cone)
-				return ConeGenerator(.5f, 1f, 8);
+				pb = ConeGenerator(.5f, 1f, 8);
 			if (shape == pb_ShapeType.Sprite)
-				return PlaneGenerator(1f, 1f, 0, 0, Axis.Up);
+				pb = PlaneGenerator(1f, 1f, 0, 0, Axis.Up);
 			if (shape == pb_ShapeType.Arch)
-				return ArchGenerator(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
+				pb = ArchGenerator(180f, 2f, 1f, 1f, 9, true, true, true, true, true);
 			if (shape == pb_ShapeType.Icosahedron)
-				return IcosahedronGenerator(.5f, 2, true, false);
+				pb = IcosahedronGenerator(.5f, 2, true, false);
 			if (shape == pb_ShapeType.Torus)
-				return TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
+				pb = TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
 
 			#if DEBUG
-			pb_Log.Error("Shape type has no default!");
+			if(pb == null)
+				pb_Log.Error(shape.ToString() + " type has no default!");
 			#endif
 
-			return CubeGenerator(Vector3.one);
+			pb = CubeGenerator(Vector3.one);
+
+			pb.gameObject.name = shape.ToString();
+
+			return pb;
 		}
 
 		/// <summary>

@@ -9,24 +9,31 @@ namespace ProBuilder.Test
 {
 	public class CreateBasicShapes
 	{
-		const string k_MeshTemplatePath = "Assets/Tests/Editor/Runtime/Shape/Mesh Templates/";
-
 		static void CreateBasicAndCompare(pb_ShapeType type)
 		{
 			pb_Object pb = pb_ShapeGenerator.CreateShape(type);
+
+#if PB_GENERATE_MESH_TEMPLATES
+			// save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
+			// Templates/{Asset Type}/{CallingFilePathRelativeToTests}/{MethodName}/{AssetName}.asset
+			// note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need
+			// to set `dontDestroyOnDelete` in the editor.
+			pb_TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
+#else
 
 			try
 			{
 				Assert.IsNotNull(pb, type.ToString());
 				pb_TestUtility.AssertMeshAttributesValid(pb.msh);
-				Mesh template = AssetDatabase.LoadAssetAtPath<Mesh>(k_MeshTemplatePath + type.ToString() + "_Default.asset");
-				Assert.IsNotNull(template, type.ToString());
+				// Loads an asset by name from the template path. See also pb_TestUtility.GetTemplatePath
+				Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(type.ToString());
 				Assert.IsTrue(pb_TestUtility.AssertAreEqual(template, pb.msh), type.ToString() + " value-wise mesh comparison");
 			}
 			finally
 			{
 				Object.DestroyImmediate(pb);
 			}
+#endif
 		}
 
 		[Test]
