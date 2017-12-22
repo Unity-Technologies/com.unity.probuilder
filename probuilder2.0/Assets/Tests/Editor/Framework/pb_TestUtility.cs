@@ -11,6 +11,7 @@ using ProBuilder.Core;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.EventSystems;
+using UnityEngine.TestTools;
 
 namespace ProBuilder.Test
 {
@@ -29,7 +30,18 @@ namespace ProBuilder.Test
 			get { return k_TestsDirectory; }
 		}
 
-		public class BasicShapes : IDisposable, IEnumerable<pb_Object>
+		public static string TemporarySavedAssetsDirectory
+		{
+			get { return k_TestsDirectory + "Temp Assets/"; }
+		}
+
+		/**
+		 * @TODO
+		 * Similar to BuiltInPrimitives, but also including a set of meshes from a folder (though meshes should be treated
+		 * as immutable when pulled from asset... somehow)
+		 */
+
+		public class BuiltInPrimitives : IDisposable, IEnumerable<pb_Object>
 		{
 			pb_Object[] m_Shapes;
 
@@ -45,7 +57,7 @@ namespace ProBuilder.Test
 				return primitives;
 			}
 
-			public BasicShapes()
+			public BuiltInPrimitives()
 			{
 				m_Shapes = GetBasicShapes();
 			}
@@ -73,6 +85,16 @@ namespace ProBuilder.Test
 			{
 				return m_Shapes.GetEnumerator();
 			}
+		}
+
+		/// <summary>
+		/// Convert a full path to one relative to the project directory.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		static string ToAssetPath(string path)
+		{
+			return path.Replace("\\", "/").Replace(Application.dataPath, "Assets/");
 		}
 
 		public static void AssertMeshAttributesValid(Mesh mesh)
@@ -308,6 +330,24 @@ namespace ProBuilder.Test
 			}
 
 			AssetDatabase.CreateAsset(asset, assetPath);
+		}
+
+		public static string SaveAssetTemporary<T>(UObject asset) where T : UObject
+		{
+			if (!Directory.Exists(TemporarySavedAssetsDirectory))
+				Directory.CreateDirectory(TemporarySavedAssetsDirectory);
+
+			string path = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", TemporarySavedAssetsDirectory, asset.name));
+			AssetDatabase.CreateAsset(asset, path);
+			return path;
+		}
+
+		public static void ClearTempAssets()
+		{
+			if (!Directory.Exists(TemporarySavedAssetsDirectory))
+				return;
+
+			Directory.Delete(TemporarySavedAssetsDirectory);
 		}
 	}
 }

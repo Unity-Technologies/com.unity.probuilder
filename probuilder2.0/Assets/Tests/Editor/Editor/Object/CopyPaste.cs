@@ -50,26 +50,5 @@ namespace ProBuilder.Test
 			Assert.AreNotEqual(copy, original, "GameObject references are equal");
 			Assert.IsTrue(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
 		}
-
-		[Test]
-		public static void DestroyDeletesMesh()
-		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
-			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
-			UObject.DestroyImmediate(pb.gameObject);
-			// IsNull doesn't work due to c#/c++ goofiness
-			Assert.IsTrue(mesh == null);
-		}
-
-		[Test]
-		public static void DestroyWithNoDeleteFlagPreservesMesh()
-		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
-			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
-			pb.dontDestroyMeshOnDelete = true;
-			UObject.DestroyImmediate(pb.gameObject);
-			Assert.IsNotNull(mesh);
-			UObject.DestroyImmediate(mesh);
-		}
 	}
 }

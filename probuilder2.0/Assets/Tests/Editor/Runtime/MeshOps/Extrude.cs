@@ -18,7 +18,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeAllFaces_FaceNormal()
 		{
-			using(var shapes = new pb_TestUtility.BasicShapes())
+			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<pb_Object>) shapes)
 				{
@@ -38,7 +38,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeAllFaces_IndividualFaces()
 		{
-			using(var shapes = new pb_TestUtility.BasicShapes())
+			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<pb_Object>) shapes)
 				{
@@ -58,7 +58,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeAllFaces_VertexNormal()
 		{
-			using(var shapes = new pb_TestUtility.BasicShapes())
+			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<pb_Object>) shapes)
 				{
@@ -77,7 +77,7 @@ namespace ProBuilder.Test
 
 		static void ExtrudeSingleFace(ExtrudeMethod method, float distance = 1f)
 		{
-			using(var shapes = new pb_TestUtility.BasicShapes())
+			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<pb_Object>) shapes)
 				{
@@ -132,7 +132,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeFaceMultipleTimes()
 		{
-			using (var shapes = new pb_TestUtility.BasicShapes())
+			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (pb_Object pb in shapes)
 				{
@@ -167,7 +167,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeSingleEdge()
 		{
-			using (var shapes = new pb_TestUtility.BasicShapes())
+			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (pb_Object pb in shapes)
 				{
@@ -190,7 +190,7 @@ namespace ProBuilder.Test
 		[Test]
 		public static void ExtrudeMultipleEdges()
 		{
-			using (var shapes = new pb_TestUtility.BasicShapes())
+			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
 				foreach (pb_Object pb in shapes)
 				{
