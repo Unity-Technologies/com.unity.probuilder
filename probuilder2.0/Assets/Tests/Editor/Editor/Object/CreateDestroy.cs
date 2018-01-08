@@ -5,11 +5,12 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using ProBuilder.Core;
+using ProBuilder.Test;
 using UnityEngine.TestTools;
 using ProBuilder.EditorCore;
 using UnityEditor;
 
-namespace ProBuilder.Test
+namespace ProBuilder.EditorTests.Object
 {
 	public class CreateDestroy
 	{

@@ -7,7 +7,7 @@ using System.Linq;
 using System;
 using ProBuilder.Core;
 
-namespace ProBuilder.Test
+namespace ProBuilder.RuntimeTests.Type
 {
 	public static class TestHashUtility
 	{

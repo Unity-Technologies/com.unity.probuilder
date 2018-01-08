@@ -8,7 +8,7 @@ using ProBuilder.Core;
 using System;
 using ProBuilder.EditorCore;
 
-namespace ProBuilder.Test
+namespace ProBuilder.RuntimeTests.Type
 {
 	public class TestVersionInfo
 	{

@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using ProBuilder.Core;
+using ProBuilder.Test;
 
-namespace ProBuilder.Test
+namespace ProBuilder.RuntimeTests.Shape
 {
 	public class CreateBasicShapes
 	{
@@ -13,7 +14,7 @@ namespace ProBuilder.Test
 		{
 			pb_Object pb = pb_ShapeGenerator.CreateShape(type);
 
-#if PB_GENERATE_MESH_TEMPLATES
+#if PB_CREATE_TEST_MESH_TEMPLATES
 			// save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
 			// Templates/{Asset Type}/{CallingFilePathRelativeToTests}/{MethodName}/{AssetName}.asset
 			// note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need

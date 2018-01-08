@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using ProBuilder.Core;
 
-namespace ProBuilder.Test
+namespace ProBuilder.EditorTests.Picking
 {
 	public class SelectionPicker
 	{

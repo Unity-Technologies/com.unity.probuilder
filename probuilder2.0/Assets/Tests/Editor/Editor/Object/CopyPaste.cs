@@ -5,10 +5,11 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using ProBuilder.Core;
+using ProBuilder.Test;
 using UnityEngine.TestTools;
 using ProBuilder.EditorCore;
 
-namespace ProBuilder.Test
+namespace ProBuilder.EditorTests.Object
 {
 	public class CopyPaste
 	{
@@ -17,7 +18,7 @@ namespace ProBuilder.Test
 		{
 			var original = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
 			original.Optimize();
-			
+
 			var copy = UObject.Instantiate(original);
 
 			try

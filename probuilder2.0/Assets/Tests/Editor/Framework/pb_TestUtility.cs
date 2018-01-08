@@ -1,10 +1,11 @@
-﻿using System;
+﻿#define PB_CREATE_TEST_MESH_TEMPLATES
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using ProBuilder.Core;
@@ -296,7 +297,8 @@ namespace ProBuilder.Test
 		/// </summary>
 		/// <param name="asset"></param>
 		/// <param name="path"></param>
-		public static void SaveAssetTemplateAtPath<T>(T asset, string path, bool overwrite = true) where T : UObject
+		[Conditional("PB_CREATE_TEST_MESH_TEMPLATES")]
+		static void SaveAssetTemplateAtPath<T>(T asset, string path, bool overwrite = true) where T : UObject
 		{
 
 			if (!path.EndsWith(".asset"))

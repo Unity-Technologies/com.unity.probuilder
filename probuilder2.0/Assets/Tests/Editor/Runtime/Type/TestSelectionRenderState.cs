@@ -8,8 +8,9 @@ using System.Linq;
 using ProBuilder.Core;
 using System;
 using ProBuilder.EditorCore;
+using ProBuilder.Test;
 
-namespace ProBuilder.Test
+namespace ProBuilder.RuntimeTests.Type
 {
 	public class TestSelectionRenderState
 	{
