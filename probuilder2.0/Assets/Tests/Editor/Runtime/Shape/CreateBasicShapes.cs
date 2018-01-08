@@ -31,7 +31,7 @@ namespace ProBuilder.Test
 			}
 			finally
 			{
-				Object.DestroyImmediate(pb);
+				Object.DestroyImmediate(pb.gameObject);
 			}
 #endif
 		}
@@ -107,7 +107,6 @@ namespace ProBuilder.Test
 		{
 			CreateBasicAndCompare(pb_ShapeType.Icosahedron);
 		}
-
 
 		[Test]
 		public static void Torus()

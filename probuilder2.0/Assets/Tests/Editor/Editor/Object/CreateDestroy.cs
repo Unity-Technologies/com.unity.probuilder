@@ -27,11 +27,19 @@ namespace ProBuilder.Test
 		public static void DestroyWithNoDeleteFlagPreservesMesh()
 		{
 			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
-			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
-			pb.dontDestroyMeshOnDelete = true;
-			UObject.DestroyImmediate(pb.gameObject);
-			Assert.IsFalse(mesh == null);
-			UObject.DestroyImmediate(mesh);
+
+			try
+			{
+				Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
+				pb.dontDestroyMeshOnDelete = true;
+				UObject.DestroyImmediate(pb.gameObject);
+				Assert.IsFalse(mesh == null);
+			}
+			finally
+			{
+				if(pb != null)
+					UObject.DestroyImmediate(pb.gameObject);
+			}
 		}
 
 		[Test]
