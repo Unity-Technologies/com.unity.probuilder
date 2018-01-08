@@ -134,12 +134,13 @@ namespace ProBuilder.Core
 			if (shape == pb_ShapeType.Torus)
 				pb = TorusGenerator(12, 16, 1f, .3f, true, 360f, 360f);
 
-			#if DEBUG
-			if(pb == null)
+			if (pb == null)
+			{
+#if DEBUG
 				pb_Log.Error(shape.ToString() + " type has no default!");
-			#endif
-
-			pb = CubeGenerator(Vector3.one);
+#endif
+				pb = CubeGenerator(Vector3.one);
+			}
 
 			pb.gameObject.name = shape.ToString();
 

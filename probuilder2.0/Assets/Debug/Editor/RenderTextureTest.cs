@@ -3,9 +3,6 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
-using ProBuilder2.MeshOperations;
 using System.Linq;
 using System.Text;
 using System.Reflection;
@@ -47,7 +44,7 @@ public class RenderTextureTest : EditorWindow
 		RenderTexture.ReleaseTemporary(rt);
 		profiler.End();
 
-		pb_EditorUtility.SaveTexture(img, "Assets/test.png");
+//		pb_EditorUtility.SaveTexture(img, "Assets/test.png");
 
 		GameObject.DestroyImmediate(img);
 		GameObject.DestroyImmediate(go);
