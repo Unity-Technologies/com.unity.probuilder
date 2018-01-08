@@ -213,7 +213,7 @@ namespace ProBuilder.AssetUtility
 				if (!string.IsNullOrEmpty(m_ConversionLog))
 				{
 					m_ConversionLogScroll = EditorGUILayout.BeginScrollView(m_ConversionLogScroll);
-					GUILayout.Label(m_ConversionLog);
+					GUILayout.Label(m_ConversionLog, EditorStyles.wordWrappedLabel);
 					EditorGUILayout.EndScrollView();
 				}
 				else
