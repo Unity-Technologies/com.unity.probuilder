@@ -77,7 +77,8 @@ class pb_Editor : EditorWindow
 
 	pb_Shortcut[] shortcuts;
 
-	private bool vertexSelectionMask = true;	///< If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
+	// If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
+	bool vertexSelectionMask = true;
 	public float drawNormals = 0f;
 	private bool pref_showSceneInfo = false;
 	private bool pref_backfaceSelect = false;
@@ -266,11 +267,8 @@ class pb_Editor : EditorWindow
 
 	public void HookDelegates()
 	{
-		if(SceneView.onSceneGUIDelegate != this.OnSceneGUI)
-		{
-			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-		}
+		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+		SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 
 		Undo.undoRedoPerformed += this.UndoRedoPerformed;
 		// Undo.postprocessModifications += PostprocessModifications;
@@ -1116,6 +1114,12 @@ class pb_Editor : EditorWindow
 		bool selectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
 		bool selectHidden = pref_backfaceSelect;
 
+		var pickingOptions = new pb_PickerOptions()
+		{
+			depthTest = !selectHidden,
+			rectSelectMode = selectWholeElement ? pb_RectSelectMode.Complete : pb_RectSelectMode.Partial
+		};
+
 		switch(selectionMode)
 		{
 			case SelectMode.Vertex:
@@ -1127,7 +1131,7 @@ class pb_Editor : EditorWindow
 					SceneView.lastActiveSceneView.camera,
 					selectionRect,
 					selection,
-					new pb_PickerOptions() { culling = selectHidden ? pb_Culling.None : pb_Culling.Back },
+					pickingOptions,
 					EditorGUIUtility.pixelsPerPoint );
 
 				foreach(var kvp in selected)
@@ -1170,11 +1174,7 @@ class pb_Editor : EditorWindow
 					SceneView.lastActiveSceneView.camera,
 					selectionRect,
 					selection,
-					new pb_PickerOptions()
-					{
-						culling = selectHidden ? pb_Culling.None : pb_Culling.Back,
-						rectSelectMode = selectWholeElement ? pb_RectSelectMode.Complete : pb_RectSelectMode.Partial
-					},
+					pickingOptions,
 					EditorGUIUtility.pixelsPerPoint);
 
 				foreach(var kvp in selected)
@@ -1197,7 +1197,7 @@ class pb_Editor : EditorWindow
 						current = kvp.Value;
 					}
 
-					kvp.Key.SetSelectedFaces( current.ToArray() );
+					kvp.Key.SetSelectedFaces(current);
 				}
 
 
@@ -1211,66 +1211,38 @@ class pb_Editor : EditorWindow
 				if(!shiftKey && !ctrlKey)
 					ClearElementSelection();
 
-				for(int i = 0; i < selection.Length; i++)
+				var selected = pb_Picking.PickEdgesInRect(
+					SceneView.lastActiveSceneView.camera,
+					selectionRect,
+					selection,
+					pickingOptions,
+					EditorGUIUtility.pixelsPerPoint);
+
+				foreach(var kvp in selected)
 				{
-					pb_Object pb = selection[i];
+					pb_Object pb = kvp.Key;
+					Dictionary<int, int> commonIndices = pb.sharedIndices.ToDictionary();
+					HashSet<pb_EdgeLookup> selectedEdges = pb_EdgeLookup.GetEdgeLookupHashSet(kvp.Value, commonIndices);
 
-					Vector3[] vertices = m_verticesInWorldSpace[i];
-					Vector2[] gui = new Vector2[pb.vertexCount];
-
-					for(int nn = 0; nn < m_verticesInWorldSpace[i].Length; nn++)
-						gui[nn] = HandleUtility.WorldToGUIPoint(m_verticesInWorldSpace[i][nn]);
-
-					pb_IntArray[] sharedIndices = pb.sharedIndices;
-					HashSet<pb_Edge> inSelection = new HashSet<pb_Edge>();
-
-					for(int n = 0; n < m_universalEdges[i].Length; n++)
-					{
-						int x = sharedIndices[m_universalEdges[i][n].x][0],
-							y = sharedIndices[m_universalEdges[i][n].y][0];
-
-						Vector3 cen = (vertices[x] + vertices[y]) * .5f;
-
-						bool behindCam = cam.WorldToScreenPoint(cen).z < 0;
-
-						if( behindCam )
-							continue;
-
-						if( selectionRect.Contains(gui[x]) ||
-							selectionRect.Contains(gui[y]) ||
-							pb_Math.RectIntersectsLineSegment(selectionRect, gui[x], gui[y]) )
-						{
-							bool occluded = !pref_backfaceSelect && pb_HandleUtility.PointIsOccluded(cam, pb, cen);
-
-							if(!occluded)
-								inSelection.Add(m_universalEdges[i][n]);
-						}
-					}
-
-					HashSet<pb_Edge> current;
+					HashSet<pb_EdgeLookup> current;
 
 					if(shiftKey || ctrlKey)
 					{
-						current = new HashSet<pb_Edge>(pb_EdgeExtension.GetUniversalEdges(pb.SelectedEdges, m_sharedIndicesLookup[i]));
+						current = pb_EdgeLookup.GetEdgeLookupHashSet(pb.SelectedEdges, commonIndices);
 
 						if(dragSelectMode == DragSelectMode.Add)
-							current.UnionWith(inSelection);
+							current.UnionWith(selectedEdges);
 						else if(dragSelectMode == DragSelectMode.Subtract)
-							current.RemoveWhere(x => inSelection.Contains(x));
+							current.RemoveWhere(x => selectedEdges.Contains(x));
 						else if(dragSelectMode == DragSelectMode.Difference)
-							current.SymmetricExceptWith(inSelection);
+							current.SymmetricExceptWith(selectedEdges);
 					}
 					else
 					{
-						current = inSelection;
+						current = selectedEdges;
 					}
 
-					pb_Edge[] arr = current.ToArray();
-
-					for(int n = 0; n < current.Count; n++)
-						arr[n] = new pb_Edge(sharedIndices[arr[n].x][0], sharedIndices[arr[n].y][0]);
-
-					pb.SetSelectedEdges(arr);
+					pb.SetSelectedEdges(current.Select(x => x.local));
 				}
 
 				if(!vertexSelectionMask)

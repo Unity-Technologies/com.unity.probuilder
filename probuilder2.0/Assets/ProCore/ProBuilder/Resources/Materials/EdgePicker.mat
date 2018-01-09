@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: FacePicker
-  m_Shader: {fileID: 4800000, guid: 4024a17c5f5543fe9eb4add419e1fe6a, type: 3}
+  m_Name: EdgePicker
+  m_Shader: {fileID: 4800000, guid: f95983c5af5c74a4bacdb0d204ab11b1, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
@@ -19,5 +19,4 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats: []
-    m_Colors:
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    m_Colors: []

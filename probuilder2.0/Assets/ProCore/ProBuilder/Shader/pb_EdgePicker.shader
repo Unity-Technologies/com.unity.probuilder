@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ProBuilder/VertexPicker"
+﻿Shader "Hidden/ProBuilder/EdgePicker"
 {
 	Properties {}
 
@@ -6,7 +6,7 @@
 	{
 		Tags
 		{
-			"ProBuilderPicker"="VertexPass"
+			"ProBuilderPicker"="EdgePass"
 			"RenderType"="Transparent"
 			"IgnoreProjector"="True"
 			"DisableBatching"="True"
@@ -21,7 +21,7 @@
 
 		Pass
 		{
-			Name "Vertices"
+			Name "Edges"
 			AlphaTest Greater .25
 
 CGPROGRAM
@@ -32,16 +32,12 @@ CGPROGRAM
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float3 normal : NORMAL;
 				float4 color : COLOR;
-				float2 texcoord : TEXCOORD0;
-				float2 texcoord1 : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
-				float2 uv : TEXCOORD0;
 				float4 color : COLOR;
 			};
 
@@ -64,7 +60,6 @@ CGPROGRAM
 				clip.xy = clip.xy * .5 + .5;
 				clip.xy *= _ScreenParams.xy;
 
-				clip.xy += v.texcoord1.xy * 3.5;
 				clip.z -= .0001 * (1 - UNITY_MATRIX_P[3][3]);
 
 				clip.xy /= _ScreenParams.xy;
@@ -72,7 +67,6 @@ CGPROGRAM
 				clip.xy *= clip.w;
 
 				o.pos = clip;
-				o.uv = v.texcoord.xy;
 				o.color = v.color;
 
 				return o;

@@ -22,12 +22,13 @@ namespace ProBuilder.Core
 		internal static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
 		internal const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
 
-		static Material m_DefaultMaterial = null;
-		static Material m_FacePickerMaterial;
-		static Material m_VertexPickerMaterial;
-		static Shader m_SelectionPickerShader = null;
-		static Material m_UnityDefaultDiffuse = null;
-		static Material m_UnlitVertexColorMaterial;
+		static Material s_DefaultMaterial = null;
+		static Material s_FacePickerMaterial;
+		static Material s_VertexPickerMaterial;
+		static Material s_EdgePickerMaterial;
+		static Shader s_SelectionPickerShader = null;
+		static Material s_UnityDefaultDiffuse = null;
+		static Material s_UnlitVertexColorMaterial;
 
 		/// <summary>
 		/// Default ProBuilder material.
@@ -36,15 +37,15 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if(m_DefaultMaterial == null)
+				if(s_DefaultMaterial == null)
 				{
-					m_DefaultMaterial = (Material) Resources.Load("Materials/Default_Prototype", typeof(Material));
+					s_DefaultMaterial = (Material) Resources.Load("Materials/Default_Prototype", typeof(Material));
 
-					if(m_DefaultMaterial == null)
-						m_DefaultMaterial = UnityDefaultDiffuse;
+					if(s_DefaultMaterial == null)
+						s_DefaultMaterial = UnityDefaultDiffuse;
 				}
 
-				return m_DefaultMaterial;
+				return s_DefaultMaterial;
 			}
 		}
 
@@ -55,16 +56,16 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if(m_FacePickerMaterial == null)
+				if(s_FacePickerMaterial == null)
 				{
-					m_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
+					s_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
 
-					if(m_FacePickerMaterial == null)
-						m_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+					if(s_FacePickerMaterial == null)
+						s_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
 					else
-						m_FacePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
+						s_FacePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
 				}
-				return m_FacePickerMaterial;
+				return s_FacePickerMaterial;
 			}
 		}
 
@@ -75,16 +76,36 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if(m_VertexPickerMaterial == null)
+				if(s_VertexPickerMaterial == null)
 				{
-					m_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
+					s_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
 
-					if(m_VertexPickerMaterial == null)
-						m_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
+					if(s_VertexPickerMaterial == null)
+						s_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
 					else
-						m_VertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
+						s_VertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
 				}
-				return m_VertexPickerMaterial;
+				return s_VertexPickerMaterial;
+			}
+		}
+
+		/// <summary>
+		/// Material used for edge picking functions.
+		/// </summary>
+		internal static Material EdgePickerMaterial
+		{
+			get
+			{
+				if(s_EdgePickerMaterial == null)
+				{
+					s_EdgePickerMaterial = Resources.Load<Material>("Materials/EdgePicker");
+
+					if(s_EdgePickerMaterial == null)
+						s_EdgePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/EdgePicker"));
+					else
+						s_EdgePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/EdgePicker");
+				}
+				return s_EdgePickerMaterial;
 			}
 		}
 
@@ -95,9 +116,9 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if(m_SelectionPickerShader == null)
-					m_SelectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/SelectionPicker");
-				return m_SelectionPickerShader;
+				if(s_SelectionPickerShader == null)
+					s_SelectionPickerShader = (Shader) Shader.Find("Hidden/ProBuilder/SelectionPicker");
+				return s_SelectionPickerShader;
 			}
 		}
 
@@ -132,14 +153,14 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if( m_UnityDefaultDiffuse == null )
+				if( s_UnityDefaultDiffuse == null )
 				{
 					GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-					m_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
+					s_UnityDefaultDiffuse = go.GetComponent<MeshRenderer>().sharedMaterial;
 					GameObject.DestroyImmediate(go);
 				}
 
-				return m_UnityDefaultDiffuse;
+				return s_UnityDefaultDiffuse;
 			}
 		}
 
@@ -150,10 +171,10 @@ namespace ProBuilder.Core
 		{
 			get
 			{
-				if(m_UnlitVertexColorMaterial == null)
-					m_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
+				if(s_UnlitVertexColorMaterial == null)
+					s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
 
-				return m_UnlitVertexColorMaterial;
+				return s_UnlitVertexColorMaterial;
 			}
 		}
 

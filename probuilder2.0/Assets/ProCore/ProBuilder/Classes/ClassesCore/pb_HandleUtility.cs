@@ -18,11 +18,11 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="camera"></param>
 		/// <param name="point"></param>
-		/// <param name="pointsPerPixel"></param>
+		/// <param name="pixelsPerPoint"></param>
 		/// <returns></returns>
-		public static Vector3 ScreenToGuiPoint(this Camera camera, Vector3 point, float pointsPerPixel = 1f)
+		public static Vector3 ScreenToGuiPoint(this Camera camera, Vector3 point, float pixelsPerPoint)
 		{
-			return new Vector3(point.x / pointsPerPixel, (camera.pixelHeight - point.y) / pointsPerPixel, point.z);
+			return new Vector3(point.x / pixelsPerPoint, (camera.pixelHeight - point.y) / pixelsPerPoint, point.z);
 		}
 
 		/// <summary>

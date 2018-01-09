@@ -7,9 +7,10 @@ namespace ProBuilder.Core
 	public struct pb_PickerOptions
 	{
 		/// <summary>
-		/// Which faces should be culled when picking elements. Set to Back to select only visible elements, None to select any element regardless of visibility.
+		/// Should depth testing be performed when hit testing elements?
+		/// Enable to select only visible elements, disable to select all elements regardless of visibility.
 		/// </summary>
-		public pb_Culling culling;
+		public bool depthTest;
 
 		/// <summary>
 		/// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
@@ -19,7 +20,7 @@ namespace ProBuilder.Core
 
 		static readonly pb_PickerOptions k_Default = new pb_PickerOptions()
 		{
-			culling = pb_Culling.Back,
+			depthTest = true,
 			rectSelectMode = pb_RectSelectMode.Partial,
 		};
 
@@ -29,7 +30,7 @@ namespace ProBuilder.Core
 		}
 	}
 
-	class pb_Picking
+	static class pb_Picking
 	{
 		/// <summary>
 		/// Pick the vertex indices contained within a rect.
@@ -47,10 +48,9 @@ namespace ProBuilder.Core
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			if ((int) options.culling > 0)
+			if (options.depthTest)
 			{
-				// todo pb_Culling.Front is not respected
-				// todo Use pb_SelectionPicker path for culled and unculled paths (set face culling in object shader)
+				// todo Use pb_SelectionPicker path for depth tested and untested paths (set face culling in object shader)
 				return pb_SelectionPicker.PickVerticesInRect(
 					cam,
 					rect,
@@ -110,10 +110,10 @@ namespace ProBuilder.Core
 			IEnumerable<pb_Object> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
+
 		{
-			if (options.culling == pb_Culling.Back && options.rectSelectMode == pb_RectSelectMode.Partial)
+			if (options.depthTest && options.rectSelectMode == pb_RectSelectMode.Partial)
 			{
-				// todo handle both culling modes here
 				return pb_SelectionPicker.PickFacesInRect(
 					cam,
 					rect,
@@ -166,8 +166,7 @@ namespace ProBuilder.Core
 
 							if(!nope)
 							{
-								// todo occlusion testing here is super slow - use pb_SelectionPicker path
-								if( options.culling == pb_Culling.None ||
+								if( !options.depthTest ||
 									!pb_HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(pb_Math.Average(positions, face.distinctIndices))))
 								{
 									selectedFaces.Add(face);
@@ -228,6 +227,70 @@ namespace ProBuilder.Core
 				}
 
 				selected.Add(pb, selectedFaces);
+			}
+
+			return selected;
+		}
+
+		public static Dictionary<pb_Object, HashSet<pb_Edge>> PickEdgesInRect(
+			Camera cam,
+			Rect rect,
+			IEnumerable<pb_Object> selectable,
+			pb_PickerOptions options,
+			float pixelsPerPoint = 1f)
+		{
+			// todo texture render picking path for edges w/ complete rect mode
+
+			if (options.rectSelectMode == pb_RectSelectMode.Partial)
+			{
+				return pb_SelectionPicker.PickEdgesInRect(
+					cam,
+					rect,
+					selectable,
+					options.depthTest,
+					(int) (cam.pixelWidth / pixelsPerPoint),
+					(int) (cam.pixelHeight / pixelsPerPoint));
+			}
+
+			// complete select mode
+			var selected = new Dictionary<pb_Object, HashSet<pb_Edge>>();
+
+			foreach (var pb in selectable)
+			{
+				if (!pb.isSelectable)
+					continue;
+
+				Transform trs = pb.transform;
+				var selectedEdges = new HashSet<pb_Edge>();
+
+				for (int i = 0, fc = pb.faceCount; i < fc; i++)
+				{
+					var edges = pb.faces[i].edges;
+
+					for (int n = 0, ec = edges.Length; n < ec; n++)
+					{
+						var edge = edges[n];
+
+						var posA = trs.TransformPoint(pb.vertices[edge.x]);
+						var posB = trs.TransformPoint(pb.vertices[edge.y]);
+
+						Vector3 a = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posA), pixelsPerPoint);
+						Vector3 b = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posB), pixelsPerPoint);
+
+						// if either of the positions are clipped by the camera we cannot possibly select both, skip it
+						if ((a.z < cam.nearClipPlane || b.z < cam.nearClipPlane))
+							continue;
+
+						if (rect.Contains(a) && rect.Contains(b))
+						{
+
+							if (!options.depthTest || !pb_HandleUtility.PointIsOccluded(cam, pb, (posA + posB) * .5f))
+								selectedEdges.Add(edge);
+						}
+					}
+				}
+
+				selected.Add(pb, selectedEdges);
 			}
 
 			return selected;

@@ -2,7 +2,9 @@
 
 Shader "Hidden/ProBuilder/FacePicker"
 {
-	Properties {}
+	Properties {
+		_Tint ("Tint", Color) = (1,1,1,1)
+	}
 
 	SubShader
 	{
@@ -21,6 +23,8 @@ Shader "Hidden/ProBuilder/FacePicker"
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
+
+			float4 _Tint;
 
 			struct appdata
 			{
@@ -45,7 +49,7 @@ Shader "Hidden/ProBuilder/FacePicker"
 
 			float4 frag (v2f i) : COLOR
 			{
-				return i.color;
+				return _Tint * i.color;
 			}
 
 			ENDCG

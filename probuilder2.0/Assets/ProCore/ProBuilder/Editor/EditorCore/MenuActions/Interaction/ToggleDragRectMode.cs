@@ -31,16 +31,16 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode == SelectMode.Face;
+			return pb_Editor.instance != null &&
+			       pb_Editor.instance.editLevel == EditLevel.Geometry &&
+			       pb_Editor.instance.selectionMode != SelectMode.Vertex;
 		}
 
 		public override bool IsHidden()
 		{
 			return 	pb_Editor.instance == null ||
 					pb_Editor.instance.editLevel != EditLevel.Geometry ||
-					pb_Editor.instance.selectionMode != SelectMode.Face;
+			       	pb_Editor.instance.selectionMode == SelectMode.Vertex;
 		}
 	}
 }

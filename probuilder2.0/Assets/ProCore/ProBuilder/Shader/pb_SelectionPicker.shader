@@ -4,6 +4,18 @@
 
 	SubShader
 	{
+		Tags { "ProBuilderPicker"="EdgePass" }
+		Lighting Off
+		ZTest LEqual
+		ZWrite On
+		Cull Off
+		Blend Off
+
+		UsePass "Hidden/ProBuilder/EdgePicker/EDGES"
+	}
+
+	SubShader
+	{
 		Tags { "ProBuilderPicker"="VertexPass" }
 		Lighting Off
 		ZTest LEqual

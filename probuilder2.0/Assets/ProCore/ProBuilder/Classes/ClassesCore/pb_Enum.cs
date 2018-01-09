@@ -193,6 +193,7 @@ namespace ProBuilder.Core
 		FrontBack = 0x2
 	}
 
+	[System.Flags]
 	public enum pb_Culling
 	{
 		None = 0 << 0,

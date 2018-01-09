@@ -81,5 +81,19 @@ namespace ProBuilder.Core
 		{
 			return edges.Select(x => new pb_EdgeLookup(new pb_Edge(lookup[x.x], lookup[x.y]), x));
 		}
+
+		/// <summary>
+		/// Create a hashset of edge lookup values from a collection of local edges and a shared indices lookup.
+		/// </summary>
+		/// <param name="edges"></param>
+		/// <param name="lookup"></param>
+		/// <returns></returns>
+		public static HashSet<pb_EdgeLookup> GetEdgeLookupHashSet(IEnumerable<pb_Edge> edges, Dictionary<int, int> lookup)
+		{
+			var hash = new HashSet<pb_EdgeLookup>();
+			foreach (var local in edges)
+				hash.Add(new pb_EdgeLookup(new pb_Edge(lookup[local.x], lookup[local.y]), local));
+			return hash;
+		}
 	}
 }
