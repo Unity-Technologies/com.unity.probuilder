@@ -12,16 +12,16 @@ namespace ProBuilder.Core
 	/// </summary>
 	static class pb_SelectionPicker
 	{
-		private static bool m_Initialized = false;
+		static bool s_Initialized = false;
 
-		private static RenderTextureFormat renderTextureFormat
+		static RenderTextureFormat renderTextureFormat
 		{
 			get
 			{
-				if(m_Initialized)
+				if(s_Initialized)
 					return m_RenderTextureFormat;
 
-				m_Initialized = true;
+				s_Initialized = true;
 
 				for(int i = 0; i < m_PreferredFormats.Length; i++)
 				{
@@ -36,11 +36,11 @@ namespace ProBuilder.Core
 			}
 		}
 
-		private static TextureFormat textureFormat { get { return TextureFormat.ARGB32; } }
+		static TextureFormat textureFormat { get { return TextureFormat.ARGB32; } }
 
-		private static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
+		static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
 
-		private static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
+		static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
 		{
 #if UNITY_5_6
 			RenderTextureFormat.ARGBFloat,
@@ -51,10 +51,15 @@ namespace ProBuilder.Core
 #endif
 		};
 
-		/**
-		 * Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched
-		 * by the rect.
-		 */
+		/// <summary>
+		/// Given a camera and selection rect (in screen space) return a Dictionary containing the number of faces touched by the rect.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="pickerRect"></param>
+		/// <param name="selection"></param>
+		/// <param name="renderTextureWidth"></param>
+		/// <param name="renderTextureHeight"></param>
+		/// <returns></returns>
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera camera,
 			Rect pickerRect,
@@ -125,10 +130,15 @@ namespace ProBuilder.Core
 			return selected;
 		}
 
-		/**
-		 *	Given a camera and selection rect (in screen space) return a Dictionary containing the number of vertices touched
-		 *	by the rect.
-		 */
+		/// <summary>
+		/// Select vertex indices contained within a rect.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="pickerRect"></param>
+		/// <param name="selection"></param>
+		/// <param name="renderTextureWidth"></param>
+		/// <param name="renderTextureHeight"></param>
+		/// <returns>A dictionary of pb_Object selected vertex indices.</returns>
 		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
 			Camera camera,
 			Rect pickerRect,
@@ -210,7 +220,7 @@ namespace ProBuilder.Core
 					GameObject.DestroyImmediate(img);
 				}
 			}
-			Debug.Log(sb.ToString());
+			pb_Log.Debug(sb.ToString());
 
 #endif
 
