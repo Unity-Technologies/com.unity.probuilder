@@ -4,7 +4,7 @@ using ProBuilder.Core;
 
 namespace ProBuilder.EditorTests.Picking
 {
-	public class SelectionPicker
+	public class ColorEncoding
 	{
 		static readonly Color32 k_ColorWhite = new Color32(255, 255, 255, 255);
 		const uint k_HexColorWhite = 0x00FFFFFF;
