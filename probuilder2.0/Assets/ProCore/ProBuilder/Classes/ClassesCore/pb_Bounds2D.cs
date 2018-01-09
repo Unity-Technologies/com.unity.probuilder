@@ -77,10 +77,49 @@ namespace ProBuilder.Core
 			SetWithPoints(points, indices);
 		}
 
-		/**
-		 * Create bounds from a set of 2d points.
-		 */
+		/// <summary>
+		/// Create bounds from a set of 2d points.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="edges"></param>
 		public pb_Bounds2D(Vector2[] points, pb_Edge[] edges)
+		{
+			float 	xMin = 0f,
+					xMax = 0f,
+					yMin = 0f,
+					yMax = 0f;
+
+			if(points.Length > 0 && edges.Length > 0)
+			{
+				xMin = points[edges[0].x].x;
+				yMin = points[edges[0].x].y;
+				xMax = xMin;
+				yMax = yMin;
+
+				for(int i = 0; i < edges.Length; i++)
+				{
+					xMin = Mathf.Min(xMin, points[edges[i].x].x);
+					xMin = Mathf.Min(xMin, points[edges[i].y].x);
+					yMin = Mathf.Min(yMin, points[edges[i].x].y);
+					yMin = Mathf.Min(yMin, points[edges[i].y].y);
+
+					xMax = Mathf.Max(xMax, points[edges[i].x].x);
+					xMax = Mathf.Max(xMax, points[edges[i].y].x);
+					yMax = Mathf.Max(yMax, points[edges[i].x].y);
+					yMax = Mathf.Max(yMax, points[edges[i].y].y);
+				}
+			}
+
+			this.center = new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f );
+			this.size = new Vector3(xMax-xMin, yMax-yMin);
+		}
+
+		/// <summary>
+		/// Create bounds from a set of 3d points cast to 2d.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="edges"></param>
+		internal pb_Bounds2D(Vector3[] points, pb_Edge[] edges)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,

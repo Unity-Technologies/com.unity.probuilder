@@ -419,9 +419,7 @@ class pb_Editor : EditorWindow
 				snapToFace = true;
 		}
 
-		/**
-		 * Snap stuff
-		 */
+		// Snap stuff
 		if(currentEvent.type == EventType.KeyUp)
 		{
 			snapToFace = false;
@@ -1125,44 +1123,12 @@ class pb_Editor : EditorWindow
 				if(!shiftKey && !ctrlKey)
 					ClearElementSelection();
 
-				Dictionary<pb_Object, HashSet<int>> selected;
-
-				if( !selectHidden )
-				{
-					selected = pb_SelectionPicker.PickVerticesInRect(
-						cam,
-						selectionRect,
-						selection.Where(x => x.isSelectable),
-						(int) sceneView.position.width,
-						(int) sceneView.position.height);
-				}
-				else
-				{
-					selected = new Dictionary<pb_Object, HashSet<int>>();
-
-					for(int i = 0; i < selection.Length; i++)
-					{
-						pb_Object pb = selection[i];
-
-						if(!pb.isSelectable)
-							continue;
-
-						pb_IntArray[] sharedIndices = pb.sharedIndices;
-						HashSet<int> inRect = new HashSet<int>();
-
-						for(int n = 0; n < sharedIndices.Length; n++)
-						{
-							Vector3 v = m_verticesInWorldSpace[i][sharedIndices[n][0]];
-
-							bool contains = selectionRect.Contains(HandleUtility.WorldToGUIPoint(v));
-
-							if(contains && cam.WorldToScreenPoint(v).z > 0)
-								inRect.Add(n);
-						}
-
-						selected.Add(pb, inRect);
-					}
-				}
+				Dictionary<pb_Object, HashSet<int>> selected = pb_Picking.PickVerticesInRect(
+					SceneView.lastActiveSceneView.camera,
+					selectionRect,
+					selection,
+					new pb_PickerOptions() { culling = selectHidden ? pb_Culling.None : pb_Culling.Back },
+					EditorGUIUtility.pixelsPerPoint );
 
 				foreach(var kvp in selected)
 				{
@@ -1200,118 +1166,16 @@ class pb_Editor : EditorWindow
 				if(!shiftKey && !ctrlKey)
 					ClearElementSelection();
 
-				Dictionary<pb_Object, HashSet<pb_Face>> selected;
-
-				if( !selectHidden && !selectWholeElement )
-				{
-					selected = pb_SelectionPicker.PickFacesInRect(
-						cam,
-						selectionRect,
-						selection.Where(x => x.isSelectable),
-						(int) sceneView.position.width,
-						(int) sceneView.position.height);
-				}
-				else
-				{
-					selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
-
-					for(int i = 0; i < selection.Length; i++)
+				Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_Picking.PickFacesInRect(
+					SceneView.lastActiveSceneView.camera,
+					selectionRect,
+					selection,
+					new pb_PickerOptions()
 					{
-						pb_Object pb = selection[i];
-						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>();
-
-						Vector3[] verticesInWorldSpace = m_verticesInWorldSpace[i];
-						Vector2[] guiPoints = new Vector2[verticesInWorldSpace.Length];
-
-						for(int nn = 0; nn < pb.vertexCount; nn++)
-							guiPoints[nn] = HandleUtility.WorldToGUIPoint(verticesInWorldSpace[nn]);
-
-						for(int n = 0; n < pb.faces.Length; n++)
-						{
-							pb_Face face = pb.faces[n];
-
-							/// face is behind the camera
-							if( cam.WorldToScreenPoint(verticesInWorldSpace[face.indices[0]]).z < 0 )
-								continue;
-
-							if(selectWholeElement)
-							{
-								// only check the first index per quad, and if it checks out, then check every other point
-								if(selectionRect.Contains(guiPoints[face.indices[0]]))
-								{
-									bool nope = false;
-									for(int q = 1; q < face.distinctIndices.Length; q++)
-									{
-										if(!selectionRect.Contains(guiPoints[face.distinctIndices[q]]))
-										{
-											nope = true;
-											break;
-										}
-									}
-
-									if(!nope)
-									{
-										if( pref_backfaceSelect ||
-											!pb_HandleUtility.PointIsOccluded(cam, pb, pb_Math.Average(pb_Util.ValuesWithIndices(verticesInWorldSpace, face.distinctIndices))) )
-										{
-											selectedFaces.Add(face);
-										}
-									}
-								}
-							}
-							else
-							{
-								pb_Bounds2D poly = new pb_Bounds2D(guiPoints, face.edges);
-								bool overlaps = false;
-
-								if( poly.Intersects(selectionRect) )
-								{
-									// if selectionRect contains one point of polygon, it overlaps
-									for(int nn = 0; nn < face.distinctIndices.Length && !overlaps; nn++)
-										overlaps = selectionRect.Contains(guiPoints[face.distinctIndices[nn]]);
-
-									// if polygon contains one point of selectionRect, it overlaps
-									if(!overlaps)
-									{
-										Vector2 tl = new Vector2(selectionRect.xMin, selectionRect.yMax);
-										Vector2 tr = new Vector2(selectionRect.xMax, selectionRect.yMax);
-										Vector2 bl = new Vector2(selectionRect.xMin, selectionRect.yMin);
-										Vector2 br = new Vector2(selectionRect.xMax, selectionRect.yMin);
-
-										overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tl);
-										if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, tr);
-										if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, br);
-										if(!overlaps) overlaps = pb_Math.PointInPolygon(guiPoints, poly, face.edges, bl);
-
-										// if any polygon edge intersects rect
-										for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
-										{
-											if( pb_Math.GetLineSegmentIntersect(tr, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-												overlaps = true;
-											else
-											if( pb_Math.GetLineSegmentIntersect(tl, bl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-												overlaps = true;
-											else
-											if( pb_Math.GetLineSegmentIntersect(bl, br, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-												overlaps = true;
-											else
-											if( pb_Math.GetLineSegmentIntersect(br, tl, guiPoints[face.edges[nn].x], guiPoints[face.edges[nn].y]) )
-												overlaps = true;
-										}
-									}
-								}
-
-								// don't test occlusion since that case is handled special
-								if(overlaps)
-								{
-									selectedFaces.Add(face);
-								}
-							}
-						}
-
-						selected.Add(pb, selectedFaces);
-					}
-				}
+						culling = selectHidden ? pb_Culling.None : pb_Culling.Back,
+						rectSelectMode = selectWholeElement ? pb_RectSelectMode.Complete : pb_RectSelectMode.Partial
+					},
+					EditorGUIUtility.pixelsPerPoint);
 
 				foreach(var kvp in selected)
 				{

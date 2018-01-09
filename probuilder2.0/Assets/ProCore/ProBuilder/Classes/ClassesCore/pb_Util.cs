@@ -95,7 +95,6 @@ namespace ProBuilder.Core
 			return c.ToArray() as T[];
 		}
 
-
 		/**
 		 * Extension to transform.TransformPoint(Vector3 v) for arrays of Vector3[].
 		 */

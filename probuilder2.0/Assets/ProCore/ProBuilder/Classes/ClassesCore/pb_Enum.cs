@@ -176,6 +176,7 @@ namespace ProBuilder.Core
 	/// <summary>
 	/// Describes different culling options.
 	/// </summary>
+	[System.Obsolete("use pb_Culling")]
 	public enum Culling
 	{
 		/// <summary>
@@ -190,6 +191,20 @@ namespace ProBuilder.Core
 		/// Both faces are culled.
 		/// </summary>
 		FrontBack = 0x2
+	}
+
+	public enum pb_Culling
+	{
+		None = 0 << 0,
+		Back = 1 << 0,
+		Front = 1 << 1,
+		FrontBack = Front | Back,
+	}
+
+	public enum pb_RectSelectMode
+	{
+		Partial,
+		Complete
 	}
 
 	/// <summary>

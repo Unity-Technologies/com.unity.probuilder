@@ -19,28 +19,28 @@ namespace ProBuilder.Core
 			get
 			{
 				if(s_Initialized)
-					return m_RenderTextureFormat;
+					return s_RenderTextureFormat;
 
 				s_Initialized = true;
 
-				for(int i = 0; i < m_PreferredFormats.Length; i++)
+				for(int i = 0; i < s_PreferredFormats.Length; i++)
 				{
-					if(SystemInfo.SupportsRenderTextureFormat(m_PreferredFormats[i]))
+					if(SystemInfo.SupportsRenderTextureFormat(s_PreferredFormats[i]))
 					{
-						m_RenderTextureFormat = m_PreferredFormats[i];
+						s_RenderTextureFormat = s_PreferredFormats[i];
 						break;
 					}
 				}
 
-				return m_RenderTextureFormat;
+				return s_RenderTextureFormat;
 			}
 		}
 
 		static TextureFormat textureFormat { get { return TextureFormat.ARGB32; } }
 
-		static RenderTextureFormat m_RenderTextureFormat = RenderTextureFormat.Default;
+		static RenderTextureFormat s_RenderTextureFormat = RenderTextureFormat.Default;
 
-		static RenderTextureFormat[] m_PreferredFormats = new RenderTextureFormat[]
+		static RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
 		{
 #if UNITY_5_6
 			RenderTextureFormat.ARGBFloat,
@@ -155,7 +155,7 @@ namespace ProBuilder.Core
 			sb.AppendLine("default: " + renderTextureFormat);
 			sb.AppendLine("event: " + Event.current.type);
 
-			foreach(RenderTextureFormat tf in m_PreferredFormats)
+			foreach(RenderTextureFormat tf in s_PreferredFormats)
 			{
 				if( !SystemInfo.SupportsRenderTextureFormat(tf) )
 				{
@@ -164,7 +164,7 @@ namespace ProBuilder.Core
 				}
 
 				sb.AppendLine(tf.ToString());
-				m_RenderTextureFormat = tf;
+				s_RenderTextureFormat = tf;
 				List<Color> rectImg = new List<Color>();
 				selected.Clear();
 #endif
@@ -173,7 +173,7 @@ namespace ProBuilder.Core
 			Color32[] pix = tex.GetPixels32();
 
 #if PB_DEBUG
-			// System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
+			 System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
 #endif
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
@@ -221,7 +221,6 @@ namespace ProBuilder.Core
 				}
 			}
 			pb_Log.Debug(sb.ToString());
-
 #endif
 
 			return selected;

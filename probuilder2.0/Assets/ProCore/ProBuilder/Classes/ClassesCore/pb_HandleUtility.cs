@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,18 @@ namespace ProBuilder.Core
 	static class pb_HandleUtility
 	{
 		const float MAX_EDGE_SELECT_DISTANCE = 20f;
+
+		/// <summary>
+		/// Convert a screen point (0,0 bottom left, in pixels) to a GUI point (0,0 top left, in points).
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="point"></param>
+		/// <param name="pointsPerPixel"></param>
+		/// <returns></returns>
+		public static Vector3 ScreenToGuiPoint(this Camera camera, Vector3 point, float pointsPerPixel = 1f)
+		{
+			return new Vector3(point.x / pointsPerPixel, (camera.pixelHeight - point.y) / pointsPerPixel, point.z);
+		}
 
 		/// <summary>
 		/// Find a triangle intersected by InRay on InMesh.  InRay is in world space.

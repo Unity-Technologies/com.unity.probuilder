@@ -381,17 +381,17 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		///
+		/// Is the point within a polygon?
 		/// </summary>
 		/// <remarks>
 		/// Assumes polygon has already been tested with AABB
 		/// </remarks>
-		/// <param name="polygon"></param>
+		/// <param name="positions"></param>
 		/// <param name="polyBounds"></param>
 		/// <param name="edges"></param>
 		/// <param name="point"></param>
 		/// <returns></returns>
-		internal static bool PointInPolygon(Vector2[] polygon, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		internal static bool PointInPolygon(Vector2[] positions, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
 		{
 			int len = edges.Length * 2;
 
@@ -401,7 +401,35 @@ namespace ProBuilder.Core
 
 			for(int i = 0; i < len; i += 2)
 			{
-				if( GetLineSegmentIntersect(rayStart, point, polygon[i], polygon[i+1]) )
+				if( GetLineSegmentIntersect(rayStart, point, positions[i], positions[i+1]) )
+					collisions++;
+			}
+
+			return collisions % 2 != 0;
+		}
+
+		/// <summary>
+		/// Is the 2d point within a 2d polygon? This overload is provided as a convenience for 2d arrays coming from cam.WorldToScreenPoint (which includes a Z value).
+		/// </summary>
+		/// <remarks>
+		/// Assumes polygon has already been tested with AABB
+		/// </remarks>
+		/// <param name="positions"></param>
+		/// <param name="polyBounds"></param>
+		/// <param name="edges"></param>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		internal static bool PointInPolygon(Vector3[] positions, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		{
+			int len = edges.Length * 2;
+
+			Vector2 rayStart = polyBounds.center + Vector2.up * (polyBounds.size.y + 2f);
+
+			int collisions = 0;
+
+			for(int i = 0; i < len; i += 2)
+			{
+				if( GetLineSegmentIntersect(rayStart, point, positions[i], positions[i+1]) )
 					collisions++;
 			}
 
