@@ -48,51 +48,50 @@ namespace ProBuilder.Core
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			if (options.depthTest)
-			{
-				// todo Use pb_SelectionPicker path for depth tested and untested paths (set face culling in object shader)
-				return pb_SelectionPicker.PickVerticesInRect(
-					cam,
-					rect,
-					selectable,
-					(int) (cam.pixelWidth / pixelsPerPoint),
-					(int) (cam.pixelHeight / pixelsPerPoint));
-			}
-			else
-			{
-				var selected = new Dictionary<pb_Object, HashSet<int>>();
+			return pb_SelectionPicker.PickVerticesInRect(
+				cam,
+				rect,
+				selectable,
+				options.depthTest,
+				(int) (cam.pixelWidth / pixelsPerPoint),
+				(int) (cam.pixelHeight / pixelsPerPoint));
 
-				foreach(var pb in selectable)
+			// todo - this path can be faster for lower vertex count objects. evaluate the difference and consider
+			// splitting based on the selection vertex count?
+#pragma warning disable 162
+			var selected = new Dictionary<pb_Object, HashSet<int>>();
+
+			foreach(var pb in selectable)
+			{
+				if(!pb.isSelectable)
+					continue;
+
+				pb_IntArray[] sharedIndices = pb.sharedIndices;
+				HashSet<int> inRect = new HashSet<int>();
+				Vector3[] positions = pb.vertices;
+				var trs = pb.transform;
+				float pixelHeight = cam.pixelHeight;
+
+				for(int n = 0; n < sharedIndices.Length; n++)
 				{
-					if(!pb.isSelectable)
+					Vector3 v = trs.TransformPoint(positions[sharedIndices[n][0]]);
+					Vector3 p = cam.WorldToScreenPoint(v);
+
+					if (p.z < cam.nearClipPlane)
 						continue;
 
-					pb_IntArray[] sharedIndices = pb.sharedIndices;
-					HashSet<int> inRect = new HashSet<int>();
-					Vector3[] positions = pb.vertices;
-					var trs = pb.transform;
-					float pixelHeight = cam.pixelHeight;
+					p.x /= pixelsPerPoint;
+					p.y = (pixelHeight - p.y) / pixelsPerPoint;
 
-					for(int n = 0; n < sharedIndices.Length; n++)
-					{
-						Vector3 v = trs.TransformPoint(positions[sharedIndices[n][0]]);
-						Vector3 p = cam.WorldToScreenPoint(v);
-
-						if (p.z < cam.nearClipPlane)
-							continue;
-
-						p.x /= pixelsPerPoint;
-						p.y = (pixelHeight - p.y) / pixelsPerPoint;
-
-						if(rect.Contains(p))
-							inRect.Add(n);
-					}
-
-					selected.Add(pb, inRect);
+					if(rect.Contains(p))
+						inRect.Add(n);
 				}
 
-				return selected;
+				selected.Add(pb, inRect);
 			}
+
+			return selected;
+#pragma warning restore 162
 		}
 
 		/// <summary>

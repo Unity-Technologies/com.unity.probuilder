@@ -68,7 +68,7 @@ namespace ProBuilder.Core
 			int OutHitFace = -1;
 			Vector3 OutNrm = Vector3.zero;
 
-			// Iterate faces, testing for nearest hit to ray origin.  Optionally ignores backfaces.
+			// Iterate faces, testing for nearest hit to ray origin. Optionally ignores backfaces.
 			for(int CurFace = 0; CurFace < mesh.faces.Length; ++CurFace)
 			{
 				if(ignore != null && ignore.Contains(mesh.faces[CurFace]))
