@@ -212,7 +212,7 @@ namespace ProBuilder.MeshOperations
 			else
 				addedFaces = null;
 
-			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count));
+			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count / 2));
 		}
 
 		/// <summary>
