@@ -28,19 +28,22 @@ namespace ProBuilder.EditorCore
 		private List<GameObject> m_IgnorePick = new List<GameObject>();
 		private bool m_IsModifyingVertices = false;
 
-		private pb_PolyShape polygon { get { return target as pb_PolyShape; } }
+		private pb_PolyShape polygon
+		{
+			get { return target as pb_PolyShape; }
+		}
 
 		Material CreateHighlightLineMaterial()
 		{
 			Material mat = new Material(Shader.Find("Hidden/ProBuilder/ScrollHighlight"));
-			mat.SetColor("_Highlight", new Color(0f, 200f/255f, 170f/200f, 1f));
-			mat.SetColor("_Base", new Color(0f, 136f/255f, 1f, 1f));
+			mat.SetColor("_Highlight", new Color(0f, 200f / 255f, 170f / 200f, 1f));
+			mat.SetColor("_Base", new Color(0f, 136f / 255f, 1f, 1f));
 			return mat;
 		}
 
 		void OnEnable()
 		{
-			if(polygon == null)
+			if (polygon == null)
 			{
 				DestroyImmediate(this);
 				return;
@@ -70,14 +73,16 @@ namespace ProBuilder.EditorCore
 
 		public override void OnInspectorGUI()
 		{
-			switch(polygon.polyEditMode)
+			switch (polygon.polyEditMode)
 			{
 				case pb_PolyShape.PolyEditMode.None:
 				{
-					if( GUILayout.Button("Edit Poly Shape") )
+					if (GUILayout.Button("Edit Poly Shape"))
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
 
-					EditorGUILayout.HelpBox("Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.", MessageType.Warning);
+					EditorGUILayout.HelpBox(
+						"Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.",
+						MessageType.Warning);
 
 					break;
 				}
@@ -96,7 +101,7 @@ namespace ProBuilder.EditorCore
 
 				case pb_PolyShape.PolyEditMode.Edit:
 				{
-					if( GUILayout.Button("Editing Poly Shape", pb_EditorGUIUtility.GetActiveStyle("Button")) )
+					if (GUILayout.Button("Editing Poly Shape", pb_EditorGUIUtility.GetActiveStyle("Button")))
 						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
 					break;
 				}
@@ -111,11 +116,11 @@ namespace ProBuilder.EditorCore
 			bool flipNormals = polygon.flipNormals;
 			flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
 
-			if(EditorGUI.EndChangeCheck())
+			if (EditorGUI.EndChangeCheck())
 			{
-				if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+				if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
 				{
-					if(pb_Editor.instance != null)
+					if (pb_Editor.instance != null)
 						pb_Editor.instance.ClearElementSelection();
 
 					pb_Undo.RecordObject(polygon, "Change Polygon Shape Settings");
@@ -128,7 +133,8 @@ namespace ProBuilder.EditorCore
 
 				polygon.extrude = extrude;
 				polygon.flipNormals = flipNormals;
-				UpdateMesh();
+
+				RebuildPolyShapeMesh(polygon);
 			}
 
 			// GUILayout.Label("selected : " + m_SelectedIndex);
@@ -136,7 +142,7 @@ namespace ProBuilder.EditorCore
 
 		void Update()
 		{
-			if(m_LineMaterial != null)
+			if (m_LineMaterial != null)
 				m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
@@ -144,7 +150,7 @@ namespace ProBuilder.EditorCore
 		{
 			pb_PolyShape.PolyEditMode old = polygon.polyEditMode;
 
-			if(mode != old)
+			if (mode != old)
 			{
 				// Clear the control always
 				GUIUtility.hotControl = 0;
@@ -152,9 +158,9 @@ namespace ProBuilder.EditorCore
 				// Entering edit mode after the shape has been finalized once before, which means
 				// possibly reverting manual changes.  Store undo state so that if this was
 				// not intentional user can revert.
-				if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None && polygon.points.Count > 2)
+				if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None && polygon.points.Count > 2)
 				{
-					if(pb_Editor.instance != null)
+					if (pb_Editor.instance != null)
 						pb_Editor.instance.ClearElementSelection();
 
 					pb_Undo.RecordObject(polygon, "Edit Polygon Shape");
@@ -163,28 +169,30 @@ namespace ProBuilder.EditorCore
 
 				polygon.polyEditMode = mode;
 
-				if(pb_Editor.instance != null)
+				if (pb_Editor.instance != null)
 				{
-					if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+					if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
 						pb_Editor.instance.PopEditLevel();
 					else
 						pb_Editor.instance.SetEditLevel(EditLevel.Plugin);
 				}
 
-				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+				if (polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
 					Tools.current = Tool.None;
 
 				// If coming from Path -> Height set the mouse / origin offset
-				if(old == pb_PolyShape.PolyEditMode.Path && mode == pb_PolyShape.PolyEditMode.Height && Event.current != null)
+				if (old == pb_PolyShape.PolyEditMode.Path && mode == pb_PolyShape.PolyEditMode.Height && Event.current != null)
 				{
 					Vector3 up = polygon.transform.up;
 					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
 					Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-					m_HeightMouseOffset = polygon.extrude - pb_ProGridsInterface.ProGridsSnap(Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
+					m_HeightMouseOffset = polygon.extrude -
+					                      pb_ProGridsInterface.ProGridsSnap(
+						                      Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
 				}
 
-				UpdateMesh();
+				RebuildPolyShapeMesh(polygon);
 			}
 		}
 
@@ -195,32 +203,32 @@ namespace ProBuilder.EditorCore
 
 			do
 			{
-				if(go != null)
+				if (go != null)
 					m_IgnorePick.Add(go);
 
 				go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
-			}
-			while(go != null && go.GetComponent<MeshFilter>() == null);
+			} while (go != null && go.GetComponent<MeshFilter>() == null);
 
-			if(go != null)
+			if (go != null)
 			{
 				Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
 
-				if(m != null)
+				if (m != null)
 				{
 					pb_RaycastHit hit;
 
-					if(pb_HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
+					if (pb_HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
 						go.transform,
 						m.vertices,
 						m.triangles,
 						out hit))
 					{
-						polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) * Quaternion.Euler(new Vector3(90f, 0f, 0f));
+						polygon.transform.rotation = Quaternion.LookRotation(go.transform.TransformDirection(hit.normal).normalized) *
+						                             Quaternion.Euler(new Vector3(90f, 0f, 0f));
 						Vector3 hitPointWorld = go.transform.TransformPoint(hit.point);
 
 						// if hit point on plane is cardinal axis and on grid, snap to grid.
-						if( !pb_Math.IsCardinalAxis(polygon.transform.up) )
+						if (!pb_Math.IsCardinalAxis(polygon.transform.up))
 						{
 							polygon.isOnGrid = false;
 						}
@@ -232,7 +240,8 @@ namespace ProBuilder.EditorCore
 							polygon.isOnGrid = (rem < epsilon || Mathf.Abs(snapVal - rem) < epsilon);
 						}
 
-						polygon.transform.position = polygon.isOnGrid ? pb_ProGridsInterface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
+						polygon.transform.position =
+							polygon.isOnGrid ? pb_ProGridsInterface.ProGridsSnap(hitPointWorld, Vector3.one) : hitPointWorld;
 
 						return;
 					}
@@ -247,14 +256,14 @@ namespace ProBuilder.EditorCore
 
 			ProjectionAxis axis = ProjectionAxis.Y;
 
-			if( Mathf.Abs(cam_x) > .98f )
+			if (Mathf.Abs(cam_x) > .98f)
 				axis = ProjectionAxis.X;
-			else if ( Mathf.Abs(cam_z) > .98f )
+			else if (Mathf.Abs(cam_z) > .98f)
 				axis = ProjectionAxis.Z;
 
 			polygon.transform.position = pb_ProGridsInterface.ProGridsSnap(polygon.transform.position);
 
-			switch(axis)
+			switch (axis)
 			{
 				case ProjectionAxis.X:
 					polygon.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 90f * Mathf.Sign(cam_x)));
@@ -270,19 +279,19 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		// Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
-		bool UpdateMesh(bool vertexCountChanged = true)
+		// Update the pb_Object with the new coordinates. Returns true if mesh successfully triangulated, false if not.
+		void RebuildPolyShapeMesh(bool vertexCountChanged = false)
 		{
 			// If Undo is called immediately after creation this situation can occur
-			if(polygon == null)
-				return false;
+			if (polygon == null)
+				return;
 
 			DrawPolyLine(polygon.points);
 
 			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
 			{
 				pb_Editor.Refresh();
-				return false;
+				return;
 			}
 
 			if(vertexCountChanged)
@@ -296,7 +305,7 @@ namespace ProBuilder.EditorCore
 					pb_Editor.Refresh();
 			}
 
-			return true;
+			return;
 		}
 
 		void OnSceneGUI()
@@ -372,7 +381,7 @@ namespace ProBuilder.EditorCore
 					{
 						evt.Use();
 						polygon.points[m_SelectedIndex] = pb_ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(ray.GetPoint(hitDistance)), SNAP_MASK);
-						UpdateMesh(false);
+						RebuildPolyShapeMesh(false);
 						SceneView.RepaintAll();
 					}
 				}
@@ -420,7 +429,7 @@ namespace ProBuilder.EditorCore
 
 						m_PlacingPoint = true;
 						m_SelectedIndex = polygon.points.Count - 1;
-						UpdateMesh();
+						RebuildPolyShapeMesh(polygon);
 					}
 				}
 			}
@@ -462,7 +471,7 @@ namespace ProBuilder.EditorCore
 							polygon.points.Insert(index, p);
 							m_SelectedIndex = index;
 							m_PlacingPoint = true;
-							UpdateMesh(true);
+							RebuildPolyShapeMesh(true);
 							OnBeginVertexMovement();
 						}
 
@@ -527,7 +536,7 @@ namespace ProBuilder.EditorCore
 				{
 					OnBeginVertexMovement();
 					polygon.extrude = extrude;
-					UpdateMesh(false);
+					RebuildPolyShapeMesh(false);
 				}
 			}
 			else
@@ -554,7 +563,7 @@ namespace ProBuilder.EditorCore
 						pb_Undo.RecordObject(polygon, "Move Polygon Shape Point");
 						polygon.points[ii] = pb_ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
 						OnBeginVertexMovement();
-						UpdateMesh(false);
+						RebuildPolyShapeMesh(false);
 					}
 
 					// "clicked" a button
@@ -599,7 +608,7 @@ namespace ProBuilder.EditorCore
 						pb_Undo.RecordObject(polygon, "Set Polygon Shape Height");
 						polygon.extrude = pb_ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
 						OnBeginVertexMovement();
-						UpdateMesh(false);
+						RebuildPolyShapeMesh(false);
 					}
 				}
 			}
@@ -642,7 +651,7 @@ namespace ProBuilder.EditorCore
 						pb_Undo.RecordObject(polygon, "Delete Selected Points");
 						polygon.points.RemoveAt(m_SelectedIndex);
 						m_SelectedIndex = -1;
-						UpdateMesh();
+						RebuildPolyShapeMesh(polygon);
 					}
 					break;
 				}
@@ -723,7 +732,7 @@ namespace ProBuilder.EditorCore
 		void OnFinishVertexMovement()
 		{
 			m_IsModifyingVertices = false;
-			UpdateMesh();
+			RebuildPolyShapeMesh(polygon);
 		}
 
 		void UndoRedoPerformed()
@@ -737,9 +746,6 @@ namespace ProBuilder.EditorCore
 			m_LineMesh = new Mesh();
 
 			m_LineMaterial = CreateHighlightLineMaterial();
-
-			if(polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
-				UpdateMesh(true);
 		}
 #endif
 	}

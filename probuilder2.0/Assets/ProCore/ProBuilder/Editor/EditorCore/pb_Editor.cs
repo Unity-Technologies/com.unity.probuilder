@@ -239,7 +239,6 @@ class pb_Editor : EditorWindow
 		pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-		Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 
 		pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int)handleAlignment);
 
@@ -269,9 +268,6 @@ class pb_Editor : EditorWindow
 	{
 		SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 		SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-
-		Undo.undoRedoPerformed += this.UndoRedoPerformed;
-		// Undo.postprocessModifications += PostprocessModifications;
 
 		pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 		pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
@@ -2743,27 +2739,6 @@ class pb_Editor : EditorWindow
 		foreach(pb_Object pb in selection)
 			pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(), pb_EditorUtility.GetSelectionRenderState() & SelectionRenderState.Outline);
 
-		SceneView.RepaintAll();
-	}
-
-	void UndoRedoPerformed()
-	{
-		pb_Object[] pbos = pb_Util.GetComponents<pb_Object>(Selection.transforms);
-
-		foreach(pb_Object pb in pbos)
-		{
-			/**
-			 * because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
-			 */
-			pb.ToMesh();
-			pb.Refresh();
-			pb.Optimize();
-
-			if( pb.SelectedFaces.Length > 0 )
-				pb.SetSelectedFaces( System.Array.FindAll( pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces)) ) );
-		}
-
-		UpdateSelection(true);
 		SceneView.RepaintAll();
 	}
 

@@ -3,14 +3,44 @@ using UnityEditor;
 using System.Collections;
 using System.Linq;
 using ProBuilder.Core;
+using ProBuilder.MeshOperations;	// todo remove dependency. currently needed for polyshape undo hack
 
 namespace ProBuilder.EditorCore
 {
-	/// <summary>
-	/// A wrapper around Unity Undo calls.  Used for debugging and (previously) version compatibility.
-	/// </summary>
+	[InitializeOnLoad]
 	static class pb_Undo
 	{
+		static pb_Undo()
+		{
+			Undo.undoRedoPerformed += UndoRedoPerformed;
+		}
+
+		static void UndoRedoPerformed()
+		{
+			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			{
+				var polyShape = pb.GetComponent<pb_PolyShape>();
+
+				if (polyShape != null)
+				{
+					polyShape.CreateShapeFromPolygon();
+					continue;
+				}
+
+				pb.ToMesh();
+				pb.Refresh();
+				pb.Optimize();
+
+				// because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
+				if( pb_Editor.instance != null && pb.SelectedFaces.Length > 0 )
+					pb.SetSelectedFaces(
+						System.Array.FindAll(pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces))));
+			}
+
+			pb_Editor.Refresh(true);
+			SceneView.RepaintAll();
+		}
+
 		/**
 		 * Since Undo calls can potentially hang the main thread, store states when the diff
 		 * will large.
