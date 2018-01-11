@@ -33,6 +33,8 @@ namespace ProBuilder.Core
 
 		static readonly HideFlags PB_EDITOR_GRAPHIC_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
 
+		static readonly Material[] k_WireframeMaterials = new Material[1];
+
 		pb_ObjectPool<pb_Renderable> pool;
 		List<pb_Renderable> activeRenderables = new List<pb_Renderable>();
 
@@ -68,6 +70,7 @@ namespace ProBuilder.Core
 		{
 			base.OnEnable();
 			pool = new pb_ObjectPool<pb_Renderable>(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
+			k_WireframeMaterials[0] = wireframeMaterial;
 		}
 
 		void OnDisable()
@@ -113,7 +116,7 @@ namespace ProBuilder.Core
 		/**
 		 * Update the highlight and wireframe graphics.
 		 */
-		public void RebuildGraphics(pb_Object[] selection, pb_Edge[][] universalEdgesDistinct, EditLevel editLevel, SelectMode selectionMode)
+		public void RebuildGraphics(pb_Object[] selection, EditLevel editLevel, SelectMode selectionMode)
 		{
 			// in the event that the editor starts calling UpdateGraphics before the object has run OnEnable() (which happens on script reloads)
 			if(pool == null) return;
@@ -129,7 +132,7 @@ namespace ProBuilder.Core
 			wireframeMaterial.SetColor("_Color", (selectionMode == SelectMode.Edge && editLevel == EditLevel.Geometry) ? edgeSelectionColor : wireframeColor);
 
 			for(int i = 0; i < selection.Length; i++)
-				AddRenderable( BuildEdgeMesh(selection[i], universalEdgesDistinct[i]) );
+				AddRenderable(BuildEdgeMesh(selection[i]));
 
 			if(editLevel == EditLevel.Geometry)
 			{
@@ -162,26 +165,15 @@ namespace ProBuilder.Core
 			ren.name = "Faces Renderable";
 			ren.transform = pb.transform;
 			ren.materials = new Material[] { faceMaterial };
-
 			ren.mesh.Clear();
 			ren.mesh.vertices = pb.vertices;
-
-#if UNITY_4_5 || UNITY_4_6 || UNITY_4_7
-			// Unity 5.0 and up is okay with null normals & uvs, but lower versions
-			// log a warning to the console even if the shader does not require them
-			ren.mesh.normals = pb.vertices;
-			ren.mesh.uv = new Vector2[pb.vertexCount];
-#endif
-
 			ren.mesh.triangles = pb_Face.AllTriangles(pb.SelectedFaces);
 
 			return ren;
 		}
 
-		/**
-		  * Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
-		  */
-		private pb_Renderable BuildVertexMesh(pb_Object pb)
+		// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
+		pb_Renderable BuildVertexMesh(pb_Object pb)
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
@@ -278,35 +270,43 @@ namespace ProBuilder.Core
 			return ren;
 		}
 
-		private pb_Renderable BuildEdgeMesh(pb_Object pb, pb_Edge[] universalEdgesDistinct)
+		pb_Renderable BuildEdgeMesh(pb_Object pb)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			int segmentCount = universalEdgesDistinct.Length;
-			int[] lineSegments = new int[segmentCount * 2];
+			int edgeCount = 0;
+			int faceCount = pb.faceCount;
 
-			int n = 0;
+			for (int i = 0; i < faceCount; i++)
+				edgeCount += pb.faces[i].edges.Length;
 
-			for(int i = 0; i < segmentCount; i++)
+			int elementCount = System.Math.Min(edgeCount, ushort.MaxValue / 2 - 1);
+			int[] tris = new int[ elementCount * 2 ];
+
+			int edgeIndex = 0;
+
+			for(int i = 0; i < faceCount && edgeIndex < elementCount; i++)
 			{
-				lineSegments[n++] = sharedIndices[universalEdgesDistinct[i].x][0];
-				lineSegments[n++] = sharedIndices[universalEdgesDistinct[i].y][0];
+				for (int n = 0; n < pb.faces[i].edges.Length && edgeIndex < elementCount; n++)
+				{
+					var edge = pb.faces[i].edges[n];
+
+					int positionIndex = edgeIndex * 2;
+
+					tris[positionIndex + 0] = edge.x;
+					tris[positionIndex + 1] = edge.y;
+
+					edgeIndex++;
+				}
 			}
 
 			pb_Renderable ren = pool.Get();
-
+			ren.materials = k_WireframeMaterials;
 			ren.name = "Wireframe Renderable";
-			ren.materials = new Material[] { wireframeMaterial };
 			ren.transform = pb.transform;
-			ren.mesh.name = "Wireframe Mesh";
 			ren.mesh.Clear();
+			ren.mesh.name = "Edge Billboard";
 			ren.mesh.vertices = pb.vertices;
-#if !UNITY_5
-			// appease unity 4
-			ren.mesh.normals = pb.vertices;
-			ren.mesh.uv = new Vector2[pb.vertexCount];
-#endif
 			ren.mesh.subMeshCount = 1;
-			ren.mesh.SetIndices(lineSegments, MeshTopology.Lines, 0);
+			ren.mesh.SetIndices(tris, MeshTopology.Lines, 0);
 
 			return ren;
 		}

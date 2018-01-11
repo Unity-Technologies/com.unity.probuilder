@@ -55,6 +55,9 @@ namespace ProBuilder.Core
 		/// <returns></returns>
 		public static pb_IntArray[] ToSharedIndices(this IEnumerable<KeyValuePair<int, int>> lookup)
 		{
+			if(lookup == null)
+				return new pb_IntArray[0];
+			
 			Dictionary<int, int> map = new Dictionary<int, int>();
 			List<List<int>> shared = new List<List<int>>();
 

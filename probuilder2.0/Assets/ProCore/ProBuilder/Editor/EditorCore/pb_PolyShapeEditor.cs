@@ -198,11 +198,7 @@ namespace ProBuilder.EditorCore
 				if(go != null)
 					m_IgnorePick.Add(go);
 
-#if UNITY_4_7 || UNITY_5_0
-				go = HandleUtility.PickGameObject(mousePosition, false);
-#else
 				go = HandleUtility.PickGameObject(mousePosition, false, m_IgnorePick.ToArray());
-#endif
 			}
 			while(go != null && go.GetComponent<MeshFilter>() == null);
 
@@ -274,10 +270,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 *	Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
-
-		 */
+		// Update the pb_Object with the new coordinates.  Returns true if mesh successfully triangulated, false if not.
 		bool UpdateMesh(bool vertexCountChanged = true)
 		{
 			// If Undo is called immediately after creation this situation can occur
@@ -288,13 +281,7 @@ namespace ProBuilder.EditorCore
 
 			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
 			{
-				polygon.mesh.SetVertices(new Vector3[0]);
-				polygon.mesh.SetFaces(new pb_Face[0]);
-				polygon.mesh.SetSharedIndices(new pb_IntArray[0]);
-				polygon.mesh.ToMesh();
-				polygon.mesh.Refresh();
 				pb_Editor.Refresh();
-
 				return false;
 			}
 

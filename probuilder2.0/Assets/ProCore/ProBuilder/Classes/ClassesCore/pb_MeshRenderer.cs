@@ -62,7 +62,7 @@ namespace ProBuilder.Core
 
 					if (mats[materialIndex] == null || !mats[materialIndex].SetPass(0) )
 					{
-						Debug.Log("material is null");
+						pb_Log.Error("ProBuilder mesh handle material is null.");
 						continue;
 					}
 

@@ -71,10 +71,13 @@ namespace ProBuilder.MeshOperations
 				return Triangulate(points2d, out triangles, convex);
 		}
 
-		/**
-		 *	Given a set of points ordered counter-clockwise along a contour, return triangle indices.
-		 *	Triangulation may optionally be set to convex, which will result in some a convex shape.
-		 */
+		/// <summary>
+		/// Given a set of points ordered counter-clockwise along a contour, return triangle indices.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="indices"></param>
+		/// <param name="convex">Triangulation may optionally be set to convex, which will result in some a convex shape.</param>
+		/// <returns></returns>
 		public static bool Triangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
 			indices = new List<int>();
@@ -85,13 +88,21 @@ namespace ProBuilder.MeshOperations
 				(Triangulatable) new PointSet(points.Select(x => new TriangulationPoint(x.x, x.y, index++)).ToList()) :
 				(Triangulatable) new Polygon(points.Select(x => new PolygonPoint(x.x, x.y, index++)));
 
-			P2T.Triangulate(TriangulationAlgorithm.DTSweep, soup);
+			try
+			{
+				P2T.Triangulate(TriangulationAlgorithm.DTSweep, soup);
+			}
+			catch (System.Exception e)
+			{
+				pb_Log.Warning("Triangulation failed: " + e.ToString());
+				return false;
+			}
 
 			foreach(DelaunayTriangle d in soup.Triangles)
 			{
 				if(d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
 				{
-					pb_Log.Warning("Triangulation failed - additional vertices were inserted.");
+					pb_Log.Warning("Triangulation failed: Additional vertices were inserted.");
 					return false;
 				}
 
@@ -102,8 +113,8 @@ namespace ProBuilder.MeshOperations
 
 			WindingOrder originalWinding = pb_TriangleOps.GetWindingOrder(points);
 
-			// // if the re-triangulated first tri doesn't match the winding order of the original
-			// // vertices, flip 'em
+			// if the re-triangulated first tri doesn't match the winding order of the original
+			// vertices, flip 'em
 			if( pb_TriangleOps.GetWindingOrder(new Vector2[3]{
 				points[indices[0]],
 				points[indices[1]],

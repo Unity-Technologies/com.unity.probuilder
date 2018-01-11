@@ -62,11 +62,11 @@ namespace ProBuilder.MeshOperations
 
 		public static pb_ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
 		{
-			if(points.Count < 3)
+			if (points.Count < 3)
 			{
-				pb.SetVertices(new Vector3[0]);
-				pb.SetFaces(new pb_Face[0]);
-				pb.SetSharedIndices(new pb_IntArray[0]);
+				pb.Clear();
+				pb.ToMesh();
+				pb.Refresh();
 				return new pb_ActionResult(Status.NoChange, "Too Few Points");
 			}
 
@@ -88,6 +88,7 @@ namespace ProBuilder.MeshOperations
 					return new pb_ActionResult(Status.Failure, "Polygon Area < Epsilon");
 				}
 
+				pb.Clear();
 				pb.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(indices) });
 
 				Vector3 nrm = pb_Math.Normal(pb, pb.faces[0]);
@@ -101,6 +102,9 @@ namespace ProBuilder.MeshOperations
 
 				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
 					pb.ReverseWindingOrder(pb.faces);
+
+				pb.ToMesh();
+				pb.Refresh();
 			}
 			else
 			{
@@ -109,9 +113,6 @@ namespace ProBuilder.MeshOperations
 			}
 
 			pb_Log.PopLogLevel();
-
-			pb.ToMesh();
-			pb.Refresh();
 
 			return new pb_ActionResult(Status.Success, "Create Polygon Shape");
 		}

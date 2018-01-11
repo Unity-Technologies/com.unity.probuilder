@@ -2377,6 +2377,7 @@ class pb_Editor : EditorWindow
 	int vertexCount = 0;
 	int triangleCount = 0;
 
+	// todo remove this manual selection caching junk
 	public void UpdateSelection(bool forceUpdate = true)
 	{
 		// profiler.BeginSample("UpdateSelection()");
@@ -2557,11 +2558,9 @@ class pb_Editor : EditorWindow
 		// profiler.EndSample();
 	}
 
-	private void UpdateGraphics()
+	void UpdateGraphics()
 	{
-		// profiler.BeginSample("UpdateGraphics");
-		graphics.RebuildGraphics(selection, m_universalEdges, editLevel, selectionMode);
-		// profiler.EndSample();
+		graphics.RebuildGraphics(selection, editLevel, selectionMode);
 	}
 
 	public void ClearElementSelection()
