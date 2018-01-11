@@ -436,24 +436,14 @@ namespace ProBuilder.Core
 			return collisions % 2 != 0;
 		}
 
-		/// <summary>
-		/// Test if line segment (a-b) intersects any line segment on rect.
-		/// </summary>
-		/// <param name="rect"></param>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		internal static bool RectIntersectsLineSegment(Rect rect, Vector2 a, Vector2 b)
 		{
-			Vector2 tl = new Vector2(rect.xMin, rect.yMax);
-			Vector2 tr = new Vector2(rect.xMax, rect.yMax);
-			Vector2 bl = new Vector2(rect.xMin, rect.yMin);
-			Vector2 br = new Vector2(rect.xMax, rect.yMin);
+			return pb_Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
+		}
 
-			return 	pb_Math.GetLineSegmentIntersect(tr, tl, a, b) ||
-					pb_Math.GetLineSegmentIntersect(tl, bl, a, b) ||
-					pb_Math.GetLineSegmentIntersect(bl, br, a, b) ||
-					pb_Math.GetLineSegmentIntersect(br, tl, a, b);
+		internal static bool RectIntersectsLineSegment(Rect rect, Vector3 a, Vector3 b)
+		{
+			return pb_Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
 		}
 
 		/// <summary>

@@ -44,21 +44,23 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
 			Camera cam,
 			Rect rect,
-			IEnumerable<pb_Object> selectable,
+			IList<pb_Object> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			return pb_SelectionPicker.PickVerticesInRect(
-				cam,
-				rect,
-				selectable,
-				options.depthTest,
-				(int) (cam.pixelWidth / pixelsPerPoint),
-				(int) (cam.pixelHeight / pixelsPerPoint));
+			if (options.depthTest)
+			{
+				return pb_SelectionPicker.PickVerticesInRect(
+					cam,
+					rect,
+					selectable,
+					true,
+					(int) (cam.pixelWidth / pixelsPerPoint),
+					(int) (cam.pixelHeight / pixelsPerPoint));
+			}
 
-			// todo - this path can be faster for lower vertex count objects. evaluate the difference and consider
-			// splitting based on the selection vertex count?
-#pragma warning disable 162
+			// while the selectionpicker render path supports no depth test picking, it's usually faster to skip
+			// the render. also avoids issues with vertex billboards obscuring one another.
 			var selected = new Dictionary<pb_Object, HashSet<int>>();
 
 			foreach(var pb in selectable)
@@ -91,7 +93,6 @@ namespace ProBuilder.Core
 			}
 
 			return selected;
-#pragma warning restore 162
 		}
 
 		/// <summary>
@@ -106,10 +107,9 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera cam,
 			Rect rect,
-			IEnumerable<pb_Object> selectable,
+			IList<pb_Object> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
-
 		{
 			if (options.depthTest && options.rectSelectMode == pb_RectSelectMode.Partial)
 			{
@@ -234,24 +234,21 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<pb_Edge>> PickEdgesInRect(
 			Camera cam,
 			Rect rect,
-			IEnumerable<pb_Object> selectable,
+			IList<pb_Object> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
-			// todo texture render picking path for edges w/ complete rect mode
-
-			if (options.rectSelectMode == pb_RectSelectMode.Partial)
+			if (options.depthTest && options.rectSelectMode == pb_RectSelectMode.Partial)
 			{
 				return pb_SelectionPicker.PickEdgesInRect(
 					cam,
 					rect,
 					selectable,
-					options.depthTest,
+					true,
 					(int) (cam.pixelWidth / pixelsPerPoint),
 					(int) (cam.pixelHeight / pixelsPerPoint));
 			}
 
-			// complete select mode
 			var selected = new Dictionary<pb_Object, HashSet<pb_Edge>>();
 
 			foreach (var pb in selectable)
@@ -276,15 +273,32 @@ namespace ProBuilder.Core
 						Vector3 a = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posA), pixelsPerPoint);
 						Vector3 b = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posB), pixelsPerPoint);
 
-						// if either of the positions are clipped by the camera we cannot possibly select both, skip it
-						if ((a.z < cam.nearClipPlane || b.z < cam.nearClipPlane))
-							continue;
-
-						if (rect.Contains(a) && rect.Contains(b))
+						switch (options.rectSelectMode)
 						{
+							case pb_RectSelectMode.Complete:
+							{
+								// if either of the positions are clipped by the camera we cannot possibly select both, skip it
+								if ((a.z < cam.nearClipPlane || b.z < cam.nearClipPlane))
+									continue;
 
-							if (!options.depthTest || !pb_HandleUtility.PointIsOccluded(cam, pb, (posA + posB) * .5f))
-								selectedEdges.Add(edge);
+								if (rect.Contains(a) && rect.Contains(b))
+								{
+
+									if (!options.depthTest || !pb_HandleUtility.PointIsOccluded(cam, pb, (posA + posB) * .5f))
+										selectedEdges.Add(edge);
+								}
+
+								break;
+							}
+
+							case pb_RectSelectMode.Partial:
+							{
+								// partial + depth test is covered earlier
+								if (pb_Math.RectIntersectsLineSegment(rect, a, b))
+									selectedEdges.Add(edge);
+
+								break;
+							}
 						}
 					}
 				}

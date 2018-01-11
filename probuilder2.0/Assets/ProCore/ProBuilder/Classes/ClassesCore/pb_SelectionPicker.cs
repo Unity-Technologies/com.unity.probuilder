@@ -1,4 +1,4 @@
-#define PB_RENDER_PICKER_TEXTURE
+//#define PB_RENDER_PICKER_TEXTURE
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -72,16 +72,12 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
 		{
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
-
-#if PB_RENDER_PICKER_TEXTURE
-			System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-#endif
 
 			Color32[] pix = tex.GetPixels32();
 
@@ -125,7 +121,7 @@ namespace ProBuilder.Core
 #if PB_RENDER_PICKER_TEXTURE
 			if(width > 0 && height > 0)
 			{
-				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
+//				Debug.Log("used: \n" + used.Select(x => string.Format("{0} ({1})", x, EncodeRGBA(x))).ToString("\n"));
 				Texture2D img = new Texture2D(width, height);
 				img.SetPixels(rectImg.ToArray());
 				img.Apply();
@@ -152,7 +148,7 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			bool doDepthTest,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
@@ -161,31 +157,11 @@ namespace ProBuilder.Core
 			Dictionary<pb_Object, HashSet<int>> selected = new Dictionary<pb_Object, HashSet<int>>();
 
 #if PB_RENDER_PICKER_TEXTURE
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-			sb.AppendLine("default: " + renderTextureFormat);
-			sb.AppendLine("event: " + Event.current.type);
-
-			foreach(RenderTextureFormat tf in s_PreferredFormats)
-			{
-				if( !SystemInfo.SupportsRenderTextureFormat(tf) )
-				{
-					sb.AppendLine(tf.ToString() + " not supported");
-					continue;
-				}
-
-				sb.AppendLine(tf.ToString());
-				s_RenderTextureFormat = tf;
-				List<Color> rectImg = new List<Color>();
-				selected.Clear();
+			List<Color> rectImg = new List<Color>();
 #endif
 
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, doDepthTest, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
-
-#if PB_RENDER_PICKER_TEXTURE
-			 System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
-#endif
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
 			int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - pickerRect.y) - pickerRect.height));
@@ -220,18 +196,15 @@ namespace ProBuilder.Core
 			}
 
 #if PB_RENDER_PICKER_TEXTURE
-				if(width > 0 && height > 0)
-				{
-					sb.AppendLine("  in rect: \n" + used.Select(x => string.Format("   {0:X6} ({1})", x, EncodeRGBA(x))).ToString("\n"));
-					Texture2D img = new Texture2D(width, height);
-					img.SetPixels(rectImg.ToArray());
-					img.Apply();
-					System.IO.File.WriteAllBytes("Assets/rect_" + tf.ToString() + ".png", img.EncodeToPNG());
-					UnityEditor.AssetDatabase.Refresh();
-					UObject.DestroyImmediate(img);
-				}
+			if(width > 0 && height > 0)
+			{
+				Texture2D img = new Texture2D(width, height);
+				img.SetPixels(rectImg.ToArray());
+				img.Apply();
+				System.IO.File.WriteAllBytes("Assets/rect_" + s_RenderTextureFormat.ToString() + ".png", img.EncodeToPNG());
+				UnityEditor.AssetDatabase.Refresh();
+				UObject.DestroyImmediate(img);
 			}
-			pb_Log.Debug(sb.ToString());
 #endif
 
 			return selected;
@@ -250,7 +223,7 @@ namespace ProBuilder.Core
 		public static Dictionary<pb_Object, HashSet<pb_Edge>> PickEdgesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			bool doDepthTest,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
@@ -258,23 +231,7 @@ namespace ProBuilder.Core
 			var selected = new Dictionary<pb_Object, HashSet<pb_Edge>>();
 
 #if PB_RENDER_PICKER_TEXTURE
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-			sb.AppendLine("default: " + renderTextureFormat);
-			sb.AppendLine("event: " + Event.current.type);
-
-			foreach(RenderTextureFormat tf in s_PreferredFormats)
-			{
-				if( !SystemInfo.SupportsRenderTextureFormat(tf) )
-				{
-					sb.AppendLine(tf.ToString() + " not supported");
-					continue;
-				}
-
-				sb.AppendLine(tf.ToString());
-				s_RenderTextureFormat = tf;
-				List<Color> rectImg = new List<Color>();
-				selected.Clear();
+			List<Color> rectImg = new List<Color>();
 #endif
 
 			Dictionary<uint, pb_Tuple<pb_Object, pb_Edge>> map;
@@ -330,18 +287,15 @@ namespace ProBuilder.Core
 			}
 
 #if PB_RENDER_PICKER_TEXTURE
-				if(width > 0 && height > 0)
-				{
-					sb.AppendLine("  in rect: \n" + pixelCount.Select(x => string.Format("   {0:X6} ({1})", x.Key, EncodeRGBA(x.Key))).ToString("\n"));
-					Texture2D img = new Texture2D(width, height);
-					img.SetPixels(rectImg.ToArray());
-					img.Apply();
-					System.IO.File.WriteAllBytes("Assets/rect_" + tf.ToString() + ".png", img.EncodeToPNG());
-					UnityEditor.AssetDatabase.Refresh();
-					UObject.DestroyImmediate(img);
-				}
+			if(width > 0 && height > 0)
+			{
+				Texture2D img = new Texture2D(width, height);
+				img.SetPixels(rectImg.ToArray());
+				img.Apply();
+				System.IO.File.WriteAllBytes("Assets/rect_" + s_RenderTextureFormat.ToString() + ".png", img.EncodeToPNG());
+				UnityEditor.AssetDatabase.Refresh();
+				UObject.DestroyImmediate(img);
 			}
-			pb_Log.Debug(sb.ToString());
 #endif
 
 			return selected;
@@ -356,20 +310,20 @@ namespace ProBuilder.Core
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns></returns>
-		public static Texture2D RenderSelectionPickerTexture(
+		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map,
 			int width = -1,
 			int height = -1)
 		{
-			List<GameObject> depthGameObjects = GenerateFacePickingObjects(selection, out map);
+			var pickerObjects = GenerateFacePickingObjects(selection, out map);
 
 			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
 
 			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
 
-			foreach(GameObject go in depthGameObjects)
+			foreach(GameObject go in pickerObjects)
 			{
 				UObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
 				UObject.DestroyImmediate(go);
@@ -383,28 +337,39 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="camera"></param>
 		/// <param name="selection"></param>
+		/// <param name="doDepthTest"></param>
 		/// <param name="map"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns></returns>
-		public static Texture2D RenderSelectionPickerTexture(
+		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			bool doDepthTest,
 			out Dictionary<uint, pb_Tuple<pb_Object, int>> map,
 			int width = -1,
 			int height = -1)
 		{
-			List<GameObject> depthGameObjects = GenerateVertexPickingObjects(selection, doDepthTest, out map);
+			GameObject[] depthObjects, pickerObjects;
+
+			GenerateVertexPickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
 			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
 			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
 
-			foreach(GameObject go in depthGameObjects)
+			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
-				UObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
-				UObject.DestroyImmediate(go);
+				UObject.DestroyImmediate(pickerObjects[i].GetComponent<MeshFilter>().sharedMesh);
+				UObject.DestroyImmediate(pickerObjects[i]);
+			}
+
+			if (doDepthTest)
+			{
+				for (int i = 0, c = depthObjects.Length; i < c; i++)
+				{
+					UObject.DestroyImmediate(depthObjects[i]);
+				}
 			}
 
 			return tex;
@@ -420,51 +385,53 @@ namespace ProBuilder.Core
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns></returns>
-		public static Texture2D RenderSelectionPickerTexture(
+		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IEnumerable<pb_Object> selection,
+			IList<pb_Object> selection,
 			bool doDepthTest,
 			out Dictionary<uint, pb_Tuple<pb_Object, pb_Edge>> map,
 			int width = -1,
 			int height = -1)
 		{
-			List<GameObject> depthGameObjects = GenerateEdgePickingObjects(selection, doDepthTest, out map);
+			GameObject[] depthObjects, pickerObjects;
+			GenerateEdgePickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
 			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
 			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
 
-			foreach(GameObject go in depthGameObjects)
+			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
-				UObject.DestroyImmediate(go.GetComponent<MeshFilter>().sharedMesh);
-				UObject.DestroyImmediate(go);
+				UObject.DestroyImmediate(pickerObjects[i].GetComponent<MeshFilter>().sharedMesh);
+				UObject.DestroyImmediate(pickerObjects[i]);
 			}
 
+			if (doDepthTest)
+			{
+				for (int i = 0, c = depthObjects.Length; i < c; i++)
+				{
+					UObject.DestroyImmediate(depthObjects[i]);
+				}
+			}
 			return tex;
 		}
 
-		/// <summary>
-		/// Generate a set of meshes and gameObjects that can be rendered for depth testing faces.
-		/// </summary>
-		/// <param name="selection"></param>
-		/// <param name="map"></param>
-		/// <returns></returns>
-		public static List<GameObject> GenerateFacePickingObjects(
-			IEnumerable<pb_Object> selection,
+		static GameObject[] GenerateFacePickingObjects(
+			IList<pb_Object> selection,
 			out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
 		{
-			List<GameObject> meshes = new List<GameObject>();
+			int selectionCount = selection.Count;
+			GameObject[] meshes = new GameObject[selectionCount];
 			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
 
 			uint index = 0;
 
-			foreach(pb_Object pb in selection)
+			for(int i = 0; i < selectionCount; i++)
 			{
-				GameObject go = new GameObject();
+				var pb = selection[i];
+
+				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + " (Face Depth Test)";
-				go.transform.position = pb.transform.position;
-				go.transform.localRotation = pb.transform.localRotation;
-				go.transform.localScale = pb.transform.localScale;
 
 				Mesh m = new Mesh();
 				m.vertices = pb.vertices;
@@ -476,8 +443,8 @@ namespace ProBuilder.Core
 					Color32 color = EncodeRGBA(index++);
 					map.Add(DecodeRGBA(color), new pb_Tuple<pb_Object, pb_Face>(pb, f));
 
-					for(int i = 0; i < f.distinctIndices.Length; i++)
-						colors[f.distinctIndices[i]] = color;
+					for(int n = 0; n < f.distinctIndices.Length; n++)
+						colors[f.distinctIndices[n]] = color;
 				}
 
 				m.colors32 = colors;
@@ -491,78 +458,96 @@ namespace ProBuilder.Core
 			return meshes;
 		}
 
-		/// <summary>
-		/// Generate a set of meshes and gameObjects that can be rendered for depth testing vertex positions.
-		/// </summary>
-		/// <param name="selection"></param>
-		/// <param name="map"></param>
-		/// <returns></returns>
-		static List<GameObject> GenerateVertexPickingObjects(
-			IEnumerable<pb_Object> selection,
+		static void GenerateVertexPickingObjects(
+			IList<pb_Object> selection,
 			bool doDepthTest,
-			out Dictionary<uint, pb_Tuple<pb_Object, int>> map)
+			out Dictionary<uint, pb_Tuple<pb_Object, int>> map,
+			out GameObject[] depthObjects,
+			out GameObject[] pickerObjects)
 		{
-			List<GameObject> meshes = new List<GameObject>();
 			map = new Dictionary<uint, pb_Tuple<pb_Object, int>>();
 
 			// don't start at 0 because that means one vertex would be black, matching
 			// the color used to cull hidden vertices.
 			uint index = 0x02;
+			int selectionCount = selection.Count;
+			pickerObjects = new GameObject[selectionCount];
 
-			foreach(pb_Object pb in selection)
+			for(int i = 0; i < selectionCount; i++)
 			{
+				// build vertex billboards
+				var pb = selection[i];
+				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
+				go.name = pb.name + "  (Vertex Billboards)";
+				go.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.VertexPickerMaterial;
+				pickerObjects[i] = go;
+			}
+
+			if (doDepthTest)
+			{
+				depthObjects = new GameObject[selectionCount];
+
 				// copy the select gameobject just for z-write
-				if (doDepthTest)
+				for(int i = 0; i < selectionCount; i++)
 				{
+					var pb = selection[i];
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
 					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
-					meshes.Add(go);
+					depthObjects[i] = go;
 				}
-
-				// build vertex billboards
-				GameObject go2 = pb_Util.EmptyGameObjectWithTransform(pb.transform);
-				go2.name = pb.name + "  (Vertex Billboards)";
-				go2.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
-				go2.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.VertexPickerMaterial;
-				meshes.Add(go2);
 			}
-
-			return meshes;
+			else
+			{
+				depthObjects = null;
+			}
 		}
 
-		static List<GameObject> GenerateEdgePickingObjects(
-			IEnumerable<pb_Object> selection,
-			bool generateDepthTestObjects,
-			out Dictionary<uint, pb_Tuple<pb_Object, pb_Edge>> map)
+		static void GenerateEdgePickingObjects(
+			IList<pb_Object> selection,
+			bool doDepthTest,
+			out Dictionary<uint, pb_Tuple<pb_Object, pb_Edge>> map,
+			out GameObject[] depthObjects,
+			out GameObject[] pickerObjects)
 		{
-			List<GameObject> meshes = new List<GameObject>();
 			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Edge>>();
 
 			uint index = 0x2;
+			int selectionCount = selection.Count;
+			pickerObjects = new GameObject[selectionCount];
 
-			foreach(pb_Object pb in selection)
+			for(int i = 0; i < selectionCount; i++)
 			{
-				if (generateDepthTestObjects)
+				// build edge billboards
+				var pb = selection[i];
+				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
+				go.name = pb.name + "  (Edge Billboards)";
+				go.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.EdgePickerMaterial;
+				pickerObjects[i] = go;
+			}
+
+			if (doDepthTest)
+			{
+				depthObjects = new GameObject[selectionCount];
+
+				for(int i = 0; i < selectionCount; i++)
 				{
+					var pb = selection[i];
 					// copy the select gameobject just for z-write
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
 					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
-					meshes.Add(go);
+					depthObjects[i] = go;
 				}
-
-				// build edge billboards
-				GameObject go2 = pb_Util.EmptyGameObjectWithTransform(pb.transform);
-				go2.name = pb.name + "  (Edge Billboards)";
-				go2.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
-				go2.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.EdgePickerMaterial;
-				meshes.Add(go2);
 			}
-
-			return meshes;
+			else
+			{
+				depthObjects = null;
+			}
 		}
 
 		static Mesh BuildVertexMesh(pb_Object pb, Dictionary<uint, pb_Tuple<pb_Object, int>> map, ref uint index)
