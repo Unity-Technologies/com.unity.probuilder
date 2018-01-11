@@ -126,7 +126,7 @@ namespace ProBuilder.Actions
 		}
 
 		/**
-		 * Adds pb_Object and pb_Entity to object without duplicating the objcet.  Is undo-able.
+		 * Adds pb_Object and pb_Entity to object without duplicating the objcet. Is undo-able.
 		 */
 		public static pb_ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
@@ -194,7 +194,8 @@ namespace ProBuilder.Actions
 
 			EditorUtility.ClearProgressBar();
 
-			pb_Editor.Refresh();
+			pb_Selection.OnSelectionChanged();
+			pb_Editor.Refresh(true);
 
 			return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
 		}
