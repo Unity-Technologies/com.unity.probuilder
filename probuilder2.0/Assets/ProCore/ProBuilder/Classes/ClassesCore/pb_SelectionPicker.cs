@@ -15,7 +15,6 @@ namespace ProBuilder.Core
 		const string k_FacePickerOcclusionTintUniform = "_Tint";
 		static readonly Color k_Blackf = new Color(0f, 0f, 0f, 1f);
 		static readonly Color k_Whitef = new Color(1f, 1f, 1f, 1f);
-		static readonly Color32 k_Black = new Color32(0, 0, 0, 255);
 		const uint k_PickerHashNone = 0x00;
 		const uint k_PickerHashMin = 0x1;
 		const uint k_PickerHashMax = 0x00FFFFFF;

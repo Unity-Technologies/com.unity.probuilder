@@ -757,7 +757,7 @@ class pb_Editor : EditorWindow
 			List<pb_RaycastHit> hits;
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-			if(pb_HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, Culling.FrontBack))
+			if(pb_HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, pb_Culling.FrontBack))
 			{
 				Camera cam = SceneView.lastActiveSceneView.camera;
 
@@ -852,7 +852,7 @@ class pb_Editor : EditorWindow
 					pb,
 					out hit,
 					Mathf.Infinity,
-					pref_backfaceSelect ? Culling.FrontBack : Culling.Front) )
+					pref_backfaceSelect ? pb_Culling.FrontBack : pb_Culling.Front) )
 				{
 					face = pb.faces[hit.face];
 				}
