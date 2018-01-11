@@ -90,6 +90,33 @@ namespace ProBuilder.EditorTests.Picking
 			}
 			catch(System.Exception e)
 			{
+				Debug.LogError(e.ToString());
+				return null;
+			}
+		}
+
+		Dictionary<pb_Object, HashSet<pb_Face>> TestFacePick(pb_PickerOptions options)
+		{
+			try
+			{
+				Rect selectionRect = new Rect(camera.pixelRect);
+				selectionRect.width /= EditorGUIUtility.pixelsPerPoint;
+				selectionRect.height /= EditorGUIUtility.pixelsPerPoint;
+
+				var faces = pb_Picking.PickFacesInRect(
+					camera,
+					selectionRect,
+					selectables,
+					options,
+					EditorGUIUtility.pixelsPerPoint);
+
+				LogAssert.NoUnexpectedReceived();
+
+				return faces;
+			}
+			catch(System.Exception e)
+			{
+				Debug.LogError(e.ToString());
 				return null;
 			}
 		}
@@ -181,6 +208,63 @@ namespace ProBuilder.EditorTests.Picking
 			HashSet<pb_Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.Less(selectedElements.Count, selection.Key.faces.Sum(x=>x.edges.Length));
+
+			Cleanup();
+		}
+
+		[Test]
+		public void PickFaces_DepthTestOff_RectSelectPartial()
+		{
+			Setup();
+			var faces = TestFacePick(new pb_PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Partial });
+			Assert.IsNotNull(faces, "Selection is null");
+			var selection = faces.FirstOrDefault();
+			Assert.IsNotNull(selection, "Selection is null");
+			HashSet<pb_Face> selectedElements = selection.Value;
+			Assert.Greater(selectedElements.Count, 0);
+			Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
+			Cleanup();
+		}
+
+		[Test]
+		public void PickFaces_DepthTestOn_RectSelectPartial()
+		{
+			Setup();
+			var faces = TestFacePick(new pb_PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Partial });
+			Assert.IsNotNull(faces, "Face pick returned null");
+			var selection = faces.FirstOrDefault();
+			Assert.IsNotNull(selection);
+			HashSet<pb_Face> selectedElements = selection.Value;
+			Assert.Greater(selectedElements.Count, 0);
+			Assert.Less(selectedElements.Count, selection.Key.faceCount);
+
+			Cleanup();
+		}
+
+		[Test]
+		public void PickFaces_DepthTestOff_RectSelectComplete()
+		{
+			Setup();
+			var faces = TestFacePick(new pb_PickerOptions() { depthTest = false, rectSelectMode = pb_RectSelectMode.Complete });
+			Assert.IsNotNull(faces, "Selection is null");
+			var selection = faces.FirstOrDefault();
+			Assert.IsNotNull(selection, "Selection is null");
+			HashSet<pb_Face> selectedElements = selection.Value;
+			Assert.Greater(selectedElements.Count, 0);
+			Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
+			Cleanup();
+		}
+
+		[Test]
+		public void PickFaces_DepthTestOn_RectSelectComplete()
+		{
+			Setup();
+			var faces = TestFacePick(new pb_PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Complete });
+			var selection = faces.FirstOrDefault();
+			Assert.IsNotNull(selection);
+			HashSet<pb_Face> selectedElements = selection.Value;
+			Assert.Greater(selectedElements.Count, 0);
+			Assert.Less(selectedElements.Count, selection.Key.faceCount);
 
 			Cleanup();
 		}
