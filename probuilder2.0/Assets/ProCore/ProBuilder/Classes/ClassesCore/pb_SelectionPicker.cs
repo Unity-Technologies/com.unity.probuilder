@@ -421,7 +421,7 @@ namespace ProBuilder.Core
 			out Dictionary<uint, pb_Tuple<pb_Object, pb_Face>> map)
 		{
 			int selectionCount = selection.Count;
-			GameObject[] meshes = new GameObject[selectionCount];
+			GameObject[] pickerObjects = new GameObject[selectionCount];
 			map = new Dictionary<uint, pb_Tuple<pb_Object, pb_Face>>();
 
 			uint index = 0;
@@ -452,10 +452,10 @@ namespace ProBuilder.Core
 				go.AddComponent<MeshFilter>().sharedMesh = m;
 				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
 
-				meshes.Add(go);
+				pickerObjects[i] = go;
 			}
 
-			return meshes;
+			return pickerObjects;
 		}
 
 		static void GenerateVertexPickingObjects(
