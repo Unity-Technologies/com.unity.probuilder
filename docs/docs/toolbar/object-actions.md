@@ -117,7 +117,7 @@ Builds the UV2 channel for each selected mesh, or all meshes in the scene if the
 Setting | Description
 --- | ---
 **Generate Scene UV2s** | If **On**, will generate UV2s for all meshes in the scene. Otherwise, only UV2s on the selected object(s) will be generated.
-**Enable Auto UV2** | If **On**, UV2s will be auto-generated as needed. 
+**Enable Auto UV2** | If **On**, UV2s will be auto-generated as needed.
 
 ---
 
@@ -129,12 +129,12 @@ Format | Description
 --- | ---
 OBJ | Wavefront OBJ. Widely supported model format supports multiple textures and mesh groups.
 STL | A widely supported format generally used in CAD software or 3D printing. Only supports triangle geometry.
-PLY | Stanform PLY. Widely supported and very extensible. Supports quads and vertex colors, but not multiple materials.
-Asset | Unity's asset format, only readable in Unity.
+PLY | Stanford PLY. Generally supported and very extensible. Supports quads and vertex colors, but not multiple materials.
+Asset | Unity asset format, only readable in Unity.
 
 Export options:
 
-| Option | Formats | Description |
+| Option | Applicable Formats | Description |
 |--|--|--|
 | Include Children | All | If enabled ProBuilder will include not only selected meshes, but also the children of selected objects in the exported model. |
 | Export as Group | OBJ, PLY | If enabled all selected objects will be combined and exported as a single model file. Otherwise each mesh will be exported separately. |
@@ -156,36 +156,34 @@ Converts the selected object(s) into ProBuilder-editable objects.
 
 Setting | Description
 --- | ---
-**Preserve Faces** | If **On**, ProBuilder will attempt to keep ngons. Otherwise, all the mesh will be converted to hard tris.
-
----
+**Import Quads** | If **On** ProBuilder will attempt to keep quadrangulate meshes on import. If **Off** the mesh will be imported as triangles.
+**Import Smoothing** | If **On** ProBuilder will use a smoothing angle value to calculate [smoothing groups](tool-panels/#smoothing-groups).
+**Smoothing Threshold** | When **Import Smoothing** is enabled any adjacent faces with an adjoining angle difference of less than this value will be assigned to a smooth group.
 
 ##![Entity Icon](../images/icons/Entity_Trigger.png "Entity Icon") Entity Type Tools
 
-In ProBuilder, "Entity Types" can be very helpful in projects that make heavy use of Trigger Volumes and custom Collision Volumes. There are 4 Entity Types:
+ProBuilder provides some default "entity" behaviours. These are simply MonoBehaviours that provide some commonly used functionality.
 
-### Trigger
- - Configures a mesh for use as a Trigger Volume 
- - This object will only be visible in the editor, never in game 
- - On the object's Collider component, "Force Convex" and "Is Trigger are enabled
- - Static Flags: none
+### Set Trigger
 
-### Collider 
- - Configures the mesh for use as a Collision Volume
- - This object will only be visible in the editor, never in-game
- - Static Flags: Navigation Static and Off-Link Mesh Navigation
+Assigns the `pb_TriggerBehaviour` script to selected objects, which does the following:
 
-### Mover
- - For meshes that will need to move and change in-game
- - Static Flags: NONE
+- If no collider is present, adds a `MeshCollider`.
+- If collider is a `MeshCollider`, it is set to `Convex`.
+- The collider `isTrigger` toggle is enabled.
+- Sets the `Renderer` material to the ProBuilder Trigger material.
+- When entering **Play Mode** or building the renderer is automatically disabled.
 
-### Detail
- - For objects that will NOT move or change in-game
- - Static Flags: ALL
+### Set Collider
 
-**Using the Entity Type Controls:** To set an object's type, select it (or multiple) and click the "Set (type name)" button at the bottom of the ProBuilder GUI. Click the "eye" icon to instantly toggle the visibility of each Entity Type (for example, to quickly hide all Mover objects)
+Assigns the `pb_ColliderBehaviour` script to selected objects, which does the following:
 
->Tip: You can choose the default Entity Type in the [ProBuilder Preferences](../preferences/preferences/#default-entity)
+- If no collider is present, adds a `MeshCollider`.
+- Sets the `Renderer` material to the ProBuilder Collider material.
+- When entering **Play Mode** or building the renderer is automatically disabled.
 
+### pb_Entity (Deprecated)
+
+Older versions of ProBuilder used a script called `pb_Entity` to manage trigger and collider objects. Projects making use of `pb_Entity` will still continue to function, but it is recommended to make use of the new `pb_TriggerBehaviour` and `pb_ColliderBehaviour` instead.
 
 ---

@@ -40,6 +40,15 @@ namespace ProBuilder.EditorCore
 			if(EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
+
+			foreach (var entity in Resources.FindObjectsOfTypeAll<pb_EntityBehaviour>())
+			{
+				if(entity.manageVisibility)
+					entity.OnEnterPlayMode();
+			}
+
+			// pb_Entity is deprecated - remove someday
+
 			foreach(var pb in Object.FindObjectsOfType<pb_Object>())
 			{
 				GameObject go = pb.gameObject;
@@ -63,7 +72,6 @@ namespace ProBuilder.EditorCore
 
 				Object.DestroyImmediate( pb );
 				Object.DestroyImmediate( entity );
-
 			}
 		}
 	}
