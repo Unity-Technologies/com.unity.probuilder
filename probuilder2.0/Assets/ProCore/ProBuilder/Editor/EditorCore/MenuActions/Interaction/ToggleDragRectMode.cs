@@ -18,7 +18,7 @@ namespace ProBuilder.Actions
 
 		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
 		(
-			"Set Drag Rect Mode", "Sets whether or not a mesh element (vertex, edge, or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
+			"Set Drag Rect Mode", "Sets whether or not a mesh element (edge or face) needs to be completely encompassed by a drag to be selected.\n\nThe default value is Intersect, meaning if any part of the elemnent is touched by the drag rectangle it will be selected."
 		);
 
 		public override string menuTitle { get { return isComplete ? "Rect: Complete" : "Rect: Intersect"; } }
