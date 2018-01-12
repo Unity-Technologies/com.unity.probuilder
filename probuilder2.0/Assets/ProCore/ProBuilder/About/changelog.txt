@@ -1,3 +1,23 @@
+# ProBuilder 3.0.0b0
+
+## Features
+
+- Custom color palettes now supported.
+- Add an editor window to display licenses for third party software used in ProBuilder.
+- Debug symbols are now included.
+- Add `pb_ShapeGenerator.CreateShape(pb_ShapeType shape)` function to build default primitives without requiring parameters.
+- Support partial and complete rect selection for edge elements.
+- New `Set Trigger` and `Set Collider` replace the deprecated `pb_Entity` component.
+
+## Bug Fixes
+
+- Catch edge cases of bad input for Poly Shape, preventing console spam.
+- Fix Poly Shape objects not updating graphics on undo when not currently editing the contour.
+- Fix "Connect Edges" notification showing 2x the amount of edges as connected.
+- Fix ProBuilder Editor not refreshing after a ProBuilderize action.
+- Fix UV editor throwing null if shader has no _MainTex uniform.
+- Fix potential null ref if a menu action is called without a pb_Editor instance.
+
 # ProBuilder 2.10.0f0
 
 ## Features
@@ -17,7 +37,7 @@
 
 - Move Dimensions Overlay into ProBuilder menu.
 - Move pb_Object/Entity to ProBuilder.Core namespace.
-- Move `ProBuilder2.{Common, EditorCommon}` to `ProBuilder.Core` and `ProBuilder.EditorCore`.
+- Move `ProBuilder2.Common` and` ProBuilder2.EditorCommon` namespaces to `ProBuilder.Core` and `ProBuilder.EditorCore`.
 
 ## Known Issues
 
