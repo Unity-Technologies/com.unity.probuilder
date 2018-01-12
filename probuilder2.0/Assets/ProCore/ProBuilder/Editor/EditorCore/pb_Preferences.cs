@@ -1,15 +1,3 @@
-#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
-#define UNITY_5_4_OR_LOWER
-#else
-#define UNITY_5_5_OR_HIGHER
-#endif
-
-#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5
-#define UNITY_5_5_OR_LOWER
-#else
-#define UNITY_5_6_OR_HIGHER
-#endif
-
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
@@ -21,7 +9,7 @@ namespace ProBuilder.EditorCore
 {
 	static class pb_Preferences
 	{
-		private static bool prefsLoaded = false;
+		static bool prefsLoaded = false;
 
 		static Color pbDefaultFaceColor;
 		static Color pbDefaultEdgeColor;
@@ -53,14 +41,10 @@ namespace ProBuilder.EditorCore
 		static bool pbEnableExperimental = false;
 
 		static bool showMissingLightmapUvWarning = false;
-
-#if !UNITY_4_6 && !UNITY_4_7
 		static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
-#endif
 
 		static ColliderType defaultColliderType = ColliderType.BoxCollider;
 		static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
-		static EntityType pbDefaultEntity = EntityType.Detail;
 
 		static float pbUVGridSnapValue;
 		static float pbVertexHandleSize;
@@ -68,7 +52,7 @@ namespace ProBuilder.EditorCore
 		static pb_Shortcut[] defaultShortcuts;
 
 		[PreferenceItem(pb_Constant.PRODUCT_NAME)]
-		private static void PreferencesGUI()
+		static void PreferencesGUI()
 		{
 			// Load the preferences
 			if (!prefsLoaded)
@@ -132,11 +116,6 @@ namespace ProBuilder.EditorCore
 				(Material) EditorGUILayout.ObjectField("Default Material", pbDefaultMaterial, typeof(Material), false);
 
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Default Entity");
-			pbDefaultEntity = ((EntityType) EditorGUILayout.EnumPopup((EntityType) pbDefaultEntity));
-			GUILayout.EndHorizontal();
-
-			GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Collider");
 			defaultColliderType = ((ColliderType) EditorGUILayout.EnumPopup((ColliderType) defaultColliderType));
 			GUILayout.EndHorizontal();
@@ -144,12 +123,10 @@ namespace ProBuilder.EditorCore
 			if ((ColliderType) defaultColliderType == ColliderType.MeshCollider)
 				pbForceConvex = EditorGUILayout.Toggle("Force Convex Mesh Collider", pbForceConvex);
 
-#if !UNITY_4_6 && !UNITY_4_7
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Shadow Casting Mode");
 			pbShadowCastingMode = (ShadowCastingMode) EditorGUILayout.EnumPopup(pbShadowCastingMode);
 			GUILayout.EndHorizontal();
-#endif
 
 			/**
 			 * MISC. SETTINGS
@@ -324,9 +301,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowTrigger);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowNoDraw);
 				pb_PreferencesInternal.DeleteKey("pb_Lightmapping::showMissingLightmapUvWarning");
-#if !UNITY_4_6 && !UNITY_4_7
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShadowCastingMode);
-#endif
 			}
 
 			LoadPrefs();
@@ -334,13 +309,8 @@ namespace ProBuilder.EditorCore
 
 		static int shortcutIndex = 0;
 
-#if UNITY_5_6_OR_HIGHER
 		static Rect selectBox = new Rect(0, 214, 183, 156);
 		static Rect shortcutEditRect = new Rect(190, 191, 178, 300);
-#else
-		static Rect selectBox = new Rect(130, 253, 183, 142);
-		static Rect shortcutEditRect = new Rect(320, 228, 178, 300);
-	#endif
 
 		static Vector2 shortcutScroll = Vector2.zero;
 		static int CELL_HEIGHT = 20;
@@ -408,10 +378,10 @@ namespace ProBuilder.EditorCore
 			EventModifiers em = (EventModifiers) defaultShortcuts[shortcutIndex].eventModifiers;
 			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
 #else
-				EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
-				em = (EventModifiers)EditorGUILayout.EnumMaskField(em);
-				defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
-	#endif
+			EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
+			em = (EventModifiers)EditorGUILayout.EnumMaskField(em);
+			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) (((int)em) / 2);
+#endif
 			GUILayout.Label("Description", EditorStyles.boldLabel);
 
 			GUILayout.Label(defaultShortcuts[shortcutIndex].description, EditorStyles.wordWrappedLabel);
@@ -457,10 +427,7 @@ namespace ProBuilder.EditorCore
 
 			defaultColliderType = pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 			pbToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
-			pbDefaultEntity = pb_PreferencesInternal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
-#if !UNITY_4_6 && !UNITY_4_7
 			pbShadowCastingMode = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
-#endif
 
 			pbDefaultMaterial = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
@@ -474,7 +441,6 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, pb_PreferenceLocation.Global);
 
 			pb_PreferencesInternal.SetInt(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultEntity, (int) pbDefaultEntity);
 
 			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor, pb_PreferenceLocation.Global);
@@ -489,9 +455,7 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
 
 			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
-#if !UNITY_4_6 && !UNITY_4_7
 			pb_PreferencesInternal.SetInt(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
-#endif
 
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow,
 				pb_PreferenceLocation.Global);
