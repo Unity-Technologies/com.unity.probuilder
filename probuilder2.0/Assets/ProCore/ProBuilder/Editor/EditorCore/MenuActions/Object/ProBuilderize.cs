@@ -156,7 +156,7 @@ namespace ProBuilder.Actions
 					// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
 					// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
 					// renderer so that we don't modify the asset.
-					if(AssetDatabase.GetAssetPath(originalMesh) == "" )
+					if(string.IsNullOrEmpty(AssetDatabase.GetAssetPath(originalMesh)))
 						Undo.DestroyObjectImmediate(originalMesh);
 					else
 						go.GetComponent<MeshFilter>().sharedMesh = new Mesh();

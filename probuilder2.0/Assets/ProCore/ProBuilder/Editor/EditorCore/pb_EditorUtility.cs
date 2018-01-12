@@ -258,6 +258,18 @@ namespace ProBuilder.EditorCore
 			ShadowCastingMode scm = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
 			ScreenCenter( pb.gameObject );
+
+			switch(pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider))
+			{
+				case ColliderType.BoxCollider:
+					pb.gameObject.AddComponent<BoxCollider>();
+					break;
+
+				case ColliderType.MeshCollider:
+					pb.gameObject.AddComponent<MeshCollider>().convex = pb_PreferencesInternal.HasKey(pb_Constant.pbForceConvex) ? pb_PreferencesInternal.GetBool(pb_Constant.pbForceConvex) : false;
+					break;
+			}
+
 			pb.Optimize();
 
 			if( onObjectCreated != null )
