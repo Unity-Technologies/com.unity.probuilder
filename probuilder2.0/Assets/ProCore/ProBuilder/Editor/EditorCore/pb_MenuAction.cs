@@ -81,10 +81,10 @@ namespace ProBuilder.EditorCore
 
 		public delegate void SettingsDelegate();
 
-		public static pb_Object[] selection { get { return pb_Selection.All(); } }
+		protected static pb_Object[] selection { get { return pb_Selection.All(); } }
 
-		protected EditLevel editLevel { get { return pb_Editor.instance.editLevel; } }
-		protected SelectMode selectionMode { get { return pb_Editor.instance.selectionMode; } }
+		protected static EditLevel editLevel { get { return pb_Editor.instance ? pb_Editor.instance.editLevel : EditLevel.Top; } }
+		protected static SelectMode selectionMode { get { return pb_Editor.instance ? pb_Editor.instance.selectionMode : SelectMode.Face; } }
 
 		public static GUIStyle textButtonStyleVertical 		{ get { return pb_MenuActionStyles.buttonStyleVertical; } }
 		public static GUIStyle buttonStyleHorizontal 	{ get { return pb_MenuActionStyles.buttonStyleHorizontal; } }
