@@ -110,56 +110,37 @@ namespace ProBuilder.Actions
 		 */
 		public static pb_Object Mirror(pb_Object pb, Vector3 scale, bool duplicate = true)
 		{
-			pb_Object p;
+			pb_Object mirredObject;
 
-			if(duplicate)
+			if (duplicate)
 			{
-				p = pb_Object.InitWithObject(pb);
-				p.MakeUnique();
-				p.transform.parent = pb.transform.parent;
-				p.transform.localRotation = pb.transform.localRotation;
+				mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<pb_Object>();
+				mirredObject.MakeUnique();
+				mirredObject.transform.parent = pb.transform.parent;
+				mirredObject.transform.localRotation = pb.transform.localRotation;
+				Undo.RegisterCreatedObjectUndo(mirredObject.gameObject, "Mirror Object");
 			}
 			else
 			{
 				pb_Undo.RecordObject(pb, "Mirror");
-				p = pb;
+				mirredObject = pb;
 			}
 
-			Vector3 lScale = pb.gameObject.transform.localScale;
-			p.transform.localScale = scale;
+			Vector3 lScale = mirredObject.gameObject.transform.localScale;
+			mirredObject.transform.localScale = scale;
 
 			// if flipping on an odd number of axes, flip winding order
 			if( (scale.x * scale.y * scale.z) < 0)
-				p.ReverseWindingOrder(p.faces);
+				mirredObject.ReverseWindingOrder(mirredObject.faces);
 
-			p.FreezeScaleTransform();
+			mirredObject.FreezeScaleTransform();
+			mirredObject.transform.localScale = lScale;
 
-			p.transform.localScale = lScale;
+			mirredObject.ToMesh();
+			mirredObject.Refresh();
+			mirredObject.Optimize();
 
-			if(duplicate)
-			{
-				Collider col = pb.GetComponent<Collider>();
-				ColliderType colType = ColliderType.None;
-
-				if(col != null)
-				{
-					if(col is MeshCollider)
-						colType = ColliderType.MeshCollider;
-					else
-						colType = ColliderType.BoxCollider;
-				}
-
-				pb_EditorUtility.InitObject(p, colType, pb.GetComponent<pb_Entity>().entityType);
-				p.transform.position = pb.transform.position;
-
-				Undo.RegisterCreatedObjectUndo(p.gameObject, "Mirror Object");
-			}
-
-			p.ToMesh();
-			p.Refresh();
-			p.Optimize();
-
-			return p;
+			return mirredObject;
 		}
 	}
 }

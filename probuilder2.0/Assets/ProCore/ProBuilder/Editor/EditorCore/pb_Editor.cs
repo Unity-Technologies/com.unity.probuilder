@@ -1987,7 +1987,6 @@ class pb_Editor : EditorWindow
 				switch(editLevel)
 				{
 					case EditLevel.Top:
-						used = TopLevelShortcuts(cut);
 						break;
 
 					case EditLevel.Texture:
@@ -2081,39 +2080,6 @@ class pb_Editor : EditorWindow
 
 			default:
 				return false;
-		}
-	}
-
-	private bool TopLevelShortcuts(pb_Shortcut shortcut)
-	{
-		if(selection == null || selection.Length < 1 || editLevel != EditLevel.Top)
-			return false;
-
-		switch(shortcut.action)
-		{
-			/* ENTITY TYPES */
-			case "Set Trigger":
-					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Trigger);
-				return true;
-
-			case "Set Occluder":
-					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Occluder);
-				return true;
-
-			case "Set Collider":
-					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Collider);
-				return true;
-
-			case "Set Mover":
-					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Mover);
-				return true;
-
-			case "Set Detail":
-					pb_MenuCommands.MenuSetEntityType(selection, EntityType.Detail);
-				return true;
-
-			default:
-				return true;
 		}
 	}
 

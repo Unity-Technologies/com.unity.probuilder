@@ -15,12 +15,10 @@ namespace ProBuilder.EditorCore
 		[PostProcessScene]
 		public static void OnPostprocessScene()
 		{
-			Material invisibleFaceMaterial = (Material)Resources.Load("Materials/InvisibleFace");
+			var invisibleFaceMaterial = Resources.Load<Material>("Materials/InvisibleFace");
 
-			/**
-			 * Hide nodraw faces if present.
-			 */
-			foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
+			// Hide nodraw faces if present.
+			foreach(var pb in Object.FindObjectsOfType<pb_Object>())
 			{
 				if(pb.GetComponent<MeshRenderer>() == null)
 					continue;
@@ -42,7 +40,7 @@ namespace ProBuilder.EditorCore
 			if(EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			foreach(pb_Object pb in GameObject.FindObjectsOfType(typeof(pb_Object)))
+			foreach(var pb in Object.FindObjectsOfType<pb_Object>())
 			{
 				GameObject go = pb.gameObject;
 
@@ -63,8 +61,8 @@ namespace ProBuilder.EditorCore
 
 				pb.dontDestroyMeshOnDelete = true;
 
-				GameObject.DestroyImmediate( pb );
-				GameObject.DestroyImmediate( go.GetComponent<pb_Entity>() );
+				Object.DestroyImmediate( pb );
+				Object.DestroyImmediate( entity );
 
 			}
 		}

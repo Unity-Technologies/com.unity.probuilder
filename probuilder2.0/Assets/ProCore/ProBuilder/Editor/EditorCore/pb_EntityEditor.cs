@@ -6,9 +6,6 @@ using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
 {
-	/// <summary>
-	/// CustomEditor implementation for @pb_Entity.
-	/// </summary>
 	[CustomEditor(typeof(pb_Entity))]
 	[CanEditMultipleObjects]
 	class pb_EntityEditor : UnityEditor.Editor
@@ -41,13 +38,13 @@ namespace ProBuilder.EditorCore
 			if(et != ent.entityType)
 			{
 				pb_Undo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
-
-				pb_EditorUtility.SetEntityType(et, ent.gameObject);
+#pragma warning disable 0618
+				pb_EntityUtility.SetEntityType(et, ent.gameObject);
+#pragma warning restore 0618
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
 			}
-
 
 			GUILayout.Space(4);
 

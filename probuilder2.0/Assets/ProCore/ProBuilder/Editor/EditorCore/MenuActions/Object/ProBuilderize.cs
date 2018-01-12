@@ -125,26 +125,25 @@ namespace ProBuilder.Actions
 			});
 		}
 
-		/**
-		 * Adds pb_Object and pb_Entity to object without duplicating the objcet. Is undo-able.
-		 */
+		/// <summary>
+		/// Adds pb_Object component without duplicating the objcet. Is undo-able.
+		/// </summary>
+		/// <param name="selected"></param>
+		/// <param name="settings"></param>
+		/// <returns></returns>
 		public static pb_ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
 			pb_MeshImporter.Settings settings)
 		{
-			if(selected.Count() < 1)
-				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
-
 			int i = 0;
 			float count = selected.Count();
 
-			foreach(MeshFilter mf in selected)
+			foreach(var mf in selected)
 			{
 				if(mf.sharedMesh == null)
 					continue;
 
 				GameObject go = mf.gameObject;
-				MeshRenderer mr = go.GetComponent<MeshRenderer>();
 				Mesh originalMesh = mf.sharedMesh;
 
 				try
@@ -154,20 +153,12 @@ namespace ProBuilder.Actions
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
 					meshImporter.Import(go, settings);
 
-					EntityType entityType = EntityType.Detail;
-
-					if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Collider")))
-						entityType = EntityType.Collider;
-					else
-					if(mr != null && mr.sharedMaterials != null && mr.sharedMaterials.Any(x => x != null && x.name.Contains("Trigger")))
-						entityType = EntityType.Trigger;
-
 					// if this was previously a pb_Object, or similarly any other instance asset, destroy it.
 					// if it is backed by saved asset, leave the mesh asset alone but assign a new mesh to the
 					// renderer so that we don't modify the asset.
 					if(AssetDatabase.GetAssetPath(originalMesh) == "" )
 						Undo.DestroyObjectImmediate(originalMesh);
-					else if(mf != null)
+					else
 						go.GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
 					pb.ToMesh();
@@ -175,29 +166,23 @@ namespace ProBuilder.Actions
 					pb.Optimize();
 
 					i++;
-
-					// Don't call the editor version of SetEntityType because that will
-					// reset convexity and trigger settings, which we can assume are user
-					// set already.
-					if( !pb.gameObject.GetComponent<pb_Entity>() )
-						Undo.AddComponent<pb_Entity>(pb.gameObject).SetEntity(entityType);
-					else
-						pb.gameObject.GetComponent<pb_Entity>().SetEntity(entityType);
 				}
 				catch(System.Exception e)
 				{
 					Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
 				}
 
-				EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i/count);
+				EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
 			}
 
 			EditorUtility.ClearProgressBar();
-
 			pb_Selection.OnSelectionChanged();
 			pb_Editor.Refresh(true);
 
-			return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+			if(i < 1)
+				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+			else
+				return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
 		}
 	}
 }

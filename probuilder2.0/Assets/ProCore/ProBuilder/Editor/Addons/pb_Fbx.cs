@@ -82,7 +82,7 @@ namespace ProBuilder.Addons.FBX
 			component.dontDestroyMeshOnDelete = true;
 			UnityEngine.Object.DestroyImmediate(component);
 			if(entity != null)
-			UnityEngine.Object.DestroyImmediate(entity);
+				UnityEngine.Object.DestroyImmediate(entity);
 
 			return true;
 		}

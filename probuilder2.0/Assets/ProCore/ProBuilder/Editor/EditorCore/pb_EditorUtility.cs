@@ -136,7 +136,7 @@ namespace ProBuilder.EditorCore
 			window.Repaint();
 		}
 
-		private static void NotifUpdate()
+		static void NotifUpdate()
 		{
 			if(notifDisplayed && Time.realtimeSinceStartup > notifTimer)
 			{
@@ -189,175 +189,6 @@ namespace ProBuilder.EditorCore
 		{
 			return PrefabUtility.GetPrefabType(go) == PrefabType.Prefab;
 		}
-
-		/**
-		 *	\brief Sets the EntityType for the passed gameObject.
-		 *	@param newEntityType The type to set.
-		 *	@param target The gameObject to apply the EntityType to.  Must contains pb_Object and pb_Entity components.  Method does contain null checks.
-		 */
-		public static void SetEntityType(EntityType newEntityType, GameObject target)
-		{
-			pb_Entity ent = target.GetComponent<pb_Entity>();
-
-			if(ent == null)
-				ent = target.AddComponent<pb_Entity>();
-
-			pb_Object pb = target.GetComponent<pb_Object>();
-
-			if(!ent || !pb)
-				return;
-
-			SetEditorFlags(StaticEditorFlags_All, target);
-
-			switch(newEntityType)
-			{
-				case EntityType.Detail:
-				case EntityType.Occluder:
-					SetBrush(target);
-					break;
-
-				case EntityType.Trigger:
-					SetTrigger(target);
-					break;
-
-				case EntityType.Collider:
-					SetCollider(target);
-					break;
-
-				case EntityType.Mover:
-					SetDynamic(target);
-					break;
-			}
-
-			ent.SetEntity(newEntityType);
-		}
-
-		private static void SetBrush(GameObject target)
-		{
-			EntityType et = target.GetComponent<pb_Entity>().entityType;
-
-			if(	et == EntityType.Trigger ||
-				et == EntityType.Collider )
-			{
-				pb_Object pb = target.GetComponent<pb_Object>();
-
-				#if !PROTOTYPE
-				pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
-				#else
-				target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-				#endif
-
-				pb.ToMesh();
-				pb.Refresh();
-			}
-		}
-
-		private static void SetDynamic(GameObject target)
-		{
-			EntityType et = target.GetComponent<pb_Entity>().entityType;
-
-			SetEditorFlags((StaticEditorFlags)0, target);
-
-			if(	et == EntityType.Trigger ||
-				et == EntityType.Collider )
-			{
-				pb_Object pb = target.GetComponent<pb_Object>();
-
-				#if !PROTOTYPE
-					pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial );
-				#else
-					target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-				#endif
-
-				pb.ToMesh();
-				pb.Refresh();
-			}
-		}
-
-		private static void SetTrigger(GameObject target)
-		{
-			pb_Object pb = target.GetComponent<pb_Object>();
-
-			#if !PROTOTYPE
-			pb.SetFaceMaterial(pb.faces, pb_Constant.TriggerMaterial );
-			#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.TriggerMaterial;
-			#endif
-
-			SetIsTrigger(true, target);
-			SetEditorFlags((StaticEditorFlags)0, target);
-
-			pb.ToMesh();
-			pb.Refresh();
-		}
-
-		private static void SetCollider(GameObject target)
-		{
-			pb_Object pb = target.GetComponent<pb_Object>();
-
-			#if !PROTOTYPE
-			pb.SetFaceMaterial(pb.faces, pb_Constant.ColliderMaterial );
-			#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.ColliderMaterial;
-			#endif
-
-			pb.ToMesh();
-			pb.Refresh();
-
-			SetEditorFlags( (StaticEditorFlags)(StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration), target);
-		}
-
-		private static void SetEditorFlags(StaticEditorFlags editorFlags, GameObject target)
-		{
-			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
-		}
-
-		/**
-		 *	Toggles the LightmapStatic bit of an objects Static flags.
-		 */
-		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
-		{
-			pb_Entity ent = pb.GetComponent<pb_Entity>();
-
-			if(ent != null && ent.entityType == EntityType.Detail)
-			{
-				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
-
-				if( isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0 )
-				{
-					flags ^= StaticEditorFlags.LightmapStatic;
-					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-				}
-			}
-		}
-
-		/**
-		 * Returns true if GameObject contains flags.
-		 */
-		public static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
-		{
-			return (GameObjectUtility.GetStaticEditorFlags(go) & flags) == flags;
-		}
-
-		private static void SetIsTrigger(bool val, GameObject target)
-		{
-			Collider[] colliders = pb_Util.GetComponents<Collider>(target);
-			foreach(Collider col in colliders)
-			{
-				if(val && col is MeshCollider)
-					((MeshCollider)col).convex = true;
-				col.isTrigger = val;
-			}
-		}
-
-		const StaticEditorFlags StaticEditorFlags_All =
-				StaticEditorFlags.LightmapStatic |
-				StaticEditorFlags.OccluderStatic |
-				StaticEditorFlags.BatchingStatic |
-				StaticEditorFlags.OccludeeStatic |
-				StaticEditorFlags.NavigationStatic |
-				StaticEditorFlags.OffMeshLinkGeneration |
-				StaticEditorFlags.ReflectionProbeStatic;
 
 		/**
 		 *	Returns true if Asset Store window is open, false otherwise.
@@ -430,21 +261,22 @@ namespace ProBuilder.EditorCore
 			return reason;
 		}
 
-		/**
-		 * \brief ProBuilder objects created in Editor need to be initialized with a number of additional Editor-only settings.
-		 *	This method provides an easy method of doing so in a single call.  #InitObject will set the Entity Type, generate
-		 *	a UV2 channel, set the unwrapping parameters, and center the object in the screen.
-		 */
+		/// <summary>
+		/// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
+		/// </summary>
+		/// <param name="pb"></param>
 		public static void InitObject(pb_Object pb)
 		{
-			ColliderType col = pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
-			EntityType et = pb_PreferencesInternal.GetEnum<EntityType>(pb_Constant.pbDefaultEntity);
-			InitObject(pb, col, et);
+			ShadowCastingMode scm = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
+			ScreenCenter( pb.gameObject );
+			pb.Optimize();
 
 			if( onObjectCreated != null )
 				onObjectCreated(pb);
 		}
 
+		[System.Obsolete("pb_Entity is deprecated, please use InitObject(pb_Object)")]
 		public static void InitObject(pb_Object pb, ColliderType colliderType, EntityType entityType)
 		{
 			switch(colliderType)
@@ -458,13 +290,11 @@ namespace ProBuilder.EditorCore
 					break;
 			}
 
-			#if !UNITY_4_7
 			ShadowCastingMode scm = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
-			#endif
 
-			pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
-			pb_EditorUtility.ScreenCenter( pb.gameObject );
+			pb_EntityUtility.SetEntityType(entityType, pb.gameObject);
+			ScreenCenter( pb.gameObject );
 			pb.Optimize();
 		}
 

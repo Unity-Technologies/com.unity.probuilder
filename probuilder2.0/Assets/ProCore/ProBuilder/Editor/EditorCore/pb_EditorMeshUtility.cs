@@ -108,8 +108,8 @@ namespace ProBuilder.EditorCore
 				}
 			}
 
-			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag))
-				pb_EditorUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
+			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false))
+				pb_EntityUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(onMeshCompiled != null)
 				onMeshCompiled(InObject, mesh);

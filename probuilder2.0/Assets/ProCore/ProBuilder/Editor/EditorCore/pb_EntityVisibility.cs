@@ -75,7 +75,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Registered to EditorApplication.onPlaymodeStateChanged
 		/// </summary>
-		private static void OnPlayModeStateChanged()
+		static void OnPlayModeStateChanged()
 		{
 			bool isPlaying = EditorApplication.isPlaying;
 			bool orWillPlay = EditorApplication.isPlayingOrWillChangePlaymode;

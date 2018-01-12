@@ -1133,11 +1133,11 @@ namespace ProBuilder.EditorCore
 			// Remove pb_Object
 			Mesh m = pb_MeshUtility.DeepCopy( pb.msh );
 
-			GameObject.DestroyImmediate(pb.msh);
-			GameObject.DestroyImmediate(pb);
+			Object.DestroyImmediate(pb.msh);
+			Object.DestroyImmediate(pb);
 
 			if(previewObject.GetComponent<pb_Entity>())
-				GameObject.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
+				Object.DestroyImmediate(previewObject.GetComponent<pb_Entity>());
 
 			HideFlags flags = HideFlags.DontSave;
 

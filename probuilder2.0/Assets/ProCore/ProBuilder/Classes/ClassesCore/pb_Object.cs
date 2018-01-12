@@ -13,7 +13,6 @@ namespace ProBuilder.Core
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(MeshFilter))]
 	[RequireComponent(typeof(MeshRenderer))]
-	[RequireComponent(typeof(pb_Entity))]
 	[ExecuteInEditMode]
 	public class pb_Object : MonoBehaviour
 	{
@@ -135,6 +134,14 @@ namespace ProBuilder.Core
 		public Vector2[] uv
 		{
 			get { return _uv; }
+		}
+
+		/// <summary>
+		/// True if this mesh has a valid UV2 channel.
+		/// </summary>
+		public bool hasUv2
+		{
+			get { return msh.uv2 != null && msh.uv2.Length == vertexCount; }
 		}
 
 		/// <summary>
@@ -370,10 +377,7 @@ namespace ProBuilder.Core
 			GameObject _gameObject = new GameObject();
 			pb_Object pb_obj = _gameObject.AddComponent<pb_Object>();
 			_gameObject.name = "ProBuilder Mesh";
-
 			pb_obj.GeometryWithPoints(vertices);
-
-			pb_obj.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
 
 			return pb_obj;
 		}
@@ -422,8 +426,6 @@ namespace ProBuilder.Core
 			pb.ToMesh();
 			pb.Refresh();
 
-			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
-
 			return pb;
 		}
 
@@ -463,8 +465,6 @@ namespace ProBuilder.Core
 
 			pb.ToMesh();
 			pb.Refresh();
-
-			pb.GetComponent<pb_Entity>().SetEntity(EntityType.Detail);
 
 			return pb;
 		}

@@ -30,13 +30,15 @@ namespace ProBuilder.EditorCore
 			Lightmapping.completed += OnLightmappingCompleted;
 		}
 
-		private static void OnLightmappingCompleted()
+		static void OnLightmappingCompleted()
 		{
 			if (!pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", false))
 				return;
 
-			IEnumerable<pb_Entity> missingUv2 = GameObject.FindObjectsOfType<pb_Entity>().Where(x => x.entityType == EntityType.Detail && !x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+			var missingUv2 = Object.FindObjectsOfType<pb_Object>().Where(x => !x.hasUv2 && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+
 			int count = missingUv2.Count();
+
 			if (count > 0)
 				pb_Log.Warning("{0} ProBuilder {1} not included in lightmap bake due to missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}

@@ -56,7 +56,9 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
+#pragma warning disable 0618
 			return pb_MenuCommands.MenuSetEntityType(selection, entityType);
+#pragma warning restore 0618
 		}
 
 		protected override bool DoAltButton(params GUILayoutOption[] options)

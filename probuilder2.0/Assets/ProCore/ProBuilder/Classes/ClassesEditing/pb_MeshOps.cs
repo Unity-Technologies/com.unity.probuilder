@@ -656,7 +656,7 @@ namespace ProBuilder.MeshOperations
 	#endif
 
 		/// <summary>
-		/// Given an array of "donors", this method returns a merged #pb_Object.
+		/// Given an array of "donors", this method returns a merged pb_Object.
 		/// </summary>
 		/// <param name="pbs"></param>
 		/// <param name="combined"></param>
@@ -720,17 +720,17 @@ namespace ProBuilder.MeshOperations
 				}
 			}
 
-			GameObject go = (GameObject)GameObject.Instantiate(pbs[0].gameObject);
+			GameObject go = Object.Instantiate(pbs[0].gameObject);
 			go.transform.position = Vector3.zero;
 			go.transform.localRotation = Quaternion.identity;
 			go.transform.localScale = Vector3.one;
 
 			// Destroy the children
 			foreach(Transform t in go.transform)
-				GameObject.DestroyImmediate(t.gameObject);
+				Object.DestroyImmediate(t.gameObject);
 
-			if(go.GetComponent<pb_Object>()) GameObject.DestroyImmediate(go.GetComponent<pb_Object>());
-			if(go.GetComponent<pb_Entity>()) GameObject.DestroyImmediate(go.GetComponent<pb_Entity>());
+			if(go.GetComponent<pb_Object>()) Object.DestroyImmediate(go.GetComponent<pb_Object>());
+			if(go.GetComponent<pb_Entity>()) Object.DestroyImmediate(go.GetComponent<pb_Entity>());
 
 			combined = go.AddComponent<pb_Object>();
 
@@ -741,13 +741,8 @@ namespace ProBuilder.MeshOperations
 
 			combined.SetSharedIndices( s.ToArray() ?? pb_IntArrayUtility.ExtractSharedIndices(v.ToArray()) );
 			combined.SetSharedIndicesUV( suv.ToArray() ?? new pb_IntArray[0] {});
-
 			combined.ToMesh();
-
-			combined.GetComponent<pb_Entity>().SetEntity( pbs[0].GetComponent<pb_Entity>().entityType );
-
 			combined.CenterPivot( pbs[0].transform.position );
-
 			combined.Refresh();
 
 			// refresh donors since deleting the children of the instantiated object could cause them to lose references

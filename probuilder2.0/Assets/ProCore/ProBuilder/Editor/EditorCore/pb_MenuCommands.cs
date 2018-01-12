@@ -50,7 +50,7 @@ namespace ProBuilder.EditorCore
 
 			if( pb_MeshOps.CombineObjects(selected, out pb) )
 			{
-				pb_EditorUtility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
+//				pb_EntityUtility.SetEntityType(selected[0].GetComponent<pb_Entity>().entityType, pb.gameObject);
 
 				pb.Optimize();
 
@@ -167,9 +167,13 @@ namespace ProBuilder.EditorCore
 			return new pb_ActionResult(Status.Success, "Freeze Transforms");
 		}
 
-		/**
-		 * Set the pb_Entity entityType on selection.
-		 */
+		/// <summary>
+		/// Set the pb_Entity entityType on selection.
+		/// </summary>
+		/// <param name="selection"></param>
+		/// <param name="entityType"></param>
+		/// <returns></returns>
+		[Obsolete("pb_Entity is obsolete.")]
 		public static pb_ActionResult MenuSetEntityType(pb_Object[] selection, EntityType entityType)
 		{
 			if(selection.Length < 1)
@@ -181,7 +185,7 @@ namespace ProBuilder.EditorCore
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_EditorUtility.SetEntityType(entityType, pb.gameObject);
+				pb_EntityUtility.SetEntityType(entityType, pb.gameObject);
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
