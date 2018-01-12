@@ -30,9 +30,30 @@ namespace ProBuilder.EditorCore
 			Lightmapping.completed += OnLightmappingCompleted;
 		}
 
+		/// <summary>
+		/// Toggles the LightmapStatic bit of an objects Static flags.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="isEnabled"></param>
+		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
+		{
+			pb_Entity ent = pb.GetComponent<pb_Entity>();
+
+			if (ent != null && ent.entityType == EntityType.Detail)
+			{
+				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
+
+				if (isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0)
+				{
+					flags ^= StaticEditorFlags.LightmapStatic;
+					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
+				}
+			}
+		}
+
 		static void OnLightmappingCompleted()
 		{
-			if (!pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", false))
+			if (!pb_PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false))
 				return;
 
 			var missingUv2 = Object.FindObjectsOfType<pb_Object>().Where(x => !x.hasUv2 && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
@@ -40,7 +61,7 @@ namespace ProBuilder.EditorCore
 			int count = missingUv2.Count();
 
 			if (count > 0)
-				pb_Log.Warning("{0} ProBuilder {1} not included in lightmap bake due to missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
+				pb_Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}
 
 		/**

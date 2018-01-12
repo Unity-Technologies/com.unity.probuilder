@@ -133,33 +133,6 @@ namespace ProBuilder.EditorCore
 			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
 		}
 
-		/**
-		 *	Toggles the LightmapStatic bit of an objects Static flags.
-		 */
-		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
-		{
-			pb_Entity ent = pb.GetComponent<pb_Entity>();
-
-			if (ent != null && ent.entityType == EntityType.Detail)
-			{
-				StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(pb.gameObject);
-
-				if (isEnabled != (flags & StaticEditorFlags.LightmapStatic) > 0)
-				{
-					flags ^= StaticEditorFlags.LightmapStatic;
-					GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
-				}
-			}
-		}
-
-		/**
-		 * Returns true if GameObject contains flags.
-		 */
-		public static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
-		{
-			return (GameObjectUtility.GetStaticEditorFlags(go) & flags) == flags;
-		}
-
 		private static void SetIsTrigger(bool val, GameObject target)
 		{
 			Collider[] colliders = pb_Util.GetComponents<Collider>(target);

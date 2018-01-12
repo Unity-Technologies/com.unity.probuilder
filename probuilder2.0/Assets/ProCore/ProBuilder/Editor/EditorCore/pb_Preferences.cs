@@ -41,6 +41,7 @@ namespace ProBuilder.EditorCore
 		static bool pbEnableExperimental = false;
 
 		static bool showMissingLightmapUvWarning = false;
+		static bool pbManageLightmappingStaticFlag = false;
 		static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 
 		static ColliderType defaultColliderType = ColliderType.BoxCollider;
@@ -133,6 +134,13 @@ namespace ProBuilder.EditorCore
 			 */
 			GUILayout.Label("Misc. Settings", EditorStyles.boldLabel);
 
+			pbManageLightmappingStaticFlag = EditorGUILayout.Toggle(
+				new GUIContent("Manage Lightmap Static Flag",
+					"Allow ProBuilder to toggle off the Lightmap Static flag when no UV2 channel is present. This prevents lighting artifacts caused by a missing UV2 channel."),
+				pbManageLightmappingStaticFlag);
+
+			showMissingLightmapUvWarning = EditorGUILayout.Toggle("Show Missing Lightmap UVs Warning", showMissingLightmapUvWarning);
+
 			pbDragCheckLimit = EditorGUILayout.Toggle(
 				new GUIContent("Limit Drag Check to Selection",
 					"If true, when drag selecting faces, only currently selected pb-Objects will be tested for matching faces.  If false, all pb_Objects in the scene will be checked.  The latter may be slower in large scenes."),
@@ -150,8 +158,6 @@ namespace ProBuilder.EditorCore
 				EditorGUILayout.Toggle(
 					new GUIContent("Dimension Overlay Lines",
 						"When the Dimensions Overlay is on, this toggle shows or hides the axis lines."), pbDrawAxisLines);
-			showMissingLightmapUvWarning =
-				EditorGUILayout.Toggle("Show Missing Lightmap UVs Warning", showMissingLightmapUvWarning);
 
 			GUILayout.Space(4);
 
@@ -300,7 +306,8 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowCollider);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowTrigger);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowNoDraw);
-				pb_PreferencesInternal.DeleteKey("pb_Lightmapping::showMissingLightmapUvWarning");
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowMissingLightmapUvWarning);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbManageLightmappingStaticFlag);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShadowCastingMode);
 			}
 
@@ -413,8 +420,8 @@ namespace ProBuilder.EditorCore
 			pbElementSelectIsHamFisted = pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 			pbDragSelectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
 			pbEnableExperimental = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
-			showMissingLightmapUvWarning =
-				pb_PreferencesInternal.GetBool("pb_Lightmapping::showMissingLightmapUvWarning", false);
+			showMissingLightmapUvWarning = pb_PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false);
+			pbManageLightmappingStaticFlag = pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false);
 
 
 			pbDefaultFaceColor = pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultFaceColor);
@@ -470,19 +477,16 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetBool(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, pbUVEditorFloating, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetBool(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts,
-				pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, pbIconGUI, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDrawAxisLines, pbDrawAxisLines, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
-			pb_PreferencesInternal.SetBool(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted,
-				pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetBool(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement,
-				pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbDragSelectWholeElement, pbDragSelectWholeElement, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbEnableExperimental, pbEnableExperimental, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetBool("pb_Lightmapping::showMissingLightmapUvWarning", showMissingLightmapUvWarning,
-				pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, pb_PreferenceLocation.Global);
 
 			pb_PreferencesInternal.SetFloat(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetFloat(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue, pb_PreferenceLocation.Global);

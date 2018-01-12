@@ -109,7 +109,7 @@ namespace ProBuilder.EditorCore
 			}
 
 			if(pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false))
-				pb_EntityUtility.SetLightmapStaticFlagEnabled(InObject, hasUv2);
+				pb_Lightmapping.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(onMeshCompiled != null)
 				onMeshCompiled(InObject, mesh);

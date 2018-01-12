@@ -186,92 +186,118 @@ namespace ProBuilder.Core
 		internal const char CMD_DELETE  	= '\u232B';
 
 		// Enum
-		internal const string pbDefaultEditLevel 				= "pbDefaultEditLevel";
-		internal const string pbDefaultSelectionMode 			= "pbDefaultSelectionMode";
-		internal const string pbHandleAlignment 				= "pbHandleAlignment";
-		internal const string pbVertexColorTool 				= "pbVertexColorTool";
-		internal const string pbToolbarLocation 				= "pbToolbarLocation";
-		internal const string pbDefaultEntity 				= "pbDefaultEntity";
-		internal const string pbExtrudeMethod					= "pbExtrudeMethod";
+		internal const string pbDefaultEditLevel = "pbDefaultEditLevel";
+		internal const string pbDefaultSelectionMode = "pbDefaultSelectionMode";
+		internal const string pbHandleAlignment = "pbHandleAlignment";
+		internal const string pbVertexColorTool = "pbVertexColorTool";
+		internal const string pbToolbarLocation = "pbToolbarLocation";
+		internal const string pbDefaultEntity = "pbDefaultEntity";
+		internal const string pbExtrudeMethod = "pbExtrudeMethod";
 
 		// Color
-		internal const string pbDefaultFaceColor 				= "pbDefaultFaceColor";
-		internal const string pbDefaultEdgeColor 				= "pbDefaultEdgeColor";
-		internal const string pbDefaultSelectedVertexColor	= "pbDefaultSelectedVertexColor";
-		internal const string pbDefaultVertexColor 			= "pbDefaultVertexColor";
+		internal const string pbDefaultFaceColor = "pbDefaultFaceColor";
+		internal const string pbDefaultEdgeColor = "pbDefaultEdgeColor";
+		internal const string pbDefaultSelectedVertexColor = "pbDefaultSelectedVertexColor";
+		internal const string pbDefaultVertexColor = "pbDefaultVertexColor";
 
 		// Bool
-		internal const string pbDefaultOpenInDockableWindow	= "pbDefaultOpenInDockableWindow";
-		internal const string pbEditorPrefVersion 			= "pbEditorPrefVersion";
-		internal const string pbEditorShortcutsVersion		= "pbEditorShortcutsVersion";
-		internal const string pbDefaultCollider 				= "pbDefaultCollider";
-		internal const string pbForceConvex 					= "pbForceConvex";
-		internal const string pbVertexColorPrefs 				= "pbVertexColorPrefs";
-		internal const string pbShowEditorNotifications 		= "pbShowEditorNotifications";
-		internal const string pbDragCheckLimit 				= "pbDragCheckLimit";
-		internal const string pbForceVertexPivot 				= "pbForceVertexPivot";
-		internal const string pbForceGridPivot 				= "pbForceGridPivot";
-		internal const string pbManifoldEdgeExtrusion 		= "pbManifoldEdgeExtrusion";
-		internal const string pbPerimeterEdgeBridgeOnly 		= "pbPerimeterEdgeBridgeOnly";
-		internal const string pbPBOSelectionOnly 				= "pbPBOSelectionOnly";
-		internal const string pbCloseShapeWindow 				= "pbCloseShapeWindow";
-		internal const string pbUVEditorFloating 				= "pbUVEditorFloating";
-		internal const string pbUVMaterialPreview 			= "pbUVMaterialPreview";			///< Toggles the UV editor material preview
-		internal const string pbShowSceneToolbar 				= "pbShowSceneToolbar";				///< Turns on or off the SceneView toolbar.
-		internal const string pbNormalizeUVsOnPlanarProjection= "pbNormalizeUVsOnPlanarProjection";
-		internal const string pbStripProBuilderOnBuild 		= "pbStripProBuilderOnBuild";
-		internal const string pbDisableAutoUV2Generation 		= "pbDisableAutoUV2Generation";
-		internal const string pbShowSceneInfo 				= "pbShowSceneInfo";
-		internal const string pbEnableBackfaceSelection		= "pbEnableBackfaceSelection";
-		internal const string pbVertexPaletteDockable			= "pbVertexPaletteDockable";
-		internal const string pbExtrudeAsGroup				= "pbExtrudeAsGroup";				///< When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
-		internal const string pbUniqueModeShortcuts			= "pbUniqueModeShortcuts";
-		internal const string pbMaterialEditorFloating 		= "pbMaterialEditorFloating";
-		internal const string pbShapeWindowFloating	 		= "pbShapeWindowFloating";
-		internal const string pbIconGUI	 					= "pbIconGUI";
-		internal const string pbShiftOnlyTooltips	 			= "pbShiftOnlyTooltips";
-		internal const string pbDrawAxisLines					= "pbDrawAxisLines";
-		internal const string pbCollapseVertexToFirst			= "pbCollapseVertexToFirst";
-		internal const string pbMeshesAreAssets				= "pbMeshesAreAssets";
-		internal const string pbElementSelectIsHamFisted		= "pbElementSelectIsHamFisted";
-		internal const string pbFillHoleSelectsEntirePath		= "pbFillHoleSelectsEntirePath";
-		internal const string pbDetachToNewObject				= "pbDetachToNewObject";
+		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
+		internal const string pbEditorPrefVersion = "pbEditorPrefVersion";
+		internal const string pbEditorShortcutsVersion = "pbEditorShortcutsVersion";
+		internal const string pbDefaultCollider = "pbDefaultCollider";
+		internal const string pbForceConvex = "pbForceConvex";
+		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
+		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
+		internal const string pbDragCheckLimit = "pbDragCheckLimit";
+		internal const string pbForceVertexPivot = "pbForceVertexPivot";
+		internal const string pbForceGridPivot = "pbForceGridPivot";
+		internal const string pbManifoldEdgeExtrusion = "pbManifoldEdgeExtrusion";
+		internal const string pbPerimeterEdgeBridgeOnly = "pbPerimeterEdgeBridgeOnly";
+		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
+		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
+		internal const string pbUVEditorFloating = "pbUVEditorFloating";
+		/// Toggles the UV editor material preview
+		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
+		/// Turns on or off the SceneView toolbar.
+		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
+		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
+
+		internal const string pbStripProBuilderOnBuild = "pbStripProBuilderOnBuild";
+		internal const string pbDisableAutoUV2Generation = "pbDisableAutoUV2Generation";
+		internal const string pbShowSceneInfo = "pbShowSceneInfo";
+		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
+		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
+		/// When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
+		internal const string pbExtrudeAsGroup = "pbExtrudeAsGroup";
+		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
+
+		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
+		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
+		internal const string pbIconGUI = "pbIconGUI";
+		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
+		internal const string pbDrawAxisLines = "pbDrawAxisLines";
+		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
+		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
+		internal const string pbElementSelectIsHamFisted = "pbElementSelectIsHamFisted";
+		internal const string pbFillHoleSelectsEntirePath = "pbFillHoleSelectsEntirePath";
+		internal const string pbDetachToNewObject = "pbDetachToNewObject";
+
 		[System.Obsolete("Use pb_MeshImporter::quads")]
-		internal const string pbPreserveFaces					= "pbPreserveFaces";
-		internal const string pbDragSelectWholeElement		= "pbDragSelectWholeElement";		///< When drag selecting faces or edges, does the entire element have to be encompassed?
-		internal const string pbDragSelectMode				= "pbDragSelectMode";				///< When shift + drag selecting elements, how is the selection modified?
-		internal const string pbShadowCastingMode				= "pbShadowCastingMode";			///< If present sets the shadow casting mode on new ProBuilder objects.
-		internal const string pbEnableExperimental			= "pbEnableExperimental";			///< Are experimental features enabled?
-		internal const string pbCheckForProBuilderUpdates		= "pbCheckForProBuilderUpdates";	///< Automatically check for updates?
-		internal const string pbManageLightmappingStaticFlag	= "pbManageLightmappingStaticFlag";	///< Enable ProBuilder to manage the lightmapping static flags.
+		internal const string pbPreserveFaces = "pbPreserveFaces";
+
+		/// When drag selecting faces or edges, does the entire element have to be encompassed?
+		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
+
+		/// When shift + drag selecting elements, how is the selection modified?
+		internal const string pbDragSelectMode = "pbDragSelectMode";
+
+		/// If present sets the shadow casting mode on new ProBuilder objects.
+		internal const string pbShadowCastingMode = "pbShadowCastingMode";
+
+		/// Are experimental features enabled?
+		internal const string pbEnableExperimental = "pbEnableExperimental";
+
+		/// Automatically check for updates?
+		internal const string pbCheckForProBuilderUpdates = "pbCheckForProBuilderUpdates";
+
+		/// Enable ProBuilder to manage the lightmapping static flags.
+		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
+		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
 
 		// Float
-		internal const string pbVertexHandleSize 				= "pbVertexHandleSize";
-		internal const string pbUVGridSnapValue				= "pbUVGridSnapValue";
-		internal const string pbUVWeldDistance				= "pbUVWeldDistance";
-		internal const string pbWeldDistance 					= "pbWeldDistance";					///< The maximum allowed distance between vertices to weld.
-		internal const string pbExtrudeDistance 				= "pbExtrudeDistance";
-		internal const string pbBevelAmount 					= "pbBevelAmount";
+		internal const string pbVertexHandleSize = "pbVertexHandleSize";
+		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
+		internal const string pbUVWeldDistance = "pbUVWeldDistance";
+
+		/// The maximum allowed distance between vertices to weld.
+		internal const string pbWeldDistance = "pbWeldDistance";
+
+		internal const string pbExtrudeDistance = "pbExtrudeDistance";
+		internal const string pbBevelAmount = "pbBevelAmount";
 
 		// Int
-		internal const string pbEdgeSubdivisions				= "pbEdgeSubdivisions";
+		internal const string pbEdgeSubdivisions = "pbEdgeSubdivisions";
 
 		// Misc
-		internal const string pbDefaultShortcuts 				= "pbDefaultShortcuts";
-		internal const string pbDefaultMaterial 				= "pbDefaultMaterial";
-		internal const string pbCurrentMaterialPalette		= "pbCurrentMaterialPalette";
+		internal const string pbDefaultShortcuts = "pbDefaultShortcuts";
+		internal const string pbDefaultMaterial = "pbDefaultMaterial";
+		internal const string pbCurrentMaterialPalette = "pbCurrentMaterialPalette";
 
-		// usablility settings (not preferences, just things that need to be saved)
-		internal const string pbGrowSelectionUsingAngle 		= "pbGrowSelectionUsingAngle";		///< Grow using angle check?
-		internal const string pbGrowSelectionAngle 	 		= "pbGrowSelectionAngle";			///< The angle value
-		internal const string pbGrowSelectionAngleIterative	= "pbGrowSelectionAngleIterative";	///< If true, only one step of outer edges will be added.
+		/// Grow using angle check?
+		internal const string pbGrowSelectionUsingAngle = "pbGrowSelectionUsingAngle";
 
-		internal const string pbShowDetail					= "pbShowDetail";
-		internal const string pbShowOccluder					= "pbShowOccluder";
-		internal const string pbShowMover						= "pbShowMover";
-		internal const string pbShowCollider					= "pbShowCollider";
-		internal const string pbShowTrigger					= "pbShowTrigger";
-		internal const string pbShowNoDraw					= "pbShowNoDraw";
+		/// The angle value
+		internal const string pbGrowSelectionAngle = "pbGrowSelectionAngle";
+
+		/// If true, only one step of outer edges will be added.
+		internal const string pbGrowSelectionAngleIterative = "pbGrowSelectionAngleIterative";
+
+		internal const string pbShowDetail = "pbShowDetail";
+		internal const string pbShowOccluder = "pbShowOccluder";
+		internal const string pbShowMover = "pbShowMover";
+		internal const string pbShowCollider = "pbShowCollider";
+		internal const string pbShowTrigger = "pbShowTrigger";
+		internal const string pbShowNoDraw = "pbShowNoDraw";
 
 		internal static readonly Rect RectZero = new Rect(0,0,0,0);
 

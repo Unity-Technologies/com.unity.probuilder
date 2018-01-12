@@ -250,6 +250,17 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
+		/// Returns true if GameObject contains flags.
+		/// </summary>
+		/// <param name="go"></param>
+		/// <param name="flags"></param>
+		/// <returns></returns>
+		public static bool HasStaticFlag(this GameObject go, StaticEditorFlags flags)
+		{
+			return (GameObjectUtility.GetStaticEditorFlags(go) & flags) == flags;
+		}
+
+		/// <summary>
 		/// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
 		/// </summary>
 		/// <param name="pb"></param>
