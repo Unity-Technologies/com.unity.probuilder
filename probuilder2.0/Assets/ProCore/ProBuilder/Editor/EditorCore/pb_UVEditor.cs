@@ -1811,8 +1811,34 @@ class pb_UVEditor : EditorWindow
 	}
 
 	Rect UVRectIdentity = new Rect(0,0,1,1);
-	/// re-usable rect for drawing graphs
+
+	// re-usable rect for drawing graphs
 	Rect r = new Rect(0,0,0,0);
+
+	Texture2D GetMainTexture(Material material)
+	{
+		Texture2D best = null;
+
+		for (int i = 0; i < ShaderUtil.GetPropertyCount(material.shader); i++)
+		{
+			if (ShaderUtil.GetPropertyType(material.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
+			{
+				string propertyName = ShaderUtil.GetPropertyName(material.shader, i);
+
+				Texture2D tex = material.GetTexture(propertyName) as Texture2D;
+
+				if (tex != null)
+				{
+					if (propertyName.Contains("_MainTex") || propertyName.Contains("Albedo"))
+						return tex;
+					else if (best == null)
+						best = tex;
+				}
+			}
+		}
+
+		return best;
+	}
 
 	private void DrawUVGraph(Rect rect)
 	{
@@ -1824,8 +1850,10 @@ class pb_UVEditor : EditorWindow
 		UVRectIdentity.x = UVGraphCenter.x + uvGraphOffset.x;
 		UVRectIdentity.y = UVGraphCenter.y + uvGraphOffset.y - UVRectIdentity.height;
 
-		if(pref_showMaterial && preview_material && preview_material.mainTexture)
-			EditorGUI.DrawPreviewTexture(UVRectIdentity, preview_material.mainTexture, null, ScaleMode.StretchToFill, 0);
+		var texture = GetMainTexture(preview_material);
+
+		if(pref_showMaterial && preview_material && texture != null)
+			EditorGUI.DrawPreviewTexture(UVRectIdentity, texture, null, ScaleMode.StretchToFill, 0);
 
 		if( (screenshotStatus != ScreenshotStatus.PrepareCanvas && screenshotStatus != ScreenshotStatus.CanvasReady) || !screenshot_hideGrid)
 		{
