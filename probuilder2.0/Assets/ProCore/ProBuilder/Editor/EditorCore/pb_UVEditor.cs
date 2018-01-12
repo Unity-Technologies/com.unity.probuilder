@@ -1817,6 +1817,9 @@ class pb_UVEditor : EditorWindow
 
 	Texture2D GetMainTexture(Material material)
 	{
+		if (material == null || material.shader == null)
+			return null;
+
 		Texture2D best = null;
 
 		for (int i = 0; i < ShaderUtil.GetPropertyCount(material.shader); i++)
