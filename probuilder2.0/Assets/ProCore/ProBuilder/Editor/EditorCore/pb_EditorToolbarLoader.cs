@@ -136,10 +136,15 @@ namespace ProBuilder.EditorCore
 				new Actions.SplitVertices(),
 
 				// Entity
+#if ENABLE_ENTITY_TYPES
 				new Actions.SetEntityType_Detail(),
 				new Actions.SetEntityType_Mover(),
 				new Actions.SetEntityType_Collider(),
 				new Actions.SetEntityType_Trigger(),
+#endif
+				new Actions.SetTrigger(),
+				new Actions.SetCollider(),
+
 			};
 
 			if(onLoadMenu != null)

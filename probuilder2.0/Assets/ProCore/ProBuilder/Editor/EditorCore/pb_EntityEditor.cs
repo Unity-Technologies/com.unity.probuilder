@@ -70,11 +70,6 @@ namespace ProBuilder.EditorCore
 			GUILayout.EndHorizontal();
 
 			GUI.enabled = true;
-
-			// GUILayout.Space(4);
-
-			// if(GUI.changed)
-			// 	EditorUtility.SetDirty(ent);
 		}
 
 		void AddMeshCollider() {

@@ -1,3 +1,5 @@
+#if ENABLE_ENTITY_TYPES
+
 using ProBuilder.Core;
 using ProBuilder.EditorCore;
 using UnityEngine;
@@ -131,3 +133,4 @@ A Detail type is marked with ALL static flags, and should not move during play m
 			"Sets all objects in selection to the entity type Trigger.\n\nTrigger types have no static flags, and have a convex collider marked as Is Trigger added.  The MeshRenderer is turned off on entering play mode.");
 	}
 }
+#endif

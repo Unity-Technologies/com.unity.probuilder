@@ -2,11 +2,9 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Linq;
 using System;
 using System.Reflection;
-using System.IO;
 using ProBuilder.Actions;
 using ProBuilder.Core;
 using ProBuilder.MeshOperations;
@@ -26,22 +24,22 @@ namespace ProBuilder.EditorCore
 	static class pb_EditorUtility
 	{
 		const float TIMER_DISPLAY_TIME = 1f;
-		private static float notifTimer = 0f;
-		private static EditorWindow notifWindow;
-		private static bool notifDisplayed = false;
+		static float notifTimer = 0f;
+		static EditorWindow notifWindow;
+		static bool notifDisplayed = false;
 
-		/**
-		 *	Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
-		 *	Note that this is only called when an object is initialized, not just created.  Eg, pb_ShapeGenerator.GenerateCube(Vector3.one) won't
-		 * 	fire this callback.
-		 *
-		 *	\sa pb_EditorUtility.InitObject
-		 */
+		/// <summary>
+		/// Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
+		/// </summary>
+		/// <remarks>
+		/// This is only called when an object is initialized in editor. Ie, pb_ShapeGenerator.GenerateCube(Vector3.one) won't fire this callback.
+		/// </remarks>
 		public static event OnObjectCreated onObjectCreated = null;
 
-		/**
-		 *	Add a listener to the multicast onObjectCreated delegate.
-		 */
+		/// <summary>
+		/// Add a listener to the multicast onObjectCreated delegate.
+		/// </summary>
+		/// <param name="onProBuilderObjectCreated"></param>
 		public static void AddOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
 		{
 			if(onObjectCreated == null)
@@ -50,44 +48,35 @@ namespace ProBuilder.EditorCore
 				onObjectCreated += onProBuilderObjectCreated;
 		}
 
-		/**
-		 *	Remove a listener from the onObjectCreated delegate.
-		 */
+		/// <summary>
+		/// Remove a listener from the onObjectCreated delegate.
+		/// </summary>
+		/// <param name="onProBuilderObjectCreated"></param>
 		public static void RemoveOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
 		{
 			if(onObjectCreated != null)
 				onObjectCreated -= onProBuilderObjectCreated;
 		}
 
-		/**
-		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe
-		 *	on or off.
-		 */
+		/// <summary>
+		/// Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe on or off.
+		/// </summary>
+		/// <param name="renderer"></param>
+		/// <param name="state"></param>
 		public static void SetSelectionRenderState(Renderer renderer, SelectionRenderState state)
 		{
-			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
-				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
-			#else
-				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
-			#endif
+			EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
 		}
 
 		public static SelectionRenderState GetSelectionRenderState()
 		{
-
-			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 ||UNITY_5_3 || UNITY_5_4
-
-			return SelectionRenderState.Wireframe;
-
-			#else
-
 			bool wireframe = false, outline = false;
 
 			try {
 				wireframe = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
 				outline = (bool) pb_Reflection.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
 			} catch {
-				Debug.LogWarning("Looks like Unity changed the AnnotationUtility \"showSelectionOutline\"\nPlease email contact@procore3d.com and let Karl know!");
+				pb_Log.Warning("Looks like Unity changed the AnnotationUtility \"showSelectionOutline\"\nPlease email contact@procore3d.com and let Karl know!");
 			}
 
 			SelectionRenderState state = SelectionRenderState.None;
@@ -96,13 +85,12 @@ namespace ProBuilder.EditorCore
 			if(outline) state |= SelectionRenderState.Outline;
 
 			return state;
-
-			#endif
 		}
 
-		/**
-		 * Show a timed notification in the SceneView window.
-		 */
+		/// <summary>
+		/// Show a timed notification in the SceneView window.
+		/// </summary>
+		/// <param name="notif"></param>
 		public static void ShowNotification(string notif)
 		{
 			SceneView scnview = SceneView.lastActiveSceneView;

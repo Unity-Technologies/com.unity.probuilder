@@ -62,7 +62,7 @@ namespace ProBuilder.EditorCore
 					break;
 			}
 
-			foreach(pb_Entity entity in Object.FindObjectsOfType(typeof(pb_Entity)))
+			foreach(var entity in Object.FindObjectsOfType<pb_Entity>())
 			{
 				if(entity.entityType == entityType)
 				{
@@ -88,13 +88,27 @@ namespace ProBuilder.EditorCore
 
 			bool isEntering = isPlaying && orWillPlay;
 
+			foreach (var entityBehaviour in Resources.FindObjectsOfTypeAll<pb_EntityBehaviour>())
+			{
+				if (entityBehaviour.manageVisibility)
+				{
+					// skip OnExit because OnEnter is operating on an instanced new scene, no changes will affect the
+					// actual scene
+					if(isEntering)
+						entityBehaviour.OnEnterPlayMode();
+//					else
+//						entityBehaviour.OnExitPlayMode();
+				}
+			}
+
 			if(!isEntering)
 				return;
 
+			// deprecated pb_Entity path
 			bool detailEnabled	 = show_Detail;
 			bool moverEnabled	 = show_Mover;
 
-			foreach(pb_Entity entity in Resources.FindObjectsOfTypeAll(typeof(pb_Entity)))
+			foreach(var entity in Resources.FindObjectsOfTypeAll<pb_Entity>())
 			{
 				MeshRenderer mr = entity.gameObject.GetComponent<MeshRenderer>();
 
