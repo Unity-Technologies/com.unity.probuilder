@@ -9,25 +9,25 @@ compiling packaged versions from source.
 
 There are 3 major namespaces, each corresponding to a DLL target.
 
-- ProBuilder2.Common -> ProBuilderCore.dll
-- ProBuilder2.MeshOperations -> ProBuilderMeshOps.dll
-- ProBuilder2.EditorCommon -> ProBuilderEditorCore.dll
+- ProBuilder.Core -> ProBuilderCore.dll
+- ProBuilder.MeshOperations -> ProBuilderMeshOps.dll
+- ProBuilder.EditorCore -> ProBuilderEditorCore.dll
 
 All mesh creation and editing functionality is restricted to the `Core` and
 `MeshOps` libraries, which are both available at runtime.
 
-### ProBuilder2.Common
+### ProBuilder.Core
 
-The Common namespace includes most of the data types and functionality required
+The Core namespace includes most of the data types and functionality required
 to compile meshes from aforementioned types. This corresponds to the
 `ProBuilder/Classes/ClassesCore/` folder.
 
-### ProBuilder2.MeshOperations
+### ProBuilder.MeshOperations
 
 MeshOperations is a collection of mostly static classes for manipulating mesh
 data. This corresponds to the `ProBuilder/Classes/ClassesEditing/` folder.
 
-### ProBuilder2.EditorCommon
+### ProBuilder.EditorCore
 
 Unity editor integration. This corresponds to the
 `ProBuilder/Editor/EditorCore` folder.
