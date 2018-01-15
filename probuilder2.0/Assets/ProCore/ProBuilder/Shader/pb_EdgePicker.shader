@@ -7,7 +7,6 @@
 		Tags
 		{
 			"ProBuilderPicker"="EdgePass"
-			"RenderType"="Transparent"
 			"IgnoreProjector"="True"
 			"DisableBatching"="True"
 		}
@@ -17,7 +16,6 @@
 		ZWrite On
 		Cull Off
 		Blend Off
-//		Offset -1, -1
 
 		Pass
 		{
@@ -43,32 +41,6 @@ CGPROGRAM
 
 			v2f vert (appdata v)
 			{
-//				v2f o;
-//
-//				#if UNITY_VERSION > 550
-//				o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-//				#else
-//				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-//				#endif
-//				o.pos.xyz *= .95;
-//				o.pos = mul(UNITY_MATRIX_P, o.pos);
-//
-//				// convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
-//				float4 clip = o.pos;
-//
-//				clip.xy /= clip.w;
-//				clip.xy = clip.xy * .5 + .5;
-//				clip.xy *= _ScreenParams.xy;
-//
-////				clip.z -= .0001 * (1 - UNITY_MATRIX_P[3][3]);
-//
-//				clip.xy /= _ScreenParams.xy;
-//				clip.xy = (clip.xy - .5) / .5;
-//				clip.xy *= clip.w;
-//
-//				o.pos = clip;
-//				o.color = v.color;
-
 				v2f o;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
@@ -80,7 +52,6 @@ CGPROGRAM
 			{
 				return i.color;
 			}
-
 ENDCG
 		}
 	}

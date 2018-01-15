@@ -58,12 +58,15 @@ namespace ProBuilder.Core
 			{
 				if(s_FacePickerMaterial == null)
 				{
-					s_FacePickerMaterial = Resources.Load<Material>("Materials/FacePicker");
+					var facePickerShader = Shader.Find("Hidden/ProBuilder/FacePicker");
+
+					if(facePickerShader == null)
+						pb_Log.Error("pb_FacePicker.shader not found! Re-import ProBuilder to fix.");
 
 					if(s_FacePickerMaterial == null)
-						s_FacePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/FacePicker"));
+						s_FacePickerMaterial = new Material(facePickerShader);
 					else
-						s_FacePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/FacePicker");
+						s_FacePickerMaterial.shader = facePickerShader;
 				}
 				return s_FacePickerMaterial;
 			}
@@ -80,10 +83,15 @@ namespace ProBuilder.Core
 				{
 					s_VertexPickerMaterial = Resources.Load<Material>("Materials/VertexPicker");
 
+					var vertexPickerShader = Shader.Find("Hidden/ProBuilder/VertexPicker");
+
+					if(vertexPickerShader == null)
+						pb_Log.Error("pb_VertexPicker.shader not found! Re-import ProBuilder to fix.");
+
 					if(s_VertexPickerMaterial == null)
-						s_VertexPickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/VertexPicker"));
+						s_VertexPickerMaterial = new Material(vertexPickerShader);
 					else
-						s_VertexPickerMaterial.shader = Shader.Find("Hidden/ProBuilder/VertexPicker");
+						s_VertexPickerMaterial.shader = vertexPickerShader;
 				}
 				return s_VertexPickerMaterial;
 			}
@@ -100,10 +108,15 @@ namespace ProBuilder.Core
 				{
 					s_EdgePickerMaterial = Resources.Load<Material>("Materials/EdgePicker");
 
+					var edgePickerShader = Shader.Find("Hidden/ProBuilder/EdgePicker");
+
+					if(edgePickerShader == null)
+						pb_Log.Error("pb_EdgePicker.shader not found! Re-import ProBuilder to fix.");
+
 					if(s_EdgePickerMaterial == null)
-						s_EdgePickerMaterial = new Material(Shader.Find("Hidden/ProBuilder/EdgePicker"));
+						s_EdgePickerMaterial = new Material(edgePickerShader);
 					else
-						s_EdgePickerMaterial.shader = Shader.Find("Hidden/ProBuilder/EdgePicker");
+						s_EdgePickerMaterial.shader = edgePickerShader;
 				}
 				return s_EdgePickerMaterial;
 			}

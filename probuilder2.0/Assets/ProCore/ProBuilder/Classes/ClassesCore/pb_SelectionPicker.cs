@@ -126,7 +126,9 @@ namespace ProBuilder.Core
 				img.Apply();
 				byte[] bytes = img.EncodeToPNG();
 				System.IO.File.WriteAllBytes("Assets/rect.png", bytes);
+#if UNITY_EDITOR
 				UnityEditor.AssetDatabase.Refresh();
+#endif
 				UObject.DestroyImmediate(img);
 			}
 #endif
@@ -201,7 +203,9 @@ namespace ProBuilder.Core
 				img.SetPixels(rectImg.ToArray());
 				img.Apply();
 				System.IO.File.WriteAllBytes("Assets/rect_" + s_RenderTextureFormat.ToString() + ".png", img.EncodeToPNG());
+#if UNITY_EDITOR
 				UnityEditor.AssetDatabase.Refresh();
+#endif
 				UObject.DestroyImmediate(img);
 			}
 #endif
@@ -238,7 +242,7 @@ namespace ProBuilder.Core
 			Color32[] pix = tex.GetPixels32();
 
 #if PB_RENDER_PICKER_TEXTURE
-			 System.IO.File.WriteAllBytes("Assets/scene.png", tex.EncodeToPNG());
+			 System.IO.File.WriteAllBytes("Assets/edge_scene.png", tex.EncodeToPNG());
 #endif
 
 			int ox = System.Math.Max(0, Mathf.FloorToInt(pickerRect.x));
@@ -291,8 +295,10 @@ namespace ProBuilder.Core
 				Texture2D img = new Texture2D(width, height);
 				img.SetPixels(rectImg.ToArray());
 				img.Apply();
-				System.IO.File.WriteAllBytes("Assets/rect_" + s_RenderTextureFormat.ToString() + ".png", img.EncodeToPNG());
+				System.IO.File.WriteAllBytes("Assets/edge_rect_" + s_RenderTextureFormat.ToString() + ".png", img.EncodeToPNG());
+#if UNITY_EDITOR
 				UnityEditor.AssetDatabase.Refresh();
+#endif
 				UObject.DestroyImmediate(img);
 			}
 #endif

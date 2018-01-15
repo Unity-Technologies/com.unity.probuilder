@@ -42,11 +42,7 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
 				v2f o;
 
 				/// https://www.opengl.org/discussion_boards/showthread.php/166719-Clean-Wireframe-Over-Solid-Mesh
-				#if UNITY_VERSION > 550
 				o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-				#else
-				o.pos = mul(UNITY_MATRIX_MV, v.vertex);
-				#endif
 				o.pos.xyz *= .98;
 				o.pos = mul(UNITY_MATRIX_P, o.pos);
                 o.color = v.color;
