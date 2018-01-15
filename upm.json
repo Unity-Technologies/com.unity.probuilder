@@ -66,11 +66,11 @@
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.meta" ] },
-		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.meta", "$DST_PB_ROOT/AssetIdRemapUtility/AssetIdRemapUtility.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.meta", "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.mdb.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.mdb.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.mdb.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.mdb.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.mdb.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.mdb.meta" ] },
-		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.mdb.meta", "$DST_PB_ROOT/AssetIdRemapUtility/AssetIdRemapUtility.dll.mdb.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.mdb.meta", "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll.mdb.meta" ] },
 	],
 	"ReferenceSearchPaths":[
 		"$UNITY/Data/Mono/lib/mono/2.0",
