@@ -1,3 +1,12 @@
+# ProBuilder 3.0.0b1
+
+## Changes from 3.0.0b0
+
+- Remove deprecated `pb_Entity` repair actions.
+- Fix edge drag selection regression.
+- Fix UPM warnings on import due to icons post-processor running.
+- Fix UPM warnings due to missing meta files.
+
 # ProBuilder 3.0.0b0
 
 ## Features
