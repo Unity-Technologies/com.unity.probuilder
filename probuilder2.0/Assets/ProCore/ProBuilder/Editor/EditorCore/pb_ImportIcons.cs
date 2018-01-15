@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 
 namespace ProBuilder.EditorCore
 {
@@ -10,11 +9,15 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	class pb_ImportIcons : AssetPostprocessor
 	{
-		/**
-		 *	Automatically set the importer settings for ProBuilder icons.
-		 */
+		/// <summary>
+		/// Automatically set the importer settings for ProBuilder icons.
+		/// </summary>
 		public void OnPreprocessTexture()
 		{
+			// don't try to write to upm dir
+			if (!assetPath.StartsWith("Assets"))
+				return;
+
 			if( assetPath.IndexOf("ProBuilder/Icons", StringComparison.Ordinal) < 0 &&
 				assetPath.IndexOf("ProBuilder/About/Images", StringComparison.Ordinal) < 0)
 				return;
