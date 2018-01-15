@@ -52,7 +52,7 @@ namespace ProBuilder.EditorCore
 				"Okay");
 		}
 
-		private static bool ReProBuilderize(pb_Object pb)
+		static bool ReProBuilderize(pb_Object pb)
 		{
 			try
 			{
@@ -82,7 +82,7 @@ namespace ProBuilder.EditorCore
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild Shared Indices Cache", true, pb_Constant.MENU_REPAIR)]
-		private static bool VertifyRebuildMeshes()
+		static bool VertifyRebuildMeshes()
 		{
 			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
@@ -97,8 +97,7 @@ namespace ProBuilder.EditorCore
 		/// Rebuild targets if they can't be refreshed.
 		/// </summary>
 		/// <param name="targets"></param>
-		/// <param name="interactive"></param>
-		private static void RebuildSharedIndices(pb_Object[] targets)
+		static void RebuildSharedIndices(pb_Object[] targets)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -151,45 +150,6 @@ namespace ProBuilder.EditorCore
 			}
 
 			pb_EditorUtility.ShowNotification("Removed " + (count/3) + " degenerate triangles.");
-		}
-
-		/// <summary>
-		/// Re-assign the default entity type materials to all objects in the scene.
-		/// </summary>
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Repair Entity Materials", false, pb_Constant.MENU_REPAIR)]
-		public static void MenuRefreshMeshReferences()
-		{
-			RepairEntityMaterials();
-		}
-
-		private static void RepairEntityMaterials()
-		{
-			IEnumerable all = Object.FindObjectsOfType(typeof(pb_Entity))
-				.Where(x => ((pb_Entity)x).entityType == EntityType.Collider || ((pb_Entity)x).entityType == EntityType.Trigger);
-
-			Material ColliderMat = pb_Constant.ColliderMaterial;
-			Material TriggerMat = pb_Constant.TriggerMaterial;
-
-			if( ColliderMat == null )
-			{
-				Debug.LogError("ProBuilder cannot find Collider material!  Make sure the Collider material asset is in \"Assets/ProCore/ProBuilder/Resources/Material\" folder.");
-				return;
-			}
-
-			if( TriggerMat == null )
-			{
-				Debug.LogError("ProBuilder cannot find Trigger material!  Make sure the Trigger material asset is in \"Assets/ProCore/ProBuilder/Resources/Material\" folder.");
-				return;
-			}
-
-			foreach(pb_Entity ent in all)
-			{
-				MeshRenderer mr = ent.transform.GetComponent<MeshRenderer>() ?? ent.gameObject.AddComponent<MeshRenderer>();
-
-				mr.sharedMaterials = new Material[1] { ent.entityType == EntityType.Collider ? ColliderMat : TriggerMat };
-			}
-
-			EditorUtility.DisplayDialog("Repair Entity Materials", "Successfully reset special entity materials in scene.", "Okay");
 		}
 	}
 }
