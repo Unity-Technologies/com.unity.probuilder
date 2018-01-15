@@ -31,14 +31,23 @@
 	"Clean":[
 		{ "Command":"rm", "Arguments": [
 			"$UPM_PACKAGE_DIR/ProBuilder",
+			"$UPM_PACKAGE_DIR/ProBuilder.meta",
 			"$UPM_PACKAGE_DIR/CHANGELOG.md"
 		]}
 	],
 	"OnPreBuild":[
+		// get version number with build type marker for pb_VersionInfo
 		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=# ProBuilder )[0-9a-zA-Z.]*" ] },
+		// get version number without build type marker for package.json
+		{ "Command":"find", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "(?<=# ProBuilder )[0-9]*\\.[0-9]*\\.[0-9]*" ] },
+		// set version info in pb_VersionInfo
 		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=new pb_VersionInfo\\(\")[0-9]*.[0-9]*.[0-9]*[dpbfDPBF][0-9]", "GetFindVar(0)" ] },
+		// set build date in pb_VersionInfo
 		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US: [1-9]{1,2}/[1-9]{1,2}/[0-9]{4}(?=\"\\);)", "$DATE" ] },
+		// set version number in upm-project package.json
+		{ "Command":"replace", "Arguments": [ "$UPM_PACKAGE_DIR/package.json" "(?<=\"version\":.*\")[0-9]*\\.[0-9]*\\.[0-9]*", "GetFindVar(1)" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$BUILD_DIR/$DST_PB_NAME" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT.meta", "$BUILD_DIR/$DST_PB_NAME.meta" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },
 		{ "Command":"mkdir", "Arguments": [ "$DST_PB_ROOT/AssetIdRemapUtility/Editor" ] },
 		{ "Command":"rm", "Arguments": [ "$DST_PB_ROOT/Classes/ClassesCore" ] },
@@ -57,6 +66,11 @@
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.meta", "$DST_PB_ROOT/AssetIdRemapUtility/AssetIdRemapUtility.dll.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderCore.dll.mdb.meta", "$DST_PB_ROOT/Classes/ProBuilderCore.dll.mdb.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.mdb.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.mdb.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.mdb.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.mdb.meta" ] },
+		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.mdb.meta", "$DST_PB_ROOT/AssetIdRemapUtility/AssetIdRemapUtility.dll.mdb.meta" ] },
 	],
 	"ReferenceSearchPaths":[
 		"$UNITY/Data/Mono/lib/mono/2.0",
