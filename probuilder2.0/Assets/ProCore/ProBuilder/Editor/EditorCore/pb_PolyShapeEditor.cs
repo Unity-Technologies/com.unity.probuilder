@@ -11,24 +11,24 @@ namespace ProBuilder.EditorCore
 	class pb_PolyShapeEditor : UnityEditor.Editor
 	{
 #if !PROTOTYPE
-		private static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
-		private static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
-		private static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
+		static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
+		static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
+		static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
 
-		private static readonly Vector3 SNAP_MASK = new Vector3(1f, 0f, 1f);
+		static readonly Vector3 SNAP_MASK = new Vector3(1f, 0f, 1f);
 
-		private Material m_LineMaterial;
-		private Mesh m_LineMesh = null;
-		private Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
-		private bool m_PlacingPoint = false;
-		private int m_SelectedIndex = -2;
-		private float m_DistanceFromHeightHandle;
-		private static float m_HeightMouseOffset;
-		private bool m_NextMouseUpAdvancesMode = false;
-		private List<GameObject> m_IgnorePick = new List<GameObject>();
-		private bool m_IsModifyingVertices = false;
+		Material m_LineMaterial;
+		Mesh m_LineMesh = null;
+		Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
+		bool m_PlacingPoint = false;
+		int m_SelectedIndex = -2;
+		float m_DistanceFromHeightHandle;
+		static float m_HeightMouseOffset;
+		bool m_NextMouseUpAdvancesMode = false;
+		List<GameObject> m_IgnorePick = new List<GameObject>();
+		bool m_IsModifyingVertices = false;
 
-		private pb_PolyShape polygon
+		pb_PolyShape polygon
 		{
 			get { return target as pb_PolyShape; }
 		}
@@ -142,7 +142,7 @@ namespace ProBuilder.EditorCore
 
 		void Update()
 		{
-			if (m_LineMaterial != null)
+			if (polygon != null && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path && m_LineMaterial != null)
 				m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
@@ -312,11 +312,7 @@ namespace ProBuilder.EditorCore
 		{
 			if(polygon == null || (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None) || Tools.current != Tool.None)
 			{
-				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
-				{
-					polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
-				}
-
+				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
 				return;
 			}
 
