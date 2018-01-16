@@ -189,7 +189,7 @@ namespace ProBuilder.Core
 		/// <param name="value"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <typeparam name="K"></typeparam>
-		[Conditional("DEBUG")]
+		[Conditional("CONSOLE_PRO_ENABLED")]
 		internal static void Watch<T, K>(T key, K value)
 		{
 			UnityEngine.Debug.Log(string.Format("{0} : {1}\nCPAPI:{{\"cmd\":\"Watch\" \"name\":\"{0}\"}}", key.ToString(), value.ToString()));

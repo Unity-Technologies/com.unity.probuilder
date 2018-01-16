@@ -304,8 +304,6 @@ namespace ProBuilder.EditorCore
 				else
 					pb_Editor.Refresh();
 			}
-
-			return;
 		}
 
 		void OnSceneGUI()

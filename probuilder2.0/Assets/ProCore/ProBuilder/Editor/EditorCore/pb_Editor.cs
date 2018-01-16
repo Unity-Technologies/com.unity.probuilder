@@ -25,7 +25,7 @@ namespace ProBuilder.EditorCore
 		// Called immediately prior to beginning vertex modifications. pb_Object will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
 		public static event OnVertexMovementBeginEventHandler onVertexMovementBegin;
 
-		// because editor prefs can change, or shortcuts may be added, certain pb_Preferences_Internal.need to be force reloaded.
+		// because editor prefs can change, or shortcuts may be added, certain pb_Preferences_Internal need to be force reloaded.
 		// adding to this const will force update on updating packages.
 		const int k_EditorPrefVersion = 2080;
 		const int k_EditorShortcutsVersion = 250;
@@ -67,7 +67,6 @@ namespace ProBuilder.EditorCore
 		Tool currentHandle = Tool.Move;
 		Vector2 mousePosition_initial;
 		Rect selectionRect;
-		Color dragRectColor = new Color(.313f, .8f, 1f, 1f);
 		bool dragging = false, readyForMouseDrag = false;
 		bool doubleClicked = false; // prevents leftClickUp from stealing focus after double click
 		// vertex handles
@@ -102,7 +101,6 @@ namespace ProBuilder.EditorCore
 		Vector3 textureScale = Vector3.one;
 		Color handleBgColor;
 		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
-
 
 		int[][] m_uniqueIndices = new int[0][];
 		Vector3[][] m_verticesInWorldSpace = new Vector3[0][];
@@ -143,6 +141,38 @@ namespace ProBuilder.EditorCore
 		{
 			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection, true); }
 			set { pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, value); }
+		}
+
+		static class SceneStyles
+		{
+			static bool m_Init = false;
+			static GUIStyle m_SelectionRect;
+
+			public static GUIStyle selectionRect
+			{
+				get { return m_SelectionRect; }
+			}
+
+			public static void Init()
+			{
+				if (m_Init)
+					return;
+
+				m_Init = true;
+
+				m_SelectionRect = new GUIStyle()
+				{
+					normal = new GUIStyleState()
+					{
+						background = pb_IconUtility.GetIcon("Scene/SelectionRect")
+					},
+					border = new RectOffset(1,1,1,1),
+					margin = new RectOffset(0,0,0,0),
+					padding = new RectOffset(0,0,0,0)
+				};
+
+				Debug.Log(m_SelectionRect.normal.background != null);
+			}
 		}
 
 		/// <summary>
@@ -301,7 +331,7 @@ namespace ProBuilder.EditorCore
 		void InitGUI()
 		{
 			if (s_EditorToolbar != null)
-				GameObject.DestroyImmediate(s_EditorToolbar);
+				Object.DestroyImmediate(s_EditorToolbar);
 
 			s_EditorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
 			s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
@@ -312,10 +342,10 @@ namespace ProBuilder.EditorCore
 			VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
 			VertexTranslationInfoStyle.padding = new RectOffset(3, 3, 3, 0);
 
-			Texture2D object_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Object", IconSkin.Pro);
-			Texture2D face_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Face", IconSkin.Pro);
-			Texture2D vertex_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Vertex", IconSkin.Pro);
-			Texture2D edge_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Edge", IconSkin.Pro);
+			var object_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Object");
+			var face_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Face");
+			var vertex_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Vertex");
+			var edge_Graphic_off = pb_IconUtility.GetIcon("Modes/Mode_Edge");
 
 			m_EditModeIcons = new GUIContent[]
 			{
@@ -426,6 +456,8 @@ namespace ProBuilder.EditorCore
 
 		void OnSceneGUI(SceneView scnView)
 		{
+			SceneStyles.Init();
+
 			currentEvent = Event.current;
 
 			if (editLevel == EditLevel.Geometry)
@@ -621,6 +653,9 @@ namespace ProBuilder.EditorCore
 
 			if (mouseDrag && readyForMouseDrag)
 			{
+				if(!dragging)
+					scnView.Repaint();
+
 				dragging = true;
 			}
 
@@ -1902,25 +1937,23 @@ namespace ProBuilder.EditorCore
 			else
 				mouseRect = pb_Constant.RectZero;
 
-			// Draw selection rect if dragging
-
-			if (dragging)
-			{
-				GUI.backgroundColor = dragRectColor;
-
-				// Always draw from lowest to largest values
-				Vector2 start = Vector2.Min(mousePosition_initial, mousePosition);
-				Vector2 end = Vector2.Max(mousePosition_initial, mousePosition);
-
-				selectionRect = new Rect(start.x, start.y,
-					end.x - start.x, end.y - start.y);
-
-				GUI.Box(selectionRect, "");
-
-				HandleUtility.Repaint();
-			}
-
 			GUI.backgroundColor = handleBgColor;
+
+			if (currentEvent.type == EventType.Repaint)
+			{
+				if (dragging)
+				{
+					// Always draw from lowest to largest values
+					Vector2 start = Vector2.Min(mousePosition_initial, mousePosition);
+					Vector2 end = Vector2.Max(mousePosition_initial, mousePosition);
+
+					selectionRect = new Rect(start.x, start.y,
+						end.x - start.x, end.y - start.y);
+
+					SceneStyles.selectionRect.Draw(selectionRect, false, false, false, false);
+					HandleUtility.Repaint();
+				}
+			}
 
 			Handles.EndGUI();
 		}
