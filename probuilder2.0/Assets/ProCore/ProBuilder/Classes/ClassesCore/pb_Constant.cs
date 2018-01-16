@@ -221,6 +221,7 @@ namespace ProBuilder.Core
 		internal const string pbForceConvex = "pbForceConvex";
 		internal const string pbVertexColorPrefs = "pbVertexColorPrefs";
 		internal const string pbShowEditorNotifications = "pbShowEditorNotifications";
+		[System.Obsolete]
 		internal const string pbDragCheckLimit = "pbDragCheckLimit";
 		internal const string pbForceVertexPivot = "pbForceVertexPivot";
 		internal const string pbForceGridPivot = "pbForceGridPivot";
@@ -229,9 +230,14 @@ namespace ProBuilder.Core
 		internal const string pbPBOSelectionOnly = "pbPBOSelectionOnly";
 		internal const string pbCloseShapeWindow = "pbCloseShapeWindow";
 		internal const string pbUVEditorFloating = "pbUVEditorFloating";
+		/// <summary>
 		/// Toggles the UV editor material preview
+		/// </summary>
 		internal const string pbUVMaterialPreview = "pbUVMaterialPreview";
+		/// <summary>
 		/// Turns on or off the SceneView toolbar.
+		/// </summary>
+		[System.Obsolete]
 		internal const string pbShowSceneToolbar = "pbShowSceneToolbar";
 		internal const string pbNormalizeUVsOnPlanarProjection = "pbNormalizeUVsOnPlanarProjection";
 
@@ -240,14 +246,23 @@ namespace ProBuilder.Core
 		internal const string pbShowSceneInfo = "pbShowSceneInfo";
 		internal const string pbEnableBackfaceSelection = "pbEnableBackfaceSelection";
 		internal const string pbVertexPaletteDockable = "pbVertexPaletteDockable";
+		/// <summary>
 		/// When extruding, if this is true all faces that share an edge will be extruded as a group.  If false, each face is extruded separately.
+		/// </summary>
 		internal const string pbExtrudeAsGroup = "pbExtrudeAsGroup";
+
+		/// <summary>
+		/// Toggles the edit level and selection mode shortcuts between:
+		/// - 'G' = Toggle edit level, 'J, K, L' Vert, Edge, Face
+		/// - 'G, J, K, L' = Object, Vert, Edge, Face modes
+		/// </summary>
 		internal const string pbUniqueModeShortcuts = "pbUniqueModeShortcuts";
 
 		internal const string pbMaterialEditorFloating = "pbMaterialEditorFloating";
 		internal const string pbShapeWindowFloating = "pbShapeWindowFloating";
 		internal const string pbIconGUI = "pbIconGUI";
 		internal const string pbShiftOnlyTooltips = "pbShiftOnlyTooltips";
+		[System.Obsolete]
 		internal const string pbDrawAxisLines = "pbDrawAxisLines";
 		internal const string pbCollapseVertexToFirst = "pbCollapseVertexToFirst";
 		internal const string pbMeshesAreAssets = "pbMeshesAreAssets";
@@ -259,9 +274,17 @@ namespace ProBuilder.Core
 		internal const string pbPreserveFaces = "pbPreserveFaces";
 
 		/// When drag selecting faces or edges, does the entire element have to be encompassed?
+		[System.Obsolete("Use pbRectSelectMode")]
 		internal const string pbDragSelectWholeElement = "pbDragSelectWholeElement";
 
+		/// <summary>
+		/// When drag selecting elements does the entire element need to be encompassed or just touched by the rect.
+		/// </summary>
+		internal const string pbRectSelectMode = "pbRectSelectMode";
+
+		/// <summary>
 		/// When shift + drag selecting elements, how is the selection modified?
+		/// </summary>
 		internal const string pbDragSelectMode = "pbDragSelectMode";
 
 		/// If present sets the shadow casting mode on new ProBuilder objects.

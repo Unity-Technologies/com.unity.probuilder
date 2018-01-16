@@ -1,3 +1,9 @@
+# ProBuilder 3.0.0b2
+
+## Changes from 3.0.0b1
+
+- Fix "Select Hidden" preference not matching the state shown in toolbar on launch.
+
 # ProBuilder 3.0.0b1
 
 ## Changes from 3.0.0b0

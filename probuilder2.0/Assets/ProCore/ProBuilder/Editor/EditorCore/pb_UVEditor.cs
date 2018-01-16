@@ -263,7 +263,7 @@ class pb_UVEditor : EditorWindow
 		this.wantsMouseMove = true;
 		this.autoRepaintOnSceneChange = true;
 
-		pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+		pb_Editor.onSelectionUpdate += OnSelectionUpdate;
 		if(editor != null) OnSelectionUpdate(editor.selection);
 
 		instance = this;
@@ -285,7 +285,7 @@ class pb_UVEditor : EditorWindow
 			editor.PopEditLevel();
 
 		// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
-		pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
+		pb_Editor.onSelectionUpdate -= OnSelectionUpdate;
 		pb_ObjectEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
 	}
 

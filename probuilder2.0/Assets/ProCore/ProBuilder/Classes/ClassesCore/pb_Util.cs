@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using UnityEngine.Assertions;
 
 namespace ProBuilder.Core
 {
@@ -133,15 +134,17 @@ namespace ProBuilder.Core
 			return vals;
 		}
 
-		public static int[] AllIndexesOf<T>(T[] arr, T instance)
+		public static T NextEnumValue<T>(this T current) where T : IConvertible
 		{
-			List<int> indices = new List<int>();
-			for(int i = 0; i < arr.Length; i++)
-			{
-				if(arr[i].Equals(instance))
-					indices.Add(i);
-			}
-			return indices.ToArray();
+			Assert.IsTrue(current is Enum);
+
+			var values = Enum.GetValues(current.GetType());
+
+			for(int i = 0, c = values.Length; i < c; i++)
+				if(current.Equals(values.GetValue((i))))
+					return (T) values.GetValue((i+1)%c);
+			
+			return current;
 		}
 
 		/**
@@ -250,7 +253,7 @@ namespace ProBuilder.Core
 		/**
 		 * Holds a start and end index for a binary search.
 		 */
-		private struct SearchRange
+		struct SearchRange
 		{
 			public int begin, end;
 

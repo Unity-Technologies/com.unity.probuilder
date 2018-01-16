@@ -48,7 +48,7 @@ namespace ProBuilder.EditorCore
 			EVEN = EditorGUIUtility.isProSkin ? new Color(.18f, .18f, .18f, 1f) : new Color(.85f, .85f, .85f, 1f);
 			ODD = EditorGUIUtility.isProSkin ? new Color(.15f, .15f, .15f, 1f) : new Color(.80f, .80f, .80f, 1f);
 
-			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
+			pb_Editor.onSelectionUpdate += OnSelectionUpdate;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 
 			if(pb_Editor.instance != null)
@@ -57,7 +57,7 @@ namespace ProBuilder.EditorCore
 
 		void OnDisable()
 		{
-			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
+			pb_Editor.onSelectionUpdate -= OnSelectionUpdate;
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 

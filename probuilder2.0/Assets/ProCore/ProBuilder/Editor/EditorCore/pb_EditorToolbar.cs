@@ -44,8 +44,8 @@ namespace ProBuilder.EditorCore
 			m_Actions = pb_EditorToolbarLoader.GetActions(true);
 			m_ActionsLength = m_Actions.Count();
 
-			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
-			pb_Editor.OnSelectionUpdate += OnElementSelectionChange;
+			pb_Editor.onSelectionUpdate -= OnElementSelectionChange;
+			pb_Editor.onSelectionUpdate += OnElementSelectionChange;
 
 			EditorApplication.update -= Update;
 			EditorApplication.update += Update;
@@ -73,7 +73,7 @@ namespace ProBuilder.EditorCore
 			// don't unsubscribe here because on exiting playmode OnEnable/OnDisable
 			// is called.  no clue why.
 			// EditorApplication.update -= Update;
-			pb_Editor.OnSelectionUpdate -= OnElementSelectionChange;
+			pb_Editor.onSelectionUpdate -= OnElementSelectionChange;
 			pb_PreferencesInternal.SetFloat("pbEditorScroll.x", scroll.x);
 			pb_PreferencesInternal.SetFloat("pbEditorScroll.y", scroll.y);
 		}

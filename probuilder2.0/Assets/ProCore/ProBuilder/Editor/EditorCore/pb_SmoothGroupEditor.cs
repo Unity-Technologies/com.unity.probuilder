@@ -325,8 +325,8 @@ namespace ProBuilder.EditorCore
 			Selection.selectionChanged += OnSelectionChanged;
 			Undo.undoRedoPerformed += OnSelectionChanged;
 			pb_Object.onElementSelectionChanged += OnElementSelectionChanged;
-			pb_Editor.OnVertexMovementBegin += OnBeginVertexMovement;
-			pb_Editor.OnVertexMovementFinish += OnFinishVertexMovement;
+			pb_Editor.onVertexMovementBegin += OnBeginVertexMovement;
+			pb_Editor.onVertexMovementFinish += OnFinishVertexMovement;
 			this.autoRepaintOnSceneChange = true;
 			m_HelpIcon = new GUIContent(pb_IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
 			m_ShowPreview = pb_PreferencesInternal.GetBool("pb_SmoothingGroupEditor::m_ShowPreview", false);

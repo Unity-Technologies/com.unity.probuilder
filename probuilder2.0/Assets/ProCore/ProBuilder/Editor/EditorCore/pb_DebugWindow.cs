@@ -40,17 +40,10 @@ namespace ProBuilder.EditorCore
 			faceInfoOffset = pb_PreferencesInternal.GetFloat("pb_Debug_faceInfoOffset", .05f);
 			testOcclusion = pb_PreferencesInternal.GetBool("pb_Debug_testOcclusion", false);
 
-			HookSceneViewDelegate();
-		}
-
-		private void HookSceneViewDelegate()
-		{
-			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
-
-			pb_Editor.OnSelectionUpdate += OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinish += OnSelectionUpdate;
-		}
+			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			SceneView.onSceneGUIDelegate += OnSceneGUI;
+			pb_Editor.onSelectionUpdate += OnSelectionUpdate;
+			pb_Editor.onVertexMovementFinish += OnSelectionUpdate;		}
 
 		void OnDisable()
 		{
@@ -58,8 +51,8 @@ namespace ProBuilder.EditorCore
 				pb_LineRenderer.instance.Clear();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			pb_Editor.OnSelectionUpdate -= OnSelectionUpdate;
-			pb_Editor.OnVertexMovementFinish -= OnSelectionUpdate;
+			pb_Editor.onSelectionUpdate -= OnSelectionUpdate;
+			pb_Editor.onVertexMovementFinish -= OnSelectionUpdate;
 		}
 
 		void OnSelectionUpdate(pb_Object[] selection)

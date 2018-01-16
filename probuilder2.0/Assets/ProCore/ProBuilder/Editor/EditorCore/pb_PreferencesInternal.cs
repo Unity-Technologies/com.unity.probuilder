@@ -34,7 +34,7 @@ namespace ProBuilder.EditorCore
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 
-		private static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
+		static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
 		{
 			{ pb_Constant.pbForceConvex, false },
 			{ pb_Constant.pbManifoldEdgeExtrusion, false },
@@ -51,12 +51,11 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbUniqueModeShortcuts, false },
 			{ pb_Constant.pbShiftOnlyTooltips, false },
 			{ pb_Constant.pbCollapseVertexToFirst, false },
-			{ pb_Constant.pbDragSelectWholeElement, false },
 			{ pb_Constant.pbEnableExperimental, false },
 			{ pb_Constant.pbMeshesAreAssets, false }
 		};
 
-		private static Dictionary<string, float> m_FloatDefaults = new Dictionary<string, float>()
+		static Dictionary<string, float> m_FloatDefaults = new Dictionary<string, float>()
 		{
 			{ pb_Constant.pbVertexHandleSize, .5f },
 			{ pb_Constant.pbGrowSelectionAngle, 42f },
@@ -67,7 +66,7 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbBevelAmount, .05f }
 		};
 
-		private static Dictionary<string, int> m_IntDefaults = new Dictionary<string, int>()
+		static Dictionary<string, int> m_IntDefaults = new Dictionary<string, int>()
 		{
 			{ pb_Constant.pbDefaultEditLevel, 0 },
 			{ pb_Constant.pbDefaultSelectionMode, 0 },
