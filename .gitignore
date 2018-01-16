@@ -15,6 +15,9 @@ bin/packages
 bin/logs
 bin/temp
 
+tests/upgrade/Library
+tests/upgrade/Assets/ProBuilder\ Data*
+
 probuilder-staging/
 visual studio/*/*/bin/
 visual studio/*/*/obj/
