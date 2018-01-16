@@ -78,35 +78,34 @@ class pb_Editor : EditorWindow
 	pb_Shortcut[] shortcuts;
 
 	// If true, in EditMode.ModeBased && SelectionMode.Vertex only vertices will be selected when dragging.
-	bool vertexSelectionMask = true;
-	public float drawNormals = 0f;
-	private bool pref_showSceneInfo = false;
-	private bool pref_backfaceSelect = false;
-	private bool pref_hamSelection = false;
+	bool m_VertexSelectionMask = true;
+	bool m_ShowSceneInfo = false;
+	bool m_HamSelection = false;
 
-	private float pref_snapValue = .25f;
-	private bool pref_snapAxisConstraints = true;
-	private bool pref_snapEnabled = false;
-	private bool prefs_iconGui = false;
+	float m_SnapValue = .25f;
+	bool m_SnapAxisConstraint = true;
+	bool m_SnapEnabled = false;
+	bool m_IsIconGui = false;
 
-	private bool pref_showToolbar = true;
-	private SceneToolbarLocation pref_sceneToolbarLocation = SceneToolbarLocation.UpperCenter;
+	bool m_ShowToolbar = true;
+	SceneToolbarLocation m_SceneToolbarLocation = SceneToolbarLocation.UpperCenter;
 
-	private bool limitFaceDragCheckToSelection = true;
+	bool m_LimitFaceDragToSelection = true;
 	public bool isFloatingWindow { get; private set; }
 
-	public void SetSelectHiddenEnabled(bool isEnabled)
+	public static bool SelectHiddenEnabled
 	{
-		pref_backfaceSelect = isEnabled;
-		pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, pref_backfaceSelect);
+		get { return pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection, true); }
+		set { pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, value); }
 	}
 #endregion
 
 #region INITIALIZATION AND ONDISABLE
 
-	/**
-	 * Open the pb_Editor window with whatever dockable status is preference-d.
-	 */
+	/// <summary>
+	/// Open the pb_Editor window with whatever dockable status is preference-d.
+	/// </summary>
+	/// <returns></returns>
 	public static pb_Editor MenuOpenWindow()
 	{
 		pb_Editor editor = (pb_Editor)EditorWindow.GetWindow(typeof(pb_Editor), !pb_PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow), pb_Constant.PRODUCT_NAME, true);			// open as floating window
@@ -196,20 +195,19 @@ class pb_Editor : EditorWindow
 		editLevel 			= pb_PreferencesInternal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
 		selectionMode		= pb_PreferencesInternal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
 		handleAlignment		= pb_PreferencesInternal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
-		pref_showSceneInfo 	= pb_PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
-		pref_backfaceSelect = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
-		pref_hamSelection	= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
+		m_ShowSceneInfo 	= pb_PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
+		m_HamSelection	= pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
 
-		pref_snapEnabled 	= pb_ProGridsInterface.SnapEnabled();
-		pref_snapValue		= pb_ProGridsInterface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
+		m_SnapEnabled 	= pb_ProGridsInterface.SnapEnabled();
+		m_SnapValue		= pb_ProGridsInterface.SnapValue();
+		m_SnapAxisConstraint = pb_ProGridsInterface.UseAxisConstraints();
 
 		shortcuts 			= pb_Shortcut.ParseShortcuts(pb_PreferencesInternal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
-		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
+		m_LimitFaceDragToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
 
 		// pref_showToolbar = pb_Preferences_Internal.GetBool(pb_Constant.pbShowSceneToolbar);
-		pref_sceneToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
-		prefs_iconGui = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
+		m_SceneToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
+		m_IsIconGui = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 		dragSelectMode = pb_PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
 	}
 
@@ -345,8 +343,8 @@ class pb_Editor : EditorWindow
 
 	void Menu_ToggleIconMode()
 	{
-		prefs_iconGui = !pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
-		pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, prefs_iconGui);
+		m_IsIconGui = !pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
+		pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, m_IsIconGui);
 		if(editorToolbar != null)
 			GameObject.DestroyImmediate(editorToolbar);
 		editorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
@@ -724,7 +722,7 @@ class pb_Editor : EditorWindow
 		if(bestObj == null)
 		{
 			// TODO
-			float bestDistance = pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX;
+			float bestDistance = m_HamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX;
 
 			try {
 				for(int i = 0; i < m_universalEdges.Length; i++)
@@ -789,7 +787,7 @@ class pb_Editor : EditorWindow
 						break;
 				}
 
-				if(	bestEdge.IsValid() && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > (pref_hamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
+				if(	bestEdge.IsValid() && HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]), bestObj.transform.TransformPoint(v[bestEdge.y])) > (m_HamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
 					bestEdge = pb_Edge.Empty;
 			}
 		}
@@ -852,7 +850,7 @@ class pb_Editor : EditorWindow
 					pb,
 					out hit,
 					Mathf.Infinity,
-					pref_backfaceSelect ? pb_Culling.FrontBack : pb_Culling.Front) )
+					SelectHiddenEnabled ? pb_Culling.FrontBack : pb_Culling.Front) )
 				{
 					face = pb.faces[hit.face];
 				}
@@ -958,7 +956,7 @@ class pb_Editor : EditorWindow
 		// this could be much faster by raycasting against the mesh and doing a 3d space
 		// distance check first
 
-		if(pref_hamSelection)
+		if(m_HamSelection)
 		{
 			float best = MAX_EDGE_SELECT_DISTANCE_HAM * MAX_EDGE_SELECT_DISTANCE_HAM;
 			int obj = -1, tri = -1;
@@ -1099,16 +1097,16 @@ class pb_Editor : EditorWindow
 		}
 	}
 
-	private void DragCheck()
+	void DragCheck()
 	{
 		SceneView sceneView = SceneView.lastActiveSceneView;
 		Camera cam = sceneView.camera;
 
 		pb_Undo.RecordSelection(selection, "Drag Select");
 
-		limitFaceDragCheckToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
+		m_LimitFaceDragToSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbDragCheckLimit);
 		bool selectWholeElement = pb_PreferencesInternal.GetBool(pb_Constant.pbDragSelectWholeElement);
-		bool selectHidden = pref_backfaceSelect;
+		bool selectHidden = SelectHiddenEnabled;
 
 		var pickingOptions = new pb_PickerOptions()
 		{
@@ -1154,7 +1152,7 @@ class pb_Editor : EditorWindow
 					kvp.Key.SetSelectedTriangles( sharedIndices.GetIndicesWithCommon(common).ToArray() );
 				}
 
-				if(!vertexSelectionMask)
+				if(!m_VertexSelectionMask)
 					DragObjectCheck(true);
 
 				UpdateSelection(false);
@@ -1241,7 +1239,7 @@ class pb_Editor : EditorWindow
 					pb.SetSelectedEdges(current.Select(x => x.local));
 				}
 
-				if(!vertexSelectionMask)
+				if(!m_VertexSelectionMask)
 				{
 					DragObjectCheck(true);
 				}
@@ -1272,7 +1270,7 @@ class pb_Editor : EditorWindow
 
 		// scan for new selected objects
 		/// if mode based, don't allow selection of non-probuilder objects
-		if(!limitFaceDragCheckToSelection)
+		if(!m_LimitFaceDragToSelection)
 		{
 			foreach(pb_Object g in HandleUtility.PickRectObjects(selectionRect).GetComponents<pb_Object>())
 				if(!Selection.Contains(g.gameObject))
@@ -1382,7 +1380,7 @@ class pb_Editor : EditorWindow
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, pref_snapEnabled ? pref_snapValue : 0f, pref_snapAxisConstraints, m_sharedIndicesLookup[i]);
+				selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f, m_SnapAxisConstraint, m_sharedIndicesLookup[i]);
 				selection[i].RefreshUV( SelectedFacesInEditZone[selection[i]] );
 				selection[i].Refresh(RefreshMask.Normals);
 				selection[i].msh.RecalculateBounds();
@@ -1824,14 +1822,14 @@ class pb_Editor : EditorWindow
 
 		Handles.BeginGUI();
 
-		if(pref_showToolbar)
+		if(m_ShowToolbar)
 		{
 			int screenWidth = (int) sceneView.position.width;
 			int screenHeight = (int) sceneView.position.height;
 
 			int t_selectionMode = (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int)selectionMode) + 1 : 0;
 
-			switch(pref_sceneToolbarLocation)
+			switch(m_SceneToolbarLocation)
 			{
 				case SceneToolbarLocation.BottomCenter:
 					elementModeToolbarRect.x = (screenWidth/2 - 64);
@@ -1887,7 +1885,7 @@ class pb_Editor : EditorWindow
 
 		handleBgColor = GUI.backgroundColor;
 
-		if(movingVertices && pref_showSceneInfo)
+		if(movingVertices && m_ShowSceneInfo)
 		{
 			GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
 
@@ -1899,7 +1897,7 @@ class pb_Editor : EditorWindow
 				);
 		}
 
-		if( pref_showSceneInfo )
+		if( m_ShowSceneInfo )
 		{
 			/**
 			 * Show the PB cached and Unity mesh element counts if in Debug mode.
@@ -2775,9 +2773,9 @@ class pb_Editor : EditorWindow
 				break;
 		}
 
-		pref_snapEnabled = pb_ProGridsInterface.SnapEnabled();
-		pref_snapValue = pb_ProGridsInterface.SnapValue();
-		pref_snapAxisConstraints = pb_ProGridsInterface.UseAxisConstraints();
+		m_SnapEnabled = pb_ProGridsInterface.SnapEnabled();
+		m_SnapValue = pb_ProGridsInterface.SnapValue();
+		m_SnapAxisConstraint = pb_ProGridsInterface.UseAxisConstraints();
 
 		// Disable iterative lightmapping
 		pb_Lightmapping.PushGIWorkflowMode();

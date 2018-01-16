@@ -10,16 +10,15 @@ namespace ProBuilder.Core
 	/// </summary>
 	class pb_PreferenceDictionary :
 		ScriptableObject,
-		IEnumerable,
 		ISerializationCallbackReceiver,
 		pb_IHasDefault
 	{
-		private Dictionary<string, bool> 		m_Bool 		= new Dictionary<string, bool>();
-		private Dictionary<string, int> 		m_Int 		= new Dictionary<string, int>();
-		private Dictionary<string, float> 		m_Float 	= new Dictionary<string, float>();
-		private Dictionary<string, string> 		m_String 	= new Dictionary<string, string>();
-		private Dictionary<string, Color> 		m_Color 	= new Dictionary<string, Color>();
-		private Dictionary<string, Material> 	m_Material 	= new Dictionary<string, Material>();
+		Dictionary<string, bool> 		m_Bool 		= new Dictionary<string, bool>();
+		Dictionary<string, int> 		m_Int 		= new Dictionary<string, int>();
+		Dictionary<string, float> 		m_Float 	= new Dictionary<string, float>();
+		Dictionary<string, string> 		m_String 	= new Dictionary<string, string>();
+		Dictionary<string, Color> 		m_Color 	= new Dictionary<string, Color>();
+		Dictionary<string, Material> 	m_Material 	= new Dictionary<string, Material>();
 
 		[SerializeField] List<string> 	m_Bool_keys;
 		[SerializeField] List<string>	m_Int_keys;
@@ -77,19 +76,6 @@ namespace ProBuilder.Core
 
 			for(int i = 0; i < m_Material_keys.Count; i++)
 				m_Material.Add(m_Material_keys[i], m_Material_values[i]);
-		}
-
-		public int Length { get { return 6; } }
-
-		// Implementation for the GetEnumerator method.
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return (IEnumerator) GetEnumerator();
-		}
-
-		public pb_PreferenceDictionaryEnumerator GetEnumerator()
-		{
-			return new pb_PreferenceDictionaryEnumerator(this);
 		}
 
 		/// <summary>

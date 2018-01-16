@@ -26,7 +26,7 @@ The default value is <b>On</b>.
 
 		public override string menuTitle { get { return isEnabled ? "Select Hidden: On" : "Select Hidden: Off"; } }
 
-		private Texture2D[] icons;
+		Texture2D[] icons;
 
 		public ToggleSelectBackFaces()
 		{
@@ -39,10 +39,9 @@ The default value is <b>On</b>.
 
 		public override pb_ActionResult DoAction()
 		{
-			bool isEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
-			pb_Editor.instance.SetSelectHiddenEnabled( !isEnabled );
-
-			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (isEnabled ? "Off" : "On") );
+			bool backFaceEnabled = pb_Editor.SelectHiddenEnabled;
+			pb_Editor.SelectHiddenEnabled = !backFaceEnabled;
+			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (pb_Editor.SelectHiddenEnabled ? "On" : "Off") );
 		}
 
 		public override bool IsEnabled()
