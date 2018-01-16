@@ -53,6 +53,87 @@ namespace ProBuilder.EditorCore
 		pb_Shortcut[] m_Shortcuts;
 		static pb_Editor s_Instance;
 		SceneToolbarLocation m_SceneToolbarLocation = SceneToolbarLocation.UpperCenter;
+		GUIStyle commandStyle = null;
+		Rect elementModeToolbarRect = new Rect(3, 6, 128, 24);
+
+		public const float k_MaxEdgeSelectDistanceHam = 128;
+		public const float k_MaxEdgeSelectDistanceCtx = 12;
+
+		pb_Object nearestEdgeObject = null;
+		pb_Edge nearestEdge;
+
+		// the mouse vertex selection box
+		Rect mouseRect = new Rect(0, 0, 0, 0);
+		Tool currentHandle = Tool.Move;
+		Vector2 mousePosition_initial;
+		Rect selectionRect;
+		Color dragRectColor = new Color(.313f, .8f, 1f, 1f);
+		bool dragging = false, readyForMouseDrag = false;
+		bool doubleClicked = false; // prevents leftClickUp from stealing focus after double click
+		// vertex handles
+		Vector3 newPosition, cachedPosition;
+		bool movingVertices = false;
+		// top level caching
+		bool scaling = false;
+		bool rightMouseDown = false;
+		static int s_DeepSelectionPrevious = 0x0;
+
+		bool snapToVertex = false;
+		bool snapToFace = false;
+		Vector3 previousHandleScale = Vector3.one;
+		Vector3 currentHandleScale = Vector3.one;
+		Vector3[][] vertexOrigins;
+		Vector3[] vertexOffset;
+		Quaternion previousHandleRotation = Quaternion.identity;
+		Quaternion currentHandleRotation = Quaternion.identity;
+
+		// Use for delta display
+		Vector3 translateOrigin = Vector3.zero;
+		Vector3 rotateOrigin = Vector3.zero;
+		Vector3 scaleOrigin = Vector3.zero;
+
+		Quaternion m_HandleRotation = Quaternion.identity;
+		Quaternion m_InverseRotation = Quaternion.identity;
+
+		Vector3 textureHandle = Vector3.zero;
+		Vector3 previousTextureHandle = Vector3.zero;
+		bool movingPictures = false;
+		Quaternion textureRotation = Quaternion.identity;
+		Vector3 textureScale = Vector3.one;
+		Color handleBgColor;
+		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
+
+
+		int[][] m_uniqueIndices = new int[0][];
+		Vector3[][] m_verticesInWorldSpace = new Vector3[0][];
+		pb_Edge[][] m_universalEdges = new pb_Edge[0][];
+		Vector3 m_handlePivotWorld = Vector3.zero;
+		Dictionary<int, int>[] m_sharedIndicesLookup = new Dictionary<int, int>[0];
+
+		public pb_Edge[][] SelectedUniversalEdges
+		{
+			get { return m_universalEdges; }
+		}
+
+		// faces that need to be refreshed when moving or modifying the actual selection
+		// public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
+		public Dictionary<pb_Object, List<pb_Face>> SelectedFacesInEditZone { get; private set; }
+
+		// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
+		int per_object_vertexCount_distinct = 0;
+
+		int faceCount = 0;
+		int vertexCount = 0;
+		int triangleCount = 0;
+
+		Matrix4x4 handleMatrix = Matrix4x4.identity;
+		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
+
+		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
+		public int selectedVertexCount { get; private set; } // Sum of all vertices sleected
+		public int selectedFaceCount { get; private set; } // Sum of all faces sleected
+		public int selectedEdgeCount { get; private set; } // Sum of all edges sleected
+		Event currentEvent;
 
 		public bool isFloatingWindow { get; private set; }
 		public EditLevel editLevel { get; private set; }
@@ -259,9 +340,6 @@ namespace ProBuilder.EditorCore
 				instance.UpdateSelection(force);
 		}
 
-		GUIStyle commandStyle = null;
-		Rect elementModeToolbarRect = new Rect(3, 6, 128, 24);
-
 		void OnGUI()
 		{
 			if (commandStyle == null)
@@ -302,8 +380,6 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		#region CONTEXT MENU
-
 		void OpenContextMenu()
 		{
 			GenericMenu menu = new GenericMenu();
@@ -328,7 +404,7 @@ namespace ProBuilder.EditorCore
 			m_IsIconGui = !pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbIconGUI, m_IsIconGui);
 			if (s_EditorToolbar != null)
-				GameObject.DestroyImmediate(s_EditorToolbar);
+				Object.DestroyImmediate(s_EditorToolbar);
 			s_EditorToolbar = ScriptableObject.CreateInstance<pb_EditorToolbar>();
 			s_EditorToolbar.hideFlags = HideFlags.HideAndDontSave;
 			s_EditorToolbar.InitWindowProperties(this);
@@ -347,40 +423,6 @@ namespace ProBuilder.EditorCore
 			EditorWindow.GetWindow<pb_Editor>().Close();
 			pb_Editor.MenuOpenWindow();
 		}
-
-		#endregion
-
-		#region ONSCENEGUI
-
-		// GUI Caches
-		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
-
-		public int selectedVertexCount { get; private set; } // Sum of all vertices sleected
-		public int selectedFaceCount { get; private set; } // Sum of all faces sleected
-		public int selectedEdgeCount { get; private set; } // Sum of all edges sleected
-
-		// the mouse vertex selection box
-		private Rect mouseRect = new Rect(0, 0, 0, 0);
-
-		// Handles
-		Tool currentHandle = Tool.Move;
-
-		// Dragging
-		Vector2 mousePosition_initial;
-		Rect selectionRect;
-		Color dragRectColor = new Color(.313f, .8f, 1f, 1f);
-		private bool dragging = false, readyForMouseDrag = false;
-		private bool doubleClicked = false; // prevents leftClickUp from stealing focus after double click
-
-		// vertex handles
-		Vector3 newPosition, cachedPosition;
-		bool movingVertices = false;
-
-		// top level caching
-		bool scaling = false;
-
-		private bool rightMouseDown = false;
-		Event currentEvent;
 
 		void OnSceneGUI(SceneView scnView)
 		{
@@ -407,7 +449,6 @@ namespace ProBuilder.EditorCore
 			if (currentEvent.type == EventType.MouseUp && currentEvent.button == 1 || currentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-#if !PROTOTYPE
 			if (currentEvent.type == EventType.DragPerform)
 			{
 				GameObject go = HandleUtility.PickGameObject(currentEvent.mousePosition, false);
@@ -468,7 +509,6 @@ namespace ProBuilder.EditorCore
 					}
 				}
 			}
-#endif
 
 			DrawHandleGUI(scnView);
 
@@ -488,19 +528,12 @@ namespace ProBuilder.EditorCore
 			}
 
 			// Finished moving vertices, scaling, or adjusting uvs
-#if PROTOTYPE
-			if( (movingVertices || scaling) && GUIUtility.hotControl < 1)
-			{
-				OnFinishVertexModification();
-			}
-	#else
 			if ((movingVertices || movingPictures || scaling) && GUIUtility.hotControl < 1)
 			{
 				OnFinishVertexModification();
 				UpdateHandleRotation();
 				UpdateTextureHandles();
 			}
-#endif
 
 			// Check mouse position in scene and determine if we should highlight something
 			if (currentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
@@ -532,7 +565,6 @@ namespace ProBuilder.EditorCore
 								break;
 						}
 					}
-#if !PROTOTYPE // TEXTURE HANDLES
 					else if (editLevel == EditLevel.Texture && selectedVertexCount > 0)
 					{
 						switch (currentHandle)
@@ -548,7 +580,6 @@ namespace ProBuilder.EditorCore
 								break;
 						}
 					}
-#endif
 				}
 			}
 			else
@@ -616,10 +647,8 @@ namespace ProBuilder.EditorCore
 				{
 					if (!dragging)
 					{
-#if !PROTOTYPE
 						if (pb_UVEditor.instance)
 							pb_UVEditor.instance.ResetUserPivot();
-#endif
 
 						RaycastCheck(currentEvent.mousePosition);
 					}
@@ -627,10 +656,9 @@ namespace ProBuilder.EditorCore
 					{
 						dragging = false;
 						readyForMouseDrag = false;
-#if !PROTOTYPE
+
 						if (pb_UVEditor.instance)
 							pb_UVEditor.instance.ResetUserPivot();
-#endif
 
 						DragCheck();
 					}
@@ -674,16 +702,6 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		#endregion
-
-		#region RAYCASTING AND DRAGGING
-
-		public const float MAX_EDGE_SELECT_DISTANCE_HAM = 128;
-		public const float MAX_EDGE_SELECT_DISTANCE_CTX = 12;
-
-		pb_Object nearestEdgeObject = null;
-		pb_Edge nearestEdge;
-
 		/// <summary>
 		/// If in Edge mode, finds the nearest Edge to the mouse
 		/// </summary>
@@ -705,7 +723,7 @@ namespace ProBuilder.EditorCore
 			if (bestObj == null)
 			{
 				// TODO
-				float bestDistance = m_HamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX;
+				float bestDistance = m_HamSelection ? k_MaxEdgeSelectDistanceHam : k_MaxEdgeSelectDistanceCtx;
 
 				try
 				{
@@ -777,7 +795,7 @@ namespace ProBuilder.EditorCore
 					if (bestEdge.IsValid() &&
 					    HandleUtility.DistanceToLine(bestObj.transform.TransformPoint(v[bestEdge.x]),
 						    bestObj.transform.TransformPoint(v[bestEdge.y])) >
-					    (m_HamSelection ? MAX_EDGE_SELECT_DISTANCE_HAM : MAX_EDGE_SELECT_DISTANCE_CTX))
+					    (m_HamSelection ? k_MaxEdgeSelectDistanceHam : k_MaxEdgeSelectDistanceCtx))
 						bestEdge = pb_Edge.Empty;
 				}
 			}
@@ -791,12 +809,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		private static int m_DeepSelectionPrevious = 0x0;
-
 		// Returns the pb_Object modified by this action.  If no action taken, or action is eaten by texture window, return null.
 		// A pb_Object is returned because double click actions need to know what the last selected pb_Object was.
 		// If deepClickOffset is specified, the object + deepClickOffset in the deep select stack will be returned (instead of next).
-		private pb_Object RaycastCheck(Vector3 mousePosition, int deepClickOffset = 0)
+		pb_Object RaycastCheck(Vector3 mousePosition, int deepClickOffset = 0)
 		{
 			pb_Object pb = null;
 
@@ -849,7 +865,7 @@ namespace ProBuilder.EditorCore
 				// pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
 				int hash = face == null ? go.GetHashCode() : face.GetHashCode();
 
-				if (m_DeepSelectionPrevious == hash)
+				if (s_DeepSelectionPrevious == hash)
 					next = (i + (1 + deepClickOffset)) % pickedCount;
 
 				if (next == i)
@@ -868,7 +884,7 @@ namespace ProBuilder.EditorCore
 				}
 			}
 
-			m_DeepSelectionPrevious = newHash;
+			s_DeepSelectionPrevious = newHash;
 
 			if (pickedGo != null)
 			{
@@ -937,7 +953,7 @@ namespace ProBuilder.EditorCore
 			return pickedPb;
 		}
 
-		private bool VertexClickCheck(out pb_Object vpb)
+		bool VertexClickCheck(out pb_Object vpb)
 		{
 			if (!shiftKey && !ctrlKey)
 				ClearElementSelection();
@@ -951,7 +967,7 @@ namespace ProBuilder.EditorCore
 
 			if (m_HamSelection)
 			{
-				float best = MAX_EDGE_SELECT_DISTANCE_HAM * MAX_EDGE_SELECT_DISTANCE_HAM;
+				float best = k_MaxEdgeSelectDistanceHam * k_MaxEdgeSelectDistanceHam;
 				int obj = -1, tri = -1;
 
 				for (int i = 0; i < selection.Length; i++)
@@ -1044,7 +1060,7 @@ namespace ProBuilder.EditorCore
 			return false;
 		}
 
-		private bool EdgeClickCheck(out pb_Object pb)
+		bool EdgeClickCheck(out pb_Object pb)
 		{
 			if (!shiftKey && !ctrlKey)
 			{
@@ -1258,25 +1274,7 @@ namespace ProBuilder.EditorCore
 					pb_Selection.AddToSelection(g.gameObject);
 		}
 
-		#endregion
-
-		#region VERTEX TOOLS
-
-		private bool snapToVertex = false;
-		private bool snapToFace = false;
-		private Vector3 previousHandleScale = Vector3.one;
-		private Vector3 currentHandleScale = Vector3.one;
-		private Vector3[][] vertexOrigins;
-		private Vector3[] vertexOffset;
-		private Quaternion previousHandleRotation = Quaternion.identity;
-		private Quaternion currentHandleRotation = Quaternion.identity;
-
-		// Use for delta display
-		private Vector3 translateOrigin = Vector3.zero;
-		private Vector3 rotateOrigin = Vector3.zero;
-		private Vector3 scaleOrigin = Vector3.zero;
-
-		private void VertexMoveTool()
+		void VertexMoveTool()
 		{
 			newPosition = m_handlePivotWorld;
 			cachedPosition = newPosition;
@@ -1375,7 +1373,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		private void VertexScaleTool()
+		void VertexScaleTool()
 		{
 			newPosition = m_handlePivotWorld;
 
@@ -1496,10 +1494,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		Quaternion m_HandleRotation = Quaternion.identity;
-		Quaternion m_InverseRotation = Quaternion.identity;
-
-		private void VertexRotateTool()
+		void VertexRotateTool()
 		{
 			if (!movingVertices)
 				newPosition = m_handlePivotWorld;
@@ -1599,10 +1594,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Extrude the current selection with no translation.
-		 */
-		private void ShiftExtrude()
+		/// <summary>
+		/// Extrude the current selection with no translation.
+		/// </summary>
+		void ShiftExtrude()
 		{
 			int ef = 0;
 			foreach (pb_Object pb in selection)
@@ -1615,7 +1610,6 @@ namespace ProBuilder.EditorCore
 					case SelectMode.Edge:
 						if (pb.SelectedFaceCount > 0)
 							goto default;
-#if !PROTOTYPE
 
 						pb_Edge[] newEdges;
 						bool success = pb.Extrude(pb.SelectedEdges,
@@ -1629,7 +1623,6 @@ namespace ProBuilder.EditorCore
 							ef += newEdges.Length;
 							pb.SetSelectedEdges(newEdges);
 						}
-#endif
 						break;
 
 					default:
@@ -1657,12 +1650,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-#if !PROTOTYPE
-		Vector3 textureHandle = Vector3.zero;
-		Vector3 previousTextureHandle = Vector3.zero;
-		bool movingPictures = false;
-
-		private void TextureMoveTool()
+		void TextureMoveTool()
 		{
 			pb_UVEditor uvEditor = pb_UVEditor.instance;
 			if (!uvEditor) return;
@@ -1694,9 +1682,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		Quaternion textureRotation = Quaternion.identity;
-
-		private void TextureRotateTool()
+		void TextureRotateTool()
 		{
 			pb_UVEditor uvEditor = pb_UVEditor.instance;
 			if (!uvEditor) return;
@@ -1723,9 +1709,7 @@ namespace ProBuilder.EditorCore
 			Handles.matrix = prev;
 		}
 
-		Vector3 textureScale = Vector3.one;
-
-		private void TextureScaleTool()
+		void TextureScaleTool()
 		{
 			pb_UVEditor uvEditor = pb_UVEditor.instance;
 			if (!uvEditor) return;
@@ -1750,11 +1734,6 @@ namespace ProBuilder.EditorCore
 
 			Handles.matrix = prev;
 		}
-#endif
-
-		#endregion
-
-		#region HANDLE DRAWING
 
 		public void DrawHandles()
 		{
@@ -1802,9 +1781,6 @@ namespace ProBuilder.EditorCore
 
 			Handles.lighting = true;
 		}
-
-		Color handleBgColor;
-		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
 
 		public void DrawHandleGUI(SceneView sceneView)
 		{
@@ -1949,10 +1925,6 @@ namespace ProBuilder.EditorCore
 			Handles.EndGUI();
 		}
 
-		#endregion
-
-		#region SHORTCUT
-
 		public bool ShortcutCheck(Event e)
 		{
 			List<pb_Shortcut> matches = m_Shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
@@ -2014,7 +1986,7 @@ namespace ProBuilder.EditorCore
 			return used;
 		}
 
-		private bool AllLevelShortcuts(pb_Shortcut shortcut)
+		bool AllLevelShortcuts(pb_Shortcut shortcut)
 		{
 			bool uniqueModeShortcuts = pb_PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts);
 
@@ -2077,7 +2049,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		private bool GeoLevelShortcuts(pb_Shortcut shortcut)
+		bool GeoLevelShortcuts(pb_Shortcut shortcut)
 		{
 			switch (shortcut.action)
 			{
@@ -2155,30 +2127,25 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		#endregion
-
-		#region TOOL SETTINGS
-
-		/**
-		 * Allows another window to tell the Editor what Tool is now in use.
-		 * Does *not* update any other windows.
-		 */
+		/// <summary>
+		/// Allows another window to tell the Editor what Tool is now in use. Does *not* update any other windows.
+		/// </summary>
+		/// <param name="newTool"></param>
 		public void SetTool(Tool newTool)
 		{
 			currentHandle = newTool;
 		}
 
-		/**
-		 * Calls SetTool(), then Updates the UV Editor window if applicable.
-		 */
-		private void SetTool_Internal(Tool newTool)
+		/// <summary>
+		/// Calls SetTool(), then Updates the UV Editor window if applicable.
+		/// </summary>
+		/// <param name="newTool"></param>
+		void SetTool_Internal(Tool newTool)
 		{
 			SetTool(newTool);
 
-#if !PROTOTYPE
 			if (pb_UVEditor.instance != null)
 				pb_UVEditor.instance.SetTool(newTool);
-#endif
 		}
 
 		public void SetHandleAlignment(HandleAlignment ha)
@@ -2208,18 +2175,9 @@ namespace ProBuilder.EditorCore
 			SetHandleAlignment((HandleAlignment) newHa);
 		}
 
-		public void ToggleEditLevel()
-		{
-			if (editLevel == EditLevel.Geometry)
-				SetEditLevel(EditLevel.Top);
-			else
-				SetEditLevel(EditLevel.Geometry);
-		}
-
-		/**
-		 * Toggles between the SelectMode values and updates the graphic handles
-		 * as necessary.
-		 */
+		/// <summary>
+		/// Toggles between the SelectMode values and updates the graphic handles as necessary.
+		/// </summary>
 		public void ToggleSelectionMode()
 		{
 			int smode = (int) selectionMode;
@@ -2229,9 +2187,10 @@ namespace ProBuilder.EditorCore
 			SetSelectionMode((SelectMode) smode);
 		}
 
-		/**
-		 * \brief Sets the current selection mode @SelectMode to the mode value.
-		 */
+		/// <summary>
+		/// Sets the current selection mode @SelectMode to the mode value.
+		/// </summary>
+		/// <param name="mode"></param>
 		public void SetSelectionMode(SelectMode mode)
 		{
 			selectionMode = mode;
@@ -2243,17 +2202,18 @@ namespace ProBuilder.EditorCore
 			SceneView.RepaintAll();
 		}
 
-		/**
-		 * Set the EditLevel back to its last level.
-		 */
+		/// <summary>
+		/// Set the EditLevel back to its last level.
+		/// </summary>
 		public void PopEditLevel()
 		{
 			SetEditLevel(m_PreviousEditLevel);
 		}
 
-		/**
-		 * Changes the current Editor level - switches between Object, Sub-object, and Texture (hidden).
-		 */
+		/// <summary>
+		/// Changes the current Editor level - switches between Object, Sub-object, and Texture (hidden).
+		/// </summary>
+		/// <param name="el"></param>
 		public void SetEditLevel(EditLevel el)
 		{
 			m_PreviousEditLevel = editLevel;
@@ -2308,38 +2268,12 @@ namespace ProBuilder.EditorCore
 				onEditLevelChanged((int) editLevel);
 		}
 
-		#endregion
-
-		#region SELECTION CACHING
-
 		/**
 		 *	\brief Updates the arrays used to draw GUI elements (both Window and Scene).
 		 *	@selection_vertex should already be populated at this point.  UpdateSelection
 		 *	just removes duplicate indices, and populates the gui arrays for displaying
 		 *	 things like quad faces and vertex billboards.
 		 */
-
-		int[][] m_uniqueIndices = new int[0][];
-		Vector3[][] m_verticesInWorldSpace = new Vector3[0][];
-		pb_Edge[][] m_universalEdges = new pb_Edge[0][];
-		Vector3 m_handlePivotWorld = Vector3.zero;
-		Dictionary<int, int>[] m_sharedIndicesLookup = new Dictionary<int, int>[0];
-
-		public pb_Edge[][] SelectedUniversalEdges
-		{
-			get { return m_universalEdges; }
-		}
-
-		// faces that need to be refreshed when moving or modifying the actual selection
-		// public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
-		public Dictionary<pb_Object, List<pb_Face>> SelectedFacesInEditZone { get; private set; }
-
-		// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
-		int per_object_vertexCount_distinct = 0;
-
-		int faceCount = 0;
-		int vertexCount = 0;
-		int triangleCount = 0;
 
 		// todo remove this manual selection caching junk
 		public void UpdateSelection(bool forceUpdate = true)
@@ -2541,15 +2475,7 @@ namespace ProBuilder.EditorCore
 			nearestEdgeObject = null;
 		}
 
-		#endregion
-
-		#region HANDLE AND GUI CALCULTATIONS
-
-#if !PROTOTYPE
-
-		Matrix4x4 handleMatrix = Matrix4x4.identity;
-
-		private void UpdateTextureHandles()
+		void UpdateTextureHandles()
 		{
 			if (selection.Length < 1) return;
 
@@ -2579,9 +2505,6 @@ namespace ProBuilder.EditorCore
 					Quaternion.LookRotation(nrm, bitan), Vector3.one);
 			}
 		}
-#endif
-
-		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 
 		public void UpdateHandleRotation()
 		{
@@ -2624,10 +2547,13 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Find the nearest vertex among all visible objects.
-		 */
-		private bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
+		/// <summary>
+		/// Find the nearest vertex among all visible objects.
+		/// </summary>
+		/// <param name="mousePosition"></param>
+		/// <param name="vertex"></param>
+		/// <returns></returns>
+		bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
 		{
 			List<Transform> t =
 				new List<Transform>(
@@ -2650,14 +2576,10 @@ namespace ProBuilder.EditorCore
 			return (bool) result;
 		}
 
-		#endregion
-
-		#region Selection Management and checks
-
-		/**
-		 * If dragging a texture aroudn, this method ensures that if it's a member of a texture group it's cronies are also selected
-		 */
-		private void VerifyTextureGroupSelection()
+		/// <summary>
+		/// If dragging a texture aroudn, this method ensures that if it's a member of a texture group it's cronies are also selected
+		/// </summary>
+		void VerifyTextureGroupSelection()
 		{
 			foreach (pb_Object pb in selection)
 			{
@@ -2701,11 +2623,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		#endregion
-
-		#region EVENTS AND LISTENERS
-
-		private void OnSelectionChange()
+		void OnSelectionChange()
 		{
 			nearestEdge = pb_Edge.Empty;
 			nearestEdgeObject = null;
@@ -2715,10 +2633,10 @@ namespace ProBuilder.EditorCore
 			HideSelectedWireframe();
 		}
 
-		/**
-		 * Hide the default unity wireframe renderer
-		 */
-		private void HideSelectedWireframe()
+		/// <summary>
+		/// Hide the default unity wireframe renderer
+		/// </summary>
+		void HideSelectedWireframe()
 		{
 			foreach (pb_Object pb in selection)
 				pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
@@ -2727,10 +2645,11 @@ namespace ProBuilder.EditorCore
 			SceneView.RepaintAll();
 		}
 
-		/**
-		 * Called from ProGrids.
-		 */
-		private void PushToGrid(float snapVal)
+		/// <summary>
+		/// Called from ProGrids.
+		/// </summary>
+		/// <param name="snapVal"></param>
+		void PushToGrid(float snapVal)
 		{
 			pb_Undo.RecordSelection(selection, "Push elements to Grid");
 
@@ -2755,27 +2674,26 @@ namespace ProBuilder.EditorCore
 			Internal_UpdateSelectionFast();
 		}
 
-		private void ProGridsToolbarOpen(bool menuOpen)
+		void ProGridsToolbarOpen(bool menuOpen)
 		{
 			bool active = pb_ProGridsInterface.ProGridsActive();
 			sceneInfoRect.y = active && !menuOpen ? 28 : 10;
 			sceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
 		}
 
-		/**
-		 *	A tool, any tool, has just been engaged while in texture mode
-		 */
+		/// <summary>
+		/// A tool, any tool, has just been engaged while in texture mode
+		/// </summary>
 		public void OnBeginTextureModification()
 		{
 			VerifyTextureGroupSelection();
 		}
 
-		/**
-		 * When beginning a vertex modification, nuke the UV2 and rebuild the mesh
-		 * using PB data so that triangles match vertices (and no inserted vertices
-		 * from the Unwrapping.GenerateSecondaryUVSet() remain).
-		 */
-		private void OnBeginVertexMovement()
+		/// <summary>
+		/// When beginning a vertex modification, nuke the UV2 and rebuild the mesh using PB data so that triangles
+		/// match vertices (and no inserted vertices from the Unwrapping.GenerateSecondaryUVSet() remain).
+		/// </summary>
+		void OnBeginVertexMovement()
 		{
 			switch (currentHandle)
 			{
@@ -2816,14 +2734,13 @@ namespace ProBuilder.EditorCore
 				onVertexMovementBegin(selection);
 		}
 
-		private void OnFinishVertexModification()
+		void OnFinishVertexModification()
 		{
 			pb_Lightmapping.PopGIWorkflowMode();
 
 			currentHandleScale = Vector3.one;
 			currentHandleRotation = handleRotation;
 
-#if !PROTOTYPE
 			if (movingPictures)
 			{
 				if (pb_UVEditor.instance != null)
@@ -2833,9 +2750,7 @@ namespace ProBuilder.EditorCore
 
 				movingPictures = false;
 			}
-			else
-#endif
-			if (movingVertices)
+			else if (movingVertices)
 			{
 				foreach (pb_Object sel in selection)
 				{
@@ -2853,13 +2768,12 @@ namespace ProBuilder.EditorCore
 			scaling = false;
 		}
 
-		#endregion
-
-		#region CONVENIENCE CALLS
-
-		/**
-		 * Returns the first selected pb_Object and pb_Face, or false if not found.
-		 */
+		/// <summary>
+		/// Returns the first selected pb_Object and pb_Face, or false if not found.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public bool GetFirstSelectedFace(out pb_Object pb, out pb_Face face)
 		{
 			pb = null;
@@ -2877,9 +2791,11 @@ namespace ProBuilder.EditorCore
 			return true;
 		}
 
-		/**
-		 * Returns the first selected pb_Object and pb_Face, or false if not found.
-		 */
+		/// <summary>
+		/// Returns the first selected pb_Object and pb_Face, or false if not found.
+		/// </summary>
+		/// <param name="mat"></param>
+		/// <returns></returns>
 		public bool GetFirstSelectedMaterial(ref Material mat)
 		{
 			for (int i = 0; i < selection.Length; i++)
@@ -2956,7 +2872,5 @@ namespace ProBuilder.EditorCore
 		{
 			get { return currentEvent.type == EventType.KeyUp ? currentEvent.keyCode : KeyCode.None; }
 		}
-
-		#endregion
 	}
 }
