@@ -11,10 +11,15 @@ namespace ProBuilder.Core
 	public static class pb_Version
 	{
 #if DEBUG || DEVELOPMENT
+		static pb_VersionInfo s_LoadedVersion = null;
+
 		public static pb_VersionInfo Current
 		{
 			get
 			{
+				if (s_LoadedVersion != null)
+					return s_LoadedVersion;
+
 				// messy reflection to avoid editor dependency, and this is only in debug code anyways
 				// iterate assemblies because the ProBuilder.EditorCore namespace can be in a couple different
 				// places (UnityEditor, ProBuilder.EditorCore, future changes, etc)
@@ -31,7 +36,7 @@ namespace ProBuilder.Core
 							var v = (pb_VersionInfo) getVersion.Invoke(null, null);
 
 							// manually set to dev build
-							return new pb_VersionInfo(
+							return s_LoadedVersion = new pb_VersionInfo(
 								v.major,
 								v.minor,
 								v.patch,
@@ -43,7 +48,7 @@ namespace ProBuilder.Core
 					}
 				}
 
-				return new pb_VersionInfo("null", "null");
+				return s_LoadedVersion = new pb_VersionInfo("null", "null");
 			}
 		}
 #else

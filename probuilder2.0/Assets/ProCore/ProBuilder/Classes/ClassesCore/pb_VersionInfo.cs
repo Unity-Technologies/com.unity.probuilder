@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace ProBuilder.Core
 {
@@ -213,7 +214,7 @@ namespace ProBuilder.Core
 			try
 			{
 				string[] split = Regex.Split(str, @"[\.A-Za-z]");
-				Match type = Regex.Match(str, @"A-Za-z");
+				Match type = Regex.Match(str, @"[A-Z|a-z]");
 				int.TryParse(split[0], out version.m_Major);
 				int.TryParse(split[1], out version.m_Minor);
 				int.TryParse(split[2], out version.m_Patch);
@@ -235,10 +236,10 @@ namespace ProBuilder.Core
 			if( type.Equals("p") || type.Equals("P") )
 				return VersionType.Patch;
 
-			if( type.Equals("d") || type.Equals("D") )
-				return VersionType.Development;
+			if( type.Equals("f") || type.Equals("F") )
+				return VersionType.Final;
 
-			return VersionType.Final;
+			return VersionType.Development;
 		}
 	}
 }
