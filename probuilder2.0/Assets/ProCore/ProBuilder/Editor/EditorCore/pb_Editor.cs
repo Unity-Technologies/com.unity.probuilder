@@ -63,11 +63,11 @@ namespace ProBuilder.EditorCore
 		pb_Edge nearestEdge;
 
 		// the mouse vertex selection box
-		Rect mouseRect = new Rect(0, 0, 0, 0);
+		Rect m_MouseClickRect = new Rect(0, 0, 0, 0);
 		Tool currentHandle = Tool.Move;
 		Vector2 mousePosition_initial;
-		Rect selectionRect;
-		bool dragging = false, readyForMouseDrag = false;
+		Rect m_MouseDragRect;
+		bool m_IsDragging = false, readyForMouseDrag = false;
 		bool doubleClicked = false; // prevents leftClickUp from stealing focus after double click
 		// vertex handles
 		Vector3 newPosition, cachedPosition;
@@ -133,7 +133,7 @@ namespace ProBuilder.EditorCore
 		public int selectedVertexCount { get; private set; } // Sum of all vertices sleected
 		public int selectedFaceCount { get; private set; } // Sum of all faces sleected
 		public int selectedEdgeCount { get; private set; } // Sum of all edges sleected
-		Event currentEvent;
+		Event m_CurrentEvent;
 
 		public bool isFloatingWindow { get; private set; }
 		public EditLevel editLevel { get; private set; }
@@ -465,32 +465,32 @@ namespace ProBuilder.EditorCore
 
 			SceneStyles.Init();
 
-			currentEvent = Event.current;
+			m_CurrentEvent = Event.current;
 
 			if (editLevel == EditLevel.Geometry)
 			{
-				if (currentEvent.Equals(Event.KeyboardEvent("v")))
+				if (m_CurrentEvent.Equals(Event.KeyboardEvent("v")))
 					snapToVertex = true;
-				else if (currentEvent.Equals(Event.KeyboardEvent("c")))
+				else if (m_CurrentEvent.Equals(Event.KeyboardEvent("c")))
 					snapToFace = true;
 			}
 
 			// Snap stuff
-			if (currentEvent.type == EventType.KeyUp)
+			if (m_CurrentEvent.type == EventType.KeyUp)
 			{
 				snapToFace = false;
 				snapToVertex = false;
 			}
 
-			if (currentEvent.type == EventType.MouseDown && currentEvent.button == 1)
+			if (m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.button == 1)
 				rightMouseDown = true;
 
-			if (currentEvent.type == EventType.MouseUp && currentEvent.button == 1 || currentEvent.type == EventType.Ignore)
+			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-			if (currentEvent.type == EventType.DragPerform)
+			if (m_CurrentEvent.type == EventType.DragPerform)
 			{
-				GameObject go = HandleUtility.PickGameObject(currentEvent.mousePosition, false);
+				GameObject go = HandleUtility.PickGameObject(m_CurrentEvent.mousePosition, false);
 
 				if (go != null && System.Array.Exists(DragAndDrop.objectReferences, x => x is Texture2D || x is Material))
 				{
@@ -543,7 +543,7 @@ namespace ProBuilder.EditorCore
 							pb.Refresh();
 							pb.Optimize();
 
-							currentEvent.Use();
+							m_CurrentEvent.Use();
 						}
 					}
 				}
@@ -553,17 +553,17 @@ namespace ProBuilder.EditorCore
 
 			if (!rightMouseDown && getKeyUp != KeyCode.None)
 			{
-				if (ShortcutCheck(currentEvent))
+				if (ShortcutCheck(m_CurrentEvent))
 				{
-					currentEvent.Use();
+					m_CurrentEvent.Use();
 					return;
 				}
 			}
 
-			if (currentEvent.type == EventType.KeyDown)
+			if (m_CurrentEvent.type == EventType.KeyDown)
 			{
-				if (m_Shortcuts.Any(x => x.Matches(currentEvent.keyCode, currentEvent.modifiers)))
-					currentEvent.Use();
+				if (m_Shortcuts.Any(x => x.Matches(m_CurrentEvent.keyCode, m_CurrentEvent.modifiers)))
+					m_CurrentEvent.Use();
 			}
 
 			// Finished moving vertices, scaling, or adjusting uvs
@@ -575,8 +575,8 @@ namespace ProBuilder.EditorCore
 			}
 
 			// Check mouse position in scene and determine if we should highlight something
-			if (currentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
-				UpdateMouse(currentEvent.mousePosition);
+			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
+				UpdateMouse(m_CurrentEvent.mousePosition);
 
 			// Draw GUI Handles
 			if (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
@@ -628,10 +628,10 @@ namespace ProBuilder.EditorCore
 
 			// altClick || Tools.current == Tool.View || GUIUtility.hotControl > 0 || middleClick
 			// Tools.viewTool == ViewTool.FPS || Tools.viewTool == ViewTool.Orbit
-			if (pb_EditorHandleUtility.SceneViewInUse(currentEvent) || currentEvent.isKey || selection == null ||
+			if (pb_EditorHandleUtility.SceneViewInUse(m_CurrentEvent) || m_CurrentEvent.isKey || selection == null ||
 			    selection.Length < 1)
 			{
-				dragging = false;
+				m_IsDragging = false;
 				return;
 			}
 
@@ -647,9 +647,9 @@ namespace ProBuilder.EditorCore
 			if (leftClick)
 			{
 				// double clicking object
-				if (currentEvent.clickCount > 1)
+				if (m_CurrentEvent.clickCount > 1)
 				{
-					DoubleClick(currentEvent);
+					DoubleClick(m_CurrentEvent);
 				}
 
 				mousePosition_initial = mousePosition;
@@ -660,18 +660,18 @@ namespace ProBuilder.EditorCore
 
 			if (mouseDrag && readyForMouseDrag)
 			{
-				if(!dragging)
+				if(!m_IsDragging)
 					scnView.Repaint();
 
-				dragging = true;
+				m_IsDragging = true;
 			}
 
 			if (ignore)
 			{
-				if (dragging)
+				if (m_IsDragging)
 				{
 					readyForMouseDrag = false;
-					dragging = false;
+					m_IsDragging = false;
 					DragCheck();
 				}
 
@@ -687,16 +687,16 @@ namespace ProBuilder.EditorCore
 				}
 				else
 				{
-					if (!dragging)
+					if (!m_IsDragging)
 					{
 						if (pb_UVEditor.instance)
 							pb_UVEditor.instance.ResetUserPivot();
 
-						RaycastCheck(currentEvent.mousePosition);
+						RaycastCheck(m_CurrentEvent.mousePosition);
 					}
 					else
 					{
-						dragging = false;
+						m_IsDragging = false;
 						readyForMouseDrag = false;
 
 						if (pb_UVEditor.instance)
@@ -1075,7 +1075,7 @@ namespace ProBuilder.EditorCore
 					{
 						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
 
-						if (mouseRect.Contains(HandleUtility.WorldToGUIPoint(v)))
+						if (m_MouseClickRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
 							if (pb_HandleUtility.PointIsOccluded(cam, pb, v))
 								continue;
@@ -1171,7 +1171,7 @@ namespace ProBuilder.EditorCore
 
 					Dictionary<pb_Object, HashSet<int>> selected = pb_Picking.PickVerticesInRect(
 						SceneView.lastActiveSceneView.camera,
-						selectionRect,
+						m_MouseDragRect,
 						selection,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
@@ -1211,7 +1211,7 @@ namespace ProBuilder.EditorCore
 
 					Dictionary<pb_Object, HashSet<pb_Face>> selected = pb_Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,
-						selectionRect,
+						m_MouseDragRect,
 						selection,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
@@ -1250,7 +1250,7 @@ namespace ProBuilder.EditorCore
 
 					var selected = pb_Picking.PickEdgesInRect(
 						SceneView.lastActiveSceneView.camera,
-						selectionRect,
+						m_MouseDragRect,
 						selection,
 						pickingOptions,
 						EditorGUIUtility.pixelsPerPoint);
@@ -1311,7 +1311,7 @@ namespace ProBuilder.EditorCore
 
 			// scan for new selected objects
 			// if mode based, don't allow selection of non-probuilder objects
-			foreach (pb_Object g in HandleUtility.PickRectObjects(selectionRect).GetComponents<pb_Object>())
+			foreach (pb_Object g in HandleUtility.PickRectObjects(m_MouseDragRect).GetComponents<pb_Object>())
 				if (!Selection.Contains(g.gameObject))
 					pb_Selection.AddToSelection(g.gameObject);
 		}
@@ -1905,9 +1905,6 @@ namespace ProBuilder.EditorCore
 
 			if (m_ShowSceneInfo)
 			{
-				/**
-				 * Show the PB cached and Unity mesh element counts if in Debug mode.
-				 */
 				try
 				{
 					System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -1939,25 +1936,25 @@ namespace ProBuilder.EditorCore
 			}
 
 			// Enables vertex selection with a mouse click
-			if (editLevel == EditLevel.Geometry && !dragging && selectionMode == SelectMode.Vertex)
-				mouseRect = new Rect(Event.current.mousePosition.x - 10, Event.current.mousePosition.y - 10, 20, 20);
+			if (editLevel == EditLevel.Geometry && !m_IsDragging && selectionMode == SelectMode.Vertex)
+				m_MouseClickRect = new Rect(m_CurrentEvent.mousePosition.x - 10, m_CurrentEvent.mousePosition.y - 10, 20, 20);
 			else
-				mouseRect = pb_Constant.RectZero;
+				m_MouseClickRect = pb_Constant.RectZero;
 
-			GUI.backgroundColor = handleBgColor;
-
-			if (currentEvent.type == EventType.Repaint)
+			if (m_IsDragging)
 			{
-				if (dragging)
+				if (m_CurrentEvent.type == EventType.Repaint)
 				{
 					// Always draw from lowest to largest values
-					Vector2 start = Vector2.Min(mousePosition_initial, mousePosition);
-					Vector2 end = Vector2.Max(mousePosition_initial, mousePosition);
+					var start = Vector2.Min(mousePosition_initial, mousePosition);
+					var end = Vector2.Max(mousePosition_initial, mousePosition);
 
-					selectionRect = new Rect(start.x, start.y,
-						end.x - start.x, end.y - start.y);
+					m_MouseDragRect = new Rect(start.x, start.y, end.x - start.x, end.y - start.y);
 
-					SceneStyles.selectionRect.Draw(selectionRect, false, false, false, false);
+					SceneStyles.selectionRect.Draw(m_MouseDragRect, false, false, false, false);
+				}
+				else if (m_CurrentEvent.isMouse)
+				{
 					HandleUtility.Repaint();
 				}
 			}
@@ -2855,62 +2852,62 @@ namespace ProBuilder.EditorCore
 		// Handy calls -- currentEvent must be set, so only call in the OnGUI loop!
 		public bool altClick
 		{
-			get { return (currentEvent.alt); }
+			get { return (m_CurrentEvent.alt); }
 		}
 
 		public bool leftClick
 		{
-			get { return (currentEvent.type == EventType.MouseDown); }
+			get { return (m_CurrentEvent.type == EventType.MouseDown); }
 		}
 
 		public bool leftClickUp
 		{
-			get { return (currentEvent.type == EventType.MouseUp); }
+			get { return (m_CurrentEvent.type == EventType.MouseUp); }
 		}
 
 		public bool contextClick
 		{
-			get { return (currentEvent.type == EventType.ContextClick); }
+			get { return (m_CurrentEvent.type == EventType.ContextClick); }
 		}
 
 		public bool mouseDrag
 		{
-			get { return (currentEvent.type == EventType.MouseDrag); }
+			get { return (m_CurrentEvent.type == EventType.MouseDrag); }
 		}
 
 		public bool ignore
 		{
-			get { return currentEvent.type == EventType.Ignore; }
+			get { return m_CurrentEvent.type == EventType.Ignore; }
 		}
 
 		public Vector2 mousePosition
 		{
-			get { return currentEvent.mousePosition; }
+			get { return m_CurrentEvent.mousePosition; }
 		}
 
 		public Vector2 eventDelta
 		{
-			get { return currentEvent.delta; }
+			get { return m_CurrentEvent.delta; }
 		}
 
 		public bool rightClick
 		{
-			get { return (currentEvent.type == EventType.ContextClick); }
+			get { return (m_CurrentEvent.type == EventType.ContextClick); }
 		}
 
 		public bool shiftKey
 		{
-			get { return currentEvent.shift; }
+			get { return m_CurrentEvent.shift; }
 		}
 
 		public bool ctrlKey
 		{
-			get { return currentEvent.command || currentEvent.control; }
+			get { return m_CurrentEvent.command || m_CurrentEvent.control; }
 		}
 
 		public KeyCode getKeyUp
 		{
-			get { return currentEvent.type == EventType.KeyUp ? currentEvent.keyCode : KeyCode.None; }
+			get { return m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None; }
 		}
 	}
 }
