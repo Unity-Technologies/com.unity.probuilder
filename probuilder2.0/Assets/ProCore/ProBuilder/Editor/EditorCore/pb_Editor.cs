@@ -127,6 +127,8 @@ namespace ProBuilder.EditorCore
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 
+		static MethodInfo s_ResetOnSceneGUIState = null;
+
 		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
 		public int selectedVertexCount { get; private set; } // Sum of all vertices sleected
 		public int selectedFaceCount { get; private set; } // Sum of all faces sleected
@@ -226,6 +228,8 @@ namespace ProBuilder.EditorCore
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 			pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
+
+			s_ResetOnSceneGUIState = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
 
 			// make sure load prefs is called first, because other methods depend on the preferences set here
 			LoadPrefs();
@@ -454,6 +458,11 @@ namespace ProBuilder.EditorCore
 
 		void OnSceneGUI(SceneView scnView)
 		{
+			// todo remove once https://ono.unity3d.com/unity/unity/changelog?branch=editor/sceneview/reset-guistate-per-onsceneguidelegate
+			// is merged to trunk
+			if(s_ResetOnSceneGUIState != null)
+				s_ResetOnSceneGUIState.Invoke(scnView, null);
+
 			SceneStyles.Init();
 
 			currentEvent = Event.current;
