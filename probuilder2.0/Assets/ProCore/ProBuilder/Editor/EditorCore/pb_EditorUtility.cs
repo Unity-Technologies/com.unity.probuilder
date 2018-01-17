@@ -270,6 +270,18 @@ namespace ProBuilder.EditorCore
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
 			ScreenCenter( pb.gameObject );
 
+			var flags = pb_PreferencesInternal.HasKey(pb_Constant.pbDefaultStaticFlags)
+				? pb_PreferencesInternal.GetEnum<StaticEditorFlags>(pb_Constant.pbDefaultStaticFlags)
+				: StaticEditorFlags.LightmapStatic |
+				  StaticEditorFlags.OccluderStatic |
+				  StaticEditorFlags.OccludeeStatic |
+				  StaticEditorFlags.BatchingStatic |
+				  StaticEditorFlags.NavigationStatic |
+				  StaticEditorFlags.OffMeshLinkGeneration |
+				  StaticEditorFlags.ReflectionProbeStatic;
+
+			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
+
 			switch(pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider))
 			{
 				case ColliderType.BoxCollider:

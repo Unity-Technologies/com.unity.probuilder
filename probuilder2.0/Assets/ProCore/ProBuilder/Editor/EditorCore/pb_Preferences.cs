@@ -41,6 +41,8 @@ namespace ProBuilder.EditorCore
 		static bool pbManageLightmappingStaticFlag = false;
 		static ShadowCastingMode pbShadowCastingMode = ShadowCastingMode.On;
 
+		static StaticEditorFlags pbDefaultStaticFlags = (StaticEditorFlags) 0xFFFF;
+
 		static ColliderType defaultColliderType = ColliderType.BoxCollider;
 		static SceneToolbarLocation pbToolbarLocation = SceneToolbarLocation.UpperCenter;
 
@@ -112,6 +114,8 @@ namespace ProBuilder.EditorCore
 
 			pbDefaultMaterial =
 				(Material) EditorGUILayout.ObjectField("Default Material", pbDefaultMaterial, typeof(Material), false);
+
+			pbDefaultStaticFlags = (StaticEditorFlags) EditorGUILayout.EnumFlagsField("Static Flags", pbDefaultStaticFlags);
 
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Default Collider");
@@ -305,6 +309,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShowMissingLightmapUvWarning);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbManageLightmappingStaticFlag);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbShadowCastingMode);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultStaticFlags);
 			}
 
 			LoadPrefs();
@@ -426,6 +431,7 @@ namespace ProBuilder.EditorCore
 			defaultColliderType = pb_PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
 			pbToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 			pbShadowCastingMode = pb_PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			pbDefaultStaticFlags = pb_PreferencesInternal.GetEnum<StaticEditorFlags>(pb_Constant.pbDefaultStaticFlags);
 
 			pbDefaultMaterial = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 
@@ -446,6 +452,7 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
+			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultStaticFlags, (int) pbDefaultStaticFlags);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbForceConvex, pbForceConvex);
