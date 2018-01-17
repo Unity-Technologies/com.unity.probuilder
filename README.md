@@ -170,41 +170,46 @@ C:/Users/karl/dev
     |_ manifest.json
 ```
 
-### Building for Unity Package Manager
+### Compile ProBuilder from Source Project
 
-Run the **ProBuilderAdvanced-UPM.json** build target.
+Run the **upm.json** build target.
 
-`mono pb-build.exe build/targets/ProBuilderAdvanced-UPM.json`
+`mono pb-build.exe upm.json`
 
-Alternatively, you can build using the latest version of Unity trunk using the `upm-trunk.json` build target. This is currently only tested on @karl-'s machine but should work on any setup with minimal modifications (ask on #devs-probuilder if you're having trouble).
+The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project. It does *not* set the Unity version in the "package.json" file, so if this is a new Unity version you'll need to change that manually.
 
-`mono pb-build.exe build/targets/upm-trunk.json`
+> The version info is scraped from the source changelog.txt file.
 
-The build target takes care of copying all the necessary files and changelogs to the package manager staging project.
+Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
 At this point the `upm-package-probuilder-project` is ready for testing and uploading.
 
 ### Push Package Manager to Staging
 
-Follow the instructions in the [upm-package-template](https://github.com/UnityTech/upm-package-template) to set up **npm** credentials. **Do not commit `.npmrc` files to the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
+Follow the instructions in the [upm-package-template](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template) to set up **npm** credentials. **Do not commit `.npmrc` files to the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
 
-1. Verify that **packages.json** is up to date and contains the correct information.
-1. Follow QA release steps.
-1. Make 100% sure that this release is ready to go. Unpublishing is not possible.
+1. Verify that **package.json** is up to date and contains the correct information. Note that the version info in this file is automatically populated by pb-build.
+1. Perform QA testing as outlined in QAReport.md.
 1. `npm publish`
+
+**Important** Once a package is pushed it is not undo-able. Un-publishing or overwriting a version is not possible.
 
 ### Testing UPM Builds
 
-There are two ways to install ProBuilder with Packman.
-
-1. Edit the registry (pull the latest from [staging](https://bintray.com/unity/unity-staging))
-1. Build locally (see above)
+1. Grab the latest release from [Github](https://github.com/procore3d/upm-package-probuilder/releases).
+1. Create a new Unity project
+1. Copy the **com.unity.probuilder** directory into the new project's **UnityPackageManager** directory.
+1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file.
+1. Follow the QA instructions outlined in the QAReport.md file.
 
 #### Installing the latest staging
+
+Check for the latest version on Bintray: https://bintray.com/unity/unity-staging/com.unity.probuilder
 
 1. Open a new Unity project
 1. Open the `manifest.json` file in `My Unity Project/UnityPackageManager`
 1. Add the package, version, and staging URL to your registry
+
 ```
 {
 	"dependencies": {
@@ -213,12 +218,3 @@ There are two ways to install ProBuilder with Packman.
 	"registry":"http://staging-packages.unity.com"
 }
 ```
-
-### Upgrading from Asset Store to Packman
-
-1. Move user data out of the ProCore/ProBuilder folder (put it in `Assets` or where-ever else you want)
-	- Move `Assets/ProCore/ProBuilder/Data` to `Assets/ProBuilder Data`
-	- Move `Assets/ProCore/ProBuilder/ProBuilderMeshCache` to `Assets/ProBuilder Data/ProBuilderMeshCache`
-1. Delete the ProCore/ProBuilder folder
-	- **If meshes in your scene disappear when you delete this folder:** Don't panic. That just means **Meshes Are Assets** is enabled you and didn't move the Mesh Cache. Perform the next step (import Packman ProBuilder) then run `Tools/ProBuilder/Repair/Rebuild All ProBuilder Objects`.
-1. Import Packman ProBuilder package
