@@ -206,6 +206,7 @@ namespace ProBuilder.Core
 		internal const string pbToolbarLocation = "pbToolbarLocation";
 		internal const string pbDefaultEntity = "pbDefaultEntity";
 		internal const string pbExtrudeMethod = "pbExtrudeMethod";
+		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
 
 		// Color
 		internal const string pbDefaultFaceColor = "pbDefaultFaceColor";

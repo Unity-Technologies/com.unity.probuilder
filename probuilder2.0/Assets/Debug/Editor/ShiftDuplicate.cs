@@ -1,47 +1,45 @@
-﻿#if SHIFT_DUP_ENABLED
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using ProBuilder2.Common;
-using ProBuilder2.EditorCommon;
+using ProBuilder.Core;
+using ProBuilder.EditorCore;
 
 [InitializeOnLoad]
-public class ShiftDuplicate : Editor
+static class ShiftDuplicate
 {
- 
+	static bool m_IsDragging = false;
+
 	static ShiftDuplicate()
 	{
-		SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		SceneView.onSceneGUIDelegate += OnSceneGUI;
 	}
- 
-	~ShiftDuplicate()
-	{
-		SceneView.onSceneGUIDelegate -= OnSceneGUI;
-	}
- 
-	static Object go = null;
- 
+
 	static void OnSceneGUI(SceneView scn)
 	{
 		Event e = Event.current;
- 
-		if(e.modifiers == EventModifiers.Shift && e.type == EventType.MouseDrag)
+
+		if(!m_IsDragging && e.modifiers == EventModifiers.Shift && e.type == EventType.MouseDrag)
 		{
+			m_IsDragging = true;
+
+			// probuilder-specific
 			if(pb_Editor.instance != null && pb_Editor.instance.editLevel == EditLevel.Geometry)
 				return;
 
-			if(go == null)
+			Object[] selection = Selection.GetFiltered(typeof(Transform), SelectionMode.TopLevel);
+
+			if(selection != null && selection.Length > 0)
 			{
-				go = GameObject.Instantiate(Selection.activeTransform.gameObject);
-				Undo.RegisterCreatedObjectUndo(go, "Shift Duplicate");
+				Object[] duplicates = new Object[selection.Length];
+
+				for(int i = 0, c = selection.Length; i < c; i++)
+				{
+					duplicates[i] = Object.Instantiate(selection[i]);
+					Undo.RegisterCreatedObjectUndo((duplicates[i] as Transform).gameObject, "Shift Duplicate");
+				}
 			}
 		}
- 
+
 		if(e.type == EventType.MouseUp || e.type == EventType.Ignore)
-			go = null;
+			m_IsDragging = false;
 	}
 }
-
-#endif

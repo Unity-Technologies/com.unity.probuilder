@@ -242,10 +242,12 @@ namespace ProBuilder.EditorCore
 			if (!string.IsNullOrEmpty(raw))
 			{
 				pb_VersionUtil.FormatChangelog(raw, out m_changeLogVersionInfo, out m_ChangeLogRichText);
+#if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_changeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
 						m_changeLogVersionInfo.ToString(k_AboutPrefFormat),
 						pb_Version.Current.ToString(k_AboutPrefFormat));
+#endif
 			}
 		}
 
