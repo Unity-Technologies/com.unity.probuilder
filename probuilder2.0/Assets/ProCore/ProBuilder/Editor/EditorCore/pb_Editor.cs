@@ -170,8 +170,6 @@ namespace ProBuilder.EditorCore
 					margin = new RectOffset(0,0,0,0),
 					padding = new RectOffset(0,0,0,0)
 				};
-
-				Debug.Log(m_SelectionRect.normal.background != null);
 			}
 		}
 
