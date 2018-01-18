@@ -104,13 +104,20 @@ namespace ProBuilder.EditorCore
 			if (!s_ElementCountCacheIsDirty)
 				return;
 
-			s_ElementCountCacheIsDirty = false;
+			try
+			{
 
-			s_TotalVertexCount = Top().Sum(x => x.vertexCount);
-			s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
-			s_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
-			s_TotalFaceCount = Top().Sum(x => x.faceCount);
-			s_TotalTriangleCountCompiled = Top().Sum(x => (int) pb_MeshUtility.GetTriangleCount(x.msh));
+				s_TotalVertexCount = Top().Sum(x => x.vertexCount);
+				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
+				s_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
+				s_TotalFaceCount = Top().Sum(x => x.faceCount);
+				s_TotalTriangleCountCompiled = Top().Sum(x => (int) pb_MeshUtility.GetTriangleCount(x.msh));
+				s_ElementCountCacheIsDirty = false;
+			}
+			catch
+			{
+				// expected when UndoRedo is called
+			}
 		}
 
 		public static void AddToSelection(GameObject t)

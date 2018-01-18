@@ -2659,7 +2659,6 @@ namespace ProBuilder.EditorCore
 			nearestEdgeObject = null;
 
 			UpdateSelection(false);
-
 			HideSelectedWireframe();
 		}
 
