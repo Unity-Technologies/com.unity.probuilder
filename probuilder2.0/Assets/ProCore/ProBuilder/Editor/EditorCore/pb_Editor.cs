@@ -1829,7 +1829,7 @@ namespace ProBuilder.EditorCore
 			int screenWidth = (int) sceneView.position.width;
 			int screenHeight = (int) sceneView.position.height;
 
-			int t_selectionMode = (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) selectionMode) + 1 : 0;
+			int currentSelectionMode = (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) selectionMode) + 1 : 0;
 
 			switch (m_SceneToolbarLocation)
 			{
@@ -1867,11 +1867,11 @@ namespace ProBuilder.EditorCore
 
 			EditorGUI.BeginChangeCheck();
 
-			t_selectionMode = GUI.Toolbar(elementModeToolbarRect, (int) t_selectionMode, m_EditModeIcons, commandStyle);
+			currentSelectionMode = GUI.Toolbar(elementModeToolbarRect, (int) currentSelectionMode, m_EditModeIcons, commandStyle);
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (t_selectionMode == 0)
+				if (currentSelectionMode == 0)
 				{
 					SetEditLevel(EditLevel.Top);
 				}
@@ -1880,7 +1880,7 @@ namespace ProBuilder.EditorCore
 					if (editLevel != EditLevel.Geometry)
 						SetEditLevel(EditLevel.Geometry);
 
-					SetSelectionMode((SelectMode) (t_selectionMode - 1));
+					SetSelectionMode((SelectMode) (currentSelectionMode - 1));
 				}
 			}
 
@@ -1896,7 +1896,12 @@ namespace ProBuilder.EditorCore
 				// sceneview screen.height includes the tab and toolbar
 				var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
 				var size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
-				Rect handleTransformInfoRect = new Rect(Screen.width - (size.x + 8), Screen.height - (size.y + 8 + toolbarHeight * 2), size.x, size.y);
+
+				Rect handleTransformInfoRect = new Rect(
+					sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
+					size.x,
+					size.y);
+
 				GUI.Label(handleTransformInfoRect, gc, pb_EditorStyles.sceneTextBox);
 			}
 
