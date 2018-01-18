@@ -1,0 +1,9 @@
+{
+    "name": "ProBuilderAddOns",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

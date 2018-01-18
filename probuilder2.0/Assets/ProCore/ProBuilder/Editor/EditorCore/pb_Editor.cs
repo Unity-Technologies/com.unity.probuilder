@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ProBuilder.Core;
 using ProBuilder.Interface;
 using ProBuilder.MeshOperations;
+using UnityEngine.XR.WSA.Input;
 
 namespace ProBuilder.EditorCore
 {
@@ -99,7 +100,6 @@ namespace ProBuilder.EditorCore
 		bool movingPictures = false;
 		Quaternion textureRotation = Quaternion.identity;
 		Vector3 textureScale = Vector3.one;
-		Color handleBgColor;
 		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
 
 		int[][] m_uniqueIndices = new int[0][];
@@ -117,22 +117,27 @@ namespace ProBuilder.EditorCore
 		// public pb_Face[][] 	SelectedFacesInEditZone { get; private set; }
 		public Dictionary<pb_Object, List<pb_Face>> SelectedFacesInEditZone { get; private set; }
 
-		// The number of selected distinct indices on the object with the greatest number of selected distinct indices.
-		int per_object_vertexCount_distinct = 0;
-
-		int faceCount = 0;
-		int vertexCount = 0;
-		int triangleCount = 0;
-
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 
 		static MethodInfo s_ResetOnSceneGUIState = null;
 
 		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
-		public int selectedVertexCount { get; private set; } // Sum of all vertices sleected
-		public int selectedFaceCount { get; private set; } // Sum of all faces sleected
-		public int selectedEdgeCount { get; private set; } // Sum of all edges sleected
+
+		// Sum of all vertices sleected
+		int m_SelectedVertexCount;
+		int m_SelectedCommonVertexCount;
+
+		// Sum of all faces sleected
+		int m_SelectedFaceCount;
+
+		// Sum of all edges sleected
+		int m_SelectedEdgeCount;
+
+		public int selectedVertexCount { get { return m_SelectedVertexCount; } }
+		public int selectedFaceCount { get { return m_SelectedFaceCount; } }
+		public int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
+
 		Event m_CurrentEvent;
 
 		public bool isFloatingWindow { get; private set; }
@@ -587,7 +592,7 @@ namespace ProBuilder.EditorCore
 
 			if ((editLevel == EditLevel.Geometry || editLevel == EditLevel.Texture) && Tools.current != Tool.View)
 			{
-				if (selectedVertexCount > 0)
+				if (m_SelectedVertexCount > 0)
 				{
 					if (editLevel == EditLevel.Geometry)
 					{
@@ -604,7 +609,7 @@ namespace ProBuilder.EditorCore
 								break;
 						}
 					}
-					else if (editLevel == EditLevel.Texture && selectedVertexCount > 0)
+					else if (editLevel == EditLevel.Texture && m_SelectedVertexCount > 0)
 					{
 						switch (currentHandle)
 						{
@@ -641,7 +646,7 @@ namespace ProBuilder.EditorCore
 			HandleUtility.AddDefaultControl(controlID);
 
 			// If selection is made, don't use default handle -- set it to Tools.None
-			if (selectedVertexCount > 0)
+			if (m_SelectedVertexCount > 0)
 				Tools.current = Tool.None;
 
 			if (leftClick)
@@ -1197,7 +1202,7 @@ namespace ProBuilder.EditorCore
 							common = kvp.Value;
 						}
 
-						kvp.Key.SetSelectedTriangles(sharedIndices.GetIndicesWithCommon(common).ToArray());
+						kvp.Key.SetSelectedTriangles(common.SelectMany(x => sharedIndices[x].array).ToArray());
 					}
 
 					UpdateSelection(false);
@@ -1302,7 +1307,7 @@ namespace ProBuilder.EditorCore
 			// if not, behave regularly (clear selection if shift isn't held)
 			if (editLevel == EditLevel.Geometry && selectionMode == SelectMode.Vertex)
 			{
-				if (!shiftKey && selectedVertexCount > 0) return;
+				if (!shiftKey && m_SelectedVertexCount > 0) return;
 			}
 			else
 			{
@@ -1457,7 +1462,7 @@ namespace ProBuilder.EditorCore
 				Vector3 over; // vertex point to modify. different for world, local, and plane
 
 				bool gotoWorld = Selection.transforms.Length > 1 && handleAlignment == HandleAlignment.Plane;
-				bool gotoLocal = selectedFaceCount < 1;
+				bool gotoLocal = m_SelectedFaceCount < 1;
 
 				// if(pref_snapEnabled)
 				// 	pbUndo.RecordSelection(selection as Object[], "Move Vertices");
@@ -1889,50 +1894,38 @@ namespace ProBuilder.EditorCore
 				}
 			}
 
-			handleBgColor = GUI.backgroundColor;
-
 			if (movingVertices && m_ShowSceneInfo)
 			{
-				GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
+				string handleTransformInfo = string.Format(
+					"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
+					(newPosition - translateOrigin),
+					(currentHandleRotation.eulerAngles - rotateOrigin),
+					(currentHandleScale - scaleOrigin));
 
-				GUI.Label(new Rect(Screen.width - 200, Screen.height - 120, 162, 48),
-					"Translate: " + (newPosition - translateOrigin).ToString() +
-					"\nRotate: " + (currentHandleRotation.eulerAngles - rotateOrigin).ToString() +
-					"\nScale: " + (currentHandleScale - scaleOrigin).ToString()
-					, VertexTranslationInfoStyle
-				);
+				var gc = pb_EditorGUIUtility.TempGUIContent(handleTransformInfo);
+				// sceneview screen.height includes the tab and toolbar
+				var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
+				var size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
+				Rect handleTransformInfoRect = new Rect(Screen.width - (size.x + 8), Screen.height - (size.y + 8 + toolbarHeight * 2), size.x, size.y);
+				GUI.Label(handleTransformInfoRect, gc, pb_EditorStyles.sceneTextBox);
 			}
 
 			if (m_ShowSceneInfo)
 			{
-				try
-				{
-					System.Text.StringBuilder sb = new System.Text.StringBuilder();
+				var gc = new GUIContent(string.Format(
+						"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
+						pb_Selection.totalFaceCount,
+						pb_Selection.totalTriangleCountCompiled,
+						pb_Selection.totalCommonVertexCount,
+						pb_Selection.totalVertexCountCompiled,
+						m_SelectedFaceCount,
+						m_SelectedEdgeCount,
+						m_SelectedCommonVertexCount));
 
-					sb.AppendLine("Faces: " + faceCount);
-					sb.AppendLine("Triangles: " + triangleCount);
-					sb.AppendLine("Vertices: " + vertexCount + " (" +
-					              (selection != null ? selection.Select(x => x.msh.vertexCount).Sum() : 0).ToString() + ")\n");
-					sb.AppendLine("Selected Faces: " + selectedFaceCount);
-					sb.AppendLine("Selected Edges: " + selectedEdgeCount);
-					sb.AppendLine("Selected Vertices: " + selectedVertexCount);
-
-					GUIContent gc = new GUIContent(sb.ToString(), "");
-
-					Vector2 size = EditorStyles.label.CalcSize(gc);
-
-					sceneInfoRect.width = size.x + 8;
-					sceneInfoRect.height = size.y - 4;
-
-					pb_EditorGUIUtility.DrawSolidColor(
-						new Rect(sceneInfoRect.x - 4, sceneInfoRect.y - 4, sceneInfoRect.width, sceneInfoRect.height),
-						new Color(.1f, .1f, .1f, .55f));
-
-					GUI.Label(sceneInfoRect, gc);
-				}
-				catch
-				{
-				}
+				Vector2 size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
+				sceneInfoRect.width = size.x;
+				sceneInfoRect.height = size.y;
+				GUI.Label(sceneInfoRect, gc, pb_EditorStyles.sceneTextBox);
 			}
 
 			// Enables vertex selection with a mouse click
@@ -2127,7 +2120,7 @@ namespace ProBuilder.EditorCore
 
 				/* handle alignment */
 				case "Toggle Handle Pivot":
-					if (selectedVertexCount < 1)
+					if (m_SelectedVertexCount < 1)
 						return false;
 
 					if (editLevel != EditLevel.Texture)
@@ -2312,19 +2305,19 @@ namespace ProBuilder.EditorCore
 		 *	 things like quad faces and vertex billboards.
 		 */
 
-		// todo remove this manual selection caching junk
+		/// <summary>
+		/// Rebuild the selection caches that help pb_Editor work.
+		/// </summary>
+		/// <param name="forceUpdate">Force update if elements have been added or removed, or the indices have been altered.</param>
 		public void UpdateSelection(bool forceUpdate = true)
 		{
-			// profiler.BeginSample("UpdateSelection()");
-			per_object_vertexCount_distinct = 0;
+			profiler.BeginSample("UpdateSelection()");
 
-			selectedVertexCount = 0;
-			selectedFaceCount = 0;
-			selectedEdgeCount = 0;
-
-			faceCount = 0;
-			vertexCount = 0;
-			triangleCount = 0;
+			profiler.BeginSample("CompareSequence");
+			m_SelectedVertexCount = 0;
+			m_SelectedCommonVertexCount = 0;
+			m_SelectedFaceCount = 0;
+			m_SelectedEdgeCount = 0;
 
 			pb_Object[] t_selection = selection;
 
@@ -2335,38 +2328,46 @@ namespace ProBuilder.EditorCore
 			else
 				SelectedFacesInEditZone = new Dictionary<pb_Object, List<pb_Face>>();
 
+			bool selectionEqual = t_selection.SequenceEqual(selection);
+
+			profiler.EndSample();
+			profiler.BeginSample("forceUpdate");
+
 			// If the top level selection has changed, update all the heavy cache things
 			// that don't change based on element selction
-			if (forceUpdate || !t_selection.SequenceEqual(selection))
+			if (forceUpdate || !selectionEqual)
 			{
-				// profiler.BeginSample("Heavy Update");
 
-				forceUpdate =
-					true; // If updating due to inequal selections, set the forceUpdate to true so some of the functions below know that these values
-				// can be trusted.
+				// If updating due to inequal selections, set the forceUpdate to true so some of the functions below
+				// know that these values can be trusted.
+				forceUpdate = true;
+
+				profiler.BeginSample("alloc pb_Edge[]");
 				m_universalEdges = new pb_Edge[selection.Length][];
-				m_verticesInWorldSpace = new Vector3[selection.Length][];
-				m_uniqueIndices = new int[selection.Length][];
-				m_sharedIndicesLookup = new Dictionary<int, int>[selection.Length];
+				profiler.EndSample();
 
+				profiler.BeginSample("alloc dictionary[]");
+				m_sharedIndicesLookup = new Dictionary<int, int>[selection.Length];
+				profiler.EndSample();
+
+				profiler.BeginSample("get caches");
 				for (int i = 0; i < selection.Length; i++)
 				{
-					// profiler.BeginSample("Unique Indices");
-					m_uniqueIndices[i] = selection[i].faces.SelectMany(x => x != null ? x.distinctIndices : null).ToArray();
-					// profiler.EndSample();
-
-					// profiler.BeginSample("sharedIndices.ToDictionary()");
+					profiler.BeginSample("sharedIndices.ToDictionary()");
 					m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
-					// profiler.EndSample();
+					profiler.EndSample();
 
-					// profiler.BeginSample("GetUniversalEdges (dictionary)");
-					m_universalEdges[i] =
-						pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
-					// profiler.EndSample();
+					profiler.BeginSample("GetUniversalEdges (dictionary)");
+					m_universalEdges[i] = pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
+					profiler.EndSample();
 				}
+				profiler.EndSample();
 
 				// profiler.EndSample();
 			}
+
+			profiler.EndSample();
+			profiler.BeginSample("get bounds");
 
 			m_handlePivotWorld = Vector3.zero;
 
@@ -2377,13 +2378,6 @@ namespace ProBuilder.EditorCore
 			{
 				pb_Object pb = selection[i];
 
-				// pb.transform.hasChanged = false;
-
-				// profiler.BeginSample("VerticesInWorldSpace");
-				m_verticesInWorldSpace[i] =
-					selection[i].VerticesInWorldSpace(); // to speed this up, could just get uniqueIndices vertiecs
-				// profiler.EndSample();
-
 				if (!boundsInitialized && pb.SelectedTriangleCount > 0)
 				{
 					boundsInitialized = true;
@@ -2393,66 +2387,57 @@ namespace ProBuilder.EditorCore
 
 				if (pb.SelectedTriangles.Length > 0)
 				{
-					if (forceUpdate)
+					for (int n = 0, c = pb.SelectedTriangleCount; n < c; n++)
 					{
-						foreach (Vector3 v in pb_Util.ValuesWithIndices(m_verticesInWorldSpace[i], pb.SelectedTriangles))
-						{
-							min = Vector3.Min(min, v);
-							max = Vector3.Max(max, v);
-						}
-					}
-					else
-					{
-						foreach (Vector3 v in pb.VerticesInWorldSpace(pb.SelectedTriangles))
-						{
-							min = Vector3.Min(min, v);
-							max = Vector3.Max(max, v);
-						}
+						Vector3 v = pb.transform.TransformPoint(pb.vertices[pb.SelectedTriangles[n]]);
+						min = Vector3.Min(min, v);
+						max = Vector3.Max(max, v);
 					}
 				}
 
 				SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList());
 
-				selectedVertexCount += selection[i].SelectedTriangles.Length;
-				selectedFaceCount += selection[i].SelectedFaceCount;
-				selectedEdgeCount += selection[i].SelectedEdges.Length;
-
-				int distinctVertexCount = selection[i].sharedIndices.UniqueIndicesWithValues(selection[i].SelectedTriangles)
-					.ToList().Count;
-
-				if (distinctVertexCount > per_object_vertexCount_distinct)
-					per_object_vertexCount_distinct = distinctVertexCount;
-
-				faceCount += selection[i].faces.Length;
-				vertexCount += selection[i].sharedIndices.Length; // vertexCount;
-				triangleCount += selection[i].msh != null ? selection[i].msh.triangles.Length / 3 : selection[i].faces.Length;
+				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
+				m_SelectedFaceCount += selection[i].SelectedFaceCount;
+				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
 			}
 
-			m_handlePivotWorld = (max + min) / 2f;
+			m_handlePivotWorld = (max + min) * .5f;
+
+			profiler.EndSample();
+			profiler.BeginSample("update graphics");
 
 			UpdateGraphics();
 
+			profiler.EndSample();
+			profiler.BeginSample("update handlerotation");
+
 			UpdateHandleRotation();
 
-#if !PROTOTYPE
+			profiler.EndSample();
+			profiler.BeginSample("update texture hadnles");
+
 			UpdateTextureHandles();
-#endif
+
+			profiler.EndSample();
+			profiler.BeginSample("onSelectionUpdate");
 
 			currentHandleRotation = handleRotation;
 
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(selection);
+			profiler.EndSample();
 
-			// profiler.EndSample();
+			profiler.EndSample();
 		}
 
 		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
 		internal void Internal_UpdateSelectionFast()
 		{
 			// profiler.BeginSample("Internal_UpdateSelectionFast");
-			selectedVertexCount = 0;
-			selectedFaceCount = 0;
-			selectedEdgeCount = 0;
+			m_SelectedVertexCount = 0;
+			m_SelectedFaceCount = 0;
+			m_SelectedEdgeCount = 0;
 
 			bool boundsInitialized = false;
 			Vector3 min = Vector3.zero, max = Vector3.zero;
@@ -2481,9 +2466,9 @@ namespace ProBuilder.EditorCore
 					}
 				}
 
-				selectedVertexCount += selection[i].SelectedTriangleCount;
-				selectedFaceCount += selection[i].SelectedFaceCount;
-				selectedEdgeCount += selection[i].SelectedEdges.Length;
+				m_SelectedVertexCount += selection[i].SelectedTriangleCount;
+				m_SelectedFaceCount += selection[i].SelectedFaceCount;
+				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
 			}
 
 			m_handlePivotWorld = (max + min) / 2f;

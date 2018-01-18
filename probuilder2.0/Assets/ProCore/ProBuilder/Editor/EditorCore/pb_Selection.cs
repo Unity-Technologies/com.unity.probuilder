@@ -13,7 +13,22 @@ namespace ProBuilder.EditorCore
 	[InitializeOnLoad]
 	static class pb_Selection
 	{
-		private static pb_Object[] selection
+		static pb_Object[] m_TopSelection = new pb_Object[0];
+		static pb_Object[] m_DeepSelection = new pb_Object[0];
+
+		static bool m_ElementCountCacheIsDirty = true;
+
+		static int m_TotalVertexCount;
+		static int m_TotalCommonVertexCount;
+		static int m_TotalVertexCountCompiled;
+		static int m_TotalFaceCount;
+		static int m_TotalTriangleCountCompiled;
+
+		static int m_SelectedVertexCount;
+		static int m_SelectedEdgeCount;
+		static int m_SelectedFaceCount;
+
+		static pb_Object[] selection
 		{
 			get
 			{
@@ -29,30 +44,77 @@ namespace ProBuilder.EditorCore
 			OnSelectionChanged();
 		}
 
-		private static pb_Object[] m_TopSelection = new pb_Object[0];
-		private static pb_Object[] m_DeepSelection = new pb_Object[0];
-
-		// Allow other scripts to forcibly reload the cached selection.
+		/// <summary>
+		/// Allow other scripts to forcibly reload the cached selection.
+		/// </summary>
 		public static void OnSelectionChanged()
 		{
 			m_TopSelection = Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
 			m_DeepSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
+			m_ElementCountCacheIsDirty = true;
 		}
 
-		/**
-		 *	Get just the top level selected pb_Object components.
-		 */
+		/// <summary>
+		/// Get just the top level selected pb_Object components.
+		/// </summary>
+		/// <returns></returns>
 		public static pb_Object[] Top()
 		{
 			return m_TopSelection;
 		}
 
-		/**
-		 *	Get all selected pb_Object components, including those in children of selected objects.
-		 */
+		/// <summary>
+		/// Get all selected pb_Object components, including those in children of selected objects.
+		/// </summary>
+		/// <returns></returns>
 		public static pb_Object[] All()
 		{
 			return m_DeepSelection;
+		}
+
+		/// <summary>
+		/// Get the sum of all pb_Object vertex counts in the selection.
+		/// </summary>
+		/// <remarks>
+		/// This is the pb_Object.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count, see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
+		/// </remarks>
+		public static int totalVertexCount { get { RebuildElementCounts(); return m_TotalVertexCount; } }
+
+		/// <summary>
+		/// Get the sum of all pb_Object common vertex counts in the selection.
+		/// </summary>
+		/// <remarks>
+		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count, see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
+		/// </remarks>
+		public static int totalCommonVertexCount { get { RebuildElementCounts(); return m_TotalCommonVertexCount; } }
+
+		/// <summary>
+		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per UnityEngine.Mesh.
+		/// </summary>
+		public static int totalVertexCountCompiled { get { RebuildElementCounts(); return m_TotalVertexCountCompiled; } }
+
+		/// <summary>
+		/// Sum of all selected ProBuilder object face counts.
+		/// </summary>
+		public static int totalFaceCount { get { RebuildElementCounts(); return m_TotalFaceCount; } }
+
+		/// <summary>
+		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4 indices if topology is quad).
+		/// </summary>
+		public static int totalTriangleCountCompiled { get { RebuildElementCounts(); return m_TotalTriangleCountCompiled; } }
+
+		static void RebuildElementCounts()
+		{
+			if (!m_ElementCountCacheIsDirty)
+				return;
+
+			m_ElementCountCacheIsDirty = false;
+
+			m_TotalVertexCount = Top().Sum(x => x.vertexCount);
+			m_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
+			m_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
+			m_TotalFaceCount = Top().Sum(x => x.faceCount);
+			m_TotalTriangleCountCompiled = Top().Sum(x => (int) pb_MeshUtility.GetTriangleCount(x.msh));
 		}
 
 		public static void AddToSelection(GameObject t)
@@ -113,15 +175,18 @@ namespace ProBuilder.EditorCore
 			AddToSelection(go);
 		}
 
-		/**
-		 *	Clears all `selected` caches associated with each pb_Object in the current selection.  The means triangles, faces, and edges.
-		 */
+		/// <summary>
+		/// Clears all `selected` caches associated with each pb_Object in the current selection. This means triangles, faces, and edges, but not objects.
+		/// </summary>
 		public static void ClearElementSelection()
 		{
 			if(pb_Editor.instance)
 				pb_Editor.instance.ClearElementSelection();
 		}
 
+		/// <summary>
+		/// Clear both the Selection.objects and ProBuilder geometry element selections.
+		/// </summary>
 		public static void ClearElementAndObjectSelection()
 		{
 			ClearElementSelection();

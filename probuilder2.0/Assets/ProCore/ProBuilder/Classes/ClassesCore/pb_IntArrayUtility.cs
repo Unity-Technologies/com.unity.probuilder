@@ -57,7 +57,7 @@ namespace ProBuilder.Core
 		{
 			if(lookup == null)
 				return new pb_IntArray[0];
-			
+
 			Dictionary<int, int> map = new Dictionary<int, int>();
 			List<List<int>> shared = new List<List<int>>();
 
@@ -210,11 +210,13 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		/// Convert a list of common indices (eg, indices of a group in the sharedIndices array) to actual triangle indices.
+		/// Convert a list of common indices (indices of a group in the sharedIndices array) to actual triangle indices.
+		/// Only returns the first index in a common index array.
 		/// </summary>
 		/// <param name="pbIntArr"></param>
 		/// <param name="common"></param>
 		/// <returns></returns>
+		[System.Obsolete]
 		internal static IEnumerable<int> GetIndicesWithCommon(this pb_IntArray[] pbIntArr, IEnumerable<int> common)
 		{
 			return common.Select(x => pbIntArr[x][0]);

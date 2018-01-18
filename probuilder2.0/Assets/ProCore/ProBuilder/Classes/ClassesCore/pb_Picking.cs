@@ -40,7 +40,7 @@ namespace ProBuilder.Core
 		/// <param name="selectable">The objects to hit test.</param>
 		/// <param name="options">Culling options.</param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
-		/// <returns></returns>
+		/// <returns>A dictionary of pb_Object and sharedIndices that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
 		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
 			Camera cam,
 			Rect rect,

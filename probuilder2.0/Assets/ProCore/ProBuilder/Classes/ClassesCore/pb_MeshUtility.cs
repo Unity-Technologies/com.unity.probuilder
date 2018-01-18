@@ -459,5 +459,46 @@ namespace ProBuilder.Core
 
 			return sb.ToString();
 		}
+
+		/// <summary>
+		/// Get the number of indices this mesh contains.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <returns></returns>
+		public static uint GetIndexCount(Mesh m)
+		{
+			uint sum = 0;
+
+			if (m == null)
+				return sum;
+
+			for (int i = 0, c = m.subMeshCount; i < c; i++)
+				sum += m.GetIndexCount(i);
+
+			return sum;
+		}
+
+		/// <summary>
+		/// Get the number of triangles (or quads) this mesh contains.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <returns></returns>
+		public static uint GetTriangleCount(Mesh m)
+		{
+			uint sum = 0;
+
+			if (m == null)
+				return sum;
+
+			for (int i = 0, c = m.subMeshCount; i < c; i++)
+			{
+				if(m.GetTopology(i) == MeshTopology.Triangles)
+					sum += m.GetIndexCount(i) / 3;
+				else if(m.GetTopology(i) == MeshTopology.Quads)
+					sum += m.GetIndexCount(i) / 4;
+			}
+
+			return sum;
+		}
 	}
 }

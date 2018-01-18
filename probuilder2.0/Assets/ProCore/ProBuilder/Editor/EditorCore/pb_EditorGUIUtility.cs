@@ -11,14 +11,14 @@ namespace ProBuilder.Interface
 	/// <summary>
 	/// Generic GUI utility methods used in ProBuilder windows.
 	/// </summary>
-	class pb_EditorGUIUtility
+	static class pb_EditorGUIUtility
 	{
-		private static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin
+		static readonly Color TOOL_SETTINGS_COLOR = EditorGUIUtility.isProSkin
 			? Color.green
 			: new Color(.2f, .2f, .2f, .2f);
 
-		private static GUIStyle _splitStyle;
-		private static GUIStyle SplitStyle
+		static GUIStyle _splitStyle;
+		static GUIStyle SplitStyle
 		{
 			get
 			{
@@ -32,7 +32,7 @@ namespace ProBuilder.Interface
 			}
 		}
 
-		private static GUIStyle _centeredGreyMiniLabel;
+		static GUIStyle _centeredGreyMiniLabel;
 		public static GUIStyle CenteredGreyMiniLabel
 		{
 			get
@@ -47,7 +47,7 @@ namespace ProBuilder.Interface
 			}
 		}
 
-		private static GUIStyle _solidBackgroundStyle;
+		static GUIStyle _solidBackgroundStyle;
 		public static GUIStyle solidBackgroundStyle
 		{
 			get
@@ -61,7 +61,7 @@ namespace ProBuilder.Interface
 			}
 		}
 
-		private static GUIStyle _buttonNoBackgroundSmallMarginStyle = null;
+		static GUIStyle _buttonNoBackgroundSmallMarginStyle = null;
 		public static GUIStyle ButtonNoBackgroundSmallMarginStyle
 		{
 			get
@@ -91,9 +91,9 @@ namespace ProBuilder.Interface
 			return _guiContent;
 		}
 
-		private static Stack<bool> m_GuiEnabled = new Stack<bool>();
-		private static Stack<Color> m_ContentColor = new Stack<Color>();
-		private static Stack<Color> m_BackgroundColor = new Stack<Color>();
+		static Stack<bool> m_GuiEnabled = new Stack<bool>();
+		static Stack<Color> m_ContentColor = new Stack<Color>();
+		static Stack<Color> m_BackgroundColor = new Stack<Color>();
 
 		public static void PushGUIEnabled(bool enabled)
 		{
@@ -151,7 +151,7 @@ namespace ProBuilder.Interface
 			}
 		}
 
-		private static Dictionary<GUIStyle, GUIStyle> onStyles = new Dictionary<GUIStyle, GUIStyle>();
+		static Dictionary<GUIStyle, GUIStyle> onStyles = new Dictionary<GUIStyle, GUIStyle>();
 
 		public static GUIStyle GetOnStyle(GUIStyle style)
 		{
@@ -167,7 +167,7 @@ namespace ProBuilder.Interface
 			return on;
 		}
 
-		private static Dictionary<GUIStyle, GUIStyle> activeStyles = new Dictionary<GUIStyle, GUIStyle>();
+		static Dictionary<GUIStyle, GUIStyle> activeStyles = new Dictionary<GUIStyle, GUIStyle>();
 
 		public static GUIStyle GetActiveStyle(GUIStyle style)
 		{
@@ -345,8 +345,8 @@ namespace ProBuilder.Interface
 				return value;
 		}
 
-		private static Rect sceneLabelRect = new Rect(0f, 0f, 0f, 0f);
-		private static Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
+		static Rect sceneLabelRect = new Rect(0f, 0f, 0f, 0f);
+		static Color SceneLabelBackgroundColor = new Color(.12f, .12f, .12f, 1f);
 
 		static GUIStyle sceneBoldLabel {
 			get {

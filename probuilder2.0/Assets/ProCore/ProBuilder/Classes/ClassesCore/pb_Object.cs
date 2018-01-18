@@ -499,9 +499,9 @@ namespace ProBuilder.Core
 			get { return m_SelectedEdges.Length; }
 		}
 
-		[SerializeField] private int[] m_selectedFaces = new int[] { };
-		[SerializeField] private pb_Edge[] m_SelectedEdges = new pb_Edge[] { };
-		[SerializeField] private int[] m_selectedTriangles = new int[] { };
+		[SerializeField] int[] m_selectedFaces = new int[] { };
+		[SerializeField] pb_Edge[] m_SelectedEdges = new pb_Edge[] { };
+		[SerializeField] int[] m_selectedTriangles = new int[] { };
 
 		/// <summary>
 		/// Adds a face to this pb_Object's selected array.  Also updates the SelectedEdges and SelectedTriangles arrays.
@@ -555,7 +555,7 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		/// Sets this pb_Object's SelectedTriangles array.  Clears SelectedFaces and SelectedEdges arrays.
+		/// Sets this pb_Object's SelectedTriangles array. Clears SelectedFaces and SelectedEdges arrays.
 		/// </summary>
 		/// <param name="tris"></param>
 		internal void SetSelectedTriangles(int[] tris)

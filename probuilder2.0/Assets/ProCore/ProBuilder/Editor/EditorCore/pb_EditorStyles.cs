@@ -10,7 +10,7 @@ namespace ProBuilder.Interface
 	/// </summary>
 	static class pb_EditorStyles
 	{
-		static readonly Color k_TextColorWhiteNormal = new Color(0.82f, 0.82f, 0.82f, 1f);
+		static readonly Color k_TextColorWhiteNormal = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteHover = new Color(0.7f, 0.7f, 0.7f, 1f);
 		static readonly Color k_TextColorWhiteActive = new Color(0.5f, 0.5f, 0.5f, 1f);
 
@@ -19,6 +19,7 @@ namespace ProBuilder.Interface
 		static GUIStyle m_SettingsGroupStyle = null;
 		static GUIStyle m_RowStyle = null;
 		static GUIStyle m_HeaderLabel = null;
+		static GUIStyle m_SceneTextBox = null;
 
 		/// <summary>
 		/// A generic menu button with no accent bar.
@@ -123,6 +124,28 @@ namespace ProBuilder.Interface
 				}
 
 				return m_HeaderLabel;
+			}
+		}
+
+		public static GUIStyle sceneTextBox
+		{
+			get
+			{
+				if (m_SceneTextBox == null)
+				{
+					m_SceneTextBox = new GUIStyle(GUI.skin.box);
+					m_SceneTextBox.wordWrap = false;
+					m_SceneTextBox.richText = true;
+					m_SceneTextBox.stretchWidth = false;
+					m_SceneTextBox.stretchHeight = false;
+					m_SceneTextBox.border = new RectOffset(2,2,2,2);
+					m_SceneTextBox.padding = new RectOffset(4,4,4,4);
+					m_SceneTextBox.normal.textColor = k_TextColorWhiteNormal;
+					m_SceneTextBox.alignment = TextAnchor.UpperLeft;
+					m_SceneTextBox.normal.background = pb_IconUtility.GetIcon("Scene/TextBackground");
+				}
+
+				return m_SceneTextBox;
 			}
 		}
 	}

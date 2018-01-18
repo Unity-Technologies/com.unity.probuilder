@@ -1,7 +1,8 @@
-// #define DO_THE_DEBUG_DANCE
-// #define PROFILER_EXISTS
-
-using System.Diagnostics;
+#define DO_THE_DEBUG_DANCE
+#define PROFILER_EXISTS
+#if PROFILER_EXISTS
+using Parabox.Debug;
+#endif
 
 public static class profiler
 {
@@ -16,31 +17,31 @@ public static class profiler
 
 	static pb_Profiler _profiler = new pb_Profiler("Global");
 
-	[Conditional("DO_THE_DEBUG_DANCE")]
+//	[Conditional("DO_THE_DEBUG_DANCE")]
 	public static void Begin(string str)
 	{
 		_profiler.BeginSample(str, 1);
 	}
 
-	[Conditional("DO_THE_DEBUG_DANCE")]
+//	[Conditional("DO_THE_DEBUG_DANCE")]
 	public static void End()
 	{
 		_profiler.EndSample();
 	}
 
-	[Conditional("DO_THE_DEBUG_DANCE")]
+//	[Conditional("DO_THE_DEBUG_DANCE")]
 	public static void BeginSample(string str)
 	{
 		_profiler.BeginSample(str, 1);
 	}
 
-	[Conditional("DO_THE_DEBUG_DANCE")]
+//	[Conditional("DO_THE_DEBUG_DANCE")]
 	public static void EndSample()
 	{
 		_profiler.EndSample();
 	}
 
-	[Conditional("DO_THE_DEBUG_DANCE")]
+//	[Conditional("DO_THE_DEBUG_DANCE")]
 	public static void Print()
 	{
 		UnityEngine.Debug.Log( _profiler.ToString() );
