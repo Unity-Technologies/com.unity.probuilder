@@ -1,3 +1,19 @@
+# ProBuilder 3.0.0b3
+
+## Changes from 3.0.0b2
+
+- Fix scene repainting endlessly when drag selecting elements.
+- Improve performance of pb_Editor selection caching, fixing lag when selecting high vertex count objects.
+- Fix scene toolbar sometimes not matching free/pro skin.
+- Fix washed colors in gui textures with linear rendering.
+- Default new objects with Static flag checked, and add preference to set a custom default.
+- Fix About window failing to find correct build type.
+- Fix Standard Vertex Color shader errors in 2018.1 and up.
+- Match element drag rect image to Unity's drag rect.
+- Remove unused preferences from the ProBuilder/Preferences window.
+- Fix Poly Shape editor repainting the sceneview on every tick.
+- Fix "Select Hidden" preference not matching editor behavior at launch.
+
 # ProBuilder 3.0.0b2
 
 ## Changes from 3.0.0b1
