@@ -249,14 +249,16 @@ namespace ProBuilder.MeshOperations
 			return faces;
 		}
 
-		/**
-		 * Gets all faces connected to each index taking into account shared vertices.
-		 */
-		public static IEnumerable<pb_Face> GetNeighborFaces(pb_Object pb, IEnumerable<int> indices)
+		/// <summary>
+		/// Gets all faces connected to each index taking into account shared vertices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <param name="lookup"></param>
+		/// <returns></returns>
+		public static List<pb_Face> GetNeighborFaces(pb_Object pb, int[] indices, Dictionary<int, int> lookup)
 		{
 			List<pb_Face> neighboring = new List<pb_Face>();
-			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-
 			HashSet<int> shared = new HashSet<int>();
 
 			foreach(int tri in indices)

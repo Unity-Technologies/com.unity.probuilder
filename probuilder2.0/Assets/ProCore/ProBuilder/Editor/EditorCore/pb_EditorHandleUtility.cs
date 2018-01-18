@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using ProBuilder.Core;
+using UnityEngine.Rendering;
 
 namespace ProBuilder.EditorCore
 {
@@ -24,33 +25,33 @@ namespace ProBuilder.EditorCore
 					|| Tools.viewTool == ViewTool.Orbit;
 		}
 
-		private const int HANDLE_PADDING = 8;
-		private const int LEFT_MOUSE_BUTTON = 0;
-		private const int MIDDLE_MOUSE_BUTTON = 2;
+		const int HANDLE_PADDING = 8;
+		const int LEFT_MOUSE_BUTTON = 0;
+		const int MIDDLE_MOUSE_BUTTON = 2;
 
-		private static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
-		private static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
-		private static Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
+		static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
+		static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
+		static Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
 
-		private static Color HANDLE_COLOR_UP = new Color(0f, .7f, 0f, .8f);
-		private static Color HANDLE_COLOR_RIGHT = new Color(0f, 0f, .7f, .8f);
-		private static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
-		private static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
+		static Color HANDLE_COLOR_UP = new Color(0f, .7f, 0f, .8f);
+		static Color HANDLE_COLOR_RIGHT = new Color(0f, 0f, .7f, .8f);
+		static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
+		static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
 
-		private static Material m_HandleMaterial = null;
+		static Material m_HandleMaterial = null;
 
 		public static Material handleMaterial
 		{
 			get
 			{
 				if(m_HandleMaterial == null)
-					m_HandleMaterial = (Material)EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
+					m_HandleMaterial = (Material) EditorGUIUtility.LoadRequired("SceneView/2DHandleLines.mat");
 
 				return m_HandleMaterial;
 			}
 		}
 
-		private static Material m_UnlitVertexColorMaterial = null;
+		static Material m_UnlitVertexColorMaterial = null;
 
 		public static Material unlitVertexColorMaterial
 		{
@@ -76,7 +77,7 @@ namespace ProBuilder.EditorCore
 		}
 
 
-		private static Material m_EdgeMaterial = null;
+		static Material m_EdgeMaterial = null;
 
 		public static Material edgeMaterial
 		{
@@ -91,12 +92,12 @@ namespace ProBuilder.EditorCore
 		}
 
 		public static int CurrentID { get { return currentId; } }
-		private static int currentId = -1;
+		static int currentId = -1;
 
-		private static Vector2 handleOffset = Vector2.zero;
-		private static Vector2 initialMousePosition = Vector2.zero;
+		static Vector2 handleOffset = Vector2.zero;
+		static Vector2 initialMousePosition = Vector2.zero;
 
-		private static pb_HandleConstraint2D axisConstraint = new pb_HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
+		static pb_HandleConstraint2D axisConstraint = new pb_HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
 		public static pb_HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
 
 		public static bool limitToLeftButton = true;
@@ -591,7 +592,7 @@ namespace ProBuilder.EditorCore
 			return m;
 		}
 
-		private static Vector3[] DrawBoundsEdge(Vector3 center, float x, float y, float z, float size)
+		static Vector3[] DrawBoundsEdge(Vector3 center, float x, float y, float z, float size)
 		{
 			Vector3 p = center;
 			Vector3[] v = new Vector3[6];
@@ -610,6 +611,45 @@ namespace ProBuilder.EditorCore
 			v[5] = (p + ( -(z/Mathf.Abs(z)) * Vector3.forward 	* Mathf.Min(size, Mathf.Abs(z))));
 
 			return v;
+		}
+
+		static MethodInfo m_ApplyWireMaterial = null;
+
+		static object[] m_ApplyWireMaterialArgs = new object[]
+		{
+			UnityEngine.Rendering.CompareFunction.Always
+		};
+
+		internal static bool BeginDrawingLines(CompareFunction zTest)
+		{
+			if (Event.current.type != EventType.Repaint)
+				return false;
+
+			if (m_ApplyWireMaterial == null)
+			{
+
+				m_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
+					"ApplyWireMaterial",
+					BindingFlags.Static | BindingFlags.NonPublic,
+					null,
+					new System.Type[] { typeof(UnityEngine.Rendering.CompareFunction) },
+					null);
+
+			}
+
+			m_ApplyWireMaterialArgs[0] = zTest;
+			m_ApplyWireMaterial.Invoke(null, m_ApplyWireMaterialArgs);
+
+			GL.PushMatrix();
+			GL.Begin(GL.LINES);
+
+			return true;
+		}
+
+		internal static void EndDrawingLines()
+		{
+			GL.End();
+			GL.PopMatrix();
 		}
 	}
 }

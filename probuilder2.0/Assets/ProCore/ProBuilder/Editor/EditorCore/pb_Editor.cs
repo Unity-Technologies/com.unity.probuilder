@@ -87,6 +87,8 @@ namespace ProBuilder.EditorCore
 		Quaternion previousHandleRotation = Quaternion.identity;
 		Quaternion currentHandleRotation = Quaternion.identity;
 
+		GUIContent m_SceneInfo = new GUIContent();
+
 		// Use for delta display
 		Vector3 translateOrigin = Vector3.zero;
 		Vector3 rotateOrigin = Vector3.zero;
@@ -102,15 +104,13 @@ namespace ProBuilder.EditorCore
 		Vector3 textureScale = Vector3.one;
 		Rect sceneInfoRect = new Rect(10, 10, 200, 40);
 
-		int[][] m_uniqueIndices = new int[0][];
-		Vector3[][] m_verticesInWorldSpace = new Vector3[0][];
-		pb_Edge[][] m_universalEdges = new pb_Edge[0][];
-		Vector3 m_handlePivotWorld = Vector3.zero;
-		Dictionary<int, int>[] m_sharedIndicesLookup = new Dictionary<int, int>[0];
+		pb_Edge[][] m_UniversalEdges = new pb_Edge[0][];
+		Vector3 m_HandlePivotWorld = Vector3.zero;
+		Dictionary<int, int>[] m_SharedIndicesDictionary = new Dictionary<int, int>[0];
 
 		public pb_Edge[][] SelectedUniversalEdges
 		{
-			get { return m_universalEdges; }
+			get { return m_UniversalEdges; }
 		}
 
 		// faces that need to be refreshed when moving or modifying the actual selection
@@ -657,7 +657,7 @@ namespace ProBuilder.EditorCore
 					DoubleClick(m_CurrentEvent);
 				}
 
-				mousePosition_initial = mousePosition;
+				mousePosition_initial = m_CurrentEvent.mousePosition;
 				// readyForMouseDrag prevents a bug wherein after ending a drag an errant
 				// MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
 				readyForMouseDrag = true;
@@ -769,36 +769,29 @@ namespace ProBuilder.EditorCore
 			// If mouse isn't over a pb object, it still may be near enough to an edge.
 			if (bestObj == null)
 			{
-				// TODO
 				float bestDistance = m_HamSelection ? k_MaxEdgeSelectDistanceHam : k_MaxEdgeSelectDistanceCtx;
 
-				try
+				for (int i = 0; i < m_UniversalEdges.Length; i++)
 				{
-					for (int i = 0; i < m_universalEdges.Length; i++)
+					var pb = selection[i];
+					var edges = m_UniversalEdges[i];
+
+					for (int j = 0; j < edges.Length; j++)
 					{
-						pb_Edge[] edges = m_universalEdges[i];
+						int x = selection[i].sharedIndices[edges[j].x][0];
+						int y = selection[i].sharedIndices[edges[j].y][0];
 
-						for (int j = 0; j < edges.Length; j++)
+						float d = HandleUtility.DistanceToLine(
+							pb.transform.TransformPoint(pb.vertices[x]),
+							pb.transform.TransformPoint(pb.vertices[x]));
+
+						if (d < bestDistance)
 						{
-							int x = selection[i].sharedIndices[edges[j].x][0];
-							int y = selection[i].sharedIndices[edges[j].y][0];
-
-							Vector3 world_vert_x = m_verticesInWorldSpace[i][x];
-							Vector3 world_vert_y = m_verticesInWorldSpace[i][y];
-
-							float d = HandleUtility.DistanceToLine(world_vert_x, world_vert_y);
-
-							if (d < bestDistance)
-							{
-								bestObj = selection[i];
-								bestEdge = new pb_Edge(x, y);
-								bestDistance = d;
-							}
+							bestObj = selection[i];
+							bestEdge = new pb_Edge(x, y);
+							bestDistance = d;
 						}
 					}
-				}
-				catch
-				{
 				}
 			}
 			else
@@ -1006,7 +999,6 @@ namespace ProBuilder.EditorCore
 				ClearElementSelection();
 
 			Camera cam = SceneView.lastActiveSceneView.camera;
-			Vector2 m = Event.current.mousePosition;
 			List<pb_Tuple<float, Vector3, int, int>> nearest = new List<pb_Tuple<float, Vector3, int, int>>();
 
 			// this could be much faster by raycasting against the mesh and doing a 3d space
@@ -1014,8 +1006,9 @@ namespace ProBuilder.EditorCore
 
 			if (m_HamSelection)
 			{
-				float best = k_MaxEdgeSelectDistanceHam * k_MaxEdgeSelectDistanceHam;
+				const float minAllowableDistance = k_MaxEdgeSelectDistanceHam * k_MaxEdgeSelectDistanceHam;
 				int obj = -1, tri = -1;
+				Vector2 mousePosition = m_CurrentEvent.mousePosition;
 
 				for (int i = 0; i < selection.Length; i++)
 				{
@@ -1024,15 +1017,16 @@ namespace ProBuilder.EditorCore
 					if (!pb.isSelectable)
 						continue;
 
-					for (int n = 0; n < m_uniqueIndices[i].Length; n++)
+					for (int n = 0, c = pb.sharedIndices.Length; n < c; n++)
 					{
-						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+						int index = pb.sharedIndices[n][0];
+						Vector3 v = pb.transform.TransformPoint(pb.vertices[index]);
 						Vector2 p = HandleUtility.WorldToGUIPoint(v);
 
-						float dist = (p - m).sqrMagnitude;
+						float dist = (p - mousePosition).sqrMagnitude;
 
-						if (dist < best)
-							nearest.Add(new pb_Tuple<float, Vector3, int, int>(dist, v, i, m_uniqueIndices[i][n]));
+						if (dist < minAllowableDistance)
+							nearest.Add(new pb_Tuple<float, Vector3, int, int>(dist, v, i, index));
 					}
 				}
 
@@ -1076,9 +1070,10 @@ namespace ProBuilder.EditorCore
 					if (!pb.isSelectable)
 						continue;
 
-					for (int n = 0; n < m_uniqueIndices[i].Length; n++)
+					for (int n = 0, c = pb.sharedIndices.Length; n < c; n++)
 					{
-						Vector3 v = m_verticesInWorldSpace[i][m_uniqueIndices[i][n]];
+						int index = pb.sharedIndices[n][0];
+						Vector3 v = pb.transform.TransformPoint(pb.vertices[index]);
 
 						if (m_MouseClickRect.Contains(HandleUtility.WorldToGUIPoint(v)))
 						{
@@ -1086,7 +1081,7 @@ namespace ProBuilder.EditorCore
 								continue;
 
 							// Check if index is already selected, and if not add it to the pot
-							int indx = System.Array.IndexOf(pb.SelectedTriangles, m_uniqueIndices[i][n]);
+							int indx = System.Array.IndexOf(pb.SelectedTriangles, index);
 
 							pb_Undo.RecordObject(pb, "Change Vertex Selection");
 
@@ -1094,7 +1089,7 @@ namespace ProBuilder.EditorCore
 							if (indx > -1)
 								pb.SetSelectedTriangles(pb.SelectedTriangles.RemoveAt(indx));
 							else
-								pb.SetSelectedTriangles(pb.SelectedTriangles.Add(m_uniqueIndices[i][n]));
+								pb.SetSelectedTriangles(pb.SelectedTriangles.Add(index));
 
 							vpb = pb;
 							return true;
@@ -1323,7 +1318,7 @@ namespace ProBuilder.EditorCore
 
 		void VertexMoveTool()
 		{
-			newPosition = m_handlePivotWorld;
+			newPosition = m_HandlePivotWorld;
 			cachedPosition = newPosition;
 
 			newPosition = Handles.PositionHandle(newPosition, handleRotation);
@@ -1344,7 +1339,7 @@ namespace ProBuilder.EditorCore
 				{
 					Vector3 v;
 
-					if (FindNearestVertex(mousePosition, out v))
+					if (FindNearestVertex(m_CurrentEvent.mousePosition, out v))
 						diff = Vector3.Scale(v - cachedPosition, mask);
 				}
 				else if (snapToFace)
@@ -1355,7 +1350,7 @@ namespace ProBuilder.EditorCore
 					foreach (pb_Object pb in selection)
 						ignore.Add(pb, new HashSet<pb_Face>(pb.SelectedFaces));
 
-					if (pb_EditorHandleUtility.FaceRaycast(mousePosition, out obj, out hit, ignore))
+					if (pb_EditorHandleUtility.FaceRaycast(m_CurrentEvent.mousePosition, out obj, out hit, ignore))
 					{
 						if (mask.IntSum() == 1)
 						{
@@ -1408,7 +1403,7 @@ namespace ProBuilder.EditorCore
 				for (int i = 0; i < selection.Length; i++)
 				{
 					selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
-						m_SnapAxisConstraint, m_sharedIndicesLookup[i]);
+						m_SnapAxisConstraint, m_SharedIndicesDictionary[i]);
 					selection[i].RefreshUV(SelectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
 					selection[i].msh.RecalculateBounds();
@@ -1422,7 +1417,7 @@ namespace ProBuilder.EditorCore
 
 		void VertexScaleTool()
 		{
-			newPosition = m_handlePivotWorld;
+			newPosition = m_HandlePivotWorld;
 
 			previousHandleScale = currentHandleScale;
 
@@ -1501,7 +1496,7 @@ namespace ProBuilder.EditorCore
 								// re-apply world position offset
 								ver += vertexOffset[i];
 
-								int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
 
 								for (int t = 0; t < array.Length; t++)
 									v[array[t]] = ver;
@@ -1520,7 +1515,7 @@ namespace ProBuilder.EditorCore
 								ver += vertexOffset[i];
 								// set vertex in local space on pb-Object
 
-								int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+								int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
 
 								for (int t = 0; t < array.Length; t++)
 									v[array[t]] = ver;
@@ -1544,7 +1539,7 @@ namespace ProBuilder.EditorCore
 		void VertexRotateTool()
 		{
 			if (!movingVertices)
-				newPosition = m_handlePivotWorld;
+				newPosition = m_HandlePivotWorld;
 
 			previousHandleRotation = currentHandleRotation;
 
@@ -1616,7 +1611,7 @@ namespace ProBuilder.EditorCore
 						// move vertex back to locally offset position
 						ver = (lr * ver) + vertexOffset[i];
 
-						int[] array = sharedIndices[m_sharedIndicesLookup[i][selection[i].SelectedTriangles[n]]].array;
+						int[] array = sharedIndices[m_SharedIndicesDictionary[i][selection[i].SelectedTriangles[n]]].array;
 
 						for (int t = 0; t < array.Length; t++)
 							v[array[t]] = selection[i].transform.InverseTransformPoint(ver);
@@ -1734,7 +1729,7 @@ namespace ProBuilder.EditorCore
 			pb_UVEditor uvEditor = pb_UVEditor.instance;
 			if (!uvEditor) return;
 
-			float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
+			float size = HandleUtility.GetHandleSize(m_HandlePivotWorld);
 
 			if (altClick) return;
 
@@ -1761,7 +1756,7 @@ namespace ProBuilder.EditorCore
 			pb_UVEditor uvEditor = pb_UVEditor.instance;
 			if (!uvEditor) return;
 
-			float size = HandleUtility.GetHandleSize(m_handlePivotWorld);
+			float size = HandleUtility.GetHandleSize(m_HandlePivotWorld);
 
 			Matrix4x4 prev = Handles.matrix;
 			Handles.matrix = handleMatrix;
@@ -1786,44 +1781,39 @@ namespace ProBuilder.EditorCore
 		{
 			Handles.lighting = false;
 
-			/**
-			 * Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices
-			 * are drawn here.
-			 */
-			switch (selectionMode)
+			// Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices are drawn here.
+			if(selectionMode == SelectMode.Edge && m_CurrentEvent.type == EventType.Repaint)
 			{
-				case SelectMode.Edge:
+				for (int i = 0; i < selection.Length; i++)
+				{
+					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
+					pb_Object pb = selection[i];
+					pb_Edge[] edges = pb.SelectedEdges;
 
-					// TODO - figure out how to run UpdateSelection prior to an Undo event.
-					// Currently UndoRedoPerformed is called after the action has taken place.
-					try
+					GL.MultMatrix(pb.transform.localToWorldMatrix);
+					// todo add preference or use handles
+					GL.Color(Color.green);
+
+					for (int j = 0; j < selection[i].SelectedEdges.Length; j++)
 					{
-						Handles.color = Color.green;
-						for (int i = 0; i < selection.Length; i++)
-						{
-							for (int j = 0; j < selection[i].SelectedEdges.Length; j++)
-							{
-								pb_Object pb = selection[i];
-								Vector3[] v = m_verticesInWorldSpace[i];
-
-								Handles.DrawLine(v[pb.SelectedEdges[j].x], v[pb.SelectedEdges[j].y]);
-							}
-						}
-
-						if (nearestEdgeObject != null && nearestEdge.IsValid())
-						{
-							Handles.color = Color.red;
-							Handles.DrawLine(nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.x]),
-								nearestEdgeObject.transform.TransformPoint(nearestEdgeObject.vertices[nearestEdge.y]));
-						}
+						GL.Vertex(pb.vertices[edges[j].x]);
+						GL.Vertex(pb.vertices[edges[j].y]);
 					}
-					catch
-					{
-					}
+					pb_EditorHandleUtility.EndDrawingLines();
+				}
 
-					Handles.color = Color.white;
+				if (nearestEdgeObject != null && nearestEdge.IsValid())
+				{
+					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
 
-					break;
+					GL.Color(Color.red);
+
+					GL.MultMatrix(nearestEdgeObject.transform.localToWorldMatrix);
+					GL.Vertex(nearestEdgeObject.vertices[nearestEdge.x]);
+					GL.Vertex(nearestEdgeObject.vertices[nearestEdge.y]);
+
+					pb_EditorHandleUtility.EndDrawingLines();
+				}
 			}
 
 			Handles.lighting = true;
@@ -1898,9 +1888,9 @@ namespace ProBuilder.EditorCore
 			{
 				string handleTransformInfo = string.Format(
 					"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
-					(newPosition - translateOrigin),
-					(currentHandleRotation.eulerAngles - rotateOrigin),
-					(currentHandleScale - scaleOrigin));
+					(newPosition - translateOrigin).ToString(),
+					(currentHandleRotation.eulerAngles - rotateOrigin).ToString(),
+					(currentHandleScale - scaleOrigin).ToString());
 
 				var gc = pb_EditorGUIUtility.TempGUIContent(handleTransformInfo);
 				// sceneview screen.height includes the tab and toolbar
@@ -1912,20 +1902,10 @@ namespace ProBuilder.EditorCore
 
 			if (m_ShowSceneInfo)
 			{
-				var gc = new GUIContent(string.Format(
-						"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
-						pb_Selection.totalFaceCount,
-						pb_Selection.totalTriangleCountCompiled,
-						pb_Selection.totalCommonVertexCount,
-						pb_Selection.totalVertexCountCompiled,
-						m_SelectedFaceCount,
-						m_SelectedEdgeCount,
-						m_SelectedCommonVertexCount));
-
-				Vector2 size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
+				Vector2 size = pb_EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
 				sceneInfoRect.width = size.x;
 				sceneInfoRect.height = size.y;
-				GUI.Label(sceneInfoRect, gc, pb_EditorStyles.sceneTextBox);
+				GUI.Label(sceneInfoRect, m_SceneInfo, pb_EditorStyles.sceneTextBox);
 			}
 
 			// Enables vertex selection with a mouse click
@@ -1939,8 +1919,8 @@ namespace ProBuilder.EditorCore
 				if (m_CurrentEvent.type == EventType.Repaint)
 				{
 					// Always draw from lowest to largest values
-					var start = Vector2.Min(mousePosition_initial, mousePosition);
-					var end = Vector2.Max(mousePosition_initial, mousePosition);
+					var start = Vector2.Min(mousePosition_initial, m_CurrentEvent.mousePosition);
+					var end = Vector2.Max(mousePosition_initial, m_CurrentEvent.mousePosition);
 
 					m_MouseDragRect = new Rect(start.x, start.y, end.x - start.x, end.y - start.y);
 
@@ -2311,9 +2291,9 @@ namespace ProBuilder.EditorCore
 		/// <param name="forceUpdate">Force update if elements have been added or removed, or the indices have been altered.</param>
 		public void UpdateSelection(bool forceUpdate = true)
 		{
-			profiler.BeginSample("UpdateSelection()");
+////			profiler.BeginSample("UpdateSelection()");
 
-			profiler.BeginSample("CompareSequence");
+//			profiler.BeginSample("CompareSequence");
 			m_SelectedVertexCount = 0;
 			m_SelectedCommonVertexCount = 0;
 			m_SelectedFaceCount = 0;
@@ -2330,8 +2310,8 @@ namespace ProBuilder.EditorCore
 
 			bool selectionEqual = t_selection.SequenceEqual(selection);
 
-			profiler.EndSample();
-			profiler.BeginSample("forceUpdate");
+//			profiler.EndSample();
+//			profiler.BeginSample("forceUpdate");
 
 			// If the top level selection has changed, update all the heavy cache things
 			// that don't change based on element selction
@@ -2342,40 +2322,39 @@ namespace ProBuilder.EditorCore
 				// know that these values can be trusted.
 				forceUpdate = true;
 
-				profiler.BeginSample("alloc pb_Edge[]");
-				m_universalEdges = new pb_Edge[selection.Length][];
-				profiler.EndSample();
+//				profiler.BeginSample("alloc pb_Edge[]");
+				m_UniversalEdges = new pb_Edge[selection.Length][];
+//				profiler.EndSample();
 
-				profiler.BeginSample("alloc dictionary[]");
-				m_sharedIndicesLookup = new Dictionary<int, int>[selection.Length];
-				profiler.EndSample();
+//				profiler.BeginSample("alloc dictionary[]");
+				m_SharedIndicesDictionary = new Dictionary<int, int>[selection.Length];
+//				profiler.EndSample();
 
-				profiler.BeginSample("get caches");
+//				profiler.BeginSample("get caches");
 				for (int i = 0; i < selection.Length; i++)
 				{
-					profiler.BeginSample("sharedIndices.ToDictionary()");
-					m_sharedIndicesLookup[i] = selection[i].sharedIndices.ToDictionary();
-					profiler.EndSample();
+//					profiler.BeginSample("sharedIndices.ToDictionary()");
+					m_SharedIndicesDictionary[i] = selection[i].sharedIndices.ToDictionary();
+//					profiler.EndSample();
 
-					profiler.BeginSample("GetUniversalEdges (dictionary)");
-					m_universalEdges[i] = pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_sharedIndicesLookup[i]);
-					profiler.EndSample();
+//					profiler.BeginSample("GetUniversalEdges (dictionary)");
+					m_UniversalEdges[i] = pb_EdgeExtension.GetUniversalEdges(pb_EdgeExtension.AllEdges(selection[i].faces), m_SharedIndicesDictionary[i]);
+//					profiler.EndSample();
 				}
-				profiler.EndSample();
-
-				// profiler.EndSample();
+//				profiler.EndSample();
 			}
 
-			profiler.EndSample();
-			profiler.BeginSample("get bounds");
+//			profiler.EndSample();
+//			profiler.BeginSample("get bounds");
 
-			m_handlePivotWorld = Vector3.zero;
+			m_HandlePivotWorld = Vector3.zero;
 
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool boundsInitialized = false;
 
 			for (int i = 0; i < selection.Length; i++)
 			{
+//				profiler.Begin("bounds");
 				pb_Object pb = selection[i];
 
 				if (!boundsInitialized && pb.SelectedTriangleCount > 0)
@@ -2395,40 +2374,53 @@ namespace ProBuilder.EditorCore
 					}
 				}
 
-				SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles).ToList());
+//				profiler.End();
+//				profiler.Begin("selected faces in edit zone");
+				SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
 
 				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
 				m_SelectedFaceCount += selection[i].SelectedFaceCount;
 				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
+//				profiler.End();
 			}
 
-			m_handlePivotWorld = (max + min) * .5f;
+			m_HandlePivotWorld = (max + min) * .5f;
 
-			profiler.EndSample();
-			profiler.BeginSample("update graphics");
+//			profiler.EndSample();
+//			profiler.BeginSample("update graphics");
 
 			UpdateGraphics();
 
-			profiler.EndSample();
-			profiler.BeginSample("update handlerotation");
+//			profiler.EndSample();
+//			profiler.BeginSample("update handlerotation");
 
 			UpdateHandleRotation();
 
-			profiler.EndSample();
-			profiler.BeginSample("update texture hadnles");
+//			profiler.EndSample();
+//			profiler.BeginSample("update texture hadnles");
 
 			UpdateTextureHandles();
 
-			profiler.EndSample();
-			profiler.BeginSample("onSelectionUpdate");
+//			profiler.EndSample();
+//			profiler.BeginSample("onSelectionUpdate");
 
 			currentHandleRotation = handleRotation;
 
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(selection);
-			profiler.EndSample();
+//			profiler.EndSample();
 
-			profiler.EndSample();
+			m_SceneInfo.text = string.Format(
+				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
+				pb_Selection.totalFaceCount.ToString(),
+				pb_Selection.totalTriangleCountCompiled.ToString(),
+				pb_Selection.totalCommonVertexCount.ToString(),
+				pb_Selection.totalVertexCountCompiled.ToString(),
+				m_SelectedFaceCount.ToString(),
+				m_SelectedEdgeCount.ToString(),
+				m_SelectedCommonVertexCount.ToString());
+
+//			profiler.EndSample();
 		}
 
 		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
@@ -2445,24 +2437,24 @@ namespace ProBuilder.EditorCore
 			for (int i = 0; i < selection.Length; i++)
 			{
 				pb_Object pb = selection[i];
+				Vector3[] vertices = pb.vertices;
+				int[] indices = pb.SelectedTriangles;
 
 				if (pb == null) continue;
-
-				m_verticesInWorldSpace[i] = pb.VerticesInWorldSpace(); // to speed this up, could just get uniqueIndices vertiecs
 
 				if (selection[i].SelectedTriangleCount > 0)
 				{
 					if (!boundsInitialized)
 					{
 						boundsInitialized = true;
-						min = m_verticesInWorldSpace[i][selection[i].SelectedTriangles[0]];
+						min = pb.transform.TransformPoint(vertices[indices[0]]);
 						max = min;
 					}
 
 					for (int n = 0; n < selection[i].SelectedTriangleCount; n++)
 					{
-						min = Vector3.Min(min, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
-						max = Vector3.Max(max, m_verticesInWorldSpace[i][selection[i].SelectedTriangles[n]]);
+						min = Vector3.Min(min, pb.transform.TransformPoint(vertices[indices[n]]));
+						max = Vector3.Max(max, pb.transform.TransformPoint(vertices[indices[n]]));
 					}
 				}
 
@@ -2471,7 +2463,7 @@ namespace ProBuilder.EditorCore
 				m_SelectedEdgeCount += selection[i].SelectedEdges.Length;
 			}
 
-			m_handlePivotWorld = (max + min) / 2f;
+			m_HandlePivotWorld = (max + min) / 2f;
 
 			UpdateGraphics();
 			UpdateHandleRotation();
@@ -2480,12 +2472,23 @@ namespace ProBuilder.EditorCore
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(selection);
 
+
+			m_SceneInfo.text = string.Format(
+				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
+				pb_Selection.totalFaceCount.ToString(),
+				pb_Selection.totalTriangleCountCompiled.ToString(),
+				pb_Selection.totalCommonVertexCount.ToString(),
+				pb_Selection.totalVertexCountCompiled.ToString(),
+				m_SelectedFaceCount.ToString(),
+				m_SelectedEdgeCount.ToString(),
+				m_SelectedCommonVertexCount.ToString());
+
 			// profiler.EndSample();
 		}
 
 		void UpdateGraphics()
 		{
-			graphics.RebuildGraphics(selection, editLevel, selectionMode);
+			graphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
 		}
 
 		public void ClearElementSelection()
@@ -2502,7 +2505,7 @@ namespace ProBuilder.EditorCore
 			if (selection.Length < 1) return;
 
 			// Reset temp vars
-			textureHandle = m_handlePivotWorld;
+			textureHandle = m_HandlePivotWorld;
 			textureScale = Vector3.one;
 			textureRotation = Quaternion.identity;
 
@@ -2743,14 +2746,11 @@ namespace ProBuilder.EditorCore
 			// Disable iterative lightmapping
 			pb_Lightmapping.PushGIWorkflowMode();
 
-			// profiler.BeginSample("ResetMesh");
 			foreach (pb_Object pb in selection)
 			{
 				pb.ToMesh();
 				pb.Refresh();
 			}
-
-			// profiler.EndSample();
 
 			if (onVertexMovementBegin != null)
 				onVertexMovementBegin(selection);
@@ -2863,16 +2863,6 @@ namespace ProBuilder.EditorCore
 		public bool ignore
 		{
 			get { return m_CurrentEvent.type == EventType.Ignore; }
-		}
-
-		public Vector2 mousePosition
-		{
-			get { return m_CurrentEvent.mousePosition; }
-		}
-
-		public Vector2 eventDelta
-		{
-			get { return m_CurrentEvent.delta; }
 		}
 
 		public bool rightClick

@@ -1,49 +1,66 @@
-#define DO_THE_DEBUG_DANCE
-#define PROFILER_EXISTS
+//#define DO_THE_DEBUG_DANCE
+//#define PROFILER_EXISTS
+
 #if PROFILER_EXISTS
 using Parabox.Debug;
 #endif
 
-public static class profiler
-{
+#pragma warning disable 618
+
 #if !PROFILER_EXISTS
-	class pb_Profiler
-	{
-		public pb_Profiler(string name) {}
-		public void BeginSample(string str, int offset = 0) {}
-		public void EndSample() {}
-	}
+class pb_Profiler
+{
+	public pb_Profiler(string name) {}
+	public void BeginSample(string str, int offset = 0) {}
+	public void EndSample() {}
+}
 #endif
 
-	static pb_Profiler _profiler = new pb_Profiler("Global");
+public static class profiler
+{
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
+	static pb_Profiler s_Profiler = new pb_Profiler("Global");
 
-//	[Conditional("DO_THE_DEBUG_DANCE")]
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
 	public static void Begin(string str)
 	{
-		_profiler.BeginSample(str, 1);
+		s_Profiler.BeginSample(str, 1);
 	}
 
-//	[Conditional("DO_THE_DEBUG_DANCE")]
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
 	public static void End()
 	{
-		_profiler.EndSample();
+		s_Profiler.EndSample();
 	}
 
-//	[Conditional("DO_THE_DEBUG_DANCE")]
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
 	public static void BeginSample(string str)
 	{
-		_profiler.BeginSample(str, 1);
+		s_Profiler.BeginSample(str, 1);
 	}
 
-//	[Conditional("DO_THE_DEBUG_DANCE")]
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
 	public static void EndSample()
 	{
-		_profiler.EndSample();
+		s_Profiler.EndSample();
 	}
 
-//	[Conditional("DO_THE_DEBUG_DANCE")]
+#if !DO_THE_DEBUG_DANCE
+	[System.Obsolete("Profiler code exists in non-debug build!")]
+#endif
 	public static void Print()
 	{
-		UnityEngine.Debug.Log( _profiler.ToString() );
+		UnityEngine.Debug.Log( s_Profiler.ToString() );
 	}
 }
+#pragma warning restore 618

@@ -10,14 +10,15 @@ public class TempMenuItems : EditorWindow
 	[MenuItem("Tools/Temp Menu Item &d")]
 	static void MenuInit()
 	{
-		profiler.Begin("Refresh(force = true)");
 
-		for (int i = 0; i < 100; i++)
-		{
-			pb_Editor.Refresh(true);
-		}
-
-		profiler.End();
+//		profiler.Begin("Refresh(force = true)");
+//
+//		for (int i = 0; i < 100; i++)
+//		{
+//			pb_Editor.Refresh(true);
+//		}
+//
+//		profiler.End();
 	}
 
 	void OnGUI()

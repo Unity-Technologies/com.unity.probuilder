@@ -12,7 +12,7 @@ public class RenderTextureTest : EditorWindow
 	[MenuItem("Tools/Render Scene to Texture")]
 	static void MenuInit()
 	{
-		profiler.Begin("render scene texture");
+//		profiler.Begin("render scene texture");
 		SceneView scn = SceneView.lastActiveSceneView;
 		Camera sceneCamera = scn.camera;
 		int width = (int) scn.position.width;
@@ -42,7 +42,7 @@ public class RenderTextureTest : EditorWindow
 
 		RenderTexture.active = prev;
 		RenderTexture.ReleaseTemporary(rt);
-		profiler.End();
+//		profiler.End();
 
 //		pb_EditorUtility.SaveTexture(img, "Assets/test.png");
 

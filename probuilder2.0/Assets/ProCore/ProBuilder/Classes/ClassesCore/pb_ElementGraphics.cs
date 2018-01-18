@@ -116,10 +116,11 @@ namespace ProBuilder.Core
 		/**
 		 * Update the highlight and wireframe graphics.
 		 */
-		public void RebuildGraphics(pb_Object[] selection, EditLevel editLevel, SelectMode selectionMode)
+		public void RebuildGraphics(pb_Object[] selection, Dictionary<int, int>[] commonIndicesLookup, EditLevel editLevel, SelectMode selectionMode)
 		{
 			// in the event that the editor starts calling UpdateGraphics before the object has run OnEnable() (which happens on script reloads)
-			if(pool == null) return;
+			if(pool == null)
+				return;
 
 			// clear the current renderables
 			foreach(pb_Renderable ren in activeRenderables)
@@ -145,8 +146,8 @@ namespace ProBuilder.Core
 						break;
 
 					case SelectMode.Vertex:
-						foreach(pb_Object pb in selection)
-							AddRenderable( BuildVertexMesh(pb) );
+						for(int i = 0, c = selection.Length; i < c; i++)
+							AddRenderable( BuildVertexMesh(selection[i], commonIndicesLookup[i]) );
 						break;
 
 					default:
@@ -173,7 +174,7 @@ namespace ProBuilder.Core
 		}
 
 		// Populate a rendereble's mesh with a spattering of vertices representing both selected and not selected.
-		pb_Renderable BuildVertexMesh(pb_Object pb)
+		pb_Renderable BuildVertexMesh(pb_Object pb, Dictionary<int, int> lookup)
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
@@ -183,7 +184,7 @@ namespace ProBuilder.Core
 				billboardCount = maxBillboardCount;
 
 			Vector3[] v = new Vector3[pb.sharedIndices.Length];
-			HashSet<int> selected = new HashSet<int>(pb.sharedIndices.GetCommonIndices(pb.SelectedTriangles));
+			HashSet<int> selected = new HashSet<int>(pb_IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
 
 			for(int i = 0; i < billboardCount; i++)
 				v[i] = pb.vertices[pb.sharedIndices[i][0]];
