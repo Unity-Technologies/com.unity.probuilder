@@ -176,6 +176,8 @@ Run the **upm.json** build target.
 
 `mono pb-build.exe upm.json`
 
+If you check out the `unity/trunk` repository to somewhere other than `$HOME` (`~` on unix, `C:/Users/%USER%` on Windows) you will need to either modify the **upm.json** file "UnityPath" to append your Unity build directory, or pass `-unity-path=` to `pb-build`.
+
 The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project. It does *not* set the Unity version in the "package.json" file, so if this is a new Unity version you'll need to change that manually.
 
 > The version info is scraped from the source changelog.txt file.
@@ -199,7 +201,14 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 1. Grab the latest release from [Github](https://github.com/procore3d/upm-package-probuilder/releases).
 1. Create a new Unity project
 1. Copy the **com.unity.probuilder** directory into the new project's **UnityPackageManager** directory.
-1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file.
+1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file, or add the latest version as a dependency in the manifest file manually:
+```
+{
+	"dependencies":{
+		"com.unity.probuilder":"3.0.0"
+	}
+}
+```
 1. Follow the QA instructions outlined in the QAReport.md file.
 
 #### Installing the latest staging
