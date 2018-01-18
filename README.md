@@ -176,7 +176,7 @@ Run the **upm.json** build target.
 
 `mono pb-build.exe upm.json`
 
-If you check out the `unity/trunk` repository to somewhere other than `$HOME` (`~` on unix, `C:/Users/%USER%` on Windows) you will need to either modify the **upm.json** file "UnityPath" to append your Unity build directory, or pass `-unity-path=` to `pb-build`.
+If you check out the `unity/trunk` repository to somewhere other than `$HOME` (`~` on unix, `C:/Users/%USER%` on Windows) you will need to either modify the **upm.json** file "UnityPath" to append your Unity build directory, or pass `-unity-path=<path_to_unity>` to `pb-build`. See `mono pb-build.exe --help` for more information on build arguments.
 
 The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project. It does *not* set the Unity version in the "package.json" file, so if this is a new Unity version you'll need to change that manually.
 
@@ -196,12 +196,18 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 
 **Important** Once a package is pushed it is not undo-able. Un-publishing or overwriting a version is not possible.
 
-### Testing UPM Builds
+## Testing UPM Builds
+
+#### Locally
 
 1. Grab the latest release from [Github](https://github.com/procore3d/upm-package-probuilder/releases).
 1. Create a new Unity project
 1. Copy the **com.unity.probuilder** directory into the new project's **UnityPackageManager** directory.
-1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file, or add the latest version as a dependency in the manifest file manually:
+1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file\*
+1. Follow the QA instructions outlined in the QAReport.md file.
+
+\* Or add the latest version as a dependency in the manifest file manually:
+
 ```
 {
 	"dependencies":{
@@ -209,9 +215,8 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 	}
 }
 ```
-1. Follow the QA instructions outlined in the QAReport.md file.
 
-#### Installing the latest staging
+#### From Bintray Staging
 
 Check for the latest version on Bintray: https://bintray.com/unity/unity-staging/com.unity.probuilder
 
