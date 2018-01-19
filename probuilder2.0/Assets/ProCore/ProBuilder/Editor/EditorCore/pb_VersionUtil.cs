@@ -65,7 +65,7 @@ namespace ProBuilder.EditorCore
 			if (changelogAsset == null)
 				return new pb_VersionInfo("changelog not found", "");
 
-			Match m = Regex.Match(changelogAsset.text, "(?<=# ProBuilder )[0-9a-zA-Z.]*", RegexOptions.Multiline);
+			Match m = Regex.Match(changelogAsset.text, "(?<=# ProBuilder )[0-9\\-a-zA-Z.]*", RegexOptions.Multiline);
 
 			pb_VersionInfo version;
 			pb_VersionInfo.TryGetVersionInfo(m.Value, out version);
@@ -77,9 +77,9 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		/// <param name="raw"></param>
 		/// <param name="version"></param>
-		/// <param name="formatted_changes"></param>
+		/// <param name="formattedChangelog"></param>
 		/// <returns></returns>
-		public static bool FormatChangelog(string raw, out pb_VersionInfo version, out string formatted_changes)
+		public static bool FormatChangelog(string raw, out pb_VersionInfo version, out string formattedChangelog)
 		{
 			bool success = true;
 
@@ -89,7 +89,7 @@ namespace ProBuilder.EditorCore
 			// get the version info
 			try
 			{
-				Match versionMatch = Regex.Match(split[1], @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[a-z][0-9]*");
+				Match versionMatch = Regex.Match(split[1], @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[A-Z|a-z|\-]*\.[0-9]*");
 				success = pb_VersionInfo.TryGetVersionInfo(versionMatch.Success ? versionMatch.Value : split[1].Split('\n')[0], out version);
 			}
 			catch
@@ -105,14 +105,14 @@ namespace ProBuilder.EditorCore
 				for(int i = 2; i < newLineSplit.Length; i++)
 					sb.AppendLine(newLineSplit[i]);
 
-				formatted_changes = sb.ToString();
-				formatted_changes = Regex.Replace(formatted_changes, "^-", "\u2022", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"(?<=^##\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
-				formatted_changes = Regex.Replace(formatted_changes, @"^##\ ", "", RegexOptions.Multiline);
+				formattedChangelog = sb.ToString();
+				formattedChangelog = Regex.Replace(formattedChangelog, "^-", "\u2022", RegexOptions.Multiline);
+				formattedChangelog = Regex.Replace(formattedChangelog, @"(?<=^##\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
+				formattedChangelog = Regex.Replace(formattedChangelog, @"^##\ ", "", RegexOptions.Multiline);
 			}
 			catch
 			{
-				formatted_changes = "";
+				formattedChangelog = "";
 				success = false;
 			}
 

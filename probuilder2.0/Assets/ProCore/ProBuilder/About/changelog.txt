@@ -1,4 +1,12 @@
-# ProBuilder 3.0.0b3
+# ProBuilder 3.0.0-b.4
+
+## Changes from 3.0.0-b3
+
+- Fix null reference when undoing a delete.
+- Fix torus and icosphere not remembering last used settings in a session.
+- Use semantic versioning format for build type and number.
+
+# ProBuilder 3.0.0-b.3
 
 ## Changes from 3.0.0b2
 

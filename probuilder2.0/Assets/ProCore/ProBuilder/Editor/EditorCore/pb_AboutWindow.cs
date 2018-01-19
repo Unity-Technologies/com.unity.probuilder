@@ -58,7 +58,7 @@ namespace ProBuilder.EditorCore
 		const float k_BannerHeight = 270f;
 
 		const string k_AboutWindowVersionPref = "ProBuilder_AboutWindowIdentifier";
-		const string k_AboutPrefFormat = "M.m.ptb";
+		const string k_AboutPrefFormat = "M.m.p-t.b";
 
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
@@ -297,7 +297,7 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_changeLogVersionInfo.ToString("M.m.p")), versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_changeLogVersionInfo.ToString("M.m.p T b")), versionInfoStyle);
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 

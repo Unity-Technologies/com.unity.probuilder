@@ -9,8 +9,9 @@ namespace ProBuilder.Core
 	{
 		Development = 0,
 		Patch = 1,
-		Beta = 2,
-		Final = 3,
+		Alpha = 2,
+		Beta = 3,
+		Final = 4,
 	}
 
 	/// <summary>
@@ -196,12 +197,19 @@ namespace ProBuilder.Core
 
 		public override string ToString()
 		{
-			return string.Format("{5} build {0}.{1}.{2}{3}{4} {6}", major, minor, patch, type.ToString().ToLower()[0], build, type, date);
+			return string.Format("{5} build {0}.{1}.{2}-{3}.{4} {6}",
+				major.ToString(),
+				minor.ToString(),
+				patch.ToString(),
+				type.ToString().ToLower()[0].ToString(),
+				build.ToString(),
+				type.ToString(),
+				date);
 		}
 
 		/// <summary>
 		/// Create a pb_VersionInfo type from a string.
-		/// Ex: TryGetVersionInfo("2.5.3b1", out info)
+		/// Ex: TryGetVersionInfo("2.5.3-b.1", out info)
 		/// </summary>
 		/// <param name="str"></param>
 		/// <param name="version"></param>
@@ -213,12 +221,12 @@ namespace ProBuilder.Core
 
 			try
 			{
-				string[] split = Regex.Split(str, @"[\.A-Za-z]");
+				string[] split = Regex.Split(str, @"[\.\-A-Za-z]");
 				Match type = Regex.Match(str, @"[A-Z|a-z]");
 				int.TryParse(split[0], out version.m_Major);
 				int.TryParse(split[1], out version.m_Minor);
 				int.TryParse(split[2], out version.m_Patch);
-				int.TryParse(split[3], out version.m_Build);
+				int.TryParse(split[split.Length - 1], out version.m_Build);
 				version.m_Type = GetVersionType(type.Success ? type.Value : "");
 				return true;
 			}
@@ -230,6 +238,9 @@ namespace ProBuilder.Core
 
 		static VersionType GetVersionType(string type)
 		{
+			if( type.Equals("a") || type.Equals("A") )
+				return VersionType.Alpha;
+
 			if( type.Equals("b") || type.Equals("B") )
 				return VersionType.Beta;
 

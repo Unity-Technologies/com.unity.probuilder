@@ -177,8 +177,12 @@ namespace ProBuilder.BuildSystem
 				string contents = File.ReadAllText(path);
 				string pattern = arguments[1];
 				string replace = arguments[2];
-				string replaced = Regex.Replace(contents, pattern, replace);
-				Log.Info("=> " + pattern + " (" + replace + ")");
+				string replaced = Regex.Replace(contents, pattern, replace, RegexOptions.Multiline);
+				Log.Info("    => pattern: " + pattern);
+				Log.Info("    => replace contents: " + replace);
+				foreach(Match match in Regex.Matches(contents, pattern, RegexOptions.Multiline))
+					if(match.Success)
+						Log.Info("    => match: " + match.Value);
 				File.WriteAllText(path, replaced);
 			}
 			catch(System.Exception e)
