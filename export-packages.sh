@@ -45,8 +45,9 @@ UNITY_TARGET_MACRO=(UNITY_53 UNITY_53 UNITY_55 UNITY_56 UNITY_2017_1 UNITY_2017_
 UNITY_TARGET_SUFFIX=(SRC 5.3 5.5 5.6 2017.1 2017.2 2017.3 trunk)
 UNITY_TARGETS_COUNT=${#UNITY_TARGET_MACRO[@]}
 
-VERSION_LINE=$(grep version: $WORKING_DIR/probuilder2.0/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
-PROBUILDER_VERSION=${VERSION_LINE/"version: "/""}
+# VERSION_LINE=$(grep version: $WORKING_DIR/probuilder2.0/Assets/ProCore/ProBuilder/About/pc_AboutEntry_ProBuilder.txt)
+# PROBUILDER_VERSION=${VERSION_LINE/"version: "/""}
+PROBUILDER_VERSION=trunk
 echo "Exporting package version: " $PROBUILDER_VERSION
 
 rm -rf bin/packages
