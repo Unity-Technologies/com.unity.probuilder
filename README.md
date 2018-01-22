@@ -211,7 +211,7 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 ```
 {
 	"dependencies":{
-		"com.unity.probuilder":"3.0.0"
+		"com.unity.probuilder":"3.0.0-b.4"
 	}
 }
 ```
@@ -227,7 +227,7 @@ Check for the latest version on Bintray: https://bintray.com/unity/unity-staging
 ```
 {
 	"dependencies": {
-		"com.unity.probuilder" : "2.10.0"
+		"com.unity.probuilder" : "3.0.0-b.4"
 	},
 	"registry":"http://staging-packages.unity.com"
 }
