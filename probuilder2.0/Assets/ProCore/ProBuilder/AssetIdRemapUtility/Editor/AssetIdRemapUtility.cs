@@ -297,6 +297,14 @@ namespace ProBuilder.AssetUtility
 
 				try
 				{
+					// Set serialization mode to mixed then back to force-text to reserialize any assets in binary form
+					// that may have somehow persisted (version control makes a state where "Force Text" is enabled with
+					// some existing binary assets persisting possible). this happened during testing.
+					// mixed doesn't refresh anything, but setting to ForceText re-iterates all assets and double-checks
+					// that they are in the correct format.
+					EditorSettings.serializationMode = SerializationMode.Mixed;
+					EditorSettings.serializationMode = SerializationMode.ForceText;
+
 					EditorApplication.LockReloadAssemblies();
 
 					log.AppendLine("ProBuilder Asset Store to Unity Package Manager Conversion Log");
