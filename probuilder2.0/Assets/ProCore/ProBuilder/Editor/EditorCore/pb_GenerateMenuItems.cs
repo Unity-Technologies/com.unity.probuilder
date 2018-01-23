@@ -57,11 +57,11 @@ namespace ProBuilder.EditorCore
 
 using UnityEngine;
 using UnityEditor;
-using ProBuilder2.Common;
-using ProBuilder2.Actions;
+using ProBuilder.Core;
+using ProBuilder.Actions;
 using System.Collections.Generic;
 
-namespace ProBuilder2.EditorCommon
+namespace ProBuilder.EditorCore
 {
 	static class pb_EditorToolbarMenuItems
 	{
@@ -80,7 +80,7 @@ namespace ProBuilder2.EditorCommon
 			sb.AppendLine("\t}");
 			sb.AppendLine("}");
 
-			File.WriteAllText(k_GeneratedFilePath, sb.ToString());
+			File.WriteAllText(k_GeneratedFilePath, sb.ToString().Replace("\r\n", "\n"));
 
 			Debug.Log(sb.ToString());
 			pb_EditorUtility.ShowNotification("Successfully Generated\nMenu Items");
@@ -106,7 +106,7 @@ namespace ProBuilder2.EditorCommon
 
 			try
 			{
-				o = System.Activator.CreateInstance(System.Type.GetType("ProBuilder2.Actions." + class_name));
+				o = System.Activator.CreateInstance(System.Type.GetType("ProBuilder.Actions." + class_name));
 			}
 			catch
 			{
@@ -123,7 +123,7 @@ namespace ProBuilder2.EditorCommon
 			PropertyInfo tooltipProperty = typeof(pb_MenuAction).GetProperty("tooltip");
 			string shortcut = GetMenuFormattedShortcut(((pb_TooltipContent) tooltipProperty.GetValue(o, null)).shortcut);
 
-			/// VERIFY
+			// VERIFY
 			sb.Append("\t\t[MenuItem(");
 			sb.Append("PB_MENU_PREFIX + \"");
 			sb.Append(pretty_path);
@@ -154,7 +154,7 @@ namespace ProBuilder2.EditorCommon
 
 			sb.AppendLine("");
 
-			/// PERFORM
+			// PERFORM
 			sb.Append("\t\t[MenuItem(");
 			sb.Append("PB_MENU_PREFIX + \"");
 			sb.Append(pretty_path);
