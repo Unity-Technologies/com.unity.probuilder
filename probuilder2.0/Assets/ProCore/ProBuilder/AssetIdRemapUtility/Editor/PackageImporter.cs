@@ -44,9 +44,7 @@ namespace ProBuilder.AssetUtility
 
 		static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
 		{
-#if !ALLOW_MULTIPLE_INSTALL
 			CheckEditorCoreEnabled();
-#endif
 		}
 
 		static void CheckEditorCoreEnabled()
@@ -61,10 +59,10 @@ namespace ProBuilder.AssetUtility
 
 				if (isEnabled == assetStoreInstall)
 				{
-					Debug.Log(isEnabled ? "Disabling ProBuilder Package Manager version" : " Enabling ProBuilder Package Manager version");
-					importer.SetCompatibleWithAnyPlatform(false);
-					importer.SetCompatibleWithEditor(!assetStoreInstall);
-					AssetDatabase.ImportAsset(editorCoreDllPath);
+//					Debug.Log(isEnabled ? "Disabling ProBuilder Package Manager version" : " Enabling ProBuilder Package Manager version");
+//					importer.SetCompatibleWithAnyPlatform(false);
+//					importer.SetCompatibleWithEditor(!assetStoreInstall);
+//					AssetDatabase.ImportAsset(editorCoreDllPath);
 
 					if (isEnabled)
 					{
@@ -75,7 +73,7 @@ namespace ProBuilder.AssetUtility
 							"Yes", "No"))
 							EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
 						else
-							Debug.Log("ProBuilder Package Manager conversion process cancelled. You may initiate this conversion at a later time via Tools/ProBuilder/Repair/Convert to Package Manager.");
+							Debug.Log("ProBuilder Package Manager conversion process cancelled. You can initiate this conversion at a later time via Tools/ProBuilder/Repair/Convert to Package Manager.");
 					}
 				}
 			}
