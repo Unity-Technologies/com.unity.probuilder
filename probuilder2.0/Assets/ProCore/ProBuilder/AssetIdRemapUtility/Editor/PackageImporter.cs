@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEditor;
@@ -45,7 +44,9 @@ namespace ProBuilder.AssetUtility
 
 		static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
 		{
+#if !ALLOW_MULTIPLE_INSTALL
 			CheckEditorCoreEnabled();
+#endif
 		}
 
 		static void CheckEditorCoreEnabled()

@@ -63,6 +63,22 @@
         {
             "source": {
                 "m_Guid": "0472bdc8d6d15384d98f22ee34302f9c",
+                "m_FileId": "-443790166",
+                "m_LocalPath": "Classes/ProBuilderCore-Unity5.dll",
+                "m_Name": "pb_ColorPalette",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.Common.pb_ColorPalette"
+            },
+            "destination": {
+                "m_Guid": "4f0627da958b4bb78c260446066f065f",
+                "m_FileId": "-395903333",
+                "m_LocalPath": "Classes/ProBuilderCore.dll",
+                "m_Name": "pb_ColorPalette",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_ColorPalette"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "0472bdc8d6d15384d98f22ee34302f9c",
                 "m_FileId": "1936026714",
                 "m_LocalPath": "Classes/ProBuilderCore-Unity5.dll",
                 "m_Name": "pb_DummyScript",
@@ -207,22 +223,6 @@
         {
             "source": {
                 "m_Guid": "0472bdc8d6d15384d98f22ee34302f9c",
-                "m_FileId": "-443790166",
-                "m_LocalPath": "Classes/ProBuilderCore-Unity5.dll",
-                "m_Name": "pb_ColorPalette",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.Common.pb_ColorPalette"
-            },
-            "destination": {
-                "m_Guid": "4f0627da958b4bb78c260446066f065f",
-                "m_FileId": "-395903333",
-                "m_LocalPath": "Classes/ProBuilderCore.dll",
-                "m_Name": "pb_ColorPalette",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_ColorPalette"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "0472bdc8d6d15384d98f22ee34302f9c",
                 "m_FileId": "-378153031",
                 "m_LocalPath": "Classes/ProBuilderCore-Unity5.dll",
                 "m_Name": "pb_Renderable",
@@ -234,6 +234,70 @@
                 "m_LocalPath": "Classes/ProBuilderCore.dll",
                 "m_Name": "pb_Renderable",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_Renderable"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "a241196dd31138e4ca612fcf4c3e07ca",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/pb_MenuItems.cs",
+                "m_Name": "pb_MenuItems",
+                "m_Type": "UnityEditor.MonoScript::pb_MenuItems"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "dd8f47a8919189447ad0df151b5d75eb",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/pb_MissingScriptEditor.cs",
+                "m_Name": "pb_MissingScriptEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_MissingScriptEditor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "0e173da316764614aa781d9323718eca",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/pb_Preferences.cs",
+                "m_Name": "pb_Preferences",
+                "m_Type": "UnityEditor.MonoScript::pb_Preferences"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "0750965282433464f88a4f9ac7b54b3f",
+                "m_FileId": "11500000",
+                "m_LocalPath": "Editor/pb_ScenePostProcessor.cs",
+                "m_Name": "pb_ScenePostProcessor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_ScenePostProcessor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
             }
         },
         {
@@ -351,6 +415,22 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "58441803",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_Entity_Editor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Entity_Editor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
                 "m_FileId": "2122206633",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
                 "m_Name": "pb_Geometry_Interface",
@@ -399,6 +479,22 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "-361920131",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_Material_Editor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Material_Editor"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
                 "m_FileId": "-770389242",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
                 "m_Name": "pb_MaterialPalette",
@@ -415,10 +511,10 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-361920131",
+                "m_FileId": "-1744794725",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Material_Editor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Material_Editor"
+                "m_Name": "pb_Menu_Commands",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Menu_Commands"
             },
             "destination": {
                 "m_Guid": "",
@@ -447,10 +543,10 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-1744794725",
+                "m_FileId": "-1209551219",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Menu_Commands",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Menu_Commands"
+                "m_Name": "pb_Object_Editor",
+                "m_Type": "UnityEditor.MonoScript::pb_Object_Editor"
             },
             "destination": {
                 "m_Guid": "",
@@ -474,6 +570,22 @@
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
                 "m_Name": "pb_ObjectArray",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ObjectArray"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "-1112534863",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_PolyShapeTool",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_PolyShapeTool"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
             }
         },
         {
@@ -559,17 +671,49 @@
         {
             "source": {
                 "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "952440270",
+                "m_FileId": "1249426934",
                 "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_VertexEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_VertexEditor"
+                "m_Name": "pb_UV_Editor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_UV_Editor"
             },
             "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-2107302012",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_VertexEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_VertexEditor"
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "104679506",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_UV_Render_Options",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_UV_Render_Options"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "-1300174809",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_Vertex_Color_Toolbar",
+                "m_Type": "UnityEditor.MonoScript::pb_Vertex_Color_Toolbar"
+            },
+            "destination": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
             }
         },
         {
@@ -590,66 +734,18 @@
         },
         {
             "source": {
-                "m_Guid": "a241196dd31138e4ca612fcf4c3e07ca",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/pb_MenuItems.cs",
-                "m_Name": "pb_MenuItems",
-                "m_Type": "UnityEditor.MonoScript::pb_MenuItems"
+                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
+                "m_FileId": "952440270",
+                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
+                "m_Name": "pb_VertexEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_VertexEditor"
             },
             "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "dd8f47a8919189447ad0df151b5d75eb",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/pb_MissingScriptEditor.cs",
-                "m_Name": "pb_MissingScriptEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_MissingScriptEditor"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "0e173da316764614aa781d9323718eca",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/pb_Preferences.cs",
-                "m_Name": "pb_Preferences",
-                "m_Type": "UnityEditor.MonoScript::pb_Preferences"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "0750965282433464f88a4f9ac7b54b3f",
-                "m_FileId": "11500000",
-                "m_LocalPath": "Editor/pb_ScenePostProcessor.cs",
-                "m_Name": "pb_ScenePostProcessor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_ScenePostProcessor"
-            },
-            "destination": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "-2107302012",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_VertexEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_VertexEditor"
             }
         },
         {
@@ -1157,11 +1253,11 @@
                 "m_Type": "UnityEditor.MonoScript::"
             },
             "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-2107302012",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_VertexEditor",
-                "m_Type": "UnityEditor.MonoScript::"
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
             }
         },
         {
@@ -1637,102 +1733,6 @@
                 "m_Type": ""
             },
             "destination": {
-                "m_Guid": "f15fdad101837e1488bb299e53fb6557",
-                "m_FileId": "2144120010",
-                "m_LocalPath": "Editor/Addons/ProBuilderAddOns.asmdef",
-                "m_Name": "ProBuilderAddOns",
-                "m_Type": "UnityEditorInternal.AssemblyDefinitionAsset"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "b74dc1b557ab24957bad9a8b1cf12ace",
-                "m_FileId": "2100000",
-                "m_LocalPath": "Resources/Materials/EdgePicker.mat",
-                "m_Name": "EdgePicker",
-                "m_Type": "UnityEngine.Material"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "f95983c5af5c74a4bacdb0d204ab11b1",
-                "m_FileId": "4800000",
-                "m_LocalPath": "Shader/pb_EdgePicker.shader",
-                "m_Name": "Hidden/ProBuilder/EdgePicker",
-                "m_Type": "UnityEngine.Shader"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "4f0627da958b4bb78c260446066f065f",
-                "m_FileId": "-142605913",
-                "m_LocalPath": "Classes/ProBuilderCore.dll",
-                "m_Name": "pb_ColliderBehaviour",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_ColliderBehaviour"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "4f0627da958b4bb78c260446066f065f",
-                "m_FileId": "1034063083",
-                "m_LocalPath": "Classes/ProBuilderCore.dll",
-                "m_Name": "pb_EntityBehaviour",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_EntityBehaviour"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
-                "m_Guid": "4f0627da958b4bb78c260446066f065f",
-                "m_FileId": "1771188328",
-                "m_LocalPath": "Classes/ProBuilderCore.dll",
-                "m_Name": "pb_TriggerBehaviour",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.Core.pb_TriggerBehaviour"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "",
-                "m_FileId": "",
-                "m_LocalPath": "",
-                "m_Name": "",
-                "m_Type": ""
-            },
-            "destination": {
                 "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
                 "m_FileId": "1172297460",
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
@@ -1750,10 +1750,10 @@
             },
             "destination": {
                 "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "873610731",
+                "m_FileId": "888113147",
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_GenerateMenuItems",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_GenerateMenuItems"
+                "m_Name": "pb_EntityEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_EntityEditor"
             }
         },
         {
@@ -1814,6 +1814,38 @@
             },
             "destination": {
                 "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "-558150151",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_ObjectEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ObjectEditor"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "1692371",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_PolyShapeEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_PolyShapeEditor"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
                 "m_FileId": "-1661522833",
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
                 "m_Name": "pb_UpdateAvailable",
@@ -1830,10 +1862,74 @@
             },
             "destination": {
                 "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "-560962089",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_UVEditor",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVEditor"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "-878013196",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_UVRenderOptions",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVRenderOptions"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
                 "m_FileId": "115630533",
                 "m_LocalPath": "Editor/ProBuilderEditor.dll",
                 "m_Name": "pb_VertexColorPainter",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_VertexColorPainter"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "923635329",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_VertexColorPalette",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_VertexColorPalette"
+            }
+        },
+        {
+            "source": {
+                "m_Guid": "",
+                "m_FileId": "",
+                "m_LocalPath": "",
+                "m_Name": "",
+                "m_Type": ""
+            },
+            "destination": {
+                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
+                "m_FileId": "873610731",
+                "m_LocalPath": "Editor/ProBuilderEditor.dll",
+                "m_Name": "pb_GenerateMenuItems",
+                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_GenerateMenuItems"
             }
         },
         {
@@ -1886,22 +1982,6 @@
         },
         {
             "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "58441803",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Entity_Editor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_Entity_Editor"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "888113147",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_EntityEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_EntityEditor"
-            }
-        },
-        {
-            "source": {
                 "m_Guid": "3fce8ab926626f84a988bc7e668a97ba",
                 "m_FileId": "11500000",
                 "m_LocalPath": "Editor/Addons/pb_Fbx.cs",
@@ -1914,86 +1994,6 @@
                 "m_LocalPath": "Editor/Addons/pb_Fbx.cs",
                 "m_Name": "pb_Fbx",
                 "m_Type": "UnityEditor.MonoScript::ProBuilder.Addons.FBX.pb_Fbx"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-1209551219",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Object_Editor",
-                "m_Type": "UnityEditor.MonoScript::pb_Object_Editor"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-558150151",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_ObjectEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_ObjectEditor"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-1112534863",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_PolyShapeTool",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_PolyShapeTool"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "1692371",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_PolyShapeEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_PolyShapeEditor"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "1249426934",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_UV_Editor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_UV_Editor"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-560962089",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_UVEditor",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVEditor"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "104679506",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_UV_Render_Options",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder2.EditorCommon.pb_UV_Render_Options"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "-878013196",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_UVRenderOptions",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_UVRenderOptions"
-            }
-        },
-        {
-            "source": {
-                "m_Guid": "4df21bd079886d84699ca7be1316c7a7",
-                "m_FileId": "-1300174809",
-                "m_LocalPath": "Editor/ProBuilderEditor-Unity5.dll",
-                "m_Name": "pb_Vertex_Color_Toolbar",
-                "m_Type": "UnityEditor.MonoScript::pb_Vertex_Color_Toolbar"
-            },
-            "destination": {
-                "m_Guid": "e98d45d69e2c4936a7382af00fd45e58",
-                "m_FileId": "923635329",
-                "m_LocalPath": "Editor/ProBuilderEditor.dll",
-                "m_Name": "pb_VertexColorPalette",
-                "m_Type": "UnityEditor.MonoScript::ProBuilder.EditorCore.pb_VertexColorPalette"
             }
         }
     ]
