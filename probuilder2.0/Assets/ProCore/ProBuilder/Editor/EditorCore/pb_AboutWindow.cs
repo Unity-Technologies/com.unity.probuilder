@@ -103,7 +103,7 @@ namespace ProBuilder.EditorCore
 				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -229,9 +229,9 @@ namespace ProBuilder.EditorCore
 			{
 				pb_VersionUtil.FormatChangelog(raw, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
-				if(!pb_Version.Current.Equals(m_changeLogVersionInfo))
+				if(!pb_Version.Current.Equals(m_ChangeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
-						m_changeLogVersionInfo.ToString(k_AboutPrefFormat),
+						m_ChangeLogVersionInfo.ToString(k_AboutPrefFormat),
 						pb_Version.Current.ToString(k_AboutPrefFormat));
 #endif
 			}
