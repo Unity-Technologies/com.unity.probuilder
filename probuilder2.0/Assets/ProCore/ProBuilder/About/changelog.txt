@@ -1,3 +1,9 @@
+# ProBuilder 3.0.0-b.7
+
+## Changes from 3.0.0-b6
+
+- Fix open scenes and prefabs temporarily showing null references after upgrading from an Asset Store install to UPM.
+
 # ProBuilder 3.0.0-b.6
 
 ## Changes from 3.0.0-b5
