@@ -23,7 +23,7 @@ namespace ProBuilder.AssetUtility
 			"Assets/ProCore/ProBuilder/Upgrade/AssetIdRemap.json",
 		};
 
-		string[] k_AssetExtensionsToRemap = new string[]
+		static readonly string[] k_AssetExtensionsToRemap = new string[]
 		{
 			"*.meta",
 			"*.unity",
@@ -343,6 +343,7 @@ namespace ProBuilder.AssetUtility
 
 					EditorApplication.UnlockReloadAssemblies();
 					m_ConversionReadyState = ConversionReadyState.ConversionRan;
+					EditorApplication.delayCall += AssetDatabase.Refresh;
 					GUIUtility.ExitGUI();
 				}
 			}
