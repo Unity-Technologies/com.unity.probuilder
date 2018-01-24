@@ -88,6 +88,16 @@
 			]
 		},
 		{
+			"SourceDirectory": "$SRC_PB_ROOT/AssetIdRemapUtility/Editor",
+			"OutputAssembly": "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll",
+			"Defines": [
+				"UNITY_EDITOR"
+			],
+			"ReferencedAssemblies": [
+				"UnityEditor.dll"
+			]
+		},
+		{
 			"SourceDirectory": "$SRC_PB_ROOT/Editor/EditorCore",
 			"OutputAssembly": "$DST_PB_ROOT/Editor/ProBuilderEditor.dll",
 			"Defines": [
@@ -99,17 +109,8 @@
 				"$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/pb_Stl.dll",
 				"$SRC_PB_ROOT/Classes/ClassesLib/Poly2Tri.dll",
-				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll"
-			]
-		},
-		{
-			"SourceDirectory": "$SRC_PB_ROOT/AssetIdRemapUtility/Editor",
-			"OutputAssembly": "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll",
-			"Defines": [
-				"UNITY_EDITOR"
-			],
-			"ReferencedAssemblies": [
-				"UnityEditor.dll"
+				"$SRC_PB_ROOT/Classes/ClassesLib/KdTreeLib.dll",
+				"$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll"
 			]
 		}
 	],

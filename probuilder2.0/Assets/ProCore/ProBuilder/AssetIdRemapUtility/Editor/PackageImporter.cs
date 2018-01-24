@@ -30,55 +30,6 @@ namespace ProBuilder.AssetUtility
 		internal static string EditorCorePackageManager { get { return k_PackageManagerEditorCore; } }
 		internal static string EditorCoreAssetStore { get { return k_AssetStoreEditorCore; } }
 
-#if DEBUG
-		static PackageImporter()
-		{
-			AssetDatabase.importPackageCompleted += OnImportPackageCompleted;
-		}
-
-		static void OnImportPackageCompleted(string name)
-		{
-			Debug.Log("OnImportPackageCompleted: " + name);
-		}
-#endif
-
-		static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-		{
-			CheckEditorCoreEnabled();
-		}
-
-		static void CheckEditorCoreEnabled()
-		{
-			string editorCoreDllPath = AssetDatabase.GUIDToAssetPath(k_PackageManagerEditorCore);
-			var importer = AssetImporter.GetAtPath(editorCoreDllPath) as PluginImporter;
-
-			if (importer != null)
-			{
-				bool assetStoreInstall = IsPreUpmProBuilderInProject();
-				bool isEnabled = importer.GetCompatibleWithEditor();
-
-				if (isEnabled == assetStoreInstall)
-				{
-//					Debug.Log(isEnabled ? "Disabling ProBuilder Package Manager version" : " Enabling ProBuilder Package Manager version");
-//					importer.SetCompatibleWithAnyPlatform(false);
-//					importer.SetCompatibleWithEditor(!assetStoreInstall);
-//					AssetDatabase.ImportAsset(editorCoreDllPath);
-
-					if (isEnabled)
-					{
-						CancelProBuilderImportPopup();
-
-						if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
-							"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" the Package Manager ProBuilder package will be disabled.",
-							"Yes", "No"))
-							EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
-						else
-							Debug.Log("ProBuilder Package Manager conversion process cancelled. You can initiate this conversion at a later time via Tools/ProBuilder/Repair/Convert to Package Manager.");
-					}
-				}
-			}
-		}
-
 		internal static void SetEditorDllEnabled(string guid, bool isEnabled)
 		{
 			string dllPath = AssetDatabase.GUIDToAssetPath(guid);

@@ -1,4 +1,4 @@
-﻿#if DEBUG && UNITY_2018_1_OR_NEWER
+﻿#if DEBUG && UNITY_2018_2_OR_NEWER
 
 using System;
 using System.Collections.Generic;

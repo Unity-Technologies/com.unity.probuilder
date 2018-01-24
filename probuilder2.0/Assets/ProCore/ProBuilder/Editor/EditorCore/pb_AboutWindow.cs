@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using ProBuilder.AssetUtility;
 using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
@@ -20,29 +21,6 @@ namespace ProBuilder.EditorCore
 		}
 	}
 
-	/// <summary>
-	///	Changelog.txt file should follow this format:
-	///		| # Product Name 2.1.0
-	///		|
-	///		| ## Features
-	///		|
-	///		| - All kinds of awesome stuff
-	///		| - New flux capacitor design achieves time travel at lower velocities.
-	///		| - Dark matter reactor recalibrated.
-	///		|
-	///		| ## Bug Fixes
-	///		|
-	///		| - No longer explodes when spacebar is pressed.
-	///		| - Fix rolling issue in rickmeter.
-	///		|
-	///		| # Changes
-	///		|
-	///		| - Changed Blue to Red.
-	///		| - Enter key now causes explosions.
-	///	This path is relative to the PRODUCT_ROOT path.
-	///	Note that your changelog may contain multiple entries.  Only the top-most
-	///	entry will be displayed.
-	/// </summary>
 	class pb_AboutWindow : EditorWindow
 	{
 		GUIContent m_LearnContent = new GUIContent("Learn ProBuilder", "Documentation");
@@ -70,9 +48,9 @@ namespace ProBuilder.EditorCore
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
 		string m_ProductName = pb_Constant.PRODUCT_NAME;
-		pb_VersionInfo m_changeLogVersionInfo;
+		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
-		static bool m_CancelImportPopup = false;
+		static bool s_CancelImportPopup = false;
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -90,7 +68,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void CancelImportPopup()
 		{
-			m_CancelImportPopup = true;
+			s_CancelImportPopup = true;
 		}
 
 		/// <summary>
@@ -103,22 +81,30 @@ namespace ProBuilder.EditorCore
 			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
 			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
 			// doesn't set the version to the newly imported editorcore).
-			if (m_CancelImportPopup)
+			if (s_CancelImportPopup)
 			{
-				m_CancelImportPopup = false;
+				s_CancelImportPopup = false;
 				return false;
 			}
 
 			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.Current.ToString(k_AboutPrefFormat))
 			{
+				if (PackageImporter.IsPreUpmProBuilderInProject())
+				{
+					if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
+						"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+						"Yes", "No"))
+						EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
+
+					return false;
+				}
+
 				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.Current.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
 				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			
+			return false;
 		}
 
 		static Color HexToColor(uint x)
@@ -241,7 +227,7 @@ namespace ProBuilder.EditorCore
 
 			if (!string.IsNullOrEmpty(raw))
 			{
-				pb_VersionUtil.FormatChangelog(raw, out m_changeLogVersionInfo, out m_ChangeLogRichText);
+				pb_VersionUtil.FormatChangelog(raw, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_changeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
@@ -297,7 +283,7 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_changeLogVersionInfo.ToString("M.m.p T b")), versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_ChangeLogVersionInfo.ToString("M.m.p T b")), versionInfoStyle);
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
