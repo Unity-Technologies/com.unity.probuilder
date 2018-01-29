@@ -79,7 +79,7 @@ namespace ProBuilder.EditorCore
 			GUILayout.EndHorizontal();
 
 			scroll = EditorGUILayout.BeginScrollView(scroll, pb_AboutWindow.changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_NewVersion.text), pb_AboutWindow.versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_NewVersion.ToString("M.m.p T (b)")), pb_AboutWindow.versionInfoStyle);
 			GUILayout.Label("\n" + m_NewChangelog, pb_AboutWindow.changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
