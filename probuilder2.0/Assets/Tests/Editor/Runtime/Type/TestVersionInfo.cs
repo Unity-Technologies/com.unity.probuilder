@@ -100,4 +100,3 @@ namespace ProBuilder.RuntimeTests.Type
 		}
 	}
 }
-#endif

@@ -279,8 +279,6 @@ namespace ProBuilder.Core
 
 				if (preReleaseVersion.Success)
 				{
-					Debug.Log(input + " pre: " + preReleaseVersion);
-
 					// If not parsed, "Development" is returned.
 					version.m_Type = GetVersionType(preReleaseVersion.Value);
 
