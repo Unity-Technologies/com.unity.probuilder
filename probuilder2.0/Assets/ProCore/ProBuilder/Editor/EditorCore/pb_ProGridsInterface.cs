@@ -9,16 +9,20 @@ using ProBuilder.Core;
 namespace ProBuilder.EditorCore
 {
 	/// <summary>
-	/// Acts as a bridge between ProGrids and ProBuilder. Provides a delegate for push to grid events, and allows access to snap enabled, axis preference, and grid size values.
+	/// Acts as a bridge between ProGrids and ProBuilder. Provides a delegate for push to grid events, and allows access
+	/// to snap enabled, axis preference, and grid size values.
 	/// </summary>
 	[InitializeOnLoad]
 	static class pb_ProGridsInterface
 	{
-		private static Type m_ProGridsType = null;
+		static Type s_ProGridsType = null;
 
 		static pb_ProGridsInterface()
 		{
-			m_ProGridsType = GetProGridsType();
+			s_ProGridsType = pb_Reflection.GetType("ProGrids.pg_Editor");
+
+			if(s_ProGridsType == null)
+				s_ProGridsType = pb_Reflection.GetType("pg_Editor");
 		}
 
 		/// <summary>
@@ -27,29 +31,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static Type GetProGridsType()
 		{
-			if( m_ProGridsType == null )
-			{
-				try
-				{
-					Assembly editorAssembly = Assembly.Load("Assembly-CSharp-Editor");
-					m_ProGridsType = editorAssembly.GetType("ProGrids.pg_Editor");
-
-					if (m_ProGridsType != null)
-						return m_ProGridsType;
-
-					Assembly pluginsAssembly = Assembly.Load("Assembly-CSharp-Editor-firstpass");
-					m_ProGridsType = pluginsAssembly.GetType("ProGrids.pg_Editor");
-
-					if (m_ProGridsType != null)
-						return m_ProGridsType;
-
-					m_ProGridsType = editorAssembly.GetType("pg_Editor");
-				}
-				catch
-				{}
-			}
-
-			return m_ProGridsType;
+			return s_ProGridsType;
 		}
 
 		public static ScriptableObject GetProGridsInstance()
@@ -57,18 +39,20 @@ namespace ProBuilder.EditorCore
 			return Resources.FindObjectsOfTypeAll<ScriptableObject>().FirstOrDefault(x => x.GetType().ToString().Contains("pg_Editor"));
 		}
 
-		/**
-		 * True if ProGrids is open in scene.
-		 */
+		/// <summary>
+		/// True if ProGrids is open in scene.
+		/// </summary>
+		/// <returns></returns>
 		public static bool ProGridsActive()
 		{
 			Type type = GetProGridsType();
 			return type != null && (bool) type.GetMethod("SceneToolbarActive").Invoke(null, null);
 		}
 
-		/**
-		 * Returns the current UseAxisConstraints value from ProGrids.
-		 */
+		/// <summary>
+		/// Returns the current UseAxisConstraints value from ProGrids.
+		/// </summary>
+		/// <returns></returns>
 		public static bool UseAxisConstraints()
 		{
 			Type type = GetProGridsType();
@@ -79,9 +63,10 @@ namespace ProBuilder.EditorCore
 				return false;
 		}
 
-		/**
-		 * If ProGrids is open and snap enabled, return true.  False otherwise.
-		 */
+		/// <summary>
+		/// If ProGrids is open and snap enabled, return true.  False otherwise.
+		/// </summary>
+		/// <returns></returns>
 		public static bool SnapEnabled()
 		{
 			Type type = GetProGridsType();
@@ -92,9 +77,10 @@ namespace ProBuilder.EditorCore
 				return false;
 		}
 
-		/**
-		 * Return the last known snap value setting from ProGrids.
-		 */
+		/// <summary>
+		/// Return the last known snap value setting from ProGrids.
+		/// </summary>
+		/// <returns></returns>
 		public static float SnapValue()
 		{
 			Type type = GetProGridsType();
@@ -105,9 +91,11 @@ namespace ProBuilder.EditorCore
 				return 0f;
 		}
 
-		/**
-		 * Return the last known grid pivot point.
-		 */
+		/// <summary>
+		/// Return the last known grid pivot point.
+		/// </summary>
+		/// <param name="pivot"></param>
+		/// <returns></returns>
 		public static bool GetPivot(out Vector3 pivot)
 		{
 			pivot = Vector3.zero;
@@ -136,9 +124,10 @@ namespace ProBuilder.EditorCore
 			return false;
 		}
 
-		/**
-		 * Subscribe to PushToGrid events.
-		 */
+		/// <summary>
+		/// Subscribe to PushToGrid events.
+		/// </summary>
+		/// <param name="listener"></param>
 		public static void SubscribePushToGridEvent(System.Action<float> listener)
 		{
 			Type type = GetProGridsType();
@@ -151,9 +140,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Remove subscription from PushToGrid events.
-		 */
+		/// <summary>
+		/// Remove subscription from PushToGrid events.
+		/// </summary>
+		/// <param name="listener"></param>
 		public static void UnsubscribePushToGridEvent(System.Action<float> listener)
 		{
 			Type type = GetProGridsType();
@@ -166,9 +156,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Tell ProGrids that a non-Unity handle has moved in some direction (in world space).
-		 */
+		/// <summary>
+		/// Tell ProGrids that a non-Unity handle has moved in some direction (in world space).
+		/// </summary>
+		/// <param name="worldDirection"></param>
 		public static void OnHandleMove(Vector3 worldDirection)
 		{
 			Type type = GetProGridsType();
@@ -182,9 +173,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Subscribe to toolbar extendo/retracto events.  Delegates are called with bool paramater Listener(bool menuOpen);
-		 */
+		/// <summary>
+		/// Subscribe to toolbar extendo/retracto events.  Delegates are called with bool paramater Listener(bool menuOpen);
+		/// </summary>
+		/// <param name="listener"></param>
 		public static void SubscribeToolbarEvent(System.Action<bool> listener)
 		{
 			Type type = GetProGridsType();
@@ -197,9 +189,10 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 * Remove subscription from extendo/retracto tooblar events.
-		 */
+		/// <summary>
+		/// Remove subscription from extendo/retracto tooblar events.
+		/// </summary>
+		/// <param name="listener"></param>
 		public static void UnsubscribeToolbarEvent(System.Action<bool> listener)
 		{
 			Type type = GetProGridsType();
@@ -212,9 +205,11 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		/**
-		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
-		 */
+		/// <summary>
+		/// Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public static float ProGridsSnap(float point)
 		{
 			if(pb_ProGridsInterface.SnapEnabled())
@@ -223,9 +218,11 @@ namespace ProBuilder.EditorCore
 			return point;
 		}
 
-		/**
-		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
-		 */
+		/// <summary>
+		/// Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public static Vector3 ProGridsSnap(Vector3 point)
 		{
 			if(pb_ProGridsInterface.SnapEnabled())
@@ -237,9 +234,12 @@ namespace ProBuilder.EditorCore
 			return point;
 		}
 
-		/**
-		 *	Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled, with mask.
-		 */
+		/// <summary>
+		/// Snap a Vector3 to the nearest point on the current ProGrids grid if ProGrids is enabled, with mask.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <param name="mask"></param>
+		/// <returns></returns>
 		public static Vector3 ProGridsSnap(Vector3 point, Vector3 mask)
 		{
 			if(pb_ProGridsInterface.SnapEnabled())
