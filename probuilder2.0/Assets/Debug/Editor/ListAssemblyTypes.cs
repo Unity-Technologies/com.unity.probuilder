@@ -7,7 +7,7 @@ using System.Reflection;
 
 public class ListAssemblyTypes : EditorWindow
 {
-	[MenuItem("Tools/List Assembly Types")]
+	[MenuItem("Window/List Assembly Types")]
 	static void Init()
 	{
 		EditorWindow.GetWindow<ListAssemblyTypes>(true, "Loaded Assemblies", true);
@@ -64,7 +64,7 @@ public class ListAssemblyTypes : EditorWindow
 
 		EditorGUILayout.EndScrollView();
 	}
-	
+
 	bool AssemblyContainsKeyworld(Assembly asm, string word)
 	{
 		if (asm.FullName.Contains(word))
