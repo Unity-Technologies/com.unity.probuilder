@@ -61,6 +61,12 @@ public class pb_SceneExplorer : EditorWindow
 
 		GUILayout.Space(12);
 
+		GUI.skin.label.richText = true;
+
+		bool doReload = false;
+
+		EditorGUI.BeginChangeCheck();
+
 		for (int i = 0; i < m_Objects.Length; i++)
 		{
 			m_Objects[i].Item2 = EditorGUILayout.Foldout(m_Objects[i].Item2, m_Objects[i].Item1 + m_Objects[i].Item3.Length);
@@ -69,13 +75,29 @@ public class pb_SceneExplorer : EditorWindow
 				DrawObjectArray(m_Objects[i].Item3);
 		}
 
+		if (EditorGUI.EndChangeCheck())
+			doReload = true;
+
 		GUILayout.EndScrollView();
+
+		if (doReload)
+		{
+			OnHierarchyChange();
+			EditorGUIUtility.ExitGUI();
+		}
 	}
 
 	void DrawObjectArray(Object[] array)
 	{
 		for (int i = 0; i < array.Length; i++)
+		{
+			GUILayout.BeginHorizontal();
 			GUILayout.Label(string.Format("<color=#808080ff>\u2022</color> {0}", array[i] != null ? array[i].ToString() : "null"));
+			GUILayout.FlexibleSpace();
+			if(GUILayout.Button("x", EditorStyles.miniButtonRight))
+				Object.DestroyImmediate(array[i]);
+			GUILayout.EndHorizontal();
+		}
 	}
 
 	void OnHierarchyChange()
@@ -86,6 +108,9 @@ public class pb_SceneExplorer : EditorWindow
 		Object[] materials = Resources.FindObjectsOfTypeAll(typeof(Material));
 		Object[] gameobjects = Resources.FindObjectsOfTypeAll(typeof(GameObject));
 		Object[] components = Resources.FindObjectsOfTypeAll(typeof(Component));
+
+		if (m_SearchPattern == null)
+			m_SearchPattern = "";
 
 		m_Objects[0].Item3 = textures.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
 		m_Objects[1].Item3 = audioclips.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
