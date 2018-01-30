@@ -81,7 +81,7 @@ namespace ProBuilder.EditorCore
 			bool orWillPlay = EditorApplication.isPlayingOrWillChangePlaymode;
 
 			// if these two don't match, that means it's the call prior to actually engaging
-			// whatever state.  when entering play mode it doesn't make a difference, but on
+			// whatever state. when entering play mode it doesn't make a difference, but on
 			// exiting it's the difference between a scene reload and the reloaded scene.
 			if(isPlaying != orWillPlay)
 				return;

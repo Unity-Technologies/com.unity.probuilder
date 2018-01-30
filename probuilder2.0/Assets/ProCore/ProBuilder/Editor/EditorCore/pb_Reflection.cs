@@ -12,25 +12,31 @@ namespace ProBuilder.EditorCore
 	static class pb_Reflection
 	{
 		public static bool enableWarnings = true;
-		const BindingFlags ALL_FLAGS = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+		const BindingFlags k_AllFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-		private static void Warning(string text)
+		static void Warning(string text)
 		{
 			if(enableWarnings)
 				Debug.LogWarning(text);
 		}
 
-		/**
-		 *	Get a component with type name.
-		 */
+		/// <summary>
+		/// Get a component with type name.
+		/// </summary>
+		/// <param name="gameObject"></param>
+		/// <param name="componentTypeName"></param>
+		/// <returns></returns>
 		public static object GetComponent(this GameObject gameObject, string componentTypeName)
 		{
 			return gameObject.GetComponent(componentTypeName);
 		}
 
-		/**
-		 *	Fetch a type with name and optional assembly name.  `type` should include namespace.
-		 */
+		/// <summary>
+		/// Fetch a type with name and optional assembly name. `type` should include namespace.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="assembly"></param>
+		/// <returns></returns>
 		public static Type GetType(string type, string assembly = null)
 		{
 			Type t = Type.GetType(type);
@@ -54,15 +60,21 @@ namespace ProBuilder.EditorCore
 			return t;
 		}
 
-		/**
-		 *	Call a method with args.
-		 */
-		public static object Invoke(object target,
-									string method,
-									BindingFlags flags = ALL_FLAGS,
-									params object[] args)
+		/// <summary>
+		/// Call a method with args.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="method"></param>
+		/// <param name="flags"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public static object Invoke(
+			object target,
+			string method,
+			BindingFlags flags = k_AllFlags,
+			params object[] args)
 		{
-			if(target == null)
+			if (target == null)
 			{
 				Warning("Invoke failed, target is null and no type was provided.");
 				return null;
@@ -71,19 +83,20 @@ namespace ProBuilder.EditorCore
 			return Invoke(target, target.GetType(), method, null, flags, args);
 		}
 
-		public static object Invoke(object target,
-									string type,
-									string method,
-									BindingFlags flags = ALL_FLAGS,
-									string assembly = null,
-									params object[] args)
+		public static object Invoke(
+			object target,
+			string type,
+			string method,
+			BindingFlags flags = k_AllFlags,
+			string assembly = null,
+			params object[] args)
 		{
 			Type t = GetType(type, assembly);
 
-			if(t == null && target != null)
+			if (t == null && target != null)
 				t = target.GetType();
 
-			if(t != null)
+			if (t != null)
 				return Invoke(target, t, method, null, flags, args);
 			else
 				Warning("Invoke failed, type is null: " + type);
@@ -91,12 +104,13 @@ namespace ProBuilder.EditorCore
 			return null;
 		}
 
-		public static object Invoke(object target,
-									Type type,
-									string method,
-									Type[] methodParams = null,
-									BindingFlags flags = ALL_FLAGS,
-									params object[] args)
+		public static object Invoke(
+			object target,
+			Type type,
+			string method,
+			Type[] methodParams = null,
+			BindingFlags flags = k_AllFlags,
+			params object[] args)
 		{
 			MethodInfo mi = null;
 
@@ -114,10 +128,15 @@ namespace ProBuilder.EditorCore
 			return mi.Invoke(target, args);
 		}
 
-		/**
-		 *	Fetch a value using GetProperty or GetField.
-		 */
-		public static object GetValue(object target, string type, string member, BindingFlags flags = ALL_FLAGS)
+		/// <summary>
+		/// Fetch a value using GetProperty or GetField.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="type"></param>
+		/// <param name="member"></param>
+		/// <param name="flags"></param>
+		/// <returns></returns>
+		public static object GetValue(object target, string type, string member, BindingFlags flags = k_AllFlags)
 		{
 			Type t = GetType(type);
 
@@ -130,7 +149,7 @@ namespace ProBuilder.EditorCore
 				return GetValue(target, t, member, flags);
 		}
 
-		public static object GetValue(object target, Type type, string member, BindingFlags flags = ALL_FLAGS)
+		public static object GetValue(object target, Type type, string member, BindingFlags flags = k_AllFlags)
 		{
 			PropertyInfo pi = type.GetProperty(member, flags);
 
@@ -145,10 +164,15 @@ namespace ProBuilder.EditorCore
 			return null;
 		}
 
-		/**
-		 *	Set a propery or field.
-		 */
-		public static bool SetValue(object target, string member, object value, BindingFlags flags = ALL_FLAGS)
+		/// <summary>
+		/// Set a propery or field.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="member"></param>
+		/// <param name="value"></param>
+		/// <param name="flags"></param>
+		/// <returns></returns>
+		public static bool SetValue(object target, string member, object value, BindingFlags flags = k_AllFlags)
 		{
 			if(target == null)
 				return false;

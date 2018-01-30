@@ -11,10 +11,10 @@ namespace ProBuilder.RuntimeTests.Type
 {
 	public class TestVersionInfo
 	{
-		static pb_VersionInfo version_a = new pb_VersionInfo(2, 0, 0, 3, VersionType.Final);
-		static pb_VersionInfo version_b = new pb_VersionInfo(3, 2, 0, 3, VersionType.Final);
-		static pb_VersionInfo version_c = new pb_VersionInfo(3, 2, 0, 3, VersionType.Beta);
-		static pb_VersionInfo version_d = new pb_VersionInfo(3, 2, 2, 3, VersionType.Final);
+		static readonly pb_VersionInfo k_VersionA = new pb_VersionInfo(2, 0, 0, 3, VersionType.Final);
+		static readonly pb_VersionInfo k_VersionB = new pb_VersionInfo(3, 2, 0, 3, VersionType.Final);
+		static readonly pb_VersionInfo k_VersionC = new pb_VersionInfo(3, 2, 0, 3, VersionType.Beta);
+		static readonly pb_VersionInfo k_VersionD = new pb_VersionInfo(3, 2, 2, 3, VersionType.Final);
 
 		[Test]
 		public static void ParseMajorMinorPatchOnly()
@@ -45,14 +45,14 @@ namespace ProBuilder.RuntimeTests.Type
 			Assert.AreEqual(expected, info, "input: " + input);
 		}
 
+		static readonly pb_VersionInfo k_Alpha = new pb_VersionInfo(1, 2, 3, 4, VersionType.Alpha);
+		static readonly pb_VersionInfo k_Beta = new pb_VersionInfo(1, 2, 3, 4, VersionType.Beta);
+		static readonly pb_VersionInfo k_Patch = new pb_VersionInfo(1, 2, 3, 4, VersionType.Patch);
+		static readonly pb_VersionInfo k_Final = new pb_VersionInfo(1, 2, 3, 4, VersionType.Final);
+
 		[Test]
 		public static void ParseGoodInput()
 		{
-			pb_VersionInfo k_Alpha = new pb_VersionInfo(1, 2, 3, 4, VersionType.Alpha);
-			pb_VersionInfo k_Beta = new pb_VersionInfo(1, 2, 3, 4, VersionType.Beta);
-			pb_VersionInfo k_Patch = new pb_VersionInfo(1, 2, 3, 4, VersionType.Patch);
-			pb_VersionInfo k_Final = new pb_VersionInfo(1, 2, 3, 4, VersionType.Final);
-
 			// test all correct variations
 			ParseBuildType("1.2.3-a.4", k_Alpha);
 			ParseBuildType("1.2.3-alpha.4", k_Alpha);
@@ -93,10 +93,10 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestComparison()
 		{
-			Assert.Less(version_a.CompareTo(version_b), 0);
-			Assert.Greater(version_b.CompareTo(version_a), 0);
-			Assert.Less(version_b.CompareTo(version_d), 0);
-			Assert.Less(version_c.CompareTo(version_b), 0);
+			Assert.Less(k_VersionA.CompareTo(k_VersionB), 0);
+			Assert.Greater(k_VersionB.CompareTo(k_VersionA), 0);
+			Assert.Less(k_VersionB.CompareTo(k_VersionD), 0);
+			Assert.Less(k_VersionC.CompareTo(k_VersionB), 0);
 		}
 	}
 }
