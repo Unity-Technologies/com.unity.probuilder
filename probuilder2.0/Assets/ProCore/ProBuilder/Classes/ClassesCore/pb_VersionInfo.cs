@@ -18,33 +18,49 @@ namespace ProBuilder.Core
 	/// Version information container that is comparable.
 	/// </summary>
 	[Serializable]
-	public class pb_VersionInfo : System.IEquatable<pb_VersionInfo>, System.IComparable<pb_VersionInfo>
+	public class pb_VersionInfo : IEquatable<pb_VersionInfo>, IComparable<pb_VersionInfo>
 	{
+		[SerializeField]
 		int m_Major = -1;
+
+		[SerializeField]
 		int m_Minor = -1;
+
+		[SerializeField]
 		int m_Patch = -1;
-		int m_Build = -1;
+
+		[SerializeField]
+		int m_Build = 0;
+
+		[SerializeField]
 		VersionType m_Type;
-		string m_Text;
+
+		[SerializeField]
+		string m_Metadata;
+
+		[SerializeField]
 		string m_Date;
+
 
 		public int major { get { return m_Major; } }
 		public int minor { get { return m_Minor; } }
 		public int patch { get { return m_Patch; } }
 		public int build { get { return m_Build; } }
 		public VersionType type { get { return m_Type; } }
-		public string text { get { return m_Text; } }
+		public string metadata { get { return m_Metadata; } }
 		public string date { get { return m_Date; } }
+
+		public const string DefaultStringFormat = "M.m.p-t.b";
 
 		public pb_VersionInfo()
 		{
 		}
 
-		public pb_VersionInfo(string formatted, string date)
+		public pb_VersionInfo(string formatted, string date = null)
 		{
 			pb_VersionInfo parsed;
 
-			m_Text = formatted;
+			m_Metadata = formatted;
 			m_Date = date;
 
 			if (TryGetVersionInfo(formatted, out parsed))
@@ -54,17 +70,22 @@ namespace ProBuilder.Core
 				m_Patch = parsed.m_Patch;
 				m_Build = parsed.m_Build;
 				m_Type = parsed.m_Type;
+				m_Metadata = parsed.metadata;
+			}
+			else
+			{
+				pb_Log.Error("Failed parsing version info: " + formatted);
 			}
 		}
 
-		public pb_VersionInfo(int major, int minor, int patch, int build = 0, VersionType type = VersionType.Development, string date = "")
+		public pb_VersionInfo(int major, int minor, int patch, int build = 0, VersionType type = VersionType.Development, string date = "", string metadata = "")
 		{
 			m_Major = major;
 			m_Minor = minor;
 			m_Patch = patch;
 			m_Build = build;
 			m_Type = type;
-			m_Text = null;
+			m_Metadata = metadata;
 			m_Date = string.IsNullOrEmpty(date) ? DateTime.Now.ToString("en-US: MM/dd/yyyy") : date;
 		}
 
@@ -86,7 +107,7 @@ namespace ProBuilder.Core
 
 			unchecked
 			{
-				if(IsValid() || string.IsNullOrEmpty(text))
+				if(IsValid())
 				{
 					hash = (hash * 7) + major.GetHashCode();
 					hash = (hash * 7) + minor.GetHashCode();
@@ -96,7 +117,7 @@ namespace ProBuilder.Core
 				}
 				else
 				{
-					return text.GetHashCode();
+					return string.IsNullOrEmpty(m_Metadata) ? m_Metadata.GetHashCode() : base.GetHashCode();
 				}
 			}
 
@@ -118,10 +139,10 @@ namespace ProBuilder.Core
 			}
 			else
 			{
-				if( string.IsNullOrEmpty(text) || string.IsNullOrEmpty(version.text) )
+				if( string.IsNullOrEmpty(m_Metadata) || string.IsNullOrEmpty(version.m_Metadata) )
 					return false;
 
-				return text.Equals(version.text);
+				return m_Metadata.Equals(version.m_Metadata);
 			}
 		}
 
@@ -155,8 +176,7 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		/// Simple formatting for a version info. The following characters are available (any non-matching chars are appended
-		/// as is).
+		/// Simple formatting for a version info. The following characters are available:
 		/// 'M' Major
 		/// 'm' Minor
 		/// 'p' Patch
@@ -164,17 +184,31 @@ namespace ProBuilder.Core
 		/// 't' Lowercase single type (f, d, b, or p)
 		/// 'T' Type
 		/// 'd' Date
-		/// Ex, ToString("T:M.m.p") returns "Final:2.10.1"
+		/// 'D' Metadata
+		/// Escape characters with '\'.
 		/// </summary>
+		/// <example>
+		/// ToString("\buil\d: T:M.m.p") returns "build: Final:2.10.1"
+		/// </example>
 		/// <param name="format"></param>
 		/// <returns></returns>
 		public string ToString(string format)
 		{
 			var sb = new StringBuilder();
+			bool skip = false;
 
 			foreach (char c in format.ToCharArray())
 			{
-				if(c == 'M')
+				if (skip)
+				{
+					sb.Append(c);
+					skip = false;
+					continue;
+				}
+
+				if (c == '\\')
+					skip = true;
+				else if(c == 'M')
 					sb.Append(major);
 				else if(c == 'm')
 					sb.Append(minor);
@@ -188,6 +222,8 @@ namespace ProBuilder.Core
 					sb.Append(type);
 				else if (c == 'd')
 					sb.Append(date);
+				else if (c == 'D')
+					sb.Append(metadata);
 				else
 					sb.Append(c);
 			}
@@ -197,60 +233,106 @@ namespace ProBuilder.Core
 
 		public override string ToString()
 		{
-			return string.Format("{5} build {0}.{1}.{2}-{3}.{4} {6}",
-				major.ToString(),
-				minor.ToString(),
-				patch.ToString(),
-				type.ToString().ToLower()[0].ToString(),
-				build.ToString(),
-				type.ToString(),
-				date);
+			return ToString(DefaultStringFormat);
 		}
 
 		/// <summary>
-		/// Create a pb_VersionInfo type from a string.
+		/// Create a pb_VersionInfo type from a string formatted in valid semantic versioning format.
+		/// https://semver.org/
 		/// Ex: TryGetVersionInfo("2.5.3-b.1", out info)
 		/// </summary>
-		/// <param name="str"></param>
+		/// <param name="input"></param>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public static bool TryGetVersionInfo(string str, out pb_VersionInfo version)
+		public static bool TryGetVersionInfo(string input, out pb_VersionInfo version)
 		{
 			version = new pb_VersionInfo();
-			version.m_Text = string.IsNullOrEmpty(str) ? "null" : str;
+			bool ret = false;
+
+			const string k_MajorMinorPatchRegex = "^([0-9]+\\.[0-9]+\\.[0-9]+)";
+			const string k_VersionReleaseRegex = "(?i)(?<=\\-)[a-z0-9\\-\\.]+";
+			const string k_VersionReleaseLooseRegex = "(?<=[0-9]+\\.[0-9]+\\.[0-9]+)[a-z0-9\\-\\.\\+]+";
+			const string k_MetadataRegex = "(?<=\\+).+";
 
 			try
 			{
-				string[] split = Regex.Split(str, @"[\.\-A-Za-z]");
-				Match type = Regex.Match(str, @"[A-Z|a-z]");
-				int.TryParse(split[0], out version.m_Major);
-				int.TryParse(split[1], out version.m_Minor);
-				int.TryParse(split[2], out version.m_Patch);
-				int.TryParse(split[split.Length - 1], out version.m_Build);
-				version.m_Type = GetVersionType(type.Success ? type.Value : "");
-				return true;
+				var mmp = Regex.Match(input, k_MajorMinorPatchRegex);
+
+				if (!mmp.Success)
+					return false;
+
+				string[] mmpSplit = mmp.Value.Split('.');
+
+				int.TryParse(mmpSplit[0], out version.m_Major);
+				int.TryParse(mmpSplit[1], out version.m_Minor);
+				int.TryParse(mmpSplit[2], out version.m_Patch);
+
+				ret = true;
+
+				// from here down is less rigid
+				var preReleaseVersion = Regex.Match(input, k_VersionReleaseRegex);
+
+				// this is technically wrong version formatting, but it's common enough to see so we try our best to
+				// parse it
+				if (!preReleaseVersion.Success)
+					preReleaseVersion = Regex.Match(input, k_VersionReleaseLooseRegex);
+
+				if (preReleaseVersion.Success)
+				{
+					Debug.Log(input + " pre: " + preReleaseVersion);
+
+					// If not parsed, "Development" is returned.
+					version.m_Type = GetVersionType(preReleaseVersion.Value);
+
+					// If not parsed, "0" is returned.
+					version.m_Build = GetBuildNumber(preReleaseVersion.Value);
+				}
+
+				var meta = Regex.Match(input, k_MetadataRegex);
+
+				if (meta.Success)
+					version.m_Metadata = meta.Value;
 			}
 			catch
 			{
-				return false;
+				ret = false;
 			}
+
+			return ret;
 		}
 
-		static VersionType GetVersionType(string type)
+		static VersionType GetVersionType(string input)
 		{
-			if( type.Equals("a") || type.Equals("A") )
+			const string k_AlphaRegex = "(?i)^(alpha|a)(?=[^a-z]|\\Z)";
+			const string k_BetaRegex = "(?i)^(beta|b)(?=[^a-z]|\\Z)";
+			const string k_PatchRegex = "(?i)^(patch|p)(?=[^a-z]|\\Z)";
+			const string k_FinalRegex = "(?i)^(final|f)(?=[^a-z]|\\Z)";
+
+			if (Regex.IsMatch(input, k_AlphaRegex, RegexOptions.Multiline))
 				return VersionType.Alpha;
 
-			if( type.Equals("b") || type.Equals("B") )
+			if (Regex.IsMatch(input, k_BetaRegex, RegexOptions.Multiline))
 				return VersionType.Beta;
 
-			if( type.Equals("p") || type.Equals("P") )
+			if (Regex.IsMatch(input, k_PatchRegex, RegexOptions.Multiline))
 				return VersionType.Patch;
 
-			if( type.Equals("f") || type.Equals("F") )
+			if (Regex.IsMatch(input, k_FinalRegex, RegexOptions.Multiline))
 				return VersionType.Final;
 
 			return VersionType.Development;
+		}
+
+		static int GetBuildNumber(string input)
+		{
+			var number = Regex.Match(input, "[0-9]+");
+
+			int buildNo = 0;
+
+			if (number.Success && int.TryParse(number.Value, out buildNo))
+				return buildNo;
+
+			return 0;
 		}
 	}
 }

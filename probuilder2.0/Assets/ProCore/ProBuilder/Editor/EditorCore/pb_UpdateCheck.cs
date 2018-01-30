@@ -70,10 +70,10 @@ namespace ProBuilder.EditorCore
 								// next, test if a notification for this version has already been shown
 								string lastNotification = pb_PreferencesInternal.GetString(pbLastWebVersionChecked, "");
 
-								if(calledFromMenu || !lastNotification.Equals(webVersion.text))
+								if(calledFromMenu || !lastNotification.Equals(webVersion.ToString(pb_VersionInfo.DefaultStringFormat)))
 								{
 									pb_UpdateAvailable.Init(webVersion, webChangelog);
-									pb_PreferencesInternal.SetString(pbLastWebVersionChecked, webVersion.text);
+									pb_PreferencesInternal.SetString(pbLastWebVersionChecked, webVersion.ToString(pb_VersionInfo.DefaultStringFormat));
 								}
 							}
 							else
