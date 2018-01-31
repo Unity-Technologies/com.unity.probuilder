@@ -33,7 +33,7 @@
 ## Changes
 
 - Move Dimensions Overlay into ProBuilder menu.
-- Move `ProBuilder2.Common` and` ProBuilder2.EditorCommon` namespaces to `ProBuilder.Core` and `ProBuilder.EditorCore`.
+- Move `ProBuilder2.Common` and `ProBuilder2.EditorCommon` namespaces to `ProBuilder.Core` and `ProBuilder.EditorCore`.
 - Move `pb_Object` to ProBuilder.Core namespace.
 
 ## Known Issues
