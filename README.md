@@ -97,7 +97,9 @@ ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 
 ## Building Asset Store Projects & Packages
 
-**Asset Store build paths are no longer maintained - 2018.1 and later is required to use Package Manager**
+**Important:** Asset Store build paths are no longer maintained - 2018.1 and later is required to use Package Manager**
+
+Updates to Asset Store ProBuilder version should made and pushed from the v2.9.8f3-dev branch.
 
 To facilitate building the projects and packages for the various Unity versions a custom built build system is employed. The lifting is done by a mono app called `pb-build` and driven by a set of `json` files. The `json` files describe the build process for a single version of ProBuilder. They are located in `build/targets` and named to match their intended destination (ex, "ProBuilderAdvanced-5.6" builds ProBuilder Advanced for Unity 5.6).
 
