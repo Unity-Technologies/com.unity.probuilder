@@ -9,9 +9,9 @@ compiling packaged versions from source.
 
 There are 3 major namespaces, each corresponding to a DLL target.
 
-- ProBuilder.Core -> ProBuilderCore.dll
-- ProBuilder.MeshOperations -> ProBuilderMeshOps.dll
-- ProBuilder.EditorCore -> ProBuilderEditorCore.dll
+- `ProBuilder.Core` -> `ProBuilderCore.dll`
+- `ProBuilder.MeshOperations` -> `ProBuilderMeshOps.dll`
+- `ProBuilder.EditorCore` -> `ProBuilderEditorCore.dll`
 
 All mesh creation and editing functionality is restricted to the `Core` and
 `MeshOps` libraries, which are both available at runtime.
@@ -61,13 +61,15 @@ by manually as well).
 Creating a simple quad with the ProBuilder API could look like this (assuming
 one doesn't use `pb_ShapeGenerator`):
 
-	// Create a new quad facing forward.
-	pb_Object quad = pb_Object.CreateInstanceWithVerticesFaces(new Vector3[] {
-		Vector3.zero,
-		Vector3.right,
-		Vector3.up,
-		Vector2.one },
-		new pb_Face[] { new pb_Face(new int[] { 0, 1, 2, 1, 3, 2 } ) } );
+```
+// Create a new quad facing forward.
+pb_Object quad = pb_Object.CreateInstanceWithVerticesFaces(new Vector3[] {
+	new Vector3(0f, 0f, 0f),
+	new Vector3(1f, 0f, 0f),
+	new Vector3(0f, 1f, 0f),
+	new Vector3(1f, 1f, 0f) },
+	new pb_Face[] { new pb_Face(new int[] { 0, 1, 2, 1, 3, 2 } ) } );
+```
 
 Modifying a ProBuilder mesh is a bit different from a Unity mesh. Instead of
 working with the `MeshFilter.sharedMesh` you'll instead be operating on the
@@ -77,21 +79,25 @@ The basics are the same however. Set vertex positions, modify triangles (faces
 in ProBuilder), then rebuild the mesh. Say for example you'd like to move the
 vertices up on that quad from the previous example:
 
-	// Move vertex positions up
-	for(int i = 0; i < quad.vertexCount; i++)
-		quad.vertices[i] += Vector3.one;
+```
+// Move vertex positions up
+for(int i = 0; i < quad.vertexCount; i++)
+	quad.vertices[i] += Vector3.one;
 
-	// Assign positions and triangles to the `MeshFilter.sharedMesh`
-	quad.ToMesh();
+// Assign positions and triangles to the `MeshFilter.sharedMesh`
+quad.ToMesh();
 
-	// Recalculate UVs, Normals, Tangents, Collisions
-	quad.Refresh();
+// Recalculate UVs, Normals, Tangents, Collisions
+quad.Refresh();
+```
 
 Note that you should not ever directly modify the `MeshFilter.sharedMesh`.
 ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 `pb_Object::Refresh` functions.
 
 ## Building Asset Store Projects & Packages
+
+**Asset Store build paths are no longer maintained - 2018.1 and later is required to use Package Manager**
 
 To facilitate building the projects and packages for the various Unity versions a custom built build system is employed. The lifting is done by a mono app called `pb-build` and driven by a set of `json` files. The `json` files describe the build process for a single version of ProBuilder. They are located in `build/targets` and named to match their intended destination (ex, "ProBuilderAdvanced-5.6" builds ProBuilder Advanced for Unity 5.6).
 
@@ -141,17 +147,15 @@ Valid arguments:
 
 ### Setup
 
-First create a new Unity project in a directory adjacent the **probuilder2** directory and name it **upm-package-probuilder-project**.\*
+Check out the [com.unity.probuilder](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder) repository to a directory adjacent to the **probuilder2** repository.
 
-\*See below for an example folder structure.
+If you do not need to publish builds to Package Manager you can simply create an empty folder named **com.unity.probuilder** in the same directory as the **probuilder2** repository.
 
-Next, create the folder `UnityPackageManager` (if it doesn't already exist) and clone the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository to a folder named `com.unity.probuilder`.
+*See below for an example folder structure.*
 
 ```
-cd upm-package-probuilder-project
-mkdir UnityPackageManager
-cd UnityPackageManager
-git clone https://github.com/procore3d/upm-package-probuilder.git com.unity.probuilder
+# check out package manager repository
+git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder.git com.unity.probuilder
 ```
 
 At this point your directory structure should something like this:
@@ -163,16 +167,16 @@ C:/Users/karl/dev
   |_ build
   |_ docs
   |_ probuilder2.0
-|_ upm-package-probuilder-project
-  |_ Assets
-  |_ UnityPackageManager
-    |_ com.unity.probuilder
-    |_ manifest.json
+|_ com.unity.probuilder
+  |_ Documentation
+  |_ ProBuilder
+  |_ CHANGELOG.md
+  |_ etc...
 ```
 
 ### Compile ProBuilder from Source Project
 
-Run the **upm.json** build target.
+In the **probuilder2** directory, run **upm.json** build target:
 
 `mono pb-build.exe upm.json`
 
@@ -184,15 +188,17 @@ The build target takes care of copying all the necessary files and changelogs to
 
 Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
-At this point the `upm-package-probuilder-project` is ready for testing and uploading.
+**upm.json** builds the project to `../com.unity.probuilder`. Copy this directory into a Unity project's "UnityPackageManager" directory and edit the manifest to test locally.
 
 ### Push Package Manager to Staging
 
-Follow the instructions in the [upm-package-template](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template) to set up **npm** credentials. **Do not commit `.npmrc` files to the [upm-package-probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
+Follow the instructions in the [upm-package-template](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template) to set up **npm** credentials.
 
-1. Verify that **package.json** is up to date and contains the correct information. Note that the version info in this file is automatically populated by pb-build.
+**Do not commit `.npmrc` files to the [com.unity.probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
+
+1. Verify that **package.json** is up to date and contains the correct information (the version info in this file is automatically populated by pb-build).
 1. Perform QA testing as outlined in QAReport.md.
-1. `npm publish`
+1. To push a live version, run `npm publish`.
 
 **Important** Once a package is pushed it is not undo-able. Un-publishing or overwriting a version is not possible.
 
@@ -200,18 +206,18 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 
 #### Locally
 
-1. Grab the latest release from [Github](https://github.com/procore3d/upm-package-probuilder/releases).
+1. Grab the latest release from [Gitlab](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder/tags).
 1. Create a new Unity project
 1. Copy the **com.unity.probuilder** directory into the new project's **UnityPackageManager** directory.
-1. Overwrite the **manifest.json** file with the one included in the ProBuilder zip file\*
+1. Edit the **manifest.json** file to include "com.unity.probuilder" as a dependency (see below for example).
 1. Follow the QA instructions outlined in the QAReport.md file.
 
-\* Or add the latest version as a dependency in the manifest file manually:
+Example **manifest.json** file (replace the version number with the tagged version).
 
 ```
 {
 	"dependencies":{
-		"com.unity.probuilder":"3.0.0-b.4"
+		"com.unity.probuilder":"3.0.0-f.0"
 	}
 }
 ```
@@ -227,7 +233,7 @@ Check for the latest version on Bintray: https://bintray.com/unity/unity-staging
 ```
 {
 	"dependencies": {
-		"com.unity.probuilder" : "3.0.0-b.4"
+		"com.unity.probuilder" : "3.0.0-f.0"
 	},
 	"registry":"http://staging-packages.unity.com"
 }
