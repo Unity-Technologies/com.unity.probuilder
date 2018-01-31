@@ -1,109 +1,44 @@
-# ProBuilder 3.0.0-b.7
-
-## Changes from 3.0.0-b6
-
-- Fix open scenes and prefabs temporarily showing null references after upgrading from an Asset Store install to UPM.
-
-# ProBuilder 3.0.0-b.6
-
-## Changes from 3.0.0-b5
-
-- Fix upgrade from asset store sometimes not popping up, or continuously popping up dialog.
-
-# ProBuilder 3.0.0-b.5
-
-## Changes from 3.0.0-b4
-
-- Update asset id remap file.
-- Fix line endings in menu generator and menu items file.
-- Verify that assets are text serialized prior to guid r.emap.
-- Replace TGA textures with PNG versions.
-- Remove pdf manual.
-
-# ProBuilder 3.0.0-b.4
-
-## Changes from 3.0.0-b3
-
-- Fix null reference when undoing a delete.
-- Fix torus and icosphere not remembering last used settings in a session.
-- Use semantic versioning format for build type and number.
-
-# ProBuilder 3.0.0-b.3
-
-## Changes from 3.0.0b2
-
-- Fix scene repainting endlessly when drag selecting elements.
-- Improve performance of pb_Editor selection caching, fixing lag when selecting high vertex count objects.
-- Fix scene toolbar sometimes not matching free/pro skin.
-- Fix washed colors in gui textures with linear rendering.
-- Default new objects with Static flag checked, and add preference to set a custom default.
-- Fix About window failing to find correct build type.
-- Fix Standard Vertex Color shader errors in 2018.1 and up.
-- Match element drag rect image to Unity's drag rect.
-- Remove unused preferences from the ProBuilder/Preferences window.
-- Fix Poly Shape editor repainting the sceneview on every tick.
-- Fix "Select Hidden" preference not matching editor behavior at launch.
-
-# ProBuilder 3.0.0b2
-
-## Changes from 3.0.0b1
-
-- Fix "Select Hidden" preference not matching the state shown in toolbar on launch.
-
-# ProBuilder 3.0.0b1
-
-## Changes from 3.0.0b0
-
-- Remove deprecated `pb_Entity` repair actions.
-- Fix edge drag selection regression.
-- Fix UPM warnings on import due to icons post-processor running.
-- Fix UPM warnings due to missing meta files.
-
-# ProBuilder 3.0.0b0
-
-## Features
-
-- Custom color palettes now supported.
-- Add an editor window to display licenses for third party software used in ProBuilder.
-- Debug symbols are now included.
-- Add `pb_ShapeGenerator.CreateShape(pb_ShapeType shape)` function to build default primitives without requiring parameters.
-- Support partial and complete rect selection for edge elements.
-- New `Set Trigger` and `Set Collider` replace the deprecated `pb_Entity` component.
-
-## Bug Fixes
-
-- Catch edge cases of bad input for Poly Shape, preventing console spam.
-- Fix Poly Shape objects not updating graphics on undo when not currently editing the contour.
-- Fix "Connect Edges" notification showing 2x the amount of edges as connected.
-- Fix ProBuilder Editor not refreshing after a ProBuilderize action.
-- Fix UV editor throwing null if shader has no _MainTex uniform.
-- Fix potential null ref if a menu action is called without a pb_Editor instance.
-
-# ProBuilder 2.10.0f0
+# ProBuilder 3.0.0-f.0
 
 ## Features
 
 - ProBuilder now runs as package manager module.
-- Add button to view third party licenses in About window.
-- Debug symbols now distributed libraries.
-- Enable custom color palettes in the Vertex Color Palette window.
+- Custom color palettes for Vertex Color Editor.
+- Added a new window to display licenses for third party software used in ProBuilder.
+- Debug symbols are now included.
+- Support partial and complete drag selection for edge elements.
+- New `Set Trigger` and `Set Collider` replace the deprecated `pb_Entity` component.
+- Add `pb_ShapeGenerator.CreateShape(pb_ShapeType shape)` function to build default primitives without requiring parameters.
+- Add preference to set the static flags for new ProBuilder objects.
 
 ## Bug Fixes
 
-- Fix entity vis toggles using pro tint in basic skin.
-- Fix standard shader errors in 2017.3.
+- Fix "Select Hidden" preference not matching the state shown in toolbar on launch.
+- Fix Standard Vertex Color shader errors in 2018.1 and up.
+- Catch edge cases of bad input for Poly Shape, preventing console spam.
+- Match element drag rect visual to Unity's.
+- Fix Poly Shape objects not updating graphics on undo when not currently editing the contour.
+- Fix "Connect Edges" notification showing 2x the amount of edges as connected.
+- Fix ProBuilder Editor not refreshing after a ProBuilderize action.
+- Fix UV editor throwing null if shader has no _MainTex uniform.
+- Fix potential error if a menu action is called without a pb_Editor instance.
+- Improve performance of pb_Editor selection caching, addressing lag when selecting high vertex count objects.
+- Fix scene toolbar sometimes not matching free/pro skin.
+- Fix washed colors in gui textures with linear rendering.
+- Remove unused preferences from the ProBuilder/Preferences window.
+- Fix torus and icosphere not remembering last used settings in a session.
+- Fix Poly Shape editor repainting the scene view more than necessary.
 - Corrected tool-tips for "Clear Smoothing" and "Break Smoothing" buttons.
 
 ## Changes
 
 - Move Dimensions Overlay into ProBuilder menu.
-- Move pb_Object/Entity to ProBuilder.Core namespace.
 - Move `ProBuilder2.Common` and` ProBuilder2.EditorCommon` namespaces to `ProBuilder.Core` and `ProBuilder.EditorCore`.
+- Move `pb_Object` to ProBuilder.Core namespace.
 
 ## Known Issues
 
-- Standard Vertex Color shadder throws warning about semicolon.
-- "Library already loaded" logs when importing Package Manager over Asset Store install.
+- "Library already loaded" warning logs when importing Package Manager over Asset Store install.
 - "Cannot create menu item" warnings when importing Package Manager over Asset Store install.
 - Deleting an Asset Store package before importing a Package Manager version does not automatically pop up the Convert To Package Manager editor window.
 - API Examples are not accessible from Package Manager.
