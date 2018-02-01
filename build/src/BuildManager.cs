@@ -329,6 +329,26 @@ namespace ProBuilder.BuildSystem
 					}
 				}
 
+				if(t.Name == null)
+					t.Name = "Untitled Build Target";
+				if(t.UnityPath == null)
+					t.UnityPath = new List<string>();
+				if(t.Macros == null)
+					t.Macros = new Dictionary<string, string>();
+				if(t.ReferenceSearchPaths == null)
+					t.ReferenceSearchPaths = new List<string>();
+				if(t.ReferencedAssemblies == null)
+					t.ReferencedAssemblies = new List<string>();
+				if(t.Defines == null)
+					t.Defines = new List<string>();
+				if(t.Clean == null)
+					t.Clean = new List<BuildCommand>();
+				if(t.OnPreBuild == null)
+					t.OnPreBuild = new List<BuildCommand>();
+				if(t.OnPostBuild == null)
+					t.OnPostBuild = new List<BuildCommand>();
+				if(t.Assemblies == null)
+					t.Assemblies = new List<AssemblyTarget>();
 
 				return t;
 			}
