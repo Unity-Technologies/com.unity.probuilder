@@ -19,7 +19,7 @@ namespace ProBuilder.EditorCore
 
 		static pb_ProGridsInterface()
 		{
-			s_ProGridsType = pb_Reflection.GetType("ProGrids.pg_Editor");
+			s_ProGridsType = pb_Reflection.GetType("ProGrids.Editor.pg_Editor");
 
 			if(s_ProGridsType == null)
 				s_ProGridsType = pb_Reflection.GetType("pg_Editor");
