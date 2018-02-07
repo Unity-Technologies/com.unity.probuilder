@@ -66,6 +66,7 @@
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderMeshOps.dll.mdb.meta", "$DST_PB_ROOT/Classes/ProBuilderMeshOps.dll.mdb.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/ProBuilderEditor.dll.mdb.meta", "$DST_PB_ROOT/Editor/ProBuilderEditor.dll.mdb.meta" ] },
 		{ "Command":"cp", "Arguments": [ "build/targets/resources/$UNITY_VERSION/AssetIdRemapUtility.dll.mdb.meta", "$DST_PB_ROOT/AssetIdRemapUtility/Editor/AssetIdRemapUtility.dll.mdb.meta" ] },
+		{ "Command":"replace", "Arguments": [ "$DST_PB_ROOT/Editor/Addons/Unity.ProBuilder.AddOns.Editor.asmdef", "\"Unity\\.ProBuilder\\.[a-zA-Z]+\\\"[,]*", ""]}
 	],
 	"ReferenceSearchPaths":[
 		"$UNITY/Data/Mono/lib/mono/2.0",
