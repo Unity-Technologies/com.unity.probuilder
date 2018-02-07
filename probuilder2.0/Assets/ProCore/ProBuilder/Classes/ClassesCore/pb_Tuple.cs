@@ -3,7 +3,7 @@ namespace ProBuilder.Core
 {
 	/// <summary>
 	/// A bare-bones Tuple class. Holds 2 items, does not implement equality, comparison, or anything else.
-	/// <remarks>Unlike C# Tuple pb_Tuple is a class.</remarks>
+	/// <remarks>Unlike the System Tuple pb_Tuple is a class.</remarks>
 	/// </summary>
 	/// <typeparam name="T1"></typeparam>
 	/// <typeparam name="T2"></typeparam>
@@ -28,12 +28,12 @@ namespace ProBuilder.Core
 
 	/// <summary>
 	/// A bare-bones Tuple class. Holds 3 items, does not implement equality, comparison, or anything else.
-	/// <remarks>Unlike C# Tuple pb_Tuple is a class.</remarks>
+	/// <remarks>Unlike System Tuple pb_Tuple is a class.</remarks>
 	/// </summary>
 	/// <typeparam name="T1"></typeparam>
 	/// <typeparam name="T2"></typeparam>
 	/// <typeparam name="T3"></typeparam>
-	class pb_Tuple<T1, T2, T3>
+	public class pb_Tuple<T1, T2, T3>
 	{
 		public T1 Item1;
 		public T2 Item2;
@@ -56,13 +56,13 @@ namespace ProBuilder.Core
 
 	/// <summary>
 	/// A bare-bones Tuple class. Holds 4 items, does not implement equality, comparison, or anything else.
-	/// <remarks>Unlike C# Tuple pb_Tuple is a class.</remarks>
+	/// <remarks>Unlike System Tuple pb_Tuple is a class.</remarks>
 	/// </summary>
 	/// <typeparam name="T1"></typeparam>
 	/// <typeparam name="T2"></typeparam>
 	/// <typeparam name="T3"></typeparam>
 	/// <typeparam name="T4"></typeparam>
-	class pb_Tuple<T1, T2, T3, T4>
+	public class pb_Tuple<T1, T2, T3, T4>
 	{
 		public T1 Item1;
 		public T2 Item2;

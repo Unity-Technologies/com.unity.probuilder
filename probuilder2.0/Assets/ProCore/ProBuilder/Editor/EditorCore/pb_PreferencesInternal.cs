@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-#if !UNITY_4_7
 using UnityEngine.Rendering;
-#endif
 using System.Collections;
 using System.Collections.Generic;
 using ProBuilder.Core;
@@ -29,7 +27,6 @@ namespace ProBuilder.EditorCore
 	/// <summary>
 	/// Manage ProBuilder preferences.
 	/// </summary>
-	[InitializeOnLoad]
 	static class pb_PreferencesInternal
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
@@ -143,9 +140,11 @@ namespace ProBuilder.EditorCore
 			EditorPrefs.DeleteKey(key);
 		}
 
-		/**
-		 * Checks if pref key exists in library, and if so return the value.  If not, return the default value (true).
-		 */
+		/// <summary>
+		/// Checks if pref key exists in library, and if so return the value.  If not, return the default value (true).
+		/// </summary>
+		/// <param name="pref"></param>
+		/// <returns></returns>
 		public static bool GetBool(string pref)
 		{
 			// Backwards compatibility reasons dictate that default bool value is true.
@@ -154,9 +153,12 @@ namespace ProBuilder.EditorCore
 			return GetBool(pref, true);
 		}
 
-		/**
-		 *	Get a preference bool value. Local preference has priority over EditorPref.
-		 */
+		/// <summary>
+		/// Get a preference bool value. Local preference has priority over EditorPref.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="fallback"></param>
+		/// <returns></returns>
 		public static bool GetBool(string key, bool fallback)
 		{
 			if(m_Preferences != null && preferences.HasKey<bool>(key))
@@ -164,9 +166,11 @@ namespace ProBuilder.EditorCore
 			return EditorPrefs.GetBool(key, fallback);
 		}
 
-		/**
-		 *	Get float value that is stored in preferences, or it's default value.
-		 */
+		/// <summary>
+		/// Get float value that is stored in preferences, or it's default value.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static float GetFloat(string key)
 		{
 			if(m_FloatDefaults.ContainsKey(key))
@@ -181,9 +185,11 @@ namespace ProBuilder.EditorCore
 			return EditorPrefs.GetFloat(key, fallback);
 		}
 
-		/**
-		 *	Get int value that is stored in preferences, or it's default value.
-		 */
+		/// <summary>
+		/// Get int value that is stored in preferences, or it's default value.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static int GetInt(string key)
 		{
 			if(m_IntDefaults.ContainsKey(key))
@@ -198,17 +204,22 @@ namespace ProBuilder.EditorCore
 			return EditorPrefs.GetInt(key, fallback);
 		}
 
-		/**
-		 *	Get an enum value from the stored preferences (or it's default value).
-		 */
+		/// <summary>
+		/// Get an enum value from the stored preferences (or it's default value).
+		/// </summary>
+		/// <param name="key"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public static T GetEnum<T>(string key) where T : struct, System.IConvertible
 		{
 			return (T) (object) GetInt(key);
 		}
 
-		/**
-		 *	Get Color value stored in preferences.
-		 */
+		/// <summary>
+		/// Get Color value stored in preferences.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static Color GetColor(string key)
 		{
 			if(m_ColorDefaults.ContainsKey(key))
@@ -224,9 +235,11 @@ namespace ProBuilder.EditorCore
 			return fallback;
 		}
 
-		/**
-		 *	Get the string value associated with this key.
-		 */
+		/// <summary>
+		/// Get the string value associated with this key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static string GetString(string key)
 		{
 			if(m_StringDefaults.ContainsKey(key))
@@ -241,9 +254,11 @@ namespace ProBuilder.EditorCore
 			return EditorPrefs.GetString(key, fallback);
 		}
 
-		/**
-		 *	Get a material from preferences.
-		 */
+		/// <summary>
+		/// Get a material from preferences.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static Material GetMaterial(string key)
 		{
 			if(m_Preferences != null && preferences.HasKey<Material>(key))
@@ -273,9 +288,10 @@ namespace ProBuilder.EditorCore
 			return mat;
 		}
 
-		/**
-		 *	Retrieve stored shortcuts from preferences in an IEnumerable format.
-		 */
+		/// <summary>
+		/// Retrieve stored shortcuts from preferences in an IEnumerable format.
+		/// </summary>
+		/// <returns></returns>
 		public static IEnumerable<pb_Shortcut> GetShortcuts()
 		{
 			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
@@ -283,10 +299,12 @@ namespace ProBuilder.EditorCore
 				pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
 		}
 
-		/**
-		 *	Associate key with int value.
-		 *	Optional isLocal parameter stores preference in project settings (true) or global (false).
-		 */
+		/// <summary>
+		/// Associate key with int value.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="location">Optional parameter stores preference in project settings (true) or global (false).</param>
 		public static void SetInt(string key, int value, pb_PreferenceLocation location = pb_PreferenceLocation.Project)
 		{
 			if(location == pb_PreferenceLocation.Project)

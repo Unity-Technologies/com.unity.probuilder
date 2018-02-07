@@ -1,0 +1,11 @@
+{
+    "name": "Unity.ProBuilder.Tests.Framework",
+    "references": [
+        "Unity.ProBuilder.Core"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

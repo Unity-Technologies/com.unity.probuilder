@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ProBuilder.Core;
 using System;
-using ProBuilder.EditorCore;
 
 namespace ProBuilder.RuntimeTests.Type
 {

@@ -1,0 +1,16 @@
+{
+    "name": "Unity.ProBuilder.Editor.Tests",
+    "references": [
+        "Unity.ProBuilder.Tests.Framework",
+        "Unity.ProBuilder.Core",
+        "Unity.ProBuilder.MeshOperations",
+        "Unity.ProBuilder.Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

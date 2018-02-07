@@ -11,12 +11,10 @@ using UObject = UnityEngine.Object;
 using ProBuilder.Core;
 using NUnit.Framework;
 using UnityEditor;
-using UnityEngine.EventSystems;
-using UnityEngine.TestTools;
 
 namespace ProBuilder.Test
 {
-	static class pb_TestUtility
+	public static class pb_TestUtility
 	{
 		const string k_TemplatesDirectory = "Assets/Tests/Editor/Templates/";
 		const string k_TestsDirectory = "Assets/Tests/Editor/";
@@ -53,7 +51,7 @@ namespace ProBuilder.Test
 				for (int i = 0, c = shapes.Length; i < c; i++)
 				{
 					primitives[i] = pb_ShapeGenerator.CreateShape(shapes[i]);
-					primitives[i].msh.name = shapes[i].ToString();
+					primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
 				}
 				return primitives;
 			}

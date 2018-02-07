@@ -1,5 +1,5 @@
 {
-    "name": "ProBuilderAddOns",
+    "name": "Unity.AssetIdRemapUtility.Editor",
     "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [

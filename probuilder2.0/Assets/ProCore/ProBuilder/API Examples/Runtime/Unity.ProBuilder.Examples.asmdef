@@ -1,0 +1,10 @@
+{
+    "name": "Unity.ProBuilder.Examples",
+    "references": [
+        "Unity.ProBuilder.Core",
+        "Unity.ProBuilder.MeshOperations"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

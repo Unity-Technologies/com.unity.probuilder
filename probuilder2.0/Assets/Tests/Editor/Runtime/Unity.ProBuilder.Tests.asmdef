@@ -1,0 +1,13 @@
+{
+    "name": "Unity.ProBuilder.Tests",
+    "references": [
+        "Unity.ProBuilder.Core",
+        "Unity.ProBuilder.MeshOperations",
+        "Unity.ProBuilder.Tests.Framework"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

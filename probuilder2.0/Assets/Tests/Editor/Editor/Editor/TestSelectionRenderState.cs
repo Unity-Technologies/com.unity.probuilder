@@ -1,5 +1,3 @@
-#if !UNITY_4_7 && !UNITY_5_0 && !PROTOTYPE
-
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
@@ -10,7 +8,7 @@ using System;
 using ProBuilder.EditorCore;
 using ProBuilder.Test;
 
-namespace ProBuilder.RuntimeTests.Type
+namespace ProBuilder.EditorTests.Editor
 {
 	public class TestSelectionRenderState
 	{
@@ -23,4 +21,3 @@ namespace ProBuilder.RuntimeTests.Type
 		}
 	}
 }
-#endif
