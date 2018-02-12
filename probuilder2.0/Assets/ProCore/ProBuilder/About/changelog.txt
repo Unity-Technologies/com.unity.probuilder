@@ -1,4 +1,4 @@
-# ProBuilder 3.0.0-f.0
+# ProBuilder 3.0.0-f.1
 
 ## Features
 
@@ -42,6 +42,10 @@
 - "Cannot create menu item" warnings when importing Package Manager over Asset Store install.
 - Deleting an Asset Store package before importing a Package Manager version does not automatically pop up the Convert To Package Manager editor window.
 - API Examples are not accessible from Package Manager.
+
+## Changes from 3.0.0-f.0
+
+- Fix `pb_Fbx` errors when Unity FbxExporter is present in project.
 
 # ProBuilder 2.9.8f2
 

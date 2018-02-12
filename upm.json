@@ -41,7 +41,7 @@
 		// set version info in pb_VersionInfo
 		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=new pb_VersionInfo\\(\")[0-9adpbfADPBF\\-\\.]+", "GetFindVar(0)" ] },
 		// set build date in pb_VersionInfo
-		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US: [1-9]{1,2}/[1-9]{1,2}/[0-9]{4}(?=\"\\);)", "$DATE" ] },
+		{ "Command":"replace", "Arguments": [ "$SRC_PB_ROOT/Classes/ClassesCore/pb_Version.cs", "(?<=\")en-US:\\s[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}", "$DATE" ] },
 		// set version number in upm-project package.json
 		{ "Command":"replace", "Arguments": [ "$UPM_PACKAGE_DIR/package.json" "(?<=\"version\":\\s*\")[0-9adpbfADPBF\\-\\.]+", "GetFindVar(0)" ] },
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT", "$BUILD_DIR/$DST_PB_NAME" ] },
