@@ -19,8 +19,14 @@ namespace ProBuilder.EditorCore
 
 		static pb_ProGridsInterface()
 		{
+			// Current release
 			s_ProGridsType = pb_Reflection.GetType("ProGrids.Editor.pg_Editor");
 
+			// 2016/17ish
+			if(s_ProGridsType == null)
+				s_ProGridsType = pb_Reflection.GetType("ProGrids.pg_Editor");
+
+			// earlier
 			if(s_ProGridsType == null)
 				s_ProGridsType = pb_Reflection.GetType("pg_Editor");
 		}
