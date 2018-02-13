@@ -24,7 +24,7 @@ In Explorer (or Finder on macOS) navigate to your project directory. Open **mani
 ```
 {
 	"dependencies": {
-		"com.unity.probuilder" : "3.0.0"
+		"com.unity.probuilder" : "3.0.0-f.1"
 	},
 	"registry":"http://staging-packages.unity.com"
 }

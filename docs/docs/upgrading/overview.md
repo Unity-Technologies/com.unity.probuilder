@@ -1,35 +1,43 @@
-<div class="site"><a href="https://youtu.be/Ta3HkV_qHTc"><img src="../../images/VidLink_GettingStarted_Slim.png"></a></div>
+<h1>Installing ProBuilder</h1>
 
----
+## Unity 2018.1 and later (recommended)
 
-<div class="alert-box warning">
-The upgrade process is <b>not</b> reversible. If an error occurs, you will lose all your work. Always make a backup of your entire project before upgrading.
-</div>
+In Explorer (or Finder on macOS) navigate to your project directory. Open **manifest.json** found inside the **UnityPackageManager** directory and add ProBuilder as a dependency:
 
-<div class="alert-box warning">
-<strong>Unity Compatibility:</strong> As of ProBuilder v2.9.5f3, Unity 4.7 and 5.0 are no longer supported!
-</div>
 
-## Standard Upgrade Process
+```
+{
+	"dependencies": {
+		"com.unity.probuilder" : "3.0.0-f.1"
+	},
+	"registry":"http://staging-packages.unity.com"
+}
+```
 
-If you are using **ProBuilder 2.4.7** or later, simply import the latest version. No special steps are required.
+Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > About`.
 
-> To check your version of ProBuilder, click "Tools > ProBuilder > About".
+<h4>Upgrading from ProBuilder 2.9.8</h4>
 
-## Non-Standard Upgrade
+To upgrade a Unity project with ProBuilder 2.9.8 or later, follow these instructions.
 
-If you're running an older version of **ProBuilder** you'll need to follow a slightly more complex path.  **Make a backup of your entire project before proceeding!**
+1. Open the project in Unity 2018.1 or later
+2. Edit the **manifest.json** as described above
+3. Follow the **Convert to Package Manager** utility instructions.
 
-Depending on the version of ProBuilder you currently have installed, the process differs.  Use this chart to decide which guide you should follow.
+If the **Convert to Package Manager** utility does not automatically open, you can manually start the process by opening `Tools > ProBuilder > Repair > Convert to Package Manager`.
 
-| Currently Using | Upgrading To | Process |
-| - | - | - |
-| None (no ProBuilder install) | ProBuilder Basic | [Standard](standard.md) |
-| None (no ProBuilder install) | ProBuilder Advanced | [Standard](standard.md) |
-| ProBuilder Basic 2.4.7+ | ProBuilder Basic 2.4.8+ | [Standard](standard.md) |
-| ProBuilder Advanced 2.4.7+ | ProBuilder Advanced 2.4.8+ | [Standard](standard.md) |
-| ProBuilder 2.1.0 - 2.3.x | ProBuilder Advanced | [Upgrade Kit](upgrade-kit.md) |
-| ProBuilder 2.4.0 - 2.4.6 | ProBuilder Advanced | [DLL Rename Upgrade](dllrename.md) |
-| Prototype 2.4 - 2.6 | ProBuilder Basic/Advanced | [Prototype Upgrade](prototype.md) |
-| ProBuilder Source (any version) | ProBuilder (any version) | [Upgrade Kit](upgrade-kit.md) |
-| ProBuilder (any version) | ProBuilder Source (any version) | [Upgrade Kit](upgrade-kit.md) |
+See also [Upgrading to 3.0](../troubleshooting/faq/#convert-to-package-manager).
+
+
+## Unity 2017.3 and earlier
+
+**Important** - The Asset Store version of ProBuilder will only receive critical bug fixes going forward. New features are available in the 2018.1 Package Manager version of ProBuilder.
+
+1. Open your Unity project and ensure you have no persistent errors (red-colored text) in the Console.
+1. From the top menu, choose `Window > Asset Store`.
+1. In the Asset Store window type "ProBuilder" into the search bar.
+1. Click the "ProBuilder" icon in the search results.
+1. Click the blue "Download" button, and wait for the download to complete.
+1. After Unity has downloaded the package, click "Import."
+1. An "Import Unity Package" window will appear. Click "Import" at the bottom-right.
+1. After the import process completes, choose `Tools > ProBuilder > ProBuilder Window` from the top menu to begin using ProBuilder.

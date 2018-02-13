@@ -13,11 +13,12 @@ extra_javascript:
 pages:
 
 - Home: index.md
+- Install ProBuilder: upgrading/overview.md
 - Fundamentals: general/fundamentals.md
 
 - Toolbar:
   - Overview: toolbar/overview-toolbar.md
-  - Tool Panels: toolbar/tool-panels.md
+  - Tool Windows: toolbar/tool-panels.md
   - Poly Shape: toolbar/polyshape.md
   - Selection Actions: toolbar/selection-tools.md
   - Object Actions: toolbar/object-actions.md
@@ -32,25 +33,10 @@ pages:
     - Auto UVs Actions: texturing/auto-uvs-actions.md
     - Manual UVs Actions: texturing/manual-uvs-actions.md
 
-- Menu Actions: menu-actions.md
-
-- Experimental: 
-  - Overview: experimental/experimental-overview.md
-  - Bezier Shape: experimental/beziershape.md
-  - Boolean Ops: experimental/booleanops.md
+- Menu Actions: general/menu-actions.md
+- Experimental: experimental/experimental-overview.md
 
 - Preferences: preferences/preferences.md
-- ProBuilder Basic vs Advanced: basic-vs-advanced.md
-- Troubleshooting:
-  - troubleshooting/faq.md
-
-- Upgrading:
-  - What Upgrade Procedure Should I Follow?: upgrading/overview.md
-  - Standard: upgrading/standard.md
-  - DLL Rename: upgrading/dllrename.md
-  - Upgrade Kit: upgrading/upgrade-kit.md
-  - Prototype: upgrading/prototype.md
-
+- FAQ: troubleshooting/faq.md
 - Third-Party Licenses: credits.md
-
 - Changelog: changelog.md

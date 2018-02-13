@@ -2,54 +2,48 @@
 
 ---
 
-These **Tool Panels** contain important tools for [Shape Creation](#shape-tool), [Materials](#material-tools), [Texturing and UVs](#texturing), [Vertex Coloring](#vertex-colors), and [Smoothing Groups](#smoothing-groups).
-
-**Note:** Each panel can be docked, kept floating, or simply closed immediately after use.
-
----
-
 <a id="shape-tool"></a>
 ##![Shape Tool Icon](../images/icons/Panel_Shapes.png "Create New Shape Icon") Shape Tool
 
 **Keyboard Shortcut** : `CTRL SHIFT K`
 
-**Purpose** : Create new editable shapes such as Cylinder, Arch, and Stairs.
+**Purpose** : Create new editable shapes such as cylinder, arch, and stairs.
 
-Each shape has specific properties which can be customized before creation- for example, the Stairs shape lets you choose items like Step Height, Arc, and which parts of the Stairway to build.
+Each shape has specific properties which can be customized before creation. For example, the stairs shape lets you choose items like step height, arc, and which parts of the stairway to build.
 
 ![Shape Tool Example](../images/Example_ShapeToolsWithCurvedStair.png)
 
-**Usage** : To create a new shape, do the following:
+**Usage**
 
-1. Open the New Shape Tool
-1. If "Shape Preview" is enabled, you will see a blue Preview Object in the scene
-1. Choose the Shape you'd like to create (ex, Cube, Cylinder, Torus, etc)
-1. Set the options (ex, width, height, radius, number of stairs, etc)
-1. You may Move or Rotate the Preview Object within your scene
-1. Once ready, click "Build Shape" to create your final Shape
+1. Click **New Shape**.
+1. If *Shape Preview* is enabled, you will see a blue preview object in the scene.
+1. Choose the shape you'd like to create (ex, cube, cylinder, torus, etc).
+1. Set the options (ex, width, height, radius, number of stairs, etc).
+1. You may move or rotate the preview object within your scene.
+1. Click **Build Shape** to create your final shape.
 
 ---
 
 <a id="material-tools"></a>
 ##![Material Tools Icon](../images/icons/Panel_Materials.png "Material Tools Icon") Material Tools
 
-**Purpose** : Save and apply your most frequently used materials, using Quick Material one-click or Material Palette keyboard shortcuts.
+**Purpose** : Apply materials to objects or faces.
 
 ![Material Tools](../images/MaterialTools_WithExample.png "Material Tools")
 
-**Quick Material Usage**:
+**Quick Material Usage**
 
-* **(A)** The current "Quick Material"
-* **(B)** Apply the Quick Material to the selected faces
-* **(C)** Pick your Quick Material from the selected face
-* **(D)** Preview of the current Quick Material
+- **(A)** The current *Quick Material*.
+- **(B)** Apply the material to the selected faces.
+- **(C)** Pick your material from the selected face.
+- **(D)** Preview of the current *Quick Material*.
 
-Hold `CTRL SHIFT` while clicking on a face to apply the Quick Material.
+Hold `CTRL SHIFT` while clicking on a face to apply the *Quick Material*.
 
-**Material Palette Usage** :
+**Material Palette Usage**
 
-* **(E)** Drag-and-drop your often-used materials to these slots
-* **(F)** Create additional Material Palette slots
+- **(E)** Drag-and-drop your often-used materials to these slots.
+- **(F)** Create additional Material Palette slots.
 
 You can also press `ALT (number key)` to apply materials from the Palette.
 
@@ -58,7 +52,7 @@ You can also press `ALT (number key)` to apply materials from the Palette.
 <a id="texturing"></a>
 ##![UV Editor Icon](../images/icons/Panel_UVEditor.png "UV Editor Icon") Texturing and UVs
 
-**Purpose** : Opens the UV Editor Panel, for controlling how materials are displayed on your mesh (tiling, offset, unwrapping, etc).
+**Purpose**: Opens the UV Editor.
 
 ![Materials Example](../images/Example_MaterialsOnLevel.png "Materials Example")
 
