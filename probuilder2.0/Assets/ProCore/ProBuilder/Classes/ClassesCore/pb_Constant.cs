@@ -19,8 +19,8 @@ namespace ProBuilder.Core
 		public const string PRODUCT_NAME = "ProBuilder";
 #endif
 
-		internal static readonly HideFlags EDITOR_OBJECT_HIDE_FLAGS = (HideFlags) (1 | 2 | 4 | 8);
-		internal const float MAX_POINT_DISTANCE_FROM_CONTROL = 20f;
+		internal const HideFlags k_EditorHideFlags = (HideFlags) (1 | 2 | 4 | 8);
+		internal const float k_MaxPointDistanceFromControl = 20f;
 
 		static Material s_DefaultMaterial = null;
 		static Material s_FacePickerMaterial;

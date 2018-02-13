@@ -636,7 +636,7 @@ namespace ProBuilder.EditorCore
 
 				Vector3 p = pb_EditorHandleUtility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
 
-				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL )
+				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.k_MaxPointDistanceFromControl )
 				{
 					Handles.color = Color.green;
 					pb_Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
@@ -678,9 +678,9 @@ namespace ProBuilder.EditorCore
 				bool ti = m_CloseLoop || i > 0;
 				bool to = m_CloseLoop || i < (count - 1);
 
-				if(	Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.position)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL ||
-					(ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentIn)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL) ||
-					(to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentOut)) < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL))
+				if(	Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.position)) < pb_Constant.k_MaxPointDistanceFromControl ||
+					(ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentIn)) < pb_Constant.k_MaxPointDistanceFromControl) ||
+					(to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentOut)) < pb_Constant.k_MaxPointDistanceFromControl))
 					return true;
 			}
 

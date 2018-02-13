@@ -23,10 +23,10 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_EditorUtility
 	{
-		const float TIMER_DISPLAY_TIME = 1f;
-		static float notifTimer = 0f;
-		static EditorWindow notifWindow;
-		static bool notifDisplayed = false;
+		const float k_DefaultNotificationDuration = 1f;
+		static float s_NotificationTimer = 0f;
+		static EditorWindow s_NotificationWindow;
+		static bool s_IsNotificationDisplayed = false;
 
 		/// <summary>
 		/// Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
@@ -111,9 +111,9 @@ namespace ProBuilder.EditorCore
 			if(EditorApplication.update != NotifUpdate)
 				EditorApplication.update += NotifUpdate;
 
-			notifTimer = Time.realtimeSinceStartup + TIMER_DISPLAY_TIME;
-			notifWindow = window;
-			notifDisplayed = true;
+			s_NotificationTimer = Time.realtimeSinceStartup + k_DefaultNotificationDuration;
+			s_NotificationWindow = window;
+			s_IsNotificationDisplayed = true;
 		}
 
 		public static void RemoveNotification(EditorWindow window)
@@ -126,10 +126,10 @@ namespace ProBuilder.EditorCore
 
 		static void NotifUpdate()
 		{
-			if(notifDisplayed && Time.realtimeSinceStartup > notifTimer)
+			if(s_IsNotificationDisplayed && Time.realtimeSinceStartup > s_NotificationTimer)
 			{
-				notifDisplayed = false;
-				RemoveNotification(notifWindow);
+				s_IsNotificationDisplayed = false;
+				RemoveNotification(s_NotificationWindow);
 			}
 		}
 
@@ -289,7 +289,7 @@ namespace ProBuilder.EditorCore
 					break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = pb_PreferencesInternal.HasKey(pb_Constant.pbForceConvex) ? pb_PreferencesInternal.GetBool(pb_Constant.pbForceConvex) : false;
+					pb.gameObject.AddComponent<MeshCollider>().convex = pb_PreferencesInternal.GetBool(pb_Constant.pbForceConvex, false);
 					break;
 			}
 

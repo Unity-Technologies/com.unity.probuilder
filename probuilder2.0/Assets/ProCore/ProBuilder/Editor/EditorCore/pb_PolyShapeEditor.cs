@@ -435,7 +435,7 @@ namespace ProBuilder.EditorCore
 					return;
 				}
 
-				if(m_DistanceFromHeightHandle > pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL)
+				if(m_DistanceFromHeightHandle > pb_Constant.k_MaxPointDistanceFromControl)
 				{
 					// point insertion
 					int index;
@@ -451,7 +451,7 @@ namespace ProBuilder.EditorCore
 
 					float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
-					if(distanceToVertex > pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL && distanceToLine < pb_Constant.MAX_POINT_DISTANCE_FROM_CONTROL)
+					if(distanceToVertex > pb_Constant.k_MaxPointDistanceFromControl && distanceToLine < pb_Constant.k_MaxPointDistanceFromControl)
 					{
 						Handles.color = Color.green;
 

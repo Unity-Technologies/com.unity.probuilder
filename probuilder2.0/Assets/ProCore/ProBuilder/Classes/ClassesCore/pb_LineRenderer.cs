@@ -22,7 +22,7 @@ namespace ProBuilder.Core
 		static Mesh MeshConstructor()
 		{
 			Mesh m = new Mesh();
-			m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
+			m.hideFlags = pb_Constant.k_EditorHideFlags;
 			m.name = "pb_LineRenderer::Mesh";
 			return m;
 		}
@@ -53,7 +53,7 @@ namespace ProBuilder.Core
 			mat = new Material(Shader.Find("ProBuilder/UnlitVertexColor"));
 			mat.name = "pb_LineRenderer_Material";
 			mat.SetColor("_Color", Color.white);
-			mat.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
+			mat.hideFlags = pb_Constant.k_EditorHideFlags;
 		}
 
 		void OnDestroy()
@@ -101,7 +101,7 @@ namespace ProBuilder.Core
 			m.uv = new Vector2[m.vertexCount];
 			m.colors = col;
 
-			m.hideFlags = pb_Constant.EDITOR_OBJECT_HIDE_FLAGS;
+			m.hideFlags = pb_Constant.k_EditorHideFlags;
 
 			gizmos.Add(m);
 		}
