@@ -33,6 +33,7 @@
 			"$UPM_PACKAGE_DIR/ProBuilder",
 			"$UPM_PACKAGE_DIR/ProBuilder.meta",
 			"$UPM_PACKAGE_DIR/CHANGELOG.md"
+			"$UPM_PACKAGE_DIR/Documentation/com.unity.probuilder.md"
 		]}
 	],
 	"OnPreBuild":[
@@ -117,5 +118,6 @@
 	],
 	"OnPostBuild": [
 		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT/About/changelog.txt", "$BUILD_DIR/CHANGELOG.md" ] },
+		{ "Command":"cp", "Arguments": [ "$SRC_PB_ROOT/README.md", "$UPM_PACKAGE_DIR/Documentation/com.unity.probuilder.md" ] },
 	]
 }
