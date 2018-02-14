@@ -9,7 +9,7 @@ mkdocs build -c
 find site/ -name '*.psd' -exec rm {} \;
 
 # generate the current.txt file
-mono gen_cur_txt.exe -f docs/changelog.md > site/current.txt
+# mono gen_cur_txt.exe -f docs/changelog.md > site/current.txt
 
 SITE=../../site/probuilder2
 MKBUILD=$(pwd)

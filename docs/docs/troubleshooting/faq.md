@@ -1,11 +1,15 @@
 <a id="convert-to-package-manager"></a>
-## Upgrading to 3.0
+## Convert to Package Manager / Upgrading to 3.0
 
 In most cases, the process to upgrade a Unity project using ProBuilder 2.9.8 or lower to ProBuilder 3.0.0 or higher is simply to import the latest version. However, if that fails you may manually invoke the upgrade utility.
 
 `Tools/ProBuilder/Repair/Convert to Package Manager`
 
 To force the **Convert to Package Manager** utility to run, context click in the window and select "Find and Replace Deprecated File Ids."
+
+## Source Code
+
+Currently source code access is not available. We're working on getting it published soon.
 
 <div class="manual"><hr /></div>
 
