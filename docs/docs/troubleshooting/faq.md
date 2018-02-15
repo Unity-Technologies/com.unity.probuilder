@@ -15,6 +15,16 @@ Currently source code access is not available. We're working on getting it publi
 
 The ProBuilder API is currently considered to be in **beta**. It **will** change before the final release.
 
+## Pink Shaders
+
+If you are upgrading a project from the Asset Store package make sure to run the [Convert to Package Manager](#convert-to-package-manager) utility.
+
+If you're using the new Standard Rendering Pipeline you may have issues compiling the ProBuilder default shader. As a workaround, you can set the default material for ProBuilder in:
+
+`Edit > Preferences > ProBuilder`
+
+Under "Default Material."
+
 <div class="manual"><hr /></div>
 
 ## Error building Player (Windows Store, iOS, Android, WebGL)
