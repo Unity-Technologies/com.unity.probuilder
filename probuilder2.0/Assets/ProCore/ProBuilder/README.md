@@ -1,12 +1,10 @@
-![](images/ProBuilder_Logo_Flat_256.png)
-
 # About ProBuilder
 
 Build, edit, and texture custom geometry in Unity. Use ProBuilder for in-scene level design, prototyping, collision meshes, all with on-the-fly play-testing. Advanced features include UV editing, vertex colors, parametric shapes, and texture blending. With ProBuilder's model export feature it's easy to tweak your levels in any external 3D modelling suite.
 
 ## Requirements
 
-ProBuilder 3.0.0 is compatible with Unity 2018.1 and later.
+ProBuilder is compatible with Unity 2018.1 and later.
 
 ## Help and Support
 
@@ -18,17 +16,7 @@ For general questions and info, email us at [contact@procore3d.com](mailto:conta
 
 ## Unity 2018.1 and later (recommended)
 
-In Explorer (or Finder on macOS) navigate to your project directory. Open **manifest.json** found inside the **UnityPackageManager** directory and add ProBuilder as a dependency:
-
-
-```
-{
-	"dependencies": {
-		"com.unity.probuilder" : "3.0.0-f.1"
-	},
-	"registry":"http://staging-packages.unity.com"
-}
-```
+To install this package, follow the instructions in the [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@1.7/manual/index.html).
 
 Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > About`.
 
@@ -36,8 +24,8 @@ Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > A
 
 To upgrade a Unity project with ProBuilder 2.9.8 or later, follow these instructions.
 
-1. Open the project in Unity 2018.1 or later
-2. Edit the **manifest.json** as described above
+1. Open the project in Unity 2018.1 or later.
+2. Install ProBuilder as described aboved.
 3. Follow the **Convert to Package Manager** utility instructions.
 
 If the **Convert to Package Manager** utility does not automatically open, you can manually start the process by opening `Tools > ProBuilder > Repair > Convert to Package Manager`.
