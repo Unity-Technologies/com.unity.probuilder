@@ -269,7 +269,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			}
 
-			if (pb_PreferencesInternal.GetInt(pb_Constant.pbEditorShortcutsVersion, -1) != k_EditorShortcutsVersion)
+			if (pb_PreferencesInternal.GetInt(pb_Constant.pbEditorShortcutsVersion, k_EditorShortcutsVersion) != k_EditorShortcutsVersion)
 			{
 				pb_PreferencesInternal.SetInt(pb_Constant.pbEditorShortcutsVersion, k_EditorShortcutsVersion,
 					pb_PreferenceLocation.Global);
