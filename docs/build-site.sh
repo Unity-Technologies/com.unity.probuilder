@@ -2,7 +2,7 @@
 
 set -e
 
-cp ../probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt docs/changelog.md
+# cp ../probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt docs/changelog.md
 
 mkdocs build -c
 
