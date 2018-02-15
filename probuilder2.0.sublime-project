@@ -61,14 +61,6 @@
 			]
 		},
 		{
-			"path": "docfx_project",
-			"folder_exclude_patterns":
-			[
-				"docs/site",
-				"pdfs"
-			]
-		},
-		{
 			"path": ".",
 			"folder_exclude_patterns": [ "*" ]
 		},
