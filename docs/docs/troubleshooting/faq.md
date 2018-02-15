@@ -11,6 +11,10 @@ To force the **Convert to Package Manager** utility to run, context click in the
 
 Currently source code access is not available. We're working on getting it published soon.
 
+## API
+
+The ProBuilder API is currently considered to be in **beta**. It **will** change before the final release.
+
 <div class="manual"><hr /></div>
 
 ## Error building Player (Windows Store, iOS, Android, WebGL)
