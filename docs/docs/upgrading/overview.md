@@ -2,17 +2,7 @@
 
 ## Unity 2018.1 and later (recommended)
 
-In Explorer (or Finder on macOS) navigate to your project directory. Open **manifest.json** found inside the **UnityPackageManager** directory and add ProBuilder as a dependency:
-
-
-```
-{
-	"dependencies": {
-		"com.unity.probuilder" : "3.0.1"
-	},
-	"registry":"http://staging-packages.unity.com"
-}
-```
+To install this package, follow the instructions in the [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@1.7/manual/index.html).
 
 Verify that ProBuilder is correctly installed by opening `Tools > ProBuilder > About`.
 
