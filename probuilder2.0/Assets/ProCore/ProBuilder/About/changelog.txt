@@ -1,4 +1,4 @@
-# ProBuilder 3.0.0-f.1
+# ProBuilder 3.0.1-f.0
 
 ## Features
 
@@ -43,9 +43,10 @@
 - Deleting an Asset Store package before importing a Package Manager version does not automatically pop up the Convert To Package Manager editor window.
 - API Examples are not accessible from Package Manager.
 
-## Changes from 3.0.0-f.0
+## Changes from 3.0.0-f.1
 
 - Fix `pb_Fbx` errors when Unity FbxExporter is present in project.
+- Update Package Manager description and display name.
 
 # ProBuilder 2.9.8f2
 

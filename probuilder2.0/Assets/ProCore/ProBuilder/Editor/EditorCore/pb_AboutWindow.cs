@@ -283,7 +283,7 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_ChangeLogVersionInfo.ToString("M.m.p T b")), versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_ChangeLogVersionInfo.ToString("M.m.p")), versionInfoStyle);
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
