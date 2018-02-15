@@ -7,8 +7,6 @@ extra_css:
   - css/general.css
   - css_site/site.css
   - css_site/youtube.css
-extra_javascript:
-  - javascript/zendesk-chat.js
 
 pages:
 
