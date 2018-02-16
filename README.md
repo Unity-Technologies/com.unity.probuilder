@@ -5,7 +5,7 @@
 - [API Quick Start](#api-quick-start)
 - [Build for Package Manager](#building-for-unity-package-manager)
 - [Testing UPM Builds](#testing-upm-builds)
-- [Build for Asset Store](#building-asset-store-projects-&-packages)
+- [Build for Asset Store](#building-asset-store-projects)
 
 # Summary
 
@@ -204,7 +204,7 @@ Check for the latest version on Bintray: https://bintray.com/unity/unity-staging
 }
 ```
 
-## Building Asset Store Projects & Packages
+## Building Asset Store Projects
 
 **Important:** Asset Store build paths are no longer maintained. 2018.1 and later is required to use Package Manager.
 
