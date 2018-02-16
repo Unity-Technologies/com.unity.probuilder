@@ -29,14 +29,14 @@ namespace ProBuilder.EditorCore
 		const int LEFT_MOUSE_BUTTON = 0;
 		const int MIDDLE_MOUSE_BUTTON = 2;
 
-		static Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
-		static Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
-		static Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
+		static readonly Quaternion QuaternionUp = Quaternion.Euler(Vector3.right*90f);
+		static readonly Quaternion QuaternionRight = Quaternion.Euler(Vector3.up*90f);
+		static readonly Vector3 ConeDepth = new Vector3(0f, 0f, 16f);
 
-		static Color HANDLE_COLOR_UP = new Color(0f, .7f, 0f, .8f);
-		static Color HANDLE_COLOR_RIGHT = new Color(0f, 0f, .7f, .8f);
-		static Color HANDLE_COLOR_ROTATE = new Color(0f, .7f, 0f, .8f);
-		static Color HANDLE_COLOR_SCALE = new Color(.7f, .7f, .7f, .8f);
+		static readonly Color k_HandleColorUp = new Color(0f, .7f, 0f, .8f);
+		static readonly Color k_HandleColorRight = new Color(0f, 0f, .7f, .8f);
+		static readonly Color k_HandleColorRotate = new Color(0f, .7f, 0f, .8f);
+		static readonly Color k_HandleColorScale = new Color(.7f, .7f, .7f, .8f);
 
 		static Material m_HandleMaterial = null;
 
@@ -143,7 +143,7 @@ namespace ProBuilder.EditorCore
 
 			Handles.color = Color.yellow;
 			pb_Handles.CircleCap(-1, position, Quaternion.identity, width / 2f);
-			Handles.color = HANDLE_COLOR_UP;
+			Handles.color = k_HandleColorUp;
 
 			// Y Line
 			Handles.DrawLine(position, position - Vector2.up * size);
@@ -155,7 +155,7 @@ namespace ProBuilder.EditorCore
 					QuaternionUp,
 					width/2);
 
-			Handles.color = HANDLE_COLOR_RIGHT;
+			Handles.color = k_HandleColorRight;
 
 			// X Line
 			Handles.DrawLine(position, position + Vector2.right * size);
@@ -233,7 +233,7 @@ namespace ProBuilder.EditorCore
 			Vector2 currentDirection = (mousePosition-position).normalized;
 
 			// Draw gizmos
-			Handles.color = HANDLE_COLOR_ROTATE;
+			Handles.color = k_HandleColorRotate;
 			pb_Handles.CircleCap(-1, position, Quaternion.identity, radius);
 
 			if(currentId == id)
@@ -291,7 +291,7 @@ namespace ProBuilder.EditorCore
 			Vector2 mousePosition = e.mousePosition;
 			int width = size/4;
 
-			Handles.color = HANDLE_COLOR_UP;
+			Handles.color = k_HandleColorUp;
 			Handles.DrawLine(position, position - Vector2.up * size * scale.y);
 
 			if(position.y - size > 0f)
@@ -300,7 +300,7 @@ namespace ProBuilder.EditorCore
 					QuaternionUp,
 					width/3);
 
-			Handles.color = HANDLE_COLOR_RIGHT;
+			Handles.color = k_HandleColorRight;
 			Handles.DrawLine(position, position + Vector2.right * size * scale.x);
 
 			if(position.y > 0f)
@@ -309,7 +309,7 @@ namespace ProBuilder.EditorCore
 					Quaternion.Euler(Vector3.up*90f),
 					width/3);
 
-			Handles.color = HANDLE_COLOR_SCALE;
+			Handles.color = k_HandleColorScale;
 			pb_Handles.CubeCap(0,
 				((Vector3)position) - Vector3.forward*16,
 				QuaternionUp,

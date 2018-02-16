@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using ProBuilder.Core;
 using ProBuilder.Interface;
 using ProBuilder.MeshOperations;
-using UnityEngine.XR.WSA.Input;
 
 namespace ProBuilder.EditorCore
 {
@@ -1824,120 +1823,121 @@ namespace ProBuilder.EditorCore
 			if (sceneView != SceneView.lastActiveSceneView)
 				return;
 
-			Handles.BeginGUI();
-
-			int screenWidth = (int) sceneView.position.width;
-			int screenHeight = (int) sceneView.position.height;
-
-			int currentSelectionMode = (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) selectionMode) + 1 : 0;
-
-			switch (m_SceneToolbarLocation)
+			using (new pb_HandleGUI())
 			{
-				case SceneToolbarLocation.BottomCenter:
-					elementModeToolbarRect.x = (screenWidth / 2 - 64);
-					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
-					break;
+				int screenWidth = (int) sceneView.position.width;
+				int screenHeight = (int) sceneView.position.height;
 
-				case SceneToolbarLocation.BottomLeft:
-					elementModeToolbarRect.x = 12;
-					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
-					break;
+				int currentSelectionMode =
+					(editLevel != EditLevel.Top && editLevel != EditLevel.Plugin) ? ((int) selectionMode) + 1 : 0;
 
-				case SceneToolbarLocation.BottomRight:
-					elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 12);
-					elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
-					break;
-
-				case SceneToolbarLocation.UpperLeft:
-					elementModeToolbarRect.x = 12;
-					elementModeToolbarRect.y = 10;
-					break;
-
-				case SceneToolbarLocation.UpperRight:
-					elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 96);
-					elementModeToolbarRect.y = 10;
-					break;
-
-				default:
-				case SceneToolbarLocation.UpperCenter:
-					elementModeToolbarRect.x = (screenWidth / 2 - 64);
-					elementModeToolbarRect.y = 10;
-					break;
-			}
-
-			EditorGUI.BeginChangeCheck();
-
-			currentSelectionMode = GUI.Toolbar(elementModeToolbarRect, (int) currentSelectionMode, m_EditModeIcons, commandStyle);
-
-			if (EditorGUI.EndChangeCheck())
-			{
-				if (currentSelectionMode == 0)
+				switch (m_SceneToolbarLocation)
 				{
-					SetEditLevel(EditLevel.Top);
+					case SceneToolbarLocation.BottomCenter:
+						elementModeToolbarRect.x = (screenWidth / 2 - 64);
+						elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
+						break;
+
+					case SceneToolbarLocation.BottomLeft:
+						elementModeToolbarRect.x = 12;
+						elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
+						break;
+
+					case SceneToolbarLocation.BottomRight:
+						elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 12);
+						elementModeToolbarRect.y = screenHeight - elementModeToolbarRect.height * 3;
+						break;
+
+					case SceneToolbarLocation.UpperLeft:
+						elementModeToolbarRect.x = 12;
+						elementModeToolbarRect.y = 10;
+						break;
+
+					case SceneToolbarLocation.UpperRight:
+						elementModeToolbarRect.x = screenWidth - (elementModeToolbarRect.width + 96);
+						elementModeToolbarRect.y = 10;
+						break;
+
+					default:
+					case SceneToolbarLocation.UpperCenter:
+						elementModeToolbarRect.x = (screenWidth / 2 - 64);
+						elementModeToolbarRect.y = 10;
+						break;
 				}
+
+				EditorGUI.BeginChangeCheck();
+
+				currentSelectionMode =
+					GUI.Toolbar(elementModeToolbarRect, (int) currentSelectionMode, m_EditModeIcons, commandStyle);
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					if (currentSelectionMode == 0)
+					{
+						SetEditLevel(EditLevel.Top);
+					}
+					else
+					{
+						if (editLevel != EditLevel.Geometry)
+							SetEditLevel(EditLevel.Geometry);
+
+						SetSelectionMode((SelectMode) (currentSelectionMode - 1));
+					}
+				}
+
+				if (movingVertices && m_ShowSceneInfo)
+				{
+					string handleTransformInfo = string.Format(
+						"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
+						(newPosition - translateOrigin).ToString(),
+						(currentHandleRotation.eulerAngles - rotateOrigin).ToString(),
+						(currentHandleScale - scaleOrigin).ToString());
+
+					var gc = pb_EditorGUIUtility.TempGUIContent(handleTransformInfo);
+					// sceneview screen.height includes the tab and toolbar
+					var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
+					var size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
+
+					Rect handleTransformInfoRect = new Rect(
+						sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
+						size.x,
+						size.y);
+
+					GUI.Label(handleTransformInfoRect, gc, pb_EditorStyles.sceneTextBox);
+				}
+
+				if (m_ShowSceneInfo)
+				{
+					Vector2 size = pb_EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
+					sceneInfoRect.width = size.x;
+					sceneInfoRect.height = size.y;
+					GUI.Label(sceneInfoRect, m_SceneInfo, pb_EditorStyles.sceneTextBox);
+				}
+
+				// Enables vertex selection with a mouse click
+				if (editLevel == EditLevel.Geometry && !m_IsDragging && selectionMode == SelectMode.Vertex)
+					m_MouseClickRect = new Rect(m_CurrentEvent.mousePosition.x - 10, m_CurrentEvent.mousePosition.y - 10, 20, 20);
 				else
-				{
-					if (editLevel != EditLevel.Geometry)
-						SetEditLevel(EditLevel.Geometry);
+					m_MouseClickRect = pb_Constant.RectZero;
 
-					SetSelectionMode((SelectMode) (currentSelectionMode - 1));
+				if (m_IsDragging)
+				{
+					if (m_CurrentEvent.type == EventType.Repaint)
+					{
+						// Always draw from lowest to largest values
+						var start = Vector2.Min(mousePosition_initial, m_CurrentEvent.mousePosition);
+						var end = Vector2.Max(mousePosition_initial, m_CurrentEvent.mousePosition);
+
+						m_MouseDragRect = new Rect(start.x, start.y, end.x - start.x, end.y - start.y);
+
+						SceneStyles.selectionRect.Draw(m_MouseDragRect, false, false, false, false);
+					}
+					else if (m_CurrentEvent.isMouse)
+					{
+						HandleUtility.Repaint();
+					}
 				}
 			}
-
-			if (movingVertices && m_ShowSceneInfo)
-			{
-				string handleTransformInfo = string.Format(
-					"translate: <b>{0}</b>\nrotate: <b>{1}</b>\nscale: <b>{2}</b>",
-					(newPosition - translateOrigin).ToString(),
-					(currentHandleRotation.eulerAngles - rotateOrigin).ToString(),
-					(currentHandleScale - scaleOrigin).ToString());
-
-				var gc = pb_EditorGUIUtility.TempGUIContent(handleTransformInfo);
-				// sceneview screen.height includes the tab and toolbar
-				var toolbarHeight = EditorStyles.toolbar.CalcHeight(gc, Screen.width);
-				var size = pb_EditorStyles.sceneTextBox.CalcSize(gc);
-
-				Rect handleTransformInfoRect = new Rect(
-					sceneView.position.width - (size.x + 8), sceneView.position.height - (size.y + 8 + toolbarHeight),
-					size.x,
-					size.y);
-
-				GUI.Label(handleTransformInfoRect, gc, pb_EditorStyles.sceneTextBox);
-			}
-
-			if (m_ShowSceneInfo)
-			{
-				Vector2 size = pb_EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
-				sceneInfoRect.width = size.x;
-				sceneInfoRect.height = size.y;
-				GUI.Label(sceneInfoRect, m_SceneInfo, pb_EditorStyles.sceneTextBox);
-			}
-
-			// Enables vertex selection with a mouse click
-			if (editLevel == EditLevel.Geometry && !m_IsDragging && selectionMode == SelectMode.Vertex)
-				m_MouseClickRect = new Rect(m_CurrentEvent.mousePosition.x - 10, m_CurrentEvent.mousePosition.y - 10, 20, 20);
-			else
-				m_MouseClickRect = pb_Constant.RectZero;
-
-			if (m_IsDragging)
-			{
-				if (m_CurrentEvent.type == EventType.Repaint)
-				{
-					// Always draw from lowest to largest values
-					var start = Vector2.Min(mousePosition_initial, m_CurrentEvent.mousePosition);
-					var end = Vector2.Max(mousePosition_initial, m_CurrentEvent.mousePosition);
-
-					m_MouseDragRect = new Rect(start.x, start.y, end.x - start.x, end.y - start.y);
-
-					SceneStyles.selectionRect.Draw(m_MouseDragRect, false, false, false, false);
-				}
-				else if (m_CurrentEvent.isMouse)
-				{
-					HandleUtility.Repaint();
-				}
-			}
-
-			Handles.EndGUI();
 		}
 
 		public bool ShortcutCheck(Event e)

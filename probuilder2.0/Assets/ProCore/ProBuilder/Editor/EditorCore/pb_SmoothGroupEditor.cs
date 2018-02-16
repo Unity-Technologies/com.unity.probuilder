@@ -13,7 +13,7 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	class pb_SmoothGroupEditor : EditorWindow
 	{
-		private class SmoothGroupData
+		class SmoothGroupData
 		{
 			public bool isVisible;
 			public Dictionary<int, List<pb_Face>> groups;
@@ -622,14 +622,15 @@ namespace ProBuilder.EditorCore
 				Repaint();
 		}
 
-		private void OnSceneGUI(SceneView view)
+		void OnSceneGUI(SceneView view)
 		{
 			if (m_SmoothGroups.Count > 1)
 			{
-				Handles.BeginGUI();
-				foreach(var kvp in m_SmoothGroups)
-					Handles.Label(kvp.Key.transform.position, kvp.Key.name, EditorStyles.boldLabel);
-				Handles.EndGUI();
+				using (new pb_HandleGUI())
+				{
+					foreach (var kvp in m_SmoothGroups)
+						Handles.Label(kvp.Key.transform.position, kvp.Key.name, EditorStyles.boldLabel);
+				}
 			}
 
 			Event evt = Event.current;
