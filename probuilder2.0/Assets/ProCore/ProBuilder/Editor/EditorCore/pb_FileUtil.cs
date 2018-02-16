@@ -151,6 +151,10 @@ namespace ProBuilder.EditorCore
 			return null;
 		}
 
+		/// <summary>
+		/// Get the selected directory relative to project root.
+		/// </summary>
+		/// <returns></returns>
 		internal static string GetSelectedDirectory()
 		{
 			Object o = Selection.activeObject;
@@ -162,16 +166,16 @@ namespace ProBuilder.EditorCore
 				if (!string.IsNullOrEmpty(path))
 				{
 					if (Directory.Exists(path))
-						return Path.GetFullPath(path);
+						return GetRelativePath(Path.GetFullPath(path));
 
 					string res = Path.GetDirectoryName(path);
 
-					if (!string.IsNullOrEmpty(res) && System.IO.Directory.Exists(res))
-						return Path.GetFullPath(res);
+					if (!string.IsNullOrEmpty(res) && Directory.Exists(res))
+						return GetRelativePath(Path.GetFullPath(res));
 				}
 			}
 
-			return Path.GetFullPath("Assets");
+			return "Assets";
 		}
 
 		/// <summary>
@@ -183,6 +187,8 @@ namespace ProBuilder.EditorCore
 		{
 			string full = Path.GetFullPath(path).Replace("\\", "/");
 			string cur = Directory.GetCurrentDirectory().Replace("\\", "/");
+			if (!cur.EndsWith("/"))
+				cur += "/";
 			return full.Replace(cur, "");
 		}
 
