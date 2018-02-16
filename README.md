@@ -1,11 +1,11 @@
 # Table of Contents
 
-- [Summary](#Summary)
-- [API Overview](#Code-Organization)
-- [API Quick Start](#API-Quick-Start)
-- [Build for Package Manager](#Building-for-Unity-Package-Manager)
-- [Testing UPM Builds](#Testing-UPM-Builds)
-- [Build for Asset Store](#Building-Asset-Store-Projects-&-Packages)
+- [Summary](#summary)
+- [API Overview](#code-organization)
+- [API Quick Start](#api-quick-start)
+- [Build for Package Manager](#building-for-unity-package-manager)
+- [Testing UPM Builds](#testing-upm-builds)
+- [Build for Asset Store](#building-asset-store-projects-&-packages)
 
 # Summary
 
