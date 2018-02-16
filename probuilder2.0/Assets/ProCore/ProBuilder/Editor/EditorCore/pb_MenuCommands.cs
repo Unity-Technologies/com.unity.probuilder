@@ -529,8 +529,6 @@ namespace ProBuilder.EditorCore
 			if(editor != null)
 				editor.UpdateSelection();
 
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
-
 			SceneView.RepaintAll();
 
 			if( extrudedFaceCount > 0 )
@@ -566,8 +564,6 @@ namespace ProBuilder.EditorCore
 					}
 				}
 			}
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(success)
 			{
@@ -779,8 +775,6 @@ namespace ProBuilder.EditorCore
 
 			if(editor)
 				editor.UpdateSelection(false);
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if( rc > 0 )
 				return new pb_ActionResult(Status.Success, "Shrink Selection");
@@ -1028,8 +1022,6 @@ namespace ProBuilder.EditorCore
 				editor.UpdateSelection();
 			}
 
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
-
 			if(count > 0)
 				return new pb_ActionResult(Status.Success, "Delete " + count + " Faces");
 			else
@@ -1078,8 +1070,6 @@ namespace ProBuilder.EditorCore
 
 			if(editor)
 				editor.UpdateSelection();
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(count > 0)
 				return new pb_ActionResult(Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
@@ -1166,8 +1156,6 @@ namespace ProBuilder.EditorCore
 				pb_Selection.SetSelection(detached.ToArray());
 				editor.UpdateSelection();
 			}
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(detachedFaceCount > 0)
 				return new pb_ActionResult(Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
@@ -1297,8 +1285,6 @@ namespace ProBuilder.EditorCore
 			if(editor)
 				editor.UpdateSelection();
 
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
-
 			if(success)
 				return new pb_ActionResult(Status.Success, "Collapse Vertices");
 			else
@@ -1353,8 +1339,6 @@ namespace ProBuilder.EditorCore
 
 			if(editor)
 				editor.UpdateSelection(true);
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(res && weldCount > 0)
 				return new pb_ActionResult(Status.Success, "Weld " + weldCount + (weldCount > 1 ? " Vertices" : " Vertex"));
@@ -1458,8 +1442,6 @@ namespace ProBuilder.EditorCore
 			}
 
 			pb_Editor.Refresh();
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(splitCount > 0)
 				return new pb_ActionResult(Status.Success, "Split " + splitCount + (splitCount > 1 ? " Vertices" : " Vertex"));
@@ -1707,8 +1689,6 @@ namespace ProBuilder.EditorCore
 				}
 			}
 
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
-
 			if(success > 0)
 			{
 				if(editor)
@@ -1804,8 +1784,6 @@ namespace ProBuilder.EditorCore
 
 			if(editor)
 				editor.UpdateSelection(true);
-
-			EditorWindow.FocusWindowIfItsOpen(typeof(SceneView));
 
 			if(success > 0)
 				return new pb_ActionResult(Status.Success, "Insert Edge Loop");
