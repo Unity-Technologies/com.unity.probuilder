@@ -119,7 +119,9 @@ namespace ProBuilder.EditorCore
 		Matrix4x4 handleMatrix = Matrix4x4.identity;
 		Quaternion handleRotation = new Quaternion(0f, 0f, 0f, 1f);
 
+#if !UNITY_2018_2_OR_NEWER
 		static MethodInfo s_ResetOnSceneGUIState = null;
+#endif
 
 		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
 
@@ -233,7 +235,9 @@ namespace ProBuilder.EditorCore
 			pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 
+#if !UNITY_2018_2_OR_NEWER
 			s_ResetOnSceneGUIState = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
 
 			// make sure load prefs is called first, because other methods depend on the preferences set here
 			LoadPrefs();
@@ -462,10 +466,10 @@ namespace ProBuilder.EditorCore
 
 		void OnSceneGUI(SceneView scnView)
 		{
-			// todo remove once https://ono.unity3d.com/unity/unity/changelog?branch=editor/sceneview/reset-guistate-per-onsceneguidelegate
-			// is merged to trunk
+#if !UNITY_2018_2_OR_NEWER
 			if(s_ResetOnSceneGUIState != null)
 				s_ResetOnSceneGUIState.Invoke(scnView, null);
+#endif
 
 			SceneStyles.Init();
 
@@ -492,66 +496,7 @@ namespace ProBuilder.EditorCore
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-			if (m_CurrentEvent.type == EventType.DragPerform)
-			{
-				GameObject go = HandleUtility.PickGameObject(m_CurrentEvent.mousePosition, false);
-
-				if (go != null && System.Array.Exists(DragAndDrop.objectReferences, x => x is Texture2D || x is Material))
-				{
-					pb_Object pb = go.GetComponent<pb_Object>();
-
-					if (pb)
-					{
-						Material mat = null;
-						foreach (Object t in DragAndDrop.objectReferences)
-						{
-							if (t is Material)
-							{
-								mat = (Material) t;
-								break;
-							}
-							/* This works, but throws some bullshit errors. Not creating a material leaks, so disable this functionality. */
-							else if (t is Texture2D)
-							{
-								mat = new Material(Shader.Find("Diffuse"));
-								mat.mainTexture = (Texture2D) t;
-
-								string texPath = AssetDatabase.GetAssetPath(mat.mainTexture);
-								int lastDot = texPath.LastIndexOf(".");
-								texPath = texPath.Substring(0, texPath.Length - (texPath.Length - lastDot));
-								texPath = AssetDatabase.GenerateUniqueAssetPath(texPath + ".mat");
-
-								AssetDatabase.CreateAsset(mat, texPath);
-								AssetDatabase.Refresh();
-
-								break;
-							}
-						}
-
-						if (mat != null)
-						{
-							if (editLevel == EditLevel.Geometry)
-							{
-								pb_Undo.RecordSelection(selection, "Set Face Materials");
-
-								foreach (pb_Object pbs in selection)
-									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
-							}
-							else
-							{
-								pb_Undo.RecordObject(pb, "Set Object Material");
-								pb.SetFaceMaterial(pb.faces, mat);
-							}
-
-							pb.ToMesh();
-							pb.Refresh();
-							pb.Optimize();
-
-							m_CurrentEvent.Use();
-						}
-					}
-				}
-			}
+			HandleDragAndDrop(m_CurrentEvent);
 
 			DrawHandleGUI(scnView);
 
@@ -746,6 +691,79 @@ namespace ProBuilder.EditorCore
 				SceneView.RepaintAll();
 				doubleClicked = true;
 			}
+		}
+
+		void HandleDragAndDrop(Event evt)
+		{
+//			if (evt.type == EventType.DragUpdated)
+//			{
+//				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, false);
+//
+//				if (go != null && go.GetComponent<pb_Object>())
+//					evt.Use();
+//			}
+
+			if (evt.type == EventType.DragPerform)
+			{
+				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, false);
+
+				if (go != null && System.Array.Exists(DragAndDrop.objectReferences, x => x is Texture2D || x is Material))
+				{
+					pb_Object pb = go.GetComponent<pb_Object>();
+
+					if (pb)
+					{
+						Material mat = null;
+						foreach (Object t in DragAndDrop.objectReferences)
+						{
+							if (t is Material)
+							{
+								mat = (Material) t;
+								break;
+							}
+							/* This works, but throws some bullshit errors. Not creating a material leaks, so disable this functionality. */
+							else if (t is Texture2D)
+							{
+								mat = new Material(Shader.Find("Diffuse"));
+								mat.mainTexture = (Texture2D) t;
+
+								string texPath = AssetDatabase.GetAssetPath(mat.mainTexture);
+								int lastDot = texPath.LastIndexOf(".");
+								texPath = texPath.Substring(0, texPath.Length - (texPath.Length - lastDot));
+								texPath = AssetDatabase.GenerateUniqueAssetPath(texPath + ".mat");
+
+								AssetDatabase.CreateAsset(mat, texPath);
+								AssetDatabase.Refresh();
+
+								break;
+							}
+						}
+
+						if (mat != null)
+						{
+							if (editLevel == EditLevel.Geometry)
+							{
+								pb_Undo.RecordSelection(selection, "Set Face Materials");
+
+								foreach (pb_Object pbs in selection)
+									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
+							}
+							else
+							{
+								pb_Undo.RecordObject(pb, "Set Object Material");
+								pb.SetFaceMaterial(pb.faces, mat);
+							}
+
+							pb.ToMesh();
+							pb.Refresh();
+							pb.Optimize();
+
+							evt.Use();
+						}
+					}
+				}
+			}
+
 		}
 
 		/// <summary>
