@@ -1,4 +1,13 @@
-# ProBuilder
+# Table of Contents
+
+- [Summary](#Summary)
+- [API Overview](#Code-Organization)
+- [API Quick Start](#API-Quick-Start)
+- [Build for Package Manager](#Building-for-Unity-Package-Manager)
+- [Testing UPM Builds](#Testing-UPM-Builds)
+- [Build for Asset Store](#Building-Asset-Store-Projects-&-Packages)
+
+# Summary
 
 ProBuilder is a 3D modeling plugin for [Unity](https://unity3d.com).
 
@@ -95,56 +104,6 @@ Note that you should not ever directly modify the `MeshFilter.sharedMesh`.
 ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 `pb_Object::Refresh` functions.
 
-## Building Asset Store Projects & Packages
-
-**Important:** Asset Store build paths are no longer maintained - 2018.1 and later is required to use Package Manager**
-
-Updates to Asset Store ProBuilder version should made and pushed from the v2.9.8f3-dev branch.
-
-To facilitate building the projects and packages for the various Unity versions a custom built build system is employed. The lifting is done by a mono app called `pb-build` and driven by a set of `json` files. The `json` files describe the build process for a single version of ProBuilder. They are located in `build/targets` and named to match their intended destination (ex, "ProBuilderAdvanced-5.6" builds ProBuilder Advanced for Unity 5.6).
-
-You can either run builds individually using `pb-build` directly:
-
-```
-mono pb-build.exe build/targets/ProBuilderAdvanced-5.6.json
-```
-
-Build scripts search for an install of Unity matching the version set with the `$UNITY_VERSION` macro. Unity folders are expected to be installed with the version appended (ex, **Program Files/Unity 2017.1/**). The following paths are scanned for appropriate Unity installations, or you can pass the `-unity=<path to unity>` argument to `pb-build.exe`.
-
-- */Applications/Unity $UNITY_VERSION/Unity.app*
-- *D:/Applications/Unity $UNITY_VERSION*
-- *C:/Program Files/Unity $UNITY_VERSION*
-
-Or run a batch build with the `advanced.sh` or `basic.sh` scripts.
-
-`pb-build` provides some switches for debugging (see `mono pb-build.exe --help`).
-
-The result of `pb-build` is a Unity project in `bin/projects` that is ready to be uploaded to the Asset Store.
-
-### Pushing an Update to the Asset Store
-
-1. Create a new package version in the [Asset Publisher Portal](https://publisher.assetstore.unity3d.com)
-2. For each Unity version in `bin/projects` open Unity and upload the ProCore folder.
-3. Update the changelog and version in the Publisher Portal and submit.
-
-### Building ProBuilder to a UnityPackage
-
-To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`.
-
-Packages are used for distribution via the [ProCore User Toolbox](http://www.procore3d.com/usertoolbox) (deprecated) and Github releases (internal).
-
-To selectively build a package pass the project suffix to `export-packages.sh`. Ex, `sh export-packages.sh 56 SRC` will build the Unity 5.6 and Source code packages.
-
-Valid arguments:
-
-- `SRC`
-- `5.3`
-- `5.5`
-- `5.6`
-- `2017.1`
-- `2017.2`
-- `2017.3`
-
 ## Building for Unity Package Manager
 
 ### Setup
@@ -194,6 +153,8 @@ Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
 ### Push Package Manager to Staging
 
+See [Semantic Versioning](#Semantic-Versioning) for information about build versions.
+
 Follow the instructions in the [upm-package-template](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template) to set up **npm** credentials.
 
 **Do not commit `.npmrc` files to the [com.unity.probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
@@ -224,13 +185,15 @@ Example **manifest.json** file (replace the version number with the tagged versi
 }
 ```
 
-#### From Bintray Staging
+#### From Bintray
 
 Check for the latest version on Bintray: https://bintray.com/unity/unity-staging/com.unity.probuilder
 
 1. Open a new Unity project
 1. Open the `manifest.json` file in `My Unity Project/UnityPackageManager`
-1. Add the package, version, and staging URL to your registry
+1. Add the package, version, and staging URL to your registry\*
+
+\* The version must match the Bintray version **exactly**. That is, `3.0.0` is not the same as `3.0.0-f.0`.
 
 ```
 {
@@ -240,3 +203,64 @@ Check for the latest version on Bintray: https://bintray.com/unity/unity-staging
 	"registry":"http://staging-packages.unity.com"
 }
 ```
+
+## Building Asset Store Projects & Packages
+
+**Important:** Asset Store build paths are no longer maintained. 2018.1 and later is required to use Package Manager.
+
+Updates to Asset Store ProBuilder version should made and pushed from the v2.9.8f3-dev branch.
+
+To facilitate building the projects and packages for the various Unity versions a custom built build system is employed. The lifting is done by a mono app called `pb-build` and driven by a set of `json` files. The `json` files describe the build process for a single version of ProBuilder. They are located in `build/targets` and named to match their intended destination (ex, "ProBuilderAdvanced-5.6" builds ProBuilder Advanced for Unity 5.6).
+
+You can either run builds individually using `pb-build` directly:
+
+```
+mono pb-build.exe build/targets/ProBuilderAdvanced-5.6.json
+```
+
+Build scripts search for an install of Unity matching the version set with the `$UNITY_VERSION` macro. Unity folders are expected to be installed with the version appended (ex, **Program Files/Unity 2017.1/**). The following paths are scanned for appropriate Unity installations, or you can pass the `-unity=<path to unity>` argument to `pb-build.exe`.
+
+- */Applications/Unity $UNITY_VERSION/Unity.app*
+- *D:/Applications/Unity $UNITY_VERSION*
+- *C:/Program Files/Unity $UNITY_VERSION*
+
+Or run a batch build with the `advanced.sh` or `basic.sh` scripts.
+
+`pb-build` provides some switches for debugging (see `mono pb-build.exe --help`).
+
+The result of `pb-build` is a Unity project in `bin/projects` that is ready to be uploaded to the Asset Store.
+
+### Pushing an Update to the Asset Store
+
+1. Create a new package version in the [Asset Publisher Portal](https://publisher.assetstore.unity3d.com)
+2. For each Unity version in `bin/projects` open Unity and upload the ProCore folder.
+3. Update the changelog and version in the Publisher Portal and submit.
+
+### Building ProBuilder to a UnityPackage
+
+To export a project to a `.unitypackage` there is a bash script named `export-packages.sh`. This exports all ProBuilder Advanced projects to `bin/packages`.
+
+Packages are used for distribution via the [ProCore User Toolbox](http://www.procore3d.com/usertoolbox) (deprecated) and Github releases (internal).
+
+To selectively build a package pass the project suffix to `export-packages.sh`. Ex, `sh export-packages.sh 56 SRC` will build the Unity 5.6 and Source code packages.
+
+Valid arguments:
+
+- `SRC`
+- `5.3`
+- `5.5`
+- `5.6`
+- `2017.1`
+- `2017.2`
+- `2017.3`
+
+## Semantic Versioning
+
+ProBuilder follows [semantic versioning](https://semver.org/) rules.
+
+Non-public testing builds should include a build identifier and patch pre-release version. Ex,
+
+`3.0.0-f.1`
+
+Once a build is verified with a [QA Report](https://drive.google.com/drive/u/0/folders/1neI43BrzpTmyHvE5Qe5TN8YVHTOp-5Dd) and cleared for release, modify the `package.json` file to omit the pre-release information (ex, `-f.0`) and tag the commit with a `vMajor.Minor.Patch`.
+
