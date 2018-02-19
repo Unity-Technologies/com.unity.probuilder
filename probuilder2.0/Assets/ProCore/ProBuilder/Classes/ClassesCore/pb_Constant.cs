@@ -305,7 +305,7 @@ namespace ProBuilder.Core
 		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
 		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
 		internal const string pbUseUnityColors = "pbUseUnityColors";
-		
+
 		// Float
 		internal const string pbVertexHandleSize = "pbVertexHandleSize";
 		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";

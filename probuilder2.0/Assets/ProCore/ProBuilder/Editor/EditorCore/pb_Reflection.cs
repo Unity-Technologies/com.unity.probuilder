@@ -104,6 +104,16 @@ namespace ProBuilder.EditorCore
 			return null;
 		}
 
+		/// <summary>
+		/// Invoke a method with arguments.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="type"></param>
+		/// <param name="method"></param>
+		/// <param name="methodParams"></param>
+		/// <param name="flags"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
 		public static object Invoke(
 			object target,
 			Type type,

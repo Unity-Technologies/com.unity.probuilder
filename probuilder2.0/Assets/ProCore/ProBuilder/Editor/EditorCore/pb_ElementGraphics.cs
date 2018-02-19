@@ -113,24 +113,28 @@ namespace ProBuilder.Core
 			if (Event.current.type != EventType.Repaint)
 				return;
 
-			foreach(pb_Renderable renderable in s_ActiveRenderables)
+			if (!pb_DragAndDropListener.IsDragging())
 			{
-				Material[] mats = renderable.materials;
-
-				if( renderable.mesh == null )
-					continue;
-
-				for(int n = 0; n < renderable.mesh.subMeshCount; n++)
+				foreach (pb_Renderable renderable in s_ActiveRenderables)
 				{
-					int materialIndex = Clamp(n, 0, mats.Length-1);
+					Material[] mats = renderable.materials;
 
-					if (mats[materialIndex] == null || !mats[materialIndex].SetPass(0) )
-					{
-						pb_Log.Debug("ProBuilder mesh handle material is null.");
+					if (renderable.mesh == null)
 						continue;
-					}
 
-					Graphics.DrawMeshNow(renderable.mesh, renderable.transform != null ? renderable.transform.localToWorldMatrix : Matrix4x4.identity, n);
+					for (int n = 0; n < renderable.mesh.subMeshCount; n++)
+					{
+						int materialIndex = Clamp(n, 0, mats.Length - 1);
+
+						if (mats[materialIndex] == null || !mats[materialIndex].SetPass(0))
+						{
+							pb_Log.Debug("ProBuilder mesh handle material is null.");
+							continue;
+						}
+
+						Graphics.DrawMeshNow(renderable.mesh,
+							renderable.transform != null ? renderable.transform.localToWorldMatrix : Matrix4x4.identity, n);
+					}
 				}
 			}
 

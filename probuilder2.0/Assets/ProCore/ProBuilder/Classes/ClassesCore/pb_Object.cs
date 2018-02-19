@@ -1,8 +1,6 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace ProBuilder.Core
 {
@@ -805,7 +803,10 @@ namespace ProBuilder.Core
 				m.Clear();
 
 			m.vertices = _vertices;
-			if (_uv != null) m.uv = _uv;
+
+			if (_uv != null)
+				m.uv = _uv;
+
 			m.uv2 = null;
 
 			pb_Submesh[] submeshes;
@@ -817,7 +818,7 @@ namespace ProBuilder.Core
 				m.SetIndices(submeshes[i].indices, submeshes[i].topology, i, false);
 #else
 				m.SetIndices(submeshes[i].indices, submeshes[i].topology, i);
-	#endif
+#endif
 
 			m.name = string.Format("pb_Mesh{0}", id);
 

@@ -17,6 +17,8 @@ namespace ProBuilder.EditorCore
 
 		static void UndoRedoPerformed()
 		{
+			// material preview when dragging in sceneview is done by applying then undoing changes. we don't want to
+			// rebuild the mesh every single frame when dragging.
 			if (pb_DragAndDropListener.IsDragging())
 				return;
 

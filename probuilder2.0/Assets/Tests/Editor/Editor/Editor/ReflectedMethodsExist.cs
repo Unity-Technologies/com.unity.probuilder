@@ -22,6 +22,7 @@ namespace ProBuilder.EditorTests.Editor
 			Assert.IsNotNull(fi);
 		}
 
+#if !UNITY_2018_2_OR_NEWER
 		[Test]
 		public static void ResetOnSceneGUIState()
 		{
@@ -29,6 +30,7 @@ namespace ProBuilder.EditorTests.Editor
 			var mi = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.IsNotNull(mi);
 		}
+#endif
 
 		[Test]
 		public static void ApplyWireMaterial()
@@ -41,5 +43,15 @@ namespace ProBuilder.EditorTests.Editor
 				null);
 			Assert.IsNotNull(m_ApplyWireMaterial);
 		}
+
+#if UNITY_2018_2_OR_NEWER
+		[Test]
+		public static void GetDefaultMaterial()
+		{
+			var mi = typeof(Material).GetMethod("GetDefaultMaterial", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+			Assert.IsNotNull(mi);
+		}
+#endif
+
 	}
 }
