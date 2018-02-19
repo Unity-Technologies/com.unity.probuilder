@@ -11,6 +11,7 @@ namespace ProBuilder.EditorCore
 	{
 		static bool prefsLoaded = false;
 
+		static bool pbUseUnityColors;
 		static Color faceSelectedColor;
 		static Color pbWireframeColor;
 		static Color pbSelectedEdgeColor;
@@ -138,13 +139,19 @@ namespace ProBuilder.EditorCore
 			 */
 			GUILayout.Label("Handles & Colors", EditorStyles.boldLabel);
 
-			pbWireframeColor = EditorGUILayout.ColorField("Wireframe", pbWireframeColor);
-			faceSelectedColor = EditorGUILayout.ColorField("Selected Face Color", faceSelectedColor);
-			pbSelectedFaceDither = EditorGUILayout.Toggle("Dither Face Overlay", pbSelectedFaceDither);
-			pbUnselectedEdgeColor = EditorGUILayout.ColorField("Unselected Edge Color", pbUnselectedEdgeColor);
-			pbSelectedEdgeColor = EditorGUILayout.ColorField("Selected Edge Color", pbSelectedEdgeColor);
-			vertexUnselectedColor = EditorGUILayout.ColorField("Unselected Vertex Color", vertexUnselectedColor);
-			vertexSelectedColor = EditorGUILayout.ColorField("Selected Vertex Color", vertexSelectedColor);
+			pbUseUnityColors = EditorGUILayout.Toggle("Use Unity Colors", pbUseUnityColors);
+
+			if (!pbUseUnityColors)
+			{
+				pbWireframeColor = EditorGUILayout.ColorField("Wireframe", pbWireframeColor);
+				faceSelectedColor = EditorGUILayout.ColorField("Selected Face Color", faceSelectedColor);
+				pbSelectedFaceDither = EditorGUILayout.Toggle("Dither Face Overlay", pbSelectedFaceDither);
+				pbUnselectedEdgeColor = EditorGUILayout.ColorField("Unselected Edge Color", pbUnselectedEdgeColor);
+				pbSelectedEdgeColor = EditorGUILayout.ColorField("Selected Edge Color", pbSelectedEdgeColor);
+				vertexUnselectedColor = EditorGUILayout.ColorField("Unselected Vertex Color", vertexUnselectedColor);
+				vertexSelectedColor = EditorGUILayout.ColorField("Selected Vertex Color", vertexSelectedColor);
+			}
+
 			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Handle Size", pbVertexHandleSize, 0f, 3f);
 
 			/**
@@ -249,6 +256,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbToolbarLocation);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEntity);
 
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUseUnityColors);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
@@ -437,6 +445,7 @@ namespace ProBuilder.EditorCore
 			showMissingLightmapUvWarning = pb_PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false);
 			pbManageLightmappingStaticFlag = pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false);
 
+			pbUseUnityColors = pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors);
 			faceSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
 			pbWireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
 			pbSelectedFaceDither = pb_PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
@@ -460,6 +469,7 @@ namespace ProBuilder.EditorCore
 
 		public static void SetPrefs()
 		{
+			pb_PreferencesInternal.SetBool(pb_Constant.pbUseUnityColors, pbUseUnityColors);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, pb_PreferenceLocation.Global);

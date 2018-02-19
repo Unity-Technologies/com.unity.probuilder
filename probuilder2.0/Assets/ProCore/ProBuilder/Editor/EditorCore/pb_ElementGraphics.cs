@@ -14,7 +14,6 @@ namespace ProBuilder.Core
 
 		static float s_VertexHandleSize = .03f;
 		static bool s_EnableFaceDither = false;
-		const bool k_UseUnityColors = false;
 
 		static Material s_FaceMaterial;
 		static Material s_VertexMaterial;
@@ -73,7 +72,7 @@ namespace ProBuilder.Core
 			s_WireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
 			s_VertexHandleSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize);
 
-			if (k_UseUnityColors)
+			if (pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors, false))
 			{
 				s_FaceSelectedColor = Handles.selectedColor;
 				s_EdgeSelectedColor = Handles.selectedColor;
