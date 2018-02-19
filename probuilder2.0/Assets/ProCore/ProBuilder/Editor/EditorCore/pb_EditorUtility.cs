@@ -9,6 +9,8 @@ using ProBuilder.Actions;
 using ProBuilder.Core;
 using ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
+using UObject = UnityEngine.Object;
 
 namespace ProBuilder.EditorCore
 {
@@ -27,6 +29,9 @@ namespace ProBuilder.EditorCore
 		static float s_NotificationTimer = 0f;
 		static EditorWindow s_NotificationWindow;
 		static bool s_IsNotificationDisplayed = false;
+
+		const BindingFlags k_BindingFlagsAll =
+			BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
 		/// <summary>
 		/// Subscribe to this delegate to be notified when a pb_Object has been created and initialized through ProBuilder.
@@ -371,6 +376,41 @@ namespace ProBuilder.EditorCore
 			return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
 		}
 
+		static SceneView.OnSceneFunc onPreSceneGuiDelegate
+		{
+			get
+			{
+				var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
+				return fi != null ? fi.GetValue(null) as SceneView.OnSceneFunc : null;
+			}
+
+			set
+			{
+				var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
+
+				if (fi != null)
+					fi.SetValue(null, value);
+			}
+		}
+
+		public static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
+		{
+			var del = onPreSceneGuiDelegate;
+
+			if (del == null)
+				onPreSceneGuiDelegate = func;
+			else
+				del += func;
+		}
+
+		public static void UnregisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
+		{
+			var del = onPreSceneGuiDelegate;
+
+			if (del != null)
+				del -= func;
+		}
+
 		/**
 		 *	Is this code running on a Unix OS?
 		 *
@@ -400,60 +440,6 @@ namespace ProBuilder.EditorCore
 			#else
 			UnityEditor.Editor.CreateCachedEditor(targetObjects, typeof(T), ref previousEditor);
 			#endif
-		}
-
-		private static bool IsObsolete(BuildTargetGroup group)
-		{
-			var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
-			return attrs != null && attrs.Length > 0;
-		}
-
-		/**
-		 * Add a define to the scripting define symbols for every build target.
-		 */
-		public static void AddScriptingDefine(string define)
-		{
-			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
-			{
-				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
-					continue;
-
-				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-
-				if( !defineSymbols.Contains(define) )
-				{
-					if(defineSymbols.Length < 1)
-						defineSymbols = define;
-					else if(defineSymbols.EndsWith(";"))
-						defineSymbols = string.Format("{0}{1}", defineSymbols, define);
-					else
-						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
-
-					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
-				}
-			}
-		}
-
-		/**
-		 * Remove a define from the scripting define symbols for every build target.
-		 */
-		public static void RemoveScriptingDefine(string define)
-		{
-			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
-			{
-				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
-					continue;
-
-				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-
-				if( defineSymbols.Contains(define) )
-				{
-					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
-					defineSymbols = defineSymbols.Replace(define, "");
-
-					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
-				}
-			}
 		}
 	}
 }

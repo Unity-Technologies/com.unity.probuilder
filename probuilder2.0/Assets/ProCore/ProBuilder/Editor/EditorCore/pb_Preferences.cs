@@ -11,10 +11,13 @@ namespace ProBuilder.EditorCore
 	{
 		static bool prefsLoaded = false;
 
-		static Color pbDefaultFaceColor;
-		static Color pbDefaultEdgeColor;
-		static Color pbDefaultSelectedVertexColor;
-		static Color pbDefaultVertexColor;
+		static Color faceSelectedColor;
+		static Color pbWireframeColor;
+		static Color pbSelectedEdgeColor;
+		static Color pbUnselectedEdgeColor;
+		static Color vertexSelectedColor;
+		static Color vertexUnselectedColor;
+		static bool pbSelectedFaceDither;
 
 		static bool defaultOpenInDockableWindow;
 		static Material pbDefaultMaterial;
@@ -131,6 +134,20 @@ namespace ProBuilder.EditorCore
 			GUILayout.EndHorizontal();
 
 			/**
+			 * HANDLE COLORS
+			 */
+			GUILayout.Label("Handles & Colors", EditorStyles.boldLabel);
+
+			pbWireframeColor = EditorGUILayout.ColorField("Wireframe", pbWireframeColor);
+			faceSelectedColor = EditorGUILayout.ColorField("Selected Face Color", faceSelectedColor);
+			pbSelectedFaceDither = EditorGUILayout.Toggle("Dither Face Overlay", pbSelectedFaceDither);
+			pbUnselectedEdgeColor = EditorGUILayout.ColorField("Unselected Edge Color", pbUnselectedEdgeColor);
+			pbSelectedEdgeColor = EditorGUILayout.ColorField("Selected Edge Color", pbSelectedEdgeColor);
+			vertexUnselectedColor = EditorGUILayout.ColorField("Unselected Vertex Color", vertexUnselectedColor);
+			vertexSelectedColor = EditorGUILayout.ColorField("Selected Vertex Color", vertexSelectedColor);
+			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Handle Size", pbVertexHandleSize, 0f, 3f);
+
+			/**
 			 * MISC. SETTINGS
 			 */
 			GUILayout.Label("Misc. Settings", EditorStyles.boldLabel);
@@ -163,11 +180,7 @@ namespace ProBuilder.EditorCore
 				new GUIContent("Precise Element Selection",
 					"When enabled you will be able to select object faces when in Vertex of Edge mode by clicking the center of a face.  When disabled, edge and vertex selection will always be restricted to the nearest element."),
 				!pbElementSelectIsHamFisted);
-			pbDefaultFaceColor = EditorGUILayout.ColorField("Selected Face Color", pbDefaultFaceColor);
-			pbDefaultEdgeColor = EditorGUILayout.ColorField("Edge Wireframe Color", pbDefaultEdgeColor);
-			pbDefaultVertexColor = EditorGUILayout.ColorField("Vertex Color", pbDefaultVertexColor);
-			pbDefaultSelectedVertexColor = EditorGUILayout.ColorField("Selected Vertex Color", pbDefaultSelectedVertexColor);
-			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Handle Size", pbVertexHandleSize, 0f, 3f);
+
 			pbForceVertexPivot =
 				EditorGUILayout.Toggle(
 					new GUIContent("Force Pivot to Vertex Point",
@@ -229,17 +242,21 @@ namespace ProBuilder.EditorCore
 				"Are you sure you want to delete all existing ProBuilder preferences?\n\nThis action cannot be undone.", "Yes",
 				"No"))
 			{
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultFaceColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEditLevel);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultSelectionMode);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbHandleAlignment);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexColorTool);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbToolbarLocation);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEntity);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultFaceColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultVertexColor);
+
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedEdgeColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedEdgeColor);
+
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbEditorPrefVersion);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbEditorShortcutsVersion);
@@ -420,10 +437,13 @@ namespace ProBuilder.EditorCore
 			showMissingLightmapUvWarning = pb_PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false);
 			pbManageLightmappingStaticFlag = pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false);
 
-			pbDefaultFaceColor = pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultFaceColor);
-			pbDefaultEdgeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultEdgeColor);
-			pbDefaultSelectedVertexColor = pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultSelectedVertexColor);
-			pbDefaultVertexColor = pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultVertexColor);
+			faceSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
+			pbWireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
+			pbSelectedFaceDither = pb_PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
+			pbSelectedEdgeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedEdgeColor);
+			pbUnselectedEdgeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbUnselectedEdgeColor);
+			vertexSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedVertexColor);
+			vertexUnselectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbUnselectedVertexColor);
 
 			pbUVGridSnapValue = pb_PreferencesInternal.GetFloat(pb_Constant.pbUVGridSnapValue);
 			pbVertexHandleSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize);
@@ -444,10 +464,13 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultFaceColor, pbDefaultFaceColor, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultEdgeColor, pbDefaultEdgeColor, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultSelectedVertexColor, pbDefaultSelectedVertexColor, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetColor(pb_Constant.pbDefaultVertexColor, pbDefaultVertexColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedFaceColor, faceSelectedColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbWireframeColor, pbWireframeColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbSelectedFaceDither, pbSelectedFaceDither, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedVertexColor, vertexSelectedColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbUnselectedVertexColor, vertexUnselectedColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedEdgeColor, pbSelectedEdgeColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbUnselectedEdgeColor, pbUnselectedEdgeColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetString(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultCollider, (int) defaultColliderType);

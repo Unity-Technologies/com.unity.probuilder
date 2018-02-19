@@ -627,14 +627,12 @@ namespace ProBuilder.EditorCore
 
 			if (m_ApplyWireMaterial == null)
 			{
-
 				m_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
 					"ApplyWireMaterial",
 					BindingFlags.Static | BindingFlags.NonPublic,
 					null,
 					new System.Type[] { typeof(UnityEngine.Rendering.CompareFunction) },
 					null);
-
 			}
 
 			m_ApplyWireMaterialArgs[0] = zTest;

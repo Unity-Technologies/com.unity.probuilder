@@ -15,12 +15,12 @@ namespace ProBuilder.EditorCore
 		static pb_ScriptingSymbolManager()
 		{
 			if( FbxTypesExist() )
-				pb_EditorUtility.AddScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
+				AddScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
 			else
-				pb_EditorUtility.RemoveScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
+				RemoveScriptingDefine("PROBUILDER_FBX_PLUGIN_ENABLED");
 		}
 
-		private static bool FbxTypesExist()
+		static bool FbxTypesExist()
 		{
 #if UNITY_2017_1_OR_NEWER
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -29,6 +29,62 @@ namespace ProBuilder.EditorCore
 #else
 			return false;
 #endif
+		}
+
+		static bool IsObsolete(BuildTargetGroup group)
+		{
+			var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
+			return attrs.Length > 0;
+		}
+
+		/// <summary>
+		/// Add a define to the scripting define symbols for every build target.
+		/// </summary>
+		/// <param name="define"></param>
+		public static void AddScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
+					continue;
+
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( !defineSymbols.Contains(define) )
+				{
+					if(defineSymbols.Length < 1)
+						defineSymbols = define;
+					else if(defineSymbols.EndsWith(";"))
+						defineSymbols = string.Format("{0}{1}", defineSymbols, define);
+					else
+						defineSymbols = string.Format("{0};{1}", defineSymbols, define);
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Remove a define from the scripting define symbols for every build target.
+		/// </summary>
+		/// <param name="define"></param>
+		public static void RemoveScriptingDefine(string define)
+		{
+			foreach(BuildTargetGroup targetGroup in System.Enum.GetValues(typeof(BuildTargetGroup)))
+			{
+				if( targetGroup == BuildTargetGroup.Unknown || IsObsolete(targetGroup) )
+					continue;
+
+				string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				if( defineSymbols.Contains(define) )
+				{
+					defineSymbols = defineSymbols.Replace(string.Format("{0};", define), "");
+					defineSymbols = defineSymbols.Replace(define, "");
+
+					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defineSymbols);
+				}
+			}
 		}
 	}
 }

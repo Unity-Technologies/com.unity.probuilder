@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ProBuilder.Core
@@ -209,10 +210,12 @@ namespace ProBuilder.Core
 		internal const string pbDefaultStaticFlags = "pbDefaultStaticFlags";
 
 		// Color
-		internal const string pbDefaultFaceColor = "pbDefaultFaceColor";
-		internal const string pbDefaultEdgeColor = "pbDefaultEdgeColor";
-		internal const string pbDefaultSelectedVertexColor = "pbDefaultSelectedVertexColor";
-		internal const string pbDefaultVertexColor = "pbDefaultVertexColor";
+		internal const string pbSelectedFaceColor = "pbDefaultFaceColor";
+		internal const string pbWireframeColor = "pbDefaultEdgeColor";
+		internal const string pbUnselectedEdgeColor = "pbUnselectedEdgeColor";
+		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
+		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
+		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
 
 		// Bool
 		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";
@@ -300,6 +303,7 @@ namespace ProBuilder.Core
 		/// Enable ProBuilder to manage the lightmapping static flags.
 		internal const string pbManageLightmappingStaticFlag = "pbManageLightmappingStaticFlag";
 		internal const string pbShowMissingLightmapUvWarning = "pb_Lightmapping::showMissingLightmapUvWarning";
+		internal const string pbSelectedFaceDither = "pbSelectedFaceDither";
 
 		// Float
 		internal const string pbVertexHandleSize = "pbVertexHandleSize";

@@ -23,7 +23,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				// secretely this is the normal
+				// secretely this is the normal, w is used to pass extrusion
 				float4 tangent : TANGENT;
 			};
 

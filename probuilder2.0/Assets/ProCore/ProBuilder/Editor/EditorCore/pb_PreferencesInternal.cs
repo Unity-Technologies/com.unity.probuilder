@@ -29,6 +29,9 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_PreferencesInternal
 	{
+		static readonly Color k_DefaultSelectedColor = new Color(0f, .86f, 1f, .275f);
+		static readonly Color k_DefaultWireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);
+
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 
 		static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
@@ -49,7 +52,8 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbShiftOnlyTooltips, false },
 			{ pb_Constant.pbCollapseVertexToFirst, false },
 			{ pb_Constant.pbEnableExperimental, false },
-			{ pb_Constant.pbMeshesAreAssets, false }
+			{ pb_Constant.pbMeshesAreAssets, false },
+			{ pb_Constant.pbSelectedFaceDither, false }
 		};
 
 		static Dictionary<string, float> m_FloatDefaults = new Dictionary<string, float>()
@@ -79,15 +83,17 @@ namespace ProBuilder.EditorCore
 			#endif
 		};
 
-		private static Dictionary<string, Color> m_ColorDefaults = new Dictionary<string, Color>()
+		static Dictionary<string, Color> m_ColorDefaults = new Dictionary<string, Color>()
 		{
-			{ pb_Constant.pbDefaultFaceColor, new Color(0f, .86f, 1f, .275f) },
-			{ pb_Constant.pbDefaultEdgeColor, new Color(0f, .25f, 1f, 1f) },
-			{ pb_Constant.pbDefaultVertexColor, new Color(.8f, .8f, .8f, 1f) },
-			{ pb_Constant.pbDefaultSelectedVertexColor, Color.green },
+			{ pb_Constant.pbSelectedFaceColor, k_DefaultSelectedColor },
+			{ pb_Constant.pbWireframeColor, k_DefaultWireframeColor },
+			{ pb_Constant.pbUnselectedEdgeColor, new Color(0f, .1f, 1f, 1f) },
+			{ pb_Constant.pbSelectedEdgeColor, k_DefaultSelectedColor },
+			{ pb_Constant.pbUnselectedVertexColor, new Color(.8f, .8f, .8f, 1f) },
+			{ pb_Constant.pbSelectedVertexColor, k_DefaultSelectedColor },
 		};
 
-		private static Dictionary<string, string> m_StringDefaults = new Dictionary<string, string>()
+		static Dictionary<string, string> m_StringDefaults = new Dictionary<string, string>()
 		{
 		};
 

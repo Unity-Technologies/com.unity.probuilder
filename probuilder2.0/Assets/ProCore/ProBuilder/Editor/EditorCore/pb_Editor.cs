@@ -106,6 +106,7 @@ namespace ProBuilder.EditorCore
 		pb_Edge[][] m_UniversalEdges = new pb_Edge[0][];
 		Vector3 m_HandlePivotWorld = Vector3.zero;
 		Dictionary<int, int>[] m_SharedIndicesDictionary = new Dictionary<int, int>[0];
+		bool m_IsSceneViewDragAndDrop;
 
 		public pb_Edge[][] SelectedUniversalEdges
 		{
@@ -200,11 +201,6 @@ namespace ProBuilder.EditorCore
 			get { return s_Instance; }
 		}
 
-		pb_ElementGraphics graphics
-		{
-			get { return pb_ElementGraphics.instance; }
-		}
-
 		/// <summary>
 		/// Open the pb_Editor window with whatever dockable status is preference-d.
 		/// </summary>
@@ -223,15 +219,11 @@ namespace ProBuilder.EditorCore
 		{
 			s_Instance = this;
 
-			graphics.LoadPrefs(
-				pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultFaceColor),
-				pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultEdgeColor),
-				pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultSelectedVertexColor),
-				pb_PreferencesInternal.GetColor(pb_Constant.pbDefaultVertexColor),
-				pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize));
+			pb_ElementGraphics.Initialize();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
+
 			pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 
@@ -241,13 +233,8 @@ namespace ProBuilder.EditorCore
 
 			// make sure load prefs is called first, because other methods depend on the preferences set here
 			LoadPrefs();
-
 			InitGUI();
-
-			// EditorUtility.UnloadUnusedAssets();
-
 			UpdateSelection(true);
-
 			HideSelectedWireframe();
 
 			findNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
@@ -255,6 +242,44 @@ namespace ProBuilder.EditorCore
 
 			if (onEditLevelChanged != null)
 				onEditLevelChanged((int) editLevel);
+		}
+
+		void OnDisable()
+		{
+			s_Instance = null;
+
+			if (s_EditorToolbar != null)
+				DestroyImmediate(s_EditorToolbar);
+
+			ClearElementSelection();
+
+			UpdateSelection();
+
+			pb_ElementGraphics.Destroy();
+
+			if (onSelectionUpdate != null)
+				onSelectionUpdate(null);
+
+			pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
+			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
+			pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int) handleAlignment);
+
+			if (pb_LineRenderer.Valid())
+				pb_LineRenderer.instance.Clear();
+
+			// re-enable unity wireframe
+			// todo set wireframe override in pb_Selection, no pb_Editor
+			foreach (var pb in FindObjectsOfType<pb_Object>())
+				pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
+					pb_EditorUtility.GetSelectionRenderState());
+
+			SceneView.RepaintAll();
+		}
+
+		void OnDestroy()
+		{
+			if (pb_LineRenderer.nullableInstance != null)
+				DestroyImmediate(pb_LineRenderer.nullableInstance.gameObject);
 		}
 
 		internal void LoadPrefs()
@@ -265,10 +290,10 @@ namespace ProBuilder.EditorCore
 			{
 				pb_PreferencesInternal.SetInt(pb_Constant.pbEditorPrefVersion, k_EditorPrefVersion, pb_PreferenceLocation.Global);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultFaceColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEdgeColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultSelectedVertexColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultVertexColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
 			}
 
@@ -296,46 +321,6 @@ namespace ProBuilder.EditorCore
 			m_SceneToolbarLocation = pb_PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
 			m_IsIconGui = pb_PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
 			dragSelectMode = pb_PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
-		}
-
-		void OnDisable()
-		{
-			s_Instance = null;
-
-			if (s_EditorToolbar != null)
-				GameObject.DestroyImmediate(s_EditorToolbar);
-
-			ClearElementSelection();
-
-			UpdateSelection();
-
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(null);
-
-			pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
-
-			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-
-			pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int) handleAlignment);
-
-			if (pb_LineRenderer.Valid())
-				pb_LineRenderer.instance.Clear();
-
-			// re-enable unity wireframe
-			foreach (var pb in FindObjectsOfType<pb_Object>())
-				pb_EditorUtility.SetSelectionRenderState(pb.gameObject.GetComponent<Renderer>(),
-					pb_EditorUtility.GetSelectionRenderState());
-
-			SceneView.RepaintAll();
-		}
-
-		void OnDestroy()
-		{
-			if (pb_ElementGraphics.nullableInstance != null)
-				GameObject.DestroyImmediate(pb_ElementGraphics.nullableInstance.gameObject);
-
-			if (pb_LineRenderer.nullableInstance != null)
-				GameObject.DestroyImmediate(pb_LineRenderer.nullableInstance.gameObject);
 		}
 
 		void InitGUI()
@@ -464,7 +449,7 @@ namespace ProBuilder.EditorCore
 			pb_Editor.MenuOpenWindow();
 		}
 
-		void OnSceneGUI(SceneView scnView)
+		void OnSceneGUI(SceneView sceneView)
 		{
 #if !UNITY_2018_2_OR_NEWER
 			if(s_ResetOnSceneGUIState != null)
@@ -496,9 +481,10 @@ namespace ProBuilder.EditorCore
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-			HandleDragAndDrop(m_CurrentEvent);
+			DrawHandleGUI(sceneView);
 
-			DrawHandleGUI(scnView);
+			if (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
+				pb_ElementGraphics.DoGUI(editLevel, selectionMode);
 
 			if (!rightMouseDown && getKeyUp != KeyCode.None)
 			{
@@ -526,10 +512,6 @@ namespace ProBuilder.EditorCore
 			// Check mouse position in scene and determine if we should highlight something
 			if (m_CurrentEvent.type == EventType.MouseMove && editLevel == EditLevel.Geometry)
 				UpdateMouse(m_CurrentEvent.mousePosition);
-
-			// Draw GUI Handles
-			if (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
-				DrawHandles();
 
 			if (Tools.current != Tool.None && Tools.current != currentHandle)
 				SetTool_Internal(Tools.current);
@@ -610,7 +592,7 @@ namespace ProBuilder.EditorCore
 			if (mouseDrag && readyForMouseDrag)
 			{
 				if(!m_IsDragging)
-					scnView.Repaint();
+					sceneView.Repaint();
 
 				m_IsDragging = true;
 			}
@@ -691,79 +673,6 @@ namespace ProBuilder.EditorCore
 				SceneView.RepaintAll();
 				doubleClicked = true;
 			}
-		}
-
-		void HandleDragAndDrop(Event evt)
-		{
-//			if (evt.type == EventType.DragUpdated)
-//			{
-//				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, false);
-//
-//				if (go != null && go.GetComponent<pb_Object>())
-//					evt.Use();
-//			}
-
-			if (evt.type == EventType.DragPerform)
-			{
-				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, false);
-
-				if (go != null && System.Array.Exists(DragAndDrop.objectReferences, x => x is Texture2D || x is Material))
-				{
-					pb_Object pb = go.GetComponent<pb_Object>();
-
-					if (pb)
-					{
-						Material mat = null;
-						foreach (Object t in DragAndDrop.objectReferences)
-						{
-							if (t is Material)
-							{
-								mat = (Material) t;
-								break;
-							}
-							/* This works, but throws some bullshit errors. Not creating a material leaks, so disable this functionality. */
-							else if (t is Texture2D)
-							{
-								mat = new Material(Shader.Find("Diffuse"));
-								mat.mainTexture = (Texture2D) t;
-
-								string texPath = AssetDatabase.GetAssetPath(mat.mainTexture);
-								int lastDot = texPath.LastIndexOf(".");
-								texPath = texPath.Substring(0, texPath.Length - (texPath.Length - lastDot));
-								texPath = AssetDatabase.GenerateUniqueAssetPath(texPath + ".mat");
-
-								AssetDatabase.CreateAsset(mat, texPath);
-								AssetDatabase.Refresh();
-
-								break;
-							}
-						}
-
-						if (mat != null)
-						{
-							if (editLevel == EditLevel.Geometry)
-							{
-								pb_Undo.RecordSelection(selection, "Set Face Materials");
-
-								foreach (pb_Object pbs in selection)
-									pbs.SetFaceMaterial(pbs.SelectedFaces.Length < 1 ? pbs.faces : pbs.SelectedFaces, mat);
-							}
-							else
-							{
-								pb_Undo.RecordObject(pb, "Set Object Material");
-								pb.SetFaceMaterial(pb.faces, mat);
-							}
-
-							pb.ToMesh();
-							pb.Refresh();
-							pb.Optimize();
-
-							evt.Use();
-						}
-					}
-				}
-			}
-
 		}
 
 		/// <summary>
@@ -1794,36 +1703,21 @@ namespace ProBuilder.EditorCore
 			Handles.matrix = prev;
 		}
 
-		public void DrawHandles()
+		void DrawHandleGUI(SceneView sceneView)
 		{
-			Handles.lighting = false;
+			if (sceneView != SceneView.lastActiveSceneView)
+				return;
 
-			// Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices are drawn here.
-			if(selectionMode == SelectMode.Edge && m_CurrentEvent.type == EventType.Repaint)
+			// Draw nearest edge
+			if (m_CurrentEvent.type == EventType.Repaint &&
+			    editLevel != EditLevel.Top &&
+			    editLevel != EditLevel.Plugin)
 			{
-				for (int i = 0; i < selection.Length; i++)
-				{
-					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
-					pb_Object pb = selection[i];
-					pb_Edge[] edges = pb.SelectedEdges;
-
-					GL.MultMatrix(pb.transform.localToWorldMatrix);
-					// todo add preference or use handles
-					GL.Color(Color.green);
-
-					for (int j = 0; j < selection[i].SelectedEdges.Length; j++)
-					{
-						GL.Vertex(pb.vertices[edges[j].x]);
-						GL.Vertex(pb.vertices[edges[j].y]);
-					}
-					pb_EditorHandleUtility.EndDrawingLines();
-				}
-
 				if (nearestEdgeObject != null && nearestEdge.IsValid())
 				{
 					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
 
-					GL.Color(Color.red);
+					GL.Color(Handles.preselectionColor);
 
 					GL.MultMatrix(nearestEdgeObject.transform.localToWorldMatrix);
 					GL.Vertex(nearestEdgeObject.vertices[nearestEdge.x]);
@@ -1832,14 +1726,6 @@ namespace ProBuilder.EditorCore
 					pb_EditorHandleUtility.EndDrawingLines();
 				}
 			}
-
-			Handles.lighting = true;
-		}
-
-		public void DrawHandleGUI(SceneView sceneView)
-		{
-			if (sceneView != SceneView.lastActiveSceneView)
-				return;
 
 			using (new pb_HandleGUI())
 			{
@@ -1958,7 +1844,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		public bool ShortcutCheck(Event e)
+		internal bool ShortcutCheck(Event e)
 		{
 			List<pb_Shortcut> matches = m_Shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
@@ -2412,7 +2298,7 @@ namespace ProBuilder.EditorCore
 //			profiler.EndSample();
 //			profiler.BeginSample("update graphics");
 
-			UpdateGraphics();
+			pb_ElementGraphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
 
 //			profiler.EndSample();
 //			profiler.BeginSample("update handlerotation");
@@ -2488,7 +2374,8 @@ namespace ProBuilder.EditorCore
 
 			m_HandlePivotWorld = (max + min) / 2f;
 
-			UpdateGraphics();
+			pb_ElementGraphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
+
 			UpdateHandleRotation();
 			currentHandleRotation = handleRotation;
 
@@ -2507,11 +2394,6 @@ namespace ProBuilder.EditorCore
 				m_SelectedCommonVertexCount.ToString());
 
 			// profiler.EndSample();
-		}
-
-		void UpdateGraphics()
-		{
-			graphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
 		}
 
 		public void ClearElementSelection()

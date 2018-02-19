@@ -17,6 +17,9 @@ namespace ProBuilder.EditorCore
 
 		static void UndoRedoPerformed()
 		{
+			if (pb_DragAndDropListener.IsDragging())
+				return;
+
 			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
 				var polyShape = pb.GetComponent<pb_PolyShape>();

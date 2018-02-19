@@ -91,11 +91,14 @@ public class pb_SceneExplorer : EditorWindow
 	{
 		for (int i = 0; i < array.Length; i++)
 		{
+			if (array[i] == null)
+				continue;
+
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(string.Format("<color=#808080ff>\u2022</color> {0}", array[i] != null ? array[i].ToString() : "null"));
 			GUILayout.FlexibleSpace();
 			if(GUILayout.Button("x", EditorStyles.miniButtonRight))
-				Object.DestroyImmediate(array[i]);
+				DestroyImmediate(array[i]);
 			GUILayout.EndHorizontal();
 		}
 	}

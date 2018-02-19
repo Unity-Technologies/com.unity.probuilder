@@ -63,10 +63,10 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Call a method with args.
 		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="method"></param>
-		/// <param name="flags"></param>
-		/// <param name="args"></param>
+		/// <param name="target">Target object</param>
+		/// <param name="method">The name of the method to invoke</param>
+		/// <param name="flags">Optional BindingFlags. If none are passed, defaults to Public|NonPublic|Static|Instance</param>
+		/// <param name="args">Any additional arguments to pass to the invoked function</param>
 		/// <returns></returns>
 		public static object Invoke(
 			object target,
