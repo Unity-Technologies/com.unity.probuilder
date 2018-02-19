@@ -106,6 +106,9 @@ namespace ProBuilder.EditorCore
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
 						s_PreviewMesh.vertices = mesh.vertices;
+						Vector2[] uvs = mesh.uv;
+						if(uvs != null && uvs.Length == mesh.vertexCount)
+							s_PreviewMesh.uv = uvs;
 						s_PreviewMesh.triangles = pb_Face.AllTriangles(mesh.SelectedFaces);
 					}
 				}
