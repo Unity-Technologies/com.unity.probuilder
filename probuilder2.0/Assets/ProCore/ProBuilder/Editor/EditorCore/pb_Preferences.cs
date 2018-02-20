@@ -12,6 +12,8 @@ namespace ProBuilder.EditorCore
 		static bool prefsLoaded = false;
 
 		static bool pbUseUnityColors;
+		static float pbLineHandleSize;
+		static float pbWireframeSize;
 		static Color faceSelectedColor;
 		static Color pbWireframeColor;
 		static Color pbSelectedEdgeColor;
@@ -152,7 +154,13 @@ namespace ProBuilder.EditorCore
 				vertexSelectedColor = EditorGUILayout.ColorField("Selected Vertex Color", vertexSelectedColor);
 			}
 
-			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Handle Size", pbVertexHandleSize, 0f, 3f);
+			pbVertexHandleSize = EditorGUILayout.Slider("Vertex Size", pbVertexHandleSize, 1f, 10f);
+
+			bool geoLine = pb_MeshHandles.geometryShadersSupported;
+			GUI.enabled = geoLine;
+			pbLineHandleSize = EditorGUILayout.Slider("Line Size", geoLine ? pbLineHandleSize : 0f, 0f, 3f);
+			pbWireframeSize = EditorGUILayout.Slider("Wireframe Size", geoLine ? pbWireframeSize : 0f, 0f, 3f);
+			GUI.enabled = true;
 
 			/**
 			 * MISC. SETTINGS
@@ -257,6 +265,8 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEntity);
 
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUseUnityColors);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbLineHandleSize);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeSize);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
@@ -446,6 +456,8 @@ namespace ProBuilder.EditorCore
 			pbManageLightmappingStaticFlag = pb_PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false);
 
 			pbUseUnityColors = pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors);
+			pbLineHandleSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize);
+			pbWireframeSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize);
 			faceSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
 			pbWireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
 			pbSelectedFaceDither = pb_PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
@@ -469,18 +481,23 @@ namespace ProBuilder.EditorCore
 
 		public static void SetPrefs()
 		{
-			pb_PreferencesInternal.SetBool(pb_Constant.pbUseUnityColors, pbUseUnityColors);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, pb_PreferenceLocation.Global);
+
+			pb_PreferencesInternal.SetBool(pb_Constant.pbUseUnityColors, pbUseUnityColors, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbSelectedFaceDither, pbSelectedFaceDither, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetFloat(pb_Constant.pbLineHandleSize, pbLineHandleSize, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetFloat(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetFloat(pb_Constant.pbWireframeSize, pbWireframeSize, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedFaceColor, faceSelectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbWireframeColor, pbWireframeColor, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetBool(pb_Constant.pbSelectedFaceDither, pbSelectedFaceDither, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedVertexColor, vertexSelectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbUnselectedVertexColor, vertexUnselectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedEdgeColor, pbSelectedEdgeColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbUnselectedEdgeColor, pbUnselectedEdgeColor, pb_PreferenceLocation.Global);
+
 			pb_PreferencesInternal.SetString(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
 			pb_PreferencesInternal.SetInt(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
@@ -503,11 +520,13 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetBool(pb_Constant.pbEnableExperimental, pbEnableExperimental, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetBool(pb_Constant.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, pb_PreferenceLocation.Global);
-			pb_PreferencesInternal.SetFloat(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetFloat(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue, pb_PreferenceLocation.Global);
 
 			if (pb_Editor.instance != null)
+			{
+				pb_MeshHandles.Destroy();
 				pb_Editor.instance.OnEnable();
+			}
 
 			SceneView.RepaintAll();
 		}

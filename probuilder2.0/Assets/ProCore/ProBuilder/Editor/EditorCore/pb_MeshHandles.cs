@@ -1,23 +1,35 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Net.Configuration;
-using ProBuilder.EditorCore;
+using System.Linq;
+using ProBuilder.Core;
 using UnityEditor;
 
-namespace ProBuilder.Core
+namespace ProBuilder.EditorCore
 {
-	static class pb_ElementGraphics
+	public static class pb_MeshHandles
 	{
 		const string k_FaceShader = "Hidden/ProBuilder/FaceHighlight";
+
+		// used when gpu doesn't support geometry shaders (metal, for example)
 		const string k_EdgeShader = "Hidden/ProBuilder/FaceHighlight";
+
+		// used when gpu doesn't support geometry shaders (metal, for example)
 		const string k_VertexShader = "Hidden/ProBuilder/pb_VertexShader";
 
-		static float s_VertexHandleSize = .03f;
+		// geometry shader expands lines to billboards
+		const string k_LineBillboardShader = "Hidden/ProBuilder/LineBillboard";
+
+		// geometry shader expands points to billboards
+		const string k_PointBillboardShader = "Hidden/ProBuilder/PointBillboard";
+
+		static bool s_GeometryShadersSupported;
+		static float s_VertexHandleSize = 3f;
 		static bool s_EnableFaceDither = false;
 
 		static Material s_FaceMaterial;
 		static Material s_VertexMaterial;
 		static Material s_WireframeMaterial;
+		static Material s_LineMaterial;
 
 		static Color s_FaceSelectedColor = new Color(0f, 1f, 1f, .275f);
 		static Color s_WireframeColor = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
@@ -28,58 +40,96 @@ namespace ProBuilder.Core
 		static Color s_VertexUnselectedColor = new Color(.8f, .8f, .8f, 1f);
 
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
-		static readonly Material[] k_WireframeMaterials = new Material[1];
 
 		static pb_ObjectPool<pb_Renderable> s_RenderablePool;
 		static List<pb_Renderable> s_ActiveRenderables;
+		static List<pb_Renderable> s_WireframeRenderables;
 
 		static bool s_IsInitialized;
+		static bool s_IsGuiInitialized;
+
+		public static bool geometryShadersSupported
+		{
+			get { return s_GeometryShadersSupported; }
+		}
+
+		public static Material lineMaterial
+		{
+			get { return s_LineMaterial; }
+		}
+
+		public static void SetLineColor(Color color)
+		{
+			lineMaterial.SetColor("_Color", color);
+			GL.Color(color);
+		}
+
+		public static Material vertexMaterial
+		{
+			get { return s_VertexMaterial; }
+		}
 
 		public static void Initialize()
 		{
 			if (!s_IsInitialized)
 			{
-				s_RenderablePool =
-					new pb_ObjectPool<pb_Renderable>(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
+				s_RenderablePool = new pb_ObjectPool<pb_Renderable>(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
 				s_ActiveRenderables = new List<pb_Renderable>();
+				s_WireframeRenderables = new List<pb_Renderable>();
 
-				s_WireframeMaterial = CreateMaterial(Shader.Find(k_EdgeShader), "pb_ElementGraphics::WireframeMaterial");
-				k_WireframeMaterials[0] = s_WireframeMaterial;
+				float wireframeSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize);
+				float edgeSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize);
 
+				s_LineMaterial = CreateMaterial(Shader.Find(edgeSize <= 0f ? k_EdgeShader : k_LineBillboardShader), "pb_ElementGraphics::LineMaterial");
+				s_WireframeMaterial = CreateMaterial(Shader.Find(wireframeSize <= 0f ? k_EdgeShader : k_LineBillboardShader), "pb_ElementGraphics::WireMaterial");
+				s_VertexMaterial = CreateMaterial(Shader.Find(k_PointBillboardShader), "pb_ElementGraphics::VertexBillboardMaterial");
 				s_FaceMaterial = CreateMaterial(Shader.Find(k_FaceShader), "pb_ElementGraphics::FaceSelectionMaterial");
-				s_VertexMaterial = CreateMaterial(Shader.Find(k_VertexShader), "pb_ElementGraphics::VertexBillboardMaterial");
 
+				s_GeometryShadersSupported = s_WireframeMaterial.shader.isSupported && s_VertexMaterial.shader.isSupported;
+
+				if (!s_GeometryShadersSupported)
+				{
+					s_LineMaterial.shader = Shader.Find(k_EdgeShader);
+					s_WireframeMaterial.shader = Shader.Find(k_EdgeShader);
+					s_VertexMaterial.shader = Shader.Find(k_VertexShader);
+				}
+
+				s_IsGuiInitialized = false;
 				s_IsInitialized = true;
 			}
-
-			LoadPrefs();
 		}
 
 		public static void Destroy()
 		{
+			ClearAllRenderables();
 			s_RenderablePool.Empty();
 			Object.DestroyImmediate(s_FaceMaterial);
 			Object.DestroyImmediate(s_VertexMaterial);
 			Object.DestroyImmediate(s_WireframeMaterial);
+			Object.DestroyImmediate(s_LineMaterial);
 			s_IsInitialized = false;
 		}
 
 		/// <summary>
 		/// Reload colors for edge and face highlights from editor prefs.
 		/// </summary>
-		public static void LoadPrefs()
+		public static void InitializeStyles()
 		{
-			s_WireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
-			s_VertexHandleSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize);
+			if (s_IsGuiInitialized)
+				return;
 
-			if (pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors, false))
+			s_IsGuiInitialized = true;
+
+			s_WireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
+
+			if (pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors))
 			{
 				s_FaceSelectedColor = Handles.selectedColor;
 				s_EdgeSelectedColor = Handles.selectedColor;
 				s_VertexSelectedColor = Handles.selectedColor;
 
 				s_EdgeUnselectedColor = s_WireframeColor;
-				s_VertexUnselectedColor = s_WireframeColor;
+				s_VertexUnselectedColor = Handles.secondaryColor;
 
 				s_EnableFaceDither = true;
 			}
@@ -98,14 +148,14 @@ namespace ProBuilder.Core
 			s_WireframeMaterial.SetColor("_Color", s_WireframeColor);
 			s_FaceMaterial.SetColor("_Color", s_FaceSelectedColor);
 			s_FaceMaterial.SetFloat("_Dither", s_EnableFaceDither ? 1f : 0f);
-			s_VertexMaterial.SetColor("_Color", s_VertexUnselectedColor);
-			s_VertexMaterial.SetFloat("_Scale", s_VertexHandleSize * 4f);
-		}
 
-		static int Clamp(int val, int min, int max)
-		{
-			return val < min ? min :
-				val > max ? max : val;
+			if (geometryShadersSupported)
+			{
+				s_WireframeMaterial.SetFloat("_Scale", pb_PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize) * EditorGUIUtility.pixelsPerPoint);
+				s_LineMaterial.SetFloat("_Scale", pb_PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize) * EditorGUIUtility.pixelsPerPoint);
+			}
+
+			s_VertexMaterial.SetFloat("_Scale", pb_PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
 		}
 
 		public static void DoGUI(EditLevel editLevel, SelectMode selectionMode)
@@ -113,57 +163,74 @@ namespace ProBuilder.Core
 			if (Event.current.type != EventType.Repaint)
 				return;
 
+			InitializeStyles();
+
+			// wireframe and unselected vertices are always drawn
+			s_VertexMaterial.SetColor("_Color", s_VertexUnselectedColor);
+			s_LineMaterial.SetColor("_Color", s_EdgeUnselectedColor);
+
+			foreach (var r in s_WireframeRenderables)
+				r.Render();
+
+			// don't render overlays when drag and drop is active so that the user can see the material preview
 			if (!pb_DragAndDropListener.IsDragging())
 			{
-				foreach (pb_Renderable renderable in s_ActiveRenderables)
+				if (selectionMode == SelectMode.Vertex)
 				{
-					Material[] mats = renderable.materials;
+					s_VertexMaterial.SetColor("_Color", s_VertexSelectedColor);
+					foreach(var r in s_ActiveRenderables)
+						r.Render();
+				}
+				else if (selectionMode == SelectMode.Face)
+				{
+					foreach(var r in s_ActiveRenderables)
+						r.Render();
+				}
+				else if (selectionMode == SelectMode.Edge)
+				{
+					Handles.lighting = false;
 
-					if (renderable.mesh == null)
-						continue;
+					var selection = pb_Selection.Top();
+					SetLineColor(s_EdgeSelectedColor);
 
-					for (int n = 0; n < renderable.mesh.subMeshCount; n++)
+					for (int i = 0; i < selection.Length; i++)
 					{
-						int materialIndex = Clamp(n, 0, mats.Length - 1);
-
-						if (mats[materialIndex] == null || !mats[materialIndex].SetPass(0))
+						if (pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 						{
-							pb_Log.Debug("ProBuilder mesh handle material is null.");
-							continue;
+							pb_Object pb = selection[i];
+							pb_Edge[] edges = pb.SelectedEdges;
+
+							GL.MultMatrix(pb.transform.localToWorldMatrix);
+
+							for (int j = 0, c = selection[i].SelectedEdgeCount; j < c; j++)
+							{
+								GL.Vertex(pb.vertices[edges[j].x]);
+								GL.Vertex(pb.vertices[edges[j].y]);
+							}
+
+							pb_EditorHandleUtility.EndDrawingLines();
 						}
-
-						Graphics.DrawMeshNow(renderable.mesh,
-							renderable.transform != null ? renderable.transform.localToWorldMatrix : Matrix4x4.identity, n);
+						else
+						{
+							break;
+						}
 					}
+
+					Handles.lighting = true;
 				}
 			}
+		}
 
-			Handles.lighting = false;
+		static void ClearAllRenderables()
+		{
+			foreach (var ren in s_ActiveRenderables)
+				s_RenderablePool.Put(ren);
 
-			// Edge wireframe and selected faces are drawn in pb_ElementGraphics, selected edges & vertices are drawn here.
-			if(selectionMode == SelectMode.Edge)
-			{
-				var selection = pb_Selection.Top();
+			foreach (var ren in s_WireframeRenderables)
+				s_RenderablePool.Put(ren);
 
-				for (int i = 0; i < selection.Length; i++)
-				{
-					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
-					pb_Object pb = selection[i];
-					pb_Edge[] edges = pb.SelectedEdges;
-
-					GL.MultMatrix(pb.transform.localToWorldMatrix);
-					GL.Color(s_EdgeSelectedColor);
-
-					for (int j = 0; j < selection[i].SelectedEdges.Length; j++)
-					{
-						GL.Vertex(pb.vertices[edges[j].x]);
-						GL.Vertex(pb.vertices[edges[j].y]);
-					}
-					pb_EditorHandleUtility.EndDrawingLines();
-				}
-			}
-
-			Handles.lighting = true;
+			s_ActiveRenderables.Clear();
+			s_WireframeRenderables.Clear();
 		}
 
 		static Material CreateMaterial(Shader shader, string materialName)
@@ -188,16 +255,10 @@ namespace ProBuilder.Core
 				return;
 
 			// clear the current renderables
-			foreach(pb_Renderable ren in s_ActiveRenderables)
-				s_RenderablePool.Put(ren);
+			ClearAllRenderables();
 
-			s_ActiveRenderables.Clear();
-
-			// update wireframe
-			s_WireframeMaterial.SetColor("_Color", (selectionMode == SelectMode.Edge && editLevel == EditLevel.Geometry) ? s_EdgeUnselectedColor : s_WireframeColor);
-
-			for(int i = 0; i < selection.Length; i++)
-				s_ActiveRenderables.Add(BuildEdgeMesh(selection[i]));
+			for (int i = 0; i < selection.Length; i++)
+				s_WireframeRenderables.Add(BuildEdgeMesh(selection[i], selectionMode == SelectMode.Edge ? s_LineMaterial : s_WireframeMaterial));
 
 			if(editLevel == EditLevel.Geometry)
 			{
@@ -206,13 +267,23 @@ namespace ProBuilder.Core
 				{
 					case SelectMode.Face:
 						foreach(pb_Object pb in selection)
-							s_ActiveRenderables.Add( BuildFaceMesh(pb) );
+							s_ActiveRenderables.Add(BuildFaceMesh(pb));
 						break;
 
 					case SelectMode.Vertex:
-						for(int i = 0, c = selection.Length; i < c; i++)
-							s_ActiveRenderables.Add( BuildVertexMesh(selection[i], commonIndicesLookup[i]) );
+					{
+						if (geometryShadersSupported)
+						{
+							for (int i = 0, c = selection.Length; i < c; i++)
+								s_WireframeRenderables.Add(BuildVertexPoints(selection[i]));
+						}
+
+						for (int i = 0, c = selection.Length; i < c; i++)
+							s_ActiveRenderables.Add(geometryShadersSupported
+								? BuildVertexPoints(selection[i], selection[i].SelectedTriangles)
+								: BuildVertexMesh(selection[i], commonIndicesLookup[i]));
 						break;
+					}
 
 					default:
 						break;
@@ -231,7 +302,7 @@ namespace ProBuilder.Core
 
 			ren.name = "pb_ElementGraphics::FacesRenderable";
 			ren.transform = pb.transform;
-			ren.materials = new Material[] { s_FaceMaterial };
+			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
 			ren.mesh.vertices = pb.vertices;
 			ren.mesh.triangles = pb_Face.AllTriangles(pb.SelectedFaces);
@@ -330,7 +401,7 @@ namespace ProBuilder.Core
 
 			ren.name = "pb_ElementGraphics::VertexRenderable";
 			ren.transform = pb.transform;
-			ren.materials = new Material[] { s_VertexMaterial };
+			ren.material = s_VertexMaterial;
 			ren.mesh.Clear();
 			ren.mesh.vertices = t_billboards;
 			ren.mesh.normals = t_nrm;
@@ -342,7 +413,7 @@ namespace ProBuilder.Core
 			return ren;
 		}
 
-		static pb_Renderable BuildEdgeMesh(pb_Object pb)
+		static pb_Renderable BuildEdgeMesh(pb_Object pb, Material material)
 		{
 			int edgeCount = 0;
 			int faceCount = pb.faceCount;
@@ -371,16 +442,46 @@ namespace ProBuilder.Core
 			}
 
 			pb_Renderable ren = s_RenderablePool.Get();
-			ren.materials = k_WireframeMaterials;
+			ren.material = material;
 			ren.name = "pb_ElementGraphics::WireframeRenderable";
 			ren.transform = pb.transform;
 			ren.mesh.Clear();
-			ren.mesh.name = "Edge Billboard";
+			ren.mesh.name = "pb_ElementGraphics::WireframeMesh";
 			ren.mesh.vertices = pb.vertices;
 			ren.mesh.subMeshCount = 1;
 			ren.mesh.SetIndices(tris, MeshTopology.Lines, 0);
 
 			return ren;
+		}
+
+		/// <summary>
+		/// Draw a set of vertices.
+		/// </summary>
+		/// <param name="pb"></param>
+		static pb_Renderable BuildVertexPoints(pb_Object pb)
+		{
+			int[] indices = new int[pb.sharedIndices.Length];
+			for (int i = 0; i < pb.sharedIndices.Length; i++)
+				indices[i] = pb.sharedIndices[i][0];
+			return BuildVertexPoints(pb, indices);
+		}
+
+		/// <summary>
+		/// Draw a set of vertices.
+		/// </summary>
+		/// <param name="pb"></param>
+		static pb_Renderable BuildVertexPoints(pb_Object pb, int[] indices)
+		{
+			var renderable = s_RenderablePool.Get();
+			renderable.material = s_VertexMaterial;
+			renderable.transform = pb.transform;
+			var mesh = renderable.mesh;
+			mesh.Clear();
+			mesh.name = "pb_ElementGraphics::PointMesh";
+			mesh.vertices = pb.vertices;
+			mesh.subMeshCount = 1;
+			mesh.SetIndices(indices, MeshTopology.Points, 0);
+			return renderable;
 		}
 	}
 }

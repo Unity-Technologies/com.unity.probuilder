@@ -219,7 +219,7 @@ namespace ProBuilder.EditorCore
 		{
 			s_Instance = this;
 
-			pb_ElementGraphics.Initialize();
+			pb_MeshHandles.Initialize();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			SceneView.onSceneGUIDelegate += this.OnSceneGUI;
@@ -255,7 +255,7 @@ namespace ProBuilder.EditorCore
 
 			UpdateSelection();
 
-			pb_ElementGraphics.Destroy();
+			pb_MeshHandles.Destroy();
 
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(null);
@@ -453,7 +453,7 @@ namespace ProBuilder.EditorCore
 		{
 #if !UNITY_2018_2_OR_NEWER
 			if(s_ResetOnSceneGUIState != null)
-				s_ResetOnSceneGUIState.Invoke(scnView, null);
+				s_ResetOnSceneGUIState.Invoke(sceneView, null);
 #endif
 
 			SceneStyles.Init();
@@ -481,10 +481,9 @@ namespace ProBuilder.EditorCore
 			if (m_CurrentEvent.type == EventType.MouseUp && m_CurrentEvent.button == 1 || m_CurrentEvent.type == EventType.Ignore)
 				rightMouseDown = false;
 
-			DrawHandleGUI(sceneView);
+			pb_MeshHandles.DoGUI(editLevel, selectionMode);
 
-			if (editLevel != EditLevel.Top && editLevel != EditLevel.Plugin)
-				pb_ElementGraphics.DoGUI(editLevel, selectionMode);
+			DrawHandleGUI(sceneView);
 
 			if (!rightMouseDown && getKeyUp != KeyCode.None)
 			{
@@ -1715,15 +1714,17 @@ namespace ProBuilder.EditorCore
 			{
 				if (nearestEdgeObject != null && nearestEdge.IsValid())
 				{
-					pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest);
+					if (pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest))
+					{
+						pb_MeshHandles.SetLineColor(Handles.preselectionColor);
 
-					GL.Color(Handles.preselectionColor);
+						GL.MultMatrix(nearestEdgeObject.transform.localToWorldMatrix);
 
-					GL.MultMatrix(nearestEdgeObject.transform.localToWorldMatrix);
-					GL.Vertex(nearestEdgeObject.vertices[nearestEdge.x]);
-					GL.Vertex(nearestEdgeObject.vertices[nearestEdge.y]);
+						GL.Vertex(nearestEdgeObject.vertices[nearestEdge.x]);
+						GL.Vertex(nearestEdgeObject.vertices[nearestEdge.y]);
 
-					pb_EditorHandleUtility.EndDrawingLines();
+						pb_EditorHandleUtility.EndDrawingLines();
+					}
 				}
 			}
 
@@ -2298,7 +2299,7 @@ namespace ProBuilder.EditorCore
 //			profiler.EndSample();
 //			profiler.BeginSample("update graphics");
 
-			pb_ElementGraphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
+			pb_MeshHandles.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
 
 //			profiler.EndSample();
 //			profiler.BeginSample("update handlerotation");
@@ -2374,7 +2375,7 @@ namespace ProBuilder.EditorCore
 
 			m_HandlePivotWorld = (max + min) / 2f;
 
-			pb_ElementGraphics.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
+			pb_MeshHandles.RebuildGraphics(selection, m_SharedIndicesDictionary, editLevel, selectionMode);
 
 			UpdateHandleRotation();
 			currentHandleRotation = handleRotation;

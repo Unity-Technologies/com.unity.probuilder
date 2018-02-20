@@ -613,11 +613,11 @@ namespace ProBuilder.EditorCore
 			return v;
 		}
 
-		static MethodInfo m_ApplyWireMaterial = null;
+		static MethodInfo s_ApplyWireMaterial = null;
 
-		static object[] m_ApplyWireMaterialArgs = new object[]
+		static object[] s_ApplyWireMaterialArgs = new object[]
 		{
-			UnityEngine.Rendering.CompareFunction.Always
+			CompareFunction.Always
 		};
 
 		internal static bool BeginDrawingLines(CompareFunction zTest)
@@ -625,18 +625,28 @@ namespace ProBuilder.EditorCore
 			if (Event.current.type != EventType.Repaint)
 				return false;
 
-			if (m_ApplyWireMaterial == null)
+			if (!pb_MeshHandles.geometryShadersSupported ||
+			    !pb_MeshHandles.lineMaterial.SetPass(0))
 			{
-				m_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
-					"ApplyWireMaterial",
-					BindingFlags.Static | BindingFlags.NonPublic,
-					null,
-					new System.Type[] { typeof(UnityEngine.Rendering.CompareFunction) },
-					null);
-			}
+				if (s_ApplyWireMaterial == null)
+				{
+					s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
+						"ApplyWireMaterial",
+						BindingFlags.Static | BindingFlags.NonPublic,
+						null,
+						new System.Type[] { typeof(CompareFunction) },
+						null);
 
-			m_ApplyWireMaterialArgs[0] = zTest;
-			m_ApplyWireMaterial.Invoke(null, m_ApplyWireMaterialArgs);
+					if (s_ApplyWireMaterial == null)
+					{
+						pb_Log.Info("Failed to find wire material, stopping draw lines.");
+						return false;
+					}
+				}
+
+				s_ApplyWireMaterialArgs[0] = zTest;
+				s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
+			}
 
 			GL.PushMatrix();
 			GL.Begin(GL.LINES);

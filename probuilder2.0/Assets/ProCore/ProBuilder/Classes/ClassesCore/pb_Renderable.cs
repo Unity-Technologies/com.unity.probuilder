@@ -11,30 +11,22 @@ namespace ProBuilder.Core
 	class pb_Renderable : ScriptableObject
 	{
 		public Mesh mesh;
-		public Material[] materials;
+		public Material material;
 		public Transform transform;
-
-		public static pb_Renderable CreateInstance(Mesh InMesh, Material[] InMaterials, Transform transform = null)
-		{
-			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
-			ren.mesh = InMesh;
-			ren.materials = InMaterials;
-			ren.transform = transform;
-			return ren;
-		}
 
 		public static pb_Renderable CreateInstance(Mesh InMesh, Material InMaterial, Transform transform = null)
 		{
 			pb_Renderable ren = ScriptableObject.CreateInstance<pb_Renderable>();
 			ren.mesh = InMesh;
-			ren.materials = new Material[] { InMaterial };
+			ren.material = InMaterial;
 			ren.transform = transform;
 			return ren;
 		}
 
-		/**
-		 * Create a new pb_Renderable with an empty mesh and no materials.
-		 */
+		/// <summary>
+		/// Create a new pb_Renderable with an empty mesh and no materials.
+		/// </summary>
+		/// <returns></returns>
 		public static pb_Renderable CreateInstance()
 		{
 			pb_Renderable ren = CreateInstance(new Mesh(), (Material)null);
@@ -48,18 +40,33 @@ namespace ProBuilder.Core
 			return ren;
 		}
 
-		/**
-		 * Destructor for wireframe pb_Renderables.
-		 */
+		/// <summary>
+		/// Destructor for wireframe pb_Renderables.
+		/// </summary>
+		/// <param name="ren"></param>
 		public static void DestroyInstance(UnityEngine.Object ren)
 		{
-			GameObject.DestroyImmediate(ren);
+			DestroyImmediate(ren);
 		}
 
 		void OnDestroy()
 		{
 			if(mesh != null)
-				GameObject.DestroyImmediate(mesh);
+				DestroyImmediate(mesh);
+		}
+
+		public void Render()
+		{
+			if (mesh == null)
+				return;
+
+			for (int n = 0, c = mesh.subMeshCount; n < c; n++)
+			{
+				if (material == null || !material.SetPass(0))
+					continue;
+
+				Graphics.DrawMeshNow(mesh, transform != null ? transform.localToWorldMatrix : Matrix4x4.identity, n);
+			}
 		}
 	}
 }

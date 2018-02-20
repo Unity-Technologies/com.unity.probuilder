@@ -8,17 +8,10 @@ namespace ProBuilder.Core
 	/// </summary>
 	public static class pb_Constant
 	{
-#if PROTOTYPE
-		/// <summary>
-		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).
-		/// </summary>
-		public const string PRODUCT_NAME = "ProBuilder Basic";
-#else
 		/// <summary>
 		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).
 		/// </summary>
 		public const string PRODUCT_NAME = "ProBuilder";
-#endif
 
 		internal const HideFlags k_EditorHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 		internal const float k_MaxPointDistanceFromControl = 20f;
@@ -310,6 +303,8 @@ namespace ProBuilder.Core
 		internal const string pbVertexHandleSize = "pbVertexHandleSize";
 		internal const string pbUVGridSnapValue = "pbUVGridSnapValue";
 		internal const string pbUVWeldDistance = "pbUVWeldDistance";
+		internal const string pbLineHandleSize = "pbLineHandleSize";
+		internal const string pbWireframeSize = "pbWireframeSize";
 
 		/// The maximum allowed distance between vertices to weld.
 		internal const string pbWeldDistance = "pbWeldDistance";

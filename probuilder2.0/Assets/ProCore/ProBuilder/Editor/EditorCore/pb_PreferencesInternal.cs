@@ -34,7 +34,7 @@ namespace ProBuilder.EditorCore
 
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 
-		static Dictionary<string, bool> m_BoolDefaults = new Dictionary<string, bool>()
+		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
 		{
 			{ pb_Constant.pbForceConvex, false },
 			{ pb_Constant.pbManifoldEdgeExtrusion, false },
@@ -53,21 +53,23 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbCollapseVertexToFirst, false },
 			{ pb_Constant.pbEnableExperimental, false },
 			{ pb_Constant.pbMeshesAreAssets, false },
-			{ pb_Constant.pbSelectedFaceDither, false }
+			{ pb_Constant.pbSelectedFaceDither, false },
 		};
 
-		static Dictionary<string, float> m_FloatDefaults = new Dictionary<string, float>()
+		static Dictionary<string, float> s_FloatDefaults = new Dictionary<string, float>()
 		{
-			{ pb_Constant.pbVertexHandleSize, .5f },
 			{ pb_Constant.pbGrowSelectionAngle, 42f },
 			{ pb_Constant.pbExtrudeDistance, .5f },
 			{ pb_Constant.pbWeldDistance, Mathf.Epsilon },
 			{ pb_Constant.pbUVGridSnapValue, .125f },
 			{ pb_Constant.pbUVWeldDistance, .01f },
-			{ pb_Constant.pbBevelAmount, .05f }
+			{ pb_Constant.pbBevelAmount, .05f },
+			{ pb_Constant.pbVertexHandleSize, 3f },
+			{ pb_Constant.pbLineHandleSize, 1f },
+			{ pb_Constant.pbWireframeSize, .5f },
 		};
 
-		static Dictionary<string, int> m_IntDefaults = new Dictionary<string, int>()
+		static Dictionary<string, int> s_IntDefaults = new Dictionary<string, int>()
 		{
 			{ pb_Constant.pbDefaultEditLevel, 0 },
 			{ pb_Constant.pbDefaultSelectionMode, 0 },
@@ -78,12 +80,10 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbDefaultEntity, (int) EntityType.Detail },
 			{ pb_Constant.pbDragSelectMode, (int) DragSelectMode.Difference },
 			{ pb_Constant.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
-			#if !UNITY_4_7
 			{ pb_Constant.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
-			#endif
 		};
 
-		static Dictionary<string, Color> m_ColorDefaults = new Dictionary<string, Color>()
+		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
 			{ pb_Constant.pbSelectedFaceColor, k_DefaultSelectedColor },
 			{ pb_Constant.pbWireframeColor, k_DefaultWireframeColor },
@@ -93,26 +93,26 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbSelectedVertexColor, k_DefaultSelectedColor },
 		};
 
-		static Dictionary<string, string> m_StringDefaults = new Dictionary<string, string>()
+		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()
 		{
 		};
 
-		private static pb_PreferenceDictionary m_Preferences = null;
+		static pb_PreferenceDictionary s_Preferences = null;
 
-		private static void LoadPreferencesObject()
+		static void LoadPreferencesObject()
 		{
 			string preferencesPath = pb_FileUtil.GetLocalDataDirectory() + k_PrefsAssetName;
 
 			// First try loading at the local files directory
-			m_Preferences = AssetDatabase.LoadAssetAtPath<pb_PreferenceDictionary>(preferencesPath);
+			s_Preferences = AssetDatabase.LoadAssetAtPath<pb_PreferenceDictionary>(preferencesPath);
 
 			// If that fails, search the project for a compatible preference object
-			if (m_Preferences == null)
-				m_Preferences = pb_FileUtil.FindAssetOfType<pb_PreferenceDictionary>();
+			if (s_Preferences == null)
+				s_Preferences = pb_FileUtil.FindAssetOfType<pb_PreferenceDictionary>();
 
 			// If that fails, create a new preferences object at the local data directory
-			if (m_Preferences == null)
-				m_Preferences = pb_FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
+			if (s_Preferences == null)
+				s_Preferences = pb_FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
 		}
 
 		/**
@@ -122,10 +122,10 @@ namespace ProBuilder.EditorCore
 		{
 			get
 			{
-				if (m_Preferences == null)
+				if (s_Preferences == null)
 					LoadPreferencesObject();
 
-				return m_Preferences;
+				return s_Preferences;
 			}
 		}
 
@@ -134,12 +134,13 @@ namespace ProBuilder.EditorCore
 		 */
 		public static bool HasKey(string key)
 		{
-			return (m_Preferences != null && m_Preferences.HasKey(key)) || EditorPrefs.HasKey(key);
+			return (s_Preferences != null && s_Preferences.HasKey(key)) || EditorPrefs.HasKey(key);
 		}
 
-		/**
-		 *	Delete a key from both project and global preferences.
-		 */
+		/// <summary>
+		/// Delete a key from both project and global preferences.
+		/// </summary>
+		/// <param name="key"></param>
 		public static void DeleteKey(string key)
 		{
 			preferences.DeleteKey(key);
@@ -154,8 +155,8 @@ namespace ProBuilder.EditorCore
 		public static bool GetBool(string pref)
 		{
 			// Backwards compatibility reasons dictate that default bool value is true.
-			if(m_BoolDefaults.ContainsKey(pref))
-				return GetBool(pref, m_BoolDefaults[pref]);
+			if(s_BoolDefaults.ContainsKey(pref))
+				return GetBool(pref, s_BoolDefaults[pref]);
 			return GetBool(pref, true);
 		}
 
@@ -167,7 +168,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static bool GetBool(string key, bool fallback)
 		{
-			if(m_Preferences != null && preferences.HasKey<bool>(key))
+			if(s_Preferences != null && preferences.HasKey<bool>(key))
 				return preferences.GetBool(key, fallback);
 			return EditorPrefs.GetBool(key, fallback);
 		}
@@ -179,14 +180,14 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static float GetFloat(string key)
 		{
-			if(m_FloatDefaults.ContainsKey(key))
-				return GetFloat(key, m_FloatDefaults[key]);
+			if(s_FloatDefaults.ContainsKey(key))
+				return GetFloat(key, s_FloatDefaults[key]);
 			return GetFloat(key, 1f);
 		}
 
 		public static float GetFloat(string key, float fallback)
 		{
-			if(m_Preferences != null && preferences.HasKey<float>(key))
+			if(s_Preferences != null && preferences.HasKey<float>(key))
 				return preferences.GetFloat(key, fallback);
 			return EditorPrefs.GetFloat(key, fallback);
 		}
@@ -198,14 +199,14 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static int GetInt(string key)
 		{
-			if(m_IntDefaults.ContainsKey(key))
-				return GetInt(key, m_IntDefaults[key]);
+			if(s_IntDefaults.ContainsKey(key))
+				return GetInt(key, s_IntDefaults[key]);
 			return GetInt(key, 0);
 		}
 
 		public static int GetInt(string key, int fallback)
 		{
-			if(m_Preferences != null && preferences.HasKey<int>(key))
+			if(s_Preferences != null && preferences.HasKey<int>(key))
 				return preferences.GetInt(key, fallback);
 			return EditorPrefs.GetInt(key, fallback);
 		}
@@ -228,14 +229,14 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static Color GetColor(string key)
 		{
-			if(m_ColorDefaults.ContainsKey(key))
-				return GetColor(key, m_ColorDefaults[key]);
+			if(s_ColorDefaults.ContainsKey(key))
+				return GetColor(key, s_ColorDefaults[key]);
 			return GetColor(key, Color.white);
 		}
 
 		public static Color GetColor(string key, Color fallback)
 		{
-			if(m_Preferences != null && preferences.HasKey<Color>(key))
+			if(s_Preferences != null && preferences.HasKey<Color>(key))
 				return preferences.GetColor(key, fallback);
 			pb_Util.TryParseColor(EditorPrefs.GetString(key), ref fallback);
 			return fallback;
@@ -248,14 +249,14 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static string GetString(string key)
 		{
-			if(m_StringDefaults.ContainsKey(key))
-				return GetString(key, m_StringDefaults[key]);
+			if(s_StringDefaults.ContainsKey(key))
+				return GetString(key, s_StringDefaults[key]);
 			return GetString(key, string.Empty);
 		}
 
 		public static string GetString(string key, string fallback)
 		{
-			if(m_Preferences != null && preferences.HasKey<string>(key))
+			if(s_Preferences != null && preferences.HasKey<string>(key))
 				return preferences.GetString(key, fallback);
 			return EditorPrefs.GetString(key, fallback);
 		}
@@ -267,7 +268,7 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static Material GetMaterial(string key)
 		{
-			if(m_Preferences != null && preferences.HasKey<Material>(key))
+			if(s_Preferences != null && preferences.HasKey<Material>(key))
 				return preferences.GetMaterial(key);
 
 			Material mat = null;
