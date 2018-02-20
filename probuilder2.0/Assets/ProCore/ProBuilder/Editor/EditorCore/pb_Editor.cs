@@ -25,10 +25,6 @@ namespace ProBuilder.EditorCore
 		// Called immediately prior to beginning vertex modifications. pb_Object will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
 		public static event OnVertexMovementBeginEventHandler onVertexMovementBegin;
 
-		// because editor prefs can change, or shortcuts may be added, certain pb_Preferences_Internal need to be force reloaded.
-		// adding to this const will force update on updating packages.
-		const int k_EditorPrefVersion = 2080;
-		const int k_EditorShortcutsVersion = 250;
 		// Toggles for Face, Vertex, and Edge mode.
 		const int k_SelectModeLength = 3;
 
@@ -284,27 +280,7 @@ namespace ProBuilder.EditorCore
 
 		internal void LoadPrefs()
 		{
-			// this exists to force update preferences when updating packages
-			if (!pb_PreferencesInternal.HasKey(pb_Constant.pbEditorPrefVersion) ||
-			    pb_PreferencesInternal.GetInt(pb_Constant.pbEditorPrefVersion) != k_EditorPrefVersion)
-			{
-				pb_PreferencesInternal.SetInt(pb_Constant.pbEditorPrefVersion, k_EditorPrefVersion, pb_PreferenceLocation.Global);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
-			}
-
-			if (pb_PreferencesInternal.GetInt(pb_Constant.pbEditorShortcutsVersion, k_EditorShortcutsVersion) != k_EditorShortcutsVersion)
-			{
-				pb_PreferencesInternal.SetInt(pb_Constant.pbEditorShortcutsVersion, k_EditorShortcutsVersion,
-					pb_PreferenceLocation.Global);
-				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
-				Debug.LogWarning(
-					"ProBuilder shortcuts reset. This is either due to a version update that breaks existing shortcuts, or the preferences have been manually reset.");
-			}
+			pb_PreferencesUpdater.CheckEditorPrefsVersion();
 
 			editLevel = pb_PreferencesInternal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
 			selectionMode = pb_PreferencesInternal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);

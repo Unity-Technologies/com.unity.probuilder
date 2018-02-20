@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
-using System.Collections;
 using System.Collections.Generic;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
 
 namespace ProBuilder.EditorCore
 {
