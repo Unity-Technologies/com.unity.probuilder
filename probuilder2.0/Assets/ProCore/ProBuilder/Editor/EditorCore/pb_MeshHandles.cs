@@ -199,6 +199,7 @@ namespace ProBuilder.EditorCore
 						{
 							pb_Object pb = selection[i];
 							pb_Edge[] edges = pb.SelectedEdges;
+							GL.Color(s_EdgeSelectedColor);
 
 							GL.MultMatrix(pb.transform.localToWorldMatrix);
 
