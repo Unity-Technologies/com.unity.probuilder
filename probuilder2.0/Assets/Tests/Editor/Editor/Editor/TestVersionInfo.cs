@@ -6,7 +6,7 @@ using System.Linq;
 using ProBuilder.Core;
 using System;
 
-namespace ProBuilder.RuntimeTests.Type
+namespace ProBuilder.EditorTests.Type
 {
 	public class TestVersionInfo
 	{
@@ -19,7 +19,7 @@ namespace ProBuilder.RuntimeTests.Type
 		public static void ParseMajorMinorPatchOnly()
 		{
 			var info = new pb_VersionInfo("1.0.0");
-			var expected = new pb_VersionInfo(1, 0, 0, 0, VersionType.Development);
+			var expected = new pb_VersionInfo(1, 0, 0);
 			Assert.AreEqual(info, expected);
 		}
 
@@ -28,7 +28,7 @@ namespace ProBuilder.RuntimeTests.Type
 		{
 			pb_VersionInfo info;
 
-			var expected = new pb_VersionInfo(1, 0, 0, 12, VersionType.Development);
+			var expected = new pb_VersionInfo(1, 0, 0, 12, VersionType.Missing);
 			Assert.IsTrue(pb_VersionInfo.TryGetVersionInfo("1.0.0-12text", out info));
 			Assert.AreEqual(expected, info);
 
@@ -42,6 +42,20 @@ namespace ProBuilder.RuntimeTests.Type
 			pb_VersionInfo info;
 			Assert.IsTrue(pb_VersionInfo.TryGetVersionInfo(input, out info));
 			Assert.AreEqual(expected, info, "input: " + input);
+		}
+
+		static pb_VersionInfo V(string version)
+		{
+			return new pb_VersionInfo(version);
+		}
+
+		[Test]
+		public static void CompareVersionInfo()
+		{
+			Assert.Less(V("3.0.0-b.0"), V("3.0.0-f.0"));
+			Assert.Greater(V("3.0.1-f.0"), V("3.0.0"));
+			Assert.Less(V("3.0.0-f.0"), V("3.0.0"));
+			Assert.Less(V("3.0.0-f.0"), V("4.0.0-b.1"));
 		}
 
 		static readonly pb_VersionInfo k_Alpha = new pb_VersionInfo(1, 2, 3, 4, VersionType.Alpha);
@@ -77,7 +91,7 @@ namespace ProBuilder.RuntimeTests.Type
 			ParseBuildType("1.0.0-final-4", new pb_VersionInfo(1, 0, 0, 4, VersionType.Final));
 			ParseBuildType("1.0.0-final+more_metadata", new pb_VersionInfo(1, 0, 0, 0, VersionType.Final));
 			ParseBuildType("1.0.0-final+more_metadata.3", new pb_VersionInfo(1, 0, 0, 0, VersionType.Final));
-			ParseBuildType("1.0.0-finished", new pb_VersionInfo(1, 0, 0, 0, VersionType.Development));
+			ParseBuildType("1.0.0-finished", new pb_VersionInfo(1, 0, 0, 0, VersionType.Missing));
 		}
 
 		[Test]

@@ -7,6 +7,7 @@ namespace ProBuilder.Core
 {
 	public enum VersionType
 	{
+		Missing = -1,
 		Development = 0,
 		Patch = 1,
 		Alpha = 2,
@@ -18,7 +19,7 @@ namespace ProBuilder.Core
 	/// Version information container that is comparable.
 	/// </summary>
 	[Serializable]
-	public class pb_VersionInfo : IEquatable<pb_VersionInfo>, IComparable<pb_VersionInfo>
+	public class pb_VersionInfo : IEquatable<pb_VersionInfo>, IComparable<pb_VersionInfo>, IComparable
 	{
 		[SerializeField]
 		int m_Major = -1;
@@ -30,17 +31,16 @@ namespace ProBuilder.Core
 		int m_Patch = -1;
 
 		[SerializeField]
-		int m_Build = 0;
+		int m_Build = -1;
 
 		[SerializeField]
-		VersionType m_Type;
+		VersionType m_Type = VersionType.Missing;
 
 		[SerializeField]
 		string m_Metadata;
 
 		[SerializeField]
 		string m_Date;
-
 
 		public int major { get { return m_Major; } }
 		public int minor { get { return m_Minor; } }
@@ -74,11 +74,13 @@ namespace ProBuilder.Core
 			}
 			else
 			{
+#if PB_DEBUG
 				pb_Log.Error("Failed parsing version info: " + formatted);
+#endif
 			}
 		}
 
-		public pb_VersionInfo(int major, int minor, int patch, int build = 0, VersionType type = VersionType.Development, string date = "", string metadata = "")
+		public pb_VersionInfo(int major, int minor, int patch, int build = -1, VersionType type = VersionType.Missing, string date = "", string metadata = "")
 		{
 			m_Major = major;
 			m_Minor = minor;
@@ -126,6 +128,9 @@ namespace ProBuilder.Core
 
 		public bool Equals(pb_VersionInfo version)
 		{
+			if (object.ReferenceEquals(version, null))
+				return false;
+
 			if(IsValid() != version.IsValid())
 				return false;
 
@@ -146,33 +151,80 @@ namespace ProBuilder.Core
 			}
 		}
 
+		public int CompareTo(object obj)
+		{
+			return CompareTo(obj as pb_VersionInfo);
+		}
+
+		static int WrapNoValue(int value)
+		{
+			return value < 0 ? int.MaxValue : value;
+		}
+
 		public int CompareTo(pb_VersionInfo version)
 		{
 			const int GREATER = 1;
+			const int EVEN = 0;
 			const int LESS = -1;
 
-			if(this.Equals(version))
-				return 0;
-			else if(major > version.major)
+			if (object.ReferenceEquals(version, null))
 				return GREATER;
-			else if(major < version.major)
-				return LESS;
-			else if(minor > version.minor)
+
+			if(Equals(version))
+				return EVEN;
+
+			if(major > version.major)
 				return GREATER;
-			else if(minor < version.minor)
+			if(major < version.major)
 				return LESS;
-			else if(patch > version.patch)
+			if(minor > version.minor)
 				return GREATER;
-			else if(patch < version.patch)
+			if(minor < version.minor)
 				return LESS;
-			else if((int)type > (int)version.type)
+
+			// missing values in the following categories are > than existing.
+
+			if(WrapNoValue(patch) > WrapNoValue(version.patch))
 				return GREATER;
-			else if((int)type < (int)version.type)
+			if(WrapNoValue(patch) < WrapNoValue(version.patch))
 				return LESS;
-			else if(build > version.build)
+			if(WrapNoValue((int)type) > WrapNoValue((int)version.type))
 				return GREATER;
-			else
+			if(WrapNoValue((int)type) < WrapNoValue((int)version.type))
 				return LESS;
+			if(WrapNoValue(build) > WrapNoValue(version.build))
+				return GREATER;
+			if(WrapNoValue(build) < WrapNoValue(version.build))
+				return LESS;
+
+			return EVEN;
+		}
+
+		public static bool operator ==(pb_VersionInfo left, pb_VersionInfo right)
+		{
+			if (object.ReferenceEquals(left, null))
+				return object.ReferenceEquals(right, null);
+
+			return left.Equals(right);
+		}
+		public static bool operator !=(pb_VersionInfo left, pb_VersionInfo right)
+		{
+			return !(left == right);
+		}
+		public static bool operator <(pb_VersionInfo left, pb_VersionInfo right)
+		{
+			if (object.ReferenceEquals(left, null))
+				return !object.ReferenceEquals(right, null);
+
+			return left.CompareTo(right) < 0;
+		}
+		public static bool operator >(pb_VersionInfo left, pb_VersionInfo right)
+		{
+			// null < null still equals false
+			if (object.ReferenceEquals(left, null))
+				return false;
+
+			return left.CompareTo(right) > 0;
 		}
 
 		/// <summary>
@@ -279,7 +331,7 @@ namespace ProBuilder.Core
 
 				if (preReleaseVersion.Success)
 				{
-					// If not parsed, "Development" is returned.
+					// If not parsed, "Missing" is returned.
 					version.m_Type = GetVersionType(preReleaseVersion.Value);
 
 					// If not parsed, "0" is returned.
@@ -305,6 +357,7 @@ namespace ProBuilder.Core
 			const string k_BetaRegex = "(?i)^(beta|b)(?=[^a-z]|\\Z)";
 			const string k_PatchRegex = "(?i)^(patch|p)(?=[^a-z]|\\Z)";
 			const string k_FinalRegex = "(?i)^(final|f)(?=[^a-z]|\\Z)";
+			const string k_DevRegex = "(?i)^(dev|d|development)(?=[^a-z]|\\Z)";
 
 			if (Regex.IsMatch(input, k_AlphaRegex, RegexOptions.Multiline))
 				return VersionType.Alpha;
@@ -318,7 +371,10 @@ namespace ProBuilder.Core
 			if (Regex.IsMatch(input, k_FinalRegex, RegexOptions.Multiline))
 				return VersionType.Final;
 
-			return VersionType.Development;
+			if (Regex.IsMatch(input, k_DevRegex, RegexOptions.Multiline))
+				return VersionType.Development;
+
+			return VersionType.Missing;
 		}
 
 		static int GetBuildNumber(string input)
