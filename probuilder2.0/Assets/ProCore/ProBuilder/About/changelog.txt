@@ -1,3 +1,20 @@
+# ProBuilder 3.0.2-beta.0
+
+## Features
+
+- Support drag and drop materials to ProBuilder meshes.
+- Mesh handles now use Unity gizmo colors by default.
+- New options to set unselected and selected edge colors.
+- New option to set edge and wireframe line width (not available on Metal).
+
+## Bug Fixes
+
+- Expand preferences window contents to match size.
+- Don't show "shortcuts were cleared" warning if no prior version is detected.
+- Fix overexposed imgui controls in scene view with scene lighting disabled.
+- Fix certain actions switching the current scene focus.
+- Fix Create Material Palette failing to create asset.
+
 # ProBuilder 3.0.1-f.0
 
 ## Features
