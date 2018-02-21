@@ -50,6 +50,14 @@ namespace ProBuilder.Core
 		public string metadata { get { return m_Metadata; } }
 		public string date { get { return m_Date; } }
 
+		/// <summary>
+		/// Get a new version info with just the major, minor, and patch values.
+		/// </summary>
+		public pb_VersionInfo MajorMinorPatch
+		{
+			get { return new pb_VersionInfo(major, minor, patch); }
+		}
+
 		public const string DefaultStringFormat = "M.m.p-t.b";
 
 		public pb_VersionInfo()

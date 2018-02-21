@@ -5,7 +5,7 @@ using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
 {
-	class pb_PreferencesUpdater
+	static class pb_PreferencesUpdater
 	{
 		static readonly pb_VersionInfo k_ProBuilder_3_0_2 = new pb_VersionInfo(3,0,2);
 
@@ -15,16 +15,16 @@ namespace ProBuilder.EditorCore
 		public static void CheckEditorPrefsVersion()
 		{
 			// this exists to force update preferences when updating packages
-			var storedVersion = new pb_VersionInfo(pb_PreferencesInternal.GetString(pb_Constant.pbEditorPrefVersion));
-			pb_Log.Debug("stored: " + storedVersion + "  current: " + pb_Version.Current);
+			var stored = new pb_VersionInfo(pb_PreferencesInternal.GetString(pb_Constant.pbEditorPrefVersion)).MajorMinorPatch;
+			var current = pb_Version.Current.MajorMinorPatch;
 
-			if (!storedVersion.Equals(pb_Version.Current))
+			if (!stored.Equals(current))
 			{
-				pb_PreferencesInternal.SetString(pb_Constant.pbEditorPrefVersion, pb_Version.Current.ToString("M.m.p"), pb_PreferenceLocation.Global);
+				pb_PreferencesInternal.SetString(pb_Constant.pbEditorPrefVersion, current.ToString("M.m.p"), pb_PreferenceLocation.Global);
 
-				if (storedVersion < k_ProBuilder_3_0_2)
+				if (stored < k_ProBuilder_3_0_2)
 				{
-					pb_Log.Debug("reset editor pref version");
+					pb_Log.Info("Updated mesh handle graphic preferences to 3.0.2.");
 
 					pb_PreferencesInternal.DeleteKey(pb_Constant.pbUseUnityColors);
 					pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);

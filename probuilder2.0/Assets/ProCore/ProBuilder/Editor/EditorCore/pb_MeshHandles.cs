@@ -23,7 +23,6 @@ namespace ProBuilder.EditorCore
 		const string k_PointBillboardShader = "Hidden/ProBuilder/PointBillboard";
 
 		static bool s_GeometryShadersSupported;
-		static float s_VertexHandleSize = 3f;
 		static bool s_EnableFaceDither = false;
 
 		static Material s_FaceMaterial;
