@@ -102,7 +102,6 @@ namespace ProBuilder.EditorCore
 		pb_Edge[][] m_UniversalEdges = new pb_Edge[0][];
 		Vector3 m_HandlePivotWorld = Vector3.zero;
 		Dictionary<int, int>[] m_SharedIndicesDictionary = new Dictionary<int, int>[0];
-		bool m_IsSceneViewDragAndDrop;
 
 		public pb_Edge[][] SelectedUniversalEdges
 		{

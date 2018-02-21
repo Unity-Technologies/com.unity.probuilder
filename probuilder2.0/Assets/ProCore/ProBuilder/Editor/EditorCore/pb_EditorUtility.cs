@@ -9,7 +9,6 @@ using ProBuilder.Actions;
 using ProBuilder.Core;
 using ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
-using UnityEngine.UI;
 using UObject = UnityEngine.Object;
 
 namespace ProBuilder.EditorCore
