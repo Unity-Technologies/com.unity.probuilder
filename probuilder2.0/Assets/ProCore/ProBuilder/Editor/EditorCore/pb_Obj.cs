@@ -196,7 +196,12 @@ namespace ProBuilder.EditorCore
 					else
 						sb.AppendLine(string.Format("g {0}", model.name));
 
-					sb.AppendLine(string.Format("usemtl {0}", materialMap[submesh.material]));
+					string materialName = "";
+					
+					if(materialMap.TryGetValue(submesh.material, out materialName))
+						sb.AppendLine(string.Format("usemtl {0}", materialName));
+					else
+						sb.AppendLine(string.Format("usemtl {0}", "null"));
 
 					int[] indices = submesh.indices;
 					int inc = submesh.topology == MeshTopology.Quads ? 4 : 3;
