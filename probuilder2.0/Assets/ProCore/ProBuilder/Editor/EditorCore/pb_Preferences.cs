@@ -9,7 +9,11 @@ namespace ProBuilder.EditorCore
 {
 	static class pb_Preferences
 	{
-		static bool prefsLoaded = false;
+		static int s_ShortcutIndex = 0;
+		static Vector2 s_ShortcutScroll = Vector2.zero;
+		const int k_ShortcutLineHeight = 20;
+
+		static bool s_PrefsLoaded = false;
 
 		static bool pbUseUnityColors;
 		static float pbLineHandleSize;
@@ -24,7 +28,7 @@ namespace ProBuilder.EditorCore
 
 		static bool defaultOpenInDockableWindow;
 		static Material pbDefaultMaterial;
-		static Vector2 settingsScroll = Vector2.zero;
+		static Vector2 m_SettingsScroll = Vector2.zero;
 		static bool pbShowEditorNotifications;
 		static bool pbForceConvex = false;
 		static bool pbForceVertexPivot = true;
@@ -60,14 +64,9 @@ namespace ProBuilder.EditorCore
 		[PreferenceItem(pb_Constant.PRODUCT_NAME)]
 		static void PreferencesGUI()
 		{
-			// Load the preferences
-			if (!prefsLoaded)
-			{
-				LoadPrefs();
-				prefsLoaded = true;
-			}
+			LoadPrefs();
 
-			settingsScroll = EditorGUILayout.BeginScrollView(settingsScroll, GUILayout.MinHeight(180), GUILayout.MaxHeight(180));
+			m_SettingsScroll = EditorGUILayout.BeginScrollView(m_SettingsScroll);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -237,14 +236,20 @@ namespace ProBuilder.EditorCore
 					new GUIContent("Editor window floating", "If true UV   Editor window will open as a floating window"),
 					pbUVEditorFloating);
 
-			EditorGUILayout.EndScrollView();
-
 			GUILayout.Space(4);
 
 			GUILayout.Label("Shortcut Settings", EditorStyles.boldLabel);
 
+			GUILayout.BeginHorizontal();
+			GUILayout.BeginVertical(GUILayout.MinWidth(EditorGUIUtility.labelWidth), GUILayout.MaxWidth(EditorGUIUtility.labelWidth));
 			ShortcutSelectPanel();
+			GUILayout.EndVertical();
+			GUILayout.BeginVertical();
 			ShortcutEditPanel();
+			GUILayout.EndVertical();
+			GUILayout.EndHorizontal();
+
+			EditorGUILayout.EndScrollView();
 
 			// Save the preferences
 			if (EditorGUI.EndChangeCheck())
@@ -350,19 +355,10 @@ namespace ProBuilder.EditorCore
 			LoadPrefs();
 		}
 
-		static int shortcutIndex = 0;
-
-		static Rect selectBox = new Rect(0, 214, 183, 156);
-		static Rect shortcutEditRect = new Rect(190, 191, 178, 300);
-
-		static Vector2 shortcutScroll = Vector2.zero;
-		static int CELL_HEIGHT = 20;
-
 		static void ShortcutSelectPanel()
 		{
 			GUILayout.Space(4);
 			GUI.contentColor = Color.white;
-			GUI.Box(selectBox, "");
 
 			GUIStyle labelStyle = GUIStyle.none;
 
@@ -372,19 +368,19 @@ namespace ProBuilder.EditorCore
 			labelStyle.alignment = TextAnchor.MiddleLeft;
 			labelStyle.contentOffset = new Vector2(4f, 0f);
 
-			shortcutScroll =
-				EditorGUILayout.BeginScrollView(shortcutScroll, false, true, GUILayout.MaxWidth(183), GUILayout.MaxHeight(156));
+			s_ShortcutScroll =
+				EditorGUILayout.BeginScrollView(s_ShortcutScroll, false, true, GUILayout.MinHeight(150));
 
 			for (int n = 1; n < defaultShortcuts.Length; n++)
 			{
-				if (n == shortcutIndex)
+				if (n == s_ShortcutIndex)
 				{
 					GUI.backgroundColor = new Color(0.23f, .49f, .89f, 1f);
 					labelStyle.normal.background = EditorGUIUtility.whiteTexture;
 					Color oc = labelStyle.normal.textColor;
 					labelStyle.normal.textColor = Color.white;
-					GUILayout.Box(defaultShortcuts[n].action, labelStyle, GUILayout.MinHeight(CELL_HEIGHT),
-						GUILayout.MaxHeight(CELL_HEIGHT));
+					GUILayout.Box(defaultShortcuts[n].action, labelStyle, GUILayout.MinHeight(k_ShortcutLineHeight),
+						GUILayout.MaxHeight(k_ShortcutLineHeight));
 					labelStyle.normal.background = null;
 					labelStyle.normal.textColor = oc;
 					GUI.backgroundColor = Color.white;
@@ -392,34 +388,30 @@ namespace ProBuilder.EditorCore
 				else
 				{
 
-					if (GUILayout.Button(defaultShortcuts[n].action, labelStyle, GUILayout.MinHeight(CELL_HEIGHT),
-						GUILayout.MaxHeight(CELL_HEIGHT)))
+					if (GUILayout.Button(defaultShortcuts[n].action, labelStyle, GUILayout.MinHeight(k_ShortcutLineHeight),
+						GUILayout.MaxHeight(k_ShortcutLineHeight)))
 					{
-						shortcutIndex = n;
+						s_ShortcutIndex = n;
 					}
 				}
 			}
 
 			EditorGUILayout.EndScrollView();
-
 		}
 
 		static void ShortcutEditPanel()
 		{
-			GUILayout.BeginArea(shortcutEditRect);
-
-			// descriptionTitleRect = EditorGUI.RectField(new Rect(240,150,200,50), descriptionTitleRect);
 			GUILayout.Label("Key", EditorStyles.boldLabel);
-			KeyCode key = defaultShortcuts[shortcutIndex].key;
+			KeyCode key = defaultShortcuts[s_ShortcutIndex].key;
 			key = (KeyCode) EditorGUILayout.EnumPopup(key);
-			defaultShortcuts[shortcutIndex].key = key;
+			defaultShortcuts[s_ShortcutIndex].key = key;
 
 			GUILayout.Label("Modifiers", EditorStyles.boldLabel);
 			// EnumMaskField returns a bit-mask where the flags correspond to the indices of the enum, not the enum values,
 			// so this isn't technically correct.
 #if UNITY_2017_3_OR_NEWER
-			EventModifiers em = (EventModifiers) defaultShortcuts[shortcutIndex].eventModifiers;
-			defaultShortcuts[shortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
+			EventModifiers em = (EventModifiers) defaultShortcuts[s_ShortcutIndex].eventModifiers;
+			defaultShortcuts[s_ShortcutIndex].eventModifiers = (EventModifiers) EditorGUILayout.EnumFlagsField(em);
 #else
 			EventModifiers em = (EventModifiers) (((int)defaultShortcuts[shortcutIndex].eventModifiers) * 2);
 			em = (EventModifiers)EditorGUILayout.EnumMaskField(em);
@@ -427,13 +419,14 @@ namespace ProBuilder.EditorCore
 #endif
 			GUILayout.Label("Description", EditorStyles.boldLabel);
 
-			GUILayout.Label(defaultShortcuts[shortcutIndex].description, EditorStyles.wordWrappedLabel);
-
-			GUILayout.EndArea();
+			GUILayout.Label(defaultShortcuts[s_ShortcutIndex].description, EditorStyles.wordWrappedLabel);
 		}
 
 		static void LoadPrefs()
 		{
+			if (s_PrefsLoaded)
+				return;
+			s_PrefsLoaded = true;
 			pbStripProBuilderOnBuild = pb_PreferencesInternal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
 			pbDisableAutoUV2Generation = pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 			pbShowSceneInfo = pb_PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
