@@ -153,15 +153,15 @@ Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
 ### Push Package Manager to Staging
 
+Packages are pushed to staging through a CI job on Gitlab. To initiate a push, just tag a commit and push.
+
 See [Semantic Versioning](#Semantic-Versioning) for information about build versions.
 
 Follow the instructions in the [upm-package-template](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template) to set up **npm** credentials.
 
-**Do not commit `.npmrc` files to the [com.unity.probuilder](https://github.com/procore3d/upm-package-probuilder) repository.**
-
 1. Verify that **package.json** is up to date and contains the correct information (the version info in this file is automatically populated by pb-build).
 1. Perform QA testing as outlined in QAReport.md.
-1. To push a live version, run `npm publish`.
+1. To push a version to staging, tag the commit. Ex, `git tag v3.0.1`
 
 **Important** Once a package is pushed it is not undo-able. Un-publishing or overwriting a version is not possible.
 
