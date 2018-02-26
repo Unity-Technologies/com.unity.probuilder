@@ -18,7 +18,7 @@ namespace ProBuilder.EditorCore
 			// When a prefab is updated, this is raised.  For some reason it's
 			// called twice?
  #if UNITY_2018_1_OR_NEWER
-			 EditorApplication.hierarchyChanged += HierarchyWindowChanged;
+			EditorApplication.hierarchyChanged += HierarchyWindowChanged;
  #else
 			EditorApplication.hierarchyWindowChanged -= HierarchyWindowChanged;
 			EditorApplication.hierarchyWindowChanged += HierarchyWindowChanged;

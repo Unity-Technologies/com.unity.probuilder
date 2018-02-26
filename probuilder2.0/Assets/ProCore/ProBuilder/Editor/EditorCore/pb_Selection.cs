@@ -40,6 +40,8 @@ namespace ProBuilder.EditorCore
 			OnSelectionChanged();
 		}
 
+		public static System.Action onObjectSelectionChanged;
+
 		/// <summary>
 		/// Allow other scripts to forcibly reload the cached selection.
 		/// </summary>
@@ -48,6 +50,9 @@ namespace ProBuilder.EditorCore
 			s_TopSelection = Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
 			s_DeepSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
 			s_ElementCountCacheIsDirty = true;
+
+			if (onObjectSelectionChanged != null)
+				onObjectSelectionChanged();
 		}
 
 		/// <summary>

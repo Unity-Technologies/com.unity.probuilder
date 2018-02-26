@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using ProBuilder.Core;
 using ProBuilder.Interface;
-using ProBuilder.EditorCore;
 
 namespace ProBuilder.EditorCore
 {

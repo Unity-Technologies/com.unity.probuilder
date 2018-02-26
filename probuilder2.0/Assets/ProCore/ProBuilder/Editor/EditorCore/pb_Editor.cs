@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using ProBuilder.Core;
 using ProBuilder.Interface;
 using ProBuilder.MeshOperations;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder.EditorCore
 {
@@ -123,7 +125,9 @@ namespace ProBuilder.EditorCore
 
 		// Sum of all vertices sleected
 		int m_SelectedVertexCount;
-		int m_SelectedCommonVertexCount;
+
+		// Sum of all vertices selected, not counting duplicates on common positions
+		int m_SelectedVerticesCommon;
 
 		// Sum of all faces sleected
 		int m_SelectedFaceCount;
@@ -132,6 +136,7 @@ namespace ProBuilder.EditorCore
 		int m_SelectedEdgeCount;
 
 		public int selectedVertexCount { get { return m_SelectedVertexCount; } }
+		public int selectedVertexCommonCount { get { return m_SelectedVerticesCommon; } }
 		public int selectedFaceCount { get { return m_SelectedFaceCount; } }
 		public int selectedEdgeCount { get { return m_SelectedEdgeCount; } }
 
@@ -222,6 +227,8 @@ namespace ProBuilder.EditorCore
 			pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 
+			pb_Selection.onObjectSelectionChanged += OnObjectSelectionChanged;
+
 #if !UNITY_2018_2_OR_NEWER
 			s_ResetOnSceneGUIState = typeof(SceneView).GetMethod("ResetOnSceneGUIState", BindingFlags.Instance | BindingFlags.NonPublic);
 #endif
@@ -258,6 +265,7 @@ namespace ProBuilder.EditorCore
 			pb_ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			pb_PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int) handleAlignment);
+			pb_Selection.onObjectSelectionChanged -= OnObjectSelectionChanged;
 
 			if (pb_LineRenderer.Valid())
 				pb_LineRenderer.instance.Clear();
@@ -2180,9 +2188,9 @@ namespace ProBuilder.EditorCore
 
 //			profiler.BeginSample("CompareSequence");
 			m_SelectedVertexCount = 0;
-			m_SelectedCommonVertexCount = 0;
 			m_SelectedFaceCount = 0;
 			m_SelectedEdgeCount = 0;
+			m_SelectedVerticesCommon = 0;
 
 			pb_Object[] t_selection = selection;
 
@@ -2235,10 +2243,14 @@ namespace ProBuilder.EditorCore
 			m_HandlePivotWorld = Vector3.zero;
 
 			Vector3 min = Vector3.zero, max = Vector3.zero;
-			bool boundsInitialized = false;
+			var boundsInitialized = false;
+			HashSet<int> used = new HashSet<int>();
 
-			for (int i = 0; i < selection.Length; i++)
+			for (var i = 0; i < selection.Length; i++)
 			{
+				var lookup = m_SharedIndicesDictionary[i];
+				used.Clear();
+
 //				profiler.Begin("bounds");
 				pb_Object pb = selection[i];
 
@@ -2249,14 +2261,21 @@ namespace ProBuilder.EditorCore
 					max = min;
 				}
 
-				if (pb.SelectedTriangles.Length > 0)
+				if (pb.SelectedTriangleCount > 0)
 				{
+					var indices = pb.SelectedTriangles;
+
 					for (int n = 0, c = pb.SelectedTriangleCount; n < c; n++)
 					{
-						Vector3 v = pb.transform.TransformPoint(pb.vertices[pb.SelectedTriangles[n]]);
-						min = Vector3.Min(min, v);
-						max = Vector3.Max(max, v);
+						if (used.Add(lookup[indices[n]]))
+						{
+							Vector3 v = pb.transform.TransformPoint(pb.vertices[indices[n]]);
+							min = Vector3.Min(min, v);
+							max = Vector3.Max(max, v);
+						}
 					}
+
+					m_SelectedVerticesCommon += used.Count;
 				}
 
 //				profiler.End();
@@ -2295,17 +2314,23 @@ namespace ProBuilder.EditorCore
 				onSelectionUpdate(selection);
 //			profiler.EndSample();
 
-			m_SceneInfo.text = string.Format(
-				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
-				pb_Selection.totalFaceCount.ToString(),
-				pb_Selection.totalTriangleCountCompiled.ToString(),
-				pb_Selection.totalCommonVertexCount.ToString(),
-				pb_Selection.totalVertexCountCompiled.ToString(),
-				m_SelectedFaceCount.ToString(),
-				m_SelectedEdgeCount.ToString(),
-				m_SelectedCommonVertexCount.ToString());
+			UpdateSceneInfo();
 
 //			profiler.EndSample();
+		}
+
+		void UpdateSceneInfo()
+		{
+			m_SceneInfo.text = string.Format(
+				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6} ({7})</b>",
+				pb_Selection.totalFaceCount,
+				pb_Selection.totalTriangleCountCompiled,
+				pb_Selection.totalCommonVertexCount,
+				pb_Selection.totalVertexCountCompiled,
+				m_SelectedFaceCount,
+				m_SelectedEdgeCount,
+				m_SelectedVerticesCommon,
+				m_SelectedVertexCount);
 		}
 
 		// Only updates things that absolutely need to be refreshed, and assumes that no selection changes have occured
@@ -2358,16 +2383,7 @@ namespace ProBuilder.EditorCore
 			if (onSelectionUpdate != null)
 				onSelectionUpdate(selection);
 
-
-			m_SceneInfo.text = string.Format(
-				"Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6}</b>",
-				pb_Selection.totalFaceCount.ToString(),
-				pb_Selection.totalTriangleCountCompiled.ToString(),
-				pb_Selection.totalCommonVertexCount.ToString(),
-				pb_Selection.totalVertexCountCompiled.ToString(),
-				m_SelectedFaceCount.ToString(),
-				m_SelectedEdgeCount.ToString(),
-				m_SelectedCommonVertexCount.ToString());
+			UpdateSceneInfo();
 
 			// profiler.EndSample();
 		}
@@ -2529,7 +2545,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		void OnSelectionChange()
+		void OnObjectSelectionChanged()
 		{
 			nearestEdge = pb_Edge.Empty;
 			nearestEdgeObject = null;
