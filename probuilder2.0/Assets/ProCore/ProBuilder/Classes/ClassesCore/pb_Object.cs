@@ -527,16 +527,16 @@ namespace ProBuilder.Core
 
 		internal void SetSelectedFaces(IEnumerable<int> selected)
 		{
-			this.m_selectedFaces = selected.ToArray();
-			this.m_selectedTriangles = pb_Face.AllTriangles(SelectedFaces);
+			m_selectedFaces = selected.ToArray();
+			m_selectedTriangles = m_selectedFaces.SelectMany(x => faces[x].distinctIndices).ToArray();
 
 			// Copy the edges- otherwise Unity's Undo does unholy things to the actual edges reference
 			// @todo test this now that pb_Edge is a struct
 			pb_Edge[] edges = pb_EdgeExtension.AllEdges(SelectedFaces);
 			int len = edges.Length;
-			this.m_SelectedEdges = new pb_Edge[len];
+			m_SelectedEdges = new pb_Edge[len];
 			for (int i = 0; i < len; i++)
-				this.m_SelectedEdges[i] = edges[i];
+				m_SelectedEdges[i] = edges[i];
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
@@ -544,9 +544,9 @@ namespace ProBuilder.Core
 
 		internal void SetSelectedEdges(IEnumerable<pb_Edge> edges)
 		{
-			this.m_selectedFaces = new int[0];
-			this.m_SelectedEdges = edges.ToArray();
-			this.m_selectedTriangles = m_SelectedEdges.AllTriangles();
+			m_selectedFaces = new int[0];
+			m_SelectedEdges = edges.ToArray();
+			m_selectedTriangles = m_SelectedEdges.AllTriangles();
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
