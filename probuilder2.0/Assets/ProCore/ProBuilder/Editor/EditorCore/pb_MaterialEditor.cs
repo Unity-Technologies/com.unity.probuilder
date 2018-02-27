@@ -88,6 +88,17 @@ namespace ProBuilder.EditorCore
 		// Path to the required default material palette. If not valid material palettes are
 		// found a new one will be created with this path (relative to ProBuilder folder).
 		static string m_DefaultMaterialPalettePath;
+
+		static string DefaultMaterialPalettePath
+		{
+			get
+			{
+				if(string.IsNullOrEmpty(m_DefaultMaterialPalettePath))
+					m_DefaultMaterialPalettePath = pb_FileUtil.GetLocalDataDirectory() + "/Default Material Palette.asset";
+				return m_DefaultMaterialPalettePath;
+			}
+		}
+
 		// The currently loaded material palette asset.
 		static pb_MaterialPalette m_CurrentPalette = null;
 		// The user set "quick material"
@@ -130,7 +141,7 @@ namespace ProBuilder.EditorCore
 					// If no existing pb_MaterialPalette objects in project:
 					// - create a new one
 					// - check for the older pb_ObjectArray and copy data to new default
-					m_CurrentPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(m_DefaultMaterialPalettePath);
+					m_CurrentPalette = pb_FileUtil.LoadRequired<pb_MaterialPalette>(DefaultMaterialPalettePath);
 
 					string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
@@ -166,7 +177,6 @@ namespace ProBuilder.EditorCore
 			m_RowBackgroundStyle = new GUIStyle();
 			m_RowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
 			m_CurrentPalette = null;
-			m_DefaultMaterialPalettePath = pb_FileUtil.GetLocalDataDirectory() + "/Default Material Palette.asset";
 			RefreshAvailablePalettes();
 		}
 
