@@ -560,7 +560,7 @@ namespace ProBuilder.Core
 		{
 			m_selectedFaces = new int[0];
 			m_SelectedEdges = new pb_Edge[0];
-			m_selectedTriangles = tris != null ? tris.Distinct().ToArray() : null;
+			m_selectedTriangles = tris != null ? tris.Distinct().ToArray() : new int[0];
 
 			if (onElementSelectionChanged != null)
 				onElementSelectionChanged(this);
