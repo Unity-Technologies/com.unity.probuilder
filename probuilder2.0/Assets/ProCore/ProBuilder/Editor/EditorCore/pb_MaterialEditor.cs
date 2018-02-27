@@ -20,44 +20,6 @@ namespace ProBuilder.EditorCore
 		// Reference to the currently open pb_Material_Editor
 		public static pb_MaterialEditor instance { get; private set; }
 
-#if PROTOTYPE
-
-		public static void MenuOpenMaterialEditor()
-		{
-			Debug.LogWarning("Material Editor is ProBuilder Advanced feature.");
-		}
-
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 4 &4", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 5 &5", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 6 &6", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 7 &7", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 8 &8", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 9 &9", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 10 &0", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		public static bool VerifyMaterialAction()
-		{
-			return false;
-		}
-
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 4 &4", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 5 &5", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 6 &6", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 7 &7", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 8 &8", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 9 &9", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 10 &0", false, pb_Constant.MENU_MATERIAL_COLORS)]
-		public static void PrototypeApplyMaterial()
-		{
-			// Pro-only feature.
-		}
-
-#else
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", true, pb_Constant.MENU_MATERIAL_COLORS)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", true, pb_Constant.MENU_MATERIAL_COLORS)]
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", true, pb_Constant.MENU_MATERIAL_COLORS)]
@@ -125,21 +87,21 @@ namespace ProBuilder.EditorCore
 
 		// Path to the required default material palette. If not valid material palettes are
 		// found a new one will be created with this path (relative to ProBuilder folder).
-		private static string m_DefaultMaterialPalettePath;
+		static string m_DefaultMaterialPalettePath;
 		// The currently loaded material palette asset.
-		private static pb_MaterialPalette m_CurrentPalette = null;
+		static pb_MaterialPalette m_CurrentPalette = null;
 		// The user set "quick material"
-		private static Material m_QueuedMaterial;
+		static Material m_QueuedMaterial;
 		// Custom style for material row background
-		private GUIStyle m_RowBackgroundStyle;
+		GUIStyle m_RowBackgroundStyle;
 		// The view scroll position.
-		private Vector2 m_ViewScroll = Vector2.zero;
+		Vector2 m_ViewScroll = Vector2.zero;
 		// All available material palettes
-		private pb_MaterialPalette[] m_AvailablePalettes = null;
+		pb_MaterialPalette[] m_AvailablePalettes = null;
 		// List of string names for all available palettes (plus one entry for 'Add New')
-		private string[] m_AvailablePalettes_Str = null;
+		string[] m_AvailablePalettes_Str = null;
 		// The index of the currently loaded material palette in m_AvailablePalettes
-		private int m_CurrentPaletteIndex = 0;
+		int m_CurrentPaletteIndex = 0;
 
 		/// <summary>
 		/// The currently loaded material palette, or a default.
@@ -436,6 +398,5 @@ namespace ProBuilder.EditorCore
 			m_CurrentPaletteIndex = System.Array.IndexOf(m_AvailablePalettes, cur);
 			pb_PreferencesInternal.SetString(pb_Constant.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
 		}
-#endif
 	}
 }

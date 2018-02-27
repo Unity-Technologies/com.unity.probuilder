@@ -47,8 +47,10 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void OnSelectionChanged()
 		{
-			s_TopSelection = Selection.transforms.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
-			s_DeepSelection = Selection.transforms.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
+			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
+			// transform.
+			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
+			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
 			s_ElementCountCacheIsDirty = true;
 
 			if (onObjectSelectionChanged != null)
