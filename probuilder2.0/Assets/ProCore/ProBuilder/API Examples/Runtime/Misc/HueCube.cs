@@ -1,7 +1,5 @@
 ﻿#if UNITY_EDITOR || UNITY_STANDALONE
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using ProBuilder.Core;
 
 namespace ProBuilder.Examples
@@ -102,7 +100,7 @@ namespace ProBuilder.Examples
 					b = q;
 					break;
 			}
-			
+
 			return new Color(r, g, b, 1f);
 		}
 	}

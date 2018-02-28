@@ -8,9 +8,8 @@ using ProBuilder.Interface;
 namespace ProBuilder.EditorCore
 {
 	[CustomEditor(typeof(pb_PolyShape))]
-	class pb_PolyShapeEditor : UnityEditor.Editor
+	class pb_PolyShapeEditor : Editor
 	{
-#if !PROTOTYPE
 		static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
 		static Color HANDLE_GREEN = new Color(.01f, .9f, .3f, 1f);
 		static Color SELECTED_COLOR = new Color(.01f, .8f, .98f, 1f);
@@ -51,7 +50,6 @@ namespace ProBuilder.EditorCore
 
 			pb_Editor.AddOnEditLevelChangedListener(OnEditLevelChange);
 			m_LineMesh = new Mesh();
-			// m_LineMaterial = (Material) Resources.Load("Materials/HighlightScroller", typeof(Material));
 			m_LineMaterial = CreateHighlightLineMaterial();
 			Undo.undoRedoPerformed += UndoRedoPerformed;
 			DrawPolyLine(polygon.points);
@@ -732,16 +730,17 @@ namespace ProBuilder.EditorCore
 		void UndoRedoPerformed()
 		{
 			if(m_LineMesh != null)
-				GameObject.DestroyImmediate(m_LineMesh);
+				DestroyImmediate(m_LineMesh);
 
 			if(m_LineMaterial != null)
-				GameObject.DestroyImmediate(m_LineMaterial);
+				DestroyImmediate(m_LineMaterial);
 
 			m_LineMesh = new Mesh();
-
 			m_LineMaterial = CreateHighlightLineMaterial();
+
+			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+				RebuildPolyShapeMesh(polygon);
 		}
-#endif
 	}
 }
 

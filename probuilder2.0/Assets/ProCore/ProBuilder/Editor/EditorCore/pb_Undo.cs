@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Linq;
 using ProBuilder.Core;
-using ProBuilder.MeshOperations;	// todo remove dependency. currently needed for polyshape undo hack
 
 namespace ProBuilder.EditorCore
 {
@@ -24,14 +22,6 @@ namespace ProBuilder.EditorCore
 
 			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
 			{
-				var polyShape = pb.GetComponent<pb_PolyShape>();
-
-				if (polyShape != null)
-				{
-					polyShape.CreateShapeFromPolygon();
-					continue;
-				}
-
 				pb.ToMesh();
 				pb.Refresh();
 				pb.Optimize();
