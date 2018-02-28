@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ProBuilder.Core
@@ -20,11 +19,12 @@ namespace ProBuilder.Core
 			Edit
 		}
 
+		pb_Object m_Mesh;
+
 		public List<Vector3> points = new List<Vector3>();
 		public float extrude = 0f;
 		public PolyEditMode polyEditMode = PolyEditMode.None;
 		public bool flipNormals = false;
-		private pb_Object m_Mesh;
 		public bool isOnGrid = true;
 
 		public pb_Object mesh

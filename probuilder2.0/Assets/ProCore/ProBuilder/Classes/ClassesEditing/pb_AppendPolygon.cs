@@ -5,7 +5,7 @@ using ProBuilder.Core;
 
 namespace ProBuilder.MeshOperations
 {
-	static class pb_AppendPolygon
+	public static class pb_AppendPolygon
 	{
 		/// <summary>
 		/// Create a new face connecting the vertices selected by indices.
@@ -52,14 +52,24 @@ namespace ProBuilder.MeshOperations
 			return new pb_ActionResult(Status.Failure, unordered ? INSUF_PTS : BAD_WINDING);
 		}
 
-		/**
-		 *	Create a poly shape from a set of points on a plane.
-		 */
-		public static pb_ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
+		/// <summary>
+		/// Create a poly shape from a set of points on a plane. The points must be ordered.
+		/// </summary>
+		/// <param name="poly"></param>
+		/// <returns>An action result indicating the status of the operation.</returns>
+		internal static pb_ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
 		{
 			return poly.mesh.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 		}
 
+		/// <summary>
+		/// Rebuild a pb_Object from an ordered set of points.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="points"></param>
+		/// <param name="extrude"></param>
+		/// <param name="flipNormals"></param>
+		/// <returns></returns>
 		public static pb_ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
 		{
 			if (points.Count < 3)
@@ -117,10 +127,13 @@ namespace ProBuilder.MeshOperations
 			return new pb_ActionResult(Status.Success, "Create Polygon Shape");
 		}
 
-		/**
-		 *	Create a new face given a set of unordered vertices (or ordered, if unordered param is set to false).
-		 */
-		public static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
+		/// <summary>
+		/// Create a new face given a set of unordered vertices (or ordered, if unordered param is set to false).
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="unordered"></param>
+		/// <returns></returns>
+		internal static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
 		{
 			List<int> triangles;
 
@@ -135,10 +148,12 @@ namespace ProBuilder.MeshOperations
 			return null;
 		}
 
-		/**
-		 * Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
-		 */
-		public static List<pb_FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
+		/// <summary>
+		/// Given a path of vertices, inserts a new vertex in the center inserts triangles along the path.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		internal static List<pb_FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
 		{
 			int count = path.Count;
 			pb_Vertex center = pb_Vertex.Average(path);
@@ -163,10 +178,13 @@ namespace ProBuilder.MeshOperations
 			return faces;
 		}
 
-		/**
-		 *	Find any holes touching one of the passed vertex indices.
-		 */
-		public static List<List<pb_Edge>> FindHoles(pb_Object pb, IList<int> indices)
+		/// <summary>
+		/// Find any holes touching one of the passed vertex indices.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		internal static List<List<pb_Edge>> FindHoles(pb_Object pb, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
@@ -180,12 +198,15 @@ namespace ProBuilder.MeshOperations
 		}
 
 		// @todo #343
-		const int MAX_HOLE_ITERATIONS = 2048;
+		const int k_MaxHoleIterations = 2048;
 
-		/**
-		 *	Find any holes touching one of the passed common indices.
-		 */
-		public static List<List<pb_WingedEdge>> FindHoles(List<pb_WingedEdge> wings, HashSet<int> common)
+		/// <summary>
+		/// Find any holes touching one of the passed common indices.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <param name="common"></param>
+		/// <returns></returns>
+		internal static List<List<pb_WingedEdge>> FindHoles(List<pb_WingedEdge> wings, HashSet<int> common)
 		{
 			HashSet<pb_WingedEdge> used = new HashSet<pb_WingedEdge>();
 			List<List<pb_WingedEdge>> holes = new List<List<pb_WingedEdge>>();
@@ -205,7 +226,7 @@ namespace ProBuilder.MeshOperations
 
 				int counter = 0;
 
-				while(it != null && counter++ < MAX_HOLE_ITERATIONS)
+				while(it != null && counter++ < k_MaxHoleIterations)
 				{
 					used.Add(it);
 					hole.Add(it);
@@ -286,11 +307,11 @@ namespace ProBuilder.MeshOperations
 			return holes;
 		}
 
-		private static pb_WingedEdge FindNextEdgeInHole(pb_WingedEdge wing, int common)
+		static pb_WingedEdge FindNextEdgeInHole(pb_WingedEdge wing, int common)
 		{
 			pb_WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
 			int counter = 0;
-			while(next != null && next != wing && counter++ < MAX_HOLE_ITERATIONS)
+			while(next != null && next != wing && counter++ < k_MaxHoleIterations)
 			{
 				if(next.opposite == null)
 					return next;
