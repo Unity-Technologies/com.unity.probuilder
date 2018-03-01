@@ -1,3 +1,23 @@
+# ProBuilder 3.0.2-beta.1
+
+## Features
+
+- API Examples are now published on [Github](https://github.com/Unity-Technologies/ProBuilder-API-Examples).
+- Expose poly shape creation methods. Add API example.
+
+## Bug Fixes
+
+- Fix scene info not updating with selection changes.
+- Fix `Apply Material` only applying to parent gameobjects if children are also selected.
+- Fix `pb_Object.SetSelectedFaces` setting duplicate vertex indices.
+- Fix `Alt+Num` material shortcut throwing null if Material Editor has not been opened and no default palette is found.
+- Fix bug where `Undo` on a Poly Shape would reset any mesh edits.
+- Fix preferences interface not updating after resetting all preferences.
+
+## Changes
+
+- Remove update checking.
+
 # ProBuilder 3.0.2-beta.0
 
 ## Features
