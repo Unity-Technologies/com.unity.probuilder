@@ -1,4 +1,4 @@
-# ProBuilder 3.0.2-beta.1
+# ProBuilder 3.0.2-beta.2
 
 ## Features
 
@@ -13,6 +13,7 @@
 - Fix `Alt+Num` material shortcut throwing null if Material Editor has not been opened and no default palette is found.
 - Fix bug where `Undo` on a Poly Shape would reset any mesh edits.
 - Fix preferences interface not updating after resetting all preferences.
+- Fix bug where the edge picker would prefer vertical lines over horizontal.
 
 ## Changes
 
