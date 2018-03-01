@@ -11,7 +11,7 @@ namespace ProBuilder.EditorCore
 	/// Helper functions for working with Unity object selection & ProBuilder element selection.
 	/// </summary>
 	[InitializeOnLoad]
-	static class pb_Selection
+	public static class pb_Selection
 	{
 		static pb_Object[] s_TopSelection = new pb_Object[0];
 		static pb_Object[] s_DeepSelection = new pb_Object[0];
@@ -40,6 +40,9 @@ namespace ProBuilder.EditorCore
 			OnSelectionChanged();
 		}
 
+		/// <summary>
+		/// Register to receive notifications when the object selection changes.
+		/// </summary>
 		public static System.Action onObjectSelectionChanged;
 
 		/// <summary>
@@ -58,7 +61,7 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
-		/// Get just the top level selected pb_Object components.
+		/// Get all selected pb_Object components. Corresponds to `Selection.gameObjects`.
 		/// </summary>
 		/// <returns></returns>
 		public static pb_Object[] Top()
@@ -79,7 +82,8 @@ namespace ProBuilder.EditorCore
 		/// Get the sum of all pb_Object vertex counts in the selection.
 		/// </summary>
 		/// <remarks>
-		/// This is the pb_Object.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count, see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
+		/// This is the pb_Object.vertexCount, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
+		/// see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
 		/// </remarks>
 		public static int totalVertexCount { get { RebuildElementCounts(); return s_TotalVertexCount; } }
 
@@ -87,12 +91,14 @@ namespace ProBuilder.EditorCore
 		/// Get the sum of all pb_Object common vertex counts in the selection.
 		/// </summary>
 		/// <remarks>
-		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count, see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
+		/// This is the pb_Object.sharedIndices, not UnityEngine.Mesh.vertexCount. To get the optimized mesh vertex count,
+		/// see `totalVertexCountCompiled` for the vertex count as is rendered in the scene.
 		/// </remarks>
 		public static int totalCommonVertexCount { get { RebuildElementCounts(); return s_TotalCommonVertexCount; } }
 
 		/// <summary>
-		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per UnityEngine.Mesh.
+		/// Get the sum of all selected ProBuilder mesh vertex counts. This value reflects the actual vertex count per
+		/// UnityEngine.Mesh.
 		/// </summary>
 		public static int totalVertexCountCompiled { get { RebuildElementCounts(); return s_TotalVertexCountCompiled; } }
 
@@ -102,7 +108,8 @@ namespace ProBuilder.EditorCore
 		public static int totalFaceCount { get { RebuildElementCounts(); return s_TotalFaceCount; } }
 
 		/// <summary>
-		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4 indices if topology is quad).
+		/// Get the sum of all selected ProBuilder compiled mesh triangle counts (3 indices make up a triangle, or 4
+		/// indices if topology is quad).
 		/// </summary>
 		public static int totalTriangleCountCompiled { get { RebuildElementCounts(); return s_TotalTriangleCountCompiled; } }
 
@@ -113,7 +120,6 @@ namespace ProBuilder.EditorCore
 
 			try
 			{
-
 				s_TotalVertexCount = Top().Sum(x => x.vertexCount);
 				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
 				s_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
@@ -127,7 +133,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		public static void AddToSelection(GameObject t)
+		internal static void AddToSelection(GameObject t)
 		{
 			if(t == null || Selection.objects.Contains(t))
 				return;
@@ -142,7 +148,7 @@ namespace ProBuilder.EditorCore
 			Selection.objects = temp;
 		}
 
-		public static void RemoveFromSelection(GameObject t)
+		internal static void RemoveFromSelection(GameObject t)
 		{
 			int ind = System.Array.IndexOf(Selection.objects, t);
 			if(ind < 0)
@@ -158,7 +164,7 @@ namespace ProBuilder.EditorCore
 			Selection.objects = temp;
 		}
 
-		public static void SetSelection(IList<GameObject> newSelection)
+		internal static void SetSelection(IList<GameObject> newSelection)
 		{
 			pb_Undo.RecordSelection(selection, "Change Selection");
 
@@ -178,7 +184,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		public static void SetSelection(GameObject go)
+		internal static void SetSelection(GameObject go)
 		{
 			pb_Undo.RecordSelection(selection, "Change Selection");
 			ClearElementAndObjectSelection();
@@ -188,7 +194,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Clears all `selected` caches associated with each pb_Object in the current selection. This means triangles, faces, and edges, but not objects.
 		/// </summary>
-		public static void ClearElementSelection()
+		internal static void ClearElementSelection()
 		{
 			if(pb_Editor.instance)
 				pb_Editor.instance.ClearElementSelection();
@@ -197,7 +203,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Clear both the Selection.objects and ProBuilder geometry element selections.
 		/// </summary>
-		public static void ClearElementAndObjectSelection()
+		internal static void ClearElementAndObjectSelection()
 		{
 			ClearElementSelection();
 			Selection.objects = new Object[0];

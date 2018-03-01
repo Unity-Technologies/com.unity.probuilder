@@ -9,12 +9,11 @@ namespace ProBuilder.EditorCore
 	/// <summary>
 	/// Responsible for loading menu actions in to the pb_Toolbar.
 	/// </summary>
-	static class pb_EditorToolbarLoader
+	public static class pb_EditorToolbarLoader
 	{
 		public delegate pb_MenuAction OnLoadActionsDelegate();
-		public static OnLoadActionsDelegate onLoadMenu;
-
-		private static List<pb_MenuAction> _defaults;
+		internal static OnLoadActionsDelegate onLoadMenu;
+		static List<pb_MenuAction> _defaults;
 
 		public static void RegisterMenuItem(OnLoadActionsDelegate getMenuAction)
 		{
@@ -50,7 +49,7 @@ namespace ProBuilder.EditorCore
 			return instance;
 		}
 
-		public static List<pb_MenuAction> GetActions(bool forceReload = false)
+		internal static List<pb_MenuAction> GetActions(bool forceReload = false)
 		{
 			if(_defaults != null && !forceReload)
 				return _defaults;

@@ -7,14 +7,14 @@ using ProBuilder.Core;
 namespace ProBuilder.EditorCore
 {
 	/// <summary>
-	/// Options menu window container.
+	/// Options menu window container. Do not instantiate this yourself, the toolbar will handle opening option windows.
 	/// </summary>
-	class pb_MenuOption : EditorWindow
+	public class pb_MenuOption : EditorWindow
 	{
 		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsGUI = null;
 		[SerializeField] pb_MenuAction.SettingsDelegate onSettingsDisable = null;
 
-		public static pb_MenuOption Show(pb_MenuAction.SettingsDelegate onSettingsGUI, pb_MenuAction.SettingsDelegate onSettingsEnable, pb_MenuAction.SettingsDelegate onSettingsDisable)
+		internal static pb_MenuOption Show(pb_MenuAction.SettingsDelegate onSettingsGUI, pb_MenuAction.SettingsDelegate onSettingsEnable, pb_MenuAction.SettingsDelegate onSettingsDisable)
 		{
 			pb_MenuOption win = EditorWindow.GetWindow<pb_MenuOption>(true, "Options", true);
 			win.hideFlags = HideFlags.HideAndDontSave;
@@ -40,6 +40,9 @@ namespace ProBuilder.EditorCore
 			return win;
 		}
 
+		/// <summary>
+		/// Close any currently open option windows.
+		/// </summary>
 		public static void CloseAll()
 		{
 			foreach(pb_MenuOption win in Resources.FindObjectsOfTypeAll<pb_MenuOption>())
@@ -48,7 +51,7 @@ namespace ProBuilder.EditorCore
 
 		void OnEnable()
 		{
-			this.autoRepaintOnSceneChange = true;
+			autoRepaintOnSceneChange = true;
 		}
 
 		void OnDisable()
@@ -75,7 +78,7 @@ namespace ProBuilder.EditorCore
 			}
 			else if(Event.current.type == EventType.Repaint)
 			{
-				EditorApplication.delayCall += () => { pb_MenuOption.CloseAll(); };
+				EditorApplication.delayCall += CloseAll;
 				GUIUtility.ExitGUI();
 			}
 		}
