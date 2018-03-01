@@ -352,6 +352,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbDefaultStaticFlags);
 			}
 
+			s_PrefsLoaded = false;
 			LoadPrefs();
 		}
 
