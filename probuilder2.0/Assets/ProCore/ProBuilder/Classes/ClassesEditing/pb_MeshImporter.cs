@@ -101,7 +101,7 @@ namespace ProBuilder.MeshOperations
 
 			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
 			{
-				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : pb_Constant.DefaultMaterial;
+				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : pb_Material.DefaultMaterial;
 
 				switch(originalMesh.GetTopology(subMeshIndex))
 				{

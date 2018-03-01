@@ -324,9 +324,9 @@ namespace ProBuilder.Core
 		{
 			var pickerObjects = GenerateFacePickingObjects(selection, out map);
 
-			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
+			pb_Material.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Whitef);
 
-			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Material.SelectionPickerShader, "ProBuilderPicker", width, height);
 
 			foreach(GameObject go in pickerObjects)
 			{
@@ -359,9 +359,9 @@ namespace ProBuilder.Core
 
 			GenerateVertexPickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+			pb_Material.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Material.SelectionPickerShader, "ProBuilderPicker", width, height);
 
 			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
@@ -401,9 +401,9 @@ namespace ProBuilder.Core
 			GameObject[] depthObjects, pickerObjects;
 			GenerateEdgePickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-			pb_Constant.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+			pb_Material.FacePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
-			Texture2D tex = RenderWithReplacementShader(camera, pb_Constant.SelectionPickerShader, "ProBuilderPicker", width, height);
+			Texture2D tex = RenderWithReplacementShader(camera, pb_Material.SelectionPickerShader, "ProBuilderPicker", width, height);
 
 			for(int i = 0, c = pickerObjects.Length; i < c; i++)
 			{
@@ -455,7 +455,7 @@ namespace ProBuilder.Core
 				m.colors32 = colors;
 
 				go.AddComponent<MeshFilter>().sharedMesh = m;
-				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.FacePickerMaterial;
 
 				pickerObjects[i] = go;
 			}
@@ -485,7 +485,7 @@ namespace ProBuilder.Core
 				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + "  (Vertex Billboards)";
 				go.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
-				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.VertexPickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.VertexPickerMaterial;
 				pickerObjects[i] = go;
 			}
 
@@ -500,7 +500,7 @@ namespace ProBuilder.Core
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
-					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.FacePickerMaterial;
 					depthObjects[i] = go;
 				}
 			}
@@ -530,7 +530,7 @@ namespace ProBuilder.Core
 				GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 				go.name = pb.name + "  (Edge Billboards)";
 				go.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
-				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.EdgePickerMaterial;
+				go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.EdgePickerMaterial;
 				pickerObjects[i] = go;
 			}
 
@@ -545,7 +545,7 @@ namespace ProBuilder.Core
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
 					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
-					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.FacePickerMaterial;
+					go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.FacePickerMaterial;
 					depthObjects[i] = go;
 				}
 			}

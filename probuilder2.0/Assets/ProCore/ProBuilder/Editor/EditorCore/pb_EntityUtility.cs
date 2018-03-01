@@ -9,6 +9,15 @@ namespace ProBuilder.EditorCore
 {
 	static class pb_EntityUtility
 	{
+		const StaticEditorFlags StaticEditorFlags_All =
+			StaticEditorFlags.LightmapStatic |
+			StaticEditorFlags.OccluderStatic |
+			StaticEditorFlags.BatchingStatic |
+			StaticEditorFlags.OccludeeStatic |
+			StaticEditorFlags.NavigationStatic |
+			StaticEditorFlags.OffMeshLinkGeneration |
+			StaticEditorFlags.ReflectionProbeStatic;
+
 		/// <summary>
 		/// Sets the EntityType for the passed gameObject.
 		/// </summary>
@@ -52,7 +61,8 @@ namespace ProBuilder.EditorCore
 			ent.SetEntity(newEntityType);
 		}
 
-		private static void SetBrush(GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetBrush(GameObject target)
 		{
 			EntityType et = target.GetComponent<pb_Entity>().entityType;
 
@@ -60,19 +70,14 @@ namespace ProBuilder.EditorCore
 			    et == EntityType.Collider)
 			{
 				pb_Object pb = target.GetComponent<pb_Object>();
-
-#if !PROTOTYPE
-				pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial);
-#else
-				target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-				#endif
-
+				pb.SetFaceMaterial(pb.faces, pb_Material.DefaultMaterial);
 				pb.ToMesh();
 				pb.Refresh();
 			}
 		}
 
-		private static void SetDynamic(GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetDynamic(GameObject target)
 		{
 			EntityType et = target.GetComponent<pb_Entity>().entityType;
 
@@ -82,28 +87,18 @@ namespace ProBuilder.EditorCore
 			    et == EntityType.Collider)
 			{
 				pb_Object pb = target.GetComponent<pb_Object>();
-
-#if !PROTOTYPE
-				pb.SetFaceMaterial(pb.faces, pb_Constant.DefaultMaterial);
-#else
-					target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
-				#endif
+				pb.SetFaceMaterial(pb.faces, pb_Material.DefaultMaterial);
 
 				pb.ToMesh();
 				pb.Refresh();
 			}
 		}
 
-		private static void SetTrigger(GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetTrigger(GameObject target)
 		{
 			pb_Object pb = target.GetComponent<pb_Object>();
-
-#if !PROTOTYPE
-			pb.SetFaceMaterial(pb.faces, pb_Constant.TriggerMaterial);
-#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.TriggerMaterial;
-			#endif
-
+			pb.SetFaceMaterial(pb.faces, pb_Material.TriggerMaterial);
 			SetIsTrigger(true, target);
 			SetEditorFlags((StaticEditorFlags) 0, target);
 
@@ -111,16 +106,11 @@ namespace ProBuilder.EditorCore
 			pb.Refresh();
 		}
 
-		private static void SetCollider(GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetCollider(GameObject target)
 		{
 			pb_Object pb = target.GetComponent<pb_Object>();
-
-#if !PROTOTYPE
-			pb.SetFaceMaterial(pb.faces, pb_Constant.ColliderMaterial);
-#else
-			target.GetComponent<MeshRenderer>().sharedMaterial = pb_Constant.ColliderMaterial;
-			#endif
-
+			pb.SetFaceMaterial(pb.faces, pb_Material.ColliderMaterial);
 			pb.ToMesh();
 			pb.Refresh();
 
@@ -128,12 +118,14 @@ namespace ProBuilder.EditorCore
 				target);
 		}
 
-		private static void SetEditorFlags(StaticEditorFlags editorFlags, GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetEditorFlags(StaticEditorFlags editorFlags, GameObject target)
 		{
 			GameObjectUtility.SetStaticEditorFlags(target, editorFlags);
 		}
 
-		private static void SetIsTrigger(bool val, GameObject target)
+		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
+		static void SetIsTrigger(bool val, GameObject target)
 		{
 			Collider[] colliders = pb_Util.GetComponents<Collider>(target);
 			foreach (Collider col in colliders)
@@ -143,15 +135,5 @@ namespace ProBuilder.EditorCore
 				col.isTrigger = val;
 			}
 		}
-
-		const StaticEditorFlags StaticEditorFlags_All =
-			StaticEditorFlags.LightmapStatic |
-			StaticEditorFlags.OccluderStatic |
-			StaticEditorFlags.BatchingStatic |
-			StaticEditorFlags.OccludeeStatic |
-			StaticEditorFlags.NavigationStatic |
-			StaticEditorFlags.OffMeshLinkGeneration |
-			StaticEditorFlags.ReflectionProbeStatic;
-
 	}
 }

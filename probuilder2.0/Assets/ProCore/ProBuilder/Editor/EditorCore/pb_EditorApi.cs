@@ -8,10 +8,6 @@ namespace ProBuilder.EditorCore
 	/// <summary>
 	/// Register for ProBuilder editor callbacks.
 	/// </summary>
-	/// <remarks>
-	/// This exists as a temporary measure to expose some of the more useful callbacks in the editor while I sort out
-	/// the editor-side public API.
-	/// </remarks>
 	public static class pb_EditorApi
 	{
 		/// <summary>

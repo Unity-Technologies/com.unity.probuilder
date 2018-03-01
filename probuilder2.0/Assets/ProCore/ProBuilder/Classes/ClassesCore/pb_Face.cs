@@ -18,7 +18,7 @@ namespace ProBuilder.Core
 		{
 			SetIndices(i);
 			_uv = new pb_UV();
-			_mat = pb_Constant.DefaultMaterial;
+			_mat = pb_Material.DefaultMaterial;
 			_smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
 			textureGroup = -1;
 			elementGroup = 0;
@@ -401,12 +401,7 @@ namespace ProBuilder.Core
 				if(face.indices == null || face.indices.Length < 1)
 					continue;
 
-#if PROTOTYPE
-				Material material = pb_Constant.DefaultMaterial;
-#else
-				Material material = face.material ?? pb_Constant.DefaultMaterial;
-#endif
-
+				Material material = face.material ?? pb_Material.DefaultMaterial;
 				List<int> polys = null;
 
 				int[] res;

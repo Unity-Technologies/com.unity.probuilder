@@ -52,7 +52,7 @@ namespace ProBuilder.EditorCore
 			this.submeshes = new pb_Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
 			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
-				submeshes[subMeshIndex] = new pb_Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : pb_Constant.DefaultMaterial);
+				submeshes[subMeshIndex] = new pb_Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : pb_Material.DefaultMaterial);
 		}
 
 		/**

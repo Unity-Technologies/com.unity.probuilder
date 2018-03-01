@@ -467,32 +467,50 @@ namespace ProBuilder.Core
 			return pb;
 		}
 
-		internal pb_Face[] SelectedFaces
+		/// <summary>
+		/// Get a copy of the selected face array.
+		/// </summary>
+		public pb_Face[] SelectedFaces
 		{
 			get { return pb_Util.ValuesWithIndices(this.faces, m_selectedFaces); }
 		}
 
-		internal int SelectedFaceCount
+		/// <summary>
+		/// Get the number of faces that are currently selected on this object. Faster than checking SelectedFaces.Length.
+		/// </summary>
+		public int SelectedFaceCount
 		{
 			get { return m_selectedFaces.Length; }
 		}
 
-		internal int[] SelectedTriangles
+		/// <summary>
+		/// Get the selected vertex indices array.
+		/// </summary>
+		public int[] SelectedTriangles
 		{
 			get { return m_selectedTriangles; }
 		}
 
-		internal int SelectedTriangleCount
+		/// <summary>
+		/// Get the count of selected vertex indices.
+		/// </summary>
+		public int SelectedTriangleCount
 		{
 			get { return m_selectedTriangles.Length; }
 		}
 
-		internal pb_Edge[] SelectedEdges
+		/// <summary>
+		/// Get the selected edges array.
+		/// </summary>
+		public pb_Edge[] SelectedEdges
 		{
 			get { return m_SelectedEdges; }
 		}
 
-		internal int SelectedEdgeCount
+		/// <summary>
+		/// Get the count of selected edges.
+		/// </summary>
+		public int SelectedEdgeCount
 		{
 			get { return m_SelectedEdges.Length; }
 		}
@@ -710,7 +728,7 @@ namespace ProBuilder.Core
 						i + 0, i + 1, i + 2,
 						i + 1, i + 3, i + 2
 					},
-					pb_Constant.DefaultMaterial,
+					pb_Material.DefaultMaterial,
 					new pb_UV(),
 					0,
 					-1,

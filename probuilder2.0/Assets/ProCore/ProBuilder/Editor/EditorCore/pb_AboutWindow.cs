@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProBuilder.AssetUtility;

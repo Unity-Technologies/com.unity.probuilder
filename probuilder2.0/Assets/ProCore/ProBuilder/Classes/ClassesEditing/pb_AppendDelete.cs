@@ -9,7 +9,7 @@ namespace ProBuilder.MeshOperations
 	/// <summary>
 	/// Functions for appending or deleting faces from pb_Object meshes.
 	/// </summary>
-	static class pb_AppendDelete
+	public static class pb_AppendDelete
 	{
 		/// <summary>
 		/// Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
@@ -28,9 +28,16 @@ namespace ProBuilder.MeshOperations
 			return pb.AppendFace(positions, colors, uvs, face, shared);
 		}
 
-		/**
-		 * Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
-		 */
+		/// <summary>
+		/// Append a new face to the pb_Object using sharedIndex array to set the face indices to sharedIndex groups.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="v"></param>
+		/// <param name="c"></param>
+		/// <param name="u"></param>
+		/// <param name="face"></param>
+		/// <param name="sharedIndex"></param>
+		/// <returns></returns>
 		public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face, int[] sharedIndex)
 		{
 			int vertexCount = pb.vertexCount;
@@ -73,9 +80,16 @@ namespace ProBuilder.MeshOperations
 			return face;
 		}
 
-		/**
-		 * Append a group of new faces to the pb_Object.  Significantly faster than calling AppendFace multiple times.
-		 */
+		/// <summary>
+		/// Append a group of new faces to the pb_Object. Significantly faster than calling AppendFace multiple times.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="new_Vertices"></param>
+		/// <param name="new_Colors"></param>
+		/// <param name="new_uvs"></param>
+		/// <param name="new_Faces"></param>
+		/// <param name="new_SharedIndices"></param>
+		/// <returns></returns>
 		public static pb_Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, pb_Face[] new_Faces, int[][] new_SharedIndices)
 		{
 			List<Vector3> _verts = new List<Vector3>(pb.vertices);
@@ -132,9 +146,11 @@ namespace ProBuilder.MeshOperations
 			return new_Faces;
 		}
 
-		/**
-		 *	Duplicate and reverse the winding direction for each face.
-		 */
+		/// <summary>
+		/// Duplicate and reverse the winding direction for each face.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
 		public static void DuplicateAndFlip(this pb_Object pb, pb_Face[] faces)
 		{
 			List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>();
@@ -172,27 +188,34 @@ namespace ProBuilder.MeshOperations
 			pb_FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
 		}
 
-		/**
-		 *	Removes the passed face from this pb_Object.  Handles shifting vertices and triangles, as well as messing with the sharedIndices cache.
-		 */
+		/// <summary>
+		/// Removes the passed face from this pb_Object.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static int[] DeleteFace(this pb_Object pb, pb_Face face)
 		{
 			return DeleteFaces(pb, new pb_Face[] { face });
 		}
 
-		/**
-		 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
-		 * all the sharedIndices moving stuff for you.
-		 */
+		/// <summary>
+		/// Remove a set of faces from a pb_Object.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faces"></param>
+		/// <returns></returns>
 		public static int[] DeleteFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
 		{
 			return DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 		}
 
-		/**
-		 * Removes faces from a pb_Object.  Overrides available for pb_Face[] and int[] faceIndices.  handles
-		 * all the sharedIndices moving stuff for you.
-		 */
+		/// <summary>
+		/// Remove faces from an object by their index in the pb_Object.faces array.
+		/// </summary>
+		/// <param name="pb"></param>
+		/// <param name="faceIndices"></param>
+		/// <returns></returns>
 		public static int[] DeleteFaces(this pb_Object pb, IList<int> faceIndices)
 		{
 			pb_Face[] faces = new pb_Face[faceIndices.Count];

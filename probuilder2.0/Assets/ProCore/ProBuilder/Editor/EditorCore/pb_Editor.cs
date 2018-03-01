@@ -17,7 +17,7 @@ namespace ProBuilder.EditorCore
 
 	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
 
-	class pb_Editor : EditorWindow
+	public class pb_Editor : EditorWindow
 	{
 		public static event OnSelectionUpdateEventHandler onSelectionUpdate;
 
@@ -32,7 +32,7 @@ namespace ProBuilder.EditorCore
 
 		GUIContent[] m_EditModeIcons;
 		GUIStyle VertexTranslationInfoStyle;
-		public static System.Action<int> onEditLevelChanged;
+		public static Action<int> onEditLevelChanged;
 
 		bool m_ShowSceneInfo = false;
 		bool m_HamSelection = false;
@@ -54,8 +54,8 @@ namespace ProBuilder.EditorCore
 		GUIStyle commandStyle = null;
 		Rect elementModeToolbarRect = new Rect(3, 6, 128, 24);
 
-		public const float k_MaxEdgeSelectDistanceHam = 128;
-		public const float k_MaxEdgeSelectDistanceCtx = 12;
+		const float k_MaxEdgeSelectDistanceHam = 128;
+		const float k_MaxEdgeSelectDistanceCtx = 12;
 
 		pb_Object nearestEdgeObject = null;
 		pb_Edge nearestEdge;
@@ -66,7 +66,8 @@ namespace ProBuilder.EditorCore
 		Vector2 mousePosition_initial;
 		Rect m_MouseDragRect;
 		bool m_IsDragging = false, readyForMouseDrag = false;
-		bool doubleClicked = false; // prevents leftClickUp from stealing focus after double click
+		// prevents leftClickUp from stealing focus after double click
+		bool doubleClicked = false;
 		// vertex handles
 		Vector3 newPosition, cachedPosition;
 		bool movingVertices = false;
@@ -121,15 +122,15 @@ namespace ProBuilder.EditorCore
 		static MethodInfo s_ResetOnSceneGUIState = null;
 #endif
 
-		public pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
+		internal pb_Object[] selection = new pb_Object[0]; // All selected pb_Objects
 
-		// Sum of all vertices sleected
+		// Sum of all vertices selected
 		int m_SelectedVertexCount;
 
 		// Sum of all vertices selected, not counting duplicates on common positions
 		int m_SelectedVerticesCommon;
 
-		// Sum of all faces sleected
+		// Sum of all faces selected
 		int m_SelectedFaceCount;
 
 		// Sum of all edges sleected
@@ -2034,7 +2035,7 @@ namespace ProBuilder.EditorCore
 		/// Allows another window to tell the Editor what Tool is now in use. Does *not* update any other windows.
 		/// </summary>
 		/// <param name="newTool"></param>
-		public void SetTool(Tool newTool)
+		internal void SetTool(Tool newTool)
 		{
 			currentHandle = newTool;
 		}
@@ -2051,7 +2052,7 @@ namespace ProBuilder.EditorCore
 				pb_UVEditor.instance.SetTool(newTool);
 		}
 
-		public void SetHandleAlignment(HandleAlignment ha)
+		internal void SetHandleAlignment(HandleAlignment ha)
 		{
 			if (editLevel == EditLevel.Texture)
 				ha = HandleAlignment.Plane;
@@ -2070,7 +2071,7 @@ namespace ProBuilder.EditorCore
 			Repaint();
 		}
 
-		public void ToggleHandleAlignment()
+		internal void ToggleHandleAlignment()
 		{
 			int newHa = (int) handleAlignment + 1;
 			if (newHa >= System.Enum.GetValues(typeof(HandleAlignment)).Length)
@@ -2081,7 +2082,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Toggles between the SelectMode values and updates the graphic handles as necessary.
 		/// </summary>
-		public void ToggleSelectionMode()
+		internal void ToggleSelectionMode()
 		{
 			int smode = (int) selectionMode;
 			smode++;
@@ -2108,7 +2109,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Set the EditLevel back to its last level.
 		/// </summary>
-		public void PopEditLevel()
+		internal void PopEditLevel()
 		{
 			SetEditLevel(m_PreviousEditLevel);
 		}
@@ -2428,7 +2429,7 @@ namespace ProBuilder.EditorCore
 			}
 		}
 
-		public void UpdateHandleRotation()
+		internal void UpdateHandleRotation()
 		{
 			Quaternion localRot = Selection.activeTransform == null ? Quaternion.identity : Selection.activeTransform.rotation;
 
@@ -2605,7 +2606,7 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// A tool, any tool, has just been engaged while in texture mode
 		/// </summary>
-		public void OnBeginTextureModification()
+		internal void OnBeginTextureModification()
 		{
 			VerifyTextureGroupSelection();
 		}
@@ -2692,7 +2693,7 @@ namespace ProBuilder.EditorCore
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public bool GetFirstSelectedFace(out pb_Object pb, out pb_Face face)
+		internal bool GetFirstSelectedFace(out pb_Object pb, out pb_Face face)
 		{
 			pb = null;
 			face = null;
@@ -2714,7 +2715,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		/// <param name="mat"></param>
 		/// <returns></returns>
-		public bool GetFirstSelectedMaterial(ref Material mat)
+		internal bool GetFirstSelectedMaterial(ref Material mat)
 		{
 			for (int i = 0; i < selection.Length; i++)
 			{
@@ -2731,52 +2732,52 @@ namespace ProBuilder.EditorCore
 		}
 
 		// Handy calls -- currentEvent must be set, so only call in the OnGUI loop!
-		public bool altClick
+		bool altClick
 		{
 			get { return (m_CurrentEvent.alt); }
 		}
 
-		public bool leftClick
+		bool leftClick
 		{
 			get { return (m_CurrentEvent.type == EventType.MouseDown); }
 		}
 
-		public bool leftClickUp
+		bool leftClickUp
 		{
 			get { return (m_CurrentEvent.type == EventType.MouseUp); }
 		}
 
-		public bool contextClick
+		bool contextClick
 		{
 			get { return (m_CurrentEvent.type == EventType.ContextClick); }
 		}
 
-		public bool mouseDrag
+		bool mouseDrag
 		{
 			get { return (m_CurrentEvent.type == EventType.MouseDrag); }
 		}
 
-		public bool ignore
+		bool ignore
 		{
 			get { return m_CurrentEvent.type == EventType.Ignore; }
 		}
 
-		public bool rightClick
+		bool rightClick
 		{
 			get { return (m_CurrentEvent.type == EventType.ContextClick); }
 		}
 
-		public bool shiftKey
+		bool shiftKey
 		{
 			get { return m_CurrentEvent.shift; }
 		}
 
-		public bool ctrlKey
+		bool ctrlKey
 		{
 			get { return m_CurrentEvent.command || m_CurrentEvent.control; }
 		}
 
-		public KeyCode getKeyUp
+		KeyCode getKeyUp
 		{
 			get { return m_CurrentEvent.type == EventType.KeyUp ? m_CurrentEvent.keyCode : KeyCode.None; }
 		}

@@ -1,0 +1,3 @@
+[submodule "probuilder2.0/Assets/ProBuilder-API-Examples"]
+	path = probuilder2.0/Assets/ProBuilder-API-Examples
+	url = https://github.com/Unity-Technologies/ProBuilder-API-Examples.git

@@ -517,7 +517,7 @@ namespace ProBuilder.MeshOperations
 				Color[] c;
 				int[] s;
 				pb_UV uvs = new pb_UV();
-				Material mat = pb_Constant.DefaultMaterial;
+				Material mat = pb_Material.DefaultMaterial;
 
 				// Get material and UV stuff from the first edge face
 				pb_Tuple<pb_Face, pb_Edge> faceAndEdge = null;
