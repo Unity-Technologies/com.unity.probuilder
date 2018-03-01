@@ -80,7 +80,8 @@ namespace ProBuilder.EditorCore
 
 		static readonly Color k_ProBuilderWireframe = new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f);
 		static readonly Color k_ProBuilderSelected = new Color(0f, 210f / 255f, 239f / 255f, 1f);
-		static readonly Color k_ProBuilderUnselected = new Color(1f, 1f, 1f, 1f);
+		static readonly Color k_ProBuilderUnselected = new Color(44f / 255f, 44f / 255f, 44f / 255f, 1f);
+		static readonly Color k_ProBuilderPreselection = new Color(179f / 255f, 246f / 255f, 255f / 255f, 1f);
 
 		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
@@ -90,7 +91,7 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbSelectedEdgeColor, k_ProBuilderSelected},
 			{ pb_Constant.pbUnselectedVertexColor, k_ProBuilderUnselected},
 			{ pb_Constant.pbSelectedVertexColor, k_ProBuilderSelected},
-			{ pb_Constant.pbPreselectionColor, Color.yellow },
+			{ pb_Constant.pbPreselectionColor, k_ProBuilderPreselection },
 		};
 
 		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()

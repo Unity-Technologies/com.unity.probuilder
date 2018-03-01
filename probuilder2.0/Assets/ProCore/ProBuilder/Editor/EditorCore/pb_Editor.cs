@@ -692,7 +692,7 @@ namespace ProBuilder.EditorCore
 
 						float d = HandleUtility.DistanceToLine(
 							pb.transform.TransformPoint(pb.vertices[x]),
-							pb.transform.TransformPoint(pb.vertices[x]));
+							pb.transform.TransformPoint(pb.vertices[y]));
 
 						if (d < bestDistance)
 						{
