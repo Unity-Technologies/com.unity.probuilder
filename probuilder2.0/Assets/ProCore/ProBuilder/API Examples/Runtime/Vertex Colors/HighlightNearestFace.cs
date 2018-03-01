@@ -31,7 +31,7 @@ namespace ProBuilder.Examples
 			target = pb_ShapeGenerator.PlaneGenerator(travel, travel, 25, 25, ProBuilder.Core.Axis.Up);
 
 			foreach (pb_Face face in target.faces)
-				face.material = pb_Constant.DefaultMaterial;
+				face.material = pb_Material.DefaultMaterial;
 
 			target.transform.position = new Vector3(travel * .5f, 0f, travel * .5f);
 

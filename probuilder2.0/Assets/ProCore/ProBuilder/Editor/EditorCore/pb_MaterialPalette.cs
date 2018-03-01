@@ -51,7 +51,7 @@ namespace ProBuilder.EditorCore
 		public void SetDefaultValues()
 		{
 			array = new Material[10] {
-				pb_Constant.DefaultMaterial,
+				pb_Material.DefaultMaterial,
 				null,
 				null,
 				null,

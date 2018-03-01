@@ -1815,7 +1815,7 @@ class pb_UVEditor : EditorWindow
 	// re-usable rect for drawing graphs
 	Rect r = new Rect(0,0,0,0);
 
-	Texture2D GetMainTexture(Material material)
+	internal static Texture2D GetMainTexture(Material material)
 	{
 		if (material == null || material.shader == null)
 			return null;

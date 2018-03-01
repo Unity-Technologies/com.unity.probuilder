@@ -39,31 +39,15 @@ namespace ProBuilder.EditorCore
 		}
 
 		static readonly Color k_ColorGreen = new Color(0f, .8f, 0f, .8f);
-		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 
 		[SerializeField] ShapeType m_CurrentShape = ShapeType.Cube;
 
 		GameObject m_PreviewObject;
 		bool m_ShowPreview = true;
-		Material m_PreviewMaterial;
 		// used to toggle preview on and off from class OnGUI
 		bool m_DoInitPreview = false;
 		Material m_DefaultMaterial = null;
 		Vector2 m_Scroll = Vector2.zero;
-
-		public Material previewMat
-		{
-			get
-			{
-				if(m_PreviewMaterial == null)
-				{
-					m_PreviewMaterial = new Material(Shader.Find("Diffuse"));
-					m_PreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
-					m_PreviewMaterial.SetColor("_Color", k_PreviewColor);
-				}
-				return m_PreviewMaterial;
-			}
-		}
 
 		// toogle for closing the window after shape creation from the prefrences window
 		static bool prefClose
@@ -1080,9 +1064,8 @@ namespace ProBuilder.EditorCore
 				if(m_PreviewObject.GetComponent<MeshFilter>().sharedMesh != null)
 					DestroyImmediate(m_PreviewObject.GetComponent<MeshFilter>().sharedMesh);
 
-				GameObject.DestroyImmediate(m_PreviewObject);
+				DestroyImmediate(m_PreviewObject);
 			}
-			if(m_PreviewMaterial != null) DestroyImmediate(m_PreviewMaterial);
 		}
 
 		void SetPreviewObject(pb_Object pb)
@@ -1136,14 +1119,11 @@ namespace ProBuilder.EditorCore
 			if(m_PreviewObject.GetComponent<pb_Entity>())
 				Object.DestroyImmediate(m_PreviewObject.GetComponent<pb_Entity>());
 
-			HideFlags flags = HideFlags.DontSave;
-
-			m.hideFlags = flags;
-			previewMat.hideFlags = flags;
-			m_PreviewObject.hideFlags = flags;
+			m.hideFlags = HideFlags.DontSave;
+			m_PreviewObject.hideFlags = HideFlags.DontSave;
 
 			m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = m;
-			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = previewMat;
+			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = pb_Material.ShapePreviewMaterial;
 
 			Selection.activeTransform = m_PreviewObject.transform;
 		}

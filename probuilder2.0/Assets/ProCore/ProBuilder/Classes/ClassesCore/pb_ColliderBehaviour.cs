@@ -13,7 +13,7 @@ namespace ProBuilder.Core
 			if (!collision)
 				collision = gameObject.AddComponent<MeshCollider>();
 			collision.isTrigger = false;
-			SetMaterial(pb_Constant.ColliderMaterial);
+			SetMaterial(pb_Material.ColliderMaterial);
 		}
 
 		public override void OnEnterPlayMode()

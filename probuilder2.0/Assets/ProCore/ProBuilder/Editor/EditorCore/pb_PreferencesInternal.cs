@@ -277,18 +277,18 @@ namespace ProBuilder.EditorCore
 					if(EditorPrefs.HasKey(key))
 					{
 						if(EditorPrefs.GetString(key) == "Default-Diffuse")
-							return pb_Constant.UnityDefaultDiffuse;
+							return pb_Material.UnityDefaultDiffuse;
 
 						mat = (Material) AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString(key), typeof(Material));
 					}
 					break;
 
 				default:
-					return pb_Constant.DefaultMaterial;
+					return pb_Material.DefaultMaterial;
 			}
 
 			if(!mat)
-				mat = pb_Constant.DefaultMaterial;
+				mat = pb_Material.DefaultMaterial;
 
 			return mat;
 		}

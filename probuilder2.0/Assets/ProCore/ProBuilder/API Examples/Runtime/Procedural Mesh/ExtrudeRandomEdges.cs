@@ -24,7 +24,7 @@ namespace ProBuilder.Examples
 		void Start()
 		{
 			pb = pb_ShapeGenerator.PlaneGenerator(1, 1, 0, 0, ProBuilder.Core.Axis.Up);
-			foreach (var f in pb.faces) f.material = pb_Constant.DefaultMaterial;
+			foreach (var f in pb.faces) f.material = pb_Material.DefaultMaterial;
 			lastExtrudedFace = pb.faces[0];
 		}
 

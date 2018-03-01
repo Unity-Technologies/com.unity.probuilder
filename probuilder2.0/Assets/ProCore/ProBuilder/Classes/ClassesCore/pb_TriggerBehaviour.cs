@@ -21,7 +21,7 @@ namespace ProBuilder.Core
 
 			collision.isTrigger = true;
 
-			SetMaterial(pb_Constant.TriggerMaterial);
+			SetMaterial(pb_Material.TriggerMaterial);
 		}
 
 		public override void OnEnterPlayMode()

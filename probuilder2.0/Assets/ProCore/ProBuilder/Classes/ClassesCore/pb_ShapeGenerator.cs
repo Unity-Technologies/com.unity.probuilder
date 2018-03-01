@@ -660,7 +660,7 @@ namespace ProBuilder.Core
 
 					faces[f++] = new pb_Face(
 						new int[6]{ zero, one, two, one, three, two },
-						pb_Constant.DefaultMaterial,
+						pb_Material.DefaultMaterial,
 						new pb_UV(),
 						smoothing,
 						-1,

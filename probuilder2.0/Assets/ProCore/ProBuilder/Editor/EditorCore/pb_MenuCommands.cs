@@ -302,7 +302,7 @@ namespace ProBuilder.EditorCore
 
 			GameObject go = new GameObject();
 
-			go.AddComponent<MeshRenderer>().sharedMaterial = pb_Constant.DefaultMaterial;
+			go.AddComponent<MeshRenderer>().sharedMaterial = pb_Material.DefaultMaterial;
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
 			pb_Object pb = pb_MeshOps.CreatePbObjectWithTransform(go.transform, false);
