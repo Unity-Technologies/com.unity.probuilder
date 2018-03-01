@@ -7,50 +7,6 @@ using System.Reflection;
 
 namespace ProBuilder.Core
 {
-	public class Materials : ScriptableObject
-	{
-		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
-
-		public Material s_ShapePreviewMaterial;
-		static Materials s_Instance;
-
-		public static Materials instance
-		{
-			get
-			{
-				if (!s_Instance)
-				{
-					Debug.Log("create  -> Materials");
-					s_Instance = CreateInstance<Materials>();
-					s_Instance.hideFlags = HideFlags.HideAndDontSave;
-				}
-
-				return s_Instance;
-			}
-		}
-
-		public Material shapePreviewMaterial
-		{
-			get
-			{
-				if (s_ShapePreviewMaterial == null)
-				{
-					Debug.Log("init shape -> preview");
-					s_ShapePreviewMaterial = new Material(pb_Material.DefaultMaterial.shader);
-					s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
-
-					if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
-						s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
-
-					if (s_ShapePreviewMaterial.HasProperty("_Color"))
-						s_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
-
-				}
-				return s_ShapePreviewMaterial;
-			}
-		}
-	}
-
 	public static class pb_Material
 	{
 		static Shader s_SelectionPickerShader;
@@ -101,11 +57,6 @@ namespace ProBuilder.Core
 
 				return s_DefaultMaterial;
 			}
-		}
-
-		internal static Material ShapePreviewMaterial
-		{
-			get { return Materials.instance.shapePreviewMaterial; }
 		}
 
 		/// <summary>

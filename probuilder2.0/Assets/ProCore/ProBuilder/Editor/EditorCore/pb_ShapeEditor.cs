@@ -48,6 +48,8 @@ namespace ProBuilder.EditorCore
 		bool m_DoInitPreview = false;
 		Material m_DefaultMaterial = null;
 		Vector2 m_Scroll = Vector2.zero;
+		static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
+		Material s_ShapePreviewMaterial;
 
 		// toogle for closing the window after shape creation from the prefrences window
 		static bool prefClose
@@ -59,6 +61,23 @@ namespace ProBuilder.EditorCore
 		{
 			m_DefaultMaterial = pb_PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
 			m_DoInitPreview = true;
+
+			if (s_ShapePreviewMaterial == null)
+			{
+				s_ShapePreviewMaterial = new Material(pb_Material.DefaultMaterial.shader);
+				s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
+
+				if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
+					s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+
+				if (s_ShapePreviewMaterial.HasProperty("_Color"))
+					s_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
+			}
+		}
+
+		void OnDisable()
+		{
+			DestroyImmediate(s_ShapePreviewMaterial);
 		}
 
 		void OnDestroy()
@@ -1123,7 +1142,7 @@ namespace ProBuilder.EditorCore
 			m_PreviewObject.hideFlags = HideFlags.DontSave;
 
 			m_PreviewObject.GetComponent<MeshFilter>().sharedMesh = m;
-			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = pb_Material.ShapePreviewMaterial;
+			m_PreviewObject.GetComponent<MeshRenderer>().sharedMaterial = s_ShapePreviewMaterial;
 
 			Selection.activeTransform = m_PreviewObject.transform;
 		}
