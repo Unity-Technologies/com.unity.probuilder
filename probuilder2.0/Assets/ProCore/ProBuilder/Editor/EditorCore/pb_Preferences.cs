@@ -24,6 +24,7 @@ namespace ProBuilder.EditorCore
 		static Color pbUnselectedEdgeColor;
 		static Color vertexSelectedColor;
 		static Color vertexUnselectedColor;
+		static Color pbPreselectionColor;
 		static bool pbSelectedFaceDither;
 
 		static bool defaultOpenInDockableWindow;
@@ -145,6 +146,7 @@ namespace ProBuilder.EditorCore
 			if (!pbUseUnityColors)
 			{
 				pbWireframeColor = EditorGUILayout.ColorField("Wireframe", pbWireframeColor);
+				pbPreselectionColor = EditorGUILayout.ColorField("Preselection", pbPreselectionColor);
 				faceSelectedColor = EditorGUILayout.ColorField("Selected Face Color", faceSelectedColor);
 				pbSelectedFaceDither = EditorGUILayout.Toggle("Dither Face Overlay", pbSelectedFaceDither);
 				pbUnselectedEdgeColor = EditorGUILayout.ColorField("Unselected Edge Color", pbUnselectedEdgeColor);
@@ -274,6 +276,7 @@ namespace ProBuilder.EditorCore
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeSize);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
+				pb_PreferencesInternal.DeleteKey(pb_Constant.pbPreselectionColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
 				pb_PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
@@ -454,6 +457,7 @@ namespace ProBuilder.EditorCore
 			pbWireframeSize = pb_PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize);
 			faceSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
 			pbWireframeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
+			pbPreselectionColor = pb_PreferencesInternal.GetColor(pb_Constant.pbPreselectionColor);
 			pbSelectedFaceDither = pb_PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
 			pbSelectedEdgeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedEdgeColor);
 			pbUnselectedEdgeColor = pb_PreferencesInternal.GetColor(pb_Constant.pbUnselectedEdgeColor);
@@ -487,6 +491,7 @@ namespace ProBuilder.EditorCore
 			pb_PreferencesInternal.SetFloat(pb_Constant.pbWireframeSize, pbWireframeSize, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedFaceColor, faceSelectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbWireframeColor, pbWireframeColor, pb_PreferenceLocation.Global);
+			pb_PreferencesInternal.SetColor(pb_Constant.pbPreselectionColor, pbPreselectionColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedVertexColor, vertexSelectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbUnselectedVertexColor, vertexUnselectedColor, pb_PreferenceLocation.Global);
 			pb_PreferencesInternal.SetColor(pb_Constant.pbSelectedEdgeColor, pbSelectedEdgeColor, pb_PreferenceLocation.Global);

@@ -1700,7 +1700,8 @@ namespace ProBuilder.EditorCore
 				{
 					if (pb_EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 					{
-						pb_MeshHandles.SetLineColor(Handles.preselectionColor);
+						pb_MeshHandles.lineMaterial.SetColor("_Color", Color.white);
+						GL.Color(pb_MeshHandles.preselectionColor);
 
 						GL.MultMatrix(nearestEdgeObject.transform.localToWorldMatrix);
 

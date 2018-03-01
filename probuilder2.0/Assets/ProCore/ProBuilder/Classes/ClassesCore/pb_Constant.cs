@@ -46,6 +46,7 @@ namespace ProBuilder.Core
 		internal const string pbSelectedEdgeColor = "pbSelectedEdgeColor";
 		internal const string pbSelectedVertexColor = "pbDefaultSelectedVertexColor";
 		internal const string pbUnselectedVertexColor = "pbDefaultVertexColor";
+		internal const string pbPreselectionColor = "pbPreselectionColor";
 
 		// Bool
 		internal const string pbDefaultOpenInDockableWindow = "pbDefaultOpenInDockableWindow";

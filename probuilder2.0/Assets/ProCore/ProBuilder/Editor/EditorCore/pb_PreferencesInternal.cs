@@ -27,9 +27,6 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_PreferencesInternal
 	{
-		static readonly Color k_DefaultSelectedColor = new Color(0f, .86f, 1f, .275f);
-		static readonly Color k_DefaultWireframeColor = new Color(0.53f, 0.65f, 0.84f, 1f);
-
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
 
 		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
@@ -51,7 +48,7 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbCollapseVertexToFirst, false },
 			{ pb_Constant.pbEnableExperimental, false },
 			{ pb_Constant.pbMeshesAreAssets, false },
-			{ pb_Constant.pbSelectedFaceDither, false },
+			{ pb_Constant.pbSelectedFaceDither, true },
 		};
 
 		static Dictionary<string, float> s_FloatDefaults = new Dictionary<string, float>()
@@ -81,14 +78,19 @@ namespace ProBuilder.EditorCore
 			{ pb_Constant.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};
 
+		static readonly Color k_ProBuilderWireframe = new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f);
+		static readonly Color k_ProBuilderSelected = new Color(0f, 210f / 255f, 239f / 255f, 1f);
+		static readonly Color k_ProBuilderUnselected = new Color(1f, 1f, 1f, 1f);
+
 		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
-			{ pb_Constant.pbSelectedFaceColor, k_DefaultSelectedColor },
-			{ pb_Constant.pbWireframeColor, k_DefaultWireframeColor },
-			{ pb_Constant.pbUnselectedEdgeColor, new Color(0f, .1f, 1f, 1f) },
-			{ pb_Constant.pbSelectedEdgeColor, k_DefaultSelectedColor },
-			{ pb_Constant.pbUnselectedVertexColor, new Color(.8f, .8f, .8f, 1f) },
-			{ pb_Constant.pbSelectedVertexColor, k_DefaultSelectedColor },
+			{ pb_Constant.pbSelectedFaceColor, k_ProBuilderSelected},
+			{ pb_Constant.pbWireframeColor, k_ProBuilderWireframe},
+			{ pb_Constant.pbUnselectedEdgeColor, k_ProBuilderUnselected},
+			{ pb_Constant.pbSelectedEdgeColor, k_ProBuilderSelected},
+			{ pb_Constant.pbUnselectedVertexColor, k_ProBuilderUnselected},
+			{ pb_Constant.pbSelectedVertexColor, k_ProBuilderSelected},
+			{ pb_Constant.pbPreselectionColor, Color.yellow },
 		};
 
 		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()

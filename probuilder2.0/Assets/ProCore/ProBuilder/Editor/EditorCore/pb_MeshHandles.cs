@@ -30,13 +30,21 @@ namespace ProBuilder.EditorCore
 		static Material s_WireframeMaterial;
 		static Material s_LineMaterial;
 
-		static Color s_FaceSelectedColor = new Color(0f, 1f, 1f, .275f);
-		static Color s_WireframeColor = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
-		static Color s_EdgeSelectedColor = new Color(0f, .6f, .7f, 1f);
-		static Color s_EdgeUnselectedColor = new Color(0f, .6f, .7f, 1f);
+		static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
+		static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
 
-		static Color s_VertexSelectedColor = new Color(1f, .2f, .2f, 1f);
-		static Color s_VertexUnselectedColor = new Color(.8f, .8f, .8f, 1f);
+		static Color s_FaceSelectedColor;
+		static Color s_WireframeColor;
+		static Color s_PreselectionColor;
+		static Color s_EdgeSelectedColor;
+		static Color s_EdgeUnselectedColor;
+		static Color s_VertexSelectedColor;
+		static Color s_VertexUnselectedColor;
+
+		public static Color preselectionColor
+		{
+			get { return s_PreselectionColor; }
+		}
 
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
@@ -55,12 +63,6 @@ namespace ProBuilder.EditorCore
 		public static Material lineMaterial
 		{
 			get { return s_LineMaterial; }
-		}
-
-		public static void SetLineColor(Color color)
-		{
-			lineMaterial.SetColor("_Color", color);
-			GL.Color(color);
 		}
 
 		public static Material vertexMaterial
@@ -124,13 +126,15 @@ namespace ProBuilder.EditorCore
 			if (pb_PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors))
 			{
 				s_FaceSelectedColor = Handles.selectedColor;
-				s_EdgeSelectedColor = Handles.selectedColor;
-				s_VertexSelectedColor = Handles.selectedColor;
-
-				s_EdgeUnselectedColor = s_WireframeColor;
-				s_VertexUnselectedColor = Handles.secondaryColor;
-
 				s_EnableFaceDither = true;
+
+				s_EdgeSelectedColor = Handles.selectedColor;
+				s_EdgeUnselectedColor = k_WireframeDefault;
+
+				s_VertexSelectedColor = Handles.selectedColor;
+				s_VertexUnselectedColor = k_VertexUnselectedDefault;
+
+				s_PreselectionColor = Handles.preselectionColor;
 			}
 			else
 			{
@@ -142,6 +146,8 @@ namespace ProBuilder.EditorCore
 
 				s_VertexSelectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbSelectedVertexColor);
 				s_VertexUnselectedColor = pb_PreferencesInternal.GetColor(pb_Constant.pbUnselectedVertexColor);
+
+				s_PreselectionColor = pb_PreferencesInternal.GetColor(pb_Constant.pbPreselectionColor);
 			}
 
 			s_WireframeMaterial.SetColor("_Color", s_WireframeColor);
@@ -190,7 +196,8 @@ namespace ProBuilder.EditorCore
 					Handles.lighting = false;
 
 					var selection = pb_Selection.Top();
-					SetLineColor(s_EdgeSelectedColor);
+
+					lineMaterial.SetColor("_Color", Color.white);
 
 					for (int i = 0; i < selection.Length; i++)
 					{
