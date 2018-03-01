@@ -63,6 +63,7 @@ probuilder2.0/Assets/Plugins*
 probuilder2.0/Assets/Materials/*
 probuilder2.0/Assets/ProBuilderPreferences.asset
 probuilder2.0/Assets/tools-api-sandbox/*
+probuilder2.0/Assets/ProBuilder-API-Examples*
 
 # generated test files
 probuilder2.0/Assets/Tests/Editor/Temp Assets*
