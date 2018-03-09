@@ -170,7 +170,6 @@ namespace ProBuilder.EditorCore
 
 			InitializeStyles();
 
-			// wireframe and unselected vertices are always drawn
 			s_VertexMaterial.SetColor("_Color", s_VertexUnselectedColor);
 			s_LineMaterial.SetColor("_Color", s_EdgeUnselectedColor);
 
@@ -265,7 +264,7 @@ namespace ProBuilder.EditorCore
 			ClearAllRenderables();
 
 			for (int i = 0; i < selection.Length; i++)
-				s_WireframeRenderables.Add(BuildEdgeMesh(selection[i], selectionMode == SelectMode.Edge ? s_LineMaterial : s_WireframeMaterial));
+				s_WireframeRenderables.Add(BuildEdgeMesh(selection[i], (editLevel == EditLevel.Geometry && selectionMode == SelectMode.Edge) ? s_LineMaterial : s_WireframeMaterial));
 
 			if(editLevel == EditLevel.Geometry)
 			{
