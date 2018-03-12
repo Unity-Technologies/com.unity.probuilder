@@ -1,3 +1,10 @@
+# ProBuilder 3.0.2-beta.3
+
+## Bug Fixes
+
+- Fix wireframe rendering with unselected edge color in certain cases.
+- Fix edge selection preferring vertical edges.
+
 # ProBuilder 3.0.2-beta.2
 
 ## Features
