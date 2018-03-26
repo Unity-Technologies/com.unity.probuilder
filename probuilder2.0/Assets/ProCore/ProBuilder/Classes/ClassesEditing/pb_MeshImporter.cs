@@ -7,27 +7,33 @@ using ProBuilder.Core;
 namespace ProBuilder.MeshOperations
 {
 	/// <summary>
-	/// Import UnityEngine.Mesh and other sources (someday) to pb_Object.
+	/// Import UnityEngine.Mesh to pb_Object.
 	/// </summary>
-	class pb_MeshImporter
+	public class pb_MeshImporter
 	{
 		public class Settings
 		{
-			// Try to quadrangilize triangle meshes.
+			/// <summary>
+			/// Try to quadrangilize triangle meshes.
+			/// </summary>
 			public bool quads = true;
 
 			// Allow ngons when importing meshes. @todo
 			// public bool ngons = false;
 
-			// Generate smoothing groups based on mesh normals.
+			/// <summary>
+			/// Generate smoothing groups based on mesh normals.
+			/// </summary>
 			public bool smoothing = true;
 
-			// Degree of difference between face normals to allow when determining smoothing groups.
+			/// <summary>
+			/// Degree of difference between face normals to allow when determining smoothing groups.
+			/// </summary>
 			public float smoothingThreshold = 1f;
 
-			/**
-			 * Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
-			 */
+			/// <summary>
+			/// Basic mesh import settings. Imports quads, and smoothes faces with a threshold of 1 degree.
+			/// </summary>
 			public static Settings Default
 			{
 				get
@@ -50,24 +56,27 @@ namespace ProBuilder.MeshOperations
 			}
 		}
 
-		private static readonly Settings DEFAULT_IMPORT_SETTINGS = new Settings()
+		static readonly Settings k_DefaultImportSettings = new Settings()
 		{
 			quads = true,
 			smoothing = true,
 			smoothingThreshold = 1f
 		};
 
-		private pb_Object m_Mesh;
-		private pb_Vertex[] m_Vertices;
+		pb_Object m_Mesh;
+		pb_Vertex[] m_Vertices;
 
 		public pb_MeshImporter(pb_Object target)
 		{
 			m_Mesh = target;
 		}
 
-		/**
-		 * Import a pb_Object from MeshFilter and MeshRenderer.
-		 */
+		/// <summary>
+		/// Import a pb_Object from MeshFilter and MeshRenderer.
+		/// </summary>
+		/// <param name="go"></param>
+		/// <param name="importSettings"></param>
+		/// <returns></returns>
 		public bool Import(GameObject go, Settings importSettings = null)
 		{
 			MeshFilter mf = go.GetComponent<MeshFilter>();
@@ -79,13 +88,18 @@ namespace ProBuilder.MeshOperations
 			return Import(mf.sharedMesh, mr ? mr.sharedMaterials : null, importSettings);
 		}
 
-		/**
-		 * Import a mesh onto an empty pb_Object.
-		 */
+		/// <summary>
+		/// Import a mesh onto an empty pb_Object.
+		/// </summary>
+		/// <param name="originalMesh"></param>
+		/// <param name="materials"></param>
+		/// <param name="importSettings"></param>
+		/// <returns></returns>
+		/// <exception cref="NotImplementedException">Import only supports triangle and quad mesh topologies.</exception>
 		public bool Import(Mesh originalMesh, Material[] materials, Settings importSettings = null)
 		{
 			if(importSettings == null)
-				importSettings = DEFAULT_IMPORT_SETTINGS;
+				importSettings = k_DefaultImportSettings;
 
 			// When importing the mesh is always split into triangles with no vertices shared
 			// between faces. In a later step co-incident vertices are collapsed (eg, before
@@ -238,7 +252,7 @@ namespace ProBuilder.MeshOperations
 			return false;
 		}
 
-		private pb_Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<pb_EdgeLookup, float> connections)
+		pb_Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<pb_EdgeLookup, float> connections)
 		{
 			float score = 0f;
 			pb_Face face = null;
@@ -262,7 +276,7 @@ namespace ProBuilder.MeshOperations
 		 * normalThreshold will discard any quads where the dot product of their normals is less than the threshold.
 		 * @todo Abstract the quad detection to a separate class so it can be applied to pb_Objects.
 		 */
-		private float GetQuadScore(pb_WingedEdge left, pb_WingedEdge right, float normalThreshold = .9f)
+		float GetQuadScore(pb_WingedEdge left, pb_WingedEdge right, float normalThreshold = .9f)
 		{
 			int[] quad = pb_WingedEdge.MakeQuad(left, right);
 
