@@ -6,11 +6,11 @@ public class OpenConsoleHere : Editor
 {
 	private const string CONSOLE_PATH = "C:\\Program Files\\ConEmu\\ConEmu64.exe";
 
-	[MenuItem("Assets/Open Cygwin Here", false, 400)]
+	[MenuItem("Assets/Open Console Here", false, 400)]
 	private static void MenuOpenConsole()
 	{
 		string dir = GetDirectory();
-		System.Diagnostics.Process.Start(CONSOLE_PATH, string.Format("-Dir {0} -run {{CygWin bash}} -new_console", dir));
+		System.Diagnostics.Process.Start(CONSOLE_PATH, string.Format("-Dir {0} -run {{Bash::msys2}} -new_console", dir));
 	}
 
 	private static string GetDirectory()
