@@ -51,6 +51,7 @@ namespace ProBuilder.Actions
 
 			try
 			{
+				// pb_Stl is an external lib
 				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 				res = pb_Stl_Exporter.Export(path, gameObjects, type);
 			}

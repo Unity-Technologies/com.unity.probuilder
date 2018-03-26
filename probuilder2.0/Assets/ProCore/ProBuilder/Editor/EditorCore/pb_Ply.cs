@@ -148,48 +148,37 @@ namespace ProBuilder.EditorCore
 			bool hasNormals = normals != null && normals.Length == vertexCount;
 			bool hasColors = colors != null && colors.Length == vertexCount;
 
-			var currentCulture = Thread.CurrentThread.CurrentCulture;
+			StringBuilder sb = new StringBuilder();
 
-			try
+			WriteHeader(vertexCount, faceCount, hasNormals, hasColors, ref sb);
+
+			for (int i = 0; i < vertexCount; i++)
 			{
-				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+				sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
 
-				StringBuilder sb = new StringBuilder();
+				if (hasNormals)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
 
-				WriteHeader(vertexCount, faceCount, hasNormals, hasColors, ref sb);
+				if (hasColors)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0} {1} {2} {3}",
+						System.Math.Min(System.Math.Max(0, (int)(colors[i].r * 255)), 255),
+						System.Math.Min(System.Math.Max(0, (int)(colors[i].g * 255)), 255),
+						System.Math.Min(System.Math.Max(0, (int)(colors[i].b * 255)), 255),
+						System.Math.Min(System.Math.Max(0, (int)(colors[i].a * 255)), 255)));
 
-				for (int i = 0; i < vertexCount; i++)
-				{
-					sb.Append(string.Format("{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
-
-					if (hasNormals)
-						sb.Append(string.Format(" {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
-
-					if (hasColors)
-						sb.Append(string.Format(" {0} {1} {2} {3}",
-							System.Math.Min(System.Math.Max(0, (int)(colors[i].r * 255)), 255),
-							System.Math.Min(System.Math.Max(0, (int)(colors[i].g * 255)), 255),
-							System.Math.Min(System.Math.Max(0, (int)(colors[i].b * 255)), 255),
-							System.Math.Min(System.Math.Max(0, (int)(colors[i].a * 255)), 255)));
-
-					sb.AppendLine();
-				}
-
-				for (int i = 0; i < faceCount; i++)
-				{
-					int faceLength = faces[i] != null ? faces[i].Length : 0;
-					sb.Append(faceLength.ToString());
-					for (int n = 0; n < faceLength; n++)
-						sb.Append(string.Format(" {0}", faces[i][flipHandedness ? faceLength - n - 1 : n]));
-					sb.AppendLine();
-				}
-
-				contents = sb.ToString();
+				sb.AppendLine();
 			}
-			finally
+
+			for (int i = 0; i < faceCount; i++)
 			{
-				Thread.CurrentThread.CurrentCulture = currentCulture;
+				int faceLength = faces[i] != null ? faces[i].Length : 0;
+				sb.Append(faceLength.ToString(CultureInfo.InvariantCulture));
+				for (int n = 0; n < faceLength; n++)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0}", faces[i][flipHandedness ? faceLength - n - 1 : n]));
+				sb.AppendLine();
 			}
+
+			contents = sb.ToString();
 
 			return true;
 		}
@@ -200,7 +189,7 @@ namespace ProBuilder.EditorCore
 			sb.AppendLine("format ascii 1.0");
 			sb.AppendLine("comment Exported by [ProBuilder](http://www.procore3d.com/probuilder)");
 			sb.AppendLine("comment " + System.DateTime.Now);
-			sb.AppendLine(string.Format("element vertex {0}", vertexCount));
+			sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "element vertex {0}", vertexCount));
 			sb.AppendLine("property float32 x");
 			sb.AppendLine("property float32 y");
 			sb.AppendLine("property float32 z");
@@ -217,7 +206,7 @@ namespace ProBuilder.EditorCore
 				sb.AppendLine("property uint8 blue");
 				sb.AppendLine("property uint8 alpha");
 			}
-			sb.AppendLine(string.Format("element face {0}", faceCount));
+			sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "element face {0}", faceCount));
 			sb.AppendLine("property list uint8 int32 vertex_index");
 			sb.AppendLine("end_header");
 		}
