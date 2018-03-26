@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
@@ -29,6 +31,13 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_Ply
 	{
+		/// <summary>
+		/// Export a ply file.
+		/// </summary>
+		/// <param name="models"></param>
+		/// <param name="contents"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
 		public static bool Export(IEnumerable<pb_Object> models, out string contents, pb_PlyOptions options = null)
 		{
 			if(options == null)
@@ -110,9 +119,16 @@ namespace ProBuilder.EditorCore
 			return res;
 		}
 
-		/**
-		 *	Create the contents of an ASCII formatted PLY file.
-		 */
+		/// <summary>
+		/// Create the contents of an ASCII formatted PLY file.
+		/// </summary>
+		/// <param name="positions"></param>
+		/// <param name="faces"></param>
+		/// <param name="contents"></param>
+		/// <param name="normals"></param>
+		/// <param name="colors"></param>
+		/// <param name="flipHandedness"></param>
+		/// <returns></returns>
 		public static bool Export(
 			Vector3[] positions,
 			int[][] faces, out string contents,
@@ -132,37 +148,48 @@ namespace ProBuilder.EditorCore
 			bool hasNormals = normals != null && normals.Length == vertexCount;
 			bool hasColors = colors != null && colors.Length == vertexCount;
 
-			StringBuilder sb = new StringBuilder();
+			var currentCulture = Thread.CurrentThread.CurrentCulture;
 
-			WriteHeader(vertexCount, faceCount, hasNormals, hasColors, ref sb);
-
-			for(int i = 0; i < vertexCount; i++)
+			try
 			{
-				sb.Append(string.Format("{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-				if(hasNormals)
-					sb.Append(string.Format(" {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
+				StringBuilder sb = new StringBuilder();
 
-				if(hasColors)
-					sb.Append(string.Format(" {0} {1} {2} {3}",
-						System.Math.Min(System.Math.Max(0, (int)(colors[i].r * 255)), 255),
-						System.Math.Min(System.Math.Max(0, (int)(colors[i].g * 255)), 255),
-						System.Math.Min(System.Math.Max(0, (int)(colors[i].b * 255)), 255),
-						System.Math.Min(System.Math.Max(0, (int)(colors[i].a * 255)), 255)));
+				WriteHeader(vertexCount, faceCount, hasNormals, hasColors, ref sb);
 
-				sb.AppendLine();
+				for (int i = 0; i < vertexCount; i++)
+				{
+					sb.Append(string.Format("{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
+
+					if (hasNormals)
+						sb.Append(string.Format(" {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
+
+					if (hasColors)
+						sb.Append(string.Format(" {0} {1} {2} {3}",
+							System.Math.Min(System.Math.Max(0, (int)(colors[i].r * 255)), 255),
+							System.Math.Min(System.Math.Max(0, (int)(colors[i].g * 255)), 255),
+							System.Math.Min(System.Math.Max(0, (int)(colors[i].b * 255)), 255),
+							System.Math.Min(System.Math.Max(0, (int)(colors[i].a * 255)), 255)));
+
+					sb.AppendLine();
+				}
+
+				for (int i = 0; i < faceCount; i++)
+				{
+					int faceLength = faces[i] != null ? faces[i].Length : 0;
+					sb.Append(faceLength.ToString());
+					for (int n = 0; n < faceLength; n++)
+						sb.Append(string.Format(" {0}", faces[i][flipHandedness ? faceLength - n - 1 : n]));
+					sb.AppendLine();
+				}
+
+				contents = sb.ToString();
 			}
-
-			for(int i = 0; i < faceCount; i++)
+			finally
 			{
-				int faceLength = faces[i] != null ? faces[i].Length : 0;
-				sb.Append(faceLength.ToString());
-				for(int n = 0; n < faceLength; n++)
-					sb.Append(string.Format(" {0}", faces[i][ flipHandedness ? faceLength - n - 1 : n]));
-				sb.AppendLine();
+				Thread.CurrentThread.CurrentCulture = currentCulture;
 			}
-
-			contents = sb.ToString();
 
 			return true;
 		}

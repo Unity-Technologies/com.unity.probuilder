@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
@@ -74,9 +76,16 @@ namespace ProBuilder.EditorCore
 			// { "_EmissionMap", "Ke" },
 		};
 
-		/**
-		 * Write the contents of a single obj & mtl from a set of models.
-		 */
+		/// <summary>
+		/// Write the contents of a single obj & mtl from a set of models.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="models"></param>
+		/// <param name="objContents"></param>
+		/// <param name="mtlContents"></param>
+		/// <param name="textures"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
 		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, out List<string> textures, pb_ObjOptions options = null)
 		{
 			if(models == null || models.Count() < 1)
@@ -92,13 +101,24 @@ namespace ProBuilder.EditorCore
 			if(options == null)
 				options = new pb_ObjOptions();
 
-			mtlContents = WriteMtlContents(models, options, out materialMap, out textures);
-			objContents = WriteObjContents(name, models, materialMap, options);
+			var currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try
+			{
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+				mtlContents = WriteMtlContents(models, options, out materialMap, out textures);
+				objContents = WriteObjContents(name, models, materialMap, options);
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 
 			return true;
 		}
 
-		private static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
+		static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
 		{
 			// Empty names in OBJ groups can crash some 3d programs (meshlab)
 			if(string.IsNullOrEmpty(name))
@@ -197,7 +217,7 @@ namespace ProBuilder.EditorCore
 						sb.AppendLine(string.Format("g {0}", model.name));
 
 					string materialName = "";
-					
+
 					if(materialMap.TryGetValue(submesh.material, out materialName))
 						sb.AppendLine(string.Format("usemtl {0}", materialName));
 					else
@@ -255,11 +275,15 @@ namespace ProBuilder.EditorCore
 			return sb.ToString();
 		}
 
-		/**
-		 * Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring
-		 * unique names for each group. Material to named mtl group are stored in materialMap.
-		 */
-		private static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap, out List<string> textures)
+		/// <summary>
+		/// Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring unique names for each group. Material to named mtl group are stored in materialMap.
+		/// </summary>
+		/// <param name="models"></param>
+		/// <param name="options"></param>
+		/// <param name="materialMap"></param>
+		/// <param name="textures"></param>
+		/// <returns></returns>
+		static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap, out List<string> textures)
 		{
 			materialMap = new Dictionary<Material, string>();
 
