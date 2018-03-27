@@ -17,18 +17,19 @@ namespace ProBuilder.EditorCore
 	{
 		static Type s_ProGridsType = null;
 
+		static readonly string[] ProGridsEditorTypeNames = new string[]
+		{
+			"ProGrids.Editor.ProGridsEditor",
+			"ProGrids.Editor.pg_Editor",
+			"ProGrids.pg_Editor",
+			"pg_Editor",
+		};
+
 		static pb_ProGridsInterface()
 		{
 			// Current release
-			s_ProGridsType = pb_Reflection.GetType("ProGrids.Editor.pg_Editor");
-
-			// 2016/17ish
-			if(s_ProGridsType == null)
-				s_ProGridsType = pb_Reflection.GetType("ProGrids.pg_Editor");
-
-			// earlier
-			if(s_ProGridsType == null)
-				s_ProGridsType = pb_Reflection.GetType("pg_Editor");
+			for(int i = 0, c = ProGridsEditorTypeNames.Length; i < c && s_ProGridsType == null; i++)
+				s_ProGridsType = pb_Reflection.GetType(ProGridsEditorTypeNames[i]);
 		}
 
 		/// <summary>
