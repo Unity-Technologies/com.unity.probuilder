@@ -22,15 +22,16 @@ namespace ProBuilder.EditorCore
 
 	class pb_AboutWindow : EditorWindow
 	{
-		GUIContent m_LearnContent = new GUIContent("Learn ProBuilder", "Documentation");
-		GUIContent m_ForumLinkContent = new GUIContent("Support Forum", "ProCore Support Forum");
-		GUIContent m_ContactContent = new GUIContent("Contact Us", "Send us an email!");
-		GUIContent m_BannerContent = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
+		static readonly GUIContent k_LearnContent = new GUIContent("Learn ProBuilder", "Documentation");
+		static readonly GUIContent k_ForumLinkContent = new GUIContent("Support Forum", "ProCore Support Forum");
+		static readonly GUIContent k_BannerContent = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
+		static readonly GUIContent k_ApiExamplesContent = new GUIContent("API Examples");
 
 		const string k_VideoUrl = @"http://bit.ly/pbstarter";
 		const string k_LearnUrl = @"http://procore3d.com/docs/probuilder";
 		const string k_SupportUrl = @"http://www.procore3d.com/forum/";
-		const string k_ContactEmailUrl = @"http://www.procore3d.com/about/";
+		const string k_ApiExamplesLink = @"https://github.com/Unity-Technologies/ProBuilder-API-Examples";
+
 		const float k_BannerWidth = 480f;
 		const float k_BannerHeight = 270f;
 
@@ -208,13 +209,12 @@ namespace ProBuilder.EditorCore
 			}
 			else
 			{
-				bannerStyle.fixedWidth = k_BannerWidth; // banner.width;
-				bannerStyle.fixedHeight = k_BannerHeight; // banner.height;
+				bannerStyle.fixedWidth = k_BannerWidth;
+				bannerStyle.fixedHeight = k_BannerHeight;
 
-				this.wantsMouseMove = true;
-
-				this.minSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
-				this.maxSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
+				wantsMouseMove = true;
+				minSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
+				maxSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
 
 				if(!m_ProductName.Contains("Basic"))
 					m_ProductName = "ProBuilder Advanced";
@@ -246,7 +246,7 @@ namespace ProBuilder.EditorCore
 
 			Vector2 mousePosition = Event.current.mousePosition;
 
-			if( GUILayout.Button(m_BannerContent, bannerStyle) )
+			if( GUILayout.Button(k_BannerContent, bannerStyle) )
 				Application.OpenURL(k_VideoUrl);
 
 			if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
@@ -257,22 +257,21 @@ namespace ProBuilder.EditorCore
 			GUILayout.Label(m_ProductName, header1Style);
 
 			GUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
+				GUILayout.FlexibleSpace();
 
-				if(GUILayout.Button(m_LearnContent, linkStyle))
+				if(GUILayout.Button(k_LearnContent, linkStyle))
 					Application.OpenURL(k_LearnUrl);
 
 				GUILayout.Label("|", separatorStyle);
 
-				if(GUILayout.Button(m_ForumLinkContent, linkStyle))
+				if(GUILayout.Button(k_ForumLinkContent, linkStyle))
 					Application.OpenURL(k_SupportUrl);
 
 				GUILayout.Label("|", separatorStyle);
 
-				if(GUILayout.Button(m_ContactContent, linkStyle))
-					Application.OpenURL(k_ContactEmailUrl);
-
-			GUILayout.FlexibleSpace();
+				if(GUILayout.Button(k_ApiExamplesContent, linkStyle))
+					Application.OpenURL(k_ApiExamplesLink);
+				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
 			if(GUILayoutUtility.GetLastRect().Contains(mousePosition))
