@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
@@ -74,9 +76,16 @@ namespace ProBuilder.EditorCore
 			// { "_EmissionMap", "Ke" },
 		};
 
-		/**
-		 * Write the contents of a single obj & mtl from a set of models.
-		 */
+		/// <summary>
+		/// Write the contents of a single obj & mtl from a set of models.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="models"></param>
+		/// <param name="objContents"></param>
+		/// <param name="mtlContents"></param>
+		/// <param name="textures"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
 		public static bool Export(string name, IEnumerable<pb_Model> models, out string objContents, out string mtlContents, out List<string> textures, pb_ObjOptions options = null)
 		{
 			if(models == null || models.Count() < 1)
@@ -98,7 +107,7 @@ namespace ProBuilder.EditorCore
 			return true;
 		}
 
-		private static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
+		static string WriteObjContents(string name, IEnumerable<pb_Model> models, Dictionary<Material, string> materialMap, pb_ObjOptions options)
 		{
 			// Empty names in OBJ groups can crash some 3d programs (meshlab)
 			if(string.IsNullOrEmpty(name))
@@ -164,25 +173,25 @@ namespace ProBuilder.EditorCore
 				if(options.vertexColors && colors != null && colors.Length == vertexCount)
 				{
 					for(int i = 0; i < vertexCount; i++)
-						sb.AppendLine(string.Format("v {0} {1} {2} {3} {4} {5}",
+						sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2} {3} {4} {5}",
 							positions[i].x, positions[i].y, positions[i].z,
 							colors[i].r, colors[i].g, colors[i].b ));
 				}
 				else
 				{
 					for(int i = 0; i < vertexCount; i++)
-						sb.AppendLine(string.Format("v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
+						sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "v {0} {1} {2}", positions[i].x, positions[i].y, positions[i].z));
 				}
 
 				sb.AppendLine();
 
 				for(int i = 0; normals != null && i < vertexCount; i++)
-					sb.AppendLine(string.Format("vn {0} {1} {2}", normals[i].x, normals[i].y, normals[i].z));
+					sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "vn {0} {1} {2}", normals[i].x, normals[i].y, normals[i].z));
 
 				sb.AppendLine();
 
 				for(int i = 0; textures0 != null && i < vertexCount; i++)
-					sb.AppendLine(string.Format("vt {0} {1}", textures0[i].x, textures0[i].y));
+					sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "vt {0} {1}", textures0[i].x, textures0[i].y));
 
 				sb.AppendLine();
 
@@ -197,7 +206,7 @@ namespace ProBuilder.EditorCore
 						sb.AppendLine(string.Format("g {0}", model.name));
 
 					string materialName = "";
-					
+
 					if(materialMap.TryGetValue(submesh.material, out materialName))
 						sb.AppendLine(string.Format("usemtl {0}", materialName));
 					else
@@ -212,7 +221,7 @@ namespace ProBuilder.EditorCore
 						{
 							if(reverseWinding)
 							{
-								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
+								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
 									indices[ff + 3] + triangleOffset,
 									indices[ff + 2] + triangleOffset,
 									indices[ff + 1] + triangleOffset,
@@ -220,7 +229,7 @@ namespace ProBuilder.EditorCore
 							}
 							else
 							{
-								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
+								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2} {3}/{3}/{3}",
 									indices[ff + 0] + triangleOffset,
 									indices[ff + 1] + triangleOffset,
 									indices[ff + 2] + triangleOffset,
@@ -231,14 +240,14 @@ namespace ProBuilder.EditorCore
 						{
 							if(reverseWinding)
 							{
-								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
 									indices[ff + 2] + triangleOffset,
 									indices[ff + 1] + triangleOffset,
 									indices[ff + 0] + triangleOffset));
 							}
 							else
 							{
-								sb.AppendLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
+								sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}",
 									indices[ff + 0] + triangleOffset,
 									indices[ff + 1] + triangleOffset,
 									indices[ff + 2] + triangleOffset));
@@ -255,11 +264,15 @@ namespace ProBuilder.EditorCore
 			return sb.ToString();
 		}
 
-		/**
-		 * Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring
-		 * unique names for each group. Material to named mtl group are stored in materialMap.
-		 */
-		private static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap, out List<string> textures)
+		/// <summary>
+		/// Write the material file for an OBJ. This function handles making the list of Materials unique & ensuring unique names for each group. Material to named mtl group are stored in materialMap.
+		/// </summary>
+		/// <param name="models"></param>
+		/// <param name="options"></param>
+		/// <param name="materialMap"></param>
+		/// <param name="textures"></param>
+		/// <returns></returns>
+		static string WriteMtlContents(IEnumerable<pb_Model> models, pb_ObjOptions options, out Dictionary<Material, string> materialMap, out List<string> textures)
 		{
 			materialMap = new Dictionary<Material, string>();
 
@@ -300,12 +313,7 @@ namespace ProBuilder.EditorCore
 				{
 					for(int i = 0; i < ShaderUtil.GetPropertyCount(mat.shader); i++)
 					{
-#if !(UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_3)
-						if( ShaderUtil.GetPropertyType(mat.shader, i) != ShaderUtil.ShaderPropertyType.TexEnv ||
-							ShaderUtil.GetTexDim(mat.shader, i) != UnityEngine.Rendering.TextureDimension.Tex2D )
-#else
 						if( ShaderUtil.GetPropertyType(mat.shader, i) != ShaderUtil.ShaderPropertyType.TexEnv )
-#endif
 							continue;
 
 						string texPropertyName = ShaderUtil.GetPropertyName(mat.shader, i);
@@ -332,7 +340,7 @@ namespace ProBuilder.EditorCore
 								Vector2 scale  = mat.GetTextureScale(texPropertyName);
 
 								if(options.textureOffsetScale)
-									sb.AppendLine(string.Format("{0} -o {1} {2} -s {3} {4} {5}", mtlKey, offset.x, offset.y, scale.x, scale.y, textureName));
+									sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0} -o {1} {2} -s {3} {4} {5}", mtlKey, offset.x, offset.y, scale.x, scale.y, textureName));
 								else
 									sb.AppendLine(string.Format("{0} {1}", mtlKey, textureName));
 							}
@@ -345,9 +353,9 @@ namespace ProBuilder.EditorCore
 					Color color = mat.color;
 
 					// Diffuse
-					sb.AppendLine(string.Format("Kd {0}", string.Format("{0} {1} {2}", color.r, color.g, color.b)));
+					sb.AppendLine(string.Format("Kd {0}", string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", color.r, color.g, color.b)));
 					// Transparency
-					sb.AppendLine(string.Format("d {0}", color.a));
+					sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "d {0}", color.a));
 				}
 				else
 				{

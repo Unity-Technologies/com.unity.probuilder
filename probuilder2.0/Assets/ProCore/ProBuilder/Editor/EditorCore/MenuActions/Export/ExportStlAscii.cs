@@ -1,10 +1,13 @@
+using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
 using System.Linq;
+using System.Threading;
 using Parabox.STL;
 using ProBuilder.Core;
 using ProBuilder.EditorCore;
+using Object = UnityEngine.Object;
 
 namespace ProBuilder.Actions
 {
@@ -39,10 +42,26 @@ namespace ProBuilder.Actions
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)
 		{
 			GameObject first = gameObjects.FirstOrDefault(x => x.GetComponent<pb_Object>() != null);
+
 			string name = first != null ? first.name : "Mesh";
 			string path = EditorUtility.SaveFilePanel("Save Mesh to STL", "", name, "stl");
 
-			if( pb_Stl_Exporter.Export(path, gameObjects, type) )
+			var res = false;
+			var currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try
+			{
+				// pb_Stl is an external lib
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+				res = pb_Stl_Exporter.Export(path, gameObjects, type);
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
+
+
+			if(res)
 			{
 				string full = path.Replace("\\", "/");
 

@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
@@ -29,6 +31,13 @@ namespace ProBuilder.EditorCore
 	/// </summary>
 	static class pb_Ply
 	{
+		/// <summary>
+		/// Export a ply file.
+		/// </summary>
+		/// <param name="models"></param>
+		/// <param name="contents"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
 		public static bool Export(IEnumerable<pb_Object> models, out string contents, pb_PlyOptions options = null)
 		{
 			if(options == null)
@@ -110,9 +119,16 @@ namespace ProBuilder.EditorCore
 			return res;
 		}
 
-		/**
-		 *	Create the contents of an ASCII formatted PLY file.
-		 */
+		/// <summary>
+		/// Create the contents of an ASCII formatted PLY file.
+		/// </summary>
+		/// <param name="positions"></param>
+		/// <param name="faces"></param>
+		/// <param name="contents"></param>
+		/// <param name="normals"></param>
+		/// <param name="colors"></param>
+		/// <param name="flipHandedness"></param>
+		/// <returns></returns>
 		public static bool Export(
 			Vector3[] positions,
 			int[][] faces, out string contents,
@@ -136,15 +152,15 @@ namespace ProBuilder.EditorCore
 
 			WriteHeader(vertexCount, faceCount, hasNormals, hasColors, ref sb);
 
-			for(int i = 0; i < vertexCount; i++)
+			for (int i = 0; i < vertexCount; i++)
 			{
-				sb.Append(string.Format("{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
+				sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", flipHandedness ? -positions[i].x : positions[i].x, positions[i].y, positions[i].z));
 
-				if(hasNormals)
-					sb.Append(string.Format(" {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
+				if (hasNormals)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0} {1} {2}", flipHandedness ? -normals[i].x : -normals[i].x, normals[i].y, normals[i].z));
 
-				if(hasColors)
-					sb.Append(string.Format(" {0} {1} {2} {3}",
+				if (hasColors)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0} {1} {2} {3}",
 						System.Math.Min(System.Math.Max(0, (int)(colors[i].r * 255)), 255),
 						System.Math.Min(System.Math.Max(0, (int)(colors[i].g * 255)), 255),
 						System.Math.Min(System.Math.Max(0, (int)(colors[i].b * 255)), 255),
@@ -153,12 +169,12 @@ namespace ProBuilder.EditorCore
 				sb.AppendLine();
 			}
 
-			for(int i = 0; i < faceCount; i++)
+			for (int i = 0; i < faceCount; i++)
 			{
 				int faceLength = faces[i] != null ? faces[i].Length : 0;
-				sb.Append(faceLength.ToString());
-				for(int n = 0; n < faceLength; n++)
-					sb.Append(string.Format(" {0}", faces[i][ flipHandedness ? faceLength - n - 1 : n]));
+				sb.Append(faceLength.ToString(CultureInfo.InvariantCulture));
+				for (int n = 0; n < faceLength; n++)
+					sb.Append(string.Format(CultureInfo.InvariantCulture, " {0}", faces[i][flipHandedness ? faceLength - n - 1 : n]));
 				sb.AppendLine();
 			}
 
@@ -173,7 +189,7 @@ namespace ProBuilder.EditorCore
 			sb.AppendLine("format ascii 1.0");
 			sb.AppendLine("comment Exported by [ProBuilder](http://www.procore3d.com/probuilder)");
 			sb.AppendLine("comment " + System.DateTime.Now);
-			sb.AppendLine(string.Format("element vertex {0}", vertexCount));
+			sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "element vertex {0}", vertexCount));
 			sb.AppendLine("property float32 x");
 			sb.AppendLine("property float32 y");
 			sb.AppendLine("property float32 z");
@@ -190,7 +206,7 @@ namespace ProBuilder.EditorCore
 				sb.AppendLine("property uint8 blue");
 				sb.AppendLine("property uint8 alpha");
 			}
-			sb.AppendLine(string.Format("element face {0}", faceCount));
+			sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "element face {0}", faceCount));
 			sb.AppendLine("property list uint8 int32 vertex_index");
 			sb.AppendLine("end_header");
 		}
