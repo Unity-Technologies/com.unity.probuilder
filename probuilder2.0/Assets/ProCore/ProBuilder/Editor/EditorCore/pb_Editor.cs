@@ -228,6 +228,8 @@ namespace ProBuilder.EditorCore
 			pb_ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
 			pb_ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
 
+			ProGridsToolbarOpen(pb_ProGridsInterface.SceneToolbarIsExtended());
+
 			pb_Selection.onObjectSelectionChanged += OnObjectSelectionChanged;
 
 #if !UNITY_2018_2_OR_NEWER
