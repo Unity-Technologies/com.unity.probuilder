@@ -57,6 +57,16 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
+		/// Is the scene toolbar extended or collapsed? Also check ProGridsActive to see if ProGrids is open in the first place.
+		/// </summary>
+		/// <returns>True if ProGrids scene toolbar is open and extended, false if not extended or not active in scene.</returns>
+		public static bool SceneToolbarIsExtended()
+		{
+			Type type = GetProGridsType();
+			return type != null && (bool) type.GetMethod("SceneToolbarIsExtended").Invoke(null, null);
+		}
+
+		/// <summary>
 		/// Returns the current UseAxisConstraints value from ProGrids.
 		/// </summary>
 		/// <returns></returns>

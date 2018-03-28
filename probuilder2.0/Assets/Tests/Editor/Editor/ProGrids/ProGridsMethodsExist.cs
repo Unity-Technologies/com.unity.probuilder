@@ -26,6 +26,12 @@ namespace ProBuilder.EditorTests.ProGrids
 		}
 
 		[Test]
+		public static void SceneToolbarIsExtended()
+		{
+			Assert.IsNotNull(pb_ProGridsInterface.GetProGridsType().GetMethod("SceneToolbarIsExtended", k_BindingFlagsAll));
+		}
+
+		[Test]
 		public static void UseAxisConstraints()
 		{
 			Assert.IsNotNull(pb_ProGridsInterface.GetProGridsType().GetMethod("UseAxisConstraints", k_BindingFlagsAll));
