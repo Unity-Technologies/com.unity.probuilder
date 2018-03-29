@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using ProBuilder.Core;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 
 namespace ProBuilder.EditorCore
 {
@@ -12,16 +11,23 @@ namespace ProBuilder.EditorCore
 	{
 		pb_PreferenceDictionary m_Preferences = null;
 		Vector2 m_Scroll = Vector2.zero;
-		string m_Search;
+		SearchField m_Search;
+		string m_SearchText;
 
 		void OnEnable()
 		{
 			m_Preferences = target as pb_PreferenceDictionary;
+			m_Search = new SearchField();
+			m_SearchText = "";
 		}
 
 		public override void OnInspectorGUI()
 		{
-			m_Search = EditorGUILayout.TextField("Search", m_Search);
+#if DEBUG
+			GUILayout.Label(((Object)target).GetInstanceID().ToString());
+#endif
+
+			m_SearchText = m_Search.OnGUI(m_SearchText);
 
 			GUILayout.Label("Key Value Pairs", EditorStyles.boldLabel);
 
@@ -45,7 +51,7 @@ namespace ProBuilder.EditorCore
 				var label = kvp.Key.ToString();
 				var value = kvp.Value.ToString();
 
-				if (string.IsNullOrEmpty(m_Search) || label.Contains(m_Search))
+				if (string.IsNullOrEmpty(m_SearchText) || label.Contains(m_SearchText))
 				{
 					GUILayout.BeginHorizontal();
 					GUILayout.Label(label, GUILayout.Width(180), GUILayout.ExpandWidth(false));
