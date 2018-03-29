@@ -25,6 +25,7 @@ namespace ProBuilder.EditorCore
 	/// <summary>
 	/// Manage ProBuilder preferences.
 	/// </summary>
+	[InitializeOnLoad]
 	static class pb_PreferencesInternal
 	{
 		const string k_PrefsAssetName = "ProBuilderPreferences.asset";
@@ -98,6 +99,11 @@ namespace ProBuilder.EditorCore
 		{
 		};
 
+		static pb_PreferencesInternal()
+		{
+			LoadPreferencesObject();
+		}
+
 		static pb_PreferenceDictionary s_Preferences = null;
 
 		static void LoadPreferencesObject()
@@ -116,9 +122,9 @@ namespace ProBuilder.EditorCore
 				s_Preferences = pb_FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
 		}
 
-		/**
-		 *	Access the project local preferences asset.
-		 */
+		/// <summary>
+		/// Access the project local preferences asset.
+		/// </summary>
 		public static pb_PreferenceDictionary preferences
 		{
 			get
@@ -302,9 +308,9 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		public static IEnumerable<pb_Shortcut> GetShortcuts()
 		{
-			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts) ?
-				pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts)) :
-				pb_Shortcut.DefaultShortcuts();													// Key not found, return the default
+			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts)
+				? pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts))
+				: pb_Shortcut.DefaultShortcuts();
 		}
 
 		/// <summary>
