@@ -23,10 +23,6 @@ namespace ProBuilder.EditorCore
 
 		public override void OnInspectorGUI()
 		{
-#if DEBUG
-			GUILayout.Label(((Object)target).GetInstanceID().ToString());
-#endif
-
 			m_SearchText = m_Search.OnGUI(m_SearchText);
 
 			GUILayout.Label("Key Value Pairs", EditorStyles.boldLabel);
