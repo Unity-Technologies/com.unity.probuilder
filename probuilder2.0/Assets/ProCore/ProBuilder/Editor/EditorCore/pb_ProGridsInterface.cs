@@ -63,7 +63,10 @@ namespace ProBuilder.EditorCore
 		public static bool SceneToolbarIsExtended()
 		{
 			Type type = GetProGridsType();
-			return type != null && (bool) type.GetMethod("SceneToolbarIsExtended").Invoke(null, null);
+			if (type == null)
+				return false;
+			MethodInfo mi = type.GetMethod("SceneToolbarIsExtended");
+			return mi != null && (bool) mi.Invoke(null, null);
 		}
 
 		/// <summary>

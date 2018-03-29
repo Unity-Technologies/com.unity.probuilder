@@ -33,9 +33,9 @@ namespace ProBuilder.EditorTests.Export
 			{
 				Thread.CurrentThread.CurrentCulture = current;
 
-				if(File.Exists(path))
-					File.Delete(path);
-				
+				if(System.IO.File.Exists(path))
+					System.IO.File.Delete(path);
+
 				UnityEngine.Object.DestroyImmediate(cube);
 			}
 		}
