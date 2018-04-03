@@ -53,6 +53,7 @@ namespace ProBuilder.EditorCore
 		bool mouseClickedSwapRect = false;
 
 		int lowerControlsHeight = 32;
+		int screenWidth, screenHeight;
 
 		void OnEnable()
 		{
@@ -94,6 +95,9 @@ namespace ProBuilder.EditorCore
 
 		void OnGUI()
 		{
+			screenWidth = (int) position.width;
+			screenHeight = (int) position.height;
+
 			Event e = Event.current;
 
 			// Since image wells eat mouse clicks, listen for a mouse up when hovering over 'reverse operation order' button
@@ -128,7 +132,7 @@ namespace ProBuilder.EditorCore
 				return;
 			}
 
-			swapOrderRect.x = (Screen.width/2f)-(swapOrderRect.width/2f);
+			swapOrderRect.x = (screenWidth/2f)-(swapOrderRect.width/2f);
 			swapOrderRect.y = PAD + previewHeight/2f - (swapOrderRect.width/2f);
 
 			// http://xahlee.info/comp/unicode_arrows.html
@@ -193,8 +197,8 @@ namespace ProBuilder.EditorCore
 		void DrawPreviewWells()
 		{
 			// RECT CALCULTAIONS
-			previewWidth = (int)Screen.width/2-PAD-2;
-			previewHeight = (int)Mathf.Min(Screen.height - lowerControlsHeight, Screen.width/2-(PAD*2));
+			previewWidth = (int)screenWidth/2-PAD-2;
+			previewHeight = (int)Mathf.Min(screenHeight - lowerControlsHeight, screenWidth/2-(PAD*2));
 
 			lhsRect.width = previewWidth;
 			lhsRect.height = previewHeight;
@@ -212,11 +216,8 @@ namespace ProBuilder.EditorCore
 			// END RECT CALCULATIONS
 
 			// DRAW PREVIEW WELLS
-
-			GUI.color = previewBorderColor;
-			EditorGUI.DrawPreviewTexture(lhsRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-			EditorGUI.DrawPreviewTexture(rhsRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-			GUI.color = Color.white;
+			GUI.Box(lhsRect, "", pb_EditorStyles.sceneTextBox);
+			GUI.Box(rhsRect, "", pb_EditorStyles.sceneTextBox);
 
 			if (lhs != null)
 			{
@@ -226,9 +227,7 @@ namespace ProBuilder.EditorCore
 			}
 			else
 			{
-				GUI.color = backgroundColor;
-				EditorGUI.DrawPreviewTexture(lhsPreviewRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-				GUI.color = Color.white;
+				GUI.Label(lhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
 			}
 
 			if (rhs != null)
@@ -240,9 +239,7 @@ namespace ProBuilder.EditorCore
 			}
 			else
 			{
-				GUI.color = backgroundColor;
-				EditorGUI.DrawPreviewTexture(rhsPreviewRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-				GUI.color = Color.white;
+				GUI.Label(rhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
 			}
 
 			// Show text summary
@@ -251,15 +248,15 @@ namespace ProBuilder.EditorCore
 				switch(operation)
 				{
 				case BooleanOp.Intersection:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Intersects " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(PAD+2, PAD + 2, screenWidth, 128), lhs.name + " Intersects " + rhs.name, EditorStyles.boldLabel);
 					break;
 
 				case BooleanOp.Union:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Union " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(PAD+2, PAD + 2, screenWidth, 128), lhs.name + " Union " + rhs.name, EditorStyles.boldLabel);
 					break;
 
 				case BooleanOp.Subtraction:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Subtracts " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(PAD+2, PAD + 2, screenWidth, 128), lhs.name + " Subtracts " + rhs.name, EditorStyles.boldLabel);
 					break;
 				}
 			}
