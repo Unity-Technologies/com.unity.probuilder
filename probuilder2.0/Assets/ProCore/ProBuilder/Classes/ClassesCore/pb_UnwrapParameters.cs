@@ -20,7 +20,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		[Tooltip("Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.")]
 		[Range(1f, 64f)]
-		public float packMargin = 6f;
+		public float packMargin = 4f;
 
 		/// <summary>
 		/// Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures deviation of UV triangles area from geometry triangles if they were uniformly scaled.
@@ -43,7 +43,7 @@ namespace ProBuilder.Core
 		public void Reset()
 		{
 			hardAngle 	= 88f;
-			packMargin 	= 6f;
+			packMargin 	= 4f;
 			angleError 	= 8f;
 			areaError 	= 15f;
 		}
