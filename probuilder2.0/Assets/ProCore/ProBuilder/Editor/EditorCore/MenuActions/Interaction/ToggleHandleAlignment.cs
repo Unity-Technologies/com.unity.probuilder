@@ -66,7 +66,7 @@ namespace ProBuilder.Actions
 				current = 0;
 
 			pb_Editor.instance.SetHandleAlignment( (HandleAlignment)current );
-
+			pb_Editor.instance.LoadPrefs();
 			return new pb_ActionResult(Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
 		}
 
