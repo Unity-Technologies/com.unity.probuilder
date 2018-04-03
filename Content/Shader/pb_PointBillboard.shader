@@ -131,6 +131,4 @@
 			ENDCG
 		}
 	}
-
-	Fallback "Hidden/ProBuilder/FacePicker"
 }
