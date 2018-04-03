@@ -1,4 +1,4 @@
-# ProBuilder 3.0.2-beta.5
+# ProBuilder 3.0.2-beta.6
 
 ## Features
 
@@ -34,10 +34,10 @@
 - Remove update checking.
 - Expose `pb_MeshImporter` class, making "ProBuilderize" action available at runtime.
 
-## Changes from 3.0.2-beta.4
+## Changes from 3.0.2-beta.5
 
-- Fix "Select Hidden" menu item not matching stored preference value on startup.
-- Increase default UV2 padding value to 6, which appeases the progressive lightmapping overlap check.
+- Fix Boolean Editor rendering a white texture filling the entire screen.
+- Set default UV2 padding value back to 4.
 
 # ProBuilder 3.0.1-f.0
 

@@ -44,7 +44,6 @@ namespace ProBuilder.EditorCore
 		static GUIStyle previewBackground;
 		static GUIStyle unicodeIconStyle;
 
-		Color previewBorderColor = new Color(.3f, .3f, .3f, 1f);
 		Color backgroundColor = new Color(.15625f, .15625f, .15625f, 1f);
 		Texture2D backgroundTexture;
 		UnityEditor.Editor lhsEditor, rhsEditor;
