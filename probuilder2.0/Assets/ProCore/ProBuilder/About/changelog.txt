@@ -1,4 +1,4 @@
-# ProBuilder 3.0.2-beta.4
+# ProBuilder 3.0.2-beta.5
 
 ## Features
 
@@ -25,17 +25,19 @@
 - Fix overexposed imgui controls in scene view with scene lighting disabled.
 - Fix certain actions switching the current scene focus.
 - Fix Create Material Palette failing to create asset.
+- Export model files with culture invariant settings.
+- Fix scene info display overlapping ProGrids toolbar in some cases.
+- Fix local preferences not loading until restarting the ProBuilder editor.
 
 ## Changes
 
 - Remove update checking.
-
-## Changes from 3.0.2-beta.3
-
-- Export model files with culture invariant settings.
-- Fix scene info display overlapping ProGrids toolbar in some cases.
-- Regression: Fix local preferences not loading until restarting the ProBuilder editor.
 - Expose `pb_MeshImporter` class, making "ProBuilderize" action available at runtime.
+
+## Changes from 3.0.2-beta.4
+
+- Fix "Select Hidden" menu item not matching stored preference value on startup.
+- Increase default UV2 padding value to 6, which appeases the progressive lightmapping overlap check.
 
 # ProBuilder 3.0.1-f.0
 
