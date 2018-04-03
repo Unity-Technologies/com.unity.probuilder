@@ -17,12 +17,11 @@ namespace ProBuilder.EditorCore
 	static class pb_FileUtil
 	{
 		// ProBuilder folder path.
-		private static string m_ProBuilderFolderPath = "Packages/com.unity.probuilder/ProBuilder/";
-
-		private static string m_ProBuilderDataPath = "Assets/ProBuilder Data/";
+		static string s_ProBuilderFolderPath = "Packages/com.unity.probuilder/";
+		static string s_ProBuilderDataPath = "Assets/ProBuilder Data/";
 
 		// The order is important - always search for the package manager installed version first
-		private static string[] k_PossibleInstallDirectories = new string[]
+		static readonly string[] k_PossibleInstallDirectories = new string[]
 		{
 			"Packages/com.unity.probuilder/",
 			"UnityPackageManager/com.unity.probuilder/",
@@ -37,10 +36,9 @@ namespace ProBuilder.EditorCore
 		internal static bool ValidateProBuilderRoot(string dir)
 		{
 			return !string.IsNullOrEmpty(dir) &&
-				Directory.Exists(dir + "/Classes") &&
-				Directory.Exists(dir + "/Icons") &&
-				Directory.Exists(dir + "/Editor") &&
-				Directory.Exists(dir + "/Shader");
+			       Directory.Exists(dir + "/Editor/EditorCore") &&
+			       Directory.Exists(dir + "/Runtime/Core") &&
+			       Directory.Exists(dir + "/Runtime/MeshOperations");
 		}
 
 		/// <summary>
@@ -50,32 +48,32 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		internal static string GetProBuilderInstallDirectory()
 		{
-			if (ValidateProBuilderRoot(m_ProBuilderFolderPath))
-				return m_ProBuilderFolderPath;
+			if (ValidateProBuilderRoot(s_ProBuilderFolderPath))
+				return s_ProBuilderFolderPath;
 
 			foreach (var install in k_PossibleInstallDirectories)
 			{
-				m_ProBuilderFolderPath = string.Format("{0}{1}", install, "ProBuilder/");
+				s_ProBuilderFolderPath = install;
 
-				if (ValidateProBuilderRoot(m_ProBuilderFolderPath))
-					return m_ProBuilderFolderPath;
+				if (ValidateProBuilderRoot(s_ProBuilderFolderPath))
+					return s_ProBuilderFolderPath;
 			}
 
 			// It's not in any of the usual haunts, start digging through Assets until we find it (likely an A$ install)
-			m_ProBuilderFolderPath = FindAssetStoreProBuilderInstall();
+			s_ProBuilderFolderPath = FindAssetStoreProBuilderInstall();
 
-			if (Directory.Exists(m_ProBuilderFolderPath))
-				return m_ProBuilderFolderPath;
+			if (Directory.Exists(s_ProBuilderFolderPath))
+				return s_ProBuilderFolderPath;
 
 			// Things are dire. ProBuilder was nowhere to be found in the Assets directory, which means either the user
 			// has renamed the folder, or something very spooky is going on.
 			// Either way, just create a new ProBuilder folder in Assets and return that so at the very least
 			// local preferences and the material/color palettes will still work.
 			pb_Log.Warning("Creating a new ProBuilder directory... was the ProBuilder folder renamed?\nIcons & preferences may not work in this state.");
-			m_ProBuilderFolderPath = "Assets/ProBuilder";
-			Directory.CreateDirectory(m_ProBuilderFolderPath);
+			s_ProBuilderFolderPath = "Assets/ProBuilder";
+			Directory.CreateDirectory(s_ProBuilderFolderPath);
 
-			return m_ProBuilderFolderPath;
+			return s_ProBuilderFolderPath;
 		}
 
 		/// <summary>
@@ -104,28 +102,28 @@ namespace ProBuilder.EditorCore
 		/// <returns></returns>
 		internal static string GetLocalDataDirectory(bool initializeIfMissing = false)
 		{
-			if (Directory.Exists(m_ProBuilderDataPath))
-				return m_ProBuilderDataPath;
+			if (Directory.Exists(s_ProBuilderDataPath))
+				return s_ProBuilderDataPath;
 
 			string root = GetProBuilderInstallDirectory();
 
 			if (root.StartsWith("Assets"))
 			{
 				// Installed from Asset Store or manual package import
-				m_ProBuilderDataPath = root + "Data/";
+				s_ProBuilderDataPath = root + "Data/";
 			}
 			else
 			{
 				// Scan project for ProBuilder Data folder
 				// none found? create one at root
 				string[] matches = Directory.GetDirectories("Assets", "ProBuilder Data", SearchOption.AllDirectories);
-				m_ProBuilderDataPath = matches.Length > 0 ? matches[0] : "Assets/ProBuilder Data/";
+				s_ProBuilderDataPath = matches.Length > 0 ? matches[0] : "Assets/ProBuilder Data/";
 			}
 
-			if (!Directory.Exists(m_ProBuilderDataPath) && initializeIfMissing)
-				Directory.CreateDirectory(m_ProBuilderDataPath);
+			if (!Directory.Exists(s_ProBuilderDataPath) && initializeIfMissing)
+				Directory.CreateDirectory(s_ProBuilderDataPath);
 
-			return m_ProBuilderDataPath;
+			return s_ProBuilderDataPath;
 		}
 
 		internal static string[] FindAssets<T>(string pattern) where T : UnityEngine.Object
@@ -193,39 +191,6 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
-		/// Find a file in the ProBuilder directory or the Assets directory by searching for a partial path.
-		/// </summary>
-		/// <param name="file"></param>
-		/// <returns></returns>
-		internal static string FindFile(string file)
-		{
-			if (string.IsNullOrEmpty(file))
-				return null;
-
-			if (File.Exists(file))
-				return file;
-
-			string nameWithExtension = Path.GetFileName(file);
-			string unixPath = file.Replace("\\", "/");
-
-			foreach (var dir in k_PossibleInstallDirectories)
-			{
-				if (!Directory.Exists(dir))
-					continue;
-
-				string[] matches = Directory.GetFiles(dir, nameWithExtension, SearchOption.AllDirectories);
-
-				foreach (var str in matches)
-				{
-					if (str.Replace("\\", "/").Contains(unixPath))
-						return str;
-				}
-			}
-
-			return null;
-		}
-
-		/// <summary>
 		/// Check if a file or folder exists at path.
 		/// </summary>
 		/// <param name="path"></param>
@@ -233,18 +198,6 @@ namespace ProBuilder.EditorCore
 		public static bool Exists(string path)
 		{
 			return Directory.Exists(path) || File.Exists(path);
-		}
-
-		/// <summary>
-		/// Load an internal asset from the ProBuilder directory.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		internal static T LoadInternalAssetRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
-		{
-			string full = string.Format("{0}{1}", GetProBuilderInstallDirectory(), path);
-			return LoadRequired<T>(full);
 		}
 
 		/// <summary>

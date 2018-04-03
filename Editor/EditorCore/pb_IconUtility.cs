@@ -19,13 +19,15 @@ namespace ProBuilder.EditorCore
 
 	static class pb_IconUtility
 	{
-		private static Dictionary<string, Texture2D> m_Icons = new Dictionary<string, Texture2D>();
-		private static string m_IconFolderPath = "Icons/";
+		static Dictionary<string, Texture2D> s_Icons = new Dictionary<string, Texture2D>();
+		static string m_IconFolderPath = "Content/Icons/";
 
-		/**
-		 * Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode
-		 * suffix.
-		 */
+		/// <summary>
+		/// Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode suffix.
+		/// </summary>
+		/// <param name="iconName"></param>
+		/// <param name="skin"></param>
+		/// <returns></returns>
 		public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
 		{
 #if PB_DEBUG
@@ -40,7 +42,7 @@ namespace ProBuilder.EditorCore
 			string name = isDarkSkin ? iconName : iconName + "_Light";
 			Texture2D icon = null;
 
-			if (!m_Icons.TryGetValue(name, out icon))
+			if (!s_Icons.TryGetValue(name, out icon))
 			{
 				int i = 0;
 
@@ -53,7 +55,7 @@ namespace ProBuilder.EditorCore
 					icon = pb_FileUtil.LoadInternalAsset<Texture2D>(fullPath);
 				} while (!isDarkSkin && ++i < 2 && icon == null);
 
-				m_Icons.Add(name, icon);
+				s_Icons.Add(name, icon);
 			}
 
 			return icon;

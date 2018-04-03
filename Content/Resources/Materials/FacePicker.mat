@@ -4,10 +4,10 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FacePicker
-  m_Shader: {fileID: 4800000, guid: 4024a17c5f5543fe9eb4add419e1fe6a, type: 3}
+  m_Shader: {fileID: 4800000, guid: c84d57d423a2042eb92da86f9fa670a3, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
