@@ -1,4 +1,4 @@
-# ProBuilder 3.0.2-beta.6
+# ProBuilder 3.0.2
 
 ## Features
 
@@ -28,16 +28,12 @@
 - Export model files with culture invariant settings.
 - Fix scene info display overlapping ProGrids toolbar in some cases.
 - Fix local preferences not loading until restarting the ProBuilder editor.
+- Fix Boolean Editor rendering a white texture filling the entire screen.
 
 ## Changes
 
 - Remove update checking.
 - Expose `pb_MeshImporter` class, making "ProBuilderize" action available at runtime.
-
-## Changes from 3.0.2-beta.5
-
-- Fix Boolean Editor rendering a white texture filling the entire screen.
-- Set default UV2 padding value back to 4.
 
 # ProBuilder 3.0.1-f.0
 
