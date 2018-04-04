@@ -39,9 +39,10 @@ The default value is <b>On</b>.
 
 		public override pb_ActionResult DoAction()
 		{
-			bool backFaceEnabled = pb_Editor.selectHiddenEnabled;
-			pb_Editor.selectHiddenEnabled = !backFaceEnabled;
-			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (pb_Editor.selectHiddenEnabled ? "On" : "Off") );
+			bool backFaceEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+			pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, !backFaceEnabled);
+			pb_Editor.instance.LoadPrefs();
+			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
 		}
 
 		public override bool IsEnabled()

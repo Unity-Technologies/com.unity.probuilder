@@ -53,6 +53,7 @@ namespace ProBuilder.EditorCore
 		SceneToolbarLocation m_SceneToolbarLocation = SceneToolbarLocation.UpperCenter;
 		GUIStyle commandStyle = null;
 		Rect elementModeToolbarRect = new Rect(3, 6, 128, 24);
+		bool m_SelectHiddenEnabled;
 
 		const float k_MaxEdgeSelectDistanceHam = 128;
 		const float k_MaxEdgeSelectDistanceCtx = 12;
@@ -147,11 +148,7 @@ namespace ProBuilder.EditorCore
 		public EditLevel editLevel { get; private set; }
 		public SelectMode selectionMode { get; private set; }
 		public HandleAlignment handleAlignment { get; private set; }
-		public static bool selectHiddenEnabled
-		{
-			get { return pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection, true); }
-			set { pb_PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, value); }
-		}
+		public bool selectHiddenEnabled { get { return m_SelectHiddenEnabled; } }
 
 		static class SceneStyles
 		{
@@ -297,6 +294,7 @@ namespace ProBuilder.EditorCore
 			handleAlignment = pb_PreferencesInternal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
 			m_ShowSceneInfo = pb_PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
 			m_HamSelection = pb_PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
+			m_SelectHiddenEnabled = pb_PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 
 			m_SnapEnabled = pb_ProGridsInterface.SnapEnabled();
 			m_SnapValue = pb_ProGridsInterface.SnapValue();
