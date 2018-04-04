@@ -309,6 +309,7 @@ namespace ProBuilder.EditorCore
 			{
 				pb_Undo.RecordObject(m_Target, "Clear Bezier Spline Points");
 				m_Points.Clear();
+				UpdateMesh(true);
 			}
 
 			if(GUILayout.Button("Add Point"))
@@ -629,7 +630,7 @@ namespace ProBuilder.EditorCore
 			}
 
 			// Do control point insertion
-			if(!eventHasBeenUsed && m_ControlPoints != null)
+			if(!eventHasBeenUsed && m_ControlPoints != null && m_ControlPoints.Count > 1)
 			{
 				int index = -1;
 				float distanceToLine;

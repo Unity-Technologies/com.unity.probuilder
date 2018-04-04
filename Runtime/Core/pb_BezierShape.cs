@@ -45,13 +45,22 @@ namespace ProBuilder.Core
 			m_Points.Add(new pb_BezierPoint(p1, p1 + tan, p1 + -tan, Quaternion.identity));
 		}
 
-		/**
-		 *	Rebuild the pb_Object with the extruded spline.
-		 */
+		/// <summary>
+		/// Rebuild the pb_Object with the extruded spline.
+		/// </summary>
 		public void Refresh()
 		{
-			pb_Object m = mesh;
-			pb_Spline.Extrude(m_Points, m_Radius, m_Columns, m_Rows, m_CloseLoop, m_Smooth, ref m);
+			if (m_Points.Count < 2)
+			{
+				mesh.Clear();
+				mesh.ToMesh();
+				mesh.Refresh();
+			}
+			else
+			{
+				pb_Object m = mesh;
+				pb_Spline.Extrude(m_Points, m_Radius, m_Columns, m_Rows, m_CloseLoop, m_Smooth, ref m);
+			}
 		}
 	}
 }

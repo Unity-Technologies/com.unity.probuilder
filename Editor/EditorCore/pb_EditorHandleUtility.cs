@@ -494,17 +494,21 @@ namespace ProBuilder.EditorCore
 			return index;
 		}
 
-		/**
-		 *	Pick the closest point on a world space set of line segments.
-		 *
-		 *	Similar to UnityEditor.HandleUtility version except this also
-		 *	returns the index of the segment that best matched (source modified
-		 *	from UnityEngine.HandleUtility class).
-		 */
+		/// <summary>
+		/// Pick the closest point on a world space set of line segments.
+		/// Similar to UnityEditor.HandleUtility version except this also
+		/// returns the index of the segment that best matched (source modified
+		/// from UnityEngine.HandleUtility class).
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="index"></param>
+		/// <param name="distanceToLine"></param>
+		/// <param name="closeLoop"></param>
+		/// <param name="trs"></param>
+		/// <returns></returns>
 		public static Vector3 ClosestPointToPolyLine(List<Vector3> vertices, out int index, out float distanceToLine, bool closeLoop = false, Transform trs = null)
 		{
 			distanceToLine = Mathf.Infinity;
-			float distance = 0f;
 
 			if(trs != null)
 				distanceToLine = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[0]), trs.TransformPoint(vertices[1]));
@@ -516,6 +520,8 @@ namespace ProBuilder.EditorCore
 
 			for (int i = 2; i < (closeLoop ? count + 1 : count); i++)
 			{
+				var distance = 0f;
+
 				if(trs != null)
 					distance = HandleUtility.DistanceToLine(trs.TransformPoint(vertices[i - 1]), trs.TransformPoint(vertices[i % count]));
 				else
