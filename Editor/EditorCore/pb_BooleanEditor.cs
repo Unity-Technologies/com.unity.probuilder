@@ -21,38 +21,35 @@ namespace ProBuilder.EditorCore
 			Subtraction
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, pb_Constant.MENU_MISC)]
-		public static void MenuOpenBooleanTool()
-		{
-			EditorWindow.GetWindow<pb_BooleanInterface>(true, "Boolean (Experimental)", true).Show();
-		}
+		const int k_Padding = 6;
+		const int k_PreviewInset = 2;
+		const int k_LowerControlsHeight = 32;
 
-		const int PAD = 6;
-		const int PREVIEW_INSET = 2;
+		GameObject m_LeftGameObject, m_RightGameObject;
+		int m_PreviewHeight, m_PreviewWidth;
 
-		GameObject lhs, rhs;
-		int previewHeight = 0, previewWidth = 0;
+		Rect lhsRect = new Rect(k_Padding, k_Padding, 0f, 0f);
+		Rect lhsPreviewRect = new Rect(k_Padding + k_PreviewInset, k_Padding + k_PreviewInset, 0f, 0f);
 
-		Rect lhsRect = new Rect(PAD, PAD, 0f, 0f);
-		Rect lhsPreviewRect = new Rect(PAD + PREVIEW_INSET, PAD + PREVIEW_INSET, 0f, 0f);
-
-		Rect rhsRect = new Rect(0f, PAD, 0f, 0f);
-		Rect rhsPreviewRect = new Rect(0f, PAD + PREVIEW_INSET, 0f, 0f);
-
+		Rect rhsRect = new Rect(0f, k_Padding, 0f, 0f);
+		Rect rhsPreviewRect = new Rect(0f, k_Padding + k_PreviewInset, 0f, 0f);
 		Rect swapOrderRect = new Rect(0f, 0f, 42f, 42f);
 
 		static GUIStyle previewBackground;
 		static GUIStyle unicodeIconStyle;
 
-		Color previewBorderColor = new Color(.3f, .3f, .3f, 1f);
 		Color backgroundColor = new Color(.15625f, .15625f, .15625f, 1f);
 		Texture2D backgroundTexture;
-		UnityEditor.Editor lhsEditor, rhsEditor;
-
+		Editor lhsEditor, rhsEditor;
 		BooleanOp operation = BooleanOp.Intersection;
 		bool mouseClickedSwapRect = false;
+		Vector2Int screen = Vector2Int.zero;
 
-		int lowerControlsHeight = 32;
+		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, pb_Constant.MENU_MISC)]
+		public static void MenuOpenBooleanTool()
+		{
+			GetWindow<pb_BooleanInterface>(true, "Boolean (Experimental)", true).Show();
+		}
 
 		void OnEnable()
 		{
@@ -60,8 +57,8 @@ namespace ProBuilder.EditorCore
 
 			if(pbs.Length == 2)
 			{
-				lhs = pbs[0].gameObject;
-				rhs = pbs[1].gameObject;
+				m_LeftGameObject = pbs[0].gameObject;
+				m_RightGameObject = pbs[1].gameObject;
 			}
 
 			previewBackground = new GUIStyle();
@@ -95,6 +92,8 @@ namespace ProBuilder.EditorCore
 		void OnGUI()
 		{
 			Event e = Event.current;
+			screen.x = (int) position.width;
+			screen.y = (int) position.height;
 
 			// Since image wells eat mouse clicks, listen for a mouse up when hovering over 'reverse operation order' button
 			switch(e.type)
@@ -124,12 +123,10 @@ namespace ProBuilder.EditorCore
 			DrawPreviewWells();
 
 			if(ListenForDragAndDrop())
-			{
 				return;
-			}
 
-			swapOrderRect.x = (Screen.width/2f)-(swapOrderRect.width/2f);
-			swapOrderRect.y = PAD + previewHeight/2f - (swapOrderRect.width/2f);
+			swapOrderRect.x = (screen.x/2f)-(swapOrderRect.width/2f);
+			swapOrderRect.y = k_Padding + m_PreviewHeight/2f - (swapOrderRect.width/2f);
 
 			// http://xahlee.info/comp/unicode_arrows.html
 			if(GUI.Button( swapOrderRect, ((char)8644).ToString(), unicodeIconStyle))
@@ -137,17 +134,17 @@ namespace ProBuilder.EditorCore
 				ReverseOperationOrder();
 			}
 
-			GUILayout.Space(previewHeight + PAD*2);
+			GUILayout.Space(m_PreviewHeight + k_Padding*2);
 
 			GUILayout.BeginHorizontal();
-				pb_Object lpb = lhs != null ? lhs.GetComponent<pb_Object>() : null;
-				pb_Object rpb = rhs != null ? rhs.GetComponent<pb_Object>() : null;
+				pb_Object lpb = m_LeftGameObject != null ? m_LeftGameObject.GetComponent<pb_Object>() : null;
+				pb_Object rpb = m_RightGameObject != null ? m_RightGameObject.GetComponent<pb_Object>() : null;
 
 				lpb = (pb_Object) EditorGUILayout.ObjectField(lpb, typeof(pb_Object), true);
 				rpb = (pb_Object) EditorGUILayout.ObjectField(rpb, typeof(pb_Object), true);
 
-				lhs = lpb != null ? lpb.gameObject : null;
-				rhs = rpb != null ? rpb.gameObject : null;
+				m_LeftGameObject = lpb != null ? lpb.gameObject : null;
+				m_RightGameObject = rpb != null ? rpb.gameObject : null;
 			GUILayout.EndHorizontal();
 
 			// Boolean controls
@@ -164,15 +161,15 @@ namespace ProBuilder.EditorCore
 				switch(operation)
 				{
 					case BooleanOp.Union:
-						pb_MenuCommands.MenuUnion(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuUnion(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
 						break;
 
 					case BooleanOp.Intersection:
-						pb_MenuCommands.MenuIntersect(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuIntersect(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
 						break;
 
 					case BooleanOp.Subtraction:
-						pb_MenuCommands.MenuSubtract(lhs.GetComponent<pb_Object>(), rhs.GetComponent<pb_Object>());
+						pb_MenuCommands.MenuSubtract(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
 						break;
 				}
 			}
@@ -180,9 +177,9 @@ namespace ProBuilder.EditorCore
 
 		void ReverseOperationOrder()
 		{
-			GameObject tmp = lhs;
-			lhs = rhs;
-			rhs = tmp;
+			GameObject tmp = m_LeftGameObject;
+			m_LeftGameObject = m_RightGameObject;
+			m_RightGameObject = tmp;
 			lhsEditor = null;
 			rhsEditor = null;
 		}
@@ -193,73 +190,66 @@ namespace ProBuilder.EditorCore
 		void DrawPreviewWells()
 		{
 			// RECT CALCULTAIONS
-			previewWidth = (int)Screen.width/2-PAD-2;
-			previewHeight = (int)Mathf.Min(Screen.height - lowerControlsHeight, Screen.width/2-(PAD*2));
+			m_PreviewWidth = (int)screen.x/2-k_Padding-2;
+			m_PreviewHeight = (int)Mathf.Min(screen.y - k_LowerControlsHeight, screen.x/2-(k_Padding*2));
 
-			lhsRect.width = previewWidth;
-			lhsRect.height = previewHeight;
+			lhsRect.width = m_PreviewWidth;
+			lhsRect.height = m_PreviewHeight;
 
-			lhsPreviewRect.width = lhsRect.width -  PREVIEW_INSET*2;
-			lhsPreviewRect.height = lhsRect.height - PREVIEW_INSET*2;
+			lhsPreviewRect.width = lhsRect.width -  k_PreviewInset*2;
+			lhsPreviewRect.height = lhsRect.height - k_PreviewInset*2;
 
-			rhsRect.x = lhsRect.x + lhsRect.width + PAD;
+			rhsRect.x = lhsRect.x + lhsRect.width + k_Padding;
 			rhsRect.width = lhsRect.width;
 			rhsRect.height = lhsRect.height;
 
-			rhsPreviewRect.x = rhsRect.x + PREVIEW_INSET;
+			rhsPreviewRect.x = rhsRect.x + k_PreviewInset;
 			rhsPreviewRect.width = lhsPreviewRect.width;
 			rhsPreviewRect.height = lhsPreviewRect.height;
 			// END RECT CALCULATIONS
 
 			// DRAW PREVIEW WELLS
+			GUI.Box(lhsRect, "", pb_EditorStyles.sceneTextBox);
+			GUI.Box(rhsRect, "", pb_EditorStyles.sceneTextBox);
 
-			GUI.color = previewBorderColor;
-			EditorGUI.DrawPreviewTexture(lhsRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-			EditorGUI.DrawPreviewTexture(rhsRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-			GUI.color = Color.white;
-
-			if (lhs != null)
+			if (m_LeftGameObject != null)
 			{
 				if(lhsEditor == null)
-					lhsEditor = UnityEditor.Editor.CreateEditor(lhs);
+					lhsEditor = UnityEditor.Editor.CreateEditor(m_LeftGameObject);
 				lhsEditor.OnPreviewGUI(lhsPreviewRect, previewBackground);
 			}
 			else
 			{
-				GUI.color = backgroundColor;
-				EditorGUI.DrawPreviewTexture(lhsPreviewRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-				GUI.color = Color.white;
+				GUI.Label(lhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
 			}
 
-			if (rhs != null)
+			if (m_RightGameObject != null)
 			{
 				if(rhsEditor == null)
-					rhsEditor = UnityEditor.Editor.CreateEditor(rhs);
+					rhsEditor = UnityEditor.Editor.CreateEditor(m_RightGameObject);
 
 				rhsEditor.OnPreviewGUI(rhsPreviewRect, previewBackground);
 			}
 			else
 			{
-				GUI.color = backgroundColor;
-				EditorGUI.DrawPreviewTexture(rhsPreviewRect, EditorGUIUtility.whiteTexture, null, ScaleMode.StretchToFill);
-				GUI.color = Color.white;
+				GUI.Label(rhsRect, "Drag GameObject Here", EditorStyles.centeredGreyMiniLabel);
 			}
 
 			// Show text summary
-			if(lhs && rhs)
+			if(m_LeftGameObject && m_RightGameObject)
 			{
 				switch(operation)
 				{
 				case BooleanOp.Intersection:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Intersects " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(k_Padding+2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Intersects " + m_RightGameObject.name, EditorStyles.boldLabel);
 					break;
 
 				case BooleanOp.Union:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Union " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(k_Padding+2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Union " + m_RightGameObject.name, EditorStyles.boldLabel);
 					break;
 
 				case BooleanOp.Subtraction:
-					GUI.Label(new Rect(PAD+2, PAD + 2, Screen.width, 128), lhs.name + " Subtracts " + rhs.name, EditorStyles.boldLabel);
+					GUI.Label(new Rect(k_Padding+2, k_Padding + 2, screen.x, 128), m_LeftGameObject.name + " Subtracts " + m_RightGameObject.name, EditorStyles.boldLabel);
 					break;
 				}
 			}
@@ -291,12 +281,12 @@ namespace ProBuilder.EditorCore
 					{
 						if( (pb is GameObject && ((GameObject)pb).GetComponent<pb_Object>()) || pb is pb_Object)
 						{
-							if(pb == lhs || pb == rhs) continue;
+							if(pb == m_LeftGameObject || pb == m_RightGameObject) continue;
 
 							if(inLeft)
-								lhs = (GameObject) pb;
+								m_LeftGameObject = (GameObject) pb;
 							else
-								rhs = (GameObject) pb;
+								m_RightGameObject = (GameObject) pb;
 
 							return true;
 						}
