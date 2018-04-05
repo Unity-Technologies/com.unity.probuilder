@@ -16,8 +16,8 @@ namespace ProBuilder.Test
 {
 	public static class pb_TestUtility
 	{
-		const string k_TemplatesDirectory = "Assets/Tests/Editor/Templates/";
-		const string k_TestsDirectory = "Assets/Tests/Editor/";
+		const string k_TemplatesDirectory = "Packages/com.unity.probuilder/Tests/Editor/Templates/";
+		const string k_TestsDirectory = "Packages/com.unity.probuilder/Tests/Editor/";
 
 		public static string TemplatesDirectory
 		{
@@ -262,7 +262,7 @@ namespace ProBuilder.Test
 		{
 			string assetPath = TemplatesDirectory + GetTemplatePath<T>(name, 1);
 			T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-			Assert.IsFalse(asset == null, "Failed loading asset template: " + name);
+			Assert.IsFalse(asset == null, "Failed loading asset template: " + name + "\n" + assetPath);
 			return asset;
 		}
 
