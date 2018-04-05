@@ -309,7 +309,7 @@ namespace ProBuilder.Core
 			version = new pb_VersionInfo();
 			bool ret = false;
 
-			const string k_MajorMinorPatchRegex = "^([0-9]+\\.[0-9]+\\.[0-9]+)";
+			const string k_MajorMinorPatchRegex = "([0-9]+\\.[0-9]+\\.[0-9]+)";
 			const string k_VersionReleaseRegex = "(?i)(?<=\\-)[a-z0-9\\-\\.]+";
 			const string k_VersionReleaseLooseRegex = "(?<=[0-9]+\\.[0-9]+\\.[0-9]+)[a-z0-9\\-\\.\\+]+";
 			const string k_MetadataRegex = "(?<=\\+).+";
