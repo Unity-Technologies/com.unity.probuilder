@@ -52,7 +52,7 @@ namespace ProBuilder.EditorTests.ProGrids
 		[Test]
 		public static void GetPivot()
 		{
-			Assert.IsNotNull(pb_ProGridsInterface.GetProGridsType().GetField("pivot", k_BindingFlagsAll));
+			Assert.IsNotNull(pb_ProGridsInterface.GetProGridsType().GetMethod("GetPivot", k_BindingFlagsAll));
 		}
 
 		[Test]

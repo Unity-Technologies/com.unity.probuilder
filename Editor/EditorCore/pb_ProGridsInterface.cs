@@ -93,8 +93,8 @@ namespace ProBuilder.EditorCore
 
 			if( type != null )
 				return (bool) type.GetMethod("SnapEnabled").Invoke(null, null);
-			else
-				return false;
+
+			return false;
 		}
 
 		/// <summary>
@@ -120,25 +120,15 @@ namespace ProBuilder.EditorCore
 		{
 			pivot = Vector3.zero;
 
-			if(!pb_ProGridsInterface.SnapEnabled())
+			if(!ProGridsActive() || !SnapEnabled())
 				return false;
 
-			Type type = GetProGridsType();
+			var getPivot = GetProGridsType().GetMethod("GetPivot");
 
-			if(type == null)
-				return false;
-
-			ScriptableObject pg = GetProGridsInstance();
-
-			if( pg != null )
+			if (getPivot != null)
 			{
-				object o = pb_Reflection.GetValue(pg, type, "pivot");
-
-				if(o != null)
-				{
-					pivot = (Vector3) o;
-					return true;
-				}
+				pivot = (Vector3) getPivot.Invoke(null, null);
+				return true;
 			}
 
 			return false;
