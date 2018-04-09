@@ -1,0 +1,14 @@
+{
+    "name": "Unity.ProBuilder.Editor",
+    "references": [
+        "Unity.ProBuilder.Core",
+        "Unity.ProBuilder.MeshOperations",
+        "Unity.AssetIdRemapUtility.Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
