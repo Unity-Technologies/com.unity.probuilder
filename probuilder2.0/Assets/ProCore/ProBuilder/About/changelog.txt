@@ -1,3 +1,9 @@
+# ProBuilder 3.0.4
+
+## Bug Fixes
+
+- Use the default material preference for shapes created through the Boolean Editor.
+
 # ProBuilder 3.0.3
 
 ## Features
