@@ -113,3 +113,8 @@ Packages are created through a Gitlab pipeline, triggered by tags.
 
 Once a build is verified with a [QA Report](https://drive.google.com/drive/u/0/folders/1neI43BrzpTmyHvE5Qe5TN8YVHTOp-5Dd) and cleared for release, modify the `package.json` file to omit the pre-release information (ex, `-f.0`) and tag the commit with a `vMajor.Minor.Patch`.
 
+## Asset Store
+
+If updating the Asset Store version of ProBuilder 2.x, check out a new branch from `v2.9.8f3` and follow the instructions in the readme.
+
+`git checkout v2.9.8f3 -b v2.10-dev`
