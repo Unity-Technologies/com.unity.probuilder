@@ -105,6 +105,12 @@ ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 
 Packages are created through a Gitlab pipeline, triggered by tags.
 
+In addition to a tag, the version number needs to be set in the following places:
+
+- [ ] CHANGELOG.md
+- [ ] package.json
+- [ ] Runtime/Core/pb_Version.cs
+
 [Create a Pre-Release Package](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template#create-a-pre-release-package)
 
 [Preparing your package for Staging](https://gitlab.internal.unity3d.com/upm-packages/upm-package-template#preparing-your-package-for-staging)

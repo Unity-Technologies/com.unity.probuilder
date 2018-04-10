@@ -5,16 +5,6 @@ using UnityEngine;
 
 namespace ProBuilder.Core
 {
-	public enum VersionType
-	{
-		Missing = -1,
-		Development = 0,
-		Patch = 1,
-		Alpha = 2,
-		Beta = 3,
-		Final = 4,
-	}
-
 	/// <summary>
 	/// Version information container that is comparable.
 	/// </summary>
@@ -34,7 +24,7 @@ namespace ProBuilder.Core
 		int m_Build = -1;
 
 		[SerializeField]
-		VersionType m_Type = VersionType.Missing;
+		string m_Type;
 
 		[SerializeField]
 		string m_Metadata;
@@ -46,7 +36,7 @@ namespace ProBuilder.Core
 		public int minor { get { return m_Minor; } }
 		public int patch { get { return m_Patch; } }
 		public int build { get { return m_Build; } }
-		public VersionType type { get { return m_Type; } }
+		public string type { get { return m_Type; } }
 		public string metadata { get { return m_Metadata; } }
 		public string date { get { return m_Date; } }
 
@@ -58,7 +48,7 @@ namespace ProBuilder.Core
 			get { return new pb_VersionInfo(major, minor, patch); }
 		}
 
-		public const string DefaultStringFormat = "M.m.p-t.b";
+		public const string DefaultStringFormat = "M.m.p-T.b";
 
 		public pb_VersionInfo()
 		{
@@ -88,7 +78,7 @@ namespace ProBuilder.Core
 			}
 		}
 
-		public pb_VersionInfo(int major, int minor, int patch, int build = -1, VersionType type = VersionType.Missing, string date = "", string metadata = "")
+		public pb_VersionInfo(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
 		{
 			m_Major = major;
 			m_Minor = minor;
@@ -196,9 +186,9 @@ namespace ProBuilder.Core
 				return GREATER;
 			if(WrapNoValue(patch) < WrapNoValue(version.patch))
 				return LESS;
-			if(WrapNoValue((int)type) > WrapNoValue((int)version.type))
+			if(string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(version.type))
 				return GREATER;
-			if(WrapNoValue((int)type) < WrapNoValue((int)version.type))
+			if(!string.IsNullOrEmpty(type) && string.IsNullOrEmpty(version.type))
 				return LESS;
 			if(WrapNoValue(build) > WrapNoValue(version.build))
 				return GREATER;
@@ -241,7 +231,6 @@ namespace ProBuilder.Core
 		/// 'm' Minor
 		/// 'p' Patch
 		/// 'b' Build
-		/// 't' Lowercase single type (f, d, b, or p)
 		/// 'T' Type
 		/// 'd' Date
 		/// 'D' Metadata
@@ -276,8 +265,6 @@ namespace ProBuilder.Core
 					sb.Append(patch);
 				else if(c == 'b')
 					sb.Append(build);
-				else if(c == 't')
-					sb.Append(char.ToLower(type.ToString()[0]));
 				else if(c == 'T')
 					sb.Append(type);
 				else if (c == 'd')
@@ -310,8 +297,8 @@ namespace ProBuilder.Core
 			bool ret = false;
 
 			const string k_MajorMinorPatchRegex = "^([0-9]+\\.[0-9]+\\.[0-9]+)";
-			const string k_VersionReleaseRegex = "(?i)(?<=\\-)[a-z0-9\\-\\.]+";
-			const string k_VersionReleaseLooseRegex = "(?<=[0-9]+\\.[0-9]+\\.[0-9]+)[a-z0-9\\-\\.\\+]+";
+			const string k_VersionReleaseRegex = "(?i)(?<=\\-)[a-z0-9\\-]+";
+			const string k_VersionBuildRegex = "(?i)(?<=\\-[a-z0-9\\-]+\\.)[0-9]+";
 			const string k_MetadataRegex = "(?<=\\+).+";
 
 			try
@@ -329,22 +316,16 @@ namespace ProBuilder.Core
 
 				ret = true;
 
-				// from here down is less rigid
+				// from here down is not required
 				var preReleaseVersion = Regex.Match(input, k_VersionReleaseRegex);
 
-				// this is technically wrong version formatting, but it's common enough to see so we try our best to
-				// parse it
-				if (!preReleaseVersion.Success)
-					preReleaseVersion = Regex.Match(input, k_VersionReleaseLooseRegex);
-
 				if (preReleaseVersion.Success)
-				{
-					// If not parsed, "Missing" is returned.
-					version.m_Type = GetVersionType(preReleaseVersion.Value);
+					version.m_Type = preReleaseVersion.Value;
+				else
+					version.m_Type = "";
 
-					// If not parsed, "0" is returned.
-					version.m_Build = GetBuildNumber(preReleaseVersion.Value);
-				}
+				var preReleaseBuild = Regex.Match(input, k_VersionBuildRegex);
+				version.m_Build = preReleaseBuild.Success ? GetBuildNumber(preReleaseBuild.Value) : -1;
 
 				var meta = Regex.Match(input, k_MetadataRegex);
 
@@ -359,32 +340,6 @@ namespace ProBuilder.Core
 			return ret;
 		}
 
-		static VersionType GetVersionType(string input)
-		{
-			const string k_AlphaRegex = "(?i)^(alpha|a)(?=[^a-z]|\\Z)";
-			const string k_BetaRegex = "(?i)^(beta|b)(?=[^a-z]|\\Z)";
-			const string k_PatchRegex = "(?i)^(patch|p)(?=[^a-z]|\\Z)";
-			const string k_FinalRegex = "(?i)^(final|f)(?=[^a-z]|\\Z)";
-			const string k_DevRegex = "(?i)^(dev|d|development)(?=[^a-z]|\\Z)";
-
-			if (Regex.IsMatch(input, k_AlphaRegex, RegexOptions.Multiline))
-				return VersionType.Alpha;
-
-			if (Regex.IsMatch(input, k_BetaRegex, RegexOptions.Multiline))
-				return VersionType.Beta;
-
-			if (Regex.IsMatch(input, k_PatchRegex, RegexOptions.Multiline))
-				return VersionType.Patch;
-
-			if (Regex.IsMatch(input, k_FinalRegex, RegexOptions.Multiline))
-				return VersionType.Final;
-
-			if (Regex.IsMatch(input, k_DevRegex, RegexOptions.Multiline))
-				return VersionType.Development;
-
-			return VersionType.Missing;
-		}
-
 		static int GetBuildNumber(string input)
 		{
 			var number = Regex.Match(input, "[0-9]+");
@@ -394,7 +349,7 @@ namespace ProBuilder.Core
 			if (number.Success && int.TryParse(number.Value, out buildNo))
 				return buildNo;
 
-			return 0;
+			return -1;
 		}
 	}
 }

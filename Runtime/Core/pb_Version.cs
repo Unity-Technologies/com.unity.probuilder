@@ -1,9 +1,6 @@
-// GENERATED FILE
-// See build target ProBuilderAdvanced-UPM.json
 #if DEBUG || DEVELOPMENT
 using System;
 using System.Reflection;
-using System.Collections.Generic;
 #endif
 
 namespace ProBuilder.Core
@@ -41,18 +38,18 @@ namespace ProBuilder.Core
 								v.minor,
 								v.patch,
 								v.build,
-								VersionType.Development,
+								"preview",
 								System.DateTime.Now.ToString("en-US: MM/dd/yyyy"));
 						}
 
 					}
 				}
 
-				return s_LoadedVersion = new pb_VersionInfo("3.0.2-beta.4", "null");
+				return s_LoadedVersion = new pb_VersionInfo("4.0.0-preview.0", "null");
 			}
 		}
 #else
-		public static readonly pb_VersionInfo Current = new pb_VersionInfo("3.0.2-beta.4", "en-US: 03/29/2018");
+		public static readonly pb_VersionInfo Current = new pb_VersionInfo("4.0.0-preview.0", "en-US: 03/29/2018");
 #endif
 	}
 }
