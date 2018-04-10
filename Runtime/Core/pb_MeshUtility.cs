@@ -46,60 +46,6 @@ namespace ProBuilder.Core
 		}
 
 		/// <summary>
-		/// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
-		/// </summary>
-		/// <param name="m">The mesh to optimize.</param>
-		/// <param name="vertices">
-		/// If provided these values are used in place of extracting attributes from the Mesh.
-		/// This is a performance optimization for when this array already exists. If not provided this array will be
-		/// automatically generated for you.
-		/// </param>
-		public static void CollapseSharedVertices(Mesh m, pb_Vertex[] vertices = null)
-		{
-			if(vertices == null)
-				vertices = pb_Vertex.GetVertices(m);
-
-			int smc = m.subMeshCount;
-			List<Dictionary<pb_Vertex, int>> sub_vertices = new List<Dictionary<pb_Vertex, int>>();
-			int[][] tris = new int[smc][];
-			int sub_index = 0;
-
-			for(int i = 0; i < smc; ++i)
-			{
-				tris[i] = m.GetTriangles(i);
-				Dictionary<pb_Vertex, int> new_vertices = new Dictionary<pb_Vertex, int>();
-
-				for(int n = 0; n < tris[i].Length; n++)
-				{
-					pb_Vertex v = vertices[tris[i][n]];
-					int index;
-
-					if(new_vertices.TryGetValue(v, out index))
-					{
-						tris[i][n] = index;
-					}
-					else
-					{
-						tris[i][n] = sub_index;
-						new_vertices.Add(v, sub_index);
-						sub_index++;
-					}
-				}
-
-				sub_vertices.Add(new_vertices);
-			}
-
-			pb_Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
-
-			pb_Vertex.SetMesh(m, collapsed);
-
-			m.subMeshCount = smc;
-
-			for(int i = 0; i < smc; i++)
-				m.SetTriangles(tris[i], i);
-		}
-
-		/// <summary>
 		/// Generate tangents for the mesh.
 		/// </summary>
 		/// <param name="InMesh"></param>

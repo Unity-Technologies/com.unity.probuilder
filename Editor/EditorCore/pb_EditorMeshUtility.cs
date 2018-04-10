@@ -100,11 +100,11 @@ namespace ProBuilder.EditorCore
 						pb_Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					pb_MeshUtility.CollapseSharedVertices(mesh, vertices);
+					pb_MeshCompiler.CollapseSharedVertices(mesh, vertices);
 				}
 				else
 				{
-					pb_MeshUtility.CollapseSharedVertices(mesh);
+					pb_MeshCompiler.CollapseSharedVertices(mesh);
 				}
 			}
 
