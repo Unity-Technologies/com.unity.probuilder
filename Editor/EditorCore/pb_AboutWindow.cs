@@ -122,10 +122,10 @@ namespace ProBuilder.EditorCore
 				// RectOffset(left, right, top, bottom)
 				margin = new RectOffset(12, 12, 12, 12),
 				normal = new GUIStyleState() {
-					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/Banner_Normal.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Normal.png")
 				},
 				hover = new GUIStyleState() {
-					background = pb_FileUtil.LoadInternalAsset<Texture2D>("About/Images/Banner_Hover.png")
+					background = pb_FileUtil.LoadInternalAsset<Texture2D>("Content/About/Images/Banner_Hover.png")
 				},
 			};
 
@@ -135,7 +135,7 @@ namespace ProBuilder.EditorCore
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 24,
 				// fontStyle = FontStyle.Bold,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontMedium),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontMedium),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
@@ -143,7 +143,7 @@ namespace ProBuilder.EditorCore
 			{
 				margin = new RectOffset(10, 10, 10, 10),
 				fontSize = 14,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
@@ -152,16 +152,16 @@ namespace ProBuilder.EditorCore
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() {
 					textColor = k_FontBlueNormal,
 					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
-						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				},
 				hover = new GUIStyleState() {
 					textColor = k_FontBlueHover,
 					background = pb_FileUtil.LoadInternalAsset<Texture2D>(
-						string.Format("About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
+						string.Format("Content/About/Images/ScrollBackground_{0}.png", EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
 
@@ -170,17 +170,17 @@ namespace ProBuilder.EditorCore
 				margin = new RectOffset(10, 10, 10, 10),
 				alignment = TextAnchor.MiddleCenter,
 				fontSize = 16,
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack }
 			};
 
 			changelogStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				richText = true,
 				normal = new GUIStyleState() { background = pb_FileUtil.LoadInternalAsset<Texture2D>(
-					string.Format("About/Images/ScrollBackground_{0}.png",
+					string.Format("Content/About/Images/ScrollBackground_{0}.png",
 						EditorGUIUtility.isProSkin ? "Pro" : "Light"))
 				}
 			};
@@ -188,7 +188,7 @@ namespace ProBuilder.EditorCore
 			changelogTextStyle = new GUIStyle()
 			{
 				margin = new RectOffset(10, 10, 10, 10),
-				font = pb_FileUtil.LoadInternalAsset<Font>("About/Font/" + k_FontRegular),
+				font = pb_FileUtil.LoadInternalAsset<Font>("Content/Font/" + k_FontRegular),
 				fontSize = 14,
 				normal = new GUIStyleState() { textColor = EditorGUIUtility.isProSkin ? k_FontWhite : k_FontBlack },
 				richText = true,
@@ -215,24 +215,24 @@ namespace ProBuilder.EditorCore
 				wantsMouseMove = true;
 				minSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
 				maxSize = new Vector2(k_BannerWidth + 24, k_BannerHeight * 2.5f);
-
-				if(!m_ProductName.Contains("Basic"))
-					m_ProductName = "ProBuilder Advanced";
 			}
 
-			TextAsset changeText = pb_FileUtil.LoadInternalAsset<TextAsset>("About/changelog.txt");
+			string changes = System.IO.File.ReadAllText(pb_FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md");
 
-			string raw = changeText != null ? changeText.text : "";
-
-			if (!string.IsNullOrEmpty(raw))
+			if (!string.IsNullOrEmpty(changes))
 			{
-				pb_VersionUtil.FormatChangelog(raw, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
+				FormatChangelog(changes, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
+				
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_ChangeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
 						m_ChangeLogVersionInfo.ToString(k_AboutPrefFormat),
 						pb_Version.Current.ToString(k_AboutPrefFormat));
 #endif
+			}
+			else
+			{
+				pb_Log.Error(pb_FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md not found!");
 			}
 		}
 
@@ -281,7 +281,10 @@ namespace ProBuilder.EditorCore
 
 			// always bold the first line (cause it's the version info stuff)
 			scroll = EditorGUILayout.BeginScrollView(scroll, changelogStyle);
-			GUILayout.Label(string.Format("Version: {0}", m_ChangeLogVersionInfo.ToString("M.m.p")), versionInfoStyle);
+			GUILayout.Label(string.Format("Version: {0}", m_ChangeLogVersionInfo != null
+				? m_ChangeLogVersionInfo.ToString("M.m.p")
+				: "Changelog Not Loaded"), versionInfoStyle);
+
 			GUILayout.Label("\n" + m_ChangeLogRichText, changelogTextStyle);
 			EditorGUILayout.EndScrollView();
 
@@ -293,17 +296,42 @@ namespace ProBuilder.EditorCore
 		}
 
 		/// <summary>
-		/// Draw a horizontal line across the screen and update the guilayout.
+		/// Extracts and formats the latest changelog entry into rich text.  Also grabs the version.
 		/// </summary>
-		void HorizontalLine()
+		/// <param name="raw"></param>
+		/// <param name="version"></param>
+		/// <param name="formattedChangelog"></param>
+		/// <returns></returns>
+		public static bool FormatChangelog(string raw, out pb_VersionInfo version, out string formattedChangelog)
 		{
-			Rect r = GUILayoutUtility.GetLastRect();
-			Color og = GUI.backgroundColor;
-			GUI.backgroundColor = Color.black;
-			GUI.Box(new Rect(0f, r.y + r.height + 2, Screen.width, 2f), "");
-			GUI.backgroundColor = og;
+			bool success = true;
 
-			GUILayout.Space(6);
+			// get first version entry
+			string[] split = Regex.Split(raw, "(?mi)^#\\s", RegexOptions.Multiline);
+			string firstChangelogEntryLine = split.Length > 1 ? split[1] : "";
+			// get the version info
+			Match versionMatch = Regex.Match(firstChangelogEntryLine, @"(?<=^ProBuilder\s).[0-9]*\.[0-9]*\.[0-9]*[A-Z|a-z|\-]*\.[0-9]*");
+			success = pb_VersionInfo.TryGetVersionInfo(versionMatch.Success ? versionMatch.Value : firstChangelogEntryLine.Split('\n')[0], out version);
+
+			try
+			{
+				StringBuilder sb = new StringBuilder();
+				string[] newLineSplit = firstChangelogEntryLine.Trim().Split('\n');
+				for(int i = 2; i < newLineSplit.Length; i++)
+					sb.AppendLine(newLineSplit[i]);
+
+				formattedChangelog = sb.ToString();
+				formattedChangelog = Regex.Replace(formattedChangelog, "^-", "\u2022", RegexOptions.Multiline);
+				formattedChangelog = Regex.Replace(formattedChangelog, @"(?<=^##\\s).*", "<size=16><b>${0}</b></size>", RegexOptions.Multiline);
+				formattedChangelog = Regex.Replace(formattedChangelog, @"^##\ ", "", RegexOptions.Multiline);
+			}
+			catch
+			{
+				formattedChangelog = "";
+				success = false;
+			}
+
+			return success;
 		}
 	}
 }
