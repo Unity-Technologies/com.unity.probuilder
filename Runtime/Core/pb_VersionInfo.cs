@@ -265,7 +265,7 @@ namespace ProBuilder.Core
 					sb.Append(patch);
 				else if(c == 'b')
 					sb.Append(build);
-				else if(c == 'T')
+				else if(c == 'T' || c == 't')
 					sb.Append(type);
 				else if (c == 'd')
 					sb.Append(date);

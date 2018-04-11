@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProBuilder.AssetUtility;
@@ -27,6 +26,7 @@ namespace ProBuilder.EditorCore
 		static readonly GUIContent k_BannerContent = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
 		static readonly GUIContent k_ApiExamplesContent = new GUIContent("API Examples");
 
+		const string k_NeverShowUpdatePopup = "pb_AboutWindow::neverShowUpdatePopup";
 		const string k_VideoUrl = @"http://bit.ly/pbstarter";
 		const string k_LearnUrl = @"http://procore3d.com/docs/probuilder";
 		const string k_SupportUrl = @"http://www.procore3d.com/forum/";
@@ -36,10 +36,14 @@ namespace ProBuilder.EditorCore
 		const float k_BannerHeight = 270f;
 
 		const string k_AboutWindowVersionPref = "ProBuilder_AboutWindowIdentifier";
-		const string k_AboutPrefFormat = "M.m.p-t.b";
+		const string k_AboutPrefFormat = "M.m.p-T.b";
 
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
+
+		static readonly GUIContent m_NoUpdatePopupContent = new GUIContent("Do not show again", "When ProBuilder is updated, do not show the changelog window.");
+		[SerializeField]
+		bool m_IsUpdatePopup;
 
 		// Use less contast-y white and black font colors for better readabililty
 		public static readonly Color k_FontWhite = HexToColor(0xCECECE);
@@ -47,7 +51,7 @@ namespace ProBuilder.EditorCore
 		public static readonly Color k_FontBlueNormal = HexToColor(0x00AAEF);
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
-		string m_ProductName = pb_Constant.PRODUCT_NAME;
+		const string k_ProductName = pb_Constant.PRODUCT_NAME;
 		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
 		static bool s_CancelImportPopup = false;
@@ -74,9 +78,9 @@ namespace ProBuilder.EditorCore
 		/// <summary>
 		/// Return true if Init took place, false if not.
 		/// </summary>
-		/// <param name="fromMenu"></param>
+		/// <param name="openedFromMenu"></param>
 		/// <returns></returns>
-		public static bool Init (bool fromMenu)
+		public static bool Init (bool openedFromMenu)
 		{
 			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
 			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
@@ -87,7 +91,12 @@ namespace ProBuilder.EditorCore
 				return false;
 			}
 
-			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.Current.ToString(k_AboutPrefFormat))
+			string currentVersionString = pb_Version.Current.ToString(k_AboutPrefFormat);
+			bool isNewVersion = pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
+			pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, pb_PreferenceLocation.Global);
+			bool neverShowUpdate = EditorPrefs.GetBool(k_NeverShowUpdatePopup, false);
+
+			if(openedFromMenu || (isNewVersion && !neverShowUpdate))
 			{
 				if (PackageImporter.IsPreUpmProBuilderInProject())
 				{
@@ -99,8 +108,9 @@ namespace ProBuilder.EditorCore
 					return false;
 				}
 
-				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.Current.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
-				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
+				var window = GetWindow<pb_AboutWindow>(true, k_ProductName, true);
+				window.m_IsUpdatePopup = !openedFromMenu;
+
 				return true;
 			}
 
@@ -222,7 +232,7 @@ namespace ProBuilder.EditorCore
 			if (!string.IsNullOrEmpty(changes))
 			{
 				FormatChangelog(changes, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
-				
+
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_ChangeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
@@ -244,7 +254,12 @@ namespace ProBuilder.EditorCore
 				return;
 			}
 
-			Vector2 mousePosition = Event.current.mousePosition;
+			var evt = Event.current;
+
+			if (evt.type == EventType.ContextClick)
+				DoContextMenu();
+
+			Vector2 mousePosition = evt.mousePosition;
 
 			if( GUILayout.Button(k_BannerContent, bannerStyle) )
 				Application.OpenURL(k_VideoUrl);
@@ -254,7 +269,7 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.BeginVertical(changelogStyle);
 
-			GUILayout.Label(m_ProductName, header1Style);
+			GUILayout.Label(k_ProductName, header1Style);
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
@@ -290,9 +305,30 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(pb_Version.Current.ToString());
+
+			GUILayout.FlexibleSpace();
+
+			if (m_IsUpdatePopup)
+			{
+				EditorGUI.BeginChangeCheck();
+				bool neverShowUpdatePopup = EditorPrefs.GetBool(k_NeverShowUpdatePopup, false);
+				neverShowUpdatePopup = EditorGUILayout.Toggle(m_NoUpdatePopupContent, neverShowUpdatePopup);
+				if (EditorGUI.EndChangeCheck())
+					EditorPrefs.SetBool(k_NeverShowUpdatePopup, neverShowUpdatePopup);
+			}
+
 			if (GUILayout.Button("licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
 				GetWindow<pb_LicenseWindow>(true, "ProBuilder 3rd Party Licenses", true);
+
 			GUILayout.EndHorizontal();
+		}
+
+		void DoContextMenu()
+		{
+			var menu = new GenericMenu();
+			menu.AddItem(new GUIContent("Never Show Update Window"), EditorPrefs.GetBool(k_NeverShowUpdatePopup), () => { EditorPrefs.SetBool(k_NeverShowUpdatePopup, true); });
+			menu.AddItem(new GUIContent("Do Show Update Window"), !EditorPrefs.GetBool(k_NeverShowUpdatePopup), () => { EditorPrefs.SetBool(k_NeverShowUpdatePopup, false); });
+			menu.ShowAsContext();
 		}
 
 		/// <summary>

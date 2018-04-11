@@ -1,27 +1,28 @@
-﻿#if CONSOLE_PRO_ENABLED
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using FlyingWormConsole3;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditorInternal;
+using UObject = UnityEngine.Object;
 
-public static class ConsoleProCallbacks
+public static class ConsoleProExtensions
 {
-	private static GUIContent gc_OpenInTextEditor = new GUIContent("Open In Text Editor", "Open a composite of the selected logs in the preferred text editor.");
-	private static GUIContent gc_OpenEachInTextEditor = new GUIContent("Open Each In Text Editor", "Open each the selected logs in the preferred text editor.");
-	private static GUIContent gc_OpenDiffTool = new GUIContent("Open Merge | Diff", "Open selected entries in the user set merge / diff tool.");
+	static readonly GUIContent gc_OpenInTextEditor = new GUIContent("Open In Text Editor", "Open a composite of the selected logs in the preferred text editor.");
+	static readonly GUIContent gc_OpenEachInTextEditor = new GUIContent("Open Each In Text Editor", "Open each the selected logs in the preferred text editor.");
+	static readonly GUIContent gc_OpenDiffTool = new GUIContent("Open Merge | Diff", "Open selected entries in the user set merge / diff tool.");
 
 	// Keep the reference to m_SelectedEntries list.
-	private static List<ConsoleProEntry> m_SelectedEntries;
+	static List<ConsoleProEntry> m_SelectedEntries;
 
-	/**
-	 *	ConsolePro invokes this function with a reference to the contextMenu object. Here we can
-	 *	add custom entries.
-	 */
+	/// <summary>
+	/// ConsolePro invokes this function with a reference to the contextMenu object. Here we can add custom entries.
+	/// </summary>
+	/// <param name="contextMenu"></param>
+	/// <param name="entrySelection"></param>
 	[ConsoleProLogContextMenuAttribute]
 	public static void ContextMenuCallback(GenericMenu contextMenu, List<ConsoleProEntry> entrySelection)
 	{
@@ -34,12 +35,13 @@ public static class ConsoleProCallbacks
 		contextMenu.AddItem(gc_OpenInTextEditor, false, OpenInTextEditor);
 
 		// Open each selected entry in it's own text file.
-		if(m_SelectedEntries != null && m_SelectedEntries.Count > 1)
+		if (m_SelectedEntries != null && m_SelectedEntries.Count > 1)
 			contextMenu.AddItem(gc_OpenEachInTextEditor, false, () =>
+			{
+				foreach (var x in m_SelectedEntries)
 				{
-					foreach(var x in m_SelectedEntries) {
-						System.Diagnostics.Process.Start(WriteTempFile(x.logText));
-					}
+					System.Diagnostics.Process.Start(WriteTempFile(x.logText));
+				}
 			});
 		else
 			contextMenu.AddDisabledItem(gc_OpenEachInTextEditor);
@@ -47,20 +49,20 @@ public static class ConsoleProCallbacks
 		contextMenu.AddSeparator("");
 
 		// Open the user-set merge/diff tool with two of the selected entries.
-		if(m_SelectedEntries != null && m_SelectedEntries.Count == 2)
+		if (m_SelectedEntries != null && m_SelectedEntries.Count == 2)
 			contextMenu.AddItem(gc_OpenDiffTool, false, OpenDiff);
 		else
 			contextMenu.AddDisabledItem(gc_OpenDiffTool);
 	}
 
-	/**
-	 *	Open the selected entries in a merge / diff tool.
-	 */
-	private static void OpenDiff()
+	/// <summary>
+	/// Open the selected entries in a merge / diff tool.
+	/// </summary>
+	static void OpenDiff()
 	{
 		// The menu item shouldn't allow this in the first place, but if somehow it does
 		// better to throw a warning than error.
-		if(m_SelectedEntries == null || m_SelectedEntries.Count != 2)
+		if (m_SelectedEntries == null || m_SelectedEntries.Count != 2)
 		{
 			Debug.LogWarning("Diff requires exactly 2 console entries be selected!");
 			return;
@@ -71,24 +73,26 @@ public static class ConsoleProCallbacks
 
 		string m_DiffApp = EditorPrefs.GetString("kDiffsDefaultApp");
 
-		if(string.IsNullOrEmpty(m_DiffApp))
+		if (string.IsNullOrEmpty(m_DiffApp))
 			Debug.LogWarning("No Diff / Merge tool set in Unity Preferences -> External Tools");
 		else
 			System.Diagnostics.Process.Start(m_DiffApp, string.Format("{0} {1}", left, right));
 	}
 
-	/**
-	 *	Write the selected entries to a single text file and open in a text editor.
-	 */
-	private static void OpenInTextEditor()
+	/// <summary>
+	/// Write the selected entries to a single text file and open in a text editor.
+	/// </summary>
+	static void OpenInTextEditor()
 	{
-		System.Diagnostics.Process.Start( WriteTempFile(string.Join("\n", m_SelectedEntries.Select(x => x.logText).ToArray())) );
+		System.Diagnostics.Process.Start(WriteTempFile(string.Join("\n", m_SelectedEntries.Select(x => x.logText).ToArray())));
 	}
 
-	/**
-	 *	Create a new unique temporary file and return it's path.
-	 */
-	private static string WriteTempFile(string contents)
+	/// <summary>
+	/// Create a new unique temporary file and return it's path.
+	/// </summary>
+	/// <param name="contents"></param>
+	/// <returns></returns>
+	static string WriteTempFile(string contents)
 	{
 		string m_TempFilePath = string.Format("{0}{1}{2}.txt",
 			Directory.GetParent(Application.dataPath),
@@ -99,5 +103,51 @@ public static class ConsoleProCallbacks
 
 		return m_TempFilePath;
 	}
+
+	[ConsoleProOpenSourceFileAttribute]
+	public static void StackOpenSourceFileCallback(ConsoleProEntry inEntry, ConsoleProStackEntry inStackEntry, int? inLineNumber)
+	{
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = inEntry.stackEntries.Count - 1; i > -1; i--)
+		{
+			var entry = inEntry.stackEntries[i];
+			sb.AppendLine(entry.fileName + " " + entry.lineNumber);
+		}
+
+		// In some cases the stackEntry is null, but we still have a valid consoleEntry.
+		var consoleEntry = inStackEntry != null
+			? inStackEntry
+			: inEntry.stackEntries != null
+				? inEntry.stackEntries.FirstOrDefault()
+				: null;
+
+		string filePath = consoleEntry.fileName;
+		int lineNum = consoleEntry.lineNumber;
+
+		if (string.IsNullOrEmpty(filePath) || filePath == "None")
+			return;
+
+		string originalFilePath = filePath;
+
+		if (inLineNumber.HasValue)
+			lineNum = inLineNumber.Value;
+
+		if (filePath.StartsWith("Assets/"))
+		{
+			var scriptObj = AssetDatabase.LoadAssetAtPath<UObject>(filePath);
+
+			if (scriptObj != null)
+			{
+				AssetDatabase.OpenAsset(scriptObj, lineNum);
+				return;
+			}
+		}
+
+		if (File.Exists(originalFilePath))
+		{
+			originalFilePath = originalFilePath.Replace("/", "" + Path.DirectorySeparatorChar);
+			InternalEditorUtility.OpenFileAtLineExternal(originalFilePath, lineNum);
+		}
+	}
 }
-#endif

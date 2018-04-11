@@ -45,7 +45,7 @@ namespace ProBuilder.Core
 					}
 				}
 
-				return s_LoadedVersion = new pb_VersionInfo("4.0.0-preview.0", "null");
+				return s_LoadedVersion = new pb_VersionInfo("4.0.0-preview.3", "null");
 			}
 		}
 #else
