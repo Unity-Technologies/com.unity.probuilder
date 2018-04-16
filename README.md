@@ -108,7 +108,9 @@ ProBuilder controls updating the UMesh via the `pb_Object::ToMesh` and
 
 ### Setup
 
-Check out the [com.unity.probuilder](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder) repository to a directory adjacent to the **probuilder2** repository.
+Check out the [com.unity.probuilder-dll](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder-dll) repository to a directory adjacent to the **probuilder2** repository.
+
+> **Important** There are two similarly named projects - `com.unity.probuilder` and `com.unity.probuilder-dll`. Make sure to download the `-dll` suffixed project - the former is for ProBuilder 4.x, whereas the `-dll` version is for 3.x.
 
 If you do not need to publish builds to Package Manager you can simply create an empty folder named **com.unity.probuilder** in the same directory as the **probuilder2** repository.
 
@@ -116,7 +118,7 @@ If you do not need to publish builds to Package Manager you can simply create an
 
 ```
 # check out package manager repository
-git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder.git com.unity.probuilder
+git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder-dll.git com.unity.probuilder
 ```
 
 At this point your directory structure should something like this:
