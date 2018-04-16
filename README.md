@@ -112,13 +112,13 @@ Check out the [com.unity.probuilder-dll](https://gitlab.internal.unity3d.com/upm
 
 > **Important** There are two similarly named projects - `com.unity.probuilder` and `com.unity.probuilder-dll`. Make sure to download the `-dll` suffixed project - the former is for ProBuilder 4.x, whereas the `-dll` version is for 3.x.
 
-If you do not need to publish builds to Package Manager you can simply create an empty folder named **com.unity.probuilder** in the same directory as the **probuilder2** repository.
+If you do not need to publish builds to Package Manager you can simply create an empty folder named **com.unity.probuilder-dll** in the same directory as the **probuilder2** repository.
 
 *See below for an example folder structure.*
 
 ```
 # check out package manager repository
-git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder-dll.git com.unity.probuilder
+git clone git@gitlab.internal.unity3d.com:upm-packages/world-building/com.unity.probuilder-dll.git com.unity.probuilder-dll
 ```
 
 At this point your directory structure should something like this:
@@ -151,7 +151,7 @@ The build target takes care of copying all the necessary files and changelogs to
 
 Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
-**upm.json** builds the project to `../com.unity.probuilder`. Copy this directory into a Unity project's "UnityPackageManager" directory and edit the manifest to test locally.
+**upm.json** builds the project to `../com.unity.probuilder-dll`. Copy this directory into a Unity project's "UnityPackageManager" directory and edit the manifest to test locally.
 
 ### Push Package Manager to Staging
 
@@ -173,7 +173,7 @@ Follow the instructions in the [upm-package-template](https://gitlab.internal.un
 
 1. Grab the latest release from [Gitlab](https://gitlab.internal.unity3d.com/upm-packages/world-building/com.unity.probuilder/tags).
 1. Create a new Unity project
-1. Copy the **com.unity.probuilder** directory into the new project's **UnityPackageManager** directory.
+1. Copy the **com.unity.probuilder-dll** directory into the new project's **UnityPackageManager** directory.
 1. Edit the **manifest.json** file to include "com.unity.probuilder" as a dependency (see below for example).
 1. Follow the QA instructions outlined in the QAReport.md file.
 
@@ -182,7 +182,7 @@ Example **manifest.json** file (replace the version number with the tagged versi
 ```
 {
 	"dependencies":{
-		"com.unity.probuilder":"3.0.0-f.0"
+		"com.unity.probuilder":"3.0.0"
 	}
 }
 ```

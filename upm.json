@@ -9,11 +9,11 @@
 	"Macros": {
 		"$DST_PROJECT_ROOT": "bin/projects/ProBuilder-trunk/Assets",
 		"$SRC_PB_ROOT": "probuilder2.0/Assets/ProCore/ProBuilder",
-		"$DST_PB_ROOT": "../com.unity.probuilder/ProBuilder",
+		"$DST_PB_ROOT": "../com.unity.probuilder-dll/ProBuilder",
 		"$DST_PB_NAME": "ProBuilder",
 		"$UNITY_VERSION": "trunk",
-		"$UPM_PACKAGE_DIR": "../com.unity.probuilder",
-		"$BUILD_DIR": "../com.unity.probuilder",
+		"$UPM_PACKAGE_DIR": "../com.unity.probuilder-dll",
+		"$BUILD_DIR": "../com.unity.probuilder-dll",
 	},
 	"Defines": [
 		"PROBUILDER_DLL",
