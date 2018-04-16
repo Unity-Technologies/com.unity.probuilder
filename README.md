@@ -126,7 +126,11 @@ Once a build is verified with a [QA Report](https://drive.google.com/drive/u/0/f
 
 ### ProBuilder 3.x
 
-Check out the `v3.x-release` branch, and follow the instructions in the README.
+Starting with 4.x, ProBuilder is distributed as source code using assembly definition files. ProBuilder 3.x was distributed in pre-compiled DLLs. To build a DLL package for a 3.x update:
+
+- [ ] Check out the `v3.x-release` branch
+- [ ] Check out the `com.unity.probuilder-dll` repository
+- [ ] Follow build instructions in the README of the `3.x` branch.
 
 ### Asset Store
 
