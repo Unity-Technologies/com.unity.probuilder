@@ -48,7 +48,7 @@ namespace ProBuilder.Core
 			get { return new pb_VersionInfo(major, minor, patch); }
 		}
 
-		public const string DefaultStringFormat = "M.m.p-T.b";
+		public const string DefaultStringFormat = "M.m.p-t.b";
 
 		public pb_VersionInfo()
 		{

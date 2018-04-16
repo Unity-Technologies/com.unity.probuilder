@@ -15,7 +15,7 @@ namespace ProBuilder.EditorCore
 	{
 		static pb_AboutWindowSetup()
 		{
-			EditorApplication.delayCall += () => { pb_AboutWindow.Init(false); };
+			EditorApplication.delayCall += pb_AboutWindow.ValidateVersion;
 		}
 	}
 
@@ -54,7 +54,6 @@ namespace ProBuilder.EditorCore
 		const string k_ProductName = pb_Constant.PRODUCT_NAME;
 		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
-		static bool s_CancelImportPopup = false;
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -66,55 +65,22 @@ namespace ProBuilder.EditorCore
 
 		Vector2 scroll = Vector2.zero;
 
-		/// <summary>
-		/// Cancel the About window popup on asset import. Used by PackageImporter through reflection to prevent window
-		/// from popping up when the EditorCore DLL is about to be disabled.
-		/// </summary>
-		public static void CancelImportPopup()
+		internal static void ValidateVersion()
 		{
-			s_CancelImportPopup = true;
-		}
-
-		/// <summary>
-		/// Return true if Init took place, false if not.
-		/// </summary>
-		/// <param name="openedFromMenu"></param>
-		/// <returns></returns>
-		public static bool Init (bool openedFromMenu)
-		{
-			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
-			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
-			// doesn't set the version to the newly imported editorcore).
-			if (s_CancelImportPopup)
-			{
-				s_CancelImportPopup = false;
-				return false;
-			}
-
 			string currentVersionString = pb_Version.Current.ToString(k_AboutPrefFormat);
 			bool isNewVersion = pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
 			pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, pb_PreferenceLocation.Global);
-			bool neverShowUpdate = EditorPrefs.GetBool(k_NeverShowUpdatePopup, false);
 
-			if(openedFromMenu || (isNewVersion && !neverShowUpdate))
-			{
-				if (PackageImporter.IsPreUpmProBuilderInProject())
-				{
-					if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
-						"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
-						"Yes", "No"))
-						EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
+			if (isNewVersion && PackageImporter.IsPreUpmProBuilderInProject())
+				if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
+					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+					"Yes", "No"))
+					EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
+		}
 
-					return false;
-				}
-
-				var window = GetWindow<pb_AboutWindow>(true, k_ProductName, true);
-				window.m_IsUpdatePopup = !openedFromMenu;
-
-				return true;
-			}
-
-			return false;
+		public static void Init()
+		{
+			GetWindow<pb_AboutWindow>(true, k_ProductName, true);
 		}
 
 		static Color HexToColor(uint x)
