@@ -140,19 +140,5 @@ namespace ProBuilder.AssetUtility
 
 			return false;
 		}
-
-		internal static void CancelProBuilderImportPopup()
-		{
-			Type aboutWindowType = FindType("ProBuilder.EditorCore.pb_AboutWindow");
-
-			if (aboutWindowType != null)
-			{
-				MethodInfo cancelPopupMethod =
-					aboutWindowType.GetMethod("CancelImportPopup", BindingFlags.Public | BindingFlags.Static);
-
-				if(cancelPopupMethod != null)
-					cancelPopupMethod.Invoke(null, null);
-			}
-		}
 	}
 }

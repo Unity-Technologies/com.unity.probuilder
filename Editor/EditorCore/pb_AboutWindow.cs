@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProBuilder.AssetUtility;
@@ -16,7 +15,7 @@ namespace ProBuilder.EditorCore
 	{
 		static pb_AboutWindowSetup()
 		{
-			EditorApplication.delayCall += () => { pb_AboutWindow.Init(false); };
+			EditorApplication.delayCall += pb_AboutWindow.ValidateVersion;
 		}
 	}
 
@@ -36,7 +35,7 @@ namespace ProBuilder.EditorCore
 		const float k_BannerHeight = 270f;
 
 		const string k_AboutWindowVersionPref = "ProBuilder_AboutWindowIdentifier";
-		const string k_AboutPrefFormat = "M.m.p-t.b";
+		const string k_AboutPrefFormat = "M.m.p-T.b";
 
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
@@ -47,10 +46,9 @@ namespace ProBuilder.EditorCore
 		public static readonly Color k_FontBlueNormal = HexToColor(0x00AAEF);
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
-		string m_ProductName = pb_Constant.PRODUCT_NAME;
+		const string k_ProductName = pb_Constant.PRODUCT_NAME;
 		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
-		static bool s_CancelImportPopup = false;
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -62,49 +60,22 @@ namespace ProBuilder.EditorCore
 
 		Vector2 scroll = Vector2.zero;
 
-		/// <summary>
-		/// Cancel the About window popup on asset import. Used by PackageImporter through reflection to prevent window
-		/// from popping up when the EditorCore DLL is about to be disabled.
-		/// </summary>
-		public static void CancelImportPopup()
+		internal static void ValidateVersion()
 		{
-			s_CancelImportPopup = true;
+			string currentVersionString = pb_Version.Current.ToString(k_AboutPrefFormat);
+			bool isNewVersion = pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
+			pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, pb_PreferenceLocation.Global);
+
+			if (isNewVersion && PackageImporter.IsPreUpmProBuilderInProject())
+				if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
+					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+					"Yes", "No"))
+					EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
 		}
 
-		/// <summary>
-		/// Return true if Init took place, false if not.
-		/// </summary>
-		/// <param name="fromMenu"></param>
-		/// <returns></returns>
-		public static bool Init (bool fromMenu)
+		public static void Init()
 		{
-			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
-			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
-			// doesn't set the version to the newly imported editorcore).
-			if (s_CancelImportPopup)
-			{
-				s_CancelImportPopup = false;
-				return false;
-			}
-
-			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.Current.ToString(k_AboutPrefFormat))
-			{
-				if (PackageImporter.IsPreUpmProBuilderInProject())
-				{
-					if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
-						"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
-						"Yes", "No"))
-						EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
-
-					return false;
-				}
-
-				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.Current.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
-				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
-				return true;
-			}
-
-			return false;
+			GetWindow<pb_AboutWindow>(true, k_ProductName, true);
 		}
 
 		static Color HexToColor(uint x)
@@ -222,7 +193,7 @@ namespace ProBuilder.EditorCore
 			if (!string.IsNullOrEmpty(changes))
 			{
 				FormatChangelog(changes, out m_ChangeLogVersionInfo, out m_ChangeLogRichText);
-				
+
 #if !(DEBUG || DEVELOPMENT || PB_DEBUG)
 				if(!pb_Version.Current.Equals(m_ChangeLogVersionInfo))
 					pb_Log.Info("Changelog version does not match internal version. {0} != {1}",
@@ -244,7 +215,9 @@ namespace ProBuilder.EditorCore
 				return;
 			}
 
-			Vector2 mousePosition = Event.current.mousePosition;
+			var evt = Event.current;
+
+			Vector2 mousePosition = evt.mousePosition;
 
 			if( GUILayout.Button(k_BannerContent, bannerStyle) )
 				Application.OpenURL(k_VideoUrl);
@@ -254,7 +227,7 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.BeginVertical(changelogStyle);
 
-			GUILayout.Label(m_ProductName, header1Style);
+			GUILayout.Label(k_ProductName, header1Style);
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
@@ -290,8 +263,12 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(pb_Version.Current.ToString());
+
+			GUILayout.FlexibleSpace();
+
 			if (GUILayout.Button("licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
 				GetWindow<pb_LicenseWindow>(true, "ProBuilder 3rd Party Licenses", true);
+
 			GUILayout.EndHorizontal();
 		}
 
