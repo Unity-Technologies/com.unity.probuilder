@@ -1,3 +1,9 @@
+# ProBuilder 3.0.5
+
+## Bug Fixes
+
+- Fix About Window opening on every script reload event.
+
 # ProBuilder 3.0.4
 
 ## Bug Fixes

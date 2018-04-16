@@ -18,7 +18,7 @@ namespace ProBuilder.EditorCore
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/About", false, pb_Constant.MENU_ABOUT)]
 		public static void MenuInitAbout()
 		{
-			pb_AboutWindow.Init(true);
+			pb_AboutWindow.Init();
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, pb_Constant.MENU_ABOUT)]

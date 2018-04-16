@@ -8,15 +8,12 @@ using ProBuilder.Core;
 
 namespace ProBuilder.EditorCore
 {
-	/// <summary>
-	/// Used to pop up the window on import.
-	/// </summary>
 	[InitializeOnLoad]
 	static class pb_AboutWindowSetup
 	{
 		static pb_AboutWindowSetup()
 		{
-			EditorApplication.delayCall += () => { pb_AboutWindow.Init(false); };
+			EditorApplication.delayCall += pb_AboutWindow.ValidateVersion;
 		}
 	}
 
@@ -50,7 +47,6 @@ namespace ProBuilder.EditorCore
 		string m_ProductName = pb_Constant.PRODUCT_NAME;
 		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
-		static bool s_CancelImportPopup = false;
 
 		internal static GUIStyle bannerStyle,
 								header1Style,
@@ -62,49 +58,22 @@ namespace ProBuilder.EditorCore
 
 		Vector2 scroll = Vector2.zero;
 
-		/// <summary>
-		/// Cancel the About window popup on asset import. Used by PackageImporter through reflection to prevent window
-		/// from popping up when the EditorCore DLL is about to be disabled.
-		/// </summary>
-		public static void CancelImportPopup()
+		internal static void ValidateVersion()
 		{
-			s_CancelImportPopup = true;
+			string currentVersionString = pb_Version.Current.ToString(k_AboutPrefFormat);
+			bool isNewVersion = pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
+			pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, pb_PreferenceLocation.Global);
+
+			if (isNewVersion && PackageImporter.IsPreUpmProBuilderInProject())
+				if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
+					"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
+					"Yes", "No"))
+					EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
 		}
 
-		/// <summary>
-		/// Return true if Init took place, false if not.
-		/// </summary>
-		/// <param name="fromMenu"></param>
-		/// <returns></returns>
-		public static bool Init (bool fromMenu)
+		public static void Init ()
 		{
-			// added as a way for the upm converter check to cancel the about popup when the new editor dll is going to
-			// be immediately disabled. exiting here allows the popup to run when the editor is re-enabled (ie, prefs
-			// doesn't set the version to the newly imported editorcore).
-			if (s_CancelImportPopup)
-			{
-				s_CancelImportPopup = false;
-				return false;
-			}
-
-			if(fromMenu || pb_PreferencesInternal.GetString(k_AboutWindowVersionPref) != pb_Version.Current.ToString(k_AboutPrefFormat))
-			{
-				if (PackageImporter.IsPreUpmProBuilderInProject())
-				{
-					if (EditorUtility.DisplayDialog("Conflicting ProBuilder Install in Project",
-						"The Asset Store version of ProBuilder is incompatible with Package Manager. Would you like to convert your project to the Package Manager version of ProBuilder?\n\nIf you choose \"No\" this dialog may be accessed again at any time through the \"Tools/ProBuilder/Repair/Convert to Package Manager\" menu item.",
-						"Yes", "No"))
-						EditorApplication.delayCall += AssetIdRemapUtility.OpenConversionEditor;
-
-					return false;
-				}
-
-				pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, pb_Version.Current.ToString(k_AboutPrefFormat), pb_PreferenceLocation.Global);
-				GetWindow(typeof(pb_AboutWindow), true, pb_Constant.PRODUCT_NAME, true).ShowUtility();
-				return true;
-			}
-
-			return false;
+			GetWindow<pb_AboutWindow>(true, pb_Constant.PRODUCT_NAME, true);
 		}
 
 		static Color HexToColor(uint x)
