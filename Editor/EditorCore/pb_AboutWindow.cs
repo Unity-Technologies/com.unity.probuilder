@@ -26,7 +26,6 @@ namespace ProBuilder.EditorCore
 		static readonly GUIContent k_BannerContent = new GUIContent("", "ProBuilder Quick-Start Video Tutorials");
 		static readonly GUIContent k_ApiExamplesContent = new GUIContent("API Examples");
 
-		const string k_NeverShowUpdatePopup = "pb_AboutWindow::neverShowUpdatePopup";
 		const string k_VideoUrl = @"http://bit.ly/pbstarter";
 		const string k_LearnUrl = @"http://procore3d.com/docs/probuilder";
 		const string k_SupportUrl = @"http://www.procore3d.com/forum/";
@@ -40,10 +39,6 @@ namespace ProBuilder.EditorCore
 
 		internal const string k_FontRegular = "Asap-Regular.otf";
 		internal const string k_FontMedium = "Asap-Medium.otf";
-
-		static readonly GUIContent m_NoUpdatePopupContent = new GUIContent("Do not show again", "When ProBuilder is updated, do not show the changelog window.");
-		[SerializeField]
-		bool m_IsUpdatePopup;
 
 		// Use less contast-y white and black font colors for better readabililty
 		public static readonly Color k_FontWhite = HexToColor(0xCECECE);
@@ -222,9 +217,6 @@ namespace ProBuilder.EditorCore
 
 			var evt = Event.current;
 
-			if (evt.type == EventType.ContextClick)
-				DoContextMenu();
-
 			Vector2 mousePosition = evt.mousePosition;
 
 			if( GUILayout.Button(k_BannerContent, bannerStyle) )
@@ -274,27 +266,10 @@ namespace ProBuilder.EditorCore
 
 			GUILayout.FlexibleSpace();
 
-			if (m_IsUpdatePopup)
-			{
-				EditorGUI.BeginChangeCheck();
-				bool neverShowUpdatePopup = EditorPrefs.GetBool(k_NeverShowUpdatePopup, false);
-				neverShowUpdatePopup = EditorGUILayout.Toggle(m_NoUpdatePopupContent, neverShowUpdatePopup);
-				if (EditorGUI.EndChangeCheck())
-					EditorPrefs.SetBool(k_NeverShowUpdatePopup, neverShowUpdatePopup);
-			}
-
 			if (GUILayout.Button("licenses", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
 				GetWindow<pb_LicenseWindow>(true, "ProBuilder 3rd Party Licenses", true);
 
 			GUILayout.EndHorizontal();
-		}
-
-		void DoContextMenu()
-		{
-			var menu = new GenericMenu();
-			menu.AddItem(new GUIContent("Never Show Update Window"), EditorPrefs.GetBool(k_NeverShowUpdatePopup), () => { EditorPrefs.SetBool(k_NeverShowUpdatePopup, true); });
-			menu.AddItem(new GUIContent("Do Show Update Window"), !EditorPrefs.GetBool(k_NeverShowUpdatePopup), () => { EditorPrefs.SetBool(k_NeverShowUpdatePopup, false); });
-			menu.ShowAsContext();
 		}
 
 		/// <summary>
