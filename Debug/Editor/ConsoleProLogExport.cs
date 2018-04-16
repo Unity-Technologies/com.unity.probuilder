@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditorInternal;
 using UObject = UnityEngine.Object;
 
@@ -143,6 +144,9 @@ public static class ConsoleProExtensions
 				return;
 			}
 		}
+
+		if (originalFilePath.StartsWith("["))
+			originalFilePath = Regex.Replace(originalFilePath, "^\\[[0-9]*\\:[0-9]*\\:[0-9]*\\][ ]*", "");
 
 		if (File.Exists(originalFilePath))
 		{

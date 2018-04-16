@@ -6,7 +6,7 @@ namespace ProBuilder.EditorCore
 {
 	class pb_LicenseWindow : EditorWindow
 	{
-		const string k_LicenseTextPath = "About/ThirdPartyLicenses.txt";
+		const string k_LicenseTextPath = "ThirdPartyLicenses.txt";
 		const int k_MaxStringLength = 60000;
 		TextAsset m_LicenseText;
 		string[] m_LicenseContents;
