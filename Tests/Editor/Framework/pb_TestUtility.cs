@@ -11,13 +11,30 @@ using UObject = UnityEngine.Object;
 using ProBuilder.Core;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine.TestTools;
 
 namespace ProBuilder.Test
 {
+	public abstract class pb_TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
+	{
+		public void Setup()
+		{
+			if (!Directory.Exists(pb_TestUtility.TemporarySavedAssetsDirectory))
+				Directory.CreateDirectory(pb_TestUtility.TemporarySavedAssetsDirectory);
+		}
+
+		public void Cleanup()
+		{
+			if (Directory.Exists(pb_TestUtility.TemporarySavedAssetsDirectory))
+				Directory.Delete(pb_TestUtility.TemporarySavedAssetsDirectory, true);
+		}
+	}
+
 	public static class pb_TestUtility
 	{
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder/Tests/Editor/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder/Tests/Editor/";
+		const string k_TempDirectory = "Assets/ProBuilderUnitTestsTemp/";
 
 		public static string TemplatesDirectory
 		{
@@ -31,14 +48,8 @@ namespace ProBuilder.Test
 
 		public static string TemporarySavedAssetsDirectory
 		{
-			get { return k_TestsDirectory + "Temp Assets/"; }
+			get { return k_TempDirectory; }
 		}
-
-		/**
-		 * @TODO
-		 * Similar to BuiltInPrimitives, but also including a set of meshes from a folder (though meshes should be treated
-		 * as immutable when pulled from asset... somehow)
-		 */
 
 		public class BuiltInPrimitives : IDisposable, IEnumerable<pb_Object>
 		{
