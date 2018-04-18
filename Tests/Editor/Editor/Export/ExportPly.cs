@@ -5,10 +5,11 @@ using ProBuilder.EditorCore;
 using NUnit.Framework;
 using System.Threading;
 using ProBuilder.Core;
+using ProBuilder.Test;
 
 namespace ProBuilder.EditorTests.Export
 {
-	public class ExportPly
+	public class ExportPly : pb_TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()

@@ -12,14 +12,13 @@ using System.Threading;
 
 namespace ProBuilder.EditorTests.Export
 {
-	public class ExportObj
+	public class ExportObj : pb_TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()
 		{
 			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			var model = new pb_Model("Cube", cube.GetComponent<MeshFilter>().sharedMesh, cube.GetComponent<MeshRenderer>().sharedMaterial);
-
 			var current = Thread.CurrentThread.CurrentCulture;
 
 			try

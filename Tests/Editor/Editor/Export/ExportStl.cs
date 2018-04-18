@@ -12,7 +12,7 @@ using UnityEngine.Windows;
 
 namespace ProBuilder.EditorTests.Export
 {
-	public class ExportStl
+	public class ExportStl : pb_TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()
