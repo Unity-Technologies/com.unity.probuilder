@@ -130,7 +130,7 @@ C:/Users/karl/dev
   |_ build
   |_ docs
   |_ probuilder2.0
-|_ com.unity.probuilder
+|_ com.unity.probuilder-dll
   |_ Documentation
   |_ ProBuilder
   |_ CHANGELOG.md
@@ -145,9 +145,21 @@ In the **probuilder2** directory, run **upm.json** build target:
 
 If you check out the `unity/trunk` repository to somewhere other than `$HOME` (`~` on unix, `C:/Users/%USER%` on Windows) you will need to either modify the **upm.json** file "UnityPath" to append your Unity build directory, or pass `-unity-path=<path_to_unity>` to `pb-build`. See `mono pb-build.exe --help` for more information on build arguments.
 
-The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project. It does *not* set the Unity version in the "package.json" file, so if this is a new Unity version you'll need to change that manually.
+The build target takes care of copying all the necessary files and changelogs to the package manager staging project, as well as updating the version information in both the source project and upm project.
 
-> The version info is scraped from the source changelog.txt file.
+To increment the version number, update `probuilder2.0/Assets/ProCore/ProBuilder/About/changelog.txt`. This is where the version number for `pb_Version` and `package.json` is collected.
+
+#### Release checklist
+
+- [ ] Update `changelog.txt` in the `ProBuilder/About` folder
+- [ ] In `com.unity.probuilder-dll`, `git co . && git clean -df`
+- [ ] In `probuilder2`, run `mono pb-build.exe upm.json -C`
+- [ ] In `probuilder2`, `git commit -a`
+- [ ] In `probuilder2`, `git tag (version number)`
+- [ ] In `com.unity.probuilder-dll`, `git add -A; git commit`
+- [ ] In `com.unity.probuilder-dll`, `git tag (version number)`
+
+After pushing the `com.unity.probuilder-dll`, Gitlab CI will build and publish to Bintray.
 
 Pass `-d` for a debug build. See `pb-build --help` for additional args.
 
