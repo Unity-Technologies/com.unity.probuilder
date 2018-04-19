@@ -61,7 +61,7 @@ namespace ProBuilder.EditorCore
 		internal static void ValidateVersion()
 		{
 			string currentVersionString = pb_Version.Current.ToString(k_AboutPrefFormat);
-			bool isNewVersion = pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
+			bool isNewVersion = !pb_PreferencesInternal.GetString(k_AboutWindowVersionPref).Equals(currentVersionString);
 			pb_PreferencesInternal.SetString(k_AboutWindowVersionPref, currentVersionString, pb_PreferenceLocation.Global);
 
 			if (isNewVersion && PackageImporter.IsPreUpmProBuilderInProject())

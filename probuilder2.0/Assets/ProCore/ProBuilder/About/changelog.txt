@@ -1,3 +1,9 @@
+# ProBuilder 3.0.6-preview.0
+
+## Bug Fixes
+
+- Fix upgrade prompt failing to show on version changes.
+
 # ProBuilder 3.0.5
 
 ## Bug Fixes
