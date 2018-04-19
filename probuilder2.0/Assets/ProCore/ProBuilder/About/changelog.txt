@@ -1,4 +1,4 @@
-# ProBuilder 3.0.6-preview.0
+# ProBuilder 3.0.6
 
 ## Bug Fixes
 
