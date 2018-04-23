@@ -19,6 +19,7 @@ namespace ProBuilder.EditorCore
 
 		static readonly string[] ProGridsEditorTypeNames = new string[]
 		{
+			"UnityEditor.ProGrids.ProGridsEditor",
 			"ProGrids.Editor.ProGridsEditor",
 			"ProGrids.Editor.pg_Editor",
 			"ProGrids.pg_Editor",
