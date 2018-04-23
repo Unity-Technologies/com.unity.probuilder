@@ -2,17 +2,20 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace ProBuilder.Actions
 {
-	class MirrorObjects : pb_MenuAction
+	class MirrorObjects : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
 		[System.Flags]
@@ -25,11 +28,11 @@ namespace ProBuilder.Actions
 
 		MirrorSettings storedScale
 		{
-			get { return (MirrorSettings) pb_PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
-			set { pb_PreferencesInternal.SetInt("pbMirrorObjectScale", (int) value); }
+			get { return (MirrorSettings) PreferencesInternal.GetInt("pbMirrorObjectScale", (int)(0x1 | 0x8)); }
+			set { PreferencesInternal.SetInt("pbMirrorObjectScale", (int) value); }
 		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Mirror Objects",
 			@"Mirroring objects will duplicate an flip objects on the specified axes."
@@ -37,7 +40,7 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && selection != null && selection.Length > 0;
+			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
 		}
 
 		public override MenuActionState AltState()
@@ -75,7 +78,7 @@ namespace ProBuilder.Actions
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Mirror"))
-				pb_EditorUtility.ShowNotification( DoAction().notification );
+				EditorUtility.ShowNotification( DoAction().notification );
 		}
 
 		public override pb_ActionResult DoAction()
@@ -92,9 +95,9 @@ namespace ProBuilder.Actions
 			foreach(pb_Object pb in selection)
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
-			pb_Selection.SetSelection(res);
+			MeshSelection.SetSelection(res);
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return res.Count > 0 ?
 				new pb_ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :

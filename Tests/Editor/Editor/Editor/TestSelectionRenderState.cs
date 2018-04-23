@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProBuilder.Core;
 using System;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using ProBuilder.Test;
 
 namespace ProBuilder.EditorTests.Editor

@@ -1,19 +1,22 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace ProBuilder.Actions
 {
-	class ProBuilderize : pb_MenuAction
+	class ProBuilderize : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return m_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
 		private GUIContent m_QuadsTooltip = new GUIContent("Import Quads", "Create ProBuilder mesh using quads where " +
@@ -24,7 +27,7 @@ namespace ProBuilder.Actions
 			"smoothing groups any adjacent faces with an adjoining angle difference of less than this value will be " +
 			"grouped together in a smoothing group.");
 
-		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		private static readonly TooltipContent m_Tooltip = new TooltipContent
 		(
 			"ProBuilderize",
 			@"Creates ProBuilder-modifiable objects from meshes."
@@ -49,9 +52,9 @@ namespace ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", MessageType.Info);
 
-			bool quads = pb_PreferencesInternal.GetBool("pb_MeshImporter::quads", true);
-			bool smoothing = pb_PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true);
-			float smoothingThreshold = pb_PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f);
+			bool quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true);
+			bool smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true);
+			float smoothingThreshold = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -64,9 +67,9 @@ namespace ProBuilder.Actions
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				pb_PreferencesInternal.SetBool("pb_MeshImporter::quads", quads);
-				pb_PreferencesInternal.SetBool("pb_MeshImporter::smoothing", smoothing);
-				pb_PreferencesInternal.SetFloat("pb_MeshImporter::smoothingThreshold", smoothingThreshold);
+				PreferencesInternal.SetBool("pb_MeshImporter::quads", quads);
+				PreferencesInternal.SetBool("pb_MeshImporter::smoothing", smoothing);
+				PreferencesInternal.SetFloat("pb_MeshImporter::smoothingThreshold", smoothingThreshold);
 			}
 
 			GUILayout.FlexibleSpace();
@@ -74,7 +77,7 @@ namespace ProBuilder.Actions
 			GUI.enabled = IsEnabled();
 
 			if(GUILayout.Button("ProBuilderize"))
-				pb_EditorUtility.ShowNotification(DoAction().notification);
+				EditorUtility.ShowNotification(DoAction().notification);
 
 			GUI.enabled = true;
 		}
@@ -86,14 +89,14 @@ namespace ProBuilder.Actions
 
 			pb_MeshImporter.Settings settings = new pb_MeshImporter.Settings()
 			{
-				quads = pb_PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
-				smoothing = pb_PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
-				smoothingThreshold = pb_PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
+				quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
+				smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
+				smoothingThreshold = PreferencesInternal.GetFloat("pb_MeshImporter::smoothingThreshold", 1f)
 			};
 
 			if(top.Count() != all.Count())
 			{
-				int result = EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
+				int result = UnityEditor.EditorUtility.DisplayDialogComplex("ProBuilderize Selection",
 					"ProBuilderize children of selection?",
 					"Yes",
 					"No",
@@ -172,12 +175,12 @@ namespace ProBuilder.Actions
 					Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
 				}
 
-				EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
+				UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
 			}
 
-			EditorUtility.ClearProgressBar();
-			pb_Selection.OnSelectionChanged();
-			pb_Editor.Refresh(true);
+			UnityEditor.EditorUtility.ClearProgressBar();
+			MeshSelection.OnSelectionChanged();
+			ProBuilderEditor.Refresh(true);
 
 			if(i < 1)
 				return new pb_ActionResult(Status.Canceled, "Nothing Selected");

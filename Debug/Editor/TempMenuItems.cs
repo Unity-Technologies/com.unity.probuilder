@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Linq;
 using System.Diagnostics;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 
 public class TempMenuItems : EditorWindow
 {

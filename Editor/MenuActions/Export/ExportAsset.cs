@@ -1,23 +1,24 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
 using System.IO;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
+using EditorUtility = UnityEditor.EditorUtility;
 
 namespace ProBuilder.Actions
 {
-	class ExportAsset : pb_MenuAction
+	class ExportAsset : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Export Asset",
 			"Export a Unity mesh asset file."
@@ -33,7 +34,7 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			ExportWithFileDialog( pb_Selection.Top() );
+			ExportWithFileDialog( MeshSelection.Top() );
 			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
 		}
 

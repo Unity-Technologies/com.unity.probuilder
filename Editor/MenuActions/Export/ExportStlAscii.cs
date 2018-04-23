@@ -6,19 +6,20 @@ using System.Linq;
 using System.Threading;
 using Parabox.STL;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
+using EditorUtility = UnityEditor.EditorUtility;
 using Object = UnityEngine.Object;
 
 namespace ProBuilder.Actions
 {
-	class ExportStlAscii : pb_MenuAction
+	class ExportStlAscii : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Export Stl",
 			@"Export an Stl model file."

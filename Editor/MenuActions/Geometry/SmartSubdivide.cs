@@ -1,20 +1,20 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 
 namespace ProBuilder.Actions
 {
-	class SmartSubdivide : pb_MenuAction
+	class SmartSubdivide : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Geometry; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Smart Subdivide",
 			"",
@@ -23,9 +23,9 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null &&
-					pb_Editor.instance.editLevel == EditLevel.Geometry &&
-					pb_Editor.instance.selectionMode != SelectMode.Vertex &&
+			return 	ProBuilderEditor.instance != null &&
+					ProBuilderEditor.instance.editLevel == EditLevel.Geometry &&
+					ProBuilderEditor.instance.selectionMode != SelectMode.Vertex &&
 					selection != null &&
 					selection.Length > 0 &&
 					selection.Any(x => x.SelectedEdgeCount > 0);
@@ -38,13 +38,13 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			switch(pb_Editor.instance.selectionMode)
+			switch(ProBuilderEditor.instance.selectionMode)
 			{
 				case SelectMode.Edge:
-					return pb_MenuCommands.MenuSubdivideEdge(selection);
+					return MenuCommands.MenuSubdivideEdge(selection);
 
 				default:
-					return pb_MenuCommands.MenuSubdivideFace(selection);
+					return MenuCommands.MenuSubdivideFace(selection);
 			}
 		}
 	}

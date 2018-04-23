@@ -13,7 +13,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	/// <summary>
 	/// Wrap UnityEngine.Handles class functions for backwards compatibility.

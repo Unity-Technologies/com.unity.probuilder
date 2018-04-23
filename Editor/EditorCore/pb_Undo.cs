@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Linq;
 using ProBuilder.Core;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	[InitializeOnLoad]
 	static class pb_Undo
@@ -17,7 +17,7 @@ namespace ProBuilder.EditorCore
 		{
 			// material preview when dragging in sceneview is done by applying then undoing changes. we don't want to
 			// rebuild the mesh every single frame when dragging.
-			if (pb_DragAndDropListener.IsDragging())
+			if (SceneDragAndDropListener.IsDragging())
 				return;
 
 			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
@@ -27,12 +27,12 @@ namespace ProBuilder.EditorCore
 				pb.Optimize();
 
 				// because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
-				if( pb_Editor.instance != null && pb.SelectedFaces.Length > 0 )
+				if( ProBuilderEditor.instance != null && pb.SelectedFaces.Length > 0 )
 					pb.SetSelectedFaces(
 						System.Array.FindAll(pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, pb_Face.AllTriangles(pb.SelectedFaces))));
 			}
 
-			pb_Editor.Refresh(true);
+			ProBuilderEditor.Refresh(true);
 			SceneView.RepaintAll();
 		}
 

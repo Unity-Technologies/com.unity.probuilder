@@ -1,23 +1,25 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using Parabox.STL;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
+using EditorUtility = UnityEditor.EditorUtility;
+using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
 namespace ProBuilder.Actions
 {
-	class ExportPly : pb_MenuAction
+	class ExportPly : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Export Ply",
 			"Export a Stanford PLY file."
@@ -32,7 +34,7 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			string res = ExportWithFileDialog(pb_Selection.Top());
+			string res = ExportWithFileDialog(MeshSelection.Top());
 
 			if( string.IsNullOrEmpty(res) )
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
@@ -43,7 +45,7 @@ namespace ProBuilder.Actions
 		/**
 		 *	Prompt user for a save file location and export meshes as Obj.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, pb_PlyOptions options = null)
+		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, PlyOptions options = null)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return null;
@@ -75,18 +77,18 @@ namespace ProBuilder.Actions
 			return res;
 		}
 
-		private static string DoExport(string path, IEnumerable<pb_Object> models, pb_PlyOptions options)
+		private static string DoExport(string path, IEnumerable<pb_Object> models, PlyOptions options)
 		{
 			string name = Path.GetFileNameWithoutExtension(path);
 			string directory = Path.GetDirectoryName(path);
 
 			string ply;
 
-			if( pb_Ply.Export(models, out ply, options) )
+			if( PlyExporter.Export(models, out ply, options) )
 			{
 				try
 				{
-					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.ply", directory, name), ply);
+					FileUtil.WriteAllText(string.Format("{0}/{1}.ply", directory, name), ply);
 				}
 				catch(System.Exception e)
 				{

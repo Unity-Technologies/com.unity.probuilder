@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ProBuilder.Core;
 using ProBuilder.Test;
 using UnityEngine.TestTools;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using UnityEditor;
 
 namespace ProBuilder.EditorTests.Object

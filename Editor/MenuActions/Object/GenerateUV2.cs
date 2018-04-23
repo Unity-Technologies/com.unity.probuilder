@@ -1,16 +1,19 @@
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
+using EditorGUILayout = UnityEditor.EditorGUILayout;
+using EditorStyles = UnityEditor.EditorStyles;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace ProBuilder.Actions
 {
-	class GenerateUV2 : pb_MenuAction
+	class GenerateUV2 : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Object_GenerateUV2", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_GenerateUV2", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 		public override bool hasFileMenuEntry { get { return false; } }
 
@@ -20,11 +23,11 @@ namespace ProBuilder.Actions
 		{
 			get
 			{
-				return pb_PreferencesInternal.GetBool("pbGenerateUV2PerObject", false);
+				return PreferencesInternal.GetBool("pbGenerateUV2PerObject", false);
 			}
 			set
 			{
-				pb_PreferencesInternal.SetBool("pbGenerateUV2PerObject", value);
+				PreferencesInternal.SetBool("pbGenerateUV2PerObject", value);
 			}
 		}
 
@@ -32,15 +35,15 @@ namespace ProBuilder.Actions
 		{
 			get
 			{
-				return pb_PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+				return PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
 			}
 			set
 			{
-				pb_PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
+				PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
 			}
 		}
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Generate UV2",
 			@"Create UV2 maps for all selected objects.\n\nCan optionally be set to Generate UV2 for the entire scene in the options panel."
@@ -74,7 +77,7 @@ namespace ProBuilder.Actions
 			if(EditorGUI.EndChangeCheck())
 				disableAutoUV2Generation = !enableAutoUV2;
 
-			pb_EditorUtility.CreateCachedEditor<pb_UnwrapParametersEditor>(selection, ref uv2Editor);
+			EditorUtility.CreateCachedEditor<UnwrapParametersEditor>(selection, ref uv2Editor);
 
 			if(uv2Editor != null)
 			{
@@ -85,7 +88,7 @@ namespace ProBuilder.Actions
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button( generateUV2PerObject ? "Rebuild Selected UV2s" : "Rebuild Scene UV2s"))
-				pb_EditorUtility.ShowNotification( DoAction().notification);
+				EditorUtility.ShowNotification( DoAction().notification);
 		}
 
 		public override pb_ActionResult DoAction()
@@ -103,12 +106,12 @@ namespace ProBuilder.Actions
 			{
 				if(selected.Length > 3)
 				{
-					if( EditorUtility.DisplayCancelableProgressBar(
+					if( UnityEditor.EditorUtility.DisplayCancelableProgressBar(
 						"Generating UV2 Channel",
 						"pb_Object: " + selected[i].name + ".",
 						(((float)i+1) / selected.Length)))
 					{
-						EditorUtility.ClearProgressBar();
+						UnityEditor.EditorUtility.ClearProgressBar();
 						Debug.LogWarning("User canceled UV2 generation.  " + (selected.Length-i) + " pb_Objects left without lightmap UVs.");
 						return pb_ActionResult.UserCanceled;
 					}
@@ -118,7 +121,7 @@ namespace ProBuilder.Actions
 				selected[i].Optimize(true);
 			}
 
-			EditorUtility.ClearProgressBar();
+			UnityEditor.EditorUtility.ClearProgressBar();
 
 			int l = selected.Length;
 			return new pb_ActionResult(Status.Success, "Generate UV2\n" + (l > 1 ? string.Format("for {0} objects", l) : string.Format("for {0} object", l)) );

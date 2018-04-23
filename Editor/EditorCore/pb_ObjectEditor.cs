@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using System.Linq;
 using ProBuilder.Core;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	/// <summary>
 	/// Custom editor for pb_Object type.
@@ -22,9 +22,9 @@ namespace ProBuilder.EditorCore
 
 		pb_Object pb;
 
-		pb_Editor editor
+		ProBuilderEditor editor
 		{
-			get { return pb_Editor.instance; }
+			get { return ProBuilderEditor.instance; }
 		}
 
 		Renderer ren = null;
@@ -41,13 +41,13 @@ namespace ProBuilder.EditorCore
 				return;
 
 			ren = pb.gameObject.GetComponent<Renderer>();
-			SelectionRenderState s = pb_EditorUtility.GetSelectionRenderState();
-			pb_EditorUtility.SetSelectionRenderState(ren, editor != null ? s & SelectionRenderState.Outline : s);
+			SelectionRenderState s = EditorUtility.GetSelectionRenderState();
+			EditorUtility.SetSelectionRenderState(ren, editor != null ? s & SelectionRenderState.Outline : s);
 
 			// If Verify returns false, that means the mesh was rebuilt - so generate UV2 again
 
 			foreach (pb_Object selpb in Selection.transforms.GetComponents<pb_Object>())
-				pb_EditorUtility.VerifyMesh(selpb);
+				EditorUtility.VerifyMesh(selpb);
 		}
 
 		public override void OnInspectorGUI()
@@ -55,7 +55,7 @@ namespace ProBuilder.EditorCore
 			GUI.backgroundColor = Color.green;
 
 			if (GUILayout.Button("Open " + pb_Constant.PRODUCT_NAME))
-				pb_Editor.MenuOpenWindow();
+				ProBuilderEditor.MenuOpenWindow();
 
 			GUI.backgroundColor = Color.white;
 
@@ -103,7 +103,7 @@ namespace ProBuilder.EditorCore
 			if (pb == null)
 				pb = (pb_Object) target;
 
-			return pb_Editor.instance != null &&
+			return ProBuilderEditor.instance != null &&
 			       pb_Util.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
 		}
 

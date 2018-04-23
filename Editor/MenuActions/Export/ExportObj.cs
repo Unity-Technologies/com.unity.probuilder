@@ -1,23 +1,25 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using Parabox.STL;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
+using EditorUtility = UnityEditor.EditorUtility;
+using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
 namespace ProBuilder.Actions
 {
-	class ExportObj : pb_MenuAction
+	class ExportObj : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Export; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
 		public override Texture2D icon { get { return null; } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 		public override bool isProOnly { get { return false; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Export Obj",
 			"Export a Wavefront OBJ file."
@@ -32,7 +34,7 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			string res = ExportWithFileDialog(pb_Selection.Top());
+			string res = ExportWithFileDialog(MeshSelection.Top());
 
 			if( string.IsNullOrEmpty(res) )
 				return new pb_ActionResult(Status.Canceled, "User Canceled");
@@ -43,14 +45,14 @@ namespace ProBuilder.Actions
 		/**
 		 *	Prompt user for a save file location and export meshes as Obj.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, bool allowQuads = true, pb_ObjOptions options = null)
+		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return null;
 
-			IEnumerable<pb_Model> models = allowQuads
-				? meshes.Select(x => new pb_Model(x.gameObject.name, x))
-				: meshes.Select(x => new pb_Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
+			IEnumerable<Model> models = allowQuads
+				? meshes.Select(x => new Model(x.gameObject.name, x))
+				: meshes.Select(x => new Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
 
 			string path = null, res = null;
 
@@ -72,14 +74,14 @@ namespace ProBuilder.Actions
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;
 
-				foreach(pb_Model model in models)
-					res = DoExport(string.Format("{0}/{1}.obj", path, model.name), new List<pb_Model>() { model }, options);
+				foreach(Model model in models)
+					res = DoExport(string.Format("{0}/{1}.obj", path, model.name), new List<Model>() { model }, options);
 			}
 
 			return res;
 		}
 
-		private static string DoExport(string path, IEnumerable<pb_Model> models, pb_ObjOptions options)
+		private static string DoExport(string path, IEnumerable<Model> models, ObjOptions options)
 		{
 			string name = Path.GetFileNameWithoutExtension(path);
 			string directory = Path.GetDirectoryName(path);
@@ -87,13 +89,13 @@ namespace ProBuilder.Actions
 			List<string> textures = null;
 			string obj, mat;
 
-			if( pb_Obj.Export(name, models, out obj, out mat, out textures, options) )
+			if( ObjExporter.Export(name, models, out obj, out mat, out textures, options) )
 			{
 				try
 				{
 					CopyTextures(textures, directory);
-					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
-					pb_FileUtil.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
+					FileUtil.WriteAllText(string.Format("{0}/{1}.obj", directory, name), obj);
+					FileUtil.WriteAllText(string.Format("{0}/{1}.mtl", directory, name.Replace(" ", "_")), mat);
 				}
 				catch(System.Exception e)
 				{

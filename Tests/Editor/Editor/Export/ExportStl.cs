@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection.Emit;
 using UnityEngine;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using Parabox.STL;

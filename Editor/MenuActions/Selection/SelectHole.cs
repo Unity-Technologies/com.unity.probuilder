@@ -1,22 +1,22 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 
 namespace ProBuilder.Actions
 {
-	class SelectHole : pb_MenuAction
+	class SelectHole : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return m_Tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return m_Tooltip; } }
 		public override bool isProOnly { get { return true; } }
 
-		private static readonly pb_TooltipContent m_Tooltip = new pb_TooltipContent
+		private static readonly TooltipContent m_Tooltip = new TooltipContent
 		(
 			"Select Holes",
 			"Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
@@ -24,13 +24,13 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			if(pb_Editor.instance == null)
+			if(ProBuilderEditor.instance == null)
 				return false;
 
-			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
+			if(ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return false;
 
-			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
+			if(ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return false;
 
 			if(selection == null || selection.Length < 1)
@@ -41,10 +41,10 @@ namespace ProBuilder.Actions
 
 		public override bool IsHidden()
 		{
-			if(pb_Editor.instance.editLevel != EditLevel.Geometry)
+			if(ProBuilderEditor.instance.editLevel != EditLevel.Geometry)
 				return true;
 
-			if(pb_Editor.instance.selectionMode != SelectMode.Edge && pb_Editor.instance.selectionMode != SelectMode.Vertex)
+			if(ProBuilderEditor.instance.selectionMode != SelectMode.Edge && ProBuilderEditor.instance.selectionMode != SelectMode.Vertex)
 				return true;
 
 			return false;
@@ -68,7 +68,7 @@ namespace ProBuilder.Actions
 				pb.SetSelectedEdges(holes.SelectMany(x => x));
 			}
 
-			pb_Editor.Refresh();
+			ProBuilderEditor.Refresh();
 
 			return res;
 		}

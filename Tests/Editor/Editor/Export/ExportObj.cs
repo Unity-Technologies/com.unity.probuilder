@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder.Test;
 using UnityEngine.TestTools;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 
@@ -18,7 +18,7 @@ namespace ProBuilder.EditorTests.Export
 		public static void NumbersAreCultureInvariant()
 		{
 			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			var model = new pb_Model("Cube", cube.GetComponent<MeshFilter>().sharedMesh, cube.GetComponent<MeshRenderer>().sharedMaterial);
+			var model = new Model("Cube", cube.GetComponent<MeshFilter>().sharedMesh, cube.GetComponent<MeshRenderer>().sharedMaterial);
 			var current = Thread.CurrentThread.CurrentCulture;
 
 			try
@@ -28,7 +28,7 @@ namespace ProBuilder.EditorTests.Export
 				string obj, mtl;
 				List<string> textures;
 
-				if (pb_Obj.Export("Cube Test", new pb_Model[] { model }, out obj, out mtl, out textures))
+				if (ObjExporter.Export("Cube Test", new Model[] { model }, out obj, out mtl, out textures))
 				{
 					Assert.IsFalse(obj.Any(x => x.Equals(',')));
 					Assert.IsFalse(mtl.Any(x => x.Equals(',')));

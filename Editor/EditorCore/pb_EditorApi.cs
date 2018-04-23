@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	/// <summary>
 	/// Register for ProBuilder editor callbacks.
@@ -15,7 +15,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnEditLevelChangedListener(Action<int> func)
 		{
-			pb_Editor.AddOnEditLevelChangedListener(func);
+			ProBuilderEditor.AddOnEditLevelChangedListener(func);
 		}
 
 		/// <summary>
@@ -23,7 +23,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnObjectCreatedListener(OnObjectCreated func)
 		{
-			pb_EditorUtility.AddOnObjectCreatedListener(func);
+			EditorUtility.AddOnObjectCreatedListener(func);
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnSelectionUpdateListener(OnSelectionUpdateEventHandler func)
 		{
-			pb_Editor.onSelectionUpdate += func;
+			ProBuilderEditor.onSelectionUpdate += func;
 		}
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnVertexMovementBeginListener(OnVertexMovementBeginEventHandler func)
 		{
-			pb_Editor.onVertexMovementBegin += func;
+			ProBuilderEditor.onVertexMovementBegin += func;
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnVertexMovementFinishListener(OnVertexMovementFinishedEventHandler func)
 		{
-			pb_Editor.onVertexMovementFinish += func;
+			ProBuilderEditor.onVertexMovementFinish += func;
 		}
 
 		/// <summary>
@@ -55,37 +55,37 @@ namespace ProBuilder.EditorCore
 		/// </summary>
 		public static void AddOnMeshCompiledListener(OnMeshCompiled func)
 		{
-			pb_EditorMeshUtility.onMeshCompiled += func;
+			EditorMeshUtility.onMeshCompiled += func;
 		}
 
 		public static void RemoveOnEditLevelChangedListener(Action<int> func)
 		{
-			pb_Editor.RemoveOnEditLevelChangedListener(func);
+			ProBuilderEditor.RemoveOnEditLevelChangedListener(func);
 		}
 
 		public static void RemoveOnObjectCreatedListener(OnObjectCreated func)
 		{
-			pb_EditorUtility.RemoveOnObjectCreatedListener(func);
+			EditorUtility.RemoveOnObjectCreatedListener(func);
 		}
 
 		public static void RemoveOnSelectionUpdateListener(OnSelectionUpdateEventHandler func)
 		{
-			pb_Editor.onSelectionUpdate -= func;
+			ProBuilderEditor.onSelectionUpdate -= func;
 		}
 
 		public static void RemoveOnVertexMovementBeginListener(OnVertexMovementBeginEventHandler func)
 		{
-			pb_Editor.onVertexMovementBegin -= func;
+			ProBuilderEditor.onVertexMovementBegin -= func;
 		}
 
 		public static void RemoveOnVertexMovementFinishListener(OnVertexMovementFinishedEventHandler func)
 		{
-			pb_Editor.onVertexMovementFinish -= func;
+			ProBuilderEditor.onVertexMovementFinish -= func;
 		}
 
 		public static void RemoveOnMeshCompiledListener(OnMeshCompiled func)
 		{
-			pb_EditorMeshUtility.onMeshCompiled -= func;
+			EditorMeshUtility.onMeshCompiled -= func;
 		}
 	}
 }

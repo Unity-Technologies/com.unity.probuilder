@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using UnityEngine;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using ProBuilder.Core;
@@ -23,7 +23,7 @@ namespace ProBuilder.EditorTests.Export
 
 				string ply;
 
-				if (pb_Ply.Export(new pb_Object[] { cube }, out ply))
+				if (PlyExporter.Export(new pb_Object[] { cube }, out ply))
 				{
 					Assert.IsFalse(ply.Any(x => x.Equals(',')));
 				}

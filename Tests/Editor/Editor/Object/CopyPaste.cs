@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ProBuilder.Core;
 using ProBuilder.Test;
 using UnityEngine.TestTools;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 
 namespace ProBuilder.EditorTests.Object
 {
@@ -23,7 +23,7 @@ namespace ProBuilder.EditorTests.Object
 
 			try
 			{
-				pb_EditorUtility.VerifyMesh(copy);
+				EditorUtility.VerifyMesh(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
 				Assert.IsFalse(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
 				pb_TestUtility.AssertAreEqual(copy.msh, original.msh);

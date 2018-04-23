@@ -1,18 +1,18 @@
 using ProBuilder.Core;
-using ProBuilder.EditorCore;
+using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Interface;
+using UnityEditor.ProBuilder.UI;
 
 namespace ProBuilder.Actions
 {
-	class InvertSelection : pb_MenuAction
+	class InvertSelection : MenuAction
 	{
-		public override pb_ToolbarGroup group { get { return pb_ToolbarGroup.Selection; } }
-		public override Texture2D icon { get { return pb_IconUtility.GetIcon("Toolbar/Selection_Invert", IconSkin.Pro); } }
-		public override pb_TooltipContent tooltip { get { return _tooltip; } }
+		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
+		public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Invert", IconSkin.Pro); } }
+		public override TooltipContent tooltip { get { return _tooltip; } }
 
-		static readonly pb_TooltipContent _tooltip = new pb_TooltipContent
+		static readonly TooltipContent _tooltip = new TooltipContent
 		(
 			"Invert Selection",
 			@"Selects the opposite of the current selection. Eg, all unselected elements will become selected, the current selection will be unselected.",
@@ -21,7 +21,7 @@ namespace ProBuilder.Actions
 
 		public override bool IsEnabled()
 		{
-			return 	pb_Editor.instance != null && pb_Editor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
+			return 	ProBuilderEditor.instance != null && ProBuilderEditor.instance.editLevel != EditLevel.Top && selection != null && selection.Length > 0;
 		}
 
 		public override bool IsHidden()
@@ -31,7 +31,7 @@ namespace ProBuilder.Actions
 
 		public override pb_ActionResult DoAction()
 		{
-			return pb_MenuCommands.MenuInvertSelection(selection);
+			return MenuCommands.MenuInvertSelection(selection);
 		}
 	}
 }

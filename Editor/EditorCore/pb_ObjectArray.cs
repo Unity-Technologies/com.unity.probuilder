@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using ProBuilder.Core;
 
-namespace ProBuilder.EditorCore
+namespace UnityEditor.ProBuilder
 {
 	/**
 	 *	Used to store arrays of materials. Made obsolete by pb_MaterialArray.
