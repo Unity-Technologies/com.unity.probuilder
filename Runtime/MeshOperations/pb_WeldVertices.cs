@@ -25,10 +25,10 @@ namespace ProBuilder.MeshOperations
 		public static ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			int vertexCount = common.Count;
 
 			// Make assumption that there will rarely be a time when a single weld encompasses more than 32 vertices.

@@ -6,11 +6,11 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-	[CustomEditor(typeof(pb_Entity))]
+	[CustomEditor(typeof(Entity))]
 	[CanEditMultipleObjects]
 	class EntityEditor : UnityEditor.Editor
 	{
-		pb_Entity ent;
+		Entity ent;
 		pb_Object pb;
 
 		public enum ColType
@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 
 		public void OnEnable()
 		{
-			ent = (pb_Entity)target;
+			ent = (Entity)target;
 
 			if(ent != null)
 				pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
@@ -82,14 +82,14 @@ namespace UnityEditor.ProBuilder
 
 		private void AddCollider(ColType c)
 		{
-			Collider[] colliders = serializedObject.targetObjects.Where(x => x is pb_Entity).SelectMany(x => ((pb_Entity)x).gameObject.GetComponents<Collider>()).ToArray();
+			Collider[] colliders = serializedObject.targetObjects.Where(x => x is Entity).SelectMany(x => ((Entity)x).gameObject.GetComponents<Collider>()).ToArray();
 			bool isTrigger = false;
 			if( colliders != null )
 				isTrigger = colliders.Any(x => x.isTrigger);
 
 			RemoveColliders();
 
-			foreach(pb_Entity obj in serializedObject.targetObjects)
+			foreach(Entity obj in serializedObject.targetObjects)
 			{
 				GameObject go = obj.gameObject;
 
@@ -143,7 +143,7 @@ namespace UnityEditor.ProBuilder
 
 		private void RemoveColliders()
 		{
-			foreach(pb_Entity obj in serializedObject.targetObjects)
+			foreach(Entity obj in serializedObject.targetObjects)
 			{
 				foreach(Collider c in obj.gameObject.GetComponents<Collider>())
 					DestroyImmediate(c);

@@ -203,7 +203,7 @@ namespace UnityEditor.ProBuilder
 						if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 						{
 							pb_Object pb = selection[i];
-							pb_Edge[] edges = pb.SelectedEdges;
+							Edge[] edges = pb.SelectedEdges;
 							GL.Color(s_EdgeSelectedColor);
 
 							GL.MultMatrix(pb.transform.localToWorldMatrix);
@@ -311,7 +311,7 @@ namespace UnityEditor.ProBuilder
 			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
 			ren.mesh.vertices = pb.vertices;
-			ren.mesh.triangles = pb_Face.AllTriangles(pb.SelectedFaces);
+			ren.mesh.triangles = Face.AllTriangles(pb.SelectedFaces);
 
 			return ren;
 		}
@@ -332,7 +332,7 @@ namespace UnityEditor.ProBuilder
 				billboardCount = maxBillboardCount;
 
 			Vector3[] v = new Vector3[pb.sharedIndices.Length];
-			HashSet<int> selected = new HashSet<int>(pb_IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
+			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
 
 			for(int i = 0; i < billboardCount; i++)
 				v[i] = pb.vertices[pb.sharedIndices[i][0]];

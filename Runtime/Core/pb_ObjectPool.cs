@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// Simple object pool implementation.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	class pb_ObjectPool<T> where T : UnityEngine.Object, new()
+	class pb_ObjectPool<T> where T : Object, new()
 	{
 		public int desiredSize;
 

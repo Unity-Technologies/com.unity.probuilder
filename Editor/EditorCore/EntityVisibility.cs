@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder
 					break;
 			}
 
-			foreach(var entity in Object.FindObjectsOfType<pb_Entity>())
+			foreach(var entity in Object.FindObjectsOfType<Entity>())
 			{
 				if(entity.entityType == entityType)
 				{
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 
 			bool isEntering = isPlaying && orWillPlay;
 
-			foreach (var entityBehaviour in Resources.FindObjectsOfTypeAll<pb_EntityBehaviour>())
+			foreach (var entityBehaviour in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
 			{
 				if (entityBehaviour.manageVisibility)
 				{
@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder
 			bool detailEnabled	 = show_Detail;
 			bool moverEnabled	 = show_Mover;
 
-			foreach(var entity in Resources.FindObjectsOfTypeAll<pb_Entity>())
+			foreach(var entity in Resources.FindObjectsOfTypeAll<Entity>())
 			{
 				MeshRenderer mr = entity.gameObject.GetComponent<MeshRenderer>();
 

@@ -47,8 +47,8 @@ namespace UnityEditor.ProBuilder
 
 		void OnDisable()
 		{
-			if(pb_LineRenderer.Valid())
-				pb_LineRenderer.instance.Clear();
+			if(SceneViewLineRenderer.Valid())
+				SceneViewLineRenderer.instance.Clear();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 			ProBuilderEditor.OnSelectionUpdate -= OnSelectionUpdate;
@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
 		{
 			try
 			{
-				pb_LineRenderer.instance.Clear();
+				SceneViewLineRenderer.instance.Clear();
 
 				foreach(pb_Object pb in selection)
 					DrawElements(pb);
@@ -425,7 +425,7 @@ namespace UnityEditor.ProBuilder
 
 		void DrawTriangleInfo(pb_Object pb)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			Vector3[] vertices = pb.vertices;
 			Camera cam = SceneView.lastActiveSceneView.camera;
@@ -451,7 +451,7 @@ namespace UnityEditor.ProBuilder
 
 				Vector3 point = pb.transform.TransformPoint(vertices[indices[0]]);
 
-				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
 				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
@@ -485,17 +485,17 @@ namespace UnityEditor.ProBuilder
 		void DrawEdgeInfo(pb_Object pb)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			pb_Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
-			IEnumerable<pb_EdgeLookup> edges = pb_EdgeLookup.GetEdgeLookup(source, lookup);
+			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
+			IEnumerable<EdgeLookup> edges = EdgeLookup.GetEdgeLookup(source, lookup);
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			int labelCount = 0;
 
-			foreach(pb_EdgeLookup edge in edges)
+			foreach(EdgeLookup edge in edges)
 			{
 				Vector3 point = pb.transform.TransformPoint((pb.vertices[edge.local.x] + pb.vertices[edge.local.y])/ 2f);
 
-				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
 				Vector2 cen = HandleUtility.WorldToGUIPoint(point);
@@ -519,20 +519,20 @@ namespace UnityEditor.ProBuilder
 
 		void DrawFaceInfo(pb_Object pb)
 		{
-			pb_Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
+			Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			int labelCount = 0;
 
-			foreach(pb_Face f in faces)
+			foreach(Face f in faces)
 			{
-				Vector3 point = pb.transform.TransformPoint( pb_Math.Average(pb.vertices, f.distinctIndices) );
+				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.vertices, f.distinctIndices) );
 
-				if( testOcclusion && pb_HandleUtility.PointIsOccluded(cam, pb, point) )
+				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
 
-				Vector3 normal = pb.transform.TransformDirection( pb_Math.Normal(pb, f) );
+				Vector3 normal = pb.transform.TransformDirection( ProBuilderMath.Normal(pb, f) );
 
 				StringBuilder sb = new StringBuilder();
 
@@ -620,7 +620,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		void DrawElements(pb_Object pb)
 		{
-			pb_LineRenderer.instance.Clear();
+			SceneViewLineRenderer.instance.Clear();
 
 			if( selectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
 				return;
@@ -654,7 +654,7 @@ namespace UnityEditor.ProBuilder
 				n += 6;
 			}
 
-			pb_LineRenderer.instance.AddLineSegments(segments, ElementColors);
+			SceneViewLineRenderer.instance.AddLineSegments(segments, ElementColors);
 		}
 	}
 }

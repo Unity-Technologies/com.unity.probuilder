@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder
 			// has renamed the folder, or something very spooky is going on.
 			// Either way, just create a new ProBuilder folder in Assets and return that so at the very least
 			// local preferences and the material/color palettes will still work.
-			pb_Log.Warning("Creating a new ProBuilder directory... was the ProBuilder folder renamed?\nIcons & preferences may not work in this state.");
+			Log.Warning("Creating a new ProBuilder directory... was the ProBuilder folder renamed?\nIcons & preferences may not work in this state.");
 			s_ProBuilderFolderPath = "Assets/ProBuilder";
 			Directory.CreateDirectory(s_ProBuilderFolderPath);
 
@@ -218,7 +218,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="path"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		internal static T LoadRequired<T>(string path) where T : ScriptableObject, pb_IHasDefault
+		internal static T LoadRequired<T>(string path) where T : ScriptableObject, IHasDefault
 		{
 			T asset = Load<T>(path);
 
@@ -268,7 +268,7 @@ namespace UnityEditor.ProBuilder
 
 			if (string.IsNullOrEmpty(dir))
 			{
-				pb_Log.Error("Cannot write file to \"{0}\", invalid path.", path);
+				Log.Error("Cannot write file to \"{0}\", invalid path.", path);
 				return;
 			}
 

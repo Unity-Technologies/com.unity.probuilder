@@ -97,8 +97,8 @@ namespace UnityEditor.ProBuilder
 		static Vector2 handleOffset = Vector2.zero;
 		static Vector2 initialMousePosition = Vector2.zero;
 
-		static pb_HandleConstraint2D axisConstraint = new pb_HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
-		public static pb_HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
+		static HandleConstraint2D axisConstraint = new HandleConstraint2D(0, 0);	// Multiply this value by input to mask axis movement.
+		public static HandleConstraint2D CurrentAxisConstraint { get { return axisConstraint; } }
 
 		public static bool limitToLeftButton = true;
 
@@ -191,20 +191,20 @@ namespace UnityEditor.ProBuilder
 					{
 						currentId = id;
 						handleOffset = position - mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(1, 1);
+						axisConstraint = new HandleConstraint2D(1, 1);
 					}
 					else
 					if(handleRectRight.Contains(mousePosition))
 					{
 						currentId = id;
 						handleOffset = position - mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(1, 0);
+						axisConstraint = new HandleConstraint2D(1, 0);
 					}
 					else if(handleRectUp.Contains(mousePosition))
 					{
 						currentId = id;
 						handleOffset = position - mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(0, 1);
+						axisConstraint = new HandleConstraint2D(0, 1);
 					}
 
 				}
@@ -337,7 +337,7 @@ namespace UnityEditor.ProBuilder
 						diff.y = -diff.y;	// gui space Y is opposite-world
 						diff.y+=size;
 						scale = diff/size;
-						if(axisConstraint == pb_HandleConstraint2D.None)
+						if(axisConstraint == HandleConstraint2D.None)
 						{
 							scale.x = Mathf.Min(scale.x, scale.y);
 							scale.y = Mathf.Min(scale.x, scale.y);
@@ -359,7 +359,7 @@ namespace UnityEditor.ProBuilder
 						currentId = id;
 						handleOffset = position - mousePosition;
 						initialMousePosition = mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(1, 1);
+						axisConstraint = new HandleConstraint2D(1, 1);
 					}
 					else
 					if(handleRectRight.Contains(mousePosition))
@@ -367,14 +367,14 @@ namespace UnityEditor.ProBuilder
 						currentId = id;
 						handleOffset = position - mousePosition;
 						initialMousePosition = mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(1, 0);
+						axisConstraint = new HandleConstraint2D(1, 0);
 					}
 					else if(handleRectUp.Contains(mousePosition))
 					{
 						currentId = id;
 						handleOffset = position - mousePosition;
 						initialMousePosition = mousePosition;
-						axisConstraint = new pb_HandleConstraint2D(0, 1);
+						axisConstraint = new HandleConstraint2D(0, 1);
 					}
 
 				}
@@ -386,7 +386,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Pick the GameObject nearest mousePosition (filtering out @ignore) and raycast for a face it.
 		 */
-		internal static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<pb_Face>> ignore = null)
+		internal static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<Face>> ignore = null)
 		{
 			pb = null;
 			hit = null;
@@ -403,7 +403,7 @@ namespace UnityEditor.ProBuilder
 
 			Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
-			return pb_HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
+			return UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit, ignore[pb]);
 		}
 
 		/**
@@ -649,7 +649,7 @@ namespace UnityEditor.ProBuilder
 
 					if (s_ApplyWireMaterial == null)
 					{
-						pb_Log.Info("Failed to find wire material, stopping draw lines.");
+						Log.Info("Failed to find wire material, stopping draw lines.");
 						return false;
 					}
 				}

@@ -8,20 +8,20 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	class pb_VertexConnection : System.IEquatable<pb_VertexConnection>
 	{
-		public pb_VertexConnection(pb_Face face, List<int> indices)
+		public pb_VertexConnection(Face face, List<int> indices)
 		{
 			this.face = face;
 			this.indices = indices;
 		}
 
-		public pb_Face face;
+		public Face face;
 		public List<int> indices;
 
 		public bool isValid {
 			get { return indices != null && indices.Count > 1; }
 		}
 
-		public pb_VertexConnection Distinct(pb_IntArray[] sharedIndices)
+		public pb_VertexConnection Distinct(IntArray[] sharedIndices)
 		{
 			return new pb_VertexConnection(this.face, sharedIndices.UniqueIndicesWithValues(indices).ToList());
 		}
@@ -36,7 +36,7 @@ namespace UnityEngine.ProBuilder
 			return this.face == vc.face;
 		}
 
-		public static implicit operator pb_Face(pb_VertexConnection vc)
+		public static implicit operator Face(pb_VertexConnection vc)
 		{
 			return vc.face;
 		}

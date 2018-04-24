@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
 			this.submeshes = new pb_Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
 			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
-				submeshes[subMeshIndex] = new pb_Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : pb_Material.DefaultMaterial);
+				submeshes[subMeshIndex] = new pb_Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.DefaultMaterial);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);
 			this.name = name;
 			this.vertices = pb_Vertex.GetVertices(mesh);
-			pb_Face.GetMeshIndices(mesh.faces, out this.submeshes, quads ? MeshTopology.Quads : MeshTopology.Triangles);
+			Face.GetMeshIndices(mesh.faces, out this.submeshes, quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			this.matrix = mesh.transform.localToWorldMatrix;
 			mesh.ToMesh(MeshTopology.Triangles);
 			mesh.Refresh();

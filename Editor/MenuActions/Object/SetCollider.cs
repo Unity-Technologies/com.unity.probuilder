@@ -28,14 +28,14 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			foreach (pb_Object pb in MeshSelection.All())
 			{
-				var existing = pb.GetComponents<pb_EntityBehaviour>();
+				var existing = pb.GetComponents<EntityBehaviour>();
 
 				// For now just nuke any existing entity types (since there are only two). In the future we should be
 				// smarter about conflicting entity types.
 				for (int i = 0, c = existing.Length; i < c; i++)
 					Undo.DestroyObjectImmediate(existing[i]);
 
-				var entity = pb.GetComponent<pb_Entity>();
+				var entity = pb.GetComponent<Entity>();
 
 				if (entity != null)
 					Undo.DestroyObjectImmediate(entity);

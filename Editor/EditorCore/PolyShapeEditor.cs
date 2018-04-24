@@ -182,9 +182,9 @@ namespace UnityEditor.ProBuilder
 				if (old == pb_PolyShape.PolyEditMode.Path && mode == pb_PolyShape.PolyEditMode.Height && Event.current != null)
 				{
 					Vector3 up = polygon.transform.up;
-					Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
+					Vector3 origin = polygon.transform.TransformPoint(ProBuilderMath.Average(polygon.points));
 					Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+					Vector3 p = ProBuilderMath.GetNearestPointRayRay(origin, up, r.origin, r.direction);
 					m_HeightMouseOffset = polygon.extrude -
 					                      ProGridsInterface.ProGridsSnap(
 						                      Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up)));
@@ -215,7 +215,7 @@ namespace UnityEditor.ProBuilder
 				{
 					pb_RaycastHit hit;
 
-					if (pb_HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
+					if (UnityEngine.ProBuilder.HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
 						go.transform,
 						m.vertices,
 						m.triangles,
@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 						Vector3 hitPointWorld = go.transform.TransformPoint(hit.point);
 
 						// if hit point on plane is cardinal axis and on grid, snap to grid.
-						if (!pb_Math.IsCardinalAxis(polygon.transform.up))
+						if (!ProBuilderMath.IsCardinalAxis(polygon.transform.up))
 						{
 							polygon.isOnGrid = false;
 						}
@@ -411,7 +411,7 @@ namespace UnityEditor.ProBuilder
 
 						Vector3 point = ProGridsInterface.ProGridsSnap(polygon.transform.InverseTransformPoint(hit), SNAP_MASK);
 
-						if(polygon.points.Count > 2 && pb_Math.Approx3(polygon.points[0], point))
+						if(polygon.points.Count > 2 && ProBuilderMath.Approx3(polygon.points[0], point))
 						{
 							m_NextMouseUpAdvancesMode = true;
 							return;
@@ -505,13 +505,13 @@ namespace UnityEditor.ProBuilder
 				bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
 
-				Vector3 origin = polygon.transform.TransformPoint(pb_Math.Average(polygon.points));
+				Vector3 origin = polygon.transform.TransformPoint(ProBuilderMath.Average(polygon.points));
 
 				float extrude = polygon.extrude;
 
 				if(!sceneInUse)
 				{
-					Vector3 p = pb_Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+					Vector3 p = ProBuilderMath.GetNearestPointRayRay(origin, up, r.origin, r.direction);
 					extrude = ProGridsInterface.ProGridsSnap(m_HeightMouseOffset + Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p-origin, up)));
 				}
 

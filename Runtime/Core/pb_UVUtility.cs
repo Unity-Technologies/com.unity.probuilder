@@ -89,7 +89,7 @@ namespace UnityEngine.ProBuilder
 
 		private static Vector2[] StretchUVs(Vector2[] uvs, int[] indices)
 		{
-			Vector2 scale = pb_Math.LargestVector2(uvs, indices) - pb_Math.SmallestVector2(uvs, indices);
+			Vector2 scale = ProBuilderMath.LargestVector2(uvs, indices) - ProBuilderMath.SmallestVector2(uvs, indices);
 
 			for(int i = 0; i < indices.Length; i++)
 			{
@@ -114,7 +114,7 @@ namespace UnityEngine.ProBuilder
 			int len = indices.Length;
 
 			// shift UVs to zeroed coordinates
-			Vector2 smallestVector2 = pb_Math.SmallestVector2(uvs, indices);
+			Vector2 smallestVector2 = ProBuilderMath.SmallestVector2(uvs, indices);
 
 			int i;
 
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder
 				uvs[indices[i]].y -= smallestVector2.y;
 			}
 
-			float scale = pb_Math.LargestValue( pb_Math.LargestVector2(uvs, indices) );
+			float scale = ProBuilderMath.LargestValue( ProBuilderMath.LargestVector2(uvs, indices) );
 
 			for(i = 0; i < len; i++)
 			{
@@ -143,19 +143,19 @@ namespace UnityEngine.ProBuilder
 			switch(j)
 			{
 				case pb_UV.Justify.Left:
-					amt = new Vector2(pb_Math.SmallestVector2(uvs).x, 0f);
+					amt = new Vector2(ProBuilderMath.SmallestVector2(uvs).x, 0f);
 					break;
 				case pb_UV.Justify.Right:
-					amt = new Vector2(pb_Math.LargestVector2(uvs).x - 1f, 0f);
+					amt = new Vector2(ProBuilderMath.LargestVector2(uvs).x - 1f, 0f);
 					break;
 				case pb_UV.Justify.Top:
-					amt = new Vector2(0f, pb_Math.LargestVector2(uvs).y - 1f);
+					amt = new Vector2(0f, ProBuilderMath.LargestVector2(uvs).y - 1f);
 					break;
 				case pb_UV.Justify.Bottom:
-					amt = new Vector2(0f, pb_Math.SmallestVector2(uvs).y);
+					amt = new Vector2(0f, ProBuilderMath.SmallestVector2(uvs).y);
 					break;
 				case pb_UV.Justify.Center:
-					amt = pb_Math.Average(uvs) - (new Vector2(.5f, .5f));
+					amt = ProBuilderMath.Average(uvs) - (new Vector2(.5f, .5f));
 					break;
 			}
 
@@ -170,8 +170,8 @@ namespace UnityEngine.ProBuilder
 			tvec2.x = 0f;
 			tvec2.y = 0f;
 
-			Vector2 min = pb_Math.SmallestVector2(uvs, indices);
-			Vector2 max = pb_Math.LargestVector2(uvs, indices);
+			Vector2 min = ProBuilderMath.SmallestVector2(uvs, indices);
+			Vector2 max = ProBuilderMath.LargestVector2(uvs, indices);
 
 			if(	anchor == pb_UV.Anchor.UpperLeft || anchor == pb_UV.Anchor.MiddleLeft || anchor == pb_UV.Anchor.LowerLeft )
 				tvec2.x = min.x;

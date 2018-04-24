@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 						Vector2[] uvs = mesh.uv;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
-						s_PreviewMesh.triangles = pb_Face.AllTriangles(mesh.SelectedFaces);
+						s_PreviewMesh.triangles = Face.AllTriangles(mesh.SelectedFaces);
 					}
 				}
 				else

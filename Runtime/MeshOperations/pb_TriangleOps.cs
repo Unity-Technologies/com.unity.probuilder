@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		public static void ReverseWindingOrder(this pb_Object pb, pb_Face[] faces)
+		public static void ReverseWindingOrder(this pb_Object pb, Face[] faces)
 		{
 			for(int i = 0; i < faces.Length; i++)
 				faces[i].ReverseIndices();
@@ -29,7 +29,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static WindingOrder GetWindingOrder(this pb_Object pb, pb_Face face)
+		public static WindingOrder GetWindingOrder(this pb_Object pb, Face face)
 		{
 			Vector2[] p = pb_Projection.PlanarProject(pb, face);
 			return GetWindingOrder(p);
@@ -71,7 +71,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FlipEdge(this pb_Object pb, pb_Face face)
+		public static bool FlipEdge(this pb_Object pb, Face face)
 		{
 			int[] indices = face.indices;
 
@@ -140,9 +140,9 @@ namespace ProBuilder.MeshOperations
 			Vector3[] m_Vertices = pb.vertices;
 			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
 			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
-			List<pb_Face> m_RebuiltFaces = new List<pb_Face>();
+			List<Face> m_RebuiltFaces = new List<Face>();
 
-			foreach(pb_Face face in pb.faces)
+			foreach(Face face in pb.faces)
 			{
 				List<int> tris = new List<int>();
 
@@ -150,7 +150,7 @@ namespace ProBuilder.MeshOperations
 
 				for(int i = 0; i < ind.Length; i+=3)
 				{
-					float area = pb_Math.TriangleArea(m_Vertices[ind[i+0]], m_Vertices[ind[i+1]], m_Vertices[ind[i+2]]);
+					float area = ProBuilderMath.TriangleArea(m_Vertices[ind[i+0]], m_Vertices[ind[i+1]], m_Vertices[ind[i+2]]);
 
 					if(area > Mathf.Epsilon)
 					{
@@ -203,7 +203,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <returns></returns>
 		[System.Obsolete("Please use pb_MergeFaces.Merge(pb_Object target, IEnumerable<pb_Face> faces)")]
-		public static pb_Face MergeFaces(this pb_Object pb, pb_Face[] faces)
+		public static Face MergeFaces(this pb_Object pb, Face[] faces)
 		{
 			List<int> collectedIndices = new List<int>(faces[0].indices);
 
@@ -212,7 +212,7 @@ namespace ProBuilder.MeshOperations
 				collectedIndices.AddRange(faces[i].indices);
 			}
 
-			pb_Face mergedFace = new pb_Face(collectedIndices.ToArray(),
+			Face mergedFace = new Face(collectedIndices.ToArray(),
 			                                 faces[0].material,
 			                                 faces[0].uv,
 			                                 faces[0].smoothingGroup,
@@ -220,10 +220,10 @@ namespace ProBuilder.MeshOperations
 			                                 faces[0].elementGroup,
 			                                 faces[0].manualUV);
 
-			pb_Face[] rebuiltFaces = new pb_Face[pb.faces.Length - faces.Length + 1];
+			Face[] rebuiltFaces = new Face[pb.faces.Length - faces.Length + 1];
 
 			int n = 0;
-			foreach(pb_Face f in pb.faces)
+			foreach(Face f in pb.faces)
 			{
 				if(System.Array.IndexOf(faces, f) < 0)
 				{

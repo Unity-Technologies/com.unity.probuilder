@@ -96,7 +96,7 @@ namespace UnityEngine.ProBuilder
 			bool hasPointRotations = pointRotations != null && pointRotations.Count == points.Count;
 
 			Vector3[] positions = new Vector3[vertexCount];
-			pb_Face[] faces = vertexCountsMatch ? null : new pb_Face[(closeLoop ? cnt : cnt - 1) * rows];
+			Face[] faces = vertexCountsMatch ? null : new Face[(closeLoop ? cnt : cnt - 1) * rows];
 
 			int triangleIndex = 0, faceIndex = 0, vertexIndex = 0;
 			int segmentCount = (closeLoop ? cnt : cnt - 1);
@@ -126,7 +126,7 @@ namespace UnityEngine.ProBuilder
 				{
 					for(int n = 0; n < rowsPlus1Times2; n += 2)
 					{
-						faces[faceIndex] = new pb_Face(new int[6] {
+						faces[faceIndex] = new Face(new int[6] {
 							triangleIndex, triangleIndex + 1, triangleIndex + rowsPlus1Times2,
 							triangleIndex + rowsPlus1Times2, triangleIndex + 1, triangleIndex + rowsPlus1Times2 + 1 } );
 
@@ -176,7 +176,7 @@ namespace UnityEngine.ProBuilder
 
 				dir = (coming + leaving) * .5f;
 
-				secant = pb_Math.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
+				secant = ProBuilderMath.Secant(Vector3.Angle(coming, dir) * Mathf.Deg2Rad);
 			}
 			else
 			{
@@ -190,7 +190,7 @@ namespace UnityEngine.ProBuilder
 
 			dir.Normalize();
 
-			if(pb_Math.Approx3(dir, Vector3.up) || pb_Math.Approx3(dir, Vector3.zero))
+			if(ProBuilderMath.Approx3(dir, Vector3.up) || ProBuilderMath.Approx3(dir, Vector3.zero))
 				return Quaternion.identity;
 
 			return Quaternion.LookRotation(dir);

@@ -21,8 +21,8 @@ namespace UnityEngine.ProBuilder
 	/// </summary>
 	public class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
 	{
-		public pb_EdgeLookup edge;
-		public pb_Face face;
+		public EdgeLookup edge;
+		public Face face;
 		public pb_WingedEdge next;
 		public pb_WingedEdge previous;
 		public pb_WingedEdge opposite;
@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder
 			if(be != null && this.Equals(be))
 				return true;
 
-			if(b is pb_Edge && this.edge.local.Equals((pb_Edge) b))
+			if(b is Edge && this.edge.local.Equals((Edge) b))
 				return true;
 
 			return true;
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder
 			if(left.Count() != 3 || right.Count() != 3)
 				return null;
 
-			pb_EdgeLookup[] all = new pb_EdgeLookup[6]
+			EdgeLookup[] all = new EdgeLookup[6]
 			{
 				left.edge,
 				left.next.edge,
@@ -128,7 +128,7 @@ namespace UnityEngine.ProBuilder
 
 			int qi = 0;
 
-			pb_EdgeLookup[] edges = new pb_EdgeLookup[4];
+			EdgeLookup[] edges = new EdgeLookup[4];
 
 			for(int i = 0; i < 6; i++)
 				if(dup[i] < 1)
@@ -181,10 +181,10 @@ namespace UnityEngine.ProBuilder
 		 *	Returns a new set of edges where each edge's y matches the next edge x.
 		 *	The first edge is used as a starting point.
 		 */
-		public static List<pb_Edge> SortEdgesByAdjacency(pb_Face face)
+		public static List<Edge> SortEdgesByAdjacency(Face face)
 		{
 			// grab perimeter edges
-			List<pb_Edge> edges = new List<pb_Edge>(face.edges);
+			List<Edge> edges = new List<Edge>(face.edges);
 
 			return SortEdgesByAdjacency(edges);
 		}
@@ -192,7 +192,7 @@ namespace UnityEngine.ProBuilder
 		/**
 		 * Sort edges list by adjacency.
 		 */
-		public static List<pb_Edge> SortEdgesByAdjacency(List<pb_Edge> edges)
+		public static List<Edge> SortEdgesByAdjacency(List<Edge> edges)
 		{
 			for(int i = 1; i < edges.Count; i++)
 			{
@@ -202,7 +202,7 @@ namespace UnityEngine.ProBuilder
 				{
 					if(edges[n].x == want || edges[n].y == want)
 					{
-						pb_Edge swap = edges[n];
+						Edge swap = edges[n];
 						edges[n] = edges[i];
 						edges[i] = swap;
 					}
@@ -242,7 +242,7 @@ namespace UnityEngine.ProBuilder
 		 */
 		public static List<int> SortCommonIndicesByAdjacency(List<pb_WingedEdge> wings, HashSet<int> common)
 		{
-			List<pb_Edge> matches = wings.Where(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)).Select(y => y.edge.common).ToList();
+			List<Edge> matches = wings.Where(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)).Select(y => y.edge.common).ToList();
 
 			// if edge count != index count there isn't a full perimeter
 			if(matches.Count != common.Count)
@@ -260,27 +260,27 @@ namespace UnityEngine.ProBuilder
 		 *	Generate a Winged Edge data structure.
 		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
 		 */
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<pb_Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
+		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
 			Dictionary<int, int> lookup = sharedIndexLookup == null ? pb.sharedIndices.ToDictionary() : sharedIndexLookup;
-			IEnumerable<pb_Face> distinct = faces.Distinct();
+			IEnumerable<Face> distinct = faces.Distinct();
 
 			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();
-			Dictionary<pb_Edge, pb_WingedEdge> opposites = new Dictionary<pb_Edge, pb_WingedEdge>();
+			Dictionary<Edge, pb_WingedEdge> opposites = new Dictionary<Edge, pb_WingedEdge>();
 			int index = 0;
 
-			foreach(pb_Face f in distinct)
+			foreach(Face f in distinct)
 			{
-				List<pb_Edge> edges = SortEdgesByAdjacency(f);
+				List<Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
 				pb_WingedEdge first = null, prev = null;
 
 				for(int n = 0; n < edgeLength; n++)
 				{
-					pb_Edge e = edges[n];
+					Edge e = edges[n];
 
 					pb_WingedEdge w = new pb_WingedEdge();
-					w.edge = new pb_EdgeLookup(lookup[e.x], lookup[e.y], e.x, e.y);
+					w.edge = new EdgeLookup(lookup[e.x], lookup[e.y], e.x, e.y);
 					w.face = f;
 					if(n < 1) first = w;
 

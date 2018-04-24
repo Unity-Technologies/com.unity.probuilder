@@ -86,8 +86,8 @@ namespace UnityEditor.ProBuilder.Actions
 				{
 					DestroyImmediate(pb);
 
-					if(go.GetComponent<pb_Entity>())
-						DestroyImmediate(go.GetComponent<pb_Entity>());
+					if(go.GetComponent<Entity>())
+						DestroyImmediate(go.GetComponent<Entity>());
 
 					return;
 				}
@@ -101,17 +101,17 @@ namespace UnityEditor.ProBuilder.Actions
 				{
 					pb.dontDestroyMeshOnDelete = true;
 					DestroyImmediate(pb);
-					if(go.GetComponent<pb_Entity>())
-						DestroyImmediate(go.GetComponent<pb_Entity>());
+					if(go.GetComponent<Entity>())
+						DestroyImmediate(go.GetComponent<Entity>());
 				}
 				else
 				{
-					Mesh m = pb_MeshUtility.DeepCopy(pb.msh);
+					Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.msh);
 
 					DestroyImmediate(pb);
 
-					if(go.GetComponent<pb_Entity>())
-						DestroyImmediate(go.GetComponent<pb_Entity>());
+					if(go.GetComponent<Entity>())
+						DestroyImmediate(go.GetComponent<Entity>());
 
 					go.GetComponent<MeshFilter>().sharedMesh = m;
 					if(go.GetComponent<MeshCollider>())

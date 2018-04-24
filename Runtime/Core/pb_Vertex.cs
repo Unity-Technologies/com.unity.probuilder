@@ -51,14 +51,14 @@ namespace UnityEngine.ProBuilder
 			if(other == null)
 				return false;
 
-			return 	pb_Math.Approx3(position, other.position) &&
-					pb_Math.ApproxC(color, other.color) &&
-					pb_Math.Approx3(normal, other.normal) &&
-					pb_Math.Approx4(tangent, other.tangent) &&
-					pb_Math.Approx2(uv0, other.uv0) &&
-					pb_Math.Approx2(uv2, other.uv2) &&
-					pb_Math.Approx4(uv3, other.uv3) &&
-					pb_Math.Approx4(uv4, other.uv4);
+			return 	ProBuilderMath.Approx3(position, other.position) &&
+					ProBuilderMath.ApproxC(color, other.color) &&
+					ProBuilderMath.Approx3(normal, other.normal) &&
+					ProBuilderMath.Approx4(tangent, other.tangent) &&
+					ProBuilderMath.Approx2(uv0, other.uv0) &&
+					ProBuilderMath.Approx2(uv2, other.uv2) &&
+					ProBuilderMath.Approx4(uv3, other.uv3) &&
+					ProBuilderMath.Approx4(uv4, other.uv4);
 		}
 
 		// GetHashCode creates a new hashcode from position, uv0, and normal since those are the values most likely to be different.

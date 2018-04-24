@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 				// if not generating uv2, just collapse vertices.
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
-					pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
+					pb_Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(mesh);
 
 					float time = Time.realtimeSinceStartup;
 
@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder
 					// If GenerateUV2() takes longer than 3 seconds (!), show a warning prompting user
 					// to disable auto-uv2 generation.
 					if( (Time.realtimeSinceStartup - time) > 3f )
-						pb_Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", InObject.name, (Time.realtimeSinceStartup - time).ToString("F2")));
+						Log.Warning(string.Format("Generate UV2 for \"{0}\" took {1} seconds!  You may want to consider disabling Auto-UV2 generation in the `Preferences > ProBuilder` tab.", InObject.name, (Time.realtimeSinceStartup - time).ToString("F2")));
 
 					if(uv2.Length == vertices.Length)
 					{
@@ -97,14 +97,14 @@ namespace UnityEditor.ProBuilder
 					}
 					else
 					{
-						pb_Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
+						Log.Warning("Generate UV2 failed - the returned size of UV2 array != mesh.vertexCount");
 					}
 
-					pb_MeshCompiler.CollapseSharedVertices(mesh, vertices);
+					MeshCompiler.CollapseSharedVertices(mesh, vertices);
 				}
 				else
 				{
-					pb_MeshCompiler.CollapseSharedVertices(mesh);
+					MeshCompiler.CollapseSharedVertices(mesh);
 				}
 			}
 
@@ -158,7 +158,7 @@ namespace UnityEditor.ProBuilder
 							// Debug.Log("reconnect prefab to mesh");
 
 							// use the most recent mesh iteration (when undoing for example)
-							pb_MeshUtility.CopyTo(mesh, m);
+							UnityEngine.ProBuilder.MeshUtility.CopyTo(mesh, m);
 
 							UnityEngine.Object.DestroyImmediate(mesh);
 							pb.gameObject.GetComponent<MeshFilter>().sharedMesh = m;

@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
 
 				if (stored < k_ProBuilder_3_0_2)
 				{
-					pb_Log.Info("Updated mesh handle graphic preferences to 3.0.2.");
+					Log.Info("Updated mesh handle graphic preferences to 3.0.2.");
 
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbUseUnityColors);
 					PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeColor);

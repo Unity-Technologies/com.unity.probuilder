@@ -106,7 +106,7 @@ namespace ProBuilder.MeshOperations
 			// leaving the Import function).
 			pb_Vertex[] sourceVertices = pb_Vertex.GetVertices(originalMesh);
 			List<pb_Vertex> splitVertices = new List<pb_Vertex>();
-			List<pb_Face> faces = new List<pb_Face>();
+			List<Face> faces = new List<Face>();
 
 			// Fill in Faces array with just the position indices. In the next step we'll
 			// figure out smoothing groups & merging
@@ -115,7 +115,7 @@ namespace ProBuilder.MeshOperations
 
 			for(int subMeshIndex = 0; subMeshIndex < originalMesh.subMeshCount; subMeshIndex++)
 			{
-				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : pb_Material.DefaultMaterial;
+				Material material = materialCount > 0 ? materials[subMeshIndex % materialCount] : BuiltinMaterials.DefaultMaterial;
 
 				switch(originalMesh.GetTopology(subMeshIndex))
 				{
@@ -125,7 +125,7 @@ namespace ProBuilder.MeshOperations
 
 						for(int tri = 0; tri < indices.Length; tri += 3)
 						{
-							faces.Add(new pb_Face(
+							faces.Add(new Face(
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
 								material,
 								new pb_UV(),
@@ -149,7 +149,7 @@ namespace ProBuilder.MeshOperations
 
 						for(int quad = 0; quad < indices.Length; quad += 4)
 						{
-							faces.Add(new pb_Face(new int[] {
+							faces.Add(new Face(new int[] {
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
 								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
 								material,
@@ -179,17 +179,17 @@ namespace ProBuilder.MeshOperations
 			m_Mesh.Clear();
 			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.SetFaces(faces);
-			m_Mesh.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(m_Mesh.vertices));
-			m_Mesh.SetSharedIndicesUV(new pb_IntArray[0]);
+			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.vertices));
+			m_Mesh.SetSharedIndicesUV(new IntArray[0]);
 
-			HashSet<pb_Face> processed = new HashSet<pb_Face>();
+			HashSet<Face> processed = new HashSet<Face>();
 
 			if(importSettings.quads)
 			{
 				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 
 				// build a lookup of the strength of edge connections between triangle faces
-				Dictionary<pb_EdgeLookup, float> connections = new Dictionary<pb_EdgeLookup, float>();
+				Dictionary<EdgeLookup, float> connections = new Dictionary<EdgeLookup, float>();
 
 				for(int i = 0; i < wings.Count; i++)
 				{
@@ -203,7 +203,7 @@ namespace ProBuilder.MeshOperations
 					}
 				}
 
-				List<pb_Tuple<pb_Face, pb_Face>> quads = new List<pb_Tuple<pb_Face, pb_Face>>();
+				List<pb_Tuple<Face, Face>> quads = new List<pb_Tuple<Face, Face>>();
 
 				// move through each face and find it's best quad neighbor
 				foreach(pb_WingedEdge face in wings)
@@ -212,7 +212,7 @@ namespace ProBuilder.MeshOperations
 						continue;
 
 					float bestScore = 0f;
-					pb_Face buddy = null;
+					Face buddy = null;
 
 					foreach(pb_WingedEdge border in face)
 					{
@@ -234,7 +234,7 @@ namespace ProBuilder.MeshOperations
 					if(buddy != null)
 					{
 						processed.Add(buddy);
-						quads.Add(new pb_Tuple<pb_Face, pb_Face>(face.face, buddy));
+						quads.Add(new pb_Tuple<Face, Face>(face.face, buddy));
 					}
 				}
 
@@ -252,10 +252,10 @@ namespace ProBuilder.MeshOperations
 			return false;
 		}
 
-		pb_Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<pb_EdgeLookup, float> connections)
+		Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<EdgeLookup, float> connections)
 		{
 			float score = 0f;
-			pb_Face face = null;
+			Face face = null;
 
 			foreach(pb_WingedEdge border in wing)
 			{
@@ -284,8 +284,8 @@ namespace ProBuilder.MeshOperations
 				return 0f;
 
 			// first check normals
-			Vector3 leftNormal = pb_Math.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
-			Vector3 rightNormal = pb_Math.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
+			Vector3 leftNormal = ProBuilderMath.Normal(m_Vertices[quad[0]].position, m_Vertices[quad[1]].position, m_Vertices[quad[2]].position);
+			Vector3 rightNormal = ProBuilderMath.Normal(m_Vertices[quad[2]].position, m_Vertices[quad[3]].position, m_Vertices[quad[0]].position);
 
 			float score = Vector3.Dot(leftNormal, rightNormal);
 

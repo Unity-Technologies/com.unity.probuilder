@@ -31,20 +31,20 @@ namespace UnityEngine.ProBuilder
 
 		static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
 		{
-			new Vector3(-1f,  pb_Math.PHI,  0f),
-			new Vector3( 1f,  pb_Math.PHI,  0f),
-			new Vector3(-1f, -pb_Math.PHI,  0f),
-			new Vector3( 1f, -pb_Math.PHI,  0f),
+			new Vector3(-1f,  ProBuilderMath.phi,  0f),
+			new Vector3( 1f,  ProBuilderMath.phi,  0f),
+			new Vector3(-1f, -ProBuilderMath.phi,  0f),
+			new Vector3( 1f, -ProBuilderMath.phi,  0f),
 
-			new Vector3( 0f, -1f,  pb_Math.PHI),
-			new Vector3( 0f,  1f,  pb_Math.PHI),
-			new Vector3( 0f, -1f, -pb_Math.PHI),
-			new Vector3( 0f,  1f, -pb_Math.PHI),
+			new Vector3( 0f, -1f,  ProBuilderMath.phi),
+			new Vector3( 0f,  1f,  ProBuilderMath.phi),
+			new Vector3( 0f, -1f, -ProBuilderMath.phi),
+			new Vector3( 0f,  1f, -ProBuilderMath.phi),
 
-			new Vector3(  pb_Math.PHI, 0f, -1f),
-			new Vector3(  pb_Math.PHI, 0f,  1f),
-			new Vector3( -pb_Math.PHI, 0f, -1f),
-			new Vector3( -pb_Math.PHI, 0f,  1f)
+			new Vector3(  ProBuilderMath.phi, 0f, -1f),
+			new Vector3(  ProBuilderMath.phi, 0f,  1f),
+			new Vector3( -ProBuilderMath.phi, 0f, -1f),
+			new Vector3( -ProBuilderMath.phi, 0f,  1f)
 		};
 
 		static readonly int[] k_IcosphereTriangles = new int[60]
@@ -137,7 +137,7 @@ namespace UnityEngine.ProBuilder
 			if (pb == null)
 			{
 #if DEBUG
-				pb_Log.Error(shape.ToString() + " type has no default!");
+				Log.Error(shape.ToString() + " type has no default!");
 #endif
 				pb = CubeGenerator(Vector3.one);
 			}
@@ -158,7 +158,7 @@ namespace UnityEngine.ProBuilder
 		{
 			/// 4 vertices per quad, 2 quads per step.
 			Vector3[] vertices = new Vector3[4 * steps * 2];
-			pb_Face[] faces = new pb_Face[steps * 2];
+			Face[] faces = new Face[steps * 2];
 
 			/// vertex index, face index
 			int v = 0, t = 0;
@@ -185,14 +185,14 @@ namespace UnityEngine.ProBuilder
 				vertices[v+6] = new Vector3(x0, y1, z1);
 				vertices[v+7] = new Vector3(x1, y1, z1);
 
-				faces[t+0] = new pb_Face( new int[] { 	v + 0,
+				faces[t+0] = new Face( new int[] { 	v + 0,
 														v + 1,
 														v + 2,
 														v + 1,
 														v + 3,
 														v + 2 });
 
-				faces[t+1] = new pb_Face( new int[] { 	v + 4,
+				faces[t+1] = new Face( new int[] { 	v + 4,
 														v + 5,
 														v + 6,
 														v + 5,
@@ -213,7 +213,7 @@ namespace UnityEngine.ProBuilder
 				for(int side = 0; side < 2; side++)
 				{
 					Vector3[] sides_v = new Vector3[ steps * 4 + (steps - 1) * 3 ];
-					pb_Face[] sides_f = new pb_Face[ steps + steps-1 ];
+					Face[] sides_f = new Face[ steps + steps-1 ];
 
 					int sv = 0, st = 0;
 
@@ -230,7 +230,7 @@ namespace UnityEngine.ProBuilder
 						sides_v[sv+2] = new Vector3(x, y0, z0);
 						sides_v[sv+3] = new Vector3(x, y1, z1);
 
-						sides_f[st++] = new pb_Face( side % 2 == 0 ?
+						sides_f[st++] = new Face( side % 2 == 0 ?
 							new int[] { v+0, v+1, v+2, v+1, v+3, v+2 } :
 							new int[] { v+2, v+1, v+0, v+2, v+3, v+1 } );
 
@@ -246,7 +246,7 @@ namespace UnityEngine.ProBuilder
 							sides_v[sv+1] = new Vector3(x, y1, z0);
 							sides_v[sv+2] = new Vector3(x, y1, z1);
 
-							sides_f[st++] = new pb_Face( side % 2 == 0 ?
+							sides_f[st++] = new Face( side % 2 == 0 ?
 								new int[] { v+2, v+1, v+0 } :
 								new int[] { v+0, v+1, v+2 } );
 
@@ -271,7 +271,7 @@ namespace UnityEngine.ProBuilder
 					new Vector3(size.x, size.y, size.z)
 					});
 
-				faces = faces.Add(new pb_Face(new int[] {v+0, v+1, v+2, v+1, v+3, v+2}));
+				faces = faces.Add(new Face(new int[] {v+0, v+1, v+2, v+1, v+3, v+2}));
 			}
 
 			pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(vertices, faces);
@@ -297,7 +297,7 @@ namespace UnityEngine.ProBuilder
 			// 4 vertices per quad, vertical step first, then floor step can be 3 or 4 verts depending on
 			// if the inner radius is 0 or not.
 			Vector3[] vertices = new Vector3[(4 * steps) + ((noInnerSide ? 3 : 4) * steps)];
-			pb_Face[] faces = new pb_Face[steps * 2];
+			Face[] faces = new Face[steps * 2];
 
 			// vertex index, face index
 			int v = 0, t = 0;
@@ -349,7 +349,7 @@ namespace UnityEngine.ProBuilder
 					vertices[v+7].y = h1;
 				}
 
-				faces[t+0] = new pb_Face( new int[] {
+				faces[t+0] = new Face( new int[] {
 					v + 0,
 					v + 1,
 					v + 2,
@@ -359,14 +359,14 @@ namespace UnityEngine.ProBuilder
 
 				if(noInnerSide)
 				{
-					faces[t+1] = new pb_Face( new int[] {
+					faces[t+1] = new Face( new int[] {
 						v + 4,
 						v + 5,
 						v + 6 });
 				}
 				else
 				{
-					faces[t+1] = new pb_Face( new int[] {
+					faces[t+1] = new Face( new int[] {
 						v + 4,
 						v + 5,
 						v + 6,
@@ -395,7 +395,7 @@ namespace UnityEngine.ProBuilder
 				for(int side = (noInnerSide ? 1 : 0); side < 2; side++)
 				{
 					Vector3[] sides_v = new Vector3[ steps * 4 + (steps - 1) * 3 ];
-					pb_Face[] sides_f = new pb_Face[ steps + steps-1 ];
+					Face[] sides_f = new Face[ steps + steps-1 ];
 
 					int sv = 0, st = 0;
 
@@ -420,7 +420,7 @@ namespace UnityEngine.ProBuilder
 						sides_v[sv+2].y = h0;
 						sides_v[sv+3].y = h1;
 
-						sides_f[st++] = new pb_Face( side % 2 == 0 ?
+						sides_f[st++] = new Face( side % 2 == 0 ?
 							new int[] { v+2, v+1, v+0, v+2, v+3, v+1 } :
 							new int[] { v+0, v+1, v+2, v+1, v+3, v+2 } );
 						sides_f[st-1].smoothingGroup = side + 1;
@@ -440,7 +440,7 @@ namespace UnityEngine.ProBuilder
 							sides_v[sv+1].y = h1;
 							sides_v[sv+2].y = h1;
 
-							sides_f[st++] = new pb_Face( side % 2 == 0 ?
+							sides_f[st++] = new Face( side % 2 == 0 ?
 								new int[] { v+2, v+1, v+0 } :
 								new int[] { v+0, v+1, v+2 } );
 
@@ -469,7 +469,7 @@ namespace UnityEngine.ProBuilder
 					new Vector3(cos * outerRadius, height, sin * outerRadius)
 					});
 
-				faces = faces.Add(new pb_Face(new int[] {v+2, v+1, v+0, v+2, v+3, v+1}));
+				faces = faces.Add(new Face(new int[] {v+2, v+1, v+0, v+2, v+3, v+1}));
 			}
 
 			if(circumference < 0f)
@@ -481,7 +481,7 @@ namespace UnityEngine.ProBuilder
 					vertices[i].Scale(flip);
 				}
 
-				foreach(pb_Face f in faces)
+				foreach(Face f in faces)
 					f.ReverseIndices();
 			}
 
@@ -619,7 +619,7 @@ namespace UnityEngine.ProBuilder
 
 			// add two because end caps
 			Vector3[] verts = new Vector3[(axisDivisions*(heightCuts+1)*4) + (axisDivisions*6)];
-			pb_Face[] faces = new pb_Face[axisDivisions*(heightCuts+1)   + (axisDivisions*2)];
+			Face[] faces = new Face[axisDivisions*(heightCuts+1)   + (axisDivisions*2)];
 
 			// build vertex array
 			int it = 0;
@@ -658,9 +658,9 @@ namespace UnityEngine.ProBuilder
 					int two 	= index + 2;
 					int three 	= index + 3;
 
-					faces[f++] = new pb_Face(
+					faces[f++] = new Face(
 						new int[6]{ zero, one, two, one, three, two },
-						pb_Material.DefaultMaterial,
+						BuiltinMaterials.DefaultMaterial,
 						new pb_UV(),
 						smoothing,
 						-1,
@@ -685,7 +685,7 @@ namespace UnityEngine.ProBuilder
 				else
 					verts[ind+2] = new Vector3(circle[000].x, 0f, circle[000].z);
 
-				faces[f_ind + n] = new pb_Face(new int[3] {ind+2, ind+1, ind+0});
+				faces[f_ind + n] = new Face(new int[3] {ind+2, ind+1, ind+0});
 
 				ind += 3;
 
@@ -697,7 +697,7 @@ namespace UnityEngine.ProBuilder
 				else
 					verts[ind+2] = new Vector3(circle[000].x, height, circle[000].z);
 
-				faces[f_ind + (n+axisDivisions)] = new pb_Face(new int[3] {ind+0, ind+1, ind+2});
+				faces[f_ind + (n+axisDivisions)] = new Face(new int[3] {ind+0, ind+1, ind+2});
 
 				ind += 3;
 			}
@@ -752,13 +752,13 @@ namespace UnityEngine.ProBuilder
 				template[4]		// 17
 			};
 
-			pb_Face[] f = new pb_Face[5]
+			Face[] f = new Face[5]
 			{
-				new pb_Face(new int[3]{2, 1, 0}),			// x
-				new pb_Face(new int[6]{5, 4, 3, 5, 6, 4}),	// x
-				new pb_Face(new int[3]{9, 8, 7}),
-				new pb_Face(new int[6]{12, 11, 10, 12, 13, 11}),
-				new pb_Face(new int[6]{14, 15, 16, 15, 17, 16})
+				new Face(new int[3]{2, 1, 0}),			// x
+				new Face(new int[6]{5, 4, 3, 5, 6, 4}),	// x
+				new Face(new int[3]{9, 8, 7}),
+				new Face(new int[6]{12, 11, 10, 12, 13, 11}),
+				new Face(new int[6]{14, 15, 16, 15, 17, 16})
 			};
 
 			pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v, f);
@@ -887,7 +887,7 @@ namespace UnityEngine.ProBuilder
 
 			Vector2[] p = new Vector2[ (w*h) * 4 ];
 			Vector3[] v = new Vector3[ (w*h) * 4 ];
-			pb_Face[] f = new pb_Face[w*h];
+			Face[] f = new Face[w*h];
 
 			int i = 0, j = 0;
 			{
@@ -906,7 +906,7 @@ namespace UnityEngine.ProBuilder
 						p[i+2] = new Vector2(x0, 	y1);
 						p[i+3] = new Vector2(x1, 	y1);
 
-						f[j++] = new pb_Face( new int[6]
+						f[j++] = new Face( new int[6]
 							{
 								i+0,
 								i+1,
@@ -972,8 +972,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < subdivAxis; i++)
 			{
-				templateOut[i] = pb_Math.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
-				templateIn[i] = pb_Math.PointInCircumference(radius-thickness, i*(360f/subdivAxis), Vector2.zero);
+				templateOut[i] = ProBuilderMath.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
+				templateIn[i] = ProBuilderMath.PointInCircumference(radius-thickness, i*(360f/subdivAxis), Vector2.zero);
 			}
 
 			List<Vector3> v = new List<Vector3>();
@@ -1069,12 +1069,12 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < subdivAxis; i++)
 			{
-				Vector2 ct = pb_Math.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
+				Vector2 ct = ProBuilderMath.PointInCircumference(radius, i*(360f/subdivAxis), Vector2.zero);
 				template[i] = new Vector3(ct.x, 0f, ct.y);
 			}
 
 			List<Vector3> v = new List<Vector3>();
-			List<pb_Face> f = new List<pb_Face>();
+			List<Face> f = new List<Face>();
 
 			// build sides
 			for(int i = 0; i < subdivAxis; i++)
@@ -1092,8 +1092,8 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < subdivAxis*6; i+=6)
 			{
-				f.Add( new pb_Face( new int[3] {i+2,i+1,i+0} ) );
-				f.Add( new pb_Face( new int[3] {i+3,i+4,i+5} ) );
+				f.Add( new Face( new int[3] {i+2,i+1,i+0} ) );
+				f.Add( new Face( new int[3] {i+3,i+4,i+5} ) );
 			}
 
 			pb_Object pb = pb_Object.CreateInstanceWithVerticesFaces(v.ToArray(), f.ToArray());
@@ -1122,8 +1122,8 @@ namespace UnityEngine.ProBuilder
 
 			for (int i = 0; i < radialCuts; i++)
 			{
-				templateOut[i] = pb_Math.PointInCircumference(radius, i * (angle / (radialCuts-1)), Vector2.zero);
-				templateIn[i] = pb_Math.PointInCircumference(radius - width, i * (angle / (radialCuts-1)), Vector2.zero);
+				templateOut[i] = ProBuilderMath.PointInCircumference(radius, i * (angle / (radialCuts-1)), Vector2.zero);
+				templateIn[i] = ProBuilderMath.PointInCircumference(radius - width, i * (angle / (radialCuts-1)), Vector2.zero);
 			}
 
 			List<Vector3> v = new List<Vector3>();
@@ -1269,9 +1269,9 @@ namespace UnityEngine.ProBuilder
 			/**
 			 * Wind faces
 			 */
-			pb_Face[] f = new pb_Face[v.Length/3];
+			Face[] f = new Face[v.Length/3];
 			for(int i = 0; i < v.Length; i+=3) {
-				f[i/3] = new pb_Face( new int[3] { i, i+1, i+2 } );
+				f[i/3] = new Face( new int[3] { i, i+1, i+2 } );
 				f[i/3].manualUV = manualUvs;
 			}
 
@@ -1290,15 +1290,15 @@ namespace UnityEngine.ProBuilder
 
 			if (!weldVertices)
 			{
-				pb_IntArray[] si = new pb_IntArray[v.Length];
+				IntArray[] si = new IntArray[v.Length];
 				for (int i = 0; i < si.Length; i++)
-					si[i] = new pb_IntArray(new int[] {i});
+					si[i] = new IntArray(new int[] {i});
 
 				pb.SetSharedIndices(si);
 			}
 			else
 			{
-				pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(v));
+				pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(v));
 			}
 
 			pb.ToMesh();
@@ -1422,7 +1422,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// List<int> ind = new List<int>();
-			List<pb_Face> faces = new List<pb_Face>();
+			List<Face> faces = new List<Face>();
 			int fc = 0;
 
 			// faces
@@ -1436,7 +1436,7 @@ namespace UnityEngine.ProBuilder
 					int c = (i+0) * ((rows-1) * 2) + (n * 2) + 1;
 					int d = (i+1) * ((rows-1) * 2) + (n * 2) + 1;
 
-					faces.Add( new pb_Face(new int[] { a, b, c, b, d, c } ) );
+					faces.Add( new Face(new int[] { a, b, c, b, d, c } ) );
 					faces[fc].smoothingGroup = InSmooth ? 1 : -1;
 					faces[fc].manualUV = manualUvs;
 

@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
 				return;
 
 
-			foreach (var entity in Resources.FindObjectsOfTypeAll<pb_EntityBehaviour>())
+			foreach (var entity in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
 			{
 				if(entity.manageVisibility)
 					entity.OnEnterPlayMode();
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 			{
 				GameObject go = pb.gameObject;
 
-				pb_Entity entity = pb.gameObject.GetComponent<pb_Entity>();
+				Entity entity = pb.gameObject.GetComponent<Entity>();
 
 				if( entity == null )
 					continue;

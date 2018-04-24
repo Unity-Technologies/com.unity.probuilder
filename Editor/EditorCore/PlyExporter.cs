@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 				{
 					indices = new List<int[]>();
 
-					foreach(pb_Face	face in pb.faces)
+					foreach(Face	face in pb.faces)
 					{
 						if(options.quads)
 						{

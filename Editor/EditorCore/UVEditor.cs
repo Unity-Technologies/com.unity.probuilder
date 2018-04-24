@@ -127,7 +127,7 @@ class UVEditor : EditorWindow
 	pb_Object[] selection;
 	int[][] distinct_indices;
 
-	List<pb_Face[]>[] incompleteTextureGroupsInSelection = new List<pb_Face[]>[0];
+	List<Face[]>[] incompleteTextureGroupsInSelection = new List<Face[]>[0];
 	List<List<Vector2>> incompleteTextureGroupsInSelection_CoordCache = new List<List<Vector2>>();
 
 	int selectedUVCount = 0;
@@ -514,7 +514,7 @@ class UVEditor : EditorWindow
 		// get incompletely selected texture groups
 		int len = selection == null ? 0 : selection.Length;
 
-		incompleteTextureGroupsInSelection = new List<pb_Face[]>[len];
+		incompleteTextureGroupsInSelection = new List<Face[]>[len];
 		incompleteTextureGroupsInSelection_CoordCache.Clear();
 
 		for(int i = 0; i < len; i++)
@@ -530,14 +530,14 @@ class UVEditor : EditorWindow
 				pb_Object pb = selection[i];
 
 
-				foreach(pb_Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
+				foreach(Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
 				{
 					if(incomplete_group == null || incomplete_group.Length < 1)
 						continue;
 
 					List<Vector2> coords = new List<Vector2>();
 
-					foreach(pb_Face face in incomplete_group)
+					foreach(Face face in incomplete_group)
 						coords.Add(Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
 
 					coords.Insert(0, Bounds2D.Center(coords.ToArray()));
@@ -616,27 +616,27 @@ class UVEditor : EditorWindow
 					/**
 					 * Sort faces into texture groups for re-projection
 					 */
-					Dictionary<int, List<pb_Face>> textureGroups = new Dictionary<int, List<pb_Face>>();
+					Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
 
 					int n = -2;
-					foreach(pb_Face face in System.Array.FindAll(pb.SelectedFaces, x => !x.manualUV))
+					foreach(Face face in System.Array.FindAll(pb.SelectedFaces, x => !x.manualUV))
 					{
 						if(textureGroups.ContainsKey(face.textureGroup))
 							textureGroups[face.textureGroup].Add(face);
 						else
-							textureGroups.Add( face.textureGroup > 0 ? face.textureGroup : n--, new List<pb_Face>() {face} );
+							textureGroups.Add( face.textureGroup > 0 ? face.textureGroup : n--, new List<Face>() {face} );
 					}
 
-					foreach(KeyValuePair<int, List<pb_Face>> kvp in textureGroups)
+					foreach(KeyValuePair<int, List<Face>> kvp in textureGroups)
 					{
 						if(tool == Tool.Move)
 						{
-							foreach(pb_Face face in kvp.Value)
+							foreach(Face face in kvp.Value)
 								face.uv.offset -= handlePosition - handlePosition_origin;
 						}
 						else if(tool == Tool.Rotate)
 						{
-							foreach(pb_Face face in kvp.Value)
+							foreach(Face face in kvp.Value)
 							{
 								if(face.uv.rotation > 360f)
 									face.uv.rotation = face.uv.rotation % 360f;
@@ -658,7 +658,7 @@ class UVEditor : EditorWindow
 			{
 				if(pb.SelectedFaceCount > 0)
 				{
-					foreach(pb_Face face in pb.SelectedFaces)
+					foreach(Face face in pb.SelectedFaces)
 					{
 						face.textureGroup = -1;
 						face.manualUV = true;
@@ -713,7 +713,7 @@ class UVEditor : EditorWindow
 			// 		selectedTris.Add(tris[n]);
 			// }
 
-			pb_IntArray[] sharedUVs = selection[i].sharedIndicesUV;
+			IntArray[] sharedUVs = selection[i].sharedIndicesUV;
 
 			List<int> selectedTris = new List<int>(selection[i].SelectedTriangles);
 
@@ -751,7 +751,7 @@ class UVEditor : EditorWindow
 	/**
 	 * return true if shortcut should eat the event
 	 */
-	internal bool ClickShortcutCheck(pb_Object pb, pb_Face selectedFace)
+	internal bool ClickShortcutCheck(pb_Object pb, Face selectedFace)
 	{
 		Event e = Event.current;
 
@@ -760,7 +760,7 @@ class UVEditor : EditorWindow
 		{
 			// get first selected Auto UV face
 			pb_Object firstObj;
-			pb_Face source;
+			Face source;
 
 			ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source);
 
@@ -795,7 +795,7 @@ class UVEditor : EditorWindow
 			if(len < 1)
 				return false;
 
-			pb_Face anchor = pb.SelectedFaces[len-1];
+			Face anchor = pb.SelectedFaces[len-1];
 
 			if(anchor == selectedFace) return false;
 
@@ -809,7 +809,7 @@ class UVEditor : EditorWindow
 			{
 				RefreshElementGroups(pb);
 
-				pb.SetSelectedFaces(new pb_Face[]{selectedFace});
+				pb.SetSelectedFaces(new Face[]{selectedFace});
 
 				// // only need to do this for one pb_Object...
 				// for(int i = 0; i < selection.Length; i++)
@@ -1087,7 +1087,7 @@ class UVEditor : EditorWindow
 								x = uv[pb.faces[n].edges[p].x];
 								y = uv[pb.faces[n].edges[p].y];
 
-								dist = pb_Math.DistancePointLineSegment(mpos, x, y);
+								dist = ProBuilderMath.DistancePointLineSegment(mpos, x, y);
 
 								if(dist < best)
 								{
@@ -1116,7 +1116,7 @@ class UVEditor : EditorWindow
 
 						for(int n = 0; n < selection[i].faces.Length; n++)
 						{
-							if( pb_Math.PointInPolygon(uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
+							if( ProBuilderMath.PointInPolygon(uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
 							{
 								nearestElement.objectIndex = i;
 								nearestElement.elementIndex = n;
@@ -1179,7 +1179,7 @@ class UVEditor : EditorWindow
 				{
 					pb_Object pb = selection[nearestElement.objectIndex];
 
-					pb_Edge edge = pb.faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+					Edge edge = pb.faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
 					int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices.ToDictionary());
 
 					if( ind > -1 )
@@ -1195,11 +1195,11 @@ class UVEditor : EditorWindow
 				bool superBreak = false;
 				for(int i = 0; i < selection.Length; i++)
 				{
-					HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(selection[i].SelectedFaces);
+					HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].SelectedFaces);
 
 					for(int n = 0; n < selection[i].faces.Length; n++)
 					{
-						if( pb_Math.PointInPolygon(selection[i].uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
+						if( ProBuilderMath.PointInPolygon(selection[i].uv, mpos, selection[i].faces[n].edges.AllTriangles()) )
 						{
 							if( selectedFaces.Contains(selection[i].faces[n]) )
 								selectedFaces.Remove(selection[i].faces[n]);
@@ -1279,13 +1279,13 @@ class UVEditor : EditorWindow
 		/**
 		 *	Setting a custom pivot
 		 */
-		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !pb_Math.Approx2(t_handlePosition, handlePosition, .0001f))
+		if((e.button == RIGHT_MOUSE_BUTTON || (e.alt && e.button == LEFT_MOUSE_BUTTON)) && !ProBuilderMath.Approx2(t_handlePosition, handlePosition, .0001f))
 		{
 			userPivot = true;	// flag the handle as having been user set.
 
 			if(ControlKey)
 			{
-				handlePosition = pb_Snap.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				handlePosition = pb_Snap.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 			}
 			else
 			{
@@ -1328,7 +1328,7 @@ class UVEditor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx2(t_handlePosition, handlePosition, pb_Math.HANDLE_EPSILON) )
+		if( !ProBuilderMath.Approx2(t_handlePosition, handlePosition, ProBuilderMath.handleEpsilon) )
 		{
 			/**
 			 * Start of move UV operation
@@ -1348,7 +1348,7 @@ class UVEditor : EditorWindow
 			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pb_Snap.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				newUVPosition = pb_Snap.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1433,7 +1433,7 @@ class UVEditor : EditorWindow
 		 * 	Unlike rotate and scale tools, if the selected faces are Auto the pb_UV changes will be applied
 		 *	in OnFinishUVModification, not at real time.
 		 */
-		if( !pb_Math.Approx2(delta, Vec3_Zero, .000001f) )
+		if( !ProBuilderMath.Approx2(delta, Vec3_Zero, .000001f) )
 		{
 			// Start of move UV operation
 			if(!modifyingUVs)
@@ -1448,7 +1448,7 @@ class UVEditor : EditorWindow
 			handlePosition.y += delta.y;
 
 			if(ControlKey)
-				handlePosition = pb_Snap.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(pb_Math.HANDLE_EPSILON) * pref_gridSnapValue);
+				handlePosition = pb_Snap.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1504,9 +1504,9 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+					Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
 
-					foreach(pb_Face face in autoFaces)
+					foreach(Face face in autoFaces)
 						face.uv.rotation += uvRotation - t_uvRotation;
 
 					selection[n].RefreshUV(autoFaces);
@@ -1559,9 +1559,9 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+					Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
 
-					foreach(pb_Face face in autoFaces)
+					foreach(Face face in autoFaces)
 						face.uv.rotation += delta;
 
 					selection[n].RefreshUV(autoFaces);
@@ -1582,8 +1582,8 @@ class UVEditor : EditorWindow
 		if(ControlKey)
 			uvScale = pb_Snap.SnapValue(uvScale, pref_gridSnapValue);
 
-		if(pb_Math.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
-		if(pb_Math.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
+		if(ProBuilderMath.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
+		if(ProBuilderMath.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
 
 		if(t_uvScale != uvScale)
 		{
@@ -1618,8 +1618,8 @@ class UVEditor : EditorWindow
 				Vector2 scale = uvScale.DivideBy(t_uvScale);
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
-					foreach(pb_Face face in autoFaces)
+					Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+					foreach(Face face in autoFaces)
 					{
 						face.uv.scale = Vector2.Scale(face.uv.scale, scale);
 					}
@@ -1681,8 +1681,8 @@ class UVEditor : EditorWindow
 
 			for(int n = 0; n < selection.Length; n++)
 			{
-				pb_Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
-				foreach(pb_Face face in autoFaces)
+				Face[] autoFaces = System.Array.FindAll(selection[n].SelectedFaces, x => !x.manualUV);
+				foreach(Face face in autoFaces)
 				{
 					face.uv.scale = Vector2.Scale(face.uv.scale, delta);
 				}
@@ -1983,9 +1983,9 @@ class UVEditor : EditorWindow
 
 					for(int n = 0; n < pb.faces.Length; n++)
 					{
-						pb_Face face = pb.faces[n];
+						Face face = pb.faces[n];
 
-						foreach(pb_Edge edge in face.edges)
+						foreach(Edge edge in face.edges)
 						{
 							x = UVToGUIPoint(uv[edge.x]);
 							y = UVToGUIPoint(uv[edge.y]);
@@ -2052,7 +2052,7 @@ class UVEditor : EditorWindow
 
 					if(pb.SelectedEdges.Length > 0)
 					{
-						foreach(pb_Edge edge in pb.SelectedEdges)
+						foreach(Edge edge in pb.SelectedEdges)
 						{
 							x = UVToGUIPoint(uv[edge.x]);
 							y = UVToGUIPoint(uv[edge.y]);
@@ -2078,7 +2078,7 @@ class UVEditor : EditorWindow
 						GL.Color(Color.red);
 						if(nearestElement.valid && nearestElement.elementSubIndex > -1 && !modifyingUVs)
 						{
-							pb_Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
+							Edge edge = selection[nearestElement.objectIndex].faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
 							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.x]) );
 							GL.Vertex( UVToGUIPoint(selection[nearestElement.objectIndex].uv[edge.y]) );
 						}
@@ -2113,7 +2113,7 @@ class UVEditor : EditorWindow
 						GL.Begin(GL.TRIANGLES);
 						for(int i = 0; i < selection.Length; i++)
 						{
-							foreach(pb_Face face in selection[i].SelectedFaces)
+							foreach(Face face in selection[i].SelectedFaces)
 							{
 								GL.Color(face.manualUV ? SELECTED_COLOR_MANUAL : SELECTED_COLOR_AUTO);
 
@@ -2401,13 +2401,13 @@ class UVEditor : EditorWindow
 						break;
 
 					case SelectMode.Edge:
-						List<pb_Edge> selectedEdges = new List<pb_Edge>(pb.SelectedEdges);
+						List<Edge> selectedEdges = new List<Edge>(pb.SelectedEdges);
 
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
 							for(int p = 0; p < pb.faces[n].edges.Length; p++)
 							{
-								pb_Edge edge = pb.faces[n].edges[p];
+								Edge edge = pb.faces[n].edges[p];
 
 								if( dragBounds.IntersectsLineSegment( mshUV[edge.x], mshUV[edge.y]) )
 								{
@@ -2427,11 +2427,11 @@ class UVEditor : EditorWindow
 					 */
 					case SelectMode.Face:
 
-						HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>(selection[i].SelectedFaces);
+						HashSet<Face> selectedFaces = new HashSet<Face>(selection[i].SelectedFaces);
 
 						for(int n = 0; n < pb.faces.Length; n++)
 						{
-							pb_Face face = pb.faces[n];
+							Face face = pb.faces[n];
 
 							int[] distinctIndices = pb.faces[n].distinctIndices;
 
@@ -2873,12 +2873,12 @@ class UVEditor : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			pb_Face[] faces = GetFaces(pb, pb.SelectedTriangles);
+			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 
 			List<int> elementGroups = new List<int>();
 			List<int> textureGroups = new List<int>();
 
-			foreach(pb_Face f in faces)
+			foreach(Face f in faces)
 			{
 				if(f.manualUV)
 					elementGroups.Add(f.elementGroup);
@@ -2886,7 +2886,7 @@ class UVEditor : EditorWindow
 					textureGroups.Add(f.textureGroup);
 			}
 
-			IEnumerable<pb_Face> matches = System.Array.FindAll(pb.faces, x =>
+			IEnumerable<Face> matches = System.Array.FindAll(pb.faces, x =>
 																(x.manualUV && x.elementGroup > -1 && elementGroups.Contains(x.elementGroup)) ||
 																(!x.manualUV && x.textureGroup > 0 && textureGroups.Contains(x.textureGroup)) );
 
@@ -2901,10 +2901,10 @@ class UVEditor : EditorWindow
 	 * If any of the faces in @selection are AutoUV and in a texture group, this
 	 * augments the texture group buddies to the selection and returns it.
 	 */
-	private pb_Face[] SelectTextureGroups(pb_Object pb, pb_Face[] selection)
+	private Face[] SelectTextureGroups(pb_Object pb, Face[] selection)
 	{
 		List<int> texGroups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
-		pb_Face[] sel = System.Array.FindAll(pb.faces, x => !x.manualUV && texGroups.Contains(x.textureGroup));
+		Face[] sel = System.Array.FindAll(pb.faces, x => !x.manualUV && texGroups.Contains(x.textureGroup));
 
 		return selection.Union(sel).ToArray();
 	}
@@ -2913,16 +2913,16 @@ class UVEditor : EditorWindow
 	 * If selection contains faces that are part of a texture group, and not all of those group faces are in the selection,
 	 * return a pb_Face[] of that entire group so that we can show the user some indication of that groupage.
 	 */
-	private List<pb_Face[]> GetIncompleteTextureGroups(pb_Object pb, pb_Face[] selection)
+	private List<Face[]> GetIncompleteTextureGroups(pb_Object pb, Face[] selection)
 	{
 		// get distinct list of all selected texture groups
 		List<int> groups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
-		List<pb_Face[]> incompleteGroups = new List<pb_Face[]>();
+		List<Face[]> incompleteGroups = new List<Face[]>();
 
 		// figure out how many
 		for(int i = 0; i < groups.Count; i++)
 		{
-			pb_Face[] whole_group = System.Array.FindAll(pb.faces, x => !x.manualUV && groups[i] == x.textureGroup);
+			Face[] whole_group = System.Array.FindAll(pb.faces, x => !x.manualUV && groups[i] == x.textureGroup);
 			int inSelection = System.Array.FindAll(selection, x => x.textureGroup == groups[i]).Length;
 
 			if(inSelection != whole_group.Length)
@@ -2941,7 +2941,7 @@ class UVEditor : EditorWindow
 
 		foreach(pb_Object pb in selection)
 		{
-			pb_Face[] faces = GetFaces(pb, pb.SelectedTriangles);
+			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 			pb.SetSelectedFaces(faces);
 
 			if(editor != null)
@@ -2956,27 +2956,27 @@ class UVEditor : EditorWindow
 	 */
 	private void RefreshElementGroups(pb_Object pb)
 	{
-		foreach(pb_Face f in pb.faces)
+		foreach(Face f in pb.faces)
 			f.elementGroup = -1;
 
-		pb_IntArray[] sharedUVs = pb.sharedIndicesUV;
+		IntArray[] sharedUVs = pb.sharedIndicesUV;
 
 		int eg = 0;
-		foreach(pb_IntArray pint in sharedUVs)
+		foreach(IntArray pint in sharedUVs)
 		{
 			if(pint.array.Length < 2) continue;
 
-			pb_Face[] faces = GetFaces(pb, pint);
+			Face[] faces = GetFaces(pb, pint);
 
 			int cur = pb.UnusedElementGroup(eg++);
 
-			foreach(pb_Face f in faces)
+			foreach(Face f in faces)
 			{
 				if(f.elementGroup > -1)
 				{
 					int g = f.elementGroup;
 
-					foreach(pb_Face fin in pb.faces)
+					foreach(Face fin in pb.faces)
 						if(fin.elementGroup == g)
 							fin.elementGroup = cur;
 				}
@@ -2989,10 +2989,10 @@ class UVEditor : EditorWindow
 	/**
 	 * Get all faces that contain any of the passed vertex indices.
 	 */
-	private pb_Face[] GetFaces(pb_Object pb, int[] indices)
+	private Face[] GetFaces(pb_Object pb, int[] indices)
 	{
-		List<pb_Face> faces = new List<pb_Face>();
-		foreach(pb_Face f in pb.faces)
+		List<Face> faces = new List<Face>();
+		foreach(Face f in pb.faces)
 		{
 			foreach(int i in f.distinctIndices)
 			{
@@ -3013,7 +3013,7 @@ class UVEditor : EditorWindow
 	private void FlagSelectedFacesAsManual(pb_Object pb)
 	{
 		// Mark selected UV faces manualUV flag true
-		foreach(pb_Face f in GetFaces(pb, pb.SelectedTriangles))
+		foreach(Face f in GetFaces(pb, pb.SelectedTriangles))
 		{
 			f.textureGroup = -1;
 			f.manualUV = true;
@@ -3053,7 +3053,7 @@ class UVEditor : EditorWindow
 				pb_UVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
 				pb_UVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
 
-				foreach(pb_Face f in selection[i].SelectedFaces)
+				foreach(Face f in selection[i].SelectedFaces)
 					f.manualUV = true;
 
 				RefreshElementGroups(selection[i]);
@@ -3317,7 +3317,7 @@ class UVEditor : EditorWindow
 			Vector2[] uv = channel == 0 ? selection[i].uv : selection[i].msh.uv2;
 
 			foreach(int n in selection[i].SelectedTriangles.Distinct())
-				uv[n] = pb_Math.ReflectPoint(uv[n], center, center + direction);
+				uv[n] = ProBuilderMath.ReflectPoint(uv[n], center, center + direction);
 
 			ApplyUVs(selection[i], uv, channel);
 

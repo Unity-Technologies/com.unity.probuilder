@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 			{
 				foreach (pb_Object pb in selection)
 				{
-					foreach (pb_Face face in pb.faces)
+					foreach (Face face in pb.faces)
 						pb.SetFaceColor(face, col);
 				}
 			}

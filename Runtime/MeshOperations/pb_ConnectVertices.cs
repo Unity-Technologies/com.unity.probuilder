@@ -28,10 +28,10 @@ namespace ProBuilder.MeshOperations
 			foreach(int i in distinct)
 				affected.UnionWith(pb.sharedIndices[i].array);
 
-			Dictionary<pb_Face, List<int>> splits = new Dictionary<pb_Face, List<int>>();
+			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 
-			foreach(pb_Face face in pb.faces)
+			foreach(Face face in pb.faces)
 			{
 				int[] faceIndices = face.distinctIndices;
 
@@ -43,13 +43,13 @@ namespace ProBuilder.MeshOperations
 			}
 
 			List<ConnectFaceRebuildData> appendFaces = new List<ConnectFaceRebuildData>();
-			List<pb_Face> successfulSplits = new List<pb_Face>();
+			List<Face> successfulSplits = new List<Face>();
 			HashSet<int> usedTextureGroups = new HashSet<int>(pb.faces.Select(x => x.textureGroup));
 			int newTextureGroupIndex = 1;
 
-			foreach(KeyValuePair<pb_Face, List<int>> split in splits)
+			foreach(KeyValuePair<Face, List<int>> split in splits)
 			{
-				pb_Face face = split.Key;
+				Face face = split.Key;
 
 				List<ConnectFaceRebuildData> res = split.Value.Count == 2 ?
 					ConnectIndicesInFace(face, split.Value[0], split.Value[1], vertices, lookup) :
@@ -79,9 +79,9 @@ namespace ProBuilder.MeshOperations
 				appendFaces.AddRange(res);
 			}
 
-			pb_FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), pb, vertices, null, lookup, null );
+			FaceRebuildData.Apply( appendFaces.Select(x => x.faceRebuildData), pb, vertices, null, lookup, null );
 			pb.SetSharedIndices(lookup);
-			pb.SetSharedIndicesUV(new pb_IntArray[0]);
+			pb.SetSharedIndicesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(successfulSplits).Length;
 
 			lookup = pb.sharedIndices.ToDictionary();
@@ -100,13 +100,13 @@ namespace ProBuilder.MeshOperations
 		}
 
 		static List<ConnectFaceRebuildData> ConnectIndicesInFace(
-			pb_Face face,
+			Face face,
 			int a,
 			int b,
 			List<pb_Vertex> vertices,
 			Dictionary<int, int> lookup)
 		{
-			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 
 			List<pb_Vertex>[] n_vertices = new List<pb_Vertex>[] {
 				new List<pb_Vertex>(),
@@ -147,14 +147,14 @@ namespace ProBuilder.MeshOperations
 			}
 
 			List<ConnectFaceRebuildData> faces = new List<ConnectFaceRebuildData>();
-			Vector3 nrm = pb_Math.Normal(vertices, face.indices);
+			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
 
 			for(int i = 0; i < n_vertices.Length; i++)
 			{
-				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = pb_Math.Normal(n_vertices[i], f.face.indices);
+				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.ReverseIndices();
@@ -166,7 +166,7 @@ namespace ProBuilder.MeshOperations
 		}
 
 		static List<ConnectFaceRebuildData> ConnectIndicesInFace(
-			pb_Face face,
+			Face face,
 			List<int> indices,
 			List<pb_Vertex> vertices,
 			Dictionary<int, int> lookup,
@@ -175,7 +175,7 @@ namespace ProBuilder.MeshOperations
 			if(indices.Count < 3)
 				return null;
 
-			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 
 			int splitCount = indices.Count;
 
@@ -184,7 +184,7 @@ namespace ProBuilder.MeshOperations
 			List<List<int>> n_indices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
 			pb_Vertex center = pb_Vertex.Average(vertices, indices);
-			Vector3 nrm = pb_Math.Normal(vertices, face.indices);
+			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
 
 			int index = 0;
 
@@ -216,10 +216,10 @@ namespace ProBuilder.MeshOperations
 				if(n_vertices[i].Count < 3)
 					continue;
 
-				pb_FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
+				FaceRebuildData f = pb_AppendPolygon.FaceWithVertices(n_vertices[i], false);
 				f.sharedIndices = n_sharedIndices[i];
 
-				Vector3 fn = pb_Math.Normal(n_vertices[i], f.face.indices);
+				Vector3 fn = ProBuilderMath.Normal(n_vertices[i], f.face.indices);
 
 				if(Vector3.Dot(nrm, fn) < 0)
 					f.face.ReverseIndices();

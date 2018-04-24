@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
 	[DisallowMultipleComponent]
-	class pb_TriggerBehaviour : pb_EntityBehaviour
+	class pb_TriggerBehaviour : EntityBehaviour
 	{
 		public override void Initialize()
 		{
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
 
 			collision.isTrigger = true;
 
-			SetMaterial(pb_Material.TriggerMaterial);
+			SetMaterial(BuiltinMaterials.TriggerMaterial);
 		}
 
 		public override void OnEnterPlayMode()

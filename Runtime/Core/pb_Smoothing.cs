@@ -80,12 +80,12 @@ namespace UnityEngine.ProBuilder
 		/// <param name="faces"></param>
 		/// <param name="angleThreshold"></param>
 		/// <param name="normals"></param>
-		public static void ApplySmoothingGroups(pb_Object pb, IEnumerable<pb_Face> faces, float angleThreshold, Vector3[] normals = null)
+		public static void ApplySmoothingGroups(pb_Object pb, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
 		{
 			// Reset the selected faces to no smoothing group
 			bool anySmoothed = false;
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
 				if(face.smoothingGroup != SMOOTHING_GROUP_NONE)
 					anySmoothed = true;
@@ -105,7 +105,7 @@ namespace UnityEngine.ProBuilder
 			float threshold = Mathf.Abs(Mathf.Cos(Mathf.Clamp(angleThreshold, 0f, 89.999f) * Mathf.Deg2Rad));
 			HashSet<int> used = new HashSet<int>(pb.faces.Select(x => x.smoothingGroup));
 			int group = GetNextUnusedSmoothingGroup(1, used);
-			HashSet<pb_Face> processed = new HashSet<pb_Face>();
+			HashSet<Face> processed = new HashSet<Face>();
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true);
 
 			foreach(pb_WingedEdge wing in wings)
@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		// Walk the perimiter of a wing looking for compatibly smooth connections. Returns true if any match was found, false if not.
-		static bool FindSoftEdgesRecursive(Vector3[] normals, pb_WingedEdge wing, float angleThreshold, HashSet<pb_Face> processed)
+		static bool FindSoftEdgesRecursive(Vector3[] normals, pb_WingedEdge wing, float angleThreshold, HashSet<Face> processed)
 		{
 			bool foundSmoothEdge = false;
 
@@ -153,7 +153,7 @@ namespace UnityEngine.ProBuilder
 			return foundSmoothEdge;
 		}
 
-		static bool IsSoftEdge(Vector3[] normals, pb_EdgeLookup left, pb_EdgeLookup right, float threshold)
+		static bool IsSoftEdge(Vector3[] normals, EdgeLookup left, EdgeLookup right, float threshold)
 		{
 			Vector3 lx = normals[left.local.x];
 			Vector3 ly = normals[left.local.y];

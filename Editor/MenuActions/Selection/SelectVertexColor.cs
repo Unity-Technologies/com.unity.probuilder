@@ -95,8 +95,8 @@ namespace UnityEditor.ProBuilder.Actions
 				if(mesh_colors == null || mesh_colors.Length != pb.vertexCount)
 					continue;
 
-				List<pb_Face> matches = new List<pb_Face>();
-				pb_Face[] faces = pb.faces;
+				List<Face> matches = new List<Face>();
+				Face[] faces = pb.faces;
 
 				for(int i = 0; i < faces.Length; i++)
 				{

@@ -60,7 +60,7 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestHashCollisions_IVEC3()
 		{
-			pb_IntVec3[] ivec3 = pb_Util.Fill<pb_IntVec3>(TestIterationCount, (i) => { return (pb_IntVec3) RandVec3(); });
+			IntVec3[] ivec3 = pb_Util.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3) RandVec3(); });
 			Assert.IsTrue( TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f );
 		}
 
@@ -82,12 +82,12 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestComparison_IVEC3()
 		{
-			pb_IntVec3 a = (pb_IntVec3) RandVec3();
-			pb_IntVec3 b = (pb_IntVec3) (a.vec * 2.3f);
-			pb_IntVec3 c = (pb_IntVec3) new Vector3(a.x, a.y + .001f, a.z);
-			pb_IntVec3 d = (pb_IntVec3) new Vector3(a.x, a.y, a.z);
+			IntVec3 a = (IntVec3) RandVec3();
+			IntVec3 b = (IntVec3) (a.vec * 2.3f);
+			IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);
+			IntVec3 d = (IntVec3) new Vector3(a.x, a.y, a.z);
 
-			pb_IntVec3[] arr = pb_Util.Fill<pb_IntVec3>(24, (i) => { return i % 2 == 0 ? a : (pb_IntVec3) RandVec3(); });
+			IntVec3[] arr = pb_Util.Fill<IntVec3>(24, (i) => { return i % 2 == 0 ? a : (IntVec3) RandVec3(); });
 
 			Assert.IsFalse(a == b);
 			Assert.IsFalse(a == c);

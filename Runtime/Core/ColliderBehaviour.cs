@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder
 	/// A MonoBehaviour that automatically enables and disables the parent GameObject on exiting and enterin playmode, respectively.
 	/// </summary>
 	[DisallowMultipleComponent]
-	class ColliderBehaviour : pb_EntityBehaviour
+	class ColliderBehaviour : EntityBehaviour
 	{
 		public override void Initialize()
 		{
@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 			if (!collision)
 				collision = gameObject.AddComponent<MeshCollider>();
 			collision.isTrigger = false;
-			SetMaterial(pb_Material.ColliderMaterial);
+			SetMaterial(BuiltinMaterials.ColliderMaterial);
 		}
 
 		public override void OnEnterPlayMode()

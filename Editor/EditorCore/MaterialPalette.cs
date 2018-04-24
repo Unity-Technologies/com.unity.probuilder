@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// A serializable object that stores an array of materials. Used by pb_MaterialEditor.
 	/// </summary>
-	class MaterialPalette : ScriptableObject, pb_IHasDefault
+	class MaterialPalette : ScriptableObject, IHasDefault
 	{
 		[MenuItem("Assets/Create/Material Palette", true)]
 		static bool VerifyCreateMaterialPalette()
@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		public void SetDefaultValues()
 		{
 			array = new Material[10] {
-				pb_Material.DefaultMaterial,
+				BuiltinMaterials.DefaultMaterial,
 				null,
 				null,
 				null,

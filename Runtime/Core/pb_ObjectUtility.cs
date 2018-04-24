@@ -79,7 +79,7 @@ namespace UnityEngine.ProBuilder
 			{
 				Matrix4x4 l2w = pb.transform.localToWorldMatrix;
 				Vector3 v = Vector3.zero;
-				Vector3 mask = snapAxisOnly ? offset.ToMask(pb_Math.HANDLE_EPSILON) : Vector3.one;
+				Vector3 mask = snapAxisOnly ? offset.ToMask(ProBuilderMath.handleEpsilon) : Vector3.one;
 
 				for(i = 0; i < indices.Length; i++)
 				{
@@ -163,7 +163,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="tri">int[] composed of three indices.</param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out pb_Face face)
+		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out Face face)
 		{
 			for(int i = 0; i < pb.faces.Length; i++)
 			{

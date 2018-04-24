@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
 	class pb_PreferenceDictionary :
 		ScriptableObject,
 		ISerializationCallbackReceiver,
-		pb_IHasDefault
+		IHasDefault
 	{
 		Dictionary<string, bool> 		m_Bool 		= new Dictionary<string, bool>();
 		Dictionary<string, int> 		m_Int 		= new Dictionary<string, int>();

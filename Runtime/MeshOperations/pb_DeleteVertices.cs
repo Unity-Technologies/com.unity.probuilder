@@ -19,7 +19,7 @@ namespace ProBuilder.MeshOperations
 		public static int[] RemoveUnusedVertices(this pb_Object pb)
 		{
 			List<int> del = new List<int>();
-			HashSet<int> tris = new HashSet<int>(pb_Face.AllTriangles(pb.faces));
+			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(pb.faces));
 
 			for(int i = 0; i < pb.vertices.Length; i++)
 				if(!tris.Contains(i))
@@ -56,7 +56,7 @@ namespace ProBuilder.MeshOperations
 			for(int i = 0; i < originalVertexCount; i++)
 				offset[i] = pb_Util.NearestIndexPriorToValue(sorted, i) + 1;
 
-			foreach(pb_Face face in pb.faces)
+			foreach(Face face in pb.faces)
 			{
 				int[] indices = face.indices;
 

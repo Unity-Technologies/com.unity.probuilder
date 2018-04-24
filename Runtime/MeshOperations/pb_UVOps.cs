@@ -27,7 +27,7 @@ namespace ProBuilder.MeshOperations
 			for(int i = 0; i < indices.Length; i++)
 				si[i] = -(i+1);
 
-			pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
+			IntArray[] sharedIndices = pb.sharedIndicesUV;
 
 			for(int i = 0; i < indices.Length-1; i++)
 			{
@@ -41,7 +41,7 @@ namespace ProBuilder.MeshOperations
 						Vector3 cen = (uvs[indices[i]] + uvs[indices[n]]) / 2f;
 						uvs[indices[i]] = cen;
 						uvs[indices[n]] = cen;
-						int newIndex = pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, new int[2] {indices[i], indices[n]});
+						int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, new int[2] {indices[i], indices[n]});
 						si[i] = newIndex;
 						si[n] = newIndex;
 					}
@@ -62,13 +62,13 @@ namespace ProBuilder.MeshOperations
 			Vector2[] uvs = pb.uv;
 
 			// set the shared indices cache to a unique non-used index
-			Vector2 cen = pb_Math.Average(pb_Util.ValuesWithIndices(uvs, indices) );
+			Vector2 cen = ProBuilderMath.Average(pb_Util.ValuesWithIndices(uvs, indices) );
 
 			foreach(int i in indices)
 				uvs[i] = cen;
 
-			pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
-			pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
+			IntArray[] sharedIndices = pb.sharedIndicesUV;
+			IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
 
 			pb.SetUV(uvs);
 			pb.SetSharedIndicesUV(sharedIndices);
@@ -80,7 +80,7 @@ namespace ProBuilder.MeshOperations
 		 */
 		public static bool SplitUVs(this pb_Object pb, int[] indices)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndicesUV;
+			IntArray[] sharedIndices = pb.sharedIndicesUV;
 
 			if( sharedIndices == null )
 				return false;
@@ -104,7 +104,7 @@ namespace ProBuilder.MeshOperations
 			 * and add 'em back in as loners
 			 */
 			foreach(int i in distInd)
-				pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
+				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
 			pb.SetSharedIndicesUV(sharedIndices);
 
@@ -115,14 +115,14 @@ namespace ProBuilder.MeshOperations
 		 * Projects UVs on all passed faces, automatically updating the sharedIndicesUV table
 		 * as required (only associates vertices that share a seam).
 		 */
-		public static void ProjectFacesAuto(pb_Object pb, pb_Face[] faces)
+		public static void ProjectFacesAuto(pb_Object pb, Face[] faces)
 		{
 			int[] ind = faces.SelectMany(x => x.distinctIndices).ToArray();
 
 			/* get average face normal */
 			Vector3 nrm = Vector3.zero;
-			foreach(pb_Face face in faces)
-				nrm += pb_Math.Normal(pb, face);
+			foreach(Face face in faces)
+				nrm += ProBuilderMath.Normal(pb, face);
 			nrm /= (float)faces.Length;
 
 			/* project uv coordinates */
@@ -138,7 +138,7 @@ namespace ProBuilder.MeshOperations
 			pb.msh.uv = rebuiltUVs;
 
 			/* now go trhough and set all adjacent face groups to use matching element groups */
-			foreach(pb_Face f in faces)
+			foreach(Face f in faces)
 			{
 				f.elementGroup = -1;
 				SplitUVs(pb, f.distinctIndices);
@@ -192,15 +192,15 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Projects UVs for each face using the closest normal on a box.
 		 */
-		public static void ProjectFacesBox(pb_Object pb, pb_Face[] faces)
+		public static void ProjectFacesBox(pb_Object pb, Face[] faces)
 		{
 			Vector2[] uv = pb.uv;
 
-			Dictionary<ProjectionAxis, List<pb_Face>> sorted = new Dictionary<ProjectionAxis, List<pb_Face>>();
+			Dictionary<ProjectionAxis, List<Face>> sorted = new Dictionary<ProjectionAxis, List<Face>>();
 
 			for(int i = 0; i < faces.Length; i++)
 			{
-				Vector3 nrm = pb_Math.Normal(pb, faces[i]);
+				Vector3 nrm = ProBuilderMath.Normal(pb, faces[i]);
 				ProjectionAxis axis = pb_Projection.VectorToProjectionAxis(nrm);
 
 				if(sorted.ContainsKey(axis))
@@ -209,7 +209,7 @@ namespace ProBuilder.MeshOperations
 				}
 				else
 				{
-					sorted.Add(axis, new List<pb_Face>() { faces[i] });
+					sorted.Add(axis, new List<Face>() { faces[i] });
 				}
 
 				// clean up UV stuff - no shared UV indices and remove element group
@@ -217,7 +217,7 @@ namespace ProBuilder.MeshOperations
 				faces[i].manualUV = true;
 			}
 
-			foreach(KeyValuePair<ProjectionAxis, List<pb_Face>> kvp in sorted)
+			foreach(KeyValuePair<ProjectionAxis, List<Face>> kvp in sorted)
 			{
 				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
@@ -238,7 +238,7 @@ namespace ProBuilder.MeshOperations
 		 */
 		public  static void ProjectFacesSphere(pb_Object pb, int[] indices)
 		{
-			foreach(pb_Face f in pb.faces)
+			foreach(Face f in pb.faces)
 			{
 				if(pb_Util.ContainsMatch<int>(f.distinctIndices, indices))
 				{
@@ -266,7 +266,7 @@ namespace ProBuilder.MeshOperations
 		public static Vector2[] FitUVs(Vector2[] uvs)
 		{
 			// shift UVs to zeroed coordinates
-			Vector2 smallestVector2 = pb_Math.SmallestVector2(uvs);
+			Vector2 smallestVector2 = ProBuilderMath.SmallestVector2(uvs);
 
 			int i;
 			for(i = 0; i < uvs.Length; i++)
@@ -274,7 +274,7 @@ namespace ProBuilder.MeshOperations
 				uvs[i] -= smallestVector2;
 			}
 
-			float scale = pb_Math.LargestValue( pb_Math.LargestVector2(uvs) );
+			float scale = ProBuilderMath.LargestValue( ProBuilderMath.LargestVector2(uvs) );
 
 			for(i = 0; i < uvs.Length; i++)
 			{
@@ -288,7 +288,7 @@ namespace ProBuilder.MeshOperations
 		 * Provided two faces, this method will attempt to project @f2 and align its size, rotation, and position
 		 * to match the shared edge on f1.  Returns true on success, false otherwise.
 		 */
-		public static bool AutoStitch(pb_Object pb, pb_Face f1, pb_Face f2)
+		public static bool AutoStitch(pb_Object pb, Face f1, Face f2)
 		{
 			// Cache shared indices (we gon' use 'em a lot)
 			Dictionary<int, int> sharedIndices = pb.sharedIndices.ToDictionary();
@@ -300,7 +300,7 @@ namespace ProBuilder.MeshOperations
 				if( ind > -1 )
 				{
 					// First, project the second face
-					pb_UVOps.ProjectFacesAuto(pb, new pb_Face[] { f2 } );
+					pb_UVOps.ProjectFacesAuto(pb, new Face[] { f2 } );
 
 					// Use the first first projected as the starting point
 					// and match the vertices
@@ -322,11 +322,11 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * move the UVs to where the edges passed meet
 		 */
-		static bool AlignEdges(pb_Object pb, pb_Face f1, pb_Face f2, pb_Edge edge1, pb_Edge edge2)
+		static bool AlignEdges(pb_Object pb, Face f1, Face f2, Edge edge1, Edge edge2)
 		{
 			Vector2[] uvs = pb.uv;
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			pb_IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
+			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
 
 			/**
 			 * Match each edge vertex to the other
@@ -384,7 +384,7 @@ namespace ProBuilder.MeshOperations
 				angle = 360f - angle;
 
 			foreach(int i in f2.distinctIndices)
-				uvs[i] = pb_Math.RotateAroundPoint(uvs[i], f1_center, angle);
+				uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, angle);
 
 			float error = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
 
@@ -393,7 +393,7 @@ namespace ProBuilder.MeshOperations
 			{
 				// first try rotating 180 degrees
 				foreach(int i in f2.distinctIndices)
-					uvs[i] = pb_Math.RotateAroundPoint(uvs[i], f1_center, 180f);
+					uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
 
 				float e2 = Mathf.Abs( Vector2.Distance(uvs[matchX[0]], uvs[matchX[1]]) ) + Mathf.Abs( Vector2.Distance(uvs[matchY[0]], uvs[matchY[1]]) );
 				if(e2 < error)
@@ -402,17 +402,17 @@ namespace ProBuilder.MeshOperations
 				{
 					// flip 'em back around
 					foreach(int i in f2.distinctIndices)
-						uvs[i] = pb_Math.RotateAroundPoint(uvs[i], f1_center, 180f);
+						uvs[i] = ProBuilderMath.RotateAroundPoint(uvs[i], f1_center, 180f);
 				}
 			}
 
 			// If successfully aligned, merge the sharedIndicesUV
 			pb_UVOps.SplitUVs(pb, f2.distinctIndices);
 
-			pb_IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
-			pb_IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);
+			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchX);
+			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, matchY);
 
-			pb_IntArray.RemoveEmptyOrNull(ref sharedIndicesUV);
+			IntArray.RemoveEmptyOrNull(ref sharedIndicesUV);
 
 			pb.SetSharedIndicesUV(sharedIndicesUV);
 
@@ -445,7 +445,7 @@ namespace ProBuilder.MeshOperations
 			Vector2 target_angle = target[1]-target[0], transform_angle = transformed[1]-transformed[0];
 
 			float angle = Vector2.Angle(target_angle, transform_angle);
-			float dot = Vector2.Dot( pb_Math.Perpendicular(target_angle), transform_angle);
+			float dot = Vector2.Dot( ProBuilderMath.Perpendicular(target_angle), transform_angle);
 
 			if(dot < 0) angle = 360f - angle;
 
@@ -465,13 +465,13 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Sets the passed faces to use Auto or Manual UVs, and (if previously manual) splits any vertex connections.
 		 */
-		public static void SetAutoUV(pb_Object pb, pb_Face[] faces, bool auto)
+		public static void SetAutoUV(pb_Object pb, Face[] faces, bool auto)
 		{
 			if(auto)
 			{
 				faces = System.Array.FindAll(faces, x => x.manualUV).ToArray();	// only operate on faces that were previously manual
 
-				pb.SplitUVs( pb_Face.AllTriangles(faces) );
+				pb.SplitUVs( Face.AllTriangles(faces) );
 
 				Vector2[][] uv_origins = new Vector2[faces.Length][];
 				for(int i = 0; i < faces.Length; i++)
@@ -499,7 +499,7 @@ namespace ProBuilder.MeshOperations
 			}
 			else
 			{
-				foreach(pb_Face f in faces)
+				foreach(Face f in faces)
 				{
 					f.textureGroup = -1;
 					f.manualUV = !auto;

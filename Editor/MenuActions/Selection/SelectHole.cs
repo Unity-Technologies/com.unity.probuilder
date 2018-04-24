@@ -59,9 +59,9 @@ namespace UnityEditor.ProBuilder.Actions
 			foreach(pb_Object pb in selection)
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
-				int[] indices = selectAll ? pb_Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
+				int[] indices = selectAll ? Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
 
-				List<List<pb_Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);
+				List<List<Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);
 
 				res = new ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 

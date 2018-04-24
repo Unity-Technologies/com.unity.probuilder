@@ -66,7 +66,7 @@ namespace ProBuilder.EditorTests.Picking
 			}
 		}
 
-		Dictionary<pb_Object, HashSet<pb_Edge>> TestEdgePick(pb_PickerOptions options)
+		Dictionary<pb_Object, HashSet<Edge>> TestEdgePick(pb_PickerOptions options)
 		{
 			try
 			{
@@ -92,7 +92,7 @@ namespace ProBuilder.EditorTests.Picking
 			}
 		}
 
-		Dictionary<pb_Object, HashSet<pb_Face>> TestFacePick(pb_PickerOptions options)
+		Dictionary<pb_Object, HashSet<Face>> TestFacePick(pb_PickerOptions options)
 		{
 			try
 			{
@@ -151,12 +151,12 @@ namespace ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(edges, "Selection is null");
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
-			HashSet<pb_Edge> selectedElements = selection.Value;
+			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
 			Dictionary<int, int> commonLookup = selection.Key.sharedIndices.ToDictionary();
-			var allEdges = pb_EdgeLookup.GetEdgeLookupHashSet(selection.Key.faces.SelectMany(x => x.edges), commonLookup);
-			var selectedEdges = pb_EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
+			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.faces.SelectMany(x => x.edges), commonLookup);
+			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
 			Cleanup();
@@ -169,7 +169,7 @@ namespace ProBuilder.EditorTests.Picking
 			var edges = TestEdgePick(new pb_PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Partial });
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection);
-			HashSet<pb_Edge> selectedElements = selection.Value;
+			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.Less(selectedElements.Count, selection.Key.faces.Sum(x=>x.edges.Length));
 
@@ -184,12 +184,12 @@ namespace ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(edges, "Selection is null");
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
-			HashSet<pb_Edge> selectedElements = selection.Value;
+			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 
 			Dictionary<int, int> commonLookup = selection.Key.sharedIndices.ToDictionary();
-			var allEdges = pb_EdgeLookup.GetEdgeLookupHashSet(selection.Key.faces.SelectMany(x => x.edges), commonLookup);
-			var selectedEdges = pb_EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
+			var allEdges = EdgeLookup.GetEdgeLookupHashSet(selection.Key.faces.SelectMany(x => x.edges), commonLookup);
+			var selectedEdges = EdgeLookup.GetEdgeLookupHashSet(selectedElements, commonLookup);
 			Assert.AreEqual(allEdges.Count, selectedEdges.Count);
 
 			Cleanup();
@@ -202,7 +202,7 @@ namespace ProBuilder.EditorTests.Picking
 			var edges = TestEdgePick(new pb_PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Complete });
 			var selection = edges.FirstOrDefault();
 			Assert.IsNotNull(selection);
-			HashSet<pb_Edge> selectedElements = selection.Value;
+			HashSet<Edge> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.Less(selectedElements.Count, selection.Key.faces.Sum(x=>x.edges.Length));
 
@@ -217,7 +217,7 @@ namespace ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(faces, "Selection is null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
-			HashSet<pb_Face> selectedElements = selection.Value;
+			HashSet<Face> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
 			Cleanup();
@@ -231,7 +231,7 @@ namespace ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(faces, "Face pick returned null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection);
-			HashSet<pb_Face> selectedElements = selection.Value;
+			HashSet<Face> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.Less(selectedElements.Count, selection.Key.faceCount);
 
@@ -246,7 +246,7 @@ namespace ProBuilder.EditorTests.Picking
 			Assert.IsNotNull(faces, "Selection is null");
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection, "Selection is null");
-			HashSet<pb_Face> selectedElements = selection.Value;
+			HashSet<Face> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.AreEqual(selection.Key.faceCount, selectedElements.Count);
 			Cleanup();
@@ -259,7 +259,7 @@ namespace ProBuilder.EditorTests.Picking
 			var faces = TestFacePick(new pb_PickerOptions() { depthTest = true, rectSelectMode = pb_RectSelectMode.Complete });
 			var selection = faces.FirstOrDefault();
 			Assert.IsNotNull(selection);
-			HashSet<pb_Face> selectedElements = selection.Value;
+			HashSet<Face> selectedElements = selection.Value;
 			Assert.Greater(selectedElements.Count, 0);
 			Assert.Less(selectedElements.Count, selection.Key.faceCount);
 

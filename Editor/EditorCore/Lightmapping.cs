@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="isEnabled"></param>
 		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
 		{
-			pb_Entity ent = pb.GetComponent<pb_Entity>();
+			Entity ent = pb.GetComponent<Entity>();
 
 			if (ent != null && ent.entityType == EntityType.Detail)
 			{
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
 			int count = missingUv2.Count();
 
 			if (count > 0)
-				pb_Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
+				Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2.\nYou can turn off this warning in Preferences/ProBuilder.", count, count == 1 ? "mesh" : "meshes");
 		}
 
 		/**

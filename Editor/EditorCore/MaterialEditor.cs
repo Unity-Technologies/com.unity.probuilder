@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 					if(GUILayout.Button("Match Selection"))
 					{
 						pb_Object tp;
-						pb_Face tf;
+						Face tf;
 						if( editor.GetFirstSelectedFace(out tp, out tf) )
 							m_QueuedMaterial = tf.material;
 					}
@@ -344,14 +344,14 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Applies the currently queued material to the selected face and eats the event.
 		 */
-		public bool ClickShortcutCheck(EventModifiers em, pb_Object pb, pb_Face quad)
+		public bool ClickShortcutCheck(EventModifiers em, pb_Object pb, Face quad)
 		{
 			if(UVEditor.instance == null)
 			{
 				if(em == (EventModifiers.Control | EventModifiers.Shift))
 				{
 					UndoUtility.RecordObject(pb, "Quick Apply");
-					pb.SetFaceMaterial( new pb_Face[1] { quad }, m_QueuedMaterial);
+					pb.SetFaceMaterial( new Face[1] { quad }, m_QueuedMaterial);
 					OnFaceChanged(pb);
 					EditorUtility.ShowNotification("Quick Apply Material");
 					return true;
@@ -369,7 +369,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Face[] faces = pb.SelectedFaces;
+				Face[] faces = pb.SelectedFaces;
 				pb.SetFaceMaterial(faces == null || faces.Length < 1 ? pb.faces : faces, mat);
 
 				OnFaceChanged(pb);

@@ -17,26 +17,26 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pairs"></param>
 		/// <param name="collapseCoincidentVertices"></param>
 		/// <returns></returns>
-		public static List<pb_Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<pb_Face, pb_Face>> pairs, bool collapseCoincidentVertices = true)
+		public static List<Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
 		{
-			HashSet<pb_Face> remove = new HashSet<pb_Face>();
-			List<pb_Face> add = new List<pb_Face>();
+			HashSet<Face> remove = new HashSet<Face>();
+			List<Face> add = new List<Face>();
 
-			foreach(pb_Tuple<pb_Face, pb_Face> pair in pairs)
+			foreach(pb_Tuple<Face, Face> pair in pairs)
 			{
-				pb_Face left = pair.Item1;
-				pb_Face right = pair.Item2;
+				Face left = pair.Item1;
+				Face right = pair.Item2;
 				int leftLength = left.indices.Length;
 				int rightLength = right.indices.Length;
 				int[] indices = new int[leftLength + rightLength];
 				System.Array.Copy(left.indices, 0, indices, 0, leftLength);
 				System.Array.Copy(right.indices, 0, indices, leftLength, rightLength);
-				add.Add(new pb_Face(indices, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
+				add.Add(new Face(indices, left.material, left.uv, left.smoothingGroup, left.textureGroup, left.elementGroup, left.manualUV));
 				remove.Add(left);
 				remove.Add(right);
 			}
 
-			List<pb_Face> faces = target.faces.Where(x => !remove.Contains(x)).ToList();
+			List<Face> faces = target.faces.Where(x => !remove.Contains(x)).ToList();
 			faces.AddRange(add);
 			target.SetFaces(faces.ToArray());
 
@@ -56,16 +56,16 @@ namespace ProBuilder.MeshOperations
 		/// <param name="target"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static pb_Face Merge(pb_Object target, IEnumerable<pb_Face> faces)
+		public static Face Merge(pb_Object target, IEnumerable<Face> faces)
 		{
 			int mergedCount = faces != null ? faces.Count() : 0;
 
 			if(mergedCount < 1)
 				return null;
 
-			pb_Face first = faces.First();
+			Face first = faces.First();
 
-			pb_Face mergedFace = new pb_Face(faces.SelectMany(x => x.indices).ToArray(),
+			Face mergedFace = new Face(faces.SelectMany(x => x.indices).ToArray(),
 				first.material,
 				first.uv,
 				first.smoothingGroup,
@@ -73,13 +73,13 @@ namespace ProBuilder.MeshOperations
 				first.elementGroup,
 				first.manualUV);
 
-			pb_Face[] rebuiltFaces = new pb_Face[target.faces.Length - mergedCount + 1];
+			Face[] rebuiltFaces = new Face[target.faces.Length - mergedCount + 1];
 
 			int n = 0;
 
-			HashSet<pb_Face> skip = new HashSet<pb_Face>(faces);
+			HashSet<Face> skip = new HashSet<Face>(faces);
 
-			foreach(pb_Face f in target.faces)
+			foreach(Face f in target.faces)
 			{
 				if(!skip.Contains(f))
 					rebuiltFaces[n++] = f;
@@ -89,7 +89,7 @@ namespace ProBuilder.MeshOperations
 
 			target.SetFaces(rebuiltFaces);
 
-			CollapseCoincidentVertices(target, new pb_Face[] { mergedFace });
+			CollapseCoincidentVertices(target, new Face[] { mergedFace });
 
 			return mergedFace;
 		}
@@ -100,12 +100,12 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		internal static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<pb_Face> faces)
+		internal static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
 				matches.Clear();
 

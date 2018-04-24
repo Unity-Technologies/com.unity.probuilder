@@ -18,7 +18,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="method">How faces are extruded.</param>
 		/// <param name="distance">The distance in Unity units to extrude faces.</param>
 		/// <returns>True on success, false if the action failed.</returns>
-		public static bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)
+		public static bool Extrude(this pb_Object pb, Face[] faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
 			{
@@ -37,7 +37,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudePerFace(pb_Object pb, pb_Face[] faces, float distance)
+		static bool ExtrudePerFace(pb_Object pb, Face[] faces, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -48,16 +48,16 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
 
-			List<pb_Face> newFaces = new List<pb_Face>(pb.faces);
+			List<Face> newFaces = new List<Face>(pb.faces);
 			Dictionary<int, int> used = new Dictionary<int, int>();
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
 				face.smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
 				face.textureGroup = -1;
 
-				Vector3 delta = pb_Math.Normal(pb, face) * distance;
-				pb_Edge[] edges = face.edges;
+				Vector3 delta = ProBuilderMath.Normal(pb, face) * distance;
+				Edge[] edges = face.edges;
 
 				used.Clear();
 
@@ -93,7 +93,7 @@ namespace ProBuilder.MeshOperations
 					vertices.Add( xx );
 					vertices.Add( yy );
 
-					pb_Face bridge = new pb_Face(
+					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2}, // indices
 						face.material,							// material
 						new pb_UV(face.uv),						// UV material
@@ -134,7 +134,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="compensateAngleVertexDistance"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudeAsGroups(pb_Object pb, pb_Face[] faces, bool compensateAngleVertexDistance, float distance)
+		static bool ExtrudeAsGroups(pb_Object pb, Face[] faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -145,7 +145,7 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV.ToDictionary();
 
-			List<pb_Face> newFaces = new List<pb_Face>(pb.faces);
+			List<Face> newFaces = new List<Face>(pb.faces);
 			// old triangle index -> old shared index
 			Dictionary<int, int> oldSharedMap = new Dictionary<int, int>();
 			// old shared index -> new shared index
@@ -157,19 +157,19 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, pb_Tuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, pb_Tuple<Vector3, Vector3,List<int>>>();
 
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true, lookup);
-			List<HashSet<pb_Face>> groups = GetFaceGroups(wings);
+			List<HashSet<Face>> groups = GetFaceGroups(wings);
 
-			foreach(HashSet<pb_Face> group in groups)
+			foreach(HashSet<Face> group in groups)
 			{
-				Dictionary<pb_EdgeLookup, pb_Face> perimeter = GetPerimeterEdges(group, lookup);
+				Dictionary<EdgeLookup, Face> perimeter = GetPerimeterEdges(group, lookup);
 
 				newSharedMap.Clear();
 				oldSharedMap.Clear();
 
 				foreach(var edgeAndFace in perimeter)
 				{
-					pb_EdgeLookup edge = edgeAndFace.Key;
-					pb_Face face = edgeAndFace.Value;
+					EdgeLookup edge = edgeAndFace.Key;
+					Face face = edgeAndFace.Value;
 
 					int vc = vertices.Count;
 					int x = edge.local.x, y = edge.local.y;
@@ -223,7 +223,7 @@ namespace ProBuilder.MeshOperations
 					vertices.Add( null );
 					vertices.Add( null );
 
-					pb_Face bridge = new pb_Face(
+					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, 	// indices
 						face.material,													// material
 						new pb_UV(face.uv),												// UV material
@@ -236,12 +236,12 @@ namespace ProBuilder.MeshOperations
 					newFaces.Add(bridge);
 				}
 
-				foreach(pb_Face face in group)
+				foreach(Face face in group)
 				{
 					// @todo keep together if possible
 					face.textureGroup = -1;
 
-					Vector3 normal = pb_Math.Normal(pb, face);
+					Vector3 normal = ProBuilderMath.Normal(pb, face);
 
 					for(int i = 0; i < face.distinctIndices.Length; i++)
 					{
@@ -282,7 +282,7 @@ namespace ProBuilder.MeshOperations
 				direction.Normalize();
 
 				// If extruding by face normal extend vertices on seams by the hypotenuse
-				float modifier = compensateAngleVertexDistance ? pb_Math.Secant(Vector3.Angle(direction, kvp.Value.Item2) * Mathf.Deg2Rad) : 1f;
+				float modifier = compensateAngleVertexDistance ? ProBuilderMath.Secant(Vector3.Angle(direction, kvp.Value.Item2) * Mathf.Deg2Rad) : 1f;
 
 				direction.x *= distance * modifier;
 				direction.y *= distance * modifier;
@@ -307,20 +307,20 @@ namespace ProBuilder.MeshOperations
 			return true;
 		}
 
-		static List<HashSet<pb_Face>> GetFaceGroups(List<pb_WingedEdge> wings)
+		static List<HashSet<Face>> GetFaceGroups(List<pb_WingedEdge> wings)
 		{
-			HashSet<pb_Face> used = new HashSet<pb_Face>();
-			List<HashSet<pb_Face>> groups = new List<HashSet<pb_Face>>();
+			HashSet<Face> used = new HashSet<Face>();
+			List<HashSet<Face>> groups = new List<HashSet<Face>>();
 
 			foreach(pb_WingedEdge wing in wings)
 			{
 				if(used.Add(wing.face))
 				{
-					HashSet<pb_Face> group = new HashSet<pb_Face>() { wing.face };
+					HashSet<Face> group = new HashSet<Face>() { wing.face };
 
 					pb_GrowShrink.Flood(wing, group);
 
-					foreach(pb_Face f in group)
+					foreach(Face f in group)
 						used.Add(f);
 
 					groups.Add(group);
@@ -333,16 +333,16 @@ namespace ProBuilder.MeshOperations
 		/// <summary>
 		/// returns perimeter edges by key<edge>, value<face>
 		/// </summary>
-		static Dictionary<pb_EdgeLookup, pb_Face> GetPerimeterEdges(HashSet<pb_Face> faces, Dictionary<int, int> lookup)
+		static Dictionary<EdgeLookup, Face> GetPerimeterEdges(HashSet<Face> faces, Dictionary<int, int> lookup)
 		{
-			Dictionary<pb_EdgeLookup, pb_Face> perimeter = new Dictionary<pb_EdgeLookup, pb_Face>();
-			HashSet<pb_EdgeLookup> used = new HashSet<pb_EdgeLookup>();
+			Dictionary<EdgeLookup, Face> perimeter = new Dictionary<EdgeLookup, Face>();
+			HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
-				foreach(pb_Edge edge in face.edges)
+				foreach(Edge edge in face.edges)
 				{
-					pb_EdgeLookup e = new pb_EdgeLookup(lookup[edge.x], lookup[edge.y], edge.x, edge.y);
+					EdgeLookup e = new EdgeLookup(lookup[edge.x], lookup[edge.y], edge.x, edge.y);
 
 					if(!used.Add(e))
 					{
@@ -369,20 +369,20 @@ namespace ProBuilder.MeshOperations
 		/// <param name="enableManifoldExtrude"></param>
 		/// <param name="extrudedEdges"></param>
 		/// <returns></returns>
-		public static bool Extrude(this pb_Object pb, pb_Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out pb_Edge[] extrudedEdges)
+		public static bool Extrude(this pb_Object pb, Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
-			List<pb_Edge> validEdges = new List<pb_Edge>();
-			List<pb_Face> edgeFaces = new List<pb_Face>();
+			List<Edge> validEdges = new List<Edge>();
+			List<Face> edgeFaces = new List<Face>();
 
-			foreach(pb_Edge e in edges)
+			foreach(Edge e in edges)
 			{
 				int faceCount = 0;
-				pb_Face fa = null;
+				Face fa = null;
 
-				foreach(pb_Face f in pb.faces)
+				foreach(Face f in pb.faces)
 				{
 					if(f.edges.IndexOf(e, lookup) > -1)
 					{
@@ -418,25 +418,25 @@ namespace ProBuilder.MeshOperations
 				allEdgeIndices[c++] = validEdges[i].y;
 			}
 
-			List<pb_Edge> extrudedIndices = new List<pb_Edge>();
+			List<Edge> extrudedIndices = new List<Edge>();
 			// used to set the editor selection to the newly created edges
-			List<pb_Edge> newEdges = new List<pb_Edge>();
+			List<Edge> newEdges = new List<Edge>();
 
 			// build out new faces around validEdges
 
 			for(int i = 0; i < validEdges.Count; i++)
 			{
-				pb_Edge edge = validEdges[i];
-				pb_Face face = edgeFaces[i];
+				Edge edge = validEdges[i];
+				Face face = edgeFaces[i];
 
 				// Averages the normals using only vertices that are on the edge
-				Vector3 xnorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
-				Vector3 ynorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : pb_Math.Normal(pb, face);
+				Vector3 xnorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.x]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(pb, face);
+				Vector3 ynorm = extrudeAsGroup ? pb_MeshOps.AverageNormalWithIndices( sharedIndices[lookup[edge.y]], allEdgeIndices, oNormals ) : ProBuilderMath.Normal(pb, face);
 
 				int x_sharedIndex = lookup[edge.x];
 				int y_sharedIndex = lookup[edge.y];
 
-				pb_Face newFace = pb.AppendFace(
+				Face newFace = pb.AppendFace(
 					new Vector3[4]
 					{
 						localVerts [ edge.x ],
@@ -452,13 +452,13 @@ namespace ProBuilder.MeshOperations
 						pb.colors[ edge.y ]
 					},
 					new Vector2[4],
-					new pb_Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
+					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
-				newEdges.Add(new pb_Edge(newFace.indices[3], newFace.indices[4]));
+				newEdges.Add(new Edge(newFace.indices[3], newFace.indices[4]));
 
-				extrudedIndices.Add(new pb_Edge(x_sharedIndex, newFace.indices[3]));
-				extrudedIndices.Add(new pb_Edge(y_sharedIndex, newFace.indices[4]));
+				extrudedIndices.Add(new Edge(x_sharedIndex, newFace.indices[3]));
+				extrudedIndices.Add(new Edge(y_sharedIndex, newFace.indices[4]));
 			}
 
 			sharedIndices = pb.sharedIndices;
@@ -476,7 +476,7 @@ namespace ProBuilder.MeshOperations
 
 						if(extrudedIndices[n].x == val)
 						{
-							pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
+							IntArrayUtility.MergeSharedIndices(ref sharedIndices, extrudedIndices[n].y, extrudedIndices[i].y);
 							break;
 						}
 					}
@@ -485,7 +485,7 @@ namespace ProBuilder.MeshOperations
 
 			pb.SetSharedIndices(sharedIndices);
 
-			foreach(pb_Face f in pb.faces)
+			foreach(Face f in pb.faces)
 				f.RebuildCaches();
 
 			extrudedEdges = newEdges.ToArray();

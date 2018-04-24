@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(sb.Length > 0)
-				pb_Log.Error(sb.ToString());
+				Log.Error(sb.ToString());
 
 			UnityEditor.EditorUtility.ClearProgressBar();
 			UnityEditor.EditorUtility.DisplayDialog("Refresh ProBuilder Objects",
@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 
 				try
 				{
-					pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+					pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
 					pb.ToMesh();
 					pb.Refresh();
@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(sb.Length > 0)
-				pb_Log.Error(sb.ToString());
+				Log.Error(sb.ToString());
 
 			UnityEditor.EditorUtility.ClearProgressBar();
 			UnityEditor.EditorUtility.DisplayDialog("Rebuild Shared Index Cache", "Successfully rebuilt " + targets.Length + " shared index caches", "Okay");

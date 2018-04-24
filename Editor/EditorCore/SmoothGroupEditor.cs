@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 		class SmoothGroupData
 		{
 			public bool isVisible;
-			public Dictionary<int, List<pb_Face>> groups;
+			public Dictionary<int, List<Face>> groups;
 			public Dictionary<int, Color> groupColors;
 			public HashSet<int> selected;
 			public Mesh previewMesh;
@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
 
 			public SmoothGroupData(pb_Object pb)
 			{
-				groups = new Dictionary<int, List<pb_Face>>();
+				groups = new Dictionary<int, List<Face>>();
 				selected = new HashSet<int>();
 				groupColors = new Dictionary<int, Color>();
 				isVisible = true;
@@ -65,12 +65,12 @@ namespace UnityEditor.ProBuilder
 			{
 				groups.Clear();
 
-				foreach (pb_Face face in pb.faces)
+				foreach (Face face in pb.faces)
 				{
-					List<pb_Face> affected;
+					List<Face> affected;
 
 					if (!groups.TryGetValue(face.smoothingGroup, out affected))
-						groups.Add(face.smoothingGroup, new List<pb_Face>() {face});
+						groups.Add(face.smoothingGroup, new List<Face>() {face});
 					else
 						affected.Add(face);
 				}
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 			{
 				selected.Clear();
 
-				foreach(pb_Face face in pb.SelectedFaces)
+				foreach(Face face in pb.SelectedFaces)
 					selected.Add(face.smoothingGroup);
 			}
 
@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder
 				Color32[] colors = new Color32[pb.vertexCount];
 				groupColors.Clear();
 
-				foreach (KeyValuePair<int, List<pb_Face>> smoothGroup in groups)
+				foreach (KeyValuePair<int, List<Face>> smoothGroup in groups)
 				{
 					if (smoothGroup.Key > pb_Smoothing.SMOOTHING_GROUP_NONE)
 					{
@@ -683,7 +683,7 @@ namespace UnityEditor.ProBuilder
 		{
 			UndoUtility.RecordObject(pb, "Set Smoothing Group");
 
-			foreach (pb_Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
+			foreach (Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
 				face.smoothingGroup = index;
 
 			// todo pb.Rebuild

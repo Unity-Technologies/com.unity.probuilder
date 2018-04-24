@@ -94,7 +94,7 @@ namespace ProBuilder.MeshOperations
 			}
 			catch (System.Exception e)
 			{
-				pb_Log.Warning("Triangulation failed: " + e.ToString());
+				Log.Warning("Triangulation failed: " + e.ToString());
 				return false;
 			}
 
@@ -102,7 +102,7 @@ namespace ProBuilder.MeshOperations
 			{
 				if(d.Points[0].Index < 0 || d.Points[1].Index < 0 || d.Points[2].Index < 0)
 				{
-					pb_Log.Warning("Triangulation failed: Additional vertices were inserted.");
+					Log.Warning("Triangulation failed: Additional vertices were inserted.");
 					return false;
 				}
 

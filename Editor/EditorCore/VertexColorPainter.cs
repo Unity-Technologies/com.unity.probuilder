@@ -478,7 +478,7 @@ namespace UnityEditor.ProBuilder
 					Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
 					pb_RaycastHit hit;
 
-					if (pb_HandleUtility.FaceRaycast(ray, pb, out hit))
+					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit))
 					{
 						handlePosition = pb.transform.TransformPoint(hit.point);
 						handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);

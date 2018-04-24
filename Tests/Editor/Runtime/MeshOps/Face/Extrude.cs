@@ -88,8 +88,8 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 				foreach (var pb in (IEnumerable<pb_Object>) shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
-					pb_Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
-					pb.Extrude(new pb_Face[] {face}, method, 1f);
+					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
+					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, method, 1f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -146,8 +146,8 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 				foreach (pb_Object pb in shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
-					pb_Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
-					pb.Extrude(new pb_Face[] {face}, ExtrudeMethod.FaceNormal, 1f);
+					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
+					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.FaceNormal, 1f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -155,7 +155,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
-					pb.Extrude(new pb_Face[] {face}, ExtrudeMethod.VertexNormal, 1f);
+					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.VertexNormal, 1f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
@@ -163,7 +163,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
-					pb.Extrude(new pb_Face[] {face}, ExtrudeMethod.IndividualFaces, 1f);
+					pb.Extrude(new UnityEngine.ProBuilder.Face[] {face}, ExtrudeMethod.IndividualFaces, 1f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();

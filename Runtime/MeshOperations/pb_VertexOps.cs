@@ -22,11 +22,11 @@ namespace ProBuilder.MeshOperations
 
 			pb_Vertex cen = collapseToFirst ? vertices[indices[0]] : pb_Vertex.Average(vertices, indices);
 
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
-			pb_IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
+			IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
 
-			int newIndex = pb_IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
-			pb_IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indices);
+			int newIndex = IntArrayUtility.MergeSharedIndices(ref sharedIndices, indices);
+			IntArrayUtility.MergeSharedIndices(ref sharedIndicesUV, indices);
 
 			pb.SetSharedIndices(sharedIndices);
 			pb.SetSharedIndicesUV(sharedIndicesUV);
@@ -71,7 +71,7 @@ namespace ProBuilder.MeshOperations
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 
 			List<int> usedIndex = new List<int>();
 			List<int> splits = new List<int>();
@@ -87,10 +87,10 @@ namespace ProBuilder.MeshOperations
 				}
 			}
 
-			pb_IntArrayUtility.RemoveValues(ref sharedIndices, splits.ToArray());
+			IntArrayUtility.RemoveValues(ref sharedIndices, splits.ToArray());
 
 			foreach(int i in splits)
-				pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
+				IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, i);
 
 			pb.SetSharedIndices(sharedIndices);
 
@@ -102,7 +102,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="edge"></param>
-		public static void SplitVertices(this pb_Object pb, pb_Edge edge)
+		public static void SplitVertices(this pb_Object pb, Edge edge)
 		{
 			SplitVertices(pb, new int[] { edge.x, edge.y });
 		}
@@ -131,7 +131,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="addColors"></param>
 		/// <param name="newFace"></param>
 		/// <returns></returns>
-		public static bool AppendVerticesToFace(this pb_Object pb, pb_Face face, Vector3[] points, Color[] addColors, out pb_Face newFace)
+		public static bool AppendVerticesToFace(this pb_Object pb, Face face, Vector3[] points, Color[] addColors, out Face newFace)
 		{
 			if(!face.IsValid())
 			{
@@ -140,11 +140,11 @@ namespace ProBuilder.MeshOperations
 			}
 
 			List<pb_Vertex> vertices = pb_Vertex.GetVertices(pb).ToList();
-			List<pb_Face> faces = new List<pb_Face>( pb.faces );
+			List<Face> faces = new List<Face>( pb.faces );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV == null ? null : pb.sharedIndicesUV.ToDictionary();
 
-			List<pb_Edge> wound = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> wound = pb_WingedEdge.SortEdgesByAdjacency(face);
 
 			List<pb_Vertex> n_vertices 	= new List<pb_Vertex>();
 			List<int> n_shared 			= new List<int>();
@@ -179,7 +179,7 @@ namespace ProBuilder.MeshOperations
 					Vector3 v = n_vertices[n].position;
 					Vector3 w = n_vertices[(n + 1) % vc].position;
 
-					float dist = pb_Math.DistancePointLineSegment(p, v, w);
+					float dist = ProBuilderMath.DistancePointLineSegment(p, v, w);
 
 					if(dist < best)
 					{
@@ -213,14 +213,14 @@ namespace ProBuilder.MeshOperations
 				return false;
 			}
 
-			pb_FaceRebuildData data = new pb_FaceRebuildData();
+			FaceRebuildData data = new FaceRebuildData();
 
-			data.face = new pb_Face(triangles.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+			data.face = new Face(triangles.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 			data.vertices 			= n_vertices;
 			data.sharedIndices 		= n_shared;
 			data.sharedIndicesUV 	= n_sharedUV;
 
-			pb_FaceRebuildData.Apply(	new List<pb_FaceRebuildData>() { data },
+			FaceRebuildData.Apply(	new List<FaceRebuildData>() { data },
 										vertices,
 										faces,
 										lookup,
@@ -234,8 +234,8 @@ namespace ProBuilder.MeshOperations
 			pb.SetSharedIndicesUV(lookupUV);
 
 			// check old normal and make sure this new face is pointing the same direction
-			Vector3 oldNrm = pb_Math.Normal(pb, face);
-			Vector3 newNrm = pb_Math.Normal(pb, newFace);
+			Vector3 oldNrm = ProBuilderMath.Normal(pb, face);
+			Vector3 newNrm = ProBuilderMath.Normal(pb, newFace);
 
 			if( Vector3.Dot(oldNrm, newNrm) < 0 )
 				newFace.ReverseIndices();
@@ -253,9 +253,9 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static ActionResult AppendVerticesToEdge(this pb_Object pb, pb_Edge edge, int count, out List<pb_Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this pb_Object pb, Edge edge, int count, out List<Edge> newEdges)
 		{
-			return AppendVerticesToEdge(pb, new pb_Edge[] { edge }, count, out newEdges);
+			return AppendVerticesToEdge(pb, new Edge[] { edge }, count, out newEdges);
 		}
 
 		/// <summary>
@@ -266,9 +266,9 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count, out List<pb_Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this pb_Object pb, IList<Edge> edges, int count, out List<Edge> newEdges)
 		{
-			newEdges = new List<pb_Edge>();
+			newEdges = new List<Edge>();
 
 			if(count < 1 || count > 512)
 				return new ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
@@ -277,17 +277,17 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
 			List<int> indicesToDelete		= new List<int>();
-			pb_Edge[] commonEdges	 		= pb_EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
-			List<pb_Edge> distinctEdges 	= commonEdges.Distinct().ToList();
+			Edge[] commonEdges	 		= EdgeExtension.GetUniversalEdges(edges.ToArray(), lookup);
+			List<Edge> distinctEdges 	= commonEdges.Distinct().ToList();
 
-			Dictionary<pb_Face, pb_FaceRebuildData> modifiedFaces = new Dictionary<pb_Face, pb_FaceRebuildData>();
+			Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
 
 			int originalSharedIndicesCount = lookup.Count();
 			int sharedIndicesCount = originalSharedIndicesCount;
 
-			foreach(pb_Edge edge in distinctEdges)
+			foreach(Edge edge in distinctEdges)
 			{
-				pb_Edge localEdge = pb_EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndices);
+				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndices);
 
 				// Generate the new vertices that will be inserted on this edge
 				List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);
@@ -295,19 +295,19 @@ namespace ProBuilder.MeshOperations
 				for(int i = 0; i < count; i++)
 					verticesToAppend.Add(pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
 
-				List<pb_Tuple<pb_Face, pb_Edge>> adjacentFaces = pb_MeshUtils.GetNeighborFaces(pb, localEdge);
+				List<pb_Tuple<Face, Edge>> adjacentFaces = pb_MeshUtils.GetNeighborFaces(pb, localEdge);
 
 				// foreach face attached to common edge, append vertices
-				foreach(pb_Tuple<pb_Face, pb_Edge> tup in adjacentFaces)
+				foreach(pb_Tuple<Face, Edge> tup in adjacentFaces)
 				{
-					pb_Face face = tup.Item1;
+					Face face = tup.Item1;
 
-					pb_FaceRebuildData data;
+					FaceRebuildData data;
 
 					if( !modifiedFaces.TryGetValue(face, out data) )
 					{
-						data = new pb_FaceRebuildData();
-						data.face = new pb_Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+						data = new FaceRebuildData();
+						data.face = new Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 						data.vertices = new List<pb_Vertex>(pb_Util.ValuesWithIndices(vertices, face.distinctIndices));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
@@ -341,16 +341,16 @@ namespace ProBuilder.MeshOperations
 			}
 
 			// now apply the changes
-			List<pb_Face> dic_face = modifiedFaces.Keys.ToList();
-			List<pb_FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
-			List<pb_EdgeLookup> appendedEdges = new List<pb_EdgeLookup>();
+			List<Face> dic_face = modifiedFaces.Keys.ToList();
+			List<FaceRebuildData> dic_data = modifiedFaces.Values.ToList();
+			List<EdgeLookup> appendedEdges = new List<EdgeLookup>();
 
 			for(int i = 0; i < dic_face.Count; i++)
 			{
-				pb_Face face = dic_face[i];
-				pb_FaceRebuildData data = dic_data[i];
+				Face face = dic_face[i];
+				FaceRebuildData data = dic_data[i];
 
-				Vector3 nrm = pb_Math.Normal(pb, face);
+				Vector3 nrm = ProBuilderMath.Normal(pb, face);
 				Vector2[] projection = pb_Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
 
 				int vertexCount = vertices.Count;
@@ -377,9 +377,9 @@ namespace ProBuilder.MeshOperations
 
 				vertices.AddRange(data.vertices);
 
-				foreach(pb_Edge e in face.edges)
+				foreach(Edge e in face.edges)
 				{
-					pb_EdgeLookup el = new pb_EdgeLookup(new pb_Edge(lookup[e.x], lookup[e.y]), e);
+					EdgeLookup el = new EdgeLookup(new Edge(lookup[e.x], lookup[e.y]), e);
 
 					if(el.common.x >= originalSharedIndicesCount || el.common.y >= originalSharedIndicesCount)
 						appendedEdges.Add(el);
@@ -417,16 +417,16 @@ namespace ProBuilder.MeshOperations
 		/// <param name="distance"></param>
 		/// <param name="appendedVertices"></param>
 		/// <returns></returns>
-		public static pb_FaceRebuildData ExplodeVertex(
+		public static FaceRebuildData ExplodeVertex(
 			IList<pb_Vertex> vertices,
 			IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex,
 			float distance,
 			out Dictionary<int, List<int>> appendedVertices)
 		{
-			pb_Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
-			List<pb_Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
+			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 			appendedVertices = new Dictionary<int, List<int>>();
-			Vector3 oldNormal = pb_Math.Normal(vertices, face.indices);
+			Vector3 oldNormal = ProBuilderMath.Normal(vertices, face.indices);
 
 			// store local and common index of split points
 			Dictionary<int, int> toSplit = new Dictionary<int, int>();
@@ -478,11 +478,11 @@ namespace ProBuilder.MeshOperations
 
 			if( pb_Triangulation.TriangulateVertices(n_vertices, out triangles, false) )
 			{
-				pb_FaceRebuildData data = new pb_FaceRebuildData();
+				FaceRebuildData data = new FaceRebuildData();
 				data.vertices = n_vertices;
-				data.face = new pb_Face(face);
+				data.face = new Face(face);
 
-				Vector3 newNormal = pb_Math.Normal(n_vertices, triangles);
+				Vector3 newNormal = ProBuilderMath.Normal(n_vertices, triangles);
 
 				if(Vector3.Dot(oldNormal, newNormal) < 0f)
 					triangles.Reverse();
@@ -495,12 +495,12 @@ namespace ProBuilder.MeshOperations
 			return null;
 		}
 
-		static pb_Edge AlignEdgeWithDirection(pb_EdgeLookup edge, int commonIndex)
+		static Edge AlignEdgeWithDirection(EdgeLookup edge, int commonIndex)
 		{
 			if(edge.common.x == commonIndex)
-				return new pb_Edge(edge.local.x, edge.local.y);
+				return new Edge(edge.local.x, edge.local.y);
 			else
-				return new pb_Edge(edge.local.y, edge.local.x);
+				return new Edge(edge.local.y, edge.local.x);
 		}
 
 		/// <summary>

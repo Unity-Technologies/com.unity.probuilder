@@ -14,10 +14,10 @@ namespace ProBuilder.MeshOperations
 		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but
 		 *	it may not unify each island the same way.
 		 */
-		public static ActionResult ConformNormals(this pb_Object pb, IList<pb_Face> faces)
+		public static ActionResult ConformNormals(this pb_Object pb, IList<Face> faces)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces);
-			HashSet<pb_Face> used = new HashSet<pb_Face>();
+			HashSet<Face> used = new HashSet<Face>();
 			int count = 0;
 
 			// this loop adds support for multiple islands of grouped selections
@@ -26,7 +26,7 @@ namespace ProBuilder.MeshOperations
 				if(used.Contains(wings[i].face))
 					continue;
 
-				Dictionary<pb_Face, bool> flags = new Dictionary<pb_Face, bool>();
+				Dictionary<Face, bool> flags = new Dictionary<Face, bool>();
 
 				GetWindingFlags(wings[i], true, flags);
 
@@ -55,7 +55,7 @@ namespace ProBuilder.MeshOperations
 				return new ActionResult(Status.NoChange, "Faces Uniform");
 		}
 
-		private static void GetWindingFlags(pb_WingedEdge edge, bool flag, Dictionary<pb_Face, bool> flags)
+		private static void GetWindingFlags(pb_WingedEdge edge, bool flag, Dictionary<Face, bool> flags)
 		{
 			flags.Add(edge.face, flag);
 
@@ -67,8 +67,8 @@ namespace ProBuilder.MeshOperations
 
 				if(opp != null && !flags.ContainsKey(opp.face))
 				{
-					pb_Edge cea = GetCommonEdgeInWindingOrder(next);
-					pb_Edge ceb = GetCommonEdgeInWindingOrder(opp);
+					Edge cea = GetCommonEdgeInWindingOrder(next);
+					Edge ceb = GetCommonEdgeInWindingOrder(opp);
 
 					GetWindingFlags(opp, cea.x == ceb.x ? !flag : flag, flags);
 				}
@@ -86,8 +86,8 @@ namespace ProBuilder.MeshOperations
 			if(source == null || source.opposite == null)
 				return new ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
 
-			pb_Edge cea = GetCommonEdgeInWindingOrder(source);
-			pb_Edge ceb = GetCommonEdgeInWindingOrder(source.opposite);
+			Edge cea = GetCommonEdgeInWindingOrder(source);
+			Edge ceb = GetCommonEdgeInWindingOrder(source.opposite);
 
 			if( cea.x == ceb.x )
 			{
@@ -102,41 +102,41 @@ namespace ProBuilder.MeshOperations
 		/**
 		 *	Iterate a face and return a new common edge where the edge indices are true to the triangle winding order.
 		 */
-		private static pb_Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
+		private static Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
 		{
 			int[] indices = wing.face.indices;
 			int len = indices.Length;
 
 			for(int i = 0; i < len; i += 3)
 			{
-				pb_Edge e = wing.edge.local;
+				Edge e = wing.edge.local;
 				int a = indices[i], b = indices[i+1], c = indices[i+2];
 
 				if(e.x == a && e.y == b)
 					return wing.edge.common;
 				else if(e.x == b && e.y == a)
-					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+					return new Edge(wing.edge.common.y, wing.edge.common.x);
 				else if(e.x == b && e.y == c)
 					return wing.edge.common;
 				else if(e.x == c && e.y == b)
-					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+					return new Edge(wing.edge.common.y, wing.edge.common.x);
 				else if(e.x == c && e.y == a)
 					return wing.edge.common;
 				else if(e.x == a && e.y == c)
-					return new pb_Edge(wing.edge.common.y, wing.edge.common.x);
+					return new Edge(wing.edge.common.y, wing.edge.common.x);
 			}
 
-			return pb_Edge.Empty;
+			return Edge.Empty;
 		}
 
-		public static void MatchNormal(pb_Face source, pb_Face target, Dictionary<int, int> lookup)
+		public static void MatchNormal(Face source, Face target, Dictionary<int, int> lookup)
 		{
-			List<pb_EdgeLookup> source_edges = pb_EdgeLookup.GetEdgeLookup(source.edges, lookup).ToList();
-			List<pb_EdgeLookup> target_edges = pb_EdgeLookup.GetEdgeLookup(target.edges, lookup).ToList();
+			List<EdgeLookup> source_edges = EdgeLookup.GetEdgeLookup(source.edges, lookup).ToList();
+			List<EdgeLookup> target_edges = EdgeLookup.GetEdgeLookup(target.edges, lookup).ToList();
 
 			bool superBreak = false;
 
-			pb_Edge src, tar;
+			Edge src, tar;
 
 			for(int i = 0; !superBreak && i < source_edges.Count; i++)
 			{

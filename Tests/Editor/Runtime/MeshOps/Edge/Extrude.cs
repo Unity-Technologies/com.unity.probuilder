@@ -24,9 +24,9 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 			try
 			{
 				int vertexCount = pb.vertexCount;
-				pb_Edge[] edges = new pb_Edge[1];
-				pb_Edge[] extruded;
-				pb_Face face = pb.faces[m_Random.Next(0, pb.faceCount)];
+				UnityEngine.ProBuilder.Edge[] edges = new UnityEngine.ProBuilder.Edge[1];
+				UnityEngine.ProBuilder.Edge[] extruded;
+				UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faceCount)];
 				edges[0] = face.edges[m_Random.Next(0, face.edges.Length)];
 				// as group, enable manifold extrude
 				Assert.IsFalse(pb.Extrude(edges, .5f, true, false, out extruded), "Do not allow manifold edge extrude");
@@ -50,8 +50,8 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 			try
 			{
 				int vertexCount = pb.vertexCount;
-				pb_Edge[] edges = new pb_Edge[pb.faceCount];
-				pb_Edge[] extruded;
+				UnityEngine.ProBuilder.Edge[] edges = new UnityEngine.ProBuilder.Edge[pb.faceCount];
+				UnityEngine.ProBuilder.Edge[] extruded;
 				for (int i = 0; i < pb.faceCount; i++)
 					edges[i] = pb.faces[i].edges[m_Random.Next(0, pb.faces[i].edges.Length)];
 				// as group, enable manifold extrude

@@ -175,7 +175,7 @@ namespace UnityEditor.ProBuilder
 
 			if(banner == null)
 			{
-				pb_Log.Warning("Could not load About window resources");
+				Log.Warning("Could not load About window resources");
 				EditorApplication.delayCall += Close;
 			}
 			else
@@ -203,7 +203,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				pb_Log.Error(FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md not found!");
+				Log.Error(FileUtil.GetProBuilderInstallDirectory() + "CHANGELOG.md not found!");
 			}
 		}
 

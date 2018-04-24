@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Face[] triangulatedFaces = null;
+				Face[] triangulatedFaces = null;
 				pb.ToMesh();
 				res = pb.ToTriangles(pb.SelectedFaces, out triangulatedFaces);
 				pb.Refresh();

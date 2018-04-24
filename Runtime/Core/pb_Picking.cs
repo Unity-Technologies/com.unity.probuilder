@@ -68,7 +68,7 @@ namespace UnityEngine.ProBuilder
 				if(!pb.isSelectable)
 					continue;
 
-				pb_IntArray[] sharedIndices = pb.sharedIndices;
+				IntArray[] sharedIndices = pb.sharedIndices;
 				HashSet<int> inRect = new HashSet<int>();
 				Vector3[] positions = pb.vertices;
 				var trs = pb.transform;
@@ -104,7 +104,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="options"></param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pixelsPerPoint.</param>
 		/// <returns></returns>
-		public static Dictionary<pb_Object, HashSet<pb_Face>> PickFacesInRect(
+		public static Dictionary<pb_Object, HashSet<Face>> PickFacesInRect(
 			Camera cam,
 			Rect rect,
 			IList<pb_Object> selectable,
@@ -121,14 +121,14 @@ namespace UnityEngine.ProBuilder
 					(int) (cam.pixelHeight / pixelsPerPoint));
 			}
 
-			var selected = new Dictionary<pb_Object, HashSet<pb_Face>>();
+			var selected = new Dictionary<pb_Object, HashSet<Face>>();
 
 			foreach(var pb in selectable)
 			{
 				if (!pb.isSelectable)
 					continue;
 
-				HashSet<pb_Face> selectedFaces = new HashSet<pb_Face>();
+				HashSet<Face> selectedFaces = new HashSet<Face>();
 				Transform trs = pb.transform;
 				Vector3[] positions = pb.vertices;
 				Vector3[] screenPoints = new Vector3[pb.vertexCount];
@@ -138,7 +138,7 @@ namespace UnityEngine.ProBuilder
 
 				for(int n = 0; n < pb.faces.Length; n++)
 				{
-					pb_Face face = pb.faces[n];
+					Face face = pb.faces[n];
 
 					// rect select = complete
 					if(options.rectSelectMode == pb_RectSelectMode.Complete)
@@ -166,7 +166,7 @@ namespace UnityEngine.ProBuilder
 							if(!nope)
 							{
 								if( !options.depthTest ||
-									!pb_HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(pb_Math.Average(positions, face.distinctIndices))))
+									!HandleUtility.PointIsOccluded(cam, pb, trs.TransformPoint(ProBuilderMath.Average(positions, face.distinctIndices))))
 								{
 									selectedFaces.Add(face);
 								}
@@ -196,24 +196,24 @@ namespace UnityEngine.ProBuilder
 								Vector2 bl = new Vector2(rect.xMin, rect.yMin);
 								Vector2 br = new Vector2(rect.xMax, rect.yMin);
 
-								overlaps = pb_Math.PointInPolygon(screenPoints, poly, face.edges, tl);
-								if(!overlaps) overlaps = pb_Math.PointInPolygon(screenPoints, poly, face.edges, tr);
-								if(!overlaps) overlaps = pb_Math.PointInPolygon(screenPoints, poly, face.edges, br);
-								if(!overlaps) overlaps = pb_Math.PointInPolygon(screenPoints, poly, face.edges, bl);
+								overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edges, tl);
+								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edges, tr);
+								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edges, br);
+								if(!overlaps) overlaps = ProBuilderMath.PointInPolygon(screenPoints, poly, face.edges, bl);
 
 								// if any polygon edge intersects rect
 								for(int nn = 0; nn < face.edges.Length && !overlaps; nn++)
 								{
-									if( pb_Math.GetLineSegmentIntersect(tr, tl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
+									if( ProBuilderMath.GetLineSegmentIntersect(tr, tl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
 										overlaps = true;
 									else
-									if( pb_Math.GetLineSegmentIntersect(tl, bl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
+									if( ProBuilderMath.GetLineSegmentIntersect(tl, bl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
 										overlaps = true;
 									else
-									if( pb_Math.GetLineSegmentIntersect(bl, br, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
+									if( ProBuilderMath.GetLineSegmentIntersect(bl, br, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
 										overlaps = true;
 									else
-									if( pb_Math.GetLineSegmentIntersect(br, tl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
+									if( ProBuilderMath.GetLineSegmentIntersect(br, tl, screenPoints[face.edges[nn].x], screenPoints[face.edges[nn].y]) )
 										overlaps = true;
 								}
 							}
@@ -231,7 +231,7 @@ namespace UnityEngine.ProBuilder
 			return selected;
 		}
 
-		public static Dictionary<pb_Object, HashSet<pb_Edge>> PickEdgesInRect(
+		public static Dictionary<pb_Object, HashSet<Edge>> PickEdgesInRect(
 			Camera cam,
 			Rect rect,
 			IList<pb_Object> selectable,
@@ -249,7 +249,7 @@ namespace UnityEngine.ProBuilder
 					(int) (cam.pixelHeight / pixelsPerPoint));
 			}
 
-			var selected = new Dictionary<pb_Object, HashSet<pb_Edge>>();
+			var selected = new Dictionary<pb_Object, HashSet<Edge>>();
 
 			foreach (var pb in selectable)
 			{
@@ -257,7 +257,7 @@ namespace UnityEngine.ProBuilder
 					continue;
 
 				Transform trs = pb.transform;
-				var selectedEdges = new HashSet<pb_Edge>();
+				var selectedEdges = new HashSet<Edge>();
 
 				for (int i = 0, fc = pb.faceCount; i < fc; i++)
 				{
@@ -284,7 +284,7 @@ namespace UnityEngine.ProBuilder
 								if (rect.Contains(a) && rect.Contains(b))
 								{
 
-									if (!options.depthTest || !pb_HandleUtility.PointIsOccluded(cam, pb, (posA + posB) * .5f))
+									if (!options.depthTest || !HandleUtility.PointIsOccluded(cam, pb, (posA + posB) * .5f))
 										selectedEdges.Add(edge);
 								}
 
@@ -294,7 +294,7 @@ namespace UnityEngine.ProBuilder
 							case pb_RectSelectMode.Partial:
 							{
 								// partial + depth test is covered earlier
-								if (pb_Math.RectIntersectsLineSegment(rect, a, b))
+								if (ProBuilderMath.RectIntersectsLineSegment(rect, a, b))
 									selectedEdges.Add(edge);
 
 								break;

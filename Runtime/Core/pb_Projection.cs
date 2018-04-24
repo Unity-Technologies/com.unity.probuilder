@@ -20,9 +20,9 @@ namespace UnityEngine.ProBuilder
 			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
 		}
 
-		internal static Vector2[] PlanarProject(pb_Object pb, pb_Face face)
+		internal static Vector2[] PlanarProject(pb_Object pb, Face face)
 		{
-			Vector3 normal = pb_Math.Normal(pb, face);
+			Vector3 normal = ProBuilderMath.Normal(pb, face);
 			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
 			for(int i = 0; i < len; i++)
 				v[i] = vertices[indices[i]].position;
 
-			Vector3 normal = pb_Math.Normal(vertices, indices);
+			Vector3 normal = ProBuilderMath.Normal(vertices, indices);
 			ProjectionAxis axis = VectorToProjectionAxis(normal);
 
 			return PlanarProject(v, normal, axis, null);
@@ -121,11 +121,11 @@ namespace UnityEngine.ProBuilder
 			}
 
 			// get U axis
-			pb_Math.Cross(planeNormal, vec, ref t_uaxis.x, ref t_uaxis.y, ref t_uaxis.z);
+			ProBuilderMath.Cross(planeNormal, vec, ref t_uaxis.x, ref t_uaxis.y, ref t_uaxis.z);
 			t_uaxis.Normalize();
 
 			// calculate V axis relative to U
-			pb_Math.Cross(t_uaxis, planeNormal, ref t_vaxis.x, ref t_vaxis.y, ref t_vaxis.z);
+			ProBuilderMath.Cross(t_uaxis, planeNormal, ref t_vaxis.x, ref t_vaxis.y, ref t_vaxis.z);
 			t_vaxis.Normalize();
 
 			int len = indices.Length;
@@ -143,7 +143,7 @@ namespace UnityEngine.ProBuilder
 		{
 			int len = indices == null ? vertices.Count : indices.Count;
 			Vector2[] uv = new Vector2[len];
-			Vector3 cen = pb_Math.Average(vertices, indices);
+			Vector3 cen = ProBuilderMath.Average(vertices, indices);
 
 			for(int i = 0; i < len; i++)
 			{
@@ -165,14 +165,14 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		internal static IList<Vector2> Sort(IList<Vector2> verts, SortMethod method = SortMethod.CounterClockwise)
 		{
-			Vector2 cen = pb_Math.Average(verts);
+			Vector2 cen = ProBuilderMath.Average(verts);
 			Vector2 up = Vector2.up;
 			int count = verts.Count;
 
 			List<pb_Tuple<float, Vector2>> angles = new List<pb_Tuple<float, Vector2>>(count);
 
 			for(int i = 0; i < count; i++)
-				angles.Add(new pb_Tuple<float, Vector2>(pb_Math.SignedAngle(up, verts[i] - cen), verts[i]));
+				angles.Add(new pb_Tuple<float, Vector2>(ProBuilderMath.SignedAngle(up, verts[i] - cen), verts[i]));
 
 			angles.Sort((a, b) => { return a.Item1 < b.Item1 ? -1 : 1; });
 
@@ -252,7 +252,7 @@ namespace UnityEngine.ProBuilder
 
 			bool ind = indices != null && indices.Count > 0;
 			int len = ind ? indices.Count : points.Count;
-			Vector3 c = pb_Math.Average(points, selector, indices);
+			Vector3 c = ProBuilderMath.Average(points, selector, indices);
 
 			for(int i = 0; i < len; i++)
 			{

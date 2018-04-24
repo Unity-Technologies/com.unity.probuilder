@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 
 			if (s_ShapePreviewMaterial == null)
 			{
-				s_ShapePreviewMaterial = new Material(pb_Material.DefaultMaterial.shader);
+				s_ShapePreviewMaterial = new Material(BuiltinMaterials.DefaultMaterial.shader);
 				s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
 
 				if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
@@ -1130,13 +1130,13 @@ namespace UnityEditor.ProBuilder
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object
-			Mesh m = pb_MeshUtility.DeepCopy( pb.msh );
+			Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy( pb.msh );
 
 			Object.DestroyImmediate(pb.msh);
 			Object.DestroyImmediate(pb);
 
-			if(m_PreviewObject.GetComponent<pb_Entity>())
-				Object.DestroyImmediate(m_PreviewObject.GetComponent<pb_Entity>());
+			if(m_PreviewObject.GetComponent<Entity>())
+				Object.DestroyImmediate(m_PreviewObject.GetComponent<Entity>());
 
 			m.hideFlags = HideFlags.DontSave;
 			m_PreviewObject.hideFlags = HideFlags.DontSave;

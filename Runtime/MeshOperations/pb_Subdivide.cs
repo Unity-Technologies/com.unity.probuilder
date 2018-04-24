@@ -18,7 +18,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static ActionResult Subdivide(this pb_Object pb)
 		{
-			pb_Face[] ignore;
+			Face[] ignore;
 			return pb.Subdivide(pb.faces, out ignore);
 		}
 
@@ -29,7 +29,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces">The faces to be affected by subdivision.</param>
 		/// <param name="subdividedFaces"></param>
 		/// <returns>An result indicating the status of the action.</returns>
-		public static ActionResult Subdivide(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] subdividedFaces)
+		public static ActionResult Subdivide(this pb_Object pb, IList<Face> faces, out Face[] subdividedFaces)
 		{
 			ActionResult res = pb_ConnectEdges.Connect(pb, faces, out subdividedFaces);
 			return res;

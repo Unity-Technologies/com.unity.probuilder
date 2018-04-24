@@ -22,20 +22,20 @@ namespace ProBuilder.MeshOperations
 			return false;
 		}
 
-		public static ActionResult ToTriangles(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] newFaces)
+		public static ActionResult ToTriangles(this pb_Object pb, IList<Face> faces, out Face[] newFaces)
 		{
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-			List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>();
+			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
-				List<pb_FaceRebuildData> res = BreakFaceIntoTris(face, vertices, lookup);
+				List<FaceRebuildData> res = BreakFaceIntoTris(face, vertices, lookup);
 				rebuild.AddRange(res);
 			}
 
-			pb_FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
 			pb.DeleteFaces(faces);
 			pb.ToMesh();
 
@@ -44,17 +44,17 @@ namespace ProBuilder.MeshOperations
 			return new ActionResult(Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
 		}
 
-		private static List<pb_FaceRebuildData> BreakFaceIntoTris(pb_Face face, List<pb_Vertex> vertices, Dictionary<int, int> lookup)
+		private static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<pb_Vertex> vertices, Dictionary<int, int> lookup)
 		{
 			int[] tris = face.indices;
 			int triCount = tris.Length;
-			List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>(triCount / 3);
+			List<FaceRebuildData> rebuild = new List<FaceRebuildData>(triCount / 3);
 
 			for(int i = 0; i < triCount; i += 3)
 			{
-				pb_FaceRebuildData r = new pb_FaceRebuildData();
+				FaceRebuildData r = new FaceRebuildData();
 
-				r.face = new pb_Face(face);
+				r.face = new Face(face);
 				r.face.SetIndices( new int[] { 0, 1, 2} );
 
 				r.vertices = new List<pb_Vertex>() {

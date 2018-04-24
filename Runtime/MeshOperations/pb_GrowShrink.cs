@@ -16,11 +16,11 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="maxAngleDiff"></param>
 		/// <returns></returns>
-		public static HashSet<pb_Face> GrowSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff = -1f)
+		public static HashSet<Face> GrowSelection(pb_Object pb, IList<Face> faces, float maxAngleDiff = -1f)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
-			HashSet<pb_Face> source = new HashSet<pb_Face>(faces);
-			HashSet<pb_Face> neighboring = new HashSet<pb_Face>();
+			HashSet<Face> source = new HashSet<Face>(faces);
+			HashSet<Face> neighboring = new HashSet<Face>();
 
 			Vector3 srcNormal = Vector3.zero;
 			bool checkAngle = maxAngleDiff > 0f;
@@ -31,7 +31,7 @@ namespace ProBuilder.MeshOperations
 					continue;
 
 				if(checkAngle)
-					srcNormal = pb_Math.Normal(pb, wings[i].face);
+					srcNormal = ProBuilderMath.Normal(pb, wings[i].face);
 
 				foreach(pb_WingedEdge w in wings[i])
 				{
@@ -39,7 +39,7 @@ namespace ProBuilder.MeshOperations
 					{
 						if(checkAngle)
 						{
-							Vector3 oppNormal = pb_Math.Normal(pb, w.opposite.face);
+							Vector3 oppNormal = ProBuilderMath.Normal(pb, w.opposite.face);
 
 							if(Vector3.Angle(srcNormal, oppNormal) < maxAngleDiff)
 								neighboring.Add(w.opposite.face);
@@ -57,12 +57,12 @@ namespace ProBuilder.MeshOperations
 
 		static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 
-		internal static void Flood(pb_WingedEdge wing, HashSet<pb_Face> selection)
+		internal static void Flood(pb_WingedEdge wing, HashSet<Face> selection)
 		{
 			Flood(null, wing, Vector3_Zero, -1f, selection);
 		}
 
-		internal static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<pb_Face> selection)
+		internal static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
 		{
 			pb_WingedEdge next = wing;
 
@@ -74,7 +74,7 @@ namespace ProBuilder.MeshOperations
 				{
 					if(maxAngle > 0f)
 					{
-						Vector3 oppNormal = pb_Math.Normal(pb, opp.face);
+						Vector3 oppNormal = ProBuilderMath.Normal(pb, opp.face);
 
 						if(Vector3.Angle(wingNrm, oppNormal) < maxAngle)
 						{
@@ -100,18 +100,18 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="maxAngleDiff"></param>
 		/// <returns></returns>
-		public static HashSet<pb_Face> FloodSelection(pb_Object pb, IList<pb_Face> faces, float maxAngleDiff)
+		public static HashSet<Face> FloodSelection(pb_Object pb, IList<Face> faces, float maxAngleDiff)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
-			HashSet<pb_Face> source = new HashSet<pb_Face>(faces);
-			HashSet<pb_Face> flood = new HashSet<pb_Face>();
+			HashSet<Face> source = new HashSet<Face>(faces);
+			HashSet<Face> flood = new HashSet<Face>();
 
 			for(int i = 0; i < wings.Count; i++)
 			{
 				if(!flood.Contains(wings[i].face) && source.Contains(wings[i].face))
 				{
 					flood.Add(wings[i].face);
-					Flood(pb, wings[i], maxAngleDiff > 0f ? pb_Math.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
+					Flood(pb, wings[i], maxAngleDiff > 0f ? ProBuilderMath.Normal(pb, wings[i].face) : Vector3_Zero, maxAngleDiff, flood);
 				}
 			}
 			return flood;

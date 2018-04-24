@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(pb_Object pb in selection)
 			{
-				IEnumerable<pb_Face> matches = pb.faces.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
+				IEnumerable<Face> matches = pb.faces.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 
 				if(matches.Count() > 0)
 				{

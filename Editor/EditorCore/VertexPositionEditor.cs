@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 			{
 				this.lookup = lookup;
 				this.isVisible = visible;
-				this.common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+				this.common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 				if(selection.TryGetValue(pb, out sel))
 				{
 					sel.lookup = pb.sharedIndices.ToDictionary();
-					sel.common = pb_IntArrayUtility.GetCommonIndices(sel.lookup, pb.SelectedTriangles);
+					sel.common = IntArrayUtility.GetCommonIndices(sel.lookup, pb.SelectedTriangles);
 					res.Add(pb, sel);
 				}
 				else

@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="points"></param>
 		/// <param name="edges"></param>
-		public Bounds2D(Vector2[] points, pb_Edge[] edges)
+		public Bounds2D(Vector2[] points, Edge[] edges)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="points"></param>
 		/// <param name="edges"></param>
-		internal Bounds2D(Vector3[] points, pb_Edge[] edges)
+		internal Bounds2D(Vector3[] points, Edge[] edges)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
@@ -203,10 +203,10 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				Vector2[] aabb = corners;
-				return( pb_Math.GetLineSegmentIntersect(aabb[0], aabb[1], lineStart, lineEnd) ||
-						pb_Math.GetLineSegmentIntersect(aabb[1], aabb[3], lineStart, lineEnd) ||
-						pb_Math.GetLineSegmentIntersect(aabb[3], aabb[2], lineStart, lineEnd) ||
-						pb_Math.GetLineSegmentIntersect(aabb[2], aabb[0], lineStart, lineEnd) );
+				return( ProBuilderMath.GetLineSegmentIntersect(aabb[0], aabb[1], lineStart, lineEnd) ||
+						ProBuilderMath.GetLineSegmentIntersect(aabb[1], aabb[3], lineStart, lineEnd) ||
+						ProBuilderMath.GetLineSegmentIntersect(aabb[3], aabb[2], lineStart, lineEnd) ||
+						ProBuilderMath.GetLineSegmentIntersect(aabb[2], aabb[0], lineStart, lineEnd) );
 			}
 		}
 

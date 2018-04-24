@@ -124,7 +124,7 @@ namespace UnityEditor.ProBuilder
 				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
 				s_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
 				s_TotalFaceCount = Top().Sum(x => x.faceCount);
-				s_TotalTriangleCountCompiled = Top().Sum(x => (int) pb_MeshUtility.GetTriangleCount(x.msh));
+				s_TotalTriangleCountCompiled = Top().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetTriangleCount(x.msh));
 				s_ElementCountCacheIsDirty = false;
 			}
 			catch

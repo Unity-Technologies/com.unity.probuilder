@@ -8,6 +8,7 @@ using System;
 using UnityEditor.ProBuilder;
 using ProBuilder.Test;
 using System.Reflection;
+using HandleUtility = UnityEditor.HandleUtility;
 
 namespace ProBuilder.EditorTests.Editor
 {

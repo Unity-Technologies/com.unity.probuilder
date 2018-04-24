@@ -20,7 +20,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="uvs">The new uvs to add (must match positions length).</param>
 		/// <param name="face">A </param>
 		/// <returns></returns>
-		public static pb_Face AppendFace(this pb_Object pb, Vector3[] positions, Color[] colors, Vector2[] uvs, pb_Face face)
+		public static Face AppendFace(this pb_Object pb, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face)
 		{
 			int[] shared = new int[positions.Length];
 			for(int i = 0; i < positions.Length; i++)
@@ -38,7 +38,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="face"></param>
 		/// <param name="sharedIndex"></param>
 		/// <returns></returns>
-		public static pb_Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, pb_Face face, int[] sharedIndex)
+		public static Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, Face face, int[] sharedIndex)
 		{
 			int vertexCount = pb.vertexCount;
 
@@ -46,8 +46,8 @@ namespace ProBuilder.MeshOperations
 			Color[] _colors = new Color[vertexCount + c.Length];
 			Vector2[] _uvs = new Vector2[pb.uv.Length + u.Length];
 
-			List<pb_Face> _faces = new List<pb_Face>(pb.faces);
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			List<Face> _faces = new List<Face>(pb.faces);
+			IntArray[] sharedIndices = pb.sharedIndices;
 
 			// copy new vertices
 			System.Array.Copy(pb.vertices, 0, _verts, 0, vertexCount);
@@ -68,7 +68,7 @@ namespace ProBuilder.MeshOperations
 			_faces.Add(face);
 
 			for(int i = 0; i < sharedIndex.Length; i++)
-				pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndex[i], i+vertexCount);
+				IntArrayUtility.AddValueAtIndex(ref sharedIndices, sharedIndex[i], i+vertexCount);
 
 			pb.SetVertices( _verts );
 			pb.SetColors( _colors );
@@ -90,14 +90,14 @@ namespace ProBuilder.MeshOperations
 		/// <param name="new_Faces"></param>
 		/// <param name="new_SharedIndices"></param>
 		/// <returns></returns>
-		public static pb_Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, pb_Face[] new_Faces, int[][] new_SharedIndices)
+		public static Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, Face[] new_Faces, int[][] new_SharedIndices)
 		{
 			List<Vector3> _verts = new List<Vector3>(pb.vertices);
 			List<Color> _colors = new List<Color>(pb.colors);
 			List<Vector2> _uv = new List<Vector2>(pb.uv);
 
-			List<pb_Face> _faces = new List<pb_Face>(pb.faces);
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			List<Face> _faces = new List<Face>(pb.faces);
+			IntArray[] sharedIndices = pb.sharedIndices;
 
 			int vc = pb.vertexCount;
 
@@ -122,14 +122,14 @@ namespace ProBuilder.MeshOperations
 				{
 					for(int j = 0; j < new_SharedIndices[i].Length; j++)
 					{
-						pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, new_SharedIndices[i][j], j+vc);
+						IntArrayUtility.AddValueAtIndex(ref sharedIndices, new_SharedIndices[i][j], j+vc);
 					}
 				}
 				else
 				{
 					for(int j = 0; j < new_Vertices[i].Length; j++)
 					{
-						pb_IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, j+vc);
+						IntArrayUtility.AddValueAtIndex(ref sharedIndices, -1, j+vc);
 					}
 				}
 
@@ -151,18 +151,18 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		public static void DuplicateAndFlip(this pb_Object pb, pb_Face[] faces)
+		public static void DuplicateAndFlip(this pb_Object pb, Face[] faces)
 		{
-			List<pb_FaceRebuildData> rebuild = new List<pb_FaceRebuildData>();
+			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
-			foreach(pb_Face face in faces)
+			foreach(Face face in faces)
 			{
-				pb_FaceRebuildData data = new pb_FaceRebuildData();
+				FaceRebuildData data = new FaceRebuildData();
 
 				data.vertices = new List<pb_Vertex>();
-				data.face = new pb_Face(face);
+				data.face = new Face(face);
 				data.sharedIndices = new List<int>();
 
 				Dictionary<int, int> map = new Dictionary<int, int>();
@@ -185,7 +185,7 @@ namespace ProBuilder.MeshOperations
 				rebuild.Add(data);
 			}
 
-			pb_FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
+			FaceRebuildData.Apply(rebuild, pb, vertices, null, lookup, null);
 		}
 
 		/// <summary>
@@ -194,9 +194,9 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static int[] DeleteFace(this pb_Object pb, pb_Face face)
+		public static int[] DeleteFace(this pb_Object pb, Face face)
 		{
-			return DeleteFaces(pb, new pb_Face[] { face });
+			return DeleteFaces(pb, new Face[] { face });
 		}
 
 		/// <summary>
@@ -205,7 +205,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static int[] DeleteFaces(this pb_Object pb, IEnumerable<pb_Face> faces)
+		public static int[] DeleteFaces(this pb_Object pb, IEnumerable<Face> faces)
 		{
 			return DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 		}
@@ -218,7 +218,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static int[] DeleteFaces(this pb_Object pb, IList<int> faceIndices)
 		{
-			pb_Face[] faces = new pb_Face[faceIndices.Count];
+			Face[] faces = new Face[faceIndices.Count];
 
 			for(int i = 0; i < faces.Length; i++)
 				faces[i] = pb.faces[faceIndices[i]];
@@ -231,7 +231,7 @@ namespace ProBuilder.MeshOperations
 			Vector3[] verts 	= pb.vertices.SortedRemoveAt(indicesToRemove);
 			Color[] cols 		= pb.colors.SortedRemoveAt(indicesToRemove);
 			Vector2[] uvs 		= pb.uv.SortedRemoveAt(indicesToRemove);
-			pb_Face[] nFaces 	= pb.faces.RemoveAt(faceIndices);
+			Face[] nFaces 	= pb.faces.RemoveAt(faceIndices);
 
 
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
@@ -252,11 +252,11 @@ namespace ProBuilder.MeshOperations
 
 
 			// shift all other face indices in the shared index array down to account for moved vertex positions
-			pb_IntArray[] si = pb.sharedIndices;
-			pb_IntArray[] si_uv = pb.sharedIndicesUV;
+			IntArray[] si = pb.sharedIndices;
+			IntArray[] si_uv = pb.sharedIndicesUV;
 
-			pb_IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
-			pb_IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
+			IntArrayUtility.RemoveValuesAndShift(ref si, indicesToRemove);
+			IntArrayUtility.RemoveValuesAndShift(ref si_uv, indicesToRemove);
 
 			pb.SetSharedIndices(si);
 			pb.SetSharedIndicesUV(si_uv);

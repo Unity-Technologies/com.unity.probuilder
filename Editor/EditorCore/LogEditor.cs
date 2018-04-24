@@ -24,9 +24,9 @@ namespace UnityEditor.ProBuilder
 		{
 			EditorApplication.delayCall += () =>
 			{
-				pb_Log.SetLogLevel( (pb_LogLevel) PreferencesInternal.GetInt("pb_Log::m_LogLevel", (int) pb_LogLevel.Default) );
-				pb_Log.SetOutput( (pb_LogOutput) PreferencesInternal.GetInt("pb_Log::m_Output", (int) pb_LogOutput.Console) );
-				pb_Log.SetLogFile( PreferencesInternal.GetString("pb_Log::m_LogFilePath", pb_Log.DEFAULT_LOG_PATH) );
+				Log.SetLogLevel( (LogLevel) PreferencesInternal.GetInt("pb_Log::m_LogLevel", (int) LogLevel.Default) );
+				Log.SetOutput( (LogOutput) PreferencesInternal.GetInt("pb_Log::m_Output", (int) LogOutput.Console) );
+				Log.SetLogFile( PreferencesInternal.GetString("pb_Log::m_LogFilePath", Log.DEFAULT_LOG_PATH) );
 			};
 		}
 	}
@@ -57,15 +57,15 @@ namespace UnityEditor.ProBuilder
 			new GUIContent("All")
 		};
 
-		private pb_LogOutput m_Buffer;
-		private pb_LogLevel m_LogLevel;
+		private LogOutput m_Buffer;
+		private LogLevel m_LogLevel;
 		private string m_LogFilePath;
 
 		private void OnEnable()
 		{
-			m_Buffer = (pb_LogOutput) PreferencesInternal.GetInt("pb_Log::m_Output", (int) pb_LogOutput.Console);
-			m_LogLevel = (pb_LogLevel) PreferencesInternal.GetInt("pb_Log:::m_LogLevel", (int) pb_LogLevel.All);
-			m_LogFilePath = PreferencesInternal.GetString("pb_Log::m_LogFilePath", pb_Log.DEFAULT_LOG_PATH);
+			m_Buffer = (LogOutput) PreferencesInternal.GetInt("pb_Log::m_Output", (int) LogOutput.Console);
+			m_LogLevel = (LogLevel) PreferencesInternal.GetInt("pb_Log:::m_LogLevel", (int) LogLevel.All);
+			m_LogFilePath = PreferencesInternal.GetString("pb_Log::m_LogFilePath", Log.DEFAULT_LOG_PATH);
 		}
 
 		private void OnGUI()
@@ -73,14 +73,14 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Label("Log Output", EditorStyles.boldLabel);
 
 			EditorGUI.BeginChangeCheck();
-			m_Buffer = (pb_LogOutput) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)m_Buffer, gc_output);
+			m_Buffer = (LogOutput) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)m_Buffer, gc_output);
 			if(EditorGUI.EndChangeCheck())
 			{
 				PreferencesInternal.SetInt("pb_Log::m_Output", (int) m_Buffer);
 				LogPreferences.SetLogPreferences();
 			}
 
-			GUI.enabled = (m_Buffer & pb_LogOutput.File) > 0;
+			GUI.enabled = (m_Buffer & LogOutput.File) > 0;
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Log Path");
@@ -91,7 +91,7 @@ namespace UnityEditor.ProBuilder
 
 				if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
 				{
-					m_LogFilePath = string.Format("{0}/{1}", dir, pb_Log.DEFAULT_LOG_PATH);
+					m_LogFilePath = string.Format("{0}/{1}", dir, Log.DEFAULT_LOG_PATH);
 
 					try
 					{
@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 					catch {}
 
 					PreferencesInternal.SetString("pb_Log::m_LogFilePath", m_LogFilePath);
-					pb_Log.SetLogFile(m_LogFilePath);
+					Log.SetLogFile(m_LogFilePath);
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -120,18 +120,18 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Label("Chatty-ness", EditorStyles.boldLabel);
 
 			EditorGUI.BeginChangeCheck();
-			m_LogLevel = (pb_LogLevel) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)m_LogLevel, gc_level, false, true);
+			m_LogLevel = (LogLevel) global::UnityEditor.ProBuilder.UI.EditorGUILayout.FlagToolbar((int)m_LogLevel, gc_level, false, true);
 			if(EditorGUI.EndChangeCheck())
 			{
 				PreferencesInternal.SetInt("pb_Log::m_LogLevel", (int) m_LogLevel);
-				pb_Log.SetLogLevel(m_LogLevel);
+				Log.SetLogLevel(m_LogLevel);
 			}
 
 			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 			if(GUILayout.Button("Clear Log File", EditorStyles.miniButton))
-				pb_Log.ClearLogFile();
+				Log.ClearLogFile();
 			GUILayout.EndHorizontal();
 		}
 	}

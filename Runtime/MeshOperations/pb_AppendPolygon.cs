@@ -15,11 +15,11 @@ namespace ProBuilder.MeshOperations
 		/// <param name="unordered"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
+		public static ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out Face face)
 		{
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
+			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 			List<pb_Vertex> append_vertices = new List<pb_Vertex>();
 
@@ -29,13 +29,13 @@ namespace ProBuilder.MeshOperations
 				append_vertices.Add(new pb_Vertex(vertices[index]));
 			}
 
-			pb_FaceRebuildData data = FaceWithVertices(append_vertices, unordered);
+			FaceRebuildData data = FaceWithVertices(append_vertices, unordered);
 
 			if(data != null)
 			{
 				data.sharedIndices = common.ToList();
-				List<pb_Face> faces = new List<pb_Face>(pb.faces);
-				pb_FaceRebuildData.Apply(new pb_FaceRebuildData[] { data }, vertices, faces, lookup, null);
+				List<Face> faces = new List<Face>(pb.faces);
+				FaceRebuildData.Apply(new FaceRebuildData[] { data }, vertices, faces, lookup, null);
 				pb.SetVertices(vertices);
 				pb.SetFaces(faces.ToArray());
 				pb.SetSharedIndices(lookup);
@@ -83,32 +83,32 @@ namespace ProBuilder.MeshOperations
 			Vector3[] vertices = points.ToArray();
 			List<int> triangles;
 
-			pb_Log.PushLogLevel(pb_LogLevel.Error);
+			Log.PushLogLevel(LogLevel.Error);
 
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, false))
 			{
 				int[] indices = triangles.ToArray();
 
-				if(pb_Math.PolygonArea(vertices, indices) < Mathf.Epsilon )
+				if(ProBuilderMath.PolygonArea(vertices, indices) < Mathf.Epsilon )
 				{
 					pb.SetVertices(new Vector3[0]);
-					pb.SetFaces(new pb_Face[0]);
-					pb.SetSharedIndices(new pb_IntArray[0]);
-					pb_Log.PopLogLevel();
+					pb.SetFaces(new Face[0]);
+					pb.SetSharedIndices(new IntArray[0]);
+					Log.PopLogLevel();
 					return new ActionResult(Status.Failure, "Polygon Area < Epsilon");
 				}
 
 				pb.Clear();
-				pb.GeometryWithVerticesFaces(vertices, new pb_Face[] { new pb_Face(indices) });
+				pb.GeometryWithVerticesFaces(vertices, new Face[] { new Face(indices) });
 
-				Vector3 nrm = pb_Math.Normal(pb, pb.faces[0]);
+				Vector3 nrm = ProBuilderMath.Normal(pb, pb.faces[0]);
 
 				if(Vector3.Dot(Vector3.up, nrm) > 0f)
 					pb.faces[0].ReverseIndices();
 
 				pb.DuplicateAndFlip(pb.faces);
 
-				pb.Extrude(new pb_Face[] { pb.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
+				pb.Extrude(new Face[] { pb.faces[1] }, ExtrudeMethod.IndividualFaces, extrude);
 
 				if((extrude < 0f && !flipNormals) || (extrude > 0f && flipNormals))
 					pb.ReverseWindingOrder(pb.faces);
@@ -118,11 +118,11 @@ namespace ProBuilder.MeshOperations
 			}
 			else
 			{
-				pb_Log.PopLogLevel();
+				Log.PopLogLevel();
 				return new ActionResult(Status.Failure, "Failed Triangulating Points");
 			}
 
-			pb_Log.PopLogLevel();
+			Log.PopLogLevel();
 
 			return new ActionResult(Status.Success, "Create Polygon Shape");
 		}
@@ -133,15 +133,15 @@ namespace ProBuilder.MeshOperations
 		/// <param name="vertices"></param>
 		/// <param name="unordered"></param>
 		/// <returns></returns>
-		internal static pb_FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
+		internal static FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
 		{
 			List<int> triangles;
 
 			if(pb_Triangulation.TriangulateVertices(vertices, out triangles, unordered))
 			{
-				pb_FaceRebuildData data = new pb_FaceRebuildData();
+				FaceRebuildData data = new FaceRebuildData();
 				data.vertices = vertices;
-				data.face = new pb_Face(triangles.ToArray());
+				data.face = new Face(triangles.ToArray());
 				return data;
 			}
 
@@ -153,11 +153,11 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		internal static List<pb_FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
+		internal static List<FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
 		{
 			int count = path.Count;
 			pb_Vertex center = pb_Vertex.Average(path);
-			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
+			List<FaceRebuildData> faces = new List<FaceRebuildData>();
 
 			for(int i = 0; i < count; i++)
 			{
@@ -168,9 +168,9 @@ namespace ProBuilder.MeshOperations
 					path[(i+1)%count]
 				};
 
-				pb_FaceRebuildData data = new pb_FaceRebuildData();
+				FaceRebuildData data = new FaceRebuildData();
 				data.vertices = vertices;
-				data.face = new pb_Face(new int[] {0 , 1, 2});
+				data.face = new Face(new int[] {0 , 1, 2});
 
 				faces.Add(data);
 			}
@@ -184,11 +184,11 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static List<List<pb_Edge>> FindHoles(pb_Object pb, IList<int> indices)
+		internal static List<List<Edge>> FindHoles(pb_Object pb, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-			HashSet<int> common = pb_IntArrayUtility.GetCommonIndices(lookup, indices);
-			List<List<pb_Edge>> holes = new List<List<pb_Edge>>();
+			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
+			List<List<Edge>> holes = new List<List<Edge>>();
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
 
 			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(wings, common))

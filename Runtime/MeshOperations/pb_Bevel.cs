@@ -11,34 +11,34 @@ namespace ProBuilder.MeshOperations
 	/// </summary>
 	static class pb_Bevel
 	{
-		public static ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
+		public static ActionResult BevelEdges(pb_Object pb, IList<Edge> edges, float amount, out List<Face> createdFaces)
 		{
 			createdFaces = null;
 
 			Dictionary<int, int> 		lookup 		= pb.sharedIndices.ToDictionary();
 			List<pb_Vertex> 			vertices 	= new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
-			List<pb_EdgeLookup> 		m_edges 	= pb_EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
+			List<EdgeLookup> 		m_edges 	= EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
 			List<pb_WingedEdge> 		wings 		= pb_WingedEdge.GetWingedEdges(pb);
-			List<pb_FaceRebuildData> 	appendFaces = new List<pb_FaceRebuildData>();
+			List<FaceRebuildData> 	appendFaces = new List<FaceRebuildData>();
 
-			Dictionary<pb_Face, List<int>> 	ignore 	= new Dictionary<pb_Face, List<int>>();
+			Dictionary<Face, List<int>> 	ignore 	= new Dictionary<Face, List<int>>();
 			HashSet<int> 					slide 	= new HashSet<int>();
 			int beveled = 0;
 
-			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>>();
+			Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>>();
 
 			// test every edge that will be moved along to make sure the bevel distance is appropriate.  if it's not, adjust the max bevel amount
 			// to suit.
 			Dictionary<int, List<pb_WingedEdge>> spokes = pb_WingedEdge.GetSpokes(wings);
 			HashSet<int> tested_common = new HashSet<int>();
 
-			foreach(pb_EdgeLookup e in m_edges)
+			foreach(EdgeLookup e in m_edges)
 			{
 				if(tested_common.Add(e.common.x))
 				{
 					foreach(pb_WingedEdge w in spokes[e.common.x])
 					{
-						pb_Edge le = w.edge.local;
+						Edge le = w.edge.local;
 						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
 					}
 				}
@@ -47,7 +47,7 @@ namespace ProBuilder.MeshOperations
 				{
 					foreach(pb_WingedEdge w in spokes[e.common.y])
 					{
-						pb_Edge le = w.edge.local;
+						Edge le = w.edge.local;
 						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
 					}
 				}
@@ -58,7 +58,7 @@ namespace ProBuilder.MeshOperations
 
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
-			foreach(pb_EdgeLookup lup in m_edges)
+			foreach(EdgeLookup lup in m_edges)
 			{
 				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
 
@@ -90,9 +90,9 @@ namespace ProBuilder.MeshOperations
 
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
 			// then add holes later
-			createdFaces = new List<pb_Face>(appendFaces.Select(x => x.face));
+			createdFaces = new List<Face>(appendFaces.Select(x => x.face));
 
-			Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>>();
+			Dictionary<Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<Face, List<pb_Tuple<pb_WingedEdge, int>>>();
 
 			// sort the adjacent but affected faces into winged edge groups where each group contains a set of
 			// unique winged edges pointing to the same face
@@ -100,7 +100,7 @@ namespace ProBuilder.MeshOperations
 			{
 				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !(ignore.ContainsKey(x.face) && ignore[x.face].Contains(c)));
 
-				HashSet<pb_Face> used = new HashSet<pb_Face>();
+				HashSet<Face> used = new HashSet<Face>();
 
 				foreach(pb_WingedEdge match in matches)
 				{
@@ -112,12 +112,12 @@ namespace ProBuilder.MeshOperations
 			}
 
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
-			foreach(KeyValuePair<pb_Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
+			foreach(KeyValuePair<Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
 			{
 				// common index & list of vertices it was split into
 				Dictionary<int, List<int>> appendedVertices;
 
-				pb_FaceRebuildData f = pb_VertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
+				FaceRebuildData f = pb_VertexOps.ExplodeVertex(vertices, kvp.Value, amount, out appendedVertices);
 
 				if(f == null)
 					continue;
@@ -128,22 +128,22 @@ namespace ProBuilder.MeshOperations
 				{
 					// organize holes by new face so that later we can compare the winding of the new face to the hole face
 					// holes are sorted by key: common index value: face, vertex list
-					holes.AddOrAppend(apv.Key, new pb_Tuple<pb_FaceRebuildData, List<int>>(f, apv.Value));
+					holes.AddOrAppend(apv.Key, new pb_Tuple<FaceRebuildData, List<int>>(f, apv.Value));
 				}
 			}
 
-			pb_FaceRebuildData.Apply(appendFaces, pb, vertices);
+			FaceRebuildData.Apply(appendFaces, pb, vertices);
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
-			pb.SetSharedIndicesUV(new pb_IntArray[0]);
-			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			pb.SetSharedIndicesUV(new IntArray[0]);
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
-			pb_IntArray[] sharedIndices = pb.sharedIndices;
+			IntArray[] sharedIndices = pb.sharedIndices;
 			lookup = sharedIndices.ToDictionary();
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
 			// offset the indices of holes and cull any potential holes that are less than 3 indices (not a hole :)
-			foreach(KeyValuePair<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> hole in holes)
+			foreach(KeyValuePair<int, List<pb_Tuple<FaceRebuildData, List<int>>>> hole in holes)
 			{
 				// less than 3 indices in hole path; ain't a hole
 				if(hole.Value.Sum(x => x.Item2.Count) < 3)
@@ -151,7 +151,7 @@ namespace ProBuilder.MeshOperations
 
 				HashSet<int> holeCommon = new HashSet<int>();
 
-				foreach(pb_Tuple<pb_FaceRebuildData, List<int>> path in hole.Value)
+				foreach(pb_Tuple<FaceRebuildData, List<int>> path in hole.Value)
 				{
 					int offset = path.Item1.Offset() - removed;
 
@@ -167,7 +167,7 @@ namespace ProBuilder.MeshOperations
 			// now go through the holes and create faces for them
 			vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 
-			List<pb_FaceRebuildData> holeFaces = new List<pb_FaceRebuildData>();
+			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
 			foreach(HashSet<int> h in holesCommonIndices)
 			{
@@ -192,14 +192,14 @@ namespace ProBuilder.MeshOperations
 				}
 			}
 
-			pb_FaceRebuildData.Apply(holeFaces, pb, vertices);
-			pb.SetSharedIndices(pb_IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			FaceRebuildData.Apply(holeFaces, pb, vertices);
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces
 			// HashSet<pb_Face> adjacent = new HashSet<pb_Face>(appendFaces.Select(x => x.face));
 			// and also just the filled holes
-			HashSet<pb_Face> newHoles = new HashSet<pb_Face>(holeFaces.Select(x => x.face));
+			HashSet<Face> newHoles = new HashSet<Face>(holeFaces.Select(x => x.face));
 			// now append filled holes to the full list of added faces
 			appendFaces.AddRange(holeFaces);
 
@@ -236,18 +236,18 @@ namespace ProBuilder.MeshOperations
 
  		private static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };
 
- 		private static List<pb_FaceRebuildData> GetBridgeFaces(
+ 		private static List<FaceRebuildData> GetBridgeFaces(
  			IList<pb_Vertex> vertices,
  			pb_WingedEdge left,
  			pb_WingedEdge right,
- 			Dictionary<int, List<pb_Tuple<pb_FaceRebuildData, List<int>>>> holes)
+ 			Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>> holes)
  		{
- 			List<pb_FaceRebuildData> faces = new List<pb_FaceRebuildData>();
+ 			List<FaceRebuildData> faces = new List<FaceRebuildData>();
 
- 			pb_FaceRebuildData rf = new pb_FaceRebuildData();
+ 			FaceRebuildData rf = new FaceRebuildData();
 
- 			pb_EdgeLookup a = left.edge;
- 			pb_EdgeLookup b = right.edge;
+ 			EdgeLookup a = left.edge;
+ 			EdgeLookup b = right.edge;
 
  			rf.vertices = new List<pb_Vertex>()
  			{
@@ -257,15 +257,15 @@ namespace ProBuilder.MeshOperations
  				vertices[a.common.x == b.common.x ? b.local.y : b.local.x]
  			};
 
- 			Vector3 an = pb_Math.Normal(vertices, left.face.indices);
- 			Vector3 bn = pb_Math.Normal(rf.vertices, BRIDGE_INDICES_NRM);
+ 			Vector3 an = ProBuilderMath.Normal(vertices, left.face.indices);
+ 			Vector3 bn = ProBuilderMath.Normal(rf.vertices, BRIDGE_INDICES_NRM);
 
  			int[] triangles = new int[] { 2, 1, 0, 2, 3, 1 };
 
  			if( Vector3.Dot(an, bn) < 0f)
  				System.Array.Reverse(triangles);
 
- 			rf.face = new pb_Face(
+ 			rf.face = new Face(
  				triangles,
  				left.face.material,
  				new pb_UV(),
@@ -276,8 +276,8 @@ namespace ProBuilder.MeshOperations
 
  			faces.Add(rf);
 
- 			holes.AddOrAppend(a.common.x, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
- 			holes.AddOrAppend(a.common.y, new pb_Tuple<pb_FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
+ 			holes.AddOrAppend(a.common.x, new pb_Tuple<FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
+ 			holes.AddOrAppend(a.common.y, new pb_Tuple<FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
 
  			return faces;
  		}
@@ -287,8 +287,8 @@ namespace ProBuilder.MeshOperations
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
 
-			pb_Edge slide_x = GetLeadingEdge(we, we.edge.common.x);
-			pb_Edge slide_y = GetLeadingEdge(we, we.edge.common.y);
+			Edge slide_x = GetLeadingEdge(we, we.edge.common.x);
+			Edge slide_y = GetLeadingEdge(we, we.edge.common.y);
 
 			if(!slide_x.IsValid() || !slide_y.IsValid())
 				return;
@@ -304,18 +304,18 @@ namespace ProBuilder.MeshOperations
 			vertices[we.edge.local.y].Add(y * amount);
 		}
 
-		private static pb_Edge GetLeadingEdge(pb_WingedEdge wing, int common)
+		private static Edge GetLeadingEdge(pb_WingedEdge wing, int common)
 		{
 			if(wing.previous.edge.common.x == common)
-				return new pb_Edge(wing.previous.edge.local.y, wing.previous.edge.local.x);
+				return new Edge(wing.previous.edge.local.y, wing.previous.edge.local.x);
 			else if(wing.previous.edge.common.y == common)
-				return new pb_Edge(wing.previous.edge.local.x, wing.previous.edge.local.y);
+				return new Edge(wing.previous.edge.local.x, wing.previous.edge.local.y);
 			else if(wing.next.edge.common.x == common)
-				return new pb_Edge(wing.next.edge.local.y, wing.next.edge.local.x);
+				return new Edge(wing.next.edge.local.y, wing.next.edge.local.x);
 			else if(wing.next.edge.common.y == common)
-				return new pb_Edge(wing.next.edge.local.x, wing.next.edge.local.y);
+				return new Edge(wing.next.edge.local.x, wing.next.edge.local.y);
 
-			return pb_Edge.Empty;
+			return Edge.Empty;
 		}
 	}
 }
