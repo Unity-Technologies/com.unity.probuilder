@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.RuntimeTests.Shape
+namespace UnityEngine.ProBuilder.RuntimeTests.Shape
 {
 	public class CreateBasicShapes
 	{
@@ -25,10 +25,10 @@ namespace ProBuilder.RuntimeTests.Shape
 			try
 			{
 				Assert.IsNotNull(pb, type.ToString());
-				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
+				TestUtility.AssertMeshAttributesValid(pb.mesh);
 				// Loads an asset by name from the template path. See also pb_TestUtility.GetTemplatePath
-				Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(type.ToString());
-				Assert.IsTrue(pb_TestUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
+				Mesh template = TestUtility.GetAssetTemplate<Mesh>(type.ToString());
+				Assert.IsTrue(TestUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
 			}
 			finally
 			{

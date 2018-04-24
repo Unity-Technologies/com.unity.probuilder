@@ -1,4 +1,4 @@
-﻿#define PB_CREATE_TEST_MESH_TEMPLATES
+﻿//#define PB_CREATE_TEST_MESH_TEMPLATES
 
 using System;
 using System.Collections;
@@ -13,24 +13,24 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace ProBuilder.Test
+namespace UnityEngine.ProBuilder.Test
 {
-	public abstract class pb_TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
+	public abstract class TemporaryAssetTest : IPrebuildSetup, IPostBuildCleanup
 	{
 		public void Setup()
 		{
-			if (!Directory.Exists(pb_TestUtility.TemporarySavedAssetsDirectory))
-				Directory.CreateDirectory(pb_TestUtility.TemporarySavedAssetsDirectory);
+			if (!Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
+				Directory.CreateDirectory(TestUtility.TemporarySavedAssetsDirectory);
 		}
 
 		public void Cleanup()
 		{
-			if (Directory.Exists(pb_TestUtility.TemporarySavedAssetsDirectory))
-				Directory.Delete(pb_TestUtility.TemporarySavedAssetsDirectory, true);
+			if (Directory.Exists(TestUtility.TemporarySavedAssetsDirectory))
+				Directory.Delete(TestUtility.TemporarySavedAssetsDirectory, true);
 		}
 	}
 
-	public static class pb_TestUtility
+	public static class TestUtility
 	{
 		const string k_TemplatesDirectory = "Packages/com.unity.probuilder/Tests/Editor/Templates/";
 		const string k_TestsDirectory = "Packages/com.unity.probuilder/Tests/Editor/";

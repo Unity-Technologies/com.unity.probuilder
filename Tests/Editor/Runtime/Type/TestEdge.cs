@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.RuntimeTests.Type
+namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
 	public static class TestEdge
 	{

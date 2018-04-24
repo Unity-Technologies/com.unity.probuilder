@@ -8,7 +8,7 @@ using UnityEditor.ProBuilder;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace ProBuilder.EditorTests.Picking
+namespace UnityEngine.ProBuilder.EditorTests.Picking
 {
 	public class RectSelection
 	{

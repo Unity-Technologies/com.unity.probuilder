@@ -7,11 +7,11 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace ProBuilder.RuntimeTests.MeshOps.Face
+namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Face
 {
 	public class Delete
 	{
@@ -20,7 +20,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		[Test]
 		public static void DeleteFirstFace()
 		{
-			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
+			using (var shapes = new TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
@@ -31,10 +31,10 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
-					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
-					var template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
+					TestUtility.AssertMeshAttributesValid(pb.mesh);
+					var template = TestUtility.GetAssetTemplate<Mesh>(pb.name);
 					Assert.IsNotNull(template);
-					pb_TestUtility.AssertAreEqual(pb.mesh, template);
+					TestUtility.AssertAreEqual(pb.mesh, template);
 				}
 			}
 		}
@@ -42,7 +42,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		[Test]
 		public static void DeleteRandomFace()
 		{
-			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
+			using (var shapes = new TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
@@ -53,7 +53,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 
-					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
+					TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(pb.vertexCount, vertexCount - faceVertexCount);
 				}
 			}
@@ -62,14 +62,14 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		[Test]
 		public static void DeleteAllFaces()
 		{
-			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
+			using (var shapes = new TestUtility.BuiltInPrimitives())
 			{
 				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					pb.DeleteFaces(pb.faces);
 					pb.ToMesh();
 					pb.Refresh();
-					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
+					TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(pb.vertexCount, 0);
 				}
 			}

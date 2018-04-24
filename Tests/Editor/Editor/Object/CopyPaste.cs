@@ -5,11 +5,11 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.TestTools;
 using UnityEditor.ProBuilder;
 
-namespace ProBuilder.EditorTests.Object
+namespace UnityEngine.ProBuilder.EditorTests.Object
 {
 	public class CopyPaste
 	{
@@ -26,7 +26,7 @@ namespace ProBuilder.EditorTests.Object
 				EditorUtility.VerifyMesh(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
 				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
-				pb_TestUtility.AssertAreEqual(copy.mesh, original.mesh);
+				TestUtility.AssertAreEqual(copy.mesh, original.mesh);
 			}
 			finally
 			{

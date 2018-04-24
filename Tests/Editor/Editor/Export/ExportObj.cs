@@ -4,15 +4,15 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.TestTools;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 
-namespace ProBuilder.EditorTests.Export
+namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportObj : pb_TemporaryAssetTest
+	public class ExportObj : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()

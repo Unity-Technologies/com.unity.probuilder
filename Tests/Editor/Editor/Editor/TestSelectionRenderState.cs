@@ -6,9 +6,9 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using System;
 using UnityEditor.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.EditorTests.Editor
+namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
 	public class TestSelectionRenderState
 	{

@@ -5,12 +5,12 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.TestTools;
 using UnityEditor.ProBuilder;
 using UnityEditor;
 
-namespace ProBuilder.EditorTests.Object
+namespace UnityEngine.ProBuilder.EditorTests.Object
 {
 	public class CreateDestroy
 	{
@@ -47,7 +47,7 @@ namespace ProBuilder.EditorTests.Object
 		public static void DestroyDoesNotDeleteMeshBackByAsset()
 		{
 			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
-			string path = pb_TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
+			string path = TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);
 			Assert.IsFalse(mesh == null);

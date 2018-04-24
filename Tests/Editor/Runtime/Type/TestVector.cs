@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
 
-namespace ProBuilder.RuntimeTests.Type
+namespace UnityEngine.ProBuilder.RuntimeTests.Type
 {
 	public static class TestHashUtility
 	{

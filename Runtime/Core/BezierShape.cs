@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// Rebuild the pb_Object with the extruded spline.
+		/// Rebuild the ProBuilderMesh with the extruded spline.
 		/// </summary>
 		public void Refresh()
 		{

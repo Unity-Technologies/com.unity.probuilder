@@ -6,7 +6,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEditor.ProBuilder;
 
-namespace ProBuilder.EditorTests.ProGrids
+namespace UnityEngine.ProBuilder.EditorTests.ProGrids
 {
 	public class ProGridsMethodsExist
 	{

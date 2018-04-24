@@ -6,11 +6,11 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using System;
 using UnityEditor.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using System.Reflection;
 using HandleUtility = UnityEditor.HandleUtility;
 
-namespace ProBuilder.EditorTests.Editor
+namespace UnityEngine.ProBuilder.EditorTests.Editor
 {
 	public static class ReflectedMethodsExist
 	{
@@ -36,7 +36,7 @@ namespace ProBuilder.EditorTests.Editor
 		[Test]
 		public static void ApplyWireMaterial()
 		{
-			var m_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
+			var m_ApplyWireMaterial = typeof(UnityEditor.HandleUtility).GetMethod(
 				"ApplyWireMaterial",
 				BindingFlags.Static | BindingFlags.NonPublic,
 				null,

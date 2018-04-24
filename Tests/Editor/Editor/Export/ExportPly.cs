@@ -5,11 +5,11 @@ using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 
-namespace ProBuilder.EditorTests.Export
+namespace UnityEngine.ProBuilder.EditorTests.Export
 {
-	public class ExportPly : pb_TemporaryAssetTest
+	public class ExportPly : TemporaryAssetTest
 	{
 		[Test]
 		public static void NumbersAreCultureInvariant()

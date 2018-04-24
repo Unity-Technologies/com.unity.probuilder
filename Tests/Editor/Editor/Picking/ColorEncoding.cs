@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 
-namespace ProBuilder.EditorTests.Picking
+namespace UnityEngine.ProBuilder.EditorTests.Picking
 {
 	public class ColorEncoding
 	{

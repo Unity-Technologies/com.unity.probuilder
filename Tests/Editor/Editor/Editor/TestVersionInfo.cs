@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using System;
 
-namespace ProBuilder.EditorTests.Type
+namespace UnityEngine.ProBuilder.EditorTests.Type
 {
 	public class TestVersionInfo
 	{

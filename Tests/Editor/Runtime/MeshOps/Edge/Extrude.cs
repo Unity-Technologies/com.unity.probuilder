@@ -5,12 +5,12 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using ProBuilder.Test;
+using UnityEngine.ProBuilder.Test;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace ProBuilder.RuntimeTests.MeshOps.Edge
+namespace UnityEngine.ProBuilder.RuntimeTests.MeshOps.Edge
 {
 	public class Extrude
 	{
@@ -33,7 +33,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
-				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
+				TestUtility.AssertMeshAttributesValid(pb.mesh);
 				Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
 			}
 			finally
@@ -59,7 +59,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
-				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
+				TestUtility.AssertMeshAttributesValid(pb.mesh);
 				Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
 			}
 			finally
