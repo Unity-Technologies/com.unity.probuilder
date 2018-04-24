@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	class LogEditor : EditorWindow
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/Log Preferences")]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Debug/Log Preferences")]
 		private static void MenuInit()
 		{
 			EditorWindow.GetWindow<LogEditor>(true, "Log Preferences", true);

@@ -22,18 +22,18 @@ namespace UnityEditor.ProBuilder
 
 		public const string PROBUILDER_MENU_PATH = "Tools/ProBuilder/";
 
-		protected const char CMD_SUPER 	= pb_Constant.CMD_SUPER;
-		protected const char CMD_SHIFT 	= pb_Constant.CMD_SHIFT;
-		protected const char CMD_OPTION = pb_Constant.CMD_OPTION;
-		protected const char CMD_ALT 	= pb_Constant.CMD_ALT;
-		protected const char CMD_DELETE = pb_Constant.CMD_DELETE;
+		protected const char CMD_SUPER 	= PreferenceKeys.CMD_SUPER;
+		protected const char CMD_SHIFT 	= PreferenceKeys.CMD_SHIFT;
+		protected const char CMD_OPTION = PreferenceKeys.CMD_OPTION;
+		protected const char CMD_ALT 	= PreferenceKeys.CMD_ALT;
+		protected const char CMD_DELETE = PreferenceKeys.CMD_DELETE;
 
 		static readonly GUIContent AltButtonContent = new GUIContent("+", "");
 		public virtual bool isProOnly { get { return false; } }
 
 		protected MenuAction()
 		{
-			isIconMode = PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
+			isIconMode = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
 		}
 
 		public static int CompareActionsByGroupAndPriority(MenuAction left, MenuAction right)

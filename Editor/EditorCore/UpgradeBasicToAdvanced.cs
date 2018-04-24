@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/// </summary>
 	class UpgradeBasicToAdvanced : Editor
 	{
-		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Repair/Upgrade Scene to Advanced", false, PreferenceKeys.MENU_REPAIR + 10)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Upgrade Scene to Advanced", false, PreferenceKeys.menuRepair + 10)]
 		public static void MenuUpgradeSceneAdvanced()
 		{
 			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Scene to Advanced", "This utility sets the materials on every ProBuilder object in the scene.  Continue?", "Okay", "Cancel") )
@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 			UnityEditor.EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in scene.\n\nIf any of the objects in the scene were prefabs you'll need to 'Apply' changes.", "Okay");
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Repair/Upgrade Selection to Advanced", false, PreferenceKeys.MENU_REPAIR + 10)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Upgrade Selection to Advanced", false, PreferenceKeys.menuRepair + 10)]
 		public static void MenuUpgradeSelectionAdvanced()
 		{
 			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Selection to Advanced", "This utility sets the materials on every selected ProBuilder object.  Continue?", "Okay", "Cancel") )

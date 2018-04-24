@@ -200,10 +200,10 @@ namespace UnityEditor.ProBuilder
 		public static ProBuilderEditor MenuOpenWindow()
 		{
 			ProBuilderEditor editor = (ProBuilderEditor) EditorWindow.GetWindow(typeof(ProBuilderEditor),
-				!PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow), pb_Constant.PRODUCT_NAME,
+				!PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow), PreferenceKeys.pluginTitle,
 				true); // open as floating window
 			// would be nice if editorwindow's showMode was exposed
-			editor.isFloatingWindow = !PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
+			editor.isFloatingWindow = !PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow);
 			return editor;
 		}
 
@@ -258,7 +258,7 @@ namespace UnityEditor.ProBuilder
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int) handleAlignment);
+			PreferencesInternal.SetInt(PreferenceKeys.pbHandleAlignment, (int) handleAlignment);
 			MeshSelection.onObjectSelectionChanged -= OnObjectSelectionChanged;
 
 			if (pb_LineRenderer.Valid())
@@ -283,22 +283,22 @@ namespace UnityEditor.ProBuilder
 		{
 			PreferencesUpdater.CheckEditorPrefsVersion();
 
-			editLevel = PreferencesInternal.GetEnum<EditLevel>(pb_Constant.pbDefaultEditLevel);
-			selectionMode = PreferencesInternal.GetEnum<SelectMode>(pb_Constant.pbDefaultSelectionMode);
-			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(pb_Constant.pbHandleAlignment);
-			m_ShowSceneInfo = PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
-			m_HamSelection = PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
-			m_SelectHiddenEnabled = PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
+			editLevel = PreferencesInternal.GetEnum<EditLevel>(PreferenceKeys.pbDefaultEditLevel);
+			selectionMode = PreferencesInternal.GetEnum<SelectMode>(PreferenceKeys.pbDefaultSelectionMode);
+			handleAlignment = PreferencesInternal.GetEnum<HandleAlignment>(PreferenceKeys.pbHandleAlignment);
+			m_ShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
+			m_HamSelection = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
+			m_SelectHiddenEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
 
 			m_SnapEnabled = ProGridsInterface.SnapEnabled();
 			m_SnapValue = ProGridsInterface.SnapValue();
 			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
 
-			m_Shortcuts = pb_Shortcut.ParseShortcuts(PreferencesInternal.GetString(pb_Constant.pbDefaultShortcuts)).ToArray();
+			m_Shortcuts = pb_Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
 
-			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
-			m_IsIconGui = PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
-			dragSelectMode = PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode);
+			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
+			m_IsIconGui = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+			dragSelectMode = PreferencesInternal.GetEnum<DragSelectMode>(PreferenceKeys.pbDragSelectMode);
 		}
 
 		void InitGUI()
@@ -388,15 +388,15 @@ namespace UnityEditor.ProBuilder
 			GenericMenu menu = new GenericMenu();
 
 			menu.AddItem(new GUIContent("Open As Floating Window", ""),
-				!PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
+				!PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true), Menu_OpenAsFloatingWindow);
 			menu.AddItem(new GUIContent("Open As Dockable Window", ""),
-				PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
+				PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true), Menu_OpenAsDockableWindow);
 
 			menu.AddSeparator("");
 
-			menu.AddItem(new GUIContent("Use Icon Mode", ""), PreferencesInternal.GetBool(pb_Constant.pbIconGUI),
+			menu.AddItem(new GUIContent("Use Icon Mode", ""), PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
 				Menu_ToggleIconMode);
-			menu.AddItem(new GUIContent("Use Text Mode", ""), !PreferencesInternal.GetBool(pb_Constant.pbIconGUI),
+			menu.AddItem(new GUIContent("Use Text Mode", ""), !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI),
 				Menu_ToggleIconMode);
 
 			menu.ShowAsContext();
@@ -404,8 +404,8 @@ namespace UnityEditor.ProBuilder
 
 		void Menu_ToggleIconMode()
 		{
-			m_IsIconGui = !PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
-			PreferencesInternal.SetBool(pb_Constant.pbIconGUI, m_IsIconGui);
+			m_IsIconGui = !PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+			PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, m_IsIconGui);
 			if (s_EditorToolbar != null)
 				Object.DestroyImmediate(s_EditorToolbar);
 			s_EditorToolbar = ScriptableObject.CreateInstance<EditorToolbar>();
@@ -415,14 +415,14 @@ namespace UnityEditor.ProBuilder
 
 		void Menu_OpenAsDockableWindow()
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, true);
+			PreferencesInternal.SetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, true);
 			EditorWindow.GetWindow<ProBuilderEditor>().Close();
 			ProBuilderEditor.MenuOpenWindow();
 		}
 
 		void Menu_OpenAsFloatingWindow()
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, false);
+			PreferencesInternal.SetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, false);
 			EditorWindow.GetWindow<ProBuilderEditor>().Close();
 			ProBuilderEditor.MenuOpenWindow();
 		}
@@ -869,7 +869,7 @@ namespace UnityEditor.ProBuilder
 						return null;
 					}
 				}
-				else if (!PreferencesInternal.GetBool(pb_Constant.pbPBOSelectionOnly))
+				else if (!PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly))
 				{
 					// If clicked off a pb_Object but onto another gameobject, set the selection
 					// and dip out.
@@ -1062,7 +1062,7 @@ namespace UnityEditor.ProBuilder
 			var pickingOptions = new pb_PickerOptions()
 			{
 				depthTest = !selectHidden,
-				rectSelectMode = PreferencesInternal.GetEnum<pb_RectSelectMode>(pb_Constant.pbRectSelectMode)
+				rectSelectMode = PreferencesInternal.GetEnum<pb_RectSelectMode>(PreferenceKeys.pbRectSelectMode)
 			};
 
 			switch (selectionMode)
@@ -1559,8 +1559,8 @@ namespace UnityEditor.ProBuilder
 						pb_Edge[] newEdges;
 						bool success = pb.Extrude(pb.SelectedEdges,
 							0.0001f,
-							PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup),
-							PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+							PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
+							PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion),
 							out newEdges);
 
 						if (success)
@@ -1575,7 +1575,7 @@ namespace UnityEditor.ProBuilder
 
 						if (len > 0)
 						{
-							pb.Extrude(pb.SelectedFaces, PreferencesInternal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
+							pb.Extrude(pb.SelectedFaces, PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
 								0.0001f);
 							pb.SetSelectedFaces(pb.SelectedFaces);
 							ef += len;
@@ -1802,7 +1802,7 @@ namespace UnityEditor.ProBuilder
 				if (editLevel == EditLevel.Geometry && !m_IsDragging && selectionMode == SelectMode.Vertex)
 					m_MouseClickRect = new Rect(m_CurrentEvent.mousePosition.x - 10, m_CurrentEvent.mousePosition.y - 10, 20, 20);
 				else
-					m_MouseClickRect = pb_Constant.RectZero;
+					m_MouseClickRect = PreferenceKeys.RectZero;
 
 				if (m_IsDragging)
 				{
@@ -1887,7 +1887,7 @@ namespace UnityEditor.ProBuilder
 
 		bool AllLevelShortcuts(pb_Shortcut shortcut)
 		{
-			bool uniqueModeShortcuts = PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts);
+			bool uniqueModeShortcuts = PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts);
 
 			switch (shortcut.action)
 			{
@@ -1962,7 +1962,7 @@ namespace UnityEditor.ProBuilder
 				// TODO Remove once a workaround for non-upper-case shortcut chars is found
 				case "Toggle Selection Mode":
 
-					if (PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts))
+					if (PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts))
 						return false;
 
 					ToggleSelectionMode();
@@ -2052,7 +2052,7 @@ namespace UnityEditor.ProBuilder
 			if (editLevel == EditLevel.Texture)
 				ha = HandleAlignment.Plane;
 			else
-				PreferencesInternal.SetInt(pb_Constant.pbHandleAlignment, (int) ha);
+				PreferencesInternal.SetInt(PreferenceKeys.pbHandleAlignment, (int) ha);
 
 			handleAlignment = ha;
 
@@ -2096,7 +2096,7 @@ namespace UnityEditor.ProBuilder
 
 			Internal_UpdateSelectionFast();
 
-			PreferencesInternal.SetInt(pb_Constant.pbDefaultSelectionMode, (int) selectionMode);
+			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultSelectionMode, (int) selectionMode);
 
 			SceneView.RepaintAll();
 		}
@@ -2161,7 +2161,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
 			if (editLevel != EditLevel.Texture)
-				PreferencesInternal.SetInt(pb_Constant.pbDefaultEditLevel, (int) editLevel);
+				PreferencesInternal.SetInt(PreferenceKeys.pbDefaultEditLevel, (int) editLevel);
 
 			if (onEditLevelChanged != null)
 				onEditLevelChanged((int) editLevel);

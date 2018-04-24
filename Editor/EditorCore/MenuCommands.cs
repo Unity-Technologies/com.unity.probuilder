@@ -181,7 +181,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static void MenuOpenVertexColorsEditor()
 		{
-			switch( PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
 					VertexColorPalette.MenuOpenWindow();
@@ -198,7 +198,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static ActionResult MenuOpenVertexColorsEditor2(pb_Object[] selection)
 		{
-			switch( PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool) )
+			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
 			{
 				case VertexColorTool.Palette:
 					VertexColorPalette.MenuOpenWindow();
@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder
 
 		public static void VertexColorsGUI(int width)
 		{
-			VertexColorTool tool = PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
+			VertexColorTool tool = PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool);
 			VertexColorTool prev = tool;
 
 			GUILayout.Label("Color Editor");
@@ -222,7 +222,7 @@ namespace UnityEditor.ProBuilder
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("", tool, GUILayout.MaxWidth(width-14));
 
 			if(prev != tool)
-				PreferencesInternal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				PreferencesInternal.SetInt(PreferenceKeys.pbVertexColorTool, (int)tool);
 		}
 #if !PROTOTYPE
 
@@ -284,7 +284,7 @@ namespace UnityEditor.ProBuilder
 
 			GameObject go = new GameObject();
 
-			go.AddComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			go.AddComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
 			pb_Object pb = pb_MeshOps.CreatePbObjectWithTransform(go.transform, false);
@@ -429,8 +429,8 @@ namespace UnityEditor.ProBuilder
 
 		public static void ExtrudeButtonGUI(int width)
 		{
-			float extrudeAmount = PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
-			bool extrudeAsGroup = PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup);
+			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
+			bool extrudeAsGroup = PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -442,8 +442,8 @@ namespace UnityEditor.ProBuilder
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				PreferencesInternal.SetBool(pb_Constant.pbExtrudeAsGroup, extrudeAsGroup);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
+				PreferencesInternal.SetBool(PreferenceKeys.pbExtrudeAsGroup, extrudeAsGroup);
 			}
 		}
 
@@ -477,9 +477,9 @@ namespace UnityEditor.ProBuilder
 						pb_Edge[] newEdges;
 
 						success = pb.Extrude(	pb.SelectedEdges,
-												PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance),
-												PreferencesInternal.GetBool(pb_Constant.pbExtrudeAsGroup),
-												PreferencesInternal.GetBool(pb_Constant.pbManifoldEdgeExtrusion),
+												PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance),
+												PreferencesInternal.GetBool(PreferenceKeys.pbExtrudeAsGroup),
+												PreferencesInternal.GetBool(PreferenceKeys.pbManifoldEdgeExtrusion),
 												out newEdges);
 
 						if(success)
@@ -496,8 +496,8 @@ namespace UnityEditor.ProBuilder
 					extrudedFaceCount += pb.SelectedFaces.Length;
 
 					pb.Extrude(	pb.SelectedFaces,
-								PreferencesInternal.GetEnum<ExtrudeMethod>(pb_Constant.pbExtrudeMethod),
-								PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance));
+								PreferencesInternal.GetEnum<ExtrudeMethod>(PreferenceKeys.pbExtrudeMethod),
+								PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance));
 
 					pb.SetSelectedFaces(pb.SelectedFaces);
 
@@ -531,7 +531,7 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
-			bool limitToPerimeterEdges = PreferencesInternal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
+			bool limitToPerimeterEdges = PreferencesInternal.GetBool(PreferenceKeys.pbPerimeterEdgeBridgeOnly);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -567,7 +567,7 @@ namespace UnityEditor.ProBuilder
 			ActionResult res = ActionResult.NoSelection;
 			UndoUtility.RecordSelection(selection, "Bevel Edges");
 
-			float amount = PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
+			float amount = PreferencesInternal.GetFloat(PreferenceKeys.pbBevelAmount);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -639,9 +639,9 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(selection, "Grow Selection");
 
 			int grown = 0;
-			bool angleGrow = PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
-			bool iterative = PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionAngleIterative);
-			float growSelectionAngle = PreferencesInternal.GetFloat(pb_Constant.pbGrowSelectionAngle);
+			bool angleGrow = PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionUsingAngle);
+			bool iterative = PreferencesInternal.GetBool(PreferenceKeys.pbGrowSelectionAngleIterative);
+			float growSelectionAngle = PreferencesInternal.GetFloat(PreferenceKeys.pbGrowSelectionAngle);
 
 			if(!angleGrow && !iterative)
 				iterative = true;
@@ -1017,7 +1017,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
-			bool detachToNewObject = PreferencesInternal.GetBool(pb_Constant.pbDetachToNewObject);
+			bool detachToNewObject = PreferencesInternal.GetBool(PreferenceKeys.pbDetachToNewObject);
 
 			if(detachToNewObject)
 				return MenuDetachFacesToObject(selection);
@@ -1239,7 +1239,7 @@ namespace UnityEditor.ProBuilder
 
 			bool success = false;
 
-			bool collapseToFirst = PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+			bool collapseToFirst = PreferencesInternal.GetBool(PreferenceKeys.pbCollapseVertexToFirst);
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
@@ -1285,7 +1285,7 @@ namespace UnityEditor.ProBuilder
 			ActionResult res = ActionResult.NoSelection;
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Weld Vertices");
-			float weld = PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
+			float weld = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 			int weldCount = 0;
 
 			foreach(pb_Object pb in selection)
@@ -1338,7 +1338,7 @@ namespace UnityEditor.ProBuilder
 		{
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
+			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 
 			if(weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
@@ -1350,7 +1350,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				PreferencesInternal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbWeldDistance, weldDistance);
 			}
 		}
 
@@ -1443,7 +1443,7 @@ namespace UnityEditor.ProBuilder
 
 			ActionResult res = new ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
-			bool wholePath = PreferencesInternal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
+			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1617,7 +1617,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
-			int subdivisions = PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = PreferencesInternal.GetInt(PreferenceKeys.pbEdgeSubdivisions, 1);
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 

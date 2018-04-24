@@ -13,11 +13,11 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return (pb_RectSelectMode) PreferencesInternal.GetInt(pb_Constant.pbRectSelectMode,
+				return (pb_RectSelectMode) PreferencesInternal.GetInt(PreferenceKeys.pbRectSelectMode,
 					(int) pb_RectSelectMode.Partial);
 			}
 
-			set { PreferencesInternal.SetInt(pb_Constant.pbRectSelectMode, (int) value); }
+			set { PreferencesInternal.SetInt(PreferenceKeys.pbRectSelectMode, (int) value); }
 		}
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }

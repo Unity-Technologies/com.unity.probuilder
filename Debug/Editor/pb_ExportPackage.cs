@@ -93,8 +93,8 @@ public class pb_ExportPackage : Editor
 	private static void WriteAboutEntry(string changelog, string version, bool inEditor = false)
 	{
 		string versionInfoText =
-			"name: " + PreferenceKeys.PRODUCT_NAME + "\n" +
-			"identifier: " + PreferenceKeys.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
+			"name: " + PreferenceKeys.pluginTitle + "\n" +
+			"identifier: " + PreferenceKeys.pluginTitle + "_AboutWindowIdentifier\n" +
 			"version: " + version + "\n" +
 			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 			"changelog: " + changelog;

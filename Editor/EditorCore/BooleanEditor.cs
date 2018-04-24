@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
@@ -40,7 +39,7 @@ namespace UnityEditor.ProBuilder
 		bool mouseClickedSwapRect = false;
 		Vector2Int screen = Vector2Int.zero;
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Experimental/Boolean (CSG) Tool", false, pb_Constant.MENU_MISC)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Experimental/Boolean (CSG) Tool", false, PreferenceKeys.menuMisc)]
 		public static void MenuOpenBooleanTool()
 		{
 			GetWindow<BooleanEditor>(true, "Boolean (Experimental)", true).Show();
@@ -145,7 +144,7 @@ namespace UnityEditor.ProBuilder
 			// Boolean controls
 			GUILayout.Space(4);
 
-			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
+			GUI.backgroundColor = PreferenceKeys.proBuilderDarkGray;
 			UI.EditorGUIUtility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 

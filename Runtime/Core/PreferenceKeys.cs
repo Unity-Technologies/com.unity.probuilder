@@ -6,12 +6,12 @@ namespace UnityEngine.ProBuilder
 	/// <summary>
 	/// A collection of constant values the ProBuilder uses regularly.
 	/// </summary>
-	public static class pb_Constant
+	public static class PreferenceKeys
 	{
 		/// <summary>
 		/// The product name ("ProBuilder" or "ProBuilder Basic" depending on assembly definition).
 		/// </summary>
-		public const string PRODUCT_NAME = "ProBuilder";
+		public const string pluginTitle = "ProBuilder";
 
 		[Obsolete("Use pb_Material.Default")]
 		public static Material DefaultMaterial
@@ -176,58 +176,58 @@ namespace UnityEngine.ProBuilder
 
 		internal static readonly Rect RectZero = new Rect(0,0,0,0);
 
-	 	internal static Color ProBuilderBlue = new Color(0f, .682f, .937f, 1f);
-	 	internal static Color ProBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
-	 	internal static Color ProBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
+	 	internal static readonly Color proBuilderBlue = new Color(0f, .682f, .937f, 1f);
+	 	internal static readonly Color proBuilderLightGray = new Color(.35f, .35f, .35f, .4f);
+	 	internal static readonly Color proBuilderDarkGray = new Color(.1f, .1f, .1f, .3f);
 
 		/// <summary>
 		/// The starting range for about menu items.
 		/// </summary>
-		public const int MENU_ABOUT = 0;
+		public const int menuAbout = 0;
 
 		/// <summary>
 		/// The starting range for editor menu items.
 		/// </summary>
-		public const int MENU_EDITOR = 100;
+		public const int menuEditor = 100;
 
 		/// <summary>
 		/// The starting range for selection menu items.
 		/// </summary>
-		public const int MENU_SELECTION 		= 200;
+		public const int menuSelection = 200;
 
 		/// <summary>
 		/// Starting range for geometry menu actions.
 		/// </summary>
-		public const int MENU_GEOMETRY 			= 200;
+		public const int menuGeometry = 200;
 
 		/// <summary>
 		/// Starting range for action menu actions.
 		/// </summary>
-		public const int MENU_ACTIONS 			= 300;
+		public const int menuActions = 300;
 
 		/// <summary>
 		/// Starting range for material color menu items.
 		/// </summary>
-		public const int MENU_MATERIAL_COLORS 	= 400;
+		public const int menuMaterialColors = 400;
 
 		/// <summary>
 		/// Starting range for vertex color menu items.
 		/// </summary>
-		public const int MENU_VERTEX_COLORS	 	= 400;
+		public const int menuVertexColors = 400;
 
 		/// <summary>
 		/// Starting range for repair menu items.
 		/// </summary>
-		public const int MENU_REPAIR 			= 600;
+		public const int menuRepair = 600;
 
 		/// <summary>
 		/// Starting range for other misc. menu items that belong in the ProBuilder menu subtree.
 		/// </summary>
-		public const int MENU_MISC 				= 600;
+		public const int menuMisc = 600;
 
 		/// <summary>
 		/// Starting range for export menu items.
 		/// </summary>
-		public const int MENU_EXPORT			= 800;
+		public const int menuExport = 800;
 	}
 }

@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder
 			if (editor)
 				editor.SetEditLevel(EditLevel.Plugin);
 
-			colorName = UnityEngine.ColorUtility.GetColorName(color);
+			colorName = ColorUtility.GetColorName(color);
 
 			// load the users custom palette
 			UserColors = new Color[10];
@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Colors", EditorStyles.toolbarButton))
 			{
-				colorName = UnityEngine.ColorUtility.GetColorName(color);
+				colorName = ColorUtility.GetColorName(color);
 				mode = VertexPainterMode.Color;
 			}
 
@@ -246,7 +246,7 @@ namespace UnityEditor.ProBuilder
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(6);
-			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.ProBuilderLightGray);
+			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.proBuilderLightGray);
 			GUILayout.Space(6);
 
 			/**
@@ -372,7 +372,7 @@ namespace UnityEditor.ProBuilder
 				if (GUILayout.Button(EditorGUIUtility.whiteTexture, GUILayout.Width(ButtonWidth), GUILayout.Height(42)))
 				{
 					color = UserColors[i];
-					colorName = UnityEngine.ColorUtility.GetColorName(color);
+					colorName = ColorUtility.GetColorName(color);
 				}
 
 				GUI.color = UserColors[i];

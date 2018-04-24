@@ -21,67 +21,67 @@ namespace UnityEditor.ProBuilder
 		// Reference to the currently open pb_Material_Editor
 		public static MaterialEditor instance { get; private set; }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 4 &4", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 5 &5", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 6 &6", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 7 &7", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 8 &8", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 9 &9", true, pb_Constant.MENU_MATERIAL_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 10 &0", true, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2 &2", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3 &3", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4 &4", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5 &5", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6 &6", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7 &7", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8 &8", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9 &9", true, PreferenceKeys.menuMaterialColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10 &0", true, PreferenceKeys.menuMaterialColors)]
 		public static bool VerifyMaterialAction()
 		{
 			return ProBuilderEditor.instance != null && ProBuilderEditor.instance.selection.Length > 0;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 1 &1", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial0() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[0]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 2 &2", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2 &2", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial1() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[1]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 3 &3", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3 &3", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial2() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[2]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 4 &4", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4 &4", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial3() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[3]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 5 &5", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5 &5", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial4() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[4]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 6 &6", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6 &6", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial5() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[5]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 7 &7", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7 &7", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial6() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[6]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 8 &8", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8 &8", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial7() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[7]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 9 &9", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9 &9", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial8() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[8]);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Materials/Apply Material Preset 10 &0", false, pb_Constant.MENU_MATERIAL_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10 &0", false, PreferenceKeys.menuMaterialColors)]
 		public static void ApplyMaterial9() {
 			ApplyMaterial(MeshSelection.Top(), CurrentPalette[9]);
 		}
@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 					// Attempt to load the last user-set material palette
 					m_CurrentPalette =
 						AssetDatabase.LoadAssetAtPath<MaterialPalette>(
-							PreferencesInternal.GetString(pb_Constant.pbCurrentMaterialPalette));
+							PreferencesInternal.GetString(PreferenceKeys.pbCurrentMaterialPalette));
 
 					// If not set (or deleted), fall back on default
 					if (m_CurrentPalette != null)
@@ -165,7 +165,7 @@ namespace UnityEditor.ProBuilder
 		public static void MenuOpenMaterialEditor()
 		{
 			EditorWindow.GetWindow<MaterialEditor>(
-				PreferencesInternal.GetBool(pb_Constant.pbMaterialEditorFloating),
+				PreferencesInternal.GetBool(PreferenceKeys.pbMaterialEditorFloating),
 				"Material Editor",
 				true).Show();
 		}
@@ -198,7 +198,7 @@ namespace UnityEditor.ProBuilder
 
 		private void SetFloating(bool floating)
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbMaterialEditorFloating, floating);
+			PreferencesInternal.SetBool(PreferenceKeys.pbMaterialEditorFloating, floating);
 			this.Close();
 			MenuOpenMaterialEditor();
 		}
@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.Space(4);
 
-			GUI.backgroundColor = pb_Constant.ProBuilderDarkGray;
+			GUI.backgroundColor = PreferenceKeys.proBuilderDarkGray;
 			UI.EditorGUIUtility.DrawSeparator(2);
 			GUI.backgroundColor = Color.white;
 
@@ -292,7 +292,7 @@ namespace UnityEditor.ProBuilder
 				if(i == 10)
 				{
 					GUILayout.Space(2);
-					GUI.backgroundColor = pb_Constant.ProBuilderLightGray;
+					GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 					UI.EditorGUIUtility.DrawSeparator(1);
 					GUI.backgroundColor = Color.white;
 					GUILayout.Space(2);
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, string.Empty);
 			ArrayUtility.Add<string>(ref m_AvailablePalettes_Str, "New Material Palette...");
 			m_CurrentPaletteIndex = System.Array.IndexOf(m_AvailablePalettes, cur);
-			PreferencesInternal.SetString(pb_Constant.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
+			PreferencesInternal.SetString(PreferenceKeys.pbCurrentMaterialPalette, AssetDatabase.GetAssetPath(cur));
 		}
 	}
 }

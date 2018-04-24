@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
+			float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 
 			if(weldDistance <= MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder.Actions
 			{
 				if(weldDistance < MIN_WELD_DISTANCE)
 					weldDistance = MIN_WELD_DISTANCE;
-				PreferencesInternal.SetFloat(pb_Constant.pbWeldDistance, weldDistance);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbWeldDistance, weldDistance);
 			}
 
 			GUILayout.FlexibleSpace();

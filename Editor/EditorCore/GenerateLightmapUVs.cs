@@ -13,13 +13,13 @@ namespace UnityEditor.ProBuilder.Actions
 	/// @todo I THINK THIS IS OBSOLETE - action -> GenerateUV2s
 	class GenerateLightmapUVs : Editor
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Selection", true, pb_Constant.MENU_ACTIONS + 20)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", true, PreferenceKeys.menuActions + 20)]
 		public static bool VerifyGenerateUV2Selection()
 		{
 			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Selection", false, pb_Constant.MENU_ACTIONS + 20)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", false, PreferenceKeys.menuActions + 20)]
 		public static void MenuGenerateUV2Selection()
 		{
 			pb_Object[] sel = Selection.transforms.GetComponents<pb_Object>();
@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder.Actions
 				EditorUtility.ShowNotification("Nothing Selected");
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Generate UV2 - Scene", false, pb_Constant.MENU_ACTIONS + 20)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Scene", false, PreferenceKeys.menuActions + 20)]
 		public static void MenuGenerateUV2Scene()
 		{
 			pb_Object[] sel = (pb_Object[])FindObjectsOfType(typeof(pb_Object));

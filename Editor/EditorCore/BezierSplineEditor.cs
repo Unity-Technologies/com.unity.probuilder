@@ -634,7 +634,7 @@ namespace UnityEditor.ProBuilder
 
 				Vector3 p = EditorHandleUtility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
 
-				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.k_MaxPointDistanceFromControl )
+				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl )
 				{
 					Handles.color = Color.green;
 					Handles.DotHandleCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
@@ -676,9 +676,9 @@ namespace UnityEditor.ProBuilder
 				bool ti = m_CloseLoop || i > 0;
 				bool to = m_CloseLoop || i < (count - 1);
 
-				if(	Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.position)) < pb_Constant.k_MaxPointDistanceFromControl ||
-					(ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentIn)) < pb_Constant.k_MaxPointDistanceFromControl) ||
-					(to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentOut)) < pb_Constant.k_MaxPointDistanceFromControl))
+				if(	Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.position)) < PreferenceKeys.k_MaxPointDistanceFromControl ||
+					(ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentIn)) < PreferenceKeys.k_MaxPointDistanceFromControl) ||
+					(to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(p.tangentOut)) < PreferenceKeys.k_MaxPointDistanceFromControl))
 					return true;
 			}
 

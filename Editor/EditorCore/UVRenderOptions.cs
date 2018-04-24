@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
 		{
 			GUILayout.Label("Render UVs", EditorStyles.boldLabel);
 
-			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.ProBuilderDarkGray);
+			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.proBuilderDarkGray);
 			GUILayout.Space(2);
 
 			imageSize = (ImageSize)EditorGUILayout.EnumPopup(new GUIContent("Image Size", "The pixel size of the image to be rendered."), imageSize);

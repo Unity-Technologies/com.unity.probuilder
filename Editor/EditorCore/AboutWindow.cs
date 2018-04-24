@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 		public static readonly Color k_FontBlueNormal = HexToColor(0x00AAEF);
 		public static readonly Color k_FontBlueHover = HexToColor(0x008BEF);
 
-		const string k_ProductName = pb_Constant.PRODUCT_NAME;
+		const string k_ProductName = PreferenceKeys.pluginTitle;
 		pb_VersionInfo m_ChangeLogVersionInfo;
 		string m_ChangeLogRichText = "";
 

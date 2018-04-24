@@ -92,7 +92,7 @@ namespace UnityEditor.ProBuilder
 				GUI.enabled = enabled;
 			GUILayout.EndHorizontal();
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.ProBuilderLightGray;
+			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.Space(4);
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.ProBuilderLightGray;
+			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
@@ -161,7 +161,7 @@ namespace UnityEditor.ProBuilder
 			uv_gui.useWorldSpace = EditorGUILayout.Toggle("World Space", uv_gui.useWorldSpace);
 			if(uv_gui.useWorldSpace != tempBool) SetUseWorldSpace(uv_gui.useWorldSpace, selection);
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.ProBuilderLightGray;
+			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 
@@ -257,7 +257,7 @@ namespace UnityEditor.ProBuilder
 			}
 
 
-			UnityEngine.GUI.backgroundColor = PreferenceKeys.ProBuilderLightGray;
+			UnityEngine.GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;
 			UI.EditorGUIUtility.DrawSeparator(1);
 			UnityEngine.GUI.backgroundColor = Color.white;
 

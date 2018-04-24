@@ -35,11 +35,11 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			get
 			{
-				return PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
+				return PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation);
 			}
 			set
 			{
-				PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, value);
+				PreferencesInternal.SetBool(PreferenceKeys.pbDisableAutoUV2Generation, value);
 			}
 		}
 

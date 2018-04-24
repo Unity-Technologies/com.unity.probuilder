@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Amount determines how much space the bevel takes up.  Bigger value means more bevel action.", MessageType.Info);
 
-			float bevelAmount = PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
+			float bevelAmount = PreferencesInternal.GetFloat(PreferenceKeys.pbBevelAmount);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if(bevelAmount < .001f) bevelAmount = .001f;
 
 			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetFloat(pb_Constant.pbBevelAmount, bevelAmount);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbBevelAmount, bevelAmount);
 
 			GUILayout.FlexibleSpace();
 

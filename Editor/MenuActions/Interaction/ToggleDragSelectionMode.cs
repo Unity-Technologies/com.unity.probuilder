@@ -11,8 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
 	{
 		DragSelectMode dragSelectMode
 		{
-			get { return PreferencesInternal.GetEnum<DragSelectMode>(pb_Constant.pbDragSelectMode); }
-			set { PreferencesInternal.SetInt(pb_Constant.pbDragSelectMode, (int) value); }
+			get { return PreferencesInternal.GetEnum<DragSelectMode>(PreferenceKeys.pbDragSelectMode); }
+			set { PreferencesInternal.SetInt(PreferenceKeys.pbDragSelectMode, (int) value); }
 		}
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }

@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/// @TODO MOVE TO ACTIONS
 	class StripProBuilderScripts : Editor
 	{
-		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()
 		{
 
@@ -26,13 +26,13 @@ namespace UnityEditor.ProBuilder.Actions
 			Strip(all);
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
 		public static bool VerifyStripSelection()
 		{
 			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
-		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection")]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]
 		public static void StripAllSelected()
 		{
 			if(!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))

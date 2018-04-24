@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Debug/ProBuilder Debug Window", false, pb_Constant.MENU_REPAIR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Debug/ProBuilder Debug Window", false, PreferenceKeys.menuRepair)]
 		public static void MenuSceneViewDebug()
 		{
 			EditorWindow.GetWindow<DebugEditor>();

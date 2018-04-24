@@ -51,14 +51,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges.\n\nIf no elements are selected, the entire object will be scanned for holes.", MessageType.Info);
 
-			bool wholePath = PreferencesInternal.GetBool(pb_Constant.pbFillHoleSelectsEntirePath);
+			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 
 			EditorGUI.BeginChangeCheck();
 
 			wholePath = EditorGUILayout.Toggle("Fill Entire Hole", wholePath);
 
 			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetBool(pb_Constant.pbFillHoleSelectsEntirePath, wholePath);
+				PreferencesInternal.SetBool(PreferenceKeys.pbFillHoleSelectsEntirePath, wholePath);
 
 			GUILayout.FlexibleSpace();
 

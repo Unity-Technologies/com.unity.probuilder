@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public ExtrudeFaces()
 		{
-			m_ExtrudeMethod = (ExtrudeMethod) PreferencesInternal.GetInt(pb_Constant.pbExtrudeMethod);
+			m_ExtrudeMethod = (ExtrudeMethod) PreferencesInternal.GetInt(PreferenceKeys.pbExtrudeMethod);
 
 			icons = new Texture2D[3];
 			icons[(int)ExtrudeMethod.IndividualFaces] = IconUtility.GetIcon("Toolbar/ExtrudeFace_Individual", IconSkin.Pro);
@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 		public override bool IsHidden()
 		{
 			return 	editLevel != EditLevel.Geometry ||
-					(PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
+					(PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted) && selectionMode != SelectMode.Face);
 		}
 
 		public override MenuActionState AltState()
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Extrude Amount determines how far a face will be moved along it's normal when extruding.  This value can be negative.\n\nYou may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.", MessageType.Info);
 
-			float extrudeAmount = PreferencesInternal.HasKey(pb_Constant.pbExtrudeDistance) ? PreferencesInternal.GetFloat(pb_Constant.pbExtrudeDistance) : .5f;
+			float extrudeAmount = PreferencesInternal.HasKey(PreferenceKeys.pbExtrudeDistance) ? PreferencesInternal.GetFloat(PreferenceKeys.pbExtrudeDistance) : .5f;
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
@@ -88,8 +88,8 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				PreferencesInternal.SetFloat(pb_Constant.pbExtrudeDistance, extrudeAmount);
-				PreferencesInternal.SetInt(pb_Constant.pbExtrudeMethod, (int) m_ExtrudeMethod);
+				PreferencesInternal.SetFloat(PreferenceKeys.pbExtrudeDistance, extrudeAmount);
+				PreferencesInternal.SetInt(PreferenceKeys.pbExtrudeMethod, (int) m_ExtrudeMethod);
 			}
 
 			GUILayout.FlexibleSpace();

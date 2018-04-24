@@ -7,25 +7,25 @@ namespace UnityEditor.ProBuilder
 {
 	class DimensionsEditor : ISceneEditor
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Dimensions Overlay/Hide", true, pb_Constant.MENU_EDITOR + 30)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", true, PreferenceKeys.menuEditor + 30)]
 		public static bool HideVerify()
 		{
 			return instance != null;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Dimensions Overlay/Hide", false, pb_Constant.MENU_EDITOR + 30)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Hide", false, PreferenceKeys.menuEditor + 30)]
 		public static void Hide()
 		{
 			instance.Close();
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Dimensions Overlay/Show", true, pb_Constant.MENU_EDITOR + 30)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", true, PreferenceKeys.menuEditor + 30)]
 		public static bool InitVerify()
 		{
 			return instance == null;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Dimensions Overlay/Show", false, pb_Constant.MENU_EDITOR + 30)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Dimensions Overlay/Show", false, PreferenceKeys.menuEditor + 30)]
 		public static void Init()
 		{
 			Create<DimensionsEditor>();

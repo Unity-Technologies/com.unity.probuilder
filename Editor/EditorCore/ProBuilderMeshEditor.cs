@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
 		{
 			GUI.backgroundColor = Color.green;
 
-			if (GUILayout.Button("Open " + pb_Constant.PRODUCT_NAME))
+			if (GUILayout.Button("Open " + PreferenceKeys.pluginTitle))
 				ProBuilderEditor.MenuOpenWindow();
 
 			GUI.backgroundColor = Color.white;

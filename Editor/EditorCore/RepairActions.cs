@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Menu interface for manually re-generating all ProBuilder geometry in scene.
 		/// </summary>
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild All ProBuilder Objects", false, pb_Constant.MENU_REPAIR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild All ProBuilder Objects", false, PreferenceKeys.menuRepair)]
 		public static void MenuForceSceneRefresh()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -82,13 +82,13 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild Shared Indices Cache", true, pb_Constant.MENU_REPAIR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", true, PreferenceKeys.menuRepair)]
 		static bool VertifyRebuildMeshes()
 		{
 			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Rebuild Shared Indices Cache", false, pb_Constant.MENU_REPAIR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", false, PreferenceKeys.menuRepair)]
 		public static void DoRebuildMeshes()
 		{
 			RebuildSharedIndices( pb_Util.GetComponents<pb_Object>(Selection.transforms) );
@@ -132,7 +132,7 @@ namespace UnityEditor.ProBuilder
 			UnityEditor.EditorUtility.DisplayDialog("Rebuild Shared Index Cache", "Successfully rebuilt " + targets.Length + " shared index caches", "Okay");
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Remove Degenerate Triangles", false, pb_Constant.MENU_REPAIR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Remove Degenerate Triangles", false, PreferenceKeys.menuRepair)]
 		public static void MenuRemoveDegenerateTriangles()
 		{
 			int count = 0;

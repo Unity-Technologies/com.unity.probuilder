@@ -108,7 +108,7 @@ namespace UnityEditor.ProBuilder
 			MenuOpenShapeCreator();
 		}
 
-		[MenuItem("GameObject/3D Object/" + PreferenceKeys.PRODUCT_NAME + " Cube _%k")]
+		[MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);

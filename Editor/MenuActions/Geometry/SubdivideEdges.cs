@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
 
-			int subdivisions = PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
+			int subdivisions = PreferencesInternal.GetInt(PreferenceKeys.pbEdgeSubdivisions, 1);
 
 			EditorGUI.BeginChangeCheck();
 
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder.Actions
 			subdivisions = (int) UI.EditorGUIUtility.FreeSlider("Subdivisions", subdivisions, 1, 32);
 
 			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetInt(pb_Constant.pbEdgeSubdivisions, subdivisions);
+				PreferencesInternal.SetInt(PreferenceKeys.pbEdgeSubdivisions, subdivisions);
 
 			GUILayout.FlexibleSpace();
 

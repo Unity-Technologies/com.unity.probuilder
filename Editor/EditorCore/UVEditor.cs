@@ -196,7 +196,7 @@ class UVEditor : EditorWindow
 		if(ProBuilderEditor.instance != null && ProBuilderEditor.instance.editLevel == EditLevel.Top)
 			ProBuilderEditor.instance.SetEditLevel(EditLevel.Geometry);
 
-		EditorWindow.GetWindow<UVEditor>(PreferencesInternal.GetBool(pb_Constant.pbUVEditorFloating), "UV Editor", true);
+		EditorWindow.GetWindow<UVEditor>(PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating), "UV Editor", true);
 	}
 
 	void OpenContextMenu()
@@ -237,7 +237,7 @@ class UVEditor : EditorWindow
 
 	static void ContextMenu_OpenFloatingWindow()
 	{
-		PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, true);
+		PreferencesInternal.SetBool(PreferenceKeys.pbUVEditorFloating, true);
 
 		EditorWindow.GetWindow<UVEditor>().Close();
 		EditorWindow.GetWindow<UVEditor>(true, "UV Editor", true);
@@ -245,7 +245,7 @@ class UVEditor : EditorWindow
 
 	static void ContextMenu_OpenDockableWindow()
 	{
-		PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, false);
+		PreferencesInternal.SetBool(PreferenceKeys.pbUVEditorFloating, false);
 
 		EditorWindow.GetWindow<UVEditor>().Close();
 		EditorWindow.GetWindow<UVEditor>(false, "UV Editor", true);
@@ -273,8 +273,8 @@ class UVEditor : EditorWindow
 		nearestElement.Clear();
 
 		// Find preferences
-		pref_showMaterial = PreferencesInternal.GetBool(pb_Constant.pbUVMaterialPreview);
-		pref_gridSnapValue = PreferencesInternal.GetFloat(pb_Constant.pbUVGridSnapValue);
+		pref_showMaterial = PreferencesInternal.GetBool(PreferenceKeys.pbUVMaterialPreview);
+		pref_gridSnapValue = PreferencesInternal.GetFloat(PreferenceKeys.pbUVGridSnapValue);
 	}
 
 	void OnDisable()
@@ -1781,7 +1781,7 @@ class UVEditor : EditorWindow
 				GL.Vertex(UVGraphCenter + (UpperRight * uvGridSize) * uvGraphScale + uvGraphOffset );
 				GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
 
-				GL.Color( pb_Constant.ProBuilderBlue );
+				GL.Color( PreferenceKeys.proBuilderBlue );
 
 				GL.Vertex(UVGraphCenter + (LowerRight * uvGridSize) * uvGraphScale + uvGraphOffset );
 				GL.Vertex(UVGraphCenter + (LowerLeft * uvGridSize) * uvGraphScale + uvGraphOffset );
@@ -2619,7 +2619,7 @@ class UVEditor : EditorWindow
 		if(GUI.Button(editor_toggles_rect, gc_ShowPreviewTexture))
 		{
 			pref_showMaterial = !pref_showMaterial;
-			PreferencesInternal.SetBool(pb_Constant.pbUVMaterialPreview, pref_showMaterial);
+			PreferencesInternal.SetBool(PreferenceKeys.pbUVMaterialPreview, pref_showMaterial);
 		}
 
 		editor_toggles_rect.x += editor_toggles_rect.width + PAD;
@@ -2845,7 +2845,7 @@ class UVEditor : EditorWindow
 	{
 		EditorGUI.BeginChangeCheck();
 
-		float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
+		float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
 
 		if(weldDistance <= MIN_WELD_DISTANCE)
 			weldDistance = MIN_WELD_DISTANCE;
@@ -2857,7 +2857,7 @@ class UVEditor : EditorWindow
 		{
 			if(weldDistance < MIN_WELD_DISTANCE)
 				weldDistance = MIN_WELD_DISTANCE;
-			PreferencesInternal.SetFloat(pb_Constant.pbUVWeldDistance, weldDistance);
+			PreferencesInternal.SetFloat(PreferenceKeys.pbUVWeldDistance, weldDistance);
 		}
 	}
 #endregion
@@ -3067,7 +3067,7 @@ class UVEditor : EditorWindow
 
 		if(projected > 0)
 		{
-			if(PreferencesInternal.GetBool(pb_Constant.pbNormalizeUVsOnPlanarProjection))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbNormalizeUVsOnPlanarProjection))
 				Menu_FitUVs();
 			else
 				CenterUVsAtPoint( handlePosition );
@@ -3252,7 +3252,7 @@ class UVEditor : EditorWindow
 			return new ActionResult(Status.Canceled, "Invalid UV2 Operation");
 		}
 
-		float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
+		float weldDistance = PreferencesInternal.GetFloat(PreferenceKeys.pbUVWeldDistance);
 
 		UndoUtility.RecordSelection(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
@@ -3448,7 +3448,7 @@ class UVEditor : EditorWindow
 	{
 		get
 		{
-			if( PreferencesInternal.GetBool(pb_Constant.pbUVEditorFloating) )
+			if( PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating) )
 				return 0;
 			else
 #if UNITY_4_6

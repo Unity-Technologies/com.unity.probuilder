@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder.Actions
 {
 	class ToggleSelectBackFaces : MenuAction
 	{
-		bool isEnabled { get { return PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection); } }
+		bool isEnabled { get { return PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection); } }
 
 		public override ToolbarGroup group { get { return ToolbarGroup.Selection; } }
 		public override Texture2D icon { get { return isEnabled ? icons[1] : icons[0]; } }
@@ -39,8 +39,8 @@ The default value is <b>On</b>.
 
 		public override ActionResult DoAction()
 		{
-			bool backFaceEnabled = PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
-			PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, !backFaceEnabled);
+			bool backFaceEnabled = PreferencesInternal.GetBool(PreferenceKeys.pbEnableBackfaceSelection);
+			PreferencesInternal.SetBool(PreferenceKeys.pbEnableBackfaceSelection, !backFaceEnabled);
 			ProBuilderEditor.instance.LoadPrefs();
 			return new ActionResult(Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
 		}

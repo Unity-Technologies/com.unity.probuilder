@@ -14,20 +14,20 @@ namespace UnityEditor.ProBuilder
 			get { return ProBuilderEditor.instance; }
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/About", false, pb_Constant.MENU_ABOUT)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/About", false, PreferenceKeys.menuAbout)]
 		public static void MenuInitAbout()
 		{
 			AboutWindow.Init();
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Documentation", false, pb_Constant.MENU_ABOUT)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Documentation", false, PreferenceKeys.menuAbout)]
 		public static void MenuInitDocumentation()
 		{
 			Application.OpenURL(DOCUMENTATION_URL);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/" + pb_Constant.PRODUCT_NAME + " Window", false,
-			pb_Constant.MENU_EDITOR)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/" + PreferenceKeys.pluginTitle + " Window", false,
+			PreferenceKeys.menuEditor)]
 		public static void OpenEditorWindow()
 		{
 			ProBuilderEditor.MenuOpenWindow();
@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
 			get { return Selection.transforms.GetComponents<pb_Object>(); }
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %e", true)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", true)]
 		private static bool MenuVerifyExtrude()
 		{
 			ProBuilderEditor e = ProBuilderEditor.instance;
@@ -50,14 +50,14 @@ namespace UnityEditor.ProBuilder
 			       (selection.Any(x => x.SelectedEdgeCount > 0) || selection.Any(x => x.SelectedFaces.Length > 0));
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Geometry/Extrude %e", false, pb_Constant.MENU_GEOMETRY + 3)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", false, PreferenceKeys.menuGeometry + 3)]
 		private static void MenuDoExtrude()
 		{
 			MenuCommands.MenuExtrude(selection, false);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Loop &l", true, pb_Constant.MENU_SELECTION)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Ring &r", true, pb_Constant.MENU_SELECTION)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", true, PreferenceKeys.menuSelection)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", true, PreferenceKeys.menuSelection)]
 		private static bool MenuVerifyRingLoop()
 		{
 			if (editor == null || editor.editLevel != EditLevel.Geometry)
@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 			return false;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Loop &l", false, pb_Constant.MENU_SELECTION)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Loop &l", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectLoop()
 		{
 			switch (editor.selectionMode)
@@ -85,7 +85,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Selection/Select Ring &r", false, pb_Constant.MENU_SELECTION)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Selection/Select Ring &r", false, PreferenceKeys.menuSelection)]
 		private static void MenuSelectRing()
 		{
 			switch (editor.selectionMode)
@@ -100,96 +100,96 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 3 &#3", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 4 &#4", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 5 &#5", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 6 &#6", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 7 &#7", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 8 &#8", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 9 &#9", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 0 &#0", true,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 3 &#3", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 4 &#4", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 5 &#5", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 6 &#6", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 7 &#7", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 8 &#8", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 9 &#9", true,
+			PreferenceKeys.menuVertexColors)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 0 &#0", true,
+			PreferenceKeys.menuVertexColors)]
 		public static bool VerifyApplyVertexColor()
 		{
 			return ProBuilderEditor.instance != null && ProBuilderEditor.instance.selectedVertexCount > 0;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset1()
 		{
 			VertexColorPalette.SetFaceColors(1);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset2()
 		{
 			VertexColorPalette.SetFaceColors(2);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 3 &#3", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 3 &#3", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset3()
 		{
 			VertexColorPalette.SetFaceColors(3);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 4 &#4", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 4 &#4", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset4()
 		{
 			VertexColorPalette.SetFaceColors(4);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 5 &#5", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 5 &#5", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset5()
 		{
 			VertexColorPalette.SetFaceColors(5);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 6 &#6", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 6 &#6", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset6()
 		{
 			VertexColorPalette.SetFaceColors(6);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 7 &#7", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 7 &#7", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset7()
 		{
 			VertexColorPalette.SetFaceColors(7);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 8 &#8", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 8 &#8", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset8()
 		{
 			VertexColorPalette.SetFaceColors(8);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 9 &#9", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 9 &#9", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset9()
 		{
 			VertexColorPalette.SetFaceColors(9);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Vertex Colors/Set Selected Faces to Preset 0 &#0", false,
-			pb_Constant.MENU_VERTEX_COLORS)]
+		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 0 &#0", false,
+			PreferenceKeys.menuVertexColors)]
 		public static void MenuSetVertexColorPreset0()
 		{
 			VertexColorPalette.SetFaceColors(0);

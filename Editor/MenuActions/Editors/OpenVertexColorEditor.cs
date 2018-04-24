@@ -41,13 +41,13 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GUILayout.Label("Vertex Color Editor", EditorStyles.boldLabel);
 
-			VertexColorTool tool = PreferencesInternal.GetEnum<VertexColorTool>(pb_Constant.pbVertexColorTool);
+			VertexColorTool tool = PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool);
 			VertexColorTool prev = tool;
 
 			tool = (VertexColorTool) EditorGUILayout.EnumPopup("Editor", tool);
 
 			if(prev != tool)
-				PreferencesInternal.SetInt(pb_Constant.pbVertexColorTool, (int)tool);
+				PreferencesInternal.SetInt(PreferenceKeys.pbVertexColorTool, (int)tool);
 
 			GUILayout.FlexibleSpace();
 

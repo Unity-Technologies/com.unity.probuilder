@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder
 
 		static pb_Shortcut[] defaultShortcuts;
 
-		[PreferenceItem(pb_Constant.PRODUCT_NAME)]
+		[PreferenceItem(PreferenceKeys.pluginTitle)]
 		static void PreferencesGUI()
 		{
 			LoadPrefs();
@@ -264,95 +264,95 @@ namespace UnityEditor.ProBuilder
 				"Are you sure you want to delete all existing ProBuilder preferences?\n\nThis action cannot be undone.", "Yes",
 				"No"))
 			{
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEditLevel);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultSelectionMode);
-				PreferencesInternal.DeleteKey(pb_Constant.pbHandleAlignment);
-				PreferencesInternal.DeleteKey(pb_Constant.pbVertexColorTool);
-				PreferencesInternal.DeleteKey(pb_Constant.pbToolbarLocation);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultEntity);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultEditLevel);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultSelectionMode);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbHandleAlignment);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexColorTool);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbToolbarLocation);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultEntity);
 
-				PreferencesInternal.DeleteKey(pb_Constant.pbUseUnityColors);
-				PreferencesInternal.DeleteKey(pb_Constant.pbLineHandleSize);
-				PreferencesInternal.DeleteKey(pb_Constant.pbWireframeSize);
-				PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbPreselectionColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
-				PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbSelectedEdgeColor);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedEdgeColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUseUnityColors);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbLineHandleSize);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeSize);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedFaceColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbPreselectionColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedFaceDither);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedVertexColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUnselectedVertexColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedEdgeColor);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUnselectedEdgeColor);
 
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultOpenInDockableWindow);
-				PreferencesInternal.DeleteKey(pb_Constant.pbEditorPrefVersion);
-				PreferencesInternal.DeleteKey(pb_Constant.pbEditorShortcutsVersion);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultCollider);
-				PreferencesInternal.DeleteKey(pb_Constant.pbForceConvex);
-				PreferencesInternal.DeleteKey(pb_Constant.pbVertexColorPrefs);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowEditorNotifications);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultOpenInDockableWindow);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbEditorPrefVersion);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbEditorShortcutsVersion);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultCollider);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceConvex);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexColorPrefs);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowEditorNotifications);
 #pragma warning disable 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbDragCheckLimit);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDragCheckLimit);
 #pragma warning restore 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbForceVertexPivot);
-				PreferencesInternal.DeleteKey(pb_Constant.pbForceGridPivot);
-				PreferencesInternal.DeleteKey(pb_Constant.pbManifoldEdgeExtrusion);
-				PreferencesInternal.DeleteKey(pb_Constant.pbPerimeterEdgeBridgeOnly);
-				PreferencesInternal.DeleteKey(pb_Constant.pbPBOSelectionOnly);
-				PreferencesInternal.DeleteKey(pb_Constant.pbCloseShapeWindow);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUVEditorFloating);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUVMaterialPreview);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceVertexPivot);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbForceGridPivot);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbManifoldEdgeExtrusion);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbPerimeterEdgeBridgeOnly);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbPBOSelectionOnly);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbCloseShapeWindow);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVEditorFloating);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVMaterialPreview);
 #pragma warning disable 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowSceneToolbar);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowSceneToolbar);
 #pragma warning restore 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbNormalizeUVsOnPlanarProjection);
-				PreferencesInternal.DeleteKey(pb_Constant.pbStripProBuilderOnBuild);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDisableAutoUV2Generation);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowSceneInfo);
-				PreferencesInternal.DeleteKey(pb_Constant.pbEnableBackfaceSelection);
-				PreferencesInternal.DeleteKey(pb_Constant.pbVertexPaletteDockable);
-				PreferencesInternal.DeleteKey(pb_Constant.pbExtrudeAsGroup);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUniqueModeShortcuts);
-				PreferencesInternal.DeleteKey(pb_Constant.pbMaterialEditorFloating);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShapeWindowFloating);
-				PreferencesInternal.DeleteKey(pb_Constant.pbIconGUI);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShiftOnlyTooltips);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbNormalizeUVsOnPlanarProjection);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbStripProBuilderOnBuild);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDisableAutoUV2Generation);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowSceneInfo);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbEnableBackfaceSelection);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexPaletteDockable);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbExtrudeAsGroup);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUniqueModeShortcuts);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbMaterialEditorFloating);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShapeWindowFloating);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbIconGUI);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShiftOnlyTooltips);
 #pragma warning disable 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbDrawAxisLines);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDrawAxisLines);
 #pragma warning restore 612
-				PreferencesInternal.DeleteKey(pb_Constant.pbCollapseVertexToFirst);
-				PreferencesInternal.DeleteKey(pb_Constant.pbMeshesAreAssets);
-				PreferencesInternal.DeleteKey(pb_Constant.pbElementSelectIsHamFisted);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbCollapseVertexToFirst);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbMeshesAreAssets);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbElementSelectIsHamFisted);
 #pragma warning disable 618
-				PreferencesInternal.DeleteKey(pb_Constant.pbDragSelectWholeElement);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDragSelectWholeElement);
 #pragma warning restore 618
-				PreferencesInternal.DeleteKey(pb_Constant.pbEnableExperimental);
-				PreferencesInternal.DeleteKey(pb_Constant.pbFillHoleSelectsEntirePath);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDetachToNewObject);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbEnableExperimental);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbFillHoleSelectsEntirePath);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDetachToNewObject);
 #pragma warning disable 618
-				PreferencesInternal.DeleteKey(pb_Constant.pbPreserveFaces);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbPreserveFaces);
 #pragma warning restore 618
-				PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUVGridSnapValue);
-				PreferencesInternal.DeleteKey(pb_Constant.pbUVWeldDistance);
-				PreferencesInternal.DeleteKey(pb_Constant.pbWeldDistance);
-				PreferencesInternal.DeleteKey(pb_Constant.pbExtrudeDistance);
-				PreferencesInternal.DeleteKey(pb_Constant.pbBevelAmount);
-				PreferencesInternal.DeleteKey(pb_Constant.pbEdgeSubdivisions);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultShortcuts);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultMaterial);
-				PreferencesInternal.DeleteKey(pb_Constant.pbGrowSelectionUsingAngle);
-				PreferencesInternal.DeleteKey(pb_Constant.pbGrowSelectionAngle);
-				PreferencesInternal.DeleteKey(pb_Constant.pbGrowSelectionAngleIterative);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowDetail);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowOccluder);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowMover);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowCollider);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowTrigger);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowNoDraw);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShowMissingLightmapUvWarning);
-				PreferencesInternal.DeleteKey(pb_Constant.pbManageLightmappingStaticFlag);
-				PreferencesInternal.DeleteKey(pb_Constant.pbShadowCastingMode);
-				PreferencesInternal.DeleteKey(pb_Constant.pbDefaultStaticFlags);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexHandleSize);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVGridSnapValue);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbUVWeldDistance);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbWeldDistance);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbExtrudeDistance);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbBevelAmount);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbEdgeSubdivisions);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultShortcuts);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultMaterial);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbGrowSelectionUsingAngle);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbGrowSelectionAngle);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbGrowSelectionAngleIterative);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowDetail);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowOccluder);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowMover);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowCollider);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowTrigger);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowNoDraw);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShowMissingLightmapUvWarning);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbManageLightmappingStaticFlag);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbShadowCastingMode);
+				PreferencesInternal.DeleteKey(PreferenceKeys.pbDefaultStaticFlags);
 			}
 
 			s_PrefsLoaded = false;
@@ -431,95 +431,95 @@ namespace UnityEditor.ProBuilder
 			if (s_PrefsLoaded)
 				return;
 			s_PrefsLoaded = true;
-			pbStripProBuilderOnBuild = PreferencesInternal.GetBool(pb_Constant.pbStripProBuilderOnBuild);
-			pbDisableAutoUV2Generation = PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation);
-			pbShowSceneInfo = PreferencesInternal.GetBool(pb_Constant.pbShowSceneInfo);
-			defaultOpenInDockableWindow = PreferencesInternal.GetBool(pb_Constant.pbDefaultOpenInDockableWindow);
-			pbForceConvex = PreferencesInternal.GetBool(pb_Constant.pbForceConvex);
-			pbForceGridPivot = PreferencesInternal.GetBool(pb_Constant.pbForceGridPivot);
-			pbForceVertexPivot = PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot);
-			pbPerimeterEdgeBridgeOnly = PreferencesInternal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
-			pbPBOSelectionOnly = PreferencesInternal.GetBool(pb_Constant.pbPBOSelectionOnly);
-			pbCloseShapeWindow = PreferencesInternal.GetBool(pb_Constant.pbCloseShapeWindow);
-			pbUVEditorFloating = PreferencesInternal.GetBool(pb_Constant.pbUVEditorFloating);
-			pbShowEditorNotifications = PreferencesInternal.GetBool(pb_Constant.pbShowEditorNotifications);
-			pbUniqueModeShortcuts = PreferencesInternal.GetBool(pb_Constant.pbUniqueModeShortcuts);
-			pbIconGUI = PreferencesInternal.GetBool(pb_Constant.pbIconGUI);
-			pbShiftOnlyTooltips = PreferencesInternal.GetBool(pb_Constant.pbShiftOnlyTooltips);
-			pbMeshesAreAssets = PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets);
-			pbElementSelectIsHamFisted = PreferencesInternal.GetBool(pb_Constant.pbElementSelectIsHamFisted);
-			pbEnableExperimental = PreferencesInternal.GetBool(pb_Constant.pbEnableExperimental);
-			showMissingLightmapUvWarning = PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false);
-			pbManageLightmappingStaticFlag = PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false);
+			pbStripProBuilderOnBuild = PreferencesInternal.GetBool(PreferenceKeys.pbStripProBuilderOnBuild);
+			pbDisableAutoUV2Generation = PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation);
+			pbShowSceneInfo = PreferencesInternal.GetBool(PreferenceKeys.pbShowSceneInfo);
+			defaultOpenInDockableWindow = PreferencesInternal.GetBool(PreferenceKeys.pbDefaultOpenInDockableWindow);
+			pbForceConvex = PreferencesInternal.GetBool(PreferenceKeys.pbForceConvex);
+			pbForceGridPivot = PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot);
+			pbForceVertexPivot = PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot);
+			pbPerimeterEdgeBridgeOnly = PreferencesInternal.GetBool(PreferenceKeys.pbPerimeterEdgeBridgeOnly);
+			pbPBOSelectionOnly = PreferencesInternal.GetBool(PreferenceKeys.pbPBOSelectionOnly);
+			pbCloseShapeWindow = PreferencesInternal.GetBool(PreferenceKeys.pbCloseShapeWindow);
+			pbUVEditorFloating = PreferencesInternal.GetBool(PreferenceKeys.pbUVEditorFloating);
+			pbShowEditorNotifications = PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications);
+			pbUniqueModeShortcuts = PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts);
+			pbIconGUI = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
+			pbShiftOnlyTooltips = PreferencesInternal.GetBool(PreferenceKeys.pbShiftOnlyTooltips);
+			pbMeshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
+			pbElementSelectIsHamFisted = PreferencesInternal.GetBool(PreferenceKeys.pbElementSelectIsHamFisted);
+			pbEnableExperimental = PreferencesInternal.GetBool(PreferenceKeys.pbEnableExperimental);
+			showMissingLightmapUvWarning = PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false);
+			pbManageLightmappingStaticFlag = PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false);
 
-			pbUseUnityColors = PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors);
-			pbLineHandleSize = PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize);
-			pbWireframeSize = PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize);
-			faceSelectedColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
-			pbWireframeColor = PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
-			pbPreselectionColor = PreferencesInternal.GetColor(pb_Constant.pbPreselectionColor);
-			pbSelectedFaceDither = PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
-			pbSelectedEdgeColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedEdgeColor);
-			pbUnselectedEdgeColor = PreferencesInternal.GetColor(pb_Constant.pbUnselectedEdgeColor);
-			vertexSelectedColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedVertexColor);
-			vertexUnselectedColor = PreferencesInternal.GetColor(pb_Constant.pbUnselectedVertexColor);
+			pbUseUnityColors = PreferencesInternal.GetBool(PreferenceKeys.pbUseUnityColors);
+			pbLineHandleSize = PreferencesInternal.GetFloat(PreferenceKeys.pbLineHandleSize);
+			pbWireframeSize = PreferencesInternal.GetFloat(PreferenceKeys.pbWireframeSize);
+			faceSelectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedFaceColor);
+			pbWireframeColor = PreferencesInternal.GetColor(PreferenceKeys.pbWireframeColor);
+			pbPreselectionColor = PreferencesInternal.GetColor(PreferenceKeys.pbPreselectionColor);
+			pbSelectedFaceDither = PreferencesInternal.GetBool(PreferenceKeys.pbSelectedFaceDither);
+			pbSelectedEdgeColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedEdgeColor);
+			pbUnselectedEdgeColor = PreferencesInternal.GetColor(PreferenceKeys.pbUnselectedEdgeColor);
+			vertexSelectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedVertexColor);
+			vertexUnselectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbUnselectedVertexColor);
 
-			pbUVGridSnapValue = PreferencesInternal.GetFloat(pb_Constant.pbUVGridSnapValue);
-			pbVertexHandleSize = PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize);
+			pbUVGridSnapValue = PreferencesInternal.GetFloat(PreferenceKeys.pbUVGridSnapValue);
+			pbVertexHandleSize = PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize);
 
-			defaultColliderType = PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider);
-			pbToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(pb_Constant.pbToolbarLocation);
-			pbShadowCastingMode = PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
-			pbDefaultStaticFlags = PreferencesInternal.GetEnum<StaticEditorFlags>(pb_Constant.pbDefaultStaticFlags);
+			defaultColliderType = PreferencesInternal.GetEnum<ColliderType>(PreferenceKeys.pbDefaultCollider);
+			pbToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
+			pbShadowCastingMode = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
+			pbDefaultStaticFlags = PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags);
 
-			pbDefaultMaterial = PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			pbDefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 
 			defaultShortcuts = PreferencesInternal.GetShortcuts().ToArray();
 		}
 
 		public static void SetPrefs()
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
-			PreferencesInternal.SetBool(pb_Constant.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
-			PreferencesInternal.SetBool(pb_Constant.pbShowSceneInfo, pbShowSceneInfo, PreferenceLocation.Global);
-			PreferencesInternal.SetInt(pb_Constant.pbToolbarLocation, (int) pbToolbarLocation, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbStripProBuilderOnBuild, pbStripProBuilderOnBuild);
+			PreferencesInternal.SetBool(PreferenceKeys.pbDisableAutoUV2Generation, pbDisableAutoUV2Generation);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShowSceneInfo, pbShowSceneInfo, PreferenceLocation.Global);
+			PreferencesInternal.SetInt(PreferenceKeys.pbToolbarLocation, (int) pbToolbarLocation, PreferenceLocation.Global);
 
-			PreferencesInternal.SetBool(pb_Constant.pbUseUnityColors, pbUseUnityColors, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbSelectedFaceDither, pbSelectedFaceDither, PreferenceLocation.Global);
-			PreferencesInternal.SetFloat(pb_Constant.pbLineHandleSize, pbLineHandleSize, PreferenceLocation.Global);
-			PreferencesInternal.SetFloat(pb_Constant.pbVertexHandleSize, pbVertexHandleSize, PreferenceLocation.Global);
-			PreferencesInternal.SetFloat(pb_Constant.pbWireframeSize, pbWireframeSize, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbSelectedFaceColor, faceSelectedColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbWireframeColor, pbWireframeColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbPreselectionColor, pbPreselectionColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbSelectedVertexColor, vertexSelectedColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbUnselectedVertexColor, vertexUnselectedColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbSelectedEdgeColor, pbSelectedEdgeColor, PreferenceLocation.Global);
-			PreferencesInternal.SetColor(pb_Constant.pbUnselectedEdgeColor, pbUnselectedEdgeColor, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbUseUnityColors, pbUseUnityColors, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbSelectedFaceDither, pbSelectedFaceDither, PreferenceLocation.Global);
+			PreferencesInternal.SetFloat(PreferenceKeys.pbLineHandleSize, pbLineHandleSize, PreferenceLocation.Global);
+			PreferencesInternal.SetFloat(PreferenceKeys.pbVertexHandleSize, pbVertexHandleSize, PreferenceLocation.Global);
+			PreferencesInternal.SetFloat(PreferenceKeys.pbWireframeSize, pbWireframeSize, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbSelectedFaceColor, faceSelectedColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbWireframeColor, pbWireframeColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbPreselectionColor, pbPreselectionColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbSelectedVertexColor, vertexSelectedColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbUnselectedVertexColor, vertexUnselectedColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbSelectedEdgeColor, pbSelectedEdgeColor, PreferenceLocation.Global);
+			PreferencesInternal.SetColor(PreferenceKeys.pbUnselectedEdgeColor, pbUnselectedEdgeColor, PreferenceLocation.Global);
 
-			PreferencesInternal.SetString(pb_Constant.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), PreferenceLocation.Global);
-			PreferencesInternal.SetMaterial(pb_Constant.pbDefaultMaterial, pbDefaultMaterial);
-			PreferencesInternal.SetInt(pb_Constant.pbDefaultCollider, (int) defaultColliderType);
-			PreferencesInternal.SetInt(pb_Constant.pbShadowCastingMode, (int) pbShadowCastingMode);
-			PreferencesInternal.SetInt(pb_Constant.pbDefaultStaticFlags, (int) pbDefaultStaticFlags);
-			PreferencesInternal.SetBool(pb_Constant.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbShowEditorNotifications, pbShowEditorNotifications, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbForceConvex, pbForceConvex);
-			PreferencesInternal.SetBool(pb_Constant.pbForceVertexPivot, pbForceVertexPivot, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbForceGridPivot, pbForceGridPivot, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbPBOSelectionOnly, pbPBOSelectionOnly, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbCloseShapeWindow, pbCloseShapeWindow, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbUVEditorFloating, pbUVEditorFloating, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbUniqueModeShortcuts, pbUniqueModeShortcuts, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbIconGUI, pbIconGUI, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbShiftOnlyTooltips, pbShiftOnlyTooltips, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbMeshesAreAssets, pbMeshesAreAssets);
-			PreferencesInternal.SetBool(pb_Constant.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbEnableExperimental, pbEnableExperimental, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, PreferenceLocation.Global);
-			PreferencesInternal.SetBool(pb_Constant.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, PreferenceLocation.Global);
-			PreferencesInternal.SetFloat(pb_Constant.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
+			PreferencesInternal.SetString(PreferenceKeys.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), PreferenceLocation.Global);
+			PreferencesInternal.SetMaterial(PreferenceKeys.pbDefaultMaterial, pbDefaultMaterial);
+			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultCollider, (int) defaultColliderType);
+			PreferencesInternal.SetInt(PreferenceKeys.pbShadowCastingMode, (int) pbShadowCastingMode);
+			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultStaticFlags, (int) pbDefaultStaticFlags);
+			PreferencesInternal.SetBool(PreferenceKeys.pbDefaultOpenInDockableWindow, defaultOpenInDockableWindow, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShowEditorNotifications, pbShowEditorNotifications, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbForceConvex, pbForceConvex);
+			PreferencesInternal.SetBool(PreferenceKeys.pbForceVertexPivot, pbForceVertexPivot, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbForceGridPivot, pbForceGridPivot, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbPerimeterEdgeBridgeOnly, pbPerimeterEdgeBridgeOnly, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbPBOSelectionOnly, pbPBOSelectionOnly, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbCloseShapeWindow, pbCloseShapeWindow, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbUVEditorFloating, pbUVEditorFloating, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbUniqueModeShortcuts, pbUniqueModeShortcuts, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbIconGUI, pbIconGUI, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShiftOnlyTooltips, pbShiftOnlyTooltips, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbMeshesAreAssets, pbMeshesAreAssets);
+			PreferencesInternal.SetBool(PreferenceKeys.pbElementSelectIsHamFisted, pbElementSelectIsHamFisted, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbEnableExperimental, pbEnableExperimental, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, showMissingLightmapUvWarning, PreferenceLocation.Global);
+			PreferencesInternal.SetBool(PreferenceKeys.pbManageLightmappingStaticFlag, pbManageLightmappingStaticFlag, PreferenceLocation.Global);
+			PreferencesInternal.SetFloat(PreferenceKeys.pbUVGridSnapValue, pbUVGridSnapValue, PreferenceLocation.Global);
 
 			if (ProBuilderEditor.instance != null)
 			{

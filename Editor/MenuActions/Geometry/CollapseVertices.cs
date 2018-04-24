@@ -52,14 +52,14 @@ namespace UnityEditor.ProBuilder.Actions
 
 			EditorGUILayout.HelpBox("Collapse To First setting decides where the collapsed vertex will be placed.\n\nIf True, the new vertex will be placed at the position of the first selected vertex.  If false, the new vertex is placed at the average position of all selected vertices.", MessageType.Info);
 
-			bool collapseToFirst = PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
+			bool collapseToFirst = PreferencesInternal.GetBool(PreferenceKeys.pbCollapseVertexToFirst);
 
 			EditorGUI.BeginChangeCheck();
 
 			collapseToFirst = EditorGUILayout.Toggle("Collapse To First", collapseToFirst);
 
 			if(EditorGUI.EndChangeCheck())
-				PreferencesInternal.SetBool(pb_Constant.pbCollapseVertexToFirst, collapseToFirst);
+				PreferencesInternal.SetBool(PreferenceKeys.pbCollapseVertexToFirst, collapseToFirst);
 
 			GUILayout.FlexibleSpace();
 
