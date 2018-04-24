@@ -151,7 +151,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				try
 				{
-					pb_Object pb = Undo.AddComponent<pb_Object>(go);
+					ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
 
 					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
 					meshImporter.Import(go, settings);

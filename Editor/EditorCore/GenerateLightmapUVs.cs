@@ -16,13 +16,13 @@ namespace UnityEditor.ProBuilder.Actions
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", true, PreferenceKeys.menuActions + 20)]
 		public static bool VerifyGenerateUV2Selection()
 		{
-			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
+			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", false, PreferenceKeys.menuActions + 20)]
 		public static void MenuGenerateUV2Selection()
 		{
-			pb_Object[] sel = Selection.transforms.GetComponents<pb_Object>();
+			ProBuilderMesh[] sel = Selection.transforms.GetComponents<ProBuilderMesh>();
 
 			if( !Menu_GenerateUV2(sel) )
 				return;	// user canceled
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Scene", false, PreferenceKeys.menuActions + 20)]
 		public static void MenuGenerateUV2Scene()
 		{
-			pb_Object[] sel = (pb_Object[])FindObjectsOfType(typeof(pb_Object));
+			ProBuilderMesh[] sel = (ProBuilderMesh[])FindObjectsOfType(typeof(ProBuilderMesh));
 
 			if( !Menu_GenerateUV2(sel) )
 				return;
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder.Actions
 				EditorUtility.ShowNotification("No ProBuilder Objects Found");
 		}
 
-		static bool Menu_GenerateUV2(pb_Object[] selected)
+		static bool Menu_GenerateUV2(ProBuilderMesh[] selected)
 		{
 			for(int i = 0; i < selected.Length; i++)
 			{

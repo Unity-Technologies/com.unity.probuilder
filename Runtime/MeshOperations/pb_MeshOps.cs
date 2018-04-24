@@ -19,7 +19,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
-		public static void CenterPivot(this pb_Object pb, int[] indices)
+		public static void CenterPivot(this ProBuilderMesh pb, int[] indices)
 		{
 			Vector3 center = Vector3.zero;
 
@@ -34,7 +34,7 @@ namespace ProBuilder.MeshOperations
 			}
 			else
 			{
-				center = pb.transform.TransformPoint(pb.msh.bounds.center);
+				center = pb.transform.TransformPoint(pb.mesh.bounds.center);
 			}
 
 			Vector3 dir = (pb.transform.position - center);
@@ -42,7 +42,7 @@ namespace ProBuilder.MeshOperations
 			pb.transform.position = center;
 
 			pb.ToMesh();
-			pb.TranslateVertices_World(pb.msh.triangles, dir);
+			pb.TranslateVertices_World(pb.mesh.triangles, dir);
 			pb.Refresh();
 		}
 
@@ -51,14 +51,14 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="worldPosition"></param>
-		public static void CenterPivot(this pb_Object pb, Vector3 worldPosition)
+		public static void CenterPivot(this ProBuilderMesh pb, Vector3 worldPosition)
 		{
 			Vector3 offset = pb.transform.position - worldPosition;
 
 			pb.transform.position = worldPosition;
 
 			pb.ToMesh();
-			pb.TranslateVertices_World(pb.msh.triangles, offset);
+			pb.TranslateVertices_World(pb.mesh.triangles, offset);
 			pb.Refresh();
 		}
 
@@ -66,9 +66,9 @@ namespace ProBuilder.MeshOperations
 		/// Scale vertices and set transform.localScale to Vector3.one.
 		/// </summary>
 		/// <param name="pb"></param>
-		public static void FreezeScaleTransform(this pb_Object pb)
+		public static void FreezeScaleTransform(this ProBuilderMesh pb)
 		{
-			Vector3[] v = pb.vertices;
+			Vector3[] v = pb.positions;
 			for(int i = 0; i < v.Length; i++)
 				v[i] = Vector3.Scale(v[i], pb.transform.localScale);
 
@@ -84,7 +84,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="extrudeDistance"></param>
 		/// <returns></returns>
 		[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
-		public static bool Extrude(this pb_Object pb, Face[] faces, float extrudeDistance)
+		public static bool Extrude(this ProBuilderMesh pb, Face[] faces, float extrudeDistance)
 		{
 			Face[] appended;
 			return Extrude(pb, faces, extrudeDistance, true, out appended);
@@ -100,13 +100,13 @@ namespace ProBuilder.MeshOperations
 		/// <param name="appendedFaces"></param>
 		/// <returns></returns>
 		[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
-		public static bool Extrude(this pb_Object pb, Face[] faces, float extrudeDistance, bool extrudeAsGroup, out Face[] appendedFaces)
+		public static bool Extrude(this ProBuilderMesh pb, Face[] faces, float extrudeDistance, bool extrudeAsGroup, out Face[] appendedFaces)
 		{
 			return Extrude(pb, faces, extrudeAsGroup ? ExtrudeMethod.VertexNormal : ExtrudeMethod.IndividualFaces, extrudeDistance, out appendedFaces);
 		}
 
 		[System.Obsolete("Please use `bool Extrude(this pb_Object pb, pb_Face[] faces, ExtrudeMethod method, float distance)`")]
-		public static bool Extrude(this pb_Object pb, Face[] faces, ExtrudeMethod method, float extrudeDistance, out Face[] appendedFaces)
+		public static bool Extrude(this ProBuilderMesh pb, Face[] faces, ExtrudeMethod method, float extrudeDistance, out Face[] appendedFaces)
 		{
 			appendedFaces = null;
 
@@ -117,7 +117,7 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 
 			int vertexCount = pb.vertexCount;
-			Vector3[] localVerts = pb.vertices;
+			Vector3[] localVerts = pb.positions;
 			bool extrudeAsGroup = method != ExtrudeMethod.IndividualFaces;
 
 			Edge[][] perimeterEdges = extrudeAsGroup ? new Edge[1][] { pb_MeshUtils.GetPerimeterEdges(lookup, faces).ToArray() } : faces.Select(x => x.edges).ToArray();
@@ -156,7 +156,7 @@ namespace ProBuilder.MeshOperations
 			}
 
 			List<Edge>[] extrudedIndices = new List<Edge>[perimeterEdges.Length];
-			Vector3[] normals = pb.msh.normals;
+			Vector3[] normals = pb.mesh.normals;
 			Vector3[] extrusionPerIndex = new Vector3[vertexCount];
 
 			List<Vector3[]> append_vertices = new List<Vector3[]>();
@@ -286,7 +286,7 @@ namespace ProBuilder.MeshOperations
 				}
 			}
 
-			localVerts = pb.vertices;
+			localVerts = pb.positions;
 
 			// Remove smoothing and texture group flags
 			foreach(Face f in faces)
@@ -431,7 +431,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static List<Face> DetachFaces(this pb_Object pb, IEnumerable<Face> faces)
+		public static List<Face> DetachFaces(this ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 			int sharedIndicesOffset = pb.sharedIndices.Length;
@@ -489,7 +489,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="b"></param>
 		/// <param name="enforcePerimiterEdgesOnly"></param>
 		/// <returns></returns>
-		public static bool Bridge(this pb_Object pb, Edge a, Edge b, bool enforcePerimiterEdgesOnly = false)
+		public static bool Bridge(this ProBuilderMesh pb, Edge a, Edge b, bool enforcePerimiterEdgesOnly = false)
 			{
 				IntArray[] sharedIndices = pb.GetSharedIndices();
 				Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -512,7 +512,7 @@ namespace ProBuilder.MeshOperations
 					}
 				}
 
-				Vector3[] verts = pb.vertices;
+				Vector3[] verts = pb.positions;
 				Vector3[] v;
 				Color[] c;
 				int[] s;
@@ -661,7 +661,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pbs"></param>
 		/// <param name="combined"></param>
 		/// <returns></returns>
-		public static bool CombineObjects(pb_Object[] pbs, out pb_Object combined)
+		public static bool CombineObjects(ProBuilderMesh[] pbs, out ProBuilderMesh combined)
 		 {
 			combined = null;
 
@@ -674,7 +674,7 @@ namespace ProBuilder.MeshOperations
 			List<IntArray> s = new List<IntArray>();
 			List<IntArray> suv = new List<IntArray>();
 
-			foreach(pb_Object pb in pbs)
+			foreach(ProBuilderMesh pb in pbs)
 			{
 				int vertexCount = v.Count;
 
@@ -729,10 +729,10 @@ namespace ProBuilder.MeshOperations
 			foreach(Transform t in go.transform)
 				Object.DestroyImmediate(t.gameObject);
 
-			if(go.GetComponent<pb_Object>()) Object.DestroyImmediate(go.GetComponent<pb_Object>());
+			if(go.GetComponent<ProBuilderMesh>()) Object.DestroyImmediate(go.GetComponent<ProBuilderMesh>());
 			if(go.GetComponent<Entity>()) Object.DestroyImmediate(go.GetComponent<Entity>());
 
-			combined = go.AddComponent<pb_Object>();
+			combined = go.AddComponent<ProBuilderMesh>();
 
 			combined.SetVertices(v.ToArray());
 			combined.SetUV(u.ToArray());
@@ -746,7 +746,7 @@ namespace ProBuilder.MeshOperations
 			combined.Refresh();
 
 			// refresh donors since deleting the children of the instantiated object could cause them to lose references
-			foreach(pb_Object pb in pbs)
+			foreach(ProBuilderMesh pb in pbs)
 				pb.Verify();
 
 			return true;
@@ -758,7 +758,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="t"></param>
 		/// <param name="preserveFaces"></param>
 		/// <returns></returns>
-		public static pb_Object CreatePbObjectWithTransform(Transform t, bool preserveFaces)
+		public static ProBuilderMesh CreatePbObjectWithTransform(Transform t, bool preserveFaces)
 		{
 			Mesh m = t.GetComponent<MeshFilter>().sharedMesh;
 
@@ -849,7 +849,7 @@ namespace ProBuilder.MeshOperations
 			GameObject go = (GameObject)GameObject.Instantiate(t.gameObject);
 			go.GetComponent<MeshFilter>().sharedMesh = null;
 
-			pb_Object pb = go.AddComponent<pb_Object>();
+			ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
 			pb.GeometryWithVerticesFaces(verts.ToArray(), faces.ToArray());
 
 			pb.SetColors(cols.ToArray());
@@ -874,7 +874,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="preserveFaces"></param>
 		/// <returns></returns>
-		public static bool ResetPbObjectWithMeshFilter(pb_Object pb, bool preserveFaces)
+		public static bool ResetPbObjectWithMeshFilter(ProBuilderMesh pb, bool preserveFaces)
 	{
 		MeshFilter mf = pb.gameObject.GetComponent<MeshFilter>();
 

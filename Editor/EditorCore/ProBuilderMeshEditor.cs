@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 	/// <summary>
 	/// Custom editor for pb_Object type.
 	/// </summary>
-	[CustomEditor(typeof(pb_Object))]
+	[CustomEditor(typeof(ProBuilderMesh))]
 	[CanEditMultipleObjects]
 	class ProBuilderMeshEditor : Editor
 	{
@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder
 
 		public static event OnGetFrameBoundsDelegate OnGetFrameBoundsEvent;
 
-		pb_Object pb;
+		ProBuilderMesh pb;
 
 		ProBuilderEditor editor
 		{
@@ -35,8 +35,8 @@ namespace UnityEditor.ProBuilder
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			if (target is pb_Object)
-				pb = (pb_Object) target;
+			if (target is ProBuilderMesh)
+				pb = (ProBuilderMesh) target;
 			else
 				return;
 
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 
 			// If Verify returns false, that means the mesh was rebuilt - so generate UV2 again
 
-			foreach (pb_Object selpb in Selection.transforms.GetComponents<pb_Object>())
+			foreach (ProBuilderMesh selpb in Selection.transforms.GetComponents<ProBuilderMesh>())
 				EditorUtility.VerifyMesh(selpb);
 		}
 
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 
 				if (GUILayout.Button("Apply Offset"))
 				{
-					foreach (pb_Object ipb in Selection.transforms.GetComponents<pb_Object>())
+					foreach (ProBuilderMesh ipb in Selection.transforms.GetComponents<ProBuilderMesh>())
 					{
 						UndoUtility.RecordObject(ipb, "Offset Vertices");
 
@@ -101,10 +101,10 @@ namespace UnityEditor.ProBuilder
 		bool HasFrameBounds()
 		{
 			if (pb == null)
-				pb = (pb_Object) target;
+				pb = (ProBuilderMesh) target;
 
 			return ProBuilderEditor.instance != null &&
-			       pb_Util.GetComponents<pb_Object>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
+			       pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool init = false;
 
-			foreach (pb_Object pbo in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach (ProBuilderMesh pbo in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				if (pbo.SelectedTriangles.Length < 1) continue;
 

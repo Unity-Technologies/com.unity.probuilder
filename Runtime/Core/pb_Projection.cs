@@ -20,10 +20,10 @@ namespace UnityEngine.ProBuilder
 			return PlanarProject(verts.ToArray(), planeNormal, VectorToProjectionAxis(planeNormal));
 		}
 
-		internal static Vector2[] PlanarProject(pb_Object pb, Face face)
+		internal static Vector2[] PlanarProject(ProBuilderMesh pb, Face face)
 		{
 			Vector3 normal = ProBuilderMath.Normal(pb, face);
-			return PlanarProject(pb.vertices, normal, VectorToProjectionAxis(normal), face.indices);
+			return PlanarProject(pb.positions, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
 		internal static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)

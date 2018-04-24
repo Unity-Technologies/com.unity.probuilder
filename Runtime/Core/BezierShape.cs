@@ -16,14 +16,14 @@ namespace UnityEngine.ProBuilder
 		public bool smooth = true;
 		public bool isEditing { get; set; }
 
-		pb_Object m_Mesh;
+		ProBuilderMesh m_Mesh;
 
-		public pb_Object mesh
+		public ProBuilderMesh mesh
 		{
 			get
 			{
 				if(m_Mesh == null)
-					m_Mesh = GetComponent<pb_Object>();
+					m_Mesh = GetComponent<ProBuilderMesh>();
 
 				return m_Mesh;
 			}
@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				pb_Object m = mesh;
+				ProBuilderMesh m = mesh;
 				pb_Spline.Extrude(points, radius, columns, rows, closeLoop, smooth, ref m);
 			}
 		}

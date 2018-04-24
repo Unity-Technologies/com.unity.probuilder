@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 			if (SceneDragAndDropListener.IsDragging())
 				return;
 
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 		 * Since Undo calls can potentially hang the main thread, store states when the diff
 		 * will large.
 		 */
-		public static void RecordSelection(pb_Object pb, string msg)
+		public static void RecordSelection(ProBuilderMesh pb, string msg)
 		{
 			if( pb.vertexCount > 256 )
 				RegisterCompleteObjectUndo(pb, msg);
@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 		 *	Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object
 		 * 	instead of diffing the serialized object (which is very slow for large arrays).
 		 */
-		public static void RecordSelection(pb_Object[] pb, string msg)
+		public static void RecordSelection(ProBuilderMesh[] pb, string msg)
 		{
 			if (pb == null || pb.Length < 1)
 				return;
@@ -67,12 +67,12 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static void RecordObject(Object obj, string msg)
 		{
-			if(obj is pb_Object && ((pb_Object)obj).vertexCount > 256)
+			if(obj is ProBuilderMesh && ((ProBuilderMesh)obj).vertexCount > 256)
 			{
 #if PB_DEBUG
 				Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)obj).vertexCount);
 #endif
-				RegisterCompleteObjectUndo(obj as pb_Object, msg);
+				RegisterCompleteObjectUndo(obj as ProBuilderMesh, msg);
 			}
 			else
 			{
@@ -88,8 +88,8 @@ namespace UnityEditor.ProBuilder
 			if(objs == null)
 				return;
 
-			Object[] obj = objs.Where(x => !(x is pb_Object)).ToArray();
-			pb_Object[] pb = objs.Where(x => x is pb_Object).Cast<pb_Object>().ToArray();
+			Object[] obj = objs.Where(x => !(x is ProBuilderMesh)).ToArray();
+			ProBuilderMesh[] pb = objs.Where(x => x is ProBuilderMesh).Cast<ProBuilderMesh>().ToArray();
 
 			Undo.RecordObjects(obj, msg);
 			UndoUtility.RecordSelection(pb, msg);

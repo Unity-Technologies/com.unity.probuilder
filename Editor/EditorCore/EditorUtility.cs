@@ -32,13 +32,13 @@ namespace UnityEditor.ProBuilder
 		/// <remarks>
 		/// This is only called when an object is initialized in editor. Ie, pb_ShapeGenerator.GenerateCube(Vector3.one) won't fire this callback.
 		/// </remarks>
-		public static event Action<pb_Object> OnObjectCreated = null;
+		public static event Action<ProBuilderMesh> OnObjectCreated = null;
 
 		/// <summary>
 		/// Add a listener to the multicast OnObjectCreated delegate.
 		/// </summary>
 		/// <param name="onProBuilderObjectCreated"></param>
-		public static void AddOnObjectCreatedListener(Action<pb_Object> onProBuilderObjectCreated)
+		public static void AddOnObjectCreatedListener(Action<ProBuilderMesh> onProBuilderObjectCreated)
 		{
 			if(OnObjectCreated == null)
 				OnObjectCreated = onProBuilderObjectCreated;
@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder
 		/// Remove a listener from the OnObjectCreated delegate.
 		/// </summary>
 		/// <param name="onProBuilderObjectCreated"></param>
-		public static void RemoveOnObjectCreatedListener(Action<pb_Object> onProBuilderObjectCreated)
+		public static void RemoveOnObjectCreatedListener(Action<ProBuilderMesh> onProBuilderObjectCreated)
 		{
 			if(OnObjectCreated != null)
 				OnObjectCreated -= onProBuilderObjectCreated;
@@ -132,7 +132,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[System.Obsolete("Please use pb_Obj.Export")]
-		public static string ExportOBJ(pb_Object[] pb)
+		public static string ExportOBJ(ProBuilderMesh[] pb)
 		{
 			return ExportObj.ExportWithFileDialog(pb);
 		}
@@ -188,9 +188,9 @@ namespace UnityEditor.ProBuilder
 		 * Ensure that this object has a valid mesh reference, and the geometry is
 		 * current.
 		 */
-		public static MeshRebuildReason VerifyMesh(pb_Object pb)
+		public static MeshRebuildReason VerifyMesh(ProBuilderMesh pb)
 		{
-		 	Mesh oldMesh = pb.msh;
+		 	Mesh oldMesh = pb.mesh;
 	 		MeshRebuildReason reason = pb.Verify();
 			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
@@ -214,7 +214,7 @@ namespace UnityEditor.ProBuilder
 					if(go == null)
 					{
 						// Debug.Log("scene reloaded - false positive.");
-						pb.msh.name = "pb_Mesh" + pb.id;
+						pb.mesh.name = "pb_Mesh" + pb.id;
 					}
 					else
 					{
@@ -233,7 +233,7 @@ namespace UnityEditor.ProBuilder
 					// old mesh didn't exist, so this is probably a prefab being instanced
 
 					if(EditorUtility.IsPrefabRoot(pb.gameObject))
-						pb.msh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
+						pb.mesh.hideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
 					pb.Optimize();
 				}
@@ -262,7 +262,7 @@ namespace UnityEditor.ProBuilder
 		/// Initialize this object with the various editor-only parameters, and invoke the object creation callback.
 		/// </summary>
 		/// <param name="pb"></param>
-		public static void InitObject(pb_Object pb)
+		public static void InitObject(ProBuilderMesh pb)
 		{
 			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
@@ -298,7 +298,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[System.Obsolete("pb_Entity is deprecated, please use InitObject(pb_Object)")]
-		public static void InitObject(pb_Object pb, ColliderType colliderType, EntityType entityType)
+		public static void InitObject(ProBuilderMesh pb, ColliderType colliderType, EntityType entityType)
 		{
 			switch(colliderType)
 			{
@@ -345,7 +345,7 @@ namespace UnityEditor.ProBuilder
 		 * If pb_Preferences_Internal.say to set pivot to corner and ProGrids or PB pref says snap to grid, do it.
 		 * @param indicesToCenterPivot If any values are passed here, the pivot is set to an average of all vertices at indices.  If null, the first vertex is used as the pivot.
 		 */
-		public static void SetPivotAndSnapWithPref(pb_Object pb, int[] indicesToCenterPivot)
+		public static void SetPivotAndSnapWithPref(ProBuilderMesh pb, int[] indicesToCenterPivot)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
 				pb.CenterPivot( indicesToCenterPivot == null ? new int[1]{0} : indicesToCenterPivot );

@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Returns true on GUI change detected.
 		 */
-		public static bool OnGUI(pb_Object[] selection, int maxWidth)
+		public static bool OnGUI(ProBuilderMesh[] selection, int maxWidth)
 		{
 			int width = maxWidth - 36;	// scrollbar is 36px
 
@@ -273,7 +273,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Sets the pb_UV list and diff tables.
 		 */
-		static void UpdateDiffDictionary(pb_Object[] selection)
+		static void UpdateDiffDictionary(ProBuilderMesh[] selection)
 		{
 			uv_selection.Clear();
 
@@ -318,7 +318,7 @@ namespace UnityEditor.ProBuilder
 					uv_diff["anchor"] = true;
 			}
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(uv_diff["manualUV"] && uv_diff["textureGroup"])
 					break;
@@ -339,7 +339,7 @@ namespace UnityEditor.ProBuilder
 
 #region MODIFY SINGLE PROPERTIES
 
-		private static void SetFlipU(bool flipU, pb_Object[] sel)
+		private static void SetFlipU(bool flipU, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Flip U");
 			for(int i = 0; i < sel.Length; i++)
@@ -350,7 +350,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetFlipV(bool flipV, pb_Object[] sel)
+		private static void SetFlipV(bool flipV, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Flip V");
 			for(int i = 0; i < sel.Length; i++) {
@@ -360,7 +360,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetSwapUV(bool swapUV, pb_Object[] sel)
+		private static void SetSwapUV(bool swapUV, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Swap U, V");
 			for(int i = 0; i < sel.Length; i++) {
@@ -370,7 +370,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetUseWorldSpace(bool useWorldSpace, pb_Object[] sel)
+		private static void SetUseWorldSpace(bool useWorldSpace, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Use World Space UVs");
 			for(int i = 0; i < sel.Length; i++) {
@@ -380,7 +380,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetFill(pb_UV.Fill fill, pb_Object[] sel)
+		private static void SetFill(pb_UV.Fill fill, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Fill UVs");
 			for(int i = 0; i < sel.Length; i++)
@@ -391,7 +391,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetAnchor(pb_UV.Anchor anchor, pb_Object[] sel)
+		private static void SetAnchor(pb_UV.Anchor anchor, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Set UV Anchor");
 
@@ -402,7 +402,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetOffset(Vector2 offset, pb_Axis2d axis, pb_Object[] sel)
+		private static void SetOffset(Vector2 offset, pb_Axis2d axis, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Offset UVs");
 
@@ -425,7 +425,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetRotation(float rot, pb_Object[] sel)
+		private static void SetRotation(float rot, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Rotate UVs");
 
@@ -437,7 +437,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetScale(Vector2 scale, pb_Axis2d axis, pb_Object[] sel)
+		private static void SetScale(Vector2 scale, pb_Axis2d axis, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Scale UVs");
 			for(int i = 0; i < sel.Length; i++)
@@ -462,11 +462,11 @@ namespace UnityEditor.ProBuilder
 
 #region TEXTURE GROUPS
 
-		private static void SetTextureGroup(pb_Object[] selection, int tex)
+		private static void SetTextureGroup(ProBuilderMesh[] selection, int tex)
 		{
 			UndoUtility.RecordSelection(selection, "Set Texture Group " + textureGroup);
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount < 1)
 					continue;
@@ -483,7 +483,7 @@ namespace UnityEditor.ProBuilder
 
 		}
 
-		private static void TextureGroupSelectedFaces(pb_Object pb)//, pb_Face face)
+		private static void TextureGroupSelectedFaces(ProBuilderMesh pb)//, pb_Face face)
 		{
 			if(pb.SelectedFaceCount < 1) return;
 

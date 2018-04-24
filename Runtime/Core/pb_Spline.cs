@@ -16,14 +16,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="closeLoop">Should the mesh join at the ends or remain unconnected.</param>
 		/// <param name="smooth">Are the mesh edges smoothed or hard.</param>
 		/// <returns>The resulting pb_Object.</returns>
-		internal static pb_Object Extrude(IList<BezierPoint> points,
+		internal static ProBuilderMesh Extrude(IList<BezierPoint> points,
 										float radius = .5f,
 										int columns = 32,
 										int rows = 16,
 										bool closeLoop = false,
 										bool smooth = true)
 		{
-			pb_Object pb = null;
+			ProBuilderMesh pb = null;
 			Extrude(points, radius, columns, rows, closeLoop, smooth, ref pb);
 			return pb;
 		}
@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
 									int rows,
 									bool closeLoop,
 									bool smooth,
-									ref pb_Object target)
+									ref ProBuilderMesh target)
 		{
 			List<Quaternion> rotations = new List<Quaternion>();
 			List<Vector3> positions = GetControlPoints(bezierPoints, columns, closeLoop, rotations);
@@ -81,7 +81,7 @@ namespace UnityEngine.ProBuilder
 									int radiusRows,
 									bool closeLoop,
 									bool smooth,
-									ref pb_Object target,
+									ref ProBuilderMesh target,
 									IList<Quaternion> pointRotations = null)
 		{
 			if(points == null || points.Count < 2)
@@ -156,7 +156,7 @@ namespace UnityEngine.ProBuilder
 			}
 			else
 			{
-				target = pb_Object.CreateInstanceWithVerticesFaces(positions, faces);
+				target = ProBuilderMesh.CreateInstanceWithVerticesFaces(positions, faces);
 			}
 		}
 

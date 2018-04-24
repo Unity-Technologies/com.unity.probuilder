@@ -68,14 +68,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="renderTextureWidth"></param>
 		/// <param name="renderTextureHeight"></param>
 		/// <returns></returns>
-		public static Dictionary<pb_Object, HashSet<Face>> PickFacesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<Face>> PickFacesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
 		{
-			Dictionary<uint, pb_Tuple<pb_Object, Face>> map;
+			Dictionary<uint, pb_Tuple<ProBuilderMesh, Face>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, out map, renderTextureWidth, renderTextureHeight);
 
 			Color32[] pix = tex.GetPixels32();
@@ -88,8 +88,8 @@ namespace UnityEngine.ProBuilder
 			int height = Mathf.FloorToInt(pickerRect.height);
 			UObject.DestroyImmediate(tex);
 
-			Dictionary<pb_Object, HashSet<Face>> selected = new Dictionary<pb_Object, HashSet<Face>>();
-			pb_Tuple<pb_Object, Face> hit;
+			Dictionary<ProBuilderMesh, HashSet<Face>> selected = new Dictionary<ProBuilderMesh, HashSet<Face>>();
+			pb_Tuple<ProBuilderMesh, Face> hit;
 			HashSet<Face> faces = null;
 			HashSet<uint> used = new HashSet<uint>();
 
@@ -146,16 +146,16 @@ namespace UnityEngine.ProBuilder
 		/// <param name="renderTextureWidth"></param>
 		/// <param name="renderTextureHeight"></param>
 		/// <returns>A dictionary of pb_Object selected vertex indices.</returns>
-		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
 		{
-			Dictionary<uint, pb_Tuple<pb_Object, int>> map;
-			Dictionary<pb_Object, HashSet<int>> selected = new Dictionary<pb_Object, HashSet<int>>();
+			Dictionary<uint, pb_Tuple<ProBuilderMesh, int>> map;
+			Dictionary<ProBuilderMesh, HashSet<int>> selected = new Dictionary<ProBuilderMesh, HashSet<int>>();
 
 #if PB_RENDER_PICKER_TEXTURE
 			List<Color> rectImg = new List<Color>();
@@ -172,7 +172,7 @@ namespace UnityEngine.ProBuilder
 			int height = Mathf.FloorToInt(pickerRect.height);
 			UObject.DestroyImmediate(tex);
 
-			pb_Tuple<pb_Object, int> hit;
+			pb_Tuple<ProBuilderMesh, int> hit;
 			HashSet<int> indices = null;
 			HashSet<uint> used = new HashSet<uint>();
 
@@ -223,21 +223,21 @@ namespace UnityEngine.ProBuilder
 		/// <param name="renderTextureWidth"></param>
 		/// <param name="renderTextureHeight"></param>
 		/// <returns>A dictionary of pb_Object and selected edges.</returns>
-		public static Dictionary<pb_Object, HashSet<Edge>> PickEdgesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<Edge>> PickEdgesInRect(
 			Camera camera,
 			Rect pickerRect,
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
 			int renderTextureWidth = -1,
 			int renderTextureHeight = -1)
 		{
-			var selected = new Dictionary<pb_Object, HashSet<Edge>>();
+			var selected = new Dictionary<ProBuilderMesh, HashSet<Edge>>();
 
 #if PB_RENDER_PICKER_TEXTURE
 			List<Color> rectImg = new List<Color>();
 #endif
 
-			Dictionary<uint, pb_Tuple<pb_Object, Edge>> map;
+			Dictionary<uint, pb_Tuple<ProBuilderMesh, Edge>> map;
 			Texture2D tex = RenderSelectionPickerTexture(camera, selection, doDepthTest, out map, renderTextureWidth, renderTextureHeight);
 			Color32[] pix = tex.GetPixels32();
 
@@ -276,7 +276,7 @@ namespace UnityEngine.ProBuilder
 
 			foreach (var kvp in pixelCount)
 			{
-				pb_Tuple<pb_Object, Edge> hit;
+				pb_Tuple<ProBuilderMesh, Edge> hit;
 
 				if (kvp.Value > k_MinEdgePixelsForValidSelection && map.TryGetValue(kvp.Key, out hit))
 				{
@@ -317,8 +317,8 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IList<pb_Object> selection,
-			out Dictionary<uint, pb_Tuple<pb_Object, Face>> map,
+			IList<ProBuilderMesh> selection,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, Face>> map,
 			int width = -1,
 			int height = -1)
 		{
@@ -349,9 +349,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
-			out Dictionary<uint, pb_Tuple<pb_Object, int>> map,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, int>> map,
 			int width = -1,
 			int height = -1)
 		{
@@ -392,9 +392,9 @@ namespace UnityEngine.ProBuilder
 		/// <returns></returns>
 		static Texture2D RenderSelectionPickerTexture(
 			Camera camera,
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
-			out Dictionary<uint, pb_Tuple<pb_Object, Edge>> map,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, Edge>> map,
 			int width = -1,
 			int height = -1)
 		{
@@ -422,12 +422,12 @@ namespace UnityEngine.ProBuilder
 		}
 
 		static GameObject[] GenerateFacePickingObjects(
-			IList<pb_Object> selection,
-			out Dictionary<uint, pb_Tuple<pb_Object, Face>> map)
+			IList<ProBuilderMesh> selection,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, Face>> map)
 		{
 			int selectionCount = selection.Count;
 			GameObject[] pickerObjects = new GameObject[selectionCount];
-			map = new Dictionary<uint, pb_Tuple<pb_Object, Face>>();
+			map = new Dictionary<uint, pb_Tuple<ProBuilderMesh, Face>>();
 
 			uint index = 0;
 
@@ -439,14 +439,14 @@ namespace UnityEngine.ProBuilder
 				go.name = pb.name + " (Face Depth Test)";
 
 				Mesh m = new Mesh();
-				m.vertices = pb.vertices;
+				m.vertices = pb.positions;
 				m.triangles = pb.faces.SelectMany(x => x.indices).ToArray();
 				Color32[] colors = new Color32[m.vertexCount];
 
 				foreach(Face f in pb.faces)
 				{
 					Color32 color = EncodeRGBA(index++);
-					map.Add(DecodeRGBA(color), new pb_Tuple<pb_Object, Face>(pb, f));
+					map.Add(DecodeRGBA(color), new pb_Tuple<ProBuilderMesh, Face>(pb, f));
 
 					for(int n = 0; n < f.distinctIndices.Length; n++)
 						colors[f.distinctIndices[n]] = color;
@@ -464,13 +464,13 @@ namespace UnityEngine.ProBuilder
 		}
 
 		static void GenerateVertexPickingObjects(
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
-			out Dictionary<uint, pb_Tuple<pb_Object, int>> map,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, int>> map,
 			out GameObject[] depthObjects,
 			out GameObject[] pickerObjects)
 		{
-			map = new Dictionary<uint, pb_Tuple<pb_Object, int>>();
+			map = new Dictionary<uint, pb_Tuple<ProBuilderMesh, int>>();
 
 			// don't start at 0 because that means one vertex would be black, matching
 			// the color used to cull hidden vertices.
@@ -499,7 +499,7 @@ namespace UnityEngine.ProBuilder
 					var pb = selection[i];
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
-					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
+					go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
 					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.FacePickerMaterial;
 					depthObjects[i] = go;
 				}
@@ -511,13 +511,13 @@ namespace UnityEngine.ProBuilder
 		}
 
 		static void GenerateEdgePickingObjects(
-			IList<pb_Object> selection,
+			IList<ProBuilderMesh> selection,
 			bool doDepthTest,
-			out Dictionary<uint, pb_Tuple<pb_Object, Edge>> map,
+			out Dictionary<uint, pb_Tuple<ProBuilderMesh, Edge>> map,
 			out GameObject[] depthObjects,
 			out GameObject[] pickerObjects)
 		{
-			map = new Dictionary<uint, pb_Tuple<pb_Object, Edge>>();
+			map = new Dictionary<uint, pb_Tuple<ProBuilderMesh, Edge>>();
 
 			uint index = 0x2;
 			int selectionCount = selection.Count;
@@ -544,7 +544,7 @@ namespace UnityEngine.ProBuilder
 					// copy the select gameobject just for z-write
 					GameObject go = pb_Util.EmptyGameObjectWithTransform(pb.transform);
 					go.name = pb.name + "  (Depth Mask)";
-					go.AddComponent<MeshFilter>().sharedMesh = pb.msh;
+					go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
 					go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.FacePickerMaterial;
 					depthObjects[i] = go;
 				}
@@ -555,7 +555,7 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		static Mesh BuildVertexMesh(pb_Object pb, Dictionary<uint, pb_Tuple<pb_Object, int>> map, ref uint index)
+		static Mesh BuildVertexMesh(ProBuilderMesh pb, Dictionary<uint, pb_Tuple<ProBuilderMesh, int>> map, ref uint index)
 		{
 			int length = System.Math.Min(pb.sharedIndices.Length, ushort.MaxValue / 4 - 1);
 
@@ -573,7 +573,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < length; i++)
 			{
-				Vector3 v = pb.vertices[pb.sharedIndices[i][0]];
+				Vector3 v = pb.positions[pb.sharedIndices[i][0]];
 
 				t_billboards[t+0] = v;
 				t_billboards[t+1] = v;
@@ -598,7 +598,7 @@ namespace UnityEngine.ProBuilder
 				t_tris[n+5] = t + 2;
 
 				Color32 color = EncodeRGBA(index);
-				map.Add(index++, new pb_Tuple<pb_Object, int>(pb, i));
+				map.Add(index++, new pb_Tuple<ProBuilderMesh, int>(pb, i));
 
 				t_col[t+0] = color;
 				t_col[t+1] = color;
@@ -620,7 +620,7 @@ namespace UnityEngine.ProBuilder
 			return mesh;
 		}
 
-		static Mesh BuildEdgeMesh(pb_Object pb, Dictionary<uint, pb_Tuple<pb_Object, Edge>> map, ref uint index)
+		static Mesh BuildEdgeMesh(ProBuilderMesh pb, Dictionary<uint, pb_Tuple<ProBuilderMesh, Edge>> map, ref uint index)
 		{
 			int edgeCount = 0;
 			int faceCount = pb.faceCount;
@@ -642,8 +642,8 @@ namespace UnityEngine.ProBuilder
 				{
 					var edge = pb.faces[i].edges[n];
 
-					Vector3 a = pb.vertices[edge.x];
-					Vector3 b = pb.vertices[edge.y];
+					Vector3 a = pb.positions[edge.x];
+					Vector3 b = pb.positions[edge.y];
 					int positionIndex = edgeIndex * 2;
 
 					positions[positionIndex + 0] = a;
@@ -651,7 +651,7 @@ namespace UnityEngine.ProBuilder
 
 					Color32 c = EncodeRGBA(index);
 
-					map.Add(index++, new pb_Tuple<pb_Object, Edge>(pb, edge));
+					map.Add(index++, new pb_Tuple<ProBuilderMesh, Edge>(pb, edge));
 
 					color[positionIndex + 0] = c;
 					color[positionIndex + 1] = c;

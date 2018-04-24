@@ -12,7 +12,7 @@ namespace ProBuilder.RuntimeTests.Shape
 	{
 		static void CreateBasicAndCompare(pb_ShapeType type)
 		{
-			pb_Object pb = pb_ShapeGenerator.CreateShape(type);
+			ProBuilderMesh pb = pb_ShapeGenerator.CreateShape(type);
 
 #if PB_CREATE_TEST_MESH_TEMPLATES
 			// save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
@@ -25,10 +25,10 @@ namespace ProBuilder.RuntimeTests.Shape
 			try
 			{
 				Assert.IsNotNull(pb, type.ToString());
-				pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 				// Loads an asset by name from the template path. See also pb_TestUtility.GetTemplatePath
 				Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(type.ToString());
-				Assert.IsTrue(pb_TestUtility.AssertAreEqual(template, pb.msh), type.ToString() + " value-wise mesh comparison");
+				Assert.IsTrue(pb_TestUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
 			}
 			finally
 			{

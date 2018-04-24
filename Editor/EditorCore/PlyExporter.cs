@@ -38,12 +38,12 @@ namespace UnityEditor.ProBuilder
 		/// <param name="contents"></param>
 		/// <param name="options"></param>
 		/// <returns></returns>
-		public static bool Export(IEnumerable<pb_Object> models, out string contents, PlyOptions options = null)
+		public static bool Export(IEnumerable<ProBuilderMesh> models, out string contents, PlyOptions options = null)
 		{
 			if(options == null)
 				options = new PlyOptions();
 
-			foreach(pb_Object pb in models)
+			foreach(ProBuilderMesh pb in models)
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -51,14 +51,14 @@ namespace UnityEditor.ProBuilder
 
 			int modelCount = models.Count();
 
-			Vector3[] positions = models.SelectMany(x => x.vertices).ToArray();
-			Vector3[] normals = models.SelectMany(x => x.msh.normals).ToArray();
+			Vector3[] positions = models.SelectMany(x => x.positions).ToArray();
+			Vector3[] normals = models.SelectMany(x => x.mesh.normals).ToArray();
 			Color[] colors = models.SelectMany(x => x.colors).ToArray();
 
 			List<int[]> faces = new List<int[]>(modelCount);
 			int vertexOffset = 0;
 
-			foreach(pb_Object pb in models)
+			foreach(ProBuilderMesh pb in models)
 			{
 				List<int[]> indices = null;
 
@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder
 
 			bool res = Export(positions, faces.ToArray(), out contents, normals, colors, options.isRightHanded);
 
-			foreach(pb_Object pb in models)
+			foreach(ProBuilderMesh pb in models)
 				pb.Optimize();
 
 			return res;

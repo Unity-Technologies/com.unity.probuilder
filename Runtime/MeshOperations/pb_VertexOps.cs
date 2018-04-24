@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="collapsedIndex"></param>
 		/// <param name="collapseToFirst"></param>
 		/// <returns></returns>
-		public static bool MergeVertices(this pb_Object pb, int[] indices, out int collapsedIndex, bool collapseToFirst = false)
+		public static bool MergeVertices(this ProBuilderMesh pb, int[] indices, out int collapsedIndex, bool collapseToFirst = false)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 
@@ -67,7 +67,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static bool SplitCommonVertices(this pb_Object pb, int[] indices)
+		public static bool SplitCommonVertices(this ProBuilderMesh pb, int[] indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
@@ -102,7 +102,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="edge"></param>
-		public static void SplitVertices(this pb_Object pb, Edge edge)
+		public static void SplitVertices(this ProBuilderMesh pb, Edge edge)
 		{
 			SplitVertices(pb, new int[] { edge.x, edge.y });
 		}
@@ -112,7 +112,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
-		public static void SplitVertices(this pb_Object pb, IEnumerable<int> indices)
+		public static void SplitVertices(this ProBuilderMesh pb, IEnumerable<int> indices)
 		{
 			// ToDictionary always sets the universal indices in ascending order from 0+.
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -131,7 +131,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="addColors"></param>
 		/// <param name="newFace"></param>
 		/// <returns></returns>
-		public static bool AppendVerticesToFace(this pb_Object pb, Face face, Vector3[] points, Color[] addColors, out Face newFace)
+		public static bool AppendVerticesToFace(this ProBuilderMesh pb, Face face, Vector3[] points, Color[] addColors, out Face newFace)
 		{
 			if(!face.IsValid())
 			{
@@ -253,7 +253,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static ActionResult AppendVerticesToEdge(this pb_Object pb, Edge edge, int count, out List<Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this ProBuilderMesh pb, Edge edge, int count, out List<Edge> newEdges)
 		{
 			return AppendVerticesToEdge(pb, new Edge[] { edge }, count, out newEdges);
 		}
@@ -266,7 +266,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static ActionResult AppendVerticesToEdge(this pb_Object pb, IList<Edge> edges, int count, out List<Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this ProBuilderMesh pb, IList<Edge> edges, int count, out List<Edge> newEdges)
 		{
 			newEdges = new List<Edge>();
 
@@ -509,9 +509,9 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <param name="snap"></param>
-		public static void Quantize(pb_Object pb, IList<int> indices, Vector3 snap)
+		public static void Quantize(ProBuilderMesh pb, IList<int> indices, Vector3 snap)
 		{
-			Vector3[] verts = pb.vertices;
+			Vector3[] verts = pb.positions;
 
 			for(int n = 0; n < indices.Count; n++)
 				verts[indices[n]] = pb.transform.InverseTransformPoint(pb_Snap.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));

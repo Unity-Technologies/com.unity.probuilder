@@ -18,7 +18,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="method">How faces are extruded.</param>
 		/// <param name="distance">The distance in Unity units to extrude faces.</param>
 		/// <returns>True on success, false if the action failed.</returns>
-		public static bool Extrude(this pb_Object pb, Face[] faces, ExtrudeMethod method, float distance)
+		public static bool Extrude(this ProBuilderMesh pb, Face[] faces, ExtrudeMethod method, float distance)
 		{
 			switch(method)
 			{
@@ -37,7 +37,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudePerFace(pb_Object pb, Face[] faces, float distance)
+		static bool ExtrudePerFace(ProBuilderMesh pb, Face[] faces, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -134,7 +134,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="compensateAngleVertexDistance"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		static bool ExtrudeAsGroups(pb_Object pb, Face[] faces, bool compensateAngleVertexDistance, float distance)
+		static bool ExtrudeAsGroups(ProBuilderMesh pb, Face[] faces, bool compensateAngleVertexDistance, float distance)
 		{
 			if(faces == null || faces.Length < 1)
 				return false;
@@ -369,7 +369,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="enableManifoldExtrude"></param>
 		/// <param name="extrudedEdges"></param>
 		/// <returns></returns>
-		public static bool Extrude(this pb_Object pb, Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
+		public static bool Extrude(this ProBuilderMesh pb, Edge[] edges, float extrudeDistance, bool extrudeAsGroup, bool enableManifoldExtrude, out Edge[] extrudedEdges)
 		{
 			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -407,8 +407,8 @@ namespace ProBuilder.MeshOperations
 				return false;
 			}
 
-			Vector3[] localVerts = pb.vertices;
-			Vector3[] oNormals = pb.msh.normals;
+			Vector3[] localVerts = pb.positions;
+			Vector3[] oNormals = pb.mesh.normals;
 
 			int[] allEdgeIndices = new int[validEdges.Count * 2];
 			int c = 0;

@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
 			if (ent == null)
 				ent = target.AddComponent<Entity>();
 
-			pb_Object pb = target.GetComponent<pb_Object>();
+			ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
 
 			if (!ent || !pb)
 				return;
@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder
 			if (et == EntityType.Trigger ||
 			    et == EntityType.Collider)
 			{
-				pb_Object pb = target.GetComponent<pb_Object>();
+				ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
 				pb.SetFaceMaterial(pb.faces, BuiltinMaterials.DefaultMaterial);
 				pb.ToMesh();
 				pb.Refresh();
@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 			if (et == EntityType.Trigger ||
 			    et == EntityType.Collider)
 			{
-				pb_Object pb = target.GetComponent<pb_Object>();
+				ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
 				pb.SetFaceMaterial(pb.faces, BuiltinMaterials.DefaultMaterial);
 
 				pb.ToMesh();
@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
 		static void SetTrigger(GameObject target)
 		{
-			pb_Object pb = target.GetComponent<pb_Object>();
+			ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
 			pb.SetFaceMaterial(pb.faces, BuiltinMaterials.TriggerMaterial);
 			SetIsTrigger(true, target);
 			SetEditorFlags((StaticEditorFlags) 0, target);
@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
 		static void SetCollider(GameObject target)
 		{
-			pb_Object pb = target.GetComponent<pb_Object>();
+			ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();
 			pb.SetFaceMaterial(pb.faces, BuiltinMaterials.ColliderMaterial);
 			pb.ToMesh();
 			pb.Refresh();

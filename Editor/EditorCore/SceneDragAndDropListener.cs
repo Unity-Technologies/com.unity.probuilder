@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 		static Mesh s_PreviewMesh;
 		static Material s_PreviewMaterial;
 		static int s_PreviewSubmesh;
-		static pb_Object s_CurrentPreview;
+		static ProBuilderMesh s_CurrentPreview;
 		static bool s_IsFaceDragAndDropOverrideEnabled;
 
 		static SceneDragAndDropListener()
@@ -91,7 +91,7 @@ namespace UnityEditor.ProBuilder
 			return null;
 		}
 
-		static void SetMeshPreview(pb_Object mesh)
+		static void SetMeshPreview(ProBuilderMesh mesh)
 		{
 			if (s_CurrentPreview != mesh)
 			{
@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{
-						s_PreviewMesh.vertices = mesh.vertices;
+						s_PreviewMesh.vertices = mesh.positions;
 						Vector2[] uvs = mesh.uv;
 						if(uvs != null && uvs.Length == mesh.vertexCount)
 							s_PreviewMesh.uv = uvs;
@@ -129,7 +129,7 @@ namespace UnityEditor.ProBuilder
 					s_IsSceneViewDragAndDrop = true;
 
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
-				SetMeshPreview(go != null ? go.GetComponent<pb_Object>() : null);
+				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
 				if (s_IsFaceDragAndDropOverrideEnabled)
 				{
@@ -153,7 +153,7 @@ namespace UnityEditor.ProBuilder
 				s_IsSceneViewDragAndDrop = false;
 
 				GameObject go = HandleUtility.PickGameObject(evt.mousePosition, out s_PreviewSubmesh);
-				SetMeshPreview(go != null ? go.GetComponent<pb_Object>() : null);
+				SetMeshPreview(go != null ? go.GetComponent<ProBuilderMesh>() : null);
 
 				if (s_CurrentPreview != null)
 				{

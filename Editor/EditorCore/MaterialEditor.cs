@@ -225,7 +225,7 @@ namespace UnityEditor.ProBuilder
 					GUI.enabled = editor != null && editor.selectedFaceCount > 0;
 					if(GUILayout.Button("Match Selection"))
 					{
-						pb_Object tp;
+						ProBuilderMesh tp;
 						Face tf;
 						if( editor.GetFirstSelectedFace(out tp, out tf) )
 							m_QueuedMaterial = tf.material;
@@ -344,7 +344,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Applies the currently queued material to the selected face and eats the event.
 		 */
-		public bool ClickShortcutCheck(EventModifiers em, pb_Object pb, Face quad)
+		public bool ClickShortcutCheck(EventModifiers em, ProBuilderMesh pb, Face quad)
 		{
 			if(UVEditor.instance == null)
 			{
@@ -361,13 +361,13 @@ namespace UnityEditor.ProBuilder
 			return false;
 		}
 
-		public static void ApplyMaterial(IEnumerable<pb_Object> selection, Material mat)
+		public static void ApplyMaterial(IEnumerable<ProBuilderMesh> selection, Material mat)
 		{
 			if(mat == null) return;
 
 			UndoUtility.RecordSelection(selection.ToArray(), "Set Face Materials");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Face[] faces = pb.SelectedFaces;
 				pb.SetFaceMaterial(faces == null || faces.Length < 1 ? pb.faces : faces, mat);
@@ -386,7 +386,7 @@ namespace UnityEditor.ProBuilder
 			AssetDatabase.SaveAssets();
 		}
 
-		private static void OnFaceChanged( pb_Object pb )
+		private static void OnFaceChanged( ProBuilderMesh pb )
 		{
 			pb.ToMesh();
 			pb.Refresh();

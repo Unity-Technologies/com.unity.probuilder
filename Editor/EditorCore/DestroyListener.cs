@@ -11,11 +11,11 @@ namespace UnityEditor.ProBuilder
 	{
 		static DestroyListener()
 		{
-			pb_Object.onDestroyObject -= OnDestroyObject;
-			pb_Object.onDestroyObject += OnDestroyObject;
+			ProBuilderMesh.onDestroyObject -= OnDestroyObject;
+			ProBuilderMesh.onDestroyObject += OnDestroyObject;
 		}
 
-		static void OnDestroyObject(pb_Object pb)
+		static void OnDestroyObject(ProBuilderMesh pb)
 		{
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 			{
@@ -49,17 +49,17 @@ namespace UnityEditor.ProBuilder
 					}
 					else
 					{
-						Object.DestroyImmediate(pb.msh);
+						Object.DestroyImmediate(pb.mesh);
 					}
 				}
 			}
 			else
 			{
-				string path = AssetDatabase.GetAssetPath(pb.msh);
+				string path = AssetDatabase.GetAssetPath(pb.mesh);
 
 				// If the pb_Object is backed by a Mesh asset don't destroy it.
 				if(string.IsNullOrEmpty(path))
-					Object.DestroyImmediate(pb.msh);
+					Object.DestroyImmediate(pb.mesh);
 			}
 		}
 	}

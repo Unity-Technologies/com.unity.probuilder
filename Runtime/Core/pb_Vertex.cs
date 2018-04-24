@@ -245,20 +245,20 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static pb_Vertex[] GetVertices(pb_Object pb, IList<int> indices = null)
+		public static pb_Vertex[] GetVertices(ProBuilderMesh pb, IList<int> indices = null)
 		{
 			int meshVertexCount = pb.vertexCount;
 			int vertexCount = indices != null ? indices.Count : pb.vertexCount;
 
 			pb_Vertex[] v = new pb_Vertex[vertexCount];
 
-			Vector3[] positions = pb.vertices;
+			Vector3[] positions = pb.positions;
 			Color[] colors 		= pb.colors;
 			Vector2[] uv0s 		= pb.uv;
 
-			Vector3[] normals 	= pb.msh.normals;
-			Vector4[] tangents 	= pb.msh.tangents;
-			Vector2[] uv2s 		= pb.msh.uv2;
+			Vector3[] normals 	= pb.mesh.normals;
+			Vector4[] tangents 	= pb.mesh.tangents;
+			Vector2[] uv2s 		= pb.mesh.uv2;
 
 			List<Vector4> uv3s = new List<Vector4>();
 			List<Vector4> uv4s = new List<Vector4>();

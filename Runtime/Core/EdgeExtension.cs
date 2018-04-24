@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="edge"></param>
 		/// <param name="validEdge"></param>
 		/// <returns></returns>
-		public static bool ValidateEdge(pb_Object pb, Edge edge, out pb_Tuple<Face, Edge> validEdge)
+		public static bool ValidateEdge(ProBuilderMesh pb, Edge edge, out pb_Tuple<Face, Edge> validEdge)
 		{
 			Face[] faces = pb.faces;
 			IntArray[] sharedIndices = pb.sharedIndices;

@@ -13,8 +13,8 @@ namespace UnityEditor.ProBuilder
 	[InitializeOnLoad]
 	public static class MeshSelection
 	{
-		static pb_Object[] s_TopSelection = new pb_Object[0];
-		static pb_Object[] s_DeepSelection = new pb_Object[0];
+		static ProBuilderMesh[] s_TopSelection = new ProBuilderMesh[0];
+		static ProBuilderMesh[] s_DeepSelection = new ProBuilderMesh[0];
 
 		static bool s_ElementCountCacheIsDirty = true;
 
@@ -24,13 +24,13 @@ namespace UnityEditor.ProBuilder
 		static int s_TotalFaceCount;
 		static int s_TotalTriangleCountCompiled;
 
-		static pb_Object[] selection
+		static ProBuilderMesh[] selection
 		{
 			get
 			{
 				return ProBuilderEditor.instance != null
 					? ProBuilderEditor.instance.selection
-					: pb_Util.GetComponents<pb_Object>(Selection.transforms);
+					: pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms);
 			}
 		}
 
@@ -52,8 +52,8 @@ namespace UnityEditor.ProBuilder
 		{
 			// GameObjects returns both parent and child when both are selected, where transforms only returns the top-most
 			// transform.
-			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<pb_Object>()).Where(x => x != null).ToArray();
-			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray();
+			s_TopSelection = Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>()).Where(x => x != null).ToArray();
+			s_DeepSelection = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray();
 			s_ElementCountCacheIsDirty = true;
 
 			if (onObjectSelectionChanged != null)
@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder
 		/// Get all selected pb_Object components. Corresponds to `Selection.gameObjects`.
 		/// </summary>
 		/// <returns></returns>
-		public static pb_Object[] Top()
+		public static ProBuilderMesh[] Top()
 		{
 			return s_TopSelection;
 		}
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
 		/// Get all selected pb_Object components, including those in children of selected objects.
 		/// </summary>
 		/// <returns></returns>
-		public static pb_Object[] All()
+		public static ProBuilderMesh[] All()
 		{
 			return s_DeepSelection;
 		}
@@ -122,9 +122,9 @@ namespace UnityEditor.ProBuilder
 			{
 				s_TotalVertexCount = Top().Sum(x => x.vertexCount);
 				s_TotalCommonVertexCount = Top().Sum(x => x.sharedIndices.Length);
-				s_TotalVertexCountCompiled = Top().Sum(x => x.msh == null ? 0 : x.msh.vertexCount);
+				s_TotalVertexCountCompiled = Top().Sum(x => x.mesh == null ? 0 : x.mesh.vertexCount);
 				s_TotalFaceCount = Top().Sum(x => x.faceCount);
-				s_TotalTriangleCountCompiled = Top().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetTriangleCount(x.msh));
+				s_TotalTriangleCountCompiled = Top().Sum(x => (int) UnityEngine.ProBuilder.MeshUtility.GetTriangleCount(x.mesh));
 				s_ElementCountCacheIsDirty = false;
 			}
 			catch

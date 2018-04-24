@@ -47,7 +47,7 @@ namespace ProBuilder.EditorTests.Object
 		public static void DestroyDoesNotDeleteMeshBackByAsset()
 		{
 			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
-			string path = pb_TestUtility.SaveAssetTemporary<Mesh>(pb.msh);
+			string path = pb_TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);
 			Assert.IsFalse(mesh == null);

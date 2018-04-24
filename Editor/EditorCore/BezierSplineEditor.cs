@@ -31,13 +31,13 @@ namespace UnityEditor.ProBuilder
 		bool m_IsMoving = false;
 		List<Vector3> m_ControlPoints;
 
-		pb_Object m_CurrentObject
+		ProBuilderMesh m_CurrentObject
 		{
 			get
 			{
 				if(m_Target.mesh == null)
 				{
-					m_Target.mesh = m_Target.gameObject.AddComponent<pb_Object>();
+					m_Target.mesh = m_Target.gameObject.AddComponent<ProBuilderMesh>();
 					EditorUtility.InitObject(m_Target.mesh);
 				}
 

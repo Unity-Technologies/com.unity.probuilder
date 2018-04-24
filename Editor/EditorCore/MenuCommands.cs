@@ -23,12 +23,12 @@ namespace UnityEditor.ProBuilder
 		 * Combine selected pb_Objects to a single object.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuMergeObjects(pb_Object[] selected)
+		public static ActionResult MenuMergeObjects(ProBuilderMesh[] selected)
 		{
 			if(selected.Length < 2)
 				return new ActionResult(Status.Canceled, "Must Select 2+ Objects");
 
-			pb_Object pb = null;
+			ProBuilderMesh pb = null;
 
 			if( pb_MeshOps.CombineObjects(selected, out pb) )
 			{
@@ -61,12 +61,12 @@ namespace UnityEditor.ProBuilder
 		 * Set the pivot to the center of the current element selection.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuCenterPivot(pb_Object[] selection)
+		public static ActionResult MenuCenterPivot(ProBuilderMesh[] selection)
 		{
 			return _SetPivot(selection, null);
 		}
 
-		public static ActionResult MenuSetPivot(pb_Object[] selection)
+		public static ActionResult MenuSetPivot(ProBuilderMesh[] selection)
 		{
 			int[][] tri = new int[selection.Length][];
 
@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder
 			return _SetPivot(selection, tri);
 		}
 
-		private static ActionResult _SetPivot(pb_Object[] selection, int[][] triangles = null)
+		private static ActionResult _SetPivot(ProBuilderMesh[] selection, int[][] triangles = null)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(Status.Success, "Set Pivot");
 		}
 
-		public static ActionResult MenuFreezeTransforms(pb_Object[] selection)
+		public static ActionResult MenuFreezeTransforms(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pb_Object pb = selection[i];
+				ProBuilderMesh pb = selection[i];
 
 				pb.transform.position = Vector3.zero;
 				pb.transform.rotation = Quaternion.identity;
@@ -156,7 +156,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="entityType"></param>
 		/// <returns></returns>
 		[Obsolete("pb_Entity is obsolete.")]
-		public static ActionResult MenuSetEntityType(pb_Object[] selection, EntityType entityType)
+		public static ActionResult MenuSetEntityType(ProBuilderMesh[] selection, EntityType entityType)
 		{
 			if(selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -165,7 +165,7 @@ namespace UnityEditor.ProBuilder
 
 			UndoUtility.RecordObjects(undoObjects, "Set Entity Type");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				EntityUtility.SetEntityType(entityType, pb.gameObject);
 				pb.ToMesh();
@@ -196,7 +196,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Open the vertex coloring editor as stored by user prefs.
 		 */
-		public static ActionResult MenuOpenVertexColorsEditor2(pb_Object[] selection)
+		public static ActionResult MenuOpenVertexColorsEditor2(ProBuilderMesh[] selection)
 		{
 			switch( PreferencesInternal.GetEnum<VertexColorTool>(PreferenceKeys.pbVertexColorTool) )
 			{
@@ -226,7 +226,7 @@ namespace UnityEditor.ProBuilder
 		}
 #if !PROTOTYPE
 
-		public static ActionResult MenuFacetizeObject(pb_Object[] selection)
+		public static ActionResult MenuFacetizeObject(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -254,14 +254,14 @@ namespace UnityEditor.ProBuilder
 			Intersect
 		}
 
-		static ActionResult MenuBooleanOperation(BooleanOperation operation, pb_Object lhs, pb_Object rhs)
+		static ActionResult MenuBooleanOperation(BooleanOperation operation, ProBuilderMesh lhs, ProBuilderMesh rhs)
 		{
 			if(lhs == null || rhs == null)
 				return new ActionResult(Status.Failure, "Must Select 2 Objects");
 
 			string op_string = operation == BooleanOperation.Union ? "Union" : (operation == BooleanOperation.Subtract ? "Subtract" : "Intersect");
 
-			pb_Object[] sel = new pb_Object[] { lhs, rhs };
+			ProBuilderMesh[] sel = new ProBuilderMesh[] { lhs, rhs };
 
 			UndoUtility.RecordSelection(sel, op_string);
 
@@ -287,7 +287,7 @@ namespace UnityEditor.ProBuilder
 			go.AddComponent<MeshRenderer>().sharedMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			go.AddComponent<MeshFilter>().sharedMesh = c;
 
-			pb_Object pb = pb_MeshOps.CreatePbObjectWithTransform(go.transform, false);
+			ProBuilderMesh pb = pb_MeshOps.CreatePbObjectWithTransform(go.transform, false);
 			DestroyImmediate(go);
 
 			Selection.objects = new Object[] { pb.gameObject };
@@ -298,7 +298,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Union operation between two ProBuilder objects.
 		 */
-		public static ActionResult MenuUnion(pb_Object lhs, pb_Object rhs)
+		public static ActionResult MenuUnion(ProBuilderMesh lhs, ProBuilderMesh rhs)
 		{
 			return MenuBooleanOperation(BooleanOperation.Union, lhs, rhs);
 		}
@@ -306,7 +306,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Subtract boolean operation between two pb_Objects.
 		 */
-		public static ActionResult MenuSubtract(pb_Object lhs, pb_Object rhs)
+		public static ActionResult MenuSubtract(ProBuilderMesh lhs, ProBuilderMesh rhs)
 		{
 			return MenuBooleanOperation(BooleanOperation.Subtract, lhs, rhs);
 		}
@@ -314,7 +314,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Intersect boolean operation between two pb_Objects.
 		 */
-		public static ActionResult MenuIntersect(pb_Object lhs, pb_Object rhs)
+		public static ActionResult MenuIntersect(ProBuilderMesh lhs, ProBuilderMesh rhs)
 		{
 			return MenuBooleanOperation(BooleanOperation.Intersect, lhs, rhs);
 		}
@@ -327,14 +327,14 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Reverse the direction of all faces on each object.
 		 */
-		public static ActionResult MenuFlipObjectNormals(pb_Object[] selected)
+		public static ActionResult MenuFlipObjectNormals(ProBuilderMesh[] selected)
 		{
 			if(selected == null || selected.Length < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
+			UndoUtility.RecordSelection(pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Object Normals");
 
-			foreach(pb_Object pb in selected)
+			foreach(ProBuilderMesh pb in selected)
 			{
 				pb.ReverseWindingOrder(pb.faces);
 				pb.ToMesh();
@@ -348,17 +348,17 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Flips all face normals if editLevel == EditLevel.Top, else flips only pb_Object->SelectedFaces
 		 */
-		public static ActionResult MenuFlipNormals(pb_Object[] selected)
+		public static ActionResult MenuFlipNormals(ProBuilderMesh[] selected)
 		{
 			if(selected == null || selected.Length < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+			UndoUtility.RecordSelection(pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Face Normals");
 
 			int c = 0;
 			int faceCount = ProBuilderEditor.instance.selectedFaceCount;
 
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				if( pb.SelectedFaceCount < 1 && faceCount < 1 )
 				{
@@ -386,17 +386,17 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Attempt to make face normals uniform.
 		 */
-		public static ActionResult MenuConformObjectNormals(pb_Object[] selection)
+		public static ActionResult MenuConformObjectNormals(ProBuilderMesh[] selection)
 		{
 			return DoConformNormals(selection, false);
 		}
 
-		public static ActionResult MenuConformNormals(pb_Object[] selection)
+		public static ActionResult MenuConformNormals(ProBuilderMesh[] selection)
 		{
 			return DoConformNormals(selection, true);
 		}
 
-		public static ActionResult DoConformNormals(pb_Object[] selection, bool perFace = true)
+		public static ActionResult DoConformNormals(ProBuilderMesh[] selection, bool perFace = true)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -405,7 +405,7 @@ namespace UnityEditor.ProBuilder
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Face[] faces = perFace ? pb.SelectedFaces : pb.faces;
 
@@ -450,7 +450,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Infers the correct context and extrudes the selected elements.
 		 */
-		public static ActionResult MenuExtrude(pb_Object[] selection, bool enforceCurrentSelectionMode = false)
+		public static ActionResult MenuExtrude(ProBuilderMesh[] selection, bool enforceCurrentSelectionMode = false)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -460,7 +460,7 @@ namespace UnityEditor.ProBuilder
 			int extrudedFaceCount = 0;
 			bool success = false;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
 				pb.Refresh(RefreshMask.Normals);
@@ -523,7 +523,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Create a face between two edges.
 		 */
-		public static ActionResult MenuBridgeEdges(pb_Object[] selection)
+		public static ActionResult MenuBridgeEdges(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -533,7 +533,7 @@ namespace UnityEditor.ProBuilder
 			bool success = false;
 			bool limitToPerimeterEdges = PreferencesInternal.GetBool(PreferenceKeys.pbPerimeterEdgeBridgeOnly);
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedEdges.Length == 2)
 				{
@@ -562,14 +562,14 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Bevel selected edges.
 		 */
-		public static ActionResult MenuBevelEdges(pb_Object[] selection)
+		public static ActionResult MenuBevelEdges(ProBuilderMesh[] selection)
 		{
 			ActionResult res = ActionResult.NoSelection;
 			UndoUtility.RecordSelection(selection, "Bevel Edges");
 
 			float amount = PreferencesInternal.GetFloat(PreferenceKeys.pbBevelAmount);
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
 
@@ -592,7 +592,7 @@ namespace UnityEditor.ProBuilder
 
 #region Selection
 
-		private static void GetSelectedElementCount(pb_Object[] selection, out int sel, out int max)
+		private static void GetSelectedElementCount(ProBuilderMesh[] selection, out int sel, out int max)
 		{
 			switch(editor.selectionMode)
 			{
@@ -613,7 +613,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		public static bool VerifyGrowSelection(pb_Object[] selection)
+		public static bool VerifyGrowSelection(ProBuilderMesh[] selection)
 		{
 			if(	!editor ||
 				selection == null ||
@@ -631,7 +631,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Grow selection to plane using max angle diff.
 		 */
-		public static ActionResult MenuGrowSelection(pb_Object[] selection)
+		public static ActionResult MenuGrowSelection(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -646,7 +646,7 @@ namespace UnityEditor.ProBuilder
 			if(!angleGrow && !iterative)
 				iterative = true;
 
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				int previousTriCount = pb.SelectedTriangleCount;
 
@@ -693,7 +693,7 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(Status.Failure, "Nothing to Grow");
 		}
 
-		public static bool VerifyShrinkSelection(pb_Object[] selection)
+		public static bool VerifyShrinkSelection(ProBuilderMesh[] selection)
 		{
 			if(	!editor ||
 				selection == null ||
@@ -710,7 +710,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Shrink selection.
 		 */
-		public static ActionResult MenuShrinkSelection(pb_Object[] selection)
+		public static ActionResult MenuShrinkSelection(ProBuilderMesh[] selection)
 		{
 			// @TODO
 			if(editor == null)
@@ -724,7 +724,7 @@ namespace UnityEditor.ProBuilder
 			int rc = 0;
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pb_Object pb = selection[i];
+				ProBuilderMesh pb = selection[i];
 
 				switch(editor.selectionMode)
 				{
@@ -764,7 +764,7 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(Status.Canceled, "Nothing to Shrink");
 		}
 
-		public static bool VerifyInvertSelection(pb_Object[] selection)
+		public static bool VerifyInvertSelection(ProBuilderMesh[] selection)
 		{
 			if(	!editor ||
 				selection == null ||
@@ -777,7 +777,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Invert the current selection.
 		 */
-		public static ActionResult MenuInvertSelection(pb_Object[] selection)
+		public static ActionResult MenuInvertSelection(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -787,7 +787,7 @@ namespace UnityEditor.ProBuilder
 			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 			{
 				case SelectMode.Vertex:
-					foreach(pb_Object pb in selection)
+					foreach(ProBuilderMesh pb in selection)
 					{
 						IntArray[] sharedIndices = pb.sharedIndices;
 						List<int> selSharedIndices = new List<int>();
@@ -808,7 +808,7 @@ namespace UnityEditor.ProBuilder
 					break;
 
 				case SelectMode.Face:
-					foreach(pb_Object pb in selection)
+					foreach(ProBuilderMesh pb in selection)
 					{
 						IEnumerable<Face> inverse = pb.faces.Where( x => !pb.SelectedFaces.Contains(x) );
 						pb.SetSelectedFaces(inverse.ToArray());
@@ -839,7 +839,7 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(Status.Success, "Invert Selection");
 		}
 
-		public static bool VerifyEdgeRingLoop(pb_Object[] selection)
+		public static bool VerifyEdgeRingLoop(ProBuilderMesh[] selection)
 		{
 			if(	!editor ||
 				selection == null ||
@@ -855,7 +855,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Expands the current selection using a "Ring" method.
 		 */
-		public static ActionResult MenuRingSelection(pb_Object[] selection)
+		public static ActionResult MenuRingSelection(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -864,7 +864,7 @@ namespace UnityEditor.ProBuilder
 
 			bool success = false;
 
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				Edge[] edges = pb_MeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
 
@@ -888,7 +888,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Selects an edge loop.
 		 */
-		public static ActionResult MenuLoopSelection(pb_Object[] selection)
+		public static ActionResult MenuLoopSelection(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -897,7 +897,7 @@ namespace UnityEditor.ProBuilder
 
 			bool foundLoop = false;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Edge[] loop;
 				bool success = pb_MeshUtils.GetEdgeLoop(pb, pb.SelectedEdges, out loop);
@@ -921,11 +921,11 @@ namespace UnityEditor.ProBuilder
 				return new ActionResult(Status.Failure, "Nothing to Loop");
 		}
 
-		public static ActionResult MenuLoopFaces(pb_Object[] selection)
+		public static ActionResult MenuLoopFaces(ProBuilderMesh[] selection)
 		{
 			UndoUtility.RecordSelection(selection, "Select Face Loop");
 
-			foreach (pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in selection)
 			{
 				HashSet<Face> loop = pb_FaceLoop.GetFaceLoop(pb, pb.SelectedFaces);
 				pb.SetSelectedFaces(loop);
@@ -936,11 +936,11 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(Status.Success, "Select Face Loop");
 		}
 
-		public static ActionResult MenuRingFaces(pb_Object[] selection)
+		public static ActionResult MenuRingFaces(ProBuilderMesh[] selection)
 		{
 			UndoUtility.RecordSelection(selection, "Select Face Ring");
 
-			foreach (pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in selection)
 			{
 				HashSet<Face> loop = pb_FaceLoop.GetFaceLoop(pb, pb.SelectedFaces, true);
 				pb.SetSelectedFaces(loop);
@@ -951,11 +951,11 @@ namespace UnityEditor.ProBuilder
 			return new ActionResult(Status.Success, "Select Face Ring");
 		}
 
-		public static ActionResult MenuRingAndLoopFaces(pb_Object[] selection)
+		public static ActionResult MenuRingAndLoopFaces(ProBuilderMesh[] selection)
 		{
 			UndoUtility.RecordSelection(selection, "Select Face Ring and Loop");
 
-			foreach (pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in selection)
 			{
 				HashSet<Face> loop = pb_FaceLoop.GetFaceRingAndLoop(pb, pb.SelectedFaces);
 				pb.SetSelectedFaces(loop);
@@ -973,7 +973,7 @@ namespace UnityEditor.ProBuilder
 		 * Delete selected faces.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuDeleteFace(pb_Object[] selection)
+		public static ActionResult MenuDeleteFace(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -982,7 +982,7 @@ namespace UnityEditor.ProBuilder
 
 			int count = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount == pb.faces.Length)
 				{
@@ -1012,7 +1012,7 @@ namespace UnityEditor.ProBuilder
 
 #if !PROTOTYPE
 
-		public static ActionResult MenuDetachFaces(pb_Object[] selection)
+		public static ActionResult MenuDetachFaces(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1029,7 +1029,7 @@ namespace UnityEditor.ProBuilder
 		 * Detach selected faces to submesh.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuDetachFacesToSubmesh(pb_Object[] selection)
+		public static ActionResult MenuDetachFacesToSubmesh(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1038,7 +1038,7 @@ namespace UnityEditor.ProBuilder
 
 			int count = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
 				List<Face> res = pb.DetachFaces(pb.SelectedFaces);
@@ -1063,7 +1063,7 @@ namespace UnityEditor.ProBuilder
 		 * Detaches currently selected faces to a new ProBuilder object.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuDetachFacesToObject(pb_Object[] selection)
+		public static ActionResult MenuDetachFacesToObject(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1073,7 +1073,7 @@ namespace UnityEditor.ProBuilder
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount < 1 || pb.SelectedFaceCount == pb.faces.Length)
 					continue;
@@ -1090,7 +1090,7 @@ namespace UnityEditor.ProBuilder
 
 				int[] inverse = inverse_list.ToArray();
 
-				pb_Object copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<pb_Object>();
+				ProBuilderMesh copy = ((GameObject)GameObject.Instantiate(pb.gameObject)).GetComponent<ProBuilderMesh>();
 				copy.MakeUnique();
 
 				// if is prefab, break connection and destroy children
@@ -1102,7 +1102,7 @@ namespace UnityEditor.ProBuilder
 					for(int i = 0; i < copy.transform.childCount; ++i)
 						GameObject.DestroyImmediate(copy.transform.GetChild(i).gameObject);
 
-					foreach(pb_Object pb_child in pb.transform.GetComponentsInChildren<pb_Object>())
+					foreach(ProBuilderMesh pb_child in pb.transform.GetComponentsInChildren<ProBuilderMesh>())
 						EditorUtility.VerifyMesh(pb_child);
 				}
 
@@ -1153,7 +1153,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Treat selected faces as a single face.
 		 */
-		public static ActionResult MenuMergeFaces(pb_Object[] selection)
+		public static ActionResult MenuMergeFaces(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1162,7 +1162,7 @@ namespace UnityEditor.ProBuilder
 
 			int success = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount > 1)
 				{
@@ -1190,7 +1190,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Turn / flip / swap a quad connecting edge.
 		 */
-		public static ActionResult MenuFlipEdges(pb_Object[] selection)
+		public static ActionResult MenuFlipEdges(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1199,7 +1199,7 @@ namespace UnityEditor.ProBuilder
 			int success = 0;
 			int attempts = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				foreach(Face face in pb.SelectedFaces)
 				{
@@ -1232,7 +1232,7 @@ namespace UnityEditor.ProBuilder
 		 * Collapse selected vertices
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuCollapseVertices(pb_Object[] selection)
+		public static ActionResult MenuCollapseVertices(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1243,7 +1243,7 @@ namespace UnityEditor.ProBuilder
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedTriangles.Length > 1)
 				{
@@ -1277,7 +1277,7 @@ namespace UnityEditor.ProBuilder
 		 * Weld all selected vertices.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuWeldVertices(pb_Object[] selection)
+		public static ActionResult MenuWeldVertices(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1288,7 +1288,7 @@ namespace UnityEditor.ProBuilder
 			float weld = PreferencesInternal.GetFloat(PreferenceKeys.pbWeldDistance);
 			int weldCount = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				weldCount += pb.sharedIndices.Length;
 
@@ -1358,7 +1358,7 @@ namespace UnityEditor.ProBuilder
 		 * Split selected vertices from shared vertices.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuSplitVertices(pb_Object[] selection)
+		public static ActionResult MenuSplitVertices(ProBuilderMesh[] selection)
 		{
 			if(selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1366,7 +1366,7 @@ namespace UnityEditor.ProBuilder
 			int splitCount = 0;
 			UndoUtility.RecordSelection(selection, "Split Vertices");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				List<int> tris = new List<int>(pb.SelectedTriangles);			// loose verts to split
 
@@ -1434,7 +1434,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Attempt to create polygons bridging any gaps in geometry.
 		 */
-		public static ActionResult MenuFillHole(pb_Object[] selection)
+		public static ActionResult MenuFillHole(ProBuilderMesh[] selection)
 		{
 			if(editor == null)
 				return ActionResult.NoSelection;
@@ -1445,7 +1445,7 @@ namespace UnityEditor.ProBuilder
 			int filled = 0;
 			bool wholePath = PreferencesInternal.GetBool(PreferenceKeys.pbFillHoleSelectsEntirePath);
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
 				int[] indices = selectAll ? Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
@@ -1538,13 +1538,13 @@ namespace UnityEditor.ProBuilder
 			return res;
 		}
 
-		public static ActionResult MenuCreatePolygon(pb_Object[] selection)
+		public static ActionResult MenuCreatePolygon(ProBuilderMesh[] selection)
 		{
 			UndoUtility.RecordSelection(selection, "Create Polygon");
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				int[] indices = pb.SelectedTriangles;
 
@@ -1580,7 +1580,7 @@ namespace UnityEditor.ProBuilder
 		 * center of the edge.  Otherwise from Vertex.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuSubdivide(pb_Object[] selection)
+		public static ActionResult MenuSubdivide(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1589,7 +1589,7 @@ namespace UnityEditor.ProBuilder
 
 			int success = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
 
@@ -1612,7 +1612,7 @@ namespace UnityEditor.ProBuilder
 		 * Attempts to subdivide the selected object edges.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuSubdivideEdge(pb_Object[] selection)
+		public static ActionResult MenuSubdivideEdge(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1623,7 +1623,7 @@ namespace UnityEditor.ProBuilder
 
 			ActionResult result = ActionResult.NoSelection;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				List<Edge> newEdgeSelection;
 
@@ -1646,14 +1646,14 @@ namespace UnityEditor.ProBuilder
 		 * Subdivides all currently selected faces.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuSubdivideFace(pb_Object[] selection)
+		public static ActionResult MenuSubdivideFace(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
 
 			int success = 0;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
@@ -1689,13 +1689,13 @@ namespace UnityEditor.ProBuilder
 		 * Connects all currently selected edges.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuConnectEdges(pb_Object[] selection, bool useOld = false)
+		public static ActionResult MenuConnectEdges(ProBuilderMesh[] selection, bool useOld = false)
 		{
 			ActionResult res = ActionResult.NoSelection;
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Edge[] connections;
 				res = pb.Connect(pb.SelectedEdges, out connections);
@@ -1712,13 +1712,13 @@ namespace UnityEditor.ProBuilder
 		 * Connects all currently selected vertices.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuConnectVertices(pb_Object[] selection)
+		public static ActionResult MenuConnectVertices(ProBuilderMesh[] selection)
 		{
 			ActionResult res = ActionResult.NoSelection;
 
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Vertices");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				int[] splits;
 
@@ -1742,7 +1742,7 @@ namespace UnityEditor.ProBuilder
 		 * Inserts an edge loop along currently selected Edges.
 		 * ProBuilder only.
 		 */
-		public static ActionResult MenuInsertEdgeLoop(pb_Object[] selection)
+		public static ActionResult MenuInsertEdgeLoop(ProBuilderMesh[] selection)
 		{
 			if(!editor || selection == null || selection.Length < 1)
 				return ActionResult.NoSelection;
@@ -1750,7 +1750,7 @@ namespace UnityEditor.ProBuilder
 			int success = 0;
 			UndoUtility.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Edge[] edges;
 

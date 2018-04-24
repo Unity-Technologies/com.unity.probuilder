@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="name"></param>
 		/// <param name="mesh"></param>
 		/// <param name="quads"></param>
-		public Model(string name, pb_Object mesh, bool quads = true)
+		public Model(string name, ProBuilderMesh mesh, bool quads = true)
 		{
 			mesh.ToMesh(quads ? MeshTopology.Quads : MeshTopology.Triangles);
 			mesh.Refresh(RefreshMask.UV | RefreshMask.Colors | RefreshMask.Normals | RefreshMask.Tangents);

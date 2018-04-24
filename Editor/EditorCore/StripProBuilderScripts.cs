@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if(!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
 				return;
 
-			pb_Object[] all = (pb_Object[]) Resources.FindObjectsOfTypeAll(typeof(pb_Object) );
+			ProBuilderMesh[] all = (ProBuilderMesh[]) Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh) );
 
 			Strip(all);
 		}
@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
 		public static bool VerifyStripSelection()
 		{
-			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
+			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]
@@ -40,12 +40,12 @@ namespace UnityEditor.ProBuilder.Actions
 
 			foreach(Transform t in Selection.transforms)
 			{
-				foreach(pb_Object pb in t.GetComponentsInChildren<pb_Object>(true))
+				foreach(ProBuilderMesh pb in t.GetComponentsInChildren<ProBuilderMesh>(true))
 					DoStrip(pb);
 			}
 		}
 
-		public static void Strip(pb_Object[] all)
+		public static void Strip(ProBuilderMesh[] all)
 		{
 				for(int i = 0; i < all.Length; i++)
 				{
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 
 
-		public static void DoStrip(pb_Object pb)
+		public static void DoStrip(ProBuilderMesh pb)
 		{
 			try
 			{
@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				EditorUtility.VerifyMesh(pb);
 
-				if(pb.msh == null)
+				if(pb.mesh == null)
 				{
 					DestroyImmediate(pb);
 
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder.Actions
 				}
 				else
 				{
-					Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.msh);
+					Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
 
 					DestroyImmediate(pb);
 

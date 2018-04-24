@@ -93,11 +93,11 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			pb_Object[] selected = generateUV2PerObject ? selection : GameObject.FindObjectsOfType<pb_Object>();
+			ProBuilderMesh[] selected = generateUV2PerObject ? selection : GameObject.FindObjectsOfType<ProBuilderMesh>();
 			return DoGenerateUV2(selected);
 		}
 
-		private static ActionResult DoGenerateUV2(pb_Object[] selected)
+		private static ActionResult DoGenerateUV2(ProBuilderMesh[] selected)
 		{
 			if(selected == null || selected.Length < 1)
 				return ActionResult.NoSelection;

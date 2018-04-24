@@ -41,10 +41,10 @@ namespace UnityEngine.ProBuilder
 		/// <param name="options">Culling options.</param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
 		/// <returns>A dictionary of pb_Object and sharedIndices that are in the selection rect. To get triangle indices access the pb.sharedIndices[index] array.</returns>
-		public static Dictionary<pb_Object, HashSet<int>> PickVerticesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
 			Camera cam,
 			Rect rect,
-			IList<pb_Object> selectable,
+			IList<ProBuilderMesh> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
@@ -61,7 +61,7 @@ namespace UnityEngine.ProBuilder
 
 			// while the selectionpicker render path supports no depth test picking, it's usually faster to skip
 			// the render. also avoids issues with vertex billboards obscuring one another.
-			var selected = new Dictionary<pb_Object, HashSet<int>>();
+			var selected = new Dictionary<ProBuilderMesh, HashSet<int>>();
 
 			foreach(var pb in selectable)
 			{
@@ -70,7 +70,7 @@ namespace UnityEngine.ProBuilder
 
 				IntArray[] sharedIndices = pb.sharedIndices;
 				HashSet<int> inRect = new HashSet<int>();
-				Vector3[] positions = pb.vertices;
+				Vector3[] positions = pb.positions;
 				var trs = pb.transform;
 				float pixelHeight = cam.pixelHeight;
 
@@ -104,10 +104,10 @@ namespace UnityEngine.ProBuilder
 		/// <param name="options"></param>
 		/// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pixelsPerPoint.</param>
 		/// <returns></returns>
-		public static Dictionary<pb_Object, HashSet<Face>> PickFacesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<Face>> PickFacesInRect(
 			Camera cam,
 			Rect rect,
-			IList<pb_Object> selectable,
+			IList<ProBuilderMesh> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
@@ -121,7 +121,7 @@ namespace UnityEngine.ProBuilder
 					(int) (cam.pixelHeight / pixelsPerPoint));
 			}
 
-			var selected = new Dictionary<pb_Object, HashSet<Face>>();
+			var selected = new Dictionary<ProBuilderMesh, HashSet<Face>>();
 
 			foreach(var pb in selectable)
 			{
@@ -130,7 +130,7 @@ namespace UnityEngine.ProBuilder
 
 				HashSet<Face> selectedFaces = new HashSet<Face>();
 				Transform trs = pb.transform;
-				Vector3[] positions = pb.vertices;
+				Vector3[] positions = pb.positions;
 				Vector3[] screenPoints = new Vector3[pb.vertexCount];
 
 				for(int nn = 0; nn < pb.vertexCount; nn++)
@@ -231,10 +231,10 @@ namespace UnityEngine.ProBuilder
 			return selected;
 		}
 
-		public static Dictionary<pb_Object, HashSet<Edge>> PickEdgesInRect(
+		public static Dictionary<ProBuilderMesh, HashSet<Edge>> PickEdgesInRect(
 			Camera cam,
 			Rect rect,
-			IList<pb_Object> selectable,
+			IList<ProBuilderMesh> selectable,
 			pb_PickerOptions options,
 			float pixelsPerPoint = 1f)
 		{
@@ -249,7 +249,7 @@ namespace UnityEngine.ProBuilder
 					(int) (cam.pixelHeight / pixelsPerPoint));
 			}
 
-			var selected = new Dictionary<pb_Object, HashSet<Edge>>();
+			var selected = new Dictionary<ProBuilderMesh, HashSet<Edge>>();
 
 			foreach (var pb in selectable)
 			{
@@ -267,8 +267,8 @@ namespace UnityEngine.ProBuilder
 					{
 						var edge = edges[n];
 
-						var posA = trs.TransformPoint(pb.vertices[edge.x]);
-						var posB = trs.TransformPoint(pb.vertices[edge.y]);
+						var posA = trs.TransformPoint(pb.positions[edge.x]);
+						var posB = trs.TransformPoint(pb.positions[edge.y]);
 
 						Vector3 a = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posA), pixelsPerPoint);
 						Vector3 b = cam.ScreenToGuiPoint(cam.WorldToScreenPoint(posB), pixelsPerPoint);

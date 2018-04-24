@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		/// <remarks>More accurately, this inserts a vertex at the center of each face and connects each edge at it's center.</remarks>
 		/// <param name="pb"></param>
 		/// <returns></returns>
-		public static ActionResult Subdivide(this pb_Object pb)
+		public static ActionResult Subdivide(this ProBuilderMesh pb)
 		{
 			Face[] ignore;
 			return pb.Subdivide(pb.faces, out ignore);
@@ -29,7 +29,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces">The faces to be affected by subdivision.</param>
 		/// <param name="subdividedFaces"></param>
 		/// <returns>An result indicating the status of the action.</returns>
-		public static ActionResult Subdivide(this pb_Object pb, IList<Face> faces, out Face[] subdividedFaces)
+		public static ActionResult Subdivide(this ProBuilderMesh pb, IList<Face> faces, out Face[] subdividedFaces)
 		{
 			ActionResult res = pb_ConnectEdges.Connect(pb, faces, out subdividedFaces);
 			return res;

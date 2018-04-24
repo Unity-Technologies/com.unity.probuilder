@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
 		public static void MenuForceSceneRefresh()
 		{
 			StringBuilder sb = new StringBuilder();
-			pb_Object[] all = Object.FindObjectsOfType<pb_Object>();
+			ProBuilderMesh[] all = Object.FindObjectsOfType<ProBuilderMesh>();
 
 			for (int i = 0, l = all.Length; i < l; i++)
 			{
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 				"Okay");
 		}
 
-		static bool ReProBuilderize(pb_Object pb)
+		static bool ReProBuilderize(ProBuilderMesh pb)
 		{
 			try
 			{
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder
 				// (which it looks like it is from c# side but
 				// is not)
 
-				pb = Undo.AddComponent<pb_Object>(go);
+				pb = Undo.AddComponent<ProBuilderMesh>(go);
 				pb_MeshOps.ResetPbObjectWithMeshFilter(pb, true);
 
 				pb.ToMesh();
@@ -85,20 +85,20 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", true, PreferenceKeys.menuRepair)]
 		static bool VertifyRebuildMeshes()
 		{
-			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
+			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", false, PreferenceKeys.menuRepair)]
 		public static void DoRebuildMeshes()
 		{
-			RebuildSharedIndices( pb_Util.GetComponents<pb_Object>(Selection.transforms) );
+			RebuildSharedIndices( pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms) );
 		}
 
 		/// <summary>
 		/// Rebuild targets if they can't be refreshed.
 		/// </summary>
 		/// <param name="targets"></param>
-		static void RebuildSharedIndices(pb_Object[] targets)
+		static void RebuildSharedIndices(ProBuilderMesh[] targets)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -109,11 +109,11 @@ namespace UnityEditor.ProBuilder
 					"Reshaping pb_Object " + targets[i].id + ".",
 					((float)i / targets.Length));
 
-				pb_Object pb = targets[i];
+				ProBuilderMesh pb = targets[i];
 
 				try
 				{
-					pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
+					pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
 
 					pb.ToMesh();
 					pb.Refresh();
@@ -137,7 +137,7 @@ namespace UnityEditor.ProBuilder
 		{
 			int count = 0;
 
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				pb.ToMesh();
 

@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
 
 		public static void SetFaceColors(Color col)
 		{
-			pb_Object[] selection = pb_Util.GetComponents<pb_Object>(Selection.transforms);
+			ProBuilderMesh[] selection = pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			UndoUtility.RecordSelection(selection, "Apply Vertex Colors");
 
@@ -198,7 +198,7 @@ namespace UnityEditor.ProBuilder
 				switch (editor.selectionMode)
 				{
 					case SelectMode.Face:
-						foreach (pb_Object pb in selection)
+						foreach (ProBuilderMesh pb in selection)
 						{
 							Color[] colors = pb.colors;
 
@@ -210,7 +210,7 @@ namespace UnityEditor.ProBuilder
 						break;
 					case SelectMode.Edge:
 					case SelectMode.Vertex:
-						foreach (pb_Object pb in selection)
+						foreach (ProBuilderMesh pb in selection)
 						{
 							Color[] colors = pb.colors;
 
@@ -224,14 +224,14 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				foreach (pb_Object pb in selection)
+				foreach (ProBuilderMesh pb in selection)
 				{
 					foreach (Face face in pb.faces)
 						pb.SetFaceColor(face, col);
 				}
 			}
 
-			foreach (pb_Object pb in selection)
+			foreach (ProBuilderMesh pb in selection)
 			{
 				pb.ToMesh();
 				pb.Refresh();

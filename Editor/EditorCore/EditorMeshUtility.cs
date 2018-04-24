@@ -13,13 +13,13 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	/// <param name="pb"></param>
 	/// <param name="mesh"></param>
-	public delegate void OnMeshCompiled(pb_Object pb, Mesh mesh);
+	public delegate void OnMeshCompiled(ProBuilderMesh pb, Mesh mesh);
 
 	/// <summary>
 	/// Delegate raised when a pb_Object is to be optimized (collapses coincident vertices). Return true to override the optimization step, false if ProBuilder should optimize the mesh internally.
 	/// </summary>
 	/// <param name="pb"></param>
-	public delegate bool SkipMeshOptimization(pb_Object pb);
+	public delegate bool SkipMeshOptimization(ProBuilderMesh pb);
 
 	/// <summary>
 	/// Mesh editing helper functions that are only available in the Editor.
@@ -46,9 +46,9 @@ namespace UnityEditor.ProBuilder
 		/// <remarks>This is only applicable to Triangle meshes. Ie, Quad meshes are not affected by this function.</remarks>
 		/// <param name="InObject">The pb_Object component to be compiled.</param>
 		/// <param name="forceRebuildUV2">If Auto UV2 is off this parameter can be used to force UV2s to be built.</param>
-		public static void Optimize(this pb_Object InObject, bool forceRebuildUV2 = false)
+		public static void Optimize(this ProBuilderMesh InObject, bool forceRebuildUV2 = false)
 		{
-			Mesh mesh = InObject.msh;
+			Mesh mesh = InObject.mesh;
 
 			if(mesh == null || mesh.vertexCount < 1)
 				return;
@@ -120,9 +120,9 @@ namespace UnityEditor.ProBuilder
 			UnityEditor.EditorUtility.SetDirty(InObject);
 		}
 
-		internal static void TryCacheMesh(pb_Object pb)
+		internal static void TryCacheMesh(ProBuilderMesh pb)
 		{
-			Mesh mesh = pb.msh;
+			Mesh mesh = pb.mesh;
 
 			// check for an existing mesh in the mesh cache and update or create a new one so
 			// as not to clutter the scene yaml.
@@ -133,12 +133,12 @@ namespace UnityEditor.ProBuilder
 			if(string.IsNullOrEmpty(meshAssetPath))
 			{
 				// at the moment the asset_guid is only used to name the mesh something unique
-				string guid = pb.asset_guid;
+				string guid = pb.assetGuid;
 
 				if(string.IsNullOrEmpty(guid))
 				{
 					guid = Guid.NewGuid().ToString("N");
-					pb.asset_guid = guid;
+					pb.assetGuid = guid;
 				}
 
 				string meshCacheDirectory = GetMeshCacheDirectory(true);
@@ -172,8 +172,8 @@ namespace UnityEditor.ProBuilder
 						{
 							// duplicate mesh
 							// Debug.Log("create new mesh in cache from disconnect");
-							pb.asset_guid = Guid.NewGuid().ToString("N");
-							path = string.Format("{0}/{1}.asset", meshCacheDirectory, pb.asset_guid);
+							pb.assetGuid = Guid.NewGuid().ToString("N");
+							path = string.Format("{0}/{1}.asset", meshCacheDirectory, pb.assetGuid);
 						}
 					}
 					else
@@ -186,23 +186,23 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		internal static bool GetCachedMesh(pb_Object pb, out string path, out Mesh mesh)
+		internal static bool GetCachedMesh(ProBuilderMesh pb, out string path, out Mesh mesh)
 		{
-			if (pb.msh != null)
+			if (pb.mesh != null)
 			{
-				string meshPath = AssetDatabase.GetAssetPath(pb.msh);
+				string meshPath = AssetDatabase.GetAssetPath(pb.mesh);
 
 				if (!string.IsNullOrEmpty(meshPath))
 				{
 					path = meshPath;
-					mesh = pb.msh;
+					mesh = pb.mesh;
 
 					return true;
 				}
 			}
 
 			string meshCacheDirectory = GetMeshCacheDirectory(false);
-			string guid = pb.asset_guid;
+			string guid = pb.assetGuid;
 
 			path = string.Format("{0}/{1}.asset", meshCacheDirectory, guid);
 			mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);

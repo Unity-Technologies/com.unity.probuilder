@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		Dictionary<pb_Object, VertexEditorSelection> selection = new Dictionary<pb_Object, VertexEditorSelection>();
+		Dictionary<ProBuilderMesh, VertexEditorSelection> selection = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
 
 		static Color EVEN;
 		static Color ODD;
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		}
 
-		void OnSelectionUpdate(pb_Object[] newSelection)
+		void OnSelectionUpdate(ProBuilderMesh[] newSelection)
 		{
 			if(newSelection == null)
 			{
@@ -71,9 +71,9 @@ namespace UnityEditor.ProBuilder
 				return;
 			}
 
-			Dictionary<pb_Object, VertexEditorSelection> res = new Dictionary<pb_Object, VertexEditorSelection>();
+			Dictionary<ProBuilderMesh, VertexEditorSelection> res = new Dictionary<ProBuilderMesh, VertexEditorSelection>();
 
-			foreach(pb_Object pb in newSelection)
+			foreach(ProBuilderMesh pb in newSelection)
 			{
 				VertexEditorSelection sel;
 
@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
 			this.Repaint();
 		}
 
-		void OnVertexMovementBegin(pb_Object pb)
+		void OnVertexMovementBegin(ProBuilderMesh pb)
 		{
 			moving = true;
 			pb.ToMesh();
@@ -147,7 +147,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(var kvp in selection)
 			{
-				pb_Object pb = kvp.Key;
+				ProBuilderMesh pb = kvp.Key;
 				VertexEditorSelection sel = kvp.Value;
 
 				bool open = sel.isVisible;
@@ -174,7 +174,7 @@ namespace UnityEditor.ProBuilder
 
 							GUILayout.Label(u.ToString(), GUILayout.MinWidth(32), GUILayout.MaxWidth(32));
 
-							Vector3 v = pb.vertices[pb.sharedIndices[u][0]];
+							Vector3 v = pb.positions[pb.sharedIndices[u][0]];
 
 							if(worldSpace) v = transform.TransformPoint(v);
 
@@ -195,7 +195,7 @@ namespace UnityEditor.ProBuilder
 								{
 									pb.RefreshUV( ProBuilderEditor.instance.SelectedFacesInEditZone[pb] );
 									pb.Refresh(RefreshMask.Normals);
-									pb.msh.RecalculateBounds();
+									pb.mesh.RecalculateBounds();
 									ProBuilderEditor.instance.UpdateSelection();
 								}
 							}
@@ -221,15 +221,15 @@ namespace UnityEditor.ProBuilder
 			Handles.BeginGUI();
 
 			// Only show dropped down probuilder objects.
-			foreach(KeyValuePair<pb_Object, VertexEditorSelection> selected in selection)
+			foreach(KeyValuePair<ProBuilderMesh, VertexEditorSelection> selected in selection)
 			{
-				pb_Object pb = selected.Key;
+				ProBuilderMesh pb = selected.Key;
 				VertexEditorSelection sel = selected.Value;
 
 				if(!sel.isVisible)
 					continue;
 
-				Vector3[] vertices = pb.vertices;
+				Vector3[] vertices = pb.positions;
 
 				foreach(int i in sel.common)
 				{

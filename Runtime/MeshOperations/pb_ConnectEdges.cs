@@ -33,7 +33,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces">The faces to subdivide (more accurately, poke).</param>
 		/// <param name="subdividedFaces">The resulting faces.</param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		public static ActionResult Connect(this pb_Object pb, IEnumerable<Face> faces, out Face[] subdividedFaces)
+		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Face> faces, out Face[] subdividedFaces)
 		{
 			IEnumerable<Edge> edges = faces.SelectMany(x => x.edges);
 			HashSet<Face> mask = new HashSet<Face>(faces);
@@ -41,13 +41,13 @@ namespace ProBuilder.MeshOperations
 			return Connect(pb, edges, out subdividedFaces, out empty, true, false, mask);
 		}
 
-		public static ActionResult Connect(this pb_Object pb, IEnumerable<Edge> edges, out Face[] faces)
+		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Edge> edges, out Face[] faces)
 		{
 			Edge[] empty;
 			return Connect(pb, edges, out faces, out empty, true, false);
 		}
 
-		public static ActionResult Connect(this pb_Object pb, IEnumerable<Edge> edges, out Edge[] connections)
+		public static ActionResult Connect(this ProBuilderMesh pb, IEnumerable<Edge> edges, out Edge[] connections)
 		{
 			Face[] empty;
 			return Connect(pb, edges, out empty, out connections, false, true);
@@ -65,7 +65,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faceMask"></param>
 		/// <returns></returns>
 		static ActionResult Connect(
-			this pb_Object pb,
+			this ProBuilderMesh pb,
 			IEnumerable<Edge> edges,
 			out Face[] addedFaces,
 			out Edge[] connections,
@@ -183,7 +183,7 @@ namespace ProBuilder.MeshOperations
 
 			pb.SetSharedIndicesUV(new IntArray[0]);
 			int removedVertexCount = pb.DeleteFaces(affected.Keys).Length;
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
 			pb.ToMesh();
 
 			// figure out where the new edges where inserted

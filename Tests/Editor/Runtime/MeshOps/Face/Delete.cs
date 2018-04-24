@@ -22,7 +22,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					var face = pb.faces.FirstOrDefault();
 					pb.DeleteFace(face);
@@ -31,10 +31,10 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					var template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
 					Assert.IsNotNull(template);
-					pb_TestUtility.AssertAreEqual(pb.msh, template);
+					pb_TestUtility.AssertAreEqual(pb.mesh, template);
 				}
 			}
 		}
@@ -44,7 +44,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					var face = pb.faces[s_Random.Next(0, pb.faceCount)];
 					int vertexCount = pb.vertexCount;
@@ -53,7 +53,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(pb.vertexCount, vertexCount - faceVertexCount);
 				}
 			}
@@ -64,12 +64,12 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					pb.DeleteFaces(pb.faces);
 					pb.ToMesh();
 					pb.Refresh();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(pb.vertexCount, 0);
 				}
 			}

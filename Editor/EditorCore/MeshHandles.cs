@@ -202,7 +202,7 @@ namespace UnityEditor.ProBuilder
 					{
 						if (EditorHandleUtility.BeginDrawingLines(Handles.zTest))
 						{
-							pb_Object pb = selection[i];
+							ProBuilderMesh pb = selection[i];
 							Edge[] edges = pb.SelectedEdges;
 							GL.Color(s_EdgeSelectedColor);
 
@@ -210,8 +210,8 @@ namespace UnityEditor.ProBuilder
 
 							for (int j = 0, c = selection[i].SelectedEdgeCount; j < c; j++)
 							{
-								GL.Vertex(pb.vertices[edges[j].x]);
-								GL.Vertex(pb.vertices[edges[j].y]);
+								GL.Vertex(pb.positions[edges[j].x]);
+								GL.Vertex(pb.positions[edges[j].y]);
 							}
 
 							EditorHandleUtility.EndDrawingLines();
@@ -254,7 +254,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="commonIndicesLookup"></param>
 		/// <param name="editLevel"></param>
 		/// <param name="selectionMode"></param>
-		public static void RebuildGraphics(pb_Object[] selection, Dictionary<int, int>[] commonIndicesLookup, EditLevel editLevel, SelectMode selectionMode)
+		public static void RebuildGraphics(ProBuilderMesh[] selection, Dictionary<int, int>[] commonIndicesLookup, EditLevel editLevel, SelectMode selectionMode)
 		{
 			// in the event that the editor starts calling UpdateGraphics before the object has run OnEnable() (which happens on script reloads)
 			if(s_RenderablePool == null)
@@ -272,7 +272,7 @@ namespace UnityEditor.ProBuilder
 				switch(selectionMode)
 				{
 					case SelectMode.Face:
-						foreach(pb_Object pb in selection)
+						foreach(ProBuilderMesh pb in selection)
 							s_ActiveRenderables.Add(BuildFaceMesh(pb));
 						break;
 
@@ -302,7 +302,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns></returns>
-		static pb_Renderable BuildFaceMesh(pb_Object pb)
+		static pb_Renderable BuildFaceMesh(ProBuilderMesh pb)
 		{
 			pb_Renderable ren = s_RenderablePool.Get();
 
@@ -310,7 +310,7 @@ namespace UnityEditor.ProBuilder
 			ren.transform = pb.transform;
 			ren.material = s_FaceMaterial;
 			ren.mesh.Clear();
-			ren.mesh.vertices = pb.vertices;
+			ren.mesh.vertices = pb.positions;
 			ren.mesh.triangles = Face.AllTriangles(pb.SelectedFaces);
 
 			return ren;
@@ -322,7 +322,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="lookup"></param>
 		/// <returns></returns>
-		static pb_Renderable BuildVertexMesh(pb_Object pb, Dictionary<int, int> lookup)
+		static pb_Renderable BuildVertexMesh(ProBuilderMesh pb, Dictionary<int, int> lookup)
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
@@ -335,7 +335,7 @@ namespace UnityEditor.ProBuilder
 			HashSet<int> selected = new HashSet<int>(IntArrayUtility.GetCommonIndices(lookup, pb.SelectedTriangles));
 
 			for(int i = 0; i < billboardCount; i++)
-				v[i] = pb.vertices[pb.sharedIndices[i][0]];
+				v[i] = pb.positions[pb.sharedIndices[i][0]];
 
 			Vector3[] 	t_billboards 		= new Vector3[billboardCount*4];
 			Vector3[] 	t_nrm 				= new Vector3[billboardCount*4];
@@ -419,7 +419,7 @@ namespace UnityEditor.ProBuilder
 			return ren;
 		}
 
-		static pb_Renderable BuildEdgeMesh(pb_Object pb, Material material)
+		static pb_Renderable BuildEdgeMesh(ProBuilderMesh pb, Material material)
 		{
 			int edgeCount = 0;
 			int faceCount = pb.faceCount;
@@ -453,7 +453,7 @@ namespace UnityEditor.ProBuilder
 			ren.transform = pb.transform;
 			ren.mesh.Clear();
 			ren.mesh.name = "pb_ElementGraphics::WireframeMesh";
-			ren.mesh.vertices = pb.vertices;
+			ren.mesh.vertices = pb.positions;
 			ren.mesh.subMeshCount = 1;
 			ren.mesh.SetIndices(tris, MeshTopology.Lines, 0);
 
@@ -464,7 +464,7 @@ namespace UnityEditor.ProBuilder
 		/// Draw a set of vertices.
 		/// </summary>
 		/// <param name="pb"></param>
-		static pb_Renderable BuildVertexPoints(pb_Object pb)
+		static pb_Renderable BuildVertexPoints(ProBuilderMesh pb)
 		{
 			int[] indices = new int[pb.sharedIndices.Length];
 			for (int i = 0; i < pb.sharedIndices.Length; i++)
@@ -476,7 +476,7 @@ namespace UnityEditor.ProBuilder
 		/// Draw a set of vertices.
 		/// </summary>
 		/// <param name="pb"></param>
-		static pb_Renderable BuildVertexPoints(pb_Object pb, int[] indices)
+		static pb_Renderable BuildVertexPoints(ProBuilderMesh pb, int[] indices)
 		{
 			var renderable = s_RenderablePool.Get();
 			renderable.material = s_VertexMaterial;
@@ -484,7 +484,7 @@ namespace UnityEditor.ProBuilder
 			var mesh = renderable.mesh;
 			mesh.Clear();
 			mesh.name = "pb_ElementGraphics::PointMesh";
-			mesh.vertices = pb.vertices;
+			mesh.vertices = pb.positions;
 			mesh.subMeshCount = 1;
 			mesh.SetIndices(indices, MeshTopology.Points, 0);
 			return renderable;

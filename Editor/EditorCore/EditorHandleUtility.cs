@@ -386,7 +386,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Pick the GameObject nearest mousePosition (filtering out @ignore) and raycast for a face it.
 		 */
-		internal static bool FaceRaycast(Vector2 mousePosition, out pb_Object pb, out pb_RaycastHit hit, Dictionary<pb_Object, HashSet<Face>> ignore = null)
+		internal static bool FaceRaycast(Vector2 mousePosition, out ProBuilderMesh pb, out pb_RaycastHit hit, Dictionary<ProBuilderMesh, HashSet<Face>> ignore = null)
 		{
 			pb = null;
 			hit = null;
@@ -396,7 +396,7 @@ namespace UnityEditor.ProBuilder
 			if(go == null)
 				return false;
 
-			pb = go.GetComponent<pb_Object>();
+			pb = go.GetComponent<ProBuilderMesh>();
 
 			if(pb == null || (ignore != null && ignore.ContainsKey(pb)))
 				return false;

@@ -20,7 +20,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="uvs">The new uvs to add (must match positions length).</param>
 		/// <param name="face">A </param>
 		/// <returns></returns>
-		public static Face AppendFace(this pb_Object pb, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face)
+		public static Face AppendFace(this ProBuilderMesh pb, Vector3[] positions, Color[] colors, Vector2[] uvs, Face face)
 		{
 			int[] shared = new int[positions.Length];
 			for(int i = 0; i < positions.Length; i++)
@@ -38,7 +38,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="face"></param>
 		/// <param name="sharedIndex"></param>
 		/// <returns></returns>
-		public static Face AppendFace(this pb_Object pb, Vector3[] v, Color[] c, Vector2[] u, Face face, int[] sharedIndex)
+		public static Face AppendFace(this ProBuilderMesh pb, Vector3[] v, Color[] c, Vector2[] u, Face face, int[] sharedIndex)
 		{
 			int vertexCount = pb.vertexCount;
 
@@ -50,7 +50,7 @@ namespace ProBuilder.MeshOperations
 			IntArray[] sharedIndices = pb.sharedIndices;
 
 			// copy new vertices
-			System.Array.Copy(pb.vertices, 0, _verts, 0, vertexCount);
+			System.Array.Copy(pb.positions, 0, _verts, 0, vertexCount);
 			System.Array.Copy(v, 0, _verts, vertexCount, v.Length);
 
 			// copy new colors
@@ -90,9 +90,9 @@ namespace ProBuilder.MeshOperations
 		/// <param name="new_Faces"></param>
 		/// <param name="new_SharedIndices"></param>
 		/// <returns></returns>
-		public static Face[] AppendFaces(this pb_Object pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, Face[] new_Faces, int[][] new_SharedIndices)
+		public static Face[] AppendFaces(this ProBuilderMesh pb, Vector3[][] new_Vertices, Color[][] new_Colors, Vector2[][] new_uvs, Face[] new_Faces, int[][] new_SharedIndices)
 		{
-			List<Vector3> _verts = new List<Vector3>(pb.vertices);
+			List<Vector3> _verts = new List<Vector3>(pb.positions);
 			List<Color> _colors = new List<Color>(pb.colors);
 			List<Vector2> _uv = new List<Vector2>(pb.uv);
 
@@ -151,7 +151,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		public static void DuplicateAndFlip(this pb_Object pb, Face[] faces)
+		public static void DuplicateAndFlip(this ProBuilderMesh pb, Face[] faces)
 		{
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
 			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
@@ -194,7 +194,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static int[] DeleteFace(this pb_Object pb, Face face)
+		public static int[] DeleteFace(this ProBuilderMesh pb, Face face)
 		{
 			return DeleteFaces(pb, new Face[] { face });
 		}
@@ -205,7 +205,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static int[] DeleteFaces(this pb_Object pb, IEnumerable<Face> faces)
+		public static int[] DeleteFaces(this ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			return DeleteFaces(pb, faces.Select(x => System.Array.IndexOf(pb.faces, x)).ToList());
 		}
@@ -216,7 +216,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="faceIndices"></param>
 		/// <returns></returns>
-		public static int[] DeleteFaces(this pb_Object pb, IList<int> faceIndices)
+		public static int[] DeleteFaces(this ProBuilderMesh pb, IList<int> faceIndices)
 		{
 			Face[] faces = new Face[faceIndices.Count];
 
@@ -226,9 +226,9 @@ namespace ProBuilder.MeshOperations
 			List<int> indicesToRemove = faces.SelectMany(x => x.distinctIndices).Distinct().ToList(); // pb_Face.AllTrianglesDistinct(faces);
 			indicesToRemove.Sort();
 
-			int vertexCount = pb.vertices.Length;
+			int vertexCount = pb.positions.Length;
 
-			Vector3[] verts 	= pb.vertices.SortedRemoveAt(indicesToRemove);
+			Vector3[] verts 	= pb.positions.SortedRemoveAt(indicesToRemove);
 			Color[] cols 		= pb.colors.SortedRemoveAt(indicesToRemove);
 			Vector2[] uvs 		= pb.uv.SortedRemoveAt(indicesToRemove);
 			Face[] nFaces 	= pb.faces.RemoveAt(faceIndices);

@@ -33,9 +33,9 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.MenuOpenWindow();
 		}
 
-		static pb_Object[] selection
+		static ProBuilderMesh[] selection
 		{
-			get { return Selection.transforms.GetComponents<pb_Object>(); }
+			get { return Selection.transforms.GetComponents<ProBuilderMesh>(); }
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Geometry/Extrude %e", true)]

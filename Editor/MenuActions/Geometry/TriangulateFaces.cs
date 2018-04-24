@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			UndoUtility.RecordSelection(selection, "Triangulate Faces");
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Face[] triangulatedFaces = null;
 				pb.ToMesh();

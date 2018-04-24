@@ -55,13 +55,13 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.OnVertexMovementFinish -= OnSelectionUpdate;
 		}
 
-		void OnSelectionUpdate(pb_Object[] selection)
+		void OnSelectionUpdate(ProBuilderMesh[] selection)
 		{
 			try
 			{
 				SceneViewLineRenderer.instance.Clear();
 
-				foreach(pb_Object pb in selection)
+				foreach(ProBuilderMesh pb in selection)
 					DrawElements(pb);
 
 			} catch {}
@@ -108,11 +108,11 @@ namespace UnityEditor.ProBuilder
 		}
 
 		Dictionary<int, ParamView> showParams = new Dictionary<int, ParamView>();
-		pb_Object[] selection = new pb_Object[0];
+		ProBuilderMesh[] selection = new ProBuilderMesh[0];
 
 		void OnGUI()
 		{
-			selection = editor != null ? editor.selection : new pb_Object[0];
+			selection = editor != null ? editor.selection : new ProBuilderMesh[0];
 
 			scroll = GUILayout.BeginScrollView(scroll);
 
@@ -179,7 +179,7 @@ namespace UnityEditor.ProBuilder
 				PreferencesInternal.SetFloat("pb_Debug_elementOffset", elementOffset);
 				PreferencesInternal.SetBool("pb_Debug_testOcclusion", testOcclusion);
 
-				foreach(pb_Object pb in selection)
+				foreach(ProBuilderMesh pb in selection)
 					DrawElements(pb);
 
 				SceneView.RepaintAll();
@@ -200,9 +200,9 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
-				Mesh m = pb.msh;
+				Mesh m = pb.mesh;
 				Renderer ren = pb.GetComponent<MeshRenderer>();
 
 				ParamView pv;
@@ -221,7 +221,7 @@ namespace UnityEditor.ProBuilder
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
-							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount + " / " + pb.msh.vertexCount);
+							pv.showVertices = EditorGUILayout.Foldout(pv.showVertices, "Vertices: " + pb.vertexCount + " / " + pb.mesh.vertexCount);
 						GUILayout.EndHorizontal();
 
 						GUILayout.BeginHorizontal();
@@ -230,14 +230,14 @@ namespace UnityEditor.ProBuilder
 							{
 								if(m == null)
 								{
-									GUILayout.Label("" + pb.vertices.ToString("\n"));
+									GUILayout.Label("" + pb.positions.ToString("\n"));
 								}
 								else
 								{
 									GUILayout.BeginVertical();
 									for(int i = 0; i < m.subMeshCount; i++)
 									{
-										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.vertices.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
+										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + "\n" + pb.positions.ValuesWithIndices( m.GetTriangles(i) ).ToString("\n") + "\n");
 									}
 									GUILayout.EndVertical();
 								}
@@ -249,7 +249,7 @@ namespace UnityEditor.ProBuilder
 					{
 						GUILayout.BeginHorizontal();
 							GUILayout.Space(24);
-							pv.showTriangles = EditorGUILayout.Foldout(pv.showTriangles, "Triangles: " + pb.msh.triangles.Length);
+							pv.showTriangles = EditorGUILayout.Foldout(pv.showTriangles, "Triangles: " + pb.mesh.triangles.Length);
 						GUILayout.EndHorizontal();
 
 						GUILayout.BeginHorizontal();
@@ -265,7 +265,7 @@ namespace UnityEditor.ProBuilder
 									GUILayout.BeginVertical();
 									for(int i = 0; i < m.subMeshCount; i++)
 									{
-										int[] tris = pb.msh.GetTriangles(i);
+										int[] tris = pb.mesh.GetTriangles(i);
 										GUILayout.Label("Mat: " + ren.sharedMaterials[i].name + " : " + tris.Length);
 
 										GUILayout.BeginHorizontal();
@@ -399,7 +399,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnSceneGUI(SceneView scn)
 		{
-			foreach(pb_Object pb in pb_Util.GetComponents<pb_Object>(Selection.transforms))
+			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				DrawStats(pb);
 			}
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
 			Repaint();
 		}
 
-		void DrawStats(pb_Object pb)
+		void DrawStats(ProBuilderMesh pb)
 		{
 			Handles.BeginGUI();
 
@@ -423,11 +423,11 @@ namespace UnityEditor.ProBuilder
 				DrawFaceInfo(pb);
 		}
 
-		void DrawTriangleInfo(pb_Object pb)
+		void DrawTriangleInfo(ProBuilderMesh pb)
 		{
 			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
-			Vector3[] vertices = pb.vertices;
+			Vector3[] vertices = pb.positions;
 			Camera cam = SceneView.lastActiveSceneView.camera;
 
 			HashSet<int> common = new HashSet<int>();
@@ -482,7 +482,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void DrawEdgeInfo(pb_Object pb)
+		void DrawEdgeInfo(ProBuilderMesh pb)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Edge[] source = selectedOnly ? pb.SelectedEdges : pb.faces.SelectMany(x => x.edges).ToArray();
@@ -493,7 +493,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(EdgeLookup edge in edges)
 			{
-				Vector3 point = pb.transform.TransformPoint((pb.vertices[edge.local.x] + pb.vertices[edge.local.y])/ 2f);
+				Vector3 point = pb.transform.TransformPoint((pb.positions[edge.local.x] + pb.positions[edge.local.y])/ 2f);
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
@@ -517,7 +517,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		void DrawFaceInfo(pb_Object pb)
+		void DrawFaceInfo(ProBuilderMesh pb)
 		{
 			Face[] faces = selectedOnly ? pb.SelectedFaces : pb.faces;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -527,7 +527,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Face f in faces)
 			{
-				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.vertices, f.distinctIndices) );
+				Vector3 point = pb.transform.TransformPoint( ProBuilderMath.Average(pb.positions, f.distinctIndices) );
 
 				if( testOcclusion && UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, pb, point) )
 					continue;
@@ -618,18 +618,18 @@ namespace UnityEditor.ProBuilder
 		 * Blue = tangents
 		 * Red = bitangents
 		 */
-		void DrawElements(pb_Object pb)
+		void DrawElements(ProBuilderMesh pb)
 		{
 			SceneViewLineRenderer.instance.Clear();
 
-			if( selectedOnly && pb.vertexCount != pb.msh.vertices.Length || elementLength <= 0f)
+			if( selectedOnly && pb.vertexCount != pb.mesh.vertices.Length || elementLength <= 0f)
 				return;
 
-			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.msh.vertexCount;
+			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.mesh.vertexCount;
 
-			Vector3[] vertices = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.msh.vertices, pb.SelectedTriangles) : pb.msh.vertices;
-			Vector3[] normals  = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.msh.normals, pb.SelectedTriangles) : pb.msh.normals;
-			Vector4[] tangents = selectedOnly ? pb_Util.ValuesWithIndices<Vector4>(pb.msh.tangents, pb.SelectedTriangles) : pb.msh.tangents;
+			Vector3[] vertices = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.mesh.vertices, pb.SelectedTriangles) : pb.mesh.vertices;
+			Vector3[] normals  = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.mesh.normals, pb.SelectedTriangles) : pb.mesh.normals;
+			Vector4[] tangents = selectedOnly ? pb_Util.ValuesWithIndices<Vector4>(pb.mesh.tangents, pb.SelectedTriangles) : pb.mesh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

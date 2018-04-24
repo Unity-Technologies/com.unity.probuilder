@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 
 		public delegate void SettingsDelegate();
 
-		protected static pb_Object[] selection { get { return MeshSelection.All(); } }
+		protected static ProBuilderMesh[] selection { get { return MeshSelection.All(); } }
 
 		protected static EditLevel editLevel { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.editLevel : EditLevel.Top; } }
 		protected static SelectMode selectionMode { get { return ProBuilderEditor.instance ? ProBuilderEditor.instance.selectionMode : SelectMode.Face; } }

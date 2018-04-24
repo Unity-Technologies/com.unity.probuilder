@@ -23,7 +23,7 @@ namespace ProBuilder.EditorTests.Export
 
 				string ply;
 
-				if (PlyExporter.Export(new pb_Object[] { cube }, out ply))
+				if (PlyExporter.Export(new ProBuilderMesh[] { cube }, out ply))
 				{
 					Assert.IsFalse(ply.Any(x => x.Equals(',')));
 				}

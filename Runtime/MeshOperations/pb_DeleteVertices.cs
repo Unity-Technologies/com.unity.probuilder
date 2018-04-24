@@ -16,12 +16,12 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns>A list of deleted vertex indices.</returns>
-		public static int[] RemoveUnusedVertices(this pb_Object pb)
+		public static int[] RemoveUnusedVertices(this ProBuilderMesh pb)
 		{
 			List<int> del = new List<int>();
 			HashSet<int> tris = new HashSet<int>(Face.AllTriangles(pb.faces));
 
-			for(int i = 0; i < pb.vertices.Length; i++)
+			for(int i = 0; i < pb.positions.Length; i++)
 				if(!tris.Contains(i))
 					del.Add(i);
 
@@ -37,7 +37,7 @@ namespace ProBuilder.MeshOperations
 		/// deleted by this function are not referenced by any triangles.</remarks>
 		/// <param name="pb"></param>
 		/// <param name="distInd"></param>
-		public static void DeleteVerticesWithIndices(this pb_Object pb, IEnumerable<int> distInd)
+		public static void DeleteVerticesWithIndices(this ProBuilderMesh pb, IEnumerable<int> distInd)
 		{
 			if(distInd == null || distInd.Count() < 1)
 				return;

@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder
 	class EntityEditor : UnityEditor.Editor
 	{
 		Entity ent;
-		pb_Object pb;
+		ProBuilderMesh pb;
 
 		public enum ColType
 		{
@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 			ent = (Entity)target;
 
 			if(ent != null)
-				pb = (pb_Object)ent.transform.GetComponent<pb_Object>();
+				pb = (ProBuilderMesh)ent.transform.GetComponent<ProBuilderMesh>();
 		}
 
 		public override void OnInspectorGUI()
@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
 			et = (EntityType)EditorGUILayout.EnumPopup("Entity Type", et);
 			if(et != ent.entityType)
 			{
-				UndoUtility.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
+				UndoUtility.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<ProBuilderMesh>() }, "Set Entity Type");
 #pragma warning disable 0618
 				EntityUtility.SetEntityType(et, ent.gameObject);
 #pragma warning restore 0618

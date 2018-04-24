@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder
 
 		protected void SetMaterial(Material material)
 		{
-			var pb = GetComponent<pb_Object>();
+			var pb = GetComponent<ProBuilderMesh>();
 
 			if (pb != null)
 			{

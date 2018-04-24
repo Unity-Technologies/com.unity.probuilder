@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)
 		{
-			GameObject first = gameObjects.FirstOrDefault(x => x.GetComponent<pb_Object>() != null);
+			GameObject first = gameObjects.FirstOrDefault(x => x.GetComponent<ProBuilderMesh>() != null);
 
 			string name = first != null ? first.name : "Mesh";
 			string path = UnityEditor.EditorUtility.SaveFilePanel("Save Mesh to STL", "", name, "stl");

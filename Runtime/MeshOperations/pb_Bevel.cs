@@ -11,7 +11,7 @@ namespace ProBuilder.MeshOperations
 	/// </summary>
 	static class pb_Bevel
 	{
-		public static ActionResult BevelEdges(pb_Object pb, IList<Edge> edges, float amount, out List<Face> createdFaces)
+		public static ActionResult BevelEdges(ProBuilderMesh pb, IList<Edge> edges, float amount, out List<Face> createdFaces)
 		{
 			createdFaces = null;
 
@@ -135,7 +135,7 @@ namespace ProBuilder.MeshOperations
 			FaceRebuildData.Apply(appendFaces, pb, vertices);
 			int removed = pb.DeleteFaces(sorted.Keys).Length;
 			pb.SetSharedIndicesUV(new IntArray[0]);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
 
 			// @todo don't rebuild sharedindices, keep 'em cached
 			IntArray[] sharedIndices = pb.sharedIndices;
@@ -193,7 +193,7 @@ namespace ProBuilder.MeshOperations
 			}
 
 			FaceRebuildData.Apply(holeFaces, pb, vertices);
-			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.vertices));
+			pb.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(pb.positions));
 
 			// go through new faces and conform hole normals
 			// get a hash of just the adjacent and bridge faces

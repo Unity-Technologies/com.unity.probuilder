@@ -45,20 +45,20 @@ namespace UnityEditor.ProBuilder.Actions
 		/**
 		 *	Prompt user for a save file location and export meshes as Obj.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
+		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, bool allowQuads = true, ObjOptions options = null)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return null;
 
 			IEnumerable<Model> models = allowQuads
 				? meshes.Select(x => new Model(x.gameObject.name, x))
-				: meshes.Select(x => new Model(x.gameObject.name, x.msh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
+				: meshes.Select(x => new Model(x.gameObject.name, x.mesh, x.GetComponent<MeshRenderer>().sharedMaterials, x.transform.localToWorldMatrix));
 
 			string path = null, res = null;
 
 			if(asGroup || models.Count() < 2)
 			{
-				pb_Object first = meshes.FirstOrDefault();
+				ProBuilderMesh first = meshes.FirstOrDefault();
 				string name = first != null ? first.name : "ProBuilderModel";
 				path = UnityEditor.EditorUtility.SaveFilePanel("Export to Obj", "Assets", name, "obj");
 

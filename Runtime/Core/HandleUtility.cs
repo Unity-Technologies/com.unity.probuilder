@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="hit"></param>
 		/// <param name="ignore"></param>
 		/// <returns></returns>
-		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out pb_RaycastHit hit, HashSet<Face> ignore = null)
 		{
 			return FaceRaycast(InWorldRay, mesh, out hit, Mathf.Infinity, pb_Culling.Front, ignore);
 		}
@@ -50,14 +50,14 @@ namespace UnityEngine.ProBuilder
 		/// <param name="cullingMode">What sides of triangles does the ray intersect with.</param>
 		/// <param name="ignore">Optional collection of faces to ignore when raycasting.</param>
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
-		public static bool FaceRaycast(Ray InWorldRay, pb_Object mesh, out pb_RaycastHit hit, float distance, pb_Culling cullingMode, HashSet<Face> ignore = null)
+		public static bool FaceRaycast(Ray InWorldRay, ProBuilderMesh mesh, out pb_RaycastHit hit, float distance, pb_Culling cullingMode, HashSet<Face> ignore = null)
 		{
 			// Transform ray into model space
 			InWorldRay.origin 		-= mesh.transform.position;  // Why doesn't worldToLocalMatrix apply translation?
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
-			Vector3[] vertices = mesh.vertices;
+			Vector3[] vertices = mesh.positions;
 
 			float dist = 0f;
 			Vector3 point = Vector3.zero;
@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder
 		/// <returns>True if the ray intersects with the mesh, false if not.</returns>
 		public static bool FaceRaycast(
 			Ray InWorldRay,
-			pb_Object mesh,
+			ProBuilderMesh mesh,
 			out List<pb_RaycastHit> hits,
 			float distance,
 			pb_Culling cullingMode,
@@ -144,7 +144,7 @@ namespace UnityEngine.ProBuilder
 			InWorldRay.origin 		= mesh.transform.worldToLocalMatrix * InWorldRay.origin;
 			InWorldRay.direction 	= mesh.transform.worldToLocalMatrix * InWorldRay.direction;
 
-			Vector3[] vertices = mesh.vertices;
+			Vector3[] vertices = mesh.positions;
 
 			float dist = 0f;
 			Vector3 point = Vector3.zero;
@@ -289,7 +289,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="worldPoint"></param>
 		/// <returns></returns>
-		internal static bool PointIsOccluded(Camera cam, pb_Object pb, Vector3 worldPoint)
+		internal static bool PointIsOccluded(Camera cam, ProBuilderMesh pb, Vector3 worldPoint)
 		{
 			Vector3 dir = (cam.transform.position - worldPoint).normalized;
 
@@ -309,13 +309,13 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		internal static bool IsOccluded(Camera cam, pb_Object pb, Face face)
+		internal static bool IsOccluded(Camera cam, ProBuilderMesh pb, Face face)
 		{
 			Vector3 point = Vector3.zero;
 			int len = face.distinctIndices.Length;
 
 			for(int i = 0;i < len; i++)
-				point += pb.vertices[face.distinctIndices[i]];
+				point += pb.positions[face.distinctIndices[i]];
 
 			point *= (1f/len);
 

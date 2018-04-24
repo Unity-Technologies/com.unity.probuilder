@@ -17,7 +17,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pairs"></param>
 		/// <param name="collapseCoincidentVertices"></param>
 		/// <returns></returns>
-		public static List<Face> MergePairs(pb_Object target, IEnumerable<pb_Tuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
+		public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<pb_Tuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
 		{
 			HashSet<Face> remove = new HashSet<Face>();
 			List<Face> add = new List<Face>();
@@ -56,7 +56,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="target"></param>
 		/// <param name="faces"></param>
 		/// <returns></returns>
-		public static Face Merge(pb_Object target, IEnumerable<Face> faces)
+		public static Face Merge(ProBuilderMesh target, IEnumerable<Face> faces)
 		{
 			int mergedCount = faces != null ? faces.Count() : 0;
 
@@ -100,7 +100,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		internal static void CollapseCoincidentVertices(pb_Object pb, IEnumerable<Face> faces)
+		internal static void CollapseCoincidentVertices(ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> matches = new Dictionary<int, int>();

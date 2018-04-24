@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Scene to Advanced", "This utility sets the materials on every ProBuilder object in the scene.  Continue?", "Okay", "Cancel") )
 				return;
 
-			DoUpgrade((pb_Object[]) Resources.FindObjectsOfTypeAll(typeof(pb_Object)));
+			DoUpgrade((ProBuilderMesh[]) Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh)));
 
 			UnityEditor.EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in scene.\n\nIf any of the objects in the scene were prefabs you'll need to 'Apply' changes.", "Okay");
 		}
@@ -30,18 +30,18 @@ namespace UnityEditor.ProBuilder.Actions
 			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Selection to Advanced", "This utility sets the materials on every selected ProBuilder object.  Continue?", "Okay", "Cancel") )
 				return;
 
-			DoUpgrade( Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray() );
+			DoUpgrade( Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()).ToArray() );
 
 			UnityEditor.EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in selection", "Okay");
 		}
 
-		private static void DoUpgrade(pb_Object[] all)
+		private static void DoUpgrade(ProBuilderMesh[] all)
 		{
 			bool interactive = all != null && all.Length > 8;
 
 			for(int i = 0 ; i < all.Length; i++)
 			{
-				pb_Object pb = all[i];
+				ProBuilderMesh pb = all[i];
 
 				if(interactive)
 				{

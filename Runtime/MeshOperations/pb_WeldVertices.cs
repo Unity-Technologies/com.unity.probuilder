@@ -22,7 +22,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="neighborRadius">The minimum distance from another vertex to be considered within welding distance.</param>
 		/// <param name="welds">The indices of any new vertices created by a weld.</param>
 		/// <returns>An action result noting the status of the operation.</returns>
-		public static ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
+		public static ActionResult WeldVertices(this ProBuilderMesh pb, int[] indices, float neighborRadius, out int[] welds)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 			IntArray[] sharedIndices = pb.sharedIndices;

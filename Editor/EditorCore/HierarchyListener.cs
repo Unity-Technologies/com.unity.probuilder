@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder
 			if(EditorApplication.isPlayingOrWillChangePlaymode)
 				return;
 
-			foreach(pb_Object pb in go.GetComponentsInChildren<pb_Object>())
+			foreach(ProBuilderMesh pb in go.GetComponentsInChildren<ProBuilderMesh>())
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
 				bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
-				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())
+				foreach(ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
 				{
 					if(!meshesAreAssets)
 						EditorUtility.VerifyMesh(pb);

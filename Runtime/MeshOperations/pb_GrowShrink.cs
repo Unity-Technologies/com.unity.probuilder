@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="maxAngleDiff"></param>
 		/// <returns></returns>
-		public static HashSet<Face> GrowSelection(pb_Object pb, IList<Face> faces, float maxAngleDiff = -1f)
+		public static HashSet<Face> GrowSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff = -1f)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
 			HashSet<Face> source = new HashSet<Face>(faces);
@@ -62,7 +62,7 @@ namespace ProBuilder.MeshOperations
 			Flood(null, wing, Vector3_Zero, -1f, selection);
 		}
 
-		internal static void Flood(pb_Object pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
+		internal static void Flood(ProBuilderMesh pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
 		{
 			pb_WingedEdge next = wing;
 
@@ -100,7 +100,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <param name="maxAngleDiff"></param>
 		/// <returns></returns>
-		public static HashSet<Face> FloodSelection(pb_Object pb, IList<Face> faces, float maxAngleDiff)
+		public static HashSet<Face> FloodSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
 			HashSet<Face> source = new HashSet<Face>(faces);

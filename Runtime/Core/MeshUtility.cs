@@ -181,11 +181,11 @@ namespace UnityEngine.ProBuilder
 		/**
 		 * Calculate mesh normals.
 		 */
-		public static Vector3[] GenerateNormals(pb_Object pb)
+		public static Vector3[] GenerateNormals(ProBuilderMesh pb)
 		{
 			int vertexCount = pb.vertexCount;
 			Vector3[] perTriangleNormal = new Vector3[vertexCount];
-			Vector3[] vertices = pb.vertices;
+			Vector3[] vertices = pb.positions;
 			Vector3[] normals = new Vector3[vertexCount];
 			int[] perTriangleAvg = new int[vertexCount];
 			Face[] faces = pb.faces;
@@ -231,7 +231,7 @@ namespace UnityEngine.ProBuilder
 		/**
 		 * Apply smoothing groups to a set of per-face normals.
 		 */
-		public static void SmoothNormals(pb_Object pb, ref Vector3[] normals)
+		public static void SmoothNormals(ProBuilderMesh pb, ref Vector3[] normals)
 		{
 			// average the soft edge faces
 			int vertexCount = pb.vertexCount;

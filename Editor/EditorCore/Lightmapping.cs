@@ -17,10 +17,10 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this pb_Object pb) { pb.GenerateUV2(false); }
+		public static void GenerateUV2(this ProBuilderMesh pb) { pb.GenerateUV2(false); }
 
 		[System.Obsolete("GenerateUV2 is obsolete, use pb_Editor_Mesh_Utility.Optimize(this pb_Object, bool forceRebuildUV2 = false) instead.")]
-		public static void GenerateUV2(this pb_Object pb, bool forceUpdate)
+		public static void GenerateUV2(this ProBuilderMesh pb, bool forceUpdate)
 		{
 			pb.Optimize(forceUpdate);
 		}
@@ -35,7 +35,7 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="isEnabled"></param>
-		public static void SetLightmapStaticFlagEnabled(pb_Object pb, bool isEnabled)
+		public static void SetLightmapStaticFlagEnabled(ProBuilderMesh pb, bool isEnabled)
 		{
 			Entity ent = pb.GetComponent<Entity>();
 
@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
 			if (!PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false))
 				return;
 
-			var missingUv2 = Object.FindObjectsOfType<pb_Object>().Where(x => !x.hasUv2 && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
+			var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.hasUv2 && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 
 			int count = missingUv2.Count();
 

@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
 				SceneView.onSceneGUIDelegate += this.OnSceneGUI;
 			}
 
-			pb_Object[] sel = Selection.transforms.GetComponents<pb_Object>();
+			ProBuilderMesh[] sel = Selection.transforms.GetComponents<ProBuilderMesh>();
 
 			if (sel != null && sel.Length > 0)
 				textures = GetTextures(sel[0].transform.GetComponent<MeshRenderer>().sharedMaterial).ToArray();
@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
 
-			foreach (pb_Object pb in modified)
+			foreach (ProBuilderMesh pb in modified)
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -121,10 +121,10 @@ namespace UnityEditor.ProBuilder
 		///< Cache the sceneview camera at start of OnSceneGUI.
 
 		///< Used to store changes to mesh color array for live preview.
-		Dictionary<pb_Object, Color[]> hovering = new Dictionary<pb_Object, Color[]>();
+		Dictionary<ProBuilderMesh, Color[]> hovering = new Dictionary<ProBuilderMesh, Color[]>();
 
 		Vector2 mpos = Vector2.zero;
-		pb_Object pb; // The object currently gettin' paintered
+		ProBuilderMesh pb; // The object currently gettin' paintered
 		bool mouseMoveEvent = false;
 		Vector3 handlePosition = Vector3.zero;
 		Quaternion handleRotation = Quaternion.identity;
@@ -133,7 +133,7 @@ namespace UnityEditor.ProBuilder
 		Vector2 screenCenter = Vector2.zero;
 		bool isPainting = false;
 
-		HashSet<pb_Object> modified = new HashSet<pb_Object>()
+		HashSet<ProBuilderMesh> modified = new HashSet<ProBuilderMesh>()
 			; // list of all objects that have been modified by the painter, stored so that we can regenerate UV2 on disable
 
 		Texture[] textures = new Texture[0];
@@ -437,7 +437,7 @@ namespace UnityEditor.ProBuilder
 
 				if (go != null && (pb == null || go != pb.gameObject))
 				{
-					pb = go.GetComponent<pb_Object>();
+					pb = go.GetComponent<ProBuilderMesh>();
 
 					if (pb != null)
 					{
@@ -465,14 +465,14 @@ namespace UnityEditor.ProBuilder
 					}
 					else
 					{
-						if (pb.msh.vertexCount != pb.vertexCount)
+						if (pb.mesh.vertexCount != pb.vertexCount)
 						{
 							// script reload can make this happen
 							pb.ToMesh();
 							pb.Refresh();
 						}
 
-						pb.msh.colors = hovering[pb];
+						pb.mesh.colors = hovering[pb];
 					}
 
 					Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
@@ -484,7 +484,7 @@ namespace UnityEditor.ProBuilder
 						handleDistance = Vector3.Distance(handlePosition, sceneCamera.transform.position);
 						handleRotation = Quaternion.LookRotation(nonzero(pb.transform.TransformDirection(hit.normal)), Vector3.up);
 
-						Color[] colors = pb.msh.colors;
+						Color[] colors = pb.mesh.colors;
 
 						int[][] sharedIndices = pb.sharedIndices.ToArray();
 
@@ -495,7 +495,7 @@ namespace UnityEditor.ProBuilder
 						{
 							for (int i = 0; i < sharedIndices.Length; i++)
 							{
-								float dist = Vector3.Distance(hit.point, pb.vertices[sharedIndices[i][0]]);
+								float dist = Vector3.Distance(hit.point, pb.positions[sharedIndices[i][0]]);
 
 								if (dist < brushSize)
 								{
@@ -513,13 +513,13 @@ namespace UnityEditor.ProBuilder
 						}
 
 						// show a preview
-						pb.msh.colors = colors;
+						pb.mesh.colors = colors;
 					}
 					else
 					{
 						// Clear
-						foreach (KeyValuePair<pb_Object, Color[]> kvp in hovering)
-							kvp.Key.msh.colors = kvp.Value;
+						foreach (KeyValuePair<ProBuilderMesh, Color[]> kvp in hovering)
+							kvp.Key.mesh.colors = kvp.Value;
 
 						hovering.Clear();
 
@@ -532,9 +532,9 @@ namespace UnityEditor.ProBuilder
 			else
 			{
 				// No longer focusing object
-				foreach (KeyValuePair<pb_Object, Color[]> kvp in hovering)
+				foreach (KeyValuePair<ProBuilderMesh, Color[]> kvp in hovering)
 				{
-					kvp.Key.msh.colors = kvp.Value;
+					kvp.Key.mesh.colors = kvp.Value;
 				}
 
 				hovering.Clear();
@@ -568,7 +568,7 @@ namespace UnityEditor.ProBuilder
 			{
 				lastBrushApplication = CurTime;
 
-				Dictionary<pb_Object, Color[]> sticky = new Dictionary<pb_Object, Color[]>();
+				Dictionary<ProBuilderMesh, Color[]> sticky = new Dictionary<ProBuilderMesh, Color[]>();
 
 				if (!isPainting)
 				{
@@ -578,9 +578,9 @@ namespace UnityEditor.ProBuilder
 
 
 				// Apply colors
-				foreach (KeyValuePair<pb_Object, Color[]> kvp in hovering)
+				foreach (KeyValuePair<ProBuilderMesh, Color[]> kvp in hovering)
 				{
-					Color[] colors = kvp.Key.msh.colors;
+					Color[] colors = kvp.Key.mesh.colors;
 
 					sticky.Add(kvp.Key, colors);
 

@@ -36,7 +36,7 @@ namespace UnityEngine.ProBuilder
 
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
-			pb_Object pb,
+			ProBuilderMesh pb,
 			List<pb_Vertex> vertices = null,
 			List<Face> faces = null,
 			Dictionary<int, int> lookup = null,

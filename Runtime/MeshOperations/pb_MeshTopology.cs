@@ -17,12 +17,12 @@ namespace ProBuilder.MeshOperations
 		/// <remarks>Not implemented.</remarks>
 		/// <param name="target"></param>
 		/// <returns></returns>
-		public static bool ToQuads(pb_Object target)
+		public static bool ToQuads(ProBuilderMesh target)
 		{
 			return false;
 		}
 
-		public static ActionResult ToTriangles(this pb_Object pb, IList<Face> faces, out Face[] newFaces)
+		public static ActionResult ToTriangles(this ProBuilderMesh pb, IList<Face> faces, out Face[] newFaces)
 		{
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();

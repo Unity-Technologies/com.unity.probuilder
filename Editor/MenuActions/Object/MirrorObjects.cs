@@ -92,7 +92,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> res  = new List<GameObject>();
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 				res.Add( Mirror(pb, scale, duplicate).gameObject );
 
 			MeshSelection.SetSelection(res);
@@ -111,13 +111,13 @@ namespace UnityEditor.ProBuilder.Actions
 		 *	\returns The newly duplicated pb_Object.
 		 *	\sa ProBuilder.Axis
 		 */
-		public static pb_Object Mirror(pb_Object pb, Vector3 scale, bool duplicate = true)
+		public static ProBuilderMesh Mirror(ProBuilderMesh pb, Vector3 scale, bool duplicate = true)
 		{
-			pb_Object mirredObject;
+			ProBuilderMesh mirredObject;
 
 			if (duplicate)
 			{
-				mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<pb_Object>();
+				mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<ProBuilderMesh>();
 				mirredObject.MakeUnique();
 				mirredObject.transform.parent = pb.transform.parent;
 				mirredObject.transform.localRotation = pb.transform.localRotation;

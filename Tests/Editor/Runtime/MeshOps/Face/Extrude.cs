@@ -21,18 +21,18 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					pb.Extrude(pb.faces, ExtrudeMethod.FaceNormal, .5f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
 					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					pb_TestUtility.AssertAreEqual(pb.msh, template);
+					pb_TestUtility.AssertAreEqual(pb.mesh, template);
 				}
 			}
 		}
@@ -42,7 +42,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					int vertexCountBeforeExtrude = pb.vertexCount;
 					pb.Extrude(pb.faces, ExtrudeMethod.IndividualFaces, .5f);
@@ -50,12 +50,12 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
 					Assert.AreNotEqual(vertexCountBeforeExtrude, pb.vertexCount);
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
 					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					pb_TestUtility.AssertAreEqual(pb.msh, template);
+					pb_TestUtility.AssertAreEqual(pb.mesh, template);
 				}
 			}
 		}
@@ -65,18 +65,18 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					pb.Extrude(pb.faces, ExtrudeMethod.VertexNormal, .5f);
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
 					Mesh template = pb_TestUtility.GetAssetTemplate<Mesh>(pb.name);
-					pb_TestUtility.AssertAreEqual(pb.msh, template);
+					pb_TestUtility.AssertAreEqual(pb.mesh, template);
 				}
 			}
 		}
@@ -85,7 +85,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using(var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (var pb in (IEnumerable<pb_Object>) shapes)
+				foreach (var pb in (IEnumerable<ProBuilderMesh>) shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
 					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
@@ -93,7 +93,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 #if PB_CREATE_TEST_MESH_TEMPLATES
 					pb_TestUtility.SaveAssetTemplate(pb.msh, pb.name);
 #endif
@@ -143,7 +143,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 		{
 			using (var shapes = new pb_TestUtility.BuiltInPrimitives())
 			{
-				foreach (pb_Object pb in shapes)
+				foreach (ProBuilderMesh pb in shapes)
 				{
 					int initialVertexCount = pb.vertexCount;
 					UnityEngine.ProBuilder.Face face = pb.faces[m_Random.Next(0, pb.faces.Length)];
@@ -151,7 +151,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
@@ -159,7 +159,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 
 					initialVertexCount = pb.vertexCount;
@@ -167,7 +167,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Face
 					pb.ToMesh();
 					pb.Refresh();
 					LogAssert.NoUnexpectedReceived();
-					pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+					pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 					Assert.AreEqual(initialVertexCount + face.edges.Length * 4, pb.vertexCount);
 				}
 			}

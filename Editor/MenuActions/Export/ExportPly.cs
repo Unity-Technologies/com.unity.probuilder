@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/**
 		 *	Prompt user for a save file location and export meshes as Obj.
 		 */
-		public static string ExportWithFileDialog(IEnumerable<pb_Object> meshes, bool asGroup = true, PlyOptions options = null)
+		public static string ExportWithFileDialog(IEnumerable<ProBuilderMesh> meshes, bool asGroup = true, PlyOptions options = null)
 		{
 			if(meshes == null || meshes.Count() < 1)
 				return null;
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if(asGroup || meshes.Count() < 2)
 			{
-				pb_Object first = meshes.FirstOrDefault();
+				ProBuilderMesh first = meshes.FirstOrDefault();
 				string name = first != null ? first.name : "ProBuilderModel";
 				path = UnityEditor.EditorUtility.SaveFilePanel("Export as PLY", "Assets", name, "ply");
 
@@ -70,14 +70,14 @@ namespace UnityEditor.ProBuilder.Actions
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;
 
-				foreach(pb_Object model in meshes)
-					res = DoExport(string.Format("{0}/{1}.ply", path, model.name), new List<pb_Object>() { model }, options);
+				foreach(ProBuilderMesh model in meshes)
+					res = DoExport(string.Format("{0}/{1}.ply", path, model.name), new List<ProBuilderMesh>() { model }, options);
 			}
 
 			return res;
 		}
 
-		private static string DoExport(string path, IEnumerable<pb_Object> models, PlyOptions options)
+		private static string DoExport(string path, IEnumerable<ProBuilderMesh> models, PlyOptions options)
 		{
 			string name = Path.GetFileNameWithoutExtension(path);
 			string directory = Path.GetDirectoryName(path);

@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder.Actions
 			HashSet<Material> sel = new HashSet<Material>(selection.SelectMany(x => x.SelectedFaces.Select(y => y.material).Where( z => z != null)));
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(pb_Object pb in restrictToSelection ? selection : Object.FindObjectsOfType<pb_Object>())
+			foreach(ProBuilderMesh pb in restrictToSelection ? selection : Object.FindObjectsOfType<ProBuilderMesh>())
 			{
 				IEnumerable<Face> matches = pb.faces.Where(x => sel.Contains(x.material));
 

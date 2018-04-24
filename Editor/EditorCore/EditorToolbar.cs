@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
 			MenuActionStyles.ResetStyles();
 		}
 
-		void OnElementSelectionChange(pb_Object[] selection)
+		void OnElementSelectionChange(ProBuilderMesh[] selection)
 		{
 			if(!window)
 				GameObject.DestroyImmediate(this);

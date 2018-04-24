@@ -15,7 +15,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="unordered"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out Face face)
+		public static ActionResult CreatePolygon(this ProBuilderMesh pb, IList<int> indices, bool unordered, out Face face)
 		{
 			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -70,7 +70,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="extrude"></param>
 		/// <param name="flipNormals"></param>
 		/// <returns></returns>
-		public static ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
+		public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh pb, IList<Vector3> points, float extrude, bool flipNormals)
 		{
 			if (points.Count < 3)
 			{
@@ -184,7 +184,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static List<List<Edge>> FindHoles(pb_Object pb, IList<int> indices)
+		internal static List<List<Edge>> FindHoles(ProBuilderMesh pb, IList<int> indices)
 		{
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);

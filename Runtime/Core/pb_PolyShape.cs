@@ -19,7 +19,7 @@ namespace UnityEngine.ProBuilder
 			Edit
 		}
 
-		pb_Object m_Mesh;
+		ProBuilderMesh m_Mesh;
 
 		public List<Vector3> points = new List<Vector3>();
 		public float extrude = 0f;
@@ -27,12 +27,12 @@ namespace UnityEngine.ProBuilder
 		public bool flipNormals = false;
 		public bool isOnGrid = true;
 
-		public pb_Object mesh
+		public ProBuilderMesh mesh
 		{
 			get
 			{
 				if(m_Mesh == null)
-					m_Mesh = GetComponent<pb_Object>();
+					m_Mesh = GetComponent<ProBuilderMesh>();
 
 				return m_Mesh;
 			}

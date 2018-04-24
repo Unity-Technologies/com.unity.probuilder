@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> newSelection = new List<GameObject>();
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				IEnumerable<Face> matches = pb.faces.Where(x => selectedSmoothGroups.Contains(x.smoothingGroup));
 

@@ -12,7 +12,7 @@ namespace ProBuilder.EditorTests.Picking
 {
 	public class RectSelection
 	{
-		pb_Object[] selectables;
+		ProBuilderMesh[] selectables;
 		Camera camera;
 
 		void Setup()
@@ -20,12 +20,12 @@ namespace ProBuilder.EditorTests.Picking
 			camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
 			camera.transform.position = new Vector3(.3f, 2.2f, -3f);
 
-			pb_Object shape = pb_ShapeGenerator.CreateShape(pb_ShapeType.Torus);
+			ProBuilderMesh shape = pb_ShapeGenerator.CreateShape(pb_ShapeType.Torus);
 			shape.transform.position = Vector3.zero - shape.GetComponent<MeshRenderer>().bounds.center;
 
 			camera.transform.LookAt(shape.transform);
 
-			selectables = new pb_Object[]
+			selectables = new ProBuilderMesh[]
 			{
 				shape
 			};
@@ -41,7 +41,7 @@ namespace ProBuilder.EditorTests.Picking
 			UObject.DestroyImmediate(camera.gameObject);
 		}
 
-		Dictionary<pb_Object, HashSet<int>> TestVertexPick(pb_PickerOptions options)
+		Dictionary<ProBuilderMesh, HashSet<int>> TestVertexPick(pb_PickerOptions options)
 		{
 			try
 			{
@@ -66,7 +66,7 @@ namespace ProBuilder.EditorTests.Picking
 			}
 		}
 
-		Dictionary<pb_Object, HashSet<Edge>> TestEdgePick(pb_PickerOptions options)
+		Dictionary<ProBuilderMesh, HashSet<Edge>> TestEdgePick(pb_PickerOptions options)
 		{
 			try
 			{
@@ -92,7 +92,7 @@ namespace ProBuilder.EditorTests.Picking
 			}
 		}
 
-		Dictionary<pb_Object, HashSet<Face>> TestFacePick(pb_PickerOptions options)
+		Dictionary<ProBuilderMesh, HashSet<Face>> TestFacePick(pb_PickerOptions options)
 		{
 			try
 			{

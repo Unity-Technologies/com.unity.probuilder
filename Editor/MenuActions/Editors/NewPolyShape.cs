@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
 		{
 			GameObject go = new GameObject();
 			pb_PolyShape poly = go.AddComponent<pb_PolyShape>();
-			pb_Object pb = poly.gameObject.AddComponent<pb_Object>();
+			ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
 			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);

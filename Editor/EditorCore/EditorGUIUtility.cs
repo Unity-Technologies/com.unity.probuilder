@@ -277,11 +277,11 @@ namespace UnityEditor.ProBuilder.UI
 		public static bool ToolSettingsGUI(	string text,
 											string description,
 											bool showSettings,
-											System.Func<pb_Object[], ActionResult> action,
+											System.Func<ProBuilderMesh[], ActionResult> action,
 											System.Action<int> gui,
 											int guiWidth,
 											int guiHeight,
-											pb_Object[] selection)
+											ProBuilderMesh[] selection)
 		{
 			return ToolSettingsGUI(text, description, showSettings, action, gui, true, guiWidth, guiHeight , selection);
 		}
@@ -289,12 +289,12 @@ namespace UnityEditor.ProBuilder.UI
 		public static bool ToolSettingsGUI(	string text,
 											string description,
 											bool showSettings,
-											System.Func<pb_Object[], ActionResult> action,
+											System.Func<ProBuilderMesh[], ActionResult> action,
 											System.Action<int> gui,
 											bool enabled,
 											int guiWidth,
 											int guiHeight,
-											pb_Object[] selection)
+											ProBuilderMesh[] selection)
 		{
 			if(enabled)
 			{

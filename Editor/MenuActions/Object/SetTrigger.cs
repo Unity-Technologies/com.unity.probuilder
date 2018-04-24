@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override ActionResult DoAction()
 		{
-			foreach (pb_Object pb in MeshSelection.All())
+			foreach (ProBuilderMesh pb in MeshSelection.All())
 			{
 				var existing = pb.GetComponents<EntityBehaviour>();
 

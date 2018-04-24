@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Register a callback when a ProBuilder shape is created.
 		/// </summary>
-		public static void AddOnObjectCreatedListener(Action<pb_Object> func)
+		public static void AddOnObjectCreatedListener(Action<ProBuilderMesh> func)
 		{
 			EditorUtility.AddOnObjectCreatedListener(func);
 		}
@@ -31,7 +31,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Called when the geometry is modified by ProBuilder.
 		/// </summary>
-		public static void AddOnSelectionUpdateListener(Action<pb_Object[]> func)
+		public static void AddOnSelectionUpdateListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnSelectionUpdate += func;
 		}
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Called prior to mesh modification.
 		/// </summary>
-		public static void AddOnVertexMovementBeginListener(Action<pb_Object[]> func)
+		public static void AddOnVertexMovementBeginListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnVertexMovementBegin += func;
 		}
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 		/// <summary>
 		/// Called after mesh modification.
 		/// </summary>
-		public static void AddOnVertexMovementFinishListener(Action<pb_Object[]> func)
+		public static void AddOnVertexMovementFinishListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnVertexMovementFinish += func;
 		}
@@ -65,22 +65,22 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.RemoveOnEditLevelChangedListener(func);
 		}
 
-		public static void RemoveOnObjectCreatedListener(Action<pb_Object> func)
+		public static void RemoveOnObjectCreatedListener(Action<ProBuilderMesh> func)
 		{
 			EditorUtility.RemoveOnObjectCreatedListener(func);
 		}
 
-		public static void RemoveOnSelectionUpdateListener(Action<pb_Object[]> func)
+		public static void RemoveOnSelectionUpdateListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnSelectionUpdate -= func;
 		}
 
-		public static void RemoveOnVertexMovementBeginListener(Action<pb_Object[]> func)
+		public static void RemoveOnVertexMovementBeginListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnVertexMovementBegin -= func;
 		}
 
-		public static void RemoveOnVertexMovementFinishListener(Action<pb_Object[]> func)
+		public static void RemoveOnVertexMovementFinishListener(Action<ProBuilderMesh[]> func)
 		{
 			ProBuilderEditor.OnVertexMovementFinish -= func;
 		}

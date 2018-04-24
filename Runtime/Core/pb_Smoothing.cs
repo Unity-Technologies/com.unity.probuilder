@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns></returns>
-		public static int GetUnusedSmoothingGroup(pb_Object pb)
+		public static int GetUnusedSmoothingGroup(ProBuilderMesh pb)
 		{
 			return GetNextUnusedSmoothingGroup(SMOOTH_RANGE_MIN, new HashSet<int>(pb.faces.Select(x => x.smoothingGroup)));
 		}
@@ -80,7 +80,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="faces"></param>
 		/// <param name="angleThreshold"></param>
 		/// <param name="normals"></param>
-		public static void ApplySmoothingGroups(pb_Object pb, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
+		public static void ApplySmoothingGroups(ProBuilderMesh pb, IEnumerable<Face> faces, float angleThreshold, Vector3[] normals = null)
 		{
 			// Reset the selected faces to no smoothing group
 			bool anySmoothed = false;
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 			if(normals == null)
 			{
 				if(anySmoothed)
-					pb.msh.normals = null;
+					pb.mesh.normals = null;
 				normals = pb.GetNormals();
 			}
 

@@ -17,11 +17,11 @@ namespace UnityEngine.ProBuilder
 		/// <param name="target">Destination UnityEngine.Mesh.</param>
 		/// <param name="materials">The resulting material array from the compiled faces array.</param>
 		/// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
-		public static void Compile(pb_Object pb, ref Mesh target, out Material[] materials, MeshTopology preferredTopology = MeshTopology.Triangles)
+		public static void Compile(ProBuilderMesh pb, ref Mesh target, out Material[] materials, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			target.Clear();
 
-			target.vertices = pb.vertices;
+			target.vertices = pb.positions;
 			target.uv = GetUVs(pb);
 #if UNITY_5_3_OR_NEWER
 			if (pb.hasUv3) target.SetUVs(2, pb.uv3);
@@ -55,7 +55,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns></returns>
-		internal static Vector2[] GetUVs(pb_Object pb)
+		internal static Vector2[] GetUVs(ProBuilderMesh pb)
 		{
 			int n = -2;
 			Dictionary<int, List<Face>> textureGroups = new Dictionary<int, List<Face>>();
@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 
 			n = 0;
 
-			Vector3[] world = anyWorldSpace ? pb.transform.ToWorldSpace(pb.vertices) : null;
+			Vector3[] world = anyWorldSpace ? pb.transform.ToWorldSpace(pb.positions) : null;
 			Vector2[] uvs = pb.uv != null && pb.uv.Length == pb.vertexCount ? pb.uv : new Vector2[pb.vertexCount];
 
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
@@ -87,14 +87,14 @@ namespace UnityEngine.ProBuilder
 				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = pb_Projection.FindBestPlane(pb.vertices, indices).normal;
+					nrm = pb_Projection.FindBestPlane(pb.positions, indices).normal;
 				else
 					nrm = ProBuilderMath.Normal(pb, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
 					pb_UVUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));
 				else
-					pb_UVUtility.PlanarMap2(pb.vertices, uvs, indices, kvp.Value[0].uv, nrm);
+					pb_UVUtility.PlanarMap2(pb.positions, uvs, indices, kvp.Value[0].uv, nrm);
 
 				// Apply UVs to array, and update the localPivot and localSize caches.
 				Vector2 pivot = kvp.Value[0].uv.localPivot;

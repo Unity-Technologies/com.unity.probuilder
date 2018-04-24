@@ -51,14 +51,14 @@ namespace ProBuilder.Test
 			get { return k_TempDirectory; }
 		}
 
-		public class BuiltInPrimitives : IDisposable, IEnumerable<pb_Object>
+		public class BuiltInPrimitives : IDisposable, IEnumerable<ProBuilderMesh>
 		{
-			pb_Object[] m_Shapes;
+			ProBuilderMesh[] m_Shapes;
 
-			static pb_Object[] GetBasicShapes()
+			static ProBuilderMesh[] GetBasicShapes()
 			{
 				var shapes = Enum.GetValues(typeof(pb_ShapeType)) as pb_ShapeType[];
-				pb_Object[] primitives = new pb_Object[shapes.Length];
+				ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
 				for (int i = 0, c = shapes.Length; i < c; i++)
 				{
 					primitives[i] = pb_ShapeGenerator.CreateShape(shapes[i]);
@@ -74,7 +74,7 @@ namespace ProBuilder.Test
 
 			public int Count { get { return m_Shapes.Length; } }
 
-			public pb_Object this[int i]
+			public ProBuilderMesh this[int i]
 			{
 				get { return m_Shapes[i]; }
 				set { m_Shapes[i] = value; }
@@ -86,9 +86,9 @@ namespace ProBuilder.Test
 					UObject.DestroyImmediate(m_Shapes[i].gameObject);
 			}
 
-			IEnumerator<pb_Object> IEnumerable<pb_Object>.GetEnumerator()
+			IEnumerator<ProBuilderMesh> IEnumerable<ProBuilderMesh>.GetEnumerator()
 			{
-				return ((IEnumerable<pb_Object>)m_Shapes).GetEnumerator();
+				return ((IEnumerable<ProBuilderMesh>)m_Shapes).GetEnumerator();
 			}
 
 			public IEnumerator GetEnumerator()

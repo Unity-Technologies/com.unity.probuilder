@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			HashSet<Color32> colors = new HashSet<Color32>();
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				Color[] mesh_colors = pb.colors;
 
@@ -86,9 +86,9 @@ namespace UnityEditor.ProBuilder.Actions
 
 			List<GameObject> newSelection = new List<GameObject>();
 			bool selectionOnly = PreferencesInternal.GetBool("pb_restrictSelectColorToCurrentSelection");
-			pb_Object[] pool = selectionOnly ? selection : Object.FindObjectsOfType<pb_Object>();
+			ProBuilderMesh[] pool = selectionOnly ? selection : Object.FindObjectsOfType<ProBuilderMesh>();
 
-			foreach(pb_Object pb in pool)
+			foreach(ProBuilderMesh pb in pool)
 			{
 				Color[] mesh_colors = pb.colors;
 

@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
 		/// Remove a pb_Object (or it's GameObject) from the current Selection.
 		/// </summary>
 		/// <param name="pb"></param>
-		public static void Remove(pb_Object pb)
+		public static void Remove(ProBuilderMesh pb)
 		{
 			if(pb == null)
 				return;

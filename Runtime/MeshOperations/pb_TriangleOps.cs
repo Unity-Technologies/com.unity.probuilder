@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <param name="faces"></param>
-		public static void ReverseWindingOrder(this pb_Object pb, Face[] faces)
+		public static void ReverseWindingOrder(this ProBuilderMesh pb, Face[] faces)
 		{
 			for(int i = 0; i < faces.Length; i++)
 				faces[i].ReverseIndices();
@@ -29,7 +29,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static WindingOrder GetWindingOrder(this pb_Object pb, Face face)
+		public static WindingOrder GetWindingOrder(this ProBuilderMesh pb, Face face)
 		{
 			Vector2[] p = pb_Projection.PlanarProject(pb, face);
 			return GetWindingOrder(p);
@@ -71,7 +71,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FlipEdge(this pb_Object pb, Face face)
+		public static bool FlipEdge(this ProBuilderMesh pb, Face face)
 		{
 			int[] indices = face.indices;
 
@@ -133,11 +133,11 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pb"></param>
 		/// <param name="removed"></param>
 		/// <returns>True if Degenerate tris were found, false if no changes.</returns>
-		public static bool RemoveDegenerateTriangles(this pb_Object pb, out int[] removed)
+		public static bool RemoveDegenerateTriangles(this ProBuilderMesh pb, out int[] removed)
 		{
 			Dictionary<int, int> m_Lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> m_LookupUV = pb.sharedIndicesUV != null ? pb.sharedIndicesUV.ToDictionary() : new Dictionary<int, int>();
-			Vector3[] m_Vertices = pb.vertices;
+			Vector3[] m_Vertices = pb.positions;
 			Dictionary<int, int> m_RebuiltLookup = new Dictionary<int, int>();
 			Dictionary<int, int> m_RebuiltLookupUV = new Dictionary<int, int>();
 			List<Face> m_RebuiltFaces = new List<Face>();
@@ -203,7 +203,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces"></param>
 		/// <returns></returns>
 		[System.Obsolete("Please use pb_MergeFaces.Merge(pb_Object target, IEnumerable<pb_Face> faces)")]
-		public static Face MergeFaces(this pb_Object pb, Face[] faces)
+		public static Face MergeFaces(this ProBuilderMesh pb, Face[] faces)
 		{
 			List<int> collectedIndices = new List<int>(faces[0].indices);
 

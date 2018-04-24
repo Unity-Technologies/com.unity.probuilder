@@ -63,10 +63,10 @@ namespace ProBuilder.MeshOperations
 			smoothingThreshold = 1f
 		};
 
-		pb_Object m_Mesh;
+		ProBuilderMesh m_Mesh;
 		pb_Vertex[] m_Vertices;
 
-		public pb_MeshImporter(pb_Object target)
+		public pb_MeshImporter(ProBuilderMesh target)
 		{
 			m_Mesh = target;
 		}
@@ -179,7 +179,7 @@ namespace ProBuilder.MeshOperations
 			m_Mesh.Clear();
 			m_Mesh.SetVertices(m_Vertices);
 			m_Mesh.SetFaces(faces);
-			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.vertices));
+			m_Mesh.SetSharedIndices(IntArrayUtility.ExtractSharedIndices(m_Mesh.positions));
 			m_Mesh.SetSharedIndicesUV(new IntArray[0]);
 
 			HashSet<Face> processed = new HashSet<Face>();

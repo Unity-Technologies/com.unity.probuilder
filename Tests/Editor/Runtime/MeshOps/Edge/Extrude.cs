@@ -33,7 +33,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
-				pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 				Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
 			}
 			finally
@@ -59,7 +59,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 				Assert.IsTrue(pb.Extrude(edges, .5f, true, true, out extruded), "Do allow manifold edge extrude");
 				pb.ToMesh();
 				pb.Refresh();
-				pb_TestUtility.AssertMeshAttributesValid(pb.msh);
+				pb_TestUtility.AssertMeshAttributesValid(pb.mesh);
 				Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
 			}
 			finally

@@ -14,7 +14,7 @@ namespace ProBuilder.MeshOperations
 		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but
 		 *	it may not unify each island the same way.
 		 */
-		public static ActionResult ConformNormals(this pb_Object pb, IList<Face> faces)
+		public static ActionResult ConformNormals(this ProBuilderMesh pb, IList<Face> faces)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces);
 			HashSet<Face> used = new HashSet<Face>();

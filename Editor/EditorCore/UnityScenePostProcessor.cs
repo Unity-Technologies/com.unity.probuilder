@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 			var invisibleFaceMaterial = Resources.Load<Material>("Materials/InvisibleFace");
 
 			// Hide nodraw faces if present.
-			foreach(var pb in Object.FindObjectsOfType<pb_Object>())
+			foreach(var pb in Object.FindObjectsOfType<ProBuilderMesh>())
 			{
 				if(pb.GetComponent<MeshRenderer>() == null)
 					continue;
@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 
 			// pb_Entity is deprecated - remove someday
 
-			foreach(var pb in Object.FindObjectsOfType<pb_Object>())
+			foreach(var pb in Object.FindObjectsOfType<ProBuilderMesh>())
 			{
 				GameObject go = pb.gameObject;
 
@@ -62,8 +62,8 @@ namespace UnityEditor.ProBuilder
 					go.GetComponent<MeshRenderer>().enabled = false;
 
 				// clear hideflags on prefab meshes
-				if(pb.msh != null)
-					pb.msh.hideFlags = HideFlags.None;
+				if(pb.mesh != null)
+					pb.mesh.hideFlags = HideFlags.None;
 
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbStripProBuilderOnBuild))
 				   return;

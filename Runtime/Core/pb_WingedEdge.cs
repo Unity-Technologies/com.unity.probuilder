@@ -251,7 +251,7 @@ namespace UnityEngine.ProBuilder
 			return SortEdgesByAdjacency(matches).Select(x => x.x).ToList();
 		}
 
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, bool oneWingPerFace = false)
+		public static List<pb_WingedEdge> GetWingedEdges(ProBuilderMesh pb, bool oneWingPerFace = false)
 		{
 			return GetWingedEdges(pb, pb.faces, oneWingPerFace);
 		}
@@ -260,7 +260,7 @@ namespace UnityEngine.ProBuilder
 		 *	Generate a Winged Edge data structure.
 		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
 		 */
-		public static List<pb_WingedEdge> GetWingedEdges(pb_Object pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
+		public static List<pb_WingedEdge> GetWingedEdges(ProBuilderMesh pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
 			Dictionary<int, int> lookup = sharedIndexLookup == null ? pb.sharedIndices.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();

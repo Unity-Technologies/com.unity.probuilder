@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 			GameObject go = new GameObject();
 			BezierShape bezier = go.AddComponent<BezierShape>();
 			bezier.Init();
-			pb_Object pb = bezier.gameObject.AddComponent<pb_Object>();
+			ProBuilderMesh pb = bezier.gameObject.AddComponent<ProBuilderMesh>();
 			bezier.Refresh();
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);

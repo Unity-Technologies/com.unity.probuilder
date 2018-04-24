@@ -17,7 +17,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="indices">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
 		/// <param name="newVertices">A list of newly created vertex indices.</param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		public static ActionResult Connect(this pb_Object pb, IList<int> indices, out int[] newVertices)
+		public static ActionResult Connect(this ProBuilderMesh pb, IList<int> indices, out int[] newVertices)
 		{
 			int sharedIndexOffset = pb.sharedIndices.Length;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();

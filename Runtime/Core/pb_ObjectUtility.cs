@@ -15,11 +15,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns>A Vector3[] containing all vertex points in world space.</returns>
-		public static Vector3[] VerticesInWorldSpace(this pb_Object pb)
+		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh pb)
 		{
-			Vector3[] worldPoints = new Vector3[pb.vertices.Length];
+			Vector3[] worldPoints = new Vector3[pb.positions.Length];
 
-			System.Array.Copy(pb.vertices, worldPoints, worldPoints.Length);
+			System.Array.Copy(pb.positions, worldPoints, worldPoints.Length);
 
 			for(int i = 0; i < worldPoints.Length; i++)
 				worldPoints[i] = pb.transform.TransformPoint(worldPoints[i]);
@@ -33,9 +33,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static Vector3[] VerticesInWorldSpace(this pb_Object pb, int[] indices)
+		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh pb, int[] indices)
 		{
-			Vector3[] worldPoints = pb.vertices.ValuesWithIndices(indices);
+			Vector3[] worldPoints = pb.positions.ValuesWithIndices(indices);
 
 			for(int i = 0; i < worldPoints.Length; i++)
 				worldPoints[i] = pb.transform.TransformPoint(worldPoints[i]);
@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="selectedTriangles">A distinct set of indices to apply an offset to.</param>
 		/// <param name="offset">The offset to apply in world coordinates.</param>
-		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
+		public static void TranslateVertices_World(this ProBuilderMesh pb, int[] selectedTriangles, Vector3 offset)
 		{
 			pb.TranslateVertices_World(selectedTriangles, offset, 0f, false, null);
 		}
@@ -63,7 +63,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="snapValue">If > 0 snap each vertex to the nearest on-grid point in world space.</param>
 		/// <param name="snapAxisOnly">If true vertices will only be snapped along the active axis.</param>
 		/// <param name="lookup">A shared index lookup table.  Can pass NULL to have this automatically calculated.</param>
-		public static void TranslateVertices_World(this pb_Object pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
+		public static void TranslateVertices_World(this ProBuilderMesh pb, int[] selectedTriangles, Vector3 offset, float snapValue, bool snapAxisOnly, Dictionary<int, int> lookup)
 		{
 			int i = 0;
 			int[] indices = lookup != null ? pb.sharedIndices.AllIndicesWithValues(lookup, selectedTriangles).ToArray() : pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
@@ -72,7 +72,7 @@ namespace UnityEngine.ProBuilder
 
 			Vector3 localOffset = w2l * offset;
 
-			Vector3[] verts = pb.vertices;
+			Vector3[] verts = pb.positions;
 
 			// Snaps to world grid
 			if(Mathf.Abs(snapValue) > Mathf.Epsilon)
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
 			pb.SetVertices(verts);
-			pb.msh.vertices = verts;
+			pb.mesh.vertices = verts;
 		}
 
 		/// <summary>
@@ -104,18 +104,18 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="selectedTriangles"></param>
 		/// <param name="offset"></param>
-		public static void TranslateVertices(this pb_Object pb, int[] selectedTriangles, Vector3 offset)
+		public static void TranslateVertices(this ProBuilderMesh pb, int[] selectedTriangles, Vector3 offset)
 		{
 			int i = 0;
 			int[] indices = pb.sharedIndices.AllIndicesWithValues(selectedTriangles).ToArray();
 
-			Vector3[] verts = pb.vertices;
+			Vector3[] verts = pb.positions;
 			for(i = 0; i < indices.Length; i++)
 				verts[indices[i]] += offset;
 
 			// don't bother calling a full ToMesh() here because we know for certain that the _vertices and msh.vertices arrays are equal in length
 			pb.SetVertices(verts);
-			pb.msh.vertices = verts;
+			pb.mesh.vertices = verts;
 		}
 
 		/// <summary>
@@ -125,16 +125,16 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="sharedIndex"></param>
 		/// <param name="position"></param>
-		public static void SetSharedVertexPosition(this pb_Object pb, int sharedIndex, Vector3 position)
+		public static void SetSharedVertexPosition(this ProBuilderMesh pb, int sharedIndex, Vector3 position)
 		{
-			Vector3[] v = pb.vertices;
+			Vector3[] v = pb.positions;
 			int[] array = pb.sharedIndices[sharedIndex].array;
 
 			for(int i = 0; i < array.Length; i++)
 				v[array[i]] = position;
 
 			pb.SetVertices(v);
-			pb.msh.vertices = v;
+			pb.mesh.vertices = v;
 		}
 
 		/// <summary>
@@ -144,7 +144,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="sharedIndex"></param>
 		/// <param name="vertex"></param>
-		public static void SetSharedVertexValues(this pb_Object pb, int sharedIndex, pb_Vertex vertex)
+		public static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, pb_Vertex vertex)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 
@@ -163,7 +163,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="tri">int[] composed of three indices.</param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out Face face)
+		public static bool FaceWithTriangle(this ProBuilderMesh pb, int[] tri, out Face face)
 		{
 			for(int i = 0; i < pb.faces.Length; i++)
 			{
@@ -185,7 +185,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="tri">int[] composed of three indices.</param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static bool FaceWithTriangle(this pb_Object pb, int[] tri, out int face)
+		public static bool FaceWithTriangle(this ProBuilderMesh pb, int[] tri, out int face)
 		{
 			for(int i = 0; i < pb.faces.Length; i++)
 			{

@@ -15,7 +15,7 @@ namespace ProBuilder.MeshOperations
 		 * Sews a UV seam using delta to determine which UVs are close enough to be merged.
 		 * \sa pbVertexOps::WeldVertices
 		 */
-		public static bool SewUVs(this pb_Object pb, int[] indices, float delta)
+		public static bool SewUVs(this ProBuilderMesh pb, int[] indices, float delta)
 		{
 			int[] si = new int[indices.Length];
 			Vector2[] uvs = pb.uv;
@@ -57,7 +57,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Similar to Sew, except Collapse just flattens all UVs to the center point no matter the distance.
 		 */
-		public static void CollapseUVs(this pb_Object pb, int[] indices)
+		public static void CollapseUVs(this ProBuilderMesh pb, int[] indices)
 		{
 			Vector2[] uvs = pb.uv;
 
@@ -78,7 +78,7 @@ namespace ProBuilder.MeshOperations
 		 * Creates separate entries in sharedIndices cache for all passed indices.
 		 * If indices are not present in pb_IntArray[], don't do anything with them.
 		 */
-		public static bool SplitUVs(this pb_Object pb, int[] indices)
+		public static bool SplitUVs(this ProBuilderMesh pb, int[] indices)
 		{
 			IntArray[] sharedIndices = pb.sharedIndicesUV;
 
@@ -115,7 +115,7 @@ namespace ProBuilder.MeshOperations
 		 * Projects UVs on all passed faces, automatically updating the sharedIndicesUV table
 		 * as required (only associates vertices that share a seam).
 		 */
-		public static void ProjectFacesAuto(pb_Object pb, Face[] faces)
+		public static void ProjectFacesAuto(ProBuilderMesh pb, Face[] faces)
 		{
 			int[] ind = faces.SelectMany(x => x.distinctIndices).ToArray();
 
@@ -126,7 +126,7 @@ namespace ProBuilder.MeshOperations
 			nrm /= (float)faces.Length;
 
 			/* project uv coordinates */
-			Vector2[] uvs = pb_Projection.PlanarProject(pb_Util.ValuesWithIndices(pb.vertices, ind), nrm);
+			Vector2[] uvs = pb_Projection.PlanarProject(pb_Util.ValuesWithIndices(pb.positions, ind), nrm);
 
 			/* re-assign new projected coords back into full uv array */
 			Vector2[] rebuiltUVs = pb.uv;
@@ -135,7 +135,7 @@ namespace ProBuilder.MeshOperations
 
 			/* and set the msh uv array using the new coordintaes */
 			pb.SetUV(rebuiltUVs);
-			pb.msh.uv = rebuiltUVs;
+			pb.mesh.uv = rebuiltUVs;
 
 			/* now go trhough and set all adjacent face groups to use matching element groups */
 			foreach(Face f in faces)
@@ -192,7 +192,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Projects UVs for each face using the closest normal on a box.
 		 */
-		public static void ProjectFacesBox(pb_Object pb, Face[] faces)
+		public static void ProjectFacesBox(ProBuilderMesh pb, Face[] faces)
 		{
 			Vector2[] uv = pb.uv;
 
@@ -221,7 +221,7 @@ namespace ProBuilder.MeshOperations
 			{
 				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
-				Vector2[] uvs = pb_Projection.PlanarProject( pb.vertices.ValuesWithIndices(distinct), pb_Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
+				Vector2[] uvs = pb_Projection.PlanarProject( pb.positions.ValuesWithIndices(distinct), pb_Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
 
 				for(int n = 0; n < distinct.Length; n++)
 					uv[distinct[n]] = uvs[n];
@@ -236,7 +236,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Projects UVs for each face using the closest normal on a box.
 		 */
-		public  static void ProjectFacesSphere(pb_Object pb, int[] indices)
+		public  static void ProjectFacesSphere(ProBuilderMesh pb, int[] indices)
 		{
 			foreach(Face f in pb.faces)
 			{
@@ -249,7 +249,7 @@ namespace ProBuilder.MeshOperations
 
 			SplitUVs(pb, indices);
 
-			Vector2[] projected = pb_Projection.SphericalProject(pb.vertices, indices);
+			Vector2[] projected = pb_Projection.SphericalProject(pb.positions, indices);
 
 			Vector2[] uv = pb.uv;
 
@@ -288,7 +288,7 @@ namespace ProBuilder.MeshOperations
 		 * Provided two faces, this method will attempt to project @f2 and align its size, rotation, and position
 		 * to match the shared edge on f1.  Returns true on success, false otherwise.
 		 */
-		public static bool AutoStitch(pb_Object pb, Face f1, Face f2)
+		public static bool AutoStitch(ProBuilderMesh pb, Face f1, Face f2)
 		{
 			// Cache shared indices (we gon' use 'em a lot)
 			Dictionary<int, int> sharedIndices = pb.sharedIndices.ToDictionary();
@@ -322,7 +322,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * move the UVs to where the edges passed meet
 		 */
-		static bool AlignEdges(pb_Object pb, Face f1, Face f2, Edge edge1, Edge edge2)
+		static bool AlignEdges(ProBuilderMesh pb, Face f1, Face f2, Edge edge1, Edge edge2)
 		{
 			Vector2[] uvs = pb.uv;
 			IntArray[] sharedIndices = pb.sharedIndices;
@@ -465,7 +465,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 * Sets the passed faces to use Auto or Manual UVs, and (if previously manual) splits any vertex connections.
 		 */
-		public static void SetAutoUV(pb_Object pb, Face[] faces, bool auto)
+		public static void SetAutoUV(ProBuilderMesh pb, Face[] faces, bool auto)
 		{
 			if(auto)
 			{

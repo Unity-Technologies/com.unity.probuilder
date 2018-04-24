@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			pb_Object[] pbs = (pb_Object[])Selection.transforms.GetComponents<pb_Object>();
+			ProBuilderMesh[] pbs = (ProBuilderMesh[])Selection.transforms.GetComponents<ProBuilderMesh>();
 
 			if(pbs.Length == 2)
 			{
@@ -131,11 +131,11 @@ namespace UnityEditor.ProBuilder
 			GUILayout.Space(m_PreviewHeight + k_Padding*2);
 
 			GUILayout.BeginHorizontal();
-				pb_Object lpb = m_LeftGameObject != null ? m_LeftGameObject.GetComponent<pb_Object>() : null;
-				pb_Object rpb = m_RightGameObject != null ? m_RightGameObject.GetComponent<pb_Object>() : null;
+				ProBuilderMesh lpb = m_LeftGameObject != null ? m_LeftGameObject.GetComponent<ProBuilderMesh>() : null;
+				ProBuilderMesh rpb = m_RightGameObject != null ? m_RightGameObject.GetComponent<ProBuilderMesh>() : null;
 
-				lpb = (pb_Object) EditorGUILayout.ObjectField(lpb, typeof(pb_Object), true);
-				rpb = (pb_Object) EditorGUILayout.ObjectField(rpb, typeof(pb_Object), true);
+				lpb = (ProBuilderMesh) EditorGUILayout.ObjectField(lpb, typeof(ProBuilderMesh), true);
+				rpb = (ProBuilderMesh) EditorGUILayout.ObjectField(rpb, typeof(ProBuilderMesh), true);
 
 				m_LeftGameObject = lpb != null ? lpb.gameObject : null;
 				m_RightGameObject = rpb != null ? rpb.gameObject : null;
@@ -155,15 +155,15 @@ namespace UnityEditor.ProBuilder
 				switch(operation)
 				{
 					case BooleanOp.Union:
-						MenuCommands.MenuUnion(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
+						MenuCommands.MenuUnion(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 
 					case BooleanOp.Intersection:
-						MenuCommands.MenuIntersect(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
+						MenuCommands.MenuIntersect(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 
 					case BooleanOp.Subtraction:
-						MenuCommands.MenuSubtract(m_LeftGameObject.GetComponent<pb_Object>(), m_RightGameObject.GetComponent<pb_Object>());
+						MenuCommands.MenuSubtract(m_LeftGameObject.GetComponent<ProBuilderMesh>(), m_RightGameObject.GetComponent<ProBuilderMesh>());
 						break;
 				}
 			}
@@ -273,7 +273,7 @@ namespace UnityEditor.ProBuilder
 
 					foreach(Object pb in DragAndDrop.objectReferences)
 					{
-						if( (pb is GameObject && ((GameObject)pb).GetComponent<pb_Object>()) || pb is pb_Object)
+						if( (pb is GameObject && ((GameObject)pb).GetComponent<ProBuilderMesh>()) || pb is ProBuilderMesh)
 						{
 							if(pb == m_LeftGameObject || pb == m_RightGameObject) continue;
 

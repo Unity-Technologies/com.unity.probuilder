@@ -124,7 +124,7 @@ class UVEditor : EditorWindow
 	private Vector2 uvGraphOffset = Vector2.zero;
 
 	/// inspected data
-	pb_Object[] selection;
+	ProBuilderMesh[] selection;
 	int[][] distinct_indices;
 
 	List<Face[]>[] incompleteTextureGroupsInSelection = new List<Face[]>[0];
@@ -503,7 +503,7 @@ class UVEditor : EditorWindow
 
 #region Editor Delegate and Event
 
-	void OnSelectionUpdate(pb_Object[] selection)
+	void OnSelectionUpdate(ProBuilderMesh[] selection)
 	{
 		this.selection = selection;
 
@@ -527,7 +527,7 @@ class UVEditor : EditorWindow
 			}
 			else
 			{
-				pb_Object pb = selection[i];
+				ProBuilderMesh pb = selection[i];
 
 
 				foreach(Face[] incomplete_group in incompleteTextureGroupsInSelection[i])
@@ -609,7 +609,7 @@ class UVEditor : EditorWindow
 		{
 			UndoUtility.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs") );
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount > 0)
 				{
@@ -654,7 +654,7 @@ class UVEditor : EditorWindow
 		}
 		else if(mode == UVMode.Manual)
 		{
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				if(pb.SelectedFaceCount > 0)
 				{
@@ -673,7 +673,7 @@ class UVEditor : EditorWindow
 		}
 
 		// Regenerate UV2s
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.ToMesh();
 			pb.Refresh();
@@ -751,7 +751,7 @@ class UVEditor : EditorWindow
 	/**
 	 * return true if shortcut should eat the event
 	 */
-	internal bool ClickShortcutCheck(pb_Object pb, Face selectedFace)
+	internal bool ClickShortcutCheck(ProBuilderMesh pb, Face selectedFace)
 	{
 		Event e = Event.current;
 
@@ -759,7 +759,7 @@ class UVEditor : EditorWindow
 		if(e.modifiers == (EventModifiers.Control | EventModifiers.Shift))
 		{
 			// get first selected Auto UV face
-			pb_Object firstObj;
+			ProBuilderMesh firstObj;
 			Face source;
 
 			ProBuilderEditor.instance.GetFirstSelectedFace(out firstObj, out source);
@@ -1077,7 +1077,7 @@ class UVEditor : EditorWindow
 				{
 					for(int i = 0; i < selection.Length; i++)
 					{
-						pb_Object pb = selection[i];
+						ProBuilderMesh pb = selection[i];
 						uv = pb.uv;
 
 						for(int n = 0; n < pb.faces.Length; n++)
@@ -1177,7 +1177,7 @@ class UVEditor : EditorWindow
 			case SelectMode.Edge:
 				if(nearestElement.valid)
 				{
-					pb_Object pb = selection[nearestElement.objectIndex];
+					ProBuilderMesh pb = selection[nearestElement.objectIndex];
 
 					Edge edge = pb.faces[nearestElement.elementIndex].edges[nearestElement.elementSubIndex];
 					int ind = pb.SelectedEdges.IndexOf(edge, pb.sharedIndices.ToDictionary());
@@ -1352,7 +1352,7 @@ class UVEditor : EditorWindow
 
 			for(int n = 0; n < selection.Length; n++)
 			{
-				pb_Object pb = selection[n];
+				ProBuilderMesh pb = selection[n];
 				Vector2[] uvs = GetUVs(pb, channel);
 
 				foreach(int i in distinct_indices[n])
@@ -1364,10 +1364,10 @@ class UVEditor : EditorWindow
 				if(channel == 0)
 					pb.SetUV(uvs);
 				else
-					pb.msh.uv2 = uvs;
+					pb.mesh.uv2 = uvs;
 
 				if( (!ShiftKey || ControlKey) && channel == 0)
-					pb.msh.uv = uvs;
+					pb.mesh.uv = uvs;
 			}
 
 			/**
@@ -1414,7 +1414,7 @@ class UVEditor : EditorWindow
 					{
 						for(int i = 0; i < selection.Length; i++)
 						{
-							selection[i].msh.uv = selection[i].uv;
+							selection[i].mesh.uv = selection[i].uv;
 						}
 					}
 				}
@@ -1452,14 +1452,14 @@ class UVEditor : EditorWindow
 
 			for(int n = 0; n < selection.Length; n++)
 			{
-				pb_Object pb = selection[n];
+				ProBuilderMesh pb = selection[n];
 				Vector2[] uvs = pb.uv;
 
 				foreach(int i in distinct_indices[n])
 					uvs[i] += delta;
 
 				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				pb.mesh.uv = uvs;
 			}
 
 			RefreshSelectedUVCoordinates();
@@ -1488,14 +1488,14 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Object pb = selection[n];
+					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = pb.uv;
 
 					foreach(int i in distinct_indices[n])
 						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
 					pb.SetUV(uvs);
-					pb.msh.uv = uvs;
+					pb.mesh.uv = uvs;
 				}
 			}
 
@@ -1543,14 +1543,14 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Object pb = selection[n];
+					ProBuilderMesh pb = selection[n];
 					Vector2[] uvs = pb.uv;
 
 					foreach(int i in distinct_indices[n])
 						uvs[i] = uv_origins[n][i].RotateAroundPoint( uvOrigin, uvRotation );
 
 					pb.SetUV(uvs);
-					pb.msh.uv = uvs;
+					pb.mesh.uv = uvs;
 				}
 			}
 
@@ -1597,8 +1597,8 @@ class UVEditor : EditorWindow
 			{
 				for(int n = 0; n < selection.Length; n++)
 				{
-					pb_Object pb = selection[n];
-					Vector2[] uvs = pb.msh.uv;
+					ProBuilderMesh pb = selection[n];
+					Vector2[] uvs = pb.mesh.uv;
 
 					foreach(int i in distinct_indices[n])
 					{
@@ -1606,7 +1606,7 @@ class UVEditor : EditorWindow
 					}
 
 					pb.SetUV(uvs);
-					pb.msh.uv = uvs;
+					pb.mesh.uv = uvs;
 				}
 			}
 
@@ -1659,8 +1659,8 @@ class UVEditor : EditorWindow
 		{
 			for(int n = 0; n < selection.Length; n++)
 			{
-				pb_Object pb = selection[n];
-				Vector2[] uvs = pb.msh.uv;
+				ProBuilderMesh pb = selection[n];
+				Vector2[] uvs = pb.mesh.uv;
 
 				foreach(int i in distinct_indices[n])
 				{
@@ -1668,7 +1668,7 @@ class UVEditor : EditorWindow
 				}
 
 				pb.SetUV(uvs);
-				pb.msh.uv = uvs;
+				pb.mesh.uv = uvs;
 			}
 		}
 
@@ -1978,7 +1978,7 @@ class UVEditor : EditorWindow
 			{
 				for(int i = 0; i < selection.Length; i++)
 				{
-					pb_Object pb = selection[i];
+					ProBuilderMesh pb = selection[i];
 					uv = pb.uv;
 
 					for(int n = 0; n < pb.faces.Length; n++)
@@ -2004,10 +2004,10 @@ class UVEditor : EditorWindow
 				{
 					uv = GetUVs(selection[i], channel);
 
-					if(uv == null || uv.Length != selection[i].msh.vertexCount)
+					if(uv == null || uv.Length != selection[i].mesh.vertexCount)
 						continue;
 
-					int[] triangles = selection[i].msh.triangles;
+					int[] triangles = selection[i].mesh.triangles;
 
 					for(int n = 0; n < triangles.Length; n += 3)
 					{
@@ -2047,7 +2047,7 @@ class UVEditor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					pb_Object pb = selection[i];
+					ProBuilderMesh pb = selection[i];
 					uv = pb.uv;
 
 					if(pb.SelectedEdges.Length > 0)
@@ -2359,7 +2359,7 @@ class UVEditor : EditorWindow
 
 		for(int i = 0; i < selection.Length; i++)
 		{
-			pb_Object pb = selection[i];
+			ProBuilderMesh pb = selection[i];
 
 			Vector2[] mshUV = GetUVs(pb, channel);
 
@@ -2500,19 +2500,19 @@ class UVEditor : EditorWindow
 	/**
 	 * Sets an array to the appropriate UV channel, but don't refresh the Mesh.
 	 */
-	static void ApplyUVs(pb_Object pb, Vector2[] uvs, int channel)
+	static void ApplyUVs(ProBuilderMesh pb, Vector2[] uvs, int channel)
 	{
 		switch(channel)
 		{
 			case 0:
 				pb.SetUV(uvs);
-				if(pb.msh != null)
-					pb.msh.uv = uvs;
+				if(pb.mesh != null)
+					pb.mesh.uv = uvs;
 				break;
 
 			case 1:
-				if(pb.msh != null)
-					pb.msh.uv2 = uvs;
+				if(pb.mesh != null)
+					pb.mesh.uv2 = uvs;
 				break;
 		}
 	}
@@ -2520,23 +2520,23 @@ class UVEditor : EditorWindow
 	/**
 	 * Get a UV channel.
 	 */
-	static Vector2[] GetUVs(pb_Object pb, int channel)
+	static Vector2[] GetUVs(ProBuilderMesh pb, int channel)
 	{
 		switch(channel)
 		{
 			case 1:
 			{
-				Mesh m = pb.msh;
+				Mesh m = pb.mesh;
 				if(m == null)
 					return null;
-				return pb.msh.uv2;
+				return pb.mesh.uv2;
 			}
 
 #if !UNITY_5_0 && !UNITY_4_7
 			case 2:
 			case 3:
 			{
-				Mesh m = pb.msh;
+				Mesh m = pb.mesh;
 				if(m == null) return null;
 				List<Vector2> v = new List<Vector2>();
 				m.GetUVs(channel, v);
@@ -2641,7 +2641,7 @@ class UVEditor : EditorWindow
 		{
 			if(t_channel == 0)
 			{
-				foreach(pb_Object pb in selection)
+				foreach(ProBuilderMesh pb in selection)
 					pb.SetSelectedTriangles(new int[0] {});
 			}
 
@@ -2698,7 +2698,7 @@ class UVEditor : EditorWindow
 
 			if(GUILayout.Button("Rebuild Selected UV2"))
 			{
-				foreach(pb_Object pb in selection)
+				foreach(ProBuilderMesh pb in selection)
 					pb.Optimize(true);
 			}
 
@@ -2723,7 +2723,7 @@ class UVEditor : EditorWindow
 			{
 				modifyingUVs_AutoPanel = true;
 
-				foreach(pb_Object pb in selection)
+				foreach(ProBuilderMesh pb in selection)
 				{
 					pb.ToMesh();
 					pb.Refresh();
@@ -2871,7 +2871,7 @@ class UVEditor : EditorWindow
 	{
 		if(selection == null || selection.Length < 1) return;
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 
@@ -2901,7 +2901,7 @@ class UVEditor : EditorWindow
 	 * If any of the faces in @selection are AutoUV and in a texture group, this
 	 * augments the texture group buddies to the selection and returns it.
 	 */
-	private Face[] SelectTextureGroups(pb_Object pb, Face[] selection)
+	private Face[] SelectTextureGroups(ProBuilderMesh pb, Face[] selection)
 	{
 		List<int> texGroups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
 		Face[] sel = System.Array.FindAll(pb.faces, x => !x.manualUV && texGroups.Contains(x.textureGroup));
@@ -2913,7 +2913,7 @@ class UVEditor : EditorWindow
 	 * If selection contains faces that are part of a texture group, and not all of those group faces are in the selection,
 	 * return a pb_Face[] of that entire group so that we can show the user some indication of that groupage.
 	 */
-	private List<Face[]> GetIncompleteTextureGroups(pb_Object pb, Face[] selection)
+	private List<Face[]> GetIncompleteTextureGroups(ProBuilderMesh pb, Face[] selection)
 	{
 		// get distinct list of all selected texture groups
 		List<int> groups = selection.Select(x => x.textureGroup).Where(x => x > 0).Distinct().ToList();
@@ -2939,7 +2939,7 @@ class UVEditor : EditorWindow
 	{
 		if(selection == null || selection.Length < 1) return;
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			Face[] faces = GetFaces(pb, pb.SelectedTriangles);
 			pb.SetSelectedFaces(faces);
@@ -2954,7 +2954,7 @@ class UVEditor : EditorWindow
 	 *	way, we can easily select UV shells by grouping all elements as opposed
 	 *	to iterating through and checking nearby faces every time.
 	 */
-	private void RefreshElementGroups(pb_Object pb)
+	private void RefreshElementGroups(ProBuilderMesh pb)
 	{
 		foreach(Face f in pb.faces)
 			f.elementGroup = -1;
@@ -2989,7 +2989,7 @@ class UVEditor : EditorWindow
 	/**
 	 * Get all faces that contain any of the passed vertex indices.
 	 */
-	private Face[] GetFaces(pb_Object pb, int[] indices)
+	private Face[] GetFaces(ProBuilderMesh pb, int[] indices)
 	{
 		List<Face> faces = new List<Face>();
 		foreach(Face f in pb.faces)
@@ -3010,7 +3010,7 @@ class UVEditor : EditorWindow
 	/**
 	 * Finds all faces attached to the current selection and marks the faces as having been manually modified.
 	 */
-	private void FlagSelectedFacesAsManual(pb_Object pb)
+	private void FlagSelectedFacesAsManual(ProBuilderMesh pb)
 	{
 		// Mark selected UV faces manualUV flag true
 		foreach(Face f in GetFaces(pb, pb.SelectedTriangles))
@@ -3028,7 +3028,7 @@ class UVEditor : EditorWindow
 		uvCopy = new Vector2[selection.Length][];
 		for(int i = 0; i < selection.Length; i++)
 		{
-			pb_Object pb = selection[i];
+			ProBuilderMesh pb = selection[i];
 			uvCopy[i] = new Vector2[pb.vertexCount];
 			System.Array.Copy( GetUVs(pb, channel), uvCopy[i], pb.vertexCount);
 		}
@@ -3075,7 +3075,7 @@ class UVEditor : EditorWindow
 			ResetUserPivot();
 		}
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.Refresh();
 			pb.Optimize();
@@ -3115,7 +3115,7 @@ class UVEditor : EditorWindow
 			ResetUserPivot();
 		}
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.Refresh();
 			pb.Optimize();
@@ -3155,7 +3155,7 @@ class UVEditor : EditorWindow
 			ResetUserPivot();
 		}
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.Refresh();
 			pb.Optimize();
@@ -3189,7 +3189,7 @@ class UVEditor : EditorWindow
 	{
 		UndoUtility.RegisterCompleteObjectUndo(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.ToMesh();
 			pb_UVOps.SetAutoUV(pb, pb.SelectedFaces, !isManual);
@@ -3244,7 +3244,7 @@ class UVEditor : EditorWindow
 		EditorUtility.ShowNotification(this, "Collapse UVs");
 	}
 
-	public ActionResult Menu_SewUVs(pb_Object[] selection)
+	public ActionResult Menu_SewUVs(ProBuilderMesh[] selection)
 	{
 		if(channel == 1)
 		{
@@ -3282,7 +3282,7 @@ class UVEditor : EditorWindow
 
 		UndoUtility.RecordSelection(selection, "Split UV Seams");
 
-		foreach(pb_Object pb in selection)
+		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.ToMesh();
 
@@ -3314,7 +3314,7 @@ class UVEditor : EditorWindow
 
 			selection[i].SplitUVs(selection[i].SelectedTriangles);
 
-			Vector2[] uv = channel == 0 ? selection[i].uv : selection[i].msh.uv2;
+			Vector2[] uv = channel == 0 ? selection[i].uv : selection[i].mesh.uv2;
 
 			foreach(int n in selection[i].SelectedTriangles.Distinct())
 				uv[n] = ProBuilderMath.ReflectPoint(uv[n], center, center + direction);

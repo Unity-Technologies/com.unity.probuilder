@@ -648,9 +648,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static Vector3 Normal(pb_Object pb, Face face)
+		public static Vector3 Normal(ProBuilderMesh pb, Face face)
 		{
-			Vector3[] _vertices = pb.vertices;
+			Vector3[] _vertices = pb.positions;
 
 			// if the face is just a quad, use the first
 			// triangle normal.
@@ -725,7 +725,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="normal"></param>
 		/// <param name="tangent"></param>
 		/// <param name="bitangent"></param>
-		public static void NormalTangentBitangent(pb_Object pb, Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
+		public static void NormalTangentBitangent(ProBuilderMesh pb, Face face, out Vector3 normal, out Vector3 tangent, out Vector3 bitangent)
 		{
 			if(face.indices.Length < 3)
 			{
@@ -746,9 +746,9 @@ namespace UnityEngine.ProBuilder
 			long i2 = face.indices[1];
 			long i3 = face.indices[2];
 
-			Vector3 v1 = pb.vertices[i1];
-			Vector3 v2 = pb.vertices[i2];
-			Vector3 v3 = pb.vertices[i3];
+			Vector3 v1 = pb.positions[i1];
+			Vector3 v2 = pb.positions[i2];
+			Vector3 v3 = pb.positions[i3];
 
 			Vector2 w1 = pb.uv[i1];
 			Vector2 w2 = pb.uv[i2];

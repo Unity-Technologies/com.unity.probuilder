@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ActionResult res = ActionResult.NoSelection;
 
-			foreach(pb_Object pb in selection)
+			foreach(ProBuilderMesh pb in selection)
 			{
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
 				int[] indices = selectAll ? Face.AllTriangles(pb.faces) : pb.SelectedTriangles;

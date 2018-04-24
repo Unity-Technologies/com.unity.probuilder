@@ -25,8 +25,8 @@ namespace ProBuilder.EditorTests.Object
 			{
 				EditorUtility.VerifyMesh(copy);
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
-				Assert.IsFalse(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
-				pb_TestUtility.AssertAreEqual(copy.msh, original.msh);
+				Assert.IsFalse(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
+				pb_TestUtility.AssertAreEqual(copy.mesh, original.mesh);
 			}
 			finally
 			{
@@ -44,7 +44,7 @@ namespace ProBuilder.EditorTests.Object
 			try
 			{
 				Assert.AreNotEqual(copy, original, "GameObject references are equal");
-				Assert.IsTrue(ReferenceEquals(copy.msh, original.msh), "Mesh references are equal");
+				Assert.IsTrue(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
 			}
 			finally
 			{
