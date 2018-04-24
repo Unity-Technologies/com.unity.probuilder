@@ -84,7 +84,7 @@ namespace UnityEngine.ProBuilder
 				for(i = 0; i < indices.Length; i++)
 				{
 					v = l2w.MultiplyPoint3x4(verts[indices[i]] + localOffset);
-					verts[indices[i]] = w2l.MultiplyPoint3x4( Snap.SnapValue(v, snapValue * mask) );
+					verts[indices[i]] = w2l.MultiplyPoint3x4( Snapping.SnapValue(v, snapValue * mask) );
 				}
 			}
 			else

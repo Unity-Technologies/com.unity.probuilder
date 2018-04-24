@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEditor;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
+using MeshTopology = UnityEngine.MeshTopology;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder

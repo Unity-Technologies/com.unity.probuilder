@@ -5,7 +5,7 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using ProBuilder.Test;
 using UnityEditor;
 using UnityEngine.TestTools;

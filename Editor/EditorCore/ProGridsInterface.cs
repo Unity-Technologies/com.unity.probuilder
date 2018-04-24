@@ -224,7 +224,7 @@ namespace UnityEditor.ProBuilder
 		public static float ProGridsSnap(float point)
 		{
 			if(ProGridsInterface.SnapEnabled())
-				return Snap.SnapValue(point, ProGridsInterface.SnapValue());
+				return Snapping.SnapValue(point, ProGridsInterface.SnapValue());
 
 			return point;
 		}
@@ -239,7 +239,7 @@ namespace UnityEditor.ProBuilder
 			if(ProGridsInterface.SnapEnabled())
 			{
 				float snap = ProGridsInterface.SnapValue();
-				return Snap.SnapValue(point, snap);
+				return Snapping.SnapValue(point, snap);
 			}
 
 			return point;
@@ -256,7 +256,7 @@ namespace UnityEditor.ProBuilder
 			if(ProGridsInterface.SnapEnabled())
 			{
 				float snap = ProGridsInterface.SnapValue();
-				return Snap.SnapValue(point, mask * snap);
+				return Snapping.SnapValue(point, mask * snap);
 			}
 
 			return point;

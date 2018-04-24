@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor;
 using UnityEngine;
 
@@ -68,7 +68,7 @@ namespace UnityEditor.ProBuilder
 				// is not)
 
 				pb = Undo.AddComponent<ProBuilderMesh>(go);
-				pb_MeshOps.ResetPbObjectWithMeshFilter(pb, true);
+				InternalMeshUtility.ResetPbObjectWithMeshFilter(pb, true);
 
 				pb.ToMesh();
 				pb.Refresh();

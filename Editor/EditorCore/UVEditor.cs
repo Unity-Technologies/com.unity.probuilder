@@ -11,7 +11,7 @@ using UnityEditor.ProBuilder;
 using System.Reflection;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -803,7 +803,7 @@ class UVEditor : EditorWindow
 
 			pb.ToMesh();
 
-			bool success = pb_UVOps.AutoStitch(pb, anchor, selectedFace);
+			bool success = UVEditing.AutoStitch(pb, anchor, selectedFace);
 
 			if(success)
 			{
@@ -1285,7 +1285,7 @@ class UVEditor : EditorWindow
 
 			if(ControlKey)
 			{
-				handlePosition = Snap.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snapping.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 			}
 			else
 			{
@@ -1348,7 +1348,7 @@ class UVEditor : EditorWindow
 			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = Snap.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				newUVPosition = Snapping.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1448,7 +1448,7 @@ class UVEditor : EditorWindow
 			handlePosition.y += delta.y;
 
 			if(ControlKey)
-				handlePosition = Snap.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snapping.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1481,7 +1481,7 @@ class UVEditor : EditorWindow
 			}
 
 			if(ControlKey)
-				uvRotation = Snap.SnapValue(uvRotation, 15f);
+				uvRotation = Snapping.SnapValue(uvRotation, 15f);
 
 			// Do rotation around the handle pivot in manual mode
 			if(mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1526,7 +1526,7 @@ class UVEditor : EditorWindow
 		if(rotation != uvRotation)
 		{
 			if(ControlKey)
-				rotation = Snap.SnapValue(rotation, 15f);
+				rotation = Snapping.SnapValue(rotation, 15f);
 
 			float delta = rotation - uvRotation;
 			uvRotation = rotation;
@@ -1580,7 +1580,7 @@ class UVEditor : EditorWindow
 		uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 		if(ControlKey)
-			uvScale = Snap.SnapValue(uvScale, pref_gridSnapValue);
+			uvScale = Snapping.SnapValue(uvScale, pref_gridSnapValue);
 
 		if(ProBuilderMath.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
 		if(ProBuilderMath.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
@@ -1646,7 +1646,7 @@ class UVEditor : EditorWindow
 		previousScale.y = 1f / previousScale.y;
 
 		if(ControlKey)
-			textureScale = Snap.SnapValue(textureScale, pref_gridSnapValue);
+			textureScale = Snapping.SnapValue(textureScale, pref_gridSnapValue);
 
 		if(!modifyingUVs)
 		{
@@ -3050,8 +3050,8 @@ class UVEditor : EditorWindow
 			if(selection[i].SelectedFaces.Length > 0)
 			{
 				selection[i].ToMesh();	// Remove UV2 modifications
-				pb_UVOps.SplitUVs(selection[i], selection[i].SelectedTriangles);
-				pb_UVOps.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
+				UVEditing.SplitUVs(selection[i], selection[i].SelectedTriangles);
+				UVEditing.ProjectFacesAuto(selection[i], selection[i].SelectedFaces);
 
 				foreach(Face f in selection[i].SelectedFaces)
 					f.manualUV = true;
@@ -3102,7 +3102,7 @@ class UVEditor : EditorWindow
 
 			if(selection[i].SelectedFaces.Length > 0)
 			{
-				pb_UVOps.ProjectFacesBox(selection[i], selection[i].SelectedFaces);
+				UVEditing.ProjectFacesBox(selection[i], selection[i].SelectedFaces);
 				p++;
 			}
 		}
@@ -3142,7 +3142,7 @@ class UVEditor : EditorWindow
 
 			if(selection[i].SelectedTriangleCount > 0)
 			{
-				pb_UVOps.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles);
+				UVEditing.ProjectFacesSphere(selection[i], selection[i].SelectedTriangles);
 				p++;
 			}
 		}
@@ -3192,7 +3192,7 @@ class UVEditor : EditorWindow
 		foreach(ProBuilderMesh pb in selection)
 		{
 			pb.ToMesh();
-			pb_UVOps.SetAutoUV(pb, pb.SelectedFaces, !isManual);
+			UVEditing.SetAutoUV(pb, pb.SelectedFaces, !isManual);
 			pb.Refresh();
 			pb.Optimize();
 		}
@@ -3360,7 +3360,7 @@ class UVEditor : EditorWindow
 			Vector2[] uv = selection[i].uv;
 			Vector2[] uvs = InternalUtility.ValuesWithIndices( uv, distinct_indices[i] );
 
-			uvs = pb_UVOps.FitUVs(uvs);
+			uvs = UVEditing.FitUVs(uvs);
 
 			for(int n = 0; n < uvs.Length; n++)
 				uv[ distinct_indices[i][n] ] = uvs[n];

@@ -8,7 +8,7 @@ using System.Text;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder.Actions
 			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
 			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
 
-			pb_MeshImporter.Settings settings = new pb_MeshImporter.Settings()
+			MeshImporter.Settings settings = new MeshImporter.Settings()
 			{
 				quads = PreferencesInternal.GetBool("pb_MeshImporter::quads", true),
 				smoothing = PreferencesInternal.GetBool("pb_MeshImporter::smoothing", true),
@@ -120,7 +120,7 @@ namespace UnityEditor.ProBuilder.Actions
 			IEnumerable<MeshFilter> selected,
 			bool preserveFaces)
 		{
-			return DoProBuilderize(selected, new pb_MeshImporter.Settings()
+			return DoProBuilderize(selected, new MeshImporter.Settings()
 			{
 				quads = preserveFaces,
 				smoothing = false,
@@ -136,7 +136,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/// <returns></returns>
 		public static ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
-			pb_MeshImporter.Settings settings)
+			MeshImporter.Settings settings)
 		{
 			int i = 0;
 			float count = selected.Count();
@@ -153,7 +153,7 @@ namespace UnityEditor.ProBuilder.Actions
 				{
 					ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
 
-					pb_MeshImporter meshImporter = new pb_MeshImporter(pb);
+					MeshImporter meshImporter = new MeshImporter(pb);
 					meshImporter.Import(go, settings);
 
 					// if this was previously a pb_Object, or similarly any other instance asset, destroy it.

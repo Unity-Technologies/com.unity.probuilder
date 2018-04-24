@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using Object = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -2272,7 +2272,7 @@ namespace UnityEditor.ProBuilder
 
 //				profiler.End();
 //				profiler.Begin("selected faces in edit zone");
-				SelectedFacesInEditZone.Add(pb, pb_MeshUtils.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
+				SelectedFacesInEditZone.Add(pb, ElementSelection.GetNeighborFaces(pb, pb.SelectedTriangles, m_SharedIndicesDictionary[i]));
 
 				m_SelectedVertexCount += selection[i].SelectedTriangles.Length;
 				m_SelectedFaceCount += selection[i].SelectedFaceCount;
@@ -2577,7 +2577,7 @@ namespace UnityEditor.ProBuilder
 					? pb.sharedIndices.AllIndicesWithValues(pb.SelectedTriangles).ToArray()
 					: pb.mesh.triangles;
 
-				pb_VertexOps.Quantize(pb, indices, Vector3.one * snapVal);
+				Snapping.SnapVertices(pb, indices, Vector3.one * snapVal);
 
 				pb.ToMesh();
 				pb.Refresh();

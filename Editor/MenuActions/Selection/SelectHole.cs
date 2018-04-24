@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder.Actions
 				bool selectAll = pb.SelectedTriangles == null || pb.SelectedTriangles.Length < 1;
 				int[] indices = selectAll ? Face.AllTriangles(pb.faces) : pb.SelectedTriangles;
 
-				List<List<Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);
+				List<List<Edge>> holes = AppendPolygon.FindHoles(pb, indices);
 
 				res = new ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 

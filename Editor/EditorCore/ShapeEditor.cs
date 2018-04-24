@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder
 {
@@ -900,7 +900,7 @@ namespace UnityEditor.ProBuilder
 				// int[] welds;
 				// pb.WeldVertices(pb_Face.AllTriangles(pb.faces), Mathf.Epsilon, out welds);
 
-				pb_UVOps.ProjectFacesBox(pb, pb.faces);
+				UVEditing.ProjectFacesBox(pb, pb.faces);
 
 				for(int i = 0; i < pb.faces.Length; i++)
 					pb.faces[i].manualUV = true;
@@ -1003,7 +1003,7 @@ namespace UnityEditor.ProBuilder
 					true);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-				pb_UVOps.ProjectFacesBox(pb, pb.faces);
+				UVEditing.ProjectFacesBox(pb, pb.faces);
 
 				if (m_DefaultMaterial) pb.SetFaceMaterial(pb.faces,m_DefaultMaterial);
 
@@ -1124,10 +1124,10 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
+				pb.transform.position = Snapping.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = Snap.SnapValue(pb.transform.position, 1f);
+				pb.transform.position = Snapping.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object
 			Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy( pb.mesh );

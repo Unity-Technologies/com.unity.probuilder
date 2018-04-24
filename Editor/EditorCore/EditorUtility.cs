@@ -7,7 +7,7 @@ using System;
 using System.Reflection;
 using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 
@@ -353,10 +353,10 @@ namespace UnityEditor.ProBuilder
 				pb.CenterPivot(indicesToCenterPivot);
 
 			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
+				pb.transform.position = Snapping.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = Snap.SnapValue(pb.transform.position, 1f);
+				pb.transform.position = Snapping.SnapValue(pb.transform.position, 1f);
 
 			pb.Optimize();
 		}

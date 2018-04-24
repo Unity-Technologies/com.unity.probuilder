@@ -4,7 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
 {

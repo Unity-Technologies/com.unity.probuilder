@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions

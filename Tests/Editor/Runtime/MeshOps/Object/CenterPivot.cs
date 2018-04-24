@@ -6,7 +6,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using ProBuilder.Test;
-using ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor;
 using UnityEngine.TestTools;
 
