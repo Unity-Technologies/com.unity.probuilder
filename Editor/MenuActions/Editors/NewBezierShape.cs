@@ -47,7 +47,7 @@ namespace ProBuilder.Actions
 			bezier.Refresh();
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);
-			pb_Undo.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
+			UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
 			bezier.m_IsEditing = true;
 
 			return new pb_ActionResult(Status.Success, "Create Bezier Shape");

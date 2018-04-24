@@ -125,7 +125,7 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				pb_Undo.RecordObject(pb, "Mirror");
+				UndoUtility.RecordObject(pb, "Mirror");
 				mirredObject = pb;
 			}
 

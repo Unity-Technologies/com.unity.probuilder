@@ -98,7 +98,7 @@ namespace UnityEditor.ProBuilder
 
 			set {
 				if(m_Target.m_CloseLoop != value)
-					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Close Loop");
+					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Close Loop");
 				m_Target.m_CloseLoop = value;
 			}
 		}
@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
 
 			set {
 				if(m_Target.m_Radius != value)
-					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Radius");
+					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Radius");
 				m_Target.m_Radius = value;
 			}
 		}
@@ -120,7 +120,7 @@ namespace UnityEditor.ProBuilder
 
 			set {
 				if(m_Target.m_Rows != value)
-					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Rows");
+					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Rows");
 				m_Target.m_Rows = value;
 			}
 		}
@@ -131,7 +131,7 @@ namespace UnityEditor.ProBuilder
 
 			set {
 				if(m_Target.m_Columns != value)
-					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Columns");
+					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Columns");
 				m_Target.m_Columns = value;
 			}
 		}
@@ -142,7 +142,7 @@ namespace UnityEditor.ProBuilder
 
 			set {
 				if(m_Target.m_Smooth != value)
-					pb_Undo.RecordObject(m_Target, "Set Bezier Shape Smooth");
+					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Smooth");
 				m_Target.m_Smooth = value;
 			}
 		}
@@ -234,8 +234,8 @@ namespace UnityEditor.ProBuilder
 				if(ProBuilderEditor.instance != null)
 					ProBuilderEditor.instance.ClearElementSelection();
 
-				pb_Undo.RecordObject(m_Target, "Edit Bezier Shape");
-				pb_Undo.RecordObject(m_Target.mesh, "Edit Bezier Shape");
+				UndoUtility.RecordObject(m_Target, "Edit Bezier Shape");
+				UndoUtility.RecordObject(m_Target.mesh, "Edit Bezier Shape");
 
 				UpdateMesh(true);
 			}
@@ -304,14 +304,14 @@ namespace UnityEditor.ProBuilder
 
 			if(GUILayout.Button("Clear Points"))
 			{
-				pb_Undo.RecordObject(m_Target, "Clear Bezier Spline Points");
+				UndoUtility.RecordObject(m_Target, "Clear Bezier Spline Points");
 				m_Points.Clear();
 				UpdateMesh(true);
 			}
 
 			if(GUILayout.Button("Add Point"))
 			{
-				pb_Undo.RecordObject(m_Target, "Add Bezier Spline Point");
+				UndoUtility.RecordObject(m_Target, "Add Bezier Spline Point");
 
 				if(m_Points.Count > 0)
 				{
@@ -401,7 +401,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)
 				{
-					pb_Undo.RecordObject(m_Target, "Delete Bezier Point");
+					UndoUtility.RecordObject(m_Target, "Delete Bezier Point");
 					m_Points.RemoveAt(m_currentHandle);
 					UpdateMesh(true);
 				}
@@ -534,12 +534,12 @@ namespace UnityEditor.ProBuilder
 
 				if(m_currentHandle == index && !m_currentHandle.isTangent)
 				{
-					pb_Handles.DotCap(0, point.position, Quaternion.identity, size, e.type);
+					Handles.DotHandleCap(0, point.position, Quaternion.identity, size, e.type);
 				}
 				else
 				{
 					prev = point.position;
-					prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
+					prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
 					if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 					{
 						eventHasBeenUsed = true;
@@ -567,12 +567,12 @@ namespace UnityEditor.ProBuilder
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.In)
 					{
-						pb_Handles.DotCap(0, point.tangentIn, Quaternion.identity, size, e.type);
+						Handles.DotHandleCap(0, point.tangentIn, Quaternion.identity, size, e.type);
 					}
 					else
 					{
 						prev = point.tangentIn;
-						prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
+						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
 
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
@@ -599,12 +599,12 @@ namespace UnityEditor.ProBuilder
 
 					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.Out)
 					{
-						pb_Handles.DotCap(0, point.tangentOut, Quaternion.identity, size, e.type);
+						Handles.DotHandleCap(0, point.tangentOut, Quaternion.identity, size, e.type);
 					}
 					else
 					{
 						prev = point.tangentOut;
-						prev = pb_Handles.FreeMoveDotHandle(prev, Quaternion.identity, size, Vector3.zero);
+						prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
 
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
@@ -637,12 +637,12 @@ namespace UnityEditor.ProBuilder
 				if( !IsHoveringHandlePoint(e.mousePosition) && distanceToLine < pb_Constant.k_MaxPointDistanceFromControl )
 				{
 					Handles.color = Color.green;
-					pb_Handles.DotCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
+					Handles.DotHandleCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
 					Handles.color = Color.white;
 
 					if(!eventHasBeenUsed && eventType == EventType.MouseDown && e.button == 0)
 					{
-						pb_Undo.RecordObject(m_Target, "Add Point");
+						UndoUtility.RecordObject(m_Target, "Add Point");
 						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
 						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, p - dir, p + dir, Quaternion.identity));
 						UpdateMesh(true);
@@ -697,7 +697,7 @@ namespace UnityEditor.ProBuilder
 		void OnBeginVertexModification()
 		{
 			m_IsMoving = true;
-			pb_Undo.RecordObject(m_Target, "Modify Bezier Spline");
+			UndoUtility.RecordObject(m_Target, "Modify Bezier Spline");
 			Lightmapping.PushGIWorkflowMode();
 		}
 

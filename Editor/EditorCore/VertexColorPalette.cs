@@ -188,7 +188,7 @@ namespace UnityEditor.ProBuilder
 		{
 			pb_Object[] selection = pb_Util.GetComponents<pb_Object>(Selection.transforms);
 
-			pb_Undo.RecordSelection(selection, "Apply Vertex Colors");
+			UndoUtility.RecordSelection(selection, "Apply Vertex Colors");
 
 			ProBuilderEditor editor = ProBuilderEditor.instance;
 

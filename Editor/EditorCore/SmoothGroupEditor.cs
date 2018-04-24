@@ -669,7 +669,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SelectGroups(pb_Object pb, HashSet<int> groups)
 		{
-			pb_Undo.RecordSelection(pb, "Select with Smoothing Group");
+			UndoUtility.RecordSelection(pb, "Select with Smoothing Group");
 
 			if( (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift ||
 				(Event.current.modifiers & EventModifiers.Control) == EventModifiers.Control )
@@ -681,7 +681,7 @@ namespace UnityEditor.ProBuilder
 
 		private void SetGroup(pb_Object pb, int index)
 		{
-			pb_Undo.RecordObject(pb, "Set Smoothing Group");
+			UndoUtility.RecordObject(pb, "Set Smoothing Group");
 
 			foreach (pb_Face face in pb.SelectedFaceCount < 1 ? pb.faces : pb.SelectedFaces)
 				face.smoothingGroup = index;

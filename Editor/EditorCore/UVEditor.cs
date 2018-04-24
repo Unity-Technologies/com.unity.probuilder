@@ -218,7 +218,7 @@ class UVEditor : EditorWindow
 	{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		// On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
-		pb_UVRenderOptions renderOptions = EditorWindow.GetWindow<pb_UVRenderOptions>(true, "Save UV Image", true);
+		UVRenderOptions renderOptions = EditorWindow.GetWindow<UVRenderOptions>(true, "Save UV Image", true);
 		renderOptions.position = new Rect(	this.position.x + (this.position.width/2f - 128),
 											this.position.y + (this.position.height/2f - 76),
 											256f,
@@ -607,7 +607,7 @@ class UVEditor : EditorWindow
 
 		if(mode == UVMode.Mixed || mode == UVMode.Auto)
 		{
-			pb_Undo.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs") );
+			UndoUtility.RegisterCompleteObjectUndo(selection, (tool == Tool.Move ? "Translate UVs" : tool == Tool.Rotate ? "Rotate UVs" : "Scale UVs") );
 
 			foreach(pb_Object pb in selection)
 			{
@@ -766,7 +766,7 @@ class UVEditor : EditorWindow
 
 			if( source != null )
 			{
-				pb_Undo.RecordObject(pb, "Copy UV Settings");
+				UndoUtility.RecordObject(pb, "Copy UV Settings");
 
 				selectedFace.uv = new pb_UV(source.uv);
 				selectedFace.material = source.material;
@@ -799,7 +799,7 @@ class UVEditor : EditorWindow
 
 			if(anchor == selectedFace) return false;
 
-			pb_Undo.RecordObject(pb, "AutoStitch");
+			UndoUtility.RecordObject(pb, "AutoStitch");
 
 			pb.ToMesh();
 
@@ -939,7 +939,7 @@ class UVEditor : EditorWindow
 					}
 					else
 					{
-						pb_Undo.RecordSelection(selection, "Change Selection");
+						UndoUtility.RecordSelection(selection, "Change Selection");
 
 						if(Event.current.modifiers == (EventModifiers)0 && editor)
 							editor.ClearElementSelection();
@@ -1240,7 +1240,7 @@ class UVEditor : EditorWindow
 
 		if(editor && !e.shift && !e.control && !e.command)
 		{
-			pb_Undo.RecordSelection(selection, "Change Selection");
+			UndoUtility.RecordSelection(selection, "Change Selection");
 			editor.ClearElementSelection();
 		}
 
@@ -1337,7 +1337,7 @@ class UVEditor : EditorWindow
 			{
 				// if auto uvs, the changes are applied after action is complete
 				if(mode != UVMode.Auto)
-					pb_Undo.RegisterCompleteObjectUndo(selection, "Translate UVs");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Translate UVs");
 
 				handlePosition_origin = handlePosition;
 				OnBeginUVModification();
@@ -1438,7 +1438,7 @@ class UVEditor : EditorWindow
 			// Start of move UV operation
 			if(!modifyingUVs)
 			{
-				pb_Undo.RecordSelection(selection, "Move UVs");
+				UndoUtility.RecordSelection(selection, "Move UVs");
 				OnBeginUVModification();
 				uvOrigin = handlePosition;	// have to set this one special
 				handlePosition_origin = handlePosition;
@@ -1476,7 +1476,7 @@ class UVEditor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				pb_Undo.RecordSelection(selection, "Rotate UVs");
+				UndoUtility.RecordSelection(selection, "Rotate UVs");
 				OnBeginUVModification();
 			}
 
@@ -1533,7 +1533,7 @@ class UVEditor : EditorWindow
 
 			if(!modifyingUVs)
 			{
-				pb_Undo.RecordSelection(selection, "Rotate UVs");
+				UndoUtility.RecordSelection(selection, "Rotate UVs");
 				OnBeginUVModification();
 				delta = 0f;
 			}
@@ -1589,7 +1589,7 @@ class UVEditor : EditorWindow
 		{
 			if(!modifyingUVs)
 			{
-				pb_Undo.RecordSelection(selection, "Scale UVs");
+				UndoUtility.RecordSelection(selection, "Scale UVs");
 				OnBeginUVModification();
 			}
 
@@ -1650,7 +1650,7 @@ class UVEditor : EditorWindow
 
 		if(!modifyingUVs)
 		{
-			pb_Undo.RecordSelection(selection, "Scale UVs");
+			UndoUtility.RecordSelection(selection, "Scale UVs");
 			OnBeginUVModification();
 		}
 
@@ -1845,6 +1845,8 @@ class UVEditor : EditorWindow
 
 	private void DrawUVGraph(Rect rect)
 	{
+		var evt = Event.current;
+
 		UVGraphCenter = rect.center;
 
 		UVRectIdentity.width = uvGridSize * uvGraphScale;
@@ -1866,17 +1868,13 @@ class UVEditor : EditorWindow
 		if(selection == null || selection.Length < 1)
 			return;
 
-		/**
-		 * Draw regular old outlines
-		 */
+		// Draw regular old outlines
 		Vector2 p = Vector2.zero;
 		Vector2[] uv;
 		r.width = DOT_SIZE;
 		r.height = DOT_SIZE;
 
-		/**
-		 * Draw all vertices if in vertex mode
-		 */
+		// Draw all vertices if in vertex mode
 		if(selectionMode == SelectMode.Vertex && screenshotStatus == ScreenshotStatus.Done)
 		{
 
@@ -1915,7 +1913,7 @@ class UVEditor : EditorWindow
 
 		foreach(List<Vector2> lines in incompleteTextureGroupsInSelection_CoordCache)
 			for(int i = 1; i < lines.Count; i++)
-				pb_Handles.CircleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f);
+				Handles.CircleHandleCap(-1, UVToGUIPoint(lines[i]), Quaternion.identity, 8f, evt.type);
 
 		#if PB_DEBUG
 		if(debug_showCoordinates)
@@ -1940,7 +1938,7 @@ class UVEditor : EditorWindow
 
 		GUI.color = Color.white;
 
-		if( Event.current.type == EventType.Repaint )
+		if( evt.type == EventType.Repaint )
 		{
 			GL.PushMatrix();
 			EditorHandleUtility.handleMaterial.SetPass(0);
@@ -3044,7 +3042,7 @@ class UVEditor : EditorWindow
 	 */
 	public void Menu_PlanarProject()
 	{
-		pb_Undo.RecordSelection(selection, "Planar Project Faces");
+		UndoUtility.RecordSelection(selection, "Planar Project Faces");
 		int projected = 0;
 
 		for(int i = 0; i < selection.Length; i++)
@@ -3096,7 +3094,7 @@ class UVEditor : EditorWindow
 	public void Menu_BoxProject()
 	{
 		int p = 0;
-		pb_Undo.RegisterCompleteObjectUndo(selection, "Box Project Faces");
+		UndoUtility.RegisterCompleteObjectUndo(selection, "Box Project Faces");
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3136,7 +3134,7 @@ class UVEditor : EditorWindow
 	public void Menu_SphericalProject()
 	{
 		int p = 0;
-		pb_Undo.RegisterCompleteObjectUndo(selection, "Spherical Project UVs");
+		UndoUtility.RegisterCompleteObjectUndo(selection, "Spherical Project UVs");
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3189,7 +3187,7 @@ class UVEditor : EditorWindow
 
 	public void SetIsManual(bool isManual)
 	{
-		pb_Undo.RegisterCompleteObjectUndo(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
+		UndoUtility.RegisterCompleteObjectUndo(selection, isManual ? "Set Faces Manual" : "Set Faces Auto");
 
 		foreach(pb_Object pb in selection)
 		{
@@ -3207,7 +3205,7 @@ class UVEditor : EditorWindow
 
 	public void Menu_SelectUVIsland()
 	{
-		pb_Undo.RecordSelection(selection, "Select Island");
+		UndoUtility.RecordSelection(selection, "Select Island");
 
 		SelectUVShell();
 		EditorUtility.ShowNotification(this, "Select UV Island");
@@ -3215,7 +3213,7 @@ class UVEditor : EditorWindow
 
 	public void Menu_SelectUVFace()
 	{
-		pb_Undo.RecordSelection(selection, "Select Face");
+		UndoUtility.RecordSelection(selection, "Select Face");
 
 		SelectUVFace();
 		EditorUtility.ShowNotification(this, "Select UV Face");
@@ -3229,7 +3227,7 @@ class UVEditor : EditorWindow
 			return;
 		}
 
-		pb_Undo.RecordSelection(selection, "Collapse UVs");
+		UndoUtility.RecordSelection(selection, "Collapse UVs");
 
 		for(int i = 0; i < selection.Length; i++)
 		{
@@ -3256,7 +3254,7 @@ class UVEditor : EditorWindow
 
 		float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
 
-		pb_Undo.RecordSelection(selection, "Sew UV Seams");
+		UndoUtility.RecordSelection(selection, "Sew UV Seams");
 		for(int i = 0; i < selection.Length; i++)
 		{
 			selection[i].ToMesh();
@@ -3282,7 +3280,7 @@ class UVEditor : EditorWindow
 			return;
 		}
 
-		pb_Undo.RecordSelection(selection, "Split UV Seams");
+		UndoUtility.RecordSelection(selection, "Split UV Seams");
 
 		foreach(pb_Object pb in selection)
 		{
@@ -3306,7 +3304,7 @@ class UVEditor : EditorWindow
 	 */
 	public void Menu_FlipUVs(Vector2 direction)
 	{
-		pb_Undo.RecordSelection(selection, "Flip " + direction);
+		UndoUtility.RecordSelection(selection, "Flip " + direction);
 
 		Vector2 center = handlePosition;
 
@@ -3351,7 +3349,7 @@ class UVEditor : EditorWindow
 	 */
 	public void Menu_FitUVs()
 	{
-		pb_Undo.RecordSelection(selection, "Fit UVs");
+		UndoUtility.RecordSelection(selection, "Fit UVs");
 
 		for(int i = 0; i < selection.Length; i++)
 		{

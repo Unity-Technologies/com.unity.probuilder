@@ -243,7 +243,7 @@ namespace UnityEditor.ProBuilder
 
 			if(GUILayout.Button(new GUIContent("Reset UVs", "Reset UV projection parameters."), GUILayout.MaxWidth(width)))
 			{
-				pb_Undo.RecordSelection(selection, "Reset UVs");
+				UndoUtility.RecordSelection(selection, "Reset UVs");
 
 				for(int i = 0; i < selection.Length; i++)
 				{
@@ -341,7 +341,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetFlipU(bool flipU, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Flip U");
+			UndoUtility.RecordSelection(sel, "Flip U");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -352,7 +352,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetFlipV(bool flipV, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Flip V");
+			UndoUtility.RecordSelection(sel, "Flip V");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.flipV = flipV;
@@ -362,7 +362,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetSwapUV(bool swapUV, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Swap U, V");
+			UndoUtility.RecordSelection(sel, "Swap U, V");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.swapUV = swapUV;
@@ -372,7 +372,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetUseWorldSpace(bool useWorldSpace, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Use World Space UVs");
+			UndoUtility.RecordSelection(sel, "Use World Space UVs");
 			for(int i = 0; i < sel.Length; i++) {
 				foreach(pb_Face q in sel[i].SelectedFaces) {
 					q.uv.useWorldSpace = useWorldSpace;
@@ -382,7 +382,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetFill(pb_UV.Fill fill, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Fill UVs");
+			UndoUtility.RecordSelection(sel, "Fill UVs");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -393,7 +393,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetAnchor(pb_UV.Anchor anchor, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Set UV Anchor");
+			UndoUtility.RecordSelection(sel, "Set UV Anchor");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -404,7 +404,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetOffset(Vector2 offset, pb_Axis2d axis, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Offset UVs");
+			UndoUtility.RecordSelection(sel, "Offset UVs");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -427,7 +427,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetRotation(float rot, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Rotate UVs");
+			UndoUtility.RecordSelection(sel, "Rotate UVs");
 
 			for(int i = 0; i < sel.Length; i++)
 			{
@@ -439,7 +439,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetScale(Vector2 scale, pb_Axis2d axis, pb_Object[] sel)
 		{
-			pb_Undo.RecordSelection(sel, "Scale UVs");
+			UndoUtility.RecordSelection(sel, "Scale UVs");
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(pb_Face q in sel[i].SelectedFaces) {
@@ -464,7 +464,7 @@ namespace UnityEditor.ProBuilder
 
 		private static void SetTextureGroup(pb_Object[] selection, int tex)
 		{
-			pb_Undo.RecordSelection(selection, "Set Texture Group " + textureGroup);
+			UndoUtility.RecordSelection(selection, "Set Texture Group " + textureGroup);
 
 			foreach(pb_Object pb in selection)
 			{
@@ -493,7 +493,7 @@ namespace UnityEditor.ProBuilder
 
 			int texGroup = pb.GetUnusedTextureGroup();
 
-			pb_Undo.RecordSelection(pb, "Create Texture Group" + textureGroup);
+			UndoUtility.RecordSelection(pb, "Create Texture Group" + textureGroup);
 
 			foreach(pb_Face f in faces)
 			{

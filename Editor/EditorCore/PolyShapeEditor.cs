@@ -121,12 +121,12 @@ namespace UnityEditor.ProBuilder
 					if (ProBuilderEditor.instance != null)
 						ProBuilderEditor.instance.ClearElementSelection();
 
-					pb_Undo.RecordObject(polygon, "Change Polygon Shape Settings");
-					pb_Undo.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+					UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
+					UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
 				}
 				else
 				{
-					pb_Undo.RecordObject(polygon, "Change Polygon Shape Settings");
+					UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
 				}
 
 				polygon.extrude = extrude;
@@ -161,8 +161,8 @@ namespace UnityEditor.ProBuilder
 					if (ProBuilderEditor.instance != null)
 						ProBuilderEditor.instance.ClearElementSelection();
 
-					pb_Undo.RecordObject(polygon, "Edit Polygon Shape");
-					pb_Undo.RecordObject(polygon.mesh, "Edit Polygon Shape");
+					UndoUtility.RecordObject(polygon, "Edit Polygon Shape");
+					UndoUtility.RecordObject(polygon.mesh, "Edit Polygon Shape");
 				}
 
 				polygon.polyEditMode = mode;
@@ -402,7 +402,7 @@ namespace UnityEditor.ProBuilder
 					if( m_Plane.Raycast(ray, out hitDistance) )
 					{
 						evt.Use();
-						pb_Undo.RecordObject(polygon, "Add Polygon Shape Point");
+						UndoUtility.RecordObject(polygon, "Add Polygon Shape Point");
 
 						Vector3 hit = ray.GetPoint(hitDistance);
 
@@ -453,13 +453,13 @@ namespace UnityEditor.ProBuilder
 					{
 						Handles.color = Color.green;
 
-						pb_Handles.DotCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f, evt.type);
+						Handles.DotHandleCap(-1, wp, Quaternion.identity, HandleUtility.GetHandleSize(wp) * .05f, evt.type);
 
 						if( evt.type == EventType.MouseDown )
 						{
 							evt.Use();
 
-							pb_Undo.RecordObject(polygon, "Insert Point");
+							UndoUtility.RecordObject(polygon, "Insert Point");
 							polygon.points.Insert(index, p);
 							m_SelectedIndex = index;
 							m_PlacingPoint = true;
@@ -518,10 +518,10 @@ namespace UnityEditor.ProBuilder
 				Vector3 extrudePoint = origin + (extrude * up);
 
 				Handles.color = HANDLE_COLOR;
-				pb_Handles.DotCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f, evt.type);
+				Handles.DotHandleCap(-1, origin, Quaternion.identity, HandleUtility.GetHandleSize(origin) * .05f, evt.type);
 				Handles.color = HANDLE_GREEN;
 				Handles.DrawLine(origin, extrudePoint);
-				pb_Handles.DotCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f, evt.type);
+				Handles.DotHandleCap(-1, extrudePoint, Quaternion.identity, HandleUtility.GetHandleSize(extrudePoint) * .05f, evt.type);
 				Handles.color = Color.white;
 
 				if( !sceneInUse && polygon.extrude != extrude)
@@ -548,11 +548,11 @@ namespace UnityEditor.ProBuilder
 
 					EditorGUI.BeginChangeCheck();
 
-					point = pb_Handles.DotSlider2D(point, up, right, forward, size, Vector2.zero, true);
+					point = Handles.Slider2D(point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
 
 					if(EditorGUI.EndChangeCheck())
 					{
-						pb_Undo.RecordObject(polygon, "Move Polygon Shape Point");
+						UndoUtility.RecordObject(polygon, "Move Polygon Shape Point");
 						polygon.points[ii] = ProGridsInterface.ProGridsSnap(trs.InverseTransformPoint(point), SNAP_MASK);
 						OnBeginVertexMovement();
 						RebuildPolyShapeMesh(false);
@@ -589,15 +589,15 @@ namespace UnityEditor.ProBuilder
 					EditorGUI.BeginChangeCheck();
 
 					Handles.color = HANDLE_COLOR;
-					pb_Handles.DotCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f, evt.type);
+					Handles.DotHandleCap(-1, center, Quaternion.identity, HandleUtility.GetHandleSize(center) * .05f, evt.type);
 					Handles.DrawLine(center, extrude);
 					Handles.color = HANDLE_GREEN;
-					extrude = pb_Handles.DotSlider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, 0f);
+					extrude = Handles.Slider(extrude, up, HandleUtility.GetHandleSize(extrude) * .05f, Handles.DotHandleCap, 0f);
 					Handles.color = Color.white;
 
 					if(EditorGUI.EndChangeCheck())
 					{
-						pb_Undo.RecordObject(polygon, "Set Polygon Shape Height");
+						UndoUtility.RecordObject(polygon, "Set Polygon Shape Height");
 						polygon.extrude = ProGridsInterface.ProGridsSnap(Vector3.Distance(extrude, center) * Mathf.Sign(Vector3.Dot(up, extrude - center)));
 						OnBeginVertexMovement();
 						RebuildPolyShapeMesh(false);
@@ -640,7 +640,7 @@ namespace UnityEditor.ProBuilder
 				{
 					if(m_SelectedIndex > -1)
 					{
-						pb_Undo.RecordObject(polygon, "Delete Selected Points");
+						UndoUtility.RecordObject(polygon, "Delete Selected Points");
 						polygon.points.RemoveAt(m_SelectedIndex);
 						m_SelectedIndex = -1;
 						RebuildPolyShapeMesh(polygon);

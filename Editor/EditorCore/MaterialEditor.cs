@@ -350,7 +350,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(em == (EventModifiers.Control | EventModifiers.Shift))
 				{
-					pb_Undo.RecordObject(pb, "Quick Apply");
+					UndoUtility.RecordObject(pb, "Quick Apply");
 					pb.SetFaceMaterial( new pb_Face[1] { quad }, m_QueuedMaterial);
 					OnFaceChanged(pb);
 					EditorUtility.ShowNotification("Quick Apply Material");
@@ -365,7 +365,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if(mat == null) return;
 
-			pb_Undo.RecordSelection(selection.ToArray(), "Set Face Materials");
+			UndoUtility.RecordSelection(selection.ToArray(), "Set Face Materials");
 
 			foreach(pb_Object pb in selection)
 			{

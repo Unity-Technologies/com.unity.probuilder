@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
 			et = (EntityType)EditorGUILayout.EnumPopup("Entity Type", et);
 			if(et != ent.entityType)
 			{
-				pb_Undo.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
+				UndoUtility.RecordObjects(new Object[] {ent, ent.gameObject.GetComponent<pb_Object>() }, "Set Entity Type");
 #pragma warning disable 0618
 				EntityUtility.SetEntityType(et, ent.gameObject);
 #pragma warning restore 0618

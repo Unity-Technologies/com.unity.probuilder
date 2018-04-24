@@ -42,10 +42,10 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < selected.Length; i++)
 				{
 					if(selected[i] != null)
-						pb_Undo.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
+						UndoUtility.DestroyImmediate(selected[i].gameObject, "Delete Merged Objects");
 				}
 
-				pb_Undo.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
+				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Merge Objects");
 
 				Selection.activeTransform = pb.transform;
 			}
@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 			for(int i = selection.Length; i < objects.Length; i++)
 				objects[i] = selection[i-selection.Length].transform;
 
-			pb_Undo.RegisterCompleteObjectUndo(objects, "Set Pivot");
+			UndoUtility.RegisterCompleteObjectUndo(objects, "Set Pivot");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder
 
 			List<Object> undoables = new List<Object>( selection.Select(x => (Object) x.transform) );
 			undoables.AddRange(selection);
-			pb_Undo.RecordObjects(undoables.ToArray(), "Freeze Transforms");
+			UndoUtility.RecordObjects(undoables.ToArray(), "Freeze Transforms");
 
 			Vector3[][] vertices = new Vector3[selection.Length][];
 
@@ -163,7 +163,7 @@ namespace UnityEditor.ProBuilder
 
 			Object[] undoObjects = selection.SelectMany(x => x.GetComponents<Component>()).ToArray();
 
-			pb_Undo.RecordObjects(undoObjects, "Set Entity Type");
+			UndoUtility.RecordObjects(undoObjects, "Set Entity Type");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -231,7 +231,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Triangulate Objects");
 
 			for(int i = 0; i < selection.Length; i++)
 			{
@@ -263,7 +263,7 @@ namespace UnityEditor.ProBuilder
 
 			pb_Object[] sel = new pb_Object[] { lhs, rhs };
 
-			pb_Undo.RecordSelection(sel, op_string);
+			UndoUtility.RecordSelection(sel, op_string);
 
 			Mesh c;
 
@@ -332,7 +332,7 @@ namespace UnityEditor.ProBuilder
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
+			UndoUtility.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Object Normals");
 
 			foreach(pb_Object pb in selected)
 			{
@@ -353,7 +353,7 @@ namespace UnityEditor.ProBuilder
 			if(selected == null || selected.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
+			UndoUtility.RecordSelection(pb_Util.GetComponents<pb_Object>(Selection.transforms), "Flip Face Normals");
 
 			int c = 0;
 			int faceCount = ProBuilderEditor.instance.selectedFaceCount;
@@ -401,7 +401,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
+			UndoUtility.RecordSelection(selection, "Conform " + (editor.selectedFaceCount > 0 ? "Face" : "Object") + " Normals.");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
@@ -455,7 +455,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Extrude");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Extrude");
 
 			int extrudedFaceCount = 0;
 			bool success = false;
@@ -528,7 +528,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Bridge Edges");
+			UndoUtility.RecordSelection(selection, "Bridge Edges");
 
 			bool success = false;
 			bool limitToPerimeterEdges = PreferencesInternal.GetBool(pb_Constant.pbPerimeterEdgeBridgeOnly);
@@ -565,7 +565,7 @@ namespace UnityEditor.ProBuilder
 		public static pb_ActionResult MenuBevelEdges(pb_Object[] selection)
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
-			pb_Undo.RecordSelection(selection, "Bevel Edges");
+			UndoUtility.RecordSelection(selection, "Bevel Edges");
 
 			float amount = PreferencesInternal.GetFloat(pb_Constant.pbBevelAmount);
 
@@ -636,7 +636,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Grow Selection");
+			UndoUtility.RecordSelection(selection, "Grow Selection");
 
 			int grown = 0;
 			bool angleGrow = PreferencesInternal.GetBool(pb_Constant.pbGrowSelectionUsingAngle);
@@ -718,7 +718,7 @@ namespace UnityEditor.ProBuilder
 			else if (selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Shrink Selection");
+			UndoUtility.RecordSelection(selection, "Shrink Selection");
 
 			// find perimeter edges
 			int rc = 0;
@@ -782,7 +782,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Invert Selection");
+			UndoUtility.RecordSelection(selection, "Invert Selection");
 
 			switch( editor != null ? editor.selectionMode : (SelectMode)0 )
 			{
@@ -860,7 +860,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Select Edge Ring");
+			UndoUtility.RecordSelection(selection, "Select Edge Ring");
 
 			bool success = false;
 
@@ -893,7 +893,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Select Edge Loop");
+			UndoUtility.RecordSelection(selection, "Select Edge Loop");
 
 			bool foundLoop = false;
 
@@ -923,7 +923,7 @@ namespace UnityEditor.ProBuilder
 
 		public static pb_ActionResult MenuLoopFaces(pb_Object[] selection)
 		{
-			pb_Undo.RecordSelection(selection, "Select Face Loop");
+			UndoUtility.RecordSelection(selection, "Select Face Loop");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -938,7 +938,7 @@ namespace UnityEditor.ProBuilder
 
 		public static pb_ActionResult MenuRingFaces(pb_Object[] selection)
 		{
-			pb_Undo.RecordSelection(selection, "Select Face Ring");
+			UndoUtility.RecordSelection(selection, "Select Face Ring");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -953,7 +953,7 @@ namespace UnityEditor.ProBuilder
 
 		public static pb_ActionResult MenuRingAndLoopFaces(pb_Object[] selection)
 		{
-			pb_Undo.RecordSelection(selection, "Select Face Ring and Loop");
+			UndoUtility.RecordSelection(selection, "Select Face Ring and Loop");
 
 			foreach (pb_Object pb in selection)
 			{
@@ -978,7 +978,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Delete Face");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Delete Face");
 
 			int count = 0;
 
@@ -1034,7 +1034,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Face(s)");
 
 			int count = 0;
 
@@ -1068,7 +1068,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Detach Selection to PBO");
 
 			int detachedFaceCount = 0;
 			List<GameObject> detached = new List<GameObject>();
@@ -1158,7 +1158,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordObjects(selection, "Merge Faces");
+			UndoUtility.RecordObjects(selection, "Merge Faces");
 
 			int success = 0;
 
@@ -1195,7 +1195,7 @@ namespace UnityEditor.ProBuilder
 			if(selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Flip Face Edges");
+			UndoUtility.RecordSelection(selection, "Flip Face Edges");
 			int success = 0;
 			int attempts = 0;
 
@@ -1241,7 +1241,7 @@ namespace UnityEditor.ProBuilder
 
 			bool collapseToFirst = PreferencesInternal.GetBool(pb_Constant.pbCollapseVertexToFirst);
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Collapse Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1284,7 +1284,7 @@ namespace UnityEditor.ProBuilder
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Weld Vertices");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Weld Vertices");
 			float weld = PreferencesInternal.GetFloat(pb_Constant.pbWeldDistance);
 			int weldCount = 0;
 
@@ -1364,7 +1364,7 @@ namespace UnityEditor.ProBuilder
 				return pb_ActionResult.NoSelection;
 
 			int splitCount = 0;
-			pb_Undo.RecordSelection(selection, "Split Vertices");
+			UndoUtility.RecordSelection(selection, "Split Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1439,7 +1439,7 @@ namespace UnityEditor.ProBuilder
 			if(editor == null)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RecordSelection(selection, "Fill Hole");
+			UndoUtility.RecordSelection(selection, "Fill Hole");
 
 			pb_ActionResult res = new pb_ActionResult(Status.NoChange, "No Holes Found");
 			int filled = 0;
@@ -1540,7 +1540,7 @@ namespace UnityEditor.ProBuilder
 
 		public static pb_ActionResult MenuCreatePolygon(pb_Object[] selection)
 		{
-			pb_Undo.RecordSelection(selection, "Create Polygon");
+			UndoUtility.RecordSelection(selection, "Create Polygon");
 
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
@@ -1585,7 +1585,7 @@ namespace UnityEditor.ProBuilder
 			if(!editor || selection == null || selection.Length < 1)
 				return pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Selection");
 
 			int success = 0;
 
@@ -1619,7 +1619,7 @@ namespace UnityEditor.ProBuilder
 
 			int subdivisions = PreferencesInternal.GetInt(pb_Constant.pbEdgeSubdivisions, 1);
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Edges");
 
 			pb_ActionResult result = pb_ActionResult.NoSelection;
 
@@ -1655,7 +1655,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(pb_Object pb in selection)
 			{
-				pb_Undo.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
+				UndoUtility.RegisterCompleteObjectUndo(selection, "Subdivide Faces");
 
 				pb_Face[] faces;
 
@@ -1693,7 +1693,7 @@ namespace UnityEditor.ProBuilder
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Connect Edges");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Edges");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1716,7 +1716,7 @@ namespace UnityEditor.ProBuilder
 		{
 			pb_ActionResult res = pb_ActionResult.NoSelection;
 
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Connect Vertices");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Connect Vertices");
 
 			foreach(pb_Object pb in selection)
 			{
@@ -1748,7 +1748,7 @@ namespace UnityEditor.ProBuilder
 				return pb_ActionResult.NoSelection;
 
 			int success = 0;
-			pb_Undo.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
+			UndoUtility.RegisterCompleteObjectUndo(selection, "Insert Edge Loop");
 
 			foreach(pb_Object pb in selection)
 			{

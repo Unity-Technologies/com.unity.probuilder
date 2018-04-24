@@ -1,14 +1,13 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using ProBuilder.Core;
 
 namespace UnityEditor.ProBuilder
 {
 	[InitializeOnLoad]
-	static class pb_Undo
+	static class UndoUtility
 	{
-		static pb_Undo()
+		static UndoUtility()
 		{
 			Undo.undoRedoPerformed += UndoRedoPerformed;
 		}
@@ -93,7 +92,7 @@ namespace UnityEditor.ProBuilder
 			pb_Object[] pb = objs.Where(x => x is pb_Object).Cast<pb_Object>().ToArray();
 
 			Undo.RecordObjects(obj, msg);
-			pb_Undo.RecordSelection(pb, msg);
+			UndoUtility.RecordSelection(pb, msg);
 		}
 
 		/**

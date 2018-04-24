@@ -47,7 +47,7 @@ namespace ProBuilder.Actions
 				if (!pb.GetComponent<Renderer>())
 					Undo.AddComponent<MeshRenderer>(pb.gameObject);
 
-				pb_Undo.RegisterCompleteObjectUndo(pb, "Set Trigger");
+				UndoUtility.RegisterCompleteObjectUndo(pb, "Set Trigger");
 
 				Undo.AddComponent<pb_TriggerBehaviour>(pb.gameObject).Initialize();
 			}

@@ -157,7 +157,7 @@ namespace UnityEditor.ProBuilder
 
 				if (s_CurrentPreview != null)
 				{
-					pb_Undo.RecordObject(s_CurrentPreview, "Set Face Material");
+					UndoUtility.RecordObject(s_CurrentPreview, "Set Face Material");
 
 					if (s_IsFaceDragAndDropOverrideEnabled)
 					{

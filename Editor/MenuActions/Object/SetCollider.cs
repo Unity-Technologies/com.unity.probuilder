@@ -46,7 +46,7 @@ namespace ProBuilder.Actions
 				if (!pb.GetComponent<Renderer>())
 					Undo.AddComponent<MeshRenderer>(pb.gameObject);
 
-				pb_Undo.RegisterCompleteObjectUndo(pb, "Set Collider");
+				UndoUtility.RegisterCompleteObjectUndo(pb, "Set Collider");
 
 				Undo.AddComponent<pb_ColliderBehaviour>(pb.gameObject).Initialize();
 			}

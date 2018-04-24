@@ -166,7 +166,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static void SetSelection(IList<GameObject> newSelection)
 		{
-			pb_Undo.RecordSelection(selection, "Change Selection");
+			UndoUtility.RecordSelection(selection, "Change Selection");
 
 			ClearElementAndObjectSelection();
 
@@ -186,7 +186,7 @@ namespace UnityEditor.ProBuilder
 
 		internal static void SetSelection(GameObject go)
 		{
-			pb_Undo.RecordSelection(selection, "Change Selection");
+			UndoUtility.RecordSelection(selection, "Change Selection");
 			ClearElementAndObjectSelection();
 			AddToSelection(go);
 		}

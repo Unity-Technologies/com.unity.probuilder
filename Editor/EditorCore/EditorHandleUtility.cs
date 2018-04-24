@@ -137,12 +137,13 @@ namespace UnityEditor.ProBuilder
 		public static Vector2 PositionHandle2d(int id, Vector2 position, int size)
 		{
 			int width = size/4;
+			var evt = Event.current;
 
 			Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size+HANDLE_PADDING);
 			Rect handleRectRight = new Rect(position.x, position.y-width/2, size, width+HANDLE_PADDING);
 
 			Handles.color = Color.yellow;
-			pb_Handles.CircleCap(-1, position, Quaternion.identity, width / 2f);
+			Handles.CircleHandleCap(-1, position, Quaternion.identity, width / 2f, Event.current.type);
 			Handles.color = k_HandleColorUp;
 
 			// Y Line
@@ -150,10 +151,7 @@ namespace UnityEditor.ProBuilder
 
 			// Y Cone
 			if(position.y - size > 0f)
-				pb_Handles.ConeCap(0,
-					((Vector3)((position - Vector2.up*size))) - ConeDepth,
-					QuaternionUp,
-					width/2);
+				Handles.ConeHandleCap(0, ((Vector3)((position - Vector2.up*size))) - ConeDepth, QuaternionUp, width/2, evt.type);
 
 			Handles.color = k_HandleColorRight;
 
@@ -162,22 +160,18 @@ namespace UnityEditor.ProBuilder
 
 			// X Cap
 			if(position.y > 0f)
-				pb_Handles.ConeCap(0,
-					((Vector3)((position + Vector2.right*size))) - ConeDepth,
-					QuaternionRight,
-					width/2);
+				Handles.ConeHandleCap(0, ((Vector3)((position + Vector2.right*size))) - ConeDepth, QuaternionRight, width/2, evt.type);
 
 			// If a Tool already is engaged and it's not this one, bail.
 			if(currentId >= 0 && currentId != id)
 				return position;
 
-			Event e = Event.current;
-			Vector2 mousePosition = e.mousePosition;
+			Vector2 mousePosition = evt.mousePosition;
 			Vector2 newPosition = position;
 
 			if(currentId == id)
 			{
-				switch(e.type)
+				switch(evt.type)
 				{
 					case EventType.MouseDrag:
 						newPosition = axisConstraint.Mask(mousePosition + handleOffset) + axisConstraint.InverseMask(position);
@@ -191,9 +185,9 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
+				if(evt.type == EventType.MouseDown && ((!limitToLeftButton && evt.button != MIDDLE_MOUSE_BUTTON) || evt.button == LEFT_MOUSE_BUTTON))
 				{
-					if(Vector2.Distance(mousePosition, position) < width/2)
+					if(Vector2.Distance(mousePosition, position) < width/2f)
 					{
 						currentId = id;
 						handleOffset = position - mousePosition;
@@ -221,20 +215,25 @@ namespace UnityEditor.ProBuilder
 
 		static Vector2 initialDirection;
 
-		/**
-		 * A 2D rotation handle.  Behaves like HandleUtility.RotationHandle
-		 */
+		/// <summary>
+		/// A 2D rotation handle. Behaves like HandleUtility.RotationHandle
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="position"></param>
+		/// <param name="rotation"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
 		public static float RotationHandle2d(int id, Vector2 position, float rotation, int radius)
 		{
-			Event e = Event.current;
-			Vector2 mousePosition = e.mousePosition;
+			Event evt = Event.current;
+			Vector2 mousePosition = evt.mousePosition;
 			float newRotation = rotation;
 
 			Vector2 currentDirection = (mousePosition-position).normalized;
 
 			// Draw gizmos
 			Handles.color = k_HandleColorRotate;
-			pb_Handles.CircleCap(-1, position, Quaternion.identity, radius);
+			Handles.CircleHandleCap(-1, position, Quaternion.identity, radius, evt.type);
 
 			if(currentId == id)
 			{
@@ -249,7 +248,7 @@ namespace UnityEditor.ProBuilder
 
 			if(currentId == id)
 			{
-				switch(e.type)
+				switch(evt.type)
 				{
 					case EventType.MouseDrag:
 
@@ -267,7 +266,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
+				if(evt.type == EventType.MouseDown && ((!limitToLeftButton && evt.button != MIDDLE_MOUSE_BUTTON) || evt.button == LEFT_MOUSE_BUTTON))
 				{
 					if( Mathf.Abs(Vector2.Distance(mousePosition, position)-radius) < 8)
 					{
@@ -282,50 +281,55 @@ namespace UnityEditor.ProBuilder
 			return newRotation;
 		}
 
-		/**
-		 * Draw a working scale handle in 2d space.
-		 */
+		/// <summary>
+		/// Scale handle in 2d space.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="position"></param>
+		/// <param name="scale"></param>
+		/// <param name="size"></param>
+		/// <returns></returns>
 		public static Vector2 ScaleHandle2d(int id, Vector2 position, Vector2 scale, int size)
 		{
-			Event e = Event.current;
-			Vector2 mousePosition = e.mousePosition;
+			Event evt = Event.current;
+			Vector2 mousePosition = evt.mousePosition;
 			int width = size/4;
 
 			Handles.color = k_HandleColorUp;
 			Handles.DrawLine(position, position - Vector2.up * size * scale.y);
 
 			if(position.y - size > 0f)
-				pb_Handles.CubeCap(0,
-					((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16,
-					QuaternionUp,
-					width/3);
+				Handles.CubeHandleCap(0, ((Vector3)((position - Vector2.up*scale.y*size))) - Vector3.forward*16, QuaternionUp, width/3, evt.type);
 
 			Handles.color = k_HandleColorRight;
 			Handles.DrawLine(position, position + Vector2.right * size * scale.x);
 
 			if(position.y > 0f)
-				pb_Handles.CubeCap(0,
-					((Vector3)((position + Vector2.right*scale.x*size))) - Vector3.forward*16,
-					Quaternion.Euler(Vector3.up*90f),
-					width/3);
+				Handles.CubeHandleCap(0,
+					((Vector3) ((position + Vector2.right * scale.x * size))) - Vector3.forward * 16,
+					Quaternion.Euler(Vector3.up * 90f),
+					width / 3f,
+					evt.type);
 
 			Handles.color = k_HandleColorScale;
-			pb_Handles.CubeCap(0,
-				((Vector3)position) - Vector3.forward*16,
+
+			Handles.CubeHandleCap(0,
+				((Vector3) position) - Vector3.forward * 16,
 				QuaternionUp,
-				width/2);
+				width / 2f,
+				evt.type);
 
 			// If a Tool already is engaged and it's not this one, bail.
 			if(currentId >= 0 && currentId != id)
 				return scale;
 
-			Rect handleRectUp = new Rect(position.x-width/2, position.y-size-HANDLE_PADDING, width, size + HANDLE_PADDING);
-			Rect handleRectRight = new Rect(position.x, position.y-width/2, size + 8, width);
-			Rect handleRectCenter = new Rect(position.x-width/2, position.y-width/2, width, width);
+			Rect handleRectUp = new Rect(position.x-width/2f, position.y-size-HANDLE_PADDING, width, size + HANDLE_PADDING);
+			Rect handleRectRight = new Rect(position.x, position.y-width/2f, size + 8, width);
+			Rect handleRectCenter = new Rect(position.x-width/2f, position.y-width/2f, width, width);
 
 			if(currentId == id)
 			{
-				switch(e.type)
+				switch(evt.type)
 				{
 					case EventType.MouseDrag:
 						Vector2 diff = axisConstraint.Mask(mousePosition - initialMousePosition);
@@ -348,7 +352,7 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				if(e.type == EventType.MouseDown && ((!limitToLeftButton && e.button != MIDDLE_MOUSE_BUTTON) || e.button == LEFT_MOUSE_BUTTON))
+				if(evt.type == EventType.MouseDown && ((!limitToLeftButton && evt.button != MIDDLE_MOUSE_BUTTON) || evt.button == LEFT_MOUSE_BUTTON))
 				{
 					if(handleRectCenter.Contains(mousePosition))
 					{

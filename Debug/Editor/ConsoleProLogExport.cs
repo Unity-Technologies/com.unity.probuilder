@@ -123,8 +123,8 @@ public static class ConsoleProExtensions
 				? inEntry.stackEntries.FirstOrDefault()
 				: null;
 
-		string filePath = consoleEntry.fileName;
-		int lineNum = consoleEntry.lineNumber;
+		string filePath = consoleEntry != null ? consoleEntry.fileName : "";
+		int lineNum = consoleEntry != null ? consoleEntry.lineNumber : -1;
 
 		if (string.IsNullOrEmpty(filePath) || filePath == "None")
 			return;

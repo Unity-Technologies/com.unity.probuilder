@@ -543,15 +543,13 @@ namespace UnityEditor.ProBuilder
 				handlePosition = ray.origin + ray.direction * handleDistance;
 			}
 
-			/**
-			*    Draw the handles
-			*/
+			// Draw the handles
 			Handles.color = InnerRingColor;
-			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .2f);
+			Handles.CircleHandleCap(0, handlePosition, handleRotation, brushSize * .2f, currentEvent.type);
 			Handles.color = MiddleRingColor;
-			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize * .5f);
+			Handles.CircleHandleCap(0, handlePosition, handleRotation, brushSize * .5f, currentEvent.type);
 			Handles.color = OuterRingColor;
-			pb_Handles.CircleCap(0, handlePosition, handleRotation, brushSize);
+			Handles.CircleHandleCap(0, handlePosition, handleRotation, brushSize, currentEvent.type);
 			Handles.color = Color.white;
 
 			// This prevents us from selecting other objects in the scene,

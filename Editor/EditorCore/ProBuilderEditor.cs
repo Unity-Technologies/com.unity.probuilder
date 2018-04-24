@@ -857,7 +857,7 @@ namespace UnityEditor.ProBuilder
 #endif
 
 						// Check to see if we've already selected this quad.  If so, remove it from selection cache.
-						pb_Undo.RecordSelection(pickedPb, "Change Face Selection");
+						UndoUtility.RecordSelection(pickedPb, "Change Face Selection");
 
 						int indx = System.Array.IndexOf(pickedPb.SelectedFaces, pickedFace);
 
@@ -958,7 +958,7 @@ namespace UnityEditor.ProBuilder
 
 					int indx = System.Array.IndexOf(pb.SelectedTriangles, tri);
 
-					pb_Undo.RecordSelection(pb, "Change Vertex Selection");
+					UndoUtility.RecordSelection(pb, "Change Vertex Selection");
 
 					// If we get a match, check to see if it exists in our selection array already, then add / remove
 					if (indx > -1)
@@ -992,7 +992,7 @@ namespace UnityEditor.ProBuilder
 							// Check if index is already selected, and if not add it to the pot
 							int indx = System.Array.IndexOf(pb.SelectedTriangles, index);
 
-							pb_Undo.RecordObject(pb, "Change Vertex Selection");
+							UndoUtility.RecordObject(pb, "Change Vertex Selection");
 
 							// If we get a match, check to see if it exists in our selection array already, then add / remove
 							if (indx > -1)
@@ -1034,7 +1034,7 @@ namespace UnityEditor.ProBuilder
 
 					int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 
-					pb_Undo.RecordSelection(pb, "Change Edge Selection");
+					UndoUtility.RecordSelection(pb, "Change Edge Selection");
 
 					if (ind > -1)
 						pb.SetSelectedEdges(pb.SelectedEdges.RemoveAt(ind));
@@ -1062,7 +1062,7 @@ namespace UnityEditor.ProBuilder
 			SceneView sceneView = SceneView.lastActiveSceneView;
 			Camera cam = sceneView.camera;
 
-			pb_Undo.RecordSelection(selection, "Drag Select");
+			UndoUtility.RecordSelection(selection, "Drag Select");
 			bool selectHidden = selectHiddenEnabled;
 
 			var pickingOptions = new pb_PickerOptions()
@@ -2012,7 +2012,7 @@ namespace UnityEditor.ProBuilder
 					{
 						foreach (pb_Object pbo in selection)
 						{
-							pb_Undo.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
+							UndoUtility.RecordObjects(new Object[2] { pbo, pbo.transform }, "Set Pivot");
 
 							if (pbo.SelectedTriangles.Length > 0)
 							{
@@ -2574,7 +2574,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="snapVal"></param>
 		void PushToGrid(float snapVal)
 		{
-			pb_Undo.RecordSelection(selection, "Push elements to Grid");
+			UndoUtility.RecordSelection(selection, "Push elements to Grid");
 
 			if (editLevel == EditLevel.Top)
 				return;
@@ -2621,19 +2621,19 @@ namespace UnityEditor.ProBuilder
 			switch (currentHandle)
 			{
 				case Tool.Move:
-					pb_Undo.RegisterCompleteObjectUndo(selection, "Translate Vertices");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Translate Vertices");
 					break;
 
 				case Tool.Rotate:
-					pb_Undo.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Rotate Vertices");
 					break;
 
 				case Tool.Scale:
-					pb_Undo.RegisterCompleteObjectUndo(selection, "Scale Vertices");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Scale Vertices");
 					break;
 
 				default:
-					pb_Undo.RegisterCompleteObjectUndo(selection, "Modify Vertices");
+					UndoUtility.RegisterCompleteObjectUndo(selection, "Modify Vertices");
 					break;
 			}
 

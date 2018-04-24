@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
 								if(!moving)
 									OnVertexMovementBegin(pb);
 
-								pb_Undo.RecordObject(pb, "Set Vertex Postion");
+								UndoUtility.RecordObject(pb, "Set Vertex Postion");
 
 								pb.SetSharedVertexPosition(u, worldSpace ? transform.InverseTransformPoint(v) : v);
 
