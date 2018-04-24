@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Linq;
 using System;
 using System.Reflection;
-using ProBuilder.Actions;
+using UnityEditor.ProBuilder.Actions;
 using ProBuilder.Core;
 using ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
@@ -13,12 +13,6 @@ using UObject = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-	/// <summary>
-	/// Delegate to be raised when a ProBuilder object is created.
-	/// </summary>
-	/// <param name="pb"></param>
-	public delegate void OnObjectCreated(pb_Object pb);
-
 	/// <summary>
 	/// Utilities for working in Unity editor: Showing notifications in windows, getting the sceneview, setting EntityTypes, OBJ export, etc.
 	/// </summary>
@@ -38,28 +32,28 @@ namespace UnityEditor.ProBuilder
 		/// <remarks>
 		/// This is only called when an object is initialized in editor. Ie, pb_ShapeGenerator.GenerateCube(Vector3.one) won't fire this callback.
 		/// </remarks>
-		public static event OnObjectCreated onObjectCreated = null;
+		public static event Action<pb_Object> OnObjectCreated = null;
 
 		/// <summary>
-		/// Add a listener to the multicast onObjectCreated delegate.
+		/// Add a listener to the multicast OnObjectCreated delegate.
 		/// </summary>
 		/// <param name="onProBuilderObjectCreated"></param>
-		public static void AddOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
+		public static void AddOnObjectCreatedListener(Action<pb_Object> onProBuilderObjectCreated)
 		{
-			if(onObjectCreated == null)
-				onObjectCreated = onProBuilderObjectCreated;
+			if(OnObjectCreated == null)
+				OnObjectCreated = onProBuilderObjectCreated;
 			else
-				onObjectCreated += onProBuilderObjectCreated;
+				OnObjectCreated += onProBuilderObjectCreated;
 		}
 
 		/// <summary>
-		/// Remove a listener from the onObjectCreated delegate.
+		/// Remove a listener from the OnObjectCreated delegate.
 		/// </summary>
 		/// <param name="onProBuilderObjectCreated"></param>
-		public static void RemoveOnObjectCreatedListener(OnObjectCreated onProBuilderObjectCreated)
+		public static void RemoveOnObjectCreatedListener(Action<pb_Object> onProBuilderObjectCreated)
 		{
-			if(onObjectCreated != null)
-				onObjectCreated -= onProBuilderObjectCreated;
+			if(OnObjectCreated != null)
+				OnObjectCreated -= onProBuilderObjectCreated;
 		}
 
 		/// <summary>
@@ -299,8 +293,8 @@ namespace UnityEditor.ProBuilder
 
 			pb.Optimize();
 
-			if( onObjectCreated != null )
-				onObjectCreated(pb);
+			if( OnObjectCreated != null )
+				OnObjectCreated(pb);
 		}
 
 		[System.Obsolete("pb_Entity is deprecated, please use InitObject(pb_Object)")]

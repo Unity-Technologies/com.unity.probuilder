@@ -42,8 +42,8 @@ namespace UnityEditor.ProBuilder
 
 			SceneView.onSceneGUIDelegate -= OnSceneGUI;
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
-			ProBuilderEditor.onSelectionUpdate += OnSelectionUpdate;
-			ProBuilderEditor.onVertexMovementFinish += OnSelectionUpdate;		}
+			ProBuilderEditor.OnSelectionUpdate += OnSelectionUpdate;
+			ProBuilderEditor.OnVertexMovementFinish += OnSelectionUpdate;		}
 
 		void OnDisable()
 		{
@@ -51,8 +51,8 @@ namespace UnityEditor.ProBuilder
 				pb_LineRenderer.instance.Clear();
 
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
-			ProBuilderEditor.onSelectionUpdate -= OnSelectionUpdate;
-			ProBuilderEditor.onVertexMovementFinish -= OnSelectionUpdate;
+			ProBuilderEditor.OnSelectionUpdate -= OnSelectionUpdate;
+			ProBuilderEditor.OnVertexMovementFinish -= OnSelectionUpdate;
 		}
 
 		void OnSelectionUpdate(pb_Object[] selection)

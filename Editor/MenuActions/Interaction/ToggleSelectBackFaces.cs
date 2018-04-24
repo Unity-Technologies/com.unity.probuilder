@@ -5,7 +5,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ToggleSelectBackFaces : MenuAction
 	{

@@ -10,7 +10,7 @@ using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 using Object = UnityEngine.Object;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ExportStlAscii : MenuAction
 	{
@@ -45,7 +45,7 @@ namespace ProBuilder.Actions
 			GameObject first = gameObjects.FirstOrDefault(x => x.GetComponent<pb_Object>() != null);
 
 			string name = first != null ? first.name : "Mesh";
-			string path = EditorUtility.SaveFilePanel("Save Mesh to STL", "", name, "stl");
+			string path = UnityEditor.EditorUtility.SaveFilePanel("Save Mesh to STL", "", name, "stl");
 
 			var res = false;
 			var currentCulture = Thread.CurrentThread.CurrentCulture;

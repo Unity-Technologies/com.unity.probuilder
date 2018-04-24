@@ -10,7 +10,7 @@ using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ExportPly : MenuAction
 	{
@@ -56,7 +56,7 @@ namespace ProBuilder.Actions
 			{
 				pb_Object first = meshes.FirstOrDefault();
 				string name = first != null ? first.name : "ProBuilderModel";
-				path = EditorUtility.SaveFilePanel("Export as PLY", "Assets", name, "ply");
+				path = UnityEditor.EditorUtility.SaveFilePanel("Export as PLY", "Assets", name, "ply");
 
 				if(string.IsNullOrEmpty(path))
 					return null;
@@ -65,7 +65,7 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				path = EditorUtility.SaveFolderPanel("Export to PLY", "Assets", "");
+				path = UnityEditor.EditorUtility.SaveFolderPanel("Export to PLY", "Assets", "");
 
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;

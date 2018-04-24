@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	[CustomEditor(typeof(pb_Object))]
 	[CanEditMultipleObjects]
-	class pb_ObjectEditor : Editor
+	class ProBuilderMeshEditor : Editor
 	{
 		public delegate void OnGetFrameBoundsDelegate();
 

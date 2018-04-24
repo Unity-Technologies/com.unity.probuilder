@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder.UI;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class GrowSelection : MenuAction
 	{

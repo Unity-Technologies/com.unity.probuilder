@@ -6,7 +6,7 @@ using System.Linq;
 using ProBuilder.Core;
 using EditorUtility = UnityEditor.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu interface for applying materials to pb_Object after upgrading from Basic to Advanced.
@@ -16,23 +16,23 @@ namespace ProBuilder.Actions
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Upgrade Scene to Advanced", false, pb_Constant.MENU_REPAIR + 10)]
 		public static void MenuUpgradeSceneAdvanced()
 		{
-			if( !EditorUtility.DisplayDialog("Upgrade Scene to Advanced", "This utility sets the materials on every ProBuilder object in the scene.  Continue?", "Okay", "Cancel") )
+			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Scene to Advanced", "This utility sets the materials on every ProBuilder object in the scene.  Continue?", "Okay", "Cancel") )
 				return;
 
 			DoUpgrade((pb_Object[]) Resources.FindObjectsOfTypeAll(typeof(pb_Object)));
 
-			EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in scene.\n\nIf any of the objects in the scene were prefabs you'll need to 'Apply' changes.", "Okay");
+			UnityEditor.EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in scene.\n\nIf any of the objects in the scene were prefabs you'll need to 'Apply' changes.", "Okay");
 		}
 
 		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Repair/Upgrade Selection to Advanced", false, pb_Constant.MENU_REPAIR + 10)]
 		public static void MenuUpgradeSelectionAdvanced()
 		{
-			if( !EditorUtility.DisplayDialog("Upgrade Selection to Advanced", "This utility sets the materials on every selected ProBuilder object.  Continue?", "Okay", "Cancel") )
+			if( !UnityEditor.EditorUtility.DisplayDialog("Upgrade Selection to Advanced", "This utility sets the materials on every selected ProBuilder object.  Continue?", "Okay", "Cancel") )
 				return;
 
 			DoUpgrade( Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<pb_Object>()).ToArray() );
 
-			EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in selection", "Okay");
+			UnityEditor.EditorUtility.DisplayDialog("Upgrade ProBuilder Objects", "Successfully upgraded all ProBuilder objects in selection", "Okay");
 		}
 
 		private static void DoUpgrade(pb_Object[] all)
@@ -45,7 +45,7 @@ namespace ProBuilder.Actions
 
 				if(interactive)
 				{
-					EditorUtility.DisplayProgressBar(
+					UnityEditor.EditorUtility.DisplayProgressBar(
 						"Applying Materials",
 						"Setting pb_Object " + all[i].id + ".",
 						((float)i / all.Length));
@@ -60,7 +60,7 @@ namespace ProBuilder.Actions
 
 			if(interactive)
 			{
-				EditorUtility.ClearProgressBar();
+				UnityEditor.EditorUtility.ClearProgressBar();
 			}
 
 		}

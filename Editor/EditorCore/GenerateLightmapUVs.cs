@@ -5,7 +5,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu items for generating UV2s for selected or scene pb_Object meshes.

@@ -8,7 +8,7 @@ using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class FillHole : MenuAction
 	{

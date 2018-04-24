@@ -6,7 +6,7 @@ using ProBuilder.MeshOperations;
 using UnityEditor.ProBuilder.UI;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class NewPolyShape : MenuAction
 	{

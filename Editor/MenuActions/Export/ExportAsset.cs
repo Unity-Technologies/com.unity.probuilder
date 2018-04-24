@@ -9,7 +9,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ExportAsset : MenuAction
 	{
@@ -56,7 +56,7 @@ namespace ProBuilder.Actions
 					return res;
 
 				string name = first != null ? first.name : "Mesh";
-				string path = EditorUtility.SaveFilePanel("Export to Asset", "Assets", name, "prefab");
+				string path = UnityEditor.EditorUtility.SaveFilePanel("Export to Asset", "Assets", name, "prefab");
 
 				if(string.IsNullOrEmpty(path))
 					return null;
@@ -77,7 +77,7 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				string path = EditorUtility.SaveFolderPanel("Export to Asset", "Assets", "");
+				string path = UnityEditor.EditorUtility.SaveFolderPanel("Export to Asset", "Assets", "");
 
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;

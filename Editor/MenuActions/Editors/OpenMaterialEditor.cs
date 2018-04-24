@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class OpenMaterialEditor : MenuAction
 	{

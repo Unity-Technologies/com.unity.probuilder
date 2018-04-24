@@ -5,7 +5,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class DetachFaces : MenuAction
 	{

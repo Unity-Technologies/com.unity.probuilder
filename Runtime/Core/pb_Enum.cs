@@ -1,10 +1,6 @@
-
 using UnityEngine;
 using System.Collections;
 
-/**
- * Contains runtime enumerators.
- */
 namespace ProBuilder.Core
 {
 	/// <summary>

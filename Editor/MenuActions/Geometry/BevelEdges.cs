@@ -8,7 +8,7 @@ using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorGUIUtility = UnityEditor.ProBuilder.UI.EditorGUIUtility;
 using EditorStyles = UnityEditor.EditorStyles;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class BevelEdges : MenuAction
 	{
@@ -54,7 +54,7 @@ namespace ProBuilder.Actions
 
 			EditorGUI.BeginChangeCheck();
 
-			bevelAmount = EditorGUIUtility.FreeSlider("Distance", bevelAmount, .001f, .99f);
+			bevelAmount = UI.EditorGUIUtility.FreeSlider("Distance", bevelAmount, .001f, .99f);
 			if(bevelAmount < .001f) bevelAmount = .001f;
 
 			if(EditorGUI.EndChangeCheck())

@@ -10,7 +10,7 @@ using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 using FileUtil = UnityEditor.ProBuilder.FileUtil;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ExportObj : MenuAction
 	{
@@ -60,7 +60,7 @@ namespace ProBuilder.Actions
 			{
 				pb_Object first = meshes.FirstOrDefault();
 				string name = first != null ? first.name : "ProBuilderModel";
-				path = EditorUtility.SaveFilePanel("Export to Obj", "Assets", name, "obj");
+				path = UnityEditor.EditorUtility.SaveFilePanel("Export to Obj", "Assets", name, "obj");
 
 				if(string.IsNullOrEmpty(path))
 					return null;
@@ -69,7 +69,7 @@ namespace ProBuilder.Actions
 			}
 			else
 			{
-				path = EditorUtility.SaveFolderPanel("Export to Obj", "Assets", "");
+				path = UnityEditor.EditorUtility.SaveFolderPanel("Export to Obj", "Assets", "");
 
 				if(string.IsNullOrEmpty(path) || !Directory.Exists(path))
 					return null;

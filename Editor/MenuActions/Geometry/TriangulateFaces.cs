@@ -6,7 +6,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class TriangulateFaces : MenuAction
 	{

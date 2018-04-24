@@ -7,7 +7,7 @@
 using UnityEngine;
 using UnityEditor;
 using ProBuilder.Core;
-using ProBuilder.Actions;
+using UnityEditor.ProBuilder.Actions;
 using System.Collections.Generic;
 
 namespace UnityEditor.ProBuilder

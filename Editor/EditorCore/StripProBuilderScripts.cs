@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	/// <summary>
 	/// Menu items for stripping ProBuilder scripts from GameObjects.

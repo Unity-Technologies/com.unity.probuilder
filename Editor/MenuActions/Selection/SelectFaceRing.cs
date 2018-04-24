@@ -3,7 +3,7 @@ using System.Linq;
 using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class SelectFaceRing : MenuAction
 	{

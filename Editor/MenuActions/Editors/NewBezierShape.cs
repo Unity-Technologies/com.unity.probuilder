@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class NewBezierShape : MenuAction
 	{

@@ -263,12 +263,12 @@ class UVEditor : EditorWindow
 		this.wantsMouseMove = true;
 		this.autoRepaintOnSceneChange = true;
 
-		ProBuilderEditor.onSelectionUpdate += OnSelectionUpdate;
+		ProBuilderEditor.OnSelectionUpdate += OnSelectionUpdate;
 		if(editor != null) OnSelectionUpdate(editor.selection);
 
 		instance = this;
 
-		pb_ObjectEditor.OnGetFrameBoundsEvent += OnGetFrameBoundsEvent;
+		ProBuilderMeshEditor.OnGetFrameBoundsEvent += OnGetFrameBoundsEvent;
 
 		nearestElement.Clear();
 
@@ -285,8 +285,8 @@ class UVEditor : EditorWindow
 			editor.PopEditLevel();
 
 		// EditorApplication.delayCall -= this.Close;							// not sure if this is necessary?
-		ProBuilderEditor.onSelectionUpdate -= OnSelectionUpdate;
-		pb_ObjectEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
+		ProBuilderEditor.OnSelectionUpdate -= OnSelectionUpdate;
+		ProBuilderMeshEditor.OnGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
 	}
 
 	/**

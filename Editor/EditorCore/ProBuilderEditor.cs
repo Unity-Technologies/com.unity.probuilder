@@ -11,21 +11,15 @@ using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
-	public delegate void OnSelectionUpdateEventHandler(pb_Object[] selection);
-
-	public delegate void OnVertexMovementBeginEventHandler(pb_Object[] selection);
-
-	public delegate void OnVertexMovementFinishedEventHandler(pb_Object[] selection);
-
 	public class ProBuilderEditor : EditorWindow
 	{
-		public static event OnSelectionUpdateEventHandler onSelectionUpdate;
+		public static event Action<pb_Object[]> OnSelectionUpdate;
 
 		// Called when vertex modifications are complete.
-		public static event OnVertexMovementFinishedEventHandler onVertexMovementFinish;
+		public static event Action<pb_Object[]> OnVertexMovementFinish;
 
 		// Called immediately prior to beginning vertex modifications. pb_Object will be in un-altered state at this point (meaning ToMesh and Refresh have been called, but not Optimize).
-		public static event OnVertexMovementBeginEventHandler onVertexMovementBegin;
+		public static event Action<pb_Object[]> OnVertexMovementBegin;
 
 		// Toggles for Face, Vertex, and Edge mode.
 		const int k_SelectModeLength = 3;
@@ -259,8 +253,8 @@ namespace UnityEditor.ProBuilder
 
 			MeshHandles.Destroy();
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(null);
+			if (OnSelectionUpdate != null)
+				OnSelectionUpdate(null);
 
 			ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
 			SceneView.onSceneGUIDelegate -= this.OnSceneGUI;
@@ -2308,12 +2302,12 @@ namespace UnityEditor.ProBuilder
 			UpdateTextureHandles();
 
 //			profiler.EndSample();
-//			profiler.BeginSample("onSelectionUpdate");
+//			profiler.BeginSample("OnSelectionUpdate");
 
 			currentHandleRotation = handleRotation;
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(selection);
+			if (OnSelectionUpdate != null)
+				OnSelectionUpdate(selection);
 //			profiler.EndSample();
 
 			UpdateSceneInfo();
@@ -2382,8 +2376,8 @@ namespace UnityEditor.ProBuilder
 			UpdateHandleRotation();
 			currentHandleRotation = handleRotation;
 
-			if (onSelectionUpdate != null)
-				onSelectionUpdate(selection);
+			if (OnSelectionUpdate != null)
+				OnSelectionUpdate(selection);
 
 			UpdateSceneInfo();
 
@@ -2650,8 +2644,8 @@ namespace UnityEditor.ProBuilder
 				pb.Refresh();
 			}
 
-			if (onVertexMovementBegin != null)
-				onVertexMovementBegin(selection);
+			if (OnVertexMovementBegin != null)
+				OnVertexMovementBegin(selection);
 		}
 
 		void OnFinishVertexModification()
@@ -2682,8 +2676,8 @@ namespace UnityEditor.ProBuilder
 				movingVertices = false;
 			}
 
-			if (onVertexMovementFinish != null)
-				onVertexMovementFinish(selection);
+			if (OnVertexMovementFinish != null)
+				OnVertexMovementFinish(selection);
 
 			scaling = false;
 		}

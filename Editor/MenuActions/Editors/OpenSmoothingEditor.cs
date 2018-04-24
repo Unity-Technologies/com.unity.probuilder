@@ -2,7 +2,7 @@ using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class OpenSmoothingEditor : MenuAction
 	{

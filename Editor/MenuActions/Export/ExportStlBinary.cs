@@ -6,7 +6,7 @@ using Parabox.STL;
 using ProBuilder.Core;
 using UnityEditor.ProBuilder;
 
-namespace ProBuilder.Actions
+namespace UnityEditor.ProBuilder.Actions
 {
 	class ExportStlBinary : MenuAction
 	{
