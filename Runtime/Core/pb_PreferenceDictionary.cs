@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Store settings in a project-local manner.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	abstract class pb_EntityBehaviour : MonoBehaviour
 	{

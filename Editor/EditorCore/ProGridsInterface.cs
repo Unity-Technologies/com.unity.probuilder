@@ -4,7 +4,7 @@ using System.Collections;
 using System;
 using System.Linq;
 using System.Reflection;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

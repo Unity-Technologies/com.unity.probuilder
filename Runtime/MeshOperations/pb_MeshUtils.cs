@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
-using pb_Edge = ProBuilder.Core.pb_Edge;
-using pb_Face = ProBuilder.Core.pb_Face;
-using pb_Object = ProBuilder.Core.pb_Object;
+using UnityEngine.ProBuilder;
+using pb_Edge = UnityEngine.ProBuilder.pb_Edge;
+using pb_Face = UnityEngine.ProBuilder.pb_Face;
+using pb_Object = UnityEngine.ProBuilder.pb_Object;
 
 namespace ProBuilder.MeshOperations
 {

@@ -5,7 +5,7 @@ using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

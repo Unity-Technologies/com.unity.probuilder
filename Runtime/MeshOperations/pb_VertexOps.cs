@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -253,7 +253,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, pb_Edge edge, int count, out List<pb_Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this pb_Object pb, pb_Edge edge, int count, out List<pb_Edge> newEdges)
 		{
 			return AppendVerticesToEdge(pb, new pb_Edge[] { edge }, count, out newEdges);
 		}
@@ -266,12 +266,12 @@ namespace ProBuilder.MeshOperations
 		/// <param name="count"></param>
 		/// <param name="newEdges"></param>
 		/// <returns></returns>
-		public static pb_ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count, out List<pb_Edge> newEdges)
+		public static ActionResult AppendVerticesToEdge(this pb_Object pb, IList<pb_Edge> edges, int count, out List<pb_Edge> newEdges)
 		{
 			newEdges = new List<pb_Edge>();
 
 			if(count < 1 || count > 512)
-				return new pb_ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
+				return new ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
 
 			List<pb_Vertex> vertices 		= new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
 			Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
@@ -396,7 +396,7 @@ namespace ProBuilder.MeshOperations
 			pb.SetSharedIndicesUV(lookupUV.ToSharedIndices());
 			pb.DeleteVerticesWithIndices(indicesToDelete);
 
-			return new pb_ActionResult(Status.Success, "Subdivide Edges");
+			return new ActionResult(Status.Success, "Subdivide Edges");
 		}
 
 		/// <summary>

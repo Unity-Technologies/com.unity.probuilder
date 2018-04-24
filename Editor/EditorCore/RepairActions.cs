@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.MeshOperations;
 using UnityEditor;
 using UnityEngine;

@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 
 		static void OnLightmappingCompleted()
 		{
-			if (!PreferencesInternal.GetBool(pb_Constant.pbShowMissingLightmapUvWarning, false))
+			if (!PreferencesInternal.GetBool(PreferenceKeys.pbShowMissingLightmapUvWarning, false))
 				return;
 
 			var missingUv2 = Object.FindObjectsOfType<pb_Object>().Where(x => !x.hasUv2 && x.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));

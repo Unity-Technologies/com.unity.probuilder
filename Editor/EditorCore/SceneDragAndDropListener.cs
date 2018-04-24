@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using UnityEditor.ProBuilder;
 using UObject = UnityEngine.Object;

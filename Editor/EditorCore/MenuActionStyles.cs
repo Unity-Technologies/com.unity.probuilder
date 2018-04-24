@@ -1,6 +1,6 @@
 ﻿// #define GENERATE_DESATURATED_ICONS
 
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEditor;
 
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
 					m_ButtonStyleVertical.hover.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_HOVER : Color.black;
 					m_ButtonStyleVertical.active.background = IconUtility.GetIcon("Toolbar/Button_Pressed", IconSkin.Pro);
 					m_ButtonStyleVertical.active.textColor = EditorGUIUtility.isProSkin ? TEXT_COLOR_WHITE_ACTIVE : Color.black;
-					m_ButtonStyleVertical.alignment = PreferencesInternal.GetBool(pb_Constant.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+					m_ButtonStyleVertical.alignment = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI) ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
 					m_ButtonStyleVertical.border = new RectOffset(4,0,0,0);
 					m_ButtonStyleVertical.stretchWidth = true;
 					m_ButtonStyleVertical.stretchHeight = false;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
@@ -37,12 +37,12 @@ The default value is <b>On</b>.
 			};
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			bool backFaceEnabled = PreferencesInternal.GetBool(pb_Constant.pbEnableBackfaceSelection);
 			PreferencesInternal.SetBool(pb_Constant.pbEnableBackfaceSelection, !backFaceEnabled);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new pb_ActionResult(Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
+			return new ActionResult(Status.Success, "Set Hidden Element Selection\n" + (!backFaceEnabled ? "On" : "Off") );
 		}
 
 		public override bool IsEnabled()

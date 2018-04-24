@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	static class pb_Spline
 	{
@@ -16,7 +16,7 @@ namespace ProBuilder.Core
 		/// <param name="closeLoop">Should the mesh join at the ends or remain unconnected.</param>
 		/// <param name="smooth">Are the mesh edges smoothed or hard.</param>
 		/// <returns>The resulting pb_Object.</returns>
-		internal static pb_Object Extrude(IList<pb_BezierPoint> points,
+		internal static pb_Object Extrude(IList<BezierPoint> points,
 										float radius = .5f,
 										int columns = 32,
 										int rows = 16,
@@ -29,7 +29,7 @@ namespace ProBuilder.Core
 		}
 
 		// Update a pb_Object with new geometry from a bezier spline.
-		internal static void Extrude(	IList<pb_BezierPoint> bezierPoints,
+		internal static void Extrude(	IList<BezierPoint> bezierPoints,
 									float radius,
 									int columns,
 									int rows,
@@ -43,7 +43,7 @@ namespace ProBuilder.Core
 		}
 
 		// Extrapolate a bezier curve to it's control points and segments between.
-		internal static List<Vector3> GetControlPoints(IList<pb_BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
+		internal static List<Vector3> GetControlPoints(IList<BezierPoint> bezierPoints, int subdivisionsPerSegment, bool closeLoop, List<Quaternion> rotations)
 		{
 			int cols = subdivisionsPerSegment;
 			int c = bezierPoints.Count;
@@ -65,7 +65,7 @@ namespace ProBuilder.Core
 				{
 					float s = cols;
 
-					positions.Add( pb_BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
+					positions.Add( BezierPoint.CubicPosition(bezierPoints[i], bezierPoints[(i+1)%c], n / s) );
 
 					if(rotations != null)
 						rotations.Add( Quaternion.Slerp(bezierPoints[i].rotation, bezierPoints[(i+1)%c].rotation, n / (float)(segments_per_keyframe - 1)) );

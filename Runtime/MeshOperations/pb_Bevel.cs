@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -11,7 +11,7 @@ namespace ProBuilder.MeshOperations
 	/// </summary>
 	static class pb_Bevel
 	{
-		public static pb_ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
+		public static ActionResult BevelEdges(pb_Object pb, IList<pb_Edge> edges, float amount, out List<pb_Face> createdFaces)
 		{
 			createdFaces = null;
 
@@ -54,7 +54,7 @@ namespace ProBuilder.MeshOperations
 			}
 
 			if(amount < .001f)
-				return new pb_ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
+				return new ActionResult(Status.Canceled, "Bevel Distance > Available Surface");
 
 			// iterate selected edges and move each leading edge back along it's direction
 			// storing information about adjacent faces in the process
@@ -85,7 +85,7 @@ namespace ProBuilder.MeshOperations
 			if(beveled < 1)
 			{
 				createdFaces = null;
-				return new pb_ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
+				return new ActionResult(Status.Canceled, "Cannot Bevel Open Edges");
 			}
 
 			// grab the "createdFaces" array now so that the selection returned is just the bridged faces
@@ -231,7 +231,7 @@ namespace ProBuilder.MeshOperations
 
 			pb.ToMesh();
 
-			return new pb_ActionResult(Status.Success, "Bevel Edges");
+			return new ActionResult(Status.Success, "Bevel Edges");
  		}
 
  		private static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };

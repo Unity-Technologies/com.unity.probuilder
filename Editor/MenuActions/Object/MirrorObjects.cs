@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using UnityEditor.ProBuilder.UI;
@@ -81,7 +81,7 @@ namespace UnityEditor.ProBuilder.Actions
 				EditorUtility.ShowNotification( DoAction().notification );
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			Vector3 scale = new Vector3(
 				(storedScale & MirrorSettings.X) > 0 ? -1f : 1f,
@@ -100,8 +100,8 @@ namespace UnityEditor.ProBuilder.Actions
 			ProBuilderEditor.Refresh();
 
 			return res.Count > 0 ?
-				new pb_ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
-				new pb_ActionResult(Status.NoChange, "No Objects Selected");
+				new ActionResult(Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :
+				new ActionResult(Status.NoChange, "No Objects Selected");
 		}
 
 		/**

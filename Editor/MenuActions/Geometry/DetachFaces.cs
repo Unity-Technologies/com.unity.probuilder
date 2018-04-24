@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 				EditorUtility.ShowNotification( DoAction().notification );
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuDetachFaces(selection);
 		}

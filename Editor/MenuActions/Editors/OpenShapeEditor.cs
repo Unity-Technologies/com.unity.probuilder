@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -26,10 +26,10 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			ShapeEditor.MenuOpenShapeCreator();
-			return new pb_ActionResult(Status.Success, "Open Shape Tool");
+			return new ActionResult(Status.Success, "Open Shape Tool");
 		}
 	}
 }

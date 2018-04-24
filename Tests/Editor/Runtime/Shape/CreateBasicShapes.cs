@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.Test;
 
 namespace ProBuilder.RuntimeTests.Shape

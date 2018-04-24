@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuSubdivideEdge(selection);
 		}

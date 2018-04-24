@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

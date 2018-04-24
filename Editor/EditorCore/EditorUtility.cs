@@ -6,7 +6,7 @@ using System.Linq;
 using System;
 using System.Reflection;
 using UnityEditor.ProBuilder.Actions;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
@@ -100,7 +100,7 @@ namespace UnityEditor.ProBuilder
 
 		public static void ShowNotification(EditorWindow window, string notif)
 		{
-			if(PreferencesInternal.HasKey(pb_Constant.pbShowEditorNotifications) && !PreferencesInternal.GetBool(pb_Constant.pbShowEditorNotifications))
+			if(PreferencesInternal.HasKey(PreferenceKeys.pbShowEditorNotifications) && !PreferencesInternal.GetBool(PreferenceKeys.pbShowEditorNotifications))
 				return;
 
 			window.ShowNotification(new GUIContent(notif, ""));
@@ -192,7 +192,7 @@ namespace UnityEditor.ProBuilder
 		{
 		 	Mesh oldMesh = pb.msh;
 	 		MeshRebuildReason reason = pb.Verify();
-			bool meshesAreAssets = PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets);
+			bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
 			if( reason != MeshRebuildReason.None )
 			{
@@ -264,12 +264,12 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		public static void InitObject(pb_Object pb)
 		{
-			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
 			ScreenCenter( pb.gameObject );
 
-			var flags = PreferencesInternal.HasKey(pb_Constant.pbDefaultStaticFlags)
-				? PreferencesInternal.GetEnum<StaticEditorFlags>(pb_Constant.pbDefaultStaticFlags)
+			var flags = PreferencesInternal.HasKey(PreferenceKeys.pbDefaultStaticFlags)
+				? PreferencesInternal.GetEnum<StaticEditorFlags>(PreferenceKeys.pbDefaultStaticFlags)
 				: StaticEditorFlags.LightmapStatic |
 				  StaticEditorFlags.OccluderStatic |
 				  StaticEditorFlags.OccludeeStatic |
@@ -280,14 +280,14 @@ namespace UnityEditor.ProBuilder
 
 			GameObjectUtility.SetStaticEditorFlags(pb.gameObject, flags);
 
-			switch(PreferencesInternal.GetEnum<ColliderType>(pb_Constant.pbDefaultCollider))
+			switch(PreferencesInternal.GetEnum<ColliderType>(PreferenceKeys.pbDefaultCollider))
 			{
 				case ColliderType.BoxCollider:
 					pb.gameObject.AddComponent<BoxCollider>();
 					break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.GetBool(pb_Constant.pbForceConvex, false);
+					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.GetBool(PreferenceKeys.pbForceConvex, false);
 					break;
 			}
 
@@ -307,11 +307,11 @@ namespace UnityEditor.ProBuilder
 				break;
 
 				case ColliderType.MeshCollider:
-					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.HasKey(pb_Constant.pbForceConvex) ? PreferencesInternal.GetBool(pb_Constant.pbForceConvex) : false;
+					pb.gameObject.AddComponent<MeshCollider>().convex = PreferencesInternal.HasKey(PreferenceKeys.pbForceConvex) ? PreferencesInternal.GetBool(PreferenceKeys.pbForceConvex) : false;
 					break;
 			}
 
-			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(pb_Constant.pbShadowCastingMode);
+			ShadowCastingMode scm = PreferencesInternal.GetEnum<ShadowCastingMode>(PreferenceKeys.pbShadowCastingMode);
 			pb.GetComponent<MeshRenderer>().shadowCastingMode = scm;
 
 			EntityUtility.SetEntityType(entityType, pb.gameObject);
@@ -347,7 +347,7 @@ namespace UnityEditor.ProBuilder
 		 */
 		public static void SetPivotAndSnapWithPref(pb_Object pb, int[] indicesToCenterPivot)
 		{
-			if(PreferencesInternal.GetBool(pb_Constant.pbForceGridPivot))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
 				pb.CenterPivot( indicesToCenterPivot == null ? new int[1]{0} : indicesToCenterPivot );
 			else
 				pb.CenterPivot(indicesToCenterPivot);
@@ -355,7 +355,7 @@ namespace UnityEditor.ProBuilder
 			if(ProGridsInterface.SnapEnabled())
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
-			if(PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			pb.Optimize();

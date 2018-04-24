@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.Test;
 
 namespace ProBuilder.EditorTests.Export

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -22,7 +22,7 @@ namespace ProBuilder.MeshOperations
 			return false;
 		}
 
-		public static pb_ActionResult ToTriangles(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] newFaces)
+		public static ActionResult ToTriangles(this pb_Object pb, IList<pb_Face> faces, out pb_Face[] newFaces)
 		{
 			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -41,7 +41,7 @@ namespace ProBuilder.MeshOperations
 
 			newFaces = rebuild.Select(x => x.face).ToArray();
 
-			return new pb_ActionResult(Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
+			return new ActionResult(Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
 		}
 
 		private static List<pb_FaceRebuildData> BreakFaceIntoTris(pb_Face face, List<pb_Vertex> vertices, Dictionary<int, int> lookup)

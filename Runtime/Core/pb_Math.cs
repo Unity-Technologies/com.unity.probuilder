@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using System.Linq;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Additional commonly used math when working with 3d geometry.
@@ -358,7 +358,7 @@ namespace ProBuilder.Core
 				return false;
 			}
 
-			pb_Bounds2D bounds = new pb_Bounds2D(polygon, indices);
+			Bounds2D bounds = new Bounds2D(polygon, indices);
 
 			if(bounds.ContainsPoint(point))
 			{
@@ -391,7 +391,7 @@ namespace ProBuilder.Core
 		/// <param name="edges"></param>
 		/// <param name="point"></param>
 		/// <returns></returns>
-		internal static bool PointInPolygon(Vector2[] positions, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		internal static bool PointInPolygon(Vector2[] positions, Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
 		{
 			int len = edges.Length * 2;
 
@@ -419,7 +419,7 @@ namespace ProBuilder.Core
 		/// <param name="edges"></param>
 		/// <param name="point"></param>
 		/// <returns></returns>
-		internal static bool PointInPolygon(Vector3[] positions, pb_Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
+		internal static bool PointInPolygon(Vector3[] positions, Bounds2D polyBounds, pb_Edge[] edges, Vector2 point)
 		{
 			int len = edges.Length * 2;
 
@@ -438,12 +438,12 @@ namespace ProBuilder.Core
 
 		internal static bool RectIntersectsLineSegment(Rect rect, Vector2 a, Vector2 b)
 		{
-			return pb_Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
+			return Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
 		}
 
 		internal static bool RectIntersectsLineSegment(Rect rect, Vector3 a, Vector3 b)
 		{
-			return pb_Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
+			return Clipping.RectContainsLineSegment(rect, a.x, a.y, b.x, b.y);
 		}
 
 		/// <summary>

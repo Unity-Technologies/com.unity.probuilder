@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEditor;
 
@@ -11,23 +11,23 @@ namespace UnityEditor.ProBuilder
 	static class EntityVisibility
 	{
 		private static bool show_Detail {
-			get { return PreferencesInternal.GetBool(pb_Constant.pbShowDetail); }
-			set { PreferencesInternal.SetBool(pb_Constant.pbShowDetail, value); }
+			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowDetail); }
+			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowDetail, value); }
 		}
 
 		private static bool show_Mover {
-			get { return PreferencesInternal.GetBool(pb_Constant.pbShowMover); }
-			set { PreferencesInternal.SetBool(pb_Constant.pbShowMover, value); }
+			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowMover); }
+			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowMover, value); }
 		}
 
 		private static bool show_Collider {
-			get { return PreferencesInternal.GetBool(pb_Constant.pbShowCollider); }
-			set { PreferencesInternal.SetBool(pb_Constant.pbShowCollider, value); }
+			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowCollider); }
+			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowCollider, value); }
 		}
 
 		private static bool show_Trigger {
-			get { return PreferencesInternal.GetBool(pb_Constant.pbShowTrigger); }
-			set { PreferencesInternal.SetBool(pb_Constant.pbShowTrigger, value); }
+			get { return PreferencesInternal.GetBool(PreferenceKeys.pbShowTrigger); }
+			set { PreferencesInternal.SetBool(PreferenceKeys.pbShowTrigger, value); }
 		}
 
 		static EntityVisibility()

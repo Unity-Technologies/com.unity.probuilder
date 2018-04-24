@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 
 namespace UnityEditor.ProBuilder
 {
@@ -15,9 +16,9 @@ namespace UnityEditor.ProBuilder
 		static VertexColorPalette m_Instance = null;
 
 		[SerializeField]
-		pb_ColorPalette m_ColorPalette = null;
+		ColorPalette m_ColorPalette = null;
 
-		pb_ColorPalette colorPalette
+		ColorPalette colorPalette
 		{
 			get { return m_ColorPalette; }
 		}
@@ -33,7 +34,7 @@ namespace UnityEditor.ProBuilder
 		/// pb_ColorPalette from the older version.
 		/// </summary>
 		/// <returns></returns>
-		static void CopyColorsFromEditorPrefs(pb_ColorPalette target)
+		static void CopyColorsFromEditorPrefs(ColorPalette target)
 		{
 			List<Color> colors = new List<Color>();
 
@@ -41,7 +42,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Color color = Color.white;
 
-				if (pb_Util.TryParseColor(PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref color))
+				if (pb_Util.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref color))
 					colors.Add(color);
 			}
 
@@ -57,26 +58,26 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		public static void MenuOpenWindow()
 		{
-			bool dockable = PreferencesInternal.GetBool(pb_Constant.pbVertexPaletteDockable);
+			bool dockable = PreferencesInternal.GetBool(PreferenceKeys.pbVertexPaletteDockable);
 			GetWindow<VertexColorPalette>(!dockable, "Vertex Colors", true);
 		}
 
-		static pb_ColorPalette GetLastUsedColorPalette()
+		static ColorPalette GetLastUsedColorPalette()
 		{
 			// serialized copy?
-			pb_ColorPalette palette = m_Instance != null ? m_Instance.m_ColorPalette : null;
+			ColorPalette palette = m_Instance != null ? m_Instance.m_ColorPalette : null;
 
 			if (palette != null)
 				return palette;
 
 			// last set asset path?
-			palette = AssetDatabase.LoadAssetAtPath<pb_ColorPalette>(lastAssignedColorPalette);
+			palette = AssetDatabase.LoadAssetAtPath<ColorPalette>(lastAssignedColorPalette);
 
 			if (palette != null)
 				return palette;
 
 			// any existing palette in project?
-			palette = FileUtil.FindAssetOfType<pb_ColorPalette>();
+			palette = FileUtil.FindAssetOfType<ColorPalette>();
 
 			if(palette != null)
 			{
@@ -86,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
 			// create new default
 			lastAssignedColorPalette = FileUtil.GetLocalDataDirectory() + "Default Color Palette.asset";
-			palette = FileUtil.LoadRequired<pb_ColorPalette>(lastAssignedColorPalette);
+			palette = FileUtil.LoadRequired<ColorPalette>(lastAssignedColorPalette);
 			CopyColorsFromEditorPrefs(palette);
 
 			return palette;
@@ -108,7 +109,7 @@ namespace UnityEditor.ProBuilder
 
 		void OpenWindowAsDockable(bool isDockable)
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbVertexPaletteDockable, isDockable);
+			PreferencesInternal.SetBool(PreferenceKeys.pbVertexPaletteDockable, isDockable);
 			GetWindow<VertexColorPalette>().Close();
 			VertexColorPalette.MenuOpenWindow();
 		}
@@ -139,7 +140,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.EndHorizontal();
 
-			m_ColorPalette = (pb_ColorPalette) EditorGUILayout.ObjectField(m_ColorPaletteGuiContent, m_ColorPalette, typeof(pb_ColorPalette), false);
+			m_ColorPalette = (ColorPalette) EditorGUILayout.ObjectField(m_ColorPaletteGuiContent, m_ColorPalette, typeof(ColorPalette), false);
 
 			if (m_ColorPalette == null)
 			{
@@ -237,7 +238,7 @@ namespace UnityEditor.ProBuilder
 				pb.Optimize();
 			}
 
-			EditorUtility.ShowNotification("Set Vertex Colors\n" + pb_ColorUtil.GetColorName(col));
+			EditorUtility.ShowNotification("Set Vertex Colors\n" + UnityEngine.ColorUtility.GetColorName(col));
 		}
 	}
 }

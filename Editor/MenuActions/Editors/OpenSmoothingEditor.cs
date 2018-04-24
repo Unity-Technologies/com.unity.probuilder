@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 
@@ -27,10 +27,10 @@ ProBuilder decides which edges should be smoothed by checking for neighboring fa
 			return 	ProBuilderEditor.instance != null;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			SmoothGroupEditor.MenuOpenSmoothGroupEditor();
-			return new pb_ActionResult(Status.Success, "Open Smoothing Groups Editor");
+			return new ActionResult(Status.Success, "Open Smoothing Groups Editor");
 		}
 	}
 }

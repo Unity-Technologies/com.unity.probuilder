@@ -1,4 +1,4 @@
-﻿using ProBuilder.Core;
+﻿using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -29,10 +29,10 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			VertexPositionEditor.MenuOpenVertexEditor();
-			return new pb_ActionResult(Status.Success, "Open Vertex Editor Window");
+			return new ActionResult(Status.Success, "Open Vertex Editor Window");
 		}
 	}
 }

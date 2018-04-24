@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Linq;
 using System.Threading;
 using Parabox.STL;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 using Object = UnityEngine.Object;
@@ -32,12 +32,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			if(!string.IsNullOrEmpty(ExportWithFileDialog(Selection.gameObjects, FileType.Ascii)))
-				return new pb_ActionResult(Status.Success, "Export STL");
+				return new ActionResult(Status.Success, "Export STL");
 			else
-				return new pb_ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(Status.Canceled, "User Canceled");
 		}
 
 		public static string ExportWithFileDialog(GameObject[] gameObjects, FileType type)

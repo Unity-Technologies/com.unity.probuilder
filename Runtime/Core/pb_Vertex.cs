@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Holds information about a single vertex, and provides methods for averaging between many.

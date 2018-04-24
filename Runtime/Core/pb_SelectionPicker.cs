@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UObject = UnityEngine.Object;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Functions for picking elements in a view.

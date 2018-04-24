@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using Parabox.STL;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 using FileUtil = UnityEditor.ProBuilder.FileUtil;
@@ -32,14 +32,14 @@ namespace UnityEditor.ProBuilder.Actions
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			string res = ExportWithFileDialog(MeshSelection.Top());
 
 			if( string.IsNullOrEmpty(res) )
-				return new pb_ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(Status.Canceled, "User Canceled");
 			else
-				return new pb_ActionResult(Status.Success, "Export OBJ");
+				return new ActionResult(Status.Success, "Export OBJ");
 		}
 
 		/**

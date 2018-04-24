@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
@@ -42,10 +42,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override string menuTitle { get { return mode == pb_RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			mode = pb_Util.NextEnumValue(mode);
-			return new pb_ActionResult(Status.Success,
+			return new ActionResult(Status.Success,
 				"Set Drag Select\n" + (mode == pb_RectSelectMode.Complete ? "Complete" : "Intersect"));
 		}
 

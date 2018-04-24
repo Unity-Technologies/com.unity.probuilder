@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using ProBuilder.MeshOperations;
 
@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
 		public static void MenuOpenShapeCreator()
 		{
 			GetWindow<ShapeEditor>(
-				PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
+				PreferencesInternal.GetBool(PreferenceKeys.pbShapeWindowFloating),
 				"Shape Tool",
 				true).Show();
 		}
@@ -54,12 +54,12 @@ namespace UnityEditor.ProBuilder
 		// toogle for closing the window after shape creation from the prefrences window
 		static bool prefClose
 		{
-			get { return PreferencesInternal.GetBool(pb_Constant.pbCloseShapeWindow, false); }
+			get { return PreferencesInternal.GetBool(PreferenceKeys.pbCloseShapeWindow, false); }
 		}
 
 		void OnEnable()
 		{
-			m_DefaultMaterial = PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			m_DefaultMaterial = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 			m_DoInitPreview = true;
 
 			if (s_ShapePreviewMaterial == null)
@@ -91,11 +91,11 @@ namespace UnityEditor.ProBuilder
 
 			menu.AddItem (
 				new GUIContent("Window/Open as Floating Window", ""),
-				PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
+				PreferencesInternal.GetBool(PreferenceKeys.pbShapeWindowFloating),
 				() => { SetFloating(true); } );
 			menu.AddItem (
 				new GUIContent("Window/Open as Dockable Window", ""),
-				!PreferencesInternal.GetBool(pb_Constant.pbShapeWindowFloating),
+				!PreferencesInternal.GetBool(PreferenceKeys.pbShapeWindowFloating),
 				() => { SetFloating(false); } );
 
 			menu.ShowAsContext ();
@@ -103,18 +103,18 @@ namespace UnityEditor.ProBuilder
 
 		void SetFloating(bool floating)
 		{
-			PreferencesInternal.SetBool(pb_Constant.pbShapeWindowFloating, floating);
+			PreferencesInternal.SetBool(PreferenceKeys.pbShapeWindowFloating, floating);
 			Close();
 			MenuOpenShapeCreator();
 		}
 
-		[MenuItem("GameObject/3D Object/" + pb_Constant.PRODUCT_NAME + " Cube _%k")]
+		[MenuItem("GameObject/3D Object/" + PreferenceKeys.PRODUCT_NAME + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
 			pb_Object pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
 			UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
-			Material mat = PreferencesInternal.GetMaterial(pb_Constant.pbDefaultMaterial);
+			Material mat = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
 
 			if(mat != null)
 			{
@@ -1109,7 +1109,7 @@ namespace UnityEditor.ProBuilder
 
 			m_PreviewObject = pb.gameObject;
 
-			if(PreferencesInternal.GetBool(pb_Constant.pbForceGridPivot))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceGridPivot))
 				pb.CenterPivot(indicesToCenterPivotOn == null ? new int[1]{0} : indicesToCenterPivotOn);
 
 			if(prevTransform)
@@ -1126,7 +1126,7 @@ namespace UnityEditor.ProBuilder
 			if(ProGridsInterface.SnapEnabled())
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
-			if(PreferencesInternal.GetBool(pb_Constant.pbForceVertexPivot))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
 				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object

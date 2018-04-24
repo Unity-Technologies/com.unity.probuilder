@@ -4,7 +4,7 @@ using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorGUIUtility = UnityEditor.EditorGUIUtility;
@@ -212,7 +212,7 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			string res = null;
 
@@ -220,7 +220,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if(meshes == null || meshes.Count() < 1)
 			{
-				return new pb_ActionResult(Status.Canceled, "No Meshes Selected");
+				return new ActionResult(Status.Canceled, "No Meshes Selected");
 			}
 			else if(m_ExportFormat == ExportFormat.Obj)
 			{
@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			if( string.IsNullOrEmpty(res) )
 			{
-				return new pb_ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(Status.Canceled, "User Canceled");
 			}
 			else
 			{
@@ -268,7 +268,7 @@ namespace UnityEditor.ProBuilder.Actions
 						EditorGUIUtility.PingObject(o);
 				}
 
-				return new pb_ActionResult(Status.Success, "Export " + m_ExportFormat);
+				return new ActionResult(Status.Success, "Export " + m_ExportFormat);
 			}
 		}
 	}

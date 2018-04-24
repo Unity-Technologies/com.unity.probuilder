@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEditor.ProBuilder;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

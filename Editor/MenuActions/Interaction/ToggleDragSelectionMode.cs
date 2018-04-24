@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
@@ -47,12 +47,12 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			int mode = (int) dragSelectMode;
 			dragSelectMode = (DragSelectMode) ((mode + 1) % 3);
 			ProBuilderEditor.instance.LoadPrefs();
-			return new pb_ActionResult(Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
+			return new ActionResult(Status.Success, "Set Shift Drag Mode\n" + dragSelectMode);
 		}
 
 		public override bool IsEnabled()

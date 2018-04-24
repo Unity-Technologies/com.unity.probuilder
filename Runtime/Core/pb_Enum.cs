@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Element selection mode.

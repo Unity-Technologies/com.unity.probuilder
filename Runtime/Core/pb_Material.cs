@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Reflection;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	public static class pb_Material
 	{

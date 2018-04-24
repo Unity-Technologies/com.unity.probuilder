@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -432,10 +432,10 @@ namespace ProBuilder.MeshOperations
 		{
 			int length = points.Length < target.Length ? points.Length : target.Length;
 
-			pb_Bounds2D t_bounds = new pb_Bounds2D(target, length); // only match the bounds of known matching points
+			Bounds2D t_bounds = new Bounds2D(target, length); // only match the bounds of known matching points
 
 			// move points to the center of target
-			Vector2 translation = t_bounds.center - pb_Bounds2D.Center(points, length);
+			Vector2 translation = t_bounds.center - Bounds2D.Center(points, length);
 
 			Vector2[] transformed = new Vector2[points.Length];
 			for(int i = 0; i < points.Length; i++)
@@ -453,7 +453,7 @@ namespace ProBuilder.MeshOperations
 				transformed[i] = transformed[i].RotateAroundPoint(t_bounds.center, angle);
 
 			// and lastly scale
-			pb_Bounds2D p_bounds = new pb_Bounds2D(transformed, length);
+			Bounds2D p_bounds = new Bounds2D(transformed, length);
 			Vector2 scale = t_bounds.size.DivideBy(p_bounds.size);
 
 			// for(int i = 0; i < points.Length; i++)

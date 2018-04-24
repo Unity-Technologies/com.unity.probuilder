@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return MenuActionState.Visible;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			UndoUtility.RecordSelection(selection, "Select Faces with Smoothing Group");
 
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.Refresh();
 
-			return new pb_ActionResult(Status.Success, "Select Faces with Smoothing Group");
+			return new ActionResult(Status.Success, "Select Faces with Smoothing Group");
 		}
 	}
 }

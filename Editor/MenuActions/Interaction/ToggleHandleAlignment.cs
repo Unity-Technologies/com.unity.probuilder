@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder.Actions
 			this.count = icons.Length;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			int current = handleAlignment + 1;
 
@@ -67,7 +67,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.instance.SetHandleAlignment( (HandleAlignment)current );
 			ProBuilderEditor.instance.LoadPrefs();
-			return new pb_ActionResult(Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
+			return new ActionResult(Status.Success, "Set Handle Alignment\n" + ((HandleAlignment)current).ToString());
 		}
 
 		public override bool IsEnabled()

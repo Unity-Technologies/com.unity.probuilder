@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine.Assertions;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A series of handy extensions.
@@ -143,7 +143,7 @@ namespace ProBuilder.Core
 			for(int i = 0, c = values.Length; i < c; i++)
 				if(current.Equals(values.GetValue((i))))
 					return (T) values.GetValue((i+1)%c);
-			
+
 			return current;
 		}
 
@@ -518,15 +518,15 @@ namespace ProBuilder.Core
 
 		public static string ControlKeyString(char character)
 		{
-			if( character == pb_Constant.CMD_SUPER )
+			if( character == PreferenceKeys.CMD_SUPER )
 				return "Control";
-			else if( character == pb_Constant.CMD_SHIFT )
+			else if( character == PreferenceKeys.CMD_SHIFT )
 				return "Shift";
-			else if( character == pb_Constant.CMD_OPTION )
+			else if( character == PreferenceKeys.CMD_OPTION )
 				return "Alt";
-			else if( character == pb_Constant.CMD_ALT )
+			else if( character == PreferenceKeys.CMD_ALT )
 				return "Alt";
-			else if( character == pb_Constant.CMD_DELETE )
+			else if( character == PreferenceKeys.CMD_DELETE )
 				return "Delete";
 			else
 				return character.ToString();

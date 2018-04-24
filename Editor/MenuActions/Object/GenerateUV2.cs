@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -91,16 +91,16 @@ namespace UnityEditor.ProBuilder.Actions
 				EditorUtility.ShowNotification( DoAction().notification);
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			pb_Object[] selected = generateUV2PerObject ? selection : GameObject.FindObjectsOfType<pb_Object>();
 			return DoGenerateUV2(selected);
 		}
 
-		private static pb_ActionResult DoGenerateUV2(pb_Object[] selected)
+		private static ActionResult DoGenerateUV2(pb_Object[] selected)
 		{
 			if(selected == null || selected.Length < 1)
-				return pb_ActionResult.NoSelection;
+				return ActionResult.NoSelection;
 
 			for(int i = 0; i < selected.Length; i++)
 			{
@@ -113,7 +113,7 @@ namespace UnityEditor.ProBuilder.Actions
 					{
 						UnityEditor.EditorUtility.ClearProgressBar();
 						Debug.LogWarning("User canceled UV2 generation.  " + (selected.Length-i) + " pb_Objects left without lightmap UVs.");
-						return pb_ActionResult.UserCanceled;
+						return ActionResult.UserCanceled;
 					}
 				}
 
@@ -124,7 +124,7 @@ namespace UnityEditor.ProBuilder.Actions
 			UnityEditor.EditorUtility.ClearProgressBar();
 
 			int l = selected.Length;
-			return new pb_ActionResult(Status.Success, "Generate UV2\n" + (l > 1 ? string.Format("for {0} objects", l) : string.Format("for {0} object", l)) );
+			return new ActionResult(Status.Success, "Generate UV2\n" + (l > 1 ? string.Format("for {0} objects", l) : string.Format("for {0} object", l)) );
 		}
 	}
 }

@@ -1,5 +1,5 @@
 using System;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			foreach (pb_Object pb in MeshSelection.All())
 			{
@@ -55,9 +55,9 @@ namespace UnityEditor.ProBuilder.Actions
 			int selectionCount = MeshSelection.All().Length;
 
 			if(selectionCount < 1)
-				return new pb_ActionResult(Status.NoChange, "Set Trigger\nNo objects selected");
+				return new ActionResult(Status.NoChange, "Set Trigger\nNo objects selected");
 
-			return new pb_ActionResult(Status.Success, "Set Trigger\nSet " + selectionCount + " Objects");
+			return new ActionResult(Status.Success, "Set Trigger\nSet " + selectionCount + " Objects");
 		}
 	}
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
@@ -239,7 +239,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Handles.color = Color.gray;
 				Handles.DrawLine(position, position + (mousePosition-position).normalized * radius );
-				GUI.Label(new Rect(position.x, position.y, 90f, 30f), newRotation.ToString("F2") + pb_Constant.DEGREE_SYMBOL);
+				GUI.Label(new Rect(position.x, position.y, 90f, 30f), newRotation.ToString("F2") + PreferenceKeys.DEGREE_SYMBOL);
 			}
 
 			// If a Tool already is engaged and it's not this one, bail.

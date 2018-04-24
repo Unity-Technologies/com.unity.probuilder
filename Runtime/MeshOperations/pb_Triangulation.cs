@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Poly2Tri;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Describes the results of a pb_Action.
@@ -16,7 +16,7 @@ namespace ProBuilder.Core
 	/// <summary>
 	/// Contains information about a ProBuilder action (success, failure, notification, etc)
 	/// </summary>
-	public class pb_ActionResult
+	public class ActionResult
 	{
 		/// <summary>
 		/// State of affairs after the operation.
@@ -33,7 +33,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="status"></param>
 		/// <param name="notification"></param>
-		public pb_ActionResult(Status status, string notification)
+		public ActionResult(Status status, string notification)
 		{
 			this.status = status;
 			this.notification = notification;
@@ -44,7 +44,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="res"></param>
 		/// <returns>True if action was successful, false otherwise.</returns>
-		public static implicit operator bool(pb_ActionResult res)
+		public static implicit operator bool(ActionResult res)
 		{
 			return res.status == Status.Success;
 		}
@@ -52,20 +52,20 @@ namespace ProBuilder.Core
 		/// <summary>
 		/// Generic "Success" action result with no notification text.
 		/// </summary>
-		public static pb_ActionResult Success { get { return new pb_ActionResult(Status.Success, ""); } }
+		public static ActionResult Success { get { return new ActionResult(Status.Success, ""); } }
 
 		/// <summary>
 		/// Generic "No Selection" action result with "Nothing Selected" notification.
 		/// </summary>
-		public static pb_ActionResult NoSelection { get {
-			return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+		public static ActionResult NoSelection { get {
+			return new ActionResult(Status.Canceled, "Nothing Selected");
 		} }
 
 		/// <summary>
 		/// Generic "Canceled" action result with "User Canceled" notification.
 		/// </summary>
-		public static pb_ActionResult UserCanceled { get {
-			return new pb_ActionResult(Status.Canceled, "User Canceled");
+		public static ActionResult UserCanceled { get {
+			return new ActionResult(Status.Canceled, "User Canceled");
 		} }
 	}
 }

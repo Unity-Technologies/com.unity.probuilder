@@ -4,7 +4,7 @@ using UnityEditor;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using ProBuilder.MeshOperations;
 using Object = UnityEngine.Object;

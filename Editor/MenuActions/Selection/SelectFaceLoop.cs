@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 					ProBuilderEditor.instance.selectionMode != SelectMode.Face;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuLoopFaces(selection);
 		}

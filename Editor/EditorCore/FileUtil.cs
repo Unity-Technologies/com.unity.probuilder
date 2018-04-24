@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		{
 			array = new Material[10]
 			{
-				pb_Constant.DefaultMaterial,
+				PreferenceKeys.DefaultMaterial,
 				null,
 				null,
 				null,

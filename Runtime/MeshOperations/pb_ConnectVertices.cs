@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -17,7 +17,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="indices">A list of indices (corresponding to the pb_Object.vertices array) to connect with new edges.</param>
 		/// <param name="newVertices">A list of newly created vertex indices.</param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		public static pb_ActionResult Connect(this pb_Object pb, IList<int> indices, out int[] newVertices)
+		public static ActionResult Connect(this pb_Object pb, IList<int> indices, out int[] newVertices)
 		{
 			int sharedIndexOffset = pb.sharedIndices.Length;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -96,7 +96,7 @@ namespace ProBuilder.MeshOperations
 
 			pb.ToMesh();
 
-			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Vertices", distinct.Count));
+			return new ActionResult(Status.Success, string.Format("Connected {0} Vertices", distinct.Count));
 		}
 
 		static List<ConnectFaceRebuildData> ConnectIndicesInFace(

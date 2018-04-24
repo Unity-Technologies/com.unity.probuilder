@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.EditorTests.Picking
 {

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 
@@ -50,11 +50,11 @@ namespace UnityEditor.ProBuilder.Actions
 			return false;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			UndoUtility.RecordSelection(selection, "Select Hole");
 
-			pb_ActionResult res = pb_ActionResult.NoSelection;
+			ActionResult res = ActionResult.NoSelection;
 
 			foreach(pb_Object pb in selection)
 			{
@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				List<List<pb_Edge>> holes = pb_AppendPolygon.FindHoles(pb, indices);
 
-				res = new pb_ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
+				res = new ActionResult(Status.Success, holes.Count > 0 ? string.Format("{0} holes found", holes.Count) : "No Holes in Selection");
 
 				pb.SetSelectedEdges(holes.SelectMany(x => x));
 			}

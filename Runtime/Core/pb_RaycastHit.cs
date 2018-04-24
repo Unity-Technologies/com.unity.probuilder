@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// The results of a raycast against a pb_Object.

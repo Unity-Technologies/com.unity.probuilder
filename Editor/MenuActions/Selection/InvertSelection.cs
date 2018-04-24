@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	editLevel != EditLevel.Geometry;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuInvertSelection(selection);
 		}

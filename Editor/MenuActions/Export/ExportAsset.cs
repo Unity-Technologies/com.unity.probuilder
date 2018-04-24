@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Parabox.STL;
 using System.IO;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorUtility = UnityEditor.EditorUtility;
 
@@ -32,10 +32,10 @@ namespace UnityEditor.ProBuilder.Actions
 
 		public override bool IsHidden() { return true; }
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			ExportWithFileDialog( MeshSelection.Top() );
-			return new pb_ActionResult(Status.Success, "Make Asset & Prefab");
+			return new ActionResult(Status.Success, "Make Asset & Prefab");
 		}
 
 		/**

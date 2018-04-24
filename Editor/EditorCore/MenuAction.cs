@@ -1,7 +1,7 @@
 ﻿// #define GENERATE_DESATURATED_ICONS
 
 using UnityEngine;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
@@ -165,7 +165,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 *	Perform whatever action this menu item is supposed to do.  Must implement undo/redo here.
 		 */
-		public abstract pb_ActionResult DoAction();
+		public abstract ActionResult DoAction();
 
 		/**
 		 *	The 'Alt' button has been pressed.  The default action is to
@@ -219,7 +219,7 @@ namespace UnityEditor.ProBuilder
 					}
 					else
 					{
-						pb_ActionResult result = DoAction();
+						ActionResult result = DoAction();
 						EditorUtility.ShowNotification(result.notification);
 					}
 				}
@@ -272,7 +272,7 @@ namespace UnityEditor.ProBuilder
 				GUILayout.BeginHorizontal(rowStyleVertical, layoutOptions);
 					if(GUILayout.Button(menuTitle, textButtonStyleVertical))
 					{
-						pb_ActionResult res = DoAction();
+						ActionResult res = DoAction();
 						EditorUtility.ShowNotification(res.notification);
 					}
 

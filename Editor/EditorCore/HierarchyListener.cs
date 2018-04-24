@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using UnityEditor.ProBuilder;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if(!EditorApplication.isPlaying)
 			{
-				bool meshesAreAssets = PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets);
+				bool meshesAreAssets = PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets);
 
 				// on duplication, or copy paste, this rebuilds the mesh structures of the new objects
 				foreach(pb_Object pb in Selection.transforms.GetComponents<pb_Object>())

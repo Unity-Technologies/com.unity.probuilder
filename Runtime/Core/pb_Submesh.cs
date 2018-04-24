@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A set of indices and material.

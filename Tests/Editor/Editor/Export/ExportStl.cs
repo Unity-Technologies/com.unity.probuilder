@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using Parabox.STL;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.Test;
 using UnityEngine.Windows;
 

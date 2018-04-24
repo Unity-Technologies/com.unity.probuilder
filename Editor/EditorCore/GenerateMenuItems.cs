@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection;
 using System.IO;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -215,18 +215,18 @@ namespace ProBuilder.EditorCore
 
 			foreach (string s in keys)
 			{
-				if (s.Contains(pb_Constant.CMD_SUPER) || s.Contains("Control"))
+				if (s.Contains(PreferenceKeys.CMD_SUPER) || s.Contains("Control"))
 				{
 					res += "%";
 					inSceneShortcut = false;
 				}
-				else if (s.Contains(pb_Constant.CMD_OPTION) || s.Contains(pb_Constant.CMD_ALT) || s.Contains("Alt") ||
+				else if (s.Contains(PreferenceKeys.CMD_OPTION) || s.Contains(PreferenceKeys.CMD_ALT) || s.Contains("Alt") ||
 				         s.Contains("Option"))
 				{
 					res += "&";
 					inSceneShortcut = false;
 				}
-				else if (s.Contains(pb_Constant.CMD_SHIFT) || s.Contains("Shift"))
+				else if (s.Contains(PreferenceKeys.CMD_SHIFT) || s.Contains("Shift"))
 				{
 					res += "#";
 					inSceneShortcut = false;

@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Hue (0,360), Saturation (0,1), Value (0,1)
 	/// </summary>
-	class pb_HsvColor
+	class HSVColor
 	{
 		public float h, s, v;
 
-		public pb_HsvColor(float h, float s, float v)
+		public HSVColor(float h, float s, float v)
 		{
 			this.h = h;
 			this.s = s;
@@ -21,16 +21,16 @@ namespace ProBuilder.Core
 		 * Wikipedia colors are from 0-100 %, so this constructor includes and S, V normalizes the values.
 		 * modifier value that affects saturation and value, making it useful for any SV value range.
 		 */
-		public pb_HsvColor(float h, float s, float v, float sv_modifier)
+		public HSVColor(float h, float s, float v, float sv_modifier)
 		{
 			this.h = h;
 			this.s = s * sv_modifier;
 			this.v = v * sv_modifier;
 		}
 
-		public static pb_HsvColor FromRGB(Color col)
+		public static HSVColor FromRGB(Color col)
 		{
-			return pb_ColorUtil.RGBtoHSV(col);
+			return ColorUtility.RGBtoHSV(col);
 		}
 
 		public override string ToString()
@@ -38,7 +38,7 @@ namespace ProBuilder.Core
 			return string.Format("( {0}, {1}, {2} )", h, s, v);
 		}
 
-		public float SqrDistance(pb_HsvColor InColor)
+		public float SqrDistance(HSVColor InColor)
 		{
 			return (InColor.h/360f - this.h/360f) + (InColor.s - this.s) + (InColor.v - this.v);
 		}
@@ -48,25 +48,25 @@ namespace ProBuilder.Core
 	/// XYZ color
 	/// <remarks>http://www.easyrgb.com/index.php?X=MATH&H=07#text7</remarks>
 	/// </summary>
-	class pb_XYZ_Color
+	class XYZColor
 	{
 		public float x, y, z;
 
-		public pb_XYZ_Color(float x, float y, float z)
+		public XYZColor(float x, float y, float z)
 		{
 			this.x = x;
 			this.y = y;
 			this.z = z;
 		}
 
-		public static pb_XYZ_Color FromRGB(Color col)
+		public static XYZColor FromRGB(Color col)
 		{
-			return pb_ColorUtil.RGBToXYZ(col);
+			return ColorUtility.RGBToXYZ(col);
 		}
 
-		public static pb_XYZ_Color FromRGB(float R, float G, float B)
+		public static XYZColor FromRGB(float R, float G, float B)
 		{
-			return pb_ColorUtil.RGBToXYZ(R, G, B);
+			return ColorUtility.RGBToXYZ(R, G, B);
 		}
 
 		public override string ToString()
@@ -78,27 +78,27 @@ namespace ProBuilder.Core
 	/// <summary>
 	/// CIE_Lab* color
 	/// </summary>
-	class pb_CIE_Lab_Color
+	class CIELabColor
 	{
 		public float L, a, b;
 
-		public pb_CIE_Lab_Color(float L, float a, float b)
+		public CIELabColor(float L, float a, float b)
 		{
 			this.L = L;
 			this.a = a;
 			this.b = b;
 		}
 
-		public static pb_CIE_Lab_Color FromXYZ(pb_XYZ_Color xyz)
+		public static CIELabColor FromXYZ(XYZColor xyz)
 		{
-			return pb_ColorUtil.XYZToCIE_Lab(xyz);
+			return ColorUtility.XYZToCIE_Lab(xyz);
 		}
 
-		public static pb_CIE_Lab_Color FromRGB(Color col)
+		public static CIELabColor FromRGB(Color col)
 		{
-			pb_XYZ_Color xyz = pb_XYZ_Color.FromRGB(col);
+			XYZColor xyz = XYZColor.FromRGB(col);
 
-			return pb_ColorUtil.XYZToCIE_Lab(xyz);
+			return ColorUtility.XYZToCIE_Lab(xyz);
 		}
 
 		public override string ToString()
@@ -110,7 +110,7 @@ namespace ProBuilder.Core
 	/// <summary>
 	/// Conversion methods for RGB, HSV, XYZ, CIE-Lab
 	/// </summary>
-	static class pb_ColorUtil
+	static class ColorUtility
 	{
 		/// <summary>
 		/// Compare float values within Epsilon distance.
@@ -128,12 +128,12 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="col"></param>
 		/// <returns></returns>
-		public static pb_XYZ_Color RGBToXYZ(Color col)
+		public static XYZColor RGBToXYZ(Color col)
 		{
 			return RGBToXYZ(col.r, col.g, col.b);
 		}
 
-		public static pb_XYZ_Color RGBToXYZ(float r, float g, float b)
+		public static XYZColor RGBToXYZ(float r, float g, float b)
 		{
 			if ( r > 0.04045f )
 				r = Mathf.Pow( ( ( r + 0.055f ) / 1.055f ), 2.4f);
@@ -159,7 +159,7 @@ namespace ProBuilder.Core
 			float y = r * 0.2126f + g * 0.7152f + b * 0.0722f;
 			float z = r * 0.0193f + g * 0.1192f + b * 0.9505f;
 
-			return new pb_XYZ_Color(x, y, z);
+			return new XYZColor(x, y, z);
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="xyz"></param>
 		/// <returns></returns>
-		public static pb_CIE_Lab_Color XYZToCIE_Lab(pb_XYZ_Color xyz)
+		public static CIELabColor XYZToCIE_Lab(XYZColor xyz)
 		{
 			float var_X = xyz.x / 95.047f;           // ref_X =  95.047   Observer= 2°, Illuminant= D65
 			float var_Y = xyz.y / 100.000f;          // ref_Y = 100.000
@@ -192,7 +192,7 @@ namespace ProBuilder.Core
 			float a = 500f * ( var_X - var_Y );
 			float b = 200f * ( var_Y - var_Z );
 
-			return new pb_CIE_Lab_Color(L, a, b);
+			return new CIELabColor(L, a, b);
 		}
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace ProBuilder.Core
 		/// <param name="lhs"></param>
 		/// <param name="rhs"></param>
 		/// <returns></returns>
-		public static float DeltaE(pb_CIE_Lab_Color lhs, pb_CIE_Lab_Color rhs)
+		public static float DeltaE(CIELabColor lhs, CIELabColor rhs)
 		{
 			return Mathf.Sqrt(
 				Mathf.Pow( (lhs.L - rhs.L), 2 ) +
@@ -219,7 +219,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="hsv"></param>
 		/// <returns></returns>
-		public static Color HSVtoRGB(pb_HsvColor hsv)
+		public static Color HSVtoRGB(HSVColor hsv)
 		{
 			return HSVtoRGB(hsv.h, hsv.s, hsv.v);
 		}
@@ -292,7 +292,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="color"></param>
 		/// <returns></returns>
-		public static pb_HsvColor RGBtoHSV(Color color)
+		public static HSVColor RGBtoHSV(Color color)
 		{
 			float h, s, v;
 			float r = color.r, b = color.b, g = color.g;
@@ -314,7 +314,7 @@ namespace ProBuilder.Core
 				// r = g = b = 0		// s = 0, v is undefined
 				s = 0f;
 				h = 0f;
-				return new pb_HsvColor(h, s, v);
+				return new HSVColor(h, s, v);
 			}
 
 			if( approx(r, max) )
@@ -337,7 +337,7 @@ namespace ProBuilder.Core
 			if( h < 0 )
 				h += 360;
 
-			return new pb_HsvColor(h, s, v);
+			return new HSVColor(h, s, v);
 		}
 
 		/// <summary>
@@ -347,12 +347,12 @@ namespace ProBuilder.Core
 		/// <returns></returns>
 		public static string GetColorName(Color InColor)
 		{
-			pb_CIE_Lab_Color lab = pb_CIE_Lab_Color.FromRGB(InColor);
+			CIELabColor lab = CIELabColor.FromRGB(InColor);
 
 			string name = "Unknown";
 			float diff = Mathf.Infinity;
 
-			foreach(KeyValuePair<string, pb_CIE_Lab_Color> kvp in ColorNameLookup)
+			foreach(KeyValuePair<string, CIELabColor> kvp in ColorNameLookup)
 			{
 				float dist = Mathf.Abs( DeltaE(lab, kvp.Value) );
 
@@ -366,18 +366,18 @@ namespace ProBuilder.Core
 			return name;
 		}
 
-		static pb_CIE_Lab_Color CIELabFromRGB(float R, float G, float B, float Scale)
+		static CIELabColor CIELabFromRGB(float R, float G, float B, float Scale)
 		{
 			float inv_scale = 1f/Scale;
-			pb_XYZ_Color xyz = pb_XYZ_Color.FromRGB(R * inv_scale, G * inv_scale, B * inv_scale);
+			XYZColor xyz = XYZColor.FromRGB(R * inv_scale, G * inv_scale, B * inv_scale);
 
-			return pb_CIE_Lab_Color.FromXYZ(xyz);
+			return CIELabColor.FromXYZ(xyz);
 		}
 
 		/// <summary>
 		/// http://en.wikipedia.org/wiki/List_of_colors:_A%E2%80%93F
 		/// </summary>
-		static readonly Dictionary<string, pb_CIE_Lab_Color> ColorNameLookup = new Dictionary<string, pb_CIE_Lab_Color>()
+		static readonly Dictionary<string, CIELabColor> ColorNameLookup = new Dictionary<string, CIELabColor>()
 		{
 			{ "Acid Green",									CIELabFromRGB(69f, 75f, 10f, 100f)		},
 			{ "Aero",										CIELabFromRGB(49f, 73f, 91f, 100f)		},

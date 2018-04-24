@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Vertex positions are sorted as integers to avoid floating point precision errors.

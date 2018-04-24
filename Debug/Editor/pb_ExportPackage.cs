@@ -7,7 +7,7 @@ using System.IO;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 /**
  * Export Unity packages for release - usually called from command line.
@@ -93,8 +93,8 @@ public class pb_ExportPackage : Editor
 	private static void WriteAboutEntry(string changelog, string version, bool inEditor = false)
 	{
 		string versionInfoText =
-			"name: " + pb_Constant.PRODUCT_NAME + "\n" +
-			"identifier: " + pb_Constant.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
+			"name: " + PreferenceKeys.PRODUCT_NAME + "\n" +
+			"identifier: " + PreferenceKeys.PRODUCT_NAME + "_AboutWindowIdentifier\n" +
 			"version: " + version + "\n" +
 			"date: " + System.DateTime.Now.ToString(DateTimeFormat) + "\n" +
 			"changelog: " + changelog;

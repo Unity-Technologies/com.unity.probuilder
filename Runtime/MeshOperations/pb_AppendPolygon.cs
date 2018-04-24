@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -15,7 +15,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="unordered"></param>
 		/// <param name="face"></param>
 		/// <returns></returns>
-		public static pb_ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
+		public static ActionResult CreatePolygon(this pb_Object pb, IList<int> indices, bool unordered, out pb_Face face)
 		{
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
@@ -41,7 +41,7 @@ namespace ProBuilder.MeshOperations
 				pb.SetSharedIndices(lookup);
 				face = data.face;
 
-				return new pb_ActionResult(Status.Success, "Create Polygon");
+				return new ActionResult(Status.Success, "Create Polygon");
 			}
 
 			face = null;
@@ -49,7 +49,7 @@ namespace ProBuilder.MeshOperations
 			const string INSUF_PTS = "Too Few Unique Points Selected";
 			const string BAD_WINDING = "Points not ordered correctly";
 
-			return new pb_ActionResult(Status.Failure, unordered ? INSUF_PTS : BAD_WINDING);
+			return new ActionResult(Status.Failure, unordered ? INSUF_PTS : BAD_WINDING);
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="poly"></param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		internal static pb_ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
+		internal static ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
 		{
 			return poly.mesh.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 		}
@@ -70,14 +70,14 @@ namespace ProBuilder.MeshOperations
 		/// <param name="extrude"></param>
 		/// <param name="flipNormals"></param>
 		/// <returns></returns>
-		public static pb_ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
+		public static ActionResult CreateShapeFromPolygon(this pb_Object pb, IList<Vector3> points, float extrude, bool flipNormals)
 		{
 			if (points.Count < 3)
 			{
 				pb.Clear();
 				pb.ToMesh();
 				pb.Refresh();
-				return new pb_ActionResult(Status.NoChange, "Too Few Points");
+				return new ActionResult(Status.NoChange, "Too Few Points");
 			}
 
 			Vector3[] vertices = points.ToArray();
@@ -95,7 +95,7 @@ namespace ProBuilder.MeshOperations
 					pb.SetFaces(new pb_Face[0]);
 					pb.SetSharedIndices(new pb_IntArray[0]);
 					pb_Log.PopLogLevel();
-					return new pb_ActionResult(Status.Failure, "Polygon Area < Epsilon");
+					return new ActionResult(Status.Failure, "Polygon Area < Epsilon");
 				}
 
 				pb.Clear();
@@ -119,12 +119,12 @@ namespace ProBuilder.MeshOperations
 			else
 			{
 				pb_Log.PopLogLevel();
-				return new pb_ActionResult(Status.Failure, "Failed Triangulating Points");
+				return new ActionResult(Status.Failure, "Failed Triangulating Points");
 			}
 
 			pb_Log.PopLogLevel();
 
-			return new pb_ActionResult(Status.Success, "Create Polygon Shape");
+			return new ActionResult(Status.Success, "Create Polygon Shape");
 		}
 
 		/// <summary>

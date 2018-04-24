@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder.Actions
 			}
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			UndoUtility.RecordSelection(selection, "Select Faces with Material");
 
@@ -93,7 +93,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 			ProBuilderEditor.Refresh();
 
-			return new pb_ActionResult(Status.Success, "Select Faces with Material");
+			return new ActionResult(Status.Success, "Select Faces with Material");
 		}
 	}
 }

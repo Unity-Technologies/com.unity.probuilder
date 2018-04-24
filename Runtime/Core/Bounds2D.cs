@@ -2,42 +2,38 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Internal bounds class.
 	/// </summary>
-	class pb_Bounds2D
+	class Bounds2D
 	{
 		public Vector2 center = Vector2.zero;
-		[SerializeField] private Vector2 _size = Vector2.zero;
-		[SerializeField] private Vector2 _extents = Vector2.zero;
+		[SerializeField] Vector2 m_Size = Vector2.zero;
+		[SerializeField] Vector2 m_Extents = Vector2.zero;
 
 		public Vector2 size
 		{
-			get
-			{
-				return _size;
-			}
+			get { return m_Size; }
 
 			set
 			{
-				_size = value;
+				m_Size = value;
 
-				_extents.x = _size.x * .5f;
-				_extents.y = _size.y * .5f;
+				m_Extents.x = m_Size.x * .5f;
+				m_Extents.y = m_Size.y * .5f;
 			}
 		}
 
-		public Vector2 extents { get { return _extents; } }
+		public Vector2 extents
+		{
+			get { return m_Extents; }
+		}
 
-		/**
-		 * Returns an array of Vector2[] points for each corner, in the order right to left, top to bottom.
-		 * 	0 -- > 1
-		 *   	/
-		 *    /
-		 *	2 -- > 3
-		 */
+		/// <summary>
+		/// Returns an array of Vector2[] points for each corner, in the order right to left, top to bottom.
+		/// </summary>
 		public Vector2[] corners {
 			get {
 				return new Vector2[] {
@@ -49,30 +45,30 @@ namespace ProBuilder.Core
 			}
 		}
 
-		/**
-		 * Basic constructor.
-		 */
-		public pb_Bounds2D()
+		public Bounds2D()
 		{}
 
-		public pb_Bounds2D(Vector2 center, Vector2 size)
+		public Bounds2D(Vector2 center, Vector2 size)
 		{
 			this.center = center;
 			this.size = size;
 		}
 
-		/**
-		 * Create bounds from a set of 2d points.
-		 */
-		public pb_Bounds2D(Vector2[] points)
+		/// <summary>
+		/// Create bounds from a set of 2d points.
+		/// </summary>
+		/// <param name="points"></param>
+		public Bounds2D(Vector2[] points)
 		{
 			SetWithPoints(points);
 		}
 
-		/**
-		 * Create bounds from a set of 2d points.
-		 */
-		public pb_Bounds2D(Vector2[] points, int[] indices)
+		/// <summary>
+		/// Create bounds from a set of 2d points.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="indices"></param>
+		public Bounds2D(Vector2[] points, int[] indices)
 		{
 			SetWithPoints(points, indices);
 		}
@@ -82,7 +78,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="points"></param>
 		/// <param name="edges"></param>
-		public pb_Bounds2D(Vector2[] points, pb_Edge[] edges)
+		public Bounds2D(Vector2[] points, pb_Edge[] edges)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
@@ -119,7 +115,7 @@ namespace ProBuilder.Core
 		/// </summary>
 		/// <param name="points"></param>
 		/// <param name="edges"></param>
-		internal pb_Bounds2D(Vector3[] points, pb_Edge[] edges)
+		internal Bounds2D(Vector3[] points, pb_Edge[] edges)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
@@ -151,7 +147,7 @@ namespace ProBuilder.Core
 			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 
-		public pb_Bounds2D(Vector2[] points, int length)
+		public Bounds2D(Vector2[] points, int length)
 		{
 			float 	xMin = 0f,
 					xMax = 0f,
@@ -179,9 +175,11 @@ namespace ProBuilder.Core
 			this.size = new Vector3(xMax-xMin, yMax-yMin);
 		}
 
-		/**
-		 * Returns true if the point is contained within the bounds.  False otherwise.
-		 */
+		/// <summary>
+		/// Returns true if the point is contained within the bounds.  False otherwise.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public bool ContainsPoint(Vector2 point)
 		{
 			return !(	point.x > center.x + extents.x ||
@@ -190,9 +188,12 @@ namespace ProBuilder.Core
 						point.y < center.y - extents.y);
 		}
 
-		/**
-		 * Returns true if any part of the line segment is contained within this bounding box.
-		 */
+		/// <summary>
+		/// Returns true if any part of the line segment is contained within this bounding box.
+		/// </summary>
+		/// <param name="lineStart"></param>
+		/// <param name="lineEnd"></param>
+		/// <returns></returns>
 		public bool IntersectsLineSegment(Vector2 lineStart, Vector2 lineEnd)
 		{
 			if( ContainsPoint(lineStart) || ContainsPoint(lineEnd) )
@@ -209,10 +210,12 @@ namespace ProBuilder.Core
 			}
 		}
 
-		/**
-		 * Returns true if bounds overlap.
-		 */
-		public bool Intersects(pb_Bounds2D bounds)
+		/// <summary>
+		/// Returns true if bounds overlap.
+		/// </summary>
+		/// <param name="bounds"></param>
+		/// <returns></returns>
+		public bool Intersects(Bounds2D bounds)
 		{
 			Vector2 dist = this.center - bounds.center;
 			Vector2 size = this.size + bounds.size;
@@ -221,9 +224,11 @@ namespace ProBuilder.Core
 					Mathf.Abs(dist.y) * 2f < size.y;
 		}
 
-		/**
-		 * Returns true if bounds overlaps rect.
-		 */
+		/// <summary>
+		/// Check if this rect is intersected by another.
+		/// </summary>
+		/// <param name="rect"></param>
+		/// <returns>True if bounds overlaps rect.</returns>
 		public bool Intersects(Rect rect)
 		{
 			Vector2 dist = this.center - rect.center;
@@ -233,9 +238,10 @@ namespace ProBuilder.Core
 					Mathf.Abs(dist.y) * 2f < size.y;
 		}
 
-		/**
-		 *	Set this bounds center and size to encapsulate points.
-		 */
+		/// <summary>
+		/// Set this bounds center and size to encapsulate points.
+		/// </summary>
+		/// <param name="points"></param>
 		public void SetWithPoints(IList<Vector2> points)
 		{
 			float 	xMin = 0f,
@@ -268,16 +274,18 @@ namespace ProBuilder.Core
 			center.x = (xMin+xMax) / 2f;
 			center.y = (yMin+yMax) / 2f;
 
-			_size.x = xMax - xMin;
-			_size.y = yMax - yMin;
+			m_Size.x = xMax - xMin;
+			m_Size.y = yMax - yMin;
 
-			_extents.x = _size.x * .5f;
-			_extents.y = _size.y * .5f;
+			m_Extents.x = m_Size.x * .5f;
+			m_Extents.y = m_Size.y * .5f;
 		}
 
-		/**
-		 *	Set this bounds center and size to encapsulate points.
-		 */
+		/// <summary>
+		/// Set this bounds center and size to encapsulate points.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="indices"></param>
 		public void SetWithPoints(IList<Vector2> points, IList<int> indices)
 		{
 			float 	xMin = 0f,
@@ -308,17 +316,20 @@ namespace ProBuilder.Core
 			center.x = (xMin+xMax) / 2f;
 			center.y = (yMin+yMax) / 2f;
 
-			_size.x = xMax - xMin;
-			_size.y = yMax - yMin;
+			m_Size.x = xMax - xMin;
+			m_Size.y = yMax - yMin;
 
-			_extents.x = _size.x * .5f;
-			_extents.y = _size.y * .5f;
+			m_Extents.x = m_Size.x * .5f;
+			m_Extents.y = m_Size.y * .5f;
 		}
 
-		/**
-		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
-		 * bounds calculations to only the points up to length in array.
-		 */
+		/// <summary>
+		/// Returns the center of the bounding box of points. Optional parameter @length limits the bounds calculations
+		/// to only the points up to length in array.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
 		public static Vector2 Center(Vector2[] points, int length = -1)
 		{
 			float 	xMin = 0f,
@@ -348,10 +359,13 @@ namespace ProBuilder.Core
 			return new Vector2( (xMin + xMax) / 2f, (yMin + yMax) / 2f );
 		}
 
-		/**
-		 * Returns the center of the bounding box of points.  Optional parameter @length limits the
-		 * bounds calculations to only the points up to length in array.
-		 */
+		/// <summary>
+		/// Returns the center of the bounding box of points.  Optional parameter @length limits the bounds calculations
+		/// to only the points up to length in array.
+		/// </summary>
+		/// <param name="points"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
 		public static Vector2 Center(Vector2[] points, int[] indices)
 		{
 			float 	xMin = 0f,

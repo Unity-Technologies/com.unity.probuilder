@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuSplitVertices(selection);
 		}

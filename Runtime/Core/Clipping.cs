@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Rect to line segment clipping implemention.
@@ -10,16 +10,16 @@ namespace ProBuilder.Core
 	/// <remarks>
 	/// https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
 	/// </remarks>
-	static class pb_Clipping
+	static class Clipping
 	{
 		[System.Flags]
 		enum OutCode
 		{
-			INSIDE = 0, // 0000
-			LEFT = 1, 	// 0001
-			RIGHT = 2, 	// 0010
-			BOTTOM = 4,	// 0100
-			TOP = 8, 	// 1000
+			Inside = 0, // 0000
+			Left = 1, 	// 0001
+			Right = 2, 	// 0010
+			Bottom = 4,	// 0100
+			Top = 8, 	// 1000
 		}
 
 		// Compute the bit code for a point (x, y) using the clip rectangle
@@ -27,16 +27,16 @@ namespace ProBuilder.Core
 
 		static OutCode ComputeOutCode(Rect rect, float x, float y)
 		{
-			OutCode code = OutCode.INSIDE; // initialised as being inside of [[clip window]]
+			OutCode code = OutCode.Inside; // initialised as being inside of [[clip window]]
 
 			if (x < rect.xMin) // to the left of clip window
-				code |= OutCode.LEFT;
+				code |= OutCode.Left;
 			else if (x > rect.xMax) // to the right of clip window
-				code |= OutCode.RIGHT;
+				code |= OutCode.Right;
 			if (y < rect.yMin) // below the clip window
-				code |= OutCode.BOTTOM;
+				code |= OutCode.Bottom;
 			else if (y > rect.yMax) // above the clip window
-				code |= OutCode.TOP;
+				code |= OutCode.Top;
 
 			return code;
 		}
@@ -54,13 +54,13 @@ namespace ProBuilder.Core
 
 			while (true)
 			{
-				if ((outcode0 | outcode1) == OutCode.INSIDE)
+				if ((outcode0 | outcode1) == OutCode.Inside)
 				{
 					// bitwise OR is 0: both points inside window; trivially accept and exit loop
 					accept = true;
 					break;
 				}
-				else if ((outcode0 & outcode1) != OutCode.INSIDE)
+				else if ((outcode0 & outcode1) != OutCode.Inside)
 				{
 					// bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
 					// or BOTTOM), so both must be outside window; exit loop (accept is false)
@@ -73,7 +73,7 @@ namespace ProBuilder.Core
 					float x = 0f, y = 0f;
 
 					// At least one endpoint is outside the clip rectangle; pick it.
-					OutCode outcodeOut = outcode0 != OutCode.INSIDE ? outcode0 : outcode1;
+					OutCode outcodeOut = outcode0 != OutCode.Inside ? outcode0 : outcode1;
 
 					// Now find the intersection point;
 					// use formulas:
@@ -82,25 +82,25 @@ namespace ProBuilder.Core
 					//   y = y0 + slope * (xm - x0), where xm is xmin or xmax
 					// No need to worry about divide-by-zero because, in each case, the
 					// outcode bit being tested guarantees the denominator is non-zero
-					if ((outcodeOut & OutCode.TOP) == OutCode.TOP)
+					if ((outcodeOut & OutCode.Top) == OutCode.Top)
 					{
 						// point is above the clip window
 						x = x0 + (x1 - x0) * (rect.yMax - y0) / (y1 - y0);
 						y = rect.yMax;
 					}
-					else if ((outcodeOut & OutCode.BOTTOM) == OutCode.BOTTOM)
+					else if ((outcodeOut & OutCode.Bottom) == OutCode.Bottom)
 					{
 						// point is below the clip window
 						x = x0 + (x1 - x0) * (rect.yMin - y0) / (y1 - y0);
 						y = rect.yMin;
 					}
-					else if ((outcodeOut & OutCode.RIGHT) == OutCode.RIGHT)
+					else if ((outcodeOut & OutCode.Right) == OutCode.Right)
 					{
 						// point is to the right of clip window
 						y = y0 + (y1 - y0) * (rect.xMax - x0) / (x1 - x0);
 						x = rect.xMax;
 					}
-					else if ((outcodeOut & OutCode.LEFT) == OutCode.LEFT)
+					else if ((outcodeOut & OutCode.Left) == OutCode.Left)
 					{
 						// point is to the left of clip window
 						y = y0 + (y1 - y0) * (rect.xMin - x0) / (x1 - x0);

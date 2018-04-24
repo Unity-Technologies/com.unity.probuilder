@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// How bezier handles behave when being manipulated in the scene view.
 	/// </summary>
-	enum pb_BezierTangentMode
+	enum BezierTangentMode
 	{
 		Free,
 		Aligned,
 		Mirrored
 	}
 
-	enum pb_BezierTangentDirection
+	enum BezierTangentDirection
 	{
 		In,
 		Out
@@ -23,14 +23,14 @@ namespace ProBuilder.Core
 	/// A bezier knot.
 	/// </summary>
 	[System.Serializable]
-	struct pb_BezierPoint
+	struct BezierPoint
 	{
 		public Vector3 position;
 		public Vector3 tangentIn;
 		public Vector3 tangentOut;
 		public Quaternion rotation;
 
-		public pb_BezierPoint(Vector3 position, Vector3 tangentIn, Vector3 tangentOut, Quaternion rotation)
+		public BezierPoint(Vector3 position, Vector3 tangentIn, Vector3 tangentOut, Quaternion rotation)
 		{
 			this.position = position;
 			this.tangentIn = tangentIn;
@@ -38,18 +38,18 @@ namespace ProBuilder.Core
 			this.rotation = rotation;
 		}
 
-		public void EnforceTangentMode(pb_BezierTangentDirection master, pb_BezierTangentMode mode)
+		public void EnforceTangentMode(BezierTangentDirection master, BezierTangentMode mode)
 		{
-			if(mode == pb_BezierTangentMode.Aligned)
+			if(mode == BezierTangentMode.Aligned)
 			{
-				if(master == pb_BezierTangentDirection.In)
+				if(master == BezierTangentDirection.In)
 					tangentOut = position + (tangentOut - position).normalized * (tangentIn - position).magnitude;
 				else
 					tangentIn = position + (tangentIn - position).normalized * (tangentOut - position).magnitude;
 			}
-			else if(mode == pb_BezierTangentMode.Mirrored)
+			else if(mode == BezierTangentMode.Mirrored)
 			{
-				if(master == pb_BezierTangentDirection.In)
+				if(master == BezierTangentDirection.In)
 					tangentOut = position - (tangentIn - position);
 				else
 					tangentIn = position - (tangentOut - position);
@@ -68,19 +68,19 @@ namespace ProBuilder.Core
 			this.tangentOut += delta;
 		}
 
-		public void SetTangentIn(Vector3 tangent, pb_BezierTangentMode mode)
+		public void SetTangentIn(Vector3 tangent, BezierTangentMode mode)
 		{
 			this.tangentIn = tangent;
-			EnforceTangentMode(pb_BezierTangentDirection.In, mode);
+			EnforceTangentMode(BezierTangentDirection.In, mode);
 		}
 
-		public void SetTangentOut(Vector3 tangent, pb_BezierTangentMode mode)
+		public void SetTangentOut(Vector3 tangent, BezierTangentMode mode)
 		{
 			this.tangentOut = tangent;
-			EnforceTangentMode(pb_BezierTangentDirection.Out, mode);
+			EnforceTangentMode(BezierTangentDirection.Out, mode);
 		}
 
-		public static Vector3 QuadraticPosition(pb_BezierPoint a, pb_BezierPoint b, float t)
+		public static Vector3 QuadraticPosition(BezierPoint a, BezierPoint b, float t)
 		{
 			float x = (1f- t) * (1f - t) * a.position.x + 2f * (1f - t) * t * a.tangentOut.x + t * t * b.position.x;
 			float y = (1f- t) * (1f - t) * a.position.y + 2f * (1f - t) * t * a.tangentOut.y + t * t * b.position.y;
@@ -88,7 +88,7 @@ namespace ProBuilder.Core
 			return new Vector3(x, y, z);
 		}
 
-		public static Vector3 CubicPosition(pb_BezierPoint a, pb_BezierPoint b, float t)
+		public static Vector3 CubicPosition(BezierPoint a, BezierPoint b, float t)
 		{
 			t = Mathf.Clamp01(t);
 
@@ -100,7 +100,7 @@ namespace ProBuilder.Core
 					t * t * t * b.position;
 		}
 
-		public static Vector3 GetLookDirection(IList<pb_BezierPoint> points, int index, int previous, int next)
+		public static Vector3 GetLookDirection(IList<BezierPoint> points, int index, int previous, int next)
 		{
 			if(previous < 0)
 			{

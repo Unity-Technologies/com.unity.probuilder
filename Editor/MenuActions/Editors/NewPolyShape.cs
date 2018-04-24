@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			GameObject go = new GameObject();
 			pb_PolyShape poly = go.AddComponent<pb_PolyShape>();
@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
 			if(ProGridsInterface.GetPivot(out pivot))
 				go.transform.position = pivot;
 
-			return new pb_ActionResult(Status.Success, "Create Poly Shape");
+			return new ActionResult(Status.Success, "Create Poly Shape");
 		}
 	}
 }

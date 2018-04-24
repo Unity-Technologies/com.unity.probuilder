@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using Actions = UnityEditor.ProBuilder.Actions;
 using System.Linq;
 

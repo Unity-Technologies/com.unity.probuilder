@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 				// if generating UV2, the process is to manually split the mesh into individual triangles,
 				// generate uv2, then re-assemble with vertex collapsing where possible.
 				// if not generating uv2, just collapse vertices.
-				if(!PreferencesInternal.GetBool(pb_Constant.pbDisableAutoUV2Generation) || forceRebuildUV2)
+				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
 					pb_Vertex[] vertices = pb_MeshUtility.GeneratePerTriangleMesh(mesh);
 
@@ -108,13 +108,13 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			if(PreferencesInternal.GetBool(pb_Constant.pbManageLightmappingStaticFlag, false))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbManageLightmappingStaticFlag, false))
 				Lightmapping.SetLightmapStaticFlagEnabled(InObject, hasUv2);
 
 			if(onMeshCompiled != null)
 				onMeshCompiled(InObject, mesh);
 
-			if(PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 				TryCacheMesh(InObject);
 
 			UnityEditor.EditorUtility.SetDirty(InObject);

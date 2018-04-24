@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
-	[CustomEditor(typeof(pb_BezierShape))]
+	[CustomEditor(typeof(BezierShape))]
 	class BezierSplineEditor : Editor
 	{
 		static GUIContent[] m_TangentModeIcons = new GUIContent[3];
@@ -25,9 +25,9 @@ namespace UnityEditor.ProBuilder
 		BezierHandle m_currentHandle = new BezierHandle(-1, false);
 
 		[SerializeField]
-		pb_BezierTangentMode m_TangentMode = pb_BezierTangentMode.Mirrored;
+		BezierTangentMode m_TangentMode = BezierTangentMode.Mirrored;
 
-		pb_BezierShape m_Target = null;
+		BezierShape m_Target = null;
 		bool m_IsMoving = false;
 		List<Vector3> m_ControlPoints;
 
@@ -50,9 +50,9 @@ namespace UnityEditor.ProBuilder
 		{
 			public int index;
 			public bool isTangent;
-			public pb_BezierTangentDirection tangent;
+			public BezierTangentDirection tangent;
 
-			public BezierHandle(int index, bool isTangent, pb_BezierTangentDirection tangent = pb_BezierTangentDirection.In)
+			public BezierHandle(int index, bool isTangent, BezierTangentDirection tangent = BezierTangentDirection.In)
 			{
 				this.index = index;
 				this.isTangent = isTangent;
@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder
 				return new BezierHandle(index, false);
 			}
 
-			public static implicit operator pb_BezierTangentDirection(BezierHandle handle)
+			public static implicit operator BezierTangentDirection(BezierHandle handle)
 			{
 				return handle.tangent;
 			}
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder
 				this.isTangent = false;
 			}
 
-			public void SetIndexAndTangent(int index, pb_BezierTangentDirection dir)
+			public void SetIndexAndTangent(int index, BezierTangentDirection dir)
 			{
 				this.index = index;
 				this.isTangent = true;
@@ -88,62 +88,62 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		List<pb_BezierPoint> m_Points { get { return m_Target.m_Points; } set { m_Target.m_Points = value; } }
+		List<BezierPoint> m_Points { get { return m_Target.points; } set { m_Target.points = value; } }
 
-		bool m_IsEditing { get { return m_Target.m_IsEditing; } set { m_Target.m_IsEditing = value; } }
+		bool m_IsEditing { get { return m_Target.isEditing; } set { m_Target.isEditing = value; } }
 
 		bool m_CloseLoop
 		{
-			get { return m_Target.m_CloseLoop; }
+			get { return m_Target.closeLoop; }
 
 			set {
-				if(m_Target.m_CloseLoop != value)
+				if(m_Target.closeLoop != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Close Loop");
-				m_Target.m_CloseLoop = value;
+				m_Target.closeLoop = value;
 			}
 		}
 
 		float m_Radius
 		{
-			get { return m_Target.m_Radius; }
+			get { return m_Target.radius; }
 
 			set {
-				if(m_Target.m_Radius != value)
+				if(m_Target.radius != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Radius");
-				m_Target.m_Radius = value;
+				m_Target.radius = value;
 			}
 		}
 
 		int m_Rows
 		{
-			get { return m_Target.m_Rows; }
+			get { return m_Target.rows; }
 
 			set {
-				if(m_Target.m_Rows != value)
+				if(m_Target.rows != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Rows");
-				m_Target.m_Rows = value;
+				m_Target.rows = value;
 			}
 		}
 
 		int m_Columns
 		{
-			get { return m_Target.m_Columns; }
+			get { return m_Target.columns; }
 
 			set {
-				if(m_Target.m_Columns != value)
+				if(m_Target.columns != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Columns");
-				m_Target.m_Columns = value;
+				m_Target.columns = value;
 			}
 		}
 
 		bool m_Smooth
 		{
-			get { return m_Target.m_Smooth; }
+			get { return m_Target.smooth; }
 
 			set {
-				if(m_Target.m_Smooth != value)
+				if(m_Target.smooth != value)
 					UndoUtility.RecordObject(m_Target, "Set Bezier Shape Smooth");
-				m_Target.m_Smooth = value;
+				m_Target.smooth = value;
 			}
 		}
 
@@ -164,7 +164,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnEnable()
 		{
-			m_Target = target as pb_BezierShape;
+			m_Target = target as BezierShape;
 
 			Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
@@ -173,7 +173,7 @@ namespace UnityEditor.ProBuilder
 			m_TangentModeIcons[2] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
 
 			if(m_Target != null)
-				SetIsEditing(m_Target.m_IsEditing);
+				SetIsEditing(m_Target.isEditing);
 		}
 
 		void OnDisable()
@@ -181,7 +181,7 @@ namespace UnityEditor.ProBuilder
 			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
 		}
 
-		pb_BezierPoint DoBezierPointGUI(pb_BezierPoint point)
+		BezierPoint DoBezierPointGUI(BezierPoint point)
 		{
 			Vector3 pos = point.position, tin = point.tangentIn, tout = point.tangentOut;
 
@@ -240,17 +240,17 @@ namespace UnityEditor.ProBuilder
 				UpdateMesh(true);
 			}
 
-			m_Target.m_IsEditing = isEditing;
+			m_Target.isEditing = isEditing;
 
 			if(ProBuilderEditor.instance != null)
 			{
-				if(m_Target.m_IsEditing)
+				if(m_Target.isEditing)
 					ProBuilderEditor.instance.SetEditLevel(EditLevel.Plugin);
 				else
 					ProBuilderEditor.instance.PopEditLevel();
 			}
 
-			if(m_Target.m_IsEditing)
+			if(m_Target.isEditing)
 			{
 				Tools.current = Tool.None;
 				UpdateControlPoints();
@@ -285,9 +285,9 @@ namespace UnityEditor.ProBuilder
 
 			bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Points.Count);
 
-			pb_BezierPoint inspectorPoint = handleIsValid ?
+			BezierPoint inspectorPoint = handleIsValid ?
 				m_Points[m_currentHandle] :
-				new pb_BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward, Quaternion.identity);
+				new BezierPoint(Vector3_Zero, Vector3_Backward, Vector3_Forward, Quaternion.identity);
 
 			inspectorPoint = DoBezierPointGUI(inspectorPoint);
 
@@ -315,7 +315,7 @@ namespace UnityEditor.ProBuilder
 
 				if(m_Points.Count > 0)
 				{
-					m_Points.Add(new pb_BezierPoint(m_Points[m_Points.Count - 1].position,
+					m_Points.Add(new BezierPoint(m_Points[m_Points.Count - 1].position,
 						m_Points[m_Points.Count - 1].tangentIn,
 						m_Points[m_Points.Count - 1].tangentOut,
 						Quaternion.identity));
@@ -333,7 +333,7 @@ namespace UnityEditor.ProBuilder
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
-					m_TangentMode = (pb_BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
+					m_TangentMode = (BezierTangentMode) GUILayout.Toolbar((int)m_TangentMode, m_TangentModeIcons, commandStyle);
 				GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
 
@@ -437,7 +437,7 @@ namespace UnityEditor.ProBuilder
 				// If the index is selected show the full transform gizmo, otherwise use free move handles
 				if(m_currentHandle == index)
 				{
-					pb_BezierPoint point = m_Points[index];
+					BezierPoint point = m_Points[index];
 
 					if(!m_currentHandle.isTangent)
 					{
@@ -461,7 +461,7 @@ namespace UnityEditor.ProBuilder
 						// rotation
 						int prev_index = index > 0 ? index - 1 : (m_CloseLoop ? count - 1 : -1);
 						int next_index = index < count - 1 ? index + 1: (m_CloseLoop ? 0 : -1);
-						Vector3 rd = pb_BezierPoint.GetLookDirection(m_Points, index, prev_index, next_index);
+						Vector3 rd = BezierPoint.GetLookDirection(m_Points, index, prev_index, next_index);
 
 						Quaternion look = Quaternion.LookRotation(rd);
 						float size = HandleUtility.GetHandleSize(point.position);
@@ -474,7 +474,7 @@ namespace UnityEditor.ProBuilder
 					{
 						Handles.color = bezierTangentHandleColor;
 
-						if(m_currentHandle.tangent == pb_BezierTangentDirection.In && (m_CloseLoop || index > 0))
+						if(m_currentHandle.tangent == BezierTangentDirection.In && (m_CloseLoop || index > 0))
 						{
 							EditorGUI.BeginChangeCheck();
 							point.tangentIn = Handles.PositionHandle(point.tangentIn, Quaternion.identity);
@@ -486,13 +486,13 @@ namespace UnityEditor.ProBuilder
 								if(m_SnapTangents)
 									point.tangentIn = ProGridsInterface.ProGridsSnap(point.tangentIn);
 
-								point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
+								point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
 							}
 							Handles.color = Color.blue;
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentIn);
 						}
 
-						if(m_currentHandle.tangent == pb_BezierTangentDirection.Out && (m_CloseLoop || index < count - 1))
+						if(m_currentHandle.tangent == BezierTangentDirection.Out && (m_CloseLoop || index < count - 1))
 						{
 							EditorGUI.BeginChangeCheck();
 							point.tangentOut = Handles.PositionHandle(point.tangentOut, Quaternion.identity);
@@ -504,7 +504,7 @@ namespace UnityEditor.ProBuilder
 								if(m_SnapTangents)
 									point.tangentOut = ProGridsInterface.ProGridsSnap(point.tangentOut);
 
-								point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
+								point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
 							}
 							Handles.color = Color.red;
 							Handles.DrawLine(m_Points[index].position, m_Points[index].tangentOut);
@@ -526,7 +526,7 @@ namespace UnityEditor.ProBuilder
 			for(int index = 0; index < count; index++)
 			{
 				Vector3 prev;
-				pb_BezierPoint point = m_Points[index];
+				BezierPoint point = m_Points[index];
 
 				// Position Handle
 				float size = HandleUtility.GetHandleSize(point.position) * HANDLE_SIZE;
@@ -565,7 +565,7 @@ namespace UnityEditor.ProBuilder
 					size = HandleUtility.GetHandleSize(point.tangentIn) * HANDLE_SIZE;
 					Handles.DrawLine(point.position, point.tangentIn);
 
-					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.In)
+					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.In)
 					{
 						Handles.DotHandleCap(0, point.tangentIn, Quaternion.identity, size, e.type);
 					}
@@ -577,7 +577,7 @@ namespace UnityEditor.ProBuilder
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
 							eventHasBeenUsed = true;
-							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.In);
+							m_currentHandle.SetIndexAndTangent(index, BezierTangentDirection.In);
 							Repaint();
 							SceneView.RepaintAll();
 						}
@@ -586,7 +586,7 @@ namespace UnityEditor.ProBuilder
 							if(!m_IsMoving)
 								OnBeginVertexModification();
 							point.tangentIn = m_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
-							point.EnforceTangentMode(pb_BezierTangentDirection.In, m_TangentMode);
+							point.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
 						}
 					}
 				}
@@ -597,7 +597,7 @@ namespace UnityEditor.ProBuilder
 					size = HandleUtility.GetHandleSize(point.tangentOut) * HANDLE_SIZE;
 					Handles.DrawLine(point.position, point.tangentOut);
 
-					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == pb_BezierTangentDirection.Out)
+					if(index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.Out)
 					{
 						Handles.DotHandleCap(0, point.tangentOut, Quaternion.identity, size, e.type);
 					}
@@ -609,7 +609,7 @@ namespace UnityEditor.ProBuilder
 						if(!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
 						{
 							eventHasBeenUsed = true;
-							m_currentHandle.SetIndexAndTangent(index, pb_BezierTangentDirection.Out);
+							m_currentHandle.SetIndexAndTangent(index, BezierTangentDirection.Out);
 							Repaint();
 							SceneView.RepaintAll();
 						}
@@ -618,7 +618,7 @@ namespace UnityEditor.ProBuilder
 							if(!m_IsMoving)
 								OnBeginVertexModification();
 							point.tangentOut = m_SnapTangents ? ProGridsInterface.ProGridsSnap(prev) : prev;
-							point.EnforceTangentMode(pb_BezierTangentDirection.Out, m_TangentMode);
+							point.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
 						}
 					}
 				}
@@ -644,7 +644,7 @@ namespace UnityEditor.ProBuilder
 					{
 						UndoUtility.RecordObject(m_Target, "Add Point");
 						Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
-						m_Points.Insert((index / m_Columns) + 1, new pb_BezierPoint(p, p - dir, p + dir, Quaternion.identity));
+						m_Points.Insert((index / m_Columns) + 1, new BezierPoint(p, p - dir, p + dir, Quaternion.identity));
 						UpdateMesh(true);
 						e.Use();
 					}
@@ -671,7 +671,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < count; i++)
 			{
-				pb_BezierPoint p = m_Points[i];
+				BezierPoint p = m_Points[i];
 
 				bool ti = m_CloseLoop || i > 0;
 				bool to = m_CloseLoop || i < (count - 1);

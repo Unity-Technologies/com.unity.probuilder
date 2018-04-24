@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Describes each primitive ProBuilder can create by default. Pass to pb_ShapeGenerator.CreateShape to get a

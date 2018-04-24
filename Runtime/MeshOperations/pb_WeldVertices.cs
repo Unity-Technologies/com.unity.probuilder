@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KdTree;
 using KdTree.Math;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -22,7 +22,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="neighborRadius">The minimum distance from another vertex to be considered within welding distance.</param>
 		/// <param name="welds">The indices of any new vertices created by a weld.</param>
 		/// <returns>An action result noting the status of the operation.</returns>
-		public static pb_ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
+		public static ActionResult WeldVertices(this pb_Object pb, int[] indices, float neighborRadius, out int[] welds)
 		{
 			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
 			pb_IntArray[] sharedIndices = pb.sharedIndices;
@@ -130,7 +130,7 @@ namespace ProBuilder.MeshOperations
 			pb.SetVertices(vertices);
 			pb.ToMesh();
 
-			return new pb_ActionResult(Status.Success, "Weld Vertices");
+			return new ActionResult(Status.Success, "Weld Vertices");
 		}
 
 	}

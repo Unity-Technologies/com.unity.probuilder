@@ -3,7 +3,7 @@
  */
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A set of common and local index edges.

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using ProBuilder.Test;
 using UnityEngine.TestTools;
 using UnityEditor.ProBuilder;

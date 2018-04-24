@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -38,19 +38,19 @@ namespace UnityEditor.ProBuilder.Actions
 			return true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			GameObject go = new GameObject();
-			pb_BezierShape bezier = go.AddComponent<pb_BezierShape>();
+			BezierShape bezier = go.AddComponent<BezierShape>();
 			bezier.Init();
 			pb_Object pb = bezier.gameObject.AddComponent<pb_Object>();
 			bezier.Refresh();
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
-			bezier.m_IsEditing = true;
+			bezier.isEditing = true;
 
-			return new pb_ActionResult(Status.Success, "Create Bezier Shape");
+			return new ActionResult(Status.Success, "Create Bezier Shape");
 		}
 	}
 }

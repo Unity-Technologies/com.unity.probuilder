@@ -3,7 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.UI
@@ -277,7 +277,7 @@ namespace UnityEditor.ProBuilder.UI
 		public static bool ToolSettingsGUI(	string text,
 											string description,
 											bool showSettings,
-											System.Func<pb_Object[], pb_ActionResult> action,
+											System.Func<pb_Object[], ActionResult> action,
 											System.Action<int> gui,
 											int guiWidth,
 											int guiHeight,
@@ -289,7 +289,7 @@ namespace UnityEditor.ProBuilder.UI
 		public static bool ToolSettingsGUI(	string text,
 											string description,
 											bool showSettings,
-											System.Func<pb_Object[], pb_ActionResult> action,
+											System.Func<pb_Object[], ActionResult> action,
 											System.Action<int> gui,
 											bool enabled,
 											int guiWidth,

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A Transform class limited to 2D
@@ -39,7 +39,7 @@ namespace ProBuilder.Core
 
 		public override string ToString()
 		{
-			return "T: " + position + "\nR: " + rotation + pb_Constant.DEGREE_SYMBOL + "\nS: " + scale;
+			return "T: " + position + "\nR: " + rotation + PreferenceKeys.DEGREE_SYMBOL + "\nS: " + scale;
 		}
 	}
 }

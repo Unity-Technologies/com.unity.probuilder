@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.ProBuilder;
 using System.Reflection;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using ProBuilder.MeshOperations;
 
@@ -538,9 +538,9 @@ class UVEditor : EditorWindow
 					List<Vector2> coords = new List<Vector2>();
 
 					foreach(pb_Face face in incomplete_group)
-						coords.Add(pb_Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
+						coords.Add(Bounds2D.Center(pb.uv.ValuesWithIndices(face.distinctIndices)));
 
-					coords.Insert(0, pb_Bounds2D.Center(coords.ToArray()));
+					coords.Insert(0, Bounds2D.Center(coords.ToArray()));
 
 					incompleteTextureGroupsInSelection_CoordCache.Add(coords);
 				}
@@ -2187,7 +2187,7 @@ class UVEditor : EditorWindow
 
 		if(UVSelectionBounds().size.sqrMagnitude > 0f)
 		{
-			pb_Bounds2D bounds = UVSelectionBounds();
+			Bounds2D bounds = UVSelectionBounds();
 
 			float x = (float) screenWidth / ((bounds.size.x * uvGridSize) * 1.5f);
 			float y = (float) (screenHeight-96) / ((bounds.size.y * uvGridSize) * 1.5f);
@@ -2244,9 +2244,9 @@ class UVEditor : EditorWindow
 		handlePosition_offset = Vector2.zero;
 	}
 
-	pb_Bounds2D GetBounds(int i, int f, Vector2[][] array)
+	Bounds2D GetBounds(int i, int f, Vector2[][] array)
 	{
-		return new pb_Bounds2D( pb_Util.ValuesWithIndices(array[i], selection[i].faces[f].distinctIndices) );
+		return new Bounds2D( pb_Util.ValuesWithIndices(array[i], selection[i].faces[f].distinctIndices) );
 	}
 
 	/**
@@ -2280,16 +2280,16 @@ class UVEditor : EditorWindow
 		return ((v-UVGraphCenter)-uvGraphOffset)/uvGraphScale;
 	}
 
-	private pb_Bounds2D _selected_gui_bounds = new pb_Bounds2D(Vector2.zero, Vector2.zero);
+	private Bounds2D _selected_gui_bounds = new Bounds2D(Vector2.zero, Vector2.zero);
 
 	/**
 	 * Returns the bounds of the current selection in GUI space.
 	 */
-	pb_Bounds2D selectedGuiBounds
+	Bounds2D selectedGuiBounds
 	{
 		get
 		{
-			pb_Bounds2D uvBounds = UVSelectionBounds();
+			Bounds2D uvBounds = UVSelectionBounds();
 			_selected_gui_bounds.center = UVToGUIPoint(uvBounds.center);
 			_selected_gui_bounds.size = uvBounds.size * uvGridSize * uvGraphScale;
 			return _selected_gui_bounds;
@@ -2299,7 +2299,7 @@ class UVEditor : EditorWindow
 	/**
 	 * Returns the bounds of the current selection in UV space
 	 */
-	pb_Bounds2D UVSelectionBounds()
+	Bounds2D UVSelectionBounds()
 	{
 		float xMin = 0f, xMax = 0f, yMin = 0f, yMax = 0f;
 		bool first = true;
@@ -2326,7 +2326,7 @@ class UVEditor : EditorWindow
 			}
 		}
 
-		return new pb_Bounds2D( new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f ), new Vector2(xMax-xMin, yMax-yMin) );
+		return new Bounds2D( new Vector2( (xMin+xMax)/2f, (yMin+yMax)/2f ), new Vector2(xMax-xMin, yMax-yMin) );
 	}
 #endregion
 
@@ -2347,12 +2347,12 @@ class UVEditor : EditorWindow
 		if(editor == null || selection == null) return;
 
 		// Convert dragrect from Unity GUI space to UV coordinates
-		pb_Bounds2D dragBounds;
+		Bounds2D dragBounds;
 
 		if(dragRect != null)
-			dragBounds = new pb_Bounds2D( GUIToUVPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / (uvGraphScale * uvGridSize) );
+			dragBounds = new Bounds2D( GUIToUVPoint(((Rect)dragRect).center), new Vector2( ((Rect)dragRect).width, ((Rect)dragRect).height) / (uvGraphScale * uvGridSize) );
 		else
-			dragBounds = new pb_Bounds2D( Vector2.zero, Vector2.zero );
+			dragBounds = new Bounds2D( Vector2.zero, Vector2.zero );
 
 		selectedUVCount   = editor.selectedVertexCount;
 		selectedFaceCount = editor.selectedFaceCount;
@@ -3244,12 +3244,12 @@ class UVEditor : EditorWindow
 		EditorUtility.ShowNotification(this, "Collapse UVs");
 	}
 
-	public pb_ActionResult Menu_SewUVs(pb_Object[] selection)
+	public ActionResult Menu_SewUVs(pb_Object[] selection)
 	{
 		if(channel == 1)
 		{
 			EditorUtility.ShowNotification(this, "Invalid UV2 Operation");
-			return new pb_ActionResult(Status.Canceled, "Invalid UV2 Operation");
+			return new ActionResult(Status.Canceled, "Invalid UV2 Operation");
 		}
 
 		float weldDistance = PreferencesInternal.GetFloat(pb_Constant.pbUVWeldDistance);
@@ -3269,7 +3269,7 @@ class UVEditor : EditorWindow
 		RefreshSelectedUVCoordinates();
 
 		EditorUtility.ShowNotification(this, "Weld UVs");
-		return new pb_ActionResult(Status.Success, "Invalid UV2 Operation");
+		return new ActionResult(Status.Success, "Invalid UV2 Operation");
 	}
 
 	public void Menu_SplitUVs()

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor;
 
 namespace UnityEditor.ProBuilder
@@ -78,8 +78,8 @@ namespace UnityEditor.ProBuilder
 				s_ActiveRenderables = new List<pb_Renderable>();
 				s_WireframeRenderables = new List<pb_Renderable>();
 
-				float wireframeSize = PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize);
-				float edgeSize = PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize);
+				float wireframeSize = PreferencesInternal.GetFloat(PreferenceKeys.pbWireframeSize);
+				float edgeSize = PreferencesInternal.GetFloat(PreferenceKeys.pbLineHandleSize);
 
 				s_LineMaterial = CreateMaterial(Shader.Find(edgeSize <= 0f ? k_EdgeShader : k_LineBillboardShader), "pb_ElementGraphics::LineMaterial");
 				s_WireframeMaterial = CreateMaterial(Shader.Find(wireframeSize <= 0f ? k_EdgeShader : k_LineBillboardShader), "pb_ElementGraphics::WireMaterial");
@@ -121,9 +121,9 @@ namespace UnityEditor.ProBuilder
 
 			s_IsGuiInitialized = true;
 
-			s_WireframeColor = PreferencesInternal.GetColor(pb_Constant.pbWireframeColor);
+			s_WireframeColor = PreferencesInternal.GetColor(PreferenceKeys.pbWireframeColor);
 
-			if (PreferencesInternal.GetBool(pb_Constant.pbUseUnityColors))
+			if (PreferencesInternal.GetBool(PreferenceKeys.pbUseUnityColors))
 			{
 				s_FaceSelectedColor = Handles.selectedColor;
 				s_EnableFaceDither = true;
@@ -138,16 +138,16 @@ namespace UnityEditor.ProBuilder
 			}
 			else
 			{
-				s_FaceSelectedColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedFaceColor);
-				s_EnableFaceDither = PreferencesInternal.GetBool(pb_Constant.pbSelectedFaceDither);
+				s_FaceSelectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedFaceColor);
+				s_EnableFaceDither = PreferencesInternal.GetBool(PreferenceKeys.pbSelectedFaceDither);
 
-				s_EdgeSelectedColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedEdgeColor);
-				s_EdgeUnselectedColor = PreferencesInternal.GetColor(pb_Constant.pbUnselectedEdgeColor);
+				s_EdgeSelectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedEdgeColor);
+				s_EdgeUnselectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbUnselectedEdgeColor);
 
-				s_VertexSelectedColor = PreferencesInternal.GetColor(pb_Constant.pbSelectedVertexColor);
-				s_VertexUnselectedColor = PreferencesInternal.GetColor(pb_Constant.pbUnselectedVertexColor);
+				s_VertexSelectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbSelectedVertexColor);
+				s_VertexUnselectedColor = PreferencesInternal.GetColor(PreferenceKeys.pbUnselectedVertexColor);
 
-				s_PreselectionColor = PreferencesInternal.GetColor(pb_Constant.pbPreselectionColor);
+				s_PreselectionColor = PreferencesInternal.GetColor(PreferenceKeys.pbPreselectionColor);
 			}
 
 			s_WireframeMaterial.SetColor("_Color", s_WireframeColor);
@@ -156,11 +156,11 @@ namespace UnityEditor.ProBuilder
 
 			if (geometryShadersSupported)
 			{
-				s_WireframeMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(pb_Constant.pbWireframeSize) * EditorGUIUtility.pixelsPerPoint);
-				s_LineMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(pb_Constant.pbLineHandleSize) * EditorGUIUtility.pixelsPerPoint);
+				s_WireframeMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(PreferenceKeys.pbWireframeSize) * EditorGUIUtility.pixelsPerPoint);
+				s_LineMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(PreferenceKeys.pbLineHandleSize) * EditorGUIUtility.pixelsPerPoint);
 			}
 
-			s_VertexMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(pb_Constant.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
+			s_VertexMaterial.SetFloat("_Scale", PreferencesInternal.GetFloat(PreferenceKeys.pbVertexHandleSize) * EditorGUIUtility.pixelsPerPoint);
 		}
 
 		public static void DoGUI(EditLevel editLevel, SelectMode selectionMode)

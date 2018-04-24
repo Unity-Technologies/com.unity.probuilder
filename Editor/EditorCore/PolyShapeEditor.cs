@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using ProBuilder.MeshOperations;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
@@ -433,7 +433,7 @@ namespace UnityEditor.ProBuilder
 					return;
 				}
 
-				if(m_DistanceFromHeightHandle > pb_Constant.k_MaxPointDistanceFromControl)
+				if(m_DistanceFromHeightHandle > PreferenceKeys.k_MaxPointDistanceFromControl)
 				{
 					// point insertion
 					int index;
@@ -449,7 +449,7 @@ namespace UnityEditor.ProBuilder
 
 					float distanceToVertex = Mathf.Min(Vector2.Distance(mouse, ga), Vector2.Distance(mouse, gb));
 
-					if(distanceToVertex > pb_Constant.k_MaxPointDistanceFromControl && distanceToLine < pb_Constant.k_MaxPointDistanceFromControl)
+					if(distanceToVertex > PreferenceKeys.k_MaxPointDistanceFromControl && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
 					{
 						Handles.color = Color.green;
 

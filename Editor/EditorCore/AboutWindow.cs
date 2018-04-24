@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProBuilder.AssetUtility;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

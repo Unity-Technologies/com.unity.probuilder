@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -24,10 +24,10 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			UVEditor.MenuOpenUVEditor();
-			return new pb_ActionResult(Status.Success, "Open UV Window");
+			return new ActionResult(Status.Success, "Open UV Window");
 		}
 	}
 }

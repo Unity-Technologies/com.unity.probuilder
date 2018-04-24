@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -14,7 +14,7 @@ namespace ProBuilder.MeshOperations
 		 *	Conform groups of adjacent faces.  This function supports multiple islands of interconnected faces, but
 		 *	it may not unify each island the same way.
 		 */
-		public static pb_ActionResult ConformNormals(this pb_Object pb, IList<pb_Face> faces)
+		public static ActionResult ConformNormals(this pb_Object pb, IList<pb_Face> faces)
 		{
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces);
 			HashSet<pb_Face> used = new HashSet<pb_Face>();
@@ -50,9 +50,9 @@ namespace ProBuilder.MeshOperations
 			}
 
 			if(count > 0)
-				return new pb_ActionResult(Status.Success, count > 1 ? string.Format("Flipped {0} faces", count) : "Flipped 1 face");
+				return new ActionResult(Status.Success, count > 1 ? string.Format("Flipped {0} faces", count) : "Flipped 1 face");
 			else
-				return new pb_ActionResult(Status.NoChange, "Faces Uniform");
+				return new ActionResult(Status.NoChange, "Faces Uniform");
 		}
 
 		private static void GetWindingFlags(pb_WingedEdge edge, bool flag, Dictionary<pb_Face, bool> flags)
@@ -81,10 +81,10 @@ namespace ProBuilder.MeshOperations
 		/**
 		 *	Ensure the opposite face to source matches the winding order.
 		 */
-		public static pb_ActionResult ConformOppositeNormal(pb_WingedEdge source)
+		public static ActionResult ConformOppositeNormal(pb_WingedEdge source)
 		{
 			if(source == null || source.opposite == null)
-				return new pb_ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
+				return new ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
 
 			pb_Edge cea = GetCommonEdgeInWindingOrder(source);
 			pb_Edge ceb = GetCommonEdgeInWindingOrder(source.opposite);
@@ -93,10 +93,10 @@ namespace ProBuilder.MeshOperations
 			{
 				source.opposite.face.ReverseIndices();
 
-				return new pb_ActionResult(Status.Success, "Reversed target face winding order.");
+				return new ActionResult(Status.Success, "Reversed target face winding order.");
 			}
 
-			return new pb_ActionResult(Status.NoChange, "Faces already unified.");
+			return new ActionResult(Status.NoChange, "Faces already unified.");
 		}
 
 		/**

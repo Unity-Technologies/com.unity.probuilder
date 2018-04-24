@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UObject = UnityEngine.Object;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;

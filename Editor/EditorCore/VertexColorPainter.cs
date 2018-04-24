@@ -4,8 +4,9 @@ using System.Reflection;
 using System.Collections.Generic;
 using UnityEditor.ProBuilder;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
+using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
 
 namespace UnityEditor.ProBuilder
 {
@@ -34,13 +35,13 @@ namespace UnityEditor.ProBuilder
 			if (editor)
 				editor.SetEditLevel(EditLevel.Plugin);
 
-			colorName = pb_ColorUtil.GetColorName(color);
+			colorName = UnityEngine.ColorUtility.GetColorName(color);
 
 			// load the users custom palette
 			UserColors = new Color[10];
 			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
 			{
-				if (!pb_Util.TryParseColor(PreferencesInternal.GetString(pb_Constant.pbVertexColorPrefs + i), ref UserColors[i]))
+				if (!pb_Util.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref UserColors[i]))
 					UserColors[i] = DEFAULT_COLORS[i];
 			}
 		}
@@ -186,7 +187,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Colors", EditorStyles.toolbarButton))
 			{
-				colorName = pb_ColorUtil.GetColorName(color);
+				colorName = UnityEngine.ColorUtility.GetColorName(color);
 				mode = VertexPainterMode.Color;
 			}
 
@@ -245,7 +246,7 @@ namespace UnityEditor.ProBuilder
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(6);
-			UI.EditorGUIUtility.DrawSeparator(2, pb_Constant.ProBuilderLightGray);
+			UI.EditorGUIUtility.DrawSeparator(2, PreferenceKeys.ProBuilderLightGray);
 			GUILayout.Space(6);
 
 			/**
@@ -371,7 +372,7 @@ namespace UnityEditor.ProBuilder
 				if (GUILayout.Button(EditorGUIUtility.whiteTexture, GUILayout.Width(ButtonWidth), GUILayout.Height(42)))
 				{
 					color = UserColors[i];
-					colorName = pb_ColorUtil.GetColorName(color);
+					colorName = UnityEngine.ColorUtility.GetColorName(color);
 				}
 
 				GUI.color = UserColors[i];
@@ -386,7 +387,7 @@ namespace UnityEditor.ProBuilder
 				UserColors[i] = EditorGUILayout.ColorField(UserColors[i], GUILayout.Width(ButtonWidth));
 
 				if (GUI.changed)
-					PreferencesInternal.SetString(pb_Constant.pbVertexColorPrefs + i, UserColors[i].ToString());
+					PreferencesInternal.SetString(PreferenceKeys.pbVertexColorPrefs + i, UserColors[i].ToString());
 
 				GUILayout.EndVertical();
 

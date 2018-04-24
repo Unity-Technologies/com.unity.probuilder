@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -15,28 +15,28 @@ namespace UnityEditor.ProBuilder
 		public static void CheckEditorPrefsVersion()
 		{
 			// this exists to force update preferences when updating packages
-			var stored = new pb_VersionInfo(PreferencesInternal.GetString(pb_Constant.pbEditorPrefVersion)).MajorMinorPatch;
+			var stored = new pb_VersionInfo(PreferencesInternal.GetString(PreferenceKeys.pbEditorPrefVersion)).MajorMinorPatch;
 			var current = pb_Version.Current.MajorMinorPatch;
 
 			if (!stored.Equals(current))
 			{
-				PreferencesInternal.SetString(pb_Constant.pbEditorPrefVersion, current.ToString("M.m.p"), PreferenceLocation.Global);
+				PreferencesInternal.SetString(PreferenceKeys.pbEditorPrefVersion, current.ToString("M.m.p"), PreferenceLocation.Global);
 
 				if (stored < k_ProBuilder_3_0_2)
 				{
 					pb_Log.Info("Updated mesh handle graphic preferences to 3.0.2.");
 
-					PreferencesInternal.DeleteKey(pb_Constant.pbUseUnityColors);
-					PreferencesInternal.DeleteKey(pb_Constant.pbWireframeColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbSelectedFaceDither);
-					PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedEdgeColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbSelectedEdgeColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbUnselectedVertexColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbSelectedVertexColor);
-					PreferencesInternal.DeleteKey(pb_Constant.pbVertexHandleSize);
-					PreferencesInternal.DeleteKey(pb_Constant.pbLineHandleSize);
-					PreferencesInternal.DeleteKey(pb_Constant.pbWireframeSize);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbUseUnityColors);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedFaceColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedFaceDither);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbUnselectedEdgeColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedEdgeColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbUnselectedVertexColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbSelectedVertexColor);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbVertexHandleSize);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbLineHandleSize);
+					PreferencesInternal.DeleteKey(PreferenceKeys.pbWireframeSize);
 				}
 			}
 		}

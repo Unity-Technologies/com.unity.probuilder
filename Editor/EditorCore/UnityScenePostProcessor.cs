@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using ProBuilder.MeshOperations;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -65,7 +65,7 @@ namespace UnityEditor.ProBuilder
 				if(pb.msh != null)
 					pb.msh.hideFlags = HideFlags.None;
 
-				if(!PreferencesInternal.GetBool(pb_Constant.pbStripProBuilderOnBuild))
+				if(!PreferencesInternal.GetBool(PreferenceKeys.pbStripProBuilderOnBuild))
 				   return;
 
 				pb.dontDestroyMeshOnDelete = true;

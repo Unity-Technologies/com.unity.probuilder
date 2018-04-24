@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	public struct pb_PickerOptions
 	{
@@ -176,7 +176,7 @@ namespace ProBuilder.Core
 					// rect select = partial
 					else
 					{
-						pb_Bounds2D poly = new pb_Bounds2D(screenPoints, face.edges);
+						Bounds2D poly = new Bounds2D(screenPoints, face.edges);
 						bool overlaps = false;
 
 						if( poly.Intersects(rect) )

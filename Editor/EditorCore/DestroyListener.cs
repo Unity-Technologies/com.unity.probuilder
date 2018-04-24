@@ -1,5 +1,5 @@
 using UnityEngine;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 
 		static void OnDestroyObject(pb_Object pb)
 		{
-			if(PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets))
+			if(PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets))
 			{
 				PrefabType type = PrefabUtility.GetPrefabType(pb.gameObject);
 

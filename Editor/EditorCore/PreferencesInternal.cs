@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
@@ -31,51 +31,51 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, bool> s_BoolDefaults = new Dictionary<string, bool>()
 		{
-			{ pb_Constant.pbForceConvex, false },
-			{ pb_Constant.pbManifoldEdgeExtrusion, false },
-			{ pb_Constant.pbPBOSelectionOnly, false },
-			{ pb_Constant.pbCloseShapeWindow, false },
-			{ pb_Constant.pbGrowSelectionUsingAngle, false },
-			{ pb_Constant.pbNormalizeUVsOnPlanarProjection, false },
-			{ pb_Constant.pbDisableAutoUV2Generation, false },
-			{ pb_Constant.pbShowSceneInfo, false },
-			{ pb_Constant.pbEnableBackfaceSelection, false },
-			{ pb_Constant.pbVertexPaletteDockable, false },
-			{ pb_Constant.pbGrowSelectionAngleIterative, false },
-			{ pb_Constant.pbIconGUI, false },
-			{ pb_Constant.pbUniqueModeShortcuts, false },
-			{ pb_Constant.pbShiftOnlyTooltips, false },
-			{ pb_Constant.pbCollapseVertexToFirst, false },
-			{ pb_Constant.pbEnableExperimental, false },
-			{ pb_Constant.pbMeshesAreAssets, false },
-			{ pb_Constant.pbSelectedFaceDither, true },
+			{ PreferenceKeys.pbForceConvex, false },
+			{ PreferenceKeys.pbManifoldEdgeExtrusion, false },
+			{ PreferenceKeys.pbPBOSelectionOnly, false },
+			{ PreferenceKeys.pbCloseShapeWindow, false },
+			{ PreferenceKeys.pbGrowSelectionUsingAngle, false },
+			{ PreferenceKeys.pbNormalizeUVsOnPlanarProjection, false },
+			{ PreferenceKeys.pbDisableAutoUV2Generation, false },
+			{ PreferenceKeys.pbShowSceneInfo, false },
+			{ PreferenceKeys.pbEnableBackfaceSelection, false },
+			{ PreferenceKeys.pbVertexPaletteDockable, false },
+			{ PreferenceKeys.pbGrowSelectionAngleIterative, false },
+			{ PreferenceKeys.pbIconGUI, false },
+			{ PreferenceKeys.pbUniqueModeShortcuts, false },
+			{ PreferenceKeys.pbShiftOnlyTooltips, false },
+			{ PreferenceKeys.pbCollapseVertexToFirst, false },
+			{ PreferenceKeys.pbEnableExperimental, false },
+			{ PreferenceKeys.pbMeshesAreAssets, false },
+			{ PreferenceKeys.pbSelectedFaceDither, true },
 		};
 
 		static Dictionary<string, float> s_FloatDefaults = new Dictionary<string, float>()
 		{
-			{ pb_Constant.pbGrowSelectionAngle, 42f },
-			{ pb_Constant.pbExtrudeDistance, .5f },
-			{ pb_Constant.pbWeldDistance, Mathf.Epsilon },
-			{ pb_Constant.pbUVGridSnapValue, .125f },
-			{ pb_Constant.pbUVWeldDistance, .01f },
-			{ pb_Constant.pbBevelAmount, .05f },
-			{ pb_Constant.pbVertexHandleSize, 3f },
-			{ pb_Constant.pbLineHandleSize, 1f },
-			{ pb_Constant.pbWireframeSize, .5f },
+			{ PreferenceKeys.pbGrowSelectionAngle, 42f },
+			{ PreferenceKeys.pbExtrudeDistance, .5f },
+			{ PreferenceKeys.pbWeldDistance, Mathf.Epsilon },
+			{ PreferenceKeys.pbUVGridSnapValue, .125f },
+			{ PreferenceKeys.pbUVWeldDistance, .01f },
+			{ PreferenceKeys.pbBevelAmount, .05f },
+			{ PreferenceKeys.pbVertexHandleSize, 3f },
+			{ PreferenceKeys.pbLineHandleSize, 1f },
+			{ PreferenceKeys.pbWireframeSize, .5f },
 		};
 
 		static Dictionary<string, int> s_IntDefaults = new Dictionary<string, int>()
 		{
-			{ pb_Constant.pbDefaultEditLevel, 0 },
-			{ pb_Constant.pbDefaultSelectionMode, 0 },
-			{ pb_Constant.pbHandleAlignment, 0 },
-			{ pb_Constant.pbDefaultCollider, (int) ColliderType.MeshCollider },
-			{ pb_Constant.pbVertexColorTool, (int) VertexColorTool.Painter },
-			{ pb_Constant.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
-			{ pb_Constant.pbDefaultEntity, (int) EntityType.Detail },
-			{ pb_Constant.pbDragSelectMode, (int) DragSelectMode.Difference },
-			{ pb_Constant.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
-			{ pb_Constant.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
+			{ PreferenceKeys.pbDefaultEditLevel, 0 },
+			{ PreferenceKeys.pbDefaultSelectionMode, 0 },
+			{ PreferenceKeys.pbHandleAlignment, 0 },
+			{ PreferenceKeys.pbDefaultCollider, (int) ColliderType.MeshCollider },
+			{ PreferenceKeys.pbVertexColorTool, (int) VertexColorTool.Painter },
+			{ PreferenceKeys.pbToolbarLocation, (int) SceneToolbarLocation.UpperCenter },
+			{ PreferenceKeys.pbDefaultEntity, (int) EntityType.Detail },
+			{ PreferenceKeys.pbDragSelectMode, (int) DragSelectMode.Difference },
+			{ PreferenceKeys.pbExtrudeMethod, (int) ExtrudeMethod.VertexNormal },
+			{ PreferenceKeys.pbShadowCastingMode, (int) ShadowCastingMode.TwoSided },
 		};
 
 		static readonly Color k_ProBuilderWireframe = new Color(125f / 255f, 155f / 255f, 185f / 255f, 1f);
@@ -85,13 +85,13 @@ namespace UnityEditor.ProBuilder
 
 		static Dictionary<string, Color> s_ColorDefaults = new Dictionary<string, Color>()
 		{
-			{ pb_Constant.pbSelectedFaceColor, k_ProBuilderSelected},
-			{ pb_Constant.pbWireframeColor, k_ProBuilderWireframe},
-			{ pb_Constant.pbUnselectedEdgeColor, k_ProBuilderUnselected},
-			{ pb_Constant.pbSelectedEdgeColor, k_ProBuilderSelected},
-			{ pb_Constant.pbUnselectedVertexColor, k_ProBuilderUnselected},
-			{ pb_Constant.pbSelectedVertexColor, k_ProBuilderSelected},
-			{ pb_Constant.pbPreselectionColor, k_ProBuilderPreselection },
+			{ PreferenceKeys.pbSelectedFaceColor, k_ProBuilderSelected},
+			{ PreferenceKeys.pbWireframeColor, k_ProBuilderWireframe},
+			{ PreferenceKeys.pbUnselectedEdgeColor, k_ProBuilderUnselected},
+			{ PreferenceKeys.pbSelectedEdgeColor, k_ProBuilderSelected},
+			{ PreferenceKeys.pbUnselectedVertexColor, k_ProBuilderUnselected},
+			{ PreferenceKeys.pbSelectedVertexColor, k_ProBuilderSelected},
+			{ PreferenceKeys.pbPreselectionColor, k_ProBuilderPreselection },
 		};
 
 		static Dictionary<string, string> s_StringDefaults = new Dictionary<string, string>()
@@ -281,7 +281,7 @@ namespace UnityEditor.ProBuilder
 
 			switch(key)
 			{
-				case pb_Constant.pbDefaultMaterial:
+				case PreferenceKeys.pbDefaultMaterial:
 					if(EditorPrefs.HasKey(key))
 					{
 						if(EditorPrefs.GetString(key) == "Default-Diffuse")
@@ -307,8 +307,8 @@ namespace UnityEditor.ProBuilder
 		/// <returns></returns>
 		public static IEnumerable<pb_Shortcut> GetShortcuts()
 		{
-			return EditorPrefs.HasKey(pb_Constant.pbDefaultShortcuts)
-				? pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(pb_Constant.pbDefaultShortcuts))
+			return EditorPrefs.HasKey(PreferenceKeys.pbDefaultShortcuts)
+				? pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(PreferenceKeys.pbDefaultShortcuts))
 				: pb_Shortcut.DefaultShortcuts();
 		}
 

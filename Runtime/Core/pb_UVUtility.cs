@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	static class pb_UVUtility
 	{
@@ -41,7 +41,7 @@ namespace ProBuilder.Core
 				uvSettings.scale.y != 1f ||
 				uvSettings.rotation != 0f)
 			{
-				Vector2 center = pb_Bounds2D.Center(uvs, indices);
+				Vector2 center = Bounds2D.Center(uvs, indices);
 
 				for(int i = 0; i < len; i++)
 				{
@@ -78,7 +78,7 @@ namespace ProBuilder.Core
 			}
 
 
-			uvSettings.localPivot = pb_Bounds2D.Center(uvs, indices);
+			uvSettings.localPivot = Bounds2D.Center(uvs, indices);
 
 			for(int i = 0; i < indices.Length; i++)
 			{

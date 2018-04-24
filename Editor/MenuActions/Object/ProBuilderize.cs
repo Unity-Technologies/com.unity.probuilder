@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder.Actions
 			GUI.enabled = true;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			IEnumerable<MeshFilter> top = Selection.transforms.Select(x => x.GetComponent<MeshFilter>()).Where(y => y != null);
 			IEnumerable<MeshFilter> all = Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<MeshFilter>()).Where(x => x != null);
@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder.Actions
 				else if(result == 1)
 					return DoProBuilderize(top, settings);
 				else
-					return pb_ActionResult.UserCanceled;
+					return ActionResult.UserCanceled;
 			}
 			else
 			{
@@ -116,7 +116,7 @@ namespace UnityEditor.ProBuilder.Actions
 		}
 
 		[System.Obsolete("Please use DoProBuilderize(IEnumerable<MeshFilter>, pb_MeshImporter.Settings")]
-		public static pb_ActionResult DoProBuilderize(
+		public static ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
 			bool preserveFaces)
 		{
@@ -134,7 +134,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/// <param name="selected"></param>
 		/// <param name="settings"></param>
 		/// <returns></returns>
-		public static pb_ActionResult DoProBuilderize(
+		public static ActionResult DoProBuilderize(
 			IEnumerable<MeshFilter> selected,
 			pb_MeshImporter.Settings settings)
 		{
@@ -183,9 +183,9 @@ namespace UnityEditor.ProBuilder.Actions
 			ProBuilderEditor.Refresh(true);
 
 			if(i < 1)
-				return new pb_ActionResult(Status.Canceled, "Nothing Selected");
+				return new ActionResult(Status.Canceled, "Nothing Selected");
 			else
-				return new pb_ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
+				return new ActionResult(Status.Success, "ProBuilderize " + i + (i > 1 ? " Objects" : " Object").ToString());
 		}
 	}
 }

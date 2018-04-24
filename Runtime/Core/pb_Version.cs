@@ -3,7 +3,7 @@ using System;
 using System.Reflection;
 #endif
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	public static class pb_Version
 	{

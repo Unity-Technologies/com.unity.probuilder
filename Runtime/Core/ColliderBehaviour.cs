@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
+	/// <summary>
+	/// A MonoBehaviour that automatically enables and disables the parent GameObject on exiting and enterin playmode, respectively.
+	/// </summary>
 	[DisallowMultipleComponent]
-	class pb_ColliderBehaviour : pb_EntityBehaviour
+	class ColliderBehaviour : pb_EntityBehaviour
 	{
 		public override void Initialize()
 		{

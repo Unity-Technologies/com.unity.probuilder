@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using Parabox.STL;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -28,12 +28,12 @@ namespace UnityEditor.ProBuilder.Actions
 			return Selection.gameObjects != null && Selection.gameObjects.Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			if(!string.IsNullOrEmpty(ExportStlAscii.ExportWithFileDialog(Selection.gameObjects, FileType.Binary)))
-				return new pb_ActionResult(Status.Success, "Export STL");
+				return new ActionResult(Status.Success, "Export STL");
 			else
-				return new pb_ActionResult(Status.Canceled, "User Canceled");
+				return new ActionResult(Status.Canceled, "User Canceled");
 		}
 	}
 }

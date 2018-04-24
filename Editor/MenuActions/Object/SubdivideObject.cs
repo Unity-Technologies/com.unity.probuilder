@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 			return 	ProBuilderEditor.instance != null && selection != null && selection.Length > 0;
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuSubdivide(selection);
 		}

@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// A set of colors for use in the color palette editor.
 	/// </summary>
 	[System.Serializable]
-	public class pb_ColorPalette : ScriptableObject, pb_IHasDefault
+	public class ColorPalette : ScriptableObject, pb_IHasDefault
 	{
 		/// <summary>
 		/// The currently selected color.
@@ -46,12 +46,12 @@ namespace ProBuilder.Core
 		/// Copy this color palettes values to a new color palette.
 		/// </summary>
 		/// <param name="target"></param>
-		public void CopyTo(pb_ColorPalette target)
+		public void CopyTo(ColorPalette target)
 		{
 			target.colors = new List<Color>(colors);
 		}
 
-		public static implicit operator List<Color>(pb_ColorPalette palette)
+		public static implicit operator List<Color>(ColorPalette palette)
 		{
 			return palette.colors;
 		}

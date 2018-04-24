@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace ProBuilder.MeshOperations
 {
@@ -33,7 +33,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="faces">The faces to subdivide (more accurately, poke).</param>
 		/// <param name="subdividedFaces">The resulting faces.</param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Face> faces, out pb_Face[] subdividedFaces)
+		public static ActionResult Connect(this pb_Object pb, IEnumerable<pb_Face> faces, out pb_Face[] subdividedFaces)
 		{
 			IEnumerable<pb_Edge> edges = faces.SelectMany(x => x.edges);
 			HashSet<pb_Face> mask = new HashSet<pb_Face>(faces);
@@ -41,13 +41,13 @@ namespace ProBuilder.MeshOperations
 			return Connect(pb, edges, out subdividedFaces, out empty, true, false, mask);
 		}
 
-		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] faces)
+		public static ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Face[] faces)
 		{
 			pb_Edge[] empty;
 			return Connect(pb, edges, out faces, out empty, true, false);
 		}
 
-		public static pb_ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Edge[] connections)
+		public static ActionResult Connect(this pb_Object pb, IEnumerable<pb_Edge> edges, out pb_Edge[] connections)
 		{
 			pb_Face[] empty;
 			return Connect(pb, edges, out empty, out connections, false, true);
@@ -64,7 +64,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="returnEdges"></param>
 		/// <param name="faceMask"></param>
 		/// <returns></returns>
-		static pb_ActionResult Connect(
+		static ActionResult Connect(
 			this pb_Object pb,
 			IEnumerable<pb_Edge> edges,
 			out pb_Face[] addedFaces,
@@ -212,7 +212,7 @@ namespace ProBuilder.MeshOperations
 			else
 				addedFaces = null;
 
-			return new pb_ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count / 2));
+			return new ActionResult(Status.Success, string.Format("Connected {0} Edges", results.Count / 2));
 		}
 
 		/// <summary>

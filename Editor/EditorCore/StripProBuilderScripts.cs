@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using ProBuilder.MeshOperations;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
 	/// @TODO MOVE TO ACTIONS
 	class StripProBuilderScripts : Editor
 	{
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
+		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip All ProBuilder Scripts in Scene")]
 		public static void StripAllScenes()
 		{
 
@@ -26,13 +26,13 @@ namespace UnityEditor.ProBuilder.Actions
 			Strip(all);
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
+		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
 		public static bool VerifyStripSelection()
 		{
 			return pb_Util.GetComponents<pb_Object>(Selection.transforms).Length > 0;
 		}
 
-		[MenuItem("Tools/" + pb_Constant.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection")]
+		[MenuItem("Tools/" + PreferenceKeys.PRODUCT_NAME + "/Actions/Strip ProBuilder Scripts in Selection")]
 		public static void StripAllSelected()
 		{
 			if(!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder.Actions
 				Mesh cachedMesh;
 
 				// if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
-				if( PreferencesInternal.GetBool(pb_Constant.pbMeshesAreAssets) && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh) )
+				if( PreferencesInternal.GetBool(PreferenceKeys.pbMeshesAreAssets) && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh) )
 				{
 					pb.dontDestroyMeshOnDelete = true;
 					DestroyImmediate(pb);

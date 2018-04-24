@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	/// <summary>
 	/// Describes the various states of chatty-ness.

@@ -1,4 +1,4 @@
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
@@ -81,7 +81,7 @@ Grow by angle is enabbled by Option + Clicking the <b>Grow Selection</b> button.
 				MenuCommands.MenuGrowSelection(selection);
 		}
 
-		public override pb_ActionResult DoAction()
+		public override ActionResult DoAction()
 		{
 			return MenuCommands.MenuGrowSelection(selection);
 		}

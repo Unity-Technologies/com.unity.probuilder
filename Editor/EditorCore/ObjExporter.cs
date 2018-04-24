@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {

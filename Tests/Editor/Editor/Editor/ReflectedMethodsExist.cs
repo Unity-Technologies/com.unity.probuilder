@@ -3,7 +3,7 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using ProBuilder.Core;
+using UnityEngine.ProBuilder;
 using System;
 using UnityEditor.ProBuilder;
 using ProBuilder.Test;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProBuilder.Core
+namespace UnityEngine.ProBuilder
 {
 	[DisallowMultipleComponent]
 	class pb_TriggerBehaviour : pb_EntityBehaviour
