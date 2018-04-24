@@ -16,9 +16,9 @@ namespace ProBuilder.MeshOperations
 			createdFaces = null;
 
 			Dictionary<int, int> 		lookup 		= pb.sharedIndices.ToDictionary();
-			List<pb_Vertex> 			vertices 	= new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+			List<Vertex> 			vertices 	= new List<Vertex>( Vertex.GetVertices(pb) );
 			List<EdgeLookup> 		m_edges 	= EdgeLookup.GetEdgeLookup(edges, lookup).Distinct().ToList();
-			List<pb_WingedEdge> 		wings 		= pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> 		wings 		= WingedEdge.GetWingedEdges(pb);
 			List<FaceRebuildData> 	appendFaces = new List<FaceRebuildData>();
 
 			Dictionary<Face, List<int>> 	ignore 	= new Dictionary<Face, List<int>>();
@@ -29,14 +29,14 @@ namespace ProBuilder.MeshOperations
 
 			// test every edge that will be moved along to make sure the bevel distance is appropriate.  if it's not, adjust the max bevel amount
 			// to suit.
-			Dictionary<int, List<pb_WingedEdge>> spokes = pb_WingedEdge.GetSpokes(wings);
+			Dictionary<int, List<WingedEdge>> spokes = WingedEdge.GetSpokes(wings);
 			HashSet<int> tested_common = new HashSet<int>();
 
 			foreach(EdgeLookup e in m_edges)
 			{
 				if(tested_common.Add(e.common.x))
 				{
-					foreach(pb_WingedEdge w in spokes[e.common.x])
+					foreach(WingedEdge w in spokes[e.common.x])
 					{
 						Edge le = w.edge.local;
 						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
@@ -45,7 +45,7 @@ namespace ProBuilder.MeshOperations
 
 				if(tested_common.Add(e.common.y))
 				{
-					foreach(pb_WingedEdge w in spokes[e.common.y])
+					foreach(WingedEdge w in spokes[e.common.y])
 					{
 						Edge le = w.edge.local;
 						amount = Mathf.Min( Vector3.Distance(vertices[le.x].position, vertices[le.y].position) - .001f, amount );
@@ -60,7 +60,7 @@ namespace ProBuilder.MeshOperations
 			// storing information about adjacent faces in the process
 			foreach(EdgeLookup lup in m_edges)
 			{
-				pb_WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
+				WingedEdge we = wings.FirstOrDefault(x => x.edge.Equals(lup));
 
 				if(we == null || we.opposite == null)
 					continue;
@@ -92,27 +92,27 @@ namespace ProBuilder.MeshOperations
 			// then add holes later
 			createdFaces = new List<Face>(appendFaces.Select(x => x.face));
 
-			Dictionary<Face, List<SimpleTuple<pb_WingedEdge, int>>> sorted = new Dictionary<Face, List<SimpleTuple<pb_WingedEdge, int>>>();
+			Dictionary<Face, List<SimpleTuple<WingedEdge, int>>> sorted = new Dictionary<Face, List<SimpleTuple<WingedEdge, int>>>();
 
 			// sort the adjacent but affected faces into winged edge groups where each group contains a set of
 			// unique winged edges pointing to the same face
 			foreach(int c in slide)
 			{
-				IEnumerable<pb_WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !(ignore.ContainsKey(x.face) && ignore[x.face].Contains(c)));
+				IEnumerable<WingedEdge> matches = wings.Where(x => x.edge.common.Contains(c) && !(ignore.ContainsKey(x.face) && ignore[x.face].Contains(c)));
 
 				HashSet<Face> used = new HashSet<Face>();
 
-				foreach(pb_WingedEdge match in matches)
+				foreach(WingedEdge match in matches)
 				{
 					if(!used.Add(match.face))
 						continue;
 
-					sorted.AddOrAppend(match.face, new SimpleTuple<pb_WingedEdge, int>(match, c));
+					sorted.AddOrAppend(match.face, new SimpleTuple<WingedEdge, int>(match, c));
 				}
 			}
 
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
-			foreach(KeyValuePair<Face, List<SimpleTuple<pb_WingedEdge, int>>> kvp in sorted)
+			foreach(KeyValuePair<Face, List<SimpleTuple<WingedEdge, int>>> kvp in sorted)
 			{
 				// common index & list of vertices it was split into
 				Dictionary<int, List<int>> appendedVertices;
@@ -162,10 +162,10 @@ namespace ProBuilder.MeshOperations
 				holesCommonIndices.Add(holeCommon);
 			}
 
-			List<pb_WingedEdge> modified = pb_WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
+			List<WingedEdge> modified = WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
 
 			// now go through the holes and create faces for them
-			vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+			vertices = new List<Vertex>( Vertex.GetVertices(pb) );
 
 			List<FaceRebuildData> holeFaces = new List<FaceRebuildData>();
 
@@ -180,14 +180,14 @@ namespace ProBuilder.MeshOperations
 				// skip sorting the path if it's just a triangle
 				if(h.Count < 4)
 				{
-					List<pb_Vertex> v = new List<pb_Vertex>( pb_Vertex.GetVertices(pb, h.Select(x => sharedIndices[x][0]).ToList()) );
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(pb, h.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.Add(pb_AppendPolygon.FaceWithVertices(v));
 				}
 				// if this hole has > 3 indices, it needs a tent pole triangulation, which requires sorting into the perimeter order
 				else
 				{
-					List<int> holePath = pb_WingedEdge.SortCommonIndicesByAdjacency(modified, h);
-					List<pb_Vertex> v = new List<pb_Vertex>( pb_Vertex.GetVertices(pb, holePath.Select(x => sharedIndices[x][0]).ToList()) );
+					List<int> holePath = WingedEdge.SortCommonIndicesByAdjacency(modified, h);
+					List<Vertex> v = new List<Vertex>( Vertex.GetVertices(pb, holePath.Select(x => sharedIndices[x][0]).ToList()) );
 					holeFaces.AddRange( pb_AppendPolygon.TentCapWithVertices(v) );
 				}
 			}
@@ -203,11 +203,11 @@ namespace ProBuilder.MeshOperations
 			// now append filled holes to the full list of added faces
 			appendFaces.AddRange(holeFaces);
 
-			List<pb_WingedEdge> allNewFaceEdges = pb_WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
+			List<WingedEdge> allNewFaceEdges = WingedEdge.GetWingedEdges(pb, appendFaces.Select(x => x.face));
 
 			for(int i = 0; i < allNewFaceEdges.Count && newHoles.Count > 0; i++)
 			{
-				pb_WingedEdge wing = allNewFaceEdges[i];
+				WingedEdge wing = allNewFaceEdges[i];
 
 				if(newHoles.Contains(wing.face))
 				{
@@ -216,12 +216,12 @@ namespace ProBuilder.MeshOperations
 					// find first edge whose opposite face isn't a filled hole* then
 					// conform normal by that.
 					// *or is a filled hole but has already been conformed
-					foreach(pb_WingedEdge w in wing)
+					foreach(WingedEdge w in wing)
 					{
 						if(!newHoles.Contains(w.opposite.face))
 						{
 							w.face.material = w.opposite.face.material;
-							w.face.uv = new pb_UV(w.opposite.face.uv);
+							w.face.uv = new AutoUnwrapSettings(w.opposite.face.uv);
 							pb_ConformNormals.ConformOppositeNormal(w.opposite);
 							break;
 						}
@@ -237,9 +237,9 @@ namespace ProBuilder.MeshOperations
  		private static readonly int[] BRIDGE_INDICES_NRM = new int[] { 2, 1, 0 };
 
  		private static List<FaceRebuildData> GetBridgeFaces(
- 			IList<pb_Vertex> vertices,
- 			pb_WingedEdge left,
- 			pb_WingedEdge right,
+ 			IList<Vertex> vertices,
+ 			WingedEdge left,
+ 			WingedEdge right,
  			Dictionary<int, List<SimpleTuple<FaceRebuildData, List<int>>>> holes)
  		{
  			List<FaceRebuildData> faces = new List<FaceRebuildData>();
@@ -249,7 +249,7 @@ namespace ProBuilder.MeshOperations
  			EdgeLookup a = left.edge;
  			EdgeLookup b = right.edge;
 
- 			rf.vertices = new List<pb_Vertex>()
+ 			rf.vertices = new List<Vertex>()
  			{
  				vertices[a.local.x],
  				vertices[a.local.y],
@@ -268,7 +268,7 @@ namespace ProBuilder.MeshOperations
  			rf.face = new Face(
  				triangles,
  				left.face.material,
- 				new pb_UV(),
+ 				new AutoUnwrapSettings(),
  				-1,
  				-1,
  				-1,
@@ -282,7 +282,7 @@ namespace ProBuilder.MeshOperations
  			return faces;
  		}
 
- 		private static void SlideEdge(IList<pb_Vertex> vertices, pb_WingedEdge we, float amount)
+ 		private static void SlideEdge(IList<Vertex> vertices, WingedEdge we, float amount)
  		{
 			we.face.manualUV = true;
 			we.face.textureGroup = -1;
@@ -293,10 +293,10 @@ namespace ProBuilder.MeshOperations
 			if(!slide_x.IsValid() || !slide_y.IsValid())
 				return;
 
-			pb_Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
+			Vertex x = (vertices[slide_x.x] - vertices[slide_x.y]);
 			x.Normalize();
 
-			pb_Vertex y = (vertices[slide_y.x] - vertices[slide_y.y]);
+			Vertex y = (vertices[slide_y.x] - vertices[slide_y.y]);
 			y.Normalize();
 
 			// need the pb_Vertex value to be modified, not reassigned in this array (which += does)
@@ -304,7 +304,7 @@ namespace ProBuilder.MeshOperations
 			vertices[we.edge.local.y].Add(y * amount);
 		}
 
-		private static Edge GetLeadingEdge(pb_WingedEdge wing, int common)
+		private static Edge GetLeadingEdge(WingedEdge wing, int common)
 		{
 			if(wing.previous.edge.common.x == common)
 				return new Edge(wing.previous.edge.local.y, wing.previous.edge.local.x);

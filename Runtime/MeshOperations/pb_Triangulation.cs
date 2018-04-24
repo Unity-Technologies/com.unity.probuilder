@@ -38,7 +38,7 @@ namespace ProBuilder.MeshOperations
 		 *	Attempts to triangulate a set of vertices.
 		 *	If unordered is specified as false vertices will not be re-ordered before triangulation.
 		 */
-		public static bool TriangulateVertices(IList<pb_Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
+		public static bool TriangulateVertices(IList<Vertex> vertices, out List<int> triangles, bool unordered = true, bool convex = false)
 		{
 			Vector3[] facePoints = new Vector3[vertices.Count];
 

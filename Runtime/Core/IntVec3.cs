@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder
 		public float y { get { return vec.y; } }
 		public float z { get { return vec.z; } }
 
-		public const float RESOLUTION = pb_Vector.FLT_COMPARE_RESOLUTION;
+		public const float RESOLUTION = VectorHash.FLT_COMPARE_RESOLUTION;
 
 		public IntVec3(Vector3 vector)
 		{
@@ -57,7 +57,7 @@ namespace UnityEngine.ProBuilder
 
 		public override int GetHashCode()
 		{
-			return pb_Vector.GetHashCode(vec);
+			return VectorHash.GetHashCode(vec);
 		}
 
 		private static int round(float v)

@@ -24,7 +24,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns>An action result noting the status of the operation.</returns>
 		public static ActionResult WeldVertices(this ProBuilderMesh pb, int[] indices, float neighborRadius, out int[] welds)
 		{
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertices(pb);
 			IntArray[] sharedIndices = pb.sharedIndices;
 
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();

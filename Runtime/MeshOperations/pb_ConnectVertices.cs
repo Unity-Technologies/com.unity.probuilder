@@ -29,7 +29,7 @@ namespace ProBuilder.MeshOperations
 				affected.UnionWith(pb.sharedIndices[i].array);
 
 			Dictionary<Face, List<int>> splits = new Dictionary<Face, List<int>>();
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 
 			foreach(Face face in pb.faces)
 			{
@@ -69,7 +69,7 @@ namespace ProBuilder.MeshOperations
 				foreach(ConnectFaceRebuildData c in res)
 				{
 					c.faceRebuildData.face.textureGroup 	= face.textureGroup < 0 ? newTextureGroupIndex : face.textureGroup;
-					c.faceRebuildData.face.uv 				= new pb_UV(face.uv);
+					c.faceRebuildData.face.uv 				= new AutoUnwrapSettings(face.uv);
 					c.faceRebuildData.face.smoothingGroup 	= face.smoothingGroup;
 					c.faceRebuildData.face.manualUV 		= face.manualUV;
 					c.faceRebuildData.face.material 		= face.material;
@@ -103,14 +103,14 @@ namespace ProBuilder.MeshOperations
 			Face face,
 			int a,
 			int b,
-			List<pb_Vertex> vertices,
+			List<Vertex> vertices,
 			Dictionary<int, int> lookup)
 		{
-			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
 
-			List<pb_Vertex>[] n_vertices = new List<pb_Vertex>[] {
-				new List<pb_Vertex>(),
-				new List<pb_Vertex>()
+			List<Vertex>[] n_vertices = new List<Vertex>[] {
+				new List<Vertex>(),
+				new List<Vertex>()
 			};
 
 			List<int>[] n_sharedIndices = new List<int>[] {
@@ -168,22 +168,22 @@ namespace ProBuilder.MeshOperations
 		static List<ConnectFaceRebuildData> ConnectIndicesInFace(
 			Face face,
 			List<int> indices,
-			List<pb_Vertex> vertices,
+			List<Vertex> vertices,
 			Dictionary<int, int> lookup,
 			int sharedIndexOffset)
 		{
 			if(indices.Count < 3)
 				return null;
 
-			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
 
 			int splitCount = indices.Count;
 
-			List<List<pb_Vertex>> n_vertices = pb_Util.Fill<List<pb_Vertex>>(x => { return new List<pb_Vertex>(); }, splitCount);
-			List<List<int>> n_sharedIndices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
-			List<List<int>> n_indices = pb_Util.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<Vertex>> n_vertices = InternalUtility.Fill<List<Vertex>>(x => { return new List<Vertex>(); }, splitCount);
+			List<List<int>> n_sharedIndices = InternalUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
+			List<List<int>> n_indices = InternalUtility.Fill<List<int>>(x => { return new List<int>(); }, splitCount);
 
-			pb_Vertex center = pb_Vertex.Average(vertices, indices);
+			Vertex center = Vertex.Average(vertices, indices);
 			Vector3 nrm = ProBuilderMath.Normal(vertices, face.indices);
 
 			int index = 0;

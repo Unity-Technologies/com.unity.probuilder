@@ -18,10 +18,10 @@ namespace UnityEditor.ProBuilder
 
 		static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 
-		static pb_UV uv_gui = new pb_UV();		// store GUI changes here, so we may selectively apply them later
+		static AutoUnwrapSettings uv_gui = new AutoUnwrapSettings();		// store GUI changes here, so we may selectively apply them later
 		static int textureGroup = -1;
 
-		static List<pb_UV> uv_selection = new List<pb_UV>();
+		static List<AutoUnwrapSettings> uv_selection = new List<AutoUnwrapSettings>();
 		static Dictionary<string, bool> uv_diff = new Dictionary<string, bool>() {
 			{"projectionAxis", false},
 			{"useWorldSpace", false},
@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder
 				tempInt = (int)uv_gui.fill;
 				EditorGUI.showMixedValue = uv_diff["fill"];
 				GUILayout.Label("Fill Mode", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
-				uv_gui.fill = (pb_UV.Fill)EditorGUILayout.EnumPopup(uv_gui.fill);
+				uv_gui.fill = (AutoUnwrapSettings.Fill)EditorGUILayout.EnumPopup(uv_gui.fill);
 				if(tempInt != (int)uv_gui.fill) SetFill(uv_gui.fill, selection);
 			GUILayout.EndHorizontal();
 
@@ -87,7 +87,7 @@ namespace UnityEditor.ProBuilder
 				tempInt = (int) uv_gui.anchor;
 				EditorGUI.showMixedValue = uv_diff["anchor"];
 				GUILayout.Label("Anchor", GUILayout.MaxWidth(80), GUILayout.MinWidth(80));
-				uv_gui.anchor = (pb_UV.Anchor) EditorGUILayout.EnumPopup(uv_gui.anchor);
+				uv_gui.anchor = (AutoUnwrapSettings.Anchor) EditorGUILayout.EnumPopup(uv_gui.anchor);
 				if(tempInt != (int)uv_gui.anchor) SetAnchor(uv_gui.anchor, selection);
 				GUI.enabled = enabled;
 			GUILayout.EndHorizontal();
@@ -249,7 +249,7 @@ namespace UnityEditor.ProBuilder
 				{
 					foreach(Face face in selection[i].SelectedFaces)
 					{
-						face.uv = new pb_UV();
+						face.uv = new AutoUnwrapSettings();
 					}
 				}
 
@@ -288,9 +288,9 @@ namespace UnityEditor.ProBuilder
 
 			if(uv_selection.Count < 1) return;
 
-			uv_gui = new pb_UV(uv_selection[0]);
+			uv_gui = new AutoUnwrapSettings(uv_selection[0]);
 
-			foreach(pb_UV u in uv_selection)
+			foreach(AutoUnwrapSettings u in uv_selection)
 			{
 				// if(u.projectionAxis != uv_gui.projectionAxis)
 				// 	uv_diff["projectionAxis"] = true;
@@ -380,7 +380,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetFill(pb_UV.Fill fill, ProBuilderMesh[] sel)
+		private static void SetFill(AutoUnwrapSettings.Fill fill, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Fill UVs");
 			for(int i = 0; i < sel.Length; i++)
@@ -391,7 +391,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		private static void SetAnchor(pb_UV.Anchor anchor, ProBuilderMesh[] sel)
+		private static void SetAnchor(AutoUnwrapSettings.Anchor anchor, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Set UV Anchor");
 
@@ -472,12 +472,12 @@ namespace UnityEditor.ProBuilder
 					continue;
 
 				Face[] faces = pb.SelectedFaces;
-				pb_UV cuv = faces[0].uv;
+				AutoUnwrapSettings cuv = faces[0].uv;
 
 				foreach(Face f in faces)
 				{
 					f.textureGroup = tex;
-					f.uv = new pb_UV(cuv);
+					f.uv = new AutoUnwrapSettings(cuv);
 				}
 			}
 
@@ -489,7 +489,7 @@ namespace UnityEditor.ProBuilder
 
 			Face[] faces = pb.SelectedFaces;
 
-			pb_UV cont_uv = faces[0].uv;
+			AutoUnwrapSettings cont_uv = faces[0].uv;
 
 			int texGroup = pb.GetUnusedTextureGroup();
 
@@ -497,7 +497,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Face f in faces)
 			{
-				f.uv = new pb_UV(cont_uv);
+				f.uv = new AutoUnwrapSettings(cont_uv);
 				f.textureGroup = texGroup;
 			}
 		}

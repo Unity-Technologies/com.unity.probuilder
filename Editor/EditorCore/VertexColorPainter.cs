@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 			UserColors = new Color[10];
 			for (int i = 0; i < DEFAULT_COLORS.Length; i++)
 			{
-				if (!pb_Util.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref UserColors[i]))
+				if (!InternalUtility.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref UserColors[i]))
 					UserColors[i] = DEFAULT_COLORS[i];
 			}
 		}

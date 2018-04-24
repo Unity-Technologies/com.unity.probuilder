@@ -2186,7 +2186,7 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderMesh[] t_selection = selection;
 
-			selection = pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms);
+			selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			if (SelectedFacesInEditZone != null)
 				SelectedFacesInEditZone.Clear();
@@ -2471,7 +2471,7 @@ namespace UnityEditor.ProBuilder
 		{
 			List<Transform> t =
 				new List<Transform>(
-					(Transform[]) pb_Util.GetComponents<Transform>(
+					(Transform[]) InternalUtility.GetComponents<Transform>(
 						HandleUtility.PickRectObjects(new Rect(0, 0, Screen.width, Screen.height))));
 
 			GameObject nearest = HandleUtility.PickGameObject(mousePosition, false);

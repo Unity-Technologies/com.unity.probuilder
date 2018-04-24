@@ -768,7 +768,7 @@ class UVEditor : EditorWindow
 			{
 				UndoUtility.RecordObject(pb, "Copy UV Settings");
 
-				selectedFace.uv = new pb_UV(source.uv);
+				selectedFace.uv = new AutoUnwrapSettings(source.uv);
 				selectedFace.material = source.material;
 				EditorUtility.ShowNotification("Copy UV Settings");
 
@@ -1379,7 +1379,7 @@ class UVEditor : EditorWindow
 
 				for(int i = 0; i < selection.Length; i++)
 				{
-					Vector2[] sel = pb_Util.ValuesWithIndices(GetUVs(selection[i], channel), distinct_indices[i]);
+					Vector2[] sel = InternalUtility.ValuesWithIndices(GetUVs(selection[i], channel), distinct_indices[i]);
 
 					for(int n = 0; n < selection.Length; n++)
 					{
@@ -2246,7 +2246,7 @@ class UVEditor : EditorWindow
 
 	Bounds2D GetBounds(int i, int f, Vector2[][] array)
 	{
-		return new Bounds2D( pb_Util.ValuesWithIndices(array[i], selection[i].faces[f].distinctIndices) );
+		return new Bounds2D( InternalUtility.ValuesWithIndices(array[i], selection[i].faces[f].distinctIndices) );
 	}
 
 	/**
@@ -3358,7 +3358,7 @@ class UVEditor : EditorWindow
 			selection[i].ToMesh();
 
 			Vector2[] uv = selection[i].uv;
-			Vector2[] uvs = pb_Util.ValuesWithIndices( uv, distinct_indices[i] );
+			Vector2[] uvs = InternalUtility.ValuesWithIndices( uv, distinct_indices[i] );
 
 			uvs = pb_UVOps.FitUVs(uvs);
 

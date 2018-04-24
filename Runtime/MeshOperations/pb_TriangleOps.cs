@@ -35,7 +35,7 @@ namespace ProBuilder.MeshOperations
 			return GetWindingOrder(p);
 		}
 
-		static WindingOrder GetWindingOrder(IList<pb_Vertex> vertices, IList<int> indices)
+		static WindingOrder GetWindingOrder(IList<Vertex> vertices, IList<int> indices)
 		{
 			Vector2[] p = Projection.PlanarProject(vertices, indices);
 			return GetWindingOrder(p);
@@ -78,7 +78,7 @@ namespace ProBuilder.MeshOperations
 			if(indices.Length != 6)
 				return false;
 
-			int[] mode = pb_Util.FilledArray<int>(1, indices.Length);
+			int[] mode = InternalUtility.FilledArray<int>(1, indices.Length);
 
 			for(int x = 0; x < indices.Length - 1; x++)
 			{

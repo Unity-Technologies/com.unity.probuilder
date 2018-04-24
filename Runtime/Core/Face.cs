@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		[SerializeField]
 		[FormerlySerializedAs("_uv")]
-		pb_UV m_Uv;
+		AutoUnwrapSettings m_Uv;
 
 		/// <summary>
 		/// What material does this face use.
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// A reference to the Auto UV mapping parameters.
 		/// </summary>
-		public pb_UV uv
+		public AutoUnwrapSettings uv
 		{
 			get { return m_Uv; }
 			set { m_Uv = value; }
@@ -129,17 +129,17 @@ namespace UnityEngine.ProBuilder
 		public Face(int[] i)
 		{
 			SetIndices(i);
-			m_Uv = new pb_UV();
+			m_Uv = new AutoUnwrapSettings();
 			m_Material = BuiltinMaterials.DefaultMaterial;
 			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
 			elementGroup = 0;
 		}
 
-		public Face(int[] i, Material m, pb_UV u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
+		public Face(int[] i, Material m, AutoUnwrapSettings u, int smoothingGroup, int textureGroup, int elementGroup, bool manualUV)
 		{
 			this.SetIndices(i);
-			this.m_Uv = new pb_UV(u);
+			this.m_Uv = new AutoUnwrapSettings(u);
 			this.m_Material = m;
 			this.m_SmoothingGroup = smoothingGroup;
 			this.textureGroup = textureGroup;
@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder
 		{
 			m_Indices = new int[face.indices.Length];
 			System.Array.Copy(face.indices, m_Indices, face.indices.Length);
-			m_Uv = new pb_UV(face.uv);
+			m_Uv = new AutoUnwrapSettings(face.uv);
 			m_Material = face.material;
 			m_SmoothingGroup = face.smoothingGroup;
 			textureGroup = face.textureGroup;
@@ -175,7 +175,7 @@ namespace UnityEngine.ProBuilder
 			m_Indices = new int[len];
 			System.Array.Copy(other.indices, m_Indices, len);
 			m_SmoothingGroup = other.smoothingGroup;
-			m_Uv = new pb_UV(other.uv);
+			m_Uv = new AutoUnwrapSettings(other.uv);
 			m_Material = other.material;
 			manualUV = other.manualUV;
 			elementGroup = other.elementGroup;

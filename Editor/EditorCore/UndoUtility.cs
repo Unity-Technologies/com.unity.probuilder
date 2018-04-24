@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 			if (SceneDragAndDropListener.IsDragging())
 				return;
 
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				pb.ToMesh();
 				pb.Refresh();
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder
 				// because undo after subdivide causes verify to fire, the face references aren't the same anymoore - so reset them
 				if( ProBuilderEditor.instance != null && pb.SelectedFaces.Length > 0 )
 					pb.SetSelectedFaces(
-						System.Array.FindAll(pb.faces, x => pb_Util.ContainsMatch(x.distinctIndices, Face.AllTriangles(pb.SelectedFaces))));
+						System.Array.FindAll(pb.faces, x => InternalUtility.ContainsMatch(x.distinctIndices, Face.AllTriangles(pb.SelectedFaces))));
 			}
 
 			ProBuilderEditor.Refresh(true);

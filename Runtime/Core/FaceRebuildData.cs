@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 		// new pb_Face
 		public Face face;
 		// new vertices (all vertices required to rebuild, not just new)
-		public List<pb_Vertex> vertices;
+		public List<Vertex> vertices;
 		// shared indices pointers (must match vertices length)
 		public List<int> sharedIndices;
 		// shared UV indices pointers (must match vertices length)
@@ -37,7 +37,7 @@ namespace UnityEngine.ProBuilder
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
 			ProBuilderMesh pb,
-			List<pb_Vertex> vertices = null,
+			List<Vertex> vertices = null,
 			List<Face> faces = null,
 			Dictionary<int, int> lookup = null,
 			Dictionary<int, int> lookupUV = null)
@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder
 			List<Face> _faces = faces == null ? new List<Face>(pb.faces) : faces;
 
 			if(vertices == null)
-				vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+				vertices = new List<Vertex>( Vertex.GetVertices(pb) );
 
 			if(lookup == null)
 				lookup = pb.sharedIndices.ToDictionary();
@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder
 		 */
 		public static void Apply(
 			IEnumerable<FaceRebuildData> newFaces,
-			List<pb_Vertex> vertices,
+			List<Vertex> vertices,
 			List<Face> faces,
 			Dictionary<int, int> sharedIndices,
 			Dictionary<int, int> sharedIndicesUV = null)

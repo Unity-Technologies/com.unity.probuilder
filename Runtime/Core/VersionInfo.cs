@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// Version information container that is comparable.
 	/// </summary>
 	[Serializable]
-	public class pb_VersionInfo : IEquatable<pb_VersionInfo>, IComparable<pb_VersionInfo>, IComparable
+	internal class VersionInfo : IEquatable<VersionInfo>, IComparable<VersionInfo>, IComparable
 	{
 		[SerializeField]
 		int m_Major = -1;
@@ -43,20 +43,20 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// Get a new version info with just the major, minor, and patch values.
 		/// </summary>
-		public pb_VersionInfo MajorMinorPatch
+		public VersionInfo MajorMinorPatch
 		{
-			get { return new pb_VersionInfo(major, minor, patch); }
+			get { return new VersionInfo(major, minor, patch); }
 		}
 
 		public const string DefaultStringFormat = "M.m.p-t.b";
 
-		public pb_VersionInfo()
+		public VersionInfo()
 		{
 		}
 
-		public pb_VersionInfo(string formatted, string date = null)
+		public VersionInfo(string formatted, string date = null)
 		{
-			pb_VersionInfo parsed;
+			VersionInfo parsed;
 
 			m_Metadata = formatted;
 			m_Date = date;
@@ -70,15 +70,15 @@ namespace UnityEngine.ProBuilder
 				m_Type = parsed.m_Type;
 				m_Metadata = parsed.metadata;
 			}
+#if PB_DEBUG
 			else
 			{
-#if PB_DEBUG
 				pb_Log.Error("Failed parsing version info: " + formatted);
-#endif
 			}
+#endif
 		}
 
-		public pb_VersionInfo(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
+		public VersionInfo(int major, int minor, int patch, int build = -1, string type = "", string date = "", string metadata = "")
 		{
 			m_Major = major;
 			m_Minor = minor;
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
 
 		public override bool Equals(object o)
 		{
-			return o is pb_VersionInfo && this.Equals((pb_VersionInfo) o);
+			return o is VersionInfo && this.Equals((VersionInfo) o);
 		}
 
 		public override int GetHashCode()
@@ -124,7 +124,7 @@ namespace UnityEngine.ProBuilder
 			return hash;
 		}
 
-		public bool Equals(pb_VersionInfo version)
+		public bool Equals(VersionInfo version)
 		{
 			if (object.ReferenceEquals(version, null))
 				return false;
@@ -151,7 +151,7 @@ namespace UnityEngine.ProBuilder
 
 		public int CompareTo(object obj)
 		{
-			return CompareTo(obj as pb_VersionInfo);
+			return CompareTo(obj as VersionInfo);
 		}
 
 		static int WrapNoValue(int value)
@@ -159,7 +159,7 @@ namespace UnityEngine.ProBuilder
 			return value < 0 ? int.MaxValue : value;
 		}
 
-		public int CompareTo(pb_VersionInfo version)
+		public int CompareTo(VersionInfo version)
 		{
 			const int GREATER = 1;
 			const int EVEN = 0;
@@ -198,25 +198,25 @@ namespace UnityEngine.ProBuilder
 			return EVEN;
 		}
 
-		public static bool operator ==(pb_VersionInfo left, pb_VersionInfo right)
+		public static bool operator ==(VersionInfo left, VersionInfo right)
 		{
 			if (object.ReferenceEquals(left, null))
 				return object.ReferenceEquals(right, null);
 
 			return left.Equals(right);
 		}
-		public static bool operator !=(pb_VersionInfo left, pb_VersionInfo right)
+		public static bool operator !=(VersionInfo left, VersionInfo right)
 		{
 			return !(left == right);
 		}
-		public static bool operator <(pb_VersionInfo left, pb_VersionInfo right)
+		public static bool operator <(VersionInfo left, VersionInfo right)
 		{
 			if (object.ReferenceEquals(left, null))
 				return !object.ReferenceEquals(right, null);
 
 			return left.CompareTo(right) < 0;
 		}
-		public static bool operator >(pb_VersionInfo left, pb_VersionInfo right)
+		public static bool operator >(VersionInfo left, VersionInfo right)
 		{
 			// null < null still equals false
 			if (object.ReferenceEquals(left, null))
@@ -291,9 +291,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="input"></param>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public static bool TryGetVersionInfo(string input, out pb_VersionInfo version)
+		public static bool TryGetVersionInfo(string input, out VersionInfo version)
 		{
-			version = new pb_VersionInfo();
+			version = new VersionInfo();
 			bool ret = false;
 
 			const string k_MajorMinorPatchRegex = "^([0-9]+\\.[0-9]+\\.[0-9]+)";

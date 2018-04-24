@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 
 			n = 0;
 
-			Vector3[] world = anyWorldSpace ? pb.transform.ToWorldSpace(pb.positions) : null;
+			Vector3[] world = anyWorldSpace ? pb.VerticesInWorldSpace() : null;
 			Vector2[] uvs = pb.uv != null && pb.uv.Length == pb.vertexCount ? pb.uv : new Vector2[pb.vertexCount];
 
 			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
@@ -92,9 +92,9 @@ namespace UnityEngine.ProBuilder
 					nrm = ProBuilderMath.Normal(pb, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					pb_UVUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, uvs, indices, kvp.Value[0].uv, pb.transform.TransformDirection(nrm));
 				else
-					pb_UVUtility.PlanarMap2(pb.positions, uvs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(pb.positions, uvs, indices, kvp.Value[0].uv, nrm);
 
 				// Apply UVs to array, and update the localPivot and localSize caches.
 				Vector2 pivot = kvp.Value[0].uv.localPivot;
@@ -115,24 +115,24 @@ namespace UnityEngine.ProBuilder
 		/// This is a performance optimization for when this array already exists. If not provided this array will be
 		/// automatically generated for you.
 		/// </param>
-		public static void CollapseSharedVertices(Mesh m, pb_Vertex[] vertices = null)
+		public static void CollapseSharedVertices(Mesh m, Vertex[] vertices = null)
 		{
 			if (vertices == null)
-				vertices = pb_Vertex.GetVertices(m);
+				vertices = Vertex.GetVertices(m);
 
 			int smc = m.subMeshCount;
-			List<Dictionary<pb_Vertex, int>> sub_vertices = new List<Dictionary<pb_Vertex, int>>();
+			List<Dictionary<Vertex, int>> sub_vertices = new List<Dictionary<Vertex, int>>();
 			int[][] tris = new int[smc][];
 			int subIndex = 0;
 
 			for (int i = 0; i < smc; ++i)
 			{
 				tris[i] = m.GetTriangles(i);
-				Dictionary<pb_Vertex, int> new_vertices = new Dictionary<pb_Vertex, int>();
+				Dictionary<Vertex, int> new_vertices = new Dictionary<Vertex, int>();
 
 				for (int n = 0; n < tris[i].Length; n++)
 				{
-					pb_Vertex v = vertices[tris[i][n]];
+					Vertex v = vertices[tris[i][n]];
 					int index;
 
 					if (new_vertices.TryGetValue(v, out index))
@@ -150,8 +150,8 @@ namespace UnityEngine.ProBuilder
 				sub_vertices.Add(new_vertices);
 			}
 
-			pb_Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
-			pb_Vertex.SetMesh(m, collapsed);
+			Vertex[] collapsed = sub_vertices.SelectMany(x => x.Keys).ToArray();
+			Vertex.SetMesh(m, collapsed);
 			m.subMeshCount = smc;
 			for (int i = 0; i < smc; i++)
 				m.SetTriangles(tris[i], i);

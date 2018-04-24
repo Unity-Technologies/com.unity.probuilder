@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-	static class pb_UVUtility
+	static class UnwrappingUtility
 	{
-		private static Vector2 tvec2 = Vector2.zero;
+		static Vector2 s_TempVector2 = Vector2.zero;
 
-		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indices, pb_UV uvSettings, Vector3 normal)
+		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indices, AutoUnwrapSettings uvSettings, Vector3 normal)
 		{
 			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
 
@@ -17,23 +17,23 @@ namespace UnityEngine.ProBuilder
 			ApplyUVSettings(uvs, indices, uvSettings);
 		}
 
-		private static void ApplyUVSettings(Vector2[] uvs, int[] indices, pb_UV uvSettings)
+		static void ApplyUVSettings(Vector2[] uvs, int[] indices, AutoUnwrapSettings uvSettings)
 		{
 			int len = indices.Length;
 
 			switch(uvSettings.fill)
 			{
-				case pb_UV.Fill.Tile:
+				case AutoUnwrapSettings.Fill.Tile:
 					break;
-				case pb_UV.Fill.Fit:
+				case AutoUnwrapSettings.Fill.Fit:
 					uvs = NormalizeUVs(uvs, indices);
 					break;
-				case pb_UV.Fill.Stretch:
+				case AutoUnwrapSettings.Fill.Stretch:
 					uvs = StretchUVs(uvs, indices);
 					break;
 			}
 
-			if(!uvSettings.useWorldSpace && uvSettings.anchor != pb_UV.Anchor.None)
+			if(!uvSettings.useWorldSpace && uvSettings.anchor != AutoUnwrapSettings.Anchor.None)
 				ApplyUVAnchor(uvs, indices, uvSettings.anchor);
 
 			// Apply transform last, so that fill and justify don't override it.
@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder
 			}
 		}
 
-		private static Vector2[] StretchUVs(Vector2[] uvs, int[] indices)
+		static Vector2[] StretchUVs(Vector2[] uvs, int[] indices)
 		{
 			Vector2 scale = ProBuilderMath.LargestVector2(uvs, indices) - ProBuilderMath.SmallestVector2(uvs, indices);
 
@@ -100,10 +100,13 @@ namespace UnityEngine.ProBuilder
 			return uvs;
 		}
 
-		/*
-		 *	Returns normalized UV values for a mesh uvs (0,0) - (1,1)
-		 */
-		private static Vector2[] NormalizeUVs(Vector2[] uvs, int[] indices)
+		/// <summary>
+		/// Returns normalized UV values for a mesh uvs (0,0) - (1,1)
+		/// </summary>
+		/// <param name="uvs"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		static Vector2[] NormalizeUVs(Vector2[] uvs, int[] indices)
 		{
 			/*
 			 *	how this works -
@@ -136,25 +139,25 @@ namespace UnityEngine.ProBuilder
 		}
 
 		[System.Obsolete("See ApplyAnchor().")]
-		private static Vector2[] JustifyUVs(Vector2[] uvs, pb_UV.Justify j)
+		private static Vector2[] JustifyUVs(Vector2[] uvs, AutoUnwrapSettings.Justify j)
 		{
 			Vector2 amt = new Vector2(0f, 0f);
 
 			switch(j)
 			{
-				case pb_UV.Justify.Left:
+				case AutoUnwrapSettings.Justify.Left:
 					amt = new Vector2(ProBuilderMath.SmallestVector2(uvs).x, 0f);
 					break;
-				case pb_UV.Justify.Right:
+				case AutoUnwrapSettings.Justify.Right:
 					amt = new Vector2(ProBuilderMath.LargestVector2(uvs).x - 1f, 0f);
 					break;
-				case pb_UV.Justify.Top:
+				case AutoUnwrapSettings.Justify.Top:
 					amt = new Vector2(0f, ProBuilderMath.LargestVector2(uvs).y - 1f);
 					break;
-				case pb_UV.Justify.Bottom:
+				case AutoUnwrapSettings.Justify.Bottom:
 					amt = new Vector2(0f, ProBuilderMath.SmallestVector2(uvs).y);
 					break;
-				case pb_UV.Justify.Center:
+				case AutoUnwrapSettings.Justify.Center:
 					amt = ProBuilderMath.Average(uvs) - (new Vector2(.5f, .5f));
 					break;
 			}
@@ -165,36 +168,36 @@ namespace UnityEngine.ProBuilder
 			return uvs;
 		}
 
-		private static void ApplyUVAnchor(Vector2[] uvs, int[] indices, pb_UV.Anchor anchor)
+		private static void ApplyUVAnchor(Vector2[] uvs, int[] indices, AutoUnwrapSettings.Anchor anchor)
 		{
-			tvec2.x = 0f;
-			tvec2.y = 0f;
+			s_TempVector2.x = 0f;
+			s_TempVector2.y = 0f;
 
 			Vector2 min = ProBuilderMath.SmallestVector2(uvs, indices);
 			Vector2 max = ProBuilderMath.LargestVector2(uvs, indices);
 
-			if(	anchor == pb_UV.Anchor.UpperLeft || anchor == pb_UV.Anchor.MiddleLeft || anchor == pb_UV.Anchor.LowerLeft )
-				tvec2.x = min.x;
+			if(	anchor == AutoUnwrapSettings.Anchor.UpperLeft || anchor == AutoUnwrapSettings.Anchor.MiddleLeft || anchor == AutoUnwrapSettings.Anchor.LowerLeft )
+				s_TempVector2.x = min.x;
 			else
-			if(	anchor == pb_UV.Anchor.UpperRight || anchor == pb_UV.Anchor.MiddleRight || anchor == pb_UV.Anchor.LowerRight )
-				tvec2.x = max.x - 1f;
+			if(	anchor == AutoUnwrapSettings.Anchor.UpperRight || anchor == AutoUnwrapSettings.Anchor.MiddleRight || anchor == AutoUnwrapSettings.Anchor.LowerRight )
+				s_TempVector2.x = max.x - 1f;
 			else
-				tvec2.x = (min.x + ((max.x - min.x) * .5f)) - .5f;
+				s_TempVector2.x = (min.x + ((max.x - min.x) * .5f)) - .5f;
 
-			if( anchor == pb_UV.Anchor.UpperLeft || anchor == pb_UV.Anchor.UpperCenter || anchor == pb_UV.Anchor.UpperRight)
-				tvec2.y = max.y - 1f;
+			if( anchor == AutoUnwrapSettings.Anchor.UpperLeft || anchor == AutoUnwrapSettings.Anchor.UpperCenter || anchor == AutoUnwrapSettings.Anchor.UpperRight)
+				s_TempVector2.y = max.y - 1f;
 			else
-			if( anchor == pb_UV.Anchor.MiddleLeft || anchor == pb_UV.Anchor.MiddleCenter || anchor == pb_UV.Anchor.MiddleRight)
-				tvec2.y = (min.y + ((max.y - min.y) * .5f)) - .5f;
+			if( anchor == AutoUnwrapSettings.Anchor.MiddleLeft || anchor == AutoUnwrapSettings.Anchor.MiddleCenter || anchor == AutoUnwrapSettings.Anchor.MiddleRight)
+				s_TempVector2.y = (min.y + ((max.y - min.y) * .5f)) - .5f;
 			else
-				tvec2.y = min.y;
+				s_TempVector2.y = min.y;
 
 			int len = indices.Length;
 
 			for(int i = 0; i < len; i++)
 			{
-				uvs[indices[i]].x -= tvec2.x;
-				uvs[indices[i]].y -= tvec2.y;
+				uvs[indices[i]].x -= s_TempVector2.x;
+				uvs[indices[i]].y -= s_TempVector2.y;
 			}
 		}
 	}

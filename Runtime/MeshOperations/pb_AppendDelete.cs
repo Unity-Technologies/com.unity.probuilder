@@ -154,14 +154,14 @@ namespace ProBuilder.MeshOperations
 		public static void DuplicateAndFlip(this ProBuilderMesh pb, Face[] faces)
 		{
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 			foreach(Face face in faces)
 			{
 				FaceRebuildData data = new FaceRebuildData();
 
-				data.vertices = new List<pb_Vertex>();
+				data.vertices = new List<Vertex>();
 				data.face = new Face(face);
 				data.sharedIndices = new List<int>();
 
@@ -237,7 +237,7 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> shiftmap = new Dictionary<int, int>();
 
 			for(int i = 0;  i < vertexCount; i++)
-				shiftmap.Add(i, pb_Util.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
+				shiftmap.Add(i, InternalUtility.NearestIndexPriorToValue<int>(indicesToRemove, i) + 1);
 
 			// shift all other face indices down to account for moved vertex positions
 			for(int i = 0; i < nFaces.Length; i++)

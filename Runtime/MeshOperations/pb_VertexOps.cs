@@ -18,9 +18,9 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static bool MergeVertices(this ProBuilderMesh pb, int[] indices, out int collapsedIndex, bool collapseToFirst = false)
 		{
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertices(pb);
 
-			pb_Vertex cen = collapseToFirst ? vertices[indices[0]] : pb_Vertex.Average(vertices, indices);
+			Vertex cen = collapseToFirst ? vertices[indices[0]] : Vertex.Average(vertices, indices);
 
 			IntArray[] sharedIndices = pb.sharedIndices;
 			IntArray[] sharedIndicesUV = pb.sharedIndicesUV;
@@ -139,14 +139,14 @@ namespace ProBuilder.MeshOperations
 				return false;
 			}
 
-			List<pb_Vertex> vertices = pb_Vertex.GetVertices(pb).ToList();
+			List<Vertex> vertices = Vertex.GetVertices(pb).ToList();
 			List<Face> faces = new List<Face>( pb.faces );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV = pb.sharedIndicesUV == null ? null : pb.sharedIndicesUV.ToDictionary();
 
-			List<Edge> wound = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> wound = WingedEdge.SortEdgesByAdjacency(face);
 
-			List<pb_Vertex> n_vertices 	= new List<pb_Vertex>();
+			List<Vertex> n_vertices 	= new List<Vertex>();
 			List<int> n_shared 			= new List<int>();
 			List<int> n_sharedUV 		= lookupUV != null ? new List<int>() : null;
 
@@ -188,12 +188,12 @@ namespace ProBuilder.MeshOperations
 					}
 				}
 
-				pb_Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
+				Vertex left = n_vertices[index], right = n_vertices[(index+1) % vc];
 
 				float x = (p - left.position).sqrMagnitude;
 				float y = (p - right.position).sqrMagnitude;
 
-				pb_Vertex insert = pb_Vertex.Mix(left, right, x / (x + y));
+				Vertex insert = Vertex.Mix(left, right, x / (x + y));
 
 				n_vertices.Insert((index + 1) % vc, insert);
 				n_shared.Insert((index + 1) % vc, -1);
@@ -215,7 +215,7 @@ namespace ProBuilder.MeshOperations
 
 			FaceRebuildData data = new FaceRebuildData();
 
-			data.face = new Face(triangles.ToArray(), face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+			data.face = new Face(triangles.ToArray(), face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
 			data.vertices 			= n_vertices;
 			data.sharedIndices 		= n_shared;
 			data.sharedIndicesUV 	= n_sharedUV;
@@ -273,7 +273,7 @@ namespace ProBuilder.MeshOperations
 			if(count < 1 || count > 512)
 				return new ActionResult(Status.Failure, "New edge vertex count is less than 1 or greater than 512.");
 
-			List<pb_Vertex> vertices 		= new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices 		= new List<Vertex>(Vertex.GetVertices(pb));
 			Dictionary<int, int> lookup 	= pb.sharedIndices.ToDictionary();
 			Dictionary<int, int> lookupUV	= pb.sharedIndicesUV.ToDictionary();
 			List<int> indicesToDelete		= new List<int>();
@@ -290,10 +290,10 @@ namespace ProBuilder.MeshOperations
 				Edge localEdge = EdgeExtension.GetLocalEdgeFast(edge, pb.sharedIndices);
 
 				// Generate the new vertices that will be inserted on this edge
-				List<pb_Vertex> verticesToAppend = new List<pb_Vertex>(count);
+				List<Vertex> verticesToAppend = new List<Vertex>(count);
 
 				for(int i = 0; i < count; i++)
-					verticesToAppend.Add(pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
+					verticesToAppend.Add(Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
 
 				List<SimpleTuple<Face, Edge>> adjacentFaces = pb_MeshUtils.GetNeighborFaces(pb, localEdge);
 
@@ -307,8 +307,8 @@ namespace ProBuilder.MeshOperations
 					if( !modifiedFaces.TryGetValue(face, out data) )
 					{
 						data = new FaceRebuildData();
-						data.face = new Face(null, face.material, new pb_UV(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
-						data.vertices = new List<pb_Vertex>(pb_Util.ValuesWithIndices(vertices, face.distinctIndices));
+						data.face = new Face(null, face.material, new AutoUnwrapSettings(face.uv), face.smoothingGroup, face.textureGroup, -1, face.manualUV);
+						data.vertices = new List<Vertex>(InternalUtility.ValuesWithIndices(vertices, face.distinctIndices));
 						data.sharedIndices = new List<int>();
 						data.sharedIndicesUV = new List<int>();
 
@@ -418,20 +418,20 @@ namespace ProBuilder.MeshOperations
 		/// <param name="appendedVertices"></param>
 		/// <returns></returns>
 		public static FaceRebuildData ExplodeVertex(
-			IList<pb_Vertex> vertices,
-			IList<SimpleTuple<pb_WingedEdge, int>> edgeAndCommonIndex,
+			IList<Vertex> vertices,
+			IList<SimpleTuple<WingedEdge, int>> edgeAndCommonIndex,
 			float distance,
 			out Dictionary<int, List<int>> appendedVertices)
 		{
 			Face face = edgeAndCommonIndex.FirstOrDefault().item1.face;
-			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
+			List<Edge> perimeter = WingedEdge.SortEdgesByAdjacency(face);
 			appendedVertices = new Dictionary<int, List<int>>();
 			Vector3 oldNormal = ProBuilderMath.Normal(vertices, face.indices);
 
 			// store local and common index of split points
 			Dictionary<int, int> toSplit = new Dictionary<int, int>();
 
-			foreach(SimpleTuple<pb_WingedEdge, int> v in edgeAndCommonIndex)
+			foreach(SimpleTuple<WingedEdge, int> v in edgeAndCommonIndex)
 			{
 				if( v.item2 == v.item1.edge.common.x)
 					toSplit.Add(v.item1.edge.local.x, v.item2);
@@ -440,7 +440,7 @@ namespace ProBuilder.MeshOperations
 			}
 
 			int pc = perimeter.Count;
-			List<pb_Vertex> n_vertices = new List<pb_Vertex>();
+			List<Vertex> n_vertices = new List<Vertex>();
 
 			for(int i = 0; i < pc; i++)
 			{
@@ -450,17 +450,17 @@ namespace ProBuilder.MeshOperations
 				if(toSplit.ContainsKey(index))
 				{
 					// a --- b --- c
-					pb_Vertex a = vertices[perimeter[i].x];
-					pb_Vertex b = vertices[perimeter[i].y];
-					pb_Vertex c = vertices[perimeter[(i+1) % pc].y];
+					Vertex a = vertices[perimeter[i].x];
+					Vertex b = vertices[perimeter[i].y];
+					Vertex c = vertices[perimeter[(i+1) % pc].y];
 
-					pb_Vertex leading_dir = a - b;
-					pb_Vertex following_dir = c - b;
+					Vertex leading_dir = a - b;
+					Vertex following_dir = c - b;
 					leading_dir.Normalize();
 					following_dir.Normalize();
 
-					pb_Vertex leading_insert = vertices[index] + leading_dir * distance;
-					pb_Vertex following_insert = vertices[index] + following_dir * distance;
+					Vertex leading_insert = vertices[index] + leading_dir * distance;
+					Vertex following_insert = vertices[index] + following_dir * distance;
 
 					appendedVertices.AddOrAppend(toSplit[index], n_vertices.Count);
 					n_vertices.Add(leading_insert);

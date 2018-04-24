@@ -64,7 +64,7 @@ namespace ProBuilder.MeshOperations
 		};
 
 		ProBuilderMesh m_Mesh;
-		pb_Vertex[] m_Vertices;
+		Vertex[] m_Vertices;
 
 		public pb_MeshImporter(ProBuilderMesh target)
 		{
@@ -104,8 +104,8 @@ namespace ProBuilder.MeshOperations
 			// When importing the mesh is always split into triangles with no vertices shared
 			// between faces. In a later step co-incident vertices are collapsed (eg, before
 			// leaving the Import function).
-			pb_Vertex[] sourceVertices = pb_Vertex.GetVertices(originalMesh);
-			List<pb_Vertex> splitVertices = new List<pb_Vertex>();
+			Vertex[] sourceVertices = Vertex.GetVertices(originalMesh);
+			List<Vertex> splitVertices = new List<Vertex>();
 			List<Face> faces = new List<Face>();
 
 			// Fill in Faces array with just the position indices. In the next step we'll
@@ -128,7 +128,7 @@ namespace ProBuilder.MeshOperations
 							faces.Add(new Face(
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
 								material,
-								new pb_UV(),
+								new AutoUnwrapSettings(),
 								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
@@ -153,7 +153,7 @@ namespace ProBuilder.MeshOperations
 								vertexIndex    , vertexIndex + 1, vertexIndex + 2,
 								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
 								material,
-								new pb_UV(),
+								new AutoUnwrapSettings(),
 								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
@@ -186,14 +186,14 @@ namespace ProBuilder.MeshOperations
 
 			if(importSettings.quads)
 			{
-				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
+				List<WingedEdge> wings = WingedEdge.GetWingedEdges(m_Mesh, m_Mesh.faces, true);
 
 				// build a lookup of the strength of edge connections between triangle faces
 				Dictionary<EdgeLookup, float> connections = new Dictionary<EdgeLookup, float>();
 
 				for(int i = 0; i < wings.Count; i++)
 				{
-					foreach(pb_WingedEdge border in wings[i])
+					foreach(WingedEdge border in wings[i])
 					{
 						if(border.opposite != null && !connections.ContainsKey(border.edge))
 						{
@@ -206,7 +206,7 @@ namespace ProBuilder.MeshOperations
 				List<SimpleTuple<Face, Face>> quads = new List<SimpleTuple<Face, Face>>();
 
 				// move through each face and find it's best quad neighbor
-				foreach(pb_WingedEdge face in wings)
+				foreach(WingedEdge face in wings)
 				{
 					if(!processed.Add(face.face))
 						continue;
@@ -214,7 +214,7 @@ namespace ProBuilder.MeshOperations
 					float bestScore = 0f;
 					Face buddy = null;
 
-					foreach(pb_WingedEdge border in face)
+					foreach(WingedEdge border in face)
 					{
 						if(border.opposite != null && processed.Contains(border.opposite.face))
 							continue;
@@ -252,12 +252,12 @@ namespace ProBuilder.MeshOperations
 			return false;
 		}
 
-		Face GetBestQuadConnection(pb_WingedEdge wing, Dictionary<EdgeLookup, float> connections)
+		Face GetBestQuadConnection(WingedEdge wing, Dictionary<EdgeLookup, float> connections)
 		{
 			float score = 0f;
 			Face face = null;
 
-			foreach(pb_WingedEdge border in wing)
+			foreach(WingedEdge border in wing)
 			{
 				float s = 0f;
 
@@ -276,9 +276,9 @@ namespace ProBuilder.MeshOperations
 		 * normalThreshold will discard any quads where the dot product of their normals is less than the threshold.
 		 * @todo Abstract the quad detection to a separate class so it can be applied to pb_Objects.
 		 */
-		float GetQuadScore(pb_WingedEdge left, pb_WingedEdge right, float normalThreshold = .9f)
+		float GetQuadScore(WingedEdge left, WingedEdge right, float normalThreshold = .9f)
 		{
-			int[] quad = pb_WingedEdge.MakeQuad(left, right);
+			int[] quad = WingedEdge.MakeQuad(left, right);
 
 			if(quad == null)
 				return 0f;

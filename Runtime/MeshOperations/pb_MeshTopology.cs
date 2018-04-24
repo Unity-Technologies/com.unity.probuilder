@@ -24,7 +24,7 @@ namespace ProBuilder.MeshOperations
 
 		public static ActionResult ToTriangles(this ProBuilderMesh pb, IList<Face> faces, out Face[] newFaces)
 		{
-			List<pb_Vertex> vertices = new List<pb_Vertex>( pb_Vertex.GetVertices(pb) );
+			List<Vertex> vertices = new List<Vertex>( Vertex.GetVertices(pb) );
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
 			List<FaceRebuildData> rebuild = new List<FaceRebuildData>();
@@ -44,7 +44,7 @@ namespace ProBuilder.MeshOperations
 			return new ActionResult(Status.Success, string.Format("Triangulated {0} {1}", faces.Count, faces.Count < 2 ? "Face" : "Faces"));
 		}
 
-		private static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<pb_Vertex> vertices, Dictionary<int, int> lookup)
+		private static List<FaceRebuildData> BreakFaceIntoTris(Face face, List<Vertex> vertices, Dictionary<int, int> lookup)
 		{
 			int[] tris = face.indices;
 			int triCount = tris.Length;
@@ -57,7 +57,7 @@ namespace ProBuilder.MeshOperations
 				r.face = new Face(face);
 				r.face.SetIndices( new int[] { 0, 1, 2} );
 
-				r.vertices = new List<pb_Vertex>() {
+				r.vertices = new List<Vertex>() {
 					vertices[tris[i  ]],
 					vertices[tris[i+1]],
 					vertices[tris[i+2]]

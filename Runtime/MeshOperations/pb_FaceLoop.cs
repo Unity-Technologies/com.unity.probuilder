@@ -19,7 +19,7 @@ namespace ProBuilder.MeshOperations
 		public static HashSet<Face> GetFaceLoop(ProBuilderMesh pb, Face[] faces, bool ring = false)
 		{
 			HashSet<Face> loops = new HashSet<Face>();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
 			foreach(Face face in faces)
 				loops.UnionWith(GetFaceLoop(wings, face, ring));
@@ -36,7 +36,7 @@ namespace ProBuilder.MeshOperations
 		public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh pb, Face[] faces)
 		{
 			HashSet<Face> loops = new HashSet<Face>();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
 			foreach (Face face in faces)
 			{
@@ -54,14 +54,14 @@ namespace ProBuilder.MeshOperations
 		/// <param name="face"></param>
 		/// <param name="ring"></param>
 		/// <returns></returns>
-		static HashSet<Face> GetFaceLoop(List<pb_WingedEdge> wings, Face face, bool ring)
+		static HashSet<Face> GetFaceLoop(List<WingedEdge> wings, Face face, bool ring)
 		{
 			HashSet<Face> loop = new HashSet<Face>();
 
 			if(face == null)
 				return loop;
 
-			pb_WingedEdge start = wings.FirstOrDefault(x => x.face == face);
+			WingedEdge start = wings.FirstOrDefault(x => x.face == face);
 
 			if(start == null)
 				return loop;
@@ -71,7 +71,7 @@ namespace ProBuilder.MeshOperations
 
 			for (int i = 0; i < 2; i++)
 			{
-				pb_WingedEdge cur = start;
+				WingedEdge cur = start;
 
 				if (i == 1)
 				{

@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder
 			return PlanarProject(pb.positions, normal, VectorToProjectionAxis(normal), face.indices);
 		}
 
-		internal static Vector2[] PlanarProject(IList<pb_Vertex> vertices, IList<int> indices)
+		internal static Vector2[] PlanarProject(IList<Vertex> vertices, IList<int> indices)
 		{
 			int len = indices.Count;
 

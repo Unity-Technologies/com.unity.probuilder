@@ -13,7 +13,7 @@ namespace UnityEngine.ProBuilder
 	/// A series of handy extensions.
 	/// todo Clean up and move to appropriate classes.
 	/// </summary>
-	static class pb_Util
+	static class InternalUtility
 	{
 		/**
 		 *	\brief Returns all components present in an array of GameObjects.  Deep search.
@@ -96,17 +96,6 @@ namespace UnityEngine.ProBuilder
 			return c.ToArray() as T[];
 		}
 
-		/**
-		 * Extension to transform.TransformPoint(Vector3 v) for arrays of Vector3[].
-		 */
-		public static Vector3[] ToWorldSpace(this Transform t, Vector3[] v)
-		{
-			Vector3[] w = new Vector3[v.Length];
-			for(int i = 0; i < w.Length; i++)
-				w[i] = t.TransformPoint(v[i]);
-			return w;
-		}
-
 		public static GameObject EmptyGameObjectWithTransform(Transform t)
 		{
 			GameObject go 					= new GameObject();
@@ -126,9 +115,9 @@ namespace UnityEngine.ProBuilder
 
 		public static List<T> ValuesWithIndices<T>(this List<T> arr, IList<int> indices)
 		{
-			List<T> vals = new List<T>();
+			List<T> vals = new List<T>(indices.Count);
 
-			foreach(int i in indices)
+			foreach(var i in indices)
 				vals.Add(arr[i]);
 
 			return vals;
@@ -145,26 +134,6 @@ namespace UnityEngine.ProBuilder
 					return (T) values.GetValue((i+1)%c);
 
 			return current;
-		}
-
-		/**
-		 * Equivalent to Linq EqualsAll()
-		 */
-		public static bool IsEqual<T>(T[] a, T[] b)
-		{
-			if(a == null && b == null)
-				return true;
-			else if( (a == null && b != null) || (a != null && b == null) )
-				return false;
-			if(a.Length != b.Length)
-				return false;
-			else
-			{
-				for(int i = 0; i < a.Length; i++)
-					if(!a[i].Equals(b[i]))
-						return false;
-				return true;
-			}
 		}
 
 		public static T[] Add<T>(this T[] arr, T val)
@@ -470,13 +439,6 @@ namespace UnityEngine.ProBuilder
 				return character.ToString();
 		}
 
-		[System.Obsolete("ColorWithString is deprecated. Use TryParseColor.")]
-		public static bool ColorWithString(string value, out Color col)
-		{
-			col = Color.white;
-			return TryParseColor(value, ref col);
-		}
-
 		/**
 		 *	Attempt to parse a color from string input.
 		 */
@@ -543,22 +505,6 @@ namespace UnityEngine.ProBuilder
 				v.Add(new Vector3(v0, v1, v2));
 			}
 			return v.ToArray();
-		}
-
-		/**
-		 * Component-wise division.
-		 */
-		public static Vector2 DivideBy(this Vector2 v, Vector2 o)
-		{
-			return new Vector2(v.x/o.x, v.y/o.y);
-		}
-
-		/**
-		 * Component-wise division.
-		 */
-		public static Vector3 DivideBy(this Vector3 v, Vector3 o)
-		{
-			return new Vector3(v.x/o.x, v.y/o.y, v.z/o.z);
 		}
 	}
 }

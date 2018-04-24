@@ -1036,7 +1036,7 @@ namespace UnityEditor.ProBuilder
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 			{
-				Vector3[] v = pb_Util.StringToVector3Array(verts);
+				Vector3[] v = InternalUtility.StringToVector3Array(verts);
 				if(v.Length % 4 == 0)
 					SetPreviewObject(ProBuilderMesh.CreateInstanceWithPoints(v));
 			}
@@ -1048,7 +1048,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(pb_Util.StringToVector3Array(verts));
+				ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(InternalUtility.StringToVector3Array(verts));
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( m_DefaultMaterial ) pb.SetFaceMaterial(pb.faces, m_DefaultMaterial );

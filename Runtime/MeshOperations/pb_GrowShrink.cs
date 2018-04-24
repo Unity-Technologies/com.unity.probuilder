@@ -18,7 +18,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static HashSet<Face> GrowSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff = -1f)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
 			HashSet<Face> source = new HashSet<Face>(faces);
 			HashSet<Face> neighboring = new HashSet<Face>();
 
@@ -33,7 +33,7 @@ namespace ProBuilder.MeshOperations
 				if(checkAngle)
 					srcNormal = ProBuilderMath.Normal(pb, wings[i].face);
 
-				foreach(pb_WingedEdge w in wings[i])
+				foreach(WingedEdge w in wings[i])
 				{
 					if(w.opposite != null && !source.Contains(w.opposite.face))
 					{
@@ -57,18 +57,18 @@ namespace ProBuilder.MeshOperations
 
 		static readonly Vector3 Vector3_Zero = new Vector3(0f, 0f, 0f);
 
-		internal static void Flood(pb_WingedEdge wing, HashSet<Face> selection)
+		internal static void Flood(WingedEdge wing, HashSet<Face> selection)
 		{
 			Flood(null, wing, Vector3_Zero, -1f, selection);
 		}
 
-		internal static void Flood(ProBuilderMesh pb, pb_WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
+		internal static void Flood(ProBuilderMesh pb, WingedEdge wing, Vector3 wingNrm, float maxAngle, HashSet<Face> selection)
 		{
-			pb_WingedEdge next = wing;
+			WingedEdge next = wing;
 
 			do
 			{
-				pb_WingedEdge opp = next.opposite;
+				WingedEdge opp = next.opposite;
 
 				if(opp != null && !selection.Contains(opp.face))
 				{
@@ -102,7 +102,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static HashSet<Face> FloodSelection(ProBuilderMesh pb, IList<Face> faces, float maxAngleDiff)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, true);
 			HashSet<Face> source = new HashSet<Face>(faces);
 			HashSet<Face> flood = new HashSet<Face>();
 

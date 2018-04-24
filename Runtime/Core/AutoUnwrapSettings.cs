@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 	/// Container for UV mapping parameters per face.
 	/// </summary>
 	[System.Serializable]
-	public class pb_UV
+	public class AutoUnwrapSettings
 	{
 		// Defines the anchor point of UV calculations.
 		[System.Obsolete("See pb_UV.Anchor")]
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		/// The origin point of UVs.
+		/// The point from which UV transform operations will be performed.
 		/// </summary>
 		public enum Anchor
 		{
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public Anchor anchor;
 
-		public pb_UV()
+		public AutoUnwrapSettings()
 		{
 			this.useWorldSpace = false;
 			this.flipU = false;
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder
 			this.anchor = Anchor.None;
 		}
 
-		public pb_UV(pb_UV uvs)
+		public AutoUnwrapSettings(AutoUnwrapSettings uvs)
 		{
 			this.useWorldSpace = uvs.useWorldSpace;
 			this.flipU = uvs.flipU;

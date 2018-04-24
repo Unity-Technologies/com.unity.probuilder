@@ -619,7 +619,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		internal static Vector3 Normal(IList<pb_Vertex> vertices, IList<int> indices = null)
+		internal static Vector3 Normal(IList<Vertex> vertices, IList<int> indices = null)
 		{
 			if(indices == null || indices.Count % 3 != 0)
 			{
@@ -803,6 +803,27 @@ namespace UnityEngine.ProBuilder
 					(1f - Mathf.Abs(Vector3.Dot(Vector3.right, v))) < epsilon;
 		}
 
+		/// <summary>
+		/// Component-wise division.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="o"></param>
+		/// <returns></returns>
+		internal static Vector2 DivideBy(this Vector2 v, Vector2 o)
+		{
+			return new Vector2(v.x/o.x, v.y/o.y);
+		}
+
+		/// <summary>
+		/// Component-wise division.
+		/// </summary>
+		/// <param name="v"></param>
+		/// <param name="o"></param>
+		/// <returns></returns>
+		internal static Vector3 DivideBy(this Vector3 v, Vector3 o)
+		{
+			return new Vector3(v.x/o.x, v.y/o.y, v.z/o.z);
+		}
 
 		/// <summary>
 		/// Find the largest value in an array.

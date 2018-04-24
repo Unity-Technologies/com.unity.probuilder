@@ -447,12 +447,12 @@ namespace ProBuilder.MeshOperations
 			return perimeter.Count < len ? perimeter.ToArray() : new int[] {};
 		}
 
-		private static pb_WingedEdge EdgeRingNext(pb_WingedEdge edge)
+		private static WingedEdge EdgeRingNext(WingedEdge edge)
 		{
 			if(edge == null)
 				return null;
 
-			pb_WingedEdge next = edge.next, prev = edge.previous;
+			WingedEdge next = edge.next, prev = edge.previous;
 			int i = 0;
 
 			while(next != prev && next != edge)
@@ -478,11 +478,11 @@ namespace ProBuilder.MeshOperations
 		 */
 		public static IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, Edge[] edges)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 			List<EdgeLookup> edge_lookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndices.ToDictionary()).ToList();
 			edge_lookup.Distinct();
 
-			Dictionary<Edge, pb_WingedEdge> wings_dic = new Dictionary<Edge, pb_WingedEdge>();
+			Dictionary<Edge, WingedEdge> wings_dic = new Dictionary<Edge, WingedEdge>();
 
 			for(int i = 0; i < wings.Count; i++)
 				if(!wings_dic.ContainsKey(wings[i].edge.common))
@@ -492,12 +492,12 @@ namespace ProBuilder.MeshOperations
 
 			for(int i = 0; i < edge_lookup.Count; i++)
 			{
-				pb_WingedEdge we;
+				WingedEdge we;
 
 				if(!wings_dic.TryGetValue(edge_lookup[i].common, out we) || used.Contains(we.edge))
 					continue;
 
-				pb_WingedEdge cur = we;
+				WingedEdge cur = we;
 
 				while(cur != null)
 				{
@@ -531,7 +531,7 @@ namespace ProBuilder.MeshOperations
 		 */
 		public static bool GetEdgeLoop(ProBuilderMesh pb, Edge[] edges, out Edge[] loop)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 			IEnumerable<EdgeLookup> m_edgeLookup = EdgeLookup.GetEdgeLookup(edges, pb.sharedIndices.ToDictionary());
 			HashSet<EdgeLookup> sources = new HashSet<EdgeLookup>(m_edgeLookup);
 			HashSet<EdgeLookup> used = new HashSet<EdgeLookup>();
@@ -553,16 +553,16 @@ namespace ProBuilder.MeshOperations
 			return true;
 		}
 
-		private static bool GetEdgeLoopInternal(pb_WingedEdge start, int startIndex, HashSet<EdgeLookup> used)
+		private static bool GetEdgeLoopInternal(WingedEdge start, int startIndex, HashSet<EdgeLookup> used)
 		{
 			int ind = startIndex;
-			pb_WingedEdge cur = start;
+			WingedEdge cur = start;
 
 			do
 			{
 				used.Add(cur.edge);
 
-				List<pb_WingedEdge> spokes = GetSpokes(cur, ind, true).DistinctBy(x => x.edge.common).ToList();
+				List<WingedEdge> spokes = GetSpokes(cur, ind, true).DistinctBy(x => x.edge.common).ToList();
 
 				cur = null;
 
@@ -576,7 +576,7 @@ namespace ProBuilder.MeshOperations
 			return cur != null;
 		}
 
-		private static pb_WingedEdge NextSpoke(pb_WingedEdge wing, int pivot, bool opp)
+		private static WingedEdge NextSpoke(WingedEdge wing, int pivot, bool opp)
 		{
 			if(opp)
 				return wing.opposite;
@@ -594,10 +594,10 @@ namespace ProBuilder.MeshOperations
 		 * Return all edges connected to @wing with @sharedIndex as the pivot point.  The first entry in the list is always
 		 * the queried wing.
 		 */
-		public static List<pb_WingedEdge> GetSpokes(pb_WingedEdge wing, int sharedIndex, bool allowHoles = false)
+		public static List<WingedEdge> GetSpokes(WingedEdge wing, int sharedIndex, bool allowHoles = false)
 		{
-			List<pb_WingedEdge> spokes = new List<pb_WingedEdge>();
-			pb_WingedEdge cur = wing;
+			List<WingedEdge> spokes = new List<WingedEdge>();
+			WingedEdge cur = wing;
 			bool opp = false;
 
 			do
@@ -619,7 +619,7 @@ namespace ProBuilder.MeshOperations
 			// do the loop again using the opposite wing
 			cur = wing.opposite;
 			opp = false;
-			List<pb_WingedEdge> fragment = new List<pb_WingedEdge>();
+			List<WingedEdge> fragment = new List<WingedEdge>();
 
 			// if mesh is non-manifold this situation could arise
 			while(cur != null && !cur.edge.common.Equals(wing.edge.common))

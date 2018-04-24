@@ -72,7 +72,7 @@ namespace UnityEditor.ProBuilder
 				// if not generating uv2, just collapse vertices.
 				if(!PreferencesInternal.GetBool(PreferenceKeys.pbDisableAutoUV2Generation) || forceRebuildUV2)
 				{
-					pb_Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(mesh);
+					Vertex[] vertices = UnityEngine.ProBuilder.MeshUtility.GeneratePerTriangleMesh(mesh);
 
 					float time = Time.realtimeSinceStartup;
 

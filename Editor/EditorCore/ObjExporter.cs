@@ -146,7 +146,7 @@ namespace UnityEditor.ProBuilder
 
 				AttributeType attribs = AttributeType.Position | AttributeType.Normal | AttributeType.UV0;
 				if(options.vertexColors) attribs = attribs | AttributeType.Color;
-				pb_Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
+				Vertex.GetArrays(model.vertices, out positions, out colors, out textures0, out normals, out tangent, out uv2, out uv3, out uv4, attribs);
 
 				// Can skip this entirely if handedness matches Unity & not applying transforms.
 				// matrix is set to identity if not applying transforms.

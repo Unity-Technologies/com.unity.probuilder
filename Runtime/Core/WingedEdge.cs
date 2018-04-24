@@ -19,22 +19,41 @@ namespace UnityEngine.ProBuilder
 	///     |             |
 	///     |             |
 	/// </summary>
-	public class pb_WingedEdge : IEquatable<pb_WingedEdge>, IEnumerable
+	public class WingedEdge : IEquatable<WingedEdge>, IEnumerable
 	{
-		public EdgeLookup edge;
-		public Face face;
-		public pb_WingedEdge next;
-		public pb_WingedEdge previous;
-		public pb_WingedEdge opposite;
+		/// <summary>
+		/// The local and shared edge that this edge belongs to.
+		/// </summary>
+		public EdgeLookup edge { get; private set; }
 
-		public bool Equals(pb_WingedEdge b)
+		/// <summary>
+		/// The connected face that this wing belongs to.
+		/// </summary>
+		public Face face { get; private set; }
+
+		/// <summary>
+		/// The WingedEdge that is connected to the edge.y vertex.
+		/// </summary>
+		public WingedEdge next { get; private set; }
+
+		/// <summary>
+		/// The WingedEdge that is connected to the edge.x vertex.
+		/// </summary>
+		public WingedEdge previous { get; private set; }
+
+		/// <summary>
+		/// The WingedEdge that is on the opposite side of this edge.
+		/// </summary>
+		public WingedEdge opposite { get; private set; }
+
+		public bool Equals(WingedEdge b)
 		{
 			return b != null && edge.local.Equals(b.edge.local);
 		}
 
 		public override bool Equals(System.Object b)
 		{
-			pb_WingedEdge be = b as pb_WingedEdge;
+			WingedEdge be = b as WingedEdge;
 
 			if(be != null && this.Equals(be))
 				return true;
@@ -55,17 +74,18 @@ namespace UnityEngine.ProBuilder
 		   return (IEnumerator) GetEnumerator();
 		}
 
-		public pb_WingedEdgeEnumerator GetEnumerator()
+		public WingedEdgeEnumerator GetEnumerator()
 		{
-		    return new pb_WingedEdgeEnumerator(this);
+		    return new WingedEdgeEnumerator(this);
 		}
 
-		/**
-		 * How many edges are in this sequence.
-		 */
+		/// <summary>
+		/// How many edges are in this sequence.
+		/// </summary>
+		/// <returns></returns>
 		public int Count()
 		{
-			pb_WingedEdge current = this;
+			WingedEdge current = this;
 			int count = 0;
 
 			do
@@ -86,10 +106,13 @@ namespace UnityEngine.ProBuilder
 				face.ToString());
 		}
 
-		/**
-		 * Given two adjacent triangle wings create a single quad (int[4]).
-		 */
-		public static int[] MakeQuad(pb_WingedEdge left, pb_WingedEdge right)
+		/// <summary>
+		/// Given two adjacent triangle wings create a single quad (int[4]).
+		/// </summary>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		internal static int[] MakeQuad(WingedEdge left, WingedEdge right)
 		{
 			// Both faces must be triangles in order to be considered a quad when combined
 			if(left.Count() != 3 || right.Count() != 3)
@@ -167,7 +190,12 @@ namespace UnityEngine.ProBuilder
 			return quad;
 		}
 
-		public pb_WingedEdge GetAdjacentEdgeWithCommonIndex(int common)
+		/// <summary>
+		/// Return the previous or next WingedEdge if it contains the passed common (shared) index.
+		/// </summary>
+		/// <param name="common"></param>
+		/// <returns></returns>
+		public WingedEdge GetAdjacentEdgeWithCommonIndex(int common)
 		{
 			if(next.edge.common.Contains(common))
 				return next;
@@ -177,10 +205,12 @@ namespace UnityEngine.ProBuilder
 			return null;
 		}
 
-		/**
-		 *	Returns a new set of edges where each edge's y matches the next edge x.
-		 *	The first edge is used as a starting point.
-		 */
+		/// <summary>
+		/// Returns a new set of edges where each edge's y matches the next edge x.
+		/// The first edge is used as a starting point.
+		/// </summary>
+		/// <param name="face"></param>
+		/// <returns></returns>
 		public static List<Edge> SortEdgesByAdjacency(Face face)
 		{
 			// grab perimeter edges
@@ -189,9 +219,11 @@ namespace UnityEngine.ProBuilder
 			return SortEdgesByAdjacency(edges);
 		}
 
-		/**
-		 * Sort edges list by adjacency.
-		 */
+		/// <summary>
+		/// Sort edges list by adjacency.
+		/// </summary>
+		/// <param name="edges"></param>
+		/// <returns></returns>
 		public static List<Edge> SortEdgesByAdjacency(List<Edge> edges)
 		{
 			for(int i = 1; i < edges.Count; i++)
@@ -212,35 +244,40 @@ namespace UnityEngine.ProBuilder
 			return edges;
 		}
 
-		/**
-		 *	Returns a dictionary where each key is a common index with a list of each winged edge touching it.
-		 */
-		public static Dictionary<int, List<pb_WingedEdge>> GetSpokes(List<pb_WingedEdge> wings)
+		/// <summary>
+		/// Returns a dictionary where each key is a common index with a list of each winged edge touching it.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <returns></returns>
+		public static Dictionary<int, List<WingedEdge>> GetSpokes(List<WingedEdge> wings)
 		{
-			Dictionary<int, List<pb_WingedEdge>> spokes = new Dictionary<int, List<pb_WingedEdge>>();
-			List<pb_WingedEdge> l = null;
+			Dictionary<int, List<WingedEdge>> spokes = new Dictionary<int, List<WingedEdge>>();
+			List<WingedEdge> l = null;
 
 			for(int i = 0; i < wings.Count; i++)
 			{
 				if(spokes.TryGetValue(wings[i].edge.common.x, out l))
 					l.Add(wings[i]);
 				else
-					spokes.Add(wings[i].edge.common.x, new List<pb_WingedEdge>() { wings[i] });
+					spokes.Add(wings[i].edge.common.x, new List<WingedEdge>() { wings[i] });
 
 				if(spokes.TryGetValue(wings[i].edge.common.y, out l))
 					l.Add(wings[i]);
 				else
-					spokes.Add(wings[i].edge.common.y, new List<pb_WingedEdge>() { wings[i] });
+					spokes.Add(wings[i].edge.common.y, new List<WingedEdge>() { wings[i] });
 			}
 
 			return spokes;
 		}
 
-		/**
-		 *	Given a set of winged edges and list of common indices, attempt to create a complete path of indices where each
-		 *	is connected by edge.  May be clockwise or counter-clockwise ordered, or null if no path is found.
-		 */
-		public static List<int> SortCommonIndicesByAdjacency(List<pb_WingedEdge> wings, HashSet<int> common)
+		/// <summary>
+		/// Given a set of winged edges and list of common indices, attempt to create a complete path of indices where
+		/// each is connected by edge.  May be clockwise or counter-clockwise ordered, or null if no path is found.
+		/// </summary>
+		/// <param name="wings"></param>
+		/// <param name="common"></param>
+		/// <returns></returns>
+		public static List<int> SortCommonIndicesByAdjacency(List<WingedEdge> wings, HashSet<int> common)
 		{
 			List<Edge> matches = wings.Where(x => common.Contains(x.edge.common.x) && common.Contains(x.edge.common.y)).Select(y => y.edge.common).ToList();
 
@@ -251,35 +288,45 @@ namespace UnityEngine.ProBuilder
 			return SortEdgesByAdjacency(matches).Select(x => x.x).ToList();
 		}
 
-		public static List<pb_WingedEdge> GetWingedEdges(ProBuilderMesh pb, bool oneWingPerFace = false)
+		/// <summary>
+		/// Create a new list of WingedEdge values for a ProBuilder mesh.
+		/// </summary>
+		/// <param name="pb">The mesh from which faces will read.</param>
+		/// <param name="oneWingPerFace">Optionally restrict the list to only include one WingedEdge per-face.</param>
+		/// <returns></returns>
+		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh pb, bool oneWingPerFace = false)
 		{
 			return GetWingedEdges(pb, pb.faces, oneWingPerFace);
 		}
 
-		/**
-		 *	Generate a Winged Edge data structure.
-		 * 	If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).
-		 */
-		public static List<pb_WingedEdge> GetWingedEdges(ProBuilderMesh pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
+		/// <summary>
+		/// Create a new list of WingedEdge values for a ProBuilder mesh.
+		/// </summary>
+		/// <param name="pb">Target ProBuilderMesh.</param>
+		/// <param name="faces">Which faces to include in the WingedEdge list.</param>
+		/// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
+		/// <param name="sharedIndexLookup">If passed, this will skip generating a shared indices dictionary, which can be an expensive operation. This is useful when doing more than one mesh operation and you have already generated a current shared index dictionary.</param>
+		/// <returns></returns>
+		public static List<WingedEdge> GetWingedEdges(ProBuilderMesh pb, IEnumerable<Face> faces, bool oneWingPerFace = false, Dictionary<int, int> sharedIndexLookup = null)
 		{
 			Dictionary<int, int> lookup = sharedIndexLookup == null ? pb.sharedIndices.ToDictionary() : sharedIndexLookup;
 			IEnumerable<Face> distinct = faces.Distinct();
 
-			List<pb_WingedEdge> winged = new List<pb_WingedEdge>();
-			Dictionary<Edge, pb_WingedEdge> opposites = new Dictionary<Edge, pb_WingedEdge>();
+			List<WingedEdge> winged = new List<WingedEdge>();
+			Dictionary<Edge, WingedEdge> opposites = new Dictionary<Edge, WingedEdge>();
 			int index = 0;
 
 			foreach(Face f in distinct)
 			{
 				List<Edge> edges = SortEdgesByAdjacency(f);
 				int edgeLength = edges.Count;
-				pb_WingedEdge first = null, prev = null;
+				WingedEdge first = null, prev = null;
 
 				for(int n = 0; n < edgeLength; n++)
 				{
 					Edge e = edges[n];
 
-					pb_WingedEdge w = new pb_WingedEdge();
+					WingedEdge w = new WingedEdge();
 					w.edge = new EdgeLookup(lookup[e.x], lookup[e.y], e.x, e.y);
 					w.face = f;
 					if(n < 1) first = w;
@@ -298,7 +345,7 @@ namespace UnityEngine.ProBuilder
 
 					prev = w;
 
-					pb_WingedEdge opp;
+					WingedEdge opp;
 
 					if( opposites.TryGetValue(w.edge.common, out opp) )
 					{

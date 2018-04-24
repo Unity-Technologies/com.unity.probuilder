@@ -16,7 +16,7 @@ namespace ProBuilder.MeshOperations
 		 */
 		public static ActionResult ConformNormals(this ProBuilderMesh pb, IList<Face> faces)
 		{
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces);
 			HashSet<Face> used = new HashSet<Face>();
 			int count = 0;
 
@@ -55,15 +55,15 @@ namespace ProBuilder.MeshOperations
 				return new ActionResult(Status.NoChange, "Faces Uniform");
 		}
 
-		private static void GetWindingFlags(pb_WingedEdge edge, bool flag, Dictionary<Face, bool> flags)
+		private static void GetWindingFlags(WingedEdge edge, bool flag, Dictionary<Face, bool> flags)
 		{
 			flags.Add(edge.face, flag);
 
-			pb_WingedEdge next = edge;
+			WingedEdge next = edge;
 
 			do
 			{
-				pb_WingedEdge opp = next.opposite;
+				WingedEdge opp = next.opposite;
 
 				if(opp != null && !flags.ContainsKey(opp.face))
 				{
@@ -81,7 +81,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 *	Ensure the opposite face to source matches the winding order.
 		 */
-		public static ActionResult ConformOppositeNormal(pb_WingedEdge source)
+		public static ActionResult ConformOppositeNormal(WingedEdge source)
 		{
 			if(source == null || source.opposite == null)
 				return new ActionResult(Status.Failure, "Source edge does not share an edge with another face.");
@@ -102,7 +102,7 @@ namespace ProBuilder.MeshOperations
 		/**
 		 *	Iterate a face and return a new common edge where the edge indices are true to the triangle winding order.
 		 */
-		private static Edge GetCommonEdgeInWindingOrder(pb_WingedEdge wing)
+		private static Edge GetCommonEdgeInWindingOrder(WingedEdge wing)
 		{
 			int[] indices = wing.face.indices;
 			int len = indices.Length;

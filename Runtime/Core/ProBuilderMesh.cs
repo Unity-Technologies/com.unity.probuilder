@@ -70,7 +70,7 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// UV2 generation parameters.
 		/// </summary>
-		public pb_UnwrapParameters unwrapParameters = new pb_UnwrapParameters();
+		public UnwrapParamaters unwrapParameters = new UnwrapParamaters();
 
 		/// <summary>
 		/// Usually when you delete a pb_Object you want to also clean up the mesh asset.
@@ -454,7 +454,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="faces"></param>
 		/// <param name="si">Optional sharedIndices array. If null this value will be generated.</param>
 		/// <returns></returns>
-		public static ProBuilderMesh CreateInstanceWithElements(pb_Vertex[] vertices, Face[] faces, IntArray[] si = null)
+		public static ProBuilderMesh CreateInstanceWithElements(Vertex[] vertices, Face[] faces, IntArray[] si = null)
 		{
 			GameObject _gameObject = new GameObject();
 			ProBuilderMesh pb = _gameObject.AddComponent<ProBuilderMesh>();
@@ -468,7 +468,7 @@ namespace UnityEngine.ProBuilder
 			List<Vector4> uv3;
 			List<Vector4> uv4;
 
-			pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+			Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
 			pb.SetVertices(position);
 			pb.SetColors(color);
@@ -492,7 +492,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		public Face[] SelectedFaces
 		{
-			get { return pb_Util.ValuesWithIndices(this.faces, m_selectedFaces); }
+			get { return InternalUtility.ValuesWithIndices(this.faces, m_selectedFaces); }
 		}
 
 		/// <summary>
@@ -649,7 +649,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="applyMesh"></param>
-		public void SetVertices(IList<pb_Vertex> vertices, bool applyMesh = false)
+		public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
 		{
 			Vector3[] position;
 			Color[] color;
@@ -660,7 +660,7 @@ namespace UnityEngine.ProBuilder
 			List<Vector4> uv3;
 			List<Vector4> uv4;
 
-			pb_Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
+			Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
 			SetVertices(position);
 			SetColors(color);
@@ -672,7 +672,7 @@ namespace UnityEngine.ProBuilder
 			{
 				Mesh m = mesh;
 
-				pb_Vertex first = vertices[0];
+				Vertex first = vertices[0];
 
 				if (first.hasPosition) m.vertices = position;
 				if (first.hasColor) m.colors = color;
@@ -749,7 +749,7 @@ namespace UnityEngine.ProBuilder
 						i + 1, i + 3, i + 2
 					},
 					BuiltinMaterials.DefaultMaterial,
-					new pb_UV(),
+					new AutoUnwrapSettings(),
 					0,
 					-1,
 					-1,
@@ -758,7 +758,7 @@ namespace UnityEngine.ProBuilder
 
 			SetVertices(v);
 			SetUV(new Vector2[v.Length]);
-			SetColors(pb_Util.FilledArray<Color>(Color.white, v.Length));
+			SetColors(InternalUtility.FilledArray<Color>(Color.white, v.Length));
 
 			SetFaces(f);
 			SetSharedIndices(IntArrayUtility.ExtractSharedIndices(v));
@@ -1111,7 +1111,7 @@ namespace UnityEngine.ProBuilder
 			}
 
 			int n = -2;
-			Dictionary<int, List<Face>> tex_groups = new Dictionary<int, List<Face>>();
+			var textureGroups = new Dictionary<int, List<Face>>();
 			bool anyWorldSpace = false;
 			List<Face> group;
 
@@ -1123,10 +1123,10 @@ namespace UnityEngine.ProBuilder
 				if (f == null || f.manualUV)
 					continue;
 
-				if (f.textureGroup > 0 && tex_groups.TryGetValue(f.textureGroup, out group))
+				if (f.textureGroup > 0 && textureGroups.TryGetValue(f.textureGroup, out group))
 					group.Add(f);
 				else
-					tex_groups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() {f});
+					textureGroups.Add(f.textureGroup > 0 ? f.textureGroup : n--, new List<Face>() {f});
 			}
 
 			// Add any non-selected faces in texture groups to the update list
@@ -1137,16 +1137,16 @@ namespace UnityEngine.ProBuilder
 					if (f.manualUV)
 						continue;
 
-					if (tex_groups.ContainsKey(f.textureGroup) && !tex_groups[f.textureGroup].Contains(f))
-						tex_groups[f.textureGroup].Add(f);
+					if (textureGroups.ContainsKey(f.textureGroup) && !textureGroups[f.textureGroup].Contains(f))
+						textureGroups[f.textureGroup].Add(f);
 				}
 			}
 
 			n = 0;
 
-			Vector3[] world = anyWorldSpace ? transform.ToWorldSpace(positions) : null;
+			Vector3[] world = anyWorldSpace ? this.VerticesInWorldSpace() : null;
 
-			foreach (KeyValuePair<int, List<Face>> kvp in tex_groups)
+			foreach (KeyValuePair<int, List<Face>> kvp in textureGroups)
 			{
 				Vector3 nrm;
 				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
@@ -1157,9 +1157,9 @@ namespace UnityEngine.ProBuilder
 					nrm = ProBuilderMath.Normal(this, kvp.Value[0]);
 
 				if (kvp.Value[0].uv.useWorldSpace)
-					pb_UVUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
+					UnwrappingUtility.PlanarMap2(world, newUVs, indices, kvp.Value[0].uv, transform.TransformDirection(nrm));
 				else
-					pb_UVUtility.PlanarMap2(positions, newUVs, indices, kvp.Value[0].uv, nrm);
+					UnwrappingUtility.PlanarMap2(positions, newUVs, indices, kvp.Value[0].uv, nrm);
 
 				// Apply UVs to array, and update the localPivot and localSize caches.
 				Vector2 pivot = kvp.Value[0].uv.localPivot;
@@ -1209,7 +1209,7 @@ namespace UnityEngine.ProBuilder
 			Mesh m = GetComponent<MeshFilter>().sharedMesh;
 
 			if (m_Colors == null || m_Colors.Length != vertexCount)
-				m_Colors = pb_Util.FilledArray<Color>(Color.white, vertexCount);
+				m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
 
 			m.colors = m_Colors;
 		}
@@ -1220,7 +1220,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="InColors"></param>
 		public void SetColors(Color[] InColors)
 		{
-			m_Colors = InColors.Length == vertexCount ? InColors : pb_Util.FilledArray<Color>(Color.white, vertexCount);
+			m_Colors = InColors.Length == vertexCount ? InColors : InternalUtility.FilledArray<Color>(Color.white, vertexCount);
 		}
 
 		/// <summary>
@@ -1230,7 +1230,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="color"></param>
 		public void SetFaceColor(Face face, Color color)
 		{
-			if (m_Colors == null) m_Colors = pb_Util.FilledArray<Color>(Color.white, vertexCount);
+			if (m_Colors == null) m_Colors = InternalUtility.FilledArray<Color>(Color.white, vertexCount);
 
 			foreach (int i in face.distinctIndices)
 				m_Colors[i] = color;

@@ -244,7 +244,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if(s_Preferences != null && preferences.HasKey<Color>(key))
 				return preferences.GetColor(key, fallback);
-			pb_Util.TryParseColor(EditorPrefs.GetString(key), ref fallback);
+			InternalUtility.TryParseColor(EditorPrefs.GetString(key), ref fallback);
 			return fallback;
 		}
 

@@ -234,7 +234,7 @@ namespace ProBuilder.MeshOperations
 					append_face.Add( new Face(
 							new int[6] {0, 1, 2, 1, 3, 2},			// indices
 							face.material,							// material
-							new pb_UV(face.uv),						// UV material
+							new AutoUnwrapSettings(face.uv),						// UV material
 							face.smoothingGroup,					// smoothing group
 							-1,										// texture group
 							-1,										// uv element group
@@ -386,15 +386,15 @@ namespace ProBuilder.MeshOperations
 			List<Face> allModified = new List<Face>(appendedFaces);
 			allModified.AddRange(faces);
 			HashSet<Face> sources = new HashSet<Face>(faces);
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, allModified);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, allModified);
 
-			foreach(pb_WingedEdge wing in wings)
+			foreach(WingedEdge wing in wings)
 			{
 				if(sources.Contains(wing.face))
 				{
 					sources.Remove(wing.face);
 
-					foreach(pb_WingedEdge w in wing)
+					foreach(WingedEdge w in wing)
 						pb_ConformNormals.ConformOppositeNormal(w);
 				}
 			}
@@ -433,7 +433,7 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static List<Face> DetachFaces(this ProBuilderMesh pb, IEnumerable<Face> faces)
 		{
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 			int sharedIndicesOffset = pb.sharedIndices.Length;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 
@@ -442,7 +442,7 @@ namespace ProBuilder.MeshOperations
 			foreach(Face face in faces)
 			{
 				FaceRebuildData data = new FaceRebuildData();
-				data.vertices = new List<pb_Vertex>();
+				data.vertices = new List<Vertex>();
 				data.sharedIndices = new List<int>();
 				data.face = new Face(face);
 
@@ -516,7 +516,7 @@ namespace ProBuilder.MeshOperations
 				Vector3[] v;
 				Color[] c;
 				int[] s;
-				pb_UV uvs = new pb_UV();
+				AutoUnwrapSettings uvs = new AutoUnwrapSettings();
 				Material mat = BuiltinMaterials.DefaultMaterial;
 
 				// Get material and UV stuff from the first edge face
@@ -527,7 +527,7 @@ namespace ProBuilder.MeshOperations
 
 				if(faceAndEdge != null)
 				{
-					uvs = new pb_UV(faceAndEdge.item1.uv);
+					uvs = new AutoUnwrapSettings(faceAndEdge.item1.uv);
 					mat = faceAndEdge.item1.material;
 				}
 
@@ -836,7 +836,7 @@ namespace ProBuilder.MeshOperations
 							new Face(
 								faceTris,
 								t.GetComponent<MeshRenderer>().sharedMaterials[n],
-								new pb_UV(),
+								new AutoUnwrapSettings(),
 								0,		// smoothing group
 								-1,		// texture group
 								-1,		// element group
@@ -967,7 +967,7 @@ namespace ProBuilder.MeshOperations
 						new Face(
 							faceTris,
 							sharedMaterials[n >= mat_length ? mat_length - 1 : n],
-							new pb_UV(),
+							new AutoUnwrapSettings(),
 							0,		// smoothing group
 							-1,		// texture group
 							-1,		// element group

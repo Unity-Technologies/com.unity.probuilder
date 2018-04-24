@@ -73,13 +73,13 @@ namespace UnityEditor.ProBuilder
 				for(int i = 0; i < shortcut.Length - 1; i++)
 				{
 					if( !EditorUtility.IsUnix() )
-						this.shortcut += pb_Util.ControlKeyString(shortcut[i]) + " + ";
+						this.shortcut += InternalUtility.ControlKeyString(shortcut[i]) + " + ";
 					else
 						this.shortcut += shortcut[i] + " + ";
 				}
 
 				if( !EditorUtility.IsUnix() )
-					this.shortcut += pb_Util.ControlKeyString(shortcut[shortcut.Length - 1]);
+					this.shortcut += InternalUtility.ControlKeyString(shortcut[shortcut.Length - 1]);
 				else
 					this.shortcut += shortcut[shortcut.Length - 1];
 			}

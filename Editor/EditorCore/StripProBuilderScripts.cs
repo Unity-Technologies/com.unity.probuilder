@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
 		public static bool VerifyStripSelection()
 		{
-			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
+			return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]

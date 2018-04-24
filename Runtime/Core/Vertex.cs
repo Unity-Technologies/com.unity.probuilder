@@ -9,7 +9,7 @@ namespace UnityEngine.ProBuilder
 	/// Holds information about a single vertex, and provides methods for averaging between many.
 	/// <remarks>A vertex is only required to contain position, all other values are optional.</remarks>
 	/// </summary>
-	public class pb_Vertex : System.IEquatable<pb_Vertex>
+	public class Vertex : System.IEquatable<Vertex>
 	{
 		public Vector3 position;
 		public Color color;
@@ -29,7 +29,7 @@ namespace UnityEngine.ProBuilder
 		public bool hasUv3		= false;
 		public bool hasUv4		= false;
 
-		public pb_Vertex(bool hasAllValues = false)
+		public Vertex(bool hasAllValues = false)
 		{
 			hasPosition = hasAllValues;
 			hasColor = hasAllValues;
@@ -43,10 +43,10 @@ namespace UnityEngine.ProBuilder
 
 		public override bool Equals(object other)
 		{
-			return other is pb_Vertex && this.Equals(other as pb_Vertex);
+			return other is Vertex && this.Equals(other as Vertex);
 		}
 
-		public bool Equals(pb_Vertex other)
+		public bool Equals(Vertex other)
 		{
 			if(other == null)
 				return false;
@@ -67,9 +67,9 @@ namespace UnityEngine.ProBuilder
 			// 783 is 27 * 29
 			unchecked
 			{
-				int hash = 783 + pb_Vector.GetHashCode(position);
-				hash = hash * 29 + pb_Vector.GetHashCode(uv0);
-				hash = hash * 31 + pb_Vector.GetHashCode(normal);
+				int hash = 783 + VectorHash.GetHashCode(position);
+				hash = hash * 29 + VectorHash.GetHashCode(uv0);
+				hash = hash * 31 + VectorHash.GetHashCode(normal);
 				return hash;
 			}
 		}
@@ -78,7 +78,7 @@ namespace UnityEngine.ProBuilder
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="v"></param>
-		public pb_Vertex(pb_Vertex v)
+		public Vertex(Vertex v)
 		{
 			this.position 	= v.position;
 			this.hasPosition = v.hasPosition;
@@ -104,9 +104,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		public static pb_Vertex operator +(pb_Vertex a, pb_Vertex b)
+		public static Vertex operator +(Vertex a, Vertex b)
 		{
-			pb_Vertex v = new pb_Vertex(a);
+			Vertex v = new Vertex(a);
 			v.Add(b);
 			return v;
 		}
@@ -115,7 +115,7 @@ namespace UnityEngine.ProBuilder
 		/// In-place addition.
 		/// </summary>
 		/// <param name="b"></param>
-		public void Add(pb_Vertex b)
+		public void Add(Vertex b)
 		{
 			this.position	+= b.position;
 			this.color		+= b.color;
@@ -133,9 +133,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		public static pb_Vertex operator -(pb_Vertex a, pb_Vertex b)
+		public static Vertex operator -(Vertex a, Vertex b)
 		{
-			pb_Vertex v = new pb_Vertex(a);
+			Vertex v = new Vertex(a);
 			v.Subtract(b);
 			return v;
 		}
@@ -144,7 +144,7 @@ namespace UnityEngine.ProBuilder
 		/// In-place subtraction.
 		/// </summary>
 		/// <param name="b"></param>
-		public void Subtract(pb_Vertex b)
+		public void Subtract(Vertex b)
 		{
 			this.position	-= b.position;
 			this.color		-= b.color;
@@ -162,9 +162,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="a"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static pb_Vertex operator *(pb_Vertex a, float value)
+		public static Vertex operator *(Vertex a, float value)
 		{
-			pb_Vertex v = new pb_Vertex(a);
+			Vertex v = new Vertex(a);
 			v.Multiply(value);
 			return v;
 		}
@@ -191,9 +191,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="a"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static pb_Vertex operator /(pb_Vertex a, float value)
+		public static Vertex operator /(Vertex a, float value)
 		{
-			pb_Vertex v = new pb_Vertex(a);
+			Vertex v = new Vertex(a);
 			v.Divide(value);
 			return v;
 		}
@@ -245,12 +245,12 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static pb_Vertex[] GetVertices(ProBuilderMesh pb, IList<int> indices = null)
+		public static Vertex[] GetVertices(ProBuilderMesh pb, IList<int> indices = null)
 		{
 			int meshVertexCount = pb.vertexCount;
 			int vertexCount = indices != null ? indices.Count : pb.vertexCount;
 
-			pb_Vertex[] v = new pb_Vertex[vertexCount];
+			Vertex[] v = new Vertex[vertexCount];
 
 			Vector3[] positions = pb.positions;
 			Color[] colors 		= pb.colors;
@@ -277,7 +277,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < vertexCount; i++)
 			{
-				v[i] = new pb_Vertex();
+				v[i] = new Vertex();
 				int ind = indices == null ? i : indices[i];
 
 				if( _hasPositions )	{ v[i].hasPosition = true; 	v[i].position 	= positions[ind];	 }
@@ -298,13 +298,13 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="m"></param>
 		/// <returns></returns>
-		public static pb_Vertex[] GetVertices(Mesh m)
+		public static Vertex[] GetVertices(Mesh m)
 		{
 			if(m == null)
 				return null;
 
 			int vertexCount = m.vertexCount;
-			pb_Vertex[] v = new pb_Vertex[vertexCount];
+			Vertex[] v = new Vertex[vertexCount];
 
 			Vector3[] positions = m.vertices;
 			Color[] colors 		= m.colors;
@@ -332,7 +332,7 @@ namespace UnityEngine.ProBuilder
 
 			for(int i = 0; i < vertexCount; i++)
 			{
-				v[i] = new pb_Vertex();
+				v[i] = new Vertex();
 
 				if( _hasPositions )	{ v[i].hasPosition = true; v[i].position = positions[i]; }
 				if( _hasColors ) 	{ v[i].hasColor = true; v[i].color = colors[i]; }
@@ -364,7 +364,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="uv2"></param>
 		/// <param name="uv3"></param>
 		/// <param name="uv4"></param>
-		public static void GetArrays(	IList<pb_Vertex> vertices,
+		public static void GetArrays(	IList<Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
 										out Vector2[] uv0,
@@ -393,7 +393,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="uv3"></param>
 		/// <param name="uv4"></param>
 		/// <param name="attributes"></param>
-		public static void GetArrays(	IList<pb_Vertex> vertices,
+		public static void GetArrays(	IList<Vertex> vertices,
 										out Vector3[] position,
 										out Color[] color,
 										out Vector2[] uv0,
@@ -442,7 +442,7 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="m"></param>
 		/// <param name="vertices"></param>
-		public static void SetMesh(Mesh m, IList<pb_Vertex> vertices)
+		public static void SetMesh(Mesh m, IList<Vertex> vertices)
 		{
 			Vector3[] positions	= null;
  			Color[] colors		= null;
@@ -464,7 +464,7 @@ namespace UnityEngine.ProBuilder
 
 			m.Clear();
 
-			pb_Vertex first = vertices[0];
+			Vertex first = vertices[0];
 
 			if(first.hasPosition)	m.vertices = positions;
 			if(first.hasColor)		m.colors = colors;
@@ -484,9 +484,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
-		public static pb_Vertex Average(IList<pb_Vertex> vertices, IList<int> indices = null)
+		public static Vertex Average(IList<Vertex> vertices, IList<int> indices = null)
 		{
-			pb_Vertex v = new pb_Vertex();
+			Vertex v = new Vertex();
 
 			int vertexCount = indices != null ? indices.Count : vertices.Count;
 
@@ -550,11 +550,11 @@ namespace UnityEngine.ProBuilder
 		/// <param name="y"></param>
 		/// <param name="a"></param>
 		/// <returns></returns>
-		public static pb_Vertex Mix(pb_Vertex x, pb_Vertex y, float a)
+		public static Vertex Mix(Vertex x, Vertex y, float a)
 		{
 			float i = 1f - a;
 
-			pb_Vertex v = new pb_Vertex();
+			Vertex v = new Vertex();
 
 			v.position 	= x.position * i + y.position * a;
 			v.color 	= x.color * i + y.color * a;

@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", true, PreferenceKeys.menuActions + 20)]
 		public static bool VerifyGenerateUV2Selection()
 		{
-			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
+			return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Generate UV2 - Selection", false, PreferenceKeys.menuActions + 20)]

@@ -106,9 +106,9 @@ namespace UnityEngine.ProBuilder
 			HashSet<int> used = new HashSet<int>(pb.faces.Select(x => x.smoothingGroup));
 			int group = GetNextUnusedSmoothingGroup(1, used);
 			HashSet<Face> processed = new HashSet<Face>();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces, true);
 
-			foreach(pb_WingedEdge wing in wings)
+			foreach(WingedEdge wing in wings)
 			{
 				// Already part of a group
 				if(!processed.Add(wing.face))
@@ -129,11 +129,11 @@ namespace UnityEngine.ProBuilder
 		}
 
 		// Walk the perimiter of a wing looking for compatibly smooth connections. Returns true if any match was found, false if not.
-		static bool FindSoftEdgesRecursive(Vector3[] normals, pb_WingedEdge wing, float angleThreshold, HashSet<Face> processed)
+		static bool FindSoftEdgesRecursive(Vector3[] normals, WingedEdge wing, float angleThreshold, HashSet<Face> processed)
 		{
 			bool foundSmoothEdge = false;
 
-			foreach(pb_WingedEdge border in wing)
+			foreach(WingedEdge border in wing)
 			{
 				if(border.opposite == null)
 					continue;

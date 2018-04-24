@@ -85,13 +85,13 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", true, PreferenceKeys.menuRepair)]
 		static bool VertifyRebuildMeshes()
 		{
-			return pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
+			return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
 		}
 
 		[MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Rebuild Shared Indices Cache", false, PreferenceKeys.menuRepair)]
 		public static void DoRebuildMeshes()
 		{
-			RebuildSharedIndices( pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms) );
+			RebuildSharedIndices( InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms) );
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace UnityEditor.ProBuilder
 		{
 			int count = 0;
 
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				pb.ToMesh();
 

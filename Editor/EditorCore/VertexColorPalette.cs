@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 			{
 				Color color = Color.white;
 
-				if (pb_Util.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref color))
+				if (InternalUtility.TryParseColor(PreferencesInternal.GetString(PreferenceKeys.pbVertexColorPrefs + i), ref color))
 					colors.Add(color);
 			}
 
@@ -187,7 +187,7 @@ namespace UnityEditor.ProBuilder
 
 		public static void SetFaceColors(Color col)
 		{
-			ProBuilderMesh[] selection = pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms);
+			ProBuilderMesh[] selection = InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 
 			UndoUtility.RecordSelection(selection, "Apply Vertex Colors");
 

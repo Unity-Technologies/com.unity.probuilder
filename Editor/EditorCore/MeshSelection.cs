@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
 			{
 				return ProBuilderEditor.instance != null
 					? ProBuilderEditor.instance.selection
-					: pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms);
+					: InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms);
 			}
 		}
 

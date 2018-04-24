@@ -661,7 +661,7 @@ namespace UnityEngine.ProBuilder
 					faces[f++] = new Face(
 						new int[6]{ zero, one, two, one, three, two },
 						BuiltinMaterials.DefaultMaterial,
-						new pb_UV(),
+						new AutoUnwrapSettings(),
 						smoothing,
 						-1,
 						-1,
@@ -1278,7 +1278,7 @@ namespace UnityEngine.ProBuilder
 			if (!manualUvs)
 			{
 				for(int i = 0; i < f.Length; i++)
-					f[i].uv.fill = pb_UV.Fill.Fit;
+					f[i].uv.fill = AutoUnwrapSettings.Fill.Fit;
 			}
 
 			GameObject _gameObject = new GameObject();

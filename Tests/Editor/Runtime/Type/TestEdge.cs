@@ -23,7 +23,7 @@ namespace ProBuilder.RuntimeTests.Type
 		[Test]
 		public static void TestHashCollisions_EDGE()
 		{
-			Edge[] edge = pb_Util.Fill<Edge>(TestIterationCount, (i) => { return RandEdge(); });
+			Edge[] edge = InternalUtility.Fill<Edge>(TestIterationCount, (i) => { return RandEdge(); });
 			Assert.IsTrue(TestHashUtility.GetCollisionsCount(edge) < TestIterationCount * .05f);
 		}
 
@@ -35,7 +35,7 @@ namespace ProBuilder.RuntimeTests.Type
 			Edge c = (Edge) new Edge(a.x + 10, a.x);
 			Edge d = (Edge) new Edge(a.x, a.y);
 
-			Edge[] arr = pb_Util.Fill<Edge>(24, (i) => { return i % 2 == 0 ? a : (Edge) RandEdge(); });
+			Edge[] arr = InternalUtility.Fill<Edge>(24, (i) => { return i % 2 == 0 ? a : (Edge) RandEdge(); });
 
 			Assert.IsFalse(a == b, "a == b");
 			Assert.IsFalse(a == c, "a == c");

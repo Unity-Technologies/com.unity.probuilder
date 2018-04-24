@@ -42,7 +42,7 @@ namespace ProBuilder.MeshOperations
 			if(distInd == null || distInd.Count() < 1)
 				return;
 
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertices(pb);
 			int originalVertexCount = vertices.Length;
 			int[] offset = new int[originalVertexCount];
 
@@ -54,7 +54,7 @@ namespace ProBuilder.MeshOperations
 
 			// Add 1 because NearestIndexPriorToValue is 0 indexed.
 			for(int i = 0; i < originalVertexCount; i++)
-				offset[i] = pb_Util.NearestIndexPriorToValue(sorted, i) + 1;
+				offset[i] = InternalUtility.NearestIndexPriorToValue(sorted, i) + 1;
 
 			foreach(Face face in pb.faces)
 			{

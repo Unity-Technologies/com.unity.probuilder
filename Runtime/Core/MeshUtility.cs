@@ -15,11 +15,11 @@ namespace UnityEngine.ProBuilder
 		/// </summary>
 		/// <param name="mesh">The mesh to extract vertices from.</param>
 		/// <returns>A pb_Vertex array of the per-triangle vertices.</returns>
-		public static pb_Vertex[] GeneratePerTriangleMesh(Mesh mesh)
+		public static Vertex[] GeneratePerTriangleMesh(Mesh mesh)
 		{
-			pb_Vertex[] vertices 	= pb_Vertex.GetVertices(mesh);
+			Vertex[] vertices 	= Vertex.GetVertices(mesh);
 			int smc 				= mesh.subMeshCount;
-			pb_Vertex[] tv 			= new pb_Vertex[mesh.triangles.Length];
+			Vertex[] tv 			= new Vertex[mesh.triangles.Length];
 			int[][] triangles 		= new int[smc][];
 			int triIndex 			= 0;
 
@@ -30,12 +30,12 @@ namespace UnityEngine.ProBuilder
 
 				for(int i = 0; i < tl; i++)
 				{
-					tv[triIndex++] = new pb_Vertex( vertices[triangles[s][i]] );
+					tv[triIndex++] = new Vertex( vertices[triangles[s][i]] );
 					triangles[s][i] = triIndex - 1;
 				}
 			}
 
-			pb_Vertex.SetMesh(mesh, tv);
+			Vertex.SetMesh(mesh, tv);
 
 			mesh.subMeshCount = smc;
 
@@ -397,7 +397,7 @@ namespace UnityEngine.ProBuilder
 					uv3 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
 					uv4 == null 		? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
 					i,
-					pb_Vector.GetHashCode(positions[i])));
+					VectorHash.GetHashCode(positions[i])));
 			}
 
 			for(int i = 0; i < m.triangles.Length; i+=3)

@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 				pb = (ProBuilderMesh) target;
 
 			return ProBuilderEditor.instance != null &&
-			       pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
+			       InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Sum(x => x.SelectedTriangles.Length) > 0;
 		}
 
 		Bounds OnGetFrameBounds()
@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder
 			Vector3 min = Vector3.zero, max = Vector3.zero;
 			bool init = false;
 
-			foreach (ProBuilderMesh pbo in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach (ProBuilderMesh pbo in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				if (pbo.SelectedTriangles.Length < 1) continue;
 

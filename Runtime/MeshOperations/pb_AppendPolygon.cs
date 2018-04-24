@@ -20,13 +20,13 @@ namespace ProBuilder.MeshOperations
 			IntArray[] sharedIndices = pb.sharedIndices;
 			Dictionary<int, int> lookup = sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
-			List<pb_Vertex> append_vertices = new List<pb_Vertex>();
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
+			List<Vertex> append_vertices = new List<Vertex>();
 
 			foreach(int i in common)
 			{
 				int index = sharedIndices[i][0];
-				append_vertices.Add(new pb_Vertex(vertices[index]));
+				append_vertices.Add(new Vertex(vertices[index]));
 			}
 
 			FaceRebuildData data = FaceWithVertices(append_vertices, unordered);
@@ -133,7 +133,7 @@ namespace ProBuilder.MeshOperations
 		/// <param name="vertices"></param>
 		/// <param name="unordered"></param>
 		/// <returns></returns>
-		internal static FaceRebuildData FaceWithVertices(List<pb_Vertex> vertices, bool unordered = true)
+		internal static FaceRebuildData FaceWithVertices(List<Vertex> vertices, bool unordered = true)
 		{
 			List<int> triangles;
 
@@ -153,15 +153,15 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		internal static List<FaceRebuildData> TentCapWithVertices(List<pb_Vertex> path)
+		internal static List<FaceRebuildData> TentCapWithVertices(List<Vertex> path)
 		{
 			int count = path.Count;
-			pb_Vertex center = pb_Vertex.Average(path);
+			Vertex center = Vertex.Average(path);
 			List<FaceRebuildData> faces = new List<FaceRebuildData>();
 
 			for(int i = 0; i < count; i++)
 			{
-				List<pb_Vertex> vertices = new List<pb_Vertex>()
+				List<Vertex> vertices = new List<Vertex>()
 				{
 					path[i],
 					center,
@@ -189,9 +189,9 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
 			HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
 			List<List<Edge>> holes = new List<List<Edge>>();
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 
-			foreach(List<pb_WingedEdge> hole in pb_AppendPolygon.FindHoles(wings, common))
+			foreach(List<WingedEdge> hole in pb_AppendPolygon.FindHoles(wings, common))
 				holes.Add( hole.Select(x => x.edge.local).ToList() );
 
 			return holes;
@@ -206,22 +206,22 @@ namespace ProBuilder.MeshOperations
 		/// <param name="wings"></param>
 		/// <param name="common"></param>
 		/// <returns></returns>
-		internal static List<List<pb_WingedEdge>> FindHoles(List<pb_WingedEdge> wings, HashSet<int> common)
+		internal static List<List<WingedEdge>> FindHoles(List<WingedEdge> wings, HashSet<int> common)
 		{
-			HashSet<pb_WingedEdge> used = new HashSet<pb_WingedEdge>();
-			List<List<pb_WingedEdge>> holes = new List<List<pb_WingedEdge>>();
+			HashSet<WingedEdge> used = new HashSet<WingedEdge>();
+			List<List<WingedEdge>> holes = new List<List<WingedEdge>>();
 
 			for(int i = 0; i < wings.Count; i++)
 			{
-				pb_WingedEdge c = wings[i];
+				WingedEdge c = wings[i];
 
 				// if this edge has been added to a hole already, or the edge isn't in the approved list of indices,
 				// or if there's an opposite face, this edge doesn't belong to a hole.  move along.
 				if(c.opposite != null || used.Contains(c) || !(common.Contains(c.edge.common.x) || common.Contains(c.edge.common.y)))
 					continue;
 
-				List<pb_WingedEdge> hole = new List<pb_WingedEdge>();
-				pb_WingedEdge it = c;
+				List<WingedEdge> hole = new List<WingedEdge>();
+				WingedEdge it = c;
 				int ind = it.edge.common.x;
 
 				int counter = 0;
@@ -243,7 +243,7 @@ namespace ProBuilder.MeshOperations
 				// check previous wings for y == x (closed loop).
 				for(int n = 0; n < hole.Count; n++)
 				{
-					pb_WingedEdge wing = hole[n];
+					WingedEdge wing = hole[n];
 
 					for(int p = n - 1; p > -1; p--)
 					{
@@ -290,7 +290,7 @@ namespace ProBuilder.MeshOperations
 					int x = splits[n].item1, y = splits[n].item2 - shift[n];
 					int range = (y - x) + 1;
 
-					List<pb_WingedEdge> section = hole.GetRange(x, range);
+					List<WingedEdge> section = hole.GetRange(x, range);
 
 					hole.RemoveRange(x, range);
 
@@ -307,9 +307,9 @@ namespace ProBuilder.MeshOperations
 			return holes;
 		}
 
-		static pb_WingedEdge FindNextEdgeInHole(pb_WingedEdge wing, int common)
+		static WingedEdge FindNextEdgeInHole(WingedEdge wing, int common)
 		{
-			pb_WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
+			WingedEdge next = wing.GetAdjacentEdgeWithCommonIndex(common);
 			int counter = 0;
 			while(next != null && next != wing && counter++ < k_MaxHoleIterations)
 			{

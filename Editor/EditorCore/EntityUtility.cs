@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 		[Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
 		static void SetIsTrigger(bool val, GameObject target)
 		{
-			Collider[] colliders = pb_Util.GetComponents<Collider>(target);
+			Collider[] colliders = InternalUtility.GetComponents<Collider>(target);
 			foreach (Collider col in colliders)
 			{
 				if (val && col is MeshCollider)

@@ -399,7 +399,7 @@ namespace UnityEditor.ProBuilder
 
 		void OnSceneGUI(SceneView scn)
 		{
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				DrawStats(pb);
 			}
@@ -627,9 +627,9 @@ namespace UnityEditor.ProBuilder
 
 			int vertexCount = selectedOnly ? pb.SelectedTriangleCount : pb.mesh.vertexCount;
 
-			Vector3[] vertices = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.mesh.vertices, pb.SelectedTriangles) : pb.mesh.vertices;
-			Vector3[] normals  = selectedOnly ? pb_Util.ValuesWithIndices<Vector3>(pb.mesh.normals, pb.SelectedTriangles) : pb.mesh.normals;
-			Vector4[] tangents = selectedOnly ? pb_Util.ValuesWithIndices<Vector4>(pb.mesh.tangents, pb.SelectedTriangles) : pb.mesh.tangents;
+			Vector3[] vertices = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.vertices, pb.SelectedTriangles) : pb.mesh.vertices;
+			Vector3[] normals  = selectedOnly ? InternalUtility.ValuesWithIndices<Vector3>(pb.mesh.normals, pb.SelectedTriangles) : pb.mesh.normals;
+			Vector4[] tangents = selectedOnly ? InternalUtility.ValuesWithIndices<Vector4>(pb.mesh.tangents, pb.SelectedTriangles) : pb.mesh.tangents;
 
 			Matrix4x4 matrix = pb.transform.localToWorldMatrix;
 

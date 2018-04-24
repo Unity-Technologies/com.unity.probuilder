@@ -332,7 +332,7 @@ namespace UnityEditor.ProBuilder
 			if(selected == null || selected.Length < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Object Normals");
+			UndoUtility.RecordSelection(InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Object Normals");
 
 			foreach(ProBuilderMesh pb in selected)
 			{
@@ -353,12 +353,12 @@ namespace UnityEditor.ProBuilder
 			if(selected == null || selected.Length < 1)
 				return ActionResult.NoSelection;
 
-			UndoUtility.RecordSelection(pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Face Normals");
+			UndoUtility.RecordSelection(InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms), "Flip Face Normals");
 
 			int c = 0;
 			int faceCount = ProBuilderEditor.instance.selectedFaceCount;
 
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				if( pb.SelectedFaceCount < 1 && faceCount < 1 )
 				{
@@ -646,7 +646,7 @@ namespace UnityEditor.ProBuilder
 			if(!angleGrow && !iterative)
 				iterative = true;
 
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				int previousTriCount = pb.SelectedTriangleCount;
 
@@ -864,7 +864,7 @@ namespace UnityEditor.ProBuilder
 
 			bool success = false;
 
-			foreach(ProBuilderMesh pb in pb_Util.GetComponents<ProBuilderMesh>(Selection.transforms))
+			foreach(ProBuilderMesh pb in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
 			{
 				Edge[] edges = pb_MeshUtils.GetEdgeRing(pb, pb.SelectedEdges).ToArray();
 
@@ -1453,14 +1453,14 @@ namespace UnityEditor.ProBuilder
 				pb.ToMesh();
 
 				Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
-				List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb);
+				List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
 				HashSet<int> common = IntArrayUtility.GetCommonIndices(lookup, indices);
-				List<List<pb_WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
+				List<List<WingedEdge>> holes = pb_AppendPolygon.FindHoles(wings, common);
 
 				HashSet<Face> faces = new HashSet<Face>();
 				List<Face> adjacent = new List<Face>();
 
-				foreach(List<pb_WingedEdge> hole in holes)
+				foreach(List<WingedEdge> hole in holes)
 				{
 					List<int> holeIndices;
 
@@ -1481,7 +1481,7 @@ namespace UnityEditor.ProBuilder
 					}
 					else
 					{
-						IEnumerable<pb_WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
+						IEnumerable<WingedEdge> selected = hole.Where(x => common.Contains(x.edge.common.x));
 						holeIndices = selected.Select(x => x.edge.local.x).ToList();
 						res = pb_AppendPolygon.CreatePolygon(pb, holeIndices, true, out face);
 
@@ -1499,22 +1499,22 @@ namespace UnityEditor.ProBuilder
 
 				pb.SetSelectedFaces(faces);
 
-				wings = pb_WingedEdge.GetWingedEdges(pb, adjacent);
+				wings = WingedEdge.GetWingedEdges(pb, adjacent);
 
 				// make sure the appended faces match the first adjacent face found
 				// both in winding and face properties
-				foreach(pb_WingedEdge wing in wings)
+				foreach(WingedEdge wing in wings)
 				{
 					if( faces.Contains(wing.face) )
 					{
 						faces.Remove(wing.face);
 
-						foreach(pb_WingedEdge p in wing)
+						foreach(WingedEdge p in wing)
 						{
 							if(p.opposite != null)
 							{
 								p.face.material = p.opposite.face.material;
-								p.face.uv = new pb_UV(p.opposite.face.uv);
+								p.face.uv = new AutoUnwrapSettings(p.opposite.face.uv);
 								pb_ConformNormals.ConformOppositeNormal(p.opposite);
 								break;
 							}

@@ -17,12 +17,12 @@ namespace UnityEngine.ProBuilder
 		/// <returns>A Vector3[] containing all vertex points in world space.</returns>
 		public static Vector3[] VerticesInWorldSpace(this ProBuilderMesh mesh)
 		{
-			Vector3[] worldPoints = new Vector3[mesh.positions.Length];
+			int len = mesh.vertexCount;
+			Vector3[] worldPoints = new Vector3[len];
+			Vector3[] localPoints = mesh.positions;
 
-			System.Array.Copy(mesh.positions, worldPoints, worldPoints.Length);
-
-			for(int i = 0; i < worldPoints.Length; i++)
-				worldPoints[i] = mesh.transform.TransformPoint(worldPoints[i]);
+			for(int i = 0; i < len; i++)
+				worldPoints[i] = mesh.transform.TransformPoint(localPoints[i]);
 
 			return worldPoints;
 		}
@@ -146,9 +146,9 @@ namespace UnityEngine.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="sharedIndex"></param>
 		/// <param name="vertex"></param>
-		public static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, pb_Vertex vertex)
+		public static void SetSharedVertexValues(this ProBuilderMesh pb, int sharedIndex, Vertex vertex)
 		{
-			pb_Vertex[] vertices = pb_Vertex.GetVertices(pb);
+			Vertex[] vertices = Vertex.GetVertices(pb);
 
 			int[] array = pb.sharedIndices[sharedIndex].array;
 

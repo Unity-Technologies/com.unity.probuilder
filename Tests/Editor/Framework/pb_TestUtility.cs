@@ -209,8 +209,8 @@ namespace ProBuilder.Test
 			Assert.AreEqual(vertexCount, right.vertexCount);
 			Assert.AreEqual(subMeshCount, right.subMeshCount);
 
-			pb_Vertex[] leftVertices = pb_Vertex.GetVertices(left);
-			pb_Vertex[] rightVertices = pb_Vertex.GetVertices(right);
+			Vertex[] leftVertices = Vertex.GetVertices(left);
+			Vertex[] rightVertices = Vertex.GetVertices(right);
 
 			for (int i = 0; i < vertexCount; i++)
 				Assert.AreEqual(leftVertices[i], rightVertices[i]);

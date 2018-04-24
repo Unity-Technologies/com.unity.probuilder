@@ -42,7 +42,7 @@ namespace ProBuilder.MeshOperations
 			if(faces == null || faces.Length < 1)
 				return false;
 
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 			int sharedIndexMax = pb.sharedIndices.Length;
 			int sharedIndexOffset = 0;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -83,12 +83,12 @@ namespace ProBuilder.MeshOperations
 					lookup.Add(vc + 2, lookup[x]);
 					lookup.Add(vc + 3, lookup[y]);
 
-					pb_Vertex xx = new pb_Vertex(vertices[x]), yy = new pb_Vertex(vertices[y]);
+					Vertex xx = new Vertex(vertices[x]), yy = new Vertex(vertices[y]);
 					xx.position += delta;
 					yy.position += delta;
 
-					vertices.Add( new pb_Vertex(vertices[x]) );
-					vertices.Add( new pb_Vertex(vertices[y]) );
+					vertices.Add( new Vertex(vertices[x]) );
+					vertices.Add( new Vertex(vertices[y]) );
 
 					vertices.Add( xx );
 					vertices.Add( yy );
@@ -96,7 +96,7 @@ namespace ProBuilder.MeshOperations
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2}, // indices
 						face.material,							// material
-						new pb_UV(face.uv),						// UV material
+						new AutoUnwrapSettings(face.uv),						// UV material
 						face.smoothingGroup,					// smoothing group
 						-1,										// texture group
 						-1,										// uv element group
@@ -139,7 +139,7 @@ namespace ProBuilder.MeshOperations
 			if(faces == null || faces.Length < 1)
 				return false;
 
-			List<pb_Vertex> vertices = new List<pb_Vertex>(pb_Vertex.GetVertices(pb));
+			List<Vertex> vertices = new List<Vertex>(Vertex.GetVertices(pb));
 			int sharedIndexMax = pb.sharedIndices.Length;
 			int sharedIndexOffset = 0;
 			Dictionary<int, int> lookup = pb.sharedIndices.ToDictionary();
@@ -156,7 +156,7 @@ namespace ProBuilder.MeshOperations
 			// key[shared index], value[normal count, normal sum]
 			Dictionary<int, SimpleTuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, SimpleTuple<Vector3, Vector3,List<int>>>();
 
-			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true, lookup);
+			List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb, faces, true, lookup);
 			List<HashSet<Face>> groups = GetFaceGroups(wings);
 
 			foreach(HashSet<Face> group in groups)
@@ -216,8 +216,8 @@ namespace ProBuilder.MeshOperations
 					delayPosition.Add(vc + 2, x);
 					delayPosition.Add(vc + 3, y);
 
-					vertices.Add( new pb_Vertex(vertices[x]) );
-					vertices.Add( new pb_Vertex(vertices[y]) );
+					vertices.Add( new Vertex(vertices[x]) );
+					vertices.Add( new Vertex(vertices[y]) );
 
 					// extruded edge will be positioned later
 					vertices.Add( null );
@@ -226,7 +226,7 @@ namespace ProBuilder.MeshOperations
 					Face bridge = new Face(
 						new int[6] { vc + 0, vc + 1, vc + 2, vc + 1, vc + 3, vc + 2 }, 	// indices
 						face.material,													// material
-						new pb_UV(face.uv),												// UV material
+						new AutoUnwrapSettings(face.uv),												// UV material
 						face.smoothingGroup,											// smoothing group
 						-1,																// texture group
 						-1,																// uv element group
@@ -297,7 +297,7 @@ namespace ProBuilder.MeshOperations
 			}
 
 			foreach(var kvp in delayPosition)
-				vertices[kvp.Key] = new pb_Vertex(vertices[kvp.Value]);
+				vertices[kvp.Key] = new Vertex(vertices[kvp.Value]);
 
 			pb.SetVertices(vertices);
 			pb.SetFaces(newFaces.ToArray());
@@ -307,12 +307,12 @@ namespace ProBuilder.MeshOperations
 			return true;
 		}
 
-		static List<HashSet<Face>> GetFaceGroups(List<pb_WingedEdge> wings)
+		static List<HashSet<Face>> GetFaceGroups(List<WingedEdge> wings)
 		{
 			HashSet<Face> used = new HashSet<Face>();
 			List<HashSet<Face>> groups = new List<HashSet<Face>>();
 
-			foreach(pb_WingedEdge wing in wings)
+			foreach(WingedEdge wing in wings)
 			{
 				if(used.Add(wing.face))
 				{
@@ -452,7 +452,7 @@ namespace ProBuilder.MeshOperations
 						pb.colors[ edge.y ]
 					},
 					new Vector2[4],
-					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new pb_UV(), 0, -1, -1, false ),
+					new Face( new int[6] {2, 1, 0, 2, 3, 1 }, face.material, new AutoUnwrapSettings(), 0, -1, -1, false ),
 					new int[4] { x_sharedIndex, y_sharedIndex, -1, -1 });
 
 				newEdges.Add(new Edge(newFace.indices[3], newFace.indices[4]));
