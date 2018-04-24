@@ -31,13 +31,13 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static WindingOrder GetWindingOrder(this ProBuilderMesh pb, Face face)
 		{
-			Vector2[] p = pb_Projection.PlanarProject(pb, face);
+			Vector2[] p = Projection.PlanarProject(pb, face);
 			return GetWindingOrder(p);
 		}
 
 		static WindingOrder GetWindingOrder(IList<pb_Vertex> vertices, IList<int> indices)
 		{
-			Vector2[] p = pb_Projection.PlanarProject(vertices, indices);
+			Vector2[] p = Projection.PlanarProject(vertices, indices);
 			return GetWindingOrder(p);
 		}
 

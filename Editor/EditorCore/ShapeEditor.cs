@@ -111,7 +111,7 @@ namespace UnityEditor.ProBuilder
 		[MenuItem("GameObject/3D Object/" + PreferenceKeys.pluginTitle + " Cube _%k")]
 		public static void MenuCreateCube()
 		{
-			ProBuilderMesh pb = pb_ShapeGenerator.CubeGenerator(Vector3.one);
+			ProBuilderMesh pb = ShapeGenerator.CubeGenerator(Vector3.one);
 			UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 			Material mat = PreferencesInternal.GetMaterial(PreferenceKeys.pbDefaultMaterial);
@@ -237,7 +237,7 @@ namespace UnityEditor.ProBuilder
 			if(cubeSize.y <= 0) cubeSize.y = .01f;
 			if(cubeSize.z <= 0) cubeSize.z = .01f;
 
-			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) ) SetPreviewObject(pb_ShapeGenerator.CubeGenerator(cubeSize));
+			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) ) SetPreviewObject(ShapeGenerator.CubeGenerator(cubeSize));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = k_ColorGreen;
@@ -246,7 +246,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.CubeGenerator(cubeSize);
+				ProBuilderMesh pb = ShapeGenerator.CubeGenerator(cubeSize);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( m_DefaultMaterial ) pb.SetFaceMaterial(pb.faces, m_DefaultMaterial );
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 				SetPreviewObject(
-					 pb_ShapeGenerator.PlaneGenerator(
+					 ShapeGenerator.PlaneGenerator(
 					 	1,
 					 	1,
 					 	0,
@@ -294,7 +294,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.PlaneGenerator(
+				ProBuilderMesh pb = ShapeGenerator.PlaneGenerator(
 					 	1,
 					 	1,
 					 	0,
@@ -334,7 +334,7 @@ namespace UnityEditor.ProBuilder
 			if(prismSize.y < 0) prismSize.y = 0.01f;
 			if(prismSize.z < 0) prismSize.z = 0.01f;
 
-			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) ) SetPreviewObject(pb_ShapeGenerator.PrismGenerator(prismSize));
+			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) ) SetPreviewObject(ShapeGenerator.PrismGenerator(prismSize));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = k_ColorGreen;
@@ -343,7 +343,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.PrismGenerator(prismSize);
+				ProBuilderMesh pb = ShapeGenerator.PrismGenerator(prismSize);
 
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
@@ -403,7 +403,7 @@ namespace UnityEditor.ProBuilder
 			{
 				if(stair_cirumference > 0f)
 				{
-					SetPreviewObject(pb_ShapeGenerator.CurvedStairGenerator(
+					SetPreviewObject(ShapeGenerator.CurvedStairGenerator(
 						stair_size.x,
 						stair_size.y,
 						stair_size.z,
@@ -413,7 +413,7 @@ namespace UnityEditor.ProBuilder
 				}
 				else
 				{
-					SetPreviewObject(pb_ShapeGenerator.StairGenerator(
+					SetPreviewObject(ShapeGenerator.StairGenerator(
 						stair_size,
 						stair_steps,
 						stair_sides));
@@ -428,14 +428,14 @@ namespace UnityEditor.ProBuilder
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
 				ProBuilderMesh pb = stair_cirumference > 0f ?
-					pb_ShapeGenerator.CurvedStairGenerator(
+					ShapeGenerator.CurvedStairGenerator(
 						stair_size.x,
 						stair_size.y,
 						stair_size.z,
 						stair_mirror ? -stair_cirumference : stair_cirumference,
 						stair_steps,
 						stair_sides) :
-					pb_ShapeGenerator.StairGenerator(
+					ShapeGenerator.StairGenerator(
 						stair_size,
 						stair_steps,
 						stair_sides);
@@ -491,7 +491,7 @@ namespace UnityEditor.ProBuilder
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 			{
 				SetPreviewObject(
-					pb_ShapeGenerator.CylinderGenerator(
+					ShapeGenerator.CylinderGenerator(
 					cyl_axisCuts,
 					cyl_radius,
 					cyl_height,
@@ -507,7 +507,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
+				ProBuilderMesh pb = ShapeGenerator.CylinderGenerator(cyl_axisCuts, cyl_radius, cyl_height, cyl_heightCuts, cyl_smoothing ? 1 : -1);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				int centerIndex = (cyl_axisCuts*(cyl_heightCuts+1)*4)+1;
@@ -556,7 +556,7 @@ namespace UnityEditor.ProBuilder
 			door_legWidth = Mathf.Clamp(door_legWidth, 0.01f, 2.0f);
 
 			if (m_ShowPreview && (GUI.changed || m_DoInitPreview))
-				SetPreviewObject(pb_ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth));
+				SetPreviewObject(ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = k_ColorGreen;
@@ -565,7 +565,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
+				ProBuilderMesh pb = ShapeGenerator.DoorGenerator(door_totalWidth, door_totalHeight, door_ledgeHeight, door_legWidth, door_depth);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( m_DefaultMaterial ) pb.SetFaceMaterial(pb.faces, m_DefaultMaterial );
@@ -614,7 +614,7 @@ namespace UnityEditor.ProBuilder
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 				SetPreviewObject(
-					 pb_ShapeGenerator.PlaneGenerator(
+					 ShapeGenerator.PlaneGenerator(
 					 	plane_height,
 					 	plane_width,
 					 	plane_height_cuts,
@@ -628,7 +628,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis);
+				ProBuilderMesh pb = ShapeGenerator.PlaneGenerator(plane_height, plane_width, plane_height_cuts, plane_width_cuts, plane_axis);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				if( m_DefaultMaterial ) pb.SetFaceMaterial(pb.faces, m_DefaultMaterial );
@@ -674,7 +674,7 @@ namespace UnityEditor.ProBuilder
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 				SetPreviewObject(
-					 pb_ShapeGenerator.PipeGenerator(
+					 ShapeGenerator.PipeGenerator(
 					 	pipe_radius,
 						pipe_height,
 						pipe_thickness,
@@ -689,7 +689,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.PipeGenerator(
+				ProBuilderMesh pb = ShapeGenerator.PipeGenerator(
 					 	pipe_radius,
 						pipe_height,
 						pipe_thickness,
@@ -737,7 +737,7 @@ namespace UnityEditor.ProBuilder
 
 			if( m_ShowPreview && (GUI.changed || m_DoInitPreview) )
 				SetPreviewObject(
-					 pb_ShapeGenerator.ConeGenerator(
+					 ShapeGenerator.ConeGenerator(
 					 	cone_radius,
 						cone_height,
 						cone_subdivAxis
@@ -750,7 +750,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.ConeGenerator(
+				ProBuilderMesh pb = ShapeGenerator.ConeGenerator(
 					 	cone_radius,
 						cone_height,
 						cone_subdivAxis
@@ -817,7 +817,7 @@ namespace UnityEditor.ProBuilder
 				arch_radialCuts = System.Math.Max(3, arch_radialCuts);
 
 		  	if (m_ShowPreview && (GUI.changed || m_DoInitPreview))
-				SetPreviewObject( pb_ShapeGenerator.ArchGenerator(	arch_angle,
+				SetPreviewObject( ShapeGenerator.ArchGenerator(	arch_angle,
 																	arch_radius,
 																	Mathf.Clamp(arch_width, 0.01f, arch_radius),
 																	arch_depth,
@@ -835,7 +835,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.ArchGenerator(
+				ProBuilderMesh pb = ShapeGenerator.ArchGenerator(
 					arch_angle,
 					arch_radius,
 					Mathf.Clamp(arch_width, 0.01f, arch_radius),
@@ -884,7 +884,7 @@ namespace UnityEditor.ProBuilder
 			ico_subdivisions = (int) EditorGUILayout.Slider("Subdivisions", ico_subdivisions, 0, 4);
 
 			if (m_ShowPreview && ((t_ico_subdivisions != ico_subdivisions || t_ico_radius != ico_radius) || m_DoInitPreview))
-				SetPreviewObject(pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions, false));
+				SetPreviewObject(ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions, false));
 
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = k_ColorGreen;
@@ -893,7 +893,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
+				ProBuilderMesh pb = ShapeGenerator.IcosahedronGenerator(ico_radius, ico_subdivisions);
 				UndoUtility.RegisterCreatedObjectUndo(pb.gameObject, "Create Shape");
 
 				// // To keep the preview snappy, shared indices aren't built in IcosahadreonGenerator
@@ -975,7 +975,7 @@ namespace UnityEditor.ProBuilder
 			torus_smooth = EditorGUILayout.Toggle("Smooth", torus_smooth);
 
 			if (m_ShowPreview && (EditorGUI.EndChangeCheck() || m_DoInitPreview))
-				SetPreviewObject(pb_ShapeGenerator.TorusGenerator(
+				SetPreviewObject(ShapeGenerator.TorusGenerator(
 					torus_rows,
 					torus_colums,
 					torus_radius,
@@ -992,7 +992,7 @@ namespace UnityEditor.ProBuilder
 
 			if (GUILayout.Button("Build " + m_CurrentShape, GUILayout.MinHeight(28)))
 			{
-				ProBuilderMesh pb = pb_ShapeGenerator.TorusGenerator(
+				ProBuilderMesh pb = ShapeGenerator.TorusGenerator(
 					torus_rows,
 					torus_colums,
 					torus_radius,
@@ -1124,10 +1124,10 @@ namespace UnityEditor.ProBuilder
 			}
 
 			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
+				pb.transform.position = Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
+				pb.transform.position = Snap.SnapValue(pb.transform.position, 1f);
 
 			// Remove pb_Object
 			Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy( pb.mesh );

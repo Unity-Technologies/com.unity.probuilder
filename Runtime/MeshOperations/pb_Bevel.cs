@@ -25,7 +25,7 @@ namespace ProBuilder.MeshOperations
 			HashSet<int> 					slide 	= new HashSet<int>();
 			int beveled = 0;
 
-			Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>>();
+			Dictionary<int, List<SimpleTuple<FaceRebuildData, List<int>>>> holes = new Dictionary<int, List<SimpleTuple<FaceRebuildData, List<int>>>>();
 
 			// test every edge that will be moved along to make sure the bevel distance is appropriate.  if it's not, adjust the max bevel amount
 			// to suit.
@@ -92,7 +92,7 @@ namespace ProBuilder.MeshOperations
 			// then add holes later
 			createdFaces = new List<Face>(appendFaces.Select(x => x.face));
 
-			Dictionary<Face, List<pb_Tuple<pb_WingedEdge, int>>> sorted = new Dictionary<Face, List<pb_Tuple<pb_WingedEdge, int>>>();
+			Dictionary<Face, List<SimpleTuple<pb_WingedEdge, int>>> sorted = new Dictionary<Face, List<SimpleTuple<pb_WingedEdge, int>>>();
 
 			// sort the adjacent but affected faces into winged edge groups where each group contains a set of
 			// unique winged edges pointing to the same face
@@ -107,12 +107,12 @@ namespace ProBuilder.MeshOperations
 					if(!used.Add(match.face))
 						continue;
 
-					sorted.AddOrAppend(match.face, new pb_Tuple<pb_WingedEdge, int>(match, c));
+					sorted.AddOrAppend(match.face, new SimpleTuple<pb_WingedEdge, int>(match, c));
 				}
 			}
 
 			// now go through those sorted faces and apply the vertex exploding, keeping track of any holes created
-			foreach(KeyValuePair<Face, List<pb_Tuple<pb_WingedEdge, int>>> kvp in sorted)
+			foreach(KeyValuePair<Face, List<SimpleTuple<pb_WingedEdge, int>>> kvp in sorted)
 			{
 				// common index & list of vertices it was split into
 				Dictionary<int, List<int>> appendedVertices;
@@ -128,7 +128,7 @@ namespace ProBuilder.MeshOperations
 				{
 					// organize holes by new face so that later we can compare the winding of the new face to the hole face
 					// holes are sorted by key: common index value: face, vertex list
-					holes.AddOrAppend(apv.Key, new pb_Tuple<FaceRebuildData, List<int>>(f, apv.Value));
+					holes.AddOrAppend(apv.Key, new SimpleTuple<FaceRebuildData, List<int>>(f, apv.Value));
 				}
 			}
 
@@ -143,20 +143,20 @@ namespace ProBuilder.MeshOperations
 			List<HashSet<int>> holesCommonIndices = new List<HashSet<int>>();
 
 			// offset the indices of holes and cull any potential holes that are less than 3 indices (not a hole :)
-			foreach(KeyValuePair<int, List<pb_Tuple<FaceRebuildData, List<int>>>> hole in holes)
+			foreach(KeyValuePair<int, List<SimpleTuple<FaceRebuildData, List<int>>>> hole in holes)
 			{
 				// less than 3 indices in hole path; ain't a hole
-				if(hole.Value.Sum(x => x.Item2.Count) < 3)
+				if(hole.Value.Sum(x => x.item2.Count) < 3)
 					continue;
 
 				HashSet<int> holeCommon = new HashSet<int>();
 
-				foreach(pb_Tuple<FaceRebuildData, List<int>> path in hole.Value)
+				foreach(SimpleTuple<FaceRebuildData, List<int>> path in hole.Value)
 				{
-					int offset = path.Item1.Offset() - removed;
+					int offset = path.item1.Offset() - removed;
 
-					for(int i = 0; i < path.Item2.Count; i++)
-						holeCommon.Add(lookup[path.Item2[i] + offset]);
+					for(int i = 0; i < path.item2.Count; i++)
+						holeCommon.Add(lookup[path.item2[i] + offset]);
 				}
 
 				holesCommonIndices.Add(holeCommon);
@@ -240,7 +240,7 @@ namespace ProBuilder.MeshOperations
  			IList<pb_Vertex> vertices,
  			pb_WingedEdge left,
  			pb_WingedEdge right,
- 			Dictionary<int, List<pb_Tuple<FaceRebuildData, List<int>>>> holes)
+ 			Dictionary<int, List<SimpleTuple<FaceRebuildData, List<int>>>> holes)
  		{
  			List<FaceRebuildData> faces = new List<FaceRebuildData>();
 
@@ -276,8 +276,8 @@ namespace ProBuilder.MeshOperations
 
  			faces.Add(rf);
 
- 			holes.AddOrAppend(a.common.x, new pb_Tuple<FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
- 			holes.AddOrAppend(a.common.y, new pb_Tuple<FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
+ 			holes.AddOrAppend(a.common.x, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 0, 2 }));
+ 			holes.AddOrAppend(a.common.y, new SimpleTuple<FaceRebuildData, List<int>>(rf, new List<int>() { 1, 3 }));
 
  			return faces;
  		}

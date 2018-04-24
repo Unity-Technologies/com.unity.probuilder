@@ -92,7 +92,7 @@ namespace UnityEditor.ProBuilder
 
 				foreach (KeyValuePair<int, List<Face>> smoothGroup in groups)
 				{
-					if (smoothGroup.Key > pb_Smoothing.SMOOTHING_GROUP_NONE)
+					if (smoothGroup.Key > Smoothing.smoothingGroupNone)
 					{
 						Color32 color = GetDistinctColor(smoothGroup.Key);
 						groupColors.Add(smoothGroup.Key, color);
@@ -556,20 +556,20 @@ namespace UnityEditor.ProBuilder
 
 					if (GUILayout.Button(m_BreakSmoothingContent,
 						UI.EditorStyles.buttonStyle))
-						SetGroup(pb, pb_Smoothing.SMOOTHING_GROUP_NONE);
+						SetGroup(pb, Smoothing.smoothingGroupNone);
 
 					GUILayout.EndHorizontal();
 
-					bool isMixedSelection = data.selected.Contains(pb_Smoothing.SMOOTHING_GROUP_NONE);
+					bool isMixedSelection = data.selected.Contains(Smoothing.smoothingGroupNone);
 
 					if (data.isVisible)
 					{
 						int column = 0;
-						bool anySmoothGroups = data.groups.Any(x => x.Key > pb_Smoothing.SMOOTHING_GROUP_NONE);
+						bool anySmoothGroups = data.groups.Any(x => x.Key > Smoothing.smoothingGroupNone);
 
 						GUILayout.BeginHorizontal();
 
-						for (int i = 1; i < pb_Smoothing.SMOOTH_RANGE_MAX; i++)
+						for (int i = 1; i < Smoothing.smoothRangeMax; i++)
 						{
 							bool isSelected = data.selected.Contains(i);
 

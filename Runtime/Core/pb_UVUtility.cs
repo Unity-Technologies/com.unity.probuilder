@@ -10,9 +10,9 @@ namespace UnityEngine.ProBuilder
 
 		public static void PlanarMap2(Vector3[] verts, Vector2[] uvs, int[] indices, pb_UV uvSettings, Vector3 normal)
 		{
-			ProjectionAxis projectionAxis = pb_Projection.VectorToProjectionAxis(normal);
+			ProjectionAxis projectionAxis = Projection.VectorToProjectionAxis(normal);
 
-			pb_Projection.PlanarProject(verts, uvs, indices, normal, projectionAxis);
+			Projection.PlanarProject(verts, uvs, indices, normal, projectionAxis);
 
 			ApplyUVSettings(uvs, indices, uvSettings);
 		}

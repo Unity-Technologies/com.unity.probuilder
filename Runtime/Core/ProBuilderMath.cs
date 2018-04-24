@@ -663,7 +663,7 @@ namespace UnityEngine.ProBuilder
 
 			if(face.indices.Length > 7)
 			{
-				Vector3 prj = pb_Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
+				Vector3 prj = Projection.FindBestPlane(_vertices, face.distinctIndices).normal;
 
 				if(Vector3.Dot(nrm, prj) < 0f)
 				{

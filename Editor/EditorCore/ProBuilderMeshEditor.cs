@@ -86,7 +86,7 @@ namespace UnityEditor.ProBuilder
 
 						ipb.ToMesh();
 
-						ipb.TranslateVertices_World(ipb.SelectedTriangles, offset);
+						ipb.TranslateVerticesInWorldSpace(ipb.SelectedTriangles, offset);
 
 						ipb.Refresh();
 						ipb.Optimize();

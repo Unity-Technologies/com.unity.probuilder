@@ -126,7 +126,7 @@ namespace ProBuilder.MeshOperations
 			nrm /= (float)faces.Length;
 
 			/* project uv coordinates */
-			Vector2[] uvs = pb_Projection.PlanarProject(pb_Util.ValuesWithIndices(pb.positions, ind), nrm);
+			Vector2[] uvs = Projection.PlanarProject(pb_Util.ValuesWithIndices(pb.positions, ind), nrm);
 
 			/* re-assign new projected coords back into full uv array */
 			Vector2[] rebuiltUVs = pb.uv;
@@ -201,7 +201,7 @@ namespace ProBuilder.MeshOperations
 			for(int i = 0; i < faces.Length; i++)
 			{
 				Vector3 nrm = ProBuilderMath.Normal(pb, faces[i]);
-				ProjectionAxis axis = pb_Projection.VectorToProjectionAxis(nrm);
+				ProjectionAxis axis = Projection.VectorToProjectionAxis(nrm);
 
 				if(sorted.ContainsKey(axis))
 				{
@@ -221,7 +221,7 @@ namespace ProBuilder.MeshOperations
 			{
 				int[] distinct = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
-				Vector2[] uvs = pb_Projection.PlanarProject( pb.positions.ValuesWithIndices(distinct), pb_Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
+				Vector2[] uvs = Projection.PlanarProject( pb.positions.ValuesWithIndices(distinct), Projection.ProjectionAxisToVector(kvp.Key), kvp.Key );
 
 				for(int n = 0; n < distinct.Length; n++)
 					uv[distinct[n]] = uvs[n];
@@ -249,7 +249,7 @@ namespace ProBuilder.MeshOperations
 
 			SplitUVs(pb, indices);
 
-			Vector2[] projected = pb_Projection.SphericalProject(pb.positions, indices);
+			Vector2[] projected = Projection.SphericalProject(pb.positions, indices);
 
 			Vector2[] uv = pb.uv;
 
@@ -428,7 +428,7 @@ namespace ProBuilder.MeshOperations
 		 * Only points[0, target.Length] coordinates are used in the matching process - points[target.Length, points.Length]
 		 * are just along for the ride.
 		 */
-		public static pb_Transform2D MatchCoordinates(Vector2[] points, Vector2[] target)
+		public static Transform2D MatchCoordinates(Vector2[] points, Vector2[] target)
 		{
 			int length = points.Length < target.Length ? points.Length : target.Length;
 
@@ -459,7 +459,7 @@ namespace ProBuilder.MeshOperations
 			// for(int i = 0; i < points.Length; i++)
 			// 	transformed[i] = transformed[i].ScaleAroundPoint(t_bounds.center, scale);
 
-			return new pb_Transform2D(translation, angle, scale);
+			return new Transform2D(translation, angle, scale);
 		}
 
 		/**
@@ -488,7 +488,7 @@ namespace ProBuilder.MeshOperations
 
 				for(int i = 0; i < faces.Length; i++)
 				{
-					pb_Transform2D transform = MatchCoordinates(pb.uv.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
+					Transform2D transform = MatchCoordinates(pb.uv.ValuesWithIndices(faces[i].distinctIndices), uv_origins[i]);
 
 					faces[i].uv.offset = -transform.position;
 					faces[i].uv.rotation = transform.rotation;

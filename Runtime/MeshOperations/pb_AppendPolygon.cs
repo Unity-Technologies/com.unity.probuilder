@@ -57,7 +57,7 @@ namespace ProBuilder.MeshOperations
 		/// </summary>
 		/// <param name="poly"></param>
 		/// <returns>An action result indicating the status of the operation.</returns>
-		internal static ActionResult CreateShapeFromPolygon(this pb_PolyShape poly)
+		internal static ActionResult CreateShapeFromPolygon(this PolyShape poly)
 		{
 			return poly.mesh.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 		}
@@ -238,7 +238,7 @@ namespace ProBuilder.MeshOperations
 						break;
 				}
 
-				List<pb_Tuple<int, int>> splits = new List<pb_Tuple<int, int>>();
+				List<SimpleTuple<int, int>> splits = new List<SimpleTuple<int, int>>();
 
 				// check previous wings for y == x (closed loop).
 				for(int n = 0; n < hole.Count; n++)
@@ -249,7 +249,7 @@ namespace ProBuilder.MeshOperations
 					{
 						if( wing.edge.common.y == hole[p].edge.common.x )
 						{
-							splits.Add( new pb_Tuple<int, int>(p, n) );
+							splits.Add( new SimpleTuple<int, int>(p, n) );
 							break;
 						}
 					}
@@ -279,7 +279,7 @@ namespace ProBuilder.MeshOperations
 
 				int splitCount = splits.Count;
 
-				splits.Sort( (x, y) => x.Item1.CompareTo(y.Item1) );
+				splits.Sort( (x, y) => x.item1.CompareTo(y.item1) );
 
 				int[] shift = new int[splitCount];
 
@@ -287,7 +287,7 @@ namespace ProBuilder.MeshOperations
 
 				for(int n = splitCount - 1; n > -1; n--)
 				{
-					int x = splits[n].Item1, y = splits[n].Item2 - shift[n];
+					int x = splits[n].item1, y = splits[n].item2 - shift[n];
 					int range = (y - x) + 1;
 
 					List<pb_WingedEdge> section = hole.GetRange(x, range);
@@ -295,7 +295,7 @@ namespace ProBuilder.MeshOperations
 					hole.RemoveRange(x, range);
 
 					for(int m = n - 1; m > -1; m--)
-						if(splits[m].Item2 > splits[n].Item2)
+						if(splits[m].item2 > splits[n].item2)
 							shift[m] += range;
 
 					// verify that this path has at least one index that was asked for

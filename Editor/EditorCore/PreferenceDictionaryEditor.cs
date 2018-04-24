@@ -6,17 +6,17 @@ using UnityEditor.IMGUI.Controls;
 
 namespace UnityEditor.ProBuilder
 {
-	[CustomEditor(typeof(pb_PreferenceDictionary))]
+	[CustomEditor(typeof(PreferenceDictionary))]
 	class PreferenceDictionaryEditor : UnityEditor.Editor
 	{
-		pb_PreferenceDictionary m_Preferences = null;
+		PreferenceDictionary m_Preferences = null;
 		Vector2 m_Scroll = Vector2.zero;
 		SearchField m_Search;
 		string m_SearchText;
 
 		void OnEnable()
 		{
-			m_Preferences = target as pb_PreferenceDictionary;
+			m_Preferences = target as PreferenceDictionary;
 			m_Search = new SearchField();
 			m_SearchText = "";
 		}

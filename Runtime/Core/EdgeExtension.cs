@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="edge"></param>
 		/// <param name="validEdge"></param>
 		/// <returns></returns>
-		public static bool ValidateEdge(ProBuilderMesh pb, Edge edge, out pb_Tuple<Face, Edge> validEdge)
+		public static bool ValidateEdge(ProBuilderMesh pb, Edge edge, out SimpleTuple<Face, Edge> validEdge)
 		{
 			Face[] faces = pb.faces;
 			IntArray[] sharedIndices = pb.sharedIndices;
@@ -74,7 +74,7 @@ namespace UnityEngine.ProBuilder
 					int x = faces[i].distinctIndices[dist_x];
 					int y = faces[i].distinctIndices[dist_y];
 
-					validEdge = new pb_Tuple<Face, Edge>(faces[i], new Edge(x, y));
+					validEdge = new SimpleTuple<Face, Edge>(faces[i], new Edge(x, y));
 					return true;
 				}
 			}

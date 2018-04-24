@@ -103,28 +103,28 @@ namespace UnityEditor.ProBuilder
 			LoadPreferencesObject();
 		}
 
-		static pb_PreferenceDictionary s_Preferences = null;
+		static PreferenceDictionary s_Preferences = null;
 
 		static void LoadPreferencesObject()
 		{
 			string preferencesPath = FileUtil.GetLocalDataDirectory() + k_PrefsAssetName;
 
 			// First try loading at the local files directory
-			s_Preferences = AssetDatabase.LoadAssetAtPath<pb_PreferenceDictionary>(preferencesPath);
+			s_Preferences = AssetDatabase.LoadAssetAtPath<PreferenceDictionary>(preferencesPath);
 
 			// If that fails, search the project for a compatible preference object
 			if (s_Preferences == null)
-				s_Preferences = FileUtil.FindAssetOfType<pb_PreferenceDictionary>();
+				s_Preferences = FileUtil.FindAssetOfType<PreferenceDictionary>();
 
 			// If that fails, create a new preferences object at the local data directory
 			if (s_Preferences == null)
-				s_Preferences = FileUtil.LoadRequired<pb_PreferenceDictionary>(preferencesPath);
+				s_Preferences = FileUtil.LoadRequired<PreferenceDictionary>(preferencesPath);
 		}
 
 		/// <summary>
 		/// Access the project local preferences asset.
 		/// </summary>
-		public static pb_PreferenceDictionary preferences
+		public static PreferenceDictionary preferences
 		{
 			get
 			{
@@ -305,11 +305,11 @@ namespace UnityEditor.ProBuilder
 		/// Retrieve stored shortcuts from preferences in an IEnumerable format.
 		/// </summary>
 		/// <returns></returns>
-		public static IEnumerable<pb_Shortcut> GetShortcuts()
+		public static IEnumerable<Shortcut> GetShortcuts()
 		{
 			return EditorPrefs.HasKey(PreferenceKeys.pbDefaultShortcuts)
-				? pb_Shortcut.ParseShortcuts(EditorPrefs.GetString(PreferenceKeys.pbDefaultShortcuts))
-				: pb_Shortcut.DefaultShortcuts();
+				? Shortcut.ParseShortcuts(EditorPrefs.GetString(PreferenceKeys.pbDefaultShortcuts))
+				: Shortcut.DefaultShortcuts();
 		}
 
 		/// <summary>

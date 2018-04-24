@@ -1285,7 +1285,7 @@ class UVEditor : EditorWindow
 
 			if(ControlKey)
 			{
-				handlePosition = pb_Snap.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snap.SnapValue(t_handlePosition, (handlePosition-t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 			}
 			else
 			{
@@ -1348,7 +1348,7 @@ class UVEditor : EditorWindow
 			Vector2 newUVPosition = t_handlePosition;
 
 			if(ControlKey)
-				newUVPosition = pb_Snap.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				newUVPosition = Snap.SnapValue(newUVPosition, (handlePosition - t_handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1448,7 +1448,7 @@ class UVEditor : EditorWindow
 			handlePosition.y += delta.y;
 
 			if(ControlKey)
-				handlePosition = pb_Snap.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
+				handlePosition = Snap.SnapValue(handlePosition, (handlePosition - handlePosition).ToMask(ProBuilderMath.handleEpsilon) * pref_gridSnapValue);
 
 			for(int n = 0; n < selection.Length; n++)
 			{
@@ -1481,7 +1481,7 @@ class UVEditor : EditorWindow
 			}
 
 			if(ControlKey)
-				uvRotation = pb_Snap.SnapValue(uvRotation, 15f);
+				uvRotation = Snap.SnapValue(uvRotation, 15f);
 
 			// Do rotation around the handle pivot in manual mode
 			if(mode == UVMode.Mixed || mode == UVMode.Manual)
@@ -1526,7 +1526,7 @@ class UVEditor : EditorWindow
 		if(rotation != uvRotation)
 		{
 			if(ControlKey)
-				rotation = pb_Snap.SnapValue(rotation, 15f);
+				rotation = Snap.SnapValue(rotation, 15f);
 
 			float delta = rotation - uvRotation;
 			uvRotation = rotation;
@@ -1580,7 +1580,7 @@ class UVEditor : EditorWindow
 		uvScale = EditorHandleUtility.ScaleHandle2d(2, UVToGUIPoint(handlePosition), uvScale, 128);
 
 		if(ControlKey)
-			uvScale = pb_Snap.SnapValue(uvScale, pref_gridSnapValue);
+			uvScale = Snap.SnapValue(uvScale, pref_gridSnapValue);
 
 		if(ProBuilderMath.Approx(uvScale.x, 0f, Mathf.Epsilon)) uvScale.x = .0001f;
 		if(ProBuilderMath.Approx(uvScale.y, 0f, Mathf.Epsilon)) uvScale.y = .0001f;
@@ -1646,7 +1646,7 @@ class UVEditor : EditorWindow
 		previousScale.y = 1f / previousScale.y;
 
 		if(ControlKey)
-			textureScale = pb_Snap.SnapValue(textureScale, pref_gridSnapValue);
+			textureScale = Snap.SnapValue(textureScale, pref_gridSnapValue);
 
 		if(!modifyingUVs)
 		{

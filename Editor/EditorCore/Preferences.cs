@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
 		static float pbUVGridSnapValue;
 		static float pbVertexHandleSize;
 
-		static pb_Shortcut[] defaultShortcuts;
+		static Shortcut[] defaultShortcuts;
 
 		[PreferenceItem(PreferenceKeys.pluginTitle)]
 		static void PreferencesGUI()
@@ -497,7 +497,7 @@ namespace UnityEditor.ProBuilder
 			PreferencesInternal.SetColor(PreferenceKeys.pbSelectedEdgeColor, pbSelectedEdgeColor, PreferenceLocation.Global);
 			PreferencesInternal.SetColor(PreferenceKeys.pbUnselectedEdgeColor, pbUnselectedEdgeColor, PreferenceLocation.Global);
 
-			PreferencesInternal.SetString(PreferenceKeys.pbDefaultShortcuts, pb_Shortcut.ShortcutsToString(defaultShortcuts), PreferenceLocation.Global);
+			PreferencesInternal.SetString(PreferenceKeys.pbDefaultShortcuts, Shortcut.ShortcutsToString(defaultShortcuts), PreferenceLocation.Global);
 			PreferencesInternal.SetMaterial(PreferenceKeys.pbDefaultMaterial, pbDefaultMaterial);
 			PreferencesInternal.SetInt(PreferenceKeys.pbDefaultCollider, (int) defaultColliderType);
 			PreferencesInternal.SetInt(PreferenceKeys.pbShadowCastingMode, (int) pbShadowCastingMode);

@@ -42,7 +42,7 @@ namespace ProBuilder.MeshOperations
 			pb.transform.position = center;
 
 			pb.ToMesh();
-			pb.TranslateVertices_World(pb.mesh.triangles, dir);
+			pb.TranslateVerticesInWorldSpace(pb.mesh.triangles, dir);
 			pb.Refresh();
 		}
 
@@ -58,7 +58,7 @@ namespace ProBuilder.MeshOperations
 			pb.transform.position = worldPosition;
 
 			pb.ToMesh();
-			pb.TranslateVertices_World(pb.mesh.triangles, offset);
+			pb.TranslateVerticesInWorldSpace(pb.mesh.triangles, offset);
 			pb.Refresh();
 		}
 
@@ -291,7 +291,7 @@ namespace ProBuilder.MeshOperations
 			// Remove smoothing and texture group flags
 			foreach(Face f in faces)
 			{
-				f.smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
+				f.smoothingGroup = Smoothing.smoothingGroupNone;
 				f.textureGroup = -1;
 			}
 
@@ -520,15 +520,15 @@ namespace ProBuilder.MeshOperations
 				Material mat = BuiltinMaterials.DefaultMaterial;
 
 				// Get material and UV stuff from the first edge face
-				pb_Tuple<Face, Edge> faceAndEdge = null;
+				SimpleTuple<Face, Edge> faceAndEdge = null;
 
 				if(!EdgeExtension.ValidateEdge(pb, a, out faceAndEdge))
 					EdgeExtension.ValidateEdge(pb, b, out faceAndEdge);
 
 				if(faceAndEdge != null)
 				{
-					uvs = new pb_UV(faceAndEdge.Item1.uv);
-					mat = faceAndEdge.Item1.material;
+					uvs = new pb_UV(faceAndEdge.item1.uv);
+					mat = faceAndEdge.item1.material;
 				}
 
 				// Bridge will form a triangle
@@ -620,7 +620,7 @@ namespace ProBuilder.MeshOperations
 				s[1] = sharedIndices.IndexOf(a.y);
 
 				Vector3 nrm = Vector3.Cross( verts[b.x]-verts[a.x], verts[a.y]-verts[a.x] ).normalized;
-				Vector2[] planed = pb_Projection.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
+				Vector2[] planed = Projection.PlanarProject( new Vector3[4] {verts[a.x], verts[a.y], verts[b.x], verts[b.y] }, nrm );
 
 				Vector2 ipoint = Vector2.zero;
 				bool intersects = ProBuilderMath.GetLineSegmentIntersect(planed[0], planed[2], planed[1], planed[3], ref ipoint);

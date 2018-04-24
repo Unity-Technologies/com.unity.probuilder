@@ -16,7 +16,7 @@ namespace UnityEngine.ProBuilder
 		// HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable
 		HideFlags SceneCameraHideFlags = (HideFlags) (1 | 4 | 8);
 
-		pb_ObjectPool<Mesh> m_Pool;
+		ObjectPool<Mesh> m_Pool;
 
 		static Mesh MeshConstructor()
 		{
@@ -35,7 +35,7 @@ namespace UnityEngine.ProBuilder
 		public override void OnEnable()
 		{
 			base.OnEnable();
-			m_Pool = new pb_ObjectPool<Mesh>(1, 8, MeshConstructor, null);
+			m_Pool = new ObjectPool<Mesh>(1, 8, MeshConstructor, null);
 		}
 
 		void OnDisable()
@@ -71,7 +71,7 @@ namespace UnityEngine.ProBuilder
 			// Because editor scripts are enabled first, pool could still be null
 			// when first request comes in.
 			if(m_Pool == null)
-				m_Pool = new pb_ObjectPool<Mesh>(1, 4, MeshConstructor, null);
+				m_Pool = new ObjectPool<Mesh>(1, 4, MeshConstructor, null);
 
 			Mesh m = m_Pool.Get();
 

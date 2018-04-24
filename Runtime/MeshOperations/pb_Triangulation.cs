@@ -18,7 +18,7 @@ namespace ProBuilder.MeshOperations
 		 */
 		public static bool SortAndTriangulate(IList<Vector2> points, out List<int> indices, bool convex = false)
 		{
-			IList<Vector2> sorted = pb_Projection.Sort(points, SortMethod.CounterClockwise);
+			IList<Vector2> sorted = Projection.Sort(points, SortMethod.CounterClockwise);
 
 			Dictionary<int, int> map = new Dictionary<int, int>();
 
@@ -62,8 +62,8 @@ namespace ProBuilder.MeshOperations
 				return true;
 			}
 
-			Vector3 normal = pb_Projection.FindBestPlane(vertices).normal;
-			Vector2[] points2d = pb_Projection.PlanarProject(vertices, normal);
+			Vector3 normal = Projection.FindBestPlane(vertices).normal;
+			Vector2[] points2d = Projection.PlanarProject(vertices, normal);
 
 			if(unordered)
 				return pb_Triangulation.SortAndTriangulate(points2d, out triangles, convex);

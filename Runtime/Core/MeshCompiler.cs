@@ -34,7 +34,7 @@ namespace UnityEngine.ProBuilder
 			if (pb.colors != null && pb.colors.Length == target.vertexCount)
 				target.colors = pb.colors;
 
-			pb_Submesh[] submeshes;
+			Submesh[] submeshes;
 
 			target.subMeshCount = Face.GetMeshIndices(pb.faces, out submeshes, preferredTopology);
 
@@ -87,7 +87,7 @@ namespace UnityEngine.ProBuilder
 				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = pb_Projection.FindBestPlane(pb.positions, indices).normal;
+					nrm = Projection.FindBestPlane(pb.positions, indices).normal;
 				else
 					nrm = ProBuilderMath.Normal(pb, kvp.Value[0]);
 

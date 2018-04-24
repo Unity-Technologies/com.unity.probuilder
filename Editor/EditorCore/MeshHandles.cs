@@ -48,9 +48,9 @@ namespace UnityEditor.ProBuilder
 
 		const HideFlags k_MeshHideFlags = (HideFlags) (1 | 2 | 4 | 8);
 
-		static pb_ObjectPool<pb_Renderable> s_RenderablePool;
-		static List<pb_Renderable> s_ActiveRenderables;
-		static List<pb_Renderable> s_WireframeRenderables;
+		static ObjectPool<Renderable> s_RenderablePool;
+		static List<Renderable> s_ActiveRenderables;
+		static List<Renderable> s_WireframeRenderables;
 
 		static bool s_IsInitialized;
 		static bool s_IsGuiInitialized;
@@ -74,9 +74,9 @@ namespace UnityEditor.ProBuilder
 		{
 			if (!s_IsInitialized)
 			{
-				s_RenderablePool = new pb_ObjectPool<pb_Renderable>(0, 8, pb_Renderable.CreateInstance, pb_Renderable.DestroyInstance);
-				s_ActiveRenderables = new List<pb_Renderable>();
-				s_WireframeRenderables = new List<pb_Renderable>();
+				s_RenderablePool = new ObjectPool<Renderable>(0, 8, Renderable.CreateInstance, Renderable.DestroyInstance);
+				s_ActiveRenderables = new List<Renderable>();
+				s_WireframeRenderables = new List<Renderable>();
 
 				float wireframeSize = PreferencesInternal.GetFloat(PreferenceKeys.pbWireframeSize);
 				float edgeSize = PreferencesInternal.GetFloat(PreferenceKeys.pbLineHandleSize);
@@ -302,9 +302,9 @@ namespace UnityEditor.ProBuilder
 		/// </summary>
 		/// <param name="pb"></param>
 		/// <returns></returns>
-		static pb_Renderable BuildFaceMesh(ProBuilderMesh pb)
+		static Renderable BuildFaceMesh(ProBuilderMesh pb)
 		{
-			pb_Renderable ren = s_RenderablePool.Get();
+			Renderable ren = s_RenderablePool.Get();
 
 			ren.name = "pb_ElementGraphics::FacesRenderable";
 			ren.transform = pb.transform;
@@ -322,7 +322,7 @@ namespace UnityEditor.ProBuilder
 		/// <param name="pb"></param>
 		/// <param name="lookup"></param>
 		/// <returns></returns>
-		static pb_Renderable BuildVertexMesh(ProBuilderMesh pb, Dictionary<int, int> lookup)
+		static Renderable BuildVertexMesh(ProBuilderMesh pb, Dictionary<int, int> lookup)
 		{
 			ushort maxBillboardCount = ushort.MaxValue / 4;
 
@@ -403,7 +403,7 @@ namespace UnityEditor.ProBuilder
 				n+=6;
 			}
 
-			pb_Renderable ren = s_RenderablePool.Get();
+			Renderable ren = s_RenderablePool.Get();
 
 			ren.name = "pb_ElementGraphics::VertexRenderable";
 			ren.transform = pb.transform;
@@ -419,7 +419,7 @@ namespace UnityEditor.ProBuilder
 			return ren;
 		}
 
-		static pb_Renderable BuildEdgeMesh(ProBuilderMesh pb, Material material)
+		static Renderable BuildEdgeMesh(ProBuilderMesh pb, Material material)
 		{
 			int edgeCount = 0;
 			int faceCount = pb.faceCount;
@@ -447,7 +447,7 @@ namespace UnityEditor.ProBuilder
 				}
 			}
 
-			pb_Renderable ren = s_RenderablePool.Get();
+			Renderable ren = s_RenderablePool.Get();
 			ren.material = material;
 			ren.name = "pb_ElementGraphics::WireframeRenderable";
 			ren.transform = pb.transform;
@@ -464,7 +464,7 @@ namespace UnityEditor.ProBuilder
 		/// Draw a set of vertices.
 		/// </summary>
 		/// <param name="pb"></param>
-		static pb_Renderable BuildVertexPoints(ProBuilderMesh pb)
+		static Renderable BuildVertexPoints(ProBuilderMesh pb)
 		{
 			int[] indices = new int[pb.sharedIndices.Length];
 			for (int i = 0; i < pb.sharedIndices.Length; i++)
@@ -476,7 +476,7 @@ namespace UnityEditor.ProBuilder
 		/// Draw a set of vertices.
 		/// </summary>
 		/// <param name="pb"></param>
-		static pb_Renderable BuildVertexPoints(ProBuilderMesh pb, int[] indices)
+		static Renderable BuildVertexPoints(ProBuilderMesh pb, int[] indices)
 		{
 			var renderable = s_RenderablePool.Get();
 			renderable.material = s_VertexMaterial;

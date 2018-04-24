@@ -17,15 +17,15 @@ namespace ProBuilder.MeshOperations
 		/// <param name="pairs"></param>
 		/// <param name="collapseCoincidentVertices"></param>
 		/// <returns></returns>
-		public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<pb_Tuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
+		public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<SimpleTuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
 		{
 			HashSet<Face> remove = new HashSet<Face>();
 			List<Face> add = new List<Face>();
 
-			foreach(pb_Tuple<Face, Face> pair in pairs)
+			foreach(SimpleTuple<Face, Face> pair in pairs)
 			{
-				Face left = pair.Item1;
-				Face right = pair.Item2;
+				Face left = pair.item1;
+				Face right = pair.item2;
 				int leftLength = left.indices.Length;
 				int rightLength = right.indices.Length;
 				int[] indices = new int[leftLength + rightLength];

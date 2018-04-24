@@ -59,7 +59,7 @@ namespace UnityEngine.ProBuilder
 			else
 			{
 				ProBuilderMesh m = mesh;
-				pb_Spline.Extrude(points, radius, columns, rows, closeLoop, smooth, ref m);
+				Spline.Extrude(points, radius, columns, rows, closeLoop, smooth, ref m);
 			}
 		}
 	}

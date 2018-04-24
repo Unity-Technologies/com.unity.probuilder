@@ -39,13 +39,13 @@ namespace UnityEditor.ProBuilder.Actions
 		public override ActionResult DoAction()
 		{
 			GameObject go = new GameObject();
-			pb_PolyShape poly = go.AddComponent<pb_PolyShape>();
+			PolyShape poly = go.AddComponent<PolyShape>();
 			ProBuilderMesh pb = poly.gameObject.AddComponent<ProBuilderMesh>();
 			pb.CreateShapeFromPolygon(poly.points, poly.extrude, poly.flipNormals);
 			EditorUtility.InitObject(pb);
 			MeshSelection.SetSelection(go);
 			UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
-			poly.polyEditMode = pb_PolyShape.PolyEditMode.Path;
+			poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
 			Vector3 pivot;
 

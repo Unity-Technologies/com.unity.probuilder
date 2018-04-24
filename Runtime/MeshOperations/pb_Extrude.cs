@@ -53,7 +53,7 @@ namespace ProBuilder.MeshOperations
 
 			foreach(Face face in faces)
 			{
-				face.smoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
+				face.smoothingGroup = Smoothing.smoothingGroupNone;
 				face.textureGroup = -1;
 
 				Vector3 delta = ProBuilderMath.Normal(pb, face) * distance;
@@ -154,7 +154,7 @@ namespace ProBuilder.MeshOperations
 			Dictionary<int, int> delayPosition = new Dictionary<int, int>();
 			// used to average the direction of vertices shared by perimeter edges
 			// key[shared index], value[normal count, normal sum]
-			Dictionary<int, pb_Tuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, pb_Tuple<Vector3, Vector3,List<int>>>();
+			Dictionary<int, SimpleTuple<Vector3, Vector3, List<int>>> extrudeMap = new Dictionary<int, SimpleTuple<Vector3, Vector3,List<int>>>();
 
 			List<pb_WingedEdge> wings = pb_WingedEdge.GetWingedEdges(pb, faces, true, lookup);
 			List<HashSet<Face>> groups = GetFaceGroups(wings);
@@ -259,18 +259,18 @@ namespace ProBuilder.MeshOperations
 							lookupUV.Remove(face.distinctIndices[i]);
 
 						// add the normal to the list of normals for this shared vertex
-						pb_Tuple<Vector3, Vector3, List<int>> dir = null;
+						SimpleTuple<Vector3, Vector3, List<int>> dir = null;
 
 						if(extrudeMap.TryGetValue(com, out dir))
 						{
-							dir.Item1.x += normal.x;
-							dir.Item1.y += normal.y;
-							dir.Item1.z += normal.z;
-							dir.Item3.Add(idx);
+							dir.item1.x += normal.x;
+							dir.item1.y += normal.y;
+							dir.item1.z += normal.z;
+							dir.item3.Add(idx);
 						}
 						else
 						{
-							extrudeMap.Add(com, new pb_Tuple<Vector3, Vector3,List<int>>(normal, normal, new List<int>() { idx }));
+							extrudeMap.Add(com, new SimpleTuple<Vector3, Vector3,List<int>>(normal, normal, new List<int>() { idx }));
 						}
 					}
 				}
@@ -278,17 +278,17 @@ namespace ProBuilder.MeshOperations
 
 			foreach(var kvp in extrudeMap)
 			{
-				Vector3 direction = (kvp.Value.Item1 / kvp.Value.Item3.Count);
+				Vector3 direction = (kvp.Value.item1 / kvp.Value.item3.Count);
 				direction.Normalize();
 
 				// If extruding by face normal extend vertices on seams by the hypotenuse
-				float modifier = compensateAngleVertexDistance ? ProBuilderMath.Secant(Vector3.Angle(direction, kvp.Value.Item2) * Mathf.Deg2Rad) : 1f;
+				float modifier = compensateAngleVertexDistance ? ProBuilderMath.Secant(Vector3.Angle(direction, kvp.Value.item2) * Mathf.Deg2Rad) : 1f;
 
 				direction.x *= distance * modifier;
 				direction.y *= distance * modifier;
 				direction.z *= distance * modifier;
 
-				foreach(int i in kvp.Value.Item3)
+				foreach(int i in kvp.Value.item3)
 				{
 					vertices[i].position.x += direction.x;
 					vertices[i].position.y += direction.y;

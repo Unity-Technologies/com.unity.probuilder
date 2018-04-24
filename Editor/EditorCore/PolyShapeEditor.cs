@@ -4,10 +4,11 @@ using ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
+using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
-	[CustomEditor(typeof(pb_PolyShape))]
+	[CustomEditor(typeof(PolyShape))]
 	class PolyShapeEditor : Editor
 	{
 		static Color HANDLE_COLOR = new Color(.8f, .8f, .8f, 1f);
@@ -27,9 +28,9 @@ namespace UnityEditor.ProBuilder
 		List<GameObject> m_IgnorePick = new List<GameObject>();
 		bool m_IsModifyingVertices = false;
 
-		pb_PolyShape polygon
+		PolyShape polygon
 		{
-			get { return target as pb_PolyShape; }
+			get { return target as PolyShape; }
 		}
 
 		Material CreateHighlightLineMaterial()
@@ -55,8 +56,8 @@ namespace UnityEditor.ProBuilder
 			DrawPolyLine(polygon.points);
 			EditorApplication.update += Update;
 
-			pb_PolyShape.PolyEditMode mode = polygon.polyEditMode;
-			polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+			PolyShape.PolyEditMode mode = polygon.polyEditMode;
+			polygon.polyEditMode = PolyShape.PolyEditMode.None;
 			SetPolyEditMode(mode);
 		}
 
@@ -73,10 +74,10 @@ namespace UnityEditor.ProBuilder
 		{
 			switch (polygon.polyEditMode)
 			{
-				case pb_PolyShape.PolyEditMode.None:
+				case PolyShape.PolyEditMode.None:
 				{
 					if (GUILayout.Button("Edit Poly Shape"))
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+						SetPolyEditMode(PolyShape.PolyEditMode.Edit);
 
 					EditorGUILayout.HelpBox(
 						"Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.",
@@ -85,22 +86,22 @@ namespace UnityEditor.ProBuilder
 					break;
 				}
 
-				case pb_PolyShape.PolyEditMode.Path:
+				case PolyShape.PolyEditMode.Path:
 				{
 					EditorGUILayout.HelpBox("\nClick To Add Points\n\nPress 'Enter' or 'Space' to Set Height\n", MessageType.Info);
 					break;
 				}
 
-				case pb_PolyShape.PolyEditMode.Height:
+				case PolyShape.PolyEditMode.Height:
 				{
 					EditorGUILayout.HelpBox("\nMove Mouse to Set Height\n\nPress 'Enter' or 'Space' to Finalize\n", MessageType.Info);
 					break;
 				}
 
-				case pb_PolyShape.PolyEditMode.Edit:
+				case PolyShape.PolyEditMode.Edit:
 				{
 					if (GUILayout.Button("Editing Poly Shape", UI.EditorGUIUtility.GetActiveStyle("Button")))
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
+						SetPolyEditMode(PolyShape.PolyEditMode.None);
 					break;
 				}
 
@@ -116,7 +117,7 @@ namespace UnityEditor.ProBuilder
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+				if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
 				{
 					if (ProBuilderEditor.instance != null)
 						ProBuilderEditor.instance.ClearElementSelection();
@@ -140,13 +141,13 @@ namespace UnityEditor.ProBuilder
 
 		void Update()
 		{
-			if (polygon != null && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path && m_LineMaterial != null)
+			if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path && m_LineMaterial != null)
 				m_LineMaterial.SetFloat("_EditorTime", (float) EditorApplication.timeSinceStartup);
 		}
 
-		void SetPolyEditMode(pb_PolyShape.PolyEditMode mode)
+		void SetPolyEditMode(PolyShape.PolyEditMode mode)
 		{
-			pb_PolyShape.PolyEditMode old = polygon.polyEditMode;
+			PolyShape.PolyEditMode old = polygon.polyEditMode;
 
 			if (mode != old)
 			{
@@ -156,7 +157,7 @@ namespace UnityEditor.ProBuilder
 				// Entering edit mode after the shape has been finalized once before, which means
 				// possibly reverting manual changes.  Store undo state so that if this was
 				// not intentional user can revert.
-				if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None && polygon.points.Count > 2)
+				if (polygon.polyEditMode == PolyShape.PolyEditMode.None && polygon.points.Count > 2)
 				{
 					if (ProBuilderEditor.instance != null)
 						ProBuilderEditor.instance.ClearElementSelection();
@@ -169,17 +170,17 @@ namespace UnityEditor.ProBuilder
 
 				if (ProBuilderEditor.instance != null)
 				{
-					if (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None)
+					if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
 						ProBuilderEditor.instance.PopEditLevel();
 					else
 						ProBuilderEditor.instance.SetEditLevel(EditLevel.Plugin);
 				}
 
-				if (polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+				if (polygon.polyEditMode != PolyShape.PolyEditMode.None)
 					Tools.current = Tool.None;
 
 				// If coming from Path -> Height set the mouse / origin offset
-				if (old == pb_PolyShape.PolyEditMode.Path && mode == pb_PolyShape.PolyEditMode.Height && Event.current != null)
+				if (old == PolyShape.PolyEditMode.Path && mode == PolyShape.PolyEditMode.Height && Event.current != null)
 				{
 					Vector3 up = polygon.transform.up;
 					Vector3 origin = polygon.transform.TransformPoint(ProBuilderMath.Average(polygon.points));
@@ -213,7 +214,7 @@ namespace UnityEditor.ProBuilder
 
 				if (m != null)
 				{
-					pb_RaycastHit hit;
+					RaycastHit hit;
 
 					if (UnityEngine.ProBuilder.HandleUtility.WorldRaycast(HandleUtility.GUIPointToWorldRay(mousePosition),
 						go.transform,
@@ -286,7 +287,7 @@ namespace UnityEditor.ProBuilder
 
 			DrawPolyLine(polygon.points);
 
-			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
+			if(polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.CreateShapeFromPolygon().status != Status.Success)
 			{
 				ProBuilderEditor.Refresh();
 				return;
@@ -306,9 +307,9 @@ namespace UnityEditor.ProBuilder
 
 		void OnSceneGUI()
 		{
-			if(polygon == null || (polygon.polyEditMode == pb_PolyShape.PolyEditMode.None) || Tools.current != Tool.None)
+			if(polygon == null || (polygon.polyEditMode == PolyShape.PolyEditMode.None) || Tools.current != Tool.None)
 			{
-				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+				polygon.polyEditMode = PolyShape.PolyEditMode.None;
 				return;
 			}
 
@@ -328,9 +329,9 @@ namespace UnityEditor.ProBuilder
 				m_NextMouseUpAdvancesMode = false;
 
 				if( SceneCameraIsAlignedWithPolyUp() )
-					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+					SetPolyEditMode(PolyShape.PolyEditMode.Edit);
 				else
-					SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+					SetPolyEditMode(PolyShape.PolyEditMode.Height);
 			}
 
 			if(	m_IsModifyingVertices && (
@@ -388,7 +389,7 @@ namespace UnityEditor.ProBuilder
 					SceneView.RepaintAll();
 				}
 			}
-			else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
+			else if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
 			{
 				if( eventType == EventType.MouseDown )
 				{
@@ -425,11 +426,11 @@ namespace UnityEditor.ProBuilder
 					}
 				}
 			}
-			else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
+			else if(polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
 			{
 				if(polygon.points.Count < 3)
 				{
-					SetPolyEditMode(pb_PolyShape.PolyEditMode.Path);
+					SetPolyEditMode(PolyShape.PolyEditMode.Path);
 					return;
 				}
 
@@ -497,10 +498,10 @@ namespace UnityEditor.ProBuilder
 				Repaint();
 			}
 
-			if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
+			if(polygon.polyEditMode == PolyShape.PolyEditMode.Height)
 			{
 				if(!used && evt.type == EventType.MouseUp && evt.button == 0 && !IsAppendModifier(evt.modifiers))
-					SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+					SetPolyEditMode(PolyShape.PolyEditMode.Edit);
 
 				bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
 				Ray r = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
@@ -561,7 +562,7 @@ namespace UnityEditor.ProBuilder
 					// "clicked" a button
 					if( !used && evt.type == EventType.Used )
 					{
-						if(ii == 0 && polygon.points.Count > 2 && polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path)
+						if(ii == 0 && polygon.points.Count > 2 && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
 						{
 							m_NextMouseUpAdvancesMode = true;
 							return;
@@ -577,7 +578,7 @@ namespace UnityEditor.ProBuilder
 				Handles.color = Color.white;
 
 				// height setting
-				if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
+				if(polygon.polyEditMode != PolyShape.PolyEditMode.Path && polygon.points.Count > 2)
 				{
 					center.x /= (float) len;
 					center.y /= (float) len;
@@ -621,17 +622,17 @@ namespace UnityEditor.ProBuilder
 				case KeyCode.Space:
 				case KeyCode.Return:
 				{
-					if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path )
+					if( polygon.polyEditMode == PolyShape.PolyEditMode.Path )
 					{
 						if( SceneCameraIsAlignedWithPolyUp() )
-							SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
+							SetPolyEditMode(PolyShape.PolyEditMode.Edit);
 						else
-							SetPolyEditMode(pb_PolyShape.PolyEditMode.Height);
+							SetPolyEditMode(PolyShape.PolyEditMode.Height);
 					}
-					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height )
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.Edit);
-					else if( polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit )
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
+					else if( polygon.polyEditMode == PolyShape.PolyEditMode.Height )
+						SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+					else if( polygon.polyEditMode == PolyShape.PolyEditMode.Edit )
+						SetPolyEditMode(PolyShape.PolyEditMode.None);
 
 					break;
 				}
@@ -650,13 +651,13 @@ namespace UnityEditor.ProBuilder
 
 				case KeyCode.Escape:
 				{
-					if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path || polygon.polyEditMode == pb_PolyShape.PolyEditMode.Height)
+					if(polygon.polyEditMode == PolyShape.PolyEditMode.Path || polygon.polyEditMode == PolyShape.PolyEditMode.Height)
 					{
 						Undo.DestroyObjectImmediate(polygon.gameObject);
 					}
-					else if(polygon.polyEditMode == pb_PolyShape.PolyEditMode.Edit)
+					else if(polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
 					{
-						SetPolyEditMode(pb_PolyShape.PolyEditMode.None);
+						SetPolyEditMode(PolyShape.PolyEditMode.None);
 					}
 
 					break;
@@ -669,7 +670,7 @@ namespace UnityEditor.ProBuilder
 			if(points.Count < 2)
 				return;
 
-			int vc = polygon.polyEditMode == pb_PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
+			int vc = polygon.polyEditMode == PolyShape.PolyEditMode.Path ? points.Count : points.Count + 1;
 
 			Vector3[] ver = new Vector3[vc];
 			Vector2[] uvs = new Vector2[vc];
@@ -711,8 +712,8 @@ namespace UnityEditor.ProBuilder
 
 		void OnEditLevelChange(int editLevel)
 		{
-			if( polygon != null && polygon.polyEditMode != pb_PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
-				polygon.polyEditMode = pb_PolyShape.PolyEditMode.None;
+			if( polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None && ((EditLevel)editLevel) != EditLevel.Plugin)
+				polygon.polyEditMode = PolyShape.PolyEditMode.None;
 		}
 
 		void OnBeginVertexMovement()
@@ -738,7 +739,7 @@ namespace UnityEditor.ProBuilder
 			m_LineMesh = new Mesh();
 			m_LineMaterial = CreateHighlightLineMaterial();
 
-			if(polygon.polyEditMode != pb_PolyShape.PolyEditMode.None)
+			if(polygon.polyEditMode != PolyShape.PolyEditMode.None)
 				RebuildPolyShapeMesh(polygon);
 		}
 	}

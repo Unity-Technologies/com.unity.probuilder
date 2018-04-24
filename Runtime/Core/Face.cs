@@ -131,7 +131,7 @@ namespace UnityEngine.ProBuilder
 			SetIndices(i);
 			m_Uv = new pb_UV();
 			m_Material = BuiltinMaterials.DefaultMaterial;
-			m_SmoothingGroup = pb_Smoothing.SMOOTHING_GROUP_NONE;
+			m_SmoothingGroup = Smoothing.smoothingGroupNone;
 			textureGroup = -1;
 			elementGroup = 0;
 		}
@@ -420,7 +420,7 @@ namespace UnityEngine.ProBuilder
 		/// <param name="preferredTopology"></param>
 		/// <returns>The number of submeshes created.</returns>
 		/// <exception cref="NotImplementedException"></exception>
-		public static int GetMeshIndices(Face[] faces, out pb_Submesh[] submeshes, MeshTopology preferredTopology = MeshTopology.Triangles)
+		public static int GetMeshIndices(Face[] faces, out Submesh[] submeshes, MeshTopology preferredTopology = MeshTopology.Triangles)
 		{
 			if(preferredTopology != MeshTopology.Triangles && preferredTopology != MeshTopology.Quads)
 				throw new System.NotImplementedException("Currently only Quads and Triangles are supported.");
@@ -461,17 +461,17 @@ namespace UnityEngine.ProBuilder
 			}
 
 			int submeshCount = (quads != null ? quads.Count : 0) + tris.Count;
-			submeshes = new pb_Submesh[submeshCount];
+			submeshes = new Submesh[submeshCount];
 			int ii = 0;
 
 			if(quads != null)
 			{
 				foreach(var kvp in quads)
-					submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
+					submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Quads, kvp.Value.ToArray());
 			}
 
 			foreach(var kvp in tris)
-				submeshes[ii++] = new pb_Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
+				submeshes[ii++] = new Submesh(kvp.Key, MeshTopology.Triangles, kvp.Value.ToArray());
 
 			return submeshCount;
 		}

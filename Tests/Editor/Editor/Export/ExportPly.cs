@@ -14,7 +14,7 @@ namespace ProBuilder.EditorTests.Export
 		[Test]
 		public static void NumbersAreCultureInvariant()
 		{
-			var cube = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
 			var current = Thread.CurrentThread.CurrentCulture;
 
 			try

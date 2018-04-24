@@ -90,7 +90,7 @@ namespace UnityEditor.ProBuilder
 
 			for(int i = 0; i < selection.Length; i++)
 			{
-				pb_TransformUtil.UnparentChildren(selection[i].transform);
+				TransformUtility.UnparentChildren(selection[i].transform);
 
 				if(triangles != null)
 					selection[i].CenterPivot(triangles[i]);
@@ -99,7 +99,7 @@ namespace UnityEditor.ProBuilder
 
 				selection[i].Optimize();
 
-				pb_TransformUtil.ReparentChildren(selection[i].transform);
+				TransformUtility.ReparentChildren(selection[i].transform);
 			}
 
 			SceneView.RepaintAll();

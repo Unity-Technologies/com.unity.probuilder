@@ -10,9 +10,9 @@ namespace ProBuilder.RuntimeTests.Shape
 {
 	public class CreateBasicShapes
 	{
-		static void CreateBasicAndCompare(pb_ShapeType type)
+		static void CreateBasicAndCompare(ShapeType type)
 		{
-			ProBuilderMesh pb = pb_ShapeGenerator.CreateShape(type);
+			ProBuilderMesh pb = ShapeGenerator.CreateShape(type);
 
 #if PB_CREATE_TEST_MESH_TEMPLATES
 			// save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
@@ -40,79 +40,79 @@ namespace ProBuilder.RuntimeTests.Shape
 		[Test]
 		public static void Cube()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cube);
+			CreateBasicAndCompare(ShapeType.Cube);
 		}
 
 		[Test]
 		public static void Stair()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Stair);
+			CreateBasicAndCompare(ShapeType.Stair);
 		}
 
 		[Test]
 		public static void CurvedStair()
 		{
-			CreateBasicAndCompare(pb_ShapeType.CurvedStair);
+			CreateBasicAndCompare(ShapeType.CurvedStair);
 		}
 
 		[Test]
 		public static void Prism()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Prism);
+			CreateBasicAndCompare(ShapeType.Prism);
 		}
 
 		[Test]
 		public static void Cylinder()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cylinder);
+			CreateBasicAndCompare(ShapeType.Cylinder);
 		}
 
 		[Test]
 		public static void Plane()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Plane);
+			CreateBasicAndCompare(ShapeType.Plane);
 		}
 
 		[Test]
 		public static void Door()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Door);
+			CreateBasicAndCompare(ShapeType.Door);
 		}
 
 		[Test]
 		public static void Pipe()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Pipe);
+			CreateBasicAndCompare(ShapeType.Pipe);
 		}
 
 		[Test]
 		public static void Cone()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Cone);
+			CreateBasicAndCompare(ShapeType.Cone);
 		}
 
 		[Test]
 		public static void Sprite()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Sprite);
+			CreateBasicAndCompare(ShapeType.Sprite);
 		}
 
 		[Test]
 		public static void Arch()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Arch);
+			CreateBasicAndCompare(ShapeType.Arch);
 		}
 
 		[Test]
 		public static void Icosahedron()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Icosahedron);
+			CreateBasicAndCompare(ShapeType.Icosahedron);
 		}
 
 		[Test]
 		public static void Torus()
 		{
-			CreateBasicAndCompare(pb_ShapeType.Torus);
+			CreateBasicAndCompare(ShapeType.Torus);
 		}
 	}
 }

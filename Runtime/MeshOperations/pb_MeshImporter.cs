@@ -129,7 +129,7 @@ namespace ProBuilder.MeshOperations
 								new int[] { vertexIndex, vertexIndex + 1, vertexIndex + 2 },
 								material,
 								new pb_UV(),
-								pb_Smoothing.SMOOTHING_GROUP_NONE,
+								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
 								true));
@@ -154,7 +154,7 @@ namespace ProBuilder.MeshOperations
 								vertexIndex + 1, vertexIndex + 2, vertexIndex + 3 },
 								material,
 								new pb_UV(),
-								pb_Smoothing.SMOOTHING_GROUP_NONE,
+								Smoothing.smoothingGroupNone,
 								-1,
 								-1,
 								true));
@@ -203,7 +203,7 @@ namespace ProBuilder.MeshOperations
 					}
 				}
 
-				List<pb_Tuple<Face, Face>> quads = new List<pb_Tuple<Face, Face>>();
+				List<SimpleTuple<Face, Face>> quads = new List<SimpleTuple<Face, Face>>();
 
 				// move through each face and find it's best quad neighbor
 				foreach(pb_WingedEdge face in wings)
@@ -234,7 +234,7 @@ namespace ProBuilder.MeshOperations
 					if(buddy != null)
 					{
 						processed.Add(buddy);
-						quads.Add(new pb_Tuple<Face, Face>(face.face, buddy));
+						quads.Add(new SimpleTuple<Face, Face>(face.face, buddy));
 					}
 				}
 
@@ -244,7 +244,7 @@ namespace ProBuilder.MeshOperations
 
 			if(importSettings.smoothing)
 			{
-				pb_Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.faces, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
+				Smoothing.ApplySmoothingGroups(m_Mesh, m_Mesh.faces, importSettings.smoothingThreshold, m_Vertices.Select(x => x.normal).ToArray());
 				// After smoothing has been applied go back and weld coincident vertices created by MergePairs.
 				pb_MergeFaces.CollapseCoincidentVertices(m_Mesh, m_Mesh.faces);
 			}

@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
+using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -476,7 +477,7 @@ namespace UnityEditor.ProBuilder
 					}
 
 					Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
-					pb_RaycastHit hit;
+					RaycastHit hit;
 
 					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, pb, out hit))
 					{

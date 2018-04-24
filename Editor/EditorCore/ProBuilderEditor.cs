@@ -8,6 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.UI;
 using ProBuilder.MeshOperations;
 using Object = UnityEngine.Object;
+using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -42,7 +43,7 @@ namespace UnityEditor.ProBuilder
 		HandleAlignment m_PreviousHandleAlignment;
 		public DragSelectMode dragSelectMode = DragSelectMode.Difference;
 		static EditorToolbar s_EditorToolbar = null;
-		pb_Shortcut[] m_Shortcuts;
+		Shortcut[] m_Shortcuts;
 		static ProBuilderEditor s_Instance;
 		SceneToolbarLocation m_SceneToolbarLocation = SceneToolbarLocation.UpperCenter;
 		GUIStyle commandStyle = null;
@@ -289,7 +290,7 @@ namespace UnityEditor.ProBuilder
 			m_SnapValue = ProGridsInterface.SnapValue();
 			m_SnapAxisConstraint = ProGridsInterface.UseAxisConstraints();
 
-			m_Shortcuts = pb_Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
+			m_Shortcuts = Shortcut.ParseShortcuts(PreferencesInternal.GetString(PreferenceKeys.pbDefaultShortcuts)).ToArray();
 
 			m_SceneToolbarLocation = PreferencesInternal.GetEnum<SceneToolbarLocation>(PreferenceKeys.pbToolbarLocation);
 			m_IsIconGui = PreferencesInternal.GetBool(PreferenceKeys.pbIconGUI);
@@ -695,7 +696,7 @@ namespace UnityEditor.ProBuilder
 			else
 			{
 				// Test culling
-				List<pb_RaycastHit> hits;
+				List<RaycastHit> hits;
 				Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
 
 				if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray, bestObj, out hits, Mathf.Infinity, pb_Culling.FrontBack))
@@ -788,7 +789,7 @@ namespace UnityEditor.ProBuilder
 				if (pb != null)
 				{
 					Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-					pb_RaycastHit hit;
+					RaycastHit hit;
 
 					if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray,
 						pb,
@@ -897,7 +898,7 @@ namespace UnityEditor.ProBuilder
 				ClearElementSelection();
 
 			Camera cam = SceneView.lastActiveSceneView.camera;
-			List<pb_Tuple<float, Vector3, int, int>> nearest = new List<pb_Tuple<float, Vector3, int, int>>();
+			List<SimpleTuple<float, Vector3, int, int>> nearest = new List<SimpleTuple<float, Vector3, int, int>>();
 
 			// this could be much faster by raycasting against the mesh and doing a 3d space
 			// distance check first
@@ -924,19 +925,19 @@ namespace UnityEditor.ProBuilder
 						float dist = (p - mousePosition).sqrMagnitude;
 
 						if (dist < minAllowableDistance)
-							nearest.Add(new pb_Tuple<float, Vector3, int, int>(dist, v, i, index));
+							nearest.Add(new SimpleTuple<float, Vector3, int, int>(dist, v, i, index));
 					}
 				}
 
-				nearest.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+				nearest.Sort((x, y) => x.item1.CompareTo(y.item1));
 
 				for (int i = 0; i < nearest.Count; i++)
 				{
-					obj = nearest[i].Item3;
+					obj = nearest[i].item3;
 
-					if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, selection[obj], nearest[i].Item2))
+					if (!UnityEngine.ProBuilder.HandleUtility.PointIsOccluded(cam, selection[obj], nearest[i].item2))
 					{
-						tri = nearest[i].Item4;
+						tri = nearest[i].item4;
 						break;
 					}
 				}
@@ -1016,10 +1017,10 @@ namespace UnityEditor.ProBuilder
 
 				if (nearestEdge.IsValid())
 				{
-					pb_Tuple<Face, Edge> edge;
+					SimpleTuple<Face, Edge> edge;
 
 					if (EdgeExtension.ValidateEdge(pb, nearestEdge, out edge))
-						nearestEdge = edge.Item2;
+						nearestEdge = edge.item2;
 
 					int ind = pb.SelectedEdges.IndexOf(nearestEdge, pb.sharedIndices.ToDictionary());
 
@@ -1054,7 +1055,7 @@ namespace UnityEditor.ProBuilder
 			UndoUtility.RecordSelection(selection, "Drag Select");
 			bool selectHidden = selectHiddenEnabled;
 
-			var pickingOptions = new pb_PickerOptions()
+			var pickingOptions = new PickerOptions()
 			{
 				depthTest = !selectHidden,
 				rectSelectMode = PreferencesInternal.GetEnum<pb_RectSelectMode>(PreferenceKeys.pbRectSelectMode)
@@ -1067,7 +1068,7 @@ namespace UnityEditor.ProBuilder
 					if (!shiftKey && !ctrlKey)
 						ClearElementSelection();
 
-					Dictionary<ProBuilderMesh, HashSet<int>> selected = pb_Picking.PickVerticesInRect(
+					Dictionary<ProBuilderMesh, HashSet<int>> selected = Picking.PickVerticesInRect(
 						SceneView.lastActiveSceneView.camera,
 						m_MouseDragRect,
 						selection,
@@ -1107,7 +1108,7 @@ namespace UnityEditor.ProBuilder
 					if (!shiftKey && !ctrlKey)
 						ClearElementSelection();
 
-					Dictionary<ProBuilderMesh, HashSet<Face>> selected = pb_Picking.PickFacesInRect(
+					Dictionary<ProBuilderMesh, HashSet<Face>> selected = Picking.PickFacesInRect(
 						SceneView.lastActiveSceneView.camera,
 						m_MouseDragRect,
 						selection,
@@ -1146,7 +1147,7 @@ namespace UnityEditor.ProBuilder
 					if (!shiftKey && !ctrlKey)
 						ClearElementSelection();
 
-					var selected = pb_Picking.PickEdgesInRect(
+					var selected = Picking.PickEdgesInRect(
 						SceneView.lastActiveSceneView.camera,
 						m_MouseDragRect,
 						selection,
@@ -1243,7 +1244,7 @@ namespace UnityEditor.ProBuilder
 				else if (snapToFace)
 				{
 					ProBuilderMesh obj = null;
-					pb_RaycastHit hit;
+					RaycastHit hit;
 					Dictionary<ProBuilderMesh, HashSet<Face>> ignore = new Dictionary<ProBuilderMesh, HashSet<Face>>();
 					foreach (ProBuilderMesh pb in selection)
 						ignore.Add(pb, new HashSet<Face>(pb.SelectedFaces));
@@ -1300,7 +1301,7 @@ namespace UnityEditor.ProBuilder
 
 				for (int i = 0; i < selection.Length; i++)
 				{
-					selection[i].TranslateVertices_World(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
+					selection[i].TranslateVerticesInWorldSpace(selection[i].SelectedTriangles, diff, m_SnapEnabled ? m_SnapValue : 0f,
 						m_SnapAxisConstraint, m_SharedIndicesDictionary[i]);
 					selection[i].RefreshUV(SelectedFacesInEditZone[selection[i]]);
 					selection[i].Refresh(RefreshMask.Normals);
@@ -1821,15 +1822,15 @@ namespace UnityEditor.ProBuilder
 
 		internal bool ShortcutCheck(Event e)
 		{
-			List<pb_Shortcut> matches = m_Shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
+			List<Shortcut> matches = m_Shortcuts.Where(x => x.Matches(e.keyCode, e.modifiers)).ToList();
 
 			if (matches.Count < 1)
 				return false;
 
 			bool used = false;
-			pb_Shortcut usedShortcut = null;
+			Shortcut usedShortcut = null;
 
-			foreach (pb_Shortcut cut in matches)
+			foreach (Shortcut cut in matches)
 			{
 				if (AllLevelShortcuts(cut))
 				{
@@ -1841,7 +1842,7 @@ namespace UnityEditor.ProBuilder
 
 			if (!used)
 			{
-				foreach (pb_Shortcut cut in matches)
+				foreach (Shortcut cut in matches)
 				{
 					switch (editLevel)
 					{
@@ -1880,7 +1881,7 @@ namespace UnityEditor.ProBuilder
 			return used;
 		}
 
-		bool AllLevelShortcuts(pb_Shortcut shortcut)
+		bool AllLevelShortcuts(Shortcut shortcut)
 		{
 			bool uniqueModeShortcuts = PreferencesInternal.GetBool(PreferenceKeys.pbUniqueModeShortcuts);
 
@@ -1943,7 +1944,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		bool GeoLevelShortcuts(pb_Shortcut shortcut)
+		bool GeoLevelShortcuts(Shortcut shortcut)
 		{
 			switch (shortcut.action)
 			{

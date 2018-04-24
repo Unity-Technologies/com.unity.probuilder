@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
 		bool isFloating { get { return ProBuilderEditor.instance != null && ProBuilderEditor.instance.isFloatingWindow; } }
 		bool isIconMode = true;
 		bool shiftOnlyTooltips = false;
-		pb_Tuple<string, double> tooltipTimer = new pb_Tuple<string, double>("", 0.0);
+		SimpleTuple<string, double> tooltipTimer = new SimpleTuple<string, double>("", 0.0);
 		// the element currently being hovered
 		string hoveringTooltipName = "";
 		// the mouse has hovered > tooltipTimerRefresh
@@ -52,8 +52,8 @@ namespace UnityEditor.ProBuilder
 
 			shiftOnlyTooltips = PreferencesInternal.GetBool(PreferenceKeys.pbShiftOnlyTooltips);
 
-			tooltipTimer.Item1 = "";
-			tooltipTimer.Item2 = 0.0;
+			tooltipTimer.item1 = "";
+			tooltipTimer.item2 = 0.0;
 			showTooltipTimer = false;
 			scrollIconUp 	= IconUtility.GetIcon("Toolbar/ShowNextPage_Up");
 			scrollIconDown 	= IconUtility.GetIcon("Toolbar/ShowNextPage_Down");
@@ -123,15 +123,15 @@ namespace UnityEditor.ProBuilder
 
 			if(!shiftOnlyTooltips)
 			{
-				if( !tooltipTimer.Item1.Equals(hoveringTooltipName) )
+				if( !tooltipTimer.item1.Equals(hoveringTooltipName) )
 				{
-					tooltipTimer.Item1 = hoveringTooltipName;
-					tooltipTimer.Item2 = EditorApplication.timeSinceStartup;
+					tooltipTimer.item1 = hoveringTooltipName;
+					tooltipTimer.item2 = EditorApplication.timeSinceStartup;
 				}
 
-				if(!string.IsNullOrEmpty(tooltipTimer.Item1))
+				if(!string.IsNullOrEmpty(tooltipTimer.item1))
 				{
-					if( EditorApplication.timeSinceStartup - tooltipTimer.Item2 > tooltipTimerRefresh )
+					if( EditorApplication.timeSinceStartup - tooltipTimer.item2 > tooltipTimerRefresh )
 					{
 						if( !showTooltipTimer )
 						{
@@ -425,7 +425,7 @@ namespace UnityEditor.ProBuilder
 				TooltipEditor.Hide();
 
 			if(e.type != EventType.Layout && !hovering)
-				tooltipTimer.Item1 = "";
+				tooltipTimer.item1 = "";
 
 			if( forceRepaint || (EditorWindow.mouseOverWindow == this && e.delta.sqrMagnitude > .001f) || e.isMouse )
 				window.Repaint();

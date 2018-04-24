@@ -143,12 +143,12 @@ namespace ProBuilder.MeshOperations
 		/**
 		 *	Returns a list of pb_Tuple<pb_Face, pb_Edge> where each face is connected to the passed edge.
 		 */
-		public static List<pb_Tuple<Face, Edge>> GetNeighborFaces(ProBuilderMesh pb, Edge edge, Dictionary<int, int> lookup = null)
+		public static List<SimpleTuple<Face, Edge>> GetNeighborFaces(ProBuilderMesh pb, Edge edge, Dictionary<int, int> lookup = null)
 		{
 			if(lookup == null)
 				lookup = pb.sharedIndices.ToDictionary();
 
-			List<pb_Tuple<Face, Edge>> faces = new List<pb_Tuple<Face, Edge>>();
+			List<SimpleTuple<Face, Edge>> faces = new List<SimpleTuple<Face, Edge>>();
 
 			Edge uni = new Edge(lookup[edge.x], lookup[edge.y]);
 			Edge e = new Edge(0,0);
@@ -164,7 +164,7 @@ namespace ProBuilder.MeshOperations
 					if( (uni.x == lookup[e.x] && uni.y == lookup[e.y]) ||
 						(uni.x == lookup[e.y] && uni.y == lookup[e.x]))
 					{
-						faces.Add(new pb_Tuple<Face, Edge>(pb.faces[i], edges[n]));
+						faces.Add(new SimpleTuple<Face, Edge>(pb.faces[i], edges[n]));
 						break;
 					}
 				}

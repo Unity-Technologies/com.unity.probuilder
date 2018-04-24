@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
+using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
 namespace UnityEditor.ProBuilder
 {
@@ -386,7 +387,7 @@ namespace UnityEditor.ProBuilder
 		/**
 		 * Pick the GameObject nearest mousePosition (filtering out @ignore) and raycast for a face it.
 		 */
-		internal static bool FaceRaycast(Vector2 mousePosition, out ProBuilderMesh pb, out pb_RaycastHit hit, Dictionary<ProBuilderMesh, HashSet<Face>> ignore = null)
+		internal static bool FaceRaycast(Vector2 mousePosition, out ProBuilderMesh pb, out RaycastHit hit, Dictionary<ProBuilderMesh, HashSet<Face>> ignore = null)
 		{
 			pb = null;
 			hit = null;

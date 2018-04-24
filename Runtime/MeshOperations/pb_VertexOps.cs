@@ -295,12 +295,12 @@ namespace ProBuilder.MeshOperations
 				for(int i = 0; i < count; i++)
 					verticesToAppend.Add(pb_Vertex.Mix(vertices[localEdge.x], vertices[localEdge.y], (i+1)/((float)count + 1)));
 
-				List<pb_Tuple<Face, Edge>> adjacentFaces = pb_MeshUtils.GetNeighborFaces(pb, localEdge);
+				List<SimpleTuple<Face, Edge>> adjacentFaces = pb_MeshUtils.GetNeighborFaces(pb, localEdge);
 
 				// foreach face attached to common edge, append vertices
-				foreach(pb_Tuple<Face, Edge> tup in adjacentFaces)
+				foreach(SimpleTuple<Face, Edge> tup in adjacentFaces)
 				{
-					Face face = tup.Item1;
+					Face face = tup.item1;
 
 					FaceRebuildData data;
 
@@ -351,7 +351,7 @@ namespace ProBuilder.MeshOperations
 				FaceRebuildData data = dic_data[i];
 
 				Vector3 nrm = ProBuilderMath.Normal(pb, face);
-				Vector2[] projection = pb_Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
+				Vector2[] projection = Projection.PlanarProject(data.vertices.Select(x=>x.position).ToArray(), nrm);
 
 				int vertexCount = vertices.Count;
 
@@ -419,11 +419,11 @@ namespace ProBuilder.MeshOperations
 		/// <returns></returns>
 		public static FaceRebuildData ExplodeVertex(
 			IList<pb_Vertex> vertices,
-			IList<pb_Tuple<pb_WingedEdge, int>> edgeAndCommonIndex,
+			IList<SimpleTuple<pb_WingedEdge, int>> edgeAndCommonIndex,
 			float distance,
 			out Dictionary<int, List<int>> appendedVertices)
 		{
-			Face face = edgeAndCommonIndex.FirstOrDefault().Item1.face;
+			Face face = edgeAndCommonIndex.FirstOrDefault().item1.face;
 			List<Edge> perimeter = pb_WingedEdge.SortEdgesByAdjacency(face);
 			appendedVertices = new Dictionary<int, List<int>>();
 			Vector3 oldNormal = ProBuilderMath.Normal(vertices, face.indices);
@@ -431,12 +431,12 @@ namespace ProBuilder.MeshOperations
 			// store local and common index of split points
 			Dictionary<int, int> toSplit = new Dictionary<int, int>();
 
-			foreach(pb_Tuple<pb_WingedEdge, int> v in edgeAndCommonIndex)
+			foreach(SimpleTuple<pb_WingedEdge, int> v in edgeAndCommonIndex)
 			{
-				if( v.Item2 == v.Item1.edge.common.x)
-					toSplit.Add(v.Item1.edge.local.x, v.Item2);
+				if( v.item2 == v.item1.edge.common.x)
+					toSplit.Add(v.item1.edge.local.x, v.item2);
 				else
-					toSplit.Add(v.Item1.edge.local.y, v.Item2);
+					toSplit.Add(v.item1.edge.local.y, v.item2);
 			}
 
 			int pc = perimeter.Count;
@@ -514,7 +514,7 @@ namespace ProBuilder.MeshOperations
 			Vector3[] verts = pb.positions;
 
 			for(int n = 0; n < indices.Count; n++)
-				verts[indices[n]] = pb.transform.InverseTransformPoint(pb_Snap.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
+				verts[indices[n]] = pb.transform.InverseTransformPoint(Snap.SnapValue(pb.transform.TransformPoint(verts[indices[n]]), snap));
 
 		}
 	}

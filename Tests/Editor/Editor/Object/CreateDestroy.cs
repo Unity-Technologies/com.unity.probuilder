@@ -17,7 +17,7 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void DestroyDeletesMesh()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);
 			// IsNull doesn't work due to c#/c++ goofiness
@@ -27,7 +27,7 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void DestroyWithNoDeleteFlagPreservesMesh()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 
 			try
 			{
@@ -46,7 +46,7 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void DestroyDoesNotDeleteMeshBackByAsset()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 			string path = pb_TestUtility.SaveAssetTemporary<Mesh>(pb.mesh);
 			Mesh mesh = pb.GetComponent<MeshFilter>().sharedMesh;
 			UObject.DestroyImmediate(pb.gameObject);

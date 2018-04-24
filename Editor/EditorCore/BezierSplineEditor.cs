@@ -370,7 +370,7 @@ namespace UnityEditor.ProBuilder
 
 		void UpdateControlPoints()
 		{
-			m_ControlPoints = pb_Spline.GetControlPoints(m_Points, m_Columns, m_CloseLoop, null);
+			m_ControlPoints = Spline.GetControlPoints(m_Points, m_Columns, m_CloseLoop, null);
 		}
 
 		void OnSceneGUI()

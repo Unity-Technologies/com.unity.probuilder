@@ -16,7 +16,7 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void CopyWithVerifyIsUnique()
 		{
-			var original = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
 			original.Optimize();
 
 			var copy = UObject.Instantiate(original);
@@ -38,7 +38,7 @@ namespace ProBuilder.EditorTests.Object
 		[Test]
 		public static void CopyReferencesOriginalMesh()
 		{
-			var original = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var original = ShapeGenerator.CreateShape(ShapeType.Cube);
 			var copy = UObject.Instantiate(original);
 
 			try

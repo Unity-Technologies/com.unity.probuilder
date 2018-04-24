@@ -198,7 +198,7 @@ namespace UnityEditor.ProBuilder
 				// Material assignment
 				for(int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
 				{
-					pb_Submesh submesh = model.submeshes[subMeshIndex];
+					Submesh submesh = model.submeshes[subMeshIndex];
 
 					if(subMeshCount > 1)
 						sb.AppendLine(string.Format("g {0}_{1}", model.name, subMeshIndex));
@@ -278,7 +278,7 @@ namespace UnityEditor.ProBuilder
 
 			foreach(Model model in models)
 			{
-				foreach(pb_Submesh submesh in model.submeshes)
+				foreach(Submesh submesh in model.submeshes)
 				{
 					Material material = submesh.material;
 

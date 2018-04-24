@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
 
 				UndoUtility.RegisterCompleteObjectUndo(pb, "Set Trigger");
 
-				Undo.AddComponent<pb_TriggerBehaviour>(pb.gameObject).Initialize();
+				Undo.AddComponent<TriggerBehaviour>(pb.gameObject).Initialize();
 			}
 
 			int selectionCount = MeshSelection.All().Length;

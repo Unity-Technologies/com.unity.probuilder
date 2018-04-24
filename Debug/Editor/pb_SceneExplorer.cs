@@ -21,14 +21,14 @@ public class pb_SceneExplorer : EditorWindow
 		OnHierarchyChange();
 	}
 
-	pb_Tuple<string, bool, Object[]>[] m_Objects = new pb_Tuple<string, bool, Object[]>[]
+	SimpleTuple<string, bool, Object[]>[] m_Objects = new SimpleTuple<string, bool, Object[]>[]
 	{
-		new pb_Tuple<string, bool, Object[]>("textures: ", false, null),
-		new pb_Tuple<string, bool, Object[]>("audioclips: ", false, null),
-		new pb_Tuple<string, bool, Object[]>("meshes: ", false, null),
-		new pb_Tuple<string, bool, Object[]>("materials: ", false, null),
-		new pb_Tuple<string, bool, Object[]>("gameobjects: ", false, null),
-		new pb_Tuple<string, bool, Object[]>("components: ", false, null)
+		new SimpleTuple<string, bool, Object[]>("textures: ", false, null),
+		new SimpleTuple<string, bool, Object[]>("audioclips: ", false, null),
+		new SimpleTuple<string, bool, Object[]>("meshes: ", false, null),
+		new SimpleTuple<string, bool, Object[]>("materials: ", false, null),
+		new SimpleTuple<string, bool, Object[]>("gameobjects: ", false, null),
+		new SimpleTuple<string, bool, Object[]>("components: ", false, null)
 	};
 
 	Vector2 m_Scroll = Vector2.zero;
@@ -69,10 +69,10 @@ public class pb_SceneExplorer : EditorWindow
 
 		for (int i = 0; i < m_Objects.Length; i++)
 		{
-			m_Objects[i].Item2 = EditorGUILayout.Foldout(m_Objects[i].Item2, m_Objects[i].Item1 + m_Objects[i].Item3.Length);
+			m_Objects[i].item2 = EditorGUILayout.Foldout(m_Objects[i].item2, m_Objects[i].item1 + m_Objects[i].item3.Length);
 
-			if(m_Objects[i].Item2)
-				DrawObjectArray(m_Objects[i].Item3);
+			if(m_Objects[i].item2)
+				DrawObjectArray(m_Objects[i].item3);
 		}
 
 		if (EditorGUI.EndChangeCheck())
@@ -115,19 +115,19 @@ public class pb_SceneExplorer : EditorWindow
 		if (m_SearchPattern == null)
 			m_SearchPattern = "";
 
-		m_Objects[0].Item3 = textures.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
-		m_Objects[1].Item3 = audioclips.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
-		m_Objects[2].Item3 = meshes.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
-		m_Objects[3].Item3 = materials.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
-		m_Objects[4].Item3 = gameobjects.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
-		m_Objects[5].Item3 = components.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[0].item3 = textures.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[1].item3 = audioclips.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[2].item3 = meshes.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[3].item3 = materials.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[4].item3 = gameobjects.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
+		m_Objects[5].item3 = components.Where(x => Regex.Match(x.name, m_SearchPattern).Success).ToArray();
 
-		m_Count = m_Objects[0].Item3.Length +
-		          m_Objects[1].Item3.Length +
-		          m_Objects[2].Item3.Length +
-		          m_Objects[3].Item3.Length +
-		          m_Objects[4].Item3.Length +
-		          m_Objects[5].Item3.Length;
+		m_Count = m_Objects[0].item3.Length +
+		          m_Objects[1].item3.Length +
+		          m_Objects[2].item3.Length +
+		          m_Objects[3].item3.Length +
+		          m_Objects[4].item3.Length +
+		          m_Objects[5].item3.Length;
 
 		Repaint();
 	}

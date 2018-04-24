@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
 		public pb_Vertex[] vertices;
 
 		// Submeshes
-		public pb_Submesh[] submeshes;
+		public Submesh[] submeshes;
 
 		// Optional transform matrix.
 		public Matrix4x4 matrix;
@@ -49,10 +49,10 @@ namespace UnityEditor.ProBuilder
 			this.name = name;
 			this.vertices = pb_Vertex.GetVertices(mesh);
 			this.matrix = matrix;
-			this.submeshes = new pb_Submesh[mesh.subMeshCount];
+			this.submeshes = new Submesh[mesh.subMeshCount];
 			int matCount = materials != null ? materials.Length : 0;
 			for(int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; subMeshIndex++)
-				submeshes[subMeshIndex] = new pb_Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.DefaultMaterial);
+				submeshes[subMeshIndex] = new Submesh(mesh, subMeshIndex, matCount > 0 ? materials[subMeshIndex % matCount] : BuiltinMaterials.DefaultMaterial);
 		}
 
 		/// <summary>

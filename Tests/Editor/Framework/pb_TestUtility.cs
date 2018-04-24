@@ -57,11 +57,11 @@ namespace ProBuilder.Test
 
 			static ProBuilderMesh[] GetBasicShapes()
 			{
-				var shapes = Enum.GetValues(typeof(pb_ShapeType)) as pb_ShapeType[];
+				var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
 				ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
 				for (int i = 0, c = shapes.Length; i < c; i++)
 				{
-					primitives[i] = pb_ShapeGenerator.CreateShape(shapes[i]);
+					primitives[i] = ShapeGenerator.CreateShape(shapes[i]);
 					primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
 				}
 				return primitives;

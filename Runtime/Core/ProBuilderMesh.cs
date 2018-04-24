@@ -847,7 +847,7 @@ namespace UnityEngine.ProBuilder
 
 			m.uv2 = null;
 
-			pb_Submesh[] submeshes;
+			Submesh[] submeshes;
 
 			m.subMeshCount = Face.GetMeshIndices(faces, out submeshes, preferredTopology);
 
@@ -1152,7 +1152,7 @@ namespace UnityEngine.ProBuilder
 				int[] indices = kvp.Value.SelectMany(x => x.distinctIndices).ToArray();
 
 				if (kvp.Value.Count > 1)
-					nrm = pb_Projection.FindBestPlane(m_Positions, indices).normal;
+					nrm = Projection.FindBestPlane(m_Positions, indices).normal;
 				else
 					nrm = ProBuilderMath.Normal(this, kvp.Value[0]);
 

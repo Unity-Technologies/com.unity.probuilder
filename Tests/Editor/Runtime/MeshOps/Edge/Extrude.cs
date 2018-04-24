@@ -19,7 +19,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 		[Test]
 		public static void ExtrudeSingleEdge()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 
 			try
 			{
@@ -45,7 +45,7 @@ namespace ProBuilder.RuntimeTests.MeshOps.Edge
 		[Test]
 		public static void ExtrudeMultipleEdges()
 		{
-			var pb = pb_ShapeGenerator.CreateShape(pb_ShapeType.Cube);
+			var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
 
 			try
 			{

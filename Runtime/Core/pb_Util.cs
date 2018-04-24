@@ -440,68 +440,6 @@ namespace UnityEngine.ProBuilder
 			return source.Where(x => knownKeys.Add(keySelector(x)));
 		}
 
-		/**
-		 *	\brief Returns a string formatted by the passed seperator parameter.
-		 *	\code{cs}
-		 *	int[] myArray = new int[3]{0, 1, 2};
-		 *
-		 *	// Prints "0, 1, 2"
-		 *	Debug.Log(myArray.ToFormattedString(", "));
-		 *	@param _delimiter Inserts this string between entries.
-		 *	\returns Formatted string.
-		 */
-		[Obsolete]
-		public static string ToFormattedString<T>(this T[] t, string _delimiter)
-		{
-			return t.ToFormattedString(_delimiter, 0, -1);
-		}
-
-		[Obsolete]
-		public static string ToFormattedString<T>(this T[] t, string _delimiter, int entriesPerLine, int maxEntries)
-		{
-			int len = maxEntries > 0 ? (int)Mathf.Min(t.Length, maxEntries) : t.Length;
-			if(t == null || len < 1)
-				return "Empty Array.";
-
-			StringBuilder str = new StringBuilder();
-
-			// str.Append(_delimiter.Replace("\n", "") + (t[0] == null ? "null" : t[0].ToString()) + _delimiter );
-
-			for(int i = 0; i < len-1; i++)
-			{
-				if(entriesPerLine > 0 && (i+1) % entriesPerLine == 0)
-					str.AppendLine( ((t[i] == null) ? "null" : t[i].ToString()) + _delimiter );
-				else
-					str.Append( ((t[i] == null) ? "null" : t[i].ToString()) + _delimiter);
-			}
-
-			str.Append( (t[len-1] == null) ? "null" : t[len-1].ToString() );
-
-			return str.ToString();
-		}
-
-		/**
-		 *	\brief Returns a string formatted by the passed seperator parameter.
-		 *	\code{cs}
-		 *	List<int> myList = new List<int>(){0, 1, 2};
-		 *
-		 *	// Prints "0, 1, 2"
-		 *	Debug.Log(myList.ToFormattedString(", "));
-		 *	@param _delimiter Inserts this string between entries.
-		 *	\returns Formatted string.
-		 */
-		[Obsolete]
-		public static string ToFormattedString<T>(this List<T> t, string _delimiter)
-		{
-			return t.ToArray().ToFormattedString(_delimiter);
-		}
-
-		[Obsolete]
-		public static string ToFormattedString<T>(this HashSet<T> t, string _delimiter)
-		{
-			return t.ToArray().ToFormattedString(_delimiter);
-		}
-
 		public static string ToString<TKey, TValue>(this Dictionary<TKey, TValue> dict)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();

@@ -353,10 +353,10 @@ namespace UnityEditor.ProBuilder
 				pb.CenterPivot(indicesToCenterPivot);
 
 			if(ProGridsInterface.SnapEnabled())
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
+				pb.transform.position = Snap.SnapValue(pb.transform.position, ProGridsInterface.SnapValue());
 			else
 			if(PreferencesInternal.GetBool(PreferenceKeys.pbForceVertexPivot))
-				pb.transform.position = pb_Snap.SnapValue(pb.transform.position, 1f);
+				pb.transform.position = Snap.SnapValue(pb.transform.position, 1f);
 
 			pb.Optimize();
 		}
