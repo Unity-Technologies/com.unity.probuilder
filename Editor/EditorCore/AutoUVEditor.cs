@@ -415,10 +415,10 @@ namespace UnityEditor.ProBuilder
 							q.uv.offset = offset;
 							break;
 						case pb_Axis2d.X:
-							q.uv.offset.x = offset.x;
+							q.uv.offset = new Vector2(offset.x, q.uv.offset.y);
 							break;
 						case pb_Axis2d.Y:
-							q.uv.offset.y = offset.y;
+							q.uv.offset = new Vector2(q.uv.offset.x, offset.y);
 							break;
 					}
 				}
@@ -440,6 +440,7 @@ namespace UnityEditor.ProBuilder
 		private static void SetScale(Vector2 scale, pb_Axis2d axis, ProBuilderMesh[] sel)
 		{
 			UndoUtility.RecordSelection(sel, "Scale UVs");
+
 			for(int i = 0; i < sel.Length; i++)
 			{
 				foreach(Face q in sel[i].SelectedFaces) {
@@ -449,10 +450,10 @@ namespace UnityEditor.ProBuilder
 							q.uv.scale = scale;
 							break;
 						case pb_Axis2d.X:
-							q.uv.scale.x = scale.x;
+							q.uv.scale = new Vector2(scale.x, q.uv.scale.y);
 							break;
 						case pb_Axis2d.Y:
-							q.uv.scale.y = scale.y;
+							q.uv.scale = new Vector2(q.uv.scale.x, scale.y);
 							break;
 					}
 				}

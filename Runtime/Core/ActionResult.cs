@@ -21,12 +21,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// State of affairs after the operation.
 		/// </summary>
-		public Status status;
+		public Status status { get; private set; }
 
 		/// <summary>
 		/// Short description of the results. Should be no longer than a few words.
 		/// </summary>
-		public string notification;
+		public string notification { get; private set; }
 
 		/// <summary>
 		/// Create a new ActionResult.
@@ -40,19 +40,29 @@ namespace UnityEngine.ProBuilder
 		}
 
 		/// <summary>
-		///
+		/// Convert a result to a boolean value, true if successful and false if not.
 		/// </summary>
 		/// <param name="res"></param>
 		/// <returns>True if action was successful, false otherwise.</returns>
 		public static implicit operator bool(ActionResult res)
 		{
-			return res.status == Status.Success;
+			return res != null && res.status == Status.Success;
 		}
 
-		/// <summary>
-		/// Generic "Success" action result with no notification text.
-		/// </summary>
-		public static ActionResult Success { get { return new ActionResult(Status.Success, ""); } }
+        public bool ToBool()
+        {
+            return status == Status.Success;
+        }
+
+        public static bool FromBool(bool success)
+        {
+            return success ? ActionResult.Success : new ActionResult(Status.Failure, "Failure");
+        }
+
+        /// <summary>
+        /// Generic "Success" action result with no notification text.
+        /// </summary>
+        public static ActionResult Success { get { return new ActionResult(Status.Success, ""); } }
 
 		/// <summary>
 		/// Generic "No Selection" action result with "Nothing Selected" notification.

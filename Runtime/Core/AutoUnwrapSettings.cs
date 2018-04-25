@@ -47,42 +47,42 @@ namespace UnityEngine.ProBuilder
 			Stretch
 		}
 
-		public bool useWorldSpace;
+		public bool useWorldSpace { get; set; }
 
 		/// <summary>
 		/// If true, UV coordinates are calculated using world points instead of local.
 		/// </summary>
-		public bool flipU;
+		public bool flipU { get; set; }
 
 		/// <summary>
 		/// If true, the U value will be inverted.
 		/// </summary>
-		public bool flipV;
+		public bool flipV { get; set; }
 
 		/// <summary>
 		/// If true, the V value will be inverted.
 		/// </summary>
-		public bool swapUV;
+		public bool swapUV { get; set; }
 
 		/// <summary>
 		/// If true, U and V values will switched.
 		/// </summary>
-		public Fill fill;
+		public Fill fill { get; set; }
 
 		/// <summary>
 		/// Which Fill mode to use.
 		/// </summary>
-		public Vector2 scale;
+		public Vector2 scale { get; set; }
 
 		/// <summary>
 		/// The scale to be applied to U and V coordinates.
 		/// </summary>
-		public Vector2 offset;
+		public Vector2 offset { get; set; }
 
 		/// <summary>
 		/// The offset to be applied to the UV coordinates.
 		/// </summary>
-		public float rotation;
+		public float rotation { get; set; }
 
 		/// <summary>
 		/// Rotates UV coordinates.
@@ -90,24 +90,24 @@ namespace UnityEngine.ProBuilder
 		#pragma warning disable 0618
 		[System.Obsolete("Please use pb_UV.anchor.")]
 		#pragma warning disable 0618
-		public Justify justify;
+		public Justify justify { get; set; }
 		#pragma warning restore 0618
 
 		/// <summary>
 		/// Aligns UVs to the edges or center.
 		/// </summary>
-		public Vector2 localPivot;
+		public Vector2 localPivot { get; set; }
 
 		/// <summary>
 		/// The center point of the mapped UVs prior to offset application.
 		/// </summary>
 		[System.Obsolete("localPivot and localSize are no longer stored.")]
-		public Vector2 localSize;
+		public Vector2 localSize { get; set; }
 
 		/// <summary>
 		/// The size of the mapped UVs prior to modifications.
 		/// </summary>
-		public Anchor anchor;
+		public Anchor anchor { get; set; }
 
 		public AutoUnwrapSettings()
 		{
@@ -124,6 +124,9 @@ namespace UnityEngine.ProBuilder
 
 		public AutoUnwrapSettings(AutoUnwrapSettings uvs)
 		{
+            if (uvs == null)
+                return;
+
 			this.useWorldSpace = uvs.useWorldSpace;
 			this.flipU = uvs.flipU;
 			this.flipV = uvs.flipV;

@@ -12,12 +12,12 @@ namespace UnityEngine.ProBuilder
 		/// <summary>
 		/// The currently selected color.
 		/// </summary>
-		public Color current = Color.white;
+		public Color current { get; set; }
 
 		/// <summary>
 		/// All colors in this palette.
 		/// </summary>
-		public List<Color> colors;
+		public List<Color> colors { get; private set; }
 
 		public void SetDefaultValues()
 		{
@@ -48,13 +48,24 @@ namespace UnityEngine.ProBuilder
 		/// <param name="target"></param>
 		public void CopyTo(ColorPalette target)
 		{
-			target.colors = new List<Color>(colors);
+            if(target != null)
+    			target.colors = new List<Color>(colors);
 		}
 
 		public static implicit operator List<Color>(ColorPalette palette)
 		{
-			return palette.colors;
+			return palette != null ? palette.colors : null;
 		}
+
+        public List<Color> ToList()
+        {
+            return new List<Color>(colors);
+        }
+
+        public void FromList(List<Color> colors)
+        {
+            colors = new List<Color>(colors);
+        }
 
 		public Color this[int i]
 		{
